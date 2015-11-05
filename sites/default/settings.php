@@ -44,3 +44,4 @@ include __DIR__ . "/settings.pantheon.php";
 if (file_exists(__DIR__ . '/settings.local.php')) {
   include __DIR__ . '/settings.local.php';
 }
+$settings['install_profile'] = 'standard';
