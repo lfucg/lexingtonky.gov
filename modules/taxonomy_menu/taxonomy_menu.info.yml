@@ -1,0 +1,12 @@
+name: Taxonomy Menu
+type: module
+description: Embed a taxonomy tree into a menu
+# core: 8.x
+package: Menu
+
+
+# Information added by Drupal.org packaging script on 2015-09-17
+version: '8.x-3.0'
+core: '8.x'
+project: 'taxonomy_menu'
+datestamp: 1442495044

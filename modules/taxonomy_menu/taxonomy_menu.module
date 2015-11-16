@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Contains taxonomy_menu.module.
+ */
+
+/**
+ * Implements hook_entity_insert().
+ *
+ * Check for taxonomy term insert.
+ */
+function taxonomy_menu_taxonomy_term_insert(\Drupal\Core\Entity\EntityInterface $entity) {
+  \Drupal::service('taxonomy_menu.helper')->generateTaxonomyMenuEntries($entity, FALSE);
+}
+
+/**
+ * Implements hook_entity_delete().
+ *
+ * Check for taxonomy term deletion.
+ */
+function taxonomy_menu_taxonomy_term_delete(Drupal\Core\Entity\EntityInterface $entity) {
+  \Drupal::service('taxonomy_menu.helper')->removeTaxonomyMenuEntries($entity, FALSE);
+}
+
+
+/**
+ * Implements hook_entity_update().
+ *
+ * Check for taxonomy term updates.
+ */
+function taxonomy_menu_taxonomy_term_update(Drupal\Core\Entity\EntityInterface $entity) {
+  \Drupal::service('taxonomy_menu.helper')->updateTaxonomyMenuEntries($entity, FALSE);
+}

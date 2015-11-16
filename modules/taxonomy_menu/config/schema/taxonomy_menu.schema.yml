@@ -1,0 +1,16 @@
+taxonomy_menu.taxonomy_menu.*:
+  type: config_entity
+  label: 'Taxonomy Menu config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    vocabulary:
+      type: string
+      label: 'Vocabulary'
+    menu:
+      type: string
+      label: 'Menu'
