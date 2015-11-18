@@ -6,7 +6,7 @@ package: Menu
 
 
 # Information added by Drupal.org packaging script on 2015-09-17
-version: '8.x-3.0'
+version: '8.x-3.0+1-dev'
 core: '8.x'
 project: 'taxonomy_menu'
-datestamp: 1442495044
+datestamp: 1442501072
