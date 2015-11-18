@@ -1,0 +1,8 @@
+uuid: 018b48d9-21c1-4933-a603-3d805af6ca73
+langcode: en
+status: true
+dependencies: {  }
+id: site_navigation
+label: 'Site Navigation'
+vocabulary: site_navigation
+menu: main
