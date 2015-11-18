@@ -1,0 +1,18 @@
+uuid: ac3def8c-9545-4441-ad5f-953b50ccf11d
+langcode: en
+status: true
+dependencies:
+  theme:
+    - stable
+id: stable_local_actions
+theme: stable
+region: content
+weight: -20
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Primary admin actions'
+  provider: core
+  label_display: '0'
+visibility: {  }

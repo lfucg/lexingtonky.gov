@@ -1,0 +1,12 @@
+uuid: dcdfdab3-584e-4bcb-9a2e-461af1b9750d
+name: 'City of Lexington'
+mail: eschwartz@codeforamerica.org
+slogan: ''
+page:
+  403: ''
+  404: ''
+  front: /node
+admin_compact_mode: false
+weight_select_max: 100
+langcode: en
+default_langcode: en
