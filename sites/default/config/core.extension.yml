@@ -32,8 +32,8 @@ module:
   shortcut: 0
   system: 0
   taxonomy: 0
-  taxonomy_menu: 0
   text: 0
+  token: 0
   toolbar: 0
   tour: 0
   update: 0

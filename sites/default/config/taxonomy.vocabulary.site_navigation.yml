@@ -5,5 +5,5 @@ dependencies: {  }
 name: 'Site Navigation'
 vid: site_navigation
 description: ''
-hierarchy: 0
+hierarchy: 1
 weight: 0

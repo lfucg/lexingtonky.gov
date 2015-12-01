@@ -10,8 +10,8 @@ dependencies:
     - bartik
 id: bartik_main_menu
 theme: bartik
-region: primary_menu
-weight: 0
+region: sidebar_first
+weight: -8
 provider: null
 plugin: 'system_menu_block:main'
 settings:
@@ -21,4 +21,9 @@ settings:
   label_display: '0'
   level: 1
   depth: 1
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: '/browse*'
+    negate: false
+    context_mapping: {  }
