@@ -1,5 +1,9 @@
 <?php
 
-function atlas_preprocess_page(&$variables) {
-
+function atlas_preprocess_menu(&$variables) {
+  if ($variables['menu_name'] == 'main') {
+    foreach($variables['items'] as &$item) {
+      $item['urlTitle'] = $item['url']->getOption('attributes')['title'];
+    }
+  }
 }
