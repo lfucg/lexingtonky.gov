@@ -139,6 +139,7 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
         $term = Term::load($term->tid);
       }
       $mlid = $this->buildMenuPluginId($term, $include_base_plugin_id);
+
       $links[$mlid] = $this->buildMenuDefinition($term, $base_plugin_definition);
     }
 
@@ -194,6 +195,11 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
 
     if (is_array($parents) && count($parents) && !is_null($parents[0]) && $parents[0] != '0') {
       $menu_parent_id = $this->buildMenuPluginId($parents[0]);
+    }
+
+    // Please note: if menu_parent_id is NULL, it will not update the hierarchy properly.
+    if (empty($menu_parent_id)) {
+      $menu_parent_id = '0';
     }
 
     // TODO: Consider implementing a forced weight based on taxonomy tree.

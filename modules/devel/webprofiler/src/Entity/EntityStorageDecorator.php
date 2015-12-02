@@ -7,14 +7,19 @@
 
 namespace Drupal\webprofiler\Entity;
 
+use Drupal\Core\Config\Config;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
+use Drupal\Core\Config\Entity\ImportableEntityStorageInterface;
+use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class EntityStorageDecorator
  */
-class EntityStorageDecorator extends EntityDecorator implements ConfigEntityStorageInterface {
+class EntityStorageDecorator extends EntityDecorator implements ConfigEntityStorageInterface, ImportableEntityStorageInterface, EntityHandlerInterface {
 
   /**
    * @param ConfigEntityStorageInterface $controller
@@ -110,13 +115,6 @@ class EntityStorageDecorator extends EntityDecorator implements ConfigEntityStor
   /**
    * {@inheritdoc}
    */
-  public function getQueryServicename() {
-    return $this->getOriginalObject()->getQueryServicename();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getQuery($conjunction = 'AND') {
     return $this->getOriginalObject()->getQuery($conjunction);
   }
@@ -133,13 +131,6 @@ class EntityStorageDecorator extends EntityDecorator implements ConfigEntityStor
    */
   public function getEntityType() {
     return $this->getOriginalObject()->getEntityType();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getConfigPrefix() {
-    return $this->getOriginalObject()->getConfigPrefix();
   }
 
   /**
@@ -183,5 +174,45 @@ class EntityStorageDecorator extends EntityDecorator implements ConfigEntityStor
    */
   public function loadMultipleOverrideFree(array $ids = NULL) {
     return $this->getOriginalObject()->loadMultipleOverrideFree($ids);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function importCreate($name, Config $new_config, Config $old_config) {
+    $this->getOriginalObject()->importCreate($name, $new_config, $old_config);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function importUpdate($name, Config $new_config, Config $old_config) {
+    $this->getOriginalObject()->importUpdate($name, $new_config, $old_config);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function importDelete($name, Config $new_config, Config $old_config) {
+    $this->getOriginalObject()->importDelete($name, $new_config, $old_config);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function importRename($old_name, Config $new_config, Config $old_config) {
+    $this->getOriginalObject()->importRename($old_name, $new_config, $old_config);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static(
+      $entity_type,
+      $container->get('config.factory'),
+      $container->get('uuid'),
+      $container->get('language_manager')
+    );
   }
 }

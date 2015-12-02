@@ -60,6 +60,7 @@ class TaxonomyMenuHelper {
           }
         }
         if ($this->manager->hasDefinition($plugin_id)) {
+
           $this->manager->updateDefinition($plugin_id, $plugin_def);
         }
         else {
@@ -75,10 +76,15 @@ class TaxonomyMenuHelper {
    * @param \Drupal\taxonomy\TermInterface $term
    */
   public function updateTaxonomyMenuEntries(TermInterface $term, $rebuild_all = TRUE) {
+
     // Load relevant taxonomy menus.
     $tax_menus = $this->getTermMenusByVocabulary($term->getVocabularyId());
+    /** @var $menu \Drupal\taxonomy_menu\TaxonomyMenuInterface */
     foreach ($tax_menus as $menu) {
-      foreach ($menu->getLinks([], TRUE) as $plugin_id => $plugin_def) {
+
+      $links = $menu->getLinks([], TRUE);
+
+      foreach ($links as $plugin_id => $plugin_def) {
         if (!$rebuild_all) {
           $plugin_id_explode = explode('.', $plugin_id);
           $term_id = array_pop($plugin_id_explode);
@@ -86,6 +92,7 @@ class TaxonomyMenuHelper {
             continue;
           }
         }
+
         $this->manager->updateDefinition($plugin_id, $plugin_def, FALSE);
       }
     }

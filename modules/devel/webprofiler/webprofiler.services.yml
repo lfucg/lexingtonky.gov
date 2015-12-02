@@ -11,7 +11,7 @@ services:
     arguments: ['webprofiler']
 
   profiler.file_storage:
-    class: Symfony\Component\HttpKernel\Profiler\FileProfilerStorage
+    class: Drupal\webprofiler\Profiler\FileProfilerStorage
     arguments: ['%data_collector.storage%']
     tags:
       - { name: webprofiler_storage, title:'File storage' }

@@ -295,8 +295,7 @@ function backtrace_error_handler($error_level, $message, $filename, $line, $cont
         drupal_set_message($msg, ($severity_level <= RfcLogLevel::NOTICE ? 'error' : 'warning'), TRUE);
       }
       if (!empty($error_handlers[DEVEL_ERROR_HANDLER_BACKTRACE_KRUMO])) {
-        print $msg . " =&gt;\n";
-        ddebug_backtrace(FALSE, 1);
+        print kprint_r(ddebug_backtrace(TRUE, 1), $return = TRUE, $msg);
       }
       if (!empty($error_handlers[DEVEL_ERROR_HANDLER_BACKTRACE_DPM])) {
         dpm(ddebug_backtrace(TRUE, 1), $msg, 'warning');
@@ -787,7 +786,7 @@ function ddebug_backtrace($return = FALSE, $pop = 0, $options = DEBUG_BACKTRACE_
           }
           $backtrace[1] += array('args' => array());
           foreach ($backtrace[1]['args'] as $key => $value) {
-            $call['args'][$key] = (is_object($value) && get_class($value) != 'stdClass') ? print_r($value, TRUE) : $value;
+            $call['args'][$key] = $value;
           }
         }
         else {
