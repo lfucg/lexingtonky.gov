@@ -2,8 +2,8 @@ uuid: 7abce661-adda-40b6-a515-210359720a50
 langcode: en
 status: true
 dependencies: {  }
-name: 'Site Navigation'
+name: 'Topic Navigation'
 vid: site_navigation
 description: ''
-hierarchy: 1
+hierarchy: 0
 weight: 0

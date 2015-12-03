@@ -1,13 +1,13 @@
-uuid: 157c72a6-da96-410c-9b00-eee103849265
+uuid: 0b58fd01-cbf3-4bd3-8c04-048bed311a87
 langcode: en
 status: true
 dependencies:
   theme:
-    - bartik
-id: bartik_page_title
-theme: bartik
+    - atlas
+id: atlas_page_title
+theme: atlas
 region: content
-weight: -7
+weight: -8
 provider: null
 plugin: page_title_block
 settings:

@@ -1,15 +1,15 @@
-uuid: a812378f-bfe5-417d-a832-50d80065806f
+uuid: 3a1949ff-6baa-4db3-bb35-535d97aefe73
 langcode: en
 status: true
 dependencies:
   module:
     - help
   theme:
-    - bartik
-id: bartik_help
-theme: bartik
+    - atlas
+id: atlas_help
+theme: atlas
 region: content
-weight: -8
+weight: -9
 provider: null
 plugin: help_block
 settings:

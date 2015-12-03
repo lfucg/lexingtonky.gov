@@ -59,33 +59,35 @@
  * @ingroup themeable
  */
 #}
-    <header class="usa-site-header" role="banner">
-      <nav class="usa-site-navbar lexington-navbar">
-        <div class="usa-grid-full lexington-grid-full">
-          <div class="usa-width-one-half">
-            <div class="logo" id="logo">
-              <a href="/" accesskey="1" title="Home" aria-label="Home">
-                <img class="lexington-logo" src="/themes/custom/atlas/img/lexington-logo.png">
-              </a>
-            </div>
-          </div>
-      </nav>
 
-      <div class="lexington-search-hero-container">
-        <div class="lexington-search-hero">
-          What can I help you find?
-          <form action="/search/node/" class="lexington-search usa-search usa-search-big">
-            <div role="search">
-              <label class="usa-sr-only" for="search-field-big">Search big</label>
-              <input id="search-field-big" name="search" type="search">
-              <button type="submit">
-                <span class="usa-search-submit-text">Search</span>
-              </button>
-            </div>
-          </form>
+{# todo: move to region file #}
+<header class="usa-site-header" role="banner">
+  <nav class="usa-site-navbar lexington-navbar">
+    <div class="usa-grid-full lexington-grid-full">
+      <div class="usa-width-one-half">
+        <div class="logo" id="logo">
+          <a href="/" accesskey="1" title="Home" aria-label="Home">
+            <img class="lexington-logo" src="/themes/custom/atlas/img/lexington-logo.png">
+          </a>
         </div>
       </div>
-    </header>
+  </nav>
+
+  <div class="lexington-search-hero-container">
+    <div class="lexington-search-hero">
+      What can I help you find?
+      <form action="/search/node/" class="lexington-search usa-search usa-search-big">
+        <div role="search">
+          <label class="usa-sr-only" for="search-field-big">Search big</label>
+          <input id="search-field-big" name="search" type="search">
+          <button type="submit">
+            <span class="usa-search-submit-text">Search</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</header>
 
     <div class="usa-grid-full lexington-grid-full">
       <div class="usa-width-two-thirds">
@@ -127,7 +129,6 @@
     </div>
 
 <div class="layout-container">
-    {{ dump(title) }}
   <header role="banner">
     {% if logo %}
       <a href="{{ front_page }}" title="{{ 'Home'|t }}" rel="home">
@@ -155,7 +156,6 @@
       </div>{# ./name-and-slogan #}
     {% endif %}
 
-    {{ page.header }}
   </header>
 
   {{ page.primary_menu }}

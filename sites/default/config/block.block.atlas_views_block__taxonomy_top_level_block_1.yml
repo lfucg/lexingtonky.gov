@@ -1,0 +1,30 @@
+uuid: 1d7f5ceb-7339-409f-8e38-56158796003d
+langcode: en
+status: false
+dependencies:
+  config:
+    - views.view.taxonomy_top_level
+  module:
+    - system
+    - views
+  theme:
+    - atlas
+id: atlas_views_block__taxonomy_top_level_block_1
+theme: atlas
+region: '-1'
+weight: -5
+provider: null
+plugin: 'views_block:taxonomy_top_level-block_1'
+settings:
+  id: 'views_block:taxonomy_top_level-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

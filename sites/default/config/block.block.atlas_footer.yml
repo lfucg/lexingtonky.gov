@@ -1,0 +1,24 @@
+uuid: b8a833be-8c8d-4590-8c40-64ccf204a15a
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.footer
+  module:
+    - system
+  theme:
+    - atlas
+id: atlas_footer
+theme: atlas
+region: sidebar_first
+weight: -10
+provider: null
+plugin: 'system_menu_block:footer'
+settings:
+  id: 'system_menu_block:footer'
+  label: 'Footer menu'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 0
+visibility: {  }

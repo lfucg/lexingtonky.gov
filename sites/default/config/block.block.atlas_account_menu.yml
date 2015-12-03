@@ -1,0 +1,24 @@
+uuid: 006aecec-d32a-437f-b15f-95b2ad7ec9a5
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.account
+  module:
+    - system
+  theme:
+    - atlas
+id: atlas_account_menu
+theme: atlas
+region: '-1'
+weight: -2
+provider: null
+plugin: 'system_menu_block:account'
+settings:
+  id: 'system_menu_block:account'
+  label: 'User account menu'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 1
+visibility: {  }

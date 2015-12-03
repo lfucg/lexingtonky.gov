@@ -10,8 +10,8 @@ dependencies:
     - bartik
 id: mainnavigation_2
 theme: bartik
-region: sidebar_first
-weight: -6
+region: content
+weight: -2
 provider: null
 plugin: 'system_menu_block:main'
 settings:

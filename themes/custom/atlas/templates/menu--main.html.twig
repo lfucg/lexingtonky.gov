@@ -25,11 +25,23 @@
   @see http://twig.sensiolabs.org/doc/tags/macro.html
 #}
 
-<section class="lexington-services-block" aria-labelledby="services-and-information-label" id="services-and-information">
-  <div class="categories-lists usa-grid-full lexington-grid-full">
-    {{ menus.menu_links(items, attributes, 0) }}
-  </div>
-</section>
+<div class="usa-width-one-third">
+  {{ menus.menu_links(items, attributes, 0) }}
+</div>
+<div class="usa-width-one-third">
+  {{ menus.menu_links_2(items, attributes, 0) }}
+</div>
+
+{% macro menu_links_2(items, attributes, menu_level) %}
+  {% import _self as menus %}
+  {% if items %}
+    {% for item in items %}
+      {% if item.in_active_trail and item.below %}
+          {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endmacro %}
 
 {% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
@@ -40,9 +52,12 @@
       <ol>
     {% endif %}
     {% for item in items %}
-        <li class="usa-width-one-third">
+        <li >
           <h3>{{ link(item.title, item.url) }}</h3>
           <p>{{ item.urlTitle }}</p>
+          {% if item.in_active_trail and item.below %}
+              <p>wooooooooooooooooooooooooow!</p>
+          {% endif %}
         </li>
     {% endfor %}
     </ul>

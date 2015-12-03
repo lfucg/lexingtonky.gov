@@ -1,13 +1,13 @@
-uuid: ad17db80-f00a-492b-a92e-46fe07fbb06a
+uuid: b79ce4b5-58bd-4128-b725-373bebc43cf5
 langcode: en
 status: true
 dependencies:
   theme:
-    - bartik
-id: bartik_local_tasks
-theme: bartik
+    - atlas
+id: atlas_local_tasks
+theme: atlas
 region: content
-weight: -5
+weight: -6
 provider: null
 plugin: local_tasks_block
 settings:

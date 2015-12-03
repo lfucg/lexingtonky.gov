@@ -1,0 +1,33 @@
+{#
+/**
+ * @file
+ * Theme override to display a region.
+ *
+ * Available variables:
+ * - content: The content for this region, typically blocks.
+ * - attributes: HTML attributes for the region div.
+ * - region: The name of the region variable as defined in the theme's
+ *   .info.yml file.
+ *
+ * @see template_preprocess_region()
+ */
+#}
+<header class="usa-site-header" role="banner">
+  <nav class="usa-site-navbar lexington-navbar">
+    <div class="usa-grid-full lexington-grid-full">
+      <div class="usa-width-one-half">
+        <div class="logo" id="logo">
+          <a href="/" accesskey="1" title="Home" aria-label="Home">
+            <img class="lexington-logo" src="/themes/custom/atlas/img/lexington-logo.png">
+          </a>
+        </div>
+      </div>
+  </nav>
+
+  {% if content %}
+    <div{{ attributes }}>
+      {# content #}
+    </div>
+  {% endif %}
+</header>
+

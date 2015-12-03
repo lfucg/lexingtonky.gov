@@ -1,25 +1,25 @@
-uuid: 3f35f47f-8b3d-43d5-8600-f07040c3cbc1
+uuid: f4a5f128-034b-4e88-bd49-735c96b150ad
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - system.menu.main
   module:
     - system
   theme:
-    - bartik
-id: bartik_main_menu
-theme: bartik
-region: content
-weight: -4
+    - atlas
+id: atlas_mainnavigation
+theme: atlas
+region: '-1'
+weight: -8
 provider: null
 plugin: 'system_menu_block:main'
 settings:
   id: 'system_menu_block:main'
-  label: 'Main navigation'
+  label: 'Main navigation - level 2'
   provider: system
   label_display: '0'
-  level: 1
+  level: 2
   depth: 1
 visibility:
   request_path:

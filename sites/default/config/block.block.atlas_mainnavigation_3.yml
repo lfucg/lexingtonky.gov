@@ -1,4 +1,4 @@
-uuid: 6172ab7a-c4b6-4a96-a700-ac4c3dc005ec
+uuid: 697f31e7-e4eb-4c09-9608-8a23f2503321
 langcode: en
 status: false
 dependencies:
@@ -7,11 +7,11 @@ dependencies:
   module:
     - system
   theme:
-    - bartik
-id: mainnavigation_3
-theme: bartik
+    - atlas
+id: atlas_mainnavigation_3
+theme: atlas
 region: '-1'
-weight: -6
+weight: -3
 provider: null
 plugin: 'system_menu_block:main'
 settings:
@@ -20,10 +20,5 @@ settings:
   provider: system
   label_display: visible
   level: 1
-  depth: 1
-visibility:
-  request_path:
-    id: request_path
-    pages: '<front>'
-    negate: false
-    context_mapping: {  }
+  depth: 3
+visibility: {  }

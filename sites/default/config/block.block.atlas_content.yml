@@ -1,15 +1,15 @@
-uuid: d7e95f17-f72e-4443-a100-ca990c99d247
+uuid: d09d7cc7-6a25-412d-8530-48cbd4548a89
 langcode: en
 status: true
 dependencies:
   module:
     - system
   theme:
-    - bartik
-id: bartik_content
-theme: bartik
+    - atlas
+id: atlas_content
+theme: atlas
 region: content
-weight: -1
+weight: -5
 provider: null
 plugin: system_main_block
 settings:

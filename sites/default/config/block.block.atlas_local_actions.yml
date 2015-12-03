@@ -1,13 +1,13 @@
-uuid: 4b251062-f274-4700-9900-eb4cf2a07ecd
+uuid: 9f85f7f0-c400-433f-b25d-93e7da362414
 langcode: en
 status: true
 dependencies:
   theme:
-    - bartik
-id: bartik_local_actions
-theme: bartik
+    - atlas
+id: atlas_local_actions
+theme: atlas
 region: content
-weight: -6
+weight: -7
 provider: null
 plugin: local_actions_block
 settings:
