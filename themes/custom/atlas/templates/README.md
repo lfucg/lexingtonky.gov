@@ -1,1 +1,0 @@
-This is a copy of the default page.twig.html file found in Drupal core. It has been placed here as an example of where to place template files you'd like to override in your theme.

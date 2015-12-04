@@ -22,6 +22,24 @@
           </a>
         </div>
       </div>
+      <div data-quickedit-entity-id="block_content/1" id="block-frontpagequicklinks" class="contextual-region usa-width-one-half" data-quickedit-entity-instance-id="0" >
+      <ol class="usa-unstyled-list" style="width: 100%; text-align: right; ">
+        <li style="margin: 5px; display: inline-block">Lexcall</li>
+        <li style="margin: 5px; display: inline-block">Translate</li>
+        <li style="margin: 5px; display: inline-block">News</li>
+      </ol>
+      {% block search %}
+      {% endblock %}
+      <form class="usa-search">
+        <div role="search">
+          <label class="usa-sr-only" for="search-field">Search medium</label>
+          <input id="search-field" name="search" type="search">
+          <button type="submit">
+            <span class="usa-search-submit-text">Search</span>
+          </button>
+        </div>
+      </form>
+    </div>
   </nav>
 
   {% if content %}
