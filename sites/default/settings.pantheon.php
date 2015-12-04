@@ -13,6 +13,22 @@
  */
 
 /**
+ * Version of Pantheon files.
+ *
+ * This is a monotonically-increasing sequence number that is
+ * incremented whenever a change is made to any Pantheon file.
+ * Not changed if Drupal core is updated without any change to
+ * any Pantheon file.
+ *
+ * The Pantheon version is included in the git tag only if a
+ * release is made that includes changes to Pantheon files, but
+ * not to any Drupal files.
+ */
+if (!defined("PANTHEON_VERSION")) {
+  define("PANTHEON_VERSION", "2");
+}
+
+/**
  * Set the default location for the 'private' directory.  Note
  * that this location is protected when running on the Pantheon
  * environment, but may be exposed if you migrate your site to
@@ -107,6 +123,16 @@ if (isset($_SERVER['PRESSFLOW_SETTINGS'])) {
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
   $settings['hash_salt'] = $_ENV['DRUPAL_HASH_SALT'];
+}
+
+/**
+ * Define appropriate location for tmp directory
+ *
+ * Issue: https://github.com/pantheon-systems/drops-8/issues/114
+ *
+ */
+if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
+  $config['system.file']['path']['temporary'] = $_SERVER['HOME'] .'/tmp';
 }
 
 
