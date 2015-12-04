@@ -32,6 +32,7 @@
   {{ menus.menu_links_2(items, attributes, 0) }}
 </div>
 
+
 {% macro menu_links_2(items, attributes, menu_level) %}
   {% import _self as menus %}
   {% if items %}
@@ -52,12 +53,9 @@
       <ol>
     {% endif %}
     {% for item in items %}
-        <li >
-          <h3>{{ link(item.title, item.url) }}</h3>
-          <p>{{ item.urlTitle }}</p>
-          {% if item.in_active_trail and item.below %}
-              <p>wooooooooooooooooooooooooow!</p>
-          {% endif %}
+        <li>
+          <h3>{% if item.in_active_trail %}(ACTIVE) {% endif %}{{ link(item.title, item.url) }}</h3>
+          <p>{{ item.url_title }}</p>
         </li>
     {% endfor %}
     </ul>
