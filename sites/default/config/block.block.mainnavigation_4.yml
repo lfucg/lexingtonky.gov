@@ -1,6 +1,6 @@
 uuid: 49a739a8-d419-42c5-9100-f3ead506c682
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - system.menu.main
@@ -10,8 +10,8 @@ dependencies:
     - atlas
 id: mainnavigation_4
 theme: atlas
-region: content
-weight: -7
+region: '-1'
+weight: -10
 provider: null
 plugin: 'system_menu_block:main'
 settings:

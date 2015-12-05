@@ -9,7 +9,7 @@ dependencies:
 id: atlas_page_title
 theme: atlas
 region: content
-weight: -9
+weight: -11
 provider: null
 plugin: page_title_block
 settings:

@@ -11,7 +11,7 @@ dependencies:
 id: atlas_account_menu
 theme: atlas
 region: '-1'
-weight: -2
+weight: 0
 provider: null
 plugin: 'system_menu_block:account'
 settings:

@@ -7,7 +7,7 @@ dependencies:
 id: atlas_local_tasks
 theme: atlas
 region: '-1'
-weight: -6
+weight: -2
 provider: null
 plugin: local_tasks_block
 settings:

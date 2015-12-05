@@ -7,7 +7,7 @@ dependencies:
 id: atlas_local_actions
 theme: atlas
 region: '-1'
-weight: -7
+weight: -4
 provider: null
 plugin: local_actions_block
 settings:

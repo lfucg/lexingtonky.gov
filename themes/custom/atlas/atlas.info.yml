@@ -25,8 +25,9 @@ stylesheets-remove:
 # Add your regions below. Defaults to those defined in Drupal core.
 regions:
   header: Header
-  primary_menu: 'Primary menu'
   featured_top: 'Featured top'
+  primary_menu: 'Primary menu'
+  secondary_menu: 'Secondary menu'
   breadcrumb: Breadcrumb
   highlighted: Highlighted
   help: Help

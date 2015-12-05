@@ -60,10 +60,18 @@
  */
 #}
 
-  {{ page.header }}
+<div class="layout-container">
+  <header class="usa-site-header" role="banner">
+    {{ page.header }}
+    {{ page.featured_top }}
+  </header>
+
   {{ page.breadcrumb }}
+
   {{ page.highlighted }}
+
   {{ page.help }}
+
 
   <section class="lexington-services-block" aria-labelledby="services-and-information-label" id="services-and-information">
     <div class="categories-lists usa-grid-full lexington-grid-full">
@@ -80,3 +88,4 @@
       {{ page.footer }}
     </footer>
   {% endif %}
+</div>
