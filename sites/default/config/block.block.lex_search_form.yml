@@ -4,6 +4,7 @@ status: true
 dependencies:
   module:
     - search
+    - system
   theme:
     - atlas
 id: lex_search_form
@@ -17,4 +18,9 @@ settings:
   label: 'What can I help you find?'
   provider: search
   label_display: visible
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

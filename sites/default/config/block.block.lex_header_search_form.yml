@@ -4,6 +4,7 @@ status: true
 dependencies:
   module:
     - search
+    - system
   theme:
     - atlas
 id: lex_header_search_form
@@ -17,4 +18,9 @@ settings:
   label: 'Header search form'
   provider: search
   label_display: '0'
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: true
+    context_mapping: {  }
