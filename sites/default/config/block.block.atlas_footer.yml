@@ -10,8 +10,8 @@ dependencies:
     - atlas
 id: atlas_footer
 theme: atlas
-region: sidebar_first
-weight: -10
+region: footer_second
+weight: -9
 provider: null
 plugin: 'system_menu_block:footer'
 settings:

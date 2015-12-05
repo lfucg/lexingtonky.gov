@@ -60,7 +60,10 @@
  */
 #}
 <div class="layout-container">
-  {{ page.header }}
+  <header class="usa-site-header" role="banner">
+    {{ page.header }}
+    {{ page.featured_top }}
+  </header>
 
   {{ page.primary_menu }}
   {{ page.secondary_menu }}

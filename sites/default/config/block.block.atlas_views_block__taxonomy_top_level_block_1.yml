@@ -1,6 +1,6 @@
 uuid: 1d7f5ceb-7339-409f-8e38-56158796003d
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - views.view.taxonomy_top_level
@@ -11,8 +11,8 @@ dependencies:
     - atlas
 id: atlas_views_block__taxonomy_top_level_block_1
 theme: atlas
-region: '-1'
-weight: -5
+region: primary_menu
+weight: -9
 provider: null
 plugin: 'views_block:taxonomy_top_level-block_1'
 settings:

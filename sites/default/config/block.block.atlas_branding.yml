@@ -1,6 +1,6 @@
 uuid: b449af8c-8359-49cc-b706-6f2bfe6d483a
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - system
@@ -8,8 +8,8 @@ dependencies:
     - atlas
 id: atlas_branding
 theme: atlas
-region: header
-weight: -8
+region: '-1'
+weight: -3
 provider: null
 plugin: system_branding_block
 settings:

@@ -2,7 +2,8 @@ api_url: api.drupal.org
 page_alter: false
 raw_names: false
 error_handlers:
-  2: '2'
+  error_handler_type: 0
+  error_handler_value: 1
 krumo_skin: default
 rebuild_theme: false
 debug_mail_file_format: '%to-%subject-%datetime.mail.txt'

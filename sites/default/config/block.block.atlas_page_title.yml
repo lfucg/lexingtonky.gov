@@ -2,12 +2,14 @@ uuid: 0b58fd01-cbf3-4bd3-8c04-048bed311a87
 langcode: en
 status: true
 dependencies:
+  module:
+    - system
   theme:
     - atlas
 id: atlas_page_title
 theme: atlas
 region: content
-weight: -8
+weight: -9
 provider: null
 plugin: page_title_block
 settings:
@@ -15,4 +17,9 @@ settings:
   label: 'Page title'
   provider: core
   label_display: '0'
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/browse-taxonomy*"
+    negate: true
+    context_mapping: {  }

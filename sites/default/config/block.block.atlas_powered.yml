@@ -9,7 +9,7 @@ dependencies:
 id: atlas_powered
 theme: atlas
 region: '-1'
-weight: -6
+weight: -5
 provider: null
 plugin: system_powered_by_block
 settings:

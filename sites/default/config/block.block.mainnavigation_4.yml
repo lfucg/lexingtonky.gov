@@ -10,8 +10,8 @@ dependencies:
     - atlas
 id: mainnavigation_4
 theme: atlas
-region: primary_menu
-weight: -9
+region: content
+weight: -7
 provider: null
 plugin: 'system_menu_block:main'
 settings:

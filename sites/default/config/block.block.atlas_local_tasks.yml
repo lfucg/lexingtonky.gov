@@ -1,12 +1,12 @@
 uuid: b79ce4b5-58bd-4128-b725-373bebc43cf5
 langcode: en
-status: true
+status: false
 dependencies:
   theme:
     - atlas
 id: atlas_local_tasks
 theme: atlas
-region: content
+region: '-1'
 weight: -6
 provider: null
 plugin: local_tasks_block

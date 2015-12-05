@@ -8,8 +8,8 @@ dependencies:
     - atlas
 id: atlas_messages
 theme: atlas
-region: highlighted
-weight: 0
+region: help
+weight: -9
 provider: null
 plugin: system_messages_block
 settings:

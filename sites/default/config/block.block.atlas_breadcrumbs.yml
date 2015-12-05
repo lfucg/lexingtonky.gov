@@ -9,7 +9,7 @@ dependencies:
 id: atlas_breadcrumbs
 theme: atlas
 region: breadcrumb
-weight: 0
+weight: -9
 provider: null
 plugin: system_breadcrumb_block
 settings:

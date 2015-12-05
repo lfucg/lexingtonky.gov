@@ -23,3 +23,15 @@ stylesheets-remove:
   - core/modules/system/css/components/pager.theme.css
   - core/modules/system/css/components/tabs.theme.css
 # Add your regions below. Defaults to those defined in Drupal core.
+regions:
+  header: Header
+  primary_menu: 'Primary menu'
+  featured_top: 'Featured top'
+  breadcrumb: Breadcrumb
+  highlighted: Highlighted
+  help: Help
+  content: Content
+  sidebar_first: 'Sidebar first'
+  sidebar_second: 'Sidebar second'
+  footer_first: 'Footer first'
+  footer_second: 'Footer second'

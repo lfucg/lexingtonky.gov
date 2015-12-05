@@ -8,8 +8,8 @@ dependencies:
     - atlas
 id: atlas_help
 theme: atlas
-region: content
-weight: -9
+region: help
+weight: -8
 provider: null
 plugin: help_block
 settings:
