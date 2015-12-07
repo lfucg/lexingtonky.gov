@@ -38,7 +38,14 @@
   {% if items %}
     {% for item in items %}
       {% if item.in_active_trail and item.below %}
-          {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+        <ul class="usa-sidenav-list">
+          {% for item in item.below %}
+            <li class="{% if item.in_active_trail %}usa-current{% endif %}">
+              <h3>{{ link(item.title, item.url) }}</h3>
+              <p>{{ item.url_title }}</p>
+            </li>
+          {% endfor %}
+        </ul>
       {% endif %}
     {% endfor %}
   {% endif %}
@@ -47,17 +54,13 @@
 {% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
   {% if items %}
-    {% if menu_level == 0 %}
-      <ol class="usa-unstyled-list">
-    {% else %}
-      <ol>
-    {% endif %}
-    {% for item in items %}
+    <ul class="usa-sidenav-list">
+      {% for item in items %}
         <li>
-          <h3>{% if item.in_active_trail %}(ACTIVE) {% endif %}{{ link(item.title, item.url) }}</h3>
-          <p>{{ item.url_title }}</p>
+          {% set current = (item.in_active_trail ? 'usa-current' : '') %}
+          {{ link(item.title, item.url, item.attributes.addClass(current)) }}
         </li>
-    {% endfor %}
+      {% endfor %}
     </ul>
   {% endif %}
 {% endmacro %}

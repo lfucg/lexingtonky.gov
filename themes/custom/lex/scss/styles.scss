@@ -1,8 +1,14 @@
-// Imports -------------- //
+// Variables
 
+// Typography
+$font-sans: 'Helvetica', 'Source Sans Pro', 'Arial', sans-serif;
+
+// Color
+$alpha-level: 0.75;
+$light-grey: lightgray;
+
+// Import WDS
 @import '../assets/_scss/all';
-
-// Variables -------------- //
 
 .lexington-grid-full {
   max-width: 1200px;
@@ -12,10 +18,11 @@
   background-image: url('../img/lexington-hero.jpg');
   background-repeat: no-repeat;
   background-size: cover;
+  min-height: 400px;
 }
 
 .usa-site-navbar {
-  background-color: rgba(255, 255, 255, 0.75);
+  background-color: rgba(255, 255, 255, $alpha-level);
   height: 100px;
   padding: 25px 0 25px 0;
 
@@ -29,16 +36,16 @@
   padding-bottom: 100px;
 
   .lexington-search-hero {
-    color: #fff;
+    color: white;
     padding: 20px;
     max-width: 50%;
     margin: 0 auto;
-    background-color: rgba(0, 87, 168, 0.75);
+    background-color: rgba(0, 87, 168, $alpha-level);
   }
 }
 
 .lexington-services-block {
-  background-color: lightgrey;
+  background-color: $light-grey;
 
   .usa-unstyled-list {
     width: 100%;
