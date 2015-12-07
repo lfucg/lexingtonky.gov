@@ -1,0 +1,25 @@
+uuid: f7e13826-4d23-4ff0-bf01-1ef341cb7d0a
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex
+id: lex_page_title
+theme: lex
+region: content
+weight: -11
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  provider: core
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/browse-taxonomy*"
+    negate: true
+    context_mapping: {  }

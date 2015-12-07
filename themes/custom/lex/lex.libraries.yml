@@ -1,0 +1,10 @@
+global-css:
+  css:
+    theme:
+      css/styles.css: {}
+      css/lexington.css: {}
+
+global-js:
+  js:
+    js/scripts.js: {}
+

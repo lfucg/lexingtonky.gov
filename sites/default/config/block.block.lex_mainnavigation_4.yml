@@ -1,0 +1,29 @@
+uuid: 8df8c537-8d4e-4e97-a947-71cbc227dcc5
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - system
+  theme:
+    - lex
+id: lex_mainnavigation_4
+theme: lex
+region: '-1'
+weight: -10
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'Main navigation - full'
+  provider: system
+  label_display: visible
+  level: 1
+  depth: 0
+visibility:
+  request_path:
+    id: request_path
+    pages: '/browse*'
+    negate: false
+    context_mapping: {  }
