@@ -1550,6 +1550,11 @@ img {
   display: inline-block;
   line-height: 0; }
 
+@-moz-document url-prefix() {
+  .media_link {
+    display: table;
+    table-layout: fixed;
+    width: 100%; } }
 .usa-label, .usa-label-big {
   background-color: #0071bc;
   border-radius: 0.3rem;
@@ -2063,7 +2068,7 @@ fieldset {
       width: 4.5rem; } }
 
 .usa-alert {
-  background-color: #eeeeee;
+  background-color: #f1f1f1;
   background-position: 1rem 2rem;
   background-repeat: no-repeat;
   background-size: 4rem;
@@ -2101,22 +2106,22 @@ fieldset {
   margin-top: 0; }
 
 .usa-alert-success {
-  background-color: #E5FCDE;
+  background-color: #e7f4e4;
   background-image: url("../img/alerts/success.png");
   background-image: url("../img/alerts/success.svg"); }
 
 .usa-alert-warning {
-  background-color: #FDF7DC;
+  background-color: #fff1d2;
   background-image: url("../img/alerts/warning.png");
   background-image: url("../img/alerts/warning.svg"); }
 
 .usa-alert-error {
-  background-color: #F9DEDE;
+  background-color: #f9dede;
   background-image: url("../img/alerts/error.png");
   background-image: url("../img/alerts/error.svg"); }
 
 .usa-alert-info {
-  background-color: #E8F5FA;
+  background-color: #e1f3f8;
   background-image: url("../img/alerts/info.png");
   background-image: url("../img/alerts/info.svg"); }
 
