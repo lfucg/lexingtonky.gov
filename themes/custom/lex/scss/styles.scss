@@ -1,1 +1,54 @@
-@import 'layout/layout';
+// Imports -------------- //
+
+@import '../assets/_scss/all';
+
+// Variables -------------- //
+
+.lexington-grid-full {
+  max-width: 1200px;
+}
+
+.usa-site-header {
+  background-image: url('../img/lexington-hero.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.usa-site-navbar {
+  background-color: rgba(255, 255, 255, 0.75);
+  height: 100px;
+  padding: 25px 0 25px 0;
+
+  .lexington-logo {
+    height: 50px;
+  }
+}
+
+.lexington-search-hero-container {
+  padding-top: 300px;
+  padding-bottom: 100px;
+
+  .lexington-search-hero {
+    color: #fff;
+    padding: 20px;
+    max-width: 50%;
+    margin: 0 auto;
+    background-color: rgba(0, 87, 168, 0.75);
+  }
+}
+
+.lexington-services-block {
+  background-color: lightgrey;
+
+  .usa-unstyled-list {
+    width: 100%;
+  }
+}
+
+.lex-nested-grid {
+  padding: 0;
+}
+
+.lex-promo-title {
+  margin-top: 0;
+}

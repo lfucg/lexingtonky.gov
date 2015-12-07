@@ -14,9 +14,9 @@ var autoprefixer = require('gulp-autoprefixer');
 var runSequence = require('run-sequence');
 
 // paths
-var imgSrc = './images/src/*';
+var imgSrc = './assets/images/src/*';
 var imgDest = './images';
-var svgSrc = './images/svg-src/*';
+var svgSrc = './assets/images/svg-src/*';
 var svgDest = './images';
 var sassSrc = './scss/**/*.scss';
 var sassDest = './css';
