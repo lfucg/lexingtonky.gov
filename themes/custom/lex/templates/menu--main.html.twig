@@ -59,7 +59,7 @@
 {% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
   {% if items %}
-    <ul class="usa-sidenav-list">
+    <ul class="usa-sidenav-list lex-browsenav-list">
       {% for item in items %}
         <li>
           {% set current = (item.in_active_trail ? 'usa-current' : '') %}

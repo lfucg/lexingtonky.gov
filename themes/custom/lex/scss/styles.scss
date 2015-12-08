@@ -5,7 +5,7 @@ $font-sans: 'Helvetica', 'Source Sans Pro', 'Arial', sans-serif;
 
 // Color
 $alpha-level: 0.75;
-$light-grey: #f1f0f0;
+$lex-light-grey: #f1f0f0;
 $lex-grey: #BFBFBF;
 $lex-blue: #0057A8;
 
@@ -14,6 +14,7 @@ $lex-blue: #0057A8;
 
 .lexington-grid-full {
   max-width: 1200px;
+  margin: 0 auto;
 }
 
 .usa-site-header {
@@ -21,6 +22,10 @@ $lex-blue: #0057A8;
   background-repeat: no-repeat;
   background-size: cover;
   min-height: 400px;
+  .lex-header-quicklinks {
+    width: 100%;
+    text-align: right;
+  }
 }
 
 .usa-site-navbar {
@@ -57,11 +62,28 @@ $lex-blue: #0057A8;
   }
 }
 
-.lex-browsenav-root {
-  nav {
-    margin-right: 2em;
-    overflow: hidden;
+.lex-region-breadcrumb {
+  background-color: $lex-light-grey;
+  padding: 2rem;
+  padding-bottom: 4rem;
+
+  .lex-nav-breadcrumbs-item:not(:last-of-type):after {
+    content: '→';
   }
+}
+
+.lex-horizontal-list li {
+  margin: 5px;
+  display: inline-block
+}
+
+.lex-browsenav-list {
+  .lex-browsenav-link a, .lex-browsenav-description {
+    padding-left: 1rem;
+  }
+}
+
+.lex-browsenav-root {
   .lex-browsenav-description {
     display: none;
   }
@@ -81,7 +103,7 @@ $lex-blue: #0057A8;
 }
 
 .lexington-services-block {
-  background-color: $light-grey;
+  background-color: $lex-light-grey;
 
   .usa-unstyled-list {
     width: 100%;
