@@ -1,6 +1,6 @@
-uuid: 8df8c537-8d4e-4e97-a947-71cbc227dcc5
+uuid: 5abce5e3-eeb4-4a93-8800-a8fbee2332d6
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - system.menu.main
@@ -8,19 +8,19 @@ dependencies:
     - system
   theme:
     - lex
-id: lex_mainnavigation_4
+id: lex_sub_navigation
 theme: lex
-region: '-1'
+region: secondary_menu
 weight: -9
 provider: null
 plugin: 'system_menu_block:main'
 settings:
   id: 'system_menu_block:main'
-  label: 'Main navigation - full'
+  label: Sub-navigation
   provider: system
-  label_display: visible
-  level: 1
-  depth: 0
+  label_display: '0'
+  level: 2
+  depth: 1
 visibility:
   request_path:
     id: request_path

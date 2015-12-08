@@ -4,15 +4,17 @@ function lex_preprocess_menu(&$variables) {
   // expose the url_title so it can be displayed in a tag
   if ($variables['menu_name'] == 'main') {
     foreach($variables['items'] as &$item) {
-      foreach($item['below'] as &$below) {
-        $below['url_title'] = $below['url']->getOption('attributes')['title'];
-      }
+      $item['url_title'] = $item['url']->getOption('attributes')['title'];
     }
   }
 }
 
 function lex_preprocess_form(&$variables) {
   $variables['attributes']['class'] = array('usa-search');
+}
+
+function lex_preprocess_region(&$variables) {
+  $variables['attributes']['class'] = array('lex-region-' . $variables['region']);
 }
 
 ?>

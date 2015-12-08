@@ -11,12 +11,12 @@ dependencies:
 id: lex_main_menu
 theme: lex
 region: primary_menu
-weight: -9
+weight: -10
 provider: null
 plugin: 'system_menu_block:main'
 settings:
   id: 'system_menu_block:main'
-  label: 'Main navigation - level 1'
+  label: 'All categories menu'
   provider: system
   label_display: '0'
   level: 1

@@ -5,7 +5,9 @@ $font-sans: 'Helvetica', 'Source Sans Pro', 'Arial', sans-serif;
 
 // Color
 $alpha-level: 0.75;
-$light-grey: lightgray;
+$light-grey: #f1f0f0;
+$lex-grey: #BFBFBF;
+$lex-blue: #0057A8;
 
 // Import WDS
 @import '../assets/_scss/all';
@@ -28,6 +30,40 @@ $light-grey: lightgray;
 
   .lexington-logo {
     height: 50px;
+  }
+}
+
+.lex-browsenav {
+  h1 {
+    font-size: 3rem;
+    margin-top: 0;
+  }
+  .usa-sidenav-list li {
+    border-top: none;
+  }
+  a.usa-current {
+    border: none;
+    background: $lex-blue;
+    color: white;
+  }
+  .lex-region-primary_menu, .lex-region-secondary_menu {
+    border-right: 3px solid $lex-grey;
+  }
+  .lex-browsenav-link {
+    margin: 0;
+  }
+  .lex-browsenav-description {
+    margin-top: 0;
+  }
+}
+
+.lex-browsenav-root {
+  nav {
+    margin-right: 2em;
+    overflow: hidden;
+  }
+  .lex-browsenav-description {
+    display: none;
   }
 }
 

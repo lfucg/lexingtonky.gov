@@ -250,7 +250,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      css_class: findme
+      css_class: lexington-services-block
       defaults:
         css_class: false
     cache_metadata:

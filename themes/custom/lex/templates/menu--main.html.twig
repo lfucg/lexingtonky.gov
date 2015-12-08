@@ -18,19 +18,24 @@
  *   - in_active_trail: TRUE if the link is in the active trail.
  */
 #}
+
 {% import _self as menus %}
 
 {#
   We call a macro which calls itself to render the full tree.
   @see http://twig.sensiolabs.org/doc/tags/macro.html
+
+
+{{ kint(_context|keys) }}
+{{ kint(menu_name) }}
+{{ kint(items) }}
+{{ kint(attributes) }}
+{{ kint(theme_hook_suggestion) }}
+{{ kint(theme_hook_suggestions) }}
+{{ kint(menus) }}
 #}
 
-<div class="usa-width-one-third">
-  {{ menus.menu_links(items, attributes, 0) }}
-</div>
-<div class="usa-width-one-third">
-  {{ menus.menu_links_2(items, attributes, 0) }}
-</div>
+{{ menus.menu_links(items, attributes, 0) }}
 
 
 {% macro menu_links_2(items, attributes, menu_level) %}
@@ -58,7 +63,8 @@
       {% for item in items %}
         <li>
           {% set current = (item.in_active_trail ? 'usa-current' : '') %}
-          {{ link(item.title, item.url, item.attributes.addClass(current)) }}
+          <h3 class="lex-browsenav-link">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
+          <p class="lex-browsenav-description">{{ item.url_title }}</p>
         </li>
       {% endfor %}
     </ul>
