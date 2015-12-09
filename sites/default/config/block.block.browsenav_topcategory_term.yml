@@ -1,4 +1,4 @@
-uuid: f7e13826-4d23-4ff0-bf01-1ef341cb7d0a
+uuid: c809fd23-e1b6-41ac-8800-000ed81b4508
 langcode: en
 status: true
 dependencies:
@@ -6,7 +6,7 @@ dependencies:
     - system
   theme:
     - lex
-id: lex_page_title
+id: browsenav_topcategory_term
 theme: lex
 region: secondary_menu
 weight: -10
@@ -14,12 +14,12 @@ provider: null
 plugin: page_title_block
 settings:
   id: page_title_block
-  label: 'Page title'
+  label: 'Browse navigation: top category term'
   provider: core
   label_display: '0'
 visibility:
   request_path:
     id: request_path
-    pages: "<front>\r\n"
-    negate: true
+    pages: '/browse/*'
+    negate: false
     context_mapping: {  }
