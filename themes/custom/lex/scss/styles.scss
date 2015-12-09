@@ -76,8 +76,14 @@ h1, h2, h3, h4, h5, h6 {
     background: $lex-blue;
     color: white;
   }
-  .lex-region-primary_menu, .lex-region-secondary_menu {
+  .lex-browsenav-column-activetrail {
     border-right: 3px solid $lex-grey;
+  }
+  .lex-browsenav-column-focus .lex-browsenav-column_title {
+    color: $color-primary;
+  }
+  .lex-browsenav-column_title {
+    margin-top: 0;
   }
   .lex-browsenav-link {
     margin: 0;
@@ -86,6 +92,7 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
   }
 }
+
 
 .lex-region-breadcrumb {
   background-color: $lex-light-grey;
@@ -108,11 +115,11 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.lex-browsenav-root {
-  .lex-browsenav-description {
-    display: none;
-  }
-}
+// .lex-browsenav-root {
+//   .lex-browsenav-description {
+//     display: none;
+//   }
+// }
 
 .lex-search-hero-container {
   padding-top: 300px;
@@ -129,17 +136,23 @@ h1, h2, h3, h4, h5, h6 {
 
 .lex-nav-services {
   background-color: $lex-light-grey;
-  padding: 3rem;
 
   .lex-unstyled-list {
     width: 100%;
   }
 }
 
+a, a:visited, a:visited,
+a.lex-browsenav-list, a.lex-browsenav-list:visited {
+  // color: $lex-dark-grey;
+  color: red;
+}
+
 .lex-nav-toplevel {
+  padding: 3rem;
+
   a, a:visited {
     font-size: 2.3rem;
-    color: $lex-dark-grey;
   }
   padding-bottom: 0;
   p {

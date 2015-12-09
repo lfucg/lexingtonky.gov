@@ -1,6 +1,6 @@
 uuid: 1df7c2cd-5497-4214-8700-ceefabfad442
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - system.menu.main
@@ -10,8 +10,8 @@ dependencies:
     - lex
 id: lex_main_menu
 theme: lex
-region: primary_menu
-weight: -10
+region: '-1'
+weight: -3
 provider: null
 plugin: 'system_menu_block:main'
 settings:

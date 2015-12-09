@@ -36,6 +36,7 @@
 #}
 
 {{ menus.menu_links(items, attributes, 0) }}
+{{ menus.menu_links_2(items, attributes, 0) }}
 
 
 {% macro menu_links_2(items, attributes, menu_level) %}
@@ -43,14 +44,23 @@
   {% if items %}
     {% for item in items %}
       {% if item.in_active_trail and item.below %}
-        <ul class="usa-sidenav-list">
-          {% for item in item.below %}
-            <li class="{% if item.in_active_trail %}usa-current{% endif %}">
-              <h3>{{ link(item.title, item.url) }}</h3>
-              <p>{{ item.url_title }}</p>
-            </li>
-          {% endfor %}
-        </ul>
+
+        {% set focus = '' %}
+        {% for item in item.below %}
+          {% set focus = (item.in_active_trail ? 'lex-browsenav-column-activetrail' : 'lex-browsenav-column-focus') %}
+        {% endfor %}
+        <div class="usa-width-one-third lex-browsenav-column {{ focus }} lex-browsenav-secondary">
+          <h2 class="lex-browsenav-column_title">{{ item.title }}</h2>
+          <ul class="usa-sidenav-list lex-browsenav-list">
+            {% for item in item.below %}
+              {% set current = (item.in_active_trail ? 'usa-current lex-current' : '') %}
+              <li>
+                <h3 class="lex-browsenav-link">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
+                <p class="lex-browsenav-description">Description</p>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
       {% endif %}
     {% endfor %}
   {% endif %}
@@ -59,14 +69,15 @@
 {% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
   {% if items %}
-    <ul class="usa-sidenav-list lex-browsenav-list">
-      {% for item in items %}
-        <li>
-          {% set current = (item.in_active_trail ? 'usa-current lex-current' : '') %}
-          <h3 class="lex-browsenav-link">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
-          <p class="lex-browsenav-description">{{ item.url_title }}</p>
-        </li>
-      {% endfor %}
-    </ul>
+    <div class="usa-width-one-third lex-browsenav-column lex-browsenav-column-activetrail">
+      <ul class="usa-sidenav-list lex-browsenav-list">
+        {% for item in items %}
+          <li>
+            {% set current = (item.in_active_trail ? 'usa-current lex-current' : '') %}
+            <h3 class="lex-browsenav-link">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
   {% endif %}
 {% endmacro %}
