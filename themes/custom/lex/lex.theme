@@ -13,6 +13,10 @@ function lex_preprocess_form(&$variables) {
   $variables['attributes']['class'] = array('usa-search');
 }
 
+function lex_preprocess_feed_icon(&$variables) {
+  $variables['attributes']['class'] = array('visually-hidden');
+}
+
 function lex_preprocess_region(&$variables) {
   $variables['attributes']['class'] = array('lex-region-' . $variables['region']);
 }
