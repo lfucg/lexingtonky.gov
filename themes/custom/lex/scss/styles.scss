@@ -1,19 +1,44 @@
 // Variables
 
 // Typography
-$font-sans: 'Helvetica', 'Source Sans Pro', 'Arial', sans-serif;
+$font-sans: 'Helvetica Neue', 'Helvetica', 'Source Sans Pro', 'Arial', sans-serif;
+$font-weight-regular: 400;
+$font-weight-medium: 550;
 
 // Color
-$alpha-level: 0.75;
+$lex-alpha-level: 0.75;
 $lex-light-grey: #f1f0f0;
 $lex-grey: #BFBFBF;
+$lex-dark-grey: #585858;
+$lex-light-blue: #3787BA;
 $lex-blue: #0057A8;
+$lex-dark-blue: #001A49;
+$lex-gold: #E0B111;
+$lex-white: #FFFFFF;
+$lex-black: #000000;
+
+// USFWDS overrides
+$color-primary: $lex-blue;
+
+body {
+  color: $lex-dark-grey;
+}
 
 // Import WDS
 @import '../assets/_scss/all';
 
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-sans;
+  font-weight: $font-weight-regular;
+}
+
+.button:hover {
+  background-color: $lex-light-blue;
+}
+
 .lex-site-header {
-  background-image: url('../img/lexington-hero.jpg');
+  background-image: url('../images/lexington-hero.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   min-height: 400px;
@@ -24,7 +49,7 @@ $lex-blue: #0057A8;
 }
 
 .lex-site-navbar {
-  background-color: rgba(255, 255, 255, $alpha-level);
+  background-color: rgba($lex-white, $lex-alpha-level);
   height: 100px;
   padding: 25px 0 25px 0;
 
@@ -68,7 +93,7 @@ $lex-blue: #0057A8;
   padding-bottom: 4rem;
 
   .lex-nav-breadcrumbs-item:not(:last-of-type):after {
-    content: '→';
+    content: '/';
   }
 }
 
@@ -98,15 +123,28 @@ $lex-blue: #0057A8;
     padding: 20px;
     max-width: 50%;
     margin: 0 auto;
-    background-color: rgba(0, 87, 168, $alpha-level);
+    background-color: rgba($lex-dark-blue, $lex-alpha-level);
   }
 }
 
-.lex-services-block {
+.lex-nav-services {
   background-color: $lex-light-grey;
+  padding: 3rem;
 
   .lex-unstyled-list {
     width: 100%;
+  }
+}
+
+.lex-nav-toplevel {
+  a, a:visited {
+    font-size: 2.3rem;
+    color: $lex-dark-grey;
+  }
+  padding-bottom: 0;
+  p {
+    margin-top: .5rem;
+    margin-bottom: 3rem;
   }
 }
 
