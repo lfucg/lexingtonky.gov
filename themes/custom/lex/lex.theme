@@ -21,4 +21,9 @@ function lex_preprocess_region(&$variables) {
   $variables['attributes']['class'] = array('lex-region-' . $variables['region']);
 }
 
+function lex_theme_suggestions_views_view_grid_alter(array &$suggestions, array $variables) {
+  if($variables['view']->id() == 'taxonomy_top_level') {
+    $suggestions[] = 'views-view-grid--' . $variables['view']->id();
+  }
+}
 ?>

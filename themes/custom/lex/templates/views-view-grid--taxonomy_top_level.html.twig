@@ -24,47 +24,16 @@
  * @see template_preprocess_views_view_grid()
  */
 #}
-{%
-  set classes = [
-    'views-view-grid',
-    options.alignment,
-    'cols-' ~ options.columns,
-    'clearfix',
-  ]
-%}
-{% if options.row_class_default %}
-  {%
-    set row_classes = [
-      'views-row',
-      options.alignment == 'horizontal' ? 'clearfix',
-    ]
-  %}
-{% endif %}
-{% if options.col_class_default %}
-  {%
-    set col_classes = [
-      'views-col',
-      options.alignment == 'vertical' ? 'clearfix',
-    ]
-  %}
-{% endif %}
-{% if title %}
-  <h3>{{ title }}</h3>
-{% endif %}
-<div{{ attributes.addClass(classes) }}>
-  {% if options.alignment == 'horizontal' %}
-    {% for row in items %}
-      <div class="categories-lists  usa-grid-full lexington-grid-full">
-        <ol class="usa-unstyled-list">
-          {% for column in row.content %}
-            <li class="usa-width-one-third">
-              {{ column.content }}
-            </li>
-        {% endfor %}
-        </ol>
-      </div>
-    {% endfor %}
-  {% else %}
-    vertical!
-  {% endif %}
+<div class="lex-nav-top_level">
+  {% for row in items %}
+    <div class="categories-lists usa-grid-full lex-grid-full">
+      <ol class="usa-unstyled-list lex-unstyled-list">
+        {% for column in row.content %}
+          <li class="usa-width-one-third">
+            {{ column.content }}
+          </li>
+      {% endfor %}
+      </ol>
+    </div>
+  {% endfor %}
 </div>

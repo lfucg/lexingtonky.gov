@@ -12,12 +12,7 @@ $lex-blue: #0057A8;
 // Import WDS
 @import '../assets/_scss/all';
 
-.lexington-grid-full {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.usa-site-header {
+.lex-site-header {
   background-image: url('../img/lexington-hero.jpg');
   background-repeat: no-repeat;
   background-size: cover;
@@ -28,14 +23,19 @@ $lex-blue: #0057A8;
   }
 }
 
-.usa-site-navbar {
+.lex-site-navbar {
   background-color: rgba(255, 255, 255, $alpha-level);
   height: 100px;
   padding: 25px 0 25px 0;
 
-  .lexington-logo {
+  .lex-logo {
     height: 50px;
   }
+}
+
+.lex-grid-full {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .lex-browsenav {
@@ -43,10 +43,10 @@ $lex-blue: #0057A8;
     font-size: 3rem;
     margin-top: 0;
   }
-  .usa-sidenav-list li {
+  .lex-browsenav-list li {
     border-top: none;
   }
-  a.usa-current {
+  a.lex-current {
     border: none;
     background: $lex-blue;
     color: white;
@@ -89,11 +89,11 @@ $lex-blue: #0057A8;
   }
 }
 
-.lexington-search-hero-container {
+.lex-search-hero-container {
   padding-top: 300px;
   padding-bottom: 100px;
 
-  .lexington-search-hero {
+  .lex-search-hero {
     color: white;
     padding: 20px;
     max-width: 50%;
@@ -102,10 +102,10 @@ $lex-blue: #0057A8;
   }
 }
 
-.lexington-services-block {
+.lex-services-block {
   background-color: $lex-light-grey;
 
-  .usa-unstyled-list {
+  .lex-unstyled-list {
     width: 100%;
   }
 }
