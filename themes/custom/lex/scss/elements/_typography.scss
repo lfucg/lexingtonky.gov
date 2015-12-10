@@ -1,0 +1,12 @@
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-sans;
+  font-weight: $font-weight-regular;
+}
+
+a.lex-font, a, a:visited, a:hover, a:active {
+  color: $lex-dark-grey;
+}
+
+.lex-font-standout {
+  color: $color-primary;
+}

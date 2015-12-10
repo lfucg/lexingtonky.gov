@@ -18,7 +18,7 @@ var imgSrc = './assets/images/src/*';
 var imgDest = './images';
 var svgSrc = './assets/images/svg-src/*';
 var svgDest = './images';
-var sassSrc = './scss/**/*.scss';
+var sassSrc = ['./scss/**/*.scss', './assets/_scss/**/*.scss'];
 var sassDest = './css';
 
 gulp.task('sass', function () {

@@ -4,7 +4,9 @@ function lex_preprocess_menu(&$variables) {
   // expose the url_title so it can be displayed in a tag
   if ($variables['menu_name'] == 'main') {
     foreach($variables['items'] as &$item) {
-      $item['url_title'] = $item['url']->getOption('attributes')['title'];
+      foreach($item['below'] as &$sub_cat) {
+        $sub_cat['url_title'] = strip_tags($sub_cat['url']->getOption('attributes')['title']);
+      }
     }
   }
 }
@@ -19,6 +21,9 @@ function lex_preprocess_feed_icon(&$variables) {
 
 function lex_preprocess_region(&$variables) {
   $variables['attributes']['class'] = array('lex-region-' . $variables['region']);
+  if ($variables['region'] == 'breadcrumb') {
+    $variables['attributes']['class'][] = 'lex-slab lex-slab-grey';
+  }
 }
 
 function lex_theme_suggestions_views_view_grid_alter(array &$suggestions, array $variables) {

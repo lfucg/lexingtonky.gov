@@ -1,0 +1,32 @@
+.lex-browsenav {
+  h1 {
+    margin-bottom: .5em;
+    @extend .lex-font-standout;
+    @extend .lex-card-title.lex-card-title-heading;
+    margin-top: 0;
+  }
+  .lex-browsenav-list li {
+    border-top: none;
+  }
+  a {
+    @extend .lex-font;
+  }
+  a.lex-current {
+    border: none;
+    background: $lex-blue;
+    color: white;
+    font-weight: $font-weight-regular;
+  }
+  .lex-browsenav-column-activetrail {
+    border-right: 3px solid $lex-grey;
+  }
+  .lex-browsenav-link {
+    margin: 0;
+  }
+  .lex-browsenav-description {
+    margin-top: 0;
+  }
+  .lex-browsenav-link a, .lex-browsenav-description {
+    padding-left: 1rem;
+  }
+}

@@ -17,24 +17,52 @@ $lex-gold: #E0B111;
 $lex-white: #FFFFFF;
 $lex-black: #000000;
 
+// Magic numbers
+$lex-section-gutter: 1.7em;
+
 // USFWDS overrides
 $color-primary: $lex-blue;
+
+// Import WDS
+@import '../assets/_scss/all';
+@import './elements/_typography';
+@import './components/_browsenav';
 
 body {
   color: $lex-dark-grey;
 }
 
-// Import WDS
-@import '../assets/_scss/all';
-
-// Typography
-h1, h2, h3, h4, h5, h6 {
-  font-family: $font-sans;
-  font-weight: $font-weight-regular;
-}
-
 .button:hover {
   background-color: $lex-light-blue;
+}
+
+
+.lex-card-title {
+  margin: 0;
+
+  &.lex-card-title-medium {
+    font-size: 1.25em;
+  }
+
+  &.lex-card-title-large {
+    font-size: 1.5em;
+  }
+
+  &.lex-card-title-extralarge {
+    font-size: 1.75em;
+  }
+
+  &.lex-card-title-heading {
+    margin-bottom: .5em;
+    text-transform: uppercase;
+    @extend .lex-card-title.lex-card-title-extralarge;
+  }
+}
+
+.lex-card-description {
+  margin-top: .5em;
+  // the card add bottom margin
+  margin-bottom: 0;
 }
 
 .lex-site-header {
@@ -63,41 +91,23 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0 auto;
 }
 
-.lex-browsenav {
-  h1 {
-    font-size: 3rem;
-    margin-top: 0;
-  }
-  .lex-browsenav-list li {
-    border-top: none;
-  }
-  a.lex-current {
-    border: none;
-    background: $lex-blue;
-    color: white;
-  }
-  .lex-browsenav-column-activetrail {
-    border-right: 3px solid $lex-grey;
-  }
-  .lex-browsenav-column-focus .lex-browsenav-column_title {
-    color: $color-primary;
-  }
-  .lex-browsenav-column_title {
-    margin-top: 0;
-  }
-  .lex-browsenav-link {
-    margin: 0;
-  }
-  .lex-browsenav-description {
-    margin-top: 0;
-  }
+.lex-section {
+  margin-bottom: $lex-section-gutter;
 }
 
+// layout components
+.lex-slab {
+  padding: 0;
+  padding-top: $lex-section-gutter;
+}
+
+.lex-slab-grey {
+  background-color: $lex-light-grey;
+}
 
 .lex-region-breadcrumb {
-  background-color: $lex-light-grey;
-  padding: 2rem;
-  padding-bottom: 4rem;
+  // todo: why is lex-section not pushing down the slab?
+  padding-bottom: $lex-section-gutter;
 
   .lex-nav-breadcrumbs-item:not(:last-of-type):after {
     content: '/';
@@ -108,18 +118,6 @@ h1, h2, h3, h4, h5, h6 {
   margin: 5px;
   display: inline-block
 }
-
-.lex-browsenav-list {
-  .lex-browsenav-link a, .lex-browsenav-description {
-    padding-left: 1rem;
-  }
-}
-
-// .lex-browsenav-root {
-//   .lex-browsenav-description {
-//     display: none;
-//   }
-// }
 
 .lex-search-hero-container {
   padding-top: 300px;
@@ -135,30 +133,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .lex-nav-services {
-  background-color: $lex-light-grey;
-
-  .lex-unstyled-list {
-    width: 100%;
-  }
-}
-
-a, a:visited, a:visited,
-a.lex-browsenav-list, a.lex-browsenav-list:visited {
-  // color: $lex-dark-grey;
-  color: red;
-}
-
-.lex-nav-toplevel {
-  padding: 3rem;
-
-  a, a:visited {
-    font-size: 2.3rem;
-  }
-  padding-bottom: 0;
-  p {
-    margin-top: .5rem;
-    margin-bottom: 3rem;
-  }
+  // background-color: $lex-light-grey;
 }
 
 .lex-nested-grid {

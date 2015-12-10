@@ -61,7 +61,7 @@ display:
           automatic_width: false
           alignment: horizontal
           col_class_default: false
-          col_class_custom: usa-width-one-third
+          col_class_custom: 'usa-width-one-third lex-section'
           row_class_default: false
           row_class_custom: 'usa-grid-full lex-grid-full'
       row:
@@ -103,8 +103,8 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
-          element_class: ''
+          element_type: h3
+          element_class: 'lex-card-title lex-card-title-large'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -165,12 +165,12 @@ display:
             more_link: false
             more_link_text: ''
             more_link_path: ''
-            strip_tags: false
+            strip_tags: true
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
-          element_class: ''
+          element_type: p
+          element_class: lex-card-description
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -268,7 +268,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      css_class: 'lex-nav-toplevel lex-nav-services'
+      css_class: 'lex-nav-toplevel lex-slab-grey lex-slab'
       defaults:
         css_class: false
     cache_metadata:

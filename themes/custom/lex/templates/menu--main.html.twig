@@ -24,15 +24,6 @@
 {#
   We call a macro which calls itself to render the full tree.
   @see http://twig.sensiolabs.org/doc/tags/macro.html
-
-
-{{ kint(_context|keys) }}
-{{ kint(menu_name) }}
-{{ kint(items) }}
-{{ kint(attributes) }}
-{{ kint(theme_hook_suggestion) }}
-{{ kint(theme_hook_suggestions) }}
-{{ kint(menus) }}
 #}
 
 {{ menus.menu_links(items, attributes, 0) }}
@@ -45,18 +36,27 @@
     {% for item in items %}
       {% if item.in_active_trail and item.below %}
 
-        {% set focus = '' %}
+        {% set active_column = false %}
         {% for item in item.below %}
-          {% set focus = (item.in_active_trail ? 'lex-browsenav-column-activetrail' : 'lex-browsenav-column-focus') %}
+          {% if item.in_active_trail %}
+            {% set active_column = true %}
+          {% endif %}
         {% endfor %}
-        <div class="usa-width-one-third lex-browsenav-column {{ focus }} lex-browsenav-secondary">
-          <h2 class="lex-browsenav-column_title">{{ item.title }}</h2>
+
+        {% if active_column %}
+          {% set active = 'lex-browsenav-column-activetrail' %}
+        {% else %}
+          {% set standout = 'lex-font-standout' %}
+        {% endif %}
+
+        <div class="usa-width-one-third lex-browsenav-column {{ active }} lex-browsenav-secondary">
+          <h2 class="{{ standout }} lex-card-title lex-card-title-heading">{{ item.title }}</h2>
           <ul class="usa-sidenav-list lex-browsenav-list">
             {% for item in item.below %}
               {% set current = (item.in_active_trail ? 'usa-current lex-current' : '') %}
               <li>
-                <h3 class="lex-browsenav-link">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
-                <p class="lex-browsenav-description">Description</p>
+                <h3 class="lex-browsenav-link lex-card-title-medium">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
+                <p class="lex-browsenav-description">{{ item.url_title }}</p>
               </li>
             {% endfor %}
           </ul>
@@ -74,7 +74,7 @@
         {% for item in items %}
           <li>
             {% set current = (item.in_active_trail ? 'usa-current lex-current' : '') %}
-            <h3 class="lex-browsenav-link">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
+            <h3 class="lex-card-title-medium lex-browsenav-link">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
           </li>
         {% endfor %}
       </ul>
