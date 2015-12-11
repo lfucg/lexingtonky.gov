@@ -26,58 +26,72 @@
   @see http://twig.sensiolabs.org/doc/tags/macro.html
 #}
 
-{{ menus.menu_links(items, attributes, 0) }}
-{{ menus.menu_links_2(items, attributes, 0) }}
+{% set active_subcat = false %}
+{% for item in items %}
+  {% if item.in_active_trail and item.below %}
+    {% set active_subcat = false %}
+    {% for item in item.below %}
+      {% if item.in_active_trail %}
+        {% set active_subcat = true %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+
+{{ menus.menu_links(items, attributes, active_subcat) }}
+{{ menus.menu_links_2(items, attributes, active_subcat) }}
 
 
-{% macro menu_links_2(items, attributes, menu_level) %}
+{% macro menu_links_2(items, attributes, active_subcat) %}
   {% import _self as menus %}
   {% if items %}
     {% for item in items %}
       {% if item.in_active_trail and item.below %}
 
-        {% set active_column = false %}
-        {% for item in item.below %}
-          {% if item.in_active_trail %}
-            {% set active_column = true %}
-          {% endif %}
-        {% endfor %}
-
-        {% if active_column %}
-          {% set active = 'lex-browsenav-column-activetrail' %}
+        {% if active_subcat %}
+          {% set active = 'usa-width-one-fourth lex-browsenav-column-activetrail lex-browsenav-nofocus' %}
         {% else %}
           {% set standout = 'lex-font-standout' %}
         {% endif %}
 
-        <div class="usa-width-one-third lex-browsenav-column {{ active }} lex-browsenav-secondary">
-          <h2 class="{{ standout }} lex-card-title lex-card-title-heading">{{ item.title }}</h2>
-          <ul class="usa-sidenav-list lex-browsenav-list">
-            {% for item in item.below %}
-              {% set current = (item.in_active_trail ? 'usa-current lex-current' : '') %}
-              <li>
-                <h3 class="lex-browsenav-link lex-card-title-medium">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
-                <p class="lex-browsenav-description">{{ item.url_title }}</p>
-              </li>
-            {% endfor %}
-          </ul>
+        <div class="lex-browsenav-column {{ active }} lex-browsenav-secondary">
+          <div class="lex-nav-categories">
+            <h2 class="{{ standout }} lex-card-title lex-card-title-heading">{{ item.title }}</h2>
+            <ul class="usa-sidenav-list lex-browsenav-list">
+              {% for item in item.below %}
+                {% set current = (item.in_active_trail ? 'usa-current lex-current' : '') %}
+                <li>
+                  <h3 class="lex-browsenav-link lex-card-title-medium">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
+                  <p class="lex-browsenav-description">{{ item.url_title }}</p>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
         </div>
       {% endif %}
     {% endfor %}
   {% endif %}
 {% endmacro %}
 
-{% macro menu_links(items, attributes, menu_level) %}
+{% macro menu_links(items, attributes, active_subcat) %}
   {% import _self as menus %}
   {% if items %}
-    <div class="usa-width-one-third lex-browsenav-column lex-browsenav-column-activetrail">
-      <ul class="usa-sidenav-list lex-browsenav-list">
-        {% for item in items %}
-          <li>
-            {% set current = (item.in_active_trail ? 'usa-current lex-current' : '') %}
-            <h3 class="lex-card-title-medium lex-browsenav-link">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
-          </li>
-        {% endfor %}
-      </ul>
+    {% if active_subcat %}
+      {% set classes = 'usa-width-one-sixth lex-browsenav-collapse lex-browsenav-nofocus' %}
+    {% else %}
+      {% set classes = 'usa-width-one-fourth' %}
+    {% endif %}
+    <div class="{{ classes }} lex-browsenav-column">
+      <div class="lex-browsenav-categories lex-browsenav-root lex-browsenav-column-activetrail">
+        <ul class="usa-sidenav-list lex-browsenav-list">
+          {% for item in items %}
+            <li>
+              {% set current = (item.in_active_trail ? 'usa-current lex-current' : '') %}
+              <h3 class="lex-card-title-medium lex-browsenav-link">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
   {% endif %}
 {% endmacro %}

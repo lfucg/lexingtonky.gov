@@ -11,6 +11,9 @@
   a {
     @extend .lex-font;
   }
+  .lex-browsenav-column {
+    float: left;
+  }
   a.lex-current {
     border: none;
     background: $lex-blue;
@@ -28,5 +31,18 @@
   }
   .lex-browsenav-link a, .lex-browsenav-description {
     padding-left: 1rem;
+  }
+  // lex-browsenav-column-activetrail => lex-browsenav-activetrail?
+  .lex-browsenav-collapse {
+    margin-right: 15%;
+    overflow: hidden;
+  }
+  .lex-browsenav-articles {
+    margin-left: $lex-section-gutter;
+  }
+  .lex-browsenav-nofocus {
+    a.lex-current {
+      background: $lex-grey;
+    }
   }
 }
