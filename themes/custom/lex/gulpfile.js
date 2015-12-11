@@ -14,10 +14,10 @@ var autoprefixer = require('gulp-autoprefixer');
 var runSequence = require('run-sequence');
 
 // paths
-var imgSrc = './assets/images/src/*';
-var imgDest = './images';
-var svgSrc = './assets/images/svg-src/*';
-var svgDest = './images';
+var imgSrc = './assets/img/**/*.png';
+var imgDest = './img';
+var svgSrc = './assets/img/**/*.svg';
+var svgDest = './img';
 var sassSrc = ['./scss/**/*.scss', './assets/_scss/**/*.scss'];
 var sassDest = './css';
 
