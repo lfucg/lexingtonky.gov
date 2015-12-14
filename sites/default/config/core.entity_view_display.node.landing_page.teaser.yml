@@ -1,0 +1,19 @@
+uuid: faf9bb7f-9244-4726-a808-8b84c25d810e
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.landing_page.field_hero_image
+    - node.type.landing_page
+  module:
+    - user
+id: node.landing_page.teaser
+targetEntityType: node
+bundle: landing_page
+mode: teaser
+content:
+  links:
+    weight: 100
+hidden:
+  field_hero_image: true
