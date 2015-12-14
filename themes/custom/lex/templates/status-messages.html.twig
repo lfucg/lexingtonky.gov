@@ -22,24 +22,26 @@
  */
 #}
 {% for type, messages in message_list %}
-  <div role="contentinfo" aria-label="{{ status_headings[type] }}"{{ attributes|without('role', 'aria-label') }}>
-    {% if type == 'error' %}
-      <div role="alert">
-    {% endif %}
+  {% set type_map = {
+     'error' : 'error',
+     'status' : 'success',
+     'warning' : 'warning',
+    }
+  %}
+  <div class="lex-alert usa-alert usa-alert-{{ type_map[type] }}" role="contentinfo" aria-label="{{ status_headings[type] }}"{{ attributes|without('role', 'aria-label') }}>
+    <div class="usa-alert-body" {{ type == 'error' ? 'role="alert"' : '' }}>
       {% if status_headings[type] %}
-        <h2 class="visually-hidden">{{ status_headings[type] }}</h2>
+        <h2 class="usa-alert-heading visually-hidden">{{ status_headings[type] }}</h2>
       {% endif %}
       {% if messages|length > 1 %}
         <ul>
           {% for message in messages %}
-            <li>{{ message }}</li>
+            <li class="usa-alert-text">{{ message }}</li>
           {% endfor %}
         </ul>
       {% else %}
         {{ messages|first }}
       {% endif %}
-    {% if type == 'error' %}
-      </div>
-    {% endif %}
+    </div>
   </div>
 {% endfor %}
