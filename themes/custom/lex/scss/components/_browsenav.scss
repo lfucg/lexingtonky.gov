@@ -21,6 +21,11 @@
     font-weight: $font-weight-regular;
   }
   .lex-browsenav-column-activetrail {
+    // smaller screens use breadcrumb nav for previous levels
+    display: none;
+    @include media($large-screen) {
+      display: block;
+    }
     border-right: 3px solid $lex-grey;
   }
   .lex-browsenav-link {
@@ -30,19 +35,29 @@
     margin-top: 0;
   }
   .lex-browsenav-link a, .lex-browsenav-description {
-    padding-left: 1rem;
+    padding-left: 0;
+
+    @include media($large-screen) {
+      padding-left: 1rem;
+    }
   }
   // lex-browsenav-column-activetrail => lex-browsenav-activetrail?
   .lex-browsenav-collapse {
     margin-right: 15%;
     overflow: hidden;
   }
-  .lex-browsenav-articles {
-    margin-left: $lex-section-gutter;
-  }
   .lex-browsenav-nofocus {
     a.lex-current {
       background: $lex-grey;
+    }
+  }
+  .lex-browsenav-articles {
+    margin-left: 0;
+    .lex-card-title {
+      margin-bottom: 1em;
+    }
+    @include media($large-screen) {
+      margin-left: $lex-section-gutter;
     }
   }
 }

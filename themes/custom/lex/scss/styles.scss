@@ -79,6 +79,7 @@ body {
   display: none;
   width: 100%;
   @include media($medium-screen) {
+    margin-top: 0.5em;
     display: block;
     text-align: right;
   }
@@ -86,7 +87,7 @@ body {
     padding: 0.3em 0 0.3em 0;
     @include media($medium-screen) {
       display: inline-block;
-      padding-right: 2em;
+      padding-left: 2em;
     }
   }
 }
@@ -107,6 +108,17 @@ body {
   }
   @include media($large-screen) {
     padding: 25px 0 25px 0;
+  }
+}
+
+.lex-site-navbar-secondary {
+  margin-top: 0.7em;
+  .lex-search {
+    float: right;
+    width: 100%;
+    @include media($large-screen) {
+      width: 50%;
+    }
   }
 }
 
@@ -149,6 +161,10 @@ body {
 
 .lex-search-hero-container {
   padding-top: 50px;
+  @include media($medium-screen) {
+    padding-top: 100px;
+    padding-bottom: 50px;
+  }
   @include media($large-screen) {
     padding-top: 220px;
     padding-bottom: 100px;
@@ -159,21 +175,28 @@ body {
   color: white;
   padding: 1em;
   background-color: rgba($lex-dark-blue, $lex-alpha-level);
-  // display: inline-block;
 
   .lex-card-title {
     font-size: 1.5em;
     margin-bottom: 0.5em;
   }
 
+  @include media($medium-screen) {
+    margin: 0 auto;
+    width: 80%;
+  }
+
   @include media($large-screen) {
     width: 40%;
-    margin: 0 auto;
-  }
-  .lex-search-submit {
-    // todo: figure out why broken with media mixin
-    @media screen and (max-width: $medium-screen) {
-      @include sr-only;
+    .lex-search {
+      @extend .usa-search-big;
     }
+  }
+}
+
+.lex-search-submit {
+  // todo: figure out why broken with media mixin
+  @media screen and (max-width: $medium-screen) {
+    @include sr-only;
   }
 }
