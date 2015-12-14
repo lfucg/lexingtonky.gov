@@ -12,6 +12,7 @@ module:
   datetime: 0
   dblog: 0
   devel: 0
+  devel_generate: 0
   dynamic_page_cache: 0
   editor: 0
   field: 0
@@ -30,6 +31,7 @@ module:
   path: 0
   quickedit: 0
   rdf: 0
+  responsive_image: 0
   search: 0
   shortcut: 0
   system: 0

@@ -1,6 +1,6 @@
 uuid: 37dc74d0-3ac5-4117-a007-075d7d6a95c9
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - system
@@ -8,8 +8,8 @@ dependencies:
     - lex
 id: lex_content
 theme: lex
-region: content
-weight: -10
+region: '-1'
+weight: -2
 provider: null
 plugin: system_main_block
 settings:
