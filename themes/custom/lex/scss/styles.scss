@@ -76,8 +76,10 @@ body {
 }
 
 .lex-header-quicklinks {
+  display: none;
   width: 100%;
   @include media($medium-screen) {
+    display: block;
     text-align: right;
   }
   li {
@@ -92,6 +94,7 @@ body {
 .lex-site-navbar {
   background-color: rgba($lex-white, $lex-alpha-level);
   padding-top: 9px;
+  padding-bottom: 5px;
   .lex-logo {
     height: 40px;
   }
@@ -147,22 +150,26 @@ body {
 .lex-search-hero-container {
   padding-top: 50px;
   @include media($large-screen) {
-    padding-top: 300px;
+    padding-top: 220px;
     padding-bottom: 100px;
   }
 }
 
 .lex-search-hero {
   color: white;
-  padding-top: 1em;
-  padding-bottom: 1em;
+  padding: 1em;
   background-color: rgba($lex-dark-blue, $lex-alpha-level);
+  // display: inline-block;
 
   .lex-card-title {
-    font-size: 1.25em;
+    font-size: 1.5em;
     margin-bottom: 0.5em;
   }
 
+  @include media($large-screen) {
+    width: 40%;
+    margin: 0 auto;
+  }
   .lex-search-submit {
     // todo: figure out why broken with media mixin
     @media screen and (max-width: $medium-screen) {
