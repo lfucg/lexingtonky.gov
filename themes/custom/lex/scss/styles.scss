@@ -153,16 +153,20 @@ body {
 }
 
 .lex-search-hero {
+  color: white;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  background-color: rgba($lex-dark-blue, $lex-alpha-level);
+
   .lex-card-title {
     font-size: 1.25em;
     margin-bottom: 0.5em;
   }
 
-  color: white;
-  padding-top: 1em;
-  padding-bottom: 1em;
-  @include media($large-screen) {
-    max-width: 50%;
+  .lex-search-submit {
+    // todo: figure out why broken with media mixin
+    @media screen and (max-width: $medium-screen) {
+      @include sr-only;
+    }
   }
-  background-color: rgba($lex-dark-blue, $lex-alpha-level);
 }
