@@ -8,7 +8,7 @@
 
 define('DEVEL_ERROR_HANDLER_NONE', 0);
 define('DEVEL_ERROR_HANDLER_STANDARD', 1);
-define('DEVEL_ERROR_HANDLER_BACKTRACE_KRUMO', 2);
+define('DEVEL_ERROR_HANDLER_BACKTRACE_KINT', 2);
 define('DEVEL_ERROR_HANDLER_BACKTRACE_DPM', 4);
 
 define('DEVEL_MIN_TEXTAREA', 50);
@@ -131,17 +131,6 @@ function has_kint() {
 }
 
 /**
- * Returns boolean. No need for cache here.
- */
-function has_krumo() {
-  @include_once DRUPAL_ROOT . '/' . drupal_get_path('module', 'devel') . '/krumo/class.krumo.php';
-  if (function_exists('krumo') && (PHP_SAPI !== 'cli')) {
-    return TRUE;
-  }
-  return FALSE;
-}
-
-/**
  * Decides whether or not to print a debug variable using Kint.
  *
  * @param mixed $input
@@ -202,7 +191,7 @@ function devel_set_handler($handlers) {
     // Do nothing.
   }
   else {
-    if (has_krumo()) {
+    if (has_kint()) {
       set_error_handler('backtrace_error_handler');
     }
   }
@@ -294,7 +283,7 @@ function backtrace_error_handler($error_level, $message, $filename, $line, $cont
       if (!empty($error_handlers[DEVEL_ERROR_HANDLER_STANDARD])) {
         drupal_set_message($msg, ($severity_level <= RfcLogLevel::NOTICE ? 'error' : 'warning'), TRUE);
       }
-      if (!empty($error_handlers[DEVEL_ERROR_HANDLER_BACKTRACE_KRUMO])) {
+      if (!empty($error_handlers[DEVEL_ERROR_HANDLER_BACKTRACE_KINT])) {
         print kprint_r(ddebug_backtrace(TRUE, 1), $return = TRUE, $msg);
       }
       if (!empty($error_handlers[DEVEL_ERROR_HANDLER_BACKTRACE_DPM])) {
@@ -325,12 +314,8 @@ function devel_get_core_version($version) {
  * Implements hook_page_attachments_alter().
  */
 function devel_page_attachments_alter(&$page) {
-  if (\Drupal::currentUser()->hasPermission('access devel information')) {
-    if (\Drupal::config('devel.settings')->get('page_alter')) {
-      dpm($page, 'page');
-    }
-
-    $page['#attached']['library'][] = 'devel/krumo_path';
+  if (\Drupal::currentUser()->hasPermission('access devel information') && \Drupal::config('devel.settings')->get('page_alter')) {
+    dpm($page, 'page');
   }
 }
 
@@ -680,7 +665,7 @@ function kprint_r($input, $return = FALSE, $name = NULL, $function = 'print_r') 
 }
 
 /**
- * Pretty-print a variable to the browser (no krumo).
+ * Pretty-print a variable to the browser (no kint).
  *
  * Displays only for users with proper permissions. If
  * you want a string returned instead of a print, use the 2nd param.

@@ -23,6 +23,6 @@ Now it is possible to also collect the time needed to instantiate every single s
 work you need to add this two lines to settings.php (or, event better, to settings.local.php):
 
 ```
-$class_loader->addPsr4('Drupal\\webprofiler\\', [ __DIR__ . '/../../modules/contrib/webprofiler/src']);
+$class_loader->addPsr4('Drupal\\webprofiler\\', [ __DIR__ . '/../../modules/contrib/devel/webprofiler/src']);
 $settings['container_base_class'] = '\Drupal\webprofiler\DependencyInjection\TraceableContainer';
 ```

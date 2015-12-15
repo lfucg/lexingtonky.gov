@@ -23,9 +23,6 @@ devel.settings:
         error_handler_value:
           type: integer
           label: 'Error handler value'
-    krumo_skin:
-      type: string
-      label: 'Krumo skin'
     rebuild_theme:
       type: boolean
       label: 'Rebuild theme information'

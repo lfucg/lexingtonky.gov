@@ -60,9 +60,6 @@ class DevelEventSubscriber implements EventSubscriberInterface {
 
     if ($this->account->hasPermission('access devel information')) {
       devel_set_handler(devel_get_handlers());
-      // We want to include the class early so that anyone may call krumo()
-      // as needed. See http://krumo.sourceforge.net/
-      has_krumo();
 
       // See http://www.firephp.org/HQ/Install.htm
       $path = NULL;

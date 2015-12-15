@@ -17,6 +17,7 @@ class FileProfilerStorage extends SymfonyFileProfilerStorage {
     $profile->setUrl($data['url']);
     $profile->setTime($data['time']);
     $profile->setCollectors($data['data']);
+    $profile->setStatusCode($data['status_code']);
 
     return $profile;
   }

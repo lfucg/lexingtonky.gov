@@ -156,6 +156,7 @@ class DatabaseProfilerStorage implements ProfilerStorageInterface {
     $profile->setUrl($data->url);
     $profile->setTime($data->time);
     $profile->setCollectors(unserialize(base64_decode($data->data)));
+    $profile->setStatusCode($data->status_code);
 
     return $profile;
   }
