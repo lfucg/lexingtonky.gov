@@ -1,0 +1,28 @@
+.lex-card-title {
+  margin: 0;
+  font-weight: $font-weight-regular;
+
+  &.lex-card-title-medium {
+    font-size: 1.25em;
+  }
+
+  &.lex-card-title-large {
+    font-size: 1.5em;
+  }
+
+  &.lex-card-title-extralarge {
+    font-size: 1.75em;
+  }
+
+  &.lex-card-title-heading {
+    margin-bottom: .5em;
+    text-transform: uppercase;
+    @extend .lex-card-title.lex-card-title-extralarge;
+  }
+}
+
+.lex-card-description {
+  margin-top: .5em;
+  // the card add bottom margin
+  margin-bottom: 0;
+}
