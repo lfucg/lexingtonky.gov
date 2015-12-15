@@ -11,6 +11,10 @@ function lex_preprocess_menu(&$variables) {
   }
 }
 
+function lex_preprocess_block(&$variables) {
+  $variables['attributes']['class'] = array('lex-block');
+}
+
 function lex_preprocess_form(&$variables) {
   $variables['attributes']['class'] = array('usa-search lex-search');
 }

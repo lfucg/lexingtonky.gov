@@ -58,6 +58,10 @@ display:
           offset: 0
       style:
         type: default
+        options:
+          grouping: {  }
+          row_class: 'lex-card lex-card-horizontal'
+          default_row_class: false
       row:
         type: fields
       fields:
@@ -112,7 +116,7 @@ display:
           click_sort_column: target_id
           type: image
           settings:
-            image_style: medium
+            image_style: max_325x325
             image_link: content
           group_column: ''
           group_columns: {  }
@@ -364,6 +368,7 @@ display:
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
+      css_class: ''
     cache_metadata:
       max-age: -1
       contexts:

@@ -37,6 +37,16 @@ body {
   background-color: $lex-light-blue;
 }
 
+.lex-heading {
+  margin: 0;
+  font-weight: $font-weight-regular;
+}
+
+.lex-section-heading {
+  text-transform: uppercase;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
 
 .lex-site-header {
   background-image: url('../img/lexington-hero.jpg');
