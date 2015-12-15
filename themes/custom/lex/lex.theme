@@ -25,7 +25,7 @@ function lex_preprocess_region(&$variables) {
     $variables['attributes']['class'][] = 'lex-slab lex-slab-grey';
   }
   if ($variables['region'] == 'content') {
-    // $variables['attributes']['class'][] = 'lex-grid-full';
+    $variables['attributes']['class'][] = 'lex-grid-full';
   }
 }
 

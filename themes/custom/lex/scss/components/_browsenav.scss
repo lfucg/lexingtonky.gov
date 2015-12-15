@@ -60,4 +60,8 @@
       margin-left: $lex-section-gutter;
     }
   }
+  .lex-region-content.lex-grid-full {
+    /* remove the normal padding */
+    padding: 0;
+  }
 }
