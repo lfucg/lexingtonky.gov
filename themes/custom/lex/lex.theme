@@ -13,6 +13,11 @@ function lex_preprocess_menu(&$variables) {
 
 function lex_preprocess_block(&$variables) {
   $variables['attributes']['class'] = array('lex-block');
+
+  // todo: generalize a way to add class to title
+  if ($variables['elements']['#id'] == 'views_block__front_page_news_block_1') {
+    $variables['title_attributes']['class'] = 'lex-section-heading lex-heading lex-font-standout';
+  }
 }
 
 function lex_preprocess_form(&$variables) {
