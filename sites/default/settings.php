@@ -16,6 +16,12 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
  */
 include __DIR__ . "/settings.pantheon.php";
 
+$settings['trusted_host_patterns'] = array(
+  '^dev-lexky-d8.pantheon.io$',
+  '^lexingtonky\.gov$',
+  '^www\.lexingtonky\.gov$',
+);
+
 /**
  * If there is a local settings file, then include it
  */
@@ -25,8 +31,3 @@ if (file_exists($local_settings)) {
 }
 $settings['install_profile'] = 'standard';
 
-$settings['trusted_host_patterns'] = array(
-  '^dev-lexky-d8.pantheon.io$',
-  '^lexingtonky\.gov$',
-  '^www\.lexingtonky\.gov$',
-);
