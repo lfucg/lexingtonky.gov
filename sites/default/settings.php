@@ -1,6 +1,6 @@
 <?php
 
-// Require HTTPS.
+// Require HTTPS on pantheon
 if (isset($_SERVER['PANTHEON_ENVIRONMENT']) &&
   $_SERVER['HTTPS'] === 'OFF') {
   if (!isset($_SERVER['HTTP_X_SSL']) ||
