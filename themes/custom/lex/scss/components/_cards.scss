@@ -1,3 +1,11 @@
+.lex-horizontalcard-image {
+  @include media($medium-screen) {
+    float: left;
+    margin-right: 1em;
+    margin-bottom: 1em;
+  }
+}
+
 .lex-card-title {
   margin: 0;
   font-weight: $font-weight-regular;
