@@ -6,6 +6,7 @@ dependencies:
     - 'block_content:list_of_links:35639d14-6857-4c30-9608-8d3e24d5975c'
   module:
     - block_content
+    - system
   theme:
     - lex
 id: lex_frontpagequicklinks
@@ -22,4 +23,9 @@ settings:
   status: true
   info: ''
   view_mode: full
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }
