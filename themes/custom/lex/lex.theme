@@ -11,6 +11,10 @@ function lex_preprocess_menu(&$variables) {
   }
 }
 
+function lex_preprocess_input__submit(&$variables) {
+  $variables['attributes']['class'][] = 'lex-submit-drupalprovided';
+}
+
 function lex_preprocess_block(&$variables) {
   $variables['attributes']['class'] = array('lex-block');
 
@@ -21,7 +25,9 @@ function lex_preprocess_block(&$variables) {
 }
 
 function lex_preprocess_form(&$variables) {
-  $variables['attributes']['class'] = array('usa-search lex-search');
+  if ($variables['attributes']['id'] == 'search-block-form') {
+    $variables['attributes']['class'] = array('usa-search lex-search');
+  }
 }
 
 function lex_preprocess_feed_icon(&$variables) {
