@@ -31,7 +31,8 @@ function lex_preprocess_form(&$variables) {
 }
 
 function lex_preprocess_container(&$variables) {
-  if (in_array('more-link', $variables['attributes']['class'])) {
+  if (isset($variables['attributes']['class']) &&
+      in_array('more-link', $variables['attributes']['class'])) {
     array_push($variables['attributes']['class'], 'usa-button', 'lex-morelink');
   }
 }
