@@ -102,7 +102,7 @@ display:
             preserve_tags: ''
             html: false
           element_type: ''
-          element_class: lex-horizontalcard-image
+          element_class: 'lex-horizontalcard-image lex-image-teaser usa-width-one-third'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -116,7 +116,7 @@ display:
           click_sort_column: target_id
           type: image
           settings:
-            image_style: max_325x325
+            image_style: teaser
             image_link: content
           group_column: ''
           group_columns: {  }
@@ -166,7 +166,7 @@ display:
             preserve_tags: ''
             html: false
           element_type: ''
-          element_class: 'lex-card-title lex-card-title-medium'
+          element_class: 'lex-card-title lex-card-title-medium usa-width-two-thirds'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -236,7 +236,7 @@ display:
           element_label_class: ''
           element_label_colon: false
           element_wrapper_type: ''
-          element_wrapper_class: ''
+          element_wrapper_class: usa-width-two-thirds
           element_default_classes: true
           empty: ''
           hide_empty: false
@@ -303,7 +303,7 @@ display:
           element_label_class: ''
           element_label_colon: false
           element_wrapper_type: ''
-          element_wrapper_class: ''
+          element_wrapper_class: usa-width-two-thirds
           element_default_classes: true
           empty: ''
           hide_empty: false
@@ -368,7 +368,10 @@ display:
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
-      css_class: ''
+      css_class: 'usa-width-two-thirds lex-horizontalcard-column'
+      use_more: true
+      use_more_always: true
+      use_more_text: 'more news'
     cache_metadata:
       max-age: -1
       contexts:
@@ -386,6 +389,24 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:field.storage.node.body'
+        - 'config:field.storage.node.field_image'
+  page_1:
+    display_plugin: page
+    id: page_1
+    display_title: Page
+    position: 2
+    display_options:
+      display_extenders: {  }
+      path: government/news
     cache_metadata:
       max-age: -1
       contexts:

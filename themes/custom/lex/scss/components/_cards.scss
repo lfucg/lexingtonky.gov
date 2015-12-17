@@ -1,8 +1,13 @@
+.usa-width-two-thirds.lex-horizontalcard-column {
+  @media screen and (min-width: $medium-screen) and (max-width: $large-screen) {
+    width: 100%;
+  }
+}
+
 .lex-horizontalcard-image {
   @include media($medium-screen) {
-    float: left;
-    margin-right: 1em;
-    margin-bottom: 1em;
+    padding-right: 1em;
+    padding-bottom: 1em;
   }
 }
 

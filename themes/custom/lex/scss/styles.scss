@@ -29,6 +29,12 @@ $color-primary: $lex-blue;
 @import './components/_cards';
 @import './components/_browsenav';
 
+// Override WDS (avoid when possible)
+.usa-button {
+  border-radius: 0;
+}
+
+// Core Lexington styles
 body {
   color: $lex-dark-grey;
 }
@@ -154,6 +160,9 @@ body {
 }
 
 .lex-search {
+  [type="submit"] {
+    border-radius: 0;
+  }
   .lex-submit-drupalprovided {
     display: none;
   }
@@ -191,4 +200,22 @@ body {
 
 .lex-alert {
   margin-top: 0;
+}
+
+.lex-image-teaser {
+  // todo: figure out how to make image formatter add class to img tag
+  img {
+    // maintain aspect ratio
+    width: 100%;
+    height: Auto;
+  }
+}
+
+.lex-morelink {
+  float: right;
+  text-transform: uppercase;
+  font-weight: $font-weight-regular;
+  a, a:visited {
+    color: white;
+  }
 }

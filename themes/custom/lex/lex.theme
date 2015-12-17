@@ -30,6 +30,12 @@ function lex_preprocess_form(&$variables) {
   }
 }
 
+function lex_preprocess_container(&$variables) {
+  if (in_array('more-link', $variables['attributes']['class'])) {
+    array_push($variables['attributes']['class'], 'usa-button', 'lex-morelink');
+  }
+}
+
 function lex_preprocess_feed_icon(&$variables) {
   $variables['attributes']['class'] = array('visually-hidden');
 }
@@ -40,7 +46,7 @@ function lex_preprocess_region(&$variables) {
     $variables['attributes']['class'][] = 'lex-slab lex-slab-grey';
   }
   if ($variables['region'] == 'content') {
-    $variables['attributes']['class'][] = 'lex-grid-full';
+    array_push($variables['attributes']['class'], 'lex-grid-full', 'usa-grid-full');
   }
 }
 
