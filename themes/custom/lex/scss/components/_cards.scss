@@ -1,5 +1,6 @@
 .usa-width-two-thirds.lex-horizontalcard-column {
   @media screen and (min-width: $medium-screen) and (max-width: $large-screen) {
+    /* expand two-thirds to 100% to maintain card layout */
     width: 100%;
   }
 }

@@ -193,7 +193,7 @@ body {
 
 .lex-search-submit {
   // todo: figure out why broken with media mixin
-  @media screen and (max-width: $medium-screen) {
+  @media screen and (max-width: $small-screen) {
     @include sr-only;
   }
 }
