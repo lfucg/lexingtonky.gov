@@ -33,6 +33,11 @@ $color-primary: $lex-blue;
 .usa-button {
   border-radius: 0;
 }
+.lex-search-hero .usa-search input {
+  @include media($medium-screen) {
+    max-width: calc(100% - #{$usa-btn-medium-width});
+  }
+}
 
 // Core Lexington styles
 body {
