@@ -139,8 +139,7 @@ body {
 }
 
 .lex-region-breadcrumb {
-  // todo: why is lex-section not pushing down the slab?
-  // padding-bottom: $lex-section-gutter;
+  padding-bottom: $lex-section-gutter;
 
   .lex-nav-breadcrumbs-item:not(:last-of-type):after {
     content: '/';
