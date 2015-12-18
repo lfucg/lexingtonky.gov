@@ -5,10 +5,27 @@
   }
 }
 
+.lex-card {
+  margin-bottom: $lex-section-gutter;
+}
+
+.lex-card-subhead {
+  font-weight: $font-weight-light;
+}
+
+.lex-event-stackeddate {
+  float: left;
+  margin-right: $lex-section-gutter;
+  text-transform: uppercase;
+
+  .lex-card-subhead {
+    text-align: center;
+  }
+}
+
 .lex-horizontalcard-image {
   @include media($medium-screen) {
     padding-right: 1em;
-    padding-bottom: 1em;
   }
 }
 

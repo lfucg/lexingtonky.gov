@@ -384,7 +384,7 @@ display:
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
-      css_class: 'usa-width-two-thirds lex-horizontalcard-column'
+      css_class: ''
       use_more: false
       use_more_always: false
       use_more_text: 'more news'
@@ -436,7 +436,7 @@ display:
     position: 2
     display_options:
       display_extenders: {  }
-      path: government/news
+      path: browse/government/news
     cache_metadata:
       max-age: -1
       contexts:
