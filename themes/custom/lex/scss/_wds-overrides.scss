@@ -1,0 +1,33 @@
+// Avoid overriding external style library classes when possible
+// Only style what we own: classes starting with 'lex-'
+// h/t https://github.com/18F/web-design-standards-drupal/pull/38/files
+.usa-button {
+  border-radius: 0;
+}
+
+.lex-search-hero .usa-search input {
+  @include media($medium-screen) {
+    max-width: calc(100% - #{$usa-btn-medium-width});
+  }
+}
+
+.usa-sr-only {
+  position: absolute;
+  left: -999em;
+}
+
+.toolbar ul {
+  display: block;
+}
+
+.toolbar ul li:before {
+  display: none;
+}
+
+.toolbar ul {
+  display: block;
+}
+
+.toolbar ul li:before {
+  display: none;
+}

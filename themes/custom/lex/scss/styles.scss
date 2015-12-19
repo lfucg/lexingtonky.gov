@@ -21,7 +21,7 @@ $lex-black: #000000;
 // Magic numbers
 $lex-section-gutter: 1.7em;
 
-// USFWDS overrides
+// WDS overrides
 $color-primary: $lex-blue;
 
 // Import WDS
@@ -29,16 +29,9 @@ $color-primary: $lex-blue;
 @import './elements/_typography';
 @import './components/_cards';
 @import './components/_browsenav';
+// Override WDS styles (avoid when possible)
+@import './wds-overrides';
 
-// Override WDS (avoid when possible)
-.usa-button {
-  border-radius: 0;
-}
-.lex-search-hero .usa-search input {
-  @include media($medium-screen) {
-    max-width: calc(100% - #{$usa-btn-medium-width});
-  }
-}
 
 // Core Lexington styles
 body {
