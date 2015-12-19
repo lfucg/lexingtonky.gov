@@ -2,7 +2,7 @@
   margin-bottom: $lex-section-gutter;
 }
 
-.lex-card-subhead {
+.lex-card-subtitle {
   font-weight: $font-weight-light;
 }
 
@@ -20,12 +20,16 @@
   float: left;
   text-transform: uppercase;
 
-  .lex-card-subhead {
+  .lex-card-subtitle {
     text-align: center;
   }
   .lex-stackeddate-month {
     display: inline-block
   }
+}
+
+.lex-card-fulldate {
+  font-style: italic;
 }
 
 .lex-horizontalcard-image {
