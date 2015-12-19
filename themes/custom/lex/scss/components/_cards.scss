@@ -1,10 +1,3 @@
-.usa-width-two-thirds.lex-horizontalcard-column {
-  @media screen and (min-width: $medium-screen) and (max-width: $large-screen) {
-    /* expand two-thirds to 100% to maintain card layout */
-    width: 100%;
-  }
-}
-
 .lex-card {
   margin-bottom: $lex-section-gutter;
 }
@@ -13,13 +6,25 @@
   font-weight: $font-weight-light;
 }
 
-.lex-event-stackeddate {
+.lex-eventcard-titlesection {
   float: left;
+  width: 73%;
+}
+
+.lex-eventcard-stackeddate {
+  width: 10%;
   margin-right: $lex-section-gutter;
+}
+
+.lex-stackeddate {
+  float: left;
   text-transform: uppercase;
 
   .lex-card-subhead {
     text-align: center;
+  }
+  .lex-stackeddate-month {
+    display: inline-block
   }
 }
 
