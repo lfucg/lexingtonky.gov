@@ -1,19 +1,19 @@
-uuid: ad63001a-e4c9-45d4-b04d-77d7ed52295a
+uuid: 3fedca96-cbed-4249-9400-a92ff858ad99
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.body
-    - node.type.page
+    - field.storage.node.field_image
+    - node.type.news_article
   module:
+    - image
     - node
-    - text
     - user
-id: content_recent
-label: 'Recent content'
-module: node
-description: 'Recent content.'
-tag: default
+id: a_note_from_the_mayor
+label: 'A note from the Mayor'
+module: views
+description: 'A short teaser of content from /visitors'
+tag: ''
 base_table: node_field_data
 base_field: nid
 core: 8.x
@@ -52,7 +52,7 @@ display:
       pager:
         type: some
         options:
-          items_per_page: 5
+          items_per_page: 1
           offset: 0
       style:
         type: default
@@ -62,81 +62,11 @@ display:
           default_row_class: false
       row:
         type: fields
-        options:
-          default_field_elements: false
-          inline: {  }
-          separator: ''
-          hide_empty: false
       fields:
-        title:
-          id: title
-          table: node_field_data
-          field: title
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: false
-            ellipsis: false
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: h4
-          element_class: 'lex-card-title lex-card-title-medium'
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: '0'
-          element_wrapper_class: ''
-          element_default_classes: false
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: true
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          entity_type: node
-          entity_field: title
-          plugin_id: field
-        body:
-          id: body
-          table: node__body
-          field: body
+        field_image:
+          id: field_image
+          table: node__field_image
+          field: field_image
           relationship: none
           group_type: group
           admin_label: ''
@@ -165,12 +95,76 @@ display:
             more_link: false
             more_link_text: ''
             more_link_path: ''
-            strip_tags: true
+            strip_tags: false
             trim: false
             preserve_tags: ''
             html: false
-          element_type: div
-          element_class: lex-card-subtitle
+          element_type: ''
+          element_class: 'lex-horizontalcard-image lex-image-teaser usa-width-one-third'
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: image
+          settings:
+            image_style: teaser
+            image_link: ''
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: 'Card text. Todo: use real content fields'
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: "<h4 class=\"lex-card-title lex-card-title-medium\">Note from the Mayor</h4>\n\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor.</p>\n\n<div class=\"more-link usa-button lex-morelink\"><a href=\"/\">more</a></div>"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: '0'
+          element_class: 'lex-card-title lex-card-title-medium'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -182,9 +176,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: text_trimmed
+          type: string
           settings:
-            trim_length: 140
+            link_to_entity: false
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -197,83 +191,17 @@ display:
           field_api_classes: false
           plugin_id: field
       filters:
-        status_extra:
-          id: status_extra
+        status:
+          value: true
           table: node_field_data
-          field: status_extra
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value: false
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
+          field: status
+          plugin_id: boolean
           entity_type: node
-          plugin_id: node_status
-        langcode:
-          id: langcode
-          table: node_field_data
-          field: langcode
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: in
-          value:
-            '***LANGUAGE_language_content***': '***LANGUAGE_language_content***'
-          group: 1
-          exposed: false
+          entity_field: status
+          id: status
           expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
             operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: node
-          entity_field: langcode
-          plugin_id: language
+          group: 1
         type:
           id: type
           table: node_field_data
@@ -283,7 +211,7 @@ display:
           admin_label: ''
           operator: in
           value:
-            page: page
+            news_article: news_article
           group: 1
           exposed: false
           expose:
@@ -315,66 +243,42 @@ display:
           entity_field: type
           plugin_id: bundle
       sorts:
-        changed:
-          id: changed
+        created:
+          id: created
           table: node_field_data
-          field: changed
+          field: created
+          order: DESC
+          entity_type: node
+          entity_field: created
+          plugin_id: date
           relationship: none
           group_type: group
           admin_label: ''
-          order: DESC
           exposed: false
           expose:
             label: ''
           granularity: second
-          entity_type: node
-          entity_field: changed
-          plugin_id: date
-      title: 'Most active pages'
+      title: 'Mayor''s Office'
       header: {  }
       footer: {  }
-      empty:
-        area_text_custom:
-          id: area_text_custom
-          table: views
-          field: area_text_custom
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: true
-          tokenize: false
-          content: 'No content available.'
-          plugin_id: text_custom
-      relationships:
-        uid:
-          id: uid
-          table: node_field_data
-          field: uid
-          relationship: none
-          group_type: group
-          admin_label: author
-          required: true
-          entity_type: node
-          entity_field: uid
-          plugin_id: standard
+      empty: {  }
+      relationships: {  }
       arguments: {  }
       display_extenders: {  }
-      use_more: true
+      use_more: false
       use_more_always: true
-      use_more_text: 'more pages'
+      use_more_text: more
       link_url: '<front>'
       link_display: custom_url
-      css_class: ''
     cache_metadata:
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - user
         - 'user.node_grants:view'
         - user.permissions
-      max-age: -1
       tags:
-        - 'config:field.storage.node.body'
+        - 'config:field.storage.node.field_image'
   block_1:
     display_plugin: block
     id: block_1
@@ -383,12 +287,11 @@ display:
     display_options:
       display_extenders: {  }
     cache_metadata:
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - user
         - 'user.node_grants:view'
         - user.permissions
-      max-age: -1
       tags:
-        - 'config:field.storage.node.body'
+        - 'config:field.storage.node.field_image'

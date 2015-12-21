@@ -34,7 +34,7 @@
 
 .lex-horizontalcard-image {
   @include media($medium-screen) {
-    padding-right: 1em;
+    padding-right: $lex-section-gutter;
   }
 }
 
@@ -42,6 +42,7 @@
   // todo: remote margin and add lex-card-firstitem to elements
   margin: 0;
   font-weight: $font-weight-regular;
+  display: inline-block;
 
   &.lex-card-title-medium {
     font-size: 1.25em;

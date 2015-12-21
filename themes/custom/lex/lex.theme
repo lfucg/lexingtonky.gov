@@ -17,17 +17,27 @@ function lex_preprocess_input__submit(&$variables) {
 
 function lex_preprocess_block(&$variables) {
   $variables['attributes']['class'] = array('lex-block');
+  $element_id = $variables['elements']['#id'];
 
   // todo: generalize an opt-in way to add class to title
-  if ($variables['elements']['#id'] !== 'lex_lex_search_form') {
+  if ($element_id !== 'lex_lex_search_form') {
     $variables['title_attributes']['class'] = array('lex-section-heading', 'lex-heading', 'lex-font-standout');
   }
-  if ($variables['elements']['#id'] == 'views_block__front_page_news_block_1') {
+
+  // todo: there must be a better way to add a class to a block
+  if ($element_id == 'views_block__front_page_news_block_1') {
     $variables['attributes']['class'][] = 'usa-width-two-thirds lex-horizontalcard-column';
   }
-  if (in_array($variables['elements']['#id'],
+  else if (in_array($element_id,
       array('views_block__events_block_1', 'views_block__visitor_information_block_front_page'))) {
     $variables['attributes']['class'][] = 'usa-width-one-third usa-end-row';
+  }
+  else if ($element_id == 'views_block__content_recent_front_page') {
+    $variables['attributes']['class'][] = 'usa-width-one-third';
+  }
+  else if (in_array($element_id,
+      array('views_block__a_note_from_the_mayor_front_page'))) {
+    $variables['attributes']['class'][] = 'usa-width-two-thirds';
   }
 }
 
