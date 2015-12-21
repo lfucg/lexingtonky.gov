@@ -105,12 +105,21 @@
         {{ page.sidebar_second }}
       </aside>
     {% endif %}
-
   </main>
 
-  {% if page.footer %}
+  {% if page.featured_bottom_first %}
+    <div class="lex-featured-bottom">
+      <aside class="layout-container clearfix" role="complementary">
+        {{ page.featured_bottom_first }}
+      </aside>
+    </div>
+  {% endif %}
+
+  {% if page.footer_first or page.footer_second or page.footer_third %}
     <footer role="contentinfo">
-      {{ page.footer }}
+      {{ page.footer_first }}
+      {{ page.footer_second }}
+      {{ page.footer_third }}
     </footer>
   {% endif %}
 

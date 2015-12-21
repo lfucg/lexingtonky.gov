@@ -9,7 +9,7 @@ dependencies:
 id: browsenav_subcategory_term
 theme: lex
 region: content
-weight: -12
+weight: -9
 provider: null
 plugin: page_title_block
 settings:
