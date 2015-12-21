@@ -108,11 +108,9 @@
   </main>
 
   {% if page.featured_bottom_first %}
-    <div class="lex-featured-bottom">
-      <aside class="layout-container clearfix" role="complementary">
-        {{ page.featured_bottom_first }}
-      </aside>
-    </div>
+    <aside class="lex-featured-bottom clearfix usa-grid lex-grid-full" role="complementary">
+      {{ page.featured_bottom_first }}
+    </aside>
   {% endif %}
 
   {% if page.footer_first or page.footer_second or page.footer_third %}

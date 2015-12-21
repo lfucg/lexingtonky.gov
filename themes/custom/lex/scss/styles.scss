@@ -132,6 +132,10 @@ body {
   background-color: $lex-light-grey;
 }
 
+.lex-region-content {
+  padding-bottom: $lex-section-gutter;
+}
+
 .lex-region-breadcrumb {
   padding-bottom: $lex-section-gutter;
 
@@ -206,6 +210,14 @@ body {
     // maintain aspect ratio
     width: 100%;
     height: Auto;
+  }
+}
+
+.lex-featured-bottom {
+  // lex-section-headings add other half. todo: use one or the other
+  padding-top: $lex-section-gutter / 2;
+  @include media($medium-screen) {
+    border-top: 1px solid $lex-grey;
   }
 }
 

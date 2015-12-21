@@ -2,8 +2,12 @@ uuid: ad63001a-e4c9-45d4-b04d-77d7ed52295a
 langcode: en
 status: true
 dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.page
   module:
     - node
+    - text
     - user
 id: content_recent
 label: 'Recent content'
@@ -48,60 +52,91 @@ display:
       pager:
         type: some
         options:
-          items_per_page: 10
+          items_per_page: 5
           offset: 0
       style:
-        type: html_list
+        type: default
         options:
           grouping: {  }
-          row_class: ''
-          default_row_class: true
-          type: ul
-          wrapper_class: item-list
-          class: ''
+          row_class: 'lex-card clearfix'
+          default_row_class: false
       row:
         type: fields
+        options:
+          default_field_elements: false
+          inline: {  }
+          separator: ''
+          hide_empty: false
       fields:
         title:
           id: title
           table: node_field_data
           field: title
-          entity_type: node
-          entity_field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
           label: ''
           exclude: false
           alter:
             alter_text: false
+            text: ''
             make_link: false
+            path: ''
             absolute: false
-            trim: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
             word_boundary: false
             ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
             strip_tags: false
+            trim: false
+            preserve_tags: ''
             html: false
-          hide_empty: false
-          empty_zero: false
-          relationship: none
-          group_type: group
-          admin_label: ''
-          element_type: ''
-          element_class: ''
+          element_type: h4
+          element_class: 'lex-card-title lex-card-title-medium'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
-          element_wrapper_type: ''
+          element_wrapper_type: '0'
           element_wrapper_class: ''
-          element_default_classes: true
+          element_default_classes: false
           empty: ''
+          hide_empty: false
+          empty_zero: false
           hide_alter_empty: true
+          click_sort_column: value
           type: string
           settings:
             link_to_entity: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: node
+          entity_field: title
           plugin_id: field
-        changed:
-          id: changed
-          table: node_field_data
-          field: changed
+        body:
+          id: body
+          table: node__body
+          field: body
           relationship: none
           group_type: group
           admin_label: ''
@@ -130,25 +165,26 @@ display:
             more_link: false
             more_link_text: ''
             more_link_path: ''
-            strip_tags: false
+            strip_tags: true
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
-          element_class: ''
+          element_type: div
+          element_class: lex-card-subtitle
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
-          element_wrapper_type: ''
+          element_wrapper_type: '0'
           element_wrapper_class: ''
-          element_default_classes: true
+          element_default_classes: false
           empty: ''
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: timestamp_ago
-          settings: {  }
+          type: text_trimmed
+          settings:
+            trim_length: 140
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -159,8 +195,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: changed
           plugin_id: field
       filters:
         status_extra:
@@ -240,6 +274,46 @@ display:
           entity_type: node
           entity_field: langcode
           plugin_id: language
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: in
+          value:
+            page: page
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
       sorts:
         changed:
           id: changed
@@ -256,7 +330,7 @@ display:
           entity_type: node
           entity_field: changed
           plugin_id: date
-      title: 'Recent content'
+      title: 'Most active pages'
       header: {  }
       footer: {  }
       empty:
@@ -285,11 +359,12 @@ display:
           plugin_id: standard
       arguments: {  }
       display_extenders: {  }
-      use_more: false
-      use_more_always: false
-      use_more_text: More
-      link_url: ''
-      link_display: '0'
+      use_more: true
+      use_more_always: true
+      use_more_text: 'more pages'
+      link_url: '<front>'
+      link_display: custom_url
+      css_class: usa-width-one-fourth
     cache_metadata:
       contexts:
         - 'languages:language_content'
@@ -298,7 +373,8 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       max-age: -1
-      tags: {  }
+      tags:
+        - 'config:field.storage.node.body'
   block_1:
     display_plugin: block
     id: block_1
@@ -314,4 +390,5 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       max-age: -1
-      tags: {  }
+      tags:
+        - 'config:field.storage.node.body'
