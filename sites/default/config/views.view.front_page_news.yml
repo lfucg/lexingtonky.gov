@@ -182,12 +182,12 @@ display:
             preserve_tags: ''
             html: false
           element_type: ''
-          element_class: 'lex-card-title lex-card-title-medium usa-width-two-thirds'
+          element_class: 'lex-card-title lex-card-title-medium'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
           element_wrapper_type: div
-          element_wrapper_class: usa-width-one-third
+          element_wrapper_class: ''
           element_default_classes: false
           empty: ''
           hide_empty: false
