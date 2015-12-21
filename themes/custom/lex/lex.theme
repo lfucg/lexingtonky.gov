@@ -25,7 +25,8 @@ function lex_preprocess_block(&$variables) {
   if ($variables['elements']['#id'] == 'views_block__front_page_news_block_1') {
     $variables['attributes']['class'][] = 'usa-width-two-thirds lex-horizontalcard-column';
   }
-  if ($variables['elements']['#id'] == 'views_block__events_block_1') {
+  if (in_array($variables['elements']['#id'],
+      array('views_block__events_block_1', 'views_block__visitor_information_block_front_page'))) {
     $variables['attributes']['class'][] = 'usa-width-one-third usa-end-row';
   }
 }

@@ -39,6 +39,7 @@
 }
 
 .lex-card-title {
+  // todo: remote margin and add lex-card-firstitem to elements
   margin: 0;
   font-weight: $font-weight-regular;
 
@@ -59,6 +60,10 @@
     text-transform: uppercase;
     @extend .lex-card-title.lex-card-title-extralarge;
   }
+}
+
+.lex-card-firstitem {
+  margin-top: 0;
 }
 
 .lex-card-description {

@@ -1,0 +1,30 @@
+uuid: 398c5c4c-6aa3-4109-a108-0870b459599b
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.visitor_information
+  module:
+    - system
+    - views
+  theme:
+    - lex
+id: views_block__visitor_information_block_front_page
+theme: lex
+region: content
+weight: null
+provider: null
+plugin: 'views_block:visitor_information-block_1'
+settings:
+  id: 'views_block:visitor_information-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }
