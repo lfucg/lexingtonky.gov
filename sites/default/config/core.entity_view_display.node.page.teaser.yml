@@ -23,4 +23,5 @@ content:
     third_party_settings: {  }
   links:
     weight: 101
-hidden: {  }
+hidden:
+  field_lex_site_nav: true

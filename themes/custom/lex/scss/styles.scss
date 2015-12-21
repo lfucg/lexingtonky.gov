@@ -62,7 +62,7 @@ body {
   }
 }
 
-.lex-header-quicklinks {
+.lex-quicklinks {
   display: none;
   width: 100%;
   @include media($medium-screen) {
@@ -132,8 +132,25 @@ body {
   background-color: $lex-light-grey;
 }
 
+.lex-slab-blue {
+  background-color: $lex-dark-blue;
+  &, a, a:visited {
+    color: $lex-grey;
+  }
+  .lex-font-standout, .lex-font-standout:visited {
+    color: $lex-white;
+  }
+  .lex-section-heading.lex-font-standout {
+    color: $lex-gold;
+  }
+}
+
 .lex-region-content {
   padding-bottom: $lex-section-gutter;
+}
+
+.lex-align-right {
+  text-align: right;
 }
 
 .lex-region-breadcrumb {
@@ -216,6 +233,7 @@ body {
 .lex-featured-bottom {
   // lex-section-headings add other half. todo: use one or the other
   padding-top: $lex-section-gutter / 2;
+  padding-bottom: $lex-section-gutter;
   @include media($medium-screen) {
     border-top: 1px solid $lex-grey;
   }
