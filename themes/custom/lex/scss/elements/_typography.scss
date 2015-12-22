@@ -7,6 +7,10 @@ a.lex-font, a, a:visited, a:hover, a:active {
   color: $lex-dark-grey;
 }
 
+a:focus {
+  box-shadow: none;
+}
+
 .lex-font-standout {
   color: $color-primary;
 }
