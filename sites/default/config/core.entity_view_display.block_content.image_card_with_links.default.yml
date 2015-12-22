@@ -1,0 +1,21 @@
+uuid: a797919c-99e8-492a-8201-017972a445f9
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.image_card_with_links
+    - field.field.block_content.image_card_with_links.body
+  module:
+    - text
+id: block_content.image_card_with_links.default
+targetEntityType: block_content
+bundle: image_card_with_links
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }
