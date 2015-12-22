@@ -16,7 +16,7 @@ function lex_preprocess_input__submit(&$variables) {
 }
 
 function lex_preprocess_block(&$variables) {
-  $variables['attributes']['class'] = array('lex-block');
+  $variables['attributes']['class'][] = 'lex-block';
   $element_id = $variables['elements']['#id'];
 
   // todo: generalize an opt-in way to add class to title
