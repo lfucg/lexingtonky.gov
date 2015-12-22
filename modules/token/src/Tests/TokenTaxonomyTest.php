@@ -75,7 +75,7 @@ class TokenTaxonomyTest extends TokenKernelTestBase {
       'parents' => 'Root term',
       'parents:count' => 1,
       'parents:keys' => $root_term->id(),
-      'root' => SafeMarkup::checkPlain($root_term->label()),
+      'root' => $root_term->label(),
       'root:tid' => $root_term->id(),
       // Deprecated tokens
       'url:alias' => "/taxonomy/term/{$parent_term->id()}",

@@ -390,8 +390,6 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
     $langcode = NULL;
   }
 
-  $sanitize = !empty($options['sanitize']);
-
   // Date tokens.
   if ($type == 'date') {
     $date = !empty($data['date']) ? $data['date'] : REQUEST_TIME;
@@ -431,11 +429,11 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'log':
-          $replacements[$original] = $sanitize ? Xss::filter($node->revision_log->value) : $node->revision_log->value;
+          $replacements[$original] = (string) $node->revision_log->value;
           break;
         case 'content-type':
           $type_name = \Drupal::entityManager()->getStorage('node_type')->load($node->getType())->label();
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($type_name) : $type_name;
+          $replacements[$original] = $type_name;
           break;
       }
     }
@@ -460,14 +458,13 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'name':
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($node_type->label()) : $node_type->label();
+          $replacements[$original] = $node_type->label();
           break;
         case 'machine-name':
-          // This is a machine name so does not ever need to be sanitized.
           $replacements[$original] = $node_type->id();
           break;
         case 'description':
-          $replacements[$original] = $sanitize ? Xss::filter($node_type->getDescription()) : $node_type->getDescription();
+          $replacements[$original] = $node_type->getDescription();
           break;
         case 'node-count':
           $count = \Drupal::entityQueryAggregate('node')
@@ -507,7 +504,7 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
           $parents = $term_storage->loadAllParents($term->id());
           $root_term = end($parents);
           if ($root_term->id() != $term->id()) {
-            $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($root_term->label()) : $root_term->label();
+            $replacements[$original] = $root_term->label();
           }
           break;
       }
@@ -539,7 +536,6 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'machine-name':
-          // This is a machine name so does not ever need to be sanitized.
           $replacements[$original] = $vocabulary->id();
           break;
         case 'edit-url':
@@ -557,11 +553,11 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
       switch ($name) {
         case 'basename':
           $basename = pathinfo($file->uri->value, PATHINFO_BASENAME);
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($basename) : $basename;
+          $replacements[$original] = $basename;
           break;
         case 'extension':
           $extension = pathinfo($file->uri->value, PATHINFO_EXTENSION);
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($extension) : $extension;
+          $replacements[$original] = $extension;
           break;
         case 'size-raw':
           $replacements[$original] = (int) $file->filesize->value;
@@ -617,7 +613,7 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
       switch ($name) {
         case 'ip-address':
           $ip = \Drupal::request()->getClientIp();
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($ip) : $ip;
+          $replacements[$original] = $ip;
           break;
       }
     }
@@ -640,7 +636,7 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
           $replacements[$original] = $link->getPluginId();
           break;
         case 'title':
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($link->getTitle()) : $link->getTitle();
+          $replacements[$original] = $link->getTitle();
           break;
         case 'url':
           $replacements[$original] = $link->getUrlObject()->setAbsolute()->toString();
@@ -649,7 +645,7 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
 
           /** @var \Drupal\Core\Menu\MenuLinkInterface $parent */
           if ($link->getParent() && $parent = $menu_link_manager->createInstance($link->getParent())) {
-            $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($parent->getTitle()) : $parent->getTitle();
+            $replacements[$original] = $parent->getTitle();
           }
           break;
         case 'parents':
@@ -660,7 +656,7 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
         case 'root';
           if ($link->getParent() && $parent_ids = array_keys(token_menu_link_load_all_parents($link->getPluginId()))) {
             $root = $menu_link_manager->createInstance(array_shift($parent_ids));
-            $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($root->getTitle()) : $root->label();
+            $replacements[$original] = $root->getTitle();
           }
           break;
       }
@@ -695,7 +691,7 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
           $request = \Drupal::request();
           $route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT);
           $title = \Drupal::service('title_resolver')->getTitle($request, $route);
-          $replacements[$original] = $sanitize ? $title : Html::decodeEntities($title);
+          $replacements[$original] = $title;
           break;
         case 'url':
           $replacements[$original] = Url::fromRoute('<current>', [], $url_options)->toString();
@@ -720,7 +716,7 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
       foreach ($arg_tokens as $name => $original) {
         $parts = explode('/', $path);
         if (is_numeric($name) && isset($parts[$name])) {
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($parts[$name]) : $parts[$name];
+          $replacements[$original] = $parts[$name];
         }
       }
     }
@@ -728,10 +724,9 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
     // [current-page:query] dynamic tokens.
     if ($query_tokens = \Drupal::token()->findWithPrefix($tokens, 'query')) {
       foreach ($query_tokens as $name => $original) {
-        // @todo Should this use filter_input()?
         if (\Drupal::request()->query->has($name)) {
           $value = \Drupal::request()->query->get($name);
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($value) : $value;
+          $replacements[$original] = $value;
         }
       }
     }
@@ -755,12 +750,12 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
       switch ($name) {
         case 'path':
           $value = !($url->getOption('alias')) ? \Drupal::service('path.alias_manager')->getAliasByPath($path, $langcode) : $path;
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($value) : $value;
+          $replacements[$original] = $value;
           break;
         case 'alias':
           // @deprecated
           $alias = \Drupal::service('path.alias_manager')->getAliasByPath($path, $langcode);
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($alias) : $alias;
+          $replacements[$original] = $alias;
           break;
         case 'absolute':
           $replacements[$original] = $url->setAbsolute()->toString();
@@ -812,7 +807,7 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
         case 'original':
           if (_token_module($type, 'original') == 'token' && !empty($entity->original)) {
             $label = $entity->original->label();
-            $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($label) : $label;
+            $replacements[$original] = $label;
           }
           break;
       }
@@ -853,12 +848,12 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
         case 'first':
           $value = $array[$keys[0]];
           $value = is_array($value) ? $renderer->renderPlain($value) : (string) $value;
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($value) : $value;
+          $replacements[$original] = $value;
           break;
         case 'last':
           $value = $array[$keys[count($keys) - 1]];
           $value = is_array($value) ? $renderer->renderPlain($value) : (string) $value;
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($value) : $value;
+          $replacements[$original] =$value;
           break;
         case 'count':
           $replacements[$original] = count($keys);
@@ -964,7 +959,6 @@ function book_token_info() {
  */
 function book_tokens($type, $tokens, array $data = array(), array $options = array(), BubbleableMetadata $bubbleable_metadata) {
   $replacements = array();
-  $sanitize = !empty($options['sanitize']);
 
   // Node tokens.
   if ($type == 'node' && !empty($data['node'])) {
@@ -976,7 +970,7 @@ function book_tokens($type, $tokens, array $data = array(), array $options = arr
       foreach ($tokens as $name => $original) {
         switch ($name) {
           case 'book':
-            $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($link['title']) : $link['title'];
+            $replacements[$original] = $link['title'];
             break;
         }
       }
@@ -1058,8 +1052,6 @@ function menu_ui_tokens($type, $tokens, array $data = array(), array $options = 
     $langcode = NULL;
   }
 
-  $sanitize = !empty($options['sanitize']);
-
   // Node tokens.
   if ($type == 'node' && !empty($data['node'])) {
     /** @var \Drupal\node\NodeInterface $node */
@@ -1071,7 +1063,7 @@ function menu_ui_tokens($type, $tokens, array $data = array(), array $options = 
           $url = $node->urlInfo();
           if ($links = $menu_link_manager->loadLinksByRoute($url->getRouteName(), $url->getRouteParameters())) {
             $link = reset($links);
-            $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($link->getTitle()) : $link->getTitle();
+            $replacements[$original] = $link->getTitle();
           }
           break;
       }
@@ -1100,7 +1092,7 @@ function menu_ui_tokens($type, $tokens, array $data = array(), array $options = 
       switch ($name) {
         case 'menu':
           if ($menu = Menu::load($link->getMenuName())) {
-            $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($menu->label()) : $menu->label();
+            $replacements[$original] = $menu->label();
           }
           break;
 
@@ -1124,16 +1116,15 @@ function menu_ui_tokens($type, $tokens, array $data = array(), array $options = 
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'name':
-          $replacements[$original] = $sanitize ? SafeMarkup::checkPlain($menu->label()) : $menu->label();
+          $replacements[$original] = $menu->label();
           break;
 
         case 'machine-name':
-          // This is a machine name so does not ever need to be sanitized.
           $replacements[$original] = $menu->id();
           break;
 
         case 'description':
-          $replacements[$original] = $sanitize ? Xss::filter($menu->getDescription()) : $menu->getDescription();
+          $replacements[$original] = $menu->getDescription();
           break;
 
         case 'menu-link-count':
@@ -1247,6 +1238,8 @@ function field_tokens($type, $tokens, array $data = array(), array $options = ar
   $replacements = array();
   $langcode = isset($options['langcode']) ? $options['langcode'] : NULL;
 
+  $renderer = \Drupal::service('renderer');
+
   // Entity tokens.
   if ($type == 'entity' && !empty($data['entity_type']) && !empty($data['entity']) && !empty($data['token_type'])) {
     // The field API does weird stuff to the entity, so let's clone it.
@@ -1273,7 +1266,7 @@ function field_tokens($type, $tokens, array $data = array(), array $options = ar
         $field_output = $entity->$name->view('token');
         $field_output['#token_options'] = $options;
         $field_output['#pre_render'][] = 'token_pre_render_field_token';
-        $replacements[$original] = drupal_render($field_output);
+        $replacements[$original] = $renderer->renderPlain($field_output);
       }
     }
 

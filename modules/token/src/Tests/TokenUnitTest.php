@@ -18,7 +18,7 @@ class TokenUnitTest extends TokenKernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('file', 'node');
+  public static $modules = array('file', 'node', 'token_test');
 
   /**
    * Test token_get_invalid_tokens() and token_get_invalid_tokens_by_context().
@@ -31,6 +31,7 @@ class TokenUnitTest extends TokenKernelTestBase {
         '[node:created:short]',
         '[node:created:custom:invalid]',
         '[node:created:custom:mm-YYYY]',
+        '[node:colons:in:name]',
         '[site:name]',
         '[site:slogan]',
         '[current-date:short]',
@@ -41,6 +42,7 @@ class TokenUnitTest extends TokenKernelTestBase {
         '[node:title:invalid]',
         '[node:created:invalid]',
         '[node:created:short:invalid]',
+        '[node:colons:in:name:invalid]',
         '[invalid:title]',
         '[site:invalid]',
         '[user:ip-address]',
@@ -60,6 +62,7 @@ class TokenUnitTest extends TokenKernelTestBase {
         '[node:created:short]',
         '[node:created:custom:invalid]',
         '[node:created:custom:mm-YYYY]',
+        '[node:colons:in:name]',
         '[site:name]',
         '[site:slogan]',
         '[user:uid]',
@@ -70,6 +73,7 @@ class TokenUnitTest extends TokenKernelTestBase {
         '[node:title:invalid]',
         '[node:created:invalid]',
         '[node:created:short:invalid]',
+        '[node:colons:in:name:invalid]',
         '[invalid:title]',
         '[site:invalid]',
         '[user:ip-address]',

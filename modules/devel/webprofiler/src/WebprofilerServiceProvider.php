@@ -9,6 +9,7 @@ namespace Drupal\webprofiler;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
+use Drupal\webprofiler\Compiler\DecoratorPass;
 use Drupal\webprofiler\Compiler\EventPass;
 use Drupal\webprofiler\Compiler\ProfilerPass;
 use Drupal\webprofiler\Compiler\ServicePass;
@@ -34,6 +35,7 @@ class WebprofilerServiceProvider extends ServiceProviderBase {
 
     $container->addCompilerPass(new ServicePass(), PassConfig::TYPE_AFTER_REMOVING);
     $container->addCompilerPass(new EventPass(), PassConfig::TYPE_AFTER_REMOVING);
+    $container->addCompilerPass(new DecoratorPass(), PassConfig::TYPE_AFTER_REMOVING);
 
     $modules = $container->getParameter('container.modules');
 
@@ -91,11 +93,6 @@ class WebprofilerServiceProvider extends ServiceProviderBase {
     // Replace the regular form_builder service with a traceable one.
     $container->getDefinition('form_builder')
       ->setClass('Drupal\webprofiler\Form\FormBuilderWrapper');
-
-    // Replace the regular plugin.manager.mail service with a traceable one.
-    $container->getDefinition('plugin.manager.mail')
-      ->setClass('Drupal\webprofiler\Mail\MailManagerWrapper')
-      ->addMethodCall('setDataCollector', [new Reference('webprofiler.mail')]);
 
     // Replace the regular access_manager service with a traceable one.
     $container->getDefinition('access_manager')
