@@ -237,12 +237,21 @@ body {
   }
 }
 
-.lex-featured-bottom {
-  // lex-section-headings add other half. todo: use one or the other
-  padding-top: $lex-section-gutter / 2;
-  padding-bottom: $lex-section-gutter;
+.lex-top-separator {
   @include media($medium-screen) {
     border-top: 1px solid $lex-grey;
+  }
+}
+
+.lex-featured-bottom {
+  /* dont show for mobile */
+  display: none;
+
+  @include media($medium-screen) {
+    display: block;
+    /* lex-section-headings add other half. todo: use one or the other */
+    padding-top: $lex-section-gutter / 2;
+    padding-bottom: $lex-section-gutter;
   }
 }
 

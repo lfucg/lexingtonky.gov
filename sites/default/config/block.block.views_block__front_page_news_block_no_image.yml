@@ -1,22 +1,22 @@
-uuid: fa7ce496-d479-4ae2-8909-9d09981e264f
+uuid: 8e639092-bebf-4750-821d-29c286d1ecc2
 langcode: en
 status: true
 dependencies:
   config:
-    - views.view.content_recent
+    - views.view.front_page_news
   module:
     - system
     - views
   theme:
     - lex
-id: views_block__content_recent_front_page
+id: views_block__front_page_news_block_no_image
 theme: lex
 region: featured_bottom_first
-weight: -14
+weight: null
 provider: null
-plugin: 'views_block:content_recent-block_1'
+plugin: 'views_block:front_page_news-block_2'
 settings:
-  id: 'views_block:content_recent-block_1'
+  id: 'views_block:front_page_news-block_2'
   label: ''
   provider: views
   label_display: visible
@@ -25,6 +25,6 @@ settings:
 visibility:
   request_path:
     id: request_path
-    pages: "<front>\r\n/browse/*"
+    pages: '/browse/*'
     negate: false
     context_mapping: {  }

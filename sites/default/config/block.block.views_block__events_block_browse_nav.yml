@@ -1,22 +1,22 @@
-uuid: fa7ce496-d479-4ae2-8909-9d09981e264f
+uuid: 06b5ab19-6084-42ea-9804-4f15f0157991
 langcode: en
 status: true
 dependencies:
   config:
-    - views.view.content_recent
+    - views.view.events
   module:
     - system
     - views
   theme:
     - lex
-id: views_block__content_recent_front_page
+id: views_block__events_block_browse_nav
 theme: lex
 region: featured_bottom_first
-weight: -14
+weight: -11
 provider: null
-plugin: 'views_block:content_recent-block_1'
+plugin: 'views_block:events-block_1'
 settings:
-  id: 'views_block:content_recent-block_1'
+  id: 'views_block:events-block_1'
   label: ''
   provider: views
   label_display: visible
@@ -25,6 +25,6 @@ settings:
 visibility:
   request_path:
     id: request_path
-    pages: "<front>\r\n/browse/*"
+    pages: '/browse/*'
     negate: false
     context_mapping: {  }
