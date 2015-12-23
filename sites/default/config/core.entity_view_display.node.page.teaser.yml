@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.page.body
+    - field.field.node.page.field_lex_site_nav
     - node.type.page
   module:
     - text
@@ -21,7 +22,6 @@ content:
     settings:
       trim_length: 600
     third_party_settings: {  }
-  links:
-    weight: 101
 hidden:
   field_lex_site_nav: true
+  links: true
