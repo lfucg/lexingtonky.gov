@@ -27,13 +27,6 @@ define('TOKEN_MAX_DEPTH', 9);
  */
 function token_help($route_name, RouteMatchInterface $route_match) {
   if ($route_name == 'help.page.token') {
-    $current_url = Url::fromRoute('<current>');
-    if ($current_url->toString() != '/admin/help/token') {
-      // Because system_modules() executes hook_help() for each module to 'test'
-      // if they will return anything, but not actually display it, we want to
-      // return a TRUE value if this is not actually the help page.
-      return TRUE;
-    }
     $output = '<dl>';
     $output .= '<dt>' . t('List of the currently available tokens on this site') . '</dt>';
     $token_tree = array(

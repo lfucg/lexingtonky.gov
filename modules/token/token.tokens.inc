@@ -1184,11 +1184,15 @@ function field_token_info_alter(&$info) {
 
       // Generate a description for the token.
 
-      list($label, $labels) = _token_field_label($entity_type_id, $field_name);
-      $description = t('@type field.', array('@type' => $type_info[$field->getType()]['label']));
-      if (count($labels) > 1) {
-        unset($labels[$label]);
-        $description .= ' ' . t('Also known as %labels.', array('%labels' => implode(', ', $labels)));
+      $labels = _token_field_label($entity_type_id, $field_name);
+      $label = array_shift($labels);
+      $params['@type'] = $type_info[$field->getType()]['label'];
+      if (!empty($labels)) {
+        $params['%labels'] = implode(', ', $labels);
+        $description = t('@type field. Also known as %labels.', $params);
+      }
+      else {
+        $description = t('@type field.', $params);
       }
 
       $info['tokens'][$token_type][$field_name] = array(
@@ -1208,27 +1212,24 @@ function field_token_info_alter(&$info) {
  * Based on field_views_field_label().
  */
 function _token_field_label($entity_type, $field_name) {
-  $label_counter = array();
-  $all_labels = array();
+  $labels = [];
   // Count the amount of instances per label per field.
-  foreach (array_keys(\Drupal::entityManager()->getBundleInfo($entity_type)) as $bundle) {
-    $bundle_instances = array_filter(\Drupal::entityManager()->getFieldDefinitions($entity_type, $bundle), function ($field_definition) {
-        return $field_definition instanceof FieldConfigInterface;
-      });
+  foreach (array_keys(\Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type)) as $bundle) {
+    $bundle_instances = \Drupal::service('entity_field.manager')->getFieldDefinitions($entity_type, $bundle);
     if (isset($bundle_instances[$field_name])) {
       $instance = $bundle_instances[$field_name];
       $label = $instance->getLabel();
-      $label_counter[$label] = isset($label_counter[$label]) ? ++$label_counter[$label] : 1;
-      $all_labels[$label] = TRUE;
+      $labels[$label] = isset($labels[$label]) ? ++$labels[$label] : 1;
     }
   }
-  if (empty($label_counter)) {
-    return array($field_name, $all_labels);
+
+  if (empty($labels)) {
+    return [$field_name];
   }
-  // Sort the field labels by it most used label and return the most used one.
-  arsort($label_counter);
-  $label_counter = array_keys($label_counter);
-  return array($label_counter[0], $all_labels);
+
+  // Sort the field labels by it most used label and return the labels.
+  arsort($labels);
+  return array_keys($labels);
 }
 
 /**
