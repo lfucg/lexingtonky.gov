@@ -220,6 +220,14 @@ body {
   margin-top: 0;
 }
 
+.lex-standoutlinks {
+  .lex-icon {
+    font-size: 2.7em;
+    float: left;
+    margin-right: 0.5em;
+  }
+}
+
 .lex-image-teaser {
   // todo: figure out how to make image formatter add class to img tag
   img {
