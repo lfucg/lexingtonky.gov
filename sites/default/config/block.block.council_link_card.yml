@@ -1,9 +1,9 @@
-uuid: 1337a23c-62e2-40f0-8402-2d468a8e36b0
+uuid: a62b3367-cf18-4a9f-ad07-7ffc70857b6e
 langcode: en
 status: true
 dependencies:
   content:
-    - 'block_content:image_card_with_links:ef626273-ea04-44c9-861e-30688dd9157a'
+    - 'block_content:image_card_with_links:eec7cd6f-dfdb-4b02-9c00-a916a9b610eb'
   module:
     - block_content
     - system
@@ -14,9 +14,9 @@ theme: lex
 region: featured_bottom_first
 weight: -12
 provider: null
-plugin: 'block_content:ef626273-ea04-44c9-861e-30688dd9157a'
+plugin: 'block_content:eec7cd6f-dfdb-4b02-9c00-a916a9b610eb'
 settings:
-  id: 'block_content:ef626273-ea04-44c9-861e-30688dd9157a'
+  id: 'block_content:eec7cd6f-dfdb-4b02-9c00-a916a9b610eb'
   label: 'Urban County Council'
   provider: block_content
   label_display: visible
