@@ -82,9 +82,5 @@
     </div>
   </section>
 
-  {% if page.footer %}
-    <footer role="contentinfo">
-      {{ page.footer }}
-    </footer>
-  {% endif %}
+  {% include "@lex/footers.html.twig" %}
 </div>
