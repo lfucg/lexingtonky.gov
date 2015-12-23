@@ -1,0 +1,31 @@
+uuid: 1337a23c-62e2-40f0-8402-2d468a8e36b0
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:image_card_with_links:ef626273-ea04-44c9-861e-30688dd9157a'
+  module:
+    - block_content
+    - system
+  theme:
+    - lex
+id: council_link_card
+theme: lex
+region: featured_bottom_first
+weight: -12
+provider: null
+plugin: 'block_content:ef626273-ea04-44c9-861e-30688dd9157a'
+settings:
+  id: 'block_content:ef626273-ea04-44c9-861e-30688dd9157a'
+  label: 'Urban County Council'
+  provider: block_content
+  label_display: visible
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

@@ -4,22 +4,30 @@ status: true
 dependencies:
   config:
     - block_content.type.image_card_with_links
-    - field.field.block_content.image_card_with_links.body
+    - field.field.block_content.image_card_with_links.field_card_image
+    - field.field.block_content.image_card_with_links.field_links
   module:
-    - text
+    - image
 id: block_content.image_card_with_links.default
 targetEntityType: block_content
 bundle: image_card_with_links
 mode: default
 content:
-  body:
-    type: text_textarea_with_summary
+  field_card_image:
+    weight: 4
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
+  field_links:
     weight: 3
     settings:
-      rows: 9
-      summary_rows: 3
+      match_operator: CONTAINS
+      size: 60
       placeholder: ''
     third_party_settings: {  }
+    type: entity_reference_autocomplete
   info:
     type: string_textfield
     weight: -5

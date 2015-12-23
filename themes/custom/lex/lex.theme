@@ -36,8 +36,8 @@ function lex_preprocess_block(&$variables) {
     $variables['attributes']['class'][] = 'usa-width-one-third';
   }
   else if (in_array($element_id,
-      array('views_block__a_note_from_the_mayor_front_page'))) {
-    $variables['attributes']['class'][] = 'usa-width-two-thirds';
+      array('views_block__a_note_from_the_mayor_front_page', 'council_link_card'))) {
+    $variables['attributes']['class'][] = 'usa-width-two-thirds usa-end-row';
   }
 }
 

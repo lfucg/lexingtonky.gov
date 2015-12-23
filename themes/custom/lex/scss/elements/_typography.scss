@@ -14,3 +14,9 @@ a:focus {
 .lex-font-standout {
   color: $color-primary;
 }
+
+.lex-standoutlinks {
+  .lex-card-title {
+    text-transform: uppercase;
+  }
+}
