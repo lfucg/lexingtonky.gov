@@ -107,11 +107,7 @@
     {% endif %}
   </main>
 
-  {% if page.featured_bottom_first %}
-    <aside class="lex-featured-bottom clearfix usa-grid lex-grid-full" role="complementary">
-      {{ page.featured_bottom_first }}
-    </aside>
-  {% endif %}
+  {% include "@lex/featured-bottom.html.twig" %}
 
   {% include "@lex/footers.html.twig" %}
 
