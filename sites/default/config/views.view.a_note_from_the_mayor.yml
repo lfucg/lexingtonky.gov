@@ -100,7 +100,7 @@ display:
             preserve_tags: ''
             html: false
           element_type: ''
-          element_class: 'lex-horizontalcard-image lex-image-teaser usa-width-one-third'
+          element_class: 'lex-horizontalcard-image lex-image-teaser'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false

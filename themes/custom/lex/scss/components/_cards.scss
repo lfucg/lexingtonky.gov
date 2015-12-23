@@ -35,6 +35,8 @@
 .lex-horizontalcard-image {
   @include media($medium-screen) {
     padding-right: $lex-section-gutter;
+    width: 33%;
+    float: left;
   }
 }
 
