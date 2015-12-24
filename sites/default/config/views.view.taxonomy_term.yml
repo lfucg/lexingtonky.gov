@@ -186,7 +186,7 @@ display:
         type: default
         options:
           grouping: {  }
-          row_class: 'lex-card-title lex-card-title-medium'
+          row_class: lex-card
           default_row_class: false
       row:
         type: fields
@@ -236,12 +236,12 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
-          element_class: ''
+          element_type: h3
+          element_class: 'lex-card-title lex-card-title-medium'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
-          element_wrapper_type: ''
+          element_wrapper_type: '0'
           element_wrapper_class: ''
           element_default_classes: false
           empty: ''
