@@ -10,10 +10,11 @@
   * @see template_preprocess_input()
   */
   #}
-  <input{{ attributes }} />
+  <input{{ attributes }} placeholder="Search for..." />
   {% block submit %}
   {% endblock %}
-  <button type="submit">
-    <span class="lex-search-submit">Search</span>
+  <button type="submit" class="lex-search-submit">
+    <span class="usa-sr-only">Search</span>
+    <i class="fa fa-search lex-icon"></i>
   </button>
   {{ children }}
