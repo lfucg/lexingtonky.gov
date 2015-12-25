@@ -111,7 +111,7 @@ body {
 .lex-grid-full {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 10px 0 10px;
+  padding: 0 15px;
   @include media($large-screen) {
     padding: 0;
   }

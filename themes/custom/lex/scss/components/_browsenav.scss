@@ -18,6 +18,10 @@
     color: white;
     font-weight: $font-weight-regular;
   }
+  .lex-region-content.lex-grid-full {
+    /* remove the normal padding */
+    padding: 0;
+  }
   .lex-browsenav-column-activetrail {
     // smaller screens use breadcrumb nav for previous levels
     display: none;
@@ -70,8 +74,4 @@
   .lex-card {
     margin-bottom: $lex-section-gutter * 0.7;
   }
-}
-.lex-region-content.lex-grid-full {
-  /* remove the normal padding */
-  padding: 0;
 }
