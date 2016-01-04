@@ -3,8 +3,8 @@ name: Token
 description: Provides a user interface for the Token API and some missing core tokens.
 # core: 8.x
 
-# Information added by Drupal.org packaging script on 2015-12-23
-version: '8.x-1.x-dev'
+# Information added by Drupal.org packaging script on 2015-12-24
+version: '8.x-1.0-alpha1'
 core: '8.x'
 project: 'token'
-datestamp: 1450858143
+datestamp: 1450961343

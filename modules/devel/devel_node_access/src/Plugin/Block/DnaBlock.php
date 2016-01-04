@@ -1,30 +1,110 @@
 <?php
 /**
  * @file
- * Contains \Drupal\devel_node_access\Plugin\Block\DnaNode.
+ * Contains \Drupal\devel_node_access\Plugin\Block\DnaBlock.
  */
 
 namespace Drupal\devel_node_access\Plugin\Block;
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Block\Annotation\Block;
+use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Routing\RedirectDestinationTrait;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\devel_node_access\DnaBlockBase;
+use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
+use Drupal\user\Entity\Role;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 
 /**
  * Provides the "Devel Node Access" block.
  *
  * @Block(
- *   id = "devel_dna_node_block",
- *   admin_label = @Translation("Devel Node Access")
+ *   id = "devel_dna_block",
+ *   admin_label = @Translation("Devel Node Access"),
+ *   category = @Translation("Devel Node Access")
  * )
  */
-class DnaNode extends DnaBlockBase {
+class DnaBlock extends BlockBase implements ContainerFactoryPluginInterface {
+
+  const NODE_ACCESS = array('@node_access' => 'node_access');
+
+  use RedirectDestinationTrait;
+
+  /**
+   * The FormBuilder object.
+   *
+   * @var \Drupal\Core\Form\FormBuilderInterface
+   */
+  protected $formBuilder;
+
+  /**
+   * The Current User object.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
+   * The user storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $userStorage;
+
+  /**
+   * Constructs a new DnaBlock object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   Current user.
+   * @param \Drupal\Core\Entity\EntityStorageInterface $user_storage
+   *   The user storage.
+   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
+   *   The form builder service.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, AccountInterface $current_user, EntityStorageInterface $user_storage, FormBuilderInterface $form_builder) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->formBuilder = $form_builder;
+    $this->currentUser = $current_user;
+    $this->userStorage = $user_storage;
+  }
 
   /**
    * {@inheritdoc}
    */
-  public function access(AccountInterface $account) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    /** @noinspection PhpParamsInspection */
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('current_user'),
+      $container->get('entity.manager')->getStorage('user'),
+      $container->get('form_builder')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function blockAccess(AccountInterface $account) {
     return AccessResult::allowedIfHasPermission($account, DNA_ACCESS_VIEW);
   }
 
@@ -32,20 +112,64 @@ class DnaNode extends DnaBlockBase {
    * {@inheritdoc}
    */
   public function build() {
-    $form_state = array();
-    $form_state->addBuildInfo('args', array());
-    $form_state->addBuildInfo('callback', array($this, 'buildForm'));
-    $form = drupal_build_form('devel_node_access_form', $form_state);
-    return $form;
+    $build['#cache'] = ['max-age' => 0];
+
+//    $headers = array(
+//      array('data' => t('node'), 'style' => 'text-align:right;'),
+//      array('data' => t('prio'), 'style' => 'text-align:right;'),
+//      t('status'),
+//      t('realm'),
+//      array('data' => t('gid'), 'style' => 'text-align:right;'),
+//      t('view'),
+//      t('update'),
+//      t('delete'),
+//      t('explained'),
+//    );
+//    $rows[] = array('data' => array(array('data' => 1, 'style' => 'background-color: red; color: blue'),
+//                                    "CACHE 5", 3, 4, 5));
+
+    if (empty(self::visibleNodes())) {
+      $request_uri = \Drupal::request()->getRequestUri();
+      if ($request_uri === '/' || $request_uri === '/node') {
+        $build['#markup'] = t('@node_access information is not available for the nodes on this page due to caching &mdash; flush your caches to display it.', self::NODE_ACCESS);
+      }
+      return $build;
+    }
+
+    $build['#title'] = t('@node_access entries for nodes shown on this page', self::NODE_ACCESS);
+//    $build['test_table'] = array(
+//      '#type' => 'table',
+//      '#header' => $headers,
+//      //      array(
+//      //        t('Column 0'),
+//      //        array('data' => t('Active'), 'colspan' => '2'),
+//      //        array('data' => t('Staged'), 'colspan' => '2'),
+//      //      ),
+//      '#rows' => $rows,
+//      '#empty' => $this->t('No records found!'),
+//      '#responsive' => FALSE,
+//      '#attributes' => array(
+//        'class'       => array(),
+//        'style'       => 'text-align: left;',
+//      ),
+//    );
+
+    $build['dna_form'] = $this->formBuilder->getForm('\Drupal\devel_node_access\Form\DnaForm');
+    return $build;
   }
 
   /**
-   * {@inheritdoc}
+   * Builds and returns the node information.
+   *
+   * @param bool $debug_mode
+   *   The level of detail to include.
+   *
+   * @return array
    */
-  public function buildForm() {
+  public static function buildNodeInfo($debug_mode) {
     global $user;
 
-    $visible_nodes = self::visible_nodes();
+    $visible_nodes = self::visibleNodes();
     if (count($visible_nodes) == 0) {
       return array();
     }
@@ -54,42 +178,52 @@ class DnaNode extends DnaBlockBase {
     }
 
     // Find out whether our DnaUser block is active or not.
-    $blocks = \Drupal::entityManager()->getListController('block')->load();
+    //dpm($blocks = \Drupal::entityTypeManager()->getStorage('block')->load());
     $user_block_active = FALSE;
-    foreach ($blocks as $block) {
-      if ($block->get('plugin') == 'devel_dna_user_block') {
-        $user_block_active = TRUE;
-      }
-    }
-    $hint = '';
-    if (!$user_block_active) {
-      $hint = t('For per-user access permissions enable the <a href="@link">%DNAbU block</a>.', array('@link' => url('admin/structure/block'), '%DNAbU' => t('Devel Node Access by User')));
-    }
+    //foreach ($blocks as $block) {
+    //  if ($block->get('plugin') == 'devel_dna_user_block') {
+    //    $user_block_active = TRUE;
+    //  }
+    //}
 
-    $output = array('title' => array(
-      '#prefix' => '<h2>',
-      '#markup' => t('node_access entries for nodes shown on this page'),
-      '#suffix' => '</h2>',
-    ));
 
     // Include rows where nid == 0.
     $nids = array_merge(array(0 => 0), $visible_nodes);
-    $query = db_select('node_access', 'na');
+    $query = \Drupal::database()->select('node_access', 'na');
     $query
       ->fields('na')
-      ->condition('na.nid', $nids, 'IN')
+      ->condition('na.nid', $nids, 'IN');
+    $query
       ->orderBy('na.nid')
       ->orderBy('na.realm')
       ->orderBy('na.gid');
-    $nodes = node_load_multiple($nids);
+    $nodes = Node::loadMultiple($nids);
 
-    if (!\Drupal::config('devel_node_access.settings')->get('debug_mode')) {
-      $headers = array(t('node'), t('realm'), t('gid'), t('view'), t('update'), t('delete'), t('explained'));
+    if (!$debug_mode) {
+      $headers = array('node', 'realm', 'gid', 'view', 'update', 'delete', 'explained');
       $rows = array();
       foreach ($query->execute() as $row) {
-        $explained = \Drupal::moduleHandler()->invokeAll('node_access_explain', $row);
-        $rows[] = array(
-          (empty($row->nid) ? '0' : '<a href="#node-' . $row->nid . '">' . self::get_node_title($nodes[$row->nid], TRUE) . '</a>'),
+        $explained = \Drupal::moduleHandler()->invokeAll('node_access_explain', [$row]);
+        $node_title = self::get_node_title($nodes[$row->nid]);
+        $title_attribute = \Drupal::request()->getRequestUri();
+        if (Unicode::strlen($node_title) > 20) {
+          $title_attribute = $title_attribute . ': ' . $node_title;
+          $node_title = Unicode::substr($node_title, 0, 18) . '...';
+        }
+
+        $rows[]     = array(
+          (empty($row->nid) ? '0'
+            : Link::fromTextAndUrl(
+              $node_title,
+              Url::fromUri(
+                \Drupal::request()->getUri(),
+                [
+                  'fragment' => 'node-' . $row->nid,
+                  'attributes' => ['title' => $title_attribute]
+                ]
+              )
+            )
+          ),
           $row->realm,
           $row->gid,
           $row->grant_view,
@@ -102,10 +236,8 @@ class DnaNode extends DnaBlockBase {
         '#theme'      => 'table',
         '#header'     => $headers,
         '#rows'       => $rows,
-        '#attributes' => array('style' => 'text-align: left')
+        '#attributes' => array('style' => 'text-align: left'),
       );
-
-      $hint = t('To see more details enable <a href="@debug_mode">debug mode</a>.', array('@debug_mode' => url('admin/config/development/devel', array('fragment' => 'edit-devel-node-access')))) . (empty($hint) ? '' : ' ' . $hint);
     }
     else {
       $tr = 't';
@@ -142,7 +274,7 @@ class DnaNode extends DnaBlockBase {
       foreach ($nids as $nid) {
         $top_priority = -99999;
         $acquired_records_nid = array();
-        if ($node = node_load($nid)) {
+        if ($node = Node::load($nid)) {
           // Check node_access_acquire_grants().
           $records = self::simulate_module_invoke_all('node_access_records', $node);
           // Check drupal_alter('node_access_records').
@@ -165,9 +297,9 @@ class DnaNode extends DnaBlockBase {
                 $record['priority'] = (isset($record['priority']) ? $priority : '&ndash;&nbsp;');
                 $record['history'] = $data_by_realm_gid;
                 $acquired_records_nid[$priority][$record['realm']][$record['gid']] = $record + array(
-                  '#title'  => self::get_node_title($node),
-                  '#module' => (isset($record['#module']) ? $record['#module'] : ''),
-                );
+                    '#title'  => self::get_node_title($node),
+                    '#module' => (isset($record['#module']) ? $record['#module'] : ''),
+                  );
               }
             }
             krsort($acquired_records_nid);
@@ -250,25 +382,25 @@ class DnaNode extends DnaBlockBase {
             foreach ($acquired_records_realm as $gid => $acquired_record) {
               // TODO: Handle priority.
               //if ($priority == $top_priority) {
-                if (empty($acquired_record['grant_view']) && empty($acquired_record['grant_update']) && empty($acquired_record['grant_delete'])) {
-                  $acquired_record['state'] = 'empty';
+              if (empty($acquired_record['grant_view']) && empty($acquired_record['grant_update']) && empty($acquired_record['grant_delete'])) {
+                $acquired_record['state'] = 'empty';
+              }
+              else {
+                if (isset($active_records[$nid][$realm][$gid])) {
+                  $acquired_record['state'] = (isset($acquired_record['#removed']) ? 'removed!' : 'ok');
                 }
                 else {
-                  if (isset($active_records[$nid][$realm][$gid])) {
-                    $acquired_record['state'] = (isset($acquired_record['#removed']) ? 'removed!' : 'ok');
-                  }
-                  else {
-                    $acquired_record['state'] = (isset($acquired_record['#removed']) ? 'removed' : 'missing');
-                  }
-                  if ($acquired_record['state'] == 'ok') {
-                    foreach (array('view', 'update', 'delete') as $op) {
-                      $active_record = (array) $active_records[$nid][$realm][$gid];
-                      if (empty($acquired_record["grant_$op"]) != empty($active_record["grant_$op"])) {
-                        $acquired_record["grant_$op!"] = $active_record["grant_$op"];
-                      }
+                  $acquired_record['state'] = (isset($acquired_record['#removed']) ? 'removed' : 'missing');
+                }
+                if ($acquired_record['state'] == 'ok') {
+                  foreach (array('view', 'update', 'delete') as $op) {
+                    $active_record = (array) $active_records[$nid][$realm][$gid];
+                    if (empty($acquired_record["grant_$op"]) != empty($active_record["grant_$op"])) {
+                      $acquired_record["grant_$op!"] = $active_record["grant_$op"];
                     }
                   }
                 }
+              }
               //}
               //else {
               //  $acquired_record['state'] = (isset($active_records[$nid][$realm][$gid]) ? 'illegitimate' : 'ignored');
@@ -438,7 +570,8 @@ class DnaNode extends DnaBlockBase {
       array_shift($nids);  // Remove the 0.
       $accounts = array();
       $variables += array(
-        '!username' => '<em class="placeholder">' . theme('username', array('account' => $user)) . '</em>',
+        //'!username' => '<em class="placeholder">' . theme('username', array('account' => $user)) . '</em>',
+        '!username' => '<em class="placeholder">' . $user->getDisplayName() . '</em>',
         '%uid'      => $user->id(),
       );
 
@@ -462,15 +595,15 @@ class DnaNode extends DnaBlockBase {
 
       if (isset($single_nid) && !$user_block_active) {
         // Only for single nodes.
-        if (user_is_logged_in()) {
-          $accounts[] = user_load(0);  // Anonymous, too.
+        if (\Drupal::currentUser()->isAuthenticated()) {
+          $accounts[] = User::load(0);  // Anonymous, too.
         }
         foreach ($accounts as $account) {
           $nid_items = array();
           foreach ($nids as $nid) {
             $op_items = array();
             foreach (array('create', 'view', 'update', 'delete') as $op) {
-              $explain = self::explain_access($op, node_load($nid), $account);
+              $explain = self::explainAccess($op, Node::load($nid), $account);
               $op_items[] = "<div style='width: 5em; display: inline-block'>" . t('%op:', array('%op' => $op)) . ' </div>' . $explain[2];
             }
             $nid_items[] = array(
@@ -505,11 +638,103 @@ class DnaNode extends DnaBlockBase {
       }
     }
 
-    if (!empty($hint)) {
-      $output[] = array(
-        '#theme'        => 'form_element',
-        '#description'  => '(' . $hint . ')',
-      );
+    return $output;
+  }
+
+  /**
+   * Builds and returns the by-user information.
+   *
+   * @return array|null
+   */
+  public static function buildByUserInfo() {
+    global $user;
+
+    $output = array();
+    return $output;
+
+    // Show which users can access this node.
+    $menu_item = menu_get_item();
+    $map = $menu_item['original_map'];
+    if ($map[0] != 'node' || !isset($map[1]) || !is_numeric($map[1]) || isset($map[2])) {
+      // Ignore anything but node/%.
+      return NULL;
+    }
+
+    if (isset($menu_item['map'][1]) && is_object($node = $menu_item['map'][1])) {
+      // We have the node.
+    }
+    elseif (is_numeric($menu_item['original_map'][1])) {
+      $node = node_load($menu_item['original_map'][1]);
+    }
+    if (isset($node)) {
+      $nid = $node->id();
+      $langcode = $node->langcode->value;
+      $language = language_load($langcode);
+      $node_type = node_type_load($node->bundle());
+      $headers = array(t('username'), '<span title="' . t("Create '@langname'-language nodes of the '@Node_type' type.", array('@langname' => $language->name, '@Node_type' => $node_type->name)) . '">' . t('create') . '</span>', t('view'), t('update'), t('delete'));
+      $rows = array();
+      // Determine whether to use Ajax or pre-populate the tables.
+      if ($ajax = \Drupal::config('devel_node_access.settings')->get('user_ajax')) {
+        $output['#attached']['library'][] = 'devel_node_access/node_access';
+      }
+      // Find all users. The following operations are very inefficient, so we
+      // limit the number of users returned.  It would be better to make a
+      // pager query, or at least make the number of users configurable.  If
+      // anyone is up for that please submit a patch.
+      $query = db_select('users', 'u')
+        ->fields('u', array('uid'))
+        ->orderBy('u.access', 'DESC')
+        ->range(0, 9);
+      $uids = $query->execute()->fetchCol();
+      array_unshift($uids, 0);
+      $accounts = user_load_multiple($uids);
+      foreach ($accounts as $account) {
+        $username = theme('username', array('account' => $account));
+        $uid = $account->id();
+        if ($uid == $user->id()) {
+          $username = '<strong>' . $username . '</strong>';
+        }
+        $rows[] = array(
+          $username,
+          array(
+            'id' => 'create-' . $nid . '-' . $uid,
+            'class' => 'dna-permission',
+            'data' => $ajax ? NULL : theme('dna_permission', array('permission' => self::explainAccess('create', $node, $account, $langcode))),
+          ),
+          array(
+            'id' => 'view-' . $nid . '-' . $uid,
+            'class' => 'dna-permission',
+            'data' => $ajax ? NULL : theme('dna_permission', array('permission' => self::explainAccess('view', $node, $account, $langcode))),
+          ),
+          array(
+            'id' => 'update-' . $nid . '-' . $uid,
+            'class' => 'dna-permission',
+            'data' => $ajax ? NULL : theme('dna_permission', array('permission' => self::explainAccess('update', $node, $account, $langcode))),
+          ),
+          array(
+            'id' => 'delete-' . $nid . '-' . $uid,
+            'class' => 'dna-permission',
+            'data' => $ajax ? NULL : theme('dna_permission', array('permission' => self::explainAccess('delete', $node, $account, $langcode))),
+          ),
+        );
+      }
+      if (count($rows)) {
+        $output['title'] = array(
+          '#prefix' => '<h2>',
+          '#markup' => t('Access permissions by user for the %langname language', array('%langname' => $language->name)),
+          '#postfix' => '</h2>',
+        );
+        $output[] = array(
+          '#theme'      => 'table',
+          '#header'     => $headers,
+          '#rows'       => $rows,
+          '#attributes' => array('style' => 'text-align: left'),
+        );
+        $output[] = array(
+          '#theme'        => 'form_element',
+          '#description'  => t('(This table lists the most-recently active users. Hover your mouse over each result for more details.)'),
+        );
+      }
     }
     return $output;
   }
@@ -813,24 +1038,17 @@ class DnaNode extends DnaBlockBase {
   /**
    * Helper function to return a sanitized node title.
    */
-  private static function get_node_title($node, $clip_and_decorate = FALSE) {
+  private static function get_node_title(Node $node) {
     if (isset($node)) {
       $nid = $node->id();
-      if ($node_title = $node->title->value) {
-        $node_title = Html::escape($node_title);
-        if ($clip_and_decorate) {
-          if (drupal_strlen($node_title) > 20) {
-            $node_title = "<span title='node/$nid: $node_title'>" . drupal_substr($node_title, 0, 15) . '...</span>';
-          }
-          $node_title = '<span title="node/' . $nid . '">' . $node_title . '</span>';
-        }
+      if ($node_title = $node->getTitle()) {
         return $node_title;
       }
       elseif ($nid) {
         return $nid;
       }
     }
-    return '&mdash;';
+    return '—';
   }
 
   /**
@@ -854,10 +1072,204 @@ class DnaNode extends DnaBlockBase {
         if (is_scalar($row[$j])) {
           $row[$j] = array('data' => $row[$j]);
         }
-        $row[$j]['style'][] = 'text-align: right;';
+        dpm($j);
+        dpm($row);
+//        $row[$j]['style'][] = 'text-align: right;';
       }
     }
     return $row;
   }
+
+
+  /**
+   * Helper function that mimics node.module's node_access() function.
+   *
+   * Unfortunately, this needs to be updated manually whenever node.module
+   * changes!
+   *
+   * @param string $op
+   *   Operation to check.
+   * @param NodeInterface $node
+   *   Node to check.
+   * @param AccountInterface $account
+   *   (optional) The user object for the user whose access is being checked. If
+   *   omitted, the current user is used. Defaults to NULL.
+   * @param string $langcode
+   *   (optional) The language code for which access is being checked. If
+   *   omitted, the default language is used. Defaults to NULL.
+   *
+   * @return array
+   *   An array suitable for theming with theme_dna_permission().
+   */
+  public static function explainAccess($op, NodeInterface $node, AccountInterface $account = NULL, $langcode = NULL) {
+    $user = Drupal::currentUser();
+
+    if (!$node) {
+      return array(
+        FALSE,
+        '???',
+        t('No node passed to node_access(); this should never happen!'),
+      );
+    }
+    if (!in_array($op, array('view', 'update', 'delete', 'create'), TRUE)) {
+      return array(
+        FALSE,
+        t('!NO: invalid $op', array('!NO' => t('NO'))),
+        t("'@op' is an invalid operation!", array('@op' => $op)),
+      );
+    }
+
+    if ($op == 'create' && is_object($node)) {
+      $node = $node->bundle();
+    }
+
+    if (!empty($account)) {
+      // To try to get the most authentic result we impersonate the given user!
+      // This may reveal bugs in other modules, leading to contradictory
+      // results.
+      /* @var \Drupal\Core\Session\AccountSwitcherInterface $account_switcher */
+      $account_switcher = Drupal::service('account_switcher');
+      $account_switcher->switchTo($account);
+      $result = DnaBlock::explainAccess($op, $node, NULL, $langcode);
+      $account_switcher->switchBack();
+      $access_handler = Drupal::entityTypeManager()->getAccessControlHandler('node');
+      $second_opinion = $access_handler->access($node, $op, $account);
+      if ($second_opinion != $result[0]) {
+        $result[1] .= '<span class="' . ($second_opinion ? 'ok' : 'error') . '" title="Core seems to disagree on this item. This is a bug in either DNA or Core and should be fixed! Try to look at this node as this user and check whether there is still disagreement.">*</span>';
+      }
+      return $result;
+    }
+
+    if (empty($langcode)) {
+      $langcode = (is_object($node) && $node->id()) ? $node->language()->getId() : '';
+    }
+
+    $variables = array(
+      '!NO'                 => t('NO'),
+      '!YES'                => t('YES'),
+      '!bypass_node_access' => t('bypass node access'),
+      '!access_content'     => t('access content'),
+    );
+
+    if (Drupal::currentUser()->hasPermission('bypass node access')) {
+      return array(
+        TRUE,
+        t('!YES: bypass node access', $variables),
+        t("!YES: This user has the '!bypass_node_access' permission and may do everything with nodes.", $variables),
+      );
+    }
+
+    if (!Drupal::currentUser()->hasPermission('access content')) {
+      return array(
+        FALSE,
+        t('!NO: access content', $variables),
+        t("!NO: This user does not have the '!access_content' permission and is denied doing anything with content.", $variables),
+      );
+    }
+
+    foreach (Drupal::moduleHandler()->getImplementations('node_access') as $module) {
+      $function = $module . '_node_access';
+      if (function_exists($function)) {
+        $result = $function($node, $op, $user, $langcode);
+        if ($module == 'node') {
+          $module = 'node (permissions)';
+        }
+        if (isset($result)) {
+          /* TODO
+          if ($result === NODE_ACCESS_DENY) {
+            $denied_by[] = $module;
+          }
+          elseif ($result === NODE_ACCESS_ALLOW) {
+            $allowed_by[] = $module;
+          }
+          */
+          $access[] = $result;
+        }
+      }
+    }
+    $variables += array(
+      '@deniers'  => (empty($denied_by) ? NULL : implode(', ', $denied_by)),
+      '@allowers' => (empty($allowed_by) ? NULL : implode(', ', $allowed_by)),
+    );
+    if (!empty($denied_by)) {
+      $variables += array(
+        '%module' => $denied_by[0] . (count($denied_by) > 1 ? '+' : ''),
+      );
+      return [
+        FALSE,
+        t('!NO: by %module', $variables),
+        empty($allowed_by)
+          ? t("!NO: hook_node_access() of the following module(s) denies this: @deniers.", $variables)
+          : t("!NO: hook_node_access() of the following module(s) denies this: @deniers &ndash; even though the following module(s) would allow it: @allowers.", $variables),
+      ];
+    }
+    if (!empty($allowed_by)) {
+      $variables += array(
+        '%module' => $allowed_by[0] . (count($allowed_by) > 1 ? '+' : ''),
+        '!view_own_unpublished_content' => t('view own unpublished content'),
+      );
+      return array(
+        TRUE,
+        t('!YES: by %module', $variables),
+        t("!YES: hook_node_access() of the following module(s) allows this: @allowers.", $variables),
+      );
+    }
+
+    // TODO if ($op == 'view' && !$node->get('status', $langcode) && \Drupal::currentUser()->hasPermission('view own unpublished content') && $user->uid == $node->get('uid', $langcode) && $user->uid != 0) {
+    if ($op == 'view' && !$node->isPublished() && Drupal::currentUser()->hasPermission('view own unpublished content') && $user->id() == $node->getRevisionAuthor()->id() && $user->id() != 0) {
+      return array(
+        TRUE,
+        t('!YES: view own unpublished content', $variables),
+        t("!YES: The node is unpublished, but the user has the '!view_own_unpublished_content' permission.", $variables),
+      );
+    }
+
+    if ($op != 'create' && $node->id()) {
+      $access_handler = Drupal::entityTypeManager()->getAccessControlHandler('node');
+      // TODO if (node_access($op, $node, $user, $langcode)) {  // delegate this part
+      if ($access_handler->access($node, $op, $user)) {
+        // Delegate this part.
+        $variables['@node_access_table'] = '{node_access}';
+        return array(
+          TRUE,
+          t('!YES: @node_access_table', $variables),
+          t('!YES: Node access allows this based on one or more records in the @node_access_table table (see the other DNA block!).', $variables),
+        );
+      }
+    }
+
+    return array(
+      FALSE,
+      t('!NO: no reason', $variables),
+      t("!NO: None of the checks resulted in allowing this, so it's denied.", $variables)
+      . ($op == 'create' ? ' ' . t('This is most likely due to a withheld permission.') : ''),
+    );
+  }
+
+  /**
+   * Collects the IDs of the visible nodes on the current page.
+   *
+   * @param int|null $nid
+   *   A node ID to save.
+   *
+   * @return array
+   *   The array of saved node IDs.
+   */
+  public static function visibleNodes($nid = NULL) {
+    static $nids = array();
+    if (isset($nid)) {
+      $nids[$nid] = $nid;
+    }
+    elseif (empty($nids)) {
+      ///** @var NodeInterface $node */
+      //$node = NULL;
+      if ($node = \Drupal::routeMatch()->getParameter('node')) {
+        $nid = $node->id();
+        $nids[$nid] = $nid;
+      }
+    }
+    return $nids;
+  }
+
 
 }
