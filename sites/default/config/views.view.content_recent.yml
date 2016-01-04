@@ -63,10 +63,10 @@ display:
       row:
         type: fields
         options:
-          default_field_elements: false
           inline: {  }
           separator: ''
           hide_empty: false
+          default_field_elements: true
       fields:
         title:
           id: title
@@ -182,7 +182,7 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: text_trimmed
+          type: text_summary_or_trimmed
           settings:
             trim_length: 140
           group_column: value
