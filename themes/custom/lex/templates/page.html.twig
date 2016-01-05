@@ -59,7 +59,7 @@
  * @ingroup themeable
  */
 #}
-<div class="layout-container">
+<div class="layout-container {{ is_front ? 'lex-frontpage' : '' }}">
   <header class="lex-site-header" role="banner">
     {{ page.header }}
     {{ page.featured_top }}

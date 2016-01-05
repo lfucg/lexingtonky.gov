@@ -5,6 +5,7 @@ $font-sans: 'Helvetica Neue', 'Helvetica', 'Source Sans Pro', 'Arial', sans-seri
 $font-weight-light: 200;
 $font-weight-regular: 400;
 $font-weight-medium: 550;
+$font-weight-heavy: 650;
 
 // Color
 $lex-alpha-level: 0.75;
@@ -20,6 +21,8 @@ $lex-black: #000000;
 
 // Magic numbers
 $lex-section-gutter: 1.7em;
+$lex-section-half-gutter: $lex-section-gutter / 2;
+$lex-max-width: 1200px;
 
 // WDS overrides
 $color-primary: $lex-blue;
@@ -81,7 +84,7 @@ body {
 .lex-site-navbar {
   background-color: rgba($lex-white, $lex-alpha-level);
   padding-top: 9px;
-  padding-bottom: 5px;
+  padding-bottom: $lex-section-half-gutter;
   .lex-logo {
     height: 40px;
   }
@@ -97,6 +100,13 @@ body {
   }
 }
 
+.lex-frontpage {
+  .lex-site-navbar {
+    padding-bottom: 0px;
+  }
+}
+
+
 .lex-site-navbar-secondary {
   margin-top: 0.7em;
   .lex-search {
@@ -109,7 +119,7 @@ body {
 }
 
 .lex-grid-full {
-  max-width: 1200px;
+  max-width: $lex-max-width;
   margin: 0 auto;
   padding: 0 15px;
   @include media($large-screen) {
@@ -153,10 +163,26 @@ body {
 }
 
 .lex-region-breadcrumb {
-  padding-bottom: $lex-section-gutter;
+  padding-bottom: $lex-section-half-gutter;
+  &.lex-slab {
+    padding-top: $lex-section-half-gutter;
+  }
+  @include media($large-screen) {
+    padding-bottom: $lex-section-gutter;
+    &.lex-slab {
+      padding-top: $lex-section-gutter;
+    }
+  }
+  a, a:visited {
+    text-decoration: underline;
+  }
+}
 
-  .lex-nav-breadcrumbs-item:not(:last-of-type):after {
-    content: '/';
+.lex-breadcrumb-item {
+  float: left;
+  .lex-icon {
+    padding: 0 0.2em 0 0.1em;
+    color: $lex-grey;
   }
 }
 

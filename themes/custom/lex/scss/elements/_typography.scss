@@ -3,6 +3,11 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: $font-weight-regular;
 }
 
+.lex-pagetitle {
+  font-size: 2em;
+  margin: 0.5em 0;
+}
+
 a.lex-font, a, a:visited, a:hover, a:active {
   color: $lex-dark-grey;
 }

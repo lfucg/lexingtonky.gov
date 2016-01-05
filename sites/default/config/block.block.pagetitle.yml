@@ -1,0 +1,27 @@
+uuid: 18c3560a-3d7d-4eca-b34b-75eaba2782b0
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+  theme:
+    - lex
+id: pagetitle
+theme: lex
+region: highlighted
+weight: null
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  provider: core
+  label_display: '0'
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      page: page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

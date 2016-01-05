@@ -17,18 +17,12 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 100
+    weight: 0
     settings: {  }
     third_party_settings: {  }
-  field_lex_site_nav:
-    weight: 102
-    label: hidden
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
   links:
-    weight: 101
+    weight: 1
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_lex_site_nav: true
