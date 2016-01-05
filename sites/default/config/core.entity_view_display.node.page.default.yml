@@ -22,11 +22,13 @@ content:
     third_party_settings: {  }
   field_lex_site_nav:
     weight: 102
-    label: above
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
   links:
     weight: 101
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }
