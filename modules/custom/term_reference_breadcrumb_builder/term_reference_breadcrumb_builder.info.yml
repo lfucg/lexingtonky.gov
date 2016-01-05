@@ -1,0 +1,5 @@
+name: TermReferenceBreadcrumbBuilder
+type: module
+description: Build breadcrumbs referenced by content types
+core: 8.x
+package: Lexington

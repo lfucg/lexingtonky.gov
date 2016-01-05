@@ -37,6 +37,7 @@ module:
   system: 0
   taxonomy: 0
   taxonomy_menu: 0
+  term_reference_breadcrumb_builder: 0
   text: 0
   token: 0
   toolbar: 0

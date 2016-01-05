@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Contains term_reference_breadcrumb_builder.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function term_reference_breadcrumb_builder_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the term_reference_breadcrumb_builder module.
+    case 'help.page.term_reference_breadcrumb_builder':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Build breadcrumbs referenced by content types') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function term_reference_breadcrumb_builder_theme() {
+  $theme = [];
+
+  return $theme;
+}
