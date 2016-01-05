@@ -61,7 +61,7 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   @include media($large-screen) {
-    min-height: 400px;
+    min-height: 300px;
   }
 }
 
