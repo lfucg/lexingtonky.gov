@@ -203,6 +203,10 @@ body {
   }
 }
 
+input:focus, input[type=search]:focus {
+  box-shadow: none;
+}
+
 .lex-search {
   .lex-search-submit {
     border-radius: 0;
