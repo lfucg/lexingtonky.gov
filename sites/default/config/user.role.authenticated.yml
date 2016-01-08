@@ -4,14 +4,20 @@ status: true
 dependencies: {  }
 id: authenticated
 label: 'Authenticated user'
-weight: 1
+weight: -9
 is_admin: false
 permissions:
-  - 'access content'
-  - 'use text format basic_html'
-  - 'access comments'
-  - 'post comments'
-  - 'skip comment approval'
-  - 'access site-wide contact form'
-  - 'access shortcuts'
-  - 'search content'
+  0: 'access content'
+  1: 'use text format basic_html'
+  5: 'access site-wide contact form'
+  6: 'access shortcuts'
+  7: 'search content'
+  8: 'edit terms in tags'
+  9: 'access tour'
+  10: 'access files overview'
+  11: 'create page content'
+  12: 'delete own page content'
+  13: 'edit any page content'
+  14: 'edit own page content'
+  15: 'revert page revisions'
+  16: 'view page revisions'

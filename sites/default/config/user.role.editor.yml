@@ -1,0 +1,44 @@
+uuid: 6ddf906b-9461-4c38-9f00-cadaccb914e3
+langcode: en
+status: true
+dependencies: {  }
+id: editor
+label: Editor
+weight: -8
+is_admin: null
+permissions:
+  - 'access contextual links'
+  - 'access files overview'
+  - 'use text format restricted_html'
+  - 'access content overview'
+  - 'view all revisions'
+  - 'view own unpublished content'
+  - 'create page content'
+  - 'delete any page content'
+  - 'delete own page content'
+  - 'delete page revisions'
+  - 'edit any page content'
+  - 'edit own page content'
+  - 'revert page revisions'
+  - 'view page revisions'
+  - 'create event content'
+  - 'delete any event content'
+  - 'delete own event content'
+  - 'delete event revisions'
+  - 'edit any event content'
+  - 'edit own event content'
+  - 'revert event revisions'
+  - 'view event revisions'
+  - 'create news_article content'
+  - 'delete any news_article content'
+  - 'delete own news_article content'
+  - 'delete news_article revisions'
+  - 'edit any news_article content'
+  - 'edit own news_article content'
+  - 'revert news_article revisions'
+  - 'view news_article revisions'
+  - 'create url aliases'
+  - 'access in-place editing'
+  - 'edit terms in tags'
+  - 'access tour'
+  - 'access administration pages'

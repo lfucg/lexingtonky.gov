@@ -1,0 +1,22 @@
+uuid: 5a03d304-7236-4988-9a47-718790a6ac97
+langcode: en
+status: true
+dependencies: {  }
+id: webmaster
+label: Webmaster
+weight: -7
+is_admin: null
+permissions:
+  32: 'administer menu'
+  33: 'administer taxonomy'
+  34: 'delete terms in organizations'
+  35: 'edit terms in organizations'
+  36: 'delete terms in tags'
+  37: 'delete terms in site_navigation'
+  38: 'edit terms in site_navigation'
+  39: 'access toolbar'
+  40: 'administer account settings'
+  41: 'administer permissions'
+  42: 'administer users'
+  43: 'access user profiles'
+  44: 'access administration pages'
