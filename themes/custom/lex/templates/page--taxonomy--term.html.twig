@@ -61,10 +61,7 @@
 #}
 
 <div class="layout-container">
-  <header class="lex-site-header" role="banner">
-    {{ page.header }}
-    {{ page.featured_top }}
-  </header>
+  {% include "@lex/includes/header.html.twig" %}
 
   {{ page.breadcrumb }}
 

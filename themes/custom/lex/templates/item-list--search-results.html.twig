@@ -1,0 +1,5 @@
+{%- for item in items -%}
+  {% set item = item.attributes.addClass('lex-card') %}
+{%- endfor -%}
+
+{% include "@stable/dataset/item-list.html.twig" %}

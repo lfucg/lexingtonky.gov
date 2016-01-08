@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: lex_frontpagequicklinks
 theme: lex
-region: header
-weight: -12
+region: navbar_secondary
+weight: -14
 provider: null
 plugin: 'block_content:35639d14-6857-4c30-9608-8d3e24d5975c'
 settings:

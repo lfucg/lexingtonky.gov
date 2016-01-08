@@ -42,7 +42,7 @@
  *   comment/reply/12345).
  *
  * Regions:
- * - page.header: Items for the header region.
+ * - page.navbar_secondary: Items for the header region.
  * - page.primary_menu: Items for the primary menu region.
  * - page.secondary_menu: Items for the secondary menu region.
  * - page.highlighted: Items for the highlighted content region.
@@ -60,10 +60,7 @@
  */
 #}
 <div class="layout-container {{ is_front ? 'lex-frontpage' : '' }}">
-  <header class="lex-site-header" role="banner">
-    {{ page.header }}
-    {{ page.featured_top }}
-  </header>
+  {% include "@lex/includes/header.html.twig" %}
 
   {{ page.help }}
 

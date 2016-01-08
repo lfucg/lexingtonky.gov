@@ -41,9 +41,36 @@ function lex_preprocess_block(&$variables) {
   }
 }
 
+/**
+ * Implements hook_form_alter() to add classes to the search form.
+ */
+function lex_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if (isset($form['advanced'])) {
+    unset($form['advanced']);
+    unset($form['basic']['keys']['#title']);
+    // submit is rendered in search input template
+    unset($form['basic']['submit']);
+    unset($form['help_link']);
+
+    array_push($form['#attributes']['class'], 'lex-search', 'lex-search-page-form', 'usa-search', 'usa-search-big');
+  }
+}
+
+function lex_preprocess_item_list__search_results(&$variables) {
+  $variables['attributes']['class'][] = 'usa-unstyled-list';
+}
+
+function lex_preprocess_search_result(&$variables) {
+  $variables['title_attributes']['class'][] = 'lex-card-title lex-card-title-medium';
+  $variables['content_attributes']['class'][] = 'lex-card-subtitle';
+}
+
 function lex_preprocess_form(&$variables) {
   if ($variables['attributes']['id'] == 'search-block-form') {
-    $variables['attributes']['class'] = array('usa-search lex-search');
+    if (! isset($variables['attributes']['class'])) {
+      $variables['attributes']['class'] = array();
+    }
+    array_push($variables['attributes']['class'], 'usa-search', 'lex-search');
   }
 }
 

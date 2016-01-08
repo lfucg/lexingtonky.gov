@@ -9,8 +9,8 @@ dependencies:
     - lex
 id: lex_lex_header_search_form
 theme: lex
-region: header
-weight: -11
+region: navbar_secondary
+weight: -13
 provider: null
 plugin: search_form_block
 settings:
@@ -21,6 +21,6 @@ settings:
 visibility:
   request_path:
     id: request_path
-    pages: '<front>'
+    pages: "<front>\r\n/search/*"
     negate: true
     context_mapping: {  }

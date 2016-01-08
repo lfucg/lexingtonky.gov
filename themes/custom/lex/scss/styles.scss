@@ -22,6 +22,7 @@ $lex-black: #000000;
 // Magic numbers
 $lex-section-gutter: 1.7em;
 $lex-section-half-gutter: $lex-section-gutter / 2;
+$lex-section-double-gutter: $lex-section-gutter * 2;
 $lex-max-width: 1200px;
 
 // WDS overrides
@@ -213,13 +214,19 @@ input:focus, input[type=search]:focus {
     background-color: white;
   }
   input {
-    border: none;
+    max-width: none;
+    border-top: 1px solid $lex-grey;
+    border-bottom: 1px solid $lex-grey;
+    border-left: 1px solid $lex-grey;
   }
 
   /* right-align search icon */
   .lex-search-submit {
     text-align: right;
     padding-right: 1em;
+    border-top: 1px solid $lex-grey;
+    border-right: 1px solid $lex-grey;
+    border-bottom: 1px solid $lex-grey;
   }
 
   .lex-icon {
@@ -228,6 +235,10 @@ input:focus, input[type=search]:focus {
   .lex-submit-drupalprovided {
     display: none;
   }
+}
+
+.lex-search-page-form {
+  margin-top: $lex-section-double-gutter;
 }
 
 .lex-search-hero {
