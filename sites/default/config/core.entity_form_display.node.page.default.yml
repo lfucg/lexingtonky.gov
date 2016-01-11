@@ -5,8 +5,11 @@ dependencies:
   config:
     - field.field.node.page.body
     - field.field.node.page.field_lex_site_nav
+    - field.field.node.page.field_page_overview
+    - field.field.node.page.field_page_section
     - node.type.page
   module:
+    - paragraphs
     - path
     - text
 id: node.page.default
@@ -16,7 +19,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 31
+    weight: 7
     settings:
       rows: 9
       summary_rows: 3
@@ -24,44 +27,52 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 3
     settings: {  }
     third_party_settings: {  }
   field_lex_site_nav:
-    weight: 32
+    weight: 6
     settings: {  }
     third_party_settings: {  }
     type: options_select
+  field_page_overview:
+    weight: 1
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea_with_summary
+  field_page_section:
+    type: entity_reference_paragraphs
+    weight: 5
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+    third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 4
     settings: {  }
-    third_party_settings: {  }
-  promote:
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    weight: 15
-    third_party_settings: {  }
-  sticky:
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    weight: 16
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 0
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 2
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  promote: true
+  sticky: true

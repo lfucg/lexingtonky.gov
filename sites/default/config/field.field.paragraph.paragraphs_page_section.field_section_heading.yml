@@ -1,0 +1,19 @@
+uuid: 36208c9f-fc23-4d77-ba27-391ef9f22f95
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_section_heading
+    - paragraphs.paragraphs_type.paragraphs_page_section
+id: paragraph.paragraphs_page_section.field_section_heading
+field_name: field_section_heading
+entity_type: paragraph
+bundle: paragraphs_page_section
+label: 'Section heading'
+description: 'Example: <strong>Trash collection schedule</strong>. A short description of the section in plain language.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

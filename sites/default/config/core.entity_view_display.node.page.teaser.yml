@@ -6,6 +6,8 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - field.field.node.page.body
     - field.field.node.page.field_lex_site_nav
+    - field.field.node.page.field_page_overview
+    - field.field.node.page.field_page_section
     - node.type.page
   module:
     - text
@@ -24,4 +26,6 @@ content:
     third_party_settings: {  }
 hidden:
   field_lex_site_nav: true
+  field_page_overview: true
+  field_page_section: true
   links: true
