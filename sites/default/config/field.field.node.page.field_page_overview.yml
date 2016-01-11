@@ -12,7 +12,7 @@ field_name: field_page_overview
 entity_type: node
 bundle: page
 label: 'Page overview'
-description: "A short summary of the page in plain language. For example:\r\n\r\n[good overview example]"
+description: "<p>A short summary of the page in plain language. </p>\r\n\r\n<strong>Resources</strong>\r\n<ol>\r\n<li><a href=\"http://www.hemingwayapp.com/\">Hemingway Editor</a> to make sure the reading level is below 8th grade!</li>\r\n<li><a href=\"https://lfucg.github.io/content-guide/\">City of Lexington Content Guide</a>\r\n</ol>"
 required: false
 translatable: false
 default_value: {  }

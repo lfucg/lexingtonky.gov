@@ -11,7 +11,7 @@ id: node.page.body
 field_name: body
 entity_type: node
 bundle: page
-label: Body
+label: 'Body (no longer used)'
 description: ''
 required: false
 translatable: true
