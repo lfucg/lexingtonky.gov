@@ -17,15 +17,15 @@ targetEntityType: node
 bundle: page
 mode: teaser
 content:
-  body:
-    label: hidden
+  field_page_overview:
     type: text_summary_or_trimmed
-    weight: 100
+    weight: 0
+    label: above
     settings:
       trim_length: 600
     third_party_settings: {  }
 hidden:
+  body: true
   field_lex_site_nav: true
-  field_page_overview: true
   field_page_section: true
   links: true

@@ -21,3 +21,4 @@ permissions:
   14: 'edit own page content'
   15: 'revert page revisions'
   16: 'view page revisions'
+  17: 'view the administration theme'

@@ -42,3 +42,4 @@ permissions:
   - 'edit terms in tags'
   - 'access tour'
   - 'access administration pages'
+  - 'use text format basic_html'
