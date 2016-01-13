@@ -4,8 +4,9 @@
 $font-sans: 'Helvetica Neue', 'Helvetica', 'Source Sans Pro', 'Arial', sans-serif;
 $font-weight-light: 200;
 $font-weight-regular: 400;
-$font-weight-medium: 550;
-$font-weight-heavy: 650;
+$font-weight-medium: 500;
+$font-weight-medium-heavy: 600;
+$font-weight-heavy: 700;
 
 // Color
 $lex-alpha-level: 0.75;
@@ -29,7 +30,7 @@ $lex-max-width: 1200px;
 $color-primary: $lex-blue;
 
 // Import WDS
-@import '../assets/_scss/all';
+@import '../webdesignstandards/_scss/all';
 @import './elements/_typography';
 @import './components/_cards';
 @import './components/_browsenav';
