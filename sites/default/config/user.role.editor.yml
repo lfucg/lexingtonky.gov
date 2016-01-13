@@ -43,3 +43,4 @@ permissions:
   - 'access tour'
   - 'access administration pages'
   - 'use text format basic_html'
+  - 'administer nodes'
