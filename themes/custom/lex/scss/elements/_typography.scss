@@ -1,25 +1,27 @@
-
 h1, h2, h3, h4, h5, h6 {
   margin-top: 1em;
   font-family: $font-sans;
 }
 
-h1, h2 {
-  font-weight: $font-weight-medium;
-}
+/* for basic document readability */
+.lex-region-content {
+  h1, h2 {
+    font-weight: $font-weight-medium;
+  }
 
-h3, h4, h5, h6 {
-  font-weight: $font-weight-medium-heavy;
-}
+  h3, h4, h5, h6 {
+    font-weight: $font-weight-medium-heavy;
+  }
 
-ul li {
-  line-height: 1em;
-  margin-top: 0;
-  margin-bottom: 0;
-}
+  ul li {
+    line-height: 1em;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 
-p {
-  margin-top: 0;
+  p {
+    margin-top: 0;
+  }
 }
 
 .lex-pagetitle {
