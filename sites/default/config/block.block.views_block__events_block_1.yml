@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: views_block__events_block_1
 theme: lex
-region: content
-weight: -11
+region: highlighted
+weight: -12
 provider: null
 plugin: 'views_block:events-block_1'
 settings:

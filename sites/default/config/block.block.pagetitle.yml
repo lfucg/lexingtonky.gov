@@ -9,7 +9,7 @@ dependencies:
 id: pagetitle
 theme: lex
 region: highlighted
-weight: -15
+weight: -14
 provider: null
 plugin: page_title_block
 settings:
