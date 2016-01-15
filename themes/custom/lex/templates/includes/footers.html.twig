@@ -1,8 +1,9 @@
-{# if page.footer_first or page.footer_second or page.footer_third #}
-  <footer role="contentinfo">
-    {% include "@lex/includes/static-footer.html.twig" %}
-    {{ page.footer_first }}
-    {{ page.footer_second }}
-    {{ page.footer_third }}
-  </footer>
-{# endif #}
+<footer role="contentinfo">
+  <section class="lex-slab lex-slab-blue">
+    <div class="lex-grid-full usa-grid">
+      {{ page.footer_first }}
+    </div>
+  </section>
+  {{ page.footer_second }}
+  {{ page.footer_third }}
+</footer>
