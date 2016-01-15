@@ -33,6 +33,7 @@ $color-primary: $lex-blue;
 // Import WDS
 @import '../webdesignstandards/_scss/all';
 @import './elements/_typography';
+@import './elements/_addresses';
 @import './components/_cards';
 @import './components/_browsenav';
 // Override WDS styles (avoid when possible)
@@ -310,6 +311,7 @@ input:focus, input[type=search]:focus {
   }
 }
 
-footer .lex-slab {
-  padding-bottom: $lex-section-gutter;
+.lex-sub-footer {
+  padding-top: $lex-section-gutter;
+  padding-bottom: $lex-section-half-gutter;
 }

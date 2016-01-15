@@ -1,9 +1,37 @@
-<footer role="contentinfo">
-  <section class="lex-slab lex-slab-blue">
-    <div class="lex-grid-full usa-grid">
-      {{ page.footer_first }}
+{% set feedback = '<a href="/contact/feedback">Provide feedback</a>' %}
+
+<footer role="contentinfo" class="lex-slab lex-slab-blue">
+  <section class="lex-grid-full usa-grid">
+    {{ page.footer_first }}
+    <div class="usa-width-one-third">
+      <h2 class="lex-section-heading lex-heading lex-font-standout">Get in touch</h2>
+      </h2>
+      <ul class="usa-unstyled-list">
+        <li>
+          <div class="h-adr lex-font-standout">
+            <span class="lex-street-address p-street-address">200 East Main Street</span>
+            <span class="p-locality">Lexington, Kentucky</span>
+            <span class="p-postal-code">40507</span>
+          </div>
+        </li>
+        <li><i class="fa fa-phone"></i>
+          <a class="lex-font-standout" href="tel:859-425-2255">(859) 425-2255</a>
+        </li>
+        <li>
+          <a href="https://twitter.com/LexingtonKyGov"><i class="lex-font-standout fa fa-twitter"></i><span class="visually-hidden">twitter</span></a>
+          <a href="https://www.facebook.com/LexingtonKyGov"><i class="lex-font-standout fa fa-facebook"></i><span class="visually-hidden">facebook</span></a>
+        </li>
+      </ul>
     </div>
   </section>
-  {{ page.footer_second }}
-  {{ page.footer_third }}
+  <section class="lex-grid-full lex-sub-footer">
+    <ul class="usa-unstyled-list lex-horizontal-list">
+      <li>{{ feedback|raw }}</li>
+      <li><a href="/terms-of-use">Terms of use</a></li>
+    </ul>
+  </section>
+  {# not used currently
+    {{ page.footer_second }}
+    {{ page.footer_third }}
+  #}
 </footer>
