@@ -1,0 +1,7 @@
+{# The footer menu is the 'services' in the middle column #}
+{% set attributes = attributes.addClass('usa-width-one-third') %}
+
+{# for some reason the label set in the menu config does not stick #}
+{% set label = 'services' %}
+
+{% include "@stable/block/block.html.twig" %}

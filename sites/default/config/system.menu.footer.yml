@@ -3,6 +3,6 @@ langcode: en
 status: true
 dependencies: {  }
 id: footer
-label: Footer
+label: Services
 description: 'Site information links'
 locked: true
