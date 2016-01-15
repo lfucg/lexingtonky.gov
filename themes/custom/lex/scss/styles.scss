@@ -2,6 +2,7 @@
 
 // Typography
 $font-sans: 'Helvetica Neue', 'Helvetica', 'Source Sans Pro', 'Arial', sans-serif;
+$font-weight-extra-light: 100;
 $font-weight-light: 200;
 $font-weight-regular: 400;
 $font-weight-medium: 500;
@@ -156,7 +157,7 @@ body {
   }
 }
 
-.lex-region-content {
+.lex-region-highlighted {
   padding-bottom: $lex-section-gutter;
 }
 

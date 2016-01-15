@@ -60,8 +60,8 @@
             {% for item in item.below %}
               {% set current = (item.in_active_trail ? 'usa-current lex-current' : '') %}
               <li class="lex-browsenav-category {{current}}">
-                <a href="{{ item.url }}" {{ item.attributes }}>
-                  <h3 class="lex-browsenav-link lex-card-title-medium">{{ item.title }}</h3>
+                <a href="{{ item.url }}" {{ item.attributes.addClass('lex-browsenav-link lex-browsenav-link-withdescription')  }}>
+                  <h3 class="lex-browsenav-title lex-card-title-medium">{{ item.title }}</h3>
                   <p class="lex-browsenav-description lex-card-subtitle">{{ item.url_title }}</p>
                 </a>
               </li>
@@ -86,7 +86,8 @@
         {% for item in items %}
           {% set current = (item.in_active_trail ? 'usa-current lex-current' : '') %}
           <li class="lex-browsenav-category {{current}}">
-            <h3 class="lex-card-title-medium lex-browsenav-link">{{ link(item.title, item.url, item.attributes.addClass(current)) }}</h3>
+            <h3 class="lex-card-title-medium lex-browsenav-title"
+              >{{ link(item.title, item.url, item.attributes.addClass('lex-browsenav-link').addClass(current)) }}</h3>
           </li>
         {% endfor %}
       </ul>

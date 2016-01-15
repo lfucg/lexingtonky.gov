@@ -8,6 +8,7 @@ $lex-category-gutter: 2rem;
 
   h1, h2, h3, h4, h5, h6 {
     font-weight: $font-weight-regular;
+    margin: 0;
   }
   h1 {
     margin-bottom: .5em;
@@ -64,10 +65,15 @@ $lex-category-gutter: 2rem;
   font-weight: $font-weight-regular;
   margin: 0;
   @include media($large-screen) {
-    & a:after {
-      right: 10px;
+    &:after {
+      font-weight: $font-weight-extra-light;
+      font-size: 3rem;
       float: right;
       content: "\203A";
+      margin-top: -4px
+    }
+    &.lex-browsenav-link-withdescription:after {
+      margin-top: -30px;
     }
   }
 }
@@ -88,6 +94,10 @@ $lex-category-gutter: 2rem;
       .lex-card-title-heading {
         // push over to match category when active
         padding-left: $lex-category-gutter;
+      }
+      .lex-browsenav-title, .lex-browsenav-description {
+        /* push arrow right */
+        padding-right: 1em;
       }
     }
   }
