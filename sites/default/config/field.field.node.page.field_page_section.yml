@@ -24,6 +24,9 @@ settings:
       paragraphs_page_section: paragraphs_page_section
     target_bundles_drag_drop:
       paragraphs_page_section:
+        enabled: true
         weight: 2
+      paragraph_linked_image:
+        weight: 3
         enabled: false
 field_type: entity_reference_revisions
