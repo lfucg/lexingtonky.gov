@@ -11,7 +11,7 @@ dependencies:
     - lex
 id: views_block__visitor_information_block_front_page
 theme: lex
-region: highlighted
+region: '-1'
 weight: -11
 provider: null
 plugin: 'views_block:visitor_information-block_1'
