@@ -14,9 +14,11 @@ var autoprefixer = require('gulp-autoprefixer');
 var runSequence = require('run-sequence');
 
 // paths
-var imgSrc = './assets/img/**/*.png';
+// todo: include webdesign standards in the image min
+// var imgSrc = './webdesignstandards/img/**/*.png';
+var imgSrc = './img-src/*';
 var imgDest = './img';
-var svgSrc = './assets/img/**/*.svg';
+var svgSrc = './webdesignstandards/img/**/*.svg';
 var svgDest = './img';
 var sassSrc = ['./scss/**/*.scss', './assets/_scss/**/*.scss'];
 var sassDest = './css';
