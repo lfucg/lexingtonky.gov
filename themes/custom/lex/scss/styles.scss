@@ -190,6 +190,17 @@ body {
   }
 }
 
+#block-urbancountycouncilhtml {
+  .lex-card-title {
+    font-weight: $font-weight-light;
+  }
+  .lex-icon {
+    font-size: 2em;
+    width: 1em;
+    opacity: 0.8;
+  }
+}
+
 .lex-horizontal-list li {
   display: inline-block;
   padding-right: 1em;

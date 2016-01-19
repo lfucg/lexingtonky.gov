@@ -36,7 +36,7 @@ function lex_preprocess_block(&$variables) {
     $variables['attributes']['class'][] = 'usa-width-one-third';
   }
   else if (in_array($element_id,
-      array('views_block__a_note_from_the_mayor_front_page', 'council_link_card'))) {
+      array('mayors_office_block', 'urbancountycouncilhtml'))) {
     $variables['attributes']['class'][] = 'usa-width-two-thirds usa-end-row';
   }
 }
