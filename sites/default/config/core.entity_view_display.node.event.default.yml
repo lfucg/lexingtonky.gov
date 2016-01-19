@@ -24,15 +24,15 @@ content:
     third_party_settings: {  }
   field_date:
     weight: 102
-    label: above
+    label: inline
     settings:
-      format_type: medium
       timezone_override: ''
+      format_type: short
     third_party_settings: {  }
     type: datetime_default
   field_date_end:
     weight: 103
-    label: above
+    label: inline
     settings:
       format_type: medium
       timezone_override: ''
@@ -40,4 +40,6 @@ content:
     type: datetime_default
   links:
     weight: 100
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }

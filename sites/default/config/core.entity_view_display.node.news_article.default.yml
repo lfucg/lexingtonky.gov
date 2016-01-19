@@ -18,17 +18,19 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 101
+    weight: 1
     settings: {  }
     third_party_settings: {  }
   field_image:
-    weight: 102
-    label: above
+    weight: 2
+    label: hidden
     settings:
-      image_style: ''
+      image_style: one_column
       image_link: ''
     third_party_settings: {  }
     type: image
   links:
-    weight: 100
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }

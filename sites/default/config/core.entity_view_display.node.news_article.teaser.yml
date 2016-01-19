@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.news_article.body
+    - field.field.node.news_article.field_image
     - node.type.news_article
   module:
     - text
@@ -23,4 +24,5 @@ content:
     third_party_settings: {  }
   links:
     weight: 100
-hidden: {  }
+hidden:
+  field_image: true

@@ -1,6 +1,6 @@
 uuid: 4b42d15d-e223-4023-a217-23a435a06b1a
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - node.type.page

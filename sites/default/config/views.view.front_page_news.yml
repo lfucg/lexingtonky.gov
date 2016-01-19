@@ -436,7 +436,7 @@ display:
     position: 2
     display_options:
       display_extenders: {  }
-      path: browse/government/news
+      path: news
     cache_metadata:
       max-age: -1
       contexts:

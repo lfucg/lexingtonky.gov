@@ -1,0 +1,15 @@
+uuid: c916b8f4-03ce-45f4-9e5a-902407973677
+langcode: en
+status: true
+dependencies: {  }
+name: one_column
+label: 'Lex: one column'
+effects:
+  0c97b854-28e4-46b5-9700-0d7b5cfdf34b:
+    uuid: 0c97b854-28e4-46b5-9700-0d7b5cfdf34b
+    id: image_scale
+    weight: 1
+    data:
+      width: 380
+      height: 285
+      upscale: false

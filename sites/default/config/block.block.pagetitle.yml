@@ -21,6 +21,8 @@ visibility:
   node_type:
     id: node_type
     bundles:
+      event: event
+      news_article: news_article
       page: page
     negate: false
     context_mapping:
