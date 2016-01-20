@@ -61,8 +61,11 @@ body {
   padding-bottom: 0.5em;
 }
 
-.lex-site-header {
+.lex-frontpage .lex-site-header {
   background-image: url('../img/lexington-hero.jpg');
+}
+.lex-site-header {
+  background-image: url('../img/lexington-hero-interior.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   @include media($large-screen) {
