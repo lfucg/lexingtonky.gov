@@ -6,7 +6,7 @@ dependencies:
     - contact_storage
 third_party_settings:
   contact_storage:
-    redirect_uri: /feedback-success
+    redirect_uri: ''
 id: page_feedback
 label: 'Page feedback'
 recipients:
