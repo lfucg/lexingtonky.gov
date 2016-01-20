@@ -1,0 +1,41 @@
+uuid: 00970fe0-743e-4e8a-8a00-be53c93a630b
+langcode: en
+status: true
+dependencies:
+  config:
+    - contact.form.page_feedback
+    - field.field.contact_message.page_feedback.field_feedback_url
+    - field.field.contact_message.page_feedback.field_feedback_what_doing
+    - field.field.contact_message.page_feedback.field_feedback_what_wrong
+id: contact_message.page_feedback.default
+targetEntityType: contact_message
+bundle: page_feedback
+mode: default
+content:
+  field_feedback_url:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_feedback_what_doing:
+    type: string_textarea
+    weight: 0
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_feedback_what_wrong:
+    type: string_textarea
+    weight: 1
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  copy: true
+  mail: true
+  message: true
+  name: true
+  subject: true

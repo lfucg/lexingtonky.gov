@@ -71,6 +71,8 @@ function lex_preprocess_form(&$variables) {
       $variables['attributes']['class'] = array();
     }
     array_push($variables['attributes']['class'], 'usa-search', 'lex-search');
+  } else if ($variables['element']['#form_id'] == 'contact_message_page_feedback_form') {
+    $variables['attributes']['class'][] = 'lex-pagefeedback-form usa-width-one-half';
   }
 }
 
@@ -92,5 +94,12 @@ function lex_preprocess_region(&$variables) {
   }
   if ($variables['region'] == 'content' || $variables['region'] == 'highlighted') {
     array_push($variables['attributes']['class'], 'lex-grid-full', 'usa-grid-full');
+  }
+}
+
+function lex_preprocess_input__textfield(&$variables) {
+  if ($variables['attributes']['name'] == 'field_feedback_url[0][value]') {
+    // the description field is able to use tokens so it contains the query param: feedback_url
+    $variables['attributes']['value'] = $variables['element']['#description'];
   }
 }

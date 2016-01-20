@@ -36,6 +36,7 @@ $color-primary: $lex-blue;
 @import './elements/_addresses';
 @import './components/_cards';
 @import './components/_browsenav';
+@import './components/_forms';
 // Override WDS styles (avoid when possible)
 @import './wds-overrides';
 

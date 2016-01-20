@@ -1,0 +1,16 @@
+uuid: c23a54c8-1068-4b1a-9355-85cb2a9565d2
+langcode: en
+status: true
+dependencies:
+  module:
+    - contact_storage
+third_party_settings:
+  contact_storage:
+    redirect_uri: /feedback-success
+id: page_feedback
+label: 'Page feedback'
+recipients:
+  - webmaster@lexingtonky.gov
+  - eschwartz@lexingtonky.gov
+reply: ''
+weight: 0

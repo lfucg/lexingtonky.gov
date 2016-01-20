@@ -1,0 +1,17 @@
+.lex-pagefeedback-form {
+  max-width: none;
+  .form-item-field-feedback-url-0-value {
+    display: none;
+  }
+  textarea {
+    height: 4rem;
+    max-width: none;
+  }
+  label {
+    font-weight: bold;
+    padding-bottom: 5px;
+  }
+  #edit-preview {
+    display: none;
+  }
+}

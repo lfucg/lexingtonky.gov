@@ -1,0 +1,19 @@
+uuid: 03ed6cdc-c55d-4c71-b801-1c75a5241bc4
+langcode: en
+status: true
+dependencies:
+  config:
+    - contact.form.page_feedback
+    - field.storage.contact_message.field_feedback_what_doing
+id: contact_message.page_feedback.field_feedback_what_doing
+field_name: field_feedback_what_doing
+entity_type: contact_message
+bundle: page_feedback
+label: 'What you were doing'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

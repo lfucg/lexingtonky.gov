@@ -1,0 +1,19 @@
+uuid: e39c7ab9-9daa-4942-8b3b-597b9873f100
+langcode: en
+status: true
+dependencies:
+  module:
+    - contact
+id: contact_message.field_feedback_what_wrong
+field_name: field_feedback_what_wrong
+entity_type: contact_message
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
