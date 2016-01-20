@@ -1,23 +1,23 @@
-uuid: f7011f2a-28c1-48e9-bc00-cf8d902e2882
+uuid: 211e9014-7edb-4fc2-a600-aa0a1ac7d418
 langcode: en
 status: true
 dependencies:
   content:
-    - 'block_content:html_block:e82ae4e6-0a89-4d6d-9a00-e193aafb5811'
+    - 'block_content:html_block:5a453adb-8cc0-403a-bf33-512fadcdc633'
   module:
     - block_content
     - system
   theme:
     - lex
-id: pagefeedbackform
+id: linktopagefeedbackform
 theme: lex
 region: footer_first
-weight: -16
+weight: null
 provider: null
-plugin: 'block_content:e82ae4e6-0a89-4d6d-9a00-e193aafb5811'
+plugin: 'block_content:5a453adb-8cc0-403a-bf33-512fadcdc633'
 settings:
-  id: 'block_content:e82ae4e6-0a89-4d6d-9a00-e193aafb5811'
-  label: 'Page feedback form'
+  id: 'block_content:5a453adb-8cc0-403a-bf33-512fadcdc633'
+  label: 'Link to page feedback form'
   provider: block_content
   label_display: '0'
   status: true
@@ -26,6 +26,6 @@ settings:
 visibility:
   request_path:
     id: request_path
-    pages: /contact/page_feedback
+    pages: '/contact/*'
     negate: true
     context_mapping: {  }
