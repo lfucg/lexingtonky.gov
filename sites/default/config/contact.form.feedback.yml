@@ -1,10 +1,17 @@
 uuid: 13eea1e8-116b-4d76-8a3c-60e73be4872a
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - contact_storage
+third_party_settings:
+  contact_storage:
+    redirect_uri: ''
 id: feedback
 label: 'Website feedback'
 recipients:
   - webmaster@lexingtonky.gov
+  - webmasterlexington@gmail.com
+  - eschwartz@codeforamerica.org
 reply: ''
 weight: 0

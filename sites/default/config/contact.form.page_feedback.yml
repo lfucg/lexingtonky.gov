@@ -11,6 +11,7 @@ id: page_feedback
 label: 'Page feedback'
 recipients:
   - webmaster@lexingtonky.gov
-  - eschwartz@lexingtonky.gov
+  - webmasterlexington@gmail.com
+  - eschwartz@codeforamerica.org
 reply: ''
 weight: 0
