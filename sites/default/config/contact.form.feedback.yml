@@ -5,6 +5,6 @@ dependencies: {  }
 id: feedback
 label: 'Website feedback'
 recipients:
-  - eschwartz@codeforamerica.org
+  - webmaster@lexingtonky.gov
 reply: ''
 weight: 0

@@ -7,5 +7,5 @@ fetch:
   timeout: 30
 notification:
   emails:
-    - eschwartz@codeforamerica.org
+    - webmaster@lexingtonky.gov
   threshold: all
