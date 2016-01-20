@@ -31,3 +31,20 @@
 .toolbar ul li:before {
   display: none;
 }
+
+.lex-alertcontainer-success, .usa-alert-success {
+  background-color: $lex-alert-green;
+}
+
+.lex-alertcontainer-warning, .usa-alert-warning {
+  background-color: $lex-alert-yellow;
+}
+
+.lex-alertcontainer-error, .usa-alert-error {
+  background-color: $lex-alert-red;
+}
+
+.lex-alertcontainer-info, .usa-alert-info {
+  background-color: $lex-alert-blue;
+}
+

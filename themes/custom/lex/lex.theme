@@ -73,6 +73,8 @@ function lex_preprocess_form(&$variables) {
     array_push($variables['attributes']['class'], 'usa-search', 'lex-search');
   } else if ($variables['element']['#form_id'] == 'contact_message_page_feedback_form') {
     $variables['attributes']['class'][] = 'lex-pagefeedback-form usa-width-one-half';
+  } else if ($variables['element']['#form_id'] == 'contact_message_feedback_form') {
+    $variables['attributes']['class'][] = 'lex-feedback-form usa-width-one-half';
   }
 }
 

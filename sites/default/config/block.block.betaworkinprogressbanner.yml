@@ -1,0 +1,25 @@
+uuid: d409c68f-da84-45ef-a435-53bf8e7e7ee9
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:7e6ac12d-c370-486c-bb03-3b8d4afe814f'
+  module:
+    - block_content
+  theme:
+    - lex
+id: betaworkinprogressbanner
+theme: lex
+region: help
+weight: -16
+provider: null
+plugin: 'block_content:7e6ac12d-c370-486c-bb03-3b8d4afe814f'
+settings:
+  id: 'block_content:7e6ac12d-c370-486c-bb03-3b8d4afe814f'
+  label: 'Beta: work in progress banner'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility: {  }

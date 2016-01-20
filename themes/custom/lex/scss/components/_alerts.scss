@@ -1,0 +1,13 @@
+.lex-alert {
+  margin-top: 0;
+
+  @include media($large-screen) {
+    /* compensate for extra svg padding in WDS */
+    max-width: $lex-max-width + 45px;
+    margin: 0 auto;
+  }
+  .usa-alert-body p {
+    margin: 0;
+  }
+}
+

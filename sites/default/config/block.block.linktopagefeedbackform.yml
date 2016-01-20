@@ -12,7 +12,7 @@ dependencies:
 id: linktopagefeedbackform
 theme: lex
 region: footer_first
-weight: null
+weight: -17
 provider: null
 plugin: 'block_content:5a453adb-8cc0-403a-bf33-512fadcdc633'
 settings:

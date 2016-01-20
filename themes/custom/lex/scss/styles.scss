@@ -21,6 +21,12 @@ $lex-gold: #E0B111;
 $lex-white: #FFFFFF;
 $lex-black: #000000;
 
+// alerts
+$lex-alert-blue: #74c7df;
+$lex-alert-green: #7edaa1;
+$lex-alert-red: #ff9191;
+$lex-alert-yellow: #ffee88;
+
 // Magic numbers
 $lex-section-gutter: 1.7em;
 $lex-section-half-gutter: $lex-section-gutter / 2;
@@ -34,6 +40,7 @@ $color-primary: $lex-blue;
 @import '../webdesignstandards/_scss/all';
 @import './elements/_typography';
 @import './elements/_addresses';
+@import './components/_alerts';
 @import './components/_cards';
 @import './components/_browsenav';
 @import './components/_forms';
@@ -281,10 +288,6 @@ input:focus, input[type=search]:focus {
       @extend .usa-search-big;
     }
   }
-}
-
-.lex-alert {
-  margin-top: 0;
 }
 
 .lex-standoutlinks {

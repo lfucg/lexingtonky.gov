@@ -9,7 +9,7 @@ dependencies:
 id: lex_help
 theme: lex
 region: help
-weight: -8
+weight: -14
 provider: null
 plugin: help_block
 settings:
