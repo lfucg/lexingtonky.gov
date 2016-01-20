@@ -98,7 +98,9 @@ function lex_preprocess_region(&$variables) {
 }
 
 function lex_preprocess_input__textfield(&$variables) {
-  if ($variables['attributes']['name'] == 'field_feedback_url[0][value]') {
+  if ($variables['attributes']['name'] == 'field_feedback_url[0][value]'
+      // if ?feedback_url is empty, the description keeps the raw token
+      && $variables['element']['#description'] != '[current-page:query:feedback_url]') {
     // the description field is able to use tokens so it contains the query param: feedback_url
     $variables['attributes']['value'] = $variables['element']['#description'];
   }

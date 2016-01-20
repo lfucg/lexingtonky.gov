@@ -1,0 +1,31 @@
+uuid: f7011f2a-28c1-48e9-bc00-cf8d902e2882
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:e82ae4e6-0a89-4d6d-9a00-e193aafb5811'
+  module:
+    - block_content
+    - system
+  theme:
+    - lex
+id: pagefeedbackform
+theme: lex
+region: footer_first
+weight: -16
+provider: null
+plugin: 'block_content:e82ae4e6-0a89-4d6d-9a00-e193aafb5811'
+settings:
+  id: 'block_content:e82ae4e6-0a89-4d6d-9a00-e193aafb5811'
+  label: 'Page feedback form'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    pages: /contact/page_feedback
+    negate: true
+    context_mapping: {  }

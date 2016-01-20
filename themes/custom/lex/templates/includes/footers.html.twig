@@ -1,8 +1,11 @@
 {% set feedback = '<a href="/contact/feedback">Provide feedback</a>' %}
 
+<footer role="contentinfo" class="lex-grid-full">
+  {{ page.footer_first }}
+</footer>
 <footer role="contentinfo" class="lex-slab lex-slab-blue">
   <section class="lex-grid-full usa-grid">
-    {{ page.footer_first }}
+    {{ page.footer_second }}
     <div class="usa-width-one-third">
       <h2 class="lex-section-heading lex-heading lex-font-standout">Get in touch</h2>
       </h2>
@@ -32,7 +35,6 @@
     </ul>
   </section>
   {# not used currently
-    {{ page.footer_second }}
     {{ page.footer_third }}
   #}
 </footer>

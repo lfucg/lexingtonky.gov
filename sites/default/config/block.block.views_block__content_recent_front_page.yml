@@ -12,7 +12,7 @@ dependencies:
 id: views_block__content_recent_front_page
 theme: lex
 region: featured_bottom_first
-weight: -15
+weight: -16
 provider: null
 plugin: 'views_block:content_recent-block_1'
 settings:

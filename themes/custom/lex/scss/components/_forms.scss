@@ -15,3 +15,8 @@
     display: none;
   }
 }
+
+/* lives in a custom html block for now */
+.lex-pagefeedback-linkcontainer {
+  margin-top: $lex-section-gutter;
+}
