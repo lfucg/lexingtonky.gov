@@ -1,23 +1,23 @@
-uuid: d409c68f-da84-45ef-a435-53bf8e7e7ee9
+uuid: fbefb133-5cc0-48b6-b207-07dc71ded23b
 langcode: en
 status: true
 dependencies:
   content:
-    - 'block_content:html_block:7e6ac12d-c370-486c-bb03-3b8d4afe814f'
+    - 'block_content:html_block:0830dd71-46af-44d3-8807-7c73429d54af'
   module:
     - block_content
     - system
   theme:
     - lex
-id: betaworkinprogressbanner
+id: betaworkinprogressbannersmall
 theme: lex
 region: super_header
-weight: -16
+weight: null
 provider: null
-plugin: 'block_content:7e6ac12d-c370-486c-bb03-3b8d4afe814f'
+plugin: 'block_content:0830dd71-46af-44d3-8807-7c73429d54af'
 settings:
-  id: 'block_content:7e6ac12d-c370-486c-bb03-3b8d4afe814f'
-  label: 'Beta: work in progress banner (large)'
+  id: 'block_content:0830dd71-46af-44d3-8807-7c73429d54af'
+  label: 'Beta: work in progress banner (small)'
   provider: block_content
   label_display: '0'
   status: true
@@ -27,5 +27,5 @@ visibility:
   request_path:
     id: request_path
     pages: '<front>'
-    negate: false
+    negate: true
     context_mapping: {  }

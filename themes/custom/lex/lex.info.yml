@@ -23,6 +23,7 @@ stylesheets-remove:
   - core/modules/system/css/components/tabs.theme.css
 # Add your regions below. Defaults to those defined in Drupal core.
 regions:
+  super_header: 'Super header'
   navbar_secondary: 'Navbar secondary'
   featured_top: 'Featured top'
   primary_menu: 'Primary menu'
