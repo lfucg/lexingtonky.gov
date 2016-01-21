@@ -102,6 +102,9 @@ body {
   padding-bottom: $lex-section-half-gutter;
   .lex-logo {
     height: 40px;
+    background-image: url('../img/lexington-logo.png');
+    background-image: url('../img/lexington-logo.svg');
+    background-repeat: no-repeat;
   }
   @include media($medium-screen) {
     height: 100px;
