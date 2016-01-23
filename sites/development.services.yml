@@ -2,6 +2,9 @@
 #
 # To activate this feature, follow the instructions at the top of the
 # 'example.settings.local.php' file, which sits next to this file.
+parameters:
+  twig.config:
+    debug: true
 services:
   cache.backend.null:
     class: Drupal\Core\Cache\NullBackendFactory
