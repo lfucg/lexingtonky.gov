@@ -2,16 +2,16 @@
 
 /**
  * @file
- * Contains \Drupal\token\Tests\TokenRandomTest.
+ * Contains \Drupal\Tests\token\Kernel\RandomTest.
  */
-namespace Drupal\token\Tests;
+namespace Drupal\Tests\token\Kernel;
 
 /**
  * Tests random tokens.
  *
  * @group token
  */
-class TokenRandomTest extends TokenKernelTestBase {
+class RandomTest extends KernelTestBase {
 
   function testRandomTokens() {
     $tokens = array(

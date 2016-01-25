@@ -2,16 +2,16 @@
 
 /**
  * @file
- * Contains \Drupal\token\Tests\TokenArrayTest
+ * Contains \Drupal\Tests\token\Kernel\ArrayTest.
  */
-namespace Drupal\token\Tests;
+namespace Drupal\Tests\token\Kernel;
 
 /**
  * Tests array tokens.
  *
  * @group token
  */
-class TokenArrayTest extends TokenKernelTestBase {
+class ArrayTest extends KernelTestBase {
 
   function testArrayTokens() {
     // Test a simple array.

@@ -2,17 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\token\Tests\TokenKernelTestBase.
+ * Contains \Drupal\Tests\token\Kernel\TokenKernelTestBase.
  */
 
-namespace Drupal\token\Tests;
+namespace Drupal\Tests\token\Kernel;
 
-use Drupal\simpletest\KernelTestBase;
+use Drupal\KernelTests\KernelTestBase as BaseKernelTestBase;
+use Drupal\token\Tests\TokenTestTrait;
 
 /**
  * Helper test class with some added functions for testing.
  */
-abstract class TokenKernelTestBase extends KernelTestBase {
+abstract class KernelTestBase extends BaseKernelTestBase {
 
   use TokenTestTrait;
 
@@ -21,8 +22,8 @@ abstract class TokenKernelTestBase extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('path', 'token', 'token_test', 'system', 'user');
-  
+  public static $modules = ['path', 'token', 'token_module_test', 'system', 'user'];
+
   /**
    * {@inheritdoc}
    */

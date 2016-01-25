@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\token\Tests\TokenNodeTest.
+ * Contains \Drupal\Tests\token\Kernel\NodeTest.
  */
 
-namespace Drupal\token\Tests;
+namespace Drupal\Tests\token\Kernel;
 
 use Drupal\node\Entity\NodeType;
 use Drupal\node\Entity\Node;
@@ -15,7 +15,7 @@ use Drupal\node\Entity\Node;
  *
  * @group token
  */
-class TokenNodeTest extends TokenKernelTestBase {
+class NodeTest extends KernelTestBase {
 
   /**
    * Modules to enable.

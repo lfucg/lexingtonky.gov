@@ -2,9 +2,9 @@
 
 /**
  * @file
- * Contains \Drupal\token\Tests\TokenFileTest.
+ * Contains \Drupal\Tests\token\Kernel\FileTest.
  */
-namespace Drupal\token\Tests;
+namespace Drupal\Tests\token\Kernel;
 use Drupal\taxonomy\Entity\Vocabulary;
 
 /**
@@ -12,7 +12,7 @@ use Drupal\taxonomy\Entity\Vocabulary;
  *
  * @group token
  */
-class TokenFileTest extends TokenKernelTestBase {
+class FileTest extends KernelTestBase {
 
   /**
    * Modules to enable.

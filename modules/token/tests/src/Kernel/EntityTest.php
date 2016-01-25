@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\token\Tests\TokenEntityTest.
+ * Contains \Drupal\Tests\token\Kernel\EntityTest.
  */
 
-namespace Drupal\token\Tests;
+namespace Drupal\Tests\token\Kernel;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\node\Entity\Node;
@@ -17,14 +17,14 @@ use Drupal\taxonomy\VocabularyInterface;
  *
  * @group token
  */
-class TokenEntityTest extends TokenKernelTestBase {
+class EntityTest extends KernelTestBase {
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = array('path', 'token', 'token_test', 'node', 'taxonomy', 'text');
+  public static $modules = ['node', 'taxonomy', 'text'];
 
   /**
    * {@inheritdoc}
@@ -47,16 +47,18 @@ class TokenEntityTest extends TokenKernelTestBase {
   }
 
   function testEntityMapping() {
-    $this->assertIdentical(token_get_entity_mapping('token', 'node'), 'node');
-    $this->assertIdentical(token_get_entity_mapping('token', 'term'), 'taxonomy_term');
-    $this->assertIdentical(token_get_entity_mapping('token', 'vocabulary'), 'taxonomy_vocabulary');
-    $this->assertIdentical(token_get_entity_mapping('token', 'invalid'), FALSE);
-    $this->assertIdentical(token_get_entity_mapping('token', 'invalid', TRUE), 'invalid');
-    $this->assertIdentical(token_get_entity_mapping('entity', 'node'), 'node');
-    $this->assertIdentical(token_get_entity_mapping('entity', 'taxonomy_term'), 'term');
-    $this->assertIdentical(token_get_entity_mapping('entity', 'taxonomy_vocabulary'), 'vocabulary');
-    $this->assertIdentical(token_get_entity_mapping('entity', 'invalid'), FALSE);
-    $this->assertIdentical(token_get_entity_mapping('entity', 'invalid', TRUE), 'invalid');
+    /** @var \Drupal\token\TokenEntityMapperInterface $mapper */
+    $mapper = \Drupal::service('token.entity_mapper');
+    $this->assertIdentical($mapper->getEntityTypeForTokenType('node'), 'node');
+    $this->assertIdentical($mapper->getEntityTypeForTokenType('term'), 'taxonomy_term');
+    $this->assertIdentical($mapper->getEntityTypeForTokenType('vocabulary'), 'taxonomy_vocabulary');
+    $this->assertIdentical($mapper->getEntityTypeForTokenType('invalid'), FALSE);
+    $this->assertIdentical($mapper->getEntityTypeForTokenType('invalid', TRUE), 'invalid');
+    $this->assertIdentical($mapper->getTokenTypeForEntityType('node'), 'node');
+    $this->assertIdentical($mapper->getTokenTypeForEntityType('taxonomy_term'), 'term');
+    $this->assertIdentical($mapper->getTokenTypeForEntityType('taxonomy_vocabulary'), 'vocabulary');
+    $this->assertIdentical($mapper->getTokenTypeForEntityType('invalid'), FALSE);
+    $this->assertIdentical($mapper->getTokenTypeForEntityType('invalid', TRUE), 'invalid');
 
     // Test that when we send the mis-matched entity type into token_replace()
     // that we still get the tokens replaced.

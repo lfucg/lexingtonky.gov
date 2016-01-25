@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\token\Tests\TokenTaxonomyTest.
+ * Contains \Drupal\Tests\token\Kernel\TaxonomyTest.
  */
 
-namespace Drupal\token\Tests;
+namespace Drupal\Tests\token\Kernel;
 
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Utility\Unicode;
@@ -16,7 +16,7 @@ use Drupal\taxonomy\Entity\Vocabulary;
  *
  * @group token
  */
-class TokenTaxonomyTest extends TokenKernelTestBase {
+class TaxonomyTest extends KernelTestBase {
   protected $vocab;
 
   /**

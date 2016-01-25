@@ -2,26 +2,39 @@
 
 /**
  * @file
- * Contains \Drupal\token\Tests\TokenUnitTest.
+ * Contains \Drupal\Tests\token\Kernel\UnitTest.
  */
-namespace Drupal\token\Tests;
+namespace Drupal\Tests\token\Kernel;
 
 /**
  * Test basic, low-level token functions.
  *
  * @group token
  */
-class TokenUnitTest extends TokenKernelTestBase {
+class UnitTest extends KernelTestBase {
+
+  /**
+   * @var \Drupal\token\Token
+   */
+  protected $tokenService;
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = array('file', 'node', 'token_test');
+  public static $modules = ['file', 'node'];
 
   /**
-   * Test token_get_invalid_tokens() and token_get_invalid_tokens_by_context().
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    parent::setUp();
+    $this->tokenService = \Drupal::token();
+  }
+
+  /**
+   * Test invalid tokens.
    */
   public function testGetInvalidTokens() {
     $tests = array();
@@ -90,7 +103,7 @@ class TokenUnitTest extends TokenKernelTestBase {
       $tokens = array_merge($test['valid tokens'], $test['invalid tokens']);
       shuffle($tokens);
 
-      $invalid_tokens = token_get_invalid_tokens_by_context(implode(' ', $tokens), $test['types']);
+      $invalid_tokens = $this->tokenService->getInvalidTokensByContext(implode(' ', $tokens), $test['types']);
 
       sort($invalid_tokens);
       sort($test['invalid tokens']);

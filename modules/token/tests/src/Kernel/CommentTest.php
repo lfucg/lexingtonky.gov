@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\token\Tests\TokenCommentTest.
+ * Contains \Drupal\Tests\token\Kernel\CommentTest.
  */
 
-namespace Drupal\token\Tests;
+namespace Drupal\Tests\token\Kernel;
 
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\node\Entity\NodeType;
@@ -17,7 +17,7 @@ use Drupal\comment\Entity\Comment;
  *
  * @group token
  */
-class TokenCommentTest extends TokenKernelTestBase {
+class CommentTest extends KernelTestBase {
 
   use CommentTestTrait;
 
@@ -26,7 +26,7 @@ class TokenCommentTest extends TokenKernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('path', 'token', 'token_test', 'node', 'comment', 'user', 'field', 'text', 'entity_reference', 'system');
+  public static $modules = ['node', 'comment', 'field', 'text', 'entity_reference'];
 
   /**
    * {@inheritdoc}

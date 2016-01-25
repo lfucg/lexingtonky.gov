@@ -2,36 +2,36 @@
 
 /**
  * @file
- * Contains \Drupal\token\Tests\TokenDateTest.
+ * Contains \Drupal\Tests\token\Kernel\DateTest.
  */
 
-namespace Drupal\token\Tests;
+namespace Drupal\Tests\token\Kernel;
 
 /**
  * Tests date tokens.
  *
  * @group token
  */
-class TokenDateTest extends TokenKernelTestBase {
+class DateTest extends KernelTestBase {
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = ['system'];
+  public static $modules = [];
 
   /**
    * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
-    $this->installConfig(['system', 'token_test']);
+    $this->installConfig(['system', 'token_module_test']);
   }
 
   function testDateTokens() {
     $tokens = array(
-      'token_test' => '1984',
+      'token_module_test' => '1984',
       'invalid_format' => NULL,
     );
 
