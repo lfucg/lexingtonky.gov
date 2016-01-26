@@ -1,0 +1,20 @@
+uuid: 0631644d-9532-4811-b502-2c94faee9bfc
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - taxonomy
+id: node.field_related_departments
+field_name: field_related_departments
+entity_type: node
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

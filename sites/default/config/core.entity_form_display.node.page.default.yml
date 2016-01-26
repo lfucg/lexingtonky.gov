@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.page.field_lex_site_nav
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
+    - field.field.node.page.field_related_departments
     - node.type.page
   module:
     - paragraphs
@@ -45,6 +46,14 @@ content:
       add_mode: dropdown
       form_display_mode: default
     third_party_settings: {  }
+  field_related_departments:
+    weight: 26
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
   path:
     type: path
     weight: 4

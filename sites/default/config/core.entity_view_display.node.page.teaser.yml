@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.page.field_lex_site_nav
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
+    - field.field.node.page.field_related_departments
     - node.type.page
   module:
     - text
@@ -28,4 +29,5 @@ hidden:
   body: true
   field_lex_site_nav: true
   field_page_section: true
+  field_related_departments: true
   links: true

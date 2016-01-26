@@ -22,21 +22,21 @@ content:
     third_party_settings: {  }
   field_street:
     weight: 2
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
   field_street_number:
     weight: 1
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
   field_zip_code:
     weight: 3
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
