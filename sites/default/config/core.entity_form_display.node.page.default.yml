@@ -17,14 +17,6 @@ targetEntityType: node
 bundle: page
 mode: default
 content:
-  body:
-    type: text_textarea_with_summary
-    weight: 7
-    settings:
-      rows: 9
-      summary_rows: 3
-      placeholder: ''
-    third_party_settings: {  }
   created:
     type: datetime_timestamp
     weight: 3
@@ -74,5 +66,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
 hidden:
+  body: true
   promote: true
   sticky: true

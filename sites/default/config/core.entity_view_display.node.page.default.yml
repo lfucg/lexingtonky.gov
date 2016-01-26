@@ -17,12 +17,6 @@ targetEntityType: node
 bundle: page
 mode: default
 content:
-  body:
-    type: text_default
-    weight: 3
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
   field_page_overview:
     weight: 1
     label: hidden
@@ -42,4 +36,5 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  body: true
   field_lex_site_nav: true
