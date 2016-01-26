@@ -1,0 +1,27 @@
+uuid: a1834487-8fa4-4ec8-b702-2d0f561823cc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_related_locations
+    - paragraphs.paragraphs_type.paragraphs_page_section
+    - taxonomy.vocabulary.locations
+id: paragraph.paragraphs_page_section.field_related_locations
+field_name: field_related_locations
+entity_type: paragraph
+bundle: paragraphs_page_section
+label: 'Related locations'
+description: 'Related locations will be displayed at the end of the section with their addresses.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      locations: locations
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference

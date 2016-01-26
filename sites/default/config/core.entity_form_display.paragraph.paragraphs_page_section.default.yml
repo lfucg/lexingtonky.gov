@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.paragraphs_page_section.field_related_locations
     - field.field.paragraph.paragraphs_page_section.field_section_body
     - field.field.paragraph.paragraphs_page_section.field_section_heading
     - paragraphs.paragraphs_type.paragraphs_page_section
@@ -13,6 +14,11 @@ targetEntityType: paragraph
 bundle: paragraphs_page_section
 mode: default
 content:
+  field_related_locations:
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
   field_section_body:
     weight: 1
     settings:
