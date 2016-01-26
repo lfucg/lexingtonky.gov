@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.taxonomy_term.locations.field_street
     - field.field.taxonomy_term.locations.field_street_number
+    - field.field.taxonomy_term.locations.field_zip_code
     - taxonomy.vocabulary.locations
   module:
     - path
@@ -15,11 +16,11 @@ bundle: locations
 mode: default
 content:
   description:
-    type: text_textfield
+    type: text_textarea
     weight: 0
     settings:
-      size: 60
       placeholder: ''
+      rows: 5
     third_party_settings: {  }
   field_street:
     weight: 32
@@ -30,6 +31,13 @@ content:
     type: string_textfield
   field_street_number:
     weight: 31
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_zip_code:
+    weight: 33
     settings:
       size: 60
       placeholder: ''

@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.taxonomy_term.locations.field_street
     - field.field.taxonomy_term.locations.field_street_number
+    - field.field.taxonomy_term.locations.field_zip_code
     - taxonomy.vocabulary.locations
   module:
     - text
@@ -28,6 +29,13 @@ content:
     type: string
   field_street_number:
     weight: 1
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_zip_code:
+    weight: 3
     label: above
     settings:
       link_to_entity: false
