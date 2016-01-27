@@ -3,6 +3,9 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.taxonomy_term.locations.field_contact_email
+    - field.field.taxonomy_term.locations.field_contact_phone
+    - field.field.taxonomy_term.locations.field_hours_of_operation
     - field.field.taxonomy_term.locations.field_street
     - field.field.taxonomy_term.locations.field_street_number
     - field.field.taxonomy_term.locations.field_zip_code
@@ -20,22 +23,42 @@ content:
     weight: 0
     settings: {  }
     third_party_settings: {  }
-  field_street:
+  field_contact_email:
     weight: 2
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
-  field_street_number:
+  field_contact_phone:
+    weight: 3
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_hours_of_operation:
     weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+  field_street:
+    weight: 5
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_street_number:
+    weight: 4
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
   field_zip_code:
-    weight: 3
+    weight: 6
     label: hidden
     settings:
       link_to_entity: false
