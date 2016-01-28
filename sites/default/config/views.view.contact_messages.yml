@@ -2,6 +2,8 @@ uuid: 8b822235-7696-4b92-b800-d656f1f08721
 langcode: en
 status: true
 dependencies:
+  config:
+    - user.role.editor
   module:
     - contact
     - contact_storage
@@ -24,9 +26,10 @@ display:
     position: 0
     display_options:
       access:
-        type: perm
+        type: role
         options:
-          perm: 'administer contact forms'
+          role:
+            editor: editor
       cache:
         type: none
         options: {  }
@@ -452,7 +455,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.permissions
+        - user.roles
       cacheable: false
       max-age: 0
       tags: {  }
@@ -478,7 +481,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.permissions
+        - user.roles
       cacheable: false
       max-age: 0
       tags: {  }
