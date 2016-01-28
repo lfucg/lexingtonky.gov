@@ -41,7 +41,7 @@ class HtmlResponse extends Response
         parent::__construct(
             $this->createBody($html),
             $status,
-            $this->injectContentType('text/html', $headers)
+            $this->injectContentType('text/html; charset=utf-8', $headers)
         );
     }
 
@@ -68,6 +68,7 @@ class HtmlResponse extends Response
 
         $body = new Stream('php://temp', 'wb+');
         $body->write($html);
+        $body->rewind();
         return $body;
     }
 }
