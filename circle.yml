@@ -1,0 +1,20 @@
+machine:
+  php:
+    version: 5.5.11
+  hosts:
+    localhost: 127.0.0.1
+  environment:
+    PATH: $HOME/$CIRCLE_PROJECT_REPONAME/vendor/bin:$PATH
+test:
+  pre:
+    - composer global require pantheon-systems/cli
+  override:
+    - terminus auth login --machine-token=$MACHINE_TOKEN
+    - git remote add pantheon $PANTHEON_REPO
+    - git push --force pantheon $CIRCLE_BRANCH:$CIRCLE_BRANCH
+    - terminus site create-env --site=$SITE_NAME --from-env=$FROM_ENV --to-env=$CIRCLE_BRANCH
+    - terminus site clone-content --site=$SITE_NAME --from-env=live --to-env=$CIRCLE_BRANCH --yes
+    - sed -e "s,http://localhost:8888,https://$CIRCLE_BRANCH-$SITE_NAME.pantheon.io,g" behat.yml > behat-pantheon.yml
+    - vendor/bin/behat --config=behat-pantheon.yml
+  post:
+    - echo "should merge into dev"
