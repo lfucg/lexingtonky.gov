@@ -17,6 +17,6 @@ test:
     - terminus drush cim --site=$SITE_NAME --env=$CIRCLE_BRANCH
     - terminus drush cr --site=$SITE_NAME --env=$CIRCLE_BRANCH
     - sed -e "s,http://localhost:8888,https://$CIRCLE_BRANCH-$SITE_NAME.pantheon.io,g" behat.yml > behat-pantheon.yml
-    - vendor/bin/behat --config=behat-pantheon.yml
+    - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat
   post:
     - echo "kill the env?"

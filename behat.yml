@@ -8,6 +8,7 @@ default:
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\DrushContext
   extensions:
+    jarnaiz\JUnitFormatter\JUnitFormatterExtension:
     Behat\MinkExtension:
       goutte: ~
       selenium2: ~
