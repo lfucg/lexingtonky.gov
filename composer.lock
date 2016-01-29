@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e1060a30a5f441d2ecd2ac5385564e65",
-    "content-hash": "fc4e0c57832198b96d30e1fad4799cf5",
+    "hash": "850cb1aadfa15caf10facf490cf8cbed",
+    "content-hash": "4f7dae8c1c19e47c718761afb2d79a11",
     "packages": [
         {
             "name": "composer/installers",
@@ -3073,6 +3073,45 @@
                 "webtest"
             ],
             "time": "2015-06-15 20:19:33"
+        },
+        {
+            "name": "jarnaiz/behat-junit-formatter",
+            "version": "v1.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/j-arnaiz/behat-junit-formatter.git",
+                "reference": "2f80b3881e04d3cf43e05ab821c0e80675a9846d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/j-arnaiz/behat-junit-formatter/zipball/2f80b3881e04d3cf43e05ab821c0e80675a9846d",
+                "reference": "2f80b3881e04d3cf43e05ab821c0e80675a9846d",
+                "shasum": ""
+            },
+            "require": {
+                "behat/behat": "~3.0",
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "v1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "jarnaiz\\JUnitFormatter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Jesús Arnaiz",
+                    "email": "j.arnaiz@gmail.com"
+                }
+            ],
+            "description": "Behat 3 JUnit xml formatter",
+            "time": "2016-01-26 17:05:07"
         },
         {
             "name": "jcalderonzumba/gastonjs",
