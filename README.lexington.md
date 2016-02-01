@@ -78,6 +78,14 @@ $databases['default']['default'] = array(
 
 ## Development
 
+### Run tests locally
+
+Set your drupal_root in behat.yml
+
+Start selenium server: `java -jar selenium-server-standalone-2.50.1.jar`
+
+`./vendor/bin/behat`
+
 ### Install composer
 
 ### Install Drush
