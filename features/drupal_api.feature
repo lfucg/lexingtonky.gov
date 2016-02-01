@@ -1,16 +1,15 @@
 @api
-Feature: Drupal Extension
-    In order to prove that the Behat Drupal extension and Blackbox driver are working
-    As a developer
-    I need to test some scenarios using definitions in the Drupal Extension
+Feature: Per-page comment
+    To submit a comment on the current page
+    As an anonymous visitor
+    I need to submit comments for various pages
 
 @javascript
-Scenario: Create many nodes
-  Given "page" content:
-  | title    |
-  | Page one |
-  | Page two |
-  And I am logged in as a user with the "administrator" role
-  When I go to "admin/content"
-  Then I should see "Page one"
-  And I should see "Page two"
+Scenario: Submit homepage feedback
+ Given I am on the homepage
+ And I click 'Is there anything wrong with this page?'
+ And I fill in "f000!" for "What went wrong"
+ And I press "Send message"
+ And I am logged in as a user with the "administrator" role
+ When I go to "admin/structure/contact/messages"
+ Then I should see the "/" in the "f000!" row

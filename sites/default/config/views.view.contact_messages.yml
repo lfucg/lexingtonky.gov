@@ -3,6 +3,8 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.contact_message.field_feedback_url
+    - field.storage.contact_message.field_feedback_what_wrong
     - user.role.administrator
     - user.role.editor
   module:
@@ -92,6 +94,131 @@ display:
       row:
         type: 'entity:contact_message'
       fields:
+        field_feedback_url:
+          id: field_feedback_url
+          table: contact_message__field_feedback_url
+          field: field_feedback_url
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Feedback URL'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: true
+            path: '{{ field_feedback_url }}'
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_feedback_what_wrong:
+          id: field_feedback_what_wrong
+          table: contact_message__field_feedback_what_wrong
+          field: field_feedback_what_wrong
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'What went wrong'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: basic_string
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         subject:
           id: subject
           table: contact_message
@@ -460,7 +587,9 @@ display:
         - user.roles
       cacheable: false
       max-age: 0
-      tags: {  }
+      tags:
+        - 'config:field.storage.contact_message.field_feedback_url'
+        - 'config:field.storage.contact_message.field_feedback_what_wrong'
   page_1:
     display_plugin: page
     id: page_1
@@ -486,4 +615,6 @@ display:
         - user.roles
       cacheable: false
       max-age: 0
-      tags: {  }
+      tags:
+        - 'config:field.storage.contact_message.field_feedback_url'
+        - 'config:field.storage.contact_message.field_feedback_what_wrong'
