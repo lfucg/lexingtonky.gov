@@ -10,11 +10,11 @@ default:
   extensions:
     jarnaiz\JUnitFormatter\JUnitFormatterExtension:
     Behat\MinkExtension:
-      zombie: ~
+      goutte: ~
+      selenium2: ~
       base_url: http://localhost:8888
-      javascript_session: zombie
     Drupal\DrupalExtension:
       blackbox: ~
       api_driver: "drupal"
       drupal:
-        drupal_root: "/Users/erikschwartz/code/lexky-d8"
+        drupal_root: "/your/drupal/root"
