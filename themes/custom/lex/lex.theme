@@ -28,6 +28,27 @@ function lex_preprocess_block(&$variables) {
   if ($element_id == 'views_block__front_page_news_block_1') {
     $variables['attributes']['class'][] = 'usa-width-two-thirds lex-horizontalcard-column';
   }
+  else if ($element_id == 'linktopagefeedbackform') {
+    $message = \Drupal::entityManager()
+      ->getStorage('contact_message')
+      ->create(array(
+        'contact_form' => 'page_feedback'
+      ));
+
+    $form = \Drupal::service('entity.form_builder')->getForm($message);
+    // $form['field_feedback_what_doing']['#attributes']['value'] = 'foo';
+    $url = \Drupal::request()->getPathInfo();
+    // $form['field_feedback_what_doing']['widget'][0]['#value'] = 'f000';
+    $form['field_feedback_what_doing']['widget']['value']['#attributes']['value'] = 'f000';
+    dsm($form['field_feedback_what_doing']['widget']);
+    // $form['#ajax'] = array(
+    //   // Function to call when event on form element triggered.
+    //   'callback' => 'Drupal\ajax_example\Form\AjaxExampleForm::usernameValidateCallback',
+    //   'event' => 'submitlkjlkjlkjj',
+    // );
+    // dsm($form);
+    $variables['contact_form'] = $form;
+  }
   else if (in_array($element_id,
       array('views_block__events_block_1', 'views_block__visitor_information_block_front_page'))) {
     $variables['attributes']['class'][] = 'usa-width-one-third usa-end-row';
@@ -101,6 +122,7 @@ function lex_preprocess_input__textfield(&$variables) {
       // if ?feedback_url is empty, the description keeps the raw token
       && $variables['element']['#description'] != '[current-page:query:feedback_url]') {
     // the description field is able to use tokens so it contains the query param: feedback_url
-    $variables['attributes']['value'] = $variables['element']['#description'];
+    // $variables['attributes']['value'] = 'foo';//$variables['element']['#description'];
   }
+  $variables['attributes']['value'] = 'foo';//$variables['element']['#description'];
 }

@@ -7,6 +7,8 @@ libraries:
   - lex/global-css
   - lex/global-js
 # Remove stylesheets.
+ckeditor_stylesheets:
+  - css/styles.css
 stylesheets-remove:
   - core/misc/dropbutton/dropbutton.css
   - core/misc/dropbutton/dropbutton.theme.css
