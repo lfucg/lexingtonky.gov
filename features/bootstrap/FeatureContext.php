@@ -44,14 +44,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
     }
 
     /**
-     * @Then I should see ajax response :arg1
-     */
-    public function iShouldSeeAjaxResponse($text) {
-       $timeout = 5000; // milliseconds
-       $this->minkContext->getSession()->wait($timeout, '(0 === jQuery.active)');
-    }
-
-    /**
      * @Given /^I fill in "([^"]*)" with random text$/
      */
     public function iFillInWithRandomText($label) {
