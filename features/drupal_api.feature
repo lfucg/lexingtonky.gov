@@ -6,10 +6,10 @@ Feature: Per-page comment
 
 @javascript
 Scenario: Submit homepage feedback
- Given I am on the homepage
- And I click 'Is there anything wrong with this page?'
- And I fill in "f000!" for "What went wrong"
- And I press "Send message"
- And I am logged in as a user with the "administrator" role
- When I go to "admin/structure/contact/messages"
- Then I should see the "/" in the "f000!" row
+   Given I am on the homepage
+   And I click 'Is there anything wrong with this page?'
+   And I fill in "What went wrong" with random text
+   And I press "Send message"
+   And I am logged in as a user with the "administrator" role
+   When I go to "admin/structure/contact/messages"
+   Then I should see the random text
