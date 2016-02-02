@@ -35,19 +35,7 @@ function lex_preprocess_block(&$variables) {
         'contact_form' => 'page_feedback'
       ));
 
-    $form = \Drupal::service('entity.form_builder')->getForm($message);
-    // $form['field_feedback_what_doing']['#attributes']['value'] = 'foo';
-    $url = \Drupal::request()->getPathInfo();
-    // $form['field_feedback_what_doing']['widget'][0]['#value'] = 'f000';
-    $form['field_feedback_what_doing']['widget']['value']['#attributes']['value'] = 'f000';
-    // dsm($form['field_feedback_what_doing']['widget']);
-    // $form['#ajax'] = array(
-    //   // Function to call when event on form element triggered.
-    //   'callback' => 'Drupal\ajax_example\Form\AjaxExampleForm::usernameValidateCallback',
-    //   'event' => 'submitlkjlkjlkjj',
-    // );
-    // dsm($form);
-    $variables['contact_form'] = $form;
+    $variables['contact_form'] = \Drupal::service('entity.form_builder')->getForm($message);
   }
   else if (in_array($element_id,
       array('views_block__events_block_1', 'views_block__visitor_information_block_front_page'))) {
@@ -118,11 +106,7 @@ function lex_preprocess_region(&$variables) {
 }
 
 function lex_preprocess_input__textfield(&$variables) {
-  if ($variables['attributes']['name'] == 'field_feedback_url[0][value]'
-      // if ?feedback_url is empty, the description keeps the raw token
-      && $variables['element']['#description'] != '[current-page:query:feedback_url]') {
-    // the description field is able to use tokens so it contains the query param: feedback_url
-    // $variables['attributes']['value'] = 'foo';//$variables['element']['#description'];
+  if ($variables['attributes']['name'] == 'field_feedback_url[0][value]') {
+    $variables['attributes']['value'] = \Drupal::request()->getRequestUri();
   }
-  // $variables['attributes']['value'] = 'foo';//$variables['element']['#description'];
 }

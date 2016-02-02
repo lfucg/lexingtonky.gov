@@ -19,6 +19,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
     private $randomString;
 
     /**
+     * @BeforeSuite
+     */
+    public static function beforeSuite() {
+      exec('drush cache-clear render');
+      exec('drush cache-clear css-js');
+    }
+
+    /**
      * Initializes context.
      *
      * Every scenario gets its own context instance.
@@ -26,15 +34,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
      * context constructor through behat.yml.
      */
     public function __construct() {
-      $this->randomString = (new Random())->string();
-    }
-
-    /**
-     * @BeforeSuite
-     */
-    public static function beforeSuite() {
-      exec('drush cache-clear render');
-      exec('drush cache-clear css-js');
+      $this->randomString = (new Random())->word(10);
     }
 
     /** @BeforeScenario */
@@ -55,5 +55,26 @@ class FeatureContext implements Context, SnippetAcceptingContext {
      */
     public function iShouldSeeTheRandomText() {
       $this->minkContext->assertPageContainsText($this->randomString);
+    }
+
+    /**
+     * @Given I am on :urlPath with a random querystring
+     */
+    public function iAmOnWithARandomQuerystring($urlPath) {
+      $this->minkContext->visit($urlPath . "?" . $this->randomString);
+    }
+
+    /**
+    * @Then I should see my page with a random querystring
+    */
+    public function iShouldSeeMyPageWithARandomQuerystring() {
+      $this->minkContext->assertPageContainsText("/browse/government?" . $this->randomString);
+    }
+
+    /**
+     * @Then I should see :urlPath with a random querystring
+     */
+    public function iShouldSeeWithARandomQuerystring($urlPath) {
+      $this->minkContext->assertPageContainsText($urlPath . "?" . $this->randomString);
     }
 }
