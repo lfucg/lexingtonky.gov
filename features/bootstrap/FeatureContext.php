@@ -29,10 +29,26 @@ class FeatureContext implements Context, SnippetAcceptingContext {
       $this->randomString = (new Random())->string();
     }
 
+    /**
+     * @BeforeSuite
+     */
+    public static function beforeSuite() {
+      exec('drush cache-clear render');
+      exec('drush cache-clear css-js');
+    }
+
     /** @BeforeScenario */
     public function gatherContexts(BeforeScenarioScope $scope) {
       $environment = $scope->getEnvironment();
       $this->minkContext = $environment->getContext('Drupal\DrupalExtension\Context\MinkContext');
+    }
+
+    /**
+     * @Then I should see ajax response :arg1
+     */
+    public function iShouldSeeAjaxResponse($text) {
+       $timeout = 5000; // milliseconds
+       $this->minkContext->getSession()->wait($timeout, '(0 === jQuery.active)');
     }
 
     /**

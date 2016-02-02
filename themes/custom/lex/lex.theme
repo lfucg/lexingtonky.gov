@@ -40,7 +40,7 @@ function lex_preprocess_block(&$variables) {
     $url = \Drupal::request()->getPathInfo();
     // $form['field_feedback_what_doing']['widget'][0]['#value'] = 'f000';
     $form['field_feedback_what_doing']['widget']['value']['#attributes']['value'] = 'f000';
-    dsm($form['field_feedback_what_doing']['widget']);
+    // dsm($form['field_feedback_what_doing']['widget']);
     // $form['#ajax'] = array(
     //   // Function to call when event on form element triggered.
     //   'callback' => 'Drupal\ajax_example\Form\AjaxExampleForm::usernameValidateCallback',
@@ -124,5 +124,5 @@ function lex_preprocess_input__textfield(&$variables) {
     // the description field is able to use tokens so it contains the query param: feedback_url
     // $variables['attributes']['value'] = 'foo';//$variables['element']['#description'];
   }
-  $variables['attributes']['value'] = 'foo';//$variables['element']['#description'];
+  // $variables['attributes']['value'] = 'foo';//$variables['element']['#description'];
 }

@@ -7,6 +7,7 @@ dependencies:
     - field.field.contact_message.page_feedback.field_feedback_url
     - field.field.contact_message.page_feedback.field_feedback_what_doing
     - field.field.contact_message.page_feedback.field_feedback_what_wrong
+    - field.field.contact_message.page_feedback.field_page_suggestion
 id: contact_message.page_feedback.default
 targetEntityType: contact_message
 bundle: page_feedback
@@ -27,6 +28,12 @@ content:
     type: basic_string
   field_feedback_what_wrong:
     weight: 2
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+  field_page_suggestion:
+    weight: 4
     label: above
     settings: {  }
     third_party_settings: {  }

@@ -6,4 +6,5 @@ global-css:
 global-js:
   js:
     js/scripts.js: {}
+    js/webdesignstandards-accordion.js: {}
 

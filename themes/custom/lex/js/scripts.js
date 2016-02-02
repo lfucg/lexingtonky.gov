@@ -9,11 +9,14 @@
   $('#contact-message-page-feedback-form').submit(function(e) {
     e.preventDefault();
     var form = $(e.target);
+    var accordion = form.parent('.js-accordion-content');
+
     $.ajax({
       type:'POST',
       url: '/contact/page_feedback',
       data: form.serialize(),
       success: function(response) {
+        accordion.find('.js-success').removeClass('visually-hidden');
     }});
   })
 }());
