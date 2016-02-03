@@ -17,4 +17,4 @@ default:
       blackbox: ~
       api_driver: "drupal"
       drupal:
-        drupal_root: "/your/drupal/root"
+        drupal_root: "."
