@@ -1,6 +1,6 @@
 uuid: d409c68f-da84-45ef-a435-53bf8e7e7ee9
 langcode: en
-status: true
+status: false
 dependencies:
   content:
     - 'block_content:html_block:7e6ac12d-c370-486c-bb03-3b8d4afe814f'
@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: betaworkinprogressbanner
 theme: lex
-region: super_header
-weight: -16
+region: '-1'
+weight: -5
 provider: null
 plugin: 'block_content:7e6ac12d-c370-486c-bb03-3b8d4afe814f'
 settings:

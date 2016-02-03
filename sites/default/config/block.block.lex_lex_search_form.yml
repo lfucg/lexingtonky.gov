@@ -15,7 +15,7 @@ provider: null
 plugin: search_form_block
 settings:
   id: search_form_block
-  label: 'What can I help you find?'
+  label: 'Welcome to the pilot of lexingtonky.gov'
   provider: search
   label_display: visible
 visibility:
