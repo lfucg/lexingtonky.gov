@@ -5,20 +5,26 @@ machine:
     localhost: 127.0.0.1
   environment:
     PATH: $HOME/$CIRCLE_PROJECT_REPONAME/vendor/bin:$PATH
+dependencies:
+  cache_directories:
+    - "~/.composer"    # keep from having to install terminus every single time
+  override:
+    - composer global require pantheon-systems/cli --prefer-source --no-interaction
+    - composer install --prefer-source --no-interaction
 test:
   pre:
-    - composer global require pantheon-systems/cli
-  override:
-    - terminus auth login --machine-token=$MACHINE_TOKEN
+    - if [ "$CIRCLE_BRANCH" == "master" ]; then export SITE_ENV="dev"; else export SITE_ENV=$CIRCLE_BRANCH; fi
+    - terminus auth login --machine-token=$MACHINE_TOKEN 2> /dev/null
     - git remote add pantheon $PANTHEON_REPO
-    - git push --force pantheon $CIRCLE_BRANCH:$CIRCLE_BRANCH
-    # - terminus site create-env --site=$SITE_NAME --from-env=$FROM_ENV --to-env=$CIRCLE_BRANCH
-    # - terminus site clone-content --site=$SITE_NAME --from-env=live --to-env=$CIRCLE_BRANCH --yes
-    - terminus drush cim --site=$SITE_NAME --env=$CIRCLE_BRANCH
+    - git push --force pantheon $CIRCLE_BRANCH:$CIRCLE_BRANCH 2> /dev/null
+    - terminus site create-env --site=$SITE_NAME --from-env=$FROM_ENV --to-env=$CIRCLE_BRANCH
+    - terminus site clone-content --site=$SITE_NAME --from-env=live --to-env=$CIRCLE_BRANCH --yes
+    - terminus drush cim --site=$SITE_NAME --env=$CIRCLE_BRANCH 2> /dev/null
     - terminus drush "pm-enable -y devel" --site=$SITE_NAME --env=$CIRCLE_BRANCH
     - terminus drush "config-set -y system.mail interface.default devel_mail_log" --site=$SITE_NAME --env=$CIRCLE_BRANCH
-    - terminus drush cr --site=$SITE_NAME --env=$CIRCLE_BRANCH
+    - terminus drush cr --site=$SITE_NAME --env=$CIRCLE_BRANCH 2> /dev/null
     - sed -e "s,http://localhost:8888,https://$CIRCLE_BRANCH-$SITE_NAME.pantheon.io,g" behat.yml > behat-pantheon.yml
+  override:
     - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat
   post:
-    - echo "kill the env?"
+    - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH --yes; fi
