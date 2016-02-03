@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - user.role.administrator
     - user.role.editor
   module:
     - contact
@@ -30,6 +31,7 @@ display:
         options:
           role:
             editor: editor
+            administrator: administrator
       cache:
         type: none
         options: {  }
