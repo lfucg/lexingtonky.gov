@@ -8,10 +8,11 @@ machine:
 dependencies:
   cache_directories:
     - "~/.composer"    # keep from having to install terminus every single time 
+  override:
+    - composer global require pantheon-systems/cli
+    - composer install --prefer-source --no-interaction
 test:
   pre:
-    - composer global require pantheon-systems/cli
-  override:
     - if [ "$CIRCLE_BRANCH" == "master"]; then export SITE_ENV="dev"; else export SITE_ENV=$CIRCLE_BRANCH; fi
     - terminus auth login --machine-token=$MACHINE_TOKEN
     - git remote add pantheon $PANTHEON_REPO
@@ -21,6 +22,7 @@ test:
     - terminus drush cim --site=$SITE_NAME --env=$CIRCLE_BRANCH
     - terminus drush cr --site=$SITE_NAME --env=$CIRCLE_BRANCH
     - sed -e "s,http://localhost:8888,https://$CIRCLE_BRANCH-$SITE_NAME.pantheon.io,g" behat.yml > behat-pantheon.yml
+  override:
     - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat
   post:
     - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH --yes; fi 
