@@ -14,13 +14,13 @@ dependencies:
 test:
   pre:
     - if [ "$CIRCLE_BRANCH" == "master" ]; then export SITE_ENV="dev"; else export SITE_ENV=$CIRCLE_BRANCH; fi
-    - terminus auth login --machine-token=$MACHINE_TOKEN
-    - git remote add pantheon $PANTHEON_REPO
-    - git push --force pantheon $CIRCLE_BRANCH:$CIRCLE_BRANCH
+    - terminus auth login --machine-token=$MACHINE_TOKEN > /dev/null
+    - git remote add pantheon $PANTHEON_REPO 
+    - git push --force pantheon $CIRCLE_BRANCH:$CIRCLE_BRANCH > /dev/null
     - terminus site create-env --site=$SITE_NAME --from-env=$FROM_ENV --to-env=$CIRCLE_BRANCH
     - terminus site clone-content --site=$SITE_NAME --from-env=live --to-env=$CIRCLE_BRANCH --yes
-    - terminus drush cim --site=$SITE_NAME --env=$CIRCLE_BRANCH
-    - terminus drush cr --site=$SITE_NAME --env=$CIRCLE_BRANCH
+    - terminus drush cim --site=$SITE_NAME --env=$CIRCLE_BRANCH > /dev/null
+    - terminus drush cr --site=$SITE_NAME --env=$CIRCLE_BRANCH > /dev/null
     - sed -e "s,http://localhost:8888,https://$CIRCLE_BRANCH-$SITE_NAME.pantheon.io,g" behat.yml > behat-pantheon.yml
   override:
     - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat
