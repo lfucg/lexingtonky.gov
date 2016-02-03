@@ -19,4 +19,4 @@ test:
     - sed -e "s,http://localhost:8888,https://$CIRCLE_BRANCH-$SITE_NAME.pantheon.io,g" behat.yml > behat-pantheon.yml
     - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat
   post:
-    - if ["$CIRCLE_BRANCH" != "master"]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH; fi 
+    - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH; fi 
