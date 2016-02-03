@@ -50,6 +50,20 @@ Feature: Step Arguments Transformations
               return new User($username, $age);
           }
 
+          /** @Transform rowtable:username,age */
+          public function createUserFromRowTable(TableNode $table) {
+              $hash     = $table->getRowsHash();
+              $username = $hash['username'];
+              $age      = $hash['age'];
+
+              return new User($username, $age);
+          }
+
+          /** @Transform row:username */
+          public function createUserNamesFromTable($tableRow) {
+              return $tableRow['username'];
+          }
+
           /** @Transform /^\d+$/ */
           public function castToNumber($number) {
               return intval($number);
@@ -89,6 +103,13 @@ Feature: Step Arguments Transformations
           public function ageMustBe($age) {
               PHPUnit_Framework_Assert::assertEquals($age, $this->user->getAge());
               PHPUnit_Framework_Assert::assertInternalType('int', $age);
+          }
+
+          /**
+           * @Then the Usernames must be:
+           */
+          public function usernamesMustBe(array $usernames) {
+              PHPUnit_Framework_Assert::assertEquals($usernames[0], $this->user->getUsername());
           }
 
           /**
@@ -149,6 +170,52 @@ Feature: Step Arguments Transformations
 
       2 scenarios (2 passed)
       6 steps (6 passed)
+      """
+  Scenario: Row Table Arguments Transformations
+    Given a file named "features/row_table_arguments.feature" with:
+      """
+      Feature: Step Arguments
+        Scenario:
+          Given I am user:
+            | username | ever.zet |
+            | age      | 22       |
+          Then Username must be "ever.zet"
+          And Age must be 22
+
+        Scenario:
+          Given I am user:
+            | username | vasiljev |
+            | age      | 30       |
+          Then Username must be "vasiljev"
+          And Age must be 30
+      """
+    When I run "behat -f progress --no-colors"
+    Then it should pass with:
+      """
+      ......
+
+      2 scenarios (2 passed)
+      6 steps (6 passed)
+      """
+  Scenario: Table Row Arguments Transformations
+    Given a file named "features/table_row_arguments.feature" with:
+      """
+      Feature: Step Arguments
+        Scenario:
+          Given I am user:
+            | username | age |
+            | ever.zet | 22  |
+          Then the Usernames must be:
+            | username |
+            | ever.zet |
+      """
+    When I run "behat -f progress --no-colors"
+    Then it should pass with:
+      """
+      ..
+
+      1 scenario (1 passed)
+      2 steps (2 passed)
       """
 
   Scenario: Named Arguments Transformations

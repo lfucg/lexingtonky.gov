@@ -20,7 +20,7 @@ use Behat\Transliterator\Transliterator;
  */
 final class TurnipPatternPolicy implements PatternPolicy
 {
-    const TOKEN_REGEX = "[\"']?(?P<%s>(?<=\")[^\"]*(?=\")|(?<=')[^']*(?=')|[\w\.\,]+)['\"]?";
+    const TOKEN_REGEX = "[\"']?(?P<%s>(?<=\")[^\"]*(?=\")|(?<=')[^']*(?=')|\-?[\w\.\,]+)['\"]?";
 
     const PLACEHOLDER_REGEXP = "/\\\:(\w+)/";
     const OPTIONAL_WORD_REGEXP = '/(\s)?\\\\\(([^\\\]+)\\\\\)(\s)?/';
@@ -29,10 +29,15 @@ final class TurnipPatternPolicy implements PatternPolicy
     /**
      * @var string[]
      */
+    private $regexCache = array();
+
+    /**
+     * @var string[]
+     */
     private static $placeholderPatterns = array(
         "/(?<!\w)\"[^\"]+\"(?!\w)/",
         "/(?<!\w)'[^']+'(?!\w)/",
-        "/(?<!\w|\.|\,)\d+(?:[\.\,]\d+)?(?!\w|\.|\,)/"
+        "/(?<!\w|\.|\,)\-?\d+(?:[\.\,]\d+)?(?!\w|\.|\,)/"
     );
 
     /**
@@ -75,6 +80,18 @@ final class TurnipPatternPolicy implements PatternPolicy
      * {@inheritdoc}
      */
     public function transformPatternToRegex($pattern)
+    {
+        if (!isset($this->regexCache[$pattern])) {
+            $this->regexCache[$pattern] = $this->createTransformedRegex($pattern);
+        }
+        return $this->regexCache[$pattern];
+    }
+
+    /**
+     * @param string $pattern
+     * @return string
+     */
+    private function createTransformedRegex($pattern)
     {
         $regex = preg_quote($pattern, '/');
 

@@ -170,7 +170,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   /**
    * Find text in a table row containing given text.
    *
-   * @Then I should see (the text ):text in the ":rowText" row
+   * @Then I should see (the text ):text in the :rowText row
    */
   public function assertTextInTableRow($text, $rowText) {
     $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
@@ -222,7 +222,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => $this->getRandom()->string(255),
+      'body' => $this->getRandom()->name(255),
     );
     $saved = $this->nodeCreate($node);
     // Set internal page on the new node.
@@ -242,7 +242,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => $this->getRandom()->string(255),
+      'body' => $this->getRandom()->name(255),
       'uid' => $this->user->uid,
     );
     $saved = $this->nodeCreate($node);
@@ -297,7 +297,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @Then I should be able to edit a/an :type( content)
    */
   public function assertEditNodeOfType($type) {
-    $node = (object) array('type' => $type);
+    $node = (object) array(
+      'type' => $type,
+      'title' => "Test $type",
+    );
     $saved = $this->nodeCreate($node);
 
     // Set internal browser on the node edit page.
@@ -319,7 +322,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $term = (object) array(
       'name' => $name,
       'vocabulary_machine_name' => $vocabulary,
-      'description' => $this->getRandom()->string(255),
+      'description' => $this->getRandom()->name(255),
     );
     $saved = $this->termCreate($term);
 
@@ -364,6 +367,14 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
 
   /**
    * Creates one or more terms on an existing vocabulary.
+   *
+   * Provide term data in the following format:
+   *
+   * | name  | parent | description | weight | taxonomy_field_image |
+   * | Snook | Fish   | Marine fish | 10     | snook-123.jpg        |
+   * | ...   | ...    | ...         | ...    | ...                  |
+   *
+   * Only the 'name' field is required.
    *
    * @Given :vocabulary terms:
    */

@@ -19,13 +19,19 @@
     "drupal/coder": "~8.2.0",
     "phpspec/phpspec": "~2.0",
     "phpunit/phpunit": "~4.0",
-    "mockery/mockery": "0.9.4"
+    "mockery/mockery": "0.9.4",
+    "drush-ops/behat-drush-endpoint": "*"
   },
   "autoload": {
     "psr-0": {
       "Drupal\\Component": "src/",
       "Drupal\\Driver": "src/",
       "Drupal\\Tests\\Driver" : "tests/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.2.x-dev"
     }
   }
 }
