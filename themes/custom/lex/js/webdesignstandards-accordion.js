@@ -5,6 +5,8 @@
    * and it works with the Drupal jQuery
    */
   var $ = jQuery;
+  var accordionControl = '.js-accordion-control';
+
   /**
    * Accordion
    *
@@ -15,7 +17,7 @@
   function Accordion($el) {
     var self = this;
     this.$root = $el;
-    this.$root.on('click', 'button', function(ev) {
+    this.$root.on('click', accordionControl, function(ev) {
       var expanded = JSON.parse($(this).attr('aria-expanded'));
       ev.preventDefault();
       self.hideAll();
@@ -47,14 +49,15 @@
 
   Accordion.prototype.hideAll = function() {
     var self = this;
-    this.$('button').each(function() {
+    this.$(accordionControl).each(function() {
       self.hide($(this));
     });
   };
   function accordion($el) {
     return new Accordion($el);
   }
-  $('[class^=usa-accordion]').each(function() {
+
+  $('[class^=lex-accordion]').each(function() {
     accordion($(this));
   });
 }());

@@ -9,7 +9,7 @@ id: contact_message.page_feedback.field_page_suggestion
 field_name: field_page_suggestion
 entity_type: contact_message
 bundle: page_feedback
-label: 'What could we do better?'
+label: 'How could this page be better?'
 description: 'Remember not to include sensitive personal information'
 required: false
 translatable: false

@@ -1,7 +1,17 @@
 .lex-pagefeedback-form {
   max-width: none;
+
+  .lex-pagefeedback-legend, .form-item-field-page-suggestion-0-value label {
+    font-size: 2rem;
+  }
+  .form-item-field-page-suggestion-0-value label {
+    margin-bottom: 1em;
+  }
   .form-item-field-feedback-url-0-value {
     display: none;
+  }
+  .lex-pagefeedback-replylegend {
+    margin-top: 3em;
   }
   textarea {
     height: 8rem;
@@ -9,7 +19,6 @@
   }
   label {
     font-weight: bold;
-    padding-bottom: 5px;
   }
 }
 .lex-pagefeedback-form, .lex-feedback-form {
@@ -18,7 +27,7 @@
   }
 }
 
-/* lives in a custom html block for now */
-.lex-pagefeedback-linkcontainer {
-  margin-top: $lex-section-gutter;
+.lex-pagefeedback-container .lex-accordion-content {
+  // first label has padding and let alert be flush
+  padding-top: 0;
 }

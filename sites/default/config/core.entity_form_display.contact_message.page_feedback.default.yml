@@ -7,6 +7,8 @@ dependencies:
     - field.field.contact_message.page_feedback.field_feedback_url
     - field.field.contact_message.page_feedback.field_feedback_what_doing
     - field.field.contact_message.page_feedback.field_feedback_what_wrong
+    - field.field.contact_message.page_feedback.field_optional_email
+    - field.field.contact_message.page_feedback.field_optional_name
     - field.field.contact_message.page_feedback.field_page_suggestion
 id: contact_message.page_feedback.default
 targetEntityType: contact_message
@@ -20,6 +22,19 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_optional_email:
+    weight: 4
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: email_default
+  field_optional_name:
+    weight: 3
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
   field_page_suggestion:
     weight: 1
     settings:

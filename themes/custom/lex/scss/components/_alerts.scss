@@ -17,14 +17,6 @@
   }
 }
 
-.lex-inline-alert {
-  position: relative;
-}
-
-.lex-inline-alert:before {
-  content: "\f05a";
-  font-family: FontAwesome;
-  left:-5px;
-  position:absolute;
-  top:0;
+.lex-notice {
+  border-left: 10px solid $lex-light-grey;
 }

@@ -1,8 +1,12 @@
 // Avoid overriding external style library classes when possible
 // Only style what we own: classes starting with 'lex-'
 // h/t https://github.com/18F/web-design-standards-drupal/pull/38/files
-.usa-button {
+.usa-button, .button {
   border-radius: 0;
+}
+
+.button:hover {
+  background-color: $lex-light-blue;
 }
 
 .lex-search-hero .usa-search input {
