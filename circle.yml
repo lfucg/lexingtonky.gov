@@ -9,7 +9,7 @@ dependencies:
   cache_directories:
     - "~/.composer"    # keep from having to install terminus every single time 
   override:
-    - composer global require pantheon-systems/cli
+    - composer global require pantheon-systems/cli --prefer-source --no-interaction
     - composer install --prefer-source --no-interaction
 test:
   pre:
