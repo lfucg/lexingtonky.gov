@@ -388,6 +388,8 @@ display:
       use_more: false
       use_more_always: false
       use_more_text: 'more news'
+      link_url: news/coming-soon
+      link_display: custom_url
     cache_metadata:
       max-age: -1
       contexts:

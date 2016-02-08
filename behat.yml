@@ -13,6 +13,7 @@ default:
       goutte: ~
       selenium2: ~
       base_url: http://localhost:8888
+      browser_name: firefox
     Drupal\DrupalExtension:
       blackbox: ~
       api_driver: "drupal"
