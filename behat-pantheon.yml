@@ -1,0 +1,20 @@
+default:
+  suites:
+    default:
+      contexts:
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\DrushContext
+  extensions:
+    jarnaiz\JUnitFormatter\JUnitFormatterExtension:
+    Behat\MinkExtension:
+      goutte: ~
+      selenium2: ~
+      base_url: http://localhost:8888
+    Drupal\DrupalExtension:
+      blackbox: ~
+      api_driver: "drush"
+      drush:
+        alias: @pantheon.PANTHEON_ALIAS

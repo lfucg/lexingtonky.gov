@@ -22,8 +22,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
      * @BeforeSuite
      */
     public static function beforeSuite() {
-      exec('drush cache-clear render');
-      exec('drush cache-clear css-js');
+      // exec('drush cache-clear render');
+      // exec('drush cache-clear css-js');
     }
 
     /**
