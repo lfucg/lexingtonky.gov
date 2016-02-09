@@ -15,5 +15,10 @@ terminus drush "pm-enable -y devel" --site=$SITE_NAME --env=$SITE_ENV
 terminus drush "config-set -y system.mail interface.default devel_mail_log" --site=$SITE_NAME --env=$SITE_ENV
 terminus drush cr --site=$SITE_NAME --env=$SITE_ENV --yes 2> /dev/null
 
-sed -i -e "s,http://localhost:8888,https://$SITE_ENV-$SITE_NAME.pantheon.io,g" behat-pantheon.yml
+if [ "$CIRCLE_BRANCH" == "master" ]; then
+  sed -i -e "s,http://localhost:8888,https://$DEV_USER:$DEV_PASSWORD@$SITE_ENV-$SITE_NAME.pantheon.io,g" behat-pantheon.yml
+else
+  sed -i -e "s,http://localhost:8888,https://$SITE_ENV-$SITE_NAME.pantheon.io,g" behat-pantheon.yml
+fi
+
 sed -i -e "s,PANTHEON_ALIAS,$SITE_NAME.$SITE_ENV,g" behat-pantheon.yml
