@@ -22,7 +22,7 @@ test:
   post:
     - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH --yes; fi
 deployment:
-  production:
+  staging:
     branch: master
     commands:
-      - terminus site deploy --site=$SITE_NAME --env=test --sync-content --cc --note="Deployed from CircleCI"
+      - ./ci-deployment-staging.sh
