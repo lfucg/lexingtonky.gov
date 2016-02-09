@@ -6,10 +6,9 @@ terminus auth login --machine-token=$MACHINE_TOKEN 2> /dev/null
 git remote add pantheon $PANTHEON_REPO
 git push --force pantheon $CIRCLE_BRANCH:$CIRCLE_BRANCH 2> /dev/null
 
-terminus sites aliases
-
 if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site create-env --site=$SITE_NAME --from-env=$FROM_ENV --to-env=$CIRCLE_BRANCH; fi
 
+terminus sites aliases
 terminus site clone-content --site=$SITE_NAME --from-env=live --to-env=$SITE_ENV --yes
 terminus drush "cim -y" --site=$SITE_NAME --env=$SITE_ENV 2> /dev/null
 terminus drush "pm-enable -y devel" --site=$SITE_NAME --env=$SITE_ENV
