@@ -14,14 +14,11 @@ dependencies:
     - wget http://selenium-release.storage.googleapis.com/2.44/selenium-server-standalone-2.44.0.jar
     - java -jar selenium-server-standalone-2.44.0.jar:
           background: true
-database:
-  override:
-    - "./scripts/ci-database-override.sh"
 test:
   pre:
     - ./scripts/ci-test-pre.sh
   override:
-    - echo "Run tests here" #vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat
+    - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat
   post:
     - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH --yes; fi
 deployment:
