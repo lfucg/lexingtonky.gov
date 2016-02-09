@@ -11,8 +11,8 @@ dependencies:
   override:
     - "./scripts/ci-dependencies-override.sh"
   post:
-    - wget http://selenium-release.storage.googleapis.com/2.44/selenium-server-standalone-2.44.0.jar
-    - java -jar selenium-server-standalone-2.44.0.jar:
+    - wget http://selenium-release.storage.googleapis.com/2.51/selenium-server-standalone-2.51.0.jar
+    - java -jar selenium-server-standalone-2.51.0.jar:
           background: true
 test:
   pre:
