@@ -41,6 +41,12 @@ a:focus {
   color: $color-primary;
 }
 
+.lex-font-light {
+  @include media($large-screen) {
+    font-weight: $font-weight-light;
+  }
+}
+
 .lex-standoutlinks {
   .lex-card-title {
     text-transform: uppercase;

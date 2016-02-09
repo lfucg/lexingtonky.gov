@@ -44,3 +44,4 @@ permissions:
   - 'access administration pages'
   - 'use text format basic_html'
   - 'administer nodes'
+  - 'access toolbar'

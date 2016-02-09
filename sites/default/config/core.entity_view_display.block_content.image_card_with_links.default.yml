@@ -6,6 +6,7 @@ dependencies:
     - block_content.type.image_card_with_links
     - field.field.block_content.image_card_with_links.field_card_image
     - field.field.block_content.image_card_with_links.field_links
+    - image.style.teaser
   module:
     - image
 id: block_content.image_card_with_links.default

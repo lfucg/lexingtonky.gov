@@ -274,6 +274,9 @@ input:focus, input[type=search]:focus {
   padding: 1em;
   background-color: rgba($lex-dark-blue, $lex-alpha-level);
 
+  a {
+    color: white;
+  }
   .lex-card-title {
     font-size: 1.5em;
     margin-bottom: 0.5em;
@@ -289,6 +292,9 @@ input:focus, input[type=search]:focus {
 
     .lex-search {
       @extend .usa-search-big;
+    }
+    .lex-card-title {
+      font-weight: $font-weight-light;
     }
   }
 }

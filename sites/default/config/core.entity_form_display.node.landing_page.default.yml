@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.landing_page.field_hero_image
+    - image.style.thumbnail
     - node.type.landing_page
   module:
     - image

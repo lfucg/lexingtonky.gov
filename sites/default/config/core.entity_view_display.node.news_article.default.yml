@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.news_article.body
     - field.field.node.news_article.field_image
+    - image.style.one_column
     - node.type.news_article
   module:
     - image
