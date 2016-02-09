@@ -35,6 +35,13 @@ $settings['trusted_host_patterns'] = array(
   '^next\.lexingtonky\.gov$',
 );
 
+if (isset($_ENV['PANTHEON_ENVIRONMENT']) && $_ENV['PANTHEON_ENVIRONMENT'] == 'live') {
+  $config['core.extension']['module']['devel'] = 0;
+} else {
+  $config['core.extension']['module']['devel'] = 1;
+  $config['system.mail']['interface']['default'] = 'devel_mail_log';
+}
+
 /**
  * If there is a local settings file, then include it
  */
