@@ -10,7 +10,7 @@ dependencies:
     - "~/.composer/cache"    # keep from having to install terminus every single time
   override:
     - composer global require pantheon-systems/cli --prefer-source --no-interaction
-    - composer global require drush --prefer-source --no-interaction
+    - composer global require drush/drush --prefer-source --no-interaction
     - composer install --prefer-source --no-interaction
 test:
   pre:
