@@ -11,7 +11,6 @@ dependencies:
   override:
     - rm -rf ~/.composer/vendor #temp do fix a propblem with cached directories
     - rm -rf ~/.composer/composer.lock
-    - composer self-update 
     - composer global require pantheon-systems/cli --prefer-source --no-interaction
     - composer global require drush/drush:8 --prefer-source --no-interaction
     - composer install --prefer-source --no-interaction
