@@ -9,9 +9,7 @@ dependencies:
   cache_directories:
     - "~/.composer/cache"    # keep from having to install terminus every single time
   override:
-    - composer global require pantheon-systems/cli --prefer-source --no-interaction
-    - composer require drush/drush:8 --prefer-source --no-interaction
-    - composer install --prefer-source --no-interaction
+    - "./scripts/ci-dependencies-override.sh"
   post:
     - wget http://selenium-release.storage.googleapis.com/2.44/selenium-server-standalone-2.44.0.jar
     - java -jar selenium-server-standalone-2.44.0.jar:
