@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 terminus site backups create --env=live --element=all
 terminus site deploy --env=live --updatedb --cc

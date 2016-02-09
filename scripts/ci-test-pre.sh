@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ "$CIRCLE_BRANCH" == "master" ]; then export SITE_ENV="dev"; else export SITE_ENV=$CIRCLE_BRANCH; fi
 

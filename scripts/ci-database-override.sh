@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 mkdir "./db_backup"
 cd ./db_backup
