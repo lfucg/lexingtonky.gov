@@ -17,4 +17,4 @@ default:
       blackbox: ~
       api_driver: "drush"
       drush:
-        alias: PANTHEON_ALIAS
+        alias: @pantheon.PANTHEON_ALIAS
