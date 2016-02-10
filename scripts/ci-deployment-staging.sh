@@ -1,4 +1,4 @@
 #!/bin/bash
 
-terminus site deploy --env=test --updatedb --cc --sync-content
-terminus drush cim -y --env=test
+terminus site deploy --site=$SITE_NAME --env=test --updatedb --cc --sync-content
+terminus drush cim -y --site=$SITE_NAME --env=test
