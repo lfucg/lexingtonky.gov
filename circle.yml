@@ -9,14 +9,14 @@ dependencies:
   cache_directories:
     - "~/.composer/cache"    # keep from having to install terminus every single time
   override:
-    - "./scripts/ci-dependencies-override.sh"
+    - "./private/scripts/ci-dependencies-override.sh"
   post:
     - wget http://selenium-release.storage.googleapis.com/2.51/selenium-server-standalone-2.51.0.jar
     - java -jar selenium-server-standalone-2.51.0.jar:
           background: true
 test:
   pre:
-    - ./scripts/ci-test-pre.sh
+    - ./private/scripts/ci-test-pre.sh
   override:
     - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat
   post:
@@ -25,4 +25,4 @@ deployment:
   staging:
     branch: master
     commands:
-      - ./scripts/ci-deployment-staging.sh
+      - ./private/scripts/ci-deployment-staging.sh
