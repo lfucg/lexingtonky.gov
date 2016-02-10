@@ -25,4 +25,4 @@ deployment:
   staging:
     branch: master
     commands:
-      - ./ci-deployment-staging.sh
+      - ./scripts/ci-deployment-staging.sh
