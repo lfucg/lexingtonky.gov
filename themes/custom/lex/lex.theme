@@ -28,7 +28,7 @@ function lex_preprocess_block(&$variables) {
   if ($element_id == 'views_block__front_page_news_block_1') {
     $variables['attributes']['class'][] = 'usa-width-two-thirds lex-horizontalcard-column';
   }
-  else if ($element_id == 'linktopagefeedbackform') {
+  else if ($element_id == 'inline_page_feedback_form') {
     $message = \Drupal::entityManager()
       ->getStorage('contact_message')
       ->create(array(
@@ -102,11 +102,5 @@ function lex_preprocess_region(&$variables) {
   }
   if ($variables['region'] == 'content' || $variables['region'] == 'highlighted') {
     array_push($variables['attributes']['class'], 'lex-grid-full', 'usa-grid-full');
-  }
-}
-
-function lex_preprocess_input__textfield(&$variables) {
-  if ($variables['attributes']['name'] == 'field_feedback_url[0][value]') {
-    $variables['attributes']['value'] = \Drupal::request()->getRequestUri();
   }
 }

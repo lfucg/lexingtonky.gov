@@ -1,17 +1,15 @@
 (function() {
   // set feedback_url
   var $ = jQuery;
-  var link = document.getElementById('js-pagefeedback-link');
-  if (link) {
-    link.setAttribute('href', link.getAttribute('href') + '?feedback_url=' + window.location.pathname);
-  }
 
   $('#contact-message-page-feedback-form').submit(function(e) {
     e.preventDefault();
     var form = $(e.target);
     var submitBtn = form.find("input[type=submit]:visible");
     var accordion = form.parent('.js-accordion-content');
+    var feedback_url = window.location.pathname + window.location.search;
 
+    form.find('#edit-field-feedback-url-0-value').val(feedback_url);
     submitBtnOriginalVal = submitBtn.val();
     submitBtn.val('Sending...');
 
