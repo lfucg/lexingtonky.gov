@@ -309,16 +309,16 @@ display:
             more_link: false
             more_link_text: ''
             more_link_path: ''
-            strip_tags: false
+            strip_tags: true
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
+          element_type: p
           element_class: ''
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
-          element_wrapper_type: ''
+          element_wrapper_type: '0'
           element_wrapper_class: ''
           element_default_classes: false
           empty: ''
@@ -326,7 +326,7 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: text_trimmed
+          type: text_summary_or_trimmed
           settings:
             trim_length: 280
           group_column: value
