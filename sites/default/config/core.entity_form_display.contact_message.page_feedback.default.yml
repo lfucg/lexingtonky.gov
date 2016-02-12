@@ -4,9 +4,8 @@ status: true
 dependencies:
   config:
     - contact.form.page_feedback
+    - field.field.contact_message.page_feedback.field_city_response_from
     - field.field.contact_message.page_feedback.field_feedback_url
-    - field.field.contact_message.page_feedback.field_feedback_what_doing
-    - field.field.contact_message.page_feedback.field_feedback_what_wrong
     - field.field.contact_message.page_feedback.field_optional_email
     - field.field.contact_message.page_feedback.field_optional_name
     - field.field.contact_message.page_feedback.field_page_suggestion
@@ -15,6 +14,14 @@ targetEntityType: contact_message
 bundle: page_feedback
 mode: default
 content:
+  field_city_response_from:
+    type: entity_reference_autocomplete
+    weight: 4
+    settings:
+      match_operator: STARTS_WITH
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_feedback_url:
     type: string_textfield
     weight: 0
@@ -23,13 +30,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_optional_email:
-    weight: 4
+    weight: 3
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: email_default
   field_optional_name:
-    weight: 3
+    weight: 2
     settings:
       size: 60
       placeholder: ''
@@ -44,8 +51,6 @@ content:
     type: string_textarea
 hidden:
   copy: true
-  field_feedback_what_doing: true
-  field_feedback_what_wrong: true
   mail: true
   message: true
   name: true

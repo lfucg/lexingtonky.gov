@@ -20,3 +20,4 @@ permissions:
   42: 'administer users'
   43: 'access user profiles'
   44: 'access administration pages'
+  45: 'administer contact forms'

@@ -55,3 +55,6 @@ Thumbs.db
 
 # used by terminus
 .env
+
+# phpstorm
+.idea/*

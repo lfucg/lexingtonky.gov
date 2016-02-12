@@ -37,24 +37,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
       $this->randomString = (new Random())->word(10);
     }
 
+    public function randomizedText($text)
+    {
+        return $text . $this->randomString;
+    }
+
+
     /** @BeforeScenario */
     public function gatherContexts(BeforeScenarioScope $scope) {
       $environment = $scope->getEnvironment();
       $this->minkContext = $environment->getContext('Drupal\DrupalExtension\Context\MinkContext');
-    }
-
-    /**
-     * @Given /^I fill in "([^"]*)" with random text$/
-     */
-    public function iFillInWithRandomText($label) {
-      $this->minkContext->fillField($label, $this->randomString);
-    }
-
-    /**
-     * @Then I should see the random text
-     */
-    public function iShouldSeeTheRandomText() {
-      $this->minkContext->assertPageContainsText($this->randomString);
+      $this->drupalContext = $environment->getContext('Drupal\DrupalExtension\Context\DrupalContext');
     }
 
     /**
@@ -76,5 +69,37 @@ class FeatureContext implements Context, SnippetAcceptingContext {
      */
     public function iShouldSeeWithARandomQuerystring($urlPath) {
       $this->minkContext->assertPageContainsText($urlPath . "?" . $this->randomString);
+    }
+
+    /**
+     * @When I fill in :label with randomized text :text
+     */
+    public function iFillInWithRandomizedText($label, $text)
+    {
+      $this->minkContext->fillField($label, $this->randomizedText($text));
+    }
+
+    /**
+     * @Then I should see randomized text :text
+     */
+    public function iShouldSeeRandomizedText($text)
+    {
+      $this->minkContext->assertPageContainsText($this->randomizedText($text));
+    }
+
+    /**
+     * @Then I should not see randomized text :text
+     */
+    public function iShouldNotSeeRandomizedText($text)
+    {
+      $this->minkContext->assertPageNotContainsText($this->randomizedText($text));
+    }
+
+    /**
+     * @Then I fill in :label with my name
+     */
+    public function iFillInWithMyName($label)
+    {
+      $this->minkContext->fillField($label, $this->drupalContext->user->name);
     }
 }

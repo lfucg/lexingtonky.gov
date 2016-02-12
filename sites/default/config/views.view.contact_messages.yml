@@ -4,12 +4,13 @@ status: true
 dependencies:
   config:
     - field.storage.contact_message.field_feedback_url
+    - field.storage.contact_message.field_optional_email
+    - field.storage.contact_message.field_optional_name
     - field.storage.contact_message.field_page_suggestion
     - user.role.administrator
     - user.role.editor
   module:
     - contact
-    - contact_storage
     - user
 _core:
   default_config_hash: PCxK4Y-DofFJkikO_UCGIrKoPkV5GBvJ2I8ZCbxP7xU
@@ -219,18 +220,81 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        name:
-          id: name
-          table: contact_message
-          field: name
+        field_optional_name:
+          id: field_optional_name
+          table: contact_message__field_optional_name
+          field: field_optional_name
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Sender''s name'
-          exclude: false
+          label: ''
+          exclude: true
           alter:
             alter_text: false
             text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_optional_email:
+          id: field_optional_email
+          table: contact_message__field_optional_email
+          field: field_optional_email
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Your email address'
+          exclude: false
+          alter:
+            alter_text: true
+            text: '<a href="mailto:{{ field_optional_email }}?subject=Feedback for lexingtonky.gov&body=Hello {{ field_optional_name }}">{{ field_optional_email }} ({{ field_optional_name ? field_optional_name : ''N/A'' }})'
             make_link: false
             path: ''
             absolute: false
@@ -268,9 +332,8 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: false
+          type: basic_string
+          settings: {  }
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -281,59 +344,7 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: contact_message
-          entity_field: name
           plugin_id: field
-        contact_form_label:
-          id: contact_form_label
-          table: contact_message
-          field: contact_form_label
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'Contact form'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          entity_type: contact_message
-          plugin_id: contact_form
         created:
           id: created
           table: contact_message
@@ -440,45 +451,115 @@ display:
           entity_type: contact_message
           plugin_id: entity_operations
       filters:
-        contact_form:
-          id: contact_form
-          table: contact_message
-          field: contact_form
+        field_optional_email_value:
+          id: field_optional_email_value
+          table: contact_message__field_optional_email
+          field: field_optional_email_value
           relationship: none
           group_type: group
-          admin_label: ''
-          operator: in
-          value: {  }
+          admin_label: 'Email provided?'
+          operator: '='
+          value: ''
           group: 1
           exposed: true
           expose:
-            operator_id: contact_form_op
-            label: 'Contact form'
+            operator_id: field_optional_email_value_op
+            label: 'Your email address (field_optional_email)'
             description: ''
             use_operator: false
-            operator: contact_form_op
-            identifier: form
+            operator: field_optional_email_value_op
+            identifier: field_optional_email_value
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
               anonymous: '0'
+              editor: '0'
+              webmaster: '0'
               administrator: '0'
-            reduce: false
-          is_grouped: false
+          is_grouped: true
           group_info:
-            label: ''
+            label: 'Email provided?'
             description: ''
-            identifier: ''
+            identifier: field_optional_email_value
             optional: true
             widget: select
             multiple: false
             remember: false
-            default_group: All
+            default_group: '2'
             default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: bundle
+            group_items:
+              1:
+                title: 'Yes'
+                operator: 'not empty'
+                value: ''
+              2:
+                title: 'No'
+                operator: empty
+                value: ''
+              3:
+                title: ''
+                operator: '='
+                value: ''
+          plugin_id: string
+        field_city_response_from_target_id_1:
+          id: field_city_response_from_target_id_1
+          table: contact_message__field_city_response_from
+          field: field_city_response_from_target_id
+          relationship: none
+          group_type: group
+          admin_label: 'We''ve responded? (City response from)'
+          operator: empty
+          value:
+            min: ''
+            max: ''
+            value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_city_response_from_target_id_1_op
+            label: 'No city response yet'
+            description: ''
+            use_operator: false
+            operator: field_city_response_from_target_id_1_op
+            identifier: no_city_response_yet
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              editor: '0'
+              webmaster: '0'
+              administrator: '0'
+          is_grouped: true
+          group_info:
+            label: 'We''ve responded?'
+            description: ''
+            identifier: received_response
+            optional: true
+            widget: select
+            multiple: false
+            remember: true
+            default_group: '1'
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: 'No'
+                operator: empty
+                value:
+                  value: ''
+                  min: ''
+                  max: ''
+              2:
+                title: 'Yes'
+                operator: 'not empty'
+                value:
+                  value: ''
+                  min: ''
+                  max: ''
+          plugin_id: numeric
       sorts:
         created:
           id: created
@@ -513,6 +594,10 @@ display:
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
     cache_metadata:
       contexts:
         - 'languages:language_content'
@@ -524,6 +609,8 @@ display:
       max-age: 0
       tags:
         - 'config:field.storage.contact_message.field_feedback_url'
+        - 'config:field.storage.contact_message.field_optional_email'
+        - 'config:field.storage.contact_message.field_optional_name'
         - 'config:field.storage.contact_message.field_page_suggestion'
   page_1:
     display_plugin: page
@@ -552,4 +639,6 @@ display:
       max-age: 0
       tags:
         - 'config:field.storage.contact_message.field_feedback_url'
+        - 'config:field.storage.contact_message.field_optional_email'
+        - 'config:field.storage.contact_message.field_optional_name'
         - 'config:field.storage.contact_message.field_page_suggestion'

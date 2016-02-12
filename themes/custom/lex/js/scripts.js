@@ -1,8 +1,7 @@
 (function() {
-  // set feedback_url
   var $ = jQuery;
 
-  $('#contact-message-page-feedback-form').submit(function(e) {
+  $('.js-accordion-content #contact-message-page-feedback-form').submit(function(e) {
     e.preventDefault();
     var form = $(e.target);
     var submitBtn = form.find("input[type=submit]:visible");

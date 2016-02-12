@@ -1,0 +1,27 @@
+uuid: 7cb21853-0c4d-40a7-a400-e741242f2eaf
+langcode: en
+status: true
+dependencies:
+  config:
+    - contact.form.page_feedback
+    - field.storage.contact_message.field_city_response_from
+id: contact_message.page_feedback.field_city_response_from
+field_name: field_city_response_from
+entity_type: contact_message
+bundle: page_feedback
+label: 'City response from'
+description: 'The employee who emailed this person back'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:user'
+  handler_settings:
+    include_anonymous: false
+    filter:
+      type: _none
+    target_bundles: null
+    sort:
+      field: _none
+field_type: entity_reference

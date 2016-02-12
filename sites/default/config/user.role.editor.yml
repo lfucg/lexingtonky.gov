@@ -45,3 +45,4 @@ permissions:
   - 'use text format basic_html'
   - 'administer nodes'
   - 'access toolbar'
+  - 'administer contact forms'

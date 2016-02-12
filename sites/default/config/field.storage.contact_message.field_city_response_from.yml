@@ -1,15 +1,16 @@
-uuid: e39c7ab9-9daa-4942-8b3b-597b9873f100
+uuid: 79559317-0e44-4ece-ba02-2ae9a529a9e3
 langcode: en
 status: true
 dependencies:
   module:
     - contact
-id: contact_message.field_feedback_what_wrong
-field_name: field_feedback_what_wrong
+    - user
+id: contact_message.field_city_response_from
+field_name: field_city_response_from
 entity_type: contact_message
-type: string_long
+type: entity_reference
 settings:
-  case_sensitive: false
+  target_type: user
 module: core
 locked: false
 cardinality: 1
