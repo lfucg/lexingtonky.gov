@@ -10,7 +10,7 @@ field_name: field_feedback_url
 entity_type: contact_message
 bundle: page_feedback
 label: 'Feedback URL'
-description: '[current-page:query:feedback_url]<!-- this field is used to populate the default value, which does not take tokens -->'
+description: ''
 required: false
 translatable: false
 default_value: {  }
