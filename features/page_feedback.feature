@@ -44,38 +44,29 @@ Scenario: Submit feedback from feedback page
     Then I should be on "/"
     And I should see "Your message has been sent"
 
-Scenario: Submit feedback without javascript
+Scenario: Submit feedback without javascript to show inline form
     Given I am on the homepage
     And I click "Suggestions or problems with this page?"
     Then I should be on "/contact/page_feedback"
 
-    When I fill in "How could this page be better?" with randomized text "bar"
-    And I press "Send message"
-    Then I should be on "/"
-    And I should see "Your message has been sent"
-    And I am logged in as a user with the "administrator" role
-    When I go to "admin/structure/contact/messages"
-    Then I should see randomized text "bar"
-
+@javascript
 Scenario: Editors mark when they have responded to feedback
     Given I am on "/contact/page_feedback"
     Then I should not see "City response from"
 
     When I fill in "Your email" with randomized text "foo@bar.com"
     And I press "Send message"
-    Given I am logged in as a user with the "editor" role
-    When I go to "admin/structure/contact/messages"
+    And I am logged in as a user with the "editor" role
+    And I go to "admin/structure/contact/messages"
     And I select "Yes" from "Email provided?"
     And I select "No" from "We've responded?"
-    Then I press "Apply"
+    And I press "Apply"
     Then I should see randomized text "foo@bar.com"
 
     And I click "Edit"
     And I fill in "City response from" with my name
-    Then I press "Save"
+    And I press "Save"
     And I select "Yes" from "Email provided?"
     And I select "No" from "We've responded?"
-    Then I press "Apply"
+    And I press "Apply"
     Then I should not see randomized text "foo@bar.com"
-
-Scenario: City response not needed if no email provided
