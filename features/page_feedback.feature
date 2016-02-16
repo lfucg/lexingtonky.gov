@@ -44,7 +44,7 @@ Scenario: Submit feedback from feedback page
     Then I should be on "/"
     And I should see "Your message has been sent"
 
-Scenario: Submit feedback without javascript to show inline form
+Scenario: Submit feedback without inline ajax form
     Given I am on the homepage
     And I click "Suggestions or problems with this page?"
     Then I should be on "/contact/page_feedback"

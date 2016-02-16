@@ -290,7 +290,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Your email address'
+          label: 'Sender''s email address'
           exclude: false
           alter:
             alter_text: true
@@ -487,7 +487,7 @@ display:
             widget: select
             multiple: false
             remember: false
-            default_group: '2'
+            default_group: All
             default_group_multiple: {  }
             group_items:
               1:
@@ -503,14 +503,14 @@ display:
                 operator: '='
                 value: ''
           plugin_id: string
-        field_city_response_from_target_id_1:
-          id: field_city_response_from_target_id_1
+        field_city_response_from_target_id:
+          id: field_city_response_from_target_id
           table: contact_message__field_city_response_from
           field: field_city_response_from_target_id
           relationship: none
           group_type: group
-          admin_label: 'We''ve responded? (City response from)'
-          operator: empty
+          admin_label: ''
+          operator: '='
           value:
             min: ''
             max: ''
@@ -518,43 +518,39 @@ display:
           group: 1
           exposed: true
           expose:
-            operator_id: field_city_response_from_target_id_1_op
-            label: 'No city response yet'
-            description: ''
+            operator_id: field_city_response_from_target_id_op
+            label: 'City response from (field_city_response_from)'
+            description: null
             use_operator: false
-            operator: field_city_response_from_target_id_1_op
-            identifier: no_city_response_yet
+            operator: field_city_response_from_target_id_op
+            identifier: field_city_response_from_target_id
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              webmaster: '0'
-              administrator: '0'
           is_grouped: true
           group_info:
             label: 'We''ve responded?'
             description: ''
-            identifier: received_response
+            identifier: field_city_response_from_target_id
             optional: true
             widget: select
             multiple: false
-            remember: true
-            default_group: '1'
+            remember: false
+            default_group: All
             default_group_multiple: {  }
             group_items:
               1:
-                title: 'No'
-                operator: empty
+                title: 'Yes'
+                operator: 'not empty'
                 value:
                   value: ''
                   min: ''
                   max: ''
               2:
-                title: 'Yes'
-                operator: 'not empty'
+                title: 'No'
+                operator: empty
                 value:
                   value: ''
                   min: ''
