@@ -486,7 +486,7 @@ display:
             optional: true
             widget: select
             multiple: false
-            remember: false
+            remember: true
             default_group: All
             default_group_multiple: {  }
             group_items:
@@ -537,7 +537,7 @@ display:
             optional: true
             widget: select
             multiple: false
-            remember: false
+            remember: true
             default_group: All
             default_group_multiple: {  }
             group_items:
