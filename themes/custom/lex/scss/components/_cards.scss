@@ -26,7 +26,8 @@
     text-align: center;
   }
   .lex-stackeddate-month {
-    display: inline-block
+    display: inline-block;
+    padding-top: 0.3em; /* account for title's h4 line height */
   }
 }
 
@@ -38,6 +39,12 @@
   @include media($medium-screen) {
     padding-right: $lex-section-gutter;
     width: 33%;
+    float: left;
+  }
+}
+.lex-horizontalcard-text {
+  @include media($medium-screen) {
+    width: 66%;
     float: left;
   }
 }
