@@ -31,3 +31,10 @@
   // first label has padding and let alert be flush
   padding-top: 0;
 }
+
+.lex-pagefeedback-button-fixed {
+  position: fixed;
+  bottom: 0;
+  /* match mobile padding */
+  right: $lex-section-half-gutter;
+}

@@ -37,6 +37,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
       $this->randomString = (new Random())->word(10);
     }
 
+    /*
+     * randomString exists for the life of a scenario
+     * The randomization means a test can be run against the same db
+     * without bumping into text from previous run (since it's impractical to reset db)
+    */
     public function randomizedText($text)
     {
         return $text . $this->randomString;
@@ -101,5 +106,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
     public function iFillInWithMyName($label)
     {
       $this->minkContext->fillField($label, $this->drupalContext->user->name);
+    }
+
+   /**
+     * @Then I smooth scroll to see :text
+     */
+    public function iSmoothScrollToSee($text)
+    {
+      $this->minkContext->getSession()->wait(60000, "jQuery('.js-accordion-content:visible').length !== 0");
+      $this->minkContext->assertPageContainsText($text);
     }
 }

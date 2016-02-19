@@ -139,7 +139,7 @@ body {
 .lex-grid-full {
   max-width: $lex-max-width;
   margin: 0 auto;
-  padding: 0 15px;
+  padding: 0 $lex-section-half-gutter;
   @include media($large-screen) {
     padding: 0;
   }
