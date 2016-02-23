@@ -107,13 +107,4 @@ class FeatureContext implements Context, SnippetAcceptingContext {
     {
       $this->minkContext->fillField($label, $this->drupalContext->user->name);
     }
-
-   /**
-     * @Then I smooth scroll to see :text
-     */
-    public function iSmoothScrollToSee($text)
-    {
-      $this->minkContext->getSession()->wait(60000, "jQuery('.js-accordion-content:visible').length !== 0");
-      $this->minkContext->assertPageContainsText($text);
-    }
 }

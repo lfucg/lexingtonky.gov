@@ -12,7 +12,7 @@ Scenario: Submit homepage feedback
     Then I should not see "What could we do better?"
 
     And I click "feedback"
-    Then I smooth scroll to see "Would you like a reply"
+    Then I should see "Would you like a reply"
 
     When I fill in "How could this page be better?" with randomized text "foo"
     And I press "Send message"
