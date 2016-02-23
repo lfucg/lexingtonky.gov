@@ -1,5 +1,17 @@
 <?php
 
+function lex_natural_sort_views($a, $b) {
+  // we can use weight module if we need manual sorting capabilities
+  // https://www.drupal.org/project/weight
+  return strnatcmp($a->node_field_data_title, $b->node_field_data_title);
+}
+
+function lex_views_pre_render($view) {
+  if ($view->id() == "taxonomy_term") {
+    uasort($view->result, "lex_natural_sort_views");
+  }
+}
+
 function lex_preprocess_menu(&$variables) {
   // expose the url_title so it can be displayed in a tag
   if ($variables['menu_name'] == 'main') {
