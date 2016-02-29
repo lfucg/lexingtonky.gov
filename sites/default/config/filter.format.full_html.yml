@@ -6,7 +6,7 @@ dependencies:
     - editor
 name: 'Full HTML'
 format: full_html
-weight: 1
+weight: -7
 filters:
   filter_align:
     id: filter_align

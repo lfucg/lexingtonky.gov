@@ -21,3 +21,4 @@ permissions:
   43: 'access user profiles'
   44: 'access administration pages'
   45: 'administer contact forms'
+  46: 'use text format advanced_html'
