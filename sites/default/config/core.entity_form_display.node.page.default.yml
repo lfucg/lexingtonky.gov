@@ -25,9 +25,12 @@ content:
     third_party_settings: {  }
   field_lex_site_nav:
     weight: 6
-    settings: {  }
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
-    type: options_select
+    type: entity_reference_autocomplete
   field_page_overview:
     weight: 1
     settings:
@@ -53,7 +56,7 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
+    type: entity_reference_autocomplete_tags
   path:
     type: path
     weight: 4
