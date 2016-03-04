@@ -1,0 +1,4 @@
+services:
+  fieldblock.block_storage:
+    class: Drupal\fieldblock\BlockEntityStorage
+    arguments: ["@config.factory", "@uuid", "@language_manager", "@entity.manager"]

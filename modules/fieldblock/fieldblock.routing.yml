@@ -1,0 +1,7 @@
+fieldblock.field_block_config_form:
+  path: '/admin/config/fieldblock/fieldblockconfig'
+  defaults:
+    _form: '\Drupal\fieldblock\Form\FieldBlockConfigForm'
+    _title: 'Field as Block settings'
+  requirements:
+    _permission: 'access administration pages'
