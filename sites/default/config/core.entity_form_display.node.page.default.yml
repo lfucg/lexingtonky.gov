@@ -25,12 +25,9 @@ content:
     third_party_settings: {  }
   field_lex_site_nav:
     weight: 6
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
-    type: entity_reference_autocomplete
+    type: options_select
   field_page_overview:
     weight: 1
     settings:
