@@ -1,0 +1,28 @@
+# Schema for the configuration files of the Field as Block module.
+
+block.settings.fieldblock:*:
+  type: block_settings
+  label: 'Field as Block'
+  mapping:
+    label_from_field:
+      type: boolean
+      lable: 'Use field label as block title'
+    field_name:
+      type: string
+      label: 'Field name'
+    formatter_id:
+      type: string
+      label: 'Format type machine name'
+    formatter_settings:
+      type: field.formatter.settings.[%parent.formatter_id]
+      label: 'Settings'
+fieldblock.settings:
+  type: config_object
+  label: 'Field Block settings'
+  mapping:
+    enabled_entity_types:
+      type: sequence
+      label: 'Entity types to create for which to create Field Blocks.'
+      sequence:
+        type: string
+        label: 'Entity type'

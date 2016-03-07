@@ -112,7 +112,4 @@ function lex_preprocess_region(&$variables) {
   if ($variables['region'] == 'breadcrumb') {
     $variables['attributes']['class'][] = 'lex-slab lex-slab-grey';
   }
-  if ($variables['region'] == 'content' || $variables['region'] == 'highlighted') {
-    array_push($variables['attributes']['class'], 'lex-grid-full', 'usa-grid-full');
-  }
 }

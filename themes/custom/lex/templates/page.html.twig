@@ -69,39 +69,38 @@
 
   {{ page.breadcrumb }}
 
-  {{ page.highlighted }}
+  <div class="lex-grid-full usa-grid-full">
+    {{ page.highlighted }}
+  </div>
 
   <main role="main">
     <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
 
-    <div class="layout-content">
-
-      {{ title_prefix }}
-      {% if title %}
-        <h1>{{ title }}</h1>
-      {% endif %}
-      {{ title_suffix }}
-
+    <div class="layout-content lex-grid-full usa-grid-full">
       {{ tabs }}
 
       {% if action_links %}
         <nav class="action-links">{{ action_links }}</nav>
       {% endif %}
 
-      {{ page.content }}
+      {% if page.sidebar_first %}
+        <aside class="layout-sidebar-first" role="complementary">
+          {{ page.sidebar_first }}
+        </aside>
+      {% endif %}
+
+      <div class="usa-width-two-thirds">
+        {{ page.content }}
+      </div>
+
+      {% if page.sidebar_second %}
+        <aside class="layout-sidebar-second" role="complementary">
+          {{ page.sidebar_second }}
+        </aside>
+      {% endif %}
     </div>{# /.layout-content #}
 
-    {% if page.sidebar_first %}
-      <aside class="layout-sidebar-first" role="complementary">
-        {{ page.sidebar_first }}
-      </aside>
-    {% endif %}
 
-    {% if page.sidebar_second %}
-      <aside class="layout-sidebar-second" role="complementary">
-        {{ page.sidebar_second }}
-      </aside>
-    {% endif %}
   </main>
 
   {% include "@lex/includes/featured-bottom.html.twig" %}
