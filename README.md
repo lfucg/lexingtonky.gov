@@ -1,3 +1,9 @@
+[![Circle CI](https://circleci.com/gh/lfucg/lexingtonky.gov/tree/master.svg?style=svg)](https://circleci.com/gh/lfucg/lexingtonky.gov/tree/master)
+
+# Lexington, KY city site
+
+The upcoming site for the City of Lexington, currently in pilot phase. It's built on [Drupal 8](https://www.drupal.org/8) and uses the draft [US Web Design Standards](https://playbook.cio.gov/designstandards/).
+
 ## Installation
 
 Use the following instructions to set up a local development environment for the city's Drupal site.
@@ -78,6 +84,12 @@ $databases['default']['default'] = array(
 
 ## Development
 
+### Install composer
+
+### Install Drush
+
+`composer require "drush/drush:dev-master"`
+
 ### Run tests locally
 
 Set your drupal_root in behat.yml
@@ -86,11 +98,6 @@ Start selenium server: `java -jar selenium-server-standalone-2.50.1.jar`
 
 `./vendor/bin/behat`
 
-### Install composer
-
-### Install Drush
-
-`composer require "drush/drush:dev-master"`
 
 ### Import/export of configuration changes
 
