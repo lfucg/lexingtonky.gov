@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# fail fast
+set -e
+
 if [ "$CIRCLE_BRANCH" == "master" ]; then export SITE_ENV="dev"; else export SITE_ENV=$CIRCLE_BRANCH; fi
 
 terminus auth login --machine-token=$MACHINE_TOKEN 2> /dev/null
