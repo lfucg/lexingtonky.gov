@@ -8,7 +8,7 @@ The upcoming site for the City of Lexington, currently in pilot phase. It's buil
 
 Use the following instructions to set up a local development environment for the city's Drupal site.
 
-An [example walkthrough of install process](http://erikschwartz.net/2015-11-16-install-pantheon-drupal-8-mamp/) on a Mac.
+An [example walkthrough of install process](http://erikschwartz.net/2015-11-16-install-pantheon-drupal-8-mamp) on a Mac.
 
 ### Download codebase
 
