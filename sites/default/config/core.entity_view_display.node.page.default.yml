@@ -11,34 +11,28 @@ dependencies:
     - node.type.page
   module:
     - entity_reference_revisions
-    - text
     - user
 id: node.page.default
 targetEntityType: node
 bundle: page
 mode: default
 content:
-  field_page_overview:
-    weight: 1
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    type: text_default
   field_page_section:
     type: entity_reference_revisions_entity_view
-    weight: 2
+    weight: 1
     label: hidden
     settings:
       view_mode: default
       link: ''
     third_party_settings: {  }
   field_related_departments:
-    weight: 3
+    type: entity_reference_entity_view
+    weight: 2
     label: above
     settings:
+      view_mode: default
       link: false
     third_party_settings: {  }
-    type: entity_reference_label
   links:
     weight: 0
     settings: {  }
@@ -46,3 +40,4 @@ content:
 hidden:
   body: true
   field_lex_site_nav: true
+  field_page_overview: true
