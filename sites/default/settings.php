@@ -32,6 +32,7 @@ $settings['trusted_host_patterns'] = array(
   '^test-lexky-d8\.pantheonsite\.io$',
   '^live-lexky-d8\.pantheonsite\.io$',
   '^.+lexky-d8\.pantheonsite\.io$',
+  '^.+lexky-d8\.gotpantheon\.com$',
   '^next\.lexingtonky\.gov$',
 );
 

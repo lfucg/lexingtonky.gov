@@ -19,9 +19,10 @@ terminus drush "config-set -y system.mail interface.default devel_mail_log" --si
 terminus drush cr --site=$SITE_NAME --env=$SITE_ENV --yes 2> /dev/null
 
 if [ "$CIRCLE_BRANCH" == "master" ]; then
-  sed -i -e "s,http://localhost:8888,https://$DEV_USER:$DEV_PASSWORD@$SITE_ENV-$SITE_NAME.pantheon.io,g" behat-pantheon.yml
+  sed -i -e "s,http://localhost:8888,https://$DEV_USER:$DEV_PASSWORD@$SITE_ENV-$SITE_NAME.pantheonsite.io,g" behat-pantheon.yml
 else
-  sed -i -e "s,http://localhost:8888,https://$SITE_ENV-$SITE_NAME.pantheon.io,g" behat-pantheon.yml
+  # multi-dev sites use gotpantheon.com
+  sed -i -e "s,http://localhost:8888,https://$SITE_ENV-$SITE_NAME.gotpantheon.com,g" behat-pantheon.yml
 fi
 
 sed -i -e "s,PANTHEON_ALIAS,$SITE_NAME.$SITE_ENV,g" behat-pantheon.yml
