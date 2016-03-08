@@ -1,0 +1,10 @@
+chosen_minimum_single: 20
+chosen_minimum_multiple: 20
+chosen_disable_search_threshold: 0
+chosen_minimum_width: 200
+chosen_jquery_selector: select:visible
+chosen_search_contains: FALSE
+chosen_disable_search: FALSE
+chosen_placeholder_text_multiple: Choose some option
+chosen_placeholder_text_single: Choose an option
+chosen_no_results_text: No results match

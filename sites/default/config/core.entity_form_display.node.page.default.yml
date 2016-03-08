@@ -48,12 +48,9 @@ content:
     third_party_settings: {  }
   field_related_departments:
     weight: 26
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
-    type: entity_reference_autocomplete_tags
+    type: options_select
   path:
     type: path
     weight: 4

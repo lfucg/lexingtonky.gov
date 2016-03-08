@@ -16,12 +16,9 @@ mode: default
 content:
   field_related_locations:
     weight: 2
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
-    type: entity_reference_autocomplete_tags
+    type: options_select
   field_section_body:
     weight: 1
     settings:

@@ -1,0 +1,17 @@
+chosen:
+  remote: http://harvesthq.github.io/chosen
+  version: 1.5.0
+  license:
+      name: MIT
+      url: https://github.com/harvesthq/chosen/blob/master/LICENSE.md
+      gpl-compatible: true
+  js:
+    /libraries/chosen/chosen.jquery.min.js: { minified: true }
+  dependencies:
+    - core/jquery
+
+chosen.css:
+  version: 1.5.0
+  css:
+    component:
+      /libraries/chosen/chosen.css: {}
