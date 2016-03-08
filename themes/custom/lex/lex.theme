@@ -111,5 +111,7 @@ function lex_preprocess_region(&$variables) {
   $variables['attributes']['class'][] = 'lex-region-' . $variables['region'];
   if ($variables['region'] == 'breadcrumb') {
     $variables['attributes']['class'][] = 'lex-slab lex-slab-grey';
+  } elseif ($variables['region'] == 'highlighted') {
+    $variables['attributes']['class'][] = 'clearfix';
   }
 }
