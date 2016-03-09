@@ -107,4 +107,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
     {
       $this->minkContext->fillField($label, $this->drupalContext->user->name);
     }
+
+
+    public function findBySelector($selector)
+    {
+        $element = $this->minkContext->getSession()->getPage()->find("css", $selector);
+        if (!$element) {
+            throw new Exception($selector . " selector could not be found");
+        }
+        return $element;
+    }
+
+    /**
+     * @When I fill in :selector element with :value
+     */
+    public function iFillInElementWith($selector, $value)
+    {
+        $this->findBySelector($selector)->setValue($value);
+    }
+
+    /**
+     * @When I click on :selector element
+     */
+    public function iClickOnElement($selector)
+    {
+        $this->findBySelector($selector)->click();
+    }
 }
