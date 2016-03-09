@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.page.body
     - field.field.node.page.field_lex_site_nav
+    - field.field.node.page.field_office_to_contact
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
     - field.field.node.page.field_related_departments
@@ -25,6 +26,11 @@ content:
     third_party_settings: {  }
   field_lex_site_nav:
     weight: 6
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+  field_office_to_contact:
+    weight: 28
     settings: {  }
     third_party_settings: {  }
     type: options_select
