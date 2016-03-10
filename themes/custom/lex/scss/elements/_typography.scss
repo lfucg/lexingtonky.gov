@@ -37,6 +37,12 @@ a.lex-font, a, a:visited, a:hover, a:active {
   color: $lex-dark-grey;
 }
 
+/* todo: make blue + underline default and use class to opt out */
+a.lex-font-standout, a.lex-font-standout:visited {
+  color: $lex-blue;
+  text-decoration: underline;
+}
+
 a:focus {
   box-shadow: none;
 }

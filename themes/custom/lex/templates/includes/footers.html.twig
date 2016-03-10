@@ -11,11 +11,13 @@
       </h2>
       <ul class="usa-unstyled-list">
         <li>
-          <div class="h-adr lex-font-standout">
-            <span class="lex-street-address p-street-address">200 East Main Street</span>
-            <span class="p-locality">Lexington, Kentucky</span>
-            <span class="p-postal-code">40507</span>
-          </div>
+          {% set address = {
+              'street_number': '200',
+              'street': 'E. Main St.',
+              'zip': '40507',
+            }
+          %}
+          {% include "@lex/includes/address.html.twig" %}
         </li>
         <li><i class="fa fa-phone"></i>
           <a class="lex-font-standout" href="tel:859-425-2255">(859) 425-2255</a>
