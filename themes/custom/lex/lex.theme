@@ -31,16 +31,12 @@ function lex_preprocess_block(&$variables) {
   $variables['attributes']['class'][] = 'lex-block';
   $element_id = $variables['elements']['#id'];
 
-  // todo: generalize an opt-in way to add class to title
-  if ($element_id !== 'lex_lex_search_form') {
-    $variables['title_attributes']['class'] = array('lex-section-heading', 'lex-heading', 'lex-font-standout');
-  }
-
-  // todo: there must be a better way to add a class to a block
+  // todo: use templates/block-foo-element.twig to add this class and then include block.twig
   if ($element_id == 'views_block__front_page_news_block_1') {
     $variables['attributes']['class'][] = 'usa-width-two-thirds lex-horizontalcard-column';
   }
   else if ($element_id == 'inline_page_feedback_form') {
+    # get contact form field to render inline
     $message = \Drupal::entityManager()
       ->getStorage('contact_message')
       ->create(array(

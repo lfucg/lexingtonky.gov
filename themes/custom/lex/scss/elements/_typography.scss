@@ -1,10 +1,14 @@
 h1, h2, h3, h4, h5, h6 {
-  margin-top: 1em;
+  margin-top: 0em;
   font-family: $font-sans;
 }
 
 /* for basic document readability */
 .lex-region-content {
+  h1, h2, h3, h4, h5, h6 {
+    /* return to uswds value */
+    margin-top: 1em;
+  }
   h1, h2 {
     font-weight: $font-weight-medium;
   }
