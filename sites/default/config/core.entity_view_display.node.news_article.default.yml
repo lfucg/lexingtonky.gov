@@ -5,10 +5,8 @@ dependencies:
   config:
     - field.field.node.news_article.body
     - field.field.node.news_article.field_image
-    - image.style.one_column
     - node.type.news_article
   module:
-    - image
     - text
     - user
 id: node.news_article.default
@@ -22,16 +20,9 @@ content:
     weight: 1
     settings: {  }
     third_party_settings: {  }
-  field_image:
-    weight: 2
-    label: hidden
-    settings:
-      image_style: one_column
-      image_link: ''
-    third_party_settings: {  }
-    type: image
   links:
     weight: 0
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_image: true
