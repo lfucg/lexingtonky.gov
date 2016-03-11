@@ -9,9 +9,12 @@ dependencies:
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
     - field.field.node.page.field_related_departments
+    - field.field.node.page.field_related_documents
     - node.type.page
   module:
     - entity_reference_revisions
+    - file
+    - taxonomy
     - user
 id: node.page.default
 targetEntityType: node
@@ -27,12 +30,16 @@ content:
       link: ''
     third_party_settings: {  }
   field_related_departments:
-    type: entity_reference_entity_view
+    type: entity_reference_rss_category
+    weight: 3
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  field_related_documents:
+    type: file_url_plain
     weight: 2
     label: above
-    settings:
-      view_mode: default
-      link: false
+    settings: {  }
     third_party_settings: {  }
   links:
     weight: 0

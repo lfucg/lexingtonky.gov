@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
     - field.field.node.page.field_related_departments
+    - field.field.node.page.field_related_documents
     - node.type.page
   module:
     - text
@@ -32,4 +33,5 @@ hidden:
   field_office_to_contact: true
   field_page_section: true
   field_related_departments: true
+  field_related_documents: true
   links: true

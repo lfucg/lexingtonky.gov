@@ -9,8 +9,10 @@ dependencies:
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
     - field.field.node.page.field_related_departments
+    - field.field.node.page.field_related_documents
     - node.type.page
   module:
+    - file
     - paragraphs
     - path
     - text
@@ -57,6 +59,12 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: options_select
+  field_related_documents:
+    weight: 29
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
   path:
     type: path
     weight: 4
