@@ -42,8 +42,9 @@ $fa-font-path: "../font-awesome-4.5.0/fonts";
 
 // Import WDS
 @import '../webdesignstandards/_scss/all';
-@import './elements/_typography';
 @import './elements/_addresses';
+@import './elements/_list';
+@import './elements/_typography';
 @import './components/_alerts';
 @import './components/_cards';
 @import './components/_browsenav';

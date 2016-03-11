@@ -1,0 +1,17 @@
+.lex-aside-list {
+  /* based on usa-unstyled-list */
+  margin-top: 1em;
+  list-style-type: none;
+
+  li {
+    display: list-item;
+
+    &:before {
+      display: none;
+    }
+
+    &:after {
+      display: none;
+    }
+  }
+}

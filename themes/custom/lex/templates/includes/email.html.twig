@@ -1,0 +1,8 @@
+{#
+  required values:
+    email_address
+#}
+{% if email_address %}
+  <i class="fa fa-envelope"></i>
+  <a class="lex-font-standout" href="mailto:{{ email_address }}">Email us</a>
+{% endif %}

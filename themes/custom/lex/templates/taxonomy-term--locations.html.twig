@@ -24,12 +24,29 @@
  */
 #}
 <div{{ attributes}}>
-  <h4 class="lex-card-title lex-card-title-medium">{{ name }}</h4>
   {% set address = {
       street_number: content.field_street_number[0]['#context'].value,
       street: content.field_street[0]['#context'].value,
       zip: content.field_zip_code[0]['#context'].value,
     }
   %}
-  {% include "@lex/includes/address.html.twig" %}
+  <ul class="lex-aside-list">
+    <li>
+      <h4 class="lex-card-title lex-card-title-medium">{{ name }}</h4>
+      {% include "@lex/includes/address.html.twig" %}
+    </li>
+    <li class="lex-card-subtitle">
+      Hours:
+      <div class="lex-notice">
+        {{ content.field_hours_of_operation }}
+      </div>
+    </li>
+    <li>
+      {% set email_address = content.field_contact_email[0]['#context'].value %}
+      {% include "@lex/includes/email.html.twig" %}
+    </li>
+    <li>
+      {% include "@lex/includes/phone-lexcall.html.twig" %}
+    </li>
+  <ul>
 </div>

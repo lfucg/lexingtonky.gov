@@ -19,8 +19,9 @@
           %}
           {% include "@lex/includes/address.html.twig" %}
         </li>
-        <li><i class="fa fa-phone"></i>
-          <a class="lex-font-standout" href="tel:859-425-2255">(859) 425-2255</a>
+        <li>
+          {% set phone_number = "859-425-2255" %}
+          {% include "@lex/includes/phone.html.twig" %}
         </li>
         <li>
           <a href="https://twitter.com/LexingtonKyGov"><i class="lex-font-standout fa fa-twitter"></i><span class="visually-hidden">twitter</span></a>
