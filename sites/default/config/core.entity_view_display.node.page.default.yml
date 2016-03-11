@@ -14,7 +14,6 @@ dependencies:
   module:
     - entity_reference_revisions
     - file
-    - taxonomy
     - user
 id: node.page.default
 targetEntityType: node
@@ -28,12 +27,6 @@ content:
     settings:
       view_mode: default
       link: ''
-    third_party_settings: {  }
-  field_related_departments:
-    type: entity_reference_rss_category
-    weight: 3
-    label: above
-    settings: {  }
     third_party_settings: {  }
   field_related_documents:
     type: file_url_plain
@@ -50,3 +43,4 @@ hidden:
   field_lex_site_nav: true
   field_office_to_contact: true
   field_page_overview: true
+  field_related_departments: true
