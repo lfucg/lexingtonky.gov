@@ -12,7 +12,7 @@ field_name: field_related_documents
 entity_type: node
 bundle: page
 label: 'Related documents'
-description: 'Remember that pdfs are a last resort. It''s best to add information directly to the webpage.'
+description: 'Remember to use pdfs as a last resort. It''s best to add information directly to the webpage.'
 required: false
 translatable: false
 default_value: {  }
