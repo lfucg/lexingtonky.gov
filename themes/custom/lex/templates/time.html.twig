@@ -21,7 +21,6 @@
 #}
 {% if attributes.datetime %}
   {% set text = (attributes.datetime | date('M j, Y g:i a')) %}
-  {% set text = (text | replace({'am': 'a.m.', 'pm': 'p.m.'})) %}
+  {% include '@lex/includes/time.html.twig' with { time: text } %}
 {% endif %}
 
-{% include '@stable/field/time.html.twig' %}

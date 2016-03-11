@@ -1,0 +1,5 @@
+{#
+  required values:
+    time
+#}
+<time>{{ time | replace({'am': 'a.m.', 'pm': 'p.m.'}) }}</time>

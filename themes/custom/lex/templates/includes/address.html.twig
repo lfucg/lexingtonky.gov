@@ -15,12 +15,14 @@
 {% set state = { 'state' : (address.state ?: "KY") } %}
 {% set address = address|merge(city)|merge(state) %}
 
-<div class="h-adr">
-  {# make the address the map destination #}
-  <a class="lex-font-standout" target="_blank" href="https://www.google.com/maps/dir//{{ address|join("+") }}">
-    <span class="lex-street-address p-street-address">{{ address.street_number }}
-    {{ address.street }}</span>
-    <span class="p-locality">{{ address.city }}, {{ address.state }}</span>
-    <span class="p-postal-code">{{ address.zip}}</span>
-  </a>
-</div>
+{% if address.street_number and address.street %}
+  <div class="h-adr">
+    {# make the address the map destination #}
+    <a class="lex-font-standout" target="_blank" href="https://www.google.com/maps/dir//{{ address|join("+") }}">
+      <span class="lex-street-address p-street-address">{{ address.street_number }}
+      {{ address.street }}</span>
+      <span class="p-locality">{{ address.city }}, {{ address.state }}</span>
+      <span class="p-postal-code">{{ address.zip}}</span>
+    </a>
+  </div>
+{% endif %}

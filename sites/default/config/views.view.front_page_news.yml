@@ -220,7 +220,7 @@ display:
           label: ''
           exclude: true
           alter:
-            alter_text: true
+            alter_text: false
             text: '{{ created | replace({''am'': ''a.m.'', ''pm'': ''p.m.''}) }}'
             make_link: false
             path: ''
@@ -351,7 +351,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "<span class=\"lex-card-title lex-card-title-medium\">{{ title }}</span>\n<div class=\"lex-card-subtitle lex-card-fulldate\">{{ created }}</div>\n<p>{{ body }}</p>"
+            text: "<span class=\"lex-card-title lex-card-title-medium\">{{ title }}</span>\n<div class=\"lex-card-subtitle lex-card-fulldate\">{% include \"@lex/includes/time.html.twig\" with { time: created } %}</div>\n<p>{{ body }}</p>"
             make_link: false
             path: ''
             absolute: false
