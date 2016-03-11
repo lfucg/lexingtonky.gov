@@ -8,7 +8,7 @@ third_party_settings:
   menu_ui:
     available_menus: {  }
     parent: ''
-name: 'News Article'
+name: 'News article'
 type: news_article
 description: 'Use news articles for time-sensitive content like news, press releases or blog posts.'
 help: ''

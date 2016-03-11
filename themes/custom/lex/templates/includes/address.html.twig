@@ -12,7 +12,7 @@
 #}
 
 {% set city = { 'city' : (address.city ?: "Lexington") } %}
-{% set state = { 'address' : (address.state ?: "KY") } %}
+{% set state = { 'state' : (address.state ?: "KY") } %}
 {% set address = address|merge(city)|merge(state) %}
 
 <div class="h-adr">

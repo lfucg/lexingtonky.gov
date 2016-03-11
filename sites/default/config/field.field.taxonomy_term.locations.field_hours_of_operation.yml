@@ -10,7 +10,7 @@ field_name: field_hours_of_operation
 entity_type: taxonomy_term
 bundle: locations
 label: 'Hours of operation'
-description: 'Monday - Thursday: 9 a.m. - 5 p.m.<br>Friday: 8 a.m. - 4 p.m.'
+description: 'Monday – Thursday: 9 a.m. – 5 p.m.<br>Friday: 8 a.m. – 4 p.m.'
 required: false
 translatable: false
 default_value: {  }
