@@ -43,6 +43,7 @@ $fa-font-path: "../font-awesome-4.5.0/fonts";
 // Import WDS
 @import '../webdesignstandards/_scss/all';
 @import './elements/_addresses';
+@import './elements/_button';
 @import './elements/_list';
 @import './elements/_typography';
 @import './components/_alerts';
@@ -323,19 +324,6 @@ input:focus, input[type=search]:focus {
   padding-bottom: $lex-section-gutter;
   @include media($medium-screen) {
     border-top: 1px solid $lex-grey;
-  }
-}
-
-.lex-morelink {
-  margin: 0;
-  width: 8em;
-  padding-left: 0;
-  padding-right: 0;
-  float: right;
-  text-transform: uppercase;
-  font-weight: $font-weight-regular;
-  a, a:visited {
-    color: white;
   }
 }
 

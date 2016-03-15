@@ -1,13 +1,15 @@
 uuid: 77506490-7005-4287-b400-e1d55869a7c6
 langcode: en
-status: false
+status: true
 dependencies:
+  module:
+    - ctools
   theme:
     - lex
 id: lex_local_tasks
 theme: lex
-region: '-1'
-weight: -7
+region: content
+weight: -16
 provider: null
 plugin: local_tasks_block
 settings:
@@ -17,4 +19,12 @@ settings:
   label_display: '0'
   primary: true
   secondary: true
-visibility: {  }
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      news_article: news_article
+      page: page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
