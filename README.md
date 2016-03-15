@@ -1,5 +1,5 @@
 [![Circle CI](https://circleci.com/gh/lfucg/lexingtonky.gov/tree/master.svg?style=svg)](https://circleci.com/gh/lfucg/lexingtonky.gov/tree/master)
-Visual regression testing via [Browserstack Automate](browserstack.com/automate) (currently in alpha, housed in [separate repo](https://github.com/eeeschwartz/shoov-tutorial))
+Visual regression testing via [Browserstack Automate](browserstack.com/automate) and [shoov.io](http://shoov.io/) (Our config is currently in alpha, housed in [separate repo](https://github.com/eeeschwartz/shoov-tutorial))
 
 # Lexington, KY city site
 

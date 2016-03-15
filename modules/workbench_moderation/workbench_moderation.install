@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * Contains install/update hooks for moderation_state.
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+
+/**
+ * Implements hook_install().
+ */
+function workbench_moderation_install() {
+  /** @var \Drupal\workbench_moderation\ModerationInformationInterface $moderation_info */
+  $moderation_info = \Drupal::service('workbench_moderation.moderation_information');
+
+  /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+  $field_manager = \Drupal::service('entity_field.manager');
+
+  $entity_definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+
+  $revisionable_entity_defintions = $moderation_info->selectRevisionableEntities((\Drupal::entityTypeManager()->getDefinitions()));
+
+  /** @var \Drupal\Core\Entity\ContentEntityTypeInterface $type */
+  foreach ($revisionable_entity_defintions as $type) {
+    $workbench_moderation_definition = $field_manager->getFieldStorageDefinitions($type->id())['moderation_state'];
+    $entity_definition_update_manager->installFieldStorageDefinition('moderation_state', $type->id(), 'moderation_state', $workbench_moderation_definition);
+  }
+}
