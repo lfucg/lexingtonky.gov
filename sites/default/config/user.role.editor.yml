@@ -46,3 +46,5 @@ permissions:
   - 'administer nodes'
   - 'access toolbar'
   - 'administer contact forms'
+  - 'use draft_draft transition'
+  - 'use needs_review_published transition'

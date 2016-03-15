@@ -22,3 +22,6 @@ permissions:
   15: 'revert page revisions'
   16: 'view page revisions'
   17: 'view the administration theme'
+  19: 'view any unpublished content'
+  20: 'use draft_draft transition'
+  21: 'use draft_needs_review transition'
