@@ -1,4 +1,3 @@
-/* somehow loading this file via lex.info.yml
-re-adds padding-left to the ckeditor editing UI
-no idea
-*/
+.cke_editable {
+  padding-left: 1em;
+}
