@@ -25,6 +25,7 @@ module:
   filter: 0
   help: 0
   history: 0
+  honeypot: 0
   image: 0
   link: 0
   menu_ui: 0
