@@ -16,6 +16,7 @@ dependencies:
     - paragraphs
     - path
     - text
+    - workbench_moderation
 id: node.page.default
 targetEntityType: node
 bundle: page
@@ -32,7 +33,7 @@ content:
     third_party_settings: {  }
     type: options_select
   field_office_to_contact:
-    weight: 28
+    weight: 7
     settings: {  }
     third_party_settings: {  }
     type: options_select
@@ -54,13 +55,8 @@ content:
       add_mode: dropdown
       form_display_mode: default
     third_party_settings: {  }
-  field_related_departments:
-    weight: 26
-    settings: {  }
-    third_party_settings: {  }
-    type: options_select
   field_related_documents:
-    weight: 29
+    weight: 8
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
@@ -87,5 +83,6 @@ content:
     third_party_settings: {  }
 hidden:
   body: true
+  field_related_departments: true
   promote: true
   sticky: true

@@ -5,12 +5,15 @@ dependencies:
   config:
     - field.field.node.news_article.body
     - field.field.node.news_article.field_image
+    - field.field.node.news_article.field_related_documents
     - image.style.thumbnail
     - node.type.news_article
   module:
+    - file
     - image
     - path
     - text
+    - workbench_moderation
 id: node.news_article.default
 targetEntityType: node
 bundle: news_article
@@ -36,6 +39,12 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
     type: image_image
+  field_related_documents:
+    weight: 33
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
   path:
     type: path
     weight: 30
