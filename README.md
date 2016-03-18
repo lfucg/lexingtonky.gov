@@ -93,9 +93,15 @@ $databases['default']['default'] = array(
 
 ### Run tests locally
 
-Set your drupal_root in behat.yml
+Set your drupal_root in behat.yml (e.g. /my/path/to/drupal/install)
 
 Start selenium server: `java -jar selenium-server-standalone-2.50.1.jar`
+
+To enable devel_mail_log:
+
+`drush en -y devel`
+
+run tests:
 
 `./vendor/bin/behat`
 
