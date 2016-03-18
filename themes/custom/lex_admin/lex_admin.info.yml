@@ -1,17 +1,17 @@
- +name: Lexington Admin
-+description: An admin theme for the City of Lexington, which makes very minor updates to the "seven" base theme
-+type: theme
-+core: 8.x
-+base theme: seven
-+regions:
-+  header: 'Header'
-+  pre_content: 'Pre-content'
-+  breadcrumb: Breadcrumb
-+  highlighted: Highlighted
-+  help: Help
-+  content: Content
-+  page_top: 'Page top'
-+  page_bottom: 'Page bottom'
-+  sidebar_first: 'First sidebar'
-+regions_hidden:
-+  - sidebar_first
+name: Lexington Admin
+description: An admin theme for the City of Lexington, which makes very minor updates to the "seven" base theme
+type: theme
+core: 8.x
+base theme: seven
+regions:
+  header: 'Header'
+  pre_content: 'Pre-content'
+  breadcrumb: Breadcrumb
+  highlighted: Highlighted
+  help: Help
+  content: Content
+  page_top: 'Page top'
+  page_bottom: 'Page bottom'
+  sidebar_first: 'First sidebar'
+regions_hidden:
+  - sidebar_first
