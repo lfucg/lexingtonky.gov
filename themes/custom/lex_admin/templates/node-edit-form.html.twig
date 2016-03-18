@@ -1,0 +1,32 @@
+{#
+/**
+ * @file
+ * Theme override for a node edit form.
+ *
+ * Two column template for the node add/edit form.
+ *
+ * This template will be used when a node edit form specifies 'node_edit_form'
+ * as its #theme callback.  Otherwise, by default, node add/edit forms will be
+ * themed by form.html.twig.
+ *
+ * Available variables:
+ * - form: The node add/edit form.
+ *
+ * @see seven_form_node_form_alter()
+ */
+#}
+<div class="layout-node-form clearfix">
+  <div class="layout-region layout-region-node-main">
+    {{ form|without('actions') }}
+  </div>
+  <div class="layout-region layout-region-node-secondary">
+    <strong>Resources</strong>&#13;
+    <ol>
+      <li><a href="http://www.hemingwayapp.com/">Hemingway Editor</a> to keep content at an 8th grade reading level</li>&#13;
+      <li><a href="https://lfucg.github.io/content-guide/">City of Lexington Content Guide</a>&#13;</li>
+    </ol>
+  </div>
+  <div class="layout-region layout-region-node-footer">
+    {{ form.actions }}
+  </div>
+</div>
