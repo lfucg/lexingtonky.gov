@@ -1,0 +1,20 @@
+uuid: 123de4a4-580b-4da1-b923-353d1ed44688
+langcode: en
+status: true
+dependencies:
+  module:
+    - help
+  theme:
+    - lex_admin
+id: lex_admin_help
+theme: lex_admin
+region: help
+weight: 0
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Help
+  provider: help
+  label_display: '0'
+visibility: {  }

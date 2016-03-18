@@ -1,0 +1,20 @@
+uuid: 0fa70d3c-d500-41c3-a000-bb260f2b115c
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_admin
+id: lex_admin_breadcrumbs
+theme: lex_admin
+region: breadcrumb
+weight: 0
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Breadcrumbs
+  provider: system
+  label_display: '0'
+visibility: {  }
