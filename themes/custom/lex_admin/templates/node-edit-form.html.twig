@@ -17,14 +17,18 @@
 #}
 <div class="layout-node-form clearfix">
   <div class="layout-region layout-region-node-main">
-    {{ form|without('actions') }}
+    {{ form|without('advanced', 'actions') }}
   </div>
   <div class="layout-region layout-region-node-secondary">
-    <strong>Resources</strong>&#13;
-    <ol>
-      <li><a href="http://www.hemingwayapp.com/">Hemingway Editor</a> to keep content at an 8th grade reading level</li>&#13;
-      <li><a href="https://lfucg.github.io/content-guide/">City of Lexington Content Guide</a>&#13;</li>
-    </ol>
+    <div class="lex-content-guidelines-container">
+      <h2>Content resources</h2>
+      <ol>
+        <li>Remember to use plain language</li>
+        <li>Use <a href="http://www.hemingwayapp.com/">Hemingway Editor</a> to keep content at an 8th grade reading level</li>
+        <li><a href="https://lfucg.github.io/content-guide/">City of Lexington Content Guide</a></li>
+      </ol>
+    </div>
+    {{ form.advanced }}
   </div>
   <div class="layout-region layout-region-node-footer">
     {{ form.actions }}

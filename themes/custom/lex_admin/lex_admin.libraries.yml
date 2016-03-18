@@ -1,0 +1,4 @@
+global-styling:
+  css:
+    component:
+      css/seven-theme-overrides.css: {}
