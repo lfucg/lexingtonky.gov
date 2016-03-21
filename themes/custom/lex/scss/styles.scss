@@ -51,8 +51,8 @@ $fa-font-path: "../font-awesome-4.5.0/fonts";
 @import './components/_browsenav';
 @import './components/_forms';
 // Override WDS styles (avoid when possible)
-@import './wds-overrides';
-
+@import './_drupal-overrides';
+@import './_wds-overrides';
 
 // Core Lexington styles
 body {

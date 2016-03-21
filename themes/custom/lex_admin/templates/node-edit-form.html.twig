@@ -17,20 +17,12 @@
 #}
 <div class="layout-node-form clearfix">
   <div class="layout-region layout-region-node-main">
-    {{ form|without('advanced', 'actions') }}
+    {{ form|without('field_lex_site_nav', 'field_office_to_contact', 'actions') }}
   </div>
   <div class="layout-region layout-region-node-secondary">
-    <div class="lex-content-guidelines-container">
-      <h2>Content resources</h2>
-      <ol>
-        <li>Remember to use plain language</li>
-        <li>Use <a href="http://www.hemingwayapp.com/">Hemingway Editor</a> to keep content at an 8th grade reading level</li>
-        <li><a href="https://lfucg.github.io/content-guide/">City of Lexington Content Guide</a></li>
-      </ol>
-    </div>
-    {{ form.advanced }}
-  </div>
-  <div class="layout-region layout-region-node-footer">
+    {% include '@lex_admin/includes/content-guidelines.html.twig' %}
+    {{ form.field_lex_site_nav }}
+    {{ form.field_office_to_contact }}
     {{ form.actions }}
   </div>
 </div>
