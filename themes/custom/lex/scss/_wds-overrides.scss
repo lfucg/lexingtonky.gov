@@ -5,6 +5,10 @@
   border-radius: 0;
 }
 
+ul, ol {
+  margin-bottom: 1em;
+}
+
 .button:hover {
   background-color: $lex-light-blue;
 }
