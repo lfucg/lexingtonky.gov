@@ -1,0 +1,10 @@
+{% if name == 'title[0][value]' %}
+  {% set title_description %}
+    Capitalize the first word and proper nouns: <em>Starting a business in Lexington</em>
+  {% endset %}
+
+  {% set description = {content: title_description} %}
+  {% set description_display = 'after' %}
+{% endif %}
+
+{% include '@classy/form/form-element.html.twig' %}
