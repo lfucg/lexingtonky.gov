@@ -1,0 +1,6 @@
+{% include '@stable/field/field.html.twig' %}
+
+{# grandfather articles with manual ### #}
+{% if '###' not in content %}
+  <div class="lex-newsarticle-end">###</div>
+{% endif %}
