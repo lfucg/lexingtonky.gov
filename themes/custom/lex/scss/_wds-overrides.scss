@@ -56,3 +56,14 @@ ul, ol {
   background-color: $lex-alert-blue;
 }
 
+/* remove clashes with admin toolbar */
+.menu-item {
+  margin: 0;
+  &:after {
+    content: none;
+  }
+}
+
+.toolbar-lining button {
+  margin: 0;
+}
