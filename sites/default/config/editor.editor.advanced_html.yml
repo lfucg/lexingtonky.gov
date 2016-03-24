@@ -40,7 +40,7 @@ settings:
             - Table
   plugins:
     stylescombo:
-      styles: 'a.usa-button|Call to action'
+      styles: 'a.lex-calltoaction|Call to action'
 image_upload:
   status: true
   scheme: public
