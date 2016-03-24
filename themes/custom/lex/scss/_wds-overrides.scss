@@ -67,3 +67,11 @@ ul, ol {
 .toolbar-lining button {
   margin: 0;
 }
+
+table {
+  min-width: initial;
+  td {
+    border: 0;
+    padding: 1rem;
+  }
+}
