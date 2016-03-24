@@ -35,10 +35,11 @@ settings:
         -
           name: 'Block Formatting'
           items:
+            - Styles
             - Format
   plugins:
     stylescombo:
-      styles: ''
+      styles: 'a.usa-button|Call to action'
 image_upload:
   status: true
   scheme: public
