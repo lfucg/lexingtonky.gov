@@ -2,6 +2,8 @@ uuid: 218b6228-9698-4f64-af1f-3188d107017d
 langcode: en
 status: true
 dependencies:
+  config:
+    - taxonomy.vocabulary.site_navigation
   module:
     - node
     - taxonomy
@@ -98,10 +100,11 @@ display:
             type: 'entity:taxonomy_term'
             fail: 'not found'
           validate_options:
+            bundles:
+              site_navigation: site_navigation
             access: true
             operation: view
             multiple: 0
-            bundles: {  }
           break_phrase: false
           add_table: false
           require_value: false
