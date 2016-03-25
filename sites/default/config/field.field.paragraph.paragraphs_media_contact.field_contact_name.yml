@@ -1,0 +1,19 @@
+uuid: c11930df-c3df-4bbb-a902-2b673ab2f42c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_contact_name
+    - paragraphs.paragraphs_type.paragraphs_media_contact
+id: paragraph.paragraphs_media_contact.field_contact_name
+field_name: field_contact_name
+entity_type: paragraph
+bundle: paragraphs_media_contact
+label: 'Contact name'
+description: 'E.g. Samantha Smith'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

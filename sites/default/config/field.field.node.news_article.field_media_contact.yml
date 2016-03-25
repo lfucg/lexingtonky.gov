@@ -1,0 +1,32 @@
+uuid: 8c8ff5e1-e543-4463-8750-800c4235bbf0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_media_contact
+    - node.type.news_article
+  module:
+    - entity_reference_revisions
+id: node.news_article.field_media_contact
+field_name: field_media_contact
+entity_type: node
+bundle: news_article
+label: 'Media contact'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      paragraphs_media_contact: paragraphs_media_contact
+    target_bundles_drag_drop:
+      paragraphs_media_contact:
+        enabled: true
+        weight: 3
+      paragraphs_page_section:
+        weight: 4
+        enabled: false
+field_type: entity_reference_revisions
