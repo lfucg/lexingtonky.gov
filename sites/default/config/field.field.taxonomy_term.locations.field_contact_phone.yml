@@ -10,7 +10,7 @@ field_name: field_contact_phone
 entity_type: taxonomy_term
 bundle: locations
 label: 'Contact phone'
-description: 859-555-1212
+description: '(859) 555-1212'
 required: false
 translatable: false
 default_value: {  }

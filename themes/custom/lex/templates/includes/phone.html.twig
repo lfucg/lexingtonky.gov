@@ -6,4 +6,4 @@
 {% set stripped_number = phone_number|replace({ '(': '', ')': '-', ' ': ''}) %}
 
 <i class="fa fa-phone"></i>
-<a class="lex-font-standout" href="tel:{{ stripped_number }}">{{ stripped_number }}</a>
+<a class="lex-font-standout" href="tel:{{ stripped_number }}">{{ phone_number }}</a>

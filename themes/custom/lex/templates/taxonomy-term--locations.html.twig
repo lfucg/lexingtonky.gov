@@ -50,8 +50,13 @@
         }
       %}
     </li>
-    <li>
-      {% include "@lex/includes/phone-lexcall.html.twig" %}
-    </li>
+    {% if content.field_contact_phone[0]['#context'] %}
+      <li>
+        {% include "@lex/includes/phone.html.twig" with {
+            phone_number: content.field_contact_phone[0]['#context'].value,
+          }
+         %}
+      </li>
+    {% endif %}
   <ul>
 </div>
