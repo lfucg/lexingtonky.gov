@@ -10,7 +10,7 @@ third_party_settings:
     parent: ''
 name: 'News article'
 type: news_article
-description: 'Use news articles for time-sensitive content like news, press releases or blog posts.'
+description: 'For time-sensitive content like news, press releases or blog posts'
 help: ''
 new_revision: true
 preview_mode: 1

@@ -19,7 +19,7 @@ third_party_settings:
     default_moderation_state: draft
 name: 'Service guide'
 type: page
-description: 'To walk someone through using a city service.'
+description: 'To walk someone through using a city service'
 help: ''
 new_revision: false
 preview_mode: 1
