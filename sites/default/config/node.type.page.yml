@@ -17,10 +17,10 @@ third_party_settings:
       - needs_review
       - published
     default_moderation_state: draft
-name: 'Basic page'
+name: 'Service guide'
 type: page
-description: 'Use <em>basic pages</em> for your static content, such as an ''About us'' page.'
+description: 'To walk someone through using a city service.'
 help: ''
-new_revision: true
+new_revision: false
 preview_mode: 1
 display_submitted: false
