@@ -29,9 +29,9 @@
       <h4 class="lex-card-title lex-card-title-medium">{{ name }}</h4>
       {% include "@lex/includes/address.html.twig" with {
           address:  {
-            street_number: content.field_street_number[0]['#context'].value,
-            street: content.field_street[0]['#context'].value,
-            zip: content.field_zip_code[0]['#context'].value,
+            street_number: render_var(content.field_street_number[0]),
+            street: render_var(content.field_street[0]),
+            zip: render_var(content.field_zip_code[0]),
           }
         }
       %}
@@ -46,14 +46,14 @@
     {% endif %}
     <li>
       {% include "@lex/includes/email.html.twig" with {
-          email_address: content.field_contact_email[0]['#context'].value
+          email_address: render_var(content.field_contact_email[0])
         }
       %}
     </li>
     {% if content.field_contact_phone[0]['#context'] %}
       <li>
         {% include "@lex/includes/phone.html.twig" with {
-            phone_number: content.field_contact_phone[0]['#context'].value,
+            phone_number: render_var(content.field_contact_phone[0]),
           }
          %}
       </li>
