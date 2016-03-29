@@ -10,7 +10,7 @@ field_name: field_section_heading
 entity_type: paragraph
 bundle: paragraphs_page_section
 label: 'Section heading'
-description: 'Example: <strong>Trash collection schedule</strong>. A short description of the section in plain language.'
+description: 'A short description of the section in plain language. Example: <strong>Trash collection schedule</strong>'
 required: true
 translatable: false
 default_value: {  }
