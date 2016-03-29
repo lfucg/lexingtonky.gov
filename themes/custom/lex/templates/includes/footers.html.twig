@@ -11,17 +11,17 @@
       </h2>
       <ul class="usa-unstyled-list">
         <li>
-          {% set address = {
-              'street_number': '200',
-              'street': 'E. Main St.',
-              'zip': '40507',
+          {% include "@lex/includes/address.html.twig" with {
+              address: {
+                'street_number': '200',
+                'street': 'E. Main St.',
+                'zip': '40507',
+              }
             }
           %}
-          {% include "@lex/includes/address.html.twig" %}
         </li>
         <li>
-          {% set phone_number = "859-425-2255" %}
-          {% include "@lex/includes/phone.html.twig" %}
+          {% include "@lex/includes/phone.html.twig" with { phone_number: "(859) 425-2255" } %}
         </li>
         <li>
           <a href="https://twitter.com/LexingtonKyGov"><i class="lex-font-standout fa fa-twitter"></i><span class="visually-hidden">twitter</span></a>
