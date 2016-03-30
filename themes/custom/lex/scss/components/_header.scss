@@ -29,6 +29,11 @@
   }
 }
 
+@mixin logo_dimensions($height) {
+  height: $height;
+  @include calc(width, "#{$height} * 5.2");
+}
+
 .lex-site-navbar {
   background-color: rgba($lex-white, $lex-alpha-level);
   padding-top: 9px;
@@ -39,15 +44,12 @@
     float: left;
   }
   .lex-logo {
-    height: 40px;
-    width: 290px;
+    @include logo_dimensions(40px);
     background-image: url('../img/lexington-logo.png');
     background-image: url('../img/lexington-logo.svg');
     background-repeat: no-repeat;
-  }
-  @include media($medium-screen) {
-    .lex-logo {
-      height: 50px;
+    @include media($large-screen) {
+      @include logo_dimensions(50px);
     }
   }
   @include media($large-screen) {
@@ -59,11 +61,13 @@
 .lex-region-search_header {
   float: left;
   width: 100%;
-  margin-top: 9px;
+  margin-top: 5px;
   max-width: 400px;
   @include media(700px) {
     float: right;
-    margin-top: 11px;
+  }
+  @include media($large-screen) {
+    margin-top: 10px;
   }
 }
 
@@ -75,10 +79,13 @@
     font-size: $small-font-size;
   }
   @include media($medium-screen) {
-    margin-top: 14px;
+    margin-top: 10px;
     font-size: $base-font-size;
     .lex-translatelink {
       font-size: $base-font-size;
     }
+  }
+  @include media($large-screen) {
+    margin-top: 13px;
   }
 }
