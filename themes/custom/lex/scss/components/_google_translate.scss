@@ -1,20 +1,24 @@
 #google_translate_element {
-  .lex-translatelink {
-    font-family: $font-sans;
-    font-size: $base-font-size;
-    color: $lex-dark-grey;
-  }
-  div {
-    border: none;
-    position: relative;
-    top: -1px; // remove extra div line-height
-    background-color: rgba(5, 95, 104, 0);
+  a.goog-te-menu-value {
+    margin: 0;
   }
   a:hover {
     text-decoration: underline;
   }
+  .lex-translatelink {
+    font-family: $font-sans;
+    color: $lex-dark-grey;
+  }
+  div {
+    border: none;
+    background-color: rgba(5, 95, 104, 0);
+  }
   .goog-te-gadget-icon {
     display: none;
     background:none !important;
+  }
+  .goog-te-gadget-simple {
+    /* let 'Translate' span dictate line-height */
+    font-size: 0;
   }
 }

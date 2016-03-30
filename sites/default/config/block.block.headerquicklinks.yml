@@ -11,7 +11,7 @@ dependencies:
 id: headerquicklinks
 theme: lex
 region: navbar_secondary
-weight: -16
+weight: -18
 provider: null
 plugin: 'system_menu_block:header-quick-links'
 settings:
@@ -21,9 +21,4 @@ settings:
   label_display: '0'
   level: 1
   depth: 0
-visibility:
-  request_path:
-    id: request_path
-    pages: '<front>'
-    negate: false
-    context_mapping: {  }
+visibility: {  }
