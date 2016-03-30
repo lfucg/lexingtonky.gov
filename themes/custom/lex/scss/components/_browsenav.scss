@@ -1,126 +1,166 @@
-$lex-category-padding: 1.2rem;
-$lex-category-gutter: 2rem;
+header {
+  display: none;
+}
 
-.lex-browsenav {
-  &.lex-grid-full {
-    padding-bottom: $lex-section-gutter;
-  }
+$tablet: 640px;
+$desktop: 770px;
 
-  h1, h2, h3, h4, h5, h6 {
-    font-weight: $font-weight-regular;
-    margin: 0;
+.browse {
+  .browse-panes {
+    &.section {
+      #root {
+        display: none; // hide on mobile
+
+        @include media($tablet){
+          display: block;
+          float: right;
+          width: 25%;
+        }
+      }
+      #section {
+        @include media($tablet){
+          float: right;
+          width: 30%;
+          margin-right: 45%;
+        }
+        @include media($desktop){
+          width: 35%;
+          margin-right: 40%;
+        }
+      }
+    }
+    &.subsection {
+      #root, #section {
+        display: none; // hide on mobile
+
+        @include media($tablet){
+          display: block;
+          float: right;
+          width: 25%;
+        }
+      }
+      #section {
+        @include media($tablet){
+          margin-left: -18%;
+          width: 30%;
+        }
+        @include media($desktop){
+          margin-left: -13%;
+          width: 25%;
+        }
+      }
+      #subsection {
+        @include media($tablet){
+          float: right;
+          width: 50%;
+          margin-right: 13%;
+        }
+      }
+    }
+
+    .pane-inner {
+      // padding-bottom: $gutter;
+
+      @include media($tablet){
+        border-left: 1px solid $lex-grey;
+        min-height: 950px;
+      }
+      @include media($desktop){
+        min-height:700px;
+      }
+    }
   }
+}
+
+#root {
+  // display: none;
+  // width: 25%;
+  // float: right;
+  // display: block;
+
+  ul {
+    margin-top: 0;
+    width: 100%; /* may need for section too */
+  }
+  li {
+    position: relative;
+  }
+}
+
+#root, #section {
+  a {
+    // background: #005ea5;
+    padding: 12px 30px 8px 15px;
+    position: relative;
+    display: block;
+    font-size: 16px;
+    line-height: 1.25;
+  }
+  a.active, a.active:hover {
+    background: #005ea5;
+    color: #fff;
+  }
+  a:hover {
+    background: #dee0e2;
+    color: #005ea5;
+    text-decoration: none;
+  }
+  a:after {
+    position: absolute;
+    top: 50%;
+    margin-top: -8px;
+    right: 10px;
+    float: right;
+    content: "\203A";
+  }
+}
+
+
+#section {
+  // width: 25%;
+  // float: right;
+  // display: block;
+  // margin-left: -13%;
+
+  /* when no articles */
+  // width: 35%;
+  // margin-right: 40%;
+  // margin-left: 0;
+
+  z-index: 2;
+  background: $lex-light-grey;
+  position: relative; /* for pane-inner *?
+  .pane-inner {
+    /* when articles */
+    // padding-left: 30px;
+  // }
   h1 {
-    margin-bottom: .5em;
-    @extend .lex-font-standout;
-    @extend .lex-card-title.lex-card-title-heading;
+    padding-left: 15px; /* must match a padding-left */
+  }
+  li {
+    position: relative;
+  }
+}
+
+.pane-inner {
+  // min-height: 700px;
+  border-left: 1px solid #bfc1c3;
+  border-left-width: 1px;
+  border-left-style: solid;
+  border-left-color: rgb(191, 193, 195);
+}
+
+#subsection {
+  // display: none;
+  // float: right;
+  // width: 50%;
+  // margin-right: 13%;
+
+  h1 {
     margin-top: 0;
   }
-  h3 {
-    font-size: 2.3rem;
-  }
-  a {
-    @extend .lex-font;
-  }
-  a.lex-current, .lex-current, .lex-current a {
-    border: none;
-    background: $lex-blue;
-    color: white;
-    font-weight: $font-weight-regular;
-  }
-  .lex-region-content.lex-grid-full {
-    /* remove the normal padding */
-    padding: 0;
-  }
-  .lex-browsenav-column-activetrail {
-    &.lex-browsenav-root {
-      margin-right: 0;
-    }
-    // smaller screens use breadcrumb nav for previous levels
-    display: none;
-    @include media($large-screen) {
-      display: block;
-      border-right: 2px solid $lex-grey;
-      .lex-browsenav-category {
-        padding-left: $lex-category-gutter;
-      }
-    }
+  .pane-inner {
+    padding-left: 100px;
   }
 }
 
-.lex-browsenav-list li {
-  a, a.usa-current {
-    padding: 0;
-  }
-  a:focus {
-    /* if relative, the blue background overlaps the column to the right */
-    position: initial;
-  }
-  border-top: none;
-}
-.lex-browsenav-column {
-  float: left;
-}
-.lex-browsenav-link {
-  font-weight: $font-weight-regular;
-  margin: 0;
-  @include media($large-screen) {
-    &:after {
-      font-weight: $font-weight-extra-light;
-      font-size: 3rem;
-      float: right;
-      content: "\203A";
-      margin-top: -4px;
-      width: 0;
-    }
-    &.lex-browsenav-link-withdescription:after {
-      margin-top: -30px;
-    }
-  }
-}
-.lex-browsenav-secondary {
-  .lex-browsenav-link {
-    padding-bottom: 0.2em;
-  }
-  @include media($large-screen) {
-    padding-left: $lex-section-gutter;
-    max-width: 33%;
-    &.lex-browsenav-column-activetrail {
-      padding-left: 0;
-      margin-left: -10%;
-
-      @include transition(all 2.0s ease-in-out);
-      background: $lex-light-grey;
-      border-left: 2px solid $lex-grey;
-      .lex-card-title-heading {
-        // push over to match category when active
-        padding-left: $lex-category-gutter;
-      }
-      .lex-browsenav-title, .lex-browsenav-description {
-        /* push arrow right */
-        padding-right: 1em;
-      }
-    }
-  }
-}
-.lex-browsenav-category {
-  padding: $lex-category-padding;
-  padding-left: 0;
-}
-.lex-browsenav-link a, .lex-browsenav-description {
-  padding-left: 0;
-}
-// lex-browsenav-column-activetrail => lex-browsenav-activetrail?
-.lex-browsenav-column-activetrail.lex-browsenav-collapse {
-  border-right: none;
-}
-
-.lex-browsenav-articles {
-  margin-left: 0;
-  @include media($large-screen) {
-    margin-left: $lex-section-gutter;
-  }
-  .lex-card {
-    margin-bottom: $lex-section-gutter * 0.7;
-  }
-}

@@ -70,12 +70,16 @@
   {{ page.help }}
 
 
-  <section class="lex-slab lex-slab-grey" aria-labelledby="services-and-information-label" id="services-and-information">
-    <div class="categories-lists usa-grid-full lex-grid-full lex-browsenav">
+  <section class="main browse lex-slab lex-slab-grey" aria-labelledby="services-and-information-label" id="services-and-information">
+    <div class="usa-grid-full lex-grid-full browse-panes {{ browse_level }}" data-state="{{ browse_level }}">
+      {% if browse_level == 'subsection' %}
+        <div id="subsection" class="pane">
+          <div class="pane-inner alphabetical">
+            {{ page.content }}
+          </div>
+        </div>
+      {% endif %}
       {{ page.primary_menu }}
-      <div class="lex-browsenav-articles lex-browsenav-column">
-        {{ page.content }}
-      </div>
     </div>
   </section>
 

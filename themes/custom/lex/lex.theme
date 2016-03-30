@@ -12,6 +12,13 @@ function lex_views_pre_render($view) {
   }
 }
 
+function lex_preprocess_page(&$variables) {
+
+  $path = \Drupal::service('path.current')->getPath();
+  $alias = \Drupal::service('path.alias_manager')->getAliasByPath($path);
+  $variables['browse_level'] = preg_match('|/browse/.*/|', $alias) == 1 ? 'subsection' : 'section';
+}
+
 function lex_preprocess_menu(&$variables) {
   // expose the url_title so it can be displayed in a tag
   if ($variables['menu_name'] == 'main') {
