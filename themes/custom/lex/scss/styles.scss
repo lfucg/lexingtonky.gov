@@ -48,6 +48,7 @@ $fa-font-path: "../font-awesome-4.5.0/fonts";
 @import './elements/_typography';
 @import './components/_alerts';
 @import './components/_cards';
+@import './components/_header';
 @import './components/_browsenav';
 @import './components/_forms';
 @import './components/_google_translate';
@@ -71,79 +72,6 @@ body {
   padding-bottom: 0.5em;
 }
 
-.lex-frontpage .lex-site-header {
-  background-image: url('../img/lexington-hero.jpg');
-}
-.lex-site-header {
-  background-image: url('../img/lexington-hero-interior.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  @include media($large-screen) {
-    min-height: 300px;
-  }
-}
-
-.lex-quicklinks {
-  width: 100%;
-  @include media($medium-screen) {
-    display: block;
-    text-align: right;
-  }
-  li {
-    margin-bottom: 0.2em;
-    float: right;
-    width: 50%;
-    @include media($medium-screen) {
-      float: none;
-      width: initial;
-      display: inline-block;
-      padding-left: 2em;
-    }
-    @include media($large-screen) {
-      padding-top: 0.2em;
-    }
-  }
-}
-
-.lex-site-navbar {
-  background-color: rgba($lex-white, $lex-alpha-level);
-  padding-top: 9px;
-  padding-bottom: $lex-section-half-gutter;
-  .lex-logo {
-    height: 40px;
-    background-image: url('../img/lexington-logo.png');
-    background-image: url('../img/lexington-logo.svg');
-    background-repeat: no-repeat;
-  }
-  @include media($medium-screen) {
-    height: 100px;
-    .lex-logo {
-      height: 50px;
-    }
-    padding: 25px 0 25px 25px;
-  }
-  @include media($large-screen) {
-    padding: 25px 0 25px 0;
-  }
-}
-
-.lex-frontpage {
-  .lex-site-navbar {
-    padding-bottom: 0px;
-  }
-}
-
-
-.lex-site-navbar-secondary {
-  margin-top: 0.7em;
-  .lex-search {
-    float: right;
-    width: 100%;
-    @include media($large-screen) {
-      width: 50%;
-    }
-  }
-}
 
 .lex-grid-full {
   max-width: $lex-max-width;
