@@ -50,6 +50,7 @@ $fa-font-path: "../font-awesome-4.5.0/fonts";
 @import './components/_cards';
 @import './components/_browsenav';
 @import './components/_forms';
+@import './components/_google_translate';
 // Override WDS styles (avoid when possible)
 @import './_drupal-overrides';
 @import './_wds-overrides';
@@ -83,17 +84,23 @@ body {
 }
 
 .lex-quicklinks {
-  display: none;
   width: 100%;
   @include media($medium-screen) {
     display: block;
     text-align: right;
   }
   li {
-    padding: 0.3em 0 0.3em 0;
+    margin-bottom: 0.2em;
+    float: right;
+    width: 50%;
     @include media($medium-screen) {
+      float: none;
+      width: initial;
       display: inline-block;
       padding-left: 2em;
+    }
+    @include media($large-screen) {
+      padding-top: 0.2em;
     }
   }
 }
