@@ -96,9 +96,18 @@ $desktop: 770px;
     font-size: 16px;
     line-height: 1.25;
   }
-  a.active, a.active:hover {
-    background: #005ea5;
-    color: #fff;
+  .active {
+    a, a:hover {
+      background: #005ea5;
+      color: #fff;
+    }
+  }
+  a.loading {
+    cursor: default;
+    background: transparent url(../img/loading.gif) 95% 50% no-repeat;
+  }
+  a.loading:after {
+    content: " ";
   }
   a:hover {
     background: #dee0e2;

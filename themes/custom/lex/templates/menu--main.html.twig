@@ -60,8 +60,8 @@
             <ul class="usa-unstyled-list">
               {% for item in item.below %}
                 {% set current = (item.in_active_trail ? 'active' : '') %}
-                <li class="">
-                  <a href="{{ item.url }}" {{ item.attributes.addClass(current) }}>
+                <li class="{{ current }}">
+                  <a href="{{ item.url }}">
                     <h3 class="">{{ item.title }}</h3>
                     <p class="">{{ item.url_title }}</p>
                   </a>
@@ -87,8 +87,8 @@
       <ul class="usa-unstyled-list">
         {% for item in items %}
           {% set current = (item.in_active_trail ? 'active' : '') %}
-          <li class="">
-            {{ link(item.title, item.url, item.attributes.addClass('').addClass(current)) }}
+          <li class="{{ current }}">
+            {{ link(item.title, item.url) }}
           </li>
         {% endfor %}
       </ul>
