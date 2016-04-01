@@ -6,6 +6,6 @@ global-css:
 global-js:
   js:
     js/scripts.js: {}
-    js/browse.js: {}
+    js/browse-columns.js: {}
     js/webdesignstandards-accordion.js: {}
 

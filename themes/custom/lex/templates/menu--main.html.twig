@@ -26,44 +26,25 @@
   @see http://twig.sensiolabs.org/doc/tags/macro.html
 #}
 
-{% set active_subcat = false %}
-{% for item in items %}
-  {% if item.in_active_trail and item.below %}
-    {% set active_subcat = false %}
-    {% for item in item.below %}
-      {% if item.in_active_trail %}
-        {% set active_subcat = true %}
-      {% endif %}
-    {% endfor %}
-  {% endif %}
-{% endfor %}
-
-{{ menus.secondary_menu_links(items, attributes, active_subcat) }}
-{{ menus.menu_links(items, attributes, active_subcat) }}
+{{ menus.secondary_menu_links(items, attributes) }}
+{{ menus.menu_links(items, attributes) }}
 
 
-{% macro secondary_menu_links(items, attributes, active_subcat) %}
+{% macro secondary_menu_links(items, attributes) %}
   {% import _self as menus %}
   {% if items %}
     {% for item in items %}
       {% if item.in_active_trail and item.below %}
-
-        {% if active_subcat %}
-          {% set active = 'lex-browsenav-column-activetrail lex-browsenav-nofocus' %}
-        {% else %}
-          {% set standout = 'lex-font-standout' %}
-        {% endif %}
-
         <div id="section" class="">
           <div class="pane-inner">
-            <h1 class="">{{ item.title }}</h1>
+            <h1 class="lex-card-title lex-card-title-heading">{{ item.title }}</h1>
             <ul class="usa-unstyled-list">
               {% for item in item.below %}
                 {% set current = (item.in_active_trail ? 'active' : '') %}
                 <li class="{{ current }}">
                   <a href="{{ item.url }}">
-                    <h3 class="">{{ item.title }}</h3>
-                    <p class="">{{ item.url_title }}</p>
+                    <h3 class="lex-card-title lex-card-title-medium">{{ item.title }}</h3>
+                    <p class="lex-browsenav-description lex-card-subtitle">{{ item.url_title }}</p>
                   </a>
                 </li>
               {% endfor %}
@@ -78,17 +59,12 @@
 {% macro menu_links(items, attributes, active_subcat) %}
   {% import _self as menus %}
   {% if items %}
-    {% if active_subcat %}
-      {% set classes = 'active' %}
-    {% else %}
-      {% set classes = '' %}
-    {% endif %}
     <div id="root" class="pane">
       <ul class="usa-unstyled-list">
         {% for item in items %}
           {% set current = (item.in_active_trail ? 'active' : '') %}
           <li class="{{ current }}">
-            {{ link(item.title, item.url) }}
+            {{ link(item.title, item.url, item.attributes.addClass('lex-card-title lex-card-title-medium')) }}
           </li>
         {% endfor %}
       </ul>

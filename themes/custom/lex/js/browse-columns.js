@@ -1,11 +1,19 @@
+// https://github.com/alphagov/collections/blob/master/app/assets/javascripts/browse-columns.js
 (function() {
   "use strict";
   window.GOVUK = window.GOVUK || {};
+
+  // https://github.com/alphagov/frontend/blob/master/app/assets/javascripts/support.js
+  if(typeof window.GOVUK.support === 'undefined'){ window.GOVUK.support = {}; }
+  window.GOVUK.support.history = function() {
+    return window.history && window.history.pushState && window.history.replaceState;
+  }
+
   var $ = window.jQuery;
 
   function BrowseColumns(options){
     if(options.$el.length === 0) return;
-    // if(!GOVUK.support.history()) return;
+    if(!GOVUK.support.history()) return;
     if($(window).width() < 640) return; // don't ajax navigation on mobile
 
     this.$el = options.$el;
