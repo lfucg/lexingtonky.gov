@@ -249,10 +249,6 @@
     // Returns data from the cache if it is there or puts the data in the cache
     // if it is not.
     getSectionData: function(state){
-      if (state.slug === 'childcare-parenting/childcare') {
-        state.slug = 'childcare';
-      }
-
       var cacheForSlug = this.sectionCache('section', state.slug),
           out = new $.Deferred(),
           url = '/browse/' + state.slug
@@ -265,11 +261,9 @@
         $.ajax({
           url: url
         }).done(function(data){
-          console.log('got data');
           var foo = $.parseHTML(data);
           var section = (state.slug.indexOf('/') > -1 ? '#subsection' : '#section');
           data = {'html': $(foo).find(section).html()};
-          // data = JSON.parse(data);
           this.sectionCache('section', state.slug, data);
 
           out.resolve(data);
@@ -346,19 +340,22 @@
       }
     },
     updateBreadcrumbs: function(state){
+      return this.lexUpdateBreadcrumbs(state);
+    },
+    lexUpdateBreadcrumbs: function(state){
       var $breadcrumbItems = this.$breadcrumbs.find('li');
       if(state.subsection){
         var sectionSlug = state.section;
         var sectionTitle = this.$section.find('h1').text();
 
         if($breadcrumbItems.length === 1){
-          var $sectionBreadcrumb = $('<li />');
+          var $sectionBreadcrumb = $('<li class="lex-breadcrumb-item"/>');
           this.$breadcrumbs.append($sectionBreadcrumb);
         } else {
           var $sectionBreadcrumb = $breadcrumbItems.slice(1);
         }
 
-        $sectionBreadcrumb.html('<strong><a href="/browse/'+sectionSlug+'">'+sectionTitle+'</a></strong>');
+        $sectionBreadcrumb.html('<a href="/browse/'+sectionSlug+'">'+sectionTitle+'</a>');
       } else {
         this.$breadcrumbs.find('li').slice(1).remove();
       }

@@ -136,9 +136,9 @@ body {
 
 .lex-breadcrumb-item {
   float: left;
-  .lex-icon {
-    padding: 0 0.2em 0 0.1em;
-    color: $lex-grey;
+  padding-right: 0.3rem;
+  &:not(:last-child) span:after {
+    content: " /";
   }
 }
 

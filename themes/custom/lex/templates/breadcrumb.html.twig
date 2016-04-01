@@ -8,17 +8,13 @@
  */
 #}
 {% if breadcrumb %}
-  <nav role="navigation" aria-labelledby="system-breadcrumb" class="lex-grid-full" id="#global-breadcrumb">
+  <nav role="navigation" aria-labelledby="system-breadcrumb" class="lex-grid-full" id="global-breadcrumb">
     <h2 class="visually-hidden">{{ 'Breadcrumb'|t }}</h2>
-    <ol class="usa-unstyled-list">
+    <ol class="usa-unstyled-list" role="breadcrumbs">
     {% for item in breadcrumb %}
-      {# use span so we can add the -> pseudo-selector #}
       <li class="lex-breadcrumb-item">
         {% if item.url %}
-          <a href="{{ item.url }}">{{ item.text }}</a>
-          {% if not loop.last %}
-           <i class="fa fa-angle-right lex-icon"></i>
-          {% endif %}
+          <span><a href="{{ item.url }}">{{ item.text }}</a></span>
         {% else %}
           {{ item.text }}
         {% endif %}
