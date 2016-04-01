@@ -70,7 +70,8 @@ $lex-category-gutter: 2rem;
       font-size: 3rem;
       float: right;
       content: "\203A";
-      margin-top: -4px
+      margin-top: -4px;
+      width: 0;
     }
     &.lex-browsenav-link-withdescription:after {
       margin-top: -30px;

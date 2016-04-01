@@ -28,6 +28,7 @@ stylesheets-remove:
 regions:
   super_header: 'Super header'
   navbar_secondary: 'Navbar secondary'
+  search_header: 'Search header'
   featured_top: 'Featured top'
   primary_menu: 'Primary menu'
   secondary_menu: 'Secondary menu'

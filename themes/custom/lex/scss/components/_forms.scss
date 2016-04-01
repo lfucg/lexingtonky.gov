@@ -34,6 +34,7 @@
 
 .lex-pagefeedback-button-fixed {
   position: fixed;
+  z-index: 1;
   bottom: 0;
   /* match mobile padding */
   right: $lex-section-half-gutter;

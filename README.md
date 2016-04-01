@@ -115,3 +115,8 @@ As you make changes to the site, you'll want to export your configuration change
 And to set the local database to the configuration stored in git:
 
 `drush cim -y`
+
+### Google Translate
+
+The Google Translation widget javascript is triggered by a menu item in the `header-quick-links`
+block titled `Translation`. See lex.theme:lex_preprocess_menu__header_quick_links for details

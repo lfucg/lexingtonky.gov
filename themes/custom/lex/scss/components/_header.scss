@@ -1,0 +1,92 @@
+.lex-frontpage .lex-site-header {
+  background-image: url('../img/lexington-hero.jpg');
+}
+.lex-site-header {
+  background-image: url('../img/lexington-hero-interior.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  @include media($large-screen) {
+    min-height: 300px;
+  }
+
+  .lex-quicklinks {
+    li {
+      display: none;
+      &#google_translate_element {
+        /* display for all screens and pages */
+        display: inline-block;
+      }
+      @include media($medium-screen) {
+        padding-left: 2em;
+      }
+    }
+  }
+}
+
+.lex-frontpage .lex-quicklinks li {
+  /* show full set of quicklinks on front page */
+  @include media($large-screen) {
+    display: inline-block;
+  }
+}
+
+@mixin logo_dimensions($height) {
+  height: $height;
+  @include calc(width, "#{$height} * 5.2");
+}
+
+.lex-site-navbar {
+  background-color: rgba($lex-white, $lex-alpha-level);
+  padding-top: 9px;
+  padding-bottom: 9px;
+  /* todo logo => .lex-logo-container */
+  .logo {
+    max-width: 75%;
+    float: left;
+  }
+  .lex-logo {
+    @include logo_dimensions(40px);
+    background-image: url('../img/lexington-logo.png');
+    background-image: url('../img/lexington-logo.svg');
+    background-repeat: no-repeat;
+    @include media($large-screen) {
+      @include logo_dimensions(50px);
+    }
+  }
+  @include media($large-screen) {
+    padding: 25px 0 25px 0;
+  }
+
+}
+
+.lex-region-search_header {
+  float: left;
+  width: 100%;
+  margin-top: 5px;
+  max-width: 400px;
+  @include media(700px) {
+    float: right;
+  }
+  @include media($large-screen) {
+    margin-top: 10px;
+  }
+}
+
+.lex-site-navbar-secondary {
+  float: right;
+  margin-top: 12px;
+  font-size: $small-font-size;
+  .lex-translatelink {
+    font-size: $small-font-size;
+  }
+  @include media($medium-screen) {
+    margin-top: 10px;
+    font-size: $base-font-size;
+    .lex-translatelink {
+      font-size: $base-font-size;
+    }
+  }
+  @include media($large-screen) {
+    margin-top: 13px;
+  }
+}

@@ -92,6 +92,16 @@ function lex_preprocess_form(&$variables) {
   }
 }
 
+function lex_preprocess_menu__header_quick_links(&$variables) {
+  foreach($variables['items'] as &$item) {
+    if ($item['title'] == 'Translate') {
+      $item['attributes']['id'] = 'google_translate_element';
+      // remove title so widget can take that space
+      $item['title'] = '';
+    }
+  }
+}
+
 function lex_preprocess_container(&$variables) {
   if (isset($variables['attributes']['class']) &&
       in_array('more-link', $variables['attributes']['class'])) {
