@@ -19,5 +19,6 @@ Scenario: Using plain html navigation
     When I click "Public Safety"
     And I click "Police"
     Then I should see the link 'Background checks'
+    And I should see text matching "A.*to.*Z"
     # breadcrumb
     And I should see "Home Public Safety"
