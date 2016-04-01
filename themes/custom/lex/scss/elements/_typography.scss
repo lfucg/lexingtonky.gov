@@ -45,6 +45,8 @@ a.lex-font-standout, a.lex-font-standout:visited {
 
 a:focus {
   box-shadow: none;
+  background-color: $lex-bright-gold;
+  outline: 3px solid $lex-bright-gold;
 }
 
 .lex-font-standout {

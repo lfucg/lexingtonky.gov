@@ -38,17 +38,20 @@
         <div id="section" class="">
           <div class="pane-inner">
             <h1 class="lex-card-title lex-card-title-heading">{{ item.title }}</h1>
-            <ul class="usa-unstyled-list">
-              {% for item in item.below %}
-                {% set current = (item.in_active_trail ? 'active' : '') %}
-                <li class="{{ current }}">
-                  <a href="{{ item.url }}">
-                    <h3 class="lex-card-title lex-card-title-medium">{{ item.title }}</h3>
-                    <p class="lex-browsenav-description lex-card-subtitle">{{ item.url_title }}</p>
-                  </a>
-                </li>
-              {% endfor %}
-            </ul>
+            <div>
+              {% include '@lex/includes/sort-a-to-z.twig' %}
+              <ul class="usa-unstyled-list">
+                {% for item in item.below %}
+                  {% set current = (item.in_active_trail ? 'active' : '') %}
+                  <li class="{{ current }}">
+                    <a href="{{ item.url }}">
+                      <h3 class="lex-card-title lex-card-title-medium">{{ item.title }}</h3>
+                      <p class="lex-browsenav-description lex-card-subtitle">{{ item.url_title }}</p>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
           </div>
         </div>
       {% endif %}

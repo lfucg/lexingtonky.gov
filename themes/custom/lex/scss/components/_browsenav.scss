@@ -56,8 +56,6 @@ $desktop: 770px;
     }
 
     .pane-inner {
-      // padding-bottom: $gutter;
-
       @include media($tablet){
         border-left: 1px solid $lex-grey;
         min-height: 950px;
@@ -92,7 +90,7 @@ $desktop: 770px;
     }
     a.loading, a.loading:hover {
       cursor: default;
-      background: transparent url(../img/loading.gif) 95% 50% no-repeat;
+      background: transparent url(../img/loading.gif) 99% 50% no-repeat;
     }
     a.loading:after {
       content: "";
@@ -116,12 +114,17 @@ $desktop: 770px;
     }
   }
 
+  .subsection #section {
+    .pane-inner {
+      padding-left: 0;
+    }
+    .sort-order {
+      display: none;
+    }
+  }
 
   .section {
     #section {
-      h3 {
-        @extend .lex-font-standout;
-      }
     }
   }
 
@@ -159,16 +162,19 @@ $desktop: 770px;
     a:hover {
       color: $lex-light-blue;
     }
-    .pane-inner {
-      padding-left: 100px;
-    }
-    .sort-order {
-      float: left;
-      display: block;
-      width: 75px;
-      margin-left: -90px;
-      padding: 0px 0 15px 15px;
-      font-size: 1.5em;
-    }
+  }
+  .pane-inner {
+    padding-left: 100px;
+  }
+  .sort-order {
+    float: left;
+    display: block;
+    width: 75px;
+    margin-left: -90px;
+    padding: 0px 0 15px 15px;
+    font-size: 1.5em;
+  }
+  #section .sort-order {
+    margin-top: 6px;
   }
 }
