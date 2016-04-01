@@ -13,6 +13,7 @@
     li {
       display: none;
       &#google_translate_element {
+        /* display for all screens and pages */
         display: inline-block;
       }
       @include media($medium-screen) {
