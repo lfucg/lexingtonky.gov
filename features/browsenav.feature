@@ -6,6 +6,8 @@ Feature: Using the browse navigation
 @javascript
 Scenario: Using ajax navigation
     Given I am on "/browse/government"
+    Then I should see text matching "A.*to.*Z"
+
     When I click "Public Safety"
     And I wait for AJAX to finish
     And I click "Police"
@@ -16,6 +18,8 @@ Scenario: Using ajax navigation
 
 Scenario: Using plain html navigation
     Given I am on "/browse/government"
+    Then I should see text matching "A.*to.*Z"
+
     When I click "Public Safety"
     And I click "Police"
     Then I should see the link 'Background checks'

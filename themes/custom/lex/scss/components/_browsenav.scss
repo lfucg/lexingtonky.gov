@@ -125,13 +125,14 @@ $desktop: 770px;
     }
   }
 
-  .section {
+  &.section {
     #section {
       a h3 {
         @extend .lex-font-standout;
       }
       @include media($desktop){
-        .pane-inner {
+        .pane-inner.alphabetical {
+          /* hard-coded in browse-columns.js */
           padding-left: 96px;
         }
         .sort-order {

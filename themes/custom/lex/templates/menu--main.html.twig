@@ -36,7 +36,7 @@
     {% for item in items %}
       {% if item.in_active_trail and item.below %}
         <div id="section" class="">
-          <div class="pane-inner">
+          <div class="pane-inner alphabetical">
             <h1 class="lex-card-title lex-card-title-heading">{{ item.title }}</h1>
             <div>
               {% include '@lex/includes/sort-a-to-z.twig' %}
