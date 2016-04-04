@@ -12,7 +12,7 @@ function lex_views_pre_render($view) {
   }
 }
 
-function lex_preprocess_page(&$variables) {
+function lex_preprocess_page__taxonomy__term(&$variables) {
 
   $path = \Drupal::service('path.current')->getPath();
   $alias = \Drupal::service('path.alias_manager')->getAliasByPath($path);
