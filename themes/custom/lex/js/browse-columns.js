@@ -112,6 +112,7 @@
       this.highlightSection('root', state.path);
       this.removeLoading();
       this.updateBreadcrumbs(state);
+      this.lexUpdateTranslation();
 
       var animationDone;
       if(this.displayState === 'subsection'){
@@ -269,9 +270,7 @@
         $.ajax({
           url: url
         }).done(function(data){
-          var foo = $.parseHTML(data);
-          var section = (state.slug.indexOf('/') > -1 ? '#subsection' : '#section');
-          data = {'html': $(foo).find(section).html()};
+          data = this.lexParseFullPage(data, state.slug);
           this.sectionCache('section', state.slug, data);
 
           out.resolve(data);
@@ -350,6 +349,11 @@
     updateBreadcrumbs: function(state){
       return this.lexUpdateBreadcrumbs(state);
     },
+    lexParseFullPage: function(fullPage, slug) {
+      var fullPageHTML = $.parseHTML(fullPage);
+      var section = (slug.indexOf('/') > -1 ? '#subsection' : '#section');
+      return {'html': $(fullPageHTML).find(section).html()};
+    },
     lexUpdateBreadcrumbs: function(state){
       var $breadcrumbItems = this.$breadcrumbs.find('li');
       if(state.subsection){
@@ -367,6 +371,9 @@
       } else {
         this.$breadcrumbs.find('li').slice(1).remove();
       }
+    },
+    lexUpdateTranslation() {
+      $.getScript("//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit");
     },
     trackPageview: function(state){
       var sectionTitle = this.$section.find('h1').text();
