@@ -44,12 +44,14 @@
         </div>
       </li>
     {% endif %}
-    <li>
-      {% include "@lex/includes/email.html.twig" with {
-          email_address: render_var(content.field_contact_email[0])
-        }
-      %}
-    </li>
+    {% if content.field_contact_email[0]['#context'] %}
+      <li>
+        {% include "@lex/includes/email.html.twig" with {
+            email_address: render_var(content.field_contact_email[0])
+          }
+        %}
+      </li>
+    {% endif %}
     {% if content.field_contact_phone[0]['#context'] %}
       <li>
         {% include "@lex/includes/phone.html.twig" with {
@@ -58,5 +60,5 @@
          %}
       </li>
     {% endif %}
-  <ul>
+  </ul>
 </div>
