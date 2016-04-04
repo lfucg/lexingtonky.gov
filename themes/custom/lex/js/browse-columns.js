@@ -372,7 +372,7 @@
         this.$breadcrumbs.find('li').slice(1).remove();
       }
     },
-    lexUpdateTranslation() {
+    lexUpdateTranslation: function(){
       $.getScript("//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit");
     },
     trackPageview: function(state){
