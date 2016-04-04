@@ -376,12 +376,7 @@
       $.getScript("//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit");
     },
     trackPageview: function(state){
-      var sectionTitle = this.$section.find('h1').text();
-      sectionTitle = sectionTitle ? sectionTitle.toLowerCase() : 'browse';
-      if (GOVUK.analytics && GOVUK.analytics.trackPageview && GOVUK.analytics.setSectionDimension) {
-        GOVUK.analytics.setSectionDimension(sectionTitle);
-        GOVUK.analytics.trackPageview(state.path);
-      }
+      // handled via GTM
     }
   };
 
