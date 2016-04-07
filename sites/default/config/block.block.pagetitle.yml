@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies:
   module:
-    - node
+    - system
   theme:
     - lex
 id: pagetitle
@@ -18,12 +18,8 @@ settings:
   provider: core
   label_display: '0'
 visibility:
-  node_type:
-    id: node_type
-    bundles:
-      event: event
-      news_article: news_article
-      page: page
-    negate: false
-    context_mapping:
-      node: '@node.node_route_context:node'
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/browse/*"
+    negate: true
+    context_mapping: {  }
