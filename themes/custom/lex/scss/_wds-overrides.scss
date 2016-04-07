@@ -24,22 +24,6 @@ ul, ol {
   left: -999em;
 }
 
-.toolbar ul {
-  display: block;
-}
-
-.toolbar ul li:before {
-  display: none;
-}
-
-.toolbar ul {
-  display: block;
-}
-
-.toolbar ul li:before {
-  display: none;
-}
-
 .lex-alertcontainer-success, .usa-alert-success {
   background-color: $lex-alert-green;
 }
@@ -54,18 +38,6 @@ ul, ol {
 
 .lex-alertcontainer-info, .usa-alert-info {
   background-color: $lex-alert-blue;
-}
-
-/* remove clashes with admin toolbar */
-.menu-item {
-  margin: 0;
-  &:after {
-    content: none;
-  }
-}
-
-.toolbar-lining button {
-  margin: 0;
 }
 
 table {

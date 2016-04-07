@@ -45,16 +45,17 @@ a:visited {
   color: $lex-visited-link;
 }
 
+a:not(.toolbar-icon):focus {
+  box-shadow: none;
+  background-color: $lex-extra-light-blue;
+  outline: 3px solid $lex-extra-light-blue;
+}
+
 a.lex-font-standout, a.lex-font-standout:visited {
   color: $lex-blue;
   text-decoration: underline;
 }
 
-a:focus {
-  box-shadow: none;
-  background-color: $lex-extra-light-blue;
-  outline: 3px solid $lex-extra-light-blue;
-}
 
 .lex-font-standout {
   color: $color-primary;

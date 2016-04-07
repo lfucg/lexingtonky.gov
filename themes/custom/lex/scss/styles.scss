@@ -75,7 +75,6 @@ body {
   padding-bottom: 0.5em;
 }
 
-
 .lex-grid-full {
   max-width: $lex-max-width;
   margin: 0 auto;
@@ -103,6 +102,9 @@ body {
   background-color: $lex-dark-blue;
   &, a, a:visited {
     color: $lex-grey;
+  }
+  a:focus {
+    color: $lex-dark-grey;
   }
   .lex-font-standout, .lex-font-standout:visited {
     color: $lex-white;

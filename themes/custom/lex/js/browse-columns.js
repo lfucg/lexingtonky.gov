@@ -367,7 +367,7 @@
           var $sectionBreadcrumb = $breadcrumbItems.slice(1);
         }
 
-        $sectionBreadcrumb.html('<a href="/browse/'+sectionSlug+'">'+sectionTitle+'</a>');
+        $sectionBreadcrumb.html('<a class="lex-font-muted" href="/browse/'+sectionSlug+'">'+sectionTitle+'</a>');
       } else {
         this.$breadcrumbs.find('li').slice(1).remove();
       }
