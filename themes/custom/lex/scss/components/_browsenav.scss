@@ -28,6 +28,9 @@ $desktop: 770px;
   &.subsection {
     #root, #section {
       display: none; // hide on mobile
+      a {
+        color: $lex-dark-grey;
+      }
 
       @include media($tablet){
         display: block;
@@ -55,6 +58,8 @@ $desktop: 770px;
   }
 
   .pane-inner {
+    padding-bottom: 30px;
+
     @include media($tablet){
       border-left: 1px solid $lex-grey;
       min-height: 950px;
@@ -80,8 +85,8 @@ $desktop: 770px;
       display: block;
     }
     .active {
-      a, a:hover, a:hover p {
-        background: #005ea5;
+      a, a:hover, a:hover, .lex-font-muted {
+        background: $lex-blue;
         color: #fff;
       }
     }
@@ -93,12 +98,9 @@ $desktop: 770px;
       content: "";
     }
     a:hover {
-      background: #dee0e2;
-      color: #005ea5;
+      background: $lex-medium-grey;
+      color: $lex-blue;
       text-decoration: none;
-      p {
-        color: $lex-dark-grey;
-      }
     }
     a:after {
       font-family: Arial, sans-serif;
@@ -126,10 +128,10 @@ $desktop: 770px;
   }
 
   &.section {
+    .lex-font-muted:visited {
+      color: $lex-visited-link;
+    }
     #section {
-      a h3 {
-        @extend .lex-font-standout;
-      }
       @include media($desktop){
         .pane-inner.alphabetical {
           /* hard-coded in browse-columns.js */
@@ -183,10 +185,6 @@ $desktop: 770px;
     }
     li {
       padding-bottom: $lex-section-half-gutter;
-    }
-    a {
-      @extend .lex-font-standout;
-      text-decoration: none;
     }
     a:hover {
       color: $lex-light-blue;

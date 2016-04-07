@@ -4,7 +4,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* for basic document readability */
-.lex-region-content {
+.lex-node .lex-region-content {
   h1, h2, h3, h4, h5, h6 {
     /* return to uswds value */
     margin-top: 1em;
@@ -33,11 +33,18 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0.5em 0;
 }
 
-a.lex-font, a, a:visited, a:hover, a:active {
+a.lex-font-muted, a.lex-font-muted:visited {
   color: $lex-dark-grey;
 }
 
-/* todo: make blue + underline default and use class to opt out */
+.lex-font-muted {
+  color: $lex-dark-grey;
+}
+
+a:visited {
+  color: $lex-visited-link;
+}
+
 a.lex-font-standout, a.lex-font-standout:visited {
   color: $lex-blue;
   text-decoration: underline;

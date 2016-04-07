@@ -14,7 +14,7 @@
     {% for item in breadcrumb %}
       <li class="lex-breadcrumb-item">
         {% if item.url %}
-          <span><a href="{{ item.url }}">{{ item.text }}</a></span>
+          <span><a class="lex-font-muted" href="{{ item.url }}">{{ item.text }}</a></span>
         {% else %}
           {{ item.text }}
         {% endif %}

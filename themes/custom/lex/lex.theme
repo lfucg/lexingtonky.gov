@@ -12,8 +12,13 @@ function lex_views_pre_render($view) {
   }
 }
 
-function lex_preprocess_page__taxonomy__term(&$variables) {
+function lex_preprocess_html(&$variables) {
+  if (\Drupal::routeMatch()->getParameter('node')) {
+    $variables['attributes']['class'][] = 'lex-node';
+  }
+}
 
+function lex_preprocess_page__taxonomy__term(&$variables) {
   $path = \Drupal::service('path.current')->getPath();
   $alias = \Drupal::service('path.alias_manager')->getAliasByPath($path);
   $variables['browse_level'] = preg_match('|/browse/.*/|', $alias) == 1 ? 'subsection' : 'section';

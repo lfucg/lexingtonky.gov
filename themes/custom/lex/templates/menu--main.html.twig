@@ -46,7 +46,7 @@
                   <li class="{{ current }}">
                     <a href="{{ item.url }}">
                       <h3 class="lex-card-title lex-card-title-medium">{{ item.title }}</h3>
-                      <p class="lex-browsenav-description lex-card-subtitle">{{ item.url_title }}</p>
+                      <p class="lex-font-muted lex-browsenav-description lex-card-subtitle">{{ item.url_title }}</p>
                     </a>
                   </li>
                 {% endfor %}
@@ -67,7 +67,7 @@
         {% for item in items %}
           {% set current = (item.in_active_trail ? 'active' : '') %}
           <li class="{{ current }}">
-            {{ link(item.title, item.url, item.attributes.addClass('lex-card-title lex-card-title-medium')) }}
+            {{ link(item.title, item.url, item.attributes.addClass('lex-font-muted lex-card-title lex-card-title-medium')) }}
           </li>
         {% endfor %}
       </ul>
