@@ -11,6 +11,8 @@ Use the following instructions to set up a local development environment for the
 
 An [example walkthrough of install process](http://erikschwartz.net/2015-11-16-install-pantheon-drupal-8-mamp) on a Mac.
 
+[Install terminus](https://github.com/pantheon-systems/terminus)
+
 ### Download codebase
 
 ```
@@ -31,8 +33,9 @@ Host pantheon
 ```
 
 ```
-mysqldump -u pantheon -pPASSWORD -h pantheon-db-server -P pantheon-port pantheon --add-drop-table > dev.lexingtonky.gov.sql
-mysql -u USER -pPASSWORD your-local-db < dev.lexingtonky.gov.sql
+terminus site backups get --element=database --env=live --to=. --latest
+gunzip --stdout <your-site_2016-03-11T13-00-00_UTC_database.sql.gz> | mysql -u <username> -p<password> <local-db-name>
+drush cr
 ```
 
 ### Download files form pantheon (optional)
@@ -49,7 +52,7 @@ Host pantheon-files
   IdentityFile ~/.ssh/your-identity-file.id_rsa
 ```
 
-rsync -rlvz --size-only --ipv4 --progress -e 'ssh -p 2222' pantheon-files:~/files/ ./sites/default/files
+`rsync -rlvz --size-only --ipv4 --progress -e 'ssh -p 2222' pantheon-files:~/files/ ./sites/default/files`
 
 ### Configure local settings
 
@@ -85,9 +88,9 @@ $databases['default']['default'] = array(
 
 ## Development
 
-### Install composer
+[Install composer](https://getcomposer.org/doc/00-intro.md)
 
-### Install Drush
+Install Drush
 
 `composer require "drush/drush:dev-master"`
 
