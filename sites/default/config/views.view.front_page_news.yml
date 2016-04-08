@@ -54,7 +54,7 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 10
+          items_per_page: 6
           offset: 0
           id: 0
           total_pages: null
@@ -439,7 +439,7 @@ display:
           expose:
             label: ''
           granularity: second
-      title: News
+      title: 'City of Lexington news'
       header: {  }
       footer: {  }
       empty: {  }
