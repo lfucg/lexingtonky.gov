@@ -240,9 +240,6 @@ class Process
      * The callback receives the type of output (out or err) and some bytes from
      * the output in real-time while writing the standard input to the process.
      * It allows to have feedback from the independent process during execution.
-     * If there is no callback passed, the wait() method can be called
-     * with true as a second parameter then the callback will get all data occurred
-     * in (and since) the start call.
      *
      * @param callable|null $callback A PHP callback to run whenever there is some
      *                                output available on STDOUT or STDERR
@@ -363,8 +360,7 @@ class Process
         do {
             $this->checkTimeout();
             $running = '\\' === DIRECTORY_SEPARATOR ? $this->isRunning() : $this->processPipes->areOpen();
-            $close = '\\' !== DIRECTORY_SEPARATOR || !$running;
-            $this->readPipes(true, $close);
+            $this->readPipes($running, '\\' !== DIRECTORY_SEPARATOR || !$running);
         } while ($running);
 
         while ($this->isRunning()) {
@@ -466,15 +462,13 @@ class Process
      */
     public function getOutput()
     {
-        if ($this->outputDisabled) {
-            throw new LogicException('Output has been disabled.');
+        $this->readPipesForOutput(__FUNCTION__);
+
+        if (false === $ret = stream_get_contents($this->stdout, -1, 0)) {
+            return '';
         }
 
-        $this->requireProcessIsStarted(__FUNCTION__);
-
-        $this->readPipes(false, '\\' === DIRECTORY_SEPARATOR ? !$this->processInformation['running'] : true);
-
-        return $this->stdout;
+        return $ret;
     }
 
     /**
@@ -490,17 +484,14 @@ class Process
      */
     public function getIncrementalOutput()
     {
-        $this->requireProcessIsStarted(__FUNCTION__);
+        $this->readPipesForOutput(__FUNCTION__);
 
-        $data = $this->getOutput();
-
-        $latest = substr($data, $this->incrementalOutputOffset);
+        $latest = stream_get_contents($this->stdout, -1, $this->incrementalOutputOffset);
+        $this->incrementalOutputOffset = ftell($this->stdout);
 
         if (false === $latest) {
             return '';
         }
-
-        $this->incrementalOutputOffset = strlen($data);
 
         return $latest;
     }
@@ -512,7 +503,8 @@ class Process
      */
     public function clearOutput()
     {
-        $this->stdout = '';
+        ftruncate($this->stdout, 0);
+        fseek($this->stdout, 0);
         $this->incrementalOutputOffset = 0;
 
         return $this;
@@ -528,15 +520,13 @@ class Process
      */
     public function getErrorOutput()
     {
-        if ($this->outputDisabled) {
-            throw new LogicException('Output has been disabled.');
+        $this->readPipesForOutput(__FUNCTION__);
+
+        if (false === $ret = stream_get_contents($this->stderr, -1, 0)) {
+            return '';
         }
 
-        $this->requireProcessIsStarted(__FUNCTION__);
-
-        $this->readPipes(false, '\\' === DIRECTORY_SEPARATOR ? !$this->processInformation['running'] : true);
-
-        return $this->stderr;
+        return $ret;
     }
 
     /**
@@ -553,17 +543,14 @@ class Process
      */
     public function getIncrementalErrorOutput()
     {
-        $this->requireProcessIsStarted(__FUNCTION__);
+        $this->readPipesForOutput(__FUNCTION__);
 
-        $data = $this->getErrorOutput();
-
-        $latest = substr($data, $this->incrementalErrorOutputOffset);
+        $latest = stream_get_contents($this->stderr, -1, $this->incrementalErrorOutputOffset);
+        $this->incrementalErrorOutputOffset = ftell($this->stderr);
 
         if (false === $latest) {
             return '';
         }
-
-        $this->incrementalErrorOutputOffset = strlen($data);
 
         return $latest;
     }
@@ -575,7 +562,8 @@ class Process
      */
     public function clearErrorOutput()
     {
-        $this->stderr = '';
+        ftruncate($this->stderr, 0);
+        fseek($this->stderr, 0);
         $this->incrementalErrorOutputOffset = 0;
 
         return $this;
@@ -795,23 +783,33 @@ class Process
     /**
      * Adds a line to the STDOUT stream.
      *
+     * @internal
+     *
      * @param string $line The line to append
      */
     public function addOutput($line)
     {
         $this->lastOutputTime = microtime(true);
-        $this->stdout .= $line;
+
+        fseek($this->stdout, 0, SEEK_END);
+        fwrite($this->stdout, $line);
+        fseek($this->stdout, $this->incrementalOutputOffset);
     }
 
     /**
      * Adds a line to the STDERR stream.
+     *
+     * @internal
      *
      * @param string $line The line to append
      */
     public function addErrorOutput($line)
     {
         $this->lastOutputTime = microtime(true);
-        $this->stderr .= $line;
+
+        fseek($this->stderr, 0, SEEK_END);
+        fwrite($this->stderr, $line);
+        fseek($this->stderr, $this->incrementalErrorOutputOffset);
     }
 
     /**
@@ -1232,7 +1230,7 @@ class Process
             $this->processPipes = UnixPipes::create($this, $this->input);
         }
 
-        return $this->processPipes->getDescriptors($this->outputDisabled);
+        return $this->processPipes->getDescriptors();
     }
 
     /**
@@ -1276,14 +1274,15 @@ class Process
         }
 
         $this->processInformation = proc_get_status($this->process);
+        $running = $this->processInformation['running'];
 
-        $this->readPipes($blocking, '\\' === DIRECTORY_SEPARATOR ? !$this->processInformation['running'] : true);
+        $this->readPipes($running && $blocking, '\\' !== DIRECTORY_SEPARATOR || !$running);
 
         if ($this->fallbackStatus && $this->enhanceSigchildCompatibility && $this->isSigchildEnabled()) {
             $this->processInformation = $this->fallbackStatus + $this->processInformation;
         }
 
-        if (!$this->processInformation['running']) {
+        if (!$running) {
             $this->close();
         }
     }
@@ -1307,6 +1306,24 @@ class Process
         phpinfo(INFO_GENERAL);
 
         return self::$sigchild = false !== strpos(ob_get_clean(), '--enable-sigchild');
+    }
+
+    /**
+     * Reads pipes for the freshest output.
+     *
+     * @param $caller The name of the method that needs fresh outputs
+     *
+     * @throws LogicException in case output has been disabled or process is not started
+     */
+    private function readPipesForOutput($caller)
+    {
+        if ($this->outputDisabled) {
+            throw new LogicException('Output has been disabled.');
+        }
+
+        $this->requireProcessIsStarted($caller);
+
+        $this->updateStatus(false);
     }
 
     /**
@@ -1393,8 +1410,8 @@ class Process
         $this->exitcode = null;
         $this->fallbackStatus = array();
         $this->processInformation = null;
-        $this->stdout = null;
-        $this->stderr = null;
+        $this->stdout = fopen('php://temp/maxmemory:'.(1024 * 1024), 'wb+');
+        $this->stderr = fopen('php://temp/maxmemory:'.(1024 * 1024), 'wb+');
         $this->process = null;
         $this->latestSignal = null;
         $this->status = self::STATUS_READY;
