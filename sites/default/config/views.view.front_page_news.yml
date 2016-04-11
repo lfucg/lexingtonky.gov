@@ -477,6 +477,7 @@ display:
         use_more_always: false
         use_more_text: false
         pager: false
+        title: false
       use_more_always: true
       use_more_text: 'more news'
       pager:
@@ -484,6 +485,7 @@ display:
         options:
           items_per_page: 3
           offset: 0
+      title: News
     cache_metadata:
       max-age: -1
       contexts:
