@@ -45,3 +45,4 @@ permissions:
   38: 'administer contact forms'
   39: 'use draft_draft transition'
   40: 'use needs_review_published transition'
+  41: 'use draft_published transition'
