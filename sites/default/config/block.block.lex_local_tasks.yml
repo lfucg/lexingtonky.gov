@@ -4,6 +4,7 @@ status: true
 dependencies:
   module:
     - ctools
+    - user
   theme:
     - lex
 id: lex_local_tasks
@@ -28,3 +29,10 @@ visibility:
     negate: false
     context_mapping:
       node: '@node.node_route_context:node'
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
