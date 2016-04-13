@@ -17,6 +17,7 @@ $lex-medium-grey: #DEE0E2;
 $lex-dark-grey: #585858;
 $lex-light-blue: #3787BA;
 $lex-extra-light-blue: #BFD5EA;
+$lex-green: #006621;
 $lex-blue: #0057A8;
 $lex-dark-blue: #001A49;
 $lex-gold: #E0B111;
@@ -206,10 +207,6 @@ input:focus, input[type=search]:focus {
   .lex-submit-drupalprovided {
     display: none;
   }
-}
-
-.lex-search-page-form {
-  margin-top: $lex-section-double-gutter;
 }
 
 .lex-search-hero {

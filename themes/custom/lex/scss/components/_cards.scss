@@ -51,7 +51,7 @@
   }
 }
 
-.lex-card-title {
+.lex-card-title, h3.lex-card-title {
   // todo: remote margin and add lex-card-firstitem to elements
   margin: 0;
   font-weight: $font-weight-regular;
@@ -80,8 +80,13 @@
   margin-top: 0;
 }
 
-.lex-card-description {
+.lex-card .lex-card-description {
+  margin-top: 1em;
+}
+
+// homepage
+.lex-nav-toplevel .lex-card-description {
   margin-top: .5em;
-  // the card add bottom margin
+  // the card adds bottom margin
   margin-bottom: 0;
 }

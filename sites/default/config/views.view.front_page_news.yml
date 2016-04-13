@@ -351,7 +351,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "<span class=\"lex-card-title lex-card-title-medium\">{{ title }}</span>\n<div class=\"lex-card-subtitle lex-card-fulldate\">{% include \"@lex/includes/time.html.twig\" with { time: created } %}</div>\n<p>{{ body }}</p>"
+            text: "<span class=\"lex-card-title lex-card-title-medium\">{{ title }}</span>\n<div class=\"lex-card-subtitle lex-card-fulldate\">{% include \"@lex/includes/time.html.twig\" with { time: created } %}</div>\n<p class=\"lex-card-description\">{{ body }}</p>"
             make_link: false
             path: ''
             absolute: false
