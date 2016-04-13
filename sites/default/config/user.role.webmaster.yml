@@ -24,3 +24,4 @@ permissions:
   46: 'use text format advanced_html'
   47: 'delete terms in locations'
   48: 'edit terms in locations'
+  49: 'use draft_published transition'
