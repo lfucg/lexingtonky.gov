@@ -70,14 +70,14 @@ display:
       arguments:
         tid:
           id: tid
-          table: taxonomy_index
+          table: taxonomy_term_field_data
           field: tid
-          relationship: none
+          relationship: field_lex_site_nav
           group_type: group
           admin_label: ''
           default_action: 'not found'
           exception:
-            value: ''
+            value: all
             title_enable: false
             title: All
           title_enable: true
@@ -106,36 +106,35 @@ display:
             operation: view
             multiple: 0
           break_phrase: false
-          add_table: false
-          require_value: false
-          reduce_duplicates: false
-          plugin_id: taxonomy_index_tid
+          not: 0
       filters:
-        langcode:
-          id: langcode
+        moderation_state:
+          id: moderation_state
           table: node_field_data
-          field: langcode
+          field: moderation_state
           relationship: none
           group_type: group
           admin_label: ''
-          operator: in
-          value:
-            '***LANGUAGE_language_content***': '***LANGUAGE_language_content***'
+          operator: '='
+          value: published
           group: 1
           exposed: false
           expose:
-            operator_id: ''
-            label: ''
+            operator_id: moderation_state_op
+            label: 'Moderation state'
             description: ''
             use_operator: false
-            operator: ''
-            identifier: ''
+            operator: moderation_state_op
+            identifier: moderation_state
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-            reduce: false
+              anonymous: '0'
+              editor: '0'
+              webmaster: '0'
+              administrator: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -148,16 +147,16 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: language
           entity_type: node
-          entity_field: langcode
+          entity_field: moderation_state
+          plugin_id: string
         status:
           id: status
-          table: taxonomy_index
+          table: node_field_data
           field: status
           relationship: none
           group_type: group
-          admin_label: ''
+          admin_label: 'Legacy before moderation state: published boolean'
           operator: '='
           value: true
           group: 1
@@ -186,6 +185,8 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+          entity_type: node
+          entity_field: status
           plugin_id: boolean
       style:
         type: html_list
@@ -206,7 +207,16 @@ display:
       header: {  }
       footer: {  }
       empty: {  }
-      relationships: {  }
+      relationships:
+        field_lex_site_nav:
+          id: field_lex_site_nav
+          table: node__field_lex_site_nav
+          field: field_lex_site_nav
+          relationship: none
+          group_type: group
+          admin_label: 'field_lex_site_nav: Taxonomy term'
+          required: true
+          plugin_id: standard
       fields:
         title:
           id: title
@@ -276,6 +286,10 @@ display:
       display_extenders: {  }
       link_url: ''
       link_display: page_1
+      filter_groups:
+        operator: AND
+        groups:
+          1: OR
     cache_metadata:
       contexts:
         - 'languages:language_content'
