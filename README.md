@@ -38,7 +38,7 @@ gunzip --stdout <your-site_2016-03-11T13-00-00_UTC_database.sql.gz> | mysql -u <
 drush cr
 ```
 
-### Download files form pantheon (optional)
+### Download files from pantheon (optional)
 
 If you want to see files that contributors have uploaded to the site like images and pdfs:
 
@@ -108,7 +108,6 @@ run tests:
 
 `./vendor/bin/behat`
 
-
 ### Import/export of configuration changes
 
 As you make changes to the site, you'll want to export your configuration changes:
@@ -119,7 +118,16 @@ And to set the local database to the configuration stored in git:
 
 `drush cim -y`
 
-### Google Translate
+## Recommended process for upgrading modules
+
+* Read release notes
+* Check bug reports for problems with new version. If not a security update, often best to wait a few weeks to let bug reports filter in. Checking usage statistics is helpful to make sure the version is being used.
+* `drush pm-update my-module`
+* Run behat tests locally
+* Scan code diffs for any red flags
+* Commit and push
+
+## Google Translate
 
 The Google Translation widget javascript is triggered by a menu item in the `header-quick-links`
 block titled `Translation`. See lex.theme:lex_preprocess_menu__header_quick_links for details
