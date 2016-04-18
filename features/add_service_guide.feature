@@ -39,8 +39,9 @@ Scenario: Editor directly publishes
   When I am on "/node/add/page"
   Then the response should contain "Save and Publish"
 
-Scenario: Editing a page doesn't remove a page from browse navigation
+Scenario: Editing a page doesn't remove it from browse navigation
   Given I am logged in as a user with the "editor" role
+  # District 12 page
   When I am on "/node/123/edit"
   And I press "Save and Create New Draft"
   And I am on "/browse/government/council"
