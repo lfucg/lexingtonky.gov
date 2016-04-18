@@ -8,6 +8,7 @@
 namespace Drupal\taxonomy_menu;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\taxonomy\TermInterface;
 
 /**
  * Provides an interface defining a TaxonomyMenu entity.
@@ -38,5 +39,14 @@ interface TaxonomyMenuInterface extends ConfigEntityInterface {
    * @return array
    */
   public function getLinks($base_plugin_definition = [], $include_base_plugin_id = FALSE);
+
+  /**
+   * Generates a menu link id for the taxonomy term.
+   *
+   * @param \Drupal\taxonomy\TermInterface $term
+   *
+   * @return string
+   */
+  public function buildMenuPluginId(TermInterface $term, $include_base_plugin_id = TRUE);
 
 }
