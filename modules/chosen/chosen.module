@@ -16,44 +16,6 @@ use Drupal\field\Entity\FieldConfig;
 define('CHOSEN_WEBSITE_URL', 'http://harvesthq.github.io/chosen');
 
 /**
- * Implements hook_page_attachments().
- */
-function chosen_page_attachments(array &$page) {
-  $page['#attached']['library'][] = 'chosen/drupal.chosen';
-
-  $chosen_conf = \Drupal::config('chosen.settings');
-
-  $css_disabled_themes = $chosen_conf->get('chosen_disabled_themes');
-  if (empty($css_disabled_themes)) {
-    $css_disabled_themes = array();
-  }
-
-  // Only add the Chosen CSS if it is not disabled for the active theme.
-  $theme_name = \Drupal::theme()->getActiveTheme()->getName();
-  if (!in_array($theme_name, $css_disabled_themes, TRUE)) {
-    $page['#attached']['library'][] = 'chosen_lib/chosen.css';
-  }
-
-  $options = array(
-    'disable_search' => (bool) $chosen_conf->get('chosen_disable_search'),
-    'disable_search_threshold' => (int) $chosen_conf->get('chosen_disable_search_threshold'),
-    'search_contains' => (bool) $chosen_conf->get('chosen_search_contains'),
-    'placeholder_text_multiple' => $chosen_conf->get('chosen_placeholder_text_multiple'),
-    'placeholder_text_single' => $chosen_conf->get('chosen_placeholder_text_single'),
-    'no_results_text' => $chosen_conf->get('chosen_no_results_text'),
-    'inherit_select_classes' => TRUE,
-  );
-
-  $page['#attached']['drupalSettings']['chosen'] = array(
-    'selector' => $chosen_conf->get('chosen_jquery_selector'),
-    'minimum_single' => (int) $chosen_conf->get('chosen_minimum_single'),
-    'minimum_multiple' => (int) $chosen_conf->get('chosen_minimum_multiple'),
-    'minimum_width' => (int) $chosen_conf->get('chosen_minimum_width'),
-    'options' => $options,
-  );
-}
-
-/**
  * Implements hook_element_info_alter().
  */
 function chosen_element_info_alter(&$info) {
@@ -105,17 +67,63 @@ function chosen_pre_render_select($element) {
   }
 
   if (isset($element['#field_name']) && !empty($element['#multiple'])) {
-    if (isset($element['#entity_type']) && isset($element['#field_name'])) {
-      $field = FieldConfig::loadByName($element['#entity_type'], $element['#field_name']);
-      if ($field['cardinality'] != FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED && $field['cardinality'] > 1) {
-        $element['#attributes']['data-cardinality'] = $field['cardinality'];
+    if (isset($element['#entity_type']) && isset($element['#bundle']) && isset($element['#field_name'])) {
+      // Remove '_none' from multi-select options.
+      unset($element['#options']['_none']);
+
+      $field = FieldConfig::loadByName($element['#entity_type'], $element['#bundle'], $element['#field_name'])->getFieldStorageDefinition();
+      $cardinality = $field->getCardinality();
+      if ($cardinality != FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED && $cardinality > 1) {
+        $element['#attributes']['data-cardinality'] = $cardinality;
       }
     }
   }
 
-  $element['#attached']['library'][] = 'chosen/drupal.chosen';
+  // Attach the library.
+  chosen_attach_library($element);
 
   return $element;
+}
+
+/**
+ * Helper function to attach the Chosen library and settings to a given element.
+ *
+ * @param array &$element
+ *   An render array element.
+ */
+function chosen_attach_library(array &$element) {
+  $element['#attached']['library'][] = 'chosen/drupal.chosen';
+
+  $chosen_conf = \Drupal::config('chosen.settings');
+
+  $css_disabled_themes = $chosen_conf->get('disabled_themes');
+  if (empty($css_disabled_themes)) {
+    $css_disabled_themes = array();
+  }
+
+  // Only add the Chosen CSS if it is not disabled for the active theme.
+  $theme_name = \Drupal::theme()->getActiveTheme()->getName();
+  if (!in_array($theme_name, $css_disabled_themes, TRUE)) {
+    $element['#attached']['library'][] = 'chosen_lib/chosen.css';
+  }
+
+  $options = array(
+    'disable_search' => (bool) $chosen_conf->get('disable_search'),
+    'disable_search_threshold' => (int) $chosen_conf->get('disable_search_threshold'),
+    'search_contains' => (bool) $chosen_conf->get('search_contains'),
+    'placeholder_text_multiple' => $chosen_conf->get('placeholder_text_multiple'),
+    'placeholder_text_single' => $chosen_conf->get('placeholder_text_single'),
+    'no_results_text' => $chosen_conf->get('no_results_text'),
+    'inherit_select_classes' => TRUE,
+  );
+
+  $element['#attached']['drupalSettings']['chosen'] = array(
+    'selector' => $chosen_conf->get('jquery_selector'),
+    'minimum_single' => (int) $chosen_conf->get('minimum_single'),
+    'minimum_multiple' => (int) $chosen_conf->get('minimum_multiple'),
+    'minimum_width' => (int) $chosen_conf->get('minimum_width'),
+    'options' => $options,
+  );
 }
 
 /**

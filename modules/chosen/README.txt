@@ -9,6 +9,10 @@ Chosen uses the Chosen jQuery plugin to make your <select> elements more user-fr
   2. Download and enable the module.
   3. Configure at Administer > Configuration > User interface > Chosen (requires administer site configuration permission)
 
+-- INSTALLATION VIA COMPOSER --
+
+  If you are using Composer to manage your site's dependencies, then the Chosen plugin will automatically be downloaded to `libraries/chosen`.
+
 -- INSTALLATION VIA DRUSH --
 
  A Drush command is provided for easy installation of the Chosen plugin.

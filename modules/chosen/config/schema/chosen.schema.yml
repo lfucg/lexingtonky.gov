@@ -2,38 +2,38 @@ chosen.settings:
   type: config_object
   label: 'Chosen settings'
   mapping:
-    chosen_minimum_single:
+    minimum_single:
       type: integer
       label: 'Minimum number of options for single select'
-    chosen_minimum_multiple:
+    minimum_multiple:
       type: integer
       label: 'Minimum number of options for multi select'
-    chosen_disable_search_threshold:
+    disable_search_threshold:
       type: integer
       label: 'Minimum number to show Search on Single Select'
-    chosen_minimum_width:
+    minimum_width:
       type: integer
       label: 'The minimum width of the Chosen widget.'
-    chosen_jquery_selector:
+    jquery_selector:
       type: string
       label: 'Apply Chosen to the following elements'
-    chosen_search_contains:
+    search_contains:
       type: boolean
       label: 'Search also in the middle of words'
-    chosen_disable_search:
+    disable_search:
       type: boolean
       label: 'Disable search box'
-    chosen_disabled_themes:
+    disabled_themes:
       type: sequence
       label: 'Disable the default Chosen theme for the following themes'
       sequence:
         type: string
-    chosen_placeholder_text_multiple:
+    placeholder_text_multiple:
       type: label
       label: 'Placeholder text of multiple selects'
-    chosen_placeholder_text_single:
+    placeholder_text_single:
       type: label
       label: 'Placeholder text of single selects'
-    chosen_no_results_text:
+    no_results_text:
       type: label
       label: 'No results text'

@@ -51,45 +51,45 @@ class ChosenConfigForm extends ConfigFormBase {
     // Chosen settings:
     $chosen_conf = $this->configFactory->get('chosen.settings');
 
-    $form['chosen_minimum_single'] = array(
+    $form['minimum_single'] = array(
       '#type' => 'select',
       '#title' => t('Minimum number of options for single select'),
       '#options' => array_merge(array('0' => t('Always apply')), range(1, 25)),
-      '#default_value' => $chosen_conf->get('chosen_minimum_single'),
+      '#default_value' => $chosen_conf->get('minimum_single'),
       '#description' => t('The minimum number of options to apply Chosen for single select fields. Example : choosing 10 will only apply Chosen if the number of options is greater or equal to 10.'),
     );
 
-    $form['chosen_minimum_multiple'] = array(
+    $form['minimum_multiple'] = array(
       '#type' => 'select',
       '#title' => t('Minimum number of options for multi select'),
       '#options' => array_merge(array('0' => t('Always apply')), range(1, 25)),
-      '#default_value' => $chosen_conf->get('chosen_minimum_multiple'),
+      '#default_value' => $chosen_conf->get('minimum_multiple'),
       '#description' => t('The minimum number of options to apply Chosen for multi select fields. Example : choosing 10 will only apply Chosen if the number of options is greater or equal to 10.'),
     );
 
-    $form['chosen_disable_search_threshold'] = array(
+    $form['disable_search_threshold'] = array(
       '#type' => 'select',
       '#title' => t('Minimum number to show Search on Single Select'),
       '#options' => array_merge(array('0' => t('Always apply')), range(1, 25)),
-      '#default_value' => $chosen_conf->get('chosen_disable_search_threshold'),
+      '#default_value' => $chosen_conf->get('disable_search_threshold'),
       '#description' => t('The minimum number of options to apply Chosen search box. Example : choosing 10 will only apply Chosen search if the number of options is greater or equal to 10.'),
     );
 
-    $form['chosen_minimum_width'] = array(
+    $form['minimum_width'] = array(
       '#type' => 'textfield',
       '#title' => t('Minimum width of widget'),
       '#field_suffix' => 'px',
       '#required' => TRUE,
       '#size' => 3,
-      '#default_value' => $chosen_conf->get('chosen_minimum_width'),
+      '#default_value' => $chosen_conf->get('minimum_width'),
       '#description' => t('The minimum width of the Chosen widget.'),
     );
 
-    $form['chosen_jquery_selector'] = array(
+    $form['jquery_selector'] = array(
       '#type' => 'textarea',
       '#title' => t('Apply Chosen to the following elements'),
       '#description' => t('A comma-separated list of jQuery selectors to apply Chosen to, such as <code>select#edit-operation, select#edit-type</code> or <code>.chosen-select</code>. Defaults to <code>select</code> to apply Chosen to all <code>&lt;select&gt;</code> elements.'),
-      '#default_value' => $chosen_conf->get('chosen_jquery_selector'),
+      '#default_value' => $chosen_conf->get('jquery_selector'),
     );
 
     $form['options'] = array(
@@ -97,18 +97,18 @@ class ChosenConfigForm extends ConfigFormBase {
       '#title' => t('Chosen general options'),
     );
 
-    $form['options']['chosen_search_contains'] = array(
+    $form['options']['search_contains'] = array(
       '#type' => 'checkbox',
       '#title' => t('Search also in the middle of words'),
-      '#default_value' => $chosen_conf->get('chosen_search_contains'),
+      '#default_value' => $chosen_conf->get('search_contains'),
       '#description' => t('Per default chosen searches only at beginning of words. Enable this option will also find results in the middle of words.
       Example: Search for <em>land</em> will also find <code>Switzer<strong>land</strong></code>.'),
     );
 
-    $form['options']['chosen_disable_search'] = array(
+    $form['options']['disable_search'] = array(
       '#type' => 'checkbox',
       '#title' => t('Disable search box'),
-      '#default_value' => $chosen_conf->get('chosen_disable_search'),
+      '#default_value' => $chosen_conf->get('disable_search'),
       '#description' => t('Enable or disable the search box in the results list to filter out possible options.'),
     );
 
@@ -117,13 +117,13 @@ class ChosenConfigForm extends ConfigFormBase {
       '#title' => t('Chosen per theme options'),
     );
 
-    $default_chosen_disabled_themes = $chosen_conf->get('chosen_disabled_themes');
-    $default_chosen_disabled_themes = is_array($default_chosen_disabled_themes) ? $default_chosen_disabled_themes : array();
-    $form['theme_options']['chosen_disabled_themes'] = array(
+    $default_disabled_themes = $chosen_conf->get('disabled_themes');
+    $default_disabled_themes = is_array($default_disabled_themes) ? $default_disabled_themes : array();
+    $form['theme_options']['disabled_themes'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Disable the default Chosen theme for the following themes'),
       '#options' => $this->chosen_enabled_themes_options(),
-      '#default_value' => $default_chosen_disabled_themes,
+      '#default_value' => $default_disabled_themes,
       '#description' => t('Enable or disable the default Chosen CSS file. Select a theme if it contains custom styles for Chosen replacements.'),
     );
 
@@ -132,25 +132,25 @@ class ChosenConfigForm extends ConfigFormBase {
       '#title' => t('Chosen strings'),
     );
 
-    $form['strings']['chosen_placeholder_text_multiple'] = array(
+    $form['strings']['placeholder_text_multiple'] = array(
       '#type' => 'textfield',
       '#title' => t('Placeholder text of multiple selects'),
       '#required' => TRUE,
-      '#default_value' => $chosen_conf->get('chosen_placeholder_text_multiple'),
+      '#default_value' => $chosen_conf->get('placeholder_text_multiple'),
     );
 
-    $form['strings']['chosen_placeholder_text_single'] = array(
+    $form['strings']['placeholder_text_single'] = array(
       '#type' => 'textfield',
       '#title' => t('Placeholder text of single selects'),
       '#required' => TRUE,
-      '#default_value' => $chosen_conf->get('chosen_placeholder_text_single'),
+      '#default_value' => $chosen_conf->get('placeholder_text_single'),
     );
 
-    $form['strings']['chosen_no_results_text'] = array(
+    $form['strings']['no_results_text'] = array(
       '#type' => 'textfield',
       '#title' => t('No results text'),
       '#required' => TRUE,
-      '#default_value' => $chosen_conf->get('chosen_no_results_text'),
+      '#default_value' => $chosen_conf->get('no_results_text'),
     );
 
     $form['submit'] = array(
@@ -173,17 +173,17 @@ class ChosenConfigForm extends ConfigFormBase {
     $config = $this->configFactory->getEditable('chosen.settings');
 
     $config
-      ->set('chosen_minimum_single', $form_state->getValue('chosen_minimum_single'))
-      ->set('chosen_minimum_multiple', $form_state->getValue('chosen_minimum_multiple'))
-      ->set('chosen_disable_search_threshold', $form_state->getValue('chosen_disable_search_threshold'))
-      ->set('chosen_minimum_width', $form_state->getValue('chosen_minimum_width'))
-      ->set('chosen_jquery_selector', $form_state->getValue('chosen_jquery_selector'))
-      ->set('chosen_search_contains', $form_state->getValue('chosen_search_contains'))
-      ->set('chosen_disable_search', $form_state->getValue('chosen_disable_search'))
-      ->set('chosen_disabled_themes', $form_state->getValue('chosen_disabled_themes'))
-      ->set('chosen_placeholder_text_multiple', $form_state->getValue('chosen_placeholder_text_multiple'))
-      ->set('chosen_placeholder_text_single', $form_state->getValue('chosen_placeholder_text_single'))
-      ->set('chosen_no_results_text', $form_state->getValue('chosen_no_results_text'));
+      ->set('minimum_single', $form_state->getValue('minimum_single'))
+      ->set('minimum_multiple', $form_state->getValue('minimum_multiple'))
+      ->set('disable_search_threshold', $form_state->getValue('disable_search_threshold'))
+      ->set('minimum_width', $form_state->getValue('minimum_width'))
+      ->set('jquery_selector', $form_state->getValue('jquery_selector'))
+      ->set('search_contains', $form_state->getValue('search_contains'))
+      ->set('disable_search', $form_state->getValue('disable_search'))
+      ->set('disabled_themes', $form_state->getValue('disabled_themes'))
+      ->set('placeholder_text_multiple', $form_state->getValue('placeholder_text_multiple'))
+      ->set('placeholder_text_single', $form_state->getValue('placeholder_text_single'))
+      ->set('no_results_text', $form_state->getValue('no_results_text'));
 
     $config->save();
 

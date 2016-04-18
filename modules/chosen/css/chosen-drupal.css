@@ -28,3 +28,7 @@
 .chosen-container.error .chosen-single {
   border: 2px solid red;
 }
+
+.filter-wrapper {
+  overflow: visible !important;
+}

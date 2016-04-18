@@ -12,11 +12,12 @@ use Drupal\Core\Link;
  */
 function chosen_requirements($phase) {
   $requirements = array();
-  module_load_include('module', 'chosen_lib');
-  $chosen_path = _chosen_lib_get_chosen_path();
 
   switch ($phase) {
     case 'runtime':
+      module_load_include('module', 'chosen_lib');
+      $chosen_path = _chosen_lib_get_chosen_path();
+
       if (!$chosen_path) {
         $url = Url::fromUri(CHOSEN_WEBSITE_URL);
         $link = Link::fromTextAndUrl(t('Chosen JavaScript file'), $url)->toString();
@@ -39,4 +40,21 @@ function chosen_requirements($phase) {
   }
 
   return $requirements;
+}
+
+/**
+ * Renames config to remove redundant 'chosen_' prefix.
+ */
+function chosen_update_8001() {
+  $config = \Drupal::configFactory()->getEditable('chosen.settings');
+  $raw_data = $config->getRawData();
+  foreach ($raw_data as $name => $data) {
+    if (strpos($name, 'chosen_') === 0) {
+      unset($raw_data[$name]);
+      $name = str_replace('chosen_', '', $name);
+      $raw_data[$name] = $data;
+    }
+  }
+  $config->setData($raw_data);
+  $config->save();
 }

@@ -1,14 +1,15 @@
-(function($) {
+(function ($) {
+  'use strict';
   Drupal.behaviors.chosen = {
-    attach: function(context, settings) {
+    attach: function (context, settings) {
       settings.chosen = settings.chosen || drupalSettings.chosen;
 
       // Prepare selector and add unwantend selectors.
       var selector = settings.chosen.selector;
-
+      var options;
       // Function to prepare all the options together for the chosen() call.
       var getElementOptions = function (element) {
-        var options = $.extend({}, settings.chosen.options);
+        options = $.extend({}, settings.chosen.options);
 
         // The width default option is considered the minimum width, so this
         // must be evaluated for every option.
@@ -29,7 +30,7 @@
       };
 
       // Process elements that have opted-in for Chosen.
-      $('select.chosen-enable', context).once('chosen').each(function() {
+      $('select.chosen-enable', context).once('chosen').each(function () {
         options = getElementOptions(this);
         $(this).chosen(options);
       });
@@ -41,8 +42,8 @@
         // - Tabledrag weights
         // - Elements that have opted-out of Chosen
         // - Elements already processed by Chosen
-        .not('#field-ui-field-storage-add-form select, #entity-form-display-edit-form select, #entity-view-display-edit-form select, .wysiwyg, .draggable select[name$="[weight]"], .draggable select[name$="[position]"], .chosen-disable, .chosen-processed')
-        .filter(function() {
+        .not('#field-ui-field-storage-add-form select, #entity-form-display-edit-form select, #entity-view-display-edit-form select, .wysiwyg, .draggable select[name$="[weight]"], .draggable select[name$="[position]"], .locale-translate-filter-form select, .chosen-disable, .chosen-processed')
+        .filter(function () {
           // Filter out select widgets that do not meet the minimum number of
           // options.
           var minOptions = $(this).attr('multiple') ? settings.chosen.minimum_multiple : settings.chosen.minimum_single;
@@ -54,7 +55,7 @@
             return $(this).find('option').length >= minOptions;
           }
         })
-        .once('chosen').each(function() {
+        .once('chosen').each(function () {
           options = getElementOptions(this);
           $(this).chosen(options);
         });
