@@ -11,6 +11,9 @@
 .lex-eventcard-titlesection {
   float: left;
   width: 73%;
+  .lex-card-subtitle {
+    margin-bottom: $lex-section-gutter;
+  }
 }
 
 .lex-eventcard-stackeddate {
@@ -51,7 +54,7 @@
   }
 }
 
-.lex-card-title, h3.lex-card-title {
+.lex-card-title, h3.lex-card-title, h2.lex-card-title {
   // todo: remote margin and add lex-card-firstitem to elements
   margin: 0;
   font-weight: $font-weight-regular;

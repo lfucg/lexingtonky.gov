@@ -439,7 +439,7 @@ display:
           expose:
             label: ''
           granularity: second
-      title: 'City of Lexington news'
+      title: 'City news'
       header: {  }
       footer: {  }
       empty: {  }
