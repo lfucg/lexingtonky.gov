@@ -1,0 +1,13 @@
+$filter-column-width: 300px;
+$gutter: 20px;
+
+@include media($medium-large-screen) {
+  .lex-events-view-page {
+    margin-left: $filter-column-width;
+  }
+  .lex-views-exposed-form {
+    position: absolute;
+    left: ($filter-column-width * -1);
+    width: ($filter-column-width - $gutter);
+  }
+}

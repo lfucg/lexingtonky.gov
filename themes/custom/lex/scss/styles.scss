@@ -24,6 +24,8 @@ $lex-gold: #E0B111;
 $lex-white: #FFFFFF;
 $lex-black: #000000;
 $lex-visited-link: $lex-light-blue;
+// used on form input borders
+$color-gray: $lex-grey;
 
 // alerts
 $lex-alert-blue: #74c7df;
@@ -48,7 +50,6 @@ $fa-font-path: "../font-awesome-4.5.0/fonts";
 @import '../webdesignstandards/_scss/all';
 @import './elements/_addresses';
 @import './elements/_button';
-@import './elements/_form';
 @import './elements/_list';
 @import './elements/_typography';
 @import './components/_alerts';
@@ -56,6 +57,7 @@ $fa-font-path: "../font-awesome-4.5.0/fonts";
 @import './components/_header';
 @import './components/_browsenav';
 @import './components/_pager';
+@import './components/_filters';
 @import './components/_forms';
 @import './components/_google_translate';
 // Override WDS styles (avoid when possible)
@@ -179,35 +181,6 @@ body {
 
 input:focus, input[type=search]:focus {
   box-shadow: none;
-}
-
-.lex-search {
-  .lex-search-submit {
-    border-radius: 0;
-    background-color: white;
-  }
-  input {
-    max-width: none;
-    border-top: 1px solid $lex-grey;
-    border-bottom: 1px solid $lex-grey;
-    border-left: 1px solid $lex-grey;
-  }
-
-  /* right-align search icon */
-  .lex-search-submit {
-    text-align: right;
-    padding-right: 1em;
-    border-top: 1px solid $lex-grey;
-    border-right: 1px solid $lex-grey;
-    border-bottom: 1px solid $lex-grey;
-  }
-
-  .lex-icon {
-    color: $lex-dark-grey;
-  }
-  .lex-submit-drupalprovided {
-    display: none;
-  }
 }
 
 .lex-search-hero {
