@@ -8,6 +8,11 @@
   font-weight: $font-weight-light;
 }
 
+.lex-eventcard {
+  /* override WDS li */
+  line-height: inherit;
+}
+
 .lex-eventcard-titlesection {
   float: left;
   width: 73%;

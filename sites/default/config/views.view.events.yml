@@ -76,7 +76,7 @@ display:
         type: html_list
         options:
           grouping: {  }
-          row_class: ''
+          row_class: 'lex-card clearfix lex-eventcard'
           default_row_class: true
           type: ol
           wrapper_class: ''
@@ -610,7 +610,8 @@ display:
       use_more: true
       use_more_always: true
       use_more_text: 'more events'
-      css_class: ''
+      css_class: lex-event-list
+      use_ajax: true
     cache_metadata:
       max-age: -1
       contexts:
@@ -642,7 +643,7 @@ display:
         type: html_list
         options:
           grouping: {  }
-          row_class: 'lex-card clearfix'
+          row_class: 'lex-card clearfix lex-eventcard'
           default_row_class: false
           type: ol
           wrapper_class: ''
@@ -1158,7 +1159,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: recreation/events
+      path: events
       use_more: false
       defaults:
         use_more: false
@@ -1629,7 +1630,7 @@ display:
           exposed: true
           expose:
             operator_id: keys_op
-            label: 'Search Keywords'
+            label: 'Search for'
             description: ''
             use_operator: false
             operator: keys_op

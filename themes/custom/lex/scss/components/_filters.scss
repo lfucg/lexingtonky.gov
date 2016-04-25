@@ -1,9 +1,18 @@
 $filter-column-width: 300px;
 $gutter: 20px;
 
+@include media($medium-screen) {
+  .lex-events-view-page.usa-width-two-thirds {
+    width: 100%;
+  }
+}
+
 @include media($medium-large-screen) {
   .lex-events-view-page {
     margin-left: $filter-column-width;
+    .pager {
+      width: 50%;
+    }
   }
   .lex-views-exposed-form {
     position: absolute;
