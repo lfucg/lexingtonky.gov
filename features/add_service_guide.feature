@@ -7,7 +7,7 @@ Scenario: Use chosen widget to select navigation topic
   And I am on "/node/add/page"
   And I fill in "Title" with randomized text "The title of my page"
   And I click on '.chosen-single' element
-  And I fill in ".chosen-search input" element with "council"
+  And I fill in ".chosen-search input" element with "urban county council"
   And I press "List additional actions"
   And I press "Save and Publish"
   Then the url should match "title-of-my-page"
