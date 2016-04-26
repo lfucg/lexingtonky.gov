@@ -17,10 +17,7 @@ $gutter: 20px;
   }
   .lex-views-exposed-form {
     float: left;
-    margin-left: -300px;
-    // position: absolute;
-    // // left: 230px;//($filter-column-width * -1);
-    // left: ($filter-column-width * -1);
+    margin-left: ($filter-column-width * -1);
     width: ($filter-column-width - $gutter);
   }
 }
