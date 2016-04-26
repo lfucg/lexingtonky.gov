@@ -1,9 +1,10 @@
 $filter-column-width: 300px;
 $gutter: 20px;
 
-@include media($medium-screen) {
-  .lex-events-view-page.usa-width-two-thirds {
-    width: 100%;
+.lex-events-view-page.usa-width-two-thirds {
+  @include media($large-screen) {
+    /* fix IE10 */
+    width: 63%;
   }
 }
 
@@ -15,8 +16,11 @@ $gutter: 20px;
     }
   }
   .lex-views-exposed-form {
-    position: absolute;
-    left: ($filter-column-width * -1);
+    float: left;
+    margin-left: -300px;
+    // position: absolute;
+    // // left: 230px;//($filter-column-width * -1);
+    // left: ($filter-column-width * -1);
     width: ($filter-column-width - $gutter);
   }
 }

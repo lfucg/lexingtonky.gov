@@ -11,7 +11,7 @@ field_name: field_locations
 entity_type: node
 bundle: event
 label: Location
-description: 'If your location is not in the list, please contact <a href="mailto:webmaster@lexingtonky.gov">webmaster@lexingtonky.gov</a>'
+description: 'If your location is not in the list, please contact <a href="mailto:webmaster@lexingtonky.gov">Nick Brock</a>'
 required: true
 translatable: false
 default_value: {  }
