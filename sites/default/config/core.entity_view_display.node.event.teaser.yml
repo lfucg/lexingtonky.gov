@@ -5,8 +5,12 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.event.body
+    - field.field.node.event.field_cost
     - field.field.node.event.field_date
     - field.field.node.event.field_date_end
+    - field.field.node.event.field_event_website
+    - field.field.node.event.field_locations
+    - field.field.node.event.field_media_contact
     - node.type.event
   module:
     - text
@@ -26,5 +30,9 @@ content:
   links:
     weight: 100
 hidden:
+  field_cost: true
   field_date: true
   field_date_end: true
+  field_event_website: true
+  field_locations: true
+  field_media_contact: true

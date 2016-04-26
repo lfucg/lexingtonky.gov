@@ -13,7 +13,7 @@ entity_type: node
 bundle: event
 label: 'End Date and Time'
 description: ''
-required: false
+required: true
 translatable: false
 default_value:
   -

@@ -1,0 +1,27 @@
+uuid: 64f76b0e-c817-441a-85e8-69dc569a6581
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_locations
+    - node.type.event
+    - taxonomy.vocabulary.locations
+id: node.event.field_locations
+field_name: field_locations
+entity_type: node
+bundle: event
+label: Location
+description: 'If your location is not in the list, please contact <a href="mailto:webmaster@lexingtonky.gov">webmaster@lexingtonky.gov</a>'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      locations: locations
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference

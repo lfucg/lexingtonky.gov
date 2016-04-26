@@ -4,13 +4,20 @@ status: true
 dependencies:
   config:
     - field.field.node.event.body
+    - field.field.node.event.field_cost
     - field.field.node.event.field_date
     - field.field.node.event.field_date_end
+    - field.field.node.event.field_event_website
+    - field.field.node.event.field_locations
+    - field.field.node.event.field_media_contact
     - node.type.event
   module:
     - datetime
+    - link
+    - paragraphs
     - path
     - text
+    - workbench_moderation
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -18,7 +25,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 31
+    weight: 8
     settings:
       rows: 9
       summary_rows: 3
@@ -26,46 +33,75 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 4
     settings: {  }
     third_party_settings: {  }
+  field_cost:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
   field_date:
-    weight: 32
+    weight: 9
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
   field_date_end:
-    weight: 33
+    weight: 10
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
+  field_event_website:
+    weight: 12
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+  field_locations:
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+  field_media_contact:
+    weight: 11
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+    third_party_settings: {  }
+    type: entity_reference_paragraphs
   path:
     type: path
-    weight: 30
+    weight: 7
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 5
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 6
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 0
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60

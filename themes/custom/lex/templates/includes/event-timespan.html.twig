@@ -1,0 +1,31 @@
+{#
+  required values:
+    field_begin (render array)
+    field_end (render array)
+#}
+{% set begin = {
+    day: (field_begin[0]['#text'] | date('d')),
+    month: (field_begin[0]['#text'] | date('m')),
+    year: (field_begin[0]['#text'] | date('Y'))
+  }
+%}
+{% set end = {
+    day: (field_end[0]['#text'] | date('d')),
+    month: (field_end[0]['#text'] | date('m')),
+    year: (field_end[0]['#text'] | date('Y'))
+  }
+%}
+
+{{ render_var(field_begin[0]) }} –
+
+{% if begin.day == end.day and begin.month == end.month and begin.year == end.year %}
+  {% set format = 'g:i a' %}
+{% elseif begin.year == end.year %}
+  {% set format = 'M j g:i a' %}
+{% endif %}
+
+{% if format %}
+  {% include '@lex/includes/time.html.twig' with { time: (field_end[0]['#text'] | date(format)) } %}
+{% else %}
+  {{ render_var(field_end[0]) }}
+{% endif %}

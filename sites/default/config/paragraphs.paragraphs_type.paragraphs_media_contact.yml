@@ -3,4 +3,4 @@ langcode: en
 status: true
 dependencies: {  }
 id: paragraphs_media_contact
-label: 'Media contact'
+label: 'Point of contact'
