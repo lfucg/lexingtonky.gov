@@ -251,3 +251,17 @@ input:focus, input[type=search]:focus {
 .lex-newsarticle-end {
   text-align: center;
 }
+
+.lex-locationwrapper {
+  /* todo: unify approach to related locations aside having a bigger title */
+  .lex-card-title {
+    font-weight: bold;
+    font-size: 1em;
+  }
+}
+
+.lex-locationwrapper-hidecontact {
+  .lex-location-contact {
+    display: none;
+  }
+}
