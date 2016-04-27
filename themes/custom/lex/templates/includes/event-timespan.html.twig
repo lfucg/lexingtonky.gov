@@ -3,29 +3,45 @@
     field_begin (render array)
     field_end (render array)
 #}
+
+{# not sure if twig has functions that can extract and return these? #}
+
+{% set begin_text = field_begin[0]['#text'] %}
 {% set begin = {
-    day: (field_begin[0]['#text'] | date('d')),
-    month: (field_begin[0]['#text'] | date('m')),
-    year: (field_begin[0]['#text'] | date('Y'))
-  }
-%}
-{% set end = {
-    day: (field_end[0]['#text'] | date('d')),
-    month: (field_end[0]['#text'] | date('m')),
-    year: (field_end[0]['#text'] | date('Y'))
+    day:       (begin_text | date('d')),
+    month:     (begin_text | date('M')),
+    year:      (begin_text | date('Y')),
+    time:      (begin_text | date('g:i')),
+    full_time: (begin_text | date('g:i a')),
+    am_pm:     (begin_text | date('a'))
   }
 %}
 
-{{ render_var(field_begin[0]) }} –
+{% set end_text = field_end[0]['#text'] %}
+{% set end = {
+    day:       (end_text | date('d')),
+    month:     (end_text | date('M')),
+    year:      (end_text | date('Y')),
+    time:      (end_text | date('g:i')),
+    full_time: (end_text | date('g:i a')),
+    am_pm:     (end_text | date('a'))
+  }
+%}
+
+{{ begin.month }} {{ begin.day }}, {{ begin.year }}
 
 {% if begin.day == end.day and begin.month == end.month and begin.year == end.year %}
-  {% set format = 'g:i a' %}
-{% elseif begin.year == end.year %}
-  {% set format = 'M j g:i a' %}
-{% endif %}
+  {% set begin_time = begin.am_pm == end.am_pm ? begin.time : begin.full_time %}
 
-{% if format %}
-  {% include '@lex/includes/time.html.twig' with { time: (field_end[0]['#text'] | date(format)) } %}
+  <br>{% include '@lex/includes/time.html.twig' with { time: begin_time } %}
+  –
+  {% include '@lex/includes/time.html.twig' with { time: end.full_time } %}
+
 {% else %}
-  {{ render_var(field_end[0]) }}
+
+  <br>{% include '@lex/includes/time.html.twig' with { time: begin.full_time } %}
+  <br> –
+  <br>{{ end.month }} {{ end.day }}, {{ end.year }}
+  <br>{% include '@lex/includes/time.html.twig' with { time: end.full_time } %}
+
 {% endif %}

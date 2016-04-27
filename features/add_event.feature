@@ -26,15 +26,15 @@ Scenario Outline: Dates are formatted correctly
   And I fill in "Cost" with "free"
 
   When I fill in "edit-field-date-0-value-date" with "<begin date>"
-  And I fill in "edit-field-date-0-value-time" with "09:30:00"
+  And I fill in "edit-field-date-0-value-time" with "<begin time>"
   And I fill in "edit-field-date-end-0-value-date" with "<end date>"
-  And I fill in "edit-field-date-end-0-value-time" with "10:30:00"
+  And I fill in "edit-field-date-end-0-value-time" with "<end time>"
   And I press the 'Save and publish' button
 
   Then I should see "<date format>"
 
   Examples:
-    | begin date | end date   | date format                                      |
-    | 2016-04-26 | 2016-04-26 | Apr 26, 2016 9:30 a.m. – 10:30 a.m.              |
-    | 2016-04-26 | 2016-04-27 | Apr 26, 2016 9:30 a.m. – Apr 27 10:30 a.m.       |
-    | 2016-04-26 | 2017-04-27 | Apr 26, 2016 9:30 a.m. – Apr 27, 2017 10:30 a.m. |
+    | begin date | begin time | end date   | end time | date format                                   |
+    | 2016-04-26 | 09:30      | 2016-04-26 | 10:30    | Apr 26, 2016 9:30 – 10:30 a.m.                |
+    | 2016-04-26 | 09:30      | 2016-04-26 | 12:30    | Apr 26, 2016 9:30 a.m. – 12:30 p.m.           |
+    | 2016-04-26 | 09:30      | 2016-04-27 | 10:00    | Apr 26, 2016 9:30 a.m. – Apr 27, 2016 10 a.m. |
