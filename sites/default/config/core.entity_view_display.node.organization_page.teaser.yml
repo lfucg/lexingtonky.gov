@@ -1,0 +1,28 @@
+uuid: 221a6fea-c531-421f-91be-3506590e64ff
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.organization_page.body
+    - field.field.node.organization_page.field_organization_taxonomy_term
+    - node.type.organization_page
+  module:
+    - text
+    - user
+id: node.organization_page.teaser
+targetEntityType: node
+bundle: organization_page
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+  links:
+    weight: 100
+hidden:
+  field_organization_taxonomy_term: true

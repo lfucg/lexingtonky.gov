@@ -1,0 +1,25 @@
+uuid: 0cddb652-1389-472b-a533-f6cfd92cade9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_organization_taxonomy_term
+    - node.type.organization_page
+id: node.organization_page.field_organization_taxonomy_term
+field_name: field_organization_taxonomy_term
+entity_type: node
+bundle: organization_page
+label: 'Organization taxonomy term'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: views
+  handler_settings:
+    view:
+      view_name: organization_taxonomy_terms
+      display_name: entity_reference_1
+      arguments: {  }
+field_type: entity_reference
