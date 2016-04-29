@@ -265,3 +265,9 @@ input:focus, input[type=search]:focus {
     display: none;
   }
 }
+
+/* used for progressive js enhancement */
+.lex-hide-initially {
+  display: none !important;
+}
+

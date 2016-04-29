@@ -21,3 +21,31 @@ $gutter: 20px;
     width: ($filter-column-width - $gutter);
   }
 }
+
+/* /departments */
+.lex-filter-label {
+  font-size: 3.5rem;
+  margin-top: 0;
+}
+
+input[type="text"].lex-filter-search {
+  display: inline-block;
+  width: 55%;
+}
+
+.lex-filter-list {
+  @include media($medium-screen) {
+    margin-left: ($lex-section-gutter * 3);
+  }
+}
+
+.lex-region-content li.lex-filter-item, li.lex-filter-item {
+  &:first-of-type {
+    margin-top: $lex-section-gutter;
+  }
+  margin-bottom: $lex-section-gutter;
+  a {
+    text-decoration: none;
+  }
+}
+

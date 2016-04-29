@@ -8,4 +8,6 @@ global-js:
     js/scripts.js: {}
     js/browse-columns.js: {}
     js/webdesignstandards-accordion.js: {}
+    js/list.js: {}
+    js/lex-list.js: {}
 
