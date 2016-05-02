@@ -133,4 +133,20 @@ class FeatureContext implements Context, SnippetAcceptingContext {
     {
         $this->findBySelector($selector)->click();
     }
+
+    /**
+     * @Given I select randomized text :text from :select
+     */
+    public function iSelectRandomizedTextFrom($text, $select)
+    {
+        $this->minkContext->selectOption($select, $this->randomizedText($text));
+    }
+
+    /**
+     * @Then the response should not contain randomized text :text
+     */
+    public function theResponseShouldNotContainRandomizedText($text)
+    {
+        $this->minkContext->assertResponseNotContains($this->randomizedText($text));
+    }
 }
