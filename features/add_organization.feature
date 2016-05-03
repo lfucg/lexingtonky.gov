@@ -1,7 +1,6 @@
 @api
 Feature: Create and manage organization page
 
-@in-progress @javascriptx
 Scenario: Create unique organization page
   Given I am logged in as a user with the "administrator" role
   And I am on "admin/structure/taxonomy/manage/organizations/add"
@@ -15,3 +14,12 @@ Scenario: Create unique organization page
 
   When I am on "/node/add/organization_page"
   Then the response should not contain randomized text "new department"
+
+@javascript
+Scenario: Filtering departments the department directory
+  Given I am on "/departments"
+  Then I should see "Planning"
+
+  When I fill in "What's the latest from" with "Accounting"
+  Then I should not see "Planning"
+  And I should see "Accounting"
