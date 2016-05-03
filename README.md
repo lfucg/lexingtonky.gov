@@ -131,3 +131,7 @@ And to set the local database to the configuration stored in git:
 
 The Google Translation widget javascript is triggered by a menu item in the `header-quick-links`
 block titled `Translation`. See lex.theme:lex_preprocess_menu__header_quick_links for details
+
+## Admin theme (lex_admin)
+
+To use the [chosen](https://www.drupal.org/project/chose) select widget, set the field to 'Select list' under content type > manage form display

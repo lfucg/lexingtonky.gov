@@ -19,3 +19,5 @@ default:
       api_driver: "drupal"
       drupal:
         drupal_root: "."
+      selectors:
+        error_message_selector: '.messages.messages--error'

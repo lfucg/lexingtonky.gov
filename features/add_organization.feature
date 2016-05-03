@@ -9,13 +9,15 @@ Scenario: Create unique organization page
 
   And I am on "/node/add/organization_page"
   And I fill in "Organization" with "foo"
-  And I select randomized text "new department" from "Organization taxonomy term"
+  And I fill in "Organization taxonomy term" with randomized text "new department"
   And I press "Save and publish"
 
   When I am on "/node/add/organization_page"
-  Then the response should not contain randomized text "new department"
+  And I fill in "Organization" with "foo"
+  And I fill in "Organization taxonomy term" with randomized text "new department"
+  And I press "Save and publish"
+  Then I should see the error message containing 'There are no entities matching "new department'
 
-@javascript
 Scenario: Filtering departments the department directory
   Given I am on "/departments"
   Then I should see "Planning"

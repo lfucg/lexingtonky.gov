@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.organization_page.body
+    - field.field.node.organization_page.field_lex_site_nav
     - field.field.node.organization_page.field_organization_taxonomy_term
     - node.type.organization_page
   module:
@@ -28,11 +29,19 @@ content:
     weight: 2
     settings: {  }
     third_party_settings: {  }
-  field_organization_taxonomy_term:
-    weight: 6
+  field_lex_site_nav:
+    weight: 26
     settings: {  }
     third_party_settings: {  }
     type: options_select
+  field_organization_taxonomy_term:
+    weight: 6
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: 'Eg department name'
+    third_party_settings: {  }
+    type: entity_reference_autocomplete_tags
   path:
     type: path
     weight: 5

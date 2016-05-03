@@ -51,7 +51,8 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    */
   public function applies(RouteMatchInterface $route_match) {
     return $route_match->getRouteName() == 'entity.node.canonical' &&
-      $route_match->getParameter('node')->field_lex_site_nav;
+      $route_match->getParameter('node')->field_lex_site_nav &&
+      $route_match->getParameter('node')->field_lex_site_nav->referencedEntities();
   }
 
   /**
