@@ -18,3 +18,5 @@ default:
       api_driver: "drush"
       drush:
         alias: @pantheon.PANTHEON_ALIAS
+      selectors:
+        error_message_selector: '.messages.messages--error'
