@@ -1,7 +1,7 @@
 @api
 Feature: Create and manage organization page
 
-@in-progress @javascript
+@javascript @in-progress
 Scenario: Create unique organization page
   Given I am logged in as a user with the "webmaster" role
   And I am on "admin/structure/taxonomy/manage/organizations/add"
@@ -25,6 +25,7 @@ Scenario: Create unique organization page
   When I fill in "What's the latest from" with randomized text "new department"
   Then I should not see randomized text "my department"
 
+@javascript
 Scenario: Filtering departments the department directory
   Given I am on "/departments"
   Then I should see "Planning"
