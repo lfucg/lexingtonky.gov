@@ -10,7 +10,7 @@ dependencies:
 id: lex_local_tasks
 theme: lex
 region: content
-weight: -16
+weight: -17
 provider: null
 plugin: local_tasks_block
 settings:

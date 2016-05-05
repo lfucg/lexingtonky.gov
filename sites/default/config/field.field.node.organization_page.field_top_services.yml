@@ -1,0 +1,23 @@
+uuid: ff456481-39be-4234-bec1-8465362904cb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_top_services
+    - node.type.organization_page
+  module:
+    - link
+id: node.organization_page.field_top_services
+field_name: field_top_services
+entity_type: node
+bundle: organization_page
+label: 'Top services'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 1
+  title: 2
+field_type: link

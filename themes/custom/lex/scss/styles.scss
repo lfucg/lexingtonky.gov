@@ -271,3 +271,8 @@ input:focus, input[type=search]:focus {
   display: none !important;
 }
 
+.lex-region-sidebar_second {
+  .lex-block {
+    margin-bottom: $lex-section-gutter;
+  }
+}

@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: views_block__front_page_news_block_org_page_news
 theme: lex
-region: highlighted
-weight: -17
+region: content
+weight: -15
 provider: null
 plugin: 'views_block:front_page_news-block_org_page_news'
 settings:

@@ -7,7 +7,9 @@ dependencies:
     - field.field.node.organization_page.body
     - field.field.node.organization_page.field_lex_site_nav
     - field.field.node.organization_page.field_office_to_contact
+    - field.field.node.organization_page.field_organization_image
     - field.field.node.organization_page.field_organization_taxonomy_term
+    - field.field.node.organization_page.field_top_services
     - node.type.organization_page
   module:
     - text
@@ -29,4 +31,6 @@ content:
 hidden:
   field_lex_site_nav: true
   field_office_to_contact: true
+  field_organization_image: true
   field_organization_taxonomy_term: true
+  field_top_services: true
