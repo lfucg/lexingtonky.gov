@@ -29,6 +29,7 @@ visibility:
   node_type:
     id: node_type
     bundles:
+      organization_page: organization_page
       page: page
     negate: false
     context_mapping:
