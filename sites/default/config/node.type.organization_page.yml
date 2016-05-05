@@ -6,13 +6,12 @@ dependencies:
     - menu_ui
 third_party_settings:
   menu_ui:
-    available_menus:
-      - main
-    parent: 'main:'
+    available_menus: {  }
+    parent: ''
 name: 'Organization page'
 type: organization_page
 description: 'Page for a department, division, or other city-affiliated organization'
 help: ''
-new_revision: false
+new_revision: true
 preview_mode: 1
 display_submitted: false

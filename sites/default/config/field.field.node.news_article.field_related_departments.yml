@@ -1,0 +1,27 @@
+uuid: f77d791b-6e15-42b3-b24c-7082dd9dc9f0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_departments
+    - node.type.news_article
+    - taxonomy.vocabulary.organizations
+id: node.news_article.field_related_departments
+field_name: field_related_departments
+entity_type: node
+bundle: news_article
+label: 'Related departments'
+description: 'Post this article on the department homepage'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      organizations: organizations
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference

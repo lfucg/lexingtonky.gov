@@ -1,7 +1,7 @@
 @api
 Feature: Create and manage organization page
 
-@javascript @in-progress
+@javascript
 Scenario: Create unique organization page
   Given I am logged in as a user with the "webmaster" role
   And I am on "admin/structure/taxonomy/manage/organizations/add"
@@ -33,3 +33,18 @@ Scenario: Filtering departments the department directory
   When I fill in "What's the latest from" with "Accounting"
   Then I should not see "Planning"
   And I should see "Accounting"
+
+Scenario: Displaying a new article on an organization page
+  Given I am logged in as a user with the "editor" role
+  And I am on "node/add/news_article"
+  And I fill in "Title" with randomized text "New article"
+  And I fill in "Body" with "foo"
+  And I select "-Police" from "Related departments"
+  And I press "Save and publish"
+
+  When I am on "/departments/police"
+  # make sure page exists
+  Then I should see "Police"
+  And I should see randomized text "New article"
+
+
