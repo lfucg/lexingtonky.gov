@@ -1,0 +1,27 @@
+uuid: 6d35d1bf-5ea1-4bb4-9afa-f09929cddfa0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_departments
+    - node.type.event
+    - taxonomy.vocabulary.organizations
+id: node.event.field_related_departments
+field_name: field_related_departments
+entity_type: node
+bundle: event
+label: 'Related departments'
+description: 'Post this event on the department homepage'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      organizations: organizations
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference

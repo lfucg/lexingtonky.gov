@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.event.field_event_website
     - field.field.node.event.field_locations
     - field.field.node.event.field_media_contact
+    - field.field.node.event.field_related_departments
     - node.type.event
   module:
     - datetime
@@ -82,4 +83,5 @@ content:
     weight: 0
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_related_departments: true
