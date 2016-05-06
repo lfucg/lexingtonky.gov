@@ -1326,6 +1326,10 @@ display:
         filter_groups: false
         fields: false
         relationships: false
+        pager: false
+        use_more: false
+        use_more_always: false
+        use_more_text: false
       filter_groups:
         operator: AND
         groups:
@@ -1734,11 +1738,36 @@ display:
           required: true
           entity_type: taxonomy_term
           plugin_id: entity_reverse
+      pager:
+        type: full
+        options:
+          items_per_page: 6
+          offset: 0
+          id: 0
+          total_pages: null
+          tags:
+            previous: '‹ Previous'
+            next: 'Next ›'
+            first: ''
+            last: ''
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          quantity: 0
+      use_more: false
+      use_more_always: true
+      use_more_text: 'more events'
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url.query_args
         - 'user.node_grants:view'
         - user.permissions
       tags:
