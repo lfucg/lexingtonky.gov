@@ -132,6 +132,11 @@ And to set the local database to the configuration stored in git:
 The Google Translation widget javascript is triggered by a menu item in the `header-quick-links`
 block titled `Translation`. See lex.theme:lex_preprocess_menu__header_quick_links for details
 
+## Lex theme
+
+To add a custom banner image to a content type, give it field_lex_custom_banner_image. No
+need to display the field, it gets added to a style tag in the document head.
+
 ## Admin theme (lex_admin)
 
 To use the [chosen](https://www.drupal.org/project/chose) select widget, set the field to 'Select list' under content type > manage form display
