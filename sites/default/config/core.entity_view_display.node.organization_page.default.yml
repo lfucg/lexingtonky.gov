@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.organization_page.body
+    - field.field.node.organization_page.field_lex_custom_hero_image
     - field.field.node.organization_page.field_lex_site_nav
     - field.field.node.organization_page.field_office_to_contact
     - field.field.node.organization_page.field_organization_image
@@ -11,6 +12,7 @@ dependencies:
     - field.field.node.organization_page.field_top_services
     - node.type.organization_page
   module:
+    - image
     - text
     - user
 id: node.organization_page.default
@@ -24,6 +26,14 @@ content:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+  field_lex_custom_hero_image:
+    weight: 1
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
 hidden:
   field_lex_site_nav: true
   field_office_to_contact: true

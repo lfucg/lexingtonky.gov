@@ -7,7 +7,7 @@ dependencies:
 id: lex_local_actions
 theme: lex
 region: '-1'
-weight: -9
+weight: -12
 provider: null
 plugin: local_actions_block
 settings:

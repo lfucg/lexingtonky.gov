@@ -6,6 +6,30 @@ function lex_natural_sort_views($a, $b) {
   return strnatcmp($a->node_field_data_title, $b->node_field_data_title);
 }
 
+function lex_page_attachments_alter(array &$attachments) {
+  $uri = false;
+  if (($node = \Drupal::routeMatch()->getParameter('node'))
+       && $node->field_lex_custom_hero_image) {
+    $path = $node->field_lex_custom_hero_image[0]->entity->getFileUri();
+    $uri = file_url_transform_relative(file_create_url($path));
+  }
+  if (! $uri) { return; }
+
+  $banner = array(
+    '#type' => 'html_tag',
+    '#tag' => 'style',
+    '#attributes' => array(
+      'type' => 'text/css',
+    ),
+    '#value' => '@media screen and (min-width: 1200px) {
+      .lex-site-header {
+        background-image: url("' . $uri . '") !important;
+      }
+    }',
+  );
+  $attachments['#attached']['html_head'][] = [$banner, 'lex-banner-image-style'];
+}
+
 function lex_views_pre_render($view) {
   if ($view->id() == "taxonomy_term") {
     uasort($view->result, "lex_natural_sort_views");

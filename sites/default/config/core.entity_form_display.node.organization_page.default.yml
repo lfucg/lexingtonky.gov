@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.organization_page.body
+    - field.field.node.organization_page.field_lex_custom_hero_image
     - field.field.node.organization_page.field_lex_site_nav
     - field.field.node.organization_page.field_office_to_contact
     - field.field.node.organization_page.field_organization_image
@@ -35,6 +36,13 @@ content:
     weight: 2
     settings: {  }
     third_party_settings: {  }
+  field_lex_custom_hero_image:
+    weight: 26
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
   field_office_to_contact:
     weight: 7
     settings: {  }
