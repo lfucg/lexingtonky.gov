@@ -6,11 +6,15 @@ function lex_natural_sort_views($a, $b) {
   return strnatcmp($a->node_field_data_title, $b->node_field_data_title);
 }
 
+/*
+ * Add custom banner if a node has it populated
+*/
 function lex_page_attachments_alter(array &$attachments) {
   $uri = false;
   if (($node = \Drupal::routeMatch()->getParameter('node'))
-       && $node->field_lex_custom_hero_image) {
-    $path = $node->field_lex_custom_hero_image[0]->entity->getFileUri();
+       && $node->field_lex_custom_banner_image
+       && $node->field_lex_custom_banner_image[0]) {
+    $path = $node->field_lex_custom_banner_image[0]->entity->getFileUri();
     $uri = file_url_transform_relative(file_create_url($path));
   }
   if (! $uri) { return; }

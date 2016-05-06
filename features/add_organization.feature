@@ -58,5 +58,3 @@ Scenario: Displaying events on an organization page
 
   When I am on "/departments/police"
   Then I should see randomized text "Updated event"
-
-

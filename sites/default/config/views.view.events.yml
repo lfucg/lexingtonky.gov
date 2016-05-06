@@ -1330,6 +1330,7 @@ display:
         use_more: false
         use_more_always: false
         use_more_text: false
+        empty: false
       filter_groups:
         operator: AND
         groups:
@@ -1762,6 +1763,8 @@ display:
       use_more: false
       use_more_always: true
       use_more_text: 'more events'
+      block_hide_empty: true
+      empty: {  }
     cache_metadata:
       max-age: -1
       contexts:

@@ -4,7 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.organization_page.body
-    - field.field.node.organization_page.field_lex_custom_hero_image
+    - field.field.node.organization_page.field_lex_custom_banner_image
     - field.field.node.organization_page.field_lex_site_nav
     - field.field.node.organization_page.field_office_to_contact
     - field.field.node.organization_page.field_organization_image
@@ -26,7 +26,7 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
-  field_lex_custom_hero_image: true
+  field_lex_custom_banner_image: true
   field_lex_site_nav: true
   field_office_to_contact: true
   field_organization_image: true

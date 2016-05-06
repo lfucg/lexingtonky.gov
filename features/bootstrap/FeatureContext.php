@@ -143,6 +143,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
     }
 
     /**
+     * @Then the response should contain randomized text :text
+     */
+    public function theResponseShouldContainRandomizedText($text)
+    {
+        $this->minkContext->assertResponseContains($this->randomizedText($text));
+    }
+
+    /**
      * @Then the response should not contain randomized text :text
      */
     public function theResponseShouldNotContainRandomizedText($text)

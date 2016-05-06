@@ -3,16 +3,16 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_lex_custom_hero_image
+    - field.storage.node.field_lex_custom_banner_image
     - node.type.organization_page
   module:
     - image
-id: node.organization_page.field_lex_custom_hero_image
-field_name: field_lex_custom_hero_image
+id: node.organization_page.field_lex_custom_banner_image
+field_name: field_lex_custom_banner_image
 entity_type: node
 bundle: organization_page
-label: 'Custom hero image'
-description: 'Add a custom hero image to the page header'
+label: 'Custom banner image'
+description: 'Add a custom banner image to the page header'
 required: false
 translatable: false
 default_value: {  }

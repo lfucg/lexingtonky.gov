@@ -6,8 +6,8 @@ dependencies:
     - file
     - image
     - node
-id: node.field_lex_custom_hero_image
-field_name: field_lex_custom_hero_image
+id: node.field_lex_custom_banner_image
+field_name: field_lex_custom_banner_image
 entity_type: node
 type: image
 settings:
