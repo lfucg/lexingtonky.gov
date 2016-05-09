@@ -21,9 +21,8 @@ Scenario: Create unique organization page
 
   # Make sure webmaster can publish org pages
   Given I am not logged in
-  And I am on "/departments"
-  When I fill in "What's the latest from" with randomized text "new department"
-  Then I should not see randomized text "my department"
+  When I am on "/departments"
+  Then I should see randomized text "new department"
 
 @javascript
 Scenario: Filtering departments the department directory
