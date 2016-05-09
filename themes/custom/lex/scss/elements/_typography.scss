@@ -37,6 +37,18 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* org page, service guide */
+.lex-region-content, .layout-sidebar-second {
+  .lex-block {
+    .lex-section-heading.lex-heading, h2 {
+      font-weight: 500;
+      margin-top: 0em;
+      padding-top: 0;
+      text-transform: none;
+    }
+  }
+}
+
 .lex-pagetitle {
   font-size: 2.5em;
   margin: 0.5em 0;

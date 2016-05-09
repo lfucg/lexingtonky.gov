@@ -1331,6 +1331,7 @@ display:
         use_more_always: false
         use_more_text: false
         empty: false
+        title: false
       filter_groups:
         operator: AND
         groups:
@@ -1666,7 +1667,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "<div class=\"lex-eventcard-stackeddate lex-stackeddate\">\n  <div class=\"lex-stackeddate-month\">\n     {{ field_date }}\n    <div class=\"lex-card-subtitle\">{{ field_date_3 }}</div>\n  </div>\n</div>\n<div class=\"lex-eventcard-titlesection\">\n  <h4 class=\"lex-card-title lex-card-title-medium\">{{ title }}</h4>\n  <div class=\"lex-card-subtitle\">{% include \"@lex/includes/timespan.html.twig\" with { begin: field_date_1, end: field_date_end } %}</div>\n</div>"
+            text: "<div class=\"lex-eventcard-stackeddate lex-stackeddate\">\n  <div class=\"lex-stackeddate-month\">\n     {{ field_date }}\n    <div class=\"lex-card-subtitle\">{{ field_date_3 }}</div>\n  </div>\n</div>\n<div class=\"lex-eventcard-titlesection\">\n  <h4 class=\"lex-card-title\">{{ title }}</h4>\n  <div class=\"lex-card-subtitle\">{% include \"@lex/includes/timespan.html.twig\" with { begin: field_date_1, end: field_date_end } %}</div>\n</div>"
             make_link: false
             path: ''
             absolute: false
@@ -1765,6 +1766,7 @@ display:
       use_more_text: 'more events'
       block_hide_empty: true
       empty: {  }
+      title: Events
     cache_metadata:
       max-age: -1
       contexts:

@@ -3,6 +3,9 @@
   margin-top: 1em;
   list-style-type: none;
 
+  li:first-of-type {
+    margin-top: 0;
+  }
   li {
     display: list-item;
 

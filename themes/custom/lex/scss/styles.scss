@@ -276,3 +276,7 @@ input:focus, input[type=search]:focus {
     margin-bottom: $lex-section-gutter;
   }
 }
+
+.lex-block.lex-block-nobottommargin {
+  margin-bottom: 0;
+}
