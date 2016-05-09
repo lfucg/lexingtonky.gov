@@ -41,8 +41,8 @@ h1, h2, h3, h4, h5, h6 {
 .lex-region-content, .layout-sidebar-second {
   .lex-block {
     .lex-section-heading.lex-heading, h2 {
-      font-weight: 500;
-      margin-top: 0em;
+      font-weight: $font-weight-medium;
+      margin-top: 0;
       padding-top: 0;
       text-transform: none;
     }
