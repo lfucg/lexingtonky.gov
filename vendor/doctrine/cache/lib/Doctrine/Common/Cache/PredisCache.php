@@ -2,7 +2,7 @@
 
 namespace Doctrine\Common\Cache;
 
-use Predis\ClientInterface;
+use Predis\Client;
 
 /**
  * Predis cache provider.
@@ -12,16 +12,16 @@ use Predis\ClientInterface;
 class PredisCache extends CacheProvider
 {
     /**
-     * @var ClientInterface
+     * @var Client
      */
     private $client;
 
     /**
-     * @param ClientInterface $client
+     * @param Client $client
      *
      * @return void
      */
-    public function __construct(ClientInterface $client)
+    public function __construct(Client $client)
     {
         $this->client = $client;
     }
@@ -46,37 +46,8 @@ class PredisCache extends CacheProvider
     {
         $fetchedItems = call_user_func_array(array($this->client, 'mget'), $keys);
 
-        return array_map('unserialize', array_filter(array_combine($keys, $fetchedItems)));
+        return array_filter(array_combine($keys, array_map('unserialize', $fetchedItems)));
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
-    {
-        if ($lifetime) {
-            $success = true;
-
-            // Keys have lifetime, use SETEX for each of them
-            foreach ($keysAndValues as $key => $value) {
-                $response = $this->client->setex($key, $lifetime, serialize($value));
-
-                if ((string) $response != 'OK') {
-                    $success = false;
-                }
-            }
-
-            return $success;
-        }
-
-        // No lifetime, use MSET
-        $response = $this->client->mset(array_map(function ($value) {
-            return serialize($value);
-        }, $keysAndValues));
-
-        return (string) $response == 'OK';
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -105,7 +76,7 @@ class PredisCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        return $this->client->del($id) >= 0;
+        return $this->client->del($id) > 0;
     }
 
     /**

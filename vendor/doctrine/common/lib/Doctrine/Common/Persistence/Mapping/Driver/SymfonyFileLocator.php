@@ -153,9 +153,7 @@ class SymfonyFileLocator implements FileLocator
             }
 
             $filename = $path.'/'.strtr(substr($className, strlen($prefix)+1), '\\', $this->nsSeparator).$this->fileExtension;
-            if (is_file($filename)) {
-                return true;
-            }
+            return is_file($filename);
         }
 
         return false;
@@ -196,7 +194,7 @@ class SymfonyFileLocator implements FileLocator
                             '\\'
                         );
 
-                        $classes[] = $this->prefixes[$path] . str_replace(DIRECTORY_SEPARATOR, '\\', $nsSuffix) . '\\' .str_replace($this->nsSeparator, '\\', $fileName);
+                        $classes[] = $this->prefixes[$path] . $nsSuffix . '\\' .str_replace($this->nsSeparator, '\\', $fileName);
                     } else {
                         $classes[] = str_replace($this->nsSeparator, '\\', $fileName);
                     }
@@ -232,6 +230,8 @@ class SymfonyFileLocator implements FileLocator
             if (is_file($filename)) {
                 return $filename;
             }
+
+            throw MappingException::mappingFileNotFound($className, $filename);
         }
 
         throw MappingException::mappingFileNotFound($className, substr($className, strrpos($className, '\\') + 1).$this->fileExtension);

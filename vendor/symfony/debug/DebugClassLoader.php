@@ -51,16 +51,7 @@ class DebugClassLoader
         }
 
         if (!isset(self::$caseCheck)) {
-            if(!file_exists(strtolower(__FILE__))) {
-                // filesystem is case sensitive
-                self::$caseCheck = 0;
-            } elseif(realpath(strtolower(__FILE__)) === __FILE__) {
-                // filesystem is not case sensitive
-                self::$caseCheck = 1;
-            } else {
-                // filesystem is not case sensitive AND realpath() fails to normalize case
-                self::$caseCheck = 2;
-            }
+            self::$caseCheck = false !== stripos(PHP_OS, 'win') ? (false !== stripos(PHP_OS, 'darwin') ? 2 : 1) : 0;
         }
     }
 
@@ -156,7 +147,7 @@ class DebugClassLoader
         try {
             if ($this->isFinder) {
                 if ($file = $this->classLoader[0]->findFile($class)) {
-                    require_once $file;
+                    require $file;
                 }
             } else {
                 call_user_func($this->classLoader, $class);
@@ -202,32 +193,15 @@ class DebugClassLoader
                             break;
                     }
                 }
-                $parent = get_parent_class($class);
+                $parent = $refl->getParentClass();
 
-                if (!$parent || strncmp($ns, $parent, $len)) {
-                    if ($parent && isset(self::$deprecated[$parent]) && strncmp($ns, $parent, $len)) {
-                        @trigger_error(sprintf('The %s class extends %s that is deprecated %s', $name, $parent, self::$deprecated[$parent]), E_USER_DEPRECATED);
-                    }
-
-                    $parentInterfaces = array();
-                    $deprecatedInterfaces = array();
-                    if ($parent) {
-                        foreach (class_implements($parent) as $interface) {
-                            $parentInterfaces[$interface] = 1;
-                        }
+                if (!$parent || strncmp($ns, $parent->name, $len)) {
+                    if ($parent && isset(self::$deprecated[$parent->name]) && strncmp($ns, $parent->name, $len)) {
+                        @trigger_error(sprintf('The %s class extends %s that is deprecated %s', $name, $parent->name, self::$deprecated[$parent->name]), E_USER_DEPRECATED);
                     }
 
                     foreach ($refl->getInterfaceNames() as $interface) {
-                        if (isset(self::$deprecated[$interface]) && strncmp($ns, $interface, $len)) {
-                            $deprecatedInterfaces[] = $interface;
-                        }
-                        foreach (class_implements($interface) as $interface) {
-                            $parentInterfaces[$interface] = 1;
-                        }
-                    }
-
-                    foreach ($deprecatedInterfaces as $interface) {
-                        if (!isset($parentInterfaces[$interface])) {
+                        if (isset(self::$deprecated[$interface]) && strncmp($ns, $interface, $len) && !($parent && $parent->implementsInterface($interface))) {
                             @trigger_error(sprintf('The %s %s %s that is deprecated %s', $name, $refl->isInterface() ? 'interface extends' : 'class implements', $interface, self::$deprecated[$interface]), E_USER_DEPRECATED);
                         }
                     }
@@ -250,7 +224,7 @@ class DebugClassLoader
                 $i = count($tail) - 1;
                 $j = count($real) - 1;
 
-                while (isset($tail[$i], $real[$j]) && $tail[$i] === $real[$j]) {
+                 while (isset($tail[$i], $real[$j]) && $tail[$i] === $real[$j]) {
                     --$i;
                     --$j;
                 }

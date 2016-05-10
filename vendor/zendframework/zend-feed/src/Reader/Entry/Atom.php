@@ -104,7 +104,7 @@ class Atom extends AbstractEntry implements EntryInterface
     /**
      * Get the entry creation date
      *
-     * @return \DateTime
+     * @return string
      */
     public function getDateCreated()
     {
@@ -122,7 +122,7 @@ class Atom extends AbstractEntry implements EntryInterface
     /**
      * Get the entry modification date
      *
-     * @return \DateTime
+     * @return string
      */
     public function getDateModified()
     {

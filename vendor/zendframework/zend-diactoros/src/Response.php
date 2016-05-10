@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @see       http://github.com/zendframework/zend-diactoros for the canonical source repository
- * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-diactoros/blob/master/LICENSE.md New BSD License
  */
 
@@ -81,7 +81,6 @@ class Response implements ResponseInterface
         428 => 'Precondition Required',
         429 => 'Too Many Requests',
         431 => 'Request Header Fields Too Large',
-        451 => 'Unavailable For Legal Reasons',
         // SERVER ERROR
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
@@ -103,18 +102,31 @@ class Response implements ResponseInterface
     /**
      * @var int
      */
-    private $statusCode;
+    private $statusCode = 200;
 
     /**
-     * @param string|resource|StreamInterface $body Stream identifier and/or actual stream resource
+     * @param string|resource|StreamInterface $stream Stream identifier and/or actual stream resource
      * @param int $status Status code for the response, if any.
      * @param array $headers Headers for the response, if any.
      * @throws InvalidArgumentException on any invalid element.
      */
     public function __construct($body = 'php://memory', $status = 200, array $headers = [])
     {
-        $this->setStatusCode($status);
-        $this->stream = $this->getStream($body, 'wb+');
+        if (! is_string($body) && ! is_resource($body) && ! $body instanceof StreamInterface) {
+            throw new InvalidArgumentException(
+                'Stream must be a string stream resource identifier, '
+                . 'an actual stream resource, '
+                . 'or a Psr\Http\Message\StreamInterface implementation'
+            );
+        }
+
+        if (null !== $status) {
+            $this->validateStatus($status);
+        }
+
+        $this->stream     = ($body instanceof StreamInterface) ? $body : new Stream($body, 'wb+');
+        $this->statusCode = $status ? (int) $status : 200;
+
         list($this->headerNames, $headers) = $this->filterHeaders($headers);
         $this->assertHeaders($headers);
         $this->headers = $headers;
@@ -147,8 +159,9 @@ class Response implements ResponseInterface
      */
     public function withStatus($code, $reasonPhrase = '')
     {
+        $this->validateStatus($code);
         $new = clone $this;
-        $new->setStatusCode($code);
+        $new->statusCode   = (int) $code;
         $new->reasonPhrase = $reasonPhrase;
         return $new;
     }
@@ -159,7 +172,7 @@ class Response implements ResponseInterface
      * @param int|string $code
      * @throws InvalidArgumentException on an invalid status code.
      */
-    private function setStatusCode($code)
+    private function validateStatus($code)
     {
         if (! is_numeric($code)
             || is_float($code)
@@ -171,7 +184,6 @@ class Response implements ResponseInterface
                 (is_scalar($code) ? $code : gettype($code))
             ));
         }
-        $this->statusCode = $code;
     }
 
     /**

@@ -1,7 +1,6 @@
 <?php
 namespace Composer\Installers;
 
-use Composer\IO\IOInterface;
 use Composer\Composer;
 use Composer\Package\PackageInterface;
 
@@ -10,20 +9,17 @@ abstract class BaseInstaller
     protected $locations = array();
     protected $composer;
     protected $package;
-    protected $io;
 
     /**
      * Initializes base installer.
      *
      * @param PackageInterface $package
      * @param Composer         $composer
-     * @param IOInterface      $io
      */
-    public function __construct(PackageInterface $package = null, Composer $composer = null, IOInterface $io = null)
+    public function __construct(PackageInterface $package = null, Composer $composer = null)
     {
         $this->composer = $composer;
         $this->package = $package;
-        $this->io = $io;
     }
 
     /**
@@ -55,7 +51,7 @@ abstract class BaseInstaller
         if ($this->composer->getPackage()) {
             $extra = $this->composer->getPackage()->getExtra();
             if (!empty($extra['installer-paths'])) {
-                $customPath = $this->mapCustomInstallPaths($extra['installer-paths'], $prettyName, $type, $vendor);
+                $customPath = $this->mapCustomInstallPaths($extra['installer-paths'], $prettyName, $type);
                 if ($customPath !== false) {
                     return $this->templatePath($customPath, $availableVars);
                 }
@@ -120,13 +116,12 @@ abstract class BaseInstaller
      * @param  array  $paths
      * @param  string $name
      * @param  string $type
-     * @param  string $vendor = NULL
      * @return string
      */
-    protected function mapCustomInstallPaths(array $paths, $name, $type, $vendor = NULL)
+    protected function mapCustomInstallPaths(array $paths, $name, $type)
     {
         foreach ($paths as $path => $names) {
-            if (in_array($name, $names) || in_array('type:' . $type, $names) || in_array('vendor:' . $vendor, $names)) {
+            if (in_array($name, $names) || in_array('type:' . $type, $names)) {
                 return $path;
             }
         }

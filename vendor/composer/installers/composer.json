@@ -1,6 +1,6 @@
 {
     "name": "composer/installers",
-    "type": "composer-plugin",
+    "type": "composer-installer",
     "license": "MIT",
     "description": "A multi-framework Composer library installer",
     "keywords": [
@@ -22,14 +22,12 @@
         "FuelPHP",
         "Grav",
         "Hurad",
-        "ImageCMS",
         "Joomla",
         "Kohana",
         "Laravel",
         "Lithium",
         "Magento",
         "Mako",
-        "Mautic",
         "MODX Evo",
         "MediaWiki",
         "OXID",
@@ -51,7 +49,7 @@
         "Zend",
         "Zikula"
     ],
-    "homepage": "https://composer.github.io/installers/",
+    "homepage": "http://composer.github.com/installers/",
     "authors": [
         {
             "name": "Kyle Robinson Young",
@@ -60,10 +58,10 @@
         }
     ],
     "autoload": {
-        "psr-4": { "Composer\\Installers\\": "src/Composer/Installers" }
+        "psr-0": { "Composer\\Installers\\": "src/" }
     },
     "extra": {
-        "class": "Composer\\Installers\\Plugin",
+        "class": "Composer\\Installers\\Installer",
         "branch-alias": {
             "dev-master": "1.0-dev"
         }
@@ -72,14 +70,8 @@
         "shama/baton": "*",
         "roundcube/plugin-installer": "*"
     },
-    "require": {
-        "composer-plugin-api": "^1.0"
-    },
     "require-dev": {
         "composer/composer": "1.0.*@dev",
         "phpunit/phpunit": "4.1.*"
-    },
-    "scripts": {
-        "test": "phpunit"
     }
 }

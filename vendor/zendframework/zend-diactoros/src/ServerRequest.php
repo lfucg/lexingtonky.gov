@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @see       http://github.com/zendframework/zend-diactoros for the canonical source repository
- * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-diactoros/blob/master/LICENSE.md New BSD License
  */
 
@@ -69,10 +69,6 @@ class ServerRequest implements ServerRequestInterface
      * @param null|string $method HTTP method for the request, if any.
      * @param string|resource|StreamInterface $body Message body, if any.
      * @param array $headers Headers for the message, if any.
-     * @param array $cookies Cookies for the message, if any.
-     * @param array $queryParams Query params for the message, if any.
-     * @param null|array|object $parsedBody The deserialized body parameters, if any.
-     * @param string $protocol HTTP protocol version.
      * @throws InvalidArgumentException for any invalid value.
      */
     public function __construct(
@@ -81,25 +77,14 @@ class ServerRequest implements ServerRequestInterface
         $uri = null,
         $method = null,
         $body = 'php://input',
-        array $headers = [],
-        array $cookies = [],
-        array $queryParams = [],
-        $parsedBody = null,
-        $protocol = '1.1'
+        array $headers = []
     ) {
         $this->validateUploadedFiles($uploadedFiles);
 
-        if ($body === 'php://input') {
-            $body = new PhpInputStream();
-        }
-
+        $body = $this->getStream($body);
         $this->initialize($uri, $method, $body, $headers);
         $this->serverParams  = $serverParams;
         $this->uploadedFiles = $uploadedFiles;
-        $this->cookieParams  = $cookies;
-        $this->queryParams   = $queryParams;
-        $this->parsedBody    = $parsedBody;
-        $this->protocol      = $protocol;
     }
 
     /**
@@ -218,6 +203,10 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withoutAttribute($attribute)
     {
+        if (! isset($this->attributes[$attribute])) {
+            return clone $this;
+        }
+
         $new = clone $this;
         unset($new->attributes[$attribute]);
         return $new;
@@ -257,6 +246,33 @@ class ServerRequest implements ServerRequestInterface
         $new = clone $this;
         $new->method = $method;
         return $new;
+    }
+
+    /**
+     * Set the body stream
+     *
+     * @param string|resource|StreamInterface $stream
+     * @return StreamInterface
+     */
+    private function getStream($stream)
+    {
+        if ($stream === 'php://input') {
+            return new PhpInputStream();
+        }
+
+        if (! is_string($stream) && ! is_resource($stream) && ! $stream instanceof StreamInterface) {
+            throw new InvalidArgumentException(
+                'Stream must be a string stream resource identifier, '
+                . 'an actual stream resource, '
+                . 'or a Psr\Http\Message\StreamInterface implementation'
+            );
+        }
+
+        if (! $stream instanceof StreamInterface) {
+            return new Stream($stream, 'r');
+        }
+
+        return $stream;
     }
 
     /**

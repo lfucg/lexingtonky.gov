@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @see       http://github.com/zendframework/zend-diactoros for the canonical source repository
- * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-diactoros/blob/master/LICENSE.md New BSD License
  */
 
@@ -26,10 +26,12 @@ class PhpInputStream extends Stream
 
     /**
      * @param  string|resource $stream
+     * @param  string $mode
      */
-    public function __construct($stream = 'php://input')
+    public function __construct($stream = 'php://input', $mode = 'r')
     {
-        parent::__construct($stream, 'r');
+        $mode = 'r';
+        parent::__construct($stream, $mode);
     }
 
     /**

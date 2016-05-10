@@ -22,14 +22,13 @@ namespace Doctrine\Common\Cache;
 /**
  * APC cache provider.
  *
- * @link       www.doctrine-project.org
- * @deprecated since version 1.6, use ApcuCache instead
- * @since      2.0
- * @author     Benjamin Eberlei <kontakt@beberlei.de>
- * @author     Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author     Jonathan Wage <jonwage@gmail.com>
- * @author     Roman Borschel <roman@code-factory.org>
- * @author     David Abdemoulaie <dave@hobodave.com>
+ * @link   www.doctrine-project.org
+ * @since  2.0
+ * @author Benjamin Eberlei <kontakt@beberlei.de>
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @author Jonathan Wage <jonwage@gmail.com>
+ * @author Roman Borschel <roman@code-factory.org>
+ * @author David Abdemoulaie <dave@hobodave.com>
  */
 class ApcCache extends CacheProvider
 {
@@ -54,7 +53,7 @@ class ApcCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return apc_store($id, $data, $lifeTime);
+        return (bool) apc_store($id, $data, (int) $lifeTime);
     }
 
     /**
@@ -62,8 +61,7 @@ class ApcCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        // apc_delete returns false if the id does not exist
-        return apc_delete($id) || ! apc_exists($id);
+        return apc_delete($id);
     }
 
     /**
@@ -80,16 +78,6 @@ class ApcCache extends CacheProvider
     protected function doFetchMultiple(array $keys)
     {
         return apc_fetch($keys);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
-    {
-        $result = apc_store($keysAndValues, null, $lifetime);
-
-        return empty($result);
     }
 
     /**

@@ -5,7 +5,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Cookie jar that stores cookies as an array
+ * Cookie jar that stores cookies an an array
  */
 class CookieJar implements CookieJarInterface
 {
@@ -58,10 +58,22 @@ class CookieJar implements CookieJarInterface
     }
 
     /**
-     * @deprecated
+     * Quote the cookie value if it is not already quoted and it contains
+     * problematic characters.
+     *
+     * @param string $value Value that may or may not need to be quoted
+     *
+     * @return string
      */
     public static function getCookieValue($value)
     {
+        if (substr($value, 0, 1) !== '"' &&
+            substr($value, -1, 1) !== '"' &&
+            strpbrk($value, ';,=')
+        ) {
+            $value = '"' . $value . '"';
+        }
+
         return $value;
     }
 
@@ -70,7 +82,7 @@ class CookieJar implements CookieJarInterface
      * that survives between requests.
      *
      * @param SetCookie $cookie Being evaluated.
-     * @param bool $allowSessionCookies If we should persist session cookies
+     * @param bool $allowSessionCookies If we should presist session cookies
      * @return bool
      */
     public static function shouldPersist(
@@ -236,7 +248,7 @@ class CookieJar implements CookieJarInterface
                 (!$cookie->getSecure() || $scheme == 'https')
             ) {
                 $values[] = $cookie->getName() . '='
-                    . $cookie->getValue();
+                    . self::getCookieValue($cookie->getValue());
             }
         }
 

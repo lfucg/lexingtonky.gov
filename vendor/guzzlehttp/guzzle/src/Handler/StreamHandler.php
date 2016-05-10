@@ -138,7 +138,7 @@ class StreamHandler
             : fopen('php://temp', 'r+');
 
         return is_string($sink)
-            ? new Psr7\LazyOpenStream($sink, 'w+')
+            ? new Psr7\Stream(Psr7\try_fopen($sink, 'r+'))
             : Psr7\stream_for($sink);
     }
 
@@ -153,15 +153,10 @@ class StreamHandler
                     $stream = new Psr7\InflateStream(
                         Psr7\stream_for($stream)
                     );
-                    $headers['x-encoded-content-encoding']
-                        = $headers[$normalizedKeys['content-encoding']];
                     // Remove content-encoding header
                     unset($headers[$normalizedKeys['content-encoding']]);
                     // Fix content-length header
                     if (isset($normalizedKeys['content-length'])) {
-                        $headers['x-encoded-content-length']
-                            = $headers[$normalizedKeys['content-length']];
-
                         $length = (int) $stream->getSize();
                         if ($length == 0) {
                             unset($headers[$normalizedKeys['content-length']]);
@@ -364,14 +359,12 @@ class StreamHandler
             }
         } elseif ($value === false) {
             $options['ssl']['verify_peer'] = false;
-            $options['ssl']['verify_peer_name'] = false;
             return;
         } else {
             throw new \InvalidArgumentException('Invalid verify request option');
         }
 
         $options['ssl']['verify_peer'] = true;
-        $options['ssl']['verify_peer_name'] = true;
         $options['ssl']['allow_self_signed'] = false;
     }
 

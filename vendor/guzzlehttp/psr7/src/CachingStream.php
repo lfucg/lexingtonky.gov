@@ -52,7 +52,8 @@ class CachingStream implements StreamInterface
             if ($size === null) {
                 $size = $this->cacheEntireStream();
             }
-            $byte = $size + $offset;
+            // Because 0 is the first byte, we seek to size - 1.
+            $byte = $size - 1 - $offset;
         } else {
             throw new \InvalidArgumentException('Invalid whence');
         }
@@ -60,12 +61,9 @@ class CachingStream implements StreamInterface
         $diff = $byte - $this->stream->getSize();
 
         if ($diff > 0) {
-            // Read the remoteStream until we have read in at least the amount
-            // of bytes requested, or we reach the end of the file.
-            while ($diff > 0 && !$this->remoteStream->eof()) {
-                $this->read($diff);
-                $diff = $byte - $this->stream->getSize();
-            }
+            // If the seek byte is greater the number of read bytes, then read
+            // the difference of bytes to cache the bytes and inherently seek.
+            $this->read($diff);
         } else {
             // We can just do a normal seek since we've already seen this byte.
             $this->stream->seek($byte);

@@ -69,16 +69,6 @@ abstract class Client
     }
 
     /**
-     * Returns whether client automatically follows redirects or not.
-     *
-     * @return bool
-     */
-    public function isFollowingRedirects()
-    {
-        return $this->followRedirects;
-    }
-
-    /**
      * Sets the maximum number of requests that crawler can follow.
      *
      * @param int $maxRedirects
@@ -87,16 +77,6 @@ abstract class Client
     {
         $this->maxRedirects = $maxRedirects < 0 ? -1 : $maxRedirects;
         $this->followRedirects = -1 != $this->maxRedirects;
-    }
-
-    /**
-     * Returns the maximum number of requests that crawler can follow.
-     *
-     * @return int
-     */
-    public function getMaxRedirects()
-    {
-        return $this->maxRedirects;
     }
 
     /**
@@ -123,6 +103,7 @@ abstract class Client
     public function setServerParameters(array $server)
     {
         $this->server = array_merge(array(
+            'HTTP_HOST' => 'localhost',
             'HTTP_USER_AGENT' => 'Symfony2 BrowserKit',
         ), $server);
     }
@@ -148,7 +129,7 @@ abstract class Client
      */
     public function getServerParameter($key, $default = '')
     {
-        return isset($this->server[$key]) ? $this->server[$key] : $default;
+        return (isset($this->server[$key])) ? $this->server[$key] : $default;
     }
 
     /**
@@ -285,20 +266,21 @@ abstract class Client
 
         $uri = $this->getAbsoluteUri($uri);
 
-        $server = array_merge($this->server, $server);
+        if (!empty($server['HTTP_HOST'])) {
+            $uri = preg_replace('{^(https?\://)'.preg_quote($this->extractHost($uri)).'}', '${1}'.$server['HTTP_HOST'], $uri);
+        }
 
         if (isset($server['HTTPS'])) {
             $uri = preg_replace('{^'.parse_url($uri, PHP_URL_SCHEME).'}', $server['HTTPS'] ? 'https' : 'http', $uri);
         }
 
+        $server = array_merge($this->server, $server);
+
         if (!$this->history->isEmpty()) {
             $server['HTTP_REFERER'] = $this->history->current()->getUri();
         }
 
-        if (empty($server['HTTP_HOST'])) {
-            $server['HTTP_HOST'] = $this->extractHost($uri);
-        }
-
+        $server['HTTP_HOST'] = $this->extractHost($uri);
         $server['HTTPS'] = 'https' == parse_url($uri, PHP_URL_SCHEME);
 
         $this->internalRequest = new Request($uri, $method, $parameters, $files, $this->cookieJar->allValues($uri), $server, $content);
