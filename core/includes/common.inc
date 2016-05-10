@@ -14,8 +14,8 @@ use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\SortArray;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Render\Element\Link;
 use Drupal\Core\Render\Markup;
-use Drupal\Core\Render\Renderer;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\PhpStorage\PhpStorageFactory;
 use Drupal\Core\StringTranslation\PluralTranslatableMarkup;
@@ -578,7 +578,7 @@ function drupal_process_states(&$elements) {
   // element available, setting #attributes does not make sense, but a wrapper
   // is available, so setting #wrapper_attributes makes it work.
   $key = ($elements['#type'] == 'item') ? '#wrapper_attributes' : '#attributes';
-  $elements[$key]['data-drupal-states'] = JSON::encode($elements['#states']);
+  $elements[$key]['data-drupal-states'] = Json::encode($elements['#states']);
 }
 
 /**
@@ -749,7 +749,7 @@ function drupal_clear_js_cache() {
  *   Use \Drupal\Core\Render\Element\Link::preRenderLink().
  */
 function drupal_pre_render_link($element) {
-  return Element\Link::preRenderLink($element);
+  return Link::preRenderLink($element);
 }
 
 /**
@@ -1271,7 +1271,7 @@ function drupal_get_updaters() {
   if (!isset($updaters)) {
     $updaters = \Drupal::moduleHandler()->invokeAll('updater_info');
     \Drupal::moduleHandler()->alter('updater_info', $updaters);
-    uasort($updaters, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+    uasort($updaters, array(SortArray::class, 'sortByWeightElement'));
   }
   return $updaters;
 }
@@ -1291,7 +1291,7 @@ function drupal_get_filetransfer_info() {
   if (!isset($info)) {
     $info = \Drupal::moduleHandler()->invokeAll('filetransfer_info');
     \Drupal::moduleHandler()->alter('filetransfer_info', $info);
-    uasort($info, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+    uasort($info, array(SortArray::class, 'sortByWeightElement'));
   }
   return $info;
 }
