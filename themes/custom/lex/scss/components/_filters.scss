@@ -44,6 +44,9 @@ input[type="text"].lex-filter-search {
     margin-top: $lex-section-gutter;
   }
   margin-bottom: $lex-section-gutter;
+  .lex-card-title {
+    font-weight: $font-weight-medium;
+  }
   a {
     text-decoration: none;
   }
