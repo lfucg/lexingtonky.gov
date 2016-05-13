@@ -140,3 +140,7 @@ need to display the field, it gets added to a style tag in the document head.
 ## Admin theme (lex_admin)
 
 To use the [chosen](https://www.drupal.org/project/chose) select widget, set the field to 'Select list' under content type > manage form display
+
+## Analytics
+
+Using Google Tag Manager as described in the [Unified Analytics](https://github.com/laurenancona/unified-analytics) repo
