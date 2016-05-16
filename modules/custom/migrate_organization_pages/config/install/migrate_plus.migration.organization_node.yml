@@ -1,7 +1,6 @@
-# Migration configuration for beer content.
 id: organization_node
 label: Organizations
-migration_group: beer
+migration_group: organization_node_group
 source:
   plugin: organization_node
 destination:
@@ -12,6 +11,5 @@ process:
     plugin: default_value
     default_value: organization_page
   title: name
-  # nid: tid
   field_organization_taxonomy_term: tid
 migration_dependencies: {}

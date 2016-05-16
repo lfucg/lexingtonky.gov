@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\migrate_example\Plugin\migrate\source\OrganizationNode.
+ * Contains \Drupal\migrate_organization_pages\Plugin\migrate\source\OrganizationNode.
  */
 
-namespace Drupal\migrate_example\Plugin\migrate\source;
+namespace Drupal\migrate_organization_pages\Plugin\migrate\source;
 
 use Drupal\migrate\Plugin\migrate\source\SqlBase;
 use Drupal\migrate\Row;
@@ -64,5 +64,4 @@ class OrganizationNode extends SqlBase {
       ],
     ];
   }
-
 }
