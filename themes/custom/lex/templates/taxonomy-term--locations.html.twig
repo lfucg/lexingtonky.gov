@@ -60,5 +60,10 @@
          %}
       </li>
     {% endif %}
+    {% if content.field_contact_fax[0]['#context'] %}
+      <li class="lex-location-contact">
+        Fax: {{ render_var(content.field_contact_fax[0]) }}
+      </li>
+    {% endif %}
   </ul>
 </div>

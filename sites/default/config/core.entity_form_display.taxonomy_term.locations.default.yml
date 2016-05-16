@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.taxonomy_term.locations.field_contact_email
+    - field.field.taxonomy_term.locations.field_contact_fax
     - field.field.taxonomy_term.locations.field_contact_phone
     - field.field.taxonomy_term.locations.field_hours_of_operation
     - field.field.taxonomy_term.locations.field_street
@@ -27,6 +28,13 @@ content:
     third_party_settings: {  }
   field_contact_email:
     weight: 35
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_contact_fax:
+    weight: 38
     settings:
       size: 60
       placeholder: ''

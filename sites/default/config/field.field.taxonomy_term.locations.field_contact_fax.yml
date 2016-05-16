@@ -1,0 +1,19 @@
+uuid: 8aecd36b-27b6-4fc4-8a19-ac1db378cfbe
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_contact_fax
+    - taxonomy.vocabulary.locations
+id: taxonomy_term.locations.field_contact_fax
+field_name: field_contact_fax
+entity_type: taxonomy_term
+bundle: locations
+label: 'Contact fax'
+description: '(859) 555-1212'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
