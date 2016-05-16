@@ -25,7 +25,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 8
+    weight: 7
     settings:
       rows: 9
       summary_rows: 3
@@ -37,27 +37,19 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_lex_custom_banner_image:
-    weight: 7
+    weight: 6
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
     type: image_image
   field_office_to_contact:
-    weight: 6
+    weight: 5
     settings: {  }
     third_party_settings: {  }
     type: options_select
-  field_organization_taxonomy_term:
-    weight: 4
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: entity_reference_autocomplete_tags
   field_top_services:
-    weight: 5
+    weight: 4
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -86,5 +78,6 @@ content:
 hidden:
   field_lex_site_nav: true
   field_organization_image: true
+  field_organization_taxonomy_term: true
   promote: true
   sticky: true

@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.storage.node.field_organization_taxonomy_term
     - node.type.organization_page
+    - taxonomy.vocabulary.organizations
 id: node.organization_page.field_organization_taxonomy_term
 field_name: field_organization_taxonomy_term
 entity_type: node
@@ -16,10 +17,12 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: views
+  handler: 'default:taxonomy_term'
   handler_settings:
-    view:
-      view_name: organization_taxonomy_terms
-      display_name: entity_reference_1
-      arguments: {  }
+    target_bundles:
+      organizations: organizations
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
 field_type: entity_reference
