@@ -43,6 +43,11 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
     type: image_image
+  field_lex_site_nav:
+    type: options_select
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
   field_office_to_contact:
     weight: 5
     settings: {  }
@@ -76,7 +81,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
 hidden:
-  field_lex_site_nav: true
   field_organization_image: true
   field_organization_taxonomy_term: true
   promote: true

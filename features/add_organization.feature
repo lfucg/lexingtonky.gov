@@ -42,8 +42,6 @@ Scenario: Displaying news articles on an organization page
   And I press "Save and publish"
 
   When I am on "/departments/police"
-  # make sure page exists
-  Then I should see "Police"
   And I should see randomized text "New article"
 
 Scenario: Displaying events on an organization page
@@ -57,3 +55,17 @@ Scenario: Displaying events on an organization page
 
   When I am on "/departments/police"
   Then I should see randomized text "Updated event"
+
+# this will have to be enabled after the org page migration 20160516
+# so we can pick the node id of org page
+# @in-progress
+# Scenario: Add department page to topic navigation
+#   Given I am logged in as a user with the "editor" role
+#   # an organization that doesn't have a topic
+#   And I am on "/node/440/edit"
+#   And I fill in "Title" with randomized text "Department page title"
+#   And I select "-Senior Programs" from "Navigation topic (optional)"
+#   And I press "Save and keep published"
+#
+#   When I am on "/browse/community-services/senior-programs"
+#   Then I should see randomized text "Department page title"

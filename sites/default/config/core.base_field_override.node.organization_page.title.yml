@@ -8,7 +8,7 @@ id: node.organization_page.title
 field_name: title
 entity_type: node
 bundle: organization_page
-label: Organization
+label: Title
 description: ''
 required: true
 translatable: true

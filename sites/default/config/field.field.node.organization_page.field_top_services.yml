@@ -12,7 +12,7 @@ field_name: field_top_services
 entity_type: node
 bundle: organization_page
 label: 'Top services'
-description: ''
+description: 'Links to the service guides for the most-used department services'
 required: false
 translatable: false
 default_value: {  }

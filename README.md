@@ -96,13 +96,10 @@ Install Drush
 
 ### Run tests locally
 
-Set your drupal_root in behat.yml (e.g. /my/path/to/drupal/install)
-
-Start selenium server: `java -jar selenium-server-standalone-2.50.1.jar`
-
-To enable devel_mail_log:
-
-`drush en -y devel`
+* Set your drupal_root in behat.yml (e.g. /my/path/to/drupal/install)
+* Install dev dependencies like behat: `composer install`
+* Start selenium server: `java -jar selenium-server-standalone-2.50.1.jar`
+* enable devel_mail_log: `drush en -y devel`
 
 run tests:
 

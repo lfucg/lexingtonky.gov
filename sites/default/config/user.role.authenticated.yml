@@ -33,3 +33,4 @@ permissions:
   29: 'create news_article content'
   30: 'edit any news_article content'
   31: 'edit own news_article content'
+  32: 'edit any organization_page content'

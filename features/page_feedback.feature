@@ -49,7 +49,7 @@ Scenario: Submit feedback without inline ajax form
     And I click "Suggestions or problems with this page?"
     Then I should be on "/contact/page_feedback"
 
-@javascript @in-progress
+@javascript
 Scenario: Editors mark when they have handled feedback
     Given I am on "/contact/page_feedback"
     Then I should not see "Handled by"
