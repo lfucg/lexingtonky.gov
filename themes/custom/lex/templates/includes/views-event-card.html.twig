@@ -6,6 +6,7 @@
     title_tag
 
   optional
+    field_hide_times
     title_class
 #}
 
@@ -40,7 +41,7 @@
       {{begin.month}} {{begin.day}} – {{ end.month }} {{ end.day }}
     {% endif %}
 
-    {% if not field_hide_times %}
+    {% if field_hide_times != 'On' %}
       {{ separator }}{% include "@lex/includes/timespan.html.twig" with { begin: begin.full_time, end: end.full_time } %}
     {% endif %}
   </div>
