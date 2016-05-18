@@ -1,0 +1,18 @@
+uuid: 8631dd50-d103-40c5-b847-b6adf9a74c0e
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_hide_times
+field_name: field_hide_times
+entity_type: node
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

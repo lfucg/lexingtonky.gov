@@ -87,9 +87,10 @@
     {% include '@lex/includes/event-timespan.html.twig' with {
         field_begin: content.field_date,
         field_end: content.field_date_end,
+        hide_times: (render_var(content.field_hide_times[0]) == 'On')
        }
     %}
-    {{ content | without('field_date','field_date_end') }}
+    {{ content | without('field_date','field_date_end', 'field_hide_times') }}
   </div>
 
 </article>

@@ -96,14 +96,40 @@ Install Drush
 
 ### Run tests locally
 
+Create a project clone to mimic the working directory. This is where we
+will `composer install` dev dependencies.
+
+create copy of working dir
+
+```
+/mkdir dev-dependencies
+rsync -vah ../site-working-dir/ dev-dependencies/
+cd dev-dependencies
+composer install
+```
+
 * Set your drupal_root in behat.yml (e.g. /my/path/to/drupal/install)
-* Install dev dependencies like behat: `composer install`
 * Start selenium server: `java -jar selenium-server-standalone-2.50.1.jar`
 * enable devel_mail_log: `drush en -y devel`
 
-run tests:
+To run tests, make sure you have latest features in the dev-dependecies dir
 
-`./vendor/bin/behat`
+```
+cd dev-dependencies
+rsync -vah ../site-working-dir/features/ features/
+./vendor/bin/behat
+
+# as a one-liner
+rsync -vah ../site-working-dir/features/ features/ && ./vendor/bin/behat
+```
+
+Backstory
+
+This solution is imperfect. If we `composer install` dev dependencies to `site-working-dir/vendor`,
+git will show a ton of changes since vendor can't be gitignored. So our local working
+directory is a mess. Pantheon doesn't have a great way to deploy vendored files at build time.
+To keep this project clean, we keep `vendor/` perfectly in sync with [Pantheon's Drupal 8 upstream](https://github.com/pantheon-systems/drops-8/).  We then install dev dependencies to a cloned version
+of the working directory.
 
 ### Import/export of configuration changes
 

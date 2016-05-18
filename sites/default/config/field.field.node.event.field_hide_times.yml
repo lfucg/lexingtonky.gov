@@ -1,0 +1,23 @@
+uuid: 67e164db-cfa9-4199-abda-a82717184118
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_hide_times
+    - node.type.event
+id: node.event.field_hide_times
+field_name: field_hide_times
+entity_type: node
+bundle: event
+label: 'Hide start and end times'
+description: 'For multi-day events or TBD start/end times'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.event.field_date
     - field.field.node.event.field_date_end
     - field.field.node.event.field_event_website
+    - field.field.node.event.field_hide_times
     - field.field.node.event.field_locations
     - field.field.node.event.field_media_contact
     - field.field.node.event.field_related_departments
@@ -35,6 +36,7 @@ hidden:
   field_date: true
   field_date_end: true
   field_event_website: true
+  field_hide_times: true
   field_locations: true
   field_media_contact: true
   field_related_departments: true

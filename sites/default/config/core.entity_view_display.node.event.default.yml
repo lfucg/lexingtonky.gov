@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.event.field_date
     - field.field.node.event.field_date_end
     - field.field.node.event.field_event_website
+    - field.field.node.event.field_hide_times
     - field.field.node.event.field_locations
     - field.field.node.event.field_media_contact
     - field.field.node.event.field_related_departments
@@ -26,11 +27,11 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 5
+    weight: 6
     settings: {  }
     third_party_settings: {  }
   field_cost:
-    weight: 4
+    weight: 5
     label: inline
     settings:
       link_to_entity: false
@@ -53,7 +54,7 @@ content:
     third_party_settings: {  }
     type: datetime_default
   field_event_website:
-    weight: 6
+    weight: 7
     label: inline
     settings:
       trim_length: 80
@@ -63,8 +64,17 @@ content:
       target: ''
     third_party_settings: {  }
     type: link
-  field_locations:
+  field_hide_times:
     weight: 3
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+  field_locations:
+    weight: 4
     label: hidden
     settings:
       link: true
@@ -72,7 +82,7 @@ content:
     third_party_settings: {  }
     type: entity_reference_entity_view
   field_media_contact:
-    weight: 7
+    weight: 8
     label: inline
     settings:
       view_mode: default
