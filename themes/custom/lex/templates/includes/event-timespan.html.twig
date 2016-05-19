@@ -42,7 +42,7 @@
 {{ begin.month }} {{ begin.day }}, {{ begin.year }}
 
 {% if begin.date == end.date %}
-  {% set begin_time = begin.am_pm == end.am_pm ? begin.time : begin.full_time %}
+  {% set begin_time = (begin.am_pm == end.am_pm ? begin.time : begin.full_time) %}
 
   {% if not hide_times %}
     <br>{{ functions.time(begin_time) }}
