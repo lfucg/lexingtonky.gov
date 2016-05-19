@@ -34,8 +34,7 @@ Scenario Outline: Event dates and times are formatted correctly
 
   Then I should see "<date format>"
 
-  # accounting page
-  When I am on "/node/409"
+  When I am on "/departments/accounting"
   Then I should see "<time to show>"
 
   Examples:
