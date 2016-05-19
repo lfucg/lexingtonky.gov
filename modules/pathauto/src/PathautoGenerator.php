@@ -248,6 +248,7 @@ class PathautoGenerator implements PathautoGeneratorInterface {
       $ids = \Drupal::entityQuery('pathauto_pattern')
         ->condition('type', array_keys(\Drupal::service('plugin.manager.alias_type')
           ->getPluginDefinitionByType($this->tokenEntityMapper->getTokenTypeForEntityType($entity_type_id))))
+        ->condition('status', 1)
         ->sort('weight')
         ->execute();
 
@@ -320,7 +321,13 @@ class PathautoGenerator implements PathautoGeneratorInterface {
       }
     }
 
-    $result = $this->createEntityAlias($entity, $op);
+    try {
+      $result = $this->createEntityAlias($entity, $op);
+    }
+    catch (\InvalidArgumentException $e) {
+      drupal_set_message($e->getMessage(), 'error');
+      return NULL;
+    }
 
     // @todo Move this to a method on the pattern plugin.
     if ($type == 'taxonomy_term') {
