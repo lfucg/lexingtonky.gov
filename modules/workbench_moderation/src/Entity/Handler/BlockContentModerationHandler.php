@@ -6,8 +6,6 @@
 
 namespace Drupal\workbench_moderation\Entity\Handler;
 
-use Drupal\block_content\Entity\BlockContentType;
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 

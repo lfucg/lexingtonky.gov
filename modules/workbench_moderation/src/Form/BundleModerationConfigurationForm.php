@@ -54,8 +54,8 @@ class BundleModerationConfigurationForm extends EntityForm {
     $bundle = $form_state->getFormObject()->getEntity();
     $form['enable_moderation_state'] = [
       '#type' => 'checkbox',
-      '#title' => t('Enable moderation states.'),
-      '#description' => t('Content of this type must transition through moderation states in order to be published.'),
+      '#title' => $this->t('Enable moderation states.'),
+      '#description' => $this->t('Content of this type must transition through moderation states in order to be published.'),
       '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'enabled', FALSE),
     ];
 
@@ -63,7 +63,7 @@ class BundleModerationConfigurationForm extends EntityForm {
     if ($bundle->getThirdPartySetting('workbench_moderation', 'enabled', FALSE)) {
       $form['enable_moderation_state_note'] = [
         '#type' => 'item',
-        '#description' => t('After disabling moderation, any existing forward drafts will be accessible via the "Revisions" tab.'),
+        '#description' => $this->t('After disabling moderation, any existing forward drafts will be accessible via the "Revisions" tab.'),
         '#states' => [
           'visible' => [
             ':input[name=enable_moderation_state]' => ['checked' => FALSE],
@@ -72,31 +72,61 @@ class BundleModerationConfigurationForm extends EntityForm {
       ];
     }
 
-    $states = \Drupal::entityTypeManager()->getStorage('moderation_state')->loadMultiple();
-    $options = [];
-    /** @var ModerationState $state */
-    foreach ($states as $key => $state) {
-      $options[$key] = $state->label() . ' ' . ($state->isPublishedState() ? t('(published)') : t('(non-published)'));
-    }
-    $form['allowed_moderation_states'] = [
+    $states = $this->entityTypeManager->getStorage('moderation_state')->loadMultiple();
+    $label = function(ModerationState $state) {
+      return $state->label();
+    };
+
+    $options_published = array_map($label, array_filter($states, function(ModerationState $state) {
+      return $state->isPublishedState();
+    }));
+
+    $options_unpublished = array_map($label, array_filter($states, function(ModerationState $state) {
+      return !$state->isPublishedState();
+    }));
+
+    $form['allowed_moderation_states_unpublished'] = [
       '#type' => 'checkboxes',
-      '#title' => t('Allowed moderation states.'),
-      '#description' => t('The allowed moderation states this content-type can be assigned. You must select at least one published and one non-published state.'),
-      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', []),
-      '#options' => $options,
+      '#title' => $this->t('Allowed moderation states (Unpublished)'),
+      '#description' => $this->t('The allowed unpublished moderation states this content-type can be assigned.'),
+      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys($options_unpublished)),
+      '#options' => $options_unpublished,
+      '#required' => TRUE,
       '#states' => [
         'visible' => [
           ':input[name=enable_moderation_state]' => ['checked' => TRUE],
         ],
       ],
     ];
+
+    $form['allowed_moderation_states_published'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Allowed moderation states (Published)'),
+      '#description' => $this->t('The allowed published moderation states this content-type can be assigned.'),
+      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys($options_published)),
+      '#options' => $options_published,
+      '#required' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name=enable_moderation_state]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    // This is screwy, but the key of the array needs to be a user-facing string
+    // so we have to fully render the translatable string to a real string, or
+    // else PHP chokes on an object used as an array key.
+    $options = [
+      $this->t('Unpublished')->render() => $options_unpublished,
+      $this->t('Published')->render() => $options_published,
+    ];
+
     $form['default_moderation_state'] = [
       '#type' => 'select',
-      '#title' => t('Default moderation state'),
-      '#empty_option' => t('-- Select --'),
+      '#title' => $this->t('Default moderation state'),
       '#options' => $options,
-      '#description' => t('Select the moderation state for new content'),
-      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'default_moderation_state', ''),
+      '#description' => $this->t('Select the moderation state for new content'),
+      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'default_moderation_state', 'draft'),
       '#states' => [
         'visible' => [
           ':input[name=enable_moderation_state]' => ['checked' => TRUE],
@@ -123,7 +153,7 @@ class BundleModerationConfigurationForm extends EntityForm {
   public function formBuilderCallback($entity_type, ConfigEntityInterface $bundle, &$form, FormStateInterface $form_state) {
     // @todo write a test for this.
     $bundle->setThirdPartySetting('workbench_moderation', 'enabled', $form_state->getValue('enable_moderation_state'));
-    $bundle->setThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys(array_filter($form_state->getValue('allowed_moderation_states'))));
+    $bundle->setThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys(array_filter($form_state->getValue('allowed_moderation_states_published') + $form_state->getValue('allowed_moderation_states_unpublished'))));
     $bundle->setThirdPartySetting('workbench_moderation', 'default_moderation_state', $form_state->getValue('default_moderation_state'));
   }
 
@@ -131,32 +161,11 @@ class BundleModerationConfigurationForm extends EntityForm {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    // @todo write a test for this.
     if ($form_state->getValue('enable_moderation_state')) {
-      $states = $this->entityTypeManager->getStorage('moderation_state')->loadMultiple();
-      $published = FALSE;
-      $non_published = TRUE;
-      $allowed = array_keys(array_filter($form_state->getValue('allowed_moderation_states')));
-      foreach ($allowed as $state_id) {
-        /** @var ModerationState $state */
-        $state = $states[$state_id];
-        if ($state->isPublishedState()) {
-          $published = TRUE;
-        }
-        else {
-          $non_published = TRUE;
-        }
-      }
-      if (!$published || !$non_published) {
-        $form_state->setErrorByName('allowed_moderation_states', t('You must select at least one published moderation and one non-published state.'));
-      }
-      if (($default = $form_state->getValue('default_moderation_state')) && !empty($default)) {
-        if (!in_array($default, $allowed, TRUE)) {
-          $form_state->setErrorByName('default_moderation_state', t('The default moderation state must be one of the allowed states.'));
-        }
-      }
-      else {
-        $form_state->setErrorByName('default_moderation_state', t('You must select a default moderation state.'));
+      $allowed = array_keys(array_filter($form_state->getValue('allowed_moderation_states_published') + $form_state->getValue('allowed_moderation_states_unpublished')));
+
+      if (($default = $form_state->getValue('default_moderation_state')) && !in_array($default, $allowed, TRUE)) {
+        $form_state->setErrorByName('default_moderation_state', $this->t('The default moderation state must be one of the allowed states.'));
       }
     }
   }

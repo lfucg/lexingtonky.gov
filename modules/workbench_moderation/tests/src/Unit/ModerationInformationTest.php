@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\workbench_moderation\Unit\ModerationInformationTest.
- */
-
 namespace Drupal\Tests\workbench_moderation\Unit;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -23,10 +18,22 @@ use Drupal\workbench_moderation\ModerationInformation;
  */
 class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
 
+  /**
+   * Builds a mock user.
+   *
+   * @return AccountInterface
+   */
   protected function getUser() {
     return $this->prophesize(AccountInterface::class)->reveal();
   }
 
+  /**
+   * Returns a mock Entity Type Manager.
+   *
+   * @param \Drupal\Core\Entity\EntityStorageInterface $entity_bundle_storage
+   *
+   * @return EntityTypeManagerInterface
+   */
   protected function getEntityTypeManager(EntityStorageInterface $entity_bundle_storage) {
     $entity_type_manager = $this->prophesize(EntityTypeManagerInterface::class);
     $entity_type_manager->getStorage('entity_test_bundle')->willReturn($entity_bundle_storage);

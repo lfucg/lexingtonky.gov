@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains Drupal\Tests\workbench_moderation\Unit\WorkbenchPreprocessTest.
- */
 
 namespace Drupal\Tests\workbench_moderation\Unit;
 

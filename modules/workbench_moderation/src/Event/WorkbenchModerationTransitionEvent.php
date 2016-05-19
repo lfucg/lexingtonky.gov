@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Event\WorkbenchModerationTransitionEvent.
- */
-
 namespace Drupal\workbench_moderation\Event;
 
 use Drupal\Core\Entity\ContentEntityInterface;

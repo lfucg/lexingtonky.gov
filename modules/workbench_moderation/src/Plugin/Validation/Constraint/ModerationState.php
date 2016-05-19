@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Plugin\Validation\Constraint\ModerationState.
- */
 
 namespace Drupal\workbench_moderation\Plugin\Validation\Constraint;
 

@@ -1,13 +1,7 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Tests\ModerationStateNodeTest.
- */
-
 namespace Drupal\workbench_moderation\Tests;
 
-use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 /**
@@ -59,8 +53,26 @@ class NodeAccessTest extends ModerationStateTestBase {
     $edit_path = 'node/' . $node->id() . '/edit';
     $latest_path = 'node/' . $node->id() . '/latest';
 
-    // Set up needs review revision.
+    // Publish the node.
     $this->drupalPostForm($edit_path, [], t('Save and Request Review'));
+    $this->drupalPostForm($edit_path, [], t('Save and Publish'));
+
+    // Ensure access works correctly for anonymous users.
+    $this->drupalLogout();
+
+    $this->drupalGet($edit_path);
+    $this->assertResponse(403);
+
+    $this->drupalGet($latest_path);
+    $this->assertResponse(403);
+    $this->drupalGet($view_path);
+    $this->assertResponse(200);
+
+    // Create a forward revision for the 'Latest revision' tab.
+    $this->drupalLogin($this->adminUser);
+    $this->drupalPostForm($edit_path, [
+      'title[0][value]' => 'moderated content revised',
+    ], t('Save and Create New Draft'));
 
     // Now make a new user and verify that the new user's access is correct.
     $user = $this->createUser([
@@ -68,6 +80,7 @@ class NodeAccessTest extends ModerationStateTestBase {
       'use draft_needs_review transition',
       'use published_draft transition',
       'use needs_review_published transition',
+      'view latest version',
       'view any unpublished content',
     ]);
     $this->drupalLogin($user);
@@ -94,6 +107,6 @@ class NodeAccessTest extends ModerationStateTestBase {
     $this->drupalGet($latest_path);
     $this->assertResponse(403);
     $this->drupalGet($view_path);
-    $this->assertResponse(403);
+    $this->assertResponse(200);
   }
 }

@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Permissions.
- */
 
 namespace Drupal\workbench_moderation;
 

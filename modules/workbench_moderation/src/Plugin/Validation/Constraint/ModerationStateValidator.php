@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Plugin\Validation\Constraint\ModerationStateValidator.
- */
-
 namespace Drupal\workbench_moderation\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -112,7 +107,7 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
 
     $original_id = $original_entity->moderation_state->target_id;
 
-    return !($original_entity && $original_id);
+    return !($entity->moderation_state->target_id && $original_entity && $original_id);
   }
 
 }

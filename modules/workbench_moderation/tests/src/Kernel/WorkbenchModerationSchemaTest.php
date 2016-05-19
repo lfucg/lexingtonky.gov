@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Tests\WorkbenchModerationSchemaTest.
- */
-
 namespace Drupal\workbench_moderation\Tests;
 
 use Drupal\block_content\Entity\BlockContentType;

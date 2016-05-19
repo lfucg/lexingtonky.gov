@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains ModerationStateStorage.php
- */
 
 namespace Drupal\workbench_moderation;
 

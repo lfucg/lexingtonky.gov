@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Tests\ModerationStateTransitionsTest.
- */
 
 namespace Drupal\workbench_moderation\Tests;
 

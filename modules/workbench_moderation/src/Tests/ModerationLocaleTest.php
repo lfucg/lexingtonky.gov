@@ -1,15 +1,6 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Tests\ModerationLocaleTest.
- */
-
 namespace Drupal\workbench_moderation\Tests;
-
-use Drupal\Core\Language\Language;
-use Drupal\Core\Language\LanguageInterface;
-use Drupal\language\Entity\ConfigurableLanguage;
 
 /**
  * Test workbench_moderation functionality with localization and translation.
@@ -49,6 +40,29 @@ class ModerationLocaleTest extends ModerationStateTestBase {
       'settings[node][article][settings][language][language_alterable]' => TRUE,
     ];
     $this->drupalPostForm(NULL, $edit, t('Save configuration'));
+
+    // Create a published article in English.
+    $edit = [
+      'title[0][value]' => 'Published English node',
+      'langcode[0][value]' => 'en',
+    ];
+    $this->drupalPostForm('node/add/article', $edit, t('Save and Publish'));
+    $this->assertText(t('Article Published English node has been created.'));
+    $english_node = $this->drupalGetNodeByTitle('Published English node');
+
+    // Add a French translation.
+    $this->drupalGet('node/' . $english_node->id() . '/translations');
+    $this->clickLink(t('Add'));
+    $edit = [
+      'title[0][value]' => 'French node Draft',
+    ];
+    $this->drupalPostForm(NULL, $edit, t('Save and Create New Draft (this translation)'));
+    // Here the error has occured "The website encountered an unexpected error.
+    // Please try again later."
+    // If the translation has got lost.
+    $this->assertText(t('Article French node Draft has been updated.'));
+    $english_node = $this->drupalGetNodeByTitle('Published English node', TRUE);
+    $french_node = $english_node->getTranslation('fr');
 
     // Create an article in English.
     $edit = [
@@ -129,7 +143,7 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $edit = [
       'new_state' => 'published',
     ];
-    $this->drupalPostForm('fr/node/' . $english_node->id() . '/latest', [], t('Apply'));
+    $this->drupalPostForm('fr/node/' . $english_node->id() . '/latest', $edit, t('Apply'));
     $this->assertText(t('The moderation state has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);
     $french_node = $english_node->getTranslation('fr');

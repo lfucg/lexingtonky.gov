@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Entity\ModerationState.
- */
-
 namespace Drupal\workbench_moderation\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
@@ -32,7 +27,6 @@ use Drupal\workbench_moderation\ModerationStateInterface;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/moderation-state/states/{moderation_state}",
  *     "edit-form" = "/admin/structure/moderation-state/states/{moderation_state}/edit",
  *     "delete-form" = "/admin/structure/moderation-state/states/{moderation_state}/delete",
  *     "collection" = "/admin/structure/moderation-state/states"

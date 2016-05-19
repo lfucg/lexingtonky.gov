@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Plugin\MenuEditTab.
- */
-
 namespace Drupal\workbench_moderation\Plugin\Menu;
 
 use Drupal\Core\Menu\LocalTaskDefault;

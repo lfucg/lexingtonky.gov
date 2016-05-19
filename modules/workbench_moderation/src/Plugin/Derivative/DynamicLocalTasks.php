@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\workbench_moderation\Plugin\Derivative\DynamicLocalTasks.
- */
-
 namespace Drupal\workbench_moderation\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
@@ -81,7 +76,11 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
         ] + $base_plugin_definition;
     }
 
-    foreach ($this->moderatableEntityDefinitions() as $entity_type_id => $entity_type) {
+    $latest_version_entities = array_filter($this->moderatableEntityDefinitions(), function (EntityTypeInterface $type) {
+      return $type->hasLinkTemplate('latest-version');
+    });
+
+    foreach ($latest_version_entities as $entity_type_id => $entity_type) {
       $this->derivatives["$entity_type_id.latest_version_tab"] = [
           'route_name' => "entity.$entity_type_id.latest_version",
           'title' => $this->t('Latest version'),

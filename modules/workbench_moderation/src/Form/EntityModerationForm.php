@@ -1,9 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Form\EntityModerationForm.
- */
-
 
 namespace Drupal\workbench_moderation\Form;
 
@@ -77,6 +72,10 @@ class EntityModerationForm extends FormBase {
     /** @var ModerationStateTransition $transition */
     foreach ($transitions as $transition) {
       $target_states[$transition->getToState()] = $transition->label();
+    }
+
+    if (!count($target_states)) {
+      return $form;
     }
 
     if ($current_state) {

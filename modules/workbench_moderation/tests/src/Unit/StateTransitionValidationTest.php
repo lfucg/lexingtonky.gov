@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\workbench_moderation\Unit\StateTransitionValidationTest.
- */
-
 namespace Drupal\Tests\workbench_moderation\Unit;
 
 use Drupal\Core\Entity\EntityStorageInterface;

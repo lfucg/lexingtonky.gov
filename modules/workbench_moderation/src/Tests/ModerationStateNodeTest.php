@@ -1,13 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Tests\ModerationStateNodeTest.
- */
-
 namespace Drupal\workbench_moderation\Tests;
 
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
 
 /**
  * Tests general content moderation workflow for nodes.
@@ -86,12 +82,12 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
     $this->assertUrl(Url::fromRoute('entity.node.canonical', ['node' => $node->id()]));
     $this->assertText('First version of the content.');
 
-    // Make a new forward revision; after saving, we should be on the "Latest
-    // version" tab.
+    // Update the draft to review; after saving, we should still be on the
+    // canonical URL, but viewing the second revision.
     $this->drupalPostForm($edit_path, [
       'body[0][value]' => 'Second version of the content.',
     ], t('Save and Request Review'));
-    $this->assertUrl(Url::fromRoute('entity.node.latest_version', ['node' => $node->id()]));
+    $this->assertUrl(Url::fromRoute('entity.node.canonical', ['node' => $node->id()]));
     $this->assertText('Second version of the content.');
 
     // Make a new published revision; after saving, we should be at the
@@ -102,13 +98,36 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
     $this->assertUrl(Url::fromRoute('entity.node.canonical', ['node' => $node->id()]));
     $this->assertText('Third version of the content.');
 
-    // Make a new forward revision; after saving, we should once again be on the
-    // "Latest version" tab.
+    // Make a new forward revision; after saving, we should be on the "Latest
+    // version" tab.
     $this->drupalPostForm($edit_path, [
       'body[0][value]' => 'Fourth version of the content.',
     ], t('Save and Create New Draft'));
     $this->assertUrl(Url::fromRoute('entity.node.latest_version', ['node' => $node->id()]));
     $this->assertText('Fourth version of the content.');
+  }
+
+  /**
+   * Tests pagers aren't broken by workbench_moderation.
+   */
+  public function testPagers() {
+    // Create 51 nodes to force the pager.
+    foreach (range(1, 51) as $delta) {
+      Node::create([
+        'type' => 'moderated_content',
+        'uid' => $this->adminUser->id(),
+        'title' => 'Node ' . $delta,
+        'status' => 1,
+        'moderation_state' => 'published',
+      ])->save();
+    }
+    $this->drupalLogin($this->adminUser);
+    $this->drupalGet('admin/content');
+    $element = $this->cssSelect('nav.pager li.is-active a');
+    $url = (string) $element[0]['href'];
+    $query = [];
+    parse_str(parse_url($url, PHP_URL_QUERY), $query);
+    $this->assertEqual(0, $query['page']);
   }
 
 }

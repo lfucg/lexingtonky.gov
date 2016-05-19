@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\InlineEditingDisabler.
- */
-
 namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -36,7 +31,7 @@ class InlineEditingDisabler {
    * Implements hook_entity_view_alter().
    */
   public function entityViewAlter(&$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
-    if ($entity->getEntityType()->isRevisionable() && !$this->moderationInfo->isLatestRevision($entity)) {
+    if ($this->moderationInfo->isModeratableEntity($entity) && !$this->moderationInfo->isLatestRevision($entity)) {
       // Hide quickedit, because its super confusing for the user to not edit the
       // live revision.
       unset($build['#attributes']['data-quickedit-entity-id']);

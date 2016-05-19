@@ -1,13 +1,6 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Tests\ModerationFormTest.
- */
-
 namespace Drupal\workbench_moderation\Tests;
-
-use Drupal\Core\Url;
 
 /**
  * Tests the moderation form, specifically on nodes.
@@ -31,7 +24,14 @@ class ModerationFormTest extends ModerationStateTestBase {
   }
 
   /**
-   * Tests the moderation form.
+   * Tests the moderation form that shows on the latest version page.
+   *
+   * The latest version page only shows if there is a forward revision. There
+   * is only a forward revision if a draft revision is created on a node where
+   * the default revision is not a published moderation state.
+   *
+   * @see \Drupal\workbench_moderation\EntityOperations
+   * @see \Drupal\workbench_moderation\Tests\ModerationStateBlockTest::testCustomBlockModeration
    */
   public function testModerationForm() {
     // Create new moderated content in draft.
@@ -47,47 +47,62 @@ class ModerationFormTest extends ModerationStateTestBase {
 
     $this->assertTrue($this->adminUser->hasPermission('edit any moderated_content content'));
 
-    // For the first revision, the latest-version tab doesn't show so don't
-    // bother checking for it.
-
-    // Make a new forward revision; after saving, the tab and form should show.
-    $this->drupalPostForm($edit_path, [
-      'body[0][value]' => 'Second version of the content.',
-    ], t('Save and Request Review'));
-    $this->drupalGet($latest_version_path);
-    $this->assertResponse(200);
-    $this->assertText('Second version of the content.');
-    $this->assertText('Status', 'Form text found on the latest-version page.');
-    $this->assertText('Needs Review', 'Correct status found on the latest-version page.');
-
-    // Make a new published revision; after saving, the latest-version tab should
-    // be unavailable and the public node page should have no form on it.
-    $this->drupalPostForm($edit_path, [
-      'body[0][value]' => 'Third version of the content.',
-    ], t('Save and Publish'));
-    $this->drupalGet($canonical_path);
-    $this->assertResponse(200);
-    $this->assertNoText('Current status', 'The node view page has no moderation form.');
+    // The latest version page should not show, because there is no forward
+    // revision.
     $this->drupalGet($latest_version_path);
     $this->assertResponse(403);
 
-    // Make a new forward revision; after saving, the latest-version tab should
-    // be back, and have a form, while the node view page still has no form.
+    // Update the draft.
+    $this->drupalPostForm($edit_path, [
+      'body[0][value]' => 'Second version of the content.',
+    ], t('Save and Request Review'));
+
+    // The latest version page should not show, because there is still no
+    // forward revision.
+    $this->drupalGet($latest_version_path);
+    $this->assertResponse(403);
+
+    // Publish the draft.
+    $this->drupalPostForm($edit_path, [
+      'body[0][value]' => 'Third version of the content.',
+    ], t('Save and Publish'));
+
+    // The published view should not have a moderation form, because it is the
+    // default revision.
+    $this->drupalGet($canonical_path);
+    $this->assertResponse(200);
+    $this->assertNoText('Status', 'The node view page has no moderation form.');
+
+    // The latest version page should not show, because there is still no
+    // forward revision.
+    $this->drupalGet($latest_version_path);
+    $this->assertResponse(403);
+
+    // Make a forward revision.
     $this->drupalPostForm($edit_path, [
       'body[0][value]' => 'Fourth version of the content.',
     ], t('Save and Create New Draft'));
+
+    // The published view should not have a moderation form, because it is the
+    // default revision.
+    $this->drupalGet($canonical_path);
+    $this->assertResponse(200);
+    $this->assertNoText('Status', 'The node view page has no moderation form.');
+
+    // The latest version page should show the moderation form and have "Draft"
+    // status, because the forward revision is in "Draft".
     $this->drupalGet($latest_version_path);
     $this->assertResponse(200);
     $this->assertText('Status', 'Form text found on the latest-version page.');
     $this->assertText('Draft', 'Correct status found on the latest-version page.');
-    $this->drupalGet($canonical_path);
-    $this->assertResponse(200);
-    $this->assertNoText('Current status', 'The node view page has no moderation form.');
 
-    // Submit the moderation form to change status.
+    // Submit the moderation form to change status to needs review.
     $this->drupalPostForm($latest_version_path, [
       'new_state' => 'needs_review',
     ], t('Apply'));
+
+    // The latest version page should show the moderation form and have "Needs
+    // Review" status, because the forward revision is in "Needs Review".
     $this->drupalGet($latest_version_path);
     $this->assertResponse(200);
     $this->assertText('Status', 'Form text found on the latest-version page.');

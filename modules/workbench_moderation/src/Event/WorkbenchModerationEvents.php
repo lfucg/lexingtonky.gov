@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Event\WorkbenchModerationEvents.
- */
-
 namespace Drupal\workbench_moderation\Event;
 
 final class WorkbenchModerationEvents {

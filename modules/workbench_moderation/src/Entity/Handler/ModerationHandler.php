@@ -13,7 +13,6 @@ use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -39,10 +38,7 @@ class ModerationHandler implements ModerationHandlerInterface, EntityHandlerInte
     // This is *probably* not necessary if configuration is setup correctly,
     // but it can't hurt.
     $entity->setNewRevision(TRUE);
-
-    // A newly-created revision is always the default revision, or else
-    // it gets lost.
-    $entity->isDefaultRevision($entity->isNew() || $default_revision);
+    $entity->isDefaultRevision($default_revision);
   }
 
   /**

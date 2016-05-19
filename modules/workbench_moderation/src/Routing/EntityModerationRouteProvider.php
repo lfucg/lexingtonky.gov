@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\workbench_moderation\Routing\EntityModerationRouteProvider.
- */
-
 namespace Drupal\workbench_moderation\Routing;
 
 use Drupal\Core\Entity\EntityFieldManagerInterface;
@@ -85,6 +80,7 @@ class EntityModerationRouteProvider implements EntityRouteProviderInterface, Ent
         // If the entity type is a node, unpublished content will be visible
         // if the user has the "view all unpublished content" permission.
         ->setRequirement('_entity_access', "{$entity_type_id}.view")
+        ->setRequirement('_permission', 'view latest version,view any unpublished content')
         ->setRequirement('_workbench_moderation_latest_version', 'TRUE')
         ->setOption('_workbench_moderation_entity_type', $entity_type_id)
         ->setOption('parameters', [

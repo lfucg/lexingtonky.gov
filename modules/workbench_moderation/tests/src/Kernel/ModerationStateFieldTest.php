@@ -1,13 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\workbench_moderation\Kernel\ModerationStateFieldTest.
- */
-
 namespace Drupal\Tests\workbench_moderation\Kernel;
-use Drupal\KernelTests\KernelTestBase;
 
+use Drupal\KernelTests\KernelTestBase;
 
 /**
  * Tests moderation state field.

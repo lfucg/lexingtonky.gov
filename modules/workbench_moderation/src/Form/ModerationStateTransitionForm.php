@@ -1,15 +1,12 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Form\ModerationStateTransitionForm.
- */
-
 namespace Drupal\workbench_moderation\Form;
 
 use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\workbench_moderation\Entity\ModerationState;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class ModerationStateTransitionForm.
@@ -17,6 +14,34 @@ use Drupal\workbench_moderation\Entity\ModerationState;
  * @package Drupal\workbench_moderation\Form
  */
 class ModerationStateTransitionForm extends EntityForm {
+
+  /**
+   * @var
+   */
+  protected $entityTypeManager;
+
+  /**
+   * @var \Drupal\Core\Entity\Query\QueryFactory
+   */
+  protected $queryFactory;
+
+  /**
+   * Constructs a new ModerationStateTransitionForm.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory) {
+    $this->entityTypeManager = $entity_type_manager;
+    $this->queryFactory = $query_factory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('entity_type.manager'), $container->get('entity.query'));
+  }
+
   /**
    * {@inheritdoc}
    */
@@ -44,7 +69,7 @@ class ModerationStateTransitionForm extends EntityForm {
     ];
 
     $options = [];
-    foreach (ModerationState::loadMultiple() as $moderation_state) {
+    foreach ($this->entityTypeManager->getStorage('moderation_state')->loadMultiple() as $moderation_state) {
       $options[$moderation_state->id()] = $moderation_state->label();
     }
 
@@ -73,8 +98,15 @@ class ModerationStateTransitionForm extends EntityForm {
       '#default_value' => $moderation_state_transition->getToState(),
     ];
 
+    // Make sure there's always at least a wide enough delta on weight to cover
+    // the current value or the total number of transitions. That way we
+    // never end up forcing a transition to change its weight needlessly.
+    $num_transitions = $this->queryFactory->get('moderation_state_transition')->count()->execute();
+    $delta = max(abs($moderation_state_transition->getWeight()), $num_transitions);
+
     $form['weight'] = [
       '#type' => 'weight',
+      '#delta' => $delta,
       '#options' => $options,
       '#title' => $this->t('Weight'),
       '#default_value' => $moderation_state_transition->getWeight(),
@@ -103,7 +135,7 @@ class ModerationStateTransitionForm extends EntityForm {
           '%label' => $moderation_state_transition->label(),
         ]));
     }
-    $form_state->setRedirectUrl($moderation_state_transition->urlInfo('collection'));
+    $form_state->setRedirectUrl($moderation_state_transition->toUrl('collection'));
   }
 
 }

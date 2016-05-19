@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Form\ModerationStateForm.
- */
-
 namespace Drupal\workbench_moderation\Form;
 
 use Drupal\Core\Entity\EntityForm;
@@ -84,7 +79,7 @@ class ModerationStateForm extends EntityForm {
           '%label' => $moderation_state->label(),
         ]));
     }
-    $form_state->setRedirectUrl($moderation_state->urlInfo('collection'));
+    $form_state->setRedirectUrl($moderation_state->toUrl('collection'));
   }
 
 }

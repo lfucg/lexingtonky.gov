@@ -6,12 +6,9 @@
 
 namespace Drupal\workbench_moderation\Entity\Handler;
 
-
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
-use Drupal\node\Entity\NodeType;
 
 /**
  * Customizations for node entities.

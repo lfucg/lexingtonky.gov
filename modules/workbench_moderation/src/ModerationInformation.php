@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\workbench_moderation\ModerationInformation.
- */
-
 namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
@@ -167,7 +162,7 @@ class ModerationInformation implements ModerationInformationInterface {
         ->allRevisions()
         ->condition($this->entityTypeManager->getDefinition($entity_type_id)->getKey('id'), $entity_id)
         ->sort($this->entityTypeManager->getDefinition($entity_type_id)->getKey('revision'), 'DESC')
-        ->pager(1)
+        ->range(0, 1)
         ->execute();
       if ($revision_ids) {
         $revision_id = array_keys($revision_ids)[0];
@@ -178,29 +173,26 @@ class ModerationInformation implements ModerationInformationInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo Make this more performant.
    */
   public function getDefaultRevisionId($entity_type_id, $entity_id) {
-    $storage = $this->entityTypeManager->getStorage($entity_type_id);
-    $entity = $storage->load($entity_id);
-    if ($entity) {
-      return $entity->getRevisionId();
+    if ($storage = $this->entityTypeManager->getStorage($entity_type_id)) {
+      $revision_ids = $storage->getQuery()
+        ->condition($this->entityTypeManager->getDefinition($entity_type_id)->getKey('id'), $entity_id)
+        ->sort($this->entityTypeManager->getDefinition($entity_type_id)->getKey('revision'), 'DESC')
+        ->range(0, 1)
+        ->execute();
+      if ($revision_ids) {
+        $revision_id = array_keys($revision_ids)[0];
+        return $revision_id;
+      }
     }
   }
 
   /**
    * {@inheritdoc}
-   *
-   * @todo There may be a more perfomant way of doing this that doesn't
-   * require loading the full entity revision.
    */
   public function isLatestRevision(ContentEntityInterface $entity) {
-    $revision = $this->getLatestRevision($entity->getEntityTypeId(), $entity->id());
-    if (!$revision) {
-      return FALSE;
-    }
-    return $revision->getRevisionId() == $entity->getRevisionId();
+    return $entity->getRevisionId() == $this->getLatestRevisionId($entity->getEntityTypeId(), $entity->id());
   }
 
   /**

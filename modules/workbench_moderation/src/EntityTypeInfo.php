@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains Drupal\workbench_moderation\EntityTypeInfo.
- */
-
 namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
@@ -108,7 +104,7 @@ class EntityTypeInfo {
       $type->setHandlerClass('moderation', $handler_class);
     }
 
-    if (!$type->hasLinkTemplate('latest-version')) {
+    if (!$type->hasLinkTemplate('latest-version') && $type->hasLinkTemplate('canonical')) {
       $type->setLinkTemplate('latest-version', $type->getLinkTemplate('canonical') . '/latest');
     }
 
@@ -354,7 +350,7 @@ class EntityTypeInfo {
     $entity = $form_state->getFormObject()->getEntity();
 
     $moderation_info = \Drupal::getContainer()->get('workbench_moderation.moderation_information');
-    if ($moderation_info->hasForwardRevision($entity)) {
+    if ($moderation_info->hasForwardRevision($entity) && $entity->hasLinkTemplate('latest-version')) {
       $entity_type_id = $entity->getEntityTypeId();
       $form_state->setRedirect("entity.$entity_type_id.latest_version", [$entity_type_id => $entity->id()]);
     }

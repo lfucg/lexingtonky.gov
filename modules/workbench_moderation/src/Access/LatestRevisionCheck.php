@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Access\LatestRevisionCheck
- */
-
 namespace Drupal\workbench_moderation\Access;
 
 use Drupal\Core\Access\AccessResult;

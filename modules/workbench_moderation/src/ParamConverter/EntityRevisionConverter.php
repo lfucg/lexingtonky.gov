@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\workbench_moderation\ParamConverter\EntityRevisionConverter.
- */
 
 namespace Drupal\workbench_moderation\ParamConverter;
 
@@ -11,6 +7,7 @@ use Drupal\Core\ParamConverter\EntityConverter;
 use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\workbench_moderation\ModerationInformationInterface;
 use Symfony\Component\Routing\Route;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Defines a class for making sure the edit-route loads the current draft.
@@ -28,13 +25,13 @@ class EntityRevisionConverter extends EntityConverter {
    * @todo: If the parent class is ever cleaned up to use EntityTypeManager
    * instead of Entity manager, this method will also need to be adjusted.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_type_manager
    *   The entity manager, needed by the parent class.
    * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_info
    *   The moderation info utility service.
    */
-  public function __construct(\Drupal\Core\Entity\EntityManagerInterface $entity_manager, ModerationInformationInterface $moderation_info) {
-    parent::__construct($entity_manager);
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModerationInformationInterface $moderation_info) {
+    parent::__construct($entity_type_manager);
     $this->moderationInformation = $moderation_info;
   }
 

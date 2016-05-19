@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Tests\ModerationStateBlockTest.
- */
-
 namespace Drupal\workbench_moderation\Tests;
 
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\block_content\Entity\BlockContentType;
-use Drupal\Component\Utility\Unicode;
 
 /**
  * Tests general content moderation workflow for blocks.
@@ -38,6 +32,21 @@ class ModerationStateBlockTest extends ModerationStateTestBase {
 
   /**
    * Tests moderating custom blocks.
+   *
+   * Blocks and any non-node-type-entities do not have a concept of
+   * "published". As such, we must use the "default revision" to know what is
+   * going to be "published", i.e. visible to the user.
+   *
+   * The one exception is a block that has never been "published". When a block
+   * is first created, it becomes the "default revision". For each edit of the
+   * block after that, Workbench Moderation checks the "default revision" to
+   * see if it is set to a published moderation state. If it is not, the entity
+   * being saved will become the "default revision".
+   *
+   * The test below is intended, in part, to make this behavior clear.
+   *
+   * @see \Drupal\workbench_moderation\EntityOperations::entityPresave
+   * @see \Drupal\workbench_moderation\Tests\ModerationFormTest::testModerationForm
    */
   public function testCustomBlockModeration() {
     $this->drupalLogin($this->rootUser);
@@ -45,8 +54,8 @@ class ModerationStateBlockTest extends ModerationStateTestBase {
     // Enable moderation for custom blocks at admin/structure/block/block-content/manage/basic/moderation.
     $edit = [
       'enable_moderation_state' => TRUE,
-      'allowed_moderation_states[draft]' => TRUE,
-      'allowed_moderation_states[published]' => TRUE,
+      'allowed_moderation_states_unpublished[draft]' => TRUE,
+      'allowed_moderation_states_published[published]' => TRUE,
       'default_moderation_state' => 'draft',
     ];
     $this->drupalPostForm('admin/structure/block/block-content/manage/basic/moderation', $edit, t('Save'));
@@ -71,11 +80,12 @@ class ModerationStateBlockTest extends ModerationStateTestBase {
     $url = 'admin/structure/block/add/block_content:' . $block->uuid() . '/' . $this->config('system.theme')->get('default');
     $this->drupalPostForm($url, $instance, t('Save block'));
 
-    // Navigate to home page and check that the block is visible.
+    // Navigate to home page and check that the block is visible. It should be
+    // visible because it is the default revision.
     $this->drupalGet('');
     $this->assertText($body);
 
-    // Open the form to edit the block:
+    // Update the block.
     $updated_body = 'This is the new body value';
     $edit = [
       'body[0][value]' => $updated_body,
@@ -83,10 +93,27 @@ class ModerationStateBlockTest extends ModerationStateTestBase {
     $this->drupalPostForm('block/' . $block->id(), $edit, t('Save and Create New Draft'));
     $this->assertText(t('basic Moderated block has been updated.'));
 
-    // Check that we still see the current revision of the block as the new one
-    // has not been approved yet.
+    // Navigate to the home page and check that the block shows the updated
+    // content. It should show the updated content because the block's default
+    // revision is not a published moderation state.
     $this->drupalGet('');
-    $this->assertNoText($updated_body);
+    $this->assertText($updated_body);
+
+    // Publish the block so we can create a forward revision.
+    $this->drupalPostForm('block/' . $block->id(), [], t('Save and Publish'));
+
+    // Create a forward revision.
+    $forward_revision_body = 'This is the forward revision body value';
+    $edit = [
+      'body[0][value]' => $forward_revision_body,
+    ];
+    $this->drupalPostForm('block/' . $block->id(), $edit, t('Save and Create New Draft'));
+    $this->assertText(t('basic Moderated block has been updated.'));
+
+    // Navigate to home page and check that the forward revision doesn't show,
+    // since it should not be set as the default revision.
+    $this->drupalGet('');
+    $this->assertText($updated_body);
 
     // Open the latest tab and publish the new draft.
     $edit = [
@@ -95,9 +122,10 @@ class ModerationStateBlockTest extends ModerationStateTestBase {
     $this->drupalPostForm('block/' . $block->id() . '/latest', $edit, t('Apply'));
     $this->assertText(t('The moderation state has been updated.'));
 
-    // Navigate to home page and check that the latest revision is now visible.
+    // Navigate to home page and check that the forward revision is now the
+    // default revision and therefore visible.
     $this->drupalGet('');
-    $this->assertText($updated_body);
+    $this->assertText($forward_revision_body);
   }
 
 }
