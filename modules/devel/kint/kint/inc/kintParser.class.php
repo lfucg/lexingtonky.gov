@@ -1,4 +1,5 @@
 <?php
+
 abstract class kintParser extends kintVariableData
 {
 	private static $_level = 0;
@@ -8,6 +9,8 @@ abstract class kintParser extends kintVariableData
 	private static $_marker;
 
 	private static $_skipAlternatives = false;
+
+	private static $_placeFullStringInValue = false;
 
 
 	private static function _init()
@@ -67,7 +70,6 @@ abstract class kintParser extends kintVariableData
 
 		self::$_level++;
 
-		$name          = self::_escape( $name );
 		$varData       = new kintVariableData;
 		$varData->name = $name;
 
@@ -83,23 +85,27 @@ abstract class kintParser extends kintVariableData
 
 				/** @var $object KintObject */
 				$object = new $className;
-				if ( ( $alternatives = $object->parse( $variable ) ) !== false ) {
-					self::$_skipAlternatives  = true;
-					$alternativeDisplay       = new kintVariableData;
-					$alternativeDisplay->type = $object->name;
+				if ( ( $alternativeTabs = $object->parse( $variable ) ) !== false ) {
+					self::$_skipAlternatives   = true;
+					$alternativeDisplay        = new kintVariableData;
+					$alternativeDisplay->type  = $object->name;
+					$alternativeDisplay->value = $object->value;
+					$alternativeDisplay->name  = $name;
 
-					foreach ( $alternatives as $name => $values ) {
+					foreach ( $alternativeTabs as $name => $values ) {
 						$alternative       = kintParser::factory( $values );
 						$alternative->type = $name;
-						if ( Kint::$mode === 'text' || Kint::$mode === 'cli' ) {
-							$alternativeDisplay->extendedValue[] = $alternative;
-						} else {
+						if ( Kint::enabled() === Kint::MODE_RICH ) {
 							empty( $alternative->value ) and $alternative->value = $alternative->extendedValue;
 							$alternativeDisplay->_alternatives[] = $alternative;
+						} else {
+							$alternativeDisplay->extendedValue[] = $alternative;
 						}
 					}
 
 					self::$_skipAlternatives = false;
+					self::$_level   = $revert['level'];
+					self::$_objects = $revert['objects'];
 					return $alternativeDisplay;
 				}
 			}
@@ -111,7 +117,7 @@ abstract class kintParser extends kintVariableData
 			return $varData;
 		}
 
-		if ( Kint::$mode === 'rich' && !self::$_skipAlternatives ) {
+		if ( Kint::enabled() === Kint::MODE_RICH && !self::$_skipAlternatives ) {
 			# if an alternative returns something that can be represented in an alternative way, don't :)
 			self::$_skipAlternatives = true;
 
@@ -134,8 +140,8 @@ abstract class kintParser extends kintVariableData
 				$_ = new kintVariableData;
 
 				$_->value = $varData->extendedValue;
-				$_->type  = $varData->type;
-				$_->size  = $varData->size;
+				$_->type  = 'contents';
+				$_->size  = null;
 
 				array_unshift( $varData->_alternatives, $_ );
 				$varData->extendedValue = null;
@@ -146,41 +152,120 @@ abstract class kintParser extends kintVariableData
 
 		self::$_level   = $revert['level'];
 		self::$_objects = $revert['objects'];
+
+		if ( strlen( $varData->name ) > 80 ) {
+			$varData->name =
+				self::_substr( $varData->name, 0, 37 )
+				. '...'
+				. self::_substr( $varData->name, -38, null );
+		}
 		return $varData;
 	}
 
 	private static function _checkDepth()
 	{
-		return Kint::$maxLevels != 0 && self::$_level > Kint::$maxLevels;
+		return Kint::$maxLevels != 0 && self::$_level >= Kint::$maxLevels;
 	}
 
-	private static function _isArrayTabular( $variable )
+	private static function _isArrayTabular( array $variable )
 	{
-		if ( Kint::$mode === 'plain' || Kint::$mode === 'cli' ) return false;
+		if ( Kint::enabled() !== Kint::MODE_RICH ) return false;
 
+		$arrayKeys   = array();
+		$keys        = null;
+		$closeEnough = false;
 		foreach ( $variable as $row ) {
-			if ( is_array( $row ) && !empty( $row ) ) {
-				if ( isset( $keys ) ) {
-					if ( $keys === array_keys( $row ) ) { // two rows have same keys in a row? Close enough.
-						return true;
-					}
-				} else {
+			if ( !is_array( $row ) || empty( $row ) ) return false;
 
-					foreach ( $row as $col ) {
-						if ( !is_scalar( $col ) && $col !== null ) {
-							break 2;
-						}
-					}
+			foreach ( $row as $col ) {
+				if ( !empty( $col ) && !is_scalar( $col ) ) return false; // todo add tabular "tolerance"
+			}
 
-					$keys = array_keys( $row );
-				}
+			if ( isset( $keys ) && !$closeEnough ) {
+				# let's just see if the first two rows have same keys, that's faster and has the
+				# positive side effect of easily spotting missing keys in later rows
+				if ( $keys !== array_keys( $row ) ) return false;
+
+				$closeEnough = true;
 			} else {
-				break;
+				$keys = array_keys( $row );
+			}
+
+			$arrayKeys = array_unique( array_merge( $arrayKeys, $keys ) );
+		}
+
+		return $arrayKeys;
+	}
+
+	private static function _decorateCell( kintVariableData $kintVar )
+	{
+		if ( $kintVar->extendedValue !== null || !empty( $kintVar->_alternatives ) ) {
+			return '<td>' . Kint_Decorators_Rich::decorate( $kintVar ) . '</td>';
+		}
+
+		$output = '<td';
+
+		if ( $kintVar->value !== null ) {
+			$output .= ' title="' . $kintVar->type;
+
+			if ( $kintVar->size !== null ) {
+				$output .= " (" . $kintVar->size . ")";
+			}
+
+			$output .= '">' . $kintVar->value;
+		} else {
+			$output .= '>';
+
+			if ( $kintVar->type !== 'NULL' ) {
+				$output .= '<u>' . $kintVar->type;
+
+				if ( $kintVar->size !== null ) {
+					$output .= "(" . $kintVar->size . ")";
+				}
+
+				$output .= '</u>';
+			} else {
+				$output .= '<u>NULL</u>';
 			}
 		}
 
-		return false;
+
+		return $output . '</td>';
 	}
+
+
+	public static function escape( $value, $encoding = null )
+	{
+		if ( empty( $value ) ) return $value;
+
+		if ( Kint::enabled() === Kint::MODE_CLI ) {
+			$value = str_replace( "\x1b", "\\x1b", $value );
+		}
+
+		if ( Kint::enabled() === Kint::MODE_CLI || Kint::enabled() === Kint::MODE_WHITESPACE ) return $value;
+
+		$encoding or $encoding = self::_detectEncoding( $value );
+		$value = htmlspecialchars( $value, ENT_NOQUOTES, $encoding === 'ASCII' ? 'UTF-8' : $encoding );
+
+
+		if ( $encoding === 'UTF-8' ) {
+			// todo we could make the symbols hover-title show the code for the invisible symbol
+			# when possible force invisible characters to have some sort of display (experimental)
+			$value = preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x80-\x9F]/u', '?', $value );
+		}
+
+		# this call converts all non-ASCII characters into html chars of format
+		if ( function_exists( 'mb_encode_numericentity' ) ) {
+			$value = mb_encode_numericentity(
+				$value,
+				array( 0x80, 0xffff, 0, 0xffff, ),
+				$encoding
+			);
+		}
+
+		return $value;
+	}
+
 
 	private static $_dealingWithGlobals = false;
 
@@ -193,12 +278,12 @@ abstract class kintParser extends kintVariableData
 		if ( array_key_exists( 'GLOBALS', $variable ) && is_array( $variable['GLOBALS'] ) ) {
 			$globalsDetector = "\x01" . uniqid();
 
-			$variable['GLOBALS'][$globalsDetector] = true;
-			if ( isset( $variable[$globalsDetector] ) ) {
-				unset( $variable[$globalsDetector] );
+			$variable['GLOBALS'][ $globalsDetector ] = true;
+			if ( isset( $variable[ $globalsDetector ] ) ) {
+				unset( $variable[ $globalsDetector ] );
 				self::$_dealingWithGlobals = true;
 			} else {
-				unset( $variable['GLOBALS'][$globalsDetector] );
+				unset( $variable['GLOBALS'][ $globalsDetector ] );
 				$globalsDetector = false;
 			}
 		}
@@ -209,11 +294,11 @@ abstract class kintParser extends kintVariableData
 		if ( $variableData->size === 0 ) {
 			return;
 		}
-		if ( isset( $variable[self::$_marker] ) ) { # recursion; todo mayhaps show from where
+		if ( isset( $variable[ self::$_marker ] ) ) { # recursion; todo mayhaps show from where
 			if ( self::$_dealingWithGlobals ) {
 				$variableData->value = '*RECURSION*';
 			} else {
-				unset( $variable[self::$_marker] );
+				unset( $variable[ self::$_marker ] );
 				$variableData->value = self::$_marker;
 			}
 			return false;
@@ -225,54 +310,38 @@ abstract class kintParser extends kintVariableData
 
 		$isSequential = self::_isSequential( $variable );
 
-		$tabular = self::_isArrayTabular( $variable );
-		if ( $tabular ) {
+		if ( $variableData->size > 1 && ( $arrayKeys = self::_isArrayTabular( $variable ) ) !== false ) {
+			$variable[ self::$_marker ] = true; # this must be AFTER _isArrayTabular
+			$firstRow                   = true;
+			$extendedValue              = '<table class="kint-report"><thead>';
 
-			$firstRow      = true;
-			$extendedValue = '<table class="kint-report">';
-			$arrayKeys     = array();
+			foreach ( $variable as $rowIndex => & $row ) {
+				# display strings in their full length
+				self::$_placeFullStringInValue = true;
 
-
-			// assure no values are unreported if an extra key appears in one of the lines
-			foreach ( $variable as $row ) {
-				// todo process all keys in _isArrayTabular()
-				if ( !is_array( $row ) ) {
-					$tabular = false;
-					break;
-				}
-				$arrayKeys = array_unique( array_merge( $arrayKeys, array_keys( $row ) ) );
-
-				if ( Kint::$keyFilterCallback ) {
-					foreach ( $arrayKeys as $k => $key ) {
-						if ( call_user_func( Kint::$keyFilterCallback, $key ) === false ) {
-							unset( $arrayKeys[$k] );
-						}
-					}
-				}
-			}
-		}
-
-
-		if ( $tabular ) {
-			$variable[self::$_marker] = true;
-			foreach ( $variable as $rowIndex => &$row ) {
 				if ( $rowIndex === self::$_marker ) continue;
 
-				if ( isset( $row[self::$_marker] ) ) {
+				if ( isset( $row[ self::$_marker ] ) ) {
 					$variableData->value = "*RECURSION*";
 					return false;
 				}
 
 
 				$extendedValue .= '<tr>';
-				$output = '<td>' . ( $isSequential ? '#' . ( $rowIndex + 1 ) : $rowIndex ) . '</td>';
+				if ( $isSequential ) {
+					$output = '<td>' . '#' . ( $rowIndex + 1 )  . '</td>';
+				} else {
+					$output = self::_decorateCell( kintParser::factory( $rowIndex ) );
+				}
 				if ( $firstRow ) {
 					$extendedValue .= '<th>&nbsp;</th>';
 				}
 
+				# we iterate the known full set of keys from all rows in case some appeared at later rows,
+				# as we only check the first two to assume
 				foreach ( $arrayKeys as $key ) {
 					if ( $firstRow ) {
-						$extendedValue .= '<th>' . self::_escape( $key ) . '</th>';
+						$extendedValue .= '<th>' . self::escape( $key ) . '</th>';
 					}
 
 					if ( !array_key_exists( $key, $row ) ) {
@@ -280,44 +349,36 @@ abstract class kintParser extends kintVariableData
 						continue;
 					}
 
-					# display strings in their full length so as not to trigger rich decoration
-					$maxStrLength       = kint::$maxStrLength;
-					kint::$maxStrLength = false;
-					$var                = kintParser::factory( $row[$key] );
-					kint::$maxStrLength = $maxStrLength;
+					$var = kintParser::factory( $row[ $key ] );
 
 					if ( $var->value === self::$_marker ) {
 						$variableData->value = '*RECURSION*';
 						return false;
 					} elseif ( $var->value === '*RECURSION*' ) {
-						$output .= '<td class="kint-empty">' . Kint_Decorators_Concise::decorate( $var ) . '</td>';
+						$output .= '<td class="kint-empty"><u>*RECURSION*</u></td>';
 					} else {
-						$output .= '<td>' . Kint_Decorators_Concise::decorate( $var ) . '</td>';
+						$output .= self::_decorateCell( $var );
 					}
 					unset( $var );
 				}
 
 				if ( $firstRow ) {
-					$extendedValue .= '</tr><tr>';
+					$extendedValue .= '</tr></thead><tr>';
 					$firstRow = false;
 				}
 
 				$extendedValue .= $output . '</tr>';
 			}
+			self::$_placeFullStringInValue = false;
 
 			$variableData->extendedValue = $extendedValue . '</table>';
 
 		} else {
-			$variable[self::$_marker] = true;
-			$extendedValue            = array();
+			$variable[ self::$_marker ] = true;
+			$extendedValue              = array();
 
 			foreach ( $variable as $key => & $val ) {
-				if ( $key === self::$_marker
-					|| ( Kint::$keyFilterCallback && call_user_func( Kint::$keyFilterCallback, $key, $val ) === false )
-				) {
-					continue;
-				}
-
+				if ( $key === self::$_marker ) continue;
 
 				$output = kintParser::factory( $val );
 				if ( $output->value === self::$_marker ) {
@@ -327,7 +388,7 @@ abstract class kintParser extends kintVariableData
 				if ( !$isSequential ) {
 					$output->operator = '=>';
 				}
-				$output->name    = $isSequential ? null : "'" . self::_escape( $key ) . "'";
+				$output->name    = $isSequential ? null : "'" . $key . "'";
 				$extendedValue[] = $output;
 			}
 			$variableData->extendedValue = $extendedValue;
@@ -337,7 +398,7 @@ abstract class kintParser extends kintVariableData
 			self::$_dealingWithGlobals = false;
 		}
 
-		unset( $variable[self::$_marker] );
+		unset( $variable[ self::$_marker ] );
 	}
 
 
@@ -352,12 +413,11 @@ abstract class kintParser extends kintVariableData
 			$hash = $match[1];
 		}
 
-		$castedArray           = (array) $variable;
-		$variableData->type    = 'object';
-		$variableData->subtype = get_class( $variable );
-		$variableData->size    = count( $castedArray );
+		$castedArray        = (array) $variable;
+		$variableData->type = get_class( $variable );
+		$variableData->size = count( $castedArray );
 
-		if ( isset( self::$_objects[$hash] ) ) {
+		if ( isset( self::$_objects[ $hash ] ) ) {
 			$variableData->value = '*RECURSION*';
 			return false;
 		}
@@ -371,23 +431,20 @@ abstract class kintParser extends kintVariableData
 		# What bothers me most, var_dump sees no problem with it, and ArrayObject also uses a custom,
 		# undocumented serialize function, so you can see the properties in internal functions, but
 		# can never iterate some of them if the flags are not STD_PROP_LIST. Fun stuff.
-		if ( $variableData->subtype === 'ArrayObject' || is_subclass_of( $variable, 'ArrayObject' ) ) {
+		if ( $variableData->type === 'ArrayObject' || is_subclass_of( $variable, 'ArrayObject' ) ) {
 			$arrayObjectFlags = $variable->getFlags();
 			$variable->setFlags( ArrayObject::STD_PROP_LIST );
 		}
 
-		self::$_objects[$hash] = true; // todo store reflectorObject here for alternatives cache
-		$reflector             = new \ReflectionObject( $variable );
+		self::$_objects[ $hash ] = true; // todo store reflectorObject here for alternatives cache
+		$reflector               = new ReflectionObject( $variable );
 
-		if ( Kint::$mode !== 'cli' && Kint::$mode !== 'whitespace' && Kint::$fileLinkFormat && $reflector->isUserDefined() ) {
-			list( $url ) = Kint::shortenPath(
-				$reflector->getFileName(),
-				$reflector->getStartLine(),
-				false
-			);
+		# add link to definition of userland objects
+		if ( Kint::enabled() === Kint::MODE_RICH && Kint::$fileLinkFormat && $reflector->isUserDefined() ) {
+			$url = Kint::getIdeLink( $reflector->getFileName(), $reflector->getStartLine() );
 
-			$_                     = ( strpos( $url, 'http://' ) === 0 ) ? 'class="kint-ide-link" ' : '';
-			$variableData->subtype = "<a {$_}href=\"{$url}\">{$variableData->subtype}</a>";
+			$class              = ( strpos( $url, 'http://' ) === 0 ) ? 'class="kint-ide-link" ' : '';
+			$variableData->type = "<a {$class}href=\"{$url}\">{$variableData->type}</a>";
 		}
 		$variableData->size = 0;
 
@@ -396,12 +453,6 @@ abstract class kintParser extends kintVariableData
 
 		# copy the object as an array as it provides more info than Reflection (depends)
 		foreach ( $castedArray as $key => $value ) {
-			if ( Kint::$keyFilterCallback
-				&& call_user_func_array( Kint::$keyFilterCallback, array( $key, $value ) ) === false
-			) {
-				continue;
-			}
-
 			/* casting object to array:
 			 * integer properties are inaccessible;
 			 * private variables have the class name prepended to the variable name;
@@ -419,9 +470,9 @@ abstract class kintParser extends kintVariableData
 				$access = "public";
 			}
 
-			$encountered[$key] = true;
+			$encountered[ $key ] = true;
 
-			$output           = kintParser::factory( $value, self::_escape( $key ) );
+			$output           = kintParser::factory( $value, self::escape( $key ) );
 			$output->access   = $access;
 			$output->operator = '->';
 			$extendedValue[]  = $output;
@@ -430,7 +481,7 @@ abstract class kintParser extends kintVariableData
 
 		foreach ( $reflector->getProperties() as $property ) {
 			$name = $property->name;
-			if ( $property->isStatic() || isset( $encountered[$name] ) ) continue;
+			if ( $property->isStatic() || isset( $encountered[ $name ] ) ) continue;
 
 			if ( $property->isProtected() ) {
 				$property->setAccessible( true );
@@ -444,13 +495,7 @@ abstract class kintParser extends kintVariableData
 
 			$value = $property->getValue( $variable );
 
-			if ( Kint::$keyFilterCallback
-				&& call_user_func_array( Kint::$keyFilterCallback, array( $name, $value ) ) === false
-			) {
-				continue;
-			}
-
-			$output           = kintParser::factory( $value, self::_escape( $name ) );
+			$output           = kintParser::factory( $value, self::escape( $name ) );
 			$output->access   = $access;
 			$output->operator = '->';
 			$extendedValue[]  = $output;
@@ -492,10 +537,10 @@ abstract class kintParser extends kintVariableData
 
 	private static function _parse_resource( &$variable, kintVariableData $variableData )
 	{
-		$variableData->type    = 'resource';
-		$variableData->subtype = get_resource_type( $variable );
+		$resourceType       = get_resource_type( $variable );
+		$variableData->type = "resource ({$resourceType})";
 
-		if ( $variableData->subtype === 'stream' && $meta = stream_get_meta_data( $variable ) ) {
+		if ( $resourceType === 'stream' && $meta = stream_get_meta_data( $variable ) ) {
 
 			if ( isset( $meta['uri'] ) ) {
 				$file = $meta['uri'];
@@ -516,183 +561,48 @@ abstract class kintParser extends kintVariableData
 	{
 		$variableData->type = 'string';
 
-		if ( Kint::$mode === 'cli' || Kint::$mode === 'whitespace' ) {
-			$variableData->value = '"' . $variable . '"';
+		$encoding = self::_detectEncoding( $variable );
+		if ( $encoding !== 'ASCII' ) {
+			$variableData->type .= ' ' . $encoding;
+		}
+
+
+		$variableData->size = self::_strlen( $variable, $encoding );
+		if ( Kint::enabled() !== Kint::MODE_RICH ) {
+			$variableData->value = '"' . self::escape( $variable, $encoding ) . '"';
 			return;
 		}
 
 
-		$encoding = self::_detectEncoding( $variable );
-		if ( $encoding !== 'ASCII' ) {
-			$variableData->subtype = $encoding;
+		if ( !self::$_placeFullStringInValue ) {
+
+			$strippedString = preg_replace( '[\s+]', ' ', $variable );
+			if ( Kint::$maxStrLength && $variableData->size > Kint::$maxStrLength ) {
+
+				// encode and truncate
+				$variableData->value         = '"'
+					. self::escape( self::_substr( $strippedString, 0, Kint::$maxStrLength, $encoding ), $encoding )
+					. '&hellip;"';
+				$variableData->extendedValue = self::escape( $variable, $encoding );
+
+				return;
+			} elseif ( $variable !== $strippedString ) { // omit no data from display
+
+				$variableData->value         = '"' . self::escape( $variable, $encoding ) . '"';
+				$variableData->extendedValue = self::escape( $variable, $encoding );
+
+				return;
+			}
 		}
 
-		$variableData->size = self::_strlen( $variable, $encoding );
-		$strippedString     = Kint::$mode === 'rich' ? self::_stripWhitespace( $variable ) : $variable;
-		if ( Kint::$mode === 'rich' && Kint::$maxStrLength && $variableData->size > Kint::$maxStrLength ) {
-
-			// encode and truncate
-			$variableData->value         = '"'
-				. self::_escape( self::_substr( $strippedString, Kint::$maxStrLength, $encoding ), $encoding )
-				. '&nbsp;&hellip;"';
-			$variableData->extendedValue = self::_escape( $variable, $encoding );
-
-		} elseif ( $variable !== $strippedString ) { // omit no data from display
-
-			$variableData->value         = '"' . self::_escape( $variable, $encoding ) . '"';
-			$variableData->extendedValue = self::_escape( $variable, $encoding );
-		} else {
-			$variableData->value = '"' . self::_escape( $variable, $encoding ) . '"';
-		}
+		$variableData->value = '"' . self::escape( $variable, $encoding ) . '"';
 	}
 
 	private static function _parse_unknown( &$variable, kintVariableData $variableData )
 	{
-		$variableData->type    = "UNKNOWN";
-		$variableData->subtype = gettype( $variable );
-		$variableData->value   = var_export( $variable, true );
+		$type                = gettype( $variable );
+		$variableData->type  = "UNKNOWN" . ( !empty( $type ) ? " ({$type})" : '' );
+		$variableData->value = var_export( $variable, true );
 	}
 
-}
-
-# todo separate classes into separate files
-
-class kintVariableData
-{
-	/** @var string */
-	public $type;
-	/** @var string */
-	public $access;
-	/** @var string */
-	public $name;
-	/** @var string */
-	public $operator;
-	/** @var string */
-	public $subtype;
-	/** @var int */
-	public $size;
-	/**
-	 * @var kintVariableData[] array of kintVariableData objects or strings; displayed collapsed, each element from
-	 * the array is a separate possible representation of the dumped var
-	 */
-	public $extendedValue;
-	/** @var string inline value */
-	public $value;
-
-	/** @var kintVariableData[] array of alternative representations for same variable, don't use in custom parsers */
-	public $_alternatives;
-
-	/* *******************************************
-	 * HELPERS
-	 */
-
-	protected static function _escape( $value, $encoding = null )
-	{
-		if ( Kint::$mode === 'cli' || Kint::$mode === 'whitespace' || empty( $value ) ) return $value;
-
-		$value = htmlspecialchars( $value, ENT_QUOTES );
-		if ( function_exists( 'mb_encode_numericentity' ) ) {
-			$encoding or $encoding = self::_detectEncoding( $value );
-			$value = mb_encode_numericentity(
-				$value,
-				array( 0x80, 0xffff, 0, 0xffff, ),
-				$encoding
-			);
-		}
-
-		# when possible force invisible characters to have some sort of display (experimental)
-		// todo we could make the symbols hover-title show the code for the invisible symbol
-		return preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x80-\x9F]/u', '�', $value );
-	}
-
-	protected static function _detectEncoding( $value )
-	{
-		$ret = null;
-		if ( function_exists( 'mb_detect_encoding' ) ) {
-			$mbDetected = mb_detect_encoding( $value );
-			if ( $mbDetected === 'ASCII' ) {
-				return 'ASCII';
-			}
-		}
-
-		if ( empty( Kint::$charEncodings ) || !function_exists( 'iconv' ) ) {
-			return !empty( $mbDetected ) ? $mbDetected : 'UTF-8';
-		}
-
-		$md5 = md5( $value );
-		foreach ( array_merge( array( 'UTF-8' ), Kint::$charEncodings ) as $encoding ) {
-			if ( empty( $encoding ) ) continue;
-
-			# fuck knows why, //IGNORE and //TRANSLIT still throw notice
-			if ( md5( @iconv( $encoding, $encoding, $value ) ) === $md5 ) {
-				return $encoding;
-			}
-		}
-
-		return 'ASCII';
-	}
-
-	/**
-	 * zaps all excess whitespace from string, compacts it but hurts readability
-	 *
-	 * @param string $string
-	 *
-	 * @return string
-	 */
-	protected static function _stripWhitespace( $string )
-	{
-		return preg_replace( '[\s+]', ' ', $string );
-	}
-
-
-	/**
-	 * returns whether the array:
-	 *  1) is numeric and
-	 *  2) in sequence starting from zero
-	 *
-	 * @param array $array
-	 *
-	 * @return bool
-	 */
-	protected static function _isSequential( array $array )
-	{
-		return Kint::$hideSequentialKeys
-			? array_keys( $array ) === range( 0, count( $array ) - 1 )
-			: false;
-	}
-
-	protected static function _strlen( $string, $encoding = null )
-	{
-		if ( function_exists( 'mb_strlen' ) ) {
-			$encoding or $encoding = self::_detectEncoding( $string );
-			return mb_strlen( $string, $encoding );
-		} else {
-			return strlen( $string );
-		}
-	}
-
-	protected static function _substr( $string, $end, $encoding = null )
-	{
-		if ( function_exists( 'mb_substr' ) ) {
-			$encoding or $encoding = self::_detectEncoding( $string );
-			return mb_substr( $string, 0, $end, $encoding );
-		} else {
-			return substr( $string, 0, $end );
-		}
-	}
-}
-
-abstract class KintObject
-{
-	/** @var string type of variable, can be set in inherited object or in static::parse() method */
-	public $name = 'NOT SET';
-
-	/**
-	 * returns false or associative array - each key represents a tab in default view, values may be anything
-	 *
-	 * @param $variable
-	 *
-	 * @return mixed
-	 */
-	abstract public function parse( & $variable );
 }

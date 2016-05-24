@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\webprofiler\Entity\EntityStorageDecorator.
+ * Contains \Drupal\webprofiler\Entity\Decorators\Config\ConfigEntityStorageDecorator.
  */
 
-namespace Drupal\webprofiler\Entity;
+namespace Drupal\webprofiler\Entity\Decorators\Config;
 
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -14,12 +14,13 @@ use Drupal\Core\Config\Entity\ImportableEntityStorageInterface;
 use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\webprofiler\Entity\EntityDecorator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class EntityStorageDecorator
+ * Class ConfigEntityStorageDecorator
  */
-class EntityStorageDecorator extends EntityDecorator implements ConfigEntityStorageInterface, ImportableEntityStorageInterface, EntityHandlerInterface {
+class ConfigEntityStorageDecorator extends EntityDecorator implements ConfigEntityStorageInterface, ImportableEntityStorageInterface, EntityHandlerInterface {
 
   /**
    * @param ConfigEntityStorageInterface $controller

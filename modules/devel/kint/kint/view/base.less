@@ -2,8 +2,6 @@
 // VARIABLES FOR THEMES TO OVERRIDE
 // --------------------------------------------------
 
-@default-font: Consolas, "Courier New", monospace;
-
 @spacing : 4;
 
 // caret taken from solarized
@@ -30,23 +28,28 @@
 
 .kint::-webkit-selection { .selection() }
 
-.kint {
-  font-family : @default-font;
-  color       : @text-color;
-  padding     : 0;
-  margin      : @spacing * 2px 0;
-  font-size   : 10pt;
-  line-height : 15px;
-  white-space : nowrap;
-  overflow-x  : auto;
-  text-align  : left;
+.kint,
+.kint::before,
+.kint::after,
+.kint *,
+.kint *::before,
+.kint *::after {
+  box-sizing    : border-box;
+  border-radius : 0;
+  color         : @text-color;
+  float         : none !important;
+  font-family   : Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+  line-height   : 15px;
+  margin        : 0;
+  padding       : 0;
+  text-align    : left;
+}
 
-  * {
-    float       : none !important;
-    line-height : 15px;
-    padding     : 0;
-    margin      : 0;
-  }
+.kint {
+  font-size   : 13px;
+  margin      : @spacing * 2px 0;
+  overflow-x  : auto;
+  white-space : nowrap;
 
   dt {
     background  : @main-background;
@@ -55,6 +58,7 @@
     display     : block;
     font-weight : bold;
     list-style  : none outside none;
+    overflow    : auto;
     padding     : @spacing * 1px;
 
     &:hover {
@@ -75,14 +79,13 @@
   // --------------------------------------------------
 
   nav {
+    background     : @caret-image no-repeat scroll 0 0 transparent;
+    cursor         : pointer;
     display        : inline-block;
     height         : 15px;
     width          : 15px;
     margin-right   : 3px;
     vertical-align : middle;
-    content        : ' ';
-    cursor         : pointer;
-    background     : @caret-image no-repeat scroll 0 0 transparent;
   }
 
   dt.kint-parent:hover nav {
@@ -150,12 +153,12 @@
   }
 
   dt.kint-parent > .kint-popup-trigger {
-    font-size : 15pt;
+    font-size : 13px;
   }
 
   footer {
     padding   : 0 3px 3px;
-    font-size : .7em;
+    font-size : 9px;
 
     > .kint-popup-trigger {
       font-size : 12px;
@@ -227,14 +230,14 @@
       border-top   : 0;
 
       li {
-        background  : @secondary-background;
-        border      : @border;
-        cursor      : pointer;
-        display     : inline-block;
-        height      : 16px + ceil(8px * (@spacing / 5));
-        line-height : 16px + ceil(8px * (@spacing / 5));
-        margin      : 0 @spacing * 1px @spacing * 1px;
-        padding     : 0 2px + @spacing * 2px floor(3px * (@spacing / 5));
+        background     : @secondary-background;
+        border         : @border;
+        cursor         : pointer;
+        display        : inline-block;
+        height         : @spacing * 6px;
+        margin         : round(@spacing / 2) * 1px;
+        padding        : 0 2px + round(@spacing * 2.5px);
+        vertical-align : top;
 
         &:hover,
         &.kint-active-tab:hover {
@@ -243,11 +246,15 @@
         }
 
         &.kint-active-tab {
-          background     : @main-background;
-          border-top     : 0;
-          margin-top     : -1px;
-          padding-bottom : floor(3px * (@spacing / 5));
-          padding-top    : 1px + ceil(3px * (@spacing / 5));
+          background  : @main-background;
+          border-top  : 0;
+          margin-top  : -1px;
+          height      : 27px;
+          line-height : 24px;
+        }
+
+        &:not(.kint-active-tab) {
+          line-height : @spacing * 5px;
         }
       }
 
@@ -277,55 +284,30 @@
   border-spacing  : 0;
 
   * {
-    text-align  : left;
-    padding     : 0 !important;
-    margin      : 0 !important;
-    font-size   : 9pt;
-    overflow    : hidden;
-    font-family : @default-font;
-    color       : @text-color;
+    font-size : 12px;
   }
 
   dt {
-    border     : 0;
     background : none;
+    padding    : (@spacing/2) * 1px;
 
     .kint-parent {
-      max-width     : 180px;
       min-width     : 100%;
       overflow      : hidden;
       text-overflow : ellipsis;
       white-space   : nowrap;
-      &.kint-show {
-        border-bottom : @border;
-      }
     }
   }
 
   td,
   th {
     border         : @border;
-    vertical-align : top;
+    padding        : (@spacing/2) * 1px;
+    vertical-align : center;
   }
 
-  td {
-    background  : @main-background;
-    white-space : pre;
-
-    > dl {
-      border : 0;
-    }
-  }
-
-  pre {
-    border-top    : 0;
-    border-bottom : 0;
-    border-right  : 0;
-  }
-
-  th:first-child {
-    background : none;
-    border     : 0;
+  th {
+    cursor : alias;
   }
 
   td:first-child,
@@ -335,18 +317,41 @@
     color       : @variable-name-color;
   }
 
+  td {
+    background  : @main-background;
+    white-space : pre;
+
+    > dl {
+      padding : 0;
+    }
+  }
+
+  pre {
+    border-top   : 0;
+    border-right : 0;
+  }
+
+  th:first-child {
+    background : none;
+    border     : 0;
+  }
+
   td.kint-empty {
     background : #d33682 !important;
   }
 
   tr:hover {
     > td {
-      box-shadow : 0px 0px 1px 0px @border-color-hover inset;
+      box-shadow : 0 0 1px 0 @border-color-hover inset;
     }
 
     var {
       color : @variable-type-color-hover;
     }
+  }
+  ul.kint-tabs li.kint-active-tab {
+    height      : 20px;
+    line-height : 17px;
   }
 }
 
@@ -355,16 +360,16 @@
 // --------------------------------------------------
 .kint-trace {
   .kint-source {
-    line-height : 1em + 0.02 * @spacing
-  }
+    line-height : round(@spacing * 3.5) * 1px;
 
-  .kint-source span {
-    padding-right : 1px;
-    border-right  : 3px inset @variable-type-color;
-  }
+    span {
+      padding-right : 1px;
+      border-right  : 3px inset @variable-type-color;
+    }
 
-  .kint-source .kint-highlight {
-    background : @secondary-background;
+    .kint-highlight {
+      background : @secondary-background;
+    }
   }
 
   .kint-parent {
@@ -404,5 +409,5 @@
 
 // mini trace
 .kint footer li {
-  color: #ddd;
+  color : #ddd;
 }
