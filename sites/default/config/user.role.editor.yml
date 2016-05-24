@@ -46,3 +46,4 @@ permissions:
   39: 'use draft_draft transition'
   40: 'use needs_review_published transition'
   41: 'use draft_published transition'
+  42: 'edit any site_wide_notice content'
