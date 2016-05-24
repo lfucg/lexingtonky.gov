@@ -20,4 +20,26 @@ function contact_storage_install() {
   $original->setStorageClass('Drupal\Core\Entity\ContentEntityNullStorage');
 
   $entity_manager->onEntityTypeUpdate($entity_type, $original);
+  _contact_storage_ensure_fields();
+}
+
+/**
+ * Make sure the fields are added.
+ */
+function contact_storage_update_8001() {
+  _contact_storage_ensure_fields();
+}
+
+/**
+ * Ensure fields are added.
+ */
+function _contact_storage_ensure_fields() {
+  /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+  $field_manager = \Drupal::service('entity_field.manager');
+
+  $entity_definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+  foreach (['id', 'created'] as $field_name) {
+    $field_definition = $field_manager->getFieldStorageDefinitions('contact_message')[$field_name];
+    $entity_definition_update_manager->installFieldStorageDefinition($field_name, 'contact_message', 'contact_storage', $field_definition);
+  }
 }

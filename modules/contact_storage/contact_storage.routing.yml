@@ -1,5 +1,13 @@
-entity.contact_message.edit_form:
+entity.contact_message.canonical:
   path: '/admin/structure/contact/messages/{contact_message}'
+  defaults:
+    _entity_view: 'contact_message'
+    _title: 'View message'
+  requirements:
+    _permission: 'administer contact forms'
+
+entity.contact_message.edit_form:
+  path: '/admin/structure/contact/messages/{contact_message}/edit'
   defaults:
     _entity_form: 'contact_message.edit'
     _title: 'Edit message'

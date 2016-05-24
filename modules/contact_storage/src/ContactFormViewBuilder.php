@@ -8,7 +8,6 @@
 namespace Drupal\contact_storage;
 
 use Drupal\Core\Config\Config;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityInterface;
