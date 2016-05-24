@@ -63,7 +63,8 @@ Scenario: Editors mark when they have handled feedback
     And I press "Apply"
     Then I should see randomized text "foo@bar.com"
 
-    And I click "Edit"
+    And I click on ".dropbutton-toggle" element
+    And I click on ".edit" element
     And I fill in "Handled by" with my name
     And I press "Save"
     And I select "Yes" from "Email provided?"
