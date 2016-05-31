@@ -1,4 +1,4 @@
-.lex-aside-list {
+.lex-aside-list, .ui-menu {
   /* based on usa-unstyled-list */
   margin-top: 1em;
   list-style-type: none;
@@ -16,5 +16,9 @@
     &:after {
       display: none;
     }
+  }
+  /* lex-district-finder */
+  .ui-menu-item.ui-state-focus {
+    background: $lex-light-blue;
   }
 }

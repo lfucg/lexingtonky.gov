@@ -186,6 +186,7 @@
       this.highlightSection('root', '/browse/' + state.section);
       this.removeLoading();
       this.updateBreadcrumbs(state);
+      this.lexOnSubsectionUpdated();
 
       var animationDone;
       if(this.displayState !== 'subsection'){
@@ -376,11 +377,18 @@
       $.getScript("//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit");
     },
     trackPageview: function(state){
-      // handled via GTM
+      // lexington: handled via GTM
     }
   };
 
   GOVUK.BrowseColumns = BrowseColumns;
 
-  $(function(){ GOVUK.browseColumns = new BrowseColumns({$el: $('.browse-panes')}); })
+  $(function(){
+    GOVUK.browseColumns = new BrowseColumns({$el: $('.browse-panes')});
+    GOVUK.browseColumns.lexOnSubsectionUpdated = function () {
+      $.LexingtonGeocoder({
+        $addressInput: jQuery('.js-lex-district-address'),
+      });
+    };
+  })
 }());

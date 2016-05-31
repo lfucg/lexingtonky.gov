@@ -6,15 +6,21 @@ dependencies:
     - field.field.node.site_wide_notice.body
     - node.type.site_wide_notice
   module:
+    - text
     - user
 id: node.site_wide_notice.default
 targetEntityType: node
 bundle: site_wide_notice
 mode: default
 content:
-  links:
-    weight: 0
+  body:
+    weight: 101
+    label: hidden
     settings: {  }
     third_party_settings: {  }
-hidden:
-  body: true
+    type: text_default
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

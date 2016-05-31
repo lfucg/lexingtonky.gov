@@ -17,10 +17,21 @@
     height: 8rem;
     max-width: none;
   }
+}
+
+.lex-district-finder {
+ .lex-autocomplete-input.loading {
+    background: transparent url(../img/loading.gif) 99% 50% no-repeat;
+  }
   label {
-    font-weight: bold;
+    margin-top: 0em;
   }
 }
+
+label {
+  font-weight: bold;
+}
+
 .lex-pagefeedback-form, .lex-feedback-form {
   #edit-preview {
     display: none;
