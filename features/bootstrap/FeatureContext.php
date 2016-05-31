@@ -108,7 +108,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
       $this->minkContext->fillField($label, $this->drupalContext->user->name);
     }
 
-
     public function findBySelector($selector)
     {
         $element = $this->minkContext->getSession()->getPage()->find("css", $selector);
@@ -156,5 +155,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
     public function theResponseShouldNotContainRandomizedText($text)
     {
         $this->minkContext->assertResponseNotContains($this->randomizedText($text));
+    }
+
+   /**
+     * @When I wait for :miliseconds miliseconds
+     */
+    public function iWaitForMilliseconds($miliseconds)
+    {
+        $element = $this->minkContext->getSession()->wait($miliseconds);
     }
 }
