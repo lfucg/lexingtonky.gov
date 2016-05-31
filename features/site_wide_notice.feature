@@ -1,7 +1,6 @@
 @api
 Feature: Allow editors to manage a site-wide alert
 
-@in-progress
 Scenario: Create a site-wide alert
     Given I am logged in as a user with the "administrator" role
     And I am on "/node/add/site_wide_notice"

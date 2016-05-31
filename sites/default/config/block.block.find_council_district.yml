@@ -12,14 +12,14 @@ dependencies:
 id: find_council_district
 theme: lex
 region: content
-weight: -19
+weight: -18
 provider: null
 plugin: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
 settings:
   id: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
   label: 'Find your council district'
   provider: block_content
-  label_display: visible
+  label_display: '0'
   status: true
   info: ''
   view_mode: full
