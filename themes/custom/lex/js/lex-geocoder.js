@@ -6,7 +6,9 @@
     var district = featureCollection.features[0];
     if (district) {
       $('.js-lex-district-number').html(district.properties['DISTRICT']);
-      $('.js-lex-district-url').prop('href', district.properties['URL']);
+      // $('.js-lex-district-url').prop('href', district.properties['URL']);
+      // hard code to /council-district-x until GIS changes links to new site
+      $('.js-lex-district-url').prop('href', '/council-district-' + district.properties['DISTRICT']);
       $('.js-lex-district-member').html(district.properties['REP']);
       $('.js-lex-district-container').show();
     }
