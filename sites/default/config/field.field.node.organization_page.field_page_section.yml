@@ -1,0 +1,32 @@
+uuid: f1628c17-1f24-4a37-9f97-edf58d0dd042
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_page_section
+    - node.type.organization_page
+  module:
+    - entity_reference_revisions
+id: node.organization_page.field_page_section
+field_name: field_page_section
+entity_type: node
+bundle: organization_page
+label: 'Page section'
+description: 'Add a page section to address one concise topic.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      paragraphs_page_section: paragraphs_page_section
+    target_bundles_drag_drop:
+      paragraphs_media_contact:
+        weight: 3
+        enabled: false
+      paragraphs_page_section:
+        enabled: true
+        weight: 4
+field_type: entity_reference_revisions

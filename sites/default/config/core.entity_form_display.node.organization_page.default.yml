@@ -9,12 +9,16 @@ dependencies:
     - field.field.node.organization_page.field_office_to_contact
     - field.field.node.organization_page.field_organization_image
     - field.field.node.organization_page.field_organization_taxonomy_term
+    - field.field.node.organization_page.field_page_section
+    - field.field.node.organization_page.field_related_documents
     - field.field.node.organization_page.field_top_services
     - image.style.thumbnail
     - node.type.organization_page
   module:
+    - file
     - image
     - link
+    - paragraphs
     - path
     - text
     - workbench_moderation
@@ -53,6 +57,22 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: options_select
+  field_page_section:
+    weight: 26
+    settings:
+      title: section
+      title_plural: sections
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+    third_party_settings: {  }
+    type: entity_reference_paragraphs
+  field_related_documents:
+    weight: 27
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
   field_top_services:
     weight: 4
     settings:
