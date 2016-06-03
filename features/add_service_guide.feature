@@ -7,12 +7,12 @@ Scenario: Use chosen widget to select navigation topic
   And I am on "/node/add/page"
   And I fill in "Title" with randomized text "New page title"
   And I click on '.chosen-single' element
-  And I fill in ".chosen-search input" element with "urban county council"
+  And I fill in ".chosen-search input" element with "councilmember"
   And I press "List additional actions"
   And I press "Save and Publish"
   Then the url should match "new-page-title"
   ## Make sure the chosen widget worked
-  And I should see the link "Urban County Council"
+  And I should see the link "Councilmembers"
 
 Scenario: Follow publishing workflow
   Given I am logged in as a user with the "authenticated user" role
@@ -20,7 +20,7 @@ Scenario: Follow publishing workflow
   Then the response should not contain "Save and Publish"
 
   Given I fill in "Title" with "Test title"
-  And I select "-Urban County Council" from "Navigation topic"
+  And I select "-Councilmembers" from "Navigation topic"
   And I press "Save and Request Review"
   When I click "Edit draft"
   Then I should see "Not published"
@@ -46,13 +46,13 @@ Scenario: Editing a page doesn't remove it from browse navigation
   And I press "Save and Create New Draft"
   And I am on "/browse/government/council"
   Then I should see the link "Council District 12"
-  And the response should contain "<title>Urban County Council | City of Lexington</title>"
+  And the response should contain "<title>Councilmembers | City of Lexington</title>"
 
 Scenario: Unpublished nodes do not show up in browse nav
   Given I am logged in as a user with the "authenticated user" role
   When I am on "/node/add/page"
   And I fill in "Title" with randomized text "Test title"
-  And I select "-Urban County Council" from "Navigation topic"
+  And I select "-Councilmembers" from "Navigation topic"
   And I press "Save and Request Review"
   And I am on "/browse/government/council"
   Then I should not see randomized text "Test title"
