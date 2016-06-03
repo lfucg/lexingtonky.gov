@@ -13,5 +13,5 @@ type: event
 description: 'For an event happening in Lexington'
 help: ''
 new_revision: true
-preview_mode: 1
+preview_mode: 0
 display_submitted: false
