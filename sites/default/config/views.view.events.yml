@@ -1279,6 +1279,7 @@ display:
         empty: false
         title: false
         arguments: false
+        sorts: false
       filter_groups:
         operator: AND
         groups:
@@ -1688,6 +1689,20 @@ display:
           entity_type: node
           entity_field: nid
           plugin_id: node_nid
+      sorts:
+        field_date_value:
+          id: field_date_value
+          table: node__field_date
+          field: field_date_value
+          relationship: reverse__node__field_related_departments
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          granularity: second
+          plugin_id: datetime
     cache_metadata:
       max-age: -1
       contexts:

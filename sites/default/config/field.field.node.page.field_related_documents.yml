@@ -12,7 +12,7 @@ field_name: field_related_documents
 entity_type: node
 bundle: page
 label: 'Related documents'
-description: 'Remember to use pdfs as a last resort. It''s best to add information directly to the webpage.'
+description: "<p>Remember to use pdfs as a last resort. It's best to add information directly as a webpage.</p>\r\n\r\n<p>To link to a document:\r\n\r\n<ol>\r\n<li>Right click on the document link</li>\r\n<li>Select 'Copy link address'</li>\r\n<li>Select the text in a page section that will become a link</li>\r\n<li>Click the chain-link icon and paste the document address</li>\r\n</ol>\r\n</p>"
 required: false
 translatable: false
 default_value: {  }

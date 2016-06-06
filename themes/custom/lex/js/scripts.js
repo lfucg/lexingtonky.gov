@@ -1,6 +1,8 @@
 (function() {
   var $ = jQuery;
 
+  $('.lex-hide-unless-javascript').removeClass('lex-hide-unless-javascript');
+
   // smooth scroll in-page: https://css-tricks.com/snippets/jquery/smooth-scrolling/
   $('a[href*="#"]:not([href="#"])').click(function() {
     var openAccordion = function(container) {
@@ -47,4 +49,5 @@
       }
     });
   });
+
 }());

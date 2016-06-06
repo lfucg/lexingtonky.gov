@@ -267,8 +267,12 @@ input:focus, input[type=search]:focus {
 }
 
 /* used for progressive js enhancement */
-.lex-hide-initially {
+.lex-hide-unless-javascript {
   display: none !important;
+}
+
+.lex-hide-initially {
+  display: none;
 }
 
 .lex-region-sidebar_second {

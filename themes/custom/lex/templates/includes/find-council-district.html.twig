@@ -1,0 +1,26 @@
+{% set district_finder %}
+  <div class="lex-district-finder lex-block">
+    <p class="autocomplete-wrapper">
+      <label for="autocomplete-address">Type an address to find your council district</label>
+      <input class="js-lex-district-address lex-autocomplete-input" id="autocomplete-address" placeholder="200 E Main St." type="text">
+    </p>
+
+    <div class="js-lex-district-container lex-hide-initially">
+      <ul class="lex-aside-list">
+        <li>
+          <a class="js-lex-district-url">Council District <span class="js-lex-district-number"></span></a>
+          <br>Councilmember: <span class="js-lex-district-member"></span></a>
+        </li>
+      </ul>
+  {#
+      <p>
+        <a class="lex-calltoaction" href="https://maps.lexingtonky.gov/mapit">More about this address</a>
+      </p>
+  #}
+    </div>
+  </div>
+{% endset %}
+
+<!--[if gte IE 10] -->
+  {{ district_finder }}
+<!-- <![endif]-->

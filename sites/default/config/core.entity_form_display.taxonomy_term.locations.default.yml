@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.field.taxonomy_term.locations.field_contact_email
     - field.field.taxonomy_term.locations.field_contact_fax
+    - field.field.taxonomy_term.locations.field_contact_person
+    - field.field.taxonomy_term.locations.field_contact_person_title
     - field.field.taxonomy_term.locations.field_contact_phone
     - field.field.taxonomy_term.locations.field_hours_of_operation
     - field.field.taxonomy_term.locations.field_street
@@ -21,55 +23,69 @@ mode: default
 content:
   description:
     type: text_textarea
-    weight: 0
+    weight: 1
     settings:
       placeholder: ''
       rows: 5
     third_party_settings: {  }
   field_contact_email:
-    weight: 35
+    weight: 8
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
   field_contact_fax:
-    weight: 38
+    weight: 11
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_contact_person:
+    weight: 6
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_contact_person_title:
+    weight: 7
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
   field_contact_phone:
-    weight: 36
+    weight: 9
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
   field_hours_of_operation:
-    weight: 37
+    weight: 10
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
     type: string_textarea
   field_street:
-    weight: 32
+    weight: 4
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
   field_street_number:
-    weight: 31
+    weight: 3
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
   field_zip_code:
-    weight: 33
+    weight: 5
     settings:
       size: 60
       placeholder: ''
@@ -77,14 +93,14 @@ content:
     type: string_textfield
   name:
     type: string_textfield
-    weight: -5
+    weight: 0
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 2
     settings: {  }
     third_party_settings: {  }
 hidden: {  }
