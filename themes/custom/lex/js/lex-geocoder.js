@@ -25,7 +25,7 @@
 
     var handleFindAddressResponse = function(error, featureCollection, response) {
       var query = L.esri.query({
-        url: "//maps.lexingtonky.gov/lfucggis/rest/services/political/MapServer/1",
+        url: "//lexington-geocode-proxy.herokuapp.com/maps.lexingtonky.gov/lfucggis/rest/services/political/MapServer/1",
       }).intersects(featureCollection.features[0]);
       query.fields(['DISTRICT', 'REP', 'URL']);
       query.run(function(error, featureCollection, response) {
@@ -43,7 +43,7 @@
       select: function( event, ui ) {
         $addressInput.addClass('loading');
         var finder = L.esri.find({
-          url: '//maps.lexingtonky.gov/lfucggis/rest/services/addresses/MapServer/',
+          url: '//lexington-geocode-proxy.herokuapp.com/maps.lexingtonky.gov/lfucggis/rest/services/addresses/MapServer/',
         }).text(ui.item.value)
           .layers([0])
           .run(handleFindAddressResponse);
