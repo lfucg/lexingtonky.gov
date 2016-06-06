@@ -41,4 +41,4 @@ Scenario: Add department page to topic navigation
   And I press "Save and keep published"
 
   When I am on "/browse/community-services/senior-programs"
-  Then I should see the link "Computer services"
+  Then I should see the link "Computer Services"
