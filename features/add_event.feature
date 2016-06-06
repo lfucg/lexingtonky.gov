@@ -16,7 +16,7 @@ Scenario: Contributors can not publish events
   Given I am logged in as a user with the "authenticated user" role
   # a random event
   When I am on "/node/273/edit"
-  Then the response should not contain "Save and keep published"
+  Then the response should not contain "Save and Publish"
 
 Scenario Outline: Event dates and times are formatted correctly
   Given I am logged in as a user with the "editor" role
@@ -30,7 +30,7 @@ Scenario Outline: Event dates and times are formatted correctly
   And I fill in "edit-field-date-0-value-time" with "<begin time>"
   And I fill in "edit-field-date-end-0-value-date" with "<end date>"
   And I fill in "edit-field-date-end-0-value-time" with "<end time>"
-  And I press the 'Save and publish' button
+  And I press the 'Save and Publish' button
 
   Then I should see "<date format>"
 
@@ -56,7 +56,7 @@ Scenario Outline: Event start/end times can be hidden
   And I fill in "edit-field-date-end-0-value-time" with "<end time>"
   And I check the box 'Hide start and end times'
   And I check the box 'Promoted to front page'
-  And I press the 'Save and publish' button
+  And I press the 'Save and Publish' button
 
   Then I should see "<date format>"
   And I should not see "<time to hide>"

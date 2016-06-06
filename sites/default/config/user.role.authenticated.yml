@@ -32,3 +32,4 @@ permissions:
   33: 'edit own organization_page content'
   34: 'access contextual links'
   35: 'view latest version'
+  36: 'edit any event content'
