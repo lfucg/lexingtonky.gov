@@ -44,6 +44,15 @@
         </div>
       </li>
     {% endif %}
+
+    {% set contact_person = content.field_contact_person[0] %}
+    {% if contact_person %}
+      <li class="lex-card-subtitle lex-location-contact">
+        {% set title = content.field_contact_person_title[0]['#context']['value'] %}
+        {{ contact_person }}{{ title ? ', ' ~ title : '' }}
+      </li>
+    {% endif %}
+
     {% if content.field_contact_email[0]['#context'] %}
       <li class="lex-location-contact">
         {% include "@lex/includes/email.html.twig" with {
