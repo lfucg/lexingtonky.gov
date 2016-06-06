@@ -11,7 +11,6 @@ permissions:
   33: 'administer taxonomy'
   34: 'delete terms in organizations'
   35: 'edit terms in organizations'
-  36: 'delete terms in tags'
   37: 'delete terms in site_navigation'
   38: 'edit terms in site_navigation'
   39: 'access toolbar'
@@ -33,3 +32,5 @@ permissions:
   55: 'edit own organization_page content'
   56: 'revert organization_page revisions'
   57: 'view organization_page revisions'
+  58: 'view latest version'
+  59: 'use published_archived transition'
