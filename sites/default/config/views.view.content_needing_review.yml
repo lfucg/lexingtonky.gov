@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - user.role.administrator
+    - user.role.editor
+    - user.role.webmaster
   module:
     - node
     - user
@@ -230,6 +232,8 @@ display:
         type: role
         options:
           role:
+            editor: editor
+            webmaster: webmaster
             administrator: administrator
       defaults:
         access: false
