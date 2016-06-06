@@ -28,21 +28,17 @@ Scenario: Displaying events on an organization page
   And I fill in "Title" with randomized text "Updated event"
   And I select "-Police" from "Related departments"
   And I fill in "edit-field-date-end-0-value-date" with "2050-01-01"
-  And I press "Save and keep published"
+  And I press "Save and Publish"
 
   When I am on "/departments/police"
   Then I should see randomized text "Updated event"
 
-# this will have to be enabled after the org page migration 20160516
-# so we can pick the node id of org page
-# @in-progress
-# Scenario: Add department page to topic navigation
-#   Given I am logged in as a user with the "editor" role
-#   # an organization that doesn't have a topic
-#   And I am on "/node/440/edit"
-#   And I fill in "Title" with randomized text "Department page title"
-#   And I select "-Senior Programs" from "Navigation topic (optional)"
-#   And I press "Save and keep published"
-#
-#   When I am on "/browse/community-services/senior-programs"
-#   Then I should see randomized text "Department page title"
+Scenario: Add department page to topic navigation
+  Given I am logged in as a user with the "editor" role
+  # computer services: an organization that doesn't have a topic
+  And I am on "/node/476/edit"
+  And I select "-Senior Programs" from "Navigation topic (optional)"
+  And I press "Save and keep published"
+
+  When I am on "/browse/community-services/senior-programs"
+  Then I should see the link "Computer services"

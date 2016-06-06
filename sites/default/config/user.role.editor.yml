@@ -47,3 +47,4 @@ permissions:
   42: 'edit any site_wide_notice content'
   43: 'view latest version'
   44: 'use published_archived transition'
+  45: 'edit any organization_page content'
