@@ -28,16 +28,17 @@ Scenario: Displaying news articles on an organization page
   When I am on "/departments/police"
   And I should see randomized text "New article"
 
+@in-progress
 Scenario: Displaying events on an organization page
   Given I am logged in as a user with the "editor" role
   # a random event
-  And I am on "/node/273/edit"
+  And I am on "/node/537/edit"
   And I fill in "Title" with randomized text "Updated event"
-  And I select "-Police" from "Related departments"
+  And I select "-Accounting" from "Related departments"
   And I fill in "edit-field-date-end-0-value-date" with "2050-01-01"
   And I press "Save and Publish"
 
-  When I am on "/departments/police"
+  When I am on "/departments/accounting"
   Then I should see randomized text "Updated event"
 
 Scenario: Add department page to topic navigation
