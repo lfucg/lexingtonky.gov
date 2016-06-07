@@ -9,9 +9,9 @@ Scenario: Filtering departments the department directory
   And I wait for AJAX to finish
   Then I should see "Planning"
 
-  When I fill in "What's the latest from" with "Accounting"
+  When I fill in "Type the name of a department" with "Accounting"
   Then I should not see "Planning"
-  And I should see "Accounting"
+  And I should see "Accounting" in the content region
 
 Scenario: On department without navigation topic
   Given I am on "/departments/computer-services"
@@ -28,7 +28,6 @@ Scenario: Displaying news articles on an organization page
   When I am on "/departments/police"
   And I should see randomized text "New article"
 
-@in-progress
 Scenario: Displaying events on an organization page
   Given I am logged in as a user with the "editor" role
   And I am on "node/add/event"
