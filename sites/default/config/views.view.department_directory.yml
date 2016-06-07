@@ -57,13 +57,18 @@ display:
         type: html_list
         options:
           grouping: {  }
-          row_class: ' lex-filter-item'
+          row_class: 'lex-filter-item lex-card'
           default_row_class: false
           type: ul
-          wrapper_class: ''
-          class: 'list usa-unstyled-list lex-filter-list'
+          wrapper_class: ' usa-unstyled-list'
+          class: 'list lex-card-title lex-card-title-medium'
       row:
         type: fields
+        options:
+          default_field_elements: false
+          inline: {  }
+          separator: ''
+          hide_empty: false
       fields:
         path:
           id: path
@@ -152,13 +157,13 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: h2
-          element_class: 'js-lex-filter-item lex-card-title lex-card-title-medium'
+          element_type: ''
+          element_class: 'lex-card lex-card-title lex-card-title-medium'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
+          element_wrapper_type: span
+          element_wrapper_class: 'js-lex-filter-item '
           element_default_classes: false
           empty: ''
           hide_empty: false

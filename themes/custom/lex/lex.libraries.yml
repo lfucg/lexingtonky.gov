@@ -5,13 +5,12 @@ global-css:
 
 global-js:
   js:
+    js/list.js: {}
     js/scripts.js: {}
     js/leaflet.js: {}
     js/esri-leaflet.js: {}
     js/browse-columns.js: {}
     js/webdesignstandards-accordion.js: {}
-    js/list.js: {}
-    js/lex-list.js: {}
     js/lex-geocoder.js: {}
   dependencies:
     - core/jquery

@@ -50,9 +50,15 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    * {@inheritdoc}
    */
   public function applies(RouteMatchInterface $route_match) {
-    return $route_match->getRouteName() == 'entity.node.canonical' &&
-      $route_match->getParameter('node')->field_lex_site_nav &&
-      $route_match->getParameter('node')->field_lex_site_nav->referencedEntities();
+    if ($route_match->getRouteName() != 'entity.node.canonical') { return false; }
+
+    $usesSiteNav = ($route_match->getParameter('node')->field_lex_site_nav &&
+      $route_match->getParameter('node')->field_lex_site_nav->referencedEntities());
+
+    $isOrgPage = ($route_match->getParameter('node')->field_organization_taxonomy_term &&
+      $route_match->getParameter('node')->field_organization_taxonomy_term->referencedEntities());
+
+    return ($usesSiteNav || $isOrgPage);
   }
 
   /**
@@ -62,9 +68,16 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   public function build(RouteMatchInterface $route_match) {
     $breadcrumb = new Breadcrumb();
     $breadcrumb->addLink(Link::createFromRoute($this->t('Home'), '<front>'));
-    $term = $route_match->getParameter('node')->field_lex_site_nav->referencedEntities()[0];
-    $breadcrumb->addCacheableDependency($term);
-    $parents = $this->termStorage->loadAllParents($term->id());
+    $termId = 0;
+    if ($route_match->getParameter('node')->field_lex_site_nav->referencedEntities()) {
+      $term = $route_match->getParameter('node')->field_lex_site_nav->referencedEntities()[0];
+      $termId = $term->id();
+      $breadcrumb->addCacheableDependency($term);
+    } elseif ($route_match->getParameter('node')->field_organization_taxonomy_term) {
+      // org pages default to 'departments and programs' term
+      $termId = 294;
+    }
+    $parents = $this->termStorage->loadAllParents($termId);
     foreach (array_reverse($parents) as $term) {
       $term = $this->entityManager->getTranslationFromContext($term);
       $breadcrumb->addCacheableDependency($term);

@@ -22,34 +22,8 @@ $gutter: 20px;
   }
 }
 
-/* /departments */
-.lex-filter-label {
-  font-weight: $font-weight-regular;
-  font-size: 3.5rem;
+.lex-department-filter-label {
   margin-top: 0;
+  /* before first dept */
+  margin-bottom: $lex-section-half-gutter;
 }
-
-input[type="text"].lex-filter-search {
-  display: inline-block;
-  width: 55%;
-}
-
-.lex-filter-list {
-  @include media($medium-screen) {
-    margin-left: ($lex-section-gutter * 3);
-  }
-}
-
-.lex-region-content li.lex-filter-item, li.lex-filter-item {
-  &:first-of-type {
-    margin-top: $lex-section-gutter;
-  }
-  margin-bottom: $lex-section-gutter;
-  .lex-card-title {
-    font-weight: $font-weight-medium;
-  }
-  a {
-    text-decoration: none;
-  }
-}
-
