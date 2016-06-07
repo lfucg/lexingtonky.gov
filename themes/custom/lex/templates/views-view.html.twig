@@ -1,4 +1,5 @@
-{% if css_name == 'taxonomy-term' %}
+{# dont show if no rows, eg department directory which has custom block #}
+{% if css_name == 'taxonomy-term' and (rows | length > 0) %}
   {% include '@lex/includes/sort-a-to-z.twig' %}
 {% endif %}
 

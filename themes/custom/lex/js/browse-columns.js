@@ -386,9 +386,13 @@
   $(function(){
     GOVUK.browseColumns = new BrowseColumns({$el: $('.browse-panes')});
     GOVUK.browseColumns.lexOnSubsectionUpdated = function () {
+      $('.lex-hide-unless-javascript').removeClass('lex-hide-unless-javascript');
       $.LexingtonGeocoder({
         $addressInput: jQuery('.js-lex-district-address'),
       });
+
+      /* duplicated in scripts.js */
+      $.LexingtonFilterBlock();
     };
   })
 }());
