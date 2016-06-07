@@ -18,7 +18,8 @@ test:
   pre:
     - ./private/scripts/ci-test-pre.sh
   override:
-    - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat
+    - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat:
+        timeout: 900
   post:
     - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH --yes; fi
 deployment:
