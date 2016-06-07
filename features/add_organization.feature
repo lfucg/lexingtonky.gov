@@ -31,15 +31,18 @@ Scenario: Displaying news articles on an organization page
 @in-progress
 Scenario: Displaying events on an organization page
   Given I am logged in as a user with the "editor" role
-  # a random event
-  And I am on "/node/537/edit"
-  And I fill in "Title" with randomized text "Updated event"
+  And I am on "node/add/event"
+  And I fill in "Title" with randomized text "New event"
+  And I select "Addison Park" from "Location"
+
+  # dept w/o events
   And I select "-Accounting" from "Related departments"
+  And I fill in "Cost" with "free"
   And I fill in "edit-field-date-end-0-value-date" with "2050-01-01"
   And I press "Save and Publish"
 
   When I am on "/departments/accounting"
-  Then I should see randomized text "Updated event"
+  Then I should see randomized text "New event"
 
 Scenario: Add department page to topic navigation
   Given I am logged in as a user with the "editor" role
