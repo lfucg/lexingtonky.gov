@@ -10,4 +10,4 @@ id: needs_review_needs_review
 label: 'Keep in Review'
 stateFrom: needs_review
 stateTo: needs_review
-weight: -8
+weight: -6

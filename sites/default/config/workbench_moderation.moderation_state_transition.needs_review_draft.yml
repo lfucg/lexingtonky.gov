@@ -11,4 +11,4 @@ id: needs_review_draft
 label: 'Send Back to Draft'
 stateFrom: needs_review
 stateTo: draft
-weight: -6
+weight: -4

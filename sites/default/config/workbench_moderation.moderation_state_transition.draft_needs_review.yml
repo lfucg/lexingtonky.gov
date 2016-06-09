@@ -11,4 +11,4 @@ id: draft_needs_review
 label: 'Request Review'
 stateFrom: draft
 stateTo: needs_review
-weight: -10
+weight: -9
