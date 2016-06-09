@@ -212,6 +212,11 @@ display:
         type: node_rss
         options: {  }
       path: content-needing-review.xml
+      title: 'Content needing review'
+      defaults:
+        title: false
+        sitename_title: false
+      sitename_title: false
     cache_metadata:
       max-age: -1
       contexts:
