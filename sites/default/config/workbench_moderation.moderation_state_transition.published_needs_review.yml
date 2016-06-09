@@ -1,0 +1,12 @@
+uuid: 35af4395-b36a-4e2c-bb17-adc255c4a5e2
+langcode: en
+status: true
+dependencies:
+  config:
+    - workbench_moderation.moderation_state.needs_review
+    - workbench_moderation.moderation_state.published
+id: published_needs_review
+label: 'Request Review'
+stateFrom: published
+stateTo: needs_review
+weight: -8
