@@ -74,5 +74,12 @@
         Fax: {{ render_var(content.field_contact_fax[0]) }}
       </li>
     {% endif %}
+    <li class="lex-location-contact">
+      <ul class="usa-unstyled-list">
+        {% for key in ['facebook', 'twitter', 'newsletter', 'instagram', 'linkedin', 'youtube'] %}
+          <li>{{ content['field_social_link_' ~ key] }}</li>
+        {% endfor %}
+      </ul>
+    </li>
   </ul>
 </div>

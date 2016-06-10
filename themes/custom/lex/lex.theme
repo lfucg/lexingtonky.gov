@@ -161,3 +161,19 @@ function lex_preprocess_region(&$variables) {
     $variables['attributes']['class'][] = 'clearfix';
   }
 }
+
+function lex_preprocess_field(&$variables) {
+  $element = $variables['element'];
+  if (strpos($element['#field_name'], 'field_social_link') === 0) {
+    $classes = [
+      'field_social_link_facebook' => 'fa-facebook',
+      'field_social_link_twitter' => 'fa-twitter',
+      'field_social_link_youtube' => 'fa-youtube',
+      'field_social_link_linkedin' => 'fa-linkedin',
+      'field_social_link_newsletter' => 'fa-envelope',
+      'field_social_link_instagram' => 'fa-instagram',
+    ];
+    $class = 'lex-social-link ' . $classes[$element['#field_name']];
+    $variables['items'][0]['content']['#options']['attributes']['class'][] = $class;
+  }
+}

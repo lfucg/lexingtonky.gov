@@ -9,11 +9,18 @@ dependencies:
     - field.field.taxonomy_term.locations.field_contact_person_title
     - field.field.taxonomy_term.locations.field_contact_phone
     - field.field.taxonomy_term.locations.field_hours_of_operation
+    - field.field.taxonomy_term.locations.field_social_link_facebook
+    - field.field.taxonomy_term.locations.field_social_link_instagram
+    - field.field.taxonomy_term.locations.field_social_link_linkedin
+    - field.field.taxonomy_term.locations.field_social_link_newsletter
+    - field.field.taxonomy_term.locations.field_social_link_twitter
+    - field.field.taxonomy_term.locations.field_social_link_youtube
     - field.field.taxonomy_term.locations.field_street
     - field.field.taxonomy_term.locations.field_street_number
     - field.field.taxonomy_term.locations.field_zip_code
     - taxonomy.vocabulary.locations
   module:
+    - link
     - path
     - text
 id: taxonomy_term.locations.default
@@ -70,6 +77,48 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textarea
+  field_social_link_facebook:
+    weight: 12
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+  field_social_link_instagram:
+    weight: 13
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+  field_social_link_linkedin:
+    weight: 14
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+  field_social_link_newsletter:
+    weight: 15
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+  field_social_link_twitter:
+    weight: 16
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+  field_social_link_youtube:
+    weight: 17
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
   field_street:
     weight: 4
     settings:

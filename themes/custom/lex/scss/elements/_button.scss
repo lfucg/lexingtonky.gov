@@ -25,3 +25,13 @@
     content: "\f054";
   }
 }
+
+a.lex-social-link {
+  &:before {
+    font-family: FontAwesome;
+    float: left;
+    width: 1em;
+    margin-right: 0.5em;
+    size: 1.5em;
+  }
+}
