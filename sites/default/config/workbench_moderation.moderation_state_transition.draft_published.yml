@@ -11,4 +11,4 @@ id: draft_published
 label: Publish
 stateFrom: draft
 stateTo: published
-weight: -9
+weight: -7
