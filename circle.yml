@@ -22,8 +22,3 @@ test:
         timeout: 900
   post:
     - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH --yes; fi
-deployment:
-  staging:
-    branch: master
-    commands:
-      - ./private/scripts/ci-deployment-staging.sh
