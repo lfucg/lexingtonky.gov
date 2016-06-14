@@ -11,7 +11,9 @@ function lex_natural_sort_views($a, $b) {
 */
 function lex_page_attachments_alter(array &$attachments) {
   $uri = false;
+  // $node is nid, not object for urls like /node/600/revisions/1965/view
   if (($node = \Drupal::routeMatch()->getParameter('node'))
+       && is_object($node)
        && $node->field_lex_custom_banner_image
        && $node->field_lex_custom_banner_image[0]) {
     $path = $node->field_lex_custom_banner_image[0]->entity->getFileUri();
