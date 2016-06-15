@@ -9,6 +9,7 @@ siteenv=$1
 if [ $siteenv != 'test' ] && [ $siteenv != 'live' ]
   then
   echo "first argument should be 'test' or 'live', '$siteenv' given"
+  exit
 fi
 
 banner()
@@ -27,6 +28,7 @@ if [ $siteenv == 'live' ]
 fi
 
 if [ $siteenv == 'test' ]
+  then
   sync='--sync-content'
 fi
 
