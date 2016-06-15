@@ -3,7 +3,9 @@ langcode: en
 status: true
 dependencies:
   config:
+    - user.role.administrator
     - user.role.editor
+    - user.role.webmaster
   module:
     - user
 id: content_needing_review
@@ -26,6 +28,8 @@ display:
         options:
           role:
             editor: editor
+            webmaster: webmaster
+            administrator: administrator
       cache:
         type: tag
         options: {  }
