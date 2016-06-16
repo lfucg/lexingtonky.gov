@@ -39,6 +39,7 @@ module:
   responsive_image: 0
   search: 0
   shortcut: 0
+  smtp: 0
   system: 0
   taxonomy: 0
   taxonomy_menu: 0
