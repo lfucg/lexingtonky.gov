@@ -23,7 +23,7 @@ Scenario: Displaying news articles on an organization page
   And I fill in "Title" with randomized text "New article"
   And I fill in "Body" with "foo"
   And I select "-Police" from "Related departments"
-  And I press "Save and publish"
+  And I press "Save and Publish"
 
   When I am on "/departments/police"
   And I should see randomized text "New article"
@@ -48,7 +48,7 @@ Scenario: Add department page to topic navigation
   # computer services: an organization that doesn't have a topic
   And I am on "/node/476/edit"
   And I select "-Senior Programs" from "Navigation topic (optional)"
-  And I press "Save and keep published"
+  And I press "Save and Publish"
 
   When I am on "/browse/community-services/senior-programs"
   Then I should see the link "Computer Services"

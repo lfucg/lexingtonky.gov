@@ -34,3 +34,4 @@ permissions:
   57: 'view organization_page revisions'
   58: 'view latest version'
   59: 'use published_archived transition'
+  60: 'view all revisions'

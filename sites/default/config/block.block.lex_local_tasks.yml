@@ -4,13 +4,12 @@ status: true
 dependencies:
   module:
     - ctools
-    - user
   theme:
     - lex
 id: lex_local_tasks
 theme: lex
 region: highlighted
-weight: -17
+weight: -18
 provider: null
 plugin: local_tasks_block
 settings:
@@ -24,15 +23,7 @@ visibility:
   'entity_bundle:node':
     id: 'entity_bundle:node'
     bundles:
-      news_article: news_article
-      page: page
-    negate: false
+      landing_page: landing_page
+    negate: true
     context_mapping:
       node: '@node.node_route_context:node'
-  user_role:
-    id: user_role
-    roles:
-      authenticated: authenticated
-    negate: false
-    context_mapping:
-      user: '@user.current_user_context:current_user'

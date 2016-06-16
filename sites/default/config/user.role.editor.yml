@@ -48,3 +48,5 @@ permissions:
   43: 'view latest version'
   44: 'use published_archived transition'
   45: 'edit any organization_page content'
+  46: 'revert organization_page revisions'
+  47: 'view organization_page revisions'
