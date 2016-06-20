@@ -36,8 +36,7 @@ $settings['trusted_host_patterns'] = array(
 );
 
 if (! (isset($_ENV['PANTHEON_ENVIRONMENT']) && $_ENV['PANTHEON_ENVIRONMENT'] == 'live')) {
-  $config['core.extension']['module']['devel'] = 0;
-  $config['system.mail']['interface']['default'] = 'devel_mail_log';
+  $config['system.mail']['interface']['default'] = 'test_mail_collector';
 }
 
 /**

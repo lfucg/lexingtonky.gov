@@ -11,7 +11,7 @@ field_name: field_lex_site_nav
 entity_type: node
 bundle: page
 label: 'Navigation topic'
-description: ''
+description: 'Where the page appears in <a href="/browse/government">the navigation<a/><br>Select an item that starts with "–" like "-Councilmembers"'
 required: true
 translatable: false
 default_value: {  }
@@ -24,4 +24,5 @@ settings:
     sort:
       field: _none
     auto_create: false
+    auto_create_bundle: ''
 field_type: entity_reference
