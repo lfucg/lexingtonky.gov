@@ -87,3 +87,13 @@ label {
   }
 }
 
+/* formstack */
+.fsEmbed {
+  &.fsBody {
+    padding: 0;
+    .fsForm {
+      padding: 0;
+      max-width: 100%;
+    }
+  }
+}
