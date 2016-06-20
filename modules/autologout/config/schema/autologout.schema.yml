@@ -1,0 +1,64 @@
+autologout.settings:
+  type: config_object
+  mapping:
+    timeout:
+      type: integer
+      label: 'Timeout value'
+    max_timeout:
+      type: integer
+      label: 'Max timeout value'
+    padding:
+      type: integer
+      label: 'Seconds to give a user to respond'
+    role_logout:
+      type: boolean
+      label: 'Enable role timeout'
+    redirect_url:
+      type: string
+      label: 'Redirect url'
+    no_dialog:
+      type: boolean
+      label: 'Integer label'
+    message:
+      type: string
+      label: 'Message to display'
+    inactivity_message:
+      type: string
+      label: 'Message displayed after logging out'
+    enforce_admin:
+      type: boolean
+      label: 'Enable admin logout'
+    jstimer_format:
+      type: string
+      label: 'JS timer format'
+    jstimer_js_load_option:
+      type: boolean
+      label: 'JS timer load'
+    use_alt_logout_method:
+      type: boolean
+      label: 'Use alternate logout methode'
+    use_watchdog:
+      type: boolean
+      label: 'Use watchdog'
+
+autologout.role.*:
+    type: config_object
+    label: 'Role Settings'
+    mapping:
+      enabled:
+        type: boolean
+        label: 'Enabled'
+      timeout:
+        type: integer
+        label: 'Timeout'
+
+autologout.user.*:
+      type: config_object
+      label: 'User Settings'
+      mapping:
+        enabled:
+          type: boolean
+          label: 'Enabled'
+        timeout:
+          type: integer
+          label: 'Timeout'
