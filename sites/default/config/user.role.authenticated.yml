@@ -34,3 +34,6 @@ permissions:
   35: 'view latest version'
   36: 'edit any event content'
   37: 'edit any organization_page content'
+  38: 'create news_article content'
+  39: 'edit any news_article content'
+  40: 'view news_article revisions'
