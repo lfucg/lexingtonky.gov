@@ -1,0 +1,40 @@
+uuid: 99a665de-fe35-4efe-821e-a1f311c4da7a
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.links_pointing_to_old_site
+  module:
+    - system
+    - user
+    - views
+  theme:
+    - lex
+id: views_block__links_pointing_to_old_site_block_2
+theme: lex
+region: content
+weight: null
+provider: null
+plugin: 'views_block:links_pointing_to_old_site-block_2'
+settings:
+  id: 'views_block:links_pointing_to_old_site-block_2'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: '/user/*'
+    negate: false
+    context_mapping: {  }
+  user_role:
+    id: user_role
+    roles:
+      editor: editor
+      webmaster: webmaster
+      administrator: administrator
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
