@@ -351,7 +351,7 @@ display:
     position: 2
     display_options:
       display_extenders: {  }
-      title: 'Links pointing to old documents'
+      title: 'Pages with documents to move to new site'
       defaults:
         title: false
         filters: false
