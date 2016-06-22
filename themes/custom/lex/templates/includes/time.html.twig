@@ -1,5 +1,12 @@
 {#
   required values:
     time
+  optional:
+    notag - skip <time>
 #}
-<time>{{ time | replace({'am': 'a.m.', 'pm': 'p.m.', ':00': '' }) }}</time>
+{% set formatted = time | replace({'am': 'a.m.', 'pm': 'p.m.', ':00': '' }) %}
+{% if notag %}
+  {{ formatted }}
+{% else %}
+  <time>{{ formatted }}</time>
+{% endif %}

@@ -7,7 +7,7 @@ dependencies:
 id: lex_admin_page_title
 theme: lex_admin
 region: header
-weight: -30
+weight: -5
 provider: null
 plugin: page_title_block
 settings:

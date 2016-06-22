@@ -9,7 +9,7 @@ dependencies:
 id: lex_admin_login
 theme: lex_admin
 region: content
-weight: 10
+weight: -1
 provider: null
 plugin: user_login_block
 settings:
