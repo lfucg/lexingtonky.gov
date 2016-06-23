@@ -8,4 +8,4 @@ fetch:
 notification:
   emails:
     - webmaster@lexingtonky.gov
-  threshold: all
+  threshold: security
