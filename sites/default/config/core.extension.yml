@@ -29,6 +29,7 @@ module:
   honeypot: 0
   image: 0
   link: 0
+  masquerade: 0
   menu_ui: 0
   node: 0
   options: 0

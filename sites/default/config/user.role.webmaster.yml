@@ -35,3 +35,4 @@ permissions:
   58: 'view latest version'
   59: 'use published_archived transition'
   60: 'view all revisions'
+  61: 'masquerade as any user'
