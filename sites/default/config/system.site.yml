@@ -3,7 +3,7 @@ name: 'City of Lexington'
 mail: webmaster@lexingtonky.gov
 slogan: ''
 page:
-  403: ''
+  403: /user/login
   404: ''
   front: /node/57
 admin_compact_mode: false
