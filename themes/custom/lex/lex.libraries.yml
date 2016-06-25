@@ -12,7 +12,10 @@ global-js:
     js/browse-columns.js: {}
     js/webdesignstandards-accordion.js: {}
     js/lex-geocoder.js: {}
+    js/papaparse.min.js: {}
+    js/lex-traffic-ticker.js: {}
   dependencies:
     - core/jquery
+    - core/underscore
     - core/jquery.ui.autocomplete
 
