@@ -101,16 +101,16 @@
 
   var displayWeekdayOrWeekend = function() {
     if (isWeekend()) {
-      Papa.parse("/scheduled-closures.csv", {
-        download: true,
-        header: true,
-        complete: displayClosures,
-      });
-    } else {
       Papa.parse("/weekend-impacts.csv", {
         download: true,
         header: true,
         complete: displayWeekendImpacts,
+      });
+    } else {
+      Papa.parse("/scheduled-closures.csv", {
+        download: true,
+        header: true,
+        complete: displayClosures,
       });
     }
   }
