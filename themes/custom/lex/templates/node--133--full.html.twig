@@ -1,0 +1,22 @@
+{{ attach_library('lex/lex-traffic-deprecated') }}
+
+{% include "@lex/node.html.twig" %}
+
+<DIV id=TrafficDiv style="TEXT-ALIGN: center"></DIV>
+
+<iframe frameborder="0" height="1500" marginheight="0" marginwidth="0" scrolling="yes" id="TrafficFrame" width="100%"><html></html></iframe>
+
+{#
+Enable when migrating to new traffic ticker
+<article>
+  <div class="lex-traffic-incidents">Loading...</div>
+</article>
+<hr>
+<article>
+  <div class="lex-traffic-weekendImpacts"></div>
+</article>
+<article>
+  <div class="lex-traffic-scheduledClosures"></div>
+</article>
+<p>Last updated: <time class="lex-traffic-lastUpdated"></time></p>
+#}

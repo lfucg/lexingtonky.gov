@@ -17,6 +17,12 @@ global-js:
     - core/underscore
     - core/jquery.ui.autocomplete
 
+lex-traffic-deprecated:
+  js:
+    js/lex-traffic-ticker-deprecated.js: {}
+  dependencies:
+    - core/jquery
+
 lex-traffic:
   js:
     js/papaparse.min.js: {}
