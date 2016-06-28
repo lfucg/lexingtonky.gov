@@ -21,3 +21,26 @@
   padding-left: 3rem;
   border-left: 10px solid $lex-light-grey;
 }
+
+.lex-traffic-notice {
+  &:before {
+    font-family: FontAwesome;
+    width: 1em;
+    margin-right: 0.5em;
+    size: 1.5em;
+  }
+}
+
+.lex-traffic-notice-info {
+  &:before {
+    content: "\f058";
+    color: $lex-alert-dark-yellow;
+  }
+}
+
+.lex-traffic-notice-alert {
+  &:before {
+    content: "\f071";
+    color: $lex-alert-dark-red;
+  }
+}

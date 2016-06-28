@@ -10,7 +10,10 @@
     });
     var markupClosure = function(closure) {
       var until = (closure.closedUntil !== '' ? ' Thru ' + closure.closedUntil : '');
-      return '<li>' + closure.location + ' – ' + closure.impact + until + '</li>';
+      var classes = closure.isNew ? 'class="lex-traffic-notice lex-traffic-notice-info"' : '';
+      return '<li ' + classes + '>' +
+        (closure.isNew ? '<strong>New:</strong> ' : '') +
+        closure.location + ' – ' + closure.impact + until + '</li>';
     }
     var markupRange = function(closures, range) {
       return '<h3>Closures scheduled from ' + range + '</h3>' +
@@ -28,7 +31,12 @@
 
 
   var markupIncident = function(incident) {
-    return '<li>' + incident.direction + '. ' + incident.location + ' – ' + incident.issueDescription + '</li>';
+    var classes = incident.displayAlert ? 'class="lex-traffic-notice lex-traffic-notice-alert"' : '';
+    return '<li ' + classes + '>' +
+      (incident.direction ? incident.direction + '. ' : '') +
+      incident.location +
+      (incident.description ? ' – ' + incident.description : '') +
+      '</li>';
   };
 
   var markupIncidents = function(incidents) {
@@ -37,11 +45,13 @@
     '</ul>';
   }
 
+  var incidentHeader = function(headerRow) {
+    return (headerRow.pageHeading ?
+      '<h2>' + headerRow.pageHeading + '</h2>' :
+      '');
+  }
   var displayIncidents = function(headerRow, incidents) {
-    var html = '';
-    if (headerRow.pageHeading) {
-      html += '<h2>' + headerRow.pageHeading + '</h2>';
-    }
+    var html = incidentHeader(headerRow);
     var withLocations = _.filter(incidents, function(r) { return r.location });
     var incidentTypes = _.groupBy(withLocations, function(i) { return i.incidentType; });
     html += _.map(incidentTypes, function(incidents, type) {
@@ -52,8 +62,8 @@
   };
 
   $.get("/traffic-incidents.csv", function(results, statusCode, req) {
-    var u = moment(new Date(req.getResponseHeader('Last-modified')));
-    $('.lex-traffic-lastUpdated').html(u.format('MM/DD/YYYY hh:mm:ss a'));
+    var updated = moment(new Date(req.getResponseHeader('Last-modified')));
+    $('.lex-traffic-lastUpdated').html(updated.format('MM/DD/YYYY hh:mm:ss a'));
 
     var incidentFile = results.split('beginIncidents');
     var headerRow = Papa.parse(incidentFile[0], { header: true }).data[0];
