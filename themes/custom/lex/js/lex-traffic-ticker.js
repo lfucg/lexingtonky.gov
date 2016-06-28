@@ -22,7 +22,8 @@
   };
 
   var displayClosures = function(results) {
-    $('.lex-traffic-scheduledClosures').html(closuresMarkup(results));
+    var header = '<h2>Closures for ' + moment(new Date()).format('dddd, MMMM D') + '</h2>';
+    $('.lex-traffic-scheduledClosures').html(header + closuresMarkup(results));
   };
 
 
@@ -36,22 +37,16 @@
     '</ul>';
   }
 
-  var displayIncidents = function(results, errors, meta) {
+  var displayIncidents = function(headerRow, incidents) {
     var html = '';
-    var bySection = _.groupBy(results.data, function(r) {
-      return r.sectionHeading;
-    });
-
-    _.each(bySection, function(incidents, section) {
-      if (section !== '') {
-        html += '<h2>' + section + '</h2>';
-      }
-      var withLocations = _.filter(incidents, function(r) { return r.location });
-      var incidentTypes = _.groupBy(withLocations, function(i) { return i.incidentType; });
-      html += _.map(incidentTypes, function(incidents, type) {
-        return '<h3>' + type + '</h3>' + markupIncidents(incidents);
-      }).join('');
-    });
+    if (headerRow.pageHeading) {
+      html += '<h2>' + headerRow.pageHeading + '</h2>';
+    }
+    var withLocations = _.filter(incidents, function(r) { return r.location });
+    var incidentTypes = _.groupBy(withLocations, function(i) { return i.incidentType; });
+    html += _.map(incidentTypes, function(incidents, type) {
+      return '<h3>' + type + '</h3>' + markupIncidents(incidents);
+    }).join('');
 
     $('.lex-traffic-incidents').html(html);
   };
@@ -59,16 +54,16 @@
   $.get("/traffic-incidents.csv", function(results, statusCode, req) {
     var u = moment(new Date(req.getResponseHeader('Last-modified')));
     $('.lex-traffic-lastUpdated').html(u.format('MM/DD/YYYY hh:mm:ss a'));
-    displayIncidents(Papa.parse(results, { header: true }));
+
+    var incidentFile = results.split('beginIncidents');
+    var headerRow = Papa.parse(incidentFile[0], { header: true }).data[0];
+    var incidents = Papa.parse(incidentFile[1], { header: true }).data;
+    displayIncidents(headerRow, incidents);
   });
 
-  // $.get("/scheduled-closures.csv", function(results, statusCode, req) {
-  //
-  // });
-
-  // Papa.parse("/scheduled-closures.csv", {
-  //   download: true,
-  //   header: true,
-  //   complete: displayClosures,
-  // });
+  Papa.parse("/scheduled-closures.csv", {
+    download: true,
+    header: true,
+    complete: displayClosures,
+  });
 }());
