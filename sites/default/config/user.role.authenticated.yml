@@ -38,3 +38,4 @@ permissions:
   39: 'edit any news_article content'
   40: 'view news_article revisions'
   42: 'view all revisions'
+  43: 'use published_needs_review transition'
