@@ -29,7 +29,6 @@
     $('.lex-traffic-scheduledClosures').html(header + closuresMarkup(results));
   };
 
-
   var markupIncident = function(incident) {
     var classes = incident.displayAlert ? 'class="lex-traffic-notice lex-traffic-notice-alert"' : '';
     return '<li ' + classes + '>' +
@@ -62,14 +61,6 @@
     $('.lex-traffic-incidents').html(html);
   };
 
-  $.get("/traffic-incidents.csv", function(results, statusCode, req) {
-    var updated = moment(new Date(req.getResponseHeader('Last-modified')));
-    $('.lex-traffic-lastUpdated').html(updated.format('MM/DD/YYYY hh:mm:ss a'));
-
-    var incidents = Papa.parse(results, { header: true }).data;
-    displayIncidents(incidents);
-  });
-
   var markupImpact = function(impact) {
     return '<li>' +
       impact.event + ' ' +
@@ -96,15 +87,45 @@
     $('.lex-traffic-weekendImpacts').html(html);
   }
 
-  // Papa.parse("/scheduled-closures.csv", {
-  //   download: true,
-  //   header: true,
-  //   complete: displayClosures,
-  // });
+  var isWeekend = function() {
+    // grabbed this wholesale from old website
+    var curDate=new Date();
+    var curDay=curDate.getDay();
+    var weekendCutOver=new Date((curDate.toLocaleDateString()) + " 15:30:00" );
+    var weekdayCutOver=new Date((curDate.toLocaleDateString()) + " 20:00:00" );
+    if(((curDay==0)&&(curDate<weekdayCutOver))||(curDay==6)||((curDay==5)&&(curDate>=weekendCutOver)))
+    {
+      return true;
+    }
+  }
 
-  Papa.parse("/weekend-impacts.csv", {
-    download: true,
-    header: true,
-    complete: displayWeekendImpacts,
-  });
+  var displayWeekdayOrWeekend = function() {
+    if (isWeekend()) {
+      Papa.parse("/scheduled-closures.csv", {
+        download: true,
+        header: true,
+        complete: displayClosures,
+      });
+    } else {
+      Papa.parse("/weekend-impacts.csv", {
+        download: true,
+        header: true,
+        complete: displayWeekendImpacts,
+      });
+    }
+  }
+
+  window.refreshTicker = function() {
+    $.get("/traffic-incidents.csv", function(results, statusCode, req) {
+      var updated = moment(new Date(req.getResponseHeader('Last-modified')));
+      $('.lex-traffic-lastUpdated').html(updated.format('MM/DD/YYYY hh:mm:ss a'));
+
+      var incidents = Papa.parse(results, { header: true }).data;
+      displayIncidents(incidents);
+    });
+    displayWeekdayOrWeekend();
+  }
+
+  window.refreshTicker();
+  setInterval(refreshTicker, 60000);
 }());
