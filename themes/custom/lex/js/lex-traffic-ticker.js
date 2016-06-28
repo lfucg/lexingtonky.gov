@@ -25,7 +25,7 @@
   };
 
   var displayClosures = function(results) {
-    var header = '<h2>Closures for ' + moment(new Date()).format('dddd, MMMM D') + '</h2>';
+    var header = sectionHeading(results.data[0]);
     $('.lex-traffic-scheduledClosures').html(header + closuresMarkup(results));
   };
 
@@ -45,13 +45,14 @@
     '</ul>';
   }
 
-  var incidentHeader = function(headerRow) {
-    return (headerRow.pageHeading ?
-      '<h2>' + headerRow.pageHeading + '</h2>' :
-      '');
+  var sectionHeading = function(firstRow) {
+    return (firstRow.sectionHeading ?
+      '<h2>' + firstRow.sectionHeading + '</h2>' :
+      'Nothing');
   }
-  var displayIncidents = function(headerRow, incidents) {
-    var html = incidentHeader(headerRow);
+
+  var displayIncidents = function(incidents) {
+    var html = sectionHeading(incidents[0]);
     var withLocations = _.filter(incidents, function(r) { return r.location });
     var incidentTypes = _.groupBy(withLocations, function(i) { return i.incidentType; });
     html += _.map(incidentTypes, function(incidents, type) {
@@ -65,15 +66,45 @@
     var updated = moment(new Date(req.getResponseHeader('Last-modified')));
     $('.lex-traffic-lastUpdated').html(updated.format('MM/DD/YYYY hh:mm:ss a'));
 
-    var incidentFile = results.split('beginIncidents');
-    var headerRow = Papa.parse(incidentFile[0], { header: true }).data[0];
-    var incidents = Papa.parse(incidentFile[1], { header: true }).data;
-    displayIncidents(headerRow, incidents);
+    var incidents = Papa.parse(results, { header: true }).data;
+    displayIncidents(incidents);
   });
 
-  Papa.parse("/scheduled-closures.csv", {
+  var markupImpact = function(impact) {
+    return '<li>' +
+      impact.event + ' ' +
+      impact.timeBegin +
+      (impact.timeEnd ? ' – ' + impact.timeEnd : '') +
+      '</li>';
+  }
+
+  var markupImpacts = function(impacts) {
+    return '<ul>' +
+      _.map(impacts, function(i) { return markupImpact(i) }).join('') +
+    '</ul>';
+  };
+
+  var displayWeekendImpacts = function(results) {
+    var impactRows = results.data;
+    var html = sectionHeading(impactRows[0]);
+    var withEvent = _.filter(impactRows, function(i) { return i.event !== '' });
+    var byDay = _.groupBy(withEvent, function(i) { return i.day; });
+    html += _.map(byDay, function(impacts, day) {
+      return '<h3>' + day + '</h3>' + markupImpacts(impacts);
+    }).join('');
+
+    $('.lex-traffic-weekendImpacts').html(html);
+  }
+
+  // Papa.parse("/scheduled-closures.csv", {
+  //   download: true,
+  //   header: true,
+  //   complete: displayClosures,
+  // });
+
+  Papa.parse("/weekend-impacts.csv", {
     download: true,
     header: true,
-    complete: displayClosures,
+    complete: displayWeekendImpacts,
   });
 }());
