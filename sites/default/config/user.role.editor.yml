@@ -51,3 +51,4 @@ permissions:
   46: 'revert organization_page revisions'
   47: 'view organization_page revisions'
   48: 'use published_published transition'
+  50: 'administer taxonomy'
