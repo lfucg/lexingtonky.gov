@@ -2,15 +2,15 @@
 Feature: Create and manage organization page
 
 @javascript
-Scenario: Filtering departments the department directory
+Scenario: Filtering departments in the department directory
   Given I am on "/browse/government"
   # make sure js department directory initializes when loaded via ajax
   And I click "Departments and programs"
   And I wait for AJAX to finish
-  Then I should see "Planning"
+  Then I should see "Computer Services"
 
   When I fill in "Type the name of a department" with "Accounting"
-  Then I should not see "Planning"
+  Then I should not see "Computer Services"
   And I should see "Accounting" in the content region
 
 Scenario: On department without navigation topic
@@ -47,7 +47,7 @@ Scenario: Add department page to topic navigation
   Given I am logged in as a user with the "editor" role
   # computer services: an organization that doesn't have a topic
   And I am on "/node/476/edit"
-  And I select "-Senior Programs" from "Navigation topic (optional)"
+  And I select "-Senior programs" from "Navigation topic (optional)"
   And I press "Save and Publish"
 
   When I am on "/browse/community-services/senior-programs"
