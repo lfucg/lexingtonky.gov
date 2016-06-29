@@ -36,3 +36,4 @@ permissions:
   59: 'use published_archived transition'
   60: 'view all revisions'
   61: 'masquerade as any user'
+  61: 'use published_published transition'
