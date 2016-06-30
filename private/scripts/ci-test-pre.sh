@@ -13,9 +13,9 @@ if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site create-env --site=$SITE_
 
 terminus sites aliases
 terminus site clone-content --site=$SITE_NAME --from-env=live --to-env=$SITE_ENV --yes
-terminus drush "cim -y" --site=$SITE_NAME --env=$SITE_ENV 2> /dev/null
 terminus drush "updatedb -y" --site=$SITE_NAME --env=$SITE_ENV 2> /dev/null
 terminus drush cr --site=$SITE_NAME --env=$SITE_ENV --yes 2> /dev/null
+terminus drush "cim -y" --site=$SITE_NAME --env=$SITE_ENV 2> /dev/null
 
 if [ "$CIRCLE_BRANCH" == "master" ]; then
   sed -i -e "s,http://localhost:8888,https://$DEV_USER:$DEV_PASSWORD@$SITE_ENV-$SITE_NAME.pantheonsite.io,g" behat-pantheon.yml
