@@ -1,5 +1,6 @@
 (function() {
   var $ = jQuery;
+  var baseUrl = 'http://traffic.erikschwartz.net';
 
   var closuresMarkup = function(results) {
     var convertTime = function(military) {
@@ -101,13 +102,13 @@
 
   var displayWeekdayOrWeekend = function() {
     if (isWeekend()) {
-      Papa.parse("/weekend-impacts.csv", {
+      Papa.parse(baseUrl + "/weekend-impacts.csv", {
         download: true,
         header: true,
         complete: displayWeekendImpacts,
       });
     } else {
-      Papa.parse("/scheduled-closures.csv", {
+      Papa.parse(baseUrl + "/scheduled-closures.csv", {
         download: true,
         header: true,
         complete: displayClosures,
@@ -116,7 +117,7 @@
   }
 
   window.refreshTicker = function() {
-    $.get("/traffic-incidents.csv", function(results, statusCode, req) {
+    $.get(baseUrl + "/traffic-incidents.csv", function(results, statusCode, req) {
       var updated = moment(new Date(req.getResponseHeader('Last-modified')));
       $('.lex-traffic-lastUpdated').html(updated.format('MM/DD/YYYY hh:mm:ss a'));
 
@@ -126,6 +127,8 @@
     displayWeekdayOrWeekend();
   }
 
-  window.refreshTicker();
-  setInterval(refreshTicker, 60000);
+  if (window.location.search === '?just-a-test=true') {
+    window.refreshTicker();
+    setInterval(refreshTicker, 60000);
+  }
 }());
