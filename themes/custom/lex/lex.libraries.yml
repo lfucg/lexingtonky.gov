@@ -14,7 +14,6 @@ global-js:
     js/lex-geocoder.js: {}
   dependencies:
     - core/jquery
-    - core/underscore
     - core/jquery.ui.autocomplete
 
 lex-traffic:

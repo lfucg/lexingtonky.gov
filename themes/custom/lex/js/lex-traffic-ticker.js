@@ -1,6 +1,6 @@
 (function() {
   var $ = jQuery;
-  var baseUrl = 'http://traffic.erikschwartz.net';
+  var baseUrl = '//lfucg.github.io/traffic-data';
 
   var closuresMarkup = function(results) {
     var convertTime = function(military) {
