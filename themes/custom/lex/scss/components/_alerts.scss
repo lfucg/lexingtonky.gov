@@ -31,14 +31,16 @@
   }
 }
 
-.lex-traffic-notice-info {
-  &:before {
-    content: "\f058";
-    color: $lex-alert-dark-yellow;
-  }
+.lex-traffic-notice-highlight {
+  padding: 0.2em;
+  background-color: $lex-alert-yellow;
+}
+
+.lex-traffic-notice-new {
 }
 
 .lex-traffic-notice-alert {
+  color: $lex-alert-dark-red;
   &:before {
     content: "\f071";
     color: $lex-alert-dark-red;

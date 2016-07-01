@@ -6,14 +6,15 @@
     var convertTime = function(military) {
       return military > 12 ? (military - 12 + ' p.m.') : (military + ' a.m.');
     }
-    var timeRanges = _.groupBy(results.data, function(range) {
-      return convertTime(range.closureBegin) + ' – ' + convertTime(range.closureEnd);
+
+    var withLocations = _.filter(results.data, function(c) { return c.location });
+    var timeRanges = _.groupBy(withLocations, function(closure) {
+      return convertTime(closure.closureBegin) + ' – ' + convertTime(closure.closureEnd);
     });
     var markupClosure = function(closure) {
       var until = (closure.closedUntil !== '' ? ' Thru ' + closure.closedUntil : '');
-      var classes = closure.isNew ? 'class="lex-traffic-notice lex-traffic-notice-info"' : '';
-      return '<li ' + classes + '>' +
-        (closure.isNew ? '<strong>New:</strong> ' : '') +
+      return '<li>' +
+        (closure.isNew ? '<span class="lex-traffic-notice-highlight">New:</span> ' : '') +
         closure.location + ' – ' + closure.impact + until + '</li>';
     }
     var markupRange = function(closures, range) {
@@ -79,7 +80,7 @@
   var displayWeekendImpacts = function(results) {
     var impactRows = results.data;
     var html = sectionHeading(impactRows[0]);
-    var withEvent = _.filter(impactRows, function(i) { return i.event !== '' });
+    var withEvent = _.filter(impactRows, function(i) { return i.event });
     var byDay = _.groupBy(withEvent, function(i) { return i.day; });
     html += _.map(byDay, function(impacts, day) {
       return '<h3>' + day + '</h3>' + markupImpacts(impacts);
