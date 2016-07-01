@@ -39,3 +39,4 @@ permissions:
   40: 'view news_article revisions'
   42: 'view all revisions'
   43: 'use published_needs_review transition'
+  44: 'use needs_review_needs_review transition'
