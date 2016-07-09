@@ -7,16 +7,16 @@ dependencies:
 id: meeting
 label: Meeting
 type: 'canonical_entities:node'
-pattern: '/meeting-notice/[node:nid]/[node:title]'
+pattern: '/meeting-notices/[node:nid]/[node:title]'
 selection_criteria:
-  c3349d2e-c25d-463f-bbe1-19bec901a46e:
+  df78bac5-1fc3-4764-aade-40a8b59f1219:
     id: node_type
     bundles:
       meeting: meeting
     negate: false
     context_mapping:
       node: node
-    uuid: c3349d2e-c25d-463f-bbe1-19bec901a46e
+    uuid: df78bac5-1fc3-4764-aade-40a8b59f1219
 selection_logic: and
 weight: -5
 relationships: {  }

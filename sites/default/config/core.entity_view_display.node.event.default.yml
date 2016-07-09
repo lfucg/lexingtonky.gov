@@ -93,5 +93,9 @@ content:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+  workbench_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   field_related_departments: true

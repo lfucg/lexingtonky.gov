@@ -15,10 +15,7 @@ label: 'End Date and Time'
 description: ''
 required: false
 translatable: true
-default_value:
-  -
-    default_date_type: relative
-    default_date: '+2 hour'
+default_value: {  }
 default_value_callback: ''
 settings: {  }
 field_type: datetime
