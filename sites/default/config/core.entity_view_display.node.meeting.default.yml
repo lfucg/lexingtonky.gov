@@ -1,0 +1,59 @@
+uuid: 89507bc5-e696-4188-bae3-9c93ba8d5886
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.meeting.body
+    - field.field.node.meeting.field_date
+    - field.field.node.meeting.field_date_end
+    - field.field.node.meeting.field_locations
+    - field.field.node.meeting.field_related_departments
+    - node.type.meeting
+  module:
+    - datetime
+    - text
+    - user
+id: node.meeting.default
+targetEntityType: node
+bundle: meeting
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+  field_date:
+    weight: 102
+    label: above
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    type: datetime_default
+  field_date_end:
+    weight: 103
+    label: above
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    type: datetime_default
+  field_locations:
+    weight: 104
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  field_related_departments:
+    weight: 105
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  links:
+    weight: 100
+hidden: {  }

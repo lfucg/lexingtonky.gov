@@ -1,0 +1,26 @@
+uuid: f3dd345f-d27a-4a3b-adff-9a9fbd0b1a52
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.meeting.body
+    - node.type.meeting
+  module:
+    - text
+    - user
+id: node.meeting.teaser
+targetEntityType: node
+bundle: meeting
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+  links:
+    weight: 100
+hidden: {  }
