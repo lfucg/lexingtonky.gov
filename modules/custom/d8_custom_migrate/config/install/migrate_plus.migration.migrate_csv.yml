@@ -42,9 +42,6 @@ process:
   # copied in.
   title: title
   field_external_id: event_id
-  field_is_public_meeting:
-    plugin: default_value
-    default_value: true
   body: body
   field_locations: location_tid
   field_date:
