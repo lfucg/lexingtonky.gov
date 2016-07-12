@@ -74,11 +74,16 @@
   {{ title_suffix }}
 
   <div{{ content_attributes }}>
+
+  {% if content.field_date_end %}
+      {{ content.field_date }}
+  {% else %}
     {% include '@lex/includes/event-timespan.html.twig' with {
         field_begin: content.field_date,
         field_end: content.field_date_end,
        }
     %}
+  {% endif %}
     {{ content | without('field_date','field_date_end') }}
   </div>
 

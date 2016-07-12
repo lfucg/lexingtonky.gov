@@ -11,7 +11,7 @@ field_name: field_locations
 entity_type: node
 bundle: meeting
 label: Location
-description: ''
+description: 'If your location is not in the list, please contact <a href="mailto:webmaster@lexingtonky.gov">Nick Brock</a>'
 required: false
 translatable: true
 default_value: {  }
