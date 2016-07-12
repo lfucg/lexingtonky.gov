@@ -20,12 +20,14 @@ use DateTimeZone;
  */
 class FormatDate extends ProcessPluginBase {
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
+
+    // \Drupal::logger('my_module')->error('value: ' . $value);
+    if (! $value) { return false; }
+
     $date = new DateTime($value, new DateTimeZone('America/New_York'));
     $format = 'Y-m-d\TH:i:s';
     $date->setTimezone(new DateTimeZone('UTC'));
     $formatted = $date->format($format);
-    // \Drupal::logger('my_module')->error('value: ' . $value);
-    // \Drupal::logger('my_module')->error('formatted: ' . $formatted);
     return $formatted;
   }
 }
