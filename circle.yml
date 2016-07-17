@@ -1,6 +1,6 @@
 machine:
   php:
-    version: 5.5.31
+    version: 5.5.11
   hosts:
     localhost: 127.0.0.1
   environment:
