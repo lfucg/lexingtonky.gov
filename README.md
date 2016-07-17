@@ -9,6 +9,12 @@ The upcoming site for the City of Lexington, currently in pilot phase. It's buil
 
 [See DEVELOPMENT.md](DEVELOPMENT.md)
 
+## Uprading Drupal core
+
+This project has run into issues using Pantheon's built-in core upgrading mechanism. Instead use:
+
+`git pull -Xtheirs git://github.com/pantheon-systems/drops-8.git master`
+
 ## Recommended process for upgrading modules
 
 * Read release notes
