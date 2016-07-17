@@ -49,7 +49,7 @@
   var sectionHeading = function(firstRow) {
     return (firstRow.sectionHeading ?
       '<h2>' + firstRow.sectionHeading + '</h2>' :
-      'Nothing');
+      '');
   }
 
   var displayIncidents = function(incidents) {
