@@ -102,7 +102,7 @@
   }
 
   var displayWeekdayOrWeekend = function() {
-    if (isWeekend()) {
+    if (isWeekend() || window.location.search.match('show-weekend=true')) {
       Papa.parse(baseUrl + "/weekend-impacts.csv", {
         download: true,
         header: true,
@@ -128,7 +128,7 @@
     displayWeekdayOrWeekend();
   }
 
-  if (window.location.search === '?just-a-test=true') {
+  if (window.location.search.match('just-a-test=true')) {
     window.refreshTicker();
     setInterval(refreshTicker, 60000);
   }
