@@ -1,4 +1,4 @@
-uuid: 6da1e948-a1aa-41f2-a55f-d1d76d91c5f1
+uuid: afd549ed-6969-45ad-921a-1a62d9a163b0
 langcode: en
 status: true
 dependencies:
@@ -9,14 +9,14 @@ dependencies:
     - views
   theme:
     - lex
-id: views_block__events_block_org_page_events
+id: views_block__events_block_org_page_meetings
 theme: lex
 region: sidebar_second
-weight: -20
+weight: -19
 provider: null
-plugin: 'views_block:events-block_org_page_events'
+plugin: 'views_block:events-block_org_page_meetings'
 settings:
-  id: 'views_block:events-block_org_page_events'
+  id: 'views_block:events-block_org_page_meetings'
   label: ''
   provider: views
   label_display: visible

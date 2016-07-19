@@ -11,7 +11,7 @@ field_name: field_related_departments
 entity_type: node
 bundle: meeting
 label: 'Related departments'
-description: 'Post this event on the department homepage'
+description: 'Post this meeting/notice on the department homepage'
 required: false
 translatable: true
 default_value: {  }
