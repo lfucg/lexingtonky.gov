@@ -609,7 +609,7 @@ display:
           empty: true
           tokenize: true
           content:
-            value: "<h3>No events found<h3>\n<p><a href=\"/events\">View all events</a></p>"
+            value: "<h3>No items found<h3>\n<p><a href=\"/meeting-notices\">View all</a></p>"
             format: basic_html
           plugin_id: text
       relationships: {  }
