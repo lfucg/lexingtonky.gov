@@ -1,0 +1,30 @@
+uuid: 1b916003-edf6-496f-883e-a6e2c5b8f3b6
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.events
+  module:
+    - system
+    - views
+  theme:
+    - lex
+id: views_block__events_block_meetings
+theme: lex
+region: content
+weight: -23
+provider: null
+plugin: 'views_block:events-block_meetings'
+settings:
+  id: 'views_block:events-block_meetings'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: /meeting-notices
+    negate: false
+    context_mapping: {  }

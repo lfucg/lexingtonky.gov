@@ -22,11 +22,11 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 101
+    weight: 5
     settings: {  }
     third_party_settings: {  }
   field_date:
-    weight: 102
+    weight: 2
     label: hidden
     settings:
       timezone_override: ''
@@ -34,41 +34,29 @@ content:
     third_party_settings: {  }
     type: datetime_default
   field_date_end:
-    weight: 103
+    weight: 3
     label: hidden
     settings:
       timezone_override: ''
       format_type: html_datetime
     third_party_settings: {  }
     type: datetime_default
-  field_external_id:
-    weight: 106
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    type: number_integer
   field_locations:
-    weight: 104
+    weight: 4
     label: hidden
     settings:
       link: true
+      view_mode: default
     third_party_settings: {  }
-    type: entity_reference_label
-  field_related_departments:
-    weight: 105
-    label: hidden
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_entity_view
   links:
-    weight: 100
+    weight: 1
     settings: {  }
     third_party_settings: {  }
   workbench_moderation_control:
-    weight: -20
+    weight: 0
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_external_id: true
+  field_related_departments: true

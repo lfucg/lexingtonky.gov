@@ -52,3 +52,8 @@ permissions:
   47: 'view organization_page revisions'
   48: 'use published_published transition'
   50: 'administer taxonomy'
+  51: 'delete any meeting content'
+  52: 'delete own meeting content'
+  53: 'delete meeting revisions'
+  54: 'revert meeting revisions'
+  55: 'view meeting revisions'

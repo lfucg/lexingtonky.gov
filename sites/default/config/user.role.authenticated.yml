@@ -40,3 +40,6 @@ permissions:
   42: 'view all revisions'
   43: 'use published_needs_review transition'
   44: 'use needs_review_needs_review transition'
+  45: 'create meeting content'
+  46: 'edit any meeting content'
+  47: 'edit own meeting content'
