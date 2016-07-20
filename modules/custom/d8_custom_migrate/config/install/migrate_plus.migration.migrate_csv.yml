@@ -44,6 +44,10 @@ process:
   field_external_id: event_id
   body: body
   field_locations: location_tid
+  field_related_departments:
+    plugin: skip_on_empty
+    method: process
+    source: related_department_ids
   field_date:
     plugin: format_date
     source: field_date
