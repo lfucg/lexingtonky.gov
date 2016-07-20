@@ -9,6 +9,7 @@ dependencies:
     - field.field.taxonomy_term.locations.field_contact_person_title
     - field.field.taxonomy_term.locations.field_contact_phone
     - field.field.taxonomy_term.locations.field_hours_of_operation
+    - field.field.taxonomy_term.locations.field_location_detail
     - field.field.taxonomy_term.locations.field_social_link_facebook
     - field.field.taxonomy_term.locations.field_social_link_instagram
     - field.field.taxonomy_term.locations.field_social_link_linkedin
@@ -74,6 +75,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: basic_string
+  field_location_detail:
+    weight: 16
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
   field_social_link_facebook:
     weight: 10
     label: hidden
