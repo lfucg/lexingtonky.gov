@@ -29,6 +29,7 @@
       <h4 class="lex-card-title lex-card-title-medium">{{ name }}</h4>
       {% include "@lex/includes/address.html.twig" with {
           address:  {
+            location_detail: render_var(content.field_location_detail[0]),
             street_number: render_var(content.field_street_number[0]),
             street: render_var(content.field_street[0]),
             zip: render_var(content.field_zip_code[0]),
