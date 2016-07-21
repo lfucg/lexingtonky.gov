@@ -1437,46 +1437,6 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
-        keys:
-          id: keys
-          table: node_search_index
-          field: keys
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: optional
-          value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: keys_op
-            label: 'Search for'
-            description: ''
-            use_operator: false
-            operator: keys_op
-            identifier: keys
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              webmaster: '0'
-              administrator: '0'
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: search_keywords
         field_date_value:
           id: field_date_value
           table: node__field_date
