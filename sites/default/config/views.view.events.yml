@@ -9,7 +9,6 @@ dependencies:
     - node.type.event
     - node.type.meeting
     - node.type.organization_page
-    - taxonomy.vocabulary.organizations
   module:
     - datetime
     - node
@@ -1327,7 +1326,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "{% include '@lex/includes/views-event-card.html.twig' with {\n    title: title,\n    title_tag: 'h2',\n    title_class: 'lex-card-title lex-card-title-medium',\n    start_date_time: field_date,\n    end_date_time: field_date_end,\n    field_hide_times: field_hide_times\n  } \n%}"
+            text: "{% include '@lex/includes/views-event-card.html.twig' with {\n    title: title,\n    title_tag: 'h2',\n    title_class: 'lex-card-title lex-card-title-medium lex-block-light-title',\n    start_date_time: field_date,\n    end_date_time: field_date_end,\n    field_hide_times: field_hide_times\n  } \n%}"
             make_link: false
             path: ''
             absolute: false
@@ -1513,53 +1512,6 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: datetime
-        field_related_departments_target_id:
-          id: field_related_departments_target_id
-          table: node__field_related_departments
-          field: field_related_departments_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: or
-          value: {  }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_related_departments_target_id_op
-            label: 'Related departments (field_related_departments)'
-            description: ''
-            use_operator: false
-            operator: field_related_departments_target_id_op
-            identifier: field_related_departments_target_id
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              editor: '0'
-              webmaster: '0'
-              administrator: '0'
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          reduce_duplicates: false
-          type: textfield
-          limit: true
-          vid: organizations
-          hierarchy: false
-          error_message: true
-          plugin_id: taxonomy_index_tid
       filter_groups:
         operator: AND
         groups:
@@ -1573,7 +1525,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
