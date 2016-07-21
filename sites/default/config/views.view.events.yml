@@ -9,6 +9,11 @@ dependencies:
     - node.type.event
     - node.type.meeting
     - node.type.organization_page
+    - taxonomy.vocabulary.organizations
+  content:
+    - 'taxonomy_term:organizations:27d91aee-1e83-4fb5-8b07-7b15f0c5ff79'
+    - 'taxonomy_term:organizations:a56427d7-f835-4032-9d01-1d54055e9879'
+    - 'taxonomy_term:organizations:ce8036eb-5c5e-4d06-9e28-609a104a8bc2'
   module:
     - datetime
     - node
@@ -1512,6 +1517,56 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: datetime
+        field_related_departments_target_id:
+          id: field_related_departments_target_id
+          table: node__field_related_departments
+          field: field_related_departments_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value:
+            440: 440
+            198: 198
+            200: 200
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_related_departments_target_id_op
+            label: Category
+            description: ''
+            use_operator: false
+            operator: field_related_departments_target_id_op
+            identifier: field_related_departments_target_id
+            required: false
+            remember: true
+            multiple: false
+            remember_roles:
+              anonymous: anonymous
+              authenticated: authenticated
+              editor: '0'
+              webmaster: '0'
+              administrator: '0'
+            reduce: true
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: organizations
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
       filter_groups:
         operator: AND
         groups:
@@ -1525,6 +1580,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
