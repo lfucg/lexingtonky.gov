@@ -43,7 +43,10 @@ process:
   title: title
   field_external_id: event_id
   body: body
-  field_locations: location_tid
+  field_locations:
+    plugin: skip_on_empty
+    method: process
+    source: location_tid
   field_related_departments:
     plugin: skip_on_empty
     method: process
