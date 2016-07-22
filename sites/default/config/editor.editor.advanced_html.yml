@@ -38,7 +38,10 @@ settings:
             - Styles
             - Format
             - Table
+            - Source
   plugins:
+    language:
+      language_list: un
     stylescombo:
       styles: 'a.lex-calltoaction|Call to action'
 image_upload:
