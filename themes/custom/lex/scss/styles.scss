@@ -71,6 +71,11 @@ body {
   color: $lex-dark-grey;
 }
 
+/* youtube embeds */
+iframe {
+  max-width: 100%;
+}
+
 .lex-heading {
   margin: 0;
   font-weight: $font-weight-regular;
