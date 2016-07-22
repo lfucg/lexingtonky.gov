@@ -21,7 +21,7 @@ dependencies:
     - taxonomy
     - user
 id: events
-label: 'Events and notices'
+label: 'Events, meetings and notices'
 module: views
 description: ''
 tag: ''
