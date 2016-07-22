@@ -90,11 +90,12 @@
   }
 
   var isWeekend = function() {
-    // grabbed this wholesale from old website
+    // grabbed this mostly wholesale from old website
     var curDate=new Date();
     var curDay=curDate.getDay();
-    var weekendCutOver=new Date((curDate.toLocaleDateString()) + " 15:30:00" );
-    var weekdayCutOver=new Date((curDate.toLocaleDateString()) + " 20:00:00" );
+    var weekendCutOver=new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 15, 30);
+    var weekdayCutOver=new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 20, 0);
+
     if(((curDay==0)&&(curDate<weekdayCutOver))||(curDay==6)||((curDay==5)&&(curDate>=weekendCutOver)))
     {
       return true;
