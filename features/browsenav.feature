@@ -12,7 +12,7 @@ Scenario: Using ajax navigation
     And I wait for AJAX to finish
     And I click "Police"
     And I wait for AJAX to finish
-    Then I should see the link 'Background checks'
+    Then I should see the link 'Crime map'
     # breadcrumb
     And I should see "Home Public safety"
 
@@ -22,7 +22,7 @@ Scenario: Using plain html navigation
 
     When I click "Public safety"
     And I click "Police"
-    Then I should see the link 'Background checks'
+    Then I should see the link 'Crime map'
     And I should see text matching "A.*to.*Z"
     # breadcrumb
     And I should see "Home Public safety"
