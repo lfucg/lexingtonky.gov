@@ -122,6 +122,7 @@
     $.get(baseUrl + "/traffic-incidents.csv", function(results, statusCode, req) {
       var updated = moment(new Date(req.getResponseHeader('Last-modified')));
       $('.lex-traffic-lastUpdated').html(updated.format('MM/DD/YYYY hh:mm:ss a'));
+      $('.lex-traffic-pageRefreshed').html(moment().format('MM/DD/YYYY hh:mm:ss a'));
 
       var incidents = Papa.parse(results, { header: true }).data;
       displayIncidents(incidents);
