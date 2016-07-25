@@ -1,0 +1,28 @@
+{{ attach_library('lex/lex-gis') }}
+
+{% include "@lex/node.html.twig" %}
+
+<!-- <div class="lex&#45;accordion js&#45;lex&#45;filter&#45;block"> -->
+<!-- <ul class="usa&#45;unstyled&#45;list"> -->
+<!--     <li> -->
+<!--       <p> -->
+<!--         <a href="/contact/page_feedback" class="lex&#45;font&#45;muted js&#45;accordion&#45;control" aria&#45;expanded="false" aria&#45;controls="collapsible&#45;0">Suggestions or problems with this page?</a> -->
+<!--       </p> -->
+<!--       <div id="collapsible&#45;0" aria&#45;hidden="true" class="lex&#45;accordion&#45;content usa&#45;accordion&#45;content lex&#45;notice js&#45;accordion&#45;content lex&#45;accordion&#45;content">foo</div> -->
+<!--     </li> -->
+<!--   </ul> -->
+<!-- </div> -->
+
+<div class="lex-accordion js-lex-filter-block">
+  <div><label class="lex-department-filter-label">Type the name of a board or commission <input class="lex-filter-search search" placeholder="planning commission" type="text" /></label></div>
+
+<div class="usa-unstyled-list">
+<ul class="list lex-card-title lex-card-title-medium js-lex-associations">
+	<li class="lex-filter-item lex-card js-lex-association-template">
+    <span class="js-lex-filter-item">
+      <a href="#" class="js-accordion-control" aria-expanded="false" aria-controls="a-thing">Administrative Hearing Board</a></span>
+    <div id="a-thing" aria-hidden="true" class="lex-accordion-content usa-accordion-content lex-notice js-accordion-content lex-accordion-content">foo</div>
+  </li>
+</ul>
+</div>
+</div>

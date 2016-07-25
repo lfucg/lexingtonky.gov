@@ -25,3 +25,7 @@ lex-traffic:
     - core/jquery
     - core/underscore
 
+lex-gis:
+  js:
+    js/lex-gis.js: {}
+
