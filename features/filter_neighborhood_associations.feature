@@ -1,7 +1,7 @@
 @api
 Feature: Filter and display neighborhood associations,
 
-@javascript @in-progress
+@javascript
 Scenario: Filtering associations in the directory
   Given I am on "/find-your-neighborhood-association"
   When I wait for AJAX to finish
