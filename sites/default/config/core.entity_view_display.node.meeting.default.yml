@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.meeting.field_external_id
     - field.field.node.meeting.field_locations
     - field.field.node.meeting.field_related_departments
+    - field.field.node.meeting.field_related_documents
     - node.type.meeting
   module:
     - datetime
@@ -60,3 +61,4 @@ content:
 hidden:
   field_external_id: true
   field_related_departments: true
+  field_related_documents: true

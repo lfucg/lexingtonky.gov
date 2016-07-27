@@ -9,16 +9,12 @@ dependencies:
     - paragraphs.paragraphs_type.paragraphs_page_section
   module:
     - text
+    - workbench_moderation
 id: paragraph.paragraphs_page_section.default
 targetEntityType: paragraph
 bundle: paragraphs_page_section
 mode: default
 content:
-  field_related_locations:
-    weight: 2
-    settings: {  }
-    third_party_settings: {  }
-    type: options_select
   field_section_body:
     weight: 1
     settings:
@@ -35,4 +31,6 @@ content:
     type: string_textfield
 hidden:
   created: true
+  field_related_locations: true
+  status: true
   uid: true
