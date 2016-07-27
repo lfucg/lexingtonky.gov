@@ -391,8 +391,8 @@
         $addressInput: jQuery('.js-lex-district-address'),
       });
 
-      /* duplicated in scripts.js */
-      $.LexingtonFilterBlock();
+      /* For /browse/government/departments. Duplicated in scripts.js */
+      $.LexingtonFilterBlock(document.getElementsByClassName('js-lex-filter-block')[0]);
     };
   })
 }());

@@ -25,3 +25,7 @@ lex-traffic:
     - core/jquery
     - core/underscore
 
+lex-neighborhood-associations:
+  js:
+    js/lex-neighborhood-associations.js: {}
+

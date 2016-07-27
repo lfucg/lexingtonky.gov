@@ -50,14 +50,14 @@
     });
   });
 
-  $.LexingtonFilterBlock = function() {
+  $.LexingtonFilterBlock = function(el) {
     var options = {
       valueNames: [ 'js-lex-filter-item' ]
     };
 
-    var userList = new List(document.getElementsByClassName('js-lex-filter-block')[0], options);
+    var userList = new List(el, options);
   }
 
-  /* duplicated in browse-columns.js */
-  $.LexingtonFilterBlock();
+  /* duplicated in browse-columns.js, lex-gis.js */
+  $.LexingtonFilterBlock(document.getElementsByClassName('js-lex-filter-block')[0]);
 }());
