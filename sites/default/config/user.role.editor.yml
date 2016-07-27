@@ -57,3 +57,4 @@ permissions:
   53: 'delete meeting revisions'
   54: 'revert meeting revisions'
   55: 'view meeting revisions'
+  56: 'use text format advanced_html'
