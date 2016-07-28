@@ -4,12 +4,18 @@
 
   var closuresMarkup = function(results) {
     var convertTime = function(military) {
-      return military > 12 ? (military - 12 + ' p.m.') : (military + ' a.m.');
+      /* sometimes is a string like 24 Hrs/Day */
+      if (military.match(/^\d+$/)) {
+        return military > 12 ? (military - 12 + ' p.m.') : (military + ' a.m.');
+      } else {
+        return military;
+      }
     }
 
     var withLocations = _.filter(results.data, function(c) { return c.location });
     var timeRanges = _.groupBy(withLocations, function(closure) {
-      return convertTime(closure.closureBegin) + ' – ' + convertTime(closure.closureEnd);
+      return convertTime(closure.closureBegin) +
+        (closure.closureEnd ? ' – ' + convertTime(closure.closureEnd) : '');
     });
     var markupClosure = function(closure) {
       var until = (closure.closedUntil !== '' ? ' Thru ' + closure.closedUntil : '');
@@ -130,8 +136,6 @@
     displayWeekdayOrWeekend();
   }
 
-  if (window.location.search.match('just-a-test=true')) {
-    window.refreshTicker();
-    setInterval(refreshTicker, 60000);
-  }
+  window.refreshTicker();
+  setInterval(refreshTicker, 60000);
 }());
