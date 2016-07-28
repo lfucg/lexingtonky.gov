@@ -24,7 +24,7 @@
         closure.location + ' – ' + closure.impact + until + '</li>';
     }
     var markupRange = function(closures, range) {
-      return '<h3>Closures scheduled from ' + range + '</h3>' +
+      return '<h3>Closures scheduled ' + range + '</h3>' +
       '<ul>' +
         _.map(closures, function(c) { return markupClosure(c) }).join('') +
       '</ul>';
