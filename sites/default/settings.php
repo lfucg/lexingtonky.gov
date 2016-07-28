@@ -28,10 +28,9 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
 include __DIR__ . "/settings.pantheon.php";
 
 $settings['trusted_host_patterns'] = array(
-  '^dev-lexky-d8\.pantheonsite\.io$',
-  '^test-lexky-d8\.pantheonsite\.io$',
-  '^live-lexky-d8\.pantheonsite\.io$',
   '^.+lexky-d8\.pantheonsite\.io$',
+  'lexingtonky\.gov$',
+  '^www\.lexingtonky\.gov$',
   '^next\.lexingtonky\.gov$',
 );
 
