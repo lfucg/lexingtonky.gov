@@ -72,9 +72,23 @@
   }
 }
 
-.lex-mostactive {
+.lex-region-featured_top {
   background-color: rgba($lex-dark-blue, $lex-alpha-level);
-  padding: 1em;
+
+  @include media($medium-large-screen) {
+    margin-top: 50px;
+  }
+  @include media($large-screen) {
+    margin-top: 310px;
+  }
+}
+
+.lex-mostactive {
+  padding-bottom: 1em;
+
+  @include media($medium-screen) {
+    padding-top: 1em;
+  }
 
   .lex-section-heading {
     color: $lex-white;
