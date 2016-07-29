@@ -88,7 +88,7 @@ function lex_preprocess_block(&$variables) {
     $variables['contact_form'] = \Drupal::service('entity.form_builder')->getForm($message);
   }
   else if (in_array($element_id,
-      array('views_block__events_block_1', 'views_block__visitor_information_block_front_page'))) {
+      array('views_block__events_block_1', 'views_block__events_front_page_meetings'))) {
     $variables['attributes']['class'][] = 'usa-width-one-third usa-end-row';
   }
   else if ($element_id == 'views_block__content_recent_front_page') {
