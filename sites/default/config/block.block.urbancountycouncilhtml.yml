@@ -12,14 +12,14 @@ dependencies:
 id: urbancountycouncilhtml
 theme: lex
 region: featured_bottom_first
-weight: -14
+weight: -22
 provider: null
 plugin: 'block_content:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
 settings:
   id: 'block_content:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
   label: 'Urban County Council'
   provider: block_content
-  label_display: visible
+  label_display: '0'
   status: true
   info: ''
   view_mode: full

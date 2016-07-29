@@ -11,7 +11,7 @@ dependencies:
 id: lex_account_menu
 theme: lex
 region: '-1'
-weight: -9
+weight: -11
 provider: null
 plugin: 'system_menu_block:account'
 settings:

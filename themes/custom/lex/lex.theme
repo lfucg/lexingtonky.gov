@@ -91,12 +91,12 @@ function lex_preprocess_block(&$variables) {
       array('views_block__events_block_1', 'views_block__events_front_page_meetings'))) {
     $variables['attributes']['class'][] = 'usa-width-one-third usa-end-row';
   }
-  else if ($element_id == 'views_block__content_recent_front_page') {
-    $variables['attributes']['class'][] = 'usa-width-one-third';
+  else if ($element_id == 'urbancountycouncilhtml') {
+    $variables['attributes']['class'][] = 'usa-width-one-third usa-end-row';
   }
   else if (in_array($element_id,
-      array('mayors_office_block', 'urbancountycouncilhtml'))) {
-    $variables['attributes']['class'][] = 'usa-width-two-thirds usa-end-row';
+      array('mayors_office_block'))) {
+    $variables['attributes']['class'][] = 'usa-width-two-thirds';
   }
 }
 

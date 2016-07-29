@@ -9,7 +9,7 @@ dependencies:
 id: lex_branding
 theme: lex
 region: '-1'
-weight: -11
+weight: -13
 provider: null
 plugin: system_branding_block
 settings:

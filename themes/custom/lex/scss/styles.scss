@@ -160,13 +160,17 @@ iframe {
 }
 
 #block-urbancountycouncilhtml {
+  padding-top: 1.3em;
   .lex-card-title {
-    font-weight: $font-weight-light;
+    margin-bottom: 1em;
   }
   .lex-icon {
+    float: left;
+    margin-top: -14px;
+    display: inline-block;
     font-size: 1.5em;
     width: 1em;
-    opacity: 0.8;
+    margin-right: 0.5em;
   }
 }
 
@@ -218,14 +222,6 @@ input:focus, input[type=search]:focus {
     .lex-card-title {
       font-weight: $font-weight-light;
     }
-  }
-}
-
-.lex-standoutlinks {
-  .lex-icon {
-    font-size: 2.7em;
-    float: left;
-    margin-right: 0.5em;
   }
 }
 

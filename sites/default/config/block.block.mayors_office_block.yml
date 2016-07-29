@@ -12,7 +12,7 @@ dependencies:
 id: mayors_office_block
 theme: lex
 region: featured_bottom_first
-weight: -15
+weight: -23
 provider: null
 plugin: 'block_content:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'
 settings:

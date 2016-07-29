@@ -9,7 +9,7 @@ dependencies:
 id: lex_content
 theme: lex
 region: '-1'
-weight: -14
+weight: -16
 provider: null
 plugin: system_main_block
 settings:
