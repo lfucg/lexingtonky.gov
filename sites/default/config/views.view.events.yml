@@ -1104,7 +1104,7 @@ display:
       display_description: ''
       use_more: true
       use_more_always: true
-      use_more_text: 'more events'
+      use_more_text: events
     cache_metadata:
       max-age: -1
       contexts:

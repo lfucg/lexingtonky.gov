@@ -470,7 +470,7 @@ display:
   block_1:
     display_plugin: block
     id: block_1
-    display_title: Block
+    display_title: 'Front page news'
     position: 1
     display_options:
       display_extenders: {  }
@@ -484,7 +484,7 @@ display:
         filters: false
         filter_groups: false
       use_more_always: true
-      use_more_text: 'more news'
+      use_more_text: news
       pager:
         type: some
         options:
@@ -554,6 +554,7 @@ display:
         operator: AND
         groups:
           1: AND
+      display_description: ''
     cache_metadata:
       max-age: -1
       contexts:
