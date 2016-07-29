@@ -92,11 +92,11 @@ function lex_preprocess_block(&$variables) {
     $variables['attributes']['class'][] = 'usa-width-one-third usa-end-row';
   }
   else if ($element_id == 'urbancountycouncilhtml') {
-    $variables['attributes']['class'][] = 'usa-width-one-third usa-end-row';
+    $variables['attributes']['class'][] = 'usa-width-one-half usa-end-row lex-frontpage-mayor';
   }
   else if (in_array($element_id,
       array('mayors_office_block'))) {
-    $variables['attributes']['class'][] = 'usa-width-two-thirds';
+    $variables['attributes']['class'][] = 'usa-width-one-half lex-frontpage-mayor';
   }
 }
 

@@ -159,8 +159,16 @@ iframe {
   }
 }
 
+.lex-grid-full .lex-frontpage-mayor {
+  width: 100%;
+  @include media($medium-large-screen) {
+    width: 46%;
+    margin-right: 4%;
+  }
+}
+
 #block-urbancountycouncilhtml {
-  padding-top: 1.3em;
+  padding-top: 2em;
   .lex-card-title {
     margin-bottom: 1em;
   }
