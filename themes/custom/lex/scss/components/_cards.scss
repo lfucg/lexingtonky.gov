@@ -65,6 +65,10 @@
   font-weight: $font-weight-regular;
   display: inline-block;
 
+  &.lex-card-title-small {
+    font-size: 1em;
+  }
+
   &.lex-card-title-medium {
     font-size: 1.25em;
   }

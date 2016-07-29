@@ -72,6 +72,19 @@
   }
 }
 
+.lex-mostactive {
+  background-color: rgba($lex-dark-blue, $lex-alpha-level);
+  padding: 1em;
+
+  .lex-section-heading {
+    color: $lex-white;
+  }
+  .lex-font-standout a, .lex-font-standout a:visited {
+    color: $lex-white;
+    text-decoration: underline;
+  }
+}
+
 .lex-site-navbar-secondary {
   float: right;
   margin-top: 12px;
