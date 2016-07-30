@@ -79,22 +79,22 @@
     margin-top: 50px;
   }
   @include media($large-screen) {
-    margin-top: 310px;
+    margin-top: 430px;
   }
 }
 
 .lex-mostactive {
-  padding-bottom: 1em;
+  padding: 1em;
+  background-color: rgba($lex-white, $lex-alpha-level);
 
   @include media($medium-screen) {
     padding-top: 1em;
   }
 
   .lex-section-heading {
-    color: $lex-white;
+    color: $lex-dark-grey;
   }
   .lex-font-standout a, .lex-font-standout a:visited {
-    color: $lex-white;
     text-decoration: underline;
   }
 }

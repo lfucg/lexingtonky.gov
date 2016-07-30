@@ -165,20 +165,35 @@ iframe {
     width: 46%;
     margin-right: 4%;
   }
+  @include media($large-screen) {
+    width: 65%;
+    margin-right: 4%;
+  }
 }
 
 #block-urbancountycouncilhtml {
-  padding-top: 2em;
+  width: 100%;
+  padding-top: 3em;
   .lex-card-title {
-    margin-bottom: 1em;
+    margin-bottom: 0.75em;
   }
   .lex-icon {
+    color: $lex-dark-grey;
     float: left;
-    margin-top: -14px;
+    margin-top: -10px;
     display: inline-block;
     font-size: 1.5em;
     width: 1em;
     margin-right: 0.5em;
+  }
+  /* also applies to .lex-frontpage-mayor */
+  @include media($medium-large-screen) {
+    width: 46%;
+    margin-right: 4%;
+  }
+  @include media($large-screen) {
+    width: 31%;
+    margin-right: 0;
   }
 }
 
@@ -206,6 +221,7 @@ input:focus, input[type=search]:focus {
 
   @include media($large-screen) {
     width: 98%;
+    padding-bottom: 3em;
 
     .lex-card-title {
       margin-bottom: 0;
@@ -281,4 +297,8 @@ input:focus, input[type=search]:focus {
 
 .lex-block.lex-block-nobottommargin {
   margin-bottom: 0;
+}
+
+.lex-footer a.lex-font-standout {
+  text-decoration: none;
 }
