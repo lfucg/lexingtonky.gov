@@ -1,5 +1,10 @@
 <?php
 
+$redirects = __DIR__ . "/redirects.php";
+if (file_exists($redirects)) {
+  include $redirects;
+}
+
 // Require HTTPS on pantheon
 if (isset($_SERVER['PANTHEON_ENVIRONMENT']) &&
   $_SERVER['HTTPS'] === 'OFF') {
