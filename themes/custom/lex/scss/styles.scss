@@ -254,12 +254,31 @@ input:focus, input[type=search]:focus {
 }
 
 .lex-sub-footer {
-  padding-top: $lex-section-gutter;
+  padding-top: $lex-section-gutter * 3;
   padding-bottom: $lex-section-half-gutter;
+}
+
+.lex-copyright {
+  padding-left: $lex-section-gutter;
+  margin-top: 0;
+  font-size: 0.8em;
+}
+
+.lex-footer {
+  a.lex-font-standout {
+    text-decoration: none;
+  }
+  .lex-social-links {
+    padding-top: 0.5em;
+  }
+  #block-views-block-taxonomy-top-level-block-footer-titles-only {
+    overflow: hidden;
+  }
 }
 
 .lex-seal {
   width: 50px;
+  float: left;
 }
 
 .lex-newsarticle-end {
@@ -299,6 +318,3 @@ input:focus, input[type=search]:focus {
   margin-bottom: 0;
 }
 
-.lex-footer a.lex-font-standout {
-  text-decoration: none;
-}
