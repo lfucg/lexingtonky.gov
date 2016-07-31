@@ -76,10 +76,7 @@
   background-color: rgba($lex-dark-blue, $lex-alpha-level);
 
   @include media($medium-large-screen) {
-    margin-top: 50px;
-  }
-  @include media($large-screen) {
-    margin-top: 290px;
+    margin-top: 310px;
   }
 }
 
