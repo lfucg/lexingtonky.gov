@@ -13,10 +13,10 @@ function _lexky_get_redirects()
   }
   $by_old_path = [];
   foreach($redirects as $redirect) {
-    if ($by_old_path[$redirect["old_path"]]) {
+    if (strtolower($by_old_path[$redirect["old_path"]])) {
       die("<br>old_path already exists: " . $redirect["old_path"]);
     } else {
-      $by_old_path[$redirect["old_path"]] = $redirect["new_path"];
+      $by_old_path[strtolower($redirect["old_path"])] = $redirect["new_path"];
     }
   }
   return $by_old_path;
@@ -60,7 +60,7 @@ function _lexky_redirect($new_path) {
 
 function _lexky_get_redirect_from_table($incoming_path) {
   $redirects = _lexky_get_redirects();
-  return $redirects[$incoming_path];
+  return $redirects[strtolower($incoming_path)];
 }
 
 function _lexky_pantheon_https_needed() {
