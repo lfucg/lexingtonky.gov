@@ -1640,10 +1640,6 @@
     "new_path": "/browse/recreation/rentals-and-facilities"
   },
   {
-    "old_path": "/parks",
-    "new_path": "/departments/parks-recreation"
-  },
-  {
     "old_path": "/parksforms",
     "new_path": "/parks-recreation-policies"
   },
