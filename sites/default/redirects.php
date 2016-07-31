@@ -22,11 +22,22 @@ function _lexky_get_redirects()
   return $by_old_path;
 }
 
+function _lexky_current_http() {
+  if (_lexky_pantheon()) {
+    return _lexky_pantheon_http() ? 'http' : 'https';
+  } else {
+    return 'http';
+  }
+}
+
 function _lexky_is_sane_redirect($new_url) {
-  $current_http = _lexky_pantheon_https_needed() ? 'http' : 'https';
-  $current_url =  $current_http . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+  $current_url =  _lexky_current_http() . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
   return (strtolower($new_url) != strtolower($current_url));
+}
+
+function _lexky_pantheon() {
+  return isset($_ENV['PANTHEON_ENVIRONMENT']);
 }
 
 function _lexky_desired_http() {
@@ -63,7 +74,7 @@ function _lexky_get_redirect_from_table($incoming_path) {
   return $redirects[strtolower($incoming_path)];
 }
 
-function _lexky_pantheon_https_needed() {
+function _lexky_pantheon_http() {
   if (isset($_SERVER['PANTHEON_ENVIRONMENT']) &&
     $_SERVER['HTTPS'] === 'OFF') {
     if (!isset($_SERVER['HTTP_X_SSL']) ||
@@ -84,6 +95,6 @@ if ($redirect_table_path) {
   // redirect to www.lexingtonky.gov
   // _lexky_redirect($incoming_path);
 
-} else if (_lexky_pantheon_https_needed()) {
+} else if (_lexky_pantheon_http()) {
   _lexky_redirect($_SERVER['REQUEST_URI']);
 }
