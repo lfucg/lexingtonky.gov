@@ -1750,5 +1750,57 @@
   {
     "old_path": "/Admin/Login.aspx",
     "new_path": "/user"
+  },
+  {
+    "old_path": "/dem",
+    "new_path": "http://bereadylexington.com/"
+  },
+  {
+    "old_path": "/economicengine",
+    "new_path": "https://lfucg.economicengine.com/?nocache=22217300"
+  },
+  {
+    "old_path": "/euclid",
+    "new_path": "https://docs.google.com/forms/d/e/1FAIpQLSeejewhglTsLEQlvfzAjWeNsnCyu0TKfPFkmuB6obDxNsCG_g/viewform"
+  },
+  {
+    "old_path": "/gismaps",
+    "new_path": "http://maps.lexingtonky.gov/mapit"
+  },
+  {
+    "old_path": "/webmail",
+    "new_path": "https://mail.lexingtonky.gov/owa/auth/logon.aspx?replaceCurrent=1&url=https://mail.lexingtonky.gov/owa/"
+  },
+  {
+    "old_path": "/traffic",
+    "new_path": "https://trafficvid.lexingtonky.gov/publicmap/"
+  },
+  {
+    "old_path": "/permits",
+    "new_path": "https://aca3.accela.com/lexky/"
+  },
+  {
+    "old_path": "/plans",
+    "new_path": "https://aca3.accela.com/lexky/"
+  },
+  {
+    "old_path": "/acella",
+    "new_path": "https://av3.accela.com/security/hostSignon.do?successUrl=https://av3.accela.com/portlets/spa/dashboard.do"
+  },
+  {
+    "old_path": "/KLB",
+    "new_path": "http://www.keeplexingtonbeautiful.com/"
+  },
+  {
+    "old_path": "/newuser",
+    "new_path": "https://parks.lexingtonky.gov/wbwsc/webtrac.wsc/wbsa0100.html?tv=42213&wbsi=nosi&xxac=a&lang=CUSTM"
+  },
+  {
+    "old_path": "/ozone",
+    "new_path": "http://lexareampo.org/what-we-do/air-quality/"
+  },
+  {
+    "old_path": "/partnersforyouth",
+    "new_path": "http://partners4youth.org/"
   }
 ]

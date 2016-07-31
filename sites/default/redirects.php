@@ -43,10 +43,16 @@ function _lexky_desired_host() {
 }
 
 function _lexky_redirect($new_path) {
-  $new_url = _lexky_desired_http() . '://' . _lexky_desired_host() . $new_path;
+  $status = '302 Moved Temporarily';
+  if (strpos($new_path, 'http') === 0) {
+    $new_url = $new_path;
+  } else {
+    // todo: use 301 for index.aspx urls
+    $new_url = _lexky_desired_http() . '://' . _lexky_desired_host() . $new_path;
+  }
 
   if (_lexky_is_sane_redirect($new_url)) {
-    header('HTTP/1.0 302 Moved Temporarily');
+    header('HTTP/1.0 ' . $status);
     header('Location: ' . $new_url);
     exit();
   }
