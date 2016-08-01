@@ -47,7 +47,8 @@ function _lexky_desired_http() {
 function _lexky_desired_host() {
   if (isset($_ENV['PANTHEON_ENVIRONMENT']) && $_ENV['PANTHEON_ENVIRONMENT'] == 'live') {
     // enable for cutover: www.lexingtonky.gov
-    return 'next.lexingtonky.gov';
+    return $_SERVER['HTTP_HOST'];
+    // return 'next.lexingtonky.gov';
   } else {
     return $_SERVER['HTTP_HOST'];
   }
