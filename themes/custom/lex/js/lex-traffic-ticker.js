@@ -1,6 +1,6 @@
 (function() {
   var $ = jQuery;
-  var baseUrl = '//lfucg.github.io/traffic-data';
+  var baseUrl = 'https://lfucg.github.io/traffic-data';
 
   var closuresMarkup = function(results) {
     var convertTime = function(military) {
@@ -110,13 +110,13 @@
 
   var displayWeekdayOrWeekend = function() {
     if (isWeekend() || window.location.search.match('show-weekend=true')) {
-      Papa.parse(baseUrl + "/weekend-impacts.csv", {
+      Papa.parse(githubUrl("/weekend-impacts.csv"), {
         download: true,
         header: true,
         complete: displayWeekendImpacts,
       });
     } else {
-      Papa.parse(baseUrl + "/scheduled-closures.csv", {
+      Papa.parse(githubUrl("/scheduled-closures.csv"), {
         download: true,
         header: true,
         complete: displayClosures,
@@ -124,8 +124,13 @@
     }
   }
 
+  var githubUrl = function(file) {
+    var epoch = (new Date).getTime();
+    return (baseUrl + file + "?breakcache=" + epoch);
+  }
+
   window.refreshTicker = function() {
-    $.get(baseUrl + "/traffic-incidents.csv", function(results, statusCode, req) {
+    $.get(githubUrl("/traffic-incidents.csv"), function(results, statusCode, req) {
       var updated = moment(new Date(req.getResponseHeader('Last-modified')));
       $('.lex-traffic-lastUpdated').html(updated.format('MM/DD/YYYY hh:mm:ss a'));
       $('.lex-traffic-pageRefreshed').html(moment().format('MM/DD/YYYY hh:mm:ss a'));
