@@ -1802,5 +1802,33 @@
   {
     "old_path": "/partnersforyouth",
     "new_path": "http://partners4youth.org/"
+  },
+  {
+    "old_path": "/index.aspx?page=1425",
+    "new_path": "/mopeds-go-carts-and-scooters"
+  },
+  {
+    "old_path": "/index.aspx?page=3072",
+    "new_path": "/pay-your-bill"
+  },
+  {
+    "old_path": "/index.aspx?page=253",
+    "new_path": "/browse/recreation/rentals-and-facilities"
+  },
+  {
+    "old_path": "/index.aspx?page=3655",
+    "new_path": "/opera-under-stars"
+  },
+  {
+    "old_path": "/index.aspx?page=117",
+    "new_path": "/contacting-police"
+  },
+  {
+    "old_path": "/index.aspx?page=605",
+    "new_path": "/plans-studies-and-surveys"
+  },
+  {
+    "old_path": "/accela",
+    "new_path": "https://av3.accela.com/security/hostSignon.do?successUrl=https://av3.accela.com/portlets/spa/dashboard.do"
   }
 ]
