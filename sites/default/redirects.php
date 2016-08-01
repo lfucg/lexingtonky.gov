@@ -46,9 +46,7 @@ function _lexky_desired_http() {
 
 function _lexky_desired_host() {
   if (isset($_ENV['PANTHEON_ENVIRONMENT']) && $_ENV['PANTHEON_ENVIRONMENT'] == 'live') {
-    // enable for cutover: www.lexingtonky.gov
-    return $_SERVER['HTTP_HOST'];
-    // return 'next.lexingtonky.gov';
+    return 'www.lexingtonky.gov';
   } else {
     return $_SERVER['HTTP_HOST'];
   }
@@ -90,12 +88,9 @@ $redirect_table_path = _lexky_get_redirect_from_table($incoming_path);
 
 if ($redirect_table_path) {
   _lexky_redirect($redirect_table_path);
-
-// enable for cutover
-// } else if (in_array($_SERVER['HTTP_HOST'], ['next.lexingtonky.gov', 'lexingtonky.gov'])) {
+} else if (in_array($_SERVER['HTTP_HOST'], ['next.lexingtonky.gov', 'lexingtonky.gov'])) {
   // redirect to www.lexingtonky.gov
-  // _lexky_redirect($incoming_path);
-
+  _lexky_redirect($incoming_path);
 } else if (_lexky_pantheon_http()) {
   _lexky_redirect($_SERVER['REQUEST_URI']);
 }
