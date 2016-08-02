@@ -36,3 +36,5 @@ permissions:
   59: 'use published_archived transition'
   60: 'view all revisions'
   61: 'masquerade as any user'
+  62: 'administer url aliases'
+  63: 'create url aliases'

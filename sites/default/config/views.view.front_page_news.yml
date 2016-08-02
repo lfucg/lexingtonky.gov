@@ -57,7 +57,7 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 6
+          items_per_page: 3
           offset: 0
           id: 0
           total_pages: null
@@ -74,7 +74,7 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
-          quantity: 9
+          quantity: 4
       style:
         type: default
         options:
