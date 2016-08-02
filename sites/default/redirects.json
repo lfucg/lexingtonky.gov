@@ -1830,5 +1830,9 @@
   {
     "old_path": "/accela",
     "new_path": "https://av3.accela.com/security/hostSignon.do?successUrl=https://av3.accela.com/portlets/spa/dashboard.do"
+  },
+  {
+    "old_path": "/index.aspx?page=1791",
+    "new_path": "/find-your-neighborhood-association"
   }
 ]
