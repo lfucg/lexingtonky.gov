@@ -1834,5 +1834,37 @@
   {
     "old_path": "/index.aspx?page=1791",
     "new_path": "/find-your-neighborhood-association"
+  },
+  {
+    "old_path": "/index.aspx?page=2436",
+    "new_path": "/all-boards-commissions"
+  },
+  {
+    "old_path": "/index.aspx?page=2435",
+    "new_path": "/all-boards-commissions"
+  },
+  {
+    "old_path": "/index.aspx?page=2723",
+    "new_path": "/all-boards-commissions"
+  },
+  {
+    "old_path": "/index.aspx?page=2438",
+    "new_path": "/all-boards-commissions"
+  },
+  {
+    "old_path": "/index.aspx?page=373",
+    "new_path": "/meeting-notices"
+  },
+  {
+    "old_path": "/index.aspx?page=2496",
+    "new_path": "/list-of-all-city-parks"
+  },
+  {
+    "old_path": "/index.aspx?page=2701",
+    "new_path": "/list-of-all-city-parks"
+  },
+  {
+    "old_path": "/index.aspx?page=3551",
+    "new_path": "/list-of-all-city-parks"
   }
 ]
