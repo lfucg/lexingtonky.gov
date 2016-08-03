@@ -1866,5 +1866,37 @@
   {
     "old_path": "/index.aspx?page=3551",
     "new_path": "/list-of-all-city-parks"
+  },
+  {
+    "old_path": "/index.aspx?page=1386",
+    "new_path": "/conditional-use-and-zone-change-applications"
+  },
+  {
+    "old_path": "/index.aspx?page=449",
+    "new_path": "/lexington-map-it"
+  },
+  {
+    "old_path": "/index.aspx?page=1344",
+    "new_path": "/circuit-district-court"
+  },
+  {
+    "old_path": "/index.aspx?page=337",
+    "new_path": "/conditional-use-and-zone-change-applications"
+  },
+  {
+    "old_path": "/index.aspx?page=120",
+    "new_path": "/citizen-report"
+  },
+  {
+    "old_path": "/index.aspx?page=965",
+    "new_path": "/departments/courthouse-area-design-review-board"
+  },
+  {
+    "old_path": "/index.aspx?page=2997",
+    "new_path": "/crime-map"
+  },
+  {
+    "old_path": "/index.aspx?page=701",
+    "new_path": "/browse/utilities-and-streets/waste-management"
   }
 ]
