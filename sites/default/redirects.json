@@ -1898,5 +1898,9 @@
   {
     "old_path": "/index.aspx?page=701",
     "new_path": "/browse/utilities-and-streets/waste-management"
+  },
+  {
+    "old_path": "/index.aspx?page=2698",
+    "new_path": "/livegreen"
   }
 ]
