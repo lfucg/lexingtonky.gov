@@ -6,6 +6,7 @@ dependencies:
     - contact.form.page_feedback
     - field.field.contact_message.page_feedback.field_city_response_from
     - field.field.contact_message.page_feedback.field_feedback_url
+    - field.field.contact_message.page_feedback.field_internal_notes
     - field.field.contact_message.page_feedback.field_optional_email
     - field.field.contact_message.page_feedback.field_optional_name
     - field.field.contact_message.page_feedback.field_page_suggestion
@@ -29,6 +30,13 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_internal_notes:
+    weight: 5
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
   field_optional_email:
     weight: 3
     settings:
