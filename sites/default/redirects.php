@@ -96,10 +96,19 @@ function _lexky_pantheon_http() {
   }
 }
 
+function _lexky_get_legacy_document_redirect($incoming_path) {
+  if (strpos($incoming_path, "/Modules/") === 0) {
+    return 'http://previous.lexingtonky.gov' . str_replace('?', '@', $incoming_path);
+  }
+}
+
 $incoming_path = $_SERVER['REQUEST_URI'];
+$legacy_document_redirect = _lexky_get_legacy_document_redirect($incoming_path);
 $redirect_table_path = _lexky_get_redirect_from_table($incoming_path);
 
-if ($redirect_table_path) {
+if ($legacy_document_redirect) {
+  _lexky_redirect($legacy_document_redirect, _lexky_status_temporary());
+} else if ($redirect_table_path) {
   _lexky_redirect($redirect_table_path, _lexky_internal_redirect_status($incoming_path));
 } else if (in_array($_SERVER['HTTP_HOST'], ['next.lexingtonky.gov', 'lexingtonky.gov'])) {
   // redirect to www.lexingtonky.gov

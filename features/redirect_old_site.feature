@@ -9,3 +9,7 @@ Scenario: Traffic ticker
 Scenario: External URL
   Given I visit "/dem"
   Then I should see "Lexington Division of Emergency Management"
+
+Scenario: Legacy document is redirected to previous.lexingtonky.gov
+  Given I visit "/Modules/ShowDocument.aspx?documentid=20877"
+  Then the response status code should be 200
