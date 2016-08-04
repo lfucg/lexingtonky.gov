@@ -40,7 +40,6 @@
   var markupIncident = function(incident) {
     var classes = incident.displayAlert ? 'class="lex-traffic-notice lex-traffic-notice-alert"' : '';
     return '<li ' + classes + '>' +
-      (incident.direction ? incident.direction + '. ' : '') +
       incident.location +
       (incident.description ? ' – ' + incident.description : '') +
       '</li>';
