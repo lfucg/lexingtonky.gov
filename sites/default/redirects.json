@@ -1902,5 +1902,65 @@
   {
     "old_path": "/index.aspx?page=2698",
     "new_path": "/livegreen"
+  },
+  {
+    "old_path": "/index.aspx?page=367",
+    "new_path": "/council-district-12"
+  },
+  {
+    "old_path": "/index.aspx?page=366",
+    "new_path": "/council-district-11"
+  },
+  {
+    "old_path": "/index.aspx?page=365",
+    "new_path": "/council-district-10"
+  },
+  {
+    "old_path": "/index.aspx?page=364",
+    "new_path": "/council-district-9"
+  },
+  {
+    "old_path": "/index.aspx?page=363",
+    "new_path": "/council-district-8"
+  },
+  {
+    "old_path": "/index.aspx?page=362",
+    "new_path": "/council-district-7"
+  },
+  {
+    "old_path": "/index.aspx?page=361",
+    "new_path": "/council-district-6"
+  },
+  {
+    "old_path": "/index.aspx?page=360",
+    "new_path": "/council-district-5"
+  },
+  {
+    "old_path": "/index.aspx?page=359",
+    "new_path": "/council-district-4"
+  },
+  {
+    "old_path": "/index.aspx?page=358",
+    "new_path": "/council-district-3"
+  },
+  {
+    "old_path": "/index.aspx?page=357",
+    "new_path": "/council-district-2"
+  },
+  {
+    "old_path": "/index.aspx?page=356",
+    "new_path": "/council-district-1"
+  },
+  {
+    "old_path": "/index.aspx?page=355",
+    "new_path": "/council-at-large-1"
+  },
+  {
+    "old_path": "/index.aspx?page=354",
+    "new_path": "/council-at-large-2"
+  },
+  {
+    "old_path": "/index.aspx?page=353",
+    "new_path": "/vice-mayor"
   }
 ]
