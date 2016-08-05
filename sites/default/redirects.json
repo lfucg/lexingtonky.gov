@@ -1902,5 +1902,13 @@
   {
     "old_path": "/index.aspx?page=2698",
     "new_path": "/livegreen"
+  },
+  {
+    "old_path": "/index.aspx?page=367",
+    "new_path": "/council-district-12"
+  },
+  {
+    "old_path": "/index.aspx?page=366",
+    "new_path": "/council-district-11"
   }
 ]
