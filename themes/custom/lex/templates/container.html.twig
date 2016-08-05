@@ -25,7 +25,9 @@
     has_parent ? 'form-wrapper',
   ]
 %}
-{# response-from field only visible from admin #}
-{% if not attributes.hasClass('field--name-field-city-response-from') %}
+{# field_city_response_from, field_internal_notes field only visible from admin #}
+{% if attributes.hasClass('field--name-field-city-response-from') %}
+{% elseif attributes.hasClass('field--name-field-internal-notes') %}
+{% else %}
   {% include '@stable/form/container.html.twig' %}
 {% endif %}
