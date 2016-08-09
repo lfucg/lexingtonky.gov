@@ -19,7 +19,7 @@ default_value: {  }
 default_value_callback: ''
 settings:
   file_directory: '[date:custom:Y]-[date:custom:m]'
-  file_extensions: 'pdf xls xlsx'
+  file_extensions: 'pdf xls xlsx jpeg jpg png'
   max_filesize: 10MB
   description_field: true
   handler: 'default:file'
