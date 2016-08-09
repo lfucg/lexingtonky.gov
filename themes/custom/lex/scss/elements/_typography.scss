@@ -49,6 +49,9 @@ h1, h2, h3, h4, h5, h6 {
     /* for blocks that are the whole page like /meeting-notices */
     .lex-block-light-title {
       font-weight: $font-weight-regular;
+      a {
+        text-decoration: none;
+      }
     }
   }
 }

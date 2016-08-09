@@ -1,0 +1,15 @@
+{#
+  required:
+    start_date: Plain formatted date (2016-08-07T19:00:00)
+    title_tag
+
+  optional
+    title_class
+#}
+
+{% set begin = {
+    date:      (start_date | date('l, F j')),
+  }
+%}
+
+<{{ title_tag }} class="{{ title_class }}" >{{ begin.date }}</{{ title_tag }}>

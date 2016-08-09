@@ -84,11 +84,15 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
-          quantity: 9
+          quantity: 4
       style:
         type: html_list
         options:
-          grouping: {  }
+          grouping:
+            -
+              field: field_date_1
+              rendered: true
+              rendered_strip: false
           row_class: 'lex-card clearfix lex-eventcard'
           default_row_class: true
           type: ol
@@ -625,6 +629,7 @@ display:
       use_more_text: 'more meetings'
       css_class: lex-event-list
       use_ajax: true
+      group_by: false
     cache_metadata:
       max-age: -1
       contexts:
@@ -658,7 +663,11 @@ display:
       style:
         type: html_list
         options:
-          grouping: {  }
+          grouping:
+            -
+              field: field_date_1
+              rendered: true
+              rendered_strip: false
           row_class: 'lex-card clearfix lex-eventcard'
           default_row_class: false
           type: ol
@@ -677,6 +686,69 @@ display:
           items_per_page: 3
           offset: 0
       fields:
+        field_date_1:
+          id: field_date_1
+          table: node__field_date
+          field: field_date
+          relationship: none
+          group_type: group
+          admin_label: 'Start date grouping'
+          label: ''
+          exclude: true
+          alter:
+            alter_text: true
+            text: "{% include '@lex/includes/views-event-daytitle.html.twig' with {   \n    start_date: field_date_1,\n    title_tag: 'h3',\n    title_class: 'lex-eventcard-title-daylist lex-card-title lex-card-title-medium',\n  } \n%}\n"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: '0'
+          element_class: ''
+          element_label_type: '0'
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: '0'
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_plain
+          settings:
+            timezone_override: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         field_date_end:
           id: field_date_end
           table: node__field_date_end
@@ -945,7 +1017,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "{% include '@lex/includes/views-event-card.html.twig' with {\n    title: title,\n    title_tag: 'h3',\n    title_class: 'lex-card-title lex-card-title-medium',\n    start_date_time: field_date,\n    end_date_time: field_date_end,\n    field_hide_times: field_hide_times\n  } \n%}"
+            text: "{% include '@lex/includes/views-event-card.html.twig' with {\n    title: title,\n    title_tag: 'h4',\n    title_class: 'lex-card-title lex-card-title-medium',\n    start_date_time: field_date,\n    end_date_time: field_date_end,\n    field_hide_times: field_hide_times\n  } \n%}"
             make_link: false
             path: ''
             absolute: false
@@ -1119,7 +1191,7 @@ display:
   block_meetings:
     display_plugin: block
     id: block_meetings
-    display_title: 'Meetings and notices block'
+    display_title: 'Meetings and notices full-page block'
     position: 1
     display_options:
       display_extenders: {  }
@@ -1133,9 +1205,138 @@ display:
         filters: false
         filter_groups: false
         use_ajax: false
+        style: false
+        row: false
       use_more_always: true
       use_more_text: 'more events'
       fields:
+        field_date_3:
+          id: field_date_3
+          table: node__field_date
+          field: field_date
+          relationship: none
+          group_type: group
+          admin_label: 'Start date grouping'
+          label: ''
+          exclude: true
+          alter:
+            alter_text: true
+            text: "{% include '@lex/includes/views-event-daytitle.html.twig' with {   \n    start_date: field_date_3,\n    title_tag: 'h2',\n    title_class: 'lex-eventcard-title-daylist lex-card-title lex-card-title-medium',\n  } \n%}\n"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_plain
+          settings:
+            timezone_override: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_date_1:
+          id: field_date_1
+          table: node__field_date
+          field: field_date
+          relationship: none
+          group_type: group
+          admin_label: 'Start date'
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_custom
+          settings:
+            timezone_override: ''
+            date_format: 'D, M j'
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         title:
           id: title
           table: node_field_data
@@ -1204,7 +1405,7 @@ display:
           table: node__field_date_end
           field: field_date_end
           relationship: none
-          group_type: group
+          group_type: count
           admin_label: ''
           label: ''
           exclude: true
@@ -1267,7 +1468,7 @@ display:
           table: node__field_date
           field: field_date
           relationship: none
-          group_type: group
+          group_type: count
           admin_label: ''
           label: ''
           exclude: true
@@ -1539,6 +1740,26 @@ display:
           1: AND
       use_ajax: true
       display_description: ''
+      style:
+        type: html_list
+        options:
+          grouping:
+            -
+              field: field_date_3
+              rendered: true
+              rendered_strip: false
+          row_class: 'lex-card clearfix lex-eventcard'
+          default_row_class: true
+          type: ol
+          wrapper_class: ''
+          class: usa-unstyled-list
+      row:
+        type: fields
+        options:
+          default_field_elements: false
+          inline: {  }
+          separator: ''
+          hide_empty: false
     cache_metadata:
       max-age: -1
       contexts:
@@ -1737,6 +1958,69 @@ display:
         groups:
           1: AND
       fields:
+        field_date_1:
+          id: field_date_1
+          table: node__field_date
+          field: field_date
+          relationship: reverse__node__field_related_departments
+          group_type: group
+          admin_label: 'Start date grouping'
+          label: ''
+          exclude: true
+          alter:
+            alter_text: true
+            text: "{% include '@lex/includes/views-event-daytitle.html.twig' with {   \n    start_date: field_date_1,\n    title_tag: 'h3',\n    title_class: 'lex-eventcard-title-daylist lex-card-title lex-card-title-medium',\n  } \n%}\n"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_plain
+          settings:
+            timezone_override: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         title:
           id: title
           table: node_field_data
@@ -2004,7 +2288,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "{% include '@lex/includes/views-event-card.html.twig' with {\n    title: title,\n    title_tag: 'h4',\n    title_class: 'lex-card-title',\n    start_date_time: field_date,\n    end_date_time: field_date_end,\n    field_hide_times: field_hide_times\n  } \n%}"
+            text: "{% include '@lex/includes/views-event-card.html.twig' with {\n    title: title,\n    title_tag: 'h4',\n    title_class: 'lex-card-title lex-card-title-medium',\n    start_date_time: field_date,\n    end_date_time: field_date_end,\n    field_hide_times: field_hide_times\n  } \n%}"
             make_link: false
             path: ''
             absolute: false
@@ -2313,6 +2597,69 @@ display:
         groups:
           1: AND
       fields:
+        field_date_1:
+          id: field_date_1
+          table: node__field_date
+          field: field_date
+          relationship: reverse__node__field_related_departments
+          group_type: group
+          admin_label: 'Start date grouping'
+          label: ''
+          exclude: true
+          alter:
+            alter_text: true
+            text: "{% include '@lex/includes/views-event-daytitle.html.twig' with {   \n    start_date: field_date_1,\n    title_tag: 'h3',\n    title_class: 'lex-eventcard-title-daylist lex-card-title lex-card-title-medium',\n  } \n%}\n"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_plain
+          settings:
+            timezone_override: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         title:
           id: title
           table: node_field_data
@@ -2702,7 +3049,11 @@ display:
       style:
         type: html_list
         options:
-          grouping: {  }
+          grouping:
+            -
+              field: field_date_1
+              rendered: true
+              rendered_strip: false
           row_class: 'lex-card clearfix lex-eventcard'
           default_row_class: false
           type: ol
@@ -2718,9 +3069,72 @@ display:
       pager:
         type: some
         options:
-          items_per_page: 3
+          items_per_page: 2
           offset: 0
       fields:
+        field_date_1:
+          id: field_date_1
+          table: node__field_date
+          field: field_date
+          relationship: none
+          group_type: group
+          admin_label: 'Start date grouping'
+          label: ''
+          exclude: true
+          alter:
+            alter_text: true
+            text: "{% include '@lex/includes/views-event-daytitle.html.twig' with {   \n    start_date: field_date_1,\n    title_tag: 'h3',\n    title_class: 'lex-eventcard-title-daylist lex-card-title lex-card-title-medium',\n  } \n%}\n"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_plain
+          settings:
+            timezone_override: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         field_date_end:
           id: field_date_end
           table: node__field_date_end
@@ -2989,7 +3403,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "{% include '@lex/includes/views-event-card.html.twig' with {\n    title: title,\n    title_tag: 'h3',\n    title_class: 'lex-card-title lex-card-title-medium',\n    start_date_time: field_date,\n    end_date_time: field_date_end,\n    field_hide_times: field_hide_times\n  } \n%}"
+            text: "{% include '@lex/includes/views-event-card.html.twig' with {\n    title: title,\n    title_tag: 'h4',\n    title_class: 'lex-card-title lex-card-title-medium',\n    start_date_time: field_date,\n    end_date_time: field_date_end,\n    field_hide_times: field_hide_times\n  } \n%}"
             make_link: false
             path: ''
             absolute: false
@@ -3176,6 +3590,69 @@ display:
       use_more_always: true
       use_more_text: 'more events'
       fields:
+        field_date_1:
+          id: field_date_1
+          table: node__field_date
+          field: field_date
+          relationship: none
+          group_type: group
+          admin_label: 'Start date grouping'
+          label: ''
+          exclude: true
+          alter:
+            alter_text: true
+            text: "{% include '@lex/includes/views-event-daytitle.html.twig' with {   \n    start_date: field_date_1,\n    title_tag: 'h2',\n    title_class: 'lex-eventcard-title-daylist lex-card-title lex-card-title-medium',\n  } \n%}\n"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_plain
+          settings:
+            timezone_override: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         title:
           id: title
           table: node_field_data
@@ -3442,7 +3919,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "{% include '@lex/includes/views-event-card.html.twig' with {\n    title: title,\n    title_tag: 'h2',\n    title_class: 'lex-card-title lex-card-title-medium',\n    start_date_time: field_date,\n    end_date_time: field_date_end,\n    field_hide_times: field_hide_times\n  } \n%}"
+            text: "{% include '@lex/includes/views-event-card.html.twig' with {\n    title: title,\n    title_tag: 'h3',\n    title_class: 'lex-card-title lex-card-title-medium',\n    start_date_time: field_date,\n    end_date_time: field_date_end,\n    field_hide_times: field_hide_times,\n  } \n%}"
             make_link: false
             path: ''
             absolute: false
