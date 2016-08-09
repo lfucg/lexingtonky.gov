@@ -1910,5 +1910,29 @@
   {
     "old_path": "/index.aspx?page=366",
     "new_path": "/council-district-11"
+  },
+  {
+    "old_path": "/index.aspx?page=225",
+    "new_path": "/senior-programs-at-bell-house"
+  },
+  {
+    "old_path": "/contact/feedback",
+    "new_path": "/contact/page_feedback"
+  },
+  {
+    "old_path": "/index.aspx?page=2120",
+    "new_path": "/list-of-all-city-parks"
+  },
+  {
+    "old_path": "/index.aspx?page=3330",
+    "new_path": "/lexcall"
+  },
+  {
+    "old_path": "/index.aspx?page=2798",
+    "new_path": "/fire-station-locations"
+  },
+  {
+    "old_path": "/index.aspx?page=1289",
+    "new_path": "/neighborhood-pools"
   }
 ]
