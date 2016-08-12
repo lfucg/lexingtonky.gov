@@ -3508,18 +3508,18 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
-        field_date_end_value:
-          id: field_date_end_value
-          table: node__field_date_end
-          field: field_date_end_value
+        field_date_value:
+          id: field_date_value
+          table: node__field_date
+          field: field_date_value
           relationship: none
           group_type: group
-          admin_label: 'Current or future events'
+          admin_label: ''
           operator: '>='
           value:
             min: ''
             max: ''
-            value: now
+            value: '-8'
             type: offset
           group: 1
           exposed: false
