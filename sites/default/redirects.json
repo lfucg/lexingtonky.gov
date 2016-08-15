@@ -1938,5 +1938,13 @@
   {
     "old_path": "/index.aspx?page=374",
     "new_path": "/council-meeting-and-work-session-packets-0"
+  },
+  {
+    "old_path": "/index.aspx?page=1231",
+    "new_path": "/council-meeting-and-work-session-packets-0"
+  },
+  {
+    "old_path": "/greencheck",
+    "new_path": "http://www.greenchecklex.org"
   }
 ]
