@@ -12,7 +12,10 @@ use Drupal\Core\Entity;
 class AddtocalController extends ControllerBase {
 
   private function formatLocation($term) {
-    return $term->getName();
+    return $term->getName() . ', ' .
+      $term->get('field_street_number')->getValue()[0]['value'] . ' ' .
+      $term->get('field_street')->getValue()[0]['value'] . ' Lexington, KY ' .
+      $term->get('field_zip_code')->getValue()[0]['value'];
   }
 
   private function formatDate($date) {
@@ -29,7 +32,7 @@ class AddtocalController extends ControllerBase {
     $end_date = $node_detail->get('field_date_end')->getValue()[0]['value'];
     $summary = $node_detail->get('title')->getValue()[0]['value'];
     $location = $this->formatLocation($node_detail->get('field_locations')->referencedEntities()[0]);
-    $description = $node_detail->get('body')->getValue()[0]['value'];
+    $description = $node_detail->get('body')->getValue() ? $node_detail->get('body')->getValue()[0]['value'] : '';
     $uid = $nid . '@' . $_SERVER['HTTP_HOST'];
 
     $vevent = [
