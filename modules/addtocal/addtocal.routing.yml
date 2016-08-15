@@ -1,5 +1,5 @@
 addtocal.controller:
- path: '/event/ical'
+ path: '/event/{nid}/ical'
  defaults:
    _controller: '\Drupal\addtocal\Controller\AddtocalController::addtocalics'
    _title: 'Calendar .ics file'
