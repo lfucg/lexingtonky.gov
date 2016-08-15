@@ -12,6 +12,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Url;
 
 /**
  * Plugin implementation of the 'Add to Cal' formatter.
@@ -180,7 +181,7 @@ class AddtocalFormatter extends FormatterBase {
         // '#markup' => 'foo: ' . $item->value,
         '#type' => 'link',
         '#title' => 'Add to Outlook',
-        '#url' => '/event/ics'
+        '#url' =>  Url::fromRoute('addtocal.controller')
         //'#theme' => 'addtocalformatter',
       );
       // $element[$delta][$addtocaltheme] = array(

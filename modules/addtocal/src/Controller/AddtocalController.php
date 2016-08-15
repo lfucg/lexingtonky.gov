@@ -23,7 +23,8 @@ class AddtocalController extends ControllerBase {
    */
   public function addtocalics() {
 
-//  $node_detail  = \Drupal\node\Entity\Node::load($nid);
+    $nid = 904;
+    $node_detail = \Drupal\node\Entity\Node::load($nid);
 //
 //  $entity_type_id='node';
 //  $bundle=$node_detail->bundle();
@@ -52,7 +53,7 @@ class AddtocalController extends ControllerBase {
 //       }
 //     }
 //
-//     $start=$node_detail->get($name_date)->getValue()[0]['value'];
+    // $start=$node_detail->get($name_date)->getValue()[0]['value'];
 //     $description=$node_detail->get($name_body)->getValue()[0]['value'];
 //     $description = html_entity_decode($description);
 //     $location=$node_detail->get($name_add)->getValue()[0]['value'];
@@ -67,6 +68,7 @@ class AddtocalController extends ControllerBase {
 //   $diff_timestamp = $end_timestamp - $start_timestamp;
 //
 //   $start_date = gmdate('Ymd', $start_timestamp) . 'T' . gmdate('His', $start_timestamp) . 'Z';
+
 //   $local_start_date = date('Ymd', $start_timestamp) . 'T' . date('His', $start_timestamp) . '';
 //   $end_date = gmdate('Ymd', $end_timestamp) . 'T' . gmdate('His', $end_timestamp) . 'Z';
 //   $local_end_date = date('Ymd', $end_timestamp) . 'T' . date('His', $end_timestamp) . '';
@@ -99,14 +101,41 @@ class AddtocalController extends ControllerBase {
 // Transfer-Encoding: chunked
 // X-AspNet-Version: 1.1.4322
 // X-Powered-By: ASP.NET
-$start_date = '20160105T191834Z';
-// 20160815T122144Z
-// DTSTART:20160817T190000-0000
-$end_date = '20160105T191834Z';
-// $end_date = '20160817T190000Z';
-$summary = 'Greenspace Commission Committee Meeting';
-$location = '7th floor Phoenix Building, 101 East Vine Street Lexington, Kentucky 40507';
-$description = '';
+
+    $start_date = $node_detail->get('field_date')->getValue()[0]['value'];
+    $start_date = gmdate('Ymd\THis\Z', strtotime($start_date . 'UTC'));
+
+    $end_date = $node_detail->get('field_date_end')->getValue()[0]['value'];
+    if ($end_date) {
+      $end_date = gmdate('Ymd\THis\Z', strtotime($end_date . 'UTC'));
+    }
+
+    $summary = $node_detail->get('title')->getValue()[0]['value'];
+    $location = $node_detail->get('field_locations')->referencedEntities()[0]->getName();
+    $description = $node_detail->get('body')->getValue()[0]['value'];;
+    $uid = '213';
+
+    $vevent = [
+      'BEGIN:VEVENT',
+      'UID:' . $uid,
+      'DTSTAMP:' . $start_date,
+      'SUMMARY:' . $summary,
+      'DESCRIPTION:' . $description,
+      'LOCATION:' . $location,
+      'END:VEVENT',
+    ];
+
+    if ($end_date) {
+      array_push($vevent, 'DTEND:' . $end_date);
+    }
+
+    $vcalendar = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//hacksw/handcal//NONSGML v1.0//EN',
+    ];
+
+    $event = array_merge($vcalendar, $vevent, ['END:VCALENDAR']);
 
     header("Pragma: public"); // required
     header("Expires: 0");
@@ -114,18 +143,8 @@ $description = '';
     header("Cache-Control: private",false); // required for certain browsers
     // header("Content-Type: application/force-download");
     // header("Content-Disposition: attachment;filename=event.ics");
-    echo 'BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//hacksw/handcal//NONSGML v1.0//EN
-BEGIN:VEVENT
-UID:123
-DTSTAMP:' . $start_date . '
-DTEND:' . $end_date . '
-SUMMARY:' . $summary . '
-DESCRIPTION: ' . $description . '
-LOCATION:' . $location . '
-END:VEVENT
-END:VCALENDAR';
+
+    echo join($event, "\r\n");
     exit;
   }
 // BEGIN:VCALENDAR

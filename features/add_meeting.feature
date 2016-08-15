@@ -28,5 +28,4 @@ Scenario: Meetings appear on calendar
 Scenario: You can add a meeting to Outlook calendar
   Given I am on "/meeting-notices/904/council-work-session"
   When I click "Add to Outlook"
-  Then the response should contain ""
-
+  Then the response status code should be 200
