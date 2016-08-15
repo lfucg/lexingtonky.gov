@@ -1,7 +1,7 @@
 addtocal.controller:
- path: '/event/{nid}/{cal}/{body}/{add}/ical'
+ path: '/event/ical'
  defaults:
    _controller: '\Drupal\addtocal\Controller\AddtocalController::addtocalics'
    _title: 'Calendar .ics file'
- requirements: 
-   _permission: 'administer site configuration'
+ requirements:
+   _permission: 'access content'
