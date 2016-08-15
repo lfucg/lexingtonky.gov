@@ -1934,5 +1934,9 @@
   {
     "old_path": "/index.aspx?page=1289",
     "new_path": "/neighborhood-pools"
+  },
+  {
+    "old_path": "/index.aspx?page=374",
+    "new_path": "/council-meeting-and-work-session-packets-0"
   }
 ]
