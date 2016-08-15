@@ -1,0 +1,23 @@
+.socialbtn{
+	float: left;
+position: absolute;
+left: 17%;
+margin-top: 10px;
+background: #EFEFEF;
+padding: 10px;
+	width: 121px;
+	   display: none;
+}
+.socialbtn a{
+	float: left;
+	width: 100%;
+	color: #000;
+	text-decoration: none;
+	padding: 5px 0px;
+	border: none;
+}
+.socialbtn a:hover,.socialbtn a:active{
+border: none;
+color: #000;
+background: #cdcdcd;	
+	}
