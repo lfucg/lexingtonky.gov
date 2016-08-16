@@ -32,7 +32,6 @@ class AddtocalController extends ControllerBase {
     $end_date = $node_detail->get('field_date_end')->getValue()[0]['value'];
     $summary = $node_detail->get('title')->getValue()[0]['value'];
     $location = $this->formatLocation($node_detail->get('field_locations')->referencedEntities()[0]);
-    $description = $node_detail->get('body')->getValue() ? $node_detail->get('body')->getValue()[0]['value'] : '';
     $uid = $nid . '@' . $_SERVER['HTTP_HOST'];
 
     $vevent = [
@@ -46,9 +45,6 @@ class AddtocalController extends ControllerBase {
 
     if ($end_date) {
       array_push($vevent, 'DTEND:' . $this->formatDate($end_date));
-    }
-    if ($description) {
-      array_push($vevent, 'DESCRIPTION:' . html_entity_decode($description));
     }
     array_push($vevent, 'END:VEVENT');
 
