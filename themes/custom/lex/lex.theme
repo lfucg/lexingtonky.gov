@@ -19,7 +19,10 @@ function lex_page_attachments_alter(array &$attachments) {
     $path = $node->field_lex_custom_banner_image[0]->entity->getFileUri();
     $uri = file_url_transform_relative(file_create_url($path));
   }
-  if (! $uri) { return; }
+  if (! $uri) {
+    // todo: use field_lex_custom_banner_image default field value,
+    $uri = '/themes/custom/lex/img/lexington-hero-interior.jpg';
+  }
 
   $banner = array(
     '#type' => 'html_tag',
@@ -27,7 +30,8 @@ function lex_page_attachments_alter(array &$attachments) {
     '#attributes' => array(
       'type' => 'text/css',
     ),
-    '#value' => '@media screen and (min-width: 1200px) {
+    // same breakpoint that _header.scss adds banner with alpha
+    '#value' => '@media screen and (min-width: 900px) {
       .lex-site-header {
         background-image: url("' . $uri . '") !important;
       }

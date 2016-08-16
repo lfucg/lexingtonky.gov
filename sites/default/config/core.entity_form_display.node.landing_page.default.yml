@@ -3,12 +3,13 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.landing_page.field_hero_image
+    - field.field.node.landing_page.field_lex_custom_banner_image
     - image.style.thumbnail
     - node.type.landing_page
   module:
     - image
     - path
+    - workbench_moderation
 id: node.landing_page.default
 targetEntityType: node
 bundle: landing_page
@@ -19,8 +20,8 @@ content:
     weight: 10
     settings: {  }
     third_party_settings: {  }
-  field_hero_image:
-    weight: 32
+  field_lex_custom_banner_image:
+    weight: 33
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail

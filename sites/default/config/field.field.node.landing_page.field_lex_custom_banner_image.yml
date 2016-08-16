@@ -1,20 +1,20 @@
-uuid: d5e4e00f-60f4-4785-9300-b67f82f8c1b6
+uuid: 29b721dd-5c96-4507-a7e1-a1a5c3872c71
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_hero_image
+    - field.storage.node.field_lex_custom_banner_image
     - node.type.landing_page
   module:
     - image
-id: node.landing_page.field_hero_image
-field_name: field_hero_image
+id: node.landing_page.field_lex_custom_banner_image
+field_name: field_lex_custom_banner_image
 entity_type: node
 bundle: landing_page
-label: 'Hero Image'
+label: 'Custom banner image'
 description: ''
 required: false
-translatable: false
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:

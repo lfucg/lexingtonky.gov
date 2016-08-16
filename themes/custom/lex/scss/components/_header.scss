@@ -1,8 +1,4 @@
-.lex-frontpage .lex-site-header {
-  background-image: url('../img/lexington-hero.jpg');
-}
 .lex-site-header {
-  background-image: url('../img/lexington-hero-interior.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   @include media($large-screen) {
@@ -36,7 +32,11 @@
 }
 
 .lex-site-navbar {
-  background-color: rgba($lex-white, $lex-alpha-level);
+  background-color: $lex-light-grey;
+  /* same breakpoint that lex.theme adds bg image */
+  @include media($medium-large-screen) {
+    background-color: rgba($lex-white, $lex-alpha-level);
+  }
   padding-top: 9px;
   padding-bottom: 9px;
   /* todo logo => .lex-logo-container */

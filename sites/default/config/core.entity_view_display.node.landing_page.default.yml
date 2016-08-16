@@ -3,18 +3,26 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.landing_page.field_hero_image
+    - field.field.node.landing_page.field_lex_custom_banner_image
     - node.type.landing_page
   module:
+    - image
     - user
 id: node.landing_page.default
 targetEntityType: node
 bundle: landing_page
 mode: default
 content:
+  field_lex_custom_banner_image:
+    weight: 101
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
   links:
     weight: 100
     settings: {  }
     third_party_settings: {  }
-hidden:
-  field_hero_image: true
+hidden: {  }
