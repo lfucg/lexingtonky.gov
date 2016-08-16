@@ -1,7 +1,6 @@
 @api
 Feature: Create and edit meetings
 
-@in-progress
 Scenario: Meetings appear on calendar
   Given I am logged in as a user with the "editor" role
   And I am on "/node/add/meeting"
@@ -24,3 +23,9 @@ Scenario: Meetings appear on calendar
 
   When I am on "/departments/accounting"
   Then I should see "very-unique-meeting"
+
+@in-progress
+Scenario: You can add a meeting to Outlook calendar
+  Given I am on "/meeting-notices/904/council-work-session"
+  When I click "Add to Outlook"
+  Then the response status code should be 200

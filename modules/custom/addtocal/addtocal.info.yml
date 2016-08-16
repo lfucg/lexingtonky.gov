@@ -1,0 +1,4 @@
+name: Add to Cal
+type: module
+description: 'A field formatter providing a widget for exporting events to various formats.'
+core: '8.x'

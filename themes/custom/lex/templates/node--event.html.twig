@@ -90,6 +90,7 @@
         hide_times: (render_var(content.field_hide_times[0]) == 'On')
        }
     %}
+    <p class="lex-margin-top-sm"><a class="lex-social-link fa fa-calendar-plus-o" href="{{ path('addtocal.controller', {'nid': node.id}) }}">Add to Outlook</a></p>
     {{ content | without('field_date','field_date_end', 'field_hide_times') }}
   </div>
 
