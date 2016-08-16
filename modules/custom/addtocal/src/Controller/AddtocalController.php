@@ -5,6 +5,7 @@ namespace Drupal\addtocal\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * controller for the add to calender module.
@@ -27,11 +28,12 @@ class AddtocalController extends ControllerBase {
    */
   public function addtocalics($nid) {
     $node_detail = \Drupal\node\Entity\Node::load($nid);
+    if (!$node_detail) { throw new NotFoundHttpException(); }
     $now_date = $this->formatDate('');
     $start_date = $this->formatDate($node_detail->get('field_date')->getValue()[0]['value']);
-    $end_date = $node_detail->get('field_date_end')->getValue()[0]['value'];
+    $end_date = $node_detail->get('field_date_end')->getValue() ? $node_detail->get('field_date_end')->getValue()[0]['value'] : '';
     $summary = $node_detail->get('title')->getValue()[0]['value'];
-    $location = $this->formatLocation($node_detail->get('field_locations')->referencedEntities()[0]);
+    $location = $node_detail->get('field_locations')->referencedEntities() ? $this->formatLocation($node_detail->get('field_locations')->referencedEntities()[0]) : '';
     $uid = $nid . '@' . $_SERVER['HTTP_HOST'];
 
     $vevent = [
