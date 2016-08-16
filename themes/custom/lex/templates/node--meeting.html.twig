@@ -84,7 +84,7 @@
        }
     %}
   {% endif %}
-    <p class="lex-margin-top-sm"><a class="lex-social-link fa fa-calendar-plus-o" href="{{ path('addtocal.controller', {'nid': node.id}) }}">Add to Outlook Calendar</a></p>
+    {% include '@lex/includes/add-to-calendar.html.twig' with { nid: node.id } %}
     {{ content | without('field_date','field_date_end') }}
   </div>
 
