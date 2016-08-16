@@ -1,4 +1,5 @@
 module:
+  addtocal: 0
   autologout: 0
   automated_cron: 0
   block: 0
