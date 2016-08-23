@@ -245,19 +245,6 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
     $this->drupalPostForm(NULL, $edit, t('Save'));
     $this->assertFieldValues($entity_init, 'card_2', array());
 
-    // Test the 'None' option.
-
-    // Check that the 'none' option has no effect if actual options are selected
-    // as well.
-    $edit = array('card_2[]' => array('_none' => '_none', 0 => 0));
-    $this->drupalPostForm('entity_test/manage/' . $entity->id() . '/edit', $edit, t('Save'));
-    $this->assertFieldValues($entity_init, 'card_2', array(0));
-
-    // Check that selecting the 'none' option empties the field.
-    $edit = array('card_2[]' => array('_none' => '_none'));
-    $this->drupalPostForm('entity_test/manage/' . $entity->id() . '/edit', $edit, t('Save'));
-    $this->assertFieldValues($entity_init, 'card_2', array());
-
     // A required select list does not have an empty key.
     $instance->setRequired(TRUE);
     $instance->save();
@@ -295,11 +282,6 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
     $this->assertOptionSelected('edit-card-2', 0);
     $this->assertNoOptionSelected('edit-card-2', 1);
     $this->assertNoOptionSelected('edit-card-2', 2);
-
-    // Submit form: Unselect the option.
-    $edit = array('card_2[]' => array('_none' => '_none'));
-    $this->drupalPostForm('entity_test/manage/' . $entity->id() . '/edit', $edit, t('Save'));
-    $this->assertFieldValues($entity_init, 'card_2', array());
   }
 
 }

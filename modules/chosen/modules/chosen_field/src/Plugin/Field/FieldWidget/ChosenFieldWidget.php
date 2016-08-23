@@ -20,7 +20,8 @@ use Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsSelectWidget;
  *   field_types = {
  *     "list_integer",
  *     "list_float",
- *     "list_string"
+ *     "list_string",
+ *     "entity_reference"
  *   },
  *   multiple_values = TRUE
  * )

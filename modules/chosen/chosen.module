@@ -8,6 +8,7 @@
  */
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\field\Entity\FieldConfig;
 
 /**
@@ -28,6 +29,23 @@ function chosen_element_info_alter(&$info) {
   if (\Drupal::moduleHandler()->moduleExists('select_or_other')) {
     $info['select_or_other']['#pre_render'][] = 'chosen_pre_render_select_or_other';
   }
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ *
+ * Add entity type  and bundle information to the widget.
+ *
+ * @see chosen_pre_render_select()
+ */
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function chosen_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
+  $field_definition = $context['items']->getFieldDefinition();
+  $element['#entity_type'] = $field_definition->getTargetEntityTypeId();
+  $element['#bundle'] = $field_definition->getTargetBundle();
 }
 
 /**
@@ -67,10 +85,11 @@ function chosen_pre_render_select($element) {
   }
 
   if (isset($element['#field_name']) && !empty($element['#multiple'])) {
-    if (isset($element['#entity_type']) && isset($element['#bundle']) && isset($element['#field_name'])) {
       // Remove '_none' from multi-select options.
       unset($element['#options']['_none']);
 
+    if (isset($element['#entity_type']) && isset($element['#bundle']) && isset($element['#field_name'])) {
+      // Set data-cardinality for fields that aren't unlimited.
       $field = FieldConfig::loadByName($element['#entity_type'], $element['#bundle'], $element['#field_name'])->getFieldStorageDefinition();
       $cardinality = $field->getCardinality();
       if ($cardinality != FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED && $cardinality > 1) {
