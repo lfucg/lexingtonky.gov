@@ -1,15 +1,15 @@
-smtp_on: null
 smtp_host: null
+smtp_on: true
 smtp_hostbackup: ''
-smtp_port: ''
-smtp_protocol: null
-smtp_username: null
-smtp_password: null
+smtp_port: '465'
+smtp_protocol: ssl
+smtp_username: ''
+smtp_password: ''
 smtp_from: ''
 smtp_fromname: ''
 smtp_allowhtml: '0'
 smtp_test_address: ''
-smtp_debugging: null
-prev_mail_system: devel_mail_log
+smtp_debugging: false
+prev_mail_system: php_mail
 _core:
-  default_config_hash: U7C23Wy4M4Eq8X8ExjU4n3yq7PtfU1S-jebw2hikU5g
+  default_config_hash: fP57Sd8RjnZMVH3p_R-Yt0tC8j7Z-BuzGMIp6pmrHAI
