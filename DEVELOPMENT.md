@@ -84,6 +84,20 @@ And to set the local database to the configuration stored in git:
 
 `drush cim -y`
 
+### Configure SMTP settings for live env
+
+add to `sites/default/files/private/config.overrides.json`
+
+```
+{
+  "smtp.settings": {
+    "smtp_host": "the.host.name",
+    "smtp_username": "the-username",
+    "smtp_password": "the-password"
+  }
+}
+```
+
 ### Configure local settings
 
 copy sites/example.settings.local.php sites/default/settings.local.php
