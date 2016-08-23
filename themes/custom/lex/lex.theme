@@ -21,8 +21,7 @@ function lex_page_attachments_alter(array &$attachments) {
     $path = $node->field_lex_custom_banner_image[0]->entity->getFileUri();
     $uri['mobile'] = ImageStyle::load('lex_banner_mobile')->buildUrl($path);
     $uri['desktop'] = ImageStyle::load('lex_banner_desktop')->buildUrl($path);
-  }
-  if (count($uri) == 0) {
+  } else {
     // todo: use field_lex_custom_banner_image default field value,
     $uri['mobile'] = '/themes/custom/lex/img/lexington-hero-interior.jpg';
     $uri['desktop'] = '/themes/custom/lex/img/lexington-hero-interior.jpg';
