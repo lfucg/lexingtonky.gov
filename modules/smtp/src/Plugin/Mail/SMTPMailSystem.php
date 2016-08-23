@@ -1,9 +1,4 @@
 <?php
-/**
- * @file
- * The code processing mail in the smtp module.
- *
- */
 
 namespace Drupal\smtp\Plugin\Mail;
 
@@ -67,7 +62,6 @@ class SMTPMailSystem implements MailInterface {
    *   TRUE if the mail was successfully accepted, otherwise FALSE.
    */
   public function mail(array $message) {
-    $id = $message['id'];
     $to = $message['to'];
     $from = $message['from'];
     $body = $message['body'];
@@ -89,48 +83,18 @@ class SMTPMailSystem implements MailInterface {
       $from_name = \Drupal::config('system.site')->get('name');
     }
 
-    //Hack to fix reply-to issue.
-    $properfrom = $this->smtpConfig->get('site_mail');
-    if (!empty($properfrom)) {
-      $headers['From'] = $properfrom;
-    }
-    if (!isset($headers['Reply-To']) || empty($headers['Reply-To'])) {
-      if (strpos($from, '<')) {
-        $reply = preg_replace('/>.*/', '', preg_replace('/.*</', '', $from));
-      }
-      else {
-        $reply = $from;
-      }
-      $headers['Reply-To'] = $reply;
-    }
-
-    // Blank value will let the e-mail address appear.
-
-    if ($from == NULL || $from == '') {
-      // If from e-mail address is blank, use smtp_from config option.
-      if (($from = $this->smtpConfig->get('smtp_from')) == '') {
-        // If smtp_from config option is blank, use site_email.
-        if (($from = $this->smtpConfig->get('site_mail')) == '') {
-          drupal_set_message(t('There is no submitted from address.'), 'error');
-          watchdog('smtp', 'There is no submitted from address.', array(), WATCHDOG_ERROR);
-          return FALSE;
-        }
-      }
-    }
-
-    $from_comp = $this->_get_components($from);
-
-    if (!\Drupal::service('email.validator')->isValid($from_comp['email'])) {
-      drupal_set_message(t('The submitted from address (@from) is not valid.', array('@from' => $from)), 'error');
-      watchdog('smtp', 'The submitted from address (@from) is not valid.', array('@from' => $from), WATCHDOG_ERROR);
-      return FALSE;
+    // Set SMTP module email from.
+    if (\Drupal::service('email.validator')->isValid($this->smtpConfig->get('smtp_from'))) {
+        $from = $this->smtpConfig->get('smtp_from');
+        $headers['Sender'] = $from;
+        $headers['Return-Path'] = $from;
+        $headers['Reply-To'] = $from;
     }
 
     // Defines the From value to what we expect.
     $mailer->From = $from;
-    $mailer->FromName = $from_comp['name'];
-    $mailer->Sender = $from_comp['email'];
-
+    $mailer->FromName = $from_name;
+    $mailer->Sender = $from;
 
     // Create the list of 'To:' recipients.
     $torecipients = explode(',', $to);
@@ -138,7 +102,6 @@ class SMTPMailSystem implements MailInterface {
       $to_comp = $this->_get_components($torecipient);
       $mailer->AddAddress($to_comp['email'], $to_comp['name']);
     }
-
 
     // Parse the headers of the message and set the PHPMailer object's settings
     // accordingly.
@@ -419,7 +382,7 @@ class SMTPMailSystem implements MailInterface {
                 $attachment = $body_part;
               }
 
-              $attachment_new_filename = drupal_tempnam('temporary://', 'smtp');
+              $attachment_new_filename = \Drupal::service('file_system')->tempnam('temporary://', 'smtp');
               $file_path = file_save_data($attachment, $attachment_new_filename, FILE_EXISTS_REPLACE);
               $real_path = \Drupal::service('file_system')->realpath($file_path->uri);
 

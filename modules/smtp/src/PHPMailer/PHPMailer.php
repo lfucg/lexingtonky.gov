@@ -1,10 +1,4 @@
 <?php
-/**
- * @file
- * The mail handler class in smtp module, based on code of the phpmailer library,
- * customized and relicensed to GPLv2.
- *
- */
 
 /*~ class.phpmailer.php
 Orginal release information:
