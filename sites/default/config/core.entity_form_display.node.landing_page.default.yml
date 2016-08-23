@@ -21,7 +21,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_lex_custom_banner_image:
-    weight: 33
+    weight: 31
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail

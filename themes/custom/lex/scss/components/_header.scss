@@ -1,6 +1,10 @@
 .lex-site-header {
   background-repeat: no-repeat;
   background-size: cover;
+
+  @include media($medium-large-screen) {
+    background-image: none; // set by lex.theme
+  }
   @include media($large-screen) {
     min-height: 300px;
   }
@@ -19,6 +23,11 @@
   }
 }
 
+#block-edithomepagebanner {
+  position: absolute;
+  left: 10px;
+}
+
 .lex-frontpage .lex-quicklinks li {
   /* show full set of quicklinks on front page */
   @include media($large-screen) {
@@ -32,11 +41,7 @@
 }
 
 .lex-site-navbar {
-  background-color: $lex-light-grey;
-  /* same breakpoint that lex.theme adds bg image */
-  @include media($medium-large-screen) {
-    background-color: rgba($lex-white, $lex-alpha-level);
-  }
+  background-color: rgba($lex-white, $lex-alpha-level);
   padding-top: 9px;
   padding-bottom: 9px;
   /* todo logo => .lex-logo-container */

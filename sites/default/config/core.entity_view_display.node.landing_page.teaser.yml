@@ -4,7 +4,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - field.field.node.landing_page.field_lex_custom_banner_image
     - node.type.landing_page
   module:
     - user
@@ -15,5 +14,4 @@ mode: teaser
 content:
   links:
     weight: 100
-hidden:
-  field_lex_custom_banner_image: true
+hidden: {  }

@@ -1,4 +1,5 @@
 <?php
+use Drupal\image\Entity\ImageStyle;
 
 function lex_natural_sort_views($a, $b) {
   // we can use weight module if we need manual sorting capabilities
@@ -10,18 +11,21 @@ function lex_natural_sort_views($a, $b) {
  * Add custom banner if a node has it populated
 */
 function lex_page_attachments_alter(array &$attachments) {
-  $uri = false;
+  $uri = [];
   // $node is nid, not object for urls like /node/600/revisions/1965/view
   if (($node = \Drupal::routeMatch()->getParameter('node'))
        && is_object($node)
        && $node->field_lex_custom_banner_image
        && $node->field_lex_custom_banner_image[0]) {
+
     $path = $node->field_lex_custom_banner_image[0]->entity->getFileUri();
-    $uri = file_url_transform_relative(file_create_url($path));
+    $uri['mobile'] = ImageStyle::load('lex_banner_mobile')->buildUrl($path);
+    $uri['desktop'] = ImageStyle::load('lex_banner_desktop')->buildUrl($path);
   }
-  if (! $uri) {
+  if (count($uri) == 0) {
     // todo: use field_lex_custom_banner_image default field value,
-    $uri = '/themes/custom/lex/img/lexington-hero-interior.jpg';
+    $uri['mobile'] = '/themes/custom/lex/img/lexington-hero-interior.jpg';
+    $uri['desktop'] = '/themes/custom/lex/img/lexington-hero-interior.jpg';
   }
 
   $banner = array(
@@ -30,10 +34,12 @@ function lex_page_attachments_alter(array &$attachments) {
     '#attributes' => array(
       'type' => 'text/css',
     ),
-    // same breakpoint that _header.scss adds banner with alpha
-    '#value' => '@media screen and (min-width: 900px) {
+    '#value' => '.lex-site-header {
+        background-image: url("' . $uri['mobile'] . '") !important;
+      }
+      @media screen and (min-width: 900px) {
       .lex-site-header {
-        background-image: url("' . $uri . '") !important;
+        background-image: url("' . $uri['desktop'] . '") !important;
       }
     }',
   );
