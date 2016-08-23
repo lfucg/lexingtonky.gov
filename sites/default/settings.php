@@ -1,6 +1,6 @@
 <?php
 
-if (isset($_SERVER['PANTHEON_ENVIRONMENT']) && (php_sapi_name() != "cli")) {
+if (php_sapi_name() != "cli") {
   $redirects = __DIR__ . "/redirects.php";
   if (file_exists($redirects)) {
     include $redirects;
@@ -27,6 +27,11 @@ $settings['trusted_host_patterns'] = array(
   '^.+lexky-d8\.pantheonsite\.io$',
   '^www\.lexingtonky\.gov$',
 );
+
+$config_overrides = __DIR__ . "/config.overrides.php";
+if (file_exists($config_overrides)) {
+  include $config_overrides;
+}
 
 if (! (isset($_ENV['PANTHEON_ENVIRONMENT']) && $_ENV['PANTHEON_ENVIRONMENT'] == 'live')) {
   $config['system.mail']['interface']['default'] = 'test_mail_collector';
