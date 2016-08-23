@@ -1946,5 +1946,29 @@
   {
     "old_path": "/greencheck",
     "new_path": "http://www.greenchecklex.org"
+  },
+  {
+    "old_path": "/index.aspx?page=3610",
+    "new_path": "/departments/fayette-county-coroners-office"
+  },
+  {
+    "old_path": "/index.aspx?page=3509",
+    "new_path": "/departments/police"
+  },
+  {
+    "old_path": "/index.aspx?page=566",
+    "new_path": "/resources-neighborhoods-residents"
+  },
+  {
+    "old_path": "/index.aspx?page=13",
+    "new_path": "/"
+  },
+  {
+    "old_path": "/index.aspx?page=2",
+    "new_path": "/"
+  },
+  {
+    "old_path": "/index.aspx?page=4",
+    "new_path": "/"
   }
 ]
