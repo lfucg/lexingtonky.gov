@@ -235,6 +235,10 @@ input:focus, input[type=search]:focus {
   }
 }
 
+// should probably apply universally
+// but requires img to have an explicit height. See front page "Jim" svg as img that will
+// blow up really big w/o explicit height
+.lex-region-sidebar_second,
 .lex-image-teaser {
   // todo: figure out how to make image formatter add class to img tag
   img {
