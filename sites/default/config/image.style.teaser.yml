@@ -12,3 +12,9 @@ effects:
     data:
       width: 480
       height: 360
+  e3d44e93-8663-46ca-9e0c-d28f1d0ff890:
+    uuid: e3d44e93-8663-46ca-9e0c-d28f1d0ff890
+    id: image_convert
+    weight: 2
+    data:
+      extension: jpg
