@@ -1,9 +1,11 @@
-[![Circle CI](https://circleci.com/gh/lfucg/lexingtonky.gov/tree/master.svg?style=svg)](https://circleci.com/gh/lfucg/lexingtonky.gov/tree/master)
-Visual regression testing via [Browserstack Automate](browserstack.com/automate) and [shoov.io](http://shoov.io/) (Our config is currently in alpha, housed in [separate repo](https://github.com/eeeschwartz/shoov-tutorial))
-
 # Lexington, KY city site
 
 The upcoming site for the City of Lexington, currently in pilot phase. It's built on [Drupal 8](https://www.drupal.org/8) and uses the draft [US Web Design Standards](https://playbook.cio.gov/designstandards/).
+
+## Test suite
+* Feature tests [![Circle CI](https://circleci.com/gh/lfucg/lexingtonky.gov/tree/master.svg?style=svg)](https://circleci.com/gh/lfucg/lexingtonky.gov/tree/master)
+* Visual regression testing via Wraith housed in
+[separate repo](https://github.com/eeeschwartz/lexky-wraith)
 
 ## Development and debugging
 
