@@ -58,3 +58,6 @@ permissions:
   54: 'revert meeting revisions'
   55: 'view meeting revisions'
   56: 'use text format advanced_html'
+  57: 'edit any landing_page content'
+  58: 'revert landing_page revisions'
+  59: 'view landing_page revisions'
