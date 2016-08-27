@@ -1,11 +1,9 @@
 <?php
 
-namespace Drupal\addtocal\Controller;
-
 class AddtocalControllerTest extends PHPUnit_Framework_TestCase {
 
 	public function testFormatDate() {
-		$pages = new AddtocalController();
+		$pages = new \Drupal\addtocal\Controller\AddtocalController();
 
 		$expected = '20111027T202339Z';
 
