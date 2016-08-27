@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/../addtocal/src/Controller/AddtocalController.php');
+namespace Drupal\addtocal\Controller;
 
 class AddtocalControllerTest extends PHPUnit_Framework_TestCase {
 

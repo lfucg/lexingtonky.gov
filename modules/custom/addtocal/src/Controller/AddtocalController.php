@@ -19,7 +19,7 @@ class AddtocalController extends ControllerBase {
       $term->get('field_zip_code')->getValue()[0]['value'];
   }
 
-  private function formatDate($date) {
+  public function formatDate($date) {
     return gmdate('Ymd\THis\Z', strtotime($date . 'UTC'));
   }
 
