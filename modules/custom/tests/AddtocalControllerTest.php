@@ -1,9 +1,13 @@
 <?php
 
+include(__DIR__ . '/../addtocal/src/Controller/AddtocalController.php');
+
+use \Drupal\addtocal\Controller\AddtocalController;
+
 class AddtocalControllerTest extends PHPUnit_Framework_TestCase {
 
 	public function testFormatDate() {
-		$pages = new \Drupal\addtocal\Controller\AddtocalController();
+		$pages = new AddtocalController();
 
 		$expected = '20111027T202339Z';
 
