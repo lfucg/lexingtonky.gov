@@ -20,6 +20,7 @@ test:
   pre:
     - ./private/scripts/ci-test-pre.sh
   override:
+    - phpunit modules/custom/tests
     - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat:
         timeout: 1500
   post:
