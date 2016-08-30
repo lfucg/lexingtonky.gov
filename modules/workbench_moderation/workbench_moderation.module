@@ -216,6 +216,8 @@ function workbench_moderation_action_info_alter(&$definitions) {
 
 /**
  * Implements hook_views_data_alter().
+ *
+ * @todo Use \Drupal\workbench_moderation\ViewsData
  */
 function workbench_moderation_views_data_alter(array &$data) {
 

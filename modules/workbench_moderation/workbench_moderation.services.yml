@@ -33,3 +33,6 @@ services:
     arguments: ['@database']
     tags:
      - { name: backend_overridable }
+  workbench_moderation.views_data:
+    class: \Drupal\workbench_moderation\ViewsData
+    arguments: ['@entity_type.manager', '@workbench_moderation.moderation_information']

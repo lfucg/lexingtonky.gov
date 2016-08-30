@@ -48,3 +48,12 @@ block_content.type.*.third_party.workbench_moderation:
     default_moderation_state:
       type: string
       label: 'Moderation state for new block content'
+
+views.filter.latest_revision:
+  type: views_filter
+  label: 'Latest revision'
+  type: mapping
+  mapping:
+    value:
+      type: string
+      label: 'Value'

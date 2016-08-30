@@ -2,6 +2,10 @@ view any unpublished content:
   title: View any unpublished content
   description: This permission is necessary for any users that may moderate content.
 
+'view moderation states':
+  title: View moderation states
+  description: View moderation states.
+
 'administer moderation states':
   title: Administer moderation states
   description: Create and edit moderation states.

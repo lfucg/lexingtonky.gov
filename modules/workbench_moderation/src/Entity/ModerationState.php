@@ -13,6 +13,7 @@ use Drupal\workbench_moderation\ModerationStateInterface;
  *   label = @Translation("Moderation state"),
  *   handlers = {
  *     "list_builder" = "Drupal\workbench_moderation\ModerationStateListBuilder",
+ *     "access" = "Drupal\workbench_moderation\ModerationStateAccessControlHandler",
  *     "form" = {
  *       "add" = "Drupal\workbench_moderation\Form\ModerationStateForm",
  *       "edit" = "Drupal\workbench_moderation\Form\ModerationStateForm",
@@ -20,7 +21,6 @@ use Drupal\workbench_moderation\ModerationStateInterface;
  *     },
  *   },
  *   config_prefix = "moderation_state",
- *   admin_permission = "administer moderation states",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
