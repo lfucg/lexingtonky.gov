@@ -1970,5 +1970,9 @@
   {
     "old_path": "/index.aspx?page=4",
     "new_path": "/"
+  },
+  {
+    "old_path": "/procurement",
+    "new_path": "https://lexingtonky.ionwave.net/Login.aspx"
   }
 ]
