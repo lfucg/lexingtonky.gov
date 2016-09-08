@@ -1,0 +1,33 @@
+uuid: d2362792-20ab-4d9f-b596-042c30dacdb8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.board_commission.field_granicus_id
+    - field.field.node.board_commission.field_organization_taxonomy_term
+    - node.type.board_commission
+  module:
+    - user
+id: node.board_commission.default
+targetEntityType: node
+bundle: board_commission
+mode: default
+content:
+  field_granicus_id:
+    weight: 104
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
+  field_organization_taxonomy_term:
+    weight: 103
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  links:
+    weight: 100
+hidden: {  }

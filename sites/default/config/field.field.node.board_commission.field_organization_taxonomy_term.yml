@@ -1,18 +1,18 @@
-uuid: 19044c57-ab8f-4bc0-bc60-60a4c94f5018
+uuid: b390a75d-0fe4-44fb-822c-39a10e2cb00c
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_related_departments
-    - node.type.meeting
+    - field.storage.node.field_organization_taxonomy_term
+    - node.type.board_commission
     - taxonomy.vocabulary.organizations
-id: node.meeting.field_related_departments
-field_name: field_related_departments
+id: node.board_commission.field_organization_taxonomy_term
+field_name: field_organization_taxonomy_term
 entity_type: node
-bundle: meeting
-label: 'Related departments (or boards/commissions)'
-description: 'Post this on the department/board/commission homepage'
-required: false
+bundle: board_commission
+label: 'Organization taxonomy term'
+description: ''
+required: true
 translatable: true
 default_value: {  }
 default_value_callback: ''

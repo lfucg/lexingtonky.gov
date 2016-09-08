@@ -1,0 +1,21 @@
+uuid: e8a515e8-4a96-495d-870e-cc3335e4ee9f
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.board_commission.field_granicus_id
+    - field.field.node.board_commission.field_organization_taxonomy_term
+    - node.type.board_commission
+  module:
+    - user
+id: node.board_commission.teaser
+targetEntityType: node
+bundle: board_commission
+mode: teaser
+content:
+  links:
+    weight: 100
+hidden:
+  field_granicus_id: true
+  field_organization_taxonomy_term: true

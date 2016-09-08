@@ -1,0 +1,23 @@
+uuid: 40e55110-a62a-43cf-8066-da07fc6b9f13
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_granicus_id
+    - node.type.board_commission
+id: node.board_commission.field_granicus_id
+field_name: field_granicus_id
+entity_type: node
+bundle: board_commission
+label: 'Granicus ID'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer
