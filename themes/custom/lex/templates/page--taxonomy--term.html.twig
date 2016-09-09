@@ -76,6 +76,8 @@
         <div id="subsection" class="pane">
           <div class="pane-inner alphabetical">
             {{ page.content }}
+            {#  displays filterable list for boards/commissions #}
+            {{ page.featured_bottom_first }}
           </div>
         </div>
       {% endif %}
@@ -83,6 +85,5 @@
     </div>
   </section>
 
-  {% include "@lex/includes/featured-bottom.html.twig" %}
   {% include "@lex/includes/footers.html.twig" %}
 </div>
