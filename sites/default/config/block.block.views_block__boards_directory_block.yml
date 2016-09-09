@@ -1,0 +1,30 @@
+uuid: 6120266d-488f-447f-bac3-d3c941df3a89
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.boards_directory
+  module:
+    - system
+    - views
+  theme:
+    - lex
+id: views_block__boards_directory_block
+theme: lex
+region: content
+weight: null
+provider: null
+plugin: 'views_block:boards_directory-block_1'
+settings:
+  id: 'views_block:boards_directory-block_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: /all-boards-commissions
+    negate: false
+    context_mapping: {  }

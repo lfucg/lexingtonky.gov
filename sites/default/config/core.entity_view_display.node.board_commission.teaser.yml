@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.board_commission.field_granicus_id
+    - field.field.node.board_commission.field_lex_site_nav
     - field.field.node.board_commission.field_organization_taxonomy_term
     - node.type.board_commission
   module:
@@ -16,6 +17,9 @@ mode: teaser
 content:
   links:
     weight: 100
+  workbench_moderation_control:
+    weight: -20
 hidden:
   field_granicus_id: true
+  field_lex_site_nav: true
   field_organization_taxonomy_term: true

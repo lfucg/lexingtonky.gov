@@ -1,0 +1,22 @@
+uuid: caa6a583-27ca-48f2-b0de-1044b9180fb7
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: board_commission_title
+label: 'Board/commission title'
+type: 'canonical_entities:node'
+pattern: '/boards/[node:title]'
+selection_criteria:
+  ac9b38fa-a593-4d7f-a8ba-8d56fb42c7fa:
+    id: node_type
+    bundles:
+      board_commission: board_commission
+    negate: false
+    context_mapping:
+      node: node
+    uuid: ac9b38fa-a593-4d7f-a8ba-8d56fb42c7fa
+selection_logic: and
+weight: -5
+relationships: {  }

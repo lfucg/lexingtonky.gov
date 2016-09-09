@@ -1,0 +1,32 @@
+uuid: 3c2ab3df-3f3b-4621-9674-a25e88c5d926
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_lex_site_nav
+    - node.type.board_commission
+    - taxonomy.vocabulary.site_navigation
+  content:
+    - 'taxonomy_term:site_navigation:bcded945-120a-4f49-b338-f0bf1adef702'
+id: node.board_commission.field_lex_site_nav
+field_name: field_lex_site_nav
+entity_type: node
+bundle: board_commission
+label: 'Navigation topic'
+description: ''
+required: true
+translatable: true
+default_value:
+  -
+    target_uuid: bcded945-120a-4f49-b338-f0bf1adef702
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      site_navigation: site_navigation
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
