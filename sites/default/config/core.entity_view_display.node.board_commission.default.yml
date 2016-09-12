@@ -5,9 +5,14 @@ dependencies:
   config:
     - field.field.node.board_commission.field_granicus_id
     - field.field.node.board_commission.field_lex_site_nav
+    - field.field.node.board_commission.field_office_to_contact
     - field.field.node.board_commission.field_organization_taxonomy_term
+    - field.field.node.board_commission.field_page_overview
+    - field.field.node.board_commission.field_page_section
     - node.type.board_commission
   module:
+    - entity_reference_revisions
+    - text
     - user
 id: node.board_commission.default
 targetEntityType: node
@@ -15,13 +20,27 @@ bundle: board_commission
 mode: default
 content:
   field_granicus_id:
-    weight: 2
+    weight: 4
     label: hidden
     settings:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
     type: number_integer
+  field_page_overview:
+    weight: 2
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+  field_page_section:
+    weight: 3
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    type: entity_reference_revisions_entity_view
   links:
     weight: 1
     settings: {  }
@@ -32,4 +51,5 @@ content:
     third_party_settings: {  }
 hidden:
   field_lex_site_nav: true
+  field_office_to_contact: true
   field_organization_taxonomy_term: true

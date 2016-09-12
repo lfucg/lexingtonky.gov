@@ -6,6 +6,7 @@ dependencies:
     - field.storage.node.field_date
     - field.storage.node.field_date_end
     - field.storage.node.field_hide_times
+    - node.type.board_commission
     - node.type.event
     - node.type.meeting
     - node.type.organization_page
@@ -2470,6 +2471,7 @@ display:
           admin_label: ''
           operator: in
           value:
+            board_commission: board_commission
             organization_page: organization_page
           group: 1
           exposed: false

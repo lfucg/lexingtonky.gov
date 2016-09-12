@@ -153,16 +153,16 @@ display:
           id: title
           table: node_field_data
           field: title
-          order: DESC
-          entity_type: node
-          entity_field: title
-          plugin_id: standard
           relationship: none
           group_type: group
           admin_label: ''
+          order: ASC
           exposed: false
           expose:
             label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: standard
       title: 'Boards directory'
       header: {  }
       footer: {  }
