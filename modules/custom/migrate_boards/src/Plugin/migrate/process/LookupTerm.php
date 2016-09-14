@@ -20,11 +20,24 @@ class LookupTerm extends ProcessPluginBase {
    * {@inheritdoc}
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
-    $term = Term::create([
-      'name' => $value,
-      'vid' => 'organizations',
-    ]);
-    $term->save();
-    return $term->id();
+
+    $tid = array_keys(\Drupal::entityQuery('taxonomy_term')
+      ->condition('name', trim($value))
+      ->condition('vid', 'organizations')
+      ->execute())[0];
+
+    if (! $tid) {
+      $term = Term::create([
+        'name' => $value,
+        'vid' => 'organizations',
+      ]);
+      $term->save();
+      $tid = $term->id();
+    } else {
+      // \Drupal::logger('lookup_term')->error('existing tid: ' . $tid);
+    }
+
+    // \Drupal::logger('lookup_term')->error('tid: ' . $tid);
+    return $tid;
   }
 }
