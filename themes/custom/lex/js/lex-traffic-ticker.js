@@ -21,7 +21,9 @@
       var until = (closure.closedUntil !== '' ? ' Thru ' + closure.closedUntil : '');
       return '<li>' +
         (closure.isNew ? '<span class="lex-traffic-notice-highlight">New:</span> ' : '') +
-        closure.location + ' – ' + closure.impact + until + '</li>';
+        closure.location +
+        (closure.impact + until === '' ? '' : ' – ' + closure.impact + until) +
+        '</li>';
     }
     var markupRange = function(closures, range) {
       return '<h3>Closures scheduled ' + range + '</h3>' +
