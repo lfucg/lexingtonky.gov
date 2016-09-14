@@ -5,10 +5,15 @@ dependencies:
   config:
     - field.field.node.board_commission.field_granicus_id
     - field.field.node.board_commission.field_lex_site_nav
+    - field.field.node.board_commission.field_office_to_contact
     - field.field.node.board_commission.field_organization_taxonomy_term
+    - field.field.node.board_commission.field_page_overview
+    - field.field.node.board_commission.field_page_section
     - node.type.board_commission
   module:
+    - paragraphs
     - path
+    - text
     - workbench_moderation
 id: node.board_commission.default
 targetEntityType: node
@@ -17,39 +22,59 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 2
+    weight: 4
     settings: {  }
     third_party_settings: {  }
   field_granicus_id:
-    weight: 7
+    weight: 9
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: number
+  field_office_to_contact:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
   field_organization_taxonomy_term:
-    weight: 6
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+  field_page_overview:
+    weight: 1
     settings:
-      match_operator: CONTAINS
-      size: 60
+      rows: 9
+      summary_rows: 3
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
+    type: text_textarea_with_summary
+  field_page_section:
+    weight: 2
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+    third_party_settings: {  }
+    type: entity_reference_paragraphs
   path:
     type: path
-    weight: 5
+    weight: 7
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 3
+    weight: 5
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 4
+    weight: 6
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -60,7 +85,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 1
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
