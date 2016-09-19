@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.board_commission.field_granicus_id
+    - field.field.node.board_commission.field_lex_custom_banner_image
     - field.field.node.board_commission.field_lex_site_nav
     - field.field.node.board_commission.field_office_to_contact
     - field.field.node.board_commission.field_organization_taxonomy_term
@@ -12,6 +13,7 @@ dependencies:
     - node.type.board_commission
   module:
     - entity_reference_revisions
+    - image
     - text
     - user
 id: node.board_commission.default
@@ -27,6 +29,14 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     type: number_integer
+  field_lex_custom_banner_image:
+    weight: 5
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
   field_page_overview:
     weight: 2
     label: hidden

@@ -4,13 +4,16 @@ status: true
 dependencies:
   config:
     - field.field.node.board_commission.field_granicus_id
+    - field.field.node.board_commission.field_lex_custom_banner_image
     - field.field.node.board_commission.field_lex_site_nav
     - field.field.node.board_commission.field_office_to_contact
     - field.field.node.board_commission.field_organization_taxonomy_term
     - field.field.node.board_commission.field_page_overview
     - field.field.node.board_commission.field_page_section
+    - image.style.thumbnail
     - node.type.board_commission
   module:
+    - image
     - paragraphs
     - path
     - text
@@ -22,22 +25,29 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 5
     settings: {  }
     third_party_settings: {  }
   field_granicus_id:
-    weight: 8
+    weight: 10
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: number
+  field_lex_custom_banner_image:
+    weight: 3
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
   field_office_to_contact:
-    weight: 9
+    weight: 11
     settings: {  }
     third_party_settings: {  }
     type: options_select
   field_organization_taxonomy_term:
-    weight: 10
+    weight: 9
     settings: {  }
     third_party_settings: {  }
     type: options_select
@@ -61,20 +71,20 @@ content:
     type: entity_reference_paragraphs
   path:
     type: path
-    weight: 7
+    weight: 8
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 5
+    weight: 6
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 7
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -85,7 +95,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
