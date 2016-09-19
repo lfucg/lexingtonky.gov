@@ -61,3 +61,6 @@ permissions:
   57: 'edit any landing_page content'
   58: 'edit own landing_page content'
   59: 'revert landing_page revisions'
+  60: 'create board_commission content'
+  64: 'revert board_commission revisions'
+  65: 'view board_commission revisions'
