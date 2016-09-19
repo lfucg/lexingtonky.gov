@@ -10,7 +10,7 @@ field_name: field_granicus_id
 entity_type: node
 bundle: board_commission
 label: 'Granicus ID'
-description: ''
+description: "<p>Visit the <a href=\"https://lfucg.granicus.com/apps/boards/\">boards admin</a> and hover your mouse over the name of a board. Toward the bottom of your browser, you'll see a preview of the link that will look like this: https://lfucg.granicus.com/boards/admin/boards#12125. The Granicus ID for the board is the number after the \"#\". In this example, it is 12125. </p>\r\n<p>The Granicus ID allows the site to show info that is stored in Granicus like the member roster</p>"
 required: true
 translatable: false
 default_value: {  }
