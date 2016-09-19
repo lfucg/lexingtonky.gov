@@ -1972,6 +1972,10 @@
     "new_path": "/"
   },
   {
+    "old_path": "/contact",
+    "new_path": "/contact/page_feedback"
+  },
+  {
     "old_path": "/procurement",
     "new_path": "https://lexingtonky.ionwave.net/Login.aspx"
   }
