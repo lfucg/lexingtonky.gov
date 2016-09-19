@@ -24,4 +24,6 @@ process:
     plugin: lookup_term
     source: title
 
-migration_dependencies: { }
+migration_dependencies:
+  required:
+    - migrate_plus.migration.migrate_board_org_terms

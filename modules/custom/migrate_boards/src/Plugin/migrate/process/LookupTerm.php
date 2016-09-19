@@ -8,7 +8,7 @@ use Drupal\migrate\Row;
 use Drupal\taxonomy\Entity\Term;
 
 /**
- * This plugin converts a string to uppercase.
+ * This plugin looks up a taxonomy term
  *
  * @MigrateProcessPlugin(
  *   id = "lookup_term"
@@ -27,17 +27,8 @@ class LookupTerm extends ProcessPluginBase {
       ->execute())[0];
 
     if (! $tid) {
-      $term = Term::create([
-        'name' => $value,
-        'vid' => 'organizations',
-      ]);
-      $term->save();
-      $tid = $term->id();
-    } else {
-      // \Drupal::logger('lookup_term')->error('existing tid: ' . $tid);
+      \Drupal::logger('lookup_term')->error('no tid! ' . $value);
     }
-
-    // \Drupal::logger('lookup_term')->error('tid: ' . $tid);
     return $tid;
   }
 }
