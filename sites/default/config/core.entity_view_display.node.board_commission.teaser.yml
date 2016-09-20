@@ -24,6 +24,7 @@ content:
     weight: -20
 hidden:
   field_granicus_id: true
+  field_lex_custom_banner_image: true
   field_lex_site_nav: true
   field_office_to_contact: true
   field_organization_taxonomy_term: true
