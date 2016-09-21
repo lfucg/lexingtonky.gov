@@ -1976,6 +1976,10 @@
     "new_path": "/contact/page_feedback"
   },
   {
+    "old_path": "/index.aspx?page=2246",
+    "new_path": "http://bereadylexington.com/1620am/"
+  },
+  {
     "old_path": "/procurement",
     "new_path": "https://lexingtonky.ionwave.net/Login.aspx"
   }
