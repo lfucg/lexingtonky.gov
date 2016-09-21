@@ -1,0 +1,10 @@
+type: module
+name: Migrate board/commission pages
+description: 'Create board term and page from a csv'
+package: Lexington
+core: 8.x
+dependencies:
+  - migrate
+  - migrate_plus
+  - migrate_tools
+  - migrate_source_csv

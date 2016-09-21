@@ -43,3 +43,5 @@ permissions:
   45: 'create meeting content'
   46: 'edit any meeting content'
   47: 'edit own meeting content'
+  48: 'edit any board_commission content'
+  49: 'edit own board_commission content'

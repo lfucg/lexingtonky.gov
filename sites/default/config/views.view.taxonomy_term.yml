@@ -3,13 +3,14 @@ langcode: en
 status: true
 dependencies:
   config:
+    - node.type.board_commission
     - taxonomy.vocabulary.site_navigation
   module:
     - node
     - taxonomy
     - user
 id: taxonomy_term
-label: 'Taxonomy term'
+label: 'Topic navigation pages'
 module: taxonomy
 description: 'Content belonging to a certain taxonomy term.'
 tag: default
@@ -188,6 +189,11 @@ display:
           entity_type: node
           entity_field: status
           plugin_id: boolean
+        field_hide_from_topic_menu_value:
+          id: field_hide_from_topic_menu_value
+          table: node__field_hide_from_topic_menu
+          field: field_hide_from_topic_menu_value
+          plugin_id: boolean
       style:
         type: html_list
         options:
@@ -349,6 +355,135 @@ display:
         options: {  }
       path: taxonomy/term/%
       display_extenders: {  }
+      filters:
+        moderation_state:
+          id: moderation_state
+          table: node_field_data
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: published
+          group: 1
+          exposed: false
+          expose:
+            operator_id: moderation_state_op
+            label: 'Moderation state'
+            description: ''
+            use_operator: false
+            operator: moderation_state_op
+            identifier: moderation_state
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              editor: '0'
+              webmaster: '0'
+              administrator: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: moderation_state
+          plugin_id: string
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          relationship: none
+          group_type: group
+          admin_label: 'Legacy before moderation state: published boolean'
+          operator: '='
+          value: true
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: 'not in'
+          value:
+            board_commission: board_commission
+          group: 2
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+      defaults:
+        filters: false
+        filter_groups: false
+      filter_groups:
+        operator: AND
+        groups:
+          1: OR
+          2: AND
     cache_metadata:
       contexts:
         - 'languages:language_content'

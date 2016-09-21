@@ -1,0 +1,26 @@
+id: migrate_board_org_terms
+label: Boards CSV file migration
+migration_group: boards
+migration_tags:
+  - CSV
+dependencies:
+  module:
+    - taxonomy
+
+source:
+  plugin: csv
+  path: modules/custom/migrate_boards/boards.csv
+  header_row_count: 1
+  keys:
+    - title
+
+destination:
+  plugin: entity:taxonomy_term
+
+process:
+  vid:
+    plugin: default_value
+    default_value: organizations
+  name: title
+
+migration_dependencies: { }

@@ -24,7 +24,6 @@ Scenario: Meetings appear on calendar
   When I am on "/departments/accounting"
   Then I should see "very-unique-meeting"
 
-@in-progress
 Scenario: You can add a meeting to Outlook calendar
   Given I am on "/meeting-notices/904/council-work-session"
   When I click "Add to Outlook"

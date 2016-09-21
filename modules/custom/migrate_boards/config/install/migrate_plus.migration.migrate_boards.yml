@@ -1,0 +1,29 @@
+id: migrate_boards
+label: Boards CSV file migration
+migration_group: boards
+migration_tags:
+  - CSV
+
+source:
+  plugin: csv
+  path: modules/custom/migrate_boards/boards.csv
+  header_row_count: 1
+  keys:
+    - granicus_id
+
+destination:
+  plugin: entity:node
+
+process:
+  type:
+    plugin: default_value
+    default_value: board_commission
+  title: title
+  field_granicus_id: granicus_id
+  field_organization_taxonomy_term:
+    plugin: lookup_term
+    source: title
+
+migration_dependencies:
+  required:
+    - migrate_plus.migration.migrate_board_org_terms

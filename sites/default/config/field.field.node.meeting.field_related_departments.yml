@@ -10,8 +10,8 @@ id: node.meeting.field_related_departments
 field_name: field_related_departments
 entity_type: node
 bundle: meeting
-label: 'Related departments'
-description: 'Post this meeting/notice on the department homepage'
+label: 'Related departments (or boards/commissions)'
+description: 'Post this on the department/board/commission homepage'
 required: false
 translatable: true
 default_value: {  }
