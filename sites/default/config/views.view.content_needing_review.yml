@@ -710,7 +710,7 @@ display:
           relationship: latest_revision__node
           group_type: group
           admin_label: ''
-          order: ASC
+          order: DESC
           exposed: false
           expose:
             label: ''
@@ -773,6 +773,9 @@ display:
             guid_field_is_permalink: false
       pager:
         type: some
+        options:
+          items_per_page: 20
+          offset: 0
       style:
         type: rss
       path: content-needing-review.xml
