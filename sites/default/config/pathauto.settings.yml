@@ -42,3 +42,5 @@ case: true
 update_action: 0
 _core:
   default_config_hash: x3zd5G959ntrLWnPqsPRjCqmznMo4F9Z3fmvE89Hcak
+enabled_entity_types:
+  - user
