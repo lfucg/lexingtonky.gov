@@ -1,16 +1,12 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\contact_storage\Kernel\ContactStorageFieldTest.
- */
-
 namespace Drupal\Tests\contact_storage\Kernel;
-use Drupal\KernelTests\KernelTestBase;
 
+use Drupal\KernelTests\KernelTestBase;
 
 /**
  * Tests contact_storage ID field.
+ *
  * @group contact_storage
  */
 class ContactStorageFieldTest extends KernelTestBase {

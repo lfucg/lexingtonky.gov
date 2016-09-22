@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\contact_storage\Tests\ContactViewBuilderTest.
- */
-
 namespace Drupal\contact_storage\Tests;
 
 /**

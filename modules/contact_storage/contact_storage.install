@@ -5,6 +5,10 @@
  * Contains install and update hooks.
  */
 
+use Drupal\Core\Config\InstallStorage;
+use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Field\BaseFieldDefinition;
+
 /**
  * Implements hook_install().
  */
@@ -38,8 +42,44 @@ function _contact_storage_ensure_fields() {
   $field_manager = \Drupal::service('entity_field.manager');
 
   $entity_definition_update_manager = \Drupal::entityDefinitionUpdateManager();
-  foreach (['id', 'created'] as $field_name) {
+  foreach (['id', 'created', 'uid', 'ip_address'] as $field_name) {
     $field_definition = $field_manager->getFieldStorageDefinitions('contact_message')[$field_name];
     $entity_definition_update_manager->installFieldStorageDefinition($field_name, 'contact_message', 'contact_storage', $field_definition);
   }
+}
+
+/**
+ * Save the bulk delete action to config.
+ */
+function contact_storage_update_8002() {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $module_handler = \Drupal::moduleHandler();
+
+  // Save the bulk delete action to config.
+  $config_install_path = $module_handler->getModule('contact_storage')->getPath() . '/' . InstallStorage::CONFIG_INSTALL_DIRECTORY;
+  $storage = new FileStorage($config_install_path);
+  $entity_type_manager
+    ->getStorage('action')
+    ->create($storage->read('system.action.message_delete_action'))
+    ->save();
+}
+
+/**
+ * Defines fields for the user id and ip address, for the contact messages.
+ */
+function contact_storage_update_8003() {
+  $storage_definition = BaseFieldDefinition::create('entity_reference')
+    ->setLabel(t('User ID'))
+    ->setDescription(t('The user ID.'))
+    ->setSetting('target_type', 'contact_form')
+    ->setDefaultValueCallback('contact_storage_contact_message_default_uid');
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('uid', 'contact_message', 'contact_storage', $storage_definition);
+
+  $storage_definition = BaseFieldDefinition::create('string')
+    ->setLabel(t('IP address'))
+    ->setDescription(t('The IP address of the submitter.'))
+    ->setDefaultValueCallback('contact_storage_contact_message_default_ip_address');
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('ip_address', 'contact_message', 'contact_storage', $storage_definition);
 }

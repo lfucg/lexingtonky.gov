@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\contact_storage\MessageEditForm.
- */
-
 namespace Drupal\contact_storage;
 
 use Drupal\Core\Entity\ContentEntityForm;

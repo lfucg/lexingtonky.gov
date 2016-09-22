@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\contact_storage\ContactFormViewBuilder.
- */
-
 namespace Drupal\contact_storage;
 
 use Drupal\Core\Config\Config;
@@ -89,16 +84,29 @@ class ContactFormViewBuilder implements EntityViewBuilderInterface, EntityHandle
    * {@inheritdoc}
    */
   public function view(EntityInterface $entity, $view_mode = 'full', $langcode = NULL) {
-    $message = $this->contactMessageStorage->create([
-      'contact_form' => $entity->id(),
-    ]);
+    if ($entity->status()) {
+      $message = $this->contactMessageStorage->create([
+        'contact_form' => $entity->id(),
+      ]);
 
-    $form = $this->entityFormBuilder->getForm($message);
-    $form['#title'] = $entity->label();
-    $form['#cache']['contexts'][] = 'user.permissions';
+      $form = $this->entityFormBuilder->getForm($message);
+      $form['#title'] = $entity->label();
+      $form['#cache']['contexts'][] = 'user.permissions';
 
-    $this->renderer->addCacheableDependency($form, $this->config);
-
+      $this->renderer->addCacheableDependency($form, $this->config);
+    }
+    else {
+      // Form disabled, display a custom message using a template.
+      $form['disabled_form_error'] = array(
+        '#theme' => 'contact_storage_disabled_form',
+        '#contact_form' => $entity,
+        '#redirect_uri' => $entity->getThirdPartySetting('contact_storage', 'redirect_uri', ''),
+        '#disabled_form_message' => $entity->getThirdPartySetting('contact_storage', 'disabled_form_message', t('This contact form has been disabled.')),
+      );
+    }
+    // Add required cacheability metadata from the contact form entity, so that
+    // changing it invalidates the cache.
+    $this->renderer->addCacheableDependency($form, $entity);
     return $form;
   }
 

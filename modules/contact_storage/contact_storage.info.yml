@@ -7,10 +7,12 @@ dependencies:
   - contact
   - user
   - views
+  - options
+  - token
 configure: entity.contact_message.collection
 
-# Information added by Drupal.org packaging script on 2016-04-28
-version: '8.x-1.0-beta4'
+# Information added by Drupal.org packaging script on 2016-08-18
+version: '8.x-1.0-beta7'
 core: '8.x'
 project: 'contact_storage'
-datestamp: 1461883146
+datestamp: 1471559644

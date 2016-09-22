@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\contact_storage\MessageViewsData.
- */
 
 namespace Drupal\contact_storage;
 
@@ -25,6 +21,14 @@ class MessageViewsData extends EntityViewsData {
       'real field' => 'contact_form',
       'field' => array(
         'id' => 'contact_form',
+      ),
+    );
+
+    $data['contact_message']['message_bulk_form'] = array(
+      'title' => $this->t('Message operations bulk form'),
+      'help' => $this->t('Add a form element that lets you run operations on multiple messages.'),
+      'field' => array(
+        'id' => 'message_bulk_form',
       ),
     );
 
