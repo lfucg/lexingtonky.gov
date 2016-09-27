@@ -11,7 +11,7 @@ Scenario: Filtering boards in the department directory
 
   When I fill in "Type the name of a board" with "Corridors"
   Then I should not see "Planning Commission"
-  And I should see "Corridors Commission" in the content region
+  And I should see "Corridors Commission" in the featured_bottom_first region
 
 Scenario: Updating a board
   Given I am logged in as a user with the "editor" role
