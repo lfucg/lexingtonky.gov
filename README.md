@@ -1,6 +1,11 @@
 # Lexington, KY city site
 
-The official site for the City of Lexington, launched August 1, 2016 after an public beta. It's built on [Drupal 8](https://www.drupal.org/8) and uses the draft [US Web Design Standards](https://playbook.cio.gov/designstandards/).
+The official site for the City of Lexington built around the needs of the public. The 2016 rebuild followed the discovery, alpha, and beta stages [as described by 18f](https://18f.gsa.gov/dashboard/stages/) before going live on August 1, 2016. The live stage is continued iteration, measurement, and improvement. 
+
+## Core technology 
+
+* [Drupal 8](https://www.drupal.org/8) 
+* [US Web Design Standards](https://playbook.cio.gov/designstandards/)
 
 ## Test suite
 * Feature tests [![Circle CI](https://circleci.com/gh/lfucg/lexingtonky.gov/tree/master.svg?style=svg)](https://circleci.com/gh/lfucg/lexingtonky.gov/tree/master)
