@@ -15,7 +15,7 @@ third_party_settings:
       - published
       - draft
     default_moderation_state: draft
-name: Homepage
+name: 'Full-bleed landing page'
 type: landing_page
 description: ''
 help: ''

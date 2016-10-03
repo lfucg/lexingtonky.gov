@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.landing_page.field_lex_custom_banner_image
+    - field.field.node.landing_page.field_lex_site_nav
     - image.style.thumbnail
     - node.type.landing_page
   module:
@@ -27,6 +28,11 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
     type: image_image
+  field_lex_site_nav:
+    weight: 32
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
   path:
     type: path
     weight: 30

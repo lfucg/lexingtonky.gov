@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.landing_page.field_lex_custom_banner_image
+    - field.field.node.landing_page.field_lex_site_nav
     - node.type.landing_page
   module:
     - image
@@ -21,8 +22,17 @@ content:
       image_link: ''
     third_party_settings: {  }
     type: image
+  field_lex_site_nav:
+    weight: 102
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
   links:
     weight: 100
     settings: {  }
     third_party_settings: {  }
+  workbench_moderation_control:
+    weight: -20
 hidden: {  }
