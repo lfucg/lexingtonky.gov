@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - node.type.board_commission
+    - node.type.landing_page
     - taxonomy.vocabulary.site_navigation
   module:
     - node
@@ -446,6 +447,7 @@ display:
           operator: 'not in'
           value:
             board_commission: board_commission
+            landing_page: landing_page
           group: 2
           exposed: false
           expose:
