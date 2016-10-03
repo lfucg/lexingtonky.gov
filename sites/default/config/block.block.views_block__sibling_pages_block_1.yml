@@ -1,23 +1,27 @@
-uuid: 6ff12526-fdb8-4716-8f5b-b9395e296641
+uuid: d8f0fd04-cc3b-418d-a161-0a1ef1fc8420
 langcode: en
 status: true
 dependencies:
+  config:
+    - views.view.sibling_pages
   module:
     - ctools
-    - system
+    - views
   theme:
     - lex
-id: breadcrumbs_fullbleed
+id: views_block__sibling_pages_block_1
 theme: lex
-region: featured_top
+region: featured_second
 weight: -27
 provider: null
-plugin: system_breadcrumb_block
+plugin: 'views_block:sibling_pages-block_1'
 settings:
-  id: system_breadcrumb_block
-  label: 'Breadcrumbs overlay on full-bleed'
-  provider: system
+  id: 'views_block:sibling_pages-block_1'
+  label: ''
+  provider: views
   label_display: '0'
+  views_label: ''
+  items_per_page: none
 visibility:
   'entity_bundle:node':
     id: 'entity_bundle:node'
@@ -26,8 +30,3 @@ visibility:
     negate: false
     context_mapping:
       node: '@node.node_route_context:node'
-  request_path:
-    id: request_path
-    pages: '<front>'
-    negate: true
-    context_mapping: {  }
