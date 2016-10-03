@@ -21,7 +21,7 @@ default:
         drupal_root: "."
       region_map:
         help: ".lex-region-help"
-        breadcrumb: ".lex-region-breadcrumb"
+        breadcrumb: ".lex-breadcrumb"
         content: ".lex-region-content"
         featured_bottom_first: ".lex-region-featured_bottom_first"
       selectors:

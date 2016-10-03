@@ -1,15 +1,15 @@
-uuid: b75a7697-2ed6-420e-ab07-7ac0da8eec13
+uuid: 08099ec0-1130-44ab-8033-73ea23b12465
 langcode: en
-status: false
+status: true
 dependencies:
   module:
     - system
   theme:
     - lex
-id: lex_breadcrumbs
+id: breadcrumbs
 theme: lex
-region: '-1'
-weight: -10
+region: secondary_menu
+weight: -22
 provider: null
 plugin: system_breadcrumb_block
 settings:

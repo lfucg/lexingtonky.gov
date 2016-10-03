@@ -11,12 +11,12 @@ dependencies:
 id: lex_sub_navigation
 theme: lex
 region: secondary_menu
-weight: -9
+weight: -23
 provider: null
 plugin: 'system_menu_block:main'
 settings:
   id: 'system_menu_block:main'
-  label: Sub-navigation
+  label: 'Browse navigation: sub-navigation'
   provider: system
   label_display: '0'
   level: 2

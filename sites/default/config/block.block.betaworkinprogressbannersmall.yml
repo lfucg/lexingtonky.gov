@@ -12,7 +12,7 @@ dependencies:
 id: betaworkinprogressbannersmall
 theme: lex
 region: '-1'
-weight: -10
+weight: -22
 provider: null
 plugin: 'block_content:0830dd71-46af-44d3-8807-7c73429d54af'
 settings:
