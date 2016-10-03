@@ -1,4 +1,4 @@
-uuid: 08099ec0-1130-44ab-8033-73ea23b12465
+uuid: 6ff12526-fdb8-4716-8f5b-b9395e296641
 langcode: en
 status: true
 dependencies:
@@ -7,27 +7,27 @@ dependencies:
     - system
   theme:
     - lex
-id: breadcrumbs
+id: breadcrumbs_fullbleed
 theme: lex
-region: secondary_menu
-weight: -22
+region: featured_top
+weight: null
 provider: null
 plugin: system_breadcrumb_block
 settings:
   id: system_breadcrumb_block
-  label: Breadcrumbs
+  label: 'Breadcrumbs overlay on full-bleed'
   provider: system
   label_display: '0'
 visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      landing_page: landing_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
   request_path:
     id: request_path
     pages: '<front>'
     negate: true
     context_mapping: {  }
-  'entity_bundle:node':
-    id: 'entity_bundle:node'
-    bundles:
-      landing_page: landing_page
-    negate: true
-    context_mapping:
-      node: '@node.node_route_context:node'

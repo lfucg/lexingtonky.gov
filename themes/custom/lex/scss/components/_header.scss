@@ -79,7 +79,13 @@
 
 .lex-region-featured_top {
   background-color: rgba($lex-dark-blue, $lex-alpha-level);
+  /* make the :after { content: "/" } white */
+  .lex-breadcrumb {
+    color: $lex-white;
+  }
+}
 
+.lex-frontpage .lex-region-featured_top {
   @include media($medium-large-screen) {
     margin-top: 310px;
   }

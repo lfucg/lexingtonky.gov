@@ -89,6 +89,14 @@ a.lex-font-standout, a.lex-font-standout:visited {
   color: $color-primary;
 }
 
+.lex-breadcrumb {
+  &.lex-font-lightcolor {
+    a, a:visited {
+      color: $lex-white;
+    }
+  }
+}
+
 .lex-font-light {
   @include media($large-screen) {
     font-weight: $font-weight-light;

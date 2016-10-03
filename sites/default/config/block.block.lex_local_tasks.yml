@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies:
   module:
-    - ctools
+    - system
   theme:
     - lex
 id: lex_local_tasks
@@ -20,10 +20,8 @@ settings:
   primary: true
   secondary: true
 visibility:
-  'entity_bundle:node':
-    id: 'entity_bundle:node'
-    bundles:
-      landing_page: landing_page
+  request_path:
+    id: request_path
+    pages: '<front>'
     negate: true
-    context_mapping:
-      node: '@node.node_route_context:node'
+    context_mapping: {  }
