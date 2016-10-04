@@ -1,18 +1,17 @@
-uuid: d8f0fd04-cc3b-418d-a161-0a1ef1fc8420
+uuid: 303164b2-8ba0-4773-b136-d1142a091200
 langcode: en
 status: true
 dependencies:
   config:
     - views.view.sibling_pages
   module:
-    - ctools
     - views
   theme:
     - lex
-id: views_block__sibling_pages_block_1
+id: views_block__sibling_pages_block_sidebar
 theme: lex
-region: featured_second
-weight: -26
+region: sidebar_second
+weight: -27
 provider: null
 plugin: 'views_block:sibling_pages-block_1'
 settings:
@@ -22,11 +21,4 @@ settings:
   label_display: '0'
   views_label: ''
   items_per_page: none
-visibility:
-  'entity_bundle:node':
-    id: 'entity_bundle:node'
-    bundles:
-      landing_page: landing_page
-    negate: false
-    context_mapping:
-      node: '@node.node_route_context:node'
+visibility: {  }

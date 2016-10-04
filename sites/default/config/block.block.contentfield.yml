@@ -18,7 +18,7 @@ provider: null
 plugin: 'fieldblock:node'
 settings:
   id: 'fieldblock:node'
-  label: 'Content field'
+  label: 'News article image'
   provider: fieldblock
   label_display: '0'
   label_from_field: 0
