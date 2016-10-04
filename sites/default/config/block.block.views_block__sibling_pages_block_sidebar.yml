@@ -5,6 +5,7 @@ dependencies:
   config:
     - views.view.sibling_pages
   module:
+    - ctools
     - views
   theme:
     - lex
@@ -21,4 +22,11 @@ settings:
   label_display: '0'
   views_label: ''
   items_per_page: none
-visibility: {  }
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      page: page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

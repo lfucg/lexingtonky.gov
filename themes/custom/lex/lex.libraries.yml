@@ -16,6 +16,12 @@ global-js:
     - core/jquery
     - core/jquery.ui.autocomplete
 
+lex-sidenav-list:
+  js:
+    js/lex-sidenav-list.js: {}
+  dependencies:
+    - core/jquery
+
 lex-traffic:
   js:
     js/papaparse.min.js: {}

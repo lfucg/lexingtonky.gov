@@ -61,7 +61,7 @@ display:
           default_row_class: true
           type: ul
           wrapper_class: item-list
-          class: 'usa-sidenav-list lex-sidenav-list lex-sidenav-list-fullbleed'
+          class: 'usa-sidenav-list lex-sidenav-list'
       row:
         type: fields
       fields:
