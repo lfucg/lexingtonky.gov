@@ -14,19 +14,18 @@
     border: none;
   }
   a {
-    padding-left: 0;
-    padding-right: 0;
     color: $lex-blue;
+    padding-left: 0;
+    @include media($medium-screen) {
+      padding-left: $lex-section-rem-gutter;
+    }
   }
   a:hover {
     text-decoration: underline;
   }
-  a.is-active {
+  a.usa-current {
     color: white;
     background: $lex-blue;
+    font-weight: normal;
   }
 }
-
-// .lex-sidenav-list-fullbleed {
-//   background-color: rgba($lex-white, $lex-alpha-level-transparent);
-// }

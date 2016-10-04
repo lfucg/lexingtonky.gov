@@ -91,14 +91,27 @@
   }
 }
 
-.lex-region-featured_second {
-  background-color: rgba($lex-white, $lex-alpha-level);
- .lex-pagetitle {
-    margin-top: 0;
+.lex-layout-fullbleed {
+  .lex-breadcrumb-wrapper {
+    /* fix double padding because of nested lex-grid-full */
+    padding-left: 0;
   }
-  // .lex-regionhighlighted {
-  //   padding: 0;
-  // }
+}
+
+.lex-layout-fullbleed .lex-region-featured_second {
+  background-color: rgba($lex-white, $lex-alpha-level);
+  padding-top: 0.5em; /* match margin of page-title to cover with bg */
+  padding-bottom: $lex-section-gutter;
+
+  .lex-pagetitle {
+    font-weight: normal;
+    @include media($medium-screen) {
+      padding-left: $lex-section-rem-gutter;
+    }
+  }
+  @include media($medium-screen) {
+    margin-left: 60%;
+  }
 }
 
 .lex-mostactive {

@@ -28,6 +28,7 @@
  * Page content (in order of occurrence in the default page.html.twig):
  *
  * - content_attributes (added by City of Lexington)
+ * - attributes.layout_class (added by City of Lexington for fullbleed layout)
  *
  * - title_prefix: Additional output populated by modules, intended to be
  *   displayed in front of the main title tag that appears in the template.
@@ -62,7 +63,7 @@
  * @ingroup themeable
  */
 #}
-<div class="layout-container {{ is_front ? 'lex-frontpage' : '' }}">
+<div class="layout-container {{ is_front ? 'lex-frontpage' : '' }} {{ attributes.layout_class }}">
   {% include "@lex/includes/header.html.twig" %}
 
   {{ page.help }}

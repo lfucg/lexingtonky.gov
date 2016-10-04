@@ -57,6 +57,12 @@ function lex_preprocess_html(&$variables) {
   }
 }
 
+function lex_preprocess_page__node(&$variables) {
+  if ($variables['node']->bundle() == 'landing_page') {
+    $variables['attributes']['layout_class'] = 'lex-layout-fullbleed';
+  }
+}
+
 function lex_preprocess_page__taxonomy__term(&$variables) {
   $path = \Drupal::service('path.current')->getPath();
   $alias = \Drupal::service('path.alias_manager')->getAliasByPath($path);

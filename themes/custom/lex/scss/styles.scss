@@ -35,10 +35,14 @@ $lex-alert-dark-red: #c31a1a;
 $lex-alert-yellow: #ffee88;
 
 // Magic numbers
+// em-based gutter is deprecated
 $lex-section-gutter: 1.7em;
 $lex-section-half-gutter: $lex-section-gutter / 2;
 $lex-section-double-gutter: $lex-section-gutter * 2;
 $lex-max-width: 1200px;
+// Use rem-based gutter!
+$lex-section-rem-gutter: 3rem;
+$lex-section-rem-gutter-half: $lex-section-rem-gutter / 2;
 
 // WDS overrides
 $color-primary: $lex-blue;
