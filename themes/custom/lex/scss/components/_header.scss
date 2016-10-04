@@ -102,15 +102,22 @@
   background-color: rgba($lex-white, $lex-alpha-level);
   padding-top: 0.5em; /* match margin of page-title to cover with bg */
   padding-bottom: $lex-section-gutter;
+}
 
+.lex-layout-fullbleed {
   .lex-pagetitle {
     font-weight: normal;
-    @include media($medium-screen) {
-      padding-left: $lex-section-rem-gutter;
-    }
   }
   @include media($medium-screen) {
-    margin-left: 60%;
+    .lex-region-featured_second {
+      margin-left: 60%;
+    }
+    .lex-sidenav-list a {
+      padding-left: 0;
+    }
+    .lex-pagetitle, .lex-sidenav-list {
+      padding-left: $lex-section-rem-gutter;
+    }
   }
 }
 

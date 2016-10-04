@@ -15,10 +15,6 @@
   }
   a {
     color: $lex-blue;
-    padding-left: 0;
-    @include media($medium-screen) {
-      padding-left: $lex-section-rem-gutter;
-    }
   }
   a:hover {
     text-decoration: underline;
