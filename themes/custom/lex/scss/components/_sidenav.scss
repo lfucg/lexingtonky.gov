@@ -1,0 +1,32 @@
+// .lex-sidenav-list-policerecruitment {
+//   @include media($medium-screen) {
+//     background: url(../img/LPD_Badge_Blue_Fade.png);
+//     background-repeat: no-repeat;
+//     background-position: right -480px top;
+//   }
+//   @include media($large-screen) {
+//     background-position: right -320px top;
+//   }
+// }
+
+.lex-sidenav-list {
+  li {
+    border: none;
+  }
+  a {
+    padding-left: 0;
+    padding-right: 0;
+    color: $lex-blue;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  a.is-active {
+    color: white;
+    background: $lex-blue;
+  }
+}
+
+// .lex-sidenav-list-fullbleed {
+//   background-color: rgba($lex-white, $lex-alpha-level-transparent);
+// }

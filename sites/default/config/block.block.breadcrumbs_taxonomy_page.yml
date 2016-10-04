@@ -1,4 +1,4 @@
-uuid: c809fd23-e1b6-41ac-8800-000ed81b4508
+uuid: 736aa2e9-2bc2-4bf5-b259-c806666b892c
 langcode: en
 status: true
 dependencies:
@@ -6,16 +6,16 @@ dependencies:
     - system
   theme:
     - lex
-id: browsenav_topcategory_term
+id: breadcrumbs_taxonomy_page
 theme: lex
 region: secondary_menu
-weight: -24
+weight: -26
 provider: null
-plugin: page_title_block
+plugin: system_breadcrumb_block
 settings:
-  id: page_title_block
-  label: 'Browse navigation: top category term'
-  provider: core
+  id: system_breadcrumb_block
+  label: 'Breadcrumbs: taxonomy page'
+  provider: system
   label_display: '0'
 visibility:
   request_path:

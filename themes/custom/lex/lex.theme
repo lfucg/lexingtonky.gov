@@ -166,9 +166,6 @@ function lex_preprocess_feed_icon(&$variables) {
 
 function lex_preprocess_region(&$variables) {
   $variables['attributes']['class'][] = 'lex-region-' . $variables['region'];
-  if ($variables['region'] == 'highlighted') {
-    $variables['attributes']['class'][] = 'clearfix';
-  }
 }
 
 function lex_preprocess_field(&$variables) {

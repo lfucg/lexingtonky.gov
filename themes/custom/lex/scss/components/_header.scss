@@ -91,6 +91,16 @@
   }
 }
 
+.lex-region-featured_second {
+  background-color: rgba($lex-white, $lex-alpha-level);
+ .lex-pagetitle {
+    margin-top: 0;
+  }
+  // .lex-regionhighlighted {
+  //   padding: 0;
+  // }
+}
+
 .lex-mostactive {
   padding: 1em;
   background-color: rgba($lex-white, $lex-alpha-level);
