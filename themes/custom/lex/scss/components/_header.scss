@@ -108,6 +108,14 @@
   .lex-pagetitle {
     font-weight: normal;
   }
+
+  /* EDS: can't figure out the block logic to hide these w/o removing
+    breadcrumbs from /news, /events, etc
+    so hide with css */
+  .lex-region-secondary_menu .lex-breadcrumb,
+  .lex-region-highlighted .lex-pagetitle {
+    display: none;
+  }
   @include media($medium-screen) {
     .lex-region-featured_second {
       margin-left: 60%;
