@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   module:
-    - ctools
     - system
   theme:
     - lex
@@ -15,14 +14,7 @@ provider: null
 plugin: system_breadcrumb_block
 settings:
   id: system_breadcrumb_block
-  label: 'Breadcrumbs: nodes except landing'
+  label: Breadcrumbs
   provider: system
   label_display: '0'
-visibility:
-  'entity_bundle:node':
-    id: 'entity_bundle:node'
-    bundles:
-      landing_page: landing_page
-    negate: true
-    context_mapping:
-      node: '@node.node_route_context:node'
+visibility: {  }
