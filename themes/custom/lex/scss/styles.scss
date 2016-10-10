@@ -42,8 +42,7 @@ $lex-section-double-gutter: $lex-section-gutter * 2;
 $lex-max-width: 1200px;
 // Use rem-based gutter!
 $lex-section-rem-gutter: 3rem;
-$lex-section-rem-gutter-half: $lex-section-rem-gutter / 2;
-
+$lex-section-rem-gutter-half: 1.5rem;
 // WDS overrides
 $color-primary: $lex-blue;
 

@@ -102,6 +102,7 @@
   background-color: rgba($lex-white, $lex-alpha-level);
   padding-top: 0.5em; /* match margin of page-title to cover with bg */
   padding-bottom: $lex-section-gutter;
+  padding-left: $lex-section-half-gutter;
 }
 
 .lex-layout-fullbleed {
@@ -116,15 +117,13 @@
   .lex-region-highlighted .lex-pagetitle {
     display: none;
   }
-  @include media($medium-screen) {
+  /* anon view includes extra useless padding */
+  .lex-region-highlighted {
+    padding-bottom: 0;
+  }
+  @include media($medium-large-screen) {
     .lex-region-featured_second {
       margin-left: 60%;
-    }
-    .lex-sidenav-list a {
-      padding-left: 0;
-    }
-    .lex-pagetitle, .lex-sidenav-list {
-      padding-left: $lex-section-rem-gutter;
     }
   }
 }

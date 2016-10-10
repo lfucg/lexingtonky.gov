@@ -22,3 +22,13 @@
     background: $lex-light-blue;
   }
 }
+
+.lex-title-list {
+  /* same as browsenav #subsection li */
+  li {
+    padding-bottom: $lex-section-rem-gutter-half;
+  }
+  a:hover {
+    color: $lex-light-blue;
+  }
+}

@@ -61,7 +61,7 @@ display:
           default_row_class: true
           type: ul
           wrapper_class: item-list
-          class: 'usa-sidenav-list lex-sidenav-list'
+          class: 'usa-unstyled-list lex-title-list'
       row:
         type: fields
       fields:
@@ -193,7 +193,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '<a href="{{ path }}" class="{{ raw_arguments.nid == nid ? ''usa-current'' : '''' }}">{{ title }}</a>'
+            text: '<a href="{{ path }}" class=" lex-card-title lex-card-title-medium {{ raw_arguments.nid == nid ? ''usa-current'' : '''' }}">{{ title }}</a>'
             make_link: true
             path: ''
             absolute: false
@@ -218,14 +218,14 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
+          element_type: '0'
           element_class: ''
-          element_label_type: ''
+          element_label_type: '0'
           element_label_class: ''
           element_label_colon: false
-          element_wrapper_type: ''
+          element_wrapper_type: '0'
           element_wrapper_class: ''
-          element_default_classes: true
+          element_default_classes: false
           empty: ''
           hide_empty: false
           empty_zero: false

@@ -184,8 +184,9 @@ $desktop: 770px;
       @extend .lex-card-title;
       @extend .lex-card-title-heading;
     }
+    /* same as lex-title-list */
     li {
-      padding-bottom: $lex-section-half-gutter;
+      padding-bottom: $lex-section-rem-gutter-half;
     }
     a:hover {
       color: $lex-light-blue;
