@@ -58,7 +58,7 @@ function lex_preprocess_html(&$variables) {
 }
 
 function lex_preprocess_page__node(&$variables) {
-  if ($variables['node']->bundle() == 'landing_page') {
+  if (is_object($variables['node']) && $variables['node']->bundle() == 'landing_page') {
     $variables['attributes']['layout_class'] = 'lex-layout-fullbleed';
   }
 }
