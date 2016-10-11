@@ -45,3 +45,6 @@ permissions:
   47: 'edit own meeting content'
   48: 'edit any board_commission content'
   49: 'edit own board_commission content'
+  50: 'edit any landing_page content'
+  51: 'edit own landing_page content'
+  52: 'view landing_page revisions'

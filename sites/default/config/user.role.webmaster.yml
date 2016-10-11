@@ -38,3 +38,6 @@ permissions:
   61: 'masquerade as any user'
   62: 'administer url aliases'
   63: 'create url aliases'
+  64: 'create landing_page content'
+  65: 'delete any landing_page content'
+  66: 'delete own landing_page content'
