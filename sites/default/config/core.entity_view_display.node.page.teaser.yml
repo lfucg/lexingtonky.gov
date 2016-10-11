@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.page.body
+    - field.field.node.page.field_lex_custom_banner_image
     - field.field.node.page.field_lex_site_nav
     - field.field.node.page.field_office_to_contact
     - field.field.node.page.field_page_overview
@@ -31,6 +32,7 @@ content:
     weight: -20
 hidden:
   body: true
+  field_lex_custom_banner_image: true
   field_lex_site_nav: true
   field_office_to_contact: true
   field_page_section: true

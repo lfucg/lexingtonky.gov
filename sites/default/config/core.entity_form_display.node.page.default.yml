@@ -4,15 +4,18 @@ status: true
 dependencies:
   config:
     - field.field.node.page.body
+    - field.field.node.page.field_lex_custom_banner_image
     - field.field.node.page.field_lex_site_nav
     - field.field.node.page.field_office_to_contact
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
     - field.field.node.page.field_related_departments
     - field.field.node.page.field_related_documents
+    - image.style.thumbnail
     - node.type.page
   module:
     - file
+    - image
     - paragraphs
     - path
     - text
@@ -27,6 +30,13 @@ content:
     weight: 3
     settings: {  }
     third_party_settings: {  }
+  field_lex_custom_banner_image:
+    weight: 26
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
   field_lex_site_nav:
     weight: 6
     settings: {  }
