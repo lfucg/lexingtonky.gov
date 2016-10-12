@@ -12,6 +12,8 @@ var cssmin = require('gulp-minify-css');
 var sourcemaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
 var runSequence = require('run-sequence');
+var mocha = require('gulp-mocha');
+var jshint = require('gulp-jshint');
 
 // paths
 // todo: include webdesign standards in the image min
@@ -57,9 +59,21 @@ gulp.task('svgmin', function() {
     .pipe(gulp.dest(svgDest));
 });
 
+gulp.task('test', function() {
+  return gulp.src(['js/lex-traffic-ticker-test.js', 'js/lex-traffic-ticker.js'], {read: false})
+    .pipe(mocha({reporter: 'nyan'}));
+});
+
 // Run tasks without watching.
 gulp.task('build', function(callback) {
   runSequence('sass', 'imagemin', 'svgmin', 'cssmin', callback);
+});
+
+
+gulp.task('lintjs', function(callback) {
+  return gulp.src(['js/lex-traffic-ticker.js'])
+          .pipe(jshint())
+          .pipe(jshint.reporter('default'));
 });
 
 // Rerun the task when a file changes

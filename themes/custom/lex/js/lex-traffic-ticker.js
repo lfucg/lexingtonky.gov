@@ -1,42 +1,50 @@
-(function() {
-  var $ = jQuery;
-  var baseUrl = 'https://lfucg.github.io/traffic-data';
+lexTicker = function () {
+  var _this = {};
 
-  var closuresMarkup = function(results) {
-    var convertTime = function(military) {
-      /* sometimes is a string like 24 Hrs/Day */
-      if (military.match(/^\d+$/)) {
-        return military > 12 ? (military - 12 + ' p.m.') : (military + ' a.m.');
-      } else {
-        return military;
-      }
-    }
-
-    var withLocations = _.filter(results.data, function(c) { return c.location });
-    var timeRanges = _.groupBy(withLocations, function(closure) {
-      return convertTime(closure.closureBegin) +
-        (closure.closureEnd ? ' – ' + convertTime(closure.closureEnd) : '');
-    });
-    var markupClosure = function(closure) {
-      var until = (closure.closedUntil !== '' ? ' Thru ' + closure.closedUntil : '');
-      return '<li>' +
-        (closure.isNew ? '<span class="lex-traffic-notice-highlight">New:</span> ' : '') +
-        closure.location +
-        (closure.impact + until === '' ? '' : ' – ' + closure.impact + until) +
-        '</li>';
-    }
-    var markupRange = function(closures, range) {
-      return '<h3>Closures scheduled ' + range + '</h3>' +
-      '<ul>' +
-        _.map(closures, function(c) { return markupClosure(c) }).join('') +
-      '</ul>';
-    }
-    return _.map(timeRanges, markupRange).join('');
+  var sectionHeading = function(heading) {
+    return (heading ? '<h2>' + heading + '</h2>' : '');
   };
 
-  var displayClosures = function(results) {
-    var header = sectionHeading(results.data[0]);
-    $('.lex-traffic-scheduledClosures').html(header + closuresMarkup(results));
+  var markupClosure = function(closure) {
+    var until = (closure.closedUntil !== '' ? ' Thru ' + closure.closedUntil : '');
+    return '<li>' +
+      (closure.isNew ? '<span class="lex-traffic-notice-highlight">New:</span> ' : '') +
+      closure.location +
+      (closure.impact + until === '' ? '' : ' – ' + closure.impact + until) +
+      '</li>';
+  };
+
+  var convertTime = function(military) {
+    /* sometimes is a string like 24 Hrs/Day */
+    if (military.match(/^\d+$/)) {
+      return military > 12 ? (military - 12 + ' p.m.') : (military + ' a.m.');
+    } else {
+      return military;
+    }
+  };
+
+  var markupImpact = function(impact) {
+    return '<li>' +
+      impact.event + ' ' +
+      impact.timeBegin +
+      (impact.timeEnd ? ' – ' + impact.timeEnd : '') +
+      '</li>';
+  };
+
+  var markupRows = function(rows, rowMarkupFnc) {
+    return '<ul>' +
+      _.map(rows, function(i) { return rowMarkupFnc(i); }).join('') +
+    '</ul>';
+  };
+
+  var markupSection = function(options) {
+    var byHeading = _this.groupByHeading(options.rows);
+    return _.map(byHeading, function(row, heading) {
+      var filtered = _.filter(row, options.filter);
+      var grouped = _.groupBy(filtered, options.group);
+      var body = _.map(grouped, options.markupBody).join('');
+      return sectionHeading(heading) + body;
+    }).join('');
   };
 
   var markupIncident = function(incident) {
@@ -47,54 +55,79 @@
       '</li>';
   };
 
-  var markupIncidents = function(incidents) {
-    return '<ul>' +
-      _.map(incidents, function(i) { return markupIncident(i) }).join('') +
-    '</ul>';
-  }
-
-  var sectionHeading = function(firstRow) {
-    return (firstRow.sectionHeading ?
-      '<h2>' + firstRow.sectionHeading + '</h2>' :
-      '');
-  }
-
-  var displayIncidents = function(incidents) {
-    var html = sectionHeading(incidents[0]);
-    var withLocations = _.filter(incidents, function(r) { return r.location });
-    var incidentTypes = _.groupBy(withLocations, function(i) { return i.incidentType; });
-    html += _.map(incidentTypes, function(incidents, type) {
-      return '<h3>' + type + '</h3>' + markupIncidents(incidents);
-    }).join('');
-
-    $('.lex-traffic-incidents').html(html);
+  _this.groupByHeading = function(rows) {
+    var byHeadings = {};
+    var currHeading = "";
+    rows.forEach(function(row) {
+      if (row.sectionHeading !== "" && currHeading !== row.sectionHeading) {
+        currHeading = row.sectionHeading;
+        byHeadings[currHeading] = [];
+      }
+      byHeadings[currHeading].push(row);
+    });
+    return byHeadings;
   };
 
-  var markupImpact = function(impact) {
-    return '<li>' +
-      impact.event + ' ' +
-      impact.timeBegin +
-      (impact.timeEnd ? ' – ' + impact.timeEnd : '') +
-      '</li>';
-  }
+  _this.markupIncidents = function(incidents) {
+    return markupSection({
+      rows: incidents,
+      filter: function(i) { return i.location; },
+      group: function(i) { return i.incidentType; },
+      markupBody: function(impacts, type) {
+        return '<h3>' + type + '</h3>' + markupRows(impacts, markupIncident);
+      },
+    });
+  };
 
-  var markupImpacts = function(impacts) {
-    return '<ul>' +
-      _.map(impacts, function(i) { return markupImpact(i) }).join('') +
-    '</ul>';
+  _this.markupClosures = function(rows) {
+    return markupSection({
+      rows: rows,
+      filter: function(c) {
+        return c.location;
+      },
+      group: function(closure) {
+        return convertTime(closure.closureBegin) +
+          (closure.closureEnd ? ' – ' + convertTime(closure.closureEnd) : '');
+      },
+      markupBody: function(closures, range) {
+        return '<h3>Closures scheduled ' + range + '</h3>' + markupRows(closures, markupClosure);
+      },
+    });
+  };
+
+  _this.markupWeekendImpacts = function(rows) {
+    return markupSection({
+      rows: rows,
+      filter: function(i) { return i.event; },
+      group: function(i) { return i.day; },
+      markupBody: function(impacts, day) {
+        return '<h3>' + day + '</h3>' + markupRows(impacts, markupImpact);
+      },
+    });
+  };
+
+  return _this;
+};
+
+lexTickerDom = function() {
+  var $ = jQuery;
+  // var baseUrl = 'https://lfucg.github.io/traffic-data';
+  var baseUrl = 'http://localhost:5000';
+  var ticker = lexTicker();
+
+  var displayClosures = function(results) {
+    $('.lex-traffic-scheduledClosures').html(ticker.markupClosures(results.data));
+  };
+
+  var displayIncidents = function(incidents) {
+    $('.lex-traffic-incidents').html(ticker.markupIncidents(incidents));
   };
 
   var displayWeekendImpacts = function(results) {
-    var impactRows = results.data;
-    var html = sectionHeading(impactRows[0]);
-    var withEvent = _.filter(impactRows, function(i) { return i.event });
-    var byDay = _.groupBy(withEvent, function(i) { return i.day; });
-    html += _.map(byDay, function(impacts, day) {
-      return '<h3>' + day + '</h3>' + markupImpacts(impacts);
-    }).join('');
+    var html = ticker.markupWeekendImpacts(results.data);
 
     $('.lex-traffic-weekendImpacts').html(html);
-  }
+  };
 
   var isWeekend = function() {
     // grabbed this mostly wholesale from old website
@@ -103,11 +136,11 @@
     var weekendCutOver=new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 15, 30);
     var weekdayCutOver=new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 20, 0);
 
-    if(((curDay==0)&&(curDate<weekdayCutOver))||(curDay==6)||((curDay==5)&&(curDate>=weekendCutOver)))
+    if(((curDay===0)&&(curDate<weekdayCutOver))||(curDay===6)||((curDay===5)&&(curDate>=weekendCutOver)))
     {
       return true;
     }
-  }
+  };
 
   var displayWeekdayOrWeekend = function() {
     if (isWeekend() || window.location.search.match('show-weekend=true')) {
@@ -123,12 +156,12 @@
         complete: displayClosures,
       });
     }
-  }
+  };
 
   var githubUrl = function(file) {
-    var epoch = (new Date).getTime();
+    var epoch = (new Date()).getTime();
     return (baseUrl + file + "?breakcache=" + epoch);
-  }
+  };
 
   window.refreshTicker = function() {
     $.get(githubUrl("/traffic-incidents.csv"), function(results, statusCode, req) {
@@ -140,8 +173,13 @@
       displayIncidents(incidents);
     });
     displayWeekdayOrWeekend();
-  }
+  };
 
   window.refreshTicker();
   setInterval(refreshTicker, 60000);
-}());
+};
+
+/* test env wont have window */
+if (window) {
+  lexTickerDom();
+}
