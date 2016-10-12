@@ -24,4 +24,4 @@ test:
     - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat:
         timeout: 1500
   post:
-    - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH --yes; fi
+    # - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH --yes; fi
