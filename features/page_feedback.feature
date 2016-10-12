@@ -15,6 +15,7 @@ Scenario: Submit homepage feedback
     Then I should see "Would you like a reply"
 
     When I fill in "How could this page be better?" with randomized text "foo"
+    And I wait for 2000 miliseconds
     And I press "Send message"
     Given I wait for AJAX to finish
     Then I should see "Thank you"
