@@ -1,6 +1,8 @@
 machine:
   php:
     version: 5.6.17
+  node:
+    version: 6.1.0
   hosts:
     localhost: 127.0.0.1
   environment:
@@ -8,10 +10,13 @@ machine:
 dependencies:
   pre:
     - echo "date.timezone = America/New_York" > /opt/circleci/php/$(phpenv global)/etc/conf.d/timezone.ini
+    - rm /opt/circleci/php/$(phpenv global)/etc/conf.d/xdebug.ini # slight performance boost
   cache_directories:
     - "~/.composer/cache"    # keep from having to install terminus every single time
   override:
     - "./private/scripts/ci-dependencies-override.sh"
+    - npm install -g gulp mocha mocha-junit-reporter
+    - cd themes/custom/lex && npm install underscore
   post:
     - wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar
     - java -jar selenium-server-standalone-2.53.0.jar -Dwebdriver.chrome.driver="/usr/local/bin/chromedriver":
@@ -20,8 +25,11 @@ test:
   pre:
     - ./private/scripts/ci-test-pre.sh
   override:
+    - cd themes/custom/lex && npm test:
+        environment:
+          MOCHA_FILE: $CIRCLE_TEST_REPORTS/junit/test-results.xml
     - phpunit modules/custom/tests
     - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat:
         timeout: 1500
   post:
-    # - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH --yes; fi
+    - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH --yes; fi

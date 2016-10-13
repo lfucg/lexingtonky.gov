@@ -24,6 +24,7 @@
     "url": "git+ssh://git@github.com/friendlymachine/atlas.git"
   },
   "scripts": {
+    "test": "mocha js/lex-traffic-ticker-test.js js/lex-traffic-ticker.js --reporter mocha-junit-reporter",
     "postinstall": "find node_modules/ -name \"*.info\" -type f -delete"
   },
   "name": "atlas-git",

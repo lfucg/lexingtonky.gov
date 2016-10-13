@@ -25,4 +25,16 @@ describe('Transform incidents', function() {
     var expected = '<h2>Heading</h2><h3>Saturday October 8</h3><ul><li>An event 8 am</li></ul>';
     assert.equal(lexTicker().markupWeekendImpacts(rows), expected);
   });
+
+  it('should markup multiple heading groups', function() {
+    var rows = [
+      {sectionHeading: 'Heading 1'},
+      {sectionHeading: '', day: "Saturday October 8", event: "An event", timeBegin: '8 am'},
+      {sectionHeading: 'Heading 2'},
+      {sectionHeading: '', day: "Sunday October 9", event: "Other event", timeBegin: '10 pm'},
+    ];
+    var expected = '<h2>Heading 1</h2><h3>Saturday October 8</h3><ul><li>An event 8 am</li></ul>' +
+      '<h2>Heading 2</h2><h3>Sunday October 9</h3><ul><li>Other event 10 pm</li></ul>';
+    assert.equal(lexTicker().markupWeekendImpacts(rows), expected);
+  });
 });

@@ -111,8 +111,7 @@ lexTicker = function () {
 
 lexTickerDom = function() {
   var $ = jQuery;
-  // var baseUrl = 'https://lfucg.github.io/traffic-data';
-  var baseUrl = 'http://localhost:5000';
+  var baseUrl = 'https://lfucg.github.io/traffic-data';
   var ticker = lexTicker();
 
   var displayClosures = function(results) {
