@@ -61,6 +61,8 @@ lexTicker = function () {
     rows.forEach(function(row) {
       if (row.sectionHeading !== "" && currHeading !== row.sectionHeading) {
         currHeading = row.sectionHeading;
+      }
+      if (! byHeadings[currHeading]) {
         byHeadings[currHeading] = [];
       }
       byHeadings[currHeading].push(row);

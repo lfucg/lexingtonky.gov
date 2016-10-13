@@ -37,4 +37,12 @@ describe('Transform incidents', function() {
       '<h2>Heading 2</h2><h3>Sunday October 9</h3><ul><li>Other event 10 pm</li></ul>';
     assert.equal(lexTicker().markupWeekendImpacts(rows), expected);
   });
+
+  it('should markup rows without headings', function() {
+    var rows = [
+      {sectionHeading: '', day: "Saturday October 8", event: "An event", timeBegin: '8 am'},
+    ];
+    var expected = '<h3>Saturday October 8</h3><ul><li>An event 8 am</li></ul>';
+    assert.equal(lexTicker().markupWeekendImpacts(rows), expected);
+  });
 });
