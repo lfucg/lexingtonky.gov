@@ -646,7 +646,9 @@ display:
           plugin_id: field
       defaults:
         fields: false
+        css_class: false
       block_hide_empty: true
+      css_class: ''
     cache_metadata:
       max-age: -1
       contexts:
