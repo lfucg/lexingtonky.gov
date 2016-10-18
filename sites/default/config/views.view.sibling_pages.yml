@@ -254,7 +254,7 @@ display:
           group_type: group
           admin_label: ''
           operator: '='
-          value: true
+          value: '1'
           group: 1
           exposed: false
           expose:
@@ -445,6 +445,7 @@ display:
         operator: AND
         groups:
           1: AND
+      css_class: lex-title-list
     cache_metadata:
       max-age: -1
       contexts:
@@ -671,7 +672,7 @@ display:
           group_type: group
           admin_label: ''
           operator: '='
-          value: true
+          value: '1'
           group: 1
           exposed: false
           expose:
@@ -753,17 +754,23 @@ display:
           1: AND
       display_description: ''
       style:
-        type: html_list
+        type: grid
         options:
           grouping: {  }
-          row_class: ''
-          default_row_class: true
-          type: ul
-          wrapper_class: ''
-          class: 'usa-unstyled-list lex-title-list'
+          columns: 2
+          automatic_width: false
+          alignment: vertical
+          col_class_default: false
+          col_class_custom: usa-width-one-half
+          row_class_default: false
+          row_class_custom: 'lex-card-title lex-font-lightcolor'
       row:
         type: fields
-        options: {  }
+        options:
+          default_field_elements: false
+          inline: {  }
+          separator: ''
+          hide_empty: false
       fields:
         nid:
           id: nid
@@ -919,7 +926,7 @@ display:
             preserve_tags: ''
             html: false
           element_type: span
-          element_class: 'lex-card-title lex-card-title-medium '
+          element_class: ''
           element_label_type: '0'
           element_label_class: ''
           element_label_colon: false

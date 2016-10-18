@@ -1,3 +1,7 @@
+body {
+  height: 100%;
+}
+
 .lex-site-header {
   background-repeat: no-repeat;
   background-size: cover;
@@ -77,37 +81,36 @@
   }
 }
 
-.lex-region-featured_top {
+.lex-slab-blue-alpha {
   background-color: rgba($lex-dark-blue, $lex-alpha-level);
-  /* make the :after { content: "/" } white */
-  .lex-breadcrumb {
-    color: $lex-white;
-  }
 }
 
-.lex-frontpage .lex-region-featured_top {
+.lex-frontpage .lex-slab-blue-alpha {
+  padding-top: 0;
   @include media($medium-large-screen) {
     margin-top: 310px;
   }
 }
 
 .lex-layout-fullbleed {
+  height: 100%;
+
+  .lex-slab {
+    padding-bottom: $lex-section-gutter;
+  }
+
+  .lex-breadcrumb {
+    padding: 0;
+  }
+
   .lex-breadcrumb-wrapper {
     /* fix double padding because of nested lex-grid-full */
     padding-left: 0;
   }
-}
 
-.lex-layout-fullbleed .lex-region-featured_second {
-  background-color: rgba($lex-white, $lex-alpha-level);
-  padding-top: 0.5em; /* match margin of page-title to cover with bg */
-  padding-bottom: $lex-section-gutter;
-  padding-left: $lex-section-half-gutter;
-}
-
-.lex-layout-fullbleed {
-  .lex-pagetitle {
-    font-weight: normal;
+  .lex-title-list .lex-card-title {
+    display: block;
+    padding-bottom: 1rem;
   }
 
   /* EDS: can't figure out the block logic to hide these w/o removing
@@ -121,9 +124,25 @@
   .lex-region-highlighted {
     padding-bottom: 0;
   }
-  @include media($medium-large-screen) {
-    .lex-region-featured_second {
-      margin-left: 60%;
+
+  @include media($medium-screen) {
+    .lex-site-header {
+      position: relative;
+      height: 100%;
+    }
+    .lex-slab-blue-alpha {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+    .lex-slab {
+      padding: $lex-section-gutter;
+    }
+    .lex-pagetitle {
+      margin: 0;
+    }
+    .lex-title-list .lex-card-title:last-of-type {
+      padding-bottom: 0;
     }
   }
 }

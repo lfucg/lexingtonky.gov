@@ -10,7 +10,7 @@ dependencies:
 id: breadcrumbs_fullbleed
 theme: lex
 region: featured_top
-weight: -26
+weight: -23
 provider: null
 plugin: system_breadcrumb_block
 settings:

@@ -9,8 +9,8 @@ dependencies:
     - lex
 id: pagetitle_fullbleed
 theme: lex
-region: featured_second
-weight: -26
+region: featured_top
+weight: -22
 provider: null
 plugin: page_title_block
 settings:

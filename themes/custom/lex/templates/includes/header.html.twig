@@ -13,6 +13,19 @@
       {{  page.search_header }}
     </div>
   </nav>
-  {{ page.featured_top }}
-  {{ page.featured_second }}
+  <div class="lex-slab lex-slab-blue-alpha">
+    <div class="lex-grid-full usa-grid-full">
+      {% if is_front %}
+          {{ page.featured_top }}
+      {% else %}
+        {# used by full-bleed langing page #}
+        <div class="usa-width-one-half">
+          {{ page.featured_top }}
+        </div>
+        <div class="usa-width-one-half">
+          {{ page.featured_second }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
 </header>
