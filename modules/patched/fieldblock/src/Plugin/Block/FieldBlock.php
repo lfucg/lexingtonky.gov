@@ -178,9 +178,10 @@ class FieldBlock extends BlockBase implements ContainerFactoryPluginInterface {
       '#id' => 'edit-block-formatter-wrapper'
     ];
 
-    $field_name = $form_state->getValue(['settings', 'field_name'], $this->configuration['field_name']);
+    $field_name = $form_state->getCompleteFormState()->getValue(['settings', 'field_name'], $this->configuration['field_name']);
     $field_definition = NULL;
-    $formatter_id = $form_state->getValue(['settings', 'formatter', 'id'], $this->configuration['formatter_id']);
+    $formatter_id = $form_state->getCompleteFormState()->getValue(['settings', 'formatter', 'id'], $this->configuration['formatter_id']);
+
 
     if ($field_name) {
       $field_definition = $this->getFieldDefinition($field_name);
