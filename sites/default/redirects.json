@@ -1982,5 +1982,9 @@
   {
     "old_path": "/procurement",
     "new_path": "https://lexingtonky.ionwave.net/Login.aspx"
+  },
+  {
+    "old_path": "/index.aspx?page=3188",
+    "new_path": "/browse/jobs-and-contracts/careers-with-the-lexington-fire-department"
   }
 ]
