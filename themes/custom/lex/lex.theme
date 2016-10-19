@@ -20,10 +20,12 @@ function lex_page_attachments_alter(array &$attachments) {
 
     $path = $node->field_lex_custom_banner_image[0]->entity->getFileUri();
     $uri['mobile'] = ImageStyle::load('lex_banner_mobile')->buildUrl($path);
+    $uri['tablet'] = ImageStyle::load('lex_banner_tablet')->buildUrl($path);
     $uri['desktop'] = ImageStyle::load('lex_banner_desktop')->buildUrl($path);
   } else {
     // todo: use field_lex_custom_banner_image default field value,
     $uri['mobile'] = '/themes/custom/lex/img/lexington-hero-interior.jpg';
+    $uri['tablet'] = '/themes/custom/lex/img/lexington-hero-interior.jpg';
     $uri['desktop'] = '/themes/custom/lex/img/lexington-hero-interior.jpg';
   }
 
@@ -36,11 +38,15 @@ function lex_page_attachments_alter(array &$attachments) {
     '#value' => '.lex-site-header {
         background-image: url("' . $uri['mobile'] . '") !important;
       }
+      @media screen and (min-width: 600px) {
+        .lex-site-header {
+          background-image: url("' . $uri['tablet'] . '") !important;
+        }
       @media screen and (min-width: 900px) {
-      .lex-site-header {
-        background-image: url("' . $uri['desktop'] . '") !important;
-      }
-    }',
+        .lex-site-header {
+          background-image: url("' . $uri['desktop'] . '") !important;
+        }
+      }',
   );
   $attachments['#attached']['html_head'][] = [$banner, 'lex-banner-image-style'];
 }
