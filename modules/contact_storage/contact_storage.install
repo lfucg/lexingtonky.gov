@@ -83,3 +83,27 @@ function contact_storage_update_8003() {
   \Drupal::entityDefinitionUpdateManager()
     ->installFieldStorageDefinition('ip_address', 'contact_message', 'contact_storage', $storage_definition);
 }
+
+/**
+ * Updates the redirect paths to the core property redirect path.
+ */
+function contact_storage_update_8200() {
+  $config_factory = \Drupal::configFactory();
+  // Iterate on all text formats config entities.
+  foreach ($config_factory->listAll('contact.form.') as $name) {
+    if ($redirect_page = $config_factory->get($name)->get('third_party_settings.contact_storage.redirect_uri')) {
+      $config = $config_factory->getEditable($name);
+      $config->clear('third_party_settings.contact_storage.redirect_uri');
+      try {
+        $url = '/' . \Drupal\Core\Url::fromUri($redirect_page)->getInternalPath();
+      }
+      catch (Exception $e) {
+        continue;
+      }
+      if (!$config->get('redirect')) {
+        $config->set('redirect', $url);
+      }
+      $config->save();
+    }
+  }
+}

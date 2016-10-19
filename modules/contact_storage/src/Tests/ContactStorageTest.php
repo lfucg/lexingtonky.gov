@@ -4,6 +4,7 @@ namespace Drupal\contact_storage\Tests;
 
 use Drupal\contact\Entity\ContactForm;
 use Drupal\field_ui\Tests\FieldUiTestTrait;
+use Drupal\language\Entity\ConfigurableLanguage;
 
 /**
  * Tests storing contact messages and viewing them through UI.
@@ -30,6 +31,7 @@ class ContactStorageTest extends ContactStorageTestBase {
     'text',
     'block',
     'contact',
+    'language',
     'field_ui',
     'contact_storage_test',
     'contact_test',
@@ -157,21 +159,6 @@ class ContactStorageTest extends ContactStorageTestBase {
     ]));
     // Make sure no messages are available.
     $this->assertText('There is no Contact message yet.');
-
-    // Fill the redirect field and assert the page is successfully redirected.
-    $edit = ['contact_storage_uri' => 'entity:user/' . $this->adminUser->id()];
-    $this->drupalPostForm('admin/structure/contact/manage/test_id', $edit, t('Save'));
-    $edit = [
-      'subject[0][value]' => 'Test subject',
-      'message[0][value]' => 'Test message',
-    ];
-    $this->drupalPostForm('contact', $edit, t('Send message'));
-    $this->assertText('Your message has been sent.');
-    $this->assertEqual($this->url, $this->adminUser->urlInfo()->setAbsolute()->toString());
-
-    // Check that this new message is now in HTML format.
-    $captured_emails = $this->drupalGetMails();
-    $this->assertTrue(strpos($captured_emails[1]['headers']['Content-Type'], 'text/html') !== FALSE);
 
     // Fill the "Submit button text" field and assert the form can still be
     // submitted.
@@ -312,6 +299,15 @@ class ContactStorageTest extends ContactStorageTestBase {
    * Tests the url alias creation feature.
    */
   public function testUrlAlias() {
+
+    // Add a second language to make sure aliases work with any language.
+    $language = ConfigurableLanguage::createFromLangcode('de');
+    $language->save();
+
+    // Set the second language as default.
+    $this->config('system.site')->set('default_langcode', $language->getId())->save();
+    $this->rebuildContainer();
+
     $mail = 'simpletest@example.com';
     // Test for alias without slash.
     $this->addContactForm('form_alias_1', 'contactForm', $mail, '', FALSE, ['contact_storage_url_alias' => 'form51']);

@@ -9,10 +9,11 @@ dependencies:
   - views
   - options
   - token
+  - drupal:system (>=8.2)
 configure: entity.contact_message.collection
 
-# Information added by Drupal.org packaging script on 2016-08-18
-version: '8.x-1.0-beta7'
+# Information added by Drupal.org packaging script on 2016-10-13
+version: '8.x-1.0-beta8'
 core: '8.x'
 project: 'contact_storage'
-datestamp: 1471559644
+datestamp: 1476400140

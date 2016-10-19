@@ -13,9 +13,10 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\contact\ContactFormInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\contact\Entity\ContactForm;
 use Drupal\views\Views;
+use Symfony\Component\Validator\Constraints\Url;
 
 /**
  * Implements hook_form_FORM_ID_alter() for contact_form_form().
@@ -29,12 +30,6 @@ function contact_storage_form_contact_form_form_alter(&$form, FormStateInterface
     return;
   }
   $contact_form = $form_object->getEntity();
-  $form['contact_storage_uri'] = [
-    '#type' => 'textfield',
-    '#title' => t('Redirect Page'),
-    '#description' => t('Input the Uri (entity:node/NODE-ID) of the Page to redirect the form after Submit.'),
-    '#default_value' => $contact_form->getThirdPartySetting('contact_storage', 'redirect_uri', FALSE),
-  ];
   $form['contact_storage_submit_text'] = [
     '#type' => 'textfield',
     '#title' => t('Submit button text'),
@@ -81,7 +76,6 @@ function contact_storage_form_contact_form_form_alter(&$form, FormStateInterface
  * @see contact_storage_test_form_contact_form_edit_form_alter()
  */
 function contact_storage_contact_form_form_builder($entity_type, ContactFormInterface $contact_form, &$form, FormStateInterface $form_state) {
-  $contact_form->setThirdPartySetting('contact_storage', 'redirect_uri', $form_state->getValue('contact_storage_uri'));
   $contact_form->setThirdPartySetting('contact_storage', 'submit_text', $form_state->getValue('contact_storage_submit_text'));
   $contact_form->setThirdPartySetting('contact_storage', 'show_preview', $form_state->getValue('contact_storage_preview'));
   $contact_form->setThirdPartySetting('contact_storage', 'disabled_form_message', $form_state->getValue('contact_storage_disabled_form_message'));
@@ -132,7 +126,7 @@ function contact_storage_contact_form_form_submit(&$form, FormStateInterface &$f
     }
     // Only save a non-empty alias.
     elseif ($new_alias) {
-      \Drupal::service('path.alias_storage')->save('/' . $entity->toUrl('canonical')->getInternalPath(), $formState->getValue('contact_storage_url_alias'), 'en', $old_alias['pid']);
+      \Drupal::service('path.alias_storage')->save('/' . $entity->toUrl('canonical')->getInternalPath(), $formState->getValue('contact_storage_url_alias'), LanguageInterface::LANGCODE_NOT_SPECIFIED, $old_alias['pid']);
     }
   }
 }
@@ -141,7 +135,6 @@ function contact_storage_contact_form_form_submit(&$form, FormStateInterface &$f
  * Implements hook_form_FORM_ID_alter() for contact_form_form().
  */
 function contact_storage_form_contact_message_form_alter(&$form, &$form_state, $form_id) {
-  $form['actions']['submit']['#submit'][] = 'contact_storage_contact_message_redirect_submit';
   /** @var \Drupal\Core\Entity\ContentEntityForm $form_object */
   $form_object = $form_state->getFormObject();
   /* @var \Drupal\contact\MessageInterface $contact_message */
@@ -172,18 +165,6 @@ function contact_storage_form_contact_message_form_alter(&$form, &$form_state, $
     // Remove the submit and preview buttons.
     $form['actions']['submit']['#access'] = FALSE;
     $form['actions']['preview']['#access'] = FALSE;
-  }
-}
-
-/**
- * Implements a Submit Callback for contact_message_form.
- */
-function contact_storage_contact_message_redirect_submit(&$form, &$form_state) {
-  /* @var \Drupal\contact\MessageInterface $contact_message */
-  $contact_message = $form_state->getFormObject()->getEntity();
-  $contact_form = ContactForm::load($contact_message->bundle());
-  if ($redirect_uri = $contact_form->getThirdPartySetting('contact_storage', 'redirect_uri', FALSE)) {
-    $form_state->setRedirectUrl(Url::fromUri($redirect_uri));
   }
 }
 
@@ -408,7 +389,6 @@ function contact_storage_theme() {
       'template' => 'contact-storage-disabled-form',
       'variables' => array(
         'contact_form' => NULL,
-        'redirect_uri' => '',
         'disabled_form_message' => '',
       ),
     ),
