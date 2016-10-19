@@ -1,5 +1,7 @@
 # Testing the project
 
+The following will all be simpler once the Kalabax Behat plugin is released. Until then:
+
 [Behat](http://docs.behat.org/en/v3.0/) is installed in vendor. We run the tests using the [Webdriver API](https://www.w3.org/TR/webdriver/)
 to automate a browser.
 
@@ -40,6 +42,10 @@ git will show a ton of changes since vendor can't be gitignored. So our local wo
 directory is a mess. Pantheon doesn't have a great way to deploy vendored files at build time.
 To keep this project clean, we keep `vendor/` perfectly in sync with [Pantheon's Drupal 8 upstream](https://github.com/pantheon-systems/drops-8/).  We then install dev dependencies to a cloned version
 of the working directory.
+
+## Testing javascript
+
+We use mocha to test js. See [circle.yml] for the npm commands to install and run js tests.
 
 ## Common issues with the chosen widget
 

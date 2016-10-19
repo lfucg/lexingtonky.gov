@@ -2,7 +2,7 @@
 
 The following instructions to set up a local development environment for the city's Drupal site.
 
-## Installthe site locally
+## Install the site locally
 
 Install Kalabox and authenticate with Pantheon to pull down the site code/files/db
 
