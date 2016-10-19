@@ -492,7 +492,7 @@ display:
           plugin_id: field
       filters:
         status:
-          value: true
+          value: '1'
           table: node_field_data
           field: status
           plugin_id: boolean
@@ -1073,7 +1073,7 @@ display:
           plugin_id: field
       filters:
         status:
-          value: true
+          value: '1'
           table: node_field_data
           field: status
           plugin_id: boolean
@@ -1140,7 +1140,7 @@ display:
           group_type: group
           admin_label: ''
           operator: '='
-          value: true
+          value: '1'
           group: 1
           exposed: false
           expose:
@@ -1595,7 +1595,7 @@ display:
       title: 'Meetings and notices'
       filters:
         status:
-          value: true
+          value: '1'
           table: node_field_data
           field: status
           plugin_id: boolean
@@ -1871,7 +1871,7 @@ display:
           group_type: group
           admin_label: ''
           operator: '='
-          value: true
+          value: '1'
           group: 1
           exposed: false
           expose:
@@ -2551,7 +2551,7 @@ display:
           group_type: group
           admin_label: ''
           operator: '='
-          value: true
+          value: '1'
           group: 1
           exposed: false
           expose:
@@ -3500,7 +3500,7 @@ display:
           plugin_id: field
       filters:
         status:
-          value: true
+          value: '1'
           table: node_field_data
           field: status
           plugin_id: boolean
@@ -4017,7 +4017,7 @@ display:
       title: 'City events'
       filters:
         status:
-          value: true
+          value: '1'
           table: node_field_data
           field: status
           plugin_id: boolean

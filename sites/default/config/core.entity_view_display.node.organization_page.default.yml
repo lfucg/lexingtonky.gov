@@ -14,34 +14,24 @@ dependencies:
     - field.field.node.organization_page.field_top_services
     - node.type.organization_page
   module:
-    - entity_reference_revisions
-    - text
     - user
 id: node.organization_page.default
 targetEntityType: node
 bundle: organization_page
 mode: default
 content:
-  body:
-    label: hidden
-    type: text_default
+  workbench_moderation_control:
     weight: 0
     settings: {  }
     third_party_settings: {  }
-  field_page_section:
-    weight: 1
-    label: hidden
-    settings:
-      view_mode: default
-      link: ''
-    third_party_settings: {  }
-    type: entity_reference_revisions_entity_view
 hidden:
+  body: true
   field_lex_custom_banner_image: true
   field_lex_site_nav: true
   field_office_to_contact: true
   field_organization_image: true
   field_organization_taxonomy_term: true
+  field_page_section: true
   field_related_documents: true
   field_top_services: true
   links: true
