@@ -114,7 +114,7 @@ class SMTPConfigForm extends ConfigFormBase {
       '#type' => 'password',
       '#title' => t('Password'),
       '#default_value' => $config->get('smtp_password'),
-      '#description' => t('SMTP password. If you have already entered your password before, you should leave this field blank, unless you want to change the stored password.'),
+      '#description' => t('SMTP password. If you have already entered your password before, you should leave this field blank, unless you want to change the stored password. Please note that this password will be stored as plain-text inside Drupal\'s core configuration variables.'),
       '#disabled' => $this->isOverridden('smtp_password'),
     );
 
