@@ -91,6 +91,27 @@
 .lex-layout-fullbleed {
   height: 100%;
 
+  .search-block-form {
+    display: none;
+  }
+
+  .lex-site-header {
+    background-size: initial;
+  }
+
+  .lex-slab-blue-alpha {
+    background-color: $lex-dark-blue;
+    margin-top: 250px;
+
+    @include media($medium-screen) {
+      background-color: rgba($lex-dark-blue, $lex-alpha-level);
+    }
+  }
+
+  .lex-pagetitle {
+    margin: 0;
+  }
+
   .lex-slab {
     padding-bottom: $lex-section-gutter;
   }
@@ -122,7 +143,11 @@
   }
 
   @include media($medium-screen) {
+    .search-block-form {
+      display: block;
+    }
     .lex-site-header {
+      background-size: cover;
       position: relative;
       height: 100vh;
     }
