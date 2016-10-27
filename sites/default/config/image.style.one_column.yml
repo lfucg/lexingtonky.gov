@@ -11,7 +11,7 @@ effects:
     weight: 1
     data:
       width: 380
-      height: 285
+      height: null
       upscale: false
   fc9a1190-540d-4bef-b684-8572f72f5da3:
     uuid: fc9a1190-540d-4bef-b684-8572f72f5da3
