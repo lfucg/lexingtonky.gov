@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.board_commission.field_organization_taxonomy_term
     - field.field.node.board_commission.field_page_overview
     - field.field.node.board_commission.field_page_section
+    - field.field.node.board_commission.field_related_documents
     - node.type.board_commission
   module:
     - entity_reference_revisions
@@ -63,3 +64,4 @@ hidden:
   field_lex_site_nav: true
   field_office_to_contact: true
   field_organization_taxonomy_term: true
+  field_related_documents: true

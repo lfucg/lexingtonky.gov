@@ -10,9 +10,11 @@ dependencies:
     - field.field.node.board_commission.field_organization_taxonomy_term
     - field.field.node.board_commission.field_page_overview
     - field.field.node.board_commission.field_page_section
+    - field.field.node.board_commission.field_related_documents
     - image.style.thumbnail
     - node.type.board_commission
   module:
+    - file
     - image
     - paragraphs
     - path
@@ -69,6 +71,12 @@ content:
       form_display_mode: default
     third_party_settings: {  }
     type: entity_reference_paragraphs
+  field_related_documents:
+    weight: 26
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
   path:
     type: path
     weight: 8
