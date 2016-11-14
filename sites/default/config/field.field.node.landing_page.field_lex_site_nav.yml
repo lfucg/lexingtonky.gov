@@ -12,7 +12,7 @@ entity_type: node
 bundle: landing_page
 label: 'Navigation topic'
 description: 'The pages with this navigation topic will appear on the landing page. (The landing page will not appear in the navigation)'
-required: true
+required: false
 translatable: true
 default_value: {  }
 default_value_callback: ''

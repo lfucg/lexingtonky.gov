@@ -41,3 +41,4 @@ permissions:
   64: 'create landing_page content'
   65: 'delete any landing_page content'
   66: 'delete own landing_page content'
+  67: 'use text format full_html'
