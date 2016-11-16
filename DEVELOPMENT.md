@@ -51,36 +51,24 @@ $settings['hash_salt'] = 'somethingunique';
 
 ## Debugging issues reported by contributors
 
-* Create a multi-dev environment with content cloned from live.
+* Test on your local machine.
+  * Download data (described below)
+  * Login via `drush user-login --uri=localhost:8888`
+* Or: create a multi-dev environment with content cloned from live.
 * Go to the contributor's page and 'Masquerade as jsmith` to reproduce the issue.
+
+## Getting data
+
+* Install [terminus](https://github.com/pantheon-systems/terminus)
+* Get machine token [from Pantheon](https://dashboard.pantheon.io/users/#account/)
+* Run `terminus auth login --machine-token=<copied-from-pantheon>`
+* Download DB `terminus site backups get --site=lexky-d8 --element=database --env=live --to=. --latest`
 
 ## Running tests locally
 
 [See TESTING.md](TESTING.md)
 
-## Deployment
+## Updating modules and deploying
 
-After merging changes to master and pushing to github, Circle CI will deploy those changes to the Pantheon `dev` environment (if the tests pass).
-
-Next: Deploy to `test`
-
-`./deploy-to-pantheon.sh test`
-
-After manual smoke testing: Deploy to `live`
-
-`./deploy-to-pantheon.sh live`
-
-### Configure SMTP settings for live env
-
-add to `sites/default/files/private/config.overrides.json`
-
-```
-{
-  "smtp.settings": {
-    "smtp_host": "the.host.name",
-    "smtp_username": "the-username",
-    "smtp_password": "the-password"
-  }
-}
-```
+[See DEPLOYMENT.md](DEPLOYMENT.md)
 

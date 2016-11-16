@@ -1,10 +1,10 @@
 # Lexington, KY city site
 
-The official site for the City of Lexington built around the needs of the public. The 2016 rebuild followed the discovery, alpha, and beta stages [as described by 18f](https://18f.gsa.gov/dashboard/stages/) before going live on August 1, 2016. The live stage is continued iteration, measurement, and improvement. 
+The official site for the City of Lexington built around the needs of the public. The 2016 rebuild followed the discovery, alpha, and beta stages [as described by 18f](https://18f.gsa.gov/dashboard/stages/) before going live on August 1, 2016. The live stage is continued iteration, measurement, and improvement.
 
-## Core technology 
+## Core technology
 
-* [Drupal 8](https://www.drupal.org/8) 
+* [Drupal 8](https://www.drupal.org/8)
 * [US Web Design Standards](https://playbook.cio.gov/designstandards/)
 
 ## Test suite
@@ -12,25 +12,13 @@ The official site for the City of Lexington built around the needs of the public
 * Visual regression testing via Wraith housed in
 [separate repo](https://github.com/eeeschwartz/lexky-wraith)
 
-## Development and debugging
+## Development
 
 [See DEVELOPMENT.md](DEVELOPMENT.md)
 
-## Uprading Drupal core
+## Upgrading and deploying
 
-This project has run into issues using Pantheon's built-in core upgrading mechanism. Instead use:
-
-`git pull -Xtheirs git://github.com/pantheon-systems/drops-8.git master`
-
-## Recommended process for upgrading modules
-
-* Read release notes
-* Check bug reports for problems with new version. If not a security update, often best to wait a few weeks to let bug reports filter in. Checking usage statistics is helpful to make sure the version is being used.
-* `drush pm-update my-module`
-* Run behat tests locally
-* Scan code diffs for any red flags
-* Commit and push
-* See [DEVELOPMENT.md](DEVELOPMENT.md) for deployment details
+[See DEPLOYMENT.md](DEPLOYMENT.md)
 
 ## Google Translate
 
@@ -48,4 +36,5 @@ To use the [chosen](https://www.drupal.org/project/chose) select widget, set the
 
 ## Analytics
 
-Using Google Tag Manager as described in the [Unified Analytics](https://github.com/laurenancona/unified-analytics) repo
+* Using Google Tag Manager as described in the [Unified Analytics](https://github.com/laurenancona/unified-analytics) repo
+* Check GA events for useful info like document downloads, outbound links
