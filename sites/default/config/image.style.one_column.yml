@@ -5,6 +5,12 @@ dependencies: {  }
 name: one_column
 label: 'Lex: one column'
 effects:
+  fc9a1190-540d-4bef-b684-8572f72f5da3:
+    uuid: fc9a1190-540d-4bef-b684-8572f72f5da3
+    id: image_convert
+    weight: 2
+    data:
+      extension: jpg
   0c97b854-28e4-46b5-9700-0d7b5cfdf34b:
     uuid: 0c97b854-28e4-46b5-9700-0d7b5cfdf34b
     id: image_scale
@@ -13,9 +19,3 @@ effects:
       width: 380
       height: null
       upscale: false
-  fc9a1190-540d-4bef-b684-8572f72f5da3:
-    uuid: fc9a1190-540d-4bef-b684-8572f72f5da3
-    id: image_convert
-    weight: 2
-    data:
-      extension: jpg

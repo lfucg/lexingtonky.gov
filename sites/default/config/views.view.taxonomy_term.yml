@@ -160,7 +160,7 @@ display:
           group_type: group
           admin_label: 'Legacy before moderation state: published boolean'
           operator: '='
-          value: true
+          value: '1'
           group: 1
           exposed: false
           expose:
@@ -407,7 +407,7 @@ display:
           group_type: group
           admin_label: 'Legacy before moderation state: published boolean'
           operator: '='
-          value: true
+          value: '1'
           group: 1
           exposed: false
           expose:
