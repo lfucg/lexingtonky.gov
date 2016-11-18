@@ -20,6 +20,10 @@ The official site for the City of Lexington built around the needs of the public
 
 [See DEPLOYMENT.md](DEPLOYMENT.md)
 
+## Integrations
+
+[See INTEGRATIONS.md](INTEGRATIONS.md)
+
 ## Google Translate
 
 The Google Translation widget javascript is triggered by a menu item in the `header-quick-links`
