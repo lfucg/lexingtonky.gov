@@ -32,7 +32,18 @@ And commit the merge
 9. CircleCI: Tests pass
 10. Local: `./deploy-to-pantheon.sh test`
 11. Pantheon: manual smoke testing on test-lexky-d8.pantheonsite.io
-12. Local: deploy test->live `./deploy-to-pantheon.sh live`
+12. Pantheon: make sure that Pantheon systems are fully operational at status.pantheon.io
+13. Local: deploy test->live `./deploy-to-pantheon.sh live`
+
+Post Release
+
+1. [Check status report](https://www.lexingtonky.gov/admin/reports/status)
+2. [Check logs](https://www.lexingtonky.gov/admin/reports/dblog) for unusual messages
+
+Troubleshooting
+
+* Pantheon: Click `Live tab` > `Clear caches` before diving into any CSS, javascript, or other issues related to a release
+* Pantheon: If there was a problem readying configuration during the release, clear caches and run `terminus drush "cim -y" --env=live` again
 
 ## Configure SMTP settings for live env
 
