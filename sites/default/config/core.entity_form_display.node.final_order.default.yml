@@ -1,0 +1,73 @@
+uuid: fc5537de-a59b-4c94-9e16-f809434422df
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.final_order.field_address
+    - field.field.node.final_order.field_citation
+    - field.field.node.final_order.field_example_color_field
+    - field.field.node.final_order.field_findings_and_penalty
+    - field.field.node.final_order.field_pva_num
+    - node.type.final_order
+  module:
+    - field_example
+    - file
+    - workbench_moderation
+id: node.final_order.default
+targetEntityType: node
+bundle: final_order
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+  field_address:
+    weight: 4
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_citation:
+    weight: 5
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
+  field_example_color_field:
+    weight: 7
+    settings: {  }
+    third_party_settings: {  }
+    type: field_example_3text
+  field_findings_and_penalty:
+    weight: 6
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
+  field_pva_num:
+    weight: 3
+    settings: {  }
+    third_party_settings: {  }
+    type: field_example_colorpicker
+  title:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  path: true
+  promote: true
+  sticky: true

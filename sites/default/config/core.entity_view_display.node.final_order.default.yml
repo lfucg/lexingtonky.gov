@@ -1,0 +1,57 @@
+uuid: 8fa828f5-b20c-428c-b6a6-0c2fc08cd2c9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.final_order.field_address
+    - field.field.node.final_order.field_citation
+    - field.field.node.final_order.field_example_color_field
+    - field.field.node.final_order.field_findings_and_penalty
+    - field.field.node.final_order.field_pva_num
+    - node.type.final_order
+  module:
+    - field_example
+    - file
+    - user
+id: node.final_order.default
+targetEntityType: node
+bundle: final_order
+mode: default
+content:
+  field_address:
+    weight: 105
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_citation:
+    weight: 102
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: file_default
+  field_example_color_field:
+    weight: 104
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: field_example_simple_text
+  field_findings_and_penalty:
+    weight: 103
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: file_default
+  field_pva_num:
+    weight: 106
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

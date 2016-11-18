@@ -1,0 +1,9 @@
+colorpicker:
+  version: 1.x
+  js:
+    field_example.js: {}
+
+leaflet:
+  js:
+    js/leaflet.js: {}
+    js/esri-leaflet.js: {}
