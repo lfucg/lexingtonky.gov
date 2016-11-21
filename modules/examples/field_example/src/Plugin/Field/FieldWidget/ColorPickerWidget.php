@@ -28,11 +28,9 @@ class ColorPickerWidget extends TextWidget {
       '#suffix' => '<div class="field-example-colorpicker"></div>',
       '#attributes' => array('class' => array('edit-field-example-colorpicker')),
       '#attached' => array(
-        // Add Farbtastic color picker and javascript file to trigger the
-        // colorpicker.
         'library' => array(
-          'core/jquery.farbtastic',
           'field_example/colorpicker',
+          'field_example/leaflet',
         ),
       ),
     );

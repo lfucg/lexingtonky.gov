@@ -1,0 +1,17 @@
+uuid: 3364c0b1-d3af-4114-8b50-8a624485a4cd
+langcode: en
+status: true
+dependencies: {  }
+id: final_order_admin
+label: 'Final order admin'
+weight: -5
+is_admin: null
+permissions:
+  - 'create final_order content'
+  - 'delete any final_order content'
+  - 'delete own final_order content'
+  - 'delete final_order revisions'
+  - 'edit any final_order content'
+  - 'edit own final_order content'
+  - 'revert final_order revisions'
+  - 'view final_order revisions'

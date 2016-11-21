@@ -1,15 +1,15 @@
-uuid: b0af00f1-b6cb-4d5a-93d4-37b8eba839c6
+uuid: 71b969c7-c586-4013-899d-e5884811fb5a
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_address
+    - field.storage.node.field_person_charged
     - node.type.final_order
-id: node.final_order.field_address
-field_name: field_address
+id: node.final_order.field_person_charged
+field_name: field_person_charged
 entity_type: node
 bundle: final_order
-label: Address
+label: 'Name of person charged'
 description: ''
 required: true
 translatable: false
