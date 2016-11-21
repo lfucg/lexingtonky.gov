@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Demonstrates how to define a new plugin type.
+ */
+
+/**
+ * @defgroup plugin_type_example Example: Plugin Types
+ * @ingroup examples
+ * @{
+ * Example of how to define a plugin type.
+ *
+ * Our example defines a Sandwich plugin type.  Sandwich's come in many flavors,
+ * each having their unique qualities, but also sharing things in common.  Our
+ * Sandwich plugins will be very simple, each providing a unique description
+ * or themselves.  Sandwich plugins also have an id and a property called
+ * foobar, which we'll use to demonstrate how you can alter a plugin using an
+ * alter hook.
+ *
+ * Start at the class \Drupal\plugin_type_example\SandwichPluginManager, which
+ * defines our plugin type manager.  Our plugin type manager is exposed to
+ * Drupal as a service in the plugin_type_example.services.yml file.
+ *
+ * We've also defined two implementations of our plugin type,
+ * \Drupal\plugin_type_example\Plugin\Sandwich\ExampleHamSandwich and
+ * \Drupal\plugin_type_example\Plugin\Sandwich\ExampleMeatballSandwich. Take a
+ * look at each.  These plugins use annotated plugin discovery, and as such have
+ * an annotation block in the doc block for the class.  Other than that, they
+ * implement the \Drupal\plugin_type_example\SandwichInterface, which is
+ * required, since we've set that interface for the plugin type in
+ * \Drupal\plugin_type_example\SandwichPluginManager::__construct.
+ *
+ * To see the plugins in action visit /examples/plugin_type_example.  The output
+ * is rendered in
+ * Drupal\plugin_type_example\Controller\PluginTypeExampleController::description().
+ * Read through that method to see how to use plugins using the
+ * plugin.manager.sandwich service.
+ */
+
+/**
+ * Implements hook_sandwich_info_alter().
+ */
+function plugin_type_example_sandwich_info_alter(&$sandwich_plugin_info) {
+  // Let's change the 'foobar' property for all sandwiches.
+  foreach ($sandwich_plugin_info as $plugin_id => $plugin_definition) {
+    $sandwich_plugin_info[$plugin_id]['foobar'] = t('We have altered this in the alter hook');
+  }
+
+  // The ham sandwich is more calorific in our system.  Note that the string
+  // 'ham_sandwich' is the id name of the Ham Sandwich plugin, which is set
+  // in the annotation in
+  // \Drupal\plugin_type_example\Plugin\Sandwich\ExampleHamSandwich.
+  $sandwich_plugin_info['ham_sandwich']['calories'] = 500;
+}

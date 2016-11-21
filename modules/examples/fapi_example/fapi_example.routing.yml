@@ -1,0 +1,91 @@
+# This routing.yml file makes both the fapi example description page and the
+# included sample forms available at specific URL's on your site. A route
+# maps a URL path to a controller. For page controllers it defines the
+# function or method that will be called when the page is accessed.  For form
+# controllers the content is determined by the buildForm method defined by the
+# form controller implementation.
+
+# Access to these paths is restricted to users with the permission
+# 'access content'. This is notated as _permission: 'access content'.
+
+# Menu items corresponding to these URLs are defined separately in the
+# fapi_example.links.menu.yml file.
+fapi_example.description:
+  path: 'examples/fapi-example'
+  defaults:
+    _controller:  '\Drupal\fapi_example\Controller\Page::description'
+    _title: 'Form API Examples'
+  requirements:
+    _permission: 'access content'
+
+fapi_example.simple_form:
+  path: 'examples/fapi-example/simple-form'
+  defaults:
+    _form:  '\Drupal\fapi_example\Form\SimpleForm'
+    _title: 'Simple Form API Example'
+  requirements:
+    _permission: 'access content'
+
+fapi_example.input_demo:
+  path: 'examples/fapi-example/input-demo'
+  defaults:
+    _form:  '\Drupal\fapi_example\Form\InputDemo'
+    _title: 'Demo of Common Input Elements'
+  requirements:
+    _permission: 'access content'
+
+fapi_example.state_demo:
+  path: 'examples/fapi-example/state-demo'
+  defaults:
+    _form:  '\Drupal\fapi_example\Form\StateDemo'
+    _title: 'Demo of Form State Binding'
+  requirements:
+    _permission: 'access content'
+
+fapi_example.container_demo:
+  path: 'examples/fapi-example/container-demo'
+  defaults:
+    _form:  '\Drupal\fapi_example\Form\ContainerDemo'
+    _title: 'Container Demo'
+  requirements:
+    _permission: 'access content'
+
+fapi_example.vertical_tabs_demo:
+  path: 'examples/fapi-example/vertical-tabs-demo'
+  defaults:
+    _form:  '\Drupal\fapi_example\Form\VerticalTabsDemo'
+    _title: 'VerticalTabs Demo'
+  requirements:
+    _permission: 'access content'
+
+fapi_example.modal_form:
+  path: 'examples/fapi-example/modal-form'
+  defaults:
+    _form:  '\Drupal\fapi_example\Form\ModalForm'
+    _title: 'Modal Form Example'
+  requirements:
+    _permission: 'access content'
+
+fapi_example.ajax_demo:
+  path: 'examples/fapi-example/ajax-demo'
+  defaults:
+    _form:  '\Drupal\fapi_example\Form\AjaxDemo'
+    _title: 'Ajax Form Example'
+  requirements:
+    _permission: 'access content'
+
+fapi_example.build_demo:
+  path: 'examples/fapi-example/build-demo'
+  defaults:
+    _form:  '\Drupal\fapi_example\Form\BuildDemo'
+    _title: 'Build Form Demo'
+  requirements:
+    _permission: 'access content'
+
+fapi_example.ajax_addmore:
+  path: 'examples/fapi_example/ajax_addmore'
+  defaults:
+    _form:  '\Drupal\fapi_example\Form\AjaxAddMore'
+    _title: 'Add-more button'
+  requirements:
+    _permission: 'access content'

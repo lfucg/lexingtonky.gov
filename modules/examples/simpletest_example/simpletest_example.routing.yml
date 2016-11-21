@@ -1,0 +1,8 @@
+# This module only has one route.
+# It is to a page explaining the module.
+simpletest_example_description:
+  path: 'examples/simpletest-example'
+  defaults:
+    _controller: '\Drupal\simpletest_example\Controller\SimpleTestExampleController::description'
+  requirements:
+    _permission: 'access content'

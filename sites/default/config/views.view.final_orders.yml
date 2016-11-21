@@ -95,9 +95,10 @@ display:
             field_owners_address: field_person_charged
             field_address: field_address
             field_citation: field_citation
-            field_findings_and_penalty: field_citation
+            field_findings_and_penalty: field_findings_and_penalty
             operations: operations
             field_pva_num: field_address
+            view_node: field_final_order_date
           info:
             field_final_order_date:
               sortable: false
@@ -145,6 +146,13 @@ display:
               empty_column: false
               responsive: ''
             field_pva_num:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            view_node:
               sortable: false
               default_sort_order: asc
               align: ''
@@ -421,7 +429,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Citation, findings, and penalties'
+          label: Citation
           exclude: false
           alter:
             alter_text: false
@@ -483,7 +491,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: ''
+          label: 'Findings and penalty'
           exclude: false
           alter:
             alter_text: false
@@ -780,7 +788,12 @@ display:
           granularity: second
           plugin_id: datetime
       title: 'Final orders'
-      header: {  }
+      header:
+        area:
+          id: area
+          table: views
+          field: area
+          plugin_id: text
       footer: {  }
       empty:
         area:

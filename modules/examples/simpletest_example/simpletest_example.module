@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @file
+ * Module file for simpletest_example.
+ */
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\node\NodeInterface;
+
+/**
+ * @defgroup simpletest_example Example: Simpletest
+ * @ingroup examples
+ * @{
+ *
+ * An example of how to write functional tests using SimpleTest under
+ * Drupal 8.
+ *
+ * This module creates a new node type called 'SimpleTest Example Node Type,'
+ * so that we can test it.
+ *
+ * This code was originally written to accompany the tutorial at
+ * http://drupal.org/node/890654. That's a Drupal 7 example, but can still
+ * teach you much.
+ */
+
+/**
+ * Implements hook_node_access().
+ *
+ * Demonstrates a bug that we'll find in our test.
+ *
+ * If this is running on the testbot, we don't want the error to show so will
+ * work around it by testing to see if we're in the 'checkout' directory.
+ */
+function simpletest_example_node_access(NodeInterface $node, $op, AccountInterface $account) {
+  // Gather the node type.
+  $type = $node->getType();
+  // If it's not a simpletest_example node, or if it's not operations we care
+  // about, then just ignore.
+  if ($type != 'simpletest_example' || ($op != 'update' && $op != 'delete')) {
+    return AccessResult::neutral();
+  }
+
+  // This code has a BUG that we'll find in testing.
+  //
+  // This is the incorrect version we'll use to demonstrate test failure.
+  // The correct version should have ($op == 'update' || $op == 'delete').
+  // The author had mistakenly always tested with User 1 so it always
+  // allowed access and the bug wasn't noticed!
+  if (($op == 'delete')  && ($account->hasPermission('extra special edit any simpletest_example') && ($account->id() == $node->getAuthorId()))) {
+    return AccessResult::allowed();
+  }
+
+  return AccessResult::forbidden();
+}
+
+/**
+ * @} End of "defgroup simpletest_example".
+ */

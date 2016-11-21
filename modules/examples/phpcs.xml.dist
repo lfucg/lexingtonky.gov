@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file contains coding standards directives for the Drupal Examples for
+     Developers project. It uses the PHP Code Sniffer and Drupal Coder projects
+     to enforce standard Drupal coding standards on this project. See
+     https://www.drupal.org/node/2176147 for instructions on how to add a sniff
+     here.-->
+<ruleset name="drupal_examples">
+  <description>Default PHP CodeSniffer configuration for Examples for Developers.</description>
+  <file>.</file>
+  <arg name="extensions" value="css,inc,install,module,php,profile,test,theme"/>
+  <rule ref="Drupal.Array.Array.CommaLastItem"/>
+  <rule ref="Drupal.CSS"/>
+  <rule ref="Drupal.Classes"/>
+  <rule ref="Drupal.Commenting.DocComment">
+      <exclude name="Drupal.Commenting.DocComment.LongFullStop"/>
+      <exclude name="Drupal.Commenting.DocComment.MissingShort"/>
+      <exclude name="Drupal.Commenting.DocComment.ShortSingleLine"/>
+      <exclude name="Drupal.Commenting.DocComment.TagsNotGrouped"/>
+  </rule>
+  <rule ref="Drupal.Commenting.InlineComment"/>
+  <rule ref="Drupal.Commenting.FileComment.NamespaceNoFileDoc"/>
+  <rule ref="Drupal.Commenting.FunctionComment"/>
+  <rule ref="Drupal.ControlStructures"/>
+  <rule ref="Drupal.Files"/>
+  <rule ref="Drupal.Formatting"/>
+  <rule ref="Drupal.Functions"/>
+  <rule ref="Drupal.InfoFiles"/>
+  <rule ref="Drupal.Strings"/>
+  <rule ref="Drupal.WhiteSpace"/>
+
+  <rule ref="Generic.Files.LineEndings"/>
+  <rule ref="Generic.Formatting.SpaceAfterCast"/>
+  <rule ref="Generic.Functions.FunctionCallArgumentSpacing"/>
+  <rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie"/>
+  <rule ref="Generic.NamingConventions.ConstructorName"/>
+  <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+  <rule ref="Generic.PHP.DeprecatedFunctions"/>
+  <rule ref="Generic.PHP.DisallowShortOpenTag"/>
+  <rule ref="Generic.PHP.LowerCaseKeyword"/>
+  <rule ref="Generic.PHP.UpperCaseConstant"/>
+  <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
+
+  <rule ref="MySource.Debug.DebugCode"/>
+
+  <rule ref="PSR2.Classes.PropertyDeclaration"/>
+
+  <rule ref="Squiz.Arrays.ArrayBracketSpacing"/>
+  <rule ref="Squiz.CSS.ClassDefinitionOpeningBraceSpace"/>
+  <rule ref="Squiz.CSS.ColonSpacing"/>
+  <rule ref="Squiz.CSS.DisallowMultipleStyleDefinitions"/>
+  <rule ref="Squiz.CSS.EmptyClassDefinition"/>
+  <rule ref="Squiz.CSS.EmptyStyleDefinition"/>
+  <rule ref="Squiz.CSS.MissingColon"/>
+  <rule ref="Squiz.CSS.SemicolonSpacing"/>
+  <rule ref="Squiz.Commenting.DocCommentAlignment"/>
+  <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration"/>
+  <rule ref="Squiz.ControlStructures.ForLoopDeclaration"/>
+  <rule ref="Squiz.PHP.LowercasePHPFunctions"/>
+  <rule ref="Squiz.PHP.NonExecutableCode"/>
+  <rule ref="Squiz.Scope.MethodScope"/>
+  <rule ref="Squiz.WhiteSpace.LanguageConstructSpacing"/>
+
+  <rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>
+  <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/>
+
+  <rule ref="Zend.Files.ClosingTag"/>
+
+</ruleset>

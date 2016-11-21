@@ -1,0 +1,8 @@
+tour_example_description:
+  path: 'examples/tour-example'
+  options:
+    _admin_route: TRUE
+  defaults:
+    _controller: '\Drupal\tour_example\Controller\TourExampleController::description'
+  requirements:
+    _access: 'TRUE'

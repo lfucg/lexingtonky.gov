@@ -1,0 +1,53 @@
+# Define default links for this module.
+fapi_example.description:
+  title: Form API Examples
+  description: Form examples using Drupal Form API.
+  route_name: fapi_example.description
+
+fapi_example.simple_form:
+  title: Simple Form API Example
+  description: A simple form example with submit processing.
+  route_name: fapi_example.simple_form
+  parent: fapi_example.description
+
+fapi_example.input_demo:
+  title: Demo of Common Input Elements
+  description: A form to demonstrate input elements.
+  route_name: fapi_example.input_demo
+  parent: fapi_example.description
+
+fapi_example.state_demo:
+  title: Demo of Form State Binding
+  description: A form to demonstrate binding of form state.
+  route_name: fapi_example.state_demo
+  parent: fapi_example.description
+
+fapi_example.container_demo:
+  title: Container Demo
+  description: A form to demonstrate use of containers.
+  route_name: fapi_example.container_demo
+  parent: fapi_example.description
+
+fapi_example.vertical_tabs_demo:
+  title: VerticalTabs Demo
+  description: A form to demonstrate use of vertical tabs.
+  route_name: fapi_example.vertical_tabs_demo
+  parent: fapi_example.description
+
+fapi_example.ajax_demo:
+  title: Ajax Form Example
+  description: A form to demonstrate use of AJAX.
+  route_name: fapi_example.ajax_demo
+  parent: fapi_example.description
+
+fapi_example.build_demo:
+  title: Build Form Demo
+  description: Demonstrates the order of firing of from controller methods.
+  route_name: fapi_example.build_demo
+  parent: fapi_example.description
+
+fapi_example.ajax_addmore:
+  title: Ajax Add more button
+  description: Form with 'add more' and 'remove' buttons.
+  route_name: fapi_example.ajax_addmore
+  parent: fapi_example.description

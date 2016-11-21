@@ -1,0 +1,19 @@
+# This declares the plugin manager to the service container.
+# For background information on the service container, see
+# http://symfony.com/doc/current/book/service_container.html.
+# Services declaration files such as this one are compiled to PHP code in
+# sites/default/files/php/service_container, so changes here require that folder
+# to be deleted in order to have Drupal notice them.
+services:
+  # The machine name of the service. This is the string that must be passed to
+  # Drupal::service() to get the instantiated plugin manager.
+  plugin.manager.sandwich:
+    # This tells the service container the name of our plugin manager class.
+    class: Drupal\plugin_type_example\SandwichPluginManager
+    # The default parameters to pass to the class constructor,
+    # SandwichPluginManager::__construct().
+    # Arguments beginning with @ are the names of other services that are being
+    # injected into this service. Many common ones are found in
+    # /core/core.services.yml.
+    # See https://drupal.org/node/2133171 for more detail.
+    arguments: ['@container.namespaces', '@cache.default', '@module_handler']

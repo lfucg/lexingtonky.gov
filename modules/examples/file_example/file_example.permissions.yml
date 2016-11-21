@@ -1,0 +1,13 @@
+'use file example':
+  title: Use the examples in the File Example module.
+
+#
+# We use the following permissions in our hook_file_download implementation.
+# See file_example.module for details.
+#
+'read private files':
+  title:  See private files in the File Example module demo.
+'read temporary files':
+  title:  See temporary files in the File Example module demo.
+'read session files':
+  title:  See session files in the File Example module demo.

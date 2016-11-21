@@ -1,0 +1,28 @@
+# A simple script using jquery ui accordion.
+js_example.accordion:
+  js:
+    js/js_example_accordion.js: {}
+  # Build up our dependencies for this page as a library. Our accordion script
+  # needs jquery.ui.accordion. You can find the core scripts under core/assets/.
+  dependencies:
+    - core/jquery.ui.accordion
+
+# Show how weights work.
+js_example.weights:
+  # Add css file.
+  css:
+    component:
+      css/jsweights.css: {}
+  # Add js files.
+  js:
+    # weight is used as example attribute, but please avoid it and instead use
+    # dependencies for order loading.
+    js/red.js: { weight: -4 }
+    js/blue.js: { weight: -2 }
+    js/green.js: { weight: -1 }
+    js/brown.js: { weight: -2 }
+    js/black.js: { weight: -1 }
+    js/purple.js: { weight: -5 }
+  dependencies:
+    - core/jquery
+    - core/drupalSettings

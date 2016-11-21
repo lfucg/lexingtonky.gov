@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * Example forms using the Forms API.
+ */
+
+/**
+ * @defgroup fapi_example Example: Forms API
+ * @ingroup examples
+ * @{
+ * Examples using Forms API.
+ *
+ * Creating A Drupal Form requires:
+ * - Creating a class that extends \Drupal\Core\Form\FormBase or
+ *   \Drupal\Core\Form\ConfigFormBase
+ *   - \Drupal\fapi_example\Form\SimpleForm
+ * - Register the route to the form or invoke using
+ *   \Drupal::formBuilder()->getForm()
+ *   - fapi_example.routing.yml
+ *
+ * In addition to the simple  example described above this module provides
+ * examples that demonstrate:
+ * - The order of execution of form controller methods
+ *   - \Drupal\fapi_example\Form\BuildDemo
+ * - Populating a portion on a form with Ajax callbacks
+ *   - \Drupal\fapi_example\Form\AjaxDemo
+ * - Container elements used to group items
+ *   - \Drupal\fapi_example\Form\ContainerDemo
+ * - Elements used for data input
+ *   - \Drupal\fapi_example\Form\InputDemo
+ * - Modal form creation
+ *   - \Drupal\fapi_example\Controller\Page
+ *   - \Drupal\fapi_example\Form\ModalForm
+ * - Hiding elements based on the state of other elements
+ *   - \Drupal\fapi_example\Form\StateDemo
+ * - Vertical Tabs elements in forms
+ *   - \Drupal\fapi_example\Form\VerticalTabsDemo
+ *
+ * @} End of "defgroup field_example".
+ */

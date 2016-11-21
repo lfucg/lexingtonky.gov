@@ -1,0 +1,7 @@
+#
+# This link will appear in the "Tools" menu.
+#
+file_example.fileapi:
+ title: File Example
+ parent: file_example.description
+ route_name: file_example.fileapi

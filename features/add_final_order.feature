@@ -10,3 +10,12 @@ Scenario: Populating address from PVANUM
     And I wait for AJAX to finish
     Then the "Address" field should contain "3534 TATES CREEK RD"
     Then the "Last known mailing address of owner" field should contain "3534 TATES CREEK RD"
+
+Scenario: Create final order links appear
+    Given I am logged in as a user with the "Final order admin" role
+    # Enable once a final order exists in prod
+    # When I am on "/node/1943"
+    # Then the response should contain "Add final order"
+
+    Given I am on "/final-orders"
+    Then the response should contain "Add final order"

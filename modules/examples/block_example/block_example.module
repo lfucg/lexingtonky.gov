@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @file
+ * Module file for block_example.
+ */
+
+use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Block\BlockPluginInterface;
+
+/**
+ * @defgroup block_example Example: Block
+ * @ingroup examples
+ * @{
+ * Demonstrates code creation of blocks.
+ *
+ * This is an example outlining how a module can define blocks that can be
+ * displayed on various pages of a site, or how to alter blocks provided by
+ * other modules.
+ */
+
+/**
+ * Implements hook_block_view_alter().
+ *
+ * This hook allows you to modify the output of any block in the system.
+ *
+ * In addition, instead of hook_block_view_alter(), which is called for all
+ * blocks, you can also use hook_block_view_BASE_BLOCK_ID_alter() to alter a
+ * specific block. To change only our block using
+ * hook_block_view_BASE_BLOCK_ID_alter, we would use the function:
+ * block_example_block_view_example_uppercase_alter()
+ *
+ * We are going to uppercase the subject (the title of the block as shown to the
+ * user) of any block if the string "uppercase" appears in the block title or
+ * subject. Default block titles are set programmatically in the subject key;
+ * titles created through the UI are saved in the title key. This module creates
+ * an example block to demonstrate this effect (default title set
+ * programmatically as subject).  You can also demonstrate the effect of this
+ * hook by creating a new block whose title has the string 'uppercase' in it
+ * (set as title through the UI).
+ */
+function block_example_block_view_alter(array &$build, BlockPluginInterface $block) {
+  // We'll search for the string 'uppercase'.
+  $definition = $block->getPluginDefinition();
+  if ((!empty($build['#configuration']['label']) && stristr($build['#configuration']['label'], 'uppercase')) || (!empty($definition['subject']) && stristr($definition['subject'], 'uppercase'))) {
+    // This will uppercase the block title.
+    $build['#configuration']['label'] = Unicode::strtoupper($build['#configuration']['label']);
+  }
+}
+
+/**
+ * @} End of "defgroup block_example".
+ */

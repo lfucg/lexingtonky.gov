@@ -1,0 +1,123 @@
+<?php
+
+/**
+ * @file
+ * Module file for Examples for Developers.
+ *
+ * This file serves as a stub file for the many Examples modules in the
+ * @link http://drupal.org/project/examples Examples for Developers Project @endlink
+ * which you can download and experiment with.
+ *
+ * One might say that examples.module is an example of documentation. However,
+ * note that the example submodules define many doxygen groups, which may or
+ * may not be a good strategy for other modules.
+ */
+
+use Drupal\Core\Url;
+
+/**
+ * @defgroup examples Examples
+ * @{
+ * Well-documented API examples for a broad range of Drupal core functionality.
+ *
+ * Developers can learn how to use a particular API quickly by experimenting
+ * with the examples, and adapt them for their own use.
+ *
+ * Download the Examples for Developers Project (and participate with
+ * submissions, bug reports, patches, and documentation) at
+ * http://drupal.org/project/examples
+ */
+
+/**
+ * Implements hook_toolbar().
+ */
+function examples_toolbar() {
+  // First, build an array of all example modules and their routes.
+  // We resort to this hard-coded way so as not to muck up each example.
+  $examples = array(
+    'block_example' => 'block_example.description',
+    'cache_example' => 'cache_example.description',
+    'config_entity_example' => 'entity.robot.list',
+    'content_entity_example' => 'entity.content_entity_example_contact.collection',
+    'cron_example' => 'cron_example',
+    'dbtng_example' => 'dbtng_example',
+    'email_example' => 'email_example.description',
+    'fapi_example' => 'fapi_example.description',
+    'file_example' => 'file_example.fileapi',
+    'field_example' => 'field_example.description',
+    'field_permission_example' => 'field_permission_example.description',
+    'js_example' => 'js_example.info',
+    'node_type_example' => 'config_node_type_example.description',
+    'page_example' => 'page_example_description',
+    'pager_example' => 'pager_example.page',
+    'phpunit_example' => 'phpunit_example_description',
+    'plugin_type_example' => 'plugin_type_example.description',
+    'simpletest_example' => 'simpletest_example_description',
+    'tour_example' => 'tour_example_description',
+  );
+
+  // Build a list of links for the menu.
+  $links = array();
+  foreach ($examples as $module => $route) {
+    // Get the module info (title, description) from Drupal.
+    $info = system_get_info('module', $module);
+
+    // If there's no info, the example isn't enabled, so don't display it.
+    if (!empty($info)) {
+      $links[$module] = array(
+        'title' => t($info['name']),
+        'url' => Url::fromRoute($route),
+        'attributes' => array(
+          'title' => t($info['description']),
+        ),
+      );
+    }
+  }
+
+  // Add a link to enable all examples.
+  $links['enable_examples'] = array(
+    'title' => t('Enable Examples'),
+    'url' => Url::fromRoute('system.modules_list'),
+    'options' => array(
+      'title' => t('Enable more examples in on the Extend page.'),
+    ),
+    'fragment' => 'edit-modules-example-modules',
+  );
+
+  // Create the examples toolbar render array.
+  $items['examples'] = array(
+    '#type' => 'toolbar_item',
+    'tab' => array(
+      '#type' => 'link',
+      '#title' => t('Examples'),
+      // @todo: Once it is created, use the example index page.
+      '#url' => Url::fromRoute('<front>'),
+      '#attributes' => array(
+        'title' => t('Developer Examples'),
+        'class' => array('toolbar-icon', 'toolbar-icon-examples'),
+      ),
+    ),
+    'tray' => array(
+      '#heading' => t('Developer Examples'),
+      'shortcuts' => array(
+        '#theme' => 'links__toolbar_example',
+        '#links' => $links,
+        '#attributes' => array(
+          'class' => array('toolbar-menu'),
+        ),
+      ),
+    ),
+    '#weight' => 99,
+    '#attached' => array(
+      'library' => array(
+        'examples/examples.icons',
+      ),
+    ),
+  );
+
+  return $items;
+}
+
+/**
+ * @} End of 'defgroup examples'.
+ */

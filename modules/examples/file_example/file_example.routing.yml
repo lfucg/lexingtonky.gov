@@ -1,0 +1,8 @@
+# Main page for our example.
+file_example.fileapi:
+  path: '/examples/file_example'
+  defaults:
+    _form: '\Drupal\file_example\Form\FileExampleReadWriteForm'
+    _title: 'File Example: Use the File API to read/write a file'
+  requirements:
+    _permission: 'use file example'

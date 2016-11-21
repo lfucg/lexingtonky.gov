@@ -1,0 +1,63 @@
+<?php
+
+/**
+ * @file
+ * This is an example outlining how a module can use the DBTNG database API.
+ *
+ * @todo Demonstrate transaction usage.
+ *
+ * General documentation is available at
+ * @link database Database abstraction layer documentation @endlink and
+ * at @link http://drupal.org/node/310069 @endlink.
+ */
+
+/**
+ * @defgroup dbtng_example Example: Database (DBTNG)
+ * @ingroup examples
+ * @{
+ * Database examples, including DBTNG.
+ *
+ * 'DBTNG' means 'Database: The Next Generation.' Yes, Drupallers are nerds.
+ *
+ * General documentation is available at
+ * @link database.inc database abstraction layer documentation @endlink and
+ * at @link http://drupal.org/node/310069 Database API @endlink.
+ *
+ * The several examples in DbtngExampleController (see
+ * /src/Drupal/dbtng_example/Controller/DbtngExampleController.php) demonstrate
+ * basic database usage.
+ *
+ * db_insert() example:
+ * @code
+ *   // INSERT INTO {dbtng_example} (name, surname) VALUES('John, 'Doe')
+ *   db_insert('dbtng_example')
+ *     ->fields(array('name' => 'John', 'surname' => 'Doe'))
+ *     ->execute();
+ * @endcode
+ *
+ * db_update() example:
+ * @code
+ *   // UPDATE {dbtng_example} SET name = 'Jane' WHERE name = 'John'
+ *   db_update('dbtng_example')
+ *     ->fields(array('name' => 'Jane'))
+ *     ->condition('name', 'John')
+ *     ->execute();
+ * @endcode
+ *
+ * db_delete() example:
+ * @code
+ *   // DELETE FROM {dbtng_example} WHERE name = 'Jane'
+ *   db_delete('dbtng_example')
+ *     ->condition('name', 'Jane')
+ *     ->execute();
+ * @endcode
+ *
+ * See @link database Database Abstraction Layer @endlink
+ * @see db_insert()
+ * @see db_update()
+ * @see db_delete()
+ */
+
+/**
+ * @} End of "defgroup dbtng_example".
+ */

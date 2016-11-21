@@ -12,7 +12,7 @@ dependencies:
 id: views_block__events_front_page_meetings
 theme: lex
 region: highlighted
-weight: -19
+weight: -20
 provider: null
 plugin: 'views_block:events-front_page_meetings'
 settings:

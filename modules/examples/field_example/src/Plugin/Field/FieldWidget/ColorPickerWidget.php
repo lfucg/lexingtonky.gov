@@ -25,7 +25,7 @@ class ColorPickerWidget extends TextWidget {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
     $element['value'] += array(
-      '#suffix' => '<div class="field-example-colorpicker"></div>',
+      '#suffix' => '<div class="field-example-colorpicker"></div><div id="map"></div><link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />',
       '#attributes' => array('class' => array('edit-field-example-colorpicker')),
       '#attached' => array(
         'library' => array(
