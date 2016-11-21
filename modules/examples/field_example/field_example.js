@@ -21,11 +21,15 @@
       });
 
       $('.edit-field-example-colorpicker').on('blur', function (event) {
+        var $pvaField = $(event.target);
+        $pvaField.val($pvaField.val().trim());
+
         parcels.query()
-          .where("PVANUM='" + $(event.target).val() + "'")
+          .where("PVANUM='" + $pvaField.val() + "'")
           .run(function(error, featureCollection) {
             $('#edit-field-address-0-value').val(featureCollection.features[0].properties['ADDRESS']);
-          })
+            $('#edit-field-owners-address-0-value').val(featureCollection.features[0].properties['ADDRESS']);
+          });
       });
     }
   };

@@ -9,3 +9,4 @@ Scenario: Populating address from PVANUM
     When I fill in "Title" with "Trigger blur event in the PVA field"
     And I wait for AJAX to finish
     Then the "Address" field should contain "3534 TATES CREEK RD"
+    Then the "Last known mailing address of owner" field should contain "3534 TATES CREEK RD"

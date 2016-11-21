@@ -1,15 +1,15 @@
-uuid: 71b969c7-c586-4013-899d-e5884811fb5a
+uuid: 780d9b7d-281c-4eea-9b67-5dd72af0accc
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_person_charged
+    - field.storage.node.field_owners_address
     - node.type.final_order
-id: node.final_order.field_person_charged
-field_name: field_person_charged
+id: node.final_order.field_owners_address
+field_name: field_owners_address
 entity_type: node
 bundle: final_order
-label: 'Property owner'
+label: 'Last known mailing address of owner'
 description: ''
 required: true
 translatable: false
