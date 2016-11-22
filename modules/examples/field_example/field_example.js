@@ -17,7 +17,7 @@
       }
 
       var parcels = L.esri.featureLayer({
-        url: 'http://maps.lexingtonky.gov/lfucggis/rest/services/parcels/MapServer/0',
+        url: 'https://maps.lexingtonky.gov/lfucggis/rest/services/parcels/MapServer/0',
       });
 
       $('.edit-field-example-colorpicker').on('blur', function (event) {
