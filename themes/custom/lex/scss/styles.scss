@@ -327,3 +327,12 @@ input:focus, input[type=search]:focus {
   margin-bottom: 0;
 }
 
+.lex-field-withlabel {
+  > div:first-of-type {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  > div:nth-of-type(2) {
+    margin-bottom: $lex-section-rem-gutter-half;
+  }
+}

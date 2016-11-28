@@ -28,7 +28,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
   field_citation:
-    type: file_url_plain
+    type: file_default
     weight: 6
     label: inline
     settings: {  }
@@ -42,7 +42,7 @@ content:
       date_format: Y-m-d
     third_party_settings: {  }
   field_findings_and_penalty:
-    type: file_url_plain
+    type: file_default
     weight: 7
     label: inline
     settings: {  }

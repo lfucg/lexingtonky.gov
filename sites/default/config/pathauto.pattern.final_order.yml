@@ -7,16 +7,16 @@ dependencies:
 id: final_order
 label: 'Final order'
 type: 'canonical_entities:node'
-pattern: 'final-order/[node:nid]'
+pattern: 'final-orders/[node:nid]'
 selection_criteria:
-  7b29351c-5e00-4346-977a-cee6bf013959:
+  d6df41c5-609d-4565-8859-4898e5a7d144:
     id: node_type
     bundles:
       final_order: final_order
     negate: false
     context_mapping:
       node: node
-    uuid: 7b29351c-5e00-4346-977a-cee6bf013959
+    uuid: d6df41c5-609d-4565-8859-4898e5a7d144
 selection_logic: and
 weight: -5
 relationships: {  }
