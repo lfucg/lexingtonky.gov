@@ -14,4 +14,11 @@ mode: teaser
 content:
   links:
     weight: 100
-hidden: {  }
+hidden:
+  field_address: true
+  field_citation: true
+  field_final_order_date: true
+  field_findings_and_penalty: true
+  field_owners_address: true
+  field_person_charged: true
+  field_pva_num: true

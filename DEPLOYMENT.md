@@ -43,7 +43,9 @@ Post Release
 Troubleshooting
 
 * Pantheon: Click `Live tab` > `Clear caches` before diving into any CSS, javascript, or other issues related to a release
-* Pantheon: If there was a problem readying configuration during the release, clear caches and run `terminus drush "cim -y" --env=live` again
+* Pantheon: If there was a problem readying configuration during the release:
+  * clear caches and run `terminus drush "cim -y" --env=live` again
+  * also try syncing config [from the site admin](https://lexingtonky.gov/admin/config/development/configuration)
 
 ## Configure SMTP settings for live env
 

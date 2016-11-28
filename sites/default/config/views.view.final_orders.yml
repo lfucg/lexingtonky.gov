@@ -742,7 +742,7 @@ display:
           operator: optional
           value: ''
           group: 1
-          exposed: false
+          exposed: true
           expose:
             operator_id: keys_op
             label: 'Search for'
@@ -796,10 +796,10 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          empty: false
+          empty: true
           tokenize: false
           content:
-            value: "<!-- Begin MailChimp Signup Form -->\n<div id=\"mc_embed_signup\">\n<form action=\"//lexingtonky.us12.list-manage.com/subscribe/post?u=6b7ad19eb3abecf1fe9ac0f15&amp;id=0391f05da4\" method=\"post\" id=\"mc-embedded-subscribe-form\" name=\"mc-embedded-subscribe-form\" class=\"validate lex-pagefeedback-form\" target=\"_blank\" novalidate>\n    <div id=\"mc_embed_signup_scroll\">\n\t<h2>Notify me about new final orders</h2>\n<div class=\"mc-field-group\">\n\t<label for=\"mce-EMAIL\">Email Address  <span class=\"asterisk\">*</span>\n</label>\n\t<input type=\"email\" value=\"\" name=\"EMAIL\" class=\"required email\" id=\"mce-EMAIL\">\n</div>\n\t<div id=\"mce-responses\" class=\"clear\">\n\t\t<div class=\"response\" id=\"mce-error-response\" style=\"display:none\"></div>\n\t\t<div class=\"response\" id=\"mce-success-response\" style=\"display:none\"></div>\n\t</div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->\n    <div style=\"position: absolute; left: -5000px;\" aria-hidden=\"true\"><input type=\"text\" name=\"b_6b7ad19eb3abecf1fe9ac0f15_0391f05da4\" tabindex=\"-1\" value=\"\"></div>\n    <div class=\"clear\"><input type=\"submit\" value=\"Subscribe\" name=\"subscribe\" id=\"mc-embedded-subscribe\" class=\"button\"></div>\n    </div>\n</form>\n</div>\n\n<!--End mc_embed_signup-->"
+            value: "<a class=\"lex-calltoaction\" href=\"//lexingtonky.us12.list-manage.com/subscribe?u=6b7ad19eb3abecf1fe9ac0f15&id=0391f05da4\">Sign-up for notifications</a>\n<hr>"
             format: full_html
           plugin_id: text
       footer: {  }
@@ -826,6 +826,7 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
@@ -849,6 +850,7 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
