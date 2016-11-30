@@ -2,16 +2,11 @@
   var $ = jQuery;
 
   // could be passed as option eventually
-  var handleDistrict = function(featureCollection){
-    var district = featureCollection.features[0];
-    if (district) {
-      $('.js-lex-district-number').html(district.properties['DISTRICT']);
-      // $('.js-lex-district-url').prop('href', district.properties['URL']);
-      // hard code to /council-district-x until GIS changes links to new site
-      $('.js-lex-district-url').prop('href', '/council-district-' + district.properties['DISTRICT']);
-      $('.js-lex-district-member').html(district.properties['REP']);
-      $('.js-lex-district-container').show();
-    }
+  var handleDistrict = function(districtFeature){
+    $('.js-lex-district-number').html(districtFeature.properties['DISTRICT']);
+    $('.js-lex-district-url').prop('href', districtFeature.properties['URL']);
+    $('.js-lex-district-member').html(districtFeature.properties['REP']);
+    $('.js-lex-district-container').show();
   }
 
   /*
@@ -21,32 +16,52 @@
   *   esri-leaflet
   */
   $.LexingtonGeocoder = function(options) {
+
     var $addressInput = options.$addressInput;
+    var political = L.esri.query({url: 'https://maps.lexingtonky.gov/lfucggis/rest/services/political/MapServer/1'});
 
     var handleFindAddressResponse = function(error, featureCollection, response) {
-      var query = L.esri.query({
-        url: "//lexington-geocode-proxy.herokuapp.com/maps.lexingtonky.gov/lfucggis/rest/services/political/MapServer/1",
-      }).intersects(featureCollection.features[0]);
-      query.fields(['DISTRICT', 'REP', 'URL']);
-      query.run(function(error, featureCollection, response) {
-        handleDistrict(featureCollection);
+        var responseJson = JSON.parse(error);
+        var address = responseJson.locations[0].feature.geometry;
+
+        political
+          .contains(L.latLng([address.y, address.x]))
+          .returnGeometry(false)
+          .run(function(error, featureCollection, response){
+            handleDistrict(featureCollection.features[0]);
+          });
         $addressInput.removeClass('loading');
-      });
     };
+
+    $addressInput.removeClass('loading');
 
     $addressInput.autocomplete({
       source: function (request, response) {
-        $.get("//lexington-geocode-proxy.herokuapp.com/maps.lexingtonky.gov/mapit/Map/GetSearchSuggestions", {
-          term: request.term
-        }, response);
+        var lexington = "-84.6604156494,37.8454742432,-84.2827148438,38.2114067078";
+        $.get("https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/suggest", {
+          text: request.term,
+          maxSuggestions: 5,
+          searchExtent: lexington,
+          f: 'json'
+        }, function(data) {
+          var suggestions = [];
+          JSON.parse(data).suggestions.forEach(function(suggestion) {
+            // sometimes bounding box includes nearby cities
+            if (suggestion.text.match('Lexington')) { suggestions.push(suggestion.text); }
+          });
+          response(suggestions);
+        });
       },
       select: function( event, ui ) {
         $addressInput.addClass('loading');
-        var finder = L.esri.find({
-          url: '//lexington-geocode-proxy.herokuapp.com/maps.lexingtonky.gov/lfucggis/rest/services/addresses/MapServer/',
-        }).text(ui.item.value)
-          .layers([0])
-          .run(handleFindAddressResponse);
+        $.get("https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/find", {
+          outSr: 4326,
+          forStorage: false,
+          outFields: '*',
+          maxLocations: 5,
+          text: ui.item.value,
+          f: 'json'
+        }, handleFindAddressResponse);
       },
       minLength: 2
     });
