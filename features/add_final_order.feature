@@ -17,5 +17,6 @@ Scenario: Create final order links appear
     # When I am on "/node/1943"
     # Then the response should contain "Add final order"
 
-    Given I am on "/final-orders"
-    Then the response should contain "Add final order"
+    # Enable once a final order menu exists in prod
+    # Given I am on "/final-orders"
+    # Then the response should contain "Add final order"
