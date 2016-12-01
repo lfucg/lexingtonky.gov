@@ -104,14 +104,14 @@ display:
               sortable: false
               default_sort_order: asc
               align: ''
-              separator: ''
+              separator: ' '
               empty_column: false
               responsive: ''
             field_person_charged:
               sortable: false
               default_sort_order: asc
               align: ''
-              separator: ''
+              separator: ' '
               empty_column: false
               responsive: ''
             field_owners_address:
@@ -125,24 +125,24 @@ display:
               sortable: false
               default_sort_order: asc
               align: ''
-              separator: ''
+              separator: ' '
               empty_column: false
               responsive: ''
             field_citation:
               align: ''
-              separator: ''
+              separator: ' '
               empty_column: false
               responsive: ''
             field_findings_and_penalty:
               align: ''
-              separator: ''
+              separator: ' '
               empty_column: false
               responsive: ''
             operations:
               sortable: false
               default_sort_order: asc
               align: ''
-              separator: ''
+              separator: ' '
               empty_column: false
               responsive: ''
             field_pva_num:
@@ -339,7 +339,7 @@ display:
           element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
-          element_default_classes: true
+          element_default_classes: false
           empty: ''
           hide_empty: false
           empty_zero: false
