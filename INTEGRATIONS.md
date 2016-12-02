@@ -25,3 +25,7 @@ lat/lon against our council district ArcGIS endpoint
 ## Various iframes
 
 Todo: create Drupal view that links to pages with iframes
+
+## Final order database
+
+Additions to the final order RSS feed is automatically sent to subscribers using the [Mailchimp RSS-to-Email feature](https://mailchimp.com/features/rss-to-email/). The Mailchimp admin can set how often the feed is sent (e.g. every two weeks).
