@@ -22,13 +22,22 @@
 
       $('.edit-field-example-colorpicker').on('blur', function (event) {
         var $pvaField = $(event.target);
+        var toOverwrite = {
+          '#edit-field-address-0-value': 'ADDRESS',
+          '#edit-field-owners-address-0-value': 'ADDRESS'
+        };
+
         $pvaField.val($pvaField.val().trim());
 
         parcels.query()
           .where("PVANUM='" + $pvaField.val() + "'")
           .run(function(error, featureCollection) {
-            $('#edit-field-address-0-value').val(featureCollection.features[0].properties['ADDRESS']);
-            $('#edit-field-owners-address-0-value').val(featureCollection.features[0].properties['ADDRESS']);
+            Object.keys(toOverwrite).forEach(function(elId) {
+              var addressKey = toOverwrite[elId];
+              if ($(elId).val() === '') {
+                $(elId).val(featureCollection.features[0].properties[addressKey]);
+              }
+            });
           });
       });
     }
