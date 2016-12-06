@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.final_order.field_address
     - field.field.node.final_order.field_citation
     - field.field.node.final_order.field_final_order_date
+    - field.field.node.final_order.field_final_order_docs
     - field.field.node.final_order.field_findings_and_penalty
     - field.field.node.final_order.field_owners_address
     - field.field.node.final_order.field_person_charged
@@ -34,7 +35,7 @@ content:
     third_party_settings: {  }
     type: string_textfield
   field_citation:
-    weight: 8
+    weight: 28
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
@@ -44,8 +45,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
+  field_final_order_docs:
+    weight: 26
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
   field_findings_and_penalty:
-    weight: 9
+    weight: 27
     settings:
       progress_indicator: throbber
     third_party_settings: {  }

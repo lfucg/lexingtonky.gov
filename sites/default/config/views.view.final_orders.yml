@@ -4,9 +4,8 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_address
-    - field.storage.node.field_citation
     - field.storage.node.field_final_order_date
-    - field.storage.node.field_findings_and_penalty
+    - field.storage.node.field_final_order_docs
     - field.storage.node.field_owners_address
     - field.storage.node.field_person_charged
     - field.storage.node.field_pva_num
@@ -60,7 +59,7 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 3
+          items_per_page: 5
           offset: 0
           id: 0
           total_pages: null
@@ -422,14 +421,14 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        field_citation:
-          id: field_citation
-          table: node__field_citation
-          field: field_citation
+        field_final_order_docs:
+          id: field_final_order_docs
+          table: node__field_final_order_docs
+          field: field_final_order_docs
           relationship: none
           group_type: group
           admin_label: ''
-          label: Citation
+          label: 'Final order and related documents'
           exclude: false
           alter:
             alter_text: false
@@ -462,69 +461,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: target_id
-          type: file_default
-          settings: {  }
-          group_column: ''
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        field_findings_and_penalty:
-          id: field_findings_and_penalty
-          table: node__field_findings_and_penalty
-          field: field_findings_and_penalty
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'Findings and penalty'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
+          element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -788,7 +725,8 @@ display:
           granularity: second
           plugin_id: datetime
       title: ''
-      header:
+      header: {  }
+      footer:
         area:
           id: area
           table: views
@@ -799,10 +737,9 @@ display:
           empty: true
           tokenize: false
           content:
-            value: "<a class=\"lex-calltoaction\" href=\"//lexingtonky.us12.list-manage.com/subscribe?u=6b7ad19eb3abecf1fe9ac0f15&id=0391f05da4\">Sign-up for notifications</a>\n<hr>"
-            format: full_html
+            value: "<a href=\"//lexingtonky.us12.list-manage.com/subscribe?u=6b7ad19eb3abecf1fe9ac0f15&id=0391f05da4\">Sign-up for notifications</a>\n<hr>"
+            format: basic_html
           plugin_id: text
-      footer: {  }
       empty:
         area:
           id: area
@@ -832,9 +769,8 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.field_address'
-        - 'config:field.storage.node.field_citation'
         - 'config:field.storage.node.field_final_order_date'
-        - 'config:field.storage.node.field_findings_and_penalty'
+        - 'config:field.storage.node.field_final_order_docs'
         - 'config:field.storage.node.field_owners_address'
         - 'config:field.storage.node.field_person_charged'
         - 'config:field.storage.node.field_pva_num'
@@ -856,9 +792,34 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.field_address'
-        - 'config:field.storage.node.field_citation'
         - 'config:field.storage.node.field_final_order_date'
-        - 'config:field.storage.node.field_findings_and_penalty'
+        - 'config:field.storage.node.field_final_order_docs'
+        - 'config:field.storage.node.field_owners_address'
+        - 'config:field.storage.node.field_person_charged'
+        - 'config:field.storage.node.field_pva_num'
+  feed_1:
+    display_plugin: feed
+    id: feed_1
+    display_title: Feed
+    position: 2
+    display_options:
+      display_extenders: {  }
+      row:
+        type: node_rss
+        options: {  }
+      path: final-orders.xml
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:field.storage.node.field_address'
+        - 'config:field.storage.node.field_final_order_date'
+        - 'config:field.storage.node.field_final_order_docs'
         - 'config:field.storage.node.field_owners_address'
         - 'config:field.storage.node.field_person_charged'
         - 'config:field.storage.node.field_pva_num'

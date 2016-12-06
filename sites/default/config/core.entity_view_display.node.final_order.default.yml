@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.final_order.field_address
     - field.field.node.final_order.field_citation
     - field.field.node.final_order.field_final_order_date
+    - field.field.node.final_order.field_final_order_docs
     - field.field.node.final_order.field_findings_and_penalty
     - field.field.node.final_order.field_owners_address
     - field.field.node.final_order.field_person_charged
@@ -28,11 +29,11 @@ content:
       link_to_entity: false
     third_party_settings: {  }
   field_citation:
-    type: file_default
-    weight: 6
-    label: inline
+    weight: 8
+    label: above
     settings: {  }
     third_party_settings: {  }
+    type: file_default
   field_final_order_date:
     type: datetime_custom
     weight: 1
@@ -41,12 +42,18 @@ content:
       timezone_override: ''
       date_format: Y-m-d
     third_party_settings: {  }
-  field_findings_and_penalty:
-    type: file_default
-    weight: 7
-    label: inline
+  field_final_order_docs:
+    weight: 6
+    label: above
     settings: {  }
     third_party_settings: {  }
+    type: file_default
+  field_findings_and_penalty:
+    weight: 7
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: file_default
   field_owners_address:
     type: string
     weight: 3
