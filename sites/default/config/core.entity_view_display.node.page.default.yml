@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.page.field_page_section
     - field.field.node.page.field_related_departments
     - field.field.node.page.field_related_documents
+    - field.field.node.page.field_sidebar_section
     - node.type.page
   module:
     - entity_reference_revisions
@@ -50,3 +51,4 @@ hidden:
   field_office_to_contact: true
   field_related_departments: true
   field_related_documents: true
+  field_sidebar_section: true

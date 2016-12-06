@@ -17,12 +17,14 @@
 #}
 <div class="layout-node-form clearfix">
   <div class="layout-region layout-region-node-main">
-    {{ form|without('field_lex_site_nav', 'field_office_to_contact', 'actions') }}
+    {# EDS 20161206: can't figure out how to pass array to without #}
+    {{ form|without('field_lex_site_nav', 'field_office_to_contact', 'actions', 'field_sidebar_section') }}
   </div>
   <div class="layout-region layout-region-node-secondary">
     {% include '@lex_admin/includes/content-guidelines.html.twig' %}
     {{ form.field_lex_site_nav }}
     {{ form.field_office_to_contact }}
+    {{ form['field_sidebar_section'] }}
     {{ form.actions }}
   </div>
 </div>

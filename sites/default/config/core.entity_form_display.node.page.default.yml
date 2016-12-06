@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.page.field_page_section
     - field.field.node.page.field_related_departments
     - field.field.node.page.field_related_documents
+    - field.field.node.page.field_sidebar_section
     - image.style.thumbnail
     - node.type.page
   module:
@@ -71,6 +72,16 @@ content:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
+  field_sidebar_section:
+    type: entity_reference_paragraphs
+    weight: 27
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+    third_party_settings: {  }
   path:
     type: path
     weight: 4

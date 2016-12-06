@@ -1,0 +1,6 @@
+uuid: ce39c6a9-9b12-4999-9183-2d97f3393413
+langcode: en
+status: true
+dependencies: {  }
+id: paragraph_sidebar_section
+label: 'Sidebar section'

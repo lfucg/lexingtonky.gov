@@ -1,0 +1,19 @@
+uuid: b265cb2f-3011-479d-842c-bcaabc8ce55d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_section_heading
+    - paragraphs.paragraphs_type.paragraph_sidebar_section
+id: paragraph.paragraph_sidebar_section.field_section_heading
+field_name: field_section_heading
+entity_type: paragraph
+bundle: paragraph_sidebar_section
+label: 'Section heading'
+description: 'A short description of the section in plain language. Example: <strong>Related pages</strong>'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
