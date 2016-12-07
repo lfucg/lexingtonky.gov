@@ -20,7 +20,6 @@
         url: 'https://maps.lexingtonky.gov/lfucggis/rest/services/parcels/MapServer/0',
       });
 
-      debugger
       $('.edit-field-parcel-lookup').on('blur', function (event) {
         var $pvaField = $(event.target);
         var toOverwrite = {
