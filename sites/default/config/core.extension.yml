@@ -20,9 +20,8 @@ module:
   dynamic_page_cache: 0
   editor: 0
   entity_reference_revisions: 0
-  examples: 0
   field: 0
-  field_example: 0
+  gis_api: 0
   field_ui: 0
   fieldblock: 0
   file: 0

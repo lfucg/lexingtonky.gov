@@ -1,0 +1,9 @@
+lex_gis_api:
+  version: 1.x
+  js:
+    parcel_lookup.js: {}
+
+leaflet:
+  js:
+    js/leaflet.js: {}
+    js/esri-leaflet.js: {}

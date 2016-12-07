@@ -23,7 +23,8 @@ dependencies:
           background: true
 test:
   pre:
-    - ./private/scripts/ci-test-pre.sh
+    - ./private/scripts/ci-test-pre.sh:
+        timeout: 2000
   override:
     - cd themes/custom/lex && npm test:
         environment:
