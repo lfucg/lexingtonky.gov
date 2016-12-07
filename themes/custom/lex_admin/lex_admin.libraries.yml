@@ -2,7 +2,3 @@ global-styling:
   css:
     component:
       css/seven-theme-overrides.css: {}
-leaflet-js:
-  js:
-    js/leaflet.js: {}
-    js/esri-leaflet.js: {}
