@@ -4,10 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.node.final_order.field_address
-    - field.field.node.final_order.field_citation
     - field.field.node.final_order.field_final_order_date
     - field.field.node.final_order.field_final_order_docs
-    - field.field.node.final_order.field_findings_and_penalty
     - field.field.node.final_order.field_owners_address
     - field.field.node.final_order.field_person_charged
     - field.field.node.final_order.field_pva_num
@@ -34,12 +32,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
-  field_citation:
-    weight: 28
-    settings:
-      progress_indicator: throbber
-    third_party_settings: {  }
-    type: file_generic
   field_final_order_date:
     weight: 3
     settings: {  }
@@ -47,12 +39,6 @@ content:
     type: datetime_default
   field_final_order_docs:
     weight: 26
-    settings:
-      progress_indicator: throbber
-    third_party_settings: {  }
-    type: file_generic
-  field_findings_and_penalty:
-    weight: 27
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
@@ -72,8 +58,10 @@ content:
     third_party_settings: {  }
     type: string_textfield
   field_pva_num:
-    weight: 4
-    settings: {  }
+    weight: 29
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
     type: field_example_colorpicker
   title:
