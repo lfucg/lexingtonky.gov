@@ -8,7 +8,7 @@ Scenario: Traffic ticker
 
 Scenario: External URL
   Given I visit "/dem"
-  Then I should see "Be prepared"
+  Then I should see "emergency"
 
 Scenario: Legacy document is redirected to previous.lexingtonky.gov
   Given I visit "/Modules/ShowDocument.aspx?documentid=20877"
