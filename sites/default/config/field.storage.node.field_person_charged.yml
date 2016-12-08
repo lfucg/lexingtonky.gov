@@ -1,4 +1,4 @@
-uuid: 52a7d1dc-a1df-46d1-8028-111078622430
+uuid: d4363611-cd58-4fa0-8457-00b45834d353
 langcode: en
 status: true
 dependencies:
@@ -7,10 +7,8 @@ dependencies:
 id: node.field_person_charged
 field_name: field_person_charged
 entity_type: node
-type: string
+type: string_long
 settings:
-  max_length: 255
-  is_ascii: false
   case_sensitive: false
 module: core
 locked: false

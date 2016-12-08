@@ -12,8 +12,8 @@ dependencies:
     - node.type.final_order
   module:
     - datetime
-    - gis_api
     - file
+    - gis_api
     - workbench_moderation
 id: node.final_order.default
 targetEntityType: node
@@ -46,17 +46,17 @@ content:
   field_owners_address:
     weight: 7
     settings:
-      size: 60
+      rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
+    type: string_textarea
   field_person_charged:
     weight: 6
     settings:
-      size: 60
+      rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
+    type: string_textarea
   field_pva_num:
     weight: 4
     settings: {  }

@@ -1,4 +1,4 @@
-uuid: a745a7b9-2f24-487a-8e1e-6c28d4870a1b
+uuid: 163a5e0e-afc1-4264-a917-1dc241263f7e
 langcode: en
 status: true
 dependencies:
@@ -7,10 +7,8 @@ dependencies:
 id: node.field_owners_address
 field_name: field_owners_address
 entity_type: node
-type: string
+type: string_long
 settings:
-  max_length: 255
-  is_ascii: false
   case_sensitive: false
 module: core
 locked: false

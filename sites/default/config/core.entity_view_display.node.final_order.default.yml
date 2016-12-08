@@ -41,19 +41,17 @@ content:
     third_party_settings: {  }
     type: file_default
   field_owners_address:
-    type: string
-    weight: 3
-    label: inline
-    settings:
-      link_to_entity: false
+    weight: 8
+    label: above
+    settings: {  }
     third_party_settings: {  }
+    type: basic_string
   field_person_charged:
-    type: string
-    weight: 2
-    label: inline
-    settings:
-      link_to_entity: false
+    weight: 7
+    label: above
+    settings: {  }
     third_party_settings: {  }
+    type: basic_string
   field_pva_num:
     type: string
     weight: 5
