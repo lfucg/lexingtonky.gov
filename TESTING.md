@@ -87,3 +87,8 @@ Behat help
 We [use CircleCI](circle.yml) to test against the Pantheon environment where our
 live site is hosted. The tests run against cloned versions of the live site.
 
+Environment variables to set up CircleCI
+
+* PANTHEON_REPO (from Pantheon dashboard): ssh://get.from.pantheon.dashboard:2222/~/repository.git
+* SITE_NAME lexky-d8
+* FROM_ENV (env to clone for tests) live
