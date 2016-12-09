@@ -134,6 +134,10 @@ function lex_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state
 }
 
 function lex_preprocess_item_list__search_results(&$variables) {
+
+  $keys = \Drupal::request()->get('keys');
+  $query = $keys . ' site:lexingtonky.gov';
+  $variables['attributes']['google_link'] = 'https://www.google.com/webhp?hl=en#q=' . $query;
   $variables['attributes']['class'][] = 'usa-unstyled-list';
 }
 
