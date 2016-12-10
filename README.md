@@ -8,7 +8,7 @@ The official site for the City of Lexington built around the needs of the public
 * [US Web Design Standards](https://playbook.cio.gov/designstandards/)
 
 ## Test suite
-* Feature tests [![Circle CI](https://circleci.com/gh/lfucg/lexingtonky.gov/tree/master.svg?style=svg)](https://circleci.com/gh/lfucg/lexingtonky.gov/tree/master)
+* Feature tests [![CircleCI](https://circleci.com/gh/CityOfLexington/lexingtonky.gov.svg?style=svg)](https://circleci.com/gh/CityOfLexington/lexingtonky.gov)
 * Visual regression testing via Wraith housed in
 [separate repo](https://github.com/eeeschwartz/lexky-wraith)
 
