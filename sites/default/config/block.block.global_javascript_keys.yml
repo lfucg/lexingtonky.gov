@@ -1,0 +1,25 @@
+uuid: c1b71d72-8c1a-4b2e-80da-fffd8005e72e
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:ea098e99-7581-4ccd-be5d-9473cb27e48f'
+  module:
+    - block_content
+  theme:
+    - lex_admin
+id: global_javascript_keys
+theme: lex_admin
+region: pre_content
+weight: 0
+provider: null
+plugin: 'block_content:ea098e99-7581-4ccd-be5d-9473cb27e48f'
+settings:
+  id: 'block_content:ea098e99-7581-4ccd-be5d-9473cb27e48f'
+  label: 'Global javascript keys'
+  provider: block_content
+  label_display: visible
+  status: true
+  info: ''
+  view_mode: full
+visibility: {  }

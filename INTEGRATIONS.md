@@ -13,6 +13,10 @@ the updated info to the traffic-data repo.
 
 [lex-neighborhood-associations.js](https://github.com/lfucg/lexingtonky.gov/blob/master/themes/custom/lex/js/lex-neighborhood-associations.js) pulls association info from the city ArcGIS API endpoint.
 
+## Content needing review RSS -> IFTTT -> Slack
+
+The site publishes an [RSS feed](https://www.lexingtonky.gov/content-needing-review.xml) of items that contributors want published. IFTTT looks for new items every 15 sends a notification to PIO slack if there are new items.
+
 ## Leaf collection map -> Citygram
 
 Data flow
@@ -29,8 +33,8 @@ Integration from lexingtonky.gov
 What determines the message that subscribers see?
 
 * The message is the ['Title' field](https://github.com/citygram/citygram-services/blob/master/lib/spy_glass/registry/lexington-leaf-collection.rb#L89) in the Citygram event.
-* The users are notified when a new event appears in an area that intersects theirs. 
-* An event is considered 'new' when it has an event id that Citygram has never seen before. 
+* The users are notified when a new event appears in an area that intersects theirs.
+* An event is considered 'new' when it has an event id that Citygram has never seen before.
 * You can allow the city to send custom messages at any time. Set the event id to a hash of the message along with any namespacing [as seen here](https://github.com/citygram/citygram-services/blob/master/lib/spy_glass/registry/lexington-leaf-collection.rb#L33). Whenever the message (or namespacing) changes, Citygram will create a new event and send a message. But be careful since _any_ change will trigger a message, for example an extra space.
 * For custom messages, give the GIS endpoint a 'message override' field that the connector hashes into the event id. Then users at a given division can edit that message through a GIS CRUD interface and trigger a send whenever they want.
 

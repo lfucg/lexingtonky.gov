@@ -16,30 +16,70 @@
         $('#edit-title-0-value').val('Final order');
       }
 
-      var parcels = L.esri.featureLayer({
-        url: 'https://maps.lexingtonky.gov/lfucggis/rest/services/parcels/MapServer/0',
+      var serverAuth = function(callback) {
+        L.esri.post('https://maps.lexingtonky.gov/lfucggis/tokens/generateToken', {
+          username: lexKeys.finalOrderGIS.username,
+          password: lexKeys.finalOrderGIS.password,
+          f: 'json',
+          expiration: 86400,
+          client: 'referer',
+          referer: window.location.origin
+        }, callback);
+      };
+
+      // https://esri.github.io/esri-leaflet/examples/arcgis-server-auth.html
+      var parcels;
+      serverAuth(function(error, response) {
+        parcels = L.esri.featureLayer({
+          url: 'https://maps.lexingtonky.gov/lfucggis/rest/services/LFUCG_Apps/property/MapServer/1',
+          token:  response.token
+        });
+
+        parcels.on('authenticationrequired', function (e) {
+          serverAuth(function(error, response){
+            e.authenticate(response.token);
+          });
+        });
       });
 
       $('.edit-field-parcel-lookup').on('blur', function (event) {
         var $pvaField = $(event.target);
+        $pvaField.val($pvaField.val().trim());
+        lookupParcel($pvaField.val());
+      });
+
+
+      var fieldValue = function(properties, keysForField) {
+        var suffixes = {
+          'CITYNAME': ',',
+          'OWN1': "\n",
+        };
+        return _.compact(_.map(keysForField, function(key) {
+          if (! properties[key]) { return; }
+          var suffix = (suffixes[key] ? suffixes[key] : '');
+          return properties[key] + suffix;
+        })).join(' ');
+      }
+
+      var lookupParcel = function(parId) {
         var toOverwrite = {
-          '#edit-field-address-0-value': 'ADDRESS',
-          '#edit-field-owners-address-0-value': 'ADDRESS'
+          '#edit-field-address-0-value': ['LOC_ADRNO', 'LOC_ADRADD', 'LOC_ADRDIR', 'LOC_ADRSTR', 'LOC_ADRSUF', 'LOC_UNITDESC', 'LOC_UNITNO', 'LOC_ZIP1'],
+          '#edit-field-owners-address-0-value': ['OWN_AdrFull', 'CITYNAME', 'STATECODE', 'COUNTRY', 'POSTALCODE'],
+          '#edit-field-person-charged-0-value': ['OWN1', 'OWN2'],
         };
 
-        $pvaField.val($pvaField.val().trim());
-
         parcels.query()
-          .where("PVANUM='" + $pvaField.val() + "'")
+          .where("PARID='" + parId + "'")
           .run(function(error, featureCollection) {
             Object.keys(toOverwrite).forEach(function(elId) {
-              var addressKey = toOverwrite[elId];
+              var keysForField = toOverwrite[elId];
               if ($(elId).val() === '') {
-                $(elId).val(featureCollection.features[0].properties[addressKey]);
+                var val = fieldValue(featureCollection.features[0].properties, keysForField);
+                $(elId).val(val);
               }
             });
           });
-      });
+      };
     }
   };
 })(jQuery);
