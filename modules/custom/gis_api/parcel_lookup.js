@@ -18,6 +18,7 @@
 
       var serverAuth = function(callback) {
         L.esri.post('https://maps.lexingtonky.gov/lfucggis/tokens/generateToken', {
+          // lexKeys is set in a block visible to authenticated users
           username: lexKeys.finalOrderGIS.username,
           password: lexKeys.finalOrderGIS.password,
           f: 'json',
@@ -63,8 +64,8 @@
 
       var lookupParcel = function(parId) {
         var toOverwrite = {
-          '#edit-field-address-0-value': ['LOC_ADRNO', 'LOC_ADRADD', 'LOC_ADRDIR', 'LOC_ADRSTR', 'LOC_ADRSUF', 'LOC_UNITDESC', 'LOC_UNITNO', 'LOC_ZIP1'],
-          '#edit-field-owners-address-0-value': ['OWN_AdrFull', 'CITYNAME', 'STATECODE', 'COUNTRY', 'POSTALCODE'],
+          '#edit-field-address-0-value': ['LOC_ADRNO', 'LOC_ADRDIR', 'LOC_ADRSTR', 'LOC_ADRSUF', 'LOC_UNITNO', 'LOC_ZIP1'],
+          '#edit-field-owners-address-0-value': ['OWN_AdrFull', 'CITYNAME', 'STATECODE', 'OWN_ZIP1', 'COUNTRY'],
           '#edit-field-person-charged-0-value': ['OWN1', 'OWN2'],
         };
 

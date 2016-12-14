@@ -6,6 +6,7 @@ dependencies:
     - 'block_content:html_block:ea098e99-7581-4ccd-be5d-9473cb27e48f'
   module:
     - block_content
+    - user
   theme:
     - lex_admin
 id: global_javascript_keys
@@ -18,8 +19,15 @@ settings:
   id: 'block_content:ea098e99-7581-4ccd-be5d-9473cb27e48f'
   label: 'Global javascript keys'
   provider: block_content
-  label_display: visible
+  label_display: '0'
   status: true
   info: ''
   view_mode: full
-visibility: {  }
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'

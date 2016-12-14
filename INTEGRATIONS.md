@@ -17,7 +17,7 @@ the updated info to the traffic-data repo.
 
 The site publishes an [RSS feed](https://www.lexingtonky.gov/content-needing-review.xml) of items that contributors want published. IFTTT looks for new items every 15 sends a notification to PIO slack if there are new items.
 
-## Leaf collection map -> Citygram
+## Leaf collection map -> [Citygram](https://github.com/codeforamerica/citygram)
 
 Data flow
 
