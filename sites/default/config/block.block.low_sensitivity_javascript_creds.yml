@@ -1,25 +1,25 @@
-uuid: c1b71d72-8c1a-4b2e-80da-fffd8005e72e
+uuid: 37b11751-926a-49e4-b70e-88a6434bf675
 langcode: en
 status: true
 dependencies:
   content:
-    - 'block_content:html_block:ea098e99-7581-4ccd-be5d-9473cb27e48f'
+    - 'block_content:html_block:9f727ba5-277d-4564-a215-0900a7f5ac75'
   module:
     - block_content
     - user
   theme:
     - lex_admin
-id: global_javascript_keys
+id: low_sensitivity_javascript_creds
 theme: lex_admin
 region: pre_content
 weight: 0
 provider: null
-plugin: 'block_content:ea098e99-7581-4ccd-be5d-9473cb27e48f'
+plugin: 'block_content:9f727ba5-277d-4564-a215-0900a7f5ac75'
 settings:
-  id: 'block_content:ea098e99-7581-4ccd-be5d-9473cb27e48f'
-  label: 'Global javascript keys'
+  id: 'block_content:9f727ba5-277d-4564-a215-0900a7f5ac75'
+  label: 'Low-sensitivity javascript credentials for authenticated users'
   provider: block_content
-  label_display: '0'
+  label_display: ''
   status: true
   info: ''
   view_mode: full
