@@ -72,6 +72,7 @@ $fa-font-path: "../font-awesome-4.5.0/fonts";
 @import './_formstack-overrides';
 @import './_granicus-overrides';
 
+
 // Core Lexington styles
 body {
   color: $lex-dark-grey;
@@ -231,9 +232,7 @@ input:focus, input[type=search]:focus {
     .lex-card-title {
       margin-bottom: 0;
     }
-    .lex-search {
-      @extend .usa-search-big;
-    }
+
     .lex-card-title {
       font-weight: $font-weight-light;
     }
@@ -336,3 +335,9 @@ input:focus, input[type=search]:focus {
     margin-bottom: $lex-section-rem-gutter-half;
   }
 }
+
+// Full Calendar view support
+@import './_lexcalendar.sass';
+
+
+

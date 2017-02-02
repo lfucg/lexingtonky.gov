@@ -1,0 +1,31 @@
+lex_calendar.eventPage:
+  path: 'calendar/events'
+  defaults:
+    _controller:
+      '\Drupal\lex_calendar\Controller\PageController::eventPage'
+  requirements:
+    _permission: 'access content'
+
+lex_calendar.meetingPage:
+  path: 'calendar/meetings'
+  defaults:
+    _controller:
+      '\Drupal\lex_calendar\Controller\PageController::meetingPage'
+  requirements:
+    _permission: 'access content'
+
+lex_calendar.fetchEvents:
+  path: 'calendar/fetchEvents'
+  defaults:
+    _controller:
+      '\Drupal\lex_calendar\Controller\CalendarController::fetchEvents'
+  requirements:
+    _permission: 'access content'
+
+lex_calendar.fetchMeetings:
+  path: 'calendar/fetchMeetings'
+  defaults:
+    _controller:
+      '\Drupal\lex_calendar\Controller\CalendarController::fetchMeetings'
+  requirements:
+    _permission: 'access content'

@@ -1,0 +1,4 @@
+services:
+  lex_calendar.full_calendar:
+    class: Drupal\lex_calendar\FullCalendarService
+    arguments: []

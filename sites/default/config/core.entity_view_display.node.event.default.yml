@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.event.body
+    - field.field.node.event.field_all_day
     - field.field.node.event.field_cost
     - field.field.node.event.field_date
     - field.field.node.event.field_date_end
@@ -11,12 +12,14 @@ dependencies:
     - field.field.node.event.field_hide_times
     - field.field.node.event.field_locations
     - field.field.node.event.field_media_contact
+    - field.field.node.event.field_recurring_event
     - field.field.node.event.field_related_departments
     - node.type.event
   module:
     - datetime
     - entity_reference_revisions
     - link
+    - options
     - text
     - user
 id: node.event.default
@@ -30,6 +33,15 @@ content:
     weight: 6
     settings: {  }
     third_party_settings: {  }
+  field_all_day:
+    weight: 9
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
   field_cost:
     weight: 5
     label: inline
@@ -89,6 +101,12 @@ content:
       link: ''
     third_party_settings: {  }
     type: entity_reference_revisions_entity_view
+  field_recurring_event:
+    weight: 10
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
   links:
     weight: 0
     settings: {  }

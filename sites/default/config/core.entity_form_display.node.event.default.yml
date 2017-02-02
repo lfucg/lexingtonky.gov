@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.event.body
+    - field.field.node.event.field_all_day
     - field.field.node.event.field_cost
     - field.field.node.event.field_date
     - field.field.node.event.field_date_end
@@ -11,6 +12,7 @@ dependencies:
     - field.field.node.event.field_hide_times
     - field.field.node.event.field_locations
     - field.field.node.event.field_media_contact
+    - field.field.node.event.field_recurring_event
     - field.field.node.event.field_related_departments
     - node.type.event
   module:
@@ -38,6 +40,12 @@ content:
     weight: 5
     settings: {  }
     third_party_settings: {  }
+  field_all_day:
+    weight: 12
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
   field_cost:
     weight: 3
     settings:
@@ -56,14 +64,14 @@ content:
     third_party_settings: {  }
     type: datetime_default
   field_event_website:
-    weight: 14
+    weight: 16
     settings:
       placeholder_url: ''
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
   field_hide_times:
-    weight: 12
+    weight: 14
     settings:
       display_label: true
     third_party_settings: {  }
@@ -74,7 +82,7 @@ content:
     third_party_settings: {  }
     type: options_select
   field_media_contact:
-    weight: 13
+    weight: 15
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -83,6 +91,11 @@ content:
       form_display_mode: default
     third_party_settings: {  }
     type: entity_reference_paragraphs
+  field_recurring_event:
+    weight: 13
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
   field_related_departments:
     weight: 2
     settings: {  }

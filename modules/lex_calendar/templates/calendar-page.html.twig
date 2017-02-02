@@ -1,0 +1,19 @@
+<div id="calendar"></div>
+<script>
+window.addEventListener( 'load', function(){
+  (function($) {
+    var today = new Date();
+    $('#calendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month, agendaWeek, agendaDay, listWeek',
+      },
+      editable: false,
+      eventsLimit: true,
+      events: '/calendar/{{ fc_callback }}',
+      defaultDate: '{{ "now"|date("Y-m-d") }}'
+    });
+  })(jQuery);
+});
+</script>
