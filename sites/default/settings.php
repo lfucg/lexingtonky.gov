@@ -26,6 +26,8 @@ include __DIR__ . "/settings.pantheon.php";
 $settings['trusted_host_patterns'] = array(
   '^.+lexky-d8\.pantheonsite\.io$',
   '^www\.lexingtonky\.gov$',
+  '^lexky-d8\.kbox\.site$',
+  '^localhost$'
 );
 
 $config_overrides = __DIR__ . "/config.overrides.php";
