@@ -23,21 +23,29 @@ class CalendarController extends ControllerBase {
   protected $events = NULL;
 
   /**
+   * Base Drupal Query Factory.
+   *
    * @var Drupal\Core\Entity\Query\QueryFactory object
    */
   protected $entityQuery = NULL;
 
   /**
+   * Default Drupal Entity Manager.
+   *
    * @var Drupal\Core\Entity\EntityManager object
    */
   protected $entityManager = NULL;
 
   /**
+   * Response object.
+   *
    * @var Symfony\Component\HttpFoundation\JsonResponse object
    */
   protected $response = NULL;
 
   /**
+   * Request stack.
+   *
    * @var Symfony\Component\HttpFoundation\RequestStack object
    */
   protected $requestStack = NULL;
@@ -45,12 +53,16 @@ class CalendarController extends ControllerBase {
   /**
    * Constructs a CalendarController object.
    *
-   * @param Drupal\lex_calendar\FullCalendarService object
-   *   The convertor of Drupal node data to something fullcalendar can use.
-   * @param Drupal\Core\Entity\Query\QueryFactory object
-   * @param Drupal\Core\Entity\EntityManager object
-   * @param Symfony\Component\HttpFoundation\JsonResponse object
-   * @param Symfony\Component\HttpFoundation\RequestStack object
+   * @param Drupal\lex_calendar\FullCalendarService $events
+   *   Custom event managing service.
+   * @param Drupal\Core\Entity\Query\QueryFactory $entityQuery
+   *   Query prep service.
+   * @param Drupal\Core\Entity\EntityManagerInterface $entityManager
+   *   Entity Manager service.
+   * @param Symfony\Component\HttpFoundation\RequestStack $requestStack
+   *   Request Stack.
+   * @param Symfony\Component\HttpFoundation\JsonResponse $response
+   *   Response.
    */
   public function __construct(FullCalendarService $events, QueryFactory $entityQuery, EntityManagerInterface $entityManager, RequestStack $requestStack, JsonResponse $response) {
     $this->events = $events;
@@ -90,7 +102,7 @@ class CalendarController extends ControllerBase {
   /**
    * Compose and return a JSON object of calendar data.
    *
-   * @param string
+   * @param string $contentType
    *   The Content Type to fetch, for now mettings or events.
    */
   protected function jsonFetch($contentType) {

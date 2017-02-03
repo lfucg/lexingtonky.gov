@@ -2,6 +2,8 @@
 
 namespace Drupal\lex_calendar;
 
+use Drupal\node\Entity\Node;
+
 /**
  * Translates Drupal node collections into fullcalendar.js data.
  */
@@ -97,12 +99,12 @@ class FullCalendarService {
   /**
    * Add a single event to the JSON array.
    *
-   * @param Entity $event
-   *   Node Object
+   * @param $event
+   *   Node Object.
    * @param string $start
-   *   Start day and time for event
+   *   Start day and time for event.
    * @param string $end
-   *   End day and time for event
+   *   End day and time for event.
    */
   protected function addEvent($event, $start, $end) {
     $this->events[] = [
@@ -121,9 +123,8 @@ class FullCalendarService {
    * We also replicate the event as many times as necessary to occupy all
    * available spots in the requested range that the event is to recur on.
    *
-   * @param array
+   * @param Node[] $events
    *   Collection of events.
-   *
    */
   public function addRecurringEvents(array $events) {
     foreach ($events as $event) {

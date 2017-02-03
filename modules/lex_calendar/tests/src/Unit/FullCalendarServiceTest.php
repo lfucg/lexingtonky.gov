@@ -1,8 +1,5 @@
 <?php
 
-/**
- * @file Contains Drupal\Tests\lex_calendar\Unit\FullCalendarServiceTest.
- */
 namespace Drupal\Tests\lex_calendar\Unit;
 
 use Drupal\Tests\UnitTestCase;

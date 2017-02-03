@@ -10,7 +10,7 @@ use Drupal\Core\Controller\ControllerBase;
 class PageController extends ControllerBase {
 
   /**
-   *
+   * Responder for /calender/events.
    */
   public function eventPage() {
     return [
@@ -27,7 +27,7 @@ class PageController extends ControllerBase {
   }
 
   /**
-   *
+   * Responder for /calendar/meetings.
    */
   public function meetingPage() {
     return [
