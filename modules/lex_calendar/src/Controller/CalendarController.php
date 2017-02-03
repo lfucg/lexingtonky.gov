@@ -1,7 +1,5 @@
 <?php
-/**
- * @file contains Drupal\lex_calendar\Controller\CalendarController
- */
+
 namespace Drupal\lex_calendar\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
@@ -13,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * JSON Responder for fullcalendar.js
+ * JSON Responder for fullcalendar.js.
  */
 class CalendarController extends ControllerBase {
 
@@ -76,14 +74,14 @@ class CalendarController extends ControllerBase {
   }
 
   /**
-   * Responder for route /calendar/fetchMeetings
+   * Responder for route /calendar/fetchMeetings.
    */
   public function fetchMeetings() {
     return $this->jsonFetch('meeting');
   }
 
   /**
-   * Responder for route /calendar/fetchEvents
+   * Responder for route /calendar/fetchEvents.
    */
   public function fetchEvents() {
     return $this->jsonFetch('event');
@@ -131,4 +129,5 @@ class CalendarController extends ControllerBase {
     $this->response->setData($this->events->getEvents());
     return $this->response;
   }
+
 }

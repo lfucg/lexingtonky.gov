@@ -1,7 +1,5 @@
 <?php
-/**
- * @file Drupal\lex_calendar\Controller\PageController
- */
+
 namespace Drupal\lex_calendar\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
@@ -10,6 +8,10 @@ use Drupal\Core\Controller\ControllerBase;
  * Standard Drupal slim controller for echoing simple pages.
  */
 class PageController extends ControllerBase {
+
+  /**
+   *
+   */
   public function eventPage() {
     return [
       '#type' => 'markup',
@@ -18,12 +20,15 @@ class PageController extends ControllerBase {
       '#fc_callback' => 'fetchEvents',
       '#attached' => [
         'library' => [
-          'lex_calendar/lex_calendar'
-        ]
-      ]
+          'lex_calendar/lex_calendar',
+        ],
+      ],
     ];
   }
 
+  /**
+   *
+   */
   public function meetingPage() {
     return [
       '#type' => 'markup',
@@ -32,9 +37,10 @@ class PageController extends ControllerBase {
       '#fc_callback' => 'fetchMeetings',
       '#attached' => [
         'library' => [
-          'lex_calendar/lex_calendar'
-        ]
-      ]
+          'lex_calendar/lex_calendar',
+        ],
+      ],
     ];
   }
+
 }

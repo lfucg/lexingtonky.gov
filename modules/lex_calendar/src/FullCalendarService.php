@@ -1,7 +1,5 @@
 <?php
-/*
- * @file Contains Drupal\lex_calendar\FullCalendarService
- */
+
 namespace Drupal\lex_calendar;
 
 /**
@@ -24,6 +22,7 @@ class FullCalendarService {
 
   /**
    * The end of the event seek range.
+   *
    * @var \DateTime Object
    */
   protected $end = NULL;
@@ -31,7 +30,8 @@ class FullCalendarService {
   /**
    * Setter.
    *
-   * @param \DateTime object | string parsable to a date.
+   * @param \DateTime object | string $date
+   *   Object or string parsable to a date.
    */
   public function setStart($date) {
     if (!$date instanceof \DateTime) {
@@ -41,7 +41,7 @@ class FullCalendarService {
   }
 
   /**
-   * Getter
+   * Getter.
    */
   public function getStart() {
     return $this->start;
@@ -50,24 +50,25 @@ class FullCalendarService {
   /**
    * Setter.
    *
-   * @param \DateTime object | string parsable to a date.
+   * @param \DateTime object | string $date
+   *   Object or string parsable to a date.
    */
   public function setEnd($date) {
-    if(!$date instanceof \DateTime) {
+    if (!$date instanceof \DateTime) {
       $date = new \DateTime($date, new \DateTimeZone('America/New_York'));
     }
     $this->end = $date;
   }
 
   /**
-   * Getter
+   * Getter.
    */
   public function getEnd() {
     return $this->end;
   }
 
   /**
-   * Getter
+   * Getter.
    */
   public function getEvents() {
     return $this->events;
@@ -76,7 +77,7 @@ class FullCalendarService {
   /**
    * Translate node event data to fullcalendar.js format and add it.
    *
-   * @param array
+   * @param array $events
    *   Collection of events.
    */
   public function addEvents(array $events) {
@@ -84,7 +85,7 @@ class FullCalendarService {
       /*
        * Skip any recurrings that happen to fall in the range.
        */
-      if( $event->field_recurring_event->value === NULL || $event->field_recurring_event->value === 'No') {
+      if ($event->field_recurring_event->value === NULL || $event->field_recurring_event->value === 'No') {
         $this->addEvent($event,
           str_replace('T', ' ', $event->field_date->value),
           str_replace('T', ' ', $event->field_date_end->value)
@@ -96,11 +97,11 @@ class FullCalendarService {
   /**
    * Add a single event to the JSON array.
    *
-   * @param Entity
+   * @param Entity $event
    *   Node Object
-   * @param string
+   * @param string $start
    *   Start day and time for event
-   * @param string
+   * @param string $end
    *   End day and time for event
    */
   protected function addEvent($event, $start, $end) {
@@ -110,10 +111,9 @@ class FullCalendarService {
       'id' => $event->nid->value,
       'end' => $end,
       'start' => $start,
-      'url' => $event->url()
+      'url' => $event->url(),
     ];
   }
-
 
   /**
    * Translate node event data to fullcalendar.js format and add it.
@@ -124,7 +124,6 @@ class FullCalendarService {
    * @param array
    *   Collection of events.
    *
-   * @return Entity[]
    */
   public function addRecurringEvents(array $events) {
     foreach ($events as $event) {
@@ -132,22 +131,23 @@ class FullCalendarService {
       $end = new \DateTime(substr($event->field_date_end->value, 0, 10), new \DateTimeZone('America/New_York'));
       $startTime = substr($event->field_date->value, 11);
       $endTime = substr($event->field_date_end->value, 11);
-      $dayOfWeek = $start->format('l'); // Lowercase L
-      $weekOfMonth = ceil($start->format('j')/7);
+      // Lowercase L.
+      $dayOfWeek = $start->format('l');
+      $weekOfMonth = ceil($start->format('j') / 7);
       $interval = $event->field_recurring_event->value;
 
-      /**
+      /*
        * Now if an event set to recur starts and ends on the same day
        * it recurs indefinitely. So we will get all of the days with the same
        * day of the week as the start and return them.
        */
-      if($start->format('Y-m-d') === $end->format('Y-m-d')) {
+      if ($start->format('Y-m-d') === $end->format('Y-m-d')) {
         $end = $this->end;
 
         if ($start->format('m') !== $this->start->format('m')) {
           $start = $this->start;
 
-          if($start->format('l') !== $dayOfWeek) {
+          if ($start->format('l') !== $dayOfWeek) {
             $start->modify("+1 $dayOfWeek");
           }
         }
@@ -162,11 +162,12 @@ class FullCalendarService {
        * we write a recurring event to the result set or not.
        */
       do {
-        if ($interval == 'Weekly' || ceil($date->format('j')/7) === $weekOfMonth) {
+        if ($interval == 'Weekly' || ceil($date->format('j') / 7) === $weekOfMonth) {
           $this->addEvent($event, $date->format('Y-m-d') . ' ' . $startTime, $date->format('Y-m-d') . ' ' . $endTime);
         }
         $date->modify('+1 week');
       } while ($date->format('Y-m-d') <= $end->format('Y-m-d'));
     }
   }
+
 }
