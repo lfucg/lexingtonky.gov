@@ -19,5 +19,32 @@
 .fc .fc-widget-header table
   margin: 0.5em
 
-.fc a:visited
+.fc tr:not(.fc-list-item) a:visited
   color: #fff
+
+@media (min-width: 1px)
+  .usa-width-two-thirds.lex-calendar-page
+    width: 100%
+    margin-left: 0
+
+@media (max-width: 767px)
+  #calendar
+    display: none
+
+  #mobileCalendar
+    .fc-left
+      width: 100%
+
+      .fc-button-group
+        width: 100%
+        display: flex
+        flex: row nowrap
+
+        button.fc-button
+          width: 33%
+          float: none
+
+@media (min-width: 768px)
+  #mobileCalendar
+    display: none
+

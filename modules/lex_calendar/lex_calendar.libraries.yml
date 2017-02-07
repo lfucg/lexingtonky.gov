@@ -8,3 +8,4 @@ lex_calendar:
     js/fullcalendar.min.js: {}
   dependencies:
     - core/jquery
+    - core/jquery.ui.dialog

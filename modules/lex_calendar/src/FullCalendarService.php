@@ -89,11 +89,23 @@ class FullCalendarService {
        */
       if ($event->field_recurring_event->value === NULL || $event->field_recurring_event->value === 'No') {
         $this->addEvent($event,
-          str_replace('T', ' ', $event->field_date->value),
-          str_replace('T', ' ', $event->field_date_end->value)
+          $this->cleanDate($event->field_date)->format('Y-m-d H:i:s'),
+          $this->cleanDate($event->field_date_end)->format('Y-m-d H:i:s')
         );
       }
     }
+  }
+
+  /**
+   * Clean the date from Drupal's screwed up system to something useable.
+   */
+  protected function cleanDate($date) {
+    $date = new \DateTime($date->value);
+    // Ugly hack to adjust the time from UTC to Eastern, depending on the
+    // timezone.
+    ($date->format('I') == 1) ? $date->modify('-4 hours') : $date->modify('-5 hours');
+
+    return $date;
   }
 
   /**
@@ -114,6 +126,7 @@ class FullCalendarService {
       'end' => $end,
       'start' => $start,
       'url' => $event->url(),
+      'description' => $event->body->value
     ];
   }
 
@@ -128,10 +141,10 @@ class FullCalendarService {
    */
   public function addRecurringEvents(array $events) {
     foreach ($events as $event) {
-      $start = new \DateTime(substr($event->field_date->value, 0, 10), new \DateTimeZone('America/New_York'));
-      $end = new \DateTime(substr($event->field_date_end->value, 0, 10), new \DateTimeZone('America/New_York'));
-      $startTime = substr($event->field_date->value, 11);
-      $endTime = substr($event->field_date_end->value, 11);
+      $start = $this->cleanDate($event->field_date);
+      $end = $this->cleanDate($event->field_date_end);
+      $startTime = $start->format('H:i:s');
+      $endTime = $end->format('H:i:s');
       // Lowercase L.
       $dayOfWeek = $start->format('l');
       $weekOfMonth = ceil($start->format('j') / 7);

@@ -1,4 +1,5 @@
 <div id="calendar"></div>
+<div id="mobileCalendar"></div>
 <script>
 window.addEventListener( 'load', function(){
   (function($) {
@@ -12,7 +13,38 @@ window.addEventListener( 'load', function(){
       editable: false,
       eventsLimit: true,
       events: '/calendar/{{ fc_callback }}',
-      defaultDate: '{{ "now"|date("Y-m-d") }}'
+      defaultDate: '{{ "now"|date("Y-m-d") }}',
+      eventClick: function(event) {
+        if ($('#dialog')) {
+          $('#dialog').remove();
+        }
+        $('body').append('<div id="dialog">'+event.description+'</div>');
+
+        if (!event.allDay) {
+          $('#dialog').append('<p><strong>Starts: </strong>'+event.start.format('h:mm a')+'</p>');
+          $('#dialog').append('<p><strong>Until: </strong>'+event.end.format('h:mm a')+'</p>');
+        }
+
+        $('#dialog').append('<p><a href="'+event.url+'" class="">More</a></p>');
+        $('#dialog').dialog({
+          dialogClass: 'eventDialog',
+          title: event.title,
+        });
+        return false;
+      }
+    });
+
+    $('#mobileCalendar').fullCalendar({
+      header: {
+        left: 'prev,today,next',
+        center: 'title',
+        right: ''
+      },
+      editable: false,
+      eventsLimit: true,
+      defaultView: 'listWeek',
+      events: '/calendar/{{ fc_callback }}',
+      defaultDate: '{{ "now"|date("Y-m-d") }}',
     });
   })(jQuery);
 });
