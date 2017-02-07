@@ -60,6 +60,7 @@ class FullCalendarServiceTest extends UnitTestCase {
         'field_all_day' => '0',
         'title' => 'Normal Event Recur NULL',
         'field_recurring_event' => NULL,
+        'body' => 'A description'
       ]),
       new MockNode([
         'nid' => '1',
@@ -68,6 +69,7 @@ class FullCalendarServiceTest extends UnitTestCase {
         'field_all_day' => '1',
         'title' => 'Normal Event Recur No',
         'field_recurring_event' => 'No',
+        'body' => 'A description'
       ]),
       new MockNode([
         'nid' => '2',
@@ -76,6 +78,7 @@ class FullCalendarServiceTest extends UnitTestCase {
         'field_all_day' => '1',
         'title' => 'Recurring Event should not show',
         'field_recurring_event' => 'Weekly',
+        'body' => 'A description'
       ]),
     ]);
 
@@ -83,18 +86,20 @@ class FullCalendarServiceTest extends UnitTestCase {
       [
         'allDay' => FALSE,
         'id' => '0',
-        'end' => '2017-01-01 07:00:00',
-        'start' => '2017-01-01 06:00:00',
+        'end' => '2017-01-01 03:00:00',
+        'start' => '2017-01-01 02:00:00',
         'title' => 'Normal Event Recur NULL',
         'url' => 'link',
+        'description' => 'A description'
       ],
       [
         'allDay' => TRUE,
         'id' => '1',
-        'end' => '2017-01-01 08:00:00',
-        'start' => '2017-01-01 07:00:00',
+        'end' => '2017-01-01 04:00:00',
+        'start' => '2017-01-01 03:00:00',
         'title' => 'Normal Event Recur No',
         'url' => 'link',
+        'description' => 'A description'
       ],
     ], $this->service->getEvents());
   }
@@ -111,6 +116,7 @@ class FullCalendarServiceTest extends UnitTestCase {
         'field_all_day' => '0',
         'title' => 'Normal Event Recur Weekly',
         'field_recurring_event' => 'Weekly',
+        'body' => 'A description'
       ]),
     ]);
 
@@ -135,6 +141,7 @@ class FullCalendarServiceTest extends UnitTestCase {
         'field_all_day' => '0',
         'title' => 'Normal Event Recur Weekly',
         'field_recurring_event' => 'Weekly',
+        'body' => 'A description'
       ]),
     ]);
 
@@ -160,6 +167,7 @@ class FullCalendarServiceTest extends UnitTestCase {
         'field_all_day' => '0',
         'title' => 'Normal Event Recur Monthly',
         'field_recurring_event' => 'Monthly',
+        'body' => 'A description'
       ]),
     ]);
 
@@ -185,6 +193,7 @@ class FullCalendarServiceTest extends UnitTestCase {
         'field_all_day' => '0',
         'title' => 'Normal Event Recur Monthly',
         'field_recurring_event' => 'Monthly',
+        'body' => 'A description'
       ]),
     ]);
 
@@ -211,6 +220,7 @@ class MockNode {
   protected $field_all_day = NULL;
   protected $title = NULL;
   protected $field_recurring_event = NULL;
+  protected $description = '';
 
   /**
    *
