@@ -631,6 +631,8 @@ display:
       css_class: lex-event-list
       use_ajax: true
       group_by: false
+      link_url: /calendar/events
+      link_display: custom_url
     cache_metadata:
       max-age: -1
       contexts:
@@ -661,6 +663,8 @@ display:
         use_more: false
         use_more_always: false
         use_more_text: false
+        link_display: false
+        link_url: false
       style:
         type: html_list
         options:
@@ -1178,6 +1182,8 @@ display:
       use_more: true
       use_more_always: true
       use_more_text: events
+      link_display: custom_url
+      link_url: calendar/events
     cache_metadata:
       max-age: -1
       contexts:
@@ -3599,7 +3605,7 @@ display:
       use_more_always: true
       use_more_text: meetings
       link_display: custom_url
-      link_url: meeting-notices
+      link_url: calendar/meetings
     cache_metadata:
       max-age: -1
       contexts:

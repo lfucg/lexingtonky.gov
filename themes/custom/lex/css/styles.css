@@ -5304,6 +5304,9 @@ input:focus, input[type=search]:focus {
 .fc tr:not(.fc-list-item) a:visited {
   color: #fff; }
 
+#calendar table td.fc-today {
+  background: #e5eef7; }
+
 @media (min-width: 1px) {
   .usa-width-two-thirds.lex-calendar-page {
     width: 100%;

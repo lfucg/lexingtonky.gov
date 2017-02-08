@@ -14,28 +14,13 @@ window.addEventListener( 'load', function(){
       eventsLimit: true,
       events: '/calendar/{{ fc_callback }}',
       defaultDate: '{{ "now"|date("Y-m-d") }}',
-      eventClick: function(event) {
-
-        var timeformat = function(str) {
-          return str.replace('am', 'a.m.').replace('pm', 'p.m.');
-        };
-
-        if ($('#dialog')) {
-          $('#dialog').remove();
+      views: {
+        month: {
+          titleFormat: 'MMMM'
+        },
+        day: {
+          titleFormat: 'dddd, MMMM d'
         }
-        $('body').append('<div id="dialog">'+event.description+'</div>');
-
-        if (!event.allDay) {
-          $('#dialog').append('<p><strong>Starts: </strong>'+timeformat(event.start.format('h:mm a'))+'</p>');
-          $('#dialog').append('<p><strong>Until: </strong>'+timeformat(event.end.format('h:mm a'))+'</p>');
-        }
-
-        $('#dialog').append('<p><a href="'+event.url+'" class="">More</a></p>');
-        $('#dialog').dialog({
-          dialogClass: 'eventDialog',
-          title: event.title,
-        });
-        return false;
       }
     });
 
