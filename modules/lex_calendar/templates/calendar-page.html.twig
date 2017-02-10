@@ -3,7 +3,12 @@
 <script>
 window.addEventListener( 'load', function(){
   (function($) {
-    var today = new Date();
+    moment.updateLocale('en', {
+      meridiem: function(hour, minute, isLowerCase) {
+        return hour < 12 ? ' a.m.' : ' p.m.';
+      }
+    });
+
     $('#calendar').fullCalendar({
       header: {
         left: 'prev,next today',
