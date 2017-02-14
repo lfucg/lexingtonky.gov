@@ -119,7 +119,6 @@ class CalendarController extends ControllerBase {
     $query = $this->entityQuery->get('node')
       ->condition('status', 1)
       ->condition('type', $contentType)
-      ->condition('field_date_end', $this->events->getEnd()->format('Y-m-d'), '<=')
       ->condition('field_date', $this->events->getStart()->format('Y-m-d'), '>=');
 
     $this->events->addEvents($this->entityManager()->getStorage('node')->loadMultiple($query->execute()));

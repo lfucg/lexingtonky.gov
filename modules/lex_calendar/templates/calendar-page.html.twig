@@ -3,17 +3,22 @@
 <script>
 window.addEventListener( 'load', function(){
   (function($) {
-    moment.updateLocale('en', {
-      meridiem: function(hour, minute, isLowerCase) {
-        return hour < 12 ? ' a.m.' : ' p.m.';
-      }
-    });
+     moment.updateLocale('en', {
+       meridiem: function(hour, minute, isLowerCase) {
+        if ($('button.fc-month-button').hasClass('fc-state-active')) {
+          return hour < 12 ? 'a':'p';
+        }
+        else {
+          return hour < 12 ? ' a.m.' : ' p.m.';
+        }
+       }
+     });
 
     $('#calendar').fullCalendar({
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month, agendaWeek, agendaDay, listWeek',
+        right: 'month, agendaWeek, agendaDay, listMonth',
       },
       editable: false,
       eventsLimit: true,

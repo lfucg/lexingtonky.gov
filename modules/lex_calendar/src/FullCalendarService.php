@@ -90,7 +90,7 @@ class FullCalendarService {
       if ($event->field_recurring_event->value === NULL || $event->field_recurring_event->value === 'No') {
         $this->addEvent($event,
           $this->cleanDate($event->field_date)->format('Y-m-d H:i:s'),
-          $this->cleanDate($event->field_date_end)->format('Y-m-d H:i:s')
+          $this->getEndEvent($event)->format('Y-m-d H:i:s')
         );
       }
     }
@@ -103,9 +103,27 @@ class FullCalendarService {
     $date = new \DateTime($date->value);
     // Ugly hack to adjust the time from UTC to Eastern, depending on the
     // timezone.
-    ($date->format('I') == 1) ? $date->modify('-4 hours') : $date->modify('-5 hours');
-
+    $this->timeZoneAdjust($date);
     return $date;
+  }
+
+  protected function timeZoneAdjust(&$date) {
+    ($date->format('I') == 1) ? $date->modify('-4 hours') : $date->modify('-5 hours');
+  }
+
+  /**
+   * Apply corrections to the event data.
+   */
+  protected function getEndEvent($event) {
+    if (empty($event->field_date_end->value)) {
+      $date = new \DateTime($event->field_date->value);
+      $date->modify('+3 hours');
+      $this->timeZoneAdjust($date);
+      return $date;
+     }
+     else {
+      return $this->cleanDate($event->field_date_end);
+     }
   }
 
   /**
@@ -141,8 +159,9 @@ class FullCalendarService {
    */
   public function addRecurringEvents(array $events) {
     foreach ($events as $event) {
+      $this->applyCorrections($event);
       $start = $this->cleanDate($event->field_date);
-      $end = $this->cleanDate($event->field_date_end);
+      $end = $this->getEndEvent($event);
       $startTime = $start->format('H:i:s');
       $endTime = $end->format('H:i:s');
       // Lowercase L.
