@@ -1,0 +1,14 @@
+name: Twig tweak test
+type: module
+description: Support module for Tweak twig testing.
+package: Testing
+# core: 8.x
+dependencies:
+  - twig_tweak
+  - node
+
+# Information added by Drupal.org packaging script on 2017-01-21
+version: '8.x-1.5'
+core: '8.x'
+project: 'twig_tweak'
+datestamp: 1484994186
