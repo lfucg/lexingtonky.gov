@@ -159,7 +159,6 @@ class FullCalendarService {
    */
   public function addRecurringEvents(array $events) {
     foreach ($events as $event) {
-      $this->applyCorrections($event);
       $start = $this->cleanDate($event->field_date);
       $end = $this->getEndEvent($event);
       $startTime = $start->format('H:i:s');

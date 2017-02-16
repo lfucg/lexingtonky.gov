@@ -64,7 +64,6 @@
  */
 #}
 <article{{ attributes }}>
-
   {{ title_prefix }}
   {% if not page %}
     <h2{{ title_attributes }}>
@@ -75,7 +74,9 @@
 
   <div{{ content_attributes }}>
 
+  <h4>{{ lexDate(content) }}</h4>
   {% if content.field_date_end %}
+
       {{ content.field_date }}
   {% else %}
     {% include '@lex/includes/event-timespan.html.twig' with {
