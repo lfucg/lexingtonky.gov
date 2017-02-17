@@ -84,12 +84,7 @@
   {% endif %}
 
   <div{{ content_attributes }}>
-    {% include '@lex/includes/event-timespan.html.twig' with {
-        field_begin: content.field_date,
-        field_end: content.field_date_end,
-        hide_times: (render_var(content.field_hide_times[0]) == 'On')
-       }
-    %}
+    <h4>{{ lexDate(content) }}</h4>
     {% include '@lex/includes/add-to-calendar.html.twig' with { nid: node.id } %}
     {{ content | without('field_date','field_date_end', 'field_hide_times') }}
   </div>

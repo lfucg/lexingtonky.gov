@@ -61,7 +61,7 @@ class TwigExtension extends \Twig_Extension {
    */
   public function getFunctions() {
     return [
-      new \Twig_SimpleFunction('lexDate', [$this, 'getLexDate']),
+      new \Twig_SimpleFunction('lexDate', [$this, 'getLexDate'], ['is_safe' => ['html']]),
     ];
   }
 
@@ -188,7 +188,7 @@ class TwigExtension extends \Twig_Extension {
    *   Date string snippet.
    */
   protected function getDate(\DateTimeInterface $date) {
-    $return = $date->format('F j');
+    $return = $date->format('M j');
     $year = $this->getYear($date);
 
     if ($year) {
@@ -266,12 +266,12 @@ class TwigExtension extends \Twig_Extension {
       if (!$this->allDay) {
         $return .= ', ' . $this->getTime($this->start)
           . $this->conditionalAppendMeridiem($this->start, $this->end)
-          . ' - ' . $this->getTime($this->end)
+          . ' &#8211; ' . $this->getTime($this->end)
           . $this->appendMerdiem($this->end);
       }
       else {
-        if ($this->start->format('F j') !== $this->end->format('F j')) {
-          $return .= ' - ' . ($this->start->format('F') === $this->end->format('F') ? $this->end->format('j') : $this->end->format('F j'));
+        if ($this->start->format('M j') !== $this->end->format('M j')) {
+          $return .= ' &#8211; ' . ($this->start->format('M') === $this->end->format('M') ? $this->end->format('j') : $this->end->format('M j'));
         }
 
         if ($this->start->format('Y') !== $this->end->format('Y') && $this->now->format('Y') !== $this->end->format('Y')) {
@@ -290,15 +290,15 @@ class TwigExtension extends \Twig_Extension {
    *   Date string snippet.
    */
   protected function parseDayRange() {
-    if ($this->start->format('F j') === $this->end->format('F j')) {
+    if ($this->start->format('M j') === $this->end->format('M j')) {
       return '';
     }
     elseif ($this->recurring === 'Monthly') {
-      return ', ' . $this->start->format('F') . ' - ' . $this->end->format('F');
+      return ', ' . $this->start->format('M') . ' &#8211; ' . $this->end->format('M');
     }
     else {
-      return ', ' . $this->start->format('F j') . ' - '
-        . ($this->start->format('F') === $this->end->format('F') ? $this->end->format('j') : $this->end->format('F j'));
+      return ', ' . $this->start->format('M j') . ' &#8211; '
+        . ($this->start->format('M') === $this->end->format('M') ? $this->end->format('j') : $this->end->format('M j'));
     }
   }
 
@@ -316,7 +316,7 @@ class TwigExtension extends \Twig_Extension {
       $return = $this->getRecurrence()
         . ', ' . $this->getTime($this->start)
         . $this->conditionalAppendMeridiem($this->start, $this->end)
-        . ' - ' . $this->getTime($this->end)
+        . ' &#8211; ' . $this->getTime($this->end)
         . $this->appendMerdiem($this->end)
         . $this->parseDayRange();
     }
