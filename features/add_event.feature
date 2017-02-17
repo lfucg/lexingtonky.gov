@@ -39,9 +39,9 @@ Scenario Outline: Event dates and times are formatted correctly
 
   Examples:
     | begin date | begin time | end date   | end time | date format                                   | time to show |
-    | 2055-04-26 | 09:33      | 2055-04-26 | 10:33    | Apr 26, 2055 9:33 – 10:33 a.m.                | 10:33 |
-    | 2055-04-26 | 09:30      | 2055-04-26 | 12:30    | Apr 26, 2055 9:30 a.m. – 12:30 p.m.           |  |
-    | 2055-04-26 | 09:30      | 2055-04-27 | 10:00    | Apr 26, 2055 9:30 a.m. – Apr 27, 2055 10 a.m. |  |
+    | 2055-04-26 | 09:33      | 2055-04-26 | 10:33    | Apr 26, 2055, 9:33 – 10:33 a.m.                | 10:33 |
+    | 2055-04-26 | 09:30      | 2055-04-26 | 12:30    | Apr 26, 2055, 9:30 a.m. – 12:30 p.m.           |  |
+    | 2055-04-26 | 09:30      | 2055-04-27 | 10:00    | Apr 26, 2055, 9:30 a.m. – Apr 27, 2055, 10 a.m. |  |
 
 Scenario Outline: Event start/end times can be hidden
   Given I am logged in as a user with the "editor" role
