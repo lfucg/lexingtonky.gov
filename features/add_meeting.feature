@@ -15,7 +15,7 @@ Scenario: Meetings appear on calendar
   # And I fill in "edit-field-date-end-0-value-time" with "<end time>"
   And I press the 'Save and Publish' button
 
-  Then I should see "Jul 18, 2045 9:30 a.m."
+  Then I should see "Jul 18, 2045, 9:30 a.m."
   And I should see "Meetings and notices" in the breadcrumb region
 
   # Handle no end time correctly
