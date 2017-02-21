@@ -17,6 +17,7 @@ module:
   ctools: 0
   datetime: 0
   dblog: 0
+  diff: 0
   dynamic_page_cache: 0
   editor: 0
   entity_reference_revisions: 0
