@@ -27,6 +27,7 @@ $settings['trusted_host_patterns'] = array(
   '^.+lexky-d8\.pantheonsite\.io$',
   '^www\.lexingtonky\.gov$',
   '^lexky-d8\.kbox\.site$',
+  '^lexky-d8-2\.kbox\.site$',
   '^localhost$'
 );
 
