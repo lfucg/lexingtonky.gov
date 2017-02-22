@@ -3,17 +3,25 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.landing_page.body
     - field.field.node.landing_page.field_lex_custom_banner_image
     - field.field.node.landing_page.field_lex_site_nav
     - node.type.landing_page
   module:
     - image
+    - text
     - user
 id: node.landing_page.default
 targetEntityType: node
 bundle: landing_page
 mode: default
 content:
+  body:
+    weight: 103
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
   field_lex_custom_banner_image:
     weight: 101
     label: above
@@ -35,4 +43,6 @@ content:
     third_party_settings: {  }
   workbench_moderation_control:
     weight: -20
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }

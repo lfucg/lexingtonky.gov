@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.landing_page.body
     - field.field.node.landing_page.field_lex_custom_banner_image
     - field.field.node.landing_page.field_lex_site_nav
     - image.style.thumbnail
@@ -10,56 +11,65 @@ dependencies:
   module:
     - image
     - path
+    - text
     - workbench_moderation
 id: node.landing_page.default
 targetEntityType: node
 bundle: landing_page
 mode: default
 content:
+  body:
+    weight: 2
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea_with_summary
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 4
     settings: {  }
     third_party_settings: {  }
   field_lex_custom_banner_image:
-    weight: 31
+    weight: 1
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
     type: image_image
   field_lex_site_nav:
-    weight: 32
+    weight: 8
     settings: {  }
     third_party_settings: {  }
     type: options_select
   path:
     type: path
-    weight: 30
+    weight: 7
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 5
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 6
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 0
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
