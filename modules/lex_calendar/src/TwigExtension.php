@@ -118,7 +118,19 @@ class TwigExtension extends \Twig_Extension {
   public function parseEventTimeString($start, $end, $allDay, $recurring) {
     $this->start = new \DateTime($start);
     $this->allDay = (boolean) $allDay;
-    $this->recurring = $recurring;
+
+    switch ($recurring) {
+      case 'Weekly':
+        $this->recurring = 'Weekly';
+      break;
+      case 'Monthly':
+        $this->recurring = 'Monthly';
+      break;
+      default:
+        $this->recurring = '';
+      break;
+    }
+
     $this->end = empty($end) ? NULL : new \DateTime($end);
     $this->timezoneAdjust();
     return $this->end === NULL ? $this->parseSingleDate() : $this->parseRange();

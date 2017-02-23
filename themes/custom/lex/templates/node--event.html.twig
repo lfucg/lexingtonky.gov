@@ -84,6 +84,7 @@
   {% endif %}
 
   <div{{ content_attributes }}>
+  <pre>{{ content.field_recurring_event }}</pre>
     <h4>{{ lexDate(content) }}</h4>
     {% include '@lex/includes/add-to-calendar.html.twig' with { nid: node.id } %}
     {{ content | without('field_date','field_date_end', 'field_hide_times', 'field_recurring_event', 'field_all_day') }}
