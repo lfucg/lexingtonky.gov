@@ -5112,6 +5112,8 @@ iframe {
   @media screen and (min-width: 1201px) {
     .lex-grid-full {
       padding: 0; } }
+  .lex-grid-full article {
+    padding: 1em; }
 
 .lex-section {
   margin-bottom: 1.7em; }

@@ -101,6 +101,10 @@ iframe {
   @include media($large-screen) {
     padding: 0;
   }
+
+  article {
+    padding: 1em;
+  }
 }
 
 .lex-section {
