@@ -43,6 +43,26 @@ class TwigExtension extends \Twig_Extension {
   protected $now;
 
   /**
+   * Month list.
+   *
+   * Some are to be abbreviated, some not.
+   */
+  protected $months = [
+    'Jan.',
+    'Feb.',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'Aug.',
+    'Sept.',
+    'Oct.',
+    'Nov.',
+    'Dec.'
+  ];
+
+  /**
    * Create a TwigExtension object for the lex_calendar module.
    */
   public function __construct() {
@@ -200,7 +220,7 @@ class TwigExtension extends \Twig_Extension {
    *   Date string snippet.
    */
   protected function getDate(\DateTimeInterface $date) {
-    $return = $date->format('M j');
+    $return = $this->getMonthDay($date);
     $year = $this->getYear($date);
 
     if ($year) {
@@ -208,6 +228,10 @@ class TwigExtension extends \Twig_Extension {
     }
 
     return $return;
+  }
+
+  protected function getMonthDay(\DateTimeInterface $date) {
+    return $this->months[$date->format('n') - 1] . $date->format(' j');
   }
 
   /**
@@ -283,7 +307,7 @@ class TwigExtension extends \Twig_Extension {
       }
       else {
         if ($this->start->format('M j') !== $this->end->format('M j')) {
-          $return .= ' &#8211; ' . ($this->start->format('M') === $this->end->format('M') ? $this->end->format('j') : $this->end->format('M j'));
+          $return .= ' &#8211; ' . ($this->start->format('M') === $this->end->format('M') ? $this->end->format('j') : $this->getMonthDay($this->end));
         }
 
         if ($this->start->format('Y') !== $this->end->format('Y') && $this->now->format('Y') !== $this->end->format('Y')) {
@@ -306,11 +330,11 @@ class TwigExtension extends \Twig_Extension {
       return '';
     }
     elseif ($this->recurring === 'Monthly') {
-      return ', ' . $this->start->format('M') . ' &#8211; ' . $this->end->format('M');
+      return ', ' . $this->months[$this->start->format('n') - 1] . ' &#8211; ' . $this->months[$this->end->format('n') - 1];
     }
     else {
-      return ', ' . $this->start->format('M j') . ' &#8211; '
-        . ($this->start->format('M') === $this->end->format('M') ? $this->end->format('j') : $this->end->format('M j'));
+      return ', ' . $this->getMonthDay($this->start) . ' &#8211; '
+        . ($this->start->format('M') === $this->end->format('M') ? $this->end->format('j') : $this->getMonthDay($this->end));
     }
   }
 
