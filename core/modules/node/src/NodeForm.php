@@ -22,6 +22,9 @@ class NodeForm extends ContentEntityForm {
 
   /**
    * Whether this node has been previewed or not.
+   *
+   * @deprecated Scheduled for removal in Drupal 8.3.x. Use the form state
+   *   property 'has_been_previewed' instead.
    */
   protected $hasBeenPreviewed = FALSE;
 
@@ -65,33 +68,33 @@ class NodeForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
+    $this->hasBeenPreviewed = $form_state->get('has_been_previewed') ?: FALSE;
+
     // Try to restore from temp store, this must be done before calling
     // parent::form().
-    $uuid = $this->entity->uuid();
     $store = $this->tempStoreFactory->get('node_preview');
 
-    // If the user is creating a new node, the UUID is passed in the request.
-    if ($request_uuid = \Drupal::request()->query->get('uuid')) {
-      $uuid = $request_uuid;
-    }
-
-    if ($preview = $store->get($uuid)) {
+    // Attempt to load from preview when the uuid is present unless we are
+    // rebuilding the form.
+    $request_uuid = \Drupal::request()->query->get('uuid');
+    if (!$form_state->isRebuilding() && $request_uuid && $preview = $store->get($request_uuid)) {
       /** @var $preview \Drupal\Core\Form\FormStateInterface */
 
-      foreach ($preview->getValues() as $name => $value) {
-        $form_state->setValue($name, $value);
-      }
+      $form_state->setStorage($preview->getStorage());
+      $form_state->setUserInput($preview->getUserInput());
 
       // Rebuild the form.
       $form_state->setRebuild();
+
+      // The combination of having user input and rebuilding the form means
+      // that it will attempt to cache the form state which will fail if it is
+      // a GET request.
+      $form_state->setRequestMethod('POST');
+
       $this->entity = $preview->getFormObject()->getEntity();
       $this->entity->in_preview = NULL;
 
-      // Remove the stale temp store entry for existing nodes.
-      if (!$this->entity->isNew()) {
-        $store->delete($uuid);
-      }
-
+      $form_state->set('has_been_previewed', TRUE);
       $this->hasBeenPreviewed = TRUE;
     }
 
@@ -234,7 +237,7 @@ class NodeForm extends ContentEntityForm {
     $node = $this->entity;
     $preview_mode = $node->type->entity->getPreviewMode();
 
-    $element['submit']['#access'] = $preview_mode != DRUPAL_REQUIRED || $this->hasBeenPreviewed;
+    $element['submit']['#access'] = $preview_mode != DRUPAL_REQUIRED || $form_state->get('has_been_previewed');
 
     // If saving is an option, privileged users get dedicated form submit
     // buttons to adjust the publishing status while saving in one go.
@@ -341,10 +344,19 @@ class NodeForm extends ContentEntityForm {
     $store = $this->tempStoreFactory->get('node_preview');
     $this->entity->in_preview = TRUE;
     $store->set($this->entity->uuid(), $form_state);
-    $form_state->setRedirect('entity.node.preview', array(
+
+    $route_parameters = [
       'node_preview' => $this->entity->uuid(),
-      'view_mode_id' => 'default',
-    ));
+      'view_mode_id' => 'full',
+    ];
+
+    $options = [];
+    $query = $this->getRequest()->query;
+    if ($query->has('destination')) {
+      $options['query']['destination'] = $query->get('destination');
+      $query->remove('destination');
+    }
+    $form_state->setRedirect('entity.node.preview', $route_parameters, $options);
   }
 
   /**
