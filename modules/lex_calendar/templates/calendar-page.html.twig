@@ -18,7 +18,7 @@ window.addEventListener( 'load', function(){
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month, agendaWeek, agendaDay, listMonth',
+        right: 'month, agendaWeek, listMonth',
       },
       editable: false,
       eventsLimit: true,
@@ -42,7 +42,7 @@ window.addEventListener( 'load', function(){
       },
       editable: false,
       eventsLimit: true,
-      defaultView: 'listWeek',
+      defaultView: 'listMonth',
       events: '/calendar/{{ fc_callback }}',
       defaultDate: '{{ "now"|date("Y-m-d") }}',
     });
