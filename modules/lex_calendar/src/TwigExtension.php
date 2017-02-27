@@ -153,7 +153,7 @@ class TwigExtension extends \Twig_Extension {
 
     $this->end = empty($end) ? NULL : new \DateTime($end);
     $this->timezoneAdjust();
-    return $this->end === NULL ? $this->parseSingleDate() : $this->parseRange();
+    return $this->end === NULL || $this->start == $this->end ? $this->parseSingleDate() : $this->parseRange();
   }
 
   /**
