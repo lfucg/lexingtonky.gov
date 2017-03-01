@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.page.body
     - field.field.node.page.field_lex_custom_banner_image
     - field.field.node.page.field_lex_site_nav
+    - field.field.node.page.field_metatags
     - field.field.node.page.field_office_to_contact
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
@@ -15,6 +16,7 @@ dependencies:
     - node.type.page
   module:
     - entity_reference_revisions
+    - metatag
     - text
     - user
 id: node.page.default
@@ -22,6 +24,12 @@ targetEntityType: node
 bundle: page
 mode: default
 content:
+  field_metatags:
+    weight: 4
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
   field_page_overview:
     type: text_default
     weight: 2

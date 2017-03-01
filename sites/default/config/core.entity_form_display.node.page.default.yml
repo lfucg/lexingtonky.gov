@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.page.body
     - field.field.node.page.field_lex_custom_banner_image
     - field.field.node.page.field_lex_site_nav
+    - field.field.node.page.field_metatags
     - field.field.node.page.field_office_to_contact
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
@@ -17,6 +18,7 @@ dependencies:
   module:
     - file
     - image
+    - metatag
     - paragraphs
     - path
     - text
@@ -43,6 +45,11 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: options_select
+  field_metatags:
+    weight: 28
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
   field_office_to_contact:
     weight: 7
     settings: {  }

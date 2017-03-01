@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.final_order.field_address
     - field.field.node.final_order.field_final_order_date
     - field.field.node.final_order.field_final_order_docs
+    - field.field.node.final_order.field_metatags
     - field.field.node.final_order.field_owners_address
     - field.field.node.final_order.field_person_charged
     - field.field.node.final_order.field_pva_num
@@ -13,6 +14,7 @@ dependencies:
   module:
     - datetime
     - file
+    - metatag
     - user
 id: node.final_order.default
 targetEntityType: node
@@ -40,6 +42,12 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: file_default
+  field_metatags:
+    weight: 9
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
   field_owners_address:
     weight: 8
     label: above

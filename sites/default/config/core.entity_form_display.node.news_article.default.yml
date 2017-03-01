@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.news_article.body
     - field.field.node.news_article.field_image
     - field.field.node.news_article.field_media_contact
+    - field.field.node.news_article.field_metatags
     - field.field.node.news_article.field_related_departments
     - field.field.node.news_article.field_related_documents
     - image.style.thumbnail
@@ -13,6 +14,7 @@ dependencies:
   module:
     - file
     - image
+    - metatag
     - paragraphs
     - path
     - text
@@ -52,6 +54,11 @@ content:
       add_mode: dropdown
       form_display_mode: default
     third_party_settings: {  }
+  field_metatags:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
   field_related_departments:
     weight: 1
     settings: {  }

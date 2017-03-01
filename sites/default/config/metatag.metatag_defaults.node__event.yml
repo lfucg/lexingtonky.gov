@@ -1,0 +1,7 @@
+uuid: e08b5c46-9a34-4e06-babb-6ef830e1e8b8
+langcode: en
+status: true
+dependencies: {  }
+id: node__event
+label: 'Content: Event'
+tags: {  }

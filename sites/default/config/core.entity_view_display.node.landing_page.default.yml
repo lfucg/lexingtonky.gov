@@ -6,9 +6,11 @@ dependencies:
     - field.field.node.landing_page.body
     - field.field.node.landing_page.field_lex_custom_banner_image
     - field.field.node.landing_page.field_lex_site_nav
+    - field.field.node.landing_page.field_metatags
     - node.type.landing_page
   module:
     - image
+    - metatag
     - text
     - user
 id: node.landing_page.default
@@ -37,6 +39,12 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+  field_metatags:
+    weight: 104
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
   links:
     weight: 100
     settings: {  }

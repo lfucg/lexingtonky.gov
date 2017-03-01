@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.final_order.field_address
     - field.field.node.final_order.field_final_order_date
     - field.field.node.final_order.field_final_order_docs
+    - field.field.node.final_order.field_metatags
     - field.field.node.final_order.field_owners_address
     - field.field.node.final_order.field_person_charged
     - field.field.node.final_order.field_pva_num
@@ -14,6 +15,7 @@ dependencies:
     - datetime
     - file
     - gis_api
+    - metatag
     - workbench_moderation
 id: node.final_order.default
 targetEntityType: node
@@ -43,6 +45,11 @@ content:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
+  field_metatags:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
   field_owners_address:
     weight: 7
     settings:

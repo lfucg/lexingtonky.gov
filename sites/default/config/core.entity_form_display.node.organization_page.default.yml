@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.organization_page.body
     - field.field.node.organization_page.field_lex_custom_banner_image
     - field.field.node.organization_page.field_lex_site_nav
+    - field.field.node.organization_page.field_metatags
     - field.field.node.organization_page.field_office_to_contact
     - field.field.node.organization_page.field_organization_image
     - field.field.node.organization_page.field_organization_taxonomy_term
@@ -18,6 +19,7 @@ dependencies:
     - file
     - image
     - link
+    - metatag
     - paragraphs
     - path
     - text
@@ -52,6 +54,11 @@ content:
     weight: 8
     settings: {  }
     third_party_settings: {  }
+  field_metatags:
+    weight: 28
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
   field_office_to_contact:
     weight: 5
     settings: {  }

@@ -8,4 +8,26 @@ id: front
 label: 'Front page'
 tags:
   canonical_url: '[site:url]'
+  description: 'The official site of the City of Lexington provides quick and easy access to information about the agencies, programs and services available.'
+  generator: 'Drupal 8'
+  geo_placename: 'Lexington Kentucky'
+  geo_position: '38.044810, -84.495460'
+  geo_region: US-KY
+  icbm: '38.044810, -84.495460'
+  news_keywords: 'City of Lexington KY'
   shortlink: '[site:url]'
+  title: 'Lexington, Kentucky: Horse Capital of the World®'
+  article_author: 'https://www.facebook.com/LexingtonKyGov/'
+  article_publisher: 'https://www.facebook.com/LexingtonKyGov/'
+  og_country_name: USA
+  og_description: 'Official site provides quick and easy access to information about the City of Lexington agencies, programs and services.'
+  og_email: webmaster@lexingtonky.gov
+  og_latitude: '38.044810'
+  og_locale: en_US
+  og_locality: Lexington
+  og_longitude: '-84.495460'
+  og_phone_number: '(859) 425-2255'
+  og_postal_code: '40507'
+  og_region: Kentucky
+  og_site_name: 'City of Lexington, Kentucky, Official Site'
+  og_street_address: '200 East Main Street'

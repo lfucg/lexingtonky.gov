@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.organization_page.body
     - field.field.node.organization_page.field_lex_custom_banner_image
     - field.field.node.organization_page.field_lex_site_nav
+    - field.field.node.organization_page.field_metatags
     - field.field.node.organization_page.field_office_to_contact
     - field.field.node.organization_page.field_organization_image
     - field.field.node.organization_page.field_organization_taxonomy_term
@@ -14,12 +15,19 @@ dependencies:
     - field.field.node.organization_page.field_top_services
     - node.type.organization_page
   module:
+    - metatag
     - user
 id: node.organization_page.default
 targetEntityType: node
 bundle: organization_page
 mode: default
 content:
+  field_metatags:
+    weight: 1
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
   workbench_moderation_control:
     weight: 0
     settings: {  }

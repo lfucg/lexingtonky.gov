@@ -10,6 +10,7 @@ dependencies:
     - field.field.taxonomy_term.locations.field_contact_phone
     - field.field.taxonomy_term.locations.field_hours_of_operation
     - field.field.taxonomy_term.locations.field_location_detail
+    - field.field.taxonomy_term.locations.field_metatags
     - field.field.taxonomy_term.locations.field_social_link_facebook
     - field.field.taxonomy_term.locations.field_social_link_instagram
     - field.field.taxonomy_term.locations.field_social_link_linkedin
@@ -22,6 +23,7 @@ dependencies:
     - taxonomy.vocabulary.locations
   module:
     - link
+    - metatag
     - text
 id: taxonomy_term.locations.default
 targetEntityType: taxonomy_term
@@ -82,6 +84,12 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+  field_metatags:
+    weight: 17
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
   field_social_link_facebook:
     weight: 11
     label: hidden

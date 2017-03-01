@@ -9,12 +9,14 @@ dependencies:
     - field.field.node.meeting.field_date_end
     - field.field.node.meeting.field_external_id
     - field.field.node.meeting.field_locations
+    - field.field.node.meeting.field_metatags
     - field.field.node.meeting.field_recurring_event
     - field.field.node.meeting.field_related_departments
     - field.field.node.meeting.field_related_documents
     - node.type.meeting
   module:
     - datetime
+    - metatag
     - options
     - text
     - user
@@ -62,6 +64,12 @@ content:
       view_mode: default
     third_party_settings: {  }
     type: entity_reference_entity_view
+  field_metatags:
+    weight: 8
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
   field_recurring_event:
     weight: 7
     label: above

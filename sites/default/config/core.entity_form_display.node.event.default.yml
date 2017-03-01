@@ -12,12 +12,14 @@ dependencies:
     - field.field.node.event.field_hide_times
     - field.field.node.event.field_locations
     - field.field.node.event.field_media_contact
+    - field.field.node.event.field_metatags
     - field.field.node.event.field_recurring_event
     - field.field.node.event.field_related_departments
     - node.type.event
   module:
     - datetime
     - link
+    - metatag
     - paragraphs
     - path
     - text
@@ -91,6 +93,11 @@ content:
       form_display_mode: default
     third_party_settings: {  }
     type: entity_reference_paragraphs
+  field_metatags:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
   field_recurring_event:
     weight: 13
     settings: {  }

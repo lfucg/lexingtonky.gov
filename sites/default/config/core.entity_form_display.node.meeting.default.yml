@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.meeting.field_date_end
     - field.field.node.meeting.field_external_id
     - field.field.node.meeting.field_locations
+    - field.field.node.meeting.field_metatags
     - field.field.node.meeting.field_recurring_event
     - field.field.node.meeting.field_related_departments
     - field.field.node.meeting.field_related_documents
@@ -16,6 +17,7 @@ dependencies:
   module:
     - datetime
     - file
+    - metatag
     - path
     - text
     - workbench_moderation
@@ -58,6 +60,11 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: options_select
+  field_metatags:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
   field_recurring_event:
     weight: 12
     settings: {  }
