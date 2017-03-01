@@ -5329,5 +5329,15 @@ input:focus, input[type=search]:focus {
 @media (min-width: 768px) {
   #mobileCalendar {
     display: none; } }
+table.directory {
+  border: 1px solid #001A49; }
+  table.directory th {
+    background: #001A49;
+    color: #fff;
+    font-weight: bold; }
+  table.directory tr:nth-child(even) td {
+    background: #BFD5EA; }
+  table.directory td:nth-child(3) {
+    white-space: nowrap; }
 
 /*# sourceMappingURL=styles.css.map */
