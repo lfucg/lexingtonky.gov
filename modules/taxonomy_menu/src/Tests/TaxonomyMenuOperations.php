@@ -77,15 +77,12 @@ class TaxonomyMenuOperations extends WebTestBase {
     $this->drupalPostForm(NULL, $edit, t('Save'));
 
     // Create new taxonomy menu.
-    $this->drupalGet('admin/structure/taxonomy_menu/add');
+    $this->drupalGet('admin/config/system/taxonomy_menu/add');
     $edit = [
       'id' => 'test_tax_menu',
       'label' => 'test tax menu',
       'vocabulary' => 'test_tax_vocab',
       'menu' => 'test-menu',
-      'expanded' => 1,
-      'depth' => '1',
-      'menu_parent' => 'test-menu:',
     ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
   }
@@ -160,19 +157,6 @@ class TaxonomyMenuOperations extends WebTestBase {
       'links[menu_plugin_id:taxonomy_menu.menu_link.test.3][enabled]',
       NULL,
       'I should not expect to see enabled field for taxonomy term 3'
-    );
-  }
-
-  /**
-   * Tests if of menu links from taxonony_menu is expanded.
-   */
-  function testTaxMenuLinkExpanded() {
-    $this->drupalGet('admin/structure/menu/link/taxonomy_menu.menu_link:taxonomy_menu.menu_link.test_tax_menu.1/edit');
-
-    $this->assertFieldByName(
-      'expanded',
-      1,
-      'I should expect to see expanded value for menu based on taxonomy term 1'
     );
   }
 

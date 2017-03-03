@@ -7,9 +7,9 @@
 
 namespace Drupal\taxonomy_menu\Form;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\system\Entity\Menu;
 
 /**
  * Class TaxonomyMenuForm.
@@ -45,7 +45,7 @@ class TaxonomyMenuForm extends EntityForm {
 
     // Vocabulary selection.
     $options = [];
-    $vocabulary_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary');
+    $vocabulary_storage = \Drupal::entityManager()->getStorage('taxonomy_vocabulary');
     foreach ($vocabulary_storage->loadMultiple() as $vocabulary) {
       $options[$vocabulary->id()] = $vocabulary->label();
     }
@@ -58,7 +58,7 @@ class TaxonomyMenuForm extends EntityForm {
 
     // Menu selection.
     $options = [];
-    $menu_storage = \Drupal::entityTypeManager()->getStorage('menu');
+    $menu_storage = \Drupal::entityManager()->getStorage('menu');
     foreach ($menu_storage->loadMultiple() as $menu) {
       $options[$menu->id()] = $menu->label();
     }
@@ -67,35 +67,6 @@ class TaxonomyMenuForm extends EntityForm {
       '#title' => $this->t('Menu'),
       '#options' => $options,
       '#default_value' => $taxonomy_menu->getMenu(),
-    ];
-    $form['expanded'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('All menus entries expanded'),
-      '#default_value' => $taxonomy_menu->expanded,
-    ];
-    $form['depth'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Depth'),
-      '#default_value' => $taxonomy_menu->getDepth(),
-      '#options' => range(1,9),
-    ];
-
-    // Menu selection.
-    $custom_menus = Menu::loadMultiple();
-    foreach ($custom_menus as $menu_name => $menu) {
-      $custom_menus[$menu_name] = $menu->label();
-    }
-    asort($custom_menus);
-
-    $menu_parent_selector = \Drupal::service('menu.parent_form_selector');
-    $available_menus = $custom_menus;
-    $menu_options = $menu_parent_selector->getParentSelectOptions(null, $available_menus);
-
-    $form['menu_parent'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Parent menu link'),
-      '#options' => $menu_options,
-      '#default_value' => $taxonomy_menu->getMenuParent(),
     ];
 
     return $form;
@@ -118,7 +89,7 @@ class TaxonomyMenuForm extends EntityForm {
         '%label' => $taxonomy_menu->label(),
       )));
     }
-    $form_state->setRedirectUrl($taxonomy_menu->toUrl('collection'));
+    $form_state->setRedirectUrl($taxonomy_menu->urlInfo('collection'));
   }
 
 }

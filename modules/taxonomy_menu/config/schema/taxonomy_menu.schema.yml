@@ -14,12 +14,3 @@ taxonomy_menu.taxonomy_menu.*:
     menu:
       type: string
       label: 'Menu'
-    expanded:
-      type: boolean
-      label: 'Expanded'
-    depth:
-      type: integer
-      label: 'Depth'
-    menu_parent:
-      type: string
-      label: 'Menu parent'

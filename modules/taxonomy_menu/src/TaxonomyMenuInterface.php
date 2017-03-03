@@ -28,16 +28,6 @@ interface TaxonomyMenuInterface extends ConfigEntityInterface {
   public function getVocabulary();
 
   /**
-   * @todo
-   */
-  public function getDepth();
-
-  /**
-   * @todo
-   */
-  public function getMenuParent();
-
-  /**
    * Get menu link plugin definitions
    *
    * @param array $base_plugin_definition

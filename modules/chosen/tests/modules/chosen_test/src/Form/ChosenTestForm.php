@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * Contains \Drupal\chosen_test\Form\ChosenTestForm.
+ */
 
 namespace Drupal\chosen_test\Form;
 

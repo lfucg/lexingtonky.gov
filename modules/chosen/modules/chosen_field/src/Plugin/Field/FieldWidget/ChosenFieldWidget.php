@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\chosen_field\Plugin\Field\FieldWidget\ChosenFieldWidget.
+ */
+
 namespace Drupal\chosen_field\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Form\FormStateInterface;

@@ -13,11 +13,6 @@ class PathautoPatternListBuilder extends DraggableListBuilder {
   /**
    * {@inheritdoc}
    */
-  protected $limit = FALSE;
-
-  /**
-   * {@inheritdoc}
-   */
   public function getFormId() {
     return 'pathauto_pattern_list';
   }

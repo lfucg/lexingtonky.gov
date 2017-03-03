@@ -1,7 +1,6 @@
 <?php
 
 namespace Drupal\entity_reference_revisions;
-use Drupal\Core\Entity\EntityStorageInterface;
 
 /**
  * Trait for EntityNeedsSaveInterface.
@@ -29,11 +28,4 @@ trait EntityNeedsSaveTrait {
     $this->needsSave = $needs_save;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
-    parent::postSave($storage, $update);
-    $this->setNeedsSave(FALSE);
-  }
 }

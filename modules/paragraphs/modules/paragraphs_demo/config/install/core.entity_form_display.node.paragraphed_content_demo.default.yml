@@ -25,7 +25,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_paragraphs_demo:
-    type: paragraphs
+    type: entity_reference_paragraphs
     weight: 32
     settings:
       title: Paragraph
@@ -33,7 +33,6 @@ content:
       edit_mode: open
       add_mode: dropdown
       form_display_mode: default
-      default_paragraph_type: ''
     third_party_settings: {  }
   langcode:
     type: language_select

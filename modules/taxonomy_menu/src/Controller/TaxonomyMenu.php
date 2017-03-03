@@ -8,6 +8,7 @@
 namespace Drupal\taxonomy_menu\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Menu\MenuTreeParameters;
 
 /**
  * Class TaxonomyMenu.
@@ -37,7 +38,7 @@ class TaxonomyMenu extends ControllerBase {
     */
 
     // Load taxonomy menus.
-    $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_menu');
+    $storage = \Drupal::entityManager()->getStorage('taxonomy_menu');
     $taxonomy_menus = $storage->loadMultiple();
     $links = [];
 

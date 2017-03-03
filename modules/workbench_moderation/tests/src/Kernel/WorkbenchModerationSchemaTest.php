@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\workbench_moderation\Kernel;
+namespace Drupal\workbench_moderation\Tests;
 
 use Drupal\block_content\Entity\BlockContentType;
 use Drupal\config\Tests\SchemaCheckTestTrait;

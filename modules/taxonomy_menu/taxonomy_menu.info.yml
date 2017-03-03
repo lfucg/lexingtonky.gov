@@ -5,8 +5,8 @@ description: Embed a taxonomy tree into a menu
 package: Menu
 
 
-# Information added by Drupal.org packaging script on 2016-11-23
-version: '8.x-3.3'
+# Information added by Drupal.org packaging script on 2016-03-12
+version: '8.x-3.2'
 core: '8.x'
 project: 'taxonomy_menu'
-datestamp: 1479916788
+datestamp: 1457813951

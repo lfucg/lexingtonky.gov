@@ -18,7 +18,7 @@ use Drupal\taxonomy_menu\TaxonomyMenuInterface;
  *
  * @ConfigEntityType(
  *   id = "taxonomy_menu",
- *   label = @Translation("Taxonomy menu"),
+ *   label = @Translation("TaxonomyMenu"),
  *   handlers = {
  *     "list_builder" = "Drupal\taxonomy_menu\Controller\TaxonomyMenuListBuilder",
  *     "form" = {
@@ -35,9 +35,9 @@ use Drupal\taxonomy_menu\TaxonomyMenuInterface;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "edit-form" = "/admin/structure/taxonomy_menu/{taxonomy_menu}",
- *     "delete-form" = "/admin/structure/taxonomy_menu/{taxonomy_menu}/delete",
- *     "collection" = "/admin/structure/taxonomy_menu"
+ *     "edit-form" = "/admin/config/system/taxonomy_menu/{taxonomy_menu}",
+ *     "delete-form" = "/admin/config/system/taxonomy_menu/{taxonomy_menu}/delete",
+ *     "collection" = "/admin/config/system/taxonomy_menu"
  *   }
  * )
  */
@@ -65,29 +65,12 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
   protected $vocabulary;
 
   /**
-   * @todo
-   */
-  protected $depth;
-
-  /**
    * The menu to embed the vocabulary.
    *
    * @var string
    *   The machine name of the menu entity.
    */
   protected $menu;
-
-  /**
-   * The expanded mode.
-   *
-   * @var boolean
-   */
-  public $expanded;
-
-   /**
-   * @todo
-   */
-  protected $menu_parent;
 
   /**
    * {@inheritdoc}
@@ -99,22 +82,8 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
   /**
    * {@inheritdoc}
    */
-  public function getDepth() {
-    return $this->depth;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getMenu() {
     return $this->menu;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getMenuParent() {
-    return $this->menu_parent;
   }
 
   /**
@@ -160,15 +129,15 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
    */
   public function getLinks($base_plugin_definition = [], $include_base_plugin_id = FALSE) {
     /** @var $termStorage \Drupal\taxonomy\TermStorageInterface */
-    $termStorage = $this->entityTypeManager()->getStorage('taxonomy_term');
+    $termStorage = $this->entityManager()->getStorage('taxonomy_term');
     // Load taxonomy terms for tax menu vocab.
-    $terms = $termStorage->loadTree($this->getVocabulary(), 0, $this->getDepth() + 1);
+    $terms = $termStorage->loadTree($this->getVocabulary());
 
     $links = [];
 
     // Create menu links for each term in the vocabulary.
     foreach ($terms as $term) {
-      if (!$term instanceof TermInterface) {
+      if (!$term instanceof \Drupal\taxonomy\TermInterface) {
         $term = Term::load($term->tid);
       }
       $mlid = $this->buildMenuPluginId($term, $include_base_plugin_id);
@@ -210,7 +179,7 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
    */
   protected function buildMenuDefinition(TermInterface $term, $base_plugin_definition) {
     $term_id = $term->id();
-    $term_url = $term->toUrl();
+    $term_url = $term->urlInfo();
     $taxonomy_menu_id = $this->id();
     $menu_id = $this->getMenu();
 
@@ -218,7 +187,7 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
     // TODO: Evaluate use case of multiple parents (should we make many menu items?)
     $menu_parent_id = NULL;
     /** @var $termStorage \Drupal\taxonomy\TermStorageInterface */
-    $termStorage = $this->entityTypeManager()->getStorage('taxonomy_term');
+    $termStorage = $this->entityManager()->getStorage('taxonomy_term');
     $parents = $termStorage->loadParents($term_id);
     $parents = array_values($parents);
 
@@ -228,7 +197,7 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
 
     // Please note: if menu_parent_id is NULL, it will not update the hierarchy properly.
     if (empty($menu_parent_id)) {
-      $menu_parent_id = str_replace($this->getMenu() . ':', '', $this->getMenuParent());
+      $menu_parent_id = '0';
     }
 
     // TODO: Consider implementing a forced weight based on taxonomy tree.
@@ -243,7 +212,6 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
       'title' => $term->label(),
       'description' => $term->getDescription(),
       'menu_name' => $menu_id,
-      'expanded' => $this->expanded,
       'metadata' => array(
         'taxonomy_menu_id' => $taxonomy_menu_id,
         'taxonomy_term_id' => $term_id,
