@@ -1,6 +1,6 @@
 chosen:
   remote: http://harvesthq.github.io/chosen
-  version: 1.5.0
+  version: 1.6.1
   license:
       name: MIT
       url: https://github.com/harvesthq/chosen/blob/master/LICENSE.md
@@ -11,7 +11,7 @@ chosen:
     - core/jquery
 
 chosen.css:
-  version: 1.5.0
+  version: 1.6.1
   css:
     component:
       /libraries/chosen/chosen.css: {}

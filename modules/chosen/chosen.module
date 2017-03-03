@@ -10,11 +10,15 @@
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\field\Entity\FieldConfig;
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Define chosen library url.
  */
 define('CHOSEN_WEBSITE_URL', 'http://harvesthq.github.io/chosen');
+define('CHOSEN_INCLUDE_ADMIN', 0);
+define('CHOSEN_INCLUDE_NO_ADMIN', 1);
+define('CHOSEN_INCLUDE_EVERYWHERE', 2);
 
 /**
  * Implements hook_element_info_alter().
@@ -58,6 +62,17 @@ function chosen_field_widget_form_alter(&$element, FormStateInterface $form_stat
  *   The element.
  */
 function chosen_pre_render_select($element) {
+  // Exclude chosen from theme other than admin.
+  $theme = \Drupal::theme()->getActiveTheme()->getName();
+  $admin_theme = \Drupal::config('system.theme')->get('admin');
+  $is_admin_path = \Drupal::service('router.admin_context')->isAdminRoute();
+  $is_admin = $is_admin_path || $theme == $admin_theme;
+
+  $chosen_include = \Drupal::config('chosen.settings')->get('chosen_include');
+  if ($chosen_include != CHOSEN_INCLUDE_EVERYWHERE && $is_admin == $chosen_include) {
+    return $element;
+  }
+
   // If the #chosen FAPI property is set, then add the appropriate class.
   if (isset($element['#chosen'])) {
     if (!empty($element['#chosen'])) {
@@ -85,8 +100,8 @@ function chosen_pre_render_select($element) {
   }
 
   if (isset($element['#field_name']) && !empty($element['#multiple'])) {
-      // Remove '_none' from multi-select options.
-      unset($element['#options']['_none']);
+    // Remove '_none' from multi-select options.
+    unset($element['#options']['_none']);
 
     if (isset($element['#entity_type']) && isset($element['#bundle']) && isset($element['#field_name'])) {
       // Set data-cardinality for fields that aren't unlimited.
@@ -100,6 +115,12 @@ function chosen_pre_render_select($element) {
 
   // Attach the library.
   chosen_attach_library($element);
+
+  // Right to Left Support.
+  $language_direction = \Drupal::languageManager()->getCurrentLanguage()->getDirection();
+  if (LanguageInterface::DIRECTION_RTL == $language_direction) {
+    $element['#attributes']['class'][] = 'chosen-rtl';
+  }
 
   return $element;
 }

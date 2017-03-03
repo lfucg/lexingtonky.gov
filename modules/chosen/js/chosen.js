@@ -1,4 +1,4 @@
-(function ($) {
+(function ($, Drupal) {
   'use strict';
   Drupal.behaviors.chosen = {
     attach: function (context, settings) {
@@ -13,11 +13,13 @@
 
         // The width default option is considered the minimum width, so this
         // must be evaluated for every option.
-        if ($(element).width() < settings.chosen.minimum_width) {
-          options.width = settings.chosen.minimum_width + 'px';
-        }
-        else {
-          options.width = $(element).width() + 'px';
+        if (settings.chosen.minimum_width > 0) {
+          if ($(element).width() < settings.chosen.minimum_width) {
+            options.width = settings.chosen.minimum_width + 'px';
+          }
+          else {
+            options.width = $(element).width() + 'px';
+          }
         }
 
         // Some field widgets have cardinality, so we must respect that.
@@ -61,4 +63,4 @@
         });
     }
   };
-})(jQuery);
+})(jQuery, Drupal);

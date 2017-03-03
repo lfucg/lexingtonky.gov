@@ -3,9 +3,13 @@
 namespace Drupal\smtp\Plugin\Mail;
 
 use Drupal\Component\Utility\Unicode;
-use Drupal\Core\Mail\MailInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Mail\MailFormatHelper;
+use Drupal\Core\Mail\MailInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\smtp\PHPMailer\PHPMailer;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Modify the drupal mail system to use smtp when sending emails.
@@ -17,15 +21,45 @@ use Drupal\smtp\PHPMailer\PHPMailer;
  *   description = @Translation("Sends the message, using SMTP.")
  * )
  */
-class SMTPMailSystem implements MailInterface {
+class SMTPMailSystem implements MailInterface, ContainerFactoryPluginInterface {
   protected $AllowHtml;
   protected $smtpConfig;
 
   /**
-   * Constructs a SMPTMailSystem object.
+   * Logger
+   * @var LoggerInterface
    */
-  public function __construct() {
+  protected $logger;
+
+  /**
+   * Constructs a SMPTMailSystem object.
+   * @param array $configuration
+   * @param $plugin_id
+   * @param $plugin_definition
+   * @param \Psr\Log\LoggerInterface $logger
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, LoggerChannelFactoryInterface $logger) {
     $this->smtpConfig = \Drupal::config('smtp.settings');
+    $this->logger = $logger;
+  }
+
+  /**
+   * Creates an instance of the plugin.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The container to pull out services used in the plugin.
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   *
+   * @return static
+   *   Returns an instance of this plugin.
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('logger.factory'));
   }
 
   /**
@@ -172,7 +206,7 @@ class SMTPMailSystem implements MailInterface {
             default:
               // Everything else is unsuppored by PHPMailer.
               drupal_set_message(t('The %header of your message is not supported by PHPMailer and will be sent as text/plain instead.', array('%header' => "Content-Type: $value")), 'error');
-              watchdog('smtp', 'The %header of your message is not supported by PHPMailer and will be sent as text/plain instead.', array('%header' => "Content-Type: $value"), WATCHDOG_ERROR);
+              $this->logger->error(t('The %header of your message is not supported by PHPMailer and will be sent as text/plain instead.', array('%header' => "Content-Type: $value")));
 
               // Force the Content-Type to be text/plain.
               $mailer->IsHTML(FALSE);
@@ -451,7 +485,7 @@ class SMTPMailSystem implements MailInterface {
       'from' => $from,
     );
     if ($this->smtpConfig->get('smtp_queue')) {
-      watchdog('smtp', 'Queue sending mail to: @to', array('@to' => $to));
+      $this->logger->info(t('Queue sending mail to: @to', array('@to' => $to)));
       smtp_send_queue($mailerArr);
     }
     else {

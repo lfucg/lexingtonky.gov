@@ -2,6 +2,7 @@
 
 namespace Drupal\pathauto\Tests;
 
+use Drupal\pathauto\PathautoState;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -76,13 +77,14 @@ class PathautoMassDeleteTest extends WebTestBase {
     $this->generateAliases();
     $edit = array(
       'delete[all_aliases]' => TRUE,
+      'options[keep_custom_aliases]' => FALSE,
     );
     $this->drupalPostForm('admin/config/search/path/delete_bulk', $edit, t('Delete aliases now!'));
     $this->assertText(t('All of your path aliases have been deleted.'));
     $this->assertUrl('admin/config/search/path/delete_bulk');
 
     // Make sure that all of them are actually deleted.
-    $aliases = db_select('url_alias', 'ua')->fields('ua', array())->execute()->fetchAll();
+    $aliases = \Drupal::database()->select('url_alias', 'ua')->fields('ua', array())->execute()->fetchAll();
     $this->assertEqual($aliases, array(), "All the aliases have been deleted.");
 
     // 2. Test deleting only specific (entity type) aliases.
@@ -92,6 +94,7 @@ class PathautoMassDeleteTest extends WebTestBase {
       $this->generateAliases();
       $edit = array(
         'delete[plugins][' . $pathauto_plugin . ']' => TRUE,
+        'options[keep_custom_aliases]' => FALSE,
       );
       $this->drupalPostForm('admin/config/search/path/delete_bulk', $edit, t('Delete aliases now!'));
       $alias_type = $manager->createInstance($pathauto_plugin);
@@ -112,26 +115,54 @@ class PathautoMassDeleteTest extends WebTestBase {
         }
       }
     }
+
+    // 3. Test deleting automatically generated aliases only.
+    $this->generateAliases();
+    $edit = array(
+      'delete[all_aliases]' => TRUE,
+      'options[keep_custom_aliases]' => TRUE,
+    );
+    $this->drupalPostForm('admin/config/search/path/delete_bulk', $edit, t('Delete aliases now!'));
+    $this->assertText(t('All of your automatically generated path aliases have been deleted.'));
+    $this->assertUrl('admin/config/search/path/delete_bulk');
+
+    // Make sure that only custom aliases and aliases with no information about
+    // their state still exist.
+    $aliases = \Drupal::database()->select('url_alias', 'ua')->fields('ua', ['source'])->execute()->fetchCol();
+    $this->assertEqual($aliases, ['/node/101', '/node/104', '/node/105'], 'Custom aliases still exist.');
   }
 
   /**
    * Helper function to generate aliases.
    */
   function generateAliases() {
+    // Delete all aliases to avoid duplicated aliases. They will be recreated below.
+    $this->deleteAllAliases();
+
     // We generate a bunch of aliases for nodes, users and taxonomy terms. If
     // the entities are already created we just update them, otherwise we create
     // them.
     if (empty($this->nodes)) {
-      for ($i = 1; $i <= 5; $i++) {
-        $node = $this->drupalCreateNode();
+      // Create a large number of nodes (100+) to make sure that the batch code works.
+      for ($i = 1; $i <= 105; $i++) {
+        // Set the alias of two nodes manually.
+        $settings = ($i > 103) ? ['path' => ['alias' => "/custom_alias_$i", 'pathauto' => PathautoState::SKIP]] : [];
+        $node = $this->drupalCreateNode($settings);
         $this->nodes[$node->id()] = $node;
       }
     }
     else {
       foreach ($this->nodes as $node) {
+        if ($node->id() > 103) {
+          // The alias is set manually.
+          $node->set('path', ['alias' => '/custom_alias_' . $node->id()]);
+        }
         $node->save();
       }
     }
+    // Delete information about the state of an alias to make sure that aliases
+    // with no such data are left alone by default.
+    \Drupal::keyValue('pathauto_state.node')->delete(101);
 
     if (empty($this->accounts)) {
       for ($i = 1; $i <= 5; $i++) {

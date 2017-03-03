@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * @defgroup pathauto Pathauto: Automatically generates aliases for content
@@ -75,28 +76,10 @@ function pathauto_help($route_name, RouteMatchInterface $route_match) {
       return $output;
 
     case 'pathauto.bulk.update.form':
-      $output = '<p>' . t('Bulk generation will only generate URL aliases for items that currently have no aliases. This is typically used when installing Pathauto on a site that has existing un-aliased content that needs to be aliased in bulk.') . '</p>';
+      $output = '<p>' . t('Bulk generation can be used to generate URL aliases for items that currently have no aliases. This is typically used when installing Pathauto on a site that has existing un-aliased content that needs to be aliased in bulk.') . '<br>';
+      $output .= t('It can also be used to regenerate URL aliases for items that have an old alias and for which the Pathauto pattern has been changed.') . '</p>';
+      $output .= '<p>' . t('Note that this will only affect items which are configured to have their URL alias automatically set. Items whose URL alias is manually set are not affected.') . '</p>';
       return $output;
-  }
-}
-
-/**
- * Implements hook_entity_presave().
- */
-function pathauto_entity_presave($entity) {
-  if (!($entity instanceof ContentEntityInterface) || !$entity->hasField('path')) {
-    return;
-  }
-
-  // About to be saved (before insert/update)
-  if ($entity->path->pathauto == PathautoState::SKIP && $entity->path->old_alias != '') {
-    /*
-     * There was an old alias, but when pathauto_perform_alias was checked
-     * the javascript disabled the textbox which led to an empty value being
-     * submitted. Restoring the old path-value here prevents the Path module
-     * from deleting any old alias before Pathauto gets control.
-     */
-    $entity->path->alias = $entity->path->old_alias;
   }
 }
 
@@ -113,7 +96,6 @@ function pathauto_entity_insert(EntityInterface $entity) {
 function pathauto_entity_update(EntityInterface $entity) {
   \Drupal::service('pathauto.generator')->updateEntityAlias($entity, 'update');
 }
-
 
 /**
  * Implements hook_entity_update().
@@ -177,7 +159,7 @@ function pathauto_entity_base_field_info_alter(&$fields, EntityTypeInterface $en
 
 /**
  * Validate the pattern field, to ensure it doesn't contain any characters that
- * are invalid in URLs
+ * are invalid in URLs.
  */
 function pathauto_pattern_validate($element, FormStateInterface $form_state) {
 
@@ -194,6 +176,10 @@ function pathauto_pattern_validate($element, FormStateInterface $form_state) {
 
     if (!empty($invalid_characters_used)) {
       $form_state->setError($element, t('The %element-title is using the following invalid characters: @invalid-characters.', array('%element-title' => $title, '@invalid-characters' => implode(', ', $invalid_characters_used))));
+    }
+
+    if (preg_match('/(\s$)+/', $element['#value'])) {
+      $form_state->setError($element, t('The %element-title doesn\'t allow the patterns ending with whitespace.', array('%element-title' => $title)));
     }
   }
 

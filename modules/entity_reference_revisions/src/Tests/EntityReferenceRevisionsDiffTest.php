@@ -36,6 +36,12 @@ class EntityReferenceRevisionsDiffTest extends WebTestBase {
     parent::setUp();
     // Create article content type.
     $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
+
+    // Disable visual inline diff.
+    $config = $this->config('diff.settings')
+      ->set('general_settings.layout_plugins.visual_inline.enabled', FALSE);
+    $config->save();
+
     $admin_user = $this->drupalCreateUser([
       'administer site configuration',
       'administer nodes',
@@ -103,11 +109,11 @@ class EntityReferenceRevisionsDiffTest extends WebTestBase {
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
 
     // Compare the revisions of the referencing node.
-    $this->drupalPostForm('node/' . $node->id() . '/revisions', [], t('Compare'));
+    $this->drupalPostForm('node/' . $node->id() . '/revisions', [], t('Compare selected revisions'));
 
     // Assert the field changes.
-    $this->assertRaw('class="diffchange">' . $title_node_1);
-    $this->assertRaw('class="diffchange">' . $title_node_2);
+    $this->assertRaw('class="diff-context diff-deletedline">' . $title_node_1);
+    $this->assertRaw('class="diff-context diff-addedline">' . $title_node_2);
   }
 
 }

@@ -28,6 +28,9 @@ chosen.settings:
       label: 'Disable the default Chosen theme for the following themes'
       sequence:
         type: string
+    chosen_include:
+      type: integer
+      label: 'Use chosen for admin pages and/or front end pages'
     placeholder_text_multiple:
       type: label
       label: 'Placeholder text of multiple selects'

@@ -5,7 +5,7 @@ Chosen uses the Chosen jQuery plugin to make your <select> elements more user-fr
 
 -- INSTALLATION --
 
-  1. Download the Chosen jQuery plugin (http://harvesthq.github.io/chosen/ version 1.5.0 is recommended) and extract the file under "libraries".
+  1. Download the Chosen jQuery plugin (http://harvesthq.github.io/chosen/ version 1.5 or higher is recommended) and extract the file under "libraries".
   2. Download and enable the module.
   3. Configure at Administer > Configuration > User interface > Chosen (requires administer site configuration permission)
 
@@ -22,6 +22,9 @@ Chosen uses the Chosen jQuery plugin to make your <select> elements more user-fr
  The command will download the plugin and unpack it in "libraries".
  It is possible to add another path as an option to the command, but not
  recommended unless you know what you are doing.
+
+ If you are using Composer to manage your site's dependencies,
+ then the Chosen plugin will automatically be downloaded to `libraries/chosen`.
 
 -- ACCESSIBILITY CONCERN --
 

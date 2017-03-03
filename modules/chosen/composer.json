@@ -15,11 +15,11 @@
     {
       "type": "package",
       "package": {
-        "name": "harvesthq/chosen",
-        "version": "1.5.1",
+        "name": "drmonty/chosen",
+        "version": "1.6.1",
         "type": "drupal-library",
         "dist": {
-          "url": "https://github.com/harvesthq/chosen/releases/download/v1.5.1/chosen_v1.5.1.zip",
+          "url": "https://github.com/harvesthq/chosen/releases/download/v1.6.1/chosen_v1.6.1.zip",
           "type": "zip"
         },
         "require": {
@@ -29,11 +29,12 @@
     }
   ],
   "require": {
-    "harvesthq/chosen": "~1.5"
+    "drmonty/chosen": "~1.6"
   },
   "autoload": {
     "psr-4": {
-        "Drupal\\chosen\\": "src/"
+      "Drupal\\chosen\\": "src/"
     }
-  }
+  },
+  "minimum-stability": "dev"
 }

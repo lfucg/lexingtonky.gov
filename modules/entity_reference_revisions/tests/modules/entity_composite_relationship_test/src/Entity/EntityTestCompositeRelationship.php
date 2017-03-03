@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\entity_reference_revisions\EntityNeedsSaveInterface;
 use Drupal\entity_reference_revisions\EntityNeedsSaveTrait;
-use Drupal\entity_test\Entity\EntityTestRev;
+use Drupal\entity_test\Entity\EntityTestMulRev;
 
 /**
  * Defines the test entity class.
@@ -16,6 +16,9 @@ use Drupal\entity_test\Entity\EntityTestRev;
  *   label = @Translation("Test entity - composite relationship"),
  *   base_table = "entity_test_composite",
  *   revision_table = "entity_test_composite_revision",
+ *   data_table = "entity_test_composite_field_data",
+ *   revision_data_table = "entity_test_composite_field_revision",
+ *   translatable = TRUE,
  *   entity_revision_parent_type_field = "parent_type",
  *   entity_revision_parent_id_field = "parent_id",
  *   entity_revision_parent_field_name_field = "parent_field_name",
@@ -30,7 +33,7 @@ use Drupal\entity_test\Entity\EntityTestRev;
  *   }
  * )
  */
-class EntityTestCompositeRelationship extends EntityTestRev implements EntityNeedsSaveInterface {
+class EntityTestCompositeRelationship extends EntityTestMulRev implements EntityNeedsSaveInterface {
 
   use EntityNeedsSaveTrait;
 

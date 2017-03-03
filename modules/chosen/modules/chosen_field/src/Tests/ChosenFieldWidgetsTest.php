@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\chosen_field\Tests\ChosenFieldWidgetsTest.
- */
-
 namespace Drupal\chosen_field\Tests;
 
 use Drupal\field\Tests\FieldTestBase;

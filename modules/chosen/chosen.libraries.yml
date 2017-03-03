@@ -1,6 +1,6 @@
 drupal.chosen:
   remote: https://drupal.org/project/chosen
-  version: 1.5.0
+  version: 1.6.1
   license:
       name: GNU GPL v2
       url: https://www.drupal.org/about/licensing
@@ -11,6 +11,7 @@ drupal.chosen:
     component:
       css/chosen-drupal.css: {}
   dependencies:
+    - core/drupal
     - core/jquery
     - core/jquery.once
     - chosen_lib/chosen

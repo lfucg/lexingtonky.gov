@@ -196,9 +196,15 @@ class AliasStorageHelper implements AliasStorageHelperInterface {
    * {@inheritdoc}
    */
   public function loadBySourcePrefix($source) {
-    return $this->database->select('url_alias', 'u')
-      ->fields('u', array('pid'))
-      ->condition('source', $source . '%', 'LIKE')
+    $select = $this->database->select('url_alias', 'u')
+      ->fields('u', array('pid'));
+
+    $or_group = $select->orConditionGroup()
+      ->condition('source', $source)
+      ->condition('source', rtrim($source, '/') . '/%', 'LIKE');
+
+    return $select
+      ->condition($or_group)
       ->execute()
       ->fetchCol();
   }
@@ -207,8 +213,15 @@ class AliasStorageHelper implements AliasStorageHelperInterface {
    * {@inheritdoc}
    */
   public function countBySourcePrefix($source) {
-    return $this->database->select('url_alias')
-      ->condition('source', $source . '%', 'LIKE')
+    $select = $this->database->select('url_alias', 'u')
+      ->fields('u', array('pid'));
+
+    $or_group = $select->orConditionGroup()
+      ->condition('source', $source)
+      ->condition('source', rtrim($source, '/') . '/%', 'LIKE');
+
+    return $select
+      ->condition($or_group)
       ->countQuery()
       ->execute()
       ->fetchField();
@@ -233,7 +246,7 @@ class AliasStorageHelper implements AliasStorageHelperInterface {
    * @param int[] $pids
    *   An array of path IDs to delete.
    */
-  protected function deleteMultiple($pids) {
+  public function deleteMultiple($pids) {
     foreach ($pids as $pid) {
       $this->aliasStorage->delete(array('pid' => $pid));
     }

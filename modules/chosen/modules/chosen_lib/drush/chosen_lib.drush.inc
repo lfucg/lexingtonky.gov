@@ -8,7 +8,7 @@
 /**
  * The Chosen plugin URI.
  */
-define('CHOSEN_DOWNLOAD_URI', 'https://github.com/harvesthq/chosen/releases/download/v1.5.0/chosen_v1.5.0.zip');
+define('CHOSEN_DOWNLOAD_URI', 'https://github.com/harvesthq/chosen/releases/download/v1.6.1/chosen_v1.6.1.zip');
 
 /**
  * Implements hook_drush_command().

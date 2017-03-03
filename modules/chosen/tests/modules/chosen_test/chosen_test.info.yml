@@ -4,8 +4,8 @@ description: 'Support module for Chosen tests.'
 # core: 8.x
 package: Testing
 
-# Information added by Drupal.org packaging script on 2016-06-22
-version: '8.x-2.0'
+# Information added by Drupal.org packaging script on 2016-11-11
+version: '8.x-2.1'
 core: '8.x'
 project: 'chosen'
-datestamp: 1466589241
+datestamp: 1478867640

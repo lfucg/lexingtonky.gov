@@ -26,7 +26,7 @@ function chosen_requirements($phase) {
           'title' => t('Chosen JavaScript file'),
           'value' => t('Not Installed'),
           'severity' => REQUIREMENT_ERROR,
-          'description' => t('You need to download the !chosen and extract the entire contents of the archive into the %path directory on your server.', array('!chosen' => $link, '%path' => 'sites/all/libraries')),
+          'description' => t('You need to <a href="@url">download</a> the @chosen and extract the entire contents of the archive into the %path directory in your Drupal installation directory.', array('@chosen' => $link, '%path' => 'libraries/chosen', '@url' => 'https://github.com/harvesthq/chosen/releases/latest')),
         );
       }
       else {
@@ -56,5 +56,14 @@ function chosen_update_8001() {
     }
   }
   $config->setData($raw_data);
+  $config->save();
+}
+
+/**
+ * Set default value for chosen for admin pages and/or front end pages.
+ */
+function chosen_update_8002() {
+  $config = \Drupal::configFactory()->getEditable('chosen.settings');
+  $config->set('chosen_include', CHOSEN_INCLUDE_EVERYWHERE);
   $config->save();
 }

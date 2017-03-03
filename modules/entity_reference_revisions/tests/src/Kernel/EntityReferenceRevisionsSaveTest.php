@@ -122,6 +122,15 @@ class EntityReferenceRevisionsSaveTest extends KernelTestBase {
     $entity_test->delete();
     $node = Node::load($node->id());
     $node->save();
+
+    // Test if the needs save variable is set as false after saving.
+    $entity_needs_save = EntityTestCompositeRelationship::create([
+      'uuid' => $text,
+      'name' => $text,
+    ]);
+    $entity_needs_save->setNeedsSave(TRUE);
+    $entity_needs_save->save();
+    $this->assertFalse($entity_needs_save->needsSave());
   }
 
   /**
