@@ -4970,15 +4970,6 @@ label {
   .lex-search .lex-submit-drupalprovided {
     display: none; }
 
-@media screen and (min-width: 600px) {
-  .lex-sidenav-list-policerecruitment {
-    background: url(../img/LPD_Badge_Blue_Fade.png);
-    background-repeat: no-repeat;
-    background-position: right -480px top; } }
-@media screen and (min-width: 1201px) {
-  .lex-sidenav-list-policerecruitment {
-    background-position: right -320px top; } }
-
 .lex-sidenav-list li {
   border: none; }
 .lex-sidenav-list a {
@@ -5339,5 +5330,8 @@ table.directory {
     background: #BFD5EA; }
   table.directory td:nth-child(3) {
     white-space: nowrap; }
+
+body.lex-police {
+  background: url(../img/LPD_Badge_Blue_Fade.png) fixed bottom right no-repeat; }
 
 /*# sourceMappingURL=styles.css.map */

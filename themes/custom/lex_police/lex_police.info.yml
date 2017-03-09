@@ -1,0 +1,5 @@
+name: Lexington Police
+description: A theme for the City of Lexington Police Department pages
+type: theme
+core: 8.x
+base theme: lex
