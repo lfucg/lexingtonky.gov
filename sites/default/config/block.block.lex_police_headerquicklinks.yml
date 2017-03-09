@@ -1,0 +1,24 @@
+uuid: 537c4af4-961c-44d5-9065-21f71a6b4cf1
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.header-quick-links
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_headerquicklinks
+theme: lex_police
+region: '-1'
+weight: -21
+provider: null
+plugin: 'system_menu_block:header-quick-links'
+settings:
+  id: 'system_menu_block:header-quick-links'
+  label: 'Header quick links'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 0
+visibility: {  }

@@ -1,0 +1,29 @@
+uuid: 7895dc9f-8d29-4a64-bf77-df1115fa2641
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_mainnavigation
+theme: lex_police
+region: '-1'
+weight: -17
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'Main navigation - level 2'
+  provider: system
+  label_display: '0'
+  level: 2
+  depth: 1
+visibility:
+  request_path:
+    id: request_path
+    pages: '/browse*'
+    negate: false
+    context_mapping: {  }

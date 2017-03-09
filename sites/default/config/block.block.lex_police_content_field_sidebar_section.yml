@@ -1,0 +1,28 @@
+uuid: 8010137e-8dbe-48f1-bfa5-c7f4f5fa428a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_sidebar_section
+  module:
+    - entity_reference_revisions
+    - fieldblock
+  theme:
+    - lex_police
+id: lex_police_content_field_sidebar_section
+theme: lex_police
+region: sidebar_second
+weight: -20
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Sidebar section'
+  provider: fieldblock
+  label_display: '0'
+  label_from_field: 0
+  field_name: field_sidebar_section
+  formatter_id: entity_reference_revisions_entity_view
+  formatter_settings:
+    view_mode: default
+visibility: {  }

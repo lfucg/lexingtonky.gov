@@ -5332,6 +5332,10 @@ table.directory {
     white-space: nowrap; }
 
 body.lex-police {
-  background: url(../img/LPD_Badge_Blue_Fade.png) fixed bottom right no-repeat; }
+  background: url(../img/LPD_Badge_Blue_Fade.png) fixed bottom right no-repeat;
+  background-size: auto 50%; }
+  body.lex-police .views-field-field-top-services a {
+    display: block;
+    margin-bottom: 1em; }
 
 /*# sourceMappingURL=styles.css.map */

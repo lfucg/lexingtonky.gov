@@ -1,0 +1,27 @@
+uuid: 1a6ee117-d0d3-431c-bbc3-2ceb1b4b654a
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_local_tasks
+theme: lex_police
+region: highlighted
+weight: -25
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  provider: core
+  label_display: '0'
+  primary: true
+  secondary: true
+visibility:
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/browse/*"
+    negate: true
+    context_mapping: {  }

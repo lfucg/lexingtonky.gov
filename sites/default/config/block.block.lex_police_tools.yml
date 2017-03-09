@@ -1,0 +1,24 @@
+uuid: 77a1f294-639b-470a-ba82-ca075cddf7ed
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.tools
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_tools
+theme: lex_police
+region: '-1'
+weight: -6
+provider: null
+plugin: 'system_menu_block:tools'
+settings:
+  id: 'system_menu_block:tools'
+  label: Tools
+  provider: system
+  label_display: visible
+  level: 1
+  depth: 0
+visibility: {  }

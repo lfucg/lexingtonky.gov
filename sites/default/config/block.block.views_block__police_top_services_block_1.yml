@@ -1,0 +1,24 @@
+uuid: 3d3202ac-b8ca-48ce-a5b8-78d9d17f1d27
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.police_top_services
+  module:
+    - views
+  theme:
+    - lex_police
+id: views_block__police_top_services_block_1
+theme: lex_police
+region: sidebar_second
+weight: -28
+provider: null
+plugin: 'views_block:police_top_services-block_1'
+settings:
+  id: 'views_block:police_top_services-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility: {  }

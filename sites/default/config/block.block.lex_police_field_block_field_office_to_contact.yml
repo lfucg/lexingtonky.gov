@@ -1,0 +1,37 @@
+uuid: 4395687b-c18c-4ae3-8191-090c95c50e7b
+langcode: en
+status: false
+dependencies:
+  config:
+    - field.storage.node.field_office_to_contact
+  module:
+    - fieldblock
+    - node
+  theme:
+    - lex_police
+id: lex_police_field_block_field_office_to_contact
+theme: lex_police
+region: '-1'
+weight: -2
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: Contact
+  provider: fieldblock
+  label_display: visible
+  label_from_field: 0
+  field_name: field_office_to_contact
+  formatter_id: entity_reference_entity_view
+  formatter_settings:
+    view_mode: default
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      board_commission: board_commission
+      organization_page: organization_page
+      page: page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
