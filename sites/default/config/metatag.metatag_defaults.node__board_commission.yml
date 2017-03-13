@@ -1,7 +1,0 @@
-uuid: a0817f8a-23d4-42b8-944b-abf30c3895be
-langcode: en
-status: true
-dependencies: {  }
-id: node__board_commission
-label: 'Content: Board/commission'
-tags: {  }

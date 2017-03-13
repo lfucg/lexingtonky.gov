@@ -1,8 +1,0 @@
-uuid: 82e14330-c5be-4d3e-8302-2f260faef2b9
-langcode: en
-status: true
-dependencies: {  }
-id: comment
-label: 'Default comments'
-target_entity_type_id: node
-description: 'Allows commenting on content'

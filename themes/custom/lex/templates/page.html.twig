@@ -64,48 +64,72 @@
  */
 #}
 <div class="layout-container {{ is_front ? 'lex-frontpage' : '' }} {{ attributes.layout_class }}">
+  {% block page_header %}
   {% include "@lex/includes/header.html.twig" %}
-
+  {% endblock %}
+  {% block page_help %}
   {{ page.help }}
+  {% endblock %}
 
+  {% block page_primary_menu %}
   {{ page.primary_menu }}
+  {% endblock %}
+  {% block page_secondary_menu %}
   {{ page.secondary_menu }}
+  {% endblock %}
 
+  {% block page_highlight %}
   <div class="lex-grid-full usa-grid-full">
     {{ page.highlighted }}
   </div>
+  {% endblock %}
 
   <main role="main" class="js-main">
+    {% block main_content %}
     <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
 
     <div class="layout-content lex-grid-full usa-grid-full">
+      {% block main_tabs %}
       {{ tabs }}
+      {% endblock %}
 
+      {% block action_links %}
       {% if action_links %}
         <nav class="action-links">{{ action_links }}</nav>
       {% endif %}
+      {% endblock %}
 
+      {% block first_sidebar %}
       {% if page.sidebar_first %}
         <aside class="layout-sidebar-first" role="complementary">
           {{ page.sidebar_first }}
         </aside>
       {% endif %}
+      {% endblock %}
 
+      {% block page_content %}
       <div class="usa-width-two-thirds {{ content_attributes.class }}">
         {{ page.content }}
       </div>
+      {% endblock %}
 
+      {% block second_sidebar %}
       {% if page.sidebar_second %}
         <aside class="layout-sidebar-second usa-width-one-third" role="complementary">
           {{ page.sidebar_second }}
         </aside>
       {% endif %}
+      {% endblock %}
     </div>{# /.layout-content #}
-
+    {% endblock %}
   </main>
 
+  {% block page_bottom_features %}
   {% include "@lex/includes/featured-bottom.html.twig" %}
+  {% endblock %}
 
+  {% block page_footer %}
   {% include "@lex/includes/footers.html.twig" %}
+  {% endblock %}
 
 </div>{# /.layout-container #}

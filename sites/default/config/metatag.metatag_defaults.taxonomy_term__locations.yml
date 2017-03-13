@@ -1,7 +1,0 @@
-uuid: 560b589d-14ed-4bb8-bb4e-a9cb608686ea
-langcode: en
-status: true
-dependencies: {  }
-id: taxonomy_term__locations
-label: 'Taxonomy term: Locations'
-tags: {  }

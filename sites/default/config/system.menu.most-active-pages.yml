@@ -1,8 +1,0 @@
-uuid: 6c1ac4c7-2327-43ba-a384-fb7112b3e90b
-langcode: en
-status: true
-dependencies: {  }
-id: most-active-pages
-label: 'Most active pages'
-description: ''
-locked: false

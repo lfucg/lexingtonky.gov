@@ -1,8 +1,0 @@
-uuid: 7d845ac3-c4a5-4c4e-8400-0f11a9d7efdf
-langcode: en
-status: true
-dependencies: {  }
-id: html_block
-label: 'HTML block'
-revision: 1
-description: 'Use sparingly. Better to use a block that is broken out into various fields so that we don''t have to manage raw html.'

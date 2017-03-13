@@ -1,7 +1,0 @@
-uuid: 6db87645-98d0-4965-826b-6ef782208788
-langcode: en
-status: true
-dependencies: {  }
-id: taxonomy_term__organizations
-label: 'Taxonomy term: Organizations'
-tags: {  }

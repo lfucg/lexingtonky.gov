@@ -1,8 +1,0 @@
-uuid: 2b969ef4-06ed-4845-baa6-dec01a4c425b
-langcode: en
-status: true
-dependencies: {  }
-id: final-order-admin
-label: 'Final order admin links'
-description: ''
-locked: false

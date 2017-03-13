@@ -26,27 +26,38 @@
 <!DOCTYPE html>
 <html{{ html_attributes }}>
   <head>
+    {% block html_head %}
     <head-placeholder token="{{ placeholder_token|raw }}">
     <title>{{ head_title|safe_join(' | ') }}</title>
     <css-placeholder token="{{ placeholder_token|raw }}">
     <js-placeholder token="{{ placeholder_token|raw }}">
+    {% endblock %}
   </head>
   <body{{ attributes }}>
-<!-- Google Tag Manager -->
-<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-TGKQQZ"
+    {% block body_start_script %}
+      <!-- Google Tag Manager -->
+      <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-TGKQQZ"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-TGKQQZ');</script>
-<!-- End Google Tag Manager -->
+    <!-- End Google Tag Manager -->
+    {% endblock %}
     <a href="#main-content" class="visually-hidden focusable">
       {{ 'Skip to main content'|t }}
     </a>
-    {{ page_top }}
-    {{ page }}
-    {{ page_bottom }}
+    {% block page_top %}
+      {{ page_top }}
+    {% endblock %}
+    {% block page_body %}
+      {{ page }}
+    {% endblock %}
+    {% block page_bottom %}
+      {{ page_bottom }}
+    {% endblock %}
+    {% block end_of_page_javascript %}
     <js-bottom-placeholder token="{{ placeholder_token|raw }}">
 
     <script type="text/javascript">
@@ -62,6 +73,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
       }
     </script><script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
+    {% endblock %}
   </body>
 </html>

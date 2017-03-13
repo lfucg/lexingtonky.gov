@@ -1,8 +1,0 @@
-uuid: f9cd0770-1a31-4c6d-ba00-e0ecb74e94c3
-langcode: en
-status: true
-dependencies: {  }
-id: image_card_with_links
-label: 'Image card with links'
-revision: 1
-description: 'Block that has a primary image and a series of links. Each link has as description, image, and url'
