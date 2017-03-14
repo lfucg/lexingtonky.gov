@@ -1,0 +1,20 @@
+uuid: a81b5ef0-e1c5-4444-b0c7-aec6d44357d1
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_messages
+theme: lex_police
+region: help
+weight: -15
+provider: null
+plugin: system_messages_block
+settings:
+  id: system_messages_block
+  label: 'Status messages'
+  provider: system
+  label_display: '0'
+visibility: {  }

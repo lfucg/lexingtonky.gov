@@ -1,0 +1,30 @@
+uuid: 438799a0-4992-4fe7-a6a3-9d1ce3bc4b50
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.events
+  module:
+    - system
+    - views
+  theme:
+    - lex_police
+id: lex_police_views_block__events_block_1
+theme: lex_police
+region: highlighted
+weight: -21
+provider: null
+plugin: 'views_block:events-block_1'
+settings:
+  id: 'views_block:events-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

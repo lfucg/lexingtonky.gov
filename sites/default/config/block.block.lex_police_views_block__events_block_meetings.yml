@@ -1,0 +1,30 @@
+uuid: e935cb48-4fcd-4386-9dbf-0a9a7091700d
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.events
+  module:
+    - system
+    - views
+  theme:
+    - lex_police
+id: lex_police_views_block__events_block_meetings
+theme: lex_police
+region: content
+weight: -26
+provider: null
+plugin: 'views_block:events-block_meetings'
+settings:
+  id: 'views_block:events-block_meetings'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: /meeting-notices
+    negate: false
+    context_mapping: {  }

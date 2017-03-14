@@ -1,0 +1,32 @@
+uuid: 9d99a62c-b875-4dea-b67a-40d054962d60
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.sibling_pages
+  module:
+    - ctools
+    - views
+  theme:
+    - lex_police
+id: lex_police_views_block__sibling_pages_block_sidebar
+theme: lex_police
+region: sidebar_second
+weight: -27
+provider: null
+plugin: 'views_block:sibling_pages-block_1'
+settings:
+  id: 'views_block:sibling_pages-block_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      page: page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

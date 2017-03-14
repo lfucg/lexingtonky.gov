@@ -1,0 +1,30 @@
+uuid: 7f837f6a-f6a7-43e3-9b3c-f93f8285a66d
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.taxonomy_top_level
+  module:
+    - system
+    - views
+  theme:
+    - lex_police
+id: lex_police_views_block__taxonomy_top_level_block_1
+theme: lex_police
+region: primary_menu
+weight: -11
+provider: null
+plugin: 'views_block:taxonomy_top_level-block_1'
+settings:
+  id: 'views_block:taxonomy_top_level-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

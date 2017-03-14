@@ -1,0 +1,32 @@
+uuid: 6ae150f0-3e71-4c57-8597-8734e551991e
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.final-order-admin
+  module:
+    - ctools
+    - system
+  theme:
+    - lex_police
+id: lex_police_finalorderadminlinks_2
+theme: lex_police
+region: highlighted
+weight: -24
+provider: null
+plugin: 'system_menu_block:final-order-admin'
+settings:
+  id: 'system_menu_block:final-order-admin'
+  label: 'Final order admin links - node'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 0
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      final_order: final_order
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

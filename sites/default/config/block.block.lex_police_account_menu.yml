@@ -1,0 +1,24 @@
+uuid: a3a2956d-5ffa-4980-8a59-07e0fec5e98d
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.account
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_account_menu
+theme: lex_police
+region: '-1'
+weight: -16
+provider: null
+plugin: 'system_menu_block:account'
+settings:
+  id: 'system_menu_block:account'
+  label: 'User account menu'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 1
+visibility: {  }
