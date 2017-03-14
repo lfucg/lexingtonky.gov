@@ -1,0 +1,23 @@
+uuid: 54171c22-7f84-47b7-9f3b-5c5916725dc5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_metatags
+    - node.type.board_commission
+  module:
+    - metatag
+id: node.board_commission.field_metatags
+field_name: field_metatags
+entity_type: node
+bundle: board_commission
+label: Metatags
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 'a:0:{}'
+default_value_callback: ''
+settings: {  }
+field_type: metatag

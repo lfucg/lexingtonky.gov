@@ -1,0 +1,28 @@
+uuid: 0cddb652-1389-472b-a533-f6cfd92cade9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_organization_taxonomy_term
+    - node.type.organization_page
+    - taxonomy.vocabulary.organizations
+id: node.organization_page.field_organization_taxonomy_term
+field_name: field_organization_taxonomy_term
+entity_type: node
+bundle: organization_page
+label: 'Organization taxonomy term'
+description: 'The ''foreign key'' that links this page to events and news tagged to this term'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      organizations: organizations
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

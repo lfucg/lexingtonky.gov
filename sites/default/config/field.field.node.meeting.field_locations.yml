@@ -1,0 +1,28 @@
+uuid: fa05fd57-8485-49c5-9109-86b74d4cb765
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_locations
+    - node.type.meeting
+    - taxonomy.vocabulary.locations
+id: node.meeting.field_locations
+field_name: field_locations
+entity_type: node
+bundle: meeting
+label: Location
+description: 'If your location is not in the list, please contact <a href="mailto:webmaster@lexingtonky.gov">Nick Brock</a>'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      locations: locations
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

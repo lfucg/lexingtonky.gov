@@ -1,0 +1,18 @@
+uuid: caae9778-0fbd-4561-8800-0d5875f0fdef
+langcode: en
+status: true
+dependencies:
+  theme:
+    - lex_admin
+id: lex_admin_local_actions
+theme: lex_admin
+region: content
+weight: -4
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Primary admin actions'
+  provider: core
+  label_display: '0'
+visibility: {  }

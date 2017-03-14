@@ -1,0 +1,21 @@
+uuid: cfb6eab4-64e4-4d30-9e41-c741f9b619e4
+langcode: en
+status: true
+dependencies: {  }
+name: lex_banner_desktop
+label: 'Lex banner desktop'
+effects:
+  bf201ae3-28c0-434b-bd82-ce3ca66fdf22:
+    uuid: bf201ae3-28c0-434b-bd82-ce3ca66fdf22
+    id: image_scale
+    weight: 1
+    data:
+      width: 1600
+      height: null
+      upscale: false
+  6a8f0786-cea3-4669-abc5-ee39321419da:
+    uuid: 6a8f0786-cea3-4669-abc5-ee39321419da
+    id: image_convert
+    weight: 2
+    data:
+      extension: jpg

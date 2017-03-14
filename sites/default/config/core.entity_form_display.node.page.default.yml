@@ -1,0 +1,116 @@
+uuid: 5aee4798-9ee0-486f-aa00-d2df4e18caa2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.page.body
+    - field.field.node.page.field_lex_custom_banner_image
+    - field.field.node.page.field_lex_site_nav
+    - field.field.node.page.field_metatags
+    - field.field.node.page.field_office_to_contact
+    - field.field.node.page.field_page_overview
+    - field.field.node.page.field_page_section
+    - field.field.node.page.field_related_departments
+    - field.field.node.page.field_related_documents
+    - field.field.node.page.field_sidebar_section
+    - image.style.thumbnail
+    - node.type.page
+  module:
+    - file
+    - image
+    - metatag
+    - paragraphs
+    - path
+    - text
+    - workbench_moderation
+id: node.page.default
+targetEntityType: node
+bundle: page
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 3
+    settings: {  }
+    third_party_settings: {  }
+  field_lex_custom_banner_image:
+    weight: 26
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
+  field_lex_site_nav:
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+  field_metatags:
+    weight: 28
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
+  field_office_to_contact:
+    weight: 7
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+  field_page_overview:
+    weight: 1
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea_with_summary
+  field_page_section:
+    type: entity_reference_paragraphs
+    weight: 5
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+    third_party_settings: {  }
+  field_related_documents:
+    weight: 8
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
+  field_sidebar_section:
+    type: entity_reference_paragraphs
+    weight: 27
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 2
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  body: true
+  field_related_departments: true
+  promote: true
+  sticky: true

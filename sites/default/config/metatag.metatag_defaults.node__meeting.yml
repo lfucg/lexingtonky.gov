@@ -1,0 +1,7 @@
+uuid: 5ebb757b-de2b-482a-aa85-2da47d1bceda
+langcode: en
+status: true
+dependencies: {  }
+id: node__meeting
+label: 'Content: Meeting/notice'
+tags: {  }

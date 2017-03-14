@@ -1,0 +1,26 @@
+uuid: 8f9e6cda-55a4-48a6-969f-125f55c2b579
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+    - workbench_moderation
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+  workbench_moderation:
+    enabled: true
+    allowed_moderation_states:
+      - published
+      - archived
+      - draft
+      - needs_review
+    default_moderation_state: draft
+name: Board/commission
+type: board_commission
+description: ''
+help: ''
+new_revision: false
+preview_mode: 0
+display_submitted: false

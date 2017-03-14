@@ -1,0 +1,77 @@
+uuid: e8415faf-b14c-4450-b204-04bef422e8e8
+langcode: en
+status: true
+dependencies:
+  config:
+    - contact.form.page_feedback
+    - field.field.contact_message.page_feedback.field_city_response_from
+    - field.field.contact_message.page_feedback.field_feedback_url
+    - field.field.contact_message.page_feedback.field_internal_notes
+    - field.field.contact_message.page_feedback.field_optional_email
+    - field.field.contact_message.page_feedback.field_optional_name
+    - field.field.contact_message.page_feedback.field_page_suggestion
+id: contact_message.page_feedback.default
+targetEntityType: contact_message
+bundle: page_feedback
+mode: default
+content:
+  field_feedback_url:
+    weight: 1
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_internal_notes:
+    weight: 5
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+  field_optional_email:
+    weight: 4
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+  field_optional_name:
+    weight: 3
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_page_suggestion:
+    weight: 2
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+  mail:
+    weight: -2
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+  message:
+    type: basic_string
+    weight: 0
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  name:
+    weight: -3
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  subject:
+    weight: -1
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+hidden:
+  field_city_response_from: true

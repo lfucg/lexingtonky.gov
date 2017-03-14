@@ -1,0 +1,23 @@
+uuid: e147ddd0-532a-4e38-ba7f-2474c8104311
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_recurring_event
+    - node.type.event
+  module:
+    - options
+id: node.event.field_recurring_event
+field_name: field_recurring_event
+entity_type: node
+bundle: event
+label: 'Recurring Event'
+description: 'Marks the event as recurring. The start time field should hold the first day, and the end time field should hold the last. If they are set to the same day the system will presume this means "repeat forever." Weekly events repeat on the same day of the week. Monthly events repeat on the same day of the week and week of the month, such as "The 3rd Tuesday."'
+required: false
+translatable: false
+default_value:
+  -
+    value: 'No'
+default_value_callback: ''
+settings: {  }
+field_type: list_string

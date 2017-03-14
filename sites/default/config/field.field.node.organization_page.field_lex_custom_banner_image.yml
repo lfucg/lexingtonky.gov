@@ -1,0 +1,38 @@
+uuid: c08c6d99-82d0-4a62-8fbd-b11ba88ed96c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_lex_custom_banner_image
+    - node.type.organization_page
+  module:
+    - image
+id: node.organization_page.field_lex_custom_banner_image
+field_name: field_lex_custom_banner_image
+entity_type: node
+bundle: organization_page
+label: 'Custom banner image'
+description: 'Add a custom banner image to the page header'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  file_directory: 'hero-[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'png gif jpg jpeg'
+  max_filesize: 2MB
+  max_resolution: 1600x300
+  min_resolution: 1200x225
+  alt_field: false
+  alt_field_required: true
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: ''
+    alt: ''
+    title: ''
+    width: null
+    height: null
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: image

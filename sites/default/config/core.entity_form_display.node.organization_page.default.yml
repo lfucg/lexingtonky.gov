@@ -1,0 +1,114 @@
+uuid: a334e4d7-56b1-4431-9e6b-55eb5887a407
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.organization_page.body
+    - field.field.node.organization_page.field_lex_custom_banner_image
+    - field.field.node.organization_page.field_lex_site_nav
+    - field.field.node.organization_page.field_metatags
+    - field.field.node.organization_page.field_office_to_contact
+    - field.field.node.organization_page.field_organization_image
+    - field.field.node.organization_page.field_organization_taxonomy_term
+    - field.field.node.organization_page.field_page_section
+    - field.field.node.organization_page.field_related_documents
+    - field.field.node.organization_page.field_top_services
+    - image.style.thumbnail
+    - node.type.organization_page
+  module:
+    - file
+    - image
+    - link
+    - metatag
+    - paragraphs
+    - path
+    - text
+    - workbench_moderation
+id: node.organization_page.default
+targetEntityType: node
+bundle: organization_page
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 7
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  created:
+    type: datetime_timestamp
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+  field_lex_custom_banner_image:
+    weight: 6
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
+  field_lex_site_nav:
+    type: options_select
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
+  field_metatags:
+    weight: 28
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
+  field_office_to_contact:
+    weight: 5
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+  field_page_section:
+    weight: 26
+    settings:
+      title: section
+      title_plural: sections
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+    third_party_settings: {  }
+    type: entity_reference_paragraphs
+  field_related_documents:
+    weight: 27
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
+  field_top_services:
+    weight: 4
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+  path:
+    type: path
+    weight: 3
+    settings: {  }
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  field_organization_image: true
+  field_organization_taxonomy_term: true
+  promote: true
+  sticky: true

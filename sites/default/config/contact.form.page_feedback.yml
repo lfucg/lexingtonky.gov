@@ -1,0 +1,19 @@
+uuid: c23a54c8-1068-4b1a-9355-85cb2a9565d2
+langcode: en
+status: true
+dependencies:
+  module:
+    - contact_storage
+third_party_settings:
+  contact_storage:
+    redirect_uri: ''
+id: page_feedback
+label: 'Page feedback'
+recipients:
+  - webmaster@lexingtonky.gov
+  - webmasterlexington@gmail.com
+  - eschwartz@codeforamerica.org
+reply: ''
+weight: 0
+message: 'Your message has been sent.'
+redirect: ''

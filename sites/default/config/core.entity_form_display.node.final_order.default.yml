@@ -1,0 +1,90 @@
+uuid: fc5537de-a59b-4c94-9e16-f809434422df
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.final_order.field_address
+    - field.field.node.final_order.field_final_order_date
+    - field.field.node.final_order.field_final_order_docs
+    - field.field.node.final_order.field_metatags
+    - field.field.node.final_order.field_owners_address
+    - field.field.node.final_order.field_person_charged
+    - field.field.node.final_order.field_pva_num
+    - node.type.final_order
+  module:
+    - datetime
+    - file
+    - gis_api
+    - metatag
+    - workbench_moderation
+id: node.final_order.default
+targetEntityType: node
+bundle: final_order
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+  field_address:
+    weight: 5
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_final_order_date:
+    weight: 3
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+  field_final_order_docs:
+    weight: 8
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
+  field_metatags:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
+  field_owners_address:
+    weight: 7
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+  field_person_charged:
+    weight: 6
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+  field_pva_num:
+    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+    type: parcel_lookup
+  title:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  path: true
+  promote: true
+  sticky: true

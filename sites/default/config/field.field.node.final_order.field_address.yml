@@ -1,0 +1,19 @@
+uuid: b0af00f1-b6cb-4d5a-93d4-37b8eba839c6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_address
+    - node.type.final_order
+id: node.final_order.field_address
+field_name: field_address
+entity_type: node
+bundle: final_order
+label: 'Address of violation'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

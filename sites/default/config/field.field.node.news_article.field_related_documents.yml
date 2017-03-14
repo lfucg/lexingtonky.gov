@@ -1,0 +1,27 @@
+uuid: 4f06b06d-b4f2-4eb7-9500-f14636cb11e8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_documents
+    - node.type.news_article
+  module:
+    - file
+id: node.news_article.field_related_documents
+field_name: field_related_documents
+entity_type: node
+bundle: news_article
+label: 'Related documents'
+description: 'Remember to use pdfs as a last resort. It''s best to add information directly to the webpage.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  file_directory: 'news-[date:custom:Y]-[date:custom:m]'
+  file_extensions: pdf
+  max_filesize: 10MB
+  description_field: true
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: file

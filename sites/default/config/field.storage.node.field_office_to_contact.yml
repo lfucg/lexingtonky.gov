@@ -1,0 +1,20 @@
+uuid: 8a898af3-9e87-4b87-a448-725ada9fc352
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - taxonomy
+id: node.field_office_to_contact
+field_name: field_office_to_contact
+entity_type: node
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

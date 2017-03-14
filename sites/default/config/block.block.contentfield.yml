@@ -1,0 +1,37 @@
+uuid: 74a5f656-a385-4351-bc2c-44034163d03e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_image
+  module:
+    - fieldblock
+    - image
+    - node
+  theme:
+    - lex
+id: contentfield
+theme: lex
+region: sidebar_second
+weight: -17
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'News article image'
+  provider: fieldblock
+  label_display: '0'
+  label_from_field: 0
+  field_name: field_image
+  formatter_id: image
+  formatter_settings:
+    image_style: one_column
+    image_link: ''
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      news_article: news_article
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

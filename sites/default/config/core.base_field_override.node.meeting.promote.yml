@@ -1,0 +1,22 @@
+uuid: ef191e4d-26df-416b-a197-0007e7f6cc2d
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.meeting
+id: node.meeting.promote
+field_name: promote
+entity_type: node
+bundle: meeting
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

@@ -1,0 +1,7 @@
+uuid: 369e9611-fb62-4826-906e-b28478a3d155
+langcode: en
+status: true
+dependencies: {  }
+id: node__organization_page
+label: 'Content: Organization page'
+tags: {  }

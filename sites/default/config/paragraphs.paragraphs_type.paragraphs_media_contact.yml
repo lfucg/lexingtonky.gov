@@ -1,0 +1,6 @@
+uuid: c75a1675-8403-4198-9c1e-3021503de525
+langcode: en
+status: true
+dependencies: {  }
+id: paragraphs_media_contact
+label: 'Point of contact'

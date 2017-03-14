@@ -1,0 +1,20 @@
+uuid: cc24512b-5b15-4d76-bf00-ad50e0370cf1
+langcode: en
+status: true
+dependencies:
+  module:
+    - user
+  theme:
+    - lex_admin
+id: lex_admin_login
+theme: lex_admin
+region: content
+weight: -1
+provider: null
+plugin: user_login_block
+settings:
+  id: user_login_block
+  label: 'User login'
+  provider: user
+  label_display: visible
+visibility: {  }

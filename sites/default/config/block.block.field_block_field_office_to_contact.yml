@@ -1,0 +1,37 @@
+uuid: b9a0522e-1f1b-41ac-9f2e-46714ecd3ba5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_office_to_contact
+  module:
+    - fieldblock
+    - node
+  theme:
+    - lex
+id: field_block_field_office_to_contact
+theme: lex
+region: sidebar_second
+weight: -18
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: Contact
+  provider: fieldblock
+  label_display: visible
+  label_from_field: 0
+  field_name: field_office_to_contact
+  formatter_id: entity_reference_entity_view
+  formatter_settings:
+    view_mode: default
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      board_commission: board_commission
+      organization_page: organization_page
+      page: page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

@@ -1,0 +1,65 @@
+uuid: 00970fe0-743e-4e8a-8a00-be53c93a630b
+langcode: en
+status: true
+dependencies:
+  config:
+    - contact.form.page_feedback
+    - field.field.contact_message.page_feedback.field_city_response_from
+    - field.field.contact_message.page_feedback.field_feedback_url
+    - field.field.contact_message.page_feedback.field_internal_notes
+    - field.field.contact_message.page_feedback.field_optional_email
+    - field.field.contact_message.page_feedback.field_optional_name
+    - field.field.contact_message.page_feedback.field_page_suggestion
+id: contact_message.page_feedback.default
+targetEntityType: contact_message
+bundle: page_feedback
+mode: default
+content:
+  field_city_response_from:
+    type: entity_reference_autocomplete
+    weight: 4
+    settings:
+      match_operator: STARTS_WITH
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_feedback_url:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_internal_notes:
+    weight: 5
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+  field_optional_email:
+    weight: 3
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: email_default
+  field_optional_name:
+    weight: 2
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_page_suggestion:
+    weight: 1
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+hidden:
+  copy: true
+  mail: true
+  message: true
+  name: true
+  subject: true

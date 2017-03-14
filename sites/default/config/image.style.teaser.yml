@@ -1,0 +1,20 @@
+uuid: 79999ed0-e51a-4d72-ad00-d057e6ec86e1
+langcode: en
+status: true
+dependencies: {  }
+name: teaser
+label: 'Teaser (480x360)'
+effects:
+  66ed682a-b782-4c15-ac5f-950a2b724511:
+    uuid: 66ed682a-b782-4c15-ac5f-950a2b724511
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 480
+      height: 360
+  e3d44e93-8663-46ca-9e0c-d28f1d0ff890:
+    uuid: e3d44e93-8663-46ca-9e0c-d28f1d0ff890
+    id: image_convert
+    weight: 2
+    data:
+      extension: jpg

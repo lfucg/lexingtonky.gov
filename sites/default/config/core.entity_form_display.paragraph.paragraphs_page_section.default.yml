@@ -1,0 +1,36 @@
+uuid: 59b50f1b-30e1-4458-b200-ea1e858e0d2a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.paragraphs_page_section.field_related_locations
+    - field.field.paragraph.paragraphs_page_section.field_section_body
+    - field.field.paragraph.paragraphs_page_section.field_section_heading
+    - paragraphs.paragraphs_type.paragraphs_page_section
+  module:
+    - text
+    - workbench_moderation
+id: paragraph.paragraphs_page_section.default
+targetEntityType: paragraph
+bundle: paragraphs_page_section
+mode: default
+content:
+  field_section_body:
+    weight: 1
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+  field_section_heading:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+hidden:
+  created: true
+  field_related_locations: true
+  status: true
+  uid: true

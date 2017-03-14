@@ -1,0 +1,6 @@
+uuid: 03776eb4-398a-4b31-a400-e71d4c9748e1
+langcode: en
+status: true
+dependencies: {  }
+id: paragraphs_page_section
+label: 'Page section'

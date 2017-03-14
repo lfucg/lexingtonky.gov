@@ -1,0 +1,20 @@
+uuid: 37dc74d0-3ac5-4117-a007-075d7d6a95c9
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - lex
+id: lex_content
+theme: lex
+region: '-1'
+weight: -17
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Main page content'
+  provider: system
+  label_display: '0'
+visibility: {  }

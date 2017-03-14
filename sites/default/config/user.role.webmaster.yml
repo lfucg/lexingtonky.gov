@@ -1,0 +1,52 @@
+uuid: 5a03d304-7236-4988-9a47-718790a6ac97
+langcode: en
+status: true
+dependencies: {  }
+id: webmaster
+label: Webmaster
+weight: -7
+is_admin: null
+permissions:
+  32: 'administer menu'
+  33: 'administer taxonomy'
+  34: 'delete terms in organizations'
+  35: 'edit terms in organizations'
+  37: 'delete terms in site_navigation'
+  38: 'edit terms in site_navigation'
+  39: 'access toolbar'
+  40: 'administer account settings'
+  41: 'administer permissions'
+  42: 'administer users'
+  43: 'access user profiles'
+  44: 'access administration pages'
+  45: 'administer contact forms'
+  46: 'use text format advanced_html'
+  47: 'delete terms in locations'
+  48: 'edit terms in locations'
+  49: 'use draft_published transition'
+  50: 'create organization_page content'
+  51: 'delete any organization_page content'
+  52: 'delete own organization_page content'
+  53: 'delete organization_page revisions'
+  54: 'edit any organization_page content'
+  55: 'edit own organization_page content'
+  56: 'revert organization_page revisions'
+  57: 'view organization_page revisions'
+  58: 'view latest version'
+  59: 'use published_archived transition'
+  60: 'view all revisions'
+  61: 'masquerade as any user'
+  62: 'administer url aliases'
+  63: 'create url aliases'
+  64: 'create landing_page content'
+  65: 'delete any landing_page content'
+  66: 'delete own landing_page content'
+  67: 'use text format full_html'
+  68: 'create site_wide_notice content'
+  69: 'delete any site_wide_notice content'
+  70: 'delete own site_wide_notice content'
+  71: 'delete site_wide_notice revisions'
+  72: 'edit any site_wide_notice content'
+  73: 'edit own site_wide_notice content'
+  74: 'revert site_wide_notice revisions'
+  75: 'view site_wide_notice revisions'

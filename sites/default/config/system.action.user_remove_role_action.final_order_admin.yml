@@ -1,0 +1,14 @@
+uuid: e13bd63e-2e17-47a1-934a-2f89924e1ada
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.final_order_admin
+  module:
+    - user
+id: user_remove_role_action.final_order_admin
+label: 'Remove the Final order admin role from the selected users'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: final_order_admin

@@ -1,0 +1,12 @@
+protect_all_forms: false
+log: true
+element_name: email
+time_limit: 0
+form_settings:
+  user_register_form: false
+  user_pass: false
+  contact_message_feedback_form: true
+  contact_message_page_feedback_form: true
+  contact_message_personal_form: false
+  node_type_node_form: false
+  comment_comment_form: false

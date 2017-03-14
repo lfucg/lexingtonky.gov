@@ -1,0 +1,127 @@
+uuid: 11875cf0-6a88-49f1-8500-ee86eed50d92
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.event.body
+    - field.field.node.event.field_all_day
+    - field.field.node.event.field_cost
+    - field.field.node.event.field_date
+    - field.field.node.event.field_date_end
+    - field.field.node.event.field_event_website
+    - field.field.node.event.field_hide_times
+    - field.field.node.event.field_locations
+    - field.field.node.event.field_media_contact
+    - field.field.node.event.field_metatags
+    - field.field.node.event.field_recurring_event
+    - field.field.node.event.field_related_departments
+    - node.type.event
+  module:
+    - datetime
+    - entity_reference_revisions
+    - link
+    - metatag
+    - options
+    - text
+    - user
+id: node.event.default
+targetEntityType: node
+bundle: event
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
+  field_all_day:
+    weight: 9
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+  field_cost:
+    weight: 5
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_date:
+    weight: 1
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: html_datetime
+    third_party_settings: {  }
+    type: datetime_default
+  field_date_end:
+    weight: 2
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: html_datetime
+    third_party_settings: {  }
+    type: datetime_default
+  field_event_website:
+    weight: 7
+    label: inline
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+  field_hide_times:
+    weight: 3
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+  field_locations:
+    weight: 4
+    label: hidden
+    settings:
+      link: true
+      view_mode: default
+    third_party_settings: {  }
+    type: entity_reference_entity_view
+  field_media_contact:
+    weight: 8
+    label: inline
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    type: entity_reference_revisions_entity_view
+  field_metatags:
+    weight: 11
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
+  field_recurring_event:
+    weight: 10
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+  links:
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+  workbench_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_related_departments: true

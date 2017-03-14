@@ -1,0 +1,8 @@
+uuid: b6c04eca-f4ab-4ca5-b73e-62567d67990f
+langcode: en
+status: true
+dependencies: {  }
+id: list_of_links
+label: 'Quick links'
+revision: 0
+description: ''

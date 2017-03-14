@@ -1,0 +1,19 @@
+uuid: 447de655-88b1-4fa9-b31f-4613c152863c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cost
+    - node.type.event
+id: node.event.field_cost
+field_name: field_cost
+entity_type: node
+bundle: event
+label: Cost
+description: 'E.g. $10 or free'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

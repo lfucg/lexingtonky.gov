@@ -1,0 +1,18 @@
+uuid: fb2204a6-461c-4a64-8f2d-454f133a98f3
+langcode: en
+status: true
+dependencies:
+  theme:
+    - seven
+id: seven_page_title
+theme: seven
+region: header
+weight: -30
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  provider: core
+  label_display: '0'
+visibility: {  }

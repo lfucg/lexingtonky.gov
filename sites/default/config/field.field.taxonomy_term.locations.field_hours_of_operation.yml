@@ -1,0 +1,19 @@
+uuid: e6a35678-d297-4903-8506-6a96c50826fa
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_hours_of_operation
+    - taxonomy.vocabulary.locations
+id: taxonomy_term.locations.field_hours_of_operation
+field_name: field_hours_of_operation
+entity_type: taxonomy_term
+bundle: locations
+label: 'Hours of operation'
+description: 'Monday – Thursday: 9 a.m. – 5 p.m.<br>Friday: 8 a.m. – 4 p.m.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

@@ -1,0 +1,33 @@
+uuid: a797919c-99e8-492a-8201-017972a445f9
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.image_card_with_links
+    - field.field.block_content.image_card_with_links.field_card_image
+    - field.field.block_content.image_card_with_links.field_links
+    - image.style.teaser
+  module:
+    - image
+id: block_content.image_card_with_links.default
+targetEntityType: block_content
+bundle: image_card_with_links
+mode: default
+content:
+  field_card_image:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: teaser
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+  field_links:
+    weight: 1
+    label: hidden
+    settings:
+      view_mode: teaser
+      link: false
+    third_party_settings: {  }
+    type: entity_reference_entity_view
+hidden: {  }

@@ -1,0 +1,26 @@
+uuid: 93dffa26-fea3-4094-b11a-264e02b65c69
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+    - workbench_moderation
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+  workbench_moderation:
+    enabled: true
+    allowed_moderation_states:
+      - archived
+      - draft
+      - needs_review
+      - published
+    default_moderation_state: draft
+name: 'Service guide'
+type: page
+description: 'To walk someone through using a city service'
+help: ''
+new_revision: false
+preview_mode: 0
+display_submitted: false

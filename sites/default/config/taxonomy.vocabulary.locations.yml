@@ -1,0 +1,9 @@
+uuid: 7f7caca0-da65-4479-a403-03c9eabd5b02
+langcode: en
+status: true
+dependencies: {  }
+name: Locations
+vid: locations
+description: 'Places in Lexington'
+hierarchy: 0
+weight: 0

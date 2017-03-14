@@ -1,0 +1,24 @@
+uuid: 32ede837-76fc-4842-bf75-6c78109aee7d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_date
+    - node.type.meeting
+  module:
+    - datetime
+id: node.meeting.field_date
+field_name: field_date
+entity_type: node
+bundle: meeting
+label: 'Start Date and Time'
+description: ''
+required: true
+translatable: true
+default_value:
+  -
+    default_date_type: relative
+    default_date: '+1 hour'
+default_value_callback: ''
+settings: {  }
+field_type: datetime

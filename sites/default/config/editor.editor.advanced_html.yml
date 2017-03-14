@@ -1,0 +1,54 @@
+uuid: a218bb7c-0d17-4f33-bc07-7f5385459877
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.advanced_html
+  module:
+    - ckeditor
+format: advanced_html
+editor: ckeditor
+settings:
+  toolbar:
+    rows:
+      -
+        -
+          name: Formatting
+          items:
+            - Bold
+            - Italic
+        -
+          name: Links
+          items:
+            - DrupalLink
+            - DrupalUnlink
+        -
+          name: Lists
+          items:
+            - BulletedList
+            - NumberedList
+        -
+          name: Media
+          items:
+            - Blockquote
+            - DrupalImage
+        -
+          name: Tools
+          items:
+            - Styles
+            - Format
+            - Table
+            - Source
+  plugins:
+    language:
+      language_list: un
+    stylescombo:
+      styles: 'a.lex-calltoaction|Call to action'
+image_upload:
+  status: true
+  scheme: public
+  directory: inline-images
+  max_size: '5'
+  max_dimensions:
+    width: 1600
+    height: 1200

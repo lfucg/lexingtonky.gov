@@ -1,0 +1,22 @@
+uuid: 3ada5aa5-9f7f-472d-9572-7264d06472a2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.organization_page
+  module:
+    - text
+id: node.organization_page.body
+field_name: body
+entity_type: node
+bundle: organization_page
+label: Body
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary

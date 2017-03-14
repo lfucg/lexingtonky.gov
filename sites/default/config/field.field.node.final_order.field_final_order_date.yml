@@ -1,0 +1,24 @@
+uuid: 0499bbd8-34d2-4467-b3a8-6f0b5b045eac
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_final_order_date
+    - node.type.final_order
+  module:
+    - datetime
+id: node.final_order.field_final_order_date
+field_name: field_final_order_date
+entity_type: node
+bundle: final_order
+label: 'Final order date'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    default_date_type: now
+    default_date: now
+default_value_callback: ''
+settings: {  }
+field_type: datetime

@@ -1,0 +1,30 @@
+uuid: ca7f1366-d86e-4b91-ac90-3767ed7cc859
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.final_orders
+  module:
+    - system
+    - views
+  theme:
+    - lex
+id: views_block__final_orders_block_1
+theme: lex
+region: content
+weight: 0
+provider: null
+plugin: 'views_block:final_orders-block_1'
+settings:
+  id: 'views_block:final_orders-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: /final-orders
+    negate: false
+    context_mapping: {  }
