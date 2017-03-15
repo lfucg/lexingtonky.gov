@@ -1,0 +1,29 @@
+uuid: 5be727b5-5188-4040-b81e-f3d27115b6a2
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_mainnavigation
+theme: lex_planning_commission
+region: '-1'
+weight: -23
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'Main navigation - level 2'
+  provider: system
+  label_display: '0'
+  level: 2
+  depth: 1
+visibility:
+  request_path:
+    id: request_path
+    pages: '/browse*'
+    negate: false
+    context_mapping: {  }

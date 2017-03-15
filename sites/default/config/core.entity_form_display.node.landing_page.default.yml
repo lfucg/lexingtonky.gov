@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.landing_page.field_lex_custom_banner_image
     - field.field.node.landing_page.field_lex_site_nav
     - field.field.node.landing_page.field_metatags
+    - field.field.node.landing_page.field_related_departments
     - image.style.thumbnail
     - node.type.landing_page
   module:
@@ -50,6 +51,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
+  field_related_departments:
+    weight: 27
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
   path:
     type: path
     weight: 7
