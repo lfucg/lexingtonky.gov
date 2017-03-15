@@ -5338,4 +5338,27 @@ body.lex-police {
     display: block;
     margin-bottom: 1em; }
 
+body.lex-planning-commission .lex-layout-fullbleed .lex-site-header::after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 70%;
+  height: 50%;
+  top: 25%;
+  left: 15%;
+  background: url(../img/imagine_lexington_logo.svg) top center no-repeat;
+  background-size: contain; }
+body.lex-planning-commission::after {
+  content: "";
+  display: block;
+  z-index: -1;
+  opacity: 0.25;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background: url(../img/imagine_lexington_logo.svg) top center no-repeat;
+  background-size: contain;
+  height: 25%;
+  width: 25%; }
+
 /*# sourceMappingURL=styles.css.map */
