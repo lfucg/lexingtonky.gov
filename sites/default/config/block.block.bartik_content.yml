@@ -1,15 +1,15 @@
-uuid: 37dc74d0-3ac5-4117-a007-075d7d6a95c9
+uuid: d7e95f17-f72e-4443-a100-ca990c99d247
 langcode: en
-status: false
+status: true
 dependencies:
   module:
     - system
   theme:
-    - lex
-id: lex_content
-theme: lex
-region: '-1'
-weight: -17
+    - bartik
+id: bartik_content
+theme: bartik
+region: content
+weight: -1
 provider: null
 plugin: system_main_block
 settings:

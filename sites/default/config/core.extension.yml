@@ -32,7 +32,6 @@ module:
   honeypot: 0
   image: 0
   lex_calendar: 0
-  lex_themecontrol: 0
   link: 0
   masquerade: 0
   menu_ui: 0
@@ -69,9 +68,8 @@ module:
   standard: 1000
 theme:
   classy: 0
+  bartik: 0
   seven: 0
   stable: 0
   lex: 0
   lex_admin: 0
-  lex_police: 0
-  lex_planning_commission: 0

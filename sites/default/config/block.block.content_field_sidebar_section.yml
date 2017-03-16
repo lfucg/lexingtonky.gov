@@ -12,7 +12,7 @@ dependencies:
 id: content_field_sidebar_section
 theme: lex
 region: sidebar_second
-weight: -22
+weight: 0
 provider: null
 plugin: 'fieldblock:node'
 settings:

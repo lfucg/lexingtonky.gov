@@ -1,15 +1,15 @@
-uuid: 0411e006-1af4-4454-b400-be8039579cdf
+uuid: a396d922-0434-454c-bd01-1ba423433602
 langcode: en
-status: false
+status: true
 dependencies:
   module:
     - system
   theme:
-    - lex
-id: lex_branding
-theme: lex
-region: '-1'
-weight: -14
+    - bartik
+id: bartik_branding
+theme: bartik
+region: header
+weight: -7
 provider: null
 plugin: system_branding_block
 settings:

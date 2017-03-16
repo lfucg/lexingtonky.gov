@@ -1,25 +1,25 @@
-uuid: fad2e2cc-19af-44c9-825b-917ebf8a85f9
+uuid: 3f35f47f-8b3d-43d5-8600-f07040c3cbc1
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - system.menu.main
   module:
     - system
   theme:
-    - lex
-id: lex_mainnavigation
-theme: lex
-region: '-1'
-weight: -19
+    - bartik
+id: bartik_main_menu
+theme: bartik
+region: content
+weight: -4
 provider: null
 plugin: 'system_menu_block:main'
 settings:
   id: 'system_menu_block:main'
-  label: 'Main navigation - level 2'
+  label: 'Main navigation'
   provider: system
   label_display: '0'
-  level: 2
+  level: 1
   depth: 1
 visibility:
   request_path:

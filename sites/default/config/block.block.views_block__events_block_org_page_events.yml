@@ -12,7 +12,7 @@ dependencies:
 id: views_block__events_block_org_page_events
 theme: lex
 region: sidebar_second
-weight: -24
+weight: -20
 provider: null
 plugin: 'views_block:events-block_org_page_events'
 settings:

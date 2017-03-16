@@ -1,17 +1,17 @@
-uuid: fad2e2cc-19af-44c9-825b-917ebf8a85f9
+uuid: 144f6bdd-1e7a-470c-9300-cf4329731001
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - system.menu.main
   module:
     - system
   theme:
-    - lex
-id: lex_mainnavigation
-theme: lex
-region: '-1'
-weight: -19
+    - bartik
+id: mainnavigation
+theme: bartik
+region: content
+weight: -3
 provider: null
 plugin: 'system_menu_block:main'
 settings:

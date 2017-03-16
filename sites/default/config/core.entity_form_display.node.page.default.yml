@@ -34,7 +34,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_lex_custom_banner_image:
-    weight: 9
+    weight: 26
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
@@ -46,7 +46,7 @@ content:
     third_party_settings: {  }
     type: options_select
   field_metatags:
-    weight: 11
+    weight: 28
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
@@ -73,14 +73,6 @@ content:
       add_mode: dropdown
       form_display_mode: default
     third_party_settings: {  }
-  field_related_departments:
-    type: entity_reference_autocomplete_tags
-    weight: 12
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_related_documents:
     weight: 8
     settings:
@@ -89,7 +81,7 @@ content:
     type: file_generic
   field_sidebar_section:
     type: entity_reference_paragraphs
-    weight: 10
+    weight: 27
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -119,5 +111,6 @@ content:
     third_party_settings: {  }
 hidden:
   body: true
+  field_related_departments: true
   promote: true
   sticky: true

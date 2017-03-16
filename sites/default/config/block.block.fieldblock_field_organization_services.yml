@@ -14,7 +14,7 @@ dependencies:
 id: fieldblock_field_organization_services
 theme: lex
 region: sidebar_second
-weight: -25
+weight: -21
 provider: null
 plugin: 'fieldblock:node'
 settings:

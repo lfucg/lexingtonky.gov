@@ -1,4 +1,4 @@
-uuid: 94073dc2-9ac8-4e3c-8d50-80679688de1a
+uuid: 6172ab7a-c4b6-4a96-a700-ac4c3dc005ec
 langcode: en
 status: false
 dependencies:
@@ -7,11 +7,11 @@ dependencies:
   module:
     - system
   theme:
-    - lex
-id: lex_mainnavigation_3
-theme: lex
+    - bartik
+id: mainnavigation_3
+theme: bartik
 region: '-1'
-weight: -20
+weight: -6
 provider: null
 plugin: 'system_menu_block:main'
 settings:
@@ -20,5 +20,10 @@ settings:
   provider: system
   label_display: visible
   level: 1
-  depth: 3
-visibility: {  }
+  depth: 1
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }
