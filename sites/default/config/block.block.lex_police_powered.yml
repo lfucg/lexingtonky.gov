@@ -1,0 +1,20 @@
+uuid: f2e38f43-8a37-4137-bbf9-99eaa9cad883
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_powered
+theme: lex_police
+region: '-1'
+weight: -20
+provider: null
+plugin: system_powered_by_block
+settings:
+  id: system_powered_by_block
+  label: 'Powered by Drupal'
+  provider: system
+  label_display: '0'
+visibility: {  }

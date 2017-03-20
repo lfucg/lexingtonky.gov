@@ -1,0 +1,26 @@
+uuid: cdff32ec-7dcc-4bc3-9a4d-fc579a38dc9f
+langcode: en
+status: true
+dependencies:
+  module:
+    - search
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_lex_planning_commission_header_search_form
+theme: lex_planning_commission
+region: search_header
+weight: -17
+provider: null
+plugin: search_form_block
+settings:
+  id: search_form_block
+  label: 'Header search form'
+  provider: search
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/search/*"
+    negate: true
+    context_mapping: {  }

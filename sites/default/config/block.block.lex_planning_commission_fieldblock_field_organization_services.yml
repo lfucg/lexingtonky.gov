@@ -1,0 +1,46 @@
+uuid: 18e184dd-1aba-444c-a587-0dd8fcfd5723
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_top_services
+  module:
+    - ctools
+    - fieldblock
+    - link
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_fieldblock_field_organization_services
+theme: lex_planning_commission
+region: sidebar_second
+weight: -25
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Top services'
+  provider: fieldblock
+  label_display: visible
+  label_from_field: 1
+  field_name: field_top_services
+  formatter_id: link
+  formatter_settings:
+    trim_length: '80'
+    url_only: 0
+    url_plain: 0
+    rel: 0
+    target: 0
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      organization_page: organization_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: true
+    context_mapping: {  }

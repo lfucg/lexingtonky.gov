@@ -1,0 +1,31 @@
+uuid: 94c25586-6b6d-4b85-8f81-3196485496a0
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
+  module:
+    - block_content
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_urbancountycouncilhtml
+theme: lex_planning_commission
+region: featured_bottom_first
+weight: -23
+provider: null
+plugin: 'block_content:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
+settings:
+  id: 'block_content:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
+  label: 'Urban County Council'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

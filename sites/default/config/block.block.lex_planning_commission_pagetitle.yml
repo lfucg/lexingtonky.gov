@@ -1,0 +1,25 @@
+uuid: 57c5eae1-57a0-4940-8c6d-0dc6ef494e0f
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_pagetitle
+theme: lex_planning_commission
+region: highlighted
+weight: -27
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  provider: core
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/browse/*"
+    negate: true
+    context_mapping: {  }

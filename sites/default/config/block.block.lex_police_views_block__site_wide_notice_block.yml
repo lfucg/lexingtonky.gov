@@ -1,0 +1,24 @@
+uuid: 42573e4a-71ce-4073-acfa-223dcd6676e1
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.site_wide_notice
+  module:
+    - views
+  theme:
+    - lex_police
+id: lex_police_views_block__site_wide_notice_block
+theme: lex_police
+region: help
+weight: -22
+provider: null
+plugin: 'views_block:site_wide_notice-block_1'
+settings:
+  id: 'views_block:site_wide_notice-block_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility: {  }

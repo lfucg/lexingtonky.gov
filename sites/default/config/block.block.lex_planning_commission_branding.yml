@@ -1,0 +1,23 @@
+uuid: 36eda550-5c52-45d3-adcc-f92e955a0776
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_branding
+theme: lex_planning_commission
+region: '-1'
+weight: -18
+provider: null
+plugin: system_branding_block
+settings:
+  id: system_branding_block
+  label: 'Site branding'
+  provider: system
+  label_display: '0'
+  use_site_logo: true
+  use_site_name: true
+  use_site_slogan: true
+visibility: {  }

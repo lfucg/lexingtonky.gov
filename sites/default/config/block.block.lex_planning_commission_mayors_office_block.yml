@@ -1,0 +1,31 @@
+uuid: 421151be-eaf6-456e-9aea-69e51ebd7918
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'
+  module:
+    - block_content
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_mayors_office_block
+theme: lex_planning_commission
+region: featured_bottom_first
+weight: -24
+provider: null
+plugin: 'block_content:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'
+settings:
+  id: 'block_content:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'
+  label: 'Mayor''s Office'
+  provider: block_content
+  label_display: visible
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

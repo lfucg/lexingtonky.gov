@@ -1,0 +1,20 @@
+uuid: 27d1e14c-3e48-4553-b4d6-e9035aad6556
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_content
+theme: lex_police
+region: '-1'
+weight: -21
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Main page content'
+  provider: system
+  label_display: '0'
+visibility: {  }

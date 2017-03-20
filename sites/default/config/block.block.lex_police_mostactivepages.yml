@@ -1,0 +1,29 @@
+uuid: cf1c7fa2-f439-4333-a83f-c469c6c17931
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.most-active-pages
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_mostactivepages
+theme: lex_police
+region: featured_top
+weight: -24
+provider: null
+plugin: 'system_menu_block:most-active-pages'
+settings:
+  id: 'system_menu_block:most-active-pages'
+  label: 'Most active pages'
+  provider: system
+  label_display: visible
+  level: 1
+  depth: 0
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

@@ -11,7 +11,7 @@ dependencies:
 id: lex_mainnavigation_2
 theme: lex
 region: '-1'
-weight: -18
+weight: -22
 provider: null
 plugin: 'system_menu_block:main'
 settings:

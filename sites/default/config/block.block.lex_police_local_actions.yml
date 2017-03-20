@@ -1,0 +1,18 @@
+uuid: 63b49eb7-c885-4451-a2c1-c1256024c76c
+langcode: en
+status: false
+dependencies:
+  theme:
+    - lex_police
+id: lex_police_local_actions
+theme: lex_police
+region: '-1'
+weight: -19
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Primary admin actions'
+  provider: core
+  label_display: '0'
+visibility: {  }

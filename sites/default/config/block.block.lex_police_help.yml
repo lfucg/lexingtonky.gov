@@ -1,0 +1,20 @@
+uuid: fbab3bd3-ce03-493f-bc69-1ea2abb05865
+langcode: en
+status: true
+dependencies:
+  module:
+    - help
+  theme:
+    - lex_police
+id: lex_police_help
+theme: lex_police
+region: help
+weight: -14
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Help
+  provider: help
+  label_display: '0'
+visibility: {  }
