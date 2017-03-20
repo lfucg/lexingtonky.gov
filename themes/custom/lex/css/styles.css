@@ -5336,7 +5336,7 @@ body.lex-police {
   background-size: auto 50%; }
   body.lex-police .views-field-field-top-services a {
     display: block;
-    margin-bottom: 1em; }
+    line-height: 1.5; }
 
 body.lex-planning-commission .lex-layout-fullbleed .lex-site-header::after {
   content: "";
