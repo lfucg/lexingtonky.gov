@@ -12,7 +12,7 @@ dependencies:
 id: lex_police_views_block__sibling_pages_block_sidebar
 theme: lex_police
 region: sidebar_second
-weight: -28
+weight: -27
 provider: null
 plugin: 'views_block:sibling_pages-block_1'
 settings:

@@ -11,7 +11,7 @@ dependencies:
 id: lex_police_mainnavigation_2
 theme: lex_police
 region: '-1'
-weight: -22
+weight: -23
 provider: null
 plugin: 'system_menu_block:main'
 settings:

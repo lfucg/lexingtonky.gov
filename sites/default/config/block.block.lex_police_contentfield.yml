@@ -1,6 +1,6 @@
 uuid: dc65ea0e-c7db-4d26-940f-ca4e58b3f281
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - field.storage.node.field_image
@@ -12,8 +12,8 @@ dependencies:
     - lex_police
 id: lex_police_contentfield
 theme: lex_police
-region: sidebar_second
-weight: -20
+region: '-1'
+weight: -14
 provider: null
 plugin: 'fieldblock:node'
 settings:

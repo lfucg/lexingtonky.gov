@@ -7,7 +7,7 @@ dependencies:
 id: lex_police_local_actions
 theme: lex_police
 region: '-1'
-weight: -19
+weight: -20
 provider: null
 plugin: local_actions_block
 settings:

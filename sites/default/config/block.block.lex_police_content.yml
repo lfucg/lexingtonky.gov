@@ -9,7 +9,7 @@ dependencies:
 id: lex_police_content
 theme: lex_police
 region: '-1'
-weight: -21
+weight: -22
 provider: null
 plugin: system_main_block
 settings:
