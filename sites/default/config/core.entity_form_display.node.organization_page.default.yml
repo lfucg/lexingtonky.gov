@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.organization_page.field_organization_image
     - field.field.node.organization_page.field_organization_taxonomy_term
     - field.field.node.organization_page.field_page_section
+    - field.field.node.organization_page.field_related_departments
     - field.field.node.organization_page.field_related_documents
     - field.field.node.organization_page.field_top_services
     - image.style.thumbnail
@@ -74,6 +75,14 @@ content:
       form_display_mode: default
     third_party_settings: {  }
     type: entity_reference_paragraphs
+  field_related_departments:
+    weight: 29
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
   field_related_documents:
     weight: 27
     settings:

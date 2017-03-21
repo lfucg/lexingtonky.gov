@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.organization_page.field_organization_image
     - field.field.node.organization_page.field_organization_taxonomy_term
     - field.field.node.organization_page.field_page_section
+    - field.field.node.organization_page.field_related_departments
     - field.field.node.organization_page.field_related_documents
     - field.field.node.organization_page.field_top_services
     - node.type.organization_page
@@ -40,6 +41,7 @@ hidden:
   field_organization_image: true
   field_organization_taxonomy_term: true
   field_page_section: true
+  field_related_departments: true
   field_related_documents: true
   field_top_services: true
   links: true

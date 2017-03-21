@@ -1,0 +1,28 @@
+uuid: 561239c8-dd83-4e1a-b28b-f8830fff9db7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_departments
+    - node.type.organization_page
+    - taxonomy.vocabulary.organizations
+id: node.organization_page.field_related_departments
+field_name: field_related_departments
+entity_type: node
+bundle: organization_page
+label: 'Related departments'
+description: 'This is only necessary if you wish to cause the layout schema to change.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      organizations: organizations
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
