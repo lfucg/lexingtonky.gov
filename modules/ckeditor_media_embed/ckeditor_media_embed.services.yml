@@ -1,0 +1,4 @@
+services:
+  ckeditor_media_embed:
+    class: Drupal\ckeditor_media_embed\Embed
+    arguments: ['@http_client', '@unrouted_url_assembler', '@request_stack']

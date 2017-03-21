@@ -1,0 +1,5 @@
+ckeditor_media_embed.ckeditor_media_embed_settings_form:
+  title: 'CKEditor Media Embed'
+  description: 'Configure provider to use with CKEditor Media Embed plugin.'
+  parent: system.admin_config_media
+  route_name: ckeditor_media_embed.ckeditor_media_embed_settings_form

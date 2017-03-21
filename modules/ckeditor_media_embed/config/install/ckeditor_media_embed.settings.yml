@@ -1,0 +1,1 @@
+embed_provider: '//ckeditor.iframe.ly/api/oembed?url={url}&callback={callback}'
