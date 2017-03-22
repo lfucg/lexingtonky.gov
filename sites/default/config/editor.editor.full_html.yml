@@ -40,7 +40,6 @@ settings:
             - Table
             - HorizontalRule
             - Embed
-            - EmbedSemantic
         -
           name: 'Block Formatting'
           items:

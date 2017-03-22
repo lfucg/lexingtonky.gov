@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   module:
+    - ckeditor_media_embed
     - editor
 name: 'Advanced HTML'
 format: advanced_html
@@ -11,7 +12,7 @@ filters:
   filter_html:
     id: filter_html
     provider: filter
-    status: true
+    status: false
     weight: -50
     settings:
       allowed_html: '<a hreflang href class="lex-calltoaction"> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h3 id> <h4 id> <h5 id> <h6 id> <img src alt data-entity-type data-entity-uuid> <p> <table> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <iframe allowfullscreen frameborder height src width>'
@@ -21,7 +22,7 @@ filters:
     id: editor_file_reference
     provider: editor
     status: true
-    weight: -43
+    weight: -44
     settings: {  }
   filter_align:
     id: filter_align
@@ -33,7 +34,7 @@ filters:
     id: filter_autop
     provider: filter
     status: false
-    weight: -46
+    weight: -42
     settings: {  }
   filter_caption:
     id: filter_caption
@@ -44,25 +45,31 @@ filters:
   filter_htmlcorrector:
     id: filter_htmlcorrector
     provider: filter
-    status: false
-    weight: -42
+    status: true
+    weight: -49
     settings: {  }
   filter_html_escape:
     id: filter_html_escape
     provider: filter
     status: false
-    weight: -49
+    weight: -43
     settings: {  }
   filter_html_image_secure:
     id: filter_html_image_secure
     provider: filter
     status: true
-    weight: -44
+    weight: -45
     settings: {  }
   filter_url:
     id: filter_url
     provider: filter
     status: true
-    weight: -45
+    weight: -46
     settings:
       filter_url_length: 72
+  filter_ckeditor_media_embed:
+    id: filter_ckeditor_media_embed
+    provider: ckeditor_media_embed
+    status: false
+    weight: -41
+    settings: {  }

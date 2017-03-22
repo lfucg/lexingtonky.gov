@@ -32,6 +32,7 @@ settings:
           items:
             - Blockquote
             - DrupalImage
+            - Embed
         -
           name: Tools
           items:
@@ -44,6 +45,8 @@ settings:
       language_list: un
     stylescombo:
       styles: 'a.lex-calltoaction|Call to action'
+    autoembed:
+      status: ''
 image_upload:
   status: true
   scheme: public
