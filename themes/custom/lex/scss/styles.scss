@@ -47,8 +47,8 @@ $lex-section-rem-gutter-half: $lex-section-rem-gutter / 2;
 $color-primary: $lex-blue;
 
 // Font Awesome
-$fa-font-path: "../font-awesome-4.5.0/fonts";
-@import '../font-awesome-4.5.0/scss/font-awesome';
+$fa-font-path: "../font-awesome-4.7.0/fonts";
+@import '../font-awesome-4.7.0/scss/font-awesome';
 
 // Import WDS
 @import '../webdesignstandards/_scss/all';
