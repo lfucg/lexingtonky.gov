@@ -20,6 +20,7 @@ $lex-extra-light-blue: #BFD5EA;
 $lex-green: #006621;
 $lex-blue: #0057A8;
 $lex-dark-blue: #001A49;
+$lex-horse-blue: #0959A7;
 $lex-gold: #E0B111;
 $lex-white: #FFFFFF;
 $lex-black: #000000;
@@ -103,8 +104,27 @@ iframe {
   }
 
   article {
-    padding: 1em;
+    padding: 0 2em 0 0;
   }
+}
+
+article {
+  figure {
+    margin: 1.5em;
+
+    img {
+      border: 1px solid $lex-grey;
+    }
+
+    &.align-right {
+      margin-right: 0;
+    }
+    &.align-left {
+      margin-left: 0;
+    }
+  }
+
+
 }
 
 .lex-section {
