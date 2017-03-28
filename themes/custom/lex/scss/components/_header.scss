@@ -1,13 +1,4 @@
 .lex-site-header {
-  background-repeat: no-repeat;
-  background-size: cover;
-
-  @include media($medium-large-screen) {
-    background-image: none; // set by lex.theme
-  }
-  @include media($large-screen) {
-    min-height: 300px;
-  }
 
   .lex-quicklinks {
     li {
@@ -41,9 +32,10 @@
 }
 
 .lex-site-navbar {
-  background-color: rgba($lex-white, $lex-alpha-level);
-  padding-top: 9px;
-  padding-bottom: 9px;
+  background: #fff;
+  border-bottom: 1px solid $lex-grey;
+  padding-top: 1em;
+  padding-bottom: 1em;
   /* todo logo => .lex-logo-container */
   .logo {
     max-width: 75%;
@@ -55,9 +47,6 @@
     background-image: url('../img/lexington-logo.png');
     background-image: url('../img/lexington-logo.svg');
     background-repeat: no-repeat;
-    @include media($large-screen) {
-      @include logo_dimensions(50px);
-    }
 
     &:hover::after {
       content: '';
@@ -65,12 +54,10 @@
       border-top: 1px solid $lex-horse-blue;
       position: absolute;
       width: 100%;
-      bottom: -1em;
+      bottom: -0.25em;
     }
   }
-  @include media($large-screen) {
-    padding: 25px 0 25px 0;
-  }
+
 
 }
 

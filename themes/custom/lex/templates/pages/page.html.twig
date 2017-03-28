@@ -63,9 +63,54 @@
  * @ingroup themeable
  */
 #}
-<div class="layout-container {{ is_front ? 'lex-frontpage' : '' }} {{ attributes.layout_class }}">
+<div class="layout-container {{ layout_class }}">
+  {% block page_super_header %}
+    {{ page.super_header }}
+  {% endblock %}
   {% block page_header %}
-  {% include "@lex/includes/header.html.twig" %}
+  <header class="lex-site-header" role="banner">
+    <nav class="usa-site-navbar lex-site-navbar">
+      <div class="usa-grid-full lex-grid-full">
+        <div class="logo" id="logo">
+          <a href="/" accesskey="1" title="Home" aria-label="Home">
+            <div class="lex-logo"></div>
+          </a>
+        </div>
+        <div class="lex-site-navbar-secondary">
+          {% block page_navbar_secondary %}
+          {{  page.navbar_secondary }}
+          {% endblock %}
+        </div>
+        {% block page_search_header %}
+        {{  page.search_header }}
+        {% endblock %}
+      </div>
+    </nav>
+    {% if page.featured_top or page.featured_second %}
+      <div class="lex-slab lex-slab-blue-alpha">
+        <div class="lex-grid-full usa-grid-full">
+          {% block page_features %}
+            {# used by full-bleed langing page #}
+            <div class="usa-width-one-half">
+              {{ page.featured_top }}
+            </div>
+            <div class="usa-width-one-half">
+              {{ page.featured_second }}
+            </div>
+          {% endblock %}
+        </div>
+      </div>
+    {% endif %}
+  </header>
+  {% endblock %}
+  {% block page_hero %}
+    <div class="lex-hero">
+      {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
+      <img src="{{ file_url(node.field_lex_custom_banner_image.entity.fileuri) }}" alt="">
+      {% else %}
+      <img src="/themes/custom/lex/img/lexington-hero-interior.jpg" alt="">
+      {% endif %}
+    </div>
   {% endblock %}
   {% block page_help %}
   {{ page.help }}

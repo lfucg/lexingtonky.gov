@@ -4820,23 +4820,14 @@ a.lex-font-standout, a.lex-font-standout:visited {
   margin-top: .5em;
   margin-bottom: 0; }
 
-.lex-site-header {
-  background-repeat: no-repeat;
-  background-size: cover; }
-  @media screen and (min-width: 900px) {
-    .lex-site-header {
-      background-image: none; } }
-  @media screen and (min-width: 1201px) {
-    .lex-site-header {
-      min-height: 300px; } }
-  .lex-site-header .lex-quicklinks li {
-    display: none; }
-    .lex-site-header .lex-quicklinks li#google_translate_element {
-      /* display for all screens and pages */
-      display: inline-block; }
-    @media screen and (min-width: 600px) {
-      .lex-site-header .lex-quicklinks li {
-        padding-left: 2em; } }
+.lex-site-header .lex-quicklinks li {
+  display: none; }
+  .lex-site-header .lex-quicklinks li#google_translate_element {
+    /* display for all screens and pages */
+    display: inline-block; }
+  @media screen and (min-width: 600px) {
+    .lex-site-header .lex-quicklinks li {
+      padding-left: 2em; } }
 
 #block-edithomepagebanner {
   position: absolute;
@@ -4849,9 +4840,10 @@ a.lex-font-standout, a.lex-font-standout:visited {
       display: inline-block; } }
 
 .lex-site-navbar {
-  background-color: rgba(255, 255, 255, 0.75);
-  padding-top: 9px;
-  padding-bottom: 9px;
+  background: #fff;
+  border-bottom: 1px solid #BFBFBF;
+  padding-top: 1em;
+  padding-bottom: 1em;
   /* todo logo => .lex-logo-container */ }
   .lex-site-navbar .logo {
     max-width: 75%;
@@ -4864,21 +4856,13 @@ a.lex-font-standout, a.lex-font-standout:visited {
     background-image: url("../img/lexington-logo.png");
     background-image: url("../img/lexington-logo.svg");
     background-repeat: no-repeat; }
-    @media screen and (min-width: 1201px) {
-      .lex-site-navbar .lex-logo {
-        height: 50px;
-        width: -webkit-calc(50px * 5.2);
-        width: calc(50px * 5.2); } }
     .lex-site-navbar .lex-logo:hover::after {
       content: '';
       display: block;
       border-top: 1px solid #0959A7;
       position: absolute;
       width: 100%;
-      bottom: -1em; }
-  @media screen and (min-width: 1201px) {
-    .lex-site-navbar {
-      padding: 25px 0 25px 0; } }
+      bottom: -0.25em; }
 
 .lex-region-search_header {
   float: left;
@@ -5630,5 +5614,12 @@ body.lex-planning-commission::after {
   background-size: contain;
   height: 25%;
   width: 25%; }
+
+.lex-hero {
+  border-bottom: 1px solid #BFBFBF; }
+  .lex-hero img {
+    display: block;
+    width: 100%;
+    height: auto; }
 
 /*# sourceMappingURL=styles.css.map */

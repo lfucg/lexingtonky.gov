@@ -368,5 +368,14 @@ input:focus, input[type=search]:focus {
 @import './sections/_police.sass';
 @import './sections/_planning_commission.sass';
 
+.lex-hero {
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  border-bottom: 1px solid $lex-grey;
+}
+
 
 
