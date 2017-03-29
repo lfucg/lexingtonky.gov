@@ -40,7 +40,7 @@ $lex-alert-yellow: #ffee88;
 $lex-section-gutter: 1.7em;
 $lex-section-half-gutter: $lex-section-gutter / 2;
 $lex-section-double-gutter: $lex-section-gutter * 2;
-$lex-max-width: 1200px;
+
 // Use rem-based gutter!
 $lex-section-rem-gutter: 3.4rem;
 $lex-section-rem-gutter-half: $lex-section-rem-gutter / 2;
@@ -50,6 +50,22 @@ $color-primary: $lex-blue;
 // Font Awesome
 $fa-font-path: "../font-awesome-4.7.0/fonts";
 @import '../font-awesome-4.7.0/scss/font-awesome';
+
+// Important resets before loading main sheets.
+
+// Better font rendering.
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Images must preserve aspect ratio if they hit a max-width or height.
+img {
+  height: auto;
+  width: auto;
+  border: 1px solid $lex-grey;
+}
+
 
 // Import WDS
 @import '../webdesignstandards/_scss/all';
@@ -72,6 +88,18 @@ $fa-font-path: "../font-awesome-4.7.0/fonts";
 @import './_wds-overrides';
 @import './_formstack-overrides';
 @import './_granicus-overrides';
+
+// Overrides of above
+.usa-grid, .usa-grid-full {
+  max-width: 90%;
+}
+
+
+html {
+  @media screen and (min-width: 1400px) {
+    font-size: 0.667vmax;
+  }
+}
 
 
 // Core Lexington styles
@@ -96,7 +124,6 @@ iframe {
 }
 
 .lex-grid-full {
-  max-width: $lex-max-width;
   margin: 0 auto;
   padding: 0 $lex-section-half-gutter;
   @include media($large-screen) {
@@ -123,8 +150,6 @@ article {
       margin-left: 0;
     }
   }
-
-
 }
 
 .lex-section {
@@ -159,6 +184,49 @@ article {
 
 .lex-region-highlighted {
   padding-bottom: $lex-section-gutter;
+}
+
+@supports (display: grid) {
+  .lex-frontpage .lex-region-highlighted {
+
+    display: grid;
+    grid-template-columns: 1fr 20em;
+    grid-gap: 2em;
+
+    > * {
+      grid-column: 2;
+      width: 100%;
+      float: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    > *:first-child {
+      grid-column: 1;
+      grid-row: span 2;
+    }
+
+    > *:last-child {
+      align-self: end;
+    }
+
+    @media (max-width: 899px) {
+      grid-template-columns: 1fr 1fr;
+
+      > * {
+        grid-column: auto;
+      }
+
+      > *:first-child {
+        grid-row: 1;
+        grid-column: span 2;
+      }
+
+      > *:last-child {
+        align-self: stretch;
+      }
+    }
+  }
 }
 
 .lex-align-right {
@@ -210,7 +278,7 @@ article {
   .lex-icon {
     color: $lex-dark-grey;
     float: left;
-    margin-top: -10px;
+    margin-top: -1em;
     display: inline-block;
     font-size: 1.5em;
     width: 1em;
@@ -236,6 +304,20 @@ input:focus, input[type=search]:focus {
   box-shadow: none;
 }
 
+@media screen and (max-width: 874px) {
+  .lex-slab-blue-alpha .lex-grid-full {
+    padding: 0;
+    max-width: none;
+  }
+  .lex-search-hero-container.usa-width-two-thirds, .lex-mostactive.usa-width-one-third  {
+    width: 100%;
+    float: none;
+    margin: 0;
+    padding: 0 7%;
+    box-sizing: border-box;
+  }
+}
+
 .lex-search-hero {
   color: white;
   padding-top: 1em;
@@ -249,6 +331,11 @@ input:focus, input[type=search]:focus {
     margin-bottom: 0.5em;
   }
 
+  h1 {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
   @include media($large-screen) {
     width: 98%;
     padding-bottom: 3em;
@@ -260,6 +347,13 @@ input:focus, input[type=search]:focus {
     .lex-card-title {
       font-weight: $font-weight-light;
     }
+  }
+
+  @media (max-width: 874px) {
+    h1.lex-card-title {
+      margin-bottom: 0;
+    }
+
   }
 }
 
@@ -309,7 +403,7 @@ input:focus, input[type=search]:focus {
 }
 
 .lex-seal {
-  width: 50px;
+  width: 5em;
   float: left;
 }
 
@@ -367,15 +461,3 @@ input:focus, input[type=search]:focus {
 // Department sheets
 @import './sections/_police.sass';
 @import './sections/_planning_commission.sass';
-
-.lex-hero {
-  img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-  border-bottom: 1px solid $lex-grey;
-}
-
-
-

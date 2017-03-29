@@ -2323,6 +2323,15 @@
   overflow: visible;
   clip: auto; }
 
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+img {
+  height: auto;
+  width: auto;
+  border: 1px solid #BFBFBF; }
+
 html {
   box-sizing: border-box; }
 
@@ -4726,7 +4735,6 @@ a.lex-font-standout, a.lex-font-standout:visited {
   @media screen and (min-width: 1201px) {
     .lex-alert {
       /* compensate for extra svg padding in WDS */
-      max-width: 1245px;
       margin: 0 auto; }
       .lex-alert .usa-alert-body p {
         margin: .2em 0 0 0; } }
@@ -4755,7 +4763,7 @@ a.lex-font-standout, a.lex-font-standout:visited {
   margin-bottom: 1.7em; }
 
 .lex-card-subtitle {
-  margin: 0;
+  margin: 0.5em 0;
   padding: 0;
   font-weight: 200; }
 
@@ -4773,10 +4781,8 @@ a.lex-font-standout, a.lex-font-standout:visited {
   .lex-region-content h2.lex-eventcard-title-daylist.lex-card-title {
     margin-bottom: 0.85em; }
 
-.lex-eventcard-titlesection {
-  padding-left: 1.5em; }
-  .lex-eventcard-titlesection .lex-card-subtitle {
-    margin-bottom: 1.7em; }
+.lex-eventcard-titlesection .lex-card-subtitle {
+  margin-bottom: 1.7em; }
 
 .lex-card-fulldate {
   font-style: italic; }
@@ -4880,10 +4886,14 @@ a.lex-font-standout, a.lex-font-standout:visited {
   background-color: rgba(0, 26, 73, 0.75); }
 
 .lex-frontpage .lex-slab-blue-alpha {
-  padding-top: 0; }
-  @media screen and (min-width: 900px) {
+  padding-top: 0;
+  background-color: #001A49; }
+  @media (min-width: 875px) {
     .lex-frontpage .lex-slab-blue-alpha {
-      margin-top: 310px; } }
+      background-color: rgba(0, 26, 73, 0.75);
+      height: 12em;
+      margin-top: -12em;
+      position: relative; } }
 
 .lex-layout-fullbleed {
   height: 100%;
@@ -4962,6 +4972,14 @@ a.lex-font-standout, a.lex-font-standout:visited {
   @media screen and (min-width: 1201px) {
     .lex-site-navbar-secondary {
       margin-top: 13px; } }
+
+.lex-hero {
+  position: relative;
+  border-bottom: 1px solid #BFBFBF; }
+  .lex-hero img {
+    display: block;
+    width: 100%;
+    height: auto; }
 
 .browse-panes.section #root {
   display: none; }
@@ -5322,6 +5340,13 @@ table {
   /* remove padding added in iframe */
   margin: -15px; }
 
+.usa-grid, .usa-grid-full {
+  max-width: 90%; }
+
+@media screen and (min-width: 1400px) {
+  html {
+    font-size: 0.667vmax; } }
+
 body {
   color: #585858; }
 
@@ -5339,7 +5364,6 @@ iframe {
   padding-bottom: 0.5em; }
 
 .lex-grid-full {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 0 0.85em; }
   @media screen and (min-width: 1201px) {
@@ -5381,6 +5405,32 @@ article figure {
 .lex-region-highlighted {
   padding-bottom: 1.7em; }
 
+@supports (display: grid) {
+  .lex-frontpage .lex-region-highlighted {
+    display: grid;
+    grid-template-columns: 1fr 20em;
+    grid-gap: 2em; }
+    .lex-frontpage .lex-region-highlighted > * {
+      grid-column: 2;
+      width: 100%;
+      float: none;
+      margin: 0;
+      padding: 0; }
+    .lex-frontpage .lex-region-highlighted > *:first-child {
+      grid-column: 1;
+      grid-row: span 2; }
+    .lex-frontpage .lex-region-highlighted > *:last-child {
+      align-self: end; }
+    @media (max-width: 899px) {
+      .lex-frontpage .lex-region-highlighted {
+        grid-template-columns: 1fr 1fr; }
+        .lex-frontpage .lex-region-highlighted > * {
+          grid-column: auto; }
+        .lex-frontpage .lex-region-highlighted > *:first-child {
+          grid-row: 1;
+          grid-column: span 2; }
+        .lex-frontpage .lex-region-highlighted > *:last-child {
+          align-self: stretch; } } }
 .lex-align-right {
   text-align: right; }
 
@@ -5422,7 +5472,7 @@ article figure {
   #block-urbancountycouncilhtml .lex-icon {
     color: #585858;
     float: left;
-    margin-top: -10px;
+    margin-top: -1em;
     display: inline-block;
     font-size: 1.5em;
     width: 1em;
@@ -5443,6 +5493,17 @@ article figure {
 input:focus, input[type=search]:focus {
   box-shadow: none; }
 
+@media screen and (max-width: 874px) {
+  .lex-slab-blue-alpha .lex-grid-full {
+    padding: 0;
+    max-width: none; }
+
+  .lex-search-hero-container.usa-width-two-thirds, .lex-mostactive.usa-width-one-third {
+    width: 100%;
+    float: none;
+    margin: 0;
+    padding: 0 7%;
+    box-sizing: border-box; } }
 .lex-search-hero {
   color: white;
   padding-top: 1em;
@@ -5452,6 +5513,9 @@ input:focus, input[type=search]:focus {
   .lex-search-hero .lex-card-title, .lex-search-hero .browse-panes #subsection h1, .browse-panes #subsection .lex-search-hero h1 {
     font-size: 1.5em;
     margin-bottom: 0.5em; }
+  .lex-search-hero h1 {
+    padding-bottom: 0;
+    margin-bottom: 0; }
   @media screen and (min-width: 1201px) {
     .lex-search-hero {
       width: 98%;
@@ -5460,6 +5524,9 @@ input:focus, input[type=search]:focus {
         margin-bottom: 0; }
       .lex-search-hero .lex-card-title, .lex-search-hero .browse-panes #subsection h1, .browse-panes #subsection .lex-search-hero h1 {
         font-weight: 200; } }
+  @media (max-width: 874px) {
+    .lex-search-hero h1.lex-card-title, .lex-search-hero .browse-panes #subsection h1, .browse-panes #subsection .lex-search-hero h1 {
+      margin-bottom: 0; } }
 
 .lex-region-sidebar_second img,
 .lex-image-teaser img {
@@ -5490,7 +5557,7 @@ input:focus, input[type=search]:focus {
   overflow: hidden; }
 
 .lex-seal {
-  width: 50px;
+  width: 5em;
   float: left; }
 
 .lex-newsarticle-end {
@@ -5614,12 +5681,5 @@ body.lex-planning-commission::after {
   background-size: contain;
   height: 25%;
   width: 25%; }
-
-.lex-hero {
-  border-bottom: 1px solid #BFBFBF; }
-  .lex-hero img {
-    display: block;
-    width: 100%;
-    height: auto; }
 
 /*# sourceMappingURL=styles.css.map */

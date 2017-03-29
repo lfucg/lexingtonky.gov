@@ -9,9 +9,9 @@ function lex_natural_sort_views($a, $b) {
 
 /*
  * Add custom banner if a node has it populated
-*/
+*
 function lex_page_attachments_alter(array &$attachments) {
-  return;
+
   $uri = [];
   // $node is nid, not object for urls like /node/600/revisions/1965/view
   if (($node = \Drupal::routeMatch()->getParameter('node'))
@@ -51,6 +51,7 @@ function lex_page_attachments_alter(array &$attachments) {
   );
   $attachments['#attached']['html_head'][] = [$banner, 'lex-banner-image-style'];
 }
+*/
 
 function lex_views_pre_render($view) {
   if ($view->id() == "taxonomy_term") {

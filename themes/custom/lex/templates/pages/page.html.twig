@@ -67,6 +67,7 @@
   {% block page_super_header %}
     {{ page.super_header }}
   {% endblock %}
+
   {% block page_header %}
   <header class="lex-site-header" role="banner">
     <nav class="usa-site-navbar lex-site-navbar">
@@ -86,23 +87,9 @@
         {% endblock %}
       </div>
     </nav>
-    {% if page.featured_top or page.featured_second %}
-      <div class="lex-slab lex-slab-blue-alpha">
-        <div class="lex-grid-full usa-grid-full">
-          {% block page_features %}
-            {# used by full-bleed langing page #}
-            <div class="usa-width-one-half">
-              {{ page.featured_top }}
-            </div>
-            <div class="usa-width-one-half">
-              {{ page.featured_second }}
-            </div>
-          {% endblock %}
-        </div>
-      </div>
-    {% endif %}
   </header>
   {% endblock %}
+
   {% block page_hero %}
     <div class="lex-hero">
       {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
@@ -110,8 +97,24 @@
       {% else %}
       <img src="/themes/custom/lex/img/lexington-hero-interior.jpg" alt="">
       {% endif %}
+      {% block page_features %}
+        {% if page.featured_top or page.featured_second %}
+          <div class="lex-slab lex-slab-blue-alpha">
+            <div class="lex-grid-full usa-grid-full">
+                {# used by full-bleed langing page #}
+                <div class="usa-width-one-half">
+                  {{ page.featured_top }}
+                </div>
+                <div class="usa-width-one-half">
+                  {{ page.featured_second }}
+                </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endblock %}
     </div>
   {% endblock %}
+
   {% block page_help %}
   {{ page.help }}
   {% endblock %}
@@ -119,6 +122,7 @@
   {% block page_primary_menu %}
   {{ page.primary_menu }}
   {% endblock %}
+
   {% block page_secondary_menu %}
   {{ page.secondary_menu }}
   {% endblock %}

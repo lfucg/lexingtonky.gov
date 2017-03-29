@@ -80,9 +80,15 @@
 
 .lex-frontpage .lex-slab-blue-alpha {
   padding-top: 0;
-  @include media($medium-large-screen) {
-    margin-top: 310px;
+  background-color: $lex-dark-blue;
+
+  @media (min-width: 875px) {
+    background-color: rgba($lex-dark-blue, $lex-alpha-level);
+    height: 12em;
+    margin-top: -12em;
+    position: relative;
   }
+
 }
 
 .lex-layout-fullbleed {
@@ -198,4 +204,18 @@
   @include media($large-screen) {
     margin-top: 13px;
   }
+}
+
+.lex-hero {
+  position: relative;
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  border-bottom: 1px solid $lex-grey;
+}
+
+@media (max-width: 899px) {
+
 }
