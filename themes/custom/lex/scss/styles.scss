@@ -166,6 +166,10 @@ article {
   background-color: $lex-light-grey;
 }
 
+.lex-breadcrumb, .lex-accordion {
+  padding-left: 5%;
+}
+
 .lex-slab-blue {
   background-color: $lex-dark-blue;
   &, a, a:visited {
@@ -380,8 +384,7 @@ input:focus, input[type=search]:focus {
 }
 
 .lex-sub-footer {
-  padding-top: $lex-section-gutter * 3;
-  padding-bottom: $lex-section-half-gutter;
+  padding: 5%;
 }
 
 .lex-copyright {

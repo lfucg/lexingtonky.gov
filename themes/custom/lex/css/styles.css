@@ -5391,6 +5391,9 @@ article figure {
 .lex-slab-grey {
   background-color: #f1f0f0; }
 
+.lex-breadcrumb, .lex-accordion {
+  padding-left: 5%; }
+
 .lex-slab-blue {
   background-color: #001A49; }
   .lex-slab-blue, .lex-slab-blue a, .lex-slab-blue a:visited {
@@ -5541,8 +5544,7 @@ input:focus, input[type=search]:focus {
       border-top: 1px solid #BFBFBF; } }
 
 .lex-sub-footer {
-  padding-top: 5.1em;
-  padding-bottom: 0.85em; }
+  padding: 5%; }
 
 .lex-copyright {
   padding-left: 1.7em;
