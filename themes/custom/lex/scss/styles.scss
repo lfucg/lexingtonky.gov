@@ -299,6 +299,38 @@ article {
   }
 }
 
+ul.lex-city-gov-stat-block {
+  font-size: 1.25em;
+  margin: 0;
+  padding: 0;
+  li {
+    &:before {
+      display: none;
+    }
+    display: block;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    clear: both;
+    line-height: 1.75;
+  }
+  span {
+    font-size: 1.75em;
+    color: $lex-dark-grey;
+    width: 1em;
+    margin-right: 0.5em;
+    display: block;
+    float: left;
+    line-height: 1;
+  }
+
+  li:first-child, li:nth-child(2) {
+    span {
+      font-family: 'FontAwesome';
+    }
+  }
+}
+
 .lex-horizontal-list li {
   display: inline-block;
   padding-right: 1em;
@@ -406,7 +438,7 @@ input:focus, input[type=search]:focus {
 }
 
 .lex-seal {
-  width: 5em;
+  width: 5rem;
   float: left;
 }
 
@@ -464,3 +496,18 @@ input:focus, input[type=search]:focus {
 // Department sheets
 @import './sections/_police.sass';
 @import './sections/_planning_commission.sass';
+
+@supports(display: flex) {
+  .lex-region-featured_bottom_first {
+    outline: 1px solid blue;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+
+    > * {
+      outline: 2px solid orange;
+      margin: auto;
+      padding: 0;
+    }
+  }
+}
