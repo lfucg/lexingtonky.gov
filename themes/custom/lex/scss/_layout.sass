@@ -1,0 +1,101 @@
+*
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+  box-sizing: border-box // IE 6 had one thing right at least.
+  padding: 0
+  margin: 0
+
+html
+  font-family: $font-sans
+  @media (min-width: $screen-large-min)
+    font-size: 0.667vmax
+
+nav ul
+  list-style: none
+
+a
+  color: $color-primary-4
+
+  &:visited
+    color: $color-primary-3
+
+p
+  line-height: 1.5
+  margin-bottom: 1.5em
+h1,h2,h3,h4,h5,h6
+  font-weight: normal
+  margin: 1em 0 0.5em 0
+
+  @include link_hover_underline
+
+h1
+  font-size: 2em
+h2
+  font-size: 1.8em
+  text-transform: uppercase
+h3
+  font-size: 1.6em
+h4
+  font-size: 1.4em
+h5
+  font-size: 1.2em
+h6
+  font-size: 1.1em
+
+input, button
+  display: block
+  font-size: 1em
+  border: 1px solid $color-secondary-3
+  margin: 0.5em 0 1em
+
+label, legend
+  font-weight: bold
+  margin: 1em 0
+
+input
+  padding: 0.25em 0.5em
+
+button
+  padding: 0.25em
+  background: #fff
+
+body > *
+  @include base_padding
+
+hr
+  height: 0
+  width: 100%
+  border: none
+  @include base_bottom_rule
+
+.lex-search
+  >div
+    width: 100%
+  button
+    border-left: none
+    span:first-child
+      display: none
+
+  input
+    width: calc(100% - 2em)
+    float: left
+    border-right: none
+  #edit-actions
+    display: none
+
+.lex-card-fulldate
+  margin-bottom: 1em
+  font-size: 0.9em
+
+.lex-accordion ul
+  list-style: none
+
+.lex-accordion-content
+  max-height: 200vh
+  transition: max-height 1s ease-out
+  &[aria-hidden="true"]
+    max-height: 0
+    overflow: hidden
+
+body > footer
+  background: $color-primary-5

@@ -1,0 +1,38 @@
+@mixin base_padding
+  padding: $base-padding $base-gutter
+
+@mixin base_clear
+  &:after
+    content: ''
+    display: block
+    clear: both
+    height: 0
+
+@mixin base_bottom_rule
+  border-bottom: 1px solid $color-secondary-3
+
+@mixin link_hover_underline
+  a
+    text-decoration: none
+    &:hover
+      text-decoration: underline
+
+@mixin img_float_left
+  img
+    float: left
+    display: block
+    margin: 0 1em 1em 0
+    border: 1px solid $color-secondary-3
+
+@mixin base_button
+  display: block
+  background: $color-primary-4
+  padding: 0.5em 1em
+  text-decoration: none
+  color: #fff
+  text-align: center
+  transition: background 0.5s ease-in
+  border: 0
+
+  &:hover
+    background: $color-primary-2

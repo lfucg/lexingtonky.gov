@@ -63,122 +63,141 @@
  * @ingroup themeable
  */
 #}
-<div class="layout-container {{ layout_class }}">
-  {% block page_super_header %}
-    {{ page.super_header }}
+{% block page_super_header %}
+  {{ page.super_header }}
+{% endblock %}
+
+{% block page_header %}
+<header role="banner">
+  <a href="/" accesskey="1" title="Home" aria-label="Home">City of Lexington, Kentucky, The Horse Capital of the World&reg;</a>
+  {% block page_header_nav %}
+    {{ page.search_header }}
   {% endblock %}
+</header>
+{% endblock %}
 
-  {% block page_header %}
-  <header class="lex-site-header" role="banner">
-    <nav class="usa-site-navbar lex-site-navbar">
-      <div class="usa-grid-full lex-grid-full">
-        <div class="logo" id="logo">
-          <a href="/" accesskey="1" title="Home" aria-label="Home">
-            <div class="lex-logo"></div>
-          </a>
-        </div>
-        <div class="lex-site-navbar-secondary">
-          {% block page_navbar_secondary %}
-          {{  page.navbar_secondary }}
-          {% endblock %}
-        </div>
-        {% block page_search_header %}
-        {{  page.search_header }}
-        {% endblock %}
-      </div>
-    </nav>
-  </header>
+{% block page_hero %}
+<div class="lex-hero">
+  {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
+  <img src="{{ file_url(node.field_lex_custom_banner_image.entity.fileuri) }}" alt="">
+  {% else %}
+  <img src="/themes/custom/lex/img/lexington-hero-interior.jpg" alt="">
+  {% endif %}
+  {% block page_features %}
+    {% if page.featured_top or page.featured_second %}
+      {{ page.featured_top }}
+      {{ page.featured_second }}
+    {% endif %}
   {% endblock %}
+</div>
+{% endblock %}
 
-  {% block page_hero %}
-    <div class="lex-hero">
-      {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
-      <img src="{{ file_url(node.field_lex_custom_banner_image.entity.fileuri) }}" alt="">
-      {% else %}
-      <img src="/themes/custom/lex/img/lexington-hero-interior.jpg" alt="">
-      {% endif %}
-      {% block page_features %}
-        {% if page.featured_top or page.featured_second %}
-          <div class="lex-slab lex-slab-blue-alpha">
-            <div class="lex-grid-full usa-grid-full">
-                {# used by full-bleed langing page #}
-                <div class="usa-width-one-half">
-                  {{ page.featured_top }}
-                </div>
-                <div class="usa-width-one-half">
-                  {{ page.featured_second }}
-                </div>
-            </div>
-          </div>
-        {% endif %}
-      {% endblock %}
-    </div>
-  {% endblock %}
+{% block page_help %}
+{{ page.help }}
+{% endblock %}
 
-  {% block page_help %}
-  {{ page.help }}
-  {% endblock %}
+{% block page_primary_menu %}
+{{ page.primary_menu }}
+{% endblock %}
 
-  {% block page_primary_menu %}
-  {{ page.primary_menu }}
-  {% endblock %}
+{% block page_secondary_menu %}
+{{ page.secondary_menu }}
+{% endblock %}
 
-  {% block page_secondary_menu %}
-  {{ page.secondary_menu }}
-  {% endblock %}
+{% block page_highlight %}
+  {{ page.highlighted }}
+{% endblock %}
 
-  {% block page_highlight %}
-  <div class="lex-grid-full usa-grid-full">
-    {{ page.highlighted }}
-  </div>
-  {% endblock %}
-
-  <main role="main" class="js-main">
-    {% block main_content %}
-    <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
-
-    <div class="layout-content lex-grid-full usa-grid-full">
-      {% block main_tabs %}
-      {{ tabs }}
-      {% endblock %}
-
-      {% block action_links %}
-      {% if action_links %}
-        <nav class="action-links">{{ action_links }}</nav>
-      {% endif %}
-      {% endblock %}
-
-      {% block first_sidebar %}
-      {% if page.sidebar_first %}
-        <aside class="layout-sidebar-first" role="complementary">
-          {{ page.sidebar_first }}
-        </aside>
-      {% endif %}
-      {% endblock %}
-
-      {% block page_content %}
-      <div class="usa-width-two-thirds {{ content_attributes.class }}">
-        {{ page.content }}
-      </div>
-      {% endblock %}
-
-      {% block second_sidebar %}
-      {% if page.sidebar_second %}
-        <aside class="layout-sidebar-second usa-width-one-third" role="complementary">
-          {{ page.sidebar_second }}
-        </aside>
-      {% endif %}
-      {% endblock %}
-    </div>{# /.layout-content #}
+<main role="main">
+  <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
+  {% block main_content %}
+  <div class="layout-content lex-grid-full usa-grid-full">
+    {% block main_tabs %}
+    {{ tabs }}
     {% endblock %}
-  </main>
 
-  {% block page_bottom_features %}
-  {% include "@lex/includes/featured-bottom.html.twig" %}
+    {% block action_links %}
+    {% if action_links %}
+      <nav class="action-links">{{ action_links }}</nav>
+    {% endif %}
+    {% endblock %}
+
+    {% block first_sidebar %}
+    {% if page.sidebar_first %}
+      <aside class="layout-sidebar-first" role="complementary">
+        {{ page.sidebar_first }}
+      </aside>
+    {% endif %}
+    {% endblock %}
+
+    {% block page_content %}
+    <div class="usa-width-two-thirds {{ content_attributes.class }}">
+      {{ page.content }}
+    </div>
+    {% endblock %}
+
+    {% block second_sidebar %}
+    {% if page.sidebar_second %}
+      <aside role="complementary">
+        {{ page.sidebar_second }}
+      </aside>
+    {% endif %}
+    {% endblock %}
+  </div>{# /.layout-content #}
   {% endblock %}
+</main>
 
-  {% block page_footer %}
-  {% include "@lex/includes/footers.html.twig" %}
-  {% endblock %}
+{% block page_bottom_features %}
+  {{ page.featured_bottom_first }}
+{% endblock %}
 
-</div>{# /.layout-container #}
+{% block page_footer_first %}
+<section class="lex-before-footer">
+  {{ page.footer_first }}
+</section>
+{% endblock %}
+{% block page_footer_main %}
+
+<footer>
+  <section class="lex-grid-full usa-grid">
+    {{ page.footer_second }}
+    <div class="usa-width-one-third">
+      <h2 class="lex-section-heading lex-heading lex-font-standout">Get in touch</h2>
+      <ul class="usa-unstyled-list">
+        <li>
+          {% include "@lex/includes/address.html.twig" with {
+              address: {
+                'street_number': '200',
+                'street': 'E. Main St.',
+                'zip': '40507',
+              }
+            }
+          %}
+        </li>
+        <li>
+          {% include "@lex/includes/phone.html.twig" with { phone_number: "(859) 425-2255" } %}
+        </li>
+        <li>
+          <ul class="usa-unstyled-list lex-horizontal-list lex-social-links">
+            <li>
+              <a href="https://twitter.com/LexingtonKyGov"><i class="lex-card-title lex-card-title-large lex-font-standout fa fa-twitter"></i><span class="visually-hidden">twitter</span></a>
+            </li>
+            <li>
+              <a href="https://www.facebook.com/LexingtonKyGov"><i class="lex-card-title lex-card-title-large lex-font-standout fa fa-facebook"></i><span class="visually-hidden">facebook</span></a>
+            </li>
+          </ul>
+          </li>
+      </ul>
+    </div>
+  </section>
+  <section class="lex-grid-full lex-sub-footer">
+    <img class="lex-seal" alt="Lexington-Fayette Seal" src="/themes/custom/lex/img/lexington-seal.svg">
+    <ul class="usa-unstyled-list lex-copyright">
+      <li>&copy; {{ "now"|date("Y") }} Lexington-Fayette Urban County Government</li>
+      <li>Lexington KY, Horse Capital of the World <sub>&#174;</sub></li>
+      <li><a href="/terms-of-use">Terms of use</a></li>
+    </ul>
+  </section>
+</footer>
+{% endblock %}
+

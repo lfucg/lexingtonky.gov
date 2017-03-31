@@ -1,11 +1,13 @@
 {% extends 'page.html.twig' %}
-{% set layout_class = 'lex-frontpage' %}
 
 {% block page_features %}
-<div class="lex-slab lex-slab-blue-alpha">
-  <div class="lex-grid-full usa-grid-full">
-    {{ page.featured_top }}
-  </div>
-</div>
+  {{ page.featured_top }}
 {% endblock %}
 
+{% block page_header_nav %}
+  {{ page.navbar_secondary }}
+{% endblock %}
+
+{% block main_content %}
+  <hr>
+{% endblock %}

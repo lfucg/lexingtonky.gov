@@ -1,0 +1,55 @@
+body > header
+  @include base_padding
+  @include base_clear
+
+  border-bottom: 1px solid $color-secondary-3
+
+  >a
+    display: block
+    background: url(../img/lexington-logo.svg) no-repeat left center
+    background-size: auto 90%
+    text-indent: -200vw
+    overflow: hidden
+    height: 4em
+    width: 33%
+
+    float: left
+
+
+
+  nav
+    display: table
+    width: 50%
+    margin: 0 0 0 auto
+
+    ul
+      display: table-row
+
+
+    li
+      display: table-cell
+      text-align: right
+
+  @include link_hover_underline
+
+@supports(display: flex)
+  body > header
+    display: flex
+
+    >a
+      float: none
+
+    >section
+      flex-grow: 2
+      align-self: end
+      margin: auto
+
+    nav
+      display: block
+
+      ul
+        display: flex
+        justify-content: space-between
+
+      li
+        display: block

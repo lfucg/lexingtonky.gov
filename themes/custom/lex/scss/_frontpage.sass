@@ -1,0 +1,157 @@
+
+// Primary Menu (Homepage)
+.lex-region-primary_menu
+  @include base_padding
+
+.lex-taxonomy-list
+
+  >div
+    vertical-align: top
+    display: inline-block
+    margin-right: 3%
+    width: 30%
+
+  h3
+    @include base_bottom_rule
+
+@supports (display: flex)
+  .lex-taxonomy-list
+    display: flex
+    flex-direction: row
+    flex-wrap: wrap
+    justify-content: space-between
+    align-items: flex-start
+
+
+    >div
+      display: block
+      margin: 0
+
+// News & Events (Homepage)
+.lex-region-highlighted
+  @include base_clear
+
+  >div:first-child
+    float: left
+    width: 63%
+    @include base_clear
+
+    img
+      float: left
+      border: 1px solid $color-secondary-3
+      width: 32%
+      height: auto
+      margin: 0 $base_padding $base_padding 0
+
+    .article
+      @include base_clear
+
+
+  >div:first-child + div, >div:first-child + div + div
+    float: right
+    width: 33%
+
+    ol
+      list-style: none
+
+    h3
+      font-size: 1.3em
+      text-transform: uppercase
+      @include base_bottom_rule
+
+    h4
+      font-size: 1.2em
+      margin-bottom: 0
+
+
+@supports (display: grid)
+  .lex-region-highlighted
+    display: grid
+    grid-template-columns: 1fr 20em
+    grid-column-gap: 5vw
+
+    >div:first-child, >div:first-child + div, >div:first-child + div + div
+      float: none
+      width: 100%
+
+    > *
+      grid-column: 2
+      width: 100%
+      float: none
+      margin: 0
+      padding: 0
+
+
+    > *:first-child
+      position: relative
+      grid-column: 1
+      grid-row: span 2
+      padding-bottom: 2em
+
+
+      .more-link
+        position: absolute
+        bottom: 0
+        right: 0
+
+    > *:last-child
+      align-self: end
+
+
+
+    @media (max-width: 899px)
+      grid-template-columns: 1fr 1fr
+
+      > *
+        grid-column: auto
+
+
+      > *:first-child
+        grid-row: 1
+        grid-column: span 2
+
+
+      > *:last-child
+        align-self: stretch
+
+// Mayor and Urban Council area
+
+.lex-region-featured_bottom_first
+  h4
+    font-size: 1.2em
+  >div
+    display: inline-block
+    vertical-align: top
+
+    &:first-child
+      width: 65%
+      margin-right: 4%
+
+      .lex-image-teaser
+        @include img_float_left
+
+        img
+          width: 33%
+          height: auto
+
+
+
+@supports (display:flex)
+  .lex-region-featured_bottom_first
+    display: flex
+    align-items: center
+    justify-content: space-between
+
+    >div
+      display: block
+      vertical-align: normal
+
+      &:first-child
+        width: 66%
+        margin: 0
+
+      &:last-child
+        width: auto
+
+  ul.lex-city-gov-stat-block
+    margin: 0

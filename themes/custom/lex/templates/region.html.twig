@@ -1,0 +1,7 @@
+{% if content %}
+  <section{{ attributes }}>
+    {% block region_content %}
+    {{ content }}
+    {% endblock %}
+  </section>
+{% endif %}

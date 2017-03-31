@@ -1,0 +1,23 @@
+ul.lex-city-gov-stat-block
+  font-size: 1.25em
+  margin-top: 3em
+  li
+    display: block
+    margin-bottom: $base-padding / 2
+    line-height: 1.75
+
+  @include link_hover_underline
+
+  span
+    font-size: 1.75em
+    color: $color-secondary-4
+    width: 1em
+    margin-right: 0.5em
+    display: block
+    float: left
+    line-height: 1
+
+  li:first-child, li:nth-child(2)
+    span
+      font-family: 'FontAwesome'
+
