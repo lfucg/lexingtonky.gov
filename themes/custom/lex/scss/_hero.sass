@@ -11,31 +11,62 @@ $feature-region-height: 10em
 
   h1
     margin-top: 0.5em
+    font-size: 1.7em
 
   input, button
     display: inline-block
 
   input
-    width: 94%
+    width: 90%
   p
     margin-bottom: 0.5em
 
   >section
     position: absolute
     height: $feature-region-height
-    bottom: 3px
+    bottom: -1px
     width: 100%
     color: #fff
     padding: 0 0 0 $base-gutter
     background: rgba($color-primary-5, 0.75)
     @include base_bottom_rule
 
+    @media (max-width: $screen-tablet-max)
+      h1
+        font-size: 1.3em
+      >div
+        width: 60%
+
+        @media (max-width: $screen-phablet-max)
+          float: none
+          width: 100%
+
+
+      input
+        width: 90%
+
+
+    @media (max-width: $screen-phablet-max)
+      position: static
+      height: auto
+
+      background: $color-primary-5
+      padding: 0
+      > div
+        padding: $base-padding ($base-gutter / 2)
+
+    @media (max-width: $screen-phone-max)
+      input
+        width: 87%
+
 .lex-region-featured_top
   @include base_clear
 
   >div
     float: left
-    width: 67%
+    width: 59%
+
+
   >nav
     color: #000
     padding: 1em
@@ -43,6 +74,10 @@ $feature-region-height: 10em
     float: right
     padding-right: $base-gutter
     height: $feature-region-height
+    width: 35%
+
+    @media (max-width: $screen-phablet-max)
+      width: auto
 
     h2
       font-size: 1em
@@ -52,4 +87,8 @@ $feature-region-height: 10em
 
     li
       margin-bottom: 0.5em
+
+    @media (max-width: $screen-phablet-max)
+      float: none
+
 

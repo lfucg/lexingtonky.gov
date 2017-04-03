@@ -39,7 +39,7 @@
           <div class="pane-inner alphabetical">
             <h1 class="lex-card-title lex-card-title-heading">{{ item.title }}</h1>
             <div>
-              {% include '@lex/includes/sort-a-to-z.twig' %}
+
               <ul class="usa-unstyled-list">
                 {% for item in item.below %}
                   {% set current = (item.in_active_trail ? 'active' : '') %}

@@ -11,6 +11,12 @@
     margin-right: 3%
     width: 30%
 
+    @media (max-width: $screen-phablet-max)
+      width: 45%
+
+    @media (max-width: $screen-phone-max)
+      width: auto
+
   h3
     @include base_bottom_rule
 
@@ -22,6 +28,8 @@
     justify-content: space-between
     align-items: flex-start
 
+    @media (max-width: $screen-phone-max)
+      flex-direction: column nowrap
 
     >div
       display: block
@@ -46,6 +54,10 @@
     .article
       @include base_clear
 
+    @media (max-width: $screen-phone-max)
+      img
+        float: none
+        width: 100%
 
   >div:first-child + div, >div:first-child + div + div
     float: right
@@ -67,8 +79,8 @@
 @supports (display: grid)
   .lex-region-highlighted
     display: grid
-    grid-template-columns: 1fr 20em
-    grid-column-gap: 5vw
+    grid-template-columns: 1fr 30%
+    grid-column-gap: $base_gutter
 
     >div:first-child, >div:first-child + div, >div:first-child + div + div
       float: none
@@ -99,7 +111,7 @@
 
 
 
-    @media (max-width: 899px)
+    @media (max-width: $screen-tablet-max)
       grid-template-columns: 1fr 1fr
 
       > *
@@ -114,6 +126,10 @@
       > *:last-child
         align-self: stretch
 
+    @media (max-width: $screen-phone-max)
+      display: flex
+      flex-direction: column
+
 // Mayor and Urban Council area
 
 .lex-region-featured_bottom_first
@@ -124,7 +140,7 @@
     vertical-align: top
 
     &:first-child
-      width: 65%
+      width: auto
       margin-right: 4%
 
       .lex-image-teaser
@@ -134,24 +150,37 @@
           width: 33%
           height: auto
 
-
+    @media (max-width: $screen-phone-max)
+      display: block
 
 @supports (display:flex)
   .lex-region-featured_bottom_first
     display: flex
-    align-items: center
     justify-content: space-between
 
     >div
       display: block
-      vertical-align: normal
+      vertical-align: baseline
 
       &:first-child
-        width: 66%
         margin: 0
+        width: 60%
 
       &:last-child
-        width: auto
+        width: 30%
+
+      @media (max-width: $screen-tablet-max)
+        &:first-child, &:last-child
+          width: 47%
+      @media (max-width: $screen-phone-max)
+        &:first-child, &:last-child
+          width: auto
+
+    @media (max-width: $screen-phone-max)
+      flex-direction: column
 
   ul.lex-city-gov-stat-block
     margin: 0
+
+.lex-card img
+  margin: 1em 0 1em auto

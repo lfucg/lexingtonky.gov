@@ -11,20 +11,27 @@ body > header
     text-indent: -200vw
     overflow: hidden
     height: 4em
-    width: 33%
-
+    width: 50%
     float: left
 
-
+    @media (max-width: $screen-phablet-max)
+      float: none
+      width: 100%
+      height: 3em
 
   nav
     display: table
-    width: 50%
+    width: 30%
     margin: 0 0 0 auto
 
     ul
       display: table-row
 
+  @media (max-width: $screen-phablet-max)
+    padding-top: 0
+    padding-bottom: 0
+    >section
+      display: none
 
     li
       display: table-cell
@@ -35,19 +42,25 @@ body > header
 @supports(display: flex)
   body > header
     display: flex
+    align-items: center
+    justify-content: space-between
+
+    &:after
+      display: none
 
     >a
       float: none
 
     >section
-      flex-grow: 2
-      align-self: end
-      margin: auto
+      width: 30%
+      margin: 0
 
     nav
       display: block
+      width: auto
 
       ul
+
         display: flex
         justify-content: space-between
 

@@ -8,7 +8,7 @@
 html
   font-family: $font-sans
   @media (min-width: $screen-large-min)
-    font-size: 0.667vmax
+    font-size: 1.15vmax
 
 nav ul
   list-style: none
@@ -42,18 +42,19 @@ h5
 h6
   font-size: 1.1em
 
-input, button
+input, button, textarea
   display: block
   font-size: 1em
   border: 1px solid $color-secondary-3
   margin: 0.5em 0 1em
+  max-width: 100%
+
+input
+  padding: 0.25em 0.5em
 
 label, legend
   font-weight: bold
   margin: 1em 0
-
-input
-  padding: 0.25em 0.5em
 
 button
   padding: 0.25em
@@ -67,6 +68,15 @@ hr
   width: 100%
   border: none
   @include base_bottom_rule
+
+img
+  display: block
+
+address
+  font-style: normal
+  margin: 1em 0
+  span
+    display: block
 
 .lex-search
   >div
@@ -96,6 +106,3 @@ hr
   &[aria-hidden="true"]
     max-height: 0
     overflow: hidden
-
-body > footer
-  background: $color-primary-5

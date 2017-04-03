@@ -1,6 +1,9 @@
 @mixin base_padding
   padding: $base-padding $base-gutter
 
+  @media (max-width: $screen-phablet-max)
+    padding: $base-padding ($base-gutter / 2)
+
 @mixin base_clear
   &:after
     content: ''
