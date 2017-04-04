@@ -8,10 +8,11 @@
 
 .lex-button,
 .lex-calltoaction,
-  a
-    @include base_button
-  &:visited, &:hover
-    color: inherit
+  @include base_button
+  a, a:visited, a:hover
+    color: #fff
+    text-decoration: none
+
 
 input[type='submit']
   @include base_button

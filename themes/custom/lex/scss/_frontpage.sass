@@ -1,186 +1,188 @@
+body.path-frontpage
+  // Primary Menu (Homepage)
+  .lex-region-primary_menu
+    @include base_padding
 
-// Primary Menu (Homepage)
-.lex-region-primary_menu
-  @include base_padding
-
-.lex-taxonomy-list
-
-  >div
-    vertical-align: top
-    display: inline-block
-    margin-right: 3%
-    width: 30%
-
-    @media (max-width: $screen-phablet-max)
-      width: 45%
-
-    @media (max-width: $screen-phone-max)
-      width: auto
-
-  h3
-    @include base_bottom_rule
-
-@supports (display: flex)
   .lex-taxonomy-list
-    display: flex
-    flex-direction: row
-    flex-wrap: wrap
-    justify-content: space-between
-    align-items: flex-start
-
-    @media (max-width: $screen-phone-max)
-      flex-direction: column nowrap
 
     >div
-      display: block
-      margin: 0
+      vertical-align: top
+      display: inline-block
+      margin-right: 3%
+      width: 30%
 
-// News & Events (Homepage)
-.lex-region-highlighted
-  @include base_clear
+      @media (max-width: $screen-phablet-max)
+        width: 45%
 
-  >div:first-child
-    float: left
-    width: 63%
+      @media (max-width: $screen-phone-max)
+        width: auto
+
+    h3
+      margin-top: 1em
+      @include base_bottom_rule
+
+  @supports (display: flex)
+    .lex-taxonomy-list
+      display: flex
+      flex-direction: row
+      flex-wrap: wrap
+      justify-content: space-between
+      align-items: flex-start
+
+      @media (max-width: $screen-phone-max)
+        flex-direction: column nowrap
+
+      >div
+        display: block
+        margin: 0
+
+  // News & Events (Homepage)
+  .lex-region-highlighted
+
     @include base_clear
 
-    img
+    >div:first-child
       float: left
-      border: 1px solid $color-secondary-3
-      width: 32%
-      height: auto
-      margin: 0 $base_padding $base_padding 0
-
-    .article
+      width: 63%
       @include base_clear
 
-    @media (max-width: $screen-phone-max)
       img
+        float: left
+        border: 1px solid $color-secondary-3
+        width: 32%
+        height: auto
+        margin: 0 $base_padding $base_padding 0
+
+      .article
+        @include base_clear
+
+      @media (max-width: $screen-phone-max)
+        img
+          float: none
+          width: 100%
+
+    >div:first-child + div, >div:first-child + div + div
+      float: right
+      width: 33%
+
+      ol
+        list-style: none
+
+      h3
+        font-size: 1.3em
+        text-transform: uppercase
+        @include base_bottom_rule
+
+      h4
+        font-size: 1.2em
+        margin-bottom: 0
+
+
+  @supports (display: grid)
+    .lex-region-highlighted
+      display: grid
+      grid-template-columns: 1fr 30%
+      grid-column-gap: $base_gutter
+
+      >div:first-child, >div:first-child + div, >div:first-child + div + div
         float: none
         width: 100%
 
-  >div:first-child + div, >div:first-child + div + div
-    float: right
-    width: 33%
-
-    ol
-      list-style: none
-
-    h3
-      font-size: 1.3em
-      text-transform: uppercase
-      @include base_bottom_rule
-
-    h4
-      font-size: 1.2em
-      margin-bottom: 0
-
-
-@supports (display: grid)
-  .lex-region-highlighted
-    display: grid
-    grid-template-columns: 1fr 30%
-    grid-column-gap: $base_gutter
-
-    >div:first-child, >div:first-child + div, >div:first-child + div + div
-      float: none
-      width: 100%
-
-    > *
-      grid-column: 2
-      width: 100%
-      float: none
-      margin: 0
-      padding: 0
-
-
-    > *:first-child
-      position: relative
-      grid-column: 1
-      grid-row: span 2
-      padding-bottom: 2em
-
-
-      .more-link
-        position: absolute
-        bottom: 0
-        right: 0
-
-    > *:last-child
-      align-self: end
-
-
-
-    @media (max-width: $screen-tablet-max)
-      grid-template-columns: 1fr 1fr
-
       > *
-        grid-column: auto
+        grid-column: 2
+        width: 100%
+        float: none
+        margin: 0
+        padding: 0
 
 
       > *:first-child
-        grid-row: 1
-        grid-column: span 2
+        position: relative
+        grid-column: 1
+        grid-row: span 2
+        padding-bottom: 2em
 
+
+        .more-link
+          position: absolute
+          bottom: 0
+          right: 0
 
       > *:last-child
-        align-self: stretch
+        align-self: end
 
-    @media (max-width: $screen-phone-max)
-      display: flex
-      flex-direction: column
 
-// Mayor and Urban Council area
-
-.lex-region-featured_bottom_first
-  h4
-    font-size: 1.2em
-  >div
-    display: inline-block
-    vertical-align: top
-
-    &:first-child
-      width: auto
-      margin-right: 4%
-
-      .lex-image-teaser
-        @include img_float_left
-
-        img
-          width: 33%
-          height: auto
-
-    @media (max-width: $screen-phone-max)
-      display: block
-
-@supports (display:flex)
-  .lex-region-featured_bottom_first
-    display: flex
-    justify-content: space-between
-
-    >div
-      display: block
-      vertical-align: baseline
-
-      &:first-child
-        margin: 0
-        width: 60%
-
-      &:last-child
-        width: 30%
 
       @media (max-width: $screen-tablet-max)
-        &:first-child, &:last-child
-          width: 47%
+        grid-template-columns: 1fr 1fr
+
+        > *
+          grid-column: auto
+
+
+        > *:first-child
+          grid-row: 1
+          grid-column: span 2
+
+
+        > *:last-child
+          align-self: stretch
+
       @media (max-width: $screen-phone-max)
-        &:first-child, &:last-child
-          width: auto
+        display: flex
+        flex-direction: column
 
-    @media (max-width: $screen-phone-max)
-      flex-direction: column
+  // Mayor and Urban Council area
 
-  ul.lex-city-gov-stat-block
-    margin: 0
+  .lex-region-featured_bottom_first
+    h4
+      font-size: 1.2em
+    >div
+      display: inline-block
+      vertical-align: top
 
-.lex-card img
-  margin: 1em 0 1em auto
+      &:first-child
+        width: auto
+        margin-right: 4%
+
+        .lex-image-teaser
+          @include img_float_left
+
+          img
+            width: 33%
+            height: auto
+
+      @media (max-width: $screen-phone-max)
+        display: block
+
+  @supports (display:flex)
+    .lex-region-featured_bottom_first
+      display: flex
+      justify-content: space-between
+
+      >div
+        display: block
+        vertical-align: baseline
+
+        &:first-child
+          margin: 0
+          width: 60%
+
+        &:last-child
+          width: 30%
+
+        @media (max-width: $screen-tablet-max)
+          &:first-child, &:last-child
+            width: 47%
+        @media (max-width: $screen-phone-max)
+          &:first-child, &:last-child
+            width: auto
+
+      @media (max-width: $screen-phone-max)
+        flex-direction: column
+
+    ul.lex-city-gov-stat-block
+      margin: 0
+
+  .lex-card img
+    margin: 1em 0 1em auto

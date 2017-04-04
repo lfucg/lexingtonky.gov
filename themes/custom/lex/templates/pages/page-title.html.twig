@@ -1,3 +1,11 @@
-{% set title_attributes = title_attributes.addClass('lex-pagetitle') %}
-
-{% include "@stable/content/page-title.html.twig" %}
+{% block title_prefix %}
+{{ title_prefix }}
+{% endblock %}
+{% if title %}
+  {% block title_body %}
+  <h1{{ title_attributes }}>{{ title }}</h1>
+  {% endblock %}
+{% endif %}
+{% block title_suffix %}
+{{ title_suffix }}
+{% endblock %}

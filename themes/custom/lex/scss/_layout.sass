@@ -63,6 +63,34 @@ button
 body > *
   @include base_padding
 
+main
+  @include base_clear
+
+  display: flex
+  justify-content: space-between
+
+
+  #main-content
+    display: none
+
+  .lex-region-sidebar_second
+    width: 30%
+    margin-left: auto
+
+  section:first-of-type
+    width: 62%
+
+  img
+    max-width: 100%
+    height: auto
+
+ul.lex-aside-list
+  list-style: none
+  line-height: 1.5
+
+.lex-newsarticle-end
+  text-align: center
+  margin: 1em
 hr
   height: 0
   width: 100%
@@ -83,11 +111,12 @@ address
     width: 100%
   button
     border-left: none
+    float: left
     span:first-child
       display: none
 
   input
-    width: calc(100% - 2em)
+    width: calc(100% - 3em)
     float: left
     border-right: none
   #edit-actions
@@ -106,3 +135,18 @@ address
   &[aria-hidden="true"]
     max-height: 0
     overflow: hidden
+
+// Breadcrumbs
+.lex-region-secondary_menu
+  background: $color-secondary-1
+  ol
+    list-style: none
+    li
+      display: inline-block
+      &:after
+        content: ' / '
+      &:last-child:after
+        content: ''
+  a, a:visited
+    color: $color-secondary-4
+

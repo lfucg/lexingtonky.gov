@@ -1,5 +1,6 @@
 <?php
 use Drupal\image\Entity\ImageStyle;
+use Drupal\Component\Utility\Html;
 
 function lex_natural_sort_views($a, $b) {
   // we can use weight module if we need manual sorting capabilities
@@ -60,8 +61,9 @@ function lex_views_pre_render($view) {
 }
 
 function lex_preprocess_html(&$variables) {
-  if (\Drupal::routeMatch()->getParameter('node')) {
-    $variables['attributes']['class'][] = 'lex-node';
+  $path_class = !$variables['root_path'] ? 'path-frontpage' : 'path-' . Html::getClass($variables['root_path']);
+  if (isset($path_class)) {
+    $variables['attributes']['class'][] = $path_class;
   }
 }
 

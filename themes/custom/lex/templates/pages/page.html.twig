@@ -92,9 +92,11 @@
 </div>
 {% endblock %}
 
-{% block page_help %}
-{{ page.help }}
-{% endblock %}
+{% if page.help.content %}
+  {% block page_help %}
+  {{ page.help }}
+  {% endblock %}
+{% endif %}
 
 {% block page_primary_menu %}
 {{ page.primary_menu }}
@@ -111,7 +113,6 @@
 <main role="main">
   <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
   {% block main_content %}
-  <div class="layout-content lex-grid-full usa-grid-full">
     {% block main_tabs %}
     {{ tabs }}
     {% endblock %}
@@ -122,28 +123,21 @@
     {% endif %}
     {% endblock %}
 
-    {% block first_sidebar %}
-    {% if page.sidebar_first %}
-      <aside class="layout-sidebar-first" role="complementary">
-        {{ page.sidebar_first }}
-      </aside>
-    {% endif %}
+    {% block page_content %}
+      {{ page.content }}
     {% endblock %}
 
-    {% block page_content %}
-    <div class="usa-width-two-thirds {{ content_attributes.class }}">
-      {{ page.content }}
-    </div>
+    {% block first_sidebar %}
+    {% if page.sidebar_first %}
+      {{ page.sidebar_first }}
+    {% endif %}
     {% endblock %}
 
     {% block second_sidebar %}
     {% if page.sidebar_second %}
-      <aside role="complementary">
         {{ page.sidebar_second }}
-      </aside>
     {% endif %}
     {% endblock %}
-  </div>{# /.layout-content #}
   {% endblock %}
 </main>
 
@@ -152,9 +146,7 @@
 {% endblock %}
 
 {% block page_footer_first %}
-<section class="lex-before-footer">
   {{ page.footer_first }}
-</section>
 {% endblock %}
 {% block page_footer_main %}
 
