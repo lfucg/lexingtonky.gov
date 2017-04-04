@@ -54,16 +54,11 @@ display:
           items_per_page: 10
           offset: 0
       style:
-        type: grid
+        type: default
         options:
           grouping: {  }
-          columns: 3
-          automatic_width: false
-          alignment: horizontal
-          col_class_default: false
-          col_class_custom: 'usa-width-one-third lex-section'
-          row_class_default: false
-          row_class_custom: 'usa-grid-full lex-grid-full'
+          row_class: ''
+          default_row_class: false
       row:
         type: fields
       fields:
@@ -268,7 +263,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      css_class: 'lex-nav-toplevel lex-slab-grey lex-slab'
+      css_class: lex-taxonomy-list
       defaults:
         css_class: false
     cache_metadata:

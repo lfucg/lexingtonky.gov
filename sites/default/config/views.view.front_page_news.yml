@@ -79,7 +79,7 @@ display:
         type: default
         options:
           grouping: {  }
-          row_class: 'lex-card clearfix'
+          row_class: article
           default_row_class: false
       row:
         type: fields
@@ -121,7 +121,7 @@ display:
             preserve_tags: ''
             html: false
           element_type: ''
-          element_class: 'lex-horizontalcard-image lex-image-teaser'
+          element_class: ''
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -156,7 +156,7 @@ display:
           group_type: group
           admin_label: ''
           label: ''
-          exclude: true
+          exclude: false
           alter:
             alter_text: false
             text: ''
@@ -184,12 +184,12 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
-          element_class: 'lex-card-title lex-card-title-medium'
+          element_type: h4
+          element_class: ''
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
-          element_wrapper_type: div
+          element_wrapper_type: '0'
           element_wrapper_class: ''
           element_default_classes: false
           empty: ''
@@ -221,7 +221,7 @@ display:
           group_type: group
           admin_label: ''
           label: ''
-          exclude: true
+          exclude: false
           alter:
             alter_text: false
             text: '{{ created | replace({''am'': ''a.m.'', ''pm'': ''p.m.''}) }}'
@@ -254,8 +254,8 @@ display:
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: 'lex-card-subtitle lex-card-fulldate'
+          element_wrapper_type: div
+          element_wrapper_class: lex-card-fulldate
           element_default_classes: false
           empty: ''
           hide_empty: false
@@ -288,7 +288,7 @@ display:
           group_type: group
           admin_label: ''
           label: ''
-          exclude: true
+          exclude: false
           alter:
             alter_text: false
             text: ''
@@ -321,7 +321,7 @@ display:
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
-          element_wrapper_type: '0'
+          element_wrapper_type: div
           element_wrapper_class: ''
           element_default_classes: false
           empty: ''
@@ -332,68 +332,6 @@ display:
           type: text_summary_or_trimmed
           settings:
             trim_length: 280
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        body_1:
-          id: body_1
-          table: node__body
-          field: body
-          relationship: none
-          group_type: group
-          admin_label: 'Image card text'
-          label: ''
-          exclude: false
-          alter:
-            alter_text: true
-            text: "<span class=\"lex-card-title lex-card-title-medium\">{{ title }}</span>\n<div class=\"lex-card-subtitle lex-card-fulldate\">{% include \"@lex/includes/time.html.twig\" with { time: created } %}</div>\n<p class=\"lex-card-description\">{{ body }}</p>"
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: lex-horizontalcard-text
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: '0'
-          element_wrapper_class: ''
-          element_default_classes: false
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: text_default
-          settings: {  }
           group_column: value
           group_columns: {  }
           group_rows: true

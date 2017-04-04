@@ -227,16 +227,11 @@ display:
           entity_type: node
           entity_field: created
       style:
-        type: grid
+        type: default
         options:
-          uses_fields: false
-          columns: 3
-          automatic_width: true
-          alignment: horizontal
-          col_class_default: true
-          col_class_custom: ''
-          row_class_default: true
-          row_class_custom: ''
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
       title: 'News and Events'
       header: {  }
       footer: {  }
