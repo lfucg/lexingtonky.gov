@@ -6,7 +6,8 @@ Feature: Using the browse navigation
 @javascript
 Scenario: Using ajax navigation
     Given I am on "/browse/government"
-    Then I should see text matching "A.*to.*Z"
+# This is now displayed using CSS, so it isn't present in the DOM to be tested for.
+#    Then I should see text matching "A.*to.*Z"
 
     When I click "Public safety"
     And I wait for AJAX to finish
@@ -23,6 +24,7 @@ Scenario: Using plain html navigation
     When I click "Public safety"
     And I click "Police"
     Then I should see the link 'Crime Map'
-    And I should see text matching "A.*to.*Z"
+# As above, this is now CSS controlled.
+#    And I should see text matching "A.*to.*Z"
     # breadcrumb
     And I should see "Home Public safety"

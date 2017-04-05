@@ -1,0 +1,49 @@
+// Site wide notices
+.lex-region-help
+  padding: 0
+
+.lex-alertcontainer-success,
+.lex-alertcontainer-warning,
+.lex-alertcontainer-error,
+.lex-alertcontainer-info
+  @include base_padding
+
+.lex-alertcontainer-success,
+.lex-alertcontainer-warning,
+.lex-alertcontainer-error,
+.lex-alertcontainer-info
+  .lex-alert
+    padding-left: 5em
+    background: url('../img/alerts/success.png') center left no-repeat
+    background-size: 4em auto
+
+.lex-alertcontainer-success
+  background-color: $lex-alert-success
+  .lex-alert
+    background-image: url('../img/alerts/success.png')
+    background-image: url('../img/alerts/success.svg')
+
+.lex-alertcontainer-warning
+  background-color: $lex-alert-warning
+  .lex-alert
+    background-image: url('../img/alerts/warning.png')
+    background-image: url('../img/alerts/warning.svg')
+
+.lex-alertcontainer-error
+  background-color: $lex-alert-error
+  .lex-alert
+    background-image: url('../img/alerts/error.png')
+    background-image: url('../img/alerts/error.svg')
+
+.lex-alertcontainer-info
+  background-color: $lex-alert-info
+  .lex-alert
+    background-image: url('../img/alerts/info.png')
+    background-image: url('../img/alerts/info.svg')
+
+.lex-alert
+
+  h2
+    margin-top: 0
+  p:last-child
+    margin-bottom: 0

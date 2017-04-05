@@ -1,16 +1,9 @@
-// #root
-//   outline: 1px solid red
-
-// #section
-//   outline: 1px solid blue
-
-// #subsection
-//   outline: 1px solid green
-
-
 body.path-taxonomy
   > .lex-region-featured_bottom_first
     display: none
+
+    .lex-region-content
+      width: 100%
 
   section.lex-region-primary_menu
     padding: 0
@@ -21,155 +14,166 @@ body.path-taxonomy
     p
       margin-bottom: 0
 
-.browse-panes
-
-  ul
-    list-style: none
-  a
-    text-decoration: none
-  &.section
-    #root
-      display: none // hide on mobile
-
-      @media (min-width: $screen-tablet-min)
-        display: block
-        float: right
-        width: 25%
-
-
-    #section
-      @media (min-width: $screen-tablet-min)
-        float: right
-        width: 30%
-        margin-right: 45%
-      @media (min-width: $screen-desk-min)
-        width: 35%
-        margin-right: 40%
-
-  &.subsection
-    #root, #section
-      display: none // hide on mobile
-      a
-        color: $color-secondary-3
-
-      @media (min-width: $screen-tablet-min)
-        display: block
-        float: right
-        width: 25%
-
-    #section
-      @media (min-width: $screen-tablet-min)
-        margin-left: -18%
-        width: 30%
-
-      @media (min-width: $screen-desk-min)
-        margin-left: -13%
-        width: 25%
-
-    #subsection
-      @media (min-width: $screen-tablet-min)
-        float: right
-        width: 50%
-        margin-right: 13%
-
-
-
-
-  .pane-inner
-    padding-bottom: 2em
+  #root
+    //outline: 1px solid red
+    display: none // hide on mobile
 
     @media (min-width: $screen-tablet-min)
-      min-height: 950px
-
-    @media (min-width: $screen-desk-min)
-      min-height: 700px
-
-  #root
-    ul
-      margin-top: 0
-      width: 100% /* may need for section too */
-    li
-      position: relative
-
-      a
-        padding-left: 1em
-        margin-left: -1em
-
-    font-size: 1.2em
-
-  #root, #section
-    background: #fff
-    a
-      padding: 0.5em 2em 0.5em 0
-      position: relative
       display: block
-      color: $color-secondary-4
+      float: right
+      width: 25%
 
+  .browse-panes
 
-    .active
-      a, a:hover, a:hover, .lex-font-muted
-        background: $color-primary-4
-        color: #fff
-
-
-    a.loading, a.loading:hover
-      cursor: default
-      background: transparent url(../img/loading.gif) 99% 50% no-repeat
-
-    a.loading:after
-      content: ""
-
-    a:hover
-      background: $color-secondary-1
-      color: $color-primary-3
+    ul
+      list-style: none
+    a
       text-decoration: none
+    input
+      width: 100%
 
-      p
+    &.section
+      #section
+        @media (min-width: $screen-tablet-min)
+          float: right
+          width: 75%
+          margin-right: 0
+
+
+    &.subsection
+      #root, #section
+        display: none // hide on mobile
+        a
+          color: $color-secondary-3
+
+        @media (min-width: $screen-tablet-min)
+          display: block
+          float: right
+          width: 25%
+
+      #section
+        @media (min-width: $screen-tablet-min)
+          margin-left: -18%
+          width: 30%
+
+        @media (min-width: $screen-desk-min)
+          margin-left: -13%
+          width: 25%
+
+      #subsection
+        @media (min-width: $screen-tablet-min)
+          float: right
+          width: 63%
+
+
+
+
+    .pane-inner
+      padding-bottom: 2em
+
+      @media (min-width: $screen-tablet-min)
+        min-height: 950px
+
+      @media (min-width: $screen-desk-min)
+        min-height: 700px
+
+    #root
+      ul
+        margin-top: 0
+        width: 100% /* may need for section too */
+      li
+        position: relative
+
+        a
+          padding-left: 1em
+          margin-left: -1em
+
+      font-size: 1.2em
+
+    #root, #section
+      background: #fff
+      a
+        padding: 0.5em 2em 0.5em 0
+        position: relative
+        display: block
         color: $color-secondary-4
 
-    a:after
-      font-family: Arial, sans-serif
-      font-size: 1em
-      position: absolute
-      top: calc(50% - 0.6em)
-      right: 10px
-      float: right
-      content: "\203A"
 
-  #section
-    z-index: 2
-    position: relative
-
-    @media (min-width: $screen-desk-min)
-      padding: 1em 0 0 1em
-      border-left: 1px solid $color-secondary-3
-
-    li
-      position: relative
+      .active
+        a, a:hover, a:hover, .lex-font-muted
+          background: $color-primary-4
+          color: #fff
 
 
-  &.section
-    .lex-font-muted:visited
-      color: $color-primary-2
+      a.loading, a.loading:hover
+        cursor: default
+        background: transparent url(../img/loading.gif) 99% 50% no-repeat
+
+      a.loading:after
+        content: ""
+
+      a:hover
+        background: $color-secondary-1
+        color: $color-primary-3
+        text-decoration: none
+
+        p
+          color: $color-secondary-4
+
+      a:after
+        font-family: Arial, sans-serif
+        font-size: 1em
+        position: absolute
+        top: calc(50% - 0.6em)
+        right: 10px
+        float: right
+        content: "\203A"
 
     #section
+      z-index: 2
+      position: relative
+
       @media (min-width: $screen-desk-min)
-        .pane-inner.alphabetical
-          padding-left: 6em
+        padding: 1em 0 0 1em
+        border-left: 1px solid $color-secondary-3
 
-          >div:before
-            content: 'AtoZ'
-            font-size: 1.5em
-            float: left
-            display: block
-            margin-left: -4em
-            padding: 0 0 15px 22px
-            margin-top: 7px
+      li
+        position: relative
 
 
+    &.section
+      .lex-font-muted:visited
+        color: $color-primary-2
 
+      #section
+        @media (min-width: $screen-tablet-min)
+          .pane-inner.alphabetical
+            padding-left: 6em
+
+            >div:before
+              content: 'AtoZ'
+              font-size: 1.5em
+              float: left
+              display: block
+              margin-left: -4em
+              padding: 0 0 15px 22px
+              margin-top: 7px
 
   #subsection
+    li
+      font-size: 1.2em
+      line-height: 1.5
+      padding-bottom: 1em
+
+      &:nth-child(even)
+        background: #fbfbfb
+
+    a:hover
+      color: $color-primary-3
+
+    section.lex-region-featured_bottom_first
+      margin-top: 2em
+
     @media (min-width: $screen-tablet-min)
       .pane-inner
         padding-left: 2em
@@ -186,20 +190,8 @@ body.path-taxonomy
             padding: 0 0 15px 22px
             margin-top: 7px
 
-  #subsection
-    li
-      font-size: 1.2em
-      line-height: 1.5
-      padding-bottom: 1em
 
-      &:nth-child(even)
-        background: #fbfbfb
 
-    a:hover
-      color: $color-primary-3
-
-    section.lex-region-featured_bottom_first
-      margin-top: 2em
 
 // .pane-inner
 //   position: relative

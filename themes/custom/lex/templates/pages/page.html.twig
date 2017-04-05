@@ -69,11 +69,15 @@
 
 {% block page_header %}
 <header role="banner">
-  <a href="/" accesskey="1" title="Home" aria-label="Home">City of Lexington, Kentucky, The Horse Capital of the World&reg;</a>
+  <a id="logo" href="/" accesskey="1" title="Home" aria-label="Home">City of Lexington, Kentucky, The Horse Capital of the World&reg;</a>
   {% block page_header_nav %}
     {{ page.search_header }}
   {% endblock %}
 </header>
+{% endblock %}
+
+{% block page_help %}
+{{ page.help }}
 {% endblock %}
 
 {% block page_hero %}
@@ -91,12 +95,6 @@
   {% endblock %}
 </div>
 {% endblock %}
-
-{% if page.help.content %}
-  {% block page_help %}
-  {{ page.help }}
-  {% endblock %}
-{% endif %}
 
 {% block page_primary_menu %}
 {{ page.primary_menu }}
