@@ -5,7 +5,7 @@ Feature: Filter and display neighborhood associations,
 Scenario: Filtering associations in the directory
   Given I am on "/find-your-neighborhood-association"
   When I wait for AJAX to finish
-  And I wait for 2000 miliseconds
+  And I wait for 4000 miliseconds
   Then I should see "ANDOVER"
 
   Given I fill in "Type the name of a neighborhood association" with "cardinal"
