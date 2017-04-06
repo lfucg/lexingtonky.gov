@@ -1,6 +1,12 @@
 body.path-frontpage
+
+  h1,h2,h3,h4,h5,h6
+    font-weight: normal
+  h2
+    text-transform: uppercase
   // Primary Menu (Homepage)
   .lex-region-primary_menu
+    background: $color-secondary-1
     @include base_padding
 
   .lex-taxonomy-list
@@ -65,19 +71,6 @@ body.path-frontpage
       float: right
       width: 33%
 
-      ol
-        list-style: none
-
-      h3
-        font-size: 1.3em
-        text-transform: uppercase
-        @include base_bottom_rule
-
-      h4
-        font-size: 1.2em
-        margin-bottom: 0
-
-
   @supports (display: grid)
     .lex-region-highlighted
       display: grid
@@ -135,6 +128,8 @@ body.path-frontpage
   // Mayor and Urban Council area
 
   .lex-region-featured_bottom_first
+    h2
+      margin-top: 0
     h4
       font-size: 1.2em
     >div

@@ -1,4 +1,7 @@
 body.path-taxonomy
+  main
+    background: $color-secondary-1
+
   > .lex-region-featured_bottom_first
     display: none
 
@@ -43,8 +46,6 @@ body.path-taxonomy
     &.subsection
       #root, #section
         display: none // hide on mobile
-        a
-          color: $color-secondary-3
 
         @media (min-width: $screen-tablet-min)
           display: block
@@ -70,6 +71,8 @@ body.path-taxonomy
 
     .pane-inner
       padding-bottom: 2em
+      border-left: 1px solid $color-secondary-2
+      padding-left: 1em
 
       @media (min-width: $screen-tablet-min)
         min-height: 950px
@@ -91,7 +94,7 @@ body.path-taxonomy
       font-size: 1.2em
 
     #root, #section
-      background: #fff
+      background: $color-secondary-1
       a
         padding: 0.5em 2em 0.5em 0
         position: relative
@@ -103,6 +106,8 @@ body.path-taxonomy
         a, a:hover, a:hover, .lex-font-muted
           background: $color-primary-4
           color: #fff
+          margin-left: -1em
+          padding-left: 1em
 
 
       a.loading, a.loading:hover
@@ -164,9 +169,6 @@ body.path-taxonomy
       font-size: 1.2em
       line-height: 1.5
       padding-bottom: 1em
-
-      &:nth-child(even)
-        background: #fbfbfb
 
     a:hover
       color: $color-primary-3

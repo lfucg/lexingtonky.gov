@@ -10,6 +10,12 @@ html
   @media (min-width: $screen-large-min)
     font-size: 1.15vmax
 
+body
+  color: $color-secondary-4
+
+  > *
+    @include base_padding
+
 nav ul
   list-style: none
 
@@ -29,18 +35,24 @@ h1,h2,h3,h4,h5,h6
   @include link_hover_underline
 
 h1
+  margin: 0
+
+h1, h3, h5
+  font-weight: bold
+
+h1
   font-size: 2em
 h2
   font-size: 1.8em
-  text-transform: uppercase
 h3
   font-size: 1.6em
 h4
-  font-size: 1.4em
+  font-size: 1.3em
 h5
   font-size: 1.2em
 h6
   font-size: 1.1em
+  font-style: italic
 
 input, button, textarea
   display: block
@@ -60,9 +72,6 @@ button
   padding: 0.25em
   background: #fff
 
-body > *
-  @include base_padding
-
 main
   @include base_clear
 
@@ -73,12 +82,33 @@ main
   #main-content
     display: none
 
-  .lex-region-sidebar_second
-    width: 30%
-    margin-left: auto
   img
     max-width: 100%
     height: auto
+
+  .lex-region-sidebar_second
+    width: 30%
+    margin-left: auto
+
+    h2
+      font-weight: bold
+
+    h4
+      margin: 0
+
+    ul, ol
+      list-style: none
+
+
+
+article
+  ul
+    margin-left: 1em
+
+  li
+    line-height: 1.5
+    margin-bottom: 1em
+
 
 .lex-region-content
   width: 62%
@@ -99,6 +129,10 @@ hr
 
 img
   display: block
+
+iframe
+  max-width: 100%
+
 
 address
   font-style: normal
@@ -146,4 +180,19 @@ address
         content: ''
   a, a:visited
     color: $color-secondary-4
+
+// Event lists
+.lex-event-list
+  ol
+    list-style: none
+
+  h3
+    font-size: 1.3em
+    text-transform: uppercase
+    font-weight: normal
+    @include base_bottom_rule
+
+  h4
+    font-size: 1.2em
+    margin-bottom: 0
 
