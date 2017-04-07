@@ -61,10 +61,33 @@ function lex_views_pre_render($view) {
 }
 
 function lex_preprocess_html(&$variables) {
-  $path_class = !$variables['root_path'] ? 'path-frontpage' : 'path-' . Html::getClass($variables['root_path']);
-  if (isset($path_class)) {
-    $variables['attributes']['class'][] = $path_class;
+
+  if ($variables['root_path']) {
+    $path_class = 'path-' . Html::getClass($variables['root_path']);
+    if (isset($path_class)) {
+      $variables['attributes']['class'][] = $path_class;
+    }
+    if ($node = \Drupal::routeMatch()->getParameter('node')) {
+      $content_type = $node->bundle();
+      if ($content_type) {
+        $variables['attributes']['class'][] = 'bundle_' . $content_type;
+      }
+    }
   }
+  else {
+    $variables['attributes']['class'][] = 'path-frontpage';
+
+  }
+
+  // $path_class = !$variables['root_path'] ? 'path-frontpage' : 'path-' . Html::getClass($variables['root_path']);
+  // if (isset($path_class)) {
+  //   $variables['attributes']['class'][] = $path_class;
+  // }
+  //   $content_type = $node->bundle();
+  //   if ($content_type) {
+  //     $variables['attributes']['class'][] = 'bundle_' . $content_type;
+  //   }
+  // }
 }
 
 function lex_preprocess_page__node(&$variables) {
@@ -208,11 +231,12 @@ function lex_preprocess_field(&$variables) {
  * Hook to add theme suggestion based on content type.
  */
 function lex_theme_suggestions_page_alter(array &$suggestions, array $variables) {
-
-  if ($node = \Drupal::routeMatch()->getParameter('node')) {
-    $content_type = $node->bundle();
-    if ($content_type) {
-      $suggestions[] = 'page__'.$content_type;
+  if (array_search('page__front', $suggestions) === FALSE ) {
+    if ($node = \Drupal::routeMatch()->getParameter('node')) {
+      $content_type = $node->bundle();
+      if ($content_type) {
+        $suggestions[] = 'page__bundle_' . $content_type;
+      }
     }
   }
 }

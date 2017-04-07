@@ -96,10 +96,25 @@ main
     h4
       margin: 0
 
-    ul, ol
-      list-style: none
+.lex-aside-list, .usa-unstyled-list
+  list-style: none
 
+.align-left
+  float: left
+  margin: 1em 1em 1em 0
+  max-width: 50%
 
+.align-right
+  float: right
+  margin: 1em 0 1em 1em
+  max-width: 50%
+
+@media (max-width: $screen-phone-max)
+  .align-left, .align-right
+    float: none
+    width: 100%
+    max-width: 100%
+    margin: 1em 0
 
 article
   ul
@@ -108,6 +123,9 @@ article
   li
     line-height: 1.5
     margin-bottom: 1em
+
+  h2
+    margin-top: 2em
 
 
 .lex-region-content

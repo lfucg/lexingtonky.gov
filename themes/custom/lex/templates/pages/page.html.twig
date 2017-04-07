@@ -89,8 +89,10 @@
   {% endif %}
   {% block page_features %}
     {% if page.featured_top or page.featured_second %}
-      {{ page.featured_top }}
-      {{ page.featured_second }}
+      <div>
+        {{ page.featured_top }}
+        {{ page.featured_second }}
+      </div>
     {% endif %}
   {% endblock %}
 </div>

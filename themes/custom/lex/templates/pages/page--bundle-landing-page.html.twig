@@ -1,0 +1,15 @@
+{% extends 'page.html.twig' %}
+{% block page_hero %}
+<div class="lex-hero splash" style="background-image: url({{ file_url(node.field_lex_custom_banner_image.entity.fileuri) }})">
+  {% block page_features %}
+    <div>
+    {{ page.highlighted }}
+    {{ page.featured_second }}
+    </div>
+  {% endblock %}
+</div>
+{% endblock %}
+
+{% block page_highlight %}{% endblock %}
+
+{% block page_secondary_menu %}{% endblock %}

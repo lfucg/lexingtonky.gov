@@ -1,0 +1,59 @@
+body.bundle_landing_page
+  >header
+    position: absolute
+    width: 100%
+    background: #fff
+    z-index: 2
+
+.lex-hero.splash
+  height: 100vh
+  background-size: cover
+
+  >div
+    padding: 1em $base_gutter
+    height: auto
+    @include base_clear
+
+  section
+    width: 50%
+    float: left
+
+    &:first-child
+      width: 45%
+
+    .lex-card-title
+      float: left
+      width: 45%
+
+  a, a:visited
+    color: #fff
+    text-decoration: none
+    font-size: 1.2em
+  a:hover
+    text-decoration: underline
+
+  @supports (display: flex)
+    h1
+      margin: 0
+
+    > div
+      outline: 1px solid red
+      display: flex
+      justify-content: space-between
+      align-items: center
+
+    section
+      width: auto
+      float: none
+      &:first-child
+        width: 50%
+
+        .usa-width-one-half
+          display: flex
+          justify-content: space-between
+
+        .lex-card-title
+          float: none
+          width: 50%
+
+
