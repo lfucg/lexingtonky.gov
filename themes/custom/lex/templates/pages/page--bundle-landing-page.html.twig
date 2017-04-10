@@ -2,6 +2,7 @@
 {% block page_hero %}
 <div class="lex-hero splash" style="background-image: url({{ file_url(node.field_lex_custom_banner_image.entity.fileuri) }})">
   {% block page_features %}
+    <img src="{{ file_url(node.field_lex_custom_banner_image.entity.fileuri) }}">
     <div>
     {{ page.highlighted }}
     {{ page.featured_second }}

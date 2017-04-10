@@ -63,6 +63,13 @@
  * @ingroup themeable
  */
 #}
+{% if (node.field_lex_custom_banner_image.entity.fileuri) %}
+  {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
+  {% set hero_alt = node.field_lex_custom_banner_image.alt %}
+{% else %}
+  {% set hero = "/themes/custom/lex/img/lexington-hero-interior.jpg" %}
+  {% set hero_alt = 'Image of Thoroughbred Park with race horse statues charging towards the viewer.' %}
+{% endif %}
 {% block page_super_header %}
   {{ page.super_header }}
 {% endblock %}
@@ -81,12 +88,8 @@
 {% endblock %}
 
 {% block page_hero %}
-<div class="lex-hero">
-  {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
-  <img src="{{ file_url(node.field_lex_custom_banner_image.entity.fileuri) }}" alt="">
-  {% else %}
-  <img src="/themes/custom/lex/img/lexington-hero-interior.jpg" alt="">
-  {% endif %}
+<div class="lex-hero" style="background-image: url({{ hero }})">
+  <img src="{{ hero }}" alt="{{ hero_alt }}">
   {% block page_features %}
     {% if page.featured_top or page.featured_second %}
       <div>

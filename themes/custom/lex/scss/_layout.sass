@@ -112,16 +112,26 @@ main
 // Article listings.
 .article
   @include base_clear
-  img
-    float: left
-    border: 1px solid $color-secondary-3
-    width: 32%
-    height: auto
-    margin: 0 $base_padding $base_padding 0
+  padding-left: 33%
 
-    @media (max-width: $screen-phone-max)
+  > div:first-child
+    float: left
+    width: 45%
+    margin: 0 0 0 -50%
+  img
+    width: 100%
+    height: auto
+    border: 1px solid $color-secondary-3
+
+
+  @media (max-width: $screen-phone-max)
+    padding: 0
+    width: 100%
+
+    >div:first-child
       float: none
       width: 100%
+      margin: 0
 
 @media (max-width: $screen-phone-max)
   .align-left, .align-right

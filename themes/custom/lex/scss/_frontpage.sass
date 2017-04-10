@@ -47,69 +47,69 @@ body.path-frontpage
 
     @include base_clear
 
-    >div:first-child
+    #block-views-block-front-page-news-block-1
       float: left
       width: 63%
       @include base_clear
 
-
-    >div:first-child + div, >div:first-child + div + div
+    #block-views-block-front-page-news-block-1 + div, #block-views-block-front-page-news-block-1 + div + div
       float: right
       width: 33%
 
-  @supports (display: grid)
-    .lex-region-highlighted
-      display: grid
-      grid-template-columns: 1fr 30%
-      grid-column-gap: $base_gutter
+  &:not(.logged-in)
+    @supports (display: grid)
+      .lex-region-highlighted
+        display: grid
+        grid-template-columns: 1fr 30%
+        grid-column-gap: $base_gutter
 
-      >div:first-child, >div:first-child + div, >div:first-child + div + div
-        float: none
-        width: 100%
-
-      > *
-        grid-column: 2
-        width: 100%
-        float: none
-        margin: 0
-        padding: 0
-
-
-      > *:first-child
-        position: relative
-        grid-column: 1
-        grid-row: span 2
-        padding-bottom: 2em
-
-
-        .more-link
-          position: absolute
-          bottom: 0
-          right: 0
-
-      > *:last-child
-        align-self: end
-
-
-
-      @media (max-width: $screen-tablet-max)
-        grid-template-columns: 1fr 1fr
+        #block-views-block-front-page-news-block-1, #block-views-block-front-page-news-block-1 + div, #block-views-block-front-page-news-block-1 + div + div
+          float: none
+          width: 100%
 
         > *
-          grid-column: auto
+          grid-column: 2
+          width: 100%
+          float: none
+          margin: 0
+          padding: 0
 
 
         > *:first-child
-          grid-row: 1
-          grid-column: span 2
+          position: relative
+          grid-column: 1
+          grid-row: span 2
+          padding-bottom: 2em
 
+
+          .more-link
+            position: absolute
+            bottom: 0
+            right: 0
 
         > *:last-child
-          align-self: stretch
+          align-self: end
 
-      @media (max-width: $screen-phone-max)
-        display: flex
-        flex-direction: column
+
+
+        @media (max-width: $screen-tablet-max)
+          grid-template-columns: 1fr 1fr
+
+          > *
+            grid-column: auto
+
+
+          > *:first-child
+            grid-row: 1
+            grid-column: span 2
+
+
+          > *:last-child
+            align-self: stretch
+
+        @media (max-width: $screen-phone-max)
+          display: flex
+          flex-direction: column
 
   // Mayor and Urban Council area
 

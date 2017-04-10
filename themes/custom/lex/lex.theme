@@ -76,7 +76,10 @@ function lex_preprocess_html(&$variables) {
   }
   else {
     $variables['attributes']['class'][] = 'path-frontpage';
+  }
 
+  if(\Drupal::currentUser()->id()) {
+    $variables['attributes']['class'][] = 'logged-in';
   }
 
   // $path_class = !$variables['root_path'] ? 'path-frontpage' : 'path-' . Html::getClass($variables['root_path']);

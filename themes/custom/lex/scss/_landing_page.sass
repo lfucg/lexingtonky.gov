@@ -8,11 +8,15 @@ body.bundle_landing_page
 .lex-hero.splash
   height: 100vh
   background-size: cover
+  > img
+    display: none
 
   >div
     padding: 1em $base_gutter
     height: auto
     @include base_clear
+
+
 
   section
     width: 50%
@@ -54,5 +58,63 @@ body.bundle_landing_page
         .lex-card-title
           float: none
           width: 50%
+
+  @media (max-width: $screen-phablet-max)
+    padding-top: 1em
+    @include base_clear
+
+    a
+      font-size: 1em
+      font-weight: bold
+
+    > div
+      width: 50%
+      float: right
+      padding-right: $base_gutter / 2
+      padding-top: 0
+      border: none
+      height: calc(100vh - 1em)
+      background: rgba($color-primary-5, 0.5)
+
+    section .lex-card-title
+      float: none
+      width: 100%
+
+    @media (orientation: landscape)
+      section:first-child
+        position: absolute
+        bottom: 0
+        left: 0
+        height: 10vh
+        width: 50%
+        background: rgba($color-primary-5, 0.5)
+        padding-left: $base_gutter / 2
+
+  @media (max-width: $screen-phablet-max) and (orientation: portrait)
+
+    padding-top: 0
+    overflow: hidden
+    background-image: none !important
+    background-color: $color-primary-5
+    > img
+      display: block
+      height: 50vh
+      width: auto
+      opacity: 1
+    > div
+      padding-top: 1em
+      display: block
+      width: 100%
+      height: auto
+      background: $color-primary-5
+
+    section:first-child
+      width: 100%
+      margin-bottom: 1em
+
+    .lex-region-featured_second
+      width: 100%
+
+
 
 
