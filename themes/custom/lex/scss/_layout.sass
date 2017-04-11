@@ -13,7 +13,7 @@ html
 body
   color: $color-secondary-4
 
-  > *
+  > section, > footer, main
     @include base_padding
 
 nav ul
@@ -239,3 +239,19 @@ address
     font-size: 1.2em
     margin-bottom: 0
 
+// Google translate
+#google_translate_element
+  float: right
+  .goog-te-gadget-simple
+    border: none
+
+    a
+      font-family: $font-sans
+      font-size: 1rem
+      color: $color-primary-4
+
+  img
+    display: none
+
+iframe.goog-te-menu-frame
+  box-shadow: none

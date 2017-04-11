@@ -60,4 +60,21 @@
 
   /* duplicated in browse-columns.js, lex-gis.js */
   $.LexingtonFilterBlock(document.getElementsByClassName('js-lex-filter-block')[0]);
+
 }());
+console.log('loaded');
+
+function googleTranslateElementInit() {
+  /* empty the translate element in case it has contents */
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    includedLanguages: 'en,es,fr',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, 'google_translate_element');
+
+  /* override default "Select Language" */
+  var label = document.getElementsByClassName('goog-te-menu-value')[0];
+  if (label && ! label.innerHTML.match('Translate')) {
+    label.innerHTML = '<span class="lex-translatelink">Translate</span>';
+  }
+}
