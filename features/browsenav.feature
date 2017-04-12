@@ -11,8 +11,10 @@ Scenario: Using ajax navigation
 
     When I click "Public safety"
     And I wait for AJAX to finish
+    And I wait for 4000 miliseconds
     And I click "Police"
     And I wait for AJAX to finish
+    And I wait for 4000 miliseconds
     Then I should see the link 'Crime Map'
     # breadcrumb
     And I should see "Home Public safety"
