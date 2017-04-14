@@ -13,7 +13,7 @@ dependencies:
 id: edithomepagebanner
 theme: lex
 region: featured_top
-weight: -26
+weight: -27
 provider: null
 plugin: 'block_content:978ac435-1bfe-4f3b-9fa5-44602e7b1b2f'
 settings:

@@ -223,8 +223,8 @@ display:
           label: ''
           exclude: false
           alter:
-            alter_text: false
-            text: '{{ created | replace({''am'': ''a.m.'', ''pm'': ''p.m.''}) }}'
+            alter_text: true
+            text: '<div class="lex-card-fulldate">{% include "@lex/includes/time.html.twig" with { time: created } %}</div>'
             make_link: false
             path: ''
             absolute: false

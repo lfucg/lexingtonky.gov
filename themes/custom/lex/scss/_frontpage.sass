@@ -169,10 +169,11 @@ body.path-frontpage
     .lex-region-featured_bottom_first
       display: flex
       justify-content: space-between
+      align-items: stretch
 
       >div
-        display: block
-        vertical-align: baseline
+        display: flex
+        flex-flow: column nowrap
 
         &:first-child
           margin: 0
