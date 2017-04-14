@@ -1,6 +1,5 @@
-(function() {
-  var $ = jQuery;
-
+;
+(function($) {
   $('.lex-hide-unless-javascript').removeClass('lex-hide-unless-javascript');
 
   // smooth scroll in-page: https://css-tricks.com/snippets/jquery/smooth-scrolling/
@@ -61,10 +60,22 @@
   /* duplicated in browse-columns.js, lex-gis.js */
   $.LexingtonFilterBlock(document.getElementsByClassName('js-lex-filter-block')[0]);
 
-}());
-console.log('loaded');
+}(jQuery));
+
 
 function googleTranslateElementInit() {
+  /*
+   * On the frontpage we need to append the nav item into a list provided by
+   * Drupal
+   */
+  var header = document.querySelector('body > header');
+  var nav = header.querySelector('nav');
+  if (nav.id != 'google_translate_element') {
+    var li = document.createElement('li');
+    li.id = 'google_translate_element';
+    nav.querySelector('ul').appendChild(li);
+    console.log('done');
+  }
   /* empty the translate element in case it has contents */
   new google.translate.TranslateElement({
     pageLanguage: 'en',
