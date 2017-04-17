@@ -1,6 +1,6 @@
 uuid: 42573e4a-71ce-4073-acfa-223dcd6676e1
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - views.view.site_wide_notice
@@ -10,7 +10,7 @@ dependencies:
     - lex_police
 id: lex_police_views_block__site_wide_notice_block
 theme: lex_police
-region: help
+region: '-1'
 weight: -22
 provider: null
 plugin: 'views_block:site_wide_notice-block_1'

@@ -1,0 +1,20 @@
+uuid: f3b80f9b-73a3-4ee8-a174-b4ed97d3e893
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_home
+id: lex_home_messages
+theme: lex_home
+region: breadcrumb
+weight: -28
+provider: null
+plugin: system_messages_block
+settings:
+  id: system_messages_block
+  label: 'Status messages'
+  provider: system
+  label_display: '0'
+visibility: {  }

@@ -1,6 +1,6 @@
 uuid: 8432b7c0-3c93-4f8f-9490-1c5d3859fb1e
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - search
@@ -9,7 +9,7 @@ dependencies:
     - lex_police
 id: lex_police_lex_police_search_form
 theme: lex_police
-region: featured_top
+region: '-1'
 weight: -25
 provider: null
 plugin: search_form_block

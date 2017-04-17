@@ -1,6 +1,6 @@
 uuid: 85acdd70-a1f4-4c94-8b7c-a2e1c191d659
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - system.menu.header-quick-links
@@ -10,7 +10,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_headerquicklinks
 theme: lex_planning_commission
-region: navbar_secondary
+region: '-1'
 weight: -18
 provider: null
 plugin: 'system_menu_block:header-quick-links'

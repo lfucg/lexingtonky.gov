@@ -1,6 +1,6 @@
 uuid: 8d62c426-65a4-4273-8e00-b1586e24847d
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - system.menu.footer
@@ -10,7 +10,7 @@ dependencies:
     - lex
 id: footer
 theme: lex
-region: footer_second
+region: '-1'
 weight: -14
 provider: null
 plugin: 'system_menu_block:footer'

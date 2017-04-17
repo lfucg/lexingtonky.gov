@@ -1,6 +1,6 @@
 uuid: 6bf56f7c-d1a7-4356-9146-14403af83a12
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - system
@@ -8,7 +8,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_messages
 theme: lex_planning_commission
-region: help
+region: '-1'
 weight: -15
 provider: null
 plugin: system_messages_block

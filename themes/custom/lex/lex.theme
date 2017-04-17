@@ -93,12 +93,6 @@ function lex_preprocess_html(&$variables) {
   // }
 }
 
-function lex_preprocess_page__node(&$variables) {
-  if (is_object($variables['node']) && $variables['node']->bundle() == 'landing_page') {
-    $variables['attributes']['layout_class'] = 'lex-layout-fullbleed';
-  }
-}
-
 function lex_preprocess_page__taxonomy__term(&$variables) {
   $path = \Drupal::service('path.current')->getPath();
   $alias = \Drupal::service('path.alias_manager')->getAliasByPath($path);
@@ -124,11 +118,7 @@ function lex_preprocess_block(&$variables) {
   $variables['attributes']['class'][] = 'lex-block';
   $element_id = $variables['elements']['#id'];
 
-  // todo: use templates/block-foo-element.twig to add this class and then include block.twig
-  if ($element_id == 'views_block__front_page_news_block_1') {
-    $variables['attributes']['class'][] = 'usa-width-two-thirds lex-horizontalcard-column';
-  }
-  else if ($element_id == 'inline_page_feedback_form') {
+  if (stristr($element_id, 'inline_page_feedback_form')) {
     # get contact form field to render inline
     $message = \Drupal::entityManager()
       ->getStorage('contact_message')
@@ -137,17 +127,6 @@ function lex_preprocess_block(&$variables) {
       ));
 
     $variables['contact_form'] = \Drupal::service('entity.form_builder')->getForm($message);
-  }
-  else if (in_array($element_id,
-      array('views_block__events_block_1', 'views_block__events_front_page_meetings'))) {
-    $variables['attributes']['class'][] = 'usa-width-one-third usa-end-row';
-  }
-  else if ($element_id == 'urbancountycouncilhtml') {
-    $variables['attributes']['class'][] = 'usa-width-one-third usa-end-row';
-  }
-  else if (in_array($element_id,
-      array('mayors_office_block'))) {
-    $variables['attributes']['class'][] = 'usa-width-two-thirds lex-frontpage-mayor';
   }
 }
 

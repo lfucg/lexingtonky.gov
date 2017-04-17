@@ -1,6 +1,6 @@
 uuid: f9cb6096-5c15-4e47-9524-78c1e101e852
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - help
@@ -8,7 +8,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_help
 theme: lex_planning_commission
-region: help
+region: '-1'
 weight: -14
 provider: null
 plugin: help_block

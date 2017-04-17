@@ -1,6 +1,6 @@
 uuid: 5b105e22-ed20-41e9-8d4f-e3f2f5aece61
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - field.storage.node.field_office_to_contact
@@ -11,7 +11,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_field_block_field_office_to_contact
 theme: lex_planning_commission
-region: sidebar_second
+region: '-1'
 weight: -21
 provider: null
 plugin: 'fieldblock:node'

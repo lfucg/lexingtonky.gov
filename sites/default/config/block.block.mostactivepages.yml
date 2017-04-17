@@ -1,6 +1,6 @@
 uuid: 07fb52ad-76fe-4efd-b7ac-426af5dad3d0
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - system.menu.most-active-pages
@@ -10,7 +10,7 @@ dependencies:
     - lex
 id: mostactivepages
 theme: lex
-region: featured_top
+region: '-1'
 weight: -25
 provider: null
 plugin: 'system_menu_block:most-active-pages'

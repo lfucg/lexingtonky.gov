@@ -1,6 +1,6 @@
 uuid: 74a5f656-a385-4351-bc2c-44034163d03e
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - field.storage.node.field_image
@@ -12,7 +12,7 @@ dependencies:
     - lex
 id: contentfield
 theme: lex
-region: sidebar_second
+region: '-1'
 weight: -20
 provider: null
 plugin: 'fieldblock:node'

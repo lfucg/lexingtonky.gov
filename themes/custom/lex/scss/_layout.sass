@@ -13,9 +13,6 @@ html
 body
   color: $color-secondary-4
 
-  > section, > footer, main
-    @include base_padding
-
 nav ul
   list-style: none
 
@@ -77,29 +74,38 @@ sup
   vertical-align: top
   font-size: 0.4em
 
+main, body > section
+  @include base_padding
+
 main
   @include base_clear
-
-  display: flex
-  justify-content: space-between
-
-
-  #main-content
-    display: none
 
   img
     max-width: 100%
     height: auto
 
-  .lex-region-sidebar_second
+  > div:first-child
+    float: left
+    width: 65%
+    margin-right: 5%
+
+  > div:last-child
+    float: left
     width: 30%
-    margin-left: auto
 
-    h2
-      font-weight: bold
+  > div:first-child:last-child
+    width: 100%
 
-    h4
-      margin: 0
+  @supports (display: flex)
+    display: flex
+    justify-content: space-between
+    align-items: stretch
+    > div:first-child, > div:last-child
+      float: none
+
+  .region > div
+    margin-bottom: 4em
+
 
 .lex-aside-list, .usa-unstyled-list
   list-style: none
@@ -159,10 +165,6 @@ article
     margin-top: 2em
 
 
-.lex-region-content
-  width: 62%
-
-
 ul.lex-aside-list
   list-style: none
   line-height: 1.5
@@ -218,8 +220,10 @@ address
     display: none
 
 // Breadcrumbs
-.lex-region-secondary_menu
+.lex-region-breadcrumb
   background: $color-secondary-1
+
+.lex-breadcrumb
   ol
     list-style: none
     li

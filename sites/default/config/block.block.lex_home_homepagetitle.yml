@@ -1,0 +1,31 @@
+uuid: 25089559-7ca6-49ec-9623-f5b2a3f08280
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:e029ca18-c572-44dd-ad66-1189d29ad413'
+  module:
+    - block_content
+    - system
+  theme:
+    - lex_home
+id: lex_home_homepagetitle
+theme: lex_home
+region: hero
+weight: -28
+provider: null
+plugin: 'block_content:e029ca18-c572-44dd-ad66-1189d29ad413'
+settings:
+  id: 'block_content:e029ca18-c572-44dd-ad66-1189d29ad413'
+  label: 'Home Page Title'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

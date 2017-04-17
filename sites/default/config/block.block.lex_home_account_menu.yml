@@ -1,0 +1,24 @@
+uuid: 394c241a-e3ef-4caa-b454-1fc3b05c331b
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.account
+  module:
+    - system
+  theme:
+    - lex_home
+id: lex_home_account_menu
+theme: lex_home
+region: '-1'
+weight: 11
+provider: null
+plugin: 'system_menu_block:account'
+settings:
+  id: 'system_menu_block:account'
+  label: 'User account menu'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 1
+visibility: {  }

@@ -1,0 +1,46 @@
+uuid: 288b198e-9489-47e5-894b-543dcd76e5ec
+langcode: en
+status: false
+dependencies:
+  config:
+    - field.storage.node.field_top_services
+  module:
+    - ctools
+    - fieldblock
+    - link
+    - system
+  theme:
+    - lex_home
+id: lex_home_fieldblock_field_organization_services
+theme: lex_home
+region: '-1'
+weight: 10
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Top services'
+  provider: fieldblock
+  label_display: visible
+  label_from_field: 1
+  field_name: field_top_services
+  formatter_id: link
+  formatter_settings:
+    trim_length: '80'
+    url_only: 0
+    url_plain: 0
+    rel: 0
+    target: 0
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      organization_page: organization_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: true
+    context_mapping: {  }

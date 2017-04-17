@@ -1,6 +1,6 @@
 uuid: d16a7c82-41ec-44bc-9ff7-dd8f9b3d6b91
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - ctools
@@ -9,7 +9,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_breadcrumbs_fullbleed
 theme: lex_planning_commission
-region: featured_top
+region: '-1'
 weight: -23
 provider: null
 plugin: system_breadcrumb_block

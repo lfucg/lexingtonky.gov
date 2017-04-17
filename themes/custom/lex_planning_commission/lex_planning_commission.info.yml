@@ -3,20 +3,14 @@ description: A theme for the City of Lexington Planning Commission pages
 type: theme
 core: 8.x
 base theme: lex
+
+# Add your regions below. Defaults to those defined in Drupal core.
 regions:
-  super_header: 'Super header'
-  navbar_secondary: 'Navbar secondary'
-  search_header: 'Search header'
-  featured_top: 'Featured top'
-  featured_second: 'Featured second'
-  primary_menu: 'Primary menu'
-  secondary_menu: 'Secondary menu'
-  highlighted: Highlighted
-  help: Help
-  content: Content
-  sidebar_first: 'Sidebar first'
-  sidebar_second: 'Sidebar second'
-  featured_bottom_first: 'Featured bottom first'
-  footer_first: 'Footer first'
-  footer_second: 'Footer second'
-  footer_third: 'Footer third'
+  notices: 'Priority Notices'
+  sitemast: 'Header Navigation'
+  hero: 'Page Features'
+  breadcrumb: 'Breadcrumbs and Notices'
+  content: 'Content'
+  sidebar: 'Sidebar'
+  feedback: 'Feedback Form'
+  footer: 'Footer'

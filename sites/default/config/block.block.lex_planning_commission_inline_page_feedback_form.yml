@@ -1,6 +1,6 @@
 uuid: e80dbc8f-e020-4227-bdb5-6a1a6410ce0e
 langcode: en
-status: true
+status: false
 dependencies:
   content:
     - 'block_content:html_block:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
@@ -11,7 +11,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_inline_page_feedback_form
 theme: lex_planning_commission
-region: footer_first
+region: '-1'
 weight: -17
 provider: null
 plugin: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'

@@ -1,6 +1,6 @@
 uuid: 91841b98-362c-4551-8774-d92b46392186
 langcode: en
-status: true
+status: false
 dependencies:
   content:
     - 'block_content:html_block:e029ca18-c572-44dd-ad66-1189d29ad413'
@@ -11,7 +11,7 @@ dependencies:
     - lex
 id: homepagetitle
 theme: lex
-region: featured_top
+region: '-1'
 weight: -28
 provider: null
 plugin: 'block_content:e029ca18-c572-44dd-ad66-1189d29ad413'

@@ -1,6 +1,6 @@
 uuid: 303164b2-8ba0-4773-b136-d1142a091200
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - views.view.sibling_pages
@@ -11,7 +11,7 @@ dependencies:
     - lex
 id: views_block__sibling_pages_block_sidebar
 theme: lex
-region: sidebar_second
+region: '-1'
 weight: -28
 provider: null
 plugin: 'views_block:sibling_pages-block_1'

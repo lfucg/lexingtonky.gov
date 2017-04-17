@@ -1,6 +1,6 @@
 uuid: 071b6e76-ff0b-43e8-b920-e01c3b1e025b
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - views.view.events
@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: views_block__events_front_page_meetings
 theme: lex
-region: highlighted
-weight: -20
+region: '-1'
+weight: -23
 provider: null
 plugin: 'views_block:events-front_page_meetings'
 settings:

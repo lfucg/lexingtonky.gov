@@ -1,6 +1,6 @@
 uuid: 9fb42d3e-7dce-4001-ba81-dc453871cdbe
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - ctools
@@ -9,7 +9,7 @@ dependencies:
     - lex_police
 id: lex_police_pagetitle_fullbleed
 theme: lex_police
-region: featured_top
+region: '-1'
 weight: -22
 provider: null
 plugin: page_title_block

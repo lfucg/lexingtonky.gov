@@ -1,0 +1,30 @@
+uuid: c1c57274-c20d-404d-b091-c3b0e9ae16c9
+langcode: en
+status: false
+dependencies:
+  config:
+    - views.view.department_directory
+  module:
+    - system
+    - views
+  theme:
+    - lex_home
+id: lex_home_views_block__department_directory_block_1
+theme: lex_home
+region: '-1'
+weight: -21
+provider: null
+plugin: 'views_block:department_directory-block_1'
+settings:
+  id: 'views_block:department_directory-block_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: /browse/government/departments
+    negate: false
+    context_mapping: {  }

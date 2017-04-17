@@ -1,6 +1,6 @@
 uuid: 3c37b4e1-55eb-48ea-8f00-da8530a92cd0
 langcode: en
-status: true
+status: false
 dependencies:
   content:
     - 'block_content:html_block:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'
@@ -11,7 +11,7 @@ dependencies:
     - lex
 id: mayors_office_block
 theme: lex
-region: featured_bottom_first
+region: '-1'
 weight: -24
 provider: null
 plugin: 'block_content:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'

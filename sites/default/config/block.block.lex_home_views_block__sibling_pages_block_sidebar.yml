@@ -1,0 +1,32 @@
+uuid: 9a575713-bc46-4d4e-ab2d-efb05f1de832
+langcode: en
+status: false
+dependencies:
+  config:
+    - views.view.sibling_pages
+  module:
+    - ctools
+    - views
+  theme:
+    - lex_home
+id: lex_home_views_block__sibling_pages_block_sidebar
+theme: lex_home
+region: '-1'
+weight: 5
+provider: null
+plugin: 'views_block:sibling_pages-block_1'
+settings:
+  id: 'views_block:sibling_pages-block_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      page: page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

@@ -1,6 +1,6 @@
 uuid: e42d5448-0782-4a53-ae40-4d937d4f7977
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - views.view.taxonomy_top_level
@@ -11,7 +11,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_views_block__taxonomy_top_level_block_1
 theme: lex_planning_commission
-region: primary_menu
+region: '-1'
 weight: -11
 provider: null
 plugin: 'views_block:taxonomy_top_level-block_1'

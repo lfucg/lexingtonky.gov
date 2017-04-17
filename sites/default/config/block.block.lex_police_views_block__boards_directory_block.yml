@@ -1,6 +1,6 @@
 uuid: d345182f-90f3-41fa-bb30-5ae509f44d1c
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - views.view.boards_directory
@@ -11,7 +11,7 @@ dependencies:
     - lex_police
 id: lex_police_views_block__boards_directory_block
 theme: lex_police
-region: featured_bottom_first
+region: '-1'
 weight: -22
 provider: null
 plugin: 'views_block:boards_directory-block_1'

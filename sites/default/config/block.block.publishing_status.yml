@@ -1,6 +1,6 @@
 uuid: 166a3a6f-2980-4dad-8925-c33f9be32293
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - fieldblock
@@ -9,8 +9,8 @@ dependencies:
     - lex
 id: publishing_status
 theme: lex
-region: highlighted
-weight: -26
+region: '-1'
+weight: -21
 provider: null
 plugin: 'fieldblock:node'
 settings:

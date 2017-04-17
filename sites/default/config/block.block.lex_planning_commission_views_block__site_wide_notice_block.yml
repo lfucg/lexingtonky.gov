@@ -1,6 +1,6 @@
 uuid: 293bdcd4-0c6c-4c19-9eb7-8b26deaa2f76
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - views.view.site_wide_notice
@@ -10,7 +10,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_views_block__site_wide_notice_block
 theme: lex_planning_commission
-region: help
+region: '-1'
 weight: -22
 provider: null
 plugin: 'views_block:site_wide_notice-block_1'

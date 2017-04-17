@@ -1,6 +1,6 @@
 uuid: bc3423e1-e6cc-46dd-a9c7-fd1fc1f46411
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - views.view.sibling_pages
@@ -11,7 +11,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_views_block__sibling_pages_block_sidebar
 theme: lex_planning_commission
-region: sidebar_second
+region: '-1'
 weight: -28
 provider: null
 plugin: 'views_block:sibling_pages-block_1'

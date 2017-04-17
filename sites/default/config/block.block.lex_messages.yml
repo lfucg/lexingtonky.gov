@@ -1,6 +1,6 @@
 uuid: db86b967-818e-4290-b45e-94ebd85a7020
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - system
@@ -8,8 +8,8 @@ dependencies:
     - lex
 id: lex_messages
 theme: lex
-region: help
-weight: -15
+region: '-1'
+weight: -28
 provider: null
 plugin: system_messages_block
 settings:

@@ -1,6 +1,6 @@
 uuid: f86213a5-32cb-4b27-8a60-9494a19a2d83
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - fieldblock
@@ -9,7 +9,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_publishing_status
 theme: lex_planning_commission
-region: highlighted
+region: '-1'
 weight: -26
 provider: null
 plugin: 'fieldblock:node'

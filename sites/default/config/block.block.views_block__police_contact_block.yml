@@ -1,6 +1,6 @@
 uuid: dd3761c9-492e-41ee-9c4b-6c2c8df1cd65
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - views.view.police_contact
@@ -10,7 +10,7 @@ dependencies:
     - lex_police
 id: views_block__police_contact_block
 theme: lex_police
-region: sidebar_second
+region: '-1'
 weight: -28
 provider: null
 plugin: 'views_block:police_contact-block_1'

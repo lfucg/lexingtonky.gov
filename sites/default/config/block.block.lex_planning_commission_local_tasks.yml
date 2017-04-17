@@ -1,6 +1,6 @@
 uuid: 743b2c32-2385-4850-8bc0-fd6127587b5f
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - system
@@ -8,7 +8,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_local_tasks
 theme: lex_planning_commission
-region: highlighted
+region: '-1'
 weight: -25
 provider: null
 plugin: local_tasks_block

@@ -1,0 +1,31 @@
+uuid: 732d60f6-8f00-4692-8148-13b11400246f
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'
+  module:
+    - block_content
+    - system
+  theme:
+    - lex_home
+id: lex_home_mayors_office_block
+theme: lex_home
+region: postscript
+weight: -28
+provider: null
+plugin: 'block_content:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'
+settings:
+  id: 'block_content:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'
+  label: 'Mayor''s Office'
+  provider: block_content
+  label_display: visible
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

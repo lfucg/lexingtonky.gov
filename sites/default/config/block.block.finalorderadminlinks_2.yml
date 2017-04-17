@@ -1,6 +1,6 @@
 uuid: ac22b897-9747-43ca-92e4-e1be081482cd
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - system.menu.final-order-admin
@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: finalorderadminlinks_2
 theme: lex
-region: highlighted
-weight: -24
+region: '-1'
+weight: -27
 provider: null
 plugin: 'system_menu_block:final-order-admin'
 settings:

@@ -1,6 +1,6 @@
 uuid: 14931710-db3b-4ae0-8a49-6e71746ed0d6
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - system
@@ -8,7 +8,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_breadcrumbs
 theme: lex_planning_commission
-region: secondary_menu
+region: '-1'
 weight: -22
 provider: null
 plugin: system_breadcrumb_block

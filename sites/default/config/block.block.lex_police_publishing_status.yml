@@ -1,6 +1,6 @@
 uuid: acdb7eef-d4aa-4d12-8d98-ccd2cc4d214e
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - fieldblock
@@ -9,7 +9,7 @@ dependencies:
     - lex_police
 id: lex_police_publishing_status
 theme: lex_police
-region: highlighted
+region: '-1'
 weight: -26
 provider: null
 plugin: 'fieldblock:node'

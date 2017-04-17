@@ -1,6 +1,6 @@
 uuid: 6c016ce0-7ee6-44ca-ba0f-87c848f2995a
 langcode: en
-status: true
+status: false
 dependencies:
   content:
     - 'block_content:html_block:34db9b12-5ecc-4371-89df-16ac11fe0d70'
@@ -11,7 +11,7 @@ dependencies:
     - lex
 id: find_council_district_sidebar
 theme: lex
-region: sidebar_second
+region: '-1'
 weight: -26
 provider: null
 plugin: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'

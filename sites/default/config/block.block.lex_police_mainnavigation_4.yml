@@ -1,6 +1,6 @@
 uuid: 82838025-eecf-4d57-8cdb-7f00eb4afdc3
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - system.menu.main
@@ -10,7 +10,7 @@ dependencies:
     - lex_police
 id: lex_police_mainnavigation_4
 theme: lex_police
-region: primary_menu
+region: '-1'
 weight: -9
 provider: null
 plugin: 'system_menu_block:main'

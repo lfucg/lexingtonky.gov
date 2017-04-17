@@ -64,18 +64,13 @@
 
 
 function googleTranslateElementInit() {
-  /*
-   * On the frontpage we need to append the nav item into a list provided by
-   * Drupal
-   */
-  var header = document.querySelector('body > header');
-  var nav = header.querySelector('nav');
-  if (nav.id != 'google_translate_element') {
-    var li = document.createElement('li');
-    li.id = 'google_translate_element';
-    nav.querySelector('ul').appendChild(li);
-    console.log('done');
+
+  var e = document.getElementById('#google_translate_element');
+
+  if (e) {
+    e.innerHTML = '';
   }
+
   /* empty the translate element in case it has contents */
   new google.translate.TranslateElement({
     pageLanguage: 'en',

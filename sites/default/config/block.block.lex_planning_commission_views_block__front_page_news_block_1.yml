@@ -1,6 +1,6 @@
 uuid: 764c7065-8017-4470-9158-5f88967a8b4c
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - views.view.front_page_news
@@ -11,7 +11,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_views_block__front_page_news_block_1
 theme: lex_planning_commission
-region: highlighted
+region: '-1'
 weight: -22
 provider: null
 plugin: 'views_block:front_page_news-block_1'

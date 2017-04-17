@@ -1,6 +1,6 @@
 uuid: d0429347-b109-4c1a-ad41-9c3250a2f283
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - system.menu.footer
@@ -10,7 +10,7 @@ dependencies:
     - lex_police
 id: lex_police_footer
 theme: lex_police
-region: footer_second
+region: '-1'
 weight: -14
 provider: null
 plugin: 'system_menu_block:footer'

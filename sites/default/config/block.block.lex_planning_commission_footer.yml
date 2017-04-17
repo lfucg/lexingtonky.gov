@@ -1,6 +1,6 @@
 uuid: 649ff3aa-6782-4c7c-a2a8-37a34bb631fd
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - system.menu.footer
@@ -10,7 +10,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_footer
 theme: lex_planning_commission
-region: footer_second
+region: '-1'
 weight: -14
 provider: null
 plugin: 'system_menu_block:footer'

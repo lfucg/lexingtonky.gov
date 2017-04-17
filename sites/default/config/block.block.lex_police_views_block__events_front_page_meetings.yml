@@ -1,6 +1,6 @@
 uuid: df4c0441-d61f-4afa-9e90-dfe4f18f2a5a
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - views.view.events
@@ -11,7 +11,7 @@ dependencies:
     - lex_police
 id: lex_police_views_block__events_front_page_meetings
 theme: lex_police
-region: highlighted
+region: '-1'
 weight: -20
 provider: null
 plugin: 'views_block:events-front_page_meetings'

@@ -1,6 +1,6 @@
 uuid: 08099ec0-1130-44ab-8033-73ea23b12465
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - system
@@ -8,8 +8,8 @@ dependencies:
     - lex
 id: breadcrumbs
 theme: lex
-region: secondary_menu
-weight: -22
+region: '-1'
+weight: -27
 provider: null
 plugin: system_breadcrumb_block
 settings:

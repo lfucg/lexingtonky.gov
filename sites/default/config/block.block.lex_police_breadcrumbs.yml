@@ -1,6 +1,6 @@
 uuid: aae55955-b84d-4633-a316-a1187b2bf949
 langcode: en
-status: true
+status: false
 dependencies:
   module:
     - system
@@ -8,7 +8,7 @@ dependencies:
     - lex_police
 id: lex_police_breadcrumbs
 theme: lex_police
-region: secondary_menu
+region: '-1'
 weight: -22
 provider: null
 plugin: system_breadcrumb_block

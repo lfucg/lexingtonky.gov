@@ -1,0 +1,27 @@
+uuid: 6330cf9c-d61b-44d5-8554-615673ec07c2
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_home
+id: lex_home_local_tasks
+theme: lex_home
+region: '-1'
+weight: 8
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  provider: core
+  label_display: '0'
+  primary: true
+  secondary: true
+visibility:
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/browse/*"
+    negate: true
+    context_mapping: {  }

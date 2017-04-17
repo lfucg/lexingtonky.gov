@@ -15,24 +15,28 @@ class LexThemeNegotiator extends DefaultNegotiator {
    * {@inheritdoc}
    */
   public function determineActiveTheme(RouteMatchInterface $route_match) {
-    $node = $route_match->getParameter('node');
+    if (\Drupal::service('path.matcher')->isFrontPage()) {
+      return 'lex_home';
+    }
+    else {
+      $node = $route_match->getParameter('node');
 
-    if ($node instanceof NodeInterface) {
-      try {
-        $departments = $node->get('field_related_departments')->getValue();
+      if ($node instanceof NodeInterface) {
+        try {
+          $departments = $node->get('field_related_departments')->getValue();
 
-        if (is_array($departments)) {
-          foreach ($departments as $department) {
-            switch($department['target_id']) {
-              case 2: return 'lex_police';
-              case 440: return 'lex_planning_commission';
+          if (is_array($departments)) {
+            foreach ($departments as $department) {
+              switch($department['target_id']) {
+                case 2: return 'lex_police';
+                case 440: return 'lex_planning_commission';
+              }
             }
           }
         }
+        catch ( \InvalidArgumentException $e) {}
       }
-      catch ( \InvalidArgumentException $e) {}
     }
-
     return NULL;
   }
 
