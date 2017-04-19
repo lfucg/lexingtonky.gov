@@ -62,6 +62,19 @@ p
   line-height: 1.5
   margin-bottom: 1.5em
 
+
+table
+  border: 1px solid $color-primary-5
+th
+  background: $color-primary-5
+  color: #fff
+  font-weight: bold
+
+tr:nth-child(even) td
+  background: $color-primary-1
+
+
+
 // Inline
 a
   color: $color-primary-4
@@ -74,7 +87,7 @@ sup
   font-size: 0.4em
 
 // Forms
-button, input[type=text], input[type=email], input[type=number], input[type=tel], input[type=search], textarea
+button, input[type=text], input[type=email], input[type=number], input[type=tel], input[type=search],  input[type=submit], textarea
   -webkit-appearance: none
   display: block
   font-size: 1em
@@ -82,7 +95,7 @@ button, input[type=text], input[type=email], input[type=number], input[type=tel]
   margin: 0.5em 0 1em
   max-width: 100%
 
-button
+button, input[type=submit]
   padding: 0.25em
   background: #fff
 
@@ -105,7 +118,7 @@ article
 
   li
     line-height: 1.5
-    margin-bottom: 1em
+    margin-bottom: 0.5em
 
   h2
     margin-top: 2em
@@ -130,6 +143,9 @@ main
 
     > section:first-child h2:first-child
       margin-top: 0
+
+    nav > div
+      margin-bottom: 0.5em
 
   > div:first-child:last-child
     width: 100%
@@ -211,12 +227,22 @@ ul.lex-aside-list
 .lex-accordion ul
   list-style: none
 
+.lex-accordion >ul li:first-child p
+  margin-bottom: 0
+
 .lex-accordion-content
   &[aria-hidden="true"]
     display: none
 
+#collapsible-0
+  margin-top: 2em
+
 .lex-traffic-notice-highlight
   background: $lex-alert-warning
+
+.lex-notice
+  font-style: italic
+
 .lex-region-breadcrumb
   padding: 0
 

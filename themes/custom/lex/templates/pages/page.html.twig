@@ -38,11 +38,11 @@
   {% endif %}
   <div class="lex-hero" style="background-image: url({{ hero }})">
     <img src="{{ hero }}" alt="{{ hero_alt }}">
-    {% block page_hero_body %}
     <div>
-      {{ page.hero }}
+      {% block page_hero_body %}
+        {{ page.hero }}
+      {% endblock %}
     </div>
-    {% endblock %}
   </div>
 {% endblock %}
 {% block page_breadcrumb %}
