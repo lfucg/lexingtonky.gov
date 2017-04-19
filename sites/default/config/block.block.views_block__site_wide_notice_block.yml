@@ -1,6 +1,6 @@
 uuid: dc2864a1-bd71-4ec0-bdfd-cf0fcab47699
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - views.view.site_wide_notice
@@ -10,8 +10,8 @@ dependencies:
     - lex
 id: views_block__site_wide_notice_block
 theme: lex
-region: '-1'
-weight: -29
+region: notices
+weight: -28
 provider: null
 plugin: 'views_block:site_wide_notice-block_1'
 settings:

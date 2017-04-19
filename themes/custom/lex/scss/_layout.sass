@@ -93,6 +93,9 @@ main
     float: left
     width: 30%
 
+    > section:first-child h2
+      margin-top: 0
+
   > div:first-child:last-child
     width: 100%
 
@@ -109,6 +112,9 @@ main
 
 .lex-aside-list, .usa-unstyled-list
   list-style: none
+
+  li
+    margin-bottom: 1em
 
 .align-left
   float: left
@@ -219,8 +225,11 @@ address
   &[aria-hidden="true"]
     display: none
 
-// Breadcrumbs
 .lex-region-breadcrumb
+  padding: 0
+
+.lex-breadcrumb, #block-lex-home-views-block-taxonomy-top-level-block-1
+  @include base_padding
   background: $color-secondary-1
 
 .lex-breadcrumb
@@ -228,12 +237,18 @@ address
     list-style: none
     li
       display: inline-block
+      margin-bottom: 0
       &:after
         content: ' / '
       &:last-child:after
         content: ''
   a, a:visited
     color: $color-secondary-4
+
+.lex-notice
+  padding-left: 1em
+  border-left: 0.5em solid $color-secondary-1
+  margin-bottom: 1em
 
 // Event lists
 .lex-event-list
@@ -252,7 +267,6 @@ address
 
 // Google translate
 #google_translate_element
-  float: right
   .goog-te-gadget-simple
     border: none
 
@@ -266,3 +280,4 @@ address
 
 iframe.goog-te-menu-frame
   box-shadow: none
+

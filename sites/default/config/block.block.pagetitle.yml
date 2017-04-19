@@ -1,6 +1,6 @@
 uuid: 18c3560a-3d7d-4eca-b34b-75eaba2782b0
 langcode: en
-status: false
+status: true
 dependencies:
   module:
     - system
@@ -8,8 +8,8 @@ dependencies:
     - lex
 id: pagetitle
 theme: lex
-region: '-1'
-weight: -22
+region: content
+weight: -27
 provider: null
 plugin: page_title_block
 settings:

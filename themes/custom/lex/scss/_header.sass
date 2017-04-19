@@ -1,72 +1,106 @@
 body > header
   @include base_padding
   @include base_clear
-
   border-bottom: 1px solid $color-secondary-3
+  display: flex
+  justify-content: space-between
+  align-items: stretch
+  flex-flow: row nowrap
 
-  >a
+  a
+    text-decoration: none
+
+  > a
     display: block
     background: url(../img/lexington-logo.svg) no-repeat left center
     background-size: auto 90%
     text-indent: -200vw
     overflow: hidden
     height: 4em
-    width: 50%
-    float: left
+    width: 33%
 
-    @media (max-width: $screen-phablet-max)
+    @media (max-width: $screen-tablet-max)
       float: none
       width: 100%
       height: 3em
 
+  section
+    width: 40%
+    margin-left: 27%
+
+    &.nonav
+      margin-left: 17%
+      width: 50%
+      display: flex
+      justify-content: space-between
+      align-items: center
+
+      >div:first-child
+        width: 80%
+
+      >div:last-child
+        width: 20%
+        text-align: right
+
+      input, button
+        margin-bottom: 0
   nav
-    display: table
-    width: 30%
-    margin: 0 0 0 auto
+    height: 100%
 
-    ul
-      display: table-row
-
-  @media (max-width: $screen-phablet-max)
-    padding-top: 0
-    padding-bottom: 0
-    >section
-      display: none
-
-    li
-      display: table-cell
-      text-align: right
-
-  @include link_hover_underline
-
-@supports(display: flex)
-  body > header
+  ul
+    height: 100%
     display: flex
-    align-items: center
+    flex-flow: row nowrap
     justify-content: space-between
-
-    &:after
-      display: none
-
-    >a
-      float: none
-
-    >section
-      width: 30%
-      margin: 0
-
-      &.lex-region-search_header
-        width: 50%
+    align-items: center
 
 
-    nav
-      display: block
-      width: auto
 
-      ul
 
-        display: flex
-        justify-content: space-between
+//   @media (max-width: $screen-tablet-max)
+//     padding-top: 0.25em
+//     padding-bottom: 0.25em
 
-      li
-        display: block
+//   @media (max-width: $screen-phablet-max)
+//     padding-top: 0
+//     padding-bottom: 0
+//     >section
+//       display: none
+
+//     li
+//       display: table-cell
+//       text-align: right
+
+//   @include link_hover_underline
+
+// @supports(display: flex)
+//   body > header
+//     display: flex
+//     align-items: center
+//     justify-content: space-between
+
+//     &:after
+//       display: none
+
+//     >a
+//       float: none
+
+//     >section
+//       width: 30%
+//       margin: 0
+
+//       &.lex-region-search_header
+//         width: 50%
+
+
+//     nav
+//       display: block
+//       width: auto
+
+//       ul
+
+//         display: flex
+//         justify-content: space-between
+
+//       li
+//         display: block

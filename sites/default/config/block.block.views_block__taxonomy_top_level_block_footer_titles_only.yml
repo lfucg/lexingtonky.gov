@@ -1,6 +1,6 @@
 uuid: b140ecd0-cfc4-4cd7-a225-3701d3929fcd
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - views.view.taxonomy_top_level
@@ -10,8 +10,8 @@ dependencies:
     - lex
 id: views_block__taxonomy_top_level_block_footer_titles_only
 theme: lex
-region: '-1'
-weight: -15
+region: footer
+weight: -28
 provider: null
 plugin: 'views_block:taxonomy_top_level-block_2'
 settings:

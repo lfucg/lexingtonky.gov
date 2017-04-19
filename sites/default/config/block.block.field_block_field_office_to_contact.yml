@@ -1,6 +1,6 @@
 uuid: b9a0522e-1f1b-41ac-9f2e-46714ecd3ba5
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - field.storage.node.field_office_to_contact
@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: field_block_field_office_to_contact
 theme: lex
-region: '-1'
-weight: -21
+region: sidebar
+weight: -22
 provider: null
 plugin: 'fieldblock:node'
 settings:

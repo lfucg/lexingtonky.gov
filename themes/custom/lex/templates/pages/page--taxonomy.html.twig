@@ -1,20 +1,17 @@
 {% extends 'page.html.twig' %}
-{% block page_primary_menu %}
-  {# This template moves this menu into the main body #}
-{% endblock %}
-{% block main_content %}
+{% block page_main %}
+<main role="main">
   <section class="main browse lex-slab lex-slab-grey" aria-labelledby="services-and-information-label" id="services-and-information">
     <div class="usa-grid-full lex-grid-full browse-panes {{ browse_level }}" data-state="{{ browse_level }}">
       {% if browse_level == 'subsection' %}
         <div id="subsection" class="pane">
           <div class="pane-inner alphabetical">
             {{ page.content }}
-            {#  displays filterable list for boards/commissions #}
-            {{ page.featured_bottom_first }}
           </div>
         </div>
       {% endif %}
-      {{ page.primary_menu }}
+      {{ page.sidebar }}
     </div>
   </section>
+</main>
 {% endblock %}

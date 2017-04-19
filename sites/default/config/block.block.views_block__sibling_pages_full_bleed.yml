@@ -12,7 +12,7 @@ dependencies:
 id: views_block__sibling_pages_full_bleed
 theme: lex
 region: '-1'
-weight: -23
+weight: -3
 provider: null
 plugin: 'views_block:sibling_pages-block_2'
 settings:

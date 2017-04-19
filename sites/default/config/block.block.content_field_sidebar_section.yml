@@ -1,6 +1,6 @@
 uuid: 8a827fb2-e22d-4368-97ec-67030596319d
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - field.storage.node.field_sidebar_section
@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: content_field_sidebar_section
 theme: lex
-region: '-1'
-weight: -22
+region: sidebar
+weight: -23
 provider: null
 plugin: 'fieldblock:node'
 settings:

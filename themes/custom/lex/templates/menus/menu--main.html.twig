@@ -40,7 +40,7 @@
             <h2 class="lex-card-title lex-card-title-heading">{{ item.title }}</h2>
             <div>
 
-              <ul class="usa-unstyled-list">
+              <ul>
                 {% for item in item.below %}
                   {% set current = (item.in_active_trail ? 'active' : '') %}
                   <li class="{{ current }}">
@@ -63,7 +63,7 @@
   {% import _self as menus %}
   {% if items %}
     <div id="root" class="pane">
-      <ul class="usa-unstyled-list">
+      <ul>
         {% for item in items %}
           {% set current = (item.in_active_trail ? 'active' : '') %}
           <li class="{{ current }}">

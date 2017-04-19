@@ -1,14 +1,15 @@
 body.path-taxonomy
   main
+    display: block
     background: $color-secondary-1
+    @include base_clear
+  // > .lex-region-featured_bottom_first
+  //   display: none
 
-  > .lex-region-featured_bottom_first
-    display: none
+  //   .lex-region-content
+  //     width: 100%
 
-    .lex-region-content
-      width: 100%
-
-  section.lex-region-primary_menu
+  section.lex-region-sidebar
     padding: 0
     @include base_clear
 
@@ -18,7 +19,6 @@ body.path-taxonomy
       margin-bottom: 0
 
   #root
-    //outline: 1px solid red
     display: none // hide on mobile
 
     @media (min-width: $screen-tablet-min)
@@ -35,9 +35,6 @@ body.path-taxonomy
     input
       width: 100%
 
-    h1, h2, h3
-      font-weight: normal
-
     &.section
       #section
         @media (min-width: $screen-tablet-min)
@@ -49,6 +46,8 @@ body.path-taxonomy
     &.subsection
       #root, #section
         display: none // hide on mobile
+        a
+          color: $color-secondary-3
 
         @media (min-width: $screen-tablet-min)
           display: block
@@ -74,8 +73,6 @@ body.path-taxonomy
 
     .pane-inner
       padding-bottom: 2em
-      border-left: 1px solid $color-secondary-2
-      padding-left: 1em
 
       @media (min-width: $screen-tablet-min)
         min-height: 950px
@@ -140,6 +137,10 @@ body.path-taxonomy
     #section
       z-index: 2
       position: relative
+
+      @media (min-width: $screen-desk-min)
+        padding: 1em 0 0 1em
+        border-left: 1px solid $color-secondary-3
 
       li
         position: relative

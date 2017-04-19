@@ -1,6 +1,6 @@
 uuid: 232a1950-2732-4953-96d7-4d09ca3b5f38
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - field.storage.node.field_top_services
@@ -13,8 +13,8 @@ dependencies:
     - lex
 id: fieldblock_field_organization_services
 theme: lex
-region: '-1'
-weight: -25
+region: sidebar
+weight: -26
 provider: null
 plugin: 'fieldblock:node'
 settings:

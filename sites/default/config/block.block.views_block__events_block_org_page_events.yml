@@ -1,6 +1,6 @@
 uuid: 6da1e948-a1aa-41f2-a55f-d1d76d91c5f1
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - views.view.events
@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: views_block__events_block_org_page_events
 theme: lex
-region: '-1'
-weight: -24
+region: sidebar
+weight: -25
 provider: null
 plugin: 'views_block:events-block_org_page_events'
 settings:
