@@ -5,6 +5,7 @@
   padding: 0
   margin: 0
 
+// Primary Structure Rules (In nesting order, so html, then body ... )
 html
   font-family: $font-sans
   @media (min-width: $screen-large-min)
@@ -13,18 +14,18 @@ html
 body
   color: $color-secondary-4
 
-nav ul
-  list-style: none
+  > section
+    @include base_padding
 
-a
-  color: $color-primary-4
+main
+  padding: $base_gutter
+  @include base_clear
 
-  &:visited
-    color: $color-primary-3
+// Blocks
+address
+  font-style: normal
+  margin: 1em 0
 
-p
-  line-height: 1.5
-  margin-bottom: 1.5em
 h1,h2,h3,h4,h5,h6
   font-weight: normal
   margin: 1em 0 0.5em 0
@@ -51,7 +52,29 @@ h6
   font-size: 1.1em
   font-style: italic
 
-input, button, textarea
+img
+  display: block
+
+nav ul
+  list-style: none
+
+p
+  line-height: 1.5
+  margin-bottom: 1.5em
+
+// Inline
+a
+  color: $color-primary-4
+
+  &:visited
+    color: $color-primary-3
+
+sup
+  vertical-align: top
+  font-size: 0.4em
+
+// Forms
+button, input[type=text], input[type=email], input[type=number], input[type=tel], input[type=search], textarea
   -webkit-appearance: none
   display: block
   font-size: 1em
@@ -59,28 +82,40 @@ input, button, textarea
   margin: 0.5em 0 1em
   max-width: 100%
 
-input
+button
+  padding: 0.25em
+  background: #fff
+
+input[type=text], input[type=email], input[type=number], input[type=tel], input[type=search]
+  line-height: 1.5
   padding: 0.25em 0.5em
 
 label, legend
   font-weight: bold
   margin: 1em 0
 
-button
-  padding: 0.25em
-  background: #fff
 
-sup
-  vertical-align: top
-  font-size: 0.4em
+// Region specific Rules
+address span
+  display: block
 
-main, body > section
-  @include base_padding
+article
+  ul
+    margin-left: 1em
+
+  li
+    line-height: 1.5
+    margin-bottom: 1em
+
+  h2
+    margin-top: 2em
 
 main
-  @include base_clear
+  display: flex
+  justify-content: space-between
+  align-items: stretch
 
-  img
+  img, iframe
     max-width: 100%
     height: auto
 
@@ -93,22 +128,17 @@ main
     float: left
     width: 30%
 
-    > section:first-child h2
+    > section:first-child h2:first-child
       margin-top: 0
 
   > div:first-child:last-child
     width: 100%
 
-  @supports (display: flex)
-    display: flex
-    justify-content: space-between
-    align-items: stretch
-    > div:first-child, > div:last-child
-      float: none
-
   .region > div
     margin-bottom: 4em
 
+#block-pagetitle
+  margin: 0
 
 .lex-aside-list, .usa-unstyled-list
   list-style: none
@@ -116,15 +146,25 @@ main
   li
     margin-bottom: 1em
 
+.align-left, .align-right
+  max-width: 50%
+  margin: 1em
+
 .align-left
   float: left
-  margin: 1em 1em 1em 0
-  max-width: 50%
+  margin-left: 0
 
 .align-right
   float: right
-  margin: 1em 0 1em 1em
-  max-width: 50%
+  margin-right: 0
+
+@media (max-width: $screen-phone-max)
+  .align-left, .align-right
+    float: none
+    width: 100%
+    max-width: 100%
+    margin: 1em 0
+
 
 // Article listings.
 .article
@@ -152,23 +192,8 @@ main
       width: 100%
       margin: 0
 
-@media (max-width: $screen-phone-max)
-  .align-left, .align-right
-    float: none
-    width: 100%
-    max-width: 100%
-    margin: 1em 0
 
-article
-  ul
-    margin-left: 1em
 
-  li
-    line-height: 1.5
-    margin-bottom: 1em
-
-  h2
-    margin-top: 2em
 
 
 ul.lex-aside-list
@@ -178,41 +203,6 @@ ul.lex-aside-list
 .lex-newsarticle-end
   text-align: center
   margin: 1em
-hr
-  height: 0
-  width: 100%
-  border: none
-  @include base_bottom_rule
-
-img
-  display: block
-
-iframe
-  max-width: 100%
-  margin: 0 auto
-
-
-address
-  font-style: normal
-  margin: 1em 0
-  span
-    display: block
-
-.lex-search
-  >div
-    width: 100%
-  button
-    border-left: none
-    float: left
-    span:first-child
-      display: none
-
-  input
-    width: calc(100% - 3em)
-    float: left
-    border-right: none
-  #edit-actions
-    display: none
 
 .lex-card-fulldate
   margin-bottom: 1em
@@ -225,6 +215,8 @@ address
   &[aria-hidden="true"]
     display: none
 
+.lex-traffic-notice-highlight
+  background: $lex-alert-warning
 .lex-region-breadcrumb
   padding: 0
 
@@ -281,3 +273,7 @@ address
 iframe.goog-te-menu-frame
   box-shadow: none
 
+body > header > #google_translate_element
+  float: right
+  margin-left: auto
+  align-self: center

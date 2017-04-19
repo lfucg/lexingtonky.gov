@@ -6,7 +6,7 @@ body.bundle_landing_page
     z-index: 2
 
 .lex-hero.splash
-  height: 100vh
+  height: calc(100vh - 6em)
   background-size: cover
   > img
     display: none
@@ -16,18 +16,22 @@ body.bundle_landing_page
     height: auto
     @include base_clear
 
-
-
   section
-    width: 50%
+    width: 66%
     float: left
 
-    &:first-child
-      width: 45%
+    &.lex-region-title
+      width: 34%
 
-    .lex-card-title
+    &.lex-region-hero > div
+      width: 100%
+
+    .usa-width-one-half
       float: left
-      width: 45%
+      width: 50%
+
+  .lex-card-title
+    margin-bottom: 0.5em
 
   a, a:visited
     color: #fff
@@ -112,7 +116,7 @@ body.bundle_landing_page
       width: 100%
       margin-bottom: 1em
 
-    .lex-region-featured_second
+    .lex-region-hero
       width: 100%
 
 

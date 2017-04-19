@@ -10,6 +10,7 @@ regions:
   sitemast: 'Header Navigation'
   hero: 'Page Features'
   breadcrumb: 'Breadcrumbs and Notices'
+  title: 'Page Title'
   content: 'Content'
   sidebar: 'Sidebar'
   feedback: 'Feedback Form'

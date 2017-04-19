@@ -64,21 +64,23 @@
 
 
 function googleTranslateElementInit() {
-
-  var e = document.getElementById('#google_translate_element');
-
-  if (!document.querySelector('body > header > section > nav')) {
+  if (document.querySelector('body > header > section') && !document.querySelector('body > header > section > nav')) {
     document.querySelector('body > header > section').classList.add('nonav');
   }
 
-  if (e) {
-    e.innerHTML = '';
+  if(document.getElementById('#google_translate_element')) {
+    document.getElementById('#google_translate_element').innerHTML = '';
   }
   else {
     var e = document.createElement('div');
     e.id = 'google_translate_element';
-    document.querySelector('body > header > .region').appendChild(e);
-    console.log('complete');
+
+    if (document.querySelector('body > header > .region')) {
+      document.querySelector('body > header > .region').appendChild(e);
+    }
+    else {
+      document.querySelector('body > header').appendChild(e);
+    }
   }
 
   /* empty the translate element in case it has contents */

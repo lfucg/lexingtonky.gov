@@ -53,6 +53,9 @@
 <a id="main-content" name="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
 <main role="main">
   <div>
+  {% block page_title_main %}
+    {{ page.title }}
+  {% endblock %}
   {% block content %}
     {{ page.content }}
   {% endblock %}

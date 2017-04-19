@@ -70,7 +70,7 @@ function lex_preprocess_html(&$variables) {
     if ($node = \Drupal::routeMatch()->getParameter('node')) {
       $content_type = $node->bundle();
       if ($content_type) {
-        $variables['attributes']['class'][] = 'bundle_' . $content_type;
+        $variables['attributes']['class'][] = 'bundle-' . $content_type;
       }
     }
   }
