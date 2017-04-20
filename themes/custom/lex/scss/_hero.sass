@@ -12,13 +12,18 @@ $feature-region-height: 10em
     height: auto
     opacity: 0
 
-    @media (max-width: $screen-phablet-max) and (orientation: landscape)
+    @media (max-width: $screen-phone-max) and (orientation: landscape)
       display: none
 
   h1
     margin-top: 0.5em
-    font-size: 2.8vmax
+    font-size: 2.8vw
 
+    @media (max-width: $screen-phablet-max)
+      font-size: 4.5vw
+
+    @media (max-width: $screen-phone-max)
+      font-size: 2em
   input, button
     display: inline-block
     height: 2em
@@ -38,15 +43,21 @@ $feature-region-height: 10em
     background: rgba($color-primary-5, 0.75)
     @include base_bottom_rule
 
-    @media (max-width: $screen-tablet-max)
-      h1
-        font-size: 1.3em
-      >div
-        width: 60%
+    >div
+      float: left
+      width: 60%
 
-        @media (max-width: $screen-phablet-max)
-          float: none
-          width: 100%
+    @media (max-width: $screen-phablet-max)
+      float: none
+      width: 100%
+      padding-left: $base-gutter / 2
+
+      >div
+        float: none
+        width: 100%
+
+        @media (max-width: $screen-phone-max)
+          padding-left: $base-gutter / 2
 
       input
         width: 90%
@@ -54,18 +65,18 @@ $feature-region-height: 10em
         @media (max-width: $screen-phablet-max)
           width: 80%
 
-    @media (max-width: $screen-phablet-max)
+    @media (max-width: $screen-phone-max)
       position: static
       height: auto
-
       background: $color-primary-5
-      padding: 0
-      > div
-        padding: $base-padding ($base-gutter / 2)
+      padding: 0.1em 0 0 0
 
-    @media (max-width: $screen-phone-max)
       input
         width: 87%
+
+  @media (max-width: $screen-phablet-max) and (min-width: $screen-phablet-min)
+    margin-bottom: 10em // make space for most active links.
+
 
 .lex-region-hero
   @include base_clear
@@ -77,11 +88,11 @@ $feature-region-height: 10em
     width: 59%
 
     @media (max-width: $screen-phablet-max)
-      padding-left: $base-gutter / 2
-      width: 50%
+      width: 100%
+      float: none
 
     @media (max-width: $screen-phone-max)
-      width: 100%
+      padding-left: $base-gutter / 2
 
   >nav
     text-align: left
@@ -93,10 +104,14 @@ $feature-region-height: 10em
     width: 34%
 
     @media (max-width: $screen-phablet-max)
-      width: auto
+      position: absolute
+      top: 100%
+      left: 0
+      width: 100%
 
     @media (max-width: $screen-phone-max)
-      width: 100%
+      position: static
+      background: #fff
 
     h2
       font-size: 1em
@@ -107,7 +122,6 @@ $feature-region-height: 10em
     li
       margin-bottom: 0.5em
 
-    @media (max-width: $screen-phablet-max)
-      float: none
+
 
 

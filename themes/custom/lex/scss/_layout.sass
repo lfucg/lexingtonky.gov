@@ -105,8 +105,10 @@ input[type=text], input[type=email], input[type=number], input[type=tel], input[
 
 label, legend
   font-weight: bold
-  margin: 1em 0
+  margin: 0
 
+.form-item, .form-actions
+  margin-top: 1em
 
 // Region specific Rules
 address span
@@ -191,6 +193,9 @@ main
     float: left
     width: 51%
     margin: 0 0 0 -56%
+  h4
+    margin-bottom: 0
+
   img
     width: 100%
     height: auto
@@ -224,11 +229,14 @@ ul.lex-aside-list
   margin-bottom: 1em
   font-size: 0.9em
 
-.lex-accordion ul
-  list-style: none
+.lex-accordion
+  ul
+    list-style: none
 
-.lex-accordion >ul li:first-child p
-  margin-bottom: 0
+  >ul li:first-child p
+    margin-bottom: 0
+  a
+    color: $color-secondary-4
 
 .lex-accordion-content
   &[aria-hidden="true"]
@@ -282,6 +290,9 @@ ul.lex-aside-list
   h4
     font-size: 1.2em
     margin-bottom: 0
+
+  >div
+    margin-bottom: 2em
 
 // Google translate
 #google_translate_element

@@ -42,98 +42,37 @@ body.path-frontpage
     > div > section:first-child h2
       margin-top: 0
 
-  //   #block-views-block-front-page-news-block-1
-  //     float: left
-  //     width: 63%
-  //     @include base_clear
+    @media (max-width: $screen-phablet-max)
+      flex-flow: column nowrap
 
-  //   #block-views-block-front-page-news-block-1 + div, #block-views-block-front-page-news-block-1 + div + div
-  //     float: right
-  //     width: 33%
+      >div:first-child, >div:last-child
+        float: none
+        width: 100%
+        margin: 0
 
-  //   @media (max-width: $screen-tablet-max)
-  //     #block-views-block-front-page-news-block-1
-  //       float: none
-  //       width: 100%
+      section.lex-region-sidebar
+        @include base_clear
+        margin-top: 2em
+        display: flex
+        justify-content: space-between
+        align-items: stretch
 
-  //     #block-views-block-front-page-news-block-1 + div, #block-views-block-front-page-news-block-1 + div + div
-  //       float: left
-  //       width: 45%
+        >div
+          float: left
+          width: 47.5%
+          margin-bottom: 0
+          &:first-child
+            margin-right: 5%
 
-  //     #block-views-block-front-page-news-block-1 + div
-  //       margin-right: 5%
+        @media (max-width: $screen-phone-max)
+          flex-flow: column
 
-  //   @media (max-width: $screen-phone-max)
-  //     #block-views-block-front-page-news-block-1 + div, #block-views-block-front-page-news-block-1 + div + div
-  //       float: none
-  //       width: 100%
-  //       margin-right: 0
-  //       margin-bottom: 1em
+          >div
+            width: 100%
 
-  // @media (max-width: $screen-phablet-max) and (min-width: $screen-phablet-min)
-  //   .lex-region-hero
-  //     display: flex
-  //     align-items: stretch
-  //     justify-content: space-between
+            &:first-child
+              margin-right: 0
 
-  //     >nav
-  //       margin-right: $base_gutter * -3
-
-
-
-  // @supports (display: grid)
-  //   main
-  //     display: grid
-  //     grid-template-columns: 1fr 30%
-  //     grid-column-gap: $base_gutter
-
-  //     #block-views-block-front-page-news-block-1, #block-views-block-front-page-news-block-1 + div, #block-views-block-front-page-news-block-1 + div + div
-  //       float: none
-  //       width: 100%
-
-  //     > *
-  //       grid-column: 2
-  //       width: 100%
-  //       float: none
-  //       margin: 0
-  //       padding: 0
-
-
-  //     > *:first-child
-  //       position: relative
-  //       grid-column: 1
-  //       grid-row: span 2
-  //       padding-bottom: 2em
-
-
-  //       .more-link
-  //         position: absolute
-  //         bottom: 0
-  //         right: 0
-
-  //     > *:last-child
-  //       align-self: end
-
-
-
-  //     @media (max-width: $screen-tablet-max)
-  //       grid-template-columns: 1fr 1fr
-
-  //       > *
-  //         grid-column: auto
-
-
-  //       > *:first-child
-  //         grid-row: 1
-  //         grid-column: span 2
-
-
-  //       > *:last-child
-  //         align-self: stretch
-
-  //     @media (max-width: $screen-phone-max)
-  //       display: flex
-  //       flex-direction: column
 
   // // Mayor and Urban Council area
   .lex-region-postscript
@@ -163,11 +102,6 @@ body.path-frontpage
           img
             width: 33%
             height: auto
-
-
-
-
-
 
       @media (max-width: $screen-phablet-max)
         display: block
@@ -204,5 +138,25 @@ body.path-frontpage
     ul.lex-city-gov-stat-block
       margin: 0
 
+      @media (max-width: $screen-phablet-max)
+        margin-top: 2em
+        display: flex
+        flex-flow: row wrap
+        justify-content: space-between
+        li
+          margin-bottom: 1em
+          width: 47.5%
+
+      @media (max-width: $screen-phone-max)
+        li
+          text-align: center
+        span
+          float: none
+          margin: 0 auto
+          font-size: 10vw
+
+
   .lex-card img
     margin: 1em 0 1em auto
+
+
