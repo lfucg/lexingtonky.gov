@@ -12,7 +12,7 @@ dependencies:
 id: finalorderadminlinks_2
 theme: lex
 region: '-1'
-weight: -20
+weight: -19
 provider: null
 plugin: 'system_menu_block:final-order-admin'
 settings:

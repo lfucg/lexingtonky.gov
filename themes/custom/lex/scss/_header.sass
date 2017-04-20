@@ -17,23 +17,21 @@ body > header
     text-indent: -200vw
     overflow: hidden
     height: 4em
-    width: 33%
+    width: 20em
 
   @media (max-width: $screen-tablet-max)
     padding-top: 0.25em
     padding-bottom: 0.25em
-    outline: 1px solid red
+
     >a
       float: none
       width: 100%
       height: 3em
 
   section
-    width: 40%
-    margin-left: 27%
+    margin: 0 0 0 auto
 
     &.nonav
-      margin-left: 17%
       width: 50%
       display: flex
       justify-content: space-between
@@ -64,53 +62,32 @@ body > header
     justify-content: space-between
     align-items: center
 
+    li
+      margin-left: 2em
+
   @media (max-width: $screen-tablet-max)
-    outline: 1px solid red
+    > a
+      width: 15em
+
     li:not(#google_translate_element)
       display: none
 
 
+@media (max-width: $screen-phone-max)
+  body:not(.path-frontpage):not(.path-search) > header
+    display: flex
+    flex-flow: column nowrap
+    height: 6em
+    position: relative
 
-//   @media (max-width: $screen-phablet-max)
-//     padding-top: 0
-//     padding-bottom: 0
-//     >section
-//       display: none
+    #google_translate_element
+      position: absolute
+      top: 1em
+      right: 2.5%
 
-//     li
-//       display: table-cell
-//       text-align: right
+    .lex-search input[type=search]
+      width: calc(100% - 2.3em)
 
-//   @include link_hover_underline
+    section, section.nonav>div:first-child
+      width: 100%
 
-// @supports(display: flex)
-//   body > header
-//     display: flex
-//     align-items: center
-//     justify-content: space-between
-
-//     &:after
-//       display: none
-
-//     >a
-//       float: none
-
-//     >section
-//       width: 30%
-//       margin: 0
-
-//       &.lex-region-search_header
-//         width: 50%
-
-
-//     nav
-//       display: block
-//       width: auto
-
-//       ul
-
-//         display: flex
-//         justify-content: space-between
-
-//       li
-//         display: block

@@ -84,7 +84,7 @@ body > footer
     body > footer > section:first-child
       display: grid
       grid-template-columns: 60% 1fr
-      grid-template-rows: 1fr 1fr
+      grid-template-rows: 1fr
 
       nav:first-child
         grid-column: 1
@@ -102,9 +102,10 @@ body > footer
         grid-column: 1
         grid-row: 2
 
-        padding-left: 0
-        padding-top: 5em
-        background-position: top left
+        @media (max-width: $screen-phablet-max) and (min-width: $screen-phablet-min)
+          padding-left: 0
+          padding-top: 5em
+          background-position: top left
 
   @media (max-width: $screen-phone-max)
     body > footer > section:first-child
@@ -112,3 +113,5 @@ body > footer
 
       > section
         margin-top: 5em
+
+        font-size: 0.8em

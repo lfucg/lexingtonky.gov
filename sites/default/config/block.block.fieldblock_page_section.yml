@@ -13,7 +13,7 @@ dependencies:
 id: fieldblock_page_section
 theme: lex
 region: content
-weight: -20
+weight: -19
 provider: null
 plugin: 'fieldblock:node'
 settings:

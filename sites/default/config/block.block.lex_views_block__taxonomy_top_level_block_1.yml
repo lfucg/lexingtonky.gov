@@ -1,6 +1,6 @@
 uuid: 6eea9216-3637-4044-a003-3f9b22b3d582
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - views.view.taxonomy_top_level
@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: lex_views_block__taxonomy_top_level_block_1
 theme: lex
-region: '-1'
-weight: -1
+region: content
+weight: -28
 provider: null
 plugin: 'views_block:taxonomy_top_level-block_1'
 settings:

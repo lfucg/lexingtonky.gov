@@ -26,6 +26,9 @@ address
   font-style: normal
   margin: 1em 0
 
+blockquote
+  @include base_padding
+
 h1,h2,h3,h4,h5,h6
   font-weight: normal
   margin: 1em 0 0.5em 0
@@ -150,10 +153,18 @@ main
       margin-bottom: 0.5em
 
   > div:first-child:last-child
+    float: none
     width: 100%
 
-  .region > div
-    margin-bottom: 4em
+  @media (max-width: $screen-phablet-max)
+    flex-flow: column nowrap
+    >div:first-child:not(:last-child)
+      border-bottom: 1px solid $color-secondary-2
+      margin-bottom: 2em
+
+    >div:first-child, >div:last-child
+      float: none
+      width: 100%
 
 #block-pagetitle
   margin: 0

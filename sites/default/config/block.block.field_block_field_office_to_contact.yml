@@ -12,7 +12,7 @@ dependencies:
 id: field_block_field_office_to_contact
 theme: lex
 region: sidebar
-weight: -22
+weight: -20
 provider: null
 plugin: 'fieldblock:node'
 settings:

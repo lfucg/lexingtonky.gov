@@ -13,7 +13,7 @@ dependencies:
 id: contentfield
 theme: lex
 region: '-1'
-weight: -10
+weight: -11
 provider: null
 plugin: 'fieldblock:node'
 settings:

@@ -45,6 +45,9 @@ body.path-frontpage
     @media (max-width: $screen-phablet-max)
       flex-flow: column nowrap
 
+      >div:first-child
+        border: none
+
       >div:first-child, >div:last-child
         float: none
         width: 100%
@@ -159,4 +162,6 @@ body.path-frontpage
   .lex-card img
     margin: 1em 0 1em auto
 
-
+  @media (max-width: $screen-phablet-max) and (min-width: $screen-phablet-min)
+    .lex-hero
+      margin-bottom: 10em // make space for most active links.
