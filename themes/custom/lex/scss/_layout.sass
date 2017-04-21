@@ -90,7 +90,15 @@ sup
   font-size: 0.4em
 
 // Forms
-button, input[type=text], input[type=email], input[type=number], input[type=tel], input[type=search],  input[type=submit], textarea
+button,
+input[type=text],
+input[type=email],
+input[type=number],
+input[type=tel],
+input[type=search],
+input[type=submit],
+input[type=password],
+textarea
   -webkit-appearance: none
   display: block
   font-size: 1em
@@ -102,7 +110,12 @@ button, input[type=submit]
   padding: 0.25em
   background: #fff
 
-input[type=text], input[type=email], input[type=number], input[type=tel], input[type=search]
+input[type=text],
+input[type=email],
+input[type=number],
+input[type=tel],
+input[type=search],
+input[type=password]
   line-height: 1.5
   padding: 0.25em 0.5em
 
@@ -149,9 +162,6 @@ main
     > section:first-child h2:first-child
       margin-top: 0
 
-    nav > div
-      margin-bottom: 0.5em
-
   > div:first-child:last-child
     float: none
     width: 100%
@@ -171,9 +181,19 @@ main
 
 .lex-aside-list, .usa-unstyled-list
   list-style: none
+  line-height: 1.5
+  a
+    text-decoration: none
 
-  li
+    &:hover
+      text-decoration: underline
+
+  li:last-child
     margin-bottom: 1em
+
+  li.lex-location-contact
+    margin-bottom: 0
+
 
 .align-left, .align-right
   max-width: 50%
@@ -186,6 +206,9 @@ main
 .align-right
   float: right
   margin-right: 0
+
+.lex-hide-initially
+  display: none
 
 @media (max-width: $screen-phone-max)
   .align-left, .align-right
@@ -223,14 +246,6 @@ main
       float: none
       width: 100%
       margin: 0
-
-
-
-
-
-ul.lex-aside-list
-  list-style: none
-  line-height: 1.5
 
 .lex-newsarticle-end
   text-align: center
@@ -281,6 +296,9 @@ ul.lex-aside-list
         content: ''
   a, a:visited
     color: $color-secondary-4
+
+  .lex-aside-list li:last-child, .usa-unstyled-list li:last-child
+    margin-bottom: 0
 
 .lex-notice
   padding-left: 1em
