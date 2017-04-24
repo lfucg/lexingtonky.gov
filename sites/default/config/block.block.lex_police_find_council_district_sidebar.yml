@@ -1,6 +1,6 @@
-uuid: 0095e889-a4d2-4c26-9070-cc8d308c7018
+uuid: a4245307-a2ef-44a1-8b9e-52b1d723ec5b
 langcode: en
-status: false
+status: true
 dependencies:
   content:
     - 'block_content:html_block:34db9b12-5ecc-4371-89df-16ac11fe0d70'
@@ -11,8 +11,8 @@ dependencies:
     - lex_police
 id: lex_police_find_council_district_sidebar
 theme: lex_police
-region: '-1'
-weight: -26
+region: sidebar
+weight: -24
 provider: null
 plugin: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
 settings:

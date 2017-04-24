@@ -1,4 +1,4 @@
-uuid: 03ea362d-6d13-47fa-a47e-187c5274c5e6
+uuid: e6cf213c-5472-429f-8032-5db538e6c00c
 langcode: en
 status: true
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_police_views_block__events_block_meetings
 theme: lex_police
 region: content
-weight: -29
+weight: -25
 provider: null
 plugin: 'views_block:events-block_meetings'
 settings:

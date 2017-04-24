@@ -1,4 +1,4 @@
-uuid: 2d02afad-3e37-4b22-9bfe-c8802c94037a
+uuid: 251f6d41-fdaf-4744-be2c-5a71904c3d59
 langcode: en
 status: false
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
 id: lex_police_branding
 theme: lex_police
 region: '-1'
-weight: -19
+weight: -5
 provider: null
 plugin: system_branding_block
 settings:

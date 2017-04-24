@@ -1,6 +1,6 @@
-uuid: d0429347-b109-4c1a-ad41-9c3250a2f283
+uuid: 411f7902-9538-45ab-9559-d33382252fec
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - system.menu.footer
@@ -10,13 +10,13 @@ dependencies:
     - lex_police
 id: lex_police_footer
 theme: lex_police
-region: '-1'
-weight: -14
+region: footer
+weight: -27
 provider: null
 plugin: 'system_menu_block:footer'
 settings:
   id: 'system_menu_block:footer'
-  label: Footer
+  label: Services
   provider: system
   label_display: visible
   level: 1

@@ -1,4 +1,4 @@
-uuid: d345182f-90f3-41fa-bb30-5ae509f44d1c
+uuid: bfd0a802-31ef-4066-b4ee-0d6ab7999bdd
 langcode: en
 status: false
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_police_views_block__boards_directory_block
 theme: lex_police
 region: '-1'
-weight: -22
+weight: -25
 provider: null
 plugin: 'views_block:boards_directory-block_1'
 settings:

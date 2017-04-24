@@ -13,6 +13,11 @@ ul.lex-city-gov-stat-block
   li
     display: block
     line-height: 1.75
+    /*
+     * Safari doesn't properly get flex element heights to completly spread
+     * things out.
+     */
+    margin-bottom: 1em
 
 
   @include link_hover_underline

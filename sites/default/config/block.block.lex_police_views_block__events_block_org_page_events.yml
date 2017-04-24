@@ -1,6 +1,6 @@
-uuid: 2ac789ce-11b2-4d4d-a1a7-b63314844af9
+uuid: b8f4a061-22ed-46e9-ab93-8fe8dfbdc89d
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - views.view.events
@@ -11,8 +11,8 @@ dependencies:
     - lex_police
 id: lex_police_views_block__events_block_org_page_events
 theme: lex_police
-region: '-1'
-weight: -24
+region: sidebar
+weight: -22
 provider: null
 plugin: 'views_block:events-block_org_page_events'
 settings:

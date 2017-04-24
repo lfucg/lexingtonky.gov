@@ -1,6 +1,6 @@
-uuid: 14e5228d-5717-4d1f-8e50-3086578e69b8
+uuid: 75049e24-8949-40f7-b6d5-3e9513f168d7
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - views.view.sibling_pages
@@ -11,8 +11,8 @@ dependencies:
     - lex_police
 id: lex_police_views_block__sibling_pages_block_sidebar
 theme: lex_police
-region: '-1'
-weight: -27
+region: sidebar
+weight: -25
 provider: null
 plugin: 'views_block:sibling_pages-block_1'
 settings:

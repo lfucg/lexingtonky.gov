@@ -1,21 +1,21 @@
-uuid: dd3761c9-492e-41ee-9c4b-6c2c8df1cd65
+uuid: 75924dc1-a014-476c-8813-4c8203f4ae6b
 langcode: en
 status: true
 dependencies:
   config:
-    - views.view.police_contact
+    - views.view.police_top_services
   module:
     - views
   theme:
     - lex_police
-id: views_block__police_contact_block
+id: views_block__police_top_services_block_1
 theme: lex_police
 region: sidebar
 weight: -28
 provider: null
-plugin: 'views_block:police_contact-block_1'
+plugin: 'views_block:police_top_services-block_1'
 settings:
-  id: 'views_block:police_contact-block_1'
+  id: 'views_block:police_top_services-block_1'
   label: ''
   provider: views
   label_display: visible

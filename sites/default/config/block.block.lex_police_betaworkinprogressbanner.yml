@@ -1,4 +1,4 @@
-uuid: 6311026b-f49d-42e4-a719-afdca3e47692
+uuid: 2410b017-8102-46b8-8921-08add5150bc1
 langcode: en
 status: false
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_police_betaworkinprogressbanner
 theme: lex_police
 region: '-1'
-weight: -28
+weight: -27
 provider: null
 plugin: 'block_content:7e6ac12d-c370-486c-bb03-3b8d4afe814f'
 settings:

@@ -1,4 +1,4 @@
-uuid: facd4cc2-4296-466b-adaf-aba4a2ca8941
+uuid: 35b3983b-34db-4167-920b-d4684d3c96b0
 langcode: en
 status: false
 dependencies:
@@ -11,7 +11,7 @@ dependencies:
 id: lex_police_finalorderadminlinks
 theme: lex_police
 region: '-1'
-weight: -23
+weight: -19
 provider: null
 plugin: 'system_menu_block:final-order-admin'
 settings:

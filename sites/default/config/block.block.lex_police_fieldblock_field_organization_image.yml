@@ -1,4 +1,4 @@
-uuid: 6cafacf4-97ce-4a78-8e33-97bd54049a85
+uuid: 612c171e-ac5a-4877-88e6-06e7d42526e3
 langcode: en
 status: false
 dependencies:
@@ -13,7 +13,7 @@ dependencies:
 id: lex_police_fieldblock_field_organization_image
 theme: lex_police
 region: '-1'
-weight: -26
+weight: -21
 provider: null
 plugin: 'fieldblock:node'
 settings:

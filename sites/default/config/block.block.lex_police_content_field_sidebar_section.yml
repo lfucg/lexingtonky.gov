@@ -1,6 +1,6 @@
-uuid: 76301b43-b4f4-4126-9845-3dea84b781ac
+uuid: 2b256212-4edf-4e32-9958-9a2aa8cf4742
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - field.storage.node.field_sidebar_section
@@ -11,8 +11,8 @@ dependencies:
     - lex_police
 id: lex_police_content_field_sidebar_section
 theme: lex_police
-region: '-1'
-weight: -22
+region: sidebar
+weight: -20
 provider: null
 plugin: 'fieldblock:node'
 settings:

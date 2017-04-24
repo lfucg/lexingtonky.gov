@@ -1,4 +1,4 @@
-uuid: 9fb42d3e-7dce-4001-ba81-dc453871cdbe
+uuid: 8981f21c-c0d9-490f-8967-b072d1b4da9a
 langcode: en
 status: false
 dependencies:
@@ -10,7 +10,7 @@ dependencies:
 id: lex_police_pagetitle_fullbleed
 theme: lex_police
 region: '-1'
-weight: -22
+weight: -10
 provider: null
 plugin: page_title_block
 settings:

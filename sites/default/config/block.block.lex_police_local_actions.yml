@@ -1,4 +1,4 @@
-uuid: 63b49eb7-c885-4451-a2c1-c1256024c76c
+uuid: 63976df7-4570-4942-ba11-018a27c89398
 langcode: en
 status: false
 dependencies:
@@ -7,7 +7,7 @@ dependencies:
 id: lex_police_local_actions
 theme: lex_police
 region: '-1'
-weight: -20
+weight: -8
 provider: null
 plugin: local_actions_block
 settings:

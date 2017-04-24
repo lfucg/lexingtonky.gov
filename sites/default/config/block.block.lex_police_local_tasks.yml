@@ -1,6 +1,6 @@
-uuid: 4b8382a6-348a-4ad7-a0f6-7a26387d6811
+uuid: 8febcf9b-8069-45c8-ad0f-b4af241b5197
 langcode: en
-status: false
+status: true
 dependencies:
   module:
     - system
@@ -8,8 +8,8 @@ dependencies:
     - lex_police
 id: lex_police_local_tasks
 theme: lex_police
-region: '-1'
-weight: -25
+region: content
+weight: -26
 provider: null
 plugin: local_tasks_block
 settings:

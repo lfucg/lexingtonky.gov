@@ -1,4 +1,4 @@
-uuid: c5f77b87-891f-481e-9eea-73709a0bee74
+uuid: f7073c32-5d2b-46c4-8481-261fb441327a
 langcode: en
 status: false
 dependencies:
@@ -16,9 +16,14 @@ provider: null
 plugin: 'system_menu_block:header-quick-links'
 settings:
   id: 'system_menu_block:header-quick-links'
-  label: 'Header quick links'
+  label: 'Homepage Header Links'
   provider: system
   label_display: '0'
   level: 1
   depth: 0
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

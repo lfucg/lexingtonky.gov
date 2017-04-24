@@ -1,6 +1,6 @@
-uuid: 10f076ba-a0bf-464a-a728-f59e2c5213e0
+uuid: ac54e1d8-52cf-4d94-b836-5e1de0110f99
 langcode: en
-status: false
+status: true
 dependencies:
   content:
     - 'block_content:html_block:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
@@ -11,8 +11,8 @@ dependencies:
     - lex_police
 id: lex_police_inline_page_feedback_form
 theme: lex_police
-region: '-1'
-weight: -17
+region: feedback
+weight: -28
 provider: null
 plugin: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
 settings:

@@ -1,4 +1,4 @@
-uuid: e8799fb4-b438-457a-bc9b-177d12da790c
+uuid: e1f5ae9e-affa-46c2-b13d-4beba64d8450
 langcode: en
 status: false
 dependencies:
@@ -11,7 +11,7 @@ dependencies:
 id: lex_police_mainnavigation_3
 theme: lex_police
 region: '-1'
-weight: -25
+weight: -17
 provider: null
 plugin: 'system_menu_block:main'
 settings:

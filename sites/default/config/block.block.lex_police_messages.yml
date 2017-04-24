@@ -1,6 +1,6 @@
-uuid: 8987eeaa-186f-453a-8e75-040a34c8be05
+uuid: 87ae93b8-6c05-4898-befe-70c4d6d2cffa
 langcode: en
-status: false
+status: true
 dependencies:
   module:
     - system
@@ -8,8 +8,8 @@ dependencies:
     - lex_police
 id: lex_police_messages
 theme: lex_police
-region: '-1'
-weight: -15
+region: breadcrumb
+weight: -28
 provider: null
 plugin: system_messages_block
 settings:
