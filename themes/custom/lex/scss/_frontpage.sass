@@ -22,20 +22,20 @@ body.path-frontpage
     h3
       margin-top: 1em
 
-  @supports (display: flex)
-    .lex-taxonomy-list
-      display: flex
-      flex-direction: row
-      flex-wrap: wrap
-      justify-content: space-between
-      align-items: flex-start
 
-      @media (max-width: $screen-phone-max)
-        flex-direction: column nowrap
+  .lex-taxonomy-list
+    display: flex
+    flex-direction: row
+    flex-wrap: wrap
+    justify-content: space-between
+    align-items: flex-start
 
-      >div
-        display: block
-        margin: 0
+    @media (max-width: $screen-phone-max)
+      flex-direction: column nowrap
+
+    >div
+      display: block
+      margin: 0
 
   // News & Events (Homepage)
   main
@@ -110,53 +110,52 @@ body.path-frontpage
         display: block
         width: 100%
 
-  @supports (display:flex)
-    .lex-region-postscript
+  .lex-region-postscript
+    display: flex
+    justify-content: space-between
+    align-items: stretch
+    flex-flow: row wrap
+
+    >div
       display: flex
-      justify-content: space-between
-      align-items: stretch
+      flex-flow: column nowrap
+
+      &:first-child
+        margin: 0
+        width: 65%
+
+      &:last-child
+        width: 30%
+
+      @media (max-width: $screen-tablet-max)
+        &:first-child, &:last-child
+          width: 47%
+      @media (max-width: $screen-phablet-max)
+        &:first-child, &:last-child
+          width: auto
+
+    @media (max-width: $screen-phablet-max)
+      flex-direction: column
+
+  ul.lex-city-gov-stat-block
+    margin: 0
+
+    @media (max-width: $screen-phablet-max)
+      margin-top: 2em
+      display: flex
       flex-flow: row wrap
+      justify-content: space-between
+      li
+        margin-bottom: 1em
+        width: 47.5%
 
-      >div
-        display: flex
-        flex-flow: column nowrap
-
-        &:first-child
-          margin: 0
-          width: 65%
-
-        &:last-child
-          width: 30%
-
-        @media (max-width: $screen-tablet-max)
-          &:first-child, &:last-child
-            width: 47%
-        @media (max-width: $screen-phablet-max)
-          &:first-child, &:last-child
-            width: auto
-
-      @media (max-width: $screen-phablet-max)
-        flex-direction: column
-
-    ul.lex-city-gov-stat-block
-      margin: 0
-
-      @media (max-width: $screen-phablet-max)
-        margin-top: 2em
-        display: flex
-        flex-flow: row wrap
-        justify-content: space-between
-        li
-          margin-bottom: 1em
-          width: 47.5%
-
-      @media (max-width: $screen-phone-max)
-        li
-          text-align: center
-        span
-          float: none
-          margin: 0 auto
-          font-size: 10vw
+    @media (max-width: $screen-phone-max)
+      li
+        text-align: center
+      span
+        float: none
+        margin: 0 auto
+        font-size: 10vw
 
 
   .lex-card img

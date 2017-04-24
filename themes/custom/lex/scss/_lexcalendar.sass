@@ -11,23 +11,43 @@
 .fc-center h2
   margin-top: 0
 
-.fc table
-  margin: 0
+.fc
+  table
+    margin: 0
+    border: inherit
 
-.fc button
-  text-shadow: none !important
-  color: #fff
-.fc .fc-widget-header table
-  margin: 0.5em
+  th
+    background: inherit
+    color: inherit
 
-.fc tr:not(.fc-list-item) a:visited
-  color: #fff
+    &.fc-day-header
+      border: none
+
+  tr:nth-child(even) td
+    background: inherit
+
+  button
+    text-shadow: none !important
+    color: #fff
+
+  .fc-widget-header
+    background: $color-secondary-1
+    table
+      margin: 0.5em 0
+
+
+  tr:not(.fc-list-item) a:visited
+    color: #fff
 
 #calendar
   margin-top: 2em
 
 #calendar table td.fc-today
   background: lighten($color-primary-1, 10%)
+
+.fc-month-view .fc-scroller
+  height: auto !important
+  overflow-y: hidden !important
 
 @media (min-width: 1px)
   .usa-width-two-thirds.lex-calendar-page

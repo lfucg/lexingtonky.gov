@@ -33,6 +33,9 @@ h1,h2,h3,h4,h5,h6
   font-weight: normal
   margin: 1em 0 0.5em 0
 
+  &:first-child
+    margin-top: 0
+
   @include link_hover_underline
 
 h1
@@ -61,10 +64,11 @@ img
 nav ul
   list-style: none
 
-p
+p, li
   line-height: 1.5
-  margin-bottom: 1.5em
 
+p:not(:last-child)
+  margin-bottom: 1.5em
 
 table
   border: 1px solid $color-primary-5
@@ -76,8 +80,9 @@ th
 tr:nth-child(even) td
   background: $color-primary-1
 
-
-
+.lex-block
+  @include base_clear
+  margin-bottom: 2em
 // Inline
 a
   color: $color-primary-4
@@ -207,6 +212,11 @@ main
   float: right
   margin-right: 0
 
+.lex-region-content img:not(.align-left):not(.align-right)
+  width: 100%
+  margin-left: auto
+  margin-right: auto
+
 .lex-hide-initially
   display: none
 
@@ -222,6 +232,7 @@ main
 .article
   @include base_clear
   padding-left: 36%
+  margin-bottom: 1em
 
   > div:first-child
     float: left
