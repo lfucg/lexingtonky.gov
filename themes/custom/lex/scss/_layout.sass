@@ -33,9 +33,6 @@ h1,h2,h3,h4,h5,h6
   font-weight: normal
   margin: 1em 0 0.5em 0
 
-  &:first-child
-    margin-top: 0
-
   @include link_hover_underline
 
 h1
@@ -135,16 +132,8 @@ label, legend
 address span
   display: block
 
-article
-  ul
-    margin-left: 1em
-
-  li
-    line-height: 1.5
-    margin-bottom: 0.5em
-
-  h2
-    margin-top: 2em
+article h2
+  margin-top: 2em
 
 main
   display: flex
@@ -155,14 +144,22 @@ main
     max-width: 100%
     height: auto
 
+  div > section:first-child > div:first-child > h2:first-child
+    margin-top: 0
+
   > div:first-child
     float: left
     width: 65%
     margin-right: 5%
 
+    ul,ol
+      margin-left: 1em
+
   > div:last-child
     float: left
     width: 30%
+
+
 
     > section:first-child h2:first-child
       margin-top: 0
@@ -170,6 +167,10 @@ main
   > div:first-child:last-child
     float: none
     width: 100%
+
+  li
+    line-height: 1.5
+    margin-bottom: 0.5em
 
   @media (max-width: $screen-phablet-max)
     flex-flow: column nowrap
