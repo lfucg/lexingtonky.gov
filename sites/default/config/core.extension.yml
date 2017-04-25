@@ -32,6 +32,7 @@ module:
   history: 0
   honeypot: 0
   image: 0
+  kint: 0
   lex_calendar: 0
   lex_themecontrol: 0
   link: 0

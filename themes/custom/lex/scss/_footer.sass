@@ -109,10 +109,11 @@ body > footer
           padding-top: 5em
           background-position: top left
 
-  @media (max-width: $screen-phone-max)
-    body > footer > section:first-child
-      display: flex
+@media (max-width: $screen-phone-max)
+  body > footer > section:first-child
+    display: flex
+    flex-flow: column nowrap
 
-      > section
-        margin: 3em 0
-        font-size: 0.8em
+    > section
+      margin: 3em 0
+      font-size: 0.8em

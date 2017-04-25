@@ -29,6 +29,36 @@ address
 blockquote
   @include base_padding
 
+dl
+  margin-top: 2em
+  display: table
+  width: 100%
+  border-spacing: 1em
+  div
+    width: 100%
+    display: table-row
+    margin-bottom: 1em
+dt
+  font-weight: bold
+  text-align: right
+  margin-right: 2em
+  display: table-cell
+  width: 40%
+  max-width: 20em
+dd
+  display: table-cell
+  vertical-align: top
+
+
+@media (max-width: $screen-phone-max)
+  dl, dl div, dt, dd
+    display: block
+    width: 100%
+    text-align: left
+    border-spacing: 0
+
+
+
 h1,h2,h3,h4,h5,h6
   font-weight: normal
   margin: 1em 0 0.5em 0
@@ -69,10 +99,17 @@ p:not(:last-child)
 
 table
   border: 1px solid $color-primary-5
+  width: 100%
+  border-spacing: 0
+  border-collapse: collapse
+
 th
   background: $color-primary-5
   color: #fff
   font-weight: bold
+
+th, td
+  padding: 0.5em
 
 tr:nth-child(even) td
   background: $color-primary-1
@@ -169,6 +206,7 @@ main
   > div:first-child:last-child
     float: none
     width: 100%
+    margin-right: 0
 
   li
     line-height: 1.5
@@ -357,3 +395,49 @@ body > header > #google_translate_element
   float: right
   margin-left: auto
   align-self: center
+
+
+/* Final order stuff, may move later*/
+table
+  .views-field-field-final-order-date,
+  .file--mime-application-pdf,
+  .file--application-pdf
+    a
+      height: 1em
+      width: 1em
+      display: inline-block
+      margin-left: 1em
+      text-indent: -1000vw
+      position: relative
+      &:before
+        content: "\f002"
+        display: block
+        position: absolute
+        text-indent: 0
+        font-family: 'FontAwesome'
+        font-size: 1em
+        line-height: 1
+        color: $color-secondary-4
+
+  .file--mime-application-pdf, .file--application-pdf
+    a
+      font-size: 1.5em
+      &:before
+        content: "\f1c1"
+
+.final-order
+  position: relative
+  width: 100%
+  padding-top: 50%
+  border: 1px solid $color-secondary-4
+
+  iframe
+    top: 0
+    left: 0
+    position: absolute
+    height: 100%
+    width: 100%
+    border: none
+
+  @media (max-width: $screen-phablet-max)
+    display: none

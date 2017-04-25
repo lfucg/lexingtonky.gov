@@ -60,13 +60,13 @@
     {{ page.content }}
   {% endblock %}
   </div>
-  {% if page.sidebar %}
-  <div>
   {% block sidebar %}
+  {% if page.sidebar is not empty %}
+  <div>
     {{ page.sidebar }}
-  {% endblock %}
   </div>
   {% endif %}
+  {% endblock %}
 </main>
 {% endblock %}
 
