@@ -13,40 +13,42 @@
 {% endblock %}
 
 {% block sidebar %}
-{{ parent() }}
-<div id="block-field-block-field-office-to-contact" class="contextual-region lex-block">
-  <h2>Contact</h2>
-    <div data-quickedit-entity-id="taxonomy_term/31" class="contextual-region" about="/taxonomy/term/31" data-quickedit-entity-instance-id="0">
-      <ul class="lex-aside-list">
-        <li>
-          <h4 class="lex-card-title lex-card-title-medium">
-            <div data-quickedit-field-id="taxonomy_term/31/name/en/default">Lexington Police Department</div>
-          </h4>
-          <div class="h-adr">
-            <a class="lex-font-standout" target="_blank" href="https://www.google.com/maps/dir//+150+East Main St.+40507+Lexington+KY">
-              <span class="lex-street-address p-street-address">150 East Main St.</span>
-              <span class="p-locality">Lexington, KY</span>
-              <span class="p-postal-code">40507</span>
-            </a>
-          </div>
-        </li>
-        <li class="lex-location-contact">
-          <a class="lex-social-link fa-envelope" href="mailto:police-chief@lexingtonpolice.ky.gov">Email us</a>
-        </li>
-        <li class="lex-location-contact">
-          <a class="lex-social-link fa-phone" href="tel:8592583600">(859) 258-3600</a>
-        </li>
-        <li class="lex-location-contact">
-          <ul class="usa-unstyled-list">
-            <li>
-              <div data-quickedit-field-id="taxonomy_term/31/field_social_link_facebook/en/default"><a href="https://www.facebook.com/LexKyPolice/?fref=ts" class="lex-social-link fa-facebook">Facebook</a></div>
-            </li>
-            <li>
-              <div data-quickedit-field-id="taxonomy_term/31/field_social_link_twitter/en/default"><a href="https://twitter.com/lexkypolice" class="lex-social-link fa-twitter">Twitter</a></div>
-            </li>
-          </ul>
-        </li>
-      </ul>
+<div>
+{{ page.sidebar }}
+  <div id="block-field-block-field-office-to-contact" class="contextual-region lex-block">
+    <h2>Contact</h2>
+      <div data-quickedit-entity-id="taxonomy_term/31" class="contextual-region" about="/taxonomy/term/31" data-quickedit-entity-instance-id="0">
+        <ul class="lex-aside-list">
+          <li>
+            <h4 class="lex-card-title lex-card-title-medium">
+              <div data-quickedit-field-id="taxonomy_term/31/name/en/default">Lexington Police Department</div>
+            </h4>
+            <div class="h-adr">
+              <a class="lex-font-standout" target="_blank" href="https://www.google.com/maps/dir//+150+East Main St.+40507+Lexington+KY">
+                <span class="lex-street-address p-street-address">150 East Main St.</span>
+                <span class="p-locality">Lexington, KY</span>
+                <span class="p-postal-code">40507</span>
+              </a>
+            </div>
+          </li>
+          <li class="lex-location-contact">
+            <a class="lex-social-link fa-envelope" href="mailto:police-chief@lexingtonpolice.ky.gov">Email us</a>
+          </li>
+          <li class="lex-location-contact">
+            <a class="lex-social-link fa-phone" href="tel:8592583600">(859) 258-3600</a>
+          </li>
+          <li class="lex-location-contact">
+            <ul class="usa-unstyled-list">
+              <li>
+                <div data-quickedit-field-id="taxonomy_term/31/field_social_link_facebook/en/default"><a href="https://www.facebook.com/LexKyPolice/?fref=ts" class="lex-social-link fa-facebook">Facebook</a></div>
+              </li>
+              <li>
+                <div data-quickedit-field-id="taxonomy_term/31/field_social_link_twitter/en/default"><a href="https://twitter.com/lexkypolice" class="lex-social-link fa-twitter">Twitter</a></div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

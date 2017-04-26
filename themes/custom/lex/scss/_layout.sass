@@ -24,7 +24,9 @@ main
 // Blocks
 address
   font-style: normal
-  margin: 1em 0
+  padding-left: 1em
+  border-left: 0.5em solid $color-secondary-1
+  line-height: 1.25
 
 blockquote
   @include base_padding
@@ -62,16 +64,13 @@ dd
 h1,h2,h3,h4,h5,h6
   font-weight: normal
   margin: 1em 0 0.5em 0
-
   @include link_hover_underline
-
-h1
-  margin: 0
 
 h1, h3, h5
   font-weight: bold
 
 h1
+  margin-top: 0
   font-size: 2em
 h2
   font-size: 1.8em
@@ -141,7 +140,7 @@ textarea
   -webkit-appearance: none
   display: block
   font-size: 1em
-  border: 1px solid $color-secondary-3
+  border: 1px solid $color-secondary-2
   margin: 0.5em 0 1em
   max-width: 100%
 
@@ -177,9 +176,14 @@ main
   justify-content: space-between
   align-items: stretch
 
-  img, iframe
+  img
     max-width: 100%
     height: auto
+    margin-left: auto
+    margin-right: auto
+
+  iframe
+    width: 100%
 
   div > section:first-child > div:first-child > h2:first-child
     margin-top: 0
@@ -191,14 +195,15 @@ main
     width: 65%
     margin-right: 5%
 
-    ul,ol
-      margin-left: 1em
+  ul,ol
+    margin-left: 1em
+
+  .lex-aside-list, .lex-aside-list ul
+    margin-left: 0
 
   > div:last-child
     float: left
     width: 30%
-
-
 
     > section:first-child h2:first-child
       margin-top: 0
@@ -243,7 +248,10 @@ main
 
 .align-left, .align-right
   max-width: 50%
-  margin: 1em
+  margin: 1em 2em
+
+  &:first-child
+    margin-top: 0
 
 .align-left
   float: left
@@ -261,12 +269,14 @@ main
 .lex-hide-initially
   display: none
 
+.lex-event-list ol
+  margin-left: 0
+
 @media (max-width: $screen-phone-max)
   .align-left, .align-right
     float: none
-    width: 100%
     max-width: 100%
-    margin: 1em 0
+    margin: 1em auto
 
 
 // Article listings.
@@ -298,6 +308,9 @@ main
       float: none
       width: 100%
       margin: 0
+
+.paragraph
+  margin-top: 2em
 
 .lex-newsarticle-end
   text-align: center
@@ -441,3 +454,18 @@ table
 
   @media (max-width: $screen-phablet-max)
     display: none
+
+/* Editor bar for logged in users */
+#block-lex-local-tasks
+  padding: 0 5%
+  background: $color-primary-2
+
+  .lex-button, .lex-calltoaction,
+  .lex-aside-list li:last-child, .usa-unstyled-list li:last-child
+    margin-bottom: 0
+
+  ul
+    border-left: 1px solid #fff
+
+  li
+    border-right: 1px solid #fff

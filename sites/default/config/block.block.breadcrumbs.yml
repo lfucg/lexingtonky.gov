@@ -9,7 +9,7 @@ dependencies:
 id: breadcrumbs
 theme: lex
 region: breadcrumb
-weight: -27
+weight: -26
 provider: null
 plugin: system_breadcrumb_block
 settings:
