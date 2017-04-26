@@ -11,7 +11,7 @@ dependencies:
 id: lex_tools
 theme: lex
 region: '-1'
-weight: -2
+weight: -4
 provider: null
 plugin: 'system_menu_block:tools'
 settings:

@@ -1,6 +1,6 @@
 uuid: 6120266d-488f-447f-bac3-d3c941df3a89
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - views.view.boards_directory
@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: views_block__boards_directory_block
 theme: lex
-region: '-1'
-weight: -24
+region: after_content
+weight: -27
 provider: null
 plugin: 'views_block:boards_directory-block_1'
 settings:

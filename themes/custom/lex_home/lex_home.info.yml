@@ -12,6 +12,7 @@ regions:
   breadcrumb: 'Breadcrumbs and Notices'
   title: 'Page Title'
   content: 'Content'
+  after_content: 'Additional Content following Page Content in Main Area'
   sidebar: 'Sidebar'
   postscript: 'Postscript Area'
   feedback: 'Feedback Form'

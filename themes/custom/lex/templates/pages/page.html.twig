@@ -59,6 +59,9 @@
   {% block content %}
     {{ page.content }}
   {% endblock %}
+  {% block after_content %}
+    {{ page.after_content }}
+  {% endblock %}
   </div>
   {% block sidebar %}
   {% if page.sidebar is not empty %}
