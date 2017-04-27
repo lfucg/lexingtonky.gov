@@ -8,8 +8,8 @@ dependencies:
     - lex_police
 id: lex_police_local_tasks
 theme: lex_police
-region: content
-weight: -26
+region: breadcrumb
+weight: -25
 provider: null
 plugin: local_tasks_block
 settings:

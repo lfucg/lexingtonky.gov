@@ -12,7 +12,7 @@ dependencies:
 id: lex_home_field_block_field_office_to_contact
 theme: lex_home
 region: '-1'
-weight: -22
+weight: -21
 provider: null
 plugin: 'fieldblock:node'
 settings:

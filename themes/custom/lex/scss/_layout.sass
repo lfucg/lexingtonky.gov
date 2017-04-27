@@ -365,6 +365,9 @@ main
   .lex-aside-list li:last-child, .usa-unstyled-list li:last-child
     margin-bottom: 0
 
+.bundle-landing_page .lex-breadcrumb
+  display: none
+
 .lex-notice
   padding-left: 1em
   border-left: 0.5em solid $color-secondary-1
@@ -456,7 +459,7 @@ table
     display: none
 
 /* Editor bar for logged in users */
-#block-lex-local-tasks
+.lex-region-breadcrumb ul.tabs
   padding: 0 5%
   background: $color-primary-2
 
@@ -464,8 +467,8 @@ table
   .lex-aside-list li:last-child, .usa-unstyled-list li:last-child
     margin-bottom: 0
 
-  ul
-    border-left: 1px solid #fff
-
   li
     border-right: 1px solid #fff
+
+    &:first-child
+      border-left: 1px solid #fff

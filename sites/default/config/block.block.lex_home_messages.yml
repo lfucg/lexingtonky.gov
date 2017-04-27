@@ -9,7 +9,7 @@ dependencies:
 id: lex_home_messages
 theme: lex_home
 region: breadcrumb
-weight: -28
+weight: -26
 provider: null
 plugin: system_messages_block
 settings:

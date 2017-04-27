@@ -13,7 +13,7 @@ dependencies:
 id: lex_police_fieldblock_body
 theme: lex_police
 region: content
-weight: -21
+weight: -22
 provider: null
 plugin: 'fieldblock:node'
 settings:

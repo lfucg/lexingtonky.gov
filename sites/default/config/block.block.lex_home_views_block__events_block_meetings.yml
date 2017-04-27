@@ -12,7 +12,7 @@ dependencies:
 id: lex_home_views_block__events_block_meetings
 theme: lex_home
 region: '-1'
-weight: -20
+weight: -19
 provider: null
 plugin: 'views_block:events-block_meetings'
 settings:

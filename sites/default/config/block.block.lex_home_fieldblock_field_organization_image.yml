@@ -13,7 +13,7 @@ dependencies:
 id: lex_home_fieldblock_field_organization_image
 theme: lex_home
 region: '-1'
-weight: -17
+weight: -16
 provider: null
 plugin: 'fieldblock:node'
 settings:

@@ -11,7 +11,7 @@ dependencies:
 id: lex_home_finalorderadminlinks
 theme: lex_home
 region: '-1'
-weight: -15
+weight: -14
 provider: null
 plugin: 'system_menu_block:final-order-admin'
 settings:

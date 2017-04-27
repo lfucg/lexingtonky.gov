@@ -12,7 +12,7 @@ dependencies:
 id: lex_home_find_council_district
 theme: lex_home
 region: '-1'
-weight: -13
+weight: -12
 provider: null
 plugin: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
 settings:

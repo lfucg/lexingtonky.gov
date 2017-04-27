@@ -1,6 +1,6 @@
 uuid: 6330cf9c-d61b-44d5-8554-615673ec07c2
 langcode: en
-status: false
+status: true
 dependencies:
   module:
     - system
@@ -8,8 +8,8 @@ dependencies:
     - lex_home
 id: lex_home_local_tasks
 theme: lex_home
-region: '-1'
-weight: 8
+region: breadcrumb
+weight: -27
 provider: null
 plugin: local_tasks_block
 settings:
