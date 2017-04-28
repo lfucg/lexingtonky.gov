@@ -29,10 +29,12 @@ body.path-taxonomy
       display: block
       float: right
       width: 25%
+      border-right: 1px solid $color-secondary-2
 
   .browse-panes
     ul
       list-style: none
+      margin-left: 0
     a
       text-decoration: none
     input
@@ -57,11 +59,18 @@ body.path-taxonomy
       #section
         @media (min-width: $screen-tablet-min)
           margin-left: -18%
+          padding-left: 1em
           width: 30%
+          border-left: 1px solid $color-secondary-2
+          border-right: 1px solid $color-secondary-2
 
         @media (min-width: $screen-desk-min)
           margin-left: -13%
           width: 25%
+
+      #root
+        @media (min-width: $screen-tablet-min)
+          opacity: 0.25
 
       #subsection
         @media (min-width: $screen-tablet-min)
@@ -101,7 +110,6 @@ body.path-taxonomy
 
         h3
           font-weight: normal
-          color: $color-primary-4
 
       .active
         a, a:hover, a:hover, .lex-font-muted
@@ -121,7 +129,7 @@ body.path-taxonomy
         content: ""
 
       a:hover
-        background: $color-secondary-1
+
         color: $color-primary-3
         text-decoration: none
 
@@ -132,9 +140,10 @@ body.path-taxonomy
         font-family: Arial, sans-serif
         font-size: 1em
         position: absolute
-        top: calc(50% - 0.6em)
-        right: 10px
-        float: right
+        line-height: 1
+        text-align: right
+        top: calc(50% - 0.5em)
+        right: 1.25em
         content: "\203A"
 
     #section
@@ -164,9 +173,8 @@ body.path-taxonomy
               font-size: 1.5em
               float: left
               display: block
-              margin-left: -4.5em
-              padding: 0 0 15px 22px
-              margin-top: 7px
+              margin-left: -3em
+              margin-top: 0.4em
 
   #subsection
     li

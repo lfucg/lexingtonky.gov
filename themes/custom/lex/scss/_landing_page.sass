@@ -6,6 +6,7 @@ body.bundle-landing_page
 
     @media (max-width: $screen-tablet-max)
       height: calc(100vh - 3em)
+
     >img
       display: none
     a
@@ -13,48 +14,66 @@ body.bundle-landing_page
       text-decoration: none
 
     >div // container of the text
-      padding-top: 1em
-      padding-bottom: 1em
+      padding: 1em $base_gutter
+      display: flex
+      justify-content: space-between
+      align-items: center
 
+      section:first-child
+        flex-grow: 1
+        max-width: 33%
+
+      section:last-child
+        flex-grow: 1
+        max-width: 61%
     h1
-      font-size: 2.8vmax
-      margin-bottom: 1em
+      font-size: 2.5vmax
 
-    .lex-region-title
-      float: left
-      max-width: 50%
-      margin-right: $base_gutter
+    .lex-region-hero>div
+      float: none
+      width: auto
+
+    .cols-2
+      display: flex
+      justify-content: space-between
+      align-items: center
+      width: 100%
 
     .usa-width-one-half
-      width: 47.5%
-      float: left
+      width: 45%
       font-size: 1.1em
       line-height: 1.5
-      &:first-child
-        margin-right: 5%
-
-    @media (orientation: portrait)
-      .lex-region-title
-        float: none
-        width: auto
-        font-size: 2em
 
     @media (max-width: $screen-phablet-max)
+      h1
+        font-size: 1.5em
+
+      >div
+        display: block
+        position: static
+        border: none
 
       .usa-width-one-half
         width: 100%
 
       @media (orientation: landscape)
-        >div
-          position: static
-          background: none
-          border: none
-          height: 100%
 
-        section
-          background: rgba($color-primary-5, 0.75)
-          @include base_padding
-          width: 50%
+        >div
+          height: 100%
+          background: none
+
+          section
+            background: rgba($color-primary-5, 0.75)
+            @include base_padding
+            width: 50%
+
+            &:first-child
+              max-width: none
+            &:last-child
+              max-width: none
+
+        .cols-2
+          flex-flow: column nowrap
 
         .lex-region-title
           position: absolute
@@ -69,141 +88,25 @@ body.bundle-landing_page
 
       @media (orientation: portrait)
         height: auto
+
+        >div
+          background: $color-primary-5
         >img
           display: block
           opacity: 1
 
-        .lex-region-title
-          max-width: none
+        section
+          &.lex-region-title:first-child, &.lex-region-hero:last-child
+            max-width: none
+            width: 100%
         h1
-          font-size: 1em
+          font-size: 1.5em
+
+
         >div
           @include base_padding
-  // >header
-  //   position: absolute
-  //   width: 100%
-  //   background: #fff
-  //   z-index: 2
 
-// .lex-hero.splash
-//   height: calc(100vh - 6em)
-//   background-size: cover
-//   > img
-//     display: none
-
-//   >div
-//     padding: 1em $base_gutter
-//     height: auto
-//     @include base_clear
-
-//   section
-//     width: 66%
-//     float: left
-
-//     &.lex-region-title
-//       width: 34%
-
-//     &.lex-region-hero > div
-//       width: 100%
-
-//     .usa-width-one-half
-//       float: left
-//       width: 47.5%
-//       &:first-child
-//         margin-right: 5%
-
-//   .lex-card-title
-//     margin-bottom: 0.5em
-
-//   a, a:visited
-//     color: #fff
-//     text-decoration: none
-//     font-size: 1.2em
-//   a:hover
-//     text-decoration: underline
-
-//   @supports (display: flex)
-//     h1
-//       margin: 0
-
-//     > div
-//       display: flex
-//       justify-content: space-between
-//       align-items: center
-
-//     section
-//       width: auto
-//       float: none
-//       &:first-child
-//         width: 50%
-
-//         .usa-width-one-half
-//           display: flex
-//           justify-content: space-between
-
-//         .lex-card-title
-//           float: none
-//           width: 50%
-
-//   @media (max-width: $screen-tablet-max)
-//     height: calc(100vh - 3em)
-
-//   @media (max-width: $screen-phablet-max)
-//     padding-top: 1em
-//     @include base_clear
-
-//     a
-//       font-size: 1em
-//       font-weight: bold
-
-//     > div
-//       position: static
-//       margin: -1em 0 0 50%
-//       width: 50%
-//       padding-right: $base_gutter / 2
-//       padding-top: 1em
-//       border: none
-//       height: calc(100vh - 3em)
-//       background: rgba($color-primary-5, 0.5)
-
-//     section .lex-card-title
-//       float: none
-//       width: 100%
-
-//     @media (orientation: landscape)
-//       #block-pagetitle
-//         position: absolute
-//         bottom: 0
-//         left: 0
-//         padding: 1em 0 2em 2.5%
-//         width: 50%
-//         background: rgba($color-primary-5, 0.5)
-
-//   @media (max-width: $screen-phablet-max) and (orientation: portrait)
-
-//     padding-top: 0
-//     overflow: hidden
-//     background-image: none !important
-//     background-color: $color-primary-5
-//     > img
-//       display: block
-//       height: 50vh
-//       width: auto
-//       opacity: 1
-//     > div
-//       padding-top: 1em
-//       display: block
-//       width: 100%
-//       height: auto
-//       background: $color-primary-5
-
-//     section:first-child
-//       width: 100%
-//       margin-bottom: 1em
-
-//     .lex-region-hero
-//       width: 100%
-
-
-
+      @media (max-width: $screen-phone-max)
+        .cols-2
+          flex-flow: column nowrap
 
