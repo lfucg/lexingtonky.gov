@@ -110,3 +110,42 @@ body.bundle-landing_page
         .cols-2
           flex-flow: column nowrap
 
+  &.lex-planning-commission
+    .lex-hero.splash
+      display: flex
+      justify-content: space-around
+      align-items: center
+      flex-flow: column nowrap
+
+      >img
+        display: block
+        opacity: 1
+        width: 50%
+        height: auto
+
+        @media (max-width: $screen-desk-max)
+          width: 75%
+
+        @media (max-width: $screen-phablet-max)
+          margin: 3em auto
+
+        @media (max-width: $screen-phablet-max) and (orientation: landscape)
+          position: absolute
+          top: 2.5%
+          left: 2.5%
+          width: 40%
+
+      >div section:first-child
+        max-width: 60%
+
+        @media (max-width: $screen-phablet-max)
+          max-width: none
+          width: 100%
+
+      @media (max-width: $screen-phablet-max) and (orientation: landscape)
+        >div
+          section:first-child
+            height: 8em
+          section:last-child
+            height: calc(100% - 8em)
+
