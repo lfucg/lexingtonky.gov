@@ -64,6 +64,7 @@ dd
 h1,h2,h3,h4,h5,h6
   font-weight: normal
   margin: 1em 0 0.5em 0
+  line-height: 1.1
   @include link_hover_underline
 
 h1, h3, h5
@@ -92,6 +93,7 @@ nav ul
 
 p, li
   line-height: 1.5
+  max-width: 40em
 
 p:not(:last-child)
   margin-bottom: 1.5em
@@ -219,6 +221,10 @@ main
   li
     line-height: 1.5
     margin-bottom: 0.5em
+
+
+  h1
+    font-size: 2.5em
 
   @media (max-width: $screen-phablet-max)
     flex-flow: column nowrap

@@ -1,3 +1,10 @@
-<p>
-{{ label }}: {{ items[0].content }}
-</p>
+<h5>{{ label }}{% if items|length > 1 %}s{% endif %}</h5>
+{% if items|length < 2 %}
+<p>{{ items[0].content }}</p>
+{% else %}
+<ul>
+  {% for item in items %}
+    <li>{{ item.content }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
