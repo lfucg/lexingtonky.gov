@@ -1,4 +1,4 @@
-uuid: 4f1cd172-c78b-406b-ab33-9f0d0efff905
+uuid: a241f479-b7e7-4435-af2b-2b74b62f23f0
 langcode: en
 status: false
 dependencies:
@@ -11,7 +11,7 @@ dependencies:
 id: lex_planning_commission_account_menu
 theme: lex_planning_commission
 region: '-1'
-weight: -16
+weight: -2
 provider: null
 plugin: 'system_menu_block:account'
 settings:

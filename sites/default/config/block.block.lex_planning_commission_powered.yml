@@ -1,4 +1,4 @@
-uuid: 491c7c9a-50f3-4247-9279-8255f0264059
+uuid: 5a212712-e29c-4984-9809-a90cfc0db039
 langcode: en
 status: false
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
 id: lex_planning_commission_powered
 theme: lex_planning_commission
 region: '-1'
-weight: -20
+weight: -9
 provider: null
 plugin: system_powered_by_block
 settings:

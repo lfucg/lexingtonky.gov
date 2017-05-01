@@ -1,4 +1,4 @@
-uuid: 6e951258-f5cc-441b-aafa-2a6bb2b0772d
+uuid: 110acc8b-a2dd-4768-89d7-0e3dd2360172
 langcode: en
 status: false
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_planning_commission_views_block__boards_directory_block
 theme: lex_planning_commission
 region: '-1'
-weight: -22
+weight: 1
 provider: null
 plugin: 'views_block:boards_directory-block_1'
 settings:

@@ -1,4 +1,4 @@
-uuid: d4ea745c-749f-4d79-9e57-c151db37a6be
+uuid: 9db32f53-c325-4c5a-911f-c1014fb6ea72
 langcode: en
 status: false
 dependencies:
@@ -11,7 +11,7 @@ dependencies:
 id: lex_planning_commission_mostactivepages
 theme: lex_planning_commission
 region: '-1'
-weight: -24
+weight: -12
 provider: null
 plugin: 'system_menu_block:most-active-pages'
 settings:

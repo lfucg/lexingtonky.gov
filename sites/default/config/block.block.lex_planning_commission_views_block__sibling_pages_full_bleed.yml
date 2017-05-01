@@ -1,6 +1,6 @@
-uuid: a7b30631-e84b-45fa-8a4a-08b7d7acdbc6
+uuid: 4c6da10b-0df9-4a42-9b32-275d2d97bdf7
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - views.view.sibling_pages
@@ -11,8 +11,8 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_views_block__sibling_pages_full_bleed
 theme: lex_planning_commission
-region: '-1'
-weight: -25
+region: hero
+weight: -27
 provider: null
 plugin: 'views_block:sibling_pages-block_2'
 settings:

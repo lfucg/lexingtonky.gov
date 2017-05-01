@@ -1,6 +1,6 @@
-uuid: 35f344f9-f342-46fd-80f0-2695edf9f018
+uuid: 639f5692-ef51-4026-afee-e149f13822eb
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - system.menu.main
@@ -10,8 +10,8 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_mainnavigation_4
 theme: lex_planning_commission
-region: '-1'
-weight: -9
+region: sidebar
+weight: -27
 provider: null
 plugin: 'system_menu_block:main'
 settings:

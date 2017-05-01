@@ -1,6 +1,6 @@
-uuid: 35ea8704-ec6b-4ef2-9a5c-adc2360d3d1f
+uuid: 96fa5cd8-165d-48fc-ad44-fe0aee13f83d
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - field.storage.node.field_image
@@ -12,8 +12,8 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_contentfield
 theme: lex_planning_commission
-region: '-1'
-weight: -20
+region: sidebar
+weight: -19
 provider: null
 plugin: 'fieldblock:node'
 settings:

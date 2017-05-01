@@ -1,6 +1,6 @@
-uuid: 649ff3aa-6782-4c7c-a2a8-37a34bb631fd
+uuid: 02f890b9-370a-4db3-bcfd-b7437fb5f2f2
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - system.menu.footer
@@ -10,13 +10,13 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_footer
 theme: lex_planning_commission
-region: '-1'
-weight: -14
+region: footer
+weight: -27
 provider: null
 plugin: 'system_menu_block:footer'
 settings:
   id: 'system_menu_block:footer'
-  label: Footer
+  label: Services
   provider: system
   label_display: visible
   level: 1

@@ -1,6 +1,6 @@
-uuid: 5d3a1172-f085-47b0-82b2-5bc7653ed16a
+uuid: 703f33b4-ae5b-406f-ac5d-66772c477905
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - field.storage.node.field_sidebar_section
@@ -11,8 +11,8 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_content_field_sidebar_section
 theme: lex_planning_commission
-region: '-1'
-weight: -22
+region: sidebar
+weight: -21
 provider: null
 plugin: 'fieldblock:node'
 settings:

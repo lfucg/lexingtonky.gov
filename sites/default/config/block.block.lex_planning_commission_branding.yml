@@ -1,4 +1,4 @@
-uuid: 36eda550-5c52-45d3-adcc-f92e955a0776
+uuid: 418ac64c-51a2-4916-aa79-c14156ab702c
 langcode: en
 status: false
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
 id: lex_planning_commission_branding
 theme: lex_planning_commission
 region: '-1'
-weight: -18
+weight: -5
 provider: null
 plugin: system_branding_block
 settings:

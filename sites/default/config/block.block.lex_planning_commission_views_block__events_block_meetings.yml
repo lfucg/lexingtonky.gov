@@ -1,4 +1,4 @@
-uuid: 079544ae-85ef-4050-9ec4-eebe9ecf0c1c
+uuid: ecd6f188-d694-47f3-b1e1-2a288a5041c4
 langcode: en
 status: true
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_planning_commission_views_block__events_block_meetings
 theme: lex_planning_commission
 region: content
-weight: -26
+weight: -27
 provider: null
 plugin: 'views_block:events-block_meetings'
 settings:

@@ -1,4 +1,4 @@
-uuid: c5cc0e7e-822f-47c7-9d98-68d3484ad9fb
+uuid: 09182989-ed53-4fc7-9838-e09eadcaa834
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
 id: lex_planning_commission_browsenav_subcategory_term
 theme: lex_planning_commission
 region: content
-weight: -25
+weight: -26
 provider: null
 plugin: page_title_block
 settings:

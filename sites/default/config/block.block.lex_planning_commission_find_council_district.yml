@@ -1,4 +1,4 @@
-uuid: 69a02196-b9ce-4050-9969-6b83654d56fa
+uuid: cbfc84aa-d352-44c0-beae-e38e28027722
 langcode: en
 status: true
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_planning_commission_find_council_district
 theme: lex_planning_commission
 region: content
-weight: -24
+weight: -25
 provider: null
 plugin: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
 settings:

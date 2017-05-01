@@ -1,6 +1,6 @@
-uuid: c6ce5e4b-cde9-4148-93d7-8f0b9b53085b
+uuid: c9a1df51-2245-4aeb-a050-61d8dc539ecf
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - views.view.events
@@ -11,8 +11,8 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_views_block__events_block_org_page_events
 theme: lex_planning_commission
-region: '-1'
-weight: -24
+region: sidebar
+weight: -23
 provider: null
 plugin: 'views_block:events-block_org_page_events'
 settings:

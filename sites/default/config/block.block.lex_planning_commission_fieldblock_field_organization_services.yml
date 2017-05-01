@@ -1,6 +1,6 @@
-uuid: 18e184dd-1aba-444c-a587-0dd8fcfd5723
+uuid: 44644715-b357-4823-ba05-1e99c6ea513f
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - field.storage.node.field_top_services
@@ -13,8 +13,8 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_fieldblock_field_organization_services
 theme: lex_planning_commission
-region: '-1'
-weight: -25
+region: sidebar
+weight: -24
 provider: null
 plugin: 'fieldblock:node'
 settings:
