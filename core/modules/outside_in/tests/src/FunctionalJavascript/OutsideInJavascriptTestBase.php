@@ -12,7 +12,7 @@ abstract class OutsideInJavascriptTestBase extends JavascriptTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function drupalGet($path, array $options = array(), array $headers = array()) {
+  protected function drupalGet($path, array $options = [], array $headers = []) {
     $return = parent::drupalGet($path, $options, $headers);
 
     // After the page loaded we need to additionally wait until the settings
@@ -37,41 +37,28 @@ abstract class OutsideInJavascriptTestBase extends JavascriptTestBase {
   }
 
   /**
-   * Waits for Off-canvas tray to open.
+   * Waits for off-canvas dialog to open.
    */
   protected function waitForOffCanvasToOpen() {
     $web_assert = $this->assertSession();
     $web_assert->assertWaitOnAjaxRequest();
-    $this->waitForElement('#drupal-offcanvas');
+    $web_assert->waitForElementVisible('css', '#drupal-off-canvas');
   }
 
   /**
-   * Waits for Off-canvas tray to close.
+   * Waits for off-canvas dialog to close.
    */
   protected function waitForOffCanvasToClose() {
-    $this->waitForNoElement('#drupal-offcanvas');
+    $this->waitForNoElement('#drupal-off-canvas');
   }
 
   /**
-   * Waits for an element to appear on the page.
-   *
-   * @param string $selector
-   *   CSS selector.
-   * @param int $timeout
-   *   (optional) Timeout in milliseconds, defaults to 10000.
-   */
-  protected function waitForElement($selector, $timeout = 10000) {
-    $condition = "(jQuery('$selector').length > 0)";
-    $this->assertJsCondition($condition, $timeout);
-  }
-
-  /**
-   * Gets the Off-Canvas tray element.
+   * Gets the off-canvas dialog element.
    *
    * @return \Behat\Mink\Element\NodeElement|null
    */
   protected function getTray() {
-    $tray = $this->getSession()->getPage()->find('css', '.ui-dialog[aria-describedby="drupal-offcanvas"]');
+    $tray = $this->getSession()->getPage()->find('css', '.ui-dialog[aria-describedby="drupal-off-canvas"]');
     $this->assertEquals(FALSE, empty($tray), 'The tray was found.');
     return $tray;
   }
@@ -129,6 +116,18 @@ abstract class OutsideInJavascriptTestBase extends JavascriptTestBase {
     // Hovering over the element itself with should be enough, but does not
     // work. Manually remove the visually-hidden class.
     $this->getSession()->executeScript("jQuery('{$selector} .contextual .trigger').toggleClass('visually-hidden');");
+  }
+
+  /**
+   * Waits for Toolbar to load.
+   */
+  protected function waitForToolbarToLoad() {
+    $web_assert = $this->assertSession();
+    // Waiting for Toolbar module.
+    // @todo Remove the hack after https://www.drupal.org/node/2542050.
+    $web_assert->waitForElementVisible('css', '.toolbar-fixed');
+    // Waiting for Toolbar animation.
+    $web_assert->assertWaitOnAjaxRequest();
   }
 
 }

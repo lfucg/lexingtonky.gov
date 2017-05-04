@@ -7,15 +7,16 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Database\DatabaseExceptionWrapper;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\migrate\Exception\RequirementsException;
-use Drupal\migrate\Plugin\Migration;
 use Drupal\migrate\Plugin\MigrationDeriverTrait;
 use Drupal\migrate_drupal\Plugin\MigrateCckFieldPluginManagerInterface;
+use Drupal\migrate_drupal\Plugin\MigrateFieldPluginManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Deriver for Drupal 7 taxonomy term migrations based on vocabularies.
  */
 class D7TaxonomyTermDeriver extends DeriverBase implements ContainerDeriverInterface {
+
   use MigrationDeriverTrait;
 
   /**
@@ -40,16 +41,33 @@ class D7TaxonomyTermDeriver extends DeriverBase implements ContainerDeriverInter
   protected $cckPluginManager;
 
   /**
+   * Already-instantiated field plugins, keyed by ID.
+   *
+   * @var \Drupal\migrate_drupal\Plugin\MigrateFieldInterface[]
+   */
+  protected $fieldPluginCache;
+
+  /**
+   * The field plugin manager.
+   *
+   * @var \Drupal\migrate_drupal\Plugin\MigrateFieldPluginManagerInterface
+   */
+  protected $fieldPluginManager;
+
+  /**
    * D7TaxonomyTermDeriver constructor.
    *
    * @param string $base_plugin_id
    *   The base plugin ID for the plugin ID.
    * @param \Drupal\migrate_drupal\Plugin\MigrateCckFieldPluginManagerInterface $cck_manager
    *   The CCK plugin manager.
+   * @param \Drupal\migrate_drupal\Plugin\MigrateFieldPluginManagerInterface $field_manager
+   *   The field plugin manager.
    */
-  public function __construct($base_plugin_id, MigrateCckFieldPluginManagerInterface $cck_manager) {
+  public function __construct($base_plugin_id, MigrateCckFieldPluginManagerInterface $cck_manager, MigrateFieldPluginManagerInterface $field_manager) {
     $this->basePluginId = $base_plugin_id;
     $this->cckPluginManager = $cck_manager;
+    $this->fieldPluginManager = $field_manager;
   }
 
   /**
@@ -58,7 +76,8 @@ class D7TaxonomyTermDeriver extends DeriverBase implements ContainerDeriverInter
   public static function create(ContainerInterface $container, $base_plugin_id) {
     return new static(
       $base_plugin_id,
-      $container->get('plugin.manager.migrate.cckfield')
+      $container->get('plugin.manager.migrate.cckfield'),
+      $container->get('plugin.manager.migrate.field')
     );
   }
 
@@ -84,8 +103,19 @@ class D7TaxonomyTermDeriver extends DeriverBase implements ContainerDeriverInter
       // we'll create a migration just for the node properties.
     }
 
+    $vocabulary_source_plugin = static::getSourcePlugin('d7_taxonomy_vocabulary');
     try {
-      foreach (static::getSourcePlugin('d7_taxonomy_vocabulary') as $row) {
+      $vocabulary_source_plugin->checkRequirements();
+    }
+    catch (RequirementsException $e) {
+      // If the d7_taxonomy_vocabulary requirements failed, that means we do not
+      // have a Drupal source database configured - there is nothing to
+      // generate.
+      return $this->derivatives;
+    }
+
+    try {
+      foreach ($vocabulary_source_plugin as $row) {
         $bundle = $row->getSourceProperty('machine_name');
         $values = $base_plugin_definition;
 
@@ -102,15 +132,25 @@ class D7TaxonomyTermDeriver extends DeriverBase implements ContainerDeriverInter
           foreach ($fields[$bundle] as $field_name => $info) {
             $field_type = $info['type'];
             try {
-              $plugin_id = $this->cckPluginManager->getPluginIdFromFieldType($field_type, ['core' => 7], $migration);
-              if (!isset($this->cckPluginCache[$field_type])) {
-                $this->cckPluginCache[$field_type] = $this->cckPluginManager->createInstance($plugin_id, ['core' => 7], $migration);
+              $plugin_id = $this->fieldPluginManager->getPluginIdFromFieldType($field_type, ['core' => 7], $migration);
+              if (!isset($this->fieldPluginCache[$field_type])) {
+                $this->fieldPluginCache[$field_type] = $this->fieldPluginManager->createInstance($plugin_id, ['core' => 7], $migration);
               }
-              $this->cckPluginCache[$field_type]
-                ->processCckFieldValues($migration, $field_name, $info);
+              $this->fieldPluginCache[$field_type]
+                ->processFieldValues($migration, $field_name, $info);
             }
             catch (PluginNotFoundException $ex) {
-              $migration->setProcessOfProperty($field_name, $field_name);
+              try {
+                $plugin_id = $this->cckPluginManager->getPluginIdFromFieldType($field_type, ['core' => 7], $migration);
+                if (!isset($this->cckPluginCache[$field_type])) {
+                  $this->cckPluginCache[$field_type] = $this->cckPluginManager->createInstance($plugin_id, ['core' => 7], $migration);
+                }
+                $this->cckPluginCache[$field_type]
+                  ->processCckFieldValues($migration, $field_name, $info);
+              }
+              catch (PluginNotFoundException $ex) {
+                $migration->setProcessOfProperty($field_name, $field_name);
+              }
             }
           }
         }
