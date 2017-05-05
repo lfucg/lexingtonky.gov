@@ -1,0 +1,20 @@
+uuid: 7ed65ed5-45f3-4d3d-8782-1da7f7ee13d8
+langcode: en
+status: true
+dependencies:
+  module:
+    - lex_calendar
+  theme:
+    - lex_home
+id: homeeventsblock_2
+theme: lex_home
+region: sidebar
+weight: -27
+provider: null
+plugin: home_events_block
+settings:
+  id: home_events_block
+  label: Events
+  provider: lex_calendar
+  label_display: visible
+visibility: {  }

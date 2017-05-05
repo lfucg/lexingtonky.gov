@@ -11,7 +11,7 @@ dependencies:
 id: views_block__taxonomy_top_level_block_footer_titles_only
 theme: lex
 region: footer
-weight: -28
+weight: -17
 provider: null
 plugin: 'views_block:taxonomy_top_level-block_2'
 settings:

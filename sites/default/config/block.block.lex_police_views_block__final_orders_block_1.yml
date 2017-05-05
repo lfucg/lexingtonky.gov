@@ -1,4 +1,4 @@
-uuid: adb5c5b9-e11d-44a7-a992-7c1719e08c92
+uuid: 74b4600e-269c-4d93-b66a-631adaf96cd1
 langcode: en
 status: true
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_police_views_block__final_orders_block_1
 theme: lex_police
 region: content
-weight: -20
+weight: -7
 provider: null
 plugin: 'views_block:final_orders-block_1'
 settings:

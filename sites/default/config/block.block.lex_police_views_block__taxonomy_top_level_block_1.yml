@@ -1,4 +1,4 @@
-uuid: e1cd58e0-b966-4a97-8104-c60e78193cd0
+uuid: 02c92422-cbf5-45b6-b851-62cb1c2f33a2
 langcode: en
 status: true
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_police_views_block__taxonomy_top_level_block_1
 theme: lex_police
 region: content
-weight: -27
+weight: -14
 provider: null
 plugin: 'views_block:taxonomy_top_level-block_1'
 settings:

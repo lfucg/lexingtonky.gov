@@ -1,4 +1,4 @@
-uuid: 5781e1f0-316d-4d3d-8bb2-5bafa462b429
+uuid: 685ef5f3-c225-4a5d-a6ff-8e5b961887ae
 langcode: en
 status: false
 dependencies:
@@ -10,7 +10,7 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_finalorderadminlinks
 theme: lex_planning_commission
-region: '-1'
+region: notices
 weight: -19
 provider: null
 plugin: 'system_menu_block:final-order-admin'

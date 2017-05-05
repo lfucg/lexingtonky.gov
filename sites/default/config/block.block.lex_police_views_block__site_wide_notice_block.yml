@@ -1,4 +1,4 @@
-uuid: ac0d9a4b-6f30-4b96-8572-24b7cb65cec4
+uuid: 4d48759b-1e07-4b31-bdf9-834e9f1625ce
 langcode: en
 status: true
 dependencies:
@@ -11,7 +11,7 @@ dependencies:
 id: lex_police_views_block__site_wide_notice_block
 theme: lex_police
 region: notices
-weight: -28
+weight: -15
 provider: null
 plugin: 'views_block:site_wide_notice-block_1'
 settings:

@@ -1,4 +1,4 @@
-uuid: 2b256212-4edf-4e32-9958-9a2aa8cf4742
+uuid: 8bc0f212-66cc-4ddb-8672-424df80875d0
 langcode: en
 status: true
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_police_content_field_sidebar_section
 theme: lex_police
 region: sidebar
-weight: -20
+weight: -8
 provider: null
 plugin: 'fieldblock:node'
 settings:
