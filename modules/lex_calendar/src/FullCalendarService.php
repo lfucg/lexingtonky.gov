@@ -202,4 +202,8 @@ class FullCalendarService {
     }
   }
 
+  public function clear() {
+    $this->events = [];
+  }
+
 }

@@ -9,6 +9,12 @@ function lex_calendar_theme($existing, $type, $theme, $path) {
       'variables' => [
         'fc_callback' => NULL
       ]
+    ],
+    'lex_calendar_event_block' => [
+      'variables' => [
+        'dates' => NULL,
+        'content_type' => ''
+      ]
     ]
   ];
 }

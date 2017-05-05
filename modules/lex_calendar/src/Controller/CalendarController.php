@@ -5,6 +5,7 @@ namespace Drupal\lex_calendar\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\lex_calendar\EventFetch;
 use Drupal\lex_calendar\FullCalendarService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,26 +16,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class CalendarController extends ControllerBase {
 
-  /**
-   * Custom service to translate Drupal nodes to full calendar event data.
-   *
-   * @var Drupal\lex_calendar\FullCalendarService object
-   */
-  protected $events = NULL;
-
-  /**
-   * Base Drupal Query Factory.
-   *
-   * @var Drupal\Core\Entity\Query\QueryFactory object
-   */
-  protected $entityQuery = NULL;
-
-  /**
-   * Default Drupal Entity Manager.
-   *
-   * @var Drupal\Core\Entity\EntityManager object
-   */
-  protected $entityManager = NULL;
+  use EventFetch;
 
   /**
    * Response object.
@@ -49,6 +31,20 @@ class CalendarController extends ControllerBase {
    * @var Symfony\Component\HttpFoundation\RequestStack object
    */
   protected $requestStack = NULL;
+
+  /**
+   * Base Drupal Query Factory.
+   *
+   * @var Drupal\Core\Entity\Query\QueryFactory object
+   */
+  protected $entityQuery = NULL;
+
+  /**
+   * Default Drupal Entity Manager.
+   *
+   * @var Drupal\Core\Entity\EntityManager object
+   */
+  protected $entityManager = NULL;
 
   /**
    * Constructs a CalendarController object.
@@ -110,29 +106,7 @@ class CalendarController extends ControllerBase {
      * Load the date range to search into the FullCalendar service.
      */
     $request = $this->requestStack->getCurrentRequest();
-    $this->events->setStart($request->query->get('start'));
-    $this->events->setEnd($request->query->get('end'));
-
-    /*
-     * Get the non recurring events for the range.
-     */
-    $query = $this->entityQuery->get('node')
-      ->condition('status', 1)
-      ->condition('type', $contentType)
-      ->condition('field_date', $this->events->getStart()->format('Y-m-d'), '>=');
-
-    $this->events->addEvents($this->entityManager()->getStorage('node')->loadMultiple($query->execute()));
-
-    /*
-     * And now the recurring events, which are handled by a seperate process
-     * which duplicates them according to need.
-     */
-    $query = $this->entityQuery->get('node')
-      ->condition('status', 1)
-      ->condition('type', $contentType)
-      ->condition('field_recurring_event', ['Weekly', 'Monthly'], 'IN');
-
-    $this->events->addRecurringEvents($this->entityManager()->getStorage('node')->loadMultiple($query->execute()));
+    $this->queryEvents($contentType, $request->query->get('start'), $request->query->get('end'));
 
     /*
      * Pack the results up and send them out the door.

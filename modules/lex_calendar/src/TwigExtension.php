@@ -81,14 +81,43 @@ class TwigExtension extends \Twig_Extension {
    */
   public function getFunctions() {
     return [
+      new \Twig_SimpleFunction('lexDateTime', [$this, 'getLexDateTime'], ['is_safe' => ['html']]),
       new \Twig_SimpleFunction('lexDate', [$this, 'getLexDate'], ['is_safe' => ['html']]),
+      new \Twig_SimpleFunction('lexTimeRange', [$this, 'getLexTimeRange'], ['is_safe' => ['html']])
     ];
+  }
+
+  /**
+   * Return a Time range for an event.
+   */
+  public function getLexTimeRange($event) {
+    if ($event['allDay']) {
+      return "All Day";
+    }
+    $start = new \DateTime($event['start']);
+    $end = new \DateTime($event['end']);
+
+    if ($event['start'] == $event['end']) {
+      return $this->getTime($start) . $this->appendMerdiem($start);
+    }
+
+    return $this->getTime($start) . $this->appendMerdiem($start) . ' &mdash; ' . $this->getTime($end) . $this->appendMerdiem($end);
+  }
+
+  /**
+   * Returns just the date.
+   *
+   * This is used by the home page event view blocks.
+   */
+  public function getLexDate($date) {
+    $date = new \DateTime($date);
+    return $date->format('l') . ', ' . $this->getDate($date);
   }
 
   /**
    * Returns the event start and end times for a given string.
    */
-  public function getLexDate($event) {
+  public function getLexDateTime($event) {
     return $this->parseEventTimeString(
       $event['field_date']['#object']->field_date->value,
       $event['field_date']['#object']->field_date_end->value,
