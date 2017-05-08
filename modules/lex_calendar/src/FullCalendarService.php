@@ -137,15 +137,17 @@ class FullCalendarService {
    *   End day and time for event.
    */
   protected function addEvent($event, $start, $end) {
-    $this->events[] = [
-      'allDay' => (bool) $event->field_all_day->value,
-      'title' => $event->title->value,
-      'id' => $event->nid->value,
-      'end' => $end,
-      'start' => $start,
-      'url' => $event->url(),
-      'description' => $event->body->value
-    ];
+    if ($start >= $this->start->format('Y-m-d') && $end <= $this->end->format('Y-m-d')) {
+      $this->events[] = [
+        'allDay' => (bool) $event->field_all_day->value,
+        'title' => $event->title->value,
+        'id' => $event->nid->value,
+        'end' => $end,
+        'start' => $start,
+        'url' => $event->url(),
+        'description' => $event->body->value
+      ];
+    }
   }
 
   /**
@@ -204,6 +206,16 @@ class FullCalendarService {
 
   public function clear() {
     $this->events = [];
+  }
+
+  public function sort() {
+    $start = [];
+
+    foreach ($this->events as $key => $row) {
+      $start[$key] = $row['start'];
+    }
+
+    return array_multisort($start, SORT_ASC, $this->events);
   }
 
 }

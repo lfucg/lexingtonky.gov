@@ -80,6 +80,8 @@ abstract class CalendarBlock extends BlockBase implements ContainerFactoryPlugin
       new \DateTime('+1 month', new \DateTimeZone('America/New_York'))
     );
 
+    $this->events->sort();
+
     $events = array_chunk($this->events->getEvents(), 3)[0];
 
     $dates = [];
