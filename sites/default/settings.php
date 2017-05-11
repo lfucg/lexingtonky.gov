@@ -49,3 +49,22 @@ if (file_exists($local_settings)) {
 }
 $settings['install_profile'] = 'standard';
 
+/*Add to settings.php*/
+
+// Relocate the compiled twig files to <binding-dir>/tmp/twig. This will improve
+// performance, but may cause problems in the live environment when multiple
+// app servers are in use. This is solved with the directives below.
+$settings['php_storage']['twig']['directory'] = $_SERVER['HOME'] . '/tmp';
+// Increase the deployment identifier sequence number every time code
+// is deployed to the live environment if the deployment contains changes
+// to any twig templates. FUTURE: Pantheon will provide a deployment environment
+// via an environment variable.
+$settings['deployment_identifier'] = '1';
+// Ensure that the compiled twig templates will be rebuilt whenever the
+// deployment identifier changes. Note that a cache rebuild is also necessary
+// (although insufficient, without this setting), as the twig-generated content
+// itself is also cached in the database. Without this setting, deploying
+// new twig source files to a live environment with multiple app servers will
+// result in some (most) of the app servers continuing to serve the old, stale
+// compiled template files.
+$settings['php_storage']['twig']['secret'] = $settings['hash_salt'] . $settings['deployment_identifier'];
