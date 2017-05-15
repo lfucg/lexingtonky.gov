@@ -6,24 +6,76 @@
   float: right
   text-transform: uppercase
 
-.lex-button,
-.lex-calltoaction,
-  @include base_button
-  a, a:visited, a:hover
+.lex-button
+  display: inline-block
+  margin-bottom: 0.5em
+
+  a
+    display: block
     color: #fff
+    text-align: center
+    transition: all 0.25s ease-in
+    border: 0
+    cursor: pointer
+    line-height: 1
+    padding: 0.5em 1em
+    background: $color-primary-4
     text-decoration: none
+
+    &:hover
+      text-decoration: none
+      background: $color-primary-5
+
 
   @media (max-width: $screen-phone-max - 100px)
     width: 100%
 
 input[type='submit']
-  @include base_button
+  color: #fff
+  text-align: center
+  transition: all 0.25s ease-in
+  border: 0
+  cursor: pointer
+  line-height: 1
+  display: block
+  padding: 0.5em 1em
+  background: $color-primary-4
+  text-decoration: none
 
-.lex-calltoaction:after
-  display: inline
-  font-family: FontAwesome
-  margin-left: 1em
-  content: "\f054"
+  &:hover
+    text-decoration: none
+    background: $color-primary-5
+
+a.lex-calltoaction
+  display: inline-block
+  color: #fff
+  text-align: left
+  transition: all 0.25s ease-in
+  border: 0
+  cursor: pointer
+  line-height: 1
+  padding: 0.5em 1em
+  background: $color-primary-4
+  text-decoration: none
+  min-width: 15em
+
+  &:visited
+    color: #fff
+
+  &:hover
+    text-decoration: none
+    background: $color-primary-5
+
+  &:after
+    display: inline
+    font-family: FontAwesome
+    margin-left: 1em
+    content: "\f054"
+    float: right
+
+  @media (max-width: $screen-phone-max)
+    width: 100%
+    display: block
 
 a.lex-social-link
   &:before
