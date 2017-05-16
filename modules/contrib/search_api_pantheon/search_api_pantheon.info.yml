@@ -1,0 +1,13 @@
+name: Search API Pantheon
+type: module
+description: Search API + Solr + Pantheon integration
+# core: 8.x
+package: Pantheon
+dependencies:
+  - search_api_solr
+
+# Information added by Drupal.org packaging script on 2017-03-16
+version: '8.x-1.0-alpha3'
+core: '8.x'
+project: 'search_api_pantheon'
+datestamp: 1489627686
