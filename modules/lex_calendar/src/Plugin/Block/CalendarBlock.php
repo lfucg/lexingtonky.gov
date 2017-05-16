@@ -99,12 +99,11 @@ abstract class CalendarBlock extends BlockBase implements ContainerFactoryPlugin
       $dates[$start_day]['events'][] = $event;
     }
 
-
-
     return [
       '#theme' => 'lex_calendar_event_block',
       '#dates' => $dates,
-      '#content_type' => $this->contentType
+      '#content_type' => $this->contentType,
+      '#cache' => ['max-age' => 1200]
     ];
   }
 }
