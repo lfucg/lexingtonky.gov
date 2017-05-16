@@ -1,0 +1,20 @@
+id: search_api_views_search_api_test_view
+langcode: en
+status: true
+dependencies:
+  config:
+    - search_api.index.database_search_index
+label: search_api_views_search_api_test_view
+index_id: database_search_index
+suggester_id: server
+type: views
+options:
+  autosubmit: true
+  custom:
+    display: page_1
+  delay: ''
+  min_length: 1
+  results: true
+  submit_button_selector: ':submit'
+  suggester_configuration:
+    fields: {}
