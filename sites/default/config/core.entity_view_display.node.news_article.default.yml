@@ -26,6 +26,7 @@ content:
     weight: 1
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_media_contact:
     type: entity_reference_revisions_entity_view
     weight: 2
@@ -34,18 +35,22 @@ content:
       view_mode: default
       link: ''
     third_party_settings: {  }
+    region: content
   field_metatags:
     weight: 3
     label: above
     settings: {  }
     third_party_settings: {  }
     type: metatag_empty_formatter
+    region: content
   links:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+    region: content
   workbench_moderation_control:
     weight: -20
+    region: content
 hidden:
   field_image: true
   field_related_departments: true

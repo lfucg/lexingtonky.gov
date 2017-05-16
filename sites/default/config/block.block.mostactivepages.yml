@@ -1,0 +1,29 @@
+uuid: 07fb52ad-76fe-4efd-b7ac-426af5dad3d0
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.most-active-pages
+  module:
+    - system
+  theme:
+    - lex
+id: mostactivepages
+theme: lex
+region: notices
+weight: -12
+provider: null
+plugin: 'system_menu_block:most-active-pages'
+settings:
+  id: 'system_menu_block:most-active-pages'
+  label: 'Most active pages'
+  provider: system
+  label_display: visible
+  level: 1
+  depth: 0
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

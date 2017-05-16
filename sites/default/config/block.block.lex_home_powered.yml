@@ -1,0 +1,20 @@
+uuid: 6c2616a5-f418-4443-95c9-8c0174423b5d
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_home
+id: lex_home_powered
+theme: lex_home
+region: notices
+weight: 1
+provider: null
+plugin: system_powered_by_block
+settings:
+  id: system_powered_by_block
+  label: 'Powered by Drupal'
+  provider: system
+  label_display: '0'
+visibility: {  }

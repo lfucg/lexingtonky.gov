@@ -12,7 +12,7 @@ dependencies:
 id: inline_page_feedback_form
 theme: lex
 region: feedback
-weight: -17
+weight: -28
 provider: null
 plugin: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
 settings:

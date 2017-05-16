@@ -31,6 +31,7 @@ content:
     weight: 5
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_all_day:
     weight: 6
     label: above
@@ -40,6 +41,7 @@ content:
       format_custom_true: ''
     third_party_settings: {  }
     type: boolean
+    region: content
   field_date:
     weight: 2
     label: hidden
@@ -48,6 +50,7 @@ content:
       format_type: html_datetime
     third_party_settings: {  }
     type: datetime_default
+    region: content
   field_date_end:
     weight: 3
     label: hidden
@@ -56,6 +59,7 @@ content:
       format_type: html_datetime
     third_party_settings: {  }
     type: datetime_default
+    region: content
   field_locations:
     weight: 4
     label: hidden
@@ -64,26 +68,31 @@ content:
       view_mode: default
     third_party_settings: {  }
     type: entity_reference_entity_view
+    region: content
   field_metatags:
     weight: 8
     label: above
     settings: {  }
     third_party_settings: {  }
     type: metatag_empty_formatter
+    region: content
   field_recurring_event:
     weight: 7
     label: above
     settings: {  }
     third_party_settings: {  }
     type: list_default
+    region: content
   links:
     weight: 1
     settings: {  }
     third_party_settings: {  }
+    region: content
   workbench_moderation_control:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden:
   field_external_id: true
   field_related_departments: true

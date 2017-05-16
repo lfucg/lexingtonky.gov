@@ -1,0 +1,41 @@
+uuid: b7fa9e2b-ed7c-4805-ad08-7e5665b7faf4
+langcode: en
+status: false
+dependencies:
+  content:
+    - 'block_content:html_block:978ac435-1bfe-4f3b-9fa5-44602e7b1b2f'
+  module:
+    - block_content
+    - system
+    - user
+  theme:
+    - lex_police
+id: lex_police_edithomepagebanner
+theme: lex_police
+region: notices
+weight: -24
+provider: null
+plugin: 'block_content:978ac435-1bfe-4f3b-9fa5-44602e7b1b2f'
+settings:
+  id: 'block_content:978ac435-1bfe-4f3b-9fa5-44602e7b1b2f'
+  label: 'Edit homepage banner'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }
+  user_role:
+    id: user_role
+    roles:
+      editor: editor
+      webmaster: webmaster
+      administrator: administrator
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'

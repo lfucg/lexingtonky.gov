@@ -1,4 +1,4 @@
-uuid: 5030a9b8-f59d-449b-9900-a8035fdfab6a
+uuid: 411f7902-9538-45ab-9559-d33382252fec
 langcode: en
 status: true
 dependencies:
@@ -11,7 +11,7 @@ dependencies:
 id: lex_police_footer
 theme: lex_police
 region: footer
-weight: -14
+weight: -27
 provider: null
 plugin: 'system_menu_block:footer'
 settings:

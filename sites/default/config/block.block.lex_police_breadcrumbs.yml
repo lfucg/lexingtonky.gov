@@ -1,4 +1,4 @@
-uuid: a0bcaadb-fbf5-448b-a433-23dcd6bfb5cb
+uuid: 25c3cd0c-e612-4ffe-8f1e-d46489150a74
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
 id: lex_police_breadcrumbs
 theme: lex_police
 region: breadcrumb
-weight: -15
+weight: -27
 provider: null
 plugin: system_breadcrumb_block
 settings:

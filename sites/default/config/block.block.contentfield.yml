@@ -13,7 +13,7 @@ dependencies:
 id: contentfield
 theme: lex
 region: sidebar
-weight: -7
+weight: -19
 provider: null
 plugin: 'fieldblock:node'
 settings:

@@ -11,7 +11,7 @@ dependencies:
 id: finalorderadminlinks
 theme: lex
 region: notices
-weight: -17
+weight: -19
 provider: null
 plugin: 'system_menu_block:final-order-admin'
 settings:

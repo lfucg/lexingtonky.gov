@@ -1,0 +1,29 @@
+uuid: 1df7c2cd-5497-4214-8700-ceefabfad442
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - system
+  theme:
+    - lex
+id: lex_main_menu
+theme: lex
+region: notices
+weight: -27
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'All categories menu'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 1
+visibility:
+  request_path:
+    id: request_path
+    pages: '/browse/*'
+    negate: false
+    context_mapping: {  }

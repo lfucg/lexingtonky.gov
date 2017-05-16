@@ -4,4 +4,10 @@ status: true
 dependencies: {  }
 id: node__news_article
 label: 'Content: News article'
-tags: {  }
+tags:
+  og_image_height: '[node:field_image:height]'
+  og_image: '[node:field_image]'
+  og_image_type: '[node:field_image:entity:mime]'
+  og_image_secure_url: '[node:field_image]'
+  og_image_width: '[node:field_image:width]'
+  og_image_url: '[node:field_image]'

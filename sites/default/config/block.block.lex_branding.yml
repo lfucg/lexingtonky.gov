@@ -1,0 +1,23 @@
+uuid: 0411e006-1af4-4454-b400-be8039579cdf
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - lex
+id: lex_branding
+theme: lex
+region: notices
+weight: -5
+provider: null
+plugin: system_branding_block
+settings:
+  id: system_branding_block
+  label: 'Site branding'
+  provider: system
+  label_display: '0'
+  use_site_logo: true
+  use_site_name: true
+  use_site_slogan: true
+visibility: {  }

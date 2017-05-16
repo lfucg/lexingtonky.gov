@@ -1,0 +1,29 @@
+uuid: dbab93e6-8a98-43eb-9b4c-a7de00f0f9c9
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.final-order-admin
+  module:
+    - system
+  theme:
+    - lex_home
+id: lex_home_finalorderadminlinks
+theme: lex_home
+region: notices
+weight: -14
+provider: null
+plugin: 'system_menu_block:final-order-admin'
+settings:
+  id: 'system_menu_block:final-order-admin'
+  label: 'Final order admin links - view'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 0
+visibility:
+  request_path:
+    id: request_path
+    pages: /final-orders
+    negate: false
+    context_mapping: {  }

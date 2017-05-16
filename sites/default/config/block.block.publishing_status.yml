@@ -1,0 +1,33 @@
+uuid: 166a3a6f-2980-4dad-8925-c33f9be32293
+langcode: en
+status: false
+dependencies:
+  module:
+    - fieldblock
+    - user
+  theme:
+    - lex
+id: publishing_status
+theme: lex
+region: notices
+weight: -7
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Publishing status'
+  provider: fieldblock
+  label_display: '0'
+  label_from_field: 0
+  field_name: moderation_state
+  formatter_id: entity_reference_label
+  formatter_settings:
+    link: 0
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'

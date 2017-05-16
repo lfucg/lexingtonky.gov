@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.event.body
+    - field.field.node.event.field_all_day
     - field.field.node.event.field_cost
     - field.field.node.event.field_date
     - field.field.node.event.field_date_end
@@ -12,6 +13,8 @@ dependencies:
     - field.field.node.event.field_hide_times
     - field.field.node.event.field_locations
     - field.field.node.event.field_media_contact
+    - field.field.node.event.field_metatags
+    - field.field.node.event.field_recurring_event
     - field.field.node.event.field_related_departments
     - node.type.event
   module:
@@ -29,11 +32,15 @@ content:
     settings:
       trim_length: 600
     third_party_settings: {  }
+    region: content
   links:
     weight: 100
+    region: content
   workbench_moderation_control:
     weight: -20
+    region: content
 hidden:
+  field_all_day: true
   field_cost: true
   field_date: true
   field_date_end: true
@@ -41,4 +48,6 @@ hidden:
   field_hide_times: true
   field_locations: true
   field_media_contact: true
+  field_metatags: true
+  field_recurring_event: true
   field_related_departments: true

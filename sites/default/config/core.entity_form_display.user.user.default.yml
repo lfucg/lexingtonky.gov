@@ -7,6 +7,7 @@ dependencies:
     - image.style.thumbnail
   module:
     - image
+    - path
     - user
 id: user.user.default
 targetEntityType: user
@@ -15,12 +16,22 @@ mode: default
 content:
   account:
     weight: -10
+    region: content
   contact:
     weight: 5
+    region: content
   language:
     weight: 0
+    region: content
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   timezone:
     weight: 6
+    region: content
   user_picture:
     type: image_image
     settings:
@@ -28,4 +39,5 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
     weight: -1
+    region: content
 hidden: {  }

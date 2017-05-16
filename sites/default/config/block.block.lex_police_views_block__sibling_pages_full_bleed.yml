@@ -1,4 +1,4 @@
-uuid: 0b6e3bcd-b234-4f9b-ad8a-9c1a63123dfe
+uuid: 2201fb64-9ede-4f02-b2ee-7b6df093cb13
 langcode: en
 status: true
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_police_views_block__sibling_pages_full_bleed
 theme: lex_police
 region: hero
-weight: -15
+weight: -27
 provider: null
 plugin: 'views_block:sibling_pages-block_2'
 settings:

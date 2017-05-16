@@ -1,0 +1,37 @@
+uuid: fbeea2d0-1151-4004-8297-80dcc6b04d1b
+langcode: en
+status: false
+dependencies:
+  config:
+    - field.storage.node.field_image
+  module:
+    - fieldblock
+    - image
+    - node
+  theme:
+    - lex_police
+id: lex_police_contentfield
+theme: lex_police
+region: notices
+weight: 0
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'News article image'
+  provider: fieldblock
+  label_display: '0'
+  label_from_field: 0
+  field_name: field_image
+  formatter_id: image
+  formatter_settings:
+    image_style: one_column
+    image_link: ''
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      news_article: news_article
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

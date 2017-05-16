@@ -25,6 +25,7 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: text_default
+    region: content
   field_lex_custom_banner_image:
     weight: 2
     label: above
@@ -33,6 +34,7 @@ content:
       image_link: ''
     third_party_settings: {  }
     type: image
+    region: content
   field_lex_site_nav:
     weight: 3
     label: above
@@ -40,19 +42,23 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+    region: content
   field_metatags:
     weight: 5
     label: above
     settings: {  }
     third_party_settings: {  }
     type: metatag_empty_formatter
+    region: content
   links:
     weight: 1
     settings: {  }
     third_party_settings: {  }
+    region: content
   workbench_moderation_control:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden:
   field_related_departments: true

@@ -12,7 +12,7 @@ dependencies:
 id: views_block__front_page_news_block_org_page_news
 theme: lex
 region: content
-weight: -17
+weight: -21
 provider: null
 plugin: 'views_block:front_page_news-block_org_page_news'
 settings:

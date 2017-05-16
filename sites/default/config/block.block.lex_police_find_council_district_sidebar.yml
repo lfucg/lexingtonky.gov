@@ -1,4 +1,4 @@
-uuid: b9f46d7e-c439-4c0e-ba85-c43002e9f8a5
+uuid: a4245307-a2ef-44a1-8b9e-52b1d723ec5b
 langcode: en
 status: true
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_police_find_council_district_sidebar
 theme: lex_police
 region: sidebar
-weight: -11
+weight: -24
 provider: null
 plugin: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
 settings:

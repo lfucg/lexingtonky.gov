@@ -32,6 +32,7 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     type: number_integer
+    region: content
   field_lex_custom_banner_image:
     weight: 5
     label: above
@@ -40,18 +41,21 @@ content:
       image_link: ''
     third_party_settings: {  }
     type: image
+    region: content
   field_metatags:
     weight: 6
     label: above
     settings: {  }
     third_party_settings: {  }
     type: metatag_empty_formatter
+    region: content
   field_page_overview:
     weight: 2
     label: hidden
     settings: {  }
     third_party_settings: {  }
     type: text_default
+    region: content
   field_page_section:
     weight: 3
     label: hidden
@@ -60,14 +64,17 @@ content:
       link: ''
     third_party_settings: {  }
     type: entity_reference_revisions_entity_view
+    region: content
   links:
     weight: 1
     settings: {  }
     third_party_settings: {  }
+    region: content
   workbench_moderation_control:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden:
   field_lex_site_nav: true
   field_office_to_contact: true

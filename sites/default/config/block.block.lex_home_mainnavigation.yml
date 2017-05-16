@@ -1,0 +1,29 @@
+uuid: afdf5150-dd25-4739-a157-1730b60de805
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - system
+  theme:
+    - lex_home
+id: lex_home_mainnavigation
+theme: lex_home
+region: notices
+weight: -8
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'Main navigation - level 2'
+  provider: system
+  label_display: '0'
+  level: 2
+  depth: 1
+visibility:
+  request_path:
+    id: request_path
+    pages: '/browse*'
+    negate: false
+    context_mapping: {  }

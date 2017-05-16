@@ -38,6 +38,7 @@ content:
       placeholder: ''
       rows: 5
     third_party_settings: {  }
+    region: content
   field_contact_email:
     weight: 9
     settings:
@@ -45,6 +46,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_contact_fax:
     weight: 12
     settings:
@@ -52,6 +54,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_contact_person:
     weight: 7
     settings:
@@ -59,6 +62,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_contact_person_title:
     weight: 8
     settings:
@@ -66,6 +70,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_contact_phone:
     weight: 10
     settings:
@@ -73,6 +78,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_hours_of_operation:
     weight: 11
     settings:
@@ -80,6 +86,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textarea
+    region: content
   field_location_detail:
     weight: 3
     settings:
@@ -87,11 +94,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_metatags:
     weight: 19
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
+    region: content
   field_social_link_facebook:
     weight: 13
     settings:
@@ -99,6 +108,7 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
   field_social_link_instagram:
     weight: 14
     settings:
@@ -106,6 +116,7 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
   field_social_link_linkedin:
     weight: 15
     settings:
@@ -113,6 +124,7 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
   field_social_link_newsletter:
     weight: 16
     settings:
@@ -120,6 +132,7 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
   field_social_link_twitter:
     weight: 17
     settings:
@@ -127,6 +140,7 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
   field_social_link_youtube:
     weight: 18
     settings:
@@ -134,6 +148,7 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
   field_street:
     weight: 5
     settings:
@@ -141,6 +156,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_street_number:
     weight: 4
     settings:
@@ -148,6 +164,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_zip_code:
     weight: 6
     settings:
@@ -155,6 +172,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   name:
     type: string_textfield
     weight: 0
@@ -162,9 +180,11 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
   path:
     type: path
     weight: 2
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden: {  }

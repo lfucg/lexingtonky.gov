@@ -35,6 +35,7 @@ content:
     weight: 6
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_all_day:
     weight: 9
     label: above
@@ -44,6 +45,7 @@ content:
       format_custom_true: ''
     third_party_settings: {  }
     type: boolean
+    region: content
   field_cost:
     weight: 5
     label: inline
@@ -51,6 +53,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_date:
     weight: 1
     label: hidden
@@ -59,6 +62,7 @@ content:
       format_type: html_datetime
     third_party_settings: {  }
     type: datetime_default
+    region: content
   field_date_end:
     weight: 2
     label: hidden
@@ -67,6 +71,7 @@ content:
       format_type: html_datetime
     third_party_settings: {  }
     type: datetime_default
+    region: content
   field_event_website:
     weight: 7
     label: inline
@@ -78,6 +83,7 @@ content:
       target: ''
     third_party_settings: {  }
     type: link
+    region: content
   field_hide_times:
     weight: 3
     label: hidden
@@ -87,6 +93,7 @@ content:
       format_custom_true: ''
     third_party_settings: {  }
     type: boolean
+    region: content
   field_locations:
     weight: 4
     label: hidden
@@ -95,6 +102,7 @@ content:
       view_mode: default
     third_party_settings: {  }
     type: entity_reference_entity_view
+    region: content
   field_media_contact:
     weight: 8
     label: inline
@@ -103,25 +111,30 @@ content:
       link: ''
     third_party_settings: {  }
     type: entity_reference_revisions_entity_view
+    region: content
   field_metatags:
     weight: 11
     label: above
     settings: {  }
     third_party_settings: {  }
     type: metatag_empty_formatter
+    region: content
   field_recurring_event:
     weight: 10
     label: above
     settings: {  }
     third_party_settings: {  }
     type: list_default
+    region: content
   links:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+    region: content
   workbench_moderation_control:
     weight: -20
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden:
   field_related_departments: true

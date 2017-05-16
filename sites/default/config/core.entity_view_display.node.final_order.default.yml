@@ -28,6 +28,7 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    region: content
   field_final_order_date:
     type: datetime_custom
     weight: 1
@@ -36,30 +37,35 @@ content:
       timezone_override: ''
       date_format: Y-m-d
     third_party_settings: {  }
+    region: content
   field_final_order_docs:
     weight: 6
     label: above
     settings: {  }
     third_party_settings: {  }
     type: file_default
+    region: content
   field_metatags:
     weight: 9
     label: above
     settings: {  }
     third_party_settings: {  }
     type: metatag_empty_formatter
+    region: content
   field_owners_address:
     weight: 8
     label: above
     settings: {  }
     third_party_settings: {  }
     type: basic_string
+    region: content
   field_person_charged:
     weight: 7
     label: above
     settings: {  }
     third_party_settings: {  }
     type: basic_string
+    region: content
   field_pva_num:
     type: string
     weight: 5
@@ -67,8 +73,10 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    region: content
   links:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden: {  }

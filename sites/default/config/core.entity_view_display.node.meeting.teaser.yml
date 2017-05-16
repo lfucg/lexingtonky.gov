@@ -5,10 +5,13 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.meeting.body
+    - field.field.node.meeting.field_all_day
     - field.field.node.meeting.field_date
     - field.field.node.meeting.field_date_end
     - field.field.node.meeting.field_external_id
     - field.field.node.meeting.field_locations
+    - field.field.node.meeting.field_metatags
+    - field.field.node.meeting.field_recurring_event
     - field.field.node.meeting.field_related_departments
     - field.field.node.meeting.field_related_documents
     - node.type.meeting
@@ -27,14 +30,20 @@ content:
     settings:
       trim_length: 600
     third_party_settings: {  }
+    region: content
   links:
     weight: 100
+    region: content
   workbench_moderation_control:
     weight: -20
+    region: content
 hidden:
+  field_all_day: true
   field_date: true
   field_date_end: true
   field_external_id: true
   field_locations: true
+  field_metatags: true
+  field_recurring_event: true
   field_related_departments: true
   field_related_documents: true

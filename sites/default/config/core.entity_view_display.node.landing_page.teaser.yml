@@ -4,6 +4,11 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.landing_page.body
+    - field.field.node.landing_page.field_lex_custom_banner_image
+    - field.field.node.landing_page.field_lex_site_nav
+    - field.field.node.landing_page.field_metatags
+    - field.field.node.landing_page.field_related_departments
     - node.type.landing_page
   module:
     - user
@@ -14,5 +19,13 @@ mode: teaser
 content:
   links:
     weight: 100
+    region: content
+  workbench_moderation_control:
+    weight: -20
+    region: content
 hidden:
+  body: true
   field_lex_custom_banner_image: true
+  field_lex_site_nav: true
+  field_metatags: true
+  field_related_departments: true

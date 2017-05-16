@@ -1,4 +1,4 @@
-uuid: f210b0b3-63e6-4492-9b19-4e8b71bd122a
+uuid: 44644715-b357-4823-ba05-1e99c6ea513f
 langcode: en
 status: true
 dependencies:
@@ -14,7 +14,7 @@ dependencies:
 id: lex_planning_commission_fieldblock_field_organization_services
 theme: lex_planning_commission
 region: sidebar
-weight: -25
+weight: -24
 provider: null
 plugin: 'fieldblock:node'
 settings:

@@ -7,18 +7,18 @@ _core:
 id: global
 label: Global
 tags:
-  description: '[body:summary]'
+  rights: '© 2017 Lexington-Fayette County Urban Government'
+  icbm: '38.04378, -84.497020'
   generator: 'Drupal 8'
   geo_placename: 'City of Lexington, Kentucky'
-  geo_position: '38.04378, -84.497020'
+  description: '[body:summary]'
   geo_region: US-KY
-  icbm: '38.04378, -84.497020'
-  rights: '© 2017 Lexington-Fayette County Urban Government'
+  geo_position: '38.04378, -84.497020'
   title: '[current-page:title] | [site:name]'
-  og_description: '[body:summary]'
-  og_latitude: '38.04378'
+  og_url: '[current-page:url]'
   og_locale: en_US
-  og_longitude: '-84.497020'
   og_site_name: '[site:name]'
+  og_longitude: '-84.497020'
   og_title: '[current-page:title]'
-  og_url: '[site:url]'
+  og_latitude: '38.04378'
+  og_description: '[body:summary]'

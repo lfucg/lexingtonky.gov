@@ -1,4 +1,4 @@
-uuid: 47f6f252-c47d-4714-bee5-365a726764de
+uuid: 2012c969-efeb-45de-b42f-c99049ee7a60
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
 id: homemeetingsblock
 theme: lex_home
 region: sidebar
-weight: -26
+weight: 0
 provider: null
 plugin: home_meetings_block
 settings:

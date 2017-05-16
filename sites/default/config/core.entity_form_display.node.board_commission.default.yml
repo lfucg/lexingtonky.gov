@@ -32,12 +32,14 @@ content:
     weight: 5
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_granicus_id:
     weight: 10
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: number
+    region: content
   field_lex_custom_banner_image:
     weight: 3
     settings:
@@ -45,21 +47,25 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
     type: image_image
+    region: content
   field_metatags:
     weight: 27
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
+    region: content
   field_office_to_contact:
     weight: 11
     settings: {  }
     third_party_settings: {  }
     type: options_select
+    region: content
   field_organization_taxonomy_term:
     weight: 9
     settings: {  }
     third_party_settings: {  }
     type: options_select
+    region: content
   field_page_overview:
     weight: 1
     settings:
@@ -68,6 +74,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textarea_with_summary
+    region: content
   field_page_section:
     weight: 2
     settings:
@@ -78,29 +85,34 @@ content:
       form_display_mode: default
     third_party_settings: {  }
     type: entity_reference_paragraphs
+    region: content
   field_related_documents:
     weight: 26
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
+    region: content
   path:
     type: path
     weight: 8
     settings: {  }
     third_party_settings: {  }
+    region: content
   promote:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 6
     third_party_settings: {  }
+    region: content
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 7
     third_party_settings: {  }
+    region: content
   title:
     type: string_textfield
     weight: 0
@@ -108,6 +120,7 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 4
@@ -116,5 +129,6 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
 hidden:
   field_lex_site_nav: true

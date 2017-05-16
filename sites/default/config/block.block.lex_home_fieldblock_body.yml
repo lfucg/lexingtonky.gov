@@ -1,0 +1,35 @@
+uuid: aa2bdef1-4259-451c-abba-5a83c393ae00
+langcode: en
+status: false
+dependencies:
+  config:
+    - field.storage.node.body
+  module:
+    - ctools
+    - fieldblock
+    - text
+  theme:
+    - lex_home
+id: lex_home_fieldblock_body
+theme: lex_home
+region: notices
+weight: -3
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Org page: body'
+  provider: fieldblock
+  label_display: '0'
+  label_from_field: 0
+  field_name: body
+  formatter_id: text_default
+  formatter_settings: {  }
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      organization_page: organization_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

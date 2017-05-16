@@ -50,7 +50,9 @@ module:
   quickedit: 0
   rdf: 0
   responsive_image: 0
-  search: 0
+  search_api: 0
+  search_api_pantheon: 0
+  search_api_solr: 0
   shortcut: 0
   smtp: 0
   system: 0
@@ -76,5 +78,6 @@ theme:
   lex: 0
   lex_admin: 0
   lex_home: 0
-  lex_planning_commission: 0
   lex_police: 0
+  lex_planning_commission: 0
+profile: standard

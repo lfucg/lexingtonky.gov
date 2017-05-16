@@ -1,4 +1,4 @@
-uuid: 7413cf3c-b062-4650-a745-e7a345374e45
+uuid: ac54e1d8-52cf-4d94-b836-5e1de0110f99
 langcode: en
 status: true
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_police_inline_page_feedback_form
 theme: lex_police
 region: feedback
-weight: -15
+weight: -28
 provider: null
 plugin: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
 settings:

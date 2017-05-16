@@ -7,10 +7,12 @@ dependencies:
     - field.field.node.organization_page.body
     - field.field.node.organization_page.field_lex_custom_banner_image
     - field.field.node.organization_page.field_lex_site_nav
+    - field.field.node.organization_page.field_metatags
     - field.field.node.organization_page.field_office_to_contact
     - field.field.node.organization_page.field_organization_image
     - field.field.node.organization_page.field_organization_taxonomy_term
     - field.field.node.organization_page.field_page_section
+    - field.field.node.organization_page.field_related_departments
     - field.field.node.organization_page.field_related_documents
     - field.field.node.organization_page.field_top_services
     - node.type.organization_page
@@ -29,16 +31,21 @@ content:
     settings:
       trim_length: 600
     third_party_settings: {  }
+    region: content
   links:
     weight: 100
+    region: content
   workbench_moderation_control:
     weight: -20
+    region: content
 hidden:
   field_lex_custom_banner_image: true
   field_lex_site_nav: true
+  field_metatags: true
   field_office_to_contact: true
   field_organization_image: true
   field_organization_taxonomy_term: true
   field_page_section: true
+  field_related_departments: true
   field_related_documents: true
   field_top_services: true

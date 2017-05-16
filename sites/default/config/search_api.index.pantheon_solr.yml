@@ -1,0 +1,56 @@
+uuid: 2158b34d-7a7b-438e-8f39-b282e7cc82c0
+langcode: en
+status: true
+dependencies:
+  config:
+    - search_api.server.pantheon
+    - core.entity_view_mode.node.teaser
+  module:
+    - search_api
+    - node
+id: pantheon_solr
+name: 'Pantheon Solr Search Index'
+description: ''
+read_only: false
+field_settings:
+  url:
+    label: URI
+    property_path: search_api_url
+    type: string
+  rendered_item:
+    label: 'Rendered HTML output'
+    property_path: rendered_item
+    type: text
+    configuration:
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:node':
+          article: teaser
+          board_commission: teaser
+          event: teaser
+          final_order: default
+          landing_page: default
+          meeting: teaser
+          news_article: teaser
+          organization_page: teaser
+          page: teaser
+          site_wide_notice: teaser
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+processor_settings:
+  add_url: {  }
+  aggregated_field: {  }
+  rendered_item: {  }
+tracker_settings:
+  default: {  }
+options:
+  index_directly: true
+  cron_limit: 50
+server: pantheon

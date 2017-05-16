@@ -1,0 +1,37 @@
+uuid: 776d420c-626c-4cbc-a69c-1a1844c24772
+langcode: en
+status: false
+dependencies:
+  config:
+    - field.storage.node.field_organization_image
+  module:
+    - ctools
+    - fieldblock
+    - responsive_image
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_fieldblock_field_organization_image
+theme: lex_planning_commission
+region: notices
+weight: -21
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Fieldblock organization image'
+  provider: fieldblock
+  label_display: '0'
+  label_from_field: 1
+  field_name: field_organization_image
+  formatter_id: responsive_image
+  formatter_settings:
+    image_style: lex_two_column
+    image_link: ''
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      organization_page: organization_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

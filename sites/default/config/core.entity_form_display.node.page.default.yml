@@ -33,6 +33,7 @@ content:
     weight: 3
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_lex_custom_banner_image:
     weight: 9
     settings:
@@ -40,21 +41,25 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
     type: image_image
+    region: content
   field_lex_site_nav:
     weight: 6
     settings: {  }
     third_party_settings: {  }
     type: options_select
+    region: content
   field_metatags:
     weight: 11
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
+    region: content
   field_office_to_contact:
     weight: 7
     settings: {  }
     third_party_settings: {  }
     type: options_select
+    region: content
   field_page_overview:
     weight: 1
     settings:
@@ -63,6 +68,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textarea_with_summary
+    region: content
   field_page_section:
     type: entity_reference_paragraphs
     weight: 5
@@ -73,6 +79,7 @@ content:
       add_mode: dropdown
       form_display_mode: default
     third_party_settings: {  }
+    region: content
   field_related_departments:
     type: entity_reference_autocomplete_tags
     weight: 12
@@ -81,12 +88,14 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
   field_related_documents:
     weight: 8
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
+    region: content
   field_sidebar_section:
     type: entity_reference_paragraphs
     weight: 10
@@ -97,11 +106,13 @@ content:
       add_mode: dropdown
       form_display_mode: default
     third_party_settings: {  }
+    region: content
   path:
     type: path
     weight: 4
     settings: {  }
     third_party_settings: {  }
+    region: content
   title:
     type: string_textfield
     weight: 0
@@ -109,6 +120,7 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 2
@@ -117,6 +129,7 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
 hidden:
   body: true
   promote: true

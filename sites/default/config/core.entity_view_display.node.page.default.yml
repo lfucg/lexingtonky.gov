@@ -30,12 +30,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: metatag_empty_formatter
+    region: content
   field_page_overview:
     type: text_default
     weight: 2
     label: hidden
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_page_section:
     type: entity_reference_revisions_entity_view
     weight: 3
@@ -44,14 +46,17 @@ content:
       view_mode: default
       link: ''
     third_party_settings: {  }
+    region: content
   links:
     weight: 1
     settings: {  }
     third_party_settings: {  }
+    region: content
   workbench_moderation_control:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden:
   body: true
   field_lex_custom_banner_image: true

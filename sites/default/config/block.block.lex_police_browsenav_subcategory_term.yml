@@ -1,4 +1,4 @@
-uuid: 4f8ac811-74cc-457c-a1c3-4642dde61854
+uuid: 0bc1a956-ef87-4615-917b-c5eb2681450d
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
 id: lex_police_browsenav_subcategory_term
 theme: lex_police
 region: content
-weight: -12
+weight: -25
 provider: null
 plugin: page_title_block
 settings:

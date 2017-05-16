@@ -1,4 +1,4 @@
-uuid: 2bf0cf68-dba7-4ab4-b997-82f62d0bd868
+uuid: f3d5cc74-b193-455b-bf05-2bb8bac849c5
 langcode: en
 status: true
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
 id: lex_planning_commission_views_block__sibling_pages_block_sidebar
 theme: lex_planning_commission
 region: sidebar
-weight: -27
+weight: -26
 provider: null
 plugin: 'views_block:sibling_pages-block_1'
 settings:
