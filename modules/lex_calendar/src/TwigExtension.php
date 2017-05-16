@@ -110,7 +110,14 @@ class TwigExtension extends \Twig_Extension {
    * This is used by the home page event view blocks.
    */
   public function getLexDate($date) {
-    $date = new \DateTime($date);
+    if (!$date instanceof \DateTimeInterface) {
+      if (is_numeric($date)) {
+        $date = \DateTime::createFromFormat( 'U', $date);
+      }
+      else {
+        $date = new \DateTime($date);
+      }
+    }
     return $date->format('l') . ', ' . $this->getDate($date);
   }
 
