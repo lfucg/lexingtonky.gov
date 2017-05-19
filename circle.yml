@@ -29,9 +29,8 @@ test:
     - cd themes/custom/lex && npm test:
         environment:
           MOCHA_FILE: $CIRCLE_TEST_REPORTS/junit/test-results.xml
-    - chmod +x vendor/bin/phpunit
     - chmod +x vendor/phpunit/phpunit/phpunit
-    - cd core && ../vendor/bin/phpunit --testsuite=unit
+    - cd core && ../vendor/phpunit/phpunit/phpunit --testsuite=unit
 #    - phpunit modules/custom/tests
 #    - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat:
 #        timeout: 2000
