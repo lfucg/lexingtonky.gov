@@ -122,7 +122,7 @@ class FullCalendarServiceTest extends UnitTestCase {
 
     $events = $this->service->getEvents();
 
-    $this->assertEquals(5, count($events));
+    $this->assertEquals(4, count($events));
     foreach ($events as $event) {
       $start = new \DateTime($event['start']);
       $this->assertEquals('Tuesday', $start->format('l'));
