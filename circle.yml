@@ -32,7 +32,7 @@ test:
     - chmod +x vendor/phpunit/phpunit/phpunit
     - cd core && ../vendor/phpunit/phpunit/phpunit --testsuite=unit
 #    - phpunit modules/custom/tests
-#    - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat:
-#        timeout: 2000
+    - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat:
+        timeout: 2000
   post:
     - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH --yes; fi
