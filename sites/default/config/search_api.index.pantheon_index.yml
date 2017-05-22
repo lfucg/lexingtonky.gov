@@ -1,0 +1,124 @@
+uuid: 52646561-68af-49d9-b338-02d8d9e90450
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - field.storage.node.field_organization_taxonomy_term
+    - field.storage.node.field_page_section
+    - field.storage.node.field_related_departments
+    - field.storage.node.field_page_overview
+    - field.storage.paragraph.field_section_body
+    - field.storage.paragraph.field_section_heading
+    - search_api.server.pantheon_solr
+  module:
+    - search_api
+    - node
+    - paragraphs
+    - taxonomy
+id: pantheon_index
+name: 'Pantheon Index'
+description: ''
+read_only: false
+field_settings:
+  body:
+    label: Body
+    datasource_id: 'entity:node'
+    property_path: body
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.body
+  field_organization_taxonomy_term:
+    label: 'Organization taxonomy term'
+    datasource_id: 'entity:node'
+    property_path: field_organization_taxonomy_term
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_organization_taxonomy_term
+  field_page_section:
+    label: 'Page section'
+    datasource_id: 'entity:node'
+    property_path: field_page_section
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_page_section
+  field_related_departments:
+    label: 'Related departments'
+    datasource_id: 'entity:node'
+    property_path: field_related_departments
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_related_departments
+  field_page_overview:
+    label: 'Page overview'
+    datasource_id: 'entity:node'
+    property_path: field_page_overview
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_page_overview
+  field_page_overview_1:
+    label: 'Page overview'
+    datasource_id: 'entity:node'
+    property_path: field_page_overview
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_page_overview
+  field_section_body:
+    label: 'Section body'
+    datasource_id: 'entity:paragraph'
+    property_path: field_section_body
+    type: text
+    dependencies:
+      config:
+        - field.storage.paragraph.field_section_body
+  field_section_heading:
+    label: 'Section heading'
+    datasource_id: 'entity:paragraph'
+    property_path: field_section_heading
+    type: string
+    dependencies:
+      config:
+        - field.storage.paragraph.field_section_heading
+  name:
+    label: Name
+    datasource_id: 'entity:taxonomy_term'
+    property_path: name
+    type: string
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+  'entity:paragraph':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+  'entity:taxonomy_term':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+processor_settings:
+  add_url: {  }
+  aggregated_field: {  }
+  rendered_item: {  }
+tracker_settings:
+  default: {  }
+options:
+  index_directly: true
+  cron_limit: 50
+server: pantheon_solr
