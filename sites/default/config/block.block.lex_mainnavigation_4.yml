@@ -11,7 +11,7 @@ dependencies:
 id: lex_mainnavigation_4
 theme: lex
 region: sidebar
-weight: -27
+weight: -25
 provider: null
 plugin: 'system_menu_block:main'
 settings:

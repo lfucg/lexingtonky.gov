@@ -11,7 +11,7 @@ dependencies:
 id: lex_home_main_menu
 theme: lex_home
 region: notices
-weight: -27
+weight: -26
 provider: null
 plugin: 'system_menu_block:main'
 settings:
