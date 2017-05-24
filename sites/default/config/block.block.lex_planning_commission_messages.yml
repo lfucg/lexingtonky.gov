@@ -9,7 +9,7 @@ dependencies:
 id: lex_planning_commission_messages
 theme: lex_planning_commission
 region: breadcrumb
-weight: -27
+weight: -24
 provider: null
 plugin: system_messages_block
 settings:

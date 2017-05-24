@@ -9,7 +9,7 @@ dependencies:
 id: lex_police_pagetitle
 theme: lex_police
 region: title
-weight: -27
+weight: -25
 provider: null
 plugin: page_title_block
 settings:

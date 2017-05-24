@@ -9,7 +9,7 @@ dependencies:
 id: lex_planning_commission_help
 theme: lex_planning_commission
 region: breadcrumb
-weight: -25
+weight: -24
 provider: null
 plugin: help_block
 settings:
