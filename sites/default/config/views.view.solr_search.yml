@@ -282,7 +282,7 @@ display:
           empty: true
           tokenize: false
           content:
-            value: 'We''re sorry, but there were no results for your search terms.'
+            value: 'We''re sorry, but there were no results.'
             format: basic_html
           plugin_id: text
       relationships: {  }
