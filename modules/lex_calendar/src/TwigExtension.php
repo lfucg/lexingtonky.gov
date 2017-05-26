@@ -83,8 +83,37 @@ class TwigExtension extends \Twig_Extension {
     return [
       new \Twig_SimpleFunction('lexDateTime', [$this, 'getLexDateTime'], ['is_safe' => ['html']]),
       new \Twig_SimpleFunction('lexDate', [$this, 'getLexDate'], ['is_safe' => ['html']]),
-      new \Twig_SimpleFunction('lexTimeRange', [$this, 'getLexTimeRange'], ['is_safe' => ['html']])
+      new \Twig_SimpleFunction('lexTimeRange', [$this, 'getLexTimeRange'], ['is_safe' => ['html']]),
+      new \Twig_SimpleFunction('lexRender', [$this, 'getRender', ['is_safe' => 'html']])
     ];
+  }
+
+  public function getRender($field) {
+
+    $entity = $field->entity;
+
+    $render_controller = \Drupal::entityManager()->getViewBuilder($entity->getEntityTypeId());
+
+    return $render_controller->view($entity);
+
+
+
+   /*$build = [];
+    $entity_type = $this->getDerivativeId();
+    $entity = $this->routeMatch->getParameter($entity_type);
+
+    if ($entity instanceof ContentEntityInterface) {
+      $build['field'] = $entity->get($this->configuration['field_name'])->view([
+        'label' => 'hidden',
+        'type' => $this->configuration['formatter_id'],
+        'settings' => $this->configuration['formatter_settings']
+      ]);
+      if ($this->configuration['label_from_field'] && !empty($build['field']['#title'])) {
+        $build['#title'] = $build['field']['#title'];
+      }
+    }
+
+    return $build;*/
   }
 
   /**

@@ -32,12 +32,12 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 6
+    weight: 5
     settings: {  }
     third_party_settings: {  }
     region: content
   field_all_day:
-    weight: 9
+    weight: 10
     label: above
     settings:
       format: default
@@ -47,7 +47,7 @@ content:
     type: boolean
     region: content
   field_cost:
-    weight: 5
+    weight: 8
     label: inline
     settings:
       link_to_entity: false
@@ -55,15 +55,6 @@ content:
     type: string
     region: content
   field_date:
-    weight: 1
-    label: hidden
-    settings:
-      timezone_override: ''
-      format_type: html_datetime
-    third_party_settings: {  }
-    type: datetime_default
-    region: content
-  field_date_end:
     weight: 2
     label: hidden
     settings:
@@ -72,8 +63,17 @@ content:
     third_party_settings: {  }
     type: datetime_default
     region: content
+  field_date_end:
+    weight: 3
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: html_datetime
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
   field_event_website:
-    weight: 7
+    weight: 9
     label: inline
     settings:
       trim_length: 80
@@ -85,7 +85,7 @@ content:
     type: link
     region: content
   field_hide_times:
-    weight: 3
+    weight: 4
     label: hidden
     settings:
       format: default
@@ -95,7 +95,7 @@ content:
     type: boolean
     region: content
   field_locations:
-    weight: 4
+    weight: 7
     label: hidden
     settings:
       link: true
@@ -104,7 +104,7 @@ content:
     type: entity_reference_entity_view
     region: content
   field_media_contact:
-    weight: 8
+    weight: 6
     label: inline
     settings:
       view_mode: default
@@ -113,28 +113,28 @@ content:
     type: entity_reference_revisions_entity_view
     region: content
   field_metatags:
-    weight: 11
+    weight: 12
     label: above
     settings: {  }
     third_party_settings: {  }
     type: metatag_empty_formatter
     region: content
   field_recurring_event:
-    weight: 10
+    weight: 11
     label: above
     settings: {  }
     third_party_settings: {  }
     type: list_default
     region: content
   links:
-    weight: 0
+    weight: 1
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   workbench_moderation_control:
-    weight: -20
+    weight: 0
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
 hidden:
   field_related_departments: true
