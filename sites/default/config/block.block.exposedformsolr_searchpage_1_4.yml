@@ -1,16 +1,15 @@
-uuid: 6ddbdfe2-7639-4bc5-8b2d-e19bcc835520
+uuid: cf8a44eb-2c3e-42c3-b9fd-8364324e6ab0
 langcode: en
 status: true
 dependencies:
   config:
     - views.view.solr_search
   module:
-    - system
     - views
   theme:
-    - lex
-id: exposedformsolr_searchpage_1
-theme: lex
+    - lex_planning_commission
+id: exposedformsolr_searchpage_1_4
+theme: lex_planning_commission
 region: sitemast
 weight: 0
 provider: null
@@ -19,11 +18,6 @@ settings:
   id: 'views_exposed_filter_block:solr_search-page_1'
   label: ''
   provider: views
-  label_display: '0'
+  label_display: visible
   views_label: ''
-visibility:
-  request_path:
-    id: request_path
-    pages: /search
-    negate: true
-    context_mapping: {  }
+visibility: {  }

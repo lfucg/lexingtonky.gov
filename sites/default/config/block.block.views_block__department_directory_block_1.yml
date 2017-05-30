@@ -12,7 +12,7 @@ dependencies:
 id: views_block__department_directory_block_1
 theme: lex
 region: content
-weight: -24
+weight: -20
 provider: null
 plugin: 'views_block:department_directory-block_1'
 settings:
