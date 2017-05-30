@@ -8,6 +8,7 @@ use Drupal\field\FieldStorageConfigInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend;
+use Drupal\Tests\search_api_solr\Traits\InvokeMethodTrait;
 
 /**
  * Tests index and search capabilities using the Solr search backend.

@@ -9,7 +9,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Tests\search_api\Kernel\BackendTestBase;
 
 /**
- * Tests index and search capabilities using the Solr search backend.
+ * Tests location searches and distance facets using the Solr search backend.
  *
  * @group search_api_solr
  */
@@ -47,16 +47,6 @@ class SearchApiSolrLocationTest extends BackendTestBase {
   protected $indexId = 'solr_search_index';
 
   /**
-   * Whether a Solr core is available for testing.
-   *
-   * Drupal testbots do not support having a solr server, so they can't execute
-   * these tests.
-   *
-   * @var bool
-   */
-  protected $solrAvailable = FALSE;
-
-  /**
    * Seconds to wait for a soft commit on Solr.
    *
    * @var int
@@ -73,6 +63,14 @@ class SearchApiSolrLocationTest extends BackendTestBase {
       'search_api_solr',
       'search_api_solr_test',
     ]);
+
+    $this->commonSolrBackendSetUp();
+  }
+
+  /**
+   * Required parts of the setUp() function that are the same for all backends.
+   */
+  protected function commonSolrBackendSetUp() {
     $this->installEntitySchema('field_storage_config');
     $this->installEntitySchema('field_config');
 
@@ -112,9 +110,15 @@ class SearchApiSolrLocationTest extends BackendTestBase {
     $server->setBackendConfig($config);
     $server->save();
 
-    $this->detectSolrAvailability();
-
     $this->indexItems($this->indexId);
+  }
+
+  /**
+   * Clear the index after every test.
+   */
+  public function tearDown() {
+    $this->clearIndex();
+    parent::tearDown();
   }
 
   /**
@@ -124,24 +128,6 @@ class SearchApiSolrLocationTest extends BackendTestBase {
     $index_status = parent::indexItems($index_id);
     sleep($this->waitForCommit);
     return $index_status;
-  }
-
-  /**
-   * Detects the availability of a Solr Server and sets $this->solrAvailable.
-   */
-  protected function detectSolrAvailability() {
-    // Because this is a kernel test, the routing isn't built by default, so
-    // we have to force it.
-    \Drupal::service('router.builder')->rebuild();
-
-    try {
-      $backend = Server::load($this->serverId)->getBackend();
-      if ($backend->isAvailable()) {
-        $this->solrAvailable = TRUE;
-      }
-    }
-    catch (\Exception $e) {
-    }
   }
 
   /**
