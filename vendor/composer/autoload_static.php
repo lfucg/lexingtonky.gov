@@ -331,6 +331,7 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/..' . '/behat/mink-browserkit-driver/src',
             1 => __DIR__ . '/..' . '/behat/mink-goutte-driver/src',
+            2 => __DIR__ . '/..' . '/behat/mink-selenium2-driver/src',
         ),
         'Behat\\Mink\\' => 
         array (
@@ -348,6 +349,13 @@ class ComposerStaticInitDrupal8
             'org\\bovigo\\vfs\\' => 
             array (
                 0 => __DIR__ . '/..' . '/mikey179/vfsStream/src/main/php',
+            ),
+        ),
+        'W' => 
+        array (
+            'WebDriver' => 
+            array (
+                0 => __DIR__ . '/..' . '/instaclick/php-webdriver/lib',
             ),
         ),
         'T' => 
@@ -388,6 +396,30 @@ class ComposerStaticInitDrupal8
         ),
         'D' => 
         array (
+            'Drupal\\Tests\\Driver' => 
+            array (
+                0 => __DIR__ . '/..' . '/drupal/drupal-driver/tests',
+            ),
+            'Drupal\\Exception' => 
+            array (
+                0 => __DIR__ . '/..' . '/drupal/drupal-extension/src',
+            ),
+            'Drupal\\DrupalExtension' => 
+            array (
+                0 => __DIR__ . '/..' . '/drupal/drupal-extension/src',
+            ),
+            'Drupal\\Drupal' => 
+            array (
+                0 => __DIR__ . '/..' . '/drupal/drupal-extension/src',
+            ),
+            'Drupal\\Driver' => 
+            array (
+                0 => __DIR__ . '/..' . '/drupal/drupal-driver/src',
+            ),
+            'Drupal\\Component' => 
+            array (
+                0 => __DIR__ . '/..' . '/drupal/drupal-driver/src',
+            ),
             'Doctrine\\Common\\Lexer\\' => 
             array (
                 0 => __DIR__ . '/..' . '/doctrine/lexer/lib',
@@ -414,6 +446,10 @@ class ComposerStaticInitDrupal8
             'Behat\\Testwork' => 
             array (
                 0 => __DIR__ . '/..' . '/behat/behat/src',
+            ),
+            'Behat\\MinkExtension' => 
+            array (
+                0 => __DIR__ . '/..' . '/behat/mink-extension/src',
             ),
             'Behat\\Gherkin' => 
             array (

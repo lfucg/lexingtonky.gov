@@ -12,7 +12,7 @@ default:
     Behat\MinkExtension:
       goutte: ~
       selenium2: ~
-      base_url: http://localhost:8888
+      base_url: http://localhost
       browser_name: chrome
     Drupal\DrupalExtension:
       blackbox: ~
