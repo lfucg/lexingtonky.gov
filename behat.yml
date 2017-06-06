@@ -8,11 +8,11 @@ default:
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\DrushContext
   extensions:
-    jarnaiz\JUnitFormatter\JUnitFormatterExtension:
+#    jarnaiz\JUnitFormatter\JUnitFormatterExtension:
     Behat\MinkExtension:
       goutte: ~
       selenium2: ~
-      base_url: http://localhost
+      base_url: "http://172.17.0.7:80"
       browser_name: chrome
     Drupal\DrupalExtension:
       blackbox: ~
