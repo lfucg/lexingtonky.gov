@@ -10,9 +10,10 @@ default:
   extensions:
 #    jarnaiz\JUnitFormatter\JUnitFormatterExtension:
     Behat\MinkExtension:
-      goutte: ~
-      selenium2: ~
-      base_url: "http://172.17.0.7:80"
+      default_session: selenium2
+      selenium2:
+          wd_host: "http://172.17.0.3:4444/wd/hub"
+      base_url: "http://172.17.0.7"
       browser_name: chrome
     Drupal\DrupalExtension:
       blackbox: ~
@@ -20,9 +21,14 @@ default:
       drupal:
         drupal_root: "."
       region_map:
-        help: ".lex-region-help"
+        notices: ".lex-region-notices"
+        sitemast: ".lex-region-sitemast"
+        hero: ".lex-region-hero"
         breadcrumb: ".lex-breadcrumb"
         content: ".lex-region-content"
-        featured_bottom_first: ".lex-region-featured_bottom_first"
+        sidebar: ".lex-region-sidebar"
+        postscript: ".lex-region-postscript"
+        feedback: ".lex-region-feedback"
+        footer: ".lex-region-footer"
       selectors:
         error_message_selector: '.messages.messages--error'

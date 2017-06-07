@@ -164,4 +164,24 @@ class FeatureContext implements Context, SnippetAcceptingContext {
     {
         $element = $this->minkContext->getSession()->wait($miliseconds);
     }
+
+    /**
+    * Click some text
+    *
+    * @When /^I click on the text "([^"]*)"$/
+    */
+    public function iClickOnTheText($text)
+    {
+        $session = $this->minkContext->getSession();
+        $element = $session->getPage()->find(
+            'xpath',
+            $session->getSelectorsHandler()->selectorToXpath('xpath', '*//*[text()="'. $text .'"]')
+        );
+        if (null === $element) {
+            throw new \InvalidArgumentException(sprintf('Cannot find text: "%s"', $text));
+        }
+
+        $element->click();
+
+    }
 }

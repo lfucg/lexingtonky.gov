@@ -6,9 +6,6 @@ Feature: Using the browse navigation
 @javascript
 Scenario: Using ajax navigation
     Given I am on "/browse/government"
-# This is now displayed using CSS, so it isn't present in the DOM to be tested for.
-#    Then I should see text matching "A.*to.*Z"
-
     When I click "Public safety"
     And I wait for AJAX to finish
     And I wait for 4000 miliseconds
@@ -21,7 +18,6 @@ Scenario: Using ajax navigation
 
 Scenario: Using plain html navigation
     Given I am on "/browse/government"
-    Then I should see text matching "A.*to.*Z"
 
     When I click "Public safety"
     And I click "Police"
