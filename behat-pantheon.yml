@@ -16,13 +16,21 @@ default:
       browser_name: chrome
     Drupal\DrupalExtension:
       blackbox: ~
-      api_driver: "drush"
-      drush:
-        alias: @pantheon.PANTHEON_ALIAS
+      api_driver: "drupal"
+      drupal:
+        drupal_root: "."
+      # api_driver: "drush"
+      # drush:
+      #   alias: @pantheon.PANTHEON_ALIAS
       region_map:
-        help: ".lex-region-help"
+        notices: ".lex-region-notices"
+        sitemast: ".lex-region-sitemast"
+        hero: ".lex-region-hero"
         breadcrumb: ".lex-breadcrumb"
         content: ".lex-region-content"
-        featured_bottom_first: ".lex-region-featured_bottom_first"
+        sidebar: ".lex-region-sidebar"
+        postscript: ".lex-region-postscript"
+        feedback: ".lex-region-feedback"
+        footer: ".lex-region-footer"
       selectors:
         error_message_selector: '.messages.messages--error'
