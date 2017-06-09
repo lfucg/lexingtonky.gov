@@ -12,14 +12,18 @@ default:
     Behat\MinkExtension:
       default_session: selenium2
       selenium2:
-          wd_host: "http://172.17.0.3:4444/wd/hub"
-      base_url: "http://172.17.0.7"
+        wd_host: "http://172.17.0.7:4444/wd/hub"
+        capabilities: { "browser" : "chrome" }
+      base_url: "http://lexky-d8.kbox.site"
       browser_name: chrome
     Drupal\DrupalExtension:
       blackbox: ~
       api_driver: "drupal"
       drupal:
         drupal_root: "."
+      # api_driver: "drush"
+      # drush:
+      #   alias: @pantheon.PANTHEON_ALIAS
       region_map:
         notices: ".lex-region-notices"
         sitemast: ".lex-region-sitemast"
