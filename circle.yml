@@ -11,6 +11,8 @@ dependencies:
   pre:
     - echo "date.timezone = America/New_York" > /opt/circleci/php/$(phpenv global)/etc/conf.d/timezone.ini
     - rm /opt/circleci/php/$(phpenv global)/etc/conf.d/xdebug.ini # slight performance boost
+    - composer global require drush/drush:6.2.0
+    - export PATH="$HOME/.composer/vendor/bin:$PATH"
   cache_directories:
     - "~/.composer/cache"    # keep from having to install terminus every single time
   override:
