@@ -9,6 +9,8 @@ Scenario: Filtering associations in the directory
   Then I should see "ANDOVER"
 
   Given I fill in "Type the name of a neighborhood association" with "cardinal"
+  When I wait for AJAX to finish
+  And I wait for 4000 miliseconds
   Then I should not see "ANDOVER"
   And I should see "CARDINAL VALLEY" in the content region
 

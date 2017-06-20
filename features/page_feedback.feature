@@ -18,7 +18,8 @@ Scenario: Submit homepage feedback
     And I wait for 2000 miliseconds
     And I press "Send message"
     Given I wait for AJAX to finish
-    Then I should see "Thank you"
+    And I wait for 4000 miliseconds
+    Then I should see "Thank you for helping us to improve lexingtonky.gov!"
 
     And I am logged in as a user with the "administrator" role
     When I go to "admin/structure/contact/messages"
@@ -45,10 +46,10 @@ Scenario: Submit feedback from feedback page
     Then I should be on "/"
     And I should see "Your message has been sent"
 
-Scenario: Submit feedback without inline ajax form
-    Given I am on the homepage
-    And I click "Suggestions or problems with this page?"
-    Then I should be on "/contact/page_feedback"
+# Scenario: Submit feedback without inline ajax form
+#     Given I am on the homepage
+#     And I click "Suggestions or problems with this page?"
+#     Then I should be on "/contact/page_feedback"
 
 @javascript
 Scenario: Editors mark when they have handled feedback

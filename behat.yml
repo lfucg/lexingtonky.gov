@@ -12,7 +12,10 @@ default:
     Behat\MinkExtension:
       default_session: selenium2
       selenium2:
-        wd_host: "http://172.17.0.7:4444/wd/hub"
+        # For the moment this has to be redone everytime the kalabox restarts.
+        # run  docker inspect lexkyd8_selenium_1 to get the ip for the selenium
+        # server.
+        wd_host: "http://selenium:4444/wd/hub"
         capabilities: { "browser" : "chrome" }
       base_url: "http://lexky-d8.kbox.site"
       browser_name: chrome
@@ -28,8 +31,9 @@ default:
         notices: ".lex-region-notices"
         sitemast: ".lex-region-sitemast"
         hero: ".lex-region-hero"
-        breadcrumb: ".lex-breadcrumb"
+        breadcrumb: ".lex-region-breadcrumb"
         content: ".lex-region-content"
+        after_content: ".lex-region-after_content"
         sidebar: ".lex-region-sidebar"
         postscript: ".lex-region-postscript"
         feedback: ".lex-region-feedback"

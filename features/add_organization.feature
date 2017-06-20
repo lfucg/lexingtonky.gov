@@ -4,7 +4,7 @@ Feature: Create and manage organization page
 @javascript
 Scenario: Filtering departments in the department directory
   Given I am on "/browse/government"
-  # make sure js department directory initializes when loaded via ajax
+  And I wait for 4000 miliseconds
   And I click "Departments and programs"
   And I wait for AJAX to finish
   Then I should see "Computer Services"
@@ -21,8 +21,9 @@ Scenario: Displaying news articles on an organization page
   Given I am logged in as a user with the "editor" role
   And I am on "node/add/news_article"
   And I fill in "Title" with randomized text "New article"
-  And I fill in "Body" with "foo"
-  And I select "-Police" from "Related departments"
+  And I fill Hypertext in "edit-body-0-value" with "foo"
+  And I select the term "-Police" by id "edit-field-related-departments"
+  And I open save options
   And I press "Save and Publish"
 
   When I am on "/departments/police"
@@ -32,12 +33,13 @@ Scenario: Displaying events on an organization page
   Given I am logged in as a user with the "editor" role
   And I am on "node/add/event"
   And I fill in "Title" with randomized text "New event"
-  And I select "Addison Park" from "Location"
+  And I select the term "Addison Park" by id "edit-field-locations"
 
   # dept w/o events
-  And I select "-Accounting" from "Related departments"
+  And I select the term "-Accounting" by id "edit-field-related-departments"
   And I fill in "Cost" with "free"
-  And I fill in "edit-field-date-end-0-value-date" with "2050-01-01"
+  And I fill in "edit-field-date-end-0-value-date" with "01/01/2050"
+  And I open save options
   And I press "Save and Publish"
 
   When I am on "/departments/accounting"
@@ -47,8 +49,16 @@ Scenario: Add department page to topic navigation
   Given I am logged in as a user with the "editor" role
   # computer services: an organization that doesn't have a topic
   And I am on "/node/476/edit"
-  And I select "-Senior programs" from "Navigation topic (optional)"
+  And I select the term "-Senior programs" by id "edit-field-lex-site-nav"
+  And I open save options
   And I press "Save and Publish"
 
   When I am on "/browse/community-services/senior-programs"
   Then I should see the link "Computer Services"
+
+  #Reset.
+  When I am on "/node/476/edit"
+  And I select the term "- None -" by id "edit-field-lex-site-nav"
+  And I open save options
+  And I press "Save and Publish"
+  Then I should see "Home Government Departments and programs" in the breadcrumb region
