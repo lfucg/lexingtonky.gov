@@ -21,12 +21,12 @@ default:
       browser_name: chrome
     Drupal\DrupalExtension:
       blackbox: ~
-      # api_driver: "drupal"
-      # drupal:
-      #   drupal_root: "."
-      api_driver: "drush"
-      drush:
-        alias: @pantheon.PANTHEON_ALIAS
+      api_driver: "drupal"
+      drupal:
+        drupal_root: "."
+      # api_driver: "drush"
+      # drush:
+      #   alias: @pantheon.PANTHEON_ALIAS
       region_map:
         notices: ".lex-region-notices"
         sitemast: ".lex-region-sitemast"

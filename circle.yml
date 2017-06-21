@@ -7,12 +7,19 @@ machine:
     localhost: 127.0.0.1
   environment:
     PATH: $HOME/$CIRCLE_PROJECT_REPONAME/vendor/bin:$PATH
+    APP_ENV: testing
+    APP_URL: 127.0.0.1
+    DB_HOST: 127.0.0.1
+    DB_URL: 127.0.0.1
+    DB_NAME: circle_test
+    DB_USER: ubuntu
+    DB_PASSWORD:
 dependencies:
   pre:
     - echo "date.timezone = America/New_York" > /opt/circleci/php/$(phpenv global)/etc/conf.d/timezone.ini
     - rm /opt/circleci/php/$(phpenv global)/etc/conf.d/xdebug.ini # slight performance boost
-    - composer global require drush/drush:6.2.0
-    - export PATH="$HOME/.composer/vendor/bin:$PATH"
+    # - composer global require drush/drush:6.2.0
+    # - export PATH="$HOME/.composer/vendor/bin:$PATH"
   cache_directories:
     - "~/.composer/cache"    # keep from having to install terminus every single time
   override:
