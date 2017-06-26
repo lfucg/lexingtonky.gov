@@ -12,7 +12,7 @@ dependencies:
 id: lex_planning_commission_views_block__sibling_pages_block_sidebar
 theme: lex_planning_commission
 region: sidebar
-weight: -24
+weight: -26
 provider: null
 plugin: 'views_block:sibling_pages-block_1'
 settings:

@@ -12,7 +12,7 @@ dependencies:
 id: lex_planning_commission_betaworkinprogressbannersmall
 theme: lex_planning_commission
 region: notices
-weight: -24
+weight: -25
 provider: null
 plugin: 'block_content:0830dd71-46af-44d3-8807-7c73429d54af'
 settings:

@@ -1,0 +1,26 @@
+uuid: a7650aae-ed02-4363-b9d0-6037465fe972
+langcode: en
+status: true
+dependencies:
+  module:
+    - search
+    - system
+  theme:
+    - lex_police
+id: lex_police_lex_police_header_search_form
+theme: lex_police
+region: sitemast
+weight: -28
+provider: null
+plugin: search_form_block
+settings:
+  id: search_form_block
+  label: 'Header search form'
+  provider: search
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/search/*"
+    negate: true
+    context_mapping: {  }

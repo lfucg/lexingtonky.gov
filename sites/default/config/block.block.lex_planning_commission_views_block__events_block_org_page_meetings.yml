@@ -1,0 +1,33 @@
+uuid: e513b6a0-4ecb-4e69-9591-7e830c42f525
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.events
+  module:
+    - ctools
+    - views
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_views_block__events_block_org_page_meetings
+theme: lex_planning_commission
+region: sidebar
+weight: -22
+provider: null
+plugin: 'views_block:events-block_org_page_meetings'
+settings:
+  id: 'views_block:events-block_org_page_meetings'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      board_commission: board_commission
+      organization_page: organization_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

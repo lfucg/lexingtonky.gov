@@ -11,7 +11,7 @@ dependencies:
 id: lex_police_views_block__site_wide_notice_block
 theme: lex_police
 region: notices
-weight: -25
+weight: -28
 provider: null
 plugin: 'views_block:site_wide_notice-block_1'
 settings:

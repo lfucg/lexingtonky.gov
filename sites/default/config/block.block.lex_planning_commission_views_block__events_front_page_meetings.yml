@@ -1,0 +1,30 @@
+uuid: b472c572-9c13-4391-ab75-72290ab0c025
+langcode: en
+status: false
+dependencies:
+  config:
+    - views.view.events
+  module:
+    - system
+    - views
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_views_block__events_front_page_meetings
+theme: lex_planning_commission
+region: notices
+weight: -22
+provider: null
+plugin: 'views_block:events-front_page_meetings'
+settings:
+  id: 'views_block:events-front_page_meetings'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

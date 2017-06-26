@@ -10,7 +10,7 @@ dependencies:
 id: pagetitle_fullbleed
 theme: lex
 region: notices
-weight: -10
+weight: -11
 provider: null
 plugin: page_title_block
 settings:

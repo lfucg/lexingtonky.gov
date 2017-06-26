@@ -9,7 +9,7 @@ dependencies:
 id: lex_powered
 theme: lex
 region: notices
-weight: -9
+weight: -10
 provider: null
 plugin: system_powered_by_block
 settings:
