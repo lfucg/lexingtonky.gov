@@ -7,6 +7,7 @@ Scenario: Filtering departments in the department directory
   And I wait for 4000 miliseconds
   And I click "Departments and programs"
   And I wait for AJAX to finish
+  And I wait for 4000 miliseconds
   Then I should see "Computer Services"
 
   When I fill in "Type the name of a department" with "Accounting"
