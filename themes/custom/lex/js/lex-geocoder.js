@@ -3,7 +3,7 @@
 
   // could be passed as option eventually
   var handleDistrict = function(districtFeature){
-    $('.js-lex-district-number').html(districtFeature.properties['DISTRICT']);
+    $('.js-lex-district-url').html('Council District ' + districtFeature.properties['DISTRICT']);
     $('.js-lex-district-url').prop('href', districtFeature.properties['URL']);
     $('.js-lex-district-member').html(districtFeature.properties['REP']);
     $('.js-lex-district-container').show();

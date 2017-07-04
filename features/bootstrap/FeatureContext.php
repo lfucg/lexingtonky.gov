@@ -217,4 +217,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
     $session->executeScript("jQuery('#toolbar-bar').hide();");
 
   }
+
+  /**
+   * @When I click :selector with JavaScript
+   */
+  public function iClickWithJavascript($selector) {
+    print_r($this->minkContext->getSession()->executeScript('jQuery("' . $selector . '").click();'));
+  }
 }

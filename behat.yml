@@ -17,7 +17,7 @@ default:
         # server.
         wd_host: "http://selenium:4444/wd/hub"
         capabilities: { "browser" : "chrome" }
-      base_url: "http://lexky-d8.kbox.site"
+      base_url: "http://lexky-d8.kbox.host"
       browser_name: chrome
     Drupal\DrupalExtension:
       blackbox: ~

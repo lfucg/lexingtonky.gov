@@ -11,7 +11,7 @@ dependencies:
 id: mostactivepages
 theme: lex
 region: notices
-weight: -13
+weight: -12
 provider: null
 plugin: 'system_menu_block:most-active-pages'
 settings:

@@ -10,7 +10,7 @@ dependencies:
 id: publishing_status
 theme: lex
 region: notices
-weight: -8
+weight: -7
 provider: null
 plugin: 'fieldblock:node'
 settings:

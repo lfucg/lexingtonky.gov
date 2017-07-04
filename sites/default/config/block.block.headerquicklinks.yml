@@ -11,7 +11,7 @@ dependencies:
 id: headerquicklinks
 theme: lex
 region: notices
-weight: -19
+weight: -18
 provider: null
 plugin: 'system_menu_block:header-quick-links'
 settings:
