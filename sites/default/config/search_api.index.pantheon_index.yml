@@ -1,0 +1,61 @@
+uuid: 158f6609-6c5c-4145-98d7-3b70f89535d1
+langcode: en
+status: true
+dependencies:
+  config:
+    - search_api.server.pantheon
+    - core.entity_view_mode.node.teaser
+  module:
+    - search_api
+    - node
+id: pantheon_index
+name: 'Pantheon Index'
+description: ''
+read_only: false
+field_settings:
+  url:
+    label: URI
+    property_path: search_api_url
+    type: string
+  rendered_item:
+    label: 'Rendered HTML output'
+    property_path: rendered_item
+    type: text
+    configuration:
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:node':
+          article: teaser
+          board_commission: teaser
+          event: teaser
+          final_order: ''
+          landing_page: teaser
+          meeting: teaser
+          news_article: teaser
+          organization_page: teaser
+          page: teaser
+          site_wide_notice: ''
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: string
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+processor_settings:
+  add_url: {  }
+  rendered_item: {  }
+  aggregated_field: {  }
+tracker_settings:
+  default: {  }
+options:
+  index_directly: true
+  cron_limit: 50
+server: pantheon
