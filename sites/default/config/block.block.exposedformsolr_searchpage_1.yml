@@ -1,0 +1,23 @@
+uuid: 980456b8-03f5-44e7-b197-c98cc3c887ad
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.solr_search
+  module:
+    - views
+  theme:
+    - lex_home
+id: exposedformsolr_searchpage_1
+theme: lex_home
+region: hero
+weight: 0
+provider: null
+plugin: 'views_exposed_filter_block:solr_search-page_1'
+settings:
+  id: 'views_exposed_filter_block:solr_search-page_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+visibility: {  }
