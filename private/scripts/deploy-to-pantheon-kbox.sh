@@ -32,7 +32,7 @@ if [ $siteenv == 'test' ]
   sync='--sync-content'
 fi
 
-banner "Deplying code"
+banner "Deploying code"
 kbox terminus site deploy --env=$siteenv $sync --updatedb --cc --note="Deployed from local env"
 
 banner "Clear cache"

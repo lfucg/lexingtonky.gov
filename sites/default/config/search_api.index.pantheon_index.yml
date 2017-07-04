@@ -3,11 +3,14 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.node.body
+    - field.storage.paragraph.field_section_body
     - search_api.server.pantheon
     - core.entity_view_mode.node.teaser
   module:
     - search_api
     - node
+    - paragraphs
 id: pantheon_index
 name: 'Pantheon Index'
 description: ''
@@ -41,6 +44,22 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: title
     type: string
+  body:
+    label: Body
+    datasource_id: 'entity:node'
+    property_path: body
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.body
+  field_section_body:
+    label: 'Section body'
+    datasource_id: 'entity:paragraph'
+    property_path: field_section_body
+    type: text
+    dependencies:
+      config:
+        - field.storage.paragraph.field_section_body
 datasource_settings:
   'entity:node':
     bundles:
@@ -49,8 +68,35 @@ datasource_settings:
     languages:
       default: true
       selected: {  }
+  'entity:paragraph':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
 processor_settings:
   add_url: {  }
+  html_filter:
+    fields:
+      - url
+      - rendered_item
+      - title
+      - body
+      - field_section_body
+    title: true
+    alt: true
+    tags:
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      b: 2
+      em: 1
+      u: 1
+    weights:
+      preprocess_index: -15
+      preprocess_query: -15
   rendered_item: {  }
   aggregated_field: {  }
 tracker_settings:
