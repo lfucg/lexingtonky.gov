@@ -4,6 +4,10 @@ sites/*/private
 files/*
 logs/*
 
+# Avoid accidental modification of pantheon.upstream.yml in sites
+# created from this upstream
+pantheon.upstream.yml
+
 # Pantheon commits a settings.php for environment-specific settings.
 # Place local settings in settings.local.php
 sites/*/settings.local.php
