@@ -9,7 +9,7 @@ dependencies:
 id: lex_police_breadcrumbs
 theme: lex_police
 region: breadcrumb
-weight: -27
+weight: -25
 provider: null
 plugin: system_breadcrumb_block
 settings:

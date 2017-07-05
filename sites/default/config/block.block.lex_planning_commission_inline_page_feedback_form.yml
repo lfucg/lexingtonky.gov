@@ -12,7 +12,7 @@ dependencies:
 id: lex_planning_commission_inline_page_feedback_form
 theme: lex_planning_commission
 region: feedback
-weight: -28
+weight: -25
 provider: null
 plugin: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
 settings:

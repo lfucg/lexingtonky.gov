@@ -9,7 +9,7 @@ dependencies:
 id: lex_planning_commission_browsenav_subcategory_term
 theme: lex_planning_commission
 region: content
-weight: -26
+weight: -25
 provider: null
 plugin: page_title_block
 settings:

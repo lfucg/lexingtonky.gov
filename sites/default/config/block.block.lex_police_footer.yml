@@ -11,7 +11,7 @@ dependencies:
 id: lex_police_footer
 theme: lex_police
 region: footer
-weight: -27
+weight: -25
 provider: null
 plugin: 'system_menu_block:footer'
 settings:

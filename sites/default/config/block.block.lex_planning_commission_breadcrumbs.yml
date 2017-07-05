@@ -9,7 +9,7 @@ dependencies:
 id: lex_planning_commission_breadcrumbs
 theme: lex_planning_commission
 region: breadcrumb
-weight: -26
+weight: -25
 provider: null
 plugin: system_breadcrumb_block
 settings:
