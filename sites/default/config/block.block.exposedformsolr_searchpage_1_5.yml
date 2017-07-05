@@ -1,4 +1,4 @@
-uuid: a8755488-de00-47ed-9cf5-fe525022aebb
+uuid: c44b071e-c88c-4988-9f75-027c5452969c
 langcode: en
 status: true
 dependencies:
@@ -9,9 +9,9 @@ dependencies:
     - views
   theme:
     - lex
-id: exposedformsolr_searchpage_1
+id: exposedformsolr_searchpage_1_5
 theme: lex
-region: sitemast
+region: title
 weight: 0
 provider: null
 plugin: 'views_exposed_filter_block:solr_search-page_1'
@@ -25,5 +25,5 @@ visibility:
   request_path:
     id: request_path
     pages: /search
-    negate: true
+    negate: false
     context_mapping: {  }
