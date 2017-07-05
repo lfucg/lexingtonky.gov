@@ -3,11 +3,9 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.body
     - search_api.index.pantheon_index
   module:
     - search_api
-    - text
 id: solr_search
 label: 'Solr Search'
 module: views
@@ -190,10 +188,10 @@ display:
           entity_type: null
           entity_field: null
           plugin_id: search_api
-        body:
-          id: body
-          table: search_api_datasource_pantheon_index_entity_node
-          field: body
+        rendered_item:
+          id: rendered_item
+          table: search_api_index_pantheon_index
+          field: rendered_item
           relationship: none
           group_type: group
           admin_label: ''
@@ -238,51 +236,42 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          click_sort_column: summary
-          type: text_summary_or_trimmed
-          settings:
-            trim_length: 300
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
+          link_to_item: false
           multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          field_rendering: true
-          fallback_handler: search_api
-          fallback_options:
-            link_to_item: false
-            multi_separator: ', '
-          entity_type: node
-          plugin_id: search_api_field
+          multi_separator: ', '
+          plugin_id: search_api
       filters:
-        search_api_fulltext:
-          id: search_api_fulltext
+        rendered_item:
+          id: rendered_item
           table: search_api_index_pantheon_index
-          field: search_api_fulltext
+          field: rendered_item
           relationship: none
           group_type: group
           admin_label: ''
-          operator: and
-          value: ''
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
           group: 1
-          exposed: false
+          exposed: true
           expose:
-            operator_id: ''
-            label: ''
+            operator_id: rendered_item_op
+            label: Search
             description: ''
             use_operator: false
-            operator: ''
-            identifier: ''
+            operator: rendered_item_op
+            identifier: search_api_fulltext
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
+              anonymous: '0'
+              editor: '0'
+              webmaster: '0'
+              administrator: '0'
+              final_order_admin: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -295,38 +284,40 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          parse_mode: terms
-          min_length: null
-          fields: {  }
-          plugin_id: search_api_fulltext
-      sorts:
-        search_api_relevance:
-          id: search_api_relevance
-          table: search_api_index_pantheon_index
-          field: search_api_relevance
+          plugin_id: search_api_text
+      sorts: {  }
+      title: Search
+      header: {  }
+      footer: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
           relationship: none
           group_type: group
           admin_label: ''
-          order: DESC
-          exposed: false
-          expose:
-            label: ''
-          plugin_id: search_api
-      title: 'Solr Search'
-      header: {  }
-      footer: {  }
-      empty: {  }
+          empty: true
+          tokenize: false
+          content:
+            value: 'We''re sorry, but there where no results for these terms.'
+            format: basic_html
+          plugin_id: text
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
+      filter_groups:
+        operator: AND
+        groups: {  }
+      show_admin_links: false
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
-      tags:
-        - 'config:field.storage.node.body'
+      tags: {  }
   page_1:
     display_plugin: page
     id: page_1
@@ -341,6 +332,6 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
-      tags:
-        - 'config:field.storage.node.body'
+      tags: {  }
