@@ -1,0 +1,25 @@
+uuid: e9e5fa12-86e2-4f71-a015-eef746dacee1
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:26dbf48b-c095-4c31-b761-cd1100647a3d'
+  module:
+    - block_content
+  theme:
+    - lex
+id: solrsearchform_2
+theme: lex
+region: sitemast
+weight: 0
+provider: null
+plugin: 'block_content:26dbf48b-c095-4c31-b761-cd1100647a3d'
+settings:
+  id: 'block_content:26dbf48b-c095-4c31-b761-cd1100647a3d'
+  label: 'Solr Search Form'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility: {  }

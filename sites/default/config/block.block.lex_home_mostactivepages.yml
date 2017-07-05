@@ -11,7 +11,7 @@ dependencies:
 id: lex_home_mostactivepages
 theme: lex_home
 region: hero
-weight: -25
+weight: -23
 provider: null
 plugin: 'system_menu_block:most-active-pages'
 settings:

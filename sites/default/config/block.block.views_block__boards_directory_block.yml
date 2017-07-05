@@ -12,7 +12,7 @@ dependencies:
 id: views_block__boards_directory_block
 theme: lex
 region: after_content
-weight: -27
+weight: -25
 provider: null
 plugin: 'views_block:boards_directory-block_1'
 settings:

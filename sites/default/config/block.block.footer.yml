@@ -11,7 +11,7 @@ dependencies:
 id: footer
 theme: lex
 region: footer
-weight: -27
+weight: -25
 provider: null
 plugin: 'system_menu_block:footer'
 settings:
