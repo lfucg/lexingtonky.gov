@@ -1,22 +1,22 @@
-uuid: 6eea9216-3637-4044-a003-3f9b22b3d582
+uuid: 34bfc86c-278c-4c8a-a597-57a2c87717e2
 langcode: en
 status: true
 dependencies:
   config:
-    - views.view.taxonomy_top_level
+    - views.view.final_orders
   module:
     - system
     - views
   theme:
     - lex
-id: lex_views_block__taxonomy_top_level_block_1
+id: views_block__final_orders_block_1
 theme: lex
 region: content
-weight: -22
+weight: -25
 provider: null
-plugin: 'views_block:taxonomy_top_level-block_1'
+plugin: 'views_block:final_orders-block_1'
 settings:
-  id: 'views_block:taxonomy_top_level-block_1'
+  id: 'views_block:final_orders-block_1'
   label: ''
   provider: views
   label_display: visible
@@ -25,6 +25,6 @@ settings:
 visibility:
   request_path:
     id: request_path
-    pages: '<front>'
+    pages: /final-orders
     negate: false
     context_mapping: {  }

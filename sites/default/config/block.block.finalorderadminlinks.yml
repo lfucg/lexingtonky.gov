@@ -1,17 +1,18 @@
 uuid: 7efab568-409e-415a-84a7-b150c45c2006
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - system.menu.final-order-admin
   module:
     - system
+    - user
   theme:
     - lex
 id: finalorderadminlinks
 theme: lex
-region: notices
-weight: -19
+region: title
+weight: -23
 provider: null
 plugin: 'system_menu_block:final-order-admin'
 settings:
@@ -27,3 +28,10 @@ visibility:
     pages: /final-orders
     negate: false
     context_mapping: {  }
+  user_role:
+    id: user_role
+    roles:
+      final_order_admin: final_order_admin
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
