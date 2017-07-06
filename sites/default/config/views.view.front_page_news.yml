@@ -390,7 +390,7 @@ display:
       css_class: ''
       use_more: false
       use_more_always: false
-      use_more_text: 'more news'
+      use_more_text: 'more'
       link_url: news/coming-soon
       link_display: page_1
       use_ajax: true
@@ -422,7 +422,7 @@ display:
         filters: false
         filter_groups: false
       use_more_always: true
-      use_more_text: 'more news'
+      use_more_text: 'more'
       pager:
         type: some
         options:
