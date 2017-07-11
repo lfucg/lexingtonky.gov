@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.browse_files
     - field.field.node.meeting.body
     - field.field.node.meeting.field_all_day
     - field.field.node.meeting.field_date
@@ -16,7 +17,7 @@ dependencies:
     - node.type.meeting
   module:
     - datetime
-    - file
+    - entity_browser
     - metatag
     - path
     - text
@@ -87,9 +88,15 @@ content:
   field_related_documents:
     weight: 13
     settings:
-      progress_indicator: throbber
+      entity_browser: browse_files
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_edit: true
+      open: false
+      view_mode: default
+      preview_image_style: thumbnail
     third_party_settings: {  }
-    type: file_generic
+    type: entity_browser_file
     region: content
   path:
     type: path

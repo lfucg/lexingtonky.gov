@@ -3,17 +3,16 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.browse_files
     - field.field.node.news_article.body
     - field.field.node.news_article.field_image
     - field.field.node.news_article.field_media_contact
     - field.field.node.news_article.field_metatags
     - field.field.node.news_article.field_related_departments
     - field.field.node.news_article.field_related_documents
-    - image.style.thumbnail
     - node.type.news_article
   module:
-    - file
-    - image
+    - entity_browser
     - metatag
     - paragraphs
     - path
@@ -42,10 +41,15 @@ content:
   field_image:
     weight: 8
     settings:
-      progress_indicator: throbber
+      entity_browser: browse_files
+      field_widget_remove: true
+      selection_mode: selection_append
       preview_image_style: thumbnail
+      field_widget_edit: true
+      open: false
+      view_mode: default
     third_party_settings: {  }
-    type: image_image
+    type: entity_browser_file
     region: content
   field_media_contact:
     type: entity_reference_paragraphs
@@ -73,9 +77,15 @@ content:
   field_related_documents:
     weight: 10
     settings:
-      progress_indicator: throbber
+      entity_browser: browse_files
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_edit: true
+      open: false
+      view_mode: default
+      preview_image_style: thumbnail
     third_party_settings: {  }
-    type: file_generic
+    type: entity_browser_file
     region: content
   path:
     type: path

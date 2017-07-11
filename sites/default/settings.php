@@ -50,6 +50,16 @@ if (file_exists($local_settings)) {
 }
 $settings['install_profile'] = 'standard';
 
+/**
+ * Define appropriate location for tmp directory
+ *
+ * Issue: https://github.com/pantheon-systems/drops-8/issues/114
+ *
+ */
+if (isset($_ENV['PANTHEON_ENVIRONMENT']) && PANTHEON_ENVIRONMENT !== 'kalabox') {
+  $config['system.file']['path']['temporary'] = $_SERVER['HOME'] .'/tmp';
+} 
+
 /*Add to settings.php*/
 
 // Relocate the compiled twig files to <binding-dir>/tmp/twig. This will improve
