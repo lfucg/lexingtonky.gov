@@ -1,0 +1,18 @@
+<?php
+/**
+ * @file
+ * These are the custom settings for the ckeditor in drupal.
+ */
+
+/**
+ * Implementation of hook_editor_js_settings_alter().
+ */
+function ckeditor_settings_editor_js_settings_alter(&$settings) {
+  foreach ($settings['editor']['formats'] as &$format) {
+    if ($format['editor'] === 'ckeditor') {
+      $format['editorSettings']['removePlugins'] = 'pastefromword';
+      $format['editorSettings']['forcePasteAsPlainText'] = TRUE;
+      $format['editorSettings']['pasteFromWordPromptCleanup'] = FALSE;
+    }
+  }
+}

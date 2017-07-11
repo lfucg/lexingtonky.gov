@@ -222,17 +222,3 @@ function lex_theme_suggestions_page_alter(array &$suggestions, array $variables)
     }
   }
 }
-
-/**
- * Hook to supress the word pasting headaches.
- */
-function lex_theme_wysiwyg_editor_settings_alter(&$settings, &$context) {
-  if($context['profile']->editor == 'ckeditor') {
-    $settings['pasteFromWordRemoveFontStyles'] = true;
-    $settings['pasteFromWordRemoveStyles'] = true;
-    $settings['forcePasteAsPlainText'] = true;
-    $settings['pasteFromWordPromptCleanup'] = false;
-    $settings['disableObjectResizing'] = false;
-    $settings['disableNativeSpellChecker'] = false;
-  }
-}
