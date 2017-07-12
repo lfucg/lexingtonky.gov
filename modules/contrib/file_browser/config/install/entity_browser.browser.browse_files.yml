@@ -8,7 +8,7 @@ dependencies:
     module:
       - file_browser
 name: browse_files
-label: 'Browser for files'
+label: 'Browser for all files'
 display: iframe
 display_configuration:
   width: '100%'

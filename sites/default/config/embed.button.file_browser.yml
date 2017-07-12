@@ -1,7 +1,9 @@
-uuid: 4b835f6a-c12f-45c3-bba0-519a64438d85
+uuid: c218cc81-0dd8-4939-9b9e-dbc55c49d786
 langcode: en
 status: true
 dependencies:
+  content:
+    - 'file:file:db2cad05-1e3b-4b35-b163-99d7d036130c'
   module:
     - entity_embed
     - file

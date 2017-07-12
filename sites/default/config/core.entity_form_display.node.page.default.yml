@@ -1,9 +1,9 @@
-uuid: 5aee4798-9ee0-486f-aa00-d2df4e18caa2
+uuid: 79e80785-406f-4bff-b7ad-42bcd1512867
 langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.browse_files
+    - entity_browser.browser.browse_nonimage_files
     - field.field.node.page.body
     - field.field.node.page.field_lex_custom_banner_image
     - field.field.node.page.field_lex_site_nav
@@ -30,13 +30,15 @@ content:
   created:
     type: datetime_timestamp
     weight: 3
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_lex_custom_banner_image:
+    type: entity_browser_file
     weight: 9
+    region: content
     settings:
-      entity_browser: browse_files
+      entity_browser: browse_files_images
       field_widget_remove: true
       selection_mode: selection_append
       preview_image_style: thumbnail
@@ -44,71 +46,43 @@ content:
       open: false
       view_mode: default
     third_party_settings: {  }
-    type: entity_browser_file
-    region: content
   field_lex_site_nav:
+    type: entity_reference_autocomplete
     weight: 6
-    settings: {  }
-    third_party_settings: {  }
-    type: options_select
     region: content
-  field_metatags:
-    weight: 11
-    settings: {  }
-    third_party_settings: {  }
-    type: metatag_firehose
-    region: content
-  field_office_to_contact:
-    weight: 7
-    settings: {  }
-    third_party_settings: {  }
-    type: options_select
-    region: content
-  field_page_overview:
-    weight: 1
-    settings:
-      rows: 9
-      summary_rows: 3
-      placeholder: ''
-    third_party_settings: {  }
-    type: text_textarea_with_summary
-    region: content
-  field_page_section:
-    type: entity_reference_paragraphs
-    weight: 5
-    settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: dropdown
-      form_display_mode: default
-    third_party_settings: {  }
-    region: content
-  field_related_departments:
-    type: entity_reference_autocomplete_tags
-    weight: 12
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_metatags:
+    type: metatag_firehose
+    weight: 11
     region: content
-  field_related_documents:
-    weight: 8
-    settings:
-      entity_browser: browse_files
-      field_widget_remove: true
-      selection_mode: selection_append
-      field_widget_edit: true
-      open: false
-      view_mode: default
-      preview_image_style: thumbnail
+    settings: {  }
     third_party_settings: {  }
-    type: entity_browser_file
+  field_office_to_contact:
+    type: entity_reference_autocomplete
+    weight: 7
     region: content
-  field_sidebar_section:
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_page_overview:
+    type: text_textarea_with_summary
+    weight: 1
+    region: content
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  field_page_section:
     type: entity_reference_paragraphs
-    weight: 10
+    weight: 5
+    region: content
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -116,21 +90,53 @@ content:
       add_mode: dropdown
       form_display_mode: default
     third_party_settings: {  }
+  field_related_departments:
+    type: entity_reference_autocomplete
+    weight: 12
     region: content
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_related_documents:
+    type: entity_browser_file
+    weight: 8
+    region: content
+    settings:
+      entity_browser: browse_nonimage_files
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_edit: true
+      open: false
+      view_mode: default
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_sidebar_section:
+    type: entity_reference_paragraphs
+    weight: 10
+    region: content
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+    third_party_settings: {  }
   path:
     type: path
     weight: 4
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   title:
     type: string_textfield
     weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 2
@@ -138,8 +144,8 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
-    third_party_settings: {  }
     region: content
+    third_party_settings: {  }
 hidden:
   body: true
   promote: true

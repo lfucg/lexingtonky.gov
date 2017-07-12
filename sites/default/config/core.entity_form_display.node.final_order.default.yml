@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.browse_files
     - field.field.node.final_order.field_address
     - field.field.node.final_order.field_final_order_date
     - field.field.node.final_order.field_final_order_docs
@@ -14,7 +13,6 @@ dependencies:
     - node.type.final_order
   module:
     - datetime
-    - entity_browser
     - gis_api
     - metatag
     - workbench_moderation
@@ -42,19 +40,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
-    region: content
-  field_final_order_docs:
-    weight: 8
-    settings:
-      entity_browser: browse_files
-      field_widget_remove: true
-      selection_mode: selection_append
-      field_widget_edit: true
-      open: false
-      view_mode: default
-      preview_image_style: thumbnail
-    third_party_settings: {  }
-    type: entity_browser_file
     region: content
   field_metatags:
     weight: 26
@@ -102,6 +87,7 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
+  field_final_order_docs: true
   path: true
   promote: true
   sticky: true

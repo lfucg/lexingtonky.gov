@@ -1,4 +1,4 @@
-uuid: 59fc9b8c-a463-49f1-a26d-b22f3088b1f0
+uuid: 786a67c7-653a-4a1f-92c1-0e295c2db735
 langcode: und
 status: true
 dependencies:
@@ -11,9 +11,9 @@ dependencies:
     - dropzonejs_eb_widget
     - views
 _core:
-  default_config_hash: N3y52bEZkiYEw6HW7b1KtTa3p_cZCsW75tHh8Mnbuz0
+  default_config_hash: bcUfWoQZHotEO9X1qaJnO1LAFwE9ra-35lDTLRYoaZ8
 name: browse_files
-label: 'Browser for files'
+label: 'Browser for all files'
 display: iframe
 display_configuration:
   width: 100%

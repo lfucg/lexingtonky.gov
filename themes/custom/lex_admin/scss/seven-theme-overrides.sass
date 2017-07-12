@@ -1,25 +1,47 @@
-.entity-browser-browse-files-form
+.entity-browser-browse-files-images-form
   .view-content
     display: flex
     flex-flow: row wrap
     justify-content: space-between
     align-items: flex-start
-    width: auto !important
-    height: auto !important
-
-    .grid-sizer, .gutter-sizer
-      display: none
 
     .grid-item
       width: 10em
-      position: relative !important
-      top: auto !important
-      left: auto !important
-      right: auto !important
-      bottom: auto !important
+      padding: 0.25em
+      margin: 0.25em
+      word-break: break-all
+      background: #eee
+      cursor: pointer
+      img
+        max-width: 100%
+        height: auto
 
-      display: flex
-      flex-flow: column nowrap
+      &:hover
+        background: #ffc
 
-      .grid-item-info
-        position: static
+.entity-browser-browse-nonimage-files-form
+  .view-content
+    display: table
+    width: 100%
+
+  .views-field-file-browser-preview
+    display: none
+
+  .grid-item
+    display: table-row 
+    cursor: pointer
+
+  .views-field-nothing
+    display: table-cell 
+    padding: 0.5em
+
+  .grid-item:nth-child(even) .views-field-nothing
+    background: #eee
+
+  .grid-item:hover .views-field-nothing
+    background: #ffc
+
+  .grid-item-info
+    display: flex
+    flex-flow: row nowrap
+    justify-content: space-between

@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.browse_files
     - field.field.node.board_commission.field_granicus_id
     - field.field.node.board_commission.field_lex_custom_banner_image
     - field.field.node.board_commission.field_lex_site_nav
@@ -15,7 +14,6 @@ dependencies:
     - field.field.node.board_commission.field_related_documents
     - node.type.board_commission
   module:
-    - entity_browser
     - metatag
     - paragraphs
     - path
@@ -38,19 +36,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: number
-    region: content
-  field_lex_custom_banner_image:
-    weight: 3
-    settings:
-      entity_browser: browse_files
-      field_widget_remove: true
-      selection_mode: selection_append
-      preview_image_style: thumbnail
-      field_widget_edit: true
-      open: false
-      view_mode: default
-    third_party_settings: {  }
-    type: entity_browser_file
     region: content
   field_metatags:
     weight: 27
@@ -90,19 +75,6 @@ content:
     third_party_settings: {  }
     type: entity_reference_paragraphs
     region: content
-  field_related_documents:
-    weight: 26
-    settings:
-      entity_browser: browse_files
-      field_widget_remove: true
-      selection_mode: selection_append
-      field_widget_edit: true
-      open: false
-      view_mode: default
-      preview_image_style: thumbnail
-    third_party_settings: {  }
-    type: entity_browser_file
-    region: content
   path:
     type: path
     weight: 8
@@ -141,4 +113,6 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
+  field_lex_custom_banner_image: true
   field_lex_site_nav: true
+  field_related_documents: true

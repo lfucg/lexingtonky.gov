@@ -25,6 +25,7 @@ module:
   dynamic_page_cache: 0
   editor: 0
   embed: 0
+  entity: 0
   entity_browser: 0
   entity_embed: 0
   entity_reference_revisions: 0
@@ -44,6 +45,7 @@ module:
   lex_themecontrol: 0
   link: 0
   masquerade: 0
+  media_entity: 0
   menu_ui: 0
   metatag: 0
   metatag_facebook: 0
