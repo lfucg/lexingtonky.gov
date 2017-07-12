@@ -33,6 +33,7 @@ settings:
             - Blockquote
             - DrupalImage
             - Embed
+            - file_browser
         -
           name: Tools
           items:
