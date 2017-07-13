@@ -5,6 +5,7 @@ dependencies:
   module:
     - ckeditor_media_embed
     - editor
+    - entity_embed
 name: 'Full HTML'
 format: full_html
 weight: -7
@@ -72,4 +73,10 @@ filters:
     provider: filter
     status: false
     weight: -41
+    settings: {  }
+  entity_embed:
+    id: entity_embed
+    provider: entity_embed
+    status: true
+    weight: 0
     settings: {  }
