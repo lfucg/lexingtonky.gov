@@ -154,12 +154,17 @@ class TwigExtension extends \Twig_Extension {
    * Returns the event start and end times for a given string.
    */
   public function getLexDateTime($event) {
-    return $this->parseEventTimeString(
-      $event['field_date']['#object']->field_date->value,
-      $event['field_date']['#object']->field_date_end->value,
-      $event['field_date']['#object']->field_all_day->value,
-      $event['field_date']['#object']->field_recurring_event->value
-    );
+    if (isset($event['field_date']) && isset($event['field_date']['#object'])) {
+      return $this->parseEventTimeString(
+        $event['field_date']['#object']->field_date->value,
+        $event['field_date']['#object']->field_date_end->value,
+        $event['field_date']['#object']->field_all_day->value,
+        $event['field_date']['#object']->field_recurring_event->value
+      );
+    }
+    else {
+      return '';
+    }
   }
 
   /**

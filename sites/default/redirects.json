@@ -1,5 +1,9 @@
 [
   {
+    "old_path": "/meeting-notices",
+    "new_path": "/calendar/meetings"
+  },
+  {
     "old_path": "/index.aspx?page=1918",
     "new_path": "/traffic-ticker"
   },
