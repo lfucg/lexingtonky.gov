@@ -241,26 +241,23 @@ display:
           multi_separator: ', '
           plugin_id: search_api
       filters:
-        rendered_item:
-          id: rendered_item
+        search_api_fulltext:
+          id: search_api_fulltext
           table: search_api_index_pantheon_index
-          field: rendered_item
+          field: search_api_fulltext
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
+          operator: and
+          value: ''
           group: 1
           exposed: true
           expose:
-            operator_id: rendered_item_op
-            label: Search
+            operator_id: search_api_fulltext_op
+            label: 'Fulltext search'
             description: ''
             use_operator: false
-            operator: rendered_item_op
+            operator: search_api_fulltext_op
             identifier: search_api_fulltext
             required: false
             remember: false
@@ -284,8 +281,23 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: search_api_text
-      sorts: {  }
+          parse_mode: phrase
+          min_length: null
+          fields: {  }
+          plugin_id: search_api_fulltext
+      sorts:
+        search_api_relevance:
+          id: search_api_relevance
+          table: search_api_index_pantheon_index
+          field: search_api_relevance
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: search_api
       title: Search
       header: {  }
       footer: {  }

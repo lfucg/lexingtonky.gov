@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.browse_nonimage_files
     - field.field.node.page.body
     - field.field.node.page.field_lex_custom_banner_image
     - field.field.node.page.field_lex_site_nav
@@ -14,9 +13,11 @@ dependencies:
     - field.field.node.page.field_related_departments
     - field.field.node.page.field_related_documents
     - field.field.node.page.field_sidebar_section
+    - image.style.thumbnail
     - node.type.page
   module:
-    - entity_browser
+    - file
+    - image
     - metatag
     - paragraphs
     - path
@@ -34,17 +35,12 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_lex_custom_banner_image:
-    type: entity_browser_file
+    type: image_image
     weight: 9
     region: content
     settings:
-      entity_browser: browse_files_images
-      field_widget_remove: true
-      selection_mode: selection_append
       preview_image_style: thumbnail
-      field_widget_edit: true
-      open: false
-      view_mode: default
+      progress_indicator: throbber
     third_party_settings: {  }
   field_lex_site_nav:
     type: entity_reference_autocomplete
@@ -100,17 +96,11 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_related_documents:
-    type: entity_browser_file
+    type: file_generic
     weight: 8
     region: content
     settings:
-      entity_browser: browse_nonimage_files
-      field_widget_remove: true
-      selection_mode: selection_append
-      field_widget_edit: true
-      open: false
-      view_mode: default
-      preview_image_style: thumbnail
+      progress_indicator: throbber
     third_party_settings: {  }
   field_sidebar_section:
     type: entity_reference_paragraphs
