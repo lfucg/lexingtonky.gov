@@ -32,6 +32,8 @@ trait EventFetch {
       ->condition('type', $contentType)
       ->condition('field_date', $this->events->getStart()->format('Y-m-d'), '>=');
 
+    $query = $this->modifyEventQuery($query);
+
     $this->events->addEvents($this->entityManager->getStorage('node')->loadMultiple($query->execute()));
 
     /*
@@ -43,6 +45,19 @@ trait EventFetch {
       ->condition('type', $contentType)
       ->condition('field_recurring_event', ['Weekly', 'Monthly'], 'IN');
 
+    $query = $this->modifyEventQuery($query);
+
     $this->events->addRecurringEvents($this->entityManager->getStorage('node')->loadMultiple($query->execute()));
+  }
+
+  /**
+   * Allow implementing classes to add additional conditions.
+   *
+   * @param $query Query Object
+   *
+   * @return Query object
+   */
+  protected function modifyEventQuery($query) {
+    return $query;
   }
 }

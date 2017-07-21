@@ -6,6 +6,10 @@ if (php_sapi_name() != "cli") {
     include $redirects;
   }
 }
+/**
+ * Insure timezone is set correctly.
+ */
+date_default_timezone_set('America/New_York');
 
 /**
  * Load services definition file.
@@ -56,7 +60,7 @@ $settings['install_profile'] = 'standard';
  * Issue: https://github.com/pantheon-systems/drops-8/issues/114
  *
  */
-if (isset($_ENV['PANTHEON_ENVIRONMENT']) && PANTHEON_ENVIRONMENT !== 'kalabox') {
+if (isset($_ENV['PANTHEON_ENVIRONMENT']) && $_ENV['PANTHEON_ENVIRONMENT'] !== 'kalabox') {
   $config['system.file']['path']['temporary'] = $_SERVER['HOME'] .'/tmp';
 } 
 
