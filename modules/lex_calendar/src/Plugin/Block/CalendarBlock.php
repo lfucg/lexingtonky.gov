@@ -142,22 +142,29 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
 
     $entity = $this->routeMatch->getParameter('node');
 
-    if ($entity instanceof ContentEntityInterface) {
-      $related = $entity->get('field_related_departments')->getValue();
-      if (empty($related)) { 
-        $related = $entity->get('field_office_to_contact')->getValue();
-echo '<pre>';var_dump($related); echo '</pre>';
+    try {
+      if ($entity instanceof ContentEntityInterface) {
+        $related = $entity->get('field_related_departments')->getValue();
+        if (empty($related)) { 
+          $related = $entity->get('field_office_to_contact')->getValue();
 
-        if (!empty($related)) {
-          $this->filterField = 'field_locations';
+          if (!empty($related)) {
+            $this->filterField = 'field_locations';
+            $this->targetDepartment = $related[0]['target_id'];
+          }
+        }
+        else {
+          $this->filterField = 'field_related_departments';
           $this->targetDepartment = $related[0]['target_id'];
         }
       }
-      else {
-        $this->filterField = 'field_related_departments';
-        $this->targetDepartment = $related[0]['target_id'];
-      }
-    }
+    } 
+    /*
+     * On pages that don't have related departments or offices to contact,
+     * such as the home page, we simply proceed without filling out these
+     * fields. This results in a query of all possible meetings or events.
+     */
+    catch ( \InvalidArgumentException $e ) {}
   }
 
   /**
