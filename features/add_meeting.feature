@@ -9,7 +9,8 @@ Scenario: Meetings appear on calendar
   And I select the term "Addison Park" by id "edit-field-locations"
   And I select the term "-Accounting" by id "edit-field-related-departments"
 
-  When I fill in "edit-field-date-0-value-date" with "07/18/2045"
+  #TODO - automate putting in tomorrow's date. The new calendar looks out only 1 month.
+  When I fill in "edit-field-date-0-value-date" with "08/18/2017"
   And I fill in "edit-field-date-0-value-time" with "09:30:00 AM"
   # optional end date
   # And I fill in "edit-field-date-end-0-value-date" with "<end date>"

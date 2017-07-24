@@ -139,24 +139,14 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
   }
 
   protected function setQueryModification() {
-
     $entity = $this->routeMatch->getParameter('node');
 
     try {
-      if ($entity instanceof ContentEntityInterface) {
-        $related = $entity->get('field_related_departments')->getValue();
-        if (empty($related)) { 
-          $related = $entity->get('field_office_to_contact')->getValue();
+      $related = $entity->get('field_organization_taxonomy_term')->getValue();
 
-          if (!empty($related)) {
-            $this->filterField = 'field_locations';
-            $this->targetDepartment = $related[0]['target_id'];
-          }
-        }
-        else {
-          $this->filterField = 'field_related_departments';
-          $this->targetDepartment = $related[0]['target_id'];
-        }
+      if (!empty($related)) {
+        $this->filterField = 'field_related_departments';
+        $this->targetDepartment = $related[0]['target_id'];
       }
     } 
     /*
