@@ -24,7 +24,9 @@ visibility:
   node_type:
     id: node_type
     bundles:
+      board_commission: board_commission
       organization_page: organization_page
+      page: page
     negate: false
     context_mapping:
       node: '@node.node_route_context:node'
