@@ -202,7 +202,7 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
         '#theme' => 'lex_calendar_event_block',
         '#dates' => $dates,
         '#content_type' => $this->contentType,
-        '#cache' => ['max-age' => 1200]
+        '#cache' => ['max-age' => 0]
       ];
     }
     else {
