@@ -202,12 +202,11 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
         '#theme' => 'lex_calendar_event_block',
         '#dates' => $dates,
         '#content_type' => $this->contentType,
-        # Force Git to detect change to next line.
         '#cache' => ['max-age' => 0]
       ];
     }
     else {
-      return [];
+      return ['#cache' => ['max-age' => 0]];
     }
   }
 
