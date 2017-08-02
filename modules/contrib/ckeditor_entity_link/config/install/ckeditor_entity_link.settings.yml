@@ -1,0 +1,32 @@
+entity_types:
+  node: node
+  file: file
+  taxonomy_term: taxonomy_term
+  comment: 0
+  contact_message: 0
+  block_content: 0
+  menu_link_content: 0
+  shortcut: 0
+  user: 0
+node_bundles:
+  article: 0
+  entity_browser_test: 0
+  page: 0
+0_bundles: null
+file_bundles:
+  file: 0
+comment_bundles:
+  comment: 0
+contact_message_bundles:
+  feedback: 0
+  personal: 0
+block_content_bundles:
+  basic: 0
+menu_link_content_bundles:
+  menu_link_content: 0
+shortcut_bundles:
+  default: 0
+taxonomy_term_bundles:
+  tags: 0
+user_bundles:
+  user: 0

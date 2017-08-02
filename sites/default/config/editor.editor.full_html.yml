@@ -27,6 +27,7 @@ settings:
           items:
             - DrupalLink
             - DrupalUnlink
+            - EntityLink
         -
           name: Lists
           items:
@@ -40,6 +41,7 @@ settings:
             - Table
             - HorizontalRule
             - Embed
+            - file_browser
         -
           name: 'Block Formatting'
           items:

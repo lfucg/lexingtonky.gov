@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.browse_nonimage_files
     - field.field.node.news_article.body
     - field.field.node.news_article.field_image
     - field.field.node.news_article.field_media_contact
@@ -11,6 +12,7 @@ dependencies:
     - field.field.node.news_article.field_related_documents
     - node.type.news_article
   module:
+    - entity_browser
     - metatag
     - paragraphs
     - path
@@ -36,9 +38,22 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
+  field_image:
+    type: entity_browser_file
+    weight: 10
+    region: content
+    settings:
+      entity_browser: browse_files_images
+      field_widget_remove: true
+      selection_mode: selection_append
+      preview_image_style: thumbnail
+      field_widget_edit: true
+      open: false
+      view_mode: default
+    third_party_settings: {  }
   field_media_contact:
     type: entity_reference_paragraphs
-    weight: 9
+    weight: 8
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -48,7 +63,7 @@ content:
     third_party_settings: {  }
     region: content
   field_metatags:
-    weight: 26
+    weight: 9
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
@@ -59,6 +74,19 @@ content:
     third_party_settings: {  }
     type: options_select
     region: content
+  field_related_documents:
+    type: entity_browser_file
+    weight: 11
+    region: content
+    settings:
+      entity_browser: browse_nonimage_files
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_edit: true
+      open: false
+      view_mode: default
+      preview_image_style: thumbnail
+    third_party_settings: {  }
   path:
     type: path
     weight: 6
@@ -96,6 +124,4 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-hidden:
-  field_image: true
-  field_related_documents: true
+hidden: {  }

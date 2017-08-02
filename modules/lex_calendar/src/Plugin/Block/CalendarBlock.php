@@ -55,11 +55,6 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
   protected $targetDepartment = NULL;
 
   /**
-   * Field to filter the above.
-   */
-  protected $filterField = NULL;
-
-  /**
    * Constructs a CalendarController object.
    *
    * @param array $configuration
@@ -109,6 +104,18 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
       '#required' => TRUE
     ];
 
+    $form['show_all'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Show All Events'),
+      '#description' => $this->t('If there is no related department, do we show all possible events?'),
+      '#options' => [
+        'yes' => $this->t('Yes'),
+        'no' =>$this->t('No')
+      ],
+      '#default_value' => isset($config['show_all']) ? $config['show_all'] : 'no',
+      '#required' => TRUE
+    ];
+
     return $form;
   }
 
@@ -119,8 +126,10 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
     parent::blockSubmit($form, $form_state);
     $config = $this->getConfiguration();
     $values = $form_state->getValues();
-    $this->configuration['display_limit'] = $values['display_limit'];
-    $this->configuration['content_type'] = $values['content_type'];
+
+    foreach (['display_limit', 'content_type', 'show_all'] as $key) {
+      $this->configuration[$key] = $values[$key];
+    }
   }
 
   /**
@@ -143,18 +152,17 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
 
     try {
       $related = $entity->get('field_organization_taxonomy_term')->getValue();
-
-      if (!empty($related)) {
-        $this->filterField = 'field_related_departments';
-        $this->targetDepartment = $related[0]['target_id'];
-      }
     } 
-    /*
-     * On pages that don't have related departments or offices to contact,
-     * such as the home page, we simply proceed without filling out these
-     * fields. This results in a query of all possible meetings or events.
-     */
-    catch ( \InvalidArgumentException $e ) {}
+    catch ( \InvalidArgumentException $e ) {
+      try {
+        $related = $entity->get('field_related_departments')->getValue();
+      }
+      catch( \InvalidArgumentException $e) {}
+    }
+
+    if (!empty($related)) {
+      $this->targetDepartment = $related[0]['target_id'];
+    }
   }
 
   /**
@@ -169,6 +177,10 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
     }
 
     $this->setQueryModification();
+
+    if ($config['show_all'] === 'no' && empty($this->targetDepartment)) {
+      return ['#cache' => ['max-age' => 0]];
+    }
 
     $this->events->clear();
     $this->queryEvents($this->contentType,
@@ -212,7 +224,7 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
 
   protected function modifyEventQuery($query) {
     return $this->targetDepartment ? 
-      $query->condition($this->filterField, $this->targetDepartment) : 
+      $query->condition('field_related_departments', $this->targetDepartment) : 
       $query;
   }
 }

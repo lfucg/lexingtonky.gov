@@ -1,0 +1,15 @@
+ckeditor_entity_link.dialog:
+  path: '/ckeditor-entity-link/dialog/{filter_format}'
+  defaults:
+    _form: '\Drupal\ckeditor_entity_link\Form\CKEditorEntityLinkDialog'
+    _title: 'Add link'
+  requirements:
+    _entity_access: 'filter_format.use'
+
+ckeditor_entity_link.config_form:
+  path: '/admin/config/content/ckeditor_entity_link'
+  defaults:
+    _form: '\Drupal\ckeditor_entity_link\Form\CKEditorEntityLinkConfigForm'
+    _title: 'CKEditor Entity Link settings'
+  requirements:
+    _permission: 'administer ckeditor_entity_link'

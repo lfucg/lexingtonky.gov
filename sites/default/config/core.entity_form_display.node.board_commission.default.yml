@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.browse_nonimage_files
     - field.field.node.board_commission.field_granicus_id
     - field.field.node.board_commission.field_lex_custom_banner_image
     - field.field.node.board_commission.field_lex_site_nav
@@ -14,6 +15,7 @@ dependencies:
     - field.field.node.board_commission.field_related_documents
     - node.type.board_commission
   module:
+    - entity_browser
     - metatag
     - paragraphs
     - path
@@ -26,31 +28,44 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 4
     settings: {  }
     third_party_settings: {  }
     region: content
   field_granicus_id:
-    weight: 10
+    weight: 9
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: number
     region: content
+  field_lex_custom_banner_image:
+    type: entity_browser_file
+    weight: 13
+    region: content
+    settings:
+      entity_browser: browse_files_images
+      field_widget_remove: true
+      selection_mode: selection_append
+      preview_image_style: thumbnail
+      field_widget_edit: true
+      open: false
+      view_mode: default
+    third_party_settings: {  }
   field_metatags:
-    weight: 27
+    weight: 11
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
     region: content
   field_office_to_contact:
-    weight: 11
+    weight: 10
     settings: {  }
     third_party_settings: {  }
     type: options_select
     region: content
   field_organization_taxonomy_term:
-    weight: 9
+    weight: 8
     settings: {  }
     third_party_settings: {  }
     type: options_select
@@ -75,9 +90,22 @@ content:
     third_party_settings: {  }
     type: entity_reference_paragraphs
     region: content
+  field_related_documents:
+    type: entity_browser_file
+    weight: 12
+    region: content
+    settings:
+      entity_browser: browse_nonimage_files
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_edit: true
+      open: false
+      view_mode: default
+      preview_image_style: thumbnail
+    third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 7
     settings: {  }
     third_party_settings: {  }
     region: content
@@ -85,14 +113,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 5
     third_party_settings: {  }
     region: content
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 6
     third_party_settings: {  }
     region: content
   title:
@@ -105,7 +133,7 @@ content:
     region: content
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
@@ -113,6 +141,4 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
-  field_lex_custom_banner_image: true
   field_lex_site_nav: true
-  field_related_documents: true

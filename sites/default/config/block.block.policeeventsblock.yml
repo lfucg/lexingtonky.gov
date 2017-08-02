@@ -1,4 +1,4 @@
-uuid: f18a849a-e2b3-4480-a903-2ec3f978b201
+uuid: 6f86af5a-a83f-42cf-9ec5-1c8846a30a9b
 langcode: en
 status: true
 dependencies:
@@ -6,9 +6,9 @@ dependencies:
     - lex_calendar
     - node
   theme:
-    - lex
-id: eventsblock
-theme: lex
+    - lex_police
+id: policeeventsblock
+theme: lex_police
 region: sidebar
 weight: 0
 provider: null
@@ -25,7 +25,6 @@ visibility:
   node_type:
     id: node_type
     bundles:
-      board_commission: board_commission
       news_article: news_article
       organization_page: organization_page
       page: page

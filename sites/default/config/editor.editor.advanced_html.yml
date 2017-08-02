@@ -22,6 +22,7 @@ settings:
           items:
             - DrupalLink
             - DrupalUnlink
+            - EntityLink
         -
           name: Lists
           items:
@@ -33,6 +34,7 @@ settings:
             - Blockquote
             - DrupalImage
             - Embed
+            - file_browser
         -
           name: Tools
           items:

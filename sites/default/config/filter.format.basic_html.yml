@@ -16,7 +16,7 @@ filters:
     status: false
     weight: -50
     settings:
-      allowed_html: '<em> <strong> <cite> <blockquote cite> <code> <ul type> <ol type start> <li> <dl> <dt> <dd> <h3 id> <h4 id> <h5 id> <h6 id> <p> <br> <span> <img width height data-caption data-align data-entity-uuid data-entity-type alt src> <a hreflang href class="lex-calltoaction"> <div data-oembed-url> <oembed> <h1> <h2> <pre> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button>'
+      allowed_html: '<em> <strong> <cite> <blockquote cite> <code> <ul type> <ol type start> <li> <dl> <dt> <dd> <h3 id> <h4 id> <h5 id> <h6 id> <p> <br> <span> <img width height data-caption data-align data-entity-uuid data-entity-type alt src> <div data-oembed-url> <oembed> <h1> <h2> <pre> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button> <a hreflang href !href class="lex-calltoaction">'
       filter_html_help: false
       filter_html_nofollow: false
   filter_align:

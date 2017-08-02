@@ -1,0 +1,5 @@
+ckeditor_entity_link.config_form:
+  title: 'CKEditor Entity Link settings'
+  parent: system.admin_config_content
+  description: 'Manage CKEditor Entity Link settings.'
+  route_name: ckeditor_entity_link.config_form
