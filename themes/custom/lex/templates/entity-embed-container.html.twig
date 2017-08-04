@@ -12,8 +12,4 @@
  * @ingroup themeable
  */
 #}
-{% if attributes.hasClass('embedded-file') %}
 {{ children }}
-{% else %}
-<article {{ attributes }}>{{ children }}</article>
-{% endif %}

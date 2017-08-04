@@ -85,8 +85,8 @@ h6
   font-size: 1.1em
   font-style: italic
 
-hr 
-  border: none 
+hr
+  border: none
   border-top: 1px solid $color-secondary-4
   margin: 2em auto
 
@@ -268,38 +268,43 @@ main
     margin-bottom: 0
 
 
-.align-left, .align-right
-  max-width: 50%
-  margin: 1em 2em
+@media (min-width: $screen-phablet-min)
+  .align-left, .align-right
+    max-width: 50%
+    margin: 0 2em 1em 2em
 
-  &:first-child
-    margin-top: 0
+  .align-left
+    float: left
+    margin-left: 0
 
-.align-left
-  float: left
-  margin-left: 0
+  .align-right
+    float: right
+    margin-right: 0
 
-.align-right
-  float: right
-  margin-right: 0
+.lex-region-content
+  img
+    max-width: 100%
+    margin: 1em auto
 
-.lex-region-content img:not(.align-left):not(.align-right)
-  width: 100%
-  margin-left: auto
-  margin-right: auto
+  @media (min-width: $screen-phablet-min)
+    figure img
+      margin: 0
+
+  figcaption
+    text-align: center
+
+@media (max-width: $screen-phone-max)
+  figure
+    &.align-left, &.align-right
+      float: none
+    margin: 1em 0
+
 
 .lex-hide-initially
   display: none
 
 .lex-event-list ol
   margin-left: 0
-
-@media (max-width: $screen-phone-max)
-  .align-left, .align-right
-    float: none
-    max-width: 100%
-    margin: 1em auto
-
 
 // Article listings.
 .article
