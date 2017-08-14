@@ -21,7 +21,13 @@
     },
     "require": {
         "solarium/solarium": "3.8.*",
-        "drupal/search_api": "~1.0"
+        "drupal/search_api": "~1.2"
+    },
+    "require-dev": {
+        "drupal/facets": "1.x-dev",
+        "drupal/geofield": "1.x-dev",
+        "drupal/search_api_autocomplete": "1.x-dev",
+        "drupal/search_api_location": "1.x-dev"
     },
     "suggest": {
         "drupal/facets": "Provides facetted search.",

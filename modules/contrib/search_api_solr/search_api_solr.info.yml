@@ -4,10 +4,10 @@ description: 'Offers an implementation of the Search API that uses an Apache Sol
 # core: 8.x
 package: Search
 dependencies:
- - search_api
+ - search_api (>=8.x-1.2)
 
-# Information added by Drupal.org packaging script on 2017-05-17
-version: '8.x-1.0-rc3'
+# Information added by Drupal.org packaging script on 2017-06-27
+version: '8.x-1.0'
 core: '8.x'
 project: 'search_api_solr'
-datestamp: 1495024997
+datestamp: 1498580649

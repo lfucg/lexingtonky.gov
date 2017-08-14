@@ -146,6 +146,13 @@ class SearchApiSolrTest extends BackendTestBase {
   /**
    * {@inheritdoc}
    */
+  protected function backendSpecificRegressionTests() {
+    $this->regressionTest2888629();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function indexItems($index_id) {
     $index_status = parent::indexItems($index_id);
     sleep($this->waitForCommit);
@@ -219,6 +226,33 @@ class SearchApiSolrTest extends BackendTestBase {
     $facets = $results->getExtraData('search_api_facets', array())['body'];
     usort($facets, array($this, 'facetCompare'));
     $this->assertEquals($expected, $facets, 'Correct facets were returned for a fulltext field.');
+  }
+
+  /**
+   * Regression tests for #2888629.
+   */
+  protected function regressionTest2888629() {
+    $query = $this->buildSearch();
+    $query->addCondition('category', NULL);
+    $results = $query->execute();
+    $this->assertResults([3], $results, 'comparing against NULL');
+
+    $query = $this->buildSearch();
+    $conditions = $query->createConditionGroup('OR');
+    $conditions->addCondition('category', 'article_category', '<>');
+    $conditions->addCondition('category', NULL);
+    $query->addConditionGroup($conditions);
+    $results = $query->execute();
+    $this->assertResults([1, 2, 3], $results, 'group comparing against category NOT article_category OR category NULL');
+
+    $query = $this->buildSearch();
+    $conditions = $query->createConditionGroup('AND');
+    $conditions->addCondition('body', NULL, '<>');
+    $conditions->addCondition('category', 'article_category', '<>');
+    $conditions->addCondition('category', NULL, '<>');
+    $query->addConditionGroup($conditions);
+    $results = $query->execute();
+    $this->assertResults([1, 2], $results, 'group comparing against body NOT NULL AND category NOT article_category AND category NOT NULL');
   }
 
   /**
@@ -314,15 +348,15 @@ class SearchApiSolrTest extends BackendTestBase {
     $query = $this->buildSearch();
     $query->addCondition('x', 5, '<>');
     $fq = $this->invokeMethod($backend, 'getFilterQueries', [$query, $mapping, $fields, &$options]);
-    $this->assertEquals('-solr_x:"5"', $fq[0]['query']);
+    $this->assertEquals('(*:* -solr_x:"5")', $fq[0]['query']);
     $this->assertFalse(isset($fq[1]));
 
     $query = $this->buildSearch();
     $query->addCondition('x', 3, '<>');
     $query->addCondition('x', 5, '<>');
     $fq = $this->invokeMethod($backend, 'getFilterQueries', [$query, $mapping, $fields, &$options]);
-    $this->assertEquals('-solr_x:"3"', $fq[0]['query']);
-    $this->assertEquals('-solr_x:"5"', $fq[1]['query']);
+    $this->assertEquals('(*:* -solr_x:"3")', $fq[0]['query']);
+    $this->assertEquals('(*:* -solr_x:"5")', $fq[1]['query']);
 
     $query = $this->buildSearch();
     $condition_group = $query->createConditionGroup();
@@ -330,7 +364,7 @@ class SearchApiSolrTest extends BackendTestBase {
     $condition_group->addCondition('x', 5, '<>');
     $query->addConditionGroup($condition_group);
     $fq = $this->invokeMethod($backend, 'getFilterQueries', [$query, $mapping, $fields, &$options]);
-    $this->assertEquals('(-solr_x:"3" -solr_x:"5")', $fq[0]['query']);
+    $this->assertEquals('(+(*:* -solr_x:"3") +(*:* -solr_x:"5"))', $fq[0]['query']);
     $this->assertFalse(isset($fq[1]));
 
     $query = $this->buildSearch();
@@ -340,7 +374,7 @@ class SearchApiSolrTest extends BackendTestBase {
     $condition_group->addCondition('z', 7);
     $query->addConditionGroup($condition_group);
     $fq = $this->invokeMethod($backend, 'getFilterQueries', [$query, $mapping, $fields, &$options]);
-    $this->assertEquals('(-solr_x:"5" +solr_y:"3" +solr_z:"7")', $fq[0]['query']);
+    $this->assertEquals('(+(*:* -solr_x:"5") +solr_y:"3" +solr_z:"7")', $fq[0]['query']);
     $this->assertFalse(isset($fq[1]));
 
     $query = $this->buildSearch();
@@ -352,7 +386,21 @@ class SearchApiSolrTest extends BackendTestBase {
     $condition_group->addConditionGroup($inner_condition_group);
     $query->addConditionGroup($condition_group);
     $fq = $this->invokeMethod($backend, 'getFilterQueries', [$query, $mapping, $fields, &$options]);
-    $this->assertEquals('(-solr_x:"5" +(solr_y:"3" solr_z:"7"))', $fq[0]['query']);
+    $this->assertEquals('(+(*:* -solr_x:"5") +(solr_y:"3" solr_z:"7"))', $fq[0]['query']);
+    $this->assertFalse(isset($fq[1]));
+
+    // Condition groups with null value queries are special snowflakes.
+    // @see https://www.drupal.org/node/2888629
+    $query = $this->buildSearch();
+    $condition_group = $query->createConditionGroup();
+    $inner_condition_group = $query->createConditionGroup('OR');
+    $condition_group->addCondition('x', 5, '<>');
+    $inner_condition_group->addCondition('y', 3);
+    $inner_condition_group->addCondition('z', NULL);
+    $condition_group->addConditionGroup($inner_condition_group);
+    $query->addConditionGroup($condition_group);
+    $fq = $this->invokeMethod($backend, 'getFilterQueries', [$query, $mapping, $fields, &$options]);
+    $this->assertEquals('(+(*:* -solr_x:"5") +(solr_y:"3" (*:* -solr_z:[* TO *])))', $fq[0]['query']);
     $this->assertFalse(isset($fq[1]));
 
     $query = $this->buildSearch();
@@ -368,7 +416,7 @@ class SearchApiSolrTest extends BackendTestBase {
     $condition_group->addConditionGroup($inner_condition_group_and);
     $query->addConditionGroup($condition_group);
     $fq = $this->invokeMethod($backend, 'getFilterQueries', [$query, $mapping, $fields, &$options]);
-    $this->assertEquals('(+(solr_x:"3" (-solr_y:"7")) +(+solr_x:"1" -solr_y:"2" +solr_z:{* TO "5"}))', $fq[0]['query']);
+    $this->assertEquals('(+(solr_x:"3" (*:* -solr_y:"7")) +(+solr_x:"1" +(*:* -solr_y:"2") +solr_z:{* TO "5"}))', $fq[0]['query']);
     $this->assertFalse(isset($fq[1]));
 
     $query = $this->buildSearch();

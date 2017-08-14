@@ -53,7 +53,7 @@ function hook_search_api_solr_field_mapping_alter(\Drupal\search_api\IndexInterf
  * @param \Drupal\search_api\Item\ItemInterface[] $items
  *   An array of items to be indexed, keyed by their item IDs.
  */
-function hook_search_api_solr_documents_alter(array $documents, \Drupal\search_api\IndexInterface $index, array $items) {
+function hook_search_api_solr_documents_alter(&$documents, \Drupal\search_api\IndexInterface $index, array $items) {
   // Adds a "foo" field with value "bar" to all documents.
   foreach ($documents as $document) {
     $document->setField('foo', 'bar');

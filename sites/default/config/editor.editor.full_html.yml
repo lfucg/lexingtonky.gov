@@ -41,7 +41,6 @@ settings:
             - Table
             - HorizontalRule
             - Embed
-            - file_browser
         -
           name: 'Block Formatting'
           items:

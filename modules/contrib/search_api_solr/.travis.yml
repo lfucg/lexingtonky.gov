@@ -20,8 +20,8 @@ env:
   - PATH=$PATH:/home/travis/.composer/vendor/bin SOLR_VERSION=4.5.1 SOLR_CORE=d8 SOLR_CONFS="$TRAVIS_BUILD_DIR/solr-conf/4.x"
   # 5.5.0 introduced major changes for boolean operators.
   - PATH=$PATH:/home/travis/.composer/vendor/bin SOLR_VERSION=5.5.4 SOLR_CORE=d8 SOLR_CONFS="$TRAVIS_BUILD_DIR/solr-conf/5.x"
-  # 6.4.2 is the latest currently supported release.
-  - PATH=$PATH:/home/travis/.composer/vendor/bin SOLR_VERSION=6.4.2 SOLR_CORE=d8 SOLR_CONFS="$TRAVIS_BUILD_DIR/solr-conf/6.x"
+  # 6.6.0 is the latest currently supported release.
+  - PATH=$PATH:/home/travis/.composer/vendor/bin SOLR_VERSION=6.6.0 SOLR_CORE=d8 SOLR_CONFS="$TRAVIS_BUILD_DIR/solr-conf/6.x"
 
 notifications:
   irc:

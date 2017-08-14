@@ -56,7 +56,7 @@ echo "name=$CORE" > $SOLR/server/solr/$CORE/core.properties
 
 Now you can start your Solr server:
 
-$CORE/bin/solr start
+$SOLR/bin/solr start
 
 Afterwards, go to [4] in your web browser to ensure Solr is running correctly.
 

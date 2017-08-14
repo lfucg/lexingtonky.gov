@@ -34,7 +34,6 @@ settings:
             - Blockquote
             - DrupalImage
             - Embed
-            - file_browser
         -
           name: 'Block Formatting'
           items:
