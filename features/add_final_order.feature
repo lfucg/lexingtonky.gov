@@ -14,9 +14,8 @@ Scenario: Populating address from PVANUM
     Given I am logged in as a user with the "Final order admin" role
     And I am on "/node/add/final_order"
     And I fill in "PVA Num" with "04010003"
-    When I fill in "Title" with "Trigger blur event in the PVA field"
+    When I blur "#edit-field-pva-num-0-value"
     And I wait for AJAX to finish
-    And I wait for 4000 miliseconds
     Then the "Address" field should contain "3534 TATES CREEK RD 40517"
     Then the "Last known mailing address of owner" field should contain "3534 TATES CREEK RD LEXINGTON, KY 40517"
 

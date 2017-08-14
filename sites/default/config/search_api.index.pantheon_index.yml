@@ -19,7 +19,8 @@ field_settings:
   url:
     label: URI
     property_path: search_api_url
-    type: string
+    type: text
+    boost: !!float 3
   rendered_item:
     label: 'Rendered HTML output'
     property_path: rendered_item
@@ -43,7 +44,8 @@ field_settings:
     label: Title
     datasource_id: 'entity:node'
     property_path: title
-    type: string
+    type: text
+    boost: !!float 8
   body:
     label: Body
     datasource_id: 'entity:node'
@@ -76,6 +78,7 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
+  entity_status: {  }
   add_url: {  }
   html_filter:
     fields:
@@ -97,7 +100,6 @@ processor_settings:
       preprocess_query: -15
   rendered_item: {  }
   aggregated_field: {  }
-  entity_status: {  }
 tracker_settings:
   default: {  }
 options:

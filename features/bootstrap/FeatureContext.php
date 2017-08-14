@@ -219,6 +219,13 @@ class FeatureContext implements Context, SnippetAcceptingContext
   }
 
   /**
+   * @When I blur :target
+   */
+  public function iBlur($target) {
+    $this->minkContext->getSession()->executeScript('jQuery("#edit-field-pva-num-0-value").val("04010003").trigger("blur");');
+  }
+
+  /**
    * @When I click :selector with JavaScript
    */
   public function iClickWithJavascript($selector) {
