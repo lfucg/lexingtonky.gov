@@ -6,8 +6,7 @@ Scenario: Use chosen widget to select navigation topic
   Given I am logged in as a user with the "administrator" role
   And I am on "/node/add/page"
   And I fill in "Title" with randomized text "New page title"
-  And I click on '.chosen-single' element
-  And I fill in ".chosen-search input" element with "councilmember"
+  And I fill in "Navigation topic" with "Councilmembers"
   And I press "List additional actions"
   And I open save options
   And I press "Save and Publish"
@@ -22,7 +21,7 @@ Scenario: Follow publishing workflow
   Then the response should not contain "Save and Publish"
 
   Given I fill in "Title" with "Test title"
-  And I select the term "-Councilmembers" by id "edit-field-lex-site-nav"
+  And I fill in "Navigation topic" with "Councilmembers"
   And I open save options
   And I press "Save and Request Review"
   When I click "Edit draft"
@@ -57,7 +56,7 @@ Scenario: Unpublished nodes do not show up in browse nav
   Given I am logged in as a user with the "authenticated user" role
   When I am on "/node/add/page"
   And I fill in "Title" with randomized text "Test title"
-  And I select the term "-Councilmembers" by id "edit-field-lex-site-nav"
+  And I fill in "Navigation topic" with "Councilmembers"
   And I open save options
   And I press "Save and Request Review"
   And I am on "/browse/government/council"
