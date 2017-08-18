@@ -198,6 +198,7 @@ class EntityAccessControlHandlerTest extends UnitTestCase {
     $entity->getCacheContexts()->willReturn([]);
     $entity->getCacheTags()->willReturn([]);
     $entity->getCacheMaxAge()->willReturn(Cache::PERMANENT);
+    $entity->getRevisionId()->willReturn(1);
 
     return $entity;
   }
