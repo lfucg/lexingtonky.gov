@@ -267,24 +267,23 @@ main
   li.lex-location-contact
     margin-bottom: 0
 
-
-@media (min-width: $screen-phablet-min)
-  .align-left, .align-right
-    max-width: 50%
-    margin: 0 2em 1em 2em
-
-  .align-left
-    float: left
-    margin-left: 0
-
-  .align-right
-    float: right
-    margin-right: 0
-
 .lex-region-content
   img
     max-width: 100%
     margin: 1em auto
+
+  @media (min-width: $screen-phablet-min)
+    .align-left, .align-right
+      max-width: 50%
+      margin: 0 2em 1em 2em
+
+    .align-left
+      float: left
+      margin-left: 0
+
+    .align-right
+      float: right
+      margin-right: 0
 
   @media (min-width: $screen-phablet-min)
     figure img
