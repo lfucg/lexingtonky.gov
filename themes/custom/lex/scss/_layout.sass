@@ -285,7 +285,6 @@ main
       float: right
       margin-right: 0
 
-  @media (min-width: $screen-phablet-min)
     figure img
       margin: 0
 
@@ -293,11 +292,11 @@ main
     text-align: center
 
 @media (max-width: $screen-phone-max)
-  figure
-    &.align-left, &.align-right
-      float: none
-    margin: 1em 0
-
+  .lex-region-content
+    figure, img
+      &.align-left, &.align-right
+        float: none
+      margin: 1em 0
 
 .lex-hide-initially
   display: none
