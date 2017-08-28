@@ -1,9 +1,8 @@
-uuid: b366ad98-37e8-4c0d-87b5-352427ec43fc
+uuid: cccee0eb-31a4-4c4a-8c03-4f143a0686f3
 langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.browse_nonimage_files
     - field.field.node.board_commission.field_granicus_id
     - field.field.node.board_commission.field_lex_custom_banner_image
     - field.field.node.board_commission.field_lex_site_nav
@@ -13,9 +12,11 @@ dependencies:
     - field.field.node.board_commission.field_page_overview
     - field.field.node.board_commission.field_page_section
     - field.field.node.board_commission.field_related_documents
+    - image.style.thumbnail
     - node.type.board_commission
   module:
-    - entity_browser
+    - file
+    - image
     - metatag
     - paragraphs
     - path
@@ -29,58 +30,61 @@ content:
   created:
     type: datetime_timestamp
     weight: 4
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_granicus_id:
+    type: number
     weight: 9
+    region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-    type: number
-    region: content
   field_lex_custom_banner_image:
-    type: entity_browser_file
-    weight: 13
+    type: image_image
+    weight: 12
     region: content
     settings:
-      entity_browser: browse_files_images
-      field_widget_remove: true
-      selection_mode: selection_append
+      progress_indicator: throbber
       preview_image_style: thumbnail
-      field_widget_edit: true
-      open: false
-      view_mode: default
     third_party_settings: {  }
   field_metatags:
-    weight: 11
-    settings: {  }
-    third_party_settings: {  }
     type: metatag_firehose
+    weight: 13
     region: content
+    settings: {  }
+    third_party_settings: {  }
   field_office_to_contact:
+    type: entity_reference_autocomplete
     weight: 10
-    settings: {  }
-    third_party_settings: {  }
-    type: options_select
     region: content
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_organization_taxonomy_term:
+    type: entity_reference_autocomplete
     weight: 8
-    settings: {  }
-    third_party_settings: {  }
-    type: options_select
     region: content
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_page_overview:
+    type: text_textarea_with_summary
     weight: 1
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea_with_summary
-    region: content
   field_page_section:
+    type: entity_reference_paragraphs
     weight: 2
+    region: content
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -88,49 +92,41 @@ content:
       add_mode: dropdown
       form_display_mode: default
     third_party_settings: {  }
-    type: entity_reference_paragraphs
-    region: content
   field_related_documents:
-    type: entity_browser_file
-    weight: 12
+    type: file_generic
+    weight: 11
     region: content
     settings:
-      entity_browser: browse_nonimage_files
-      field_widget_remove: true
-      selection_mode: selection_append
-      field_widget_edit: true
-      open: false
-      view_mode: default
-      preview_image_style: thumbnail
+      progress_indicator: throbber
     third_party_settings: {  }
   path:
     type: path
     weight: 7
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   promote:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 5
-    third_party_settings: {  }
     region: content
+    third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 6
-    third_party_settings: {  }
     region: content
+    third_party_settings: {  }
   title:
     type: string_textfield
     weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 3
@@ -138,7 +134,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
-    third_party_settings: {  }
     region: content
+    third_party_settings: {  }
 hidden:
   field_lex_site_nav: true

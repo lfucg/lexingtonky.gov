@@ -3,15 +3,15 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.browse_files_images
     - field.field.node.landing_page.body
     - field.field.node.landing_page.field_lex_custom_banner_image
     - field.field.node.landing_page.field_lex_site_nav
     - field.field.node.landing_page.field_metatags
     - field.field.node.landing_page.field_related_departments
+    - image.style.thumbnail
     - node.type.landing_page
   module:
-    - entity_browser
+    - image
     - metatag
     - path
     - text
@@ -37,17 +37,12 @@ content:
     third_party_settings: {  }
     region: content
   field_lex_custom_banner_image:
-    type: entity_browser_file
-    weight: 10
+    type: image_image
+    weight: 9
     region: content
     settings:
-      entity_browser: browse_files_images
-      field_widget_remove: true
-      selection_mode: selection_append
+      progress_indicator: throbber
       preview_image_style: thumbnail
-      field_widget_edit: true
-      open: false
-      view_mode: default
     third_party_settings: {  }
   field_lex_site_nav:
     weight: 7
@@ -56,7 +51,7 @@ content:
     type: options_select
     region: content
   field_metatags:
-    weight: 9
+    weight: 10
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose

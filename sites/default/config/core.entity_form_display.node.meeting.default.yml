@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.browse_nonimage_files
     - field.field.node.meeting.body
     - field.field.node.meeting.field_all_day
     - field.field.node.meeting.field_date
@@ -17,7 +16,7 @@ dependencies:
     - node.type.meeting
   module:
     - datetime
-    - entity_browser
+    - file
     - metatag
     - path
     - text
@@ -68,7 +67,7 @@ content:
     type: options_select
     region: content
   field_metatags:
-    weight: 13
+    weight: 14
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
@@ -86,17 +85,11 @@ content:
     third_party_settings: {  }
     region: content
   field_related_documents:
-    type: entity_browser_file
-    weight: 14
+    type: file_generic
+    weight: 13
     region: content
     settings:
-      entity_browser: browse_nonimage_files
-      field_widget_remove: true
-      selection_mode: selection_append
-      field_widget_edit: true
-      open: false
-      view_mode: default
-      preview_image_style: thumbnail
+      progress_indicator: throbber
     third_party_settings: {  }
   path:
     type: path

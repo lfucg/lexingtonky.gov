@@ -21,20 +21,16 @@ module:
   datetime: 0
   dblog: 0
   diff: 0
-  dropzonejs: 0
-  dropzonejs_eb_widget: 0
   dynamic_page_cache: 0
   editor: 0
   embed: 0
   entity: 0
-  entity_browser: 0
   entity_embed: 0
   entity_reference_revisions: 0
   field: 0
   field_ui: 0
   fieldblock: 0
   file: 0
-  file_browser: 0
   filter: 0
   gis_api: 0
   help: 0

@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.browse_nonimage_files
     - field.field.node.final_order.field_address
     - field.field.node.final_order.field_final_order_date
     - field.field.node.final_order.field_final_order_docs
@@ -14,7 +13,7 @@ dependencies:
     - node.type.final_order
   module:
     - datetime
-    - entity_browser
+    - file
     - gis_api
     - metatag
     - workbench_moderation
@@ -44,17 +43,11 @@ content:
     type: datetime_default
     region: content
   field_final_order_docs:
-    type: entity_browser_file
+    type: file_generic
     weight: 8
     region: content
     settings:
-      entity_browser: browse_nonimage_files
-      field_widget_remove: true
-      selection_mode: selection_append
-      field_widget_edit: true
-      open: false
-      view_mode: default
-      preview_image_style: thumbnail
+      progress_indicator: throbber
     third_party_settings: {  }
   field_metatags:
     weight: 9
