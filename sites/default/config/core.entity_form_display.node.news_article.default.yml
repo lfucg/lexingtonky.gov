@@ -1,4 +1,4 @@
-uuid: 741884d9-b0f4-4a54-b839-ef3493adab34
+uuid: f26f6b9e-25fd-4941-94d0-c93a48390967
 langcode: en
 status: true
 dependencies:
@@ -12,6 +12,7 @@ dependencies:
     - image.style.thumbnail
     - node.type.news_article
   module:
+    - chosen_field
     - file
     - image
     - metatag
@@ -65,13 +66,10 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_related_departments:
-    type: entity_reference_autocomplete
+    type: chosen_select
     weight: 1
     region: content
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
   field_related_documents:
     type: file_generic

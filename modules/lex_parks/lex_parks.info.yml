@@ -1,0 +1,5 @@
+type: module
+name: Parks Locator via ESRI
+description: 'Wrapper module for the Parks Locator code by ESRI'
+package: Lexington
+core: 8.x

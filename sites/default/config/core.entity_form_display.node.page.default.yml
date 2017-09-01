@@ -1,4 +1,4 @@
-uuid: b64eef6a-9cb8-4180-8513-e5415506c6e6
+uuid: 95721d6c-246b-4581-ba34-992477e8f8c8
 langcode: en
 status: true
 dependencies:
@@ -16,6 +16,8 @@ dependencies:
     - image.style.thumbnail
     - node.type.page
   module:
+    - chosen_field
+    - file
     - image
     - metatag
     - paragraphs
@@ -52,7 +54,7 @@ content:
     third_party_settings: {  }
   field_metatags:
     type: metatag_firehose
-    weight: 11
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -86,13 +88,17 @@ content:
       form_display_mode: default
     third_party_settings: {  }
   field_related_departments:
-    type: entity_reference_autocomplete
+    type: chosen_select
     weight: 8
     region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_related_documents:
+    type: file_generic
+    weight: 11
+    region: content
     settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
+      progress_indicator: throbber
     third_party_settings: {  }
   field_sidebar_section:
     type: entity_reference_paragraphs
@@ -130,6 +136,5 @@ content:
     third_party_settings: {  }
 hidden:
   body: true
-  field_related_documents: true
   promote: true
   sticky: true

@@ -47,7 +47,7 @@ content:
     region: content
   field_lex_custom_banner_image:
     type: image_image
-    weight: 11
+    weight: 10
     region: content
     settings:
       progress_indicator: throbber
@@ -60,7 +60,7 @@ content:
     third_party_settings: {  }
     region: content
   field_metatags:
-    weight: 12
+    weight: 11
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
@@ -82,18 +82,9 @@ content:
     third_party_settings: {  }
     type: entity_reference_paragraphs
     region: content
-  field_related_departments:
-    weight: 9
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_related_documents:
     type: file_generic
-    weight: 10
+    weight: 9
     region: content
     settings:
       progress_indicator: throbber
@@ -132,5 +123,6 @@ content:
 hidden:
   field_organization_image: true
   field_organization_taxonomy_term: true
+  field_related_departments: true
   promote: true
   sticky: true

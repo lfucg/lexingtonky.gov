@@ -1,0 +1,41 @@
+body {
+    scrollbar-arrow-color: #ddd;
+}
+
+.esriGovtLoadingIndicator, .esriCTLoadingIndicator {
+    background-color: #000;
+    filter: alpha(opacity = 40);
+}
+
+.divSplashContainer {
+    background-color: #fff;
+    filter: alpha(opacity=100);
+}
+
+.selectedBaseMap {
+    filter: progid:DXImageTransform.Microsoft.Glow(color='#8EAE21', Strength='4');
+}
+
+.esriCTInfoPanel, .esriCTInfoWindoContainer {
+    height: 80%;
+}
+
+.esriCTDirectionResultContent {
+    height: 65%;
+}
+
+.esriCTDirectionMainContainer div.esriCTAddressList {
+    height: 55%;
+}
+
+.esriCTCommentContainer {
+    height: 75%;
+}
+
+.esriCTActivityMainContainer {
+    height: 70%;
+}
+
+.esriCTActivityTextArea {
+    text-align: left;
+}

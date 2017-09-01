@@ -1,0 +1,64 @@
+﻿<div class="esriCTInfoWindow">
+    <div data-dojo-attach-point="divInfoContainer" align="center" class="esriCTInfoWindowContainer esriCTopacityHideAnimation">
+        <div class="esriCTInfoContent">
+            <div class="esriCTFullHeightWidth">
+                <div class="esriCTHeaderPanelContainer">
+                    <div class="esriCTTabs">
+                        <div class="esriCTTabsRight">
+                            <div data-dojo-attach-point="divClose" class="esriCTInfoClose">
+                                <a id="close" class="esriCTClose" title="${sharedNls.tooltips.closeTooltip}">&nbsp;</a></div>
+                        </div>
+                        <div class="esriCTTabsLeft">
+                            <div class="esriCTTabsLeftFlexi">
+                                <div style="border: none;" class="esriCTTabInfo esriCTInfoSelectedTab" data-dojo-attach-point="informationTab">
+                                    <a data-dojo-attach-point="infoSelect" title="${sharedNls.tooltips.informationTooltip}"
+                                        class="esriCTInfoTabImageSelect">&nbsp;</a>
+                                </div>
+                                <div data-dojo-attach-point="galleryTab" class="galleryTab">
+                                    <a data-dojo-attach-point="gallerySelect" title="${sharedNls.tooltips.galleryInfoTooltip}"
+                                        class="esriCTGalleryTabImage">&nbsp;</a>
+                                </div>
+                                <div data-dojo-attach-point="commentsTab" class="commentsTab">
+                                    <a data-dojo-attach-point="commentSelect" title="${sharedNls.tooltips.commentInfoTooltip}"
+                                        class="esriCTCommentsTabImage">&nbsp;</a>
+                                </div>
+                                <div data-dojo-attach-point="esriCTGetDir" class="esriCTGetDir">
+                                    <a data-dojo-attach-point="getDirselect" class="esriCTImageTab" title="${sharedNls.tooltips.routeTooltip}">
+                                        &nbsp;</a>
+                                </div>
+                                <div data-dojo-attach-point="addtoListTab" class="addtoListTab">
+                                    <a data-dojo-attach-point="addtoListSelect" title="${sharedNls.tooltips.addToListTooltip}"
+                                        class="addtoListTabImage">&nbsp;</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div data-dojo-attach-point="infoWindowMainContainer" class="esriCTInfoPanel">
+                    <div id="informationTabContainer" class="esriCTInfoTabContent displayBlock">
+                    </div>
+                    <div id="galleryTabContainer" class="esriCTInfoTabContent">
+                    </div>
+                    <div id="commentsTabContainer" class="esriCTInfoTabContent">
+                    </div>
+                    <div id="getDirContainer" class="esriCTDirectionTabContent">
+                    </div>
+                     <div id="getAddtoList" class="esriCTAddToListTabContent">
+                    </div>
+                </div>
+                <div class="esriCTCloseDivMobile" data-dojo-attach-point="backToMap">
+                </div>
+            </div>
+        </div>
+        <div class="esriCTInfoMobileContent esriCTCalloutPanel">
+            <div class="esriCTMobileCloseDiv esriCTDivClose" data-dojo-attach-point="mobileCloseDiv">
+            </div>
+            <div data-dojo-attach-point="spanDirection" class="esriCTCalloutText">
+            </div>
+            <div class="esriCTCalloutArrow" data-dojo-attach-point="mobileArrow">
+                <div class="esriCTImgCalloutArrow">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

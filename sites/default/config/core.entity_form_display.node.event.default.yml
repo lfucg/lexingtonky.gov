@@ -17,6 +17,7 @@ dependencies:
     - field.field.node.event.field_related_departments
     - node.type.event
   module:
+    - chosen_field
     - datetime
     - link
     - metatag
@@ -119,7 +120,7 @@ content:
     weight: 2
     settings: {  }
     third_party_settings: {  }
-    type: options_select
+    type: chosen_select
     region: content
   path:
     type: path

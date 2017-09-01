@@ -79,8 +79,6 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  entity_status: {  }
-  add_url: {  }
   html_filter:
     fields:
       - url
@@ -99,7 +97,9 @@ processor_settings:
     weights:
       preprocess_index: -15
       preprocess_query: -15
+  add_url: {  }
   rendered_item: {  }
+  entity_status: {  }
   aggregated_field: {  }
 tracker_settings:
   default: {  }

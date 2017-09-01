@@ -1,0 +1,55 @@
+﻿<div data-dojo-attach-point="divAddressContainer" align="center" class="esriCTAddressContainer esriCTHideContainerHeight">
+    <div data-dojo-attach-point="divAddressContent" class="esriCTAddressContent">
+        <div class="esriCTLocator">
+            <div data-dojo-attach-point="divAddressPlaceHolder" class="esriCTAddressPlaceHolder">
+                <input type="text" data-dojo-attach-point="txtAddress" class="esriCTTxtAddress" onfocus="if(this.setSelectionRange)this.setSelectionRange(this.value.length, this.value.length);" />
+            </div>
+            <div class="esriCTSearchClose" data-dojo-attach-point="clearhide">
+                <span class="esriCTClearInput" title="${sharedNls.tooltips.clearEntryTooltip}" data-dojo-attach-point="close">
+                </span><span>
+                    <img data-dojo-attach-point="imgSearchLoader" class="esriCTSearchLoader" alt="imgSearchLoader" /></span>
+            </div>
+            <div class="esriCTSearch" data-dojo-attach-point="divSearch">
+                <span class="esriCTSearchIcon" title="${sharedNls.tooltips.search}" data-dojo-attach-point="esriCTimgLocate">
+                </span>
+            </div>
+          <div id="divSelectLocation" style="display:none" class="esriCTSelectLocationDiv esriCTImgButtons esriCTSelectLocation" data-dojo-attach-point="selectLocation" title="${sharedNls.tooltips.addPoint}">
+          </div>
+        </div>
+
+        <div data-dojo-attach-point="esriAddressListContainer">
+            <div data-dojo-attach-point="divAddressList" class="esriCTAddressList">
+                <div id="a" data-dojo-attach-point="sliderContainer" class="esriSliderSelect esriSliderBack" style="display:none;">
+                    <div style="margin-right:20px">
+                        <div class="esriSliderText">
+                            <span>${sharedNls.titles.sliderDisplayText}</span> <span class="esriSliderDisplayText"
+                                                                                     data-dojo-attach-point="bufferSliderText"></span>
+                        </div>
+                        <div class="esriSelectCommon">
+                            <div class="esriSelect" data-dojo-attach-point="unitForSelect">
+                            </div>
+                        </div>
+                        <div class="esriSlider">
+                            <div class="esriHorizontalSliderContainer" data-dojo-attach-point="horizontalSliderContainer">
+                            </div>
+                            <div class="esriHorizontalRuleContainer" data-dojo-attach-point="horizontalRuleContainer">
+                            </div>
+                        </div>
+                        <div class="esriDistanceUnit" data-dojo-attach-point="bufferDistanceUnit">
+                        </div>
+                    </div>
+
+                </div>
+                <div data-dojo-attach-point="divAddressResults" class="esriCTFullWidth">
+                </div>
+            </div>
+
+            <hr class="hrProps colorHr" style="display:none;" data-dojo-attach-point="addressHR" />
+
+            <div data-dojo-attach-point="divActivityList" class="esriCTAddressList">
+                <div data-dojo-attach-point="divActivityResults" class="esriCTFullWidth">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
