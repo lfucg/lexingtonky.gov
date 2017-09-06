@@ -339,7 +339,16 @@ class TwigExtension extends \Twig_Extension {
    *   Date string snippet.
    */
   protected function appendMerdiem(\DateTimeInterface $date) {
-    return $date->format('g') === '12' ? '' : ($date->format('a') === 'am' ? ' a.m.' : ' p.m.');
+    $hour = $date->format('g');
+    $minutes = $date->format('i');
+    $minutes = $minutes === '00' ? '' : ':' . $minutes;
+
+    if ($hour === '12' && $minutes === '') {
+      return '';
+    }
+    else {
+      return $date->format('a') === 'am' ? ' a.m.' : ' p.m.';
+    }
   }
 
   /**

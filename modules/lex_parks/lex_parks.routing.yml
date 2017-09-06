@@ -1,7 +1,0 @@
-lex_calendar.locatorPage:
-  path: 'park-locator'
-  defaults:
-    _controller:
-      '\Drupal\lex_parks\Controller\PageController::locatorPage'
-  requirements:
-    _permission: 'access content'
