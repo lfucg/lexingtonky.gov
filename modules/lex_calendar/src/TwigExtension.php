@@ -123,14 +123,18 @@ class TwigExtension extends \Twig_Extension {
     if ($event['allDay']) {
       return "All Day";
     }
+
     $start = new \DateTime($event['start']);
     $end = new \DateTime($event['end']);
 
-    if ($event['start'] == $event['end']) {
+    if ($event['start'] == $event['end'] || empty($event['end'])) {
       return $this->getTime($start) . $this->appendMerdiem($start);
     }
+    elseif ($start->format('a') === $end->format('a')){
+      return $this->getTime($start) . ' &#8211; ' . $this->getTime($end) . $this->appendMerdiem($end);
+    }
 
-    return $this->getTime($start) . $this->appendMerdiem($start) . ' &mdash; ' . $this->getTime($end) . $this->appendMerdiem($end);
+    return $this->getTime($start) . $this->appendMerdiem($start) . ' &#8211; ' . $this->getTime($end) . $this->appendMerdiem($end);
   }
 
   /**

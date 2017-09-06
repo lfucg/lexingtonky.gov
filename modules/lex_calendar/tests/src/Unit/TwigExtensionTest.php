@@ -19,6 +19,33 @@ class TwigExtensionTest extends UnitTestCase {
   }
 
   /**
+   * Tests the Time Range Parser
+   *
+   * @dataProvider eventTimeRangeProvider
+   */
+  public function testEventTimeRangeParser($start, $end, $allDay, $expected) {
+    $ext = new TwigExtension();
+    $ext->setNow('2017-02-15T12:00');
+    $this->assertEquals($expected, $ext->getLexTimeRange([
+      'start' => $start,
+      'end' => $end,
+      'allDay' => $allDay
+    ]));
+
+  }
+
+  public function eventTimeRangeProvider() {
+    return [
+      ['2017-06-08T11:30', '', 0, '11:30 a.m.'],
+      ['2017-06-08T11:30', '', 1, 'All Day'],
+      ['2017-06-08T11:30', '2017-06-08T12:30', 0, '11:30 a.m. &#8211; 12:30 p.m.'],
+      ['2017-06-08T11:30', '2017-06-08T12:00', 0, '11:30 a.m. &#8211; noon'],
+      ['2017-06-08T10:30', '2017-06-08T11:00', 0, '10:30 &#8211; 11 a.m.'],
+      ['2017-06-08T13:00', '2017-06-08T14:00', 0, '1 &#8211; 2 p.m.']
+    ];
+  }
+
+  /**
    * Tests the event Time Parser
    *
    * @dataProvider eventTimesProvider
