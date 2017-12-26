@@ -1,24 +1,41 @@
 # Development
 
-The following instructions to set up a local development environment for the city's Drupal site.
+The following instructions to set up a local development environment for the city's Drupal site. (NOTE: With Kalabox no longer being supported, the instructions below will help get a local environment set up with the new version of Kalabox which is called [Lando](https://docs.devwithlando.io/))
 
 ## Install the site locally
 
-Install Kalabox and authenticate with Pantheon to pull down the site code/files/db
+(UPDATED 12/23/2017)
+
+Install Lando and authenticate with Pantheon to pull down the site code/files/db. Follow instructions to pull Github code from Pantheon OR do a `lando init pantheon` with an empty directory.
+
+[Getting Started with Lando Docs](https://docs.devwithlando.io/started.html)
+
+From start to finish in terminal:
+```
+$ lando init pantheon
+$ lando start
+$ lando pull
+```
+`lando pull`: You will need a machine token from Pantheon user account page. The output will ask where to pull the code, database, and site files from. 
+
+```
+$ lando restart
+$ lando drush user-login --uri=<<LOCALHOST PORT>>
+```
+
+The site should now be served locally on one of the ports listed in the CLI. 
 
 ### Import/export of configuration changes
 
 As you make changes to the site through the UI, you'll want to export your configuration changes:
 
-`kbox drush config-export -y`
+`lando drush config-export -y`
 
 And to set the local database to the configuration stored in git:
 
-`kbox drush config-import -y`
+`lando drush config-import -y`
 
 ### Theme development
-
-install npm
 
 ```
 cd themes/custom/lex
