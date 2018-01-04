@@ -154,10 +154,10 @@ processor_settings:
       - body
       - field_section_body
     exceptions:
-      garbage: 'waste management'
-      trash: 'waste management'
-      PDR: 'purchase of development rights'
-      pdr: 'purchase of development rights'
+      garbage: waste%2Bmanagement
+      trash: waste%2Bmanagement
+      PDR: purchase%2Bof%2Bdevelopment%2Brights
+      pdr: purchase%2Bof%2Bdevelopment%2Brights
     weights:
       preprocess_index: -50
       preprocess_query: 0
@@ -166,14 +166,14 @@ processor_settings:
       'entity:node':
         datasource_boost: !!float 5
         bundle_boosts:
-          article: !!float 0
-          board_commission: !!float 2
-          event: !!float 3
+          article: !!float 3
+          board_commission: !!float 0
+          event: !!float 5
           landing_page: !!float 0
-          meeting: !!float 5
+          meeting: !!float 8
           news_article: !!float 0
-          organization_page: !!float 8
-          page: !!float 13
+          organization_page: !!float 13
+          page: !!float 21
           site_wide_notice: !!float 0
       'entity:paragraph':
         datasource_boost: !!float 1
@@ -182,7 +182,7 @@ processor_settings:
           paragraphs_page_section: !!float 0
           paragraph_sidebar_section: !!float 0
       'entity:taxonomy_term':
-        datasource_boost: !!float 1
+        datasource_boost: !!float 5
         bundle_boosts:
           locations: !!float 0
           organizations: !!float 0
@@ -190,6 +190,20 @@ processor_settings:
           tags: !!float 0
     weights:
       preprocess_index: -49
+  ignorecase:
+    all_fields: true
+    fields:
+      - url
+      - rendered_item
+      - title
+      - body
+      - field_keywords
+      - field_keywords_1
+      - name
+      - field_section_body
+    weights:
+      preprocess_index: -20
+      preprocess_query: -20
 tracker_settings:
   default:
     indexing_order: fifo
