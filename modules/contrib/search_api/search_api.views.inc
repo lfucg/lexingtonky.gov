@@ -74,9 +74,6 @@ function search_api_views_data() {
           if ($datasource = $field->getDatasource()) {
             $field_definition['group'] = t('@datasource datasource', ['@datasource' => $datasource->label()]);
           }
-          if ($definition = $field->getDataDefinition()) {
-            $field_definition['title short'] = $definition->getLabel();
-          }
           if ($field_id != $field_alias) {
             $field_definition['real field'] = $field_id;
           }
@@ -235,6 +232,9 @@ function _search_api_views_handler_mapping() {
         ],
       ],
       'date' => [
+        'argument' => [
+          'id' => 'search_api_date',
+        ],
         'filter' => [
           'id' => 'search_api_date',
         ],
@@ -301,11 +301,10 @@ function _search_api_views_handler_mapping() {
       ],
       'entity:taxonomy_term' => [
         'argument' => [
-          'id' => 'search_api',
-          'filter' => 'intval',
+          'id' => 'search_api_term',
         ],
         'filter' => [
-          'id' => 'search_api',
+          'id' => 'search_api_term',
         ],
         'sort' => [
           'id' => 'search_api',
@@ -543,8 +542,7 @@ function _search_api_views_datasource_table(DatasourceInterface $datasource, arr
  */
 function _search_api_views_entity_type_table($entity_type_id, array &$data) {
   $entity_type = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
-  // @todo Once we depend on Drupal 8.3+, use entityClassImplements().
-  if (!$entity_type || !$entity_type->isSubclassOf(FieldableEntityInterface::class)) {
+  if (!$entity_type || !$entity_type->entityClassImplements(FieldableEntityInterface::class)) {
     return [];
   }
 

@@ -38,7 +38,6 @@ mysql:
 # than e.g. phantomjs
 before_install:
   - phpenv config-rm xdebug.ini
-  - composer self-update
   - composer global require "hirak/prestissimo:^0.3"
   - sudo apt-get update -qq > /dev/null
   - "export DISPLAY=:99.0"
@@ -55,17 +54,11 @@ install:
   - echo "error_log=syslog" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
   # Get latest Drupal 8 core
   - cd $TRAVIS_BUILD_DIR/..
-  - git clone --depth=1 --branch 8.3.x https://git.drupal.org/project/drupal.git
+  - git clone --depth=1 --branch 8.4.x https://git.drupal.org/project/drupal.git
   - cd $TRAVIS_BUILD_DIR/../drupal
   - composer install
   - composer config repositories.search_api_solr vcs $TRAVIS_BUILD_DIR
-  - composer require drupal/search_api:1.x-dev
-  - composer require drupal/search_api_autocomplete:1.x-dev
-  - composer require drupal/search_api_solr:999.0.0
-  - composer require drupal/search_api_location:1.x-dev
-  - composer require drupal/facets:1.x-dev
-  - composer require drupal/geofield:1.x-dev
-  - composer require drush/drush
+  - composer require drupal/search_api:1.x-dev drupal/search_api_autocomplete:1.x-dev drupal/search_api_solr:999.0.0 drupal/search_api_location:1.x-dev drupal/facets:1.x-dev drupal/geofield:1.x-dev drush/drush
   # Patch template.
   #########################################
   # to be removed once #2824932 is resolved

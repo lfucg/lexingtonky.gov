@@ -6,6 +6,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\ElementInfoManagerInterface;
 use Drupal\search_api\Item\FieldInterface;
 use Drupal\search_api\Utility\DataTypeHelperInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
@@ -51,8 +52,12 @@ abstract class FieldsProcessorPluginBase extends ProcessorPluginBase implements 
    */
   protected $dataTypeHelper;
 
-  // @todo Add defaultConfiguration() implementation and find a cleaner solution
-  //   for all the isset($this->configuration['fields']) checks.
+  /**
+   * The element info manager.
+   *
+   * @var \Drupal\Core\Render\ElementInfoManagerInterface|null
+   */
+  protected $elementInfoManager;
 
   /**
    * {@inheritdoc}
@@ -62,6 +67,7 @@ abstract class FieldsProcessorPluginBase extends ProcessorPluginBase implements 
     $processor = parent::create($container, $configuration, $plugin_id, $plugin_definition);
 
     $processor->setDataTypeHelper($container->get('search_api.data_type_helper'));
+    $processor->setElementInfoManager($container->get('plugin.manager.element_info'));
 
     return $processor;
   }
@@ -90,11 +96,48 @@ abstract class FieldsProcessorPluginBase extends ProcessorPluginBase implements 
   }
 
   /**
+   * Retrieves the element info manager.
+   *
+   * @return \Drupal\Core\Render\ElementInfoManagerInterface
+   *   The element info manager.
+   */
+  public function getElementInfoManager() {
+    return $this->elementInfoManager ?: \Drupal::service('plugin.manager.element_info');
+  }
+
+  /**
+   * Sets the element info manager.
+   *
+   * @param \Drupal\Core\Render\ElementInfoManagerInterface $element_info_manager
+   *   The new element info manager.
+   *
+   * @return $this
+   */
+  public function setElementInfoManager(ElementInfoManagerInterface $element_info_manager) {
+    $this->elementInfoManager = $element_info_manager;
+    return $this;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function preIndexSave() {
     parent::preIndexSave();
 
+    // If the "all supported fields" option is checked, we need to reset the
+    // fields array and fill it with all fields defined on the index.
+    if ($this->configuration['all_fields']) {
+      $this->configuration['fields'] = [];
+      foreach ($this->index->getFields() as $field_id => $field) {
+        if (!$field->isHidden() && $this->testType($field->getType())) {
+          $this->configuration['fields'][] = $field_id;
+        }
+      }
+      // No need to explicitly check for field renames.
+      return;
+    }
+
+    // Otherwise, if no fields were checked, we also have nothing to do here.
     if (empty($this->configuration['fields'])) {
       return;
     }
@@ -113,7 +156,9 @@ abstract class FieldsProcessorPluginBase extends ProcessorPluginBase implements 
     // this processor (or no longer present on the index at all).
     foreach ($this->configuration['fields'] as $i => $field_id) {
       $field = $this->index->getField($field_id);
-      if ($field === NULL || !$this->testType($field->getType())) {
+      if ($field === NULL
+        || $field->isHidden()
+        || !$this->testType($field->getType())) {
         unset($this->configuration['fields'][$i]);
       }
     }
@@ -125,40 +170,107 @@ abstract class FieldsProcessorPluginBase extends ProcessorPluginBase implements 
   /**
    * {@inheritdoc}
    */
+  public function defaultConfiguration() {
+    $configuration = parent::defaultConfiguration();
+
+    // @todo Add "fields" default here, too, and figure out how to replace
+    //   current "magic" code dealing with unset option (or whether we even need
+    //   to). See #2881665.
+    $configuration += [
+      'all_fields' => FALSE,
+    ];
+
+    return $configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $fields = $this->index->getFields();
     $field_options = [];
     $default_fields = [];
-    if (isset($this->configuration['fields'])) {
+    $all_fields = $this->configuration['all_fields'];
+    $fields_configured = isset($this->configuration['fields']);
+    if ($fields_configured && !$all_fields) {
       $default_fields = $this->configuration['fields'];
     }
     foreach ($fields as $name => $field) {
-      if ($this->testType($field->getType())) {
+      if (!$field->isHidden() && $this->testType($field->getType())) {
         $field_options[$name] = Html::escape($field->getPrefixedLabel());
-        if (!isset($this->configuration['fields']) && $this->testField($name, $field)) {
+        if ($all_fields || (!$fields_configured && $this->testField($name, $field))) {
           $default_fields[] = $name;
         }
       }
     }
 
+    $form['all_fields'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable on all supported fields'),
+      '#description' => $this->t('Enable this processor for all supported fields. This will also automatically update the setting when new supported fields are added to the index.'),
+      '#default_value' => $all_fields,
+    ];
+
+    // Unfortunately, Form API doesn't seem to automatically add the default
+    // "#pre_render" callbacks to an element if we set some of our own. We
+    // therefore need to explicitly include those, too.
+    $pre_render = $this->getElementInfoManager()
+      ->getInfoProperty('checkboxes', '#pre_render', []);
+    $pre_render[] = [static::class, 'preRenderFieldsCheckboxes'];
     $form['fields'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Enable this processor on the following fields'),
       '#description' => $this->t("Note: The Search API currently doesn't support per-field keywords processing, so this setting will be ignored when preprocessing search keywords. It is therefore usually recommended that you enable the processor for all fields that you intend to use as fulltext search fields, to avoid undesired consequences."),
       '#options' => $field_options,
       '#default_value' => $default_fields,
+      '#pre_render' => $pre_render,
     ];
 
     return $form;
   }
 
   /**
+   * Preprocesses the "fields" checkboxes before rendering.
+   *
+   * Adds "#states" settings to disable the checkboxes when "all_fields" is
+   * checked.
+   *
+   * @param array $element
+   *   The form element to process.
+   *
+   * @return array
+   *   The processed form element.
+   */
+  public static function preRenderFieldsCheckboxes(array $element) {
+    $parents = $element['#parents'];
+    array_pop($parents);
+    $parents[] = 'all_fields';
+    $name = array_shift($parents);
+    if ($parents) {
+      $name .= '[' . implode('][', $parents) . ']';
+    }
+    $selector = ":input[name=\"$name\"]";
+    $element['#states'] = [
+      'invisible' => [
+        $selector => ['checked' => TRUE],
+      ],
+    ];
+
+    return $element;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $fields = array_filter($form_state->getValues()['fields']);
-    if ($fields) {
-      $fields = array_keys($fields);
+    if (!$form_state->getValue('all_fields')) {
+      $fields = array_filter($form_state->getValue('fields', []));
+      if ($fields) {
+        $fields = array_keys($fields);
+      }
+    }
+    else {
+      $fields = array_keys($form['fields']['#options']);
     }
     $form_state->setValue('fields', $fields);
   }
@@ -351,7 +463,7 @@ abstract class FieldsProcessorPluginBase extends ProcessorPluginBase implements 
    */
   protected function testField($name, FieldInterface $field) {
     if (!isset($this->configuration['fields'])) {
-      return $this->testType($field->getType());
+      return !$field->isHidden() && $this->testType($field->getType());
     }
     return in_array($name, $this->configuration['fields'], TRUE);
   }

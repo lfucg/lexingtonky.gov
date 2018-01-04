@@ -36,7 +36,7 @@ class ContentEntityDeriver extends DeriverBase implements ContainerDeriverInterf
   public static function create(ContainerInterface $container, $base_plugin_id) {
     $deriver = new static();
 
-    /** @var $entity_type_manager \Drupal\Core\Entity\EntityTypeManagerInterface */
+    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager */
     $entity_type_manager = $container->get('entity_type.manager');
     $deriver->setEntityTypeManager($entity_type_manager);
 

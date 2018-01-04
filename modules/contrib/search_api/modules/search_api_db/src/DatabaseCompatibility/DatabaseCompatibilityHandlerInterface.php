@@ -2,6 +2,8 @@
 
 namespace Drupal\search_api_db\DatabaseCompatibility;
 
+use Drupal\Core\Database\Connection;
+
 /**
  * Bundles methods for resolving DBMS-specific differences.
  *
@@ -18,6 +20,17 @@ interface DatabaseCompatibilityHandlerInterface {
    *   The database connection.
    */
   public function getDatabase();
+
+  /**
+   * Creates a clone of this service for the given database.
+   *
+   * @param \Drupal\Core\Database\Connection $database
+   *   A database of a type compatible with this class.
+   *
+   * @return static
+   *   A clone of this service class for the given database.
+   */
+  public function getCloneForDatabase(Connection $database);
 
   /**
    * Reacts to a new table being created.

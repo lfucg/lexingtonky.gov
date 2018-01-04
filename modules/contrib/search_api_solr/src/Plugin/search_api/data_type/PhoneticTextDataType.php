@@ -5,7 +5,7 @@ namespace Drupal\search_api_solr\Plugin\search_api\data_type;
 use Drupal\search_api\Plugin\search_api\data_type\TextDataType;
 
 /**
- * Provides a ngram full text data type.
+ * Provides a phonetic full text data type.
  *
  * @SearchApiDataType(
  *   id = "solr_text_phonetic",

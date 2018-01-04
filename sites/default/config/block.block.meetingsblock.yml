@@ -10,7 +10,7 @@ dependencies:
 id: meetingsblock
 theme: lex
 region: sidebar
-weight: 0
+weight: -17
 provider: null
 plugin: Lex_calendar_list_block
 settings:

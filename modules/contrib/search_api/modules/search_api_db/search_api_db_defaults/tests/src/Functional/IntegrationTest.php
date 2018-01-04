@@ -62,16 +62,9 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     \Drupal::state()->set('search_api_use_tracking_batch', FALSE);
 
     // Install the search_api_db_defaults module.
-    if (version_compare(\Drupal::VERSION, '8.3', '>=')) {
-      $edit_enable = [
-        'modules[search_api_db_defaults][enable]' => TRUE,
-      ];
-    }
-    else {
-      $edit_enable = [
-        'modules[Search][search_api_db_defaults][enable]' => TRUE,
-      ];
-    }
+    $edit_enable = [
+      'modules[search_api_db_defaults][enable]' => TRUE,
+    ];
     $this->drupalPostForm('admin/modules', $edit_enable, 'Install');
 
     $this->assertSession()->pageTextContains('Some required modules must be enabled');
@@ -81,6 +74,9 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $this->assertSession()->pageTextContains('2 modules have been enabled: Database Search Defaults, Database Search');
 
     $this->rebuildContainer();
+
+    $this->drupalPostForm('admin/config/search/search-api/server/default_server/edit', [], 'Save');
+    $this->assertSession()->pageTextContains('The server was successfully saved.');
 
     $server = Server::load('default_server');
     $this->assertTrue($server, 'Server can be loaded');
@@ -98,7 +94,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
       'title[0][value]' => $title,
       'body[0][value]' => 'This is test content for the Search API to index.',
     ];
-    $this->drupalPostForm('node/add/article', $edit, 'Save and publish');
+    $this->drupalPostForm('node/add/article', $edit, 'Save');
 
     $this->drupalLogout();
     $this->drupalGet('search/content');

@@ -3,22 +3,16 @@
 namespace Drupal\Tests\search_api\Functional;
 
 use Drupal\block\Entity\Block;
-use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Component\Serialization\Yaml;
 use Drupal\Component\Utility\Html;
-// @todo Once we depend on Drupal 8.3+, change this import.
-use Drupal\Core\Config\Testing\ConfigSchemaChecker;
-use Drupal\Core\DrupalKernel;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Session\UserSession;
-use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\entity_test\Entity\EntityTestMulRevChanged;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Utility\Utility;
 use Drupal\views\Entity\View;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Tests the Views integration of the Search API.
@@ -60,7 +54,7 @@ class ViewsTest extends SearchApiBrowserTestBase {
     // Do not use a batch for tracking the initial items after creating an
     // index when running the tests via the GUI. Otherwise, it seems Drupal's
     // Batch API gets confused and the test fails.
-    if (php_sapi_name() != 'cli') {
+    if (!Utility::isRunningInCli()) {
       \Drupal::state()->set('search_api_use_tracking_batch', FALSE);
     }
   }
@@ -393,7 +387,7 @@ class ViewsTest extends SearchApiBrowserTestBase {
     for ($i = 0; $i < 3; ++$i) {
       // Flush the page-level caches to make sure the Views cache plugin is
       // used (so we could reproduce the bug if it's there).
-      \Drupal::getContainer()->get('cache.render')->deleteAll();
+      \Drupal::getContainer()->get('cache.page')->deleteAll();
       \Drupal::getContainer()->get('cache.dynamic_page_cache')->deleteAll();
       $this->submitForm([], 'Search');
       $this->assertSession()->addressEquals('search-api-test');
@@ -444,19 +438,59 @@ class ViewsTest extends SearchApiBrowserTestBase {
   }
 
   /**
-   * Test Views admin UI and field handlers.
+   * Tests results are ordered correctly and react to exposed sorts.
+   */
+  public function testViewSorts() {
+    // Check default ordering, first exposed sort in config is
+    // search_api_relevance.
+    $this->checkResultsOrder([], [1, 2, 3, 4, 5]);
+
+    // Make sure the exposed sort works.
+    $query = [
+      'sort_by' => 'search_api_id_desc',
+    ];
+    $this->checkResultsOrder($query, [5, 4, 3, 2, 1]);
+  }
+
+  /**
+   * Checks whether Views results are in a certain order in the sorts test view.
+   *
+   * @param array $query
+   *   The GET parameters to set for the view.
+   * @param int[] $expected_results
+   *   The IDs of the expected results.
+   *
+   * @see views.view.search_api_test_sorts.yml
+   */
+  protected function checkResultsOrder(array $query, array $expected_results) {
+    $this->drupalGet('search-api-test-sorts', ['query' => $query]);
+
+    $web_assert = $this->assertSession();
+    $rows_xpath = '//div[contains(@class, "views-row")]';
+    $web_assert->elementsCount('xpath', $rows_xpath, count($expected_results));
+    foreach (array_values($expected_results) as $i => $id) {
+      $entity_label = Html::escape($this->entities[$id]->label());
+      // XPath offsets are 1-based, not 0-based.
+      ++$i;
+      $web_assert->elementContains('xpath', "($rows_xpath)[$i]", $entity_label);
+    }
+  }
+
+  /**
+   * Tests the Views admin UI and field handlers.
    */
   public function testViewsAdmin() {
     // Add a field from a related entity to the index to test whether it gets
     // displayed correctly.
     /** @var \Drupal\search_api\IndexInterface $index */
     $index = Index::load($this->indexId);
+    $datasource_id = 'entity:entity_test_mulrev_changed';
     $field = \Drupal::getContainer()
       ->get('search_api.fields_helper')
       ->createField($index, 'author', [
         'label' => 'Author name',
         'type' => 'string',
-        'datasource_id' => 'entity:entity_test_mulrev_changed',
+        'datasource_id' => $datasource_id,
         'property_path' => 'user_id:entity:name',
       ]);
     $index->addField($field);
@@ -656,7 +690,7 @@ class ViewsTest extends SearchApiBrowserTestBase {
             }
           }
           else {
-            $data = ['entity:entity_test_mulrev_changed'];
+            $data = [$datasource_id];
           }
           $row_num = 2 * $id + $i - 1;
           $prefix = "#$row_num [$field] ";
@@ -670,6 +704,23 @@ class ViewsTest extends SearchApiBrowserTestBase {
           }
         }
       }
+    }
+
+    // Check whether the expected retrieved properties were listed on the page.
+    // Since the fields with the "field_rendering" option enabled will need the
+    // complete loaded entity, these are only present as "_object" here.
+    // @see search_api_test_views_search_api_query_alter()
+    $retrieved_properties = [
+      Utility::createCombinedId($datasource_id, 'id'),
+      Utility::createCombinedId($datasource_id, '_object'),
+      Utility::createCombinedId($datasource_id, 'keywords'),
+      Utility::createCombinedId($datasource_id, 'user_id'),
+      Utility::createCombinedId($datasource_id, 'user_id:entity:_object'),
+      Utility::createCombinedId($datasource_id, 'user_id:entity:roles'),
+      Utility::createCombinedId(NULL, 'rendered_item'),
+    ];
+    foreach ($retrieved_properties as $combined_property_path) {
+      $this->assertSession()->pageTextContains("'$combined_property_path'");
     }
 
     // Check that click-sorting works correctly.
@@ -725,6 +776,10 @@ class ViewsTest extends SearchApiBrowserTestBase {
     $this->drupalGet('search-api-test');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextNotContains('[name] [EMPTY]');
+
+    // Run regression tests.
+    $this->drupalLogin($admin_user);
+    $this->adminUiRegressionTests();
   }
 
   /**
@@ -814,146 +869,55 @@ class ViewsTest extends SearchApiBrowserTestBase {
   }
 
   /**
-   * Installs Drupal into the Simpletest site.
-   *
-   * We need to override \Drupal\Tests\BrowserTestBase::installDrupal() because
-   * before modules install we need to add test entity bundles for this test.
+   * Contains regression tests for previous, fixed bugs in the Views UI.
    */
-  public function installDrupal() {
-    // @todo Once we depend on Drupal 8.3+, this can be simplified by a lot.
-    $password = $this->randomMachineName();
-    // Define information about the user 1 account.
-    $this->rootUser = new UserSession([
-      'uid' => 1,
-      'name' => 'admin',
-      'mail' => 'admin@example.com',
-      'pass_raw' => $password,
-      'passRaw' => $password,
-      'timezone' => date_default_timezone_get(),
-    ]);
+  protected function adminUiRegressionTests() {
+    $this->regressionTest2883807();
+  }
 
-    // The child site derives its session name from the database prefix when
-    // running web tests.
-    $this->generateSessionName($this->databasePrefix);
-
-    // Get parameters for install_drupal() before removing global variables.
-    $parameters = $this->installParameters();
-
-    // Prepare installer settings that are not install_drupal() parameters.
-    // Copy and prepare an actual settings.php, so as to resemble a regular
-    // installation.
-    // Not using File API; a potential error must trigger a PHP warning.
-    $directory = DRUPAL_ROOT . '/' . $this->siteDirectory;
-    copy(DRUPAL_ROOT . '/sites/default/default.settings.php', $directory . '/settings.php');
-
-    // All file system paths are created by System module during installation.
-    // @see system_requirements()
-    // @see TestBase::prepareEnvironment()
-    $settings['settings']['file_public_path'] = (object) [
-      'value' => $this->publicFilesDirectory,
-      'required' => TRUE,
+  /**
+   * Verifies that adding a contextual filter doesn't trigger a notice.
+   *
+   * @see https://www.drupal.org/node/2883807
+   */
+  protected function regressionTest2883807() {
+    $this->drupalGet('admin/structure/views/nojs/add-handler/search_api_test_view/page_1/argument');
+    $edit = [
+      'name[search_api_index_database_search_index.author]' => TRUE,
     ];
-    $settings['settings']['file_private_path'] = (object) [
-      'value' => $this->privateFilesDirectory,
-      'required' => TRUE,
-    ];
-    $this->writeSettings($settings);
-    // Allow for test-specific overrides.
-    $original_site = !empty($this->originalSiteDirectory) ? $this->originalSiteDirectory : $this->originalSite;
-    $settings_testing_file = DRUPAL_ROOT . '/' . $original_site . '/settings.testing.php';
-    if (file_exists($settings_testing_file)) {
-      // Copy the testing-specific settings.php overrides in place.
-      copy($settings_testing_file, $directory . '/settings.testing.php');
-      // Add the name of the testing class to settings.php and include the
-      // testing specific overrides.
-      file_put_contents($directory . '/settings.php', "\n\$test_class = '" . get_class($this) . "';\n" . 'include DRUPAL_ROOT . \'/\' . $site_path . \'/settings.testing.php\';' . "\n", FILE_APPEND);
-    }
+    $this->submitForm($edit, 'Add and configure contextual filters');
+    $this->submitForm([], 'Apply');
+    $this->submitForm([], 'Save');
+  }
 
-    $settings_services_file = DRUPAL_ROOT . '/' . $original_site . '/testing.services.yml';
-    if (!file_exists($settings_services_file)) {
-      // Otherwise, use the default services as a starting point for overrides.
-      $settings_services_file = DRUPAL_ROOT . '/sites/default/default.services.yml';
-    }
-    // Copy the testing-specific service overrides in place.
-    copy($settings_services_file, $directory . '/services.yml');
-    if ($this->strictConfigSchema) {
-      // Add a listener to validate configuration schema on save.
-      $content = file_get_contents($directory . '/services.yml');
-      $services = Yaml::decode($content);
-      $services['services']['simpletest.config_schema_checker'] = [
-        'class' => ConfigSchemaChecker::class,
-        'arguments' => ['@config.typed', $this->getConfigSchemaExclusions()],
-        'tags' => [['name' => 'event_subscriber']],
-      ];
-      file_put_contents($directory . '/services.yml', Yaml::encode($services));
-    }
+  /**
+   * Checks whether highlighting of results works correctly.
+   *
+   * @see views.view.search_api_test_cache.yml
+   */
+  public function testHighlighting() {
+    // Add the Highlight processor to the search index.
+    $index = Index::load('database_search_index');
+    $processor = $this->container
+      ->get('search_api.plugin_helper')
+      ->createProcessorPlugin($index, 'highlight');
+    $index->addProcessor($processor);
+    $index->save();
 
-    // Since Drupal is bootstrapped already, install_begin_request() will not
-    // bootstrap into DRUPAL_BOOTSTRAP_CONFIGURATION (again). Hence, we have to
-    // reload the newly written custom settings.php manually.
-    Settings::initialize(DRUPAL_ROOT, $directory, $this->classLoader);
+    $path = 'search-api-test-search-view-caching-none';
+    $this->drupalGet($path);
+    $this->assertSession()->responseContains('foo bar baz');
 
-    // Execute the non-interactive installer.
-    require_once DRUPAL_ROOT . '/core/includes/install.core.inc';
-    install_drupal($parameters);
+    $options['query']['search_api_fulltext'] = 'foo';
+    $this->drupalGet($path, $options);
+    $this->assertSession()->responseContains('<strong>foo</strong> bar baz');
+  }
 
-    // Import new settings.php written by the installer.
-    Settings::initialize(DRUPAL_ROOT, $directory, $this->classLoader);
-    foreach ($GLOBALS['config_directories'] as $type => $path) {
-      $this->configDirectories[$type] = $path;
-    }
-
-    // After writing settings.php, the installer removes write permissions from
-    // the site directory. To allow drupal_generate_test_ua() to write a file
-    // containing the private key for drupal_valid_test_ua(), the site directory
-    // has to be writable.
-    // TestBase::restoreEnvironment() will delete the entire site directory. Not
-    // using File API; a potential error must trigger a PHP warning.
-    chmod($directory, 0777);
-
-    // During tests, cacheable responses should get the debugging cacheability
-    // headers by default.
-    $this->setContainerParameter('http.response.debug_cacheability_headers', TRUE);
-
-    $request = \Drupal::request();
-    $this->kernel = DrupalKernel::createFromRequest($request, $this->classLoader, 'prod', TRUE);
-    $this->kernel->prepareLegacyRequest($request);
-    // Force the container to be built from scratch instead of loaded from the
-    // disk. This forces us to not accidentally load the parent site.
-    $container = $this->kernel->rebuildContainer();
-
-    $config = $container->get('config.factory');
-
-    // Manually create and configure private and temporary files directories.
-    file_prepare_directory($this->privateFilesDirectory, FILE_CREATE_DIRECTORY);
-    file_prepare_directory($this->tempFilesDirectory, FILE_CREATE_DIRECTORY);
-    // While the temporary files path could be preset/enforced in settings.php
-    // like the public files directory above, some tests expect it to be
-    // configurable in the UI. If declared in settings.php, it would no longer
-    // be configurable.
-    $config->getEditable('system.file')
-      ->set('path.temporary', $this->tempFilesDirectory)
-      ->save();
-
-    // Manually configure the test mail collector implementation to prevent
-    // tests from sending out emails and collect them in state instead.
-    // While this should be enforced via settings.php prior to installation,
-    // some tests expect to be able to test mail system implementations.
-    $config->getEditable('system.mail')
-      ->set('interface.default', 'test_mail_collector')
-      ->save();
-
-    // By default, verbosely display all errors and disable all production
-    // environment optimizations for all tests to avoid needless overhead and
-    // ensure a sane default experience for test authors.
-    // @see https://www.drupal.org/node/2259167
-    $config->getEditable('system.logging')
-      ->set('error_level', 'verbose')
-      ->save();
-    $config->getEditable('system.performance')
-      ->set('css.preprocess', FALSE)
-      ->set('js.preprocess', FALSE)
-      ->save();
+  /**
+   * {@inheritdoc}
+   */
+  protected function initConfig(ContainerInterface $container) {
+    parent::initConfig($container);
 
     // This will just set the Drupal state to include the necessary bundles for
     // our test entity type. Otherwise, fields from those bundles won't be found
@@ -966,31 +930,6 @@ class ViewsTest extends SearchApiBrowserTestBase {
       'article' => ['label' => 'article'],
     ];
     \Drupal::state()->set('entity_test_mulrev_changed.bundles', $bundles);
-
-    // Collect modules to install.
-    $class = get_class($this);
-    $modules = [];
-    while ($class) {
-      if (property_exists($class, 'modules')) {
-        $modules = array_merge($modules, $class::$modules);
-      }
-      $class = get_parent_class($class);
-    }
-    if ($modules) {
-      $modules = array_unique($modules);
-      $success = $container->get('module_installer')->install($modules, TRUE);
-      $this->assertTrue($success, new FormattableMarkup('Enabled modules: %modules', ['%modules' => implode(', ', $modules)]));
-      $this->rebuildContainer();
-    }
-
-    // Reset/rebuild all data structures after enabling the modules, primarily
-    // to synchronize all data structures and caches between the test runner and
-    // the child site.
-    // @see \Drupal\Core\DrupalKernel::bootCode()
-    // @todo Test-specific setUp() methods may set up further fixtures; find a
-    //   way to execute this after setUp() is done, or to eliminate it entirely.
-    $this->resetAll();
-    $this->kernel->prepareLegacyRequest($request);
   }
 
 }

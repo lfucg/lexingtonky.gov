@@ -81,6 +81,9 @@ class TestBackend extends BackendPluginBase implements PluginFormInterface {
    * {@inheritdoc}
    */
   public function getSupportedFeatures() {
+    if ($override = $this->getMethodOverride(__FUNCTION__)) {
+      return call_user_func($override, $this);
+    }
     return ['search_api_mlt'];
   }
 
@@ -88,7 +91,10 @@ class TestBackend extends BackendPluginBase implements PluginFormInterface {
    * {@inheritdoc}
    */
   public function supportsDataType($type) {
-    return $type == 'search_api_test' || $type == 'search_api_test_altering';
+    if ($override = $this->getMethodOverride(__FUNCTION__)) {
+      return call_user_func($override, $this, $type);
+    }
+    return in_array($type, ['search_api_test', 'search_api_test_altering']);
   }
 
   /**
@@ -262,6 +268,7 @@ class TestBackend extends BackendPluginBase implements PluginFormInterface {
       $item->setScore(1);
       $result_items[$item_id] = $item;
     }
+    $results->setResultItems($result_items);
     $results->setResultCount(count($result_items));
   }
 

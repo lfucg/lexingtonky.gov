@@ -150,6 +150,7 @@ class SearchApiEntity extends SearchApiStandard {
 
     $form['link_to_item']['#description'] .= ' ' . $this->t('This will only take effect for entities for which only the entity label is displayed.');
     $form['link_to_item']['#weight'] = 5;
+    unset($form['use_highlighting']);
   }
 
   /**

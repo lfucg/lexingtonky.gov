@@ -1,7 +1,7 @@
 Installation
 ------------
 
-The search_api_solr module manages it's dependencies and class loader via
+The search_api_solr module manages its dependencies and class loader via
 composer. So if you simply downloaded this module from drupal.org you have to
 delete it and install it again via composer!
 

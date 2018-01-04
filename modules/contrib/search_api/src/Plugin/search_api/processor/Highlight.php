@@ -191,8 +191,8 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
     }
     $form['exclude_fields'] = [
       '#type' => 'checkboxes',
-      '#title' => t('Exclude fields from excerpt'),
-      '#description' => t('Exclude certain fulltext fields from being included in the excerpt.'),
+      '#title' => $this->t('Exclude fields from excerpt'),
+      '#description' => $this->t('Exclude certain fulltext fields from being included in the excerpt.'),
       '#options' => $fulltext_fields,
       '#default_value' => $this->configuration['exclude_fields'],
       '#attributes' => ['class' => ['search-api-checkboxes-list']],
@@ -255,14 +255,12 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
     }
     if ($this->configuration['highlight'] != 'never') {
       $highlighted_fields = $this->highlightFields($result_items, $keys);
-      if ($highlighted_fields) {
+      foreach ($highlighted_fields as $item_id => $item_fields) {
+        $item = $result_items[$item_id];
         // Maybe the backend or some other processor has already set highlighted
         // field values.
-        foreach ($results->getExtraData('highlighted_fields', []) as $item_id => $old_highlighting) {
-          $highlighted_fields += [$item_id => []];
-          $highlighted_fields[$item_id] += $old_highlighting;
-        }
-        $results->setExtraData('highlighted_fields', $highlighted_fields);
+        $item_fields += $item->getExtraData('highlighted_fields', []);
+        $item->setExtraData('highlighted_fields', $item_fields);
       }
     }
   }
@@ -367,7 +365,7 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
    *   An array of all unique positive keywords used in the query.
    */
   protected function getKeywords(QueryInterface $query) {
-    $keys = $query->getKeys();
+    $keys = $query->getOriginalKeys();
     if (!$keys) {
       return [];
     }

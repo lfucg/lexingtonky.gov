@@ -35,9 +35,11 @@ interface EntityDatasourceInterface extends DatasourceInterface {
    *   (optional) The languages for which all item IDs should be returned; or
    *   NULL to retrieve IDs from all enabled languages in this datasource.
    *
-   * @return string[]
-   *   An array of all item IDs matching these conditions. In case both bundles
-   *   and languages are specified, they are combined with OR.
+   * @return string[]|null
+   *   An array of all item IDs matching these conditions; or NULL if a page was
+   *   specified and there are no more items for that and all following pages.
+   *   In case both bundles and languages are specified, they are combined with
+   *   OR.
    */
   public function getPartialItemIds($page = NULL, array $bundles = NULL, array $languages = NULL);
 

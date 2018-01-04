@@ -106,4 +106,28 @@ trait TestPluginTrait {
     return $this->pluginType;
   }
 
+  /**
+   * Implements the magic __call() method.
+   *
+   * Allows the easy definition of additional methods via method overrides.
+   *
+   * @param string $name
+   *   The method name.
+   * @param array $arguments
+   *   The arguments of the method call.
+   *
+   * @return mixed
+   *   The method's return value, if any.
+   *
+   * @see \Drupal\search_api_test\TestPluginTrait::getMethodOverride()
+   */
+  public function __call($name, array $arguments) {
+    if ($override = $this->getMethodOverride($name)) {
+      array_unshift($arguments, $this);
+      return call_user_func_array($override, $arguments);
+    }
+    $class = static::class;
+    throw new \BadMethodCallException("Method $class::$name() doesn't exist.");
+  }
+
 }

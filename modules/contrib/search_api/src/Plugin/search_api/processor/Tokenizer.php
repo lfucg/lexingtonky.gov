@@ -37,11 +37,15 @@ class Tokenizer extends FieldsProcessorPluginBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
+    $configuration = parent::defaultConfiguration();
+
+    $configuration += [
       'spaces' => '',
       'overlap_cjk' => TRUE,
       'minimum_word_size' => 3,
     ];
+
+    return $configuration;
   }
 
   /**

@@ -426,39 +426,34 @@ abstract class SolrConnectorPluginBase extends ConfigurablePluginBase implements
   /**
    * Gets data from a Solr endpoint using a given handler.
    *
+   * @param $endpoint_name
+   * @param $handler
    * @param bool $reset
    *   If TRUE the server will be asked regardless if a previous call is cached.
    *
    * @return object
    *   A response object with system information.
-   *
-   * @throws \Drupal\search_api_solr\SearchApiSolrException
    */
-  protected function getDataFromHandler($endpoint, $handler, $reset = FALSE) {
+  protected function getDataFromHandler($endpoint_name, $handler, $reset = FALSE) {
     static $previous_calls = [];
 
     $this->connect();
 
-    $endpoint_uri = $this->solr->getEndpoint($endpoint)->getBaseUri();
+    $endpoint = $this->solr->getEndpoint($endpoint_name);
+    $endpoint_uri = $endpoint->getBaseUri();
     $state_key = 'search_api_solr.endpoint.data';
     $state = \Drupal::state();
     $endpoint_data = $state->get($state_key);
 
     if (!isset($previous_calls[$endpoint_uri][$handler]) || $reset) {
       // Don't retry multiple times in case of an exception.
-      $previous_calls[$endpoint] = TRUE;
+      $previous_calls[$endpoint_name] = TRUE;
 
       if (!is_array($endpoint_data) || !isset($endpoint_data[$endpoint_uri][$handler]) || $reset) {
         // @todo Finish https://github.com/solariumphp/solarium/pull/155 and stop
         // abusing the ping query for this.
         $query = $this->solr->createPing(array('handler' => $handler));
-        try {
-          $endpoint_data[$endpoint_uri][$handler] = $this->solr->execute($query, $endpoint)->getData();
-        }
-        catch (HttpException $e) {
-          throw new SearchApiSolrException(t('Solr endpoint @endpoint not found.', ['@endpoint' => $endpoint_uri]), $e->getCode(), $e);
-        }
-
+        $endpoint_data[$endpoint_uri][$handler] = $this->execute($query, $endpoint)->getData();
         $state->set($state_key, $endpoint_data);
       }
     }
@@ -504,6 +499,7 @@ abstract class SolrConnectorPluginBase extends ConfigurablePluginBase implements
       }
     }
     catch (HttpException $e) {
+      // Don't handle the exception. Just return FALSE below.
     }
 
     return FALSE;
@@ -530,33 +526,28 @@ abstract class SolrConnectorPluginBase extends ConfigurablePluginBase implements
     $query = $this->solr->createPing();
     $query->setResponseWriter(Query::WT_PHPS);
     $query->setHandler('admin/mbeans?stats=true');
-    try {
-      $stats = $this->solr->execute($query)->getData();
-      if (!empty($stats)) {
-        $update_handler_stats = $stats['solr-mbeans']['UPDATEHANDLER']['updateHandler']['stats'];
-        $summary['@pending_docs'] = (int) $update_handler_stats['docsPending'];
-        $max_time = (int) $update_handler_stats['autocommit maxTime'];
-        // Convert to seconds.
-        $summary['@autocommit_time_seconds'] = $max_time / 1000;
-        $summary['@autocommit_time'] = \Drupal::service('date.formatter')->formatInterval($max_time / 1000);
-        $summary['@deletes_by_id'] = (int) $update_handler_stats['deletesById'];
-        $summary['@deletes_by_query'] = (int) $update_handler_stats['deletesByQuery'];
-        $summary['@deletes_total'] = $summary['@deletes_by_id'] + $summary['@deletes_by_query'];
-        $summary['@schema_version'] = $this->getSchemaVersionString(TRUE);
-        $summary['@core_name'] = $stats['solr-mbeans']['CORE']['core']['stats']['coreName'];
-        if (version_compare($this->getSolrVersion(), '6.4', '>=')) {
-          // @see https://issues.apache.org/jira/browse/SOLR-3990
-          $summary['@index_size'] = $stats['solr-mbeans']['CORE']['core']['stats']['size'];
-        }
-        else {
-          $summary['@index_size'] = $stats['solr-mbeans']['QUERYHANDLER']['/replication']['stats']['indexSize'];
-        }
+    $stats = $this->execute($query)->getData();
+    if (!empty($stats)) {
+      $update_handler_stats = $stats['solr-mbeans']['UPDATEHANDLER']['updateHandler']['stats'];
+      $summary['@pending_docs'] = (int) $update_handler_stats['docsPending'];
+      $max_time = (int) $update_handler_stats['autocommit maxTime'];
+      // Convert to seconds.
+      $summary['@autocommit_time_seconds'] = $max_time / 1000;
+      $summary['@autocommit_time'] = \Drupal::service('date.formatter')->formatInterval($max_time / 1000);
+      $summary['@deletes_by_id'] = (int) $update_handler_stats['deletesById'];
+      $summary['@deletes_by_query'] = (int) $update_handler_stats['deletesByQuery'];
+      $summary['@deletes_total'] = $summary['@deletes_by_id'] + $summary['@deletes_by_query'];
+      $summary['@schema_version'] = $this->getSchemaVersionString(TRUE);
+      $summary['@core_name'] = $stats['solr-mbeans']['CORE']['core']['stats']['coreName'];
+      if (version_compare($this->getSolrVersion(TRUE), '6.4', '>=')) {
+        // @see https://issues.apache.org/jira/browse/SOLR-3990
+        $summary['@index_size'] = $stats['solr-mbeans']['CORE']['core']['stats']['size'];
       }
-      return $summary;
+      else {
+        $summary['@index_size'] = $stats['solr-mbeans']['QUERYHANDLER']['/replication']['stats']['indexSize'];
+      }
     }
-    catch (HttpException $e) {
-      throw new SearchApiSolrException(t('Solr server core @core not found.', ['@core' => $this->solr->getEndpoint()->getBaseUri()]), $e->getCode(), $e);
-    }
+    return $summary;
   }
 
   /**
@@ -619,7 +610,7 @@ abstract class SolrConnectorPluginBase extends ConfigurablePluginBase implements
     // @todo Destinguish between different flavors of REST requests and use
     //   different timeout settings.
     $endpoint->setTimeout($this->configuration['optimize_timeout']);
-    $response = $this->solr->executeRequest($request, $endpoint);
+    $response = $this->executeRequest($request, $endpoint);
     $endpoint->setTimeout($timeout);
     $output = Json::decode($response->getBody());
     // \Drupal::logger('search_api_solr')->info(print_r($output, true));.
@@ -718,7 +709,7 @@ abstract class SolrConnectorPluginBase extends ConfigurablePluginBase implements
       $request->setMethod(Request::METHOD_GET);
     }
 
-    return $this->solr->executeRequest($request, $endpoint);
+    return $this->executeRequest($request, $endpoint);
   }
 
   /**
@@ -757,7 +748,7 @@ abstract class SolrConnectorPluginBase extends ConfigurablePluginBase implements
         ->setValue($this->configuration['commit_within']);
     }
 
-    $result = $this->solr->execute($query, $endpoint);
+    $result = $this->execute($query, $endpoint);
 
     // Reset the timeout setting to the default value for search queries.
     $endpoint->setTimeout($timeout);
@@ -775,7 +766,56 @@ abstract class SolrConnectorPluginBase extends ConfigurablePluginBase implements
       $endpoint = $this->solr->getEndpoint('core');
     }
 
-    return $this->solr->execute($query, $endpoint);
+    try {
+      return $this->solr->execute($query, $endpoint);
+    }
+    catch (HttpException $e) {
+      $this->handleHttpException($e, $endpoint);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executeRequest(Request $request, Endpoint $endpoint = NULL) {
+    $this->connect();
+
+    if (!$endpoint) {
+      $endpoint = $this->solr->getEndpoint('core');
+    }
+
+    try {
+      return $this->solr->executeRequest($request, $endpoint);
+    }
+    catch (HttpException $e) {
+      $this->handleHttpException($e, $endpoint);
+    }
+  }
+
+  /**
+   * Converts a HttpException in an easier to read SearchApiSolrException.
+   *
+   * @param \Solarium\Exception\HttpException $e
+   * @param \Solarium\Core\Client\Endpoint $endpoint
+   *
+   * @throws \Drupal\search_api_solr\SearchApiSolrException
+   */
+  protected function handleHttpException(HttpException $e, Endpoint $endpoint) {
+    $response_code = $e->getCode();
+    switch ($response_code) {
+      case 404:
+        $description = $this->t('not found');
+        break;
+
+      case 401:
+      case 403:
+        $description = $this->t('access denied');
+        break;
+
+      default:
+        $description = $this->t('unreachable');
+    }
+    throw new SearchApiSolrException($this->t('Solr endpoint @endpoint @description.', ['@endpoint' => $endpoint->getBaseUri(), '@description' => $description]), $response_code, $e);
   }
 
   /**
@@ -796,7 +836,7 @@ abstract class SolrConnectorPluginBase extends ConfigurablePluginBase implements
     $update_query = $this->solr->createUpdate();
     $update_query->addOptimize(TRUE, FALSE);
 
-    $this->solr->execute($update_query, $endpoint);
+    $this->execute($update_query, $endpoint);
 
     // Reset the timeout setting to the default value for search queries.
     $endpoint->setTimeout($timeout);
@@ -806,8 +846,7 @@ abstract class SolrConnectorPluginBase extends ConfigurablePluginBase implements
    * {@inheritdoc}
    */
   public function extract(QueryInterface $query) {
-    $this->connect();
-    return $this->solr->extract($query);
+    return $this->execute($query);
   }
 
   /**
@@ -841,12 +880,7 @@ abstract class SolrConnectorPluginBase extends ConfigurablePluginBase implements
       $query->addParam('file', $file);
     }
 
-    try {
-      return $this->solr->execute($query)->getResponse();
-    }
-    catch (HttpException $e) {
-      throw new SearchApiSolrException($this->t('Solr server core @core not found.', ['@core' => $this->solr->getEndpoint()->getBaseUri()]), $e->getCode(), $e);
-    }
+    return $this->execute($query)->getResponse();
   }
 
   /**

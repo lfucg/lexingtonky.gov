@@ -33,10 +33,12 @@ class IgnoreCharacters extends FieldsProcessorPluginBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
+    $configuration = parent::defaultConfiguration();
+
     // @todo As elsewhere, the "character_sets" setting should only contain the
     //   enabled classes, in a numeric array.
     // @todo Also, nesting this setting makes no sense.
-    return [
+    $configuration += [
       'ignorable' => "['¿¡!?,.:;]",
       'strip' => [
         'character_sets' => [
@@ -50,6 +52,8 @@ class IgnoreCharacters extends FieldsProcessorPluginBase {
         ],
       ],
     ];
+
+    return $configuration;
   }
 
   /**

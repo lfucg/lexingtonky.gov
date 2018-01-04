@@ -3,7 +3,8 @@
 namespace Drupal\Tests\search_api_db\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\search_api_autocomplete\Entity\SearchApiAutocompleteSearch;
+use Drupal\search_api\Utility\Utility;
+use Drupal\search_api_autocomplete\Entity\Search;
 use Drupal\search_api_db\Plugin\search_api\backend\Database;
 use Drupal\Tests\search_api\Functional\ExampleContentTrait;
 
@@ -14,7 +15,7 @@ use Drupal\Tests\search_api\Functional\ExampleContentTrait;
  * @coversDefaultClass \Drupal\search_api_db\Plugin\search_api\backend\Database
  * @group search_api
  */
-abstract class AutocompleteTest extends KernelTestBase {
+class AutocompleteTest extends KernelTestBase {
 
   use ExampleContentTrait;
 
@@ -60,17 +61,12 @@ abstract class AutocompleteTest extends KernelTestBase {
     $this->installSchema('user', ['users_data']);
     $this->installEntitySchema('entity_test_mulrev_changed');
     $this->installEntitySchema('search_api_task');
-
-    // Set the tracking page size so tracking will work properly.
-    \Drupal::configFactory()
-      ->getEditable('search_api.settings')
-      ->set('tracking_page_size', 100)
-      ->save();
+    $this->installConfig('search_api');
 
     // Do not use a batch for tracking the initial items after creating an
     // index when running the tests via the GUI. Otherwise, it seems Drupal's
     // Batch API gets confused and the test fails.
-    if (php_sapi_name() != 'cli') {
+    if (!Utility::isRunningInCli()) {
       \Drupal::state()->set('search_api_use_tracking_batch', FALSE);
     }
 
@@ -93,8 +89,9 @@ abstract class AutocompleteTest extends KernelTestBase {
    * @covers ::getAutocompleteSuggestions
    */
   public function testAutocompletion() {
-    $autocomplete = SearchApiAutocompleteSearch::load('search_api_views_search_api_test_view');
-    $index = $autocomplete->getIndexInstance();
+    /** @var \Drupal\search_api_autocomplete\SearchInterface $autocomplete */
+    $autocomplete = Search::load('search_api_db_test_autocomplete');
+    $index = $autocomplete->getIndex();
     /** @var \Drupal\search_api_db\Plugin\search_api\backend\Database $backend */
     $backend = $index->getServerInstance()->getBackend();
 
@@ -127,19 +124,19 @@ abstract class AutocompleteTest extends KernelTestBase {
    *
    * @param int[] $expected
    *   Associative array mapping suggestion strings to their counts.
-   * @param \Drupal\search_api_autocomplete\SuggestionInterface[] $suggestions
+   * @param \Drupal\search_api_autocomplete\Suggestion\SuggestionInterface[] $suggestions
    *   The suggestions returned by the backend.
    */
   protected function assertSuggestionsEqual(array $expected, array $suggestions) {
     $terms = [];
     foreach ($suggestions as $suggestion) {
-      $keys = $suggestion->getKeys();
+      $keys = $suggestion->getSuggestedKeys();
       if ($keys === NULL) {
         $keys = $suggestion->getSuggestionPrefix();
         $keys .= $suggestion->getUserInput();
         $keys .= $suggestion->getSuggestionSuffix();
       }
-      $terms[$keys] = $suggestion->getResults();
+      $terms[$keys] = $suggestion->getResultsCount();
     }
     $this->assertEquals($expected, $terms);
   }

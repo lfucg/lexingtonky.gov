@@ -114,16 +114,17 @@ trait SearchApiCachePluginTrait {
       return;
     }
 
+    $view = $this->getView();
     $data = [
-      'result' => $this->view->result,
-      'total_rows' => isset($this->view->total_rows) ? $this->view->total_rows : 0,
-      'current_page' => $this->view->getCurrentPage(),
+      'result' => $view->result,
+      'total_rows' => isset($view->total_rows) ? $view->total_rows : 0,
+      'current_page' => $view->getCurrentPage(),
       'search_api results' => $this->getQuery()->getSearchApiResults(),
     ];
 
     $expire = $this->cacheSetMaxAge($type);
     if ($expire !== Cache::PERMANENT) {
-      $expire += (int) $this->view->getRequest()->server->get('REQUEST_TIME');
+      $expire += (int) $view->getRequest()->server->get('REQUEST_TIME');
     }
     $this->getCacheBackend()
       ->set($this->generateResultsKey(), $data, $expire, $this->getCacheTags());
@@ -142,10 +143,11 @@ trait SearchApiCachePluginTrait {
     if ($cache = $this->getCacheBackend()->get($this->generateResultsKey())) {
       $cutoff = $this->cacheExpire($type);
       if (!$cutoff || $cache->created > $cutoff) {
-        $this->view->result = $cache->data['result'];
-        $this->view->total_rows = $cache->data['total_rows'];
-        $this->view->setCurrentPage($cache->data['current_page']);
-        $this->view->execute_time = 0;
+        $view = $this->getView();
+        $view->result = $cache->data['result'];
+        $view->total_rows = $cache->data['total_rows'];
+        $view->setCurrentPage($cache->data['current_page']);
+        $view->execute_time = 0;
 
         // Trick Search API into believing a search happened, to make faceting
         // et al. work.
@@ -174,9 +176,17 @@ trait SearchApiCachePluginTrait {
       $query = $this->getQuery()->getSearchApiQuery();
       $query->preExecute();
 
-      $build_info = $this->view->build_info;
+      $view = $this->getView();
+      $build_info = $view->build_info;
 
-      $key_data = ['build_info' => $build_info];
+      $key_data = [
+        'build_info' => $build_info,
+        'pager' => [
+          'page' => $view->getCurrentPage(),
+          'items_per_page' => $view->getItemsPerPage(),
+          'offset' => $view->getOffset(),
+        ],
+      ];
 
       $display_handler_cache_contexts = $this->displayHandler
         ->getCacheMetadata()
@@ -185,10 +195,20 @@ trait SearchApiCachePluginTrait {
         ->convertTokensToKeys($display_handler_cache_contexts)
         ->getKeys();
 
-      $this->resultsKey = $this->view->storage->id() . ':' . $this->displayHandler->display['id'] . ':results:' . Crypt::hashBase64(serialize($key_data));
+      $this->resultsKey = $view->storage->id() . ':' . $this->displayHandler->display['id'] . ':results:' . Crypt::hashBase64(serialize($key_data));
     }
 
     return $this->resultsKey;
+  }
+
+  /**
+   * Retrieves the view to which this plugin belongs.
+   *
+   * @return \Drupal\views\ViewExecutable
+   *   The view.
+   */
+  protected function getView() {
+    return $this->view;
   }
 
   /**
@@ -201,7 +221,7 @@ trait SearchApiCachePluginTrait {
    *   Thrown if there is no current Views query, or it is no Search API query.
    */
   protected function getQuery() {
-    $query = $this->view->getQuery();
+    $query = $this->getView()->getQuery();
     if ($query instanceof SearchApiQuery) {
       return $query;
     }

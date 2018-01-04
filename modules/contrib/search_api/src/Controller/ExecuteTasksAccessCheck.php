@@ -22,6 +22,7 @@ class ExecuteTasksAccessCheck implements AccessInterface {
    * Creates an ExecuteTasksAccessCheck object.
    *
    * @param \Drupal\search_api\Task\TaskManagerInterface $tasksManager
+   *   The tasks manager service.
    */
   public function __construct(TaskManagerInterface $tasksManager) {
     $this->tasksManager = $tasksManager;

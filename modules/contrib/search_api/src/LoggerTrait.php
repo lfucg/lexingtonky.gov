@@ -62,7 +62,7 @@ trait LoggerTrait {
    * @see watchdog_exception()
    * @see \Drupal\Core\Utility\Error::decodeException()
    */
-  protected function logException(\Exception $exception, $message = NULL, $variables = [], $severity = RfcLogLevel::ERROR, $link = NULL) {
+  protected function logException(\Exception $exception, $message = NULL, array $variables = [], $severity = RfcLogLevel::ERROR, $link = NULL) {
     // Use a default value if $message is not set.
     if (empty($message)) {
       $message = '%type: @message in %function (line %line of %file).';

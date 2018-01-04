@@ -24,7 +24,7 @@ class ServerClearConfirmForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getDescription() {
-    return $this->t('This will permanently remove all data currently indexed on this server for indexes that aren\'t read-only. Items are queued for reindexing. Until reindexing occurs, searches for the affected indexes will not return any results. This action cannot be undone.');
+    return $this->t("This will permanently remove all data currently indexed on this server for indexes that aren't read-only. Items are queued for reindexing. Until reindexing occurs, searches for the affected indexes will not return any results. This action cannot be undone.");
   }
 
   /**

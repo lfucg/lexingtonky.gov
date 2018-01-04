@@ -48,12 +48,11 @@ class AddURL extends ProcessorPluginBase {
   public function addFieldValues(ItemInterface $item) {
     $url = $item->getDatasource()->getItemUrl($item->getOriginalObject());
     if ($url) {
+      $url = $url->toString();
       $fields = $this->getFieldsHelper()
         ->filterForPropertyPath($item->getFields(), NULL, 'search_api_url');
       foreach ($fields as $field) {
-        if (!$field->getDatasourceId()) {
-          $field->addValue($url->toString());
-        }
+        $field->addValue($url);
       }
     }
   }

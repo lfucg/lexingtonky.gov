@@ -3,7 +3,6 @@
 namespace Drupal\search_api\Form;
 
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Form\SubformState;
@@ -20,13 +19,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ServerForm extends EntityForm {
 
   /**
-   * The server storage controller.
-   *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
-   */
-  protected $storage;
-
-  /**
    * The backend plugin manager.
    *
    * @var \Drupal\search_api\Backend\BackendPluginManager
@@ -36,13 +28,10 @@ class ServerForm extends EntityForm {
   /**
    * Constructs a ServerForm object.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
    * @param \Drupal\search_api\Backend\BackendPluginManager $backend_plugin_manager
    *   The backend plugin manager.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, BackendPluginManager $backend_plugin_manager) {
-    $this->storage = $entity_type_manager->getStorage('search_api_server');
+  public function __construct(BackendPluginManager $backend_plugin_manager) {
     $this->backendPluginManager = $backend_plugin_manager;
   }
 
@@ -50,11 +39,7 @@ class ServerForm extends EntityForm {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager */
-    $entity_type_manager = $container->get('entity_type.manager');
-    /** @var \Drupal\search_api\Backend\BackendPluginManager $backend_plugin_manager */
-    $backend_plugin_manager = $container->get('plugin.manager.search_api.backend');
-    return new static($entity_type_manager, $backend_plugin_manager);
+    return new static($container->get('plugin.manager.search_api.backend'));
   }
 
   /**
@@ -117,7 +102,7 @@ class ServerForm extends EntityForm {
       '#maxlength' => 50,
       '#required' => TRUE,
       '#machine_name' => [
-        'exists' => [$this->storage, 'load'],
+        'exists' => '\Drupal\search_api\Entity\Server::load',
         'source' => ['name'],
       ],
       '#disabled' => !$server->isNew(),
@@ -209,10 +194,10 @@ class ServerForm extends EntityForm {
       drupal_set_message($this->t('The backend plugin is missing or invalid.'), 'error');
       return;
     }
-    $form['backend_config'] += ['#type' => 'container'];
-    $form['backend_config']['#attributes'] = [
-      'id' => 'search-api-backend-config-form',
+    $form['backend_config'] += [
+      '#type' => 'container',
     ];
+    $form['backend_config']['#attributes']['id'] = 'search-api-backend-config-form';
     $form['backend_config']['#tree'] = TRUE;
   }
 

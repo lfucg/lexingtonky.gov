@@ -87,6 +87,10 @@ class Utility {
         'geohash' => array(
           'prefix' => 'geo',
         ),
+        // Provided by Search API Location module.
+        'rpt' => [
+          'prefix' => 'rpt',
+        ],
       );
 
       // For the extra types, only add our extra info if it's already been
@@ -192,7 +196,7 @@ class Utility {
    *
    * Solr doesn't restrict the characters used to build field names. But using
    * non java identifiers within a field name can cause different kind of
-   * trouble when running querries. Java identifiers are only consist of
+   * trouble when running queries. Java identifiers are only consist of
    * letters, digits, '$' and '_'. See
    * https://issues.apache.org/jira/browse/SOLR-3996 and
    * http://docs.oracle.com/cd/E19798-01/821-1841/bnbuk/index.html
@@ -210,8 +214,8 @@ class Utility {
    * currently strictly enforced."
    *
    * This function therefore encodes all forbidden characters in their
-   * hexadecimal equivalent encapsulted by a leading sequence of '_X' and a
-   * termination charachter '_'. Example:
+   * hexadecimal equivalent encapsulated by a leading sequence of '_X' and a
+   * termination character '_'. Example:
    * "tm_entity:node/body" becomes "tm_entity_X3a_node_X2f_body".
    *
    * As a consequence the sequence '_X' itself needs to be encoded if it occurs
@@ -235,8 +239,8 @@ class Utility {
    * Decodes solr field names.
    *
    * This function therefore decodes all forbidden characters from their
-   * hexadecimal equivalent encapsulted by a leading sequence of '_X' and a
-   * termination charachter '_'. Example:
+   * hexadecimal equivalent encapsulated by a leading sequence of '_X' and a
+   * termination character '_'. Example:
    * "tm_entity_X3a_node_X2f_body" becomes "tm_entity:node/body".
    *
    * @see encodeSolrDynamicFieldName() for details.

@@ -76,14 +76,8 @@ class SearchApiTagCache extends Tag {
    */
   public function getCacheTags() {
     $tags = $this->view->storage->getCacheTags();
-
-    $types = $this->getQuery()->getEntityTypes();
-    // Merge the list cache tags of the entity types used in this view.
-    foreach ($types as $type) {
-      $entity_type = $this->getEntityTypeManager()->getDefinition($type);
-      $list_tags = $entity_type->getListCacheTags();
-      $tags = Cache::mergeTags($tags, $list_tags);
-    }
+    $tag = 'search_api_list:' . $this->getQuery()->getIndex()->id();
+    $tags = Cache::mergeTags([$tag], $tags);
     return $tags;
   }
 

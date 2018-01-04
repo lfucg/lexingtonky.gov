@@ -79,7 +79,11 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
+  add_url: {  }
+  aggregated_field: {  }
+  entity_status: {  }
   html_filter:
+    all_fields: false
     fields:
       - url
       - rendered_item
@@ -95,14 +99,50 @@ processor_settings:
       strong: 2
       b: 2
     weights:
-      preprocess_index: -15
+      preprocess_index: -48
       preprocess_query: -15
-  add_url: {  }
   rendered_item: {  }
-  entity_status: {  }
-  aggregated_field: {  }
+  stemmer:
+    all_fields: false
+    fields:
+      - url
+      - rendered_item
+      - title
+      - body
+      - field_section_body
+    exceptions:
+      garbage: waste+management
+      trash: waste+management
+      PDR: purchase+of+development+rights
+      pdr: purchase+of+development+rights
+    weights:
+      preprocess_index: -50
+      preprocess_query: 0
+  type_boost:
+    boosts:
+      'entity:node':
+        datasource_boost: !!float 5
+        bundle_boosts:
+          article: !!float 0
+          board_commission: !!float 2
+          event: !!float 3
+          landing_page: !!float 0
+          meeting: !!float 5
+          news_article: !!float 0
+          organization_page: !!float 8
+          page: !!float 13
+          site_wide_notice: !!float 0
+      'entity:paragraph':
+        datasource_boost: !!float 1
+        bundle_boosts:
+          paragraphs_media_contact: !!float 0
+          paragraphs_page_section: !!float 0
+          paragraph_sidebar_section: !!float 0
+    weights:
+      preprocess_index: -49
 tracker_settings:
-  default: {  }
+  default:
+    indexing_order: fifo
 options:
   index_directly: true
   cron_limit: 50

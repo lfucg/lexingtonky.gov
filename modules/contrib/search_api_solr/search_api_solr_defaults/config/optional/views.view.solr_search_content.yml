@@ -1,3 +1,4 @@
+id: solr_search_content
 langcode: en
 status: true
 dependencies:
@@ -8,7 +9,6 @@ dependencies:
     - core.entity_view_display.node.article.search_result
     - core.entity_view_display.node.page.search_result
     - search_api.index.default_solr_index
-id: solr_search_content
 label: 'Solr search content'
 module: views
 description: 'A search page preconfigured to search through the content of your site'
@@ -33,15 +33,17 @@ display:
         type: search_api_query
         options: {  }
       exposed_form:
-        type: basic
+        type: input_required
         options:
-          submit_button: Apply
+          submit_button: Search
           reset_button: false
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
           expose_sort_order: true
           sort_asc_label: Asc
           sort_desc_label: Desc
+          text_input_required: 'Please enter some keywords to search.'
+          text_input_required_format: basic_html
       pager:
         type: mini
         options:
@@ -88,7 +90,7 @@ display:
             use_operator: false
             operator: search_op
             identifier: keys
-            required: false
+            required: true
             remember: false
             multiple: false
             remember_roles:
@@ -107,12 +109,23 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+          parse_mode: terms
           min_length: 3
           fields: {  }
           plugin_id: search_api_fulltext
       sorts: {  }
       title: 'Search Content'
-      header: {  }
+      header:
+        result:
+          id: result
+          table: views
+          field: result
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: false
+          content: 'Displaying results @start - @end of @total'
+          plugin_id: result
       footer: {  }
       empty: {  }
       relationships: {  }
@@ -120,9 +133,13 @@ display:
       display_extenders: {  }
     cache_metadata:
       contexts:
+        - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
       cacheable: false
+      max-age: 0
+      tags: {  }
   page_1:
     display_plugin: page
     id: page_1
@@ -133,6 +150,10 @@ display:
       path: solr-search/content
     cache_metadata:
       contexts:
+        - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
       cacheable: false
+      max-age: 0
+      tags: {  }

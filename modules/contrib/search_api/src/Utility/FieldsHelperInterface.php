@@ -211,7 +211,7 @@ interface FieldsHelperInterface {
    * @return \Drupal\search_api\Item\FieldInterface
    *   A new field object.
    */
-  public function createField(IndexInterface $index, $fieldIdentifier, $fieldInfo = []);
+  public function createField(IndexInterface $index, $fieldIdentifier, array $fieldInfo = []);
 
   /**
    * Creates a new field on an index based on a property.

@@ -4,6 +4,7 @@ namespace Drupal\search_api_solr;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Solarium\Core\Client\Endpoint;
+use Solarium\Core\Client\Request;
 use Solarium\Core\Client\Response;
 use Solarium\Core\Query\QueryInterface;
 use Solarium\QueryType\Extract\Result as ExtractResult;
@@ -295,8 +296,22 @@ interface SolrConnectorInterface extends ConfigurablePluginInterface {
    * @param \Solarium\Core\Client\Endpoint|null $endpoint
    *
    * @return \Solarium\Core\Query\Result\ResultInterface
+   *
+   * @throws \Drupal\search_api_solr\SearchApiSolrException
    */
   public function execute(QueryInterface $query, Endpoint $endpoint = NULL);
+
+  /**
+   * Executes a request and returns the response.
+   *
+   * @param \Solarium\Core\Client\Request $request
+   * @param \Solarium\Core\Client\Endpoint|null $endpoint
+   *
+   * @return \Solarium\Core\Client\Response
+   *
+   * @throws \Drupal\search_api_solr\SearchApiSolrException
+   */
+  public function executeRequest(Request $request, Endpoint $endpoint = null);
 
   /**
    * Optimizes the Solr index.
@@ -306,7 +321,7 @@ interface SolrConnectorInterface extends ConfigurablePluginInterface {
   public function optimize(Endpoint $endpoint = NULL);
 
   /**
-   * Execute an extract query.
+   * Executes an extract query.
    *
    * @param \Solarium\Core\Query\QueryInterface|\Solarium\QueryType\Extract\Query $query
    *
@@ -347,8 +362,6 @@ interface SolrConnectorInterface extends ConfigurablePluginInterface {
    * @return \Solarium\Core\Client\Response
    *   A Solarium response object containing either the file contents or a file
    *   list.
-   *
-   * @throws \Drupal\search_api_solr\SearchApiSolrException
    */
   public function getFile($file = NULL);
 

@@ -210,18 +210,26 @@ class OverviewPageTest extends SearchApiBrowserTestBase {
 
     $this->drupalGet($this->overviewPageUrl);
     $basic_url = $this->urlGenerator->generateFromRoute('entity.search_api_server.canonical', ['search_api_server' => $server->id()]);
-    $this->assertSession()->responseContains('<a href="' . $basic_url . '/edit">Edit</a>');
-    $this->assertSession()->responseContains('<a href="' . $basic_url . '/disable">Disable</a>');
-    $this->assertSession()->responseContains('<a href="' . $basic_url . '/delete">Delete</a>');
-    $this->assertSession()->responseNotContains('<a href="' . $basic_url . '/enable">Enable</a>');
+    $destination = '';
+    // Drupal 8.5.x introduced "destination" parameters to all operations links
+    // by default, so we now need to take that into account.
+    // @todo Remove once we depend on 8.5.
+    if (version_compare(\Drupal::VERSION, '8.5.x-dev', '>=')) {
+      $destination = "?destination=" . $this->urlGenerator->generateFromRoute('search_api.overview');
+    }
+    $this->assertSession()->responseContains("<a href=\"$basic_url/edit$destination\">Edit</a>");
+    $this->assertSession()->responseContains("<a href=\"$basic_url/disable$destination\">Disable</a>");
+    $this->assertSession()->responseContains("<a href=\"$basic_url/delete$destination\">Delete</a>");
+    $this->assertSession()->responseNotContains("<a href=\"$basic_url/enable$destination\">Enable</a>");
 
     $server->setStatus(FALSE)->save();
     $this->drupalGet($this->overviewPageUrl);
 
     // Since \Drupal\Core\Access\CsrfTokenGenerator uses the current session ID,
     // we cannot verify the validity of the token from here.
-    $this->assertSession()->responseContains('<a href="' . $basic_url . '/enable?token=');
-    $this->assertSession()->responseNotContains('<a href="' . $basic_url . '/disable">Disable</a>');
+    $params = $destination ? "$destination&amp;token=" : '?token=';
+    $this->assertSession()->responseContains("<a href=\"$basic_url/enable$params");
+    $this->assertSession()->responseNotContains("<a href=\"$basic_url/disable$destination\">Disable</a>");
   }
 
   /**

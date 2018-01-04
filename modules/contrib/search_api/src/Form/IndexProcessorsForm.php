@@ -54,6 +54,7 @@ class IndexProcessorsForm extends EntityForm {
    * @param \Drupal\search_api\Processor\ProcessorPluginManager $processor_plugin_manager
    *   The processor plugin manager.
    * @param \Psr\Log\LoggerInterface $logger
+   *   The logger.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, ProcessorPluginManager $processor_plugin_manager, LoggerInterface $logger) {
     $this->entityTypeManager = $entity_type_manager;
@@ -167,7 +168,7 @@ class IndexProcessorsForm extends EntityForm {
 
     $form['weights'] = [
       '#type' => 'fieldset',
-      '#title' => t('Processor order'),
+      '#title' => $this->t('Processor order'),
     ];
     // Order enabled processors per stage.
     foreach ($stages as $stage => $description) {
@@ -321,13 +322,13 @@ class IndexProcessorsForm extends EntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     if ($form_state->get('processors_changed')) {
       $save_status = parent::save($form, $form_state);
-      drupal_set_message(t('The indexing workflow was successfully edited.'));
+      drupal_set_message($this->t('The indexing workflow was successfully edited.'));
       if ($this->entity->isReindexing()) {
-        drupal_set_message(t('All content was scheduled for reindexing so the new settings can take effect.'));
+        drupal_set_message($this->t('All content was scheduled for reindexing so the new settings can take effect.'));
       }
     }
     else {
-      drupal_set_message(t('No values were changed.'));
+      drupal_set_message($this->t('No values were changed.'));
       $save_status = SAVED_UPDATED;
     }
 
@@ -359,7 +360,7 @@ class IndexProcessorsForm extends EntityForm {
       }
       elseif (class_exists($processor_definition['class'])) {
         if (call_user_func([$processor_definition['class'], 'supportsIndex'], $this->entity)) {
-          /** @var $processor \Drupal\search_api\Processor\ProcessorInterface */
+          /** @var \Drupal\search_api\Processor\ProcessorInterface $processor */
           $processor = $this->processorPluginManager->createInstance($name, $settings);
           $processors[$name] = $processor;
         }
