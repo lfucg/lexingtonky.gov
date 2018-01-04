@@ -4,10 +4,13 @@ status: true
 dependencies:
   config:
     - field.storage.node.body
+    - field.storage.node.field_keywords
+    - field.storage.taxonomy_term.field_keywords
     - field.storage.paragraph.field_section_body
     - search_api.server.pantheon
     - core.entity_view_mode.node.teaser
   module:
+    - taxonomy
     - search_api
     - node
     - paragraphs
@@ -54,6 +57,38 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.body
+  field_keywords:
+    label: 'Keywords » Taxonomy term » Keywords'
+    datasource_id: 'entity:node'
+    property_path: 'field_keywords:entity:field_keywords'
+    type: text
+    boost: !!float 8
+    dependencies:
+      config:
+        - field.storage.node.field_keywords
+        - field.storage.taxonomy_term.field_keywords
+      module:
+        - taxonomy
+  field_keywords_1:
+    label: Keywords
+    datasource_id: 'entity:node'
+    property_path: field_keywords
+    type: text
+    boost: !!float 8
+    dependencies:
+      config:
+        - field.storage.node.field_keywords
+  name:
+    label: 'Keywords » Taxonomy term » Name'
+    datasource_id: 'entity:node'
+    property_path: 'field_keywords:entity:name'
+    type: text
+    boost: !!float 8
+    dependencies:
+      config:
+        - field.storage.node.field_keywords
+      module:
+        - taxonomy
   field_section_body:
     label: 'Section body'
     datasource_id: 'entity:paragraph'
@@ -75,6 +110,14 @@ datasource_settings:
     bundles:
       default: true
       selected: {  }
+    languages:
+      default: true
+      selected: {  }
+  'entity:taxonomy_term':
+    bundles:
+      default: true
+      selected:
+        - keywords
     languages:
       default: true
       selected: {  }
@@ -111,10 +154,10 @@ processor_settings:
       - body
       - field_section_body
     exceptions:
-      garbage: waste+management
-      trash: waste+management
-      PDR: purchase+of+development+rights
-      pdr: purchase+of+development+rights
+      garbage: 'waste management'
+      trash: 'waste management'
+      PDR: 'purchase of development rights'
+      pdr: 'purchase of development rights'
     weights:
       preprocess_index: -50
       preprocess_query: 0
@@ -138,6 +181,13 @@ processor_settings:
           paragraphs_media_contact: !!float 0
           paragraphs_page_section: !!float 0
           paragraph_sidebar_section: !!float 0
+      'entity:taxonomy_term':
+        datasource_boost: !!float 1
+        bundle_boosts:
+          locations: !!float 0
+          organizations: !!float 0
+          site_navigation: !!float 0
+          tags: !!float 0
     weights:
       preprocess_index: -49
 tracker_settings:

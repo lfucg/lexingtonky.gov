@@ -1,0 +1,28 @@
+uuid: 3e026d7e-12a7-4131-9823-c04e3fe37467
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_keywords
+    - node.type.meeting
+    - taxonomy.vocabulary.keywords
+id: node.meeting.field_keywords
+field_name: field_keywords
+entity_type: node
+bundle: meeting
+label: Keywords
+description: 'Add keywords (associated/similar terms to content) to aid in search result return.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      keywords: keywords
+    sort:
+      field: _none
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference

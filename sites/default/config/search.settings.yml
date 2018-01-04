@@ -17,6 +17,6 @@ index:
     strong: 3
     em: 3
     a: 10
-logging: false
+logging: true
 _core:
   default_config_hash: hvVxL1G-ZCxaq32IZws0YsfuhvaDiQE_np-0g35KjUk

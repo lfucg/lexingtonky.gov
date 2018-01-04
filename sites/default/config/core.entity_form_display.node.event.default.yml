@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.event.field_date_end
     - field.field.node.event.field_event_website
     - field.field.node.event.field_hide_times
+    - field.field.node.event.field_keywords
     - field.field.node.event.field_locations
     - field.field.node.event.field_media_contact
     - field.field.node.event.field_metatags
@@ -86,6 +87,15 @@ content:
       display_label: true
     third_party_settings: {  }
     type: boolean_checkbox
+    region: content
+  field_keywords:
+    weight: 27
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_locations:
     weight: 1
