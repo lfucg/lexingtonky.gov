@@ -159,17 +159,20 @@ processor_settings:
       ESP: extended+school+program
       REAL: recreation+enrichment+and+learning+program
       GTV3: lextv
+      gtv3: lextv
       gtv: lextv
       Bid: current+bids+quotes
       Form+222: current+year+occupational+tax+forms
       222: current+year+occupational+tax+forms
       Noise: code+of+ordinances+and+zoning+ordinance
       RFP: current+bids+quotes
+      rfp: current+bids+quotes
       PDR: purchase+of+development+rights
       pdr: purchase+of+development+rights
       228: current+year+occupational+tax+forms
       Bail: inmate+information
       DMV: county+clerk
+      dmv: county+clerk
       Cafr: accounting
       garbage: waste+management
       trash: waste+management
