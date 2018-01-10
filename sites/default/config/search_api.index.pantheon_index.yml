@@ -142,8 +142,8 @@ processor_settings:
       strong: 2
       b: 2
     weights:
-      preprocess_index: -48
-      preprocess_query: -15
+      preprocess_index: -47
+      preprocess_query: -47
   rendered_item: {  }
   stemmer:
     all_fields: false
@@ -154,13 +154,28 @@ processor_settings:
       - body
       - field_section_body
     exceptions:
-      garbage: waste%2Bmanagement
-      trash: waste%2Bmanagement
-      PDR: purchase%2Bof%2Bdevelopment%2Brights
-      pdr: purchase%2Bof%2Bdevelopment%2Brights
+      pva: property+valuation+administrator
+      GIS: geographic+information+services
+      ESP: extended+school+program
+      REAL: recreation+enrichment+and+learning+program
+      GTV3: lextv
+      gtv: lextv
+      Bid: current+bids+quotes
+      Form+222: current+year+occupational+tax+forms
+      222: current+year+occupational+tax+forms
+      Noise: code+of+ordinances+and+zoning+ordinance
+      RFP: current+bids+quotes
+      PDR: purchase+of+development+rights
+      pdr: purchase+of+development+rights
+      228: current+year+occupational+tax+forms
+      Bail: inmate+information
+      DMV: county+clerk
+      Cafr: accounting
+      garbage: waste+management
+      trash: waste+management
     weights:
-      preprocess_index: -50
-      preprocess_query: 0
+      preprocess_index: -49
+      preprocess_query: -49
   type_boost:
     boosts:
       'entity:node':
@@ -189,21 +204,7 @@ processor_settings:
           site_navigation: !!float 0
           tags: !!float 0
     weights:
-      preprocess_index: -49
-  ignorecase:
-    all_fields: true
-    fields:
-      - url
-      - rendered_item
-      - title
-      - body
-      - field_keywords
-      - field_keywords_1
-      - name
-      - field_section_body
-    weights:
-      preprocess_index: -20
-      preprocess_query: -20
+      preprocess_index: -48
 tracker_settings:
   default:
     indexing_order: fifo
