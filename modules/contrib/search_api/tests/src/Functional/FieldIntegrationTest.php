@@ -6,7 +6,7 @@ use Drupal\Core\Serialization\Yaml;
 use Drupal\search_api\Entity\Index;
 
 /**
- * Class FieldIntegrationTest.
+ * Tests field validation on index creation.
  *
  * @group search_api
  */

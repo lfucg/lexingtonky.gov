@@ -277,7 +277,7 @@ class TaskManager implements TaskManagerInterface {
    * @param array $conditions
    *   An array of conditions defining the tasks to be executed. Should be used
    *   to retrieve more task IDs if necessary.
-   * @param array $context
+   * @param array|\ArrayAccess $context
    *   The context of the current batch, as defined in the @link batch Batch
    *   operations @endlink documentation.
    *

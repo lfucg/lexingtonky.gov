@@ -49,7 +49,7 @@ class Porter2 {
    * @param string[] $custom_exceptions
    *   (optional) A custom list of exceptions.
    */
-  public function __construct($word, $custom_exceptions = []) {
+  public function __construct($word, array $custom_exceptions = []) {
     $this->word = $word;
     $this->exceptions = $custom_exceptions + [
       'skis' => 'ski',
@@ -404,7 +404,7 @@ class Porter2 {
    * @return bool
    *   TRUE if the character is a vowel, FALSE otherwise.
    */
-  protected function isVowel($position, $word = NULL, $additional = []) {
+  protected function isVowel($position, $word = NULL, array $additional = []) {
     if ($word === NULL) {
       $word = $this->word;
     }

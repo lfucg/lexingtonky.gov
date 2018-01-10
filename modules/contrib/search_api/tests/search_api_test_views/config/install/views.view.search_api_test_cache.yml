@@ -29,8 +29,8 @@ display:
       query:
         type: search_api_query
         options:
-          bypass_access: false
-          skip_access: false
+          bypass_access: true
+          skip_access: true
       exposed_form:
         type: basic
         options:
@@ -131,10 +131,11 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          field_rendering: true
+          field_rendering: false
           fallback_handler: search_api
           fallback_options:
             link_to_item: false
+            use_highlighting: true
             multi_separator: ', '
           entity_type: entity_test_mulrev_changed
           plugin_id: search_api_field
@@ -225,7 +226,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: search-api-test-search-view-caching
+      path: search-api-test-search-view-caching-none
       display_description: ''
     cache_metadata:
       max-age: -1
@@ -242,7 +243,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: search-api-test-search-view-caching
+      path: search-api-test-search-view-caching-tag
       display_description: ''
       cache:
         type: search_api_tag
@@ -264,7 +265,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: search-api-test-search-view-caching
+      path: search-api-test-search-view-caching-time
       display_description: ''
       cache:
         type: search_api_time

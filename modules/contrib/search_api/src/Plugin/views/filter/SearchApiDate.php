@@ -2,6 +2,7 @@
 
 namespace Drupal\search_api\Plugin\views\filter;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\views\Plugin\views\filter\Date;
 
 /**
@@ -14,6 +15,36 @@ use Drupal\views\Plugin\views\filter\Date;
 class SearchApiDate extends Date {
 
   use SearchApiFilterTrait;
+
+  /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface|null
+   */
+  protected $timeService;
+
+  /**
+   * Retrieves the time service.
+   *
+   * @return \Drupal\Component\Datetime\TimeInterface
+   *   The time service.
+   */
+  public function getTimeService() {
+    return $this->timeService ?: \Drupal::time();
+  }
+
+  /**
+   * Sets the time service.
+   *
+   * @param \Drupal\Component\Datetime\TimeInterface $time_service
+   *   The new time service.
+   *
+   * @return $this
+   */
+  public function setTimeService(TimeInterface $time_service) {
+    $this->timeService = $time_service;
+    return $this;
+  }
 
   /**
    * {@inheritdoc}
@@ -70,9 +101,9 @@ class SearchApiDate extends Date {
    */
   protected function opBetween($field) {
     if ($this->value['type'] == 'offset') {
-      // @todo Once we depend on Drupal 8.3+, replace REQUEST_TIME.
-      $a = strtotime($this->value['min'], REQUEST_TIME);
-      $b = strtotime($this->value['max'], REQUEST_TIME);
+      $time = $this->getTimeService()->getRequestTime();
+      $a = strtotime($this->value['min'], $time);
+      $b = strtotime($this->value['max'], $time);
     }
     else {
       $a = intval(strtotime($this->value['min'], 0));
@@ -90,7 +121,8 @@ class SearchApiDate extends Date {
   protected function opSimple($field) {
     $value = intval(strtotime($this->value['value'], 0));
     if (!empty($this->value['type']) && $this->value['type'] == 'offset') {
-      $value = strtotime($this->value['value'], REQUEST_TIME);
+      $time = $this->getTimeService()->getRequestTime();
+      $value = strtotime($this->value['value'], $time);
     }
 
     $this->getQuery()->addCondition($this->realField, $value, $this->operator, $this->options['group']);

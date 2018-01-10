@@ -14,7 +14,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
  * @see \Drupal\search_api\Display\DisplayPluginBase
  * @see plugin_api
  */
-class DisplayPluginManager extends DefaultPluginManager {
+class DisplayPluginManager extends DefaultPluginManager implements DisplayPluginManagerInterface {
 
   /**
    * Static cache for the display plugins.
@@ -35,10 +35,7 @@ class DisplayPluginManager extends DefaultPluginManager {
   }
 
   /**
-   * Returns all known displays.
-   *
-   * @return \Drupal\search_api\Display\DisplayInterface[]
-   *   An array of display plugins, keyed by type identifier.
+   * {@inheritdoc}
    */
   public function getInstances() {
     if ($this->displays === NULL) {

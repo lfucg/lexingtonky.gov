@@ -85,6 +85,10 @@ views.argument.search_api_more_like_this:
         type: string
         label: 'Field'
 
+views.argument.search_api_term:
+  type: views.argument.search_api
+  label: 'Search API taxonomy term'
+
 views.field.search_api:
   type: views_field
   label: 'Search API standard'
@@ -92,6 +96,9 @@ views.field.search_api:
     link_to_item:
       type: boolean
       label: 'Link to item'
+    use_highlighting:
+      type: boolean
+      label: 'Use highlighted field data'
     multi_type:
       type: string
       label: 'Handling of multiple values'
@@ -106,6 +113,9 @@ views.field.search_api_boolean:
     link_to_item:
       type: boolean
       label: 'Link to item'
+    use_highlighting:
+      type: boolean
+      label: 'Use highlighted field data'
     multi_type:
       type: string
       label: 'Handling of multiple values'
@@ -120,6 +130,9 @@ views.field.search_api_date:
     link_to_item:
       type: boolean
       label: 'Link to item'
+    use_highlighting:
+      type: boolean
+      label: 'Use highlighted field data'
     multi_type:
       type: string
       label: 'Handling of multiple values'
@@ -166,6 +179,9 @@ views.field.search_api_numeric:
     link_to_item:
       type: boolean
       label: 'Link to item'
+    use_highlighting:
+      type: boolean
+      label: 'Use highlighted field data'
     multi_type:
       type: string
       label: 'Handling of multiple values'
@@ -220,6 +236,10 @@ views.filter.search_api_string:
   type: views.filter.search_api_numeric
   label: 'Search API string'
 
+views.filter.search_api_term:
+  type: views.filter.taxonomy_index_tid
+  label: 'Search API taxonomy term'
+
 views.filter.search_api_text:
   type: views.filter.search_api_string
   label: 'Search API text'
@@ -229,7 +249,7 @@ views.filter.search_api_user:
   label: 'Search API user'
 
 views.filter_value.search_api_boolean:
-  type: boolean
+  type: string
 
 views.filter_value.search_api_datasource:
   type: string
@@ -255,6 +275,9 @@ views.filter_value.search_api_options:
 
 views.filter_value.search_api_string:
   type: views.filter_value.numeric
+
+views.filter_value.search_api_term:
+  type: string
 
 views.filter_value.search_api_text:
   type: views.filter_value.numeric

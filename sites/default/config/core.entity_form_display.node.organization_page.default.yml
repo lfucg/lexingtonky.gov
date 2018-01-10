@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.organization_page.body
+    - field.field.node.organization_page.field_keywords
     - field.field.node.organization_page.field_lex_custom_banner_image
     - field.field.node.organization_page.field_lex_site_nav
     - field.field.node.organization_page.field_metatags
@@ -44,6 +45,15 @@ content:
     weight: 2
     settings: {  }
     third_party_settings: {  }
+    region: content
+  field_keywords:
+    weight: 26
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_lex_custom_banner_image:
     type: image_image

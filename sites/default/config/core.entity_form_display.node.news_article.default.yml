@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.news_article.body
     - field.field.node.news_article.field_image
+    - field.field.node.news_article.field_keywords
     - field.field.node.news_article.field_media_contact
     - field.field.node.news_article.field_metatags
     - field.field.node.news_article.field_related_departments
@@ -48,6 +49,15 @@ content:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
+  field_keywords:
+    weight: 26
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_media_contact:
     type: entity_reference_paragraphs
     weight: 8

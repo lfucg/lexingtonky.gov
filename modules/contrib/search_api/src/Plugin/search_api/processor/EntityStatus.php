@@ -2,8 +2,7 @@
 
 namespace Drupal\search_api\Plugin\search_api\processor;
 
-use Drupal\comment\CommentInterface;
-use Drupal\node\NodeInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Processor\ProcessorPluginBase;
 use Drupal\user\UserInterface;
@@ -14,7 +13,7 @@ use Drupal\user\UserInterface;
  * @SearchApiProcessor(
  *   id = "entity_status",
  *   label = @Translation("Entity status"),
- *   description = @Translation("Exclude unpublished content, unpublished comments and inactive users from being indexed."),
+ *   description = @Translation("Exclude inactive users and unpublished entities (which have a ""Published"" state) from being indexed."),
  *   stages = {
  *     "alter_items" = 0,
  *   },
@@ -26,9 +25,20 @@ class EntityStatus extends ProcessorPluginBase {
    * {@inheritdoc}
    */
   public static function supportsIndex(IndexInterface $index) {
-    $supported_entity_types = ['node', 'comment', 'user'];
+    $interface = EntityPublishedInterface::class;
     foreach ($index->getDatasources() as $datasource) {
-      if (in_array($datasource->getEntityTypeId(), $supported_entity_types)) {
+      $entity_type_id = $datasource->getEntityTypeId();
+      if (!$entity_type_id) {
+        continue;
+      }
+      // We support users and any entities that implement
+      // \Drupal\Core\Entity\EntityPublishedInterface.
+      if ($entity_type_id === 'user') {
+        return TRUE;
+      }
+      $entity_type = \Drupal::entityTypeManager()
+        ->getDefinition($entity_type_id);
+      if ($entity_type && $entity_type->entityClassImplements($interface)) {
         return TRUE;
       }
     }
@@ -44,12 +54,8 @@ class EntityStatus extends ProcessorPluginBase {
     /** @var \Drupal\search_api\Item\ItemInterface $item */
     foreach ($items as $item_id => $item) {
       $object = $item->getOriginalObject()->getValue();
-      // @todo Use EntityPublishedInterface once we depend on Drupal 8.3+.
       $enabled = TRUE;
-      if ($object instanceof NodeInterface) {
-        $enabled = $object->isPublished();
-      }
-      elseif ($object instanceof CommentInterface) {
+      if ($object instanceof EntityPublishedInterface) {
         $enabled = $object->isPublished();
       }
       elseif ($object instanceof UserInterface) {

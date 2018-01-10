@@ -86,6 +86,85 @@ class SearchApiStandard extends ArgumentPluginBase {
   /**
    * {@inheritdoc}
    */
+  public function validateOptionsForm(&$form, FormStateInterface $form_state) {
+    $option_values = &$form_state->getValue('options');
+    if (empty($option_values)) {
+      return;
+    }
+
+    // Let the plugins do validation.
+    if (!empty($option_values['default_argument_type'])) {
+      $default_id = $option_values['default_argument_type'];
+      $plugin = $this->getPlugin('argument_default', $default_id);
+      if ($plugin) {
+        $plugin->validateOptionsForm($form['argument_default'][$default_id], $form_state, $option_values['argument_default'][$default_id]);
+      }
+    }
+
+    if (!empty($option_values['validate']['type'])) {
+      $sanitized_id = $option_values['validate']['type'];
+      // Correct ID for js sanitized version.
+      $validate_id = static::decodeValidatorId($sanitized_id);
+      $plugin = $this->getPlugin('argument_validator', $validate_id);
+      if ($plugin) {
+        $plugin->validateOptionsForm($form['validate']['options'][$sanitized_id], $form_state, $option_values['validate']['options'][$sanitized_id]);
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitOptionsForm(&$form, FormStateInterface $form_state) {
+    $option_values = &$form_state->getValue('options');
+    if (empty($option_values)) {
+      return;
+    }
+
+    // Let the plugins make submit modifications if necessary.
+    if (!empty($option_values['default_argument_type'])) {
+      $default_id = $option_values['default_argument_type'];
+      $plugin = $this->getPlugin('argument_default', $default_id);
+      if ($plugin) {
+        $options = &$option_values['argument_default'][$default_id];
+        $plugin->submitOptionsForm($form['argument_default'][$default_id], $form_state, $options);
+        // Copy the now submitted options to their final resting place so they get saved.
+        $option_values['default_argument_options'] = $options;
+      }
+    }
+
+    // If the 'Specify validation criteria' checkbox is not checked, reset the
+    // validation options.
+    if (empty($option_values['specify_validation'])) {
+      $option_values['validate']['type'] = 'none';
+      // We need to keep the empty array of options for the 'None' plugin as
+      // it will be needed later.
+      $option_values['validate']['options'] = ['none' => []];
+      $option_values['validate']['fail'] = 'not found';
+    }
+
+    if (!empty($option_values['validate']['type'])) {
+      $sanitized_id = $option_values['validate']['type'];
+      // Correct ID for js sanitized version.
+      $option_values['validate']['type'] = $validate_id = static::decodeValidatorId($sanitized_id);
+      $plugin = $this->getPlugin('argument_validator', $validate_id);
+      if ($plugin) {
+        $options = &$option_values['validate']['options'][$sanitized_id];
+        $plugin->submitOptionsForm($form['validate']['options'][$sanitized_id], $form_state, $options);
+        // Copy the now submitted options to their final resting place so they get saved.
+        $option_values['validate_options'] = $options;
+      }
+    }
+
+    // Clear out the content of title if it's not enabled.
+    if (empty($option_values['title_enable'])) {
+      $option_values['title'] = '';
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function query($group_by = FALSE) {
     $this->fillValue();
 

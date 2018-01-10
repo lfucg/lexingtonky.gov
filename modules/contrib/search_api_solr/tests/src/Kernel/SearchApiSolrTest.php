@@ -6,6 +6,7 @@ use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\Query\ResultSetInterface;
+use Drupal\search_api\Utility\Utility;
 use Drupal\search_api_autocomplete\Entity\Search;
 use Drupal\search_api_solr\SolrBackendInterface;
 use Drupal\Tests\search_api\Kernel\BackendTestBase;
@@ -148,6 +149,7 @@ class SearchApiSolrTest extends BackendTestBase {
    */
   protected function backendSpecificRegressionTests() {
     $this->regressionTest2888629();
+    $this->regressionTest2850160();
   }
 
   /**
@@ -253,6 +255,35 @@ class SearchApiSolrTest extends BackendTestBase {
     $query->addConditionGroup($conditions);
     $results = $query->execute();
     $this->assertResults([1, 2], $results, 'group comparing against body NOT NULL AND category NOT article_category AND category NOT NULL');
+  }
+
+  /**
+   *  Regression tests for #2850160.
+   */
+  public function regressionTest2850160() {
+    // Only run the tests if we have a Solr core available.
+    if ($this->solrAvailable) {
+      $backend = Server::load($this->serverId)->getBackend();
+      $index = $this->getIndex();
+
+      // Load existing test entity.
+      $entity = \Drupal::entityTypeManager()->getStorage('entity_test_mulrev_changed')->load(1);
+
+      // Prepare Search API item.
+      $id = Utility::createCombinedId('entity:entity_test_mulrev_changed', $entity->id());
+      /** @var \Drupal\search_api\Item\ItemInterface $item */
+      $item = \Drupal::getContainer()
+        ->get('search_api.fields_helper')
+        ->createItemFromObject($index, $entity->getTypedData(), $id);
+      $item->setBoost('3.0');
+
+      // Get Solr document.
+      /** @var \Solarium\QueryType\Update\Query\Document\Document $document */
+      $document = $this->invokeMethod($backend, 'getDocument', [$index, $item]);
+
+      // Compare boost values.
+      $this->assertEquals($item->getBoost(), $document->getBoost());
+    }
   }
 
   /**
@@ -800,32 +831,32 @@ class SearchApiSolrTest extends BackendTestBase {
       $suggestions = $backend->getAutocompleteSuggestions($query, $autocompleteSearch, 'artic', 'artic');
       $this->assertEquals(1, count($suggestions));
       $this->assertEquals('le', $suggestions[0]->getSuggestionSuffix());
-      $this->assertEquals(2, $suggestions[0]->getResults());
+      $this->assertEquals(2, $suggestions[0]->getResultsCount());
 
       $query = $this->buildSearch(['articel'], [], ['body'], FALSE);
       $suggestions = $backend->getAutocompleteSuggestions($query, $autocompleteSearch, 'articel', 'articel');
       $this->assertEquals(1, count($suggestions));
-      $this->assertEquals('article', $suggestions[0]->getSuggestionSuffix());
-      $this->assertEquals(0, $suggestions[0]->getResults());
+      $this->assertEquals('article', $suggestions[0]->getSuggestedKeys());
+      $this->assertEquals(0, $suggestions[0]->getResultsCount());
 
       $query = $this->buildSearch(['articel doks'], [], ['body'], FALSE);
       $suggestions = $backend->getAutocompleteSuggestions($query, $autocompleteSearch, 'doks', 'articel doks');
       $this->assertEquals(1, count($suggestions));
-      $this->assertEquals('article dogs', $suggestions[0]->getSuggestionSuffix());
+      $this->assertEquals('article dogs', $suggestions[0]->getSuggestedKeys());
 
       $query = $this->buildSearch(['articel tre'], [], ['body'], FALSE);
       $suggestions = $backend->getAutocompleteSuggestions($query, $autocompleteSearch, 'tre', 'articel tre');
       $this->assertEquals(5, count($suggestions));
       $this->assertEquals('e', $suggestions[0]->getSuggestionSuffix());
-      $this->assertEquals(1, $suggestions[0]->getResults());
+      $this->assertEquals(1, $suggestions[0]->getResultsCount());
       $this->assertEquals('es', $suggestions[1]->getSuggestionSuffix());
-      $this->assertEquals(1, $suggestions[1]->getResults());
-      $this->assertEquals('article tre', $suggestions[2]->getSuggestionSuffix());
-      $this->assertEquals(0, $suggestions[2]->getResults());
-      $this->assertEquals('article tree', $suggestions[3]->getSuggestionSuffix());
-      $this->assertEquals(0, $suggestions[3]->getResults());
-      $this->assertEquals('article trees', $suggestions[4]->getSuggestionSuffix());
-      $this->assertEquals(0, $suggestions[4]->getResults());
+      $this->assertEquals(1, $suggestions[1]->getResultsCount());
+      $this->assertEquals('article tre', $suggestions[2]->getSuggestedKeys());
+      $this->assertEquals(0, $suggestions[2]->getResultsCount());
+      $this->assertEquals('article tree', $suggestions[3]->getSuggestedKeys());
+      $this->assertEquals(0, $suggestions[3]->getResultsCount());
+      $this->assertEquals('article trees', $suggestions[4]->getSuggestedKeys());
+      $this->assertEquals(0, $suggestions[4]->getResultsCount());
     }
     else {
       $this->assertTrue(TRUE, 'Error: The Solr instance could not be found. Please enable a multi-core one on http://localhost:8983/solr/d8');
@@ -841,6 +872,52 @@ class SearchApiSolrTest extends BackendTestBase {
     $backend = Server::load($this->serverId)->getBackend();
     $content = $backend->extractContentFromFile($filepath);
     $this->assertContains('The extraction seems working!', $content);
+  }
+
+  /**
+   * Tests ngram search result.
+   */
+  public function testNgramResult() {
+    // Only run the tests if we have a Solr core available.
+    if ($this->solrAvailable) {
+      $this->addTestEntity(1, [
+        'name' => 'Test Article 1',
+        'body' => 'The test article number 1 about cats, dogs and trees.',
+        'type' => 'article',
+        'category' => 'dogs and trees',
+      ]);
+
+      // Add another node with body length equal to the limit.
+      $this->addTestEntity(2, [
+        'name' => 'Test Article 1',
+        'body' => 'The test article number 2 about a tree.',
+        'type' => 'article',
+        'category' => 'trees',
+      ]);
+
+      $this->indexItems($this->indexId);
+
+      $results = $this->buildSearch(['tre'], [], ['category_ngram'])
+        ->execute();
+      $this->assertResults([1, 2], $results, 'Ngram text "tre".');
+
+      $results = $this->buildSearch([], [], [])
+        ->addCondition('category_ngram_string', 'tre')
+        ->execute();
+      $this->assertResults([2], $results, 'Ngram string "tre".');
+
+      $results = $this->buildSearch(['Dog'], [], ['category_ngram'])
+        ->execute();
+      $this->assertResults([1], $results, 'Ngram text "Dog".');
+
+      $results = $this->buildSearch([], [], [])
+        ->addCondition('category_ngram_string', 'Dog')
+        ->execute();
+      $this->assertResults([1], $results, 'Ngram string "Dog".');
+    }
+    else {
+      $this->assertTrue(TRUE, 'Error: The Solr instance could not be found. Please enable a multi-core one on http://localhost:8983/solr/d8');
+    }
   }
 
 }

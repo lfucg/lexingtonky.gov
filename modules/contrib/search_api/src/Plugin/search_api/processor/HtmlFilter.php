@@ -65,7 +65,9 @@ class HtmlFilter extends FieldsProcessorPluginBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
+    $configuration = parent::defaultConfiguration();
+
+    $configuration += [
       'title' => TRUE,
       'alt' => TRUE,
       'tags' => [
@@ -78,6 +80,8 @@ class HtmlFilter extends FieldsProcessorPluginBase {
         'u' => 1.5,
       ],
     ];
+
+    return $configuration;
   }
 
   /**

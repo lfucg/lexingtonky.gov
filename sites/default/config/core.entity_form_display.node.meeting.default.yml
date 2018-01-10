@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.meeting.field_date
     - field.field.node.meeting.field_date_end
     - field.field.node.meeting.field_external_id
+    - field.field.node.meeting.field_keywords
     - field.field.node.meeting.field_locations
     - field.field.node.meeting.field_metatags
     - field.field.node.meeting.field_recurring_event
@@ -60,6 +61,15 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
+    region: content
+  field_keywords:
+    weight: 26
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_locations:
     weight: 1

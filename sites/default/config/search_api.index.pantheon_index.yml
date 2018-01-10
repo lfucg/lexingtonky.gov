@@ -4,10 +4,13 @@ status: true
 dependencies:
   config:
     - field.storage.node.body
+    - field.storage.node.field_keywords
+    - field.storage.taxonomy_term.field_keywords
     - field.storage.paragraph.field_section_body
     - search_api.server.pantheon
     - core.entity_view_mode.node.teaser
   module:
+    - taxonomy
     - search_api
     - node
     - paragraphs
@@ -54,6 +57,38 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.body
+  field_keywords:
+    label: 'Keywords » Taxonomy term » Keywords'
+    datasource_id: 'entity:node'
+    property_path: 'field_keywords:entity:field_keywords'
+    type: text
+    boost: !!float 8
+    dependencies:
+      config:
+        - field.storage.node.field_keywords
+        - field.storage.taxonomy_term.field_keywords
+      module:
+        - taxonomy
+  field_keywords_1:
+    label: Keywords
+    datasource_id: 'entity:node'
+    property_path: field_keywords
+    type: text
+    boost: !!float 8
+    dependencies:
+      config:
+        - field.storage.node.field_keywords
+  name:
+    label: 'Keywords » Taxonomy term » Name'
+    datasource_id: 'entity:node'
+    property_path: 'field_keywords:entity:name'
+    type: text
+    boost: !!float 8
+    dependencies:
+      config:
+        - field.storage.node.field_keywords
+      module:
+        - taxonomy
   field_section_body:
     label: 'Section body'
     datasource_id: 'entity:paragraph'
@@ -78,8 +113,20 @@ datasource_settings:
     languages:
       default: true
       selected: {  }
+  'entity:taxonomy_term':
+    bundles:
+      default: true
+      selected:
+        - keywords
+    languages:
+      default: true
+      selected: {  }
 processor_settings:
+  add_url: {  }
+  aggregated_field: {  }
+  entity_status: {  }
   html_filter:
+    all_fields: false
     fields:
       - url
       - rendered_item
@@ -95,14 +142,75 @@ processor_settings:
       strong: 2
       b: 2
     weights:
-      preprocess_index: -15
-      preprocess_query: -15
-  add_url: {  }
+      preprocess_index: -47
+      preprocess_query: -47
   rendered_item: {  }
-  entity_status: {  }
-  aggregated_field: {  }
+  stemmer:
+    all_fields: false
+    fields:
+      - url
+      - rendered_item
+      - title
+      - body
+      - field_section_body
+    exceptions:
+      pva: property+valuation+administrator
+      GIS: geographic+information+services
+      ESP: extended+school+program
+      REAL: recreation+enrichment+and+learning+program
+      GTV3: lextv
+      gtv3: lextv
+      gtv: lextv
+      Bid: current+bids+quotes
+      Form+222: current+year+occupational+tax+forms
+      222: current+year+occupational+tax+forms
+      Noise: code+of+ordinances+and+zoning+ordinance
+      RFP: current+bids+quotes
+      rfp: current+bids+quotes
+      PDR: purchase+of+development+rights
+      pdr: purchase+of+development+rights
+      228: current+year+occupational+tax+forms
+      Bail: inmate+information
+      DMV: county+clerk
+      dmv: county+clerk
+      Cafr: accounting
+      garbage: waste+management
+      trash: waste+management
+    weights:
+      preprocess_index: -49
+      preprocess_query: -49
+  type_boost:
+    boosts:
+      'entity:node':
+        datasource_boost: !!float 5
+        bundle_boosts:
+          article: !!float 3
+          board_commission: !!float 0
+          event: !!float 5
+          landing_page: !!float 0
+          meeting: !!float 8
+          news_article: !!float 0
+          organization_page: !!float 13
+          page: !!float 21
+          site_wide_notice: !!float 0
+      'entity:paragraph':
+        datasource_boost: !!float 1
+        bundle_boosts:
+          paragraphs_media_contact: !!float 0
+          paragraphs_page_section: !!float 0
+          paragraph_sidebar_section: !!float 0
+      'entity:taxonomy_term':
+        datasource_boost: !!float 5
+        bundle_boosts:
+          locations: !!float 0
+          organizations: !!float 0
+          site_navigation: !!float 0
+          tags: !!float 0
+    weights:
+      preprocess_index: -48
 tracker_settings:
-  default: {  }
+  default:
+    indexing_order: fifo
 options:
   index_directly: true
   cron_limit: 50

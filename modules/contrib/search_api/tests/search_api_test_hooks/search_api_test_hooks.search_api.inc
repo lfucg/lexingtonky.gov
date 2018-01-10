@@ -50,14 +50,14 @@ function search_api_test_hooks_search_api_processor_info_alter(array &$processor
 }
 
 /**
- * Implements hook_search_api_tracker_info_alter.
+ * Implements hook_search_api_tracker_info_alter().
  */
 function search_api_test_hooks_search_api_tracker_info_alter(array &$tracker_info) {
   $tracker_info['search_api_test']['label'] = 'Good luck';
 }
 
 /**
- * Implements hook_search_api_displays_alter
+ * Implements hook_search_api_displays_alter().
  */
 function search_api_test_hooks_search_api_displays_alter(array &$displays) {
   if (isset($displays['views_page:search_api_test_view__page_1'])) {

@@ -145,11 +145,7 @@ interface ResultSetInterface extends \Traversable {
    * Retrieves extra data for this search result.
    *
    * @param string $key
-   *   The key of the extra data. The following keys are used in the Search API
-   *   module itself:
-   *   - highlighted_fields: An array mapping item IDs (contained in the result)
-   *     to arrays mapping field IDs to arrays of highlighted field values for
-   *     that field of that item.
+   *   The key of the extra data.
    * @param mixed $default
    *   (optional) The value to return if the data is not set.
    *

@@ -197,4 +197,14 @@ class Utility {
     return $overrides;
   }
 
+  /**
+   * Determines whether this PHP process is running on the command line.
+   *
+   * @return bool
+   *   TRUE if this PHP process is running via CLI, FALSE otherwise.
+   */
+  public static function isRunningInCli() {
+    return php_sapi_name() === 'cli';
+  }
+
 }

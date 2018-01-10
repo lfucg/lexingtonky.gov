@@ -5,12 +5,8 @@
  * Drush commands for Search API.
  */
 
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\search_api\Entity\Index;
-use Drupal\search_api\Entity\Server;
-use Drupal\search_api\IndexBatchHelper;
-use Drupal\search_api\IndexInterface;
-use Drupal\search_api\SearchApiException;
+use Drupal\search_api\ConsoleException;
+use Drupal\search_api\Utility\CommandHelper;
 
 /**
  * Implements hook_drush_command().
@@ -198,11 +194,7 @@ function search_api_drush_command() {
  * Prints a list of all search indexes.
  */
 function drush_search_api_list() {
-  $indexes = search_api_drush_get_indexes();
-  if (!$indexes) {
-    return;
-  }
-
+  $command_helper = _search_api_drush_command_helper();
   $rows[] = [
     dt('ID'),
     dt('Name'),
@@ -211,25 +203,11 @@ function drush_search_api_list() {
     dt('Status'),
     dt('Limit'),
   ];
-  $none = '(' . dt('none') . ')';
-  $enabled = dt('enabled');
-  $disabled = dt('disabled');
-
-  foreach ($indexes as $index) {
-    $types = [];
-    foreach ($index->getDatasources() as $datasource) {
-      $types[] = $datasource->label();
-    }
-    $rows[] = [
-      $index->id(),
-      $index->label(),
-      $index->getServerId() ? $index->getServerInstance()->label() : $none,
-      $types ? implode(', ', $types) : $none,
-      $index->status() ? $enabled : $disabled,
-      (int) $index->getOption('cron_limit'),
-    ];
+  $rows += $command_helper->indexListCommand();
+  foreach ($rows as &$row) {
+    $row['types'] = is_array($row['types']) ? implode(', ', $row['types']) : $row['types'];
+    $row['typeNames'] = is_array($row['types']) ? implode(', ', $row['typeNames']) : $row['types'];
   }
-
   drush_print_table($rows);
 }
 
@@ -241,22 +219,12 @@ function drush_search_api_list() {
  *   enable all disabled indexes.
  */
 function drush_search_api_enable($index_id = NULL) {
-  if (!search_api_drush_get_index_count()) {
-    drush_set_error(dt('There are no indexes defined. Please define an index before trying to enable it.'));
-    return;
+  $command_helper = _search_api_drush_command_helper();
+  try {
+    $command_helper->enableIndexCommand([$index_id]);
   }
-
-  $indexes = search_api_drush_get_indexes($index_id);
-
-  if (!$indexes) {
-    drush_set_error(dt('You must specify at least one index to enable. The indexes I know about are:'));
-    drush_search_api_list();
-  }
-
-  foreach ($indexes as $index) {
-    if (!$index->status()) {
-      search_api_drush_set_index_state($index);
-    }
+  catch (ConsoleException $exception) {
+    drush_set_error($exception->getMessage());
   }
 }
 
@@ -264,7 +232,13 @@ function drush_search_api_enable($index_id = NULL) {
  * Enables all search indexes.
  */
 function drush_search_api_enable_all() {
-  drush_search_api_enable(NULL);
+  $command_helper = _search_api_drush_command_helper();
+  try {
+    $command_helper->enableIndexCommand();
+  }
+  catch (ConsoleException $exception) {
+    drush_set_error($exception->getMessage());
+  }
 }
 
 /**
@@ -275,22 +249,12 @@ function drush_search_api_enable_all() {
  *   disable all enabled indexes.
  */
 function drush_search_api_disable($index_id = NULL) {
-  if (!search_api_drush_get_index_count()) {
-    drush_set_error(dt('There are no indexes defined. Please define an index before trying to disable it.'));
-    return;
+  $command_helper = _search_api_drush_command_helper();
+  try {
+    $command_helper->disableIndexCommand([$index_id]);
   }
-
-  $indexes = search_api_drush_get_indexes($index_id);
-
-  if (!$indexes) {
-    drush_set_error(dt('You must specify at least one index to disable. The indexes I know about are:'));
-    drush_search_api_list();
-  }
-
-  foreach ($indexes as $index) {
-    if ($index->status()) {
-      search_api_drush_set_index_state($index, FALSE);
-    }
+  catch (ConsoleException $exception) {
+    drush_set_error($exception->getMessage());
   }
 }
 
@@ -298,7 +262,13 @@ function drush_search_api_disable($index_id = NULL) {
  * Disables all search indexes.
  */
 function drush_search_api_disable_all() {
-  drush_search_api_disable(NULL);
+  $command_helper = _search_api_drush_command_helper();
+  try {
+    $command_helper->disableIndexCommand();
+  }
+  catch (ConsoleException $exception) {
+    drush_set_error($exception->getMessage());
+  }
 }
 
 /**
@@ -309,11 +279,7 @@ function drush_search_api_disable_all() {
  *   NULL to display the status of all search indexes.
  */
 function drush_search_api_status($index_id = NULL) {
-  $indexes = search_api_drush_get_indexes($index_id);
-  if (!$indexes) {
-    return;
-  }
-
+  $command_helper = _search_api_drush_command_helper();
   $rows[] = [
     dt('ID'),
     dt('Name'),
@@ -321,25 +287,7 @@ function drush_search_api_status($index_id = NULL) {
     dt('Indexed'),
     dt('Total'),
   ];
-
-  foreach ($indexes as $index) {
-    $indexed = $index->getTrackerInstance()->getIndexedItemsCount();
-    $total = $index->getTrackerInstance()->getTotalItemsCount();
-
-    $complete = '-';
-    if ($total > 0) {
-      $complete = (100 * round($indexed / $total, 3)) . '%';
-    }
-
-    $row = [
-      $index->id(),
-      $index->label(),
-      $complete,
-      $indexed,
-      $total,
-    ];
-    $rows[] = $row;
-  }
+  $rows += $command_helper->indexStatusCommand([$index_id]);
 
   drush_print_table($rows);
 }
@@ -352,65 +300,11 @@ function drush_search_api_status($index_id = NULL) {
  *   items on all indexes.
  */
 function drush_search_api_index($index_id = NULL) {
-  $indexes = search_api_drush_get_indexes($index_id);
+  $command_helper = _search_api_drush_command_helper();
   $limit = drush_get_option('limit');
   $batch_size = drush_get_option('batch-size');
-  if (!$indexes) {
-    return;
-  }
 
-  $batch_set = FALSE;
-  foreach ($indexes as $index) {
-    $tracker = $index->getTrackerInstance();
-    $remaining = $tracker->getTotalItemsCount() - $tracker->getIndexedItemsCount();
-
-    if (!$remaining) {
-      drush_log(dt("The index @index is up to date.", ['@index' => $index->label()]), 'ok');
-      continue;
-    }
-    else {
-      $args = [
-        '@remaining' => $remaining,
-        '@limit' => $limit ? $limit : dt('all'),
-        '@index' => $index->label(),
-      ];
-      drush_log(dt("Found @remaining items to index for @index. Indexing @limit items.", $args), 'ok');
-    }
-
-    // If we pass NULL, it would be used as "no items". -1 is the correct way to
-    // index all items.
-    $current_limit = $limit ?: -1;
-
-    // Get the default batch size.
-    if (!isset($batch_size)) {
-      $cron_limit = $index->getOption('cron_limit');
-      $batch_size = $cron_limit ?: \Drupal::configFactory()
-        ->get('search_api.settings')
-        ->get('default_cron_limit');
-    }
-
-    // Get the number items to index.
-    if (!isset($current_limit) || !is_int($current_limit += 0) || $current_limit <= 0) {
-      $current_limit = $remaining;
-    }
-
-    $arguments = [
-      '@index' => $index->label(),
-      '@limit' => $current_limit,
-      '@batch_size' => $batch_size,
-    ];
-    drush_log(dt("Indexing a maximum number of @limit items (@batch_size items per batch run) for the index '@index'.", $arguments), 'ok');
-
-    // Create the batch.
-    try {
-      IndexBatchHelper::create($index, $batch_size, $current_limit);
-      $batch_set = TRUE;
-    }
-    catch (SearchApiException $e) {
-      drush_log(dt("Couldn't create a batch, please check the batch size and limit parameters."), 'error');
-    }
-  }
-
+  $batch_set = $command_helper->indexItemsToIndexCommand([$index_id], $limit, $batch_size);
   if ($batch_set) {
     drush_backend_batch_process();
   }
@@ -424,35 +318,9 @@ function drush_search_api_index($index_id = NULL) {
  *   reindex all search indexes.
  */
 function drush_search_api_reset_tracker($index_id = NULL) {
-  $indexes = search_api_drush_get_indexes($index_id);
+  $command_helper = _search_api_drush_command_helper();
   $entity_types = drush_get_option_list('entity-types');
-  if (!$indexes) {
-    return;
-  }
-  foreach ($indexes as $index) {
-    if ($index->status()) {
-      if (!empty($entity_types)) {
-        $datasources = $index->getDatasources();
-        $reindexed_datasources = [];
-        foreach ($datasources as $datasource_id => $datasource) {
-          if (in_array($datasource->getEntityTypeId(), $entity_types)) {
-            $index->getTrackerInstance()->trackAllItemsUpdated($datasource_id);
-            $reindexed_datasources[] = $datasource->label();
-          }
-        }
-        \Drupal::moduleHandler()->invokeAll('search_api_index_reindex', [$index, FALSE]);
-        $args = [
-          '!index' => $index->label(),
-          '!datasources' => implode(', ', $reindexed_datasources),
-        ];
-        drush_log(dt('The following datasources of !index were successfully scheduled for reindexing: !datasources.', $args), 'ok');
-      }
-      else {
-        $index->reindex();
-        drush_log(dt('!index was successfully scheduled for reindexing.', ['!index' => $index->label()]), 'ok');
-      }
-    }
-  }
+  $command_helper->resetTrackerCommand([$index_id], $entity_types);
 }
 
 /**
@@ -463,91 +331,8 @@ function drush_search_api_reset_tracker($index_id = NULL) {
  *   clear all search indexes.
  */
 function drush_search_api_clear($index_id = NULL) {
-  $indexes = search_api_drush_get_indexes($index_id);
-  if (!$indexes) {
-    return;
-  }
-  foreach ($indexes as $index) {
-    if ($index->status()) {
-      $index->clear();
-      drush_log(dt('@index was successfully cleared.', ['@index' => $index->label()]), 'ok');
-    }
-  }
-}
-
-/**
- * Returns the total number of search indexes.
- *
- * @return int
- *   The number of search indexes on this site.
- */
-function search_api_drush_get_index_count() {
-  return count(Index::loadMultiple());
-}
-
-/**
- * Returns either one or all indexes as an array.
- *
- * If the index is not defined or there are no indexes then an error message
- * is displayed.
- *
- * @param string|null $index_id
- *   (optional) Either the ID of the search index to load, or NULL to load all
- *   indexes.
- *
- * @return \Drupal\search_api\IndexInterface[]
- *   An array of search indexes.
- */
-function search_api_drush_get_indexes($index_id = NULL) {
-  if (!isset($index_id)) {
-    $indexes = Index::loadMultiple();
-  }
-  else {
-    $indexes = Index::load($index_id);
-    $indexes = $indexes ? [$index_id => $indexes] : [];
-  }
-
-  // If we found no indexes, display an error message.
-  if (!$indexes) {
-    if (!isset($index_id)) {
-      drush_set_error(dt('No indexes present.'));
-    }
-    else {
-      drush_set_error(dt('Invalid index ID "@index_id". The following indexes are defined:', ['@index_id' => $index_id]));
-      drush_print();
-      drush_search_api_list();
-    }
-  }
-
-  return $indexes;
-}
-
-/**
- * Changes the state of a single index.
- *
- * Displays helpful messages if the state cannot be changed.
- *
- * @param \Drupal\search_api\IndexInterface $index
- *   The index to be enabled.
- * @param bool $enable
- *   (optional) TRUE to enable, FALSE to disable the index.
- */
-function search_api_drush_set_index_state(IndexInterface $index, $enable = TRUE) {
-  $state_label = $enable ? dt('enabled') : dt('disabled');
-  $method = $enable ? 'enable' : 'disable';
-
-  if ($index->status() == $enable) {
-    drush_log(dt("The index @index is already @desired_state.", ['@index' => $index->label(), '@desired_state' => $state_label]), 'ok');
-    return;
-  }
-  if (!$index->getServerId()) {
-    drush_log(dt("Index @index could not be @desired_state because it is not bound to any server.", ['@index' => $index->label(), '@desired_state' => $state_label]), 'warning');
-    return;
-  }
-
-  $index = _search_api_drush_reload_entity_override_free($index);
-  $index->$method()->save();
-  drush_log(dt("The index @index was successfully @desired_state.", ['@index' => $index->label(), '@desired_state' => $state_label]), 'ok');
+  $command_helper = _search_api_drush_command_helper();
+  $command_helper->clearIndexCommand([$index_id]);
 }
 
 /**
@@ -559,26 +344,8 @@ function search_api_drush_set_index_state(IndexInterface $index, $enable = TRUE)
  *   The search keyword.
  */
 function drush_search_api_search($index_id, $keyword) {
-  $indexes = search_api_drush_get_indexes($index_id);
-  if (empty($indexes[$index_id])) {
-    return;
-  }
-  $query = $indexes[$index_id]->query();
-  if ($keyword) {
-    $query->keys($keyword);
-  }
-
-  // @todo Add paging?
-  $query->range(0, 10);
-
-  $results = $query->execute();
-
-  $rows = [];
-  // @todo Extend set of shown data.
-  foreach ($results->getResultItems() as $key => $item) {
-    $rows[$key]['id'] = $item->getId();
-  }
-
+  $command_helper = _search_api_drush_command_helper();
+  $rows = $command_helper->searchIndexCommand($index_id, $keyword);
   drush_print_table($rows);
 }
 
@@ -586,24 +353,18 @@ function drush_search_api_search($index_id, $keyword) {
  * Lists all available search servers.
  */
 function drush_search_api_server_list() {
-  /** @var \Drupal\search_api\ServerInterface[] $servers */
-  $servers = Server::loadMultiple();
-  if (empty($servers)) {
-    drush_print(dt('There are no servers present.'));
-    return;
-  }
+  $command_helper = _search_api_drush_command_helper();
   $rows[] = [
     dt('ID'),
     dt('Name'),
     dt('Status'),
   ];
 
-  foreach ($servers as $server) {
-    $rows[] = [
-      $server->id(),
-      $server->label(),
-      $server->status() ? dt('enabled') : dt('disabled'),
-    ];
+  try {
+    $rows += $command_helper->serverListCommand();
+  }
+  catch (ConsoleException $exception) {
+    drush_print($exception->getMessage());
   }
 
   drush_print_table($rows);
@@ -616,19 +377,13 @@ function drush_search_api_server_list() {
  *   The ID of the server to enable.
  */
 function drush_search_api_server_enable($server_id = NULL) {
-  if (!isset($server_id)) {
-    drush_print(dt('Please provide a valid server id.'));
-    return;
+  $command_helper = _search_api_drush_command_helper();
+  try {
+    $command_helper->enableServerCommand($server_id);
   }
-  $server = Server::load($server_id);
-  if (empty($server)) {
-    drush_print(dt('The server could not be loaded.'));
-    return;
+  catch (ConsoleException $exception) {
+    drush_print($exception->getMessage());
   }
-  $server = _search_api_drush_reload_entity_override_free($server);
-  $server->setStatus(TRUE)->save();
-  drush_print(dt('The server was enabled successfully.'));
-
 }
 
 /**
@@ -638,18 +393,13 @@ function drush_search_api_server_enable($server_id = NULL) {
  *   The ID of the server to disable.
  */
 function drush_search_api_server_disable($server_id = NULL) {
-  if (!isset($server_id)) {
-    drush_print(dt('Please provide a valid server id.'));
-    return;
+  $command_helper = _search_api_drush_command_helper();
+  try {
+    $command_helper->disableServerCommand($server_id);
   }
-  $server = Server::load($server_id);
-  if (empty($server)) {
-    drush_print(dt('The server could not be loaded.'));
-    return;
+  catch (ConsoleException $exception) {
+    drush_print($exception->getMessage());
   }
-  $server = _search_api_drush_reload_entity_override_free($server);
-  $server->setStatus(FALSE)->save();
-  drush_print(dt('The server was disabled successfully.'));
 }
 
 /**
@@ -659,20 +409,13 @@ function drush_search_api_server_disable($server_id = NULL) {
  *   The ID of the server to clear all search indexes.
  */
 function drush_search_api_server_clear($server_id = NULL) {
-  if (!isset($server_id)) {
-    drush_print(dt('Please provide a valid server id.'));
-    return;
+  $command_helper = _search_api_drush_command_helper();
+  try {
+    $command_helper->clearServerCommand($server_id);
   }
-  $server = Server::load($server_id);
-  if (empty($server)) {
-    drush_print(dt('The server could not be loaded.'));
-    return;
+  catch (ConsoleException $exception) {
+    drush_print($exception->getMessage());
   }
-
-  foreach ($server->getIndexes() as $index) {
-    $index->clear();
-  }
-  drush_print(dt('All indexes on the search server @server_id were cleared.', array('@server_id' => $server_id)));
 }
 
 /**
@@ -684,51 +427,23 @@ function drush_search_api_server_clear($server_id = NULL) {
  *   The ID of the new server for the index.
  */
 function drush_search_api_set_index_server($index_id = NULL, $server_id = NULL) {
-  // Make sure we have parameters to work with.
-  if (empty($index_id) || empty($server_id)) {
-    drush_log(dt('You must specify both an index and server.'), 'error');
-    return;
-  }
-  // Fetch current index and server data.
-  $index = Index::load($index_id);
-  $server = Server::load($server_id);
-  if (!$index) {
-    drush_set_error(dt('Invalid index ID "@index_id". The following indexes are defined:', ['@index_id' => $index_id]));
-    drush_print();
-    drush_search_api_list();
-    return;
-  }
-  if (!$server) {
-    drush_set_error(dt('Invalid server ID "@server_id". The following servers are defined:', ['@server_id' => $server_id]));
-    drush_print();
-    drush_search_api_server_list();
-    return;
-  }
-  // Set the new server on the index.
+  $command_helper = _search_api_drush_command_helper();
   try {
-    $index = _search_api_drush_reload_entity_override_free($index);
-    $index->setServer($server);
-    $index->save();
-    drush_log(dt('Index @index has been set to use server @server and items have been queued for indexing.', ['@index' => $index_id, '@server' => $server_id]), 'ok');
+    $command_helper->setIndexServerCommand($index_id, $server_id);
   }
-  catch (SearchApiException $e) {
-    drush_log($e->getMessage(), 'error');
-    drush_log(dt('There was an error setting index @index to use server @server, or this index is already configured to use this server.', ['@index' => $index_id, '@server' => $server_id]), 'error');
+  catch (ConsoleException $exception) {
+    drush_print($exception->getMessage());
   }
 }
 
 /**
- * Loads an override-free copy of an entity, for saving.
+ * Returns an instance of the command helper.
  *
- * @param \Drupal\Core\Config\Entity\ConfigEntityInterface $entity
- *   The entity to reload.
- *
- * @return \Drupal\Core\Config\Entity\ConfigEntityInterface|null
- *   The override-free version of the entity, or NULL if it couldn't be loaded.
+ * @return \Drupal\search_api\Utility\CommandHelper
+ *   An instance of the command helper class.
  */
-function _search_api_drush_reload_entity_override_free(ConfigEntityInterface $entity) {
-  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()
-    ->getStorage($entity->getEntityTypeId());
-  return $storage->loadOverrideFree($entity->id());
+function _search_api_drush_command_helper() {
+  $command_helper = new CommandHelper(\Drupal::entityTypeManager(), \Drupal::moduleHandler(), 'dt');
+  $command_helper->setLogger(\Drupal::logger('search_api'));
+  return $command_helper;
 }

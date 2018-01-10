@@ -10,7 +10,15 @@ use Drupal\Core\Url;
 function search_api_solr_requirements($phase) {
   $ret = array();
 
-  if ($phase == 'runtime') {
+  if ($phase == 'install') {
+    if (!class_exists('\Solarium\Core\Client\Request')) {
+      $ret['search_api_solr_library'] = [
+        'description' => t('Solr search requires the solarium/solarium library.'),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    }
+  }
+  elseif ($phase == 'runtime') {
     $servers = search_api_solr_get_active_servers();
     $count = 0;
     $unavailable = 0;

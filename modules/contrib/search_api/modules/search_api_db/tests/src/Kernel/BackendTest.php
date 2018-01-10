@@ -3,11 +3,16 @@
 namespace Drupal\Tests\search_api_db\Kernel;
 
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Core\Database\Database;
+use Drupal\Core\Database\Database as CoreDatabase;
 use Drupal\search_api\Entity\Server;
+use Drupal\search_api\Plugin\search_api\data_type\value\TextToken;
+use Drupal\search_api\Plugin\search_api\data_type\value\TextValue;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\SearchApiException;
-use Drupal\search_api_db\Plugin\search_api\backend\Database as BackendDatabase;
+use Drupal\search_api\Utility\Utility;
+use Drupal\search_api_db\DatabaseCompatibility\GenericDatabase;
+use Drupal\search_api_db\Plugin\search_api\backend\Database;
+use Drupal\search_api_db\Tests\DatabaseTestsTrait;
 use Drupal\Tests\search_api\Kernel\BackendTestBase;
 
 /**
@@ -18,6 +23,8 @@ use Drupal\Tests\search_api\Kernel\BackendTestBase;
  * @group search_api
  */
 class BackendTest extends BackendTestBase {
+
+  use DatabaseTestsTrait;
 
   /**
    * {@inheritdoc}
@@ -78,6 +85,7 @@ class BackendTest extends BackendTestBase {
     $this->regressionTest2557291();
     $this->regressionTest2511860();
     $this->regressionTest2846932();
+    $this->regressionTest2926733();
   }
 
   /**
@@ -104,7 +112,8 @@ class BackendTest extends BackendTestBase {
     sort($actual_fields);
     $this->assertEquals($expected_fields, $actual_fields, 'All expected field tables were created.');
 
-    $this->assertTrue(\Drupal::database()->schema()->tableExists($normalized_storage_table), 'Normalized storage table exists');
+    $this->assertTrue(\Drupal::database()->schema()->tableExists($normalized_storage_table), 'Normalized storage table exists.');
+    $this->assertHasPrimaryKey($normalized_storage_table, 'Normalized storage table has a primary key.');
     foreach ($field_infos as $field_id => $field_info) {
       if ($field_id != 'search_api_id') {
         $this->assertTrue(\Drupal::database()
@@ -474,6 +483,38 @@ class BackendTest extends BackendTestBase {
   }
 
   /**
+   * Tests indexing of text tokens with leading/trailing whitespace.
+   *
+   * @see https://www.drupal.org/node/2926733
+   */
+  protected function regressionTest2926733() {
+    $index = $this->getIndex();
+    $item_id = $this->getItemIds([1])[0];
+    $fields_helper = \Drupal::getContainer()
+      ->get('search_api.fields_helper');
+    $item = $fields_helper->createItem($index, $item_id);
+    $field = clone $index->getField('body');
+    $value = new TextValue('test');
+    $tokens = [];
+    foreach (['test', ' test', '  test', 'test  ', ' test '] as $token) {
+      $tokens[] = new TextToken($token);
+    }
+    $value->setTokens($tokens);
+    $field->setValues([$value]);
+    $item->setFields([
+      'body' => $field,
+    ]);
+    $item->setFieldsExtracted(TRUE);
+    $index->getServerInstance()->indexItems($index, [$item_id => $item]);
+
+    // Make sure to re-index the proper version of the item to avoid confusing
+    // the other tests.
+    list($datasource_id, $raw_id) = Utility::splitCombinedId($item_id);
+    $index->trackItemsUpdated($datasource_id, [$raw_id]);
+    $this->indexItems($index->id());
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function checkIndexWithoutFields() {
@@ -507,7 +548,7 @@ class BackendTest extends BackendTestBase {
     $query = $this->buildSearch();
     $results = $query->execute();
     $this->assertEquals(0, $results->getResultCount(), 'Clearing the server worked correctly.');
-    $schema = Database::getConnection()->schema();
+    $schema = \Drupal::database()->schema();
     $table_exists = $schema->tableExists($normalized_storage_table);
     $this->assertTrue($table_exists, 'The index tables were left in place.');
 
@@ -574,8 +615,62 @@ class BackendTest extends BackendTestBase {
    */
   protected function getIndexDbInfo($index_id = NULL) {
     $index_id = $index_id ?: $this->indexId;
-    return \Drupal::keyValue(BackendDatabase::INDEXES_KEY_VALUE_STORE_ID)
+    return \Drupal::keyValue(Database::INDEXES_KEY_VALUE_STORE_ID)
       ->get($index_id);
+  }
+
+  /**
+   * Tests whether a server on a non-default database is handled correctly.
+   */
+  public function testNonDefaultDatabase() {
+    // Clone the primary credentials to a replica connection.
+    // Note this will result in two independent connection objects that happen
+    // to point to the same place.
+    // @see \Drupal\KernelTests\Core\Database\ConnectionTest::testConnectionRouting()
+    $connection_info = CoreDatabase::getConnectionInfo('default');
+    CoreDatabase::addConnectionInfo('default', 'replica', $connection_info['default']);
+
+    $db1 = CoreDatabase::getConnection('default', 'default');
+    $db2 = CoreDatabase::getConnection('replica', 'default');
+
+    // Safety checks copied from the Core test, if these fail something is wrong
+    // with Core.
+    $this->assertNotNull($db1, 'default connection is a real connection object.');
+    $this->assertNotNull($db2, 'replica connection is a real connection object.');
+    $this->assertNotSame($db1, $db2, 'Each target refers to a different connection.');
+
+    // Create backends based on each of the two targets and verify they use the
+    // right connections.
+    $config = [
+      'database' => 'default:default',
+    ];
+    $backend1 = Database::create($this->container, $config, '', []);
+    $config['database'] = 'default:replica';
+    $backend2 = Database::create($this->container, $config, '', []);
+
+    $this->assertSame($db1, $backend1->getDatabase());
+    $this->assertSame($db2, $backend2->getDatabase());
+
+    // Make sure they also use different DBMS compatibility handlers, which also
+    // use the correct database connections.
+    $dbms_comp1 = $backend1->getDbmsCompatibilityHandler();
+    $dbms_comp2 = $backend2->getDbmsCompatibilityHandler();
+    $this->assertNotSame($dbms_comp1, $dbms_comp2);
+    $this->assertSame($db1, $dbms_comp1->getDatabase());
+    $this->assertSame($db2, $dbms_comp2->getDatabase());
+
+    // Finally, make sure the DBMS compatibility handlers also have the correct
+    // classes (meaning we used the correct one and didn't just fall back to the
+    // generic database).
+    $service = $this->container->get('search_api_db.database_compatibility');
+    $database_type = $db1->databaseType();
+    $service_id = "$database_type.search_api_db.database_compatibility";
+    $service2 = $this->container->get($service_id);
+    $this->assertSame($service2, $service);
+    $class = get_class($service);
+    $this->assertNotEquals(GenericDatabase::class, $class);
+    $this->assertSame($dbms_comp1, $service);
+    $this->assertEquals($class, get_class($dbms_comp2));
   }
 
 }

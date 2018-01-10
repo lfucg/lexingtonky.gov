@@ -137,6 +137,7 @@ class ContentAccess extends ProcessorPluginBase {
         'type' => 'string',
         'processor_id' => $this->getPluginId(),
         'hidden' => TRUE,
+        'is_list' => TRUE,
       ];
       $properties['search_api_node_grants'] = new ProcessorProperty($definition);
     }

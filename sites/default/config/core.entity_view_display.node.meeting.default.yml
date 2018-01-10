@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.meeting.field_date
     - field.field.node.meeting.field_date_end
     - field.field.node.meeting.field_external_id
+    - field.field.node.meeting.field_keywords
     - field.field.node.meeting.field_locations
     - field.field.node.meeting.field_metatags
     - field.field.node.meeting.field_recurring_event
@@ -85,15 +86,16 @@ content:
     region: content
   links:
     weight: 1
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   workbench_moderation_control:
     weight: 0
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
 hidden:
   field_external_id: true
+  field_keywords: true
   field_related_departments: true
   field_related_documents: true

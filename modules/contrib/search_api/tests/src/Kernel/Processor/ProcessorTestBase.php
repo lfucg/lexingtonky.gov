@@ -72,6 +72,7 @@ abstract class ProcessorTestBase extends KernelTestBase {
     $this->installEntitySchema('search_api_task');
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installConfig(['field']);
+    $this->installConfig('search_api');
 
     Action::create([
       'id' => 'foo',
@@ -82,15 +83,9 @@ abstract class ProcessorTestBase extends KernelTestBase {
     // Do not use a batch for tracking the initial items after creating an
     // index when running the tests via the GUI. Otherwise, it seems Drupal's
     // Batch API gets confused and the test fails.
-    if (php_sapi_name() != 'cli') {
+    if (!Utility::isRunningInCli()) {
       \Drupal::state()->set('search_api_use_tracking_batch', FALSE);
     }
-
-    // Set tracking page size so tracking will work properly.
-    \Drupal::configFactory()
-      ->getEditable('search_api.settings')
-      ->set('tracking_page_size', 100)
-      ->save();
 
     $this->server = Server::create([
       'id' => 'server',

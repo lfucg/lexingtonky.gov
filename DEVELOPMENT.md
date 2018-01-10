@@ -23,7 +23,16 @@ $ lando restart
 $ lando drush user-login --uri=<<LOCALHOST PORT>>
 ```
 
+##### For updating the Solr configuration and getting it to work locally
+
+Anytime you need to get the Solr server to connect you will:
+* `$ lando rebuild -s`
+* Go to Home Administration > Configuration > Search and metadata > Search API > Server > Edit then click save to resave it
+* Reindex at Administration > Configuration > Search and metadata > Search API > Pantheon Index
+
 The site should now be served locally on one of the ports listed in the CLI. 
+
+For information on all running services: `$ lando info`
 
 ### Import/export of configuration changes
 
@@ -66,20 +75,16 @@ $settings['rebuild_access'] = FALSE;
 $settings['hash_salt'] = 'somethingunique';
 ```
 
-## Debugging issues reported by contributors
+## Log in to administration backend
 
 * Test on your local machine.
   * Download data (described below)
-  * Login via `drush user-login --uri=localhost:8888`
-* Or: create a multi-dev environment with content cloned from live.
-* Go to the contributor's page and 'Masquerade as jsmith` to reproduce the issue.
+  * Login via `lando drush user-login --uri=localhost:8888` (Use the uri from lando's current localhost server (e.g. --uri=localhost:32750))
 
 ## Getting data
 
-* Install [terminus](https://github.com/pantheon-systems/terminus)
-* Get machine token [from Pantheon](https://dashboard.pantheon.io/users/#account/)
-* Run `terminus auth login --machine-token=<copied-from-pantheon>`
-* Download DB `terminus site backups get --site=lexky-d8 --element=database --env=live --to=. --latest`
+* `lando pull`
+* Follow prompts for code, database, and files.
 
 ## Running tests locally
 

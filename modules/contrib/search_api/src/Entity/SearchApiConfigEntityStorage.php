@@ -36,13 +36,6 @@ class SearchApiConfigEntityStorage extends ConfigEntityStorage {
         $old_fields = $entity->original->getFields();
         $new_fields = $entity->getFields();
         $saved_fields = $overridden_entity->getFields();
-//        $cloned_fields = [];
-//        foreach ($saved_fields as $field_id => $field) {
-//          $field = clone $field;
-//          $field->setIndex($entity);
-//          $cloned_fields[$field_id] = $field;
-//        }
-//        $entity->setFields($cloned_fields);
         foreach ($entity->getFieldRenames() as $old_id => $new_id) {
           if (!empty($old_fields[$old_id]) && !empty($saved_fields[$new_id])) {
             $field = clone $new_fields[$new_id];

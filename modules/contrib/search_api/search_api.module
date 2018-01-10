@@ -11,15 +11,16 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\field\Entity\FieldConfig;
 use Drupal\node\NodeInterface;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\IndexInterface;
+use Drupal\search_api\Plugin\search_api\datasource\ContentEntity;
 use Drupal\search_api\Plugin\search_api\datasource\ContentEntityTaskManager;
 use Drupal\search_api\Plugin\search_api\datasource\EntityDatasourceInterface;
+use Drupal\search_api\Plugin\views\argument\SearchApiTerm as TermArgument;
+use Drupal\search_api\Plugin\views\filter\SearchApiTerm as TermFilter;
 use Drupal\search_api\Plugin\views\query\SearchApiQuery;
 use Drupal\search_api\SearchApiException;
-use Drupal\search_api\Plugin\search_api\datasource\ContentEntity;
 use Drupal\search_api\Task\IndexTaskManager;
 use Drupal\views\ViewEntityInterface;
 
@@ -155,9 +156,9 @@ function search_api_hook_info() {
     'search_api_query_alter',
     // Unfortunately, it's not possible to add hook infos for hooks with
     // "wildcards".
-//    'search_api_query_TAG_alter',
+    // 'search_api_query_TAG_alter',
     'search_api_results_alter',
-//    'search_api_results_TAG_alter',
+    // 'search_api_results_TAG_alter',
     'search_api_index_reindex',
   ];
   $info = [
@@ -191,6 +192,13 @@ function search_api_config_import_steps_alter(&$sync_steps, ConfigImporter $conf
  * By setting the $entity->search_api_skip_tracking property to a true-like
  * value before this hook is invoked, you can prevent this behavior and make the
  * Search API ignore this new entity.
+ *
+ * Note that this function implements tracking only on behalf of the "Content
+ * Entity" datasource defined in this module, not for entity-based datasources
+ * in general. Datasources defined by other modules still have to implement
+ * their own mechanism for tracking new/updated/deleted entities.
+ *
+ * @see \Drupal\search_api\Plugin\search_api\datasource\ContentEntity
  */
 function search_api_entity_insert(EntityInterface $entity) {
   // Check if the entity is a content entity.
@@ -210,7 +218,8 @@ function search_api_entity_insert(EntityInterface $entity) {
   }
   $datasource_id = 'entity:' . $entity->getEntityTypeId();
   foreach ($indexes as $index) {
-    $index->trackItemsInserted($datasource_id, $item_ids);
+    $filtered_item_ids = ContentEntity::filterValidItemIds($index, $datasource_id, $item_ids);
+    $index->trackItemsInserted($datasource_id, $filtered_item_ids);
   }
 }
 
@@ -225,6 +234,13 @@ function search_api_entity_insert(EntityInterface $entity) {
  * By setting the $entity->search_api_skip_tracking property to a true-like
  * value before this hook is invoked, you can prevent this behavior and make the
  * Search API ignore this update.
+ *
+ * Note that this function implements tracking only on behalf of the "Content
+ * Entity" datasource defined in this module, not for entity-based datasources
+ * in general. Datasources defined by other modules still have to implement
+ * their own mechanism for tracking new/updated/deleted entities.
+ *
+ * @see \Drupal\search_api\Plugin\search_api\datasource\ContentEntity
  */
 function search_api_entity_update(EntityInterface $entity) {
   // Check if the entity is a content entity.
@@ -264,7 +280,8 @@ function search_api_entity_update(EntityInterface $entity) {
   $deleted_item_ids = array_map($combine_id, $deleted_item_ids);
   foreach ($indexes as $index) {
     if ($inserted_item_ids) {
-      $index->trackItemsInserted($datasource_id, $inserted_item_ids);
+      $filtered_item_ids = ContentEntity::filterValidItemIds($index, $datasource_id, $inserted_item_ids);
+      $index->trackItemsInserted($datasource_id, $filtered_item_ids);
     }
     if ($updated_item_ids) {
       $index->trackItemsUpdated($datasource_id, $updated_item_ids);
@@ -286,6 +303,13 @@ function search_api_entity_update(EntityInterface $entity) {
  * Search API ignore this deletion. (Note that this might lead to stale data in
  * the tracking table or on the server, since the item will not removed from
  * there (if it has been added before).)
+ *
+ * Note that this function implements tracking only on behalf of the "Content
+ * Entity" datasource defined in this module, not for entity-based datasources
+ * in general. Datasources defined by other modules still have to implement
+ * their own mechanism for tracking new/updated/deleted entities.
+ *
+ * @see \Drupal\search_api\Plugin\search_api\datasource\ContentEntity
  */
 function search_api_entity_delete(EntityInterface $entity) {
   // Check if the entity is a content entity.
@@ -315,7 +339,7 @@ function search_api_entity_delete(EntityInterface $entity) {
  * Marks the node and its comments changed for indexes that use the "Content
  * access" processor.
  */
-function search_api_node_access_records_alter(&$grants, NodeInterface $node) {
+function search_api_node_access_records_alter(array &$grants, NodeInterface $node) {
   /** @var \Drupal\search_api\IndexInterface $index */
   foreach (Index::loadMultiple() as $index) {
     if (!$index->hasValidTracker() || !$index->status()) {
@@ -497,6 +521,40 @@ function search_api_search_api_index_update(IndexInterface $index) {
 }
 
 /**
+ * Implements hook_views_plugins_argument_alter().
+ */
+function search_api_views_plugins_argument_alter(array &$plugins) {
+  // We have to include the term argument handler like this, since adding it
+  // directly (i.e., with an annotation) would cause fatal errors on sites
+  // without the Taxonomy module.
+  if (\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    $plugins['search_api_term'] = [
+      'plugin_type' => 'argument',
+      'id' => 'search_api_term',
+      'class' => TermArgument::class,
+      'provider' => 'search_api',
+    ];
+  }
+}
+
+/**
+ * Implements hook_views_plugins_filter_alter().
+ */
+function search_api_views_plugins_filter_alter(array &$plugins) {
+  // We have to include the term filter handler like this, since adding it
+  // directly (i.e., with an annotation) would cause fatal errors on sites
+  // without the Taxonomy module.
+  if (\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+    $plugins['search_api_term'] = [
+      'plugin_type' => 'filter',
+      'id' => 'search_api_term',
+      'class' => TermFilter::class,
+      'provider' => 'search_api',
+    ];
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_insert() for type "view".
  */
 function search_api_view_insert(ViewEntityInterface $view) {
@@ -567,8 +625,12 @@ function _search_api_view_crud_event(ViewEntityInterface $view) {
  * @see _search_api_views_handler_adjustments()
  */
 function _search_api_views_get_allowed_values($entity_type, $bundle, $field_name) {
-  if ($field_config = FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
-    $options = $field_config->getSetting('allowed_values');
+  $field_manager = \Drupal::getContainer()->get('entity_field.manager');
+  $field_definitions = $field_manager->getFieldDefinitions($entity_type, $bundle);
+  if (!empty($field_definitions[$field_name])) {
+    /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
+    $field_definition = $field_definitions[$field_name];
+    $options = $field_definition->getSetting('allowed_values');
     if ($options) {
       return $options;
     }

@@ -87,7 +87,7 @@ class FieldsHelper implements FieldsHelperInterface {
    *   The entity type manager.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entityFieldManager
    *   The entity field manager.
-   * @param EntityTypeBundleInfoInterface $entityBundleInfo
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entityBundleInfo
    *   The entity type bundle info service.
    * @param \Drupal\search_api\Utility\DataTypeHelperInterface $dataTypeHelper
    *   The data type helper service.
@@ -197,11 +197,9 @@ class FieldsHelper implements FieldsHelperInterface {
     $definition = $data->getDataDefinition();
     if ($definition instanceof ComplexDataDefinitionInterface) {
       $property = $definition->getMainPropertyName();
-      if (isset($value[$property])) {
-        return [$value[$property]];
-      }
+      return isset($value[$property]) ? [$value[$property]] : [];
     }
-    elseif (is_array($value)) {
+    if (is_array($value)) {
       return array_values($value);
     }
     return [$value];
@@ -250,9 +248,14 @@ class FieldsHelper implements FieldsHelperInterface {
           // set our own combined ID as the field identifier as kind of a hack,
           // to easily be able to add the field values to $property_values
           // afterwards.
+          // In case the first part of the property path refers to a
+          // processor-defined property, we need to use the processor to
+          // retrieve the value. Otherwise, we extract it normally from the
+          // data object.
           $property = NULL;
-          if (isset($properties[$property_path])) {
-            $property = $properties[$property_path];
+          $property_name = Utility::splitPropertyPath($property_path, FALSE)[0];
+          if (isset($properties[$property_name])) {
+            $property = $properties[$property_name];
           }
           if ($property instanceof ProcessorPropertyInterface) {
             $field_info = [
@@ -291,8 +294,7 @@ class FieldsHelper implements FieldsHelperInterface {
         $dummy_item->setFieldsExtracted(TRUE);
         $processors = $index->getProcessorsByStage(ProcessorInterface::STAGE_ADD_PROPERTIES);
         foreach ($processors as $processor_id => $processor) {
-          // Avoid an infinite recursion.
-          if (isset($needed_processors[$processor_id]) && $processor != $this) {
+          if (isset($needed_processors[$processor_id])) {
             $processor->addFieldValues($dummy_item);
           }
         }
@@ -380,8 +382,7 @@ class FieldsHelper implements FieldsHelperInterface {
   public function isContentEntityType($entity_type_id) {
     try {
       $definition = $this->entityTypeManager->getDefinition($entity_type_id);
-      // @todo Once we depend on Drupal 8.3+, use entityClassImplements().
-      return $definition->isSubclassOf(ContentEntityInterface::class);
+      return $definition->entityClassImplements(ContentEntityInterface::class);
     }
     catch (PluginNotFoundException $e) {
       return FALSE;
@@ -420,7 +421,7 @@ class FieldsHelper implements FieldsHelperInterface {
   /**
    * {@inheritdoc}
    */
-  public function createField(IndexInterface $index, $fieldIdentifier, $fieldInfo = []) {
+  public function createField(IndexInterface $index, $fieldIdentifier, array $fieldInfo = []) {
     $field = new Field($index, $fieldIdentifier);
 
     foreach ($fieldInfo as $key => $value) {

@@ -5,6 +5,7 @@ namespace Drupal\search_api\Query;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\search_api\Display\DisplayPluginManagerInterface;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\ParseMode\ParseModeInterface;
 use Drupal\search_api\ParseMode\ParseModePluginManager;
@@ -164,7 +165,7 @@ class Query implements QueryInterface {
   /**
    * The display plugin manager.
    *
-   * @var \Drupal\search_api\Display\DisplayPluginManager|null
+   * @var \Drupal\search_api\Display\DisplayPluginManagerInterface|null
    */
   protected $displayPluginManager;
 
@@ -256,7 +257,7 @@ class Query implements QueryInterface {
   /**
    * Retrieves the display plugin manager.
    *
-   * @return \Drupal\search_api\Display\DisplayPluginManager
+   * @return \Drupal\search_api\Display\DisplayPluginManagerInterface
    *   The display plugin manager.
    */
   public function getDisplayPluginManager() {
@@ -266,12 +267,12 @@ class Query implements QueryInterface {
   /**
    * Sets the display plugin manager.
    *
-   * @param \Drupal\search_api\Display\DisplayPluginManager $display_plugin_manager
+   * @param \Drupal\search_api\Display\DisplayPluginManagerInterface $display_plugin_manager
    *   The new display plugin manager.
    *
    * @return $this
    */
-  public function setDisplayPluginManager($display_plugin_manager) {
+  public function setDisplayPluginManager(DisplayPluginManagerInterface $display_plugin_manager) {
     $this->displayPluginManager = $display_plugin_manager;
     return $this;
   }
@@ -414,11 +415,11 @@ class Query implements QueryInterface {
    * {@inheritdoc}
    */
   public function sort($field, $order = self::SORT_ASC) {
-    $order = strtoupper(trim($order)) == self::SORT_DESC ? self::SORT_DESC : self::SORT_ASC;
-    if (isset($this->sorts[$field])) {
-      unset($this->sorts[$field]);
+    $order = strtoupper(trim($order));
+    $order = $order == self::SORT_DESC ? self::SORT_DESC : self::SORT_ASC;
+    if (!isset($this->sorts[$field])) {
+      $this->sorts[$field] = $order;
     }
-    $this->sorts[$field] = $order;
     return $this;
   }
 
@@ -696,11 +697,28 @@ class Query implements QueryInterface {
    * Implements the magic __wakeup() method to reload the query's index.
    */
   public function __wakeup() {
-    if (!isset($this->index) && !empty($this->indexId) && \Drupal::hasContainer()) {
+    if (!isset($this->index)
+        && !empty($this->indexId)
+        && \Drupal::hasContainer()
+        && \Drupal::getContainer()->has('entity_type.manager')) {
       $this->index = \Drupal::entityTypeManager()
         ->getStorage('search_api_index')
         ->load($this->indexId);
       $this->indexId = NULL;
+    }
+
+    // Sanitize the service IDs saved by the serialization trait to guard
+    // against incomplete service containers. Doesn't need to happen when the
+    // trait's __wakeup() method will return early anyways, though.
+    // @todo Remove once #2909164 gets fixed in Core (and we depend on that Core
+    //   version).
+    if (!isset($GLOBALS['__PHPUNIT_BOOTSTRAP']) || \Drupal::hasContainer()) {
+      $container = \Drupal::getContainer();
+      foreach ($this->_serviceIds as $key => $service_id) {
+        if (!$container->has($service_id)) {
+          unset($this->_serviceIds[$key]);
+        }
+      }
     }
     $this->traitWakeup();
   }

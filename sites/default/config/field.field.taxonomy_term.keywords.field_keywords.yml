@@ -1,0 +1,21 @@
+uuid: d3efcaf6-b85a-4e23-acaf-42f8e30997d3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_keywords
+    - taxonomy.vocabulary.keywords
+  module:
+    - options
+id: taxonomy_term.keywords.field_keywords
+field_name: field_keywords
+entity_type: taxonomy_term
+bundle: keywords
+label: Keywords
+description: 'Add keywords that will aide in returning more accurate and associated search results.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

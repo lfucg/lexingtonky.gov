@@ -2,6 +2,7 @@
 
 namespace Drupal\search_api\Entity;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\search_api\IndexInterface;
@@ -356,6 +357,8 @@ class Server extends ConfigEntityBase implements ServerInterface {
     try {
       if ($server_task_manager->execute($this)) {
         $this->getBackend()->deleteItems($index, $item_ids);
+        // Clear search api list caches.
+        Cache::invalidateTags(['search_api_list:' . $index->id()]);
         return;
       }
     }
@@ -398,6 +401,8 @@ class Server extends ConfigEntityBase implements ServerInterface {
     try {
       if ($server_task_manager->execute($this)) {
         $this->getBackend()->deleteAllIndexItems($index, $datasource_id);
+        // Clear search api list caches.
+        Cache::invalidateTags(['search_api_list:' . $index->id()]);
         return;
       }
     }
@@ -424,6 +429,7 @@ class Server extends ConfigEntityBase implements ServerInterface {
     foreach ($this->getIndexes($properties) as $index) {
       try {
         $this->getBackend()->deleteAllIndexItems($index);
+        Cache::invalidateTags(['search_api_list:' . $index->id()]);
       }
       catch (SearchApiException $e) {
         $args = [

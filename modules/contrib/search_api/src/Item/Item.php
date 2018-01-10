@@ -218,6 +218,7 @@ class Item implements \IteratorAggregate, ItemInterface {
       foreach ([NULL, $this->getDatasourceId()] as $datasource_id) {
         $fields_by_property_path = [];
         $processors_with_fields = [];
+        $properties = $this->index->getPropertyDefinitions($datasource_id);
         foreach ($this->index->getFieldsByDatasource($datasource_id) as $field_id => $field) {
           // Don't overwrite fields that were previously set.
           if (empty($this->fields[$field_id])) {
@@ -230,7 +231,16 @@ class Item implements \IteratorAggregate, ItemInterface {
               $this->fields[$field_id]->setType($data_type_fallback_mapping[$field_data_type]);
             }
 
-            $property = $field->getDataDefinition();
+            // For determining whether the field is provided via a processor, we
+            // need to check using the first part of its property path (in other
+            // words, the property that's directly on the result item, not
+            // nested), since only direct properties of the item can be added by
+            // the processor.
+            $property = NULL;
+            $property_name = Utility::splitPropertyPath($field->getPropertyPath(), FALSE)[0];
+            if (isset($properties[$property_name])) {
+              $property = $properties[$property_name];
+            }
             if ($property instanceof ProcessorPropertyInterface) {
               $processors_with_fields[$property->getProcessorId()] = TRUE;
             }

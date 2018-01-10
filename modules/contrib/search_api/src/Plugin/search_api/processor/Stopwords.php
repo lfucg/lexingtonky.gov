@@ -40,7 +40,9 @@ class Stopwords extends FieldsProcessorPluginBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
+    $configuration = parent::defaultConfiguration();
+
+    $configuration += [
       'stopwords' => [
         'a', 'an', 'and', 'are', 'as', 'at', 'be', 'but', 'by', 'for', 'if',
         'in', 'into', 'is', 'it', 'no', 'not', 'of', 'on', 'or', 's', 'such',
@@ -48,6 +50,8 @@ class Stopwords extends FieldsProcessorPluginBase {
         'to', 'was', 'will', 'with',
       ],
     ];
+
+    return $configuration;
   }
 
   /**

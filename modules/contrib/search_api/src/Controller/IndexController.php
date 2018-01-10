@@ -51,6 +51,7 @@ class IndexController extends ControllerBase {
    * Retrieves the current request.
    *
    * @return \Symfony\Component\HttpFoundation\Request|null
+   *   The current request.
    */
   public function getRequest() {
     return $this->getRequestStack()->getCurrentRequest();

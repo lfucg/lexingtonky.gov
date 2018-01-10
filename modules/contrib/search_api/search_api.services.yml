@@ -81,3 +81,8 @@ services:
   search_api.task_manager:
     class: Drupal\search_api\Task\TaskManager
     arguments: ['@entity_type.manager', '@event_dispatcher', '@string_translation']
+
+  search_api.vbo_view_data_provider:
+    class: Drupal\search_api\Contrib\ViewsBulkOperationsEventSubscriber
+    tags:
+      - { name: event_subscriber }

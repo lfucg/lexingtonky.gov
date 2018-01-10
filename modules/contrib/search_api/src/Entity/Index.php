@@ -258,6 +258,15 @@ class Index extends ConfigEntityBase implements IndexInterface {
   protected $processorInstances;
 
   /**
+   * Static cache of retrieved property definitions, grouped by datasource.
+   *
+   * @var \Drupal\Core\TypedData\DataDefinitionInterface[][]
+   *
+   * @see \Drupal\search_api\Entity\Index::getPropertyDefinitions()
+   */
+  protected $properties = [];
+
+  /**
    * The number of currently active "batch tracking" modes.
    *
    * @var int
@@ -396,6 +405,19 @@ class Index extends ConfigEntityBase implements IndexInterface {
   /**
    * {@inheritdoc}
    */
+  public function getEntityTypes($return_bool = FALSE) {
+    $types = [];
+    foreach ($this->getDatasources() as $datasource_id => $datasource) {
+      if ($type = $datasource->getEntityTypeId()) {
+        $types[$datasource_id] = $type;
+      }
+    }
+    return $types;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function hasValidTracker() {
     return (bool) \Drupal::getContainer()
       ->get('plugin.manager.search_api.tracker')
@@ -517,7 +539,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
   /**
    * {@inheritdoc}
    */
-  public function getProcessorsByStage($stage, $overrides = []) {
+  public function getProcessorsByStage($stage, array $overrides = []) {
     // Get a list of all processors which support this stage, along with their
     // weights.
     $processors = $this->getProcessors();
@@ -802,20 +824,24 @@ class Index extends ConfigEntityBase implements IndexInterface {
    * {@inheritdoc}
    */
   public function getPropertyDefinitions($datasource_id) {
-    if (isset($datasource_id)) {
-      $datasource = $this->getDatasource($datasource_id);
-      $properties = $datasource->getPropertyDefinitions();
-    }
-    else {
-      $datasource = NULL;
-      $properties = [];
+    if (!isset($this->properties[$datasource_id])) {
+      if (isset($datasource_id)) {
+        $datasource = $this->getDatasource($datasource_id);
+        $properties = $datasource->getPropertyDefinitions();
+      }
+      else {
+        $datasource = NULL;
+        $properties = [];
+      }
+
+      foreach ($this->getProcessorsByStage(ProcessorInterface::STAGE_ADD_PROPERTIES) as $processor) {
+        $properties += $processor->getPropertyDefinitions($datasource);
+      }
+
+      $this->properties[$datasource_id] = $properties;
     }
 
-    foreach ($this->getProcessorsByStage(ProcessorInterface::STAGE_ADD_PROPERTIES) as $processor) {
-      $properties += $processor->getPropertyDefinitions($datasource);
-    }
-
-    return $properties;
+    return $this->properties[$datasource_id];
   }
 
   /**
@@ -965,6 +991,9 @@ class Index extends ConfigEntityBase implements IndexInterface {
       // effect again. Therefore, we reset the flag.
       $this->setHasReindexed(FALSE);
       \Drupal::moduleHandler()->invokeAll('search_api_items_indexed', [$this, $processed_ids]);
+
+      // Clear search api list caches.
+      Cache::invalidateTags(['search_api_list:' . $this->id]);
     }
 
     return $processed_ids;
@@ -1102,8 +1131,8 @@ class Index extends ConfigEntityBase implements IndexInterface {
    * {@inheritdoc}
    */
   public function isReindexing() {
-    $id = $this->id();
-    return \Drupal::state()->get("search_api.index.$id.has_reindexed", FALSE);
+    $key = "search_api.index.{$this->id()}.has_reindexed";
+    return \Drupal::state()->get($key, FALSE);
   }
 
   /**
@@ -1116,8 +1145,10 @@ class Index extends ConfigEntityBase implements IndexInterface {
    * @return $this
    */
   protected function setHasReindexed($has_reindexed = TRUE) {
-    $id = $this->id();
-    \Drupal::state()->set("search_api.index.$id.has_reindexed", $has_reindexed);
+    if ($this->isReindexing() !== $has_reindexed) {
+      $key = "search_api.index.{$this->id()}.has_reindexed";
+      \Drupal::state()->set($key, $has_reindexed);
+    }
     return $this;
   }
 
@@ -1187,6 +1218,9 @@ class Index extends ConfigEntityBase implements IndexInterface {
       'index_directly' => TRUE,
     ];
 
+    // Reset the static cache for getPropertyDefinitions() to make sure we don't
+    // remove any fields just because of caching problems.
+    $this->properties = [];
     foreach ($this->getFields() as $field_id => $field) {
       // Remove all "locked" and "hidden" flags from all fields of the index. If
       // they are still valid, they should be re-added by the processors.
@@ -1196,17 +1230,14 @@ class Index extends ConfigEntityBase implements IndexInterface {
 
       // Also check whether the underlying property actually (still) exists.
       $datasource_id = $field->getDatasourceId();
-      if (!isset($properties[$datasource_id])) {
-        if ($datasource_id === NULL || $this->isValidDatasource($datasource_id)) {
-          $properties[$datasource_id] = $this->getPropertyDefinitions($datasource_id);
-        }
-        else {
-          $properties[$datasource_id] = [];
-        }
+      $property = NULL;
+      if ($datasource_id === NULL || $this->isValidDatasource($datasource_id)) {
+        $properties = $this->getPropertyDefinitions($datasource_id);
+        $property = \Drupal::getContainer()
+          ->get('search_api.fields_helper')
+          ->retrieveNestedProperty($properties, $field->getPropertyPath());
       }
-      if (!\Drupal::getContainer()
-        ->get('search_api.fields_helper')
-        ->retrieveNestedProperty($properties[$datasource_id], $field->getPropertyPath())) {
+      if (!$property) {
         $this->removeField($field_id);
       }
     }
@@ -1323,7 +1354,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
         // batch for tracking items. Also, do not use a batch if running in the
         // CLI.
         $use_batch = \Drupal::state()->get('search_api_use_tracking_batch', TRUE);
-        if (!$use_batch || php_sapi_name() == 'cli') {
+        if (!$use_batch || Utility::isRunningInCli()) {
           $index_task_manager->addItemsAll($this);
         }
         else {
@@ -1339,6 +1370,8 @@ class Index extends ConfigEntityBase implements IndexInterface {
       }
 
       Cache::invalidateTags($this->getCacheTags());
+
+      $this->properties = [];
     }
     catch (SearchApiException $e) {
       $this->logException($e);
@@ -1357,7 +1390,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
   protected function reactToServerSwitch(IndexInterface $original) {
     // Asserts that the index was enabled before saving and will still be
     // enabled afterwards. Otherwise, this method should not be called.
-    assert('$this->status() && $original->status()', '::reactToServerSwitch should only be called when the index is enabled');
+    assert($this->status() && $original->status(), '::reactToServerSwitch should only be called when the index is enabled');
 
     if ($this->getServerId() != $original->getServerId()) {
       if ($original->hasValidServer()) {
@@ -1387,7 +1420,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
   protected function reactToDatasourceSwitch(IndexInterface $original) {
     // Asserts that the index was enabled before saving and will still be
     // enabled afterwards. Otherwise, this method should not be called.
-    assert('$this->status() && $original->status()', '::reactToDatasourceSwitch should only be called when the index is enabled');
+    assert($this->status() && $original->status(), '::reactToDatasourceSwitch should only be called when the index is enabled');
 
     $new_datasource_ids = $this->getDatasourceIds();
     $original_datasource_ids = $original->getDatasourceIds();
@@ -1419,7 +1452,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
   protected function reactToTrackerSwitch(IndexInterface $original) {
     // Asserts that the index was enabled before saving and will still be
     // enabled afterwards. Otherwise, this method should not be called.
-    assert('$this->status() && $original->status()', '::reactToTrackerSwitch should only be called when the index is enabled');
+    assert($this->status() && $original->status(), '::reactToTrackerSwitch should only be called when the index is enabled');
 
     if ($this->getTrackerId() != $original->getTrackerId()) {
       $index_task_manager = \Drupal::getContainer()
@@ -1901,6 +1934,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
     unset($properties['serverInstance']);
     unset($properties['processorInstances']);
     unset($properties['fieldInstances']);
+    unset($properties['properties']);
     return array_keys($properties);
   }
 

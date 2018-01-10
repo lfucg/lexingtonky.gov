@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.page.body
+    - field.field.node.page.field_keywords
     - field.field.node.page.field_lex_custom_banner_image
     - field.field.node.page.field_lex_site_nav
     - field.field.node.page.field_metatags
@@ -59,6 +60,7 @@ content:
     third_party_settings: {  }
 hidden:
   body: true
+  field_keywords: true
   field_lex_custom_banner_image: true
   field_lex_site_nav: true
   field_office_to_contact: true

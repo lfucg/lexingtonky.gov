@@ -259,9 +259,7 @@ class IndexAddFieldsForm extends EntityForm {
    *   properties.
    */
   protected function getPropertiesList(array $properties, $active_property_path, Url $base_url, $datasource_id, $parent_path = '', $label_prefix = '') {
-    $list = [
-      '#theme' => 'search_api_form_item_list',
-    ];
+    $list = [];
 
     $active_item = '';
     if ($active_property_path) {
@@ -370,7 +368,10 @@ class IndexAddFieldsForm extends EntityForm {
         }
       }
 
-      $item['label']['#markup'] = Html::escape($label) . ' ';
+      $label_markup = Html::escape($label);
+      $escaped_path = Html::escape($this_path);
+      $label_markup = "$label_markup <small>(<code>$escaped_path</code>)</small>";
+      $item['label']['#markup'] = $label_markup . ' ';
 
       if ($can_be_indexed) {
         $item['add'] = [
@@ -394,7 +395,34 @@ class IndexAddFieldsForm extends EntityForm {
       $list[$key] = $item;
     }
 
+    if ($list) {
+      uasort($list, [static::class, 'compareFieldLabels']);
+      $list['#theme'] = 'search_api_form_item_list';
+    }
+
     return $list;
+  }
+
+  /**
+   * Compares labels of property render arrays.
+   *
+   * Used as an uasort() callback in
+   * \Drupal\search_api\Form\IndexAddFieldsForm::getPropertiesList().
+   *
+   * @param array $a
+   *   First property render array.
+   * @param array $b
+   *   Second property render array.
+   *
+   * @return int
+   *   -1, 0 or 1 if the first array should be considered, respectively, less
+   *   than, equal to or greater than the second.
+   */
+  public static function compareFieldLabels(array $a, array $b) {
+    $a_title = (string) $a['label']['#markup'];
+    $b_title = (string) $b['label']['#markup'];
+
+    return strnatcasecmp($a_title, $b_title);
   }
 
   /**

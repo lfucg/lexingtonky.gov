@@ -134,7 +134,7 @@ function hook_search_api_tracker_info_alter(array &$tracker_info) {
  *
  * @see \Drupal\search_api\Display\DisplayPluginBase
  */
-function hook_search_api_displays_alter(&$displays) {
+function hook_search_api_displays_alter(array &$displays) {
   if (isset($displays['some_key'])) {
     $displays['some_key']['label'] = t('New label for existing Display');
   }

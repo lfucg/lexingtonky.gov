@@ -259,16 +259,16 @@ class IndexFieldsForm extends EntityForm {
       '#theme' => 'search_api_admin_fields_table',
       '#parents' => [],
       '#header' => [
-        t('Label'),
-        t('Machine name'),
+        $this->t('Label'),
+        $this->t('Machine name'),
         [
-          'data' => t('Property path'),
+          'data' => $this->t('Property path'),
           'class' => [RESPONSIVE_PRIORITY_LOW],
         ],
-        t('Type'),
-        t('Boost'),
+        $this->t('Type'),
+        $this->t('Boost'),
         [
-          'data' => t('Operations'),
+          'data' => $this->t('Operations'),
           'colspan' => 2,
         ],
       ],
@@ -473,7 +473,7 @@ class IndexFieldsForm extends EntityForm {
 
     drupal_set_message($this->t('The changes were successfully saved.'));
     if ($this->entity->isReindexing()) {
-      drupal_set_message(t('All content was scheduled for reindexing so the new settings can take effect.'));
+      drupal_set_message($this->t('All content was scheduled for reindexing so the new settings can take effect.'));
     }
 
     return SAVED_UPDATED;

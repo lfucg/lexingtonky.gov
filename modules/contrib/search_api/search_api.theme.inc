@@ -25,7 +25,7 @@ use Drupal\search_api\Utility\Utility;
  *
  * @ingroup themeable
  */
-function theme_search_api_admin_fields_table($variables) {
+function theme_search_api_admin_fields_table(array $variables) {
   $form = $variables['element'];
   $rows = [];
   if (!empty($form['fields'])) {
@@ -183,9 +183,9 @@ function theme_search_api_form_item_list(array $variables) {
  *
  * @ingroup themeable
  */
-function theme_search_api_server($variables) {
+function theme_search_api_server(array $variables) {
   // Get the search server.
-  /** @var $server \Drupal\search_api\ServerInterface */
+  /** @var \Drupal\search_api\ServerInterface $server */
   $server = $variables['server'];
 
   $output = '';
@@ -296,7 +296,7 @@ function theme_search_api_server($variables) {
  * Implements hook_preprocess_search_api_index().
  */
 function search_api_preprocess_search_api_index(array &$variables) {
-  /** @var $index \Drupal\search_api\IndexInterface */
+  /** @var \Drupal\search_api\IndexInterface $index */
   $index = $variables['index'];
 
   if ($index->status()) {
@@ -331,7 +331,7 @@ function search_api_preprocess_search_api_index(array &$variables) {
  */
 function theme_search_api_index(array $variables) {
   // Get the index.
-  /** @var $index \Drupal\search_api\IndexInterface */
+  /** @var \Drupal\search_api\IndexInterface $index */
   $index = $variables['index'];
   $server = $index->hasValidServer() ? $index->getServerInstance() : NULL;
   $tracker = $index->hasValidTracker() ? $index->getTrackerInstance() : NULL;
@@ -456,9 +456,14 @@ function theme_search_api_index(array $variables) {
 
     $cron_limit = $index->getOption('cron_limit', \Drupal::config('search_api.settings')->get('default_cron_limit'));
     // Check if the cron limit is higher than zero.
-    if ($cron_limit > 0) {
+    if ($cron_limit != 0) {
       $classes[] = 'ok';
-      $info = \Drupal::translation()->formatPlural($cron_limit, 'During cron runs, 1 item will be indexed per batch.', 'During cron runs, @count items will be indexed per batch.');
+      if ($cron_limit > 0) {
+        $info = \Drupal::translation()->formatPlural($cron_limit, 'During cron runs, 1 item will be indexed per batch.', 'During cron runs, @count items will be indexed per batch.');
+      }
+      else {
+        $info = t('All items will be indexed at once during cron runs.');
+      }
     }
     else {
       $classes[] = 'warning';
