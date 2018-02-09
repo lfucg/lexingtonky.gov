@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\masquerade\Masquerade.
- */
-
 namespace Drupal\masquerade;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -111,7 +106,7 @@ class Masquerade {
    *   TRUE when masqueraded, FALSE otherwise.
    */
   public function switchTo(UserInterface $target_account) {
-    $account = $this->currentUser;
+    $account = $this->currentUser->getAccount();
 
     // Call logout hooks when switching from original user.
     $this->moduleHandler->invokeAll('user_logout', [$account]);
@@ -159,7 +154,7 @@ class Masquerade {
       return FALSE;
     }
 
-    $account = $this->currentUser;
+    $account = $this->currentUser->getAccount();
     // Call logout hooks when switching from masquerading user.
     $this->moduleHandler->invokeAll('user_logout', [$account]);
     // Regenerate the session ID to prevent against session fixation attacks.

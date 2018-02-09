@@ -63,15 +63,15 @@ class ContactViewBuilderTest extends ContactStorageTestBase {
 
     // Create first valid contact form.
     $mail = 'simpletest@example.com';
-    $this->addContactForm('test_id', 'test_label', $mail, '', TRUE);
-    $this->assertText(t('Contact form test_label has been added.'));
+    $this->addContactForm('test_id', 'test_label', $mail, TRUE);
+    $this->assertText('Contact form test_label has been added.');
 
     $field_name = 'contact';
     $entity_type = 'node';
     $bundle_name = 'article';
 
     // Add a Entity Reference Contact Field to Article content type.
-    $field_storage = \Drupal::entityManager()
+    $field_storage = \Drupal::entityTypeManager()
       ->getStorage('field_storage_config')
       ->create([
         'field_name' => $field_name,
@@ -80,7 +80,7 @@ class ContactViewBuilderTest extends ContactStorageTestBase {
         'settings' => ['target_type' => 'contact_form'],
       ]);
     $field_storage->save();
-    $field = \Drupal::entityManager()
+    $field = \Drupal::entityTypeManager()
       ->getStorage('field_config')
       ->create([
         'field_storage' => $field_storage,
@@ -125,9 +125,9 @@ class ContactViewBuilderTest extends ContactStorageTestBase {
     $node = $this->drupalGetNodeByTitle($edit[$title_key]);
     $this->drupalGet('node/' . $node->id());
     // Some fields should be present.
-    $this->assertText(t('Your email address'));
-    $this->assertText(t('Subject'));
-    $this->assertText(t('Message'));
+    $this->assertText('Your email address');
+    $this->assertText('Subject');
+    $this->assertText('Message');
     $this->assertFieldByName('subject[0][value]');
     $this->assertFieldByName('message[0][value]');
   }

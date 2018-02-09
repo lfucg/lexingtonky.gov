@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\chosen\Tests\Form\ChosenFormTest.
- */
-
 namespace Drupal\chosen\Tests\Form;
 
 use Drupal\simpletest\WebTestBase;
@@ -18,7 +13,10 @@ class ChosenFormTest extends WebTestBase {
 
   public static $modules = array('chosen', 'chosen_test');
 
-  function testFormPage() {
+  /**
+   * Test the form page
+   */
+  public function testFormPage() {
     $this->drupalGet('chosen-test');
     $this->dumpHeaders = TRUE;
     $this->assertText('Select');

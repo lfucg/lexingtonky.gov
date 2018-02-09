@@ -2,9 +2,6 @@
 
 namespace Drupal\metatag\Tests;
 
-use Drupal\Core\Cache\Cache;
-use Drupal\metatag\Tests\MetatagFieldTestBase;
-
 /**
  * Ensures that the Metatag field works correctly on users.
  *
@@ -13,7 +10,7 @@ use Drupal\metatag\Tests\MetatagFieldTestBase;
 class MetatagFieldUserTest extends MetatagFieldTestBase {
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public static $modules = [
     // Needed for token handling.
@@ -36,9 +33,9 @@ class MetatagFieldUserTest extends MetatagFieldTestBase {
   ];
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_perms = [
+  protected $entityPerms = [
     // From Field UI.
     'administer user fields',
 
@@ -48,44 +45,44 @@ class MetatagFieldUserTest extends MetatagFieldTestBase {
   ];
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_type = 'user';
+  protected $entityType = 'user';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_label = 'User';
+  protected $entityLabel = 'User';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_bundle = 'user';
+  protected $entityBundle = 'user';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_add_path = 'admin/people/create';
+  protected $entityAddPath = 'admin/people/create';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_field_admin_path = 'admin/config/people/accounts/fields';
+  protected $entityFieldAdminPath = 'admin/config/people/accounts/fields';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_title_field = 'name';
+  protected $entityTitleField = 'name';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_save_button_label = 'Create new account';
+  protected $entitySaveButtonLabel = 'Create new account';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected function entity_default_values($title = 'Barfoo') {
+  protected function entityDefaultValues($title = 'Barfoo') {
     $password = $this->randomString(16);
     return [
       'mail' => 'test' . $this->adminUser->getEmail(),
@@ -100,13 +97,13 @@ class MetatagFieldUserTest extends MetatagFieldTestBase {
    *
    * @todo
    */
-  // protected function testFieldsOnUserRegistrationForm() {}
+  public function testFieldsOnUserRegistrationForm() {}
 
   /**
    * Confirm the metatag field can be shown on a normal user's own edit form.
    *
    * @todo
    */
-  // protected function testFieldsOnUserEditForm() {}
+  public function testFieldsOnUserEditForm() {}
 
 }

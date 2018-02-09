@@ -12,6 +12,5 @@ expire: 300
 form_settings:
   user_register_form: false
   user_pass: false
-  webforms: false
   feedback_contact_message_form: false
   _contact_message_form: false

@@ -14,6 +14,7 @@ use Drupal\simpletest\WebTestBase;
 class EntityReferenceRevisionsAdminTest extends WebTestBase {
 
   use FieldUiTestTrait;
+  use EntityReferenceRevisionsCoreVersionUiTestTrait;
 
   /**
    * Modules to enable.
@@ -38,12 +39,6 @@ class EntityReferenceRevisionsAdminTest extends WebTestBase {
     $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
     // Place the breadcrumb, tested in fieldUIAddNewField().
     $this->drupalPlaceBlock('system_breadcrumb_block');
-  }
-
-  /**
-   * Tests the entity reference revisions configuration.
-   */
-  public function testEntityReferenceRevisions() {
     $admin_user = $this->drupalCreateUser(array(
       'administer site configuration',
       'administer nodes',
@@ -55,7 +50,12 @@ class EntityReferenceRevisionsAdminTest extends WebTestBase {
       'edit any article content',
     ));
     $this->drupalLogin($admin_user);
+  }
 
+  /**
+   * Tests the entity reference revisions configuration.
+   */
+  public function testEntityReferenceRevisions() {
     // Create a test target node used as entity reference by another test node.
     $node_target = Node::create([
       'title' => 'Target node',
@@ -89,9 +89,8 @@ class EntityReferenceRevisionsAdminTest extends WebTestBase {
     $edit = array(
       'title[0][value]' => $title,
       'body[0][value]' => 'Revision 1',
-      'revision' => TRUE,
     );
-    $this->drupalPostForm('node/add/article', $edit, t('Save and publish'));
+    $this->drupalPostNodeForm('node/add/article', $edit, t('Save and publish'));
     $this->assertText($title);
     $this->assertText('Revision 1');
     $node = $this->drupalGetNodeByTitle($title);
@@ -104,7 +103,7 @@ class EntityReferenceRevisionsAdminTest extends WebTestBase {
       'title[0][value]' => 'Entity reference revision content',
       'field_entity_reference_revisions[1][target_id]' => $node->label() . ' (' . $node->id() . ')',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save and publish'));
+    $this->drupalPostNodeForm(NULL, $edit, t('Save and publish'));
     $this->assertLinkByHref('node/' . $node_target->id());
     $this->assertText('Entity revisions Entity reference revision content has been created.');
     $this->assertText('Entity reference revision content');
@@ -116,7 +115,7 @@ class EntityReferenceRevisionsAdminTest extends WebTestBase {
       'body[0][value]' => 'Revision 2',
       'revision' => TRUE,
     );
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertText($title);
     $this->assertText('Revision 2');
 
@@ -147,6 +146,39 @@ class EntityReferenceRevisionsAdminTest extends WebTestBase {
     $this->assertEqual((string) $properties['target_revision_id']->getLabel(), 'Content revision ID');
     $this->assertEqual((string) $properties['target_id']->getLabel(), 'Content ID');
     $this->assertEqual((string) $properties['entity']->getLabel(), 'Content');
+  }
+
+  /**
+   * Tests target bundle settings for an entity reference revisions field.
+   */
+  public function testMultipleTargetBundles() {
+    // Create a couple of content types for the ERR field to point to.
+    $target_types = [];
+    for ($i = 0; $i < 2; $i++) {
+      $target_types[$i] = $this->drupalCreateContentType([
+        'type' => strtolower($this->randomMachineName()),
+        'name' => 'Test type ' . $i
+      ]);
+    }
+
+    // Create a new field that can point to either target content type.
+    $node_type_path = 'admin/structure/types/manage/entity_revisions';
+
+    // Generate a random field name, must be only lowercase characters.
+    $field_name = strtolower($this->randomMachineName());
+
+    $field_edit = [];
+    $storage_edit = ['settings[target_type]' => 'node', 'cardinality' => '-1'];
+    $field_edit['settings[handler_settings][target_bundles][' . $target_types[0]->id() . ']'] = TRUE;
+    $field_edit['settings[handler_settings][target_bundles][' . $target_types[1]->id() . ']'] = TRUE;
+
+    $this->fieldUIAddNewField($node_type_path, $field_name, 'Entity reference revisions', 'entity_reference_revisions', $storage_edit, $field_edit);
+
+    // Deleting one of these content bundles at this point should only delete
+    // that bundle's body field. Test that there is no second field that will
+    // be deleted.
+    $this->drupalGet('/admin/structure/types/manage/' . $target_types[0]->id() . '/delete');
+    $this->assertNoFieldByXPath('(//details[@id="edit-entity-deletes"]//ul[@data-drupal-selector="edit-field-config"]/li)[2]');
   }
 
 }

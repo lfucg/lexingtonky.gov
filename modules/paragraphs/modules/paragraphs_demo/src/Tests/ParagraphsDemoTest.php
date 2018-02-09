@@ -3,6 +3,7 @@
 namespace Drupal\paragraphs_demo\Tests;
 
 use Drupal\filter\Entity\FilterFormat;
+use Drupal\paragraphs\Tests\Classic\ParagraphsCoreVersionUiTestTrait;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -11,6 +12,8 @@ use Drupal\simpletest\WebTestBase;
  * @group paragraphs
  */
 class ParagraphsDemoTest extends WebTestBase {
+
+  use ParagraphsCoreVersionUiTestTrait;
 
   /**
    * Modules to enable.
@@ -43,7 +46,6 @@ class ParagraphsDemoTest extends WebTestBase {
     $basic_html_format->save();
     $admin_user = $this->drupalCreateUser(array(
       'administer site configuration',
-      'administer nodes',
       'create paragraphed_content_demo content',
       'edit any paragraphed_content_demo content',
       'delete any paragraphed_content_demo content',
@@ -62,6 +64,13 @@ class ParagraphsDemoTest extends WebTestBase {
     ));
 
     $this->drupalLogin($admin_user);
+
+    // Set edit mode to open.
+    $this->drupalGet('admin/structure/types/manage/paragraphed_content_demo/form-display');
+    $this->drupalPostAjaxForm(NULL, [], "field_paragraphs_demo_settings_edit");
+    $edit = ['fields[field_paragraphs_demo][settings_edit_form][settings][edit_mode]' => 'open'];
+    $this->drupalPostForm(NULL, $edit, t('Save'));
+
     // Check for all pre-configured paragraphs_types.
     $this->drupalGet('admin/structure/paragraphs_type');
     $this->assertText('Image + Text');
@@ -105,7 +114,7 @@ class ParagraphsDemoTest extends WebTestBase {
     // Check that title and the descriptions are set.
     $this->drupalGet('admin/structure/types/manage/paragraphed_content_demo');
     $this->assertText('Paragraphed article');
-    $this->assertText('Article with paragraphs.');
+    $this->assertText('Article with Paragraphs.');
 
     // Check that the Paragraph field is added.
     $this->clickLink('Manage fields');
@@ -132,7 +141,7 @@ class ParagraphsDemoTest extends WebTestBase {
     $edit = [
       'field_paragraphs_demo[1][subform][field_user_demo][0][target_id]' => $admin_user->label() . ' (' . $admin_user->id() . ')',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save and publish'));
+    $this->drupalPostForm(NULL, $edit, t('Save'));
 
     $this->assertText('Paragraphed article Paragraph title has been created.');
     $this->assertText('Paragraph title');
@@ -147,6 +156,11 @@ class ParagraphsDemoTest extends WebTestBase {
     // Search non existent text.
     $this->drupalGet('paragraphs_search', ['query' => ['search_api_fulltext' => 'foo']]);
     $this->assertNoRaw('Welcome to the Paragraphs Demo module!');
+
+    // Check that the dropbutton of Nested Paragraph has the Duplicate function.
+    // For now, this indicates that it is using the EXPERIMENTAL widget.
+    $this->drupalGet('node/1/edit');
+    $this->assertFieldByName('field_paragraphs_demo_3_subform_field_paragraphs_demo_0_duplicate');
   }
 
 }

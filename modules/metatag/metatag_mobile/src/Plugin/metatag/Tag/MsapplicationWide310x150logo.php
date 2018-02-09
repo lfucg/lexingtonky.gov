@@ -1,12 +1,8 @@
 <?php
-/**
- * @file
- * Contains \Drupal\metatag_mobile\Plugin\metatag\Tag\MsapplicationWide310x150logo.
- */
 
 namespace Drupal\metatag_mobile\Plugin\metatag\Tag;
 
-use \Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
+use Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
 
 /**
  * Provides a plugin for the 'msapplication:wide310x150logo' meta tag.

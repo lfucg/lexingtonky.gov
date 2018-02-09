@@ -2,7 +2,7 @@
 
 namespace Drupal\metatag_google_plus\Plugin\metatag\Tag;
 
-use \Drupal\metatag\Plugin\metatag\Tag\MetaItempropBase;
+use Drupal\metatag\Plugin\metatag\Tag\MetaItempropBase;
 
 /**
  * The GooglePlus "Description" meta tag.

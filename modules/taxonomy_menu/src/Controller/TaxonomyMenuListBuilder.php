@@ -20,6 +20,7 @@ class TaxonomyMenuListBuilder extends ConfigEntityListBuilder {
   public function buildHeader() {
     $header['label'] = $this->t('Taxonomy Menu');
     $header['id'] = $this->t('Machine name');
+    $header['expanded'] = $this->t('Expanded');
     return $header + parent::buildHeader();
   }
 
@@ -27,8 +28,9 @@ class TaxonomyMenuListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = $this->getLabel($entity);
+    $row['label'] = $entity->label();
     $row['id'] = $entity->id();
+    $row['expanded'] = ($entity->expanded) ? $this->t('Yes') : $this->t('No');
     // You probably want a few more properties here...
     return $row + parent::buildRow($entity);
   }

@@ -2,9 +2,6 @@
 
 namespace Drupal\metatag\Tests;
 
-use Drupal\Core\Cache\Cache;
-use Drupal\metatag\Tests\MetatagFieldTestBase;
-
 /**
  * Ensures that the Metatag field works correctly on taxonomy terms.
  *
@@ -13,7 +10,7 @@ use Drupal\metatag\Tests\MetatagFieldTestBase;
 class MetatagFieldTermTest extends MetatagFieldTestBase {
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public static $modules = [
     // Needed for token handling.
@@ -36,9 +33,9 @@ class MetatagFieldTermTest extends MetatagFieldTestBase {
   ];
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_perms = [
+  protected $entityPerms = [
     // From Field UI.
     'administer taxonomy_term fields',
 
@@ -49,44 +46,44 @@ class MetatagFieldTermTest extends MetatagFieldTestBase {
   ];
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_type = 'taxonomy_term';
+  protected $entityType = 'taxonomy_term';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_label = 'Taxonomy term';
+  protected $entityLabel = 'Taxonomy term';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_bundle = 'entity_test';
+  protected $entityBundle = 'entity_test';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_add_path = 'admin/structure/taxonomy/manage/tags/add';
+  protected $entityAddPath = 'admin/structure/taxonomy/manage/tags/add';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_field_admin_path = 'admin/structure/taxonomy/manage/tags/overview/fields';
+  protected $entityFieldAdminPath = 'admin/structure/taxonomy/manage/tags/overview/fields';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_title_field = 'name';
+  protected $entityTitleField = 'name';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   protected function setUpEntityType() {
     $new_perms = [
       // From Taxonomy.
       'administer taxonomy',
     ];
-    $all_perms = array_merge($this->base_perms, $new_perms);
+    $all_perms = array_merge($this->basePerms, $new_perms);
     $this->adminUser = $this->drupalCreateUser($all_perms);
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('admin/structure/taxonomy/add');

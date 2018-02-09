@@ -2,7 +2,7 @@
 
 namespace Drupal\metatag_facebook\Plugin\metatag\Tag;
 
-use \Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
+use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
 
 /**
  * The Facebook "fb:app_id" meta tag.

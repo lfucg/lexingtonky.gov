@@ -2,7 +2,7 @@
 
 namespace Drupal\metatag_google_cse\Plugin\metatag\Tag;
 
-use \Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
+use Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
 
 /**
  * Provides a plugin for the 'google_rating' meta tag.

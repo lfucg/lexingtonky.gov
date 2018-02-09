@@ -2,8 +2,8 @@
 
 namespace Drupal\paragraphs_type_permissions\Tests;
 
-use Drupal\Core\Entity\Entity;
 use Drupal\field_ui\Tests\FieldUiTestTrait;
+use Drupal\paragraphs\Tests\Classic\ParagraphsCoreVersionUiTestTrait;
 use Drupal\simpletest\WebTestBase;
 use Drupal\user\Entity\Role;
 
@@ -14,7 +14,7 @@ use Drupal\user\Entity\Role;
  */
 class ParagraphsTypePermissionsTest extends WebTestBase {
 
-  use FieldUiTestTrait;
+  use FieldUiTestTrait, ParagraphsCoreVersionUiTestTrait;
 
   /**
    * Modules to enable.
@@ -46,7 +46,6 @@ class ParagraphsTypePermissionsTest extends WebTestBase {
     // Create an admin user for test.
     $admin_user = $this->drupalCreateUser(array(
       'administer site configuration',
-      'administer nodes',
       'administer content types',
       'administer node fields',
       'administer node display',
@@ -55,6 +54,7 @@ class ParagraphsTypePermissionsTest extends WebTestBase {
       'create paragraphed_content_demo content',
       'edit any paragraphed_content_demo content',
       'bypass paragraphs type content access',
+      'administer node form display',
     ));
     $this->drupalLogin($admin_user);
 
@@ -72,7 +72,7 @@ class ParagraphsTypePermissionsTest extends WebTestBase {
         ->save();
     }
 
-    // Create a node with some paragraph types.
+    // Create a node with some Paragraph types.
     $this->drupalGet('node/add/paragraphed_content_demo');
     $this->drupalPostForm(NULL, NULL, t('Add Image + Text'));
     $this->drupalPostForm(NULL, NULL, t('Add Images'));
@@ -91,7 +91,7 @@ class ParagraphsTypePermissionsTest extends WebTestBase {
       'field_paragraphs_demo[0][subform][field_text_demo][0][value]' => 'Paragraph type Image + Text',
       'field_paragraphs_demo[2][subform][field_text_demo][0][value]' => 'Paragraph type Text',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save and publish');
+    $this->drupalPostForm(NULL, $edit, t('Save'));
 
     // Get the node to edit it later.
     $node = $this->drupalGetNodeByTitle($edit['title[0][value]']);
@@ -122,15 +122,23 @@ class ParagraphsTypePermissionsTest extends WebTestBase {
     $this->assertNoText('Paragraph type Image + Text');
     $this->assertNoText('Paragraph type Text');
 
-    // Login as admin again to unpublish the 'Image + Text' paragraph type.
+    // Login as admin
     $this->drupalLogout();
     $this->drupalLogin($admin_user);
+
+    // Set edit mode to open.
+    $this->drupalGet('admin/structure/types/manage/paragraphed_content_demo/form-display');
+    $this->drupalPostAjaxForm(NULL, [], "field_paragraphs_demo_settings_edit");
+    $edit = ['fields[field_paragraphs_demo][settings_edit_form][settings][edit_mode]' => 'open'];
+    $this->drupalPostForm(NULL, $edit, t('Save'));
+
+    // Unpublish the 'Image + Text' paragraph type.
     $this->drupalGet('node/' . $node->id() . '/edit');
     $this->assertFieldChecked('edit-field-paragraphs-demo-0-subform-status-value');
     $edit = [
       'field_paragraphs_demo[0][subform][status][value]' => FALSE,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save and keep published'));
+    $this->drupalPostForm(NULL, $edit, t('Save'));
 
     // Check that 'Image + Text' paragraph is not shown anymore for admin user.
     $this->assertNoRaw($image_text_tag);
@@ -170,6 +178,19 @@ class ParagraphsTypePermissionsTest extends WebTestBase {
     $this->assertRaw($images_tag);
     $this->assertNoText('Paragraph type Image + Text');
     $this->assertNoText('Paragraph type Text');
+
+    // Check the authenticated user with edit permission.
+    $authenticated_role->grantPermission('update paragraph content image_text');
+    $authenticated_role->grantPermission('bypass node access');
+    $authenticated_role->save();
+    $this->drupalLogin($authenticated_user);
+    $this->drupalGet('node/' . $node->id() . '/edit');
+    $this->assertRaw('Image + Text');
+    $this->assertText('Paragraph type Image + Text');
+    $this->assertText('You are not allowed to remove this Paragraph.');
+    $this->assertText('Published');
+    $this->assertText('Images');
+    $this->assertText('You are not allowed to edit or remove this Paragraph.');
   }
 
 }

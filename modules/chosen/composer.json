@@ -10,30 +10,5 @@
   "keywords": [
     "Drupal",
     "Chosen"
-  ],
-  "repositories": [
-    {
-      "type": "package",
-      "package": {
-        "name": "harvesthq/chosen",
-        "version": "1.5.1",
-        "type": "drupal-library",
-        "dist": {
-          "url": "https://github.com/harvesthq/chosen/releases/download/v1.5.1/chosen_v1.5.1.zip",
-          "type": "zip"
-        },
-        "require": {
-          "composer/installers": "~1.0"
-        }
-      }
-    }
-  ],
-  "require": {
-    "harvesthq/chosen": "~1.5"
-  },
-  "autoload": {
-    "psr-4": {
-        "Drupal\\chosen\\": "src/"
-    }
-  }
+  ]
 }

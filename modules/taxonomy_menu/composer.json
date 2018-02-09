@@ -1,6 +1,6 @@
 {
   "name": "drupal/taxonomy_menu",
-  "type": "module",
+  "type": "drupal-module",
   "description": "Creates menu items based on associations to taxonomy vocabularies",
   "keywords": ["Drupal"],
   "license": "GPL-2.0+",

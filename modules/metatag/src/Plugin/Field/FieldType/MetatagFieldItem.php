@@ -67,7 +67,7 @@ class MetatagFieldItem extends FieldItemBase {
     $current_tags = unserialize($current_value);
 
     // Only include values that differ from the default.
-    // @TODO: When site defaults are added, account for those.
+    // @todo When site defaults are added, account for those.
     $tags_to_save = [];
     foreach ($current_tags as $tag_id => $tag_value) {
       if (!isset($default_tags[$tag_id]) || ($tag_value != $default_tags[$tag_id])) {

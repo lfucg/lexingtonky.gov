@@ -22,7 +22,7 @@ webprofiler.frontend.save:
         type: 'webprofiler:token'
   methods:  [POST]
   requirements:
-    _permission: 'access webprofiler'
+    _permission: 'view webprofiler toolbar'
 
 # view profile
 webprofiler.dashboard:

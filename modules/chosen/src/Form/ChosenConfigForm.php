@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\chosen\Form\ChosenConfigForm.
- */
 
 namespace Drupal\chosen\Form;
 
@@ -40,10 +36,10 @@ class ChosenConfigForm extends ConfigFormBase {
     $chosen_path = _chosen_lib_get_chosen_path();
     if (!$chosen_path) {
       $url = Url::fromUri(CHOSEN_WEBSITE_URL);
-      $link = Link::fromTextAndUrl(t('Chosen JavaScript file'), $url)->toString();
+      $link = Link::fromTextAndUrl($this->t('Chosen JavaScript file'), $url)->toString();
 
-      drupal_set_message(t('The library could not be detected. You need to download the !chosen and extract the entire contents of the archive into the %path directory on your server.',
-        array('!chosen' => $link, '%path' => 'libraries')
+      drupal_set_message($this->t('The library could not be detected. You need to download the @chosen and extract the entire contents of the archive into the %path directory on your server.',
+        ['@chosen' => $link, '%path' => 'libraries']
       ), 'error');
       return $form;
     }
@@ -51,112 +47,129 @@ class ChosenConfigForm extends ConfigFormBase {
     // Chosen settings:
     $chosen_conf = $this->configFactory->get('chosen.settings');
 
-    $form['minimum_single'] = array(
+    $form['minimum_single'] = [
       '#type' => 'select',
-      '#title' => t('Minimum number of options for single select'),
-      '#options' => array_merge(array('0' => t('Always apply')), range(1, 25)),
+      '#title' => $this->t('Minimum number of options for single select'),
+      '#options' => array_merge(['0' => t('Always apply')], range(1, 25)),
       '#default_value' => $chosen_conf->get('minimum_single'),
-      '#description' => t('The minimum number of options to apply Chosen for single select fields. Example : choosing 10 will only apply Chosen if the number of options is greater or equal to 10.'),
-    );
+      '#description' => $this->t('The minimum number of options to apply Chosen for single select fields. Example : choosing 10 will only apply Chosen if the number of options is greater or equal to 10.'),
+    ];
 
-    $form['minimum_multiple'] = array(
+    $form['minimum_multiple'] = [
       '#type' => 'select',
-      '#title' => t('Minimum number of options for multi select'),
-      '#options' => array_merge(array('0' => t('Always apply')), range(1, 25)),
+      '#title' => $this->t('Minimum number of options for multi select'),
+      '#options' => array_merge(['0' => t('Always apply')], range(1, 25)),
       '#default_value' => $chosen_conf->get('minimum_multiple'),
-      '#description' => t('The minimum number of options to apply Chosen for multi select fields. Example : choosing 10 will only apply Chosen if the number of options is greater or equal to 10.'),
-    );
+      '#description' => $this->t('The minimum number of options to apply Chosen for multi select fields. Example : choosing 10 will only apply Chosen if the number of options is greater or equal to 10.'),
+    ];
 
-    $form['disable_search_threshold'] = array(
+    $form['disable_search_threshold'] = [
       '#type' => 'select',
-      '#title' => t('Minimum number to show Search on Single Select'),
-      '#options' => array_merge(array('0' => t('Always apply')), range(1, 25)),
+      '#title' => $this->t('Minimum number to show Search on Single Select'),
+      '#options' => array_merge(['0' => t('Always apply')], range(1, 25)),
       '#default_value' => $chosen_conf->get('disable_search_threshold'),
-      '#description' => t('The minimum number of options to apply Chosen search box. Example : choosing 10 will only apply Chosen search if the number of options is greater or equal to 10.'),
-    );
+      '#description' => $this->t('The minimum number of options to apply Chosen search box. Example : choosing 10 will only apply Chosen search if the number of options is greater or equal to 10.'),
+    ];
 
-    $form['minimum_width'] = array(
+    $form['minimum_width'] = [
       '#type' => 'textfield',
-      '#title' => t('Minimum width of widget'),
+      '#title' => $this->t('Minimum width of widget'),
       '#field_suffix' => 'px',
-      '#required' => TRUE,
       '#size' => 3,
       '#default_value' => $chosen_conf->get('minimum_width'),
-      '#description' => t('The minimum width of the Chosen widget.'),
-    );
+      '#description' => $this->t('The minimum width of the Chosen widget. Leave blank to have chosen determine this.'),
+    ];
 
-    $form['jquery_selector'] = array(
+    $form['jquery_selector'] = [
       '#type' => 'textarea',
-      '#title' => t('Apply Chosen to the following elements'),
-      '#description' => t('A comma-separated list of jQuery selectors to apply Chosen to, such as <code>select#edit-operation, select#edit-type</code> or <code>.chosen-select</code>. Defaults to <code>select</code> to apply Chosen to all <code>&lt;select&gt;</code> elements.'),
+      '#title' => $this->t('Apply Chosen to the following elements'),
+      '#description' => $this->t('A comma-separated list of jQuery selectors to apply Chosen to, such as <code>select#edit-operation, select#edit-type</code> or <code>.chosen-select</code>. Defaults to <code>select</code> to apply Chosen to all <code>&lt;select&gt;</code> elements.'),
       '#default_value' => $chosen_conf->get('jquery_selector'),
-    );
+    ];
 
-    $form['options'] = array(
+    $form['options'] = [
       '#type' => 'fieldset',
       '#title' => t('Chosen general options'),
-    );
+    ];
 
-    $form['options']['search_contains'] = array(
+    $form['options']['search_contains'] = [
       '#type' => 'checkbox',
-      '#title' => t('Search also in the middle of words'),
+      '#title' => $this->t('Search also in the middle of words'),
       '#default_value' => $chosen_conf->get('search_contains'),
-      '#description' => t('Per default chosen searches only at beginning of words. Enable this option will also find results in the middle of words.
+      '#description' => $this->t('Per default chosen searches only at beginning of words. Enable this option will also find results in the middle of words.
       Example: Search for <em>land</em> will also find <code>Switzer<strong>land</strong></code>.'),
-    );
+    ];
 
-    $form['options']['disable_search'] = array(
+    $form['options']['disable_search'] = [
       '#type' => 'checkbox',
-      '#title' => t('Disable search box'),
+      '#title' => $this->t('Disable search box'),
       '#default_value' => $chosen_conf->get('disable_search'),
-      '#description' => t('Enable or disable the search box in the results list to filter out possible options.'),
-    );
+      '#description' => $this->t('Enable or disable the search box in the results list to filter out possible options.'),
+    ];
 
-    $form['theme_options'] = array(
+    $form['options']['allow_single_deselect'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow Deselect on Single Selects'),
+      '#default_value' => $chosen_conf->get('allow_single_deselect'),
+      '#description' => $this->t('Enable or disable the deselect on single selects. Requires an empty default option.'),
+    ];
+
+    $form['theme_options'] = [
       '#type' => 'fieldset',
-      '#title' => t('Chosen per theme options'),
-    );
+      '#title' => $this->t('Chosen per theme options'),
+    ];
 
     $default_disabled_themes = $chosen_conf->get('disabled_themes');
-    $default_disabled_themes = is_array($default_disabled_themes) ? $default_disabled_themes : array();
-    $form['theme_options']['disabled_themes'] = array(
+    $default_disabled_themes = is_array($default_disabled_themes) ? $default_disabled_themes : [];
+    $form['theme_options']['disabled_themes'] = [
       '#type' => 'checkboxes',
       '#title' => t('Disable the default Chosen theme for the following themes'),
       '#options' => $this->chosen_enabled_themes_options(),
       '#default_value' => $default_disabled_themes,
-      '#description' => t('Enable or disable the default Chosen CSS file. Select a theme if it contains custom styles for Chosen replacements.'),
-    );
+      '#description' => $this->t('Enable or disable the default Chosen CSS file. Select a theme if it contains custom styles for Chosen replacements.'),
+    ];
 
-    $form['strings'] = array(
+    $form['options']['chosen_include'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Use chosen for admin pages and/or front end pages'),
+      '#options' => [
+        CHOSEN_INCLUDE_EVERYWHERE => $this->t('Include Chosen on every page'),
+        CHOSEN_INCLUDE_ADMIN => $this->t('Include Chosen only on admin pages'),
+        CHOSEN_INCLUDE_NO_ADMIN => $this->t('Include Chosen only on front end pages'),
+      ],
+      '#default_value' => $chosen_conf->get('chosen_include'),
+    ];
+
+    $form['strings'] = [
       '#type' => 'fieldset',
-      '#title' => t('Chosen strings'),
-    );
+      '#title' => $this->t('Chosen strings'),
+    ];
 
-    $form['strings']['placeholder_text_multiple'] = array(
+    $form['strings']['placeholder_text_multiple'] = [
       '#type' => 'textfield',
-      '#title' => t('Placeholder text of multiple selects'),
+      '#title' => $this->t('Placeholder text of multiple selects'),
       '#required' => TRUE,
       '#default_value' => $chosen_conf->get('placeholder_text_multiple'),
-    );
+    ];
 
-    $form['strings']['placeholder_text_single'] = array(
+    $form['strings']['placeholder_text_single'] = [
       '#type' => 'textfield',
-      '#title' => t('Placeholder text of single selects'),
+      '#title' => $this->t('Placeholder text of single selects'),
       '#required' => TRUE,
       '#default_value' => $chosen_conf->get('placeholder_text_single'),
-    );
+    ];
 
-    $form['strings']['no_results_text'] = array(
+    $form['strings']['no_results_text'] = [
       '#type' => 'textfield',
-      '#title' => t('No results text'),
+      '#title' => $this->t('No results text'),
       '#required' => TRUE,
       '#default_value' => $chosen_conf->get('no_results_text'),
-    );
+    ];
 
-    $form['submit'] = array(
+    $form['submit'] = [
       '#type' => 'submit',
-      '#value' => t('submit'),
-    );
+      '#value' => $this->t('submit'),
+    ];
 
     return $form;
   }
@@ -180,7 +193,9 @@ class ChosenConfigForm extends ConfigFormBase {
       ->set('jquery_selector', $form_state->getValue('jquery_selector'))
       ->set('search_contains', $form_state->getValue('search_contains'))
       ->set('disable_search', $form_state->getValue('disable_search'))
+      ->set('allow_single_deselect', $form_state->getValue('allow_single_deselect'))
       ->set('disabled_themes', $form_state->getValue('disabled_themes'))
+      ->set('chosen_include', $form_state->getValue('chosen_include'))
       ->set('placeholder_text_multiple', $form_state->getValue('placeholder_text_multiple'))
       ->set('placeholder_text_single', $form_state->getValue('placeholder_text_single'))
       ->set('no_results_text', $form_state->getValue('no_results_text'));
@@ -191,10 +206,10 @@ class ChosenConfigForm extends ConfigFormBase {
   }
 
   /**
-   * Helper function to get options for enabled themes
+   * Helper function to get options for enabled themes.
    */
   private function chosen_enabled_themes_options() {
-    $options = array();
+    $options = [];
 
     // Get a list of available themes.
     $theme_handler = \Drupal::service('theme_handler');
@@ -202,7 +217,7 @@ class ChosenConfigForm extends ConfigFormBase {
     $themes = $theme_handler->listInfo();
 
     foreach ($themes as $theme_name => $theme) {
-      // Only create options for enabled themes
+      // Only create options for enabled themes.
       if ($theme->status) {
         if (!(isset($theme->info['hidden']) && $theme->info['hidden'])) {
           $options[$theme_name] = $theme->info['name'];

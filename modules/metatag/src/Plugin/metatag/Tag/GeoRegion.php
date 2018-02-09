@@ -2,8 +2,6 @@
 
 namespace Drupal\metatag\Plugin\metatag\Tag;
 
-use \Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
-
 /**
  * Provides a plugin for the 'geo.region' meta tag.
  *

@@ -60,22 +60,22 @@ class ContactFormCloneForm extends ContactFormEditForm {
     $form['#process'][] = '::processForm';
     $form['#after_build'][] = '::afterBuild';
 
-    $form['label'] = array(
+    $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => '',
       '#description' => $this->t("Example: 'website feedback' or 'product information'."),
       '#required' => TRUE,
-    );
-    $form['id'] = array(
+    ];
+    $form['id'] = [
       '#type' => 'machine_name',
       '#default_value' => '',
       '#maxlength' => EntityTypeInterface::BUNDLE_MAX_LENGTH,
-      '#machine_name' => array(
+      '#machine_name' => [
         'exists' => '\Drupal\contact\Entity\ContactForm::load',
-      ),
-    );
+      ],
+    ];
     return $form;
   }
 
@@ -133,8 +133,8 @@ class ContactFormCloneForm extends ContactFormEditForm {
     // Redirect and show messge.
     $form_state->setRedirect('entity.contact_form.edit_form', ['contact_form' => $contact_form->id()]);
     $edit_link = $this->entity->link($this->t('Edit'));
-    drupal_set_message($this->t('Contact form %label has been added.', array('%label' => $contact_form->label())));
-    $this->logger('contact')->notice('Contact form %label has been added.', array('%label' => $contact_form->label(), 'link' => $edit_link));
+    drupal_set_message($this->t('Contact form %label has been added.', ['%label' => $contact_form->label()]));
+    $this->logger('contact')->notice('Contact form %label has been added.', ['%label' => $contact_form->label(), 'link' => $edit_link]);
   }
 
   /**

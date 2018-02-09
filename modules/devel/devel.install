@@ -5,16 +5,23 @@
  * Install, update and uninstall functions for the devel module.
  */
 
-use Drupal\system\Entity\Menu;
-
 /**
- * Implements hook_uninstall().
+ * Implements hook_requirements().
  */
-function devel_uninstall() {
-  // Delete the development menu.
-  if ($devel_menu = Menu::load('devel')) {
-    $devel_menu->delete();
+function devel_requirements($phase) {
+  $requirements = [];
+
+  if ($phase == 'runtime') {
+    // To understand the reasons why this message is marked as info see
+    // https://www.drupal.org/node/2834400.
+    $requirements['devel'] = [
+      'title' => t('Devel module enabled'),
+      'description' => t('The Devel module provides access to internal debugging information; therefore it\'s recommended to disable this module on sites in production.'),
+      'severity' => REQUIREMENT_INFO,
+    ];
   }
+
+  return $requirements;
 }
 
 /**
@@ -29,4 +36,14 @@ function devel_update_8001() {
   \Drupal::configFactory()->getEditable('devel.settings')
     ->set('devel_dumper', $default_dumper)
     ->save(TRUE);
+}
+
+/**
+ * Add enforced dependencies to system.menu.devel
+ */
+function devel_update_8002() {
+  $config = \Drupal::configFactory()->getEditable('system.menu.devel');
+  $dependencies = $config->get('dependencies');
+  $dependencies['enforced']['module'][] = 'devel';
+  $config->set('dependencies', $dependencies)->save(TRUE);
 }

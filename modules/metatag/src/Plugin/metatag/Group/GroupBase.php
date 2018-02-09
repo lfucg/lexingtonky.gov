@@ -1,13 +1,12 @@
 <?php
 
-/**
- * Each group will extend this base.
- */
-
 namespace Drupal\metatag\Plugin\metatag\Group;
 
 use Drupal\Component\Plugin\PluginBase;
 
+/**
+ * Each group will extend this base.
+ */
 abstract class GroupBase extends PluginBase {
 
   /**
@@ -40,25 +39,45 @@ abstract class GroupBase extends PluginBase {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     // Set the properties from the annotation.
-    // @TODO: Should we have setProperty() methods for each of these?
+    // @todo Should we have setProperty() methods for each of these?
     $this->id = $plugin_definition['id'];
     $this->label = $plugin_definition['label'];
     $this->description = $plugin_definition['description'];
   }
 
+  /**
+   * Get this group's internal ID.
+   *
+   * @return string
+   *   This group's ID.
+   */
   public function id() {
     return $this->id;
   }
 
+  /**
+   * Get this group's human-friendly name.
+   *
+   * @return string
+   *   This group's human-friendly name.
+   */
   public function label() {
     return $this->label;
   }
 
+  /**
+   * This group object's description.
+   *
+   * @return string
+   *   This group's ID.
+   */
   public function description() {
     return $this->description;
   }
 
   /**
+   * Whether or not this group is being used.
+   *
    * @return bool
    *   Whether this group has been enabled.
    */

@@ -47,7 +47,7 @@ services:
 # event subscribers
   webprofiler.profiler_listener:
     class: Symfony\Component\HttpKernel\EventListener\ProfilerListener
-    arguments: ['@profiler', '@?webprofiler.matcher', '%webprofiler.only_exceptions%', '%webprofiler.only_master_requests%', '@request_stack']
+    arguments: ['@profiler', '@request_stack', '@?webprofiler.matcher', '%webprofiler.only_exceptions%', '%webprofiler.only_master_requests%']
     tags:
       - { name: event_subscriber }
 
@@ -187,13 +187,9 @@ services:
   stopwatch:
     class: Drupal\webprofiler\Stopwatch
 
-  webprofiler.debug.event_dispatcher.default:
-    class: Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher
-    arguments: ['@service_container']
-
   webprofiler.debug.plugin.manager.mail.default:
     class: Drupal\Core\Mail\MailManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@config.factory', '@logger.factory', '@string_translation']
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@config.factory', '@logger.factory', '@string_translation', '@renderer']
 
   webprofiler.debug.controller_resolver:
     class: Symfony\Component\HttpKernel\Controller\TraceableControllerResolver
@@ -253,7 +249,6 @@ services:
 # parameter converter service for profile token
   webprofiler.token_converter:
     class: Drupal\webprofiler\Routing\TokenConverter
-    arguments: ['@profiler']
     tags:
       - { name: paramconverter }
 

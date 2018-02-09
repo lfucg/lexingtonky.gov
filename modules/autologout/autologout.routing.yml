@@ -2,7 +2,7 @@ autologout.set_admin:
   path: '/admin/config/people/autologout'
   defaults:
     _form: '\Drupal\autologout\Form\AutologoutSettingsForm'
-    _title: 'Auto Logout'
+    _title: 'Automated logout settings'
   requirements:
     _permission: 'administer autologout'
 

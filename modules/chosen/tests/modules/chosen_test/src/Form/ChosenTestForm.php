@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\chosen_test\Form\ChosenTestForm.
- */
 
 namespace Drupal\chosen_test\Form;
 
@@ -31,9 +27,9 @@ class ChosenTestForm extends FormBase {
     $form['select'] = array(
       '#type' => 'select',
       '#required' => FALSE,
-      '#title' => t('Select'),
+      '#title' => $this->t('Select'),
       '#default_value' => '',
-      '#empty_option' => t('- Select -'),
+      '#empty_option' => $this->t('- Select -'),
       '#options' => array('Option 1', 'Option 2', 'Option 3', 'Option 4'),
       '#chosen' => 1,
     );
@@ -48,4 +44,5 @@ class ChosenTestForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
   }
+
 }

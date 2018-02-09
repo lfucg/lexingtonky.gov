@@ -2,7 +2,7 @@
 
 namespace Drupal\metatag_favicons\Plugin\metatag\Group;
 
-use \Drupal\metatag\Plugin\metatag\Group\GroupBase;
+use Drupal\metatag\Plugin\metatag\Group\GroupBase;
 
 /**
  * Provides a plugin for the 'Favicons & touch icons' meta tag group.

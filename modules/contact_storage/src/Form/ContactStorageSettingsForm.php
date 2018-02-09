@@ -33,12 +33,12 @@ class ContactStorageSettingsForm extends ConfigFormBase {
     $config = $this->config('contact_storage.settings');
 
     // Global setting.
-    $form['send_html'] = array(
+    $form['send_html'] = [
       '#type' => 'checkbox',
       '#title' => t('Send HTML'),
       '#description' => t('Whether the mails should be sent as HTML. A module like <a href="https://www.drupal.org/project/swiftmailer">Swiftmailer</a> is needed for this feature. This has only been tested with the Swiftmailer module, other modules might not work out of the box and will not use the provided default template.'),
       '#default_value' => $config->get('send_html'),
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
   }

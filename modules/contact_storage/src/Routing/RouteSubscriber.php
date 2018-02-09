@@ -18,7 +18,12 @@ class RouteSubscriber extends RouteSubscriberBase {
     // Change the contact_form controller.
     if ($route = $collection->get('entity.contact_form.canonical')) {
       $route->setDefault('_controller', ContactStorageController::class . '::contactSitePage');
+      $route->setDefault('_title_callback', ContactStorageController::class . '::contactFormTitle');
     }
+    if ($route = $collection->get('entity.contact_form.edit_form')) {
+      $route->setDefault('_title_callback', ContactStorageController::class . '::contactEditFormTitle');
+    }
+
   }
 
 }

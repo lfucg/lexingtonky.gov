@@ -1,75 +1,124 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\webprofiler\DataCollector\EventsDataCollector.
- */
-
 namespace Drupal\webprofiler\DataCollector;
 
-use Drupal\webprofiler\DrupalDataCollectorInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Symfony\Component\HttpKernel\DataCollector\EventDataCollector as BaseEventDataCollector;
+use Drupal\webprofiler\DrupalDataCollectorInterface;
+use Drupal\webprofiler\EventDispatcher\EventDispatcherTraceableInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface;
 
 /**
  * Class EventsDataCollector
  */
-class EventsDataCollector extends BaseEventDataCollector implements DrupalDataCollectorInterface {
+class EventsDataCollector extends DataCollector implements DrupalDataCollectorInterface, LateDataCollectorInterface {
 
   use StringTranslationTrait, DrupalDataCollectorTrait;
+
+  /**
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  private $eventDispatcher;
+
+  /**
+   * EventsDataCollector constructor.
+   *
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   */
+  public function __construct(EventDispatcherInterface $event_dispatcher) {
+    $this->eventDispatcher = $event_dispatcher;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function collect(Request $request, Response $response, \Exception $exception = NULL) {
+    $this->data = [
+      'called_listeners' => [],
+      'called_listeners_count' => 0,
+      'not_called_listeners' => [],
+      'not_called_listeners_count' => 0,
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function lateCollect() {
+    if ($this->eventDispatcher instanceof EventDispatcherTraceableInterface) {
+      $countCalled = 0;
+      $calledListeners = $this->eventDispatcher->getCalledListeners();
+      foreach ($calledListeners as &$events) {
+        foreach ($events as &$priority) {
+          foreach ($priority as &$listener) {
+            $countCalled++;
+            $listener['clazz'] = $this->getMethodData($listener['class'], $listener['method']);
+          }
+        }
+      }
+
+      $countNotCalled = 0;
+      $notCalledListeners = $this->eventDispatcher->getNotCalledListeners();
+      foreach ($notCalledListeners as $events) {
+        foreach ($events as $priority) {
+          foreach ($priority as $listener) {
+            $countNotCalled++;
+          }
+        }
+      }
+
+      $this->data = [
+        'called_listeners' => $calledListeners,
+        'called_listeners_count' => $countCalled,
+        'not_called_listeners' => $notCalledListeners,
+        'not_called_listeners_count' => $countNotCalled,
+      ];
+    }
+  }
+
+  /**
+   * @return array
+   */
+  public function getCalledListeners() {
+    return $this->data['called_listeners'];
+  }
+
+  /**
+   * @return array
+   */
+  public function getNotCalledListeners() {
+    return $this->data['not_called_listeners'];
+  }
 
   /**
    * @return int
    */
   public function getCalledListenersCount() {
-    return count($this->getCalledListeners());
+    return $this->data['called_listeners_count'];
   }
 
   /**
    * @return int
    */
   public function getNotCalledListenersCount() {
-    return count($this->getNotCalledListeners());
+    return $this->data['not_called_listeners_count'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setCalledListeners(array $listeners) {
-    $listeners = $this->computePriority($listeners);
-    $this->data['called_listeners'] = $listeners;
+  public function getName() {
+    return 'events';
   }
 
   /**
-   * Adds the priority value to the $listeners array.
-   *
-   * @param array $listeners
-   * @return array
+   * @return mixed
    */
-  private function computePriority(array $listeners) {
-    foreach ($listeners as &$listener) {
-      foreach ($listener['class']::getSubscribedEvents() as $event => $methods) {
-
-        if (is_string($methods)) {
-          $methods = [[$methods], 0];
-        }
-        else {
-          if (is_string($methods[0])) {
-            $methods = [$methods];
-          }
-        }
-
-        foreach ($methods as $method) {
-          if ($listener['event'] === $event) {
-            if ($listener['method'] === $method[0]) {
-              $listener['priority'] = isset($method[1]) ? $method[1] : 0;
-            }
-          }
-        }
-      }
-    }
-
-    return $listeners;
+  public function getData() {
+    return $this->data;
   }
 
   /**
@@ -83,7 +132,7 @@ class EventsDataCollector extends BaseEventDataCollector implements DrupalDataCo
    * {@inheritdoc}
    */
   public function getPanelSummary() {
-    return $this->t('Called listeners: @listeners', ['@listeners' => count($this->getCalledListeners())]);
+    return $this->t('Called listeners: @listeners', ['@listeners' => $this->getCalledListenersCount()]);
   }
 
   /**

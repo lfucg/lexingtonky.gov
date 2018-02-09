@@ -6,28 +6,32 @@ use Drupal\Console\Core\Generator\Generator;
 use Drupal\Console\Extension\Manager;
 use Drupal\Console\Core\Utils\TwigRenderer;
 
+/**
+ * Drupal Console plugin for generating a group.
+ */
 class MetatagGroupGenerator extends Generator {
 
   /**
-   * @var Manager
+   * @var \Drupal\Console\Extension\Manager
    */
   protected $extensionManager;
 
   /**
-   * @var TwigRenderer
+   * @var \Drupal\Console\Core\Utils\TwigRenderer
    */
-  protected $render;
+  protected $renderer;
 
   /**
    * MetatagGroupGenerator constructor.
    *
-   * @param Manager $extensionManager
+   * @param Drupal\Console\Extension\Manager $extensionManager
+   * @param Drupal\Console\Core\Utils\TwigRenderer $renderer
    */
-  public function __construct(Manager $extensionManager, TwigRenderer $render) {
+  public function __construct(Manager $extensionManager, TwigRenderer $renderer) {
     $this->extensionManager = $extensionManager;
 
-    $render->addSkeletonDir(__DIR__ . '/../../templates/');
-    $this->setRenderer($render);
+    $renderer->addSkeletonDir(__DIR__ . '/../../templates/');
+    $this->setRenderer($renderer);
   }
 
   /**

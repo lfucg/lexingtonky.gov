@@ -18,7 +18,7 @@ class ModerationFormTest extends ModerationStateTestBase {
     $this->createContentTypeFromUI('Moderated content', 'moderated_content', TRUE, [
       'draft',
       'needs_review',
-      'published'
+      'published',
     ], 'draft');
     $this->grantUserPermissionToCreateContentOfType($this->adminUser, 'moderated_content');
   }
@@ -47,6 +47,12 @@ class ModerationFormTest extends ModerationStateTestBase {
 
     $this->assertTrue($this->adminUser->hasPermission('edit any moderated_content content'));
 
+    // The canonical view should have a moderation form, because it is not the
+    // live revision.
+    $this->drupalGet($canonical_path);
+    $this->assertResponse(200);
+    $this->assertField('edit-new-state', 'The node view page has a moderation form.');
+
     // The latest version page should not show, because there is no forward
     // revision.
     $this->drupalGet($latest_version_path);
@@ -56,6 +62,12 @@ class ModerationFormTest extends ModerationStateTestBase {
     $this->drupalPostForm($edit_path, [
       'body[0][value]' => 'Second version of the content.',
     ], t('Save and Request Review'));
+
+    // The canonical view should have a moderation form, because it is not the
+    // live revision.
+    $this->drupalGet($canonical_path);
+    $this->assertResponse(200);
+    $this->assertField('edit-new-state', 'The node view page has a moderation form.');
 
     // The latest version page should not show, because there is still no
     // forward revision.
@@ -68,10 +80,10 @@ class ModerationFormTest extends ModerationStateTestBase {
     ], t('Save and Publish'));
 
     // The published view should not have a moderation form, because it is the
-    // default revision.
+    // live revision.
     $this->drupalGet($canonical_path);
     $this->assertResponse(200);
-    $this->assertNoText('Status', 'The node view page has no moderation form.');
+    $this->assertNoField('edit-new-state', 'The node view page has no moderation form.');
 
     // The latest version page should not show, because there is still no
     // forward revision.
@@ -84,16 +96,16 @@ class ModerationFormTest extends ModerationStateTestBase {
     ], t('Save and Create New Draft'));
 
     // The published view should not have a moderation form, because it is the
-    // default revision.
+    // live revision.
     $this->drupalGet($canonical_path);
     $this->assertResponse(200);
-    $this->assertNoText('Status', 'The node view page has no moderation form.');
+    $this->assertNoField('edit-new-state', 'The node view page has no moderation form.');
 
     // The latest version page should show the moderation form and have "Draft"
     // status, because the forward revision is in "Draft".
     $this->drupalGet($latest_version_path);
     $this->assertResponse(200);
-    $this->assertText('Status', 'Form text found on the latest-version page.');
+    $this->assertField('edit-new-state', 'The latest-version page has a moderation form.');
     $this->assertText('Draft', 'Correct status found on the latest-version page.');
 
     // Submit the moderation form to change status to needs review.
@@ -105,8 +117,29 @@ class ModerationFormTest extends ModerationStateTestBase {
     // Review" status, because the forward revision is in "Needs Review".
     $this->drupalGet($latest_version_path);
     $this->assertResponse(200);
-    $this->assertText('Status', 'Form text found on the latest-version page.');
+    $this->assertField('edit-new-state', 'The latest-version page has a moderation form.');
     $this->assertText('Needs Review', 'Correct status found on the latest-version page.');
+  }
+
+  /**
+   * Tests the revision author is updated when the moderation form is used.
+   */
+  public function testModerationFormSetsRevisionAuthor() {
+    // Create new moderated content in published.
+    $node = $this->createNode(['type' => 'moderated_content', 'moderation_state' => 'published']);
+    // Make a forward revision.
+    $node->moderation_state->target_id = 'draft';
+    $node->save();
+
+    $another_user = $this->drupalCreateUser($this->permissions);
+    $this->grantUserPermissionToCreateContentOfType($another_user, 'moderated_content');
+    $this->drupalLogin($another_user);
+    $this->drupalPostForm(sprintf('node/%d/latest', $node->id()), [
+      'new_state' => 'needs_review',
+    ], t('Apply'));
+
+    $this->drupalGet(sprintf('node/%d/revisions', $node->id()));
+    $this->assertText('by ' . $another_user->getAccountName());
   }
 
 }

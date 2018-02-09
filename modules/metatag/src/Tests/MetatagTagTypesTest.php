@@ -2,7 +2,6 @@
 
 namespace Drupal\metatag\Tests;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -14,11 +13,13 @@ class MetatagTagTypesTest extends WebTestBase {
 
   /**
    * Profile to use.
+   *
+   * @var string
    */
   protected $profile = 'testing';
 
   /**
-   * Admin user
+   * Admin user.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
@@ -87,12 +88,13 @@ class MetatagTagTypesTest extends WebTestBase {
   }
 
   /**
-   * Tests whether HTML is correctly removed from metatags
+   * Tests whether HTML is correctly removed from metatags.
    *
-   * Tests three values in metatags -- one without any HTML; one with raw html; and one with escaped HTML.
-   * To pass all HTML including escaped should be removed.
+   * Tests three values in metatags -- one without any HTML; one with raw html;
+   * and one with escaped HTML. To pass all HTML including escaped should be
+   * removed.
    */
-  public function testHTMLIsRemoved() {
+  public function testHtmlIsRemoved() {
     $this->drupalGet('admin/config/search/metatag/global');
     $this->assertResponse(200);
     $values = [
@@ -113,8 +115,7 @@ class MetatagTagTypesTest extends WebTestBase {
   }
 
   /**
-   * Tests whether insecure links in Tags with attribute secure = TRUE are
-   * correctly changed to secure links
+   * Tests the 'secure' meta tag attribute.
    *
    * Tests insecure values in og:image:secure_url (a tag with secure attribue
    * set to TRUE) and in og:image (a tag with secure attribue set to FALSE). To
@@ -135,13 +136,15 @@ class MetatagTagTypesTest extends WebTestBase {
     $this->assertResponse(200);
 
     $this->assertRaw('<meta property="og:image" content="http://blahblahblah.com/insecure.jpg" />', t('Test og:image with regular http:// link'));
-    $this->assertRaw('<meta property="og:image:secure_url" content="https://blahblahblah.com/secure.jpg" />', t('Test og:image:secure_url updated regular http:// link to https:// '));
+    $this->assertRaw('<meta property="og:image:secure_url" content="https://blahblahblah.com/secure.jpg" />', t('Test og:image:secure_url updated regular http:// link to https://'));
   }
 
   /**
+   * Check the contact form.
+   *
    * @todo Move this somewhere else.
    */
-  function testContactForm() {
+  public function testContactForm() {
     // Test a route where the entity for that route does not implement
     // ContentEntityInterface.
     $controller = \Drupal::entityTypeManager()->getStorage('contact_form');
@@ -155,28 +158,31 @@ class MetatagTagTypesTest extends WebTestBase {
   }
 
   /**
+   * Check URL handling.
+   *
    * @todo Finish.
    */
-  // public function testUrl() {
-  //   // Tests metatags with URLs work.
-  //   $this->drupalGet($this->entity_add_path);
-  //   $this->assertResponse(200);
-  //   $edit = [
-  //     'name[0][value]' => 'UrlTags',
-  //     'user_id[0][target_id]' => 'foo (' . $this->adminUser->id() . ')',
-  //     'field_metatag[0][advanced][original_source]' => 'http://example.com/foo.html',
-  //   ];
-  //   $this->drupalPostForm(NULL, $edit, t('Save'));
-  //   $entities = entity_load_multiple_by_properties('entity_test', [
-  //     'name' => 'UrlTags',
-  //   ]);
-  //   $this->assertEqual(1, count($entities), 'Entity was saved');
-  //   $entity = reset($entities);
-  //   $this->drupalGet($this->entity_base_path . '/' . $entity->id());
-  //   $this->assertResponse(200);
-  //   $elements = $this->cssSelect("meta[name='original-source']");
-  //   $this->assertTrue(count($elements) === 1, 'Found original source metatag from defaults');
-  //   $this->assertEqual((string) $elements[0]['content'], $edit['field_metatag[0][advanced][original_source]']);
-  // }
+  public function todoTestUrl() {
+    // $save_label = (floatval(\Drupal::VERSION) <= 8.3) ? t('Save and publish') : t('Save');
+    // // Tests metatags with URLs work.
+    // $this->drupalGet($this->entity_add_path);
+    // $this->assertResponse(200);
+    // $edit = [
+    //   'name[0][value]' => 'UrlTags',
+    //   'user_id[0][target_id]' => 'foo (' . $this->adminUser->id() . ')',
+    //   'field_metatag[0][advanced][original_source]' => 'http://example.com/foo.html',
+    // ];
+    // $this->drupalPostForm(NULL, $edit, $save_label);
+    // $entities = entity_load_multiple_by_properties('entity_test', [
+    //   'name' => 'UrlTags',
+    // ]);
+    // $this->assertEqual(1, count($entities), 'Entity was saved');
+    // $entity = reset($entities);
+    // $this->drupalGet($this->entity_base_path . '/' . $entity->id());
+    // $this->assertResponse(200);
+    // $elements = $this->cssSelect("meta[name='original-source']");
+    // $this->assertTrue(count($elements) === 1, 'Found original source metatag from defaults');
+    // $this->assertEqual((string) $elements[0]['content'], $edit['field_metatag[0][advanced][original_source]']);
+  }
 
 }

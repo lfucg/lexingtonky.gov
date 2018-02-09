@@ -6,6 +6,7 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -304,6 +305,11 @@ class PathautoGenerator implements PathautoGeneratorInterface {
 
     // Skip if pathauto processing is disabled.
     if ($entity->path->pathauto != PathautoState::CREATE && empty($options['force'])) {
+      return NULL;
+    }
+
+    // Only act if this is the default revision.
+    if ($entity instanceof RevisionableInterface && !$entity->isDefaultRevision()) {
       return NULL;
     }
 

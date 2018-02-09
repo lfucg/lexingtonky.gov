@@ -112,10 +112,11 @@ class MetatagXssTest extends WebTestBase {
    */
   public function testXssMetatagConfig() {
     $this->drupalGet('admin/config/search/metatag/global');
+    $this->assertResponse(200);
     $values = [
       'title' => $this->xssTitleString,
       'abstract' => $this->xssString,
-      'image_src' => $this->xssImageString
+      'image_src' => $this->xssImageString,
     ];
     $this->drupalPostForm(NULL, $values, 'Save');
     $this->assertText('Saved the Global Metatag defaults.');
@@ -144,14 +145,17 @@ class MetatagXssTest extends WebTestBase {
    * Verify XSS injected in the entity metatag override field is not rendered.
    */
   public function testXssEntityOverride() {
+    $save_label = (floatval(\Drupal::VERSION) <= 8.3) ? t('Save and publish') : t('Save');
+
     $this->drupalGet('node/add/metatag_node');
+    $this->assertResponse(200);
     $edit = [
       'title[0][value]' => $this->randomString(32),
       'field_metatag_field[0][basic][title]' => $this->xssTitleString,
       'field_metatag_field[0][basic][abstract]' => $this->xssString,
       'field_metatag_field[0][advanced][image_src]' => $this->xssImageString,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save and publish'));
+    $this->drupalPostForm(NULL, $edit, $save_label);
 
     // Check for the title tag, which will have the HTML tags removed and then
     // be lightly HTML encoded.
@@ -171,12 +175,15 @@ class MetatagXssTest extends WebTestBase {
    * Verify XSS injected in the entity titles are not rendered.
    */
   public function testXssEntityTitle() {
+    $save_label = (floatval(\Drupal::VERSION) <= 8.3) ? t('Save and publish') : t('Save');
+
     $this->drupalGet('node/add/metatag_node');
+    $this->assertResponse(200);
     $edit = [
       'title[0][value]' => $this->xssTitleString,
       'body[0][value]' => $this->randomString() . ' ' . $this->randomString(),
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save and publish'));
+    $this->drupalPostForm(NULL, $edit, $save_label);
 
     // Check for the title tag, which will have the HTML tags removed and then
     // be lightly HTML encoded.
@@ -188,12 +195,15 @@ class MetatagXssTest extends WebTestBase {
    * Verify XSS injected in the entity fields are not rendered.
    */
   public function testXssEntityBody() {
+    $save_label = (floatval(\Drupal::VERSION) <= 8.3) ? t('Save and publish') : t('Save');
+
     $this->drupalGet('node/add/metatag_node');
+    $this->assertResponse(200);
     $edit = [
       'title[0][value]' => $this->randomString(),
       'body[0][value]' => $this->xssTitleString,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save and publish'));
+    $this->drupalPostForm(NULL, $edit, $save_label);
 
     // Check the body text.
     // $this->assertNoTitle($this->xssTitleString);

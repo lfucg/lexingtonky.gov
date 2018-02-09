@@ -9,5 +9,4 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
  */
 interface MetatagDefaultsInterface extends ConfigEntityInterface {
   // Add get/set methods for your configuration properties here.
-
 }

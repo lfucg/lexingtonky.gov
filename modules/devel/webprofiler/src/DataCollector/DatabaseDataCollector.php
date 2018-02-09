@@ -56,7 +56,7 @@ class DatabaseDataCollector extends DataCollector implements DrupalDataCollector
         unset($query['caller']['args']);
 
         // Remove query args element if empty.
-        if (empty($query['args'])) {
+        if (isset($query['args']) && empty($query['args'])) {
           unset($query['args']);
         }
 
@@ -223,8 +223,11 @@ class DatabaseDataCollector extends DataCollector implements DrupalDataCollector
       $query['type'] = $type;
 
       $quoted = [];
-      foreach ((array) $query['args'] as $key => $val) {
-        $quoted[$key] = is_null($val) ? 'NULL' : $conn->quote($val);
+
+      if (isset($query['args'])) {
+        foreach ((array) $query['args'] as $key => $val) {
+          $quoted[$key] = is_null($val) ? 'NULL' : $conn->quote($val);
+        }
       }
 
       $query['query_args'] = strtr($query['query'], $quoted);

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\webprofiler\Entity\Decorators\Config\ConfigEntityStorageDecorator.
- */
-
 namespace Drupal\webprofiler\Entity\Decorators\Config;
 
 use Drupal\Core\Config\Config;
@@ -111,6 +106,13 @@ class ConfigEntityStorageDecorator extends EntityDecorator implements ConfigEnti
    */
   public function save(EntityInterface $entity) {
     return $this->getOriginalObject()->save($entity);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasData() {
+    return $this->getOriginalObject()->hasData();
   }
 
   /**

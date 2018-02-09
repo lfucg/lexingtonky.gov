@@ -49,7 +49,7 @@ class TranslationsDataCollector extends DataCollector implements DrupalDataColle
       $this->data['translations']['translated'] = $this->translation->getTranslated();
       $this->data['translations']['untranslated'] = $this->translation->getUntranslated();
     }
-    $data['user_interface_translations_path'] = $this->urlGenerator->generateFromRoute('locale.translate_page');
+    $this->data['user_interface_translations_path'] = $this->urlGenerator->generateFromRoute('locale.translate_page');
   }
 
   /**

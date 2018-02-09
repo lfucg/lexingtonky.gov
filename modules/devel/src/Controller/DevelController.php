@@ -1,26 +1,42 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\devel\Controller\DevelController.
- */
-
 namespace Drupal\devel\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\FieldableEntityInterface;
-use Drupal\Core\Field;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
+use Drupal\devel\DevelDumperManagerInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Returns responses for devel module routes.
  */
 class DevelController extends ControllerBase {
+
+  /**
+   * The dumper service.
+   *
+   * @var \Drupal\devel\DevelDumperManagerInterface
+   */
+  protected $dumper;
+
+  /**
+   * EntityDebugController constructor.
+   *
+   * @param \Drupal\devel\DevelDumperManagerInterface $dumper
+   *   The dumper service.
+   */
+  public function __construct(DevelDumperManagerInterface $dumper) {
+    $this->dumper = $dumper;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('devel.dumper'));
+  }
 
   /**
    * Clears all caches, then redirects to the previous page.
@@ -31,64 +47,10 @@ class DevelController extends ControllerBase {
     return $this->redirect('<front>');
   }
 
-  /**
-   * Returns a dump of a route object.
-   *
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   Page request object.
-   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *   The route match.
-   *
-   * @return array
-   *   A render array containing the route object.
-   */
-  public function menuItem(Request $request, RouteMatchInterface $route_match) {
-    $output = [];
-
-    // Get the route object from the path query string if available.
-    if ($path = $request->query->get('path')) {
-      try {
-        /* @var \Symfony\Cmf\Component\Routing\ChainRouter $router */
-        $router = \Drupal::service('router');
-        $route = $router->match($path);
-        $output['route'] = ['#markup' => kpr($route, TRUE)];
-      }
-      catch (\Exception $e) {
-        drupal_set_message($this->t("Unable to load route for url '%url'", ['%url' => $path]), 'warning');
-      }
-    }
-    // No path specified, get the current route.
-    else {
-      $route = $route_match->getRouteObject();
-      $output['route'] = ['#markup' => kpr($route, TRUE)];
-    }
-
-    return $output;
-  }
-
   public function themeRegistry() {
     $hooks = theme_get_registry();
     ksort($hooks);
-    return array('#markup' => kprint_r($hooks, TRUE));
-  }
-
-  /**
-   * Builds the elements info overview page.
-   *
-   * @return array
-   *   Array of page elements to render.
-   */
-  public function elementsPage() {
-    $element_info_manager = \Drupal::service('element_info');
-
-    $elements_info = array();
-    foreach ($element_info_manager->getDefinitions() as $element_type => $definition) {
-      $elements_info[$element_type] = $definition + $element_info_manager->getInfo($element_type);
-    }
-
-    ksort($elements_info);
-
-    return array('#markup' => kdevel_print_object($elements_info));
+    return $this->dumper->exportAsRenderable($hooks);
   }
 
   /**
@@ -100,54 +62,29 @@ class DevelController extends ControllerBase {
   public function fieldInfoPage() {
     $fields = FieldStorageConfig::loadMultiple();
     ksort($fields);
-    $output['fields'] = array('#markup' => kprint_r($fields, TRUE, $this->t('Fields')));
+    $output['fields'] = $this->dumper->exportAsRenderable($fields, $this->t('Fields'));
 
     $field_instances = FieldConfig::loadMultiple();
     ksort($field_instances);
-    $output['instances'] = array('#markup' => kprint_r($field_instances, TRUE, $this->t('Instances')));
+    $output['instances'] = $this->dumper->exportAsRenderable($field_instances, $this->t('Instances'));
 
-    $bundles = $this->entityManager()->getAllBundleInfo();
+    $bundles = \Drupal::service('entity_type.bundle.info')->getAllBundleInfo();
     ksort($bundles);
-    $output['bundles'] = array('#markup' => kprint_r($bundles, TRUE, $this->t('Bundles')));
+    $output['bundles'] = $this->dumper->exportAsRenderable($bundles, $this->t('Bundles'));
 
     $field_types = \Drupal::service('plugin.manager.field.field_type')->getUiDefinitions();
     ksort($field_types);
-    $output['field_types'] = array('#markup' => kprint_r($field_types, TRUE, $this->t('Field types')));
+    $output['field_types'] = $this->dumper->exportAsRenderable($field_types, $this->t('Field types'));
 
     $formatter_types = \Drupal::service('plugin.manager.field.formatter')->getDefinitions();
     ksort($formatter_types);
-    $output['formatter_types'] = array('#markup' => kprint_r($formatter_types, TRUE, $this->t('Formatter types')));
+    $output['formatter_types'] = $this->dumper->exportAsRenderable($formatter_types, $this->t('Formatter types'));
 
     $widget_types = \Drupal::service('plugin.manager.field.widget')->getDefinitions();
     ksort($widget_types);
-    $output['widget_types'] = array('#markup' => kprint_r($widget_types, TRUE, $this->t('Widget types')));
+    $output['widget_types'] = $this->dumper->exportAsRenderable($widget_types, $this->t('Widget types'));
 
     return $output;
-  }
-
-  /**
-   * Builds the entity types overview page.
-   *
-   * @return array
-   *   Array of page elements to render.
-   */
-  public function entityInfoPage() {
-    $types = $this->entityManager()->getEntityTypeLabels();
-    ksort($types);
-    $result = array();
-    foreach (array_keys($types) as $type) {
-      $definition = $this->entityManager()->getDefinition($type);
-      $reflected_definition = new \ReflectionClass($definition);
-      $props = array();
-      foreach ($reflected_definition->getProperties() as $property) {
-        $property->setAccessible(TRUE);
-        $value = $property->getValue($definition);
-        $props[$property->name] = $value;
-      }
-      $result[$type] = $props;
-    }
-
-    return array('#markup' => kprint_r($result, TRUE));
   }
 
   /**
@@ -200,7 +137,7 @@ class DevelController extends ControllerBase {
           'class' => 'table-filter-text-source',
         ),
         'value' => array(
-          'data' => kprint_r($state, TRUE),
+          'data' => $this->dumper->export($state),
         ),
       );
 
@@ -244,75 +181,7 @@ class DevelController extends ControllerBase {
       '#rows' => array(array(session_name(), session_id())),
       '#empty' => $this->t('No session available.'),
     );
-    $output['data'] = array(
-      '#markup' => kprint_r($_SESSION, TRUE),
-    );
-
-    return $output;
-  }
-
-  /**
-   * Prints the loaded structure of the current entity.
-   *
-   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *    A RouteMatch object.
-   *
-   * @return array
-   *    Array of page elements to render.
-   */
-  public function entityLoad(RouteMatchInterface $route_match) {
-    $output = array();
-
-    $parameter_name = $route_match->getRouteObject()->getOption('_devel_entity_type_id');
-    $entity = $route_match->getParameter($parameter_name);
-
-    if ($entity && $entity instanceof EntityInterface) {
-
-      // Field definitions are lazy loaded and are populated only when needed.
-      // By calling ::getFieldDefinitions() we are sure that field definitions
-      // are populated and available in the dump output.
-      // @see https://www.drupal.org/node/2311557
-      if($entity instanceof FieldableEntityInterface) {
-        $entity->getFieldDefinitions();
-      }
-
-      $output = array('#markup' => kdevel_print_object($entity));
-    }
-
-    return $output;
-  }
-
-  /**
-   * Prints the render structure of the current entity.
-   *
-   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *    A RouteMatch object.
-   *
-   * @return array
-   *    Array of page elements to render.
-   */
-  public function entityRender(RouteMatchInterface $route_match) {
-    $output = array();
-
-    $parameter_name = $route_match->getRouteObject()->getOption('_devel_entity_type_id');
-    $entity = $route_match->getParameter($parameter_name);
-
-    if ($entity && $entity instanceof EntityInterface) {
-      $entity_type_id = $entity->getEntityTypeId();
-      $view_hook = $entity_type_id . '_view';
-
-      $build = array();
-      // If module implements own {entity_type}_view
-      if (function_exists($view_hook)) {
-        $build = $view_hook($entity);
-      }
-      // If entity has view_builder handler
-      elseif ($this->entityManager()->hasHandler($entity_type_id, 'view_builder')) {
-        $build = $this->entityManager()->getViewBuilder($entity_type_id)->view($entity);
-      }
-
-      $output = array('#markup' => kdevel_print_object($build));
-    }
+    $output['data'] = $this->dumper->exportAsRenderable($_SESSION);
 
     return $output;
   }

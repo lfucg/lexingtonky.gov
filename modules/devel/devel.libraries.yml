@@ -3,3 +3,9 @@ devel:
   css:
     theme:
       css/devel.css: {}
+
+devel-toolbar:
+  version: VERSION
+  css:
+    component:
+      css/devel.toolbar.css: {}

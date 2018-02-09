@@ -5,6 +5,7 @@ namespace Drupal\contact_storage\Tests;
 use Drupal\contact\Entity\ContactForm;
 use Drupal\field_ui\Tests\FieldUiTestTrait;
 use Drupal\language\Entity\ConfigurableLanguage;
+use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Tests storing contact messages and viewing them through UI.
@@ -27,7 +28,7 @@ class ContactStorageTest extends ContactStorageTestBase {
    *
    * @var array
    */
-  public static $modules = array(
+  public static $modules = [
     'text',
     'block',
     'contact',
@@ -36,7 +37,8 @@ class ContactStorageTest extends ContactStorageTestBase {
     'contact_storage_test',
     'contact_test',
     'contact_storage',
-  );
+    'filter',
+  ];
 
   protected function setUp() {
     parent::setUp();
@@ -44,6 +46,12 @@ class ContactStorageTest extends ContactStorageTestBase {
     $this->drupalPlaceBlock('system_breadcrumb_block');
     $this->drupalPlaceBlock('local_actions_block');
     $this->drupalPlaceBlock('page_title_block');
+
+    $full_html_format = FilterFormat::create([
+      'format' => 'full_html',
+      'name' => 'Full HTML',
+    ]);
+    $full_html_format->save();
 
     // Create and login administrative user.
     $this->adminUser = $this->drupalCreateUser([
@@ -54,6 +62,7 @@ class ContactStorageTest extends ContactStorageTestBase {
       'administer contact_message fields',
       'administer contact_message form display',
       'administer contact_message display',
+      'use text format full_html',
     ]);
     $this->drupalLogin($this->adminUser);
   }
@@ -64,17 +73,17 @@ class ContactStorageTest extends ContactStorageTestBase {
   public function testContactStorage() {
     // Create first valid contact form.
     $mail = 'simpletest@example.com';
-    $this->addContactForm('test_id', 'test_label', $mail, '', TRUE);
-    $this->assertText(t('Contact form test_label has been added.'));
+    $this->addContactForm('test_id', 'test_label', $mail, TRUE);
+    $this->assertText('Contact form test_label has been added.');
 
     // Ensure that anonymous can submit site-wide contact form.
-    user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array('access site-wide contact form'));
+    user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, ['access site-wide contact form']);
     $this->drupalLogout();
     $this->drupalGet('contact');
-    $this->assertText(t('Your email address'));
+    $this->assertText('Your email address');
     $this->assertNoText(t('Form'));
     $this->submitContact('Test_name', $mail, 'Test_subject', 'test_id', 'Test_message');
-    $this->assertText(t('Your message has been sent.'));
+    $this->assertText('Your message has been sent.');
 
     // Verify that only 1 message has been sent (by default, the "Send a copy
     // to yourself" option is disabled.
@@ -94,9 +103,9 @@ class ContactStorageTest extends ContactStorageTestBase {
 
     // Go to the settings form and enable sending messages in HTML format.
     $this->drupalGet('/admin/structure/contact/settings');
-    $enable_html = array(
+    $enable_html = [
       'send_html' => TRUE,
-    );
+    ];
     $this->drupalPostForm(NULL, $enable_html, t('Save configuration'));
 
     // Check that the form POST was successful.
@@ -105,11 +114,21 @@ class ContactStorageTest extends ContactStorageTestBase {
     // Check that the global setting is properly updated.
     $this->assertTrue(\Drupal::config('contact_storage.settings')->get('send_html'));
 
-    $display_fields = array(
+    $display_fields = [
       "The sender's name",
       "The sender's email",
       "Subject",
-    );
+    ];
+
+    // Check that the page title is correct.
+    $this->drupalGet('contact/test_id');
+    $this->assertTrue(!empty($this->cssSelect('h1:contains(test_label)')));
+    $this->assertTitle('test_label | Drupal');
+
+    // Check that the configuration edit page title is correct.
+    $this->drupalGet('admin/structure/contact/manage/test_id');
+    $this->assertTrue(!empty($this->cssSelect('h1:contains(test_label)')));
+    $this->assertTitle('Edit test_label | Drupal');
 
     // Check that name, subject and mail are configurable on display.
     $this->drupalGet('admin/structure/contact/manage/test_id/display');
@@ -146,7 +165,7 @@ class ContactStorageTest extends ContactStorageTestBase {
     $this->assertFieldById('edit-subject-0-value', 'Test_subject');
     $this->assertFieldById('edit-message-0-value', 'Test_message');
     // Submit should redirect back to listing.
-    $this->drupalPostForm(NULL, array(), t('Save'));
+    $this->drupalPostForm(NULL, [], t('Save'));
     $this->assertUrl('admin/structure/contact/messages');
 
     // Delete the message.
@@ -179,7 +198,7 @@ class ContactStorageTest extends ContactStorageTestBase {
     $this->assertText('Your message has been sent.');
 
     // Add an Options email item field to the form.
-    $settings = array('settings[allowed_values]' => "test_key1|test_label1|simpletest1@example.com\ntest_key2|test_label2|simpletest2@example.com");
+    $settings = ['settings[allowed_values]' => "test_key1|test_label1|simpletest1@example.com\ntest_key2|test_label2|simpletest2@example.com"];
     $this->fieldUIAddNewField('admin/structure/contact/manage/test_id', 'category', 'Category', 'contact_storage_options_email', $settings);
     // Verify that the new field shows up correctly on the form.
     $this->drupalGet('contact');
@@ -261,7 +280,7 @@ class ContactStorageTest extends ContactStorageTestBase {
 
     // Create a new contact form and assert that the disable link exists for
     // each forms.
-    $this->addContactForm('test_disable_id', 'test_disable_label', 'simpletest@example.com', '', FALSE);
+    $this->addContactForm('test_disable_id', 'test_disable_label', 'simpletest@example.com', FALSE);
     $this->drupalGet('/admin/structure/contact');
     $contact_form_count = count(ContactForm::loadMultiple());
     $this->assertEqual(count($this->cssSelect('li.disable a:contains(Disable)')), $contact_form_count);
@@ -288,7 +307,7 @@ class ContactStorageTest extends ContactStorageTestBase {
 
     // Create a new contact form with a custom disabled message, disable it and
     // assert that the message displayed is correct.
-    $this->addContactForm('test_disable_id_2', 'test_disable_label_2', 'simpletest@example.com', '', FALSE, ['contact_storage_disabled_form_message' => 'custom disabled message']);
+    $this->addContactForm('test_disable_id_2', 'test_disable_label_2', 'simpletest@example.com', FALSE, ['contact_storage_disabled_form_message' => 'custom disabled message']);
     $this->drupalPostForm('/admin/structure/contact/manage/test_disable_id_2/disable', NULL, t('Disable'));
     $this->assertText('Disabled contact form test_disable_label_2.');
     $this->drupalGet('contact/test_disable_id_2');
@@ -310,13 +329,13 @@ class ContactStorageTest extends ContactStorageTestBase {
 
     $mail = 'simpletest@example.com';
     // Test for alias without slash.
-    $this->addContactForm('form_alias_1', 'contactForm', $mail, '', FALSE, ['contact_storage_url_alias' => 'form51']);
+    $this->addContactForm('form_alias_1', 'contactForm', $mail, FALSE, ['contact_storage_url_alias' => 'form51']);
     $this->assertText('The alias path has to start with a slash.');
     $this->drupalGet('form51');
     $this->assertResponse(404);
 
     // Test for correct alias. Verify that we land on the correct contact form.
-    $this->addContactForm('form_alias_2', 'contactForm', $mail, '', FALSE, ['contact_storage_url_alias' => '/form51']);
+    $this->addContactForm('form_alias_2', 'contactForm', $mail, FALSE, ['contact_storage_url_alias' => '/form51']);
     $this->assertText('Contact form contactForm has been added.');
     $this->drupalGet('form51');
     $this->assertResponse(200);
@@ -352,8 +371,8 @@ class ContactStorageTest extends ContactStorageTestBase {
 
   public function testMaximumSubmissionLimit() {
     // Create a new contact form with a maximum submission limit of 2.
-    $this->addContactForm('test_id_3', 'test_label', 'simpletest@example.com', '', FALSE, ['contact_storage_maximum_submissions_user' => 2]);
-    $this->assertText(t('Contact form test_label has been added.'));
+    $this->addContactForm('test_id_3', 'test_label', 'simpletest@example.com', FALSE, ['contact_storage_maximum_submissions_user' => 2]);
+    $this->assertText('Contact form test_label has been added.');
 
     // Sends 2 messages with "Send yourself a copy" option activated, shouldn't
     // reach the limit even if 2 messages are sent twice.
@@ -364,14 +383,78 @@ class ContactStorageTest extends ContactStorageTestBase {
       'copy' => 'checked',
     ];
     $this->drupalPostForm(NULL, $edit, t('Send message'));
-    $this->assertText(t('Your message has been sent.'));
+    $this->assertText('Your message has been sent.');
     $this->drupalGet('contact/test_id_3');
     $this->drupalPostForm(NULL, $edit, t('Send message'));
-    $this->assertText(t('Your message has been sent.'));
+    $this->assertText('Your message has been sent.');
 
     // Try accessing the form after the limit has been reached.
     $this->drupalGet('contact/test_id_3');
-    $this->assertText(t('You have reached the maximum submission limit of 2 for this form.'));
+    $this->assertText('You have reached the maximum submission limit of 2 for this form.');
+  }
+
+  /**
+   * Tests the Auto-reply field.
+   */
+  public function testAutoReplyField() {
+    // Create a new contact form with an auto-reply.
+    $this->addContactForm('test_auto_reply_id_1', 'test_auto_reply_label_1', 'simpletest@example.com', TRUE, ['reply[value]' => "auto_reply_1\nsecond_line"]);
+    $this->assertText('Contact form test_auto_reply_label_1 has been added.');
+
+    // Verify that the auto-reply shows up in the field and only offers
+    // one format (plain text), since html e-mails are disabled.
+    $this->drupalGet('admin/structure/contact/manage/test_auto_reply_id_1');
+    $this->assertTrue($this->xpath('//textarea[@id="edit-reply-value" and text()=:text]', [':text' => "auto_reply_1\nsecond_line"]));
+    $this->assertFalse($this->xpath('//select[@name="reply[format]"]'));
+
+    $this->drupalGet('contact');
+    $edit = [
+      'subject[0][value]' => 'Test subject',
+      'message[0][value]' => 'Test message',
+    ];
+    $this->drupalPostForm('contact', $edit, t('Send message'));
+    $this->assertText('Your message has been sent.');
+
+    $captured_emails = $this->drupalGetMails();
+
+    // Checks that the last captured email is the auto-reply, has a correct
+    // body and is in html format.
+    $this->assertEqual(end($captured_emails)['key'], 'page_autoreply');
+    $this->assertTrue(strpos(end($captured_emails)['body'], "auto_reply_1\nsecond_line") !== FALSE);
+    $this->assertTrue(strpos(end($captured_emails)['headers']['Content-Type'], 'text/plain') !== FALSE);
+
+    // Enable sending messages in html format and verify that the available
+    // formats correctly show up on the contact form edit page.
+    $this->drupalPostForm('/admin/structure/contact/settings', ['send_html' => TRUE], t('Save configuration'));
+    $this->drupalGet('admin/structure/contact/manage/test_auto_reply_id_1');
+    $this->assertTrue($this->xpath('//select[@name="reply[format]"]//option[@value="plain_text" and @selected="selected"]'));
+    $this->assertTrue($this->xpath('//select[@name="reply[format]"]//option[@value="full_html"]'));
+
+    // Use custom testing mail system to support HTML mails.
+    $mail_config = $this->config('system.mail');
+    $mail_config->set('interface.default', 'test_contact_storage_html_mail');
+    $mail_config->save();
+
+    // Test sending a HTML mail.
+    $this->drupalGet('contact');
+    $edit = [
+      'subject[0][value]' => 'Test subject',
+      'message[0][value]' => 'Test message',
+    ];
+    $this->drupalPostForm('contact', $edit, t('Send message'));
+    $this->assertText('Your message has been sent.');
+
+    $captured_emails = $this->drupalGetMails();
+    $this->assertEqual(end($captured_emails)['key'], 'page_autoreply');
+    $this->assertTrue(strpos(end($captured_emails)['body'], "auto_reply_1<br />\nsecond_line") !== FALSE);
+    $this->assertEqual(end($captured_emails)['headers']['Content-Type'], 'text/html');
+
+    // Select full html format (not selected by default) and verify that it is
+    // properly set.
+    $this->drupalPostForm('admin/structure/contact/manage/test_auto_reply_id_1', ['reply[format]' => 'full_html'], t('Save'));
+    $this->drupalGet('admin/structure/contact/manage/test_auto_reply_id_1');
+    $this->assertTrue($this->xpath('//select[@name="reply[format]"]//option[@value="full_html" and @selected="selected"]'));
+
   }
 
 }

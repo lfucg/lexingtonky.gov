@@ -8,10 +8,10 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
  * A metatag tag for testing.
  *
  * @MetatagTag(
- *   id = "metatag_test",
+ *   id = "metatag_test_tag",
  *   label = @Translation("Metatag Test"),
  *   description = @Translation("A metatag tag for testing."),
- *   name = "metatag_test",
+ *   name = "metatag_test_tag",
  *   group = "basic",
  *   weight = 3,
  *   type = "label",

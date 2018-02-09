@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\masquerade\Tests\MasqueradeTest.
- */
-
 namespace Drupal\masquerade\Tests;
 
 /**
@@ -17,7 +12,7 @@ class MasqueradeTest extends MasqueradeWebTestBase {
   /**
    * Tests masquerade user links.
    */
-  function testMasquerade() {
+  public function testMasquerade() {
     $this->drupalLogin($this->admin_user);
 
     // Verify that a token is required.
@@ -37,11 +32,11 @@ class MasqueradeTest extends MasqueradeWebTestBase {
     $this->assertResponse(403);
 
     // Verify that the web user cannot masquerade.
-    $this->drupalGet('user/' . $this->admin_user->id() . '/masquerade', array(
-      'query' => array(
+    $this->drupalGet('user/' . $this->admin_user->id() . '/masquerade', [
+      'query' => [
         'token' => $this->drupalGetToken('user/' . $this->admin_user->id() . '/masquerade'),
-      ),
-    ));
+      ],
+    ]);
     $this->assertResponse(403);
 
     // Verify that the user can unmasquerade.

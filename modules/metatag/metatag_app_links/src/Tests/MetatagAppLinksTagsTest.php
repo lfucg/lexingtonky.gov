@@ -2,7 +2,6 @@
 
 namespace Drupal\metatag_app_links\Tests;
 
-use Drupal\simpletest\WebTestBase;
 use Drupal\metatag\Tests\MetatagTagsTestBase;
 
 /**
@@ -15,7 +14,7 @@ class MetatagAppLinksTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  public $tags = [
+  private $tags = [
     'al_android_app_name',
     'al_android_class',
     'al_android_package',
@@ -45,7 +44,7 @@ class MetatagAppLinksTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  public $test_name_attribute = 'property';
+  private $testNameAttribute = 'property';
 
   /**
    * {@inheritdoc}
@@ -58,7 +57,7 @@ class MetatagAppLinksTagsTest extends MetatagTagsTestBase {
   /**
    * Each of these meta tags has a different tag name vs its internal name.
    */
-  public function getTestTagName($tag_name) {
+  private function getTestTagName($tag_name) {
     $tag_name = str_replace('al_android_', 'al:android:', $tag_name);
     $tag_name = str_replace('al_ios_', 'al:ios:', $tag_name);
     $tag_name = str_replace('al_ipad_', 'al:ipad:', $tag_name);

@@ -7,6 +7,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\workbench_moderation\Event\WorkbenchModerationEvents;
 use Drupal\workbench_moderation\Event\WorkbenchModerationTransitionEvent;
@@ -46,6 +47,13 @@ class EntityOperations {
   protected $tracker;
 
   /**
+   * The current user service.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
    * Constructs a new EntityOperations object.
    *
    * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_info
@@ -58,13 +66,16 @@ class EntityOperations {
    *   The event dispatcher.
    * @param \Drupal\workbench_moderation\RevisionTrackerInterface $tracker
    *   The revision tracker.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user service.
    */
-  public function __construct(ModerationInformationInterface $moderation_info, EntityTypeManagerInterface $entity_type_manager, FormBuilderInterface $form_builder, EventDispatcherInterface $event_dispatcher, RevisionTrackerInterface $tracker) {
+  public function __construct(ModerationInformationInterface $moderation_info, EntityTypeManagerInterface $entity_type_manager, FormBuilderInterface $form_builder, EventDispatcherInterface $event_dispatcher, RevisionTrackerInterface $tracker, AccountInterface $current_user) {
     $this->moderationInfo = $moderation_info;
     $this->entityTypeManager = $entity_type_manager;
     $this->eventDispatcher = $event_dispatcher;
     $this->formBuilder = $form_builder;
     $this->tracker = $tracker;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -221,8 +232,7 @@ class EntityOperations {
     if (!$this->moderationInfo->isLatestRevision($entity)) {
       return;
     }
-    /** @var ContentEntityInterface $entity */
-    if ($entity->isDefaultRevision()) {
+    if ($this->moderationInfo->isLiveRevision($entity)) {
       return;
     }
 
@@ -230,6 +240,7 @@ class EntityOperations {
     if ($component) {
       $build['workbench_moderation_control'] = $this->formBuilder->getForm(EntityModerationForm::class, $entity);
       $build['workbench_moderation_control']['#weight'] = $component['weight'];
+      $build['workbench_moderation_control']['#access'] = $this->currentUser->hasPermission('moderate entities that cannot edit') || $entity->access('update');
     }
   }
 

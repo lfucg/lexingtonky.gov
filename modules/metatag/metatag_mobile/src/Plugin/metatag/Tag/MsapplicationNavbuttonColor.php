@@ -1,12 +1,8 @@
 <?php
-/**
- * @file
- * Contains \Drupal\metatag_mobile\Plugin\metatag\Tag\MsapplicationNavbuttonColor.
- */
 
 namespace Drupal\metatag_mobile\Plugin\metatag\Tag;
 
-use \Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
+use Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
 
 /**
  * Provides a plugin for the 'msapplication:navbutton:color' meta tag.

@@ -31,9 +31,11 @@ trait PathautoTestHelperTrait {
    *   The created pattern.
    */
   protected function createPattern($entity_type_id, $pattern, $weight = 10) {
+    $type = ($entity_type_id == 'forum') ? 'forum' : 'canonical_entities:' . $entity_type_id;
+
     $pattern = PathautoPattern::create([
       'id' => Unicode::strtolower($this->randomMachineName()),
-      'type' => 'canonical_entities:' . $entity_type_id,
+      'type' => $type,
       'pattern' => $pattern,
       'weight' => $weight,
     ]);
@@ -134,7 +136,7 @@ trait PathautoTestHelperTrait {
   }
 
   public function deleteAllAliases() {
-    db_delete('url_alias')->execute();
+    \Drupal::database()->delete('url_alias')->execute();
     \Drupal::service('path.alias_manager')->cacheClear();
   }
 

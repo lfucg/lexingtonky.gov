@@ -2,7 +2,7 @@
 
 namespace Drupal\metatag_hreflang\Plugin\metatag\Tag;
 
-use \Drupal\metatag\Plugin\metatag\Tag\LinkRelBase;
+use Drupal\metatag\Plugin\metatag\Tag\LinkRelBase;
 
 /**
  * This base plugin allows "link hreflang" tags to be further customized.

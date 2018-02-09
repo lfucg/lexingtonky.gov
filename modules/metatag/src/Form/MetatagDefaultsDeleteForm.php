@@ -10,6 +10,7 @@ use Drupal\Core\Url;
  * Builds the form to delete Metatag defaults entities.
  */
 class MetatagDefaultsDeleteForm extends EntityConfirmFormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -40,9 +41,9 @@ class MetatagDefaultsDeleteForm extends EntityConfirmFormBase {
     drupal_set_message(
       $this->t('Deleted @label defaults.',
         [
-          '@label' => $this->entity->label()
+          '@label' => $this->entity->label(),
         ]
-        )
+      )
     );
 
     $form_state->setRedirectUrl($this->getCancelUrl());

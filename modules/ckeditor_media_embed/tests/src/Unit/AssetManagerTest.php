@@ -85,7 +85,7 @@ class AssetManagerTest extends UnitTestCase {
    */
   // @codingStandardsIgnoreLine
   public function testGetCKEditorLibraryPluginPath() {
-    $this->assertSame('/libraries/ckeditor/plugins/', AssetManager::getCKEditorLibraryPluginPath());
+    $this->assertSame('libraries/ckeditor/plugins/', AssetManager::getCKEditorLibraryPluginPath());
   }
 
   /**

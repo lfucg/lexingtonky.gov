@@ -19,3 +19,8 @@ services:
   plugin.manager.alias_type:
     class: Drupal\pathauto\AliasTypeManager
     parent: default_plugin_manager
+  pathauto.settings_cache_tag:
+    class: Drupal\pathauto\EventSubscriber\PathautoSettingsCacheTag
+    arguments: ['@entity_field.manager', '@plugin.manager.alias_type']
+    tags:
+      - { name: event_subscriber }

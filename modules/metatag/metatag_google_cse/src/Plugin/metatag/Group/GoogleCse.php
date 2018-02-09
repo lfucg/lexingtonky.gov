@@ -2,7 +2,7 @@
 
 namespace Drupal\metatag_google_cse\Plugin\metatag\Group;
 
-use \Drupal\metatag\Plugin\metatag\Group\GroupBase;
+use Drupal\metatag\Plugin\metatag\Group\GroupBase;
 
 /**
  * Provides a plugin for the 'Google Custom Search Engine (CSE)' meta tag group.

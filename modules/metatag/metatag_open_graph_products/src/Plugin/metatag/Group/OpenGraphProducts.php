@@ -2,7 +2,7 @@
 
 namespace Drupal\metatag_open_graph_products\Plugin\metatag\Group;
 
-use \Drupal\metatag\Plugin\metatag\Group\GroupBase;
+use Drupal\metatag\Plugin\metatag\Group\GroupBase;
 
 /**
  * Provides a plugin for the 'Open Graph - Products' meta tag group.

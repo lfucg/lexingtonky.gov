@@ -19,7 +19,7 @@
  * @param array $form
  *   The Form API form to which protections will be added.
  */
-function hook_honeypot_form_protections_alter(&$options, $form) {
+function hook_honeypot_form_protections_alter(array &$options, array $form) {
   // Add 'time_restriction' protection to 'mymodule-form' if it's not set.
   if ($form['form_id']['#value'] == 'mymodule_form' && !in_array('time_restriction', $options)) {
     $options[] = 'time_restriction';
@@ -39,7 +39,7 @@ function hook_honeypot_form_protections_alter(&$options, $form) {
  * @param array $form
  *   The Form API form to which protections were added.
  */
-function hook_honeypot_add_form_protection($options, $form) {
+function hook_honeypot_add_form_protection(array $options, array $form) {
   if ($form['form_id']['#value'] == 'mymodule_form') {
     // Do something...
   }
@@ -86,7 +86,7 @@ function hook_honeypot_reject($form_id, $uid, $type) {
  * @return int
  *   Additional time to add to the honeypot_time_limit, in seconds (integer).
  */
-function hook_honeypot_time_limit($honeypot_time_limit, $form_values, $number) {
+function hook_honeypot_time_limit($honeypot_time_limit, array $form_values, $number) {
   $additions = 0;
   // If 'some_interesting_value' is set in your form, add 10 seconds to limit.
   if (!empty($form_values['some_interesting_value']) && $form_values['some_interesting_value']) {

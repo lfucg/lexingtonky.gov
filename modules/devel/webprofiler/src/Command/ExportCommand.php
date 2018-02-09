@@ -1,25 +1,29 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\webprofiler\Command\ExportCommand.
- */
-
 namespace Drupal\webprofiler\Command;
 
-use Drupal\Console\Command\ContainerAwareCommand;
+use Drupal\Console\Core\Command\Shared\ContainerAwareCommandTrait;
 use Drupal\Core\Archiver\ArchiveTar;
 use Drupal\webprofiler\Profiler\Profiler;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
+use Drupal\Console\Annotations\DrupalCommand;
 
 /**
  * Class ExportCommand
+ *
+ * @DrupalCommand (
+ *     extension="webprofiler",
+ *     extensionType="module"
+ * )
  */
-class ExportCommand extends ContainerAwareCommand {
+class ExportCommand extends Command {
+
+  use ContainerAwareCommandTrait;
 
   /** @var string */
   private $filename;
@@ -43,7 +47,7 @@ class ExportCommand extends ContainerAwareCommand {
     $directory = $input->getOption('directory');
 
     /** @var \Drupal\webprofiler\Profiler\Profiler $profiler */
-    $profiler = $this->getContainer()->get('profiler');
+    $profiler = $this->container->get('profiler');
 
     try {
       if ($id) {

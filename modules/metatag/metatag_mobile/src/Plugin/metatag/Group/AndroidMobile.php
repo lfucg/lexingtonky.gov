@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\metatag_mobile\Plugin\metatag\Group\AndroidMobile.
- */
 
 namespace Drupal\metatag_mobile\Plugin\metatag\Group;
 

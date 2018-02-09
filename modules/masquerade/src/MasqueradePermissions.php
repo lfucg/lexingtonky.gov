@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\masquerade\MasqueradePermissions.
- */
-
 namespace Drupal\masquerade;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
