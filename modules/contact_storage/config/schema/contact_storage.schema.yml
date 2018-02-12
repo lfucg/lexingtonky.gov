@@ -17,6 +17,9 @@ contact.form.*.third_party.contact_storage:
     maximum_submissions_user:
       type: integer
       label: 'Maximum submission limit per user'
+    page_autoreply_format:
+      type: string
+      label: 'Autoreply format'
 
 field.storage_settings.contact_storage_options_email:
   type: mapping

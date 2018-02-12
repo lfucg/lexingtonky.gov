@@ -1,17 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\masquerade\Tests\MasqueradeWebTestBase.
- */
-
 namespace Drupal\masquerade\Tests;
 
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Site\Settings;
 use Drupal\simpletest\WebTestBase;
 use Drupal\user\Entity\Role;
-use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -24,9 +18,11 @@ use Drupal\user\UserInterface;
 abstract class MasqueradeWebTestBase extends WebTestBase {
 
   /**
-   * {@inheritdoc}
+   * Modules to install.
+   *
+   * @var array
    */
-  public static $modules = array('masquerade', 'user', 'block');
+  public static $modules = ['masquerade', 'user', 'block'];
 
   /**
    * Various users for the tests.
@@ -45,7 +41,7 @@ abstract class MasqueradeWebTestBase extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     // Create and configure User module's admin role.

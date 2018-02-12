@@ -16,6 +16,8 @@ use Drupal\Core\TypedData\DataReferenceDefinitionInterface;
 use Drupal\Core\Url;
 use Drupal\field\FieldStorageConfigInterface;
 use Drupal\menu_link_content\MenuLinkContentInterface;
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 use Drupal\system\Entity\Menu;
 use Drupal\user\UserInterface;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
@@ -112,7 +114,7 @@ function token_token_info_alter(&$info) {
     if (!isset($info['tokens']['date'][$date_format_type])) {
       $info['tokens']['date'][$date_format_type] = array(
         'name' => Html::escape($date_format_type_info->label()),
-        'description' => t("A date in '@type' format. (%date)", array('@type' => $date_format_type, '%date' => format_date(REQUEST_TIME, $date_format_type))),
+        'description' => t("A date in '@type' format. (%date)", array('@type' => $date_format_type, '%date' => \Drupal::service('date.formatter')->format(REQUEST_TIME, $date_format_type))),
         'module' => 'token',
       );
     }
@@ -371,7 +373,7 @@ function token_token_info() {
   // Random tokens.
   $info['types']['random'] = array(
     'name' => t('Random'),
-    'description' => ('Tokens related to random data.'),
+    'description' => t('Tokens related to random data.'),
   );
   $info['tokens']['random']['number'] = array(
     'name' => t('Number'),
@@ -445,7 +447,7 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
     $date_format_types = \Drupal::entityTypeManager()->getStorage('date_format')->loadMultiple();
     foreach ($tokens as $name => $original) {
       if (isset($date_format_types[$name]) && _token_module('date', $name) == 'token') {
-        $replacements[$original] = format_date($date, $name, '', NULL, $langcode);
+        $replacements[$original] = \Drupal::service('date.formatter')->format($date, $name, '', NULL, $langcode);
       }
     }
   }
@@ -737,8 +739,10 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
         case 'title':
           $request = \Drupal::request();
           $route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT);
-          $title = \Drupal::service('title_resolver')->getTitle($request, $route);
-          $replacements[$original] = token_render_array_value($title);
+          if ($route) {
+            $title = \Drupal::service('title_resolver')->getTitle($request, $route);
+            $replacements[$original] = token_render_array_value($title);
+          }
           break;
         case 'url':
           $replacements[$original] = Url::fromRoute('<current>', [], $url_options)->toString();
@@ -791,7 +795,11 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
     $url = $data['url'];
     // To retrieve the correct path, modify a copy of the Url object.
     $path_url = clone $url;
-    $path = '/' . $path_url->setAbsolute(FALSE)->setOption('fragment', NULL)->getInternalPath();
+    $path = '/';
+    // Ensure the URL is routed to avoid throwing an exception.
+    if ($url->isRouted()) {
+      $path .= $path_url->setAbsolute(FALSE)->setOption('fragment', NULL)->getInternalPath();
+    }
 
     foreach ($tokens as $name => $original) {
       switch ($name) {
@@ -993,10 +1001,41 @@ function token_tokens($type, array $tokens, array $data = array(), array $option
  * Implements hook_token_info() on behalf of book.module.
  */
 function book_token_info() {
+  $info['types']['book'] = array(
+    'name' => t('Book'),
+    'description' => t('Tokens related to books.'),
+    'needs-data' => 'book',
+  );
+
+  $info['tokens']['book']['title'] = array(
+    'name' => t('Title'),
+    'description' => t('Title of the book.'),
+  );
+  $info['tokens']['book']['author'] = array(
+    'name' => t('Author'),
+    'description' => t('The author of the book.'),
+    'type' => 'user',
+  );
+  $info['tokens']['book']['root'] = array(
+    'name' => t('Root'),
+    'description' => t('Top level of the book.'),
+    'type' => 'node',
+  );
+  $info['tokens']['book']['parent'] = array(
+    'name' => t('Parent'),
+    'description' => t('Parent of the current page.'),
+    'type' => 'node',
+  );
+  $info['tokens']['book']['parents'] = array(
+    'name' => t('Parents'),
+    'description' => t("An array of all the node's parents, starting with the root."),
+    'type' => 'array',
+  );
+
   $info['tokens']['node']['book'] = array(
     'name' => t('Book'),
     'description' => t('The book page associated with the node.'),
-    'type' => 'menu-link',
+    'type' => 'book',
   );
   return $info;
 }
@@ -1009,22 +1048,55 @@ function book_tokens($type, $tokens, array $data = array(), array $options = arr
 
   // Node tokens.
   if ($type == 'node' && !empty($data['node'])) {
-    $node = $data['node'];
+    $book = $data['node']->book;
 
-    if (!empty($node->book['mlid'])) {
-      $link = token_book_link_load($node->book['mlid']);
+    if (!empty($book['bid'])) {
+      if ($book_tokens = \Drupal::token()->findWithPrefix($tokens, 'book')) {
+        $child_node = Node::load($book['nid']);
+        $replacements += \Drupal::token()->generate('book', $book_tokens, array('book' => $child_node), $options, $bubbleable_metadata);
+      }
+    }
+  }
+  // Book tokens.
+  else if ($type == 'book' && !empty($data['book'])) {
+    $book = $data['book']->book;
+
+    if (!empty($book['bid'])) {
+      $book_node = Node::load($book['bid']);
 
       foreach ($tokens as $name => $original) {
         switch ($name) {
-          case 'book':
-            $replacements[$original] = $link['title'];
+          case 'root':
+          case 'title':
+            $replacements[$original] = $book_node->getTitle();
+            break;
+          case 'parent':
+            if (!empty($book['pid'])) {
+              $parent_node = Node::load($book['pid']);
+              $replacements[$original] = $parent_node->getTitle();
+            }
+            break;
+          case 'parents':
+            if ($parents = token_book_load_all_parents($book)) {
+              $replacements[$original] = token_render_array($parents, $options);
+            }
             break;
         }
       }
 
-      // Chained token relationships.
-      if ($book_tokens = \Drupal::token()->findWithPrefix($tokens, 'book')) {
-        $replacements += \Drupal::token()->generate('menu-link', $book_tokens, array('menu-link' => $link), $options, $bubbleable_metadata);
+      if ($book_tokens = \Drupal::token()->findWithPrefix($tokens, 'author')) {
+        $replacements += \Drupal::token()->generate('user', $book_tokens, array('user' => $book_node->getOwner()), $options, $bubbleable_metadata);
+      }
+      if ($book_tokens = \Drupal::token()->findWithPrefix($tokens, 'root')) {
+        $replacements += \Drupal::token()->generate('node', $book_tokens, array('node' => $book_node), $options, $bubbleable_metadata);
+      }
+      if (!empty($book['pid']) && $book_tokens = \Drupal::token()->findWithPrefix($tokens, 'parent')) {
+        $parent_node = Node::load($book['pid']);
+        $replacements += \Drupal::token()->generate('node', $book_tokens, array('node' => $parent_node), $options, $bubbleable_metadata);
+      }
+      if ($book_tokens = \Drupal::token()->findWithPrefix($tokens, 'parents')) {
+        $parents = token_book_load_all_parents($book);
+        $replacements += \Drupal::token()->generate('array', $book_tokens, array('array' => $parents), $options, $bubbleable_metadata);
       }
     }
   }
@@ -1117,7 +1189,7 @@ function menu_ui_tokens($type, $tokens, array $data = array(), array $options = 
           else {
             $url = $node->toUrl();
             if ($links = $menu_link_manager->loadLinksByRoute($url->getRouteName(), $url->getRouteParameters())) {
-              $link = reset($links);
+              $link = _token_menu_link_best_match($node, $links);
               $replacements[$original] = token_menu_link_translated_title($link, $langcode);
             }
           }
@@ -1133,7 +1205,7 @@ function menu_ui_tokens($type, $tokens, array $data = array(), array $options = 
         else {
           $url = $node->urlInfo();
           if ($links = $menu_link_manager->loadLinksByRoute($url->getRouteName(), $url->getRouteParameters())) {
-            $link = reset($links);
+            $link = _token_menu_link_best_match($node, $links);
             $replacements += \Drupal::token()->generate('menu-link', $menu_tokens, array('menu-link' => $link), $options, $bubbleable_metadata);
           }
         }
@@ -1204,6 +1276,36 @@ function menu_ui_tokens($type, $tokens, array $data = array(), array $options = 
 }
 
 /**
+ * Returns a best matched link for a given node.
+ *
+ * If the url exists in multiple menus, default to the one set on the node
+ * itself.
+ *
+ * @param \Drupal\node\NodeInterface $node
+ *   The node to look up the default menu settings from.
+ * @param array $links
+ *   An array of instances keyed by plugin ID.
+ *
+ * @return \Drupal\Core\Menu\MenuLinkInterface
+ *   A Link instance.
+ */
+function _token_menu_link_best_match(NodeInterface $node, array $links) {
+  // Get the menu ui defaults so we can determine what menu was
+  // selected for this node. This ensures that if the node was added
+  // to the menu via the node UI, we use that as a default. If it
+  // was not added via the node UI then grab the first in the
+  // retrieved array.
+  $defaults = menu_ui_get_menu_link_defaults($node);
+  if (isset($defaults['id']) && isset($links[$defaults['id']])) {
+    $link = $links[$defaults['id']];
+  }
+  else {
+    $link = reset($links);
+  }
+  return $link;
+}
+
+/**
  * Implements hook_token_info_alter() on behalf of field.module.
  *
  * We use hook_token_info_alter() rather than hook_token_info() as other
@@ -1220,17 +1322,13 @@ function field_token_info_alter(&$info) {
 
     // Make sure a token type exists for this entity.
     $token_type = \Drupal::service('token.entity_mapper')->getTokenTypeForEntityType($entity_type_id);
-    if (empty($token_type)) {
+    if (empty($token_type) || !isset($info['types'][$token_type])) {
       continue;
     }
 
     $fields = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions($entity_type_id);
     foreach ($fields as $field_name => $field) {
       /** @var \Drupal\field\FieldStorageConfigInterface $field */
-      // Ensure the token type exists.
-      if (!isset($info['types'][$token_type])) {
-        continue;
-      }
 
       // Ensure the token implements FieldStorageConfigInterface or is defined
       // in token module.
@@ -1338,6 +1436,20 @@ function field_token_info_alter(&$info) {
             'type' => 'image_with_image_style',
           ];
         }
+      }
+      // Provide format token for datetime fields.
+      if ($field->getType() == 'datetime') {
+        $info['tokens'][$field_token_name]['date'] = $info['tokens'][$field_token_name]['value'];
+        $info['tokens'][$field_token_name]['date']['name'] .= ' ' . t('format');
+        $info['tokens'][$field_token_name]['date']['type'] = 'date';
+      }
+      if ($field->getType() == 'daterange') {
+        $info['tokens'][$field_token_name]['start_date'] = $info['tokens'][$field_token_name]['value'];
+        $info['tokens'][$field_token_name]['start_date']['name'] .= ' ' . t('format');
+        $info['tokens'][$field_token_name]['start_date']['type'] = 'date';
+        $info['tokens'][$field_token_name]['end_date'] = $info['tokens'][$field_token_name]['end_value'];
+        $info['tokens'][$field_token_name]['end_date']['name'] .= ' ' . t('format');
+        $info['tokens'][$field_token_name]['end_date']['type'] = 'date';
       }
     }
   }
@@ -1527,42 +1639,56 @@ function field_tokens($type, $tokens, array $data = array(), array $options = ar
         // replacement.
         $property_name = isset($parts[1]) ? $parts[1] : 'url';
         $entity = $field_item->entity;
-        $original_uri = $entity->getFileUri();
+        if (!empty($field_item->entity)) {
+          $original_uri = $entity->getFileUri();
 
-        // Only generate the image derivative if needed.
-        if ($property_name === 'width' || $property_name === 'height') {
-          $dimensions = [
-            'width' => $field_item->width,
-            'height' => $field_item->height,
-          ];
-          $style->transformDimensions($dimensions, $original_uri);
-          $replacements[$original] = $dimensions[$property_name];
-        }
-        elseif ($property_name === 'uri') {
-          $replacements[$original] = $style->buildUri($original_uri);
-        }
-        elseif ($property_name === 'url') {
-          $replacements[$original] = $style->buildUrl($original_uri);
-        }
-        else {
-          // Generate the image derivative, if it doesn't already exist.
-          $derivative_uri = $style->buildUri($original_uri);
-          $derivative_exists = TRUE;
-          if (!file_exists($derivative_uri)) {
-            $derivative_exists = $style->createDerivative($original_uri, $derivative_uri);
+          // Only generate the image derivative if needed.
+          if ($property_name === 'width' || $property_name === 'height') {
+            $dimensions = [
+              'width' => $field_item->width,
+              'height' => $field_item->height,
+            ];
+            $style->transformDimensions($dimensions, $original_uri);
+            $replacements[$original] = $dimensions[$property_name];
           }
-          if ($derivative_exists) {
-            $image = \Drupal::service('image.factory')->get($derivative_uri);
-            // Provide the replacement.
-            switch ($property_name) {
-              case 'mimetype':
-                $replacements[$original] = $image->getMimeType();
-                break;
-              case 'filesize' :
-                $replacements[$original] = $image->getFileSize();
-                break;
+          elseif ($property_name === 'uri') {
+            $replacements[$original] = $style->buildUri($original_uri);
+          }
+          elseif ($property_name === 'url') {
+            $replacements[$original] = $style->buildUrl($original_uri);
+          }
+          else {
+            // Generate the image derivative, if it doesn't already exist.
+            $derivative_uri = $style->buildUri($original_uri);
+            $derivative_exists = TRUE;
+            if (!file_exists($derivative_uri)) {
+              $derivative_exists = $style->createDerivative($original_uri, $derivative_uri);
+            }
+            if ($derivative_exists) {
+              $image = \Drupal::service('image.factory')->get($derivative_uri);
+              // Provide the replacement.
+              switch ($property_name) {
+                case 'mimetype':
+                  $replacements[$original] = $image->getMimeType();
+                  break;
+                case 'filesize' :
+                  $replacements[$original] = $image->getFileSize();
+                  break;
+              }
             }
           }
+        }
+      }
+      elseif (in_array($field_item->getFieldDefinition()->getType(), ['datetime', 'daterange']) && in_array($property_name, ['date', 'start_date', 'end_date'])) {
+        $timestamp = $field_item->$property_name->getTimestamp();
+        // If the token is an exact match for the property or the delta and the
+        // property, use the timestamp as-is.
+        if($property_name == $token || "$delta:$property_name" == $token) {
+          $replacements[$original] = $timestamp;
+        }
+        else {
+          $date_tokens = \Drupal::token()->findWithPrefix($filtered_tokens, $property_name);
+          $replacements += \Drupal::token()->generate('date', $date_tokens, ['date' => $timestamp], $options, $bubbleable_metadata);
         }
       }
       else {

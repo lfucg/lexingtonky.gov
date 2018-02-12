@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\masquerade\Controller\SwitchController.
- */
-
 namespace Drupal\masquerade\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
@@ -116,26 +111,39 @@ class SwitchController extends ControllerBase {
    *   (Optional) The request object.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   The redirect.
+   *
+   * @see \Drupal\Core\EventSubscriber\RedirectResponseSubscriber::checkRedirectUrl()
    */
   protected function getRedirectResponse($request = NULL) {
     if (!isset($request)) {
       $request = \Drupal::request();
     }
-    if ($redirect_path = $request->server->get('HTTP_REFERER')) {
-      $url = Url::fromUri($redirect_path);
+    $destination = \Drupal::destination();
+    if ($destination_path = $destination->get()) {
+      // Try destination first.
+      $url = Url::createFromRequest(Request::create($destination_path));
+    }
+    elseif ($redirect_path = $request->server->get('HTTP_REFERER')) {
+      // Parse referer to get route name if any.
+      $url = Url::createFromRequest(Request::create($redirect_path));
     }
     else {
-      // Redirect to front page if no referrer.
+      // Fallback to front page if no referrer.
       $url = Url::fromRoute('<front>');
-      //$url = Url::fromRoute('user.page');
     }
     // Check access for redirected url.
     if (!$url->access($this->currentUser)) {
-      // Fallback to user home page.
-      $url = Url::fromRoute('user.page');
+      // Fallback to front page redirect.
+      $url = Url::fromRoute('<front>');
     }
-    $url->setAbsolute();
-    return new RedirectResponse($url->toString());
+    $url = $url->setAbsolute()->toString();
+    if ($destination_path) {
+      // Override destination because it will take over response.
+      $request->query->set('destination', $url);
+      $destination->set($url);
+    }
+    return new RedirectResponse($url);
   }
 
 }

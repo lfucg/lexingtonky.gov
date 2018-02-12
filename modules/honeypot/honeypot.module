@@ -14,7 +14,7 @@ use Drupal\Component\Utility\Crypt;
 function honeypot_cron() {
   // Delete {honeypot_user} entries older than the value of honeypot_expire.
   $expire_limit = \Drupal::config('honeypot.settings')->get('expire');
-  db_delete('honeypot_user')
+  \Drupal::database()->delete('honeypot_user')
     ->condition('timestamp', REQUEST_TIME - $expire_limit, '<')
     ->execute();
 }
@@ -29,6 +29,11 @@ function honeypot_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if (defined('MAINTENANCE_MODE')) {
     return;
   }
+
+  // Add a tag to all forms, so that if they are cached and honeypot
+  // configuration is changed, the cached forms are invalidated and honeypot
+  // protection can be re-evaluated.
+  $form['#cache']['tags'][] = 'config:honeypot.settings';
 
   // Get list of unprotected forms and setting for whether to protect all forms.
   $unprotected_forms = \Drupal::config('honeypot.settings')->get('unprotected_forms');
@@ -48,10 +53,6 @@ function honeypot_form_alter(&$form, FormStateInterface $form_state, $form_id) {
     foreach ($forms_to_protect as $protect_form_id) {
       // For most forms, do a straight check on the form ID.
       if ($form_id == $protect_form_id) {
-        honeypot_add_form_protection($form, $form_state, ['honeypot', 'time_restriction']);
-      }
-      // For webforms use a special check for variable form ID.
-      elseif ($protect_form_id == 'webforms' && (strpos($form_id, 'webform_client_form') !== FALSE)) {
         honeypot_add_form_protection($form, $form_state, ['honeypot', 'time_restriction']);
       }
     }
@@ -98,7 +99,7 @@ function honeypot_get_protected_forms() {
  *   Array of options to be added to form. Currently accepts 'honeypot' and
  *   'time_restriction'.
  */
-function honeypot_add_form_protection(&$form, FormStateInterface $form_state, $options = array()) {
+function honeypot_add_form_protection(&$form, FormStateInterface $form_state, array $options = []) {
   $account = \Drupal::currentUser();
 
   // Allow other modules to alter the protections applied to this form.
@@ -117,30 +118,44 @@ function honeypot_add_form_protection(&$form, FormStateInterface $form_state, $o
     // Build the honeypot element.
     $honeypot_class = $honeypot_element . '-textfield';
     $form[$honeypot_element] = [
+      '#theme_wrappers' => [
+        'container' => [
+          '#id' => NULL,
+          '#attributes' => [
+            'class' => [
+              $honeypot_class,
+            ],
+            'style' => [
+              'display: none !important;',
+            ],
+          ],
+        ],
+      ],
       '#type' => 'textfield',
       '#title' => t('Leave this field blank'),
       '#size' => 20,
       '#weight' => 100,
       '#attributes' => ['autocomplete' => 'off'],
       '#element_validate' => ['_honeypot_honeypot_validate'],
-      '#prefix' => '<div class="' . $honeypot_class . '">',
-      '#suffix' => '</div>',
     ];
 
-    // Hide honeypot via dynamically-generated CSS.
-    $form[$honeypot_element]['#attached']['html_head'][] = [[
-      '#tag' => 'style',
-      '#value' => '.' . $honeypot_class . ' { display: none !important; }',
-    ], 'honeypot_css'];
   }
 
-  // Build the time restriction element (if it's not disabled).
+  // Set the time restriction for this form (if it's not disabled).
   if (in_array('time_restriction', $options) && \Drupal::config('honeypot.settings')->get('time_limit') != 0) {
     // Set the current time in a hidden value to be checked later.
+    $input = $form_state->getUserInput();
+    if (empty($input['honeypot_time'])) {
+      $identifier = Crypt::randomBytesBase64();
+      \Drupal::service('keyvalue.expirable')->get('honeypot_time_restriction')->set($identifier, time(), 3600*24);
+    }
+    else {
+      $identifier = $input['honeypot_time'];
+    }
     $form['honeypot_time'] = [
       '#type' => 'hidden',
       '#title' => t('Timestamp'),
-      '#default_value' => honeypot_get_signed_timestamp(time()),
+      '#default_value' => $identifier,
       '#element_validate' => ['_honeypot_time_restriction_validate'],
       '#cache' => [
         'max-age' => 0,
@@ -192,7 +207,8 @@ function _honeypot_time_restriction_validate($element, FormStateInterface $form_
   }
 
   // Get the time value.
-  $honeypot_time = honeypot_get_time_from_signed_timestamp($form_state->getValue('honeypot_time'));
+  $identifier = $form_state->getValue('honeypot_time', FALSE);
+  $honeypot_time = \Drupal::service('keyvalue.expirable')->get('honeypot_time_restriction')->get($identifier, 0);
 
   // Get the honeypot_time_limit.
   $time_limit = honeypot_get_time_limit($form_state->getValues());
@@ -202,7 +218,7 @@ function _honeypot_time_restriction_validate($element, FormStateInterface $form_
   if (!$honeypot_time || REQUEST_TIME < ($honeypot_time + $time_limit)) {
     _honeypot_log($form_state->getValue('form_id'), 'honeypot_time');
     $time_limit = honeypot_get_time_limit();
-    $form_state->setValue('honeypot_time', honeypot_get_signed_timestamp(REQUEST_TIME));
+    \Drupal::service('keyvalue.expirable')->get('honeypot_time_restriction')->set($identifier, REQUEST_TIME, 3600*24);
     $form_state->setErrorByName('', t('There was a problem with your form submission. Please wait @limit seconds and try again.', ['@limit' => $time_limit]));
   }
 }
@@ -234,7 +250,7 @@ function _honeypot_log($form_id, $type) {
  * @param array $form_values
  *   Array of form values (optional).
  */
-function honeypot_get_time_limit($form_values = array()) {
+function honeypot_get_time_limit(array $form_values = []) {
   $account = \Drupal::currentUser();
   $honeypot_time_limit = \Drupal::config('honeypot.settings')->get('time_limit');
 
@@ -245,7 +261,7 @@ function honeypot_get_time_limit($form_values = array()) {
     // Query the {honeypot_user} table to determine the number of failed
     // submissions for the current user.
     $uid = $account->id();
-    $query = db_select('honeypot_user', 'hu')
+    $query = \Drupal::database()->select('honeypot_user', 'hu')
       ->condition('uid', $uid)
       ->condition('timestamp', REQUEST_TIME - $expire_time, '>');
 
@@ -259,7 +275,11 @@ function honeypot_get_time_limit($form_values = array()) {
     // Don't add more than 30 days' worth of extra time.
     $honeypot_time_limit = (int) min($honeypot_time_limit + exp($number) - 1, 2592000);
     // TODO - Only accepts two args.
-    $additions = \Drupal::moduleHandler()->invokeAll('honeypot_time_limit', [$honeypot_time_limit, $form_values, $number]);
+    $additions = \Drupal::moduleHandler()->invokeAll('honeypot_time_limit', [
+      $honeypot_time_limit,
+      $form_values,
+      $number,
+    ]);
     if (count($additions)) {
       $honeypot_time_limit += array_sum($additions);
     }
@@ -293,50 +313,4 @@ function honeypot_log_failure($form_id, $type) {
   // Allow other modules to react to honeypot rejections.
   // TODO - Only accepts two args.
   \Drupal::moduleHandler()->invokeAll('honeypot_reject', [$form_id, $uid, $type]);
-}
-
-/**
- * Sign the timestamp $time.
- *
- * @param mixed $time
- *   The timestamp to sign.
- *
- * @return string
- *   A signed timestamp in the form timestamp|HMAC.
- */
-function honeypot_get_signed_timestamp($time) {
-  $private_key = Drupal::service('private_key')->get();
-  return $time . '|' . Crypt::hmacBase64($time, $private_key);
-}
-
-/**
- * Validate a signed timestamp.
- *
- * @param string $signed_timestamp
- *   A timestamp concateneted with the signature
- *
- * @return int
- *   The timestamp if the signature is correct, 0 otherwise.
- */
-function honeypot_get_time_from_signed_timestamp($signed_timestamp) {
-  $honeypot_time = 0;
-
-  // Fail fast if timestamp was forged.
-  if (strpos($signed_timestamp, '|') === FALSE) {
-    return $honeypot_time;
-  }
-
-  list($timestamp, $received_hmac) = explode('|', $signed_timestamp);
-
-  if ($timestamp && $received_hmac) {
-    $private_key = Drupal::service('private_key')->get();
-    $calculated_hmac = Crypt::hmacBase64($timestamp, $private_key);
-    // Prevent leaking timing information, compare second order hmacs.
-    $random_key = Crypt::randomBytes(32);
-    if (Crypt::hmacBase64($calculated_hmac, $random_key) === Crypt::hmacBase64($received_hmac, $random_key)) {
-      $honeypot_time = $timestamp;
-    }
-  }
-
-  return $honeypot_time;
 }

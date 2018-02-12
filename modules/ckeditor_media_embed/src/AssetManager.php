@@ -114,8 +114,7 @@ class AssetManager {
    */
   // @codingStandardsIgnoreLine
   public static function getCKEditorLibraryPluginPath() {
-    // @todo Remove as part of https://www.drupal.org/node/2481833.
-    return base_path() . 'libraries/ckeditor/plugins/';
+    return 'libraries/ckeditor/plugins/';
   }
 
   /**

@@ -2,7 +2,7 @@
 
 namespace Drupal\metatag\Plugin\DataType;
 
-use \Drupal\Core\TypedData\Plugin\DataType\StringData;
+use Drupal\Core\TypedData\Plugin\DataType\StringData;
 
 /**
  * The metatag data type.

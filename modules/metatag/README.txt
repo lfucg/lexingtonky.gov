@@ -130,17 +130,19 @@ Option 1:
       'keywords' => 'Some,Keywords',
     ]),
   ];
-  $node = \Drupal::entityTypeManager()->getStorage($entity_type)->create($values);
+  $node = \Drupal::entityTypeManager()
+    ->getStorage($entity_type)
+    ->create($values);
   $node->save();
 
 Option 2:
 
-  $node = Node::create(array(
+  $node = Node::create([
     'type' => article,
     'langcode' => 'en',
     'status' => 1,
     'uid' => 1,
-  ));
+  ]);
   $node->set('title', 'Testing metatag creation');
   $node->set('field_meta_tags', serialize([
     'title' => 'Some title',
@@ -179,10 +181,27 @@ Related modules
 Some modules are available that extend Metatag with additional or complimentary
 functionality:
 
+* Schema.org Metatag
+  https://www.drupal.org/project/schema_metatag
+  Extensive solution for adding schema.org / JSON-LD support to Metatag.
+
+* Context Metadata
+  https://www.drupal.org/project/context_metadata
+  Allow assignment of meta tags based upon different system contexts, e.g. per
+  path.
+
 * Real-time SEO for Drupal
   https://www.drupal.org/project/yoast_seo
   Uses the YoastSEO.js library and service (https://yoast.com/) to provide
   realtime feedback on the meta tags.
+
+* Metatag Cxense
+  https://www.drupal.org/project/metatag_cxense
+  Adds support for the Cxense meta tags used by their DMP and Insight services.
+
+* Metatag Google Scholar
+  https://www.drupal.org/project/metatag_google_scholar
+  Adds support for a number of meta tags used with the Google Scholar system.
 
 
 Known issues
@@ -202,12 +221,15 @@ Known issues
 Credits / contact
 --------------------------------------------------------------------------------
 Currently maintained by Damien McKenna [2] and Dave Reid [3]. Drupal 7 module
-originally written by Dave Reid. Drupal 8 port by Damien McKenna and Michelle
-Cox [4] and sponsored by Mediacurrent [5], with contributions from Lee Rowlands
-[6], Rakesh James [7], Ivo Van Geertruyen [8], Michael Kandelaars [9], and many
-others.
+originally written by Dave Reid. Early work on Drupal 8 port by Damien McKenna
+and Michelle Cox [4], and sponsored by Mediacurrent [5]; key improvements by
+Juampy Novillo Requena [6] with insights from Dave Reid and sponsorship by
+Lullabot [7] and Acquia [8]. Additional contributions to the 8.x-1.0 release
+from cilefen [9], Daniel Wehner [10], Jesus Manuel Olivas [11], Lee Rowlands
+[12], Michael Kandelaars [13], Ivo Van Geertruyen [14], Nikhilesh Gupta B [15],
+Rakesh James [16], and many others.
 
-Ongoing development is sponsored by Mediacurrent and Lullabot [10].
+Ongoing development is sponsored by Mediacurrent.
 
 The best way to contact the authors is to submit an issue, be it a support
 request, a feature request or a bug report, in the project issue queue:
@@ -221,8 +243,14 @@ References
 3: https://www.drupal.org/u/dave-reid
 4: https://www.drupal.org/u/michelle
 5: https://www.mediacurrent.com/
-6: https://www.drupal.org/u/larowlan
-7: https://www.drupal.org/u/rakesh.gectcr
-8: https://www.drupal.org/u/mr.baileys
-9: https://www.drupal.org/u/mikeyk
-10: https://www.lullabot.com/
+6: https://www.drupal.org/u/juampynr
+7: https://www.lullabot.com/
+8: https://www.acquia.com/
+9: https://www.drupal.org/u/cilefen
+10: https://www.drupal.org/u/dawehner
+11: https://www.drupal.org/u/jmolivas
+12: https://www.drupal.org/u/larowlan
+13: https://www.drupal.org/u/mikeyk
+14: https://www.drupal.org/u/mr.baileys
+15: https://www.drupal.org/u/nikhilesh-gupta
+16: https://www.drupal.org/u/rakeshgectcr

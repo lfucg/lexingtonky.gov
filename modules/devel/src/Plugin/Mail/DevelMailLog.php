@@ -1,16 +1,14 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\devel\Plugin\Mail\DevelMailLog.
- */
-
 namespace Drupal\devel\Plugin\Mail;
 
 use Drupal\Component\Utility\Unicode;
-use Drupal\Core\Mail\Plugin\Mail\PhpMail;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Mail\MailFormatHelper;
+use Drupal\Core\Mail\MailInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Site\Settings;
-use Exception;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a mail backend that saves emails as temporary files.
@@ -44,10 +42,86 @@ use Exception;
  *   description = @Translation("Outputs the message as a file in the temporary directory.")
  * )
  */
-class DevelMailLog extends PhpMail {
+class DevelMailLog implements MailInterface, ContainerFactoryPluginInterface {
 
-  public function composeMessage($message) {
-    $mimeheaders = array();
+  /**
+   * The devel.settings config object.
+   *
+   * @var \Drupal\Core\Config\Config;
+   */
+  protected $config;
+
+  /**
+   * Constructs a new DevelMailLog object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory service.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory) {
+    $this->config = $config_factory->get('devel.settings');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('config.factory')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function mail(array $message) {
+    $directory = $this->config->get('debug_mail_directory');
+
+    if (!$this->prepareDirectory($directory)) {
+      return FALSE;
+    }
+
+    $pattern = $this->config->get('debug_mail_file_format');
+    $filename = $this->replacePlaceholders($pattern, $message);
+    $output = $this->composeMessage($message);
+
+    return (bool) file_put_contents($directory . '/' . $filename, $output);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function format(array $message) {
+    // Join the body array into one string.
+    $message['body'] = implode("\n\n", $message['body']);
+
+    // Convert any HTML to plain-text.
+    $message['body'] = MailFormatHelper::htmlToText($message['body']);
+    // Wrap the mail body for sending.
+    $message['body'] = MailFormatHelper::wrapMail($message['body']);
+
+    return $message;
+  }
+
+  /**
+   * Compose the output message.
+   *
+   * @param array $message
+   *   A message array, as described in hook_mail_alter().
+   *
+   * @return string
+   *   The output message.
+   */
+  protected function composeMessage($message) {
+    $mimeheaders = [];
     $message['headers']['To'] = $message['to'];
     foreach ($message['headers'] as $name => $value) {
       $mimeheaders[] = $name . ': ' . Unicode::mimeHeaderEncode($value);
@@ -63,41 +137,52 @@ class DevelMailLog extends PhpMail {
     return $output;
   }
 
-  public function getFileName($message) {
-    $output_directory = $this->getOutputDirectory();
-    $this->makeOutputDirectory($output_directory);
-    $output_file_format = \Drupal::config('devel.settings')->get('debug_mail_file_format');
-
-    $tokens = array(
+  /**
+   * Replaces placeholders with sanitized values in a string.
+   *
+   * @param $filename
+   *   The string that contains the placeholders. The following placeholders
+   *   are considered in the replacement:
+   *   - %to: replaced by the email recipient value.
+   *   - %subject: replaced by the email subject value.
+   *   - %datetime: replaced by the current datetime in 'y-m-d_his' format.
+   * @param array $message
+   *   A message array, as described in hook_mail_alter().
+   *
+   * @return string
+   *   The formatted string.
+   */
+  protected function replacePlaceholders($filename, $message) {
+    $tokens = [
       '%to' => $message['to'],
       '%subject' => $message['subject'],
       '%datetime' => date('y-m-d_his'),
-    );
-    return $output_directory . '/' . $this->dirify(str_replace(array_keys($tokens), array_values($tokens), $output_file_format));
-  }
-
-  private function dirify($string) {
-    return preg_replace('/[^a-zA-Z0-9_\-\.@]/', '_', $string);
+    ];
+    $filename = str_replace(array_keys($tokens), array_values($tokens), $filename);
+    return preg_replace('/[^a-zA-Z0-9_\-\.@]/', '_', $filename);
   }
 
   /**
-   * {@inheritdoc}
+   * Checks that the directory exists and is writable.
+   * Public directories will be protected by adding an .htaccess which
+   * indicates that the directory is private.
+   *
+   * @param $directory
+   *   A string reference containing the name of a directory path or URI.
+   *
+   * @return bool
+   *   TRUE if the directory exists (or was created), is writable and is
+   *   protected (if it is public). FALSE otherwise.
    */
-  public function mail(array $message) {
-    $output = $this->composeMessage($message);
-    $output_file = $this->getFileName($message);
-
-    return file_put_contents($output_file, $output);
-  }
-
-  protected function makeOutputDirectory($output_directory) {
-    if (!file_prepare_directory($output_directory, FILE_CREATE_DIRECTORY)) {
-      throw new Exception("Unable to continue sending mail, $output_directory is not writable");
+  protected function prepareDirectory($directory) {
+    if (!file_prepare_directory($directory, FILE_CREATE_DIRECTORY)) {
+      return FALSE;
     }
-  }
+    if (0 === strpos($directory, 'public://')) {
+      return file_save_htaccess($directory);
+    }
 
-  public function getOutputDirectory() {
-    return \Drupal::config('devel.settings')->get('debug_mail_directory');
+    return TRUE;
   }
 
 }

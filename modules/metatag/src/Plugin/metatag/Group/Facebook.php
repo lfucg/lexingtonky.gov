@@ -2,7 +2,6 @@
 
 namespace Drupal\metatag\Plugin\metatag\Group;
 
-
 /**
  * The basic group.
  *

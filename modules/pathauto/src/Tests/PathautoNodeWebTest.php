@@ -150,12 +150,21 @@ class PathautoNodeWebTest extends WebTestBase {
     // Delete all current URL aliases.
     $this->deleteAllAliases();
 
+    $this->drupalGet('admin/content');
+
+    // Check which of the two nodes is first.
+    if (strpos($this->getTextContent(), 'node1') < strpos($this->getTextContent(), 'node2')) {
+      $index = 0;
+    }
+    else {
+      $index = 1;
+    }
+
     $edit = array(
       'action' => 'pathauto_update_alias_node',
-      // @todo - here we expect the $node1 to be at 0 position, any better way?
-      'node_bulk_form[0]' => TRUE,
+      'node_bulk_form[' . $index . ']' => TRUE,
     );
-    $this->drupalPostForm('admin/content', $edit, t('Apply to selected items'));
+    $this->drupalPostForm(NULL, $edit, t('Apply to selected items'));
     $this->assertText('Update URL alias was applied to 1 item.');
 
     $this->assertEntityAlias($node1, '/content/' . $node1->getTitle());

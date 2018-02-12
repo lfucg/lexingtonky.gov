@@ -5,10 +5,11 @@
     "license": "GPL-2.0+",
     "require": {
         "composer/installers": "^1.0.24",
-        "wikimedia/composer-merge-plugin": "~1.4"
+        "wikimedia/composer-merge-plugin": "^1.4",
+        "drupal/search_api_solr": "^1.2"
     },
     "replace": {
-        "drupal/core": "~8.3"
+        "drupal/core": "^8.4"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -33,27 +34,13 @@
             "merge-extra": false
         },
         "installer-paths": {
-            "core": [
-                "type:drupal-core"
-            ],
-            "modules/contrib/{$name}": [
-                "type:drupal-module"
-            ],
-            "profiles/contrib/{$name}": [
-                "type:drupal-profile"
-            ],
-            "themes/contrib/{$name}": [
-                "type:drupal-theme"
-            ],
-            "drush/contrib/{$name}": [
-                "type:drupal-drush"
-            ],
-            "modules/custom/{$name}": [
-                "type:drupal-custom-module"
-            ],
-            "themes/custom/{$name}": [
-                "type:drupal-custom-theme"
-            ]
+            "core": ["type:drupal-core"],
+            "modules/contrib/{$name}": ["type:drupal-module"],
+            "profiles/contrib/{$name}": ["type:drupal-profile"],
+            "themes/contrib/{$name}": ["type:drupal-theme"],
+            "drush/contrib/{$name}": ["type:drupal-drush"],
+            "modules/custom/{$name}": ["type:drupal-custom-module"],
+            "themes/custom/{$name}": ["type:drupal-custom-theme"]
         }
     },
     "autoload": {
@@ -64,19 +51,15 @@
     "scripts": {
         "pre-autoload-dump": "Drupal\\Core\\Composer\\Composer::preAutoloadDump",
         "post-autoload-dump": [
-            "Drupal\\Core\\Composer\\Composer::ensureHtaccess"
+          "Drupal\\Core\\Composer\\Composer::ensureHtaccess"
         ],
         "post-package-install": "Drupal\\Core\\Composer\\Composer::vendorTestCodeCleanup",
         "post-package-update": "Drupal\\Core\\Composer\\Composer::vendorTestCodeCleanup"
     },
-    "repositories": {
-        "0": {
-            "type": "composer",
-            "url": "https://packages.drupal.org/8"
-        },
-        "drupal": {
+    "repositories": [
+        {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
         }
-    }
+    ]
 }

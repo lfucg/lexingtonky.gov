@@ -15,8 +15,27 @@ use Drupal\contact\ContactFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\contact\Entity\ContactForm;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\views\Views;
-use Symfony\Component\Validator\Constraints\Url;
+
+/**
+ * Implements hook_help().
+ */
+function contact_storage_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.contact_storage':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The <a href="https://www.drupal.org/project/contact_storage">Contact Storage</a> module allows registered <em>users</em> on your site to see messages sent by <em>visitors</em> when using personal or site-wide forms. The Contact Storage module provides the ability to store the messages so registered users can later view them thru the site.') . '</p>';
+      $output .= '<p>' . t('The combination of  <a href="contact">Contact</a> and Contact Storage modules allows for a general means to create, read, update and delete user generated data. For more information, see the <a href=":contact_storage">online documentation for the Contact Storage module</a>.', array(':contact_storage' => 'https://www.drupal.org/node/2718407')) . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Using the Contact messages page') . '</dt>';
+      $output .= '<dd>' . t('Registered users can access stored messages on the <a href=":url">Contact messages</a> page.  This page can be manually accessed from the Administration menu path "Home >> Administration >> Structure >> Contact forms".  The Contact Storage module places the "List" tab on the "Contact forms" page. The "Contact messages" page is displayed when the List tab is selected.  View, edit and delete operations can be performed on individual messages from this listing of contact messages.', array(':url' => \Drupal::url('entity.contact_message.collection'))) . '</dd>';
+      $output .= '<dt>' . t('Configuring contact message pages') . '</dt>';
+      $output .= '<dd>' . t('The listing of Contact messages is a <a href=":url">Views</a> page.  This page can be manually accessed from the Administration menu path "Home >> Administration >> Structure >> Views" like any other view. It has a VIEW NAME of "Contact messages". Registered users can perform Edit, Duplicate, Disable and Delete Operations from the Views listing page.', array(':url' => \Drupal::url('entity.view.collection'))) . '</dd>';
+      return $output;
+  }
+}
 
 /**
  * Implements hook_form_FORM_ID_alter() for contact_form_form().
@@ -34,7 +53,7 @@ function contact_storage_form_contact_form_form_alter(&$form, FormStateInterface
     '#type' => 'textfield',
     '#title' => t('Submit button text'),
     '#description' => t("Override the submit button's default <em>Send message</em> text."),
-    '#default_value' => $contact_form->getThirdPartySetting('contact_storage', 'submit_text', 'Send message'),
+    '#default_value' => $contact_form->getThirdPartySetting('contact_storage', 'submit_text', t('Send message')),
   ];
   $form['contact_storage_url_alias'] = [
     '#type' => 'textfield',
@@ -65,6 +84,23 @@ function contact_storage_form_contact_form_form_alter(&$form, FormStateInterface
     '#description' => t('The maximum number of times, per user, the form can be submitted (0 for unlimited).'),
     '#default_value' => $contact_form->getThirdPartySetting('contact_storage', 'maximum_submissions_user', 0),
   ];
+
+  // Overrides the 'reply' field provided by Core with a formattable field. If
+  // html e-mails are disabled, enforce plain text format.
+  $form['reply']['#type'] = 'text_format';
+  if (!\Drupal::config('contact_storage.settings')->get('send_html')) {
+    $form['reply']['#allowed_formats'] = ['plain_text'];
+  }
+  else {
+    $form['reply']['#format'] = $contact_form->getThirdPartySetting('contact_storage', 'page_autoreply_format', 'plain_text');
+    // Explicitly set the allowed formats so that the fallback format is not
+    // removed. That allows to prevent any formatting and is the default option,
+    // without setting it, this option would go away after selecting something
+    // else.
+    $formats = filter_formats(\Drupal::currentUser());
+    $form['reply']['#allowed_formats'] = array_keys($formats);
+  }
+
   $form['#entity_builders'][] = 'contact_storage_contact_form_form_builder';
   $form['#validate'][] = 'contact_storage_contact_form_form_validate';
   $form['actions']['submit']['#submit'][] = 'contact_storage_contact_form_form_submit';
@@ -80,6 +116,13 @@ function contact_storage_contact_form_form_builder($entity_type, ContactFormInte
   $contact_form->setThirdPartySetting('contact_storage', 'show_preview', $form_state->getValue('contact_storage_preview'));
   $contact_form->setThirdPartySetting('contact_storage', 'disabled_form_message', $form_state->getValue('contact_storage_disabled_form_message'));
   $contact_form->setThirdPartySetting('contact_storage', 'maximum_submissions_user', $form_state->getValue('contact_storage_maximum_submissions_user'));
+
+  // Auto-reply value is handled by Core; 'reply' is expected to be a string.
+  $reply = $form_state->getValue('reply');
+  if (isset($reply['value'])) {
+    $form_state->setValue('reply', $reply['value']);
+    $contact_form->setThirdPartySetting('contact_storage', 'page_autoreply_format', $reply['format']);
+  }
 }
 
 /**
@@ -154,14 +197,14 @@ function contact_storage_form_contact_message_form_alter(&$form, &$form_state, $
   $maximum_submissions_user = $contact_form->getThirdPartySetting('contact_storage', 'maximum_submissions_user', 0);
   if (($maximum_submissions_user !== 0) && contact_storage_maximum_submissions_user($contact_form) >= $maximum_submissions_user) {
     // Sets the error message.
-    $form['maximum_submissions_error'] = array(
+    $form['maximum_submissions_error'] = [
       '#type' => 'container',
       '#markup' => t('You have reached the maximum submission limit of @limit for this form.', ['@limit' => $maximum_submissions_user]),
-      '#attributes' => array(
-        'class' => array('messages', 'messages--error'),
-      ),
+      '#attributes' => [
+        'class' => ['messages', 'messages--error'],
+      ],
       '#weight' => -100,
-    );
+    ];
     // Remove the submit and preview buttons.
     $form['actions']['submit']['#access'] = FALSE;
     $form['actions']['preview']['#access'] = FALSE;
@@ -173,7 +216,7 @@ function contact_storage_form_contact_message_form_alter(&$form, &$form_state, $
  */
 function contact_storage_entity_base_field_info(EntityTypeInterface $entity_type) {
   if ($entity_type->id() == 'contact_message') {
-    $fields = array();
+    $fields = [];
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Message ID'))
       ->setDescription(t('The message ID.'))
@@ -233,9 +276,9 @@ function contact_storage_entity_base_field_info_alter(&$fields, EntityTypeInterf
   if ($entity_type->id() == 'contact_message') {
     // Start at min 3 because message default weight is 0.
     $i = -3;
-    foreach (array('name', 'mail', 'subject') as $field_name) {
+    foreach (['name', 'mail', 'subject'] as $field_name) {
       $fields[$field_name]->setDisplayConfigurable('view', TRUE);
-      $fields[$field_name]->setDisplayOptions('view', array('weight' => $i));
+      $fields[$field_name]->setDisplayOptions('view', ['weight' => $i]);
       $i++;
     }
     // Add a validation constraint to prevent form submission if the limit is
@@ -249,28 +292,28 @@ function contact_storage_entity_base_field_info_alter(&$fields, EntityTypeInterf
  */
 function contact_storage_entity_operation_alter(array &$operations, EntityInterface $entity) {
   if ($entity->getEntityTypeId() == 'contact_message' && $entity->access('view')) {
-    $operations['view'] = array(
+    $operations['view'] = [
       'title' => t('View'),
       'weight' => 0,
-      'url' => $entity->urlInfo('canonical'),
-    );
+      'url' => $entity->toUrl('canonical'),
+    ];
   }
   if ($entity->getEntityTypeId() == 'contact_form' && $entity->access('update')) {
-    $operations['clone'] = array(
+    $operations['clone'] = [
       'title' => t('Clone'),
       'weight' => 10,
-      'url' => $entity->urlInfo('clone-form'),
-    );
+      'url' => $entity->toUrl('clone-form'),
+    ];
 
     // Provide a link to view messages submitted form the form, if the view
     // exists and if the user has access rights to it.
     $view = Views::getView('contact_messages');
     if ($view && $view->access('page_1')) {
       $view->setDisplay('page_1');
-      $operations['view_messages'] = array(
+      $operations['view_messages'] = [
         'title' => t('View messages'),
         'url' => $view->getUrl()->setOption('query', ['form' => $entity->id()]),
-      );
+      ];
     }
   }
 }
@@ -336,13 +379,13 @@ function contact_storage_entity_type_alter(array &$entity_types) {
  * Implements hook_entity_extra_field_info().
  */
 function contact_storage_entity_extra_field_info() {
-  $fields = array();
+  $fields = [];
   foreach (array_keys(\Drupal::service('entity_type.bundle.info')->getBundleInfo('contact_message')) as $bundle) {
-    $fields['contact_message'][$bundle]['form']['preview'] = array(
+    $fields['contact_message'][$bundle]['form']['preview'] = [
       'label' => t('Preview'),
       'description' => t('Rendered preview'),
       'weight' => 50,
-    );
+    ];
   }
   return $fields;
 }
@@ -366,12 +409,21 @@ function contact_storage_mail_alter(&$message) {
       }
     }
   }
-  // If enabled, ensure that contact mails are sent as plain text.
-  if ($message['module'] === 'contact' && isset($message['params']['contact_message']) && \Drupal::config('contact_storage.settings')->get('send_html')) {
-    // Enforce that we are sending mails as HTML, and tell Swiftmailer to
-    // generate a plain text version.
-    $message['headers']['Content-Type'] = 'text/html';
-    $message['params']['convert'] = TRUE;
+  if ($message['module'] === 'contact' && isset($message['params']['contact_message'])) {
+    if (($message['key'] == 'page_autoreply')) {
+      $contact_form = $message['params']['contact_form'];
+      // Filters the auto-reply message using the chosen format and sets it.
+      if ($reply = $contact_form->getReply()) {
+        $filtered_reply = check_markup($contact_form->getReply(), $contact_form->getThirdPartySetting('contact_storage', 'page_autoreply_format', 'plain_text'));
+        $message['body'] = [$filtered_reply];
+      }
+    }
+    // Enforce that we are sending mails as html, if enabled, and tell
+    // Swiftmailer to generate a plain text version.
+    if (\Drupal::config('contact_storage.settings')->get('send_html')) {
+      $message['headers']['Content-Type'] = 'text/html';
+      $message['params']['convert'] = TRUE;
+    }
   }
 }
 
@@ -379,20 +431,20 @@ function contact_storage_mail_alter(&$message) {
  * Implements hook_theme().
  */
 function contact_storage_theme() {
-  return array(
-    'swiftmailer__contact' => array(
-      'variables' => array(
-        'message' => array(),
-      ),
-    ),
-    'contact_storage_disabled_form' => array(
+  return [
+    'swiftmailer__contact' => [
+      'variables' => [
+        'message' => [],
+      ],
+    ],
+    'contact_storage_disabled_form' => [
       'template' => 'contact-storage-disabled-form',
-      'variables' => array(
+      'variables' => [
         'contact_form' => NULL,
         'disabled_form_message' => '',
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 }
 
 /**

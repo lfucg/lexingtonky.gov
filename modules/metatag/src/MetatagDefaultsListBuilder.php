@@ -15,8 +15,15 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
    */
   public function load() {
     $entities = parent::load();
-    // Move the Global defaults to the top.
-    return ['global' => $entities['global']] + $entities;
+
+    // Move the Global defaults to the top. Don't assume that the global config
+    // exists, it might have been removed.
+    if (isset($entities['global'])) {
+      return ['global' => $entities['global']] + $entities;
+    }
+    else {
+      return $entities;
+    }
   }
 
   /**
@@ -41,8 +48,16 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
   public function getOperations(EntityInterface $entity) {
     $operations = parent::getOperations($entity);
 
-    // Set the defaults that should not be deletable
-    $protected_defaults = ['global', '403', '404', 'node', 'front', 'taxonomy_term', 'user'];
+    // Set the defaults that should not be deletable.
+    $protected_defaults = [
+      'global',
+      '403',
+      '404',
+      'node',
+      'front',
+      'taxonomy_term',
+      'user',
+    ];
 
     // Global and entity defaults can be reverted but not deleted.
     if (in_array($entity->id(), $protected_defaults)) {
@@ -60,10 +75,10 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
   /**
    * Renders the Metatag defaults label plus its configuration.
    *
-   * @param EntityInterface $entity
+   * @param Drupal\Core\Entity\EntityInterface $entity
    *   The Metatag defaults entity.
    *
-   * @return
+   * @return array
    *   Render array for a table cell.
    */
   public function getLabelAndConfig(EntityInterface $entity) {
@@ -81,12 +96,14 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
     }
 
     if (!empty($inherits)) {
-      $output .= '<div><p>' . t('Inherits meta tags from: @inherits', ['@inherits' => $inherits]) . '</p></div>';
+      $output .= '<div><p>' . t('Inherits meta tags from: @inherits', [
+        '@inherits' => $inherits,
+      ]) . '</p></div>';
     }
     $tags = $entity->get('tags');
     if (count($tags)) {
       $output .= '<table>
-                    <tbody>';
+<tbody>';
       foreach ($tags as $tag_id => $tag_value) {
         $output .= '<tr><td>' . $tag_id . ':</td><td>' . $tag_value . '</td></tr>';
       }

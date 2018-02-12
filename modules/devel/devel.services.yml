@@ -1,7 +1,19 @@
 services:
-  devel.event_subscriber:
-    class: Drupal\devel\EventSubscriber\DevelEventSubscriber
-    arguments: ['@config.factory', '@current_user', '@module_handler', '@url_generator']
+  devel.error_subscriber:
+    class: Drupal\devel\EventSubscriber\ErrorHandlerSubscriber
+    arguments: ['@current_user']
+    tags:
+      - { name: event_subscriber }
+
+  devel.theme_rebuild_subscriber:
+    class: Drupal\devel\EventSubscriber\ThemeInfoRebuildSubscriber
+    arguments: ['@config.factory', '@current_user', '@theme_handler']
+    tags:
+      - { name: event_subscriber }
+
+  devel.route_subscriber:
+    class: Drupal\devel\Routing\RouteSubscriber
+    arguments: ['@entity_type.manager']
     tags:
       - { name: event_subscriber }
 
@@ -12,12 +24,6 @@ services:
   devel.dumper:
     class: Drupal\devel\DevelDumperManager
     arguments: ['@config.factory', '@current_user', '@plugin.manager.devel_dumper']
-
-  devel.route_subscriber:
-    class: Drupal\devel\Routing\RouteSubscriber
-    arguments: ['@entity_type.manager']
-    tags:
-      - { name: event_subscriber }
 
   devel.twig.debug_extension:
     class: Drupal\devel\Twig\Extension\Debug

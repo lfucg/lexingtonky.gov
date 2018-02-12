@@ -2,7 +2,7 @@
 
 namespace Drupal\metatag_google_plus\Plugin\metatag\Tag;
 
-use \Drupal\metatag\Plugin\metatag\Tag\LinkRelBase;
+use Drupal\metatag\Plugin\metatag\Tag\LinkRelBase;
 
 /**
  * Provides a plugin for the 'publisher' meta tag.

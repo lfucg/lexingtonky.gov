@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\autologout\EventSubscriber\AutologoutSubscriber.
- */
 
 namespace Drupal\autologout\EventSubscriber;
 

@@ -2,33 +2,73 @@
 
 namespace Drupal\ckeditor_media_embed\Command;
 
-use Drupal\ckeditor_media_embed\AssetManager;
-
-use Drupal\Console\Command\ContainerAwareCommand as BaseCommand;
-use Drupal\Console\Helper\HelperTrait;
-use Drupal\Console\Style\DrupalStyle;
 use Alchemy\Zippy\Zippy;
+use Drupal\ckeditor_media_embed\AssetManager;
+use Drupal\ckeditor\CKEditorPluginManager;
+use Drupal\Console\Annotations\DrupalCommand;
+use Drupal\Console\Core\Command\Shared\ContainerAwareCommandTrait;
+use Drupal\Console\Core\Style\DrupalStyle;
+use Drupal\Console\Helper\HelperTrait;
+use Drupal\Core\Asset\LibraryDiscovery;
+use GuzzleHttp\Client;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class InstallCommand.
  *
  * @package Drupal\ckeditor_media_embed
+ *
+ * @DrupalCommand (
+ *     extension="ckeditor_media_embed",
+ *     extensionType="module"
+ * )
  */
-class InstallCommand extends BaseCommand {
+class InstallCommand extends Command {
 
-  use HelperTrait;
+  use ContainerAwareCommandTrait;
+
+  /**
+   * @var CKEditorPluginManager
+   */
+  protected $ckeditorPluginManager;
+
+  /**
+   * @var Client
+   */
+  protected $httpClient;
+
+  /**
+   * @var LibraryDiscovery
+   */
+  protected $libraryDiscovery;
+
+  /**
+   * @var Site
+   */
+  protected $site;
+
+  /**
+   * @var FileSystem
+   */
+  protected $fileSystem;
 
   protected $packageVersion;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(HelperSet $helper_set) {
-    parent::__construct($helper_set);
+  public function __construct(CKEditorPluginManager $ckeditorPluginManager, LibraryDiscovery $libraryDiscovery, Client $httpClient) {
+    parent::__construct();
 
+    $this->ckeditorPluginManager = $ckeditorPluginManager;
+    $this->libraryDiscovery = $libraryDiscovery;
+    $this->httpClient = $httpClient;
+
+    $this->fileSystem = new Filesystem();
     $this->setPackageVersion();
   }
 
@@ -53,7 +93,7 @@ class InstallCommand extends BaseCommand {
       $this->installCKeditorPlugin($io, $package_directory, $plugin);
     }
 
-    $this->getService('plugin.manager.ckeditor.plugin')->clearCachedDefinitions();
+    $this->ckeditorPluginManager->clearCachedDefinitions();
   }
 
   /**
@@ -62,7 +102,7 @@ class InstallCommand extends BaseCommand {
    * @return $this
    */
   protected function setPackageVersion() {
-    $this->packageVersion = AssetManager::getCKEditorVersion($this->getService('library.discovery'));
+    $this->packageVersion = AssetManager::getCKEditorVersion($this->libraryDiscovery);
 
     return $this;
   }
@@ -85,8 +125,8 @@ class InstallCommand extends BaseCommand {
     $package_plugin_path = $package_directory . '/plugins/' . $plugin_name;
 
     try {
-      $this->getContainerHelper()->get('filesystem')->mkdir($libraries_path);
-      $this->getContainerHelper()->get('filesystem')->mirror($package_plugin_path, $libraries_path);
+      $this->fileSystem->mkdir($libraries_path);
+      $this->fileSystem->mirror($package_plugin_path, $libraries_path);
 
       $io->success(
         sprintf(
@@ -126,7 +166,7 @@ class InstallCommand extends BaseCommand {
     $package_archive = sys_get_temp_dir() . "/$package_name.zip";
 
     try {
-      $this->getHttpClientHelper()->downloadFile($package_url, $package_archive);
+      $this->downloadFile($package_url, $package_archive);
       if (is_file($package_archive)) {
         $zippy = Zippy::load();
         $archive = $zippy->open($package_archive);
@@ -146,4 +186,8 @@ class InstallCommand extends BaseCommand {
     return $package_directory;
   }
 
+  public function downloadFile($url, $destination) {
+    $this->httpClient->get($url, array('sink' => $destination));
+    return file_exists($destination);
+  }
 }

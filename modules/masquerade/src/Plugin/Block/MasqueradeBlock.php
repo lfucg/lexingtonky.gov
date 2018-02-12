@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\masquerade\Plugin\Block\MasqueradeBlock.
- */
-
 namespace Drupal\masquerade\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
@@ -80,17 +75,18 @@ class MasqueradeBlock extends BlockBase implements ContainerFactoryPluginInterfa
    */
   protected function blockAccess(AccountInterface $account) {
     if ($this->masquerade->isMasquerading()) {
-      return AccessResult::forbidden()->addCacheContexts(['is_masquerading']);
+      return AccessResult::forbidden()->addCacheContexts(['session.is_masquerading']);
     }
     // Display block for all users that has any of masquerade permissions.
-    return AccessResult::allowedIfHasPermissions($account, $this->masquerade->getPermissions(), 'OR');
+    return AccessResult::allowedIfHasPermissions($account, $this->masquerade->getPermissions(), 'OR')
+      ->addCacheContexts(['session.is_masquerading']);
   }
 
   /**
    * {@inheritdoc}
    */
   public function getCacheContexts() {
-    return Cache::mergeContexts(parent::getCacheContexts(), ['is_masquerading']);
+    return Cache::mergeContexts(parent::getCacheContexts(), ['session.is_masquerading']);
   }
 
   /**

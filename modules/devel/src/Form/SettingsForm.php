@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\devel\Form\SettingsForm.
- */
-
 namespace Drupal\devel\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
@@ -78,6 +73,12 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $devel_config->get('raw_names'),
       '#description' => t('Display the language-independent machine names of the permissions in mouse-over hints on the <a href=":permissions_url">Permissions</a> page and the module base file names on the Permissions and <a href=":modules_url">Modules</a> pages.', array(':permissions_url' => Url::fromRoute('user.admin_permissions')->toString(), ':modules_url' => Url::fromRoute('system.modules_list')->toString())),
     );
+    $form['rebuild_theme'] = array(
+      '#type' => 'checkbox',
+      '#title' => $this->t('Rebuild the theme registry on every page load'),
+      '#description' => $this->t('New templates, theme overrides, and changes to the theme.info.yml need the theme registry to be rebuilt in order to appear on the site.'),
+      '#default_value' => $devel_config->get('rebuild_theme'),
+    );
 
     $error_handlers = devel_get_handlers();
     $form['error_handlers'] = array(
@@ -120,13 +121,6 @@ class SettingsForm extends ConfigFormBase {
       }
       $request->query->remove('demo');
     }
-
-    $form['rebuild_theme'] = array(
-     '#type' => 'checkbox',
-     '#title' => t('Rebuild the theme information like the registry'),
-     '#description' => t('While creating new templates, change the $theme.info.yml and theme_ overrides the theme information needs to be rebuilt.'),
-     '#default_value' => $devel_config->get('rebuild_theme'),
-    );
 
     $dumper = $devel_config->get('devel_dumper');
     $default = $this->dumperManager->isPluginSupported($dumper) ? $dumper : $this->dumperManager->getFallbackPluginId(NULL);

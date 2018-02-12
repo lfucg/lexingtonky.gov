@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\devel_generate\Plugin\DevelGenerate\UserDevelGenerate.
- */
-
 namespace Drupal\devel_generate\Plugin\DevelGenerate;
 
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -12,6 +7,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\devel_generate\DevelGenerateBase;
+use Drush\Utils\StringUtils;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -182,14 +178,26 @@ class UserDevelGenerate extends DevelGenerateBase implements ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function validateDrushParams($args) {
+  public function validateDrushParams($args, $options = []) {
     $values = array(
       'num' => array_shift($args),
-      'roles' => drush_get_option('roles') ? explode(',', drush_get_option('roles')) : array(),
-      'kill' => drush_get_option('kill'),
-      'pass' => drush_get_option('pass', NULL),
       'time_range' => 0,
     );
+
+    if ($this->isDrush8()) {
+      $values += [
+        'roles' => explode(',', drush_get_option('roles', '')),
+        'kill' => drush_get_option('kill'),
+        'pass' => drush_get_option('pass', NULL),
+      ];
+    }
+    else {
+      $values += [
+        'roles' => StringUtils::csvToArray($options['roles']),
+        'kill' => $options['kill'],
+        'pass' => $options['pass'],
+      ];
+    }
     return $values;
   }
 

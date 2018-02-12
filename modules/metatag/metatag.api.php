@@ -24,3 +24,18 @@ function hook_metatag_route_entity(\Drupal\Core\Routing\RouteMatchInterface $rou
     }
   }
 }
+
+/**
+ * Alter the metatags for pages that are not of content entities.
+ *
+ * @param array $metatags
+ *   The special metatags to be added to the page.
+ * @param array $context
+ *   The context, containing the entity used for token replacements.
+ */
+function hook_metatags_alter(array &$metatags, array $context) {
+  // Exclude metatags on frontpage.
+  if (\Drupal::service('path.matcher')->isFrontPage()) {
+    $metatags = NULL;
+  }
+}

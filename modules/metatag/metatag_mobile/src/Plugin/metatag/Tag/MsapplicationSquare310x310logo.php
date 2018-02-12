@@ -1,12 +1,8 @@
 <?php
-/**
- * @file
- * Contains \Drupal\metatag_mobile\Plugin\metatag\Tag\MsapplicationSquare310x310logo.
- */
 
 namespace Drupal\metatag_mobile\Plugin\metatag\Tag;
 
-use \Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
+use Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
 
 /**
  * Provides a plugin for the 'msapplication:square310x310logo' meta tag.

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\chosen_field\Tests\ChosenFieldWidgetsTest.
- */
-
 namespace Drupal\chosen_field\Tests;
 
 use Drupal\field\Tests\FieldTestBase;
@@ -21,7 +16,15 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
    *
    * @var array
    */
-  public static $modules = array('node', 'options', 'entity_test', 'taxonomy', 'field_ui', 'options_test', 'chosen_field');
+  public static $modules = array(
+    'node',
+    'options',
+    'entity_test',
+    'taxonomy',
+    'field_ui',
+    'options_test',
+    'chosen_field',
+  );
 
   /**
    * A field with cardinality 1 to use in this test class.
@@ -37,6 +40,9 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
    */
   protected $card_2;
 
+  /**
+   * Function used to setup before running the test.
+   */
   protected function setUp() {
     parent::setUp();
 
@@ -85,7 +91,7 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
   /**
    * Tests the 'chosen_select' widget (single select).
    */
-  function testSelectListSingle() {
+  public function testSelectListSingle() {
     // Create an instance of the 'single value' field.
     $instance = \Drupal::entityTypeManager()->getStorage('field_config')->create([
       'field_storage' => $this->card_1,
@@ -156,7 +162,7 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
     $this->card_1->setSetting('allowed_values_function', 'options_test_allowed_values_callback');
     $this->card_1->save();
 
-    // Display form: with no field data, nothing is selected
+    // Display form: with no field data, nothing is selected.
     $this->drupalGet('entity_test/manage/' . $entity->id() . '/edit');
     $this->assertNoOptionSelected('edit-card-1', 0);
     $this->assertNoOptionSelected('edit-card-1', 1);
@@ -253,9 +259,7 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
 
     // We do not have to test that a required select list with one option is
     // auto-selected because the browser does it for us.
-
     // Test optgroups.
-
     // Use a callback function defining optgroups.
     $this->card_2->setSetting('allowed_values', []);
     $this->card_2->setSetting('allowed_values_function', 'options_test_allowed_values_callback');

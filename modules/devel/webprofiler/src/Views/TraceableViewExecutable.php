@@ -3,6 +3,7 @@
 namespace Drupal\webprofiler\Views;
 
 use Drupal\views\ViewExecutable;
+use Drupal\views\Views;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -30,7 +31,7 @@ class TraceableViewExecutable extends ViewExecutable {
    * @return float
    */
   public function getExecuteTime() {
-    return $this->execute_time;
+    return property_exists($this, 'execute_time') ? $this->execute_time : 0.0;
   }
 
   /**
@@ -58,6 +59,7 @@ class TraceableViewExecutable extends ViewExecutable {
       return;
     }
 
+    /** @var \Drupal\views\Plugin\views\exposed_form\ExposedFormPluginInterface $exposed_form */
     $exposed_form = $this->display_handler->getPlugin('exposed_form');
     $exposed_form->preRender($this->result);
 
@@ -70,11 +72,11 @@ class TraceableViewExecutable extends ViewExecutable {
     $themes[] = $active_theme->getName();
 
     // Check for already-cached output.
+    /** @var \Drupal\views\Plugin\views\cache\CachePluginBase $cache */
     if (!empty($this->live_preview)) {
-      $cache = FALSE;
+      $cache = Views::pluginManager('cache')->createInstance('none');
     }
     else {
-      /** @var \Drupal\views\Plugin\views\cache\CachePluginBase $cache */
       $cache = $this->display_handler->getPlugin('cache');
     }
 
@@ -130,9 +132,7 @@ class TraceableViewExecutable extends ViewExecutable {
 
     $exposed_form->postRender($this->display_handler->output);
 
-    if ($cache) {
-      $cache->postRender($this->display_handler->output);
-    }
+    $cache->postRender($this->display_handler->output);
 
     // Let modules modify the view output after it is rendered.
     $module_handler->invokeAll('views_post_render', [
@@ -145,7 +145,7 @@ class TraceableViewExecutable extends ViewExecutable {
     foreach ($themes as $theme_name) {
       $function = $theme_name . '_views_post_render';
       if (function_exists($function)) {
-        $function($this);
+        $function($this, $this->display_handler->output, $cache);
       }
     }
 

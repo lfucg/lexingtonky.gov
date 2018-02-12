@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Url;
+use Drupal\Core\Link;
 
 /**
  * Implements hook_schema().
@@ -47,9 +48,10 @@ function honeypot_schema() {
 function honeypot_install() {
   if (PHP_SAPI !== 'cli') {
     $config_url = Url::fromUri('base://admin/config/content/honeypot');
-    drupal_set_message(t("Honeypot installed successfully. Please @link to protect your forms from spam bots.", [
-      '@link' => \Drupal::l(t('configure Honeypot'), $config_url),
-    ]));
+    drupal_set_message(t(
+      'Honeypot installed successfully. Please <a href=":url">configure Honeypot</a> to protect your forms from spam bots.',
+      [':url' => $config_url->toString()]
+    ));
   }
 }
 

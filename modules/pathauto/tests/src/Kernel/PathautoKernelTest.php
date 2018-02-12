@@ -254,11 +254,13 @@ class PathautoKernelTest extends KernelTestBase {
     $this->saveAlias('/node/1', '/node-1-alias-en', 'en');
     $this->saveAlias('/node/1', '/node-1-alias-fr', 'fr');
     $this->saveAlias('/node/2', '/node-2-alias');
+    $this->saveAlias('/node/10', '/node-10-alias');
 
     \Drupal::service('pathauto.alias_storage_helper')->deleteBySourcePrefix('/node/1');
     $this->assertNoAliasExists(array('source' => "/node/1"));
     $this->assertNoAliasExists(array('source' => "/node/1/view"));
     $this->assertAliasExists(array('source' => "/node/2"));
+    $this->assertAliasExists(array('source' => "/node/10"));
   }
 
   /**
@@ -501,6 +503,48 @@ class PathautoKernelTest extends KernelTestBase {
     $title = 'Pattern disabled';
     $node2 = $this->drupalCreateNode(['title' => $title, 'type' => 'page']);
     $this->assertNoEntityAlias($node2);
+  }
+
+  /**
+   * Tests that enabled entity types genrates the necessary fields and plugins.
+   */
+  public function testSettingChangeInvalidatesCache() {
+
+    $this->installConfig(['pathauto']);
+
+    $this->enableModules(['entity_test']);
+
+    $definitions = \Drupal::service('plugin.manager.alias_type')->getDefinitions();
+    $this->assertFalse(isset($definitions['canonical_entities:entity_test']));
+
+    $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('entity_test');
+    $this->assertFalse(isset($fields['path']));
+
+    $this->config('pathauto.settings')
+      ->set('enabled_entity_types', ['user', 'entity_test'])
+      ->save();
+
+    $definitions = \Drupal::service('plugin.manager.alias_type')->getDefinitions();
+    $this->assertTrue(isset($definitions['canonical_entities:entity_test']));
+
+    $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('entity_test');
+    $this->assertTrue(isset($fields['path']));
+
+  }
+
+  /**
+   * Tests that aliases are only generated for default revisions.
+   */
+  public function testDefaultRevision() {
+    $node1 = $this->drupalCreateNode(['title' => 'Default revision', 'type' => 'page']);
+    $this->assertEntityAlias($node1, '/content/default-revision');
+
+    $node1->setNewRevision(TRUE);
+    $node1->isDefaultRevision(FALSE);
+    $node1->setTitle('New non-default-revision');
+    $node1->save();
+
+    $this->assertEntityAlias($node1, '/content/default-revision');
   }
 
   /**

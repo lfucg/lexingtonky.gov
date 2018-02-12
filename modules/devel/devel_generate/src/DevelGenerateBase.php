@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\devel_generate\DevelGenerateBase.
- */
-
 namespace Drupal\devel_generate;
 
 use Drupal\Component\Utility\Random;
@@ -63,6 +58,13 @@ abstract class DevelGenerateBase extends PluginBase implements DevelGenerateBase
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  function settingsFormValidate(array $form, FormStateInterface $form_state) {
+    // Validation is optional.
   }
 
   /**
@@ -162,5 +164,9 @@ abstract class DevelGenerateBase extends PluginBase implements DevelGenerateBase
       $this->random = new Random();
     }
     return $this->random;
+  }
+
+  protected function isDrush8() {
+    return function_exists('drush_drupal_load_autoloader');
   }
 }

@@ -61,7 +61,7 @@ class MetatagForumTest extends WebTestBase {
   /**
    * Verify that a forum post can be loaded when Metatag is enabled.
    */
-  function testForumPost() {
+  public function testForumPost() {
     $this->drupalGet('node/add/forum');
     $this->assertResponse(200);
     $edit = [
@@ -69,7 +69,8 @@ class MetatagForumTest extends WebTestBase {
       'taxonomy_forums' => 1,
       'body[0][value]' => 'Just testing.',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save and publish'));
+    $save_label = (floatval(\Drupal::VERSION) <= 8.3) ? t('Save and publish') : t('Save');
+    $this->drupalPostForm(NULL, $edit, $save_label);
     $this->assertResponse(200);
     $this->assertText(t('@type @title has been created.', ['@type' => t('Forum topic'), '@title' => 'Testing forums']));
   }

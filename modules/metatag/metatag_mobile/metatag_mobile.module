@@ -43,7 +43,7 @@ function metatag_mobile_theme() {
 function metatag_mobile_page_attachments_alter(array &$attachments) {
   if (isset($attachments['#attached']['html_head'])) {
     // A list of core tags that will be replaced, in the format:
-    //   core tag => Metatag-supplied tag
+    // core tag => Metatag-supplied tag
     // This assumes that the module's meta tags are output *before* the core
     // tags, if this changes then We're Going To Have A Bad Time.
     $dupes = [
@@ -79,8 +79,9 @@ function metatag_mobile_page_attachments_alter(array &$attachments) {
 /**
  * Theme callback for an Android app link meta tag.
  *
- * The format is:
- * <link rel="alternate" href="android-app://com.example.Example/sitesection/sitepage/thispage" />
+ * The format is (all on oneline):
+ * <link rel="alternate" href="android-app://com.example.Example
+ * /sitesection/sitepage/thispage" />
  */
 function theme_metatag_mobile_android_app($variables) {
   // Pass everything through to the normal 'link' tag theme.
@@ -104,14 +105,14 @@ function theme_metatag_mobile_ios_app($variables) {
   return theme('metatag_link_rel', $variables);
 }
 
-/*
-* theme-color
-* MobileOptimized
-* HandheldFriendly
-* viewport
-* cleartype
-* apple-mobile-web-app-capable
-* apple-mobile-web-app-status-bar-style
-* format-detection
-* android-app
-*/
+/**
+ * theme-color
+ * MobileOptimized
+ * HandheldFriendly
+ * viewport
+ * cleartype
+ * apple-mobile-web-app-capable
+ * apple-mobile-web-app-status-bar-style
+ * format-detection
+ * android-app
+ */

@@ -2,7 +2,6 @@
 
 namespace Drupal\metatag_mobile\Tests;
 
-use Drupal\simpletest\WebTestBase;
 use Drupal\metatag\Tests\MetatagTagsTestBase;
 
 /**
@@ -15,7 +14,7 @@ class MetatagMobileTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  public $tags = [
+  private $tags = [
     'android_app_link_alternative',
     'android_manifest',
     'apple_itunes_app',
@@ -61,7 +60,7 @@ class MetatagMobileTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  public function getTestTagName($tag_name) {
+  private function getTestTagName($tag_name) {
     // These tags all use dashes instead of underlines.
     $tag_name = str_replace('_', '-', $tag_name);
 
@@ -73,170 +72,150 @@ class MetatagMobileTagsTest extends MetatagTagsTestBase {
   }
 
   /**
-   * Implements {meta_tag_name}_test_output_xpath() for 'alternate-handheld'.
+   * Implements {tag_name}TestOutputXpath() for 'alternate-handheld'.
    */
-  public function alternate_handheld_test_output_xpath() {
+  private function alternateHandheldTestOutputXpath() {
     return "//link[@rel='alternate' and @media='handheld']";
   }
 
   /**
-   * Implements {meta_tag_name}_test_value_attribute() for 'alternate-handheld'.
+   * Implements {tag_name}TestValueAttribute() for 'alternate-handheld'.
    */
-  public function alternate_handheld_test_value_attribute() {
+  private function alternateHandheldTestValueAttribute() {
     return 'href';
   }
 
   /**
-   * Implements {meta_tag_name}_test_output_xpath() for 'amphtml'.
+   * Implements {tag_name}TestOutputXpath() for 'amphtml'.
    */
-  public function amphtml_test_output_xpath() {
+  private function amphtmlTestOutputXpath() {
     return "//link[@rel='amphtml']";
   }
 
   /**
-   * Implements {meta_tag_name}_test_value_attribute() for 'amphtml'.
+   * Implements {tag_name}TestValueAttribute() for 'amphtml'.
    */
-  public function amphtml_test_value_attribute() {
+  private function amphtmlTestValueAttribute() {
     return 'href';
   }
 
   /**
-   * Implements {meta_tag_name}_test_value() for 'android_app_link_alternative'.
+   * Implements {tag_name}TestValue() for 'android_app_link_alternative'.
    */
-  public function android_app_link_alternative_test_value() {
+  private function androidAppLinkAlternativeTestValue() {
     return 'android-app:' . $this->randomMachineName();
   }
 
   /**
-   * Implements {meta_tag_name}_test_output_xpath() for
-   * 'android-app-link-alternative'.
+   * Implements {tag_name}TestOutputXpath() for 'android-app-link-alternative'.
    */
-  public function android_app_link_alternative_test_output_xpath() {
+  private function androidAppLinkAlternativeTestOutputXpath() {
     return "//link[@rel='alternate' and starts-with(@href, 'android-app:')]";
   }
 
   /**
-   * Implements {meta_tag_name}_test_preprocess_output() for
+   * Implements {tag_name}TestValueAttribute() for
    * 'android-app-link-alternative'.
    */
-  public function android_app_link_alternative_test_preprocess_output($string) {
-    return 'android-app://' . $string;
-  }
-
-  /**
-   * Implements {meta_tag_name}_test_value_attribute() for
-   * 'android-app-link-alternative'.
-   */
-  public function android_app_link_alternative_test_value_attribute() {
+  private function androidAppLinkAlternativeTestValueAttribute() {
     return 'href';
   }
 
   /**
-   * Implements {meta_tag_name}_test_output_xpath() for 'android_manifest'.
+   * Implements {tag_name}TestOutputXpath() for 'android_manifest'.
    */
-  public function android_manifest_test_output_xpath() {
+  private function androidManifestTestOutputXpath() {
     return "//link[@rel='manifest']";
   }
 
   /**
-   * Implements {meta_tag_name}_test_value_attribute() for 'android_manifest'.
+   * Implements {tag_name}TestValueAttribute() for 'android_manifest'.
    */
-  public function android_manifest_test_value_attribute() {
+  private function androidManifestTestValueAttribute() {
     return 'href';
   }
 
   /**
-   * Implements {meta_tag_name}_test_name_attribute() for 'cleartype'.
+   * Implements {tag_name}TestNameAttribute() for 'cleartype'.
    */
-  public function cleartype_test_name_attribute() {
+  private function cleartypeTestNameAttribute() {
     return 'http-equiv';
   }
 
   /**
-   * Implements {meta_tag_name}_test_output_xpath() for 'handheldfriendly'.
+   * Implements {tag_name}TestOutputXpath() for 'handheldfriendly'.
    */
-  public function handheldfriendly_test_output_xpath() {
+  private function handheldfriendlyTestOutputXpath() {
     return "//meta[@name='HandheldFriendly']";
   }
 
   /**
-   * Implements {meta_tag_name}_test_value() for
-   * 'ios_app_link_alternative'.
+   * Implements {tag_name}TestValue() for 'ios_app_link_alternative'.
    */
-  public function ios_app_link_alternative_test_value() {
+  private function iosAppLinkAlternativeTestValue() {
     return 'ios-app:' . $this->randomMachineName();
   }
 
   /**
-   * Implements {meta_tag_name}_test_output_xpath() for
-   * 'ios_app_link_alternative'.
+   * Implements {tag_name}TestOutputXpath() for 'ios_app_link_alternative'.
    */
-  public function ios_app_link_alternative_test_output_xpath() {
+  private function iosAppLinkAlternativeTestOutputXpath() {
     return "//link[@rel='alternate' and starts-with(@href, 'ios-app:')]";
   }
 
   /**
-   * Implements {meta_tag_name}_test_output_prefix() for
-   * 'ios_app_link_alternative'.
+   * Implements {tag_name}TestValueAttribute() for 'ios_app_link_alternative'.
    */
-  public function ios_app_link_alternative_test_preprocess_output($string) {
-    return 'ios-app://' . $string;
-  }
-
-  /**
-   * Implements {meta_tag_name}_test_value_attribute() for
-   * 'ios_app_link_alternative'.
-   */
-  public function ios_app_link_alternative_test_value_attribute() {
+  private function iosAppLinkAlternativeTestValueAttribute() {
     return 'href';
   }
 
   /**
-   * Implements {meta_tag_name}_test_output_xpath() for 'mobileoptimized'.
+   * Implements {tag_name}TestOutputXpath() for 'mobileoptimized'.
    */
-  public function mobileoptimized_test_output_xpath() {
+  private function mobileoptimizedTestOutputXpath() {
     return "//meta[@name='MobileOptimized']";
   }
 
   /**
-   * Implements {meta_tag_name}_test_value() for 'msapplication-square150x150logo'.
+   * Implements {tag_name}TestValue() for 'msapplication-square150x150logo'.
    */
-  public function msapplication_square150x150logo_test_value() {
+  private function msapplicationSquare150x150logoTestValue() {
     return $this->randomImageUrl();
   }
 
   /**
-   * Implements {meta_tag_name}_test_value() for 'msapplication-square310x310logo'.
+   * Implements {tag_name}TestValue() for 'msapplication-square310x310logo'.
    */
-  public function msapplication_square310x310logo_test_value() {
+  private function msapplicationSquare310x310logoTestValue() {
     return $this->randomImageUrl();
   }
 
   /**
-   * Implements {meta_tag_name}_test_value() for 'msapplication-square70x70logo'.
+   * Implements {tag_name}TestValue() for 'msapplication-square70x70logo'.
    */
-  public function msapplication_square70x70logo_test_value() {
+  private function msapplicationSquare70x70logoTestValue() {
     return $this->randomImageUrl();
   }
 
   /**
-   * Implements {meta_tag_name}_test_value() for 'msapplication-tileimage'.
+   * Implements {tag_name}TestValue() for 'msapplication-tileimage'.
    */
-  public function msapplication_tileimage_test_value() {
+  private function msapplicationTileimageTestValue() {
     return $this->randomImageUrl();
   }
 
   /**
-   * Implements {meta_tag_name}_test_value() for 'msapplication-wide310x150logo'.
+   * Implements {tag_name}TestValue() for 'msapplication-wide310x150logo'.
    */
-  public function msapplication_wide310x150logo_test_value() {
+  private function msapplicationWide310x150logoTestValue() {
     return $this->randomImageUrl();
   }
 
   /**
-   * Implements {meta_tag_name}_test_name_attribute() for 'x-ua-compatible'.
+   * Implements {tag_name}TestNameAttribute() for 'x-ua-compatible'.
    */
-  public function x_ua_compatible_test_name_attribute() {
+  private function xUaCompatibleTestNameAttribute() {
     return 'http-equiv';
   }
 

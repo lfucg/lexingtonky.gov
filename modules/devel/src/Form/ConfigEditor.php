@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\devel\Form\ConfigEditor.
- */
-
 namespace Drupal\devel\Form;
 
 use Drupal\Component\Serialization\Exception\InvalidDataTypeException;
@@ -37,7 +32,7 @@ class ConfigEditor extends FormBase {
       return;
     }
 
-    $data = $config->get();
+    $data = $config->getOriginal();
 
     if (empty($data)) {
       drupal_set_message(t('Config @name exists but has no data.', array('@name' => $config_name)), 'warning');

@@ -74,8 +74,8 @@ class MetatagAdminTest extends WebTestBase {
     $this->assertLinkByHref('admin/config/search/metatag/global', 0, t('Global defaults were created on installation.'));
 
     // Check that Global and entity defaults can't be deleted.
-    $this->assertNoLinkByHref('admin/config/search/metatag/global/delete', 0, t('Global defaults can\'t be deleted'));
-    $this->assertNoLinkByHref('admin/config/search/metatag/node/delete', 0, t('Entity defaults can\'t be deleted'));
+    $this->assertNoLinkByHref('admin/config/search/metatag/global/delete', 0, t("Global defaults can't be deleted"));
+    $this->assertNoLinkByHref('admin/config/search/metatag/node/delete', 0, t("Entity defaults can't be deleted"));
 
     // Check that the module defaults were injected into the Global config
     // entity.
@@ -168,8 +168,7 @@ class MetatagAdminTest extends WebTestBase {
     $types = [];
     foreach ($xpath[0]->children() as $item) {
       if (!empty($item->option)) {
-        $data = (array)$item->option;
-        // $this->verbose('<pre>' . print_r($data, TRUE) . '</pre>');
+        $data = (array) $item->option;
         $types[$data['@attributes']['value']] = $data[0];
       }
     }
@@ -275,10 +274,8 @@ class MetatagAdminTest extends WebTestBase {
       $this->assertRaw($value, t('Node metatag @tag overrides Global defaults.', ['@tag' => $metatag]));
     }
 
-    /**
-     * Check that when the node defaults don't define a metatag, the Global one
-     * is used.
-     */
+    // Check that when the node defaults don't define a metatag, the Global one
+    // is used.
     // First unset node defaults.
     $this->drupalGet('admin/config/search/metatag/node');
     $this->assertResponse(200);
@@ -304,7 +301,7 @@ class MetatagAdminTest extends WebTestBase {
     // return cached results.
     // @todo BookTest.php resets the cache of a single node, which is way more
     // performant than creating a node for every set of assertions.
-    // @see BookTest::testDelete().
+    // @see BookTest::testDelete()
     $node = $this->drupalCreateNode([
       'title' => t('Hello, world!'),
       'type' => 'article',
@@ -346,8 +343,9 @@ class MetatagAdminTest extends WebTestBase {
   }
 
   /**
-   * Test that the entity default values load on the entity form, and that they
-   * can then be overridden correctly.
+   * Test that the entity default values load on the entity form.
+   *
+   * And that they can then be overridden correctly.
    */
   public function testEntityDefaultInheritence() {
     // Initiate session with a user who can manage metatags and content type

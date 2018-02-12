@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\masquerade\Form\MasqueradeForm.
- */
-
 namespace Drupal\masquerade\Form;
 
 use Drupal\Core\Entity\EntityManagerInterface;

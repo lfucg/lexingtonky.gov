@@ -2,10 +2,10 @@
 
 namespace Drupal\metatag_hreflang\Plugin\metatag\Group;
 
-use \Drupal\metatag\Plugin\metatag\Group\GroupBase;
+use Drupal\metatag\Plugin\metatag\Group\GroupBase;
 
 /**
- * Provides a plugin for the 'Alternative language links (hreflang)' meta tag group.
+ * A plugin for the 'Alternative language links (hreflang)' meta tag group.
  *
  * @MetatagGroup(
  *   id = "hreflang",

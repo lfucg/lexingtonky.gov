@@ -15,7 +15,7 @@ services:
     arguments: ['@masquerade']
     tags:
       - { name: access_check, applies_to: _user_is_masquerading }
-  cache_context.is_masquerading:
+  cache_context.session.is_masquerading:
     class: Drupal\masquerade\Cache\MasqueradeCacheContext
     arguments: ['@request_stack']
     tags:

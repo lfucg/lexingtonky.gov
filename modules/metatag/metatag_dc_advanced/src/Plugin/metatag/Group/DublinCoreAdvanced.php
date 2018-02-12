@@ -2,7 +2,7 @@
 
 namespace Drupal\metatag_dc_advanced\Plugin\metatag\Group;
 
-use \Drupal\metatag\Plugin\metatag\Group\GroupBase;
+use Drupal\metatag\Plugin\metatag\Group\GroupBase;
 
 /**
  * Provides a plugin for the 'Dublin Core Additional Tags' meta tag group.

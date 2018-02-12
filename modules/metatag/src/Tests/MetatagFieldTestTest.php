@@ -2,9 +2,6 @@
 
 namespace Drupal\metatag\Tests;
 
-use Drupal\Core\Cache\Cache;
-use Drupal\metatag\Tests\MetatagFieldTestBase;
-
 /**
  * Ensure that the Metatag field works correctly for the test entity.
  *
@@ -13,7 +10,7 @@ use Drupal\metatag\Tests\MetatagFieldTestBase;
 class MetatagFieldTestTest extends MetatagFieldTestBase {
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public static $modules = [
     // Needed for token handling.
@@ -36,47 +33,51 @@ class MetatagFieldTestTest extends MetatagFieldTestBase {
   ];
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_perms = [
+  protected $entityPerms = [
     'view test entity',
     'administer entity_test fields',
     'administer entity_test content',
   ];
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_type = 'entity_test';
+  protected $entityType = 'entity_test';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_label = 'Test entity';
+  protected $entityLabel = 'Test entity';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_bundle = 'entity_test';
+  protected $entityBundle = 'entity_test';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_add_path = 'entity_test/add';
+  protected $entityAddPath = 'entity_test/add';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_field_admin_path = 'entity_test/structure/entity_test/fields';
+  protected $entityFieldAdminPath = 'entity_test/structure/entity_test/fields';
 
   /**
+   * Whether or not the entity type supports defaults.
+   *
+   * @var bool
+   *
    * @todo Fix this.
    */
-  protected $entity_supports_defaults = FALSE;
+  protected $entitySupportsDefaults = FALSE;
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_title_field = 'name';
+  protected $entityTitleField = 'name';
 
 }

@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\masquerade\Access\SwitchAccessCheck.
- */
 
 namespace Drupal\masquerade\Access;
 
@@ -10,7 +6,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\masquerade\Masquerade;
-use Drupal\user\Entity\Role;
 
 /**
  * Checks access for any masquerade permissions.
@@ -44,12 +39,20 @@ class SwitchAccessCheck implements AccessInterface {
    *   The access result.
    */
   public function access(AccountInterface $account) {
-    // Uid 1 may masquerade as anyone.
-    if ($account->id() == 1) {
-      return AccessResult::allowed()->cachePerUser();
+    if ($this->masquerade->isMasquerading()) {
+      // Do now allow to masquerade when already masquerading.
+      $result = AccessResult::forbidden();
     }
-    $permissions = $this->masquerade->getPermissions();
-    return AccessResult::allowedIfHasPermissions($account, $permissions, 'OR');
+    elseif ($account->id() == 1) {
+      // Uid 1 may masquerade as anyone.
+      $result = AccessResult::allowed();
+    }
+    else {
+      // Ability to masquerade defined by permissions.
+      $permissions = $this->masquerade->getPermissions();
+      $result = AccessResult::allowedIfHasPermissions($account, $permissions, 'OR');
+    }
+    return $result->addCacheContexts(['session.is_masquerading']);
   }
 
 }

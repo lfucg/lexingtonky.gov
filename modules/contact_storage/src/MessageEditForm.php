@@ -51,17 +51,17 @@ class MessageEditForm extends ContentEntityForm {
     $message = $this->entity;
     $form = parent::form($form, $form_state, $message);
 
-    $form['name'] = array(
+    $form['name'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Author name'),
       '#maxlength' => 255,
       '#default_value' => $message->getSenderName(),
-    );
-    $form['mail'] = array(
+    ];
+    $form['mail'] = [
       '#type' => 'email',
       '#title' => $this->t('Sender email address'),
       '#default_value' => $message->getSenderMail(),
-    );
+    ];
 
     return $form;
   }
@@ -71,10 +71,10 @@ class MessageEditForm extends ContentEntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     $this->entity->save();
-    $this->logger('contact')->notice('The contact message %subject has been updated.', array(
+    $this->logger('contact')->notice('The contact message %subject has been updated.', [
       '%subject' => $this->entity->getSubject(),
       'link' => $this->getEntity()->link($this->t('Edit'), 'edit-form'),
-    ));
+    ]);
   }
 
 }

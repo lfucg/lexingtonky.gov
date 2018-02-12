@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Simpletest tests for autologout session cleanup on login.
- */
-
 namespace Drupal\autologout\Tests;
 use Drupal\simpletest\WebTestBase;
 
@@ -21,12 +16,12 @@ class AutologoutSessionCleanupOnLoginTest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('autologout', 'node');
+  public static $modules = ['autologout', 'node'];
   /**
    * A store references to different sessions.
    */
-  protected $curlHandles = array();
-  protected $loggedInUsers = array();
+  protected $curlHandles = [];
+  protected $loggedInUsers = [];
   protected $privilegedUser;
   protected $database;
 
@@ -183,8 +178,8 @@ class AutologoutSessionCleanupOnLoginTest extends WebTestBase {
     // Make the server forget all sessions.
     $this->database->truncate('sessions')->execute();
 
-    $this->curlHandles = array();
-    $this->loggedInUsers = array();
+    $this->curlHandles = [];
+    $this->loggedInUsers = [];
     $this->loggedInUser = FALSE;
     $this->cookieFile = $this->originalFileDirectory . '/' . $this->randomMachineName() . '.jar';
     unset($this->curlHandle);

@@ -30,11 +30,10 @@ use Drupal\metatag\MetatagDefaultsInterface;
  *     "label" = "label"
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/metatag_defaults/{metatag_defaults}",
- *     "edit-form" = "/admin/structure/metatag_defaults/{metatag_defaults}/edit",
- *     "delete-form" = "/admin/structure/metatag_defaults/{metatag_defaults}/delete",
- *     "revert-form" = "/admin/structure/metatag_defaults/{metatag_defaults}/revert",
- *     "collection" = "/admin/structure/metatag_defaults"
+ *     "edit-form" = "/admin/config/search/metatag/{metatag_defaults}/edit",
+ *     "delete-form" = "/admin/config/search/metatag/{metatag_defaults}/delete",
+ *     "revert-form" = "/admin/config/search/metatag/{metatag_defaults}/revert",
+ *     "collection" = "/admin/config/search/metatag"
  *   }
  * )
  */
@@ -66,7 +65,8 @@ class MetatagDefaults extends ConfigEntityBase implements MetatagDefaultsInterfa
    *
    * @param string $tag_id
    *   The identifier of the tag.
-   * @return boolean
+   *
+   * @return bool
    *   TRUE if the tag exists.
    */
   public function hasTag($tag_id) {
@@ -78,8 +78,9 @@ class MetatagDefaults extends ConfigEntityBase implements MetatagDefaultsInterfa
    *
    * @param string $tag_id
    *   The identifier of the tag.
-   * @return array|NULL
-   *   array containing the tag values or NULL if not found.
+   *
+   * @return array|null
+   *   Array containing the tag values or NULL if not found.
    */
   public function getTag($tag_id) {
     if (!$this->hasTag($tag_id)) {

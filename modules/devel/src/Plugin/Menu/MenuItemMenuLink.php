@@ -1,34 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\devel\Plugin\Menu\MenuItemMenuLink.
- */
-
 namespace Drupal\devel\Plugin\Menu;
-
-use Drupal\Core\Menu\MenuLinkDefault;
-use Drupal\Core\Url;
 
 /**
  * Modifies the menu link to add current route path.
+ *
+ * @deprecated in Devel 8.1.0-beta1, will be removed before Devel 8.1.0.
+ *   Use \Drupal\devel\Plugin\Menu\RouteDetailMenuLink instead.
  */
-class MenuItemMenuLink extends MenuLinkDefault {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getOptions() {
-    $options = parent::getOptions();
-    $options['query']['path'] = '/' . Url::fromRoute('<current>')->getInternalPath();
-    return $options;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheMaxAge() {
-    return 0;
-  }
-
-}
+class MenuItemMenuLink extends RouteDetailMenuLink {}

@@ -1,14 +1,6 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\masquerade\Tests\MasqueradeAccessTest.
- */
-
 namespace Drupal\masquerade\Tests;
-
-use Drupal\user\UserInterface;
-use Drupal\Core\Session\UserSession;
 
 /**
  * Tests masquerade access mechanism.
@@ -42,7 +34,7 @@ class MasqueradeAccessTest extends MasqueradeWebTestBase {
    * - masquerade ! masquerade (self)
    * - auth ! *
    */
-  function testAccess() {
+  public function testAccess() {
     $this->drupalLogin($this->rootUser);
     $this->assertCanMasqueradeAs($this->admin_user);
 
@@ -80,9 +72,9 @@ class MasqueradeAccessTest extends MasqueradeWebTestBase {
     $this->assertCanMasqueradeAs($this->auth_user);
 
     // Verify that a user cannot masquerade as himself.
-    $edit = array(
+    $edit = [
       'masquerade_as' => $this->masquerade_user->getAccountName(),
-    );
+    ];
     $this->drupalPostForm('masquerade', $edit, t('Switch'));
     $this->assertRaw(t('You cannot masquerade as yourself. Please choose a different user to masquerade as.'));
     $this->assertNoText(t('Unmasquerade'));
@@ -94,36 +86,36 @@ class MasqueradeAccessTest extends MasqueradeWebTestBase {
   }
 
   /**
-   * Asserts that the currently logged-in user can masquerade as a given target user.
+   * Asserts that the logged-in user can masquerade as a given target user.
    *
    * @param \Drupal\user\UserInterface $target_account
    *   The user to masquerade to.
    */
   protected function assertCanMasqueradeAs($target_account) {
-    $edit = array(
+    $edit = [
       'masquerade_as' => $target_account->getAccountName(),
-    );
+    ];
     $this->drupalPostForm('masquerade', $edit, t('Switch'));
-    $this->assertNoRaw(t('You are not allowed to masquerade as %name.', array(
+    $this->assertNoRaw(t('You are not allowed to masquerade as %name.', [
       '%name' => $target_account->getDisplayName(),
-    )));
+    ]));
     $this->clickLink(t('Unmasquerade'));
   }
 
   /**
-   * Asserts that the currently logged-in user can not masquerade as a given target user.
+   * Asserts that the logged-in user can not masquerade as a given target user.
    *
    * @param \Drupal\user\UserInterface $target_account
    *   The user to masquerade to.
    */
   protected function assertCanNotMasqueradeAs($target_account) {
-    $edit = array(
+    $edit = [
       'masquerade_as' => $target_account->getAccountName(),
-    );
+    ];
     $this->drupalPostForm('masquerade', $edit, t('Switch'));
-    $this->assertRaw(t('You are not allowed to masquerade as %name.', array(
+    $this->assertRaw(t('You are not allowed to masquerade as %name.', [
       '%name' => $target_account->getDisplayName(),
-    )));
+    ]));
     $this->assertNoText(t('Unmasquerade'));
   }
 

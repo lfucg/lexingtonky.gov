@@ -14,9 +14,7 @@ use Drupal\Core\Render\Markup;
  */
 function ckeditor_media_embed_install() {
   if (!AssetManager::pluginsAreInstalled()) {
-    $message .= _ckeditor_media_embed_get_install_instructions();
-
-    drupal_set_message(Markup::Create($message), 'warning');
+    drupal_set_message(_ckeditor_media_embed_get_install_instructions(), 'warning');
   }
 }
 

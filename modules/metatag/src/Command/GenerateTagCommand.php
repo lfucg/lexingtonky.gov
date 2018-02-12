@@ -1,25 +1,21 @@
 <?php
-/**
- * @file
- * Contains Drupal\metatag\Command\GenerateTagCommand.
- */
 
 namespace Drupal\metatag\Command;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command;
+use Drupal\Console\Command\Shared\ConfirmationTrait;
+use Drupal\Console\Command\Shared\FormTrait;
+use Drupal\Console\Command\Shared\ModuleTrait;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
 use Drupal\Console\Core\Style\DrupalStyle;
-use Drupal\metatag\MetatagManager;
-use Drupal\metatag\Generator\MetatagTagGenerator;
-use Drupal\Console\Command\Shared\ModuleTrait;
-use Drupal\Console\Command\Shared\FormTrait;
-use Drupal\Console\Command\Shared\ConfirmationTrait;
-use Symfony\Component\Console\Input\InputOption;
-use Drupal\Console\Extension\Manager;
-use Drupal\Console\Core\Utils\StringConverter;
 use Drupal\Console\Core\Utils\ChainQueue;
+use Drupal\Console\Core\Utils\StringConverter;
+use Drupal\Console\Extension\Manager;
+use Drupal\metatag\Generator\MetatagTagGenerator;
+use Drupal\metatag\MetatagManager;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class GenerateTagCommand.
@@ -36,36 +32,43 @@ class GenerateTagCommand extends Command {
   use ConfirmationTrait;
 
   /**
-   * @var MetatagManager
+   * @var \Drupal\metatag\MetatagManager
    */
   protected $metatagManager;
 
   /**
-   * @var MetatagTagGenerator
+   * @var \Drupal\metatag\Generator\MetatagTagGenerator
    */
   protected $generator;
 
-  /** @var Manager  */
+  /**
+   * @var \Drupal\Console\Extension\Manager
+   */
   protected $extensionManager;
 
   /**
-   * @var StringConverter
+   * @var \Drupal\Console\Core\Utils\StringConverter
    */
   protected $stringConverter;
 
   /**
-   * @var ChainQueue
+   * @var \Drupal\Console\Core\Utils\ChainQueue
    */
   protected $chainQueue;
 
   /**
    * GenerateTagCommand constructor.
    *
-   * @param MetatagManager $metatagManager
-   * @param MetatagTagGenerator $generator
-   * @param Manager $extensionManager
-   * @param StringConverter $stringConverter
-   * @param ChainQueue $chainQueue
+   * @param Drupal\metatag\MetatagManager $metatagManager
+   *   The metatag manager object.
+   * @param Drupal\metatag\Generator\MetatagTagGenerator $generator
+   *   The tag generator object.
+   * @param Drupal\Console\Extension\Manager $extensionManager
+   *   The extension manager object.
+   * @param Drupal\Console\Core\Utils\StringConverter $stringConverter
+   *   The string converter object.
+   * @param Drupal\Console\Core\Utils\ChainQueue $chainQueue
+   *   The chain queue object.
    */
   public function __construct(
       MetatagManager $metatagManager,
@@ -114,8 +117,7 @@ class GenerateTagCommand extends Command {
       ->addOption('secure', '', InputOption::VALUE_REQUIRED,
         $this->trans('commands.generate.metatag.tag.options.secure'))
       ->addOption('multiple', '', InputOption::VALUE_REQUIRED,
-        $this->trans('commands.generate.metatag.tag.options.multiple'))
-      ;
+        $this->trans('commands.generate.metatag.tag.options.multiple'));
   }
 
   /**
@@ -124,7 +126,7 @@ class GenerateTagCommand extends Command {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $io = new DrupalStyle($input, $output);
 
-    // @see use Drupal\Console\Command\ConfirmationTrait::confirmGeneration
+    // @see Drupal\Console\Command\ConfirmationTrait::confirmGeneration
     if (!$this->confirmGeneration($io)) {
       return 1;
     }
@@ -160,7 +162,7 @@ class GenerateTagCommand extends Command {
       'TRUE',
     ];
 
-    // ToDo: Take this from typed data, so it can be extended?
+    // @todo Take this from typed data, so it can be extended?
     $type_options = [
       'integer',
       'string',
@@ -251,8 +253,7 @@ class GenerateTagCommand extends Command {
     $input->setOption('group', $group);
 
     // --weight option.
-    // @todo Automatically get the next integer value based upon the current
-    //   group.
+    // @todo Automatically get the next int value based upon the current group.
     $weight = $input->getOption('weight');
     if (is_null($weight)) {
       $weight = $io->ask(

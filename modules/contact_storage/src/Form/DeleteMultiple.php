@@ -22,7 +22,7 @@ class DeleteMultiple extends ConfirmFormBase {
    *
    * @var string[][]
    */
-  protected $messages = array();
+  protected $messages = [];
 
   /**
    * The tempstore factory.

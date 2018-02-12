@@ -1,12 +1,8 @@
 <?php
-/**
- * @file
- * Contains \Drupal\metatag_mobile\Plugin\metatag\Tag\XUaCompatible.
- */
 
 namespace Drupal\metatag_mobile\Plugin\metatag\Tag;
 
-use \Drupal\metatag\Plugin\metatag\Tag\MetaHttpEquivBase;
+use Drupal\metatag\Plugin\metatag\Tag\MetaHttpEquivBase;
 
 /**
  * Provides a plugin for the 'x:ua:compatible' meta tag.

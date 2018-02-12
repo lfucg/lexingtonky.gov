@@ -27,7 +27,7 @@ use Drupal\entity_reference_revisions\EntityNeedsSaveInterface;
  * @FieldType(
  *   id = "entity_reference_revisions",
  *   label = @Translation("Entity reference revisions"),
- *   description = @Translation("An entity field containing an entity reference."),
+ *   description = @Translation("An entity field containing an entity reference to a specific revision."),
  *   category = @Translation("Reference revisions"),
  *   no_ui = FALSE,
  *   class = "\Drupal\entity_reference_revisions\Plugin\Field\FieldType\EntityReferenceRevisionsItem",
@@ -103,6 +103,7 @@ class EntityReferenceRevisionsItem extends EntityReferenceItem implements Option
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $settings = $field_definition->getSettings();
     $target_type_info = \Drupal::entityTypeManager()->getDefinition($settings['target_type']);
+
     $properties = parent::propertyDefinitions($field_definition);
 
     if ($target_type_info->getKey('revision')) {
@@ -178,7 +179,7 @@ class EntityReferenceRevisionsItem extends EntityReferenceItem implements Option
         // If the entity has been saved and we're trying to set both the
         // target_id and the entity values with a non-null target ID, then the
         // value for target_id should match the ID of the entity value.
-        if (!$this->entity->isNew() && $values['target_id'] !== NULL && ($entity_id !== $values['target_id'])) {
+        if (!$this->entity->isNew() && $values['target_id'] !== NULL && ($entity_id != $values['target_id'])) {
           throw new \InvalidArgumentException('The target id and entity passed to the entity reference item do not match.');
         }
       }
@@ -247,9 +248,27 @@ class EntityReferenceRevisionsItem extends EntityReferenceItem implements Option
    * {@inheritdoc}
    */
   public function preSave() {
+    $has_new = $this->hasNewEntity();
+
+    // If it is a new entity, parent will save it.
     parent::preSave();
-    if ($this->entity instanceof EntityNeedsSaveInterface && $this->entity->needsSave()) {
-      $this->entity->save();
+
+    if (!$has_new) {
+      // Create a new revision if it is a composite entity in a host with a new
+      // revision.
+
+      $host = $this->getEntity();
+      $needs_save = $this->entity instanceof EntityNeedsSaveInterface && $this->entity->needsSave();
+      if (!$host->isNew() && $host->isNewRevision() && $this->entity && $this->entity->getEntityType()->get('entity_revision_parent_id_field')) {
+        $this->entity->setNewRevision();
+        if ($host->isDefaultRevision()) {
+          $this->entity->isDefaultRevision(TRUE);
+        }
+        $needs_save = TRUE;
+      }
+      if ($needs_save) {
+        $this->entity->save();
+      }
     }
     if ($this->entity) {
       $this->target_revision_id = $this->entity->getRevisionId();
@@ -261,6 +280,7 @@ class EntityReferenceRevisionsItem extends EntityReferenceItem implements Option
    */
   public function postSave($update) {
     parent::postSave($update);
+
     $needs_save = FALSE;
     // If any of entity, parent type or parent id is missing then return.
     if (!$this->entity || !$this->entity->getEntityType()->get('entity_revision_parent_type_field') || !$this->entity->getEntityType()->get('entity_revision_parent_id_field')) {
@@ -306,17 +326,152 @@ class EntityReferenceRevisionsItem extends EntityReferenceItem implements Option
   /**
    * {@inheritdoc}
    */
+  public function deleteRevision() {
+    $child = $this->entity;
+    if ($child->isDefaultRevision()) {
+      // Do not delete if it is the default revision.
+      return;
+    }
+
+    $host = $this->getEntity();
+    $field_name = $this->getFieldDefinition()->getName() . '.target_revision_id';
+    $all_revisions = \Drupal::entityQuery($host->getEntityTypeId())
+      ->condition($field_name, $child->getRevisionId())
+      ->allRevisions()
+      ->execute();
+
+    if (count($all_revisions) > 1) {
+      // Do not delete if there is more than one usage of this revision.
+      return;
+    }
+
+    \Drupal::entityTypeManager()->getStorage($child->getEntityTypeId())->deleteRevision($child->getRevisionId());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function delete() {
     parent::delete();
+
     if ($this->entity && $this->entity->getEntityType()->get('entity_revision_parent_type_field') && $this->entity->getEntityType()->get('entity_revision_parent_id_field')) {
-      $this->entity->delete();
+      // Only delete composite entities if the host field is not translatable.
+      if (!$this->getFieldDefinition()->isTranslatable()) {
+        $this->entity->delete();
+      }
     }
-}
- /**
- * {@inheritdoc}
- */
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function onDependencyRemoval(FieldDefinitionInterface $field_definition, array $dependencies) {
-    return FALSE;
+    $changed = FALSE;
+    $entity_manager = \Drupal::entityManager();
+    $target_entity_type = $entity_manager->getDefinition($field_definition->getFieldStorageDefinition()
+      ->getSetting('target_type'));
+    $handler_settings = $field_definition->getSetting('handler_settings');
+
+    // Update the 'target_bundles' handler setting if a bundle config dependency
+    // has been removed.
+    if (!empty($handler_settings['target_bundles'])) {
+      if ($bundle_entity_type_id = $target_entity_type->getBundleEntityType()) {
+        if ($storage = $entity_manager->getStorage($bundle_entity_type_id)) {
+          foreach ($storage->loadMultiple($handler_settings['target_bundles']) as $bundle) {
+            if (isset($dependencies[$bundle->getConfigDependencyKey()][$bundle->getConfigDependencyName()])) {
+              unset($handler_settings['target_bundles'][$bundle->id()]);
+              $changed = TRUE;
+
+              // In case we deleted the only target bundle allowed by the field
+              // we can log a message because the behaviour of the field will
+              // have changed.
+              if ($handler_settings['target_bundles'] === []) {
+                \Drupal::logger('entity_reference_revisions')
+                  ->notice('The %target_bundle bundle (entity type: %target_entity_type) was deleted. As a result, the %field_name entity reference revisions field (entity_type: %entity_type, bundle: %bundle) no longer specifies a specific target bundle. The field will now accept any bundle and may need to be adjusted.', [
+                    '%target_bundle' => $bundle->label(),
+                    '%target_entity_type' => $bundle->getEntityType()
+                      ->getBundleOf(),
+                    '%field_name' => $field_definition->getName(),
+                    '%entity_type' => $field_definition->getTargetEntityTypeId(),
+                    '%bundle' => $field_definition->getTargetBundle()
+                  ]);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    if ($changed) {
+      $field_definition->setSetting('handler_settings', $handler_settings);
+    }
+
+    return $changed;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function generateSampleValue(FieldDefinitionInterface $field_definition) {
+    $selection_manager = \Drupal::service('plugin.manager.entity_reference_selection');
+    $entity_manager = \Drupal::entityTypeManager();
+
+    // Bail if there are no referenceable entities.
+    if (!$selection_manager->getSelectionHandler($field_definition)->getReferenceableEntities()) {
+      return;
+    }
+
+    // ERR field values are never cross referenced so we need to generate new
+    // target entities. First, find the target entity type.
+    $target_type_id = $field_definition->getFieldStorageDefinition()->getSetting('target_type');
+    $target_type = $entity_manager->getDefinition($target_type_id);
+    $handler_settings = $field_definition->getSetting('handler_settings');
+
+    // Determine referenceable bundles.
+    $bundle_manager = \Drupal::service('entity_type.bundle.info');
+    if (isset($handler_settings['target_bundles']) && is_array($handler_settings['target_bundles'])) {
+      $bundles = $handler_settings['target_bundles'];
+    }
+    else {
+      $bundles = $bundle_manager->getBundleInfo($target_type_id);
+    }
+    $bundle = array_rand($bundles);
+
+    $label = NULL;
+    if ($label_key = $target_type->getKey('label')) {
+      $random = new Random();
+      // @TODO set the length somehow less arbitrary.
+      $label = $random->word(mt_rand(1, 10));
+    }
+
+    // Create entity stub.
+    $entity = $selection_manager->getSelectionHandler($field_definition)->createNewEntity($target_type_id, $bundle, $label, 0);
+
+    // Populate entity values and save.
+    $instances = $entity_manager
+      ->getStorage('field_config')
+      ->loadByProperties([
+        'entity_type' => $target_type_id,
+        'bundle' => $bundle,
+      ]);
+
+    foreach ($instances as $instance) {
+      $field_storage = $instance->getFieldStorageDefinition();
+      $max = $cardinality = $field_storage->getCardinality();
+      if ($cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED) {
+        // Just an arbitrary number for 'unlimited'
+        $max = rand(1, 5);
+      }
+      $field_name = $field_storage->getName();
+      $entity->{$field_name}->generateSampleItems($max);
+    }
+
+    $entity->save();
+
+    return [
+      'target_id' => $entity->id(),
+      'target_revision_id' => $entity->getRevisionId(),
+    ];
   }
 
 }

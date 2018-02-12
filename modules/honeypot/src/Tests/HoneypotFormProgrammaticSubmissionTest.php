@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\honeypot\Tests\HoneypotFormProgrammaticSubmissionTest.
- */
-
 namespace Drupal\honeypot\Tests;
 
 use Drupal\simpletest\WebTestBase;
@@ -45,7 +40,7 @@ class HoneypotFormProgrammaticSubmissionTest extends WebTestBase {
    */
   public function testProgrammaticFormSubmission() {
     $result = $this->drupalGet('/honeypot_test/submit_form');
-    $form_errors = (array)json_decode($result);
+    $form_errors = (array) json_decode($result);
     $this->assertNoRaw('There was a problem with your form submission. Please wait 6 seconds and try again.');
     $this->assertFalse($form_errors, 'The were no validation errors when submitting the form.');
   }

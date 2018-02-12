@@ -7,8 +7,8 @@ dependencies:
 tags:
   - admin
 
-# Information added by Drupal.org packaging script on 2015-11-14
-version: '8.x-1.0-beta1'
+# Information added by Drupal.org packaging script on 2016-12-05
+version: '8.x-2.0-beta1'
 core: '8.x'
 project: 'masquerade'
-datestamp: 1447531740
+datestamp: 1480963692

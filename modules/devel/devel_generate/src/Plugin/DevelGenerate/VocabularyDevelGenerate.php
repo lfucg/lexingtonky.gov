@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\devel_generate\Plugin\DevelGenerate\VocabularyDevelGenerate.
- */
-
 namespace Drupal\devel_generate\Plugin\DevelGenerate;
 
 use Drupal\Component\Utility\Unicode;
@@ -163,15 +158,15 @@ class VocabularyDevelGenerate extends DevelGenerateBase implements ContainerFact
   /**
    * {@inheritdoc}
    */
-  public function validateDrushParams($args) {
+  public function validateDrushParams($args, $options = []) {
     $values = array(
       'num' => array_shift($args),
-      'kill' => drush_get_option('kill'),
+      'kill' => $this->isDrush8() ? drush_get_option('kill') : $options['kill'],
       'title_length' => 12,
     );
 
     if ($this->isNumber($values['num']) == FALSE) {
-      return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Invalid number of vocabularies: @num.', array('@num' => $values['num'])));
+      throw new \Exception(dt('Invalid number of vocabularies: @num.', array('@num' => $values['num'])));
     }
 
     return $values;

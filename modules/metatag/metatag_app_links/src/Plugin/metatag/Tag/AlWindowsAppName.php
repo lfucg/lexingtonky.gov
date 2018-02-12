@@ -10,7 +10,7 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
  * @MetatagTag(
  *   id = "al_windows_app_name",
  *   label = @Translation("Windows app name"),
- *   description = @Translation("The name of the app (suitable for display)"),
+ *   description = @Translation("The name of the app (suitable for display)."),
  *   name = "al:windows:app_name",
  *   group = "app_links",
  *   weight = 1,

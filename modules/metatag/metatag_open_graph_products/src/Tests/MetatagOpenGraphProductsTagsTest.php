@@ -2,7 +2,6 @@
 
 namespace Drupal\metatag_open_graph_products\Tests;
 
-use Drupal\simpletest\WebTestBase;
 use Drupal\metatag\Tests\MetatagTagsTestBase;
 
 /**
@@ -15,18 +14,17 @@ class MetatagOpenGraphProductsTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  public $tags = [
-  ];
+  private $tags = [];
 
   /**
-   * The tag to look for when testing the output.
+   * {@inheritdoc}
    */
-  public $test_tag = 'meta';
+  private $testTag = 'meta';
 
   /**
-   * The attribute to look for to indicate which tag.
+   * {@inheritdoc}
    */
-  public $test_name_attribute = 'property';
+  private $testNameAttribute = 'property';
 
   /**
    * {@inheritdoc}
@@ -39,7 +37,7 @@ class MetatagOpenGraphProductsTagsTest extends MetatagTagsTestBase {
   /**
    * Each of these meta tags has a different tag name vs its internal name.
    */
-  public function getTestTagName($tag_name) {
+  private function getTestTagName($tag_name) {
     // Replace the first underline with a colon.
     $tag_name = str_replace('og_', 'og:', $tag_name);
     $tag_name = str_replace('article_', 'article:', $tag_name);

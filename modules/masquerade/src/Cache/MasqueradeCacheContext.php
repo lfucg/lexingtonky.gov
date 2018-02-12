@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\masquerade\Cache\MasqueradeCacheContext.
- */
-
 namespace Drupal\masquerade\Cache;
 
 use Drupal\Core\Cache\CacheableMetadata;
@@ -15,7 +10,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 /**
  * Defines the MasqueradeCacheContext service, for "masquerade" caching.
  *
- * Cache context ID: 'is_masquerading'.
+ * Cache context ID: 'session.is_masquerading'.
  */
 class MasqueradeCacheContext extends RequestStackCacheContextBase implements CacheContextInterface {
 
@@ -30,10 +25,7 @@ class MasqueradeCacheContext extends RequestStackCacheContextBase implements Cac
    * {@inheritdoc}
    */
   public function getContext() {
-    return $this->requestStack
-      ->getCurrentRequest()
-      ->getSession()
-      ->has('masquerading');
+    return !empty($_SESSION['masquerading']) ? '1' : '0';
   }
 
   /**

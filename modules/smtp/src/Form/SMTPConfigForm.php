@@ -114,7 +114,7 @@ class SMTPConfigForm extends ConfigFormBase {
       '#type' => 'password',
       '#title' => t('Password'),
       '#default_value' => $config->get('smtp_password'),
-      '#description' => t('SMTP password. If you have already entered your password before, you should leave this field blank, unless you want to change the stored password.'),
+      '#description' => t('SMTP password. If you have already entered your password before, you should leave this field blank, unless you want to change the stored password. Please note that this password will be stored as plain-text inside Drupal\'s core configuration variables.'),
       '#disabled' => $this->isOverridden('smtp_password'),
     );
 
@@ -144,6 +144,26 @@ class SMTPConfigForm extends ConfigFormBase {
       '#default_value' => $config->get('smtp_allowhtml'),
       '#description' => t('Checking this box will allow HTML formatted e-mails to be sent with the SMTP protocol.'),
       '#disabled' => $this->isOverridden('smtp_allowhtml'),
+    );
+
+    $form['client'] = array(
+      '#type'  => 'details',
+      '#title' => t('SMTP client settings'),
+      '#open' => TRUE,
+    );
+    $form['client']['smtp_client_hostname'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Hostname'),
+      '#default_value' => $config->get('smtp_client_hostname'),
+      '#description' => t('The hostname to use in the Message-Id and Received headers, and as the default HELO string. Leave blank for using %server_name.', array('%server_name' => isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'localhost.localdomain')),
+      '#disabled' => $this->isOverridden('smtp_client_hostname'),
+    );
+    $form['client']['smtp_client_helo'] = array(
+      '#type' => 'textfield',
+      '#title' => t('HELO'),
+      '#default_value' => $config->get('smtp_client_helo'),
+      '#description' => t('The SMTP HELO/EHLO of the message. Defaults to hostname (see above).'),
+      '#disabled' => $this->isOverridden('smtp_client_helo'),
     );
 
     $form['email_test'] = array(
@@ -240,6 +260,8 @@ class SMTPConfigForm extends ConfigFormBase {
       'smtp_username',
       'smtp_from',
       'smtp_fromname',
+      'smtp_client_hostname',
+      'smtp_client_helo',
       'smtp_allowhtml',
       'smtp_debugging',
     ];
@@ -258,8 +280,11 @@ class SMTPConfigForm extends ConfigFormBase {
       $mail_config->set('interface.default', $mail_system)->save();
     }
     else {
-      $mail_system = $config->get('prev_mail_system');
-      $mail_config->set('interface.default', $mail_system)->save();
+      $default_system_mail = 'php_mail';
+      $mail_config = $this->configFactory->getEditable('system.mail');
+      $default_interface = ($mail_config->get('prev_mail_system')) ? $mail_config->get('prev_mail_system') : $default_system_mail;
+      $mail_config->set('interface.default', $default_interface)
+        ->save();
     }
 
     // If an address was given, send a test e-mail message.

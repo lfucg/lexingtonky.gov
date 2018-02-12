@@ -2,9 +2,6 @@
 
 namespace Drupal\metatag\Tests;
 
-use Drupal\Core\Cache\Cache;
-use Drupal\metatag\Tests\MetatagFieldTestBase;
-
 /**
  * Ensures that the Metatag field works correctly on nodes.
  *
@@ -13,7 +10,7 @@ use Drupal\metatag\Tests\MetatagFieldTestBase;
 class MetatagFieldNodeTest extends MetatagFieldTestBase {
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public static $modules = [
     // Needed for token handling.
@@ -36,9 +33,9 @@ class MetatagFieldNodeTest extends MetatagFieldTestBase {
   ];
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_perms = [
+  protected $entityPerms = [
     // From Field UI.
     'administer node fields',
 
@@ -53,40 +50,40 @@ class MetatagFieldNodeTest extends MetatagFieldTestBase {
   ];
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_type = 'node';
+  protected $entityType = 'node';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_label = 'Content';
+  protected $entityLabel = 'Content';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_bundle = 'page';
+  protected $entityBundle = 'page';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_add_path = 'node/add';
+  protected $entityAddPath = 'node/add';
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-  protected $entity_field_admin_path = 'admin/structure/types/manage/page/fields';
+  protected $entityFieldAdminPath = 'admin/structure/types/manage/page/fields';
 
   /**
-   * {@inheritDoc}
-   */
-  protected $entity_save_button_label = 'Save and publish';
-
-  /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   protected function setUpEntityType() {
     $this->createContentType(['type' => 'page']);
+
+    // 8.3 has the label 'Save and publish'.
+    if ((floatval(\Drupal::VERSION) <= 8.3)) {
+      $this->entitySaveButtonLabel = 'Save and publish';
+    }
   }
 
 }
