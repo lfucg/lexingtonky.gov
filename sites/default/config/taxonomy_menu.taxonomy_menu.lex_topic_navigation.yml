@@ -1,8 +1,14 @@
 uuid: e7f36e77-b6f8-44b3-8112-18c2530d2c5c
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  config:
+    - system.menu.main
+    - taxonomy.vocabulary.site_navigation
 id: lex_topic_navigation
 label: 'Topic Navigation'
 vocabulary: site_navigation
 menu: main
+expanded: false
+depth: 2
+menu_parent: 'main:'

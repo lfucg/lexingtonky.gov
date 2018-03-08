@@ -11,3 +11,9 @@ definitions:
     parent: ''
     expanded: false
     enabled: false
+  'taxonomy_menu__menu_link:taxonomy_menu__menu_link__lex_topic_navigation__423':
+    weight: -50
+    menu_name: main
+    parent: 'taxonomy_menu.menu_link:taxonomy_menu.menu_link.lex_topic_navigation.298'
+    enabled: true
+    expanded: false

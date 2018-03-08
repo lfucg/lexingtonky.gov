@@ -5,5 +5,5 @@ dependencies: {  }
 name: Locations
 vid: locations
 description: 'Places in Lexington'
-hierarchy: 0
+hierarchy: 1
 weight: 0
