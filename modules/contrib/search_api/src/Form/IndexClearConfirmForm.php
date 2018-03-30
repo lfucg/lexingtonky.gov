@@ -43,6 +43,7 @@ class IndexClearConfirmForm extends EntityConfirmFormBase {
 
     try {
       $index->clear();
+      drupal_set_message($this->t('All items were successfully deleted from search index %name.', ['%name' => $index->label()]));
     }
     catch (SearchApiException $e) {
       drupal_set_message($this->t('Failed to clear the search index %name.', ['%name' => $index->label()]), 'error');

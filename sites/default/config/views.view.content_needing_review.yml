@@ -9,6 +9,7 @@ dependencies:
   module:
     - node
     - user
+    - workbench_moderation
 id: content_needing_review
 label: 'Content needing review'
 module: views
@@ -687,6 +688,7 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -746,7 +748,7 @@ display:
       arguments: {  }
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -1317,7 +1319,7 @@ display:
             webmaster: webmaster
             administrator: administrator
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'

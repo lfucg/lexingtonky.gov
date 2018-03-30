@@ -29,7 +29,7 @@ use Drupal\search_api\Query\ConditionGroupInterface;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\SearchApiException;
 use Drupal\search_api\Utility\DataTypeHelper;
-use Drupal\search_api_autocomplete\Suggestion;
+use Drupal\search_api_autocomplete\SearchInterface;
 use Drupal\search_api_autocomplete\Suggestion\SuggestionFactory;
 use Drupal\search_api_db\DatabaseCompatibility\DatabaseCompatibilityHandlerInterface;
 use Drupal\search_api_db\DatabaseCompatibility\GenericDatabase;
@@ -1253,7 +1253,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
           /** @var \Drupal\search_api\Plugin\search_api\data_type\value\TextTokenInterface $token */
           foreach ($values as $token) {
             $word = $token->getText();
-            $score = $token->getBoost();
+            $score = $token->getBoost() * $item->getBoost();
 
             // In rare cases, tokens with leading or trailing whitespace can
             // slip through. Since this can lead to errors when such tokens are
@@ -2501,11 +2501,30 @@ class Database extends BackendPluginBase implements PluginFormInterface {
   }
 
   /**
-   * Implements AutocompleteBackendInterface::getAutocompleteSuggestions().
+   * Retrieves autocompletion suggestions for some user input.
    *
-   * @todo Add type-hint for $search as soon as we can rely on the class name.
+   * @param \Drupal\search_api\Query\QueryInterface $query
+   *   A query representing the base search, with all completely entered words
+   *   in the user input so far as the search keys.
+   * @param \Drupal\search_api_autocomplete\SearchInterface $search
+   *   An object containing details about the search the user is on, and
+   *   settings for the autocompletion. See the class documentation for details.
+   *   Especially $search->getOptions() should be checked for settings, like
+   *   whether to try and estimate result counts for returned suggestions.
+   * @param string $incomplete_key
+   *   The start of another fulltext keyword for the search, which should be
+   *   completed. Might be empty, in which case all user input up to now was
+   *   considered completed. Then, additional keywords for the search could be
+   *   suggested.
+   * @param string $user_input
+   *   The complete user input for the fulltext search keywords so far.
+   *
+   * @return \Drupal\search_api_autocomplete\Suggestion\SuggestionInterface[]
+   *   An array of autocomplete suggestions.
+   *
+   * @see \Drupal\search_api_autocomplete\AutocompleteBackendInterface::getAutocompleteSuggestions()
    */
-  public function getAutocompleteSuggestions(QueryInterface $query, $search, $incomplete_key, $user_input) {
+  public function getAutocompleteSuggestions(QueryInterface $query, SearchInterface $search, $incomplete_key, $user_input) {
     $settings = $this->configuration['autocomplete'];
 
     // If none of the options is checked, the user apparently chose a very
@@ -2522,10 +2541,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     $fields = $this->getFieldInfo($index);
 
     $suggestions = [];
-    $factory = NULL;
-    if (class_exists(SuggestionFactory::class)) {
-      $factory = new SuggestionFactory($user_input);
-    }
+    $factory = new SuggestionFactory($user_input);
     $passes = [];
     $incomplete_like = NULL;
 
@@ -2645,12 +2661,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       $incomp_len = strlen($incomplete_key);
       foreach ($db_query->execute() as $row) {
         $suffix = ($pass == 1) ? substr($row->word, $incomp_len) : ' ' . $row->word;
-        if ($factory) {
-          $suggestions[] = $factory->createFromSuggestionSuffix($suffix, $row->results);
-        }
-        else {
-          $suggestions[] = Suggestion::fromSuggestionSuffix($suffix, $row->results, $user_input);
-        }
+        $suggestions[] = $factory->createFromSuggestionSuffix($suffix, $row->results);
       }
     }
 

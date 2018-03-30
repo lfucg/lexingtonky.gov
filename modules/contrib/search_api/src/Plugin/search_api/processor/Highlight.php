@@ -472,12 +472,15 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
         // and ends with a space.
         $matches = [];
 
-        $found_position = FALSE;
         if (!$this->configuration['highlight_partial']) {
+          $found_position = FALSE;
           $regex = '/' . self::$boundary . preg_quote($key, '/') . self::$boundary . '/iu';
           if (preg_match($regex, ' ' . $text . ' ', $matches, PREG_OFFSET_CAPTURE, $look_start[$key])) {
             $found_position = $matches[0][1];
           }
+        }
+        elseif (function_exists('mb_stripos')) {
+          $found_position = mb_stripos($text, $key, $look_start[$key], 'UTF-8');
         }
         else {
           $found_position = stripos($text, $key, $look_start[$key]);

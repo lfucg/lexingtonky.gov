@@ -22,10 +22,13 @@ module:
   datetime: 0
   dblog: 0
   diff: 0
+  dropzonejs: 0
+  dropzonejs_eb_widget: 0
   dynamic_page_cache: 0
   editor: 0
   embed: 0
   entity: 0
+  entity_browser: 0
   entity_embed: 0
   entity_reference_revisions: 0
   field: 0
@@ -49,7 +52,6 @@ module:
   metatag_facebook: 0
   metatag_open_graph: 0
   metatag_open_graph_products: 0
-  migrate: 0
   node: 0
   options: 0
   page_cache: 0

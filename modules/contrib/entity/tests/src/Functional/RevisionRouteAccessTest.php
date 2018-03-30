@@ -4,7 +4,7 @@ namespace Drupal\Tests\entity\Functional;
 
 use Drupal\entity_module_test\Entity\EnhancedEntity;
 use Drupal\entity_module_test\Entity\EnhancedEntityBundle;
-use Drupal\simpletest\BlockCreationTrait;
+use Drupal\Tests\block\Traits\BlockCreationTrait;
 use Drupal\Tests\BrowserTestBase;
 
 /**
@@ -75,7 +75,7 @@ class RevisionRouteAccessTest extends BrowserTestBase {
     $this->drupalGet('/entity_test_enhanced/1/revisions');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseContains('Revisions');
-    $collection_link = $this->getSession()->getPage()->findLink('Entity test with enhancements');
+    $collection_link = $this->getSession()->getPage()->findLink('Enhanced entities');
     $collection_link->click();
     $this->assertSession()->addressEquals('/entity_test_enhanced');
     $this->assertSession()->responseContains('Edit');

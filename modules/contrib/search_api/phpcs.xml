@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ruleset name="drupal_core">
-  <description>Default PHP CodeSniffer configuration for Drupal core.</description>
+<ruleset name="search_api">
+  <description>Default PHP CodeSniffer configuration for the Search API module.</description>
   <file>.</file>
   <arg name="extensions" value="inc,install,module,php,profile,test,theme"/>
 
   <!-- Only include specific sniffs that pass. This ensures that, if new sniffs are added, HEAD does not fail.-->
   <!-- Drupal sniffs -->
-  <rule ref="Drupal.Array.DisallowLongArraySyntax"/>
+  <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
   <rule ref="Drupal.Classes.ClassCreateInstance"/>
   <rule ref="Drupal.Classes.ClassDeclaration"/>
   <rule ref="Drupal.Classes.FullyQualifiedNamespace"/>

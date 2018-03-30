@@ -8,6 +8,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\masquerade\Form\MasqueradeForm;
 use Drupal\masquerade\Masquerade;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -75,7 +76,8 @@ class MasqueradeBlock extends BlockBase implements ContainerFactoryPluginInterfa
    */
   protected function blockAccess(AccountInterface $account) {
     if ($this->masquerade->isMasquerading()) {
-      return AccessResult::forbidden()->addCacheContexts(['session.is_masquerading']);
+      return AccessResult::forbidden()
+        ->addCacheContexts(['session.is_masquerading']);
     }
     // Display block for all users that has any of masquerade permissions.
     return AccessResult::allowedIfHasPermissions($account, $this->masquerade->getPermissions(), 'OR')
@@ -93,7 +95,7 @@ class MasqueradeBlock extends BlockBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public function build() {
-    return $this->formBuilder->getForm('Drupal\masquerade\Form\MasqueradeForm');
+    return $this->formBuilder->getForm(MasqueradeForm::class);
   }
 
 }

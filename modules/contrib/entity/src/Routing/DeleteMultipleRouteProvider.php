@@ -36,9 +36,9 @@ class DeleteMultipleRouteProvider implements EntityRouteProviderInterface {
   protected function deleteMultipleFormRoute(EntityTypeInterface $entity_type) {
     if ($entity_type->hasLinkTemplate('delete-multiple-form')) {
       $route = new Route($entity_type->getLinkTemplate('delete-multiple-form'));
-      $route->setDefault('_form', '\Drupal\entity\Form\DeleteMultiple');
+      $route->setDefault('_form', '\Drupal\entity\Form\DeleteMultipleForm');
       $route->setDefault('entity_type_id', $entity_type->id());
-      $route->setRequirement('_permission', $entity_type->getAdminPermission());
+      $route->setRequirement('_entity_delete_multiple_access', $entity_type->id());
 
       return $route;
     }

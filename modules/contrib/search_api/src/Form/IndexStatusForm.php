@@ -62,9 +62,9 @@ class IndexStatusForm extends FormBase {
 
     $form['#index'] = $index;
 
-    $form['#attached']['library'][] = 'search_api/drupal.search_api.admin_css';
+    if ($index->status() && $index->hasValidTracker()) {
+      $form['#attached']['library'][] = 'search_api/drupal.search_api.admin_css';
 
-    if ($index->hasValidTracker()) {
       if (!$this->getIndexTaskManager()->isTrackingComplete($index)) {
         $form['tracking'] = [
           '#type' => 'details',
@@ -163,7 +163,14 @@ class IndexStatusForm extends FormBase {
         '#name' => 'clear',
         '#button_type' => 'danger',
       ];
+      $form['actions']['rebuild_tracker'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Rebuild tracking information'),
+        '#name' => 'rebuild_tracker',
+        '#button_type' => 'danger',
+      ];
     }
+
     return $form;
   }
 
@@ -224,6 +231,10 @@ class IndexStatusForm extends FormBase {
 
       case 'clear':
         $form_state->setRedirect('entity.search_api_index.clear', ['search_api_index' => $index->id()]);
+        break;
+
+      case 'rebuild_tracker':
+        $form_state->setRedirect('entity.search_api_index.rebuild_tracker', ['search_api_index' => $index->id()]);
         break;
 
       case 'track_now':

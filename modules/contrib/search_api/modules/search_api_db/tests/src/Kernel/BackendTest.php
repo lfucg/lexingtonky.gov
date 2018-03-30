@@ -5,6 +5,8 @@ namespace Drupal\Tests\search_api_db\Kernel;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Database\Database as CoreDatabase;
 use Drupal\search_api\Entity\Server;
+use Drupal\search_api\IndexInterface;
+use Drupal\search_api\Item\ItemInterface;
 use Drupal\search_api\Plugin\search_api\data_type\value\TextToken;
 use Drupal\search_api\Plugin\search_api\data_type\value\TextValue;
 use Drupal\search_api\Query\QueryInterface;
@@ -86,6 +88,7 @@ class BackendTest extends BackendTestBase {
     $this->regressionTest2511860();
     $this->regressionTest2846932();
     $this->regressionTest2926733();
+    $this->regressionTest2938646();
   }
 
   /**
@@ -515,6 +518,45 @@ class BackendTest extends BackendTestBase {
   }
 
   /**
+   * Tests indexing of items with boost.
+   *
+   * @see https://www.drupal.org/node/2938646
+   */
+  protected function regressionTest2938646() {
+    $db_info = $this->getIndexDbInfo();
+    $text_table = $db_info['field_tables']['body']['table'];
+    $item_id = $this->getItemIds([1])[0];
+    $select = \Drupal::database()->select($text_table, 't');
+    $select
+      ->fields('t', ['score'])
+      ->condition('item_id', $item_id)
+      ->condition('word', 'test');
+    $select2 = clone $select;
+
+    // Check old score.
+    $old_score = $select
+      ->execute()
+      ->fetchField();
+    $this->assertNotSame(FALSE, $old_score);
+    $this->assertGreaterThan(0, $old_score);
+
+    // Re-index item with higher boost.
+    $index = $this->getIndex();
+    $item = $this->container->get('search_api.fields_helper')
+      ->createItem($index, $item_id);
+    $item->setBoost(2);
+    $indexed_ids = $this->indexItemDirectly($index, $item);
+    $this->assertEquals([$item_id], $indexed_ids);
+
+    // Verify the field scores changed accordingly.
+    $new_score = $select2
+      ->execute()
+      ->fetchField();
+    $this->assertNotSame(FALSE, $new_score);
+    $this->assertEquals(2 * $old_score, $new_score);
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function checkIndexWithoutFields() {
@@ -617,6 +659,41 @@ class BackendTest extends BackendTestBase {
     $index_id = $index_id ?: $this->indexId;
     return \Drupal::keyValue(Database::INDEXES_KEY_VALUE_STORE_ID)
       ->get($index_id);
+  }
+
+  /**
+   * Indexes an item directly.
+   *
+   * @param \Drupal\search_api\IndexInterface $index
+   *   The search index to index the item on.
+   * @param \Drupal\search_api\Item\ItemInterface $item
+   *   The item.
+   *
+   * @return string[]
+   *   The successfully indexed IDs.
+   *
+   * @throws \Drupal\search_api\SearchApiException
+   *   Thrown if indexing failed.
+   */
+  protected function indexItemDirectly(IndexInterface $index, ItemInterface $item) {
+    $items = [$item->getId() => $item];
+
+    // Minimalistic version of code copied from
+    // \Drupal\search_api\Entity\Index::indexSpecificItems().
+    $index->alterIndexedItems($items);
+    \Drupal::moduleHandler()->alter('search_api_index_items', $index, $items);
+    foreach ($items as $item) {
+      // This will cache the extracted fields so processors, etc., can retrieve
+      // them directly.
+      $item->getFields();
+    }
+    $index->preprocessIndexItems($items);
+
+    $indexed_ids = [];
+    if ($items) {
+      $indexed_ids = $index->getServerInstance()->indexItems($index, $items);
+    }
+    return $indexed_ids;
   }
 
   /**

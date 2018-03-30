@@ -75,4 +75,3 @@ None.
 Current maintainers:
 * Daniel F. Kudwien (sun) - http://drupal.org/user/54136
 * Andrey Postnikov (andypost) - http://drupal.org/user/118908
-

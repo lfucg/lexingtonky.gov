@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.7.1 - 2018-02-26
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#293](https://github.com/zendframework/zend-diactoros/pull/293) updates
+  `Uri::getHost()` to cast the value via `strtolower()` before returning it.
+  While this represents a change, it is fixing a bug in our implementation: 
+  the PSR-7 specification for the method, which follows IETF RFC 3986 section
+  3.2.2, requires that the host name be normalized to lowercase.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#290](https://github.com/zendframework/zend-diactoros/pull/290) fixes
+  `Stream::getSize()` such that it checks that the result of `fstat` was
+  succesful before attempting to return its `size` member; in the case of an
+  error, it now returns `null`.
+
 ## 1.7.0 - 2018-01-04
 
 ### Added

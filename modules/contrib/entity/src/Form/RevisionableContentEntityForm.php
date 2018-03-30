@@ -3,11 +3,16 @@
 namespace Drupal\entity\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\RevisionableEntityBundleInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\entity\Entity\RevisionableEntityBundleInterface;
+
+@trigger_error('\Drupal\entity\Form\RevisionableContentEntityForm has been deprecated in favor of \Drupal\Core\Entity\ContentEntityForm. Use that instead.');
 
 /**
  * Extends the base entity form with revision support in the UI.
+ *
+ * @deprecated in favor of \Drupal\Core\Entity\ContentEntityForm. Use that
+ *   instead.
  */
 class RevisionableContentEntityForm extends ContentEntityForm {
 

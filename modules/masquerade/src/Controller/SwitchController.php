@@ -27,7 +27,7 @@ class SwitchController extends ControllerBase {
    * Constructs a new SwitchController object.
    *
    * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   The current user
+   *   The current user.
    * @param \Drupal\masquerade\Masquerade $masquerade
    *   The masquerade service.
    */
@@ -49,8 +49,8 @@ class SwitchController extends ControllerBase {
   /**
    * Masquerades the current user as a given user.
    *
-   * Access to masquerade as the target user account has to checked by all callers
-   * via masquerade_target_user_access() already.
+   * Access to masquerade as the target user account has to checked by
+   * all callers via masquerade_target_user_access() already.
    *
    * @param \Drupal\user\UserInterface $user
    *   The user account object to masquerade as.
@@ -66,9 +66,9 @@ class SwitchController extends ControllerBase {
     $error = masquerade_switch_user_validate($user);
     if (empty($error)) {
       if ($this->masquerade->switchTo($user)) {
-        drupal_set_message($this->t('You are now masquerading as @user.', array(
+        drupal_set_message($this->t('You are now masquerading as @user.', [
           '@user' => $account->getDisplayName(),
-        )));
+        ]));
       }
     }
     else {
@@ -92,14 +92,14 @@ class SwitchController extends ControllerBase {
     // Store current user name for messages.
     $account_name = $this->currentUser->getDisplayName();
     if ($this->masquerade->switchBack()) {
-      drupal_set_message($this->t('You are no longer masquerading as @user.', array(
+      drupal_set_message($this->t('You are no longer masquerading as @user.', [
         '@user' => $account_name,
-      )));
+      ]));
     }
     else {
-      drupal_set_message($this->t('Error trying unmasquerading as @user.', array(
+      drupal_set_message($this->t('Error trying unmasquerading as @user.', [
         '@user' => $account_name,
-      )), 'error');
+      ]), 'error');
     }
     return $this->getRedirectResponse($request);
   }
@@ -121,6 +121,9 @@ class SwitchController extends ControllerBase {
     }
     $destination = \Drupal::destination();
     if ($destination_path = $destination->get()) {
+      // When Drupal is installed in a sub-directory, destination path have to
+      // cut off the baseUrl part.
+      $destination_path = preg_replace('/^' . preg_quote($request->getBaseUrl(), '/') . '/', '', $destination_path);
       // Try destination first.
       $url = Url::createFromRequest(Request::create($destination_path));
     }

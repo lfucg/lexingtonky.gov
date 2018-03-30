@@ -696,6 +696,14 @@ interface IndexInterface extends ConfigEntityInterface {
   public function clear();
 
   /**
+   * Starts a rebuild of the index's tracking information.
+   *
+   * @see \Drupal\search_api\Task\IndexTaskManagerInterface::stopTracking()
+   * @see \Drupal\search_api\Task\IndexTaskManagerInterface::startTracking()
+   */
+  public function rebuildTracker();
+
+  /**
    * Determines whether reindexing has been triggered in this page request.
    *
    * @return bool

@@ -176,6 +176,31 @@ display:
               anonymous: '0'
               administrator: '0'
           is_grouped: false
+        name:
+          plugin_id: search_api_text
+          id: name
+          table: search_api_index_database_search_index
+          field: name
+          relationship: none
+          admin_label: ''
+          operator: '='
+          group: 1
+          exposed: true
+          expose:
+            operator_id: name_op
+            label: ''
+            description: ''
+            use_operator: true
+            operator: name_op
+            identifier: name
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+          is_grouped: false
         search_api_language:
           plugin_id: search_api_language
           id: search_api_language

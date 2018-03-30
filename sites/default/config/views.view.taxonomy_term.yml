@@ -137,6 +137,7 @@ display:
               editor: '0'
               webmaster: '0'
               administrator: '0'
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -384,6 +385,7 @@ display:
               editor: '0'
               webmaster: '0'
               administrator: '0'
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
