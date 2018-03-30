@@ -22,7 +22,7 @@ var imgSrc = './img-src/*';
 var imgDest = './img';
 var svgSrc = './svg-src/**/*.svg';
 var svgDest = './img';
-var sassSrc = ['./scss/**/*.scss'];
+var sassSrc = ['./scss/**/*.scss', './scss/**/*.sass'];
 var sassDest = './css';
 
 gulp.task('sass', function () {
