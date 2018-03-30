@@ -2,13 +2,8 @@
 
 namespace Drupal\entity;
 
-use Drupal\Core\Entity\EntityHandlerInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
-use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\EntityOwnerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides generic entity permissions which are cached per user.
@@ -25,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * - create $bundle $entity_type
  *
  * As this class supports "view own ($bundle) $entity_type" it is just cacheable
- * per user, which might harm performance of sites. Given that please use 
+ * per user, which might harm performance of sites. Given that please use
  * \Drupal\entity\EntityPermissionProvider unless you need the feature, or your
  * entity type is not really user facing (commerce orders for example).
  *

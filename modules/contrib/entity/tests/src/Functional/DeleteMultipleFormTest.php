@@ -18,7 +18,7 @@ class DeleteMultipleFormTest extends BrowserTestBase {
   /**
    * The current user.
    *
-   * @var \Drupal\Core\Session\AccountInterface;
+   * @var \Drupal\Core\Session\AccountInterface
    */
   protected $account;
 
@@ -60,13 +60,13 @@ class DeleteMultipleFormTest extends BrowserTestBase {
       $selection[$entity->id()][$langcode] = $langcode;
     }
     // Add the selection to the tempstore just like DeleteAction would.
-    $tempstore = \Drupal::service('user.private_tempstore')->get('entity_delete_multiple_confirm');
-    $tempstore->set($this->account->id(), $selection);
+    $tempstore = \Drupal::service('tempstore.private')->get('entity_delete_multiple_confirm');
+    $tempstore->set($this->account->id() . ':entity_test_enhanced', $selection);
 
     $this->drupalGet('/entity_test_enhanced/delete');
     $assert = $this->assertSession();
     $assert->statusCodeEquals(200);
-    $assert->elementTextContains('css', '.page-title', 'Are you sure you want to delete these items?');
+    $assert->elementTextContains('css', '.page-title', 'Are you sure you want to delete these enhanced entities?');
     $delete_button = $this->getSession()->getPage()->findButton('Delete');
     $delete_button->click();
     $assert = $this->assertSession();

@@ -1,3 +1,36 @@
+Search API 1.7 (2018-02-23):
+----------------------------
+- #2922525 by drunken monkey, borisson_: Changed "Index items immediately" to
+  delay indexing until the end of the page request.
+- #2930720 by drunken monkey, borisson_: Added a UI for rebuilding the tracking
+  table for an index.
+- #2912246 by drunken monkey: Fixed inconsistent array indices in query
+  languages.
+- #2939405 by bserem, borisson_, drunken monkey, yoroy: Improved UI text on
+  what is included in the index.
+- #2943705 by kevin.dutra, drunken monkey, borisson_: Fixed performance
+  problems with LIFO tracker.
+- #2942846 by idebr, drunken monkey, borisson_: Added empty/not empty operators
+  to Views fulltext field filters.
+- #2940255 by drunken monkey: Updated the DB autocomplete implementation to the
+  stable API version.
+- #2938646 by drunken monkey, Johnny vd Laar: Fixed item-boosts in database
+  backend.
+- #2939085 by mattgill, drunken monkey: Fixed fatal error in Views when trying
+  to set keywords conjunction on aborted query.
+- #2933811 by drunken monkey: Fixed coding standards in new Drush code.
+- #2932347 by drunken monkey, ghaya: Fixed case insensitive matching for
+  highlighting non-ASCII text.
+- #2938288 by drunken monkey: Fixed problems with PHP 7.2.
+- #2934321 by Graber, drunken monkey: Fixed Views total for views with pager
+  offset.
+- #2932347 by drunken monkey, ghaya: Fixed case insensitive matching for
+  highlighting non-ASCII text.
+- #2933309 by drunken monkey, mkalkbrenner: Made some helper methods in the
+  CommandHelper class public.
+- #2928279 by drunken monkey, borisson_: Added a test for the default tracker
+  plugin.
+
 Search API 1.6 (2017-12-24):
 ----------------------------
 - #2669962 by kevin.dutra, drunken monkey, kristofferwiklund, borisson_: Added

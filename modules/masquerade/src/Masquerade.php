@@ -4,7 +4,7 @@ namespace Drupal\masquerade;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Routing\LinkGeneratorTrait;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\SessionManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -17,7 +17,6 @@ use Psr\Log\LoggerInterface;
  */
 class Masquerade {
   use StringTranslationTrait;
-  use LinkGeneratorTrait;
 
   /**
    * The current user.
@@ -90,6 +89,7 @@ class Masquerade {
    * Returns whether the current user is masquerading.
    *
    * @return bool
+   *   TRUE when already masquerading, FALSE otherwise.
    */
   public function isMasquerading() {
     // @todo Check to use some session related service.
@@ -119,18 +119,18 @@ class Masquerade {
     // Supposed "safe" user switch method:
     // https://www.drupal.org/node/218104
     //$accountSwitcher = Drupal::service('account_switcher');
-    //$accountSwitcher->switchTo(new UserSession(array('uid' => $account->id())));
+    //$accountSwitcher->switchTo(new UserSession(['uid' => $account->id()]));
     $this->currentUser->setAccount($target_account);
     \Drupal::service('session')->set('uid', $target_account->id());
 
     // Call all login hooks when switching to masquerading user.
     $this->moduleHandler->invokeAll('user_login', [$target_account]);
 
-    $this->logger->info('User %username masqueraded as %target_username.', array(
+    $this->logger->info('User %username masqueraded as %target_username.', [
       '%username' => $account->getDisplayName(),
       '%target_username' => $target_account->getDisplayName(),
-      'link' => $this->l($this->t('view'), $target_account->toUrl()),
-    ));
+      'link' => Link::fromTextAndUrl($this->t('view'), $target_account->toUrl())->toString(),
+    ]);
     return TRUE;
   }
 
@@ -167,11 +167,11 @@ class Masquerade {
     // Call all login hooks when switching back to original user.
     $this->moduleHandler->invokeAll('user_login', [$new_user]);
 
-    $this->logger->info('User %username stopped masquerading as %old_username.', array(
+    $this->logger->info('User %username stopped masquerading as %old_username.', [
       '%username' => $new_user->getDisplayName(),
       '%old_username' => $account->getDisplayName(),
-      'link' => $this->l($this->t('view'), $new_user->toUrl()),
-    ));
+      'link' => Link::fromTextAndUrl($this->t('view'), $new_user->toUrl())->toString(),
+    ]);
     return TRUE;
   }
 

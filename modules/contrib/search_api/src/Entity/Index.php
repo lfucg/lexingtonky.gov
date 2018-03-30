@@ -49,6 +49,7 @@ use Drupal\views\Views;
  *       "disable" = "Drupal\search_api\Form\IndexDisableConfirmForm",
  *       "reindex" = "Drupal\search_api\Form\IndexReindexConfirmForm",
  *       "clear" = "Drupal\search_api\Form\IndexClearConfirmForm",
+ *       "rebuild_tracker" = "Drupal\search_api\Form\IndexRebuildTrackerConfirmForm",
  *     },
  *   },
  *   admin_permission = "administer search_api",
@@ -1061,15 +1062,8 @@ class Index extends ConfigEntityBase implements IndexInterface {
       }
       $this->getTrackerInstance()->$tracker_method($item_ids);
       if (!$this->isReadOnly() && $this->getOption('index_directly') && !$this->batchTracking) {
-        try {
-          $items = $this->loadItemsMultiple($item_ids);
-          if ($items) {
-            $this->indexSpecificItems($items);
-          }
-        }
-        catch (SearchApiException $e) {
-          $this->logException($e);
-        }
+        \Drupal::getContainer()->get('search_api.post_request_indexing')
+          ->registerIndexingOperation($this->id(), $item_ids);
       }
     }
   }
@@ -1109,22 +1103,43 @@ class Index extends ConfigEntityBase implements IndexInterface {
    * {@inheritdoc}
    */
   public function clear() {
-    if ($this->status()) {
-      // Only invoke the hook if we actually did something.
-      $invoke_hook = FALSE;
-      if (!$this->isReindexing()) {
-        $invoke_hook = TRUE;
-        $this->setHasReindexed();
-        $this->getTrackerInstance()->trackAllItemsUpdated();
-      }
-      if (!$this->isReadOnly()) {
-        $invoke_hook = TRUE;
-        $this->getServerInstance()->deleteAllIndexItems($this);
-      }
-      if ($invoke_hook) {
-        \Drupal::moduleHandler()->invokeAll('search_api_index_reindex', [$this, !$this->isReadOnly()]);
-      }
+    if (!$this->status()) {
+      return;
     }
+
+    // Only invoke the hook if we actually did something.
+    $invoke_hook = FALSE;
+    if (!$this->isReindexing()) {
+      $invoke_hook = TRUE;
+      $this->setHasReindexed();
+      $this->getTrackerInstance()->trackAllItemsUpdated();
+    }
+    if (!$this->isReadOnly()) {
+      $invoke_hook = TRUE;
+      $this->getServerInstance()->deleteAllIndexItems($this);
+    }
+    if ($invoke_hook) {
+      \Drupal::moduleHandler()
+        ->invokeAll('search_api_index_reindex', [$this, !$this->isReadOnly()]);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function rebuildTracker() {
+    if (!$this->status()) {
+      return;
+    }
+
+    $index_task_manager = \Drupal::getContainer()
+      ->get('search_api.index_task_manager');
+    $index_task_manager->stopTracking($this);
+    $index_task_manager->startTracking($this);
+    $this->setHasReindexed();
+    \Drupal::moduleHandler()
+      ->invokeAll('search_api_index_reindex', [$this, FALSE]);
+    $index_task_manager->addItemsBatch($this);
   }
 
   /**

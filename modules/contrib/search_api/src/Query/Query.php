@@ -362,7 +362,7 @@ class Query implements QueryInterface {
    * {@inheritdoc}
    */
   public function setLanguages(array $languages = NULL) {
-    $this->languages = $languages;
+    $this->languages = isset($languages) ? array_values($languages) : NULL;
     return $this;
   }
 

@@ -196,10 +196,11 @@ class Basic extends TrackerPluginBase implements PluginFormInterface {
       $select->condition('datasource', $datasource_id);
     }
     $select->condition('sai.status', $this::STATUS_NOT_INDEXED, '=');
-    $lifo = $this->configuration['indexing_order'] === 'lifo';
-    $select->orderBy('sai.changed', $lifo ? 'DESC' : 'ASC');
+    // Use the same direction for both sorts to avoid performance problems.
+    $order = $this->configuration['indexing_order'] === 'lifo' ? 'DESC' : 'ASC';
+    $select->orderBy('sai.changed', $order);
     // Add a secondary sort on item ID to make the order completely predictable.
-    $select->orderBy('sai.item_id', 'ASC');
+    $select->orderBy('sai.item_id', $order);
 
     return $select;
   }
@@ -265,6 +266,12 @@ class Basic extends TrackerPluginBase implements PluginFormInterface {
         ]);
         if ($ids_chunk) {
           $update->condition('item_id', $ids_chunk, 'IN');
+        }
+        // Update the status of unindexed items only if the item order is LIFO.
+        // (Otherwise, an item that's regularly being updated might never get
+        // indexed.)
+        if ($this->configuration['indexing_order'] === 'fifo') {
+          $update->condition('status', static::STATUS_INDEXED);
         }
         $update->execute();
       }
@@ -364,45 +371,69 @@ class Basic extends TrackerPluginBase implements PluginFormInterface {
    * {@inheritdoc}
    */
   public function getRemainingItems($limit = -1, $datasource_id = NULL) {
-    $select = $this->createRemainingItemsStatement($datasource_id);
-    if ($limit >= 0) {
-      $select->range(0, $limit);
+    try {
+      $select = $this->createRemainingItemsStatement($datasource_id);
+      if ($limit >= 0) {
+        $select->range(0, $limit);
+      }
+      return $select->execute()->fetchCol();
     }
-    return $select->execute()->fetchCol();
+    catch (\Exception $e) {
+      $this->logException($e);
+      return [];
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function getTotalItemsCount($datasource_id = NULL) {
-    $select = $this->createSelectStatement();
-    if ($datasource_id) {
-      $select->condition('datasource', $datasource_id);
+    try {
+      $select = $this->createSelectStatement();
+      if ($datasource_id) {
+        $select->condition('datasource', $datasource_id);
+      }
+      return (int) $select->countQuery()->execute()->fetchField();
     }
-    return (int) $select->countQuery()->execute()->fetchField();
+    catch (\Exception $e) {
+      $this->logException($e);
+      return 0;
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function getIndexedItemsCount($datasource_id = NULL) {
-    $select = $this->createSelectStatement();
-    $select->condition('sai.status', $this::STATUS_INDEXED);
-    if ($datasource_id) {
-      $select->condition('datasource', $datasource_id);
+    try {
+      $select = $this->createSelectStatement();
+      $select->condition('sai.status', $this::STATUS_INDEXED);
+      if ($datasource_id) {
+        $select->condition('datasource', $datasource_id);
+      }
+      return (int) $select->countQuery()->execute()->fetchField();
     }
-    return (int) $select->countQuery()->execute()->fetchField();
+    catch (\Exception $e) {
+      $this->logException($e);
+      return 0;
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function getRemainingItemsCount($datasource_id = NULL) {
-    $select = $this->createRemainingItemsStatement();
-    if ($datasource_id) {
-      $select->condition('datasource', $datasource_id);
+    try {
+      $select = $this->createRemainingItemsStatement();
+      if ($datasource_id) {
+        $select->condition('datasource', $datasource_id);
+      }
+      return (int) $select->countQuery()->execute()->fetchField();
     }
-    return (int) $select->countQuery()->execute()->fetchField();
+    catch (\Exception $e) {
+      $this->logException($e);
+      return 0;
+    }
   }
 
 }

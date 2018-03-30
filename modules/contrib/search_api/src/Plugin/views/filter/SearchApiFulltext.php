@@ -280,6 +280,9 @@ class SearchApiFulltext extends FilterPluginBase {
     $fields = $this->options['fields'];
     $fields = $fields ? $fields : array_keys($this->getFulltextFields());
     $query = $this->getQuery();
+    if ($query->shouldAbort()) {
+      return;
+    }
 
     if ($this->options['parse_mode']) {
       $parse_mode = $this->getParseModeManager()

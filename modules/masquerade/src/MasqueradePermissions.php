@@ -20,16 +20,17 @@ class MasqueradePermissions {
    *   https://drupal.org/node/1171500
    *
    * @return array
+   *   The permissions array.
    */
   public function permissions() {
     $permissions = [];
 
     // Anonymous was intentionally left out. Logout instead.
     $roles = $this->getUserRoles();
-    foreach ($roles as $rid => $role) {
+    foreach ($roles as $role) {
       $permissions['masquerade as ' . $role->id()] = [
         'title' => $this->t('Masquerade as @role', ['@role' => $role->label()]),
-        'restrict access' => TRUE
+        'restrict access' => TRUE,
       ];
     }
 

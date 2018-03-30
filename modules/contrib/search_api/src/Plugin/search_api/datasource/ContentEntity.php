@@ -455,8 +455,8 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
         '#type' => 'radios',
         '#title' => $this->t('Which bundles should be indexed?'),
         '#options' => [
+          0 => $this->t('Only those selected'),
           1 => $this->t('All except those selected'),
-          0 => $this->t('None except those selected'),
         ],
         '#default_value' => (int) $this->configuration['bundles']['default'],
       ];
@@ -480,8 +480,8 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
         '#type' => 'radios',
         '#title' => $this->t('Which languages should be indexed?'),
         '#options' => [
+          0 => $this->t('Only those selected'),
           1 => $this->t('All except those selected'),
-          0 => $this->t('None except those selected'),
         ],
         '#default_value' => (int) $this->configuration['languages']['default'],
       ];

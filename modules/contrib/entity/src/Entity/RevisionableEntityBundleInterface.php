@@ -2,16 +2,13 @@
 
 namespace Drupal\entity\Entity;
 
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Entity\RevisionableEntityBundleInterface as CoreRevisionableEntityBundleInterface;
 
-interface RevisionableEntityBundleInterface extends ConfigEntityInterface {
+@trigger_error('\Drupal\entity\Entity\RevisionableEntityBundleInterface has been deprecated in favor of \Drupal\Core\Entity\RevisionableEntityBundleInterface. Use that instead.');
 
-  /**
-   * Returns whether a new revision should be created by default.
-   *
-   * @return bool
-   *   TRUE if a new revision should be created by default.
-   */
-  public function shouldCreateNewRevision();
-
+/**
+ * @deprecated in favor of
+ *   \Drupal\Core\Entity\RevisionableEntityBundleInterface. Use that instead.
+ */
+interface RevisionableEntityBundleInterface extends CoreRevisionableEntityBundleInterface {
 }

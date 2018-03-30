@@ -168,7 +168,7 @@ class ChosenConfigForm extends ConfigFormBase {
 
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('submit'),
+      '#value' => $this->t('Submit'),
     ];
 
     return $form;

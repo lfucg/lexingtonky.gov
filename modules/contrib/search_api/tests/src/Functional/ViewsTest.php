@@ -198,6 +198,24 @@ class ViewsTest extends SearchApiBrowserTestBase {
     $this->checkResults($query, [1, 2, 4, 5], 'Search with Keywords "not empty" filter');
 
     $query = [
+      'name[value]' => 'foo',
+    ];
+    $this->checkResults($query, [1, 2, 4], 'Search with Name "contains" filter');
+    $query = [
+      'name[value]' => 'foo',
+      'name_op' => '!=',
+    ];
+    $this->checkResults($query, [3, 5], 'Search with Name "doesn\'t contain" filter');
+    $query = [
+      'name_op' => 'empty',
+    ];
+    $this->checkResults($query, [], 'Search with Name "empty" filter');
+    $query = [
+      'name_op' => 'not empty',
+    ];
+    $this->checkResults($query, [1, 2, 3, 4, 5], 'Search with Name "not empty" filter');
+
+    $query = [
       'language' => ['***LANGUAGE_site_default***'],
     ];
     $this->checkResults($query, [1, 2, 3, 4, 5], 'Search with "Page content language" filter');

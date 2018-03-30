@@ -11,7 +11,14 @@ use Drupal\entity\Revision\RevisionableContentEntityBase;
  *
  * @ContentEntityType(
  *   id = "entity_test_enhanced",
- *   label = @Translation("Entity test with enhancements"),
+ *   label = @Translation("Enhanced entity"),
+ *   label_collection = @Translation("Enhanced entities"),
+ *   label_singular = @Translation("enhanced entity"),
+ *   label_plural = @Translation("enhanced entities"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count enhanced entity",
+ *     plural = "@count enhanced entities",
+ *   ),
  *   handlers = {
  *     "storage" = "\Drupal\Core\Entity\Sql\SqlContentEntityStorage",
  *     "access" = "\Drupal\Core\Entity\EntityAccessControlHandler",
@@ -22,9 +29,12 @@ use Drupal\entity\Revision\RevisionableContentEntityBase;
  *       "delete" = "\Drupal\Core\Entity\EntityDeleteForm",
  *     },
  *     "route_provider" = {
- *       "html" = "\Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider",
+ *       "html" = "\Drupal\entity\Routing\DefaultHtmlRouteProvider",
  *       "revision" = "\Drupal\entity\Routing\RevisionRouteProvider",
  *       "delete-multiple" = "\Drupal\entity\Routing\DeleteMultipleRouteProvider",
+ *     },
+ *     "local_action_provider" = {
+ *       "collection" = "\Drupal\entity\Menu\EntityCollectionLocalActionProvider",
  *     },
  *     "list_builder" = "\Drupal\Core\Entity\EntityListBuilder",
  *   },

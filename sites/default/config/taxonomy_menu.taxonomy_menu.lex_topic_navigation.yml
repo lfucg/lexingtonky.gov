@@ -11,4 +11,4 @@ vocabulary: site_navigation
 menu: main
 expanded: false
 depth: 2
-menu_parent: 'main:'
+menu_parent: 'admin:'

@@ -68,6 +68,12 @@ services:
     class: Drupal\search_api\Utility\PluginHelper
     arguments: ['@plugin.manager.search_api.datasource', '@plugin.manager.search_api.processor', '@plugin.manager.search_api.tracker']
 
+  search_api.post_request_indexing:
+    class: Drupal\search_api\Utility\PostRequestIndexing
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: event_subscriber }
+
   search_api.query_helper:
     class: Drupal\search_api\Utility\QueryHelper
     arguments: ['@request_stack', '@module_handler', '@plugin.manager.search_api.parse_mode']

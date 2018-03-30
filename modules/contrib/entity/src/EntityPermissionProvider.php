@@ -2,13 +2,7 @@
 
 namespace Drupal\entity;
 
-use Drupal\Core\Entity\EntityHandlerInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
-use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\user\EntityOwnerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides generic entity permissions which are still cacheable.

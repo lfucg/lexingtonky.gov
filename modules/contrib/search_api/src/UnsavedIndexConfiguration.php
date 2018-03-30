@@ -598,6 +598,13 @@ class UnsavedIndexConfiguration implements IndexInterface, UnsavedConfigurationI
   /**
    * {@inheritdoc}
    */
+  public function rebuildTracker() {
+    $this->entity->rebuildTracker();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function isReindexing() {
     return $this->entity->isReindexing();
   }

@@ -229,3 +229,14 @@ entity.search_api_index.clear:
     parameters:
       search_api_index:
         with_config_overrides: TRUE
+
+entity.search_api_index.rebuild_tracker:
+  path: '/admin/config/search/search-api/index/{search_api_index}/rebuild-tracker'
+  defaults:
+    _entity_form: 'search_api_index.rebuild_tracker'
+  requirements:
+    _entity_access: 'search_api_index.rebuild_tracker'
+  options:
+    parameters:
+      search_api_index:
+        with_config_overrides: TRUE
