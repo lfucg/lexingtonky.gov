@@ -312,7 +312,7 @@ display:
           empty: true
           tokenize: false
           content:
-            value: 'We''re sorry, but there where no results for these terms.'
+            value: 'We''re sorry, but there were no results for these terms.'
             format: basic_html
           plugin_id: text
       relationships: {  }
