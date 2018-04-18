@@ -19,6 +19,7 @@ module:
   contact_storage: 0
   contextual: 0
   ctools: 0
+  current_page_crumb: 0
   datetime: 0
   dblog: 0
   diff: 0

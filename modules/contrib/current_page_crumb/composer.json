@@ -1,0 +1,6 @@
+{
+  "name": "drupal/current_page_crumb",
+  "type": "drupal-module",
+  "description": "Adds the current page title to the breadcrumb.",
+  "license": "GPL-2.0+"
+}
