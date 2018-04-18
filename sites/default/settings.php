@@ -83,3 +83,7 @@ $settings['deployment_identifier'] = '1';
 // result in some (most) of the app servers continuing to serve the old, stale
 // compiled template files.
 $settings['php_storage']['twig']['secret'] = $settings['hash_salt'] . $settings['deployment_identifier'];
+
+if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
+  include $app_root . '/' . $site_path . '/settings.local.php';
+}

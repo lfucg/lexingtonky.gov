@@ -102,7 +102,7 @@ display:
             preserve_tags: ''
             html: false
           element_type: h3
-          element_class: ''
+          element_class: search-result-title
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -131,6 +131,8 @@ display:
           fallback_handler: search_api
           fallback_options:
             link_to_item: false
+            use_highlighting: false
+            multi_type: separator
             multi_separator: ', '
           entity_type: node
           plugin_id: search_api_field
@@ -171,7 +173,7 @@ display:
             preserve_tags: ''
             html: false
           element_type: ''
-          element_class: 'lex-card-subtitle lex-link-literal'
+          element_class: 'lex-card-subtitle lex-link-literal-search'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -183,6 +185,7 @@ display:
           empty_zero: false
           hide_alter_empty: true
           link_to_item: true
+          use_highlighting: false
           multi_type: separator
           multi_separator: ', '
           entity_type: null
@@ -225,7 +228,7 @@ display:
             preserve_tags: ''
             html: false
           element_type: ''
-          element_class: ''
+          element_class: search-result-html
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -237,6 +240,7 @@ display:
           empty_zero: false
           hide_alter_empty: true
           link_to_item: false
+          use_highlighting: false
           multi_type: separator
           multi_separator: ', '
           plugin_id: search_api
