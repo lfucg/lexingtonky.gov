@@ -21,8 +21,8 @@
     var political = L.esri.query({url: 'https://maps.lexingtonky.gov/lfucggis/rest/services/political/MapServer/1'});
 
     var handleFindAddressResponse = function(error, featureCollection, response) {
-        var responseJson = JSON.parse(error);
-        var address = responseJson.locations[0].feature.geometry;
+        var responseJson = JSON.stringify(error);
+        var address = JSON.parse(responseJson).locations[0].feature.geometry;
 
         political
           .contains(L.latLng([address.y, address.x]))
