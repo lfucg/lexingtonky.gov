@@ -45,7 +45,8 @@
           f: 'json'
         }, function(data) {
           var suggestions = [];
-          JSON.parse(data).suggestions.forEach(function(suggestion) {
+          // console.log(JSON.parse(data).suggestions);
+          data.suggestions.forEach(function(suggestion) {
             // sometimes bounding box includes nearby cities
             if (suggestion.text.match('Lexington')) { suggestions.push(suggestion.text); }
           });
