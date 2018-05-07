@@ -1,0 +1,7 @@
+uuid: c5593cca-9813-41b8-b80c-d06876766aa2
+langcode: en
+status: false
+dependencies: {  }
+formId: node_site_wide_notice_form
+captchaType: default
+label: null
