@@ -413,11 +413,11 @@ class TwigExtension extends \Twig_Extension {
       return '';
     }
     elseif ($this->recurring === 'Monthly') {
-      return ', ' . $this->months[$this->start->format('n') - 1] . ' &#8211; ' . $this->months[$this->end->format('n') - 1];
+      return ', ' . $this->months[$this->start->format('n') - 1] . ' &#8211; ' . $this->months[$this->end->format('n') - 1] . ', ' . $this->getYear($this->end);
     }
     else {
       return ', ' . $this->getMonthDay($this->start) . ' &#8211; '
-        . ($this->start->format('M') === $this->end->format('M') ? $this->end->format('j') : $this->getMonthDay($this->end));
+        . ($this->start->format('M') === $this->end->format('M') ? $this->end->format('j') : $this->getMonthDay($this->end)) . ', ' . $this->getYear($this->end);
     }
   }
 
