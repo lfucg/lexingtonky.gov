@@ -8,7 +8,6 @@
         "wikimedia/composer-merge-plugin": "^1.4",
         "drupal/search_api_solr": "^1.2",
         "drush/drush": "^9.2",
-        "drupal/current_page_crumb": "^1.2",
         "drupal/captcha": "^1.0@beta"
     },
     "replace": {

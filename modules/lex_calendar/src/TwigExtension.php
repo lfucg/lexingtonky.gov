@@ -181,7 +181,7 @@ class TwigExtension extends \Twig_Extension {
    *   Date string snippet.
    */
   protected function getYear(\DateTimeInterface $date) {
-    return $date->format('Y') === $this->now->format('Y') ? '' : $date->format('Y');
+    return $date->format('Y');
   }
 
   /**

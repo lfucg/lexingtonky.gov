@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "27282a2f4459c794126c3970b9f0769a",
+    "content-hash": "fab749fa6d354c21aa80df3506082141",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1155,57 +1155,6 @@
             "homepage": "https://www.drupal.org/project/captcha",
             "support": {
                 "source": "http://cgit.drupalcode.org/captcha"
-            }
-        },
-        {
-            "name": "drupal/current_page_crumb",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupal.org/project/current_page_crumb",
-                "reference": "8.x-1.2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/current_page_crumb-8.x-1.2.zip",
-                "reference": "8.x-1.2",
-                "shasum": "1a20b49f9165e36776e9ba665737c8166348cad4"
-            },
-            "require": {
-                "drupal/core": "~8.0"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-1.x": "1.x-dev"
-                },
-                "drupal": {
-                    "version": "8.x-1.2",
-                    "datestamp": "1503937145",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "Greg Boggs",
-                    "homepage": "https://www.drupal.org/user/153069"
-                },
-                {
-                    "name": "rakesh.gectcr",
-                    "homepage": "https://www.drupal.org/user/1177822"
-                }
-            ],
-            "description": "Adds the current page title to the breadcrumb.",
-            "homepage": "https://www.drupal.org/project/current_page_crumb",
-            "support": {
-                "source": "http://cgit.drupalcode.org/current_page_crumb"
             }
         },
         {

@@ -1,6 +1,0 @@
-services:
-  current_page_crumb.breadcrumb:
-    class: Drupal\current_page_crumb\BreadcrumbBuilder
-    parent: system.breadcrumb.default
-    tags:
-      - { name: breadcrumb_builder, priority: 1 }
