@@ -10,12 +10,5 @@
     "issues": "http://drupal.org/project/issues/woot",
     "source": "http://cgit.drupalcode.org/woot"
   },
-  "require": { },
-  "extra": {
-    "drush": {
-      "services": {
-        "drush.services.yml": "^9"
-      }
-    }
-  }
+  "require": { }
 }

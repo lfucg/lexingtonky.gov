@@ -8,5 +8,5 @@
  */
 
 $queue_factory = \Drupal::service('queue');
-$queue = $queue_factory->get('woot_requeue_exception', true);
+$queue = $queue_factory->get('woot_requeue_exception', TRUE);
 $queue->createItem(['foo' => 'bar']);

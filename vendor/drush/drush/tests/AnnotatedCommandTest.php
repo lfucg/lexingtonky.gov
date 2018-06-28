@@ -2,96 +2,111 @@
 
 namespace Unish;
 
-use Webmozart\PathUtil\Path;
-
 /**
  * @group base
  */
-class AnnotatedCommandCase extends CommandUnishTestCase
-{
-    use TestModuleHelperTrait;
+class annotatedCommandCase extends CommandUnishTestCase {
 
-    public function testGlobal()
-    {
-        $globalIncludes = $targetDir = Path::join(__DIR__, 'resources/global-includes');
+  public function testGlobal() {
+    $globalExtensions = $this->setupGlobalExtensionsForTests();
 
-        $options = [];
+    $options = [];
 
-        // We modified the set of available Drush commands; we need to clear the Drush command cache
-        $this->drush('cc', ['drush'], $options);
+    // We modified the set of available Drush commands; we need to clear the Drush command cache
+    $this->drush('cc', array('drush'), $options);
 
-        // drush foobar
-        $options['include'] = "$globalIncludes";
-        $this->drush('foobar', [], $options);
-        $output = $this->getOutput();
-        $this->assertEquals('baz', $output);
+    // drush foobar
+    $options['include'] = "$globalExtensions";
+    $this->drush('foobar', array(), $options);
+    $output = $this->getOutput();
+    $this->assertEquals('baz', $output);
 
-        // Drush foobaz
-        $this->drush('foobaz', [], $options);
-        $output = $this->getOutput();
-        $this->assertEquals('bar', $output);
+    // Clear the Drush command cache again and test again with new includes
+    $this->drush('cc', array('drush'), $options);
 
-        $options = [
-            'yes' => null,
-            'include' => $globalIncludes,
-            'directory' => self::getSandbox(),
-        ];
+    // drush foobar again, except include the 'Commands' folder when passing --include
+    $options['include'] = "$globalExtensions/Commands";
+    $this->drush('foobar', array(), $options);
+    $output = $this->getOutput();
+    $this->assertEquals('baz', $output);
+  }
 
-        $original = getenv('SHELL_INTERACTIVE');
-        $this->setEnv(['SHELL_INTERACTIVE' => 1]);
-        $this->drush('generate', ['foo-example'], $options);
-        $this->setEnv(['SHELL_INTERACTIVE' => $original]);
+  public function testExecute() {
+    $sites = $this->setUpDrupal(1, TRUE);
+    $uri = key($sites);
+    $root = $this->webroot();
+    $options = array(
+      'root' => $root,
+      'uri' => $uri,
+      'yes' => NULL,
+    );
 
-        $target = Path::join($this->getSandbox(), 'foo.php');
-        $actual = trim(file_get_contents($target));
-        $this->assertEquals('Foo.', $actual);
-        unlink($target);
+    // Copy the 'woot' module over to the Drupal site we just set up.
+    $this->setupModulesForTests($root);
+
+    // These are not good asserts, but for the purposes of isolation....
+    $targetDir = $root . DIRECTORY_SEPARATOR . $this->drupalSitewideDirectory() . '/modules/woot';
+    if (UNISH_DRUPAL_MAJOR_VERSION == 8) {
+        $commandFile = $targetDir . "/src/Commands/WootCommands.php";
+    } else {
+        $commandFile = $targetDir . "/Commands/WootCommands.php";
     }
+    $this->assertFileExists(dirname(dirname(dirname($commandFile))));
+    $this->assertFileExists(dirname(dirname($commandFile)));
+    $this->assertFileExists(dirname($commandFile));
+    $this->assertFileExists($commandFile);
 
-    public function testExecute()
-    {
-        $this->setUpDrupal(1, true);
+    // Enable out module. This will also clear the commandfile cache.
+    $this->drush('pm-enable', array('woot'), $options);
 
-        // Copy the 'woot' module over to the Drupal site we just set up.
-        $this->setupModulesForTests(['woot'], Path::join(__DIR__, 'resources/modules/d8'));
+    // In theory this is not necessary, but this test keeps failing.
+    $this->drush('cc', array('drush'), $options);
 
-        // Enable our module. This will also clear the commandfile cache.
-        $this->drush('pm-enable', ['woot']);
+    // drush woot --help
+    $this->drush('woot', array(), $options + ['help' => NULL]);
+    $output = $this->getOutput();
+    $this->assertContains('Woot mightily.', $output);
+    $this->assertContains('Aliases: wt', $output);
 
-        // In theory this is not necessary, but this test keeps failing.
-        // $this->drush('cc', array('drush'), $options);
+    // drush help woot
+    $this->drush('help', array('woot'), $options);
+    $output = $this->getOutput();
+    $this->assertContains('Woot mightily.', $output);
 
-        // Make sure that modules can supply DCG Generators and they work.
-        $optionsExample['answers'] = json_encode([
-            'name' => 'foo',
-            'machine_name' => 'bar',
-        ]);
-        $optionsExample['directory'] = self::getSandbox();
-        $optionsExample['yes'] = null;
-        $original = getenv('SHELL_INTERACTIVE');
-        $this->setEnv(['SHELL_INTERACTIVE' => 1]);
-        $this->drush('generate', ['woot-example'], $optionsExample);
-        $this->setEnv(['SHELL_INTERACTIVE' => $original]);
-        $target = Path::join(self::getSandbox(), '/src/Commands/ExampleBarCommands.php');
-        $actual = trim(file_get_contents($target));
-        $this->assertEquals('ExampleBarCommands says Woot mightily.', $actual);
+    // drush woot
+    $this->drush('woot', array(), $options);
+    $output = $this->getOutput();
+    $this->assertEquals('Woot!', $output);
 
-        // drush woot
-        $this->drush('woot');
-        $output = $this->getOutput();
-        $this->assertEquals('Woot!', $output);
+    // drush my-cat --help
+    $this->drush('my-cat', array(), $options + ['help' => NULL]);
+    $output = $this->getOutput();
+    $this->assertContains('This is the my-cat command', $output);
+    $this->assertContains('bet alpha --flip', $output);
+    $this->assertContains('The first parameter', $output);
+    $this->assertContains('The other parameter', $output);
+    $this->assertContains('Whether or not the second parameter', $output);
+    $this->assertContains('Aliases: c', $output);
 
-        // drush my-cat bet alpha --flip
-        $this->drush('my-cat', ['bet', 'alpha'], ['flip' => null]);
-        $output = $this->getOutput();
-        $this->assertEquals('alphabet', $output);
+    // drush help my-cat
+    $this->drush('help', array('my-cat'), $options);
+    $output = $this->getOutput();
+    $this->assertContains('This is the my-cat command', $output);
 
-        // drush my-cat bet alpha --flip
-        $this->drush('my-cat', ['bet', 'alpha'], ['flip' => null, 'ignored-modules' => 'woot'], null, null, self::EXIT_ERROR);
+    // drush my-cat bet alpha --flip
+    $this->drush('my-cat', array('bet', 'alpha'), $options + ['flip' => NULL]);
+    $output = $this->getOutput();
+    $this->assertEquals('alphabet', $output);
 
-        $this->drush('try-formatters');
-        $output = $this->getOutput();
-        $expected = <<<EOT
+    // drush woot --help with the 'woot' module ignored
+    $this->drush('woot', array(), $options + ['help' => NULL, 'ignored-modules' => 'woot'], NULL, NULL, self::EXIT_ERROR);
+
+    // drush my-cat bet alpha --flip
+    $this->drush('my-cat', array('bet', 'alpha'), $options + ['flip' => NULL, 'ignored-modules' => 'woot'], NULL, NULL, self::EXIT_ERROR);
+
+    $this->drush('try-formatters', array(), $options);
+    $output = $this->getOutput();
+    $expected = <<<EOT
  ------ ------ -------
   I      II     III
  ------ ------ -------
@@ -101,15 +116,11 @@ class AnnotatedCommandCase extends CommandUnishTestCase
   Uno    Dos    Tres
  ------ ------ -------
 EOT;
-        $this->assertEquals(trim(preg_replace('#[ \n]+#', ' ', $expected)), trim(preg_replace('#[ \n]+#', ' ', $output)));
+    $this->assertEquals(trim(preg_replace('#[ \n]+#', ' ', $expected)), trim(preg_replace('#[ \n]+#', ' ', $output)));
 
-        $this->drush('try-formatters --format=yaml --fields=III,II', [], [], null, null, self::EXIT_SUCCESS);
-        $output = $this->getOutput();
-        // TODO: If there are different versions of symfony/yaml in Drush and Drupal,
-        // then we can get indentation errors. Ignore that in these tests; this is not
-        // a problem with site-local Drush.
-        $output = str_replace('    ', '  ', $output);
-        $expected = <<<EOT
+    $this->drush('try-formatters --format=yaml --fields=III,II', array(), $options, NULL, NULL, self::EXIT_SUCCESS);
+    $output = $this->getOutput();
+    $expected = <<<EOT
 en:
   third: Three
   second: Two
@@ -123,96 +134,56 @@ es:
   third: Tres
   second: Dos
 EOT;
-        $this->assertEquals($expected, $output);
+    $this->assertEquals($expected, $output);
 
-        $this->drush('try-formatters', [], ['format' => 'json']);
-        $data = $this->getOutput();
-        $expected = <<<EOT
-{
-    "en": {
-        "first": "One",
-        "second": "Two",
-        "third": "Three"
-    },
-    "de": {
-        "first": "Eins",
-        "second": "Zwei",
-        "third": "Drei"
-    },
-    "jp": {
-        "first": "Ichi",
-        "second": "Ni",
-        "third": "San"
-    },
-    "es": {
-        "first": "Uno",
-        "second": "Dos",
-        "third": "Tres"
-    }
-}
+    $this->drush('try-formatters', array(), $options + ['backend' => NULL]);
+    $parsed = $this->parse_backend_output($this->getOutput());
+    $data = $parsed['object'];
+    $expected = <<<EOT
+{"en":{"first":"One","second":"Two","third":"Three"},"de":{"first":"Eins","second":"Zwei","third":"Drei"},"jp":{"first":"Ichi","second":"Ni","third":"San"},"es":{"first":"Uno","second":"Dos","third":"Tres"}}
 EOT;
-        $this->assertEquals($expected, $data);
+    $this->assertEquals($expected, json_encode($data));
 
-        // drush help my-cat
-        $this->drush('help', ['my-cat']);
-        $output = $this->getOutput();
-        $this->assertContains('bet alpha --flip Concatinate "alpha" and "bet".', $output);
-        $this->assertContains('Aliases: c', $output);
+    // drush try-formatters --help
+    $this->drush('try-formatters', array(), $options + ['help' => NULL], NULL, NULL, self::EXIT_SUCCESS);
+    $output = $this->getOutput();
+    $this->assertContains('Demonstrate formatters', $output);
+    $this->assertContains('try:formatters --fields=first,third', $output);
+    $this->assertContains('try:formatters --fields=III,II', $output);
+    $this->assertContains('--fields=<first, second, third>', $output);
+    $this->assertContains('Fields to output. All available', $output);
+    $this->assertContains('--format=<table>', $output);
+    $this->assertContains('Select output format. Available:', $output);
+    $this->assertContains('Aliases: try-formatters', $output);
 
-        // drush help woot
-        $this->drush('help', ['woot']);
-        $output = $this->getOutput();
-        $this->assertContains('Woot mightily.', $output);
-
-        // TODO: support console.command commands
-        $this->drush('annotated:greet symfony');
+    // If we are running Drupal version 8 or later, then also check to
+    // see if the demo:greet and annotated:greet commands are available.
+    if (UNISH_DRUPAL_MAJOR_VERSION >= 8) {
+        $this->drush('demo:greet symfony', array(), $options, NULL, NULL, self::EXIT_SUCCESS);
         $output = $this->getOutput();
         $this->assertEquals('Hello symfony', $output);
 
-        $this->drush('demo:greet symfony');
+        $this->drush('annotated:greet symfony', array(), $options, NULL, NULL, self::EXIT_SUCCESS);
         $output = $this->getOutput();
         $this->assertEquals('Hello symfony', $output);
-
-        $this->markTestSkipped('--help not working yet.');
-
-        // drush my-cat --help
-        $this->drush('my-cat', [], ['help' => null]);
-        $output = $this->getOutput();
-        $this->assertContains('my-cat bet alpha --flip', $output);
-        $this->assertContains('The first parameter', $output);
-        $this->assertContains('The other parameter', $output);
-        $this->assertContains('Whether or not the second parameter', $output);
-
-        // drush woot --help
-        $this->drush('woot', [], ['help' => null]);
-        $output = $this->getOutput();
-        $this->assertContains('Usage:', $output);
-        $this->assertContains('woot [options]', $output);
-        $this->assertContains('Woot mightily.', $output);
-
-        // drush try-formatters --help
-        $this->drush('try-formatters', [], ['help' => null]);
-        $output = $this->getOutput();
-        $this->assertContains('Demonstrate formatters', $output);
-        $this->assertContains('try:formatters --fields=first,third', $output);
-        $this->assertContains('try:formatters --fields=III,II', $output);
-        // $this->assertContains('--fields=<first, second, third>', $output);
-        $this->assertContains('Available fields:', $output);
-        $this->assertContains('[default: "table"]', $output);
-
-        $this->markTestSkipped('--ignored-modules not supported yet');
-
-        // TODO: Support --ignored-modules
-        // drush woot --help with the 'woot' module ignored
-        $this->drush('woot', [], ['help' => null, 'ignored-modules' => 'woot'], null, null, self::EXIT_ERROR);
     }
 
-    public function setupGlobalExtensionsForTests()
-    {
-        $globalExtension = __DIR__ . '/resources/global-includes';
-        $targetDir = Path::join(self::getSandbox(), 'global-includes');
-        $this->mkdir($targetDir);
-        $this->recursiveCopy($globalExtension, $targetDir);
-        return $targetDir;
-    }
+    // Flush the Drush cache so that our 'woot' command is not cached.
+    $this->drush('cache-clear', array('drush'), $options, NULL, NULL, self::EXIT_SUCCESS);
+  }
+
+  public function setupGlobalExtensionsForTests() {
+    $globalExtension = __DIR__ . '/resources/global-includes';
+    $targetDir = UNISH_SANDBOX . DIRECTORY_SEPARATOR . 'global-includes';
+    $this->mkdir($targetDir);
+    $this->recursive_copy($globalExtension, $targetDir);
+    return $targetDir;
+  }
+
+  public function setupModulesForTests($root) {
+    $wootModule = __DIR__ . '/resources/modules/d' . UNISH_DRUPAL_MAJOR_VERSION . '/woot';
+    $targetDir = $root . DIRECTORY_SEPARATOR . $this->drupalSitewideDirectory() . '/modules/woot';
+    $this->mkdir($targetDir);
+    $this->recursive_copy($wootModule, $targetDir);
+  }
 }

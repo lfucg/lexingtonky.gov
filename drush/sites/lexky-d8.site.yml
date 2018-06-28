@@ -1,0 +1,84 @@
+core-upgd:
+  host: appserver.core-upgd.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in
+  options:
+    db-allows-remote: true
+    db-url: 'mysql://pantheon:0a1430e671a345878626c915709854a1@dbserver.core-upgd.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in:16001/pantheon'
+  paths:
+    files: files
+    drush-script: drush
+  uri: core-upgd-lexky-d8.pantheonsite.io
+  user: core-upgd.085efc9d-6f4f-4d02-a80b-9d5cf086a982
+  ssh:
+    options: '-p 2222 -o "AddressFamily inet"'
+cse:
+  host: appserver.cse.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in
+  options:
+    db-allows-remote: true
+    db-url: 'mysql://pantheon:6938c45f0e304b638cc35469b9c834a0@dbserver.cse.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in:10234/pantheon'
+  paths:
+    files: files
+    drush-script: drush
+  uri: cse-lexky-d8.pantheonsite.io
+  user: cse.085efc9d-6f4f-4d02-a80b-9d5cf086a982
+  ssh:
+    options: '-p 2222 -o "AddressFamily inet"'
+dev:
+  host: appserver.dev.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in
+  options:
+    db-allows-remote: true
+    db-url: 'mysql://pantheon:75e9df57ab794ea981f0867a915fb0a5@dbserver.dev.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in:10166/pantheon'
+  paths:
+    files: files
+    drush-script: drush
+  uri: dev-lexky-d8.pantheonsite.io
+  user: dev.085efc9d-6f4f-4d02-a80b-9d5cf086a982
+  ssh:
+    options: '-p 2222 -o "AddressFamily inet"'
+live:
+  host: appserver.live.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in
+  options:
+    db-allows-remote: true
+    db-url: 'mysql://pantheon:78998c6907fa4bbe8e7b0b8ef5938799@dbserver.live.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in:10304/pantheon'
+  paths:
+    files: files
+    drush-script: drush
+  uri: lexingtonky.gov
+  user: live.085efc9d-6f4f-4d02-a80b-9d5cf086a982
+  ssh:
+    options: '-p 2222 -o "AddressFamily inet"'
+search16751:
+  host: appserver.search16751.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in
+  options:
+    db-allows-remote: true
+    db-url: 'mysql://pantheon:786b3cf0673b4f6dae80d5ea5b202933@dbserver.search16751.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in:13175/pantheon'
+  paths:
+    files: files
+    drush-script: drush
+  uri: search16751-lexky-d8.pantheonsite.io
+  user: search16751.085efc9d-6f4f-4d02-a80b-9d5cf086a982
+  ssh:
+    options: '-p 2222 -o "AddressFamily inet"'
+test:
+  host: appserver.test.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in
+  options:
+    db-allows-remote: true
+    db-url: 'mysql://pantheon:d10612d34d4e4a979174b95bd4f8e103@dbserver.test.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in:10274/pantheon'
+  paths:
+    files: files
+    drush-script: drush
+  uri: foooo.com
+  user: test.085efc9d-6f4f-4d02-a80b-9d5cf086a982
+  ssh:
+    options: '-p 2222 -o "AddressFamily inet"'
+upgd-851:
+  host: appserver.upgd-851.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in
+  options:
+    db-allows-remote: true
+    db-url: 'mysql://pantheon:5f76a49274ad495eb5b31cc6c58c4766@dbserver.upgd-851.085efc9d-6f4f-4d02-a80b-9d5cf086a982.drush.in:15007/pantheon'
+  paths:
+    files: files
+    drush-script: drush
+  uri: upgd-851-lexky-d8.pantheonsite.io
+  user: upgd-851.085efc9d-6f4f-4d02-a80b-9d5cf086a982
+  ssh:
+    options: '-p 2222 -o "AddressFamily inet"'
