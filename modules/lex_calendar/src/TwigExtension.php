@@ -381,9 +381,9 @@ class TwigExtension extends \Twig_Extension {
       return $this->parseRecurringRange();
     }
     else {
-      $return = $this->getDate($this->start);
+      $return = $this->start->format('M j');
       if (!$this->allDay) {
-        $return .= ', ' . $this->getTime($this->start)
+        $return .= ', ' . $this->start->format('Y') . ', ' . $this->getTime($this->start)
           . $this->conditionalAppendMeridiem($this->start, $this->end)
           . ' &#8211; ' . $this->getTime($this->end)
           . $this->appendMerdiem($this->end);
@@ -393,9 +393,9 @@ class TwigExtension extends \Twig_Extension {
           $return .= ' &#8211; ' . ($this->start->format('M') === $this->end->format('M') ? $this->end->format('j') : $this->getMonthDay($this->end));
         }
 
-        if ($this->start->format('Y') !== $this->end->format('Y') && $this->now->format('Y') !== $this->end->format('Y')) {
-          $return .= ', ' . $this->end->format('Y');
-        }
+          $return .= ', ' . $this->start->format('Y');
+
+
       }
 
       return $return;

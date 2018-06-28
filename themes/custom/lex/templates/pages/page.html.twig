@@ -28,15 +28,14 @@
 
 {% block page_hero %}
   {% block hero_start %}
-  {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
-    {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
-    {% set hero_alt = node.field_lex_custom_banner_image.alt %}
-  {% else %}
-    {% set hero = "/themes/custom/lex/img/lexington-hero-interior.jpg" %}
-    {% set hero_alt = 'Image of Thoroughbred Park with race horse statues charging towards the viewer.' %}
-  {% endif %}
-  <div class="lex-hero" style="background-image: url({{ hero }})">
-    <img src="{{ hero }}" alt="{{ hero_alt }}">
+    {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
+      {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
+      {% set hero_alt = node.field_lex_custom_banner_image.alt %}
+      <div class="lex-hero" style="background-image: url({{ hero }})">
+          <img src="{{ hero }}" alt="{{ hero_alt }}">
+    {% else %}
+      {{ drupal_view('headers', 'block_2') }}
+    {% endif %}
   {% endblock %}
     <div>
       {% block page_hero_body %}

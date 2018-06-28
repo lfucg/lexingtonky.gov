@@ -4,12 +4,12 @@
   {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
     {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
     {% set hero_alt = node.field_lex_custom_banner_image.alt %}
+    <div class="lex-hero" style="background-image: url({{ hero }})">
+        <img src="{{ hero }}" alt="{{ hero_alt }}">
   {% else %}
-    {% set hero = "/themes/custom/lex_police/img/PoliceBanner.png" %}
-    {% set hero_alt = 'Image of a Lexington Police Officer in her car.' %}
+    {{ drupal_view('headers', 'block_1') }}
   {% endif %}
-  <div class="lex-hero" style="background-image: url({{ hero }})">
-    <img src="{{ hero }}" alt="{{ hero_alt }}">
+
 {% endblock %}
 
 {% block sidebar %}
