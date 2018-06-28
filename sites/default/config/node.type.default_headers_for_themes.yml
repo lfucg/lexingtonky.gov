@@ -1,0 +1,17 @@
+uuid: 0197d22c-642a-4a42-87fd-2ed8b62817b1
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Default Headers for Themes'
+type: default_headers_for_themes
+description: 'Upload a new default header for the themes of LexingtonKY.gov'
+help: ''
+new_revision: true
+preview_mode: 1
+display_submitted: true

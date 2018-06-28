@@ -1,0 +1,21 @@
+uuid: 86aade31-4d63-4464-b3e7-b1eb55729f88
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_theme
+    - node.type.default_headers_for_themes
+  module:
+    - options
+id: node.default_headers_for_themes.field_theme
+field_name: field_theme
+entity_type: node
+bundle: default_headers_for_themes
+label: Theme
+description: 'Select which custom theme to apply the image to by default. This image will show up for the theme when a page doesn''t have a hero image on it. '
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string
