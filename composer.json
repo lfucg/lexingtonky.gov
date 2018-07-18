@@ -9,7 +9,8 @@
         "drupal/search_api_solr": "^1.2",
         "drush/drush": "8.1.16",
         "drupal/captcha": "^1.0@beta",
-        "drupal/twig_tweak": "^2.0"
+        "drupal/twig_tweak": "^2.0",
+        "drupal/admin_toolbar": "^1.24"
     },
     "replace": {
         "drupal/core": "^8.4"

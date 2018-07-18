@@ -1,0 +1,18 @@
+uuid: d49413b1-3522-4814-b120-cce697cd5515
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.resource_links
+id: node.resource_links.title
+field_name: title
+entity_type: node
+bundle: resource_links
+label: 'Title (Display Name)'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

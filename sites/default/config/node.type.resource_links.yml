@@ -1,0 +1,17 @@
+uuid: b0633d8c-3759-4bf7-9524-a260953bdc1e
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Resource Links'
+type: resource_links
+description: 'Add links to internal and external pages for population in a view (i.e. ONE Lexington Resources page)'
+help: 'Enter what you want users to be able to search for. '
+new_revision: false
+preview_mode: 1
+display_submitted: true

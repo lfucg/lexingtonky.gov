@@ -1,0 +1,30 @@
+uuid: cdf92038-a195-49b3-884a-6d4d8cfd5902
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.resources_list
+  module:
+    - system
+    - views
+  theme:
+    - lex
+id: views_block__resources_list_one_lex_resources
+theme: lex
+region: after_content
+weight: 0
+provider: null
+plugin: 'views_block:resources_list-one_lex_resources'
+settings:
+  id: 'views_block:resources_list-one_lex_resources'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: /onelex/resources
+    negate: false
+    context_mapping: {  }
