@@ -19,12 +19,12 @@ settings:
   id: 'views_block:resources_list-one_lex_resources'
   label: ''
   provider: views
-  label_display: visible
+  label_display: '0'
   views_label: ''
   items_per_page: none
 visibility:
   request_path:
     id: request_path
-    pages: /onelex/resources
+    pages: /onelexresources
     negate: false
     context_mapping: {  }

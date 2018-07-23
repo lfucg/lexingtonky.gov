@@ -56,7 +56,14 @@ display:
           items_per_page: null
           offset: 0
       style:
-        type: default
+        type: html_list
+        options:
+          grouping: {  }
+          row_class: 'lex-filter-item lex-card'
+          default_row_class: false
+          type: ul
+          wrapper_class: ' usa-unstyled-list'
+          class: 'list lex-card-title lex-card-title-medium'
       row:
         type: fields
       fields:
@@ -134,7 +141,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "<li class=\"lex-card\">\n\t<a href=\"{{ field_link_to___uri }}\" hreflang=\"en\">{{title}}</a>\n</li>"
+            text: '<a href="{{ field_link_to___uri }}" hreflang="en">{{title}}</a>'
             make_link: false
             path: ''
             absolute: false
@@ -159,13 +166,13 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
-          element_class: ''
+          element_type: '0'
+          element_class: 'list lex-card-title lex-card-title-medium'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
+          element_wrapper_type: span
+          element_wrapper_class: js-lex-filter-item
           element_default_classes: false
           empty: ''
           hide_empty: false
