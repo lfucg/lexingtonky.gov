@@ -60,11 +60,11 @@
   /* duplicated in browse-columns.js, lex-gis.js */
   $.LexingtonFilterBlock(document.getElementsByClassName('js-lex-filter-block')[0]);
 
-  console.log('cache busted');
+
   // Now correct titles and search terms on the search pages.
   if ($('body.path-search')) {
     var search = getParameterByName('search_api_fulltext');
-console.log(search);
+    // console.log(search);
     if (search) {
       $('input[type="search"]').val(search);
       $('h1').append(' for "' + search + '"');

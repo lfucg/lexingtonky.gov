@@ -1,0 +1,21 @@
+uuid: 3355b062-87fe-45e8-a3a9-466d67215af5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_resources_list
+    - node.type.resource_links
+  module:
+    - options
+id: node.resource_links.field_resources_list
+field_name: field_resources_list
+entity_type: node
+bundle: resource_links
+label: 'Resources List'
+description: 'Choose from the dropdown the list to associate the Resource with.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string
