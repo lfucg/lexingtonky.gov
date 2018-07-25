@@ -21,8 +21,8 @@
     var political = L.esri.query({url: 'https://maps.lexingtonky.gov/lfucggis/rest/services/political/MapServer/1'});
 
     var handleFindAddressResponse = function(error, featureCollection, response) {
-      var responseJson = JSON.parse(error);
-      var address = responseJson.locations[0].feature.geometry;
+      var responseJson = error;
+      var address = responseJson.candidates[0].location;
 
         political
           .contains(L.latLng([address.y, address.x]))
@@ -45,7 +45,7 @@
           f: 'json'
         }, function(data) {
           var suggestions = [];
-          JSON.parse(data).suggestions.forEach(function(suggestion) {
+          data.suggestions.forEach(function(suggestion) {
             // sometimes bounding box includes nearby cities
             if (suggestion.text.match('Lexington')) { suggestions.push(suggestion.text); }
           });
@@ -54,12 +54,12 @@
       },
       select: function( event, ui ) {
         $addressInput.addClass('loading');
-        $.get("https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/find", {
+        $.get("https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates", {
           outSr: 4326,
           forStorage: false,
           outFields: '*',
           maxLocations: 5,
-          text: ui.item.value,
+          singleLine: ui.item.value,
           f: 'json'
         }, handleFindAddressResponse);
       },
