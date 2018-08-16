@@ -9,9 +9,10 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\workbench_moderation\ModerationInformation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Defines a class for making the edit tab use 'Edit draft' or 'New draft'
+ * Defines a class for making the edit tab use 'Edit draft' or 'New draft'.
  */
 class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterface {
 
@@ -77,10 +78,10 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
   /**
    * {@inheritdoc}
    */
-  public function getTitle() {
+  public function getTitle(Request $request = NULL) {
     if (!$this->moderationInfo->isModeratableEntity($this->entity)) {
       // Moderation isn't enabled.
-      return parent::getTitle();
+      return parent::getTitle($request);
     }
 
     // @todo write a test for this.
