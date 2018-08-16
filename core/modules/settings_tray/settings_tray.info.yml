@@ -2,15 +2,9 @@ name: 'Settings Tray'
 type: module
 description: 'Provides a sidebar to configure blocks on the page.'
 package: Core
-# version: VERSION
-# core: 8.x
+version: VERSION
+core: 8.x
 dependencies:
   - block
   - toolbar
   - contextual
-
-# Information added by Drupal.org packaging script on 2018-03-28
-version: '8.5.1'
-core: '8.x'
-project: 'drupal'
-datestamp: 1522264150

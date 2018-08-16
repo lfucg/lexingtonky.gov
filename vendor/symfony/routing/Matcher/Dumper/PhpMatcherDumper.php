@@ -11,10 +11,10 @@
 
 namespace Symfony\Component\Routing\Matcher\Dumper;
 
+use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
 /**
  * PhpMatcherDumper creates a PHP class able to match URLs for a given set of routes.
@@ -153,11 +153,10 @@ EOF;
             }
         }
 
-        if ('' === $code) {
-            $code .= "        if ('/' === \$pathinfo) {\n";
-            $code .= "            throw new Symfony\Component\Routing\Exception\NoConfigurationException();\n";
-            $code .= "        }\n";
-        }
+        // used to display the Welcome Page in apps that don't define a homepage
+        $code .= "        if ('/' === \$pathinfo && !\$allow) {\n";
+        $code .= "            throw new Symfony\Component\Routing\Exception\NoConfigurationException();\n";
+        $code .= "        }\n";
 
         return $code;
     }
@@ -237,10 +236,10 @@ EOF;
         $hostMatches = false;
         $methods = $route->getMethods();
 
-        $supportsTrailingSlash = $supportsRedirections && (!$methods || in_array('GET', $methods));
+        $supportsTrailingSlash = $supportsRedirections && (!$methods || \in_array('GET', $methods));
         $regex = $compiledRoute->getRegex();
 
-        if (!count($compiledRoute->getPathVariables()) && false !== preg_match('#^(.)\^(?P<url>.*?)\$\1#'.('u' === substr($regex, -1) ? 'u' : ''), $regex, $m)) {
+        if (!\count($compiledRoute->getPathVariables()) && false !== preg_match('#^(.)\^(?P<url>.*?)\$\1#'.('u' === substr($regex, -1) ? 'u' : ''), $regex, $m)) {
             if ($supportsTrailingSlash && '/' === substr($m['url'], -1)) {
                 $conditions[] = sprintf('%s === $trimmedPathinfo', var_export(rtrim(str_replace('\\', '', $m['url']), '/'), true));
                 $hasTrailingSlash = true;
@@ -280,7 +279,7 @@ EOF;
         $gotoname = 'not_'.preg_replace('/[^A-Za-z0-9_]/', '', $name);
 
         // the offset where the return value is appended below, with indendation
-        $retOffset = 12 + strlen($code);
+        $retOffset = 12 + \strlen($code);
 
         // optimize parameters array
         if ($matches || $hostMatches) {
@@ -319,7 +318,7 @@ EOF;
         }
 
         if ($methods) {
-            $methodVariable = in_array('GET', $methods) ? '$canonicalMethod' : '$requestMethod';
+            $methodVariable = \in_array('GET', $methods) ? '$canonicalMethod' : '$requestMethod';
             $methods = implode("', '", $methods);
         }
 
@@ -363,7 +362,7 @@ EOF;
 EOF;
             }
         } elseif ($methods) {
-                $code .= <<<EOF
+            $code .= <<<EOF
             if (!in_array($methodVariable, array('$methods'))) {
                 \$allow = array_merge(\$allow, array('$methods'));
                 goto $gotoname;

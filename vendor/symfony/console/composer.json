@@ -32,7 +32,11 @@
         "symfony/event-dispatcher": "",
         "symfony/lock": "",
         "symfony/process": "",
-        "psr/log": "For using the console logger"
+        "psr/log-implementation": "For using the console logger"
+    },
+    "conflict": {
+        "symfony/dependency-injection": "<3.4",
+        "symfony/process": "<3.3"
     },
     "conflict": {
         "symfony/dependency-injection": "<3.4",

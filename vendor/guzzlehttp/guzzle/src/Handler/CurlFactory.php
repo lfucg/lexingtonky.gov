@@ -394,7 +394,7 @@ class CurlFactory implements CurlFactoryInterface
         if (isset($options['force_ip_resolve'])) {
             if ('v4' === $options['force_ip_resolve']) {
                 $conf[CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V4;
-            } elseif ('v6' === $options['force_ip_resolve']) {
+            } else if ('v6' === $options['force_ip_resolve']) {
                 $conf[CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V6;
             }
         }
