@@ -13,6 +13,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\image\Entity\ImageStyle;
@@ -29,25 +30,29 @@ class TwigExtension extends \Twig_Extension {
    * {@inheritdoc}
    */
   public function getFunctions() {
+    $all_options = ['needs_environment' => TRUE, 'needs_context' => TRUE];
+    $context_options = ['needs_context' => TRUE];
     return [
       new \Twig_SimpleFunction('drupal_view', 'views_embed_view'),
       new \Twig_SimpleFunction('drupal_view_result', 'views_get_view_result'),
       new \Twig_SimpleFunction('drupal_block', [$this, 'drupalBlock']),
       new \Twig_SimpleFunction('drupal_region', [$this, 'drupalRegion']),
       new \Twig_SimpleFunction('drupal_entity', [$this, 'drupalEntity']),
+      new \Twig_SimpleFunction('drupal_entity_form', [$this, 'drupalEntityForm']),
       new \Twig_SimpleFunction('drupal_field', [$this, 'drupalField']),
       new \Twig_SimpleFunction('drupal_menu', [$this, 'drupalMenu']),
       new \Twig_SimpleFunction('drupal_form', [$this, 'drupalForm']),
       new \Twig_SimpleFunction('drupal_image', [$this, 'drupalImage']),
       new \Twig_SimpleFunction('drupal_token', [$this, 'drupalToken']),
       new \Twig_SimpleFunction('drupal_config', [$this, 'drupalConfig']),
-      new \Twig_SimpleFunction('drupal_dump', [$this, 'drupalDump']),
-      new \Twig_SimpleFunction('dd', [$this, 'drupalDump']),
+      new \Twig_SimpleFunction('drupal_dump', [$this, 'drupalDump'], $context_options),
+      new \Twig_SimpleFunction('dd', [$this, 'drupalDump'], $context_options),
       new \Twig_SimpleFunction('drupal_title', [$this, 'drupalTitle']),
       new \Twig_SimpleFunction('drupal_url', [$this, 'drupalUrl']),
       new \Twig_SimpleFunction('drupal_link', [$this, 'drupalLink']),
       new \Twig_SimpleFunction('drupal_messages', [$this, 'drupalMessages']),
       new \Twig_SimpleFunction('drupal_breadcrumb', [$this, 'drupalBreadcrumb']),
+      new \Twig_SimpleFunction('drupal_breakpoint', [$this, 'drupalBreakpoint'], $all_options),
     ];
   }
 
@@ -133,7 +138,7 @@ class TwigExtension extends \Twig_Extension {
       // Preserve cache metadata of empty blocks.
       $build = [
         '#markup' => '',
-        '#cache' => $content['#cache'],
+        '#cache' => isset($content['#cache']) ? $content['#cache'] : [],
       ];
     }
 
@@ -217,6 +222,39 @@ class TwigExtension extends \Twig_Extension {
     if ($entity && (!$check_access || $entity->access('view'))) {
       $render_controller = $entity_type_manager->getViewBuilder($entity_type);
       return $render_controller->view($entity, $view_mode, $langcode);
+    }
+  }
+
+  /**
+   * Gets the built and processed entity form for the given entity type.
+   *
+   * @param string $entity_type
+   *   The entity type.
+   * @param mixed $id
+   *   (optional) The ID of the entity to build. If empty then new entity will
+   *   be created.
+   * @param string $form_mode
+   *   (optional) The mode identifying the form variation to be returned.
+   * @param array $values
+   *   (optional) An array of values to set, keyed by property name.
+   * @param bool $check_access
+   *   (Optional) Indicates that access check is required.
+   *
+   * @return array
+   *   The processed form for the given entity type and form mode.
+   */
+  public function drupalEntityForm($entity_type, $id = NULL, $form_mode = 'default', array $values = [], $check_access = TRUE) {
+    $entity_storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+    if ($id) {
+      $entity = $entity_storage->load($id);
+      $operation = 'update';
+    }
+    else {
+      $entity = $entity_storage->create($values);
+      $operation = 'create';
+    }
+    if ($entity && (!$check_access || $entity->access($operation))) {
+      return \Drupal::service('entity.form_builder')->getForm($entity, $form_mode);
     }
   }
 
@@ -422,29 +460,19 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Dumps information about variables.
    *
-   * @param mixed $var
-   *   The variable to dump.
+   * @param array $context
+   *   Variables from the Twig template.
+   * @param mixed $variable
+   *   (Optional) The variable to dump.
    */
-  public function drupalDump($var) {
+  public function drupalDump(array $context, $variable = NULL) {
     $var_dumper = '\Symfony\Component\VarDumper\VarDumper';
     if (class_exists($var_dumper)) {
-      call_user_func($var_dumper . '::dump', $var);
+      call_user_func($var_dumper . '::dump', func_num_args() == 1 ? $context : $variable);
     }
     else {
       trigger_error('Could not dump the variable because symfony/var-dumper component is not installed.', E_USER_WARNING);
     }
-  }
-
-  /**
-   * An alias for self::drupalDump().
-   *
-   * @param mixed $var
-   *   The variable to dump.
-   *
-   * @see \Drupal\twig_tweak\TwigExtension::drupalDump();
-   */
-  public function dd($var) {
-    $this->drupalDump($var);
   }
 
   /**
@@ -508,6 +536,12 @@ class TwigExtension extends \Twig_Extension {
   public function drupalLink($text, $user_input, array $options = [], $check_access = FALSE) {
     $url = $this->drupalUrl($user_input, $options, $check_access);
     if ($url) {
+      // The text has been processed by twig already, convert it to a safe
+      // object for the render system.
+      // @see \Drupal\Core\Template\TwigExtension::getLink()
+      if ($text instanceof \Twig_Markup) {
+        $text = Markup::create($text);
+      }
       return Link::fromTextAndUrl($text, $url);
     }
   }
@@ -526,6 +560,23 @@ class TwigExtension extends \Twig_Extension {
     return \Drupal::service('breadcrumb')
       ->build(\Drupal::routeMatch())
       ->toRenderable();
+  }
+
+  /**
+   * Emits a breakpoint to the debug client.
+   *
+   * @param \Twig_Environment $environment
+   *   The Twig environment instance.
+   * @param array $context
+   *   Variables from the Twig template.
+   */
+  public function drupalBreakpoint(\Twig_Environment $environment, array $context) {
+    if (function_exists('xdebug_break')) {
+      xdebug_break();
+    }
+    else {
+      trigger_error('Could not make a break because xdebug is not available.', E_USER_WARNING);
+    }
   }
 
   /**

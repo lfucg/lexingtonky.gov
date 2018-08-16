@@ -76,7 +76,7 @@ class ReflectionLanguageConstruct extends \ReflectionFunctionAbstract
      */
     public function __construct($keyword)
     {
-        if (self::isLanguageConstruct($keyword)) {
+        if (!self::isLanguageConstruct($keyword)) {
             throw new \InvalidArgumentException('Unknown language construct: ' . $keyword);
         }
 
@@ -122,10 +122,22 @@ class ReflectionLanguageConstruct extends \ReflectionFunctionAbstract
     {
         $params = [];
         foreach (self::$languageConstructs[$this->keyword] as $parameter => $opts) {
-            array_push($params, new ReflectionLanguageConstructParameter($this->keyword, $parameter, $opts));
+            \array_push($params, new ReflectionLanguageConstructParameter($this->keyword, $parameter, $opts));
         }
 
         return $params;
+    }
+
+    /**
+     * Gets the file name from a language construct.
+     *
+     * (Hint: it always returns false)
+     *
+     * @return bool false
+     */
+    public function getFileName()
+    {
+        return false;
     }
 
     /**
@@ -147,6 +159,6 @@ class ReflectionLanguageConstruct extends \ReflectionFunctionAbstract
      */
     public static function isLanguageConstruct($keyword)
     {
-        return array_key_exists($keyword, self::$languageConstructs);
+        return \array_key_exists($keyword, self::$languageConstructs);
     }
 }

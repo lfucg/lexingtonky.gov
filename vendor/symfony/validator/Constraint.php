@@ -225,16 +225,6 @@ abstract class Constraint
     }
 
     /**
-     * @param string $option The option name
-     *
-     * @return bool
-     */
-    public function __isset($option)
-    {
-        return 'groups' === $option;
-    }
-
-    /**
      * Adds the given group if this constraint is in the Default group.
      *
      * @param string $group

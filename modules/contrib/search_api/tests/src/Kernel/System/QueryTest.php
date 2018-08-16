@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\search_api\Kernel\System;
 
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
@@ -102,18 +103,15 @@ class QueryTest extends KernelTestBase {
     $this->assertEquals($level, $query->getProcessingLevel());
     $query->addTag('andrew_hill');
 
-    // @todo Use \Drupal::messenger() once we depend on Drupal 8.5+. See
-    //   #2931730.
-    drupal_get_messages();
+    \Drupal::messenger()->deleteAll();
     $query->execute();
-    $messages = drupal_get_messages();
+    $messages = \Drupal::messenger()->all();
+    \Drupal::messenger()->deleteAll();
 
     $methods = $this->getCalledMethods('processor');
     if ($hooks_and_processors_invoked) {
-      // @todo Replace "status" with MessengerInterface::TYPE_STATUS once we
-      //   depend on Drupal 8.5+. See #2931730.
       $expected = [
-        'status' => [
+        MessengerInterface::TYPE_STATUS => [
           'Funky blue note',
           'Search id: ',
           'Stepping into tomorrow',
@@ -223,6 +221,33 @@ class QueryTest extends KernelTestBase {
 
     $query = $this->index->query()->setSearchId('search_api_test');
     $this->assertInstanceOf('Drupal\search_api_test\Plugin\search_api\display\TestDisplay', $query->getDisplayPlugin());
+  }
+
+  /**
+   * Tests the getOriginalQuery() method.
+   */
+  public function testGetOriginalQuery() {
+    $this->getCalledMethods('backend');
+
+    $query = $this->index->query()
+      ->addCondition('search_api_id', 2, '<>');
+    $query_clone_1 = $query->getOriginalQuery();
+    $this->assertEquals($query, $query_clone_1);
+    $this->assertNotSame($query, $query_clone_1);
+
+    $query->sort('search_api_id');
+    $query_clone_2 = clone $query;
+    $query->execute();
+    $methods = $this->getCalledMethods('backend');
+    $this->assertEquals(['search'], $methods);
+    $this->assertFalse($query_clone_1->hasExecuted());
+
+    $original_query = $query->getOriginalQuery();
+    $this->assertEquals($query_clone_2, $original_query);
+    $this->assertFalse($original_query->hasExecuted());
+    $original_query->execute();
+    $methods = $this->getCalledMethods('backend');
+    $this->assertEquals(['search'], $methods);
   }
 
 }

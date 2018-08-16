@@ -8,7 +8,7 @@ use Drupal\Core\ParamConverter\EntityConverter;
 use Drupal\Core\ParamConverter\ParamConverterInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\search_api\UnsavedIndexConfiguration;
-use Drupal\user\SharedTempStoreFactory;
+use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -24,7 +24,7 @@ class SearchApiConverter extends EntityConverter implements ParamConverterInterf
   /**
    * The shared temporary storage factory.
    *
-   * @var \Drupal\user\SharedTempStoreFactory
+   * @var \Drupal\Core\TempStore\SharedTempStoreFactory
    */
   protected $tempStoreFactory;
 
@@ -40,7 +40,7 @@ class SearchApiConverter extends EntityConverter implements ParamConverterInterf
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
-   * @param \Drupal\user\SharedTempStoreFactory $temp_store_factory
+   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $temp_store_factory
    *   The factory for the temp store object.
    * @param \Drupal\Core\Session\AccountInterface $user
    *   The current user.

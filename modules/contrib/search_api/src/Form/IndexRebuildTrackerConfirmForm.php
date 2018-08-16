@@ -5,11 +5,23 @@ namespace Drupal\search_api\Form;
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a confirm form for clearing an index.
  */
 class IndexRebuildTrackerConfirmForm extends EntityConfirmFormBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    $form = parent::create($container);
+
+    $form->setMessenger($container->get('messenger'));
+
+    return $form;
+  }
 
   /**
    * {@inheritdoc}
@@ -39,7 +51,8 @@ class IndexRebuildTrackerConfirmForm extends EntityConfirmFormBase {
     /** @var \Drupal\search_api\IndexInterface $index */
     $index = $this->getEntity();
     $index->rebuildTracker();
-    drupal_set_message($this->t('The tracking information for search index %name will be rebuilt.', ['%name' => $index->label()]));
+    $this->messenger()
+      ->addStatus($this->t('The tracking information for search index %name will be rebuilt.', ['%name' => $index->label()]));
     $form_state->setRedirect('entity.search_api_index.canonical', ['search_api_index' => $index->id()]);
   }
 

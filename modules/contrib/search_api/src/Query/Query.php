@@ -177,6 +177,13 @@ class Query implements QueryInterface {
   protected $queryHelper;
 
   /**
+   * The original query before preprocessing.
+   *
+   * @var static|null
+   */
+  protected $originalQuery;
+
+  /**
    * Constructs a Query object.
    *
    * @param \Drupal\search_api\IndexInterface $index
@@ -465,7 +472,7 @@ class Query implements QueryInterface {
    * {@inheritdoc}
    */
   public function getAbortMessage() {
-    return is_bool($this->aborted) ? $this->aborted : NULL;
+    return !is_bool($this->aborted) ? $this->aborted : NULL;
   }
 
   /**
@@ -511,6 +518,9 @@ class Query implements QueryInterface {
     if (!$this->wasAborted() && $this->languages !== []) {
       return FALSE;
     }
+    if (!$this->originalQuery) {
+      $this->originalQuery = clone $this;
+    }
     $this->postExecute();
     return TRUE;
   }
@@ -521,8 +531,14 @@ class Query implements QueryInterface {
   public function preExecute() {
     // Make sure to only execute this once per query, and not for queries with
     // the "none" processing level.
-    if (!$this->preExecuteRan && $this->processingLevel != self::PROCESSING_NONE) {
+    if (!$this->preExecuteRan) {
+      $this->originalQuery = clone $this;
+      $this->originalQuery->executed = FALSE;
       $this->preExecuteRan = TRUE;
+
+      if ($this->processingLevel == self::PROCESSING_NONE) {
+        return;
+      }
 
       // Preprocess query.
       $this->index->preprocessSearchQuery($this);
@@ -676,9 +692,19 @@ class Query implements QueryInterface {
   /**
    * {@inheritdoc}
    */
+  public function getOriginalQuery() {
+    return $this->originalQuery ?: clone $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function __clone() {
     $this->results = $this->getResults()->getCloneForQuery($this);
     $this->conditionGroup = clone $this->conditionGroup;
+    if ($this->originalQuery) {
+      $this->originalQuery = clone $this->originalQuery;
+    }
     if ($this->parseMode) {
       $this->parseMode = clone $this->parseMode;
     }
@@ -707,19 +733,6 @@ class Query implements QueryInterface {
       $this->indexId = NULL;
     }
 
-    // Sanitize the service IDs saved by the serialization trait to guard
-    // against incomplete service containers. Doesn't need to happen when the
-    // trait's __wakeup() method will return early anyways, though.
-    // @todo Remove once #2909164 gets fixed in Core (and we depend on that Core
-    //   version).
-    if (!isset($GLOBALS['__PHPUNIT_BOOTSTRAP']) || \Drupal::hasContainer()) {
-      $container = \Drupal::getContainer();
-      foreach ($this->_serviceIds as $key => $service_id) {
-        if (!$container->has($service_id)) {
-          unset($this->_serviceIds[$key]);
-        }
-      }
-    }
     $this->traitWakeup();
   }
 

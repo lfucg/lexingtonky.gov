@@ -5,10 +5,10 @@ package: Search
 # core: 8.x
 configure: search_api.overview
 dependencies:
-  - system (>=8.4)
+  - system (>=8.5)
 
-# Information added by Drupal.org packaging script on 2018-02-23
-version: '8.x-1.7'
+# Information added by Drupal.org packaging script on 2018-07-19
+version: '8.x-1.9'
 core: '8.x'
 project: 'search_api'
-datestamp: 1519387691
+datestamp: 1531985591

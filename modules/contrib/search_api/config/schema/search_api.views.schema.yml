@@ -16,9 +16,11 @@ views.row.search_api:
     view_modes:
       type: sequence
       label: View modes for each datasource
+      orderby: key
       sequence:
         type: sequence
         label: A list of all the bundles and their configured view mode
+        orderby: key
         sequence:
           type: string
           label: View mode for the specific bundle
@@ -70,6 +72,7 @@ views.argument.search_api_fulltext:
     fields:
       type: sequence
       label: 'Fields'
+      orderby: value
       sequence:
         type: string
         label: 'Field'
@@ -81,6 +84,7 @@ views.argument.search_api_more_like_this:
     fields:
       type: sequence
       label: 'Fields'
+      orderby: value
       sequence:
         type: string
         label: 'Field'
@@ -147,6 +151,7 @@ views.field.search_api_entity:
     display_methods:
       type: sequence
       label: 'Display settings'
+      orderby: key
       sequence:
         type: mapping
         label: 'Display settings for bundle'
@@ -216,9 +221,17 @@ views.filter.search_api_fulltext:
     fields:
       type: sequence
       label: Fields to search on
+      orderby: value
       sequence:
         type: string
         label: Field name
+    expose:
+      type: mapping
+      label: 'Exposed'
+      mapping:
+        placeholder:
+          type: label
+          label: 'Placeholder'
 
 views.filter.search_api_language:
   type: views.filter.language
@@ -269,6 +282,7 @@ views.filter_value.search_api_numeric:
 
 views.filter_value.search_api_options:
   type: sequence
+  orderby: value
   sequence:
     type: string
     label: 'Value'

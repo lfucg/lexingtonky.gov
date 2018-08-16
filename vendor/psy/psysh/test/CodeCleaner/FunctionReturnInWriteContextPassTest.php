@@ -11,7 +11,6 @@
 
 namespace Psy\Test\CodeCleaner;
 
-use PhpParser\NodeTraverser;
 use Psy\CodeCleaner\FunctionReturnInWriteContextPass;
 use Psy\Exception\FatalErrorException;
 
@@ -19,9 +18,7 @@ class FunctionReturnInWriteContextPassTest extends CodeCleanerTestCase
 {
     public function setUp()
     {
-        $this->pass      = new FunctionReturnInWriteContextPass();
-        $this->traverser = new NodeTraverser();
-        $this->traverser->addVisitor($this->pass);
+        $this->setPass(new FunctionReturnInWriteContextPass());
     }
 
     /**
@@ -31,8 +28,7 @@ class FunctionReturnInWriteContextPassTest extends CodeCleanerTestCase
      */
     public function testProcessStatementFails($code)
     {
-        $stmts = $this->parse($code);
-        $this->traverser->traverse($stmts);
+        $this->parseAndTraverse($code);
     }
 
     public function invalidStatements()
@@ -53,7 +49,7 @@ class FunctionReturnInWriteContextPassTest extends CodeCleanerTestCase
             $this->traverser->traverse($this->parse('isset(strtolower("A"))'));
             $this->fail();
         } catch (FatalErrorException $e) {
-            if (version_compare(PHP_VERSION, '5.5', '>=')) {
+            if (\version_compare(PHP_VERSION, '5.5', '>=')) {
                 $this->assertContains(
                     'Cannot use isset() on the result of a function call (you can use "null !== func()" instead)',
                     $e->getMessage()
@@ -70,10 +66,26 @@ class FunctionReturnInWriteContextPassTest extends CodeCleanerTestCase
      */
     public function testEmpty()
     {
-        if (version_compare(PHP_VERSION, '5.5', '>=')) {
+        if (\version_compare(PHP_VERSION, '5.5', '>=')) {
             $this->markTestSkipped();
         }
 
         $this->traverser->traverse($this->parse('empty(strtolower("A"))'));
+    }
+
+    /**
+     * @dataProvider validStatements
+     */
+    public function testValidStatements($code)
+    {
+        $this->parseAndTraverse($code);
+        $this->assertTrue(true);
+    }
+
+    public function validStatements()
+    {
+        return [
+            ['isset($foo)'],
+        ];
     }
 }

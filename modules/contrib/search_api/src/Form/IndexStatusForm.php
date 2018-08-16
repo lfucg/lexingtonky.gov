@@ -2,18 +2,45 @@
 
 namespace Drupal\search_api\Form;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\search_api\IndexBatchHelper;
 use Drupal\search_api\SearchApiException;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Task\IndexTaskManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a form for indexing, clearing, etc., an index.
  */
 class IndexStatusForm extends FormBase {
+
+  /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
+   * Constructs an IndexStatusForm object.
+   *
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
+   */
+  public function __construct(MessengerInterface $messenger) {
+    $this->messenger = $messenger;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    $messenger = $container->get('messenger');
+
+    return new static($messenger);
+  }
 
   /**
    * The index task manager.
@@ -184,12 +211,12 @@ class IndexStatusForm extends FormBase {
     if ($form_state->getTriggeringElement()['#name'] === 'index_now') {
       $values = $form_state->getValues();
       // Get the translated "all" value and lowercase it for comparison.
-      $all_value = Unicode::strtolower($values['all']);
+      $all_value = mb_strtolower($values['all']);
 
       foreach (['limit', 'batch_size'] as $field) {
         // Trim and lowercase the value so we correctly identify "all" values,
         // even if not matching exactly.
-        $value = Unicode::strtolower(trim($values[$field]));
+        $value = mb_strtolower(trim($values[$field]));
 
         if ($value === $all_value) {
           $value = -1;
@@ -221,7 +248,7 @@ class IndexStatusForm extends FormBase {
           IndexBatchHelper::create($index, $values['batch_size'], $values['limit']);
         }
         catch (SearchApiException $e) {
-          drupal_set_message($this->t('Failed to create a batch, please check the batch size and limit.'), 'warning');
+          $this->messenger->addWarning($this->t('Failed to create a batch, please check the batch size and limit.'));
         }
         break;
 

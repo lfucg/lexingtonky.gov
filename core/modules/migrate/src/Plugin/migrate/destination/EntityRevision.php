@@ -213,19 +213,4 @@ class EntityRevision extends EntityContentBase {
     return (int) key($values);
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getHighestId() {
-    $values = $this->storage->getQuery()
-      ->accessCheck(FALSE)
-      ->allRevisions()
-      ->sort($this->getKey('revision'), 'DESC')
-      ->range(0, 1)
-      ->execute();
-    // The array keys are the revision IDs.
-    // The array contains only one entry, so we can use key().
-    return (int) key($values);
-  }
-
 }

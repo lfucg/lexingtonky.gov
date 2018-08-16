@@ -4,6 +4,7 @@ namespace Drupal\Tests\search_api_db\Kernel;
 
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Database\Database as CoreDatabase;
+use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\ItemInterface;
@@ -73,6 +74,8 @@ class BackendTest extends BackendTestBase {
     $this->checkMultiValuedInfo();
     $this->editServerPartial();
     $this->searchSuccessPartial();
+    $this->editServerStartsWith();
+    $this->searchSuccessStartsWith();
     $this->editServerMinChars();
     $this->searchSuccessMinChars();
     $this->checkUnknownOperator();
@@ -89,6 +92,7 @@ class BackendTest extends BackendTestBase {
     $this->regressionTest2846932();
     $this->regressionTest2926733();
     $this->regressionTest2938646();
+    $this->regressionTest2925464();
   }
 
   /**
@@ -205,14 +209,11 @@ class BackendTest extends BackendTestBase {
 
   /**
    * Edits the server to enable partial matches.
-   *
-   * @param bool $enable
-   *   (optional) Whether partial matching should be enabled or disabled.
    */
-  protected function editServerPartial($enable = TRUE) {
+  protected function editServerPartial() {
     $server = $this->getServer();
     $backend_config = $server->getBackendConfig();
-    $backend_config['partial_matches'] = $enable;
+    $backend_config['matching'] = 'partial';
     $server->setBackendConfig($backend_config);
     $this->assertTrue((bool) $server->save(), 'The server was successfully edited.');
     $this->resetEntityCache();
@@ -241,7 +242,7 @@ class BackendTest extends BackendTestBase {
     $this->assertResults([], $results, 'Partial search for »foo nonexistent«');
 
     $results = $this->buildSearch('bar nonexistent')->execute();
-    $this->assertResults([], $results, 'Partial search for »foo nonexistent«');
+    $this->assertResults([], $results, 'Partial search for »bar nonexistent«');
 
     $keys = [
       '#conjunction' => 'AND',
@@ -270,13 +271,76 @@ class BackendTest extends BackendTestBase {
   }
 
   /**
+   * Edits the server to enable prefix matching.
+   */
+  protected function editServerStartsWith() {
+    $server = $this->getServer();
+    $backend_config = $server->getBackendConfig();
+    $backend_config['matching'] = 'prefix';
+    $server->setBackendConfig($backend_config);
+    $this->assertTrue((bool) $server->save(), 'The server was successfully edited.');
+    $this->resetEntityCache();
+  }
+
+  /**
+   * Tests whether prefix matching works.
+   */
+  protected function searchSuccessStartsWith() {
+    $results = $this->buildSearch('foobaz')->range(0, 1)->execute();
+    $this->assertResults([1], $results, 'Prefix search for »foobaz«');
+
+    $results = $this->buildSearch('foo', [], [], FALSE)
+      ->sort('search_api_relevance', QueryInterface::SORT_DESC)
+      ->sort('id')
+      ->execute();
+    $this->assertResults([1, 2, 4, 3, 5], $results, 'Prefix search for »foo«');
+
+    $results = $this->buildSearch('foo tes')->execute();
+    $this->assertResults([1, 2, 3, 4], $results, 'Prefix search for »foo tes«');
+
+    $results = $this->buildSearch('oob est')->execute();
+    $this->assertResults([], $results, 'Prefix search for »oob est«');
+
+    $results = $this->buildSearch('foo nonexistent')->execute();
+    $this->assertResults([], $results, 'Prefix search for »foo nonexistent«');
+
+    $results = $this->buildSearch('bar nonexistent')->execute();
+    $this->assertResults([], $results, 'Prefix search for »bar nonexistent«');
+
+    $keys = [
+      '#conjunction' => 'AND',
+      'foob',
+      [
+        '#conjunction' => 'OR',
+        'tes',
+        'nonexistent',
+      ],
+    ];
+    $results = $this->buildSearch($keys)->execute();
+    $this->assertResults([1, 2, 3], $results, 'Prefix search for complex keys');
+
+    $results = $this->buildSearch('foo', ['category,item_category'], [], FALSE)
+      ->sort('id', QueryInterface::SORT_DESC)
+      ->execute();
+    $this->assertResults([2, 1], $results, 'Prefix search for »foo« with additional filter');
+
+    $query = $this->buildSearch();
+    $conditions = $query->createConditionGroup('OR');
+    $conditions->addCondition('name', 'test');
+    $conditions->addCondition('body', 'test');
+    $query->addConditionGroup($conditions);
+    $results = $query->execute();
+    $this->assertResults([1, 2, 3, 4], $results, 'Prefix search with multi-field fulltext filter');
+  }
+
+  /**
    * Edits the server to change the "Minimum word length" setting.
    */
   protected function editServerMinChars() {
     $server = $this->getServer();
     $backend_config = $server->getBackendConfig();
     $backend_config['min_chars'] = 4;
-    $backend_config['partial_matches'] = FALSE;
+    $backend_config['matching'] = 'words';
     $server->setBackendConfig($backend_config);
     $success = (bool) $server->save();
     $this->assertTrue($success, 'The server was successfully edited.');
@@ -557,6 +621,23 @@ class BackendTest extends BackendTestBase {
   }
 
   /**
+   * Tests changing of field types.
+   *
+   * @see https://www.drupal.org/node/2925464
+   */
+  protected function regressionTest2925464() {
+    $index = $this->getIndex();
+
+    $index->getField('category')->setType('integer');
+    $index->save();
+
+    $index->getField('category')->setType('string');
+    $index->save();
+
+    $this->indexItems($index->id());
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function checkIndexWithoutFields() {
@@ -748,6 +829,61 @@ class BackendTest extends BackendTestBase {
     $this->assertNotEquals(GenericDatabase::class, $class);
     $this->assertSame($dbms_comp1, $service);
     $this->assertEquals($class, get_class($dbms_comp2));
+  }
+
+  /**
+   * Tests whether indexing of dates works correctly.
+   */
+  public function testDateIndexing() {
+    // Load all existing entities.
+    $storage = \Drupal::entityTypeManager()
+      ->getStorage('entity_test_mulrev_changed');
+    $storage->delete($storage->loadMultiple());
+
+    $index = Index::load('database_search_index');
+    $index->getField('name')->setType('date');
+    $index->save();
+
+    // Simulate date field creation in one timezone and indexing in another.
+    date_default_timezone_set('America/Chicago');
+
+    // Test different input values, similar to @dataProvider (but with less
+    // overhead).
+    $t = 1400000000;
+    $f = 'Y-m-d H:i:s';
+    $test_values = [
+      'null' => [NULL, NULL],
+      'timestamp' => [$t, $t],
+      'string timestamp' => ["$t", $t],
+      'float timestamp' => [$t + 0.12, $t],
+      'date string' => [gmdate($f, $t), $t],
+      'date string with timezone' => [date($f . 'P', $t), $t],
+    ];
+
+    // Get storage information for quickly checking the indexed value.
+    $db_info = $this->getIndexDbInfo();
+    $table = $db_info['index_table'];
+    $column = $db_info['field_tables']['name']['column'];
+    $sql = "SELECT $column FROM {{$table}} WHERE item_id = :id";
+
+    $id = 0;
+    date_default_timezone_set('Asia/Seoul');
+    foreach ($test_values as $label => list($field_value, $expected)) {
+      $entity = $this->addTestEntity(++$id, [
+        'name' => $field_value,
+        'type' => 'item',
+      ]);
+      $item_id = $this->getItemIds([$id])[0];
+      $index->indexSpecificItems([$item_id => $entity->getTypedData()]);
+      $args[':id'] = $item_id;
+      $indexed_value = \Drupal::database()->query($sql, $args)->fetchField();
+      if ($expected === NULL) {
+        $this->assertSame($expected, $indexed_value, "Indexing of date field with $label value.");
+      }
+      else {
+        $this->assertEquals($expected, $indexed_value, "Indexing of date field with $label value.");
+      }
+    }
   }
 
 }

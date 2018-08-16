@@ -27,6 +27,8 @@
   <div class="tt-entity-default">{{ drupal_entity('node', 1) }}</div>
   <div class="tt-entity-teaser">{{ drupal_entity('node', 1, 'teaser') }}</div>
   <div class="tt-entity-from-url">{{ drupal_entity('node') }}</div>
+  <div class="tt-entity-add-form">{{ drupal_entity_form('node', values={type: 'page'}) }}</div>
+  <div class="tt-entity-edit-form">{{ drupal_entity_form('node', 1) }}</div>
   <div class="tt-field">{{ drupal_field('body', 'node', 1) }}</div>
   <div class="tt-menu-default">{{ drupal_menu('twig-tweak-test') }}</div>
   <div class="tt-menu-level">{{ drupal_menu('twig-tweak-test', 2) }}</div>
@@ -43,9 +45,10 @@
   <div class="tt-title">{{ drupal_title() }}</div>
   <div class="tt-url">{{ drupal_url('node/1', {absolute: true}) }}</div>
   <div class="tt-link">{{ drupal_link('Edit', 'node/1/edit', {absolute: true}) }}</div>
+  <div class="tt-link-html">{% set link_text %}<b>Edit</b>{% endset %}{{ drupal_link(link_text, 'node/1/edit', {absolute: true}) }}</div>
   <div class="tt-messages">{{ drupal_messages() }}</div>
   <div class="tt-breadcrumb">{{ drupal_breadcrumb() }}</div>
-  <div class="tt-link-access">{{ drupal_link('Edit', 'node/1/edit', {absolute: true}, true) }}</div>
+  <div class="tt-link-access">{{ drupal_link('Administration', 'admin', {absolute: true}, true) }}</div>
   <div class="tt-token-replace">{{ 'Site name: [site:name]' | token_replace }}</div>
   <div class="tt-preg-replace">{{ 'FOO' | preg_replace('/(foo)/i', '$1-bar') }}</div>
   <div class="tt-image-style">{{ 'public://images/ocean.jpg' | image_style('thumbnail') }}</div>

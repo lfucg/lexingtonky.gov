@@ -355,7 +355,6 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         if (!$class = $this->getParameterBag()->resolveValue($class)) {
             return;
         }
-        $resource = null;
 
         if (isset(self::$internalTypes[$class])) {
             return null;

@@ -18,7 +18,7 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use XdgBaseDir\Xdg;
 
-if (!function_exists('Psy\sh')) {
+if (!\function_exists('Psy\sh')) {
     /**
      * Command to return the eval-able code to startup PsySH.
      *
@@ -28,11 +28,11 @@ if (!function_exists('Psy\sh')) {
      */
     function sh()
     {
-        return 'extract(\Psy\debug(get_defined_vars(), isset($this) ? $this : null));';
+        return 'extract(\Psy\debug(get_defined_vars(), isset($this) ? $this : @get_called_class()));';
     }
 }
 
-if (!function_exists('Psy\debug')) {
+if (!\function_exists('Psy\debug')) {
     /**
      * Invoke a Psy Shell from the current context.
      *
@@ -50,9 +50,9 @@ if (!function_exists('Psy\debug')) {
      *         var_dump($item); // will be whatever you set $item to in Psy Shell
      *     }
      *
-     * Optionally, supply an object as the `$boundObject` parameter. This
-     * determines the value `$this` will have in the shell, and sets up class
-     * scope so that private and protected members are accessible:
+     * Optionally, supply an object as the `$bindTo` parameter. This determines
+     * the value `$this` will have in the shell, and sets up class scope so that
+     * private and protected members are accessible:
      *
      *     class Foo {
      *         function bar() {
@@ -60,12 +60,22 @@ if (!function_exists('Psy\debug')) {
      *         }
      *     }
      *
-     * @param array  $vars        Scope variables from the calling context (default: array())
-     * @param object $boundObject Bound object ($this) value for the shell
+     * For the static equivalent, pass a class name as the `$bindTo` parameter.
+     * This makes `self` work in the shell, and sets up static scope so that
+     * private and protected static members are accessible:
+     *
+     *     class Foo {
+     *         static function bar() {
+     *             \Psy\debug(get_defined_vars(), get_called_class());
+     *         }
+     *     }
+     *
+     * @param array         $vars   Scope variables from the calling context (default: array())
+     * @param object|string $bindTo Bound object ($this) or class (self) value for the shell
      *
      * @return array Scope variables from the debugger session
      */
-    function debug(array $vars = [], $boundObject = null)
+    function debug(array $vars = [], $bindTo = null)
     {
         echo PHP_EOL;
 
@@ -79,8 +89,10 @@ if (!function_exists('Psy\debug')) {
             $sh->addInput('whereami -n2', true);
         }
 
-        if ($boundObject !== null) {
-            $sh->setBoundObject($boundObject);
+        if (\is_string($bindTo)) {
+            $sh->setBoundClass($bindTo);
+        } elseif ($bindTo !== null) {
+            $sh->setBoundObject($bindTo);
         }
 
         $sh->run();
@@ -89,7 +101,7 @@ if (!function_exists('Psy\debug')) {
     }
 }
 
-if (!function_exists('Psy\info')) {
+if (!\function_exists('Psy\info')) {
     /**
      * Get a bunch of debugging info about the current PsySH environment and
      * configuration.
@@ -111,12 +123,12 @@ if (!function_exists('Psy\info')) {
         }
 
         $xdg = new Xdg();
-        $home = rtrim(str_replace('\\', '/', $xdg->getHomeDir()), '/');
-        $homePattern = '#^' . preg_quote($home, '#') . '/#';
+        $home = \rtrim(\str_replace('\\', '/', $xdg->getHomeDir()), '/');
+        $homePattern = '#^' . \preg_quote($home, '#') . '/#';
 
         $prettyPath = function ($path) use ($homePattern) {
-            if (is_string($path)) {
-                return preg_replace($homePattern, '~/', $path);
+            if (\is_string($path)) {
+                return \preg_replace($homePattern, '~/', $path);
             } else {
                 return $path;
             }
@@ -134,7 +146,7 @@ if (!function_exists('Psy\info')) {
             'config file'         => [
                 'default config file' => $prettyPath($config->getConfigFile()),
                 'local config file'   => $prettyPath($config->getLocalConfigFile()),
-                'PSYSH_CONFIG env'    => $prettyPath(getenv('PSYSH_CONFIG')),
+                'PSYSH_CONFIG env'    => $prettyPath(\getenv('PSYSH_CONFIG')),
             ],
             // 'config dir'  => $config->getConfigDir(),
             // 'data dir'    => $config->getDataDir(),
@@ -159,12 +171,12 @@ if (!function_exists('Psy\info')) {
         ];
 
         if ($config->hasReadline()) {
-            $info = readline_info();
+            $info = \readline_info();
 
             $readline = [
                 'readline available' => true,
                 'readline enabled'   => $config->useReadline(),
-                'readline service'   => get_class($config->getReadline()),
+                'readline service'   => \get_class($config->getReadline()),
             ];
 
             if (isset($info['library_version'])) {
@@ -181,12 +193,12 @@ if (!function_exists('Psy\info')) {
         }
 
         $pcntl = [
-            'pcntl available' => function_exists('pcntl_signal'),
-            'posix available' => function_exists('posix_getpid'),
+            'pcntl available' => \function_exists('pcntl_signal'),
+            'posix available' => \function_exists('posix_getpid'),
         ];
 
-        $disabledFuncs = array_map('trim', explode(',', ini_get('disable_functions')));
-        if (in_array('pcntl_signal', $disabledFuncs) || in_array('pcntl_fork', $disabledFuncs)) {
+        $disabledFuncs = \array_map('trim', \explode(',', \ini_get('disable_functions')));
+        if (\in_array('pcntl_signal', $disabledFuncs) || \in_array('pcntl_fork', $disabledFuncs)) {
             $pcntl['pcntl disabled'] = true;
         }
 
@@ -214,7 +226,7 @@ if (!function_exists('Psy\info')) {
                                 $val = $d->format(\DateTime::RFC2822);
                                 break;
                         }
-                        $key = 'db ' . str_replace('_', ' ', $key);
+                        $key = 'db ' . \str_replace('_', ' ', $key);
                         $docs[$key] = $val;
                     }
                 } else {
@@ -231,25 +243,25 @@ if (!function_exists('Psy\info')) {
 
         $autocomplete = [
             'tab completion enabled' => $config->useTabCompletion(),
-            'custom matchers'        => array_map('get_class', $config->getTabCompletionMatchers()),
+            'custom matchers'        => \array_map('get_class', $config->getTabCompletionMatchers()),
             'bracketed paste'        => $config->useBracketedPaste(),
         ];
 
         // Shenanigans, but totally justified.
         if ($shell = Sudo::fetchProperty($config, 'shell')) {
-            $core['loop listeners'] = array_map('get_class', Sudo::fetchProperty($shell, 'loopListeners'));
-            $core['commands']       = array_map('get_class', $shell->all());
+            $core['loop listeners'] = \array_map('get_class', Sudo::fetchProperty($shell, 'loopListeners'));
+            $core['commands']       = \array_map('get_class', $shell->all());
 
-            $autocomplete['custom matchers'] = array_map('get_class', Sudo::fetchProperty($shell, 'matchers'));
+            $autocomplete['custom matchers'] = \array_map('get_class', Sudo::fetchProperty($shell, 'matchers'));
         }
 
         // @todo Show Presenter / custom casters.
 
-        return array_merge($core, compact('updates', 'pcntl', 'readline', 'history', 'docs', 'autocomplete'));
+        return \array_merge($core, \compact('updates', 'pcntl', 'readline', 'history', 'docs', 'autocomplete'));
     }
 }
 
-if (!function_exists('Psy\bin')) {
+if (!\function_exists('Psy\bin')) {
     /**
      * `psysh` command line executable.
      *
@@ -301,7 +313,7 @@ if (!function_exists('Psy\bin')) {
                 }
 
                 $version = $shell->getVersion();
-                $name    = basename(reset($_SERVER['argv']));
+                $name    = \basename(\reset($_SERVER['argv']));
                 echo <<<EOL
 $version
 

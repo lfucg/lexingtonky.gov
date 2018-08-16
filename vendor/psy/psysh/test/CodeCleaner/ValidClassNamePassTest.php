@@ -24,10 +24,9 @@ class ValidClassNamePassTest extends CodeCleanerTestCase
      * @dataProvider getInvalid
      * @expectedException \Psy\Exception\FatalErrorException
      */
-    public function testProcessInvalid($code, $php54 = false)
+    public function testProcessInvalid($code)
     {
-        $stmts = $this->parse($code);
-        $this->traverse($stmts);
+        $this->parseAndTraverse($code);
     }
 
     public function getInvalid()
@@ -41,7 +40,7 @@ class ValidClassNamePassTest extends CodeCleanerTestCase
 
             // collisions with interfaces and traits
             ['interface stdClass {}'],
-            ['trait stdClass {}', true],
+            ['trait stdClass {}'],
 
             // collisions inside the same code snippet
             ['
@@ -51,19 +50,19 @@ class ValidClassNamePassTest extends CodeCleanerTestCase
             ['
                 class Psy_Test_CodeCleaner_ValidClassNamePass_Alpha {}
                 trait Psy_Test_CodeCleaner_ValidClassNamePass_Alpha {}
-            ', true],
+            '],
             ['
                 trait Psy_Test_CodeCleaner_ValidClassNamePass_Alpha {}
                 class Psy_Test_CodeCleaner_ValidClassNamePass_Alpha {}
-            ', true],
+            '],
             ['
                 trait Psy_Test_CodeCleaner_ValidClassNamePass_Alpha {}
                 interface Psy_Test_CodeCleaner_ValidClassNamePass_Alpha {}
-            ', true],
+            '],
             ['
                 interface Psy_Test_CodeCleaner_ValidClassNamePass_Alpha {}
                 trait Psy_Test_CodeCleaner_ValidClassNamePass_Alpha {}
-            ', true],
+            '],
             ['
                 interface Psy_Test_CodeCleaner_ValidClassNamePass_Alpha {}
                 class Psy_Test_CodeCleaner_ValidClassNamePass_Alpha {}
@@ -110,6 +109,7 @@ class ValidClassNamePassTest extends CodeCleanerTestCase
             // static call
             ['Psy\\Test\\CodeCleaner\\ValidClassNamePass\\NotAClass::foo()'],
             ['Psy\\Test\\CodeCleaner\\ValidClassNamePass\\NotAClass::$foo()'],
+            ['Psy\\Test\\CodeCleaner\\ValidClassNamePassTest::notAMethod()'],
         ];
     }
 
@@ -118,8 +118,7 @@ class ValidClassNamePassTest extends CodeCleanerTestCase
      */
     public function testProcessValid($code)
     {
-        $stmts = $this->parse($code);
-        $this->traverse($stmts);
+        $this->parseAndTraverse($code);
         $this->assertTrue(true);
     }
 
@@ -306,12 +305,12 @@ class ValidClassNamePassTest extends CodeCleanerTestCase
         ];
 
         // Ugh. There's gotta be a better way to test for this.
-        if (class_exists('PhpParser\ParserFactory')) {
+        if (\class_exists('PhpParser\ParserFactory')) {
             // PHP 7.0 anonymous classes, only supported by PHP Parser v2.x
             $valid[] = ['$obj = new class() {}'];
         }
 
-        if (version_compare(PHP_VERSION, '5.5', '>=')) {
+        if (\version_compare(PHP_VERSION, '5.5', '>=')) {
             $valid[] = ['interface A {} A::class'];
             $valid[] = ['interface A {} A::CLASS'];
             $valid[] = ['class A {} A::class'];

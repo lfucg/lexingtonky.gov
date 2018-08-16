@@ -125,6 +125,7 @@
           <xs:enumeration value="coverage-clover"/>
           <xs:enumeration value="coverage-crap4j"/>
           <xs:enumeration value="coverage-xml"/>
+          <xs:enumeration value="coverage-php"/>
           <xs:enumeration value="json"/>
           <xs:enumeration value="plain"/>
           <xs:enumeration value="tap"/>
@@ -152,6 +153,7 @@
   <xs:complexType name="directoryFilterType">
     <xs:simpleContent>
       <xs:extension base="xs:anyURI">
+        <xs:attribute type="xs:string" name="prefix" default=""/>
         <xs:attribute type="xs:string" name="suffix" default="Test.php"/>
         <xs:attributeGroup ref="phpVersionGroup"/>
       </xs:extension>

@@ -2,5 +2,11 @@ name: 'Default format test'
 type: module
 description: 'Support module for testing default route format.'
 package: Testing
-version: VERSION
-core: 8.x
+# version: VERSION
+# core: 8.x
+
+# Information added by Drupal.org packaging script on 2018-08-01
+version: '8.5.6'
+core: '8.x'
+project: 'drupal'
+datestamp: 1533156926

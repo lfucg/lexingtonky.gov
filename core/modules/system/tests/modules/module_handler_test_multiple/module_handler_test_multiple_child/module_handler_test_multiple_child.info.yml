@@ -7,3 +7,9 @@ package: Testing
 hidden: true
 dependencies:
   - module_handler_test_multiple
+
+# Information added by Drupal.org packaging script on 2018-08-01
+version: '8.5.6'
+core: '8.x'
+project: 'drupal'
+datestamp: 1533156926

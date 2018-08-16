@@ -399,7 +399,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     return [
       'database' => NULL,
       'min_chars' => 1,
-      'partial_matches' => FALSE,
+      'matching' => 'words',
       'autocomplete' => [
         'suggest_suffix' => TRUE,
         'suggest_words' => TRUE,
@@ -465,11 +465,15 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       '#default_value' => $this->configuration['min_chars'],
     ];
 
-    $form['partial_matches'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Search on parts of a word'),
-      '#description' => $this->t('Find keywords in parts of a word, too. (For example, find results with "database" when searching for "base"). <strong>Caution:</strong> This can make searches much slower on large sites!'),
-      '#default_value' => $this->configuration['partial_matches'],
+    $form['matching'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Partial matching'),
+      '#default_value' => $this->configuration['matching'],
+      '#options' => [
+        'words' => $this->t('Match whole words only'),
+        'partial' => $this->t('Match on parts of a word'),
+        'prefix' => $this->t('Match words starting with given keywords'),
+      ],
     ];
 
     if ($this->getModuleHandler()->moduleExists('search_api_autocomplete')) {
@@ -511,10 +515,17 @@ class Database extends BackendPluginBase implements PluginFormInterface {
         'info' => $this->configuration['min_chars'],
       ];
     }
-    $info[] = [
-      'label' => $this->t('Search on parts of a word'),
-      'info' => !empty($this->configuration['partial_matches']) ? $this->t('enabled') : $this->t('disabled'),
+
+    $labels = [
+      'words' => $this->t('Match whole words only'),
+      'partial' => $this->t('Match on parts of a word'),
+      'prefix' => $this->t('Match words starting with given keywords'),
     ];
+    $info[] = [
+      'label' => $this->t('Partial matching'),
+      'info' => $labels[$this->configuration['matching']],
+    ];
+
     if (!empty($this->configuration['autocomplete'])) {
       $this->configuration['autocomplete'] += [
         'suggest_suffix' => TRUE,
@@ -669,12 +680,12 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     // A DB prefix might further reduce the maximum length of the table name.
     $max_bytes = 62;
     if ($db_prefix = $this->database->tablePrefix()) {
-      // Use strlen() instead of Unicode::strlen() since we want to measure
-      // bytes, not characters.
+      // Use strlen() instead of mb_strlen() since we want to measure bytes, not
+      // characters.
       $max_bytes -= strlen($db_prefix);
     }
 
-    $base = $table = Unicode::truncateBytes($prefix . Unicode::strtolower(preg_replace('/[^a-z0-9]/i', '_', $name)), $max_bytes);
+    $base = $table = Unicode::truncateBytes($prefix . mb_strtolower(preg_replace('/[^a-z0-9]/i', '_', $name)), $max_bytes);
     $i = 0;
     while ($this->database->schema()->tableExists($table)) {
       $suffix = '_' . ++$i;
@@ -703,7 +714,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
   protected function findFreeColumn($table, $column) {
     $maxbytes = 62;
 
-    $base = $name = Unicode::truncateBytes(Unicode::strtolower(preg_replace('/[^a-z0-9]/i', '_', $column)), $maxbytes);
+    $base = $name = Unicode::truncateBytes(mb_strtolower(preg_replace('/[^a-z0-9]/i', '_', $column)), $maxbytes);
     // If the table does not exist yet, the initial name is not taken.
     if ($this->database->schema()->tableExists($table)) {
       $i = 0;
@@ -769,7 +780,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     $db_field += [
       'description' => "The field's value for this item",
     ];
-    if ($new_table) {
+    if ($new_table || $type === 'field') {
       $db_field['not null'] = TRUE;
     }
     $this->database->schema()->addField($db['table'], $column, $db_field);
@@ -924,8 +935,13 @@ class Database extends BackendPluginBase implements PluginFormInterface {
           elseif ($this->sqlType($old_type) != $this->sqlType($new_type)) {
             // There is a change in SQL type. We don't have to clear the index,
             // since types can be converted.
-            $this->database->schema()->changeField($field['table'], 'value', 'value', $this->sqlType($new_type) + ['description' => "The field's value for this item"]);
-            $this->database->schema()->changeField($denormalized_table, $field['column'], $field['column'], $this->sqlType($new_type) + ['description' => "The field's value for this item"]);
+            $sql_spec = $this->sqlType($new_type);
+            $sql_spec += [
+              'description' => "The field's value for this item",
+            ];
+            $this->database->schema()->changeField($denormalized_table, $field['column'], $field['column'], $sql_spec);
+            $sql_spec['not null'] = TRUE;
+            $this->database->schema()->changeField($field['table'], 'value', 'value', $sql_spec);
             $reindex = TRUE;
           }
           elseif ($old_type == 'date' || $new_type == 'date') {
@@ -955,7 +971,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
               }
               $this->database->update($text_table)
                 ->expression('score', $expression, $args)
-                ->condition('field_name', self::getTextFieldName($field_id))
+                ->condition('field_name', static::getTextFieldName($field_id))
                 ->execute();
             }
             else {
@@ -1081,7 +1097,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     if ($this->getDataTypeHelper()->isTextType($field['type'])) {
       // Remove data from the text table.
       $this->database->delete($field['table'])
-        ->condition('field_name', self::getTextFieldName($name))
+        ->condition('field_name', static::getTextFieldName($name))
         ->execute();
     }
     elseif ($this->database->schema()->tableExists($field['table'])) {
@@ -1263,7 +1279,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
 
             // Store the first 30 characters of the string as the denormalized
             // value.
-            if (Unicode::strlen($denormalized_value) < 30) {
+            if (mb_strlen($denormalized_value) < 30) {
               $denormalized_value .= $word . ' ';
             }
 
@@ -1271,7 +1287,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
             if (is_numeric($word)) {
               $word = ltrim($word, '-0');
             }
-            elseif (Unicode::strlen($word) < $this->configuration['min_chars']) {
+            elseif (mb_strlen($word) < $this->configuration['min_chars']) {
               continue;
             }
 
@@ -1295,12 +1311,13 @@ class Database extends BackendPluginBase implements PluginFormInterface {
               $unique_tokens[$word_base_form]['score'] += $score;
             }
           }
-          $denormalized_values[$column] = Unicode::substr(trim($denormalized_value), 0, 30);
+          $denormalized_values[$column] = mb_substr(trim($denormalized_value), 0, 30);
           if ($unique_tokens) {
-            $field_name = self::getTextFieldName($field_id);
+            $field_name = static::getTextFieldName($field_id);
             $boost = $field_info['boost'];
             foreach ($unique_tokens as $token) {
-              $score = round($token['score'] * $boost * self::SCORE_MULTIPLIER);
+              $score = $token['score'] * $boost * self::SCORE_MULTIPLIER;
+              $score = round($score);
               // Take care that the score doesn't exceed the maximum value for
               // the database column (2^32-1).
               $score = min((int) $score, 4294967295);
@@ -1420,9 +1437,9 @@ class Database extends BackendPluginBase implements PluginFormInterface {
           }
           foreach (static::splitIntoWords($text) as $word) {
             if ($word) {
-              if (Unicode::strlen($word) > 50) {
+              if (mb_strlen($word) > 50) {
                 $this->getLogger()->warning('An overlong word (more than 50 characters) was encountered while indexing: %word.<br />Since database search servers currently cannot index words of more than 50 characters, the word was truncated for indexing. If this should not be a single word, please make sure the "Tokenizer" processor is enabled and configured correctly for index %index.', ['%word' => $word, '%index' => $index->label()]);
-                $word = Unicode::substr($word, 0, 50);
+                $word = mb_substr($word, 0, 50);
               }
               $tokens[] = new TextToken($word);
             }
@@ -1434,12 +1451,12 @@ class Database extends BackendPluginBase implements PluginFormInterface {
               // Check for over-long tokens.
               $score = $token->getBoost();
               $word = $token->getText();
-              if (Unicode::strlen($word) > 50) {
+              if (mb_strlen($word) > 50) {
                 $new_tokens = [];
                 foreach (static::splitIntoWords($word) as $word) {
-                  if (Unicode::strlen($word) > 50) {
+                  if (mb_strlen($word) > 50) {
                     $this->getLogger()->warning('An overlong word (more than 50 characters) was encountered while indexing: %word.<br />Since database search servers currently cannot index words of more than 50 characters, the word was truncated for indexing. If this should not be a single word, please make sure the "Tokenizer" processor is enabled and configured correctly for index %index.', ['%word' => $word, '%index' => $index->label()]);
-                    $word = Unicode::substr($word, 0, 50);
+                    $word = mb_substr($word, 0, 50);
                   }
                   $new_tokens[] = new TextToken($word, $score);
                 }
@@ -1459,25 +1476,20 @@ class Database extends BackendPluginBase implements PluginFormInterface {
         if ($original_type == 'date') {
           return date('c', $value);
         }
-        if (Unicode::strlen($value) > 255) {
-          $value = Unicode::substr($value, 0, 255);
+        if (mb_strlen($value) > 255) {
+          $value = mb_substr($value, 0, 255);
           $this->getLogger()->warning('An overlong value (more than 255 characters) was encountered while indexing: %value.<br />Database search servers currently cannot index such values correctly – the value was therefore trimmed to the allowed length.', ['%value' => $value]);
         }
         return $value;
 
       case 'integer':
+      case 'date':
       case 'duration':
       case 'decimal':
         return 0 + $value;
 
       case 'boolean':
         return $value ? 1 : 0;
-
-      case 'date':
-        if (is_numeric($value) || !$value) {
-          return 0 + $value;
-        }
-        return strtotime($value);
 
       default:
         throw new SearchApiException("Unknown field type '$type'.");
@@ -1791,7 +1803,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       if (is_numeric($processed_keys)) {
         return ltrim($processed_keys, '-0');
       }
-      elseif (Unicode::strlen($processed_keys) < $this->configuration['min_chars']) {
+      elseif (mb_strlen($processed_keys) < $this->configuration['min_chars']) {
         $this->ignored[$keys] = 1;
         return NULL;
       }
@@ -1886,8 +1898,9 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     $db_query = NULL;
     $mul_words = FALSE;
     $neg_nested = $neg && $conj == 'AND';
-    $match_parts = !empty($this->configuration['partial_matches']);
+    $match_parts = $this->configuration['matching'] !== 'words';
     $keyword_hits = [];
+    $prefix_search = $this->configuration['matching'] === 'prefix';
 
     foreach ($keys as $i => $key) {
       if (!Element::child($i)) {
@@ -1944,7 +1957,9 @@ class Database extends BackendPluginBase implements PluginFormInterface {
         }
 
         foreach ($words as $i => $word) {
-          $db_or->condition('t.word', '%' . $this->database->escapeLike($word) . '%', 'LIKE');
+          $like = $this->database->escapeLike($word);
+          $like = $prefix_search ? "$like%" : "%$like%";
+          $db_or->condition('t.word', $like, 'LIKE');
 
           // Add an expression for each keyword that shows whether the indexed
           // word matches that particular keyword. That way we don't return a
@@ -2547,8 +2562,8 @@ class Database extends BackendPluginBase implements PluginFormInterface {
 
     // Make the input lowercase as the indexed data is (usually) also all
     // lowercase.
-    $incomplete_key = Unicode::strtolower($incomplete_key);
-    $user_input = Unicode::strtolower($user_input);
+    $incomplete_key = mb_strtolower($incomplete_key);
+    $user_input = mb_strtolower($user_input);
 
     // Decide which methods we want to use.
     if ($incomplete_key && $settings['suggest_suffix']) {
@@ -2578,12 +2593,12 @@ class Database extends BackendPluginBase implements PluginFormInterface {
         $query->keys($user_input);
       }
       // To avoid suggesting incomplete words, we have to temporarily disable
-      // the "partial_matches" option. There should be no way we'll save the
-      // server during the createDbQuery() call, so this should be safe.
+      // partial matching. There should be no way we'll save the server during
+      // the createDbQuery() call, so this should be safe.
       $configuration = $this->configuration;
       $db_query = NULL;
       try {
-        $this->configuration['partial_matches'] = FALSE;
+        $this->configuration['matching'] = 'words';
         $db_query = $this->createDbQuery($query, $fields);
         $this->configuration = $configuration;
 

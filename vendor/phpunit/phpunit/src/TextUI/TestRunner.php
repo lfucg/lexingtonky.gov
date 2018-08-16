@@ -34,7 +34,6 @@ use PHPUnit\Util\TestDox\HtmlResultPrinter;
 use PHPUnit\Util\TestDox\TextResultPrinter;
 use PHPUnit\Util\TestDox\XmlResultPrinter;
 use ReflectionClass;
-use SebastianBergmann;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\Exception as CodeCoverageException;
 use SebastianBergmann\CodeCoverage\Filter as CodeCoverageFilter;
@@ -44,6 +43,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Facade as HtmlReport;
 use SebastianBergmann\CodeCoverage\Report\PHP as PhpReport;
 use SebastianBergmann\CodeCoverage\Report\Text as TextReport;
 use SebastianBergmann\CodeCoverage\Report\Xml\Facade as XmlReport;
+use SebastianBergmann\Comparator\Comparator;
 use SebastianBergmann\Environment\Runtime;
 
 /**
@@ -429,7 +429,7 @@ class TestRunner extends BaseTestRunner
             );
 
             $codeCoverage->setUnintentionallyCoveredSubclassesWhitelist(
-                [SebastianBergmann\Comparator\Comparator::class]
+                [Comparator::class]
             );
 
             $codeCoverage->setCheckForUnintentionallyCoveredCode(

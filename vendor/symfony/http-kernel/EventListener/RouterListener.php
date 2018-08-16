@@ -130,12 +130,6 @@ class RouterListener implements EventSubscriberInterface
             unset($parameters['_route'], $parameters['_controller']);
             $request->attributes->set('_route_params', $parameters);
         } catch (ResourceNotFoundException $e) {
-            if ($this->debug && $e instanceof NoConfigurationException) {
-                $event->setResponse($this->createWelcomeResponse());
-
-                return;
-            }
-
             $message = sprintf('No route found for "%s %s"', $request->getMethod(), $request->getPathInfo());
 
             if ($referer = $request->headers->get('referer')) {

@@ -572,7 +572,8 @@ function search_api_view_insert(ViewEntityInterface $view) {
     }
 
     if ($change) {
-      drupal_set_message(\Drupal::translation()->translate('The selected caching mechanism does not work with views on Search API indexes. Please either use one of the Search API-specific caching options or "None". Caching was turned off for this view.'), 'warning');
+      $warning = t('The selected caching mechanism does not work with views on Search API indexes. Please either use one of the Search API-specific caching options or "None". Caching was turned off for this view.');
+      \Drupal::messenger()->addWarning($warning);
       $view->set('display', $displays);
       $view->save();
     }

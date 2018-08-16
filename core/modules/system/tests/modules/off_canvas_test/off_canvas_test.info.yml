@@ -2,5 +2,11 @@ name: 'Off-canvas tests'
 type: module
 description: 'Provides off-canvas test links.'
 package: Testing
-version: VERSION
-core: 8.x
+# version: VERSION
+# core: 8.x
+
+# Information added by Drupal.org packaging script on 2018-08-01
+version: '8.5.6'
+core: '8.x'
+project: 'drupal'
+datestamp: 1533156926

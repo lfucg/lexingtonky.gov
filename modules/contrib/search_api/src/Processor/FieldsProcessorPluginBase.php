@@ -427,9 +427,9 @@ abstract class FieldsProcessorPluginBase extends ProcessorPluginBase implements 
           // value can't be in the index – but that's irrelevant for (NOT)
           // BETWEEN conditions, as any value between the two bounds could still
           // be included. We therefore never remove a (NOT) BETWEEN condition
-          // and also ignore it when one of the two values got removed. (Note
-          // that this check will also catch empty strings.) Processors who need
-          // different behavior have to override this method.
+          // and also ignore it when one of the two values got removed.
+          // Processors who need different behavior have to override this
+          // method.
           $between_operator = in_array($condition->getOperator(), ['BETWEEN', 'NOT BETWEEN']);
           if ($between_operator && (!is_array($value) || count($value) < 2)) {
             continue;

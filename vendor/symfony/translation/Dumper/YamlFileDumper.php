@@ -15,7 +15,6 @@ use Symfony\Component\Translation\Exception\LogicException;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\Util\ArrayConverter;
 use Symfony\Component\Yaml\Yaml;
-use Symfony\Component\Translation\Exception\LogicException;
 
 /**
  * YamlFileDumper generates yaml files from a message catalogue.

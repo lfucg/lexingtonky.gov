@@ -107,17 +107,4 @@ abstract class AbstractSurrogateFragmentRenderer extends RoutableFragmentRendere
 
         return false;
     }
-
-    private function containsNonScalars(array $values)
-    {
-        foreach ($values as $value) {
-            if (is_array($value)) {
-                return $this->containsNonScalars($value);
-            } elseif (!is_scalar($value) && null !== $value) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

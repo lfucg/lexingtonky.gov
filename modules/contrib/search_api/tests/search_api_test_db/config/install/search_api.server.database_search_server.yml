@@ -5,7 +5,7 @@ backend: search_api_db
 backend_config:
   database: 'default:default'
   min_chars: 3
-  partial_matches: false
+  matching: words
 status: true
 langcode: en
 dependencies:

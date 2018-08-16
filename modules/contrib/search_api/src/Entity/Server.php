@@ -62,6 +62,7 @@ use Drupal\search_api\Utility\Utility;
  */
 class Server extends ConfigEntityBase implements ServerInterface {
 
+  use InstallingTrait;
   use LoggerTrait;
 
   /**
@@ -500,6 +501,7 @@ class Server extends ConfigEntityBase implements ServerInterface {
 
     // If the server is being disabled, also disable all its indexes.
     if (!$this->isSyncing()
+        && !$this->isInstallingFromExtension()
         && !isset($overrides['status'])
         && !$this->status()
         && $this->original->status()) {

@@ -13,7 +13,6 @@ namespace Symfony\Component\Translation\Dumper;
 
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
-use Symfony\Component\Translation\Exception\InvalidArgumentException;
 
 /**
  * XliffFileDumper generates xliff files from a message catalogue.

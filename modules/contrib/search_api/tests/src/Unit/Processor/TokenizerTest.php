@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\search_api\Unit\Processor;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\search_api\Plugin\search_api\processor\Tokenizer;
 use Drupal\search_api\Utility\Utility;
 use Drupal\Tests\UnitTestCase;
@@ -184,10 +183,10 @@ class TokenizerTest extends UnitTestCase {
     // Generate characters consisting of starts, midpoints, and ends.
     $chars = [];
     foreach ($starts as $key => $value) {
-      $chars[] = self::codepointToUtf8($starts[$key]);
+      $chars[] = static::codepointToUtf8($starts[$key]);
       $mid = round(0.5 * ($starts[$key] + $ends[$key]));
-      $chars[] = self::codepointToUtf8($mid);
-      $chars[] = self::codepointToUtf8($ends[$key]);
+      $chars[] = static::codepointToUtf8($mid);
+      $chars[] = static::codepointToUtf8($ends[$key]);
     }
 
     // Merge into a single string and tokenize.
@@ -298,8 +297,8 @@ class TokenizerTest extends UnitTestCase {
         // never removed). Split this into 30-character chunks, so we don't run
         // into limits of truncation.
         $start = 0;
-        while ($start < Unicode::strlen($string)) {
-          $newstr = Unicode::substr($string, $start, 30);
+        while ($start < mb_strlen($string)) {
+          $newstr = mb_substr($string, $start, 30);
           // Special case: leading zeros are removed from numeric strings,
           // and there's one string in this file that is numbers starting with
           // zero, so prepend a 1 on that string.
@@ -313,7 +312,7 @@ class TokenizerTest extends UnitTestCase {
     }
     foreach ($strings as $key => $string) {
       $simplified = $this->invokeMethod('simplifyText', [$string]);
-      $this->assertGreaterThanOrEqual(Unicode::strlen($string), Unicode::strlen($simplified), "Nothing is removed from string $key.");
+      $this->assertGreaterThanOrEqual(mb_strlen($string), mb_strlen($simplified), "Nothing is removed from string $key.");
     }
 
     // Test the low-numbered ASCII control characters separately. They are not

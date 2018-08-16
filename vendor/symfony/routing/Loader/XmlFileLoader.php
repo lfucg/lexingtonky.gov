@@ -246,16 +246,6 @@ class XmlFileLoader extends FileLoader
             $defaults['_controller'] = $controller;
         }
 
-        if ($controller = $node->getAttribute('controller')) {
-            if (isset($defaults['_controller'])) {
-                $name = $node->hasAttribute('id') ? sprintf('"%s"', $node->getAttribute('id')) : sprintf('the "%s" tag', $node->tagName);
-
-                throw new \InvalidArgumentException(sprintf('The routing file "%s" must not specify both the "controller" attribute and the defaults key "_controller" for %s.', $path, $name));
-            }
-
-            $defaults['_controller'] = $controller;
-        }
-
         return array($defaults, $requirements, $options, $condition);
     }
 

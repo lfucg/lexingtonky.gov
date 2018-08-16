@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\TypedData\EntityDataDefinitionInterface;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\TypedData\ComplexDataDefinitionInterface;
 use Drupal\Core\TypedData\DataReferenceDefinitionInterface;
@@ -75,18 +76,11 @@ class IndexAddFieldsForm extends EntityForm {
   protected $formIdAttribute;
 
   /**
-   * {@inheritdoc}
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
    */
-  public function getFormId() {
-    return 'search_api_index_add_fields';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBaseFormId() {
-    return NULL;
-  }
+  protected $messenger;
 
   /**
    * Constructs an IndexAddFieldsForm object.
@@ -101,15 +95,18 @@ class IndexAddFieldsForm extends EntityForm {
    *   The renderer to use.
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
    * @param array $parameters
    *   The parameters for this page request.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, FieldsHelperInterface $fields_helper, DataTypeHelperInterface $data_type_helper, RendererInterface $renderer, DateFormatterInterface $date_formatter, array $parameters) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, FieldsHelperInterface $fields_helper, DataTypeHelperInterface $data_type_helper, RendererInterface $renderer, DateFormatterInterface $date_formatter, MessengerInterface $messenger, array $parameters) {
     $this->entityTypeManager = $entity_type_manager;
     $this->fieldsHelper = $fields_helper;
     $this->dataTypeHelper = $data_type_helper;
     $this->renderer = $renderer;
     $this->dateFormatter = $date_formatter;
+    $this->messenger = $messenger;
     $this->parameters = $parameters;
   }
 
@@ -123,9 +120,24 @@ class IndexAddFieldsForm extends EntityForm {
     $renderer = $container->get('renderer');
     $date_formatter = $container->get('date.formatter');
     $request_stack = $container->get('request_stack');
+    $messenger = $container->get('messenger');
     $parameters = $request_stack->getCurrentRequest()->query->all();
 
-    return new static($entity_type_manager, $fields_helper, $data_type_helper, $renderer, $date_formatter, $parameters);
+    return new static($entity_type_manager, $fields_helper, $data_type_helper, $renderer, $date_formatter, $messenger, $parameters);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBaseFormId() {
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
+    return 'search_api_index_add_fields';
   }
 
   /**
@@ -480,7 +492,7 @@ class IndexAddFieldsForm extends EntityForm {
     }
 
     $args['%label'] = $field->getLabel();
-    drupal_set_message($this->t('Field %label was added to the index.', $args));
+    $this->messenger->addStatus($this->t('Field %label was added to the index.', $args));
   }
 
 }

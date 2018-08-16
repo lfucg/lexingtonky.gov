@@ -14,7 +14,7 @@ use Drupal\search_api\Processor\ProcessorInterface;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\Query\ResultSetInterface;
 use Drupal\search_api\Tracker\TrackerInterface;
-use Drupal\user\SharedTempStore;
+use Drupal\Core\TempStore\SharedTempStore;
 
 /**
  * Represents a configuration of an index that was not yet permanently saved.
@@ -31,7 +31,7 @@ class UnsavedIndexConfiguration implements IndexInterface, UnsavedConfigurationI
   /**
    * The shared temporary storage to use.
    *
-   * @var \Drupal\user\SharedTempStore
+   * @var \Drupal\Core\TempStore\SharedTempStore
    */
   protected $tempStore;
 
@@ -61,7 +61,7 @@ class UnsavedIndexConfiguration implements IndexInterface, UnsavedConfigurationI
    *
    * @param \Drupal\search_api\IndexInterface $index
    *   The index to proxy.
-   * @param \Drupal\user\SharedTempStore $temp_store
+   * @param \Drupal\Core\TempStore\SharedTempStore $temp_store
    *   The shared temporary storage to use.
    * @param int|string $current_user_id
    *   Either the UID of the currently logged-in user, or the session ID (for

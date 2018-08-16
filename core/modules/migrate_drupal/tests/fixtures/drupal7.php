@@ -6929,7 +6929,7 @@ $connection->schema()->createTable('field_data_field_term_reference', array(
     'deleted' => array(
       'type' => 'int',
       'not null' => TRUE,
-      'size' => 'tiny',
+      'size' => 'normal',
       'default' => '0',
     ),
     'entity_id' => array(
@@ -9310,6 +9310,7 @@ $connection->schema()->createTable('field_revision_field_image', array(
       'type' => 'int',
       'not null' => FALSE,
       'size' => 'normal',
+      'unsigned' => TRUE,
     ),
   ),
   'primary key' => array(
@@ -9370,59 +9371,6 @@ $connection->schema()->createTable('field_revision_field_images', array(
     'field_images_fid' => array(
       'type' => 'int',
       'not null' => FALSE,
-    ),
-  ),
-  'primary key' => array(
-    'entity_type',
-    'deleted',
-    'entity_id',
-    'revision_id',
-    'language',
-    'delta',
-  ),
-  'mysql_character_set' => 'utf8',
-));
-
-$connection->insert('field_revision_field_datetime_without_time')
-->fields(array(
-  'entity_type',
-  'bundle',
-  'deleted',
-  'entity_id',
-  'revision_id',
-  'language',
-  'delta',
-  'field_datetime_without_time_value',
-))
-->values(array(
-  'entity_type' => 'node',
-  'bundle' => 'test_content_type',
-  'deleted' => '0',
-  'entity_id' => '1',
-  'revision_id' => '1',
-  'language' => 'und',
-  'delta' => '0',
-  'field_datetime_without_time_value' => '2015-01-20 00:00:00',
-))
-->execute();
-
-$connection->schema()->createTable('field_revision_field_date_without_time', array(
-  'fields' => array(
-    'entity_type' => array(
-      'type' => 'varchar',
-      'not null' => TRUE,
-      'length' => '128',
-      'default' => '',
-    ),
-    'bundle' => array(
-      'type' => 'varchar',
-      'not null' => TRUE,
-      'length' => '128',
-      'default' => '',
-    ),
-    'deleted' => array(
-      'type' => 'int',
-      'not null' => TRUE,
       'size' => 'normal',
       'unsigned' => TRUE,
     ),
@@ -9737,7 +9685,6 @@ $connection->schema()->createTable('field_revision_field_link', array(
       'type' => 'text',
       'not null' => FALSE,
       'size' => 'normal',
-      'unsigned' => TRUE,
     ),
   ),
   'primary key' => array(
@@ -10030,11 +9977,6 @@ $connection->schema()->createTable('field_revision_field_phone', array(
       'not null' => FALSE,
       'length' => '255',
     ),
-    'field_link_attributes' => array(
-      'type' => 'text',
-      'not null' => FALSE,
-      'size' => 'normal',
-    ),
   ),
   'primary key' => array(
     'entity_type',
@@ -10070,7 +10012,7 @@ $connection->insert('field_revision_field_phone')
 ))
 ->values(array(
   'entity_type' => 'node',
-  'bundle' => 'article',
+  'bundle' => 'test_content_type',
   'deleted' => '0',
   'entity_id' => '1',
   'revision_id' => '6',
@@ -10141,11 +10083,6 @@ $connection->schema()->createTable('field_revision_field_private_file', array(
       'type' => 'text',
       'not null' => FALSE,
       'size' => 'normal',
-    ),
-    'field_long_text_format' => array(
-      'type' => 'varchar',
-      'not null' => FALSE,
-      'length' => '255',
     ),
   ),
   'primary key' => array(
@@ -10502,7 +10439,7 @@ $connection->schema()->createTable('field_revision_field_tags', array(
     'deleted' => array(
       'type' => 'int',
       'not null' => TRUE,
-      'size' => 'tiny',
+      'size' => 'normal',
       'default' => '0',
     ),
     'entity_id' => array(
@@ -10533,38 +10470,16 @@ $connection->schema()->createTable('field_revision_field_tags', array(
       'type' => 'int',
       'not null' => FALSE,
       'size' => 'normal',
+      'unsigned' => TRUE,
     ),
   ),
   'primary key' => array(
     'entity_type',
+    'deleted',
     'entity_id',
     'revision_id',
-    'deleted',
-    'delta',
     'language',
-  ),
-  'indexes' => array(
-    'entity_type' => array(
-      'entity_type',
-    ),
-    'bundle' => array(
-      'bundle',
-    ),
-    'deleted' => array(
-      'deleted',
-    ),
-    'entity_id' => array(
-      'entity_id',
-    ),
-    'revision_id' => array(
-      'revision_id',
-    ),
-    'language' => array(
-      'language',
-    ),
-    'field_private_file_fid' => array(
-      'field_private_file_fid',
-    ),
+    'delta',
   ),
   'mysql_character_set' => 'utf8',
 ));
@@ -10740,10 +10655,10 @@ $connection->insert('field_revision_field_term_entityreference')
 ))
 ->values(array(
   'entity_type' => 'node',
-  'bundle' => 'article',
+  'bundle' => 'test_content_type',
   'deleted' => '0',
-  'entity_id' => '2',
-  'revision_id' => '2',
+  'entity_id' => '1',
+  'revision_id' => '1',
   'language' => 'und',
   'delta' => '0',
   'field_term_entityreference_target_id' => '17',
@@ -10777,7 +10692,7 @@ $connection->schema()->createTable('field_revision_field_term_reference', array(
     'deleted' => array(
       'type' => 'int',
       'not null' => TRUE,
-      'size' => 'tiny',
+      'size' => 'normal',
       'default' => '0',
     ),
     'entity_id' => array(
@@ -10806,41 +10721,18 @@ $connection->schema()->createTable('field_revision_field_term_reference', array(
     ),
     'field_term_reference_tid' => array(
       'type' => 'int',
-      'not null' => TRUE,
+      'not null' => FALSE,
       'size' => 'normal',
       'unsigned' => TRUE,
     ),
   ),
   'primary key' => array(
     'entity_type',
+    'deleted',
     'entity_id',
     'revision_id',
-    'deleted',
-    'delta',
     'language',
-  ),
-  'indexes' => array(
-    'entity_type' => array(
-      'entity_type',
-    ),
-    'bundle' => array(
-      'bundle',
-    ),
-    'deleted' => array(
-      'deleted',
-    ),
-    'entity_id' => array(
-      'entity_id',
-    ),
-    'revision_id' => array(
-      'revision_id',
-    ),
-    'language' => array(
-      'language',
-    ),
-    'field_term_entityreference_target_id' => array(
-      'field_term_entityreference_target_id',
-    ),
+    'delta',
   ),
   'mysql_character_set' => 'utf8',
 ));

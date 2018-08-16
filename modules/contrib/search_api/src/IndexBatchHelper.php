@@ -187,23 +187,23 @@ class IndexBatchHelper {
         // Build the indexed message.
         $indexed_message = static::formatPlural($results['indexed'], 'Successfully indexed 1 item.', 'Successfully indexed @count items.');
         // Notify user about indexed items.
-        drupal_set_message($indexed_message);
+        \Drupal::messenger()->addStatus($indexed_message);
         // Display the number of items not indexed.
         if (!empty($results['not indexed'])) {
           // Build the not indexed message.
           $not_indexed_message = static::formatPlural($results['not indexed'], '1 item could not be indexed. Check the logs for details.', '@count items could not be indexed. Check the logs for details.');
           // Notify user about not indexed items.
-          drupal_set_message($not_indexed_message, 'warning');
+          \Drupal::messenger()->addWarning($not_indexed_message);
         }
       }
       else {
         // Notify user about failure to index items.
-        drupal_set_message(static::t("Couldn't index items. Check the logs for details."), 'error');
+        \Drupal::messenger()->addError(static::t("Couldn't index items. Check the logs for details."));
       }
     }
     else {
       // Notify user about batch job failure.
-      drupal_set_message(static::t('An error occurred while trying to index items. Check the logs for details.'), 'error');
+      \Drupal::messenger()->addError(static::t('An error occurred while trying to index items. Check the logs for details.'));
     }
   }
 

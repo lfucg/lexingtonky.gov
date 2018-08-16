@@ -1206,6 +1206,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $this->submitForm($edit, 'Save');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('All content was scheduled for reindexing so the new settings can take effect.');
+    $this->assertSession()->responseContains($this->getIndex()->toUrl()->toString());
   }
 
   /**

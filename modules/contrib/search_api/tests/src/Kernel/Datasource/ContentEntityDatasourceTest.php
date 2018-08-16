@@ -170,6 +170,61 @@ class ContentEntityDatasourceTest extends KernelTestBase {
   }
 
   /**
+   * Tests viewing of items.
+   *
+   * @covers ::viewItem
+   * @covers ::viewMultipleItems
+   */
+  public function testItemViewing() {
+    $loaded_items = $this->datasource->loadMultiple($this->allItemIds);
+    $builder = \Drupal::entityTypeManager()
+      ->getViewBuilder('entity_test_mulrev_changed');
+
+    $item = $loaded_items['1:l0'];
+    $build = $this->datasource->viewItem($item, 'foobar');
+    $expected = [
+      '#entity_test_mulrev_changed' => $item->getValue(),
+      '#view_mode' => 'foobar',
+      '#cache' => [
+        'tags' => [
+          'entity_test_mulrev_changed:1',
+          'entity_test_mulrev_changed_view',
+        ],
+        'contexts' => [],
+        'max-age' => -1,
+      ],
+      '#weight' => 0,
+      '#pre_render' => [
+        [$builder, 'build'],
+      ],
+    ];
+    $this->assertEquals($expected, $build);
+
+    $build = $this->datasource->viewMultipleItems($loaded_items, 'foobar');
+    $this->assertTrue($build['#sorted']);
+    $this->assertEquals([[$builder, 'buildMultiple']], $build['#pre_render']);
+    foreach ($loaded_items as $item_id => $item) {
+      /** @var \Drupal\Core\Entity\EntityInterface $entity */
+      $entity = $item->getValue();
+      $expected = [
+        '#entity_test_mulrev_changed' => $entity,
+        '#view_mode' => 'foobar',
+        '#cache' => [
+          'tags' => [
+            'entity_test_mulrev_changed:' . $entity->id(),
+            'entity_test_mulrev_changed_view',
+          ],
+          'contexts' => [],
+          'max-age' => -1,
+        ],
+      ];
+      $this->assertArrayHasKey('#weight', $build[$item_id]);
+      unset($build[$item_id]['#weight']);
+      $this->assertEquals($expected, $build[$item_id]);
+    }
+  }
+
+  /**
    * Verifies that paged item discovery works correctly.
    *
    * @covers ::getPartialItemIds

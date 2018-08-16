@@ -288,24 +288,4 @@ class Cookie
     {
         return $this->sameSite;
     }
-
-    /**
-     * Checks if the cookie value should be sent with no url encoding.
-     *
-     * @return bool
-     */
-    public function isRaw()
-    {
-        return $this->raw;
-    }
-
-    /**
-     * Gets the SameSite attribute.
-     *
-     * @return string|null
-     */
-    public function getSameSite()
-    {
-        return $this->sameSite;
-    }
 }

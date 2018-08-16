@@ -22,6 +22,6 @@ function search_api_test_views_search_api_query_alter(QueryInterface $query) {
         $message[] = "'$combined_property_path'";
       }
     }
-    drupal_set_message(implode(' ', $message));
+    \Drupal::messenger()->addStatus(implode(' ', $message));
   }
 }

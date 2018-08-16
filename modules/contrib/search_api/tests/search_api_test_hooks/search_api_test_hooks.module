@@ -31,5 +31,5 @@ function search_api_test_hooks_search_api_query_andrew_hill_alter(QueryInterface
  * Implements hook_search_api_results_TAG_alter().
  */
 function search_api_test_hooks_search_api_results_andrew_hill_alter(ResultSetInterface &$results) {
-  drupal_set_message('Llama');
+  \Drupal::messenger()->addStatus('Llama');
 }

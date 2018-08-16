@@ -30,11 +30,19 @@ class ImplicitReturnPassTest extends CodeCleanerTestCase
 
     public function implicitReturns()
     {
-        $values = [
+        $data = [
             ['4',        'return 4;'],
             ['foo()',    'return foo();'],
             ['return 1', 'return 1;'],
+            ['',         'return new \Psy\CodeCleaner\NoReturnValue();'],
         ];
+
+        $from = 'echo "foo";';
+        $to   = <<<'EOS'
+echo "foo";
+return new \Psy\CodeCleaner\NoReturnValue();
+EOS;
+        $data[] = [$from, $to];
 
         $from = 'if (true) { 1; } elseif (true) { 2; } else { 3; }';
         $to   = <<<'EOS'
@@ -47,7 +55,7 @@ if (true) {
 }
 return new \Psy\CodeCleaner\NoReturnValue();
 EOS;
-        $values[] = [$from, $to];
+        $data[] = [$from, $to];
 
         $from = 'class A {}';
         $to   = <<<'EOS'
@@ -56,7 +64,7 @@ class A
 }
 return new \Psy\CodeCleaner\NoReturnValue();
 EOS;
-        $values[] = [$from, $to];
+        $data[] = [$from, $to];
 
         $from = <<<'EOS'
 switch (false) {
@@ -83,10 +91,22 @@ switch (false) {
 }
 return new \Psy\CodeCleaner\NoReturnValue();
 EOS;
-        $values[] = [$from, $to];
+        $data[] = [$from, $to];
 
-        $values[] = ['exit()', 'exit;'];
+        $from = <<<'EOS'
+namespace Foo {
+    1 + 1;
+}
+EOS;
+        $to = <<<'EOS'
+namespace Foo;
 
-        return $values;
+return 1 + 1;
+EOS;
+        $data[] = [$from, $to];
+
+        $data[] = ['exit()', 'exit;'];
+
+        return $data;
     }
 }

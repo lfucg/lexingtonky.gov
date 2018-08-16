@@ -20,6 +20,7 @@ search_api.index.*:
     field_settings:
       type: sequence
       label: 'Indexed fields'
+      orderby: key
       sequence:
         type: mapping
         label: field
@@ -56,18 +57,21 @@ search_api.index.*:
     datasource_settings:
       type: sequence
       label: 'Datasource settings'
+      orderby: key
       sequence:
         type: plugin.plugin_configuration.search_api_datasource.[%key]
         label: 'The configuration for a single datasource'
     processor_settings:
       type: sequence
       label: 'Processor settings'
+      orderby: key
       sequence:
         type: plugin.plugin_configuration.search_api_processor.[%key]
         label: 'The configuration for a single processor'
     tracker_settings:
       type: sequence
       label: 'Tracker settings'
+      orderby: key
       sequence:
         type: plugin.plugin_configuration.search_api_tracker.[%key]
         label: 'The configuration for the tracker'

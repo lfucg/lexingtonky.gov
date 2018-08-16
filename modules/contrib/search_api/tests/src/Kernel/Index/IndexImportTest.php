@@ -93,6 +93,9 @@ class IndexImportTest extends KernelTestBase {
     ];
     $sync->write('search_api.index.database_search_index', $import_config);
 
+    // The system.site key is required for import validation.
+    $sync->write('system.site', []);
+
     // Import the test configuration.
     $config_importer = $this->configImporter();
     $this->assertTrue($config_importer->hasUnprocessedConfigurationChanges(), 'Import prepared');

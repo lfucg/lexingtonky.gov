@@ -33,6 +33,7 @@ class Context
     private $lastException;
     private $lastStdout;
     private $boundObject;
+    private $boundClass;
 
     /**
      * Get a context variable.
@@ -74,13 +75,13 @@ class Context
             case '__file':
             case '__line':
             case '__dir':
-                if (array_key_exists($name, $this->commandScopeVariables)) {
+                if (\array_key_exists($name, $this->commandScopeVariables)) {
                     return $this->commandScopeVariables[$name];
                 }
                 break;
 
             default:
-                if (array_key_exists($name, $this->scopeVariables)) {
+                if (\array_key_exists($name, $this->scopeVariables)) {
                     return $this->scopeVariables[$name];
                 }
                 break;
@@ -96,7 +97,7 @@ class Context
      */
     public function getAll()
     {
-        return array_merge($this->scopeVariables, $this->getSpecialVariables());
+        return \array_merge($this->scopeVariables, $this->getSpecialVariables());
     }
 
     /**
@@ -122,7 +123,7 @@ class Context
             $vars['this'] = $this->boundObject;
         }
 
-        return array_merge($vars, $this->commandScopeVariables);
+        return \array_merge($vars, $this->commandScopeVariables);
     }
 
     /**
@@ -221,11 +222,14 @@ class Context
     /**
      * Set the bound object ($this variable) for the interactive shell.
      *
+     * Note that this unsets the bound class, if any exists.
+     *
      * @param object|null $boundObject
      */
     public function setBoundObject($boundObject)
     {
-        $this->boundObject = is_object($boundObject) ? $boundObject : null;
+        $this->boundObject = \is_object($boundObject) ? $boundObject : null;
+        $this->boundClass = null;
     }
 
     /**
@@ -239,6 +243,29 @@ class Context
     }
 
     /**
+     * Set the bound class (self) for the interactive shell.
+     *
+     * Note that this unsets the bound object, if any exists.
+     *
+     * @param string|null $boundClass
+     */
+    public function setBoundClass($boundClass)
+    {
+        $this->boundClass = (\is_string($boundClass) && $boundClass !== '') ? $boundClass : null;
+        $this->boundObject = null;
+    }
+
+    /**
+     * Get the bound class (self) for the interactive shell.
+     *
+     * @return string|null
+     */
+    public function getBoundClass()
+    {
+        return $this->boundClass;
+    }
+
+    /**
      * Set command-scope magic variables: $__class, $__file, etc.
      *
      * @param array $commandScopeVariables
@@ -248,7 +275,7 @@ class Context
         $vars = [];
         foreach ($commandScopeVariables as $key => $value) {
             // kind of type check
-            if (is_scalar($value) && in_array($key, self::$commandScopeNames)) {
+            if (\is_scalar($value) && \in_array($key, self::$commandScopeNames)) {
                 $vars[$key] = $value;
             }
         }
@@ -276,7 +303,7 @@ class Context
      */
     public function getUnusedCommandScopeVariableNames()
     {
-        return array_diff(self::$commandScopeNames, array_keys($this->commandScopeVariables));
+        return \array_diff(self::$commandScopeNames, \array_keys($this->commandScopeVariables));
     }
 
     /**
@@ -288,6 +315,6 @@ class Context
      */
     public static function isSpecialVariableName($name)
     {
-        return in_array($name, self::$specialNames) || in_array($name, self::$commandScopeNames);
+        return \in_array($name, self::$specialNames) || \in_array($name, self::$commandScopeNames);
     }
 }

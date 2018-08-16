@@ -205,7 +205,7 @@ class Tokenizer extends FieldsProcessorPluginBase {
 
     $value = [];
     foreach ($arr as $token) {
-      if (is_numeric($token) || Unicode::strlen($token) >= $this->configuration['minimum_word_size']) {
+      if (is_numeric($token) || mb_strlen($token) >= $this->configuration['minimum_word_size']) {
         $value[] = Utility::createTextToken($token);
       }
     }
@@ -277,7 +277,7 @@ class Tokenizer extends FieldsProcessorPluginBase {
   protected function expandCjk(array $matches) {
     $min = $this->configuration['minimum_word_size'];
     $str = $matches[0];
-    $length = Unicode::strlen($str);
+    $length = mb_strlen($str);
     // If the text is shorter than the minimum word size, don't tokenize it.
     if ($length <= $min) {
       return ' ' . $str . ' ';
@@ -287,7 +287,7 @@ class Tokenizer extends FieldsProcessorPluginBase {
     $chars = [];
     for ($i = 0; $i < $length; $i++) {
       // Add the next character off the beginning of the string to the queue.
-      $current = Unicode::substr($str, 0, 1);
+      $current = mb_substr($str, 0, 1);
       $str = substr($str, strlen($current));
       $chars[] = $current;
       if ($i >= $min - 1) {

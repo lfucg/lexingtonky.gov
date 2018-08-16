@@ -15,8 +15,6 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\Exception\LogicException;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
-use Symfony\Component\Translation\Exception\InvalidArgumentException;
-use Symfony\Component\Translation\Exception\LogicException;
 
 /**
  * Base catalogues binary operation class.

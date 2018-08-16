@@ -18,6 +18,13 @@ trait ExampleContentTrait {
   protected $entities = [];
 
   /**
+   * The Search API item IDs of the generated entities.
+   *
+   * @var string[]
+   */
+  protected $ids = [];
+
+  /**
    * Sets up the necessary bundles on the test entity type.
    */
   protected function setUpExampleStructure() {
@@ -82,10 +89,12 @@ trait ExampleContentTrait {
    *   The created entity.
    */
   protected function addTestEntity($id, array $values) {
-    $storage = \Drupal::entityTypeManager()->getStorage('entity_test_mulrev_changed');
+    $entity_type = 'entity_test_mulrev_changed';
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
     $values['id'] = $id;
     $this->entities[$id] = $storage->create($values);
     $this->entities[$id]->save();
+    $this->ids[$id] = Utility::createCombinedId("entity:$entity_type", "$id:en");
     return $this->entities[$id];
   }
 
@@ -114,8 +123,9 @@ trait ExampleContentTrait {
    *   An array of item IDs.
    */
   protected function getItemIds(array $entity_ids) {
-    $translate_ids = function ($entity_id) {
-      return Utility::createCombinedId('entity:entity_test_mulrev_changed', $entity_id . ':en');
+    $map = $this->ids;
+    $translate_ids = function ($entity_id) use ($map) {
+      return $map[$entity_id];
     };
     return array_map($translate_ids, $entity_ids);
   }

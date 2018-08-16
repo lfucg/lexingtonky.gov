@@ -267,10 +267,6 @@ class Definition
             throw new OutOfBoundsException(sprintf('The argument "%s" doesn\'t exist.', $index));
         }
 
-        if (!array_key_exists($index, $this->arguments)) {
-            throw new OutOfBoundsException(sprintf('The argument "%s" doesn\'t exist.', $index));
-        }
-
         $this->arguments[$index] = $argument;
 
         return $this;

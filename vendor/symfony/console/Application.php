@@ -458,10 +458,6 @@ class Application
             throw new LogicException(sprintf('The command defined in "%s" cannot have an empty name.', \get_class($command)));
         }
 
-        if (!$command->getName()) {
-            throw new LogicException(sprintf('The command defined in "%s" cannot have an empty name.', get_class($command)));
-        }
-
         $this->commands[$command->getName()] = $command;
 
         foreach ($command->getAliases() as $alias) {

@@ -124,7 +124,6 @@
         <move file="${basedir}/composer.json.bak" tofile="${basedir}/composer.json"/>
 
         <exec executable="${basedir}/build/phar-manifest.php" output="${basedir}/build/phar/manifest.txt"/>
-        <copy todir="${basedir}/build/phar" file="${basedir}/build/ca.pem" />
 
         <copy file="${basedir}/vendor/phpunit/php-code-coverage/LICENSE" tofile="${basedir}/build/phar/php-code-coverage/LICENSE"/>
         <copy todir="${basedir}/build/phar/php-code-coverage">
@@ -376,8 +375,19 @@
         <exec executable="${basedir}/build/version.php" outputproperty="version" />
     </target>
 
-    <target name="generate-project-documentation" depends="-phploc,-checkstyle,-phpmd,-phpunit">
+    <target name="generate-project-documentation" depends="-phploc,-checkstyle,-phpunit">
         <exec executable="${basedir}/build/tools/phpdox" dir="${basedir}/build" taskname="phpdox"/>
+    </target>
+
+    <target name="update-tools">
+        <exec executable="phive">
+            <arg value="--no-progress"/>
+            <arg value="update"/>
+        </exec>
+
+        <exec executable="${basedir}/build/tools/composer">
+            <arg value="self-update"/>
+        </exec>
     </target>
 
     <target name="-phploc" depends="prepare">
@@ -396,16 +406,6 @@
             <arg value="--dry-run"/>
             <arg value="fix"/>
             <arg value="--format=checkstyle"/>
-        </exec>
-    </target>
-
-    <target name="-phpmd" depends="prepare">
-        <exec executable="${basedir}/build/tools/phpmd" taskname="phpmd">
-            <arg path="${basedir}/src"/>
-            <arg value="xml"/>
-            <arg path="${basedir}/build/phpmd.xml"/>
-            <arg value="--reportfile"/>
-            <arg path="${basedir}/build/logfiles/pmd.xml"/>
         </exec>
     </target>
 
