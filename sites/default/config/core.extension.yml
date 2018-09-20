@@ -1,4 +1,5 @@
 module:
+  addtoany: 0
   addtocal: 0
   admin_toolbar: 0
   admin_toolbar_tools: 0
@@ -46,6 +47,7 @@ module:
   image: 0
   kint: 0
   lex_calendar: 0
+  lex_custom: 0
   lex_themecontrol: 0
   link: 0
   masquerade: 0

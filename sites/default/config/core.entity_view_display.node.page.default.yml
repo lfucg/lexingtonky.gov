@@ -25,6 +25,11 @@ targetEntityType: node
 bundle: page
 mode: default
 content:
+  addtoany:
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   field_metatags:
     weight: 4
     label: above

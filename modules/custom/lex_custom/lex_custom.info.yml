@@ -1,0 +1,5 @@
+type: module
+# core: 8.x
+name: lex_custom
+description: 'Various miscellaneous tasks for LexingtonKY.gov'
+core: '8.x'

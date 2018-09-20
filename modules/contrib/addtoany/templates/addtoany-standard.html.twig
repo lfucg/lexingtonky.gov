@@ -1,0 +1,45 @@
+{#
+/**
+ * @file
+ * Default theme implementation to standard AddToAny buttons.
+ *
+ * Available variables:
+ * - addtoany_html: HTML for AddToAny buttons.
+ * - button_image: URL for universal button.
+ * - button_setting: Setting of button.
+ * - button_size: Size of buttons.
+ * - universal_button_placement: Value of 'before' or 'after' to place button.
+ * - link_url: Value of URL to share.
+ * - link_title: Value of page title to share.
+ *
+ * @ingroup themeable
+ */
+#}
+{# Remove whitespace between tags for even spacing between buttons. #}
+{% spaceless %}
+
+  {% if button_setting != 'none' %}
+    {% set universal_button %}
+      <a class="a2a_dd addtoany_share" href="https://www.addtoany.com/share#url={{ link_url|url_encode }}&amp;title={{ link_title|url_encode }}">
+        {% if button_image %}
+          <img src="{{ button_image }}">
+        {% endif %}
+      </a>
+    {% endset  %}
+  {% endif %}
+
+  <span class="a2a_kit a2a_kit_size_{{ buttons_size }} addtoany_list" data-a2a-url="{{ link_url }}" data-a2a-title="{{ link_title }}">
+    {% if universal_button_placement == 'before' %}
+      {{ universal_button }}
+    {% endif %}
+
+    {% if addtoany_html %}
+      {{ addtoany_html|raw }}
+    {% endif %}
+
+    {% if universal_button_placement == 'after' %}
+      {{ universal_button }}
+    {% endif %}
+  </span>
+
+{% endspaceless %}

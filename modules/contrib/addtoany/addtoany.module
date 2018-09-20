@@ -1,0 +1,280 @@
+<?php
+
+/**
+ * @file
+ * Handle AddToAny integration.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
+use Drupal\Component\Utility\UrlHelper;
+use Drupal\node\Entity\Node;
+use Drupal\addtoany\Form\AddToAnySettingsForm;
+
+/**
+ * Implements hook_theme().
+ */
+function addtoany_theme() {
+  return [
+    'addtoany_standard' => [
+      'variables' => [
+        'addtoany_html' => FALSE,
+        'link_url' => FALSE,
+        'link_title' => FALSE,
+        'buttons_size' => FALSE,
+        'button_setting' => FALSE,
+        'button_image' => FALSE,
+        'universal_button_placement' => FALSE,
+        'entity_type' => '',
+        'bundle' => '',
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function addtoany_theme_suggestions_addtoany_standard(array $variables) {
+  $suggestion = 'addtoany_standard__';
+  $suggestions = [];
+
+  if (!empty($variables['entity_type'])) {
+    $suggestion .= $variables['entity_type'];
+    $suggestions[] = $suggestion;
+  }
+
+  if (!empty($variables['entity_type']) && !empty($variables['bundle'])) {
+    $suggestion .= '__' . $variables['bundle'];
+    $suggestions[] = $suggestion;
+  }
+
+  return $suggestions;
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function addtoany_entity_extra_field_info() {
+  $extra = [];
+  $entityTypes = AddToAnySettingsForm::getContentEntities();
+  $config = Drupal::config('addtoany.settings');
+
+  // Allow modules to alter the entity types.
+  \Drupal::moduleHandler()->alter('addtoany_entity_types', $entityTypes);
+
+  foreach ($entityTypes as $type) {
+    $entityTypeId = $type->id();
+    $isAllowed = $config->get("entities.{$entityTypeId}");
+    if ($isAllowed) {
+      $bundles = Drupal::service('entity_type.bundle.info')->getBundleInfo($entityTypeId);
+      foreach ($bundles as $bundle => $bundle_data) {
+        $extra[$entityTypeId][$bundle]['display']['addtoany'] = [
+          'label' => t('AddToAny'),
+          'description' => t('Share buttons by AddToAny'),
+          'weight' => 5,
+          'visible' => FALSE,
+        ];
+      }
+    }
+  }
+
+  return $extra;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ */
+function addtoany_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  if ($display->getComponent('addtoany')) {
+    $config = Drupal::config('addtoany.settings');
+    $isAllowed = $config->get("entities.{$entity->getEntityTypeId()}");
+    if ($isAllowed) {
+      $data = addtoany_create_entity_data($entity);
+      $build['addtoany'] = [
+        '#addtoany_html' => \Drupal::token()->replace($data['addtoany_html'], ['node' => $entity]),
+        '#link_url' => $data['link_url'],
+        '#link_title' => $data['link_title'],
+        '#button_setting' => $data['button_setting'],
+        '#button_image' => $data['button_image'],
+        '#universal_button_placement' => $data['universal_button_placement'],
+        '#buttons_size' => $data['buttons_size'],
+        '#entity_type' => $entity->getEntityType()->id(),
+        '#bundle' => $entity->bundle(),
+        '#theme' => 'addtoany_standard',
+      ];
+    }
+  }
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function addtoany_page_attachments(&$page) {
+  $config = \Drupal::config('addtoany.settings');
+
+  // Initial JavaScript.
+  $additional_js = $config->get('additional_js');
+
+  if (\Drupal::moduleHandler()->moduleExists('token')) {
+    $node = \Drupal::routeMatch()->getParameter('node');
+    $data = [];
+    if ($node) {
+      if (is_numeric($node)) {
+        $node = Node::load($node);
+      }
+      $data = ['node' => $node];
+      $additional_js = \Drupal::token()->replace($additional_js, $data);
+    }
+  }
+
+  $javascript_header = 'window.a2a_config=window.a2a_config||{};'
+    . 'a2a_config.callbacks=[];a2a_config.overlays=[];'
+    . 'a2a_config.templates={};'
+    . (($config->get('no_3p')) ? 'a2a_config.no_3p=1;' : '')
+    . $additional_js;
+
+  // Add AddToAny initial JS config.
+  $page['#attached']['html_head'][] = [
+    // The data.
+    [
+      // Add a <script> tag.
+      '#tag' => 'script',
+      // Add JavaScript to the <script> tag.
+      '#value' => Markup::create($javascript_header),
+      // Give weight so it appears after meta tags, etc.
+      '#weight' => 10,
+    ],
+    // Assign a key to reference this HTML <HEAD> element when altering.
+    'addtoany-js',
+  ];
+
+  // Custom CSS.
+  $css = $config->get('additional_css');
+  if (!empty($css)) {
+    // Add AddToAny custom CSS.
+    $page['#attached']['html_head'][] = [
+      // The data.
+      [
+        // Add a <style> tag.
+        '#tag' => 'style',
+        // Add CSS to the <style> tag.
+        '#value' => $css,
+        // Give weight so it appears after meta tags, etc.
+        '#weight' => 10,
+      ],
+      // Assign a key to reference this HTML <HEAD> element when altering.
+      'addtoany-css',
+    ];
+  }
+
+  // Add module's main library, which includes external AddToAny core JS,
+  // and the module's CSS.
+  $page['#attached']['library'][] = 'addtoany/addtoany';
+}
+
+/**
+ * Generate data for AddToAny buttons for a node.
+ *
+ * @param object $node
+ *   The node object to create the buttons for.
+ * @param object $config
+ *   If present this will be used as custom config data. Use NULL for default
+ *   config data.
+ *
+ * @return array
+ *   The array with url, title, additional_html that will be send to Twig.
+ */
+function addtoany_create_entity_data($node, $config = NULL) {
+  $url = isset($node) ? $node->url('canonical', ['absolute' => TRUE]) : NULL;
+  $title = isset($node) ? $node->label() : NULL;
+  return addtoany_create_data($url, $title, $config);
+}
+
+/**
+ * Generate data for AddToAny buttons.
+ *
+ * @param string $url
+ *   If present this will be used as the URL.
+ * @param string $title
+ *   If present this will be used as the title. Use an empty string for no title
+ *   or NULL to use the current page title.
+ * @param object $config
+ *   If present this will be used as custom config data. Use NULL for default
+ *   config data.
+ *
+ * @return array
+ *   The array with url, title, additional_html that will be send to Twig.
+ */
+function addtoany_create_data($url = NULL, $title = NULL, $config = NULL) {
+  if (is_null($config)) {
+    $config = \Drupal::config('addtoany.settings');
+  }
+
+  $additional_html = rtrim($config->get('additional_html'));
+  $universal_button_placement = $config->get('universal_button_placement');
+
+  $is_front = \Drupal::service('path.matcher')->isFrontPage();
+
+  // Default to <front> or the current path.
+  if (!isset($url)) {
+    // Use <front> for the front page to avoid '/node' as the final URL,
+    // otherwise use current path.
+    $url = ($is_front) ? Url::fromRoute('<front>')
+      ->setAbsolute()
+      ->toString() : Url::fromRoute('<current>')->setAbsolute()->toString();
+  }
+  else {
+    // Sanitize and encode URL for HTML output.
+    $url = UrlHelper::stripDangerousProtocols($url);
+  }
+
+  // Default to the current title if available, otherwise use the site name.
+  if (!isset($title)) {
+    $site_name = \Drupal::config('system.site')->get('name');
+
+    if ($is_front) {
+      $title = $site_name;
+    }
+    else {
+      $request = \Drupal::request();
+      $route_match = \Drupal::routeMatch();
+      $title = \Drupal::service('title_resolver')
+        ->getTitle($request, $route_match->getRouteObject());
+      // Expecting array|string|null from getTitle.
+      if (is_array($title)) {
+        $title['#allowed_tags'] = [];
+        $title = \Drupal::service('renderer')->renderPlain($title);
+      }
+    }
+
+    $title = (empty($title)) ? $site_name : $title;
+  }
+
+  $buttons_size = $config->get('buttons_size');
+  // Must be a 3 digit positive integer.
+  $buttons_size = (
+    $buttons_size !== '32' && strlen($buttons_size) <= 3 && $buttons_size !== ''
+    && is_numeric($buttons_size) && intval($buttons_size) == $buttons_size && $buttons_size > 0
+  ) ? $buttons_size : '32';
+
+  $button_setting = $config->get('universal_button');
+
+  if ($button_setting == 'custom') {
+    $button_image = UrlHelper::stripDangerousProtocols($config->get('custom_universal_button'));
+  }
+
+  $info = [
+    'link_url'                   => $url,
+    'link_title'                 => $title,
+    'buttons_size'               => $buttons_size,
+    'button_setting'             => $button_setting,
+    'button_image'               => isset($button_image) ? $button_image : '',
+    'universal_button_placement' => $universal_button_placement,
+    'addtoany_html'              => $additional_html,
+  ];
+
+  return $info;
+}

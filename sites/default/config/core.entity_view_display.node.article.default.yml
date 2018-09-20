@@ -69,4 +69,5 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  addtoany: true
   field_keywords: true

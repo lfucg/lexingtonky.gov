@@ -10,7 +10,8 @@
         "drush/drush": "8.1.16",
         "drupal/captcha": "^1.0@beta",
         "drupal/twig_tweak": "^2.0",
-        "drupal/admin_toolbar": "^1.24"
+        "drupal/admin_toolbar": "^1.24",
+        "drupal/addtoany": "^1.10"
     },
     "replace": {
         "drupal/core": "^8.5"

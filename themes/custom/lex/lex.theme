@@ -116,17 +116,19 @@ function lex_preprocess_input__submit(&$variables) {
 
 function lex_preprocess_block(&$variables) {
   $variables['attributes']['class'][] = 'lex-block';
-  $element_id = $variables['elements']['#id'];
+  if (isset($variables['elements']['#id'])) {
+    $element_id = $variables['elements']['#id'];
 
-  if (stristr($element_id, 'inline_page_feedback_form')) {
-    # get contact form field to render inline
-    $message = \Drupal::entityManager()
+    if (stristr($element_id, 'inline_page_feedback_form')) {
+      # get contact form field to render inline
+      $message = \Drupal::entityManager()
       ->getStorage('contact_message')
       ->create(array(
         'contact_form' => 'page_feedback'
       ));
 
-    $variables['contact_form'] = \Drupal::service('entity.form_builder')->getForm($message);
+      $variables['contact_form'] = \Drupal::service('entity.form_builder')->getForm($message);
+    }
   }
 }
 
@@ -140,6 +142,7 @@ function lex_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state
 
     array_push($form['#attributes']['class'], 'lex-search', 'lex-search-page-form', 'usa-search', 'usa-search-big');
   }
+
 }
 
 function lex_preprocess_item_list__search_results(&$variables) {

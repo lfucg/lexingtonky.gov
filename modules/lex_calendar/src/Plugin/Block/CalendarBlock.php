@@ -97,7 +97,7 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
       '#type' => 'radios',
       '#title' => $this->t('Content Type'),
       '#options' => [
-        'event' => $this->t('Events'), 
+        'event' => $this->t('Events'),
         'meeting' => $this->t('Meetings')
       ],
       '#default_value' => isset($config['content_type']) ? $config['content_type'] : '',
@@ -149,18 +149,17 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
 
   protected function setQueryModification() {
     $entity = $this->routeMatch->getParameter('node');
-
     try {
       $related = $entity->get('field_organization_taxonomy_term')->getValue();
-    } 
+    }
     catch ( \InvalidArgumentException $e ) {
       try {
         $related = $entity->get('field_related_departments')->getValue();
       }
       catch( \InvalidArgumentException $e) {}
-    }
+      }
 
-    if (!empty($related)) {
+      if (!empty($related)) {
       $this->targetDepartment = $related[0]['target_id'];
     }
   }
@@ -185,7 +184,7 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
     $this->events->clear();
     $this->queryEvents($this->contentType,
       new \DateTime('now', new \DateTimeZone('America/New_York')),
-      new \DateTime('+1 month', new \DateTimeZone('America/New_York'))
+      new \DateTime('+3 months', new \DateTimeZone('America/New_York'))
     );
 
     $this->events->sort();
@@ -223,8 +222,8 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
   }
 
   protected function modifyEventQuery($query) {
-    return $this->targetDepartment ? 
-      $query->condition('field_related_departments', $this->targetDepartment) : 
+    return $this->targetDepartment ?
+      $query->condition('field_related_departments', $this->targetDepartment) :
       $query;
   }
 }

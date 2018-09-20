@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "86f1d79472fd0a8568bf4b378dcf290e",
+    "content-hash": "d7940d2fce3d38010a9ead656312f26d",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1019,6 +1019,61 @@
                 "reflection"
             ],
             "time": "2018-06-14T14:45:07+00:00"
+        },
+        {
+            "name": "drupal/addtoany",
+            "version": "1.10.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/addtoany",
+                "reference": "8.x-1.10"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/addtoany-8.x-1.10.zip",
+                "reference": "8.x-1.10",
+                "shasum": "ebf4a3191537002a39211a9c7d0d80e83955411f"
+            },
+            "require": {
+                "drupal/core": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.10",
+                    "datestamp": "1530658695",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "AddToAny",
+                    "homepage": "https://www.drupal.org/user/2640913"
+                },
+                {
+                    "name": "micropat",
+                    "homepage": "https://www.drupal.org/user/260224"
+                },
+                {
+                    "name": "patPrzybilla",
+                    "homepage": "https://www.drupal.org/user/151965"
+                }
+            ],
+            "description": "Share buttons by AddToAny, including the AddToAny universal sharing button, Facebook, Twitter, Google+, Pinterest, and over 100 more on the <a href=\"https://www.addtoany.com/\" target=\"_blank\">AddToAny</a> platform.",
+            "homepage": "https://www.drupal.org/project/addtoany",
+            "support": {
+                "source": "http://cgit.drupalcode.org/addtoany"
+            }
         },
         {
             "name": "drupal/admin_toolbar",
