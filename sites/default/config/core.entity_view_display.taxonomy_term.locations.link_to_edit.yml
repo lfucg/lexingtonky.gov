@@ -1,0 +1,56 @@
+uuid: 3dc2525a-22a5-459d-aba0-c0e77e8a5127
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.taxonomy_term.link_to_edit
+    - field.field.taxonomy_term.locations.field_contact_email
+    - field.field.taxonomy_term.locations.field_contact_fax
+    - field.field.taxonomy_term.locations.field_contact_person
+    - field.field.taxonomy_term.locations.field_contact_person_title
+    - field.field.taxonomy_term.locations.field_contact_phone
+    - field.field.taxonomy_term.locations.field_hours_of_operation
+    - field.field.taxonomy_term.locations.field_location_detail
+    - field.field.taxonomy_term.locations.field_metatags
+    - field.field.taxonomy_term.locations.field_social_link_facebook
+    - field.field.taxonomy_term.locations.field_social_link_instagram
+    - field.field.taxonomy_term.locations.field_social_link_linkedin
+    - field.field.taxonomy_term.locations.field_social_link_newsletter
+    - field.field.taxonomy_term.locations.field_social_link_twitter
+    - field.field.taxonomy_term.locations.field_social_link_youtube
+    - field.field.taxonomy_term.locations.field_street
+    - field.field.taxonomy_term.locations.field_street_number
+    - field.field.taxonomy_term.locations.field_zip_code
+    - taxonomy.vocabulary.locations
+  module:
+    - text
+id: taxonomy_term.locations.link_to_edit
+targetEntityType: taxonomy_term
+bundle: locations
+mode: link_to_edit
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_contact_email: true
+  field_contact_fax: true
+  field_contact_person: true
+  field_contact_person_title: true
+  field_contact_phone: true
+  field_hours_of_operation: true
+  field_location_detail: true
+  field_metatags: true
+  field_social_link_facebook: true
+  field_social_link_instagram: true
+  field_social_link_linkedin: true
+  field_social_link_newsletter: true
+  field_social_link_twitter: true
+  field_social_link_youtube: true
+  field_street: true
+  field_street_number: true
+  field_zip_code: true

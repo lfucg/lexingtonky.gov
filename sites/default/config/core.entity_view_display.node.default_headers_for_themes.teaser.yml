@@ -18,3 +18,4 @@ content:
     region: content
 hidden:
   field_organization_image: true
+  field_theme: true
