@@ -18,14 +18,24 @@ body
       padding-left: 25px
       font-size: 20px
       color: $color-secondary-4
+
       a
         text-decoration: none
+        &:hover
+          text-decoration: underline
+
     .social-icon
       a
         text-decoration: none
         display: inline-block
         overflow: hidden
         text-indent: -9999px
+
+        &:hover
+          &:before
+            text-shadow: -2px 2px 5px grey
+            color: $color-secondary-4
+            transition: .2s
 
         &:before
           font-size: 2em
@@ -34,6 +44,8 @@ body
           float: left
           text-indent: 0
           font-family: FontAwesome
+
+
     .social-icon-facebook a::before
       color: #3b5999
       content: "\f082"
