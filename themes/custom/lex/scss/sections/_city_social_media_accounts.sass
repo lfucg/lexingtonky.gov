@@ -1,0 +1,53 @@
+body
+  .city-social-media-accounts
+    .views-row
+      padding: 8px
+    .views-col
+      display: table
+    .views-field
+      display: table-cell
+      float: right
+      padding-left: 10px
+      @media(max-width: 615px)
+        float: none
+      i
+        font-size: 2em
+        padding: 0px 4px
+    .views-field-name
+      width: 400px
+      padding-left: 25px
+      font-size: 20px
+      color: #585858
+      text-decoration: none
+    .social-icon
+      a
+        text-decoration: none
+        display: inline-block
+        overflow: hidden
+        text-indent: -9999px
+
+        &:before
+          font-size: 2em
+          padding: 0px 4px
+          color: $color-secondary-4
+          float: left
+          text-indent: 0
+          font-family: FontAwesome
+    .social-icon-facebook a::before
+      content: "\f082"
+    .social-icon-instagram a::before
+      content: "\f16d"
+    .social-icon-linkedin a::before
+      content: "\f08c"
+    .social-icon-twitter a::before
+      content: "\f081"
+    .social-icon-youtube a::before
+      content: "\f166"
+
+    @media(max-width: 615px)
+      .views-col
+        background-color: $color-secondary-1
+        border-radius: 5px
+      .views-field
+        vertical-align: middle
+        float: none
