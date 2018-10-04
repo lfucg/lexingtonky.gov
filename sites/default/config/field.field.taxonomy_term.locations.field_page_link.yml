@@ -1,0 +1,23 @@
+uuid: 3cce7702-d04f-4dcc-be19-153ac32f6d3f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_page_link
+    - taxonomy.vocabulary.locations
+  module:
+    - link
+id: taxonomy_term.locations.field_page_link
+field_name: field_page_link
+entity_type: taxonomy_term
+bundle: locations
+label: 'Page Link'
+description: 'Enter the urk for this loaction''s homepage i.e /departments/parks-recreation'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 0
+field_type: link
