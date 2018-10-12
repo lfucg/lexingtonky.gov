@@ -1,6 +1,12 @@
 body.bundle-landing_page
+  main
+    display: none
+
   .lex-hero.splash
     height: 75vh
+    @media (max-width: $screen-phone-max)
+      height: auto
+
     -webkit-background-size: cover !important
     -moz-background-size: cover !important
     -o-background-size: cover !important
@@ -17,18 +23,25 @@ body.bundle-landing_page
 
     h1
       background-color: rgba(0,0,0,0.15)
-      padding: 8px
       margin-top: 0px
-      margin-bottom: 4px
-
-    >div
+      margin-bottom: 0px
+      padding-top: 8px
+      padding-bottom: 8px
       padding-left: 48px
       @media (max-width: $screen-phone-max)
-        padding-left: 0px
+        padding-left: 8px
+
+    >div
+      padding-left: 0px
 
     .lex-region-hero
       >div
         width: 100%
+        padding-top: 12px
+        padding-bottom: 20px
+        padding-left: 48px
+        @media (max-width: $screen-phone-max)
+          padding-left: 0px
         .usa-width-one-half
           width: calc(33% - 16px)
           display: inline-block
@@ -36,7 +49,7 @@ body.bundle-landing_page
             width: 100%
 
     .lex-card-title
-      padding: 12px
+      padding: 8px
       a
         color: white
         text-decoration: none
@@ -55,40 +68,9 @@ body.bundle-landing_page
             width: 100%
 
   &.lex-planning-commission
-    .lex-hero.splash
-      display: flex
-      justify-content: space-around
-      align-items: center
-      flex-flow: column nowrap
+    main
+      display: block
+      padding: 5%
 
-      >img
-        display: block
-        opacity: 1
-        width: 50%
-        height: auto
-
-        @media (max-width: $screen-desk-max)
-          width: 75%
-
-        @media (max-width: $screen-phablet-max)
-          margin: 3em auto
-
-        @media (max-width: $screen-phablet-max) and (orientation: landscape)
-          position: absolute
-          top: 2.5%
-          left: 2.5%
-          width: 40%
-
-      >div section:first-child
-        max-width: 60%
-
-        @media (max-width: $screen-phablet-max)
-          max-width: none
-          width: 100%
-
-      @media (max-width: $screen-phablet-max) and (orientation: landscape)
-        >div
-          section:first-child
-            height: 8em
-          section:last-child
-            height: calc(100% - 8em)
+    #block-lex-planning-commission-pagetitle
+      margin-bottom: 0px
