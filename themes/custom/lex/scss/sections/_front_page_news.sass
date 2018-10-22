@@ -1,0 +1,91 @@
+// body
+//   .all-news
+//     max-width: 100%
+//     margin-left: 0
+//     @media (min-width: $screen-phablet-max)
+//       max-width: 75%
+//       margin-left: 12.5%
+//     @media (min-width: $screen-large-min)
+//       max-width: 50%
+//       margin-left: 25%
+//
+//     .article
+//       padding-left: 0%
+//       padding-bottom: 20px
+//       >div:first-child
+//         float: none
+//         margin: 0
+
+body
+  .all-news
+    max-width: 100%
+    margin-left: 0
+    @media (min-width: $screen-phablet-max)
+      max-width: 75%
+      margin-left: 12.5%
+    @media (min-width: $screen-tablet-max)
+      max-width: 68.75%
+      margin-left: calc((100% - 68.75%)/2)
+    @media (min-width: $screen-large-min)
+      max-width: 50%
+      margin-left: 25%
+
+    .article
+      padding-left: 0%
+      padding-bottom: 20px
+      >div.lex-card-fulldate
+        float: none
+        width: auto
+        margin: 0 0 4px 0
+        position: relative
+        top: 0px
+        // display: none
+        .lex-card-fulldate
+          margin-bottom: 0px
+          .news-year
+            font-weight: 600
+            float: left
+            margin-right: 8px
+          .news-time
+            display: block
+        @media (min-width: $screen-phablet-max)
+          top: 34px
+          height: 30px
+          display: block
+          margin: 0
+          .lex-card-fulldate
+            .news-year
+              float: none
+              margin: 0
+      >div:first-child
+        display: none
+        // display: inline-block
+        position: relative
+        float: none
+        width: auto
+        margin: 0
+        top: 160px
+        img
+          height: 125px
+          width: auto
+          border: none
+      >h4
+        margin-top: 0
+        margin-bottom: 12px
+        position: relative
+        left: 0%
+        @media (min-width: $screen-phablet-max)
+          left: 28%
+          max-width: calc(100% - 28%)
+        a
+          color: $color-secondary-4
+          text-decoration: underline
+          &:hover
+            text-decoration: none
+      >h4+div
+        overflow-x: hidden
+        position: relative
+        left: 0%
+        @media (min-width: $screen-phablet-max)
+          left: 28%
+          max-width: calc(100% - 28%)
