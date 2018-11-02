@@ -1,151 +1,72 @@
 body.bundle-landing_page
+  main
+    padding: 0% 5% 2% 5%
+
   .lex-hero.splash
-    position: relative
-    height: calc(100vh - 6em)
-    background-size: cover
+    height: 75vh
+    @media (max-width: $screen-phone-max)
+      height: auto
 
-    @media (max-width: $screen-tablet-max)
-      height: calc(100vh - 3em)
+    -webkit-background-size: cover !important
+    -moz-background-size: cover !important
+    -o-background-size: cover !important
+    background-size: cover !important
 
-    >img
+    @media (max-width: $screen-phone-max)
+      overflow: scroll
+
+    .mobile-image
       display: none
-    a
-      color: #fff
-      text-decoration: none
-
-    >div // container of the text
-      padding: 1em $base_gutter
-      display: flex
-      justify-content: space-between
-      align-items: center
-
-      section:first-child
-        flex-grow: 1
-        max-width: 33%
-
-      section:last-child
-        flex-grow: 1
-        max-width: 61%
-    h1
-      font-size: 2.5vmax
-
-    .lex-region-hero>div
-      float: none
-      width: auto
-
-    .cols-2
-      display: flex
-      justify-content: space-between
-      align-items: center
-      width: 100%
-
-    .usa-width-one-half
-      width: 45%
-      font-size: 1.1em
-      line-height: 1.5
-
-    @media (max-width: $screen-phablet-max)
-      h1
-        font-size: 1.5em
-
-      >div
+      @media (max-width: $screen-phone-max)
         display: block
-        position: static
-        border: none
-
-      .usa-width-one-half
         width: 100%
 
-      @media (orientation: landscape)
-
-        >div
-          height: 100%
-          background: none
-
-          > section
-            background: rgba($color-primary-5, 0.75)
-            @include base_padding
-            width: 50%
-
-            &:first-child
-              max-width: none
-            &:last-child
-              max-width: none
-
-        .cols-2
-          flex-flow: column nowrap
-
-        .lex-region-title
-          position: absolute
-          left: 0
-          bottom: 0
-
-        .lex-region-hero
-          position: absolute
-          height: 100%
-          right: 0
-          top: 0
-
-      @media (orientation: portrait)
-        height: auto
-
-        >div
-          background: $color-primary-5
-        >img
-          display: block
-          opacity: 1
-
-        section
-          &.lex-region-title:first-child, &.lex-region-hero:last-child
-            max-width: none
-            width: 100%
-        h1
-          font-size: 1.5em
-
-
-        >div
-          @include base_padding
-
+    h1
+      background-color: rgba(0,0,0,0.15)
+      margin-top: 0px
+      margin-bottom: 0px
+      padding-top: 8px
+      padding-bottom: 8px
+      padding-left: 48px
       @media (max-width: $screen-phone-max)
-        .cols-2
-          flex-flow: column nowrap
+        padding-left: 8px
+
+    >div
+      padding-left: 0px
+
+    .lex-region-hero
+      >div
+        width: 100%
+        padding-top: 12px
+        padding-bottom: 20px
+        padding-left: 48px
+        @media (max-width: $screen-phone-max)
+          padding-left: 0px
+        .usa-width-one-half
+          width: calc(33% - 16px)
+          display: inline-block
+          @media (max-width: $screen-phone-max)
+            width: 100%
+
+    .lex-card-title
+      padding: 8px
+      a
+        color: white
+        text-decoration: none
+        display: inline-block
+
+        &:after
+          content: ''
+          display: block
+          width: 0
+          height: 1px
+          background: #fff
+          transition: width .2s
+
+        &:hover
+          &:after
+            width: 100%
 
   &.lex-planning-commission
-    .lex-hero.splash
-      display: flex
-      justify-content: space-around
-      align-items: center
-      flex-flow: column nowrap
-
-      >img
-        display: block
-        opacity: 1
-        width: 50%
-        height: auto
-
-        @media (max-width: $screen-desk-max)
-          width: 75%
-
-        @media (max-width: $screen-phablet-max)
-          margin: 3em auto
-
-        @media (max-width: $screen-phablet-max) and (orientation: landscape)
-          position: absolute
-          top: 2.5%
-          left: 2.5%
-          width: 40%
-
-      >div section:first-child
-        max-width: 60%
-
-        @media (max-width: $screen-phablet-max)
-          max-width: none
-          width: 100%
-
-      @media (max-width: $screen-phablet-max) and (orientation: landscape)
-        >div
-          section:first-child
-            height: 8em
-          section:last-child
-            height: calc(100% - 8em)
-
+    #block-lex-planning-commission-pagetitle
+      margin-bottom: 0px

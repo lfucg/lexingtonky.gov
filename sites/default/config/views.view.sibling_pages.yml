@@ -764,7 +764,7 @@ display:
         type: grid
         options:
           grouping: {  }
-          columns: 2
+          columns: 3
           automatic_width: false
           alignment: vertical
           col_class_default: false
