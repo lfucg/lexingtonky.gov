@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\TypedData\EntityDataDefinitionInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -677,6 +678,9 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
       ->getStorage($this->getEntityTypeId())
       ->getQuery();
 
+    // When tracking items, we never want access checks.
+    $select->accessCheck(FALSE);
+
     // We want to determine all entities of either one of the given bundles OR
     // one of the given languages. That means we can't just filter for $bundles
     // if $languages is given. Instead, we have to filter for all bundles we
@@ -928,6 +932,13 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
         $name = $storage->getConfigDependencyName();
         $dependencies[$storage->getConfigDependencyKey()][$name] = $name;
       }
+    }
+
+    // The field might be provided by a module which is not the provider of the
+    // entity type, therefore we need to add a dependency on that module.
+    if ($property instanceof FieldStorageDefinitionInterface) {
+      $provider = $property->getProvider();
+      $dependencies['module'][$provider] = $provider;
     }
 
     $property = $this->getFieldsHelper()->getInnerProperty($property);

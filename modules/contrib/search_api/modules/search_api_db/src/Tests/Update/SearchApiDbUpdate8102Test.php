@@ -9,6 +9,7 @@ use Drupal\search_api_db\Tests\DatabaseTestsTrait;
  * Tests whether search_api_db_update_8102() works correctly.
  *
  * @group search_api
+ * @group legacy
  *
  * @see https://www.drupal.org/node/2884451
  */

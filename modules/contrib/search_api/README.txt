@@ -84,7 +84,7 @@ framework.
   - Datasources: src/Datasource
   - Data types: src/DataType
   - Displays: src/Display
-  - ParseModes: src/ParseMode
+  - Parse modes: src/ParseMode
   - Processors: src/Processor
   - Trackers: src/Tracker
   The display plugins are a bit of a special case there, because they aren't
@@ -105,6 +105,32 @@ module's issue regarding potential module-specific changes to that policy [7].
 
 [6] https://www.drupal.org/core/d8-bc-policy
 [7] https://www.drupal.org/node/2871549
+
+SERVER BACKEND FEATURES
+-----------------------
+
+Server backend features are a way for other contrib modules to cleanly define
+ways in which the Search API can be extended. For more information, see [8].
+
+[8] https://www.drupal.org/docs/8/modules/search-api/getting-started/server-backends-and-features
+
+The Search API module itself currently defines one feature:
+
+- More Like This (search_api_mlt)
+  This feature can be used to retrieve a list of search results that are similar
+  to a given indexed item. A backend that supports this plugin has to recognize
+  the "search_api_mlt" query option. If present, it contains an associative
+  array with the following keys:
+  - id: The Search API item ID (consisting of the datasource ID and the
+    datasource-specific item ID – passing a plain entity ID will NOT work!) of
+    the item for which similar results should be found.
+  - fields: A simple array of fields which should be used for determining
+    similarity. Backends can choose to ignore this field.
+  - "field boosts": (optional) An associative array mapping fields to a numeric
+    "boost" value that determines how important they should be considered when
+    determining similarity. Backends can choose to ignore this field.
+  The feature can be used in the UI via the "More like this" Views contextual
+  filter.
 
 MAINTAINERS
 -----------

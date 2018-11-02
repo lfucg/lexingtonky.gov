@@ -2,6 +2,7 @@
 
 namespace Drupal\search_api\Form;
 
+use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Form\FormStateInterface;
@@ -140,8 +141,17 @@ class ServerForm extends EntityForm {
     foreach ($backends as $backend_id => $definition) {
       $config = $backend_id === $server->getBackendId() ? $server->getBackendConfig() : [];
       $config['#server'] = $server;
-      $backend = $this->backendPluginManager
-        ->createInstance($backend_id, $config);
+      try {
+        /** @var \Drupal\search_api\Backend\BackendInterface $backend */
+        $backend = $this->backendPluginManager
+          ->createInstance($backend_id, $config);
+      }
+      catch (PluginException $e) {
+        continue;
+      }
+      if ($backend->isHidden()) {
+        continue;
+      }
       $backend_options[$backend_id] = $backend->label();
       $descriptions[$backend_id]['#description'] = $backend->getDescription();
     }

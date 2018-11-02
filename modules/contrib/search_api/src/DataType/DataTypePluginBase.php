@@ -2,7 +2,7 @@
 
 namespace Drupal\search_api\DataType;
 
-use Drupal\Core\Plugin\PluginBase;
+use Drupal\search_api\Plugin\HideablePluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -40,7 +40,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @see \Drupal\search_api\DataType\DataTypeInterface
  * @see plugin_api
  */
-abstract class DataTypePluginBase extends PluginBase implements DataTypeInterface {
+abstract class DataTypePluginBase extends HideablePluginBase implements DataTypeInterface {
 
   /**
    * {@inheritdoc}

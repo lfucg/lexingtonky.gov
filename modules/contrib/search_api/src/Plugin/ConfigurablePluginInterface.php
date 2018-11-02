@@ -16,7 +16,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
  * @see \Drupal\Core\Plugin\PluginFormInterface
  * @see \Drupal\search_api\Plugin\PluginFormTrait
  */
-interface ConfigurablePluginInterface extends PluginInspectionInterface, DerivativeInspectionInterface, DrupalConfigurablePluginInterface, ContainerFactoryPluginInterface {
+interface ConfigurablePluginInterface extends HideablePluginInterface, PluginInspectionInterface, DerivativeInspectionInterface, DrupalConfigurablePluginInterface, ContainerFactoryPluginInterface {
 
   /**
    * Returns the label for use on the administration pages.

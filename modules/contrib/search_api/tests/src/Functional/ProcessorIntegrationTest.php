@@ -30,6 +30,7 @@ class ProcessorIntegrationTest extends SearchApiBrowserTestBase {
   public static $modules = [
     'filter',
     'taxonomy',
+    'search_api_test_no_ui',
   ];
 
   /**
@@ -155,6 +156,13 @@ class ProcessorIntegrationTest extends SearchApiBrowserTestBase {
 
     $this->checkEntityStatusIntegration();
     $enabled[] = 'entity_status';
+    sort($enabled);
+    $actual_processors = array_keys($this->loadIndex()->getProcessors());
+    sort($actual_processors);
+    $this->assertEquals($enabled, $actual_processors);
+
+    $this->checkNoUiIntegration();
+    $enabled[] = 'search_api_test_no_ui';
     sort($enabled);
     $actual_processors = array_keys($this->loadIndex()->getProcessors());
     sort($actual_processors);
@@ -504,6 +512,21 @@ TAGS
    */
   public function checkEntityStatusIntegration() {
     $this->enableProcessor('entity_status');
+  }
+
+  /**
+   * Tests the "No UI" test processor.
+   */
+  public function checkNoUiIntegration() {
+    $this->loadProcessorsTab();
+    $this->assertSession()->pageTextNotContains('No UI processor');
+
+    // Ensure that the processor can still be enabled programmatically – and
+    // stays enabled when submitting the processors form.
+    $index = $this->loadIndex();
+    $processor = \Drupal::getContainer()->get('search_api.plugin_helper')
+      ->createProcessorPlugin($index, 'search_api_test_no_ui');
+    $index->addProcessor($processor)->save();
   }
 
   /**

@@ -252,6 +252,9 @@ class ViewsTest extends SearchApiBrowserTestBase {
     // have any effect.
     $this->checkResults([], [2, 4, 5], 'Search with arguments', 'all/item+article/strawberry+apple');
 
+    // Check "OR" contextual filters (using commas).
+    $this->checkResults([], [4], 'Search with OR arguments', 'all/item,article/strawberry,apple');
+
     $this->checkResults([], [], 'Search with unknown datasource argument', 'entity:foobar/all/all');
 
     $query = [
@@ -657,6 +660,19 @@ class ViewsTest extends SearchApiBrowserTestBase {
       'name[search_api_index_database_search_index.name]' => 'search_api_index_database_search_index.name',
     ];
     $this->submitForm($edit, 'Add and configure filter criteria');
+    $edit = [
+      'options[expose_button][checkbox][checkbox]' => 1,
+    ];
+    $this->submitForm($edit, 'Expose filter');
+    $this->submitPluginForm([]);
+
+    // Add a "Search: Fulltext search" filter.
+    $this->clickLink('Add filter criteria');
+    $edit = [
+      'name[search_api_index_database_search_index.search_api_fulltext]' => 'search_api_index_database_search_index.search_api_fulltext',
+    ];
+    $this->submitForm($edit, 'Add and configure filter criteria');
+    $this->assertSession()->pageTextNotContains('No UI parse mode');
     $edit = [
       'options[expose_button][checkbox][checkbox]' => 1,
     ];

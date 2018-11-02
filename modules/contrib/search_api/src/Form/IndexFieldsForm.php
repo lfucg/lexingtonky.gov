@@ -187,6 +187,9 @@ class IndexFieldsForm extends EntityForm {
 
     $data_types = [];
     foreach ($instances as $name => $type) {
+      if ($type->isHidden()) {
+        continue;
+      }
       $data_types[$name] = [
         'label' => $type->label(),
         'description' => $type->getDescription(),
@@ -219,7 +222,6 @@ class IndexFieldsForm extends EntityForm {
    *   The build structure.
    */
   protected function buildFieldsTable(array $fields) {
-    $types = $this->dataTypePluginManager->getInstancesOptions();
     $fallback_types = $this->dataTypeHelper
       ->getDataTypeFallbackMapping($this->entity);
 
@@ -236,6 +238,7 @@ class IndexFieldsForm extends EntityForm {
       }
     }
 
+    $types = [];
     $fulltext_types = [
       [
         'value' => 'text',
@@ -243,6 +246,9 @@ class IndexFieldsForm extends EntityForm {
     ];
     // Add all data types with fallback "text" to fulltext types as well.
     foreach ($this->dataTypePluginManager->getInstances() as $type_id => $type) {
+      if (!$type->isHidden()) {
+        $types[$type_id] = $type->label();
+      }
       if ($type->getFallbackType() == 'text') {
         $fulltext_types[] = [
           'value' => $type_id,
@@ -488,7 +494,8 @@ class IndexFieldsForm extends EntityForm {
 
     $this->messenger->addStatus($this->t('The changes were successfully saved.'));
     if ($this->entity->isReindexing()) {
-      $this->messenger->addStatus($this->t('All content was scheduled for reindexing so the new settings can take effect.'));
+      $url = $this->entity->toUrl('canonical');
+      $this->messenger->addStatus($this->t('All content was scheduled for <a href=":url">reindexing</a> so the new settings can take effect.', [':url' => $url->toString()]));
     }
 
     return SAVED_UPDATED;

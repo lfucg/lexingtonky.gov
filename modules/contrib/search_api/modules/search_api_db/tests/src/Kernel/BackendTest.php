@@ -4,6 +4,7 @@ namespace Drupal\Tests\search_api_db\Kernel;
 
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Database\Database as CoreDatabase;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\IndexInterface;
@@ -850,14 +851,20 @@ class BackendTest extends BackendTestBase {
     // Test different input values, similar to @dataProvider (but with less
     // overhead).
     $t = 1400000000;
-    $f = 'Y-m-d H:i:s';
+    $date_time_format = DateTimeItemInterface::DATETIME_STORAGE_FORMAT;
+    $date_format = DateTimeItemInterface::DATE_STORAGE_FORMAT;
     $test_values = [
       'null' => [NULL, NULL],
       'timestamp' => [$t, $t],
       'string timestamp' => ["$t", $t],
       'float timestamp' => [$t + 0.12, $t],
-      'date string' => [gmdate($f, $t), $t],
-      'date string with timezone' => [date($f . 'P', $t), $t],
+      'date string' => [gmdate($date_time_format, $t), $t],
+      'date string with timezone' => [date($date_time_format . 'P', $t), $t],
+      'date only' => [
+        date($date_format, $t),
+        // Date-only fields are stored with the default time (12:00:00).
+        strtotime(date($date_format, $t) . 'T12:00:00+00:00'),
+      ],
     ];
 
     // Get storage information for quickly checking the indexed value.

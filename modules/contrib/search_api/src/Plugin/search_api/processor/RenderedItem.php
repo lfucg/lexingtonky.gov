@@ -5,7 +5,7 @@ namespace Drupal\search_api\Plugin\search_api\processor;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\Core\Session\UserSession;
 use Drupal\Core\Theme\ThemeInitializationInterface;
 use Drupal\Core\Theme\ThemeManagerInterface;
@@ -39,9 +39,9 @@ class RenderedItem extends ProcessorPluginBase {
   /**
    * The current_user service used by this plugin.
    *
-   * @var \Drupal\Core\Session\AccountProxyInterface|null
+   * @var \Drupal\Core\Session\AccountSwitcherInterface|null
    */
-  protected $currentUser;
+  protected $accountSwitcher;
 
   /**
    * The renderer to use.
@@ -78,7 +78,7 @@ class RenderedItem extends ProcessorPluginBase {
     /** @var static $plugin */
     $plugin = parent::create($container, $configuration, $plugin_id, $plugin_definition);
 
-    $plugin->setCurrentUser($container->get('current_user'));
+    $plugin->setAccountSwitcher($container->get('account_switcher'));
     $plugin->setRenderer($container->get('renderer'));
     $plugin->setLogger($container->get('logger.channel.search_api'));
     $plugin->setThemeManager($container->get('theme.manager'));
@@ -89,25 +89,25 @@ class RenderedItem extends ProcessorPluginBase {
   }
 
   /**
-   * Retrieves the current user.
+   * Retrieves the account switcher service.
    *
-   * @return \Drupal\Core\Session\AccountProxyInterface
-   *   The current user.
+   * @return \Drupal\Core\Session\AccountSwitcherInterface
+   *   The account switcher service.
    */
-  public function getCurrentUser() {
-    return $this->currentUser ?: \Drupal::currentUser();
+  public function getAccountSwitcher() {
+    return $this->accountSwitcher ?: \Drupal::service('account_switcher');
   }
 
   /**
-   * Sets the current user.
+   * Sets the account switcher service.
    *
-   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
-   *   The current user.
+   * @param \Drupal\Core\Session\AccountSwitcherInterface $current_user
+   *   The account switcher service.
    *
    * @return $this
    */
-  public function setCurrentUser(AccountProxyInterface $current_user) {
-    $this->currentUser = $current_user;
+  public function setAccountSwitcher(AccountSwitcherInterface $current_user) {
+    $this->accountSwitcher = $current_user;
     return $this;
   }
 
@@ -229,8 +229,6 @@ class RenderedItem extends ProcessorPluginBase {
    * {@inheritdoc}
    */
   public function addFieldValues(ItemInterface $item) {
-    $original_user = $this->currentUser->getAccount();
-
     // Switch to the default theme in case the admin theme is enabled.
     $active_theme = $this->getThemeManager()->getActiveTheme();
     $default_theme = $this->getConfigFactory()
@@ -250,7 +248,8 @@ class RenderedItem extends ProcessorPluginBase {
 
       // Change the current user to our dummy implementation to ensure we are
       // using the configured roles.
-      $this->currentUser->setAccount(new UserSession(['roles' => $configuration['roles']]));
+      $this->getAccountSwitcher()
+        ->switchTo(new UserSession(['roles' => $configuration['roles']]));
 
       $datasource_id = $item->getDatasourceId();
       $datasource = $item->getDatasource();
@@ -268,15 +267,29 @@ class RenderedItem extends ProcessorPluginBase {
         $view_mode = (string) $configuration['view_mode'][$datasource_id][$bundle];
       }
 
-      $build = $datasource->viewItem($item->getOriginalObject(), $view_mode);
-      $value = (string) $this->getRenderer()->renderPlain($build);
-      if ($value) {
-        $field->addValue($value);
+      try {
+        $build = $datasource->viewItem($item->getOriginalObject(), $view_mode);
+        $value = (string) $this->getRenderer()->renderPlain($build);
+        if ($value) {
+          $field->addValue($value);
+        }
+      }
+      catch (\Exception $e) {
+        // This could throw all kinds of exceptions in specific scenarios, so we
+        // just catch all of them here. Not having a field value for this field
+        // probably makes sense in that case, so we just log an error and
+        // continue.
+        $variables = [
+          '%item_id' => $item->getId(),
+          '%view_mode' => $view_mode,
+          '%index' => $this->index->label(),
+        ];
+        $this->logException($e, '%type while trying to render item %item_id with view mode %view_mode for search index %index: @message in %function (line %line of %file).', $variables);
       }
     }
 
     // Restore the original user.
-    $this->currentUser->setAccount($original_user);
+    $this->getAccountSwitcher()->switchBack();
     // Restore the original theme.
     $this->getThemeManager()->setActiveTheme($active_theme);
 

@@ -119,7 +119,8 @@ function search_api_views_plugins_cache_alter(array &$plugins) {
   foreach (Index::loadMultiple() as $index) {
     $bases[] = 'search_api_index_' . $index->id();
   }
-  $plugins['search_api']['base'] = $bases;
+  $plugins['search_api_tag']['base'] = $bases;
+  $plugins['search_api_time']['base'] = $bases;
 }
 
 /**

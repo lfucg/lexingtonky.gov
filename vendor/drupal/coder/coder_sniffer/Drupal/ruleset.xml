@@ -7,6 +7,8 @@
 
  <arg name="extensions" value="php,module,inc,install,test,profile,theme,css,info,txt,md,yml"/>
 
+ <autoload>autoload.php</autoload>
+
  <rule ref="Internal.NoCodeFound">
   <!-- Empty files are fine, might be used for testing. -->
   <exclude-pattern>*</exclude-pattern>
@@ -108,6 +110,9 @@
   <severity>0</severity>
  </rule>
  <rule ref="PEAR.Functions.FunctionCallSignature.EmptyLine">
+  <severity>0</severity>
+ </rule>
+ <rule ref="PEAR.Functions.FunctionCallSignature.OpeningIndent">
   <severity>0</severity>
  </rule>
 

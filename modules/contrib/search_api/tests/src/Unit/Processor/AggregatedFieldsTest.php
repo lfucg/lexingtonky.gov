@@ -71,6 +71,7 @@ class AggregatedFieldsTest extends UnitTestCase {
       'datasourceInstances' => [
         'entity:test1' => $datasource,
         'entity:test2' => $datasource,
+        'entity:test3' => $datasource,
       ],
       'processorInstances' => [],
       'field_settings' => [
@@ -88,6 +89,11 @@ class AggregatedFieldsTest extends UnitTestCase {
           'type' => 'string',
           'datasource_id' => 'entity:test2',
           'property_path' => 'foobaz:bla',
+        ],
+        'always_empty' => [
+          'type' => 'string',
+          'datasource_id' => 'entity:test3',
+          'property_path' => 'always_empty',
         ],
         'aggregated_field' => [
           'type' => 'text',
@@ -146,6 +152,7 @@ class AggregatedFieldsTest extends UnitTestCase {
         'entity:test1/foo',
         'entity:test1/foo:bar',
         'entity:test2/foobaz:bla',
+        'entity:test3/always_empty',
       ],
     ];
     $this->index->getField($this->fieldId)->setConfiguration($configuration);
@@ -166,7 +173,7 @@ class AggregatedFieldsTest extends UnitTestCase {
     }
     $items = [];
     $i = 0;
-    foreach (['entity:test1', 'entity:test2'] as $datasource_id) {
+    foreach (['entity:test1', 'entity:test2', 'entity:test3'] as $datasource_id) {
       $this->itemIds[$i++] = $item_id = Utility::createCombinedId($datasource_id, '1:en');
       $item = \Drupal::getContainer()
         ->get('search_api.fields_helper')
@@ -191,6 +198,7 @@ class AggregatedFieldsTest extends UnitTestCase {
 
     $this->assertEquals(array_map($this->valueCallback, $expected[0]), $items[$this->itemIds[0]]->getField($this->fieldId)->getValues(), 'Correct aggregation for item 1.');
     $this->assertEquals(array_map($this->valueCallback, $expected[1]), $items[$this->itemIds[1]]->getField($this->fieldId)->getValues(), 'Correct aggregation for item 2.');
+    $this->assertEquals(array_map($this->valueCallback, $expected[2]), $items[$this->itemIds[2]]->getField($this->fieldId)->getValues(), 'Correct aggregation for item 3.');
   }
 
   /**
@@ -209,6 +217,7 @@ class AggregatedFieldsTest extends UnitTestCase {
         [
           ['foo', 'bar', 'baz'],
           ['foobar'],
+          [],
         ],
       ],
       '"Concatenation" aggregation' => [
@@ -216,6 +225,7 @@ class AggregatedFieldsTest extends UnitTestCase {
         [
           ["foo\n\nbar\n\nbaz"],
           ['foobar'],
+          [''],
         ],
       ],
       '"Sum" aggregation' => [
@@ -223,6 +233,7 @@ class AggregatedFieldsTest extends UnitTestCase {
         [
           [22],
           [7],
+          [0],
         ],
         TRUE,
       ],
@@ -231,6 +242,7 @@ class AggregatedFieldsTest extends UnitTestCase {
         [
           [3],
           [1],
+          [0],
         ],
       ],
       '"Maximum" aggregation' => [
@@ -238,6 +250,7 @@ class AggregatedFieldsTest extends UnitTestCase {
         [
           [16],
           [7],
+          [],
         ],
         TRUE,
       ],
@@ -246,6 +259,7 @@ class AggregatedFieldsTest extends UnitTestCase {
         [
           [2],
           [7],
+          [],
         ],
         TRUE,
       ],
@@ -254,6 +268,7 @@ class AggregatedFieldsTest extends UnitTestCase {
         [
           ['foo'],
           ['foobar'],
+          [],
         ],
       ],
       '"Last" aggregation' => [
@@ -261,6 +276,7 @@ class AggregatedFieldsTest extends UnitTestCase {
         [
           ['baz'],
           ['foobar'],
+          [],
         ],
       ],
     ];

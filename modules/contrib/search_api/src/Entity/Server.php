@@ -51,12 +51,12 @@ use Drupal\search_api\Utility\Utility;
  *     "backend_config",
  *   },
  *   links = {
- *     "canonical" = "/admin/config/search/search-api/index/{search_api_server}",
+ *     "canonical" = "/admin/config/search/search-api/server/{search_api_server}",
  *     "add-form" = "/admin/config/search/search-api/add-server",
- *     "edit-form" = "/admin/config/search/search-api/index/{search_api_server}/edit",
- *     "delete-form" = "/admin/config/search/search-api/index/{search_api_server}/delete",
- *     "disable" = "/admin/config/search/search-api/index/{search_api_server}/disable",
- *     "enable" = "/admin/config/search/search-api/index/{search_api_server}/enable",
+ *     "edit-form" = "/admin/config/search/search-api/server/{search_api_server}/edit",
+ *     "delete-form" = "/admin/config/search/search-api/server/{search_api_server}/delete",
+ *     "disable" = "/admin/config/search/search-api/server/{search_api_server}/disable",
+ *     "enable" = "/admin/config/search/search-api/server/{search_api_server}/enable",
  *   }
  * )
  */
