@@ -61,4 +61,5 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
+  addtoany: true
   field_related_departments: true

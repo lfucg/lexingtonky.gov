@@ -95,6 +95,7 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  addtoany: true
   field_external_id: true
   field_keywords: true
   field_related_departments: true

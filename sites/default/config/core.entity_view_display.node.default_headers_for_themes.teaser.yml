@@ -17,5 +17,6 @@ content:
     weight: 100
     region: content
 hidden:
+  addtoany: true
   field_organization_image: true
   field_theme: true

@@ -40,12 +40,14 @@ content:
     weight: -20
     region: content
 hidden:
+  addtoany: true
   field_all_day: true
   field_cost: true
   field_date: true
   field_date_end: true
   field_event_website: true
   field_hide_times: true
+  field_keywords: true
   field_locations: true
   field_media_contact: true
   field_metatags: true

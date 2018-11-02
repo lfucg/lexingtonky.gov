@@ -76,6 +76,7 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
+  addtoany: true
   field_lex_site_nav: true
   field_office_to_contact: true
   field_organization_taxonomy_term: true

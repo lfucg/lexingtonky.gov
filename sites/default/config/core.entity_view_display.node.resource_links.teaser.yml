@@ -17,5 +17,6 @@ content:
     weight: 100
     region: content
 hidden:
+  addtoany: true
   field_link_to_: true
   field_resources_list: true
