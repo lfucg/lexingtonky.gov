@@ -1,0 +1,14 @@
+name: 'Search API Test No UI'
+type: module
+description: 'Support module for Search API tests ("No UI" plugins)'
+package: Search
+dependencies:
+  - search_api:search_api
+# core: 8.x
+hidden: true
+
+# Information added by Drupal.org packaging script on 2018-09-17
+version: '8.x-1.10'
+core: '8.x'
+project: 'search_api'
+datestamp: 1537175289

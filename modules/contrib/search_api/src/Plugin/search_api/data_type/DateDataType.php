@@ -2,6 +2,8 @@
 
 namespace Drupal\search_api\Plugin\search_api\data_type;
 
+use Drupal\Component\Datetime\DateTimePlus;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\search_api\DataType\DataTypePluginBase;
 
 /**
@@ -26,8 +28,13 @@ class DateDataType extends DataTypePluginBase {
     if (is_numeric($value)) {
       return (int) $value;
     }
-    $timezone = new \DateTimezone('UTC');
-    $date = new \Datetime($value, $timezone);
+
+    $timezone = new \DateTimezone(DateTimeItemInterface::STORAGE_TIMEZONE);
+    $date = new DateTimePlus($value, $timezone);
+    // Add in time component if this is a date-only field.
+    if (strpos($value, ':') === FALSE) {
+      $date->setDefaultDateTime();
+    }
     return $date->getTimestamp();
   }
 

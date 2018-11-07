@@ -6,6 +6,7 @@ use Drupal\Component\Plugin\DerivativeInspectionInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Component\Plugin\DependentPluginInterface;
+use Drupal\search_api\Plugin\HideablePluginInterface;
 
 /**
  * Defines an interface for display plugins.
@@ -15,7 +16,7 @@ use Drupal\Component\Plugin\DependentPluginInterface;
  * @see \Drupal\search_api\Display\DisplayPluginBase
  * @see plugin_api
  */
-interface DisplayInterface extends PluginInspectionInterface, DerivativeInspectionInterface, ContainerFactoryPluginInterface, DependentPluginInterface {
+interface DisplayInterface extends HideablePluginInterface, PluginInspectionInterface, DerivativeInspectionInterface, ContainerFactoryPluginInterface, DependentPluginInterface {
 
   /**
    * Returns the display label.

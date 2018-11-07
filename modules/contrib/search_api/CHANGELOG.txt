@@ -1,3 +1,46 @@
+Search API 1.10 (2018-09-17):
+-----------------------------
+- #2993787 by drunken monkey, borisson_, mkalkbrenner: Added the possibility to
+  boost fields in MLT queries.
+- #2936631 by drunken monkey, borisson_: Added support for the "no_ui"
+  definition key for plugins.
+- #2996936 by drunken monkey, borisson_: Added suggested packages to
+  composer.json.
+- #2987156 by hchonov, drunken monkey, borisson_: Fixed missing dependency on
+  modules providing fields.
+- #2994638 by drunken monkey, Grayle, borisson_: Fixed warning in aggregated
+  fields without values.
+- #2987237 by quicksketch, drunken monkey, borisson_: Fixed requirements hook
+  for the Taxonomy Term Handlers module preventing updates from running.
+- #2992662 by capysara, drunken monkey, borisson_: Fixed the reindexing link
+  when saving index processors or fields.
+- #2989689 by drunken monkey, valthebald, borisson_: Fixed bug in Views cache
+  plugin alter hook.
+- #2919676 by drunken monkey, borisson_: Fixed server entity link definitions.
+- #2996278 by drunken monkey: Removed one pointless variable.
+- #2987245 by drunken monkey: Fixed use of account_switcher service for
+  switching the currently active account.
+- #2996907 by zerolab, drunken monkey: Fixed entity tracking using access
+  checks.
+- #2993434 by jasonawant, drunken monkey: Fixed handling of comma-separated
+  values in Views contextual filters.
+- #2983843 by drunken monkey, borisson_: Fixed suggestion of installing default
+  module when dependencies aren't met.
+- #2979316 by drunken monkey, Sutharsan: Fixed highlighting problems with
+  multi-byte characters.
+- #2986310 by capysara, drunken monkey: Added link to reindexing when saving
+  fields.
+- #2986013 by tim-diels, drunken monkey, borisson_: Fixed casting of
+  nun-numeric strings in the database backend.
+- #2983630 by chipway, borisson_, drunken monkey: Fixed format of System
+  dependency in search_api.info.yml.
+- #2982660 by jhedstrom, drunken monkey, borisson_: Fixed indexed time of
+  date-only fields.
+- #2986216 by drunken monkey: Added the "legacy" group to
+  SearchApiDbUpdate8102Test.
+- #2920943 by drunken monkey: Fixed error handling for "Rendered item"
+  processor.
+
 Search API 1.9 (2018-07-19):
 ----------------------------
 - #2956012 by drunken monkey, DuaelFr: Added uncustomized view modes as options

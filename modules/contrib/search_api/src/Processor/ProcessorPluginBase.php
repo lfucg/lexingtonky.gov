@@ -141,7 +141,8 @@ abstract class ProcessorPluginBase extends IndexPluginBase implements ProcessorI
    * {@inheritdoc}
    */
   public function isHidden() {
-    return !empty($this->pluginDefinition['hidden']);
+    return !empty($this->pluginDefinition['hidden'])
+        || !empty($this->pluginDefinition['no_ui']);
   }
 
   /**

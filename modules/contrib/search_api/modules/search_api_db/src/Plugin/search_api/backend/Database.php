@@ -1405,8 +1405,8 @@ class Database extends BackendPluginBase implements PluginFormInterface {
    * @param mixed $value
    *   The value to convert.
    * @param string $type
-   *   The type to convert to. One of the keys from
-   *   search_api_default_field_types().
+   *   The Search API type to convert to. (Has to be a type supported by this
+   *   backend.)
    * @param string $original_type
    *   The value's original type.
    * @param \Drupal\search_api\IndexInterface $index
@@ -1471,7 +1471,6 @@ class Database extends BackendPluginBase implements PluginFormInterface {
         return $tokens;
 
       case 'string':
-      case 'uri':
         // For non-dates, PHP can handle this well enough.
         if ($original_type == 'date') {
           return date('c', $value);
@@ -1484,9 +1483,10 @@ class Database extends BackendPluginBase implements PluginFormInterface {
 
       case 'integer':
       case 'date':
-      case 'duration':
+        return (int) $value;
+
       case 'decimal':
-        return 0 + $value;
+        return (float) $value;
 
       case 'boolean':
         return $value ? 1 : 0;

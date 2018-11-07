@@ -2,14 +2,13 @@
 
 namespace Drupal\search_api\Plugin;
 
-use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\PluginDependencyTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a base class for all configurable Search API plugins.
  */
-abstract class ConfigurablePluginBase extends PluginBase implements ConfigurablePluginInterface {
+abstract class ConfigurablePluginBase extends HideablePluginBase implements ConfigurablePluginInterface {
 
   // Normally, we'd just need \Drupal\Core\Entity\DependencyTrait here for
   // plugins. However, in a few cases, plugins use plugins themselves, and then

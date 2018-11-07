@@ -20,7 +20,10 @@ content:
     weight: 100
     region: content
 hidden:
+  addtoany: true
   body: true
   comment: true
   field_image: true
+  field_keywords: true
+  field_lex_custom_banner_image: true
   field_tags: true

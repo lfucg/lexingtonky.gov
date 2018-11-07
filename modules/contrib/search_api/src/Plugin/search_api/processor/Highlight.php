@@ -443,7 +443,7 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
     $text = Html::decodeEntities($text);
     $text = preg_replace('/\s+/', ' ', $text);
     $text = trim($text, ' ');
-    $text_length = strlen($text);
+    $text_length = mb_strlen($text);
 
     // Try to reach the requested excerpt length with about two fragments (each
     // with a keyword and some context).
@@ -483,13 +483,12 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
           $regex = '/' . static::$boundary . preg_quote($key, '/') . static::$boundary . '/iu';
           if (preg_match($regex, ' ' . $text . ' ', $matches, PREG_OFFSET_CAPTURE, $look_start[$key])) {
             $found_position = $matches[0][1];
+            // Convert the byte position into a multi-byte character position.
+            $found_position = mb_strlen(substr(" $text", 0, $found_position));
           }
         }
-        elseif (function_exists('mb_stripos')) {
-          $found_position = mb_stripos($text, $key, $look_start[$key], 'UTF-8');
-        }
         else {
-          $found_position = stripos($text, $key, $look_start[$key]);
+          $found_position = mb_stripos($text, $key, $look_start[$key], 'UTF-8');
         }
         if ($found_position !== FALSE) {
           $look_start[$key] = $found_position + 1;
@@ -500,7 +499,7 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
           // Locate a space before and after this match, leaving some context on
           // each end.
           if ($found_position > $context_length) {
-            $before = strpos($text, ' ', $found_position - $context_length);
+            $before = mb_strpos($text, ' ', $found_position - $context_length);
             if ($before !== FALSE) {
               ++$before;
             }
@@ -510,7 +509,7 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
           }
           if ($before !== FALSE && $before <= $found_position) {
             if ($text_length > $found_position + $context_length) {
-              $after = strrpos(substr($text, 0, $found_position + $context_length), ' ', $found_position);
+              $after = mb_strrpos(mb_substr($text, 0, $found_position + $context_length), ' ', $found_position);
             }
             else {
               $after = $text_length;
@@ -540,10 +539,8 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
 
     // Collapse overlapping text ranges into one. The sorting makes it O(n).
     $new_ranges = [];
-    $max_end = 0;
     $working_from = $working_to = NULL;
     foreach ($ranges as $this_from => $this_to) {
-      $max_end = max($max_end, $this_to);
       if ($working_from === NULL) {
         // This is the first time through this loop: initialize.
         $working_from = $this_from;
@@ -568,7 +565,7 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
     // Fetch text within the combined ranges we found.
     $out = [];
     foreach ($new_ranges as $from => $to) {
-      $out[] = Html::escape(substr($text, $from, $to - $from));
+      $out[] = Html::escape(mb_substr($text, $from, $to - $from));
     }
     if (!$out) {
       return NULL;

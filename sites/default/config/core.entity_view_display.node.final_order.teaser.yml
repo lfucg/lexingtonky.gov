@@ -23,6 +23,7 @@ content:
     weight: 100
     region: content
 hidden:
+  addtoany: true
   field_address: true
   field_citation: true
   field_final_order_date: true

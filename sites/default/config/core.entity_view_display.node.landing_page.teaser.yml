@@ -24,6 +24,7 @@ content:
     weight: -20
     region: content
 hidden:
+  addtoany: true
   body: true
   field_lex_custom_banner_image: true
   field_lex_site_nav: true

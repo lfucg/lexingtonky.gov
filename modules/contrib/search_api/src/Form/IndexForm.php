@@ -185,6 +185,9 @@ class IndexForm extends EntityForm {
     ];
     $datasource_options = [];
     foreach ($this->pluginHelper->createDatasourcePlugins($index) as $datasource_id => $datasource) {
+      if ($datasource->isHidden()) {
+        continue;
+      }
       $datasource_options[$datasource_id] = $datasource->label();
       $form['datasources'][$datasource_id]['#description'] = $datasource->getDescription();
     }
@@ -230,6 +233,9 @@ class IndexForm extends EntityForm {
     ];
     $tracker_options = [];
     foreach ($this->pluginHelper->createTrackerPlugins($index) as $tracker_id => $tracker) {
+      if ($tracker->isHidden()) {
+        continue;
+      }
       $tracker_options[$tracker_id] = $tracker->label();
       $form['tracker'][$tracker_id]['#description'] = $tracker->getDescription();
     }

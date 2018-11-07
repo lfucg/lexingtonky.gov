@@ -63,6 +63,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     'node',
     'search_api',
     'search_api_test',
+    'search_api_test_no_ui',
     'field_ui',
     'link',
     'image',
@@ -204,6 +205,8 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $this->drupalGet($settings_path);
     $this->assertSession()->statusCodeEquals(200);
 
+    $this->assertSession()->pageTextNotContains('No UI backend');
+
     $edit = [
       'name' => '',
       'status' => 1,
@@ -279,6 +282,9 @@ class IntegrationTest extends SearchApiBrowserTestBase {
 
     $this->drupalGet($settings_path);
     $this->assertSession()->statusCodeEquals(200);
+
+    $this->assertSession()->pageTextNotContains('No UI datasource');
+    $this->assertSession()->pageTextNotContains('No UI tracker');
 
     // Make sure datasource and tracker plugin descriptions are displayed.
     $dummy_index = Index::create();
@@ -807,6 +813,8 @@ class IntegrationTest extends SearchApiBrowserTestBase {
       $this->addField('entity:node', $property_path, $label);
     }
 
+    $this->assertSession()->pageTextNotContains('No UI data type');
+
     $index = $this->getIndex(TRUE);
     $fields = $index->getFields();
 
@@ -1206,7 +1214,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $this->submitForm($edit, 'Save');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('All content was scheduled for reindexing so the new settings can take effect.');
-    $this->assertSession()->responseContains($this->getIndex()->toUrl()->toString());
+    $this->assertSession()->responseContains($this->getIndex()->toUrl('canonical')->toString());
   }
 
   /**

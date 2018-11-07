@@ -34,7 +34,10 @@ content:
     weight: -20
     region: content
 hidden:
+  addtoany: true
   field_image: true
+  field_keywords: true
+  field_lex_custom_banner_image: true
   field_media_contact: true
   field_metatags: true
   field_related_departments: true

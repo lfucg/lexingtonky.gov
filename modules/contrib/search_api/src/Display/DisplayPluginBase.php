@@ -4,8 +4,8 @@ namespace Drupal\search_api\Display;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Path\CurrentPathStack;
-use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Url;
+use Drupal\search_api\Plugin\HideablePluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -33,7 +33,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @see \Drupal\search_api\Display\DisplayInterface
  * @see plugin_api
  */
-abstract class DisplayPluginBase extends PluginBase implements DisplayInterface {
+abstract class DisplayPluginBase extends HideablePluginBase implements DisplayInterface {
 
   /**
    * The current path service.

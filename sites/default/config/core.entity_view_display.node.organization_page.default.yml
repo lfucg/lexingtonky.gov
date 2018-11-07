@@ -37,6 +37,7 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  addtoany: true
   body: true
   field_keywords: true
   field_lex_custom_banner_image: true
