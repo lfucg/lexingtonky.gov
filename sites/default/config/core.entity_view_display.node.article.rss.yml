@@ -7,6 +7,8 @@ dependencies:
     - field.field.node.article.body
     - field.field.node.article.comment
     - field.field.node.article.field_image
+    - field.field.node.article.field_keywords
+    - field.field.node.article.field_lex_custom_banner_image
     - field.field.node.article.field_tags
     - node.type.article
   module:
@@ -19,6 +21,8 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   addtoany: true
   body: true

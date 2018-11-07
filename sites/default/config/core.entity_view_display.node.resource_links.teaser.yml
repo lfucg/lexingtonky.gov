@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.resource_links.field_link_to_
+    - field.field.node.resource_links.field_resources_list
     - node.type.resource_links
   module:
     - user
@@ -16,6 +17,8 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   addtoany: true
   field_link_to_: true

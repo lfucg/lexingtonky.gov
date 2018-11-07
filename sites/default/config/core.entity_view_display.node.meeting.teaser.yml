@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.meeting.field_date
     - field.field.node.meeting.field_date_end
     - field.field.node.meeting.field_external_id
+    - field.field.node.meeting.field_keywords
     - field.field.node.meeting.field_locations
     - field.field.node.meeting.field_metatags
     - field.field.node.meeting.field_recurring_event
@@ -34,9 +35,13 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
   workbench_moderation_control:
     weight: -20
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   addtoany: true
   field_all_day: true

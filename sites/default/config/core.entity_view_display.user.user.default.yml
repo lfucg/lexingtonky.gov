@@ -16,9 +16,13 @@ content:
   masquerade:
     weight: 50
     region: content
+    settings: {  }
+    third_party_settings: {  }
   member_for:
     weight: 5
     region: content
+    settings: {  }
+    third_party_settings: {  }
   user_picture:
     type: image
     weight: 0

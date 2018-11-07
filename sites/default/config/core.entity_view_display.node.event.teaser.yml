@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.event.field_date_end
     - field.field.node.event.field_event_website
     - field.field.node.event.field_hide_times
+    - field.field.node.event.field_keywords
     - field.field.node.event.field_locations
     - field.field.node.event.field_media_contact
     - field.field.node.event.field_metatags
@@ -36,9 +37,13 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
   workbench_moderation_control:
     weight: -20
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   addtoany: true
   field_all_day: true

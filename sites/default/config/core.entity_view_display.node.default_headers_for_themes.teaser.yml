@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.default_headers_for_themes.field_organization_image
+    - field.field.node.default_headers_for_themes.field_theme
     - node.type.default_headers_for_themes
   module:
     - user
@@ -16,6 +17,8 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   addtoany: true
   field_organization_image: true
