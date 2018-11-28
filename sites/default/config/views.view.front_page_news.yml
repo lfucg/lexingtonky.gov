@@ -1195,8 +1195,8 @@ display:
           label: ''
           exclude: true
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: '{% include "@lex/includes/time.html.twig" with { time: created } %}'
             make_link: false
             path: ''
             absolute: false
