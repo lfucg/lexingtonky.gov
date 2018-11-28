@@ -4,6 +4,8 @@ use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 use Drupal\views\Plugin\views\query\Sql;
 use Drupal\node\Entity\Node;
+use \Drupal\Core\Breadcrumb\Breadcrumb;
+use \Drupal\Core\Routing\RouteMatchInterface;
 
 
 /**
@@ -23,6 +25,19 @@ function lex_custom_views_post_execute(ViewExecutable $view) {
         {
           unset($view->result[$key]);
         }
+    }
+  }
+}
+
+/**
+ * Implements hook_system_breadcrumb_alter().
+ */
+function lex_custom_system_breadcrumb_alter(Breadcrumb &$breadcrumb, RouteMatchInterface $route_match, array $context) {
+  // Append the current page title to the breadcrumb for non-admin routes.
+  if ($breadcrumb && !\Drupal::service('router.admin_context')->isAdminRoute()) {
+    $title = \Drupal::service('title_resolver')->getTitle(\Drupal::request(), $route_match->getRouteObject());
+    if (!empty($title)) {
+      $breadcrumb->addLink(\Drupal\Core\Link::createFromRoute($title, '<none>'));
     }
   }
 }

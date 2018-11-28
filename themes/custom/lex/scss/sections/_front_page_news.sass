@@ -1,139 +1,55 @@
-body
-  .all-news
-    max-width: 100%
-    margin-left: 0
-    @media (min-width: $screen-phablet-max)
-      max-width: 75%
-      margin-left: 12.5%
-    @media (min-width: $screen-tablet-max)
-      max-width: 68.75%
-      margin-left: calc((100% - 68.75%)/2)
-    @media (min-width: $screen-large-min)
-      max-width: 50%
-      margin-left: 25%
-    .article
-      margin-bottom: 48px
-      min-height: 0px
-      @media (min-width: 567px)
-        min-height: 150px
-      >div.lex-card-fulldate
-        position: relative
-        left: 0%
-        margin-bottom: 8px
-        font-style: normal
-        .news-time
-          font-style: italic
-        .lex-card-fulldate
-          margin-bottom: 0px
-          .news-year
-            font-weight: 600
-            float: left
-            margin-right: 8px
-            @media (max-width: 566px)
-              float: none
-          .news-time
-            display: block
-            @media (max-width: 566px)
-              display: inline-block
-      >div:first-child
-        display: block
-        @media (max-width: 566px)
-          margin-bottom: 12px
-          img
-            height: auto !important
-        img
-          height: 148px
-          width: auto
-          border: none
-          margin: auto !important
-      >h4
-        margin-top: 0
-        margin-bottom: 12px
-        font-size: 18px
-        font-weight: 600
-        position: relative
-        left: 0%
-        a
-          color: $color-secondary-4
-          text-decoration: underline
-          &:hover
-            text-decoration: none
-      >div.lex-card-fulldate+div
-        font-size: 16px
-        position: relative
-        left: 0%
+body.path-news
+  .main
+    min-width: 100%;
+    min-height: 300px;
+  .col-sm-8
+    display: inline-block
+    width: 70%
+  .col-sm-4
+    display: inline-block;
+    padding: 0px 25px;
+    width: 25%;
+    @media (max-width: 998px)
+      padding: 0
+      img
+        margin-left: 0;
+        margin-bottom: 10px;
+  .col-8
+    display: flex;
+    padding: 20px 0;
+    width: 75%;
+  .row
+    width: 100%
+  .container-fluid
+    padding: 0px 15px
+    width: 100%
+  .col-xs-12
+    @media (max-width: 998px)
+      display: inline-block
+      width: 100%
+  .created
+    font-size: .8rem
+    font-style: italic
+  h4
+    font-weight: 500
+    margin: 0
+  a
+    color: $color-secondary-4
+    text-decoration: underline
+    &:hover
+      text-decoration: none
+  .lex-region-title
+    padding-left: 31px
+  .views-exposed-form
+    position: absolute;
+    right: 10px;
+    width: 25%;
+    @media (max-width: 998px)
+      padding-left: 30px
+      position: inherit
+      width: 100%
+    select
+      height: 2rem;
+      font-size: 0.8rem;
+      max-width: 80%;
 
-// WITHOUT PHOTO
-// body
-//   .all-news
-//     max-width: 100%
-//     margin-left: 0
-//     @media (min-width: $screen-phablet-max)
-//       max-width: 75%
-//       margin-left: 12.5%
-//     @media (min-width: $screen-tablet-max)
-//       max-width: 68.75%
-//       margin-left: calc((100% - 68.75%)/2)
-//     @media (min-width: $screen-large-min)
-//       max-width: 50%
-//       margin-left: 25%
-//
-//     .article
-//       padding-left: 0%
-//       padding-bottom: 20px
-//       >div.lex-card-fulldate
-//         float: none
-//         width: auto
-//         margin: 0 0 4px 0
-//         position: relative
-//         top: 0px
-//         // display: none
-//         .lex-card-fulldate
-//           margin-bottom: 0px
-//           .news-year
-//             font-weight: 600
-//             float: left
-//             margin-right: 8px
-//           .news-time
-//             display: block
-//         @media (min-width: $screen-phablet-max)
-//           top: 34px
-//           height: 30px
-//           display: block
-//           margin: 0
-//           .lex-card-fulldate
-//             .news-year
-//               float: none
-//               margin: 0
-//       >div:first-child
-//         display: none
-//         // display: inline-block
-//         position: relative
-//         float: none
-//         width: auto
-//         margin: 0
-//         top: 160px
-//         img
-//           height: 125px
-//           width: auto
-//           border: none
-//       >h4
-//         margin-top: 0
-//         margin-bottom: 12px
-//         position: relative
-//         left: 0%
-//         @media (min-width: $screen-phablet-max)
-//           left: 28%
-//           max-width: calc(100% - 28%)
-//         a
-//           color: $color-secondary-4
-//           text-decoration: underline
-//           &:hover
-//             text-decoration: none
-//       >h4+div
-//         overflow-x: hidden
-//         position: relative
-//         left: 0%
-//         @media (min-width: $screen-phablet-max)
-//           left: 28%
-//           max-width: calc(100% - 28%)
