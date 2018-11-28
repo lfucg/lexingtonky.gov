@@ -253,6 +253,8 @@ interface ItemInterface extends \Traversable {
    *     highlighting data should also include any non-highlighted field values,
    *     to avoid having to determine which values are included and which
    *     aren't.
+   *   - highlighted_keys: The exact tokens that matched keys in this item's
+   *     text values. The value is an array of strings.
    *   However, contrib modules can define arbitrary other keys. (Usually they
    *   should be prefixed with the module name, though.)
    * @param mixed $default

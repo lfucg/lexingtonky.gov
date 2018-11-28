@@ -1,10 +1,4 @@
 services:
-  access_check.search_api_tasks:
-    class: Drupal\search_api\Controller\ExecuteTasksAccessCheck
-    arguments: ['@search_api.task_manager']
-    tags:
-      - { name: access_check, applies_to: _search_api_tasks }
-
   logger.channel.search_api:
     parent: logger.channel_base
     arguments: ['search_api']

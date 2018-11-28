@@ -9,6 +9,66 @@ dependencies:
     - node.type.news_article
     - node.type.organization_page
     - taxonomy.vocabulary.organizations
+  content:
+    - 'taxonomy_term:organizations:0164a3cd-6334-4376-a200-e8e1a2393b15'
+    - 'taxonomy_term:organizations:0cc9bd19-29b1-4c67-9a00-a010fff2a572'
+    - 'taxonomy_term:organizations:11317585-b38d-49ab-8600-d8c407837518'
+    - 'taxonomy_term:organizations:11f6f8c7-b405-41ba-9b03-3fcc29be0af8'
+    - 'taxonomy_term:organizations:128e1a3f-303d-417d-8e04-4b407c083f4c'
+    - 'taxonomy_term:organizations:203f8c14-e962-4b90-ab00-f2de92ca1fea'
+    - 'taxonomy_term:organizations:221d68ff-e8d8-4237-8e00-bdb232033faf'
+    - 'taxonomy_term:organizations:240e9991-96db-4f02-b140-c6426852b00e'
+    - 'taxonomy_term:organizations:2622435b-4eb1-4eab-ad00-bc4ef68a3344'
+    - 'taxonomy_term:organizations:27d91aee-1e83-4fb5-8b07-7b15f0c5ff79'
+    - 'taxonomy_term:organizations:289bde68-155f-482e-9226-385f52346655'
+    - 'taxonomy_term:organizations:2a596033-a192-4e5d-ae03-033845e23c61'
+    - 'taxonomy_term:organizations:2b1827d8-575b-4373-9009-09edbda3ff1d'
+    - 'taxonomy_term:organizations:318facaf-faf7-4a06-9600-b2a5a524a8ad'
+    - 'taxonomy_term:organizations:3896e70e-b249-48bc-8a02-2ac9f77bc29d'
+    - 'taxonomy_term:organizations:3c7bff36-9ae7-4c15-af6e-c3fe4f85ab15'
+    - 'taxonomy_term:organizations:46801003-bbd4-4faf-8600-a267039b9e77'
+    - 'taxonomy_term:organizations:46b0e46a-dffc-4498-a800-b25aa9262583'
+    - 'taxonomy_term:organizations:4c4417a0-388f-4f44-bc00-f14da71473a4'
+    - 'taxonomy_term:organizations:5507776f-eae8-4184-b508-8e4acac1c073'
+    - 'taxonomy_term:organizations:55e20b6f-b6bc-4254-a563-99f7cae0d563'
+    - 'taxonomy_term:organizations:57199714-c4e1-48bb-a302-2c3cfbdb1d44'
+    - 'taxonomy_term:organizations:5d602960-0108-4766-ae00-ce1d6b8aaeb0'
+    - 'taxonomy_term:organizations:64ab8e22-9298-4ad6-a800-e2e802c4ad50'
+    - 'taxonomy_term:organizations:6ccbaad3-3e53-43b8-b500-a50fab10bf92'
+    - 'taxonomy_term:organizations:6e591591-92b9-4c59-a800-b18db84ae7b1'
+    - 'taxonomy_term:organizations:7c2905a7-bc86-435d-af00-a0b5cc572d1e'
+    - 'taxonomy_term:organizations:7cae5a24-e8ef-4852-834e-78f5a7bfa097'
+    - 'taxonomy_term:organizations:83001598-841d-408d-8075-9c1c150a6e7c'
+    - 'taxonomy_term:organizations:8d5a71ce-f2f7-4225-9d00-d3fdd4f6835e'
+    - 'taxonomy_term:organizations:8d6b6033-970f-499b-b800-abe597ab4334'
+    - 'taxonomy_term:organizations:8def1ec7-c791-4f2c-aa17-534fee543f84'
+    - 'taxonomy_term:organizations:90a36080-2fa7-4510-a300-b586549d1cc8'
+    - 'taxonomy_term:organizations:9a3422fd-9ab5-47d9-bd00-d8040d36b447'
+    - 'taxonomy_term:organizations:9cecfbc5-80e2-4167-ad60-96074e039f7f'
+    - 'taxonomy_term:organizations:9de0448d-324a-4be4-ba61-97a94fe0e3b7'
+    - 'taxonomy_term:organizations:9fadb5d1-bead-4014-a01b-2774623e7fa2'
+    - 'taxonomy_term:organizations:a402d6cb-ff6f-4966-9800-a6d0d38de6a1'
+    - 'taxonomy_term:organizations:a56427d7-f835-4032-9d01-1d54055e9879'
+    - 'taxonomy_term:organizations:a8cb2482-4b71-43e8-8d06-6e04c1252869'
+    - 'taxonomy_term:organizations:a9f1ad08-1c19-4e7d-ba00-d169c301aa83'
+    - 'taxonomy_term:organizations:aab678ae-5ca0-452b-91d1-cc836f2363b5'
+    - 'taxonomy_term:organizations:b5a18503-ef77-4d67-aa00-da7fd59e7d1b'
+    - 'taxonomy_term:organizations:b6369457-918e-4389-bb4f-790f6b3d627a'
+    - 'taxonomy_term:organizations:b70eec4a-0eb6-4e8d-9409-9d2d2b3e625d'
+    - 'taxonomy_term:organizations:b9f01266-246b-4cce-9908-088fb3a5b296'
+    - 'taxonomy_term:organizations:bbf1cba4-3f2c-490b-9a5f-9567adcd7cca'
+    - 'taxonomy_term:organizations:c1b3b1ab-ee63-4037-861a-263134b90dc9'
+    - 'taxonomy_term:organizations:c31287bb-9011-498a-a004-4b86d5a7761a'
+    - 'taxonomy_term:organizations:ce8036eb-5c5e-4d06-9e28-609a104a8bc2'
+    - 'taxonomy_term:organizations:d24dedca-ce60-4594-bc06-6a426a20e234'
+    - 'taxonomy_term:organizations:d4a274ae-dfb1-4244-9000-c0d276112fb4'
+    - 'taxonomy_term:organizations:d849fcf3-8c4d-4142-8d00-c6d915e28f3c'
+    - 'taxonomy_term:organizations:dc1053b7-60e7-4c79-9800-c879cfd1d815'
+    - 'taxonomy_term:organizations:dd5fda88-4289-4730-9900-eada8b954deb'
+    - 'taxonomy_term:organizations:e4e2a4b7-f802-476c-a42b-43e8d60e194e'
+    - 'taxonomy_term:organizations:ead61858-400f-4c1f-bb19-25d0dcd881f4'
+    - 'taxonomy_term:organizations:f7585d5c-dfe7-4249-8c09-9d7184adb97e'
+    - 'taxonomy_term:organizations:ffa20d72-041e-4f9e-a527-39b6ad390d7e'
   module:
     - image
     - node
@@ -1279,8 +1339,8 @@ display:
             target: ''
             nl2br: false
             max_length: 0
-            word_boundary: true
-            ellipsis: true
+            word_boundary: false
+            ellipsis: false
             more_link: false
             more_link_text: ''
             more_link_path: ''
@@ -1399,6 +1459,7 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          group: 1
         field_related_departments_target_id:
           id: field_related_departments_target_id
           table: node__field_related_departments
@@ -1407,7 +1468,66 @@ display:
           group_type: group
           admin_label: ''
           operator: or
-          value: {  }
+          value:
+            247: 247
+            210: 210
+            218: 218
+            204: 204
+            216: 216
+            506: 506
+            227: 227
+            439: 439
+            206: 206
+            524: 524
+            249: 249
+            440: 440
+            465: 465
+            438: 438
+            207: 207
+            209: 209
+            214: 214
+            215: 215
+            224: 224
+            205: 205
+            201: 201
+            234: 234
+            220: 220
+            211: 211
+            222: 222
+            223: 223
+            202: 202
+            230: 230
+            221: 221
+            213: 213
+            225: 225
+            228: 228
+            229: 229
+            233: 233
+            246: 246
+            248: 248
+            2: 2
+            240: 240
+            203: 203
+            245: 245
+            242: 242
+            237: 237
+            239: 239
+            232: 232
+            235: 235
+            190: 190
+            243: 243
+            191: 191
+            192: 192
+            193: 193
+            194: 194
+            195: 195
+            196: 196
+            197: 197
+            198: 198
+            1: 1
+            244: 244
+            199: 199
+            200: 200
           group: 1
           exposed: true
           expose:
@@ -1427,7 +1547,7 @@ display:
               webmaster: '0'
               administrator: '0'
               final_order_admin: '0'
-            reduce: false
+            reduce: true
           is_grouped: false
           group_info:
             label: ''

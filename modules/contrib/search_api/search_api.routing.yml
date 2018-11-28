@@ -12,8 +12,7 @@ search_api.execute_tasks:
     _controller: '\Drupal\search_api\Controller\TaskController::executeTasks'
     _title: 'Execute pending tasks'
   requirements:
-    _permission: 'administer search_api'
-    _search_api_tasks: 'TRUE'
+    _custom_access: '\Drupal\search_api\Controller\TaskController::executeTasksAccess'
 
 entity.search_api_server.add_form:
   path: '/admin/config/search/search-api/add-server'

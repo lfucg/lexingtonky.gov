@@ -11,7 +11,8 @@ use Drupal\search_api_test\TestPluginTrait;
  *
  * @SearchApiDatasource(
  *   id = "search_api_test",
- *   label = @Translation("Test datasource"),
+ *   label = @Translation("&quot;Test&quot; datasource"),
+ *   description = @Translation("This is the <em>test datasource</em> plugin description."),
  * )
  */
 class TestDatasource extends DatasourcePluginBase {

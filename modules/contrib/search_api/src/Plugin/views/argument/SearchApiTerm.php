@@ -2,7 +2,6 @@
 
 namespace Drupal\search_api\Plugin\views\argument;
 
-use Drupal\Component\Utility\Html;
 use Drupal\taxonomy\Entity\Term;
 
 /**
@@ -30,14 +29,14 @@ class SearchApiTerm extends SearchApiStandard {
       foreach ($this->value as $tid) {
         $taxonomy_term = Term::load($tid);
         if ($taxonomy_term) {
-          $terms[] = Html::escape($taxonomy_term->label());
+          $terms[] = $taxonomy_term->label();
         }
       }
 
-      return $terms ? implode(', ', $terms) : Html::escape($this->argument);
+      return $terms ? implode(', ', $terms) : $this->argument;
     }
     else {
-      return Html::escape($this->argument);
+      return $this->argument;
     }
   }
 

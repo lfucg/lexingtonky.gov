@@ -174,9 +174,6 @@ interface ResultSetInterface extends \Traversable {
    *   key instead.
    *
    * @return $this
-   *
-   * @todo Add unsetExtraData() instead of special NULL handling? And/or
-   *  just have to use &getAllExtraData()?
    */
   public function setExtraData($key, $data = NULL);
 

@@ -279,7 +279,16 @@ class TaskManager implements TaskManagerInterface {
     // Schedule the batch.
     batch_set($batch_definition);
     if (function_exists('drush_backend_batch_process')) {
-      drush_backend_batch_process();
+      $result = drush_backend_batch_process();
+      // Drush performs batch processing in a separate PHP request. When the
+      // last batch is processed the batch list is cleared, but this only takes
+      // effect in the other request. Take the same action here to ensure that
+      // we are not requeueing stale batches when there are multiple tasks being
+      // handled in a single request.
+      if ($result['context']['drush_batch_process_finished'] === TRUE) {
+        $batch = &batch_get();
+        $batch = NULL;
+      }
     }
   }
 

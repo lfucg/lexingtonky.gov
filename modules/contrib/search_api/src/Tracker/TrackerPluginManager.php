@@ -2,10 +2,10 @@
 
 namespace Drupal\search_api\Tracker;
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\search_api\Utility\Utility;
 
 /**
  * Manages tracker plugins.
@@ -45,7 +45,7 @@ class TrackerPluginManager extends DefaultPluginManager {
   public function getOptionsList() {
     $options = [];
     foreach ($this->getDefinitions() as $plugin_id => $plugin_definition) {
-      $options[$plugin_id] = Html::escape($plugin_definition['label']);
+      $options[$plugin_id] = Utility::escapeHtml($plugin_definition['label']);
     }
     return $options;
   }

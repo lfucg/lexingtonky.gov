@@ -11,8 +11,8 @@ dependencies:
   - drupal:taxonomy
   - drupal:views
 
-# Information added by Drupal.org packaging script on 2018-09-17
-version: '8.x-1.10'
+# Information added by Drupal.org packaging script on 2018-11-18
+version: '8.x-1.11'
 core: '8.x'
 project: 'search_api'
-datestamp: 1537175289
+datestamp: 1542564486

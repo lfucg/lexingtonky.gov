@@ -93,6 +93,7 @@ function lex_preprocess_html(&$variables) {
   // }
 }
 
+
 function lex_preprocess_page__taxonomy__term(&$variables) {
   $path = \Drupal::service('path.current')->getPath();
   $alias = \Drupal::service('path.alias_manager')->getAliasByPath($path);
@@ -143,6 +144,15 @@ function lex_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state
     array_push($form['#attributes']['class'], 'lex-search', 'lex-search-page-form', 'usa-search', 'usa-search-big');
   }
 
+  if ($form_id == 'views_exposed_form') {
+    switch($form['#id']) {
+      case 'views-exposed-form-front-page-news-page-1':
+        asort($form['field_related_departments_target_id']['#options']);
+        break;
+      default:
+        break;
+    }
+  }
 }
 
 function lex_preprocess_item_list__search_results(&$variables) {

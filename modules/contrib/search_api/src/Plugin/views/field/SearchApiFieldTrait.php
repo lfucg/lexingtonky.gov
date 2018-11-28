@@ -337,7 +337,11 @@ trait SearchApiFieldTrait {
    */
   public function query() {
     $combined_property_path = $this->getCombinedPropertyPath();
-    $this->addRetrievedProperty($combined_property_path);
+    $field_id = NULL;
+    if (!empty($this->definition['search_api field'])) {
+      $field_id = $this->definition['search_api field'];
+    }
+    $this->addRetrievedProperty($combined_property_path, $field_id);
     if ($this->options['link_to_item']) {
       $this->addRetrievedProperty("$combined_property_path:_object");
     }
@@ -350,11 +354,15 @@ trait SearchApiFieldTrait {
    *   The combined property path of the property that should be retrieved.
    *   "_object" can be used as a property name to indicate the loaded object is
    *   required.
+   * @param string|null $field_id
+   *   (optional) The ID of the field corresponding to this property, if any.
    *
    * @return $this
    */
-  protected function addRetrievedProperty($combined_property_path) {
-    $this->getQuery()->addRetrievedProperty($combined_property_path);
+  protected function addRetrievedProperty($combined_property_path, $field_id = NULL) {
+    if ($field_id) {
+      $this->getQuery()->addRetrievedFieldValue($field_id);
+    }
 
     list($datasource_id, $property_path) = Utility::splitCombinedId($combined_property_path);
     $this->retrievedProperties[$datasource_id][$property_path] = $combined_property_path;
@@ -467,7 +475,7 @@ trait SearchApiFieldTrait {
   /**
    * Expands the properties to retrieve for this field.
    *
-   * The properties are taken from this object's $retrievedProperties property,
+   * The properties are taken from this object's $retrievedFieldValues property,
    * with all their ancestors also added to the array, with the ancestor
    * properties always ordered before their descendants.
    *

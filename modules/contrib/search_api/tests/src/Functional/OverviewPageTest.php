@@ -210,13 +210,7 @@ class OverviewPageTest extends SearchApiBrowserTestBase {
 
     $this->drupalGet($this->overviewPageUrl);
     $basic_url = $this->urlGenerator->generateFromRoute('entity.search_api_server.canonical', ['search_api_server' => $server->id()]);
-    $destination = '';
-    // Drupal 8.5.x introduced "destination" parameters to all operations links
-    // by default, so we now need to take that into account.
-    // @todo Remove once we depend on 8.5.
-    if (version_compare(\Drupal::VERSION, '8.5.x-dev', '>=')) {
-      $destination = "?destination=" . $this->urlGenerator->generateFromRoute('search_api.overview');
-    }
+    $destination = "?destination=" . $this->urlGenerator->generateFromRoute('search_api.overview');
     $this->assertSession()->responseContains("<a href=\"$basic_url/edit$destination\">Edit</a>");
     $this->assertSession()->responseContains("<a href=\"$basic_url/disable$destination\">Disable</a>");
     $this->assertSession()->responseContains("<a href=\"$basic_url/delete$destination\">Delete</a>");

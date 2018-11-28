@@ -94,6 +94,7 @@ class BackendTest extends BackendTestBase {
     $this->regressionTest2926733();
     $this->regressionTest2938646();
     $this->regressionTest2925464();
+    $this->regressionTest2994022();
   }
 
   /**
@@ -639,6 +640,54 @@ class BackendTest extends BackendTestBase {
   }
 
   /**
+   * Tests changing of field types.
+   *
+   * @see https://www.drupal.org/project/search_api/issues/2994022
+   */
+  protected function regressionTest2994022() {
+    $query = $this->buildSearch('nonexistent_search_term');
+    $facets['category'] = [
+      'field' => 'category',
+      'limit' => 0,
+      'min_count' => 0,
+      'missing' => FALSE,
+      'operator' => 'and',
+    ];
+    $query->setOption('search_api_facets', $facets);
+    $results = $query->execute();
+    $this->assertResults([], $results, 'Non-existent keyword');
+    $expected = [
+      ['count' => 0, 'filter' => '"article_category"'],
+      ['count' => 0, 'filter' => '"item_category"'],
+    ];
+    $category_facets = $results->getExtraData('search_api_facets')['category'];
+    usort($category_facets, [$this, 'facetCompare']);
+    $this->assertEquals($expected, $category_facets, 'Correct facets were returned for minimum count 0');
+
+    $query = $this->buildSearch('nonexistent_search_term');
+    $conditions = $query->createConditionGroup('AND', ['facet:category']);
+    $conditions->addCondition('category', 'article_category');
+    $query->addConditionGroup($conditions);
+    $facets['category'] = [
+      'field' => 'category',
+      'limit' => 0,
+      'min_count' => 0,
+      'missing' => FALSE,
+      'operator' => 'and',
+    ];
+    $query->setOption('search_api_facets', $facets);
+    $results = $query->execute();
+    $this->assertResults([], $results, 'Non-existent keyword with filter');
+    $expected = [
+      ['count' => 0, 'filter' => '"article_category"'],
+      ['count' => 0, 'filter' => '"item_category"'],
+    ];
+    $category_facets = $results->getExtraData('search_api_facets')['category'];
+    usort($category_facets, [$this, 'facetCompare']);
+    $this->assertEquals($expected, $category_facets, 'Correct facets were returned for minimum count 0');
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function checkIndexWithoutFields() {
@@ -724,7 +773,7 @@ class BackendTest extends BackendTestBase {
     $expected = [
       'search_api_db_database_search_index' => 'search_api_db_database_search_index',
     ];
-    $this->assertEquals($expected, $tables, 'All the tables of the the Database Search module have been removed.');
+    $this->assertEquals($expected, $tables, 'All the tables of the Database Search module have been removed.');
   }
 
   /**

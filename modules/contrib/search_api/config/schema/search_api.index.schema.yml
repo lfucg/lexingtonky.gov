@@ -8,9 +8,6 @@ search_api.index.*:
     name:
       type: label
       label: Name'
-    uuid:
-      type: string
-      label: 'UUID'
     description:
       type: text
       label: 'Description'

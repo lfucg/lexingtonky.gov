@@ -279,11 +279,22 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
       foreach ($item as $values) {
         $text = array_merge($text, $values);
       }
+      $item_keys = $keys;
+
+      // If the backend already did highlighting and told us the exact keys it
+      // found in the item's text values, we can use those for our own
+      // highlighting. This will help us take stemming, transliteration, etc.
+      // into account properly.
+      $highlighted_keys = $results[$item_id]->getExtraData('highlighted_keys');
+      if ($highlighted_keys) {
+        $item_keys = array_unique(array_merge($keys, $highlighted_keys));
+      }
+
       // @todo This is pretty poor handling for the borders between different
       //   values/fields. Better would be to pass an array and have proper
       //   handling of this in createExcerpt(), ensuring that no snippet goes
       //   across multiple values/fields.
-      $results[$item_id]->setExcerpt($this->createExcerpt(implode($this->getEllipses()[1], $text), $keys));
+      $results[$item_id]->setExcerpt($this->createExcerpt(implode($this->getEllipses()[1], $text), $item_keys));
     }
   }
 
@@ -438,6 +449,9 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
    *   created.
    */
   protected function createExcerpt($text, array $keys) {
+    // Remove HTML tags <script> and <style> with all of their contents.
+    $text = preg_replace('#<(style|script).*?>.*?</\1>#is', ' ', $text);
+
     // Prepare text by stripping HTML tags and decoding HTML entities.
     $text = strip_tags(str_replace(['<', '>'], [' <', '> '], $text));
     $text = Html::decodeEntities($text);

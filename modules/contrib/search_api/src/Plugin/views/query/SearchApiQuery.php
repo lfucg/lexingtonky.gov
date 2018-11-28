@@ -3,7 +3,6 @@
 namespace Drupal\search_api\Plugin\views\query;
 
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Database\Query\ConditionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -19,7 +18,6 @@ use Drupal\search_api\Processor\ConfigurablePropertyInterface;
 use Drupal\search_api\Query\ConditionGroupInterface;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\SearchApiException;
-use Drupal\search_api\Utility\Utility;
 use Drupal\user\Entity\User;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
@@ -86,14 +84,11 @@ class SearchApiQuery extends QueryPluginBase {
   protected $abort = FALSE;
 
   /**
-   * The properties that should be retrieved from result items.
+   * The IDs of fields whose values should be retrieved by the backend.
    *
-   * The array is keyed by datasource ID (which might be NULL) and property
-   * path, the values are the associated combined property paths.
-   *
-   * @var string[][]
+   * @var string[]
    */
-  protected $retrievedProperties = [];
+  protected $retrievedFieldValues = [];
 
   /**
    * The query's conditions representing the different Views filter groups.
@@ -250,8 +245,6 @@ class SearchApiQuery extends QueryPluginBase {
       if (!$this->index) {
         $this->abort(new FormattableMarkup('View %view is not based on Search API but tries to use its query plugin.', ['%view' => $view->storage->label()]));
       }
-      $this->retrievedProperties = array_fill_keys($this->index->getDatasourceIds(), []);
-      $this->retrievedProperties[NULL] = [];
       $this->query = $this->index->query();
       $this->query->addTag('views');
       $this->query->addTag('views_' . $view->id());
@@ -278,10 +271,28 @@ class SearchApiQuery extends QueryPluginBase {
    *   The combined property path of the property that should be retrieved.
    *
    * @return $this
+   *
+   * @deprecated in 8.x-1.11. Use ::addRetrievedFieldValue() instead.
    */
   public function addRetrievedProperty($combined_property_path) {
-    list($datasource_id, $property_path) = Utility::splitCombinedId($combined_property_path);
-    $this->retrievedProperties[$datasource_id][$property_path] = $combined_property_path;
+    @trigger_error('\Drupal\search_api\Plugin\views\query\SearchApiQuery::addRetrievedProperty() is deprecated in Search API 8.x-1.11. Use addRetrievedFieldValue() instead. See https://www.drupal.org/project/search_api/issues/3009136', E_USER_DEPRECATED);
+    $this->addField(NULL, $combined_property_path);
+    return $this;
+  }
+
+  /**
+   * Adds a field value to be retrieved.
+   *
+   * Helps backends that support returning fields to determine which of the
+   * fields should actually be returned.
+   *
+   * @param string $field_id
+   *   The ID of the field whose value should be retrieved.
+   *
+   * @return $this
+   */
+  public function addRetrievedFieldValue($field_id) {
+    $this->retrievedFieldValues[$field_id] = $field_id;
     return $this;
   }
 
@@ -290,7 +301,7 @@ class SearchApiQuery extends QueryPluginBase {
    *
    * This replicates the interface of Views' default SQL backend to simplify
    * the Views integration of the Search API. If you are writing Search
-   * API-specific Views code, you should better use the addRetrievedProperty()
+   * API-specific Views code, you should better use the addRetrievedFieldValue()
    * method.
    *
    * @param string|null $table
@@ -306,10 +317,15 @@ class SearchApiQuery extends QueryPluginBase {
    *   The name that this field can be referred to as (always $field).
    *
    * @see \Drupal\views\Plugin\views\query\Sql::addField()
-   * @see \Drupal\search_api\Plugin\views\query\SearchApiQuery::addField()
+   * @see \Drupal\search_api\Plugin\views\query\SearchApiQuery::addRetrievedFieldValue()
    */
   public function addField($table, $field, $alias = '', array $params = []) {
-    $this->addRetrievedProperty($field);
+    foreach ($this->getIndex()->getFields(TRUE) as $field_id => $field_object) {
+      if ($field_object->getCombinedPropertyPath() === $field) {
+        $this->addRetrievedFieldValue($field_id);
+        break;
+      }
+    }
     return $field;
   }
 
@@ -440,9 +456,9 @@ class SearchApiQuery extends QueryPluginBase {
     // Save query information for Views UI.
     $view->build_info['query'] = (string) $this->query;
 
-    // Add the properties to be retrieved to the query, as information for the
+    // Add the fields to be retrieved to the query, as information for the
     // backend.
-    $this->query->setOption('search_api_retrieved_properties', $this->retrievedProperties);
+    $this->query->setOption('search_api_retrieved_field_values', array_values($this->retrievedFieldValues));
   }
 
   /**
@@ -459,7 +475,7 @@ class SearchApiQuery extends QueryPluginBase {
     if ($this->shouldAbort()) {
       if (error_displayable()) {
         foreach ($this->errors as $msg) {
-          $this->getMessenger()->addError(Html::escape($msg));
+          $this->getMessenger()->addError($msg);
         }
       }
       $view->result = [];

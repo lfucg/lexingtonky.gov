@@ -2,7 +2,9 @@
 
 namespace Drupal\search_api\Controller;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\search_api\Task\TaskManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -60,6 +62,25 @@ class TaskController extends ControllerBase {
   public function executeTasks() {
     $this->getTaskManager()->setTasksBatch();
     return batch_process(Url::fromRoute('search_api.overview'));
+  }
+
+  /**
+   * Checks access for executing pending tasks.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Run access checks for this account.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function executeTasksAccess(AccountInterface $account) {
+    // @todo Once we depend on Drupal 8.7+, check whether this can't just use
+    //   the "search_api_task_list" cache tag instead. (See #2722237.)
+    if ($this->taskManager->getTasksCount()) {
+      return AccessResult::allowedIfHasPermission($account, 'administer search_api')
+        ->setCacheMaxAge(0);
+    }
+    return AccessResult::forbidden()->setCacheMaxAge(0);
   }
 
 }

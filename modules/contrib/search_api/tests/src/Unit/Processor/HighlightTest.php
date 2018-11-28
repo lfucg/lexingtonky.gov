@@ -469,6 +469,60 @@ class HighlightTest extends UnitTestCase {
   }
 
   /**
+   * Tests whether excerpt creation correctly handles HTML tags.
+   */
+  public function testPostprocessSearchResultsExcerptStripTags() {
+    $query = $this->createMock(QueryInterface::class);
+    $query->expects($this->once())
+      ->method('getProcessingLevel')
+      ->willReturn(QueryInterface::PROCESSING_FULL);
+    $query->expects($this->atLeastOnce())
+      ->method('getOriginalKeys')
+      ->will($this->returnValue(['#conjunction' => 'AND', 'foo']));
+    /** @var \Drupal\search_api\Query\QueryInterface $query */
+
+    $field = $this->createTestField('body', 'entity:node/body');
+
+    $this->index->expects($this->atLeastOnce())
+      ->method('getFields')
+      ->will($this->returnValue(['body' => $field]));
+
+    $this->processor->setIndex($this->index);
+
+    $body_value = <<<'END'
+Sentence with foo keyword.
+<script>
+var foo = 1;
+</script>
+<style>
+a.foo {
+  font-weight: bold;
+}
+</style>
+And another foo!
+END;
+    $fields = [
+      'entity:node/body' => [
+        'type' => 'text',
+        'values' => [$body_value],
+      ],
+    ];
+
+    $items = $this->createItems($this->index, 1, $fields);
+
+    $results = new ResultSet($query);
+    $results->setResultItems($items);
+    $results->setResultCount(1);
+
+    $this->processor->postprocessSearchResults($results);
+
+    $output = $results->getResultItems();
+    $excerpt = $output[$this->itemIds[0]]->getExcerpt();
+    $correct_output = '… Sentence with <strong>foo</strong> keyword. And another <strong>foo</strong>! …';
+    $this->assertEquals($correct_output, $excerpt, 'Excerpt was added.');
+  }
+
+  /**
    * Tests whether highlighting works on a longer text matching near the end.
    */
   public function testPostprocessSearchResultsExerptMatchNearEnd() {
@@ -598,6 +652,50 @@ class HighlightTest extends UnitTestCase {
     $excerpt = $items[$this->itemIds[0]]->getExcerpt();
 
     $this->assertEmpty($excerpt, 'No excerpt added when disabled.');
+  }
+
+  /**
+   * Tests whether excerpt creation uses the "highlighted_keys" extra data.
+   */
+  public function testPostprocessSearchResultsExcerptWithKeysFromBackend() {
+    $query = $this->createMock(QueryInterface::class);
+    $query->expects($this->once())
+      ->method('getProcessingLevel')
+      ->willReturn(QueryInterface::PROCESSING_FULL);
+    $query->expects($this->atLeastOnce())
+      ->method('getOriginalKeys')
+      ->will($this->returnValue(['#conjunction' => 'AND', 'congues']));
+    /** @var \Drupal\search_api\Query\QueryInterface $query */
+
+    $field = $this->createTestField('body', 'entity:node/body');
+
+    $this->index->expects($this->atLeastOnce())
+      ->method('getFields')
+      ->will($this->returnValue(['body' => $field]));
+
+    $this->processor->setIndex($this->index);
+
+    $body_values = [$this->getFieldBody()];
+    $fields = [
+      'entity:node/body' => [
+        'type' => 'text',
+        'values' => $body_values,
+      ],
+    ];
+
+    $items = $this->createItems($this->index, 1, $fields);
+    $items[$this->itemIds[0]]->setExtraData('highlighted_keys', ['congue']);
+
+    $results = new ResultSet($query);
+    $results->setResultItems($items);
+    $results->setResultCount(1);
+
+    $this->processor->postprocessSearchResults($results);
+
+    $output = $results->getResultItems();
+    $excerpt = $output[$this->itemIds[0]]->getExcerpt();
+    $correct_output = '… tristique, ligula sit amet condimentum dapibus, lorem nunc <strong>congue</strong> velit, et dictum augue leo sodales augue. Maecenas …';
+    $this->assertEquals($correct_output, $excerpt, 'Excerpt was added.');
   }
 
   /**

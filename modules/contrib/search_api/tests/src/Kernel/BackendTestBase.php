@@ -88,7 +88,9 @@ abstract class BackendTestBase extends KernelTestBase {
     $this->searchNoResults();
     $this->indexItems($this->indexId);
     $this->searchSuccess();
-    $this->checkFacets();
+    if ($this->getServer()->supportsFeature('search_api_facets')) {
+      $this->checkFacets();
+    }
     $this->checkSecondServer();
     $this->regressionTests();
     $this->clearIndex();

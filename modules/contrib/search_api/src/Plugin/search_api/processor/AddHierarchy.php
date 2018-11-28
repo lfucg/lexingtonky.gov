@@ -2,7 +2,6 @@
 
 namespace Drupal\search_api\Plugin\search_api\processor;
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\TypedData\EntityDataDefinitionInterface;
@@ -13,6 +12,7 @@ use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\FieldInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
 use Drupal\search_api\Processor\ProcessorPluginBase;
+use Drupal\search_api\Utility\Utility;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -151,6 +151,7 @@ class AddHierarchy extends ProcessorPluginBase implements PluginFormInterface {
    */
   protected function findHierarchicalProperties(EntityDataDefinitionInterface $property, $property_label) {
     $entity_type_id = $property->getEntityTypeId();
+    $property_label = Utility::escapeHtml($property_label);
     $options = [];
 
     // Check properties for potential hierarchy. Check two levels down, since
@@ -159,9 +160,10 @@ class AddHierarchy extends ProcessorPluginBase implements PluginFormInterface {
     foreach ($this->getFieldsHelper()->getNestedProperties($property) as $name_2 => $property_2) {
       $property_2_label = $property_2->getLabel();
       $property_2 = $this->getFieldsHelper()->getInnerProperty($property_2);
+      $is_reference = FALSE;
       if ($property_2 instanceof EntityDataDefinitionInterface) {
         if ($property_2->getEntityTypeId() == $entity_type_id) {
-          $options["$entity_type_id-$name_2"] = Html::escape($property_label . ' » ' . $property_2_label);
+          $is_reference = TRUE;
         }
       }
       elseif ($property_2 instanceof ComplexDataDefinitionInterface) {
@@ -169,11 +171,15 @@ class AddHierarchy extends ProcessorPluginBase implements PluginFormInterface {
           $property_3 = $this->getFieldsHelper()->getInnerProperty($property_3);
           if ($property_3 instanceof EntityDataDefinitionInterface) {
             if ($property_3->getEntityTypeId() == $entity_type_id) {
-              $options["$entity_type_id-$name_2"] = Html::escape($property_label . ' » ' . $property_2_label);
+              $is_reference = TRUE;
               break;
             }
           }
         }
+      }
+      if ($is_reference) {
+        $property_2_label = Utility::escapeHtml($property_2_label);
+        $options["$entity_type_id-$name_2"] = $property_label . ' » ' . $property_2_label;
       }
     }
     return $options;

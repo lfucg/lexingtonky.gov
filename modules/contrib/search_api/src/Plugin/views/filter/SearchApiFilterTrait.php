@@ -39,6 +39,10 @@ trait SearchApiFilterTrait {
    * @see \Drupal\views\Plugin\views\filter\ManyToOne::opHelper()
    */
   protected function opHelper() {
+    // Form API returns unchecked options in the form of option_id => 0. This
+    // breaks the generated query for "is all of" filters so we remove them.
+    $this->value = array_filter($this->value, 'static::arrayFilterZero');
+
     if (empty($this->value)) {
       return;
     }

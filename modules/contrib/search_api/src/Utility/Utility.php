@@ -2,10 +2,13 @@
 
 namespace Drupal\search_api\Utility;
 
+use Drupal\Component\Render\MarkupInterface;
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\search_api\data_type\value\TextToken;
 
@@ -246,6 +249,24 @@ class Utility {
       'selected' => [],
     ];
     return in_array($value, $settings['selected']) != $settings['default'];
+  }
+
+  /**
+   * Escapes HTML special characters in plain text, if necessary.
+   *
+   * @param string|\Drupal\Component\Render\MarkupInterface $text
+   *   The text to escape.
+   *
+   * @return \Drupal\Component\Render\MarkupInterface
+   *   If a markup object was passed as $text, it is returned as-is. Otherwise,
+   *   the text is escaped and returned
+   */
+  public static function escapeHtml($text) {
+    if ($text instanceof MarkupInterface) {
+      return $text;
+    }
+
+    return Markup::create(Html::escape((string) $text));
   }
 
 }

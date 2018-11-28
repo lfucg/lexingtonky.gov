@@ -3,7 +3,6 @@
 namespace Drupal\search_api_db\Plugin\search_api\backend;
 
 use Drupal\Component\Utility\Crypt;
-use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Database as CoreDatabase;
@@ -1166,7 +1165,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       }
       catch (\Exception $e) {
         // We just log the error, hoping we can index the other items.
-        $this->getLogger()->warning(Html::escape($e->getMessage()));
+        $this->getLogger()->warning($e->getMessage());
       }
     }
     return $indexed;
@@ -1602,16 +1601,21 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     $results = $query->getResults();
 
     $skip_count = $query->getOption('skip result count');
+    $count = NULL;
     if (!$skip_count) {
       $count_query = $db_query->countQuery();
-      $results->setResultCount($count_query->execute()->fetchField());
+      $count = $count_query->execute()->fetchField();
+      $results->setResultCount($count);
     }
 
-    if ($skip_count || $results->getResultCount()) {
-      if ($query->getOption('search_api_facets')) {
-        $results->setExtraData('search_api_facets', $this->getFacets($query, clone $db_query));
-      }
-
+    // With a "min_count" of 0, some facets can even be available if there are
+    // no results.
+    if ($query->getOption('search_api_facets')) {
+      $facets = $this->getFacets($query, clone $db_query, $count);
+      $results->setExtraData('search_api_facets', $facets);
+    }
+    // Everything else can be skipped if the count is 0.
+    if ($skip_count || $count) {
       $query_options = $query->getOptions();
       if (isset($query_options['offset']) || isset($query_options['limit'])) {
         $offset = isset($query_options['offset']) ? $query_options['offset'] : 0;
@@ -2353,16 +2357,13 @@ class Database extends BackendPluginBase implements PluginFormInterface {
    *   The search query for which facets should be computed.
    * @param \Drupal\Core\Database\Query\SelectInterface $db_query
    *   A database select query which returns all results of that search query.
+   * @param int|null $result_count
+   *   (optional) The total number of results of the search query, if known.
    *
    * @return array
    *   An array of facets, as specified by the search_api_facets feature.
    */
-  protected function getFacets(QueryInterface $query, SelectInterface $db_query) {
-    $table = $this->getTemporaryResultsTable($db_query);
-    if (!$table) {
-      return [];
-    }
-
+  protected function getFacets(QueryInterface $query, SelectInterface $db_query, $result_count = NULL) {
     $fields = $this->getFieldInfo($query->getIndex());
     $ret = [];
     foreach ($query->getOption('search_api_facets') as $key => $facet) {
@@ -2374,8 +2375,33 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       $field = $fields[$facet['field']];
 
       if (empty($facet['operator']) || $facet['operator'] != 'or') {
-        // All the AND facets can use the main query.
-        $select = $this->database->select($table, 't');
+        // First, check whether this can even possibly have any results.
+        if ($result_count !== NULL && $result_count < $facet['min_count']) {
+          continue;
+        }
+
+        // All the AND facets can use the main query. If we didn't yet create a
+        // temporary table for them yet, do so now.
+        if (!isset($table)) {
+          $table = $this->getTemporaryResultsTable($db_query);
+        }
+        if ($table) {
+          $select = $this->database->select($table, 't');
+        }
+        else {
+          // If no temporary table could be created (most likely due to a
+          // missing permission), use a nested query instead.
+          $select = $this->database->select(clone $db_query, 't');
+        }
+        // In case we didn't get the result count passed to the method, we can
+        // get it now. (This allows us to skip AND facets with a min_count
+        // higher than the result count.)
+        if ($result_count === NULL) {
+          $result_count = $select->countQuery()->execute()->fetchField();
+          if ($result_count < $facet['min_count']) {
+            continue;
+          }
+        }
       }
       else {
         // For OR facets, we need to build a different base query that excludes
@@ -2388,7 +2414,13 @@ class Database extends BackendPluginBase implements PluginFormInterface {
             unset($conditions[$i]);
           }
         }
-        $or_db_query = $this->createDbQuery($or_query, $fields);
+        try {
+          $or_db_query = $this->createDbQuery($or_query, $fields);
+        }
+        catch (SearchApiException $e) {
+          $this->logException($e, '%type while trying to create a facets query: @message in %function (line %line of %file).');
+          continue;
+        }
         $select = $this->database->select($or_db_query, 't');
       }
 

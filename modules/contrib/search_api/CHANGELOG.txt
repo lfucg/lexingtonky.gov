@@ -1,3 +1,31 @@
+Search API 1.11 (2018-11-18):
+-----------------------------
+- #3012778 by Shashwat Purav, pamatt, drunken monkey: Fixed several doc comment
+  typos.
+- #3011340 by pfrenssen, idimopoulos, drunken monkey: Fixed problem when
+  updating multiple indexes' datasource settings via "drush cim".
+- #2986623 by drunken monkey, valic: Added the "Reverse entity references"
+  processor.
+- #3009136 by drunken monkey, mkalkbrenner, borisson_: Added the
+  "search_api_retrieved_field_values" query option.
+- #3006267 by idebr, drunken monkey: Removed conditional code for Drupal 8.5.
+- #3007311 by drunken monkey: Fixed catch clause in
+  PostRequestIndexing::destruct().
+- #2994022 by drunken monkey, Watergate, borisson_: Fixed facets when there are
+  no search results in Database backend.
+- #2898917 by Lennard Westerveld, RoSk0, drunken monkey: Fixed Views filters
+  with checkboxes and "is all of" operator.
+- #3001259 by klausi, drunken monkey, borisson_: Fixed HTML escaping throughout
+  the module.
+- #3001030 by mkalkbrenner, drunken monkey, mvantuch: Fixed excerpt not taking
+  Solr filters into account.
+- #3004017 by idebr, drunken monkey: Fixed server/index config schemas to use
+  UUID field from Core definition.
+- #2971619 by idebr, drunken monkey: Refactored the access check for the
+  "Execute pending tasks" local action.
+- #2995342 by AndrewsizZ, drunken monkey, borisson_: Added stripping of
+  script/style HTML tags in excerpts to Highlight processor.
+
 Search API 1.10 (2018-09-17):
 -----------------------------
 - #2993787 by drunken monkey, borisson_, mkalkbrenner: Added the possibility to

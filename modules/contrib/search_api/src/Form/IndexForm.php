@@ -2,7 +2,6 @@
 
 namespace Drupal\search_api\Form;
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -13,6 +12,7 @@ use Drupal\Core\Form\SubformState;
 use Drupal\Core\Utility\Error;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Utility\PluginHelperInterface;
+use Drupal\search_api\Utility\Utility;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -96,7 +96,7 @@ class IndexForm extends EntityForm {
       ->loadMultiple();
     foreach ($servers as $server_id => $server) {
       // @todo Special formatting for disabled servers.
-      $options[$server_id] = Html::escape($server->label());
+      $options[$server_id] = Utility::escapeHtml($server->label());
     }
     return $options;
   }
@@ -188,8 +188,8 @@ class IndexForm extends EntityForm {
       if ($datasource->isHidden()) {
         continue;
       }
-      $datasource_options[$datasource_id] = $datasource->label();
-      $form['datasources'][$datasource_id]['#description'] = $datasource->getDescription();
+      $datasource_options[$datasource_id] = Utility::escapeHtml($datasource->label());
+      $form['datasources'][$datasource_id]['#description'] = Utility::escapeHtml($datasource->getDescription());
     }
     asort($datasource_options, SORT_NATURAL | SORT_FLAG_CASE);
     $form['datasources']['#options'] = $datasource_options;
@@ -236,8 +236,8 @@ class IndexForm extends EntityForm {
       if ($tracker->isHidden()) {
         continue;
       }
-      $tracker_options[$tracker_id] = $tracker->label();
-      $form['tracker'][$tracker_id]['#description'] = $tracker->getDescription();
+      $tracker_options[$tracker_id] = Utility::escapeHtml($tracker->label());
+      $form['tracker'][$tracker_id]['#description'] = Utility::escapeHtml($tracker->getDescription());
     }
     asort($tracker_options, SORT_NATURAL | SORT_FLAG_CASE);
     $form['tracker']['#options'] = $tracker_options;
@@ -425,7 +425,7 @@ class IndexForm extends EntityForm {
 
       $form['tracker_config']['#type'] = 'details';
       $form['tracker_config']['#title'] = $this->t('Configure the %plugin tracker', ['%plugin' => $tracker->label()]);
-      $form['tracker_config']['#description'] = Html::escape($tracker->getDescription());
+      $form['tracker_config']['#description'] = Utility::escapeHtml($tracker->getDescription());
       $form['tracker_config']['#open'] = $index->isNew();
 
       // If the user changed the tracker and the new one has a config form, show

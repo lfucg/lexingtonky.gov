@@ -9,8 +9,8 @@ use Drupal\search_api\DataType\DataTypePluginBase;
  *
  * @SearchApiDataType(
  *   id = "search_api_test",
- *   label = @Translation("Test data type"),
- *   description = @Translation("Dummy data type implementation")
+ *   label = @Translation("&quot;Test&quot; data type"),
+ *   description = @Translation("Dummy <em>data type</em> implementation")
  * )
  */
 class TestDataType extends DataTypePluginBase {

@@ -13,6 +13,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Utility\Error;
 use Drupal\search_api\Backend\BackendPluginManager;
 use Drupal\search_api\ServerInterface;
+use Drupal\search_api\Utility\Utility;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -152,8 +153,8 @@ class ServerForm extends EntityForm {
       if ($backend->isHidden()) {
         continue;
       }
-      $backend_options[$backend_id] = $backend->label();
-      $descriptions[$backend_id]['#description'] = $backend->getDescription();
+      $backend_options[$backend_id] = Utility::escapeHtml($backend->label());
+      $descriptions[$backend_id]['#description'] = Utility::escapeHtml($backend->getDescription());
     }
     asort($backend_options, SORT_NATURAL | SORT_FLAG_CASE);
     if ($backend_options) {
