@@ -15,19 +15,19 @@ function lex_custom_form_alter(&$form, FormStateInterface &$form_state, $form_id
   $form['field_keywords']['widget']['add_more']['#value'] = t('Add Another Keyword');
 }
 
-function lex_custom_views_post_execute(ViewExecutable $view) {
-	if ($view->id() == 'solr_search') {
-    foreach($view->result as $key => $result) {
-      $entity = $result->_object->getValue();
-      if (
-        ($entity->bundle() == 'event' || $entity->bundle() == 'meeting') &&
-        (date("Y-m-d H:i:s") > $entity->field_date->value || date("Y-m-d H:i:s") > $entity->field_date_end->value))
-        {
-          unset($view->result[$key]);
-        }
-    }
-  }
-}
+// function lex_custom_views_post_execute(ViewExecutable $view) {
+//   if ($view->id() == 'solr_search') {
+//     foreach($view->result as $key => $result) {
+//       $entity = $result->_object->getValue();
+//       if (
+//         ($entity->bundle() == 'event' || $entity->bundle() == 'meeting') &&
+//         (date("Y-m-d H:i:s") > $entity->field_date->value || date("Y-m-d H:i:s") > $entity->field_date_end->value))
+//         {
+//           unset($view->result[$key]);
+//         }
+//     }
+//   }
+// }
 
 /**
  * Implements hook_system_breadcrumb_alter().
