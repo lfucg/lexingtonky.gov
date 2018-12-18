@@ -1680,10 +1680,6 @@
     "new_path": "/basic-training-academy"
   },
   {
-    "old_path": "/recycle",
-    "new_path": "/browse/utilities-and-streets/recycling"
-  },
-  {
     "old_path": "/recyclingdropoff",
     "new_path": "/drop-off-locations"
   },
