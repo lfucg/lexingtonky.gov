@@ -11,7 +11,9 @@
         "drupal/captcha": "^1.0@beta",
         "drupal/twig_tweak": "^2.0",
         "drupal/admin_toolbar": "^1.24",
-        "drupal/addtoany": "^1.10"
+        "drupal/addtoany": "^1.10",
+        "drupal/draggableviews": "^1.2",
+        "cweagans/composer-patches": "^1.6"
     },
     "replace": {
         "drupal/core": "^8.6"
@@ -23,6 +25,11 @@
         "autoloader-suffix": "Drupal8"
     },
     "extra": {
+        "patches": {
+            "drupal/draggableviews": {
+                "Duplicates in draggable views.": "https://www.drupal.org/files/issues/2018-11-10/draggableviews_displays.03-8.x-1.2.patch"
+            }
+        },
         "_readme": [
             "By default Drupal loads the autoloader from ./vendor/autoload.php.",
             "To change the autoloader you can edit ./autoload.php.",

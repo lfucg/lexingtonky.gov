@@ -56,7 +56,10 @@ function lex_page_attachments_alter(array &$attachments) {
 
 function lex_views_pre_render($view) {
   if ($view->id() == "taxonomy_term") {
-    uasort($view->result, "lex_natural_sort_views");
+    $taxonomy_term = \Drupal::routeMatch()->getParameter('taxonomy_term')->name->value;
+    if ($taxonomy_term != 'Councilmembers') {
+      uasort($view->result, "lex_natural_sort_views");
+    }
   }
 }
 

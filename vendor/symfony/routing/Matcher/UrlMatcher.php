@@ -118,19 +118,24 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
      */
     protected function matchCollection($pathinfo, RouteCollection $routes)
     {
+        // HEAD and GET are equivalent as per RFC
+        if ('HEAD' === $method = $this->context->getMethod()) {
+            $method = 'GET';
+        }
         $supportsTrailingSlash = '/' !== $pathinfo && '' !== $pathinfo && $this instanceof RedirectableUrlMatcherInterface;
 
         foreach ($routes as $name => $route) {
             $compiledRoute = $route->compile();
             $staticPrefix = $compiledRoute->getStaticPrefix();
+            $requiredMethods = $route->getMethods();
 
             // check the static prefix of the URL first. Only use the more expensive preg_match when it matches
             if ('' === $staticPrefix || 0 === strpos($pathinfo, $staticPrefix)) {
                 // no-op
-            } elseif (!$supportsTrailingSlash) {
+            } elseif (!$supportsTrailingSlash || ($requiredMethods && !\in_array('GET', $requiredMethods)) || 'GET' !== $method) {
                 continue;
             } elseif ('/' === substr($staticPrefix, -1) && substr($staticPrefix, 0, -1) === $pathinfo) {
-                return;
+                return $this->allow = array();
             } else {
                 continue;
             }
@@ -148,7 +153,10 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
             }
 
             if ($hasTrailingSlash && '/' !== substr($pathinfo, -1)) {
-                return;
+                if ((!$requiredMethods || \in_array('GET', $requiredMethods)) && 'GET' === $method) {
+                    return $this->allow = array();
+                }
+                continue;
             }
 
             $hostMatches = array();
@@ -163,12 +171,7 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
             }
 
             // check HTTP method requirement
-            if ($requiredMethods = $route->getMethods()) {
-                // HEAD and GET are equivalent as per RFC
-                if ('HEAD' === $method = $this->context->getMethod()) {
-                    $method = 'GET';
-                }
-
+            if ($requiredMethods) {
                 if (!\in_array($method, $requiredMethods)) {
                     if (self::REQUIREMENT_MATCH === $status[0]) {
                         $this->allow = array_merge($this->allow, $requiredMethods);
@@ -180,6 +183,8 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
 
             return $this->getAttributes($route, $name, array_replace($matches, $hostMatches, isset($status[1]) ? $status[1] : array()));
         }
+
+        return array();
     }
 
     /**
