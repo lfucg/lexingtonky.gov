@@ -13,7 +13,6 @@ class ParagraphsTest extends EntityBrowserJavascriptTestBase {
    * {@inheritdoc}
    */
   public static $modules = [
-    'ctools',
     'views',
     'block',
     'node',

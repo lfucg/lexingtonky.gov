@@ -5,7 +5,6 @@ namespace Drupal\entity_browser;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
-
 /**
  * Defines the interface for entity browser widget validations.
  */
@@ -31,5 +30,6 @@ interface WidgetValidationInterface extends PluginInspectionInterface, Configura
    *   A list of constraint violations. If the list is empty, validation
    *   succeeded.
    */
-  public function validate(array $entities, $options = []);
+  public function validate(array $entities, array $options = []);
+
 }

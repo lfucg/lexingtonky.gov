@@ -19,6 +19,8 @@ use Drupal\Core\Path\CurrentPathStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Render\BareHtmlPageRendererInterface;
 
 /**
  * Presents entity browser in an iFrame.
@@ -54,6 +56,20 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
   protected $request;
 
   /**
+   * The renderer service.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
+   * The bare HTML page renderer.
+   *
+   * @var \Drupal\Core\Render\BareHtmlPageRendererInterface
+   */
+  protected $bareHtmlPageRenderer;
+
+  /**
    * Constructs display plugin.
    *
    * @param array $configuration
@@ -74,12 +90,18 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    *   Current request.
    * @param \Drupal\Core\Path\CurrentPathStack $current_path
    *   The current path.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer service.
+   * @param \Drupal\Core\Render\BareHtmlPageRendererInterface $bare_html_page_renderer
+   *   The bare HTML page renderer.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, UuidInterface $uuid, KeyValueStoreExpirableInterface $selection_storage, RouteMatchInterface $current_route_match, Request $request, CurrentPathStack $current_path) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, UuidInterface $uuid, KeyValueStoreExpirableInterface $selection_storage, RouteMatchInterface $current_route_match, Request $request, CurrentPathStack $current_path, RendererInterface $renderer, BareHtmlPageRendererInterface $bare_html_page_renderer) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $uuid, $selection_storage);
     $this->currentRouteMatch = $current_route_match;
     $this->request = $request;
     $this->currentPath = $current_path;
+    $this->renderer = $renderer;
+    $this->bareHtmlPageRenderer = $bare_html_page_renderer;
   }
 
   /**
@@ -95,7 +117,9 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       $container->get('entity_browser.selection_storage'),
       $container->get('current_route_match'),
       $container->get('request_stack')->getCurrentRequest(),
-      $container->get('path.current')
+      $container->get('path.current'),
+      $container->get('renderer'),
+      $container->get('bare_html_page_renderer')
     );
   }
 
@@ -155,6 +179,9 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
           'library' => ['entity_browser/iframe'],
           'drupalSettings' => [
             'entity_browser' => [
+              $this->getUuid() => [
+                'auto_open' => $this->configuration['auto_open'],
+              ],
               'iframe' => [
                 $this->getUuid() => [
                   'src' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'], [], $data['query_parameters'])
@@ -179,7 +206,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    * Intercepts default response and injects response that will trigger JS to
    * propagate selected entities upstream.
    *
-   * @param FilterResponseEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\FilterResponseEvent $event
    *   Response event.
    */
   public function propagateSelection(FilterResponseEvent $event) {
@@ -189,7 +216,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
           return $item->label();
         }, $this->entities)),
         '#attached' => [
-          'library' => ['entity_browser/'. $this->pluginDefinition['id'] . '_selection'],
+          'library' => ['entity_browser/' . $this->pluginDefinition['id'] . '_selection'],
           'drupalSettings' => [
             'entity_browser' => [
               $this->pluginDefinition['id'] => [
@@ -204,7 +231,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       ],
     ];
 
-    $event->setResponse(new Response(\Drupal::service('bare_html_page_renderer')->renderBarePage($render, 'Entity browser', 'page')));
+    $event->setResponse(new Response($this->bareHtmlPageRenderer->renderBarePage($render, $this->t('Entity browser'), 'page')));
   }
 
   /**

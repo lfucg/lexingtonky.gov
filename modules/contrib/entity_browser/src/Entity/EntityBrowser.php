@@ -21,19 +21,19 @@ use Symfony\Component\Routing\Route;
  *   handlers = {
  *     "form" = {
  *       "entity_browser" = "Drupal\entity_browser\Form\EntityBrowserForm",
+ *       "default" = "Drupal\entity_browser\Form\EntityBrowserEditForm",
+ *       "edit" = "Drupal\entity_browser\Form\EntityBrowserEditForm",
  *       "delete" = "Drupal\entity_browser\Form\EntityBrowserDeleteForm",
+ *       "edit_widgets" = "Drupal\entity_browser\Form\WidgetsConfig",
  *     },
  *     "access" = "Drupal\Core\Entity\EntityAccessControlHandler",
  *     "list_builder" = "Drupal\entity_browser\Controllers\EntityBrowserListBuilder",
- *     "wizard" = {
- *       "add" = "Drupal\entity_browser\Wizard\EntityBrowserWizardAdd",
- *       "edit" = "Drupal\entity_browser\Wizard\EntityBrowserWizard",
- *     }
  *   },
  *   links = {
- *     "canonical" = "/admin/config/content/entity_browser/{machine_name}/{step}",
+ *     "canonical" = "/admin/config/content/entity_browser/{entity_browser}",
  *     "collection" = "/admin/config/content/entity_browser",
- *     "edit-form" = "/admin/config/content/entity_browser/{machine_name}/{step}",
+ *     "edit-form" = "/admin/config/content/entity_browser/{entity_browser}/edit",
+ *     "edit-widgets" = "/admin/config/content/entity_browser/{entity_browser}/edit_widgets",
  *     "delete-form" = "/admin/config/content/entity_browser/{entity_browser}/delete",
  *   },
  *   admin_permission = "administer entity browsers",
@@ -205,6 +205,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public function setDisplay($display) {
     $this->display = $display;
     $this->displayPluginCollection = NULL;
+    $this->display_configuration = [];
     $this->getDisplay();
     return $this;
   }
@@ -215,6 +216,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public function setWidgetSelector($widget_selector) {
     $this->widget_selector = $widget_selector;
     $this->widgetSelectorCollection = NULL;
+    $this->widget_selector_configuration = [];
     $this->getWidgetSelector();
     return $this;
   }
@@ -225,6 +227,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public function setSelectionDisplay($selection_display) {
     $this->selection_display = $selection_display;
     $this->selectionDisplayCollection = NULL;
+    $this->selection_display_configuration = [];
     $this->getSelectionDisplay();
     return $this;
   }
@@ -294,7 +297,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function deleteWidget(WidgetInterface $widget) {
     $this->getWidgets()->removeInstanceId($widget->uuid());
-    $this->save();
     return $this;
   }
 
@@ -303,6 +305,14 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function getFirstWidget() {
     $instance_ids = $this->getWidgets()->getInstanceIds();
+    $instance_ids = array_filter($instance_ids, function ($id) {
+      return $this->getWidget($id)->access()->isAllowed();
+    });
+
+    if (empty($instance_ids)) {
+      return NULL;
+    }
+
     return reset($instance_ids);
   }
 
@@ -410,7 +420,9 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   }
 
   /**
-   * Prevent plugin collections from being serialized and correctly serialize
+   * Sleep method.
+   *
+   * Prevents plugin collections from being serialized and correctly serializes
    * selected entities.
    */
   public function __sleep() {

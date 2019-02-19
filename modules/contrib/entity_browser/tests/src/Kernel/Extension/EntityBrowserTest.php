@@ -127,7 +127,7 @@ class EntityBrowserTest extends KernelTestBase {
         $this->fail('An entity browser without required ' . $plugin_type . ' created with no exception thrown.');
       }
       catch (PluginException $e) {
-        $this->assertEquals('The "" plugin does not exist.', $e->getMessage(), 'An exception was thrown when an entity_browser was created without a ' . $plugin_type . ' plugin.');
+        $this->assertContains('The "" plugin does not exist.', $e->getMessage(), 'An exception was thrown when an entity_browser was created without a ' . $plugin_type . ' plugin.');
       }
     }
 
@@ -465,6 +465,43 @@ class EntityBrowserTest extends KernelTestBase {
     $form_object->validateForm($form, $form_state);
 
     $this->assertEmpty($form_state->getErrors(), t('Validation succeeded where expected'));
+  }
+
+  /**
+   * Tests view widget access.
+   */
+  public function testViewWidgetAccess() {
+    $this->installConfig(['entity_browser_test']);
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('user_role');
+
+    /** @var \Drupal\entity_browser\EntityBrowserInterface $entity */
+    $entity = $this->controller->load('test_entity_browser_file');
+
+    $this->assertFalse($entity->getWidget('774798f1-5ec5-4b63-84bd-124cd51ec07d')->access()->isAllowed());
+
+    // Create a user that has permission to access the view and try with it.
+    /** @var \Drupal\user\RoleInterface $role */
+    $role = $this->container->get('entity_type.manager')
+      ->getStorage('user_role')
+      ->create([
+        'name' => $this->randomString(),
+        'id' => $this->randomMachineName(),
+      ]);
+    $role->grantPermission('access content');
+    $role->save();
+
+    $user = $this->container->get('entity_type.manager')
+      ->getStorage('user')
+      ->create([
+        'name' => $this->randomString(),
+        'mail' => 'info@example.com',
+        'roles' => $role->id(),
+      ]);
+    $user->save();
+    \Drupal::currentUser()->setAccount($user);
+
+    $this->assertTrue($entity->getWidget('774798f1-5ec5-4b63-84bd-124cd51ec07d')->access()->isAllowed());
   }
 
 }

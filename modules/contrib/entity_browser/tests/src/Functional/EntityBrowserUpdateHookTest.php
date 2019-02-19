@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\entity_browser\Tests;
+namespace Drupal\Tests\entity_browser\Functional;
 
-use Drupal\system\Tests\Update\UpdatePathTestBase;
+use Drupal\FunctionalTests\Update\UpdatePathTestBase;
 
 /**
  * Tests the update hooks in entity_browser module.
@@ -17,7 +17,7 @@ class EntityBrowserUpdateHookTest extends UpdatePathTestBase {
   protected function setDatabaseDumpFiles() {
     $this->databaseDumpFiles = [
       DRUPAL_ROOT . '/core/modules/system/tests/fixtures/update/drupal-8.bare.standard.php.gz',
-      __DIR__ . '/../../tests/fixtures/update/entity_browser.update-hook-test.php',
+      __DIR__ . '/../../fixtures/update/entity_browser.update-hook-test.php',
     ];
   }
 
@@ -53,7 +53,7 @@ class EntityBrowserUpdateHookTest extends UpdatePathTestBase {
       ->get('entity_browser.browser.test_update');
 
     $this->assertNull($browser->get('submit_text'), 'Old submit text is gone');
-    $this->assertEqual($browser->get('widgets.a4ad947c-9669-497c-9988-24351955a02f.settings.submit_text'), 'All animals are created equal','New submit text appears on the widget.');
+    $this->assertEqual($browser->get('widgets.a4ad947c-9669-497c-9988-24351955a02f.settings.submit_text'), 'All animals are created equal', 'New submit text appears on the widget.');
   }
 
   /**

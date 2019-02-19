@@ -23,9 +23,9 @@ class EntityBrowserDisplay extends Plugin {
   /**
    * The human-readable name of the display.
    *
-   * @ingroup plugin_translatable
-   *
    * @var \Drupal\Core\Annotation\Translation
+   *
+   * @ingroup plugin_translatable
    */
   public $label;
 
@@ -34,9 +34,9 @@ class EntityBrowserDisplay extends Plugin {
    *
    * This will be shown when adding or configuring this display.
    *
-   * @ingroup plugin_translatable
+   * @var \Drupal\Core\Annotation\Translation
    *
-   * @var \Drupal\Core\Annotation\Translation (optional)
+   * @ingroup plugin_translatable
    */
   public $description = '';
 

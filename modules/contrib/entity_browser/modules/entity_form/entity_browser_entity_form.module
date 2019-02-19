@@ -47,7 +47,7 @@ function entity_browser_entity_form_inline_entity_form_reference_form_alter(&$re
   ]));
 
   $cardinality = FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED;
-  if($instance->getFieldStorageDefinition()->get('cardinality') !== $cardinality) {
+  if ($instance->getFieldStorageDefinition()->get('cardinality') !== $cardinality) {
     $cardinality = $instance->getFieldStorageDefinition()->get('cardinality') - $count_existing_selection;
   }
 
@@ -115,7 +115,7 @@ function entity_browser_entity_form_reference_form_validate(array &$reference_fo
  *
  * @see inline_entity_form_reference_form_submit()
  */
-function entity_browser_entity_form_reference_form_submit($reference_form, FormStateInterface $form_state) {
+function entity_browser_entity_form_reference_form_submit(array $reference_form, FormStateInterface $form_state) {
   $ief_id = $reference_form['#ief_id'];
   $form_values = NestedArray::getValue($form_state->getValues(), $reference_form['#parents']);
   $attach_entities = EntityBrowserElement::processEntityIds($form_values['entity_browser']['entity_ids']);

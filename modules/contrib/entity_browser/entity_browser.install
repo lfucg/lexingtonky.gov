@@ -6,6 +6,46 @@
  */
 
 /**
+ * Implements hook_requirements().
+ */
+function entity_browser_requirements($phase) {
+  $requirements = [];
+
+  // This branch of Entity Browser shouldn't be used with core < 8.4.x or with
+  // media_entity 1.x enabled.
+  $incompatible = FALSE;
+  $drupal_version = explode('.', \Drupal::VERSION);
+  if ($drupal_version[1] < 4) {
+    $incompatible = TRUE;
+  }
+  elseif (\Drupal::moduleHandler()->moduleExists('media_entity')) {
+    $info = system_get_info('module', 'media_entity');
+    if (empty($info['version'])) {
+      // If the version being used is -dev, $info['version'] will be empty. Try
+      // an alternative method to detect if we are using the 2.x branch in that
+      // case.
+      if (!file_exists(DRUPAL_ROOT . '/' . drupal_get_path('module', 'media_entity') . '/src/CliService.php')) {
+        $incompatible = TRUE;
+      }
+    }
+    elseif (version_compare($info['version'], '8.x-2') < 0) {
+      $incompatible = TRUE;
+    }
+  }
+
+  if ($incompatible) {
+    $requirements['entity_browser_media'] = [
+      'title' => t('Entity Browser'),
+      'value' => t('This branch of Entity Browser is not compatible with the version of Media Entity installed.'),
+      'description' => t('This branch of Entity Browser is not compatible with the version of Media Entity installed.'),
+      'severity' => REQUIREMENT_ERROR,
+    ];
+  }
+
+  return $requirements;
+}
+
+/**
  * Updates submit text for existing Entity browsers.
  */
 function entity_browser_update_8001() {
@@ -56,6 +96,29 @@ function entity_browser_update_8002() {
     if ($save) {
       $view->set('display', $displays);
       $view->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Updates entity browsers to use the new media image upload widget plugin.
+ */
+function entity_browser_update_8201() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('entity_browser.browser.') as $name) {
+    $config = $config_factory->getEditable($name);
+    $widgets = $config->get('widgets');
+    $changed = FALSE;
+    foreach ($widgets as &$widget) {
+      if ($widget['id'] === 'media_entity_image_upload') {
+        $widget['id'] = 'media_image_upload';
+        $widget['settings']['media_type'] = $widget['settings']['media_bundle'];
+        unset($widget['settings']['media_bundle']);
+        $changed = TRUE;
+      }
+    }
+    if ($changed) {
+      $config->set('widgets', $widgets)->save(TRUE);
     }
   }
 }

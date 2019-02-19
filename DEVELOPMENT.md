@@ -14,6 +14,7 @@ From start to finish in terminal:
 ```
 $ lando init pantheon
 $ lando start
+$ terminus auth:login --machine-token=[token_from_pantheon]
 $ lando pull
 ```
 `lando pull`: You will need a machine token from Pantheon user account page. The output will ask where to pull the code, database, and site files from. 

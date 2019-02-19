@@ -14,8 +14,8 @@ dependencies:
   - views
   - user
 
-# Information added by Drupal.org packaging script on 2017-11-30
-version: '8.x-1.4'
+# Information added by Drupal.org packaging script on 2019-02-15
+version: '8.x-2.1'
 core: '8.x'
 project: 'entity_browser'
-datestamp: 1512033788
+datestamp: 1550236988

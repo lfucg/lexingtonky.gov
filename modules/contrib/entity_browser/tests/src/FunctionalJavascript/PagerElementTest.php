@@ -44,7 +44,6 @@ class PagerElementTest extends EntityBrowserJavascriptTestBase {
       ],
     ])->save();
 
-
     FieldConfig::create([
       'field_name' => 'field_reference_pager',
       'entity_type' => 'node',

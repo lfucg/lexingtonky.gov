@@ -40,14 +40,26 @@ class EntityBrowserListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   protected function getDefaultOperations(EntityInterface $entity) {
-    $operations = parent::getDefaultOperations($entity);
 
-    // Destination parameter messes up with the entity form wizard redirects.
-    $options = $operations['edit']['url']->getOptions();
-    if (!empty($options['query']['destination'])) {
-      unset($options['query']['destination']);
+    if ($entity->access('update')) {
+      $operations['edit'] = [
+        'title' => $this->t('Edit'),
+        'url' => $entity->toUrl('edit-form'),
+      ];
     }
-    $operations['edit']['url']->setOptions($options);
+
+    $operations['edit-widgets'] = [
+      'title' => $this->t('Edit Widgets'),
+      'url' => $entity->toUrl('edit-widgets'),
+    ];
+
+    if ($entity->access('delete')) {
+      $operations['delete'] = [
+        'title' => $this->t('Delete'),
+        'url' => $entity->toUrl('delete-form'),
+        'weight' => 100,
+      ];
+    }
 
     return $operations;
   }

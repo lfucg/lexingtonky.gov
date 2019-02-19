@@ -86,6 +86,21 @@ class EntityBrowserViewsWidgetTest extends EntityBrowserJavascriptTestBase {
     $check_new = $this->assertSession()->fieldExists($new_field);
     // Compare value attributes of checkboxes and assert they not equal.
     $this->assertNotEquals($check_old->getAttribute('value'), $check_new->getAttribute('value'));
+
+    $uuid = \Drupal::service('uuid')->generate();
+    \Drupal::service('entity_browser.selection_storage')->setWithExpire(
+      $uuid,
+      ['validators' => ['cardinality' => ['cardinality' => 1]]],
+      21600
+    );
+    $this->drupalGet('/entity-browser/iframe/test_entity_browser_file', ['query' => ['uuid' => $uuid]]);
+    $this->getSession()->getPage()->fillField('entity_browser_select[file:1]', TRUE);
+    $this->getSession()->getPage()->fillField('entity_browser_select[file:2]', TRUE);
+    $this->getSession()->getPage()->pressButton('Select entities');
+
+    $this->assertSession()->pageTextContains('You can not select more than 1 entity.');
+    $this->assertSession()->checkboxNotChecked('entity_browser_select[file:1]');
+    $this->assertSession()->checkboxNotChecked('entity_browser_select[file:2]');
   }
 
 }

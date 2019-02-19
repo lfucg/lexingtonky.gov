@@ -107,7 +107,7 @@ class EntityForm extends WidgetBase {
 
     // Pretend to be IEFs submit button.
     $form['#submit'] = [['Drupal\inline_entity_form\ElementSubmit', 'trigger']];
-    $form['actions']['submit']['#ief_submit_trigger']  = TRUE;
+    $form['actions']['submit']['#ief_submit_trigger'] = TRUE;
     $form['actions']['submit']['#ief_submit_trigger_all'] = TRUE;
 
     $form['inline_entity_form'] = [
@@ -237,6 +237,15 @@ class EntityForm extends WidgetBase {
     parent::submitConfigurationForm($form, $form_state);
     $this->configuration['bundle'] = $this->configuration['bundle']['select'];
     $this->configuration['form_mode'] = $this->configuration['form_mode']['form_select'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access() {
+    return $this->entityTypeManager
+      ->getAccessControlHandler($this->configuration['entity_type'])
+      ->createAccess($this->configuration['bundle'], NULL, [], TRUE);
   }
 
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\entity_browser;
+
 use Drupal\Core\Form\FormStateInterface;
 
 /**
