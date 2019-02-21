@@ -5,7 +5,6 @@ namespace Drupal\Tests\migrate_drupal\Kernel\Plugin\migrate\source;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\field\Tests\EntityReference\EntityReferenceTestTrait;
 use Drupal\file\Entity\File;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\language\Entity\ConfigurableLanguage;
@@ -16,6 +15,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\user\Entity\User;
 
@@ -371,7 +371,7 @@ class ContentEntityTest extends KernelTestBase {
     $values = $media_source->current()->getSource();
     $this->assertEquals(1, $values['mid']);
     $this->assertEquals('Foo media', $values['name'][0]['value']);
-    $this->assertEquals('Foo media', $values['thumbnail'][0]['title']);
+    $this->assertNull($values['thumbnail'][0]['title']);
     $this->assertEquals(1, $values['uid'][0]['target_id']);
     $this->assertEquals('image', $values['bundle'][0]['target_id']);
   }

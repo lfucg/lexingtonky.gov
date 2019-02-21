@@ -13,12 +13,13 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Http\Exception\CacheableAccessDeniedHttpException;
+use Drupal\Core\Routing\AccessAwareRouterInterface;
 use Drupal\rest\Plugin\ResourceBase;
 use Drupal\rest\ResourceResponse;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\rest\ModifiedResourceResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -121,14 +122,11 @@ class EntityResource extends ResourceBase implements DependentPluginInterface {
    * @throws \Symfony\Component\HttpKernel\Exception\HttpException
    */
   public function get(EntityInterface $entity) {
-    $entity_access = $entity->access('view', NULL, TRUE);
-    if (!$entity_access->isAllowed()) {
-      throw new CacheableAccessDeniedHttpException($entity_access, $entity_access->getReason() ?: $this->generateFallbackAccessDeniedMessage($entity, 'view'));
-    }
-
+    $request = \Drupal::request();
     $response = new ResourceResponse($entity, 200);
+    // @todo Either remove the line below or remove this todo in https://www.drupal.org/project/drupal/issues/2973356
+    $response->addCacheableDependency($request->attributes->get(AccessAwareRouterInterface::ACCESS_RESULT));
     $response->addCacheableDependency($entity);
-    $response->addCacheableDependency($entity_access);
 
     if ($entity instanceof FieldableEntityInterface) {
       foreach ($entity as $field_name => $field) {
@@ -223,12 +221,10 @@ class EntityResource extends ResourceBase implements DependentPluginInterface {
     if ($entity->getEntityTypeId() != $definition['entity_type']) {
       throw new BadRequestHttpException('Invalid entity type');
     }
-    $entity_access = $original_entity->access('update', NULL, TRUE);
-    if (!$entity_access->isAllowed()) {
-      throw new AccessDeniedHttpException($entity_access->getReason() ?: $this->generateFallbackAccessDeniedMessage($entity, 'update'));
-    }
 
     // Overwrite the received fields.
+    // @todo Remove $changed_fields in https://www.drupal.org/project/drupal/issues/2862574.
+    $changed_fields = [];
     foreach ($entity->_restSubmittedFields as $field_name) {
       $field = $entity->get($field_name);
       // It is not possible to set the language to NULL as it is automatically
@@ -238,12 +234,18 @@ class EntityResource extends ResourceBase implements DependentPluginInterface {
         continue;
       }
       if ($this->checkPatchFieldAccess($original_entity->get($field_name), $field)) {
+        $changed_fields[] = $field_name;
         $original_entity->set($field_name, $field->getValue());
       }
     }
 
+    // If no fields are changed, we can send a response immediately!
+    if (empty($changed_fields)) {
+      return new ModifiedResourceResponse($original_entity, 200);
+    }
+
     // Validate the received data before saving.
-    $this->validate($original_entity);
+    $this->validate($original_entity, $changed_fields);
     try {
       $original_entity->save();
       $this->logger->notice('Updated entity %type with ID %id.', ['%type' => $original_entity->getEntityTypeId(), '%id' => $original_entity->id()]);
@@ -275,13 +277,6 @@ class EntityResource extends ResourceBase implements DependentPluginInterface {
    * @internal
    */
   protected function checkPatchFieldAccess(FieldItemListInterface $original_field, FieldItemListInterface $received_field) {
-    // If the user is allowed to edit the field, it is always safe to set the
-    // received value. We may be setting an unchanged value, but that is ok.
-    $field_edit_access = $original_field->access('edit', NULL, TRUE);
-    if ($field_edit_access->isAllowed()) {
-      return TRUE;
-    }
-
     // The user might not have access to edit the field, but still needs to
     // submit the current field value as part of the PATCH request. For
     // example, the entity keys required by denormalizers. Therefore, if the
@@ -292,6 +287,13 @@ class EntityResource extends ResourceBase implements DependentPluginInterface {
     // absence of a 403 response a way to find that out.
     if ($original_field->access('view') && $original_field->equals($received_field)) {
       return FALSE;
+    }
+
+    // If the user is allowed to edit the field, it is always safe to set the
+    // received value. We may be setting an unchanged value, but that is ok.
+    $field_edit_access = $original_field->access('edit', NULL, TRUE);
+    if ($field_edit_access->isAllowed()) {
+      return TRUE;
     }
 
     // It's helpful and safe to let the user know when they are not allowed to
@@ -319,10 +321,6 @@ class EntityResource extends ResourceBase implements DependentPluginInterface {
    * @throws \Symfony\Component\HttpKernel\Exception\HttpException
    */
   public function delete(EntityInterface $entity) {
-    $entity_access = $entity->access('delete', NULL, TRUE);
-    if (!$entity_access->isAllowed()) {
-      throw new AccessDeniedHttpException($entity_access->getReason() ?: $this->generateFallbackAccessDeniedMessage($entity, 'delete'));
-    }
     try {
       $entity->delete();
       $this->logger->notice('Deleted entity %type with ID %id.', ['%type' => $entity->getEntityTypeId(), '%id' => $entity->id()]);
@@ -375,6 +373,23 @@ class EntityResource extends ResourceBase implements DependentPluginInterface {
    */
   protected function getBaseRoute($canonical_path, $method) {
     $route = parent::getBaseRoute($canonical_path, $method);
+
+    switch ($method) {
+      case 'GET':
+        $route->setRequirement('_entity_access', $this->entityType->id() . '.view');
+        break;
+      case 'POST':
+        $route->setRequirement('_entity_create_any_access', $this->entityType->id());
+        $route->setOption('_ignore_create_bundle_access', TRUE);
+        break;
+      case 'PATCH':
+        $route->setRequirement('_entity_access', $this->entityType->id() . '.update');
+        break;
+      case 'DELETE':
+        $route->setRequirement('_entity_access', $this->entityType->id() . '.delete');
+        break;
+    }
+
     $definition = $this->getPluginDefinition();
 
     $parameters = $route->getOption('parameters') ?: [];

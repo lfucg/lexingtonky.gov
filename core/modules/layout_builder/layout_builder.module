@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\field\FieldConfigInterface;
@@ -14,11 +15,11 @@ use Drupal\layout_builder\Entity\LayoutBuilderEntityViewDisplay;
 use Drupal\layout_builder\Entity\LayoutBuilderEntityViewDisplayStorage;
 use Drupal\layout_builder\Form\LayoutBuilderEntityViewDisplayForm;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
-use Drupal\layout_builder\Entity\LayoutEntityDisplayInterface;
 use Drupal\layout_builder\Plugin\Block\ExtraFieldBlock;
 use Drupal\layout_builder\InlineBlockEntityOperations;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\layout_builder\Plugin\SectionStorage\OverridesSectionStorage;
 
 /**
  * Implements hook_help().
@@ -62,8 +63,8 @@ function layout_builder_entity_type_alter(array &$entity_types) {
 function layout_builder_form_entity_form_display_edit_form_alter(&$form, FormStateInterface $form_state) {
   // Hides the Layout Builder field. It is rendered directly in
   // \Drupal\layout_builder\Entity\LayoutBuilderEntityViewDisplay::buildMultiple().
-  unset($form['fields']['layout_builder__layout']);
-  $key = array_search('layout_builder__layout', $form['#fields']);
+  unset($form['fields'][OverridesSectionStorage::FIELD_NAME]);
+  $key = array_search(OverridesSectionStorage::FIELD_NAME, $form['#fields']);
   if ($key !== FALSE) {
     unset($form['#fields'][$key]);
   }
@@ -105,7 +106,9 @@ function layout_builder_field_config_delete(FieldConfigInterface $field_config) 
  * @see layout_builder_module_implements_alter()
  */
 function layout_builder_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
-  if ($display instanceof LayoutEntityDisplayInterface) {
+  // Only replace extra fields when Layout Builder has been used to alter the
+  // build. See \Drupal\layout_builder\Entity\LayoutBuilderEntityViewDisplay::buildMultiple().
+  if (isset($build['_layout_builder']) && !Element::isEmpty($build['_layout_builder'])) {
     /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
     $field_manager = \Drupal::service('entity_field.manager');
     $extra_fields = $field_manager->getExtraFields($entity->getEntityTypeId(), $entity->bundle());
@@ -177,7 +180,7 @@ function layout_builder_cron() {
 function layout_builder_plugin_filter_block_alter(array &$definitions, array $extra, $consumer) {
   // @todo Determine the 'inline_block' blocks should be allowed outside
   //   of layout_builder https://www.drupal.org/node/2979142.
-  if ($consumer !== 'layout_builder') {
+  if ($consumer !== 'layout_builder' || !isset($extra['list']) || $extra['list'] !== 'inline_blocks') {
     foreach ($definitions as $id => $definition) {
       if ($definition['id'] === 'inline_block') {
         unset($definitions[$id]);
@@ -201,4 +204,22 @@ function layout_builder_block_content_access(EntityInterface $entity, $operation
     return AccessResult::allowed();
   }
   return AccessResult::forbidden();
+}
+
+/**
+ * Implements hook_plugin_filter_TYPE__CONSUMER_alter().
+ */
+function layout_builder_plugin_filter_block__block_ui_alter(array &$definitions, array $extra) {
+  foreach ($definitions as $id => $definition) {
+    // Filter out any layout_builder definition with required contexts.
+    if ($definition['provider'] === 'layout_builder' && !empty($definition['context'])) {
+      /** @var \Drupal\Core\Plugin\Context\ContextDefinitionInterface $context */
+      foreach ($definition['context'] as $context) {
+        if ($context->isRequired()) {
+          unset($definitions[$id]);
+          break;
+        }
+      }
+    }
+  }
 }

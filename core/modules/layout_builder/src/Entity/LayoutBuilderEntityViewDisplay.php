@@ -9,6 +9,7 @@ use Drupal\Core\Plugin\Context\EntityContext;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\layout_builder\Plugin\SectionStorage\OverridesSectionStorage;
 use Drupal\layout_builder\Section;
 use Drupal\layout_builder\SectionComponent;
 use Drupal\layout_builder\SectionStorage\SectionStorageTrait;
@@ -110,10 +111,10 @@ class LayoutBuilderEntityViewDisplay extends BaseEntityViewDisplay implements La
       $bundle = $this->getTargetBundle();
 
       if ($new_value) {
-        $this->addSectionField($entity_type_id, $bundle, 'layout_builder__layout');
+        $this->addSectionField($entity_type_id, $bundle, OverridesSectionStorage::FIELD_NAME);
       }
-      elseif ($field = FieldConfig::loadByName($entity_type_id, $bundle, 'layout_builder__layout')) {
-        $field->delete();
+      else {
+        $this->removeSectionField($entity_type_id, $bundle, OverridesSectionStorage::FIELD_NAME);
       }
     }
 
@@ -136,6 +137,31 @@ class LayoutBuilderEntityViewDisplay extends BaseEntityViewDisplay implements La
           $this->removeSection(0);
         }
       }
+    }
+  }
+
+  /**
+   * Removes a layout section field if it is no longer needed.
+   *
+   * Because the field is shared across all view modes, the field will only be
+   * removed if no other view modes are using it.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param string $bundle
+   *   The bundle.
+   * @param string $field_name
+   *   The name for the layout section field.
+   */
+  protected function removeSectionField($entity_type_id, $bundle, $field_name) {
+    $query = $this->entityTypeManager()->getStorage($this->getEntityTypeId())->getQuery()
+      ->condition('targetEntityType', $this->getTargetEntityTypeId())
+      ->condition('bundle', $this->getTargetBundle())
+      ->condition('mode', $this->getMode(), '<>')
+      ->condition('third_party_settings.layout_builder.allow_custom', TRUE);
+    $enabled = (bool) $query->count()->execute();
+    if (!$enabled && $field = FieldConfig::loadByName($entity_type_id, $bundle, $field_name)) {
+      $field->delete();
     }
   }
 
@@ -170,6 +196,16 @@ class LayoutBuilderEntityViewDisplay extends BaseEntityViewDisplay implements La
       ]);
       $field->save();
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createCopy($mode) {
+    // Disable Layout Builder and remove any sections copied from the original.
+    return parent::createCopy($mode)
+      ->setSections([])
+      ->disableLayoutBuilder();
   }
 
   /**
@@ -239,8 +275,8 @@ class LayoutBuilderEntityViewDisplay extends BaseEntityViewDisplay implements La
    *   The sections.
    */
   protected function getRuntimeSections(FieldableEntityInterface $entity) {
-    if ($this->isOverridable() && !$entity->get('layout_builder__layout')->isEmpty()) {
-      return $entity->get('layout_builder__layout')->getSections();
+    if ($this->isOverridable() && !$entity->get(OverridesSectionStorage::FIELD_NAME)->isEmpty()) {
+      return $entity->get(OverridesSectionStorage::FIELD_NAME)->getSections();
     }
 
     return $this->getSections();

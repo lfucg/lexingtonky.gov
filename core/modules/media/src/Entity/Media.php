@@ -91,15 +91,14 @@ class Media extends EditorialContentEntityBase implements MediaInterface {
    * {@inheritdoc}
    */
   public function getName() {
-    $name = $this->get('name');
+    $name = $this->getEntityKey('label');
 
-    if ($name->isEmpty()) {
+    if (empty($name)) {
       $media_source = $this->getSource();
       return $media_source->getMetadata($this, $media_source->getPluginDefinition()['default_name_metadata_attribute']);
     }
-    else {
-      return $name->value;
-    }
+
+    return $name;
   }
 
   /**
@@ -186,19 +185,10 @@ class Media extends EditorialContentEntityBase implements MediaInterface {
     // Set the thumbnail alt.
     $media_source = $this->getSource();
     $plugin_definition = $media_source->getPluginDefinition();
+
+    $this->thumbnail->alt = '';
     if (!empty($plugin_definition['thumbnail_alt_metadata_attribute'])) {
       $this->thumbnail->alt = $media_source->getMetadata($this, $plugin_definition['thumbnail_alt_metadata_attribute']);
-    }
-    else {
-      $this->thumbnail->alt = $this->t('Thumbnail', [], ['langcode' => $this->langcode->value]);
-    }
-
-    // Set the thumbnail title.
-    if (!empty($plugin_definition['thumbnail_title_metadata_attribute'])) {
-      $this->thumbnail->title = $media_source->getMetadata($this, $plugin_definition['thumbnail_title_metadata_attribute']);
-    }
-    else {
-      $this->thumbnail->title = $this->label();
     }
 
     return $this;

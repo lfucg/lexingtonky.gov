@@ -122,11 +122,11 @@ abstract class AbstractFeed implements Feed\FeedInterface
     /**
      * Return the current entry
      *
-     * @return \Zend\Feed\Reader\AbstractEntry
+     * @return \Zend\Feed\Reader\Entry\AbstractEntry
      */
     public function current()
     {
-        if (substr($this->getType(), 0, 3) == 'rss') {
+        if (0 === strpos($this->getType(), 'rss')) {
             $reader = new Entry\RSS($this->entries[$this->key()], $this->key(), $this->getType());
         } else {
             $reader = new Entry\Atom($this->entries[$this->key()], $this->key(), $this->getType());

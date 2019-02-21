@@ -6,10 +6,10 @@ use Drupal\entity_test\Entity\EntityTest;
 use Drupal\entity_test\Entity\EntityTestMulRev;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\field\Tests\EntityReference\EntityReferenceTestTrait;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -138,8 +138,11 @@ class EntityQueryTest extends EntityKernelTestBase {
       }
       foreach (array_reverse(str_split(decbin($i))) as $key => $bit) {
         if ($bit) {
-          list($field_name, $langcode, $values) = $units[$key];
-          $entity->getTranslation($langcode)->{$field_name}[] = $values;
+          // @todo https://www.drupal.org/project/drupal/issues/3001920 Doing
+          //   list($field_name, $langcode, $values) = $units[$key]; causes
+          //   problems in PHP 7.3. Revert to better variable names once
+          //   https://bugs.php.net/bug.php?id=76937 is fixed.
+          $entity->getTranslation($units[$key][1])->{$units[$key][0]}[] = $units[$key][2];
         }
       }
       $entity->save();
@@ -630,7 +633,7 @@ class EntityQueryTest extends EntityKernelTestBase {
       ->condition("$figures.%delta", 1)
       ->sort('id')
       ->execute();
-    // Entity needs to have atleast two figures.
+    // Entity needs to have at least two figures.
     $this->assertResult(3, 7, 11, 15);
 
     // Numeric delta on single value base field should return results only if
@@ -1155,6 +1158,44 @@ class EntityQueryTest extends EntityKernelTestBase {
       ->condition('type', 'entity_test')
       ->condition('ref1.entity.id', $ref1->id())
       ->condition('ref2.entity.id', $ref2->id())
+      ->execute();
+    $this->assertCount(1, $result);
+    $this->assertEquals($entity->id(), reset($result));
+  }
+
+  /**
+   * Tests entity queries with condition on the revision metadata keys.
+   */
+  public function testConditionOnRevisionMetadataKeys() {
+    $this->installModule('entity_test_revlog');
+    $this->installEntitySchema('entity_test_revlog');
+
+    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager */
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    /** @var \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type */
+    $entity_type = $entity_type_manager->getDefinition('entity_test_revlog');
+    /** @var \Drupal\Core\Entity\ContentEntityStorageInterface $storage */
+    $storage = $entity_type_manager->getStorage('entity_test_revlog');
+
+    $revision_created_timestamp = time();
+    $revision_created_field_name = $entity_type->getRevisionMetadataKey('revision_created');
+    $entity = $storage->create([
+      'type' => 'entity_test',
+      $revision_created_field_name => $revision_created_timestamp,
+    ]);
+    $entity->save();
+
+    // Query only the default revision.
+    $result = $storage->getQuery()
+      ->condition($revision_created_field_name, $revision_created_timestamp)
+      ->execute();
+    $this->assertCount(1, $result);
+    $this->assertEquals($entity->id(), reset($result));
+
+    // Query all revisions.
+    $result = $storage->getQuery()
+      ->condition($revision_created_field_name, $revision_created_timestamp)
+      ->allRevisions()
       ->execute();
     $this->assertCount(1, $result);
     $this->assertEquals($entity->id(), reset($result));
