@@ -88,10 +88,17 @@ class FullCalendarService {
        * Skip any recurrings that happen to fall in the range.
        */
       if ($event->field_recurring_event->value === NULL || $event->field_recurring_event->value === 'No') {
-        $this->addEvent($event,
-          $this->cleanDate($event->field_date)->format('Y-m-d H:i:s'),
-          $this->getEndEvent($event)->format('Y-m-d H:i:s')
-        );
+        if ($this->getEndEvent($event) == NULL) {
+          $this->addEvent($event,
+            $this->cleanDate($event->field_date)->format('Y-m-d H:i:s'),
+            $this->getEndEvent($event)
+          );
+        }else {
+          $this->addEvent($event,
+            $this->cleanDate($event->field_date)->format('Y-m-d H:i:s'),
+            $this->getEndEvent($event)->format('Y-m-d H:i:s')
+          );
+        }
       }
     }
   }
@@ -116,9 +123,7 @@ class FullCalendarService {
    */
   protected function getEndEvent($event) {
     if (empty($event->field_date_end->value)) {
-      $date = new \DateTime($event->field_date->value);
-      $date->modify('+3 hours');
-      $this->timeZoneAdjust($date);
+      $date = NULL;
       return $date;
      }
      else {
