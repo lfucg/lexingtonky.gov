@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Validation\Plugin\Validation\Constraint\NotNullConstraint;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -89,6 +90,13 @@ class ModerationStateConstraintValidator extends ConstraintValidator implements 
       return;
     }
 
+    // If the entity is moderated and the item list is empty, ensure users see
+    // the same required message as typical NotNull constraints.
+    if ($value->isEmpty()) {
+      $this->context->addViolation((new NotNullConstraint())->message);
+      return;
+    }
+
     $workflow = $this->moderationInformation->getWorkflowForEntity($entity);
 
     if (!$workflow->getTypePlugin()->hasState($entity->moderation_state->value)) {
@@ -115,7 +123,7 @@ class ModerationStateConstraintValidator extends ConstraintValidator implements 
     else {
       // If we're sure the transition exists, make sure the user has permission
       // to use it.
-      if (!$this->stateTransitionValidation->isTransitionValid($workflow, $original_state, $new_state, $this->currentUser)) {
+      if (!$this->stateTransitionValidation->isTransitionValid($workflow, $original_state, $new_state, $this->currentUser, $entity)) {
         $this->context->addViolation($constraint->invalidTransitionAccess, [
           '%original_state' => $original_state->label(),
           '%new_state' => $new_state->label(),

@@ -330,7 +330,9 @@ class DateTimePlusTest extends TestCase {
       // Create a date object in the distant past.
       // @see https://www.drupal.org/node/2795489#comment-12127088
       if (version_compare(PHP_VERSION, '5.6.15', '>=')) {
-        $dates[] = ['1809-02-12 10:30', 'America/Chicago', '1809-02-12T10:30:00-06:00'];
+        // Note that this date is after the United States standardized its
+        // timezones.
+        $dates[] = ['1883-11-19 10:30', 'America/Chicago', '1883-11-19T10:30:00-06:00'];
       }
       // Create a date object in the far future.
       $dates[] = ['2345-01-02 02:04', 'UTC', '2345-01-02T02:04:00+00:00'];
@@ -366,7 +368,9 @@ class DateTimePlusTest extends TestCase {
       // Create a date object in the distant past.
       // @see https://www.drupal.org/node/2795489#comment-12127088
       if (version_compare(PHP_VERSION, '5.6.15', '>=')) {
-        $dates[] = [['year' => 1809, 'month' => 2, 'day' => 12], 'America/Chicago', '1809-02-12T00:00:00-06:00'];
+        // Note that this date is after the United States standardized its
+        // timezones.
+        $dates[] = [['year' => 1883, 'month' => 11, 'day' => 19], 'America/Chicago', '1883-11-19T00:00:00-06:00'];
       }
       // Create a date object in the far future.
       $dates[] = [['year' => 2345, 'month' => 1, 'day' => 2], 'UTC', '2345-01-02T00:00:00+00:00'];
@@ -807,7 +811,7 @@ class DateTimePlusTest extends TestCase {
   public function testValidateFormat() {
     // Check that an input that does not strictly follow the input format will
     // produce the desired date. In this case the year string '11' doesn't
-    // precisely match the 'Y' formater parameter, but PHP will parse it
+    // precisely match the 'Y' formatter parameter, but PHP will parse it
     // regardless. However, when formatted with the same string, the year will
     // be output with four digits. With the ['validate_format' => FALSE]
     // $settings, this will not thrown an exception.

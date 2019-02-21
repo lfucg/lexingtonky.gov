@@ -113,7 +113,6 @@ CKEditor
 
 Classy
 - David Hernandez 'davidhernandez' https://www.drupal.org/u/davidhernandez
-- Morten Birch Heide-Jørgensen 'mortendk' https://www.drupal.org/u/mortendk
 
 Color
 - ?
@@ -246,7 +245,7 @@ Interface Translation (locale)
 
 JavaScript
 - Théodore Biadala 'nod_' https://www.drupal.org/u/nod_
-- Matthew Grill 'drpal' https://www.drupal.org/u/drpal
+- Matthew Grill 'alwaysworking' https://www.drupal.org/u/alwaysworking
 - Sally Young 'justafish' https://www.drupal.org/u/justafish
 
 Language
@@ -285,9 +284,9 @@ Menu UI
 Migrate
 - Adam Globus-Hoenich 'phenaproxima' https://www.drupal.org/u/phenaproxima
 - Lucas Hedding 'heddn' https://www.drupal.org/u/heddn
+- Michael Lutz 'mikelutz' https://www.drupal.org/u/mikelutz
 - Markus Sipilä 'masipila' https://www.drupal.org/u/masipila
 - Vicki Spagnolo 'quietone' https://www.drupal.org/u/quietone
-- Maxime Turcotte 'maxocub' https://www.drupal.org/u/maxocub
 
 Node
 - Tim Millwood 'timmillwood' https://www.drupal.org/u/timmillwood
@@ -475,11 +474,12 @@ their responsibilities. The initiative coordinators for Drupal 8 are:
 API-first Initiative
 - Wim Leers 'Wim Leers' https://www.drupal.org/u/wim-leers
 - Mateu Aguiló Bosch 'e0ipso' https://www.drupal.org/u/e0ipso
+- Gabe Sullice 'gabesullice' https://www.drupal.org/u/gabesullice
 
 Admin UI & JavaScript Modernisation Initiative
 - Angela Byron 'webchick' https://www.drupal.org/u/webchick
 - Cristina Chumillas 'ckrina' https://www.drupal.org/u/ckrina
-- Matthew Grill 'drpal' https://www.drupal.org/u/drpal
+- Matthew Grill 'alwaysworking' https://www.drupal.org/u/alwaysworking
 - Sally Young 'justafish' https://www.drupal.org/u/justafish
 
 Layout Initiative

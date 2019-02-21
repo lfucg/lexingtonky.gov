@@ -2,6 +2,7 @@
 
 namespace Drupal\workspaces;
 
+use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -29,8 +30,8 @@ class WorkspaceManager implements WorkspaceManagerInterface {
    * @var string[]
    */
   protected $blacklist = [
-    'workspace_association',
-    'workspace',
+    'workspace_association' => 'workspace_association',
+    'workspace' => 'workspace',
   ];
 
   /**
@@ -46,6 +47,13 @@ class WorkspaceManager implements WorkspaceManagerInterface {
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
+
+  /**
+   * The entity memory cache service.
+   *
+   * @var \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface
+   */
+  protected $entityMemoryCache;
 
   /**
    * The current user.
@@ -96,6 +104,8 @@ class WorkspaceManager implements WorkspaceManagerInterface {
    *   The request stack.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface $entity_memory_cache
+   *   The entity memory cache service.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user.
    * @param \Drupal\Core\State\StateInterface $state
@@ -107,9 +117,10 @@ class WorkspaceManager implements WorkspaceManagerInterface {
    * @param array $negotiator_ids
    *   The workspace negotiator service IDs.
    */
-  public function __construct(RequestStack $request_stack, EntityTypeManagerInterface $entity_type_manager, AccountProxyInterface $current_user, StateInterface $state, LoggerInterface $logger, ClassResolverInterface $class_resolver, array $negotiator_ids) {
+  public function __construct(RequestStack $request_stack, EntityTypeManagerInterface $entity_type_manager, MemoryCacheInterface $entity_memory_cache, AccountProxyInterface $current_user, StateInterface $state, LoggerInterface $logger, ClassResolverInterface $class_resolver, array $negotiator_ids) {
     $this->requestStack = $request_stack;
     $this->entityTypeManager = $entity_type_manager;
+    $this->entityMemoryCache = $entity_memory_cache;
     $this->currentUser = $current_user;
     $this->state = $state;
     $this->logger = $logger;
@@ -121,11 +132,17 @@ class WorkspaceManager implements WorkspaceManagerInterface {
    * {@inheritdoc}
    */
   public function isEntityTypeSupported(EntityTypeInterface $entity_type) {
-    if (!isset($this->blacklist[$entity_type->id()])
-      && $entity_type->entityClassImplements(EntityPublishedInterface::class)
-      && $entity_type->isRevisionable()) {
+    // First, check if we already determined whether this entity type is
+    // supported or not.
+    if (isset($this->blacklist[$entity_type->id()])) {
+      return FALSE;
+    }
+
+    if ($entity_type->entityClassImplements(EntityPublishedInterface::class) && $entity_type->isRevisionable()) {
       return TRUE;
     }
+
+    // This entity type can not belong to a workspace, add it to the blacklist.
     $this->blacklist[$entity_type->id()] = $entity_type->id();
     return FALSE;
   }
@@ -167,6 +184,31 @@ class WorkspaceManager implements WorkspaceManagerInterface {
    * {@inheritdoc}
    */
   public function setActiveWorkspace(WorkspaceInterface $workspace) {
+    $this->doSwitchWorkspace($workspace);
+
+    // Set the workspace on the proper negotiator.
+    $request = $this->requestStack->getCurrentRequest();
+    foreach ($this->negotiatorIds as $negotiator_id) {
+      $negotiator = $this->classResolver->getInstanceFromDefinition($negotiator_id);
+      if ($negotiator->applies($request)) {
+        $negotiator->setActiveWorkspace($workspace);
+        break;
+      }
+    }
+
+    return $this;
+  }
+
+  /**
+   * Switches the current workspace.
+   *
+   * @param \Drupal\workspaces\WorkspaceInterface $workspace
+   *   The workspace to set as active.
+   *
+   * @throws \Drupal\workspaces\WorkspaceAccessException
+   *   Thrown when the current user doesn't have access to view the workspace.
+   */
+  protected function doSwitchWorkspace(WorkspaceInterface $workspace) {
     // If the current user doesn't have access to view the workspace, they
     // shouldn't be allowed to switch to it.
     if (!$workspace->access('view') && !$workspace->isDefaultWorkspace()) {
@@ -179,22 +221,30 @@ class WorkspaceManager implements WorkspaceManagerInterface {
 
     $this->activeWorkspace = $workspace;
 
-    // Set the workspace on the proper negotiator.
-    $request = $this->requestStack->getCurrentRequest();
-    foreach ($this->negotiatorIds as $negotiator_id) {
-      $negotiator = $this->classResolver->getInstanceFromDefinition($negotiator_id);
-      if ($negotiator->applies($request)) {
-        $negotiator->setActiveWorkspace($workspace);
-        break;
-      }
+    // Clear the static entity cache for the supported entity types.
+    $cache_tags_to_invalidate = array_map(function ($entity_type_id) {
+      return 'entity.memory_cache:' . $entity_type_id;
+    }, array_keys($this->getSupportedEntityTypes()));
+    $this->entityMemoryCache->invalidateTags($cache_tags_to_invalidate);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executeInWorkspace($workspace_id, callable $function) {
+    /** @var \Drupal\workspaces\WorkspaceInterface $workspace */
+    $workspace = $this->entityTypeManager->getStorage('workspace')->load($workspace_id);
+
+    if (!$workspace) {
+      throw new \InvalidArgumentException('The ' . $workspace_id . ' workspace does not exist.');
     }
 
-    $supported_entity_types = $this->getSupportedEntityTypes();
-    foreach ($supported_entity_types as $supported_entity_type) {
-      $this->entityTypeManager->getStorage($supported_entity_type->id())->resetCache();
-    }
+    $previous_active_workspace = $this->getActiveWorkspace();
+    $this->doSwitchWorkspace($workspace);
+    $result = $function();
+    $this->doSwitchWorkspace($previous_active_workspace);
 
-    return $this;
+    return $result;
   }
 
   /**

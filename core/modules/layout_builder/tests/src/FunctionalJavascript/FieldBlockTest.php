@@ -16,7 +16,14 @@ class FieldBlockTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['block', 'datetime', 'layout_builder', 'user'];
+  protected static $modules = [
+    'block',
+    'datetime',
+    'layout_builder',
+    'user',
+    // See \Drupal\layout_builder_fieldblock_test\Plugin\Block\FieldBlock.
+    'layout_builder_fieldblock_test',
+  ];
 
   /**
    * {@inheritdoc}
@@ -67,7 +74,7 @@ class FieldBlockTest extends WebDriverTestBase {
     $assert_session->pageTextNotContains('Initial email');
 
     $assert_session->pageTextContains('Date field');
-    $block_url = 'admin/structure/block/add/field_block%3Auser%3Auser%3Afield_date/classy';
+    $block_url = 'admin/structure/block/add/field_block_test%3Auser%3Auser%3Afield_date/classy';
     $assert_session->linkByHrefExists($block_url);
 
     $this->drupalGet($block_url);
@@ -84,7 +91,7 @@ class FieldBlockTest extends WebDriverTestBase {
     $assert_session->fieldNotExists('settings[formatter][settings][format_type]');
     $assert_session->fieldExists('settings[formatter][settings][granularity]');
     $page->pressButton('Save block');
-    $assert_session->pageTextContains('The block configuration has been saved.');
+    $this->assertTrue($assert_session->waitForText('The block configuration has been saved.'));
 
     // Configure the block and change the formatter again.
     $this->clickLink('Configure');
@@ -94,7 +101,7 @@ class FieldBlockTest extends WebDriverTestBase {
     $page->selectFieldOption('settings[formatter][settings][format_type]', 'long');
 
     $page->pressButton('Save block');
-    $assert_session->pageTextContains('The block configuration has been saved.');
+    $this->assertTrue($assert_session->waitForText('The block configuration has been saved.'));
 
     // Assert that the field value is updated.
     $this->clickLink('Configure');

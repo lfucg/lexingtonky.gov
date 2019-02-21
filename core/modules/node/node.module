@@ -28,6 +28,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\node\NodeTypeInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Denotes that the node is not published.
@@ -713,7 +714,7 @@ function node_ranking() {
 /**
  * Implements hook_user_cancel().
  */
-function node_user_cancel($edit, $account, $method) {
+function node_user_cancel($edit, UserInterface $account, $method) {
   switch ($method) {
     case 'user_cancel_block_unpublish':
       // Unpublish nodes (current revisions).
@@ -943,19 +944,19 @@ function node_node_access(NodeInterface $node, $op, $account) {
       return AccessResult::allowedIfHasPermission($account, 'create ' . $type . ' content');
 
     case 'update':
-      if ($account->hasPermission('edit any ' . $type . ' content', $account)) {
+      if ($account->hasPermission('edit any ' . $type . ' content')) {
         return AccessResult::allowed()->cachePerPermissions();
       }
       else {
-        return AccessResult::allowedIf($account->hasPermission('edit own ' . $type . ' content', $account) && ($account->id() == $node->getOwnerId()))->cachePerPermissions()->cachePerUser()->addCacheableDependency($node);
+        return AccessResult::allowedIf($account->hasPermission('edit own ' . $type . ' content') && ($account->id() == $node->getOwnerId()))->cachePerPermissions()->cachePerUser()->addCacheableDependency($node);
       }
 
     case 'delete':
-      if ($account->hasPermission('delete any ' . $type . ' content', $account)) {
+      if ($account->hasPermission('delete any ' . $type . ' content')) {
         return AccessResult::allowed()->cachePerPermissions();
       }
       else {
-        return AccessResult::allowedIf($account->hasPermission('delete own ' . $type . ' content', $account) && ($account->id() == $node->getOwnerId()))->cachePerPermissions()->cachePerUser()->addCacheableDependency($node);
+        return AccessResult::allowedIf($account->hasPermission('delete own ' . $type . ' content') && ($account->id() == $node->getOwnerId()))->cachePerPermissions()->cachePerUser()->addCacheableDependency($node);
       }
 
     default:
