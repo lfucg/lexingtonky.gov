@@ -10,7 +10,7 @@ name: files_browser
 label: 'Files Browser'
 display: iframe
 display_configuration:
-  width: '1100'
+  width: '900'
   height: '500'
   link_text: 'Select entities'
   auto_open: false
