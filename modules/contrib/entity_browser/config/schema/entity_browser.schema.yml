@@ -61,7 +61,7 @@ entity_browser.browser.display.iframe:
       type: string
       label: 'iFrame height'
     link_text:
-      type: string
+      type: label
       label: 'Link text'
     auto_open:
       type: boolean
@@ -78,7 +78,7 @@ entity_browser.browser.display.modal:
       type: string
       label: 'Modal height'
     link_text:
-      type: string
+      type: label
       label: 'Link text'
     auto_open:
       type: boolean
@@ -89,7 +89,7 @@ entity_browser.browser.widget.upload:
   label: 'Upload widget configuration'
   mapping:
     submit_text:
-      type: string
+      type: label
       label: 'Submit button text'
     upload_location:
       type: string
@@ -106,7 +106,7 @@ entity_browser.browser.widget.view:
   label: 'View widget configuration'
   mapping:
     submit_text:
-      type: string
+      type: label
       label: 'Submit button text'
     auto_select:
       type: boolean
@@ -136,7 +136,7 @@ entity_browser.browser.selection_display.multi_step_display:
     display_settings:
       type: entity_browser.field_widget_display.[%parent.display]
     select_text:
-      type: string
+      type: label
       label: 'Select text'
     selection_hidden:
       type: boolean
@@ -169,6 +169,9 @@ field.widget.settings.entity_browser_entity_reference:
     field_widget_remove:
       type: boolean
       label: 'Field widget remove'
+    field_widget_replace:
+      type: boolean
+      label: 'Field widget replace'
     open:
       type: boolean
       label: 'Open'
@@ -211,6 +214,9 @@ field.widget.settings.entity_browser_file:
     field_widget_remove:
       type: boolean
       label: 'Field widget remove'
+    field_widget_replace:
+      type: boolean
+      label: 'Field widget replace'
     open:
       type: boolean
       label: 'Open'

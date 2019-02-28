@@ -20,7 +20,7 @@ class Cardinality extends WidgetValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function validate(array $entities, $options = []) {
+  public function validate(array $entities, array $options = []) {
     $violations = new ConstraintViolationList();
 
     // As this validation happens at a level above the individual entities,

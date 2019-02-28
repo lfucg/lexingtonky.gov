@@ -48,7 +48,7 @@ class EntityBrowserFormController extends HtmlFormController implements Containe
    *   The form builder.
    * @param \Drupal\Core\DependencyInjection\ClassResolverInterface $class_resolver
    *   The class resolver.
-   * @param RouteMatchInterface $route_match
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   Current route match service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager service.
@@ -104,9 +104,9 @@ class EntityBrowserFormController extends HtmlFormController implements Containe
    *   Loads the entity browser object
    */
   protected function loadBrowser() {
-    /** @var $route \Symfony\Component\Routing\Route */
+    /* @var $route \Symfony\Component\Routing\Route */
     $route = $this->currentRouteMatch->getRouteObject();
-    /** @var $browser \Drupal\entity_browser\EntityBrowserInterface */
+    /* @var $browser \Drupal\entity_browser\EntityBrowserInterface */
     return $this->browserStorage->load($route->getDefault('entity_browser_id'));
   }
 

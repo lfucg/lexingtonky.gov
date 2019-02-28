@@ -156,17 +156,22 @@ class PluginsTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->pageTextNotContains('second_file.jpg');
 
     $this->getSession()->getPage()->clickLink('view');
-    // This shows page not found, which is caused by https://www.drupal.org/node/2771547
+    // This shows page not found,
+    // which is caused by https://www.drupal.org/node/2771547
     // Uncomment this hunk when a fix for that problem lands.
-    //$this->getSession()->getPage()->checkField('entity_browser_select[file:' . $image2->id() . ']');
-    //$this->getSession()->getPage()->pressButton('Select entities');
-    //$this->assertSession()->responseContains('edit-selected-items-2-1-remove-button');
-    //$this->assertSession()->responseContains('edit-selected-items-1-0-remove-button');
-    //$this->getSession()->getPage()->pressButton('Use selected');
-    //$this->getSession()->switchToIFrame();
-    //$this->waitForAjaxToFinish();
-    //$this->assertSession()->pageTextContains('first_file.jpg');
-    //$this->assertSession()->pageTextContains('second_file.jpg');
+    // $this->getSession()
+    // ->getPage()
+    // ->checkField('entity_browser_select[file:' . $image2->id() . ']');
+    // $this->getSession()->getPage()->pressButton('Select entities');
+    // $this->assertSession()
+    // ->responseContains('edit-selected-items-2-1-remove-button');
+    // $this->assertSession()
+    // ->responseContains('edit-selected-items-1-0-remove-button');
+    // $this->getSession()->getPage()->pressButton('Use selected');
+    // $this->getSession()->switchToIFrame();
+    // $this->waitForAjaxToFinish();
+    // $this->assertSession()->pageTextContains('first_file.jpg');
+    // $this->assertSession()->pageTextContains('second_file.jpg');
   }
 
   /**

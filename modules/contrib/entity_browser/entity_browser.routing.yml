@@ -16,19 +16,25 @@ entity_browser.edit_form:
 entity.entity_browser.add_form:
   path: '/admin/config/content/entity_browser/add'
   defaults:
-    _entity_wizard: 'entity_browser.add'
+    _entity_form: 'entity_browser.edit'
     _title: 'Add Entity browser'
     tempstore_id: 'entity_browser.config'
   requirements:
     _permission: 'administer entity browsers'
 
 entity.entity_browser.edit_form:
-  path: '/admin/config/content/entity_browser/{entity_browser}/{step}'
+  path: '/admin/config/content/entity_browser/{entity_browser}/edit'
   defaults:
-    _entity_wizard: 'entity_browser.edit'
-    _title: 'Edit Entity browser'
-    tempstore_id: 'entity_browser.config'
-    step: 'general'
+    _entity_form: 'entity_browser.edit'
+    _title: 'Edit Entity Browser'
+  requirements:
+    _permission: 'administer entity browsers'
+
+entity.entity_browser.edit_widgets:
+  path: '/admin/config/content/entity_browser/{entity_browser}/widgets'
+  defaults:
+    _entity_form: 'entity_browser.edit_widgets'
+    _title: 'Edit Widgets'
   requirements:
     _permission: 'administer entity browsers'
 

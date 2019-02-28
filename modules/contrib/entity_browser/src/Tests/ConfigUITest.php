@@ -26,13 +26,19 @@ class ConfigUITest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = ['entity_browser', 'ctools', 'block', 'views', 'entity_browser_entity_form'];
+  public static $modules = [
+    'entity_browser',
+    'block',
+    'views',
+    'entity_browser_entity_form',
+  ];
 
   /**
    * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
+    $this->drupalPlaceBlock('local_tasks_block');
     $this->drupalPlaceBlock('local_actions_block');
     $this->adminUser = $this->drupalCreateUser([
       'administer entity browsers',
@@ -42,7 +48,7 @@ class ConfigUITest extends WebTestBase {
   /**
    * Tests the entity browser config UI.
    */
-  public function testConfigUI() {
+  public function testConfigUserInterface() {
     // We need token module to test upload widget settings.
     $this->container->get('module_installer')->install(['token']);
 
@@ -51,56 +57,84 @@ class ConfigUITest extends WebTestBase {
     $this->drupalGet('/admin/config/content/entity_browser/add');
     $this->assertResponse(403, "Anonymous user can't access entity browser add form.");
 
-    // Listing is empty.
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('/admin/config/content/entity_browser');
     $this->assertResponse(200, 'Admin user is able to navigate to the entity browser listing page.');
-    $this->assertText('There is no Entity browser yet.', 'Entity browsers table is empty.');
+    $this->assertText('There are no entity browser entities yet.', 'Entity browsers table is empty.');
 
     // Add page.
     $this->clickLink('Add Entity browser');
     $this->assertUrl('/admin/config/content/entity_browser/add');
     $edit = [
       'label' => 'Test entity browser',
-      'id' => 'test_entity_browser',
-      'display' => 'iframe',
+      'name' => 'test_entity_browser',
+      'display' => 'modal',
+      'display_configuration[width]' => '700',
+      'display_configuration[height]' => '300',
+      'display_configuration[link_text]' => 'Select some entities',
       'widget_selector' => 'tabs',
       'selection_display' => 'no_display',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
 
-    // Display configuration step.
-    $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/display', ['query' => ['js' => 'nojs']]);
+    $this->drupalPostForm(NULL, $edit, 'Save');
+
+    $this->assertURL('/admin/config/content/entity_browser/test_entity_browser/widgets');
+
+    $this->clickLink('General Settings');
+
+    $this->assertURL('/admin/config/content/entity_browser/test_entity_browser/edit');
+
+    $this->assertText('Width of the modal');
+
+    $this->assertFieldByXPath($this->constructFieldXpath('id', 'edit-display-configuration-width'), '700', 'Display configuration width set to 700.');
+    $this->assertFieldByXPath($this->constructFieldXpath('id', 'edit-display-configuration-height'), '300', 'Display configuration height set to 300.');
+    $this->assertFieldByXPath($this->constructFieldXpath('id', 'edit-display-configuration-link-text'), 'Select some entities', 'Display configuration link text set to "Select some entities".');
+
+    $this->drupalPostAjaxForm(NULL, ['display' => 'iframe'], 'display');
+    $this->assertText('Width of the iFrame', 'iFrame Display config form present');
+
+    $this->drupalPostAjaxForm(NULL, ['display' => 'standalone'], 'display');
+    $this->assertText('The path at which the browser will be accessible.', 'Standalone Display config form present');
+
+    $this->drupalPostAjaxForm(NULL, ['display' => 'iframe'], 'display');
+    $this->assertText('Width of the iFrame', 'iFrame Display config form present');
+
     $edit = [
-      'width' => 100,
-      'height' => 100,
-      'link_text' => 'All animals are created equal',
-      'auto_open' => TRUE,
+      'label' => 'Test entity browser',
+      'display' => 'iframe',
+      'display_configuration[width]' => '800',
+      'display_configuration[height]' => '400',
+      'display_configuration[link_text]' => 'Select entities test',
+      'display_configuration[auto_open]' => '0',
+      'widget_selector' => 'tabs',
+      'selection_display' => 'no_display',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
 
-    // Widget selector step.
-    $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/widget_selector', ['query' => ['js' => 'nojs']]);
-    $this->assertText('This plugin has no configuration options.');
-    $this->drupalPostForm(NULL, [], 'Next');
+    $this->drupalPostForm(NULL, $edit, 'Save');
 
-    // Selection display step.
-    $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/selection_display', ['query' => ['js' => 'nojs']]);
-    $this->assertText('This plugin has no configuration options.');
-    $this->drupalPostForm(NULL, [], 'Previous');
+    $this->assertURL('/admin/config/content/entity_browser/test_entity_browser/edit');
 
-    // Widget selector step again.
-    $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/widget_selector', ['query' => ['js' => 'nojs']]);
-    $this->assertText('This plugin has no configuration options.');
-    $this->drupalPostForm(NULL, [], 'Next');
+    $this->assertFieldByXPath($this->constructFieldXpath('id', 'edit-display-configuration-width'), '800', 'Display configuration width set to 800.');
+    $this->assertFieldByXPath($this->constructFieldXpath('id', 'edit-display-configuration-height'), '400', 'Display configuration height set to 400.');
+    $this->assertFieldByXPath($this->constructFieldXpath('id', 'edit-display-configuration-link-text'), 'Select entities test', 'Display configuration link text updated.');
 
-    // Selection display step.
-    $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/selection_display', ['query' => ['js' => 'nojs']]);
-    $this->assertText('This plugin has no configuration options.');
-    $this->drupalPostForm(NULL, [], 'Next');
+    $edit = [
+      'label' => 'Test entity browser',
+      'display' => 'iframe',
+      'display_configuration[width]' => '100',
+      'display_configuration[height]' => '100',
+      'display_configuration[link_text]' => 'All animals are created equal',
+      'display_configuration[auto_open]' => '1',
+      'widget_selector' => 'tabs',
+      'selection_display' => 'no_display',
+    ];
+
+    $this->drupalPostForm(NULL, $edit, 'Save');
+
+    $this->clickLink('Widget Settings');
 
     // Widgets step.
-    $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/widgets', ['query' => ['js' => 'nojs']]);
+    $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/widgets');
     $this->assertText('The available plugins are:');
     $this->assertText("Upload: Adds an upload field browser's widget.");
     $this->assertText("View: Uses a view to provide entity listing in a browser's widget.");
@@ -171,10 +205,10 @@ class ConfigUITest extends WebTestBase {
       $form_mode_name => 'register',
       $submit_text_name => 'But some are more equal than others',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Finish');
+    $this->drupalPostForm(NULL, $edit, 'Save');
 
     // Back on listing page.
-    $this->assertUrl('/admin/config/content/entity_browser');
+    $this->drupalGet('/admin/config/content/entity_browser');
     $this->assertText('Test entity browser', 'Entity browser label found on the listing page');
     $this->assertText('test_entity_browser', 'Entity browser ID found on the listing page.');
 
@@ -228,27 +262,14 @@ class ConfigUITest extends WebTestBase {
 
     // Navigate to edit.
     $this->clickLink('Edit');
-    $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser');
     $this->assertFieldById('edit-label', 'Test entity browser', 'Correct label found.');
     $this->assertText('test_entity_browser', 'Correct id found.');
     $this->assertOptionSelected('edit-display', 'iframe', 'Correct display selected.');
     $this->assertOptionSelected('edit-widget-selector', 'tabs', 'Correct widget selector selected.');
     $this->assertOptionSelected('edit-selection-display', 'no_display', 'Correct selection display selected.');
 
-    $this->drupalPostForm(NULL, [], 'Next');
-    $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/display', ['query' => ['js' => 'nojs']]);
-    $this->assertFieldById('edit-width', '100', 'Correct value for width found.');
-    $this->assertFieldById('edit-height', '100', 'Correct value for height found.');
-    $this->assertFieldById('edit-link-text', 'All animals are created equal', 'Correct value for link text found.');
-    $this->assertFieldChecked('edit-auto-open', 'Auto open is enabled.');
+    $this->clickLink('Widget Settings');
 
-    $this->drupalPostForm(NULL, [], 'Next');
-    $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/widget_selector', ['query' => ['js' => 'nojs']]);
-
-    $this->drupalPostForm(NULL, [], 'Next');
-    $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/selection_display', ['query' => ['js' => 'nojs']]);
-
-    $this->drupalPostForm(NULL, [], 'Next');
     $this->assertFieldById('edit-table-' . $first_uuid . '-label', 'upload', 'Correct value for widget label found.');
     $this->assertFieldChecked('edit-table-' . $first_uuid . '-form-multiple', 'Accept multiple files option is enabled by default.');
     $this->assertText('Multiple uploads will only be accepted if the source field allows more than one value.');
@@ -260,13 +281,13 @@ class ConfigUITest extends WebTestBase {
     $this->assertOptionSelectedWithDrupalSelector('edit-table-' . $second_uuid . '-form-form-mode-form-select', 'register', 'Correct value for form modes found.');
     $this->assertFieldByXPath("//input[@data-drupal-selector='edit-table-" . $second_uuid . "-form-submit-text']", 'But some are more equal than others', 'Correct value for submit text found.');
 
-    $this->drupalPostForm(NULL, ['table[' . $first_uuid . '][form][multiple]' => FALSE], 'Finish');
+    $this->drupalPostForm(NULL, ['table[' . $first_uuid . '][form][multiple]' => FALSE], 'Save');
     $this->drupalGet('/admin/config/content/entity_browser/test_entity_browser/widgets');
     $this->assertNoFieldChecked('edit-table-' . $first_uuid . '-form-multiple', 'Accept multiple files option is disabled.');
 
     $this->drupalLogout();
     $this->drupalGet('/admin/config/content/entity_browser/test_entity_browser');
-    $this->assertResponse(403, "Anonymous user can't access entity browser edit form.");
+    $this->assertResponse(404, "Anonymous user can't access entity browser edit form.");
 
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('/admin/config/content/entity_browser');
@@ -275,7 +296,7 @@ class ConfigUITest extends WebTestBase {
     $this->drupalPostForm(NULL, [], 'Delete Entity Browser');
 
     $this->assertText('Entity browser Test entity browser was deleted.', 'Confirmation message found.');
-    $this->assertText('There is no Entity browser yet.', 'Entity browsers table is empty.');
+    $this->assertText('There are no entity browser entities yet.', 'Entity browsers table is empty.');
     $this->drupalLogout();
   }
 

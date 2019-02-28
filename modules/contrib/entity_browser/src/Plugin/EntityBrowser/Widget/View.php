@@ -3,6 +3,7 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\entity_browser\WidgetBase;
@@ -89,8 +90,8 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
-    // TODO - do we need better error handling for view and view_display (in case
-    // either of those is nonexistent or display not of correct type)?
+    // TODO - do we need better error handling for view and view_display (in
+    // case either of those is nonexistent or display not of correct type)?
     $form['#attached']['library'] = ['entity_browser/view'];
 
     /** @var \Drupal\views\ViewExecutable $view */
@@ -135,7 +136,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
 
     // When rebuilding makes no sense to keep checkboxes that were previously
     // selected.
-    if (!empty($form['view']['entity_browser_select']) && $form_state->isRebuilding()) {
+    if (!empty($form['view']['entity_browser_select'])) {
       foreach (Element::children($form['view']['entity_browser_select']) as $child) {
         $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\entity_browser\Plugin\EntityBrowser\Widget\View', 'processCheckbox'];
         $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\Core\Render\Element\Checkbox', 'processAjaxForm'];
@@ -158,7 +159,10 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    * @see \Drupal\Core\Render\Element\Checkbox::processCheckbox()
    */
   public static function processCheckbox(&$element, FormStateInterface $form_state, &$complete_form) {
-    $element['#checked'] = FALSE;
+    if ($form_state->isRebuilding()) {
+      $element['#checked'] = FALSE;
+    }
+
     return $element;
   }
 
@@ -277,6 +281,21 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       $dependencies[$view->getConfigDependencyKey()] = [$view->getConfigDependencyName()];
     }
     return $dependencies;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access() {
+    // Mark the widget as not visible if the user has no access to the view.
+    /** @var \Drupal\views\ViewExecutable $view */
+    $view = $this->entityTypeManager
+      ->getStorage('view')
+      ->load($this->configuration['view'])
+      ->getExecutable();
+
+    // Check if the current user has access to this view.
+    return AccessResult::allowedIf($view->access($this->configuration['view_display']));
   }
 
 }

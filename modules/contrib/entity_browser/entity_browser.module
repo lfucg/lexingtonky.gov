@@ -5,10 +5,10 @@
  * Allows to flexibly create, browse and select entities.
  */
 
-use \Drupal\Core\Form\FormStateInterface;
-use \Drupal\Core\Render\Element;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
-use \Drupal\file\FileInterface;
+use Drupal\file\FileInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**

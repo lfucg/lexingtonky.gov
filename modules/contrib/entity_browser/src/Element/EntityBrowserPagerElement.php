@@ -87,10 +87,12 @@ class EntityBrowserPagerElement extends FormElement {
   /**
    * Submit handler for next and previous buttons.
    *
+   * @param array $form
+   *   The form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state.
    */
-  public static function submitPager($form, FormStateInterface $form_state) {
+  public static function submitPager(array $form, FormStateInterface $form_state) {
     $page = static::getCurrentPage($form_state);
 
     $triggering_element = $form_state->getTriggeringElement();
@@ -130,4 +132,5 @@ class EntityBrowserPagerElement extends FormElement {
   public static function setCurrentPage(FormStateInterface $form_state, $page = 1) {
     $form_state->set('page', $page);
   }
+
 }

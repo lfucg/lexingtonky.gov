@@ -23,7 +23,6 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
    */
   public static $modules = [
     'entity_browser_test',
-    'ctools',
     'views',
     'block',
     'node',

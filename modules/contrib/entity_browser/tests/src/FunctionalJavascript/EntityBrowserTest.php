@@ -78,6 +78,7 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
 
     $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
 
+    $this->assertSession()->linkExists('dummy');
     $this->assertSession()->linkExists('view');
     $this->assertSession()->linkExists('upload');
 
@@ -98,10 +99,32 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     // This is producing an error. Still investigating
     // InvalidStateError: DOM Exception 11: An attempt was made to use an object
     // that is not, or is no longer, usable.
-    //$edit = [
-    //  'files[upload][]' => $this->container->get('file_system')->realpath($image2->getFileUri()),
-    //];
+    // $uri = $this->container
+    // ->get('file_system')
+    // ->realpath($image2->getFileUri());
+    // $edit = [
+    // 'files[upload][]' => $uri,
+    // ];
     // $this->drupalPostForm(NULL, $edit, 'Select files');.
+    \Drupal::state()->set('eb_test_dummy_widget_access', FALSE);
+    $this->drupalGet('entity-browser/iframe/test_entity_browser_file');
+    $this->assertSession()->linkNotExists('dummy');
+    $this->assertSession()->linkExists('view');
+    $this->assertSession()->linkExists('upload');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
+
+    // Move dummy widget to the first place and make sure it does not appear.
+    $browser = $this->container->get('entity_type.manager')
+      ->getStorage('entity_browser')
+      ->load('test_entity_browser_file');
+    $browser->getWidget('cbc59500-04ab-4395-b063-c561f0e3bf80')->setWeight(-15);
+    $browser->save();
+    $this->drupalGet('entity-browser/iframe/test_entity_browser_file');
+    $this->assertSession()->linkNotExists('dummy');
+    $this->assertSession()->linkExists('view');
+    $this->assertSession()->linkExists('upload');
+    $this->assertSession()->pageTextNotContains('This is dummy widget.');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
   }
 
   /**
@@ -130,6 +153,12 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
 
     $this->assertSession()->selectExists('widget');
+    // Dummy.
+    $this->assertSession()->optionExists('widget', 'cbc59500-04ab-4395-b063-c561f0e3bf80');
+    // Upload.
+    $this->assertSession()->optionExists('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');
+    // View.
+    $this->assertSession()->optionExists('widget', '774798f1-5ec5-4b63-84bd-124cd51ec07d');
     // Selects the view widget.
     $this->getSession()->getPage()->selectFieldOption('widget', '774798f1-5ec5-4b63-84bd-124cd51ec07d');
 
@@ -147,11 +176,38 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
 
     // Causes a fatal.
     // Selects the upload widget.
-    // $this->getSession()->getPage()->selectFieldOption('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');.
+    // $this->getSession()
+    // ->getPage()
+    // ->selectFieldOption('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');
+    \Drupal::state()->set('eb_test_dummy_widget_access', FALSE);
+    $this->drupalGet('entity-browser/iframe/test_entity_browser_file');
+    // Dummy.
+    $this->assertSession()->optionNotExists('widget', 'cbc59500-04ab-4395-b063-c561f0e3bf80');
+    // Upload.
+    $this->assertSession()->optionExists('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');
+    // View.
+    $this->assertSession()->optionExists('widget', '774798f1-5ec5-4b63-84bd-124cd51ec07d');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
+
+    // Move dummy widget to the first place and make sure it does not appear.
+    $browser = $this->container->get('entity_type.manager')
+      ->getStorage('entity_browser')
+      ->load('test_entity_browser_file');
+    $browser->getWidget('cbc59500-04ab-4395-b063-c561f0e3bf80')->setWeight(-15);
+    $browser->save();
+    $this->drupalGet('entity-browser/iframe/test_entity_browser_file');
+    // Dummy.
+    $this->assertSession()->optionNotExists('widget', 'cbc59500-04ab-4395-b063-c561f0e3bf80');
+    // Upload.
+    $this->assertSession()->optionExists('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');
+    // View.
+    $this->assertSession()->optionExists('widget', '774798f1-5ec5-4b63-84bd-124cd51ec07d');
+    $this->assertSession()->pageTextNotContains('This is dummy widget.');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
   }
 
   /**
-   * Tests wievs selection display.
+   * Tests views selection display.
    */
   public function testViewsSelectionDisplayWidget() {
 

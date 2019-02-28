@@ -1,0 +1,22 @@
+uuid: ce7b7b10-2813-4e9f-8a68-c39e50d19d8b
+langcode: en
+status: true
+dependencies:
+  module:
+    - file
+    - node
+_core:
+  default_config_hash: KX3HGuY3d7qBx4-hRdFprVVjahr_TpxwXBuQTbGBV4o
+id: node.field_files_over_ajax
+field_name: field_files_over_ajax
+entity_type: node
+type: entity_reference
+settings:
+  target_type: file
+module: core
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

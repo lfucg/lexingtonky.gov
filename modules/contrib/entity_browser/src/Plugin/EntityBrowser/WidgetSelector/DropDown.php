@@ -24,9 +24,19 @@ class DropDown extends WidgetSelectorBase {
     $form['#prefix'] = '<div id="entity-browser-form">';
     $form['#suffix'] = '</div>';
 
+    /** @var \Drupal\entity_browser\EntityBrowserInterface $browser */
+    $browser = $form_state->getFormObject()->getEntityBrowser();
+
+    $widget_ids = [];
+    foreach ($this->widget_ids as $widget_id => $widget_name) {
+      if ($browser->getWidget($widget_id)->access()->isAllowed()) {
+        $widget_ids[$widget_id] = $widget_name;
+      }
+    }
+
     $element['widget'] = [
       '#type' => 'select',
-      '#options' => $this->widget_ids,
+      '#options' => $widget_ids,
       '#default_value' => $this->getDefaultWidget(),
       '#executes_submit_callback' => TRUE,
       '#limit_validation_errors' => [['widget']],
@@ -60,7 +70,7 @@ class DropDown extends WidgetSelectorBase {
    *
    * @param array $form
    *   Form.
-   * @param FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state object.
    *
    * @return array

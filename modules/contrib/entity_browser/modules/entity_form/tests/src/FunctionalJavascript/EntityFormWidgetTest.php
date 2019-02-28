@@ -21,7 +21,6 @@ class EntityFormWidgetTest extends JavascriptTestBase {
    */
   public static $modules = [
     'entity_browser_entity_form_test',
-    'ctools',
     'views',
     'block',
     'node',
@@ -75,6 +74,7 @@ class EntityFormWidgetTest extends JavascriptTestBase {
     $account = $this->drupalCreateUser([
       'access entity_browser_test_entity_form entity browser pages',
       'create foo content',
+      'create article content',
       'access content',
     ]);
     $this->drupalLogin($account);
@@ -102,7 +102,7 @@ class EntityFormWidgetTest extends JavascriptTestBase {
     $this->assertSession()->buttonNotExists('Save entity');
     $this->assertSession()->buttonExists('Save node');
 
-    // Make sure that the widget works correctly with the field widget
+    // Make sure that the widget works correctly with the field widget.
     $this->drupalGet('node/add/foo');
     $this->getSession()->getPage()->clickLink('Select entities');
     $this->getSession()->switchToIFrame('entity_browser_iframe_entity_browser_test_entity_form');
@@ -148,6 +148,16 @@ class EntityFormWidgetTest extends JavascriptTestBase {
     $parent_node = current($parent_node);
     $this->assertEquals(1, $parent_node->get('field_reference')->count(), 'There is one child node.');
     $this->assertEquals('War is peace', $parent_node->field_reference->entity->label(), 'Child node has correct title.');
+
+    // Make sure entity create access is respected.
+    $account = $this->drupalCreateUser([
+      'access entity_browser_test_entity_form entity browser pages',
+      'create foo content',
+      'access content',
+    ]);
+    $this->drupalLogin($account);
+    $this->drupalGet('entity-browser/iframe/entity_browser_test_entity_form');
+    $this->assertSession()->pageTextContains('No widgets are available.');
   }
 
 }

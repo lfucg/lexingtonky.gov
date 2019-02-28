@@ -136,6 +136,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       'field_widget_display' => 'label',
       'field_widget_edit' => TRUE,
       'field_widget_remove' => TRUE,
+      'field_widget_replace' => FALSE,
       'field_widget_display_settings' => [],
       'selection_mode' => EntityBrowserElement::SELECTION_MODE_APPEND,
     ] + parent::defaultSettings();
@@ -199,6 +200,13 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       '#title' => $this->t('Display Remove button'),
       '#type' => 'checkbox',
       '#default_value' => $this->getSetting('field_widget_remove'),
+    ];
+
+    $element['field_widget_replace'] = [
+      '#title' => $this->t('Display Replace button'),
+      '#description' => $this->t('This button will only be displayed if there is a single entity in the current selection.'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->getSetting('field_widget_replace'),
     ];
 
     $element['open'] = [
@@ -420,18 +428,29 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    */
   public static function updateWidgetCallback(array &$form, FormStateInterface $form_state) {
     $trigger = $form_state->getTriggeringElement();
+    $reopen_browser = FALSE;
     // AJAX requests can be triggered by hidden "target_id" element when
     // entities are added or by one of the "Remove" buttons. Depending on that
     // we need to figure out where root of the widget is in the form structure
     // and use this information to return correct part of the form.
+    $parents = [];
     if (!empty($trigger['#ajax']['event']) && $trigger['#ajax']['event'] == 'entity_browser_value_updated') {
       $parents = array_slice($trigger['#array_parents'], 0, -1);
     }
     elseif ($trigger['#type'] == 'submit' && strpos($trigger['#name'], '_remove_')) {
       $parents = array_slice($trigger['#array_parents'], 0, -static::$deleteDepth);
     }
+    elseif ($trigger['#type'] == 'submit' && strpos($trigger['#name'], '_replace_')) {
+      $parents = array_slice($trigger['#array_parents'], 0, -static::$deleteDepth);
+      // We need to re-open the browser. Instead of just passing "TRUE", send
+      // to the JS the unique part of the button's name that needs to be clicked
+      // on to relaunch the browser.
+      $reopen_browser = implode("-", array_slice($trigger['#parents'], 0, -static::$deleteDepth));
+    }
 
-    return NestedArray::getValue($form, $parents);
+    $parents = NestedArray::getValue($form, $parents);
+    $parents['#attached']['drupalSettings']['entity_browser_reopen_browser'] = $reopen_browser;
+    return $parents;
   }
 
   /**
@@ -504,11 +523,15 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       $classes[] = 'sortable';
     }
 
+    // The "Replace" button will only be shown if this setting is enabled in the
+    // widget, and there is only one entity in the current selection.
+    $replace_button_access = $this->getSetting('field_widget_replace') && (count($entities) === 1);
+
     return [
       '#theme_wrappers' => ['container'],
       '#attributes' => ['class' => $classes],
       'items' => array_map(
-        function (ContentEntityInterface $entity, $row_id) use ($field_widget_display, $details_id, $field_parents) {
+        function (ContentEntityInterface $entity, $row_id) use ($field_widget_display, $details_id, $field_parents, $replace_button_access) {
           $display = $field_widget_display->view($entity);
           $edit_button_access = $this->getSetting('field_widget_edit') && $entity->access('update', $this->currentUser);
           if ($entity->getEntityTypeId() == 'file') {
@@ -541,8 +564,26 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
               '#attributes' => [
                 'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),
                 'data-row-id' => $row_id,
+                'class' => ['remove-button'],
               ],
               '#access' => (bool) $this->getSetting('field_widget_remove'),
+            ],
+            'replace_button' => [
+              '#type' => 'submit',
+              '#value' => $this->t('Replace'),
+              '#ajax' => [
+                'callback' => [get_class($this), 'updateWidgetCallback'],
+                'wrapper' => $details_id,
+              ],
+              '#submit' => [[get_class($this), 'removeItemSubmit']],
+              '#name' => $this->fieldDefinition->getName() . '_replace_' . $entity->id() . '_' . $row_id . '_' . md5(json_encode($field_parents)),
+              '#limit_validation_errors' => [array_merge($field_parents, [$this->fieldDefinition->getName()])],
+              '#attributes' => [
+                'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),
+                'data-row-id' => $row_id,
+                'class' => ['replace-button'],
+              ],
+              '#access' => $replace_button_access,
             ],
             'edit_button' => [
               '#type' => 'submit',
@@ -559,6 +600,9 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
                     'details_id' => $details_id,
                   ],
                 ],
+              ],
+              '#attributes' => [
+                'class' => ['edit-button'],
               ],
               '#access' => $edit_button_access,
             ],

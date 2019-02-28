@@ -19,7 +19,6 @@ class EntityBrowserUITest extends WebTestBase {
    */
   public static $modules = [
     'entity_browser_test',
-    'ctools',
     'views',
     'block',
   ];
@@ -27,7 +26,7 @@ class EntityBrowserUITest extends WebTestBase {
   /**
    * Tests entity browser UI.
    */
-  public function testEntityBrowserUI() {
+  public function testEntityBrowserUserInterface() {
     $account = $this->drupalCreateUser([
       'administer entity browsers',
       'access test_entity_browser_iframe entity browser pages',
@@ -40,7 +39,7 @@ class EntityBrowserUITest extends WebTestBase {
     $edit = [
       'table[871dbf77-012e-41cb-b32a-ada353d2de35][form][submit_text]' => 'Different',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Finish');
+    $this->drupalPostForm(NULL, $edit, 'Save');
     $this->drupalGet('/entity-browser/iframe/test_entity_browser_iframe');
     $this->assertRaw('Different');
   }

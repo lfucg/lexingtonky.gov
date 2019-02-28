@@ -19,7 +19,7 @@ class File extends WidgetValidationBase {
   /**
    * {@inheritdoc}
    */
-  public function validate(array $entities, $options = []) {
+  public function validate(array $entities, array $options = []) {
     $violations = new ConstraintViolationList();
 
     // We implement the same logic as \Drupal\file\Plugin\Validation\Constraint\FileValidationConstraintValidator
