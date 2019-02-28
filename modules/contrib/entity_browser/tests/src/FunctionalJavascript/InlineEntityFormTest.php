@@ -27,6 +27,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     'system',
     'node',
     'inline_entity_form',
+    'entity',
     'entity_browser_ief_test',
   ];
 
@@ -93,7 +94,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
 
     $this->assertSession()->assertWaitOnAjaxRequest();
 
-    $page->fillField('Name', 'Test Bundle Media');
+    $page->fillField('Media name', 'Test Bundle Media');
     $page->clickLink('Select entities');
 
     $this->getSession()
@@ -120,7 +121,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Test reorder of elements.
-    $dragged = $this->xpath("//div[@data-drupal-selector='edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-type-file-field-current-items-0']")[0];
+    $dragged = $this->xpath("//div[@data-drupal-selector='edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-bundle-file-field-current-items-0']")[0];
     $this->dragDropElement($dragged, 150, 0);
     $this->assertSession()->assertWaitOnAjaxRequest();
 
@@ -131,14 +132,14 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Check that element on second position is test_file1 (file:1).
-    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-type-file-field-current"]/div[2]');
+    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-bundle-file-field-current"]/div[2]');
     if (empty($secondElement)) {
       throw new \Exception('Element is not found.');
     }
     $this->assertSame('file:1', $secondElement->getAttribute('data-entity-id'));
 
     // Test remove of element.
-    $this->click('input[name*="ief_media_type_file_field_remove_1_1"]');
+    $this->click('input[name*="ief_media_bundle_file_field_remove_1_1"]');
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     $page->pressButton('Update Test File Media');
@@ -149,7 +150,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
 
     // Check that remote button does not exist for already removed entity.
     $this->assertSession()
-      ->elementNotExists('css', '[name*="ief_media_type_file_field_remove_1_1"]');
+      ->elementNotExists('css', '[name*="ief_media_bundle_file_field_remove_1_1"]');
 
     // Test add inside Entity Browser.
     $page->clickLink('Select entities');
@@ -172,7 +173,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Check that element on second position is test_file3 (file:3).
-    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-type-file-field-current"]/div[2]');
+    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-bundle-file-field-current"]/div[2]');
     if (empty($secondElement)) {
       throw new \Exception('Element is not found.');
     }
@@ -199,7 +200,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Check that element on second position is test_file2 (file:2).
-    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-type-file-field-current"]/div[2]');
+    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-bundle-file-field-current"]/div[2]');
     if (empty($secondElement)) {
       throw new \Exception('Element is not found.');
     }
@@ -226,7 +227,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Check that element on first position is test_file2 (file:2).
-    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-type-file-field-current"]/div[1]');
+    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-bundle-file-field-current"]/div[1]');
     if (empty($secondElement)) {
       throw new \Exception('Element is not found.');
     }

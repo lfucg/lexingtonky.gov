@@ -1,12 +1,11 @@
 langcode: en
 status: true
 dependencies: {  }
-id: ief_media_type
-label: 'Test File Type'
+id: ief_media_bundle
+label: 'Test File Bundle'
 description: ''
-source: file
+type: generic
 queue_thumbnail_downloads: false
 new_revision: false
-source_configuration:
-  source_field: ief_media_type_file_field
+type_configuration: {  }
 field_map: {  }

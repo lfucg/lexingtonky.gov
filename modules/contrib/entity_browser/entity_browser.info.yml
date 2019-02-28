@@ -6,12 +6,12 @@ package: Media
 test_dependencies:
   - token:token
   - inline_entity_form:inline_entity_form
-  - drupal:media (>= 8.4)
+  - media_entity:media_entity
   - paragraphs:paragraphs
 configure: entity.entity_browser.collection
 
 # Information added by Drupal.org packaging script on 2019-02-15
-version: '8.x-2.1'
+version: '8.x-1.7'
 core: '8.x'
 project: 'entity_browser'
-datestamp: 1550236988
+datestamp: 1550237887

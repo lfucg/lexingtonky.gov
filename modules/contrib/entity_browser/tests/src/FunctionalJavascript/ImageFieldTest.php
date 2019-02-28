@@ -150,7 +150,6 @@ class ImageFieldTest extends EntityBrowserJavascriptTestBase {
     // Image filename should not be present.
     $this->assertSession()->pageTextNotContains('example.jpg');
     $this->assertSession()->linkExists('Select entities');
-
     // Test the Replace functionality.
     file_unmanaged_copy(\Drupal::root() . '/core/modules/simpletest/files/image-test.jpg', 'public://example2.jpg');
     $image2 = File::create(['uri' => 'public://example2.jpg']);

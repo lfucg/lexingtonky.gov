@@ -2114,36 +2114,37 @@
     },
     {
         "name": "drupal/entity_browser",
-        "version": "2.1.0",
-        "version_normalized": "2.1.0.0",
+        "version": "1.7.0",
+        "version_normalized": "1.7.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupal.org/project/entity_browser",
-            "reference": "8.x-2.1"
+            "reference": "8.x-1.7"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/entity_browser-8.x-2.1.zip",
-            "reference": "8.x-2.1",
-            "shasum": "56cf190f3ea3fc0af71becbc44af5954a71f216b"
+            "url": "https://ftp.drupal.org/files/projects/entity_browser-8.x-1.7.zip",
+            "reference": "8.x-1.7",
+            "shasum": "661b2fde7b726a2a87fb9aa89286c176e0300788"
         },
         "require": {
             "drupal/core": "~8.0"
         },
         "require-dev": {
             "drupal/inline_entity_form": "*",
+            "drupal/media_entity": "*",
             "drupal/paragraphs": "*",
             "drupal/token": "*"
         },
         "type": "drupal-module",
         "extra": {
             "branch-alias": {
-                "dev-2.x": "2.x-dev",
+                "dev-1.x": "1.x-dev",
                 "dev-8.x-1.x": "8.1.x-dev"
             },
             "drupal": {
-                "version": "8.x-2.1",
-                "datestamp": "1550237365",
+                "version": "8.x-1.7",
+                "datestamp": "1550237884",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
