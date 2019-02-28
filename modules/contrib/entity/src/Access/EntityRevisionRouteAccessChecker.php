@@ -26,7 +26,7 @@ class EntityRevisionRouteAccessChecker implements AccessInterface {
    *
    * @var array
    */
-  protected $accessCache = array();
+  protected $accessCache = [];
 
   /**
    * The currently active route match object.
@@ -69,6 +69,20 @@ class EntityRevisionRouteAccessChecker implements AccessInterface {
     }
   }
 
+  /**
+   * Performs access checks.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity for which to check access.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The user for which to check access.
+   * @param string $operation
+   *   The entity operation. Usually one of 'view', 'view label', 'update' or
+   *   'delete'.
+   *
+   * @return bool
+   *   The access result.
+   */
   protected function checkAccess(ContentEntityInterface $entity, AccountInterface $account, $operation = 'view') {
     $entity_type = $entity->getEntityType();
     $entity_type_id = $entity->getEntityTypeId();
@@ -125,7 +139,6 @@ class EntityRevisionRouteAccessChecker implements AccessInterface {
 
     return $this->accessCache[$cid];
   }
-
 
   /**
    * Counts the number of revisions in the default language.

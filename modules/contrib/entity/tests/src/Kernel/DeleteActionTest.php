@@ -4,13 +4,13 @@ namespace Drupal\Tests\entity\Kernel;
 
 use Drupal\entity\Plugin\Action\DeleteAction;
 use Drupal\entity_module_test\Entity\EnhancedEntity;
-use Drupal\entity_module_test\Entity\EnhancedEntityBundle;
 use Drupal\system\Entity\Action;
 use Drupal\user\Entity\User;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
  * Tests the delete entity action.
+ *
  * @group entity
  */
 class DeleteActionTest extends KernelTestBase {
@@ -25,8 +25,9 @@ class DeleteActionTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['action', 'node', 'entity_module_test', 'entity',
-                            'user', 'system'];
+  public static $modules = [
+    'action', 'node', 'entity_module_test', 'entity', 'user', 'system',
+  ];
 
   /**
    * {@inheritdoc}
@@ -37,12 +38,6 @@ class DeleteActionTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('entity_test_enhanced');
     $this->installSchema('system', ['key_value_expire', 'sequences']);
-
-    $bundle = EnhancedEntityBundle::create([
-      'id' => 'default',
-      'label' => 'Default',
-    ]);
-    $bundle->save();
 
     $this->user = User::create([
       'name' => 'username',

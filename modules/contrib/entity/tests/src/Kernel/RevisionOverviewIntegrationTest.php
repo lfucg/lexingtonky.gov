@@ -10,6 +10,8 @@ use Symfony\Component\Routing\Route;
  *
  * - Are the routes added properly.
  * - Are the local tasks added properly.
+ *
+ * @group entity
  */
 class RevisionOverviewIntegrationTest extends KernelTestBase {
 

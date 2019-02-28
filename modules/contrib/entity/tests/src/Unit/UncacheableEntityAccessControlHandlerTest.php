@@ -21,7 +21,7 @@ use Drupal\user\EntityOwnerInterface;
 use Prophecy\Argument;
 
 /**
- * @coversDefaultClass \Drupal\entity\EntityAccessControlHandler
+ * @coversDefaultClass \Drupal\entity\UncacheableEntityAccessControlHandler
  * @group entity
  */
 class UncacheableEntityAccessControlHandlerTest extends UnitTestCase {
@@ -77,126 +77,75 @@ class UncacheableEntityAccessControlHandlerTest extends UnitTestCase {
    *   A list of testAccess method arguments.
    */
   public function accessProvider() {
-    $data = [];
-
     $entity_type = $this->prophesize(ContentEntityTypeInterface::class);
     $entity_type->id()->willReturn('green_entity');
     $entity_type->getAdminPermission()->willReturn('administer green_entity');
     $entity_type->hasHandlerClass('permission_provider')->willReturn(TRUE);
     $entity_type->getHandlerClass('permission_provider')->willReturn(UncacheableEntityPermissionProvider::class);
-
-    // User with the admin permission can do anything.
-    $entity = $this->buildMockEntity($entity_type->reveal());
-    $account = $this->prophesize(AccountInterface::class);
-    $account->id()->willReturn(6);
-    $account->hasPermission('administer green_entity')->willReturn(TRUE);
-    $data[] = [$entity->reveal(), 'view', $account->reveal(), TRUE];
-    $data[] = [$entity->reveal(), 'update', $account->reveal(), TRUE];
-    $data[] = [$entity->reveal(), 'delete', $account->reveal(), TRUE];
-
-    // Entity with no owner.
-    $entity = $this->buildMockEntity($entity_type->reveal());
-    // User who has access.
-    $first_account = $this->prophesize(AccountInterface::class);
-    $first_account->id()->willReturn(6);
-    $first_account->hasPermission('view green_entity')->willReturn(TRUE);
-    $first_account->hasPermission(Argument::any())->willReturn(FALSE);
-    // User who doesn't have access.
-    $second_account = $this->prophesize(AccountInterface::class);
-    $second_account->id()->willReturn(7);
-    $second_account->hasPermission('view green_entity')->willReturn(FALSE);
-    $second_account->hasPermission(Argument::any())->willReturn(FALSE);
-    $data[] = [$entity->reveal(), 'view', $first_account->reveal(), TRUE];
-    $data[] = [$entity->reveal(), 'view', $second_account->reveal(), FALSE];
-
-    // Entity with owner.
     $entity = $this->buildMockEntity($entity_type->reveal(), 6);
-    // Owner.
-    $first_account = $this->prophesize(AccountInterface::class);
-    $first_account->id()->willReturn(6);
-    $first_account->hasPermission('update own green_entity')->willReturn(TRUE);
-    $first_account->hasPermission(Argument::any())->willReturn(FALSE);
-    // Non-owner.
-    $second_account = $this->prophesize(AccountInterface::class);
-    $second_account->id()->willReturn(7);
-    $second_account->hasPermission('update own green_entity')->willReturn(TRUE);
-    $second_account->hasPermission(Argument::any())->willReturn(FALSE);
-    // User who can update any.
-    $third_account = $this->prophesize(AccountInterface::class);
-    $third_account->id()->willReturn(8);
-    $third_account->hasPermission('update any green_entity')->willReturn(TRUE);
-    $third_account->hasPermission(Argument::any())->willReturn(FALSE);
-    $data[] = [$entity->reveal(), 'update', $first_account->reveal(), TRUE];
-    $data[] = [$entity->reveal(), 'update', $second_account->reveal(), FALSE];
-    $data[] = [$entity->reveal(), 'update', $third_account->reveal(), TRUE];
 
-    // Per bundle permissions.
-    $entity_first_other = $this->buildMockEntity($entity_type->reveal(), 9999, 'first');
-    $entity_first_own = $this->buildMockEntity($entity_type->reveal(), 10, 'first');
-    $entity_first_own_bundle = $this->buildMockEntity($entity_type->reveal(), 12, 'first');
+    $data = [];
+    // Admin permission.
+    $admin_user = $this->buildMockUser(5, 'administer green_entity');
+    $data[] = [$entity->reveal(), 'view', $admin_user->reveal(), TRUE];
+    $data[] = [$entity->reveal(), 'update', $admin_user->reveal(), TRUE];
+    $data[] = [$entity->reveal(), 'delete', $admin_user->reveal(), TRUE];
 
-    $entity_second_other = $this->buildMockEntity($entity_type->reveal(), 9999, 'second');
-    $entity_second_own = $this->buildMockEntity($entity_type->reveal(), 10, 'second');
-    $entity_second_own_bundle = $this->buildMockEntity($entity_type->reveal(), 12, 'second');
-    
-    $user_view_any = $this->buildMockUser(9, 'view any green_entity');
-    $user_view_own = $this->buildMockUser(10, 'view own green_entity');
-    $user_view_bundle_any = $this->buildMockUser(11, 'view any first green_entity');
-    $user_view_bundle_own = $this->buildMockUser(12, 'view own first green_entity');
+    // View, update, delete permissions, entity without an owner.
+    $second_entity = $this->buildMockEntity($entity_type->reveal());
+    foreach (['view', 'update', 'delete'] as $operation) {
+      $first_user = $this->buildMockUser(6, $operation . ' green_entity');
+      $second_user = $this->buildMockUser(7, 'access content');
 
-    $data['entity_first_other user_view_any'] = [$entity_first_other->reveal(), 'view', $user_view_any->reveal(), TRUE];
-    $data['entity_first_own user_view_any'] = [$entity_first_own->reveal(), 'view', $user_view_any->reveal(), TRUE];
-    $data['entity_first_own_bundle user_view_any'] = [$entity_first_own_bundle->reveal(), 'view', $user_view_any->reveal(), TRUE];
-    $data['entity_second_other user_view_any'] = [$entity_second_other->reveal(), 'view', $user_view_any->reveal(), TRUE];
-    $data['entity_second_own user_view_any'] = [$entity_second_own->reveal(), 'view', $user_view_any->reveal(), TRUE];
-    $data['entity_second_own_bundle user_view_any'] = [$entity_second_own_bundle->reveal(), 'view', $user_view_any->reveal(), TRUE];
+      $data[] = [$second_entity->reveal(), $operation, $first_user->reveal(), TRUE];
+      $data[] = [$second_entity->reveal(), $operation, $second_user->reveal(), FALSE];
+    }
 
-    $data['entity_first_other user_view_own'] = [$entity_first_other->reveal(), 'view', $user_view_own->reveal(), FALSE];
-    $data['entity_first_own user_view_own'] = [$entity_first_own->reveal(), 'view', $user_view_own->reveal(), TRUE];
-    $data['entity_first_own_bundle user_view_own'] = [$entity_first_own_bundle->reveal(), 'view', $user_view_own->reveal(), FALSE];
-    $data['entity_second_other user_view_own'] = [$entity_second_other->reveal(), 'view', $user_view_own->reveal(), FALSE];
-    $data['entity_second_own user_view_own'] = [$entity_second_own->reveal(), 'view', $user_view_own->reveal(), TRUE];
-    $data['entity_second_own_bundle user_view_own'] = [$entity_second_own_bundle->reveal(), 'view', $user_view_own->reveal(), FALSE];
+    // View, update, delete permissions.
+    foreach (['view', 'update', 'delete'] as $operation) {
+      // Owner, non-owner, user with "any" permission.
+      $first_user = $this->buildMockUser(6, $operation . ' own green_entity');
+      $second_user = $this->buildMockUser(7, $operation . ' own green_entity');
+      $third_user = $this->buildMockUser(8, $operation . ' any green_entity');
 
-    $data['entity_first_other user_view_bundle_any'] = [$entity_first_other->reveal(), 'view', $user_view_bundle_any->reveal(), TRUE];
-    $data['entity_first_own user_view_bundle_any'] = [$entity_first_own->reveal(), 'view', $user_view_bundle_any->reveal(), TRUE];
-    $data['entity_first_own_bundle user_view_bundle_any'] = [$entity_first_own_bundle->reveal(), 'view', $user_view_bundle_any->reveal(), TRUE];
-    $data['entity_second_other user_view_bundle_any'] = [$entity_second_other->reveal(), 'view', $user_view_bundle_any->reveal(), FALSE];
-    $data['entity_second_own user_view_bundle_any'] = [$entity_second_own->reveal(), 'view', $user_view_bundle_any->reveal(), FALSE];
-    $data['entity_second_own_bundle user_view_bundle_any'] = [$entity_second_own_bundle->reveal(), 'view', $user_view_bundle_any->reveal(), FALSE];
+      $data[] = [$entity->reveal(), $operation, $first_user->reveal(), TRUE];
+      $data[] = [$entity->reveal(), $operation, $second_user->reveal(), FALSE];
+      $data[] = [$entity->reveal(), $operation, $third_user->reveal(), TRUE];
+    }
 
-    $data['entity_first_other user_view_bundle_any'] = [$entity_first_other->reveal(), 'view', $user_view_bundle_own->reveal(), FALSE];
-    $data['entity_first_own user_view_bundle_any'] = [$entity_first_own->reveal(), 'view', $user_view_bundle_own->reveal(), FALSE];
-    $data['entity_first_own_bundle user_view_bundle_any'] = [$entity_first_own_bundle->reveal(), 'view', $user_view_bundle_own->reveal(), TRUE];
-    $data['entity_second_other user_view_bundle_any'] = [$entity_second_other->reveal(), 'view', $user_view_bundle_own->reveal(), FALSE];
-    $data['entity_second_own user_view_bundle_any'] = [$entity_second_own->reveal(), 'view', $user_view_bundle_own->reveal(), FALSE];
-    $data['entity_second_own_bundle user_view_bundle_any'] = [$entity_second_own_bundle->reveal(), 'view', $user_view_bundle_own->reveal(), FALSE];
+    // Per bundle and unpublished view permissions.
+    $first_user = $this->buildMockUser(11, 'view any first green_entity');
+    $second_user = $this->buildMockUser(12, 'view own first green_entity');
+    $third_user = $this->buildMockUser(13, 'view own unpublished green_entity');
 
-    // Test the unpublished permissions.
-    $entity_first_other_up = $this->buildMockEntity($entity_type->reveal(), 9999, 'first', FALSE);
-    $entity_first_own_up = $this->buildMockEntity($entity_type->reveal(), 14, 'first', FALSE);
-    $entity_first_own_bundle_up = $this->buildMockEntity($entity_type->reveal(), 15, 'first', FALSE);
+    $first_entity = $this->buildMockEntity($entity_type->reveal(), 9999, 'first');
+    $second_entity = $this->buildMockEntity($entity_type->reveal(), 12, 'first');
+    $third_entity = $this->buildMockEntity($entity_type->reveal(), 9999, 'second');
+    $fourth_entity = $this->buildMockEntity($entity_type->reveal(), 10, 'second');
+    $fifth_entity = $this->buildMockEntity($entity_type->reveal(), 13, 'first', FALSE);
 
-    $entity_second_other_up = $this->buildMockEntity($entity_type->reveal(), 9999, 'second', FALSE);
-    $entity_second_own_up = $this->buildMockEntity($entity_type->reveal(), 14, 'second', FALSE);
-    $entity_second_own_bundle_up = $this->buildMockEntity($entity_type->reveal(), 15, 'second', FALSE);
+    // The first user can view the two entities of bundle "first".
+    $data[] = [$first_entity->reveal(), 'view', $first_user->reveal(), TRUE];
+    $data[] = [$second_entity->reveal(), 'view', $first_user->reveal(), TRUE];
+    $data[] = [$third_entity->reveal(), 'view', $first_user->reveal(), FALSE];
+    $data[] = [$fourth_entity->reveal(), 'view', $first_user->reveal(), FALSE];
+    $data[] = [$fifth_entity->reveal(), 'view', $first_user->reveal(), FALSE];
 
-    $user_view_own_up = $this->buildMockUser(14, 'view own unpublished green_entity');
-    $user_view_other = $this->buildMockUser(15, 'view green_entity');
+    // The second user can view their own entity of bundle "first".
+    $data[] = [$first_entity->reveal(), 'view', $second_user->reveal(), FALSE];
+    $data[] = [$second_entity->reveal(), 'view', $second_user->reveal(), TRUE];
+    $data[] = [$third_entity->reveal(), 'view', $second_user->reveal(), FALSE];
+    $data[] = [$fourth_entity->reveal(), 'view', $second_user->reveal(), FALSE];
+    $data[] = [$fourth_entity->reveal(), 'view', $second_user->reveal(), FALSE];
+    $data[] = [$fifth_entity->reveal(), 'view', $second_user->reveal(), FALSE];
 
-    $data['entity_first_other_up user_view_own_up'] = [$entity_first_other_up->reveal(), 'view', $user_view_own_up->reveal(), FALSE];
-    $data['entity_first_own_up user_view_own_up'] = [$entity_first_own_up->reveal(), 'view', $user_view_own_up->reveal(), TRUE];
-    $data['entity_first_own_bundle_up user_view_own_up'] = [$entity_first_own_bundle_up->reveal(), 'view', $user_view_own_up->reveal(), FALSE];
-    $data['entity_second_other_up user_view_own_up'] = [$entity_second_other_up->reveal(), 'view', $user_view_own_up->reveal(), FALSE];
-    $data['entity_second_own_up user_view_own_up'] = [$entity_second_own_up->reveal(), 'view', $user_view_own_up->reveal(), TRUE];
-    $data['entity_second_own_bundle_up user_view_own_up'] = [$entity_second_own_bundle_up->reveal(), 'view', $user_view_own_up->reveal(), FALSE];
-
-    $data['entity_first_other_up user_view_other'] = [$entity_first_other_up->reveal(), 'view', $user_view_other->reveal(), FALSE];
-    $data['entity_first_own_up user_view_other'] = [$entity_first_own_up->reveal(), 'view', $user_view_other->reveal(), FALSE];
-    $data['entity_first_own_bundle_up user_view_other'] = [$entity_first_own_bundle_up->reveal(), 'view', $user_view_other->reveal(), FALSE];
-    $data['entity_second_other_up user_view_other'] = [$entity_second_other_up->reveal(), 'view', $user_view_other->reveal(), FALSE];
-    $data['entity_second_own_up user_view_other'] = [$entity_second_own_up->reveal(), 'view', $user_view_other->reveal(), FALSE];
-    $data['entity_second_own_bundle_up user_view_other'] = [$entity_second_own_bundle_up->reveal(), 'view', $user_view_other->reveal(), FALSE];
+    // The third user can only view their own unpublished entity.
+    $data[] = [$first_entity->reveal(), 'view', $third_user->reveal(), FALSE];
+    $data[] = [$second_entity->reveal(), 'view', $third_user->reveal(), FALSE];
+    $data[] = [$third_entity->reveal(), 'view', $third_user->reveal(), FALSE];
+    $data[] = [$fourth_entity->reveal(), 'view', $third_user->reveal(), FALSE];
+    $data[] = [$fourth_entity->reveal(), 'view', $third_user->reveal(), FALSE];
+    $data[] = [$fifth_entity->reveal(), 'view', $third_user->reveal(), TRUE];
 
     return $data;
   }
@@ -217,29 +166,19 @@ class UncacheableEntityAccessControlHandlerTest extends UnitTestCase {
     $entity_type->getHandlerClass('permission_provider')->willReturn(UncacheableEntityPermissionProvider::class);
 
     // User with the admin permission.
-    $account = $this->prophesize(AccountInterface::class);
-    $account->id()->willReturn(6);
-    $account->hasPermission('administer green_entity')->willReturn(TRUE);
+    $account = $this->buildMockUser('6', 'administer green_entity');
     $data[] = [$entity_type->reveal(), NULL, $account->reveal(), TRUE];
 
     // Ordinary user.
-    $account = $this->prophesize(AccountInterface::class);
-    $account->id()->willReturn(6);
-    $account->hasPermission('create green_entity')->willReturn(TRUE);
-    $account->hasPermission(Argument::any())->willReturn(FALSE);
+    $account = $this->buildMockUser('6', 'create green_entity');
     $data[] = [$entity_type->reveal(), NULL, $account->reveal(), TRUE];
 
     // Ordinary user, entity with a bundle.
-    $account = $this->prophesize(AccountInterface::class);
-    $account->id()->willReturn(6);
-    $account->hasPermission('create first_bundle green_entity')->willReturn(TRUE);
-    $account->hasPermission(Argument::any())->willReturn(FALSE);
+    $account = $this->buildMockUser('6', 'create first_bundle green_entity');
     $data[] = [$entity_type->reveal(), 'first_bundle', $account->reveal(), TRUE];
 
     // User with no permissions.
-    $account = $this->prophesize(AccountInterface::class);
-    $account->id()->willReturn(6);
-    $account->hasPermission(Argument::any())->willReturn(FALSE);
+    $account = $this->buildMockUser('6', 'access content');
     $data[] = [$entity_type->reveal(), NULL, $account->reveal(), FALSE];
 
     return $data;
@@ -252,6 +191,10 @@ class UncacheableEntityAccessControlHandlerTest extends UnitTestCase {
    *   The entity type.
    * @param string $owner_id
    *   The owner ID.
+   * @param string $bundle
+   *   The bundle.
+   * @param bool $published
+   *   Whether the entity is published.
    *
    * @return \Prophecy\Prophecy\ObjectProphecy
    *   The entity mock.
@@ -284,15 +227,26 @@ class UncacheableEntityAccessControlHandlerTest extends UnitTestCase {
     $entity->getCacheTags()->willReturn([]);
     $entity->getCacheMaxAge()->willReturn(Cache::PERMANENT);
 
-
     return $entity;
   }
 
+  /**
+   * Builds a mock user.
+   *
+   * @param int $uid
+   *   The user ID.
+   * @param string $permission
+   *   The permission to grant.
+   *
+   * @return \Prophecy\Prophecy\ObjectProphecy
+   *   The user mock.
+   */
   protected function buildMockUser($uid, $permission) {
     $account = $this->prophesize(AccountInterface::class);
     $account->id()->willReturn($uid);
     $account->hasPermission($permission)->willReturn(TRUE);
     $account->hasPermission(Argument::any())->willReturn(FALSE);
+
     return $account;
   }
 

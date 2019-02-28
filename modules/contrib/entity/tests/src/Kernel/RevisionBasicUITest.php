@@ -3,7 +3,6 @@
 namespace Drupal\Tests\entity\Kernel;
 
 use Drupal\entity_module_test\Entity\EnhancedEntity;
-use Drupal\entity_module_test\Entity\EnhancedEntityBundle;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
@@ -29,12 +28,6 @@ class RevisionBasicUITest extends KernelTestBase {
     $this->installEntitySchema('entity_test_enhanced');
     $this->installSchema('system', 'router');
     $this->installConfig(['system']);
-
-    $bundle = EnhancedEntityBundle::create([
-      'id' => 'default',
-      'label' => 'Default',
-    ]);
-    $bundle->save();
 
     \Drupal::service('router.builder')->rebuild();
   }

@@ -2,6 +2,8 @@
 
 namespace Drupal\entity_module_test\Entity;
 
+use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Entity\EntityPublishedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\entity\Revision\RevisionableContentEntityBase;
@@ -21,7 +23,8 @@ use Drupal\entity\Revision\RevisionableContentEntityBase;
  *   ),
  *   handlers = {
  *     "storage" = "\Drupal\Core\Entity\Sql\SqlContentEntityStorage",
- *     "access" = "\Drupal\Core\Entity\EntityAccessControlHandler",
+ *     "access" = "\Drupal\entity\EntityAccessControlHandler",
+ *     "query_access" = "\Drupal\entity\QueryAccess\QueryAccessHandler",
  *     "permission_provider" = "\Drupal\entity\EntityPermissionProvider",
  *     "form" = {
  *       "add" = "\Drupal\entity\Form\RevisionableContentEntityForm",
@@ -37,6 +40,7 @@ use Drupal\entity\Revision\RevisionableContentEntityBase;
  *       "collection" = "\Drupal\entity\Menu\EntityCollectionLocalActionProvider",
  *     },
  *     "list_builder" = "\Drupal\Core\Entity\EntityListBuilder",
+ *     "views_data" = "\Drupal\views\EntityViewsData",
  *   },
  *   base_table = "entity_test_enhanced",
  *   data_table = "entity_test_enhanced_field_data",
@@ -51,6 +55,8 @@ use Drupal\entity\Revision\RevisionableContentEntityBase;
  *     "bundle" = "type",
  *     "revision" = "vid",
  *     "langcode" = "langcode",
+ *     "label" = "name",
+ *     "published" = "status",
  *   },
  *   links = {
  *     "add-page" = "/entity_test_enhanced/add",
@@ -63,16 +69,18 @@ use Drupal\entity\Revision\RevisionableContentEntityBase;
  *     "revision-revert-form" = "/entity_test_enhanced/{entity_test_enhanced}/revisions/{entity_test_enhanced_revision}/revert",
  *     "version-history" = "/entity_test_enhanced/{entity_test_enhanced}/revisions",
  *   },
- *   bundle_entity_type = "entity_test_enhanced_bundle",
  * )
  */
-class EnhancedEntity extends RevisionableContentEntityBase {
+class EnhancedEntity extends RevisionableContentEntityBase implements EntityPublishedInterface {
+
+  use EntityPublishedTrait;
 
   /**
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields += static::publishedBaseFieldDefinitions($entity_type);
 
     $fields['name'] = BaseFieldDefinition::create('string')
       ->setLabel('Name')

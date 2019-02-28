@@ -5,24 +5,25 @@ namespace Drupal\entity;
 use Drupal\Core\Entity\EntityTypeInterface;
 
 /**
- * Provides generic entity permissions which are still cacheable.
+ * Provides generic entity permissions.
  *
- * This includes:
+ * Intended for content entity types, since config entity types usually rely
+ * on a single "administer" permission.
  *
+ * Provided permissions:
  * - administer $entity_type
  * - access $entity_type overview
- * - view $entity_type
  * - view own unpublished $entity_type
+ * - view ($bundle) $entity_type
  * - update (own|any) ($bundle) $entity_type
  * - delete (own|any) ($bundle) $entity_type
  * - create $bundle $entity_type
  *
- * This class does not support "view own ($bundle) $entity_type", because this
- * results in caching per user. If you need this use case, please use
- * \Drupal\entity\UncacheableEntityPermissionProvider instead.
+ * Does not provide "view own ($bundle) $entity_type" permissions, because
+ * they require caching pages per user. Please use
+ * \Drupal\entity\UncacheableEntityPermissionProvider if those permissions
+ * are necessary.
  *
- * Intended for content entity types, since config entity types usually rely
- * on a single "administer" permission.
  * Example annotation:
  * @code
  *  handlers = {
@@ -37,23 +38,58 @@ use Drupal\Core\Entity\EntityTypeInterface;
 class EntityPermissionProvider extends EntityPermissionProviderBase {
 
   /**
-   * {@inheritdoc}
+   * Builds permissions for the entity_type granularity.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type.
+   *
+   * @return array
+   *   The permissions.
    */
-  public function buildPermissions(EntityTypeInterface $entity_type) {
+  protected function buildEntityTypePermissions(EntityTypeInterface $entity_type) {
+    $permissions = parent::buildEntityTypePermissions($entity_type);
     $entity_type_id = $entity_type->id();
     $plural_label = $entity_type->getPluralLabel();
 
-    $permissions = parent::buildPermissions($entity_type);
-
-    // View permissions are the same for both granularities.
     $permissions["view {$entity_type_id}"] = [
       'title' => $this->t('View @type', [
         '@type' => $plural_label,
       ]),
     ];
 
-    return $this->processPermissions($permissions, $entity_type);
+    return $permissions;
   }
 
+  /**
+   * Builds permissions for the bundle granularity.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type.
+   *
+   * @return array
+   *   The permissions.
+   */
+  protected function buildBundlePermissions(EntityTypeInterface $entity_type) {
+    $permissions = parent::buildBundlePermissions($entity_type);
+    $entity_type_id = $entity_type->id();
+    $bundles = $this->entityTypeBundleInfo->getBundleInfo($entity_type_id);
+    $plural_label = $entity_type->getPluralLabel();
+
+    $permissions["view {$entity_type_id}"] = [
+      'title' => $this->t('View @type', [
+        '@type' => $plural_label,
+      ]),
+    ];
+    foreach ($bundles as $bundle_name => $bundle_info) {
+      $permissions["view {$bundle_name} {$entity_type_id}"] = [
+        'title' => $this->t('@bundle: View @type', [
+          '@bundle' => $bundle_info['label'],
+          '@type' => $plural_label,
+        ]),
+      ];
+    }
+
+    return $permissions;
+  }
 
 }

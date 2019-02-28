@@ -8,24 +8,24 @@ use Drupal\user\EntityOwnerInterface;
 /**
  * Provides generic entity permissions which are cached per user.
  *
- * This includes:
+ * Intended for content entity types, since config entity types usually rely
+ * on a single "administer" permission.
  *
+ * Provided permissions:
  * - administer $entity_type
  * - access $entity_type overview
- * - view an ($bundle) $entity_type
- * - view own ($bundle) $entity_type
  * - view own unpublished $entity_type
+ * - view (own|any) ($bundle) $entity_type
  * - update (own|any) ($bundle) $entity_type
  * - delete (own|any) ($bundle) $entity_type
  * - create $bundle $entity_type
  *
- * As this class supports "view own ($bundle) $entity_type" it is just cacheable
- * per user, which might harm performance of sites. Given that please use
- * \Drupal\entity\EntityPermissionProvider unless you need the feature, or your
- * entity type is not really user facing (commerce orders for example).
+ * Important:
+ * Provides "view own ($bundle) $entity_type" permissions, which require
+ * caching pages per user. This can significantly increase the size of caches,
+ * impacting site performance. Use \Drupal\entity\EntityPermissionProvider
+ * if those permissions are not necessary.
  *
- * Intended for content entity types, since config entity types usually rely
- * on a single "administer" permission.
  * Example annotation:
  * @code
  *  handlers = {
@@ -68,8 +68,8 @@ class UncacheableEntityPermissionProvider extends EntityPermissionProviderBase {
       ];
     }
     else {
-      $permissions["view any {$entity_type_id}"] = [
-        'title' => $this->t('View any @type', [
+      $permissions["view {$entity_type_id}"] = [
+        'title' => $this->t('View @type', [
           '@type' => $plural_label,
         ]),
       ];
@@ -94,14 +94,21 @@ class UncacheableEntityPermissionProvider extends EntityPermissionProviderBase {
     $has_owner = $entity_type->entityClassImplements(EntityOwnerInterface::class);
     $plural_label = $entity_type->getPluralLabel();
 
-    $permissions["view any {$entity_type_id}"] = [
-      'title' => $this->t('View any @type', [
-        '@type' => $plural_label,
-      ]),
-    ];
     if ($has_owner) {
+      $permissions["view any {$entity_type_id}"] = [
+        'title' => $this->t('View any @type', [
+          '@type' => $plural_label,
+        ]),
+      ];
       $permissions["view own {$entity_type_id}"] = [
         'title' => $this->t('View own @type', [
+          '@type' => $plural_label,
+        ]),
+      ];
+    }
+    else {
+      $permissions["view {$entity_type_id}"] = [
+        'title' => $this->t('View @type', [
           '@type' => $plural_label,
         ]),
       ];
@@ -123,8 +130,8 @@ class UncacheableEntityPermissionProvider extends EntityPermissionProviderBase {
         ];
       }
       else {
-        $permissions["view any {$bundle_name} {$entity_type_id}"] = [
-          'title' => $this->t('@bundle: View any @type', [
+        $permissions["view {$bundle_name} {$entity_type_id}"] = [
+          'title' => $this->t('@bundle: View @type', [
             '@bundle' => $bundle_info['label'],
             '@type' => $plural_label,
           ]),

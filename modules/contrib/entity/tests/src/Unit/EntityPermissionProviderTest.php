@@ -72,12 +72,12 @@ class EntityPermissionProviderTest extends UnitTestCase {
     $entity_type->id()->willReturn('green_entity');
     $entity_type->getSingularLabel()->willReturn('green entity');
     $entity_type->getPluralLabel()->willReturn('green entities');
+    $entity_type->hasLinkTemplate('collection')->willReturn(FALSE);
     $entity_type->entityClassImplements(EntityOwnerInterface::class)->willReturn(FALSE);
     $entity_type->entityClassImplements(EntityPublishedInterface::class)->willReturn(FALSE);
     $entity_type->getPermissionGranularity()->willReturn('entity_type');
     $expected_permissions = [
       'administer green_entity' => 'Administer green entities',
-      'access green_entity overview' => 'Access the green entities overview page',
       'create green_entity' => 'Create green entities',
       'update green_entity' => 'Update green entities',
       'delete green_entity' => 'Delete green entities',
@@ -91,6 +91,7 @@ class EntityPermissionProviderTest extends UnitTestCase {
     $entity_type->id()->willReturn('blue_entity');
     $entity_type->getSingularLabel()->willReturn('blue entity');
     $entity_type->getPluralLabel()->willReturn('blue entities');
+    $entity_type->hasLinkTemplate('collection')->willReturn(TRUE);
     $entity_type->entityClassImplements(EntityOwnerInterface::class)->willReturn(TRUE);
     $entity_type->entityClassImplements(EntityPublishedInterface::class)->willReturn(FALSE);
     $entity_type->getPermissionGranularity()->willReturn('entity_type');
@@ -112,6 +113,7 @@ class EntityPermissionProviderTest extends UnitTestCase {
     $entity_type->id()->willReturn('white_entity');
     $entity_type->getSingularLabel()->willReturn('white entity');
     $entity_type->getPluralLabel()->willReturn('white entities');
+    $entity_type->hasLinkTemplate('collection')->willReturn(TRUE);
     $entity_type->entityClassImplements(EntityOwnerInterface::class)->willReturn(FALSE);
     $entity_type->entityClassImplements(EntityPublishedInterface::class)->willReturn(FALSE);
     $entity_type->getPermissionGranularity()->willReturn('bundle');
@@ -125,6 +127,8 @@ class EntityPermissionProviderTest extends UnitTestCase {
       'update second white_entity' => 'Second: Update white entities',
       'delete second white_entity' => 'Second: Delete white entities',
       'view white_entity' => 'View white entities',
+      'view first white_entity' => 'First: View white entities',
+      'view second white_entity' => 'Second: View white entities',
     ];
     $data[] = [$entity_type->reveal(), $expected_permissions];
 
@@ -134,6 +138,7 @@ class EntityPermissionProviderTest extends UnitTestCase {
     $entity_type->id()->willReturn('black_entity');
     $entity_type->getSingularLabel()->willReturn('black entity');
     $entity_type->getPluralLabel()->willReturn('black entities');
+    $entity_type->hasLinkTemplate('collection')->willReturn(TRUE);
     $entity_type->entityClassImplements(EntityOwnerInterface::class)->willReturn(TRUE);
     $entity_type->entityClassImplements(EntityPublishedInterface::class)->willReturn(FALSE);
     $entity_type->getPermissionGranularity()->willReturn('bundle');
@@ -146,6 +151,7 @@ class EntityPermissionProviderTest extends UnitTestCase {
       'delete any third black_entity' => 'Third: Delete any black entity',
       'delete own third black_entity' => 'Third: Delete own black entities',
       'view black_entity' => 'View black entities',
+      'view third black_entity' => 'Third: View black entities',
     ];
     $data[] = [$entity_type->reveal(), $expected_permissions];
 
@@ -155,6 +161,7 @@ class EntityPermissionProviderTest extends UnitTestCase {
     $entity_type->id()->willReturn('pink_entity');
     $entity_type->getSingularLabel()->willReturn('pink entity');
     $entity_type->getPluralLabel()->willReturn('pink entities');
+    $entity_type->hasLinkTemplate('collection')->willReturn(TRUE);
     $entity_type->entityClassImplements(EntityOwnerInterface::class)->willReturn(TRUE);
     $entity_type->entityClassImplements(EntityPublishedInterface::class)->willReturn(TRUE);
     $entity_type->getPermissionGranularity()->willReturn('bundle');
@@ -168,6 +175,7 @@ class EntityPermissionProviderTest extends UnitTestCase {
       'delete any third pink_entity' => 'Third: Delete any pink entity',
       'delete own third pink_entity' => 'Third: Delete own pink entities',
       'view pink_entity' => 'View pink entities',
+      'view third pink_entity' => 'Third: View pink entities',
     ];
     $data[] = [$entity_type->reveal(), $expected_permissions];
 

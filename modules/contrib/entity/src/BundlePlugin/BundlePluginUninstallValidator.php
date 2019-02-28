@@ -60,7 +60,7 @@ class BundlePluginUninstallValidator implements ModuleUninstallValidatorInterfac
         });
 
         $bundles_with_content = array_intersect_key($bundles_filtered_by_module, array_flip($bundle_keys_with_content));
-  
+
         foreach ($bundles_with_content as $bundle) {
           $reasons[] = $this->t('There is data for the bundle @bundle on the entity type @entity_type. Please remove all content before uninstalling the module.', [
             '@bundle' => $bundle['label'],

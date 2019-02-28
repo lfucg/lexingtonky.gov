@@ -3,7 +3,6 @@
 namespace Drupal\Tests\entity\Functional;
 
 use Drupal\entity_module_test\Entity\EnhancedEntity;
-use Drupal\entity_module_test\Entity\EnhancedEntityBundle;
 use Drupal\Tests\BrowserTestBase;
 
 /**
@@ -35,10 +34,6 @@ class DeleteMultipleFormTest extends BrowserTestBase {
   protected function setUp() {
     parent::setUp();
 
-    EnhancedEntityBundle::create([
-      'id' => 'default',
-      'label' => 'Default',
-    ])->save();
     $this->account = $this->drupalCreateUser(['administer entity_test_enhanced']);
     $this->drupalLogin($this->account);
   }

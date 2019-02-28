@@ -30,6 +30,12 @@ class EntityCollectionLocalActionProvider implements EntityLocalActionProviderIn
           /* @see \Drupal\entity\Menu\EntityAddLocalAction::getTitle() */
           'title' => 'Add ' . $entity_type->getSingularLabel(),
           'route_name' => $route_name,
+          'options' => [
+            // Redirect back to the collection after form submission.
+            'query' => [
+              'destination' => $entity_type->getLinkTemplate('collection'),
+            ],
+          ],
           'appears_on' => ["entity.$entity_type_id.collection"],
           'class' => EntityAddLocalAction::class,
         ];

@@ -14,7 +14,8 @@
         "drupal/addtoany": "^1.10",
         "drupal/draggableviews": "^1.2",
         "cweagans/composer-patches": "^1.6",
-        "drupal/file_browser": "^1.1"
+        "drupal/file_browser": "^1.1",
+        "drupal/media_entity": "^1.8"
     },
     "replace": {
         "drupal/core": "^8.6"

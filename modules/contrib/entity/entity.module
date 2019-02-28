@@ -5,8 +5,14 @@
  * Provides expanded entity APIs.
  */
 
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\entity\BundlePlugin\BundlePluginHandler;
+use Drupal\entity\QueryAccess\EntityQueryAlter;
+use Drupal\entity\QueryAccess\ViewsQueryAlter;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\Plugin\views\query\Sql;
+use Drupal\views\ViewExecutable;
 
 /**
  * Gets the entity types which use bundle plugins.
@@ -84,5 +90,31 @@ function entity_modules_installed($modules) {
 function entity_module_preuninstall($module) {
   foreach (entity_get_bundle_plugin_entity_types() as $entity_type) {
     \Drupal::service('entity.bundle_plugin_installer')->uninstallBundles($entity_type, [$module]);
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function entity_query_entity_query_alter(SelectInterface $query) {
+  $entity_type_id = $query->getMetaData('entity_type');
+  if ($query->hasTag($entity_type_id . '_access')) {
+    $entity_type_manager = \Drupal::entityTypeManager();
+    $entity_type = $entity_type_manager->getDefinition($entity_type_id);
+
+    \Drupal::service('class_resolver')
+      ->getInstanceFromDefinition(EntityQueryAlter::class)
+      ->alter($query, $entity_type);
+  }
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function entity_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if ($query instanceof Sql) {
+    \Drupal::service('class_resolver')
+      ->getInstanceFromDefinition(ViewsQueryAlter::class)
+      ->alter($query, $view);
   }
 }
