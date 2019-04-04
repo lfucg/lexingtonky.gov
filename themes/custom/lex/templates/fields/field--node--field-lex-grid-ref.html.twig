@@ -1,0 +1,9 @@
+<h1>FIELD</h1>
+{# {{ dd(field) }} #}
+
+{# {{ dd(items[0].content['#paragraph']) }} #}
+
+{% for item in items %}
+    {# {{ dd(item) }} #}
+    <div {{attributes}}>{{item.content}}</div>
+{% endfor %}

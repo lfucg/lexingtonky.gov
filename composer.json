@@ -16,7 +16,8 @@
         "cweagans/composer-patches": "^1.6",
         "drupal/file_browser": "^1.1",
         "drupal/media_entity": "^1.8",
-        "drupal/entity_browser": "^1.7"
+        "drupal/entity_browser": "^1.7",
+        "drupal/twig_vardumper": "^1.1"
     },
     "replace": {
         "drupal/core": "^8.6"

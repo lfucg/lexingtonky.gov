@@ -1,7 +1,7 @@
 {
   "devDependencies": {
     "browser-sync": "^2.6.5",
-    "gulp": "^3.8.10",
+    "gulp": "^3.9.1",
     "gulp-autoprefixer": "~1.0.1",
     "gulp-concat": "~2.4.0",
     "gulp-imagemin": "~1.2.0",
