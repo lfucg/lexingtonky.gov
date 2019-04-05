@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Twig Vardumper install and update hooks.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function twig_vardumper_requirements($phase) {
+  $requirements = [];
+  if ($phase == 'install') {
+    if (!class_exists('\Symfony\Component\VarDumper\VarDumper')) {
+      $requirements['vardumper_library'] = [
+        'description' => t('Twig Vardumper requires the symfony/var-dumper library.'),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    }
+  }
+
+  return $requirements;
+}

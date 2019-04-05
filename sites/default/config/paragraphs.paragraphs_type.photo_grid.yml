@@ -1,0 +1,9 @@
+uuid: 960578ad-f693-4044-8b7e-df5e58dfeec9
+langcode: en
+status: true
+dependencies: {  }
+id: photo_grid
+label: 'Photo Grid'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

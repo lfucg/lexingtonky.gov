@@ -7,11 +7,13 @@ dependencies:
     - field.field.node.page.body
     - field.field.node.page.field_keywords
     - field.field.node.page.field_lex_custom_banner_image
+    - field.field.node.page.field_lex_grid_ref
     - field.field.node.page.field_lex_site_nav
     - field.field.node.page.field_metatags
     - field.field.node.page.field_office_to_contact
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
+    - field.field.node.page.field_photo_grid
     - field.field.node.page.field_related_departments
     - field.field.node.page.field_related_documents
     - field.field.node.page.field_sidebar_section
@@ -38,7 +40,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_keywords:
-    weight: 26
+    weight: 13
     settings:
       match_operator: CONTAINS
       size: 60
@@ -54,6 +56,18 @@ content:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
+  field_lex_grid_ref:
+    type: entity_reference_paragraphs
+    weight: 16
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
   field_lex_site_nav:
     type: entity_reference_autocomplete
     weight: 6
@@ -99,6 +113,18 @@ content:
       form_display_mode: default
       default_paragraph_type: ''
     third_party_settings: {  }
+  field_photo_grid:
+    type: entity_reference_paragraphs
+    weight: 15
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
   field_related_departments:
     type: chosen_select
     weight: 8
@@ -141,7 +167,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 121
+    weight: 14
     third_party_settings: {  }
     region: content
   title:

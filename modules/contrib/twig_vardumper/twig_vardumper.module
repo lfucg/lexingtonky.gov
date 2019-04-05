@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains twig_vardumper.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function twig_vardumper_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the twig_vardumper module.
+    case 'help.page.twig_vardumper':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Twig vardumper provides a better {{ dump() }} and {{ vardumper() }} function that can help you debug Twig variables.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
