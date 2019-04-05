@@ -1,0 +1,9 @@
+uuid: 22dc3a3a-3487-4ecd-bf90-535c777ac709
+langcode: en
+status: true
+dependencies: {  }
+id: lexidme_grid
+label: 'LexIDme Grid'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

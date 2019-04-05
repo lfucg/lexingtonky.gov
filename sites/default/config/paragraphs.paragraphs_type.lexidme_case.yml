@@ -1,0 +1,9 @@
+uuid: f4a9417f-74f1-43f7-bbce-69ff3732163a
+langcode: en
+status: true
+dependencies: {  }
+id: lexidme_case
+label: 'LexIDme Case'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

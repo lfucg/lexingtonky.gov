@@ -1,16 +1,8 @@
 
 {% for item in items %}
-    {# {{ dd(item.content['#node'].field_photo_grid.entity.field_grid_photo.entity.uri) }} #}
-    {# {{ dd(item.content['#node'].field_photo_grid.entity.field_grid_photo[0].entity.uri) }} #}
-
-    {# {{ item.content['#node'].field_photo_grid }} #}
-    {# {{ item.content['#node'].field_photo_grid.entity.field_grid_photo[0] }} #}
-    {# {{ item.content['#node'].field_photo_grid.entity.field_grid_photo.value }} #}
-
-
-    {# {{item.content}} #}
-<div class="col-xs-4" style="max-width: 30%; margin: 0; display: inline-block">
-    <img src="{{ file_url(item.content['#node'].field_photo_grid.entity.field_grid_photo[0].entity.uri.value) }}">
-</div>
+    <div class="case-card">
+        <img src="{{ file_url(item.content['#node'].field_photo_grid.entity.field_grid_photo[0].entity.uri.value) }}">
+        <p><a href="/node/{{ item.content['#node'].nid.value }}">{{ item.content['#node'].title.value }}</a></p>
+    </div>
 {% endfor %}
     

@@ -1,7 +1,7 @@
-<div class="container-fluid">    
-    <div class="row" style="display: inline-block">
+<div class="container-fluid lexid-container">    
+    <div class="row">
         {% for item in items %}
-            {{item.content}}
+            <div class="col-xs-4 grid-photo">{{item.content}}</div>
         {% endfor %}
     </div>
 </div>

@@ -1,0 +1,43 @@
+uuid: d038a201-0032-4d46-be35-5f1745d9f923
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_lexidme_case_ref
+    - paragraphs.paragraphs_type.lexidme_case
+    - paragraphs.paragraphs_type.lexidme_grid
+  module:
+    - entity_reference_revisions
+id: paragraph.lexidme_grid.field_lexidme_case_ref
+field_name: field_lexidme_case_ref
+entity_type: paragraph
+bundle: lexidme_grid
+label: 'lexidme case ref'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      lexidme_case: lexidme_case
+    target_bundles_drag_drop:
+      lexidme_case:
+        enabled: true
+        weight: 6
+      lexidme_grid:
+        weight: 7
+        enabled: false
+      paragraph_sidebar_section:
+        weight: 8
+        enabled: false
+      paragraphs_media_contact:
+        weight: 9
+        enabled: false
+      paragraphs_page_section:
+        weight: 10
+        enabled: false
+field_type: entity_reference_revisions
