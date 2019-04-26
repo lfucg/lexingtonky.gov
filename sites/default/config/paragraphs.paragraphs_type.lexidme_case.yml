@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies: {  }
 id: lexidme_case
-label: 'LexIDme Case'
+label: Card
 icon_uuid: null
 description: ''
 behavior_plugins: {  }

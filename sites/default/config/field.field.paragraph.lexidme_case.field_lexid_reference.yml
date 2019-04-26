@@ -10,7 +10,7 @@ id: paragraph.lexidme_case.field_lexid_reference
 field_name: field_lexid_reference
 entity_type: paragraph
 bundle: lexidme_case
-label: 'lexid reference'
+label: 'Content Reference'
 description: ''
 required: false
 translatable: false

@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies: {  }
 id: lexidme_grid
-label: 'LexIDme Grid'
+label: 'Card Grid'
 icon_uuid: null
 description: ''
 behavior_plugins: {  }

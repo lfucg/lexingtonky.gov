@@ -1,0 +1,9 @@
+uuid: f9a8ae9a-f6b4-4e0c-999e-5ee55033559b
+langcode: en
+status: true
+dependencies: {  }
+id: card_grid
+label: Reverted
+icon_uuid: null
+description: 'This photo grid allows each photo to have a title and subtitle, and offers hover stylings and image links. Use for any type of content except for LexIDMe, which has its own grid type.'
+behavior_plugins: {  }

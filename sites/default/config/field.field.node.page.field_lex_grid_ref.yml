@@ -12,7 +12,7 @@ id: node.page.field_lex_grid_ref
 field_name: field_lex_grid_ref
 entity_type: node
 bundle: page
-label: 'Lex Grid ref'
+label: 'Card Grid'
 description: ''
 required: false
 translatable: false
@@ -31,6 +31,9 @@ settings:
       lexidme_grid:
         enabled: true
         weight: 7
+      card_grid:
+        weight: 8
+        enabled: false
       paragraph_sidebar_section:
         weight: 8
         enabled: false
@@ -39,5 +42,8 @@ settings:
         enabled: false
       paragraphs_page_section:
         weight: 10
+        enabled: false
+      photo_grid:
+        weight: 14
         enabled: false
 field_type: entity_reference_revisions
