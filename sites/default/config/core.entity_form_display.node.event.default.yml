@@ -16,10 +16,12 @@ dependencies:
     - field.field.node.event.field_metatags
     - field.field.node.event.field_recurring_event
     - field.field.node.event.field_related_departments
+    - field.field.node.event.field_related_documents
     - node.type.event
   module:
     - chosen_field
     - datetime
+    - file
     - link
     - metatag
     - paragraphs
@@ -89,7 +91,7 @@ content:
     type: boolean_checkbox
     region: content
   field_keywords:
-    weight: 27
+    weight: 19
     settings:
       match_operator: CONTAINS
       size: 60
@@ -111,11 +113,12 @@ content:
       edit_mode: open
       add_mode: dropdown
       form_display_mode: default
+      default_paragraph_type: ''
     third_party_settings: {  }
     type: entity_reference_paragraphs
     region: content
   field_metatags:
-    weight: 26
+    weight: 18
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
@@ -131,6 +134,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: chosen_select
+    region: content
+  field_related_documents:
+    weight: 17
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
     region: content
   path:
     type: path
@@ -149,7 +159,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 121
+    weight: 20
     third_party_settings: {  }
     region: content
   sticky:

@@ -20,6 +20,7 @@ dependencies:
     - node.type.page
   module:
     - chosen_field
+    - file
     - image
     - metatag
     - paragraphs
@@ -129,9 +130,16 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_related_documents:
+    type: file_generic
+    weight: 10
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
   field_sidebar_section:
     type: entity_reference_paragraphs
-    weight: 10
+    weight: 11
     region: content
     settings:
       title: Paragraph
@@ -173,6 +181,5 @@ content:
     third_party_settings: {  }
 hidden:
   body: true
-  field_related_documents: true
   promote: true
   sticky: true

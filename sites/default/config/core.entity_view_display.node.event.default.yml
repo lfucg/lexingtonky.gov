@@ -16,6 +16,7 @@ dependencies:
     - field.field.node.event.field_metatags
     - field.field.node.event.field_recurring_event
     - field.field.node.event.field_related_departments
+    - field.field.node.event.field_related_documents
     - node.type.event
   module:
     - datetime
@@ -141,3 +142,4 @@ hidden:
   addtoany: true
   field_keywords: true
   field_related_departments: true
+  field_related_documents: true
