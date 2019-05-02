@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.files_browser
     - field.field.node.news_article.body
     - field.field.node.news_article.field_image
     - field.field.node.news_article.field_keywords
@@ -16,7 +15,7 @@ dependencies:
     - node.type.news_article
   module:
     - chosen_field
-    - entity_browser
+    - file
     - image
     - metatag
     - paragraphs
@@ -93,18 +92,11 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_related_documents:
-    type: entity_browser_file
+    type: file_generic
     weight: 11
     region: content
     settings:
-      entity_browser: files_browser
-      field_widget_remove: true
-      selection_mode: selection_append
-      field_widget_edit: true
-      field_widget_replace: false
-      open: false
-      view_mode: default
-      preview_image_style: thumbnail
+      progress_indicator: throbber
     third_party_settings: {  }
   path:
     type: path

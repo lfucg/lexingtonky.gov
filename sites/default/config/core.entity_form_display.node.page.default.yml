@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.files_browser
     - field.field.node.page.body
     - field.field.node.page.field_keywords
     - field.field.node.page.field_lex_custom_banner_image
@@ -21,7 +20,6 @@ dependencies:
     - node.type.page
   module:
     - chosen_field
-    - entity_browser
     - image
     - metatag
     - paragraphs
@@ -131,20 +129,6 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_related_documents:
-    type: entity_browser_file
-    weight: 11
-    region: content
-    settings:
-      entity_browser: files_browser
-      field_widget_remove: true
-      selection_mode: selection_append
-      field_widget_edit: true
-      field_widget_replace: false
-      open: false
-      view_mode: default
-      preview_image_style: thumbnail
-    third_party_settings: {  }
   field_sidebar_section:
     type: entity_reference_paragraphs
     weight: 10
@@ -189,5 +173,6 @@ content:
     third_party_settings: {  }
 hidden:
   body: true
+  field_related_documents: true
   promote: true
   sticky: true
