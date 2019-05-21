@@ -115,7 +115,7 @@ class SearchApiRow extends RowPluginBase {
       if (!$datasource->getViewModes()) {
         $form['view_modes'][$datasource_id] = [
           '#type' => 'item',
-          '#title' => $this->t('Default View mode for datasource %name', ['%name' => $datasource_label]),
+          '#title' => $this->t('View mode for datasource %name', ['%name' => $datasource_label]),
           '#description' => $this->t("This datasource doesn't have any view modes available. It is therefore not possible to display results of this datasource using this row plugin."),
         ];
         continue;

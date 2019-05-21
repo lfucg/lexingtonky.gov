@@ -303,10 +303,10 @@ class Request
         // HTTP_CONTENT_TYPE and HTTP_CONTENT_LENGTH fields.
         $server = $_SERVER;
         if ('cli-server' === \PHP_SAPI) {
-            if (array_key_exists('HTTP_CONTENT_LENGTH', $_SERVER)) {
+            if (\array_key_exists('HTTP_CONTENT_LENGTH', $_SERVER)) {
                 $server['CONTENT_LENGTH'] = $_SERVER['HTTP_CONTENT_LENGTH'];
             }
-            if (array_key_exists('HTTP_CONTENT_TYPE', $_SERVER)) {
+            if (\array_key_exists('HTTP_CONTENT_TYPE', $_SERVER)) {
                 $server['CONTENT_TYPE'] = $_SERVER['HTTP_CONTENT_TYPE'];
             }
         }
@@ -691,7 +691,7 @@ class Request
             $key = self::HEADER_CLIENT_PROTO;
         } elseif ('client_port' === $key) {
             $key = self::HEADER_CLIENT_PORT;
-        } elseif (!array_key_exists($key, self::$trustedHeaders)) {
+        } elseif (!\array_key_exists($key, self::$trustedHeaders)) {
             throw new \InvalidArgumentException(sprintf('Unable to set the trusted header name for key "%s".', $key));
         }
 
@@ -722,7 +722,7 @@ class Request
             @trigger_error(sprintf('The "%s()" method is deprecated since Symfony 3.3 and will be removed in 4.0. Use the Request::getTrustedHeaderSet() method instead.', __METHOD__), E_USER_DEPRECATED);
         }
 
-        if (!array_key_exists($key, self::$trustedHeaders)) {
+        if (!\array_key_exists($key, self::$trustedHeaders)) {
             throw new \InvalidArgumentException(sprintf('Unable to get the trusted header name for key "%s".', $key));
         }
 
@@ -1346,22 +1346,37 @@ class Request
      */
     public function getMethod()
     {
-        if (null === $this->method) {
-            $this->method = strtoupper($this->server->get('REQUEST_METHOD', 'GET'));
-
-            if ('POST' === $this->method) {
-                if ($method = $this->headers->get('X-HTTP-METHOD-OVERRIDE')) {
-                    $this->method = strtoupper($method);
-                } elseif (self::$httpMethodParameterOverride) {
-                    $method = $this->request->get('_method', $this->query->get('_method', 'POST'));
-                    if (\is_string($method)) {
-                        $this->method = strtoupper($method);
-                    }
-                }
-            }
+        if (null !== $this->method) {
+            return $this->method;
         }
 
-        return $this->method;
+        $this->method = strtoupper($this->server->get('REQUEST_METHOD', 'GET'));
+
+        if ('POST' !== $this->method) {
+            return $this->method;
+        }
+
+        $method = $this->headers->get('X-HTTP-METHOD-OVERRIDE');
+
+        if (!$method && self::$httpMethodParameterOverride) {
+            $method = $this->request->get('_method', $this->query->get('_method', 'POST'));
+        }
+
+        if (!\is_string($method)) {
+            return $this->method;
+        }
+
+        $method = strtoupper($method);
+
+        if (\in_array($method, ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'PATCH', 'PURGE', 'TRACE'], true)) {
+            return $this->method = $method;
+        }
+
+        if (!preg_match('/^[A-Z]++$/D', $method)) {
+            throw new SuspiciousOperationException(sprintf('Invalid method override "%s".', $method));
+        }
+
+        return $this->method = $method;
     }
 
     /**
@@ -1462,7 +1477,7 @@ class Request
      *
      * @param string|null $default The default format
      *
-     * @return string The request format
+     * @return string|null The request format
      */
     public function getRequestFormat($default = 'html')
     {

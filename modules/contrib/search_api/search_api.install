@@ -279,3 +279,35 @@ function search_api_update_8104() {
 
   return NULL;
 }
+
+/**
+ * Update the configuration schema of the "Ignore characters" processor.
+ */
+function search_api_update_8105() {
+  // This update function updates search indexes for the change from
+  // https://www.drupal.org/node/3007933.
+  $config_factory = \Drupal::configFactory();
+
+  $changes = FALSE;
+  foreach ($config_factory->listAll('search_api.index.') as $index_id) {
+    $index = $config_factory->getEditable($index_id);
+    $processors = $index->get('processor_settings');
+
+    if (isset($processors['ignore_character'])) {
+      $classes = $processors['ignore_character']['strip']['character_sets'];
+      $classes = array_values(array_filter($classes));
+      $processors['ignore_character']['ignorable_classes'] = $classes;
+      unset($processors['ignore_character']['strip']);
+      $index->set('processor_settings', $processors);
+      // Mark the resulting configuration as trusted data. This avoids issues
+      // with future schema changes.
+      $index->save(TRUE);
+      $changes = TRUE;
+    }
+  }
+
+  if ($changes) {
+    return t('Updated the configuration schema of the "Ignore characters" processor.');
+  }
+  return NULL;
+}

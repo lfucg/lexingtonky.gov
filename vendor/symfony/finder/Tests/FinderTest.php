@@ -199,6 +199,18 @@ class FinderTest extends Iterator\RealIteratorTestCase
         $this->assertIterator($this->toAbsolute(['foo', 'foo/bar.tmp', 'test.php', 'test.py', 'toto', '.bar', '.foo', '.foo/.bar', '.foo/bar', 'foo bar']), $finder->in(self::$tmpDir)->getIterator());
     }
 
+    public function testIgnoreVCSCanBeDisabledAfterFirstIteration()
+    {
+        $finder = $this->buildFinder();
+        $finder->in(self::$tmpDir);
+        $finder->ignoreDotFiles(false);
+
+        $this->assertIterator($this->toAbsolute(['foo', 'foo/bar.tmp', 'test.php', 'test.py', 'toto', '.bar', '.foo', '.foo/.bar', '.foo/bar', 'foo bar']), $finder->getIterator());
+
+        $finder->ignoreVCS(false);
+        $this->assertIterator($this->toAbsolute(['.git', 'foo', 'foo/bar.tmp', 'test.php', 'test.py', 'toto', 'toto/.git', '.bar', '.foo', '.foo/.bar', '.foo/bar', 'foo bar']), $finder->getIterator());
+    }
+
     public function testIgnoreDotFiles()
     {
         $finder = $this->buildFinder();
@@ -212,6 +224,17 @@ class FinderTest extends Iterator\RealIteratorTestCase
         $finder = $this->buildFinder();
         $this->assertSame($finder, $finder->ignoreDotFiles(true)->ignoreVCS(false));
         $this->assertIterator($this->toAbsolute(['foo', 'foo/bar.tmp', 'test.php', 'test.py', 'toto', 'foo bar']), $finder->in(self::$tmpDir)->getIterator());
+    }
+
+    public function testIgnoreDotFilesCanBeDisabledAfterFirstIteration()
+    {
+        $finder = $this->buildFinder();
+        $finder->in(self::$tmpDir);
+
+        $this->assertIterator($this->toAbsolute(['foo', 'foo/bar.tmp', 'test.php', 'test.py', 'toto', 'foo bar']), $finder->getIterator());
+
+        $finder->ignoreDotFiles(false);
+        $this->assertIterator($this->toAbsolute(['foo', 'foo/bar.tmp', 'test.php', 'test.py', 'toto', '.bar', '.foo', '.foo/.bar', '.foo/bar', 'foo bar']), $finder->getIterator());
     }
 
     public function testSortByName()
@@ -316,6 +339,10 @@ class FinderTest extends Iterator\RealIteratorTestCase
 
     public function testInWithGlobBrace()
     {
+        if (!\defined('GLOB_BRACE')) {
+            $this->markTestSkipped('Glob brace is not supported on this system.');
+        }
+
         $finder = $this->buildFinder();
         $finder->in([__DIR__.'/Fixtures/{A,copy/A}/B/C'])->getIterator();
 

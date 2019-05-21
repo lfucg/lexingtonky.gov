@@ -5,6 +5,7 @@ namespace Drupal\Tests\twig_tweak\Functional;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
+use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\responsive_image\Entity\ResponsiveImageStyle;
 use Drupal\Core\Render\Markup;
 use Drupal\Tests\BrowserTestBase;
@@ -28,6 +29,7 @@ class TwigTweakTest extends BrowserTestBase {
     'block',
     'image',
     'responsive_image',
+    'language',
   ];
 
   /**
@@ -55,6 +57,8 @@ class TwigTweakTest extends BrowserTestBase {
       'breakpoint_group' => 'responsive_image',
     ])->save();
 
+    // Setup Russian.
+    ConfigurableLanguage::createFromLangcode('ru')->save();
   }
 
   /**
@@ -214,7 +218,12 @@ class TwigTweakTest extends BrowserTestBase {
 
     // Test URL.
     $url = Url::fromUserInput('/node/1', ['absolute' => TRUE])->toString();
-    $xpath = sprintf('//div[@class = "tt-url" and text() = "%s"]', $url);
+    $xpath = sprintf('//div[@class = "tt-url"]/div[@data-case="default" and text() = "%s"]', $url);
+    $this->assertByXpath($xpath);
+
+    // Test URL (with langcode).
+    $url = str_replace('node/1', 'ru/node/1', $url);
+    $xpath = sprintf('//div[@class = "tt-url"]/div[@data-case="with-langcode" and text() = "%s"]', $url);
     $this->assertByXpath($xpath);
 
     // Test link.
@@ -231,7 +240,7 @@ class TwigTweakTest extends BrowserTestBase {
     self::assertEquals($link, trim($this->xpath($xpath)[0]->getHtml()));
 
     // Test status messages.
-    $xpath = '//div[@class = "tt-messages"]/div[contains(@class, "messages--status") and contains(., "Hello world!")]';
+    $xpath = '//div[@class = "tt-messages"]//div[contains(@class, "messages--status") and contains(., "Hello world!")]';
     $this->assertByXpath($xpath);
 
     // Test breadcrumb.
@@ -268,6 +277,10 @@ class TwigTweakTest extends BrowserTestBase {
 
     // Test 'with'.
     $xpath = '//div[@class = "tt-with"]/b[text() = "Example"]';
+    $this->assertByXpath($xpath);
+
+    // Test 'children'.
+    $xpath = '//div[@class = "tt-children" and text() = "doremi"]';
     $this->assertByXpath($xpath);
 
     // Test node view.

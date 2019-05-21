@@ -1,3 +1,84 @@
+Search API 1.13 (2019-05-07):
+-----------------------------
+- #3043930 by kfritsche, drunken monkey, borisson_: Fixed issue with nested
+  Drush batch operations.
+- #3049801 by drunken monkey, borisson_: Cleaned up some minor code style
+  issues.
+- #3049777 by drunken monkey: Fixed test fails for Drupal 8.7 HEAD.
+- #3039142 by drunken monkey, ali-3a, LaravZ: Fixed all results returned when
+  query has keywords but no fulltext fields.
+- #3045396 by drunken monkey: Adapted to PHPCS changes in Core.
+- #3044867 by drunken monkey, borisson_: Fixed namespace of
+  TaxonomyTermArgumentTest.
+- #3041144 by jonnyeom, drunken monkey, LaravZ: Fixed the form submission logic
+  of the "Ignore Characters" processor.
+- #2867479 by drunken monkey, odavydyuk, VitaliyB98, idebr, borisson_: Removed
+  the "Search API Taxonomy Term Handlers" module.
+
+Search API 1.12 (2019-03-11):
+-----------------------------
+- #3037972 by ifrik, borisson_, drunken monkey: Added facets support for Views
+  Feed displays.
+- #3026526 by chr.fritsch, drunken monkey, legolasbo: Fixed performance of
+  SearchApiTagCache::getRowId().
+- #2898327 by drunken monkey, Renrhaf, justanothermark, legolasbo: Improved
+  performance in SearchApiQuery::addResults().
+- #3039181 by drunken monkey: Fixed failing tests.
+- #2693071 by drunken monkey, herved: Fixed nested properties getting removed
+  from aggregated fields.
+- #3036173 by hanoii, drunken monkey, vinlaurens: Fixed bundle boost option
+  defaults for "Type-specific boosts" processor.
+- #3033040 by herved, drunken monkey, vinlaurens: Fixed error when enabling the
+  Database Search Defaults module.
+- #3031991 by drunken monkey, borisson_: Fixed edge case errors when combining
+  multiple fulltext search filters in Views.
+- #2949962 by drunken monkey, legolasbo, Keule, borisson_: Fixed negated
+  fulltext keywords with partial matching.
+- #3032916 by chr.fritsch, borisson_, drunken monkey: Fixed caching of entity
+  operations in Views field.
+- #2985131 by drunken monkey, brettboylen, borisson_, Kleve: Fixed
+  "Type-specific boosting" processor to not overwrite pre-existing boosts.
+- #3031990 by drunken monkey, borisson_: Fixed exception handling in
+  SearchApiQuery.
+- #2867479 by legolasbo, drunken monkey, borisson_: Added an update hook
+  uninstalling the "Search API Taxonomy Term Handlers" module.
+- #2998853 by drunken monkey, borisson_, legolasbo: Updated links throughout
+  the module.
+- #3023142 by legolasbo, drunken monkey: Added Kernel tests for the taxonomy
+  term Views argument plugin.
+- #3011859 by drunken monkey: Fixed Tokenizer not removing short words at
+  search time.
+- #3024753 by drunken monkey, ressa: Added overridden query() method to the
+  Views query plugin.
+- #3014641 by drunken monkey, legolasbo: Fixed memory problems when indexing
+  large amounts of items at once.
+- #3022724 by drunken monkey, legolasbo, borisson_: Fixed infinite loop when
+  creating excerpts.
+- #1696434 by orakili, drunken monkey, ldweeks, ericchew, legolasbo, borisson_:
+  Added a Views contextual filter for all taxonomy term fields.
+- #3022693 by drunken monkey, kashandarash, legolasbo: Fixed fatal error when
+  Node module is not installed.
+- #2378945 by chr.fritsch, drunken monkey, bdlangton, DamienMcKenna, JPHuxley,
+  lpeabody, legolasbo: Added option to keep facets when submitting Views
+  exposed form.
+- #3023168 by drunken monkey, legolasbo, borisson_: Fixed missing notices for
+  deprecated methods.
+- #3023255 by drunken monkey, legolasbo: Removed installation of schema
+  system.router from tests.
+- #2820410 by recrit, drunken monkey, miiimooo, abramm, borisson_, ndf: Added a
+  Views field for rendering an entity.
+- #3023247 by drunken monkey, legolasbo: Updated references to
+  NodeCreationTrait.
+- #3007933 by drunken monkey: Fixed bug in config form of "Ignore characters"
+  processor.
+- #2948707 by trwill, drunken monkey: Fixed "Content access" processor not
+  taking all grant records into account.
+- #3022452 by drunken monkey: Fixed failing tests on PHP 5.
+- #2861832 by mkalkbrenner, mtodor, drunken monkey: Added support for showing
+  entity operations in Views.
+- #3021717 by mkalkbrenner, drunken monkey: Added
+  ExampleContentTrait::removeTestEntity().
+
 Search API 1.11 (2018-11-18):
 -----------------------------
 - #3012778 by Shashwat Purav, pamatt, drunken monkey: Fixed several doc comment

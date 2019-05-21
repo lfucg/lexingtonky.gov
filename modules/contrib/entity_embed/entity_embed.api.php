@@ -72,7 +72,7 @@ function hook_entity_embed_context_alter(array &$context, \Drupal\Core\Entity\En
 }
 
 /**
- * Alter the context of an particular embedded entity type before it is rendered.
+ * Alter the context of a particular embedded entity type before it is rendered.
  *
  * @param array &$context
  *   The context array.

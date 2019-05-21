@@ -17,6 +17,7 @@ use Drupal\user\EntityOwnerInterface;
  * - view own unpublished $entity_type
  * - view (own|any) ($bundle) $entity_type
  * - update (own|any) ($bundle) $entity_type
+ * - duplicate (own|any) ($bundle) $entity_type
  * - delete (own|any) ($bundle) $entity_type
  * - create $bundle $entity_type
  *

@@ -7,7 +7,7 @@ use Drupal\field\Tests\EntityReference\EntityReferenceTestTrait;
 use Drupal\node\Entity\NodeType;
 use Drupal\search_api\Item\Field;
 use Drupal\search_api\Query\Query;
-use Drupal\simpletest\NodeCreationTrait;
+use Drupal\Tests\node\Traits\NodeCreationTrait;
 use Drupal\Tests\search_api\Kernel\ResultsTrait;
 use Drupal\Tests\taxonomy\Functional\TaxonomyTestTrait;
 

@@ -232,11 +232,14 @@ class AddToAnySettingsForm extends ConfigFormBase {
           $label = $label->render();
         }
 
-        // Link to the bundle's Manage Display page if the entity ID supports the route pattern.
-        if (in_array($entityId, $linkableEntities) && $entityType) {
-          $links[] = Link::createFromRoute(t($label), "entity.entity_view_display.{$entityId}.default", [
-            $entityType => $machine_name,
-          ])->toString();
+        // Check if Field UI module enabled.
+        if ($this->moduleHandler->moduleExists('field_ui')) {
+          // Link to the bundle's Manage Display page if the entity ID supports the route pattern.
+          if (in_array($entityId, $linkableEntities) && $entityType) {
+            $links[] = Link::createFromRoute(t($label), "entity.entity_view_display.{$entityId}.default", [
+              $entityType => $machine_name,
+            ])->toString();
+          }
         }
       }
 

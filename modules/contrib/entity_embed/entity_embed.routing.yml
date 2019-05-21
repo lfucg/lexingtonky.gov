@@ -5,5 +5,3 @@ entity_embed.dialog:
     _title: 'Embed entity'
   requirements:
     _embed_button_editor_access: 'TRUE'
-  options:
-    _theme: ajax_base_page

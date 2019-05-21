@@ -103,18 +103,14 @@ plugin.plugin_configuration.search_api_processor.ignore_character:
   mapping:
     ignorable:
       type: string
-      label: 'Regular expression for characters it should ignore to stem'
-    strip:
-      type: mapping
-      label: 'Configurable characters to ignore'
-      mapping:
-        character_sets:
-          type: sequence
-          label: 'Configuration of the character sets'
-          orderby: key
-          sequence:
-            type: ignore
-            label: 'Character set'
+      label: 'Regular expression for characters to ignore'
+    ignorable_classes:
+      type: sequence
+      label: 'Character categories to ignore'
+      orderby: value
+      sequence:
+        type: string
+        label: 'Character set'
 
 plugin.plugin_configuration.search_api_processor.stemmer:
   type: search_api.fields_processor_configuration

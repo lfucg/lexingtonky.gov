@@ -51,7 +51,6 @@ class ConfigOverrideKernelTest extends KernelTestBase {
 
     // Set up necessary schemas.
     $this->installSchema('search_api', ['search_api_item']);
-    $this->installSchema('system', ['router']);
     $this->installSchema('user', ['users_data']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('search_api_task');

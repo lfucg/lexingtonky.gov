@@ -22,8 +22,9 @@ use Drupal\embed\DomHelperTrait;
  * @Filter(
  *   id = "entity_embed",
  *   title = @Translation("Display embedded entities"),
- *   description = @Translation("Embeds entities using data attributes: data-entity-type, data-entity-uuid, and data-view-mode."),
- *   type = Drupal\filter\Plugin\FilterInterface::TYPE_TRANSFORM_REVERSIBLE
+ *   description = @Translation("Embeds entities using data attributes: data-entity-type, data-entity-uuid, and data-view-mode. Should usually run as the last filter, since it does not contain user input."),
+ *   type = Drupal\filter\Plugin\FilterInterface::TYPE_TRANSFORM_REVERSIBLE,
+ *   weight = 100,
  * )
  */
 class EntityEmbedFilter extends FilterBase implements ContainerFactoryPluginInterface {
@@ -139,7 +140,7 @@ class EntityEmbedFilter extends FilterBase implements ContainerFactoryPluginInte
             }
 
             $context = $this->getNodeAttributesAsArray($node);
-            $context += array('data-langcode' => $langcode);
+            $context += ['data-langcode' => $langcode];
             $build = $this->builder->buildEntityEmbed($entity, $context);
             // We need to render the embedded entity:
             // - without replacing placeholders, so that the placeholders are
@@ -158,6 +159,9 @@ class EntityEmbedFilter extends FilterBase implements ContainerFactoryPluginInte
             $depth--;
           }
           else {
+            $alt_text = $this->t('Deleted content encountered, site owner alerted.');
+            $title_text = $this->t('Deleted content.');
+            $entity_output = '<img src="' . file_create_url('core/modules/media/images/icons/no-thumbnail.png') . '" width="180" height="180" alt="' . $alt_text . '" title="' . $title_text . '"/>';
             throw new EntityNotFoundException(sprintf('Unable to load embedded %s entity %s.', $entity_type, $id));
           }
         }

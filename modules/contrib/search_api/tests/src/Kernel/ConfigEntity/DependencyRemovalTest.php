@@ -53,6 +53,7 @@ class DependencyRemovalTest extends KernelTestBase {
   public function setUp() {
     parent::setUp();
 
+    $this->installEntitySchema('user');
     $this->installEntitySchema('search_api_task');
     $this->installConfig('search_api');
 

@@ -10,6 +10,10 @@ use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
  *
  * @ingroup views_argument_handlers
  *
+ * @property bool argument_validated
+ *   Used by the parent class to remember that an argument value has already
+ *   been validated.
+ *
  * @ViewsArgument("search_api")
  */
 class SearchApiStandard extends ArgumentPluginBase {

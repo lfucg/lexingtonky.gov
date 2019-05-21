@@ -160,6 +160,15 @@ class Database extends BackendPluginBase implements PluginFormInterface {
   protected $warnings = [];
 
   /**
+   * Counter for named expressions used in database queries.
+   *
+   * Used to generate unique aliases even with multi-nested queries.
+   *
+   * @var int
+   */
+  protected $expressionCounter = 0;
+
+  /**
    * Constructs a Database object.
    *
    * @param array $configuration
@@ -1685,27 +1694,24 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       }
 
       $fulltext_fields = $this->getQueryFulltextFields($query);
-      if ($fulltext_fields) {
-        $fulltext_field_information = [];
-        foreach ($fulltext_fields as $name) {
-          if (!isset($fields[$name])) {
-            throw new SearchApiException("Unknown field '$name' specified as search target.");
-          }
-          if (!$this->getDataTypeHelper()->isTextType($fields[$name]['type'])) {
-            $types = $this->getDataTypePluginManager()->getInstances();
-            $type = $types[$fields[$name]['type']]->label();
-            throw new SearchApiException("Cannot perform fulltext search on field '$name' of type '$type'.");
-          }
-          $fulltext_field_information[$name] = $fields[$name];
-        }
+      if (!$fulltext_fields) {
+        throw new SearchApiException('Search keys are given but no fulltext fields are defined.');
+      }
 
-        $db_query = $this->createKeysQuery($keys, $fulltext_field_information, $fields, $query->getIndex());
+      $fulltext_field_information = [];
+      foreach ($fulltext_fields as $name) {
+        if (!isset($fields[$name])) {
+          throw new SearchApiException("Unknown field '$name' specified as search target.");
+        }
+        if (!$this->getDataTypeHelper()->isTextType($fields[$name]['type'])) {
+          $types = $this->getDataTypePluginManager()->getInstances();
+          $type = $types[$fields[$name]['type']]->label();
+          throw new SearchApiException("Cannot perform fulltext search on field '$name' of type '$type'.");
+        }
+        $fulltext_field_information[$name] = $fields[$name];
       }
-      else {
-        $this->getLogger()->warning('Search keys are given but no fulltext fields are defined.');
-        $msg = $this->t('Search keys are given but no fulltext fields are defined.');
-        $this->warnings[(string) $msg] = 1;
-      }
+
+      $db_query = $this->createKeysQuery($keys, $fulltext_field_information, $fields, $query->getIndex());
     }
     elseif ($keys_set) {
       $msg = $this->t('No valid search keys were present in the query.');
@@ -1970,7 +1976,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
           // result multiple times if a single indexed word (partially) matches
           // multiple keywords. We also remember the column name so we can
           // afterwards verify that each word matched at least once.
-          $alias = 'w' . $i;
+          $alias = 'w' . ++$this->expressionCounter;
           $like = '%' . $this->database->escapeLike($word) . '%';
           $alias = $db_query->addExpression("CASE WHEN t.word LIKE :like_$alias THEN 1 ELSE 0 END", $alias, [":like_$alias" => $like]);
           $db_query->groupBy($alias);
@@ -1978,7 +1984,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
         }
         // Also add expressions for any nested queries.
         for ($i = $word_count; $i < $subs; ++$i) {
-          $alias = 'w' . $i;
+          $alias = 'w' . ++$this->expressionCounter;
           $alias = $db_query->addExpression('0', $alias);
           $db_query->groupBy($alias);
           $keyword_hits[] = $alias;
@@ -2066,19 +2072,25 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       }
 
       if ($conj == 'AND') {
-        foreach ($negated as $k) {
-          $db_query->condition('t.item_id', $this->createKeysQuery($k, $fields, $all_fields, $index), 'NOT IN');
-        }
+        $condition = $db_query;
       }
       else {
-        $or = new Condition('OR');
-        foreach ($negated as $k) {
-          $or->condition('t.item_id', $this->createKeysQuery($k, $fields, $all_fields, $index), 'NOT IN');
+        $condition = new Condition('OR');
+        $db_query->condition($condition);
+      }
+      foreach ($negated as $k) {
+        $nested_query = $this->createKeysQuery($k, $fields, $all_fields, $index);
+        // For a "NOT IN", the SELECT must not have more than one column.
+        $num_fields = count($nested_query->getFields());
+        $num_expressions = count($nested_query->getExpressions());
+        if ($num_fields + $num_expressions > 1) {
+          $nested_query = $this->database->select($nested_query, 't')
+            ->fields('t', ['item_id']);
         }
-        if (isset($old_query)) {
-          $or->condition('t.item_id', $old_query, 'NOT IN');
-        }
-        $db_query->condition($or);
+        $condition->condition('t.item_id', $nested_query, 'NOT IN');
+      }
+      if (isset($old_query)) {
+        $condition->condition('t.item_id', $old_query, 'NOT IN');
       }
     }
 

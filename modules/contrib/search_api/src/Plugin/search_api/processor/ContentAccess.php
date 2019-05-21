@@ -173,19 +173,18 @@ class ContentAccess extends ProcessorPluginBase {
     $fields = $this->getFieldsHelper()
       ->filterForPropertyPath($fields, NULL, 'search_api_node_grants');
     foreach ($fields as $field) {
-      // Collect grant information for the node.
-      if (!$node->access('view', $anonymous_user)) {
-        // If anonymous user has no permission we collect all grants with
-        // their realms in the item.
-        $sql = 'SELECT * FROM {node_access} WHERE (nid = 0 OR nid = :nid) AND grant_view = 1';
-        $args = [':nid' => $node->id()];
-        foreach ($this->getDatabase()->query($sql, $args) as $grant) {
+      // Collect grant records for the node. If there are none, use the pseudo
+      // grant "node_access__all".
+      $sql = 'SELECT gid, realm FROM {node_access} WHERE (nid = 0 OR nid = :nid) AND grant_view = 1';
+      $args = [':nid' => $node->id()];
+      $grant_records = $this->getDatabase()->query($sql, $args)->fetchAll();
+      if ($grant_records) {
+        foreach ($grant_records as $grant) {
           $field->addValue("node_access_{$grant->realm}:{$grant->gid}");
         }
       }
       else {
-        // Add the generic pseudo view grant if we are not using node access
-        // or the node is viewable by anonymous users.
+        // Add the generic pseudo view grant if we are not using node access.
         $field->addValue('node_access__all');
       }
     }

@@ -13,18 +13,18 @@
 
 @media screen and (min-width: 768px) {
   .ui-dialog--narrow.entity-select-dialog .entity-embed-dialog-step--select {
-    min-width: 730px; // 95%
+    min-width: 730px; /* 95% */
   }
 }
 
 @media screen and (min-width: 1000px) {
   .ui-dialog--narrow.entity-select-dialog .entity-embed-dialog-step--select {
-    min-width: 950px; // 95%
+    min-width: 950px; /* 95% */
   }
 }
 
 @media screen and (min-width: 1200px) {
   .ui-dialog--narrow.entity-select-dialog .entity-embed-dialog-step--select {
-    min-width: 1140px; // 95%
+    min-width: 1140px; /* 95% */
   }
 }

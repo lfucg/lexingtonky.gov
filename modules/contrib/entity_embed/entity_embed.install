@@ -55,8 +55,7 @@ function entity_embed_update_8002() {
 }
 
 /**
- * Updates allowed HTML for all filter format config entities that have an
- * Entity Embed button.
+ * Updates allowed HTML for all filter configs that have an Entity Embed button.
  */
 function entity_embed_update_8003() {
   $buttons = \Drupal::entityTypeManager()->getStorage('embed_button')->loadMultiple();

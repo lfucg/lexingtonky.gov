@@ -341,6 +341,9 @@ class ViewsDisplayCachingTest extends KernelTestBase {
           // available as a cache tag, so that the caches are invalidated if the
           // view configuration changes.
           'config:views.view.search_api_test_cache',
+          // The view shows an entity, so it should be invalidated when that
+          // entity changes.
+          'entity_test_mulrev_changed:1',
           // Caches should also be invalidated if any items on the index are
           // indexed or deleted.
           'search_api_list:database_search_index',

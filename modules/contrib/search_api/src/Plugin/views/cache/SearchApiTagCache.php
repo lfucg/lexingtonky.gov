@@ -3,8 +3,10 @@
 namespace Drupal\search_api\Plugin\views\cache;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\views\Plugin\views\cache\Tag;
+use Drupal\views\ResultRow;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -78,6 +80,32 @@ class SearchApiTagCache extends Tag {
     $tags = $this->view->storage->getCacheTags();
     $tag = 'search_api_list:' . $this->getQuery()->getIndex()->id();
     $tags = Cache::mergeTags([$tag], $tags);
+    return $tags;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRowId(ResultRow $row) {
+    return $row->search_api_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRowCacheTags(ResultRow $row) {
+    $tags = [];
+
+    foreach ($row->_relationship_objects as $objects) {
+      /** @var \Drupal\Core\TypedData\ComplexDataInterface $object */
+      foreach ($objects as $object) {
+        $entity = $object->getValue();
+        if ($entity instanceof EntityInterface) {
+          $tags = Cache::mergeTags($tags, $entity->getCacheTags());
+        }
+      }
+    }
+
     return $tags;
   }
 

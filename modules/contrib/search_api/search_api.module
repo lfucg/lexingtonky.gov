@@ -18,11 +18,13 @@ use Drupal\search_api\Plugin\search_api\datasource\ContentEntity;
 use Drupal\search_api\Plugin\search_api\datasource\ContentEntityTaskManager;
 use Drupal\search_api\Plugin\search_api\datasource\EntityDatasourceInterface;
 use Drupal\search_api\Plugin\views\argument\SearchApiTerm as TermArgument;
+use Drupal\search_api\Plugin\views\argument\SearchApiAllTerms;
 use Drupal\search_api\Plugin\views\filter\SearchApiTerm as TermFilter;
 use Drupal\search_api\Plugin\views\query\SearchApiQuery;
 use Drupal\search_api\SearchApiException;
 use Drupal\search_api\Task\IndexTaskManager;
 use Drupal\views\ViewEntityInterface;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_help().
@@ -534,6 +536,12 @@ function search_api_views_plugins_argument_alter(array &$plugins) {
       'class' => TermArgument::class,
       'provider' => 'search_api',
     ];
+    $plugins['search_api_all_terms'] = [
+      'plugin_type' => 'argument',
+      'id' => 'search_api_all_terms',
+      'class' => SearchApiAllTerms::class,
+      'provider' => 'search_api',
+    ];
   }
 }
 
@@ -664,9 +672,62 @@ function _search_api_search_module_warning() {
   if (\Drupal::moduleHandler()->moduleExists('search')) {
     $args = [
       ':url' => Url::fromRoute('system.modules_uninstall')->toString(),
-      ':documentation' => 'https://www.drupal.org/node/2010146#core-search',
+      ':documentation' => 'https://www.drupal.org/docs/8/modules/search-api/getting-started/common-pitfalls#core-search',
     ];
     return t('The default Drupal core Search module is still enabled. If you are using Search API, you probably want to <a href=":url">uninstall</a> the Search module for performance reasons. For more information see <a href=":documentation">the Search API handbook</a>.', $args);
   }
   return NULL;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for views_exposed_form().
+ *
+ * Custom integration for facets. When a Views exposed filter is modified on a
+ * search results page it will lose any facets which have been already selected.
+ * This adds hidden fields for each facet so their values are retained.
+ */
+function search_api_form_views_exposed_form_alter(&$form, FormStateInterface $form_state) {
+  // Retrieve the view object and the query plugin.
+  $storage = $form_state->getStorage();
+  if (!isset($storage['view'])) {
+    return;
+  }
+  $view = $storage['view'];
+  if (!($view instanceof ViewExecutable)) {
+    return;
+  }
+  $query_plugin = $view->getQuery();
+
+  // Make sure the view is based on Search API and has the "Preserve facets"
+  // option enabled, and that the Facets module is installed.
+  $preserve_facets = !empty($query_plugin->options['preserve_facet_query_args'])
+    && $query_plugin instanceof SearchApiQuery
+    && \Drupal::moduleHandler()->moduleExists('facets');
+  if ($preserve_facets) {
+    // Retrieve the facet source.
+    $query = $query_plugin->getSearchApiQuery();
+    $display_id = $query->getSearchId(FALSE);
+    $facet_source_id = str_replace(':', '__', 'search_api:' . $display_id);
+    $facet_source = \Drupal::entityTypeManager()
+      ->getStorage('facets_facet_source')
+      ->load($facet_source_id);
+    if (!$facet_source) {
+      return;
+    }
+
+    // Get the active facet filters from the query parameters.
+    $filter_key = $facet_source->getFilterKey() ?: 'f';
+    $filters = \Drupal::request()->query->get($filter_key, []);
+    // Iterate through the facet filters.
+    foreach ($filters as $key => $value) {
+      if (!is_string($value)) {
+        continue;
+      }
+      // Add a hidden form field for the facet parameter.
+      $form["{$filter_key}[$key]"] = [
+        '#type' => 'hidden',
+        '#value' => $value,
+      ];
+    }
+  }
 }

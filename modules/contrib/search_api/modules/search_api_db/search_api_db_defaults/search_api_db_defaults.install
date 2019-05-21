@@ -14,6 +14,14 @@ function search_api_db_defaults_requirements($phase) {
   $requirements = [];
 
   if ($phase == 'install') {
+    // In case this is installed at the same time as the Search API module
+    // itself, the class autoloader will not be able to find the
+    // \Drupal\search_api\IndexListBuilder class on its own. Load it manually.
+    if (!class_exists(IndexListBuilder::class)) {
+      $search_api_path = drupal_get_path('module', 'search_api');
+      require_once $search_api_path . '/src/IndexListBuilder.php';
+    }
+
     $errors = IndexListBuilder::checkDefaultsModuleCanBeInstalled();
     foreach ($errors as $type => $error) {
       $requirements["search_api_db_defaults:$type"] = [

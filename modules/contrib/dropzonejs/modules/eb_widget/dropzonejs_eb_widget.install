@@ -13,10 +13,12 @@ use Drupal\entity_browser\Entity\EntityBrowser;
  * Update hook dependencies.
  */
 function dropzonejs_eb_widget_update_dependencies() {
-  $dependencies['dropzonejs_eb_widget'] = [
-    8202 => ['media_entity' => 8201],
-  ];
-  return $dependencies;
+  if (\Drupal::moduleHandler()->moduleExists('media_entity')) {
+    $dependencies['dropzonejs_eb_widget'] = [
+      8202 => ['media_entity' => 8201],
+    ];
+    return $dependencies;
+  }
 }
 
 /**

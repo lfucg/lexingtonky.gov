@@ -6,7 +6,6 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Block\TitleBlockPluginInterface;
-use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -69,6 +68,7 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFilter('truncate', [$this, 'truncate']),
       new \Twig_SimpleFilter('view', [$this, 'view']),
       new \Twig_SimpleFilter('with', [$this, 'with']),
+      new \Twig_SimpleFilter('children', [$this, 'children']),
     ];
     // PHP filter should be enabled in settings.php file.
     if (Settings::get('twig_tweak_enable_php_filter')) {
@@ -115,37 +115,37 @@ class TwigExtension extends \Twig_Extension {
       return;
     }
 
-    $content = $block_plugin->build();
-
-    if ($content && !Element::isEmpty($content)) {
-      if ($wrapper) {
-        $build = [
-          '#theme' => 'block',
-          '#attributes' => [],
-          '#contextual_links' => [],
-          '#configuration' => $block_plugin->getConfiguration(),
-          '#plugin_id' => $block_plugin->getPluginId(),
-          '#base_plugin_id' => $block_plugin->getBaseId(),
-          '#derivative_plugin_id' => $block_plugin->getDerivativeId(),
-          'content' => $content,
-        ];
-      }
-      else {
-        $build = $content;
-      }
+    // Title block needs special treatment.
+    if ($block_plugin instanceof TitleBlockPluginInterface) {
+      $request = \Drupal::request();
+      $route_match = \Drupal::routeMatch();
+      $title = \Drupal::service('title_resolver')->getTitle($request, $route_match->getRouteObject());
+      $block_plugin->setTitle($title);
     }
-    else {
-      // Preserve cache metadata of empty blocks.
-      $build = [
-        '#markup' => '',
-        '#cache' => isset($content['#cache']) ? $content['#cache'] : [],
+
+    $build = [
+      'content' => $block_plugin->build(),
+      '#cache' => [
+        'contexts' => $block_plugin->getCacheContexts(),
+        'tags' => $block_plugin->getCacheTags(),
+        'max-age' => $block_plugin->getCacheMaxAge(),
+      ],
+    ];
+
+    if ($block_plugin instanceof TitleBlockPluginInterface) {
+      $build['#cache']['contexts'][] = 'url';
+    }
+
+    if ($wrapper && !Element::isEmpty($build['content'])) {
+      $build += [
+        '#theme' => 'block',
+        '#attributes' => [],
+        '#contextual_links' => [],
+        '#configuration' => $block_plugin->getConfiguration(),
+        '#plugin_id' => $block_plugin->getPluginId(),
+        '#base_plugin_id' => $block_plugin->getBaseId(),
+        '#derivative_plugin_id' => $block_plugin->getDerivativeId(),
       ];
-    }
-
-    if (!empty($content)) {
-      CacheableMetadata::createFromRenderArray($build)
-        ->merge(CacheableMetadata::createFromRenderArray($content))
-        ->applyTo($build);
     }
 
     return $build;
@@ -507,6 +507,12 @@ class TwigExtension extends \Twig_Extension {
    * @see \Drupal\Core\Url::fromUserInput()
    */
   public function drupalUrl($user_input, array $options = [], $check_access = FALSE) {
+    if (isset($options['langcode'])) {
+      $language_manager = \Drupal::languageManager();
+      if ($language = $language_manager->getLanguage($options['langcode'])) {
+        $options['language'] = $language;
+      }
+    }
     if (!in_array($user_input[0], ['/', '#', '?'])) {
       $user_input = '/' . $user_input;
     }
@@ -715,6 +721,22 @@ class TwigExtension extends \Twig_Extension {
   public function with(array $build, $key, $element) {
     $build[$key] = $element;
     return $build;
+  }
+
+  /**
+   * Filters out the children of a render array, optionally sorted by weight.
+   *
+   * @param array $build
+   *   The render array whose children are to be filtered.
+   * @param bool $sort
+   *   Boolean to indicate whether the children should be sorted by weight.
+   *
+   * @return array
+   *   The element's children.
+   */
+  public function children(array $build, $sort = FALSE) {
+    $keys = Element::children($build, $sort);
+    return array_intersect_key($build, array_flip($keys));
   }
 
   /**

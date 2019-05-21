@@ -59,4 +59,28 @@ class ViewModeFieldFormatter extends EntityReferenceFieldFormatter {
     return 'entity_reference_entity_view';
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    $definition = $this->getPluginDefinition();
+    $view_mode = $definition['view_mode'];
+
+    $view_modes = [];
+
+    foreach ($definition['entity_types'] as $type) {
+      $view_modes[] = "$type.$view_mode";
+    }
+
+    $entity_view_modes = $this->entityTypeManager
+      ->getStorage('entity_view_mode')
+      ->loadMultiple($view_modes);
+
+    foreach ($entity_view_modes as $view_mode) {
+      $this->addDependency($view_mode->getConfigDependencyKey(), $view_mode->getConfigDependencyName());
+    }
+
+    return $this->dependencies;
+  }
+
 }

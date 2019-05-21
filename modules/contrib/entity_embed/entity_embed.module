@@ -2,9 +2,31 @@
 
 /**
  * @file
- * Framework for allowing entities to be embedded using CKEditor plugin and text
- * format.
+ * Framework for allowing entities to be embedded in CKEditor.
  */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_help().
+ */
+function entity_embed_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.entity_embed':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Entity Embed module allows entities to be embedded in formatted text.') . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Embedding media') . '</dt>';
+      $output .= '<dd>' . t('This module, and the text filter that it provides along with the CKEditor integration, is especially suited to allow content authors to embed media in their textual content: images, video, and so on.') . '</dd>';
+      $output .= '<dt>' . t('Embedding arbitrary content') . '</dt>';
+      $output .= '<dd>' . t('As mentioned above, this module is especially helpful for embedding media in textual content, but it is not necessarily restricted to that; it allows <em>any</em> entity to be embedded. On an e-commerce site, you may want to embed products, on a company blog you may want to embed past projects, and so on.') . '</dd>';
+      $output .= '</dl>';
+      return $output;
+  }
+}
 
 /**
  * Implements hook_theme().
@@ -27,14 +49,16 @@ function entity_embed_theme() {
  *   - element: An associative array containing the properties of the element.
  *     Properties used: #attributes, #children.
  */
-function template_preprocess_entity_embed_container(&$variables) {
+function template_preprocess_entity_embed_container(array &$variables) {
   $variables['element'] += ['#attributes' => []];
   $variables['attributes'] = $variables['element']['#attributes'];
   $variables['children'] = $variables['element']['#children'];
 }
 
 /**
- * Implements hook_entity_embed_display_plugins_alter() on behalf of file.module.
+ * Implements hook_entity_embed_display_plugins_alter().
+ *
+ * Implementation on behalf of the file module.
  */
 function file_entity_embed_display_plugins_alter(array &$plugins) {
   // The RSS enclosure field formatter is not usable for Entity Embed.
@@ -42,7 +66,9 @@ function file_entity_embed_display_plugins_alter(array &$plugins) {
 }
 
 /**
- * Implements hook_entity_embed_display_plugins_alter() on behalf of taxonomy.module.
+ * Implements hook_entity_embed_display_plugins_alter().
+ *
+ * Implementation on behalf of the taxonomy module.
  */
 function taxonomy_entity_embed_display_plugins_alter(array &$plugins) {
   // The RSS category field formatter is not usable for Entity Embed.
@@ -62,5 +88,67 @@ function taxonomy_entity_embed_display_plugins_alter(array &$plugins) {
 function entity_embed_entity_embed_display_plugins_for_context_alter(array &$definitions, array $context) {
   if ($context['entity_type'] === 'file' && !\Drupal::moduleHandler()->moduleExists('file_entity')) {
     unset($definitions['entity_reference:entity_reference_entity_view']);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function entity_embed_form_filter_format_edit_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  // Add an additional validate callback so we can ensure the order of filters
+  // is correct.
+  $form['#validate'][] = 'entity_embed_filter_format_edit_form_validate';
+}
+
+/**
+ * Validate callback to ensure order of filters does not break anything.
+ */
+function entity_embed_filter_format_edit_form_validate($form, FormStateInterface $form_state) {
+  // This validate handler is not applicable when using the 'Configure' button.
+  if ($form_state->getTriggeringElement()['#name'] === 'editor_configure') {
+    return;
+  }
+
+  $filters = $form_state->getValue('filters');
+
+  $get_filter_label = function ($filter_plugin_id) use ($form) {
+    return (string) $form['filters']['order'][$filter_plugin_id]['filter']['#markup'];
+  };
+
+  // The "entity_embed" filter must run after "filter_align", "filter_caption",
+  // and "filter_html_image_secure".
+  if (!empty($filters['entity_embed']['status'])) {
+    $precedents = [
+      'filter_align',
+      'filter_caption',
+      'filter_html_image_secure',
+    ];
+
+    $error_filters = [];
+    foreach ($precedents as $filter_name) {
+
+      // A filter that should run before entity embed filter.
+      $precedent = $filters[$filter_name];
+
+      if (empty($precedent['status']) || !isset($precedent['weight'])) {
+        continue;
+      }
+
+      if ($precedent['weight'] >= $filters['entity_embed']['weight']) {
+        $error_filters[$filter_name] = $get_filter_label($filter_name);
+      }
+    }
+
+    if (!empty($error_filters)) {
+      $singular = 'The %entity-embed-filter-label filter needs to be placed after the %filter filter.';
+      $plural = 'The %entity-embed-filter-label filter needs to be placed after the following filters: %filters.';
+      $error_message = \Drupal::translation()->formatPlural(count($error_filters), $singular, $plural, [
+        '%entity-embed-filter-label' => $get_filter_label('entity_embed'),
+        '%filter' => reset($error_filters),
+        '%filters' => implode(', ', $error_filters),
+      ]);
+
+      $form_state->setErrorByName('filters', $error_message);
+    }
   }
 }

@@ -58,7 +58,6 @@ class RenderedItemTest extends ProcessorTestBase {
     // Load additional configuration and needed schemas. (The necessary schemas
     // for using nodes are already installed by the parent method.)
     $this->installConfig(['system', 'filter', 'node', 'comment', 'user']);
-    $this->installSchema('system', ['router']);
     \Drupal::service('router.builder')->rebuild();
 
     // Create the default languages and a new one for translations.

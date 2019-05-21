@@ -34,6 +34,8 @@ class ResolveBindingsPass extends AbstractRecursivePass
      */
     public function process(ContainerBuilder $container)
     {
+        $this->usedBindings = $container->getRemovedBindingIds();
+
         try {
             parent::process($container);
 
@@ -115,15 +117,22 @@ class ResolveBindingsPass extends AbstractRecursivePass
             if ($method instanceof \ReflectionFunctionAbstract) {
                 $reflectionMethod = $method;
             } else {
-                $reflectionMethod = $this->getReflectionMethod($value, $method);
+                try {
+                    $reflectionMethod = $this->getReflectionMethod($value, $method);
+                } catch (RuntimeException $e) {
+                    if ($value->getFactory()) {
+                        continue;
+                    }
+                    throw $e;
+                }
             }
 
             foreach ($reflectionMethod->getParameters() as $key => $parameter) {
-                if (array_key_exists($key, $arguments) && '' !== $arguments[$key]) {
+                if (\array_key_exists($key, $arguments) && '' !== $arguments[$key]) {
                     continue;
                 }
 
-                if (array_key_exists('$'.$parameter->name, $bindings)) {
+                if (\array_key_exists('$'.$parameter->name, $bindings)) {
                     $arguments[$key] = $this->getBindingValue($bindings['$'.$parameter->name]);
 
                     continue;

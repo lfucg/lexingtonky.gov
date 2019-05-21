@@ -352,7 +352,7 @@ class FieldsHelper implements FieldsHelperInterface {
     }
 
     $property = $this->getInnerProperty($properties[$key]);
-    if (!isset($nestedPath)) {
+    if ($nestedPath === NULL) {
       return $property;
     }
 

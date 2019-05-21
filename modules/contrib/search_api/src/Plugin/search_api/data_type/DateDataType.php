@@ -29,7 +29,7 @@ class DateDataType extends DataTypePluginBase {
       return (int) $value;
     }
 
-    $timezone = new \DateTimezone(DateTimeItemInterface::STORAGE_TIMEZONE);
+    $timezone = new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE);
     $date = new DateTimePlus($value, $timezone);
     // Add in time component if this is a date-only field.
     if (strpos($value, ':') === FALSE) {

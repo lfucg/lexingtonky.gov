@@ -12,7 +12,12 @@ use Drupal\node\NodeInterface;
  * Implement hook_node_grants().
  */
 function search_api_test_node_grants(AccountInterface $account, $op) {
-  $grants['search_api_test'] = [$account->id()];
+  $grants = [];
+
+  if (\Drupal::state()->get('search_api_test_add_node_access_grant', TRUE)) {
+    $grants['search_api_test'] = [$account->id()];
+  }
+
   return $grants;
 }
 
@@ -20,14 +25,18 @@ function search_api_test_node_grants(AccountInterface $account, $op) {
  * Implement hook_node_access_records().
  */
 function search_api_test_node_access_records(NodeInterface $node) {
-  $grants[] = [
-    'realm' => 'search_api_test',
-    'gid' => $node->getOwnerId(),
-    'grant_view' => 1,
-    'grant_update' => 0,
-    'grant_delete' => 0,
-    'langcode' => $node->language()->getId(),
-  ];
+  $grants = [];
+
+  if (\Drupal::state()->get('search_api_test_add_node_access_grant', TRUE)) {
+    $grants[] = [
+      'realm' => 'search_api_test',
+      'gid' => $node->getOwnerId(),
+      'grant_view' => 1,
+      'grant_update' => 0,
+      'grant_delete' => 0,
+      'langcode' => $node->language()->getId(),
+    ];
+  }
 
   return $grants;
 }

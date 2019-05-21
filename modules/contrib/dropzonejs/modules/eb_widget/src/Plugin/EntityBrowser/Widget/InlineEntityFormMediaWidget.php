@@ -169,14 +169,18 @@ class InlineEntityFormMediaWidget extends MediaEntityDropzoneJsEbWidget {
   public function submitEdit(array $form, FormStateInterface $form_state) {
     $form_state->setRebuild(TRUE);
 
-    // Files have to saved before they can be viewed in the IEF form.
     $media_entities = $this->prepareEntities($form, $form_state);
-    $source_field = $this->getType()->getSource()->getSourceFieldDefinition($this->getType())->getName();
-    foreach ($media_entities as $media_entity) {
+    foreach ($media_entities as $id => $media_entity) {
       /** @var \Drupal\file\Entity\File $file */
+      // Files have to saved before they can be viewed in the IEF form.
+      $source_field = $this->getType()->getSource()->getSourceFieldDefinition($this->getType())->getName();
       $file = $media_entity->$source_field->entity;
       $file->save();
       $media_entity->$source_field->target_id = $file->id();
+
+      /** @var \Drupal\dropzonejs\Events\DropzoneMediaEntityCreateEvent $event */
+      $event = $this->eventDispatcher->dispatch(Events::MEDIA_ENTITY_PRECREATE, new DropzoneMediaEntityCreateEvent($media_entity, $file, $form, $form_state, $form));
+      $media_entities[$id] = $event->getMediaEntity();
     }
 
     $form_state->set('uploaded_entities', $media_entities);
@@ -231,14 +235,15 @@ class InlineEntityFormMediaWidget extends MediaEntityDropzoneJsEbWidget {
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
     $media_entities = $this->prepareEntitiesFromForm($form, $form_state);
-    $source_field = $this->getType()->getSource()->getSourceFieldDefinition($this->getType())->getName();
 
-    foreach ($media_entities as $media_entity) {
+    foreach ($media_entities as $id => $media_entity) {
+      $source_field = $media_entity->getSource()->getConfiguration()['source_field'];
       $file = $media_entity->{$source_field}->entity;
       /** @var \Drupal\dropzonejs\Events\DropzoneMediaEntityCreateEvent $event */
       $event = $this->eventDispatcher->dispatch(Events::MEDIA_ENTITY_CREATE, new DropzoneMediaEntityCreateEvent($media_entity, $file, $form, $form_state, $element));
       $media_entity = $event->getMediaEntity();
       $media_entity->save();
+      $media_entities[$id] = $media_entity;
     }
 
     if (!empty(array_filter($media_entities))) {

@@ -25,7 +25,7 @@ class FileFieldFormatter extends EntityReferenceFieldFormatter {
    */
   public function getFieldValue() {
     $value = parent::getFieldValue();
-    $value += array_intersect_key($this->getConfiguration(), array('description' => ''));
+    $value += array_intersect_key($this->getConfiguration(), ['description' => '']);
     return $value;
   }
 
@@ -47,12 +47,12 @@ class FileFieldFormatter extends EntityReferenceFieldFormatter {
 
     // Description is stored in the configuration since it doesn't map to an
     // actual HTML attribute.
-    $form['description'] = array(
+    $form['description'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Description'),
       '#default_value' => $this->getConfigurationValue('description'),
       '#description' => $this->t('The description may be used as the label of the link to the file.'),
-    );
+    ];
 
     return $form;
   }

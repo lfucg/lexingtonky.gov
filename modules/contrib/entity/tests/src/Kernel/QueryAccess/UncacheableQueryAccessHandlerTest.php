@@ -160,8 +160,8 @@ class UncacheableQueryAccessHandlerTest extends EntityKernelTestBase {
   /**
    * @covers ::getConditions
    */
-  public function testUpdateDelete() {
-    foreach (['update', 'delete'] as $operation) {
+  public function testUpdateDuplicateDelete() {
+    foreach (['update', 'duplicate', 'delete'] as $operation) {
       // Any permission.
       $user = $this->createUser([], ["$operation any entity_test_enhanced_with_owner"]);
       $conditions = $this->handler->getConditions($operation, $user);

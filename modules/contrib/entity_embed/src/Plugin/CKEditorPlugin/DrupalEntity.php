@@ -37,11 +37,11 @@ class DrupalEntity extends EmbedCKEditorPluginBase {
    * {@inheritdoc}
    */
   public function getConfig(Editor $editor) {
-    return array(
+    return [
       'DrupalEntity_dialogTitleAdd' => t('Insert entity'),
       'DrupalEntity_dialogTitleEdit' => t('Edit entity'),
       'DrupalEntity_buttons' => $this->getButtons(),
-    );
+    ];
   }
 
 }

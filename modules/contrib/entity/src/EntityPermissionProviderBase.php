@@ -113,6 +113,7 @@ class EntityPermissionProviderBase implements EntityPermissionProviderInterface,
   protected function buildEntityTypePermissions(EntityTypeInterface $entity_type) {
     $entity_type_id = $entity_type->id();
     $has_owner = $entity_type->entityClassImplements(EntityOwnerInterface::class);
+    $has_duplicate_form = $entity_type->hasLinkTemplate('duplicate-form');
     $singular_label = $entity_type->getSingularLabel();
     $plural_label = $entity_type->getPluralLabel();
 
@@ -133,6 +134,18 @@ class EntityPermissionProviderBase implements EntityPermissionProviderInterface,
           '@type' => $plural_label,
         ]),
       ];
+      if ($has_duplicate_form) {
+        $permissions["duplicate any {$entity_type_id}"] = [
+          'title' => $this->t('Duplicate any @type', [
+            '@type' => $singular_label,
+          ]),
+        ];
+        $permissions["duplicate own {$entity_type_id}"] = [
+          'title' => $this->t('Duplicate own @type', [
+            '@type' => $plural_label,
+          ]),
+        ];
+      }
       $permissions["delete any {$entity_type_id}"] = [
         'title' => $this->t('Delete any @type', [
           '@type' => $singular_label,
@@ -150,6 +163,13 @@ class EntityPermissionProviderBase implements EntityPermissionProviderInterface,
           '@type' => $plural_label,
         ]),
       ];
+      if ($has_duplicate_form) {
+        $permissions["duplicate {$entity_type_id}"] = [
+          'title' => $this->t('Duplicate @type', [
+            '@type' => $plural_label,
+          ]),
+        ];
+      }
       $permissions["delete {$entity_type_id}"] = [
         'title' => $this->t('Delete @type', [
           '@type' => $plural_label,
@@ -173,6 +193,7 @@ class EntityPermissionProviderBase implements EntityPermissionProviderInterface,
     $entity_type_id = $entity_type->id();
     $bundles = $this->entityTypeBundleInfo->getBundleInfo($entity_type_id);
     $has_owner = $entity_type->entityClassImplements(EntityOwnerInterface::class);
+    $has_duplicate_form = $entity_type->hasLinkTemplate('duplicate-form');
     $singular_label = $entity_type->getSingularLabel();
     $plural_label = $entity_type->getPluralLabel();
 
@@ -198,6 +219,20 @@ class EntityPermissionProviderBase implements EntityPermissionProviderInterface,
             '@type' => $plural_label,
           ]),
         ];
+        if ($has_duplicate_form) {
+          $permissions["duplicate any {$bundle_name} {$entity_type_id}"] = [
+            'title' => $this->t('@bundle: Duplicate any @type', [
+              '@bundle' => $bundle_info['label'],
+              '@type' => $singular_label,
+            ]),
+          ];
+          $permissions["duplicate own {$bundle_name} {$entity_type_id}"] = [
+            'title' => $this->t('@bundle: Duplicate own @type', [
+              '@bundle' => $bundle_info['label'],
+              '@type' => $plural_label,
+            ]),
+          ];
+        }
         $permissions["delete any {$bundle_name} {$entity_type_id}"] = [
           'title' => $this->t('@bundle: Delete any @type', [
             '@bundle' => $bundle_info['label'],
@@ -218,6 +253,14 @@ class EntityPermissionProviderBase implements EntityPermissionProviderInterface,
             '@type' => $plural_label,
           ]),
         ];
+        if ($has_duplicate_form) {
+          $permissions["duplicate {$bundle_name} {$entity_type_id}"] = [
+            'title' => $this->t('@bundle: Duplicate @type', [
+              '@bundle' => $bundle_info['label'],
+              '@type' => $plural_label,
+            ]),
+          ];
+        }
         $permissions["delete {$bundle_name} {$entity_type_id}"] = [
           'title' => $this->t('@bundle: Delete @type', [
             '@bundle' => $bundle_info['label'],

@@ -73,7 +73,7 @@ class BackendTest extends BackendTestBase {
    */
   protected function checkBackendSpecificFeatures() {
     $this->checkMultiValuedInfo();
-    $this->editServerPartial();
+    $this->setServerMatchMode();
     $this->searchSuccessPartial();
     $this->editServerStartsWith();
     $this->searchSuccessStartsWith();
@@ -210,12 +210,17 @@ class BackendTest extends BackendTestBase {
   }
 
   /**
-   * Edits the server to enable partial matches.
+   * Edits the server to sets the match mode.
+   *
+   * @param string $match_mode
+   *   The matching mode to set – "words", "partial" or "prefix".
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  protected function editServerPartial() {
+  protected function setServerMatchMode($match_mode = 'partial') {
     $server = $this->getServer();
     $backend_config = $server->getBackendConfig();
-    $backend_config['matching'] = 'partial';
+    $backend_config['matching'] = $match_mode;
     $server->setBackendConfig($backend_config);
     $this->assertTrue((bool) $server->save(), 'The server was successfully edited.');
     $this->resetEntityCache();
@@ -640,9 +645,9 @@ class BackendTest extends BackendTestBase {
   }
 
   /**
-   * Tests changing of field types.
+   * Tests facets functionality for empty result sets.
    *
-   * @see https://www.drupal.org/project/search_api/issues/2994022
+   * @see https://www.drupal.org/node/2994022
    */
   protected function regressionTest2994022() {
     $query = $this->buildSearch('nonexistent_search_term');
@@ -940,6 +945,99 @@ class BackendTest extends BackendTestBase {
         $this->assertEquals($expected, $indexed_value, "Indexing of date field with $label value.");
       }
     }
+  }
+
+  /**
+   * Tests negated fulltext searches with substring matching.
+   *
+   * @param string $match_mode
+   *   The match mode to use – "partial", "prefix" or "words".
+   *
+   * @see https://www.drupal.org/project/search_api/issues/2949962
+   *
+   * @dataProvider regression2949962DataProvider
+   */
+  public function testRegression2949962($match_mode) {
+    $this->insertExampleContent();
+    $this->setServerMatchMode($match_mode);
+    $this->indexItems($this->indexId);
+
+    $searches = [
+      'not this word' => [
+        'keys' => [
+          '#conjunction' => 'OR',
+          '#negation' => TRUE,
+          'test',
+        ],
+        'expected_results' => [
+          1,
+          3,
+          4,
+          5,
+        ],
+      ],
+      'none of these words' => [
+        'keys' => [
+          '#conjunction' => 'OR',
+          '#negation' => TRUE,
+          'test',
+          'foo',
+        ],
+        'expected_results' => [
+          3,
+          5,
+        ],
+      ],
+      'not all of these words' => [
+        'keys' => [
+          '#conjunction' => 'AND',
+          '#negation' => TRUE,
+          'foo baz',
+        ],
+        'expected_results' => [
+          2,
+          3,
+          5,
+        ],
+      ],
+      'complex keywords' => [
+        'keys' => [
+          [
+            'foo',
+            'bar',
+            '#conjunction' => 'AND',
+          ],
+          [
+            'test',
+            '#conjunction' => 'OR',
+            '#negation' => TRUE,
+          ],
+          '#conjunction' => 'AND',
+        ],
+        'expected_results' => [
+          1,
+        ],
+      ],
+    ];
+
+    foreach ($searches as $search) {
+      $results = $this->buildSearch($search['keys'], [], ['name'])->execute();
+      $this->assertResults($search['expected_results'], $results);
+    }
+  }
+
+  /**
+   * Provides test data for testRegression2949962().
+   *
+   * @return array
+   *   An associative array of argument arrays for testRegression2949962().
+   */
+  public function regression2949962DataProvider() {
+    return [
+      'Match mode "partial"' => ['partial'],
+      'Match mode "prefix"' => ['prefix'],
+      'Match mode "words"' => ['words'],
+    ];
   }
 
 }

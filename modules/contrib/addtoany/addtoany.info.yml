@@ -7,8 +7,8 @@ dependencies:
   - drupal:node
 configure: addtoany.admin_settings
 
-# Information added by Drupal.org packaging script on 2018-07-03
-version: '8.x-1.10'
+# Information added by Drupal.org packaging script on 2019-04-08
+version: '8.x-1.12'
 core: '8.x'
 project: 'addtoany'
-datestamp: 1530656924
+datestamp: 1554702784

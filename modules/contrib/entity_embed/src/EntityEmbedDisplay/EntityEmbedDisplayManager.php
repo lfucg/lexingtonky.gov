@@ -32,19 +32,20 @@ class EntityEmbedDisplayManager extends DefaultPluginManager {
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
     parent::__construct('Plugin/entity_embed/EntityEmbedDisplay', $namespaces, $module_handler, 'Drupal\entity_embed\EntityEmbedDisplay\EntityEmbedDisplayInterface', 'Drupal\entity_embed\Annotation\EntityEmbedDisplay');
     $this->alterInfo('entity_embed_display_plugins');
-    $this->setCacheBackend($cache_backend, 'entity_embed_display_plugins');
+    // @todo Move the cache tag to the derivers once https://www.drupal.org/node/3001284 lands.
+    $this->setCacheBackend($cache_backend, 'entity_embed_display_plugins', ['config:entity_view_mode_list']);
   }
 
   /**
    * Overrides DefaultPluginManager::processDefinition().
    */
   public function processDefinition(&$definition, $plugin_id) {
-    $definition += array(
+    $definition += [
       'entity_types' => FALSE,
-    );
+    ];
 
     if ($definition['entity_types'] !== FALSE && !is_array($definition['entity_types'])) {
-      $definition['entity_types'] = array($definition['entity_types']);
+      $definition['entity_types'] = [$definition['entity_types']];
     }
   }
 
@@ -61,7 +62,7 @@ class EntityEmbedDisplayManager extends DefaultPluginManager {
    *
    * @see https://drupal.org/node/2277981
    */
-  public function getDefinitionsForContexts(array $contexts = array()) {
+  public function getDefinitionsForContexts(array $contexts = []) {
     $definitions = $this->getDefinitions();
     $valid_ids = array_filter(array_keys($definitions), function ($id) use ($contexts) {
       try {
@@ -95,7 +96,7 @@ class EntityEmbedDisplayManager extends DefaultPluginManager {
    *   An array of valid plugin labels, keyed by plugin ID.
    */
   public function getDefinitionOptionsForEntity(EntityInterface $entity) {
-    $definitions = $this->getDefinitionsForContexts(array('entity' => $entity, 'entity_type' => $entity->getEntityTypeId()));
+    $definitions = $this->getDefinitionsForContexts(['entity' => $entity, 'entity_type' => $entity->getEntityTypeId()]);
     $definitions = $this->filterExposedDefinitions($definitions);
     return array_map(function ($definition) {
       return (string) $definition['label'];
@@ -112,7 +113,7 @@ class EntityEmbedDisplayManager extends DefaultPluginManager {
    *   Returns plugin definitions that should be displayed in the UI.
    */
   protected function filterExposedDefinitions(array $definitions) {
-    return array_filter($definitions, function($definition) {
+    return array_filter($definitions, function ($definition) {
       return empty($definition['no_ui']);
     });
   }
@@ -130,7 +131,7 @@ class EntityEmbedDisplayManager extends DefaultPluginManager {
    *   An array of valid plugin labels, keyed by plugin ID.
    */
   public function getDefinitionOptionsForEntityType($entity_type) {
-    $definitions = $this->getDefinitionsForContexts(array('entity_type' => $entity_type));
+    $definitions = $this->getDefinitionsForContexts(['entity_type' => $entity_type]);
     $definitions = $this->filterExposedDefinitions($definitions);
     return array_map(function ($definition) {
       return (string) $definition['label'];

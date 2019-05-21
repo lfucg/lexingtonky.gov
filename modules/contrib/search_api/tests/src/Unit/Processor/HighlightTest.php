@@ -1060,6 +1060,52 @@ END;
   }
 
   /**
+   * Provides a regression test for bug #3022724.
+   *
+   * Before the bug was fixed, certain combinations of text field values and
+   * keywords could lead to an infinite loop, or at least to the excerpt only
+   * containing the first snippet.
+   *
+   * @param string $text
+   *   The input text.
+   * @param string[] $keys
+   *   The keys that should be highlighted.
+   * @param string $expected
+   *   The expected result containing the highlighted strings.
+   *
+   * @see https://www.drupal.org/node/3022724
+   *
+   * @dataProvider regressionBug3022724DataProvider
+   */
+  public function testRegressionBug3022724($text, array $keys, $expected) {
+    $method = new \ReflectionMethod($this->processor, 'createExcerpt');
+    $method->setAccessible(TRUE);
+    $excerpt = $method->invoke($this->processor, $text, $keys);
+    $this->assertEquals($expected, $excerpt);
+  }
+
+  /**
+   * Provides test data for testRegressionBug3022724().
+   *
+   * @return array
+   *   An array of argument arrays for testRegressionBug3022724().
+   */
+  public function regressionBug3022724DataProvider() {
+    return [
+      'multiple snippets' => [
+        'text' => 'field value 1 … field value 2 … field value with first foo match … then long text of no matches, interspersed with some Hungarian: Jó napot kívánok! Hogy vagy? … then a field value with a second foo match – will it get highlighted?',
+        'keys' => ['foo'],
+        'expected' => '… field value 1 … field value 2 … field value with first <strong>foo</strong> match … then long text of no matches, interspersed with … kívánok! Hogy vagy? … then a field value with a second <strong>foo</strong> match – will it get highlighted? …',
+      ],
+      'overlong word in prefix' => [
+        'text' => 'field value 1 … field value 2 … this is someVeryLongTextWhichHasNoSpacesInItWhichCanLeadToProblemsGettingAContextForHighlightingThis.Foo.Match',
+        'keys' => ['foo'],
+        'expected' => '… nItWhichCanLeadToProblemsGettingAContextForHighlightingThis.<strong>Foo</strong>.Match …',
+      ],
+    ];
+  }
+
+  /**
    * Tests field highlighting with a result set that has some highlighting data.
    */
   public function testPostprocessSearchResultsWithExistingHighlighting() {

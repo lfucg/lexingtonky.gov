@@ -43,7 +43,10 @@
   <div class="tt-token-data">{{ drupal_token('node:title', {'node': node}) }}</div>
   <div class="tt-config">{{ drupal_config('user.settings', 'anonymous') }}</div>
   <div class="tt-title">{{ drupal_title() }}</div>
-  <div class="tt-url">{{ drupal_url('node/1', {absolute: true}) }}</div>
+  <div class="tt-url">
+    <div data-case="default">{{ drupal_url('node/1', {absolute: true}) }}</div>
+    <div data-case="with-langcode">{{ drupal_url('node/1', {absolute: true, langcode: 'ru'}) }}</div>
+  </div>
   <div class="tt-link">{{ drupal_link('Edit', 'node/1/edit', {absolute: true}) }}</div>
   <div class="tt-link-html">{% set link_text %}<b>Edit</b>{% endset %}{{ drupal_link(link_text, 'node/1/edit', {absolute: true}) }}</div>
   <div class="tt-messages">{{ drupal_messages() }}</div>
@@ -56,6 +59,20 @@
   <div class="tt-check-markup">{{ '<b>bold</b> <strong>strong</strong>' | check_markup('twig_tweak_test') }}</div>
   <div class="tt-truncate">{{ 'Hello world!'|truncate(10, true, true) }}</div>
   <div class="tt-with">{{ {'#markup':'Example'}|with('#prefix', '<b>')|with('#suffix', '</b>') }}</div>
+  <div class="tt-children">
+    {%-
+      set build = {
+        're': {'#markup': 're'},
+        '#sol':  {'#markup': '#sol'},
+        'mi': {'#markup': 'mi'},
+        '#fa': {'#markup': '#fa'},
+        'do':  {'#markup': 'do', '#weight': -10},
+      }
+    -%}
+    {%- for value in build|children(true) -%}
+      {{- value -}}
+    {%- endfor -%}
+  </div>
   <div class="tt-node-view">{{ node|view }}</div>
   <div class="tt-field-list-view">{{ node.title|view }}</div>
   <div class="tt-field-item-view">{{ node.title[0]|view }}</div>

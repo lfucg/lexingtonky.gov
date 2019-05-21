@@ -8,6 +8,9 @@ views.query.search_api_query:
     skip_access:
       type: boolean
       label: Do not execute additional access checks for all items in the search results.
+    preserve_facet_query_args:
+      type: boolean
+      label: By default, changing an exposed filter would reset all selected facets. This option allows you to prevent this behavior.
 
 views.row.search_api:
   type: views_row
@@ -199,6 +202,22 @@ views.field.search_api_numeric:
       sequence:
         type: string
         label: 'Singular/Plural string'
+
+views.field.search_api_rendered_item:
+  type: views.field.search_api
+  label: 'Search API rendered item'
+  mapping:
+    view_modes:
+      type: sequence
+      label: 'View modes for each datasource'
+      orderby: key
+      sequence:
+        type: sequence
+        label: 'A list of all the bundles and their configured view mode'
+        orderby: key
+        sequence:
+          type: string
+          label: 'View mode for the specific bundle'
 
 views.filter.search_api_boolean:
   type: views.filter.boolean

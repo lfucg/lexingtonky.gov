@@ -11,6 +11,7 @@ use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\DataReferenceDefinitionInterface;
 use Drupal\search_api\Datasource\DatasourceInterface;
 use Drupal\search_api\Entity\Index;
+use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\FieldInterface;
 use Drupal\search_api\SearchApiException;
 use Drupal\search_api\Utility\Utility;
@@ -85,7 +86,7 @@ function search_api_views_data() {
       }
 
       // Add special fields.
-      _search_api_views_data_special_fields($table);
+      _search_api_views_data_special_fields($table, $index);
 
       // Add relationships for field data of all datasources.
       $datasource_tables_prefix = 'search_api_datasource_' . $index->id() . '_';
@@ -219,7 +220,7 @@ function _search_api_views_get_handlers(FieldInterface $field) {
 function _search_api_views_handler_mapping() {
   $mapping = &drupal_static(__FUNCTION__);
 
-  if (!isset($mapping)) {
+  if ($mapping === NULL) {
     $mapping = [
       'boolean' => [
         'argument' => [
@@ -401,8 +402,10 @@ function _search_api_views_handler_adjustments($type, FieldInterface $field, arr
  *
  * @param array $table
  *   The existing Views data table definition.
+ * @param \Drupal\search_api\IndexInterface $index
+ *   The index for which the Views data table is created.
  */
-function _search_api_views_data_special_fields(array &$table) {
+function _search_api_views_data_special_fields(array &$table, IndexInterface $index) {
   $id_field = _search_api_views_find_field_alias('search_api_id', $table);
   $table[$id_field]['title'] = t('Item ID');
   $table[$id_field]['help'] = t("The item's internal (Search API-specific) ID");
@@ -476,7 +479,104 @@ function _search_api_views_data_special_fields(array &$table) {
     $table[$mlt_field]['real field'] = 'search_api_more_like_this';
   }
 
-  // @todo Add an "All taxonomy terms" contextual filter (if applicable).
+  $rendered_field = _search_api_views_find_field_alias('search_api_rendered_item', $table);
+  $table[$rendered_field]['group'] = t('Search');
+  $table[$rendered_field]['title'] = t('Rendered item');
+  $table[$rendered_field]['help'] = t('Renders item in a view mode.');
+  $table[$rendered_field]['field']['id'] = 'search_api_rendered_item';
+  if ($rendered_field != 'search_api_rendered_item') {
+    $table[$rendered_field]['real field'] = 'search_api_rendered_item';
+  }
+
+  // If at least one datasource is based on an entity type that offers
+  // operations, we provide them as a field.
+  foreach ($index->getDatasources() as $datasource) {
+    if ($entity_type_id = $datasource->getEntityTypeId()) {
+      $entity_type_id = \Drupal::entityTypeManager()
+        ->getDefinition($entity_type_id);
+      if ($entity_type_id->hasListBuilderClass()) {
+        $operations_field = _search_api_views_find_field_alias('search_api_operations', $table);
+        $table[$operations_field]['title'] = t('Operations links');
+        $table[$operations_field]['help'] = t('Provides links to perform entity operations.');
+        $table[$operations_field]['field']['id'] = 'search_api_entity_operations';
+        if ($operations_field !== 'search_api_operations') {
+          $table[$operations_field]['real field'] = 'search_api_operations';
+        }
+        break;
+      }
+    }
+  }
+
+  // If there are taxonomy term references indexed in the index, include the
+  // "All taxonomy term fields" contextual filter. We also save for all fields
+  // whether they contain only terms of a certain vocabulary, keying that
+  // information by vocabulary for later ease of use.
+  $vocabulary_fields = [];
+  /** @var \Drupal\search_api\Item\Field $field */
+  foreach ($index->getFields() as $field_id => $field) {
+    // Search for taxonomy term reference fields, and catch problems early on.
+    try {
+      $property = $field->getDataDefinition();
+      $datasource = $field->getDatasource();
+    }
+    catch (SearchApiException $e) {
+      // Will probably cause other problems elsewhere, but here we can just
+      // ignore it.
+      continue;
+    }
+    if (!$datasource) {
+      continue;
+    }
+    if ($property->getDataType() !== 'field_item:entity_reference') {
+      continue;
+    }
+    $settings = $property->getSettings();
+    if (!isset($settings['target_type'])
+        || $settings['target_type'] !== 'taxonomy_term') {
+      continue;
+    }
+    $entity_type_id = $datasource->getEntityTypeId();
+    // Field instances per bundle can reference different vocabularies, make
+    // sure we add them all.
+    $bundles = \Drupal::getContainer()->get('entity_type.bundle.info')
+      ->getBundleInfo($entity_type_id);
+    foreach ($bundles as $bundle_id => $bundle) {
+      $bundle_fields = \Drupal::getContainer()->get('entity_field.manager')
+        ->getFieldDefinitions($entity_type_id, $bundle_id);
+      // Check if this bundle has the taxonomy entity reference field.
+      if (array_key_exists($field->getFieldIdentifier(), $bundle_fields)) {
+        /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
+        $field_definition = $bundle_fields[$field->getFieldIdentifier()];
+        $bundle_settings = $field_definition->getSettings();
+        if (!empty($bundle_settings['handler_settings']['target_bundles'])) {
+          foreach ($bundle_settings['handler_settings']['target_bundles'] as $vocabulary_id) {
+            $vocabulary_fields[$vocabulary_id][] = $field_id;
+          }
+        }
+        else {
+          // If we can't determine the referenced vocabularies, we use the
+          // special "" key to mean "any vocabulary".
+          $vocabulary_fields[''][] = $field_id;
+        }
+      }
+    }
+  }
+
+  if ($vocabulary_fields) {
+    // Make sure $vocabulary_fields doesn't contain duplicates for fields that
+    // are shared between bundles.
+    $vocabulary_fields = array_map('array_unique', $vocabulary_fields);
+
+    $all_terms_field = _search_api_views_find_field_alias('search_api_all_terms', $table);
+    $table[$all_terms_field]['group'] = t('Search');
+    $table[$all_terms_field]['title'] = t('All taxonomy term fields');
+    $table[$all_terms_field]['help'] = t('Search all indexed taxonomy term fields');
+    $table[$all_terms_field]['argument']['id'] = 'search_api_all_terms';
+    $table[$all_terms_field]['argument']['vocabulary_fields'] = $vocabulary_fields;
+    if ($all_terms_field != 'search_api_all_terms') {
+      $table[$all_terms_field]['real field'] = 'search_api_all_terms';
+    }
+  }
 }
 
 /**
@@ -725,7 +825,7 @@ function _search_api_views_get_field_handler_for_property(DataDefinitionInterfac
 function _search_api_views_get_field_handler_mapping() {
   $mappings = &drupal_static(__FUNCTION__);
 
-  if (!isset($mappings)) {
+  if ($mappings === NULL) {
     // First create a plain mapping and pass it to the alter hook.
     $plain_mapping = [];
 

@@ -2,7 +2,10 @@
 
 namespace Drupal\Tests\search_api\Unit\Processor;
 
+use Drupal\search_api\Entity\Index;
+use Drupal\search_api\Plugin\search_api\parse_mode\Direct;
 use Drupal\search_api\Plugin\search_api\processor\Tokenizer;
+use Drupal\search_api\Query\Query;
 use Drupal\search_api\Utility\Utility;
 use Drupal\Tests\UnitTestCase;
 
@@ -117,6 +120,10 @@ class TokenizerTest extends UnitTestCase {
         'word wordword',
         [],
         ['minimum_word_size' => 10],
+      ],
+      [
+        'foo-bar',
+        [Utility::createTextToken('foobar')],
       ],
     ];
   }
@@ -381,6 +388,66 @@ class TokenizerTest extends UnitTestCase {
         'Äußerung français repülőtér',
         'Äußerung français repülőtér',
         'Umlauts and accented characters are not treated as word boundaries',
+      ],
+    ];
+    return $cases;
+  }
+
+  /**
+   * Tests search keywords preprocessing.
+   *
+   * @param string|array $keys
+   *   The original keys.
+   * @param string|array $expected
+   *   The expected keys after preprocessing.
+   *
+   * @dataProvider preprocessSearchQueryProvider
+   */
+  public function testPreprocessSearchQuery($keys, $expected) {
+    $index = $this->createMock(Index::class);
+    assert($index instanceof Index);
+    assert($index instanceof \PHPUnit_Framework_MockObject_MockObject);
+    $index->method('status')->willReturn(TRUE);
+    $this->processor->setIndex($index);
+
+    $query = new Query($index);
+    $query->setParseMode(new Direct([], 'direct', []));
+    $query->keys($keys);
+
+    $this->processor->preprocessSearchQuery($query);
+    $this->assertEquals($expected, $query->getKeys());
+  }
+
+  /**
+   * Provides test data for testPreprocessSearchQuery().
+   *
+   * @return array
+   *   Arrays of parameters for testPreprocessSearchQuery(), each containing (in
+   *   this order):
+   *   - The original keys.
+   *   - The expected keys after preprocessing.
+   */
+  public function preprocessSearchQueryProvider() {
+    $cases = [
+      'convert whitespace' => [
+        "foo\tbar\n\nbaz ",
+        'foo bar baz',
+      ],
+      'single dash' => [
+        'foo-bar',
+        'foobar',
+      ],
+      'multiple dashes' => [
+        'foo--bar',
+        'foo bar',
+      ],
+      'remove short word' => [
+        'foo in bar',
+        'foo bar',
+      ],
+      'single short word' => [
+        'in',
+        '',
       ],
     ];
     return $cases;

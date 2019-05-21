@@ -41,7 +41,7 @@ class QueryAccessEvent extends Event {
    * @param \Drupal\entity\QueryAccess\ConditionGroup $conditions
    *   The conditions.
    * @param string $operation
-   *   The operation. Usually one of "view", "update" or "delete".
+   *   The operation. Usually one of "view", "update", "duplicate", or "delete".
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The user for which to restrict access.
    */

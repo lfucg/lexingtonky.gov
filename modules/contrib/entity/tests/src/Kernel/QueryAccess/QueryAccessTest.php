@@ -285,6 +285,38 @@ class QueryAccessTest extends EntityKernelTestBase {
   }
 
   /**
+   * Tests no filtering when query access is disabled.
+   */
+  public function testNoFiltering() {
+    // EntityQuery.
+    $result = $this->storage->getQuery()->sort('id')->accessCheck(FALSE)->execute();
+    $this->assertEquals([
+      $this->entities[0]->id(),
+      $this->entities[1]->id(),
+      $this->entities[2]->id(),
+    ], array_values($result));
+
+    // Views.
+    $view = Views::getView('entity_test_enhanced');
+    $display = $view->getDisplay();
+    $display_options = $display->getOption('query');
+    $display_options['options']['disable_sql_rewrite'] = TRUE;
+    $display->setOption('query', $display_options);
+    $view->save();
+    $view->execute();
+    $this->assertIdenticalResultset($view, [
+      ['id' => $this->entities[0]->id()],
+      ['id' => $this->entities[1]->id()],
+      ['id' => $this->entities[2]->id()],
+    ], ['id' => 'id']);
+    $view = Views::getView('entity_test_enhanced');
+    $display = $view->getDisplay();
+    $display_options['options']['disable_sql_rewrite'] = FALSE;
+    $display->setOption('query', $display_options);
+    $view->save();
+  }
+
+  /**
    * Tests filtering based on a configurable field.
    *
    * QueryAccessSubscriber adds a condition that ensures that the field value

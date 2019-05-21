@@ -30,6 +30,8 @@ class EntityEmbedTwigExtension extends \Twig_Extension {
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
+   * @param \Drupal\entity_embed\EntityEmbedBuilderInterface $builder
+   *   The Entity embed builder service.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityEmbedBuilderInterface $builder) {
     $this->entityTypeManager = $entity_type_manager;
@@ -57,9 +59,9 @@ class EntityEmbedTwigExtension extends \Twig_Extension {
    * {@inheritdoc}
    */
   public function getFunctions() {
-    return array(
+    return [
       new \Twig_SimpleFunction('entity_embed', [$this, 'getRenderArray']),
-    );
+    ];
   }
 
   /**

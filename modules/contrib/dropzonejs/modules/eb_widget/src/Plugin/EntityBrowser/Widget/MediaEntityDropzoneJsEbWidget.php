@@ -180,9 +180,9 @@ class MediaEntityDropzoneJsEbWidget extends DropzoneJsEbWidget {
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\media\MediaInterface[] $media_entities */
     $media_entities = $this->prepareEntities($form, $form_state);
-    $source_field = $this->getType()->getSource()->getConfiguration()['source_field'];
 
-    foreach ($media_entities as &$media_entity) {
+    foreach ($media_entities as $id => $media_entity) {
+      $source_field = $this->getType()->getSource()->getConfiguration()['source_field'];
       $file = $media_entity->$source_field->entity;
       /** @var \Drupal\dropzonejs\Events\DropzoneMediaEntityCreateEvent $event */
       $event = $this->eventDispatcher->dispatch(Events::MEDIA_ENTITY_CREATE, new DropzoneMediaEntityCreateEvent($media_entity, $file, $form, $form_state, $element));
@@ -193,6 +193,7 @@ class MediaEntityDropzoneJsEbWidget extends DropzoneJsEbWidget {
       // in Media entity, but this workaround should work for now.
       $media_entity->$source_field->entity->save();
       $media_entity->save();
+      $media_entities[$id] = $media_entity;
     }
 
     $this->selectEntities($media_entities, $form_state);

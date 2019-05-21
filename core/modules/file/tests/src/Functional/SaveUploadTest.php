@@ -2,6 +2,9 @@
 
 namespace Drupal\Tests\file\Functional;
 
+use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\Tests\TestFileCreationTrait;
 
@@ -61,7 +64,7 @@ class SaveUploadTest extends FileManagedTestBase {
     $this->phpfile = current($this->drupalGetTestFiles('php'));
     $this->assertTrue(is_file($this->phpfile->uri), 'The PHP file we are going to upload exists.');
 
-    $this->maxFidBefore = db_query('SELECT MAX(fid) AS fid FROM {file_managed}')->fetchField();
+    $this->maxFidBefore = (int) \Drupal::entityQueryAggregate('file')->aggregate('fid', 'max')->execute()[0]['fid_max'];
 
     // Upload with replace to guarantee there's something there.
     $edit = [
@@ -82,7 +85,7 @@ class SaveUploadTest extends FileManagedTestBase {
    * Test the file_save_upload() function.
    */
   public function testNormal() {
-    $max_fid_after = db_query('SELECT MAX(fid) AS fid FROM {file_managed}')->fetchField();
+    $max_fid_after = (int) \Drupal::entityQueryAggregate('file')->aggregate('fid', 'max')->execute()[0]['fid_max'];
     $this->assertTrue($max_fid_after > $this->maxFidBefore, 'A new file was created.');
     $file1 = File::load($max_fid_after);
     $this->assertTrue($file1, 'Loaded the file.');
@@ -98,7 +101,7 @@ class SaveUploadTest extends FileManagedTestBase {
     $this->drupalPostForm('file-test/upload', $edit, t('Submit'));
     $this->assertResponse(200, 'Received a 200 response for posted test file.');
     $this->assertRaw(t('You WIN!'));
-    $max_fid_after = db_query('SELECT MAX(fid) AS fid FROM {file_managed}')->fetchField();
+    $max_fid_after = (int) \Drupal::entityQueryAggregate('file')->aggregate('fid', 'max')->execute()[0]['fid_max'];
 
     // Check that the correct hooks were called.
     $this->assertFileHooksCalled(['validate', 'insert']);
@@ -124,7 +127,7 @@ class SaveUploadTest extends FileManagedTestBase {
     $this->drupalPostForm('file-test/upload', $edit, t('Submit'));
     $this->assertResponse(200, 'Received a 200 response for posted test file.');
     $this->assertRaw(t('You WIN!'));
-    $this->assertTrue(is_file('temporary://' . $dir . '/' . trim(drupal_basename($image3_realpath))));
+    $this->assertTrue(is_file('temporary://' . $dir . '/' . trim(\Drupal::service('file_system')->basename($image3_realpath))));
   }
 
   /**
@@ -206,6 +209,7 @@ class SaveUploadTest extends FileManagedTestBase {
     $this->assertResponse(200, 'Received a 200 response for posted test file.');
     $message = t('For security reasons, your upload has been renamed to') . ' <em class="placeholder">' . $this->phpfile->filename . '.txt' . '</em>';
     $this->assertRaw($message, 'Dangerous file was renamed.');
+    $this->assertSession()->pageTextContains('File name is php-2.php.txt.');
     $this->assertRaw(t('File MIME type is text/plain.'), "Dangerous file's MIME type was changed.");
     $this->assertRaw(t('You WIN!'), 'Found the success message.');
 
@@ -221,7 +225,7 @@ class SaveUploadTest extends FileManagedTestBase {
     $this->drupalPostForm('file-test/upload', $edit, t('Submit'));
     $this->assertResponse(200, 'Received a 200 response for posted test file.');
     $this->assertNoRaw(t('For security reasons, your upload has been renamed'), 'Found no security message.');
-    $this->assertRaw(t('File name is @filename', ['@filename' => $this->phpfile->filename]), 'Dangerous file was not renamed when insecure uploads is TRUE.');
+    $this->assertSession()->pageTextContains('File name is php-2.php.');
     $this->assertRaw(t('You WIN!'), 'Found the success message.');
 
     // Check that the correct hooks were called.
@@ -285,12 +289,13 @@ class SaveUploadTest extends FileManagedTestBase {
    */
   public function testExistingRename() {
     $edit = [
-      'file_test_replace' => FILE_EXISTS_RENAME,
+      'file_test_replace' => FileSystemInterface::EXISTS_RENAME,
       'files[file_test_upload]' => \Drupal::service('file_system')->realpath($this->image->getFileUri()),
     ];
     $this->drupalPostForm('file-test/upload', $edit, t('Submit'));
     $this->assertResponse(200, 'Received a 200 response for posted test file.');
     $this->assertRaw(t('You WIN!'), 'Found the success message.');
+    $this->assertSession()->pageTextContains('File name is image-test_0.png.');
 
     // Check that the correct hooks were called.
     $this->assertFileHooksCalled(['validate', 'insert']);
@@ -307,6 +312,7 @@ class SaveUploadTest extends FileManagedTestBase {
     $this->drupalPostForm('file-test/upload', $edit, t('Submit'));
     $this->assertResponse(200, 'Received a 200 response for posted test file.');
     $this->assertRaw(t('You WIN!'), 'Found the success message.');
+    $this->assertSession()->pageTextContains('File name is image-test.png.');
 
     // Check that the correct hooks were called.
     $this->assertFileHooksCalled(['validate', 'load', 'update']);
@@ -342,12 +348,14 @@ class SaveUploadTest extends FileManagedTestBase {
   public function testDrupalMovingUploadedFileError() {
     // Create a directory and make it not writable.
     $test_directory = 'test_drupal_move_uploaded_file_fail';
-    drupal_mkdir('temporary://' . $test_directory, 0000);
+    /** @var \Drupal\Core\File\FileSystemInterface $file_system */
+    $file_system = \Drupal::service('file_system');
+    $file_system->mkdir('temporary://' . $test_directory, 0000);
     $this->assertTrue(is_dir('temporary://' . $test_directory));
 
     $edit = [
       'file_subdir' => $test_directory,
-      'files[file_test_upload]' => \Drupal::service('file_system')->realpath($this->image->getFileUri()),
+      'files[file_test_upload]' => $file_system->realpath($this->image->getFileUri()),
     ];
 
     \Drupal::state()->set('file_test.disable_error_collection', TRUE);
@@ -363,6 +371,62 @@ class SaveUploadTest extends FileManagedTestBase {
       '@file' => $this->image->getFilename(),
       '@destination' => 'temporary://' . $test_directory . '/' . $this->image->getFilename(),
     ]), 'Found upload error log entry.');
+  }
+
+  /**
+   * Tests that filenames containing invalid UTF-8 are rejected.
+   */
+  public function testInvalidUtf8FilenameUpload() {
+    $this->drupalGet('file-test/upload');
+
+    // Filename containing invalid UTF-8.
+    $filename = "x\xc0xx.gif";
+
+    $page = $this->getSession()->getPage();
+    $data = [
+      'multipart' => [
+        [
+          'name'     => 'file_test_replace',
+          'contents' => FileSystemInterface::EXISTS_RENAME,
+        ],
+        [
+          'name' => 'form_id',
+          'contents' => '_file_test_form',
+        ],
+        [
+          'name' => 'form_build_id',
+          'contents' => $page->find('hidden_field_selector', ['hidden_field', 'form_build_id'])->getAttribute('value'),
+        ],
+        [
+          'name' => 'form_token',
+          'contents' => $page->find('hidden_field_selector', ['hidden_field', 'form_token'])->getAttribute('value'),
+        ],
+        [
+          'name' => 'op',
+          'contents' => 'Submit',
+        ],
+        [
+          'name'     => 'files[file_test_upload]',
+          'contents' => 'Test content',
+          'filename' => $filename,
+        ],
+      ],
+      'cookies' => $this->getSessionCookies(),
+      'http_errors' => FALSE,
+    ];
+
+    $this->assertFileNotExists('temporary://' . $filename);
+    // Use Guzzle's HTTP client directly so we can POST files without having to
+    // write them to disk. Not all filesystem support writing files with invalid
+    // UTF-8 filenames.
+    $response = $this->getHttpClient()->request('POST', Url::fromUri('base:file-test/upload')->setAbsolute()->toString(), $data);
+
+    $content = (string) $response->getBody();
+    $this->htmlOutput($content);
+    $error_text = new FormattableMarkup('The file %filename could not be uploaded because the name is invalid.', ['%filename' => $filename]);
+    $this->assertContains((string) $error_text, $content);
+    $this->assertContains('Epic upload FAIL!', $content);
+    $this->assertFileNotExists('temporary://' . $filename);
   }
 
 }

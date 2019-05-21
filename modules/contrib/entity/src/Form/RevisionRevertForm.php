@@ -88,7 +88,7 @@ class RevisionRevertForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getConfirmText() {
-    return t('Revert');
+    return $this->t('Revert');
   }
 
   /**

@@ -295,7 +295,7 @@ class CommandHelper implements LoggerAwareInterface {
       }
 
       // Get the number items to index.
-      if (!isset($current_limit) || !is_int($current_limit += 0) || $current_limit <= 0) {
+      if (!is_int($current_limit += 0) || $current_limit <= 0) {
         $current_limit = $remaining;
       }
 

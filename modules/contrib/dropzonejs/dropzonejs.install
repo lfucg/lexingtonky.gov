@@ -29,13 +29,13 @@ function dropzonejs_requirements($phase) {
   }
 
   if (!$library_found) {
-    $requirements['dropzonejs_library'] = array(
+    $requirements['dropzonejs_library'] = [
       'title' => t('Dropzone library missing'),
       'description' => t('Dropzonejs requires the dropzone.min.js library.
         Download it (https://github.com/enyo/dropzone) and place it in the
         libraries folder (/libraries)'),
       'severity' => REQUIREMENT_ERROR,
-    );
+    ];
   }
 
   return $requirements;

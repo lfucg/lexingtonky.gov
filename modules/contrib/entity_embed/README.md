@@ -1,8 +1,5 @@
 # Entity Embed Module
 
-[![Travis build status](https://img.shields.io/travis/drupal-media/entity_embed/8.x-1.x.svg)](https://travis-ci.org/drupal-media/entity_embed)
-[![Scrutinizer code quality](https://img.shields.io/scrutinizer/g/drupal-media/entity_embed/8.x-1.x.svg)](https://scrutinizer-ci.com/g/drupal-media/entity_embed)
-
 [Entity Embed](https://www.drupal.org/project/entity_embed) module
 allows any entity to be embedded using a text editor.
 

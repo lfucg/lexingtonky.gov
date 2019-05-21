@@ -8,14 +8,14 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\field\Tests\EntityReference\EntityReferenceTestTrait;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
-use Drupal\Tests\search_api\Functional\SearchApiBrowserTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests the correct installation of the default configs.
  *
  * @group search_api
  */
-class IntegrationTest extends SearchApiBrowserTestBase {
+class IntegrationTest extends BrowserTestBase {
 
   use StringTranslationTrait, CommentTestTrait, EntityReferenceTestTrait;
 
@@ -71,7 +71,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
 
     $this->drupalPostForm(NULL, [], 'Continue');
 
-    $this->assertSession()->pageTextContains('2 modules have been enabled: Database Search Defaults, Database Search');
+    $this->assertSession()->pageTextContains('3 modules have been enabled: Database Search Defaults, Database Search, Search API');
 
     $this->rebuildContainer();
 

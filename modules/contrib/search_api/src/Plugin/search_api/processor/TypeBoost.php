@@ -96,12 +96,12 @@ class TypeBoost extends ProcessorPluginBase implements PluginFormInterface {
 
       foreach ($bundles as $bundle => $bundle_label) {
         $has_value = isset($bundle_boosts[$bundle]);
-        $bundle_boost = $has_value ? $bundle_boosts[$bundle] : '';
+        $bundle_boost = $has_value ? sprintf('%.1f', $bundle_boosts[$bundle]) : '';
         $form['boosts'][$datasource_id]['bundle_boosts'][$bundle] = [
           '#type' => 'select',
           '#title' => $this->t('Boost for the %bundle bundle', ['%bundle' => $bundle_label]),
           '#options' => $bundle_boost_options,
-          '#default_value' => sprintf('%.1f', $bundle_boost),
+          '#default_value' => $bundle_boost,
         ];
       }
     }
@@ -146,7 +146,7 @@ class TypeBoost extends ProcessorPluginBase implements PluginFormInterface {
         $item_boost = (double) $boosts[$datasource_id]['bundle_boosts'][$bundle];
       }
 
-      $item->setBoost($item_boost);
+      $item->setBoost($item->getBoost() * $item_boost);
     }
   }
 

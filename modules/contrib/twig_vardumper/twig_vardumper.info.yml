@@ -4,8 +4,8 @@ description: Twig vardumper
 # core: 8.x
 package: Development
 
-# Information added by Drupal.org packaging script on 2018-02-13
-version: '8.x-1.1'
+# Information added by Drupal.org packaging script on 2019-04-25
+version: '8.x-1.2'
 core: '8.x'
 project: 'twig_vardumper'
-datestamp: 1518539884
+datestamp: 1556212690

@@ -35,7 +35,7 @@ abstract class EntityEmbedDisplayBase extends PluginBase implements ContainerFac
   /**
    * The language manager.
    *
-   * @var \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   * @var \Drupal\Core\Language\LanguageManagerInterface
    */
   protected $languageManager;
 
@@ -44,18 +44,24 @@ abstract class EntityEmbedDisplayBase extends PluginBase implements ContainerFac
    *
    * @var array
    */
-  public $context = array();
+  public $context = [];
 
   /**
    * The attributes on the embedded entity.
    *
    * @var array
    */
-  public $attributes = array();
+  public $attributes = [];
 
   /**
-   * {@inheritdoc}
+   * Constructs an EntityEmbedDisplayBase object.
    *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
@@ -94,8 +100,7 @@ abstract class EntityEmbedDisplayBase extends PluginBase implements ContainerFac
   }
 
   /**
-   * Validates that this Entity Embed Display plugin applies to the current
-   * entity type.
+   * Validates that this display plugin applies to the current entity type.
    *
    * This checks the plugin annotation's 'entity_types' value, which should be
    * an array of entity types that this plugin can process, or FALSE if the
@@ -131,14 +136,14 @@ abstract class EntityEmbedDisplayBase extends PluginBase implements ContainerFac
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return array();
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array();
+    return [];
   }
 
   /**
@@ -266,7 +271,7 @@ abstract class EntityEmbedDisplayBase extends PluginBase implements ContainerFac
   /**
    * Gets the entity from the current context.
    *
-   * @todo Where doe sthis come from? The value must come from somewhere, yet
+   * @todo Where does this come from? The value must come from somewhere, yet
    * this does not implement any context-related interfaces. This is an *input*,
    * so we need cache contexts and possibly cache tags to reflect where this
    * came from. We need that for *everything* that this class does that relies
@@ -274,6 +279,7 @@ abstract class EntityEmbedDisplayBase extends PluginBase implements ContainerFac
    * global that breaks cacheability metadata.
    *
    * @return \Drupal\Core\Entity\EntityInterface
+   *   The entity from the current context.
    */
   public function getEntityFromContext() {
     if ($this->hasContextValue('entity')) {
@@ -321,6 +327,8 @@ abstract class EntityEmbedDisplayBase extends PluginBase implements ContainerFac
    * Gets the current language code.
    *
    * @return string
+   *   The langcode present in the 'data-langcode', if present, or the current
+   *   langcode from the language manager, otherwise.
    */
   public function getLangcode() {
     $langcode = $this->getAttributeValue('data-langcode');

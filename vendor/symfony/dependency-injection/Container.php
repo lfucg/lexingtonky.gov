@@ -159,7 +159,7 @@ class Container implements ResettableContainerInterface
     /**
      * Sets a service.
      *
-     * Setting a service to null resets the service: has() returns false and get()
+     * Setting a synthetic service to null resets it: has() returns false and get()
      * behaves in the same way as if the service was never created.
      *
      * @param string $id      The service identifier
@@ -466,7 +466,7 @@ class Container implements ResettableContainerInterface
         if (isset($this->resolving[$envName = "env($name)"])) {
             throw new ParameterCircularReferenceException(array_keys($this->resolving));
         }
-        if (isset($this->envCache[$name]) || array_key_exists($name, $this->envCache)) {
+        if (isset($this->envCache[$name]) || \array_key_exists($name, $this->envCache)) {
             return $this->envCache[$name];
         }
         if (!$this->has($id = 'container.env_var_processors_locator')) {

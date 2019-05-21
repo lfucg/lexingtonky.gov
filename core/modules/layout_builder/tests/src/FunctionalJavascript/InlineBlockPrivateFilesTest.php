@@ -62,6 +62,7 @@ class InlineBlockPrivateFilesTest extends InlineBlockTestBase {
       'configure any layout',
       'administer node display',
       'administer node fields',
+      'create and edit custom blocks',
     ]));
 
     // Enable layout builder and overrides.
@@ -77,6 +78,7 @@ class InlineBlockPrivateFilesTest extends InlineBlockTestBase {
       'access contextual links',
       'configure any layout',
       'access content',
+      'create and edit custom blocks',
     ]));
     $this->drupalGet('node/1/layout');
     $file = $this->createPrivateFile('drupal.txt');
@@ -139,7 +141,7 @@ class InlineBlockPrivateFilesTest extends InlineBlockTestBase {
     $assert_session->pageTextContains('You are not authorized to access this page');
 
     $this->drupalGet('node/2/layout');
-    $file4 = $this->createPrivateFile('drupal.txt');
+    $file4 = $this->createPrivateFile('drupal_4.txt');
     $this->addInlineFileBlockToLayout('The file', $file4);
     $this->assertSaveLayout();
 

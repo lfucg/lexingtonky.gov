@@ -28,7 +28,8 @@ interface QueryAccessHandlerInterface {
    * modules to alter the conditions.
    *
    * @param string $operation
-   *   The access operation. Usually one of "view", "update" or "delete".
+   *   The access operation. Usually one of "view", "update", "duplicate",
+   *   or "delete".
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The user for which to restrict access, or NULL
    *   to assume the current user. Defaults to NULL.

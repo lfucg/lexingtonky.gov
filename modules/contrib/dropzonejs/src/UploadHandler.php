@@ -120,17 +120,17 @@ class UploadHandler implements UploadHandlerInterface {
         case UPLOAD_ERR_INI_SIZE:
         case UPLOAD_ERR_FORM_SIZE:
           $message = $this->t('The file could not be saved because it exceeds the maximum allowed size for uploads.');
-          continue;
+          break;
 
         case UPLOAD_ERR_PARTIAL:
         case UPLOAD_ERR_NO_FILE:
           $message = $this->t('The file could not be saved because the upload did not complete.');
-          continue;
+          break;
 
         // Unknown error.
         default:
           $message = $this->t('The file could not be saved. An unknown error has occurred.');
-          continue;
+          break;
       }
 
       throw new UploadException(UploadException::FILE_UPLOAD_ERROR, $message);

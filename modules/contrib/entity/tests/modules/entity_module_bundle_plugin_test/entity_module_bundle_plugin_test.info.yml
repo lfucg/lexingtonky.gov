@@ -6,8 +6,8 @@ package: Testing
 dependencies:
   - entity
 
-# Information added by Drupal.org packaging script on 2018-10-11
-version: '8.x-1.0-rc1'
+# Information added by Drupal.org packaging script on 2019-03-22
+version: '8.x-1.0-rc2'
 core: '8.x'
 project: 'entity'
-datestamp: 1539272605
+datestamp: 1553254688

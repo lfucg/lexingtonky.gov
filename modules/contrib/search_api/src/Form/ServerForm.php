@@ -179,7 +179,7 @@ class ServerForm extends EntityForm {
       $form['backend'] += $descriptions;
     }
     else {
-      $url = 'https://www.drupal.org/node/1254698';
+      $url = 'https://www.drupal.org/docs/8/modules/search-api/getting-started/server-backends-and-features';
       $args[':url'] = Url::fromUri($url)->toString();
       $error = $this->t('There are no backend plugins available for the Search API. Please install a <a href=":url">module that provides a backend plugin</a> to proceed.', $args);
       $this->messenger->addError($error);

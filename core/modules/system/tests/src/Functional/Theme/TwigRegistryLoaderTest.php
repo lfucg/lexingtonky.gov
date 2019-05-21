@@ -3,6 +3,7 @@
 namespace Drupal\Tests\system\Functional\Theme;
 
 use Drupal\Tests\BrowserTestBase;
+use Twig\TemplateWrapper;
 
 /**
  * Tests Twig registry loader.
@@ -33,14 +34,14 @@ class TwigRegistryLoaderTest extends BrowserTestBase {
    * Checks to see if a value is a Twig template.
    */
   public function assertTwigTemplate($value, $message = '', $group = 'Other') {
-    $this->assertTrue($value instanceof \Twig_Template, $message, $group);
+    $this->assertTrue($value instanceof TemplateWrapper, $message, $group);
   }
 
   /**
    * Tests template discovery using the Drupal theme registry.
    */
   public function testTemplateDiscovery() {
-    $this->assertTwigTemplate($this->twig->resolveTemplate('block.html.twig'), 'Found block.html.twig in block module.');
+    $this->assertTwigTemplate($this->twig->load('block.html.twig'), 'Found block.html.twig in block module.');
   }
 
   /**

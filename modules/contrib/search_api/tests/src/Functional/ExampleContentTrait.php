@@ -99,6 +99,20 @@ trait ExampleContentTrait {
   }
 
   /**
+   * Deletes the test entity with the given ID.
+   *
+   * @param int $id
+   *   The entity's ID.
+   *
+   * @return $this
+   */
+  protected function removeTestEntity($id) {
+    $this->entities[$id]->delete();
+    unset($this->entities[$id]);
+    return $this;
+  }
+
+  /**
    * Indexes all (unindexed) items on the specified index.
    *
    * @param string $index_id

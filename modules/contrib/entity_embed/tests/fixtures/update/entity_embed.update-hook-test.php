@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * Update hook test file.
  */
 
 use Drupal\Core\Database\Database;

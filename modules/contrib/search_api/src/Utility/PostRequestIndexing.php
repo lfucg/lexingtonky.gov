@@ -68,9 +68,21 @@ class PostRequestIndexing implements PostRequestIndexingInterface, DestructableI
       }
 
       try {
-        $items = $index->loadItemsMultiple($item_ids);
-        if ($items) {
-          $index->indexSpecificItems($items);
+        // In case there are lots of items to index, take care to not load/index
+        // all of them at once, so we don't run out of memory. Using the index's
+        // cron batch size should always be safe.
+        $batch_size = $index->getOption('cron_limit', 50) ?: 50;
+        if ($batch_size > 0) {
+          $item_ids_batches = array_chunk($item_ids, $batch_size);
+        }
+        else {
+          $item_ids_batches = [$item_ids];
+        }
+        foreach ($item_ids_batches as $item_ids_batch) {
+          $items = $index->loadItemsMultiple($item_ids_batch);
+          if ($items) {
+            $index->indexSpecificItems($items);
+          }
         }
       }
       catch (SearchApiException $e) {

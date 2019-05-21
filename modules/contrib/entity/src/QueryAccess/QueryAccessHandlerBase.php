@@ -97,7 +97,8 @@ abstract class QueryAccessHandlerBase implements EntityHandlerInterface, QueryAc
    * Builds the conditions for the given operation and user.
    *
    * @param string $operation
-   *   The access operation. Usually one of "view", "update" or "delete".
+   *   The access operation. Usually one of "view", "update", "duplicate",
+   *   or "delete".
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The user for which to restrict access.
    *
@@ -174,7 +175,8 @@ abstract class QueryAccessHandlerBase implements EntityHandlerInterface, QueryAc
    * Builds the conditions for entities that have an owner.
    *
    * @param string $operation
-   *   The access operation. Usually one of "view", "update" or "delete".
+   *   The access operation. Usually one of "view", "update", "duplicate",
+   *   or "delete".
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The user for which to restrict access.
    *
@@ -231,7 +233,8 @@ abstract class QueryAccessHandlerBase implements EntityHandlerInterface, QueryAc
    * Builds the conditions for entities that do not have an owner.
    *
    * @param string $operation
-   *   The access operation. Usually one of "view", "update" or "delete".
+   *   The access operation. Usually one of "view", "update", "duplicate",
+   *   or "delete".
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The user for which to restrict access.
    *

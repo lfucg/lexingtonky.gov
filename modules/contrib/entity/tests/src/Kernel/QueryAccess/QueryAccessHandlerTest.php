@@ -54,7 +54,7 @@ class QueryAccessHandlerTest extends EntityKernelTestBase {
    * @covers ::getConditions
    */
   public function testNoAccess() {
-    foreach (['view', 'update', 'delete'] as $operation) {
+    foreach (['view', 'update', 'duplicate', 'delete'] as $operation) {
       $user = $this->createUser([], ['access content']);
       $conditions = $this->handler->getConditions($operation, $user);
       $this->assertEquals(0, $conditions->count());
@@ -67,7 +67,7 @@ class QueryAccessHandlerTest extends EntityKernelTestBase {
    * @covers ::getConditions
    */
   public function testAdmin() {
-    foreach (['view', 'update', 'delete'] as $operation) {
+    foreach (['view', 'update', 'duplicate', 'delete'] as $operation) {
       $user = $this->createUser([], ['administer entity_test_enhanced']);
       $conditions = $this->handler->getConditions($operation, $user);
       $this->assertEquals(0, $conditions->count());
@@ -108,8 +108,8 @@ class QueryAccessHandlerTest extends EntityKernelTestBase {
   /**
    * @covers ::getConditions
    */
-  public function testUpdateDelete() {
-    foreach (['update', 'delete'] as $operation) {
+  public function testUpdateDuplicateDelete() {
+    foreach (['update', 'duplicate', 'delete'] as $operation) {
       // Entity type permission.
       $user = $this->createUser([], ["$operation entity_test_enhanced"]);
       $conditions = $this->handler->getConditions($operation, $user);

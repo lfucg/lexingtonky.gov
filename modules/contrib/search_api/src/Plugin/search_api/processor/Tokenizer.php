@@ -308,6 +308,17 @@ class Tokenizer extends FieldsProcessorPluginBase {
     if (is_string($value)) {
       $this->prepare();
       $value = trim($this->simplifyText($value));
+
+      $min = $this->configuration['minimum_word_size'];
+      if ($min > 1) {
+        $words = explode(' ', $value);
+        foreach ($words as $i => $word) {
+          if (mb_strlen($word) < $min) {
+            unset($words[$i]);
+          }
+        }
+        $value = implode(' ', $words);
+      }
     }
   }
 

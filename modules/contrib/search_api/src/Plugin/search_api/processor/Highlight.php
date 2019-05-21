@@ -495,7 +495,13 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
         if (!$this->configuration['highlight_partial']) {
           $found_position = FALSE;
           $regex = '/' . static::$boundary . preg_quote($key, '/') . static::$boundary . '/iu';
-          if (preg_match($regex, ' ' . $text . ' ', $matches, PREG_OFFSET_CAPTURE, $look_start[$key])) {
+          // $look_start contains the position as character offset, while
+          // preg_match() takes a byte offset.
+          $offset = $look_start[$key];
+          if ($offset > 0) {
+            $offset = strlen(mb_substr(' ' . $text, 0, $offset));
+          }
+          if (preg_match($regex, ' ' . $text . ' ', $matches, PREG_OFFSET_CAPTURE, $offset)) {
             $found_position = $matches[0][1];
             // Convert the byte position into a multi-byte character position.
             $found_position = mb_strlen(substr(" $text", 0, $found_position));
@@ -516,6 +522,11 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
             $before = mb_strpos($text, ' ', $found_position - $context_length);
             if ($before !== FALSE) {
               ++$before;
+            }
+            // If we can’t find a space anywhere within the context length, just
+            // settle for a non-space.
+            if ($before === FALSE || $before > $found_position) {
+              $before = $found_position - $context_length;
             }
           }
           else {

@@ -81,7 +81,7 @@ function search_api_db_update_8102() {
  * Converts the old "partial_matches" option to the new "matching" option.
  */
 function search_api_db_update_8103() {
-  // @see https://www.drupal.org/project/search_api/issues/2971033
+  // @see https://www.drupal.org/node/2971033
 
   $config_factory = \Drupal::configFactory();
   $count = 0;

@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\search_api\Kernel\Processor;
 
+use Drupal\Core\Form\FormState;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -14,6 +15,13 @@ use Drupal\node\Entity\NodeType;
  * @coversDefaultClass \Drupal\search_api\Plugin\search_api\processor\TypeBoost
  */
 class TypeBoostTest extends ProcessorTestBase {
+
+  /**
+   * The processor used for this test.
+   *
+   * @var \Drupal\search_api\Plugin\search_api\processor\TypeBoost
+   */
+  protected $processor;
 
   /**
    * {@inheritdoc}
@@ -77,9 +85,9 @@ class TypeBoostTest extends ProcessorTestBase {
     $this->index->setProcessors(['type_boost' => $processor]);
     $this->index->save();
 
-    // Create a node for both node types.
+    // Create nodes for both node types.
     $nodes = [];
-    foreach (['article', 'page'] as $node_type) {
+    foreach (['article', 'page', 'article'] as $node_type) {
       $node = Node::create([
         'status' => NodeInterface::PUBLISHED,
         'type' => $node_type,
@@ -100,18 +108,54 @@ class TypeBoostTest extends ProcessorTestBase {
     }
     $items = $this->generateItems($items);
 
+    // Set a boost on one of the items to check whether it gets overwritten or
+    // (correctly) multiplied.
+    $items['entity:node/3']->setBoost(2);
+
     // Preprocess items.
     $this->index->preprocessIndexItems($items);
 
     // Check boost value on article node.
-    $boost_expected = $configuration['boosts']['entity:node']['bundle_boosts']['article'];
-    $boost_actual = sprintf('%.1f', $items['entity:node/1']->getBoost());
+    $boost_expected = 5;
+    $boost_actual = $items['entity:node/1']->getBoost();
     $this->assertEquals($boost_expected, $boost_actual);
 
     // Check boost value on page node.
-    $boost_expected = $configuration['boosts']['entity:node']['datasource_boost'];
-    $boost_actual = sprintf('%.1f', $items['entity:node/2']->getBoost());
+    $boost_expected = 3;
+    $boost_actual = $items['entity:node/2']->getBoost();
     $this->assertEquals($boost_expected, $boost_actual);
+
+    // Check boost value on article node with pre-existing boost.
+    $boost_expected = 10;
+    $boost_actual = $items['entity:node/3']->getBoost();
+    $this->assertEquals($boost_expected, $boost_actual);
+  }
+
+  /**
+   * Tests that default values for individual bundles are correct in the form.
+   */
+  public function testConfigFormBundleBoostDefaults() {
+    $form = $this->processor->buildConfigurationForm([], new FormState());
+
+    $this->assertEquals('', $form['boosts']['entity:node']['bundle_boosts']['article']['#default_value']);
+    $this->assertEquals('', $form['boosts']['entity:node']['bundle_boosts']['page']['#default_value']);
+
+    $configuration = [
+      'boosts' => [
+        'entity:node' => [
+          'datasource_boost' => '3.0',
+          'bundle_boosts' => [
+            'article' => '0.0',
+          ],
+        ],
+      ],
+    ];
+    $this->processor->setConfiguration($configuration);
+
+    $form = $this->processor->buildConfigurationForm([], new FormState());
+
+    $this->assertEquals('0.0', $form['boosts']['entity:node']['bundle_boosts']['article']['#default_value']);
+    $this->assertEquals('', $form['boosts']['entity:node']['bundle_boosts']['page']['#default_value']);
   }
 
 }

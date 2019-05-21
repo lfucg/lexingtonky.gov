@@ -58,7 +58,7 @@ tips:
     id: search-api-index-server-index-status
     plugin: text
     label: Server index status
-    body: For enabled indexes, the number of items that can actually be retrieved from the server is listed here. For reasons why this number might differ from the number under "Index status", <a href="https://www.drupal.org/node/2009804#server-index-status">see the module's documentation</a>.
+    body: For enabled indexes, the number of items that can actually be retrieved from the server is listed here. For reasons why this number might differ from the number under "Index status", <a href="https://www.drupal.org/docs/8/modules/search-api/getting-started/frequently-asked-questions#server-index-status">see the module's documentation</a>.
     weight: 7
     attributes:
       data-class: search-api-index-summary--server-index-status

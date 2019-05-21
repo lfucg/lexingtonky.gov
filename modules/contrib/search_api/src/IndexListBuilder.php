@@ -63,6 +63,12 @@ class IndexListBuilder extends ConfigEntityListBuilder {
   public static function checkDefaultsModuleCanBeInstalled() {
     $errors = [];
 
+    // If the Node module is missing, no further checks are necessary/possible.
+    if (!\Drupal::moduleHandler()->moduleExists('node')) {
+      $errors['node_module'] = t('The required Node module is not installed on your site. Database Search Defaults module could not be installed.');
+      return $errors;
+    }
+
     $node_types = NodeType::loadMultiple();
     $required_types = [
       'article' => ['body', 'comment', 'field_tags', 'field_image'],

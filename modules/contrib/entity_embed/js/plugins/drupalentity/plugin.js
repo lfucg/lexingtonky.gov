@@ -139,24 +139,35 @@
             click: function(editor) {
               editor.execCommand('editdrupalentity', this.data);
             },
-            icon: button.image
+            icon: button.image,
+            modes: {wysiwyg: 1, source: 0}
           });
         }
       }
 
-      // Register context menu option for editing widget.
+      // Register context menu items for editing widget.
       if (editor.contextMenu) {
         editor.addMenuGroup('drupalentity');
-        editor.addMenuItem('drupalentity', {
-          label: Drupal.t('Edit Entity'),
-          icon: this.path + 'entity.png',
-          command: 'editdrupalentity',
-          group: 'drupalentity'
-        });
+
+        for (var key in editor.config.DrupalEntity_buttons) {
+          var button = editor.config.DrupalEntity_buttons[key];
+
+          var label = Drupal.t('Edit @buttonLabel', { '@buttonLabel': button.label });
+
+          editor.addMenuItem('drupalentity_' + button.id, {
+            label: label,
+            icon: button.image,
+            command: 'editdrupalentity',
+            group: 'drupalentity'
+          });
+        }
 
         editor.contextMenu.addListener(function(element) {
           if (isEditableEntityWidget(editor, element)) {
-            return { drupalentity: CKEDITOR.TRISTATE_OFF };
+            var button_id = element.getFirst().getAttribute('data-embed-button');
+            var returnData = {};
+            returnData['drupalentity_' + button_id] = CKEDITOR.TRISTATE_OFF;
+            return returnData;
           }
         });
       }

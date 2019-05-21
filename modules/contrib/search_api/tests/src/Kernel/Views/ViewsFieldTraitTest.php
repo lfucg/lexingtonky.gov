@@ -11,7 +11,7 @@ use Drupal\search_api\Plugin\views\query\SearchApiQuery;
 use Drupal\search_api\Utility\Utility;
 use Drupal\Tests\search_api\Kernel\ViewsTestField;
 use Drupal\user\Entity\User;
-use Drupal\views\ResultRow;
+use Drupal\search_api\Plugin\views\ResultRow;
 
 /**
  * Tests the functionality of our Views field plugin trait.
@@ -144,7 +144,7 @@ class ViewsFieldTraitTest extends KernelTestBase {
     $entity_user_name = Utility::createCombinedId($datasource_id, 'user_id:entity:name');
     $user_name = Utility::createCombinedId('entity:user', 'name');
 
-    /** @var \Drupal\views\ResultRow[] $values */
+    /** @var \Drupal\search_api\Plugin\views\ResultRow[] $values */
     $values = [];
 
     $item_id = Utility::createCombinedId($datasource_id, '1:en');

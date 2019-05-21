@@ -7,6 +7,7 @@ use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Database\Database;
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -241,6 +242,17 @@ class ContentAccessTest extends ProcessorTestBase {
    * Tests comment indexing when all users have access to content.
    */
   public function testContentAccessAll() {
+    // Deactivate our custom grant and re-save the grant records.
+    \Drupal::state()->set('search_api_test_add_node_access_grant', FALSE);
+    /** @var \Drupal\node\NodeAccessControlHandlerInterface $access_control_handler */
+    $access_control_handler = \Drupal::entityTypeManager()
+      ->getAccessControlHandler('node');
+    $grants_storage = \Drupal::getContainer()->get('node.grant_storage');
+    foreach ($this->nodes as $node) {
+      $grants = $access_control_handler->acquireGrants($node);
+      $grants_storage->write($node, $grants);
+    }
+
     user_role_grant_permissions('anonymous', ['access content', 'access comments']);
     $items = [];
     foreach ($this->comments as $comment) {
@@ -258,9 +270,15 @@ class ContentAccessTest extends ProcessorTestBase {
       $this->processor->addFieldValues($item);
     }
 
+    // Verify all items were indexed with the same "all" realm grant.
+    $all = ['node_access_all:0'];
     foreach ($items as $item) {
-      $this->assertEquals(['node_access__all'], $item->getField('node_grants')->getValues());
+      $this->assertEquals($all, $item->getField('node_grants')->getValues());
     }
+
+    // Verify that the anonymous user has exactly that grant.
+    $grants = node_access_grants('view', new AnonymousUserSession());
+    $this->assertEquals(['all' => [0]], $grants);
   }
 
   /**
