@@ -144,7 +144,7 @@ class FullCalendarService {
         'end' => $end,
         'start' => $start,
         'url' => $event->url(),
-        'description' => $event->body->value
+        'description' => $event->body->value,
       ];
     }
   }
@@ -174,17 +174,18 @@ class FullCalendarService {
        * it recurs indefinitely. So we will get all of the days with the same
        * day of the week as the start and return them.
        */
-      if ($start->format('Y-m-d') === $end->format('Y-m-d')) {
-        $end = $this->end;
+      // if ($start->format('Y-m-d') === $end->format('Y-m-d')) {
+      //   $end = $this->end;
 
-        if ($start->format('m') !== $this->start->format('m')) {
-          $start = $this->start;
+      //   if ($start->format('m') !== $this->start->format('m')) {
+      //     $start = $this->start;
 
-          if ($start->format('l') !== $dayOfWeek) {
-            $start->modify("+1 $dayOfWeek");
-          }
-        }
-      }
+      //     if ($start->format('l') !== $dayOfWeek) {
+      //       $start->modify("+1 $dayOfWeek");
+      //     }
+      //   }
+      // }
+
 
       $date = $start;
 
