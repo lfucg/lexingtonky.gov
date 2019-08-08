@@ -1,3 +1,36 @@
+Admin Toolbar 8.x-1.27, 2019-05-22
+----------------------------------
+Changes since 8.x-1.26:
+
+- #3026216 by adriancid, oknate, sunlix, joachim: Add media link to content
+  menu in toolbar.
+- #3051676 by Amsteri, rollingnet, adriancid: Menu items with no link miss of
+  CSS.
+- #3026302 by idebr, adriancid: Admin toolbar icon width/height changes for
+  themes based on box-sizing: border-box.
+- #2986082 by oknate, Bobík, adriancid: Add search for menu items.
+- #3026337 by thalles, mpp, adriancid, Gábor Hojtsy: Config labels are not
+  properly translated.
+- #3003678 by adriancid, romainj: New method to invalidate twig templates.
+- #3027542 by i-trokhanenko, adriancid, thalles: menu_cache_clear_all is
+  deprecated.
+- #3031310 by akshay_d, abhisekmazumdar, adriancid: Replace deprecated method
+  assertRaw.
+- #3031107 by adriancid: Update the CHANGELOG.txt.
+
+Admin Toolbar 8.x-1.26, 2019-02-03
+----------------------------------
+Changes since 8.x-1.25:
+
+- #3009193 by oknate, jonnyeom, DYdave, DuneBL, romainj, Pasqualle, thejacer87,
+  DuaelFr, thalles, cobenash, webdrips, acrosman, kumkum29, PCate, Grimreaper,
+  azovsky, arturopanetta, s-jack, tirler, CProfessionals, jjmackow, littlecrab,
+  jl_cs, superlolo95, geraldito, Kaelfaz, andrey_semenoff, Renrhaf, lyalyuk,
+  abramm, xlith, adriancid: Error because devel module has removed the execute
+  php feature.
+- #3019298 by hayashi, romainj: Menu items for content entity show in wrong
+  language.
+
 Admin Toolbar 8.x-1.25, 2018-11-22
 ----------------------------------
 Changes since 8.x-1.24:

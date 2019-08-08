@@ -12,7 +12,6 @@ use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Utility\Utility;
 use Drupal\views\Entity\View;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Tests the Views integration of the Search API.
@@ -34,6 +33,11 @@ class ViewsTest extends SearchApiBrowserTestBase {
     'search_api_test_views',
     'views_ui',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $additionalBundles = TRUE;
 
   /**
    * {@inheritdoc}
@@ -997,25 +1001,10 @@ class ViewsTest extends SearchApiBrowserTestBase {
     $options['query']['search_api_fulltext'] = 'foo';
     $this->drupalGet($path, $options);
     $this->assertSession()->responseContains('<strong>foo</strong> bar baz');
-  }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function initConfig(ContainerInterface $container) {
-    parent::initConfig($container);
-
-    // This will just set the Drupal state to include the necessary bundles for
-    // our test entity type. Otherwise, fields from those bundles won't be found
-    // and thus removed from the test index. (We can't do it in setUp(), before
-    // calling the parent method, since the container isn't set up at that
-    // point.)
-    $bundles = [
-      'entity_test_mulrev_changed' => ['label' => 'Entity Test Bundle'],
-      'item' => ['label' => 'item'],
-      'article' => ['label' => 'article'],
-    ];
-    \Drupal::state()->set('entity_test_mulrev_changed.bundles', $bundles);
+    $options['query']['search_api_fulltext'] = 'bar';
+    $this->drupalGet($path, $options);
+    $this->assertSession()->responseContains('foo <strong>bar</strong> baz');
   }
 
 }

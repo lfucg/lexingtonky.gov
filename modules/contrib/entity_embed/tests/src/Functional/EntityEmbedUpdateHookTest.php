@@ -40,8 +40,8 @@ class EntityEmbedUpdateHookTest extends UpdatePathTestBase {
    */
   protected function doSelectionTest() {
     parent::doSelectionTest();
-    $this->assertRaw('8002 -   Updates the default mode settings.');
-    $this->assertRaw('8003 -   Updates allowed HTML for all filter configs that have an Entity Embed button.');
+    $this->assertSession()->responseContains('8002 -   Updates the default mode settings.');
+    $this->assertSession()->responseContains('8003 -   Updates allowed HTML for all filter configs that have an Entity Embed button.');
   }
 
   /**
@@ -58,7 +58,7 @@ class EntityEmbedUpdateHookTest extends UpdatePathTestBase {
   /**
    * Tests entity_embed_update_8003().
    */
-  public function testAllowedHTML() {
+  public function testAllowedAttributes() {
     $allowed_html = '<drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-settings data-align data-caption data-embed-button>';
     $expected_allowed_html = '<drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-settings data-entity-embed-display-settings data-align data-caption data-embed-button>';
     $filter_format = $this->container->get('entity_type.manager')->getStorage('filter_format')->load('full_html');

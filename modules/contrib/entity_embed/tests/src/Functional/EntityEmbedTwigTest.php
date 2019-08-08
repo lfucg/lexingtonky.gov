@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\entity_embed\Functional;
 
+use Drupal\entity_embed\Twig\EntityEmbedTwigExtension;
+
 /**
  * Tests Twig extension provided by entity_embed.
  *
@@ -21,14 +23,9 @@ class EntityEmbedTwigTest extends EntityEmbedTestBase {
    * Tests that the provided Twig extension loads the service appropriately.
    */
   public function testTwigExtensionLoaded() {
-    $twig_service = \Drupal::service('twig');
-
-    $ext = $twig_service->getExtension('entity_embed.twig.entity_embed_twig_extension');
-
-    // @todo why is the string
-    // 'Drupal\\entity_embed\\Twig\\EntityEmbedTwigExtension'
-    // and not '\Drupal\entity_embed\Twig\EntityEmbedTwigExtension' ?
-    $this->assertEqual(get_class($ext), 'Drupal\\entity_embed\\Twig\\EntityEmbedTwigExtension', 'Extension loaded successfully.');
+    $ext = $this->container->get('twig')->getExtension(EntityEmbedTwigExtension::class);
+    $this->assertNotEmpty($ext);
+    $this->assertInstanceOf(EntityEmbedTwigExtension::class, $ext, 'Extension loaded successfully.');
   }
 
   /**

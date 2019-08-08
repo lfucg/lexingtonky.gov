@@ -2,14 +2,15 @@
 
 namespace Drupal\search_api\Item;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\search_api\Datasource\DatasourceInterface;
+use Drupal\search_api\IndexInterface;
 use Drupal\search_api\LoggerTrait;
 use Drupal\search_api\Processor\ProcessorInterface;
 use Drupal\search_api\Processor\ProcessorPropertyInterface;
 use Drupal\search_api\SearchApiException;
-use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Utility\Utility;
 
 /**
@@ -102,6 +103,15 @@ class Item implements \IteratorAggregate, ItemInterface {
    * @var array
    */
   protected $extraData = [];
+
+  /**
+   * Cached access results for the item, keyed by user ID.
+   *
+   * @var \Drupal\Core\Access\AccessResultInterface[]
+   *
+   * @see getAccessResult()
+   */
+  protected $accessResults = [];
 
   /**
    * Constructs an Item object.
@@ -406,13 +416,30 @@ class Item implements \IteratorAggregate, ItemInterface {
    * {@inheritdoc}
    */
   public function checkAccess(AccountInterface $account = NULL) {
-    try {
-      return $this->getDatasource()
-        ->checkItemAccess($this->getOriginalObject(), $account);
+    @trigger_error('\Drupal\search_api\Item\ItemInterface::checkAccess() is deprecated in search_api:8.x-1.14 and is removed from search_api:9.x-1.0. Use getAccessResult() instead. See https://www.drupal.org/node/3051902', E_USER_DEPRECATED);
+    return $this->getAccessResult($account)->isAllowed();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAccessResult(AccountInterface $account = NULL) {
+    if (!$account) {
+      $account = \Drupal::currentUser();
     }
-    catch (SearchApiException $e) {
-      return FALSE;
+    $uid = $account->id();
+
+    if (empty($this->accessResults[$uid])) {
+      try {
+        $this->accessResults[$uid] = $this->getDatasource()
+          ->getItemAccessResult($this->getOriginalObject(), $account);
+      }
+      catch (SearchApiException $e) {
+        $this->accessResults[$uid] = AccessResult::neutral('Item could not be loaded, so cannot check access');
+      }
     }
+
+    return $this->accessResults[$uid];
   }
 
   /**
@@ -456,9 +483,9 @@ class Item implements \IteratorAggregate, ItemInterface {
       $excerpt = str_replace("\n", "\n  ", $this->getExcerpt());
       $out .= "\nExcerpt: $excerpt";
     }
-    if ($this->getFields()) {
+    if ($this->getFields(FALSE)) {
       $out .= "\nFields:";
-      foreach ($this->getFields() as $field) {
+      foreach ($this->getFields(FALSE) as $field) {
         $field = str_replace("\n", "\n  ", "$field");
         $out .= "\n- " . $field;
       }

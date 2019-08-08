@@ -1,10 +1,9 @@
 <?php
 
-namespace Drupal\entity_embed\Tests;
+namespace Drupal\Tests\entity_embed\Functional;
 
 use Drupal\entity_browser\Entity\EntityBrowser;
 use Drupal\embed\Entity\EmbedButton;
-use Drupal\Tests\entity_embed\Functional\EntityEmbedDialogTest;
 
 /**
  * Tests the entity_embed entity_browser integration.
@@ -26,12 +25,15 @@ class EntityEmbedEntityBrowserTest extends EntityEmbedDialogTest {
    * Tests the entity browser integration.
    */
   public function testEntityEmbedEntityBrowserIntegration() {
-    $this->getEmbedDialog('custom_format', 'node');
-    $this->assertResponse(200, 'Embed dialog is accessible with custom filter format and default embed button.');
+    $this->drupalGet('/entity-embed/dialog/custom_format/node');
+    // Verify embed dialog is accessible with custom filter format and
+    // default embed button.
+    $this->assertSession()->statusCodeEquals(200);
 
     // Verify that an autocomplete field is available by default.
-    $this->assertFieldByName('entity_id', '', 'Entity ID/UUID field is present.');
-    $this->assertNoText('Select entities to embed', 'Entity browser button is not present.');
+    $this->assertSession()->fieldExists('entity_id');
+    $this->assertSession()
+      ->linkNotExists('Select entities to embed', 'Entity browser button is not present.');
 
     // Set up entity browser.
     $entity_browser = EntityBrowser::create([
@@ -62,13 +64,16 @@ class EntityEmbedEntityBrowserTest extends EntityEmbedDialogTest {
     $dependencies = $embed_button->getDependencies();
     $this->assertContains('entity_browser.browser.entity_embed_entity_browser_test', $dependencies['config']);
 
-    $this->getEmbedDialog('custom_format', 'node');
-    $this->assertResponse(200, 'Embed dialog is accessible with custom filter format and default embed button.');
+    $this->drupalGet('/entity-embed/dialog/custom_format/node');
+
+    // Verify embed dialog is accessible with custom filter format and
+    // default embed button.
+    $this->assertSession()->statusCodeEquals(200);
 
     // Verify that the autocomplete field is replaced by an entity browser
     // button.
-    $this->assertNoFieldByName('entity_id', '', 'Entity ID/UUID field is present.');
-    $this->assertText('Select entities to embed', 'Entity browser button is present.');
+    $this->assertSession()->fieldNotExists('entity_id');
+    $this->assertSession()->buttonExists('Select entities to embed');
   }
 
 }

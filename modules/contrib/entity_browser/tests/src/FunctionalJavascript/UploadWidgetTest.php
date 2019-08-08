@@ -9,7 +9,7 @@ use Drupal\user\Entity\Role;
  *
  * @group entity_browser
  */
-class UploadWidgetTest extends EntityBrowserJavascriptTestBase {
+class UploadWidgetTest extends EntityBrowserWebDriverTestBase {
 
   /**
    * {@inheritdoc}
@@ -45,7 +45,6 @@ class UploadWidgetTest extends EntityBrowserJavascriptTestBase {
     $this->waitForAjaxToFinish();
     $this->assertSession()->fieldExists('druplicon.png');
     $page->pressButton('Select files');
-    $this->assertSession()->statusCodeEquals(200);
 
     // Check if the file was correctly uploaded to the EB destination.
     $this->assertFileExists('public://druplicon.png');
@@ -63,7 +62,6 @@ class UploadWidgetTest extends EntityBrowserJavascriptTestBase {
     $this->waitForAjaxToFinish();
     $this->assertSession()->fieldExists('druplicon.png');
     $page->pressButton('Fancy submit');
-    $this->assertSession()->statusCodeEquals(200);
 
     // Check if the file was correctly uploaded to the EB destination.
     $this->assertFileExists('public://some_location/druplicon.png');

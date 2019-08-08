@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\entity_embed\FunctionalJavascript;
 
-use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Drupal\editor\Entity\Editor;
 use Drupal\filter\Entity\FilterFormat;
 
@@ -11,7 +10,7 @@ use Drupal\filter\Entity\FilterFormat;
  *
  * @group entity_embed
  */
-class CKEditorIntegrationTest extends WebDriverTestBase {
+class CKEditorIntegrationTest extends EntityEmbedTestBase {
 
   /**
    * {@inheritdoc}
@@ -22,6 +21,7 @@ class CKEditorIntegrationTest extends WebDriverTestBase {
     'ckeditor',
     'views',
     'entity_embed',
+    'entity_embed_test',
   ];
 
   /**
@@ -73,7 +73,18 @@ class CKEditorIntegrationTest extends WebDriverTestBase {
       'editor' => 'ckeditor',
       'settings' => [
         'toolbar' => [
-          'rows' => [],
+          'rows' => [
+            [
+              [
+                'name' => 'Tools',
+                'items' => [
+                  'Source',
+                  'Undo',
+                  'Redo',
+                ],
+              ],
+            ],
+          ],
         ],
       ],
     ])->save();
@@ -166,11 +177,16 @@ class CKEditorIntegrationTest extends WebDriverTestBase {
     // Verify that the Entity Embed button shows up and results in an
     // operational entity embedding experience in the text editor.
     $this->drupalGet('/node/add/page');
+    $this->waitForEditor();
+    $this->assertSame(1, $this->getCkeditorUndoSnapshotCount());
+    $this->getSession()->executeScript("CKEDITOR.instances['edit-body-0-value'].setData('<p>Goodbye world!</p>');");
+    $this->assertSame(2, $this->getCkeditorUndoSnapshotCount());
     $this->assignNameToCkeditorIframe();
     $this->getSession()->switchToIFrame('ckeditor');
+    $this->assertSession()->responseContains('entity_embed.editor.css');
+    $this->assertSession()->responseContains('hidden.module.css');
     $this->assertSession()->pageTextNotContains('Billy Bones');
-    $this->getSession()->switchToIFrame();
-    $this->assertSession()->elementExists('css', 'a.cke_button__' . $this->button->id())->click();
+    $this->pressEditorButton($this->button->id());
     $this->assertSession()->waitForId('drupal-modal');
     $this->assertSession()
       ->fieldExists('entity_id')
@@ -185,12 +201,18 @@ class CKEditorIntegrationTest extends WebDriverTestBase {
     $this->getSession()->switchToIFrame('ckeditor');
     $this->assertSession()->pageTextContains('Billy Bones');
     $this->getSession()->switchToIFrame();
+    $this->assertSame(3, $this->getCkeditorUndoSnapshotCount());
     $this->getSession()
       ->getPage()
       ->find('css', 'input[name="title[0][value]"]')
       ->setValue('Pirates');
-    $this->assertSession()->buttonExists('Save')->press();
+    // Verify that undo/redo work.
+    $this->assertCkeditorUndoOrRedo('undo', ['Goodbye world!'], ['Billy Bones']);
+    $this->assertCkeditorUndoOrRedo('undo', [], ['Billy Bones', 'Goodbye world!']);
+    $this->assertCkeditorUndoOrRedo('redo', ['Goodbye world!'], ['Billy Bones']);
+    $this->assertCkeditorUndoOrRedo('redo', ['Billy Bones', 'Goodbye world!'], []);
     // Verify that the embedded entity is rendered by the filter for end users.
+    $this->assertSession()->buttonExists('Save')->press();
     $this->assertSession()->responseContains('Billy Bones');
 
     $this->drupalGet('/node/3/edit');
@@ -202,11 +224,7 @@ class CKEditorIntegrationTest extends WebDriverTestBase {
     $this->getSession()->switchToIFrame();
 
     // Test opening the dialog and switching embedded nodes.
-    $select_and_edit_embed = "var editor = CKEDITOR.instances['edit-body-0-value'];
-      var entityEmbed = editor.widgets.getByElement(editor.editable().findOne('div'));
-      entityEmbed.focus();
-      editor.execCommand('editdrupalentity');";
-    $this->getSession()->executeScript($select_and_edit_embed);
+    $this->reopenDialog();
 
     $this->assertSession()
       ->waitForElementVisible('css', 'div.ui-dialog-buttonset')
@@ -236,17 +254,45 @@ class CKEditorIntegrationTest extends WebDriverTestBase {
   }
 
   /**
-   * Assigns a name to the CKEditor iframe, to allow use of ::switchToIFrame().
+   * Asserts the consequences of CKEditor undo/redo actions.
    *
-   * @see \Behat\Mink\Session::switchToIFrame()
+   * @param string $action
+   *   Either 'undo' or 'redo'.
+   * @param array $contains
+   *   The strings the CKEditor instance is expected to contain.
+   * @param array $not_contains
+   *   The strings the CKEditor instance is expected to not contain.
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   * @throws \Behat\Mink\Exception\ResponseTextException
    */
-  protected function assignNameToCkeditorIframe() {
-    $javascript = <<<JS
-(function(){
-  document.getElementsByClassName('cke_wysiwyg_frame')[0].id = 'ckeditor';
-})()
-JS;
-    $this->getSession()->evaluateScript($javascript);
+  protected function assertCkeditorUndoOrRedo($action, array $contains, array $not_contains) {
+    if ($action !== 'undo' && $action !== 'redo') {
+      throw new \LogicException();
+    }
+    $this->pressEditorButton($action);
+    $this->getSession()->switchToIFrame('ckeditor');
+    foreach ($contains as $string) {
+      $this->assertSession()->pageTextContains($string);
+    }
+    foreach ($not_contains as $string) {
+      $this->assertSession()->pageTextNotContains($string);
+    }
+    $this->getSession()->switchToIFrame();
+  }
+
+  /**
+   * Get a CKEditor instance's undo snapshot count.
+   *
+   * @param string $instance_id
+   *   The CKEditor instance ID.
+   *
+   * @return int
+   *   The undo snapshot count.
+   */
+  protected function getCkeditorUndoSnapshotCount($instance_id = 'edit-body-0-value') {
+    $this->waitForEditor($instance_id);
+    return $this->getSession()->evaluateScript("CKEDITOR.instances['$instance_id'].undoManager.snapshots.length");
   }
 
 }

@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.ief_content.field_nodes
     - field.field.node.ief_content.ief_media_field
     - node.type.ief_content
   module:
@@ -11,6 +12,14 @@ targetEntityType: node
 bundle: ief_content
 mode: default
 content:
+  field_nodes:
+    weight: 102
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
   ief_media_field:
     weight: 101
     label: above
@@ -18,5 +27,6 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+    region: content
 hidden:
   links: true

@@ -3,14 +3,15 @@
 namespace Drupal\entity_embed\Plugin\Filter;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\entity_embed\EntityEmbedBuilderInterface;
 use Drupal\entity_embed\Exception\EntityNotFoundException;
-use Drupal\entity_embed\Exception\RecursiveRenderingException;
 use Drupal\filter\FilterProcessResult;
 use Drupal\filter\Plugin\FilterBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -30,6 +31,13 @@ use Drupal\embed\DomHelperTrait;
 class EntityEmbedFilter extends FilterBase implements ContainerFactoryPluginInterface {
 
   use DomHelperTrait;
+
+  /**
+   * The number of times this formatter allows rendering the same entity.
+   *
+   * @var int
+   */
+  const RECURSIVE_RENDER_LIMIT = 20;
 
   /**
    * The renderer service.
@@ -53,6 +61,25 @@ class EntityEmbedFilter extends FilterBase implements ContainerFactoryPluginInte
   protected $builder;
 
   /**
+   * The logger factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $loggerFactory;
+
+  /**
+   * An array of counters for the recursive rendering protection.
+   *
+   * Each counter takes into account all the relevant information about the
+   * field and the referenced entity that is being rendered.
+   *
+   * @var array
+   *
+   * @see \Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceEntityFormatter::$recursiveRenderDepth
+   */
+  protected static $recursiveRenderDepth = [];
+
+  /**
    * Constructs a EntityEmbedFilter object.
    *
    * @param array $configuration
@@ -67,12 +94,15 @@ class EntityEmbedFilter extends FilterBase implements ContainerFactoryPluginInte
    *   The renderer.
    * @param \Drupal\entity_embed\EntityEmbedBuilderInterface $builder
    *   The entity embed builder service.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, RendererInterface $renderer, EntityEmbedBuilderInterface $builder) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, RendererInterface $renderer, EntityEmbedBuilderInterface $builder, LoggerChannelFactoryInterface $logger_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
     $this->renderer = $renderer;
     $this->builder = $builder;
+    $this->loggerFactory = $logger_factory;
   }
 
   /**
@@ -85,7 +115,8 @@ class EntityEmbedFilter extends FilterBase implements ContainerFactoryPluginInte
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('renderer'),
-      $container->get('entity_embed.builder')
+      $container->get('entity_embed.builder'),
+      $container->get('logger.factory')
     );
   }
 
@@ -112,10 +143,10 @@ class EntityEmbedFilter extends FilterBase implements ContainerFactoryPluginInte
           $node->removeAttribute('data-entity-embed-settings');
         }
 
+        $entity = NULL;
         try {
           // Load the entity either by UUID (preferred) or ID.
           $id = NULL;
-          $entity = NULL;
           if ($id = $node->getAttribute('data-entity-uuid')) {
             $entity = $this->entityTypeManager->getStorage($entity_type)
               ->loadByProperties(['uuid' => $id]);
@@ -125,22 +156,48 @@ class EntityEmbedFilter extends FilterBase implements ContainerFactoryPluginInte
             $id = $node->getAttribute('data-entity-id');
             $entity = $this->entityTypeManager->getStorage($entity_type)->load($id);
           }
+          if (!$entity instanceof EntityInterface) {
+            $missing_text = $this->t('Missing @type.', ['@type' => $this->entityTypeManager->getDefinition($entity_type)->getLowercaseLabel()]);
+            $entity_output = '<img src="' . file_url_transform_relative(file_create_url('core/modules/media/images/icons/no-thumbnail.png')) . '" width="180" height="180" alt="' . $missing_text . '" title="' . $missing_text . '"/>';
+            throw new EntityNotFoundException(sprintf('Unable to load embedded %s entity %s.', $entity_type, $id));
+          }
+        }
+        catch (EntityNotFoundException $e) {
+          watchdog_exception('entity_embed', $e);
+        }
 
-          if ($entity) {
-            // Protect ourselves from recursive rendering.
-            static $depth = 0;
-            $depth++;
-            if ($depth > 20) {
-              throw new RecursiveRenderingException(sprintf('Recursive rendering detected when rendering embedded %s entity %s.', $entity_type, $entity->id()));
-            }
+        if ($entity instanceof EntityInterface) {
+          // If a UUID was not used, but is available, add it to the HTML.
+          if (!$node->getAttribute('data-entity-uuid') && $uuid = $entity->uuid()) {
+            $node->setAttribute('data-entity-uuid', $uuid);
+          }
 
-            // If a UUID was not used, but is available, add it to the HTML.
-            if (!$node->getAttribute('data-entity-uuid') && $uuid = $entity->uuid()) {
-              $node->setAttribute('data-entity-uuid', $uuid);
-            }
+          $context = $this->getNodeAttributesAsArray($node);
+          $context += ['data-langcode' => $langcode];
 
-            $context = $this->getNodeAttributesAsArray($node);
-            $context += ['data-langcode' => $langcode];
+          // Due to render caching and delayed calls, filtering happens later
+          // in the rendering process through a '#pre_render' callback, so we
+          // need to generate a counter that takes into account all the
+          // relevant information about this field and the referenced entity
+          // that is being rendered.
+          // @see \Drupal\filter\Element\ProcessedText::preRenderText()
+          $recursive_render_id = $entity->uuid() . json_encode($context);
+          if (isset(static::$recursiveRenderDepth[$recursive_render_id])) {
+            static::$recursiveRenderDepth[$recursive_render_id]++;
+          }
+          else {
+            static::$recursiveRenderDepth[$recursive_render_id] = 1;
+          }
+
+          // Protect ourselves from recursive rendering.
+          if (static::$recursiveRenderDepth[$recursive_render_id] > static::RECURSIVE_RENDER_LIMIT) {
+            $this->loggerFactory->get('entity')->error('Recursive rendering detected when rendering embedded entity %entity_type: %entity_id. Aborting rendering.', [
+              '%entity_type' => $entity->getEntityTypeId(),
+              '%entity_id' => $entity->id(),
+            ]);
+            $entity_output = '';
+          }
+          else {
             $build = $this->builder->buildEntityEmbed($entity, $context);
             // We need to render the embedded entity:
             // - without replacing placeholders, so that the placeholders are
@@ -155,18 +212,7 @@ class EntityEmbedFilter extends FilterBase implements ContainerFactoryPluginInte
               return $this->renderer->render($build);
             });
             $result = $result->merge(BubbleableMetadata::createFromRenderArray($build));
-
-            $depth--;
           }
-          else {
-            $alt_text = $this->t('Deleted content encountered, site owner alerted.');
-            $title_text = $this->t('Deleted content.');
-            $entity_output = '<img src="' . file_create_url('core/modules/media/images/icons/no-thumbnail.png') . '" width="180" height="180" alt="' . $alt_text . '" title="' . $title_text . '"/>';
-            throw new EntityNotFoundException(sprintf('Unable to load embedded %s entity %s.', $entity_type, $id));
-          }
-        }
-        catch (\Exception $e) {
-          watchdog_exception('entity_embed', $e);
         }
 
         $this->replaceNodeContent($node, $entity_output);

@@ -50,7 +50,7 @@ class AddURLTest extends UnitTestCase {
       ->method('toString')
       ->will($this->returnValue('http://www.example.com/node/example'));
 
-    // Mock the data source of the indexer to return the mocked url object.
+    // Mock the datasource of the indexer to return the mocked url object.
     $datasource = $this->createMock(DatasourceInterface::class);
     $datasource->expects($this->any())
       ->method('getItemUrl')

@@ -1,7 +1,7 @@
 name: 'Search API Views Test'
 type: module
 description: 'Support module for Search API Views tests'
-package: Search
+package: Testing
 dependencies:
   - search_api:search_api
   - search_api:search_api_test_db
@@ -11,8 +11,8 @@ dependencies:
 # core: 8.x
 hidden: true
 
-# Information added by Drupal.org packaging script on 2019-05-07
-version: '8.x-1.13'
+# Information added by Drupal.org packaging script on 2019-07-08
+version: '8.x-1.14'
 core: '8.x'
 project: 'search_api'
-datestamp: 1557244700
+datestamp: 1562600012

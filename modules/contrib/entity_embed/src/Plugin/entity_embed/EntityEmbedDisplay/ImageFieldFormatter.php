@@ -178,7 +178,7 @@ class ImageFieldFormatter extends FileFieldFormatter {
       // double quotes in place of empty alt text only if that was filled
       // intentionally by the user.
       if (!empty($entity_element) && $entity_element['data-entity-embed-display'] == 'image:image') {
-        $alt = '""';
+        $alt = MediaImageDecorator::EMPTY_STRING;
       }
     }
 
@@ -211,7 +211,7 @@ class ImageFieldFormatter extends FileFieldFormatter {
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     // When the alt attribute is set to two double quotes, transform it to the
     // empty string: two double quotes signify "empty alt attribute". See above.
-    if (trim($form_state->getValue(['attributes', 'alt'])) === '""') {
+    if (trim($form_state->getValue(['attributes', 'alt'])) === MediaImageDecorator::EMPTY_STRING) {
       $form_state->setValue(['attributes', 'alt'], '');
     }
   }

@@ -64,4 +64,15 @@ class Standalone extends DisplayBase implements DisplayRouterInterface {
     return $this->configuration['path'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $path = $form_state->getValue('path');
+
+    if ($path[0] != '/') {
+      $form_state->setError($form['path'], $this->t('The Path field must begin with a forward slash.'));
+    }
+  }
+
 }

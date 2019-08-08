@@ -1,6 +1,4 @@
-# Entity Browser Module
-
-[![Build Status](https://travis-ci.org/drupal-media/entity_browser.svg?branch=8.x-1.x)](https://travis-ci.org/drupal-media/entity_browser) [![Scrutinizer](https://img.shields.io/scrutinizer/g/drupal-media/entity_browser.svg)](https://scrutinizer-ci.com/g/drupal-media/entity_browser)
+Entity Browser Module
 
 Provides standardized interface to list, create and select entities.
 

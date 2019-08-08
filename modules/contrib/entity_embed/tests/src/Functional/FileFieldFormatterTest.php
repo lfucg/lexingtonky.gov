@@ -78,9 +78,10 @@ class FileFieldFormatterTest extends EntityEmbedTestBase {
     $settings['body'] = [['value' => $content, 'format' => 'custom_format']];
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
-    $this->assertText($embed_settings['description'], 'Description of the embedded file exists in page.');
-    $this->assertNoText(strip_tags($content), 'Placeholder does not appears in the output when embed is successful.');
-    $this->assertLinkByHref(file_create_url($this->file->getFileUri()), 0, 'Link to the embedded file exists.');
+    // Verify description of the embedded file exists in page.
+    $this->assertSession()->responseContains($embed_settings['description']);
+    $this->assertSession()->responseNotContains('This placeholder should not be rendered.');
+    $this->assertSession()->linkByHrefExists(file_create_url($this->file->getFileUri()), 0, 'Link to the embedded file exists.');
   }
 
 }

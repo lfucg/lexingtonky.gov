@@ -65,9 +65,19 @@ interface SelectionDisplayInterface extends PluginInspectionInterface, Configura
    * If preselection is not allowed by entity browser selection display, then
    * exception will be thrown.
    *
+   * @deprecated Use ::supportsPreselection instead.
+   *
    * @throws \Drupal\Core\Config\ConfigException
    */
   public function checkPreselectionSupport();
+
+  /**
+   * Check if the plugin supports preselection.
+   *
+   * @returns bool
+   *   Returns TRUE if preselection is supported.
+   */
+  public function supportsPreselection();
 
   /**
    * Returns true if selection display supports selection over javascript.

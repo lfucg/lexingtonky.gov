@@ -91,9 +91,11 @@ class ImageFieldFormatterTest extends EntityEmbedTestBase {
     $settings['body'] = [['value' => $content, 'format' => 'custom_format']];
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw($alt_text, 'Alternate text for the embedded image is visible when embed is successful.');
-    $this->assertNoText(strip_tags($content), 'Placeholder does not appears in the output when embed is successful.');
-    $this->assertLinkByHref(file_create_url($this->image->getFileUri()), 0, 'Link to the embedded image exists.');
+    // Verify alternate text for the embedded image is visible
+    // when embed is successful.
+    $this->assertSession()->responseContains($alt_text);
+    $this->assertSession()->responseNotContains('This placeholder should not be rendered.');
+    $this->assertSession()->linkByHrefExists(file_create_url($this->image->getFileUri()), 0, 'Link to the embedded image exists.');
 
     // Embed all three field types in one, to ensure they all render correctly.
     $content = '<drupal-entity data-entity-type="node" data-entity-uuid="' . $this->node->uuid() . '" data-entity-embed-display="entity_reference:entity_reference_label"></drupal-entity>';

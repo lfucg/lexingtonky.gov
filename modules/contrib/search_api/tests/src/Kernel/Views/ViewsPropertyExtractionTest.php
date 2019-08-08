@@ -91,14 +91,23 @@ class ViewsPropertyExtractionTest extends KernelTestBase {
         }
       };
     };
-    $value1 = $processor_property_value ?: 'Processor 1';
     $processor1 = $this->createMock(ProcessorInterface::class);
-    $processor1->method('addFieldValues')
-      ->willReturnCallback($generate_add_field_values($value1));
-    $value2 = $processor_property_value ?: 'Processor 2';
     $processor2 = $this->createMock(ProcessorInterface::class);
-    $processor2->method('addFieldValues')
-      ->willReturnCallback($generate_add_field_values($value2));
+    // When we pre-set the row values we don't expect the processor to be called
+    // for field value extraction.
+    if ($pre_set) {
+      $exception = new \Exception('Should not be called.');
+      $processor1->method('addFieldValues')->willThrowException($exception);
+      $processor2->method('addFieldValues')->willThrowException($exception);
+    }
+    else {
+      $value1 = $processor_property_value ?: 'Processor 1';
+      $processor1->method('addFieldValues')
+        ->willReturnCallback($generate_add_field_values($value1));
+      $value2 = $processor_property_value ?: 'Processor 2';
+      $processor2->method('addFieldValues')
+        ->willReturnCallback($generate_add_field_values($value2));
+    }
     $index->method('getProcessor')->willReturnMap([
       ['processor1', $processor1],
       ['processor2', $processor2],
@@ -148,7 +157,6 @@ class ViewsPropertyExtractionTest extends KernelTestBase {
     ];
     $field = new SearchApiStandard($configuration, '', []);
     $options = [
-      'link_to_item' => TRUE,
       'use_highlighting' => TRUE,
     ];
     $field->init($view, $display, $options);
@@ -167,21 +175,14 @@ class ViewsPropertyExtractionTest extends KernelTestBase {
         NULL => [$object],
       ],
     ]);
+    // For the configurable property, change the property path if it matches a
+    // field.
+    if ($property_path === 'entity:user/property2') {
+      $original_property_path = $property_path;
+      $property_path = "$property_path|test";
+    }
     if ($pre_set) {
       $row->$property_path = ['Pre-set'];
-    }
-    // For the configurable property, also set the values for the special
-    // property path.
-    if ($property_path === 'entity:user/property2') {
-      $special_path = "$property_path|test";
-      if ($pre_set) {
-        $row->$special_path = ['Pre-set'];
-      }
-      // Whether that special property path will actually be used by the field
-      // plugin depends on whether it finds a matching field.
-      if ($return_fields) {
-        $property_path = $special_path;
-      }
     }
     if ($set_highlighting) {
       $item->setExtraData('highlighted_fields', [
@@ -194,7 +195,21 @@ class ViewsPropertyExtractionTest extends KernelTestBase {
 
     $field->preRender($values);
 
+    $this->assertTrue(isset($row->$property_path), "\"$property_path\" property is set on \$row");
     $this->assertEquals((array) $expected, $row->$property_path);
+
+    // Check that $field->propertyReplacements was set correctly (if
+    // applicable).
+    $property_replacements = new \ReflectionProperty($field, 'propertyReplacements');
+    $property_replacements->setAccessible(TRUE);
+    $property_replacements = $property_replacements->getValue($field);
+    if (isset($original_property_path)) {
+      $this->assertArrayHasKey($original_property_path, $property_replacements);
+      $this->assertEquals($property_path, $property_replacements[$original_property_path]);
+    }
+    else {
+      $this->assertEmpty($property_replacements);
+    }
   }
 
   /**

@@ -2,7 +2,7 @@
 
 namespace Drupal\Tests\search_api\FunctionalJavascript;
 
-use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
+use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\search_api\Utility\Utility;
 use Drupal\search_api_test\PluginTestTrait;
@@ -12,7 +12,7 @@ use Drupal\search_api_test\PluginTestTrait;
  *
  * @group search_api
  */
-class AjaxTest extends JavascriptTestBase {
+class AjaxTest extends WebDriverTestBase {
 
   use PluginTestTrait;
 

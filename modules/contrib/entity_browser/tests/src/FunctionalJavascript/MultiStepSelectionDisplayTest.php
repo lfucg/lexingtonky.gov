@@ -11,7 +11,7 @@ use Drupal\Component\Utility\NestedArray;
  *
  * @package Drupal\Tests\entity_browser\FunctionalJavascript
  */
-class MultiStepSelectionDisplayTest extends EntityBrowserJavascriptTestBase {
+class MultiStepSelectionDisplayTest extends EntityBrowserWebDriverTestBase {
 
   /**
    * Open iframe entity browser and change scope to iframe.
@@ -27,7 +27,7 @@ class MultiStepSelectionDisplayTest extends EntityBrowserJavascriptTestBase {
    * Close iframe entity browser and change scope to base page.
    */
   protected function closeEntityBrowser() {
-    $this->clickXpathSelector('//*[@data-drupal-selector="edit-use-selected"]');
+    $this->assertSession()->elementExists('xpath', '//*[@data-drupal-selector="edit-use-selected"]')->press();
     $this->getSession()->switchToIFrame();
     $this->waitForAjaxToFinish();
   }
@@ -41,7 +41,7 @@ class MultiStepSelectionDisplayTest extends EntityBrowserJavascriptTestBase {
   protected function clickViewEntity($entityId) {
     $xpathViewRow = '//*[./*[contains(@class, "views-field-entity-browser-select") and .//input[@name="entity_browser_select[' . $entityId . ']"]]]';
 
-    $this->clickXpathSelector($xpathViewRow, FALSE);
+    $this->assertSession()->elementExists('xpath', $xpathViewRow)->press();
   }
 
   /**
@@ -117,7 +117,7 @@ class MultiStepSelectionDisplayTest extends EntityBrowserJavascriptTestBase {
       ->elementExists('xpath', '//*[@data-drupal-selector="edit-show-selection"]');
 
     // Click on first entity Remove button.
-    $this->clickXpathSelector('//input[@data-row-id="0"]');
+    $this->assertSession()->elementExists('xpath', '//input[@data-row-id="0"]')->press();
     $this->waitSelectionDisplayAjaxCommands();
 
     // Check that action buttons are not there.
@@ -158,7 +158,7 @@ class MultiStepSelectionDisplayTest extends EntityBrowserJavascriptTestBase {
 
     // Quickly remove all 5 entities.
     foreach (array_keys($entitiesToAdd) as $entityIndex) {
-      $this->clickXpathSelector('//input[@data-row-id="' . $entityIndex . '"]');
+      $this->assertSession()->elementExists('xpath', '//input[@data-row-id="' . $entityIndex . '"]')->press();
     }
     $this->waitSelectionDisplayAjaxCommands();
 
@@ -240,7 +240,7 @@ class MultiStepSelectionDisplayTest extends EntityBrowserJavascriptTestBase {
     $this->openEntityBrowser();
 
     // Click on first entity Remove button.
-    $this->clickXpathSelector('//input[@data-row-id="0"]');
+    $this->assertSession()->elementExists('xpath', '//input[@data-row-id="0"]')->press();
     $this->waitSelectionDisplayAjaxCommands();
 
     $this->closeEntityBrowser();

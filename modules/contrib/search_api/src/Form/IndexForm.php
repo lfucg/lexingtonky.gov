@@ -169,8 +169,8 @@ class IndexForm extends EntityForm {
 
     $form['datasources'] = [
       '#type' => 'checkboxes',
-      '#title' => $this->t('Data sources'),
-      '#description' => $this->t('Select one or more data sources of items that will be stored in this index.'),
+      '#title' => $this->t('Datasources'),
+      '#description' => $this->t('Select one or more datasources of items that will be stored in this index.'),
       '#default_value' => $index->getDatasourceIds(),
       '#multiple' => TRUE,
       '#required' => TRUE,

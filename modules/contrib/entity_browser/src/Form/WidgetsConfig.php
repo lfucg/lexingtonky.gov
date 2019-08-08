@@ -4,6 +4,7 @@ namespace Drupal\entity_browser\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\entity_browser\WidgetManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -11,7 +12,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Form for configuring widgets for entity browser.
  */
 class WidgetsConfig extends EntityForm {
-
 
   /**
    * Entity browser widget plugin manager.
@@ -25,9 +25,12 @@ class WidgetsConfig extends EntityForm {
    *
    * @param \Drupal\entity_browser\WidgetManager $widget_manager
    *   Entity browser widget plugin manager.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
    */
-  public function __construct(WidgetManager $widget_manager) {
+  public function __construct(WidgetManager $widget_manager, MessengerInterface $messenger) {
     $this->widgetManager = $widget_manager;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -35,7 +38,8 @@ class WidgetsConfig extends EntityForm {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('plugin.manager.entity_browser.widget')
+      $container->get('plugin.manager.entity_browser.widget'),
+      $container->get('messenger')
     );
   }
 
@@ -220,7 +224,11 @@ class WidgetsConfig extends EntityForm {
       $widget->setWeight($table[$uuid]['weight']);
       $widget->setLabel($table[$uuid]['label']);
     }
-    $entity_browser->save();
+    $status = $entity_browser->save();
+
+    if ($status == SAVED_UPDATED) {
+      $this->messenger->addMessage($this->t('The entity browser %name has been updated.', ['%name' => $this->entity->label()]));
+    }
   }
 
 }

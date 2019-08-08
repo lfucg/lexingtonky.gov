@@ -26,10 +26,19 @@ use PHP_CodeSniffer\Sniffs\Sniff;
  */
 class ScopeInfo
 {
+    /**
+     * Token stackpointer to the owner of the scope.
+     *
+     * @var integer
+     */
     public $owner;
-    public $opener;
-    public $closer;
-    public $variables = array();
+
+    /**
+     * Variable information within this scope.
+     *
+     * @var VariableInfo[]
+     */
+    public $variables = [];
 
 
     /**
@@ -37,7 +46,7 @@ class ScopeInfo
      *
      * @param int $currScope
      */
-    function __construct($currScope)
+    public function __construct($currScope)
     {
         // TODO: extract opener/closer.
         $this->owner = $currScope;
@@ -59,26 +68,81 @@ class ScopeInfo
  */
 class VariableInfo
 {
+    /**
+     * The name of this variable.
+     *
+     * @var string
+     */
     public $name;
+
     /**
      * What scope the variable has: local, param, static, global, bound
+     *
+     * @var string
      */
     public $scopeType;
+
+    /**
+     * The type hint associated with this variable.
+     *
+     * @var string
+     */
     public $typeHint;
+
+    /**
+     * Indicates whether this variable is passed by reference.
+     *
+     * @var boolean
+     */
     public $passByReference = false;
+
+    /**
+     * Token stack pointer where the variable was first declared.
+     *
+     * @var integer
+     */
     public $firstDeclared;
+
+    /**
+     * Token stack pointer where the variable was first initialized.
+     *
+     * @var integer
+     */
     public $firstInitialized;
+
+    /**
+     * Token stack pointer where the variable was first read from.
+     *
+     * @var integer
+     */
     public $firstRead;
+
+    /**
+     * Indicates if the usage of the variable should be ignored.
+     *
+     * @var boolean
+     */
     public $ignoreUnused = false;
+
+    /**
+     * Token stack pointer where the variable was last assigned a value.
+     *
+     * @var integer
+     */
     public $lastAssignment;
 
-    static $scopeTypeDescriptions = array(
-                                     'local'  => 'variable',
-                                     'param'  => 'function parameter',
-                                     'static' => 'static variable',
-                                     'global' => 'global variable',
-                                     'bound'  => 'bound variable',
-                                    );
+    /**
+     * Description mapping for the scope of the variable.
+     *
+     * @var string[]
+     */
+    public static $scopeTypeDescriptions = [
+        'local'  => 'variable',
+        'param'  => 'function parameter',
+        'static' => 'static variable',
+        'global' => 'global variable',
+        'bound'  => 'bound variable',
+    ];
 
 
     /**
@@ -86,7 +150,7 @@ class VariableInfo
      *
      * @param string $varName
      */
-    function __construct($varName)
+    public function __construct($varName)
     {
         $this->name = $varName;
 
@@ -113,469 +177,483 @@ class VariableAnalysisSniff implements Sniff
     /**
      * The current phpcsFile being checked.
      *
-     * @var phpcsFile
+     * @var File
      */
     protected $currentFile = null;
 
     /**
      * A list of scopes encountered so far and the variables within them.
+     *
+     * @var array
      */
-    private $_scopes = array();
+    private $scopes = [];
 
     /**
      * A regexp for matching variable names in double-quoted strings.
+     *
+     * @var string
      */
-    private $_double_quoted_variable_regexp = '|(?<!\\\\)(?:\\\\{2})*\${?([a-zA-Z0-9_]+)}?|';
+    private $doubleQuotedVariableRegexp = '|(?<!\\\\)(?:\\\\{2})*\${?([a-zA-Z0-9_]+)}?|';
 
     /**
      *  Array of known pass-by-reference functions and the argument(s) which are passed
      *  by reference, the arguments are numbered starting from 1 and an elipsis '...'
      *  means all argument numbers after the previous should be considered pass-by-reference.
+     *
+     * @var array
      */
-    private $_passByRefFunctions = array(
-                                    '__soapCall'                  => array(5),
-                                    'addFunction'                 => array(3),
-                                    'addTask'                     => array(3),
-                                    'addTaskBackground'           => array(3),
-                                    'addTaskHigh'                 => array(3),
-                                    'addTaskHighBackground'       => array(3),
-                                    'addTaskLow'                  => array(3),
-                                    'addTaskLowBackground'        => array(3),
-                                    'addTaskStatus'               => array(2),
-                                    'apc_dec'                     => array(3),
-                                    'apc_fetch'                   => array(2),
-                                    'apc_inc'                     => array(3),
-                                    'areConfusable'               => array(3),
-                                    'array_multisort'             => array(1),
-                                    'array_pop'                   => array(1),
-                                    'array_push'                  => array(1),
-                                    'array_replace'               => array(1),
-                                    'array_replace_recursive'     => array(
-                                                                      1,
-                                                                      2,
-                                                                      3,
-                                                                      '...',
-                                                                     ),
-                                    'array_shift'                 => array(1),
-                                    'array_splice'                => array(1),
-                                    'array_unshift'               => array(1),
-                                    'array_walk'                  => array(1),
-                                    'array_walk_recursive'        => array(1),
-                                    'arsort'                      => array(1),
-                                    'asort'                       => array(1),
-                                    'asort'                       => array(1),
-                                    'bindColumn'                  => array(2),
-                                    'bindParam'                   => array(2),
-                                    'bind_param'                  => array(
-                                                                      2,
-                                                                      3,
-                                                                      '...',
-                                                                     ),
-                                    'bind_result'                 => array(
-                                                                      1,
-                                                                      2,
-                                                                      '...',
-                                                                     ),
-                                    'call_user_method'            => array(2),
-                                    'call_user_method_array'      => array(2),
-                                    'curl_multi_exec'             => array(2),
-                                    'curl_multi_info_read'        => array(2),
-                                    'current'                     => array(1),
-                                    'dbplus_curr'                 => array(2),
-                                    'dbplus_first'                => array(2),
-                                    'dbplus_info'                 => array(3),
-                                    'dbplus_last'                 => array(2),
-                                    'dbplus_next'                 => array(2),
-                                    'dbplus_prev'                 => array(2),
-                                    'dbplus_tremove'              => array(3),
-                                    'dns_get_record'              => array(
-                                                                      3,
-                                                                      4,
-                                                                     ),
-                                    'domxml_open_file'            => array(3),
-                                    'domxml_open_mem'             => array(3),
-                                    'each'                        => array(1),
-                                    'enchant_dict_quick_check'    => array(3),
-                                    'end'                         => array(1),
-                                    'ereg'                        => array(3),
-                                    'eregi'                       => array(3),
-                                    'exec'                        => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'exif_thumbnail'              => array(
-                                                                      1,
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'expect_expectl'              => array(3),
-                                    'extract'                     => array(1),
-                                    'filter'                      => array(3),
-                                    'flock'                       => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'fscanf'                      => array(
-                                                                      2,
-                                                                      3,
-                                                                      '...',
-                                                                     ),
-                                    'fsockopen'                   => array(
-                                                                      3,
-                                                                      4,
-                                                                     ),
-                                    'ftp_alloc'                   => array(3),
-                                    'get'                         => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'getByKey'                    => array(4),
-                                    'getMulti'                    => array(2),
-                                    'getMultiByKey'               => array(3),
-                                    'getimagesize'                => array(2),
-                                    'getmxrr'                     => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'gnupg_decryptverify'         => array(3),
-                                    'gnupg_verify'                => array(4),
-                                    'grapheme_extract'            => array(5),
-                                    'headers_sent'                => array(
-                                                                      1,
-                                                                      2,
-                                                                     ),
-                                    'http_build_url'              => array(4),
-                                    'http_get'                    => array(3),
-                                    'http_head'                   => array(3),
-                                    'http_negotiate_charset'      => array(2),
-                                    'http_negotiate_content_type' => array(2),
-                                    'http_negotiate_language'     => array(2),
-                                    'http_post_data'              => array(4),
-                                    'http_post_fields'            => array(5),
-                                    'http_put_data'               => array(4),
-                                    'http_put_file'               => array(4),
-                                    'http_put_stream'             => array(4),
-                                    'http_request'                => array(5),
-                                    'isSuspicious'                => array(2),
-                                    'is_callable'                 => array(3),
-                                    'key'                         => array(1),
-                                    'krsort'                      => array(1),
-                                    'ksort'                       => array(1),
-                                    'ldap_get_option'             => array(3),
-                                    'ldap_parse_reference'        => array(3),
-                                    'ldap_parse_result'           => array(
-                                                                      3,
-                                                                      4,
-                                                                      5,
-                                                                      6,
-                                                                     ),
-                                    'localtime'                   => array(2),
-                                    'm_completeauthorizations'    => array(2),
-                                    'maxdb_stmt_bind_param'       => array(
-                                                                      3,
-                                                                      4,
-                                                                      '...',
-                                                                     ),
-                                    'maxdb_stmt_bind_result'      => array(
-                                                                      2,
-                                                                      3,
-                                                                      '...',
-                                                                     ),
-                                    'mb_convert_variables'        => array(
-                                                                      3,
-                                                                      4,
-                                                                      '...',
-                                                                     ),
-                                    'mb_parse_str'                => array(2),
-                                    'mqseries_back'               => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'mqseries_begin'              => array(
-                                                                      3,
-                                                                      4,
-                                                                     ),
-                                    'mqseries_close'              => array(
-                                                                      4,
-                                                                      5,
-                                                                     ),
-                                    'mqseries_cmit'               => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'mqseries_conn'               => array(
-                                                                      2,
-                                                                      3,
-                                                                      4,
-                                                                     ),
-                                    'mqseries_connx'              => array(
-                                                                      2,
-                                                                      3,
-                                                                      4,
-                                                                      5,
-                                                                     ),
-                                    'mqseries_disc'               => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'mqseries_get'                => array(
-                                                                      3,
-                                                                      4,
-                                                                      5,
-                                                                      6,
-                                                                      7,
-                                                                      8,
-                                                                      9,
-                                                                     ),
-                                    'mqseries_inq'                => array(
-                                                                      6,
-                                                                      8,
-                                                                      9,
-                                                                      10,
-                                                                     ),
-                                    'mqseries_open'               => array(
-                                                                      2,
-                                                                      4,
-                                                                      5,
-                                                                      6,
-                                                                     ),
-                                    'mqseries_put'                => array(
-                                                                      3,
-                                                                      4,
-                                                                      6,
-                                                                      7,
-                                                                     ),
-                                    'mqseries_put1'               => array(
-                                                                      2,
-                                                                      3,
-                                                                      4,
-                                                                      6,
-                                                                      7,
-                                                                     ),
-                                    'mqseries_set'                => array(
-                                                                      9,
-                                                                      10,
-                                                                     ),
-                                    'msg_receive'                 => array(
-                                                                      3,
-                                                                      5,
-                                                                      8,
-                                                                     ),
-                                    'msg_send'                    => array(6),
-                                    'mssql_bind'                  => array(3),
-                                    'natcasesort'                 => array(1),
-                                    'natsort'                     => array(1),
-                                    'ncurses_color_content'       => array(
-                                                                      2,
-                                                                      3,
-                                                                      4,
-                                                                     ),
-                                    'ncurses_getmaxyx'            => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'ncurses_getmouse'            => array(1),
-                                    'ncurses_getyx'               => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'ncurses_instr'               => array(1),
-                                    'ncurses_mouse_trafo'         => array(
-                                                                      1,
-                                                                      2,
-                                                                     ),
-                                    'ncurses_mousemask'           => array(2),
-                                    'ncurses_pair_content'        => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'ncurses_wmouse_trafo'        => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'newt_button_bar'             => array(1),
-                                    'newt_form_run'               => array(2),
-                                    'newt_get_screen_size'        => array(
-                                                                      1,
-                                                                      2,
-                                                                     ),
-                                    'newt_grid_get_size'          => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'newt_reflow_text'            => array(
-                                                                      5,
-                                                                      6,
-                                                                     ),
-                                    'newt_win_entries'            => array(7),
-                                    'newt_win_menu'               => array(8),
-                                    'next'                        => array(1),
-                                    'oci_bind_array_by_name'      => array(3),
-                                    'oci_bind_by_name'            => array(3),
-                                    'oci_define_by_name'          => array(3),
-                                    'oci_fetch_all'               => array(2),
-                                    'ocifetchinto'                => array(2),
-                                    'odbc_fetch_into'             => array(2),
-                                    'openssl_csr_export'          => array(2),
-                                    'openssl_csr_new'             => array(2),
-                                    'openssl_open'                => array(2),
-                                    'openssl_pkcs12_export'       => array(2),
-                                    'openssl_pkcs12_read'         => array(2),
-                                    'openssl_pkey_export'         => array(2),
-                                    'openssl_private_decrypt'     => array(2),
-                                    'openssl_private_encrypt'     => array(2),
-                                    'openssl_public_decrypt'      => array(2),
-                                    'openssl_public_encrypt'      => array(2),
-                                    'openssl_random_pseudo_bytes' => array(2),
-                                    'openssl_seal'                => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'openssl_sign'                => array(2),
-                                    'openssl_x509_export'         => array(2),
-                                    'ovrimos_fetch_into'          => array(2),
-                                    'parse'                       => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'parseCurrency'               => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'parse_str'                   => array(2),
-                                    'parsekit_compile_file'       => array(2),
-                                    'parsekit_compile_string'     => array(2),
-                                    'passthru'                    => array(2),
-                                    'pcntl_sigprocmask'           => array(3),
-                                    'pcntl_sigtimedwait'          => array(2),
-                                    'pcntl_sigwaitinfo'           => array(2),
-                                    'pcntl_wait'                  => array(1),
-                                    'pcntl_waitpid'               => array(2),
-                                    'pfsockopen'                  => array(
-                                                                      3,
-                                                                      4,
-                                                                     ),
-                                    'php_check_syntax'            => array(2),
-                                    'poll'                        => array(
-                                                                      1,
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'preg_filter'                 => array(5),
-                                    'preg_match'                  => array(3),
-                                    'preg_match_all'              => array(3),
-                                    'preg_replace'                => array(5),
-                                    'preg_replace_callback'       => array(5),
-                                    'prev'                        => array(1),
-                                    'proc_open'                   => array(3),
-                                    'query'                       => array(3),
-                                    'queryExec'                   => array(2),
-                                    'reset'                       => array(1),
-                                    'rsort'                       => array(1),
-                                    'settype'                     => array(1),
-                                    'shuffle'                     => array(1),
-                                    'similar_text'                => array(3),
-                                    'socket_create_pair'          => array(4),
-                                    'socket_getpeername'          => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'socket_getsockname'          => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'socket_recv'                 => array(2),
-                                    'socket_recvfrom'             => array(
-                                                                      2,
-                                                                      5,
-                                                                      6,
-                                                                     ),
-                                    'socket_select'               => array(
-                                                                      1,
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'sort'                        => array(1),
-                                    'sortWithSortKeys'            => array(1),
-                                    'sqlite_exec'                 => array(3),
-                                    'sqlite_factory'              => array(3),
-                                    'sqlite_open'                 => array(3),
-                                    'sqlite_popen'                => array(3),
-                                    'sqlite_query'                => array(4),
-                                    'sqlite_query'                => array(4),
-                                    'sqlite_unbuffered_query'     => array(4),
-                                    'sscanf'                      => array(
-                                                                      3,
-                                                                      '...',
-                                                                     ),
-                                    'str_ireplace'                => array(4),
-                                    'str_replace'                 => array(4),
-                                    'stream_open'                 => array(4),
-                                    'stream_select'               => array(
-                                                                      1,
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'stream_socket_accept'        => array(3),
-                                    'stream_socket_client'        => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'stream_socket_recvfrom'      => array(4),
-                                    'stream_socket_server'        => array(
-                                                                      2,
-                                                                      3,
-                                                                     ),
-                                    'system'                      => array(2),
-                                    'uasort'                      => array(1),
-                                    'uksort'                      => array(1),
-                                    'unbufferedQuery'             => array(3),
-                                    'usort'                       => array(1),
-                                    'wincache_ucache_dec'         => array(3),
-                                    'wincache_ucache_get'         => array(2),
-                                    'wincache_ucache_inc'         => array(3),
-                                    'xdiff_string_merge3'         => array(4),
-                                    'xdiff_string_patch'          => array(4),
-                                    'xml_parse_into_struct'       => array(
-                                                                      3,
-                                                                      4,
-                                                                     ),
-                                    'xml_set_object'              => array(2),
-                                    'xmlrpc_decode_request'       => array(2),
-                                    'xmlrpc_set_type'             => array(1),
-                                    'xslt_set_object'             => array(2),
-                                    'yaml_parse'                  => array(3),
-                                    'yaml_parse_file'             => array(3),
-                                    'yaml_parse_url'              => array(3),
-                                    'yaz_ccl_parse'               => array(3),
-                                    'yaz_hits'                    => array(2),
-                                    'yaz_scan_result'             => array(2),
-                                    'yaz_wait'                    => array(1),
-                                   );
+    private $passByRefFunctions = [
+        '__soapCall'                  => [5],
+        'addFunction'                 => [3],
+        'addTask'                     => [3],
+        'addTaskBackground'           => [3],
+        'addTaskHigh'                 => [3],
+        'addTaskHighBackground'       => [3],
+        'addTaskLow'                  => [3],
+        'addTaskLowBackground'        => [3],
+        'addTaskStatus'               => [2],
+        'apc_dec'                     => [3],
+        'apc_fetch'                   => [2],
+        'apc_inc'                     => [3],
+        'areConfusable'               => [3],
+        'array_multisort'             => [1],
+        'array_pop'                   => [1],
+        'array_push'                  => [1],
+        'array_replace'               => [1],
+        'array_replace_recursive'     => [
+            1,
+            2,
+            3,
+            '...',
+        ],
+        'array_shift'                 => [1],
+        'array_splice'                => [1],
+        'array_unshift'               => [1],
+        'array_walk'                  => [1],
+        'array_walk_recursive'        => [1],
+        'arsort'                      => [1],
+        'asort'                       => [1],
+        'asort'                       => [1],
+        'bindColumn'                  => [2],
+        'bindParam'                   => [2],
+        'bind_param'                  => [
+            2,
+            3,
+            '...',
+        ],
+        'bind_result'                 => [
+            1,
+            2,
+            '...',
+        ],
+        'call_user_method'            => [2],
+        'call_user_method_array'      => [2],
+        'curl_multi_exec'             => [2],
+        'curl_multi_info_read'        => [2],
+        'current'                     => [1],
+        'dbplus_curr'                 => [2],
+        'dbplus_first'                => [2],
+        'dbplus_info'                 => [3],
+        'dbplus_last'                 => [2],
+        'dbplus_next'                 => [2],
+        'dbplus_prev'                 => [2],
+        'dbplus_tremove'              => [3],
+        'dns_get_record'              => [
+            3,
+            4,
+        ],
+        'domxml_open_file'            => [3],
+        'domxml_open_mem'             => [3],
+        'each'                        => [1],
+        'enchant_dict_quick_check'    => [3],
+        'end'                         => [1],
+        'ereg'                        => [3],
+        'eregi'                       => [3],
+        'exec'                        => [
+            2,
+            3,
+        ],
+        'exif_thumbnail'              => [
+            1,
+            2,
+            3,
+        ],
+        'expect_expectl'              => [3],
+        'extract'                     => [1],
+        'filter'                      => [3],
+        'flock'                       => [
+            2,
+            3,
+        ],
+        'fscanf'                      => [
+            2,
+            3,
+            '...',
+        ],
+        'fsockopen'                   => [
+            3,
+            4,
+        ],
+        'ftp_alloc'                   => [3],
+        'get'                         => [
+            2,
+            3,
+        ],
+        'getByKey'                    => [4],
+        'getMulti'                    => [2],
+        'getMultiByKey'               => [3],
+        'getimagesize'                => [2],
+        'getmxrr'                     => [
+            2,
+            3,
+        ],
+        'gnupg_decryptverify'         => [3],
+        'gnupg_verify'                => [4],
+        'grapheme_extract'            => [5],
+        'headers_sent'                => [
+            1,
+            2,
+        ],
+        'http_build_url'              => [4],
+        'http_get'                    => [3],
+        'http_head'                   => [3],
+        'http_negotiate_charset'      => [2],
+        'http_negotiate_content_type' => [2],
+        'http_negotiate_language'     => [2],
+        'http_post_data'              => [4],
+        'http_post_fields'            => [5],
+        'http_put_data'               => [4],
+        'http_put_file'               => [4],
+        'http_put_stream'             => [4],
+        'http_request'                => [5],
+        'isSuspicious'                => [2],
+        'is_callable'                 => [3],
+        'key'                         => [1],
+        'krsort'                      => [1],
+        'ksort'                       => [1],
+        'ldap_get_option'             => [3],
+        'ldap_parse_reference'        => [3],
+        'ldap_parse_result'           => [
+            3,
+            4,
+            5,
+            6,
+        ],
+        'localtime'                   => [2],
+        'm_completeauthorizations'    => [2],
+        'maxdb_stmt_bind_param'       => [
+            3,
+            4,
+            '...',
+        ],
+        'maxdb_stmt_bind_result'      => [
+            2,
+            3,
+            '...',
+        ],
+        'mb_convert_variables'        => [
+            3,
+            4,
+            '...',
+        ],
+        'mb_parse_str'                => [2],
+        'mqseries_back'               => [
+            2,
+            3,
+        ],
+        'mqseries_begin'              => [
+            3,
+            4,
+        ],
+        'mqseries_close'              => [
+            4,
+            5,
+        ],
+        'mqseries_cmit'               => [
+            2,
+            3,
+        ],
+        'mqseries_conn'               => [
+            2,
+            3,
+            4,
+        ],
+        'mqseries_connx'              => [
+            2,
+            3,
+            4,
+            5,
+        ],
+        'mqseries_disc'               => [
+            2,
+            3,
+        ],
+        'mqseries_get'                => [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+        ],
+        'mqseries_inq'                => [
+            6,
+            8,
+            9,
+            10,
+        ],
+        'mqseries_open'               => [
+            2,
+            4,
+            5,
+            6,
+        ],
+        'mqseries_put'                => [
+            3,
+            4,
+            6,
+            7,
+        ],
+        'mqseries_put1'               => [
+            2,
+            3,
+            4,
+            6,
+            7,
+        ],
+        'mqseries_set'                => [
+            9,
+            10,
+        ],
+        'msg_receive'                 => [
+            3,
+            5,
+            8,
+        ],
+        'msg_send'                    => [6],
+        'mssql_bind'                  => [3],
+        'natcasesort'                 => [1],
+        'natsort'                     => [1],
+        'ncurses_color_content'       => [
+            2,
+            3,
+            4,
+        ],
+        'ncurses_getmaxyx'            => [
+            2,
+            3,
+        ],
+        'ncurses_getmouse'            => [1],
+        'ncurses_getyx'               => [
+            2,
+            3,
+        ],
+        'ncurses_instr'               => [1],
+        'ncurses_mouse_trafo'         => [
+            1,
+            2,
+        ],
+        'ncurses_mousemask'           => [2],
+        'ncurses_pair_content'        => [
+            2,
+            3,
+        ],
+        'ncurses_wmouse_trafo'        => [
+            2,
+            3,
+        ],
+        'newt_button_bar'             => [1],
+        'newt_form_run'               => [2],
+        'newt_get_screen_size'        => [
+            1,
+            2,
+        ],
+        'newt_grid_get_size'          => [
+            2,
+            3,
+        ],
+        'newt_reflow_text'            => [
+            5,
+            6,
+        ],
+        'newt_win_entries'            => [7],
+        'newt_win_menu'               => [8],
+        'next'                        => [1],
+        'oci_bind_array_by_name'      => [3],
+        'oci_bind_by_name'            => [3],
+        'oci_define_by_name'          => [3],
+        'oci_fetch_all'               => [2],
+        'ocifetchinto'                => [2],
+        'odbc_fetch_into'             => [2],
+        'openssl_csr_export'          => [2],
+        'openssl_csr_new'             => [2],
+        'openssl_open'                => [2],
+        'openssl_pkcs12_export'       => [2],
+        'openssl_pkcs12_read'         => [2],
+        'openssl_pkey_export'         => [2],
+        'openssl_private_decrypt'     => [2],
+        'openssl_private_encrypt'     => [2],
+        'openssl_public_decrypt'      => [2],
+        'openssl_public_encrypt'      => [2],
+        'openssl_random_pseudo_bytes' => [2],
+        'openssl_seal'                => [
+            2,
+            3,
+        ],
+        'openssl_sign'                => [2],
+        'openssl_x509_export'         => [2],
+        'ovrimos_fetch_into'          => [2],
+        'parse'                       => [
+            2,
+            3,
+        ],
+        'parseCurrency'               => [
+            2,
+            3,
+        ],
+        'parse_str'                   => [2],
+        'parsekit_compile_file'       => [2],
+        'parsekit_compile_string'     => [2],
+        'passthru'                    => [2],
+        'pcntl_sigprocmask'           => [3],
+        'pcntl_sigtimedwait'          => [2],
+        'pcntl_sigwaitinfo'           => [2],
+        'pcntl_wait'                  => [1],
+        'pcntl_waitpid'               => [2],
+        'pfsockopen'                  => [
+            3,
+            4,
+        ],
+        'php_check_syntax'            => [2],
+        'poll'                        => [
+            1,
+            2,
+            3,
+        ],
+        'preg_filter'                 => [5],
+        'preg_match'                  => [3],
+        'preg_match_all'              => [3],
+        'preg_replace'                => [5],
+        'preg_replace_callback'       => [5],
+        'prev'                        => [1],
+        'proc_open'                   => [3],
+        'query'                       => [3],
+        'queryExec'                   => [2],
+        'reset'                       => [1],
+        'rsort'                       => [1],
+        'settype'                     => [1],
+        'shuffle'                     => [1],
+        'similar_text'                => [3],
+        'socket_create_pair'          => [4],
+        'socket_getpeername'          => [
+            2,
+            3,
+        ],
+        'socket_getsockname'          => [
+            2,
+            3,
+        ],
+        'socket_recv'                 => [2],
+        'socket_recvfrom'             => [
+            2,
+            5,
+            6,
+        ],
+        'socket_select'               => [
+            1,
+            2,
+            3,
+        ],
+        'sort'                        => [1],
+        'sortWithSortKeys'            => [1],
+        'sqlite_exec'                 => [3],
+        'sqlite_factory'              => [3],
+        'sqlite_open'                 => [3],
+        'sqlite_popen'                => [3],
+        'sqlite_query'                => [4],
+        'sqlite_query'                => [4],
+        'sqlite_unbuffered_query'     => [4],
+        'sscanf'                      => [
+            3,
+            '...',
+        ],
+        'str_ireplace'                => [4],
+        'str_replace'                 => [4],
+        'stream_open'                 => [4],
+        'stream_select'               => [
+            1,
+            2,
+            3,
+        ],
+        'stream_socket_accept'        => [3],
+        'stream_socket_client'        => [
+            2,
+            3,
+        ],
+        'stream_socket_recvfrom'      => [4],
+        'stream_socket_server'        => [
+            2,
+            3,
+        ],
+        'system'                      => [2],
+        'uasort'                      => [1],
+        'uksort'                      => [1],
+        'unbufferedQuery'             => [3],
+        'usort'                       => [1],
+        'wincache_ucache_dec'         => [3],
+        'wincache_ucache_get'         => [2],
+        'wincache_ucache_inc'         => [3],
+        'xdiff_string_merge3'         => [4],
+        'xdiff_string_patch'          => [4],
+        'xml_parse_into_struct'       => [
+            3,
+            4,
+        ],
+        'xml_set_object'              => [2],
+        'xmlrpc_decode_request'       => [2],
+        'xmlrpc_set_type'             => [1],
+        'xslt_set_object'             => [2],
+        'yaml_parse'                  => [3],
+        'yaml_parse_file'             => [3],
+        'yaml_parse_url'              => [3],
+        'yaz_ccl_parse'               => [3],
+        'yaz_hits'                    => [2],
+        'yaz_scan_result'             => [2],
+        'yaz_wait'                    => [1],
+    ];
 
     /**
      *  Allows an install to extend the list of known pass-by-reference functions
      *  by defining generic.codeanalysis.variableanalysis.sitePassByRefFunctions.
+     *
+     * @var string
      */
-    public $sitePassByRefFunctions = null;
+    public $sitePassByRefFunctions = '';
 
     /**
      *  Allows exceptions in a catch block to be unused without provoking unused-var warning.
      *  Set generic.codeanalysis.variableanalysis.allowUnusedCaughtExceptions to a true value.
+     *
+     * @var boolean
      */
     public $allowUnusedCaughtExceptions = true;
 
     /**
      *  Allow function parameters to be unused without provoking unused-var warning.
      *  Set generic.codeanalysis.variableanalysis.allowUnusedFunctionParameters to a true value.
+     *
+     * @var boolean
      */
     public $allowUnusedFunctionParameters = true;
 
     /**
      *  A list of names of placeholder variables that you want to ignore from
      *  unused variable warnings, ie things like $junk.
+     *
+     * @var string
      */
-    public $validUnusedVariableNames = null;
+    public $validUnusedVariableNames = '';
 
 
     /**
@@ -585,11 +663,11 @@ class VariableAnalysisSniff implements Sniff
      */
     public function register()
     {
-        // Magic to modfy $_passByRefFunctions with any site-specific settings.
+        // Magic to modfy $passByRefFunctions with any site-specific settings.
         if (empty($this->sitePassByRefFunctions) === false) {
             foreach (preg_split('/\s+/', trim($this->sitePassByRefFunctions)) as $line) {
                 list ($function, $args) = explode(':', $line);
-                $this->_passByRefFunctions[$function] = explode(',', $args);
+                $this->passByRefFunctions[$function] = explode(',', $args);
             }
         }
 
@@ -597,13 +675,13 @@ class VariableAnalysisSniff implements Sniff
             $this->validUnusedVariableNames = preg_split('/\s+/', trim($this->validUnusedVariableNames));
         }
 
-        return array(
-                T_VARIABLE,
-                T_DOUBLE_QUOTED_STRING,
-                T_HEREDOC,
-                T_CLOSE_CURLY_BRACKET,
-                T_STRING,
-               );
+        return [
+            T_VARIABLE,
+            T_DOUBLE_QUOTED_STRING,
+            T_HEREDOC,
+            T_CLOSE_CURLY_BRACKET,
+            T_STRING,
+        ];
 
     }//end register()
 
@@ -661,7 +739,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return string
      */
-    function normalizeVarName($varName)
+    public function normalizeVarName($varName)
     {
         $varName = preg_replace('/[{}$]/', '', $varName);
         return $varName;
@@ -676,7 +754,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return string
      */
-    function scopeKey($currScope)
+    public function scopeKey($currScope)
     {
         if ($currScope === false) {
             $currScope = 'file';
@@ -699,18 +777,18 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return ScopeInfo
      */
-    function getScopeInfo($currScope, $autoCreate = true)
+    public function getScopeInfo($currScope, $autoCreate=true)
     {
         $scopeKey = $this->scopeKey($currScope);
-        if (isset($this->_scopes[$scopeKey]) === false) {
+        if (isset($this->scopes[$scopeKey]) === false) {
             if ($autoCreate === false) {
                 return null;
             }
 
-            $this->_scopes[$scopeKey] = new ScopeInfo($currScope);
+            $this->scopes[$scopeKey] = new ScopeInfo($currScope);
         }
 
-        return $this->_scopes[$scopeKey];
+        return $this->scopes[$scopeKey];
 
     }//end getScopeInfo()
 
@@ -728,7 +806,7 @@ class VariableAnalysisSniff implements Sniff
      * @return VariableInfo|null
      *   Information about the variable.
      */
-    function getVariableInfo($varName, $currScope, $autoCreate = true)
+    public function getVariableInfo($varName, $currScope, $autoCreate=true)
     {
         $scopeInfo = $this->getScopeInfo($currScope, $autoCreate);
         if (isset($scopeInfo->variables[$varName]) === false) {
@@ -758,7 +836,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return void
      */
-    function markVariableAssignment($varName, $stackPtr, $currScope)
+    public function markVariableAssignment($varName, $stackPtr, $currScope)
     {
         $varInfo = $this->getVariableInfo($varName, $currScope);
         if (isset($varInfo->scopeType) === false) {
@@ -787,7 +865,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return void
      */
-    function markVariableDeclaration($varName, $scopeType, $typeHint, $stackPtr, $currScope, $permitMatchingRedeclaration = false)
+    public function markVariableDeclaration($varName, $scopeType, $typeHint, $stackPtr, $currScope, $permitMatchingRedeclaration=false)
     {
         $varInfo = $this->getVariableInfo($varName, $currScope);
         if (isset($varInfo->scopeType) === true) {
@@ -802,11 +880,11 @@ class VariableAnalysisSniff implements Sniff
                     "Redeclaration of %s %s as %s.",
                     $stackPtr,
                     'VariableRedeclaration',
-                    array(
-                     VariableInfo::$scopeTypeDescriptions[$varInfo->scopeType],
-                     "\${$varName}",
-                     VariableInfo::$scopeTypeDescriptions[$scopeType],
-                    )
+                    [
+                        VariableInfo::$scopeTypeDescriptions[$varInfo->scopeType],
+                        "\${$varName}",
+                        VariableInfo::$scopeTypeDescriptions[$scopeType],
+                    ]
                 );
             }
         }
@@ -840,7 +918,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return void
      */
-    function markVariableRead($varName, $stackPtr, $currScope)
+    public function markVariableRead($varName, $stackPtr, $currScope)
     {
         $varInfo = $this->getVariableInfo($varName, $currScope);
         if (isset($varInfo->firstRead) === true && ($varInfo->firstRead <= $stackPtr)) {
@@ -861,7 +939,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return bool
      */
-    function isVariableInitialized($varName, $stackPtr, $currScope)
+    public function isVariableInitialized($varName, $stackPtr, $currScope)
     {
         $varInfo = $this->getVariableInfo($varName, $currScope);
         if (isset($varInfo->firstInitialized) === true && $varInfo->firstInitialized <= $stackPtr) {
@@ -882,7 +960,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return bool
      */
-    function isVariableUndefined($varName, $stackPtr, $currScope)
+    public function isVariableUndefined($varName, $stackPtr, $currScope)
     {
         $varInfo = $this->getVariableInfo($varName, $currScope, false);
         if (isset($varInfo->firstDeclared) === true && $varInfo->firstDeclared <= $stackPtr) {
@@ -909,7 +987,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return bool
      */
-    function markVariableReadAndWarnIfUndefined(File $phpcsFile, $varName, $stackPtr, $currScope)
+    public function markVariableReadAndWarnIfUndefined(File $phpcsFile, $varName, $stackPtr, $currScope)
     {
         $this->markVariableRead($varName, $stackPtr, $currScope);
 
@@ -919,7 +997,7 @@ class VariableAnalysisSniff implements Sniff
                 "Variable %s is undefined.",
                 $stackPtr,
                 'UndefinedVariable',
-                array("\${$varName}")
+                ["\${$varName}"]
             );
         }
 
@@ -936,7 +1014,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return int|false
      */
-    function findFunctionPrototype(File $phpcsFile, $stackPtr)
+    public function findFunctionPrototype(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -949,11 +1027,11 @@ class VariableAnalysisSniff implements Sniff
         // isn't a function name, reference sigil or whitespace and check if
         // it's a function keyword.
         $functionPtr = $phpcsFile->findPrevious(
-            array(
-             T_STRING,
-             T_WHITESPACE,
-             T_BITWISE_AND,
-            ),
+            [
+                T_STRING,
+                T_WHITESPACE,
+                T_BITWISE_AND,
+            ],
             ($openPtr - 1),
             null,
             true,
@@ -979,12 +1057,12 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return int|false
      */
-    function findVariableScope(File $phpcsFile, $stackPtr)
+    public function findVariableScope(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
         $token  = $tokens[$stackPtr];
 
-        $in_class = false;
+        $inClass = false;
         if (empty($token['conditions']) === false) {
             foreach (array_reverse($token['conditions'], true) as $scopePtr => $scopeCode) {
                 if (($scopeCode === T_FUNCTION) || ($scopeCode === T_CLOSURE)) {
@@ -992,7 +1070,7 @@ class VariableAnalysisSniff implements Sniff
                 }
 
                 if (($scopeCode === T_CLASS) || ($scopeCode === T_INTERFACE) || ($scopeCode === T_TRAIT)) {
-                    $in_class = true;
+                    $inClass = true;
                 }
             }
         }
@@ -1001,7 +1079,7 @@ class VariableAnalysisSniff implements Sniff
             return $scopePtr;
         }
 
-        if ($in_class === true) {
+        if ($inClass === true) {
             // Member var of a class, we don't care.
             return false;
         }
@@ -1020,7 +1098,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return bool
      */
-    function isNextThingAnAssign(File $phpcsFile, $stackPtr)
+    public function isNextThingAnAssign(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -1051,7 +1129,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return int
      */
-    function findWhereAssignExecuted(File $phpcsFile, $stackPtr)
+    public function findWhereAssignExecuted(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -1095,7 +1173,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return int|false
      */
-    function findContainingBrackets(File $phpcsFile, $stackPtr)
+    public function findContainingBrackets(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -1117,7 +1195,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return int|false
      */
-    function findFunctionCall(File $phpcsFile, $stackPtr)
+    public function findFunctionCall(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -1149,7 +1227,7 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return array|false
      */
-    function findFunctionCallArguments(File $phpcsFile, $stackPtr)
+    public function findFunctionCallArguments(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -1181,7 +1259,7 @@ class VariableAnalysisSniff implements Sniff
 
         $closePtr = $tokens[$openPtr]['parenthesis_closer'];
 
-        $argPtrs      = array();
+        $argPtrs      = [];
         $lastPtr      = $openPtr;
         $lastArgComma = $openPtr;
         while (($nextPtr = $phpcsFile->findNext(T_COMMA, ($lastPtr + 1), $closePtr)) !== false) {
@@ -1232,11 +1310,11 @@ class VariableAnalysisSniff implements Sniff
         // isn't a function name, reference sigil or whitespace and check if
         // it's a function keyword.
         $functionPtr = $phpcsFile->findPrevious(
-            array(
-             T_STRING,
-             T_WHITESPACE,
-             T_BITWISE_AND,
-            ),
+            [
+                T_STRING,
+                T_WHITESPACE,
+                T_BITWISE_AND,
+            ],
             ($openPtr - 1),
             null,
             true,
@@ -1280,7 +1358,7 @@ class VariableAnalysisSniff implements Sniff
                     "Variable %s is undefined.",
                     $stackPtr,
                     'UndefinedVariable',
-                    array("\${$varName}")
+                    ["\${$varName}"]
                 );
                 return true;
             }
@@ -1434,19 +1512,19 @@ class VariableAnalysisSniff implements Sniff
         // Are we a superglobal variable?
         if (in_array(
             $varName,
-            array(
-             'GLOBALS',
-             '_SERVER',
-             '_GET',
-             '_POST',
-             '_FILES',
-             '_COOKIE',
-             '_SESSION',
-             '_REQUEST',
-             '_ENV',
-             'argv',
-             'argc',
-            )
+            [
+                'GLOBALS',
+                '_SERVER',
+                '_GET',
+                '_POST',
+                '_FILES',
+                '_COOKIE',
+                '_SESSION',
+                '_REQUEST',
+                '_ENV',
+                'argv',
+                'argc',
+            ]
         ) === true
         ) {
             return true;
@@ -1496,11 +1574,11 @@ class VariableAnalysisSniff implements Sniff
             || ($tokens[$classNamePtr]['code'] === T_STATIC)
         ) {
             if ($tokens[$classNamePtr]['code'] === T_SELF) {
-                $err_class = 'SelfOutsideClass';
-                $err_desc  = 'self::';
+                $errClass = 'SelfOutsideClass';
+                $errDesc  = 'self::';
             } else {
-                $err_class = 'StaticOutsideClass';
-                $err_desc  = 'static::';
+                $errClass = 'StaticOutsideClass';
+                $errDesc  = 'static::';
             }
 
             if (empty($token['conditions']) === false) {
@@ -1509,10 +1587,10 @@ class VariableAnalysisSniff implements Sniff
                     // Note: have to fetch code from $tokens, T_CLOSURE isn't set for conditions codes.
                     if ($tokens[$scopePtr]['code'] === T_CLOSURE) {
                         $phpcsFile->addError(
-                            "Use of {$err_desc}%s inside closure.",
+                            "Use of {$errDesc}%s inside closure.",
                             $stackPtr,
-                            $err_class,
-                            array("\${$varName}")
+                            $errClass,
+                            ["\${$varName}"]
                         );
                         return true;
                     }
@@ -1524,10 +1602,10 @@ class VariableAnalysisSniff implements Sniff
             }
 
             $phpcsFile->addError(
-                "Use of {$err_desc}%s outside class definition.",
+                "Use of {$errDesc}%s outside class definition.",
                 $stackPtr,
-                $err_class,
-                array("\${$varName}")
+                $errClass,
+                ["\${$varName}"]
             );
             return true;
         }//end if
@@ -1643,11 +1721,11 @@ class VariableAnalysisSniff implements Sniff
         // Are we a global declaration?
         // Search backwards for first token that isn't whitespace, comma or variable.
         $globalPtr = $phpcsFile->findPrevious(
-            array(
-             T_WHITESPACE,
-             T_VARIABLE,
-             T_COMMA,
-            ),
+            [
+                T_WHITESPACE,
+                T_VARIABLE,
+                T_COMMA,
+            ],
             ($stackPtr - 1),
             null,
             true,
@@ -1707,24 +1785,24 @@ class VariableAnalysisSniff implements Sniff
         // Search backwards for first token that isn't whitespace, comma, variable,
         // equals, or on the list of assignable constant values above.
         $staticPtr = $phpcsFile->findPrevious(
-            array(
-             T_WHITESPACE,
-             T_VARIABLE,
-             T_COMMA,
-             T_EQUAL,
-             T_MINUS,
-             T_LNUMBER,
-             T_DNUMBER,
-             T_CONSTANT_ENCAPSED_STRING,
-             T_STRING,
-             T_DOUBLE_COLON,
-             T_START_HEREDOC,
-             T_HEREDOC,
-             T_END_HEREDOC,
-             T_START_NOWDOC,
-             T_NOWDOC,
-             T_END_NOWDOC,
-            ),
+            [
+                T_WHITESPACE,
+                T_VARIABLE,
+                T_COMMA,
+                T_EQUAL,
+                T_MINUS,
+                T_LNUMBER,
+                T_DNUMBER,
+                T_CONSTANT_ENCAPSED_STRING,
+                T_STRING,
+                T_DOUBLE_COLON,
+                T_START_HEREDOC,
+                T_HEREDOC,
+                T_END_HEREDOC,
+                T_START_NOWDOC,
+                T_NOWDOC,
+                T_END_NOWDOC,
+            ],
             ($stackPtr - 1),
             null,
             true,
@@ -1785,7 +1863,9 @@ class VariableAnalysisSniff implements Sniff
         }
 
         // Is there an 'as' token between us and the opening bracket?
-        if ($phpcsFile->findPrevious(T_AS, ($stackPtr - 1), $openPtr) === false) {
+        if (($asPtr = $phpcsFile->findPrevious(T_AS, ($stackPtr - 1), $openPtr)) === false
+            || $this->findContainingBrackets($phpcsFile, $asPtr) !== $openPtr
+        ) {
             return false;
         }
 
@@ -1837,11 +1917,11 @@ class VariableAnalysisSniff implements Sniff
 
         // Is our function a known pass-by-reference function?
         $functionName = $tokens[$functionPtr]['content'];
-        if (isset($this->_passByRefFunctions[$functionName]) === false) {
+        if (isset($this->passByRefFunctions[$functionName]) === false) {
             return false;
         }
 
-        $refArgs = $this->_passByRefFunctions[$functionName];
+        $refArgs = $this->passByRefFunctions[$functionName];
 
         if (($argPtrs = $this->findFunctionCallArguments($phpcsFile, $stackPtr)) === false) {
             return false;
@@ -2077,15 +2157,12 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return void
      */
-    protected function processVariableInString(
-        File
-        $phpcsFile,
-        $stackPtr
-    ) {
+    protected function processVariableInString(File $phpcsFile, $stackPtr)
+    {
         $tokens = $phpcsFile->getTokens();
         $token  = $tokens[$stackPtr];
 
-        $runMatch = preg_match_all($this->_double_quoted_variable_regexp, $token['content'], $matches);
+        $runMatch = preg_match_all($this->doubleQuotedVariableRegexp, $token['content'], $matches);
         if ($runMatch === 0 || $runMatch === false) {
             return;
         }
@@ -2118,13 +2195,8 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return void
      */
-    protected function processCompactArguments(
-        File
-        $phpcsFile,
-        $stackPtr,
-        $arguments,
-        $currScope
-    ) {
+    protected function processCompactArguments(File $phpcsFile, $stackPtr, $arguments, $currScope)
+    {
         $tokens = $phpcsFile->getTokens();
 
         foreach ($arguments as $argumentPtrs) {
@@ -2144,11 +2216,11 @@ class VariableAnalysisSniff implements Sniff
                 continue;
             }
 
-            $argument_first_token = $tokens[$argumentPtrs[0]];
-            if ($argument_first_token['code'] === T_ARRAY) {
+            $argumentFirstToken = $tokens[$argumentPtrs[0]];
+            if ($argumentFirstToken['code'] === T_ARRAY) {
                 // It's an array argument, recurse.
-                if (($array_arguments = $this->findFunctionCallArguments($phpcsFile, $argumentPtrs[0])) !== false) {
-                    $this->processCompactArguments($phpcsFile, $stackPtr, $array_arguments, $currScope);
+                if (($arrayArguments = $this->findFunctionCallArguments($phpcsFile, $argumentPtrs[0])) !== false) {
+                    $this->processCompactArguments($phpcsFile, $stackPtr, $arrayArguments, $currScope);
                 }
 
                 continue;
@@ -2159,23 +2231,23 @@ class VariableAnalysisSniff implements Sniff
                 continue;
             }
 
-            if ($argument_first_token['code'] === T_CONSTANT_ENCAPSED_STRING) {
+            if ($argumentFirstToken['code'] === T_CONSTANT_ENCAPSED_STRING) {
                 // Single-quoted string literal, ie compact('whatever').
                 // Substr is to strip the enclosing single-quotes.
-                $varName = substr($argument_first_token['content'], 1, -1);
+                $varName = substr($argumentFirstToken['content'], 1, -1);
                 $this->markVariableReadAndWarnIfUndefined($phpcsFile, $varName, $argumentPtrs[0], $currScope);
                 continue;
             }
 
-            if ($argument_first_token['code'] === T_DOUBLE_QUOTED_STRING) {
+            if ($argumentFirstToken['code'] === T_DOUBLE_QUOTED_STRING) {
                 // Double-quoted string literal.
-                if (preg_match($this->_double_quoted_variable_regexp, $argument_first_token['content']) === 1) {
+                if (preg_match($this->doubleQuotedVariableRegexp, $argumentFirstToken['content']) === 1) {
                     // Bail if the string needs variable expansion, that's runtime stuff.
                     continue;
                 }
 
                 // Substr is to strip the enclosing double-quotes.
-                $varName = substr($argument_first_token['content'], 1, -1);
+                $varName = substr($argumentFirstToken['content'], 1, -1);
                 $this->markVariableReadAndWarnIfUndefined($phpcsFile, $varName, $argumentPtrs[0], $currScope);
                 continue;
             }
@@ -2194,11 +2266,8 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return void
      */
-    protected function processCompact(
-        File
-        $phpcsFile,
-        $stackPtr
-    ) {
+    protected function processCompact(File $phpcsFile, $stackPtr)
+    {
         $tokens = $phpcsFile->getTokens();
         $token  = $tokens[$stackPtr];
 
@@ -2223,13 +2292,10 @@ class VariableAnalysisSniff implements Sniff
      *
      * @return void
      */
-    protected function processScopeClose(
-        File
-        $phpcsFile,
-        $stackPtr
-    ) {
+    protected function processScopeClose(File $phpcsFile, $stackPtr)
+    {
         $scopeInfo = $this->getScopeInfo($stackPtr, false);
-        if (is_null($scopeInfo) === true) {
+        if ($scopeInfo === null) {
             return;
         }
 
@@ -2255,20 +2321,20 @@ class VariableAnalysisSniff implements Sniff
                     "Unused %s %s.",
                     $varInfo->firstDeclared,
                     'UnusedVariable',
-                    array(
-                     VariableInfo::$scopeTypeDescriptions[$varInfo->scopeType],
-                     "\${$varInfo->name}",
-                    )
+                    [
+                        VariableInfo::$scopeTypeDescriptions[$varInfo->scopeType],
+                        "\${$varInfo->name}",
+                    ]
                 );
             } else if (isset($varInfo->firstInitialized) === true) {
                 $phpcsFile->addWarning(
                     "Unused %s %s.",
                     $varInfo->firstInitialized,
                     'UnusedVariable',
-                    array(
-                     VariableInfo::$scopeTypeDescriptions[$varInfo->scopeType],
-                     "\${$varInfo->name}",
-                    )
+                    [
+                        VariableInfo::$scopeTypeDescriptions[$varInfo->scopeType],
+                        "\${$varInfo->name}",
+                    ]
                 );
             }//end if
         }//end foreach

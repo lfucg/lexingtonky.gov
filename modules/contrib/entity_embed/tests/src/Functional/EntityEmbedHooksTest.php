@@ -58,12 +58,14 @@ class EntityEmbedHooksTest extends EntityEmbedTestBase {
     $settings['body'] = [['value' => $content, 'format' => 'custom_format']];
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
-    $this->assertText($this->node->body->value, 'Embedded node exists in page.');
-    $this->assertNoText(strip_tags($content), 'Placeholder does not appears in the output when embed is successful.');
+    // Verify embedded node body exists in page.
+    $this->assertSession()->responseContains($this->node->body->value);
+    $this->assertSession()->responseNotContains('This placeholder should not be rendered.');
     // Ensure that embedded node's title has been replaced.
-    $this->assertText('Title set by hook_entity_embed_alter', 'Title of the embedded node is replaced by hook_entity_embed_alter()');
+    $this->assertSession()->responseContains('Title set by hook_entity_embed_alter');
     $this->assertSession()->responseContains('test-class-added-in-alter-hook');
-    $this->assertNoText($this->node->title->value, 'Original title of the embedded node is not visible.');
+    // Verify the original title of the embedded node is not visible.
+    $this->assertSession()->responseNotContains($this->node->title->value);
     $this->state->set('entity_embed_test_entity_embed_alter', FALSE);
 
     // Enable entity_embed_test.module's hook_entity_embed_context_alter()
@@ -76,13 +78,12 @@ class EntityEmbedHooksTest extends EntityEmbedTestBase {
     $settings['body'] = [['value' => $content, 'format' => 'custom_format']];
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
-    $this->assertNoText(strip_tags($content), 'Placeholder does not appears in the output when embed is successful.');
+    $this->assertSession()->responseNotContains('This placeholder should not be rendered.');
     // To ensure that 'label' plugin is used, verify that the body of the
     // embedded node is not visible and the title links to the embedded node.
-    $this->assertNoText($this->node->body->value, 'Body of the embedded node does not exists in page.');
-    $this->assertText('Title set by hook_entity_embed_context_alter', 'Title of the embedded node is replaced by hook_entity_embed_context_alter()');
-    $this->assertNoText($this->node->title->value, 'Original title of the embedded node is not visible.');
-    $this->assertLinkByHref('node/' . $this->node->id(), 0, 'Link to the embedded node exists.');
+    $this->assertSession()->responseNotContains($this->node->body->value);
+    $this->assertSession()->responseContains('Title set by hook_entity_embed_context_alter');
+    $this->assertSession()->linkByHrefExists('node/' . $this->node->id(), 0, 'Link to the embedded node exists.');
     $this->state->set('entity_embed_test_entity_embed_context_alter', FALSE);
   }
 

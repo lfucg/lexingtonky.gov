@@ -95,7 +95,7 @@ class ImageThumbnail extends FieldWidgetDisplayBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function isApplicable(EntityTypeInterface $entity_type) {
-    return $entity_type->isSubclassOf(FileInterface::class);
+    return $entity_type->entityClassImplements(FileInterface::class);
   }
 
   /**

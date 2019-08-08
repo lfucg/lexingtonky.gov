@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * Use this for search results views that are fully controlled by a single
  * Drupal instance. A common use case is a website that uses the default
- * database search backend and does not index any external data sources.
+ * database search backend and does not index any external datasources.
  *
  * @ingroup views_cache_plugins
  *

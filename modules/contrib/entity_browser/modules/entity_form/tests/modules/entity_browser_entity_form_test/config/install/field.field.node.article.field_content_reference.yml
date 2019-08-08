@@ -1,6 +1,8 @@
 langcode: en
 status: true
 dependencies:
+  module:
+    - entity_browser_test
   config:
     - field.storage.node.field_content_reference
     - node.type.article

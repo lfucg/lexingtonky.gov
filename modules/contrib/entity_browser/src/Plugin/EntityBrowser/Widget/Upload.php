@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Uses a view to provide entity listing in a browser's widget.
+ * Adds an upload field browser's widget.
  *
  * @EntityBrowserWidget(
  *   id = "upload",

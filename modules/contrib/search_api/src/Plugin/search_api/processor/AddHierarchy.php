@@ -11,6 +11,7 @@ use Drupal\Core\TypedData\ComplexDataDefinitionInterface;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\FieldInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
+use Drupal\search_api\Plugin\search_api\data_type\value\TextValue;
 use Drupal\search_api\Processor\ProcessorPluginBase;
 use Drupal\search_api\Utility\Utility;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -264,7 +265,12 @@ class AddHierarchy extends ProcessorPluginBase implements PluginFormInterface {
         }
         list ($entity_type_id, $property) = explode('-', $property_specifier);
         foreach ($field->getValues() as $entity_id) {
-          $this->addHierarchyValues($entity_type_id, $entity_id, $property, $field);
+          if ($entity_id instanceof TextValue) {
+            $entity_id = $entity_id->getOriginalText();
+          }
+          if (is_scalar($entity_id)) {
+            $this->addHierarchyValues($entity_type_id, $entity_id, $property, $field);
+          }
         }
       }
     }

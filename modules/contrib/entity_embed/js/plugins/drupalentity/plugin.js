@@ -3,27 +3,88 @@
  * Drupal Entity embed plugin.
  */
 
-(function ($, Drupal, CKEDITOR) {
+(function (jQuery, Drupal, CKEDITOR) {
 
   "use strict";
 
+  function getFocusedWidget(editor) {
+    var widget = editor.widgets.focused;
+
+    if (widget && widget.name === 'drupalentity') {
+      return widget;
+    }
+
+    return null;
+  }
+
+  function linkCommandIntegrator(editor) {
+    if (!editor.plugins.drupallink) {
+      return;
+    }
+
+    editor.getCommand('drupalunlink').on('exec', function (evt) {
+      var widget = getFocusedWidget(editor);
+
+      if (!widget) {
+        return;
+      }
+
+      widget.setData('link', null);
+
+      this.refresh(editor, editor.elementPath());
+
+      evt.cancel();
+    });
+
+    editor.getCommand('drupalunlink').on('refresh', function (evt) {
+      var widget = getFocusedWidget(editor);
+
+      if (!widget) {
+        return;
+      }
+
+      this.setState(widget.data.link ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED);
+
+      evt.cancel();
+    });
+  }
+
   CKEDITOR.plugins.add('drupalentity', {
-    // This plugin requires the Widgets System defined in the 'widget' plugin.
     requires: 'widget',
 
-    // The plugin initialization logic goes inside this method.
     beforeInit: function (editor) {
       // Configure CKEditor DTD for custom drupal-entity element.
       // @see https://www.drupal.org/node/2448449#comment-9717735
       var dtd = CKEDITOR.dtd, tagName;
       dtd['drupal-entity'] = {'#': 1};
-      // Register drupal-entity element as allowed child, in each tag that can
+      // Register drupal-entity element as an allowed child in each tag that can
       // contain a div element.
       for (tagName in dtd) {
         if (dtd[tagName].div) {
           dtd[tagName]['drupal-entity'] = 1;
         }
       }
+      dtd['a']['drupal-entity'] = 1;
+
+      // drupallink has a hardcoded integration with drupalimage. Work around that, to reuse the same integration.
+      var originalGetFocusedWidget = null;
+      if (CKEDITOR.plugins.drupalimage) {
+        originalGetFocusedWidget = CKEDITOR.plugins.drupalimage.getFocusedWidget;
+      }
+      else {
+        CKEDITOR.plugins.drupalimage = {};
+      }
+      CKEDITOR.plugins.drupalimage.getFocusedWidget = function () {
+        var ourFocusedWidget = getFocusedWidget(editor);
+        if (ourFocusedWidget) {
+          return ourFocusedWidget;
+        }
+        // If drupalimage is loaded, call that next, to not break its link command integration.
+        if (originalGetFocusedWidget) {
+          return originalGetFocusedWidget(editor);
+        }
+        return null;
+      };
 
       // Generic command for adding/editing entities of all types.
       editor.addCommand('editdrupalentity', {
@@ -35,20 +96,18 @@
           data = data || {};
 
           var existingElement = getSelectedEmbeddedEntity(editor);
+          var existingWidget = (existingElement) ? editor.widgets.getByElement(existingElement, true) : null;
 
           var existingValues = {};
-          if (existingElement && existingElement.$ && existingElement.$.firstChild) {
-            var embedDOMElement = existingElement.$.firstChild;
-            // Populate array with the entity's current attributes.
-            var attribute = null, attributeName;
-            for (var key = 0; key < embedDOMElement.attributes.length; key++) {
-              attribute = embedDOMElement.attributes.item(key);
-              attributeName = attribute.nodeName.toLowerCase();
-              if (attributeName.substring(0, 15) === 'data-cke-saved-') {
-                continue;
-              }
-              existingValues[attributeName] = existingElement.data('cke-saved-' + attributeName) || attribute.nodeValue;
-            }
+
+          // Host entity's langcode added in entity_embed_field_widget_form_alter().
+          var hostEntityLangcode = document.getElementById(editor.name).getAttribute('data-entity_embed-host-entity-langcode');
+          if (hostEntityLangcode) {
+            existingValues['data-langcode'] = hostEntityLangcode;
+          }
+
+          if (existingWidget) {
+            existingValues = existingWidget.data.attributes;
           }
 
           var embed_button_id = data.id ? data.id : existingValues['data-embed-button'];
@@ -59,19 +118,24 @@
           };
 
           var saveCallback = function (values) {
-            var entityElement = editor.document.createElement('drupal-entity');
-            var attributes = values.attributes;
-            for (var key in attributes) {
-              entityElement.setAttribute(key, attributes[key]);
+            editor.fire('saveSnapshot');
+            if (!existingElement) {
+              var entityElement = editor.document.createElement('drupal-entity');
+              var attributes = values.attributes;
+              for (var key in attributes) {
+                entityElement.setAttribute(key, attributes[key]);
+              }
+              editor.insertHtml(entityElement.getOuterHtml());
             }
-
-            editor.insertHtml(entityElement.getOuterHtml());
-            if (existingElement) {
-              // Detach the behaviors that were attached when the entity content
-              // was inserted.
-              Drupal.runEmbedBehaviors('detach', existingElement.$);
-              existingElement.remove();
+            else {
+              var hasCaption = false;
+              if (values.attributes['data-caption']) {
+                values.attributes['data-caption'] = CKEDITOR.tools.htmlDecodeAttr(values.attributes['data-caption']);
+                hasCaption = true;
+              }
+              existingWidget.setData({ attributes: values.attributes, hasCaption: hasCaption });
             }
+            editor.fire('saveSnapshot');
           };
 
           // Open the entity embed dialog for corresponding EmbedButton.
@@ -85,47 +149,190 @@
         allowedContent: 'drupal-entity[data-entity-type,data-entity-uuid,data-entity-embed-display,data-entity-embed-display-settings,data-align,data-caption]',
         requiredContent: 'drupal-entity[data-entity-type,data-entity-uuid,data-entity-embed-display,data-entity-embed-display-settings,data-align,data-caption]',
 
-        // Simply recognize the element as our own. The inner markup if fetched
-        // and inserted the init() callback, since it requires the actual DOM
-        // element.
-        upcast: function (element) {
+        pathName: Drupal.t('Embedded entity'),
+
+        editables: {
+          caption: {
+            selector: 'figcaption',
+            allowedContent: 'a[!href]; em strong cite code br',
+            pathName: Drupal.t('Caption'),
+          }
+        },
+
+        upcast: function (element, data) {
           var attributes = element.attributes;
-          if (attributes['data-entity-type'] === undefined || (attributes['data-entity-id'] === undefined && attributes['data-entity-uuid'] === undefined) || (attributes['data-view-mode'] === undefined && attributes['data-entity-embed-display'] === undefined)) {
+          if (element.name !== 'drupal-entity' || attributes['data-entity-type'] === undefined || (attributes['data-entity-id'] === undefined && attributes['data-entity-uuid'] === undefined) || (attributes['data-view-mode'] === undefined && attributes['data-entity-embed-display'] === undefined)) {
             return;
           }
-          // Generate an ID for the element, so that we can use the Ajax
-          // framework.
-          element.attributes.id = generateEmbedId();
+          data.attributes = CKEDITOR.tools.copy(attributes);
+          data.hasCaption = data.attributes.hasOwnProperty('data-caption');
+          data.link = null;
+          if (element.parent.name === 'a') {
+            data.link = CKEDITOR.tools.copy(element.parent.attributes);
+            // Omit CKEditor-internal attributes.
+            Object.keys(element.parent.attributes).forEach(function (attrName) {
+              if (attrName.indexOf('data-cke-') !== -1) {
+                delete data.link[attrName];
+              }
+            });
+          }
           return element;
         },
 
-        // Fetch the rendered entity.
         init: function () {
           /** @type {CKEDITOR.dom.element} */
           var element = this.element;
-          // Use the Ajax framework to fetch the HTML, so that we can retrieve
-          // out-of-band assets (JS, CSS...).
-          var entityEmbedPreview = Drupal.ajax({
-            base: element.getId(),
-            element: element.$,
-            url: Drupal.url('embed/preview/' + editor.config.drupal.format + '?' + $.param({
-              value: element.getOuterHtml()
-            })),
-            progress: {type: 'none'},
-            // Use a custom event to trigger the call.
-            event: 'entity_embed_dummy_event'
-          });
-          entityEmbedPreview.execute();
+
+          // See https://www.drupal.org/node/2544018.
+          if (element.hasAttribute('data-embed-button')) {
+            var buttonId = element.getAttribute('data-embed-button');
+            if (editor.config.DrupalEntity_buttons[buttonId]) {
+              var button = editor.config.DrupalEntity_buttons[buttonId];
+              this.wrapper.data('cke-display-name', Drupal.t('Embedded @buttonLabel', {'@buttonLabel': button.label}));
+            }
+          }
         },
 
-        // Downcast the element.
-        downcast: function (element) {
-          // Only keep the wrapping element.
-          element.setHtml('');
-          // Remove the auto-generated ID.
-          delete element.attributes.id;
-          return element;
+        destroy: function() {
+          this._tearDownDynamicEditables();
+        },
+
+        data: function (event) {
+          if (this._previewNeedsServersideUpdate()) {
+            editor.fire('lockSnapshot');
+            this._tearDownDynamicEditables();
+
+            this._loadPreview(function (widget) {
+              widget._setUpDynamicEditables();
+              editor.fire('unlockSnapshot');
+            });
+          }
+          // @todo Remove in https://www.drupal.org/project/entity_embed/issues/3060397
+          else if (this._previewNeedsClientsideUpdate()) {
+            this._performClientsideUpdate();
+            editor.fire('saveSnapshot');
+          }
+
+          // Allow entity_embed.editor.css to respond to changes (for example in alignment).
+          this.element.setAttributes(this.data.attributes);
+
+          // Track the previous state, to allow for smarter decisions.
+          this.oldData = CKEDITOR.tools.clone(this.data);
+        },
+
+        downcast: function () {
+          var downcastElement = new CKEDITOR.htmlParser.element('drupal-entity', this.data.attributes);
+          if (this.data.link) {
+            var link = new CKEDITOR.htmlParser.element('a', this.data.link);
+            link.add(downcastElement);
+            downcastElement = link;
+          }
+          return downcastElement;
+        },
+
+        _setUpDynamicEditables: function () {
+          // Now that the caption is available in the DOM, make it editable.
+          if (this.initEditable('caption', this.definition.editables.caption)) {
+            var captionEditable = this.editables.caption;
+            // @see core/modules/filter/css/filter.caption.css
+            // @see ckeditor_ckeditor_css_alter()
+            captionEditable.setAttribute('data-placeholder', Drupal.t('Enter caption here'));
+            // And ensure that any changes made to it are persisted.
+            var config = {characterData: true, attributes: true, childList: true, subtree: true};
+            var widget = this;
+            this.captionEditableMutationObserver = new MutationObserver(function () {
+              var entityAttributes = CKEDITOR.tools.clone(widget.data.attributes);
+              entityAttributes['data-caption'] = captionEditable.getData();
+              widget.setData('attributes', entityAttributes);
+            });
+            this.captionEditableMutationObserver.observe(captionEditable.$, config);
+          }
+        },
+
+        _tearDownDynamicEditables: function () {
+          if (this.captionEditableMutationObserver) {
+            this.captionEditableMutationObserver.disconnect();
+          }
+        },
+
+        _previewNeedsServersideUpdate: function () {
+          // When the widget is first loading, it of course needs to still get a preview!
+          if (!this.ready) {
+            return true;
+          }
+
+          return this._hashData(this.oldData) !== this._hashData(this.data);
+        },
+
+        // @todo Remove in https://www.drupal.org/project/entity_embed/issues/3060397
+        _previewNeedsClientsideUpdate: function () {
+          // The preview's caption must be updated when the caption was edited in EntityEmbedDialog.
+          // @see https://www.drupal.org/project/entity_embed/issues/3060397
+          if (this.data.hasCaption && this.editables.caption.getData() !== this.data.attributes['data-caption']) {
+            return true;
+          }
+
+          return false;
+        },
+
+        // @todo Remove in https://www.drupal.org/project/entity_embed/issues/3060397
+        _performClientsideUpdate: function () {
+          if (this.data.hasCaption) {
+            this.captionEditableMutationObserver.disconnect();
+            this.editables.caption.$.innerHTML = this.data.attributes['data-caption'];
+            var config = {characterData: true, attributes: false, childList: true, subtree: true};
+            this.captionEditableMutationObserver.observe(this.editables.caption.$, config);
+          }
+        },
+
+        /**
+         * Computes a hash of the data that can only be previewed by the server.
+         */
+        _hashData: function (data) {
+          var dataToHash = CKEDITOR.tools.clone(data);
+          // The caption does not need rendering.
+          if (dataToHash.attributes.hasOwnProperty('data-caption')) {
+            delete dataToHash.attributes['data-caption'];
+          }
+          // Changed link destinations do not affect the visual preview.
+          if (dataToHash.link && dataToHash.link.hasOwnProperty('href')) {
+            delete dataToHash.link.href;
+          }
+          return JSON.stringify(dataToHash);
+        },
+
+        /**
+         * Loads an entity embed preview, calls a callback after insertion.
+         *
+         * @param {function} callback
+         *   A callback function that will be called after the preview has loaded, and receives the widget instance.
+         */
+        _loadPreview: function (callback) {
+          var widget = this;
+          jQuery.get({
+            url: Drupal.url('entity-embed/preview/' + editor.config.drupal.format + '?text=' + encodeURIComponent(this.downcast().getOuterHtml())),
+            dataType: 'html',
+          }).done(function(previewHtml) {
+            widget.element.setHtml(previewHtml);
+            callback(widget);
+          });
         }
+      });
+
+      editor.widgets.on('instanceCreated', function (event) {
+        var widget = event.data;
+
+        if (widget.name !== 'drupalentity') {
+          return;
+        }
+
+        widget.on('edit', function (event) {
+          event.cancel();
+          // @see https://www.drupal.org/node/2544018
+          if (isEditableEntityWidget(editor, event.sender.wrapper)) {
+            editor.execCommand('editdrupalentity');
+          }
+        });
       });
 
       // Register the toolbar buttons.
@@ -135,7 +342,7 @@
           editor.ui.addButton(button.id, {
             label: button.label,
             data: button,
-            allowedContent: 'drupal-entity[!data-entity-type,!data-entity-uuid,!data-entity-embed-display,!data-entity-embed-display-settings,!data-align,!data-caption,!data-embed-button]',
+            allowedContent: 'drupal-entity[!data-entity-type,!data-entity-uuid,!data-entity-embed-display,!data-entity-embed-display-settings,!data-align,!data-caption,!data-embed-button,!data-langcode,!alt,!title]',
             click: function(editor) {
               editor.execCommand('editdrupalentity', this.data);
             },
@@ -171,15 +378,10 @@
           }
         });
       }
+    },
 
-      // Execute widget editing action on double click.
-      editor.on('doubleclick', function (evt) {
-        var element = getSelectedEmbeddedEntity(editor) || evt.data.element;
-
-        if (isEditableEntityWidget(editor, element)) {
-          editor.execCommand('editdrupalentity');
-        }
-      });
+    afterInit: function (editor) {
+      linkCommandIntegrator(editor);
     }
   });
 
@@ -210,7 +412,7 @@
       return false;
     }
 
-    var button = $(element.$.firstChild).attr('data-embed-button');
+    var button = element.$.firstChild.getAttribute('data-embed-button');
     if (!button) {
       // If there was no data-embed-button attribute, not editable.
       return false;
@@ -218,18 +420,6 @@
 
     // The button itself must be valid.
     return editor.config.DrupalEntity_buttons.hasOwnProperty(button);
-  }
-
-  /**
-   * Generates unique HTML IDs for the widgets.
-   *
-   * @returns {string}
-   */
-  function generateEmbedId() {
-    if (typeof generateEmbedId.counter == 'undefined') {
-      generateEmbedId.counter = 0;
-    }
-    return 'entity-embed-' + generateEmbedId.counter++;
   }
 
 })(jQuery, Drupal, CKEDITOR);

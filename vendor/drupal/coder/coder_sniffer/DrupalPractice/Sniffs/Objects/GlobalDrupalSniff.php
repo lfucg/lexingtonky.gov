@@ -28,20 +28,20 @@ class GlobalDrupalSniff implements Sniff
      *
      * @var string[]
      */
-    public static $baseClasses = array(
-                                  'BlockBase',
-                                  'ConfigFormBase',
-                                  'ContentEntityForm',
-                                  'ControllerBase',
-                                  'EntityForm',
-                                  'EntityReferenceFormatterBase',
-                                  'FileFormatterBase',
-                                  'FormatterBase',
-                                  'FormBase',
-                                  'ImageFormatter',
-                                  'ImageFormatterBase',
-                                  'WidgetBase',
-                                 );
+    public static $baseClasses = [
+        'BlockBase',
+        'ConfigFormBase',
+        'ContentEntityForm',
+        'ControllerBase',
+        'EntityForm',
+        'EntityReferenceFormatterBase',
+        'FileFormatterBase',
+        'FormatterBase',
+        'FormBase',
+        'ImageFormatter',
+        'ImageFormatterBase',
+        'WidgetBase',
+    ];
 
 
     /**
@@ -51,7 +51,7 @@ class GlobalDrupalSniff implements Sniff
      */
     public function register()
     {
-        return array(T_STRING);
+        return [T_STRING];
 
     }//end register()
 
@@ -94,8 +94,13 @@ class GlobalDrupalSniff implements Sniff
         $classPtr    = key($tokens[$stackPtr]['conditions']);
         $extendsName = $phpcsFile->findExtendedClassName($classPtr);
 
+        // Check if the class implements ContainerInjectionInterface.
+        $implementedInterfaceNames = $phpcsFile->findImplementedInterfaceNames($classPtr);
+        $canAccessContainer        = !empty($implementedInterfaceNames) && in_array('ContainerInjectionInterface', $implementedInterfaceNames);
+
         if (($extendsName === false || in_array($extendsName, static::$baseClasses) === false)
             && Project::isServiceClass($phpcsFile, $classPtr) === false
+            && $canAccessContainer === false
         ) {
             return;
         }

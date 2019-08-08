@@ -328,6 +328,7 @@ function drush_get_global_options($brief = FALSE) {
     $options['redirect-port']       = array('hidden' => TRUE, 'never-propagate' => TRUE, 'description' => 'Used by the user-login command to specify the redirect port on the local machine; it therefore would not do to pass this to the remote machines.');
     $options['cache-clear']         = array('propagate' => TRUE, 'description' => 'If 0, Drush skips normal cache clearing; the caller should then clear if needed.', 'example-value' => '0', );
     $options['local']               = array('propagate' => TRUE, 'description' => 'Don\'t look in global locations for commandfiles, config, and site aliases');
+    $options['no-interaction']               = array('hidden' => TRUE, 'description' => 'Synonym for --yes; provided for light forward-compatibility with future Drush versions.');
     $options['ignored-directories'] = array('propagate' => TRUE, 'description' => "Exclude directories when searching for files in drush_scan_directory().", 'example-value' => 'node_modules,bower_components');
 
     $command = array(
@@ -1665,16 +1666,17 @@ function drush_errors_on($errors = null) {
 function drush_memory_limit() {
   $value = trim(ini_get('memory_limit'));
   $last = strtolower($value[strlen($value)-1]);
+  $size = (int) substr($value, 0, -1);
   switch ($last) {
     case 'g':
-      $value *= DRUSH_KILOBYTE;
+      $size *= DRUSH_KILOBYTE;
     case 'm':
-      $value *= DRUSH_KILOBYTE;
+      $size *= DRUSH_KILOBYTE;
     case 'k':
-      $value *= DRUSH_KILOBYTE;
+      $size *= DRUSH_KILOBYTE;
   }
 
-  return $value;
+  return $size;
 }
 
 /**

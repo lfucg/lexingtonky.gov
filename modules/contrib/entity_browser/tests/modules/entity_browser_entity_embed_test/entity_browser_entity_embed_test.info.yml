@@ -1,0 +1,24 @@
+name: 'Test IEF'
+type: module
+description: 'Test Entity Embed Integration'
+# core: 8.x
+package: Testing
+dependencies:
+  - drupal:media (>= 8.4)
+  - drupal:ckeditor
+  - drupal:node
+  - drupal:views
+  - drupal:file
+  - drupal:text
+  - drupal:path
+  - drupal:editor
+  - embed:embed
+  - entity_embed:entity_embed
+  - entity_browser:entity_browser
+  - entity_browser_test:entity_browser_test
+
+# Information added by Drupal.org packaging script on 2019-07-04
+version: '8.x-1.8'
+core: '8.x'
+project: 'entity_browser'
+datestamp: 1562241187

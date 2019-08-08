@@ -4,9 +4,11 @@ namespace Drupal\entity_browser\Form;
 
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigException;
+use Drupal\Core\Form\BaseFormIdInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\entity_browser\DisplayAjaxInterface;
 use Drupal\entity_browser\EntityBrowserFormInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
@@ -16,7 +18,7 @@ use Drupal\Core\Render\RendererInterface;
 /**
  * The entity browser form.
  */
-class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
+class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface, BaseFormIdInterface {
 
   /**
    * UUID generator service.
@@ -55,11 +57,14 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
    *   Selection storage.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer service.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
    */
-  public function __construct(UuidInterface $uuid_generator, KeyValueStoreExpirableInterface $selection_storage, RendererInterface $renderer) {
+  public function __construct(UuidInterface $uuid_generator, KeyValueStoreExpirableInterface $selection_storage, RendererInterface $renderer, MessengerInterface $messenger) {
     $this->uuidGenerator = $uuid_generator;
     $this->selectionStorage = $selection_storage;
     $this->renderer = $renderer;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -69,7 +74,8 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
     return new static(
       $container->get('uuid'),
       $container->get('entity_browser.selection_storage'),
-      $container->get('renderer')
+      $container->get('renderer'),
+      $container->get('messenger')
     );
   }
 
@@ -78,6 +84,13 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
    */
   public function getFormId() {
     return 'entity_browser_' . $this->entityBrowser->id() . '_form';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBaseFormId() {
+    return 'entity_browser_form';
   }
 
   /**
@@ -145,7 +158,7 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
     ];
 
     if (!($current_widget_id = $this->getCurrentWidget($form_state))) {
-      drupal_set_message($this->t('No widgets are available.'), 'warning');
+      $this->messenger->addWarning($this->t('No widgets are available.'));
       return $form;
     }
 
@@ -161,7 +174,7 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
       $form[$form['#browser_parts']['widget']] = $widget->getForm($form, $form_state, $this->entityBrowser->getAdditionalWidgetParameters());
     }
     else {
-      drupal_set_message($this->t('Access to the widget forbidden.'), 'warning');
+      $this->messenger->addWarning($this->t('Access to the widget forbidden.'));
     }
 
     // Add cache access cache metadata from the widgets to the form directly as

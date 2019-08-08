@@ -2,12 +2,14 @@
 
 namespace Drupal\Tests\entity_browser\FunctionalJavascript;
 
+use Drupal\Core\Entity\Sql\SqlContentEntityStorageException;
+
 /**
  * Tests the entity_browser plugins.
  *
  * @group entity_browser
  */
-class PluginsTest extends EntityBrowserJavascriptTestBase {
+class PluginsTest extends EntityBrowserWebDriverTestBase {
 
   /**
    * Tests the Entity browser iframe display plugin.
@@ -26,7 +28,7 @@ class PluginsTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->getPage()->checkField('entity_browser_select[file:' . $image->id() . ']');
     $this->getSession()->getPage()->pressButton('Select entities');
     $this->getSession()->switchToIFrame();
-    $this->waitUntilVisible('.field--type-entity-reference .button');
+    $this->assertSession()->waitForElement('css', '.field--type-entity-reference .button');
     $this->assertSession()->pageTextContains('lama.jpg');
 
     // Tests upload widget on single display. Gets the upload widget and sets
@@ -43,7 +45,7 @@ class PluginsTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->getPage()->checkField('entity_browser_select[file:' . $image->id() . ']');
     $this->getSession()->getPage()->pressButton('Select entities');
     $this->getSession()->switchToIFrame();
-    $this->waitUntilVisible('.field--type-entity-reference .button');
+    $this->assertSession()->waitForElement('css', '.field--type-entity-reference .button');
     $this->assertSession()->pageTextContains('lama.jpg');
 
     // Tests view tab with tabs widget selector.
@@ -60,7 +62,7 @@ class PluginsTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->getPage()->checkField('entity_browser_select[file:' . $image->id() . ']');
     $this->getSession()->getPage()->pressButton('Select entities');
     $this->getSession()->switchToIFrame();
-    $this->waitUntilVisible('.field--type-entity-reference .button');
+    $this->assertSession()->waitForElement('css', '.field--type-entity-reference .button');
     $this->assertSession()->pageTextContains('lama.jpg');
 
     // Tests upload tab with tabs widget selector.
@@ -69,12 +71,14 @@ class PluginsTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
     $this->clickLink('upload');
     $this->getSession()->getPage()->attachFileToField('edit-upload-upload', $this->container->get('file_system')->realpath($image->getFileUri()));
-    $this->waitForAjaxToFinish();
-    $this->getSession()->getPage()->checkField('upload[file_2][selected]');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $image2 = $this->getLastUploadedFile();
+    $this->assertEquals('lama_0.jpg', $image2->label());
+    $this->getSession()->getPage()->checkField('upload[file_' . $image2->id() . '][selected]');
     $this->getSession()->getPage()->pressButton('Select files');
     $this->getSession()->switchToIFrame();
-    $this->waitForAjaxToFinish();
-    $this->assertSession()->pageTextContains('lama.jpg');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->pageTextContains('lama_0.jpg');
     // Tests view widget with drop down widget selector.
     $this->getEntityBrowser('test_entity_browser_file', 'iframe', 'drop_down', 'no_display');
 
@@ -94,24 +98,25 @@ class PluginsTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->getPage()->checkField('entity_browser_select[file:' . $image->id() . ']');
     $this->getSession()->getPage()->pressButton('Select entities');
     $this->getSession()->switchToIFrame();
-    $this->waitUntilVisible('.field--type-entity-reference .button');
+    $this->assertSession()->waitForElement('css', '.field--type-entity-reference .button');
     $this->assertSession()->pageTextContains('lama.jpg');
 
-    // Tests upload vidget with drop down widget selector.
+    // Tests upload widget with drop down widget selector.
     $this->drupalGet('node/add/article');
 
     $this->getSession()->getPage()->clickLink('Select entities');
     $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
     $this->getSession()->getPage()->selectFieldOption('edit-widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');
-    $this->waitForAjaxToFinish();
+    $this->assertSession()->assertWaitOnAjaxRequest();
     $this->getSession()->getPage()->attachFileToField('files[upload][]', $this->container->get('file_system')->realpath($image->getFileUri()));
-    $this->waitForAjaxToFinish();
-    $this->getSession()->getPage()->checkField('upload[file_3][selected]');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $image3 = $this->getLastUploadedFile();
+    $this->getSession()->getPage()->checkField('upload[file_' . $image3->id() . '][selected]');
     $this->getSession()->getPage()->pressButton('Select files');
     $this->getSession()->switchToIFrame();
-    $this->waitForAjaxToFinish();
+    $this->assertSession()->assertWaitOnAjaxRequest();
     // In iframe I get page not found, so this fails.
-    $this->assertSession()->pageTextContains('lama.jpg');
+    $this->assertSession()->pageTextContains($image3->label());
     // Tests view selection display.
     $view_configuration = [
       'view' => 'test_selection_display_view',
@@ -124,8 +129,8 @@ class PluginsTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
 
     // Tests multistep selection display.
-    $image1 = $this->createFile('first_file');
-    $image2 = $this->createFile('second_file');
+    $dragon_image = $this->createFile('dragon');
+    $unicorn_image = $this->createFile('unicorn');
 
     $upload_widget = $browser->getWidget('2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');
     $upload_widget->setWeight(-9);
@@ -148,30 +153,30 @@ class PluginsTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->getPage()->clickLink('Select entities');
     $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
 
-    $this->getSession()->getPage()->attachFileToField('files[upload][]', $this->container->get('file_system')->realpath($image1->getFileUri()));
-    $this->waitForAjaxToFinish();
+    $this->getSession()->getPage()->attachFileToField('files[upload][]', $this->container->get('file_system')->realpath($dragon_image->getFileUri()));
+    $this->assertSession()->assertWaitOnAjaxRequest();
     $this->getSession()->getPage()->pressButton('Select files');
 
-    $this->assertSession()->pageTextContains('first_file.jpg');
-    $this->assertSession()->pageTextNotContains('second_file.jpg');
+    $image4 = $this->getLastUploadedFile();
+    $this->assertEquals('dragon_0.jpg', $image4->label());
+
+    $this->assertSession()->pageTextContains('dragon_0.jpg');
+    $this->assertSession()->pageTextNotContains('unicorn.jpg');
 
     $this->getSession()->getPage()->clickLink('view');
-    // This shows page not found,
-    // which is caused by https://www.drupal.org/node/2771547
-    // Uncomment this hunk when a fix for that problem lands.
-    // $this->getSession()
-    // ->getPage()
-    // ->checkField('entity_browser_select[file:' . $image2->id() . ']');
-    // $this->getSession()->getPage()->pressButton('Select entities');
-    // $this->assertSession()
-    // ->responseContains('edit-selected-items-2-1-remove-button');
-    // $this->assertSession()
-    // ->responseContains('edit-selected-items-1-0-remove-button');
-    // $this->getSession()->getPage()->pressButton('Use selected');
-    // $this->getSession()->switchToIFrame();
-    // $this->waitForAjaxToFinish();
-    // $this->assertSession()->pageTextContains('first_file.jpg');
-    // $this->assertSession()->pageTextContains('second_file.jpg');
+
+    $this->assertSession()->waitForField('entity_browser_select[file:' . $unicorn_image->id() . ']')->check();
+    $this->getSession()->getPage()->pressButton('Select entities');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()
+      ->waitForElement('css', '#edit-selected-items-2-1-remove-button');
+    $this->assertSession()
+      ->waitForElement('css', '#edit-selected-items-1-0-remove-button');
+    $this->getSession()->getPage()->pressButton('Use selected');
+    $this->getSession()->switchToIFrame();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->pageTextContains('dragon_0.jpg');
+    $this->assertSession()->pageTextContains('unicorn.jpg');
   }
 
   /**
@@ -190,14 +195,15 @@ class PluginsTest extends EntityBrowserJavascriptTestBase {
     $this->drupalGet('node/add/article');
     $this->assertSession()->buttonExists('Select entities');
     $this->getSession()->getPage()->pressButton('Select entities');
+    $this->assertSession()->assertWaitOnAjaxRequest();
     $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
 
     $this->getSession()->getPage()->checkField('entity_browser_select[file:' . $image->id() . ']');
     $this->getSession()->getPage()->pressButton('Select entities');
     $this->getSession()->switchToIFrame();
-    $this->waitForAjaxToFinish();
+    $this->assertSession()->assertWaitOnAjaxRequest();
 
-    $this->assertSession()->pageTextContains('lama.jpg');
+    $this->assertSession()->pageTextContains('lama');
   }
 
   /**
@@ -221,6 +227,33 @@ class PluginsTest extends EntityBrowserJavascriptTestBase {
 
     // TODO test if entities were selected. Will most likely need a custom event
     // subscriber that displays a message or something along those lines.
+  }
+
+  /**
+   * Get the most recently uploaded file.
+   *
+   * @return \Drupal\file\FileInterface
+   *   File entity.
+   *
+   * @throws \Drupal\Core\Entity\Sql\SqlContentEntityStorageException
+   *   Thrown if no results from query.
+   */
+  protected function getLastUploadedFile() {
+
+    $entity_type_manager = \Drupal::service('entity_type.manager');
+
+    $results = $entity_type_manager
+      ->getStorage('file')->getQuery()
+      ->range(0, 1)
+      ->sort('fid', 'DESC')
+      ->execute();
+
+    if (!empty($results)) {
+      return $entity_type_manager->getStorage('file')->load(reset($results));
+    }
+    else {
+      throw new SqlContentEntityStorageException('File not found');
+    }
   }
 
 }

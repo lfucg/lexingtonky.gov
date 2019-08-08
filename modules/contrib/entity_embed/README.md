@@ -27,7 +27,7 @@ Entity Embed can be installed via the
   * If the text format uses the 'Limit allowed HTML tags and correct
     faulty HTML' filter, ensure the necessary tags and attributes were
     automatically whitelisted:
-    ```<drupal-entity data-entity-type data-entity-uuid data-view-mode data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button>```
+    ```<drupal-entity data-entity-type data-entity-uuid data-view-mode data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button data-langcode alt title>```
     appears in the 'Allowed HTML tags' setting.
     *Warning: If you were using the module in very early pre-alpha
     stages you might need to add `data-entity-id` to the list of allowed
@@ -87,7 +87,10 @@ different Entity Embed Display plugins out of the box:
   formatter. This will only work if the entity is a file entity type.
 - image:_formatter_id_: Renders the entity using a specific Image field
   formatter. This will only work if the entity is a file entity type,
-  and the file is an image.
+  and the file is an image.  For the alt and title text to save, the `alt`
+  and `title` attributes must be allowed on the `<drupal-entity>` HTML tag
+  in the "Allowed HTML tags" for text formats that have the "Limit allowed
+  HTML tags and correct faulty HTML" filter enabled.
 
 Configuration for the Entity Embed Display plugin can be provided by
 using a `data-entity-embed-display-settings` attribute, which contains a

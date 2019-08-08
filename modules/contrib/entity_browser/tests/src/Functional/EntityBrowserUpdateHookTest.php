@@ -40,8 +40,8 @@ class EntityBrowserUpdateHookTest extends UpdatePathTestBase {
    */
   protected function doSelectionTest() {
     parent::doSelectionTest();
-    $this->assertRaw('8001 -   Updates submit text for existing Entity browsers.');
-    $this->assertRaw('8002 -   Migrates duplicated Views entity_browser_select fields.');
+    $this->assertSession()->responseContains('8001 -   Updates submit text for existing Entity browsers.');
+    $this->assertSession()->responseContains('8002 -   Migrates duplicated Views entity_browser_select fields.');
   }
 
   /**
@@ -53,7 +53,7 @@ class EntityBrowserUpdateHookTest extends UpdatePathTestBase {
       ->get('entity_browser.browser.test_update');
 
     $this->assertNull($browser->get('submit_text'), 'Old submit text is gone');
-    $this->assertEqual($browser->get('widgets.a4ad947c-9669-497c-9988-24351955a02f.settings.submit_text'), 'All animals are created equal', 'New submit text appears on the widget.');
+    $this->assertEquals('All animals are created equal', $browser->get('widgets.a4ad947c-9669-497c-9988-24351955a02f.settings.submit_text'), 'New submit text appears on the widget.');
   }
 
   /**
@@ -64,7 +64,7 @@ class EntityBrowserUpdateHookTest extends UpdatePathTestBase {
     $view = $this->container->get('config.factory')
       ->get('views.view.test_deprecated_field');
 
-    $this->assertEqual($view->get('display.default.display_options.fields.entity_browser_select.table'), 'node', 'Data table in "entity_browser_select" replaced with data field.');
+    $this->assertEquals('node', $view->get('display.default.display_options.fields.entity_browser_select.table'), 'Data table in "entity_browser_select" replaced with data field.');
   }
 
 }

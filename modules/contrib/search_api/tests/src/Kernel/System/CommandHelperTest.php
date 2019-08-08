@@ -103,7 +103,12 @@ class CommandHelperTest extends KernelTestBase {
     $this->insertExampleContent();
     $this->indexItems('test_index');
 
-    $this->systemUnderTest = new CommandHelper(\Drupal::entityTypeManager(), \Drupal::moduleHandler(), 't');
+    $this->systemUnderTest = new CommandHelper(
+      \Drupal::entityTypeManager(),
+      \Drupal::moduleHandler(),
+      \Drupal::getContainer()->get('event_dispatcher'),
+      't'
+    );
     $this->systemUnderTest->setLogger(new NullLogger());
   }
 

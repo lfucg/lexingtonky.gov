@@ -16,7 +16,6 @@ use Drupal\entity_browser\Events\AlterEntityBrowserDisplayData;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Drupal\Core\Path\CurrentPathStack;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Render\RendererInterface;
@@ -211,27 +210,22 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    */
   public function propagateSelection(FilterResponseEvent $event) {
     $render = [
-      'labels' => [
-        '#markup' => 'Labels: ' . implode(', ', array_map(function (EntityInterface $item) {
-          return $item->label();
-        }, $this->entities)),
-        '#attached' => [
-          'library' => ['entity_browser/' . $this->pluginDefinition['id'] . '_selection'],
-          'drupalSettings' => [
-            'entity_browser' => [
-              $this->pluginDefinition['id'] => [
-                'entities' => array_map(function (EntityInterface $item) {
-                  return [$item->id(), $item->uuid(), $item->getEntityTypeId()];
-                }, $this->entities),
-                'uuid' => $this->request->query->get('uuid'),
-              ],
+      '#attached' => [
+        'library' => ['entity_browser/' . $this->pluginDefinition['id'] . '_selection'],
+        'drupalSettings' => [
+          'entity_browser' => [
+            $this->pluginDefinition['id'] => [
+              'entities' => array_map(function (EntityInterface $item) {
+                return [$item->id(), $item->uuid(), $item->getEntityTypeId()];
+              }, $this->entities),
+              'uuid' => $this->request->query->get('uuid'),
             ],
           ],
         ],
       ],
     ];
 
-    $event->setResponse(new Response($this->bareHtmlPageRenderer->renderBarePage($render, $this->t('Entity browser'), 'page')));
+    $event->setResponse($this->bareHtmlPageRenderer->renderBarePage($render, $this->t('Entity browser'), 'page'));
   }
 
   /**

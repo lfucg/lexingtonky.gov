@@ -56,14 +56,18 @@ class ViewModeDeriver extends DeriverBase implements ContainerDeriverInterface {
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
-    $mode = $this->configFactory->get('entity_embed.settings')->get('rendered_entity_mode');
+    $no_ui = $this->configFactory->get('entity_embed.settings')->get('rendered_entity_mode');
     foreach ($this->entityDisplayRepository->getAllViewModes() as $view_modes) {
       foreach ($view_modes as $view_mode => $definition) {
-        $this->derivatives[$definition['id']] = $base_plugin_definition;
-        $this->derivatives[$definition['id']]['label'] = $definition['label'];
-        $this->derivatives[$definition['id']]['view_mode'] = $view_mode;
-        $this->derivatives[$definition['id']]['entity_types'] = $definition['targetEntityType'];
-        $this->derivatives[$definition['id']]['no_ui'] = $mode;
+        $this->derivatives[$definition['id']] = [
+          'label' => $definition['label'],
+          'view_mode' => $view_mode,
+          'entity_types' => [$definition['targetEntityType']],
+          'no_ui' => $no_ui,
+          // Check if the plugin should run through MediaImageDecorator. A more
+          // fine-grained access check happens there.
+          'supports_image_alt_and_title' => ($definition['targetEntityType'] === 'media'),
+        ] + $base_plugin_definition;
       }
     }
     return $this->derivatives;

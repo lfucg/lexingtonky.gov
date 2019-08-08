@@ -140,6 +140,7 @@ class Modal extends IFrame {
       'fluid' => 1,
       'autoResize' => 0,
       'resizable' => 0,
+      'classes' => ['ui-dialog' => 'entity-browser-modal'],
     ]));
     return $response;
   }

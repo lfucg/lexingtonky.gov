@@ -34,19 +34,19 @@ class HookInitCssSniff extends FunctionDefinition
      * @param int                         $functionPtr The position of the function keyword
      *                                                 in the stack.
      *
-     * @return void
+     * @return void|int
      */
     public function processFunction(File $phpcsFile, $stackPtr, $functionPtr)
     {
         $fileExtension = strtolower(substr($phpcsFile->getFilename(), -6));
         // Only check in *.module files.
         if ($fileExtension !== 'module') {
-            return;
+            return ($phpcsFile->numTokens + 1);
         }
 
         // This check only applies to Drupal 7, not Drupal 6.
-        if (Project::getCoreVersion($phpcsFile) !== '7.x') {
-            return;
+        if (Project::getCoreVersion($phpcsFile) !== 7) {
+            return ($phpcsFile->numTokens + 1);
         }
 
         $fileName = substr(basename($phpcsFile->getFilename()), 0, -7);
@@ -74,10 +74,10 @@ class HookInitCssSniff extends FunctionDefinition
                 ) {
                     if ($tokens[$stackPtr]['content'] === ($fileName.'_init')) {
                         $warning = 'Do not use %s() in hook_init(), use #attached for CSS and JS in your page/form callback or in hook_page_build() instead';
-                        $phpcsFile->addWarning($warning, $string, 'AddFunctionFound', array($tokens[$string]['content']));
+                        $phpcsFile->addWarning($warning, $string, 'AddFunctionFound', [$tokens[$string]['content']]);
                     } else {
                         $warning = 'Do not use %s() in hook_page_build(), use #attached for CSS and JS on the $page render array instead';
-                        $phpcsFile->addWarning($warning, $string, 'AddFunctionFoundPageBuild', array($tokens[$string]['content']));
+                        $phpcsFile->addWarning($warning, $string, 'AddFunctionFoundPageBuild', [$tokens[$string]['content']]);
                     }
                 }
             }

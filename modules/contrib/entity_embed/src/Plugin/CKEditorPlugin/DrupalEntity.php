@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_embed\Plugin\CKEditorPlugin;
 
+use Drupal\ckeditor\CKEditorPluginCssInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\embed\EmbedButtonInterface;
 use Drupal\embed\EmbedCKEditorPluginBase;
@@ -15,7 +16,7 @@ use Drupal\embed\EmbedCKEditorPluginBase;
  *   embed_type_id = "entity"
  * )
  */
-class DrupalEntity extends EmbedCKEditorPluginBase {
+class DrupalEntity extends EmbedCKEditorPluginBase implements CKEditorPluginCssInterface {
 
   /**
    * {@inheritdoc}
@@ -36,11 +37,32 @@ class DrupalEntity extends EmbedCKEditorPluginBase {
   /**
    * {@inheritdoc}
    */
+  public function getLibraries(Editor $editor) {
+    return [
+      'core/jquery',
+      'core/drupal',
+      'core/drupal.ajax',
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getConfig(Editor $editor) {
     return [
       'DrupalEntity_dialogTitleAdd' => t('Insert entity'),
       'DrupalEntity_dialogTitleEdit' => t('Edit entity'),
       'DrupalEntity_buttons' => $this->getButtons(),
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCssFiles(Editor $editor) {
+    return [
+      drupal_get_path('module', 'system') . '/css/components/hidden.module.css',
+      drupal_get_path('module', 'entity_embed') . '/css/entity_embed.editor.css',
     ];
   }
 

@@ -12,31 +12,31 @@ services:
 
   plugin.manager.search_api.backend:
     class: Drupal\search_api\Backend\BackendPluginManager
-    parent: default_plugin_manager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@event_dispatcher']
 
   plugin.manager.search_api.data_type:
     class: Drupal\search_api\DataType\DataTypePluginManager
-    parent: default_plugin_manager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@event_dispatcher']
 
   plugin.manager.search_api.datasource:
     class: Drupal\search_api\Datasource\DatasourcePluginManager
-    parent: default_plugin_manager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@event_dispatcher']
 
   plugin.manager.search_api.display:
     class: Drupal\search_api\Display\DisplayPluginManager
-    parent: default_plugin_manager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@event_dispatcher']
 
   plugin.manager.search_api.parse_mode:
     class: Drupal\search_api\ParseMode\ParseModePluginManager
-    parent: default_plugin_manager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@event_dispatcher']
 
   plugin.manager.search_api.processor:
     class: Drupal\search_api\Processor\ProcessorPluginManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@string_translation']
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@event_dispatcher', '@string_translation']
 
   plugin.manager.search_api.tracker:
     class: Drupal\search_api\Tracker\TrackerPluginManager
-    parent: default_plugin_manager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@event_dispatcher']
 
   search_api.datasource_task_manager:
     class: Drupal\search_api\Plugin\search_api\datasource\ContentEntityTaskManager
@@ -45,11 +45,11 @@ services:
       - { name: event_subscriber }
 
   search_api.data_type_helper:
-    class: \Drupal\search_api\Utility\DataTypeHelper
-    arguments: ['@module_handler', '@plugin.manager.search_api.data_type']
+    class: Drupal\search_api\Utility\DataTypeHelper
+    arguments: ['@module_handler', '@event_dispatcher', '@plugin.manager.search_api.data_type']
 
   search_api.fields_helper:
-    class: \Drupal\search_api\Utility\FieldsHelper
+    class: Drupal\search_api\Utility\FieldsHelper
     arguments: ['@entity_type.manager', '@entity_field.manager', '@entity_type.bundle.info', '@search_api.data_type_helper']
 
   search_api.index_task_manager:

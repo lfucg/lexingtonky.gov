@@ -73,5 +73,23 @@ function hook_entity_browser_widget_validation_info_alter(array &$validation_plu
 }
 
 /**
+ * Edit any entity browser form.
+ *
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function hook_form_entity_browser_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['#attributes']['class'][] = 'hello-world';
+}
+
+/**
+ * Edit specific entity browser form.
+ *
+ * Implements hook_form_FORM_ID_alter().
+ */
+function hook_form_entity_browser_ENTITY_BROWSER_ID_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['#attributes']['class'][] = 'hello-world';
+}
+
+/**
  * @} End of "addtogroup hooks".
  */

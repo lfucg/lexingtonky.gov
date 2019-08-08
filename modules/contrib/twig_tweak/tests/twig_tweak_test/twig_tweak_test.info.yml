@@ -4,12 +4,13 @@ description: Support module for Twig tweak testing.
 package: Testing
 # core: 8.x
 dependencies:
-  - drupal:system (>= 8.5.0)
+  - drupal:system (>= 8.7.0)
   - drupal:node
+  - drupal:media
   - drupal:twig_tweak
 
-# Information added by Drupal.org packaging script on 2019-04-17
-version: '8.x-2.3'
+# Information added by Drupal.org packaging script on 2019-07-14
+version: '8.x-2.4'
 core: '8.x'
 project: 'twig_tweak'
-datestamp: 1555516388
+datestamp: 1563096788

@@ -81,6 +81,7 @@ class TypeBoost extends ProcessorPluginBase implements PluginFormInterface {
           '#type' => 'select',
           '#title' => $this->t('Default boost for items from this datasource'),
           '#options' => static::$boost_factors,
+          '#description' => $this->t('A boost of 1 is the default. Assign a boost of 0 to not score the item at all.'),
           '#default_value' => sprintf('%.1f', $datasource_boost),
         ],
       ];

@@ -16,6 +16,7 @@ use Drupal\search_api\ParseMode\ParseModeInterface;
 use Drupal\search_api\Plugin\views\field\SearchApiStandard;
 use Drupal\search_api\Plugin\views\ResultRow;
 use Drupal\search_api\Processor\ConfigurablePropertyInterface;
+use Drupal\search_api\Query\ConditionGroup;
 use Drupal\search_api\Query\ConditionGroupInterface;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\Query\ResultSetInterface;
@@ -637,7 +638,7 @@ class SearchApiQuery extends QueryPluginBase {
       // avoid them being individually loaded inside checkAccess().
       $result_set->preLoadResultItems();
       foreach ($results as $item_id => $result) {
-        if (!$result->checkAccess($account)) {
+        if (!$result->getAccessResult($account)->isAllowed()) {
           unset($results[$item_id]);
         }
       }
@@ -861,7 +862,7 @@ class SearchApiQuery extends QueryPluginBase {
     if (!$this->shouldAbort()) {
       return $this->query->createConditionGroup($conjunction, $tags);
     }
-    return NULL;
+    return new ConditionGroup($conjunction, $tags);
   }
 
   /**

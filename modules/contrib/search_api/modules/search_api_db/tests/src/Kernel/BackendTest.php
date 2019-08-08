@@ -7,6 +7,8 @@ use Drupal\Core\Database\Database as CoreDatabase;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
+use Drupal\search_api\Event\IndexingItemsEvent;
+use Drupal\search_api\Event\SearchApiEvents;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\ItemInterface;
 use Drupal\search_api\Plugin\search_api\data_type\value\TextToken;
@@ -818,6 +820,9 @@ class BackendTest extends BackendTestBase {
     // \Drupal\search_api\Entity\Index::indexSpecificItems().
     $index->alterIndexedItems($items);
     \Drupal::moduleHandler()->alter('search_api_index_items', $index, $items);
+    $event = new IndexingItemsEvent($index, $items);
+    \Drupal::getContainer()->get('event_dispatcher')
+      ->dispatch(SearchApiEvents::INDEXING_ITEMS, $event);
     foreach ($items as $item) {
       // This will cache the extracted fields so processors, etc., can retrieve
       // them directly.

@@ -137,8 +137,27 @@ interface DatasourceInterface extends IndexPluginInterface {
    *
    * @return bool
    *   TRUE if access is granted, FALSE otherwise.
+   *
+   * @deprecated in search_api:8.x-1.14 and is removed from search_api:9.x-1.0.
+   *   Use getItemAccessResult() instead.
+   *
+   * @see https://www.drupal.org/node/3051902
    */
   public function checkItemAccess(ComplexDataInterface $item, AccountInterface $account = NULL);
+
+  /**
+   * Checks whether a user has permission to view the given item.
+   *
+   * @param \Drupal\Core\TypedData\ComplexDataInterface $item
+   *   An item of this datasource's type.
+   * @param \Drupal\Core\Session\AccountInterface|null $account
+   *   (optional) The user session for which to check access, or NULL to check
+   *   access for the current user.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function getItemAccessResult(ComplexDataInterface $item, AccountInterface $account = NULL);
 
   /**
    * Returns the available view modes for this datasource.

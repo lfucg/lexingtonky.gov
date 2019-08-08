@@ -10,9 +10,9 @@
 namespace DrupalPractice\Sniffs\Objects;
 
 use PHP_CodeSniffer\Files\File;
-use PHP_CodeSniffer\Sniffs\Sniff;
 use DrupalPractice\Sniffs\Objects\GlobalDrupalSniff;
 use DrupalPractice\Project;
+use Drupal\Sniffs\Semantics\FunctionCall;
 
 /**
  * Checks that global functions like t() are not used in forms or controllers.
@@ -21,7 +21,7 @@ use DrupalPractice\Project;
  * @package  PHP_CodeSniffer
  * @link     http://pear.php.net/package/PHP_CodeSniffer
  */
-class GlobalFunctionSniff implements Sniff
+class GlobalFunctionSniff extends FunctionCall
 {
 
     /**
@@ -29,33 +29,31 @@ class GlobalFunctionSniff implements Sniff
      *
      * @var string[]
      */
-    protected $functions = array(
-                            'drupal_get_destination'   => 'the "redirect.destination" service',
-                            'drupal_render'            => 'the "renderer" service',
-                            'entity_load'              => 'the "entity_type.manager" service',
-                            'file_load'                => 'the "entity_type.manager" service',
-                            'format_date'              => 'the "date.formatter" service',
-                            'node_load'                => 'the "entity_type.manager" service',
-                            'node_load_multiple'       => 'the "entity_type.manager" service',
-                            'node_type_load'           => 'the "entity_type.manager" service',
-                            't'                        => '$this->t()',
-                            'taxonomy_term_load'       => 'the "entity_type.manager" service',
-                            'taxonomy_vocabulary_load' => 'the "entity_type.manager" service',
-                            'user_load'                => 'the "entity_type.manager" service',
-                            'user_role_load'           => 'the "entity_type.manager" service',
-                           );
-
+    protected $functions = [
+        'drupal_get_destination'   => 'the "redirect.destination" service',
+        'drupal_render'            => 'the "renderer" service',
+        'entity_load'              => 'the "entity_type.manager" service',
+        'file_load'                => 'the "entity_type.manager" service',
+        'format_date'              => 'the "date.formatter" service',
+        'node_load'                => 'the "entity_type.manager" service',
+        'node_load_multiple'       => 'the "entity_type.manager" service',
+        'node_type_load'           => 'the "entity_type.manager" service',
+        't'                        => '$this->t()',
+        'taxonomy_term_load'       => 'the "entity_type.manager" service',
+        'taxonomy_vocabulary_load' => 'the "entity_type.manager" service',
+        'user_load'                => 'the "entity_type.manager" service',
+        'user_role_load'           => 'the "entity_type.manager" service',
+    ];
 
     /**
-     * Returns an array of tokens this test wants to listen for.
+     * List of global functions that are covered by traits.
      *
-     * @return array
+     * This is a subset of the global functions list. These functions can be
+     * replaced by methods that are provided by the listed trait.
+     *
+     * @var string[]
      */
-    public function register()
-    {
-        return array(T_STRING);
-
-    }//end register()
+    protected $traitFunctions = ['t' => '\Drupal\Core\StringTranslation\StringTranslationTrait'];
 
 
     /**
@@ -65,26 +63,25 @@ class GlobalFunctionSniff implements Sniff
      * @param int                         $stackPtr  The position of the current token
      *                                               in the stack passed in $tokens.
      *
-     * @return void
+     * @return void|int
      */
     public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 
-        // We are only interested in function calls, which are not in the global
-        // scope.
-        if (isset($this->functions[$tokens[$stackPtr]['content']]) === false
-            || isset($tokens[($stackPtr + 1)]) === false
-            || $tokens[($stackPtr + 1)]['code'] !== T_OPEN_PARENTHESIS
-            || empty($tokens[$stackPtr]['conditions']) === true
-        ) {
-            return;
+        // Only run this sniff on Drupal 8+.
+        if (Project::getCoreVersion($phpcsFile) < 8) {
+            // No need to check this file again, mark it as done.
+            return ($phpcsFile->numTokens + 1);
         }
 
-        // If there is an object operator before the call then this is a method
-        // invocation, not a function call.
-        $previous = $phpcsFile->findPrevious(T_WHITESPACE, ($stackPtr - 1), null, true);
-        if ($tokens[$previous]['code'] === T_OBJECT_OPERATOR) {
+        // We just want to listen on function calls, nothing else.
+        if ($this->isFunctionCall($phpcsFile, $stackPtr) === false
+            // Ignore function calls in the global scope.
+            || empty($tokens[$stackPtr]['conditions']) === true
+            // Only our list of function names.
+            || isset($this->functions[$tokens[$stackPtr]['content']]) === false
+        ) {
             return;
         }
 
@@ -97,21 +94,40 @@ class GlobalFunctionSniff implements Sniff
 
         // Check if the class extends another class and get the name of the class
         // that is extended.
-        $classPtr    = key($tokens[$stackPtr]['conditions']);
-        $extendsName = $phpcsFile->findExtendedClassName($classPtr);
-
-        if (($extendsName === false
-            || in_array($extendsName, GlobalDrupalSniff::$baseClasses) === false)
-            && Project::isServiceClass($phpcsFile, $classPtr) === false
-        ) {
+        $classPtr = key($tokens[$stackPtr]['conditions']);
+        if ($tokens[$classPtr]['code'] !== T_CLASS) {
             return;
         }
 
-        $warning = '%s() calls should be avoided in classes, use dependency injection and %s instead';
-        $data    = array(
-                    $tokens[$stackPtr]['content'],
-                    $this->functions[$tokens[$stackPtr]['content']],
-                   );
+        if (isset($this->traitFunctions[$tokens[$stackPtr]['content']]) === false) {
+            $extendsName = $phpcsFile->findExtendedClassName($classPtr);
+
+            // Check if the class implements ContainerInjectionInterface.
+            $implementedInterfaceNames = $phpcsFile->findImplementedInterfaceNames($classPtr);
+            $canAccessContainer        = !empty($implementedInterfaceNames) && in_array('ContainerInjectionInterface', $implementedInterfaceNames);
+
+            if (($extendsName === false
+                || in_array($extendsName, GlobalDrupalSniff::$baseClasses) === false)
+                && Project::isServiceClass($phpcsFile, $classPtr) === false
+                && $canAccessContainer === false
+            ) {
+                return;
+            }
+
+            $warning = '%s() calls should be avoided in classes, use dependency injection and %s instead';
+            $data    = [
+                $tokens[$stackPtr]['content'],
+                $this->functions[$tokens[$stackPtr]['content']],
+            ];
+        } else {
+            $warning = '%s() calls should be avoided in classes, use %s and %s instead';
+            $data    = [
+                $tokens[$stackPtr]['content'],
+                $this->traitFunctions[$tokens[$stackPtr]['content']],
+                $this->functions[$tokens[$stackPtr]['content']],
+            ];
+        }//end if
+
         $phpcsFile->addWarning($warning, $stackPtr, 'GlobalFunction', $data);
 
     }//end process()

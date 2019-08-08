@@ -5,6 +5,7 @@ namespace Drupal\Tests\search_api\Kernel\Processor;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\field\Entity\FieldConfig;
@@ -14,6 +15,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\search_api\Entity\Index;
+use Drupal\search_api\Plugin\search_api\data_type\value\TextValueInterface;
 use Drupal\search_api\Utility\Utility;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
@@ -256,7 +258,6 @@ class RenderedItemTest extends ProcessorTestBase {
         default:
           $this->assertTrue(FALSE);
       }
-
     }
   }
 
@@ -355,6 +356,40 @@ class RenderedItemTest extends ProcessorTestBase {
   }
 
   /**
+   * Tests that the "Search excerpt" field in entity displays works correctly.
+   */
+  public function testSearchExcerptField() {
+    \Drupal::getContainer()->get('module_installer')
+      ->install(['search_api_test_excerpt_field']);
+    $this->installEntitySchema('entity_view_mode');
+
+    $view_mode = EntityViewDisplay::load('node.article.teaser');
+    $view_mode->set('content', [
+      'search_api_excerpt' => [
+        'weight' => 0,
+        'region' => 'content',
+      ],
+    ]);
+    $view_mode->save();
+
+    $item = $this->generateItem([
+      'datasource' => 'entity:node',
+      'item' => $this->nodes[3]->getTypedData(),
+      'item_id' => 3,
+    ]);
+    $test_value = 'This is the test excerpt value';
+    $item->setExcerpt($test_value);
+
+    $this->processor->addFieldValues($item);
+    $rendered_item = $item->getField('rendered_item');
+
+    $values = $rendered_item->getValues();
+    $this->assertCount(1, $values);
+    $this->assertInstanceOf(TextValueInterface::class, $values[0]);
+    $this->assertContains($test_value, (string) $values[0]);
+  }
+
+  /**
    * Tests whether the property is correctly added by the processor.
    */
   public function testAlterPropertyDefinitions() {
@@ -367,7 +402,7 @@ class RenderedItemTest extends ProcessorTestBase {
 
     // Verify that there are no properties if a datasource is given.
     $properties = $this->processor->getPropertyDefinitions($this->index->getDatasource('entity:node'));
-    $this->assertEquals([], $properties, '"render_item" property not added when data source is given.');
+    $this->assertEquals([], $properties, '"render_item" property not added when datasource is given.');
   }
 
   /**

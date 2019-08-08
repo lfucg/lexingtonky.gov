@@ -8,6 +8,7 @@
 use Drupal\comment\Entity\Comment;
 use Drupal\Core\Config\ConfigImporter;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -25,6 +26,7 @@ use Drupal\search_api\SearchApiException;
 use Drupal\search_api\Task\IndexTaskManager;
 use Drupal\views\ViewEntityInterface;
 use Drupal\views\ViewExecutable;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 
 /**
  * Implements hook_help().
@@ -729,5 +731,46 @@ function search_api_form_views_exposed_form_alter(&$form, FormStateInterface $fo
         '#value' => $value,
       ];
     }
+  }
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function search_api_entity_extra_field_info() {
+  $extra = [];
+
+  // Add an extra "excerpt" field to every content entity.
+  $entity_types = \Drupal::entityTypeManager()->getDefinitions();
+  $bundle_info = \Drupal::getContainer()->get('entity_type.bundle.info');
+  foreach ($entity_types as $entity_type_id => $entity_type) {
+    if ($entity_type instanceof ContentEntityType) {
+      $bundles = $bundle_info->getBundleInfo($entity_type_id);
+      foreach ($bundles as $bundle => $data) {
+        $extra[$entity_type_id][$bundle]['display']['search_api_excerpt'] = [
+          'label' => t('Search result excerpt'),
+          'description' => t('An excerpt provided by Search API when rendered in a search.'),
+          'weight' => 100,
+          'visible' => FALSE,
+        ];
+      }
+    }
+  }
+  return $extra;
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function search_api_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  $excerpt_component = $display->getComponent('search_api_excerpt');
+  if ($excerpt_component !== NULL && isset($build['#search_api_excerpt'])) {
+    $build['search_api_excerpt'] = [
+      '#type' => 'markup',
+      '#markup' => $build['#search_api_excerpt'],
+      '#cache' => [
+        'contexts' => ['url.query_args']
+      ],
+    ];
   }
 }

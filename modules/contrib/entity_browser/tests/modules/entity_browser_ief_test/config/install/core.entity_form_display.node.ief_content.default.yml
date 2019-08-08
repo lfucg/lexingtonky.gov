@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.ief_content.field_nodes
     - field.field.node.ief_content.ief_media_field
     - node.type.ief_content
   module:
@@ -12,6 +13,21 @@ targetEntityType: node
 bundle: ief_content
 mode: default
 content:
+  field_nodes:
+    weight: 121
+    settings:
+      form_mode: default
+      label_singular: ''
+      label_plural: ''
+      allow_existing: true
+      match_operator: CONTAINS
+      override_labels: false
+      allow_new: false
+    third_party_settings:
+      entity_browser_entity_form:
+        entity_browser_id: widget_context_default_value
+    type: inline_entity_form_complex
+    region: content
   ief_media_field:
     weight: 31
     settings:
@@ -26,6 +42,14 @@ content:
       entity_browser_entity_form:
         entity_browser_id: _none
     type: inline_entity_form_complex
+    region: content
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 120
+    region: content
+    third_party_settings: {  }
   title:
     type: string_textfield
     weight: -5
@@ -33,6 +57,7 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
 hidden:
   created: true
   path: true

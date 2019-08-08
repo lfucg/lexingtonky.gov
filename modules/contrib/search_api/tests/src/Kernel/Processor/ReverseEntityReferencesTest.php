@@ -129,6 +129,7 @@ class ReverseEntityReferencesTest extends ProcessorTestBase {
     $this->assertInstanceOf(ProcessorPropertyInterface::class, $property);
     $this->assertEquals('node', $property->getEntityTypeId());
     $this->assertEquals('reverse_entity_references', $property->getProcessorId());
+    $this->assertTrue($property->isList());
   }
 
   /**

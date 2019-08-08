@@ -48,10 +48,6 @@ function admin_toolbar_tools_help($route_name, RouteMatchInterface $route_match)
  * Implements hook_menu_links_discovered_alter().
  */
 function admin_toolbar_tools_menu_links_discovered_alter(&$links) {
-  $languageManager = \Drupal::languageManager();
-  $config_override_language = $languageManager->getConfigOverrideLanguage();
-  $languageManager->setConfigOverrideLanguage($languageManager->getLanguage('en'));
-
   $moduleHandler = \Drupal::moduleHandler();
   $entityTypeManager = \Drupal::entityTypeManager();
   $routeProvider = \Drupal::service('router.route_provider');
@@ -112,7 +108,7 @@ function admin_toolbar_tools_menu_links_discovered_alter(&$links) {
         // Some bundles have an overview/list form that make a better root link.
         $content_entity_bundle_root = 'entity.' . $content_entity_bundle . '.overview_form.' . $machine_name;
         $links[$content_entity_bundle_root] = [
-          'title' => t($bundle->label()),
+          'title' => $bundle->label(),
           'provider' => 'admin_toolbar_tools',
           'route_name' => 'entity.' . $content_entity_bundle . '.overview_form',
           'menu_name' => 'admin',
@@ -123,7 +119,7 @@ function admin_toolbar_tools_menu_links_discovered_alter(&$links) {
       if ($routeExists('entity.' . $content_entity_bundle . '.edit_form')) {
         $key = 'entity.' . $content_entity_bundle . '.edit_form.' . $machine_name;
         $links[$key] = [
-          'title' => t($bundle->label()),
+          'title' => $bundle->label(),
           'provider' => 'admin_toolbar_tools',
           'route_name' => 'entity.' . $content_entity_bundle . '.edit_form',
           'menu_name' => 'admin',
@@ -260,7 +256,7 @@ function admin_toolbar_tools_menu_links_discovered_alter(&$links) {
   }
   foreach (user_roles() as $role) {
     $links['entity.user_role.edit_form.' . $role->id()] = [
-      'title' => t($role->label()),
+      'title' => $role->label(),
       'provider' => 'admin_toolbar_tools',
       'route_name' => 'entity.user_role.edit_form',
       'menu_name' => 'admin',
@@ -309,7 +305,7 @@ function admin_toolbar_tools_menu_links_discovered_alter(&$links) {
     // Add node links for each content type.
     foreach ($entityTypeManager->getStorage('node_type')->loadMultiple() as $type) {
       $links['node.add.' . $type->id()] = [
-        'title' => t($type->label()),
+        'title' => $type->label(),
         'provider' => 'admin_toolbar_tools',
         'route_name' => 'node.add',
         'parent' => 'admin_toolbar_tools.add_content',
@@ -358,7 +354,7 @@ function admin_toolbar_tools_menu_links_discovered_alter(&$links) {
     // Adds links to /admin/structure/menu.
     foreach (menu_ui_get_menus() as $machine_name => $label) {
       $links['entity.menu.edit_form.' . $machine_name] = [
-        'title' => t($label),
+        'title' => $label,
         'provider' => 'admin_toolbar_tools',
         'route_name' => 'entity.menu.edit_form',
         'menu_name' => 'admin',
@@ -615,7 +611,7 @@ function admin_toolbar_tools_menu_links_discovered_alter(&$links) {
     $installed_themes = admin_toolbar_tools_installed_themes();
     foreach ($installed_themes as $key_theme => $label_theme) {
       $links['system.theme_settings_theme.' . $key_theme] = [
-        'title' => t($label_theme),
+        'title' => $label_theme,
         'provider' => 'admin_toolbar_tools',
         'route_name' => 'system.theme_settings_theme',
         'menu_name' => 'admin',
@@ -640,6 +636,15 @@ function admin_toolbar_tools_menu_links_discovered_alter(&$links) {
 
   // If module Media enabled.
   if ($moduleHandler->moduleExists('media')) {
+      // Displays media link in toolbar.
+      $links['admin_toolbar_tools.media_page'] = [
+          'title' => t('Media'),
+          'provider' => 'admin_toolbar_tools',
+          'route_name' => 'entity.media.collection',
+          'menu_name' => 'admin',
+          'parent' => 'system.admin_content',
+      ];
+
     $links['admin_toolbar_tools.add_media'] = [
       'title' => t('Add media'),
       'provider' => 'admin_toolbar_tools',
@@ -650,7 +655,7 @@ function admin_toolbar_tools_menu_links_discovered_alter(&$links) {
     // Add node links for each media type.
     foreach ($entityTypeManager->getStorage('media_type')->loadMultiple() as $type) {
       $links['media.add.' . $type->id()] = [
-        'title' => t($type->label()),
+        'title' => $type->label(),
         'provider' => 'admin_toolbar_tools',
         'route_name' => 'entity.media.add_form',
         'parent' => 'admin_toolbar_tools.add_media',
@@ -678,8 +683,6 @@ function admin_toolbar_tools_menu_links_discovered_alter(&$links) {
       'weight' => 2,
     ];
   }
-
-  $languageManager->setConfigOverrideLanguage($config_override_language);
 }
 
 /**

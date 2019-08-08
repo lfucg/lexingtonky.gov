@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Component\Plugin\Exception\PluginException;
+use Drupal\entity_embed\Plugin\entity_embed\EntityEmbedDisplay\MediaImageDecorator;
 
 /**
  * Provides an Entity Embed display plugin manager.
@@ -37,19 +38,6 @@ class EntityEmbedDisplayManager extends DefaultPluginManager {
   }
 
   /**
-   * Overrides DefaultPluginManager::processDefinition().
-   */
-  public function processDefinition(&$definition, $plugin_id) {
-    $definition += [
-      'entity_types' => FALSE,
-    ];
-
-    if ($definition['entity_types'] !== FALSE && !is_array($definition['entity_types'])) {
-      $definition['entity_types'] = [$definition['entity_types']];
-    }
-  }
-
-  /**
    * Determines plugins whose constraints are satisfied by a set of contexts.
    *
    * @param array $contexts
@@ -64,6 +52,20 @@ class EntityEmbedDisplayManager extends DefaultPluginManager {
    */
   public function getDefinitionsForContexts(array $contexts = []) {
     $definitions = $this->getDefinitions();
+
+    if (!empty($contexts['embed_button'])) {
+      $button_plugins = $contexts['embed_button']->getTypeSetting('display_plugins');
+      if (!empty($button_plugins)) {
+        $allowed_definitions = [];
+        foreach ($button_plugins as $plugin_id) {
+          if (!empty($definitions[$plugin_id])) {
+            $allowed_definitions[$plugin_id] = $definitions[$plugin_id];
+          }
+        }
+        $definitions = $allowed_definitions;
+      }
+    }
+
     $valid_ids = array_filter(array_keys($definitions), function ($id) use ($contexts) {
       try {
         $display = $this->createInstance($id);
@@ -81,6 +83,35 @@ class EntityEmbedDisplayManager extends DefaultPluginManager {
     $definitions_for_context = array_intersect_key($definitions, array_flip($valid_ids));
     $this->moduleHandler->alter('entity_embed_display_plugins_for_context', $definitions_for_context, $contexts);
     return $definitions_for_context;
+  }
+
+  /**
+   * Gets definition options for context.
+   *
+   * Provides a list of plugins that can be used for a certain context and
+   * filters out plugins that should be hidden in the UI.
+   *
+   * @param array $context
+   *   An array of context options; possible keys are 'entity', 'entity_type'
+   *   and 'embed_button'.
+   *
+   * @return string[]
+   *   An array of valid plugin labels, keyed by plugin ID.
+   */
+  public function getDefinitionOptionsForContext(array $context) {
+    $values = [
+      'entity' => TRUE,
+      'entity_type' => TRUE,
+      'embed_button' => TRUE,
+    ];
+    assert(empty(array_diff_key($context, $values)));
+    $definitions = $this->getDefinitionsForContexts($context);
+    $definitions = $this->filterExposedDefinitions($definitions);
+    $options = array_map(function ($definition) {
+      return (string) $definition['label'];
+    }, $definitions);
+    natsort($options);
+    return $options;
   }
 
   /**
@@ -136,6 +167,23 @@ class EntityEmbedDisplayManager extends DefaultPluginManager {
     return array_map(function ($definition) {
       return (string) $definition['label'];
     }, $definitions);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createInstance($plugin_id, array $configuration = []) {
+    $instance = parent::createInstance($plugin_id, $configuration);
+    $definition = $instance->getPluginDefinition();
+
+    if (empty($definition['supports_image_alt_and_title'])) {
+      return $instance;
+    }
+    else {
+      // Use decorator pattern to add alt and title fields to dialog when
+      // embedding media with image source.
+      return new MediaImageDecorator($instance);
+    }
   }
 
 }

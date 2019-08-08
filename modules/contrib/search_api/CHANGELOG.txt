@@ -1,3 +1,48 @@
+Search API 1.14 (2019-07-08):
+-----------------------------
+- #3065550 by mkalkbrenner, drunken monkey: Declared a conflict for most older
+  Search API Solr versions.
+- #2983606 by StryKaizer, borisson_, drunken monkey, sgurlt: Added an excerpt
+  field to use in view modes.
+- #3065359 by mkalkbrenner, drunken monkey, borisson_: Fixed fatal error in all
+  Drush commands.
+- #2718045 by drunken monkey, joelpittet: Fixed "Rendered entity" Views row
+  style being available for all base tables in some cases.
+- #3023704 by legolasbo, drunken monkey, borisson_: Converted all hooks to
+  events.
+- #3059312 by drunken monkey, borisson_: Fixed warning when trying to add
+  hierarchical data to fulltext fields.
+- #2674750 by drunken monkey, Niklan, borisson_: Fixed display of computed
+  fields in Views.
+- #3015114 by legolasbo, drunken monkey, borisson_, weseze: Improved the
+  performance of the Highlight processor.
+- #3053200 by drunken monkey, mkalkbrenner, borisson_: Increased Core version
+  requirement to 8.6.
+- #3055151 by drunken monkey, borisson_: Content Access Index Processor
+  statusFixed data type plugins to properly convert values.
+- #3058300 by pfrenssen, drunken monkey, borisson_: Changed access methods to
+  work with AccessResult objects instead of booleans.
+- #3059070 by fconnolly, borisson_, drunken monkey: Fixed Item::__toString() to
+  not extract fields.
+- #3055775 by legolasbo, drunken monkey: Fixed documentation of
+  hook_search_api_query_alter().
+- #3054875 by mpp, drunken monkey, borisson_: Fixed help text for
+  "Type-specific boosting" processor.
+- #3052877 by legolasbo, drunken monkey, borisson_: Fixed "no backend plugins"
+  case in "Add server" form.
+- #2986222 by idebr, drunken monkey: Switched Javascript tests to
+  WebDriverTestBase.
+- #2840272 by drunken monkey: Fixed fatal error in certain Views error
+  conditions.
+- #3057510 by drunken monkey, borisson_: Fixed inconsistent package names for
+  test modules.
+- #3031621 by drunken monkey, DeFr, borisson_: Fixed fields returned by backend
+  sometimes ignored by Views.
+- #3053603 by drunken monkey, borisson_: Fixed reported cardinality of
+  entity-valued processor properties.
+- #2881689 by pwolanin, drunken monkey, borisson_: Added performance
+  improvement for initial tracking of existing entities.
+
 Search API 1.13 (2019-05-07):
 -----------------------------
 - #3043930 by kfritsche, drunken monkey, borisson_: Fixed issue with nested

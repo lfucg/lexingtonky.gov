@@ -4,7 +4,6 @@ namespace Drupal\search_api\Plugin\views\field;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
-use Drupal\search_api\LoggerTrait;
 use Drupal\search_api\Plugin\views\query\SearchApiQuery;
 use Drupal\search_api\SearchApiException;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
@@ -22,7 +21,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SearchApiRenderedItem extends FieldPluginBase {
 
-  use LoggerTrait;
   use SearchApiFieldTrait;
 
   /**

@@ -22,6 +22,16 @@ function entity_browser_views_data_alter(&$data) {
           'real field' => $entity_keys['id'],
         ],
       ];
+
+      if (!empty($entity_keys['bundle'])) {
+        $data[$base_table]['entity_browser_bundle'] = [
+          'title' => t('Entity Browser Target Bundles'),
+          'filter' => [
+            'id' => 'entity_browser_bundle',
+            'real field' => $entity_keys['bundle'],
+          ],
+        ];
+      }
     }
   }
   if (\Drupal::moduleHandler()->moduleExists('search_api')) {

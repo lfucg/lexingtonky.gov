@@ -237,7 +237,7 @@ abstract class EntityEmbedDisplayBase extends PluginBase implements ContainerFac
    *   The currently set context value.
    */
   public function getContextValue($name) {
-    return $this->context[$name];
+    return !empty($this->context[$name]) ? $this->context[$name] : NULL;
   }
 
   /**
@@ -321,6 +321,19 @@ abstract class EntityEmbedDisplayBase extends PluginBase implements ContainerFac
   public function getAttributeValue($name, $default = NULL) {
     $attributes = $this->getAttributeValues();
     return array_key_exists($name, $attributes) ? $attributes[$name] : $default;
+  }
+
+  /**
+   * Checks if an attribute is set.
+   *
+   * @param string $name
+   *   The name of the attribute.
+   *
+   * @return bool
+   *   Returns TRUE if value is set.
+   */
+  public function hasAttribute($name) {
+    return array_key_exists($name, $this->getAttributeValues());
   }
 
   /**

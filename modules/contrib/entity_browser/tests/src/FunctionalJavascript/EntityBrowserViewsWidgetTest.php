@@ -10,7 +10,7 @@ use Drupal\file\Entity\File;
  * @group entity_browser
  * @see \Drupal\entity_browser\Plugin\EntityBrowser\Widget\View
  */
-class EntityBrowserViewsWidgetTest extends EntityBrowserJavascriptTestBase {
+class EntityBrowserViewsWidgetTest extends EntityBrowserWebDriverTestBase {
 
   /**
    * Modules to enable.
@@ -40,7 +40,7 @@ class EntityBrowserViewsWidgetTest extends EntityBrowserJavascriptTestBase {
    */
   public function testViewsWidget() {
     // Create a file so that our test View isn't empty.
-    file_unmanaged_copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example.jpg');
+    \Drupal::service('file_system')->copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example.jpg');
     /** @var \Drupal\file\FileInterface $file */
     $file = File::create([
       'uri' => 'public://example.jpg',
@@ -63,16 +63,25 @@ class EntityBrowserViewsWidgetTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->getPage()->pressButton('Apply');
     $this->waitForAjaxToFinish();
     $this->assertSession()->pageTextContains('example.jpg');
-    $this->assertSession()->fieldExists($field);
-
-    // Test selection.
-    $this->submitForm([
-      $field => 1,
-    ], t('Select entities'));
-    $this->assertSession()->pageTextContains($file->getFilename());
+    $this->assertSession()->fieldExists($field)->check();
+    $this->assertSession()->buttonExists('Select entities')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->responseNotContains('HTTP/1.0 200 OK');
+    $this->assertSession()->responseNotContains('Cache-Control: no-cache, private');
+    // Test that the response contains the selected entity.
+    $script = "return drupalSettings.entity_browser.iframe.entities[0];";
+    $result = $this->getSession()
+      ->getDriver()
+      ->getWebDriverSession()
+      ->execute([
+        'script' => $script,
+        'args' => [],
+      ]);
+    $this->assertEquals($file->id(), $result[0]);
+    $this->assertEquals('file', $result[2]);
 
     // Create another file to test bulk select form.
-    file_unmanaged_copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example_1.jpg');
+    \Drupal::service('file_system')->copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example_1.jpg');
     /** @var \Drupal\file\FileInterface $file */
     $new_file = File::create([
       'uri' => 'public://example_1.jpg',

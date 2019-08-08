@@ -104,6 +104,13 @@
   display: block;
 }
 
+.toolbar-menu  .menu-item > span {
+      padding: 1em 1.3333em;
+      display: block;
+      color: #434343;
+      cursor: pointer;
+}
+
 [dir="rtl"] .toolbar-tray-horizontal .menu-item:hover {
   background: #fff;
 }

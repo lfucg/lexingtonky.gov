@@ -188,6 +188,17 @@ class ServerForm extends EntityForm {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function actions(array $form, FormStateInterface $form_state) {
+    if ($form === []) {
+      return [];
+    }
+
+    return parent::actions($form, $form_state);
+  }
+
+  /**
    * Builds the backend-specific configuration form.
    *
    * @param array $form

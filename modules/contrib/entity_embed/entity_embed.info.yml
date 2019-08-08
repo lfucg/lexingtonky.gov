@@ -11,8 +11,8 @@ dependencies:
 test_dependencies:
   - entity_browser:entity_browser
 
-# Information added by Drupal.org packaging script on 2019-05-03
-version: '8.x-1.0-beta3'
+# Information added by Drupal.org packaging script on 2019-06-28
+version: '8.x-1.0'
 core: '8.x'
 project: 'entity_embed'
-datestamp: 1556906885
+datestamp: 1561765985

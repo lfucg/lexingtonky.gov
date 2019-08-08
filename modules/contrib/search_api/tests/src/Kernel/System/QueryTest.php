@@ -101,7 +101,7 @@ class QueryTest extends KernelTestBase {
       $query->setProcessingLevel($level);
     }
     $this->assertEquals($level, $query->getProcessingLevel());
-    $query->addTag('andrew_hill');
+    $query->addTag('andrew_hill')->addTag('views_search_api_test_view');
 
     \Drupal::messenger()->deleteAll();
     $query->execute();
@@ -114,6 +114,7 @@ class QueryTest extends KernelTestBase {
         MessengerInterface::TYPE_STATUS => [
           'Funky blue note',
           'Search id: ',
+          'Freeland',
           'Stepping into tomorrow',
           'Llama',
         ],

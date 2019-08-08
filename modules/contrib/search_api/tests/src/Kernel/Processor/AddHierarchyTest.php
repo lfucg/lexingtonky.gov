@@ -253,6 +253,55 @@ class AddHierarchyTest extends ProcessorTestBase {
   }
 
   /**
+   * Tests adding values to Fulltext fields.
+   *
+   * @see https://www.drupal.org/node/3059312
+   *
+   * @covers ::preprocessIndexItems
+   */
+  public function testRegression3059312() {
+    // Add hierarchical terms to 3 nodes.
+    foreach (['vegetable.turnip', 'vegetable', 'fruit.pear'] as $i => $term) {
+      $this->nodes[$i] = $this->createNode([
+        'type' => 'page',
+        'term_field' => [
+          'target_id' => $this->terms[$term]->id(),
+        ],
+      ]);
+    }
+
+    // Also add a term with multiple parents.
+    $this->terms['avocado'] = $this->createTerm($this->vocabulary, [
+      'name' => 'Avocado',
+      'parent' => [$this->terms['fruit']->id(), $this->terms['vegetable']->id()],
+    ]);
+    $this->nodes[3] = $this->createNode([
+      'type' => 'page',
+      'term_field' => [
+        'target_id' => $this->terms['avocado']->id(),
+      ],
+    ]);
+
+    // Enable hierarchical indexing.
+    $processor = $this->index->getProcessor('hierarchy');
+    $processor->setConfiguration([
+      'fields' => [
+        'term_field' => 'taxonomy_term-parent',
+      ],
+    ]);
+    // Set the field type to "Fulltext".
+    $this->index->getField('term_field')->setType('text');
+    $this->index->save();
+    $this->indexItems();
+
+    $query = new Query($this->index);
+    $query->addCondition('term_field', $this->terms['fruit']->id());
+    $result = $query->execute();
+    $expected = ['node' => [2, 3]];
+    $this->assertResults($result, $expected);
+  }
+
+  /**
    * Tests non-taxonomy-based hierarchy.
    *
    * @covers ::preprocessIndexItems

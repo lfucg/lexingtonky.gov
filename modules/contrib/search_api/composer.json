@@ -37,5 +37,8 @@
         "drush.services.yml": "^9"
       }
     }
+  },
+  "conflict": {
+    "drupal/search_api_solr": "2.* || 3.0 || 3.1"
   }
 }

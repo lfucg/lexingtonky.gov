@@ -72,7 +72,23 @@ class RenderedEntity extends FieldWidgetDisplayBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function view(EntityInterface $entity) {
-    return $this->entityTypeManager->getViewBuilder($this->configuration['entity_type'])->view($entity, $this->configuration['view_mode']);
+    return $this->entityTypeManager->getViewBuilder($this->configuration['entity_type'])
+      ->view($entity, $this->configuration['view_mode']);
+  }
+
+  /**
+   * Get the label from the view mode.
+   *
+   * @return string
+   *   View mode label.
+   */
+  public function getViewModeLabel() {
+    if (!empty($this->configuration['entity_type']) && !empty($this->configuration['view_mode'])) {
+      $view_modes = $this->entityDisplayRepository->getViewModeOptions($this->configuration['entity_type']);
+      return $view_modes[$this->configuration['view_mode']];
+    }
+
+    return $this->t('Default');
   }
 
   /**

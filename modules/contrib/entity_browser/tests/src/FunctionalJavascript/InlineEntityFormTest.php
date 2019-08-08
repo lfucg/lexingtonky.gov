@@ -2,8 +2,6 @@
 
 namespace Drupal\Tests\entity_browser\FunctionalJavascript;
 
-use Behat\Mink\Element\NodeElement;
-
 /**
  * Test for integration of entity browser and inline entity form.
  *
@@ -11,7 +9,7 @@ use Behat\Mink\Element\NodeElement;
  *
  * @package Drupal\Tests\entity_browser\FunctionalJavascript
  */
-class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
+class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
 
   /**
    * {@inheritdoc}
@@ -27,7 +25,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     'system',
     'node',
     'inline_entity_form',
-    'entity',
+    'entity_browser_test',
     'entity_browser_ief_test',
   ];
 
@@ -39,43 +37,14 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     'update media',
     'access ief_entity_browser_file entity browser pages',
     'access ief_entity_browser_file_modal entity browser pages',
+    'access widget_context_default_value entity browser pages',
+    'access bundle_filter entity browser pages',
     'access content',
     'create ief_content content',
+    'create shark content',
+    'create jet content',
     'edit any ief_content content',
   ];
-
-  /**
-   * Drag element in document with defined offset position.
-   *
-   * @param \Behat\Mink\Element\NodeElement $element
-   *   Element that will be dragged.
-   * @param int $offsetX
-   *   Vertical offset for element drag in pixels.
-   * @param int $offsetY
-   *   Horizontal offset for element drag in pixels.
-   */
-  protected function dragDropElement(NodeElement $element, $offsetX, $offsetY) {
-    $elemXpath = $element->getXpath();
-
-    $jsCode = "var fireMouseEvent = function (type, element, x, y) {"
-      . "  var event = document.createEvent('MouseEvents');"
-      . "  event.initMouseEvent(type, true, (type !== 'mousemove'), window, 0, 0, 0, x, y, false, false, false, false, 0, element);"
-      . "  element.dispatchEvent(event); };";
-
-    // XPath provided by getXpath uses single quote (') to encapsulate strings,
-    // that's why xpath has to be quited with double quites in javascript code.
-    $jsCode .= "(function() {" .
-      "  var dragElement = document.evaluate(\"{$elemXpath}\", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;" .
-      "  var pos = dragElement.getBoundingClientRect();" .
-      "  var centerX = Math.floor((pos.left + pos.right) / 2);" .
-      "  var centerY = Math.floor((pos.top + pos.bottom) / 2);" .
-      "  fireMouseEvent('mousedown', dragElement, centerX, centerY);" .
-      "  fireMouseEvent('mousemove', document, centerX + {$offsetX}, centerY + {$offsetY});" .
-      "  fireMouseEvent('mouseup', dragElement, centerX + {$offsetX}, centerY + {$offsetY});" .
-      "})();";
-
-    $this->getSession()->executeScript($jsCode);
-  }
 
   /**
    * Check that selection state in entity browser Inline Entity Form.
@@ -254,7 +223,187 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()
       ->switchToIFrame('entity_browser_iframe_ief_entity_browser_file_modal');
 
-    $this->assertSession()->pageTextContains('Test entity browser file modal');
+    $this->assertSession()->waitForElementVisible('css', 'ief-entity-browser-file-modal-form');
+
+    $this->assertSession()->responseContains('Test entity browser file modal');
+  }
+
+  /**
+   * Tests the EntityBrowserWidgetContext argument_default views plugin.
+   */
+  public function testContextualFilter() {
+    $this->createNode(['type' => 'shark', 'title' => 'Luke']);
+    $this->createNode(['type' => 'jet', 'title' => 'Leia']);
+    $this->createNode(['type' => 'ief_content', 'title' => 'Darth']);
+
+    $this->drupalGet('node/add/ief_content');
+    $page = $this->getSession()->getPage();
+
+    $page->fillField('Title', 'Test IEF Title');
+    $page->pressButton('Add existing node');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_config */
+    $field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('node.ief_content.field_nodes');
+    $handler_settings = $field_config->getSetting('handler_settings');
+    $handler_settings['target_bundles'] = [
+      'ief_content' => 'ief_content',
+    ];
+    $field_config->setSetting('handler_settings', $handler_settings);
+    $field_config->save();
+
+    $this->drupalGet('node/add/ief_content');
+    $page = $this->getSession()->getPage();
+
+    $page->fillField('Title', 'Test IEF Title');
+    $page->pressButton('Add existing node');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextNotContains('Luke');
+    $this->assertSession()->pageTextNotContains('Leia');
+    $this->assertSession()->pageTextContains('Darth');
+  }
+
+  /**
+   * Tests the ContextualBundle filter plugin with exposed option.
+   */
+  public function testContextualBundleExposed() {
+
+    $this->config('core.entity_form_display.node.ief_content.default')
+      ->set('content.field_nodes.third_party_settings.entity_browser_entity_form.entity_browser_id', 'bundle_filter')
+      ->save();
+
+    $this->config('entity_browser.browser.bundle_filter')
+      ->set('widgets.b882a89d-9ce4-4dfe-9802-62df93af232a.settings.view', 'bundle_filter_exposed')
+      ->save();
+
+    $this->createNode(['type' => 'shark', 'title' => 'Luke']);
+    $this->createNode(['type' => 'jet', 'title' => 'Leia']);
+    $this->createNode(['type' => 'ief_content', 'title' => 'Darth']);
+
+    $this->drupalGet('node/add/ief_content');
+    $page = $this->getSession()->getPage();
+
+    $page->fillField('Title', 'Test IEF Title');
+    $page->pressButton('Add existing node');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->getSession()->switchToIFrame('entity_browser_iframe_bundle_filter');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    // Test exposed form type filter.
+    $this->assertSession()->selectExists('Type')->selectOption('jet');
+    $this->assertSession()->buttonExists('Apply')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    // Check that only nodes of the type selected in the exposed filter display.
+    $this->assertSession()->pageTextNotContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    $this->assertSession()->selectExists('Type')->selectOption('shark');
+    $this->assertSession()->buttonExists('Apply')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    // Check that only nodes of the type selected in the exposed filter display.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextNotContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    $this->assertSession()->selectExists('Type')->selectOption('All');
+    $this->assertSession()->buttonExists('Apply')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    // Check that only nodes of the type selected in the exposed filter display.
+    $this->assertSession()->pageTextContains('Luke');
+    $this->assertSession()->pageTextContains('Leia');
+    $this->assertSession()->pageTextNotContains('Darth');
+
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_config */
+    $field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('node.ief_content.field_nodes');
+    $handler_settings = $field_config->getSetting('handler_settings');
+    $handler_settings['target_bundles'] = [
+      'ief_content' => 'ief_content',
+    ];
+    $field_config->setSetting('handler_settings', $handler_settings);
+    $field_config->save();
+
+    $this->drupalGet('node/add/ief_content');
+    $page = $this->getSession()->getPage();
+
+    $page->fillField('Title', 'Test IEF Title');
+    $page->pressButton('Add existing node');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->getSession()->switchToIFrame('entity_browser_iframe_bundle_filter');
+
+    // Check that only nodes of an allowed type are listed.
+    $this->assertSession()->pageTextNotContains('Luke');
+    $this->assertSession()->pageTextNotContains('Leia');
+    $this->assertSession()->pageTextContains('Darth');
+
+    // If there is just one target_bundle, the contextual filter
+    // should not be visible.
+    $this->assertSession()->fieldNotExists('Type');
+
+  }
+
+  /**
+   * Tests entity_browser_entity_form_reference_form_validate.
+   */
+  public function testEntityFormReferenceFormValidate() {
+    $boxer = $this->createNode(['type' => 'shark', 'title' => 'Boxer']);
+    $napoleon = $this->createNode(['type' => 'jet', 'title' => 'Napoleon']);
+
+    $this->drupalGet('node/add/ief_content');
+    $page = $this->getSession()->getPage();
+
+    $page->fillField('Title', 'Test IEF Title');
+
+    // Select the same node twice.
+    for ($i = 0; $i < 2; $i++) {
+      $this->assertSession()->buttonExists('Add existing node')->press();
+      $this->assertSession()->assertWaitOnAjaxRequest();
+      $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+      $this->assertSession()->fieldExists('entity_browser_select[node:' . $boxer->id() . ']')->check();
+      $this->assertSession()->buttonExists('Select entities')->press();
+      $this->assertSession()->assertWaitOnAjaxRequest();
+      $this->assertSession()->buttonExists('Use selected')->press();
+      $this->getSession()->switchToIFrame();
+      $this->assertSession()->assertWaitOnAjaxRequest();
+    }
+
+    $this->assertSession()->pageTextContains('The selected node has already been added.');
+
+    // Select a different node.
+    $this->getSession()->switchToIFrame('entity_browser_iframe_widget_context_default_value');
+    $this->assertSession()->fieldExists('entity_browser_select[node:' . $napoleon->id() . ']')->check();
+    $this->assertSession()->buttonExists('Select entities')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->buttonExists('Use selected')->press();
+    $this->getSession()->switchToIFrame();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    $this->assertSession()->pageTextNotContains('The selected node has already been added.');
+
+    $ief_table = $this->assertSession()->elementExists('xpath', '//table[contains(@id, "ief-entity-table-edit-field-nodes-entities")]');
+    $table_text = $ief_table->getText();
+    $this->assertContains('Boxer', $table_text);
+    $this->assertContains('Napoleon', $table_text);
   }
 
 }

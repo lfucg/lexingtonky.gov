@@ -31,7 +31,7 @@ class GlobalDefineSniff extends FunctionCall
      */
     public function registerFunctionNames()
     {
-        return array('define');
+        return ['define'];
 
     }//end registerFunctionNames()
 
@@ -47,7 +47,7 @@ class GlobalDefineSniff extends FunctionCall
      * @param int                         $closeBracket The position of the closing
      *                                                  parenthesis in the stack.
      *
-     * @return void
+     * @return void|int
      */
     public function processFunctionCall(
         File $phpcsFile,
@@ -63,8 +63,9 @@ class GlobalDefineSniff extends FunctionCall
         }
 
         $coreVersion = Project::getCoreVersion($phpcsFile);
-        if ($coreVersion !== '8.x') {
-            return;
+        if ($coreVersion < 8) {
+            // No need to check this file again, mark it as done.
+            return ($phpcsFile->numTokens + 1);
         }
 
         // Allow constants if they are deprecated.

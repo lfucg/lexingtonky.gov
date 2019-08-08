@@ -9,7 +9,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a set of tasks to view, edit and delete an entity.
+ * Provides a set of tasks to view, edit and duplicate an entity.
  */
 class DefaultEntityLocalTaskProvider implements EntityLocalTaskProviderInterface, EntityHandlerInterface {
 
@@ -38,8 +38,9 @@ class DefaultEntityLocalTaskProvider implements EntityLocalTaskProviderInterface
    * {@inheritdoc}
    */
   public function buildLocalTasks(EntityTypeInterface $entity_type) {
+    // Note: delete-form was intentionally omitted, to match core. See #1834002.
     $link_templates = [];
-    foreach (['canonical', 'edit-form', 'duplicate-form', 'delete-form', 'version-history'] as $rel) {
+    foreach (['canonical', 'edit-form', 'duplicate-form', 'version-history'] as $rel) {
       if ($entity_type->hasLinkTemplate($rel)) {
         $link_templates[] = str_replace('-', '_', $rel);
       }
@@ -54,7 +55,6 @@ class DefaultEntityLocalTaskProvider implements EntityLocalTaskProviderInterface
         'canonical' => $this->t('View'),
         'edit_form' => $this->t('Edit'),
         'duplicate_form' => $this->t('Duplicate'),
-        'delete_form' => $this->t('Delete'),
         'version_history' => $this->t('Revisions'),
       ];
 

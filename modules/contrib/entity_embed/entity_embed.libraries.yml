@@ -8,3 +8,11 @@ drupal.entity_embed.dialog:
   dependencies:
     - core/drupal
     - core/jquery
+
+caption:
+  version: VERSION
+  css:
+    component:
+      css/entity_embed.filter.caption.css: {}
+  dependencies:
+    - filter/caption

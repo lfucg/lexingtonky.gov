@@ -3,6 +3,7 @@
 }
 
 .toolbar-icon-admin-toolbar-tools-help:before {
+  box-sizing: content-box;
   background-image: url(../misc/icons/ffffff/d8-item.svg);
   padding-bottom: 0;
   padding-left: 4px;

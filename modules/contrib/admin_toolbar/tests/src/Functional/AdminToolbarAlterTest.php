@@ -48,7 +48,7 @@ class AdminToolbarAlterTest extends BrowserTestBase {
    */
   public function testAdminToolbar() {
     // Assert that expanded links are present in the HTML.
-    $this->assertRaw('class="toolbar-icon toolbar-icon-user-admin-index"');
+    $this->assertSession()->responseContains('class="toolbar-icon toolbar-icon-user-admin-index"');
   }
 
 }

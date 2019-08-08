@@ -12,7 +12,8 @@ use Drupal\search_api\Utility\Utility;
 /**
  * Implements hook_search_api_query_TAG_alter().
  */
-function search_api_test_hooks_search_api_query_andrew_hill_alter(QueryInterface &$query) {
+function search_api_test_hooks_search_api_query_views_search_api_test_view_alter(QueryInterface $query) {
+  \Drupal::messenger()->addStatus("Freeland");
   // Exclude the node with ID 2 from the search results.
   $query->setOption('tag query alter hook', TRUE);
   $index = $query->getIndex();

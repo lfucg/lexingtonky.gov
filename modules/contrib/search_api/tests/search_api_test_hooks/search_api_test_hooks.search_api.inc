@@ -83,7 +83,7 @@ function search_api_test_hooks_search_api_items_indexed(IndexInterface $index, a
 /**
  * Implements hook_search_api_query_alter().
  */
-function search_api_test_hooks_search_api_query_alter(QueryInterface &$query) {
+function search_api_test_hooks_search_api_query_alter(QueryInterface $query) {
   \Drupal::messenger()->addStatus('Funky blue note');
   \Drupal::messenger()->addStatus("Search id: {$query->getSearchId(FALSE)}");
   $query->addTag('andrew_hill');

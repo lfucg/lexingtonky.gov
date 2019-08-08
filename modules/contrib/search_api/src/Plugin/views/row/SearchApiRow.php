@@ -198,7 +198,14 @@ class SearchApiRow extends RowPluginBase {
     }
 
     try {
-      return $this->index->getDatasource($datasource_id)->viewItem($row->_object, $view_mode);
+      $build = $this->index->getDatasource($datasource_id)
+        ->viewItem($row->_object, $view_mode);
+      // Add the excerpt to the render array to allow adding it to view modes.
+      if (isset($row->search_api_excerpt)) {
+        $build['#search_api_excerpt'] = $row->search_api_excerpt;
+      }
+
+      return $build;
     }
     catch (SearchApiException $e) {
       $this->logException($e);

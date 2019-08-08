@@ -243,10 +243,7 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
 
     $excerpt_fulltext_fields = $this->index->getFulltextFields();
     if (!empty($this->configuration['exclude_fields'])) {
-      $excerpt_fulltext_fields = array_combine($excerpt_fulltext_fields, $excerpt_fulltext_fields);
-      foreach ($this->configuration['exclude_fields'] as $field) {
-        unset($excerpt_fulltext_fields[$field]);
-      }
+      $excerpt_fulltext_fields = array_diff($excerpt_fulltext_fields, $this->configuration['exclude_fields']);
     }
 
     $result_items = $results->getResultItems();
@@ -275,10 +272,13 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
   protected function addExcerpts(array $results, array $fulltext_fields, array $keys) {
     $items = $this->getFulltextFields($results, $fulltext_fields);
     foreach ($items as $item_id => $item) {
-      $text = [];
-      foreach ($item as $values) {
-        $text = array_merge($text, $values);
+      if (!$item) {
+        continue;
       }
+      // We call array_merge() using call_user_func_array() to prevent having to
+      // use it in a loop because it is a resource greedy construction.
+      // @see https://github.com/kalessil/phpinspectionsea/blob/master/docs/performance.md#slow-array-function-used-in-loop
+      $text = call_user_func_array('array_merge', $item);
       $item_keys = $keys;
 
       // If the backend already did highlighting and told us the exact keys it
@@ -622,7 +622,8 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
   protected function highlightField($text, array $keys, $html = TRUE) {
     if ($html) {
       $texts = preg_split('#((?:</?[[:alpha:]](?:[^>"\']*|"[^"]*"|\'[^\']\')*>)+)#i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
-      for ($i = 0; $i < count($texts); $i += 2) {
+      $textsCount = count($texts);
+      for ($i = 0; $i < $textsCount; $i += 2) {
         $texts[$i] = $this->highlightField($texts[$i], $keys, FALSE);
       }
       return implode('', $texts);

@@ -115,7 +115,7 @@ class Patches implements PluginInterface, EventSubscriberInterface {
           $this->installedPatches[$package->getName()] = $extra['patches'];
         }
         $patches = isset($extra['patches']) ? $extra['patches'] : array();
-        $tmp_patches = array_merge_recursive($tmp_patches, $patches);
+        $tmp_patches = $this->arrayMergeRecursiveDistinct($tmp_patches, $patches);
       }
 
       if ($tmp_patches == FALSE) {
@@ -129,7 +129,7 @@ class Patches implements PluginInterface, EventSubscriberInterface {
           $package_name = $package->getName();
           $extra = $package->getExtra();
           $has_patches = isset($tmp_patches[$package_name]);
-          $has_applied_patches = isset($extra['patches_applied']);
+          $has_applied_patches = isset($extra['patches_applied']) && count($extra['patches_applied']) > 0;
           if (($has_patches && !$has_applied_patches)
             || (!$has_patches && $has_applied_patches)
             || ($has_patches && $has_applied_patches && $tmp_patches[$package_name] !== $extra['patches_applied'])) {
@@ -198,7 +198,7 @@ class Patches implements PluginInterface, EventSubscriberInterface {
 
     // Merge installed patches from dependencies that did not receive an update.
     foreach ($this->installedPatches as $patches) {
-      $this->patches = array_merge_recursive($this->patches, $patches);
+      $this->patches = $this->arrayMergeRecursiveDistinct($this->patches, $patches);
     }
 
     // If we're in verbose mode, list the projects we're going to patch.
@@ -378,8 +378,9 @@ class Patches implements PluginInterface, EventSubscriberInterface {
     $patch_levels = array('-p1', '-p0', '-p2', '-p4');
 
     // Check for specified patch level for this package.
-    if (!empty($this->composer->getPackage()->getExtra()['patchLevel'][$package->getName()])){
-      $patch_levels = array($this->composer->getPackage()->getExtra()['patchLevel'][$package->getName()]);
+    $extra = $this->composer->getPackage()->getExtra();
+    if (!empty($extra['patchLevel'][$package->getName()])){
+      $patch_levels = array($extra['patchLevel'][$package->getName()]);
     }
     // Attempt to apply with git apply.
     $patched = $this->applyPatchWithGit($install_path, $patch_levels, $filename);

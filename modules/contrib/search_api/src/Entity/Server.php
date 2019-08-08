@@ -5,6 +5,8 @@ namespace Drupal\search_api\Entity;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\search_api\Event\DeterminingServerFeaturesEvent;
+use Drupal\search_api\Event\SearchApiEvents;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\LoggerTrait;
 use Drupal\search_api\Query\QueryInterface;
@@ -207,8 +209,12 @@ class Server extends ConfigEntityBase implements ServerInterface {
       if ($this->hasValidBackend()) {
         $this->features = $this->getBackend()->getSupportedFeatures();
       }
+      $description = 'This hook is deprecated in search_api 8.x-1.14 and will be removed in 9.x-1.0. Please use the "search_api.determining_server_features" event instead. See https://www.drupal.org/node/3059866';
       \Drupal::moduleHandler()
-        ->alter('search_api_server_features', $this->features, $this);
+        ->alterDeprecated($description, 'search_api_server_features', $this->features, $this);
+      /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher */
+      $eventDispatcher = \Drupal::getContainer()->get('event_dispatcher');
+      $eventDispatcher->dispatch(SearchApiEvents::DETERMINING_SERVER_FEATURES, new DeterminingServerFeaturesEvent($this->features, $this));
     }
 
     return $this->features;

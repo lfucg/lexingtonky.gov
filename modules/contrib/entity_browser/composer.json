@@ -21,16 +21,20 @@
     }
   ],
   "support": {
-    "issues": "http://drupal.org/project/issues/entity_browser",
+    "issues": "https://www.drupal.org/project/issues/entity_browser",
     "irc": "irc://irc.freenode.org/drupal-contribute",
-    "source": "http://cgit.drupalcode.org/entity_browser"
+    "source": "https://git.drupalcode.org/project/entity_browser"
   },
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
   "require": { },
-  "extra": {
-    "branch-alias": {
-      "dev-8.x-1.x": "8.1.x-dev"
-    }
+  "require-dev": {
+    "drupal/token": "~1.0",
+    "drupal/inline_entity_form": "~1.0",
+    "drupal/paragraphs": "~1.0",
+    "drupal/media_entity": "~1.0",
+    "drupal/embed": "~1.0",
+    "drupal/entity_embed": "~1.0",
+    "drupal/entityqueue": "~1.0"
   }
 }

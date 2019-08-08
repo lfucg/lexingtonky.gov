@@ -502,8 +502,8 @@ class MultiStepDisplay extends SelectionDisplayBase {
    * Ajax callback that updates multi-step plugin configuration form.
    */
   public function updateSettingsAjax(array $form, FormStateInterface $form_state) {
-    $form['selection_display_configuration']['#open'] = TRUE;
-    return $form['selection_display_configuration'];
+    $form['selection_display_wrapper']['selection_display_configuration']['#open'] = TRUE;
+    return $form['selection_display_wrapper']['selection_display_configuration'];
   }
 
 }

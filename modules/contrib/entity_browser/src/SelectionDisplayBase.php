@@ -130,9 +130,17 @@ abstract class SelectionDisplayBase extends PluginBase implements SelectionDispl
    * {@inheritdoc}
    */
   public function checkPreselectionSupport() {
+    @trigger_error('checkPreselectionSupport method is deprecated. Use supportsPreselection instead.', E_USER_DEPRECATED);
     if (!$this->getPluginDefinition()['acceptPreselection']) {
       throw new ConfigException('Used entity browser selection display does not support preselection.');
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function supportsPreselection() {
+    return $this->getPluginDefinition()['acceptPreselection'];
   }
 
   /**

@@ -29,14 +29,14 @@ class GlobalClassSniff implements Sniff
      *
      * @var string[]
      */
-    protected $classes = array(
-                          'File',
-                          'Node',
-                          'NodeType',
-                          'Role',
-                          'Term',
-                          'User',
-                         );
+    protected $classes = [
+        'File',
+        'Node',
+        'NodeType',
+        'Role',
+        'Term',
+        'User',
+    ];
 
 
     /**
@@ -46,7 +46,7 @@ class GlobalClassSniff implements Sniff
      */
     public function register()
     {
-        return array(T_STRING);
+        return [T_STRING];
 
     }//end register()
 
@@ -70,7 +70,7 @@ class GlobalClassSniff implements Sniff
             || $tokens[($stackPtr + 1)]['code'] !== T_DOUBLE_COLON
             || isset($tokens[($stackPtr + 2)]) === false
             || $tokens[($stackPtr + 2)]['code'] !== T_STRING
-            || in_array($tokens[($stackPtr + 2)]['content'], array('load', 'loadMultiple')) === false
+            || in_array($tokens[($stackPtr + 2)]['content'], ['load', 'loadMultiple']) === false
             || isset($tokens[($stackPtr + 3)]) === false
             || $tokens[($stackPtr + 3)]['code'] !== T_OPEN_PARENTHESIS
             || empty($tokens[$stackPtr]['conditions']) === true
@@ -90,18 +90,23 @@ class GlobalClassSniff implements Sniff
         $classPtr    = key($tokens[$stackPtr]['conditions']);
         $extendsName = $phpcsFile->findExtendedClassName($classPtr);
 
+        // Check if the class implements ContainerInjectionInterface.
+        $implementedInterfaceNames = $phpcsFile->findImplementedInterfaceNames($classPtr);
+        $canAccessContainer        = !empty($implementedInterfaceNames) && in_array('ContainerInjectionInterface', $implementedInterfaceNames);
+
         if (($extendsName === false
             || in_array($extendsName, GlobalDrupalSniff::$baseClasses) === false)
             && Project::isServiceClass($phpcsFile, $classPtr) === false
+            && $canAccessContainer === false
         ) {
             return;
         }
 
         $warning = '%s::%s calls should be avoided in classes, use dependency injection instead';
-        $data    = array(
-                    $tokens[$stackPtr]['content'],
-                    $tokens[($stackPtr + 2)]['content'],
-                   );
+        $data    = [
+            $tokens[$stackPtr]['content'],
+            $tokens[($stackPtr + 2)]['content'],
+        ];
         $phpcsFile->addWarning($warning, $stackPtr, 'GlobalClass', $data);
 
     }//end process()

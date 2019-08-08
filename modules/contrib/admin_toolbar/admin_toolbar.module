@@ -9,6 +9,7 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Implements hook_toolbar_alter().
@@ -16,6 +17,38 @@ use Drupal\Component\Utility\Html;
 function admin_toolbar_toolbar_alter(&$items) {
   $items['administration']['tray']['toolbar_administration']['#pre_render'] = ['admin_toolbar_prerender_toolbar_administration_tray'];
   $items['administration']['#attached']['library'][] = 'admin_toolbar/toolbar.tree';
+
+  $items['administration_search'] = [
+    "#type" => "toolbar_item",
+    'tab' => [
+      '#type' => 'link',
+      '#title' => new TranslatableMarkup('Search'),
+      '#url' => URL::fromRoute('system.admin'),
+      '#attributes' => [
+        'class' => [
+          'toolbar-icon',
+        ],
+      ],
+    ],
+    'tray' => [
+      'search' => [
+        '#title' => 'Search',
+        '#type' => 'textfield',
+        '#size' => 60,
+        '#attributes' => [
+          'id' => 'admin-toolbar-search-input',
+        ],
+      ],
+    ],
+    '#attached' => [
+      'library' => [
+        'admin_toolbar/search',
+      ],
+    ],
+    '#wrapper_attributes' => [
+      "id" => "admin-toolbar-search-tab",
+    ],
+  ];
 }
 
 /**

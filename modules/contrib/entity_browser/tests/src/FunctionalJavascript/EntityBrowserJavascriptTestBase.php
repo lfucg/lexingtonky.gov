@@ -13,6 +13,11 @@ use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
  * Base class for Entity browser Javascript functional tests.
  *
  * @package Drupal\Tests\entity_browser\FunctionalJavascript
+ *
+ * @deprecated in Drupal 8.6.x, will be removed before Drupal 9.0.0.
+ * Use \Drupal\Tests\entity_browser\FunctionalJavascript\EntityBrowserWebDriverTestBase instead
+ *
+ * @see \Drupal\FunctionalJavascriptTests\JavascriptTestBase for more info.
  */
 abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
 
@@ -49,8 +54,6 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
    */
   protected function setUp() {
     parent::setUp();
-
-    $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
 
     FieldStorageConfig::create([
       'field_name' => 'field_reference',

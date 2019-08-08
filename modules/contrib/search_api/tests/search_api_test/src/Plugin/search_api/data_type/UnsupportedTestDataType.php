@@ -19,7 +19,7 @@ class UnsupportedTestDataType extends DataTypePluginBase {
    * {@inheritdoc}
    */
   public function getFallbackType() {
-    return 'integer';
+    return 'string';
   }
 
 }

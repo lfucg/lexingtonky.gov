@@ -100,13 +100,6 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       ->load($this->configuration['view'])
       ->getExecutable();
 
-    // Check if the current user has access to this view.
-    if (!$view->access($this->configuration['view_display'])) {
-      return [
-        '#markup' => $this->t('You do not have access to this View.'),
-      ];
-    }
-
     if (!empty($this->configuration['arguments'])) {
       if (!empty($additional_widget_parameters['path_parts'])) {
         $arguments = [];

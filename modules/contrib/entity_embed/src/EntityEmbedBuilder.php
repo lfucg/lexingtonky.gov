@@ -98,6 +98,11 @@ class EntityEmbedBuilder implements EntityEmbedBuilderInterface {
       $context['data-entity-embed-display-settings'],
       $context
     );
+    // Don't ever cache a representation of an embedded entity, since the host
+    // entity may be overriding specific values (such as an `alt` attribute)
+    // which means that this particular rendered representation is unique to
+    // the host entity, and hence nonsensical to cache separately anyway.
+    unset($build['entity']['#cache']['keys']);
 
     if (isset($context['class'])) {
       if (is_string($context['class'])) {

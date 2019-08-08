@@ -59,7 +59,7 @@ class RevisionOverviewController extends ControllerBase {
    * {@inheritdoc}
    */
   protected function hasDeleteRevisionAccess(EntityInterface $entity) {
-    return $this->currentUser()->hasPermission("delete all {$entity->id()} revisions");
+    return $this->currentUser()->hasPermission("delete all {$entity->getEntityTypeId()} revisions");
   }
 
   /**

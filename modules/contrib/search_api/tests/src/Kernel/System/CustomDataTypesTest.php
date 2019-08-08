@@ -160,7 +160,7 @@ class CustomDataTypesTest extends KernelTestBase {
     $processed_type = $name_field->getType();
 
     $this->assertEquals($original_value, $processed_value, 'The processed value matches the original value');
-    $this->assertEquals('integer', $processed_type, 'The processed type matches the fallback type.');
+    $this->assertEquals('string', $processed_type, 'The processed type matches the fallback type.');
 
     // Reset the fields on the item and change to the data altering data type.
     $item->setFieldsExtracted(FALSE);

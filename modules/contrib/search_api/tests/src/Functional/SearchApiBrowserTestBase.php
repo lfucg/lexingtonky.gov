@@ -7,6 +7,7 @@ use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\Utility\Utility;
 use Drupal\Tests\BrowserTestBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the base class for web tests for Search API.
@@ -23,6 +24,13 @@ abstract class SearchApiBrowserTestBase extends BrowserTestBase {
     'search_api',
     'search_api_test',
   ];
+
+  /**
+   * Set this to TRUE to include "item" and "article" bundles for test entities.
+   *
+   * @var bool
+   */
+  protected static $additionalBundles = FALSE;
 
   /**
    * An admin user used for this test.
@@ -192,6 +200,29 @@ abstract class SearchApiBrowserTestBase extends BrowserTestBase {
     $task_manager = \Drupal::getContainer()->get('search_api.task_manager');
     $task_manager->executeAllTasks();
     $this->assertEquals(0, $task_manager->getTasksCount(), 'No more pending tasks.');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function initConfig(ContainerInterface $container) {
+    parent::initConfig($container);
+
+    if (!static::$additionalBundles) {
+      return;
+    }
+
+    // This will just set the Drupal state to include the necessary bundles for
+    // our test entity type. Otherwise, fields from those bundles won't be found
+    // and thus removed from the test index. (We can't do it in setUp(), before
+    // calling the parent method, since the container isn't set up at that
+    // point.)
+    $bundles = [
+      'entity_test_mulrev_changed' => ['label' => 'Entity Test Bundle'],
+      'item' => ['label' => 'item'],
+      'article' => ['label' => 'article'],
+    ];
+    \Drupal::state()->set('entity_test_mulrev_changed.bundles', $bundles);
   }
 
 }

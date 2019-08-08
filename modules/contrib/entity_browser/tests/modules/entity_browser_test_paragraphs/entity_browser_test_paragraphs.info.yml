@@ -3,19 +3,18 @@ type: module
 description: 'Test Paragraphs Integration.'
 # core: 8.x
 package: Testing
-# version: VERSION
 dependencies:
-  - entity_reference_revisions
-  - entity_browser
-  - menu_ui
-  - node
-  - paragraphs
-  - path
-  - views
-  - user
+  - entity_reference_revisions:entity_reference_revisions
+  - entity_browser:entity_browser
+  - drupal:menu_ui
+  - drupal:node
+  - paragraphs:paragraphs
+  - drupal:path
+  - drupal:views
+  - drupal:user
 
-# Information added by Drupal.org packaging script on 2019-02-15
-version: '8.x-1.7'
+# Information added by Drupal.org packaging script on 2019-07-04
+version: '8.x-1.8'
 core: '8.x'
 project: 'entity_browser'
-datestamp: 1550237887
+datestamp: 1562241187

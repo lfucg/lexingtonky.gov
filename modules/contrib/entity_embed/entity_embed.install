@@ -5,6 +5,8 @@
  * Contains install and update functions for Entity Embed.
  */
 
+use Drupal\Core\Entity\ContentEntityType;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\embed\Entity\EmbedButton;
 use Drupal\Core\Utility\UpdateException;
 
@@ -83,4 +85,17 @@ function entity_embed_update_8003() {
       }
     }
   }
+}
+
+/**
+ * Adds new content entity type to remove dependency on node module.
+ */
+function entity_embed_update_8004() {
+  \Drupal::entityDefinitionUpdateManager()->installEntityType(new ContentEntityType([
+    'id' => 'entity_embed_fake_entity',
+    'label' => new TranslatableMarkup('Fake entity type'),
+    'handlers' => [
+      'storage' => 'Drupal\\Core\\Entity\\ContentEntityNullStorage',
+    ],
+  ]));
 }

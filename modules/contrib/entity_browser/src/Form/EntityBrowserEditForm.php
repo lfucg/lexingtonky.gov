@@ -10,6 +10,7 @@ use Drupal\entity_browser\WidgetManager;
 use Drupal\entity_browser\WidgetSelectorManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\SubformState;
+use Drupal\Core\Messenger\MessengerInterface;
 
 /**
  * Class EntityBrowserEditForm.
@@ -55,12 +56,15 @@ class EntityBrowserEditForm extends EntityForm {
    *   Entity browser selection display plugin manager.
    * @param \Drupal\entity_browser\WidgetManager $widget_manager
    *   Entity browser widget plugin manager.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
    */
-  public function __construct(DisplayManager $display_manager, WidgetSelectorManager $widget_selector_manager, SelectionDisplayManager $selection_display_manager, WidgetManager $widget_manager) {
+  public function __construct(DisplayManager $display_manager, WidgetSelectorManager $widget_selector_manager, SelectionDisplayManager $selection_display_manager, WidgetManager $widget_manager, MessengerInterface $messenger) {
     $this->displayManager = $display_manager;
     $this->selectionDisplayManager = $selection_display_manager;
     $this->widgetSelectorManager = $widget_selector_manager;
     $this->widgetManager = $widget_manager;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -71,7 +75,8 @@ class EntityBrowserEditForm extends EntityForm {
       $container->get('plugin.manager.entity_browser.display'),
       $container->get('plugin.manager.entity_browser.widget_selector'),
       $container->get('plugin.manager.entity_browser.selection_display'),
-      $container->get('plugin.manager.entity_browser.widget')
+      $container->get('plugin.manager.entity_browser.widget'),
+      $container->get('messenger')
     );
   }
 
@@ -447,6 +452,20 @@ class EntityBrowserEditForm extends EntityForm {
         'entity_browser' => $this->entity->id(),
       ];
       $form_state->setRedirect('entity.entity_browser.edit_widgets', $params);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save(array $form, FormStateInterface $form_state) {
+    $status = $this->entity->save();
+
+    if ($status == SAVED_UPDATED) {
+      $this->messenger->addMessage($this->t('The entity browser %name has been updated.', ['%name' => $this->entity->label()]));
+    }
+    elseif ($status == SAVED_NEW) {
+      $this->messenger->addMessage($this->t('The entity browser %name has been added. Now you may configure the widgets you would like to use.', ['%name' => $this->entity->label()]));
     }
   }
 

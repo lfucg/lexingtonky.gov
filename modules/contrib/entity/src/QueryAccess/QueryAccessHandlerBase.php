@@ -108,6 +108,14 @@ abstract class QueryAccessHandlerBase implements EntityHandlerInterface, QueryAc
   public function buildConditions($operation, AccountInterface $account) {
     $entity_type_id = $this->entityType->id();
     $has_owner = $this->entityType->entityClassImplements(EntityOwnerInterface::class);
+    $has_published = $this->entityType->entityClassImplements(EntityPublishedInterface::class);
+    // Guard against broken/incomplete entity type definitions.
+    if ($has_owner && !$this->entityType->hasKey('uid')) {
+      throw new \RuntimeException(sprintf('The "%s" entity type did not define a "uid" key.', $entity_type_id));
+    }
+    if ($has_published && !$this->entityType->hasKey('published')) {
+      throw new \RuntimeException(sprintf('The "%s" entity type did not define a "published" key', $entity_type_id));
+    }
 
     if ($account->hasPermission("administer {$entity_type_id}")) {
       // The user has full access to all operations, no conditions needed.
@@ -124,7 +132,7 @@ abstract class QueryAccessHandlerBase implements EntityHandlerInterface, QueryAc
     }
 
     $conditions = NULL;
-    if ($operation == 'view' && $this->entityType->entityClassImplements(EntityPublishedInterface::class)) {
+    if ($operation == 'view' && $has_published) {
       $uid_key = $this->entityType->getKey('uid');
       $published_key = $this->entityType->getKey('published');
       $published_conditions = NULL;

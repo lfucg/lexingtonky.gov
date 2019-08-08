@@ -2,10 +2,14 @@
 
 namespace Drupal\search_api\Query;
 
+use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\search_api\Display\DisplayPluginManagerInterface;
+use Drupal\search_api\Event\QueryPreExecuteEvent;
+use Drupal\search_api\Event\ProcessingResultsEvent;
+use Drupal\search_api\Event\SearchApiEvents;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\ParseMode\ParseModeInterface;
 use Drupal\search_api\ParseMode\ParseModePluginManager;
@@ -156,6 +160,13 @@ class Query implements QueryInterface {
   protected $moduleHandler;
 
   /**
+   * The event dispatcher.
+   *
+   * @var \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher|null
+   */
+  protected $eventDispatcher;
+
+  /**
    * The parse mode manager.
    *
    * @var \Drupal\search_api\ParseMode\ParseModePluginManager|null
@@ -235,6 +246,29 @@ class Query implements QueryInterface {
    */
   public function setModuleHandler(ModuleHandlerInterface $module_handler) {
     $this->moduleHandler = $module_handler;
+    return $this;
+  }
+
+  /**
+   * Retrieves the event dispatcher.
+   *
+   * @return \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher
+   *   The event dispatcher.
+   */
+  public function getEventDispatcher() {
+    return $this->eventDispatcher ?: \Drupal::service('event_dispatcher');
+  }
+
+  /**
+   * Sets the event dispatcher.
+   *
+   * @param \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher $event_dispatcher
+   *   The new event dispatcher.
+   *
+   * @return $this
+   */
+  public function setEventDispatcher(ContainerAwareEventDispatcher $event_dispatcher) {
+    $this->eventDispatcher = $event_dispatcher;
     return $this;
   }
 
@@ -544,11 +578,19 @@ class Query implements QueryInterface {
       $this->index->preprocessSearchQuery($this);
 
       // Let modules alter the query.
+      $event_base_name = SearchApiEvents::QUERY_PRE_EXECUTE;
+      $event = new QueryPreExecuteEvent($this);
+      $this->getEventDispatcher()->dispatch($event_base_name, $event);
       $hooks = ['search_api_query'];
       foreach ($this->tags as $tag) {
         $hooks[] = "search_api_query_$tag";
+        $event_name = "$event_base_name.$tag";
+        $event = new QueryPreExecuteEvent($this);
+        $this->getEventDispatcher()->dispatch($event_name, $event);
       }
-      $this->getModuleHandler()->alter($hooks, $this);
+
+      $description = 'This hook is deprecated in search_api 8.x-1.14 and will be removed in 9.x-1.0. Please use the "search_api.query_pre_execute" event instead. See https://www.drupal.org/node/3059866';
+      $this->getModuleHandler()->alterDeprecated($description, $hooks, $this);
     }
   }
 
@@ -564,11 +606,21 @@ class Query implements QueryInterface {
     $this->index->postprocessSearchResults($this->results);
 
     // Let modules alter the results.
+    $event_base_name = SearchApiEvents::PROCESSING_RESULTS;
+    $event = new ProcessingResultsEvent($this->results);
+    $this->results = $event->getResults();
+    $this->getEventDispatcher()->dispatch($event_base_name, $event);
+
     $hooks = ['search_api_results'];
     foreach ($this->tags as $tag) {
       $hooks[] = "search_api_results_$tag";
+
+      $event = new ProcessingResultsEvent($this->results);
+      $this->getEventDispatcher()->dispatch("$event_base_name.$tag", $event);
+      $this->results = $event->getResults();
     }
-    $this->getModuleHandler()->alter($hooks, $this->results);
+    $description = 'This hook is deprecated in search_api 8.x-1.14 and will be removed in 9.x-1.0. Please use the "search_api.processing_results" event instead. See https://www.drupal.org/node/3059866';
+    $this->getModuleHandler()->alterDeprecated($description, $hooks, $this->results);
 
     // Store the results in the static cache.
     $this->getQueryHelper()->addResults($this->results);

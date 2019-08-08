@@ -2,14 +2,14 @@
 
 namespace Drupal\entity_browser_entity_form\Tests;
 
-use Drupal\simpletest\WebTestBase;
+use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 
 /**
  * Tests integration with Inline entity form.
  *
  * @group entity_browser_entity_form
  */
-class InlineEntityIntegrationTest extends WebTestBase {
+class InlineEntityIntegrationTest extends WebDriverTestBase {
 
   /**
    * Modules to enable.
@@ -18,6 +18,7 @@ class InlineEntityIntegrationTest extends WebTestBase {
    */
   public static $modules = [
     'entity_browser_entity_form',
+    'entity_browser_test',
     'node',
     'field_ui',
     'entity_browser_entity_form_test',
@@ -37,40 +38,65 @@ class InlineEntityIntegrationTest extends WebTestBase {
    * Tests integration with Inline entity form.
    */
   public function testInlineEntityIntegration() {
+
+    $this->createNode(['type' => 'article', 'title' => 'Daddy Shark']);
+    $this->createNode(['type' => 'article', 'title' => 'Mommy Shark']);
+    $this->createNode(['type' => 'article', 'title' => 'Baby Shark']);
+
     $account = $this->drupalCreateUser([
       'administer node form display',
       'administer node display',
       'create article content',
+      'access test_entity_browser_iframe_node_view entity browser pages',
     ]);
     $this->drupalLogin($account);
     $this->drupalGet('admin/structure/types/manage/article/form-display');
-    $edit = [
-      'fields[field_content_reference][region]' => 'content',
-      'fields[field_content_reference][type]' => 'inline_entity_form_complex',
-    ];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
-    $this->drupalPostAjaxForm(NULL, [], 'field_content_reference_settings_edit');
-    $this->assertRaw('fields[field_content_reference][settings_edit_form][third_party_settings][entity_browser_entity_form][entity_browser_id]', 'Field to select entity browser is available.');
-    $edit = [
-      'fields[field_content_reference][settings_edit_form][third_party_settings][entity_browser_entity_form][entity_browser_id]' => 'entity_browser_entity_form_test',
-      'fields[field_content_reference][settings_edit_form][settings][allow_existing]' => TRUE,
-    ];
-    $this->drupalPostAjaxForm(NULL, $edit, 'field_content_reference_plugin_settings_update');
-    $this->drupalPostForm(NULL, [], t('Save'));
-    $this->assertText('Entity browser: Entity browser entity form test', 'Settings summary is working correctly.');
+    $this->assertSession()->buttonExists('Show row weights')->click();
 
-    $this->drupalGet('node/add');
-    $elements = $this->xpath('//input[@type="submit" and @value="Add existing node"]');
-    $button_name = $elements[0]->attributes()['name'];
-    $this->drupalPostAjaxForm(NULL, [], $button_name);
-    $this->assertLink('Select entities', 0, 'Entity browser is available.');
+    // Enable field (by default it's in the disabled region).
+    $this->assertSession()
+      ->selectExists('fields[field_content_reference][region]')
+      ->selectOption('content');
+    $this->assertSession()->assertWaitOnAjaxRequest();
 
-    $browsers = $this->container->get('entity_type.manager')->getStorage('entity_browser')->loadMultiple();
-    $browser = current($browsers);
-    $this->container->get('entity_type.manager')->getStorage('entity_browser')->delete([$browser]);
+    // Switch to using inline_entity_form_complex, so we can test
+    // entity browser alterations to field widget settings form.
+    $this->assertSession()
+      ->selectExists('fields[field_content_reference][type]')
+      ->setValue('inline_entity_form_complex');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    // Open field widget settings form.
+    $this->assertSession()->waitForButton('field_content_reference_settings_edit')->press();
+    $prefix = 'fields[field_content_reference][settings_edit_form]';
+    $this->assertSession()
+      ->waitforField($prefix . '[third_party_settings][entity_browser_entity_form][entity_browser_id]')
+      ->setValue('test_entity_browser_iframe_node_view');
+
+    $this->assertSession()
+      ->fieldExists($prefix . '[settings][allow_existing]')
+      ->check();
+
+    $this->submitForm([], 'Save');
+    $this->assertSession()->responseContains('Test entity browser iframe with view widget for nodes');
+
+    $this->drupalGet('node/add/article');
+    $this->assertSession()->buttonExists('Add existing node')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->responseContains('Select entities');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_iframe_node_view');
+    $this->assertSession()->pageTextContains('Daddy Shark');
+    $this->assertSession()->pageTextContains('Mommy Shark');
+    $this->assertSession()->pageTextContains('Baby Shark');
+
+    $storage = $this->container->get('entity_type.manager')->getStorage('entity_browser');
+    $browsers = $storage->loadMultiple();
+    $storage->delete($browsers);
     $this->drupalGet('admin/structure/types/manage/article/form-display');
-    $this->drupalPostAjaxForm(NULL, [], 'field_content_reference_settings_edit');
-    $this->assertText(t('There are no entity browsers available. You can create one here'), 'Massage displays when no entity browser is available.');
+    $this->assertSession()->buttonExists('field_content_reference_settings_edit')->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->pageTextContains('There are no entity browsers available. You can create one here');
+
   }
 
 }

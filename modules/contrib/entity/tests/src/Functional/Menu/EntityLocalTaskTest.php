@@ -59,9 +59,6 @@ class EntityLocalTaskTest extends BrowserTestBase {
     $this->clickLink('Duplicate');
     $this->assertLocalTasks();
 
-    $this->clickLink('Delete');
-    $this->assertLocalTasks();
-
     $this->clickLink('Revisions');
     $this->assertLocalTasks();
   }
@@ -78,9 +75,6 @@ class EntityLocalTaskTest extends BrowserTestBase {
 
     $this->assertSession()->linkByHrefExists("$this->viewPath/duplicate");
     $this->assertSession()->linkExists('Duplicate');
-
-    $this->assertSession()->linkByHrefExists("$this->viewPath/delete");
-    $this->assertSession()->linkExists('Delete');
 
     $this->assertSession()->linkByHrefExists("$this->viewPath/revisions");
     $this->assertSession()->linkExists('Revisions');

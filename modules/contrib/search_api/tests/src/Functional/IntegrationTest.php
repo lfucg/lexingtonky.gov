@@ -312,7 +312,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $this->submitForm($edit, 'Save');
     $this->assertSession()->pageTextContains('Index name field is required.');
     $this->assertSession()->pageTextContains('Machine-readable name field is required.');
-    $this->assertSession()->pageTextContains('Data sources field is required.');
+    $this->assertSession()->pageTextContains('Datasources field is required.');
 
     $edit = [
       'name' => $index_name,
@@ -477,7 +477,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
   }
 
   /**
-   * Tests that an entity without bundles can be used as a data source.
+   * Tests that an entity without bundles can be used as a datasource.
    */
   protected function checkUserIndexCreation() {
     $edit = [

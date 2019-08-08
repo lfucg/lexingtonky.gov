@@ -1,0 +1,9 @@
+/**
+ * @file
+ * Styles for entity browser modal.
+ */
+
+/** Prevent div wrapper to have height bigger then dialog content height. */
+.entity-browser-modal .ui-dialog-content > * {
+  max-height: 100%;
+}

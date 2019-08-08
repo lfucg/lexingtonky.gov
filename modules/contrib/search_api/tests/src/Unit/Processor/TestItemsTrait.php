@@ -13,6 +13,7 @@ use Drupal\search_api\Item\Item;
 use Drupal\search_api\Query\Query;
 use Drupal\search_api\Utility\QueryHelperInterface;
 use Drupal\search_api\Utility\Utility;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Provides common methods for test cases that need to create search items.
@@ -124,7 +125,9 @@ trait TestItemsTrait {
     $moduleHandler = $this->getMockBuilder('Drupal\Core\Extension\ModuleHandlerInterface')
       ->disableOriginalConstructor()
       ->getMock();
-    $dataTypeHelper = new DataTypeHelper($moduleHandler, $dataTypeManager);
+    $eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
+      ->getMock();
+    $dataTypeHelper = new DataTypeHelper($moduleHandler, $eventDispatcher, $dataTypeManager);
 
     $entityTypeManager = $this->getMockBuilder('Drupal\Core\Entity\EntityTypeManagerInterface')
       ->disableOriginalConstructor()

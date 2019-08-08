@@ -443,7 +443,7 @@ function drush_search_api_set_index_server($index_id = NULL, $server_id = NULL) 
  *   An instance of the command helper class.
  */
 function _search_api_drush_command_helper() {
-  $command_helper = new CommandHelper(\Drupal::entityTypeManager(), \Drupal::moduleHandler(), 'dt');
+  $command_helper = new CommandHelper(\Drupal::entityTypeManager(), \Drupal::moduleHandler(), \Drupal::service('event_dispatcher'), 'dt');
   $command_helper->setLogger(\Drupal::logger('search_api'));
   return $command_helper;
 }

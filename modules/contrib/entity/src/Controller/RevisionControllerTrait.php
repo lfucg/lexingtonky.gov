@@ -120,13 +120,14 @@ trait RevisionControllerTrait {
     $entity_storage = $this->entityTypeManager()->getStorage($entity->getEntityTypeId());
     $revision_ids = $this->revisionIds($entity);
     $entity_revisions = $entity_storage->loadMultipleRevisions($revision_ids);
+    $translatable = $entity->getEntityType()->isTranslatable();
 
     $header = [$this->t('Revision'), $this->t('Operations')];
     $rows = [];
     foreach ($entity_revisions as $revision) {
       $row = [];
       /** @var \Drupal\Core\Entity\ContentEntityInterface $revision */
-      if ($revision->hasTranslation($langcode) && $revision->getTranslation($langcode)->isRevisionTranslationAffected()) {
+      if (!$translatable || ($revision->hasTranslation($langcode) && $revision->getTranslation($langcode)->isRevisionTranslationAffected())) {
         $row[] = $this->getRevisionDescription($revision, $revision->isDefaultRevision());
 
         if ($revision->isDefaultRevision()) {
