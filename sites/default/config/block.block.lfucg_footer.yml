@@ -1,0 +1,25 @@
+uuid: 4552b155-124e-4a2f-8231-af9c163ae289
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.footer
+  module:
+    - system
+  theme:
+    - lfucg
+id: lfucg_footer
+theme: lfucg
+region: top_header
+weight: -23
+provider: null
+plugin: 'system_menu_block:footer'
+settings:
+  id: 'system_menu_block:footer'
+  label: Services
+  provider: system
+  label_display: visible
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility: {  }

@@ -1,0 +1,31 @@
+uuid: 53036838-ed80-4b92-9e5a-5e2d9b976e0b
+langcode: en
+status: false
+dependencies:
+  content:
+    - 'block_content:html_block:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
+  module:
+    - block_content
+    - system
+  theme:
+    - lfucg
+id: lfucg_urbancountycouncilhtml
+theme: lfucg
+region: top_header
+weight: -3
+provider: null
+plugin: 'block_content:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
+settings:
+  id: 'block_content:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
+  label: 'Urban County Council'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }
