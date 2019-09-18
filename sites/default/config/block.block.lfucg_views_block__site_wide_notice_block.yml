@@ -1,0 +1,24 @@
+uuid: f1043818-faa4-4e88-95f4-b6350e209e86
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.site_wide_notice
+  module:
+    - views
+  theme:
+    - lfucg
+id: lfucg_views_block__site_wide_notice_block
+theme: lfucg
+region: top_header
+weight: -25
+provider: null
+plugin: 'views_block:site_wide_notice-block_1'
+settings:
+  id: 'views_block:site_wide_notice-block_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility: {  }

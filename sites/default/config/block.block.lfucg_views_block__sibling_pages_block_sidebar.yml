@@ -1,0 +1,32 @@
+uuid: affd6ffc-92a7-41e4-a074-8d8e131e3951
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.sibling_pages
+  module:
+    - ctools
+    - views
+  theme:
+    - lfucg
+id: lfucg_views_block__sibling_pages_block_sidebar
+theme: lfucg
+region: top_header
+weight: -23
+provider: null
+plugin: 'views_block:sibling_pages-block_1'
+settings:
+  id: 'views_block:sibling_pages-block_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      page: page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

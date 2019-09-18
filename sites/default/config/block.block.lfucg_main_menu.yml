@@ -1,0 +1,30 @@
+uuid: 00c4bf0a-8c9b-4497-98ed-d960845e1d85
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - system
+  theme:
+    - lfucg
+id: lfucg_main_menu
+theme: lfucg
+region: top_header
+weight: -25
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'All categories menu'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 1
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    pages: '/browse/*'
+    negate: false
+    context_mapping: {  }

@@ -1,0 +1,33 @@
+uuid: b8394eb1-ac82-4678-8027-6c25746a25b7
+langcode: en
+status: false
+dependencies:
+  module:
+    - ctools
+    - system
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_pagetitle_fullbleed
+theme: bootstrap_barrio
+region: top_header
+weight: -10
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title for full-bleed'
+  provider: core
+  label_display: '0'
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      landing_page: landing_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: true
+    context_mapping: {  }

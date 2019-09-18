@@ -1,0 +1,20 @@
+uuid: 87b32d66-3aff-4830-aaec-e636662444ed
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - lfucg
+id: lfucg_content
+theme: lfucg
+region: top_header
+weight: -14
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Main page content'
+  provider: system
+  label_display: '0'
+visibility: {  }

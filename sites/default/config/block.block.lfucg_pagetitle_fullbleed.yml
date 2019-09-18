@@ -1,0 +1,33 @@
+uuid: 62ad2031-25c0-4283-88f9-da173cd66a2f
+langcode: en
+status: false
+dependencies:
+  module:
+    - ctools
+    - system
+  theme:
+    - lfucg
+id: lfucg_pagetitle_fullbleed
+theme: lfucg
+region: top_header
+weight: -10
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title for full-bleed'
+  provider: core
+  label_display: '0'
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      landing_page: landing_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: true
+    context_mapping: {  }
