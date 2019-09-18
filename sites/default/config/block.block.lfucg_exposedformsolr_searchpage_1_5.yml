@@ -1,0 +1,29 @@
+uuid: d8b4077d-12b8-409d-941f-f78d6b4c4cc6
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.solr_search
+  module:
+    - system
+    - views
+  theme:
+    - lfucg
+id: lfucg_exposedformsolr_searchpage_1_5
+theme: lfucg
+region: top_header
+weight: -24
+provider: null
+plugin: 'views_exposed_filter_block:solr_search-page_1'
+settings:
+  id: 'views_exposed_filter_block:solr_search-page_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+visibility:
+  request_path:
+    id: request_path
+    pages: /search
+    negate: false
+    context_mapping: {  }

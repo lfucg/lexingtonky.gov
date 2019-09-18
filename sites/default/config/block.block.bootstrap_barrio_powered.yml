@@ -1,0 +1,20 @@
+uuid: 6e39ac96-13f0-4a9f-862b-0248edc9e18d
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_powered
+theme: bootstrap_barrio
+region: top_header
+weight: -9
+provider: null
+plugin: system_powered_by_block
+settings:
+  id: system_powered_by_block
+  label: 'Powered by Drupal'
+  provider: system
+  label_display: '0'
+visibility: {  }

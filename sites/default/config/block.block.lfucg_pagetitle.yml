@@ -1,0 +1,25 @@
+uuid: d2f6e051-6fa2-49cc-a73d-f5e90da527f4
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lfucg
+id: lfucg_pagetitle
+theme: lfucg
+region: top_header
+weight: -25
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  provider: core
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/browse/*\r\n/search"
+    negate: true
+    context_mapping: {  }

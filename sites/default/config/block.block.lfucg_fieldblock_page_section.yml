@@ -1,0 +1,36 @@
+uuid: 8619c2d3-04d0-4fa5-9324-ab85bfccb2d7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_page_section
+  module:
+    - ctools
+    - entity_reference_revisions
+    - fieldblock
+  theme:
+    - lfucg
+id: lfucg_fieldblock_page_section
+theme: lfucg
+region: content
+weight: -19
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Org page: page sections'
+  provider: fieldblock
+  label_display: '0'
+  label_from_field: 0
+  field_name: field_page_section
+  formatter_id: entity_reference_revisions_entity_view
+  formatter_settings:
+    view_mode: default
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      organization_page: organization_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

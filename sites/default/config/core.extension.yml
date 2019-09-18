@@ -50,7 +50,6 @@ module:
   kint: 0
   lex_calendar: 0
   lex_custom: 0
-  lex_themecontrol: 0
   link: 0
   masquerade: 0
   media_entity: 0
@@ -101,4 +100,6 @@ theme:
   lex_home: 0
   lex_police: 0
   lex_planning_commission: 0
+  bootstrap_barrio: 0
+  lfucg: 0
 profile: standard

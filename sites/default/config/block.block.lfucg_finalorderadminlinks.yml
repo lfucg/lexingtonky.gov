@@ -1,0 +1,38 @@
+uuid: 7b97cdea-07d1-4369-a176-7b7fa03739ae
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.final-order-admin
+  module:
+    - system
+    - user
+  theme:
+    - lfucg
+id: lfucg_finalorderadminlinks
+theme: lfucg
+region: top_header
+weight: -23
+provider: null
+plugin: 'system_menu_block:final-order-admin'
+settings:
+  id: 'system_menu_block:final-order-admin'
+  label: 'Final order admin links - view'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    pages: /final-orders
+    negate: false
+    context_mapping: {  }
+  user_role:
+    id: user_role
+    roles:
+      final_order_admin: final_order_admin
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'

@@ -1,0 +1,23 @@
+uuid: bc164151-0372-43c2-8b3f-78ac05ae3c47
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - lfucg
+id: lfucg_branding
+theme: lfucg
+region: top_header
+weight: -5
+provider: null
+plugin: system_branding_block
+settings:
+  id: system_branding_block
+  label: 'Site branding'
+  provider: system
+  label_display: '0'
+  use_site_logo: true
+  use_site_name: true
+  use_site_slogan: true
+visibility: {  }

@@ -1,0 +1,25 @@
+uuid: 703de87c-8bb6-43ef-82da-7afb69b22c7e
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - system
+  theme:
+    - lfucg
+id: lfucg_mainnavigation_3
+theme: lfucg
+region: top_header
+weight: -17
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'Main navigation'
+  provider: system
+  label_display: visible
+  level: 1
+  depth: 3
+  expand_all_items: false
+visibility: {  }

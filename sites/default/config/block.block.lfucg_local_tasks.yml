@@ -1,0 +1,27 @@
+uuid: 659efe93-2d79-402d-b9d6-301fcc81a5d9
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lfucg
+id: lfucg_local_tasks
+theme: lfucg
+region: breadcrumb
+weight: -24
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  provider: core
+  label_display: '0'
+  primary: true
+  secondary: true
+visibility:
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/browse/*"
+    negate: true
+    context_mapping: {  }

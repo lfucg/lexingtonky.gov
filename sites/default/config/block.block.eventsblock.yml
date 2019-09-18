@@ -18,15 +18,15 @@ settings:
   label: Events
   provider: lex_calendar
   label_display: visible
-  display_limit: '5'
+  display_limit: '10'
   content_type: event
   show_all: 'no'
 visibility:
   node_type:
     id: node_type
     bundles:
-      organization_page: organization_page
       board_commission: board_commission
+      organization_page: organization_page
       page: page
     negate: false
     context_mapping:
