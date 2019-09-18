@@ -1,0 +1,30 @@
+uuid: 240f7efe-a4cf-4b9e-92f5-e4e6bc174a37
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.header-quick-links
+  module:
+    - system
+  theme:
+    - lfucg
+id: lfucg_headerquicklinks
+theme: lfucg
+region: top_header
+weight: -18
+provider: null
+plugin: 'system_menu_block:header-quick-links'
+settings:
+  id: 'system_menu_block:header-quick-links'
+  label: 'Homepage Header Links'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

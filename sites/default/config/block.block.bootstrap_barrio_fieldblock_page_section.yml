@@ -1,0 +1,36 @@
+uuid: 6fbe41e2-78fb-46c3-bc82-e7ad4d098b3b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_page_section
+  module:
+    - ctools
+    - entity_reference_revisions
+    - fieldblock
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_fieldblock_page_section
+theme: bootstrap_barrio
+region: content
+weight: -19
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Org page: page sections'
+  provider: fieldblock
+  label_display: '0'
+  label_from_field: 0
+  field_name: field_page_section
+  formatter_id: entity_reference_revisions_entity_view
+  formatter_settings:
+    view_mode: default
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      organization_page: organization_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

@@ -17,7 +17,8 @@
         "drupal/file_browser": "^1.1",
         "drupal/media_entity": "^1.8",
         "drupal/entity_browser": "^1.7",
-        "drupal/twig_vardumper": "^1.1"
+        "drupal/twig_vardumper": "^1.1",
+        "drupal/bootstrap_barrio": "^4.22"
     },
     "replace": {
         "drupal/core": "^8.6"

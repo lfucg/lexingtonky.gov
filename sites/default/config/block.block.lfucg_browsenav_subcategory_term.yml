@@ -1,0 +1,25 @@
+uuid: fca98e1b-8096-4d56-a03e-731b3e92f27f
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lfucg
+id: lfucg_browsenav_subcategory_term
+theme: lfucg
+region: content
+weight: -24
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Browse navigation: sub-category term'
+  provider: core
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '/browse/*/*'
+    negate: false
+    context_mapping: {  }

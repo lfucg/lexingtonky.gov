@@ -1,0 +1,20 @@
+uuid: 16ab5f76-a508-4bb8-9e82-1c9da8669dd7
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lfucg
+id: lfucg_breadcrumbs
+theme: lfucg
+region: breadcrumb
+weight: -25
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Breadcrumbs
+  provider: system
+  label_display: '0'
+visibility: {  }
