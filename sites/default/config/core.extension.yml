@@ -51,6 +51,7 @@ module:
   kint: 0
   lex_calendar: 0
   lex_custom: 0
+  lex_themecontrol: 0
   link: 0
   lookup_services: 0
   masquerade: 0
