@@ -30,8 +30,7 @@ include __DIR__ . "/settings.pantheon.php";
 $settings['trusted_host_patterns'] = array(
   '^.+lexky-d8\.pantheonsite\.io$',
   '^www\.lexingtonky\.gov$',
-  '^lexky-d8\.kbox\.site$', // windows & Mac
-  '^lexky-d8\.kbox\.host$', // Linux
+  '^lexky-d8\.lndo\.site$', // windows & Mac
   '^web$',
   '^localhost$'
 );
@@ -62,7 +61,7 @@ $settings['install_profile'] = 'standard';
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT']) && $_ENV['PANTHEON_ENVIRONMENT'] !== 'kalabox') {
   $config['system.file']['path']['temporary'] = $_SERVER['HOME'] .'/tmp';
-} 
+}
 
 /*Add to settings.php*/
 
