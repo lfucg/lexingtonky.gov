@@ -1,0 +1,8 @@
+{#
+  required values:
+    phone_number
+#}
+
+{% set stripped_number = phone_number|replace({ '(': '', ')': '', '-': '', ' ': ''}) %}
+
+<a class="lex-social-link fa-phone" href="tel:{{ stripped_number }}">{{ phone_number }}</a>

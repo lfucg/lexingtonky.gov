@@ -1,0 +1,20 @@
+{#
+  /**
+  * @file
+  * Theme override for an 'input' #type form element.
+  *
+  * Available variables:
+  * - attributes: A list of HTML attributes for the input element.
+  * - children: Optional additional rendered elements.
+  *
+  * @see template_preprocess_input()
+  */
+  #}
+  <input{{ attributes }} placeholder="Search for..." />
+  {% block submit %}
+  {% endblock %}
+  <button type="submit" class="lex-search-submit">
+    <span class="usa-sr-only">Search</span>
+    <i class="fa fa-search lex-icon"></i>
+  </button>
+  {{ children }}
