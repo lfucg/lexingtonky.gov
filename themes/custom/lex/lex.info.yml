@@ -2,11 +2,11 @@ name: Lexington
 description: A theme for the City of Lexington
 type: theme
 core: 8.x
-base theme: bootstrap_barrio
 # Add libraries.
 libraries:
   - lex/global-css
   - lex/global-js
+  - lex/bootstrap_cdn
 # Remove stylesheets.
 ckeditor_stylesheets:
   - css/styles.css
@@ -38,3 +38,7 @@ regions:
   feedback: 'Feedback Form'
   footer: 'Footer'
 
+component-libraries:
+  components:
+    paths:
+      - patterns
