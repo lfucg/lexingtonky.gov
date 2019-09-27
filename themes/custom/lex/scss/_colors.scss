@@ -6,11 +6,6 @@
   @return $color-undefined;
 }
 
-@mixin rgba-background($hexcolor, $opacity) {
-  background-color: $hexcolor;
-  background-color: rgba($hexcolor, $opacity);
-}
-
 
 $colors: (
   lex-blue: #004585,
@@ -19,5 +14,5 @@ $colors: (
   gray: #787878,
   dark-gray: #353535,
   yellow: #E1B111,
-  white: #fefEfe,
 );
+

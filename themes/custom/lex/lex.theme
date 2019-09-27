@@ -48,16 +48,16 @@ function lex_preprocess_page__taxonomy__term(&$variables) {
   $variables['browse_level'] = preg_match('|/browse/.*/|', $alias) == 1 ? 'subsection' : 'section';
 }
 
-// function lex_preprocess_menu(&$variables) {
-//   // expose the url_title so it can be displayed in a tag
-//   if ($variables['menu_name'] == 'main') {
-//     foreach($variables['items'] as &$item) {
-//       foreach($item['below'] as &$sub_cat) {
-//         $sub_cat['url_title'] = strip_tags($sub_cat['url']->getOption('attributes')['title']);
-//       }
-//     }
-//   }
-// }
+function lex_preprocess_menu(&$variables) {
+  // expose the url_title so it can be displayed in a tag
+  if ($variables['menu_name'] == 'main') {
+    foreach($variables['items'] as &$item) {
+      foreach($item['below'] as &$sub_cat) {
+        $sub_cat['url_title'] = strip_tags($sub_cat['url']->getOption('attributes')['title']);
+      }
+    }
+  }
+}
 
 function lex_preprocess_input__submit(&$variables) {
   $variables['attributes']['class'][] = 'lex-submit-drupalprovided';
