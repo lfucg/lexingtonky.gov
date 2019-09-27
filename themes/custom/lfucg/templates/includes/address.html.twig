@@ -1,0 +1,31 @@
+{#
+  Expects address value to be available
+
+  required values:
+    address.street_number
+    address.street
+    address.zip
+
+  optional values:
+    address.location_detail
+    address.city (defaults to Lexington)
+    address.state (defaults to KY)
+#}
+
+{% set city = { 'city' : (address.city ?: "Lexington") } %}
+{% set state = { 'state' : (address.state ?: "KY") } %}
+{% set address = address|merge(city)|merge(state) %}
+
+{% if address.street_number and address.street %}
+  <address>
+    {# make the address the map destination #}
+    {% if address.location_detail %}
+      <div>{{ address.location_detail }}</div>
+    {% endif %}
+    <a class="lex-font-standout" target="_blank" href="https://www.google.com/maps/dir//{{ address|join("+") }}">
+      <span class="lex-street-address p-street-address">{{ address.street_number }}
+      {{ address.street }}</span>
+      <span class="p-locality">{{ address.city }}, {{ address.state }} &nbsp;{{ address.zip}}</span>
+    </a>
+  </address>
+{% endif %}

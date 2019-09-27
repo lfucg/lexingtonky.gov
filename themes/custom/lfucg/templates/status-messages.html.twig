@@ -1,0 +1,49 @@
+{#
+/**
+ * @file
+ * Theme override for status messages.
+ *
+ * Displays status, error, and warning messages, grouped by type.
+ *
+ * An invisible heading identifies the messages for assistive technology.
+ * Sighted users see a colored box. See http://www.w3.org/TR/WCAG-TECHS/H69.html
+ * for info.
+ *
+ * Add an ARIA label to the contentinfo area so that assistive technology
+ * user agents will better describe this landmark.
+ *
+ * Available variables:
+ * - message_list: List of messages to be displayed, grouped by type.
+ * - status_headings: List of all status types.
+ * - display: (optional) May have a value of 'status' or 'error' when only
+ *   displaying messages of that specific type.
+ * - attributes: HTML attributes for the element, including:
+ *   - class: HTML classes.
+ */
+#}
+{% for type, messages in message_list %}
+  {% set type_map = {
+     'error' : 'error',
+     'status' : 'success',
+     'warning' : 'warning',
+    }
+  %}
+  <div class="lex-alertcontainer-{{ type_map[type] }}">
+    <div class="lex-alert usa-alert usa-alert-{{ type_map[type] }}" role="contentinfo" aria-label="{{ status_headings[type] }}"{{ attributes|without('role', 'aria-label') }}>
+      <div class="usa-alert-body" {{ type == 'error' ? 'role="alert"' : '' }}>
+        {% if status_headings[type] %}
+          <h2 class="lex-alert-heading usa-alert-heading">{{ status_headings[type] }}</h2>
+        {% endif %}
+        {% if messages|length > 1 %}
+          <ul>
+            {% for message in messages %}
+              <li class="usa-alert-text">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>{{ messages|first }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endfor %}

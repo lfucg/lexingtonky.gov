@@ -5,5 +5,4 @@ dependencies: {  }
 name: 'Topic Navigation'
 vid: site_navigation
 description: ''
-hierarchy: 1
 weight: 0

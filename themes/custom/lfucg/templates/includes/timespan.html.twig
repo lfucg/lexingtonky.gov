@@ -1,0 +1,14 @@
+{#
+  Expects address value to be available
+
+  required values:
+    begin
+
+  optional:
+    end
+#}
+{% include "@lex/includes/time.html.twig" with { time: begin } %}
+{% if end %}
+  – {% include "@lex/includes/time.html.twig" with { time: end } %}
+{% endif %}
+

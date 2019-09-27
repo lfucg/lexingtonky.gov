@@ -1,0 +1,44 @@
+<footer role="contentinfo" class="lex-grid-full">
+  {{ page.footer_first }}
+</footer>
+<footer role="contentinfo" class="lex-slab lex-slab-blue lex-footer">
+  <section class="lex-grid-full usa-grid">
+    {{ page.footer_second }}
+    <div class="usa-width-one-third">
+      <h2 class="lex-section-heading lex-heading lex-font-standout">Get in touch</h2>
+      <ul class="usa-unstyled-list">
+        <li>
+          {% include "@lex/includes/address.html.twig" with {
+              address: {
+                'street_number': '200',
+                'street': 'E. Main St.',
+                'zip': '40507',
+              }
+            }
+          %}
+        </li>
+        <li>
+          {% include "@lex/includes/phone.html.twig" with { phone_number: "(859) 425-2255" } %}
+        </li>
+        <li>
+          <ul class="usa-unstyled-list lex-horizontal-list lex-social-links">
+            <li>
+              <a href="https://twitter.com/LexingtonKyGov"><i class="lex-card-title lex-card-title-large lex-font-standout fa fa-twitter"></i><span class="visually-hidden">twitter</span></a>
+            </li>
+            <li>
+              <a href="https://www.facebook.com/LexingtonKyGov"><i class="lex-card-title lex-card-title-large lex-font-standout fa fa-facebook"></i><span class="visually-hidden">facebook</span></a>
+            </li>
+          </ul>
+          </li>
+      </ul>
+    </div>
+  </section>
+  <section class="lex-grid-full lex-sub-footer">
+    <img class="lex-seal" alt="Lexington-Fayette Seal" src="/themes/custom/lex/img/lexington-seal.svg">
+    <ul class="usa-unstyled-list lex-copyright">
+      <li>&copy; {{ "now"|date("Y") }} Lexington-Fayette Urban County Government</li>
+      <li>Lexington KY, Horse Capital of the World <sub>&#174;</sub></li>
+      <li><a href="/terms-of-use">Terms of use</a></li>
+    </ul>
+  </section>
+</footer>
