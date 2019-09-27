@@ -1,0 +1,20 @@
+{{ attach_library('lex/lex-traffic') }}
+
+<article>
+  <div class="lex-traffic-incidents">Loading...</div>
+</article>
+<hr>
+<article>
+  <div class="lex-traffic-weekendImpacts"></div>
+</article>
+<article>
+  <div class="lex-traffic-scheduledClosures"></div>
+</article>
+
+{% include "node.html.twig" %}
+
+<hr>
+<p>
+<em>Last updated: <time class="lex-traffic-lastUpdated"></time></em></p>
+<em>Page refreshed: <time class="lex-traffic-pageRefreshed"></time></em></p>
+</p>

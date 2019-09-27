@@ -1,0 +1,10 @@
+{#
+  required values:
+    email_address
+
+  optional:
+    display_as_address: true/false to show 'a@b.cc' versus 'Email us'
+#}
+{% if email_address %}
+  <a class="lex-social-link fa-envelope" href="mailto:{{ email_address }}">{{ display_as_address ? email_address : 'Email us' }}</a>
+{% endif %}

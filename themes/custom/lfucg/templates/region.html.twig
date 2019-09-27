@@ -1,0 +1,8 @@
+{% if content %}
+  {% set attributes = attributes.addClass('region') %}
+  <section{{ attributes }}>
+    {% block region_content %}
+    {{ content }}
+    {% endblock %}
+  </section>
+{% endif %}

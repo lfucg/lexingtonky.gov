@@ -1,0 +1,22 @@
+{#
+{% set title_attributes = title_attributes.addClass('lex-section-heading', 'lex-heading') %}
+{% block drupal_block %}
+{% include "@stable/block/block.html.twig" %}
+{% endblock %}
+#}
+<div class="addtoany--block">
+  {% block title_prefix %}
+  {{ title_prefix }}
+  {% endblock %}
+  {% block title %}
+  {% if label %}
+    <h2{{ title_attributes }}>{{ label }}</h2>
+  {% endif %}
+  {% endblock %}
+  {% block title_suffix %}
+  {{ title_suffix }}
+  {% endblock %}
+  {% block content %}
+    {{ content }}
+  {% endblock %}
+</div>

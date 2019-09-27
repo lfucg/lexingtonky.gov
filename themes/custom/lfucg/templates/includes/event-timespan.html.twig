@@ -1,0 +1,60 @@
+{#
+  required values:
+    field_begin (render array)
+    field_end (render array)
+
+  optional:
+    hide_times
+#}
+
+{# not sure if twig has functions that can extract and return these? #}
+
+{% import _self as functions %}
+
+{% set begin_text = field_begin[0]['#text'] %}
+{% set begin = {
+    date:      (begin_text | date('y-m-d')),
+    day:       (begin_text | date('d')),
+    month:     (begin_text | date('M')),
+    year:      (begin_text | date('Y')),
+    time:      (begin_text | date('g:i')),
+    full_time: (begin_text | date('g:i a')),
+    am_pm:     (begin_text | date('a'))
+  }
+%}
+
+{% set end_text = field_end[0]['#text'] %}
+{% set end = {
+    date:      (end_text | date('y-m-d')),
+    day:       (end_text | date('d')),
+    month:     (end_text | date('M')),
+    year:      (end_text | date('Y')),
+    time:      (end_text | date('g:i')),
+    full_time: (end_text | date('g:i a')),
+    am_pm:     (end_text | date('a'))
+  }
+%}
+
+{% macro time(time) %}
+  {% include '@lex/includes/time.html.twig' with { time: time } %}
+{% endmacro %}
+
+{{ begin.month }} {{ begin.day }}, {{ begin.year }}
+
+{% if begin.date == end.date %}
+  {% set begin_time = (begin.am_pm == end.am_pm ? begin.time : begin.full_time) %}
+
+  {% if not hide_times %}
+    <br>{{ functions.time(begin_time) }}
+    –
+    {{ functions.time(end.full_time) }}
+  {% endif %}
+
+{% else %}
+
+  {% if not hide_times %}<br>{{ functions.time(begin.full_time) }}{% endif %}
+  <br> –
+  <br>{{ end.month }} {{ end.day }}, {{ end.year }}
+  <br>{{ hide_times ? '' : functions.time(end.full_time) }}
+
+{% endif %}
