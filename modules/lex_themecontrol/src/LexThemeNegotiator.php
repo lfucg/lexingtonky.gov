@@ -16,7 +16,7 @@ class LexThemeNegotiator extends DefaultNegotiator {
    */
   public function determineActiveTheme(RouteMatchInterface $route_match) {
     if (\Drupal::service('path.matcher')->isFrontPage()) {
-      return 'lex_home';
+      return 'lfucg';
     }
     else {
       $node = $route_match->getParameter('node');

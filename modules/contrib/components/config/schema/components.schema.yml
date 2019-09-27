@@ -1,0 +1,7 @@
+components.settings:
+  type: config_object
+  label: 'Component Library Settings'
+  mapping:
+    namespace_prefix:
+      type: boolean
+      label: 'Prefix Namespaces'

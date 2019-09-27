@@ -11,9 +11,9 @@ use Drupal\Core\Form\FormStateInterface;
  * Implements hook_form_system_theme_settings_alter() for settings form.
  *
  * Replace Barrio setting options with subtheme ones.
- * 
+ *
  * Example on how to alter theme settings form
- * 
+ *
  */
 function lfucg_form_system_theme_settings_alter(&$form, FormStateInterface $form_state) {
   $form['components']['navbar']['bootstrap_barrio_navbar_top_background']['#options'] = array(
@@ -33,3 +33,11 @@ function lfucg_form_system_theme_settings_alter(&$form, FormStateInterface $form
       'bg-transparent' => t('Transparent'),
   );
 }
+
+/**
+ * Hook to add theme suggestion based on content type.
+ */
+function lfucg_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+
+}
+

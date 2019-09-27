@@ -33,3 +33,7 @@ regions:
   footer_fourth: 'Footer fourth'
   footer_fifth: 'Footer fifth'
 
+component-libraries:
+  components:
+    paths:
+      - patterns

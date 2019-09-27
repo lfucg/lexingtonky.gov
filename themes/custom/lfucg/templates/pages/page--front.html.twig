@@ -1,0 +1,14 @@
+{% extends "@lfucg/pages/page.html.twig" %}
+
+{% block page_main %}
+  {{ parent() }}
+  {{ page.postscript }}
+{% endblock %}
+
+{% block page_hero_body %}
+  <div>
+    <h1>Welcome to the Horse Capital of the World<sup>&reg;</sup></h1>
+    <p>The best place to find city services and information for Lexington, KY</p>
+  </div>
+  {{ parent() }}
+{% endblock %}
