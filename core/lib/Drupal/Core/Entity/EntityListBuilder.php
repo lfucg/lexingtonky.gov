@@ -2,6 +2,9 @@
 
 namespace Drupal\Core\Entity;
 
+use Drupal\Core\Messenger\MessengerTrait;
+use Drupal\Core\Routing\RedirectDestinationTrait;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -10,6 +13,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @ingroup entity_api
  */
 class EntityListBuilder extends EntityHandlerBase implements EntityListBuilderInterface, EntityHandlerInterface {
+
+  use MessengerTrait;
+  use RedirectDestinationTrait;
 
   /**
    * The entity storage class.
@@ -48,7 +54,7 @@ class EntityListBuilder extends EntityHandlerBase implements EntityListBuilderIn
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
       $entity_type,
-      $container->get('entity.manager')->getStorage($entity_type->id())
+      $container->get('entity_type.manager')->getStorage($entity_type->id())
     );
   }
 
@@ -120,7 +126,7 @@ class EntityListBuilder extends EntityHandlerBase implements EntityListBuilderIn
    */
   public function getOperations(EntityInterface $entity) {
     $operations = $this->getDefaultOperations($entity);
-    $operations += $this->moduleHandler()->invokeAll('entity_operation', array($entity));
+    $operations += $this->moduleHandler()->invokeAll('entity_operation', [$entity]);
     $this->moduleHandler->alter('entity_operation', $operations, $entity);
     uasort($operations, '\Drupal\Component\Utility\SortArray::sortByWeightElement');
 
@@ -138,20 +144,20 @@ class EntityListBuilder extends EntityHandlerBase implements EntityListBuilderIn
    *   self::getOperations().
    */
   protected function getDefaultOperations(EntityInterface $entity) {
-    $operations = array();
+    $operations = [];
     if ($entity->access('update') && $entity->hasLinkTemplate('edit-form')) {
-      $operations['edit'] = array(
+      $operations['edit'] = [
         'title' => $this->t('Edit'),
         'weight' => 10,
-        'url' => $entity->urlInfo('edit-form'),
-      );
+        'url' => $this->ensureDestination($entity->toUrl('edit-form')),
+      ];
     }
     if ($entity->access('delete') && $entity->hasLinkTemplate('delete-form')) {
-      $operations['delete'] = array(
+      $operations['delete'] = [
         'title' => $this->t('Delete'),
         'weight' => 100,
-        'url' => $entity->urlInfo('delete-form'),
-      );
+        'url' => $this->ensureDestination($entity->toUrl('delete-form')),
+      ];
     }
 
     return $operations;
@@ -198,10 +204,10 @@ class EntityListBuilder extends EntityHandlerBase implements EntityListBuilderIn
    * @see \Drupal\Core\Entity\EntityListBuilder::buildRow()
    */
   public function buildOperations(EntityInterface $entity) {
-    $build = array(
+    $build = [
       '#type' => 'operations',
       '#links' => $this->getOperations($entity),
-    );
+    ];
 
     return $build;
   }
@@ -214,17 +220,17 @@ class EntityListBuilder extends EntityHandlerBase implements EntityListBuilderIn
    * @todo Add a link to add a new item to the #empty text.
    */
   public function render() {
-    $build['table'] = array(
+    $build['table'] = [
       '#type' => 'table',
       '#header' => $this->buildHeader(),
       '#title' => $this->getTitle(),
-      '#rows' => array(),
-      '#empty' => $this->t('There is no @label yet.', array('@label' => $this->entityType->getLabel())),
+      '#rows' => [],
+      '#empty' => $this->t('There are no @label yet.', ['@label' => $this->entityType->getPluralLabel()]),
       '#cache' => [
         'contexts' => $this->entityType->getListCacheContexts(),
         'tags' => $this->entityType->getListCacheTags(),
       ],
-    );
+    ];
     foreach ($this->load() as $entity) {
       if ($row = $this->buildRow($entity)) {
         $build['table']['#rows'][$entity->id()] = $row;
@@ -233,21 +239,31 @@ class EntityListBuilder extends EntityHandlerBase implements EntityListBuilderIn
 
     // Only add the pager if a limit is specified.
     if ($this->limit) {
-      $build['pager'] = array(
+      $build['pager'] = [
         '#type' => 'pager',
-      );
+      ];
     }
     return $build;
   }
 
   /**
    * Gets the title of the page.
-   *
-   * @return string
-   *   A string title of the page.
    */
   protected function getTitle() {
     return;
+  }
+
+  /**
+   * Ensures that a destination is present on the given URL.
+   *
+   * @param \Drupal\Core\Url $url
+   *   The URL object to which the destination should be added.
+   *
+   * @return \Drupal\Core\Url
+   *   The updated URL object.
+   */
+  protected function ensureDestination(Url $url) {
+    return $url->mergeOptions(['query' => $this->getRedirectDestination()->getAsArray()]);
   }
 
 }

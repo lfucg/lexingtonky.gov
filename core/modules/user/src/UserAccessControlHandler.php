@@ -3,6 +3,8 @@
 namespace Drupal\user;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultNeutral;
+use Drupal\Core\Access\AccessResultReasonInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -56,15 +58,23 @@ class UserAccessControlHandler extends EntityAccessControlHandler {
         elseif ($account->id() == $entity->id()) {
           return AccessResult::allowed()->cachePerUser();
         }
+        else {
+          return AccessResultNeutral::neutral("The 'access user profiles' permission is required and the user must be active.")->cachePerPermissions()->addCacheableDependency($entity);
+        }
         break;
 
       case 'update':
         // Users can always edit their own account.
-        return AccessResult::allowedIf($account->id() == $entity->id())->cachePerUser();
+        $access_result = AccessResult::allowedIf($account->id() == $entity->id())->cachePerUser();
+        if (!$access_result->isAllowed() && $access_result instanceof AccessResultReasonInterface) {
+          $access_result->setReason("Users can only update their own account, unless they have the 'administer users' permission.");
+        }
+        return $access_result;
 
       case 'delete':
         // Users with 'cancel account' permission can cancel their own account.
-        return AccessResult::allowedIf($account->id() == $entity->id() && $account->hasPermission('cancel account'))->cachePerPermissions()->cachePerUser();
+        return AccessResult::allowedIfHasPermission($account, 'cancel account')
+          ->andIf(AccessResult::allowedIf($account->id() == $entity->id())->cachePerUser());
     }
 
     // No opinion.
@@ -76,9 +86,9 @@ class UserAccessControlHandler extends EntityAccessControlHandler {
    */
   protected function checkFieldAccess($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
     // Fields that are not implicitly allowed to administrative users.
-    $explicit_check_fields = array(
+    $explicit_check_fields = [
       'pass',
-    );
+    ];
 
     // Administrative users are allowed to edit and view all fields.
     if (!in_array($field_definition->getName(), $explicit_check_fields) && $account->hasPermission('administer users')) {
@@ -89,11 +99,9 @@ class UserAccessControlHandler extends EntityAccessControlHandler {
     $is_own_account = $items ? $items->getEntity()->id() == $account->id() : FALSE;
     switch ($field_definition->getName()) {
       case 'name':
-        // Allow view access to anyone with access to the entity. Anonymous
-        // users should be able to access the username field during the
-        // registration process, otherwise the username and email constraints
-        // are not checked.
-        if ($operation == 'view' || ($items && $account->isAnonymous() && $items->getEntity()->isAnonymous())) {
+        // Allow view access to anyone with access to the entity.
+        // The username field is editable during the registration process.
+        if ($operation == 'view' || ($items && $items->getEntity()->isAnonymous())) {
           return AccessResult::allowed()->cachePerPermissions();
         }
         // Allow edit access for the own user name if the permission is
@@ -102,7 +110,7 @@ class UserAccessControlHandler extends EntityAccessControlHandler {
           return AccessResult::allowed()->cachePerPermissions()->cachePerUser();
         }
         else {
-          return AccessResult::forbidden();
+          return AccessResult::neutral();
         }
 
       case 'preferred_langcode':
@@ -112,7 +120,7 @@ class UserAccessControlHandler extends EntityAccessControlHandler {
         // Allow view access to own mail address and other personalization
         // settings.
         if ($operation == 'view') {
-          return $is_own_account ? AccessResult::allowed()->cachePerUser() : AccessResult::forbidden();
+          return AccessResult::allowedIf($is_own_account)->cachePerUser();
         }
         // Anyone that can edit the user can also edit this field.
         return AccessResult::allowed()->cachePerPermissions();
@@ -123,14 +131,14 @@ class UserAccessControlHandler extends EntityAccessControlHandler {
 
       case 'created':
         // Allow viewing the created date, but not editing it.
-        return ($operation == 'view') ? AccessResult::allowed() : AccessResult::forbidden();
+        return ($operation == 'view') ? AccessResult::allowed() : AccessResult::neutral();
 
       case 'roles':
       case 'status':
       case 'access':
       case 'login':
       case 'init':
-        return AccessResult::forbidden();
+        return AccessResult::neutral();
     }
 
     return parent::checkFieldAccess($operation, $field_definition, $account, $items);

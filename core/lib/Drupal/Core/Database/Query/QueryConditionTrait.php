@@ -63,6 +63,14 @@ trait QueryConditionTrait {
   /**
    * {@inheritdoc}
    */
+  public function alwaysFalse() {
+    $this->condition->alwaysFalse();
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function &conditions() {
     return $this->condition->conditions();
   }
@@ -77,7 +85,7 @@ trait QueryConditionTrait {
   /**
    * {@inheritdoc}
    */
-  public function where($snippet, $args = array()) {
+  public function where($snippet, $args = []) {
     $this->condition->where($snippet, $args);
     return $this;
   }

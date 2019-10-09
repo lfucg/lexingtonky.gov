@@ -10,20 +10,22 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Builds the form to delete a path alias.
+ *
+ * @internal
  */
 class DeleteForm extends ConfirmFormBase {
 
   /**
    * The alias storage service.
    *
-   * @var AliasStorageInterface $path
+   * @var \Drupal\Core\Path\AliasStorageInterface
    */
   protected $aliasStorage;
 
   /**
    * The path alias being deleted.
    *
-   * @var array $pathAlias
+   * @var array
    */
   protected $pathAlias;
 
@@ -57,7 +59,7 @@ class DeleteForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return t('Are you sure you want to delete path alias %title?', array('%title' => $this->pathAlias['alias']));
+    return t('Are you sure you want to delete path alias %title?', ['%title' => $this->pathAlias['alias']]);
   }
 
   /**
@@ -71,7 +73,7 @@ class DeleteForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $pid = NULL) {
-    $this->pathAlias = $this->aliasStorage->load(array('pid' => $pid));
+    $this->pathAlias = $this->aliasStorage->load(['pid' => $pid]);
 
     $form = parent::buildForm($form, $form_state);
 
@@ -82,7 +84,7 @@ class DeleteForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->aliasStorage->delete(array('pid' => $this->pathAlias['pid']));
+    $this->aliasStorage->delete(['pid' => $this->pathAlias['pid']]);
 
     $form_state->setRedirect('path.admin_overview');
   }

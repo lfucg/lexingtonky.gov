@@ -9,7 +9,8 @@ use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
  * Drupal config source from database.
  *
  * @MigrateSource(
- *   id = "d8_config"
+ *   id = "d8_config",
+ *   source_module = "system",
  * )
  */
 class Config extends DrupalSqlBase {
@@ -19,7 +20,7 @@ class Config extends DrupalSqlBase {
    */
   public function query() {
     $query = $this->select('config', 'c')
-      ->fields('c', array('collection', 'name', 'data'));
+      ->fields('c', ['collection', 'name', 'data']);
     if (!empty($this->configuration['collections'])) {
       $query->condition('collection', (array) $this->configuration['collections'], 'IN');
     }

@@ -37,21 +37,21 @@ interface StatementInterface extends \Traversable {
    * "the access type must be omitted" if it is protected; i.e., conflicting
    * statements). The access type has to be protected.
    */
-  //protected function __construct(Connection $dbh);
+  // protected function __construct(Connection $dbh);
 
   /**
    * Executes a prepared statement
    *
    * @param $args
    *   An array of values with as many elements as there are bound parameters in
-   *   the SQL statement being executed.
+   *   the SQL statement being executed. This can be NULL.
    * @param $options
    *   An array of options for this query.
    *
    * @return
    *   TRUE on success, or FALSE on failure.
    */
-  public function execute($args = array(), $options = array());
+  public function execute($args = [], $options = []);
 
   /**
    * Gets the query string of this statement.
@@ -90,7 +90,7 @@ interface StatementInterface extends \Traversable {
    *   If $mode is PDO::FETCH_CLASS, the optional arguments to pass to the
    *   constructor.
    */
-  public function setFetchMode($mode, $a1 = NULL, $a2 = array());
+  public function setFetchMode($mode, $a1 = NULL, $a2 = []);
 
   /**
    * Fetches the next row from a result set.
@@ -155,7 +155,7 @@ interface StatementInterface extends \Traversable {
    * @return
    *   An array of results.
    */
-  function fetchAll($mode = NULL, $column_index = NULL, $constructor_arguments = NULL);
+  public function fetchAll($mode = NULL, $column_index = NULL, $constructor_arguments = NULL);
 
   /**
    * Returns an entire single column of a result set as an indexed array.

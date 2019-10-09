@@ -1,0 +1,25 @@
+uuid: a241f479-b7e7-4435-af2b-2b74b62f23f0
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.account
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_account_menu
+theme: lex_planning_commission
+region: notices
+weight: -2
+provider: null
+plugin: 'system_menu_block:account'
+settings:
+  id: 'system_menu_block:account'
+  label: 'User account menu'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 1
+  expand_all_items: false
+visibility: {  }

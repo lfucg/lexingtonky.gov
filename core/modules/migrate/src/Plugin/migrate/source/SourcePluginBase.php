@@ -13,7 +13,50 @@ use Drupal\migrate\Plugin\MigrateSourceInterface;
 use Drupal\migrate\Row;
 
 /**
- * The base class for all source plugins.
+ * The base class for source plugins.
+ *
+ * Available configuration keys:
+ * - cache_counts: (optional) If set, cache the source count.
+ * - cache_key: (optional) Uniquely named cache key used for cache_counts.
+ * - skip_count: (optional) If set, do not attempt to count the source.
+ * - track_changes: (optional) If set, track changes to incoming data.
+ * - high_water_property: (optional) It is an array of name & alias values
+ *   (optional table alias). This high_water_property is typically a timestamp
+ *   or serial id showing what was the last imported record. Only content with a
+ *   higher value will be imported.
+ *
+ * The high_water_property and track_changes are mutually exclusive.
+ *
+ * Example:
+ *
+ * @code
+ * source:
+ *   plugin: some_source_plugin_name
+ *   cache_counts: true
+ *   track_changes: true
+ * @endcode
+ *
+ * This example uses the plugin "some_source_plugin_name" and caches the count
+ * of available source records to save calculating it every time count() is
+ * called. Changes to incoming data are watched (because track_changes is true),
+ * which can affect the result of prepareRow().
+ *
+ * Example:
+ *
+ * @code
+ * source:
+ *   plugin: some_source_plugin_name
+ *   skip_count: true
+ *   high_water_property:
+ *     name: changed
+ *     alias: n
+ * @endcode
+ *
+ * In this example, skip_count is true which means count() will not attempt to
+ * count the available source records, but just always return -1 instead. The
+ * high_water_property defines which field marks the last imported row of the
+ * migration. This will get converted into a SQL condition that looks like
+ * 'n.changed' or 'changed' if no alias.
  *
  * @see \Drupal\migrate\Plugin\MigratePluginManager
  * @see \Drupal\migrate\Annotation\MigrateSource
@@ -41,7 +84,7 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
   /**
    * The current row from the query.
    *
-   * @var \Drupal\Migrate\Row
+   * @var \Drupal\migrate\Row
    */
   protected $currentRow;
 
@@ -174,10 +217,10 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
   /**
    * Initializes the iterator with the source data.
    *
-   * @return array
-   *   An array of the data for this source.
+   * @return \Iterator
+   *   Returns an iteratable object of data for this source.
    */
-  protected abstract function initializeIterator();
+  abstract protected function initializeIterator();
 
   /**
    * Gets the module handler.
@@ -198,8 +241,8 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
   public function prepareRow(Row $row) {
     $result = TRUE;
     try {
-      $result_hook = $this->getModuleHandler()->invokeAll('migrate_prepare_row', array($row, $this, $this->migration));
-      $result_named_hook = $this->getModuleHandler()->invokeAll('migrate_' . $this->migration->id() . '_prepare_row', array($row, $this, $this->migration));
+      $result_hook = $this->getModuleHandler()->invokeAll('migrate_prepare_row', [$row, $this, $this->migration]);
+      $result_named_hook = $this->getModuleHandler()->invokeAll('migrate_' . $this->migration->id() . '_prepare_row', [$row, $this, $this->migration]);
       // We will skip if any hook returned FALSE.
       $skip = ($result_hook && in_array(FALSE, $result_hook)) || ($result_named_hook && in_array(FALSE, $result_named_hook));
       $save_to_map = TRUE;
@@ -217,7 +260,7 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
       // Make sure we replace any previous messages for this item with any
       // new ones.
       if ($save_to_map) {
-        $this->idMap->saveIdMapping($row, array(), MigrateIdMapInterface::STATUS_IGNORED);
+        $this->idMap->saveIdMapping($row, [], MigrateIdMapInterface::STATUS_IGNORED);
         $this->currentRow = NULL;
         $this->currentSourceIds = NULL;
       }
@@ -256,7 +299,7 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
   /**
    * Gets the iterator key.
    *
-   * Implementation of Iterator::key - called when entering a loop iteration,
+   * Implementation of \Iterator::key() - called when entering a loop iteration,
    * returning the key of the current row. It must be a scalar - we will
    * serialize to fulfill the requirement, but using getCurrentIds() is
    * preferable.
@@ -268,7 +311,7 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
   /**
    * Checks whether the iterator is currently valid.
    *
-   * Implementation of Iterator::valid() - called at the top of the loop,
+   * Implementation of \Iterator::valid() - called at the top of the loop,
    * returning TRUE to process the loop and FALSE to terminate it.
    */
   public function valid() {
@@ -278,9 +321,9 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
   /**
    * Rewinds the iterator.
    *
-   * Implementation of Iterator::rewind() - subclasses of MigrateSource should
-   * implement performRewind() to do any class-specific setup for iterating
-   * source records.
+   * Implementation of \Iterator::rewind() - subclasses of SourcePluginBase
+   * should implement initializeIterator() to do any class-specific setup for
+   * iterating source records.
    */
   public function rewind() {
     $this->getIterator()->rewind();
@@ -310,13 +353,13 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
     while (!isset($this->currentRow) && $this->getIterator()->valid()) {
 
       $row_data = $this->getIterator()->current() + $this->configuration;
-      $this->getIterator()->next();
-      $row = new Row($row_data, $this->migration->getSourcePlugin()->getIds(), $this->migration->getDestinationIds());
+      $this->fetchNextRow();
+      $row = new Row($row_data, $this->getIds());
 
       // Populate the source key for this row.
       $this->currentSourceIds = $row->getSourceIdValues();
 
-      // Pick up the existing map row, if any, unless getNextRow() did it.
+      // Pick up the existing map row, if any, unless fetchNextRow() did it.
       if (!$this->mapRowAdded && ($id_map = $this->idMap->getRowBySource($this->currentSourceIds))) {
         $row->setIdMap($id_map);
       }
@@ -348,7 +391,14 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
   }
 
   /**
-   * Checks if the incoming data is newer than what we've previously imported.
+   * Position the iterator to the following row.
+   */
+  protected function fetchNextRow() {
+    $this->getIterator()->next();
+  }
+
+  /**
+   * Check if the incoming data is newer than what we've previously imported.
    *
    * @param \Drupal\migrate\Row $row
    *   The row we're importing.
@@ -387,7 +437,10 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
    * Returns -1 if the source is not countable.
    *
    * @param bool $refresh
-   *   (optional) Whether or not to refresh the count. Defaults to FALSE.
+   *   (optional) Whether or not to refresh the count. Defaults to FALSE. Not
+   *   all implementations support the reset flag. In such instances this
+   *   parameter is ignored and the result of calling the method will always be
+   *   up to date.
    *
    * @return int
    *   The count.
@@ -532,6 +585,19 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
   public function postRollback(MigrateRollbackEvent $event) {
     // Reset the high-water mark.
     $this->saveHighWater(NULL);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSourceModule() {
+    if (!empty($this->configuration['source_module'])) {
+      return $this->configuration['source_module'];
+    }
+    elseif (!empty($this->pluginDefinition['source_module'])) {
+      return $this->pluginDefinition['source_module'];
+    }
+    return NULL;
   }
 
 }

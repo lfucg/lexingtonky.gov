@@ -13,6 +13,8 @@ use Drupal\Core\Form\FormStateInterface;
  * in the form storage and have to be present during any step. By setting the
  * request parameter "cache" the form can be tested with caching enabled, as
  * it would be the case, if the form would contain some #ajax callbacks.
+ *
+ * @internal
  */
 class FormTestStorageForm extends FormBase {
 
@@ -28,7 +30,7 @@ class FormTestStorageForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     if ($form_state->isRebuilding()) {
-      $form_state->setUserInput(array());
+      $form_state->setUserInput([]);
     }
     // Initialize
     $storage = $form_state->getStorage();
@@ -48,34 +50,34 @@ class FormTestStorageForm extends FormBase {
     }
     // Count how often the form is constructed.
     $_SESSION['constructions']++;
-    drupal_set_message("Form constructions: " . $_SESSION['constructions']);
+    $this->messenger()->addStatus("Form constructions: " . $_SESSION['constructions']);
 
-    $form['title'] = array(
+    $form['title'] = [
       '#type' => 'textfield',
       '#title' => 'Title',
       '#default_value' => $storage['thing']['title'],
       '#required' => TRUE,
-    );
-    $form['value'] = array(
+    ];
+    $form['value'] = [
       '#type' => 'textfield',
       '#title' => 'Value',
       '#default_value' => $storage['thing']['value'],
-      '#element_validate' => array('::elementValidateValueCached'),
-    );
-    $form['continue_button'] = array(
+      '#element_validate' => ['::elementValidateValueCached'],
+    ];
+    $form['continue_button'] = [
       '#type' => 'button',
       '#value' => 'Reset',
       // Rebuilds the form without keeping the values.
-    );
-    $form['continue_submit'] = array(
+    ];
+    $form['continue_submit'] = [
       '#type' => 'submit',
       '#value' => 'Continue submit',
-      '#submit' => array('::continueSubmitForm'),
-    );
-    $form['submit'] = array(
+      '#submit' => ['::continueSubmitForm'],
+    ];
+    $form['submit'] = [
       '#type' => 'submit',
       '#value' => 'Save',
-    );
+    ];
 
     // @todo Remove this in https://www.drupal.org/node/2524408, because form
     //   cache immutability is no longer necessary, because we no longer cache
@@ -86,7 +88,7 @@ class FormTestStorageForm extends FormBase {
     //   that issue.
     if ($this->getRequest()->get('immutable')) {
       $form_state->addBuildInfo('immutable', TRUE);
-      if ($this->getRequest()->get('cache') && $this->getRequest()->isMethodSafe()) {
+      if ($this->getRequest()->get('cache') && $this->getRequest()->isMethodCacheable()) {
         $form_state->setRequestMethod('FAKE');
         $form_state->setCached();
       }
@@ -134,10 +136,10 @@ class FormTestStorageForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    drupal_set_message("Title: " . Html::escape($form_state->getValue('title')));
-    drupal_set_message("Form constructions: " . $_SESSION['constructions']);
+    $this->messenger()->addStatus("Title: " . Html::escape($form_state->getValue('title')));
+    $this->messenger()->addStatus("Form constructions: " . $_SESSION['constructions']);
     if ($form_state->has(['thing', 'changed'])) {
-      drupal_set_message("The thing has been changed.");
+      $this->messenger()->addStatus("The thing has been changed.");
     }
     $form_state->setRedirect('<front>');
   }

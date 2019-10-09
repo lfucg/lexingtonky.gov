@@ -7,6 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Form constructor to test the #required property without #title.
+ *
+ * @internal
  */
 class FormTestValidateRequiredNoTitleForm extends FormBase {
 
@@ -21,12 +23,12 @@ class FormTestValidateRequiredNoTitleForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['textfield'] = array(
+    $form['textfield'] = [
       '#type' => 'textfield',
       '#required' => TRUE,
-    );
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array('#type' => 'submit', '#value' => 'Submit');
+    ];
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = ['#type' => 'submit', '#value' => 'Submit'];
     return $form;
   }
 
@@ -34,7 +36,7 @@ class FormTestValidateRequiredNoTitleForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    drupal_set_message('The form_test_validate_required_form_no_title form was submitted successfully.');
+    $this->messenger()->addStatus('The form_test_validate_required_form_no_title form was submitted successfully.');
   }
 
 }

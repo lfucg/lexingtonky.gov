@@ -2,10 +2,9 @@
 
 namespace Drupal\views;
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Tags;
-use Drupal\Core\DependencyInjection\DependencySerializationTrait;
-use Drupal\Core\Form\FormState;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\views\Plugin\views\display\DisplayRouterInterface;
@@ -18,9 +17,14 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
  *
  * An object to contain all of the data to generate a view, plus the member
  * functions to build the view query, execute the query and render the output.
+ *
+ * This class does not implement the Serializable interface since problems
+ * occurred when using the serialize method.
+ *
+ * @see https://www.drupal.org/node/2849674
+ * @see https://bugs.php.net/bug.php?id=66052
  */
-class ViewExecutable implements \Serializable {
-  use DependencySerializationTrait;
+class ViewExecutable {
 
   /**
    * The config entity in which the view is stored.
@@ -52,14 +56,14 @@ class ViewExecutable implements \Serializable {
    *
    * @var array
    */
-  public $args = array();
+  public $args = [];
 
   /**
    * An array of build info.
    *
    * @var array
    */
-  public $build_info = array();
+  public $build_info = [];
 
   /**
    * Whether this view uses AJAX.
@@ -75,7 +79,7 @@ class ViewExecutable implements \Serializable {
    *
    * @var \Drupal\views\ResultRow[]
    */
-  public $result = array();
+  public $result = [];
 
   // May be used to override the current pager info.
 
@@ -110,23 +114,23 @@ class ViewExecutable implements \Serializable {
   /**
    * Attachments to place before the view.
    *
-   * @var array()
+   * @var array
    */
-  public $attachment_before = array();
+  public $attachment_before = [];
 
   /**
    * Attachments to place after the view.
    *
    * @var array
    */
-  public $attachment_after = array();
+  public $attachment_after = [];
 
   /**
    * Feed icons attached to the view.
    *
    * @var array
    */
-  public $feedIcons = array();
+  public $feedIcons = [];
 
   // Exposed widget input
 
@@ -135,35 +139,35 @@ class ViewExecutable implements \Serializable {
    *
    * @var array
    */
-  public $exposed_data = array();
+  public $exposed_data = [];
 
   /**
    * An array of input values from exposed forms.
    *
    * @var array
    */
-  protected $exposed_input = array();
+  protected $exposed_input = [];
 
   /**
    * Exposed widget input directly from the $form_state->getValues().
    *
    * @var array
    */
-  public $exposed_raw_input = array();
+  public $exposed_raw_input = [];
 
   /**
    * Used to store views that were previously running if we recurse.
    *
    * @var \Drupal\views\ViewExecutable[]
    */
-  public $old_view = array();
+  public $old_view = [];
 
   /**
    * To avoid recursion in views embedded into areas.
    *
    * @var \Drupal\views\ViewExecutable[]
    */
-  public $parent_views = array();
+  public $parent_views = [];
 
   /**
    * Whether this view is an attachment to another view.
@@ -327,7 +331,7 @@ class ViewExecutable implements \Serializable {
   protected $request;
 
   /**
-   * Does this view already have loaded it's handlers.
+   * Does this view already have loaded its handlers.
    *
    * @todo Group with other static properties.
    *
@@ -434,6 +438,13 @@ class ViewExecutable implements \Serializable {
    * @var \Drupal\Core\Entity\EntityTypeInterface|false
    */
   protected $baseEntityType;
+
+  /**
+   * Holds all necessary data for proper unserialization.
+   *
+   * @var array
+   */
+  protected $serializationData;
 
   /**
    * Constructs a new ViewExecutable object.
@@ -608,7 +619,6 @@ class ViewExecutable implements \Serializable {
 
     $this->offset = $offset;
 
-
     // If the pager is already initialized, pass it through to the pager.
     if (!empty($this->pager)) {
       $this->pager->setOffset($offset);
@@ -681,7 +691,7 @@ class ViewExecutable implements \Serializable {
 
       $this->exposed_input = \Drupal::request()->query->all();
       // unset items that are definitely not our input:
-      foreach (array('page', 'q') as $key) {
+      foreach (['page', 'q'] as $key) {
         if (isset($this->exposed_input[$key])) {
           unset($this->exposed_input[$key]);
         }
@@ -789,7 +799,7 @@ class ViewExecutable implements \Serializable {
 
     // Ensure the requested display exists.
     if (!$this->displayHandlers->has($display_id)) {
-      debug(format_string('setDisplay() called with invalid display ID "@display".', array('@display' => $display_id)));
+      trigger_error(new FormattableMarkup('setDisplay() called with invalid display ID "@display".', ['@display' => $display_id]), E_USER_WARNING);
       return FALSE;
     }
 
@@ -915,7 +925,7 @@ class ViewExecutable implements \Serializable {
     if (!isset($this->pager)) {
       $this->pager = $this->display_handler->getPlugin('pager');
 
-      if ($this->pager->usePager()) {
+      if ($this->usePager()) {
         $this->pager->setCurrentPage($this->current_page);
       }
 
@@ -941,7 +951,7 @@ class ViewExecutable implements \Serializable {
    *   The render array of the pager if it's set, blank string otherwise.
    */
   public function renderPager($exposed_input) {
-    if (!empty($this->pager) && $this->pager->usePager()) {
+    if ($this->usePager()) {
       return $this->pager->render($exposed_input);
     }
 
@@ -957,10 +967,10 @@ class ViewExecutable implements \Serializable {
    *   An array of base tables to be used by the view.
    */
   public function getBaseTables() {
-    $base_tables = array(
+    $base_tables = [
       $this->storage->get('base_table') => TRUE,
       '#global' => TRUE,
-    );
+    ];
 
     foreach ($this->display_handler->getHandlers('relationship') as $handler) {
       $base_tables[$handler->definition['base']] = TRUE;
@@ -1055,7 +1065,7 @@ class ViewExecutable implements \Serializable {
 
     // build arguments.
     $position = -1;
-    $substitutions = array();
+    $substitutions = [];
     $status = TRUE;
 
     // Get the title.
@@ -1086,7 +1096,8 @@ class ViewExecutable implements \Serializable {
           $argument->is_default = TRUE;
         }
 
-        // Set the argument, which will also validate that the argument can be set.
+        // Set the argument, which ensures that the argument is valid and
+        // possibly transforms the value.
         if (!$argument->setArgument($arg)) {
           $status = $argument->validateFail($arg);
           break;
@@ -1100,9 +1111,11 @@ class ViewExecutable implements \Serializable {
           $argument->query($this->display_handler->useGroupBy());
         }
 
-        // Add this argument's substitution
+        // Add this argument's substitution.
         $substitutions["{{ arguments.$id }}"] = $arg_title;
-        $substitutions["{{ raw_arguments.$id }}"] = strip_tags(Html::decodeEntities($arg));
+        // Since argument validator plugins can potentially transform the value,
+        // use whatever value the argument handler now has, not the raw value.
+        $substitutions["{{ raw_arguments.$id }}"] = strip_tags(Html::decodeEntities($argument->getValue()));
 
         // Test to see if we should use this argument's title
         if (!empty($argument->options['title_enable']) && !empty($argument->options['title'])) {
@@ -1193,18 +1206,18 @@ class ViewExecutable implements \Serializable {
 
     // Let modules modify the view just prior to building it.
     $module_handler = \Drupal::moduleHandler();
-    $module_handler->invokeAll('views_pre_build', array($this));
+    $module_handler->invokeAll('views_pre_build', [$this]);
 
     // Attempt to load from cache.
     // @todo Load a build_info from cache.
 
     $start = microtime(TRUE);
     // If that fails, let's build!
-    $this->build_info = array(
+    $this->build_info = [
       'query' => '',
       'count_query' => '',
-      'query_args' => array(),
-    );
+      'query_args' => [],
+    ];
 
     $this->initQuery();
 
@@ -1223,7 +1236,7 @@ class ViewExecutable implements \Serializable {
       /** @var \Drupal\views\Plugin\views\exposed_form\ExposedFormPluginInterface $exposed_form */
       $exposed_form = $this->display_handler->getPlugin('exposed_form');
       $this->exposed_widgets = $exposed_form->renderExposedForm();
-      if (FormState::hasAnyErrors() || !empty($this->build_info['abort'])) {
+      if (!empty($this->build_info['abort'])) {
         $this->built = TRUE;
         // Don't execute the query, $form_state, but rendering will still be executed to display the empty text.
         $this->executed = TRUE;
@@ -1315,7 +1328,7 @@ class ViewExecutable implements \Serializable {
     $this->attachDisplays();
 
     // Let modules modify the view just after building it.
-    $module_handler->invokeAll('views_post_build', array($this));
+    $module_handler->invokeAll('views_post_build', [$this]);
 
     return TRUE;
   }
@@ -1328,15 +1341,15 @@ class ViewExecutable implements \Serializable {
    * @todo Some filter needs this function, even it is internal.
    *
    * @param string $key
-   *    The type of handlers (filter etc.) which should be iterated over to
-   *    build the relationship and query information.
+   *   The type of handlers (filter etc.) which should be iterated over to build
+   *   the relationship and query information.
    */
   public function _build($key) {
     $handlers = &$this->$key;
     foreach ($handlers as $id => $data) {
 
       if (!empty($handlers[$id]) && is_object($handlers[$id])) {
-        $multiple_exposed_input = array(0 => NULL);
+        $multiple_exposed_input = [0 => NULL];
         if ($handlers[$id]->multipleExposedInput()) {
           $multiple_exposed_input = $handlers[$id]->groupMultipleExposedInput($this->exposed_data);
         }
@@ -1392,7 +1405,7 @@ class ViewExecutable implements \Serializable {
 
     // Let modules modify the view just prior to executing it.
     $module_handler = \Drupal::moduleHandler();
-    $module_handler->invokeAll('views_pre_execute', array($this));
+    $module_handler->invokeAll('views_pre_execute', [$this]);
 
     // Check for already-cached results.
     /** @var \Drupal\views\Plugin\views\cache\CachePluginBase $cache */
@@ -1404,7 +1417,7 @@ class ViewExecutable implements \Serializable {
     }
 
     if ($cache->cacheGet('results')) {
-      if ($this->pager->usePager()) {
+      if ($this->usePager()) {
         $this->pager->total_items = $this->total_rows;
         $this->pager->updatePageInfo();
       }
@@ -1419,7 +1432,7 @@ class ViewExecutable implements \Serializable {
     }
 
     // Let modules modify the view just after executing it.
-    $module_handler->invokeAll('views_post_execute', array($this));
+    $module_handler->invokeAll('views_post_execute', [$this]);
 
     return $this->executed = TRUE;
   }
@@ -1457,7 +1470,7 @@ class ViewExecutable implements \Serializable {
     // @TODO In the longrun, it would be great to execute a view without
     //   the theme system at all. See https://www.drupal.org/node/2322623.
     $active_theme = \Drupal::theme()->getActiveTheme();
-    $themes = array_keys($active_theme->getBaseThemes());
+    $themes = array_keys($active_theme->getBaseThemeExtensions());
     $themes[] = $active_theme->getName();
 
     // Check for already-cached output.
@@ -1495,7 +1508,7 @@ class ViewExecutable implements \Serializable {
     $this->style_plugin->preRender($this->result);
 
     // Let each area handler have access to the result set.
-    $areas = array('header', 'footer');
+    $areas = ['header', 'footer'];
     // Only call preRender() on the empty handlers if the result is empty.
     if (empty($this->result)) {
       $areas[] = 'empty';
@@ -1507,9 +1520,9 @@ class ViewExecutable implements \Serializable {
     }
 
     // Let modules modify the view just prior to rendering it.
-    $module_handler->invokeAll('views_pre_render', array($this));
+    $module_handler->invokeAll('views_pre_render', [$this]);
 
-    // Let the themes play too, because pre render is a very themey thing.
+    // Let the themes play too, because prerender is a very themey thing.
     foreach ($themes as $theme_name) {
       $function = $theme_name . '_views_pre_render';
       if (function_exists($function)) {
@@ -1524,7 +1537,7 @@ class ViewExecutable implements \Serializable {
     $cache->postRender($this->display_handler->output);
 
     // Let modules modify the view output after it is rendered.
-    $module_handler->invokeAll('views_post_render', array($this, &$this->display_handler->output, $cache));
+    $module_handler->invokeAll('views_post_render', [$this, &$this->display_handler->output, $cache]);
 
     // Let the themes play too, because post render is a very themey thing.
     foreach ($themes as $theme_name) {
@@ -1571,7 +1584,7 @@ class ViewExecutable implements \Serializable {
    *   A renderable array with #type 'view' or NULL if the display ID was
    *   invalid.
    */
-  public function buildRenderable($display_id = NULL, $args = array(), $cache = TRUE) {
+  public function buildRenderable($display_id = NULL, $args = [], $cache = TRUE) {
     // @todo Extract that into a generic method.
     if (empty($this->current_display) || $this->current_display != $this->chooseDisplay($display_id)) {
       if (!$this->setDisplay($display_id)) {
@@ -1604,7 +1617,7 @@ class ViewExecutable implements \Serializable {
    *   A renderable array containing the view output or NULL if the display ID
    *   of the view to be executed doesn't exist.
    */
-  public function executeDisplay($display_id = NULL, $args = array()) {
+  public function executeDisplay($display_id = NULL, $args = []) {
     if (empty($this->current_display) || $this->current_display != $this->chooseDisplay($display_id)) {
       if (!$this->setDisplay($display_id)) {
         return NULL;
@@ -1636,7 +1649,7 @@ class ViewExecutable implements \Serializable {
    *   A renderable array containing the view output or NULL if the display ID
    *   of the view to be executed doesn't exist.
    */
-  public function preview($display_id = NULL, $args = array()) {
+  public function preview($display_id = NULL, $args = []) {
     if (empty($this->current_display) || ((!empty($display_id)) && $this->current_display != $display_id)) {
       if (!$this->setDisplay($display_id)) {
         return FALSE;
@@ -1658,7 +1671,7 @@ class ViewExecutable implements \Serializable {
    * @param array $args
    *   An array of arguments from the URL that can be used by the view.
    */
-  public function preExecute($args = array()) {
+  public function preExecute($args = []) {
     $this->old_view[] = views_get_current_view();
     views_set_current_view($this);
     $display_id = $this->current_display;
@@ -1670,7 +1683,7 @@ class ViewExecutable implements \Serializable {
     }
 
     // Let modules modify the view just prior to executing it.
-    \Drupal::moduleHandler()->invokeAll('views_pre_view', array($this, $display_id, &$this->args));
+    \Drupal::moduleHandler()->invokeAll('views_pre_view', [$this, $display_id, &$this->args]);
 
     // Allow hook_views_pre_view() to set the dom_id, then ensure it is set.
     $this->dom_id = !empty($this->dom_id) ? $this->dom_id : hash('sha256', $this->storage->id() . REQUEST_TIME . mt_rand());
@@ -1747,7 +1760,7 @@ class ViewExecutable implements \Serializable {
 
     // We can't use choose_display() here because that function
     // calls this one.
-    $displays = (array)$displays;
+    $displays = (array) $displays;
     foreach ($displays as $display_id) {
       if ($this->displayHandlers->has($display_id)) {
         if (($display = $this->displayHandlers->get($display_id)) && $display->access($account)) {
@@ -1948,7 +1961,7 @@ class ViewExecutable implements \Serializable {
       return $display_handler->getUrlInfo();
     }
 
-    $argument_keys = isset($this->argument) ? array_keys($this->argument) : array();
+    $argument_keys = isset($this->argument) ? array_keys($this->argument) : [];
     $id = current($argument_keys);
 
     /** @var \Drupal\Core\Url $url */
@@ -2085,7 +2098,7 @@ class ViewExecutable implements \Serializable {
    *   errors.
    */
   public function validate() {
-    $errors = array();
+    $errors = [];
 
     $this->initDisplay();
     $current_display = $this->current_display;
@@ -2159,7 +2172,7 @@ class ViewExecutable implements \Serializable {
    * @return string
    *   The unique ID for this handler instance.
    */
-  public function addHandler($display_id, $type, $table, $field, $options = array(), $id = NULL) {
+  public function addHandler($display_id, $type, $table, $field, $options = [], $id = NULL) {
     $types = $this::getHandlerTypes();
     $this->setDisplay($display_id);
 
@@ -2173,11 +2186,11 @@ class ViewExecutable implements \Serializable {
     // If the desired type is not found, use the original value directly.
     $handler_type = !empty($types[$type]['type']) ? $types[$type]['type'] : $type;
 
-    $fields[$id] = array(
+    $fields[$id] = [
       'id' => $id,
       'table' => $table,
       'field' => $field,
-    ) + $options;
+    ] + $options;
 
     if (isset($data['table']['entity type'])) {
       $fields[$id]['entity_type'] = $data['table']['entity type'];
@@ -2406,7 +2419,7 @@ class ViewExecutable implements \Serializable {
    *   An array of theme hook suggestions.
    */
   public function buildThemeFunctions($hook) {
-    $themes = array();
+    $themes = [];
     $display = isset($this->display_handler) ? $this->display_handler->display : NULL;
     $id = $this->storage->id();
 
@@ -2467,52 +2480,68 @@ class ViewExecutable implements \Serializable {
   }
 
   /**
-   * {@inheritdoc}
+   * Magic method implementation to serialize the view executable.
+   *
+   * @return array
+   *   The names of all variables that should be serialized.
    */
-  public function serialize() {
-    return serialize([
-      // Only serialize the storage entity ID.
-      $this->storage->id(),
-      $this->current_display,
-      $this->args,
-      $this->current_page,
-      $this->exposed_input,
-      $this->exposed_raw_input,
-      $this->exposed_data,
-      $this->dom_id,
-      $this->executed,
-    ]);
+  public function __sleep() {
+    // Limit to only the required data which is needed to properly restore the
+    // state during unserialization.
+    $this->serializationData = [
+      'storage' => $this->storage->id(),
+      'views_data' => $this->viewsData->_serviceId,
+      'route_provider' => $this->routeProvider->_serviceId,
+      'current_display' => $this->current_display,
+      'args' => $this->args,
+      'current_page' => $this->current_page,
+      'exposed_input' => $this->exposed_input,
+      'exposed_raw_input' => $this->exposed_raw_input,
+      'exposed_data' => $this->exposed_data,
+      'dom_id' => $this->dom_id,
+      'executed' => $this->executed,
+    ];
+    return ['serializationData'];
   }
 
   /**
-   * {@inheritdoc}
+   * Magic method implementation to unserialize the view executable.
    */
-  public function unserialize($serialized) {
-    list($storage, $current_display, $args, $current_page, $exposed_input, $exposed_raw_input, $exposed_data, $dom_id, $executed) = unserialize($serialized);
-
-    // There are cases, like in testing, where we don't have a container
+  public function __wakeup() {
+    // There are cases, like in testing where we don't have a container
     // available.
-    if (\Drupal::hasContainer()) {
-      $this->setRequest(\Drupal::request());
+    if (\Drupal::hasContainer() && !empty($this->serializationData)) {
+      // Load and reference the storage.
+      $this->storage = \Drupal::entityTypeManager()->getStorage('view')
+        ->load($this->serializationData['storage']);
+      $this->storage->set('executable', $this);
+
+      // Attach all necessary services.
       $this->user = \Drupal::currentUser();
+      $this->viewsData = \Drupal::service($this->serializationData['views_data']);
+      $this->routeProvider = \Drupal::service($this->serializationData['route_provider']);
 
-      $this->storage = \Drupal::entityManager()->getStorage('view')->load($storage);
-
-      $this->setDisplay($current_display);
-      $this->setArguments($args);
-      $this->setCurrentPage($current_page);
-      $this->setExposedInput($exposed_input);
-      $this->exposed_data = $exposed_data;
-      $this->exposed_raw_input = $exposed_raw_input;
-      $this->dom_id = $dom_id;
+      // Restore the state of this executable.
+      if ($request = \Drupal::request()) {
+        $this->setRequest($request);
+      }
+      $this->setDisplay($this->serializationData['current_display']);
+      $this->setArguments($this->serializationData['args']);
+      $this->setCurrentPage($this->serializationData['current_page']);
+      $this->setExposedInput($this->serializationData['exposed_input']);
+      $this->exposed_data = $this->serializationData['exposed_data'];
+      $this->exposed_raw_input = $this->serializationData['exposed_raw_input'];
+      $this->dom_id = $this->serializationData['dom_id'];
 
       $this->initHandlers();
 
       // If the display was previously executed, execute it now.
-      if ($executed) {
+      if ($this->serializationData['executed']) {
         $this->execute($this->current_display);
       }
     }
+    // Unset serializationData since it serves no further purpose.
+    unset($this->serializationData);
   }
 
 }

@@ -2,6 +2,8 @@
 
 namespace Drupal\field\Tests\Views;
 
+@trigger_error(__NAMESPACE__ . '\FieldTestBase is deprecated in Drupal 8.6.0 and will be removed before Drupal 9.0.0. Instead, use \Drupal\Tests\field\Functional\Views\FieldTestBase. See https://www.drupal.org/node/2971931.', E_USER_DEPRECATED);
+
 use Drupal\field\Entity\FieldConfig;
 use Drupal\node\Entity\NodeType;
 use Drupal\views\Tests\ViewTestBase;
@@ -17,6 +19,11 @@ use Drupal\field\Entity\FieldStorageConfig;
  *   - Use basic fields and make sure that the full wanted object is built.
  *   - Use relationships between different entity types, for example node and
  *     the node author(user).
+ *
+ * @deprecated in Drupal 8.6.0. Will be removed before Drupal 9.0.0. Use
+ * \Drupal\Tests\field\Functional\Views\FieldTestBase instead.
+ *
+ * @see https://www.drupal.org/node/2989020
  */
 abstract class FieldTestBase extends ViewTestBase {
 
@@ -25,7 +32,7 @@ abstract class FieldTestBase extends ViewTestBase {
    *
    * @var array
    */
-  public static $modules = array('node', 'field_test_views');
+  public static $modules = ['node', 'field_test_views'];
 
   /**
    * Stores the field definitions used by the test.
@@ -42,8 +49,8 @@ abstract class FieldTestBase extends ViewTestBase {
    */
   public $fields;
 
-  protected function setUp() {
-    parent::setUp();
+  protected function setUp($import_test_views = TRUE) {
+    parent::setUp($import_test_views);
 
     // Ensure the page node type exists.
     NodeType::create([
@@ -51,25 +58,25 @@ abstract class FieldTestBase extends ViewTestBase {
       'name' => 'page',
     ])->save();
 
-    ViewTestData::createTestViews(get_class($this), array('field_test_views'));
+    ViewTestData::createTestViews(get_class($this), ['field_test_views']);
   }
 
-  function setUpFieldStorages($amount = 3, $type = 'string') {
+  public function setUpFieldStorages($amount = 3, $type = 'string') {
     // Create three fields.
-    $field_names = array();
+    $field_names = [];
     for ($i = 0; $i < $amount; $i++) {
       $field_names[$i] = 'field_name_' . $i;
-      $this->fieldStorages[$i] = FieldStorageConfig::create(array(
+      $this->fieldStorages[$i] = FieldStorageConfig::create([
         'field_name' => $field_names[$i],
         'entity_type' => 'node',
         'type' => $type,
-      ));
+      ]);
       $this->fieldStorages[$i]->save();
     }
     return $field_names;
   }
 
-  function setUpFields($bundle = 'page') {
+  public function setUpFields($bundle = 'page') {
     foreach ($this->fieldStorages as $key => $field_storage) {
       $this->fields[$key] = FieldConfig::create([
         'field_storage' => $field_storage,

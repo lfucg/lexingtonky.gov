@@ -2,6 +2,8 @@
 
 namespace Drupal\serialization\EventSubscriber;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\Cache\CacheableResponse;
 use Drupal\Core\EventSubscriber\HttpExceptionSubscriberBase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -51,93 +53,42 @@ class DefaultExceptionSubscriber extends HttpExceptionSubscriberBase {
    */
   protected static function getPriority() {
     // This will fire after the most common HTML handler, since HTML requests
-    // are still more common than HTTP requests.
-    return -75;
+    // are still more common than HTTP requests. But it has a lower priority
+    // than \Drupal\Core\EventSubscriber\ExceptionJsonSubscriber::on4xx(), so
+    // that this also handles the 'json' format. Then all serialization formats
+    // (::getHandledFormats()) are handled by this exception subscriber, which
+    // results in better consistency.
+    return -70;
   }
 
   /**
-   * Handles a 400 error for HTTP.
+   * Handles all 4xx errors for all serialization failures.
    *
    * @param \Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $event
    *   The event to process.
    */
-  public function on400(GetResponseForExceptionEvent $event) {
-    $this->setEventResponse($event, Response::HTTP_BAD_REQUEST);
-  }
+  public function on4xx(GetResponseForExceptionEvent $event) {
+    /** @var \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $exception */
+    $exception = $event->getException();
+    $request = $event->getRequest();
 
-  /**
-   * Handles a 403 error for HTTP.
-   *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $event
-   *   The event to process.
-   */
-  public function on403(GetResponseForExceptionEvent $event) {
-    $this->setEventResponse($event, Response::HTTP_FORBIDDEN);
-  }
-
-  /**
-   * Handles a 404 error for HTTP.
-   *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $event
-   *   The event to process.
-   */
-  public function on404(GetResponseForExceptionEvent $event) {
-    $this->setEventResponse($event, Response::HTTP_NOT_FOUND);
-  }
-
-  /**
-   * Handles a 405 error for HTTP.
-   *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $event
-   *   The event to process.
-   */
-  public function on405(GetResponseForExceptionEvent $event) {
-    $this->setEventResponse($event, Response::HTTP_METHOD_NOT_ALLOWED);
-  }
-
-  /**
-   * Handles a 406 error for HTTP.
-   *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $event
-   *   The event to process.
-   */
-  public function on406(GetResponseForExceptionEvent $event) {
-    $this->setEventResponse($event, Response::HTTP_NOT_ACCEPTABLE);
-  }
-
-  /**
-   * Handles a 422 error for HTTP.
-   *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $event
-   *   The event to process.
-   */
-  public function on422(GetResponseForExceptionEvent $event) {
-    $this->setEventResponse($event, Response::HTTP_UNPROCESSABLE_ENTITY);
-  }
-
-  /**
-   * Handles a 429 error for HTTP.
-   *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $event
-   *   The event to process.
-   */
-  public function on429(GetResponseForExceptionEvent $event) {
-    $this->setEventResponse($event, Response::HTTP_TOO_MANY_REQUESTS);
-  }
-
-  /**
-   * Sets the Response for the exception event.
-   *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $event
-   *   The current exception event.
-   * @param int $status
-   *   The HTTP status code to set for the response.
-   */
-  protected function setEventResponse(GetResponseForExceptionEvent $event, $status) {
-    $format = $event->getRequest()->getRequestFormat();
-    $content = ['message' => $event->getException()->getMessage()];
+    $format = $request->getRequestFormat();
+    $content = ['message' => $exception->getMessage()];
     $encoded_content = $this->serializer->serialize($content, $format);
-    $response = new Response($encoded_content, $status);
+    $headers = $exception->getHeaders();
+
+    // Add the MIME type from the request to send back in the header.
+    $headers['Content-Type'] = $request->getMimeType($format);
+
+    // If the exception is cacheable, generate a cacheable response.
+    if ($exception instanceof CacheableDependencyInterface) {
+      $response = new CacheableResponse($encoded_content, $exception->getStatusCode(), $headers);
+      $response->addCacheableDependency($exception);
+    }
+    else {
+      $response = new Response($encoded_content, $exception->getStatusCode(), $headers);
+    }
+
     $event->setResponse($response);
   }
 

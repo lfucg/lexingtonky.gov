@@ -24,7 +24,7 @@ class QueueTest extends KernelTestBase {
     $queue2 = new DatabaseQueue($this->randomMachineName(), Database::getConnection());
     $queue2->createQueue();
 
-    $this->queueTest($queue1, $queue2);
+    $this->runQueueTest($queue1, $queue2);
   }
 
   /**
@@ -37,7 +37,7 @@ class QueueTest extends KernelTestBase {
     $queue2 = new Memory($this->randomMachineName());
     $queue2->createQueue();
 
-    $this->queueTest($queue1, $queue2);
+    $this->runQueueTest($queue1, $queue2);
   }
 
   /**
@@ -48,11 +48,11 @@ class QueueTest extends KernelTestBase {
    * @param \Drupal\Core\Queue\QueueInterface $queue2
    *   An instantiated queue object.
    */
-  protected function queueTest($queue1, $queue2) {
+  protected function runQueueTest($queue1, $queue2) {
     // Create four items.
-    $data = array();
+    $data = [];
     for ($i = 0; $i < 4; $i++) {
-      $data[] = array($this->randomMachineName() => $this->randomMachineName());
+      $data[] = [$this->randomMachineName() => $this->randomMachineName()];
     }
 
     // Queue items 1 and 2 in the queue1.
@@ -60,8 +60,8 @@ class QueueTest extends KernelTestBase {
     $queue1->createItem($data[1]);
 
     // Retrieve two items from queue1.
-    $items = array();
-    $new_items = array();
+    $items = [];
+    $new_items = [];
 
     $items[] = $item = $queue1->claimItem();
     $new_items[] = $item->data;
@@ -76,8 +76,8 @@ class QueueTest extends KernelTestBase {
     $queue1->createItem($data[2]);
     $queue1->createItem($data[3]);
 
-    $this->assertTrue($queue1->numberOfItems(), 'Queue 1 is not empty after adding items.');
-    $this->assertFalse($queue2->numberOfItems(), 'Queue 2 is empty while Queue 1 has items');
+    $this->assertSame(4, $queue1->numberOfItems(), 'Queue 1 is not empty after adding items.');
+    $this->assertSame(0, $queue2->numberOfItems(), 'Queue 2 is empty while Queue 1 has items');
 
     $items[] = $item = $queue1->claimItem();
     $new_items[] = $item->data;
@@ -98,8 +98,8 @@ class QueueTest extends KernelTestBase {
     }
 
     // Check that both queues are empty.
-    $this->assertFalse($queue1->numberOfItems(), 'Queue 1 is empty');
-    $this->assertFalse($queue2->numberOfItems(), 'Queue 2 is empty');
+    $this->assertSame(0, $queue1->numberOfItems(), 'Queue 1 is empty');
+    $this->assertSame(0, $queue2->numberOfItems(), 'Queue 2 is empty');
   }
 
   /**

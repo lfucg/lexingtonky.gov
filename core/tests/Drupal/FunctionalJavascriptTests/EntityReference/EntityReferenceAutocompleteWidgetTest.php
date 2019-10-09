@@ -2,17 +2,17 @@
 
 namespace Drupal\FunctionalJavascriptTests\EntityReference;
 
-use Drupal\field\Tests\EntityReference\EntityReferenceTestTrait;
-use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
-use Drupal\simpletest\ContentTypeCreationTrait;
-use Drupal\simpletest\NodeCreationTrait;
+use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
+use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
+use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
+use Drupal\Tests\node\Traits\NodeCreationTrait;
 
 /**
  * Tests the output of entity reference autocomplete widgets.
  *
  * @group entity_reference
  */
-class EntityReferenceAutocompleteWidgetTest extends JavascriptTestBase {
+class EntityReferenceAutocompleteWidgetTest extends WebDriverTestBase {
 
   use ContentTypeCreationTrait;
   use EntityReferenceTestTrait;
@@ -52,9 +52,9 @@ class EntityReferenceAutocompleteWidgetTest extends JavascriptTestBase {
     entity_get_form_display('node', 'page', 'default')
       ->setComponent($field_name, [
         'type' => 'entity_reference_autocomplete',
-        'settings' => array(
+        'settings' => [
           'match_operator' => 'CONTAINS',
-        ),
+        ],
       ])
       ->save();
 
@@ -63,7 +63,7 @@ class EntityReferenceAutocompleteWidgetTest extends JavascriptTestBase {
     $page = $this->getSession()->getPage();
     $assert_session = $this->assertSession();
 
-    $autocomplete_field = $page->findField($field_name . '[0][target_id]');
+    $autocomplete_field = $assert_session->waitForElement('css', '[name="' . $field_name . '[0][target_id]"].ui-autocomplete-input');
     $autocomplete_field->setValue('Test');
     $this->getSession()->getDriver()->keyDown($autocomplete_field->getXpath(), ' ');
     $assert_session->waitOnAutocomplete();
@@ -78,16 +78,16 @@ class EntityReferenceAutocompleteWidgetTest extends JavascriptTestBase {
     entity_get_form_display('node', 'page', 'default')
       ->setComponent($field_name, [
         'type' => 'entity_reference_autocomplete',
-        'settings' => array(
+        'settings' => [
           'match_operator' => 'STARTS_WITH',
-        ),
+        ],
       ])
       ->save();
 
     $this->drupalGet('node/add/page');
     $page = $this->getSession()->getPage();
 
-    $autocomplete_field = $page->findField($field_name . '[0][target_id]');
+    $autocomplete_field = $assert_session->waitForElement('css', '[name="' . $field_name . '[0][target_id]"].ui-autocomplete-input');
     $autocomplete_field->setValue('Test');
     $this->getSession()->getDriver()->keyDown($autocomplete_field->getXpath(), ' ');
     $assert_session->waitOnAutocomplete();

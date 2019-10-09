@@ -2,6 +2,10 @@
 
 namespace Drupal\views\Plugin\views\display;
 
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\Condition;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 /**
  * The plugin that handles an EntityReference display.
  *
@@ -40,6 +44,42 @@ class EntityReference extends DisplayPluginBase {
   protected $usesAttachments = FALSE;
 
   /**
+   * The database connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $connection;
+
+  /**
+   * Constructs a new EntityReference object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Database\Connection $connection
+   *   The database connection.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Connection $connection) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->connection = $connection;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('database')
+    );
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function defineOptions() {
@@ -47,13 +87,10 @@ class EntityReference extends DisplayPluginBase {
 
     // Force the style plugin to 'entity_reference_style' and the row plugin to
     // 'fields'.
-    $options['style']['contains']['type'] = array('default' => 'entity_reference');
+    $options['style']['contains']['type'] = ['default' => 'entity_reference'];
     $options['defaults']['default']['style'] = FALSE;
-    $options['row']['contains']['type'] = array('default' => 'entity_reference');
+    $options['row']['contains']['type'] = ['default' => 'entity_reference'];
     $options['defaults']['default']['row'] = FALSE;
-
-    // Make sure the query is not cached.
-    $options['defaults']['default']['cache'] = FALSE;
 
     // Set the display title to an empty string (not used in this display type).
     $options['title']['default'] = '';
@@ -63,13 +100,12 @@ class EntityReference extends DisplayPluginBase {
   }
 
   /**
-   * Overrides \Drupal\views\Plugin\views\display\DisplayPluginBase::optionsSummary().
-   *
-   * Disable 'cache' and 'title' so it won't be changed.
+   * {@inheritdoc}
    */
   public function optionsSummary(&$categories, &$options) {
     parent::optionsSummary($categories, $options);
-    unset($options['query']);
+    // Disable 'title' so it won't be changed from the default set in
+    // \Drupal\views\Plugin\views\display\EntityReference::defineOptions.
     unset($options['title']);
   }
 
@@ -88,13 +124,16 @@ class EntityReference extends DisplayPluginBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Builds the view result as a renderable array.
+   *
+   * @return array
+   *   Renderable array or empty array.
    */
   public function render() {
     if (!empty($this->view->result) && $this->view->style_plugin->evenEmpty()) {
       return $this->view->style_plugin->render($this->view->result);
     }
-    return '';
+    return [];
   }
 
   /**
@@ -122,13 +161,16 @@ class EntityReference extends DisplayPluginBase {
     // Restrict the autocomplete options based on what's been typed already.
     if (isset($options['match'])) {
       $style_options = $this->getOption('style');
-      $value = db_like($options['match']) . '%';
-      if ($options['match_operator'] != 'STARTS_WITH') {
-        $value = '%' . $value;
+      $value = $this->connection->escapeLike($options['match']);
+      if ($options['match_operator'] !== '=') {
+        $value = $value . '%';
+        if ($options['match_operator'] != 'STARTS_WITH') {
+          $value = '%' . $value;
+        }
       }
 
       // Multiple search fields are OR'd together.
-      $conditions = db_or();
+      $conditions = new Condition('OR');
 
       // Build the condition using the selected search fields.
       foreach ($style_options['options']['search_fields'] as $field_id) {
@@ -162,14 +204,14 @@ class EntityReference extends DisplayPluginBase {
     // Verify that search fields are set up.
     $style = $this->getOption('style');
     if (!isset($style['options']['search_fields'])) {
-      $errors[] = $this->t('Display "@display" needs a selected search fields to work properly. See the settings for the Entity Reference list format.', array('@display' => $this->display['display_title']));
+      $errors[] = $this->t('Display "@display" needs a selected search fields to work properly. See the settings for the Entity Reference list format.', ['@display' => $this->display['display_title']]);
     }
     else {
       // Verify that the search fields used actually exist.
       $fields = array_keys($this->handlers['field']);
       foreach ($style['options']['search_fields'] as $field_alias => $enabled) {
         if ($enabled && !in_array($field_alias, $fields)) {
-          $errors[] = $this->t('Display "@display" uses field %field as search field, but the field is no longer present. See the settings for the Entity Reference list format.', array('@display' => $this->display['display_title'], '%field' => $field_alias));
+          $errors[] = $this->t('Display "@display" uses field %field as search field, but the field is no longer present. See the settings for the Entity Reference list format.', ['@display' => $this->display['display_title'], '%field' => $field_alias]);
         }
       }
     }

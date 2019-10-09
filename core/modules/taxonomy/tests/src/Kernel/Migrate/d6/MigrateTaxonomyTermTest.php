@@ -15,7 +15,7 @@ class MigrateTaxonomyTermTest extends MigrateDrupal6TestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('taxonomy');
+  public static $modules = ['taxonomy'];
 
   /**
    * {@inheritdoc}
@@ -30,44 +30,47 @@ class MigrateTaxonomyTermTest extends MigrateDrupal6TestBase {
    * Tests the Drupal 6 taxonomy term to Drupal 8 migration.
    */
   public function testTaxonomyTerms() {
-    $expected_results = array(
-      '1' => array(
+    $expected_results = [
+      '1' => [
         'source_vid' => 1,
         'vid' => 'vocabulary_1_i_0_',
         'weight' => 0,
-        'parent' => array(0),
-      ),
-      '2' => array(
+        'parent' => [0],
+        'language' => 'zu',
+      ],
+      '2' => [
         'source_vid' => 2,
         'vid' => 'vocabulary_2_i_1_',
         'weight' => 3,
-        'parent' => array(0),
-      ),
-      '3' => array(
+        'parent' => [0],
+        'language' => 'fr',
+      ],
+      '3' => [
         'source_vid' => 2,
         'vid' => 'vocabulary_2_i_1_',
         'weight' => 4,
-        'parent' => array(2),
-      ),
-      '4' => array(
+        'parent' => [2],
+        'language' => 'fr',
+      ],
+      '4' => [
         'source_vid' => 3,
         'vid' => 'vocabulary_3_i_2_',
         'weight' => 6,
-        'parent' => array(0),
-      ),
-      '5' => array(
+        'parent' => [0],
+      ],
+      '5' => [
         'source_vid' => 3,
         'vid' => 'vocabulary_3_i_2_',
         'weight' => 7,
-        'parent' => array(4),
-      ),
-      '6' => array(
+        'parent' => [4],
+      ],
+      '6' => [
         'source_vid' => 3,
         'vid' => 'vocabulary_3_i_2_',
         'weight' => 8,
-        'parent' => array(4, 5),
-      ),
-    );
+        'parent' => [4, 5],
+      ],
+    ];
     $terms = Term::loadMultiple(array_keys($expected_results));
 
     // Find each term in the tree.
@@ -81,26 +84,34 @@ class MigrateTaxonomyTermTest extends MigrateDrupal6TestBase {
     }
 
     foreach ($expected_results as $tid => $values) {
-      /** @var Term $term */
+      /** @var \Drupal\taxonomy\Entity\Term $term */
       $term = $terms[$tid];
-      $this->assertIdentical("term {$tid} of vocabulary {$values['source_vid']}", $term->name->value);
-      $this->assertIdentical("description of term {$tid} of vocabulary {$values['source_vid']}", $term->description->value);
-      $this->assertIdentical($values['vid'], $term->vid->target_id);
-      $this->assertIdentical((string) $values['weight'], $term->weight->value);
-      if ($values['parent'] === array(0)) {
-        $this->assertNull($term->parent->target_id);
+      $language = isset($values['language']) ? $values['language'] . ' - ' : '';
+      $this->assertSame("{$language}term {$tid} of vocabulary {$values['source_vid']}", $term->name->value);
+      $this->assertSame("{$language}description of term {$tid} of vocabulary {$values['source_vid']}", $term->description->value);
+      $this->assertSame($values['vid'], $term->vid->target_id);
+      $this->assertSame((string) $values['weight'], $term->weight->value);
+      if ($values['parent'] === [0]) {
+        $this->assertSame(0, (int) $term->parent->target_id);
       }
       else {
-        $parents = array();
+        $parents = [];
         foreach (\Drupal::entityManager()->getStorage('taxonomy_term')->loadParents($tid) as $parent) {
           $parents[] = (int) $parent->id();
         }
-        $this->assertIdentical($parents, $values['parent']);
+        $this->assertSame($parents, $values['parent']);
       }
 
       $this->assertArrayHasKey($tid, $tree_terms, "Term $tid exists in vocabulary tree");
       $tree_term = $tree_terms[$tid];
-      $this->assertEquals($values['parent'], $tree_term->parents, "Term $tid has correct parents in vocabulary tree");
+
+      // PostgreSQL, MySQL and SQLite may not return the parent terms in the
+      // same order so sort before testing.
+      $expected_parents = $values['parent'];
+      sort($expected_parents);
+      $actual_parents = $tree_term->parents;
+      sort($actual_parents);
+      $this->assertEquals($expected_parents, $actual_parents, "Term $tid has correct parents in vocabulary tree");
     }
   }
 

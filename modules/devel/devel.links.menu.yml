@@ -23,11 +23,6 @@ devel.menu_rebuild:
   route_name: devel.menu_rebuild
   menu_name: devel
   class: \Drupal\devel\Plugin\Menu\DestinationMenuLink
-devel.menu_item:
-  title: 'Menu Item'
-  route_name: devel.menu_item
-  menu_name: devel
-  class: \Drupal\devel\Plugin\Menu\MenuItemMenuLink
 devel.state_system_page:
   title: 'State editor'
   description: 'Edit state system values.'
@@ -73,3 +68,26 @@ devel.run_cron:
   route_name: devel.run_cron
   menu_name: devel
   class: \Drupal\devel\Plugin\Menu\DestinationMenuLink
+
+# Container info
+devel.container_info.service:
+  title: 'Container Info'
+  route_name: devel.container_info.service
+  menu_name: devel
+
+# Routes info
+devel.route_info:
+  title: 'Routes Info'
+  route_name: devel.route_info
+  menu_name: devel
+devel.route_info.item:
+  title: 'Current route info'
+  route_name: devel.route_info.item
+  menu_name: devel
+  class: \Drupal\devel\Plugin\Menu\RouteDetailMenuLink
+
+# Event info
+devel.event_info:
+  title: 'Events Info'
+  route_name: devel.event_info
+  menu_name: devel

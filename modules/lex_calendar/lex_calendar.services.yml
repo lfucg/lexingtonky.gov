@@ -1,0 +1,9 @@
+services:
+  lex_calendar.full_calendar:
+    class: Drupal\lex_calendar\FullCalendarService
+    arguments: []
+  lex_calendar.twig_extension:
+    class: Drupal\lex_calendar\TwigExtension
+    arguments: []
+    tags:
+      - { name: twig.extension }

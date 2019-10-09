@@ -44,11 +44,12 @@ class BlockPageVariantTest extends UnitTestCase {
    * @return \Drupal\block\Plugin\DisplayVariant\BlockPageVariant|\PHPUnit_Framework_MockObject_MockObject
    *   A mocked display variant plugin.
    */
-  public function setUpDisplayVariant($configuration = array(), $definition = array()) {
+  public function setUpDisplayVariant($configuration = [], $definition = []) {
 
     $container = new Container();
     $cache_context_manager = $this->getMockBuilder('Drupal\Core\Cache\CacheContextsManager')
       ->disableOriginalConstructor()
+      ->setMethods(['assertValidTokens'])
       ->getMock();
     $container->set('cache_contexts_manager', $cache_context_manager);
     $cache_context_manager->expects($this->any())
@@ -60,37 +61,37 @@ class BlockPageVariantTest extends UnitTestCase {
     $this->blockViewBuilder = $this->getMock('Drupal\Core\Entity\EntityViewBuilderInterface');
 
     return $this->getMockBuilder('Drupal\block\Plugin\DisplayVariant\BlockPageVariant')
-      ->setConstructorArgs(array($configuration, 'test', $definition, $this->blockRepository, $this->blockViewBuilder, ['config:block_list']))
-      ->setMethods(array('getRegionNames'))
+      ->setConstructorArgs([$configuration, 'test', $definition, $this->blockRepository, $this->blockViewBuilder, ['config:block_list']])
+      ->setMethods(['getRegionNames'])
       ->getMock();
   }
 
   public function providerBuild() {
-    $blocks_config = array(
-      'block1' => array(
+    $blocks_config = [
+      'block1' => [
         // region, is main content block, is messages block, is title block
         'top', FALSE, FALSE, FALSE,
-      ),
+      ],
       // Test multiple blocks in the same region.
-      'block2' => array(
+      'block2' => [
         'bottom', FALSE, FALSE, FALSE,
-      ),
-      'block3' => array(
+      ],
+      'block3' => [
         'bottom', FALSE, FALSE, FALSE,
-      ),
+      ],
       // Test a block implementing MainContentBlockPluginInterface.
-      'block4' => array(
+      'block4' => [
         'center', TRUE, FALSE, FALSE,
-      ),
+      ],
       // Test a block implementing MessagesBlockPluginInterface.
-      'block5' => array(
+      'block5' => [
         'center', FALSE, TRUE, FALSE,
-      ),
+      ],
       // Test a block implementing TitleBlockPluginInterface.
-      'block6' => array(
+      'block6' => [
         'center', FALSE, FALSE, TRUE,
-      ),
-    );
+      ],
+    ];
 
     $test_cases = [];
     $test_cases[] = [$blocks_config, 6,
@@ -152,6 +153,7 @@ class BlockPageVariantTest extends UnitTestCase {
           'messages' => [
             '#weight' => -1000,
             '#type' => 'status_messages',
+            '#include_fallback' => TRUE,
           ],
         ],
       ],
@@ -184,6 +186,7 @@ class BlockPageVariantTest extends UnitTestCase {
           'messages' => [
             '#weight' => -1000,
             '#type' => 'status_messages',
+            '#include_fallback' => TRUE,
           ],
         ],
       ],
@@ -209,9 +212,6 @@ class BlockPageVariantTest extends UnitTestCase {
     $title_block_plugin = $this->getMock('Drupal\Core\Block\TitleBlockPluginInterface');
     foreach ($blocks_config as $block_id => $block_config) {
       $block = $this->getMock('Drupal\block\BlockInterface');
-      $block->expects($this->any())
-        ->method('getContexts')
-        ->willReturn([]);
       $block->expects($this->atLeastOnce())
         ->method('getPlugin')
         ->willReturn($block_config[1] ? $main_content_block_plugin : ($block_config[2] ? $messages_block_plugin : ($block_config[3] ? $title_block_plugin : $block_plugin)));
@@ -219,7 +219,7 @@ class BlockPageVariantTest extends UnitTestCase {
     }
     $this->blockViewBuilder->expects($this->exactly($visible_block_count))
       ->method('view')
-      ->will($this->returnValue(array()));
+      ->will($this->returnValue([]));
     $this->blockRepository->expects($this->once())
       ->method('getVisibleBlocksPerRegion')
       ->willReturnCallback(function (&$cacheable_metadata) use ($blocks) {
@@ -255,6 +255,7 @@ class BlockPageVariantTest extends UnitTestCase {
         'messages' => [
           '#weight' => -1000,
           '#type' => 'status_messages',
+          '#include_fallback' => TRUE,
         ],
       ],
     ];

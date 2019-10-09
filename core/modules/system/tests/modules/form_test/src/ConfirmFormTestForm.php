@@ -8,6 +8,8 @@ use Drupal\Core\Url;
 
 /**
  * Provides a test confirmation form.
+ *
+ * @internal
  */
 class ConfirmFormTestForm extends ConfirmFormBase {
 
@@ -57,7 +59,7 @@ class ConfirmFormTestForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['element'] = array('#markup' => '<p>The ConfirmFormTestForm::buildForm() method was used for this form.</p>');
+    $form['element'] = ['#markup' => '<p>The ConfirmFormTestForm::buildForm() method was used for this form.</p>'];
 
     return parent::buildForm($form, $form_state);
   }
@@ -66,7 +68,7 @@ class ConfirmFormTestForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    drupal_set_message($this->t('The ConfirmFormTestForm::submitForm() method was used for this form.'));
+    $this->messenger()->addStatus($this->t('The ConfirmFormTestForm::submitForm() method was used for this form.'));
     $form_state->setRedirect('<front>');
   }
 

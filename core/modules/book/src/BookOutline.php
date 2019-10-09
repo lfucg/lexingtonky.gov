@@ -39,12 +39,14 @@ class BookOutline {
     if ($book_link['pid'] == 0) {
       return NULL;
     }
-    // Assigning the array to $flat resets the array pointer for use with each().
     $flat = $this->bookManager->bookTreeGetFlat($book_link);
+    reset($flat);
     $curr = NULL;
     do {
       $prev = $curr;
-      list($key, $curr) = each($flat);
+      $key = key($flat);
+      $curr = current($flat);
+      next($flat);
     } while ($key && $key != $book_link['nid']);
 
     if ($key == $book_link['nid']) {
@@ -78,10 +80,11 @@ class BookOutline {
    *   $book_link.
    */
   public function nextLink(array $book_link) {
-    // Assigning the array to $flat resets the array pointer for use with each().
     $flat = $this->bookManager->bookTreeGetFlat($book_link);
+    reset($flat);
     do {
-      list($key,) = each($flat);
+      $key = key($flat);
+      next($flat);
     } while ($key && $key != $book_link['nid']);
 
     if ($key == $book_link['nid']) {
@@ -105,7 +108,7 @@ class BookOutline {
   public function childrenLinks(array $book_link) {
     $flat = $this->bookManager->bookTreeGetFlat($book_link);
 
-    $children = array();
+    $children = [];
 
     if ($book_link['has_children']) {
       // Walk through the array until we find the current page.

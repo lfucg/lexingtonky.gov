@@ -10,6 +10,8 @@ dependencies:
     - field.field.taxonomy_term.locations.field_contact_phone
     - field.field.taxonomy_term.locations.field_hours_of_operation
     - field.field.taxonomy_term.locations.field_location_detail
+    - field.field.taxonomy_term.locations.field_metatags
+    - field.field.taxonomy_term.locations.field_page_link
     - field.field.taxonomy_term.locations.field_social_link_facebook
     - field.field.taxonomy_term.locations.field_social_link_instagram
     - field.field.taxonomy_term.locations.field_social_link_linkedin
@@ -22,6 +24,7 @@ dependencies:
     - taxonomy.vocabulary.locations
   module:
     - link
+    - metatag
     - text
 id: taxonomy_term.locations.default
 targetEntityType: taxonomy_term
@@ -34,6 +37,7 @@ content:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_contact_email:
     weight: 2
     label: hidden
@@ -41,6 +45,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_contact_fax:
     weight: 8
     label: hidden
@@ -48,6 +53,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_contact_person:
     weight: 9
     label: above
@@ -55,6 +61,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_contact_person_title:
     weight: 10
     label: above
@@ -62,6 +69,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_contact_phone:
     weight: 3
     label: hidden
@@ -69,12 +77,14 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_hours_of_operation:
     weight: 1
     label: hidden
     settings: {  }
     third_party_settings: {  }
     type: basic_string
+    region: content
   field_location_detail:
     weight: 4
     label: hidden
@@ -82,6 +92,26 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
+  field_metatags:
+    weight: 17
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
+    region: content
+  field_page_link:
+    weight: 18
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
   field_social_link_facebook:
     weight: 11
     label: hidden
@@ -93,6 +123,7 @@ content:
       target: ''
     third_party_settings: {  }
     type: link
+    region: content
   field_social_link_instagram:
     weight: 12
     label: hidden
@@ -104,6 +135,7 @@ content:
       target: ''
     third_party_settings: {  }
     type: link
+    region: content
   field_social_link_linkedin:
     weight: 13
     label: hidden
@@ -115,6 +147,7 @@ content:
       target: ''
     third_party_settings: {  }
     type: link
+    region: content
   field_social_link_newsletter:
     weight: 14
     label: hidden
@@ -126,6 +159,7 @@ content:
       target: ''
     third_party_settings: {  }
     type: link
+    region: content
   field_social_link_twitter:
     weight: 15
     label: hidden
@@ -137,6 +171,7 @@ content:
       target: ''
     third_party_settings: {  }
     type: link
+    region: content
   field_social_link_youtube:
     weight: 16
     label: hidden
@@ -148,6 +183,7 @@ content:
       target: ''
     third_party_settings: {  }
     type: link
+    region: content
   field_street:
     weight: 6
     label: hidden
@@ -155,6 +191,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_street_number:
     weight: 5
     label: hidden
@@ -162,6 +199,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
   field_zip_code:
     weight: 7
     label: hidden
@@ -169,4 +207,5 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
 hidden: {  }

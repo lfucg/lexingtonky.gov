@@ -4,8 +4,11 @@ namespace Drupal\image\Entity;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
+use Drupal\Core\File\Exception\FileException;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Routing\RequestHelper;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
@@ -17,12 +20,20 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+
 /**
  * Defines an image style configuration entity.
  *
  * @ConfigEntityType(
  *   id = "image_style",
  *   label = @Translation("Image style"),
+ *   label_collection = @Translation("Image styles"),
+ *   label_singular = @Translation("image style"),
+ *   label_plural = @Translation("image styles"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count image style",
+ *     plural = "@count image styles",
+ *   ),
  *   handlers = {
  *     "form" = {
  *       "add" = "Drupal\image\Form\ImageStyleAddForm",
@@ -73,7 +84,7 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
    *
    * @var array
    */
-  protected $effects = array();
+  protected $effects = [];
 
   /**
    * Holds the collection of image effects that are used by this image style.
@@ -146,7 +157,7 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
           }
         }
       }
-      foreach (EntityViewDisplay::loadMultiple() as $display) {
+      foreach (EntityFormDisplay::loadMultiple() as $display) {
         foreach ($display->getComponents() as $name => $options) {
           if (isset($options['type']) && $options['type'] == 'image_image' && $options['settings']['preview_image_style'] == $style->getOriginalId()) {
             $options['settings']['preview_image_style'] = $style->id();
@@ -200,11 +211,11 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
     // that (if both are set, the security token will neither be emitted in the
     // image derivative URL nor checked for in
     // \Drupal\image\ImageStyleInterface::deliver()).
-    $token_query = array();
+    $token_query = [];
     if (!\Drupal::config('image.settings')->get('suppress_itok_output')) {
       // The passed $path variable can be either a relative path or a full URI.
       $original_uri = file_uri_scheme($path) ? file_stream_wrapper_uri_normalize($path) : file_build_uri($path);
-      $token_query = array(IMAGE_DERIVATIVE_TOKEN => $this->getPathToken($original_uri));
+      $token_query = [IMAGE_DERIVATIVE_TOKEN => $this->getPathToken($original_uri)];
     }
 
     if ($clean_urls === NULL) {
@@ -225,7 +236,7 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
     // built.
     if ($clean_urls === FALSE && file_uri_scheme($uri) == 'public' && !file_exists($uri)) {
       $directory_path = $this->getStreamWrapperManager()->getViaUri($uri)->getDirectoryPath();
-      return Url::fromUri('base:' . $directory_path . '/' . file_uri_target($uri), array('absolute' => TRUE, 'query' => $token_query))->toString();
+      return Url::fromUri('base:' . $directory_path . '/' . file_uri_target($uri), ['absolute' => TRUE, 'query' => $token_query])->toString();
     }
 
     $file_url = file_create_url($uri);
@@ -242,10 +253,17 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
    */
   public function flush($path = NULL) {
     // A specific image path has been provided. Flush only that derivative.
+    /** @var \Drupal\Core\File\FileSystemInterface $file_system */
+    $file_system = \Drupal::service('file_system');
     if (isset($path)) {
       $derivative_uri = $this->buildUri($path);
       if (file_exists($derivative_uri)) {
-        file_unmanaged_delete($derivative_uri);
+        try {
+          $file_system->delete($derivative_uri);
+        }
+        catch (FileException $e) {
+          // Ignore failed deletes.
+        }
       }
       return $this;
     }
@@ -254,13 +272,18 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
     $wrappers = $this->getStreamWrapperManager()->getWrappers(StreamWrapperInterface::WRITE_VISIBLE);
     foreach ($wrappers as $wrapper => $wrapper_data) {
       if (file_exists($directory = $wrapper . '://styles/' . $this->id())) {
-        file_unmanaged_delete_recursive($directory);
+        try {
+          $file_system->deleteRecursive($directory);
+        }
+        catch (FileException $e) {
+          // Ignore failed deletes.
+        }
       }
     }
 
     // Let other modules update as necessary on flush.
     $module_handler = \Drupal::moduleHandler();
-    $module_handler->invokeAll('image_style_flush', array($this));
+    $module_handler->invokeAll('image_style_flush', [$this]);
 
     // Clear caches so that formatters may be added for this style.
     drupal_theme_rebuild();
@@ -274,19 +297,18 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
    * {@inheritdoc}
    */
   public function createDerivative($original_uri, $derivative_uri) {
-
     // If the source file doesn't exist, return FALSE without creating folders.
-    $image = \Drupal::service('image.factory')->get($original_uri);
+    $image = $this->getImageFactory()->get($original_uri);
     if (!$image->isValid()) {
       return FALSE;
     }
 
     // Get the folder for the final location of this style.
-    $directory = drupal_dirname($derivative_uri);
+    $directory = \Drupal::service('file_system')->dirname($derivative_uri);
 
     // Build the destination folder tree if it doesn't already exist.
-    if (!file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
-      \Drupal::logger('image')->error('Failed to create style directory: %directory', array('%directory' => $directory));
+    if (!\Drupal::service('file_system')->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+      \Drupal::logger('image')->error('Failed to create style directory: %directory', ['%directory' => $directory]);
       return FALSE;
     }
 
@@ -296,7 +318,7 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
 
     if (!$image->save($derivative_uri)) {
       if (file_exists($derivative_uri)) {
-        \Drupal::logger('image')->error('Cached image file %destination already exists. There may be an issue with your rewrite configuration.', array('%destination' => $derivative_uri));
+        \Drupal::logger('image')->error('Cached image file %destination already exists. There may be an issue with your rewrite configuration.', ['%destination' => $derivative_uri]);
       }
       return FALSE;
     }
@@ -343,6 +365,18 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
   /**
    * {@inheritdoc}
    */
+  public function supportsUri($uri) {
+    // Only support the URI if its extension is supported by the current image
+    // toolkit.
+    return in_array(
+      mb_strtolower(pathinfo($uri, PATHINFO_EXTENSION)),
+      $this->getImageFactory()->getSupportedExtensions()
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getEffect($effect) {
     return $this->getEffects()->get($effect);
   }
@@ -362,7 +396,7 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
    * {@inheritdoc}
    */
   public function getPluginCollections() {
-    return array('effects' => $this->getEffects());
+    return ['effects' => $this->getEffects()];
   }
 
   /**
@@ -406,6 +440,16 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
    */
   protected function getImageEffectPluginManager() {
     return \Drupal::service('plugin.manager.image.effect');
+  }
+
+  /**
+   * Returns the image factory.
+   *
+   * @return \Drupal\Core\Image\ImageFactory
+   *   The image factory.
+   */
+  protected function getImageFactory() {
+    return \Drupal::service('image.factory');
   }
 
   /**

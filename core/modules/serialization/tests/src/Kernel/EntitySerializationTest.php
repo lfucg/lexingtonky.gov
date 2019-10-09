@@ -2,8 +2,12 @@
 
 namespace Drupal\Tests\serialization\Kernel;
 
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Serialization\Json;
+use Drupal\Component\Render\FormattableMarkup;
+use Drupal\entity_test\Entity\EntitySerializedField;
 use Drupal\entity_test\Entity\EntityTestMulRev;
+use Drupal\filter\Entity\FilterFormat;
+use Drupal\Tests\rest\Functional\BcTimestampNormalizerUnixTestTrait;
 
 /**
  * Tests that entities can be serialized to supported core formats.
@@ -12,12 +16,14 @@ use Drupal\entity_test\Entity\EntityTestMulRev;
  */
 class EntitySerializationTest extends NormalizerTestBase {
 
+  use BcTimestampNormalizerUnixTestTrait;
+
   /**
    * Modules to install.
    *
    * @var array
    */
-  public static $modules = array('serialization', 'system', 'field', 'entity_test', 'text', 'filter', 'user', 'entity_serialization_test');
+  public static $modules = ['serialization', 'system', 'field', 'entity_test', 'text', 'filter', 'user', 'entity_serialization_test'];
 
   /**
    * The test values.
@@ -29,7 +35,7 @@ class EntitySerializationTest extends NormalizerTestBase {
   /**
    * The test entity.
    *
-   * @var \Drupal\Core\Entity\ContentEntityBase
+   * @var \Drupal\Core\Entity\ContentEntityInterface
    */
   protected $entity;
 
@@ -43,7 +49,7 @@ class EntitySerializationTest extends NormalizerTestBase {
   /**
    * The serializer service.
    *
-   * @var \Symfony\Component\Serializer\Serializer.
+   * @var \Symfony\Component\Serializer\Serializer
    */
   protected $serializer;
 
@@ -58,7 +64,28 @@ class EntitySerializationTest extends NormalizerTestBase {
     parent::setUp();
 
     // User create needs sequence table.
-    $this->installSchema('system', array('sequences'));
+    $this->installSchema('system', ['sequences']);
+
+    FilterFormat::create([
+      'format' => 'my_text_format',
+      'name' => 'My Text Format',
+      'filters' => [
+        'filter_html' => [
+          'module' => 'filter',
+          'status' => TRUE,
+          'weight' => 10,
+          'settings' => [
+            'allowed_html' => '<p>',
+          ],
+        ],
+        'filter_autop' => [
+          'module' => 'filter',
+          'status' => TRUE,
+          'weight' => 10,
+          'settings' => [],
+        ],
+      ],
+    ])->save();
 
     // Create a test user to use as the entity owner.
     $this->user = \Drupal::entityManager()->getStorage('user')->create([
@@ -69,74 +96,81 @@ class EntitySerializationTest extends NormalizerTestBase {
     $this->user->save();
 
     // Create a test entity to serialize.
-    $this->values = array(
+    $test_text_value = $this->randomMachineName();
+    $this->values = [
       'name' => $this->randomMachineName(),
       'user_id' => $this->user->id(),
-      'field_test_text' => array(
-        'value' => $this->randomMachineName(),
-        'format' => 'full_html',
-      ),
-    );
+      'field_test_text' => [
+        'value' => $test_text_value,
+        'format' => 'my_text_format',
+      ],
+    ];
     $this->entity = EntityTestMulRev::create($this->values);
     $this->entity->save();
 
     $this->serializer = $this->container->get('serializer');
 
-    $this->installConfig(array('field'));
+    $this->installConfig(['field']);
   }
 
   /**
    * Test the normalize function.
    */
   public function testNormalize() {
-    $expected = array(
-      'id' => array(
-        array('value' => 1),
-      ),
-      'uuid' => array(
-        array('value' => $this->entity->uuid()),
-      ),
-      'langcode' => array(
-        array('value' => 'en'),
-      ),
-      'name' => array(
-        array('value' => $this->values['name']),
-      ),
-      'type' => array(
-        array('value' => 'entity_test_mulrev'),
-      ),
-      'created' => array(
-        array('value' => $this->entity->created->value),
-      ),
-      'user_id' => array(
-        array(
-          'target_id' => $this->user->id(),
+    $expected = [
+      'id' => [
+        ['value' => 1],
+      ],
+      'uuid' => [
+        ['value' => $this->entity->uuid()],
+      ],
+      'langcode' => [
+        ['value' => 'en'],
+      ],
+      'name' => [
+        ['value' => $this->values['name']],
+      ],
+      'type' => [
+        ['value' => 'entity_test_mulrev'],
+      ],
+      'created' => [
+        $this->formatExpectedTimestampItemValues($this->entity->created->value),
+      ],
+      'user_id' => [
+        [
+          // id() will return the string value as it comes from the database.
+          'target_id' => (int) $this->user->id(),
           'target_type' => $this->user->getEntityTypeId(),
           'target_uuid' => $this->user->uuid(),
-          'url' => $this->user->url(),
-        ),
-      ),
-      'revision_id' => array(
-        array('value' => 1),
-      ),
-      'default_langcode' => array(
-        array('value' => TRUE),
-      ),
-      'non_rev_field' => array(),
-      'field_test_text' => array(
-        array(
+          'url' => $this->user->toUrl()->toString(),
+        ],
+      ],
+      'revision_id' => [
+        ['value' => 1],
+      ],
+      'default_langcode' => [
+        ['value' => TRUE],
+      ],
+      'revision_translation_affected' => [
+        ['value' => TRUE],
+      ],
+      'non_rev_field' => [],
+      'non_mul_field' => [],
+      'field_test_text' => [
+        [
           'value' => $this->values['field_test_text']['value'],
           'format' => $this->values['field_test_text']['format'],
-        ),
-      ),
-    );
+          'processed' => "<p>{$this->values['field_test_text']['value']}</p>",
+        ],
+      ],
+    ];
 
     $normalized = $this->serializer->normalize($this->entity);
 
     foreach (array_keys($expected) as $fieldName) {
-      $this->assertEqual($expected[$fieldName], $normalized[$fieldName], "ComplexDataNormalizer produces expected array for $fieldName.");
+      $this->assertSame($expected[$fieldName], $normalized[$fieldName], "Normalization produces expected array for $fieldName.");
     }
-    $this->assertEqual(array_diff_key($normalized, $expected), array(), 'No unexpected data is added to the normalized array.');
+    $this->assertEqual(array_diff_key($normalized, $expected), [], 'No unexpected data is added to the normalized array.');
   }
 
   /**
@@ -167,7 +201,7 @@ class EntitySerializationTest extends NormalizerTestBase {
     // JsonEncoder. The output of ComplexDataNormalizer::normalize() is tested
     // elsewhere, so we can just assume that it works properly here.
     $normalized = $this->serializer->normalize($this->entity, 'json');
-    $expected = json_encode($normalized);
+    $expected = Json::encode($normalized);
     // Test 'json'.
     $actual = $this->serializer->serialize($this->entity, 'json');
     $this->assertIdentical($actual, $expected, 'Entity serializes to JSON when "json" is requested.');
@@ -181,19 +215,23 @@ class EntitySerializationTest extends NormalizerTestBase {
 
     // Generate the expected xml in a way that allows changes to entity property
     // order.
-    $expected = array(
+    $expected_created = $this->formatExpectedTimestampItemValues($this->entity->created->value);
+
+    $expected = [
       'id' => '<id><value>' . $this->entity->id() . '</value></id>',
       'uuid' => '<uuid><value>' . $this->entity->uuid() . '</value></uuid>',
       'langcode' => '<langcode><value>en</value></langcode>',
       'name' => '<name><value>' . $this->values['name'] . '</value></name>',
       'type' => '<type><value>entity_test_mulrev</value></type>',
-      'created' => '<created><value>' . $this->entity->created->value . '</value></created>',
-      'user_id' => '<user_id><target_id>' . $this->user->id() . '</target_id><target_type>' . $this->user->getEntityTypeId() . '</target_type><target_uuid>' . $this->user->uuid() . '</target_uuid><url>' . $this->user->url() . '</url></user_id>',
+      'created' => '<created><value>' . $expected_created['value'] . '</value><format>' . $expected_created['format'] . '</format></created>',
+      'user_id' => '<user_id><target_id>' . $this->user->id() . '</target_id><target_type>' . $this->user->getEntityTypeId() . '</target_type><target_uuid>' . $this->user->uuid() . '</target_uuid><url>' . $this->user->toUrl()->toString() . '</url></user_id>',
       'revision_id' => '<revision_id><value>' . $this->entity->getRevisionId() . '</value></revision_id>',
       'default_langcode' => '<default_langcode><value>1</value></default_langcode>',
+      'revision_translation_affected' => '<revision_translation_affected><value>1</value></revision_translation_affected>',
+      'non_mul_field' => '<non_mul_field/>',
       'non_rev_field' => '<non_rev_field/>',
-      'field_test_text' => '<field_test_text><value>' . $this->values['field_test_text']['value'] . '</value><format>' . $this->values['field_test_text']['format'] . '</format></field_test_text>',
-    );
+      'field_test_text' => '<field_test_text><value>' . $this->values['field_test_text']['value'] . '</value><format>' . $this->values['field_test_text']['format'] . '</format><processed><![CDATA[<p>' . $this->values['field_test_text']['value'] . '</p>]]></processed></field_test_text>',
+    ];
     // Sort it in the same order as normalised.
     $expected = array_merge($normalized, $expected);
     // Add header and footer.
@@ -214,13 +252,101 @@ class EntitySerializationTest extends NormalizerTestBase {
   public function testDenormalize() {
     $normalized = $this->serializer->normalize($this->entity);
 
-    foreach (array('json', 'xml') as $type) {
-      $denormalized = $this->serializer->denormalize($normalized, $this->entityClass, $type, array('entity_type' => 'entity_test_mulrev'));
-      $this->assertTrue($denormalized instanceof $this->entityClass, SafeMarkup::format('Denormalized entity is an instance of @class', array('@class' => $this->entityClass)));
+    foreach (['json', 'xml'] as $type) {
+      $denormalized = $this->serializer->denormalize($normalized, $this->entityClass, $type, ['entity_type' => 'entity_test_mulrev']);
+      $this->assertTrue($denormalized instanceof $this->entityClass, new FormattableMarkup('Denormalized entity is an instance of @class', ['@class' => $this->entityClass]));
       $this->assertIdentical($denormalized->getEntityTypeId(), $this->entity->getEntityTypeId(), 'Expected entity type found.');
       $this->assertIdentical($denormalized->bundle(), $this->entity->bundle(), 'Expected entity bundle found.');
       $this->assertIdentical($denormalized->uuid(), $this->entity->uuid(), 'Expected entity UUID found.');
     }
+  }
+
+  /**
+   * Tests denormalizing serialized columns.
+   */
+  public function testDenormalizeSerializedItem() {
+    $this->setExpectedException(\LogicException::class, 'The generic FieldItemNormalizer cannot denormalize string values for "value" properties of the "serialized" field (field item class: Drupal\entity_test\Plugin\Field\FieldType\SerializedItem).');
+    $this->serializer->denormalize([
+      'serialized' => [
+        [
+          'value' => 'boo',
+        ],
+      ],
+      'type' => 'entity_test_serialized_field',
+    ], EntitySerializedField::class);
+  }
+
+  /**
+   * Tests normalizing/denormalizing custom serialized columns.
+   */
+  public function testDenormalizeCustomSerializedItem() {
+    $entity = EntitySerializedField::create(['serialized_text' => serialize(['Hello world!'])]);
+    $normalized = $this->serializer->normalize($entity);
+    $this->assertEquals($normalized['serialized_text'][0]['value'], ['Hello world!']);
+    $this->setExpectedException(\LogicException::class, 'The generic FieldItemNormalizer cannot denormalize string values for "value" properties of the "serialized_text" field (field item class: Drupal\entity_test\Plugin\Field\FieldType\SerializedPropertyItem).');
+    $this->serializer->denormalize([
+      'serialized_text' => [
+        [
+          'value' => 'boo',
+        ],
+      ],
+      'type' => 'entity_test_serialized_field',
+    ], EntitySerializedField::class);
+  }
+
+  /**
+   * Tests normalizing/denormalizing invalid custom serialized fields.
+   */
+  public function testDenormalizeInvalidCustomSerializedField() {
+    $entity = EntitySerializedField::create(['serialized_long' => serialize(['Hello world!'])]);
+    $normalized = $this->serializer->normalize($entity);
+    $this->assertEquals($normalized['serialized_long'][0]['value'], ['Hello world!']);
+    $this->setExpectedException(\LogicException::class, 'The generic FieldItemNormalizer cannot denormalize string values for "value" properties of the "serialized_long" field (field item class: Drupal\Core\Field\Plugin\Field\FieldType\StringLongItem).');
+    $this->serializer->denormalize([
+      'serialized_long' => [
+        [
+         'value' => 'boo',
+        ],
+      ],
+      'type' => 'entity_test_serialized_field',
+    ], EntitySerializedField::class);
+  }
+
+  /**
+   * Tests normalizing/denormalizing empty custom serialized fields.
+   */
+  public function testDenormalizeEmptyCustomSerializedField() {
+    $entity = EntitySerializedField::create(['serialized_long' => serialize([])]);
+    $normalized = $this->serializer->normalize($entity);
+    $this->assertEquals([], $normalized['serialized_long'][0]['value']);
+
+    $entity = $this->serializer->denormalize($normalized, EntitySerializedField::class);
+
+    $this->assertEquals(serialize([]), $entity->get('serialized_long')->value);
+  }
+
+  /**
+   * Tests normalizing/denormalizing valid custom serialized fields.
+   */
+  public function testDenormalizeValidCustomSerializedField() {
+    $entity = EntitySerializedField::create(['serialized_long' => serialize(['key' => 'value'])]);
+    $normalized = $this->serializer->normalize($entity);
+    $this->assertEquals(['key' => 'value'], $normalized['serialized_long'][0]['value']);
+
+    $entity = $this->serializer->denormalize($normalized, EntitySerializedField::class);
+
+    $this->assertEquals(serialize(['key' => 'value']), $entity->get('serialized_long')->value);
+  }
+
+  /**
+   * Tests normalizing/denormalizing using string values.
+   */
+  public function testDenormalizeStringValue() {
+    $this->setExpectedException(\LogicException::class, 'The generic FieldItemNormalizer cannot denormalize string values for "value" properties of the "serialized_long" field (field item class: Drupal\Core\Field\Plugin\Field\FieldType\StringLongItem).');
+    $this->serializer->denormalize([
+      'serialized_long' => ['boo'],
+      'type' => 'entity_test_serialized_field',
+    ], EntitySerializedField::class);
   }
 
 }

@@ -20,7 +20,7 @@ class PrefixInfoTest extends DatabaseTestBase {
    * The other two by Drupal core supported databases do not have this variable
    * set in the return array.
    */
-  function testGetPrefixInfo() {
+  public function testGetPrefixInfo() {
     $connection_info = Database::getConnectionInfo('default');
     if ($connection_info['default']['driver'] == 'mysql') {
       // Copy the default connection info to the 'extra' key.
@@ -30,7 +30,7 @@ class PrefixInfoTest extends DatabaseTestBase {
       $db1_schema = $db1_connection->schema();
       $db2_connection = Database::getConnection('default', 'extra');
 
-      // Get the prefix info for the first databse.
+      // Get the prefix info for the first database.
       $method = new \ReflectionMethod($db1_schema, 'getPrefixInfo');
       $method->setAccessible(TRUE);
       $db1_info = $method->invoke($db1_schema);

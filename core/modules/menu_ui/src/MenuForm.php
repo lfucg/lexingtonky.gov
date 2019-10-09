@@ -5,7 +5,6 @@ namespace Drupal\menu_ui;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Link;
@@ -16,19 +15,16 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\Core\Utility\LinkGeneratorInterface;
+use Drupal\menu_link_content\MenuLinkContentStorageInterface;
+use Drupal\menu_link_content\Plugin\Menu\MenuLinkContent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base form for menu edit forms.
+ *
+ * @internal
  */
 class MenuForm extends EntityForm {
-
-  /**
-   * The factory for entity queries.
-   *
-   * @var \Drupal\Core\Entity\Query\QueryFactory
-   */
-  protected $entityQueryFactory;
 
   /**
    * The menu link manager.
@@ -52,29 +48,36 @@ class MenuForm extends EntityForm {
   protected $linkGenerator;
 
   /**
+   * The menu_link_content storage handler.
+   *
+   * @var \Drupal\menu_link_content\MenuLinkContentStorageInterface
+   */
+  protected $menuLinkContentStorage;
+
+  /**
    * The overview tree form.
    *
    * @var array
    */
-  protected $overviewTreeForm = array('#tree' => TRUE);
+  protected $overviewTreeForm = ['#tree' => TRUE];
 
   /**
    * Constructs a MenuForm object.
    *
-   * @param \Drupal\Core\Entity\Query\QueryFactory $entity_query_factory
-   *   The factory for entity queries.
    * @param \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager
    *   The menu link manager.
    * @param \Drupal\Core\Menu\MenuLinkTreeInterface $menu_tree
    *   The menu tree service.
    * @param \Drupal\Core\Utility\LinkGeneratorInterface $link_generator
    *   The link generator.
+   * @param \Drupal\menu_link_content\MenuLinkContentStorageInterface $menu_link_content_storage
+   *   The menu link content storage handler.
    */
-  public function __construct(QueryFactory $entity_query_factory, MenuLinkManagerInterface $menu_link_manager, MenuLinkTreeInterface $menu_tree, LinkGeneratorInterface $link_generator) {
-    $this->entityQueryFactory = $entity_query_factory;
+  public function __construct(MenuLinkManagerInterface $menu_link_manager, MenuLinkTreeInterface $menu_tree, LinkGeneratorInterface $link_generator, MenuLinkContentStorageInterface $menu_link_content_storage) {
     $this->menuLinkManager = $menu_link_manager;
     $this->menuTree = $menu_tree;
     $this->linkGenerator = $link_generator;
+    $this->menuLinkContentStorage = $menu_link_content_storage;
   }
 
   /**
@@ -82,10 +85,10 @@ class MenuForm extends EntityForm {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.query'),
       $container->get('plugin.manager.menu.link'),
       $container->get('menu.link_tree'),
-      $container->get('link_generator')
+      $container->get('link_generator'),
+      $container->get('entity_type.manager')->getStorage('menu_link_content')
     );
   }
 
@@ -96,43 +99,43 @@ class MenuForm extends EntityForm {
     $menu = $this->entity;
 
     if ($this->operation == 'edit') {
-      $form['#title'] = $this->t('Edit menu %label', array('%label' => $menu->label()));
+      $form['#title'] = $this->t('Edit menu %label', ['%label' => $menu->label()]);
     }
 
-    $form['label'] = array(
+    $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Title'),
       '#default_value' => $menu->label(),
       '#required' => TRUE,
-    );
-    $form['id'] = array(
+    ];
+    $form['id'] = [
       '#type' => 'machine_name',
       '#title' => $this->t('Menu name'),
       '#default_value' => $menu->id(),
       '#maxlength' => MENU_MAX_MENU_NAME_LENGTH_UI,
       '#description' => $this->t('A unique name to construct the URL for the menu. It must only contain lowercase letters, numbers and hyphens.'),
-      '#machine_name' => array(
-        'exists' => array($this, 'menuNameExists'),
-        'source' => array('label'),
+      '#machine_name' => [
+        'exists' => [$this, 'menuNameExists'],
+        'source' => ['label'],
         'replace_pattern' => '[^a-z0-9-]+',
         'replace' => '-',
-      ),
+      ],
       // A menu's machine name cannot be changed.
       '#disabled' => !$menu->isNew() || $menu->isLocked(),
-    );
-    $form['description'] = array(
+    ];
+    $form['description'] = [
       '#type' => 'textfield',
       '#title' => t('Administrative summary'),
       '#maxlength' => 512,
       '#default_value' => $menu->getDescription(),
-    );
+    ];
 
-    $form['langcode'] = array(
+    $form['langcode'] = [
       '#type' => 'language_select',
       '#title' => t('Menu language'),
       '#languages' => LanguageInterface::STATE_ALL,
       '#default_value' => $menu->language()->getId(),
-    );
+    ];
 
     // Add menu links administration form for existing menus.
     if (!$menu->isNew() || $menu->isLocked()) {
@@ -142,7 +145,7 @@ class MenuForm extends EntityForm {
       // the parents of the form section.
       // @see self::submitOverviewForm()
       $form_state->set('menu_overview_form_parents', ['links']);
-      $form['links'] = array();
+      $form['links'] = [];
       $form['links'] = $this->buildOverviewForm($form['links'], $form_state);
     }
 
@@ -160,7 +163,7 @@ class MenuForm extends EntityForm {
    */
   public function menuNameExists($value) {
     // Check first to see if a menu with this ID exists.
-    if ($this->entityQueryFactory->get('menu')->condition('id', $value)->range(0, 1)->count()->execute()) {
+    if ($this->entityTypeManager->getStorage('menu')->getQuery()->condition('id', $value)->range(0, 1)->count()->execute()) {
       return TRUE;
     }
 
@@ -174,17 +177,17 @@ class MenuForm extends EntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     $menu = $this->entity;
     $status = $menu->save();
-    $edit_link = $this->entity->link($this->t('Edit'));
+    $edit_link = $this->entity->toLink($this->t('Edit'), 'edit-form')->toString();
     if ($status == SAVED_UPDATED) {
-      drupal_set_message($this->t('Menu %label has been updated.', array('%label' => $menu->label())));
-      $this->logger('menu')->notice('Menu %label has been updated.', array('%label' => $menu->label(), 'link' => $edit_link));
+      $this->messenger()->addStatus($this->t('Menu %label has been updated.', ['%label' => $menu->label()]));
+      $this->logger('menu')->notice('Menu %label has been updated.', ['%label' => $menu->label(), 'link' => $edit_link]);
     }
     else {
-      drupal_set_message($this->t('Menu %label has been added.', array('%label' => $menu->label())));
-      $this->logger('menu')->notice('Menu %label has been added.', array('%label' => $menu->label(), 'link' => $edit_link));
+      $this->messenger()->addStatus($this->t('Menu %label has been added.', ['%label' => $menu->label()]));
+      $this->logger('menu')->notice('Menu %label has been added.', ['%label' => $menu->label(), 'link' => $edit_link]);
     }
 
-    $form_state->setRedirectUrl($this->entity->urlInfo('edit-form'));
+    $form_state->setRedirectUrl($this->entity->toUrl('edit-form'));
   }
 
   /**
@@ -225,15 +228,15 @@ class MenuForm extends EntityForm {
 
     // We indicate that a menu administrator is running the menu access check.
     $this->getRequest()->attributes->set('_menu_admin', TRUE);
-    $manipulators = array(
-      array('callable' => 'menu.default_tree_manipulators:checkAccess'),
-      array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
-    );
+    $manipulators = [
+      ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+      ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+    ];
     $tree = $this->menuTree->transform($tree, $manipulators);
     $this->getRequest()->attributes->set('_menu_admin', FALSE);
 
     // Determine the delta; the number of weights to be made available.
-    $count = function(array $tree) {
+    $count = function (array $tree) {
       $sum = function ($carry, MenuLinkTreeElement $item) {
         return $carry + $item->count();
       };
@@ -241,26 +244,26 @@ class MenuForm extends EntityForm {
     };
     $delta = max($count($tree), 50);
 
-    $form['links'] = array(
+    $form['links'] = [
       '#type' => 'table',
       '#theme' => 'table__menu_overview',
-      '#header' => array(
+      '#header' => [
         $this->t('Menu link'),
-        array(
+        [
           'data' => $this->t('Enabled'),
-          'class' => array('checkbox'),
-        ),
+          'class' => ['checkbox'],
+        ],
         $this->t('Weight'),
-        array(
+        [
           'data' => $this->t('Operations'),
           'colspan' => 3,
-        ),
-      ),
-      '#attributes' => array(
+        ],
+      ],
+      '#attributes' => [
         'id' => 'menu-overview',
-      ),
-      '#tabledrag' => array(
-        array(
+      ],
+      '#tabledrag' => [
+        [
           'action' => 'match',
           'relationship' => 'parent',
           'group' => 'menu-parent',
@@ -268,24 +271,55 @@ class MenuForm extends EntityForm {
           'source' => 'menu-id',
           'hidden' => TRUE,
           'limit' => \Drupal::menuTree()->maxDepth() - 1,
-        ),
-        array(
+        ],
+        [
           'action' => 'order',
           'relationship' => 'sibling',
           'group' => 'menu-weight',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
     $form['links']['#empty'] = $this->t('There are no menu links yet. <a href=":url">Add link</a>.', [
       ':url' => $this->url('entity.menu.add_link_form', ['menu' => $this->entity->id()], [
-        'query' => ['destination' => $this->entity->url('edit-form')],
+        'query' => ['destination' => $this->entity->toUrl('edit-form')->toString()],
       ]),
     ]);
     $links = $this->buildOverviewTreeForm($tree, $delta);
+
+    // Get the menu links which have pending revisions, and disable the
+    // tabledrag if there are any.
+    $edited_ids = array_filter(array_map(function ($element) {
+      return is_array($element) && isset($element['#item']) && $element['#item']->link instanceof MenuLinkContent ? $element['#item']->link->getMetaData()['entity_id'] : NULL;
+    }, $links));
+    $pending_menu_link_ids = array_intersect($this->menuLinkContentStorage->getMenuLinkIdsWithPendingRevisions(), $edited_ids);
+    if ($pending_menu_link_ids) {
+      $form['help'] = [
+        '#type' => 'container',
+        'message' => [
+          '#markup' => $this->formatPlural(
+            count($pending_menu_link_ids),
+            '%capital_name contains 1 menu link with pending revisions. Manipulation of a menu tree having links with pending revisions is not supported, but you can re-enable manipulation by getting each menu link to a published state.',
+            '%capital_name contains @count menu links with pending revisions. Manipulation of a menu tree having links with pending revisions is not supported, but you can re-enable manipulation by getting each menu link to a published state.',
+            [
+              '%capital_name' => $this->entity->label(),
+            ]
+          ),
+        ],
+        '#attributes' => ['class' => ['messages', 'messages--warning']],
+        '#weight' => -10,
+      ];
+
+      unset($form['links']['#tabledrag']);
+      unset($form['links']['#header'][2]);
+    }
+
     foreach (Element::children($links) as $id) {
       if (isset($links[$id]['#item'])) {
         $element = $links[$id];
+
+        $is_pending_menu_link = isset($element['#item']->link->getMetaData()['entity_id'])
+          && in_array($element['#item']->link->getMetaData()['entity_id'], $pending_menu_link_ids);
 
         $form['links'][$id]['#item'] = $element['#item'];
 
@@ -293,25 +327,37 @@ class MenuForm extends EntityForm {
         $form['links'][$id]['#attributes'] = $element['#attributes'];
         $form['links'][$id]['#attributes']['class'][] = 'draggable';
 
+        if ($is_pending_menu_link) {
+          $form['links'][$id]['#attributes']['class'][] = 'color-warning';
+          $form['links'][$id]['#attributes']['class'][] = 'menu-link-content--pending-revision';
+        }
+
         // TableDrag: Sort the table row according to its existing/configured weight.
         $form['links'][$id]['#weight'] = $element['#item']->link->getWeight();
 
         // Add special classes to be used for tabledrag.js.
-        $element['parent']['#attributes']['class'] = array('menu-parent');
-        $element['weight']['#attributes']['class'] = array('menu-weight');
-        $element['id']['#attributes']['class'] = array('menu-id');
+        $element['parent']['#attributes']['class'] = ['menu-parent'];
+        $element['weight']['#attributes']['class'] = ['menu-weight'];
+        $element['id']['#attributes']['class'] = ['menu-id'];
 
-        $form['links'][$id]['title'] = array(
-          array(
+        $form['links'][$id]['title'] = [
+          [
             '#theme' => 'indentation',
             '#size' => $element['#item']->depth - 1,
-          ),
+          ],
           $element['title'],
-        );
+        ];
         $form['links'][$id]['enabled'] = $element['enabled'];
-        $form['links'][$id]['enabled']['#wrapper_attributes']['class'] = array('checkbox', 'menu-enabled');
+        $form['links'][$id]['enabled']['#wrapper_attributes']['class'] = ['checkbox', 'menu-enabled'];
 
-        $form['links'][$id]['weight'] = $element['weight'];
+        // Disallow changing the publishing status of a pending revision.
+        if ($is_pending_menu_link) {
+          $form['links'][$id]['enabled']['#access'] = FALSE;
+        }
+
+        if (!$pending_menu_link_ids) {
+          $form['links'][$id]['weight'] = $element['weight'];
+        }
 
         // Operations (dropbutton) column.
         $form['links'][$id]['operations'] = $element['operations'];
@@ -351,7 +397,7 @@ class MenuForm extends EntityForm {
       if ($link) {
         $id = 'menu_plugin_id:' . $link->getPluginId();
         $form[$id]['#item'] = $element;
-        $form[$id]['#attributes'] = $link->isEnabled() ? array('class' => array('menu-enabled')) : array('class' => array('menu-disabled'));
+        $form[$id]['#attributes'] = $link->isEnabled() ? ['class' => ['menu-enabled']] : ['class' => ['menu-disabled']];
         $form[$id]['title'] = Link::fromTextAndUrl($link->getTitle(), $link->getUrlObject())->toRenderable();
         if (!$link->isEnabled()) {
           $form[$id]['title']['#suffix'] = ' (' . $this->t('disabled') . ')';
@@ -365,32 +411,32 @@ class MenuForm extends EntityForm {
           $form[$id]['title']['#suffix'] = ' (' . $this->t('logged in users only') . ')';
         }
 
-        $form[$id]['enabled'] = array(
+        $form[$id]['enabled'] = [
           '#type' => 'checkbox',
-          '#title' => $this->t('Enable @title menu link', array('@title' => $link->getTitle())),
+          '#title' => $this->t('Enable @title menu link', ['@title' => $link->getTitle()]),
           '#title_display' => 'invisible',
           '#default_value' => $link->isEnabled(),
-        );
-        $form[$id]['weight'] = array(
+        ];
+        $form[$id]['weight'] = [
           '#type' => 'weight',
           '#delta' => $delta,
           '#default_value' => $link->getWeight(),
-          '#title' => $this->t('Weight for @title', array('@title' => $link->getTitle())),
+          '#title' => $this->t('Weight for @title', ['@title' => $link->getTitle()]),
           '#title_display' => 'invisible',
-        );
-        $form[$id]['id'] = array(
+        ];
+        $form[$id]['id'] = [
           '#type' => 'hidden',
           '#value' => $link->getPluginId(),
-        );
-        $form[$id]['parent'] = array(
+        ];
+        $form[$id]['parent'] = [
           '#type' => 'hidden',
           '#default_value' => $link->getParent(),
-        );
+        ];
         // Build a list of operations.
-        $operations = array();
-        $operations['edit'] = array(
+        $operations = [];
+        $operations['edit'] = [
           'title' => $this->t('Edit'),
-        );
+        ];
         // Allow for a custom edit link per plugin.
         $edit_route = $link->getEditRoute();
         if ($edit_route) {
@@ -400,16 +446,16 @@ class MenuForm extends EntityForm {
         }
         else {
           // Fall back to the standard edit link.
-          $operations['edit'] += array(
+          $operations['edit'] += [
             'url' => Url::fromRoute('menu_ui.link_edit', ['menu_link_plugin' => $link->getPluginId()]),
-          );
+          ];
         }
         // Links can either be reset or deleted, not both.
         if ($link->isResettable()) {
-          $operations['reset'] = array(
+          $operations['reset'] = [
             'title' => $this->t('Reset'),
             'url' => Url::fromRoute('menu_ui.link_reset', ['menu_link_plugin' => $link->getPluginId()]),
-          );
+          ];
         }
         elseif ($delete_link = $link->getDeleteRoute()) {
           $operations['delete']['url'] = $delete_link;
@@ -417,15 +463,15 @@ class MenuForm extends EntityForm {
           $operations['delete']['title'] = $this->t('Delete');
         }
         if ($link->isTranslatable()) {
-          $operations['translate'] = array(
+          $operations['translate'] = [
             'title' => $this->t('Translate'),
             'url' => $link->getTranslateRoute(),
-          );
+          ];
         }
-        $form[$id]['operations'] = array(
+        $form[$id]['operations'] = [
           '#type' => 'operations',
           '#links' => $operations,
-        );
+        ];
       }
 
       if ($element->subtree) {
@@ -461,19 +507,19 @@ class MenuForm extends EntityForm {
     // parent. To prevent this, save items in the form in the same order they
     // are sent, ensuring parents are saved first, then their children.
     // See https://www.drupal.org/node/181126#comment-632270.
-    $order = is_array($input) ? array_flip(array_keys($input)) : array();
+    $order = is_array($input) ? array_flip(array_keys($input)) : [];
     // Update our original form with the new order.
     $form = array_intersect_key(array_merge($order, $form), $form);
 
-    $fields = array('weight', 'parent', 'enabled');
+    $fields = ['weight', 'parent', 'enabled'];
     $form_links = $form['links'];
     foreach (Element::children($form_links) as $id) {
       if (isset($form_links[$id]['#item'])) {
         $element = $form_links[$id];
-        $updated_values = array();
+        $updated_values = [];
         // Update any fields that have changed in this menu item.
         foreach ($fields as $field) {
-          if ($element[$field]['#value'] != $element[$field]['#default_value']) {
+          if (isset($element[$field]['#value']) && $element[$field]['#value'] != $element[$field]['#default_value']) {
             $updated_values[$field] = $element[$field]['#value'];
           }
         }

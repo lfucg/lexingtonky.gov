@@ -3,7 +3,9 @@
 namespace Drupal\Core\Template;
 
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\PhpStorage\PhpStorageFactory;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\State\StateInterface;
 
 /**
  * A class that defines a Twig environment for Drupal.
@@ -16,11 +18,30 @@ use Drupal\Core\Render\Markup;
 class TwigEnvironment extends \Twig_Environment {
 
   /**
+   * Key name of the Twig cache prefix metadata key-value pair in State.
+   */
+  const CACHE_PREFIX_METADATA_KEY = 'twig_extension_hash_prefix';
+
+  /**
+   * The state service.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
+
+  /**
    * Static cache of template classes.
    *
    * @var array
    */
   protected $templateClasses;
+
+  /**
+   * The template cache filename prefix.
+   *
+   * @var string
+   */
+  protected $twigCachePrefix = '';
 
   /**
    * Constructs a TwigEnvironment object and stores cache and storage
@@ -32,37 +53,73 @@ class TwigEnvironment extends \Twig_Environment {
    *   The cache bin.
    * @param string $twig_extension_hash
    *   The Twig extension hash.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state service.
    * @param \Twig_LoaderInterface $loader
    *   The Twig loader or loader chain.
    * @param array $options
    *   The options for the Twig environment.
    */
-  public function __construct($root, CacheBackendInterface $cache, $twig_extension_hash, \Twig_LoaderInterface $loader = NULL, $options = array()) {
+  public function __construct($root, CacheBackendInterface $cache, $twig_extension_hash, StateInterface $state, \Twig_LoaderInterface $loader = NULL, array $options = []) {
+    $this->state = $state;
+
     // Ensure that twig.engine is loaded, given that it is needed to render a
     // template because functions like TwigExtension::escapeFilter() are called.
+    // @todo remove in Drupal 9.0.0 https://www.drupal.org/node/3011393.
     require_once $root . '/core/themes/engines/twig/twig.engine';
 
-    $this->templateClasses = array();
+    $this->templateClasses = [];
 
-    $options += array(
+    $options += [
       // @todo Ensure garbage collection of expired files.
       'cache' => TRUE,
       'debug' => FALSE,
       'auto_reload' => NULL,
-    );
+    ];
     // Ensure autoescaping is always on.
     $options['autoescape'] = 'html';
+    if ($options['cache'] === TRUE) {
+      $current = $state->get(static::CACHE_PREFIX_METADATA_KEY, ['twig_extension_hash' => '']);
+      if ($current['twig_extension_hash'] !== $twig_extension_hash || empty($current['twig_cache_prefix'])) {
+        $current = [
+          'twig_extension_hash' => $twig_extension_hash,
+          // Generate a new prefix which invalidates any existing cached files.
+          'twig_cache_prefix' => uniqid(),
 
+        ];
+        $state->set(static::CACHE_PREFIX_METADATA_KEY, $current);
+      }
+      $this->twigCachePrefix = $current['twig_cache_prefix'];
+
+      $options['cache'] = new TwigPhpStorageCache($cache, $this->twigCachePrefix);
+    }
+
+    $this->setLoader($loader);
+    parent::__construct($this->getLoader(), $options);
     $policy = new TwigSandboxPolicy();
     $sandbox = new \Twig_Extension_Sandbox($policy, TRUE);
     $this->addExtension($sandbox);
+  }
 
-    if ($options['cache'] === TRUE) {
-      $options['cache'] = new TwigPhpStorageCache($cache, $twig_extension_hash);
-    }
+  /**
+   * Invalidates all compiled Twig templates.
+   *
+   * @see \drupal_flush_all_caches
+   */
+  public function invalidate() {
+    PhpStorageFactory::get('twig')->deleteAll();
+    $this->templateClasses = [];
+    $this->state->delete(static::CACHE_PREFIX_METADATA_KEY);
+  }
 
-    $this->loader = $loader;
-    parent::__construct($this->loader, $options);
+  /**
+   * Get the cache prefixed used by \Drupal\Core\Template\TwigPhpStorageCache
+   *
+   * @return string
+   *   The file cache prefix, or empty string if the cache is disabled.
+   */
+  public function getTwigCachePrefix() {
+    return $this->twigCachePrefix;
   }
 
   /**
@@ -83,7 +140,7 @@ class TwigEnvironment extends \Twig_Environment {
     // node.html.twig for the output of each node and the same compiled class.
     $cache_index = $name . (NULL === $index ? '' : '_' . $index);
     if (!isset($this->templateClasses[$cache_index])) {
-      $this->templateClasses[$cache_index] = $this->templateClassPrefix . hash('sha256', $this->loader->getCacheKey($name)) . (NULL === $index ? '' : '_' . $index);
+      $this->templateClasses[$cache_index] = parent::getTemplateClass($name, $index);
     }
     return $this->templateClasses[$cache_index];
   }
@@ -110,10 +167,10 @@ class TwigEnvironment extends \Twig_Environment {
    *
    * @see \Drupal\Core\Template\Loader\StringLoader::exists()
    */
-  public function renderInline($template_string, array $context = array()) {
+  public function renderInline($template_string, array $context = []) {
     // Prefix all inline templates with a special comment.
     $template_string = '{# inline_template_start #}' . $template_string;
-    return Markup::create($this->loadTemplate($template_string, NULL)->render($context));
+    return Markup::create($this->createTemplate($template_string)->render($context));
   }
 
 }

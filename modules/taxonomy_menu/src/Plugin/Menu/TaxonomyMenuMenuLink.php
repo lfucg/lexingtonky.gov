@@ -25,7 +25,7 @@ class TaxonomyMenuMenuLink extends MenuLinkBase implements ContainerFactoryPlugi
    */
   protected $overrideAllowed = array(
     //'menu_name' => 1,
-    'parent' => 1,
+    //'parent' => 1,
     'weight' => 1,
     'expanded' => 1,
     'enabled' => 1,

@@ -2,6 +2,7 @@
 
 namespace Drupal\aggregator\Entity;
 
+use Drupal\aggregator\FeedStorageInterface;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -14,6 +15,13 @@ use Drupal\aggregator\FeedInterface;
  * @ContentEntityType(
  *   id = "aggregator_feed",
  *   label = @Translation("Aggregator feed"),
+ *   label_collection = @Translation("Aggregator feeds"),
+ *   label_singular = @Translation("aggregator feed"),
+ *   label_plural = @Translation("aggregator feeds"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count aggregator feed",
+ *     plural = "@count aggregator feeds",
+ *   ),
  *   handlers = {
  *     "storage" = "Drupal\aggregator\FeedStorage",
  *     "storage_schema" = "Drupal\aggregator\FeedStorageSchema",
@@ -88,11 +96,11 @@ class Feed extends ContentEntityBase implements FeedInterface {
    * {@inheritdoc}
    */
   public static function preCreate(EntityStorageInterface $storage, array &$values) {
-    $values += array(
+    $values += [
       'link' => '',
       'description' => '',
       'image' => '',
-    );
+    ];
   }
 
   /**
@@ -143,10 +151,10 @@ class Feed extends ContentEntityBase implements FeedInterface {
       ->setDescription(t('The name of the feed (or the name of the website providing the feed).'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 255)
-      ->setDisplayOptions('form', array(
+      ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -5,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->addConstraint('FeedTitle');
 
@@ -154,38 +162,39 @@ class Feed extends ContentEntityBase implements FeedInterface {
       ->setLabel(t('URL'))
       ->setDescription(t('The fully-qualified URL of the feed.'))
       ->setRequired(TRUE)
-      ->setDisplayOptions('form', array(
+      ->setDisplayOptions('form', [
         'type' => 'uri',
         'weight' => -3,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->addConstraint('FeedUrl');
 
-    $intervals = array(900, 1800, 3600, 7200, 10800, 21600, 32400, 43200, 64800, 86400, 172800, 259200, 604800, 1209600, 2419200);
-    $period = array_map(array(\Drupal::service('date.formatter'), 'formatInterval'), array_combine($intervals, $intervals));
-    $period[AGGREGATOR_CLEAR_NEVER] = t('Never');
+    $intervals = [900, 1800, 3600, 7200, 10800, 21600, 32400, 43200, 64800, 86400, 172800, 259200, 604800, 1209600, 2419200];
+    $period = array_map([\Drupal::service('date.formatter'), 'formatInterval'], array_combine($intervals, $intervals));
+    $period[FeedStorageInterface::CLEAR_NEVER] = t('Never');
 
     $fields['refresh'] = BaseFieldDefinition::create('list_integer')
       ->setLabel(t('Update interval'))
       ->setDescription(t('The length of time between feed updates. Requires a correctly configured cron maintenance task.'))
+      ->setDefaultValue(3600)
       ->setSetting('unsigned', TRUE)
       ->setRequired(TRUE)
       ->setSetting('allowed_values', $period)
-      ->setDisplayOptions('form', array(
+      ->setDisplayOptions('form', [
         'type' => 'options_select',
         'weight' => -2,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['checked'] = BaseFieldDefinition::create('timestamp')
-      ->setLabel(t('Checked'))
+      ->setLabel(t('Checked', [], ['context' => 'Examined']))
       ->setDescription(t('Last time feed was checked for new items, as Unix timestamp.'))
       ->setDefaultValue(0)
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'inline',
         'type' => 'timestamp_ago',
         'weight' => 1,
-      ))
+      ])
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['queued'] = BaseFieldDefinition::create('timestamp')
@@ -196,15 +205,15 @@ class Feed extends ContentEntityBase implements FeedInterface {
     $fields['link'] = BaseFieldDefinition::create('uri')
       ->setLabel(t('URL'))
       ->setDescription(t('The link of the feed.'))
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'inline',
         'weight' => 4,
-      ))
+      ])
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['description'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Description'))
-      ->setDescription(t("The parent website's description that comes from the @description element in the feed.", array('@description' => '<description>')));
+      ->setDescription(t("The parent website's description that comes from the @description element in the feed.", ['@description' => '<description>']));
 
     $fields['image'] = BaseFieldDefinition::create('uri')
       ->setLabel(t('Image'))

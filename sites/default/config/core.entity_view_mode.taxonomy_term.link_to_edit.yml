@@ -1,0 +1,10 @@
+uuid: 0e692937-4140-45d9-8a77-1dd915cb70f0
+langcode: en
+status: true
+dependencies:
+  module:
+    - taxonomy
+id: taxonomy_term.link_to_edit
+label: 'Link to Edit'
+targetEntityType: taxonomy_term
+cache: true

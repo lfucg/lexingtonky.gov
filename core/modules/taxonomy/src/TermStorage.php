@@ -2,8 +2,9 @@
 
 namespace Drupal\taxonomy;
 
-use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+use Drupal\Core\Entity\Sql\TableMappingInterface;
 
 /**
  * Defines a Controller class for taxonomy terms.
@@ -11,53 +12,53 @@ use Drupal\Core\Entity\EntityInterface;
 class TermStorage extends SqlContentEntityStorage implements TermStorageInterface {
 
   /**
-   * Array of loaded parents keyed by child term ID.
-   *
-   * @var array
-   */
-  protected $parents = array();
-
-  /**
-   * Array of all loaded term ancestry keyed by ancestor term ID.
-   *
-   * @var array
-   */
-  protected $parentsAll = array();
-
-  /**
-   * Array of child terms keyed by parent term ID.
-   *
-   * @var array
-   */
-  protected $children = array();
-
-  /**
    * Array of term parents keyed by vocabulary ID and child term ID.
    *
    * @var array
    */
-  protected $treeParents = array();
+  protected $treeParents = [];
 
   /**
    * Array of term ancestors keyed by vocabulary ID and parent term ID.
    *
    * @var array
    */
-  protected $treeChildren = array();
+  protected $treeChildren = [];
 
   /**
    * Array of terms in a tree keyed by vocabulary ID and term ID.
    *
    * @var array
    */
-  protected $treeTerms = array();
+  protected $treeTerms = [];
 
   /**
    * Array of loaded trees keyed by a cache id matching tree arguments.
    *
    * @var array
    */
-  protected $trees = array();
+  protected $trees = [];
+
+  /**
+   * Array of all loaded term ancestry keyed by ancestor term ID, keyed by term
+   * ID.
+   *
+   * @var \Drupal\taxonomy\TermInterface[][]
+   */
+  protected $ancestors;
+
+  /**
+   * The type of hierarchy allowed within a vocabulary.
+   *
+   * Possible values:
+   * - VocabularyInterface::HIERARCHY_DISABLED: No parents.
+   * - VocabularyInterface::HIERARCHY_SINGLE: Single parent.
+   * - VocabularyInterface::HIERARCHY_MULTIPLE: Multiple parents.
+   *
+   * @var int[]
+   *   An array of one the possible values above, keyed by vocabulary ID.
+   */
+  protected $vocabularyHierarchyType;
 
   /**
    * {@inheritdoc}
@@ -66,10 +67,10 @@ class TermStorage extends SqlContentEntityStorage implements TermStorageInterfac
    *   An array of values to set, keyed by property name. A value for the
    *   vocabulary ID ('vid') is required.
    */
-  public function create(array $values = array()) {
+  public function create(array $values = []) {
     // Save new terms with no parents by default.
     if (empty($values['parent'])) {
-      $values['parent'] = array(0);
+      $values['parent'] = [0];
     }
     $entity = parent::create($values);
     return $entity;
@@ -80,113 +81,137 @@ class TermStorage extends SqlContentEntityStorage implements TermStorageInterfac
    */
   public function resetCache(array $ids = NULL) {
     drupal_static_reset('taxonomy_term_count_nodes');
-    $this->parents = array();
-    $this->parentsAll = array();
-    $this->children = array();
-    $this->treeChildren = array();
-    $this->treeParents = array();
-    $this->treeTerms = array();
-    $this->trees = array();
+    $this->ancestors = [];
+    $this->treeChildren = [];
+    $this->treeParents = [];
+    $this->treeTerms = [];
+    $this->trees = [];
+    $this->vocabularyHierarchyType = [];
     parent::resetCache($ids);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function deleteTermHierarchy($tids) {
-    $this->database->delete('taxonomy_term_hierarchy')
-      ->condition('tid', $tids, 'IN')
-      ->execute();
-  }
+  public function deleteTermHierarchy($tids) {}
 
   /**
    * {@inheritdoc}
    */
-  public function updateTermHierarchy(EntityInterface $term) {
-    $query = $this->database->insert('taxonomy_term_hierarchy')
-      ->fields(array('tid', 'parent'));
-
-    foreach ($term->parent as $parent) {
-      $query->values(array(
-        'tid' => $term->id(),
-        'parent' => (int) $parent->target_id,
-      ));
-    }
-    $query->execute();
-  }
+  public function updateTermHierarchy(EntityInterface $term) {}
 
   /**
    * {@inheritdoc}
    */
   public function loadParents($tid) {
-    if (!isset($this->parents[$tid])) {
-      $parents = array();
-      $query = $this->database->select('taxonomy_term_field_data', 't');
-      $query->join('taxonomy_term_hierarchy', 'h', 'h.parent = t.tid');
-      $query->addField('t', 'tid');
-      $query->condition('h.tid', $tid);
-      $query->condition('t.default_langcode', 1);
-      $query->addTag('taxonomy_term_access');
-      $query->orderBy('t.weight');
-      $query->orderBy('t.name');
-      if ($ids = $query->execute()->fetchCol()) {
-        $parents = $this->loadMultiple($ids);
+    $terms = [];
+    /** @var \Drupal\taxonomy\TermInterface $term */
+    if ($tid && $term = $this->load($tid)) {
+      foreach ($this->getParents($term) as $id => $parent) {
+        // This method currently doesn't return the <root> parent.
+        // @see https://www.drupal.org/node/2019905
+        if (!empty($id)) {
+          $terms[$id] = $parent;
+        }
       }
-      $this->parents[$tid] = $parents;
     }
-    return $this->parents[$tid];
+
+    return $terms;
+  }
+
+  /**
+   * Returns a list of parents of this term.
+   *
+   * @return \Drupal\taxonomy\TermInterface[]
+   *   The parent taxonomy term entities keyed by term ID. If this term has a
+   *   <root> parent, that item is keyed with 0 and will have NULL as value.
+   *
+   * @internal
+   * @todo Refactor away when TreeInterface is introduced.
+   */
+  protected function getParents(TermInterface $term) {
+    $parents = $ids = [];
+    // Cannot use $this->get('parent')->referencedEntities() here because that
+    // strips out the '0' reference.
+    foreach ($term->get('parent') as $item) {
+      if ($item->target_id == 0) {
+        // The <root> parent.
+        $parents[0] = NULL;
+        continue;
+      }
+      $ids[] = $item->target_id;
+    }
+
+    // @todo Better way to do this? AND handle the NULL/0 parent?
+    // Querying the terms again so that the same access checks are run when
+    // getParents() is called as in Drupal version prior to 8.3.
+    $loaded_parents = [];
+
+    if ($ids) {
+      $query = \Drupal::entityQuery('taxonomy_term')
+        ->condition('tid', $ids, 'IN');
+
+      $loaded_parents = static::loadMultiple($query->execute());
+    }
+
+    return $parents + $loaded_parents;
   }
 
   /**
    * {@inheritdoc}
    */
   public function loadAllParents($tid) {
-    if (!isset($this->parentsAll[$tid])) {
-      $parents = array();
-      if ($term = $this->load($tid)) {
-        $parents[$term->id()] = $term;
-        $terms_to_search[] = $term->id();
+    /** @var \Drupal\taxonomy\TermInterface $term */
+    return (!empty($tid) && $term = $this->load($tid)) ? $this->getAncestors($term) : [];
+  }
 
-        while ($tid = array_shift($terms_to_search)) {
-          if ($new_parents = $this->loadParents($tid)) {
-            foreach ($new_parents as $new_parent) {
-              if (!isset($parents[$new_parent->id()])) {
-                $parents[$new_parent->id()] = $new_parent;
-                $terms_to_search[] = $new_parent->id();
-              }
-            }
+  /**
+   * Returns all ancestors of this term.
+   *
+   * @return \Drupal\taxonomy\TermInterface[]
+   *   A list of ancestor taxonomy term entities keyed by term ID.
+   *
+   * @internal
+   * @todo Refactor away when TreeInterface is introduced.
+   */
+  protected function getAncestors(TermInterface $term) {
+    if (!isset($this->ancestors[$term->id()])) {
+      $this->ancestors[$term->id()] = [$term->id() => $term];
+      $search[] = $term->id();
+
+      while ($tid = array_shift($search)) {
+        foreach ($this->getParents(static::load($tid)) as $id => $parent) {
+          if ($parent && !isset($this->ancestors[$term->id()][$id])) {
+            $this->ancestors[$term->id()][$id] = $parent;
+            $search[] = $id;
           }
         }
       }
-
-      $this->parentsAll[$tid] = $parents;
     }
-    return $this->parentsAll[$tid];
+    return $this->ancestors[$term->id()];
   }
 
   /**
    * {@inheritdoc}
    */
   public function loadChildren($tid, $vid = NULL) {
-    if (!isset($this->children[$tid])) {
-      $children = array();
-      $query = $this->database->select('taxonomy_term_field_data', 't');
-      $query->join('taxonomy_term_hierarchy', 'h', 'h.tid = t.tid');
-      $query->addField('t', 'tid');
-      $query->condition('h.parent', $tid);
-      if ($vid) {
-        $query->condition('t.vid', $vid);
-      }
-      $query->condition('t.default_langcode', 1);
-      $query->addTag('taxonomy_term_access');
-      $query->orderBy('t.weight');
-      $query->orderBy('t.name');
-      if ($ids = $query->execute()->fetchCol()) {
-        $children = $this->loadMultiple($ids);
-      }
-      $this->children[$tid] = $children;
-    }
-    return $this->children[$tid];
+    /** @var \Drupal\taxonomy\TermInterface $term */
+    return (!empty($tid) && $term = $this->load($tid)) ? $this->getChildren($term) : [];
+  }
+
+  /**
+   * Returns all children terms of this term.
+   *
+   * @return \Drupal\taxonomy\TermInterface[]
+   *   A list of children taxonomy term entities keyed by term ID.
+   *
+   * @internal
+   * @todo Refactor away when TreeInterface is introduced.
+   */
+  public function getChildren(TermInterface $term) {
+    $query = \Drupal::entityQuery('taxonomy_term')
+      ->condition('parent', $term->id());
+    return static::loadMultiple($query->execute());
   }
 
   /**
@@ -198,15 +223,15 @@ class TermStorage extends SqlContentEntityStorage implements TermStorageInterfac
       // We cache trees, so it's not CPU-intensive to call on a term and its
       // children, too.
       if (!isset($this->treeChildren[$vid])) {
-        $this->treeChildren[$vid] = array();
-        $this->treeParents[$vid] = array();
-        $this->treeTerms[$vid] = array();
-        $query = $this->database->select('taxonomy_term_field_data', 't');
-        $query->join('taxonomy_term_hierarchy', 'h', 'h.tid = t.tid');
+        $this->treeChildren[$vid] = [];
+        $this->treeParents[$vid] = [];
+        $this->treeTerms[$vid] = [];
+        $query = $this->database->select($this->getDataTable(), 't');
+        $query->join('taxonomy_term__parent', 'p', 't.tid = p.entity_id');
+        $query->addExpression('parent_target_id', 'parent');
         $result = $query
           ->addTag('taxonomy_term_access')
           ->fields('t')
-          ->fields('h', array('parent'))
           ->condition('t.vid', $vid)
           ->condition('t.default_langcode', 1)
           ->orderBy('t.weight')
@@ -221,17 +246,17 @@ class TermStorage extends SqlContentEntityStorage implements TermStorageInterfac
 
       // Load full entities, if necessary. The entity controller statically
       // caches the results.
-      $term_entities = array();
+      $term_entities = [];
       if ($load_entities) {
         $term_entities = $this->loadMultiple(array_keys($this->treeTerms[$vid]));
       }
 
       $max_depth = (!isset($max_depth)) ? count($this->treeChildren[$vid]) : $max_depth;
-      $tree = array();
+      $tree = [];
 
       // Keeps track of the parents we have to process, the last entry is used
       // for the next processing step.
-      $process_parents = array();
+      $process_parents = [];
       $process_parents[] = $parent;
 
       // Loops over the parent terms and adds its children to the tree array.
@@ -254,7 +279,9 @@ class TermStorage extends SqlContentEntityStorage implements TermStorageInterfac
               $term = clone $term;
             }
             $term->depth = $depth;
-            unset($term->parent);
+            if (!$load_entities) {
+              unset($term->parent);
+            }
             $tid = $load_entities ? $term->id() : $term->tid;
             $term->parents = $this->treeParents[$vid][$tid];
             $tree[] = $term;
@@ -293,7 +320,7 @@ class TermStorage extends SqlContentEntityStorage implements TermStorageInterfac
   public function nodeCount($vid) {
     $query = $this->database->select('taxonomy_index', 'ti');
     $query->addExpression('COUNT(DISTINCT ti.nid)');
-    $query->leftJoin('taxonomy_term_data', 'td', 'ti.tid = td.tid');
+    $query->leftJoin($this->getBaseTable(), 'td', 'ti.tid = td.tid');
     $query->condition('td.vid', $vid);
     $query->addTag('vocabulary_node_count');
     return $query->execute()->fetchField();
@@ -303,8 +330,8 @@ class TermStorage extends SqlContentEntityStorage implements TermStorageInterfac
    * {@inheritdoc}
    */
   public function resetWeights($vid) {
-    $this->database->update('taxonomy_term_field_data')
-      ->fields(array('weight' => 0))
+    $this->database->update($this->getDataTable())
+      ->fields(['weight' => 0])
       ->condition('vid', $vid)
       ->execute();
   }
@@ -312,10 +339,10 @@ class TermStorage extends SqlContentEntityStorage implements TermStorageInterfac
   /**
    * {@inheritdoc}
    */
-  public function getNodeTerms(array $nids, array $vocabs = array(), $langcode = NULL) {
-    $query = db_select('taxonomy_term_field_data', 'td');
+  public function getNodeTerms(array $nids, array $vocabs = [], $langcode = NULL) {
+    $query = $this->database->select($this->getDataTable(), 'td');
     $query->innerJoin('taxonomy_index', 'tn', 'td.tid = tn.tid');
-    $query->fields('td', array('tid'));
+    $query->fields('td', ['tid']);
     $query->addField('tn', 'nid', 'node_nid');
     $query->orderby('td.weight');
     $query->orderby('td.name');
@@ -328,15 +355,15 @@ class TermStorage extends SqlContentEntityStorage implements TermStorageInterfac
       $query->condition('td.langcode', $langcode);
     }
 
-    $results = array();
-    $all_tids = array();
+    $results = [];
+    $all_tids = [];
     foreach ($query->execute() as $term_record) {
       $results[$term_record->node_nid][] = $term_record->tid;
       $all_tids[] = $term_record->tid;
     }
 
     $all_terms = $this->loadMultiple($all_tids);
-    $terms = array();
+    $terms = [];
     foreach ($results as $nid => $tids) {
       foreach ($tids as $tid) {
         $terms[$nid][$tid] = $all_terms[$tid];
@@ -348,10 +375,79 @@ class TermStorage extends SqlContentEntityStorage implements TermStorageInterfac
   /**
    * {@inheritdoc}
    */
+  public function getTermIdsWithPendingRevisions() {
+    $table_mapping = $this->getTableMapping();
+    $id_field = $table_mapping->getColumnNames($this->entityType->getKey('id'))['value'];
+    $revision_field = $table_mapping->getColumnNames($this->entityType->getKey('revision'))['value'];
+    $rta_field = $table_mapping->getColumnNames($this->entityType->getKey('revision_translation_affected'))['value'];
+    $langcode_field = $table_mapping->getColumnNames($this->entityType->getKey('langcode'))['value'];
+    $revision_default_field = $table_mapping->getColumnNames($this->entityType->getRevisionMetadataKey('revision_default'))['value'];
+
+    $query = $this->database->select($this->getRevisionDataTable(), 'tfr');
+    $query->fields('tfr', [$id_field]);
+    $query->addExpression("MAX(tfr.$revision_field)", $revision_field);
+
+    $query->join($this->getRevisionTable(), 'tr', "tfr.$revision_field = tr.$revision_field AND tr.$revision_default_field = 0");
+
+    $inner_select = $this->database->select($this->getRevisionDataTable(), 't');
+    $inner_select->condition("t.$rta_field", '1');
+    $inner_select->fields('t', [$id_field, $langcode_field]);
+    $inner_select->addExpression("MAX(t.$revision_field)", $revision_field);
+    $inner_select
+      ->groupBy("t.$id_field")
+      ->groupBy("t.$langcode_field");
+
+    $query->join($inner_select, 'mr', "tfr.$revision_field = mr.$revision_field AND tfr.$langcode_field = mr.$langcode_field");
+
+    $query->groupBy("tfr.$id_field");
+
+    return $query->execute()->fetchAllKeyed(1, 0);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getVocabularyHierarchyType($vid) {
+    // Return early if we already computed this value.
+    if (isset($this->vocabularyHierarchyType[$vid])) {
+      return $this->vocabularyHierarchyType[$vid];
+    }
+
+    $parent_field_storage = $this->entityFieldManager->getFieldStorageDefinitions($this->entityTypeId)['parent'];
+    $table_mapping = $this->getTableMapping();
+
+    $target_id_column = $table_mapping->getFieldColumnName($parent_field_storage, 'target_id');
+    $delta_column = $table_mapping->getFieldColumnName($parent_field_storage, TableMappingInterface::DELTA);
+
+    $query = $this->database->select($table_mapping->getFieldTableName('parent'), 'p');
+    $query->addExpression("MAX($target_id_column)", 'max_parent_id');
+    $query->addExpression("MAX($delta_column)", 'max_delta');
+    $query->condition('bundle', $vid);
+
+    $result = $query->execute()->fetchAll();
+
+    // If all the terms have the same parent, the parent can only be root (0).
+    if ((int) $result[0]->max_parent_id === 0) {
+      $this->vocabularyHierarchyType[$vid] = VocabularyInterface::HIERARCHY_DISABLED;
+    }
+    // If no term has a delta higher than 0, no term has multiple parents.
+    elseif ((int) $result[0]->max_delta === 0) {
+      $this->vocabularyHierarchyType[$vid] = VocabularyInterface::HIERARCHY_SINGLE;
+    }
+    else {
+      $this->vocabularyHierarchyType[$vid] = VocabularyInterface::HIERARCHY_MULTIPLE;
+    }
+
+    return $this->vocabularyHierarchyType[$vid];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function __sleep() {
     $vars = parent::__sleep();
     // Do not serialize static cache.
-    unset($vars['parents'], $vars['parentsAll'], $vars['children'], $vars['treeChildren'], $vars['treeParents'], $vars['treeTerms'], $vars['trees']);
+    unset($vars['ancestors'], $vars['treeChildren'], $vars['treeParents'], $vars['treeTerms'], $vars['trees'], $vars['vocabularyHierarchyType']);
     return $vars;
   }
 
@@ -361,13 +457,12 @@ class TermStorage extends SqlContentEntityStorage implements TermStorageInterfac
   public function __wakeup() {
     parent::__wakeup();
     // Initialize static caches.
-    $this->parents = array();
-    $this->parentsAll = array();
-    $this->children = array();
-    $this->treeChildren = array();
-    $this->treeParents = array();
-    $this->treeTerms = array();
-    $this->trees = array();
+    $this->ancestors = [];
+    $this->treeChildren = [];
+    $this->treeParents = [];
+    $this->treeTerms = [];
+    $this->trees = [];
+    $this->vocabularyHierarchyType = [];
   }
 
 }

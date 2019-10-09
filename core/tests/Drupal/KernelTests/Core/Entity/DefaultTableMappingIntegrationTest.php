@@ -4,6 +4,7 @@ namespace Drupal\KernelTests\Core\Entity;
 
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Tests\system\Functional\Entity\Traits\EntityDefinitionTestTrait;
 
 /**
  * Tests the default table mapping class for content entities stored in SQL.
@@ -16,10 +17,12 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
  */
 class DefaultTableMappingIntegrationTest extends EntityKernelTestBase {
 
+  use EntityDefinitionTestTrait;
+
   /**
    * The table mapping for the tested entity type.
    *
-   * @var \Drupal\Core\Entity\Sql\TableMappingInterface
+   * @var \Drupal\Core\Entity\Sql\DefaultTableMapping
    */
   protected $tableMapping;
 
@@ -39,11 +42,17 @@ class DefaultTableMappingIntegrationTest extends EntityKernelTestBase {
       ->setName('multivalued_base_field')
       ->setTargetEntityTypeId('entity_test_mulrev')
       ->setTargetBundle('entity_test_mulrev')
-      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      // Base fields are non-translatable and non-revisionable by default, but
+      // we explicitly set these values here for extra clarity.
+      ->setTranslatable(FALSE)
+      ->setRevisionable(FALSE);
     $this->state->set('entity_test_mulrev.additional_base_field_definitions', $definitions);
 
-    $this->entityManager->clearCachedDefinitions();
-    $this->tableMapping = $this->entityManager->getStorage('entity_test_mulrev')->getTableMapping();
+    $this->tableMapping = $this->entityTypeManager->getStorage('entity_test_mulrev')->getTableMapping();
+
+    // Ensure that the tables for the new field are created.
+    $this->applyEntityUpdates('entity_test_mulrev');
   }
 
   /**
@@ -66,6 +75,35 @@ class DefaultTableMappingIntegrationTest extends EntityKernelTestBase {
     // in a dedicated table.
     $expected = 'entity_test_mulrev__multivalued_base_field';
     $this->assertEquals($this->tableMapping->getFieldTableName('multivalued_base_field'), $expected);
+  }
+
+  /**
+   * Tests DefaultTableMapping::getTableNames().
+   *
+   * @covers ::getTableNames
+   */
+  public function testGetTableNames() {
+    $storage_definitions = $this->entityManager->getFieldStorageDefinitions('entity_test_mulrev');
+    $dedicated_data_table = $this->tableMapping->getDedicatedDataTableName($storage_definitions['multivalued_base_field']);
+    $dedicated_revision_table = $this->tableMapping->getDedicatedRevisionTableName($storage_definitions['multivalued_base_field']);
+
+    // Check that both the data and the revision tables exist for a multi-valued
+    // base field.
+    $database_schema = \Drupal::database()->schema();
+    $this->assertTrue($database_schema->tableExists($dedicated_data_table));
+    $this->assertTrue($database_schema->tableExists($dedicated_revision_table));
+
+    // Check that the table mapping contains both the data and the revision
+    // tables exist for a multi-valued base field.
+    $expected = [
+      'entity_test_mulrev',
+      'entity_test_mulrev_property_data',
+      'entity_test_mulrev_revision',
+      'entity_test_mulrev_property_revision',
+      $dedicated_data_table,
+      $dedicated_revision_table,
+    ];
+    $this->assertEquals($expected, $this->tableMapping->getTableNames());
   }
 
 }

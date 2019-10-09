@@ -14,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Builds a confirmation form for enabling modules with dependencies.
+ *
+ * @internal
  */
 class ModulesListConfirmForm extends ConfirmFormBase {
 
@@ -36,7 +38,7 @@ class ModulesListConfirmForm extends ConfirmFormBase {
    *
    * @var array
    */
-  protected $modules = array();
+  protected $modules = [];
 
   /**
    * The module installer.
@@ -120,10 +122,10 @@ class ModulesListConfirmForm extends ConfirmFormBase {
     }
 
     $items = $this->buildMessageList();
-    $form['message'] = array(
+    $form['message'] = [
       '#theme' => 'item_list',
       '#items' => $items,
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
   }
@@ -172,32 +174,30 @@ class ModulesListConfirmForm extends ConfirmFormBase {
       }
       catch (PreExistingConfigException $e) {
         $config_objects = $e->flattenConfigObjects($e->getConfigObjects());
-        drupal_set_message(
+        $this->messenger()->addError(
           $this->formatPlural(
             count($config_objects),
             'Unable to install @extension, %config_names already exists in active configuration.',
             'Unable to install @extension, %config_names already exist in active configuration.',
-            array(
+            [
               '%config_names' => implode(', ', $config_objects),
-              '@extension' => $this->modules['install'][$e->getExtension()]
-            )),
-          'error'
+              '@extension' => $this->modules['install'][$e->getExtension()],
+            ])
         );
         return;
       }
       catch (UnmetDependenciesException $e) {
-        drupal_set_message(
-          $e->getTranslatedMessage($this->getStringTranslation(), $this->modules['install'][$e->getExtension()]),
-          'error'
+        $this->messenger()->addError(
+          $e->getTranslatedMessage($this->getStringTranslation(), $this->modules['install'][$e->getExtension()])
         );
         return;
       }
 
       $module_names = array_values($this->modules['install']);
-      drupal_set_message($this->formatPlural(count($module_names), 'Module %name has been enabled.', '@count modules have been enabled: %names.', array(
+      $this->messenger()->addStatus($this->formatPlural(count($module_names), 'Module %name has been enabled.', '@count modules have been enabled: %names.', [
         '%name' => $module_names[0],
         '%names' => implode(', ', $module_names),
-      )));
+      ]));
     }
 
     $form_state->setRedirectUrl($this->getCancelUrl());

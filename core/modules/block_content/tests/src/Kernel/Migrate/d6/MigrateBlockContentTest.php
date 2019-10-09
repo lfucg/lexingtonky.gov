@@ -22,8 +22,8 @@ class MigrateBlockContentTest extends MigrateDrupal6TestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->installConfig(['block_content']);
     $this->installEntitySchema('block_content');
+    $this->installConfig(['block_content']);
 
     $this->executeMigrations([
       'd6_filter_format',
@@ -37,7 +37,7 @@ class MigrateBlockContentTest extends MigrateDrupal6TestBase {
    * Tests the Drupal 6 custom block to Drupal 8 migration.
    */
   public function testBlockMigration() {
-    /** @var BlockContent $block */
+    /** @var \Drupal\block_content\Entity\BlockContent $block */
     $block = BlockContent::load(1);
     $this->assertIdentical('My block 1', $block->label());
     $this->assertTrue(REQUEST_TIME <= $block->getChangedTime() && $block->getChangedTime() <= time());

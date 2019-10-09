@@ -17,13 +17,14 @@ class ConfigSnapshotTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('config_test', 'system');
+  public static $modules = ['config_test', 'system'];
 
   /**
    * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
+    $this->installConfig(['system']);
     // Update the config snapshot. This allows the parent::setUp() to write
     // configuration files.
     \Drupal::service('config.manager')->createSnapshot(\Drupal::service('config.storage'), \Drupal::service('config.storage.snapshot'));
@@ -33,24 +34,23 @@ class ConfigSnapshotTest extends KernelTestBase {
   /**
    * Tests config snapshot creation and updating.
    */
-  function testSnapshot() {
+  public function testSnapshot() {
     $active = $this->container->get('config.storage');
     $sync = $this->container->get('config.storage.sync');
     $snapshot = $this->container->get('config.storage.snapshot');
-    $config_manager = $this->container->get('config.manager');
     $config_name = 'config_test.system';
     $config_key = 'foo';
     $new_data = 'foobar';
 
-    $active_snapshot_comparer = new StorageComparer($active, $snapshot, $config_manager);
-    $sync_snapshot_comparer = new StorageComparer($sync, $snapshot, $config_manager);
+    $active_snapshot_comparer = new StorageComparer($active, $snapshot);
+    $sync_snapshot_comparer = new StorageComparer($sync, $snapshot);
 
     // Verify that we have an initial snapshot that matches the active
     // configuration. This has to be true as no config should be installed.
     $this->assertFalse($active_snapshot_comparer->createChangelist()->hasChanges());
 
     // Install the default config.
-    $this->installConfig(array('config_test'));
+    $this->installConfig(['config_test']);
     // Although we have imported config this has not affected the snapshot.
     $this->assertTrue($active_snapshot_comparer->reset()->hasChanges());
 

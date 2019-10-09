@@ -1,7 +1,7 @@
 @media print {
   * {
-    background-color: transparent !important;
     color: #000 !important; /* Black prints faster: h5bp.com/s */
+    background-color: transparent !important;
     box-shadow: none !important;
     text-shadow: none !important;
   }
@@ -39,10 +39,11 @@
   }
   a,
   .link {
-    color: #000;
     text-decoration: underline;
+    color: #000;
   }
-  .button, .button--primary {
+  .button,
+  .button--primary {
     background: none !important;
   }
   .messages {
@@ -67,10 +68,20 @@
     display: none;
   }
   .js .dropbutton-multiple .dropbutton-widget {
-    background: none;
     border-radius: 4px;
+    background: none;
   }
-  input.form-autocomplete, input.form-text, input.form-tel, input.form-email, input.form-url, input.form-search, input.form-number, input.form-color, input.form-file, textarea.form-textarea, select.form-select {
+  input.form-autocomplete,
+  input.form-text,
+  input.form-tel,
+  input.form-email,
+  input.form-url,
+  input.form-search,
+  input.form-number,
+  input.form-color,
+  input.form-file,
+  textarea.form-textarea,
+  select.form-select {
     border-width: 1px;
   }
 }

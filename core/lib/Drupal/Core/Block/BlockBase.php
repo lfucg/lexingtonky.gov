@@ -2,16 +2,16 @@
 
 namespace Drupal\Core\Block;
 
-use Drupal\block\BlockInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Plugin\ContextAwarePluginAssignmentTrait;
 use Drupal\Core\Plugin\ContextAwarePluginBase;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Plugin\PluginWithFormsInterface;
 use Drupal\Core\Plugin\PluginWithFormsTrait;
+use Drupal\Core\Render\PreviewFallbackInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Component\Transliteration\TransliterationInterface;
 
@@ -24,9 +24,10 @@ use Drupal\Component\Transliteration\TransliterationInterface;
  *
  * @ingroup block_api
  */
-abstract class BlockBase extends ContextAwarePluginBase implements BlockPluginInterface, PluginWithFormsInterface {
+abstract class BlockBase extends ContextAwarePluginBase implements BlockPluginInterface, PluginWithFormsInterface, PreviewFallbackInterface {
 
   use ContextAwarePluginAssignmentTrait;
+  use MessengerTrait;
   use PluginWithFormsTrait;
 
   /**
@@ -83,19 +84,19 @@ abstract class BlockBase extends ContextAwarePluginBase implements BlockPluginIn
    *   An associative array with the default configuration.
    */
   protected function baseConfigurationDefaults() {
-    return array(
+    return [
       'id' => $this->getPluginId(),
       'label' => '',
       'provider' => $this->pluginDefinition['provider'],
-      'label_display' => BlockInterface::BLOCK_LABEL_VISIBLE,
-    );
+      'label_display' => static::BLOCK_LABEL_VISIBLE,
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array();
+    return [];
   }
 
   /**
@@ -109,7 +110,7 @@ abstract class BlockBase extends ContextAwarePluginBase implements BlockPluginIn
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return array();
+    return [];
   }
 
   /**
@@ -152,29 +153,29 @@ abstract class BlockBase extends ContextAwarePluginBase implements BlockPluginIn
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $definition = $this->getPluginDefinition();
-    $form['provider'] = array(
+    $form['provider'] = [
       '#type' => 'value',
       '#value' => $definition['provider'],
-    );
+    ];
 
-    $form['admin_label'] = array(
+    $form['admin_label'] = [
       '#type' => 'item',
       '#title' => $this->t('Block description'),
       '#plain_text' => $definition['admin_label'],
-    );
-    $form['label'] = array(
+    ];
+    $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Title'),
       '#maxlength' => 255,
       '#default_value' => $this->label(),
       '#required' => TRUE,
-    );
-    $form['label_display'] = array(
+    ];
+    $form['label_display'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Display title'),
-      '#default_value' => ($this->configuration['label_display'] === BlockInterface::BLOCK_LABEL_VISIBLE),
-      '#return_value' => BlockInterface::BLOCK_LABEL_VISIBLE,
-    );
+      '#default_value' => ($this->configuration['label_display'] === static::BLOCK_LABEL_VISIBLE),
+      '#return_value' => static::BLOCK_LABEL_VISIBLE,
+    ];
 
     // Add context mapping UI form elements.
     $contexts = $form_state->getTemporaryValue('gathered_contexts') ?: [];
@@ -188,7 +189,7 @@ abstract class BlockBase extends ContextAwarePluginBase implements BlockPluginIn
    * {@inheritdoc}
    */
   public function blockForm($form, FormStateInterface $form_state) {
-    return array();
+    return [];
   }
 
   /**
@@ -245,11 +246,18 @@ abstract class BlockBase extends ContextAwarePluginBase implements BlockPluginIn
     //   \Drupal\system\MachineNameController::transliterate(), so it might make
     //   sense to provide a common service for the two.
     $transliterated = $this->transliteration()->transliterate($admin_label, LanguageInterface::LANGCODE_DEFAULT, '_');
-    $transliterated = Unicode::strtolower($transliterated);
+    $transliterated = mb_strtolower($transliterated);
 
     $transliterated = preg_replace('@[^a-z0-9_.]+@', '', $transliterated);
 
     return $transliterated;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPreviewFallbackString() {
+    return $this->t('"@block" block', ['@block' => $this->label()]);
   }
 
   /**

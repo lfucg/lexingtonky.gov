@@ -33,6 +33,10 @@
       // Prevent settings being overridden by ajax callbacks by cloning it.
       localSettings = jQuery.extend(true, {}, settings.autologout);
 
+      // Add timer element to prevent detach of all behaviours.
+      var timerMarkup = $('<div id="timer"></div>').hide();
+      $('body').append(timerMarkup);
+
       if (localSettings.refresh_only) {
         // On pages where user shouldn't be logged out, don't set the timer.
         t = setTimeout(keepAlive, localSettings.timeout);
@@ -208,6 +212,8 @@
 
           callback(response[1].settings.time);
 
+          response[0].data = '<div id="timer" style="display: none;">' + response[0].data + '</div>';
+
           // Let Drupal.ajax handle the JSON response.
           return ajax.success(response, status);
         };
@@ -257,6 +263,9 @@
 
           t = setTimeout(timerfunction, localSettings.timeout);
           activity = false;
+
+          // Wrap response data in timer markup to prevent detach of all behaviors.
+          response[0].data = '<div id="timer" style="display: none;">' + response[0].data + '</div>';
 
           // Let Drupal.ajax handle the JSON response.
           return ajax.success(response, status);

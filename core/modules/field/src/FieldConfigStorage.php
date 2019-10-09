@@ -2,19 +2,20 @@
 
 namespace Drupal\field;
 
+use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\DeletedFieldsRepositoryInterface;
 use Drupal\Core\Field\FieldConfigStorageBase;
 use Drupal\Core\Field\FieldTypePluginManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Component\Uuid\UuidInterface;
-use Drupal\Core\State\StateInterface;
 
 /**
- * Controller class for fields.
+ * Storage handler for field config.
  */
 class FieldConfigStorage extends FieldConfigStorageBase {
 
@@ -26,18 +27,18 @@ class FieldConfigStorage extends FieldConfigStorageBase {
   protected $entityManager;
 
   /**
-   * The state keyvalue collection.
-   *
-   * @var \Drupal\Core\State\StateInterface
-   */
-  protected $state;
-
-  /**
    * The field type plugin manager.
    *
    * @var \Drupal\Core\Field\FieldTypePluginManagerInterface
    */
   protected $fieldTypeManager;
+
+  /**
+   * The deleted fields repository.
+   *
+   * @var \Drupal\Core\Field\DeletedFieldsRepositoryInterface
+   */
+  protected $deletedFieldsRepository;
 
   /**
    * Constructs a FieldConfigStorage object.
@@ -52,16 +53,18 @@ class FieldConfigStorage extends FieldConfigStorageBase {
    *   The language manager.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
-   * @param \Drupal\Core\State\StateInterface $state
-   *   The state key value store.
    * @param \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager
    *   The field type plugin manager.
+   * @param \Drupal\Core\Field\DeletedFieldsRepositoryInterface $deleted_fields_repository
+   *   The deleted fields repository.
+   * @param \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface $memory_cache
+   *   The memory cache.
    */
-  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, EntityManagerInterface $entity_manager, StateInterface $state, FieldTypePluginManagerInterface $field_type_manager) {
-    parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager);
+  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, EntityManagerInterface $entity_manager, FieldTypePluginManagerInterface $field_type_manager, DeletedFieldsRepositoryInterface $deleted_fields_repository, MemoryCacheInterface $memory_cache) {
+    parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager, $memory_cache);
     $this->entityManager = $entity_manager;
-    $this->state = $state;
     $this->fieldTypeManager = $field_type_manager;
+    $this->deletedFieldsRepository = $deleted_fields_repository;
   }
 
   /**
@@ -74,8 +77,9 @@ class FieldConfigStorage extends FieldConfigStorageBase {
       $container->get('uuid'),
       $container->get('language_manager'),
       $container->get('entity.manager'),
-      $container->get('state'),
-      $container->get('plugin.manager.field.field_type')
+      $container->get('plugin.manager.field.field_type'),
+      $container->get('entity_field.deleted_fields_repository'),
+      $container->get('entity.memory_cache')
     );
   }
 
@@ -95,21 +99,21 @@ class FieldConfigStorage extends FieldConfigStorageBase {
   /**
    * {@inheritdoc}
    */
-  public function loadByProperties(array $conditions = array()) {
+  public function loadByProperties(array $conditions = []) {
     // Include deleted fields if specified in the $conditions parameters.
     $include_deleted = isset($conditions['include_deleted']) ? $conditions['include_deleted'] : FALSE;
     unset($conditions['include_deleted']);
 
-    $fields = array();
+    $fields = [];
 
     // Get fields stored in configuration. If we are explicitly looking for
     // deleted fields only, this can be skipped, because they will be
-    // retrieved from state below.
+    // retrieved from the deleted fields repository below.
     if (empty($conditions['deleted'])) {
       if (isset($conditions['entity_type']) && isset($conditions['bundle']) && isset($conditions['field_name'])) {
         // Optimize for the most frequent case where we do have a specific ID.
         $id = $conditions['entity_type'] . '.' . $conditions['bundle'] . '.' . $conditions['field_name'];
-        $fields = $this->loadMultiple(array($id));
+        $fields = $this->loadMultiple([$id]);
       }
       else {
         // No specific ID, we need to examine all existing fields.
@@ -117,21 +121,18 @@ class FieldConfigStorage extends FieldConfigStorageBase {
       }
     }
 
-    // Merge deleted fields (stored in state) if needed.
+    // Merge deleted fields from the deleted fields repository if needed.
     if ($include_deleted || !empty($conditions['deleted'])) {
-      $deleted_fields = $this->state->get('field.field.deleted') ?: array();
-      $deleted_storages = $this->state->get('field.storage.deleted') ?: array();
-      foreach ($deleted_fields as $id => $config) {
-        // If the field storage itself is deleted, inject it directly in the field.
-        if (isset($deleted_storages[$config['field_storage_uuid']])) {
-          $config['field_storage'] = $this->entityManager->getStorage('field_storage_config')->create($deleted_storages[$config['field_storage_uuid']]);
+      $deleted_field_definitions = $this->deletedFieldsRepository->getFieldDefinitions();
+      foreach ($deleted_field_definitions as $id => $field_definition) {
+        if ($field_definition instanceof FieldConfigInterface) {
+          $fields[$id] = $field_definition;
         }
-        $fields[$id] = $this->create($config);
       }
     }
 
     // Collect matching fields.
-    $matching_fields = array();
+    $matching_fields = [];
     foreach ($fields as $field) {
       // Some conditions are checked against the field storage.
       $field_storage = $field->getFieldStorageDefinition();

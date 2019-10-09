@@ -2,6 +2,8 @@
 
 namespace Drupal\serialization\Normalizer;
 
+use Drupal\Core\TypedData\ListInterface;
+
 /**
  * Converts list objects to arrays.
  *
@@ -14,17 +16,15 @@ namespace Drupal\serialization\Normalizer;
 class ListNormalizer extends NormalizerBase {
 
   /**
-   * The interface or class that this Normalizer supports.
-   *
-   * @var string
+   * {@inheritdoc}
    */
-  protected $supportedInterfaceOrClass = 'Drupal\Core\TypedData\ListInterface';
+  protected $supportedInterfaceOrClass = ListInterface::class;
 
   /**
    * {@inheritdoc}
    */
-  public function normalize($object, $format = NULL, array $context = array()) {
-    $attributes = array();
+  public function normalize($object, $format = NULL, array $context = []) {
+    $attributes = [];
     foreach ($object as $fieldItem) {
       $attributes[] = $this->serializer->normalize($fieldItem, $format, $context);
     }

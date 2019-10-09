@@ -5,12 +5,12 @@ Feature: Searching the site
 
 Scenario: Searching from the homepage
     Given I am on the homepage
-    When I fill in "keys" with "About the site"
+    When I fill in "search_api_fulltext" with "About the site"
     And press "Search"
     Then I should see "about-the-site"
 
 Scenario: Searching from an interior page
     Given I am on "/browse/government"
-    When I fill in "keys" with "About the site"
+    When I fill in "search_api_fulltext" with "About the site"
     And press "Search"
     Then I should see "about-the-site"

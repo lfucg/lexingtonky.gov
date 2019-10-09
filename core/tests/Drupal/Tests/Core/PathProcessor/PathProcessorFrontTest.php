@@ -7,6 +7,7 @@ use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\PathProcessor\PathProcessorFront;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Test front page path processing.
@@ -22,15 +23,17 @@ class PathProcessorFrontTest extends UnitTestCase {
    * @covers ::processInbound
    * @dataProvider providerProcessInbound
    */
-  public function testProcessInbound($path, $expected) {
+  public function testProcessInbound($frontpage_path, $path, $expected, array $expected_query = []) {
     $config_factory = $this->prophesize(ConfigFactoryInterface::class);
     $config = $this->prophesize(ImmutableConfig::class);
     $config_factory->get('system.site')
       ->willReturn($config->reveal());
     $config->get('page.front')
-      ->willReturn('/node');
+      ->willReturn($frontpage_path);
     $processor = new PathProcessorFront($config_factory->reveal());
-    $this->assertEquals($expected, $processor->processInbound($path, new Request()));
+    $request = new Request();
+    $this->assertEquals($expected, $processor->processInbound($path, $request));
+    $this->assertEquals($expected_query, $request->query->all());
   }
 
   /**
@@ -38,8 +41,13 @@ class PathProcessorFrontTest extends UnitTestCase {
    */
   public function providerProcessInbound() {
     return [
-      ['/', '/node'],
-      ['/user', '/user'],
+      'accessing frontpage' => ['/node', '/', '/node'],
+      'accessing non frontpage' => ['/node', '/user', '/user'],
+      'accessing frontpage with query parameters' => ['/node?example=muh',
+        '/',
+        '/node',
+        ['example' => 'muh'],
+      ],
     ];
   }
 
@@ -47,7 +55,6 @@ class PathProcessorFrontTest extends UnitTestCase {
    * Test inbound failure with broken config.
    *
    * @covers ::processInbound
-   * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
   public function testProcessInboundBadConfig() {
     $config_factory = $this->prophesize(ConfigFactoryInterface::class);
@@ -57,6 +64,7 @@ class PathProcessorFrontTest extends UnitTestCase {
     $config->get('page.front')
       ->willReturn('');
     $processor = new PathProcessorFront($config_factory->reveal());
+    $this->setExpectedException(NotFoundHttpException::class);
     $processor->processInbound('/', new Request());
   }
 

@@ -17,7 +17,7 @@
  *   The instantiated field formatter plugin.
  * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
  *   The field definition.
- * @param $view_mode
+ * @param string $view_mode
  *   The entity view mode.
  * @param array $form
  *   The (entire) configuration form array.
@@ -27,18 +27,18 @@
  * @return array
  *   Returns the form array to be built.
  *
- * @see \Drupal\field_ui\DisplayOverView
+ * @see \Drupal\field_ui\Form\EntityViewDisplayEditForm::thirdPartySettingsForm()
  */
-function hook_field_formatter_third_party_settings_form(\Drupal\Core\Field\FormatterInterface $plugin, \Drupal\Core\Field\FieldDefinitionInterface $field_definition, $view_mode, $form, \Drupal\Core\Form\FormStateInterface $form_state) {
-  $element = array();
+function hook_field_formatter_third_party_settings_form(\Drupal\Core\Field\FormatterInterface $plugin, \Drupal\Core\Field\FieldDefinitionInterface $field_definition, $view_mode, array $form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  $element = [];
   // Add a 'my_setting' checkbox to the settings form for 'foo_formatter' field
   // formatters.
   if ($plugin->getPluginId() == 'foo_formatter') {
-    $element['my_setting'] = array(
+    $element['my_setting'] = [
       '#type' => 'checkbox',
       '#title' => t('My setting'),
       '#default_value' => $plugin->getThirdPartySetting('my_module', 'my_setting'),
-    );
+    ];
   }
   return $element;
 }
@@ -50,7 +50,7 @@ function hook_field_formatter_third_party_settings_form(\Drupal\Core\Field\Forma
  *   The instantiated field widget plugin.
  * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
  *   The field definition.
- * @param $form_mode
+ * @param string $form_mode
  *   The entity form mode.
  * @param array $form
  *   The (entire) configuration form array.
@@ -60,18 +60,18 @@ function hook_field_formatter_third_party_settings_form(\Drupal\Core\Field\Forma
  * @return array
  *   Returns the form array to be built.
  *
- * @see \Drupal\field_ui\FormDisplayOverView
+ * @see \Drupal\field_ui\Form\EntityFormDisplayEditForm::thirdPartySettingsForm()
  */
-function hook_field_widget_third_party_settings_form(\Drupal\Core\Field\WidgetInterface $plugin, \Drupal\Core\Field\FieldDefinitionInterface $field_definition, $form_mode, $form, \Drupal\Core\Form\FormStateInterface $form_state) {
-  $element = array();
+function hook_field_widget_third_party_settings_form(\Drupal\Core\Field\WidgetInterface $plugin, \Drupal\Core\Field\FieldDefinitionInterface $field_definition, $form_mode, array $form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  $element = [];
   // Add a 'my_setting' checkbox to the settings form for 'foo_widget' field
   // widgets.
   if ($plugin->getPluginId() == 'foo_widget') {
-    $element['my_setting'] = array(
+    $element['my_setting'] = [
       '#type' => 'checkbox',
       '#title' => t('My setting'),
       '#default_value' => $plugin->getThirdPartySetting('my_module', 'my_setting'),
-    );
+    ];
   }
   return $element;
 }
@@ -81,15 +81,15 @@ function hook_field_widget_third_party_settings_form(\Drupal\Core\Field\WidgetIn
  *
  * @param array $summary
  *   An array of summary messages.
- * @param $context
+ * @param array $context
  *   An associative array with the following elements:
- *   - formatter: The formatter object.
+ *   - formatter: The formatter plugin.
  *   - field_definition: The field definition.
  *   - view_mode: The view mode being configured.
  *
- * @see \Drupal\field_ui\DisplayOverView
+ * @see \Drupal\field_ui\Form\EntityViewDisplayEditForm::alterSettingsSummary()
  */
-function hook_field_formatter_settings_summary_alter(&$summary, $context) {
+function hook_field_formatter_settings_summary_alter(array &$summary, array $context) {
   // Append a message to the summary when an instance of foo_formatter has
   // mysetting set to TRUE for the current view mode.
   if ($context['formatter']->getPluginId() == 'foo_formatter') {
@@ -110,9 +110,9 @@ function hook_field_formatter_settings_summary_alter(&$summary, $context) {
  *   - field_definition: The field definition.
  *   - form_mode: The form mode being configured.
  *
- * @see \Drupal\field_ui\FormDisplayOverView
+ * @see \Drupal\field_ui\Form\EntityFormDisplayEditForm::alterSettingsSummary()
  */
-function hook_field_widget_settings_summary_alter(&$summary, $context) {
+function hook_field_widget_settings_summary_alter(array &$summary, array $context) {
   // Append a message to the summary when an instance of foo_widget has
   // mysetting set to TRUE for the current view mode.
   if ($context['widget']->getPluginId() == 'foo_widget') {

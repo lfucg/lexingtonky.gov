@@ -2,6 +2,8 @@
 
 namespace Drupal\Core\Cache;
 
+use Drupal\Component\Assertion\Inspector;
+
 /**
  * Stores cache items in the Alternative PHP Cache User Cache (APCu).
  */
@@ -80,13 +82,13 @@ class ApcuBackend implements CacheBackendInterface {
    */
   public function getMultiple(&$cids, $allow_invalid = FALSE) {
     // Translate the requested cache item IDs to APCu keys.
-    $map = array();
+    $map = [];
     foreach ($cids as $cid) {
       $map[$this->getApcuKey($cid)] = $cid;
     }
 
     $result = apcu_fetch(array_keys($map));
-    $cache = array();
+    $cache = [];
     if ($result) {
       foreach ($result as $key => $item) {
         $item = $this->prepareItem($item, $allow_invalid);
@@ -127,7 +129,7 @@ class ApcuBackend implements CacheBackendInterface {
    * Checks that the item is either permanent or did not expire.
    *
    * @param \stdClass $cache
-   *   An item loaded from cache_get() or cache_get_multiple().
+   *   An item loaded from self::get() or self::getMultiple().
    * @param bool $allow_invalid
    *   If TRUE, a cache item may be returned even if it is expired or has been
    *   invalidated. See ::get().
@@ -140,7 +142,7 @@ class ApcuBackend implements CacheBackendInterface {
       return FALSE;
     }
 
-    $cache->tags = $cache->tags ? explode(' ', $cache->tags) : array();
+    $cache->tags = $cache->tags ? explode(' ', $cache->tags) : [];
 
     // Check expire time.
     $cache->valid = $cache->expire == Cache::PERMANENT || $cache->expire >= REQUEST_TIME;
@@ -160,8 +162,8 @@ class ApcuBackend implements CacheBackendInterface {
   /**
    * {@inheritdoc}
    */
-  public function set($cid, $data, $expire = CacheBackendInterface::CACHE_PERMANENT, array $tags = array()) {
-    assert('\Drupal\Component\Assertion\Inspector::assertAllStrings($tags)', 'Cache tags must be strings.');
+  public function set($cid, $data, $expire = CacheBackendInterface::CACHE_PERMANENT, array $tags = []) {
+    assert(Inspector::assertAllStrings($tags), 'Cache tags must be strings.');
     $tags = array_unique($tags);
     $cache = new \stdClass();
     $cache->cid = $cid;
@@ -180,9 +182,9 @@ class ApcuBackend implements CacheBackendInterface {
   /**
    * {@inheritdoc}
    */
-  public function setMultiple(array $items = array()) {
+  public function setMultiple(array $items = []) {
     foreach ($items as $cid => $item) {
-      $this->set($cid, $item['data'], isset($item['expire']) ? $item['expire'] : CacheBackendInterface::CACHE_PERMANENT, isset($item['tags']) ? $item['tags'] : array());
+      $this->set($cid, $item['data'], isset($item['expire']) ? $item['expire'] : CacheBackendInterface::CACHE_PERMANENT, isset($item['tags']) ? $item['tags'] : []);
     }
   }
 
@@ -197,7 +199,7 @@ class ApcuBackend implements CacheBackendInterface {
    * {@inheritdoc}
    */
   public function deleteMultiple(array $cids) {
-    apcu_delete(array_map(array($this, 'getApcuKey'), $cids));
+    apcu_delete(array_map([$this, 'getApcuKey'], $cids));
   }
 
   /**
@@ -225,7 +227,7 @@ class ApcuBackend implements CacheBackendInterface {
    * {@inheritdoc}
    */
   public function invalidate($cid) {
-    $this->invalidateMultiple(array($cid));
+    $this->invalidateMultiple([$cid]);
   }
 
   /**

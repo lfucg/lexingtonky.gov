@@ -63,7 +63,7 @@ class ConnectionUnitTest extends KernelTestBase {
    *
    * @return int
    */
-  protected function getConnectionID() {
+  protected function getConnectionId() {
     return (int) Database::getConnection($this->target, $this->key)->query('SELECT CONNECTION_ID()')->fetchField();
   }
 
@@ -75,7 +75,7 @@ class ConnectionUnitTest extends KernelTestBase {
    */
   protected function assertConnection($id) {
     $list = $this->monitor->query('SHOW PROCESSLIST')->fetchAllKeyed(0, 0);
-    return $this->assertTrue(isset($list[$id]), format_string('Connection ID @id found.', array('@id' => $id)));
+    return $this->assertTrue(isset($list[$id]), format_string('Connection ID @id found.', ['@id' => $id]));
   }
 
   /**
@@ -86,21 +86,21 @@ class ConnectionUnitTest extends KernelTestBase {
    */
   protected function assertNoConnection($id) {
     $list = $this->monitor->query('SHOW PROCESSLIST')->fetchAllKeyed(0, 0);
-    return $this->assertFalse(isset($list[$id]), format_string('Connection ID @id not found.', array('@id' => $id)));
+    return $this->assertFalse(isset($list[$id]), format_string('Connection ID @id not found.', ['@id' => $id]));
   }
 
   /**
    * Tests Database::closeConnection() without query.
    *
-   * @todo getConnectionID() executes a query.
+   * @todo getConnectionId() executes a query.
    */
-  function testOpenClose() {
+  public function testOpenClose() {
     if ($this->skipTest) {
       return;
     }
     // Add and open a new connection.
     $this->addConnection();
-    $id = $this->getConnectionID();
+    $id = $this->getConnectionId();
     Database::getConnection($this->target, $this->key);
 
     // Verify that there is a new connection.
@@ -118,13 +118,13 @@ class ConnectionUnitTest extends KernelTestBase {
   /**
    * Tests Database::closeConnection() with a query.
    */
-  function testOpenQueryClose() {
+  public function testOpenQueryClose() {
     if ($this->skipTest) {
       return;
     }
     // Add and open a new connection.
     $this->addConnection();
-    $id = $this->getConnectionID();
+    $id = $this->getConnectionId();
     Database::getConnection($this->target, $this->key);
 
     // Verify that there is a new connection.
@@ -145,13 +145,13 @@ class ConnectionUnitTest extends KernelTestBase {
   /**
    * Tests Database::closeConnection() with a query and custom prefetch method.
    */
-  function testOpenQueryPrefetchClose() {
+  public function testOpenQueryPrefetchClose() {
     if ($this->skipTest) {
       return;
     }
     // Add and open a new connection.
     $this->addConnection();
-    $id = $this->getConnectionID();
+    $id = $this->getConnectionId();
     Database::getConnection($this->target, $this->key);
 
     // Verify that there is a new connection.
@@ -172,13 +172,13 @@ class ConnectionUnitTest extends KernelTestBase {
   /**
    * Tests Database::closeConnection() with a select query.
    */
-  function testOpenSelectQueryClose() {
+  public function testOpenSelectQueryClose() {
     if ($this->skipTest) {
       return;
     }
     // Add and open a new connection.
     $this->addConnection();
-    $id = $this->getConnectionID();
+    $id = $this->getConnectionId();
     Database::getConnection($this->target, $this->key);
 
     // Verify that there is a new connection.
@@ -186,18 +186,18 @@ class ConnectionUnitTest extends KernelTestBase {
 
     // Create a table.
     $name = 'foo';
-    Database::getConnection($this->target, $this->key)->schema()->createTable($name, array(
-      'fields' => array(
-        'name' => array(
+    Database::getConnection($this->target, $this->key)->schema()->createTable($name, [
+      'fields' => [
+        'name' => [
           'type' => 'varchar',
           'length' => 255,
-        ),
-      ),
-    ));
+        ],
+      ],
+    ]);
 
     // Execute a query.
     Database::getConnection($this->target, $this->key)->select('foo', 'f')
-      ->fields('f', array('name'))
+      ->fields('f', ['name'])
       ->execute()
       ->fetchAll();
 
@@ -221,6 +221,12 @@ class ConnectionUnitTest extends KernelTestBase {
     $reflection = new \ReflectionObject($connection);
     $connection_property = $reflection->getProperty('connection');
     $connection_property->setAccessible(TRUE);
+    // Skip this test when a database driver does not implement PDO.
+    // An alternative database driver that does not implement PDO
+    // should implement its own connection test.
+    if (get_class($connection_property->getValue($connection)) !== 'PDO') {
+      $this->markTestSkipped('Ignored PDO connection unit test for this driver because it does not implement PDO.');
+    }
     $error_mode = $connection_property->getValue($connection)
       ->getAttribute(\PDO::ATTR_ERRMODE);
     $this->assertEqual($error_mode, \PDO::ERRMODE_EXCEPTION, 'Ensure the default error mode is set to exception.');

@@ -17,7 +17,8 @@ use Drupal\Core\TypedData\DataDefinition;
  *   description = @Translation("An entity field containing a path alias and related data."),
  *   no_ui = TRUE,
  *   default_widget = "path",
- *   list_class = "\Drupal\path\Plugin\Field\FieldType\PathFieldItemList"
+ *   list_class = "\Drupal\path\Plugin\Field\FieldType\PathFieldItemList",
+ *   constraints = {"PathAlias" = {}},
  * )
  */
 class PathItem extends FieldItemBase {
@@ -30,6 +31,8 @@ class PathItem extends FieldItemBase {
       ->setLabel(t('Path alias'));
     $properties['pid'] = DataDefinition::create('integer')
       ->setLabel(t('Path id'));
+    $properties['langcode'] = DataDefinition::create('string')
+      ->setLabel(t('Language Code'));
     return $properties;
   }
 
@@ -37,24 +40,38 @@ class PathItem extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
-    return array();
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isEmpty() {
+    return ($this->alias === NULL || $this->alias === '') && ($this->pid === NULL || $this->pid === '') && ($this->langcode === NULL || $this->langcode === '');
   }
 
   /**
    * {@inheritdoc}
    */
   public function preSave() {
-    $this->alias = trim($this->alias);
+    if ($this->alias !== NULL) {
+      $this->alias = trim($this->alias);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function postSave($update) {
+    // If specified, rely on the langcode property for the language, so that the
+    // existing language of an alias can be kept. That could for example be
+    // unspecified even if the field/entity has a specific langcode.
+    $alias_langcode = ($this->langcode && $this->pid) ? $this->langcode : $this->getLangcode();
+
     if (!$update) {
       if ($this->alias) {
         $entity = $this->getEntity();
-        if ($path = \Drupal::service('path.alias_storage')->save('/' . $entity->urlInfo()->getInternalPath(), $this->alias, $this->getLangcode())) {
+        if ($path = \Drupal::service('path.alias_storage')->save('/' . $entity->toUrl()->getInternalPath(), $this->alias, $alias_langcode)) {
           $this->pid = $path['pid'];
         }
       }
@@ -62,12 +79,12 @@ class PathItem extends FieldItemBase {
     else {
       // Delete old alias if user erased it.
       if ($this->pid && !$this->alias) {
-        \Drupal::service('path.alias_storage')->delete(array('pid' => $this->pid));
+        \Drupal::service('path.alias_storage')->delete(['pid' => $this->pid]);
       }
       // Only save a non-empty alias.
       elseif ($this->alias) {
         $entity = $this->getEntity();
-        \Drupal::service('path.alias_storage')->save('/' . $entity->urlInfo()->getInternalPath(), $this->alias, $this->getLangcode(), $this->pid);
+        \Drupal::service('path.alias_storage')->save('/' . $entity->toUrl()->getInternalPath(), $this->alias, $alias_langcode, $this->pid);
       }
     }
   }
@@ -77,7 +94,7 @@ class PathItem extends FieldItemBase {
    */
   public static function generateSampleValue(FieldDefinitionInterface $field_definition) {
     $random = new Random();
-    $values['alias'] = str_replace(' ', '-', strtolower($random->sentences(3)));
+    $values['alias'] = '/' . str_replace(' ', '-', strtolower($random->sentences(3)));
     return $values;
   }
 

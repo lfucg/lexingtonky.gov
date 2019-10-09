@@ -16,6 +16,13 @@ use Drupal\filter\Plugin\FilterInterface;
  * @ConfigEntityType(
  *   id = "filter_format",
  *   label = @Translation("Text format"),
+ *   label_collection = @Translation("Text formats"),
+ *   label_singular = @Translation("text format"),
+ *   label_plural = @Translation("text formats"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count text format",
+ *     plural = "@count text formats",
+ *   ),
  *   handlers = {
  *     "form" = {
  *       "add" = "Drupal\filter\FilterFormatAddForm",
@@ -112,7 +119,7 @@ class FilterFormat extends ConfigEntityBase implements FilterFormatInterface, En
    *
    * @var array
    */
-  protected $filters = array();
+  protected $filters = [];
 
   /**
    * Holds the collection of filters that are attached to this format.
@@ -146,7 +153,7 @@ class FilterFormat extends ConfigEntityBase implements FilterFormatInterface, En
    * {@inheritdoc}
    */
   public function getPluginCollections() {
-    return array('filters' => $this->filters());
+    return ['filters' => $this->filters()];
   }
 
   /**
@@ -182,7 +189,7 @@ class FilterFormat extends ConfigEntityBase implements FilterFormatInterface, En
     parent::disable();
 
     // Allow modules to react on text format deletion.
-    \Drupal::moduleHandler()->invokeAll('filter_format_disable', array($this));
+    \Drupal::moduleHandler()->invokeAll('filter_format_disable', [$this]);
 
     // Clear the filter cache whenever a text format is disabled.
     filter_formats_reset();
@@ -222,7 +229,7 @@ class FilterFormat extends ConfigEntityBase implements FilterFormatInterface, En
       if (($roles = $this->get('roles')) && $permission = $this->getPermissionName()) {
         foreach (user_roles() as $rid => $name) {
           $enabled = in_array($rid, $roles, TRUE);
-          user_role_change_permissions($rid, array($permission => $enabled));
+          user_role_change_permissions($rid, [$permission => $enabled]);
         }
       }
     }
@@ -252,7 +259,7 @@ class FilterFormat extends ConfigEntityBase implements FilterFormatInterface, En
    * {@inheritdoc}
    */
   public function getFilterTypes() {
-    $filter_types = array();
+    $filter_types = [];
 
     $filters = $this->filters();
     foreach ($filters as $filter) {
@@ -269,7 +276,7 @@ class FilterFormat extends ConfigEntityBase implements FilterFormatInterface, En
    */
   public function getHtmlRestrictions() {
     // Ignore filters that are disabled or don't have HTML restrictions.
-    $filters = array_filter($this->filters()->getAll(), function($filter) {
+    $filters = array_filter($this->filters()->getAll(), function ($filter) {
       if (!$filter->status) {
         return FALSE;
       }
@@ -286,7 +293,7 @@ class FilterFormat extends ConfigEntityBase implements FilterFormatInterface, En
       // From the set of remaining filters (they were filtered by array_filter()
       // above), collect the list of tags and attributes that are allowed by all
       // filters, i.e. the intersection of all allowed tags and attributes.
-      $restrictions = array_reduce($filters, function($restrictions, $filter) {
+      $restrictions = array_reduce($filters, function ($restrictions, $filter) {
         $new_restrictions = $filter->getHTMLRestrictions();
 
         // The first filter with HTML restrictions provides the initial set.
@@ -386,7 +393,7 @@ class FilterFormat extends ConfigEntityBase implements FilterFormatInterface, En
       // whitelisting filters were used, then effectively nothing is allowed.
       if (isset($restrictions['allowed'])) {
         if (count($restrictions['allowed']) === 1 && array_key_exists('*', $restrictions['allowed']) && !isset($restrictions['forbidden_tags'])) {
-          $restrictions['allowed'] = array();
+          $restrictions['allowed'] = [];
         }
       }
 

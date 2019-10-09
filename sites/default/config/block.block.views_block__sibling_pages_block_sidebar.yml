@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: views_block__sibling_pages_block_sidebar
 theme: lex
-region: sidebar_second
-weight: -26
+region: sidebar
+weight: -23
 provider: null
 plugin: 'views_block:sibling_pages-block_1'
 settings:

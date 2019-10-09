@@ -3,6 +3,7 @@
 namespace Drupal\workbench_moderation\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Plugin\Action\PublishNode;
@@ -21,8 +22,8 @@ class ModerationOptOutPublishNode extends PublishNode implements ContainerFactor
    */
   protected $moderationInfo;
 
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModerationInformationInterface $mod_info) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModerationInformationInterface $mod_info, EntityTypeManagerInterface $entity_type_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
     $this->moderationInfo = $mod_info;
   }
 
@@ -32,7 +33,8 @@ class ModerationOptOutPublishNode extends PublishNode implements ContainerFactor
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
    return new static(
      $configuration, $plugin_id, $plugin_definition,
-     $container->get('workbench_moderation.moderation_information')
+     $container->get('workbench_moderation.moderation_information'),
+     $container->get('entity_type.manager')
    );
   }
 

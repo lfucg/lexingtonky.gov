@@ -5,6 +5,7 @@
  * Contains install and update hooks.
  */
 
+use Drupal\Core\Url;
 use Drupal\Core\Config\InstallStorage;
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -13,7 +14,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
  * Implements hook_install().
  */
 function contact_storage_install() {
-  $entity_manager = \Drupal::entityManager();
+  $entity_manager = \Drupal::entityTypeManager();
   $entity_type = $entity_manager->getDefinition('contact_message');
 
   // Recreate the original entity type definition, in order to notify the
@@ -22,8 +23,8 @@ function contact_storage_install() {
   // @see contact_storage_test_entity_type_alter()
   $original = clone $entity_type;
   $original->setStorageClass('Drupal\Core\Entity\ContentEntityNullStorage');
-
-  $entity_manager->onEntityTypeUpdate($entity_type, $original);
+  \Drupal::service('entity_type.listener')
+    ->onEntityTypeUpdate($entity_type, $original);
   _contact_storage_ensure_fields();
 }
 
@@ -57,11 +58,17 @@ function contact_storage_update_8002() {
 
   // Save the bulk delete action to config.
   $config_install_path = $module_handler->getModule('contact_storage')->getPath() . '/' . InstallStorage::CONFIG_INSTALL_DIRECTORY;
-  $storage = new FileStorage($config_install_path);
-  $entity_type_manager
-    ->getStorage('action')
-    ->create($storage->read('system.action.message_delete_action'))
-    ->save();
+
+  // Create action if it doesn't exist.
+  $action_storage = $entity_type_manager->getStorage('action');
+  $action = $action_storage->load('message_delete_action');
+  if (!$action) {
+    $storage = new FileStorage($config_install_path);
+    $entity_type_manager
+      ->getStorage('action')
+      ->create($storage->read('system.action.message_delete_action'))
+      ->save();
+  }
 }
 
 /**
@@ -95,7 +102,7 @@ function contact_storage_update_8200() {
       $config = $config_factory->getEditable($name);
       $config->clear('third_party_settings.contact_storage.redirect_uri');
       try {
-        $url = '/' . \Drupal\Core\Url::fromUri($redirect_page)->getInternalPath();
+        $url = '/' . Url::fromUri($redirect_page)->getInternalPath();
       }
       catch (Exception $e) {
         continue;
@@ -106,4 +113,11 @@ function contact_storage_update_8200() {
       $config->save();
     }
   }
+}
+
+/**
+ * Enables the options module as it is now a dependency.
+ */
+function contact_storage_update_8201() {
+  \Drupal::service('module_installer')->install(['options']);
 }

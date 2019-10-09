@@ -3,6 +3,7 @@
 namespace Drupal\block;
 
 use Drupal\Component\Plugin\Exception\ContextException;
+use Drupal\Component\Plugin\Exception\MissingValueContextException;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableDependencyInterface;
@@ -11,7 +12,6 @@ use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Executable\ExecutableManagerInterface;
 use Drupal\Core\Plugin\Context\ContextHandlerInterface;
 use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
@@ -26,13 +26,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class BlockAccessControlHandler extends EntityAccessControlHandler implements EntityHandlerInterface {
 
   use ConditionAccessResolverTrait;
-
-  /**
-   * The condition plugin manager.
-   *
-   * @var \Drupal\Core\Executable\ExecutableManagerInterface
-   */
-  protected $manager;
 
   /**
    * The plugin context handler.
@@ -54,7 +47,6 @@ class BlockAccessControlHandler extends EntityAccessControlHandler implements En
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
       $entity_type,
-      $container->get('plugin.manager.condition'),
       $container->get('context.handler'),
       $container->get('context.repository')
     );
@@ -65,20 +57,16 @@ class BlockAccessControlHandler extends EntityAccessControlHandler implements En
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition.
-   * @param \Drupal\Core\Executable\ExecutableManagerInterface $manager
-   *   The ConditionManager for checking visibility of blocks.
    * @param \Drupal\Core\Plugin\Context\ContextHandlerInterface $context_handler
    *   The ContextHandler for applying contexts to conditions properly.
    * @param \Drupal\Core\Plugin\Context\ContextRepositoryInterface $context_repository
    *   The lazy context repository service.
    */
-  public function __construct(EntityTypeInterface $entity_type, ExecutableManagerInterface $manager, ContextHandlerInterface $context_handler, ContextRepositoryInterface $context_repository ) {
+  public function __construct(EntityTypeInterface $entity_type, ContextHandlerInterface $context_handler, ContextRepositoryInterface $context_repository) {
     parent::__construct($entity_type);
-    $this->manager = $manager;
     $this->contextHandler = $context_handler;
     $this->contextRepository = $context_repository;
   }
-
 
   /**
    * {@inheritdoc}
@@ -96,11 +84,15 @@ class BlockAccessControlHandler extends EntityAccessControlHandler implements En
     else {
       $conditions = [];
       $missing_context = FALSE;
+      $missing_value = FALSE;
       foreach ($entity->getVisibilityConditions() as $condition_id => $condition) {
         if ($condition instanceof ContextAwarePluginInterface) {
           try {
             $contexts = $this->contextRepository->getRuntimeContexts(array_values($condition->getContextMapping()));
             $this->contextHandler->applyContextMapping($condition, $contexts);
+          }
+          catch (MissingValueContextException $e) {
+            $missing_value = TRUE;
           }
           catch (ContextException $e) {
             $missing_context = TRUE;
@@ -112,13 +104,14 @@ class BlockAccessControlHandler extends EntityAccessControlHandler implements En
       if ($missing_context) {
         // If any context is missing then we might be missing cacheable
         // metadata, and don't know based on what conditions the block is
-        // accessible or not. For example, blocks that have a node type
-        // condition will have a missing context on any non-node route like the
-        // frontpage.
-        // @todo Avoid setting max-age 0 for some or all cases, for example by
-        //   treating available contexts without value differently in
-        //   https://www.drupal.org/node/2521956.
+        // accessible or not. Make sure the result cannot be cached.
         $access = AccessResult::forbidden()->setCacheMaxAge(0);
+      }
+      elseif ($missing_value) {
+        // The contexts exist but have no value. Deny access without
+        // disabling caching. For example the node type condition will have a
+        // missing context on any non-node route like the frontpage.
+        $access = AccessResult::forbidden();
       }
       elseif ($this->resolveConditions($conditions, 'and') !== FALSE) {
         // Delegate to the plugin.
@@ -130,17 +123,23 @@ class BlockAccessControlHandler extends EntityAccessControlHandler implements En
           }
           $access = $block_plugin->access($account, TRUE);
         }
+        catch (MissingValueContextException $e) {
+          // The contexts exist but have no value. Deny access without
+          // disabling caching.
+          $access = AccessResult::forbidden();
+        }
         catch (ContextException $e) {
-          // Setting access to forbidden if any context is missing for the same
-          // reasons as with conditions (described in the comment above).
-          // @todo Avoid setting max-age 0 for some or all cases, for example by
-          //   treating available contexts without value differently in
-          //   https://www.drupal.org/node/2521956.
+          // If any context is missing then we might be missing cacheable
+          // metadata, and don't know based on what conditions the block is
+          // accessible or not. Make sure the result cannot be cached.
           $access = AccessResult::forbidden()->setCacheMaxAge(0);
         }
       }
       else {
-        $access = AccessResult::forbidden();
+        $reason = count($conditions) > 1
+          ? "One of the block visibility conditions ('%s') denied access."
+          : "The block visibility condition '%s' denied access.";
+        $access = AccessResult::forbidden(sprintf($reason, implode("', '", array_keys($conditions))));
       }
 
       $this->mergeCacheabilityFromConditions($access, $conditions);

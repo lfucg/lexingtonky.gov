@@ -1,0 +1,16 @@
+.lex-sidenav-list {
+  li {
+    border: none;
+  }
+  a {
+    color: $lex-blue;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  a.usa-current {
+    color: white;
+    background: $lex-blue;
+    font-weight: normal;
+  }
+}

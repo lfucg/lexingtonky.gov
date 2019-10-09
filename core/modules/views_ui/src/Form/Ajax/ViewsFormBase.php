@@ -104,11 +104,13 @@ abstract class ViewsFormBase extends FormBase implements ViewsFormInterface {
       // Retrieve the first form from the stack without changing the integer keys,
       // as they're being used for the "2 of 3" progress indicator.
       reset($view->stack);
-      list($key, $top) = each($view->stack);
+      $key = key($view->stack);
+      $top = current($view->stack);
+      next($view->stack);
       unset($view->stack[$key]);
 
       if (array_shift($top) != $identifier) {
-        $view->stack = array();
+        $view->stack = [];
       }
     }
 
@@ -138,7 +140,7 @@ abstract class ViewsFormBase extends FormBase implements ViewsFormInterface {
       $form_state = $reflection->newInstanceArgs(array_slice($top, 3, 2))->getFormState($view, $top[2], $form_state->get('ajax'));
       $form_class = get_class($form_state->getFormObject());
 
-      $form_state->setUserInput(array());
+      $form_state->setUserInput([]);
       $form_url = views_ui_build_form_url($form_state);
       if (!$form_state->get('ajax')) {
         return new RedirectResponse($form_url->setAbsolute()->toString());
@@ -234,16 +236,16 @@ abstract class ViewsFormBase extends FormBase implements ViewsFormInterface {
       $response->setAttachments($form['#attached']);
 
       $display = '';
-      $status_messages = array('#type' => 'status_messages');
+      $status_messages = ['#type' => 'status_messages'];
       if ($messages = $renderer->renderRoot($status_messages)) {
         $display = '<div class="views-messages">' . $messages . '</div>';
       }
       $display .= $output;
 
-      $options = array(
+      $options = [
         'dialogClass' => 'views-ui-dialog js-views-ui-dialog',
         'width' => '75%',
-      );
+      ];
 
       $response->addCommand(new OpenModalDialogCommand($title, $display, $options));
 

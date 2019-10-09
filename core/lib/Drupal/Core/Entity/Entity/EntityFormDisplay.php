@@ -23,6 +23,9 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
  *     "id" = "id",
  *     "status" = "status"
  *   },
+ *   handlers = {
+ *     "access" = "\Drupal\Core\Entity\Entity\Access\EntityFormDisplayAccessControlHandler",
+ *   },
  *   config_export = {
  *     "id",
  *     "targetEntityType",
@@ -62,6 +65,10 @@ class EntityFormDisplay extends EntityDisplayBase implements EntityFormDisplayIn
    *   The entity for which the form is being built.
    * @param string $form_mode
    *   The form mode.
+   * @param bool $default_fallback
+   *   (optional) Whether the default display should be used to initialize the
+   *   form display in case the specified display does not exist. Defaults to
+   *   TRUE.
    *
    * @return \Drupal\Core\Entity\Display\EntityFormDisplayInterface
    *   The display object that should be used to build the entity form.
@@ -69,7 +76,7 @@ class EntityFormDisplay extends EntityDisplayBase implements EntityFormDisplayIn
    * @see entity_get_form_display()
    * @see hook_entity_form_display_alter()
    */
-  public static function collectRenderDisplay(FieldableEntityInterface $entity, $form_mode) {
+  public static function collectRenderDisplay(FieldableEntityInterface $entity, $form_mode, $default_fallback = TRUE) {
     $entity_type = $entity->getEntityTypeId();
     $bundle = $entity->bundle();
 
@@ -79,7 +86,9 @@ class EntityFormDisplay extends EntityDisplayBase implements EntityFormDisplayIn
     if ($form_mode != 'default') {
       $candidate_ids[] = $entity_type . '.' . $bundle . '.' . $form_mode;
     }
-    $candidate_ids[] = $entity_type . '.' . $bundle . '.default';
+    if ($default_fallback) {
+      $candidate_ids[] = $entity_type . '.' . $bundle . '.default';
+    }
     $results = \Drupal::entityQuery('entity_form_display')
       ->condition('id', $candidate_ids)
       ->condition('status', TRUE)
@@ -95,23 +104,23 @@ class EntityFormDisplay extends EntityDisplayBase implements EntityFormDisplayIn
     }
     // Else create a fresh runtime object.
     if (empty($display)) {
-      $display = $storage->create(array(
+      $display = $storage->create([
         'targetEntityType' => $entity_type,
         'bundle' => $bundle,
-        'mode' => $form_mode,
+        'mode' => $default_fallback ? $form_mode : static::CUSTOM_MODE,
         'status' => TRUE,
-      ));
+      ]);
     }
 
     // Let the display know which form mode was originally requested.
     $display->originalMode = $form_mode;
 
     // Let modules alter the display.
-    $display_context = array(
+    $display_context = [
       'entity_type' => $entity_type,
       'bundle' => $bundle,
       'form_mode' => $form_mode,
-    );
+    ];
     \Drupal::moduleHandler()->alter('entity_form_display', $display, $display_context);
 
     return $display;
@@ -136,13 +145,13 @@ class EntityFormDisplay extends EntityDisplayBase implements EntityFormDisplayIn
 
     // Instantiate the widget object from the stored display properties.
     if (($configuration = $this->getComponent($field_name)) && isset($configuration['type']) && ($definition = $this->getFieldDefinition($field_name))) {
-      $widget = $this->pluginManager->getInstance(array(
+      $widget = $this->pluginManager->getInstance([
         'field_definition' => $definition,
         'form_mode' => $this->originalMode,
         // No need to prepare, defaults have been merged in setComponent().
         'prepare' => FALSE,
-        'configuration' => $configuration
-      ));
+        'configuration' => $configuration,
+      ]);
     }
     else {
       $widget = NULL;
@@ -158,7 +167,7 @@ class EntityFormDisplay extends EntityDisplayBase implements EntityFormDisplayIn
    */
   public function buildForm(FieldableEntityInterface $entity, array &$form, FormStateInterface $form_state) {
     // Set #parents to 'top-level' by default.
-    $form += array('#parents' => array());
+    $form += ['#parents' => []];
 
     // Let each widget generate the form elements.
     foreach ($this->getComponents() as $name => $options) {
@@ -185,7 +194,7 @@ class EntityFormDisplay extends EntityDisplayBase implements EntityFormDisplayIn
     $this->renderer->addCacheableDependency($form, $this);
 
     // Add a process callback so we can assign weights and hide extra fields.
-    $form['#process'][] = array($this, 'processForm');
+    $form['#process'][] = [$this, 'processForm'];
   }
 
   /**
@@ -203,7 +212,7 @@ class EntityFormDisplay extends EntityDisplayBase implements EntityFormDisplayIn
 
     // Hide extra fields.
     $extra_fields = \Drupal::entityManager()->getExtraFields($this->targetEntityType, $this->bundle);
-    $extra_fields = isset($extra_fields['form']) ? $extra_fields['form'] : array();
+    $extra_fields = isset($extra_fields['form']) ? $extra_fields['form'] : [];
     foreach ($extra_fields as $extra_field => $info) {
       if (!$this->getComponent($extra_field)) {
         $element[$extra_field]['#access'] = FALSE;
@@ -216,7 +225,7 @@ class EntityFormDisplay extends EntityDisplayBase implements EntityFormDisplayIn
    * {@inheritdoc}
    */
   public function extractFormValues(FieldableEntityInterface $entity, array &$form, FormStateInterface $form_state) {
-    $extracted = array();
+    $extracted = [];
     foreach ($entity as $name => $items) {
       if ($widget = $this->getRenderer($name)) {
         $widget->extractFormValues($items, $form, $form_state);
@@ -316,19 +325,19 @@ class EntityFormDisplay extends EntityDisplayBase implements EntityFormDisplayIn
    * {@inheritdoc}
    */
   public function getPluginCollections() {
-    $configurations = array();
+    $configurations = [];
     foreach ($this->getComponents() as $field_name => $configuration) {
       if (!empty($configuration['type']) && ($field_definition = $this->getFieldDefinition($field_name))) {
-        $configurations[$configuration['type']] = $configuration + array(
+        $configurations[$configuration['type']] = $configuration + [
           'field_definition' => $field_definition,
           'form_mode' => $this->mode,
-        );
+        ];
       }
     }
 
-    return array(
-      'widgets' => new EntityDisplayPluginCollection($this->pluginManager, $configurations)
-    );
+    return [
+      'widgets' => new EntityDisplayPluginCollection($this->pluginManager, $configurations),
+    ];
   }
 
 }

@@ -4,8 +4,9 @@ namespace Drupal\Tests\Component\Discovery;
 
 use Drupal\Component\Discovery\DiscoveryException;
 use Drupal\Component\Discovery\YamlDirectoryDiscovery;
-use Drupal\Tests\UnitTestCase;
+use Drupal\Component\FileCache\FileCacheFactory;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * YamlDirectoryDiscoveryTest component unit tests.
@@ -14,7 +15,15 @@ use org\bovigo\vfs\vfsStream;
  *
  * @group Discovery
  */
-class YamlDirectoryDiscoveryTest extends UnitTestCase {
+class YamlDirectoryDiscoveryTest extends TestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    // Ensure that FileCacheFactory has a prefix.
+    FileCacheFactory::setPrefix('prefix');
+  }
 
   /**
    * Tests YAML directory discovery.
@@ -115,7 +124,13 @@ class YamlDirectoryDiscoveryTest extends UnitTestCase {
    * @covers ::getIdentifier
    */
   public function testDiscoveryNoIdException() {
-    $this->setExpectedException(DiscoveryException::class, 'The vfs://modules/test_1/item_1.test.yml contains no data in the identifier key \'id\'');
+    if (method_exists($this, 'expectException')) {
+      $this->expectException(DiscoveryException::class);
+      $this->expectExceptionMessage('The vfs://modules/test_1/item_1.test.yml contains no data in the identifier key \'id\'');
+    }
+    else {
+      $this->setExpectedException(DiscoveryException::class, 'The vfs://modules/test_1/item_1.test.yml contains no data in the identifier key \'id\'');
+    }
     vfsStream::setup('modules', NULL, [
       'test_1' => [
         'item_1.test.yml' => "",
@@ -135,7 +150,13 @@ class YamlDirectoryDiscoveryTest extends UnitTestCase {
    * @covers ::findAll
    */
   public function testDiscoveryInvalidYamlException() {
-    $this->setExpectedException(DiscoveryException::class, 'The vfs://modules/test_1/item_1.test.yml contains invalid YAML');
+    if (method_exists($this, 'expectException')) {
+      $this->expectException(DiscoveryException::class);
+      $this->expectExceptionMessage('The vfs://modules/test_1/item_1.test.yml contains invalid YAML');
+    }
+    else {
+      $this->setExpectedException(DiscoveryException::class, 'The vfs://modules/test_1/item_1.test.yml contains invalid YAML');
+    }
     vfsStream::setup('modules', NULL, [
       'test_1' => [
         'item_1.test.yml' => "id: invalid\nfoo : [bar}",

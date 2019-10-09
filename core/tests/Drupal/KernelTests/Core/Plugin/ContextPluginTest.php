@@ -3,7 +3,7 @@
 namespace Drupal\KernelTests\Core\Plugin;
 
 use Drupal\Component\Plugin\Exception\ContextException;
-use Drupal\Core\Plugin\Context\ContextDefinition;
+use Drupal\Core\Plugin\Context\EntityContextDefinition;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -17,12 +17,12 @@ use Drupal\user\Entity\User;
  */
 class ContextPluginTest extends KernelTestBase {
 
-  public static $modules = array('system', 'user', 'node', 'field', 'filter', 'text');
+  public static $modules = ['system', 'user', 'node', 'field', 'filter', 'text'];
 
   /**
    * Tests basic context definition and value getters and setters.
    */
-  function testContext() {
+  public function testContext() {
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('node_type');
@@ -45,7 +45,7 @@ class ContextPluginTest extends KernelTestBase {
     }
 
     // Test the getContextDefinitions() method.
-    $user_context_definition = ContextDefinition::create('entity:user')->setLabel(t('User'));
+    $user_context_definition = EntityContextDefinition::fromEntityTypeId('user')->setLabel(t('User'));
     $this->assertEqual($plugin->getContextDefinitions()['user']->getLabel(), $user_context_definition->getLabel());
 
     // Test the getContextDefinition() method for a valid context.
@@ -59,7 +59,7 @@ class ContextPluginTest extends KernelTestBase {
       $plugin->getContextValue('user');
     }
     catch (ContextException $e) {
-      $this->assertIdentical("The 'entity:user' context is required and not present.", $e->getMessage(), 'Requesting a non-set value of a required context should throw a context exception.');
+      $this->assertSame("The 'entity:user' context is required and not present.", $e->getMessage(), 'Requesting a non-set value of a required context should throw a context exception.');
     }
 
     // Try to pass the wrong class type as a context value.
@@ -72,7 +72,7 @@ class ContextPluginTest extends KernelTestBase {
     $user = User::create(['name' => $name]);
     $plugin->setContextValue('user', $user);
 
-    $this->assertEqual($plugin->getContextValue('user')->getUsername(), $user->getUsername());
+    $this->assertEqual($plugin->getContextValue('user')->getAccountName(), $user->getAccountName());
     $this->assertEqual($user->label(), $plugin->getTitle());
 
     // Test Optional context handling.

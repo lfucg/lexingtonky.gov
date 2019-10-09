@@ -2,12 +2,19 @@
 
 namespace Drupal\system\Tests\Cache;
 
+@trigger_error(__NAMESPACE__ . '\PageCacheTagsTestBase is deprecated for removal before Drupal 9.0.0. Use \Drupal\Tests\system\Functional\Cache\PageCacheTagsTestBase instead. See https://www.drupal.org/node/2999939', E_USER_DEPRECATED);
+
 use Drupal\Core\Url;
 use Drupal\simpletest\WebTestBase;
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Render\FormattableMarkup;
 
 /**
  * Provides helper methods for page cache tags tests.
+ *
+ * @deprecated Scheduled for removal in Drupal 9.0.0.
+ *   Use \Drupal\Tests\system\Functional\Cache\PageCacheTagsTestBase instead.
+ *
+ * @see https://www.drupal.org/node/2999939
  */
 abstract class PageCacheTagsTestBase extends WebTestBase {
 
@@ -44,14 +51,14 @@ abstract class PageCacheTagsTestBase extends WebTestBase {
    */
   protected function verifyPageCache(Url $url, $hit_or_miss, $tags = FALSE) {
     $this->drupalGet($url);
-    $message = SafeMarkup::format('Page cache @hit_or_miss for %path.', array('@hit_or_miss' => $hit_or_miss, '%path' => $url->toString()));
+    $message = new FormattableMarkup('Page cache @hit_or_miss for %path.', ['@hit_or_miss' => $hit_or_miss, '%path' => $url->toString()]);
     $this->assertEqual($this->drupalGetHeader('X-Drupal-Cache'), $hit_or_miss, $message);
 
     if ($hit_or_miss === 'HIT' && is_array($tags)) {
       $absolute_url = $url->setAbsolute()->toString();
-      $cid_parts = array($absolute_url, 'html');
+      $cid_parts = [$absolute_url, 'html'];
       $cid = implode(':', $cid_parts);
-      $cache_entry = \Drupal::cache('render')->get($cid);
+      $cache_entry = \Drupal::cache('page')->get($cid);
       sort($cache_entry->tags);
       $tags = array_unique($tags);
       sort($tags);

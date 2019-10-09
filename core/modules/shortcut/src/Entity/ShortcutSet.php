@@ -12,6 +12,13 @@ use Drupal\shortcut\ShortcutSetInterface;
  * @ConfigEntityType(
  *   id = "shortcut_set",
  *   label = @Translation("Shortcut set"),
+ *   label_collection = @Translation("Shortcut sets"),
+ *   label_singular = @Translation("shortcut set"),
+ *   label_plural = @Translation("shortcut sets"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count shortcut set",
+ *     plural = "@count shortcut sets",
+ *   ),
  *   handlers = {
  *     "storage" = "Drupal\shortcut\ShortcutSetStorage",
  *     "access" = "Drupal\shortcut\ShortcutSetAccessControlHandler",
@@ -116,8 +123,8 @@ class ShortcutSet extends ConfigEntityBundleBase implements ShortcutSetInterface
    * {@inheritdoc}
    */
   public function getShortcuts() {
-    $shortcuts = \Drupal::entityManager()->getStorage('shortcut')->loadByProperties(array('shortcut_set' => $this->id()));
-    uasort($shortcuts, array('\Drupal\shortcut\Entity\Shortcut', 'sort'));
+    $shortcuts = \Drupal::entityManager()->getStorage('shortcut')->loadByProperties(['shortcut_set' => $this->id()]);
+    uasort($shortcuts, ['\Drupal\shortcut\Entity\Shortcut', 'sort']);
     return $shortcuts;
   }
 

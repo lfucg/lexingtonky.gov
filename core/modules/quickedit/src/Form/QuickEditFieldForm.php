@@ -10,19 +10,20 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
-use Drupal\user\PrivateTempStoreFactory;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Builds and process a form for editing a single entity field.
+ *
+ * @internal
  */
 class QuickEditFieldForm extends FormBase {
 
   /**
    * Stores the tempstore factory.
    *
-   * @var \Drupal\user\PrivateTempStoreFactory
+   * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
   protected $tempStoreFactory;
 
@@ -41,29 +42,19 @@ class QuickEditFieldForm extends FormBase {
   protected $nodeTypeStorage;
 
   /**
-   * The typed data validator.
-   *
-   * @var \Symfony\Component\Validator\Validator\ValidatorInterface
-   */
-  protected $validator;
-
-  /**
    * Constructs a new EditFieldForm.
    *
-   * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
+   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    * @param \Drupal\Core\Entity\EntityStorageInterface $node_type_storage
    *   The node type storage.
-   * @param \Symfony\Component\Validator\Validator\ValidatorInterface $validator
-   *   The typed data validator service.
    */
-  public function __construct(PrivateTempStoreFactory $temp_store_factory, ModuleHandlerInterface $module_handler, EntityStorageInterface $node_type_storage, ValidatorInterface $validator) {
+  public function __construct(PrivateTempStoreFactory $temp_store_factory, ModuleHandlerInterface $module_handler, EntityStorageInterface $node_type_storage) {
     $this->moduleHandler = $module_handler;
     $this->nodeTypeStorage = $node_type_storage;
     $this->tempStoreFactory = $temp_store_factory;
-    $this->validator = $validator;
   }
 
   /**
@@ -71,10 +62,9 @@ class QuickEditFieldForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('user.private_tempstore'),
+      $container->get('tempstore.private'),
       $container->get('module_handler'),
-      $container->get('entity.manager')->getStorage('node_type'),
-      $container->get('typed_data_manager')->getValidator()
+      $container->get('entity.manager')->getStorage('node_type')
     );
   }
 
@@ -100,19 +90,23 @@ class QuickEditFieldForm extends FormBase {
 
     // Add a dummy changed timestamp field to attach form errors to.
     if ($entity instanceof EntityChangedInterface) {
-      $form['changed_field'] = array(
+      $form['changed_field'] = [
         '#type' => 'hidden',
         '#value' => $entity->getChangedTime(),
-      );
+      ];
     }
 
     // Add a submit button. Give it a class for easy JavaScript targeting.
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array(
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => t('Save'),
-      '#attributes' => array('class' => array('quickedit-form-submit')),
-    );
+      '#attributes' => ['class' => ['quickedit-form-submit']],
+    ];
+
+    // Use the non-inline form error display for Quick Edit forms, because in
+    // this case the errors are already near the form element.
+    $form['#disable_inline_form_errors'] = TRUE;
 
     // Simplify it for optimal in-place use.
     $this->simplify($form, $form_state);
@@ -183,7 +177,7 @@ class QuickEditFieldForm extends FormBase {
     // @todo Refine automated log messages and abstract them to all entity
     //   types: https://www.drupal.org/node/1678002.
     if ($entity->getEntityTypeId() == 'node' && $entity->isNewRevision() && $entity->revision_log->isEmpty()) {
-      $entity->revision_log = t('Updated the %field-name field through in-place editing.', array('%field-name' => $entity->get($field_name)->getFieldDefinition()->getLabel()));
+      $entity->revision_log = t('Updated the %field-name field through in-place editing.', ['%field-name' => $entity->get($field_name)->getFieldDefinition()->getLabel()]);
     }
 
     return $entity;

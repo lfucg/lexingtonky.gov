@@ -11,8 +11,6 @@ use Drupal\Core\Entity\EntityTypeInterface;
  * administrative theme.
  *
  * @see \Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider.
- *
- * @internal
  */
 class AdminHtmlRouteProvider extends DefaultHtmlRouteProvider {
 
@@ -51,6 +49,16 @@ class AdminHtmlRouteProvider extends DefaultHtmlRouteProvider {
    */
   protected function getDeleteFormRoute(EntityTypeInterface $entity_type) {
     if ($route = parent::getDeleteFormRoute($entity_type)) {
+      $route->setOption('_admin_route', TRUE);
+      return $route;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getDeleteMultipleFormRoute(EntityTypeInterface $entity_type) {
+    if ($route = parent::getDeleteMultipleFormRoute($entity_type)) {
       $route->setOption('_admin_route', TRUE);
       return $route;
     }

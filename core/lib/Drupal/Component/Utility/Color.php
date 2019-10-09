@@ -23,7 +23,7 @@ class Color {
     // Hash prefix is optional.
     $hex = ltrim($hex, '#');
     // Must be either RGB or RRGGBB.
-    $length = Unicode::strlen($hex);
+    $length = mb_strlen($hex);
     $valid = $valid && ($length === 3 || $length === 6);
     // Must be a valid hex value.
     $valid = $valid && ctype_xdigit($hex);
@@ -56,11 +56,11 @@ class Color {
 
     $c = hexdec($hex);
 
-    return array(
+    return [
       'red' => $c >> 16 & 0xFF,
       'green' => $c >> 8 & 0xFF,
       'blue' => $c & 0xFF,
-    );
+    ];
   }
 
   /**
@@ -92,6 +92,30 @@ class Color {
     }
 
     return '#' . str_pad(dechex($out), 6, 0, STR_PAD_LEFT);
+  }
+
+  /**
+   * Normalize the hex color length to 6 characters for comparison.
+   *
+   * @param string $hex
+   *   The hex color to normalize.
+   *
+   * @return string
+   *   The 6 character hex color.
+   */
+  public static function normalizeHexLength($hex) {
+    // Ignore '#' prefixes.
+    $hex = ltrim($hex, '#');
+
+    if (strlen($hex) === 3) {
+      $hex[5] = $hex[2];
+      $hex[4] = $hex[2];
+      $hex[3] = $hex[1];
+      $hex[2] = $hex[1];
+      $hex[1] = $hex[0];
+    }
+
+    return '#' . $hex;
   }
 
 }

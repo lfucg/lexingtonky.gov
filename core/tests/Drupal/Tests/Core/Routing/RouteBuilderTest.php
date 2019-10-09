@@ -11,6 +11,7 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Discovery\YamlDiscovery;
 use Drupal\Core\Routing\RouteBuilder;
 use Drupal\Core\Routing\RouteBuildEvent;
+use Drupal\Core\Routing\RouteCompiler;
 use Drupal\Core\Routing\RoutingEvents;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\Routing\Route;
@@ -106,7 +107,7 @@ class RouteBuilderTest extends UnitTestCase {
 
     $this->yamlDiscovery->expects($this->any())
       ->method('findAll')
-      ->will($this->returnValue(array()));
+      ->will($this->returnValue([]));
 
     $this->assertTrue($this->routeBuilder->rebuild());
   }
@@ -149,9 +150,12 @@ class RouteBuilderTest extends UnitTestCase {
 
     $this->yamlDiscovery->expects($this->once())
       ->method('findAll')
-      ->will($this->returnValue(array('test_module' => $routes)));
+      ->will($this->returnValue(['test_module' => $routes]));
 
     $route_collection = $routing_fixtures->sampleRouteCollection();
+    foreach ($route_collection->all() as $route) {
+      $route->setOption('compiler_class', RouteCompiler::class);
+    }
     $route_build_event = new RouteBuildEvent($route_collection);
 
     // Ensure that the alter routes events are fired.
@@ -192,14 +196,14 @@ class RouteBuilderTest extends UnitTestCase {
 
     $this->yamlDiscovery->expects($this->once())
       ->method('findAll')
-      ->will($this->returnValue(array(
-        'test_module' => array(
-          'route_callbacks' => array(
+      ->will($this->returnValue([
+        'test_module' => [
+          'route_callbacks' => [
             '\Drupal\Tests\Core\Routing\TestRouteSubscriber::routesFromArray',
             'test_module.route_service:routesFromCollection',
-          ),
-        ),
-      )));
+          ],
+        ],
+      ]));
 
     $container = new ContainerBuilder();
     $container->set('test_module.route_service', new TestRouteSubscriber());
@@ -215,7 +219,7 @@ class RouteBuilderTest extends UnitTestCase {
           list($class, $method) = explode('::', $controller, 2);
           $object = new $class();
         }
-        return array($object, $method);
+        return [$object, $method];
       }));
 
     $route_collection_filled = new RouteCollection();
@@ -262,8 +266,8 @@ class RouteBuilderTest extends UnitTestCase {
       ->with('router_rebuild');
 
     $this->yamlDiscovery->expects($this->any())
-                        ->method('findAll')
-                        ->will($this->returnValue(array()));
+      ->method('findAll')
+      ->will($this->returnValue([]));
 
     $this->routeBuilder->setRebuildNeeded();
 
@@ -272,6 +276,47 @@ class RouteBuilderTest extends UnitTestCase {
 
     // This will not trigger a rebuild.
     $this->assertFalse($this->routeBuilder->rebuildIfNeeded());
+  }
+
+  /**
+   * Tests routes can use alternative compiler classes.
+   *
+   * @see \Drupal\Core\Routing\RouteBuilder::rebuild()
+   */
+  public function testRebuildWithOverriddenRouteClass() {
+    $this->lock->expects($this->once())
+      ->method('acquire')
+      ->with('router_rebuild')
+      ->will($this->returnValue(TRUE));
+    $this->yamlDiscovery->expects($this->once())
+      ->method('findAll')
+      ->will($this->returnValue([
+        'test_module' => [
+          'test_route.override' => [
+            'path' => '/test_route_override',
+            'options' => [
+              'compiler_class' => 'Class\Does\Not\Exist',
+            ],
+          ],
+          'test_route' => [
+            'path' => '/test_route',
+          ],
+        ],
+      ]));
+
+    $container = new ContainerBuilder();
+    $container->set('test_module.route_service', new TestRouteSubscriber());
+
+    // Test that routes can have alternative compiler classes.
+    $route_collection_filled = new RouteCollection();
+    $route_collection_filled->add('test_route.override', new Route('/test_route_override', [], [], ['compiler_class' => 'Class\Does\Not\Exist']));
+    $route_collection_filled->add('test_route', new Route('/test_route', [], [], ['compiler_class' => RouteCompiler::class]));
+    $route_build_event = new RouteBuildEvent($route_collection_filled);
+    $this->dispatcher->expects($this->at(0))
+      ->method('dispatch')
+      ->with(RoutingEvents::DYNAMIC, $route_build_event);
+
+    $this->assertTrue($this->routeBuilder->rebuild());
   }
 
 }
@@ -311,11 +356,13 @@ class TestRouteBuilder extends RouteBuilder {
  * Provides a callback for route definition.
  */
 class TestRouteSubscriber {
+
   public function routesFromArray() {
-    return array(
+    return [
       'test_route.1' => new Route('/test-route/1'),
-    );
+    ];
   }
+
   public function routesFromCollection() {
     $collection = new RouteCollection();
     $collection->add('test_route.2', new Route('/test-route/2'));

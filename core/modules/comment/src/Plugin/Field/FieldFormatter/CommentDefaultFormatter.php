@@ -3,9 +3,11 @@
 namespace Drupal\comment\Plugin\Field\FieldFormatter;
 
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
+use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -31,15 +33,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class CommentDefaultFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
+  use DeprecatedServicePropertyTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
+    return [
       'view_mode' => 'default',
       'pager_id' => 0,
-    ) + parent::defaultSettings();
+    ] + parent::defaultSettings();
   }
 
   /**
@@ -64,11 +72,11 @@ class CommentDefaultFormatter extends FormatterBase implements ContainerFactoryP
   protected $viewBuilder;
 
   /**
-   * The entity manager.
+   * The entity display repository.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
    */
-  protected $entityManager;
+  protected $entityDisplayRepository;
 
   /**
    * The entity form builder.
@@ -78,7 +86,7 @@ class CommentDefaultFormatter extends FormatterBase implements ContainerFactoryP
   protected $entityFormBuilder;
 
   /**
-   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
+   * @var \Drupal\Core\Routing\RouteMatchInterface
    */
   protected $routeMatch;
 
@@ -95,9 +103,10 @@ class CommentDefaultFormatter extends FormatterBase implements ContainerFactoryP
       $configuration['view_mode'],
       $configuration['third_party_settings'],
       $container->get('current_user'),
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('entity.form_builder'),
-      $container->get('current_route_match')
+      $container->get('current_route_match'),
+      $container->get('entity_display.repository')
     );
   }
 
@@ -120,29 +129,35 @@ class CommentDefaultFormatter extends FormatterBase implements ContainerFactoryP
    *   Third party settings.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder
    *   The entity form builder.
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The route match object.
+   * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
+   *   The entity display repository.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, AccountInterface $current_user, EntityManagerInterface $entity_manager, EntityFormBuilderInterface $entity_form_builder, RouteMatchInterface $route_match) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, EntityFormBuilderInterface $entity_form_builder, RouteMatchInterface $route_match, EntityDisplayRepositoryInterface $entity_display_repository = NULL) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
-    $this->viewBuilder = $entity_manager->getViewBuilder('comment');
-    $this->storage = $entity_manager->getStorage('comment');
+    $this->viewBuilder = $entity_type_manager->getViewBuilder('comment');
+    $this->storage = $entity_type_manager->getStorage('comment');
     $this->currentUser = $current_user;
-    $this->entityManager = $entity_manager;
     $this->entityFormBuilder = $entity_form_builder;
     $this->routeMatch = $route_match;
+    if (!$entity_display_repository) {
+      @trigger_error('Calling RssPluginBase::__construct() with the $entity_repository argument is supported in drupal:8.7.0 and will be required before drupal:9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
+      $entity_display_repository = \Drupal::service('entity_display.repository');
+    }
+    $this->entityDisplayRepository = $entity_display_repository;
   }
 
   /**
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = array();
-    $output = array();
+    $elements = [];
+    $output = [];
 
     $field_name = $this->fieldDefinition->getName();
     $entity = $items->getEntity();
@@ -153,7 +168,7 @@ class CommentDefaultFormatter extends FormatterBase implements ContainerFactoryP
       // Comments are added to the search results and search index by
       // comment_node_update_index() instead of by this formatter, so don't
       // return anything if the view mode is search_index or search_result.
-      !in_array($this->viewMode, array('search_result', 'search_index'))) {
+      !in_array($this->viewMode, ['search_result', 'search_index'])) {
       $comment_settings = $this->getFieldSettings();
 
       // Only attempt to render comments if the entity has visible comments.
@@ -192,23 +207,26 @@ class CommentDefaultFormatter extends FormatterBase implements ContainerFactoryP
         $elements['#cache']['contexts'][] = 'user.roles';
         if ($this->currentUser->hasPermission('post comments')) {
           $output['comment_form'] = [
-            '#lazy_builder' => ['comment.lazy_builders:renderForm', [
-              $entity->getEntityTypeId(),
-              $entity->id(),
-              $field_name,
-              $this->getFieldSetting('comment_type'),
-            ]],
+            '#lazy_builder' => [
+              'comment.lazy_builders:renderForm',
+              [
+                $entity->getEntityTypeId(),
+                $entity->id(),
+                $field_name,
+                $this->getFieldSetting('comment_type'),
+              ],
+            ],
             '#create_placeholder' => TRUE,
           ];
         }
       }
 
-      $elements[] = $output + array(
+      $elements[] = $output + [
         '#comment_type' => $this->getFieldSetting('comment_type'),
         '#comment_display_mode' => $this->getFieldSetting('default_mode'),
-        'comments' => array(),
-        'comment_form' => array(),
-      );
+        'comments' => [],
+        'comment_form' => [],
+      ];
     }
 
     return $elements;
@@ -218,7 +236,7 @@ class CommentDefaultFormatter extends FormatterBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $element = array();
+    $element = [];
     $view_modes = $this->getViewModes();
     $element['view_mode'] = [
       '#type' => 'select',
@@ -229,13 +247,13 @@ class CommentDefaultFormatter extends FormatterBase implements ContainerFactoryP
       // Only show the select element when there are more than one options.
       '#access' => count($view_modes) > 1,
     ];
-    $element['pager_id'] = array(
+    $element['pager_id'] = [
       '#type' => 'select',
       '#title' => $this->t('Pager ID'),
       '#options' => range(0, 10),
       '#default_value' => $this->getSetting('pager_id'),
       '#description' => $this->t("Unless you're experiencing problems with pagers related to this field, you should leave this at 0. If using multiple pagers on one page you may need to set this number to a higher value so as not to conflict within the ?page= array. Large values will add a lot of commas to your URLs, so avoid if possible."),
-    );
+    ];
     return $element;
   }
 
@@ -277,7 +295,7 @@ class CommentDefaultFormatter extends FormatterBase implements ContainerFactoryP
    *   as value.
    */
   protected function getViewModes() {
-    return $this->entityManager->getViewModeOptionsByBundle('comment', $this->getFieldSetting('comment_type'));
+    return $this->entityDisplayRepository->getViewModeOptionsByBundle('comment', $this->getFieldSetting('comment_type'));
   }
 
 }

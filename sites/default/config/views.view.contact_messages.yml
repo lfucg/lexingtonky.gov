@@ -541,6 +541,7 @@ display:
               editor: '0'
               webmaster: '0'
               administrator: '0'
+            placeholder: ''
           is_grouped: true
           group_info:
             label: 'Email provided?'
@@ -592,6 +593,9 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
           is_grouped: true
           group_info:
             label: 'We''ve handled the feedback?'
@@ -665,7 +669,7 @@ display:
         - url.query_args
         - user.roles
       cacheable: false
-      max-age: 0
+      max-age: -1
       tags:
         - 'config:field.storage.contact_message.field_feedback_url'
         - 'config:field.storage.contact_message.field_internal_notes'
@@ -696,7 +700,7 @@ display:
         - url.query_args
         - user.roles
       cacheable: false
-      max-age: 0
+      max-age: -1
       tags:
         - 'config:field.storage.contact_message.field_feedback_url'
         - 'config:field.storage.contact_message.field_internal_notes'

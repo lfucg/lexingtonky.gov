@@ -3,7 +3,7 @@
 namespace Drupal\Tests\Component\Utility;
 
 use Drupal\Component\Utility\Environment;
-use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test PHP Environment helper methods.
@@ -12,7 +12,7 @@ use Drupal\Tests\UnitTestCase;
  *
  * @coversDefaultClass \Drupal\Component\Utility\Environment
  */
-class EnvironmentTest extends UnitTestCase {
+class EnvironmentTest extends TestCase {
 
   /**
    * Tests \Drupal\Component\Utility\Environment::checkMemoryLimit().
@@ -44,19 +44,16 @@ class EnvironmentTest extends UnitTestCase {
    *   required and memory_limit, and the expected return value.
    */
   public function providerTestCheckMemoryLimit() {
-    $memory_limit = ini_get('memory_limit');
-    $twice_avail_memory = ($memory_limit * 2) . 'MB';
-
-    return array(
+    return [
       // Minimal amount of memory should be available.
-      array('30MB', NULL, TRUE),
-      // Exceed a custom (unlimited) memory limit.
-      array($twice_avail_memory, -1, TRUE),
+      ['30MB', NULL, TRUE],
+      // Test an unlimited memory limit.
+      ['9999999999YB', -1, TRUE],
       // Exceed a custom memory limit.
-      array('30MB', '16MB', FALSE),
+      ['30MB', '16MB', FALSE],
       // Available = required.
-      array('30MB', '30MB', TRUE),
-    );
+      ['30MB', '30MB', TRUE],
+    ];
   }
 
 }

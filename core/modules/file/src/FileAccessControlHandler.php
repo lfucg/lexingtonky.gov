@@ -22,8 +22,12 @@ class FileAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\file\FileInterface $entity */
     if ($operation == 'download' || $operation == 'view') {
       if (\Drupal::service('file_system')->uriScheme($entity->getFileUri()) === 'public') {
-        // Always allow access to file in public file system.
-        return AccessResult::allowed();
+        if ($operation === 'download') {
+          return AccessResult::allowed();
+        }
+        else {
+          return AccessResult::allowedIfHasPermission($account, 'access content');
+        }
       }
       elseif ($references = $this->getFileReferences($entity)) {
         foreach ($references as $field_name => $entity_map) {
@@ -40,19 +44,31 @@ class FileAccessControlHandler extends EntityAccessControlHandler {
       }
       elseif ($entity->getOwnerId() == $account->id()) {
         // This case handles new nodes, or detached files. The user who uploaded
-        // the file can always access if it's not yet used.
-        return AccessResult::allowed();
+        // the file can access it even if it's not yet used.
+        if ($account->isAnonymous()) {
+          // For anonymous users, only the browser session that uploaded the
+          // file is positively allowed access to it. See file_save_upload().
+          // @todo Implement \Drupal\Core\Entity\EntityHandlerInterface so that
+          //   services can be more properly injected.
+          $allowed_fids = \Drupal::service('session')->get('anonymous_allowed_file_ids', []);
+          if (!empty($allowed_fids[$entity->id()])) {
+            return AccessResult::allowed()->addCacheContexts(['session', 'user']);
+          }
+        }
+        else {
+          return AccessResult::allowed()->addCacheContexts(['user']);
+        }
       }
     }
 
     if ($operation == 'delete' || $operation == 'update') {
       $account = $this->prepareUser($account);
       $file_uid = $entity->get('uid')->getValue();
-      // Only the file owner can delete and update the file entity.
+      // Only the file owner can update or delete the file entity.
       if ($account->id() == $file_uid[0]['target_id']) {
         return AccessResult::allowed();
       }
-      return AccessResult::forbidden();
+      return AccessResult::forbidden('Only the file owner can update or delete the file entity.');
     }
 
     // No opinion.
@@ -79,9 +95,24 @@ class FileAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkFieldAccess($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
-    // No user can edit the status of a file. Prevents saving a new file as
-    // persistent before even validating it.
-    if ($field_definition->getName() === 'status' && $operation === 'edit') {
+    // Deny access to fields that should only be set on file creation, and
+    // "status" which should only be changed based on a file's usage.
+    $create_only_fields = [
+      'uri',
+      'filemime',
+      'filesize',
+    ];
+    // The operation is 'edit' when the entity is being created or updated.
+    // Determine if the entity is being updated by checking if it is new.
+    $field_name = $field_definition->getName();
+    if ($operation === 'edit' && $items && ($entity = $items->getEntity()) && !$entity->isNew() && in_array($field_name, $create_only_fields, TRUE)) {
+      return AccessResult::forbidden();
+    }
+    // Regardless of whether the entity exists access should be denied to the
+    // status field as this is managed via other APIs, for example:
+    // - \Drupal\file\FileUsage\FileUsageBase::add()
+    // - \Drupal\file\Plugin\EntityReferenceSelection\FileSelection::createNewEntity()
+    if ($operation === 'edit' && $field_name === 'status') {
       return AccessResult::forbidden();
     }
     return parent::checkFieldAccess($operation, $field_definition, $account, $items);
@@ -96,8 +127,6 @@ class FileAccessControlHandler extends EntityAccessControlHandler {
     // create file entities that are referenced from another entity
     // (e.g. an image for a article). A contributed module is free to alter
     // this to allow file entities to be created directly.
-    // @todo Update comment to mention REST module when
-    //   https://www.drupal.org/node/1927648 is fixed.
     return AccessResult::neutral();
   }
 

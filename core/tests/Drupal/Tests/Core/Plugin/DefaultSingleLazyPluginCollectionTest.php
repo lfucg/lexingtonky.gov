@@ -2,7 +2,7 @@
 
 namespace Drupal\Tests\Core\Plugin;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
 
@@ -27,7 +27,7 @@ class DefaultSingleLazyPluginCollectionTest extends LazyPluginCollectionTestBase
         return $this->pluginInstances[$id];
       });
 
-    $this->defaultPluginCollection = new DefaultSingleLazyPluginCollection($this->pluginManager, 'apple', array('id' => 'apple', 'key' => 'value'));
+    $this->defaultPluginCollection = new DefaultSingleLazyPluginCollection($this->pluginManager, 'apple', ['id' => 'apple', 'key' => 'value']);
   }
 
   /**
@@ -58,9 +58,20 @@ class DefaultSingleLazyPluginCollectionTest extends LazyPluginCollectionTestBase
     $this->assertEquals(['id' => 'banana', 'key' => 'other_value'], $this->defaultPluginCollection->get('banana')->getConfiguration());
   }
 
+  /**
+   * @covers ::getInstanceIds
+   */
+  public function testGetInstanceIds() {
+    $this->setupPluginCollection($this->any());
+    $this->assertEquals(['apple' => 'apple'], $this->defaultPluginCollection->getInstanceIds());
+
+    $this->defaultPluginCollection->addInstanceId('banana', ['id' => 'banana', 'key' => 'other_value']);
+    $this->assertEquals(['banana' => 'banana'], $this->defaultPluginCollection->getInstanceIds());
+  }
+
 }
 
-class ConfigurablePlugin extends PluginBase implements ConfigurablePluginInterface {
+class ConfigurablePlugin extends PluginBase implements ConfigurableInterface {
 
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -78,10 +89,6 @@ class ConfigurablePlugin extends PluginBase implements ConfigurablePluginInterfa
 
   public function setConfiguration(array $configuration) {
     $this->configuration = $configuration;
-  }
-
-  public function calculateDependencies() {
-    return [];
   }
 
 }

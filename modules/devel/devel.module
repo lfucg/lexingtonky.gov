@@ -19,14 +19,51 @@ use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\RfcLogLevel;
+use Drupal\Core\Menu\LocalTaskDefault;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
 use Drupal\Core\Utility\Error;
+use Drupal\devel\EntityTypeInfo;
+use Drupal\devel\ToolbarHandler;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Implements hook_help().
  */
-function devel_help($route_name) {
+function devel_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
+    case 'help.page.devel':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Devel module provides a suite of modules containing fun for module developers and themers. For more information, see the <a href=":url">online documentation for the Devel module</a>.', [':url' => 'https://www.drupal.org/docs/8/modules/devel']) . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Inspecting Service Container') . '</dt>';
+      $output .= '<dd>' . t('The module allows you to inspect Services and Parameters registered in the Service Container. You can see those informations on <a href=":url">Container info</a> page.', [':url' => Url::fromRoute('devel.container_info.service')->toString()]) . '</dd>';
+      $output .= '<dt>' . t('Inspecting Routes') . '</dt>';
+      $output .= '<dd>' . t('The module allows you to inspect routes information, gathering all routing data from <em>.routing.yml</em> files and from classes which subscribe to the route build/alter events. You can see those informations on <a href=":url">Routes info</a> page.', [':url' => Url::fromRoute('devel.route_info')->toString()]) . '</dd>';
+      $output .= '<dt>' . t('Inspecting Events') . '</dt>';
+      $output .= '<dd>' . t('The module allow you to inspect listeners registered in the event dispatcher. You can see those informations on <a href=":url">Events info</a> page.', [':url' => Url::fromRoute('devel.event_info')->toString()]) . '</dd>';
+      $output .= '</dl>';
+      return $output;
+
+    case 'devel.container_info.service':
+    case 'devel.container_info.parameter':
+      $output = '';
+      $output .= '<p>' . t('Displays Services and Parameters registered in the Service Container. For more informations on the Service Container, see the <a href=":url">Symfony online documentation</a>.', [':url' => 'http://symfony.com/doc/current/service_container.html']) . '</p>';
+      return $output;
+
+    case 'devel.route_info':
+      $output = '';
+      $output .= '<p>' . t('Displays registered routes for the site. For a complete overview of the routing system, see the <a href=":url">online documentation</a>.', [':url' => 'https://www.drupal.org/docs/8/api/routing-system']) . '</p>';
+      return $output;
+
+    case 'devel.event_info':
+      $output = '';
+      $output .= '<p>' . t('Displays events and listeners registered in the event dispatcher. For a complete overview of the event system, see the <a href=":url">Symfony online documentation</a>.', [':url' => 'http://symfony.com/doc/current/components/event_dispatcher.html']) . '</p>';
+      return $output;
+
     case 'devel.reinstall':
       $output = '<p>' . t('<strong>Warning</strong> - will delete your module tables and configuration.') . '</p>';
       $output .= '<p>' . t('Uninstall and then install the selected modules. <code>hook_uninstall()</code> and <code>hook_install()</code> will be executed and the schema version number will be set to the most recent update number.') . '</p>';
@@ -38,6 +75,11 @@ function devel_help($route_name) {
     case 'devel.state_system_page':
       return '<p>' . t('This is a list of state variables and their values. For more information read online documentation of <a href=":documentation">State API in Drupal 8</a>.', array(':documentation' => "https://www.drupal.org/developing/api/8/state")) . '</p>';
 
+    case 'devel.layout_info':
+      $output = '';
+      $output .= '<p>' . t('Displays layouts available to the site. For a complete overview of the layout system, see the <a href=":url">Layout API documentation</a>.', [':url' => 'https://www.drupal.org/docs/8/api/layout-api']) . '</p>';
+      return $output;
+
   }
 }
 
@@ -45,39 +87,57 @@ function devel_help($route_name) {
  * Implements hook_entity_type_alter().
  */
 function devel_entity_type_alter(array &$entity_types) {
-  /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
-  foreach ($entity_types as $entity_type_id => $entity_type) {
-    if ($entity_type->hasViewBuilderClass() && $entity_type->hasLinkTemplate('canonical')) {
-      $entity_type->setLinkTemplate('devel-render', "/devel/$entity_type_id/{{$entity_type_id}}/render");
-    }
-    if (($entity_type->getFormClass('default') || $entity_type->getFormClass('edit')) && $entity_type->hasLinkTemplate('edit-form')) {
-      $entity_type->setLinkTemplate('devel-load', "/devel/$entity_type_id/{{$entity_type_id}}");
-    }
-  }
+  return \Drupal::service('class_resolver')
+    ->getInstanceFromDefinition(EntityTypeInfo::class)
+    ->entityTypeAlter($entity_types);
 }
 
 /**
  * Implements hook_entity_operation().
  */
 function devel_entity_operation(EntityInterface $entity) {
-  $operations = array();
-  if (\Drupal::currentUser()->hasPermission('access devel information')) {
-    if ($entity->hasLinkTemplate('devel-load')) {
-      $operations['devel'] = array(
-        'title' => t('Devel'),
-        'weight' => 100,
-        'url' => $entity->toUrl('devel-load'),
-      );
-    }
-    elseif ($entity->hasLinkTemplate('devel-render')) {
-      $operations['devel'] = array(
-        'title' => t('Devel'),
-        'weight' => 100,
-        'url' => $entity->toUrl('devel-render'),
-      );
-    }
+  return \Drupal::service('class_resolver')
+    ->getInstanceFromDefinition(EntityTypeInfo::class)
+    ->entityOperation($entity);
+}
+
+/**
+ * Implements hook_toolbar().
+ */
+function devel_toolbar() {
+  return \Drupal::service('class_resolver')
+    ->getInstanceFromDefinition(ToolbarHandler::class)
+    ->toolbar();
+}
+
+/**
+ * Implements hook_menu_links_discovered_alter().
+ */
+function devel_menu_links_discovered_alter(&$links) {
+  // Conditionally add the Layouts info menu link.
+  if (\Drupal::moduleHandler()->moduleExists('layout_discovery')) {
+    $links['devel.layout_info'] = [
+      'title' => new TranslatableMarkup('Layouts Info'),
+      'route_name' => 'devel.layout_info',
+      'description' => new TranslatableMarkup('Overview of layouts available to the site.'),
+      'menu_name' => 'devel',
+    ];
   }
-  return $operations;
+}
+
+/**
+ * Implements hook_local_tasks_alter().
+ */
+function devel_local_tasks_alter(&$local_tasks) {
+  if (\Drupal::moduleHandler()->moduleExists('toolbar')) {
+    $local_tasks['devel.toolbar.settings_form'] = [
+      'title' => 'Toolbar Settings',
+      'base_route' => 'devel.admin_settings',
+      'route_name' => 'devel.toolbar.settings_form',
+      'class' => LocalTaskDefault::class,
+      'options' => [],
+    ];
+  }
 }
 
 /**
@@ -205,7 +265,7 @@ function backtrace_error_handler($error_level, $message, $filename, $line, $cont
         drupal_set_message($msg, ($severity_level <= RfcLogLevel::NOTICE ? 'error' : 'warning'), TRUE);
       }
       if (!empty($error_handlers[DEVEL_ERROR_HANDLER_BACKTRACE_KINT])) {
-        print kprint_r(ddebug_backtrace(TRUE, 1), $return = TRUE, $msg);
+        print kpr(ddebug_backtrace(TRUE, 1), TRUE, $msg);
       }
       if (!empty($error_handlers[DEVEL_ERROR_HANDLER_BACKTRACE_DPM])) {
         dpm(ddebug_backtrace(TRUE, 1), $msg, 'warning');
@@ -223,24 +283,6 @@ function devel_page_attachments_alter(&$page) {
   if (\Drupal::currentUser()->hasPermission('access devel information') && \Drupal::config('devel.settings')->get('page_alter')) {
     dpm($page, 'page');
   }
-}
-
-/**
- * Prints an object using either Kint (if enabled) or devel_print_object().
- *
- * @param array|object $object
- *   An array or object to print.
- * @param string $prefix
- * @todo: this parameter is not needed with Kint.
- *   Prefix for output items.
- *
- * @deprecated in Devel 8.x-dev, will be removed before Devel 8.0.
- *   Use kpr() or devel.dumper service instead.
- *
- * @TODO remove in https://www.drupal.org/node/2703343
- */
-function kdevel_print_object($object, $prefix = NULL) {
-  return kpr($object, TRUE, $prefix);
 }
 
 /**
@@ -365,18 +407,6 @@ function kpr($input, $export = FALSE, $name = NULL) {
 }
 
 /**
- * Kint print.
- *
- * @deprecated in Devel 8.x-dev, will be removed before Devel 8.0.
- *   Use kpr() or devel.dumper service instead.
- *
- * @TODO remove in https://www.drupal.org/node/2703343
- */
-function kprint_r($input, $export = FALSE, $name = NULL, $function = 'print_r') {
-  return kpr($input, $export, $name);
-}
-
-/**
  * Wrapper for DevelDumperManager::dumpOrExport().
  *
  * Like dpr(), but uses Variable::export() instead.
@@ -394,7 +424,7 @@ function dargs($always = TRUE) {
   static $printed;
   if ($always || !$printed) {
     $bt = debug_backtrace();
-    print kdevel_print_object($bt[1]['args']);
+    print kpr($bt[1]['args'], TRUE);
     $printed = TRUE;
   }
 }
@@ -444,7 +474,7 @@ function dpq($query, $return = FALSE, $name = NULL) {
 function devel_render() {
   $args = func_get_args();
   // #pre_render and #post_render pass the rendered $element as last argument.
-  kprint_r(end($args));
+  kpr(end($args));
   // #pre_render and #post_render expect the first argument to be returned.
   return reset($args);
 }
@@ -517,49 +547,9 @@ function ddebug_backtrace($return = FALSE, $pop = 0, $options = DEBUG_BACKTRACE_
       if ($return) {
         return $nicetrace;
       }
-      kprint_r($nicetrace);
+      kpr($nicetrace);
     }
   }
-}
-
-/*
- * Migration-related functions.
- */
-
-/**
- * Regenerates the data in node_comment_statistics table.
- * Technique - http://www.artfulsoftware.com/infotree/queries.php?&bw=1280#101
- *
- * @return void
- */
-function devel_rebuild_node_comment_statistics() {
-  // Empty table.
-  db_truncate('node_comment_statistics')->execute();
-
-  // TODO: DBTNG. Ignore keyword is Mysql only? Is only used in the rare case
-  // when two comments on the same node share same timestamp.
-  $sql = "
-    INSERT IGNORE INTO {node_comment_statistics} (nid, cid, last_comment_timestamp, last_comment_name, last_comment_uid, comment_count) (
-      SELECT c.nid, c.cid, c.created, c.name, c.uid, c2.comment_count FROM {comment} c
-      JOIN (
-        SELECT c.nid, MAX(c.created) AS created, COUNT(*) AS comment_count FROM {comment} c WHERE status = 1 GROUP BY c.nid
-      ) AS c2 ON c.nid = c2.nid AND c.created = c2.created
-    )";
-  db_query($sql, array(':published' => CommentInterface::PUBLISHED));
-
-  // Insert records into the node_comment_statistics for nodes that are missing.
-  $query = db_select('node', 'n');
-  $query->leftJoin('node_comment_statistics', 'ncs', 'ncs.nid = n.nid');
-  $query->addField('n', 'changed', 'last_comment_timestamp');
-  $query->addField('n', 'uid', 'last_comment_uid');
-  $query->addField('n', 'nid');
-  $query->addExpression('0', 'comment_count');
-  $query->addExpression('NULL', 'last_comment_name');
-  $query->isNull('ncs.comment_count');
-
-  db_insert('node_comment_statistics', array('return' => Database::RETURN_NULL))
-    ->from($query)
-    ->execute();
 }
 
 /**

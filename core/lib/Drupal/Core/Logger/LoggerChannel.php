@@ -46,7 +46,7 @@ class LoggerChannel implements LoggerChannelInterface {
    *
    * @var array
    */
-  protected $levelTranslation = array(
+  protected $levelTranslation = [
     LogLevel::EMERGENCY => RfcLogLevel::EMERGENCY,
     LogLevel::ALERT => RfcLogLevel::ALERT,
     LogLevel::CRITICAL => RfcLogLevel::CRITICAL,
@@ -55,14 +55,14 @@ class LoggerChannel implements LoggerChannelInterface {
     LogLevel::NOTICE => RfcLogLevel::NOTICE,
     LogLevel::INFO => RfcLogLevel::INFO,
     LogLevel::DEBUG => RfcLogLevel::DEBUG,
-  );
+  ];
 
   /**
    * An array of arrays of \Psr\Log\LoggerInterface keyed by priority.
    *
    * @var array
    */
-  protected $loggers = array();
+  protected $loggers = [];
 
   /**
    * The request stack object.
@@ -91,39 +91,30 @@ class LoggerChannel implements LoggerChannelInterface {
   /**
    * {@inheritdoc}
    */
-  public function log($level, $message, array $context = array()) {
+  public function log($level, $message, array $context = []) {
     if ($this->callDepth == self::MAX_CALL_DEPTH) {
       return;
     }
     $this->callDepth++;
 
     // Merge in defaults.
-    $context += array(
+    $context += [
       'channel' => $this->channel,
       'link' => '',
-      'user' => NULL,
       'uid' => 0,
       'request_uri' => '',
       'referer' => '',
       'ip' => '',
       'timestamp' => time(),
-    );
+    ];
     // Some context values are only available when in a request context.
     if ($this->requestStack && $request = $this->requestStack->getCurrentRequest()) {
       $context['request_uri'] = $request->getUri();
       $context['referer'] = $request->headers->get('Referer', '');
       $context['ip'] = $request->getClientIP();
-      try {
-        if ($this->currentUser) {
-          $context['user'] = $this->currentUser;
-          $context['uid'] = $this->currentUser->id();
-        }
-      }
-      catch (\Exception $e) {
-        // An exception might be thrown if the database connection is not
-        // available or due to another unexpected reason. It is more important
-        // to log the error that we already have so any additional exceptions
-        // are ignored.
+
+      if ($this->currentUser) {
+        $context['uid'] = $this->currentUser->id();
       }
     }
 
@@ -174,7 +165,7 @@ class LoggerChannel implements LoggerChannelInterface {
    *   An array of sorted loggers by priority.
    */
   protected function sortLoggers() {
-    $sorted = array();
+    $sorted = [];
     krsort($this->loggers);
 
     foreach ($this->loggers as $loggers) {

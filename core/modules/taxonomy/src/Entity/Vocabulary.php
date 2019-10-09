@@ -12,13 +12,25 @@ use Drupal\taxonomy\VocabularyInterface;
  * @ConfigEntityType(
  *   id = "taxonomy_vocabulary",
  *   label = @Translation("Taxonomy vocabulary"),
+ *   label_singular = @Translation("vocabulary"),
+ *   label_plural = @Translation("vocabularies"),
+ *   label_collection = @Translation("Taxonomy"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count vocabulary",
+ *     plural = "@count vocabularies"
+ *   ),
  *   handlers = {
  *     "storage" = "Drupal\taxonomy\VocabularyStorage",
  *     "list_builder" = "Drupal\taxonomy\VocabularyListBuilder",
+ *     "access" = "Drupal\taxonomy\VocabularyAccessControlHandler",
  *     "form" = {
  *       "default" = "Drupal\taxonomy\VocabularyForm",
  *       "reset" = "Drupal\taxonomy\Form\VocabularyResetForm",
- *       "delete" = "Drupal\taxonomy\Form\VocabularyDeleteForm"
+ *       "delete" = "Drupal\taxonomy\Form\VocabularyDeleteForm",
+ *       "overview" = "Drupal\taxonomy\Form\OverviewTerms"
+ *     },
+ *     "route_provider" = {
+ *       "html" = "Drupal\taxonomy\Entity\Routing\VocabularyRouteProvider",
  *     }
  *   },
  *   admin_permission = "administer taxonomy",
@@ -30,7 +42,7 @@ use Drupal\taxonomy\VocabularyInterface;
  *     "weight" = "weight"
  *   },
  *   links = {
- *     "add-form" = "/admin/structure/taxonomy/manage/{taxonomy_vocabulary}/add",
+ *     "add-form" = "/admin/structure/taxonomy/add",
  *     "delete-form" = "/admin/structure/taxonomy/manage/{taxonomy_vocabulary}/delete",
  *     "reset-form" = "/admin/structure/taxonomy/manage/{taxonomy_vocabulary}/reset",
  *     "overview-form" = "/admin/structure/taxonomy/manage/{taxonomy_vocabulary}/overview",
@@ -41,7 +53,6 @@ use Drupal\taxonomy\VocabularyInterface;
  *     "name",
  *     "vid",
  *     "description",
- *     "hierarchy",
  *     "weight",
  *   }
  * )
@@ -70,18 +81,6 @@ class Vocabulary extends ConfigEntityBundleBase implements VocabularyInterface {
   protected $description;
 
   /**
-   * The type of hierarchy allowed within the vocabulary.
-   *
-   * Possible values:
-   * - VocabularyInterface::HIERARCHY_DISABLED: No parents.
-   * - VocabularyInterface::HIERARCHY_SINGLE: Single parent.
-   * - VocabularyInterface::HIERARCHY_MULTIPL: Multiple parents.
-   *
-   * @var int
-   */
-  protected $hierarchy = VocabularyInterface::HIERARCHY_DISABLED;
-
-  /**
    * The weight of this vocabulary in relation to other vocabularies.
    *
    * @var int
@@ -92,14 +91,16 @@ class Vocabulary extends ConfigEntityBundleBase implements VocabularyInterface {
    * {@inheritdoc}
    */
   public function getHierarchy() {
-    return $this->hierarchy;
+    @trigger_error('\Drupal\taxonomy\VocabularyInterface::getHierarchy() is deprecated in Drupal 8.7.x and will be removed before Drupal 9.0.x. Use \Drupal\taxonomy\TermStorage::getVocabularyHierarchyType() instead.', E_USER_DEPRECATED);
+    return $this->entityTypeManager()->getStorage('taxonomy_term')->getVocabularyHierarchyType($this->id());
   }
 
   /**
    * {@inheritdoc}
    */
   public function setHierarchy($hierarchy) {
-    $this->hierarchy = $hierarchy;
+    @trigger_error('\Drupal\taxonomy\VocabularyInterface::setHierarchy() is deprecated in Drupal 8.7.x and will be removed before Drupal 9.0.x. Reset the cache of the taxonomy_term storage controller instead.', E_USER_DEPRECATED);
+    $this->entityTypeManager()->getStorage('taxonomy_term')->resetCache();
     return $this;
   }
 
@@ -140,13 +141,13 @@ class Vocabulary extends ConfigEntityBundleBase implements VocabularyInterface {
       return;
     }
 
-    $vocabularies = array();
+    $vocabularies = [];
     foreach ($entities as $vocabulary) {
       $vocabularies[$vocabulary->id()] = $vocabulary->id();
     }
     // Load all Taxonomy module fields and delete those which use only this
     // vocabulary.
-    $field_storages = entity_load_multiple_by_properties('field_storage_config', array('module' => 'taxonomy'));
+    $field_storages = entity_load_multiple_by_properties('field_storage_config', ['module' => 'taxonomy']);
     foreach ($field_storages as $field_storage) {
       $modified_storage = FALSE;
       // Term reference fields may reference terms from more than one

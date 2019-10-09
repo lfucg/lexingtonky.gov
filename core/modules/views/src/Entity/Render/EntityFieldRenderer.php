@@ -3,11 +3,13 @@
 namespace Drupal\views\Entity\Render;
 
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
+use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\views\Plugin\views\field\Field;
+use Drupal\views\Plugin\views\field\EntityField;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ResultRow;
 use Drupal\views\ViewExecutable;
@@ -22,6 +24,12 @@ use Drupal\views\ViewExecutable;
 class EntityFieldRenderer extends RendererBase {
   use EntityTranslationRenderTrait;
   use DependencySerializationTrait;
+  use DeprecatedServicePropertyTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The relationship being handled.
@@ -31,11 +39,18 @@ class EntityFieldRenderer extends RendererBase {
   protected $relationship;
 
   /**
-   * The entity manager.
+   * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
+
+  /**
+   * The entity repository service.
+   *
+   * @var \Drupal\Core\Entity\EntityRepositoryInterface
+   */
+  protected $entityRepository;
 
   /**
    * A list of indexes of rows whose fields have already been rendered.
@@ -55,13 +70,20 @@ class EntityFieldRenderer extends RendererBase {
    *   The language manager.
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository.
    */
-  public function __construct(ViewExecutable $view, $relationship, LanguageManagerInterface $language_manager, EntityTypeInterface $entity_type, EntityManagerInterface $entity_manager) {
+  public function __construct(ViewExecutable $view, $relationship, LanguageManagerInterface $language_manager, EntityTypeInterface $entity_type, EntityTypeManagerInterface $entity_type_manager, EntityRepositoryInterface $entity_repository = NULL) {
     parent::__construct($view, $language_manager, $entity_type);
     $this->relationship = $relationship;
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
+    if (!$entity_repository) {
+      @trigger_error('Calling EntityFieldRenderer::__construct() with the $entity_repository argument is supported in drupal:8.7.0 and will be required before drupal:9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
+      $entity_repository = \Drupal::service('entity.repository');
+    }
+    $this->entityRepository = $entity_repository;
   }
 
   /**
@@ -82,7 +104,23 @@ class EntityFieldRenderer extends RendererBase {
    * {@inheritdoc}
    */
   protected function getEntityManager() {
+    // This relies on DeprecatedServicePropertyTrait to trigger a deprecation
+    // message in case it is accessed.
     return $this->entityManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEntityTypeManager() {
+    return $this->entityTypeManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEntityRepository() {
+    return $this->entityRepository;
   }
 
   /**
@@ -111,13 +149,13 @@ class EntityFieldRenderer extends RendererBase {
    *
    * @param \Drupal\views\ResultRow $row
    *   A single row of the query result.
-   * @param \Drupal\views\Plugin\views\field\Field $field
+   * @param \Drupal\views\Plugin\views\field\EntityField $field
    *   (optional) A field to be rendered.
    *
    * @return array
    *   A renderable array for the entity data contained in the result row.
    */
-  public function render(ResultRow $row, Field $field = NULL) {
+  public function render(ResultRow $row, EntityField $field = NULL) {
     // The method is called for each field in each result row. In order to
     // leverage multiple-entity building of formatter output, we build the
     // render arrays for all fields in all rows on the first call.
@@ -259,7 +297,7 @@ class EntityFieldRenderer extends RendererBase {
   protected function getRenderableFieldIds() {
     $field_ids = [];
     foreach ($this->view->field as $field_id => $field) {
-      if ($field instanceof Field && $field->relationship == $this->relationship) {
+      if ($field instanceof EntityField && $field->relationship == $this->relationship) {
         $field_ids[] = $field_id;
       }
     }

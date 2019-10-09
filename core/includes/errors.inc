@@ -5,7 +5,7 @@
  * Functions for error handling.
  */
 
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\Render\Markup;
@@ -21,23 +21,23 @@ use Symfony\Component\HttpFoundation\Response;
  * @ingroup logging_severity_levels
  */
 function drupal_error_levels() {
-  $types = array(
-    E_ERROR => array('Error', RfcLogLevel::ERROR),
-    E_WARNING => array('Warning', RfcLogLevel::WARNING),
-    E_PARSE => array('Parse error', RfcLogLevel::ERROR),
-    E_NOTICE => array('Notice', RfcLogLevel::NOTICE),
-    E_CORE_ERROR => array('Core error', RfcLogLevel::ERROR),
-    E_CORE_WARNING => array('Core warning', RfcLogLevel::WARNING),
-    E_COMPILE_ERROR => array('Compile error', RfcLogLevel::ERROR),
-    E_COMPILE_WARNING => array('Compile warning', RfcLogLevel::WARNING),
-    E_USER_ERROR => array('User error', RfcLogLevel::ERROR),
-    E_USER_WARNING => array('User warning', RfcLogLevel::WARNING),
-    E_USER_NOTICE => array('User notice', RfcLogLevel::NOTICE),
-    E_STRICT => array('Strict warning', RfcLogLevel::DEBUG),
-    E_RECOVERABLE_ERROR => array('Recoverable fatal error', RfcLogLevel::ERROR),
-    E_DEPRECATED => array('Deprecated function', RfcLogLevel::DEBUG),
-    E_USER_DEPRECATED => array('User deprecated function', RfcLogLevel::DEBUG),
-  );
+  $types = [
+    E_ERROR => ['Error', RfcLogLevel::ERROR],
+    E_WARNING => ['Warning', RfcLogLevel::WARNING],
+    E_PARSE => ['Parse error', RfcLogLevel::ERROR],
+    E_NOTICE => ['Notice', RfcLogLevel::NOTICE],
+    E_CORE_ERROR => ['Core error', RfcLogLevel::ERROR],
+    E_CORE_WARNING => ['Core warning', RfcLogLevel::WARNING],
+    E_COMPILE_ERROR => ['Compile error', RfcLogLevel::ERROR],
+    E_COMPILE_WARNING => ['Compile warning', RfcLogLevel::WARNING],
+    E_USER_ERROR => ['User error', RfcLogLevel::ERROR],
+    E_USER_WARNING => ['User warning', RfcLogLevel::WARNING],
+    E_USER_NOTICE => ['User notice', RfcLogLevel::NOTICE],
+    E_STRICT => ['Strict warning', RfcLogLevel::DEBUG],
+    E_RECOVERABLE_ERROR => ['Recoverable fatal error', RfcLogLevel::ERROR],
+    E_DEPRECATED => ['Deprecated function', RfcLogLevel::DEBUG],
+    E_USER_DEPRECATED => ['User deprecated function', RfcLogLevel::DEBUG],
+  ];
 
   return $types;
 }
@@ -70,7 +70,7 @@ function _drupal_error_handler_real($error_level, $message, $filename, $line, $c
     // in PHP, we allow them to trigger a fatal error by emitting a user error
     // using trigger_error().
     $to_string = $error_level == E_USER_ERROR && substr($caller['function'], -strlen('__toString()')) == '__toString()';
-    _drupal_log_error(array(
+    _drupal_log_error([
       '%type' => isset($types[$error_level]) ? $severity_msg : 'Unknown error',
       // The standard PHP error handler considers that the error messages
       // are HTML. We mimick this behavior here.
@@ -81,7 +81,20 @@ function _drupal_error_handler_real($error_level, $message, $filename, $line, $c
       'severity_level' => $severity_level,
       'backtrace' => $backtrace,
       '@backtrace_string' => (new \Exception())->getTraceAsString(),
-    ), $recoverable || $to_string);
+    ], $recoverable || $to_string);
+  }
+  // If the site is a test site then fail for user deprecations so they can be
+  // caught by the deprecation error handler.
+  elseif (DRUPAL_TEST_IN_CHILD_SITE && $error_level === E_USER_DEPRECATED) {
+    $backtrace = debug_backtrace();
+    $caller = Error::getLastCaller($backtrace);
+    _drupal_error_header(
+      Markup::create(Xss::filterAdmin($message)),
+      'User deprecated function',
+      $caller['function'],
+      $caller['file'],
+      $caller['line']
+    );
   }
 }
 
@@ -136,25 +149,7 @@ function _drupal_log_error($error, $fatal = FALSE) {
   // When running inside the testing framework, we relay the errors
   // to the tested site by the way of HTTP headers.
   if (DRUPAL_TEST_IN_CHILD_SITE && !headers_sent() && (!defined('SIMPLETEST_COLLECT_ERRORS') || SIMPLETEST_COLLECT_ERRORS)) {
-    // $number does not use drupal_static as it should not be reset
-    // as it uniquely identifies each PHP error.
-    static $number = 0;
-    $assertion = array(
-      $error['@message'],
-      $error['%type'],
-      array(
-        'function' => $error['%function'],
-        'file' => $error['%file'],
-        'line' => $error['%line'],
-      ),
-    );
-    // For non-fatal errors (e.g. PHP notices) _drupal_log_error can be called
-    // multiple times per request. In that case the response is typically
-    // generated outside of the error handler, e.g., in a controller. As a
-    // result it is not possible to use a Response object here but instead the
-    // headers need to be emitted directly.
-    header('X-Drupal-Assertion-' . $number . ': ' . rawurlencode(serialize($assertion)));
-    $number++;
+    _drupal_error_header($error['@message'], $error['%type'], $error['%function'], $error['%file'], $error['%line']);
   }
 
   $response = new Response();
@@ -164,7 +159,8 @@ function _drupal_log_error($error, $fatal = FALSE) {
   // installer.
   if (\Drupal::hasService('logger.factory')) {
     try {
-      \Drupal::logger('php')->log($error['severity_level'], '%type: @message in %function (line %line of %file) @backtrace_string.', $error);
+      // Provide the PHP backtrace to logger implementations.
+      \Drupal::logger('php')->log($error['severity_level'], '%type: @message in %function (line %line of %file) @backtrace_string.', $error + ['backtrace' => $backtrace]);
     }
     catch (\Exception $e) {
       // We can't log, for example because the database connection is not
@@ -182,7 +178,7 @@ function _drupal_log_error($error, $fatal = FALSE) {
     if ($fatal) {
       // When called from CLI, simply output a plain text message.
       // Should not translate the string to avoid errors producing more errors.
-      $response->setContent(html_entity_decode(strip_tags(SafeMarkup::format('%type: @message in %function (line %line of %file).', $error))) . "\n");
+      $response->setContent(html_entity_decode(strip_tags(new FormattableMarkup('%type: @message in %function (line %line of %file).', $error))) . "\n");
       $response->send();
       exit;
     }
@@ -193,7 +189,7 @@ function _drupal_log_error($error, $fatal = FALSE) {
       if (error_displayable($error)) {
         // When called from JavaScript, simply output the error message.
         // Should not translate the string to avoid errors producing more errors.
-        $response->setContent(SafeMarkup::format('%type: @message in %function (line %line of %file).', $error));
+        $response->setContent(new FormattableMarkup('%type: @message in %function (line %line of %file).', $error));
         $response->send();
       }
       exit;
@@ -230,10 +226,10 @@ function _drupal_log_error($error, $fatal = FALSE) {
       if ($error_level != ERROR_REPORTING_DISPLAY_VERBOSE) {
         // Without verbose logging, use a simple message.
 
-        // We call SafeMarkup::format() directly here, rather than use t() since
-        // we are in the middle of error handling, and we don't want t() to
-        // cause further errors.
-        $message = SafeMarkup::format('%type: @message in %function (line %line of %file).', $error);
+        // We use \Drupal\Component\Render\FormattableMarkup directly here,
+        // rather than use t() since we are in the middle of error handling, and
+        // we don't want t() to cause further errors.
+        $message = new FormattableMarkup('%type: @message in %function (line %line of %file).', $error);
       }
       else {
         // With verbose logging, we will also include a backtrace.
@@ -245,7 +241,7 @@ function _drupal_log_error($error, $fatal = FALSE) {
         array_shift($backtrace);
         // Generate a backtrace containing only scalar argument values.
         $error['@backtrace'] = Error::formatBacktrace($backtrace);
-        $message = SafeMarkup::format('%type: @message in %function (line %line of %file). <pre class="backtrace">@backtrace</pre>', $error);
+        $message = new FormattableMarkup('%type: @message in %function (line %line of %file). <pre class="backtrace">@backtrace</pre>', $error);
       }
     }
 
@@ -257,10 +253,10 @@ function _drupal_log_error($error, $fatal = FALSE) {
 
       if ($is_installer) {
         // install_display_output() prints the output and ends script execution.
-        $output = array(
+        $output = [
           '#title' => 'Error',
           '#markup' => $message,
-        );
+        ];
         install_display_output($output, $GLOBALS['install_state'], $response->headers->all());
         exit;
       }
@@ -276,7 +272,7 @@ function _drupal_log_error($error, $fatal = FALSE) {
     if ($message) {
       if (\Drupal::hasService('session')) {
         // Message display is dependent on sessions being available.
-        drupal_set_message($message, $class, TRUE);
+        \Drupal::messenger()->addMessage($message, $class, TRUE);
       }
       else {
         print $message;
@@ -323,4 +319,40 @@ function _drupal_get_error_level() {
   // possibly in an edge-case error situation while trying to serve a regular
   // request on a public site, so use the non-verbose default value.
   return $error_level ?: ERROR_REPORTING_DISPLAY_ALL;
+}
+
+/**
+ * Adds error information to headers so that tests can access it.
+ *
+ * @param $message
+ *   The error message.
+ * @param $type
+ *   The type of error.
+ * @param $function
+ *   The function that emitted the error.
+ * @param $file
+ *   The file that emitted the error.
+ * @param $line
+ *   The line number in file that emitted the error.
+ */
+function _drupal_error_header($message, $type, $function, $file, $line) {
+  // $number does not use drupal_static as it should not be reset
+  // as it uniquely identifies each PHP error.
+  static $number = 0;
+  $assertion = [
+    $message,
+    $type,
+    [
+      'function' => $function,
+      'file' => $file,
+      'line' => $line,
+    ],
+  ];
+  // For non-fatal errors (e.g. PHP notices) _drupal_log_error can be called
+  // multiple times per request. In that case the response is typically
+  // generated outside of the error handler, e.g., in a controller. As a
+  // result it is not possible to use a Response object here but instead the
+  // headers need to be emitted directly.
+  header('X-Drupal-Assertion-' . $number . ': ' . rawurlencode(serialize($assertion)));
+  $number++;
 }

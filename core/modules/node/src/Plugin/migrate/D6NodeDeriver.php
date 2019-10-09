@@ -3,12 +3,11 @@
 namespace Drupal\node\Plugin\migrate;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Database\DatabaseExceptionWrapper;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\migrate\Exception\RequirementsException;
 use Drupal\migrate\Plugin\MigrationDeriverTrait;
-use Drupal\migrate_drupal\Plugin\MigrateCckFieldPluginManagerInterface;
+use Drupal\migrate_drupal\FieldDiscoveryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,20 +24,6 @@ class D6NodeDeriver extends DeriverBase implements ContainerDeriverInterface {
   protected $basePluginId;
 
   /**
-   * Already-instantiated cckfield plugins, keyed by ID.
-   *
-   * @var \Drupal\migrate_drupal\Plugin\MigrateCckFieldInterface[]
-   */
-  protected $cckPluginCache;
-
-  /**
-   * The CCK plugin manager.
-   *
-   * @var \Drupal\migrate_drupal\Plugin\MigrateCckFieldPluginManagerInterface
-   */
-  protected $cckPluginManager;
-
-  /**
    * Whether or not to include translations.
    *
    * @var bool
@@ -46,19 +31,26 @@ class D6NodeDeriver extends DeriverBase implements ContainerDeriverInterface {
   protected $includeTranslations;
 
   /**
+   * The migration field discovery service.
+   *
+   * @var \Drupal\migrate_drupal\FieldDiscoveryInterface
+   */
+  protected $fieldDiscovery;
+
+  /**
    * D6NodeDeriver constructor.
    *
    * @param string $base_plugin_id
    *   The base plugin ID for the plugin ID.
-   * @param \Drupal\migrate_drupal\Plugin\MigrateCckFieldPluginManagerInterface $cck_manager
-   *   The CCK plugin manager.
    * @param bool $translations
    *   Whether or not to include translations.
+   * @param \Drupal\migrate_drupal\FieldDiscoveryInterface $field_discovery
+   *   The migration field discovery service.
    */
-  public function __construct($base_plugin_id, MigrateCckFieldPluginManagerInterface $cck_manager, $translations) {
+  public function __construct($base_plugin_id, $translations, FieldDiscoveryInterface $field_discovery) {
     $this->basePluginId = $base_plugin_id;
-    $this->cckPluginManager = $cck_manager;
     $this->includeTranslations = $translations;
+    $this->fieldDiscovery = $field_discovery;
   }
 
   /**
@@ -68,21 +60,13 @@ class D6NodeDeriver extends DeriverBase implements ContainerDeriverInterface {
     // Translations don't make sense unless we have content_translation.
     return new static(
       $base_plugin_id,
-      $container->get('plugin.manager.migrate.cckfield'),
-      $container->get('module_handler')->moduleExists('content_translation')
+      $container->get('module_handler')->moduleExists('content_translation'),
+      $container->get('migrate_drupal.field_discovery')
     );
   }
 
   /**
-   * Gets the definition of all derivatives of a base plugin.
-   *
-   * @param array $base_plugin_definition
-   *   The definition array of the base plugin.
-   *
-   * @return array
-   *   An array of full derivative definitions keyed on derivative id.
-   *
-   * @see \Drupal\Component\Plugin\Derivative\DeriverBase::getDerivativeDefinition()
+   * {@inheritdoc}
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
     if ($base_plugin_definition['id'] == 'd6_node_translation' && !$this->includeTranslations) {
@@ -90,24 +74,18 @@ class D6NodeDeriver extends DeriverBase implements ContainerDeriverInterface {
       return $this->derivatives;
     }
 
-    // Read all CCK field instance definitions in the source database.
-    $fields = array();
+    $node_types = static::getSourcePlugin('d6_node_type');
     try {
-      $source_plugin = static::getSourcePlugin('d6_field_instance');
-      $source_plugin->checkRequirements();
-
-      foreach ($source_plugin as $row) {
-        $fields[$row->getSourceProperty('type_name')][$row->getSourceProperty('field_name')] = $row->getSource();
-      }
+      $node_types->checkRequirements();
     }
     catch (RequirementsException $e) {
-      // If checkRequirements() failed then the content module did not exist and
-      // we do not have any CCK fields. Therefore, $fields will be empty and
-      // below we'll create a migration just for the node properties.
+      // If the d6_node_type requirements failed, that means we do not have a
+      // Drupal source database configured - there is nothing to generate.
+      return $this->derivatives;
     }
 
     try {
-      foreach (static::getSourcePlugin('d6_node_type') as $row) {
+      foreach ($node_types as $row) {
         $node_type = $row->getSourceProperty('type');
         $values = $base_plugin_definition;
 
@@ -125,23 +103,9 @@ class D6NodeDeriver extends DeriverBase implements ContainerDeriverInterface {
           $values['migration_dependencies']['required'][] = 'd6_node:' . $node_type;
         }
 
+        /** @var \Drupal\migrate\Plugin\Migration $migration */
         $migration = \Drupal::service('plugin.manager.migration')->createStubMigration($values);
-        if (isset($fields[$node_type])) {
-          foreach ($fields[$node_type] as $field_name => $info) {
-            $field_type = $info['type'];
-            try {
-              $plugin_id = $this->cckPluginManager->getPluginIdFromFieldType($field_type, ['core' => 6], $migration);
-              if (!isset($this->cckPluginCache[$field_type])) {
-                $this->cckPluginCache[$field_type] = $this->cckPluginManager->createInstance($plugin_id, ['core' => 6], $migration);
-              }
-              $this->cckPluginCache[$field_type]
-                ->processCckFieldValues($migration, $field_name, $info);
-            }
-            catch (PluginNotFoundException $ex) {
-              $migration->setProcessOfProperty($field_name, $field_name);
-            }
-          }
-        }
+        $this->fieldDiscovery->addBundleFieldProcesses($migration, 'node', $node_type);
         $this->derivatives[$node_type] = $migration->getPluginDefinition();
       }
     }

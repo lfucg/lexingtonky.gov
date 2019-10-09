@@ -2,7 +2,7 @@
 
 namespace Drupal\Tests\Traits\Core\Config;
 
-use \Drupal\Core\Config\Schema\SchemaIncompleteException;
+use Drupal\Core\Config\Schema\SchemaIncompleteException;
 
 /**
  * Adds a test for the configuration schema checker use in tests.
@@ -10,7 +10,7 @@ use \Drupal\Core\Config\Schema\SchemaIncompleteException;
 trait SchemaConfigListenerTestTrait {
 
   /**
-   * Tests \Drupal\Core\Config\Testing\ConfigSchemaChecker.
+   * Tests \Drupal\Core\Config\Development\ConfigSchemaChecker.
    */
   public function testConfigSchemaChecker() {
     // Test a non-existing schema.
@@ -27,6 +27,19 @@ trait SchemaConfigListenerTestTrait {
     // Test a valid schema.
     $message = 'Unexpected SchemaIncompleteException thrown';
     $config = $this->config('config_test.types')->set('int', 10);
+    try {
+      $config->save();
+      $this->pass($message);
+    }
+    catch (SchemaIncompleteException $e) {
+      $this->fail($message);
+    }
+
+    // Test a valid schema, where the value is accessed before saving. Ensures
+    // that overridden data is correctly reset after casting.
+    $message = 'Unexpected SchemaIncompleteException thrown';
+    $config = $this->config('config_test.types')->set('int', '10');
+    $config->get('int');
     try {
       $config->save();
       $this->pass($message);

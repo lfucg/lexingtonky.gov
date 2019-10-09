@@ -1,0 +1,6 @@
+name: lexky-d8
+recipe: pantheon
+config:
+  framework: drupal8
+  site: lexky-d8
+  id: 085efc9d-6f4f-4d02-a80b-9d5cf086a982

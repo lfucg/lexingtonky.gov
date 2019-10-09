@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\migrate\Unit\process\CallbackTest.
- */
-
 namespace Drupal\Tests\migrate\Unit\process;
 
 use Drupal\migrate\Plugin\migrate\process\Callback;
@@ -17,39 +12,66 @@ use Drupal\migrate\Plugin\migrate\process\Callback;
 class CallbackTest extends MigrateProcessTestCase {
 
   /**
-   * {@inheritdoc}
+   * Test callback with valid "callable".
+   *
+   * @dataProvider providerCallback
    */
-  protected function setUp() {
-    $this->plugin = new TestCallback();
-    parent::setUp();
+  public function testCallback($callable) {
+    $configuration = ['callable' => $callable];
+    $this->plugin = new Callback($configuration, 'map', []);
+    $value = $this->plugin->transform('FooBar', $this->migrateExecutable, $this->row, 'destinationproperty');
+    $this->assertSame('foobar', $value);
   }
 
   /**
-   * Test callback with a function as callable.
+   * Data provider for ::testCallback().
    */
-  public function testCallbackWithFunction() {
-    $this->plugin->setCallable('strtolower');
-    $value = $this->plugin->transform('FooBar', $this->migrateExecutable, $this->row, 'destinationproperty');
-    $this->assertSame($value, 'foobar');
+  public function providerCallback() {
+    return [
+      'function' => ['strtolower'],
+      'class method' => [[self::class, 'strtolower']],
+    ];
   }
 
   /**
-   * Test callback with a class method as callable.
+   * Test callback exceptions.
+   *
+   * @dataProvider providerCallbackExceptions
    */
-  public function testCallbackWithClassMethod() {
-    $this->plugin->setCallable(array('\Drupal\Component\Utility\Unicode', 'strtolower'));
-    $value = $this->plugin->transform('FooBar', $this->migrateExecutable, $this->row, 'destinationproperty');
-    $this->assertSame($value, 'foobar');
+  public function testCallbackExceptions($message, $configuration) {
+    $this->setExpectedException(\InvalidArgumentException::class, $message);
+    $this->plugin = new Callback($configuration, 'map', []);
   }
 
-}
-
-class TestCallback extends Callback {
-  public function __construct() {
+  /**
+   * Data provider for ::testCallbackExceptions().
+   */
+  public function providerCallbackExceptions() {
+    return [
+      'not set' => [
+        'message' => 'The "callable" must be set.',
+        'configuration' => [],
+      ],
+      'invalid method' => [
+        'message' => 'The "callable" must be a valid function or method.',
+        'configuration' => ['callable' => 'nonexistent_callable'],
+      ],
+    ];
   }
 
-  public function setCallable($callable) {
-    $this->configuration['callable'] = $callable;
+  /**
+   * Makes a string lowercase for testing purposes.
+   *
+   * @param string $string
+   *   The input string.
+   *
+   * @return string
+   *   The lowercased string.
+   *
+   * @see \Drupal\Tests\migrate\Unit\process\CallbackTest::providerCallback()
+   */
+  public static function strToLower($string) {
+    return mb_strtolower($string);
   }
 
 }

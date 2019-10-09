@@ -5,6 +5,7 @@ namespace Drupal\KernelTests\Core\Entity;
 use Drupal\entity_test\Entity\EntityTestMulRev;
 use Drupal\entity_test\Entity\EntityTestRev;
 use Drupal\language\Entity\ConfigurableLanguage;
+use Drupal\Tests\system\Functional\Entity\Traits\EntityDefinitionTestTrait;
 
 /**
  * Tests non-revisionable fields on revisionable (and translatable) entities.
@@ -12,6 +13,8 @@ use Drupal\language\Entity\ConfigurableLanguage;
  * @group Entity
  */
 class ContentEntityNonRevisionableFieldTest extends EntityKernelTestBase {
+
+  use EntityDefinitionTestTrait;
 
   /**
    * Modules to enable.
@@ -57,21 +60,21 @@ class ContentEntityNonRevisionableFieldTest extends EntityKernelTestBase {
     $user2 = $this->createUser();
 
     // Create a test entity.
-    $entity = EntityTestMulRev::create(array(
+    $entity = EntityTestMulRev::create([
       'name' => $this->randomString(),
       'user_id' => $user1->id(),
       'language' => 'en',
       'non_rev_field' => 'Huron',
-    ));
+    ]);
     $entity->save();
 
     // Create a test entity.
-    $entity2 = EntityTestMulRev::create(array(
+    $entity2 = EntityTestMulRev::create([
       'name' => $this->randomString(),
       'user_id' => $user1->id(),
       'language' => 'en',
       'non_rev_field' => 'Michigan',
-    ));
+    ]);
     $entity2->save();
 
     $this->assertEquals('Huron', $entity->get('non_rev_field')->value, 'Huron found on entity 1');
@@ -123,19 +126,19 @@ class ContentEntityNonRevisionableFieldTest extends EntityKernelTestBase {
     $user2 = $this->createUser();
 
     // Create a test entity.
-    $entity = EntityTestRev::create(array(
+    $entity = EntityTestRev::create([
       'name' => $this->randomString(),
       'user_id' => $user1->id(),
       'non_rev_field' => 'Superior',
-    ));
+    ]);
     $entity->save();
 
     // Create a test entity.
-    $entity2 = EntityTestRev::create(array(
+    $entity2 = EntityTestRev::create([
       'name' => $this->randomString(),
       'user_id' => $user1->id(),
       'non_rev_field' => 'Ontario',
-    ));
+    ]);
     $entity2->save();
 
     $this->assertEquals('Superior', $entity->get('non_rev_field')->value, 'Superior found on entity 1');
@@ -179,7 +182,7 @@ class ContentEntityNonRevisionableFieldTest extends EntityKernelTestBase {
    */
   public function testMultiColumnNonRevisionableBaseField() {
     \Drupal::state()->set('entity_test.multi_column', TRUE);
-    \Drupal::entityDefinitionUpdateManager()->applyUpdates();
+    $this->applyEntityUpdates('entity_test_mulrev');
     // Refresh the storage.
     $this->mulRev = $this->entityManager->getStorage('entity_test_mulrev');
     $user1 = $this->createUser();

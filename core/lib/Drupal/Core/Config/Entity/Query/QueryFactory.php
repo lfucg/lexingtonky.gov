@@ -28,7 +28,7 @@ class QueryFactory implements QueryFactoryInterface, EventSubscriberInterface {
   /**
    * The config factory used by the config entity query.
    *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface;
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 
@@ -163,7 +163,7 @@ class QueryFactory implements QueryFactoryInterface, EventSubscriberInterface {
 
     $values = (array) $this->getValues($config, $parts[0], $get_method, $parts);
 
-    $output = array();
+    $output = [];
     // Flatten the array to a single dimension and add the key to all the
     // values.
     array_walk_recursive($values, function ($current) use (&$output, $key) {
@@ -219,14 +219,14 @@ class QueryFactory implements QueryFactoryInterface, EventSubscriberInterface {
   /**
    * Updates configuration entity in the key store.
    *
-   * @param ConfigCrudEvent $event
+   * @param \Drupal\Core\Config\ConfigCrudEvent $event
    *   The configuration event.
    */
   public function onConfigSave(ConfigCrudEvent $event) {
     $saved_config = $event->getConfig();
     $entity_type_id = $this->configManager->getEntityTypeIdByName($saved_config->getName());
     if ($entity_type_id) {
-      $entity_type = $this->configManager->getEntityManager()->getDefinition($entity_type_id);
+      $entity_type = $this->configManager->getEntityTypeManager()->getDefinition($entity_type_id);
       $this->updateConfigKeyStore($entity_type, $saved_config);
     }
   }
@@ -241,7 +241,7 @@ class QueryFactory implements QueryFactoryInterface, EventSubscriberInterface {
     $saved_config = $event->getConfig();
     $entity_type_id = $this->configManager->getEntityTypeIdByName($saved_config->getName());
     if ($entity_type_id) {
-      $entity_type = $this->configManager->getEntityManager()->getDefinition($entity_type_id);
+      $entity_type = $this->configManager->getEntityTypeManager()->getDefinition($entity_type_id);
       $this->deleteConfigKeyStore($entity_type, $saved_config);
     }
   }
@@ -249,9 +249,9 @@ class QueryFactory implements QueryFactoryInterface, EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  static function getSubscribedEvents() {
-    $events[ConfigEvents::SAVE][] = array('onConfigSave', 128);
-    $events[ConfigEvents::DELETE][] = array('onConfigDelete', 128);
+  public static function getSubscribedEvents() {
+    $events[ConfigEvents::SAVE][] = ['onConfigSave', 128];
+    $events[ConfigEvents::DELETE][] = ['onConfigDelete', 128];
     return $events;
   }
 

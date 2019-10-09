@@ -1,0 +1,28 @@
+uuid: 718ff65b-3b38-4242-af43-d15357b5c9f6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_departments
+    - node.type.landing_page
+    - taxonomy.vocabulary.organizations
+id: node.landing_page.field_related_departments
+field_name: field_related_departments
+entity_type: node
+bundle: landing_page
+label: 'Related departments'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      organizations: organizations
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

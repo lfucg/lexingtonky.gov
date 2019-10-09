@@ -24,9 +24,9 @@ class MigrationPluginManager extends DefaultPluginManager implements MigrationPl
    *
    * @var array
    */
-  protected $defaults = array(
+  protected $defaults = [
     'class' => '\Drupal\migrate\Plugin\Migration',
-  );
+  ];
 
   /**
    * The interface the plugins should implement.
@@ -55,16 +55,27 @@ class MigrationPluginManager extends DefaultPluginManager implements MigrationPl
   public function __construct(ModuleHandlerInterface $module_handler, CacheBackendInterface $cache_backend, LanguageManagerInterface $language_manager) {
     $this->factory = new ContainerFactory($this, $this->pluginInterface);
     $this->alterInfo('migration_plugins');
-    $this->setCacheBackend($cache_backend, 'migration_plugins', array('migration_plugins'));
+    $this->setCacheBackend($cache_backend, 'migration_plugins', ['migration_plugins']);
     $this->moduleHandler = $module_handler;
   }
 
   /**
-   * {@inheritdoc}
+   * Gets the plugin discovery.
+   *
+   * This method overrides DefaultPluginManager::getDiscovery() in order to
+   * search for migration configurations in the MODULENAME/migrations and
+   * MODULENAME/migration_templates directories. Throws a deprecation notice if
+   * the MODULENAME/migration_templates directory exists.
    */
   protected function getDiscovery() {
     if (!isset($this->discovery)) {
-      $directories = array_map(function($directory) {
+      $directories = array_map(function ($directory) {
+        // Check for use of the @deprecated /migration_templates directory.
+        // @todo Remove use of /migration_templates in Drupal 9.0.0.
+        if (is_dir($directory . '/migration_templates')) {
+          @trigger_error('Use of the /migration_templates directory to store migration configuration files is deprecated in Drupal 8.1.0 and will be removed before Drupal 9.0.0. See https://www.drupal.org/node/2920988.', E_USER_DEPRECATED);
+        }
+        // But still accept configurations found in /migration_templates.
         return [$directory . '/migration_templates', $directory . '/migrations'];
       }, $this->moduleHandler->getModuleDirectories());
 
@@ -72,7 +83,7 @@ class MigrationPluginManager extends DefaultPluginManager implements MigrationPl
       // This gets rid of migrations which try to use a non-existent source
       // plugin. The common case for this is if the source plugin has, or
       // specifies, a non-existent provider.
-      $only_with_source_discovery  = new NoSourcePluginDecorator($yaml_discovery);
+      $only_with_source_discovery = new NoSourcePluginDecorator($yaml_discovery);
       // This gets rid of migrations with explicit providers set if one of the
       // providers do not exist before we try to use a potentially non-existing
       // deriver. This is a rare case.
@@ -85,7 +96,7 @@ class MigrationPluginManager extends DefaultPluginManager implements MigrationPl
   /**
    * {@inheritdoc}
    */
-  public function createInstance($plugin_id, array $configuration = array()) {
+  public function createInstance($plugin_id, array $configuration = []) {
     $instances = $this->createInstances([$plugin_id], [$plugin_id => $configuration]);
     return reset($instances);
   }
@@ -93,7 +104,7 @@ class MigrationPluginManager extends DefaultPluginManager implements MigrationPl
   /**
    * {@inheritdoc}
    */
-  public function createInstances($migration_id, array $configuration = array()) {
+  public function createInstances($migration_id, array $configuration = []) {
     if (empty($migration_id)) {
       $migration_id = array_keys($this->getDefinitions());
     }
@@ -116,16 +127,10 @@ class MigrationPluginManager extends DefaultPluginManager implements MigrationPl
   }
 
   /**
-   * Create migrations given a tag.
-   *
-   * @param string $tag
-   *   A migration tag we want to filter by.
-   *
-   * @return array|\Drupal\migrate\Plugin\MigrationInterface[]
-   *   An array of migration objects with the given tag.
+   * {@inheritdoc}
    */
   public function createInstancesByTag($tag) {
-    $migrations = array_filter($this->getDefinitions(), function($migration) use ($tag) {
+    $migrations = array_filter($this->getDefinitions(), function ($migration) use ($tag) {
       return !empty($migration['migration_tags']) && in_array($tag, $migration['migration_tags']);
     });
     return $this->createInstances(array_keys($migrations));
@@ -154,7 +159,6 @@ class MigrationPluginManager extends DefaultPluginManager implements MigrationPl
     }
     return $plugin_ids;
   }
-
 
   /**
    * {@inheritdoc}
@@ -204,7 +208,14 @@ class MigrationPluginManager extends DefaultPluginManager implements MigrationPl
         $migration->set('requirements', $required_dependency_graph[$migration_id]['paths']);
       }
     }
-    array_multisort($weights, SORT_DESC, SORT_NUMERIC, $migrations);
+    // Sort weights, labels, and keys in the same order as each other.
+    array_multisort(
+      // Use the numerical weight as the primary sort.
+      $weights, SORT_DESC, SORT_NUMERIC,
+      // When migrations have the same weight, sort them alphabetically by ID.
+      array_keys($migrations), SORT_ASC, SORT_NATURAL,
+      $migrations
+    );
 
     return $migrations;
   }
@@ -222,9 +233,9 @@ class MigrationPluginManager extends DefaultPluginManager implements MigrationPl
    *   The dynamic ID mapping.
    */
   protected function addDependency(array &$graph, $id, $dependency, $dynamic_ids) {
-    $dependencies = isset($dynamic_ids[$dependency]) ? $dynamic_ids[$dependency] : array($dependency);
+    $dependencies = isset($dynamic_ids[$dependency]) ? $dynamic_ids[$dependency] : [$dependency];
     if (!isset($graph[$id]['edges'])) {
-      $graph[$id]['edges'] = array();
+      $graph[$id]['edges'] = [];
     }
     $graph[$id]['edges'] += array_combine($dependencies, $dependencies);
   }

@@ -2,17 +2,23 @@
 
 namespace Drupal\Tests\simpletest\Unit;
 
+use Drupal\Core\Database\Database;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\File\FileSystemInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests simpletest_run_phpunit_tests() handles PHPunit fatals correctly.
  *
+ * We don't extend Drupal\Tests\UnitTestCase here because its $root property is
+ * not static and we need it to be static here.
+ *
  * @group simpletest
  *
  * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
  */
-class SimpletestPhpunitRunCommandTest extends \PHPUnit_Framework_TestCase {
+class SimpletestPhpunitRunCommandTest extends TestCase {
 
   /**
    * Path to the app root.
@@ -81,6 +87,18 @@ class SimpletestPhpunitRunCommandTest extends \PHPUnit_Framework_TestCase {
    * @dataProvider provideStatusCodes
    */
   public function testSimpletestPhpUnitRunCommand($status, $label) {
+    // Add a default database connection in order for
+    // Database::getConnectionInfoAsUrl() to return valid information.
+    Database::addConnectionInfo('default', 'default', [
+        'driver' => 'mysql',
+        'username' => 'test_user',
+        'password' => 'test_pass',
+        'host' => 'test_host',
+        'database' => 'test_database',
+        'port' => 3306,
+        'namespace' => 'Drupal\Core\Database\Driver\mysql',
+      ]
+    );
     $test_id = basename(tempnam(sys_get_temp_dir(), 'xxx'));
     putenv('SimpletestPhpunitRunCommandTestWillDie=' . $status);
     $ret = simpletest_run_phpunit_tests($test_id, [SimpletestPhpunitRunCommandTestWillDie::class]);

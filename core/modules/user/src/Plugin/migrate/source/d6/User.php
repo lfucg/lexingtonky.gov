@@ -9,7 +9,8 @@ use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
  * Drupal 6 user source from database.
  *
  * @MigrateSource(
- *   id = "d6_user"
+ *   id = "d6_user",
+ *   source_module = "user"
  * )
  */
 class User extends DrupalSqlBase {
@@ -32,14 +33,6 @@ class User extends DrupalSqlBase {
     // Add roles field.
     $fields['roles'] = $this->t('Roles');
 
-    // Profile fields.
-    if ($this->moduleExists('profile')) {
-      $fields += $this->select('profile_fields', 'pf')
-        ->fields('pf', array('name', 'title'))
-        ->execute()
-        ->fetchAllKeyed();
-    }
-
     return $fields;
   }
 
@@ -49,7 +42,7 @@ class User extends DrupalSqlBase {
   public function prepareRow(Row $row) {
     // User roles.
     $roles = $this->select('users_roles', 'ur')
-      ->fields('ur', array('rid'))
+      ->fields('ur', ['rid'])
       ->condition('ur.uid', $row->getSourceProperty('uid'))
       ->execute()
       ->fetchCol();
@@ -60,7 +53,7 @@ class User extends DrupalSqlBase {
     if ($row->hasSourceProperty('timezone_id') && $row->getSourceProperty('timezone_id')) {
       if ($this->getDatabase()->schema()->tableExists('event_timezones')) {
         $event_timezone = $this->select('event_timezones', 'e')
-          ->fields('e', array('name'))
+          ->fields('e', ['name'])
           ->condition('e.timezone', $row->getSourceProperty('timezone_id'))
           ->execute()
           ->fetchField();
@@ -80,12 +73,12 @@ class User extends DrupalSqlBase {
    * {@inheritdoc}
    */
   public function getIds() {
-    return array(
-      'uid' => array(
+    return [
+      'uid' => [
         'type' => 'integer',
         'alias' => 'u',
-      ),
-    );
+      ],
+    ];
   }
 
   /**
@@ -95,7 +88,7 @@ class User extends DrupalSqlBase {
    *   Associative array having field name as key and description as value.
    */
   protected function baseFields() {
-    $fields = array(
+    $fields = [
       'uid' => $this->t('User ID'),
       'name' => $this->t('Username'),
       'pass' => $this->t('Password'),
@@ -112,7 +105,7 @@ class User extends DrupalSqlBase {
       'picture' => $this->t('Picture'),
       'init' => $this->t('Init'),
       'data' => $this->t('User data'),
-    );
+    ];
 
     // Possible field added by Date contributed module.
     // @see https://api.drupal.org/api/drupal/modules%21user%21user.install/function/user_update_7002/7

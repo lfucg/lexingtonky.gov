@@ -4,6 +4,13 @@ status: false
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.final_order.field_address
+    - field.field.node.final_order.field_final_order_date
+    - field.field.node.final_order.field_final_order_docs
+    - field.field.node.final_order.field_metatags
+    - field.field.node.final_order.field_owners_address
+    - field.field.node.final_order.field_person_charged
+    - field.field.node.final_order.field_pva_num
     - node.type.final_order
   module:
     - user
@@ -14,12 +21,17 @@ mode: teaser
 content:
   links:
     weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
+  addtoany: true
   field_address: true
   field_citation: true
   field_final_order_date: true
   field_final_order_docs: true
   field_findings_and_penalty: true
+  field_metatags: true
   field_owners_address: true
   field_person_charged: true
   field_pva_num: true

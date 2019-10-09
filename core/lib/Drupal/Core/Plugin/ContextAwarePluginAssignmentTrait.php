@@ -12,7 +12,7 @@ trait ContextAwarePluginAssignmentTrait {
    *
    * @see \Drupal\Core\StringTranslation\StringTranslationTrait
    */
-  abstract protected function t($string, array $args = array(), array $options = array());
+  abstract protected function t($string, array $args = [], array $options = []);
 
   /**
    * Wraps the context handler.
@@ -48,7 +48,10 @@ trait ContextAwarePluginAssignmentTrait {
         ];
       }
 
-      if (count($options) > 1 || !$definition->isRequired()) {
+      // Show the context selector only if there is more than 1 option to choose
+      // from. Also, show if there is a single option but the plugin does not
+      // require a context.
+      if (count($options) > 1 || (count($options) == 1 && !$definition->isRequired())) {
         $assignments = $plugin->getContextMapping();
         $element[$context_slot] = [
           '#title' => $definition->getLabel() ?: $this->t('Select a @context value:', ['@context' => $context_slot]),

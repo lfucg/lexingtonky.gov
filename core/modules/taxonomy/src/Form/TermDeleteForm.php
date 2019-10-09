@@ -2,12 +2,13 @@
 
 namespace Drupal\taxonomy\Form;
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\ContentEntityDeleteForm;
 use Drupal\Core\Url;
 
 /**
  * Provides a deletion confirmation form for taxonomy term.
+ *
+ * @internal
  */
 class TermDeleteForm extends ContentEntityDeleteForm {
 
@@ -38,24 +39,7 @@ class TermDeleteForm extends ContentEntityDeleteForm {
    * {@inheritdoc}
    */
   protected function getDeletionMessage() {
-    return $this->t('Deleted term %name.', array('%name' => $this->entity->label()));
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    parent::submitForm($form, $form_state);
-
-    /** @var \Drupal\Core\Entity\ContentEntityInterface $term */
-    $term = $this->getEntity();
-    if ($term->isDefaultTranslation()) {
-      $storage = $this->entityManager->getStorage('taxonomy_vocabulary');
-      $vocabulary = $storage->load($this->entity->bundle());
-
-      // @todo Move to storage http://drupal.org/node/1988712
-      taxonomy_check_vocabulary_hierarchy($vocabulary, array('tid' => $term->id()));
-    }
+    return $this->t('Deleted term %name.', ['%name' => $this->entity->label()]);
   }
 
 }

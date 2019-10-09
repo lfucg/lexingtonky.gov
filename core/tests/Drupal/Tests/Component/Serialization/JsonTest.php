@@ -3,13 +3,13 @@
 namespace Drupal\Tests\Component\Serialization;
 
 use Drupal\Component\Serialization\Json;
-use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass \Drupal\Component\Serialization\Json
  * @group Serialization
  */
-class JsonTest extends UnitTestCase {
+class JsonTest extends TestCase {
 
   /**
    * A test string with the full ASCII table.
@@ -32,7 +32,6 @@ class JsonTest extends UnitTestCase {
    */
   protected $htmlUnsafeEscaped;
 
-
   /**
    * {@inheritdoc}
    */
@@ -48,9 +47,9 @@ class JsonTest extends UnitTestCase {
 
     // Characters that must be escaped.
     // We check for unescaped " separately.
-    $this->htmlUnsafe = array('<', '>', '\'', '&');
+    $this->htmlUnsafe = ['<', '>', '\'', '&'];
     // The following are the encoded forms of: < > ' & "
-    $this->htmlUnsafeEscaped = array('\u003C', '\u003E', '\u0027', '\u0026', '\u0022');
+    $this->htmlUnsafeEscaped = ['\u003C', '\u003E', '\u0027', '\u0026', '\u0022'];
   }
 
   /**
@@ -58,7 +57,7 @@ class JsonTest extends UnitTestCase {
    */
   public function testEncodingAscii() {
     // Verify there aren't character encoding problems with the source string.
-    $this->assertSame(strlen($this->string), 127, 'A string with the full ASCII table has the correct length.');
+    $this->assertSame(127, strlen($this->string), 'A string with the full ASCII table has the correct length.');
     foreach ($this->htmlUnsafe as $char) {
       $this->assertTrue(strpos($this->string, $char) > 0, sprintf('A string with the full ASCII table includes %s.', $char));
     }
@@ -100,7 +99,7 @@ class JsonTest extends UnitTestCase {
   public function testStructuredReversibility() {
     // Verify reversibility for structured data. Also verify that necessary
     // characters are escaped.
-    $source = array(TRUE, FALSE, 0, 1, '0', '1', $this->string, array('key1' => $this->string, 'key2' => array('nested' => TRUE)));
+    $source = [TRUE, FALSE, 0, 1, '0', '1', $this->string, ['key1' => $this->string, 'key2' => ['nested' => TRUE]]];
     $json = Json::encode($source);
     foreach ($this->htmlUnsafe as $char) {
       $this->assertTrue(strpos($json, $char) === FALSE, sprintf('A JSON encoded string does not contain %s.', $char));

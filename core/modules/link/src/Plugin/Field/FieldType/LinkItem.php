@@ -30,10 +30,10 @@ class LinkItem extends FieldItemBase implements LinkItemInterface {
    * {@inheritdoc}
    */
   public static function defaultFieldSettings() {
-    return array(
+    return [
       'title' => DRUPAL_OPTIONAL,
-      'link_type' => LinkItemInterface::LINK_GENERIC
-    ) + parent::defaultFieldSettings();
+      'link_type' => LinkItemInterface::LINK_GENERIC,
+    ] + parent::defaultFieldSettings();
   }
 
   /**
@@ -56,58 +56,58 @@ class LinkItem extends FieldItemBase implements LinkItemInterface {
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
-    return array(
-      'columns' => array(
-        'uri' => array(
+    return [
+      'columns' => [
+        'uri' => [
           'description' => 'The URI of the link.',
           'type' => 'varchar',
           'length' => 2048,
-        ),
-        'title' => array(
+        ],
+        'title' => [
           'description' => 'The link text.',
           'type' => 'varchar',
           'length' => 255,
-        ),
-        'options' => array(
+        ],
+        'options' => [
           'description' => 'Serialized array of options for the link.',
           'type' => 'blob',
           'size' => 'big',
           'serialize' => TRUE,
-        ),
-      ),
-      'indexes' => array(
-        'uri' => array(array('uri', 30)),
-      ),
-    );
+        ],
+      ],
+      'indexes' => [
+        'uri' => [['uri', 30]],
+      ],
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
-    $element = array();
+    $element = [];
 
-    $element['link_type'] = array(
+    $element['link_type'] = [
       '#type' => 'radios',
       '#title' => t('Allowed link type'),
       '#default_value' => $this->getSetting('link_type'),
-      '#options' => array(
+      '#options' => [
         static::LINK_INTERNAL => t('Internal links only'),
         static::LINK_EXTERNAL => t('External links only'),
         static::LINK_GENERIC => t('Both internal and external links'),
-      ),
-    );
+      ],
+    ];
 
-    $element['title'] = array(
+    $element['title'] = [
       '#type' => 'radios',
       '#title' => t('Allow link text'),
       '#default_value' => $this->getSetting('title'),
-      '#options' => array(
+      '#options' => [
         DRUPAL_DISABLED => t('Disabled'),
         DRUPAL_OPTIONAL => t('Optional'),
         DRUPAL_REQUIRED => t('Required'),
-      ),
-    );
+      ],
+    ];
 
     return $element;
   }
@@ -119,7 +119,7 @@ class LinkItem extends FieldItemBase implements LinkItemInterface {
     $random = new Random();
     if ($field_definition->getItemDefinition()->getSetting('link_type') & LinkItemInterface::LINK_EXTERNAL) {
       // Set of possible top-level domains.
-      $tlds = array('com', 'net', 'gov', 'org', 'edu', 'biz', 'info');
+      $tlds = ['com', 'net', 'gov', 'org', 'edu', 'biz', 'info'];
       // Set random length for the domain name.
       $domain_length = mt_rand(7, 15);
 
@@ -135,7 +135,7 @@ class LinkItem extends FieldItemBase implements LinkItemInterface {
           $values['title'] = mt_rand(0, 1) ? $random->sentences(4) : '';
           break;
       }
-      $values['uri'] = 'http://www.' . $random->word($domain_length) . '.' . $tlds[mt_rand(0, (sizeof($tlds) - 1))];
+      $values['uri'] = 'http://www.' . $random->word($domain_length) . '.' . $tlds[mt_rand(0, (count($tlds) - 1))];
     }
     else {
       $values['uri'] = 'base:' . $random->name(mt_rand(1, 64));
@@ -186,12 +186,16 @@ class LinkItem extends FieldItemBase implements LinkItemInterface {
         'options' => [],
       ];
     }
-    // Unserialize the values.
-    // @todo The storage controller should take care of this, see
-    //   SqlContentEntityStorage::loadFieldItems, see
-    //   https://www.drupal.org/node/2414835
+    // Unserialize the values, this is deprecated as the storage takes care of
+    // this, options must not be passed as a string anymore.
     if (is_string($values['options'])) {
-      $values['options'] = unserialize($values['options']);
+      @trigger_error('Support for passing options as a serialized string is deprecated in 8.7.0 and will be removed before Drupal 9.0.0. Pass them as an array instead. See https://www.drupal.org/node/2961643.', E_USER_DEPRECATED);
+      if (version_compare(PHP_VERSION, '7.0.0', '>=')) {
+        $values['options'] = unserialize($values['options'], ['allowed_classes' => FALSE]);
+      }
+      else {
+        $values['options'] = unserialize($values['options']);
+      }
     }
     parent::setValue($values, $notify);
   }

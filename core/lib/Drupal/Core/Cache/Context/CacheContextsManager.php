@@ -71,7 +71,7 @@ class CacheContextsManager {
    *   An array of available cache contexts and corresponding labels.
    */
   public function getLabels($include_calculated_cache_contexts = FALSE) {
-    $with_labels = array();
+    $with_labels = [];
     foreach ($this->contexts as $context) {
       $service = $this->getService($context);
       if (!$include_calculated_cache_contexts && $service instanceof CalculatedCacheContextInterface) {
@@ -100,7 +100,7 @@ class CacheContextsManager {
    *   cacheability metadata.
    */
   public function convertTokensToKeys(array $context_tokens) {
-    assert('$this->assertValidTokens($context_tokens)');
+    assert($this->assertValidTokens($context_tokens));
     $cacheable_metadata = new CacheableMetadata();
     $optimized_tokens = $this->optimizeTokens($context_tokens);
     // Iterate over cache contexts that have been optimized away and get their

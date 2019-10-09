@@ -1,0 +1,19 @@
+name: Lexington Home
+description: Subtheme for Homepage.
+type: theme
+core: 8.x
+base theme: lex
+
+# Add your regions below. Defaults to those defined in Drupal core.
+regions:
+  notices: 'Priority Notices'
+  sitemast: 'Header Navigation'
+  hero: 'Page Features'
+  breadcrumb: 'Breadcrumbs and Notices'
+  title: 'Page Title'
+  content: 'Content'
+  after_content: 'Additional Content following Page Content in Main Area'
+  sidebar: 'Sidebar'
+  postscript: 'Postscript Area'
+  feedback: 'Feedback Form'
+  footer: 'Footer'

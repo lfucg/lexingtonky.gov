@@ -4,7 +4,6 @@ namespace Drupal\Core\Plugin\Discovery;
 
 use Drupal\Component\Annotation\AnnotationInterface;
 use Drupal\Component\Annotation\Plugin\Discovery\AnnotatedClassDiscovery as ComponentAnnotatedClassDiscovery;
-use Drupal\Component\Utility\Unicode;
 
 /**
  * Defines a discovery mechanism to find annotated plugins in PSR-0 namespaces.
@@ -50,7 +49,7 @@ class AnnotatedClassDiscovery extends ComponentAnnotatedClassDiscovery {
    * @param string[] $annotation_namespaces
    *   (optional) Additional namespaces to scan for annotation definitions.
    */
-  function __construct($subdir, \Traversable $root_namespaces, $plugin_definition_annotation_name = 'Drupal\Component\Annotation\Plugin', array $annotation_namespaces = []) {
+  public function __construct($subdir, \Traversable $root_namespaces, $plugin_definition_annotation_name = 'Drupal\Component\Annotation\Plugin', array $annotation_namespaces = []) {
     if ($subdir) {
       // Prepend a directory separator to $subdir,
       // if it does not already have one.
@@ -61,7 +60,7 @@ class AnnotatedClassDiscovery extends ComponentAnnotatedClassDiscovery {
       $this->namespaceSuffix = str_replace('/', '\\', $subdir);
     }
     $this->rootNamespacesIterator = $root_namespaces;
-    $plugin_namespaces = array();
+    $plugin_namespaces = [];
     parent::__construct($plugin_namespaces, $plugin_definition_annotation_name, $annotation_namespaces);
   }
 
@@ -103,7 +102,7 @@ class AnnotatedClassDiscovery extends ComponentAnnotatedClassDiscovery {
     preg_match('|^Drupal\\\\(?<provider>[\w]+)\\\\|', $namespace, $matches);
 
     if (isset($matches['provider'])) {
-      return Unicode::strtolower($matches['provider']);
+      return mb_strtolower($matches['provider']);
     }
 
     return NULL;
@@ -113,7 +112,7 @@ class AnnotatedClassDiscovery extends ComponentAnnotatedClassDiscovery {
    * {@inheritdoc}
    */
   protected function getPluginNamespaces() {
-    $plugin_namespaces = array();
+    $plugin_namespaces = [];
     if ($this->namespaceSuffix) {
       foreach ($this->rootNamespacesIterator as $namespace => $dirs) {
         // Append the namespace suffix to the base namespace, to obtain the

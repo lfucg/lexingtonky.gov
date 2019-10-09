@@ -24,7 +24,6 @@ class StableTemplateOverrideTest extends KernelTestBase {
    */
   protected $templatesToSkip = [
     'views-form-views-form',
-    'entity-moderation-form'
   ];
 
   /**
@@ -83,7 +82,7 @@ class StableTemplateOverrideTest extends KernelTestBase {
    * Ensures that Stable overrides all relevant core templates.
    */
   public function testStableTemplateOverrides() {
-    $registry = new Registry(\Drupal::root(), \Drupal::cache(), \Drupal::lock(), \Drupal::moduleHandler(), $this->themeHandler, \Drupal::service('theme.initialization'), 'stable');
+    $registry = new Registry($this->root, \Drupal::cache(), \Drupal::lock(), \Drupal::moduleHandler(), $this->themeHandler, \Drupal::service('theme.initialization'), 'stable');
     $registry->setThemeManager(\Drupal::theme());
 
     $registry_full = $registry->get();

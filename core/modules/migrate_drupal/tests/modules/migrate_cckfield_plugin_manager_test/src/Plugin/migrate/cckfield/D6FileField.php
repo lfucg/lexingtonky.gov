@@ -11,7 +11,9 @@ use Drupal\migrate\Plugin\MigrationInterface;
  *   core = {6},
  *   type_map = {
  *     "file" = "file"
- *   }
+ *   },
+ *   source_module = "foo",
+ *   destination_module = "bar"
  * )
  */
 class D6FileField extends CckFieldPluginBase {
@@ -19,11 +21,10 @@ class D6FileField extends CckFieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getFieldFormatterMap() {}
-
-  /**
-   * {@inheritdoc}
-   */
-  public function processCckFieldValues(MigrationInterface $migration, $field_name, $data) {}
+  public function processCckFieldValues(MigrationInterface $migration, $field_name, $data) {
+    $migration->setProcessOfProperty($field_name, [
+      'class' => static::class,
+    ]);
+  }
 
 }

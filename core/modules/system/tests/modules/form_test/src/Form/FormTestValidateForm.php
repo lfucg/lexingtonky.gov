@@ -17,6 +17,8 @@ use Drupal\form_test\Callbacks;
  *   structure and the alterations should be contained in the rebuilt form.
  * - #validate handlers should be able to alter the $form and the alterations
  *   should be contained in the rebuilt form.
+ *
+ * @internal
  */
 class FormTestValidateForm extends FormBase {
 
@@ -33,16 +35,16 @@ class FormTestValidateForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $object = new Callbacks();
 
-    $form['name'] = array(
+    $form['name'] = [
       '#type' => 'textfield',
       '#title' => 'Name',
       '#default_value' => '',
-      '#element_validate' => array(array($object, 'validateName')),
-    );
-    $form['submit'] = array(
+      '#element_validate' => [[$object, 'validateName']],
+    ];
+    $form['submit'] = [
       '#type' => 'submit',
       '#value' => 'Save',
-    );
+    ];
 
     return $form;
   }
@@ -57,7 +59,7 @@ class FormTestValidateForm extends FormBase {
       // Alter the submitted value in $form_state.
       $form_state->setValueForElement($form['name'], 'value changed by setValueForElement() in #validate');
       // Output the element's value from $form_state.
-      drupal_set_message(t('@label value: @value', array('@label' => $form['name']['#title'], '@value' => $form_state->getValue('name'))));
+      $this->messenger()->addStatus($this->t('@label value: @value', ['@label' => $form['name']['#title'], '@value' => $form_state->getValue('name')]));
 
       // Trigger a form validation error to see our changes.
       $form_state->setErrorByName('');

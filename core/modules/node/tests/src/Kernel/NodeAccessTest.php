@@ -6,9 +6,9 @@ use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\NodeInterface;
-use Drupal\simpletest\ContentTypeCreationTrait;
-use Drupal\simpletest\NodeCreationTrait;
-use Drupal\simpletest\UserCreationTrait;
+use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
+use Drupal\Tests\node\Traits\NodeCreationTrait;
+use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\user\RoleInterface;
 
 /**
@@ -73,11 +73,11 @@ class NodeAccessTest extends KernelTestBase {
     $this->drupalCreateUser();
 
     // Create a node type.
-    $this->drupalCreateContentType(array(
+    $this->drupalCreateContentType([
       'type' => 'page',
       'name' => 'Basic page',
       'display_submitted' => FALSE,
-    ));
+    ]);
   }
 
   /**

@@ -6,12 +6,13 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItem;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
 
 /**
  * Base class for 'DateTime Field formatter' plugin implementations.
@@ -82,9 +83,9 @@ abstract class DateTimeFormatterBase extends FormatterBase implements ContainerF
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
+    return [
       'timezone_override' => '',
-    ) + parent::defaultSettings();
+    ] + parent::defaultSettings();
   }
 
   /**
@@ -93,13 +94,13 @@ abstract class DateTimeFormatterBase extends FormatterBase implements ContainerF
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::settingsForm($form, $form_state);
 
-    $form['timezone_override'] = array(
+    $form['timezone_override'] = [
       '#type' => 'select',
       '#title' => $this->t('Time zone override'),
       '#description' => $this->t('The time zone selected here will always be used'),
-      '#options' => system_time_zones(TRUE),
+      '#options' => system_time_zones(TRUE, TRUE),
       '#default_value' => $this->getSetting('timezone_override'),
-    );
+    ];
 
     return $form;
   }
@@ -111,10 +112,34 @@ abstract class DateTimeFormatterBase extends FormatterBase implements ContainerF
     $summary = parent::settingsSummary();
 
     if ($override = $this->getSetting('timezone_override')) {
-      $summary[] = $this->t('Time zone: @timezone', array('@timezone' => $override));
+      $summary[] = $this->t('Time zone: @timezone', ['@timezone' => $override]);
     }
 
     return $summary;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    $elements = [];
+
+    foreach ($items as $delta => $item) {
+      if ($item->date) {
+        /** @var \Drupal\Core\Datetime\DrupalDateTime $date */
+        $date = $item->date;
+        $elements[$delta] = $this->buildDateWithIsoAttribute($date);
+
+        if (!empty($item->_attributes)) {
+          $elements[$delta]['#attributes'] += $item->_attributes;
+          // Unset field item attributes since they have been included in the
+          // formatter output and should not be rendered in the field template.
+          unset($item->_attributes);
+        }
+      }
+    }
+
+    return $elements;
   }
 
   /**
@@ -143,7 +168,7 @@ abstract class DateTimeFormatterBase extends FormatterBase implements ContainerF
   protected function setTimeZone(DrupalDateTime $date) {
     if ($this->getFieldSetting('datetime_type') === DateTimeItem::DATETIME_TYPE_DATE) {
       // A date without time has no timezone conversion.
-      $timezone = DATETIME_STORAGE_TIMEZONE;
+      $timezone = DateTimeItemInterface::STORAGE_TIMEZONE;
     }
     else {
       $timezone = drupal_get_user_timezone();
@@ -165,6 +190,62 @@ abstract class DateTimeFormatterBase extends FormatterBase implements ContainerF
     }
 
     return $settings;
+  }
+
+  /**
+   * Creates a render array from a date object.
+   *
+   * @param \Drupal\Core\Datetime\DrupalDateTime $date
+   *   A date object.
+   *
+   * @return array
+   *   A render array.
+   */
+  protected function buildDate(DrupalDateTime $date) {
+    $this->setTimeZone($date);
+
+    $build = [
+      '#markup' => $this->formatDate($date),
+      '#cache' => [
+        'contexts' => [
+          'timezone',
+        ],
+      ],
+    ];
+
+    return $build;
+  }
+
+  /**
+   * Creates a render array from a date object with ISO date attribute.
+   *
+   * @param \Drupal\Core\Datetime\DrupalDateTime $date
+   *   A date object.
+   *
+   * @return array
+   *   A render array.
+   */
+  protected function buildDateWithIsoAttribute(DrupalDateTime $date) {
+    // Create the ISO date in Universal Time.
+    $iso_date = $date->format("Y-m-d\TH:i:s") . 'Z';
+
+    $this->setTimeZone($date);
+
+    $build = [
+      '#theme' => 'time',
+      '#text' => $this->formatDate($date),
+      '#html' => FALSE,
+      '#attributes' => [
+        'datetime' => $iso_date,
+      ],
+      '#cache' => [
+        'contexts' => [
+          'timezone',
+        ],
+      ],
+    ];
+
+    return $build;
   }
 
 }

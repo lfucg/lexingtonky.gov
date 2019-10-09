@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\webprofiler\WebprofilerServiceProvider.
- */
-
 namespace Drupal\webprofiler;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -33,7 +28,6 @@ class WebprofilerServiceProvider extends ServiceProviderBase {
     $container->addCompilerPass(new StoragePass());
 
     $container->addCompilerPass(new ServicePass(), PassConfig::TYPE_AFTER_REMOVING);
-    $container->addCompilerPass(new EventPass(), PassConfig::TYPE_AFTER_REMOVING);
     $container->addCompilerPass(new DecoratorPass(), PassConfig::TYPE_AFTER_REMOVING);
 
     $modules = $container->getParameter('container.modules');
@@ -62,7 +56,7 @@ class WebprofilerServiceProvider extends ServiceProviderBase {
           'priority' => 78,
         ]);
     }
-    
+
     // Add TranslationsDataCollector only if Locale module is enabled.
     if (isset($modules['locale'])) {
       $container->register('webprofiler.translations', 'Drupal\webprofiler\DataCollector\TranslationsDataCollector')
@@ -110,5 +104,14 @@ class WebprofilerServiceProvider extends ServiceProviderBase {
     // Replace the regular string_translation service with a traceable one.
     $container->getDefinition('string_translation')
       ->setClass('Drupal\webprofiler\StringTranslation\TranslationManagerWrapper');
+
+    // Replace the regular event_dispatcher service with a traceable one.
+    $container->getDefinition('event_dispatcher')
+      ->setClass('Drupal\webprofiler\EventDispatcher\TraceableEventDispatcher')
+      ->addMethodCall('setStopwatch', [new Reference('stopwatch')]);
+
+    $container->getDefinition('http_kernel.basic')
+      ->replaceArgument(1, new Reference('webprofiler.debug.controller_resolver'));
   }
+
 }

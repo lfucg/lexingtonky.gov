@@ -6,6 +6,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Controller for image style addition forms.
+ *
+ * @internal
  */
 class ImageStyleAddForm extends ImageStyleFormBase {
 
@@ -14,7 +16,7 @@ class ImageStyleAddForm extends ImageStyleFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
-    drupal_set_message($this->t('Style %name was created.', array('%name' => $this->entity->label())));
+    $this->messenger()->addStatus($this->t('Style %name was created.', ['%name' => $this->entity->label()]));
   }
 
   /**

@@ -8,7 +8,8 @@ use Drupal\Core\Entity\EntityDisplayPluginCollection;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityDisplayBase;
-use Drupal\Core\TypedData\TranslatableInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\TypedData\TranslatableInterface as TranslatableDataInterface;
 
 /**
  * Configuration entity that contains display options for all components of a
@@ -20,6 +21,9 @@ use Drupal\Core\TypedData\TranslatableInterface;
  *   entity_keys = {
  *     "id" = "id",
  *     "status" = "status"
+ *   },
+ *   handlers = {
+ *     "access" = "\Drupal\Core\Entity\Entity\Access\EntityViewDisplayAccessControlHandler",
  *   },
  *   config_export = {
  *     "id",
@@ -70,12 +74,12 @@ class EntityViewDisplay extends EntityDisplayBase implements EntityViewDisplayIn
    */
   public static function collectRenderDisplays($entities, $view_mode) {
     if (empty($entities)) {
-      return array();
+      return [];
     }
 
     // Collect entity type and bundles.
     $entity_type = current($entities)->getEntityTypeId();
-    $bundles = array();
+    $bundles = [];
     foreach ($entities as $entity) {
       $bundles[$entity->bundle()] = TRUE;
     }
@@ -84,7 +88,7 @@ class EntityViewDisplay extends EntityDisplayBase implements EntityViewDisplayIn
     // For each bundle, check the existence and status of:
     // - the display for the view mode,
     // - the 'default' display.
-    $candidate_ids = array();
+    $candidate_ids = [];
     foreach ($bundles as $bundle) {
       if ($view_mode != 'default') {
         $candidate_ids[$bundle][] = $entity_type . '.' . $bundle . '.' . $view_mode;
@@ -97,7 +101,7 @@ class EntityViewDisplay extends EntityDisplayBase implements EntityViewDisplayIn
       ->execute();
 
     // For each bundle, select the first valid candidate display, if any.
-    $load_ids = array();
+    $load_ids = [];
     foreach ($bundles as $bundle) {
       foreach ($candidate_ids[$bundle] as $candidate_id) {
         if (isset($results[$candidate_id])) {
@@ -111,30 +115,30 @@ class EntityViewDisplay extends EntityDisplayBase implements EntityViewDisplayIn
     $storage = \Drupal::entityManager()->getStorage('entity_view_display');
     $displays = $storage->loadMultiple($load_ids);
 
-    $displays_by_bundle = array();
+    $displays_by_bundle = [];
     foreach ($bundles as $bundle) {
       // Use the selected display if any, or create a fresh runtime object.
       if (isset($load_ids[$bundle])) {
         $display = $displays[$load_ids[$bundle]];
       }
       else {
-        $display = $storage->create(array(
+        $display = $storage->create([
           'targetEntityType' => $entity_type,
           'bundle' => $bundle,
           'mode' => $view_mode,
           'status' => TRUE,
-        ));
+        ]);
       }
 
       // Let the display know which view mode was originally requested.
       $display->originalMode = $view_mode;
 
       // Let modules alter the display.
-      $display_context = array(
+      $display_context = [
         'entity_type' => $entity_type,
         'bundle' => $bundle,
         'view_mode' => $view_mode,
-      );
+      ];
       \Drupal::moduleHandler()->alter('entity_view_display', $display, $display_context);
 
       $displays_by_bundle[$bundle] = $display;
@@ -159,7 +163,7 @@ class EntityViewDisplay extends EntityDisplayBase implements EntityViewDisplayIn
    * @see \Drupal\Core\Entity\Entity\EntityViewDisplay::collectRenderDisplays()
    */
   public static function collectRenderDisplay(FieldableEntityInterface $entity, $view_mode) {
-    $displays = static::collectRenderDisplays(array($entity), $view_mode);
+    $displays = static::collectRenderDisplays([$entity], $view_mode);
     return $displays[$entity->bundle()];
   }
 
@@ -193,13 +197,13 @@ class EntityViewDisplay extends EntityDisplayBase implements EntityViewDisplayIn
 
     // Instantiate the formatter object from the stored display properties.
     if (($configuration = $this->getComponent($field_name)) && isset($configuration['type']) && ($definition = $this->getFieldDefinition($field_name))) {
-      $formatter = $this->pluginManager->getInstance(array(
+      $formatter = $this->pluginManager->getInstance([
         'field_definition' => $definition,
         'view_mode' => $this->originalMode,
         // No need to prepare, defaults have been merged in setComponent().
         'prepare' => FALSE,
-        'configuration' => $configuration
-      ));
+        'configuration' => $configuration,
+      ]);
     }
     else {
       $formatter = NULL;
@@ -214,7 +218,7 @@ class EntityViewDisplay extends EntityDisplayBase implements EntityViewDisplayIn
    * {@inheritdoc}
    */
   public function build(FieldableEntityInterface $entity) {
-    $build = $this->buildMultiple(array($entity));
+    $build = $this->buildMultiple([$entity]);
     return $build[0];
   }
 
@@ -222,9 +226,9 @@ class EntityViewDisplay extends EntityDisplayBase implements EntityViewDisplayIn
    * {@inheritdoc}
    */
   public function buildMultiple(array $entities) {
-    $build_list = array();
+    $build_list = [];
     foreach ($entities as $key => $entity) {
-      $build_list[$key] = array();
+      $build_list[$key] = [];
     }
 
     // Run field formatters.
@@ -232,7 +236,7 @@ class EntityViewDisplay extends EntityDisplayBase implements EntityViewDisplayIn
       if ($formatter = $this->getRenderer($name)) {
         // Group items across all entities and pass them to the formatter's
         // prepareView() method.
-        $grouped_items = array();
+        $grouped_items = [];
         foreach ($entities as $id => $entity) {
           $items = $entity->get($name);
           $items->filterEmptyItems();
@@ -250,7 +254,7 @@ class EntityViewDisplay extends EntityDisplayBase implements EntityViewDisplayIn
           // those values using:
           // - the entity language if the entity is translatable,
           // - the current "content language" otherwise.
-          if ($entity instanceof TranslatableInterface && $entity->isTranslatable()) {
+          if ($entity instanceof TranslatableDataInterface && $entity->isTranslatable()) {
             $view_langcode = $entity->language()->getId();
           }
           else {
@@ -266,17 +270,17 @@ class EntityViewDisplay extends EntityDisplayBase implements EntityViewDisplayIn
     foreach ($entities as $id => $entity) {
       // Assign the configured weights.
       foreach ($this->getComponents() as $name => $options) {
-        if (isset($build_list[$id][$name])) {
+        if (isset($build_list[$id][$name]) && !Element::isEmpty($build_list[$id][$name])) {
           $build_list[$id][$name]['#weight'] = $options['weight'];
         }
       }
 
       // Let other modules alter the renderable array.
-      $context = array(
+      $context = [
         'entity' => $entity,
         'view_mode' => $this->originalMode,
         'display' => $this,
-      );
+      ];
       \Drupal::moduleHandler()->alter('entity_display_build', $build_list[$id], $context);
     }
 
@@ -287,19 +291,19 @@ class EntityViewDisplay extends EntityDisplayBase implements EntityViewDisplayIn
    * {@inheritdoc}
    */
   public function getPluginCollections() {
-    $configurations = array();
+    $configurations = [];
     foreach ($this->getComponents() as $field_name => $configuration) {
       if (!empty($configuration['type']) && ($field_definition = $this->getFieldDefinition($field_name))) {
-        $configurations[$configuration['type']] = $configuration + array(
+        $configurations[$configuration['type']] = $configuration + [
           'field_definition' => $field_definition,
           'view_mode' => $this->originalMode,
-        );
+        ];
       }
     }
 
-    return array(
-      'formatters' => new EntityDisplayPluginCollection($this->pluginManager, $configurations)
-    );
+    return [
+      'formatters' => new EntityDisplayPluginCollection($this->pluginManager, $configurations),
+    ];
   }
 
 }

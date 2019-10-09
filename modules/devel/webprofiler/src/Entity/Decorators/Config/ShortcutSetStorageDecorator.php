@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\webprofiler\Entity\Decorators\Config\ShortcutSetStorageDecorator.
- */
-
 namespace Drupal\webprofiler\Entity\Decorators\Config;
 
 use Drupal\Core\Session\AccountInterface;
@@ -20,42 +15,42 @@ class ShortcutSetStorageDecorator extends ConfigEntityStorageDecorator implement
    * {@inheritdoc}
    */
   public function assignUser(ShortcutSetInterface $shortcut_set, $account) {
-    // TODO: Implement assignUser() method.
+    $this->getOriginalObject()->assignUser($shortcut_set, $account);
   }
 
   /**
    * {@inheritdoc}
    */
   public function unassignUser($account) {
-    // TODO: Implement unassignUser() method.
+    return $this->getOriginalObject()->unassignUser($account);
   }
 
   /**
    * {@inheritdoc}
    */
   public function deleteAssignedShortcutSets(ShortcutSetInterface $entity) {
-    // TODO: Implement deleteAssignedShortcutSets() method.
+    $this->getOriginalObject()->deleteAssignedShortcutSets($entity);
   }
 
   /**
    * {@inheritdoc}
    */
   public function getAssignedToUser($account) {
-    // TODO: Implement getAssignedToUser() method.
+    return $this->getOriginalObject()->getAssignedToUser($account);
   }
 
   /**
    * {@inheritdoc}
    */
   public function countAssignedUsers(ShortcutSetInterface $shortcut_set) {
-    // TODO: Implement countAssignedUsers() method.
+    return $this->getOriginalObject()->countAssignedUsers($shortcut_set);
   }
 
   /**
    * {@inheritdoc}
    */
   public function getDefaultSet(AccountInterface $account) {
-    // TODO: Implement getDefaultSet() method.
+    return $this->getOriginalObject()->getDefaultSet($account);
   }
 
 }

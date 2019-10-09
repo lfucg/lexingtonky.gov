@@ -97,12 +97,12 @@ class ContactFormViewBuilder implements EntityViewBuilderInterface, EntityHandle
     }
     else {
       // Form disabled, display a custom message using a template.
-      $form['disabled_form_error'] = array(
+      $form['disabled_form_error'] = [
         '#theme' => 'contact_storage_disabled_form',
         '#contact_form' => $entity,
         '#redirect_uri' => $entity->getThirdPartySetting('contact_storage', 'redirect_uri', ''),
         '#disabled_form_message' => $entity->getThirdPartySetting('contact_storage', 'disabled_form_message', t('This contact form has been disabled.')),
-      );
+      ];
     }
     // Add required cacheability metadata from the contact form entity, so that
     // changing it invalidates the cache.

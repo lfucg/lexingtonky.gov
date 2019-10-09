@@ -19,6 +19,13 @@ use Drupal\field\FieldStorageConfigInterface;
 function field_test_field_widget_info_alter(&$info) {
   $info['test_field_widget_multiple']['field_types'][] = 'test_field';
   $info['test_field_widget_multiple']['field_types'][] = 'test_field_with_preconfigured_options';
+  // Add extra widget when needed for tests.
+  // @see \Drupal\field\Tests\FormTest::widgetAlterTest().
+  if ($alter_info = \Drupal::state()->get("field_test.widget_alter_test")) {
+    if ($alter_info['widget'] === 'test_field_widget_multiple_single_value') {
+      $info['test_field_widget_multiple_single_value']['field_types'][] = 'test_field';
+    }
+  }
 }
 
 /**
@@ -34,7 +41,7 @@ function field_test_field_storage_config_update_forbid(FieldStorageConfigInterfa
  * Sample 'default value' callback.
  */
 function field_test_default_value(FieldableEntityInterface $entity, FieldDefinitionInterface $definition) {
-  return array(array('value' => 99));
+  return [['value' => 99]];
 }
 
 /**

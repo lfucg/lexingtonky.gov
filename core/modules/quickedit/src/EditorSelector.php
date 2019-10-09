@@ -22,7 +22,7 @@ class EditorSelector implements EditorSelectorInterface {
   /**
    * The manager for formatter plugins.
    *
-   * @var \Drupal\Core\Field\FormatterPluginManager.
+   * @var \Drupal\Core\Field\FormatterPluginManager
    */
   protected $formatterManager;
 
@@ -65,7 +65,7 @@ class EditorSelector implements EditorSelectorInterface {
     }
 
     // No early return, so create a list of all choices.
-    $editor_choices = array($editor_id);
+    $editor_choices = [$editor_id];
     if (isset($this->alternatives[$editor_id])) {
       $editor_choices = array_merge($editor_choices, $this->alternatives[$editor_id]);
     }
@@ -86,7 +86,7 @@ class EditorSelector implements EditorSelectorInterface {
    * {@inheritdoc}
    */
   public function getEditorAttachments(array $editor_ids) {
-    $attachments = array();
+    $attachments = [];
     $editor_ids = array_unique($editor_ids);
 
     // Editor plugins' attachments.

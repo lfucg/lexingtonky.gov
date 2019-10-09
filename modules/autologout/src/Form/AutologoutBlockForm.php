@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\autologout\Form\AutologoutBlockForm.
- */
-
 namespace Drupal\autologout\Form;
 
 use Drupal\autologout\AutologoutManagerInterface;
@@ -54,20 +49,20 @@ class AutologoutBlockForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['reset'] = array(
+    $form['reset'] = [
       '#type' => 'button',
       '#value' => t('Reset Timeout'),
       '#weight' => 1,
       '#limit_validation_errors' => FALSE,
       '#executes_submit_callback' => FALSE,
-      '#ajax' => array(
+      '#ajax' => [
         'callback' => 'autologout_ahah_set_last',
-      ),
-    );
+      ],
+    ];
 
-    $form['timer'] = array(
+    $form['timer'] = [
       '#markup' => $this->autoLogoutManager->createTimer(),
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
   }

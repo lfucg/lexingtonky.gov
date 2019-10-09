@@ -50,20 +50,20 @@ abstract class ImageStyleFormBase extends EntityForm {
    */
   public function form(array $form, FormStateInterface $form_state) {
 
-    $form['label'] = array(
+    $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Image style name'),
       '#default_value' => $this->entity->label(),
       '#required' => TRUE,
-    );
-    $form['name'] = array(
+    ];
+    $form['name'] = [
       '#type' => 'machine_name',
-      '#machine_name' => array(
-        'exists' => array($this->imageStyleStorage, 'load'),
-      ),
+      '#machine_name' => [
+        'exists' => [$this->imageStyleStorage, 'load'],
+      ],
       '#default_value' => $this->entity->id(),
       '#required' => TRUE,
-    );
+    ];
 
     return parent::form($form, $form_state);
   }
@@ -73,7 +73,7 @@ abstract class ImageStyleFormBase extends EntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
-    $form_state->setRedirectUrl($this->entity->urlInfo('edit-form'));
+    $form_state->setRedirectUrl($this->entity->toUrl('edit-form'));
   }
 
 }

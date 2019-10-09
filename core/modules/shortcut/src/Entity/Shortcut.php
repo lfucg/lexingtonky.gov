@@ -18,6 +18,14 @@ use Drupal\shortcut\ShortcutInterface;
  * @ContentEntityType(
  *   id = "shortcut",
  *   label = @Translation("Shortcut link"),
+ *   label_collection = @Translation("Shortcut links"),
+ *   label_singular = @Translation("shortcut link"),
+ *   label_plural = @Translation("shortcut links"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count shortcut link",
+ *     plural = "@count shortcut links",
+ *   ),
+ *   bundle_label = @Translation("Shortcut set"),
  *   handlers = {
  *     "access" = "Drupal\shortcut\ShortcutAccessControlHandler",
  *     "form" = {
@@ -123,13 +131,13 @@ class Shortcut extends ContentEntityBase implements ShortcutInterface {
       ->setRequired(TRUE)
       ->setTranslatable(TRUE)
       ->setSetting('max_length', 255)
-      ->setDisplayOptions('form', array(
+      ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -10,
-        'settings' => array(
+        'settings' => [
           'size' => 40,
-        ),
-      ));
+        ],
+      ]);
 
     $fields['weight'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Weight'))
@@ -139,14 +147,14 @@ class Shortcut extends ContentEntityBase implements ShortcutInterface {
       ->setLabel(t('Path'))
       ->setDescription(t('The location this shortcut points to.'))
       ->setRequired(TRUE)
-      ->setSettings(array(
+      ->setSettings([
         'link_type' => LinkItemInterface::LINK_INTERNAL,
         'title' => DRUPAL_DISABLED,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'link_default',
         'weight' => 0,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE);
 
     return $fields;

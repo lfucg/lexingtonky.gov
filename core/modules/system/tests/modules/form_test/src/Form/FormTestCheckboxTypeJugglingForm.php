@@ -7,6 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Builds a form to test return values for checkboxes.
+ *
+ * @internal
  */
 class FormTestCheckboxTypeJugglingForm extends FormBase {
 
@@ -21,12 +23,12 @@ class FormTestCheckboxTypeJugglingForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $default_value = NULL, $return_value = NULL) {
-    $form['checkbox'] = array(
+    $form['checkbox'] = [
       '#title' => t('Checkbox'),
       '#type' => 'checkbox',
       '#return_value' => $return_value,
       '#default_value' => $default_value,
-    );
+    ];
     return $form;
   }
 

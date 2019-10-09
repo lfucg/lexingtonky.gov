@@ -5,6 +5,8 @@
  * The content translation administration forms.
  */
 
+use Drupal\content_translation\BundleTranslationSettingsInterface;
+use Drupal\content_translation\ContentTranslationManager;
 use Drupal\Core\Config\Entity\ThirdPartySettingsInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -29,10 +31,10 @@ use Drupal\Core\Render\Element;
 function content_translation_field_sync_widget(FieldDefinitionInterface $field, $element_name = 'third_party_settings[content_translation][translation_sync]') {
   // No way to store field sync information on this field.
   if (!($field instanceof ThirdPartySettingsInterface)) {
-    return array();
+    return [];
   }
 
-  $element = array();
+  $element = [];
   $definition = \Drupal::service('plugin.manager.field.field_type')->getDefinition($field->getType());
   $column_groups = $definition['column_groups'];
   if (!empty($column_groups) && count($column_groups) > 1) {
@@ -50,12 +52,12 @@ function content_translation_field_sync_widget(FieldDefinitionInterface $field, 
 
     $default = $field->getThirdPartySetting('content_translation', 'translation_sync', $default);
 
-    $element = array(
+    $element = [
       '#type' => 'checkboxes',
       '#title' => t('Translatable elements'),
       '#options' => $options,
       '#default_value' => $default,
-    );
+    ];
 
     if ($require_all_groups_for_translation) {
       // The actual checkboxes are sometimes rendered separately and the parent
@@ -63,7 +65,7 @@ function content_translation_field_sync_widget(FieldDefinitionInterface $field, 
       // does not get lost.
       $element[key($options)]['#attached']['drupalSettings']['contentTranslationDependentOptions'] = [
         'dependent_selectors' => [
-          $element_name => $require_all_groups_for_translation
+          $element_name => $require_all_groups_for_translation,
         ],
       ];
       $element[key($options)]['#attached']['library'][] = 'content_translation/drupal.content_translation.admin';
@@ -83,6 +85,7 @@ function _content_translation_form_language_content_settings_form_alter(array &$
     return;
   }
 
+  /** @var \Drupal\content_translation\ContentTranslationManagerInterface $content_translation_manager */
   $content_translation_manager = \Drupal::service('content_translation.manager');
   $default = $form['entity_types']['#default_value'];
   foreach ($default as $entity_type_id => $enabled) {
@@ -96,7 +99,7 @@ function _content_translation_form_language_content_settings_form_alter(array &$
   $bundle_info_service = \Drupal::service('entity_type.bundle.info');
   foreach ($form['#labels'] as $entity_type_id => $label) {
     $entity_type = $entity_manager->getDefinition($entity_type_id);
-    $storage_definitions = $entity_type instanceof ContentEntityTypeInterface ? $entity_manager->getFieldStorageDefinitions($entity_type_id) : array();
+    $storage_definitions = $entity_type instanceof ContentEntityTypeInterface ? $entity_manager->getFieldStorageDefinitions($entity_type_id) : [];
 
     $entity_type_translatable = $content_translation_manager->isSupported($entity_type_id);
     foreach ($bundle_info_service->getBundleInfo($entity_type_id) as $bundle => $bundle_info) {
@@ -106,19 +109,39 @@ function _content_translation_form_language_content_settings_form_alter(array &$
       // about UI integration.
       $form['settings'][$entity_type_id][$bundle]['settings']['language']['#content_translation_skip_alter'] = TRUE;
       if (!$entity_type_translatable) {
-        $form['settings'][$entity_type_id]['#title'] = t('@label (Translation is not supported).', array('@label' => $entity_type->getLabel()));
+        $form['settings'][$entity_type_id]['#title'] = t('@label (Translation is not supported).', ['@label' => $entity_type->getLabel()]);
         continue;
+      }
+
+      // Displayed the "shared fields widgets" toggle.
+      if ($content_translation_manager instanceof BundleTranslationSettingsInterface) {
+        $settings = $content_translation_manager->getBundleTranslationSettings($entity_type_id, $bundle);
+        $force_hidden = ContentTranslationManager::isPendingRevisionSupportEnabled($entity_type_id, $bundle);
+        $form['settings'][$entity_type_id][$bundle]['settings']['content_translation']['untranslatable_fields_hide'] = [
+          '#type' => 'checkbox',
+          '#title' => t('Hide non translatable fields on translation forms'),
+          '#default_value' => $force_hidden || !empty($settings['untranslatable_fields_hide']),
+          '#disabled' => $force_hidden,
+          '#description' => $force_hidden ? t('Moderated content requires non-translatable fields to be edited in the original language form.') : '',
+          '#states' => [
+            'visible' => [
+              ':input[name="settings[' . $entity_type_id . '][' . $bundle . '][translatable]"]' => [
+                'checked' => TRUE,
+              ],
+            ],
+          ],
+        ];
       }
 
       $fields = $entity_manager->getFieldDefinitions($entity_type_id, $bundle);
       if ($fields) {
         foreach ($fields as $field_name => $definition) {
           if ($definition->isComputed() || (!empty($storage_definitions[$field_name]) && _content_translation_is_field_translatability_configurable($entity_type, $storage_definitions[$field_name]))) {
-            $form['settings'][$entity_type_id][$bundle]['fields'][$field_name] = array(
+            $form['settings'][$entity_type_id][$bundle]['fields'][$field_name] = [
               '#label' => $definition->getLabel(),
               '#type' => 'checkbox',
               '#default_value' => $definition->isTranslatable(),
-            );
+            ];
             // Display the column translatability configuration widget.
             $column_element = content_translation_field_sync_widget($definition, "settings[{$entity_type_id}][{$bundle}][columns][{$field_name}]");
             if ($column_element) {
@@ -129,10 +152,10 @@ function _content_translation_form_language_content_settings_form_alter(array &$
         if (!empty($form['settings'][$entity_type_id][$bundle]['fields'])) {
           // Only show the checkbox to enable translation if the bundles in the
           // entity might have fields and if there are fields to translate.
-          $form['settings'][$entity_type_id][$bundle]['translatable'] = array(
+          $form['settings'][$entity_type_id][$bundle]['translatable'] = [
             '#type' => 'checkbox',
             '#default_value' => $content_translation_manager->isEnabled($entity_type_id, $bundle),
-          );
+          ];
         }
       }
     }
@@ -141,6 +164,7 @@ function _content_translation_form_language_content_settings_form_alter(array &$
   $form['#validate'][] = 'content_translation_form_language_content_settings_validate';
   $form['#submit'][] = 'content_translation_form_language_content_settings_submit';
 }
+
 /**
  * Checks whether translatability should be configurable for a field.
  *
@@ -158,8 +182,7 @@ function _content_translation_is_field_translatability_configurable(EntityTypeIn
   // Allow to configure only fields supporting multilingual storage. We skip our
   // own fields as they are always translatable. Additionally we skip a set of
   // well-known fields implementing entity system business logic.
-  return
-    $definition->isTranslatable() &&
+  return $definition->isTranslatable() &&
     $definition->getProvider() != 'content_translation' &&
     !in_array($definition->getName(), [$entity_type->getKey('langcode'), $entity_type->getKey('default_langcode'), 'revision_translation_affected']);
 }
@@ -177,102 +200,103 @@ function _content_translation_preprocess_language_content_settings_table(&$varia
   $element = $variables['element'];
   $build = &$variables['build'];
 
-  array_unshift($build['#header'], array('data' => t('Translatable'), 'class' => array('translatable')));
-  $rows = array();
+  array_unshift($build['#header'], ['data' => t('Translatable'), 'class' => ['translatable']]);
+  $rows = [];
 
   foreach (Element::children($element) as $bundle) {
-    $field_names = !empty($element[$bundle]['fields']) ? Element::children($element[$bundle]['fields']) : array();
+    $field_names = !empty($element[$bundle]['fields']) ? Element::children($element[$bundle]['fields']) : [];
     if (!empty($element[$bundle]['translatable'])) {
       $checkbox_id = $element[$bundle]['translatable']['#id'];
     }
     $rows[$bundle] = $build['#rows'][$bundle];
 
     if (!empty($element[$bundle]['translatable'])) {
-      $translatable = array(
+      $translatable = [
         'data' => $element[$bundle]['translatable'],
-        'class' => array('translatable'),
-      );
+        'class' => ['translatable'],
+      ];
       array_unshift($rows[$bundle]['data'], $translatable);
 
       $rows[$bundle]['data'][1]['data']['#prefix'] = '<label for="' . $checkbox_id . '">';
     }
     else {
-      $translatable = array(
+      $translatable = [
         'data' => t('N/A'),
-        'class' => array('untranslatable'),
-      );
+        'class' => ['untranslatable'],
+      ];
       array_unshift($rows[$bundle]['data'], $translatable);
     }
 
     foreach ($field_names as $field_name) {
       $field_element = &$element[$bundle]['fields'][$field_name];
-      $rows[] = array(
-        'data' => array(
-          array(
-            'data' => drupal_render($field_element),
-            'class' => array('translatable'),
-          ),
-          array(
-            'data' => array(
+      $rows[] = [
+        'data' => [
+          [
+            'data' => \Drupal::service('renderer')->render($field_element),
+            'class' => ['translatable'],
+          ],
+          [
+            'data' => [
               '#prefix' => '<label for="' . $field_element['#id'] . '">',
               '#suffix' => '</label>',
-              'bundle' => array(
+              'bundle' => [
                 '#prefix' => '<span class="visually-hidden">',
                 '#suffix' => '</span> ',
                 '#plain_text' => $element[$bundle]['settings']['#label'],
-              ),
-              'field' => array(
+              ],
+              'field' => [
                 '#plain_text' => $field_element['#label'],
-              ),
-            ),
-            'class' => array('field'),
-          ),
-          array(
+              ],
+            ],
+            'class' => ['field'],
+          ],
+          [
             'data' => '',
-            'class' => array('operations'),
-          ),
-        ),
-        'class' => array('field-settings'),
-      );
+            'class' => ['operations'],
+          ],
+        ],
+        '#field_name' => $field_name,
+        'class' => ['field-settings'],
+      ];
 
       if (!empty($element[$bundle]['columns'][$field_name])) {
         $column_element = &$element[$bundle]['columns'][$field_name];
         foreach (Element::children($column_element) as $key) {
           $column_label = $column_element[$key]['#title'];
           unset($column_element[$key]['#title']);
-          $rows[] = array(
-            'data' => array(
-              array(
-                'data' => drupal_render($column_element[$key]),
-                'class' => array('translatable'),
-              ),
-              array(
-                'data' => array(
+          $rows[] = [
+            'data' => [
+              [
+                'data' => \Drupal::service('renderer')->render($column_element[$key]),
+                'class' => ['translatable'],
+              ],
+              [
+                'data' => [
                   '#prefix' => '<label for="' . $column_element[$key]['#id'] . '">',
                   '#suffix' => '</label>',
-                  'bundle' => array(
+                  'bundle' => [
                     '#prefix' => '<span class="visually-hidden">',
                     '#suffix' => '</span> ',
                     '#plain_text' => $element[$bundle]['settings']['#label'],
-                  ),
-                  'field' => array(
+                  ],
+                  'field' => [
                     '#prefix' => '<span class="visually-hidden">',
                     '#suffix' => '</span> ',
                     '#plain_text' => $field_element['#label'],
-                  ),
-                  'columns' => array(
+                  ],
+                  'columns' => [
                     '#plain_text' => $column_label,
-                  ),
-                ),
-                'class' => array('column'),
-              ),
-              array(
+                  ],
+                ],
+                'class' => ['column'],
+              ],
+              [
                 'data' => '',
-                'class' => array('operations'),
-              ),
-            ),
-            'class' => array('column-settings'),
-          );
+                'class' => ['operations'],
+              ],
+            ],
+            'class' => ['column-settings'],
+          ];
         }
       }
     }
@@ -295,7 +319,7 @@ function content_translation_form_language_content_settings_validate(array $form
 
         $translatable_fields = isset($settings[$entity_type][$bundle]['fields']) ? array_filter($settings[$entity_type][$bundle]['fields']) : FALSE;
         if (empty($translatable_fields)) {
-          $t_args = array('%bundle' => $form['settings'][$entity_type][$bundle]['settings']['#label']);
+          $t_args = ['%bundle' => $form['settings'][$entity_type][$bundle]['settings']['#label']];
           $form_state->setErrorByName($name, t('At least one field needs to be translatable to enable %bundle for translation.', $t_args));
         }
 
@@ -304,7 +328,7 @@ function content_translation_form_language_content_settings_validate(array $form
           foreach (\Drupal::languageManager()->getLanguages(LanguageInterface::STATE_LOCKED) as $language) {
             $locked_languages[] = $language->getName();
           }
-          $form_state->setErrorByName($name, t('Translation is not supported if language is always one of: @locked_languages', array('@locked_languages' => implode(', ', $locked_languages))));
+          $form_state->setErrorByName($name, t('Translation is not supported if language is always one of: @locked_languages', ['@locked_languages' => implode(', ', $locked_languages)]));
         }
       }
     }
@@ -317,6 +341,8 @@ function content_translation_form_language_content_settings_validate(array $form
  * @see content_translation_admin_settings_form_validate()
  */
 function content_translation_form_language_content_settings_submit(array $form, FormStateInterface $form_state) {
+  /** @var \Drupal\content_translation\ContentTranslationManagerInterface $content_translation_manager */
+  $content_translation_manager = \Drupal::service('content_translation.manager');
   $entity_types = $form_state->getValue('entity_types');
   $settings = &$form_state->getValue('settings');
 
@@ -347,7 +373,12 @@ function content_translation_form_language_content_settings_submit(array $form, 
       }
       if (isset($bundle_settings['translatable'])) {
         // Store whether a bundle has translation enabled or not.
-        \Drupal::service('content_translation.manager')->setEnabled($entity_type_id, $bundle, $bundle_settings['translatable']);
+        $content_translation_manager->setEnabled($entity_type_id, $bundle, $bundle_settings['translatable']);
+
+        // Store any other bundle settings.
+        if ($content_translation_manager instanceof BundleTranslationSettingsInterface) {
+          $content_translation_manager->setBundleTranslationSettings($entity_type_id, $bundle, $bundle_settings['settings']['content_translation']);
+        }
 
         // Save translation_sync settings.
         if (!empty($bundle_settings['columns'])) {
@@ -367,8 +398,8 @@ function content_translation_form_language_content_settings_submit(array $form, 
       }
     }
   }
-  // Ensure entity and menu router information are correctly rebuilt.
-  \Drupal::entityManager()->clearCachedDefinitions();
-  \Drupal::service('router.builder')->setRebuildNeeded();
 
+  // Ensure entity and menu router information are correctly rebuilt.
+  \Drupal::entityTypeManager()->clearCachedDefinitions();
+  \Drupal::service('router.builder')->setRebuildNeeded();
 }

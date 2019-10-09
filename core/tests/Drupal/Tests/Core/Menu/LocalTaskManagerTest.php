@@ -7,6 +7,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\Context\CacheContextsManager;
+use Drupal\Core\Controller\ControllerResolver;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Menu\LocalTaskInterface;
@@ -31,11 +32,11 @@ class LocalTaskManagerTest extends UnitTestCase {
   protected $manager;
 
   /**
-   * The mocked controller resolver.
+   * The mocked argument resolver.
    *
    * @var \PHPUnit_Framework_MockObject_MockObject
    */
-  protected $controllerResolver;
+  protected $argumentResolver;
 
   /**
    * The test request.
@@ -99,7 +100,7 @@ class LocalTaskManagerTest extends UnitTestCase {
   protected function setUp() {
     parent::setUp();
 
-    $this->controllerResolver = $this->getMock('Drupal\Core\Controller\ControllerResolverInterface');
+    $this->argumentResolver = $this->getMock('Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface');
     $this->request = new Request();
     $this->routeProvider = $this->getMock('Drupal\Core\Routing\RouteProviderInterface');
     $this->pluginDiscovery = $this->getMock('Drupal\Component\Plugin\Discovery\DiscoveryInterface');
@@ -194,7 +195,7 @@ class LocalTaskManagerTest extends UnitTestCase {
 
     $this->cacheBackend->expects($this->at(3))
       ->method('set')
-      ->with('local_task_plugins:en:menu_local_task_test_tasks_view', $expected_set, Cache::PERMANENT, array('local_task'));
+      ->with('local_task_plugins:en:menu_local_task_test_tasks_view', $expected_set, Cache::PERMANENT, ['local_task']);
 
     $local_tasks = $this->manager->getLocalTasksForRoute('menu_local_task_test_tasks_view');
     $this->assertEquals($result, $local_tasks);
@@ -217,7 +218,7 @@ class LocalTaskManagerTest extends UnitTestCase {
     $this->cacheBackend->expects($this->at(0))
       ->method('get')
       ->with('local_task_plugins:en:menu_local_task_test_tasks_view')
-      ->will($this->returnValue((object) array('data' => $result)));
+      ->will($this->returnValue((object) ['data' => $result]));
 
     $this->cacheBackend->expects($this->never())
       ->method('set');
@@ -237,12 +238,36 @@ class LocalTaskManagerTest extends UnitTestCase {
     $menu_local_task->expects($this->once())
       ->method('getTitle');
 
-    $this->controllerResolver->expects($this->once())
+    $this->argumentResolver->expects($this->once())
       ->method('getArguments')
-      ->with($this->request, array($menu_local_task, 'getTitle'))
-      ->will($this->returnValue(array()));
+      ->with($this->request, [$menu_local_task, 'getTitle'])
+      ->will($this->returnValue([]));
 
     $this->manager->getTitle($menu_local_task);
+  }
+
+  /**
+   * @expectedDeprecation Using the 'controller_resolver' service as the first argument is deprecated, use the 'http_kernel.controller.argument_resolver' instead. If your subclass requires the 'controller_resolver' service add it as an additional argument. See https://www.drupal.org/node/2959408.
+   * @group legacy
+   */
+  public function testControllerResolverDeprecation() {
+    if (!in_array('Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface', class_implements('Symfony\Component\HttpKernel\Controller\ControllerResolver'))) {
+      $this->markTestSkipped("Do not test ::getArguments() method when it is not implemented by Symfony's ControllerResolver.");
+    }
+
+    $controller_resolver = $this->getMockBuilder(ControllerResolver::class)->disableOriginalConstructor()->getMock();
+    $request_stack = new RequestStack();
+    $request_stack->push($this->request);
+    $module_handler = $this->getMock('Drupal\Core\Extension\ModuleHandlerInterface');
+    $module_handler->expects($this->any())
+      ->method('getModuleDirectories')
+      ->willReturn([]);
+    $language_manager = $this->getMock('Drupal\Core\Language\LanguageManagerInterface');
+    $language_manager->expects($this->any())
+      ->method('getCurrentLanguage')
+      ->will($this->returnValue(new Language(['id' => 'en'])));
+
+    new LocalTaskManager($controller_resolver, $request_stack, $this->routeMatch, $this->routeProvider, $module_handler, $this->cacheBackend, $language_manager, $this->accessManager, $this->account);
   }
 
   /**
@@ -254,13 +279,13 @@ class LocalTaskManagerTest extends UnitTestCase {
     $module_handler = $this->getMock('Drupal\Core\Extension\ModuleHandlerInterface');
     $module_handler->expects($this->any())
       ->method('getModuleDirectories')
-      ->willReturn(array());
+      ->willReturn([]);
     $language_manager = $this->getMock('Drupal\Core\Language\LanguageManagerInterface');
     $language_manager->expects($this->any())
       ->method('getCurrentLanguage')
-      ->will($this->returnValue(new Language(array('id' => 'en'))));
+      ->will($this->returnValue(new Language(['id' => 'en'])));
 
-    $this->manager = new LocalTaskManager($this->controllerResolver, $request_stack, $this->routeMatch, $this->routeProvider, $module_handler, $this->cacheBackend, $language_manager, $this->accessManager, $this->account);
+    $this->manager = new LocalTaskManager($this->argumentResolver, $request_stack, $this->routeMatch, $this->routeProvider, $module_handler, $this->cacheBackend, $language_manager, $this->accessManager, $this->account);
 
     $property = new \ReflectionProperty('Drupal\Core\Menu\LocalTaskManager', 'discovery');
     $property->setAccessible(TRUE);
@@ -279,51 +304,51 @@ class LocalTaskManagerTest extends UnitTestCase {
    *   An array of plugin definition keyed by plugin ID.
    */
   protected function getLocalTaskFixtures() {
-    $definitions = array();
-    $definitions['menu_local_task_test_tasks_settings'] = array(
+    $definitions = [];
+    $definitions['menu_local_task_test_tasks_settings'] = [
       'route_name' => 'menu_local_task_test_tasks_settings',
       'title' => 'Settings',
       'base_route' => 'menu_local_task_test_tasks_view',
-    );
-    $definitions['menu_local_task_test_tasks_edit'] = array(
+    ];
+    $definitions['menu_local_task_test_tasks_edit'] = [
       'route_name' => 'menu_local_task_test_tasks_edit',
       'title' => 'Settings',
       'base_route' => 'menu_local_task_test_tasks_view',
       'weight' => 20,
-    );
+    ];
     // Make this ID different from the route name to catch code that
     // confuses them.
-    $definitions['menu_local_task_test_tasks_view.tab'] = array(
+    $definitions['menu_local_task_test_tasks_view.tab'] = [
       'route_name' => 'menu_local_task_test_tasks_view',
       'title' => 'Settings',
       'base_route' => 'menu_local_task_test_tasks_view',
-    );
+    ];
 
-    $definitions['menu_local_task_test_tasks_view_child1'] = array(
+    $definitions['menu_local_task_test_tasks_view_child1'] = [
       'route_name' => 'menu_local_task_test_tasks_child1_page',
       'title' => 'Settings child #1',
       'parent_id' => 'menu_local_task_test_tasks_view.tab',
-    );
-    $definitions['menu_local_task_test_tasks_view_child2'] = array(
+    ];
+    $definitions['menu_local_task_test_tasks_view_child2'] = [
       'route_name' => 'menu_local_task_test_tasks_child2_page',
       'title' => 'Settings child #2',
       'parent_id' => 'menu_local_task_test_tasks_view.tab',
       'base_route' => 'this_should_be_replaced',
-    );
+    ];
     // Add the ID and defaults from the LocalTaskManager.
     foreach ($definitions as $id => &$info) {
       $info['id'] = $id;
-      $info += array(
+      $info += [
         'id' => '',
         'route_name' => '',
-        'route_parameters' => array(),
+        'route_parameters' => [],
         'title' => '',
         'base_route' => '',
         'parent_id' => NULL,
         'weight' => 0,
-        'options' => array(),
+        'options' => [],
         'class' => 'Drupal\Core\Menu\LocalTaskDefault',
-      );
+      ];
     }
     return $definitions;
   }
@@ -335,9 +360,9 @@ class LocalTaskManagerTest extends UnitTestCase {
    *   The mock plugin.
    */
   protected function setupFactory($mock_plugin) {
-    $map = array();
+    $map = [];
     foreach ($this->getLocalTaskFixtures() as $info) {
-      $map[] = array($info['id'], array(), $mock_plugin);
+      $map[] = [$info['id'], [], $mock_plugin];
     }
     $this->factory->expects($this->any())
       ->method('createInstance')
@@ -354,17 +379,17 @@ class LocalTaskManagerTest extends UnitTestCase {
    *   The expected result, keyed by local task level.
    */
   protected function getLocalTasksForRouteResult($mock_plugin) {
-    $result = array(
-      0 => array(
+    $result = [
+      0 => [
         'menu_local_task_test_tasks_settings' => $mock_plugin,
         'menu_local_task_test_tasks_view.tab' => $mock_plugin,
         'menu_local_task_test_tasks_edit' => $mock_plugin,
-      ),
-      1 => array(
+      ],
+      1 => [
         'menu_local_task_test_tasks_view_child1' => $mock_plugin,
         'menu_local_task_test_tasks_view_child2' => $mock_plugin,
-      ),
-    );
+      ],
+    ];
     return $result;
   }
 
@@ -375,26 +400,26 @@ class LocalTaskManagerTest extends UnitTestCase {
    */
   protected function getLocalTasksCache() {
     $local_task_fixtures = $this->getLocalTaskFixtures();
-    $local_tasks = array(
-      'base_routes' => array(
+    $local_tasks = [
+      'base_routes' => [
         'menu_local_task_test_tasks_view' => 'menu_local_task_test_tasks_view',
-      ),
-      'parents' => array(
+      ],
+      'parents' => [
         'menu_local_task_test_tasks_view.tab' => TRUE,
-      ),
-      'children' => array(
-        '> menu_local_task_test_tasks_view' => array(
+      ],
+      'children' => [
+        '> menu_local_task_test_tasks_view' => [
           'menu_local_task_test_tasks_settings' => $local_task_fixtures['menu_local_task_test_tasks_settings'],
           'menu_local_task_test_tasks_edit' => $local_task_fixtures['menu_local_task_test_tasks_edit'],
           'menu_local_task_test_tasks_view.tab' => $local_task_fixtures['menu_local_task_test_tasks_view.tab'],
-        ),
-        'menu_local_task_test_tasks_view.tab' => array(
+        ],
+        'menu_local_task_test_tasks_view.tab' => [
           // The manager will fill in the base_route before caching.
-          'menu_local_task_test_tasks_view_child1' => array('base_route' => 'menu_local_task_test_tasks_view') + $local_task_fixtures['menu_local_task_test_tasks_view_child1'],
-          'menu_local_task_test_tasks_view_child2' => array('base_route' => 'menu_local_task_test_tasks_view') + $local_task_fixtures['menu_local_task_test_tasks_view_child2'],
-        ),
-      ),
-    );
+          'menu_local_task_test_tasks_view_child1' => ['base_route' => 'menu_local_task_test_tasks_view'] + $local_task_fixtures['menu_local_task_test_tasks_view_child1'],
+          'menu_local_task_test_tasks_view_child2' => ['base_route' => 'menu_local_task_test_tasks_view'] + $local_task_fixtures['menu_local_task_test_tasks_view_child2'],
+        ],
+      ],
+    ];
     $local_tasks['children']['> menu_local_task_test_tasks_view']['menu_local_task_test_tasks_settings']['weight'] = 0;
     $local_tasks['children']['> menu_local_task_test_tasks_view']['menu_local_task_test_tasks_edit']['weight'] = 20 + 1e-6;
     $local_tasks['children']['> menu_local_task_test_tasks_view']['menu_local_task_test_tasks_view.tab']['weight'] = 2e-6;
@@ -413,7 +438,7 @@ class LocalTaskManagerTest extends UnitTestCase {
       ->method('getDefinitions')
       ->will($this->returnValue($definitions));
 
-    // Set up some cacheablity metadata and ensure its merged together.
+    // Set up some cacheability metadata and ensure its merged together.
     $definitions['menu_local_task_test_tasks_settings']['cache_tags'] = ['tag.example1'];
     $definitions['menu_local_task_test_tasks_settings']['cache_contexts'] = ['context.example1'];
     $definitions['menu_local_task_test_tasks_edit']['cache_tags'] = ['tag.example2'];
@@ -424,7 +449,7 @@ class LocalTaskManagerTest extends UnitTestCase {
     $this->setupFactoryAndLocalTaskPlugins($definitions, 'menu_local_task_test_tasks_view');
     $this->setupLocalTaskManager();
 
-    $this->controllerResolver->expects($this->any())
+    $this->argumentResolver->expects($this->any())
       ->method('getArguments')
       ->willReturn([]);
 
@@ -461,7 +486,6 @@ class LocalTaskManagerTest extends UnitTestCase {
       $mock->getCacheContexts()->willReturn(isset($info['cache_contexts']) ? $info['cache_contexts'] : []);
       $mock->getCacheTags()->willReturn(isset($info['cache_tags']) ? $info['cache_tags'] : []);
       $mock->getCacheMaxAge()->willReturn(isset($info['cache_max_age']) ? $info['cache_max_age'] : Cache::PERMANENT);
-
 
       $access_manager_map[] = [$info['route_name'], [], $this->account, TRUE, $info['access']];
 

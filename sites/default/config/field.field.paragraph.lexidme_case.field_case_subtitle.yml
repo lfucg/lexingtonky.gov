@@ -1,0 +1,21 @@
+uuid: 788c7e58-9c13-4fa0-b4f8-a3c677657cc1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_case_subtitle
+    - paragraphs.paragraphs_type.lexidme_case
+  module:
+    - text
+id: paragraph.lexidme_case.field_case_subtitle
+field_name: field_case_subtitle
+entity_type: paragraph
+bundle: lexidme_case
+label: 'Card Subtitle'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text

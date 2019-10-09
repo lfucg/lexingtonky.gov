@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldTypePluginManagerInterface;
 use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\migrate\Audit\HighestIdInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\Plugin\MigrateIdMapInterface;
@@ -16,9 +17,68 @@ use Drupal\migrate\Row;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * The destination class for all content entities lacking a specific class.
+ * Provides destination class for all content entities lacking a specific class.
+ *
+ * Available configuration keys:
+ * - translations: (optional) Boolean, indicates if the entity is translatable,
+ *   defaults to FALSE.
+ * - overwrite_properties: (optional) A list of properties that will be
+ *   overwritten if an entity with the same ID already exists. Any properties
+ *   that are not listed will not be overwritten.
+ *
+ * Example:
+ *
+ * The example below will create a 'node' entity of content type 'article'.
+ *
+ * The language of the source will be used because the configuration
+ * 'translations: true' was set. Without this configuration option the site's
+ * default language would be used.
+ *
+ * The example content type has fields 'title', 'body' and 'field_example'.
+ * The text format of the body field is defaulted to 'basic_html'. The example
+ * uses the EmbeddedDataSource source plugin for the sake of simplicity.
+ *
+ * If the migration is executed again in an update mode, any updates done in the
+ * destination Drupal site to the 'title' and 'body' fields would be overwritten
+ * with the original source values. Updates done to 'field_example' would be
+ * preserved because 'field_example' is not included in 'overwrite_properties'
+ * configuration.
+ * @code
+ * id: custom_article_migration
+ * label: Custom article migration
+ * source:
+ *   plugin: embedded_data
+ *   data_rows:
+ *     -
+ *       id: 1
+ *       langcode: 'fi'
+ *       title: 'Sivun otsikko'
+ *       field_example: 'Huhuu'
+ *       content: '<p>Hoi maailma</p>'
+ *   ids:
+ *     id:
+ *       type: integer
+ * process:
+ *   nid: id
+ *   langcode: langcode
+ *   title: title
+ *   field_example: field_example
+ *   'body/0/value': content
+ *   'body/0/format':
+ *     plugin: default_value
+ *     default_value: basic_html
+ * destination:
+ *   plugin: entity:node
+ *   default_bundle: article
+ *   translations: true
+ *   overwrite_properties:
+ *     - title
+ *     - body
+ * @endcode
+ *
+ * @see \Drupal\migrate\Plugin\migrate\destination\EntityRevision
  */
-class EntityContentBase extends Entity {
+class EntityContentBase extends Entity implements HighestIdInterface {
 
   /**
    * Entity manager.
@@ -71,7 +131,7 @@ class EntityContentBase extends Entity {
       $plugin_definition,
       $migration,
       $container->get('entity.manager')->getStorage($entity_type),
-      array_keys($container->get('entity.manager')->getBundleInfo($entity_type)),
+      array_keys($container->get('entity_type.bundle.info')->getBundleInfo($entity_type)),
       $container->get('entity.manager'),
       $container->get('plugin.manager.field.field_type')
     );
@@ -80,7 +140,7 @@ class EntityContentBase extends Entity {
   /**
    * {@inheritdoc}
    */
-  public function import(Row $row, array $old_destination_id_values = array()) {
+  public function import(Row $row, array $old_destination_id_values = []) {
     $this->rollbackAction = MigrateIdMapInterface::ROLLBACK_DELETE;
     $entity = $this->getEntity($row, $old_destination_id_values);
     if (!$entity) {
@@ -88,7 +148,7 @@ class EntityContentBase extends Entity {
     }
 
     $ids = $this->save($entity, $old_destination_id_values);
-    if (!empty($this->configuration['translations'])) {
+    if ($this->isTranslationDestination()) {
       $ids[] = $entity->language()->getId();
     }
     return $ids;
@@ -105,18 +165,15 @@ class EntityContentBase extends Entity {
    * @return array
    *   An array containing the entity ID.
    */
-  protected function save(ContentEntityInterface $entity, array $old_destination_id_values = array()) {
+  protected function save(ContentEntityInterface $entity, array $old_destination_id_values = []) {
     $entity->save();
-    return array($entity->id());
+    return [$entity->id()];
   }
 
   /**
-   * Get whether this destination is for translations.
-   *
-   * @return bool
-   *   Whether this destination is for translations.
+   * {@inheritdoc}
    */
-  protected function isTranslationDestination() {
+  public function isTranslationDestination() {
     return !empty($this->configuration['translations']);
   }
 
@@ -124,12 +181,15 @@ class EntityContentBase extends Entity {
    * {@inheritdoc}
    */
   public function getIds() {
+    $ids = [];
+
     $id_key = $this->getKey('id');
     $ids[$id_key] = $this->getDefinitionFromEntity($id_key);
 
     if ($this->isTranslationDestination()) {
-      if (!$langcode_key = $this->getKey('langcode')) {
-        throw new MigrateException('This entity type does not support translation.');
+      $langcode_key = $this->getKey('langcode');
+      if (!$langcode_key) {
+        throw new MigrateException(sprintf('The "%s" entity type does not support translations.', $this->storage->getEntityTypeId()));
       }
       $ids[$langcode_key] = $this->getDefinitionFromEntity($langcode_key);
     }
@@ -145,10 +205,11 @@ class EntityContentBase extends Entity {
    * @param \Drupal\migrate\Row $row
    *   The row object to update from.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|null
-   *   An updated entity, or NULL if it's the same as the one passed in.
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   An updated entity from row values.
    */
   protected function updateEntity(EntityInterface $entity, Row $row) {
+    $empty_destinations = $row->getEmptyDestinationProperties();
     // By default, an update will be preserved.
     $rollback_action = MigrateIdMapInterface::ROLLBACK_PRESERVE;
 
@@ -171,6 +232,7 @@ class EntityContentBase extends Entity {
     // clone the row with an empty set of destination values, and re-add only
     // the specified properties.
     if (isset($this->configuration['overwrite_properties'])) {
+      $empty_destinations = array_intersect($empty_destinations, $this->configuration['overwrite_properties']);
       $clone = $row->cloneWithoutDestination();
       foreach ($this->configuration['overwrite_properties'] as $property) {
         $clone->setDestinationProperty($property, $row->getDestinationProperty($property));
@@ -183,6 +245,9 @@ class EntityContentBase extends Entity {
       if ($field instanceof TypedDataInterface) {
         $field->setValue($values);
       }
+    }
+    foreach ($empty_destinations as $field_name) {
+      $entity->$field_name = NULL;
     }
 
     $this->setRollbackAction($row->getIdMap(), $rollback_action);
@@ -213,7 +278,7 @@ class EntityContentBase extends Entity {
       if ($field_definition->isRequired() && is_null($row->getDestinationProperty($field_name))) {
         // Use the configured default value for this specific field, if any.
         if ($default_value = $field_definition->getDefaultValueLiteral()) {
-          $values[] = $default_value;
+          $values = $default_value;
         }
         else {
           // Otherwise, ask the field type to generate a sample value.
@@ -287,6 +352,18 @@ class EntityContentBase extends Entity {
     return [
       'type' => $field_definition->getType(),
     ] + $field_definition->getSettings();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getHighestId() {
+    $values = $this->storage->getQuery()
+      ->accessCheck(FALSE)
+      ->sort($this->getKey('id'), 'DESC')
+      ->range(0, 1)
+      ->execute();
+    return (int) current($values);
   }
 
 }

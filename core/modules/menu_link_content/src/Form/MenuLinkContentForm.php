@@ -2,8 +2,10 @@
 
 namespace Drupal\menu_link_content\Form;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Menu\MenuParentFormSelectorInterface;
@@ -12,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a form to add/update content menu links.
+ *
+ * @internal
  */
 class MenuLinkContentForm extends ContentEntityForm {
 
@@ -39,17 +43,21 @@ class MenuLinkContentForm extends ContentEntityForm {
   /**
    * Constructs a MenuLinkContentForm object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository.
    * @param \Drupal\Core\Menu\MenuParentFormSelectorInterface $menu_parent_selector
    *   The menu parent form selector service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
    * @param \Drupal\Core\Path\PathValidatorInterface $path_validator
    *   The path validator.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle service.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    */
-  public function __construct(EntityManagerInterface $entity_manager, MenuParentFormSelectorInterface $menu_parent_selector, LanguageManagerInterface $language_manager, PathValidatorInterface $path_validator) {
-    parent::__construct($entity_manager, $language_manager);
+  public function __construct(EntityRepositoryInterface $entity_repository, MenuParentFormSelectorInterface $menu_parent_selector, LanguageManagerInterface $language_manager, PathValidatorInterface $path_validator, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
+    parent::__construct($entity_repository, $entity_type_bundle_info, $time);
     $this->menuParentSelector = $menu_parent_selector;
     $this->pathValidator = $path_validator;
   }
@@ -59,10 +67,12 @@ class MenuLinkContentForm extends ContentEntityForm {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager'),
+      $container->get('entity.repository'),
       $container->get('menu.parent_form_selector'),
       $container->get('language_manager'),
-      $container->get('path.validator')
+      $container->get('path.validator'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('datetime.time')
     );
   }
 
@@ -105,8 +115,8 @@ class MenuLinkContentForm extends ContentEntityForm {
 
     $entity->parent->value = $parent;
     $entity->menu_name->value = $menu_name;
-    $entity->enabled->value = (!$form_state->isValueEmpty(array('enabled', 'value')));
-    $entity->expanded->value = (!$form_state->isValueEmpty(array('expanded', 'value')));
+    $entity->enabled->value = (!$form_state->isValueEmpty(['enabled', 'value']));
+    $entity->expanded->value = (!$form_state->isValueEmpty(['expanded', 'value']));
 
     return $entity;
   }
@@ -117,19 +127,11 @@ class MenuLinkContentForm extends ContentEntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     // The entity is rebuilt in parent::submit().
     $menu_link = $this->entity;
-    $saved = $menu_link->save();
+    $menu_link->save();
 
-    if ($saved) {
-      drupal_set_message($this->t('The menu link has been saved.'));
-      $form_state->setRedirect(
-        'entity.menu_link_content.canonical',
-        array('menu_link_content' => $menu_link->id())
-      );
-    }
-    else {
-      drupal_set_message($this->t('There was an error saving the menu link.'), 'error');
-      $form_state->setRebuild();
-    }
+    $this->messenger()->addStatus($this->t('The menu link has been saved.'));
+
+    $form_state->setRedirectUrl($menu_link->toUrl('canonical'));
   }
 
 }

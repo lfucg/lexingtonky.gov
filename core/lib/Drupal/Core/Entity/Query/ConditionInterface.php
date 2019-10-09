@@ -19,8 +19,7 @@ interface ConditionInterface {
    * Implements \Countable::count().
    *
    * Returns the size of this conditional. The size of the conditional is the
-   * size of its conditional array minus one, because one element is the
-   * conjunction.
+   * size of its conditional array.
    */
   public function count();
 
@@ -50,8 +49,8 @@ interface ConditionInterface {
    * Queries for the existence of a field.
    *
    * @param string $field
-   * @return ConditionInterface;
-   * @see \Drupal\Core\Entity\Query\QueryInterface::notexists()
+   * @return ConditionInterface
+   * @see \Drupal\Core\Entity\Query\QueryInterface::notExists()
    */
   public function notExists($field, $langcode = NULL);
 

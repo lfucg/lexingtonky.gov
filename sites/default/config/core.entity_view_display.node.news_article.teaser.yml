@@ -6,7 +6,10 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - field.field.node.news_article.body
     - field.field.node.news_article.field_image
+    - field.field.node.news_article.field_keywords
+    - field.field.node.news_article.field_lex_custom_banner_image
     - field.field.node.news_article.field_media_contact
+    - field.field.node.news_article.field_metatags
     - field.field.node.news_article.field_related_departments
     - field.field.node.news_article.field_related_documents
     - node.type.news_article
@@ -25,10 +28,23 @@ content:
     settings:
       trim_length: 600
     third_party_settings: {  }
+    region: content
   links:
     weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  workbench_moderation_control:
+    weight: -20
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
+  addtoany: true
   field_image: true
+  field_keywords: true
+  field_lex_custom_banner_image: true
   field_media_contact: true
+  field_metatags: true
   field_related_departments: true
   field_related_documents: true

@@ -76,7 +76,6 @@ class PasswordHashingTest extends UnitTestCase {
     $this->assertEquals(PhpassHashedPassword::MAX_HASH_COUNT, $hasher->enforceLog2Boundaries(100), "Max hash count enforced");
   }
 
-
   /**
    * Test a password needs update.
    *
@@ -96,7 +95,7 @@ class PasswordHashingTest extends UnitTestCase {
    * @covers ::needsRehash
    */
   public function testPasswordHashing() {
-    $this->assertSame($this->passwordHasher->getCountLog2($this->hashedPassword), PhpassHashedPassword::MIN_HASH_COUNT, 'Hashed password has the minimum number of log2 iterations.');
+    $this->assertSame(PhpassHashedPassword::MIN_HASH_COUNT, $this->passwordHasher->getCountLog2($this->hashedPassword), 'Hashed password has the minimum number of log2 iterations.');
     $this->assertNotEquals($this->hashedPassword, $this->md5HashedPassword, 'Password hashes not the same.');
     $this->assertTrue($this->passwordHasher->check($this->password, $this->md5HashedPassword), 'Password check succeeds.');
     $this->assertTrue($this->passwordHasher->check($this->password, $this->hashedPassword), 'Password check succeeds.');
@@ -119,7 +118,7 @@ class PasswordHashingTest extends UnitTestCase {
     $this->assertTrue($password_hasher->needsRehash($this->hashedPassword), 'Needs a new hash after incrementing the log2 count.');
     // Re-hash the password.
     $rehashed_password = $password_hasher->hash($this->password);
-    $this->assertSame($password_hasher->getCountLog2($rehashed_password), PhpassHashedPassword::MIN_HASH_COUNT + 1, 'Re-hashed password has the correct number of log2 iterations.');
+    $this->assertSame(PhpassHashedPassword::MIN_HASH_COUNT + 1, $password_hasher->getCountLog2($rehashed_password), 'Re-hashed password has the correct number of log2 iterations.');
     $this->assertNotEquals($rehashed_password, $this->hashedPassword, 'Password hash changed again.');
 
     // Now the hash should be OK.
@@ -152,21 +151,21 @@ class PasswordHashingTest extends UnitTestCase {
    */
   public function providerLongPasswords() {
     // '512 byte long password is allowed.'
-    $passwords['allowed'] = array(str_repeat('x', PasswordInterface::PASSWORD_MAX_LENGTH), TRUE);
+    $passwords['allowed'] = [str_repeat('x', PasswordInterface::PASSWORD_MAX_LENGTH), TRUE];
     // 513 byte long password is not allowed.
-    $passwords['too_long'] = array(str_repeat('x', PasswordInterface::PASSWORD_MAX_LENGTH + 1), FALSE);
+    $passwords['too_long'] = [str_repeat('x', PasswordInterface::PASSWORD_MAX_LENGTH + 1), FALSE];
 
     // Check a string of 3-byte UTF-8 characters, 510 byte long password is
     // allowed.
     $len = floor(PasswordInterface::PASSWORD_MAX_LENGTH / 3);
     $diff = PasswordInterface::PASSWORD_MAX_LENGTH % 3;
-    $passwords['utf8'] = array(str_repeat('€', $len), TRUE);
+    $passwords['utf8'] = [str_repeat('€', $len), TRUE];
     // 512 byte long password is allowed.
-    $passwords['ut8_extended'] = array($passwords['utf8'][0] . str_repeat('x', $diff), TRUE);
+    $passwords['ut8_extended'] = [$passwords['utf8'][0] . str_repeat('x', $diff), TRUE];
 
     // Check a string of 3-byte UTF-8 characters, 513 byte long password is
     // allowed.
-    $passwords['utf8_too_long'] = array(str_repeat('€', $len + 1), FALSE);
+    $passwords['utf8_too_long'] = [str_repeat('€', $len + 1), FALSE];
     return $passwords;
   }
 
@@ -177,7 +176,7 @@ class PasswordHashingTest extends UnitTestCase {
  */
 class FakePhpassHashedPassword extends PhpassHashedPassword {
 
-  function __construct() {
+  public function __construct() {
     // Noop.
   }
 

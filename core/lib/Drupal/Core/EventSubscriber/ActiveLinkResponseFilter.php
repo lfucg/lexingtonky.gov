@@ -97,13 +97,12 @@ class ActiveLinkResponseFilter implements EventSubscriberInterface {
     ));
   }
 
-
   /**
    * Sets the "is-active" class on relevant links.
    *
    * This is a PHP implementation of the drupal.active-link JavaScript library.
    *
-   * @param string $html_markup.
+   * @param string $html_markup
    *   The HTML markup to update.
    * @param string $current_path
    *   The system path of the currently active page.
@@ -126,6 +125,9 @@ class ActiveLinkResponseFilter implements EventSubscriberInterface {
   public static function setLinkActiveClass($html_markup, $current_path, $is_front, $url_language, array $query) {
     $search_key_current_path = 'data-drupal-link-system-path="' . $current_path . '"';
     $search_key_front = 'data-drupal-link-system-path="&lt;front&gt;"';
+
+    // Receive the query in a standardized manner.
+    ksort($query);
 
     $offset = 0;
     // There are two distinct conditions that can make a link be marked active:

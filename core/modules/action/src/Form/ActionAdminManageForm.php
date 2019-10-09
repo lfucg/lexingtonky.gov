@@ -3,13 +3,14 @@
 namespace Drupal\action\Form;
 
 use Drupal\Core\Form\FormBase;
-use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a configuration form for configurable actions.
+ *
+ * @internal
  */
 class ActionAdminManageForm extends FormBase {
 
@@ -50,33 +51,33 @@ class ActionAdminManageForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $actions = array();
+    $actions = [];
     foreach ($this->manager->getDefinitions() as $id => $definition) {
       if (is_subclass_of($definition['class'], '\Drupal\Core\Plugin\PluginFormInterface')) {
-        $key = Crypt::hashBase64($id);
-        $actions[$key] = $definition['label'] . '...';
+        $actions[$id] = $definition['label'];
       }
     }
-    $form['parent'] = array(
+    asort($actions);
+    $form['parent'] = [
       '#type' => 'details',
       '#title' => $this->t('Create an advanced action'),
-      '#attributes' => array('class' => array('container-inline')),
+      '#attributes' => ['class' => ['container-inline']],
       '#open' => TRUE,
-    );
-    $form['parent']['action'] = array(
+    ];
+    $form['parent']['action'] = [
       '#type' => 'select',
       '#title' => $this->t('Action'),
       '#title_display' => 'invisible',
       '#options' => $actions,
-      '#empty_option' => $this->t('Choose an advanced action'),
-    );
-    $form['parent']['actions'] = array(
-      '#type' => 'actions'
-    );
-    $form['parent']['actions']['submit'] = array(
+      '#empty_option' => $this->t('- Select -'),
+    ];
+    $form['parent']['actions'] = [
+      '#type' => 'actions',
+    ];
+    $form['parent']['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Create'),
-    );
+    ];
     return $form;
   }
 
@@ -87,7 +88,7 @@ class ActionAdminManageForm extends FormBase {
     if ($form_state->getValue('action')) {
       $form_state->setRedirect(
         'action.admin_add',
-        array('action_id' => $form_state->getValue('action'))
+        ['action_id' => $form_state->getValue('action')]
       );
     }
   }

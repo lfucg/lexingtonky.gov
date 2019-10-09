@@ -1,5 +1,6 @@
 # Prophecy
 
+[![Stable release](https://poser.pugx.org/phpspec/prophecy/version.svg)](https://packagist.org/packages/phpspec/prophecy)
 [![Build Status](https://travis-ci.org/phpspec/prophecy.svg?branch=master)](https://travis-ci.org/phpspec/prophecy)
 
 Prophecy is a highly opinionated yet very powerful and flexible PHP object mocking
@@ -158,7 +159,7 @@ promise, there's plenty others you can use:
 
 - `ReturnPromise` or `->willReturn(1)` - returns a value from a method call
 - `ReturnArgumentPromise` or `->willReturnArgument($index)` - returns the nth method argument from call
-- `ThrowPromise` or `->willThrow` - causes the method to throw specific exception
+- `ThrowPromise` or `->willThrow($exception)` - causes the method to throw specific exception
 - `CallbackPromise` or `->will($callback)` - gives you a quick way to define your own custom logic
 
 Keep in mind, that you can always add even more promises by implementing

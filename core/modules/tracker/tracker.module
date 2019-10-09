@@ -5,6 +5,7 @@
  * Tracks recent content posted by a user or users.
  */
 
+use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -19,11 +20,11 @@ function tracker_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     case 'help.page.tracker':
       $output = '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('The Activity Tracker module displays the most recently added and updated content on your site, and allows you to follow new content created by each user. This module has no configuration options. For more information, see the <a href=":tracker">online documentation for the Activity Tracker module</a>.', array(':tracker' => 'https://www.drupal.org/documentation/modules/tracker')) . '</p>';
+      $output .= '<p>' . t('The Activity Tracker module displays the most recently added and updated content on your site, and allows you to follow new content created by each user. This module has no configuration options. For more information, see the <a href=":tracker">online documentation for the Activity Tracker module</a>.', [':tracker' => 'https://www.drupal.org/documentation/modules/tracker']) . '</p>';
       $output .= '<h3>' . t('Uses') . '</h3>';
       $output .= '<dl>';
       $output .= '<dt>' . t('Tracking new and updated site content') . '</dt>';
-      $output .= '<dd>' . t('The <a href=":recent">Recent content</a> page shows new and updated content in reverse chronological order, listing the content type, title, author\'s name, number of comments, and time of last update. Content is considered updated when changes occur in the text, or when new comments are added. The <em>My recent content</em> tab limits the list to the currently logged-in user.', array(':recent' => \Drupal::url('tracker.page'))) . '</dd>';
+      $output .= '<dd>' . t('The <a href=":recent">Recent content</a> page shows new and updated content in reverse chronological order, listing the content type, title, author\'s name, number of comments, and time of last update. Content is considered updated when changes occur in the text, or when new comments are added. The <em>My recent content</em> tab limits the list to the currently logged-in user.', [':recent' => Url::fromRoute('tracker.page')->toString()]) . '</dd>';
       $output .= '<dt>' . t('Tracking user-specific content') . '</dt>';
       $output .= '<dd>' . t("To follow a specific user's new and updated content, select the <em>Activity</em> tab from the user's profile page.") . '</dd>';
       $output .= '</dl>';
@@ -55,36 +56,37 @@ function tracker_cron() {
       ->execute();
 
     $nodes = Node::loadMultiple($nids);
+    $connection = \Drupal::database();
     foreach ($nodes as $nid => $node) {
 
       // Calculate the changed timestamp for this node.
       $changed = _tracker_calculate_changed($node);
 
       // Remove existing data for this node.
-      db_delete('tracker_node')
+      $connection->delete('tracker_node')
         ->condition('nid', $nid)
         ->execute();
-      db_delete('tracker_user')
+      $connection->delete('tracker_user')
         ->condition('nid', $nid)
         ->execute();
 
       // Insert the node-level data.
-      db_insert('tracker_node')
-        ->fields(array(
+      $connection->insert('tracker_node')
+        ->fields([
           'nid' => $nid,
-          'published' => $node->isPublished(),
+          'published' => (int) $node->isPublished(),
           'changed' => $changed,
-        ))
+        ])
         ->execute();
 
       // Insert the user-level data for the node's author.
-      db_insert('tracker_user')
-        ->fields(array(
+      $connection->insert('tracker_user')
+        ->fields([
           'nid' => $nid,
-          'published' => $node->isPublished(),
+          'published' => (int) $node->isPublished(),
           'changed' => $changed,
           'uid' => $node->getOwnerId(),
-        ))
+        ])
         ->execute();
 
       // Insert the user-level data for the commenters (except if a commenter
@@ -101,14 +103,14 @@ function tracker_cron() {
         ->groupBy('uid')
         ->execute();
       if ($result) {
-        $query = db_insert('tracker_user');
+        $query = $connection->insert('tracker_user');
         foreach ($result as $row) {
-          $query->fields(array(
+          $query->fields([
             'uid' => $row['uid'],
             'nid' => $nid,
             'published' => CommentInterface::PUBLISHED,
             'changed' => $changed,
-          ));
+          ]);
         }
         $query->execute();
       }
@@ -123,7 +125,7 @@ function tracker_cron() {
       // Prepare a starting point for the next run.
       $state->set('tracker.index_nid', $last_nid - 1);
 
-      \Drupal::logger('tracker')->notice('Indexed %count content items for tracking.', array('%count' => $count));
+      \Drupal::logger('tracker')->notice('Indexed %count content items for tracking.', ['%count' => $count]);
     }
     else {
       // If all nodes have been indexed, set to zero to skip future cron runs.
@@ -135,16 +137,21 @@ function tracker_cron() {
 /**
  * Access callback: Determines access permission for a user's own account.
  *
+ * @deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0. As
+ *   internal API, _tracker_user_access() may also be removed in a minor
+ *   release.
+ *
+ * @internal
+ *
  * @param \Drupal\Core\Session\AccountInterface $account
  *   The user account to track.
  *
  * @return bool
  *   TRUE if a user is accessing tracking info for their own account and
  *   has permission to access the content.
- *
- * @see tracker_menu()
  */
 function _tracker_myrecent_access(AccountInterface $account) {
+  @trigger_error('_tracker_myrecent_access() is deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0.', E_USER_DEPRECATED);
   // This path is only allowed for authenticated users looking at their own content.
   return $account->id() && (\Drupal::currentUser()->id() == $account->id()) && $account->hasPermission('access content');
 }
@@ -152,16 +159,21 @@ function _tracker_myrecent_access(AccountInterface $account) {
 /**
  * Access callback: Determines access permission for an account.
  *
+ * @deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0. As
+ *   internal API, _tracker_user_access() may also be removed in a minor
+ *   release.
+ *
+ * @internal
+ *
  * @param int $account
  *   The user account ID to track.
  *
  * @return bool
  *   TRUE if a user has permission to access the account for $account and
  *   has permission to access the content.
- *
- * @see tracker_menu()
  */
 function _tracker_user_access($account) {
+  @trigger_error('_tracker_user_access() is deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0.', E_USER_DEPRECATED);
   return $account->access('view') && $account->hasPermission('access content');
 }
 
@@ -189,10 +201,11 @@ function tracker_node_update(NodeInterface $node, $arg = 0) {
  * Deletes tracking information for a node.
  */
 function tracker_node_predelete(EntityInterface $node, $arg = 0) {
-  db_delete('tracker_node')
+  $connection = \Drupal::database();
+  $connection->delete('tracker_node')
     ->condition('nid', $node->id())
     ->execute();
-  db_delete('tracker_user')
+  $connection->delete('tracker_user')
     ->condition('nid', $node->id())
     ->execute();
 }
@@ -240,41 +253,42 @@ function tracker_comment_delete(CommentInterface $comment) {
  *   The node updated timestamp or comment timestamp.
  */
 function _tracker_add($nid, $uid, $changed) {
+  $connection = \Drupal::database();
   // @todo This should be actually filtering on the desired language and just
   //   fall back to the default language.
-  $node = db_query('SELECT nid, status, uid, changed FROM {node_field_data} WHERE nid = :nid AND default_langcode = 1 ORDER BY changed DESC, status DESC', array(':nid' => $nid))->fetchObject();
+  $node = db_query('SELECT nid, status, uid, changed FROM {node_field_data} WHERE nid = :nid AND default_langcode = 1 ORDER BY changed DESC, status DESC', [':nid' => $nid])->fetchObject();
 
   // Adding a comment can only increase the changed timestamp, so our
   // calculation here is simple.
   $changed = max($node->changed, $changed);
 
   // Update the node-level data.
-  db_merge('tracker_node')
+  $connection->merge('tracker_node')
     ->key('nid', $nid)
-    ->fields(array(
+    ->fields([
       'changed' => $changed,
       'published' => $node->status,
-    ))
+    ])
     ->execute();
 
   // Create or update the user-level data, first for the user posting.
-  db_merge('tracker_user')
-    ->keys(array(
+  $connection->merge('tracker_user')
+    ->keys([
       'nid' => $nid,
       'uid' => $uid,
-    ))
-    ->fields(array(
+    ])
+    ->fields([
       'changed' => $changed,
       'published' => $node->status,
-    ))
+    ])
     ->execute();
   // Update the times for all the other users tracking the post.
-  db_update('tracker_user')
+  $connection->update('tracker_user')
     ->condition('nid', $nid)
-    ->fields(array(
+    ->fields([
       'changed' => $changed,
       'published' => $node->status,
-    ))
+    ])
     ->execute();
 }
 
@@ -293,7 +307,7 @@ function _tracker_add($nid, $uid, $changed) {
  */
 function _tracker_calculate_changed($node) {
   $changed = $node->getChangedTime();
-  $latest_comment = \Drupal::service('comment.statistics')->read(array($node), 'node', FALSE);
+  $latest_comment = \Drupal::service('comment.statistics')->read([$node], 'node', FALSE);
   if ($latest_comment && $latest_comment->last_comment_timestamp > $changed) {
     $changed = $latest_comment->last_comment_timestamp;
   }
@@ -312,6 +326,7 @@ function _tracker_calculate_changed($node) {
  */
 function _tracker_remove($nid, $uid = NULL, $changed = NULL) {
   $node = Node::load($nid);
+  $connection = \Drupal::database();
 
   // The user only keeps their subscription if the node exists.
   if ($node) {
@@ -333,7 +348,7 @@ function _tracker_remove($nid, $uid = NULL, $changed = NULL) {
 
     // If we haven't found a reason to keep the user's subscription, delete it.
     if (!$keep_subscription) {
-      db_delete('tracker_user')
+      $connection->delete('tracker_user')
         ->condition('nid', $nid)
         ->condition('uid', $uid)
         ->execute();
@@ -343,7 +358,7 @@ function _tracker_remove($nid, $uid = NULL, $changed = NULL) {
     // and the node itself.
     // We only need to do this if the removed item has a timestamp that equals
     // or exceeds the listed changed timestamp for the node.
-    $tracker_node = db_query('SELECT nid, changed FROM {tracker_node} WHERE nid = :nid', array(':nid' => $nid))->fetchObject();
+    $tracker_node = db_query('SELECT nid, changed FROM {tracker_node} WHERE nid = :nid', [':nid' => $nid])->fetchObject();
     if ($tracker_node && $changed >= $tracker_node->changed) {
       // If we're here, the item being removed is *possibly* the item that
       // established the node's changed timestamp.
@@ -353,28 +368,28 @@ function _tracker_remove($nid, $uid = NULL, $changed = NULL) {
 
       // And then we push the out the new changed timestamp to our denormalized
       // tables.
-      db_update('tracker_node')
-        ->fields(array(
+      $connection->update('tracker_node')
+        ->fields([
           'changed' => $changed,
           'published' => $node->isPublished(),
-        ))
+        ])
         ->condition('nid', $nid)
         ->execute();
-      db_update('tracker_node')
-        ->fields(array(
+      $connection->update('tracker_node')
+        ->fields([
           'changed' => $changed,
           'published' => $node->isPublished(),
-        ))
+        ])
         ->condition('nid', $nid)
         ->execute();
     }
   }
   else {
     // If the node doesn't exist, remove everything.
-    db_delete('tracker_node')
+    $connection->delete('tracker_node')
       ->condition('nid', $nid)
       ->execute();
-    db_delete('tracker_user')
+    $connection->delete('tracker_user')
       ->condition('nid', $nid)
       ->execute();
   }

@@ -12,9 +12,10 @@ use Drupal\Core\TypedData\OptionsProviderInterface;
 /**
  * A class for defining entity fields.
  */
-class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionInterface, FieldStorageDefinitionInterface {
+class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionInterface, FieldStorageDefinitionInterface, RequiredFieldStorageDefinitionInterface {
 
   use UnchangingCacheableDependencyTrait;
+  use FieldInputValueNormalizerTrait;
 
   /**
    * The field type.
@@ -42,7 +43,7 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
   /**
    * @var array
    */
-  protected $indexes = array();
+  protected $indexes = [];
 
   /**
    * Creates a new field definition.
@@ -54,12 +55,11 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    *   A new field definition object.
    */
   public static function create($type) {
-    $field_definition = new static(array());
+    $field_definition = new static([]);
     $field_definition->type = $type;
     $field_definition->itemDefinition = FieldItemDataDefinition::create($field_definition);
     // Create a definition for the items, and initialize it with the default
     // settings for the field type.
-    // @todo Cleanup in https://www.drupal.org/node/2116341.
     $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
     $default_settings = $field_type_manager->getDefaultStorageSettings($type) + $field_type_manager->getDefaultFieldSettings($type);
     $field_definition->itemDefinition->setSettings($default_settings);
@@ -89,7 +89,6 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
       ->setLabel($definition->getLabel())
       ->setName($definition->getName())
       ->setProvider($definition->getProvider())
-      ->setQueryable($definition->isQueryable())
       ->setRevisionable($definition->isRevisionable())
       ->setSettings($definition->getSettings())
       ->setTargetEntityTypeId($definition->getTargetEntityTypeId())
@@ -234,7 +233,9 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    * {@inheritdoc}
    */
   public function isRevisionable() {
-    return !empty($this->definition['revisionable']);
+    // Multi-valued base fields are always considered revisionable, just like
+    // configurable fields.
+    return !empty($this->definition['revisionable']) || $this->isMultiple();
   }
 
   /**
@@ -265,6 +266,10 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    * Possible values are positive integers or
    * FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED.
    *
+   * Note that if the entity type that this base field is attached to is
+   * revisionable and the field has a cardinality higher than 1, the field is
+   * considered revisionable by default.
+   *
    * @param int $cardinality
    *   The field cardinality.
    *
@@ -287,7 +292,8 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    * {@inheritdoc}
    */
   public function isQueryable() {
-    return isset($this->definition['queryable']) ? $this->definition['queryable'] : !$this->isComputed();
+    @trigger_error('BaseFieldDefinition::isQueryable() is deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0. Instead, you should use \Drupal\Core\Field\BaseFieldDefinition::hasCustomStorage(). See https://www.drupal.org/node/2856563.', E_USER_DEPRECATED);
+    return !$this->hasCustomStorage();
   }
 
   /**
@@ -298,8 +304,14 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    *
    * @return static
    *   The object itself for chaining.
+   *
+   * @deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0. Use
+   *   \Drupal\Core\Field\BaseFieldDefinition::setCustomStorage() instead.
+   *
+   * @see https://www.drupal.org/node/2856563
    */
   public function setQueryable($queryable) {
+    @trigger_error('BaseFieldDefinition::setQueryable() is deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0. Instead, you should use \Drupal\Core\Field\BaseFieldDefinition::setCustomStorage(). See https://www.drupal.org/node/2856563.', E_USER_DEPRECATED);
     $this->definition['queryable'] = $queryable;
     return $this;
   }
@@ -414,7 +426,7 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
   public function setDisplayConfigurable($display_context, $configurable) {
     // If no explicit display options have been specified, default to 'hidden'.
     if (empty($this->definition['display'][$display_context])) {
-      $this->definition['display'][$display_context]['options'] = array('type' => 'hidden');
+      $this->definition['display'][$display_context]['options'] = ['region' => 'hidden'];
     }
     $this->definition['display'][$display_context]['configurable'] = $configurable;
     return $this;
@@ -459,14 +471,7 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
     else {
       $value = $this->getDefaultValueLiteral();
     }
-    // Normalize into the "array keyed by delta" format.
-    if (isset($value) && !is_array($value)) {
-      $properties = $this->getPropertyNames();
-      $property = reset($properties);
-      $value = array(
-        array($property => $value),
-      );
-    }
+    $value = $this->normalizeValue($value, $this->getMainPropertyName());
     // Allow the field type to process default values.
     $field_item_list_class = $this->getClass();
     return $field_item_list_class::processDefaultValue($value, $entity, $this);
@@ -482,10 +487,10 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
     // Unless the value is an empty array, we may need to transform it.
     if (!is_array($value) || !empty($value)) {
       if (!is_array($value)) {
-        $value = array(array($this->getMainPropertyName() => $value));
+        $value = [[$this->getMainPropertyName() => $value]];
       }
       elseif (is_array($value) && !is_numeric(array_keys($value)[0])) {
-        $value = array(0 => $value);
+        $value = [0 => $value];
       }
     }
     $this->definition['default_value'] = $value;
@@ -504,13 +509,86 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
   }
 
   /**
+   * Returns the initial value for the field.
+   *
+   * @return array
+   *   The initial value for the field, as a numerically indexed array of items,
+   *   each item being a property/value array (array() for no default value).
+   */
+  public function getInitialValue() {
+    return $this->normalizeValue($this->definition['initial_value'], $this->getMainPropertyName());
+  }
+
+  /**
+   * Sets an initial value for the field.
+   *
+   * @param mixed $value
+   *   The initial value for the field. This can be either:
+   *   - a literal, in which case it will be assigned to the first property of
+   *     the first item;
+   *   - a numerically indexed array of items, each item being a property/value
+   *     array;
+   *   - a non-numerically indexed array, in which case the array is assumed to
+   *     be a property/value array and used as the first item;
+   *   - an empty array for no initial value.
+   *
+   * @return $this
+   */
+  public function setInitialValue($value) {
+    // @todo Implement initial value support for multi-value fields in
+    //   https://www.drupal.org/node/2883851.
+    if ($this->isMultiple()) {
+      throw new FieldException('Multi-value fields can not have an initial value.');
+    }
+
+    $this->definition['initial_value'] = $this->normalizeValue($value, $this->getMainPropertyName());
+    return $this;
+  }
+
+  /**
+   * Returns the name of the field that will be used for getting initial values.
+   *
+   * @return string|null
+   *   The field name.
+   */
+  public function getInitialValueFromField() {
+    return isset($this->definition['initial_value_from_field']) ? $this->definition['initial_value_from_field'] : NULL;
+  }
+
+  /**
+   * Sets a field that will be used for getting initial values.
+   *
+   * @param string $field_name
+   *   The name of the field that will be used for getting initial values.
+   * @param mixed $default_value
+   *   (optional) The default value for the field, in case the inherited value
+   *   is NULL. This can be either:
+   *   - a literal, in which case it will be assigned to the first property of
+   *     the first item;
+   *   - a numerically indexed array of items, each item being a property/value
+   *     array;
+   *   - a non-numerically indexed array, in which case the array is assumed to
+   *     be a property/value array and used as the first item;
+   *   - an empty array for no initial value.
+   *   If the field being added is required or an entity key, it is recommended
+   *   to provide a default value.
+   *
+   * @return $this
+   */
+  public function setInitialValueFromField($field_name, $default_value = NULL) {
+    $this->definition['initial_value_from_field'] = $field_name;
+    $this->setInitialValue($default_value);
+    return $this;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getOptionsProvider($property_name, FieldableEntityInterface $entity) {
     // If the field item class implements the interface, create an orphaned
     // runtime item object, so that it can be used as the options provider
     // without modifying the entity being worked on.
-    if (is_subclass_of($this->getFieldItemClass(), OptionsProviderInterface::class)) {
+    if (is_subclass_of($this->getItemDefinition()->getClass(), OptionsProviderInterface::class)) {
       $items = $entity->get($this->getName());
       return \Drupal::service('plugin.manager.field.field_type')->createFieldItem($items, 0);
     }
@@ -535,7 +613,7 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    */
   public function getPropertyDefinitions() {
     if (!isset($this->propertyDefinitions)) {
-      $class = $this->getFieldItemClass();
+      $class = $this->getItemDefinition()->getClass();
       $this->propertyDefinitions = $class::propertyDefinitions($this);
     }
     return $this->propertyDefinitions;
@@ -552,17 +630,18 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    * {@inheritdoc}
    */
   public function getMainPropertyName() {
-    $class = $this->getFieldItemClass();
+    $class = $this->getItemDefinition()->getClass();
     return $class::mainPropertyName();
   }
 
   /**
    * Helper to retrieve the field item class.
    *
-   * @todo: Remove once getClass() adds in defaults. See
-   * https://www.drupal.org/node/2116341.
+   * @deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0. Use
+   *   \Drupal\Core\TypedData\ListDataDefinition::getClass() instead.
    */
   protected function getFieldItemClass() {
+    @trigger_error('BaseFieldDefinition::getFieldItemClass() is deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0. Instead, you should use \Drupal\Core\TypedData\ListDataDefinition::getClass(). See https://www.drupal.org/node/2933964.', E_USER_DEPRECATED);
     if ($class = $this->getItemDefinition()->getClass()) {
       return $class;
     }
@@ -579,7 +658,7 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
   public function __sleep() {
     // Do not serialize the statically cached property definitions.
     $vars = get_object_vars($this);
-    unset($vars['propertyDefinitions']);
+    unset($vars['propertyDefinitions'], $vars['typedDataManager']);
     return array_keys($vars);
   }
 
@@ -633,12 +712,12 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
       $class = $definition['class'];
       $schema = $class::schema($this);
       // Fill in default values.
-      $schema += array(
-        'columns' => array(),
-        'unique keys' => array(),
-        'indexes' => array(),
-        'foreign keys' => array(),
-      );
+      $schema += [
+        'columns' => [],
+        'unique keys' => [],
+        'indexes' => [],
+        'foreign keys' => [],
+      ];
 
       // Merge custom indexes with those specified by the field type. Custom
       // indexes prevail.
@@ -655,12 +734,6 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    */
   public function getColumns() {
     $schema = $this->getSchema();
-    // A typical use case for the method is to iterate on the columns, while
-    // some other use cases rely on identifying the first column with the key()
-    // function. Since the schema is persisted in the Field object, we take care
-    // of resetting the array pointer so that the former does not interfere with
-    // the latter.
-    reset($schema['columns']);
     return $schema['columns'];
   }
 
@@ -715,12 +788,96 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
   /**
    * {@inheritdoc}
    */
+  public function getUniqueIdentifier() {
+    // If we have a specified target bundle, we're dealing with a bundle base
+    // field definition, so we need to include it in the unique identifier.
+    if ($this->getTargetBundle()) {
+      return $this->getTargetEntityTypeId() . '-' . $this->getTargetBundle() . '-' . $this->getName();
+    }
+
+    return $this->getUniqueStorageIdentifier();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isDeleted() {
+    return !empty($this->definition['deleted']);
+  }
+
+  /**
+   * Sets whether the field storage is deleted.
+   *
+   * @param bool $deleted
+   *   Whether the field storage is deleted.
+   *
+   * @return $this
+   */
+  public function setDeleted($deleted) {
+    $this->definition['deleted'] = $deleted;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getConfig($bundle) {
     $override = BaseFieldOverride::loadByName($this->getTargetEntityTypeId(), $bundle, $this->getName());
     if ($override) {
       return $override;
     }
     return BaseFieldOverride::createFromBaseFieldDefinition($this, $bundle);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isStorageRequired() {
+    if (isset($this->definition['storage_required'])) {
+      return (bool) $this->definition['storage_required'];
+    }
+
+    // Default to the 'required' property of the base field.
+    return $this->isRequired();
+  }
+
+  /**
+   * Sets whether the field storage is required.
+   *
+   * @param bool $required
+   *   Whether the field storage is required.
+   *
+   * @return static
+   *   The object itself for chaining.
+   */
+  public function setStorageRequired($required) {
+    $this->definition['storage_required'] = $required;
+    return $this;
+  }
+
+  /**
+   * Magic method: Implements a deep clone.
+   */
+  public function __clone() {
+    parent::__clone();
+
+    // The itemDefinition (\Drupal\Core\Field\TypedData\FieldItemDataDefinition)
+    // has a property fieldDefinition, which is a recursive reference to the
+    // parent BaseFieldDefinition, therefore the reference to the old object has
+    // to be overwritten with a reference to the cloned one.
+    $this->itemDefinition->setFieldDefinition($this);
+    // Reset the static cache of the field property definitions in order to
+    // ensure that the clone will reference different field property definitions
+    // objects.
+    $this->propertyDefinitions = NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isInternal() {
+    // All fields are not internal unless explicitly set.
+    return !empty($this->definition['internal']);
   }
 
 }

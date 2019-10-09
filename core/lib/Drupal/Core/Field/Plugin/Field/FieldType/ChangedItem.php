@@ -13,7 +13,7 @@ namespace Drupal\Core\Field\Plugin\Field\FieldType;
  *   label = @Translation("Last changed"),
  *   description = @Translation("An entity field containing a UNIX timestamp of when the entity has been last updated."),
  *   no_ui = TRUE,
- *   default_widget = "datetime_default",
+ *   default_widget = "datetime_timestamp",
  *   default_formatter = "timestamp",
  *   list_class = "\Drupal\Core\Field\ChangedFieldItemList"
  * )
@@ -44,7 +44,7 @@ class ChangedItem extends CreatedItem {
       /** @var \Drupal\Core\Entity\ContentEntityInterface $original */
       $original = $entity->original;
       $langcode = $entity->language()->getId();
-      if (!$entity->isNew() && $original->hasTranslation($langcode)) {
+      if (!$entity->isNew() && $original && $original->hasTranslation($langcode)) {
         $original_value = $original->getTranslation($langcode)->get($this->getFieldDefinition()->getName())->value;
         if ($this->value == $original_value && $entity->hasTranslationChanges()) {
           $this->value = REQUEST_TIME;

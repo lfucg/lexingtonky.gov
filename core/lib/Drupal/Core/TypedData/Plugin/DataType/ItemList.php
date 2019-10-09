@@ -30,13 +30,13 @@ class ItemList extends TypedData implements \IteratorAggregate, ListInterface {
    *
    * @var \Drupal\Core\TypedData\TypedDataInterface[]
    */
-  protected $list = array();
+  protected $list = [];
 
   /**
    * {@inheritdoc}
    */
   public function getValue() {
-    $values = array();
+    $values = [];
     foreach ($this->list as $delta => $item) {
       $values[$delta] = $item->getValue();
     }
@@ -50,8 +50,8 @@ class ItemList extends TypedData implements \IteratorAggregate, ListInterface {
    *   An array of values of the field items, or NULL to unset the field.
    */
   public function setValue($values, $notify = TRUE) {
-    if (!isset($values) || $values === array()) {
-      $this->list = array();
+    if (!isset($values) || $values === []) {
+      $this->list = [];
     }
     else {
       // Only arrays with numeric keys are supported.
@@ -82,12 +82,12 @@ class ItemList extends TypedData implements \IteratorAggregate, ListInterface {
    * {@inheritdoc}
    */
   public function getString() {
-    $strings = array();
+    $strings = [];
     foreach ($this->list as $item) {
       $strings[] = $item->getString();
     }
     // Remove any empty strings resulting from empty items.
-    return implode(', ', array_filter($strings, '\Drupal\Component\Utility\Unicode::strlen'));
+    return implode(', ', array_filter($strings, 'mb_strlen'));
   }
 
   /**
@@ -98,7 +98,10 @@ class ItemList extends TypedData implements \IteratorAggregate, ListInterface {
       throw new \InvalidArgumentException('Unable to get a value with a non-numeric delta in a list.');
     }
     // Automatically create the first item for computed fields.
+    // @deprecated in Drupal 8.5.x, will be removed before Drupal 9.0.0.
+    // Use \Drupal\Core\TypedData\ComputedItemListTrait instead.
     if ($index == 0 && !isset($this->list[0]) && $this->definition->isComputed()) {
+      @trigger_error('Automatically creating the first item for computed fields is deprecated in Drupal 8.5.x and will be removed before Drupal 9.0.0. Use \Drupal\Core\TypedData\ComputedItemListTrait instead.', E_USER_DEPRECATED);
       $this->list[0] = $this->createItem(0);
     }
     return isset($this->list[$index]) ? $this->list[$index] : NULL;

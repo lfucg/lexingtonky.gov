@@ -6,7 +6,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
-
 /**
  * Provides an interface defining a book manager.
  */
@@ -108,7 +107,7 @@ interface BookManagerInterface {
    *   An array of (menu link ID, title) pairs for use as options for selecting
    *   a book page.
    */
-  public function getTableOfContents($bid, $depth_limit, array $exclude = array());
+  public function getTableOfContents($bid, $depth_limit, array $exclude = []);
 
   /**
    * Finds the depth limit for items in the parent select.
@@ -207,7 +206,7 @@ interface BookManagerInterface {
    */
   public function getLinkDefaults($nid);
 
-  public function getBookParents(array $item, array $parent = array());
+  public function getBookParents(array $item, array $parent = []);
 
   /**
    * Builds the common elements of the book form for the node and outline forms.
@@ -247,7 +246,8 @@ interface BookManagerInterface {
    *   A data structure representing the tree as returned from buildBookOutlineData.
    *
    * @return array
-   *   A structured array to be rendered by drupal_render().
+   *   A structured array to be rendered by
+   *   \Drupal\Core\Render\RendererInterface::render().
    *
    * @see \Drupal\Core\Menu\MenuLinkTree::build
    */
@@ -262,7 +262,7 @@ interface BookManagerInterface {
    *   A collection of node link references generated from $tree by
    *   menu_tree_collect_node_links().
    */
-  public function bookTreeCheckAccess(&$tree, $node_links = array());
+  public function bookTreeCheckAccess(&$tree, $node_links = []);
 
   /**
    * Gets the data representing a subtree of the book hierarchy.

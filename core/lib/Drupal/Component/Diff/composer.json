@@ -3,10 +3,10 @@
   "description": "Diff.",
   "keywords": ["drupal"],
   "homepage": "https://www.drupal.org/project/drupal",
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "require": {
     "php": ">=5.5.9",
-    "drupal/utility": "~8.2"
+    "symfony/polyfill-mbstring": "~1.0"
   },
   "autoload": {
     "psr-4": {

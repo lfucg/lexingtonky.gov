@@ -1,0 +1,18 @@
+name: Lexington Planning Commission
+description: A theme for the City of Lexington Planning Commission pages
+type: theme
+core: 8.x
+base theme: lex
+
+# Add your regions below. Defaults to those defined in Drupal core.
+regions:
+  notices: 'Priority Notices'
+  sitemast: 'Header Navigation'
+  hero: 'Page Features'
+  breadcrumb: 'Breadcrumbs and Notices'
+  title: 'Page Title'
+  content: 'Content'
+  after_content: 'Additional Content following Page Content in Main Area'
+  sidebar: 'Sidebar'
+  feedback: 'Feedback Form'
+  footer: 'Footer'

@@ -9,8 +9,13 @@ namespace Drupal\Tests\Core\Access;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\CustomAccessCheck;
+use Drupal\Core\Controller\ControllerResolver;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\Routing\Route;
+use Drupal\Core\DependencyInjection\ClassResolverInterface;
+use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 
 /**
  * @coversDefaultClass \Drupal\Core\Access\CustomAccessCheck
@@ -59,12 +64,12 @@ class CustomAccessCheckTest extends UnitTestCase {
     $this->controllerResolver->expects($this->at(0))
       ->method('getControllerFromDefinition')
       ->with('\Drupal\Tests\Core\Access\TestController::accessDeny')
-      ->will($this->returnValue(array(new TestController(), 'accessDeny')));
+      ->will($this->returnValue([new TestController(), 'accessDeny']));
 
     $resolver0 = $this->getMock('Drupal\Component\Utility\ArgumentsResolverInterface');
     $resolver0->expects($this->once())
       ->method('getArguments')
-      ->will($this->returnValue(array()));
+      ->will($this->returnValue([]));
     $this->argumentsResolverFactory->expects($this->at(0))
       ->method('getArgumentsResolver')
       ->will($this->returnValue($resolver0));
@@ -72,12 +77,12 @@ class CustomAccessCheckTest extends UnitTestCase {
     $this->controllerResolver->expects($this->at(1))
       ->method('getControllerFromDefinition')
       ->with('\Drupal\Tests\Core\Access\TestController::accessAllow')
-      ->will($this->returnValue(array(new TestController(), 'accessAllow')));
+      ->will($this->returnValue([new TestController(), 'accessAllow']));
 
     $resolver1 = $this->getMock('Drupal\Component\Utility\ArgumentsResolverInterface');
     $resolver1->expects($this->once())
       ->method('getArguments')
-      ->will($this->returnValue(array()));
+      ->will($this->returnValue([]));
     $this->argumentsResolverFactory->expects($this->at(1))
       ->method('getArgumentsResolver')
       ->will($this->returnValue($resolver1));
@@ -85,25 +90,53 @@ class CustomAccessCheckTest extends UnitTestCase {
     $this->controllerResolver->expects($this->at(2))
       ->method('getControllerFromDefinition')
       ->with('\Drupal\Tests\Core\Access\TestController::accessParameter')
-      ->will($this->returnValue(array(new TestController(), 'accessParameter')));
+      ->will($this->returnValue([new TestController(), 'accessParameter']));
 
     $resolver2 = $this->getMock('Drupal\Component\Utility\ArgumentsResolverInterface');
     $resolver2->expects($this->once())
       ->method('getArguments')
-      ->will($this->returnValue(array('parameter' => 'TRUE')));
+      ->will($this->returnValue(['parameter' => 'TRUE']));
     $this->argumentsResolverFactory->expects($this->at(2))
       ->method('getArgumentsResolver')
       ->will($this->returnValue($resolver2));
 
-    $route = new Route('/test-route', array(), array('_custom_access' => '\Drupal\Tests\Core\Access\TestController::accessDeny'));
+    $route = new Route('/test-route', [], ['_custom_access' => '\Drupal\Tests\Core\Access\TestController::accessDeny']);
     $account = $this->getMock('Drupal\Core\Session\AccountInterface');
     $this->assertEquals(AccessResult::neutral(), $this->accessChecker->access($route, $route_match, $account));
 
-    $route = new Route('/test-route', array(), array('_custom_access' => '\Drupal\Tests\Core\Access\TestController::accessAllow'));
+    $route = new Route('/test-route', [], ['_custom_access' => '\Drupal\Tests\Core\Access\TestController::accessAllow']);
     $this->assertEquals(AccessResult::allowed(), $this->accessChecker->access($route, $route_match, $account));
 
-    $route = new Route('/test-route', array('parameter' => 'TRUE'), array('_custom_access' => '\Drupal\Tests\Core\Access\TestController::accessParameter'));
+    $route = new Route('/test-route', ['parameter' => 'TRUE'], ['_custom_access' => '\Drupal\Tests\Core\Access\TestController::accessParameter']);
     $this->assertEquals(AccessResult::allowed(), $this->accessChecker->access($route, $route_match, $account));
+  }
+
+  /**
+   * Tests the access method exception for invalid access callbacks.
+   */
+  public function testAccessException() {
+    // Create two mocks for the ControllerResolver constructor.
+    $httpMessageFactory = $this->getMockBuilder(HttpMessageFactoryInterface::class)->getMock();
+    $controllerResolver = $this->getMockBuilder(ClassResolverInterface::class)->getMock();
+
+    // Re-create the controllerResolver mock with proxy to original methods.
+    $this->controllerResolver = $this->getMockBuilder(ControllerResolver::class)
+      ->setConstructorArgs([$httpMessageFactory, $controllerResolver])
+      ->enableProxyingToOriginalMethods()
+      ->getMock();
+
+    // Overwrite the access checker using the newly mocked controller resolve.
+    $this->accessChecker = new CustomAccessCheck($this->controllerResolver, $this->argumentsResolverFactory);
+
+    // Add a route with a _custom_access route that doesn't exist.
+    $route = new Route('/test-route', [], ['_custom_access' => '\Drupal\Tests\Core\Access\NonExistentController::nonExistentMethod']);
+    $route_match = $this->getMock(RouteMatchInterface::class);
+    $account = $this->getMock(AccountInterface::class);
+
+    $this->setExpectedException(\BadMethodCallException::class, 'The "\Drupal\Tests\Core\Access\NonExistentController::nonExistentMethod" method is not callable as a _custom_access callback in route "/test-route"');
+
+    // Run the access check.
+    $this->accessChecker->access($route, $route_match, $account);
   }
 
 }

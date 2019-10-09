@@ -4,16 +4,22 @@ status: true
 dependencies:
   config:
     - field.field.node.meeting.body
+    - field.field.node.meeting.field_all_day
     - field.field.node.meeting.field_date
     - field.field.node.meeting.field_date_end
     - field.field.node.meeting.field_external_id
+    - field.field.node.meeting.field_keywords
     - field.field.node.meeting.field_locations
+    - field.field.node.meeting.field_metatags
+    - field.field.node.meeting.field_recurring_event
     - field.field.node.meeting.field_related_departments
     - field.field.node.meeting.field_related_documents
     - node.type.meeting
   module:
+    - chosen_field
     - datetime
     - file
+    - metatag
     - path
     - text
     - workbench_moderation
@@ -30,54 +36,99 @@ content:
       summary_rows: 3
       placeholder: ''
     third_party_settings: {  }
+    region: content
   created:
     type: datetime_timestamp
     weight: 4
     settings: {  }
     third_party_settings: {  }
+    region: content
+  field_all_day:
+    weight: 11
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
   field_date:
     weight: 9
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
+    region: content
   field_date_end:
     weight: 10
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
+    region: content
+  field_keywords:
+    weight: 15
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_locations:
     weight: 1
     settings: {  }
     third_party_settings: {  }
     type: options_select
-  field_related_departments:
+    region: content
+  field_metatags:
+    weight: 13
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
+    region: content
+  field_recurring_event:
+    weight: 12
+    settings: {  }
+    third_party_settings: {  }
     type: options_select
+    region: content
+  field_related_departments:
+    type: chosen_select
     weight: 2
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_related_documents:
-    weight: 26
+    type: file_generic
+    weight: 14
+    region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
-    type: file_generic
   path:
     type: path
     weight: 7
     settings: {  }
     third_party_settings: {  }
+    region: content
   promote:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 5
     third_party_settings: {  }
+    region: content
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 16
+    third_party_settings: {  }
+    region: content
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 6
     third_party_settings: {  }
+    region: content
   title:
     type: string_textfield
     weight: 0
@@ -85,6 +136,7 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 3
@@ -93,5 +145,6 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
 hidden:
   field_external_id: true

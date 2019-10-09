@@ -1,0 +1,14 @@
+name: 'Workflow Type Test'
+type: module
+description: 'Provides a workflow type plugin for testing.'
+package: Testing
+# version: VERSION
+# core: 8.x
+dependencies:
+  - drupal:workflows
+
+# Information added by Drupal.org packaging script on 2019-05-08
+version: '8.7.1'
+core: '8.x'
+project: 'drupal'
+datestamp: 1557336198

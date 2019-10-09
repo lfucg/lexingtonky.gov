@@ -1,0 +1,31 @@
+uuid: 3d9f5dc8-279f-4251-8284-26c73bbcf94a
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:34db9b12-5ecc-4371-89df-16ac11fe0d70'
+  module:
+    - block_content
+    - system
+  theme:
+    - lex_police
+id: lex_police_find_council_district
+theme: lex_police
+region: content
+weight: -24
+provider: null
+plugin: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
+settings:
+  id: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
+  label: 'Find your council district'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    pages: /browse/government/council
+    negate: false
+    context_mapping: {  }

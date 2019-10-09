@@ -2,10 +2,13 @@
 
 namespace Drupal\simpletest;
 
+@trigger_error(__NAMESPACE__ . '\InstallerTestBase is deprecated in Drupal 8.6.0 and will be removed before Drupal 9.0.0. Instead, use \Drupal\FunctionalTests\Installer\InstallerTestBase, see https://www.drupal.org/node/2988752.', E_USER_DEPRECATED);
+
 use Drupal\Core\DrupalKernel;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Session\UserSession;
 use Drupal\Core\Site\Settings;
+use Drupal\Tests\RequirementsPageTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,8 +16,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Base class for testing the interactive installer.
+ *
+ * @deprecated in Drupal 8.6.0 and will be removed before Drupal 9.0.0.
+ * Use \Drupal\FunctionalTests\Installer\InstallerTestBase. See
+ * https://www.drupal.org/node/2988752
  */
 abstract class InstallerTestBase extends WebTestBase {
+
+  use RequirementsPageTrait;
 
   /**
    * Custom settings.php values to write for a test run.
@@ -23,7 +32,7 @@ abstract class InstallerTestBase extends WebTestBase {
    *   An array of settings to write out, in the format expected by
    *   drupal_rewrite_settings().
    */
-  protected $settings = array();
+  protected $settings = [];
 
   /**
    * The language code in which to install Drupal.
@@ -46,7 +55,7 @@ abstract class InstallerTestBase extends WebTestBase {
    *
    * @var array
    */
-  protected $parameters = array();
+  protected $parameters = [];
 
   /**
    * A string translation map used for translated installer screens.
@@ -55,9 +64,9 @@ abstract class InstallerTestBase extends WebTestBase {
    *
    * @var array
    */
-  protected $translations = array(
+  protected $translations = [
     'Save and continue' => 'Save and continue',
-  );
+  ];
 
   /**
    * Whether the installer has completed.
@@ -73,12 +82,12 @@ abstract class InstallerTestBase extends WebTestBase {
     $this->isInstalled = FALSE;
 
     // Define information about the user 1 account.
-    $this->rootUser = new UserSession(array(
+    $this->rootUser = new UserSession([
       'uid' => 1,
       'name' => 'admin',
       'mail' => 'admin@example.com',
       'pass_raw' => $this->randomMachineName(),
-    ));
+    ]);
 
     // If any $settings are defined for this test, copy and prepare an actual
     // settings.php, so as to resemble a regular installation.
@@ -121,6 +130,9 @@ abstract class InstallerTestBase extends WebTestBase {
 
     // Select profile.
     $this->setUpProfile();
+
+    // Address the requirements problem screen, if any.
+    $this->setUpRequirementsProblem();
 
     // Configure settings.
     $this->setUpSettings();
@@ -171,9 +183,9 @@ abstract class InstallerTestBase extends WebTestBase {
    * Installer step: Select language.
    */
   protected function setUpLanguage() {
-    $edit = array(
+    $edit = [
       'langcode' => $this->langcode,
-    );
+    ];
     $this->drupalPostForm(NULL, $edit, $this->translations['Save and continue']);
   }
 
@@ -181,9 +193,9 @@ abstract class InstallerTestBase extends WebTestBase {
    * Installer step: Select installation profile.
    */
   protected function setUpProfile() {
-    $edit = array(
+    $edit = [
       'profile' => $this->profile,
-    );
+    ];
     $this->drupalPostForm(NULL, $edit, $this->translations['Save and continue']);
   }
 
@@ -193,6 +205,18 @@ abstract class InstallerTestBase extends WebTestBase {
   protected function setUpSettings() {
     $edit = $this->translatePostValues($this->parameters['forms']['install_settings_form']);
     $this->drupalPostForm(NULL, $edit, $this->translations['Save and continue']);
+  }
+
+  /**
+   * Installer step: Requirements problem.
+   *
+   * Override this method to test specific requirements warnings or errors
+   * during the installer.
+   *
+   * @see system_requirements()
+   */
+  protected function setUpRequirementsProblem() {
+    // Do nothing.
   }
 
   /**

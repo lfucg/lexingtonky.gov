@@ -7,6 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Form builder to test button click detection.
+ *
+ * @internal
  */
 class FormTestClickedButtonForm extends FormBase {
 
@@ -26,10 +28,10 @@ class FormTestClickedButtonForm extends FormBase {
     // submitted without any information identifying the button responsible for
     // the submission. In other browsers, the form is submitted as though the
     // first button were clicked.
-    $form['text'] = array(
+    $form['text'] = [
       '#title' => 'Text',
       '#type' => 'textfield',
-    );
+    ];
 
     // Loop through each path argument, adding buttons based on the information
     // in the argument. For example, if the path is
@@ -37,7 +39,7 @@ class FormTestClickedButtonForm extends FormBase {
     // 'image_button', and a 'button' with #access=FALSE. This enables form.test
     // to test a variety of combinations.
     $i = 0;
-    $args = array($first, $second, $third);
+    $args = [$first, $second, $third];
     foreach ($args as $arg) {
       $name = 'button' . ++$i;
       // 's', 'b', or 'i' in the argument define the button type wanted.
@@ -54,10 +56,10 @@ class FormTestClickedButtonForm extends FormBase {
         $type = NULL;
       }
       if (isset($type)) {
-        $form[$name] = array(
+        $form[$name] = [
           '#type' => $type,
           '#name' => $name,
-        );
+        ];
         // Image buttons need a #src; the others need a #value.
         if ($type == 'image_button') {
           $form[$name]['#src'] = 'core/misc/druplicon.png';
@@ -81,10 +83,10 @@ class FormTestClickedButtonForm extends FormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     if ($triggering_element = $form_state->getTriggeringElement()) {
-      drupal_set_message(t('The clicked button is %name.', ['%name' => $triggering_element['#name']]));
+      $this->messenger()->addStatus(t('The clicked button is %name.', ['%name' => $triggering_element['#name']]));
     }
     else {
-      drupal_set_message('There is no clicked button.');
+      $this->messenger()->addStatus('There is no clicked button.');
     }
   }
 
@@ -92,7 +94,7 @@ class FormTestClickedButtonForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    drupal_set_message('Submit handler for form_test_clicked_button executed.');
+    $this->messenger()->addStatus('Submit handler for form_test_clicked_button executed.');
   }
 
 }

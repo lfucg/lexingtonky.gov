@@ -16,7 +16,8 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *     "view_builder" = "Drupal\entity_test\EntityTestViewBuilder",
  *     "form" = {
  *       "default" = "Drupal\entity_test\EntityTestForm",
- *       "delete" = "Drupal\entity_test\EntityTestDeleteForm"
+ *       "delete" = "Drupal\entity_test\EntityTestDeleteForm",
+ *       "delete-multiple-confirm" = "Drupal\Core\Entity\Form\DeleteMultipleForm"
  *     },
  *     "view_builder" = "Drupal\entity_test\EntityTestViewBuilder",
  *     "translation" = "Drupal\content_translation\ContentTranslationHandler",
@@ -28,6 +29,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *   base_table = "entity_test_rev",
  *   revision_table = "entity_test_rev_revision",
  *   admin_permission = "administer entity_test content",
+ *   show_revision_ui = TRUE,
  *   entity_keys = {
  *     "id" = "id",
  *     "uuid" = "uuid",
@@ -40,6 +42,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *     "add-form" = "/entity_test_rev/add",
  *     "canonical" = "/entity_test_rev/manage/{entity_test_rev}",
  *     "delete-form" = "/entity_test/delete/entity_test_rev/{entity_test_rev}",
+ *     "delete-multiple-form" = "/entity_test_rev/delete_multiple",
  *     "edit-form" = "/entity_test_rev/manage/{entity_test_rev}/edit",
  *     "revision" = "/entity_test_rev/{entity_test_rev}/revision/{entity_test_rev_revision}/view",
  *   }
@@ -53,13 +56,6 @@ class EntityTestRev extends EntityTest {
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
-    $fields['revision_id'] = BaseFieldDefinition::create('integer')
-      ->setLabel(t('Revision ID'))
-      ->setDescription(t('The version id of the test entity.'))
-      ->setReadOnly(TRUE)
-      ->setSetting('unsigned', TRUE);
-
-    $fields['langcode']->setRevisionable(TRUE);
     $fields['name']->setRevisionable(TRUE);
     $fields['user_id']->setRevisionable(TRUE);
 

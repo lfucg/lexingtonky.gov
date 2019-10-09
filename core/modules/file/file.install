@@ -5,55 +5,57 @@
  * Install, update and uninstall functions for File module.
  */
 
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+
 /**
  * Implements hook_schema().
  */
 function file_schema() {
-  $schema['file_usage'] = array(
+  $schema['file_usage'] = [
     'description' => 'Track where a file is used.',
-    'fields' => array(
-      'fid' => array(
+    'fields' => [
+      'fid' => [
         'description' => 'File ID.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'module' => array(
+      ],
+      'module' => [
         'description' => 'The name of the module that is using the file.',
         'type' => 'varchar_ascii',
         'length' => DRUPAL_EXTENSION_NAME_MAX_LENGTH,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'type' => array(
+      ],
+      'type' => [
         'description' => 'The name of the object type in which the file is used.',
         'type' => 'varchar_ascii',
         'length' => 64,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'id' => array(
+      ],
+      'id' => [
         'description' => 'The primary key of the object using the file.',
         'type' => 'varchar_ascii',
         'length' => 64,
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'count' => array(
+      ],
+      'count' => [
         'description' => 'The number of times this file is used by this object.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-    ),
-    'primary key' => array('fid', 'type', 'id', 'module'),
-    'indexes' => array(
-      'type_id' => array('type', 'id'),
-      'fid_count' => array('fid', 'count'),
-      'fid_module' => array('fid', 'module'),
-    ),
-  );
+      ],
+    ],
+    'primary key' => ['fid', 'type', 'id', 'module'],
+    'indexes' => [
+      'type_id' => ['type', 'id'],
+      'fid_count' => ['fid', 'count'],
+      'fid_module' => ['fid', 'module'],
+    ],
+  ];
   return $schema;
 }
 
@@ -63,7 +65,7 @@ function file_schema() {
  * Display information about getting upload progress bars working.
  */
 function file_requirements($phase) {
-  $requirements = array();
+  $requirements = [];
 
   // Check the server's ability to indicate upload progress.
   if ($phase == 'runtime') {
@@ -96,13 +98,9 @@ function file_requirements($phase) {
       $value = t('Not enabled');
       $description = t('Your server is not capable of displaying file upload progress. File upload progress requires PHP be run with mod_php or PHP-FPM and not as FastCGI.');
     }
-    elseif (!$implementation && extension_loaded('apcu')) {
-      $value = t('Not enabled');
-      $description = t('Your server is capable of displaying file upload progress through APC, but it is not enabled. Add <code>apc.rfc1867 = 1</code> to your php.ini configuration. Alternatively, it is recommended to use <a href="http://pecl.php.net/package/uploadprogress">PECL uploadprogress</a>, which supports more than one simultaneous upload.');
-    }
     elseif (!$implementation) {
       $value = t('Not enabled');
-      $description = t('Your server is capable of displaying file upload progress, but does not have the required libraries. It is recommended to install the <a href="http://pecl.php.net/package/uploadprogress">PECL uploadprogress library</a> (preferred) or to install <a href="http://php.net/apcu">APC</a>.');
+      $description = t('Your server is capable of displaying file upload progress, but does not have the required libraries. It is recommended to install the <a href="http://pecl.php.net/package/uploadprogress">PECL uploadprogress library</a>.');
     }
     elseif ($implementation == 'apc') {
       $value = t('Enabled (<a href="http://php.net/manual/apcu.configuration.php#ini.apcu.rfc1867">APC RFC1867</a>)');
@@ -111,12 +109,71 @@ function file_requirements($phase) {
     elseif ($implementation == 'uploadprogress') {
       $value = t('Enabled (<a href="http://pecl.php.net/package/uploadprogress">PECL uploadprogress</a>)');
     }
-    $requirements['file_progress'] = array(
+    $requirements['file_progress'] = [
       'title' => t('Upload progress'),
       'value' => $value,
       'description' => $description,
-    );
+    ];
   }
 
   return $requirements;
+}
+
+/**
+ * Prevent unused files from being deleted.
+ */
+function file_update_8300() {
+  // Disable deletion of unused permanent files.
+  \Drupal::configFactory()->getEditable('file.settings')
+    ->set('make_unused_managed_files_temporary', FALSE)
+    ->save();
+
+  return t('Files that have no remaining usages are no longer deleted by default.');
+}
+
+/**
+ * Add 'use_description_as_link_text' setting to file field formatters.
+ */
+function file_update_8001() {
+  $displays = EntityViewDisplay::loadMultiple();
+  foreach ($displays as $display) {
+    /** @var \Drupal\Core\Entity\Entity\EntityViewDisplay $display */
+    $fields_settings = $display->get('content');
+    $changed = FALSE;
+    foreach ($fields_settings as $field_name => $settings) {
+      if (!empty($settings['type'])) {
+        switch ($settings['type']) {
+          // The file_table formatter never displayed available descriptions
+          // before, so we disable this option to ensure backward compatibility.
+          case 'file_table':
+            $fields_settings[$field_name]['settings']['use_description_as_link_text'] = FALSE;
+            $changed = TRUE;
+            break;
+
+          // The file_default formatter always displayed available descriptions
+          // before, so we enable this option to ensure backward compatibility.
+          case 'file_default':
+            $fields_settings[$field_name]['settings']['use_description_as_link_text'] = TRUE;
+            $changed = TRUE;
+            break;
+        }
+      }
+    }
+    if ($changed === TRUE) {
+      $display->set('content', $fields_settings)->save();
+    }
+  }
+}
+
+/**
+ * Set the 'owner' entity key and update the field.
+ */
+function file_update_8700() {
+  $definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+  $entity_type = $definition_update_manager->getEntityType('file');
+  $keys = $entity_type->getKeys();
+  $keys['owner'] = 'uid';
+  $entity_type->set('entity_keys', $keys);
+  $definition_update_manager->updateEntityType($entity_type);
+  $definition_update_manager->updateFieldStorageDefinition($definition_update_manager->getFieldStorageDefinition('uid', 'file'));
 }

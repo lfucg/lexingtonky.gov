@@ -2,9 +2,12 @@
 
 namespace Drupal\views\Plugin\views\argument_validator;
 
+use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\Context\EntityContextDefinition;
 use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -19,13 +22,26 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @see \Drupal\views\Plugin\Derivative\ViewsEntityArgumentValidator
  */
 class Entity extends ArgumentValidatorPluginBase {
+  use DeprecatedServicePropertyTrait;
 
   /**
-   * The entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * {@inheritdoc}
    */
-  protected $entityManager;
+  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The entity bundle info.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
+   */
+  protected $entityTypeBundleInfo;
 
   /**
    * If this validator can handle multiple arguments.
@@ -43,13 +59,20 @@ class Entity extends ArgumentValidatorPluginBase {
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle info.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
+    if (!$entity_type_bundle_info) {
+      @trigger_error('Calling Entity::__construct() with the $entity_type_bundle_info argument is supported in drupal:8.7.0 and will be required before drupal:9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
+      $entity_type_bundle_info = \Drupal::service('entity_type.bundle.info');
+    }
+    $this->entityTypeBundleInfo = $entity_type_bundle_info;
   }
 
   /**
@@ -60,7 +83,8 @@ class Entity extends ArgumentValidatorPluginBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.manager')
+      $container->get('entity_type.manager'),
+      $container->get('entity_type.bundle.info')
     );
   }
 
@@ -70,10 +94,10 @@ class Entity extends ArgumentValidatorPluginBase {
   protected function defineOptions() {
     $options = parent::defineOptions();
 
-    $options['bundles'] = array('default' => array());
-    $options['access'] = array('default' => FALSE);
-    $options['operation'] = array('default' => 'view');
-    $options['multiple'] = array('default' => FALSE);
+    $options['bundles'] = ['default' => []];
+    $options['access'] = ['default' => FALSE];
+    $options['operation'] = ['default' => 'view'];
+    $options['multiple'] = ['default' => FALSE];
 
     return $options;
   }
@@ -88,64 +112,64 @@ class Entity extends ArgumentValidatorPluginBase {
     // Derivative IDs are all entity:entity_type. Sanitized for js.
     // The ID is converted back on submission.
     $sanitized_id = ArgumentPluginBase::encodeValidatorId($this->definition['id']);
-    $entity_type = $this->entityManager->getDefinition($entity_type_id);
+    $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
 
     // If the entity has bundles, allow option to restrict to bundle(s).
     if ($entity_type->hasKey('bundle')) {
-      $bundle_options = array();
-      foreach ($this->entityManager->getBundleInfo($entity_type_id) as $bundle_id => $bundle_info) {
+      $bundle_options = [];
+      foreach ($this->entityTypeBundleInfo->getBundleInfo($entity_type_id) as $bundle_id => $bundle_info) {
         $bundle_options[$bundle_id] = $bundle_info['label'];
       }
 
-      $form['bundles'] = array(
+      $form['bundles'] = [
         '#title' => $entity_type->getBundleLabel() ?: $this->t('Bundles'),
         '#default_value' => $this->options['bundles'],
         '#type' => 'checkboxes',
         '#options' => $bundle_options,
         '#description' => $this->t('If none are selected, all are allowed.'),
-      );
+      ];
     }
 
     // Offer the option to filter by access to the entity in the argument.
-    $form['access'] = array(
+    $form['access'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Validate user has access to the %name', array('%name' => $entity_type->getLabel())),
+      '#title' => $this->t('Validate user has access to the %name', ['%name' => $entity_type->getLabel()]),
       '#default_value' => $this->options['access'],
-    );
-    $form['operation'] = array(
+    ];
+    $form['operation'] = [
       '#type' => 'radios',
       '#title' => $this->t('Access operation to check'),
-      '#options' => array(
+      '#options' => [
         'view' => $this->t('View'),
         'update' => $this->t('Edit'),
         'delete' => $this->t('Delete'),
-      ),
+      ],
       '#default_value' => $this->options['operation'],
-      '#states' => array(
-        'visible' => array(
-          ':input[name="options[validate][options][' . $sanitized_id . '][access]"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
+      '#states' => [
+        'visible' => [
+          ':input[name="options[validate][options][' . $sanitized_id . '][access]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
 
     // If class is multiple capable give the option to validate single/multiple.
     if ($this->multipleCapable) {
-      $form['multiple'] = array(
+      $form['multiple'] = [
         '#type' => 'radios',
         '#title' => $this->t('Multiple arguments'),
-        '#options' => array(
-          0 => $this->t('Single ID', array('%type' => $entity_type->getLabel())),
-          1 => $this->t('One or more IDs separated by , or +', array('%type' => $entity_type->getLabel())),
-        ),
+        '#options' => [
+          0 => $this->t('Single ID', ['%type' => $entity_type->getLabel()]),
+          1 => $this->t('One or more IDs separated by , or +', ['%type' => $entity_type->getLabel()]),
+        ],
         '#default_value' => (string) $this->options['multiple'],
-      );
+      ];
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitOptionsForm(&$form, FormStateInterface $form_state, &$options = array()) {
+  public function submitOptionsForm(&$form, FormStateInterface $form_state, &$options = []) {
     // Filter out unused options so we don't store giant unnecessary arrays.
     $options['bundles'] = array_filter($options['bundles']);
   }
@@ -162,14 +186,14 @@ class Entity extends ArgumentValidatorPluginBase {
       $ids = array_filter(preg_split('/[,+ ]/', $argument));
     }
     elseif ($argument) {
-      $ids = array($argument);
+      $ids = [$argument];
     }
     // No specified argument should be invalid.
     else {
       return FALSE;
     }
 
-    $entities = $this->entityManager->getStorage($entity_type)->loadMultiple($ids);
+    $entities = $this->entityTypeManager->getStorage($entity_type)->loadMultiple($ids);
     // Validate each id => entity. If any fails break out and return false.
     foreach ($ids as $id) {
       // There is no entity for this ID.
@@ -213,12 +237,12 @@ class Entity extends ArgumentValidatorPluginBase {
     $dependencies = parent::calculateDependencies();
 
     $entity_type_id = $this->definition['entity_type'];
-    $bundle_entity_type = $this->entityManager->getDefinition($entity_type_id)->getBundleEntityType();
+    $bundle_entity_type = $this->entityTypeManager->getDefinition($entity_type_id)->getBundleEntityType();
 
     // The bundle entity type might not exist. For example, users do not have
     // bundles.
-    if ($this->entityManager->hasHandler($bundle_entity_type, 'storage')) {
-      $bundle_entity_storage = $this->entityManager->getStorage($bundle_entity_type);
+    if ($this->entityTypeManager->hasHandler($bundle_entity_type, 'storage')) {
+      $bundle_entity_storage = $this->entityTypeManager->getStorage($bundle_entity_type);
 
       foreach ($bundle_entity_storage->loadMultiple(array_keys($this->options['bundles'])) as $bundle_entity) {
         $dependencies[$bundle_entity->getConfigDependencyKey()][] = $bundle_entity->getConfigDependencyName();
@@ -226,6 +250,15 @@ class Entity extends ArgumentValidatorPluginBase {
     }
 
     return $dependencies;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getContextDefinition() {
+    return EntityContextDefinition::fromEntityTypeId($this->definition['entity_type'])
+      ->setLabel($this->argument->adminLabel())
+      ->setRequired(FALSE);
   }
 
 }

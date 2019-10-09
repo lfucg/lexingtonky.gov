@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\masquerade\Access\UnmasqueradeAccessCheck.
- */
 
 namespace Drupal\masquerade\Access;
 
@@ -40,7 +36,7 @@ class UnmasqueradeAccessCheck implements AccessInterface {
    */
   public function access() {
     return AccessResult::allowedIf($this->masquerade->isMasquerading())
-      ->addCacheContexts(['is_masquerading']);
+      ->addCacheContexts(['session.is_masquerading']);
   }
 
 }

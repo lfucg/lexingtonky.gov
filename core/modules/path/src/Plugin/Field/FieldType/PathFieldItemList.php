@@ -4,12 +4,49 @@ namespace Drupal\path\Plugin\Field\FieldType;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\TypedData\ComputedItemListTrait;
 
 /**
  * Represents a configurable entity path field.
  */
 class PathFieldItemList extends FieldItemList {
+
+  use ComputedItemListTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function computeValue() {
+    // Default the langcode to the current language if this is a new entity or
+    // there is no alias for an existent entity.
+    // @todo Set the langcode to not specified for untranslatable fields
+    //   in https://www.drupal.org/node/2689459.
+    $value = ['langcode' => $this->getLangcode()];
+
+    $entity = $this->getEntity();
+    if (!$entity->isNew()) {
+      $conditions = [
+        'source' => '/' . $entity->toUrl()->getInternalPath(),
+        'langcode' => $this->getLangcode(),
+      ];
+      $alias = \Drupal::service('path.alias_storage')->load($conditions);
+      if ($alias === FALSE) {
+        // Fall back to non-specific language.
+        if ($this->getLangcode() !== LanguageInterface::LANGCODE_NOT_SPECIFIED) {
+          $conditions['langcode'] = LanguageInterface::LANGCODE_NOT_SPECIFIED;
+          $alias = \Drupal::service('path.alias_storage')->load($conditions);
+        }
+      }
+
+      if ($alias) {
+        $value = $alias;
+      }
+    }
+
+    $this->list[0] = $this->createItem(0, $value);
+  }
 
   /**
    * {@inheritdoc}

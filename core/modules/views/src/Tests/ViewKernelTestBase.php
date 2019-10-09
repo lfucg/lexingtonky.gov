@@ -2,6 +2,9 @@
 
 namespace Drupal\views\Tests;
 
+@trigger_error(__NAMESPACE__ . '\ViewKernelTestBase is deprecated in Drupal 8.0.0 and will be removed before Drupal 9.0.0. Use \Drupal\Tests\views\Kernel\ViewsKernelTestBase instead.', E_USER_DEPRECATED);
+
+use Drupal\Core\Database\Database;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\simpletest\KernelTestBase;
 
@@ -12,7 +15,7 @@ use Drupal\simpletest\KernelTestBase;
  * requires the full web test environment provided by WebTestBase, extend
  * ViewTestBase instead.
  *
- * @deprecated in Drupal 8.0.x, will be removed in Drupal 8.2.x. Use
+ * @deprecated in Drupal 8.0.0 and will be removed before Drupal 9.0.0. Use
  *   \Drupal\Tests\views\Kernel\ViewsKernelTestBase instead.
  *
  * @see \Drupal\Tests\views\Kernel\ViewsKernelTestBase
@@ -26,24 +29,24 @@ abstract class ViewKernelTestBase extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('system', 'views', 'views_test_config', 'views_test_data', 'user');
+  public static $modules = ['system', 'views', 'views_test_config', 'views_test_data', 'user'];
 
   /**
    * {@inheritdoc}
    *
    * @param bool $import_test_views
-   *   Should the views specififed on the test class be imported. If you need
+   *   Should the views specified on the test class be imported. If you need
    *   to setup some additional stuff, like fields, you need to call false and
    *   then call createTestViews for your own.
    */
   protected function setUp($import_test_views = TRUE) {
     parent::setUp();
 
-    $this->installSchema('system', array('sequences'));
+    $this->installSchema('system', ['sequences']);
     $this->setUpFixtures();
 
     if ($import_test_views) {
-      ViewTestData::createTestViews(get_class($this), array('views_test_config'));
+      ViewTestData::createTestViews(get_class($this), ['views_test_config']);
     }
   }
 
@@ -56,13 +59,13 @@ abstract class ViewKernelTestBase extends KernelTestBase {
   protected function setUpFixtures() {
     // First install the system module. Many Views have Page displays have menu
     // links, and for those to work, the system menus must already be present.
-    $this->installConfig(array('system'));
+    $this->installConfig(['system']);
 
     // Define the schema and views data variable before enabling the test module.
     \Drupal::state()->set('views_test_data_schema', $this->schemaDefinition());
     \Drupal::state()->set('views_test_data_views_data', $this->viewsData());
 
-    $this->installConfig(array('views', 'views_test_config', 'views_test_data'));
+    $this->installConfig(['views', 'views_test_config', 'views_test_data']);
     foreach ($this->schemaDefinition() as $table => $schema) {
       $this->installSchema('views_test_data', $table);
     }
@@ -71,7 +74,7 @@ abstract class ViewKernelTestBase extends KernelTestBase {
 
     // Load the test dataset.
     $data_set = $this->dataSet();
-    $query = db_insert('views_test_data')
+    $query = Database::getConnection()->insert('views_test_data')
       ->fields(array_keys($data_set[0]));
     foreach ($data_set as $record) {
       $query->values($record);
@@ -113,7 +116,7 @@ abstract class ViewKernelTestBase extends KernelTestBase {
    * @param array $args
    *   (optional) An array of the view arguments to use for the view.
    */
-  protected function executeView($view, array $args = array()) {
+  protected function executeView($view, array $args = []) {
     $view->setDisplay();
     $view->preExecute($args);
     $view->execute();
@@ -126,6 +129,8 @@ abstract class ViewKernelTestBase extends KernelTestBase {
 
   /**
    * Returns the schema definition.
+   *
+   * @internal
    */
   protected function schemaDefinition() {
     return ViewTestData::schemaDefinition();

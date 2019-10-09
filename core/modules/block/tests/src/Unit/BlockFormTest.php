@@ -3,6 +3,8 @@
 namespace Drupal\Tests\block\Unit;
 
 use Drupal\block\BlockForm;
+use Drupal\block\Entity\Block;
+use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\PluginFormFactoryInterface;
 use Drupal\Tests\UnitTestCase;
 
@@ -83,12 +85,38 @@ class BlockFormTest extends UnitTestCase {
   }
 
   /**
+   * Mocks a block with a block plugin.
+   *
+   * @param string $machine_name
+   *   The machine name of the block plugin.
+   *
+   * @return \Drupal\block\BlockInterface|\PHPUnit_Framework_MockObject_MockObject
+   *   The mocked block.
+   */
+  protected function getBlockMockWithMachineName($machine_name) {
+    $plugin = $this->getMockBuilder(BlockBase::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+    $plugin->expects($this->any())
+      ->method('getMachineNameSuggestion')
+      ->will($this->returnValue($machine_name));
+
+    $block = $this->getMockBuilder(Block::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+    $block->expects($this->any())
+      ->method('getPlugin')
+      ->will($this->returnValue($plugin));
+    return $block;
+  }
+
+  /**
    * Tests the unique machine name generator.
    *
    * @see \Drupal\block\BlockForm::getUniqueMachineName()
    */
   public function testGetUniqueMachineName() {
-    $blocks = array();
+    $blocks = [];
 
     $blocks['test'] = $this->getBlockMockWithMachineName('test');
     $blocks['other_test'] = $this->getBlockMockWithMachineName('other_test');
@@ -102,7 +130,7 @@ class BlockFormTest extends UnitTestCase {
 
     $query->expects($this->exactly(5))
       ->method('execute')
-      ->will($this->returnValue(array('test', 'other_test', 'other_test_1', 'other_test_2')));
+      ->will($this->returnValue(['test', 'other_test', 'other_test_1', 'other_test_2']));
 
     $this->storage->expects($this->exactly(5))
       ->method('getQuery')

@@ -7,6 +7,8 @@ use Drupal\Core\Url;
 
 /**
  * Provides the path edit form.
+ *
+ * @internal
  */
 class EditForm extends PathFormBase {
 
@@ -21,7 +23,7 @@ class EditForm extends PathFormBase {
    * {@inheritdoc}
    */
   protected function buildPath($pid) {
-    return $this->aliasStorage->load(array('pid' => $pid));
+    return $this->aliasStorage->load(['pid' => $pid]);
   }
 
   /**
@@ -31,27 +33,27 @@ class EditForm extends PathFormBase {
     $form = parent::buildForm($form, $form_state, $pid);
 
     $form['#title'] = $this->path['alias'];
-    $form['pid'] = array(
+    $form['pid'] = [
       '#type' => 'hidden',
       '#value' => $this->path['pid'],
-    );
+    ];
 
-    $url = new Url('path.delete', array(
+    $url = new Url('path.delete', [
       'pid' => $this->path['pid'],
-    ));
+    ]);
 
     if ($this->getRequest()->query->has('destination')) {
       $url->setOption('query', $this->getDestinationArray());
     }
 
-    $form['actions']['delete'] = array(
+    $form['actions']['delete'] = [
       '#type' => 'link',
       '#title' => $this->t('Delete'),
       '#url' => $url,
-      '#attributes' => array(
-        'class' => array('button', 'button--danger'),
-      ),
-    );
+      '#attributes' => [
+        'class' => ['button', 'button--danger'],
+      ],
+    ];
 
     return $form;
   }

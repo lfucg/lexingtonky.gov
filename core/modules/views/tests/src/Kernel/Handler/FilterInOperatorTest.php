@@ -2,7 +2,11 @@
 
 namespace Drupal\Tests\views\Kernel\Handler;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Tests\views\Kernel\ViewsKernelTestBase;
+use Drupal\views\Plugin\views\display\DisplayPluginBase;
+use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 
 /**
@@ -11,27 +15,28 @@ use Drupal\views\Views;
  * @group views
  */
 class FilterInOperatorTest extends ViewsKernelTestBase {
+  use StringTranslationTrait;
 
-  public static $modules = array('system');
+  public static $modules = ['system'];
 
   /**
    * Views used by this test.
    *
    * @var array
    */
-  public static $testViews = array('test_view');
+  public static $testViews = ['test_view'];
 
   /**
    * Map column names.
    *
    * @var array
    */
-  protected $columnMap = array(
+  protected $columnMap = [
     'views_test_data_name' => 'name',
     'views_test_data_age' => 'age',
-  );
+  ];
 
-  function viewsData() {
+  public function viewsData() {
     $data = parent::viewsData();
     $data['views_test_data']['age']['filter']['id'] = 'in_operator';
     return $data;
@@ -42,28 +47,28 @@ class FilterInOperatorTest extends ViewsKernelTestBase {
     $view->setDisplay();
 
     // Add a in_operator ordering.
-    $view->displayHandlers->get('default')->overrideOption('filters', array(
-      'age' => array(
+    $view->displayHandlers->get('default')->overrideOption('filters', [
+      'age' => [
         'id' => 'age',
         'field' => 'age',
         'table' => 'views_test_data',
-        'value' => array(26, 30),
+        'value' => [26, 30],
         'operator' => 'in',
-      ),
-    ));
+      ],
+    ]);
 
     $this->executeView($view);
 
-    $expected_result = array(
-      array(
+    $expected_result = [
+      [
         'name' => 'Paul',
         'age' => 26,
-      ),
-      array(
+      ],
+      [
         'name' => 'Meredith',
         'age' => 30,
-      ),
-    );
+      ],
+    ];
 
     $this->assertEqual(2, count($view->result));
     $this->assertIdenticalResultset($view, $expected_result, $this->columnMap);
@@ -72,32 +77,32 @@ class FilterInOperatorTest extends ViewsKernelTestBase {
     $view->setDisplay();
 
     // Add a in_operator ordering.
-    $view->displayHandlers->get('default')->overrideOption('filters', array(
-      'age' => array(
+    $view->displayHandlers->get('default')->overrideOption('filters', [
+      'age' => [
         'id' => 'age',
         'field' => 'age',
         'table' => 'views_test_data',
-        'value' => array(26, 30),
+        'value' => [26, 30],
         'operator' => 'not in',
-      ),
-    ));
+      ],
+    ]);
 
     $this->executeView($view);
 
-    $expected_result = array(
-      array(
+    $expected_result = [
+      [
         'name' => 'John',
         'age' => 25,
-      ),
-      array(
+      ],
+      [
         'name' => 'George',
         'age' => 27,
-      ),
-      array(
+      ],
+      [
         'name' => 'Ringo',
         'age' => 28,
-      ),
-    );
+      ],
+    ];
 
     $this->assertEqual(3, count($view->result));
     $this->assertIdenticalResultset($view, $expected_result, $this->columnMap);
@@ -114,16 +119,16 @@ class FilterInOperatorTest extends ViewsKernelTestBase {
 
     $this->executeView($view);
 
-    $expected_result = array(
-      array(
+    $expected_result = [
+      [
         'name' => 'Paul',
         'age' => 26,
-      ),
-      array(
+      ],
+      [
         'name' => 'Meredith',
         'age' => 30,
-      ),
-    );
+      ],
+    ];
 
     $this->assertEqual(2, count($view->result));
     $this->assertIdenticalResultset($view, $expected_result, $this->columnMap);
@@ -140,59 +145,89 @@ class FilterInOperatorTest extends ViewsKernelTestBase {
 
     $this->executeView($view);
 
-    $expected_result = array(
-      array(
+    $expected_result = [
+      [
         'name' => 'John',
         'age' => 25,
-      ),
-      array(
+      ],
+      [
         'name' => 'George',
         'age' => 27,
-      ),
-      array(
+      ],
+      [
         'name' => 'Ringo',
         'age' => 28,
-      ),
-    );
+      ],
+    ];
 
     $this->assertEqual(3, count($view->result));
     $this->assertIdenticalResultset($view, $expected_result, $this->columnMap);
   }
 
   protected function getGroupedExposedFilters() {
-    $filters = array(
-      'age' => array(
+    $filters = [
+      'age' => [
         'id' => 'age',
         'table' => 'views_test_data',
         'field' => 'age',
         'relationship' => 'none',
         'exposed' => TRUE,
-        'expose' => array(
+        'expose' => [
           'operator' => 'age_op',
           'label' => 'age',
           'identifier' => 'age',
-        ),
+        ],
         'is_grouped' => TRUE,
-        'group_info' => array(
+        'group_info' => [
           'label' => 'age',
           'identifier' => 'age',
           'default_group' => 'All',
-          'group_items' => array(
-            1 => array(
+          'group_items' => [
+            1 => [
               'title' => 'Age is one of 26, 30',
               'operator' => 'in',
-              'value' => array(26, 30),
-            ),
-            2 => array(
+              'value' => [26, 30],
+            ],
+            2 => [
               'title' => 'Age is not one of 26, 30',
               'operator' => 'not in',
-              'value' => array(26, 30),
-            ),
-          ),
-        ),
-      ),
-    );
+              'value' => [26, 30],
+            ],
+          ],
+        ],
+      ],
+    ];
     return $filters;
+  }
+
+  /**
+   * Tests that the InOperator filter can handle TranslateableMarkup.
+   */
+  public function testFilterOptionAsMarkup() {
+    $view = $this->prophesize(ViewExecutable::class);
+    $display = $this->prophesize(DisplayPluginBase::class);
+    $display->getOption('relationships')->willReturn(FALSE);
+    $view->display_handler = $display->reveal();
+
+    /** @var \Drupal\views\Plugin\ViewsHandlerManager $manager */
+    $manager = $this->container->get('plugin.manager.views.filter');
+    /** @var \Drupal\views\Plugin\views\filter\InOperator $operator */
+    $operator = $manager->createInstance('in_operator');
+    $options = ['value' => ['foo' => [], 'baz' => []]];
+    $operator->init($view->reveal(), $display->reveal(), $options);
+
+    $input_options = [
+      'foo' => 'bar',
+      'baz' => $this->t('qux'),
+      'quux' => (object) ['option' => ['quux' => 'corge']],
+    ];
+    $reduced_values = $operator->reduceValueOptions($input_options);
+
+    $this->assertSame(['foo', 'baz'], array_keys($reduced_values));
+    $this->assertInstanceOf(TranslatableMarkup::class, $reduced_values['baz']);
+    $this->assertSame('qux', (string) $reduced_values['baz']);
+    $this->assertSame('bar', $reduced_values['foo']);
+
   }
 
 }

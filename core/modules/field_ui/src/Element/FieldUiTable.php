@@ -38,11 +38,11 @@ class FieldUiTable extends Table {
    * @return array
    *   The $element with prepared variables ready for field-ui-table.html.twig.
    *
-   * @see drupal_render()
+   * @see \Drupal\Core\Render\RendererInterface::render()
    * @see \Drupal\Core\Render\Element\Table::preRenderTable()
    */
   public static function tablePreRender($elements) {
-    $js_settings = array();
+    $js_settings = [];
 
     // For each region, build the tree structure from the weight and parenting
     // data contained in the flat form structure, to determine row order and
@@ -67,7 +67,7 @@ class FieldUiTable extends Table {
           unset($list[$name]);
 
           // Determine the region for the row.
-          $region_name = call_user_func($row['#region_callback'], $row);
+          $region_name = call_user_func_array($row['#region_callback'], [&$row]);
 
           // Add the element in the tree.
           $target = &$trees[$region_name][''];
@@ -159,7 +159,7 @@ class FieldUiTable extends Table {
         $elements['#rows'][] = [
           'class' => [
             'region-title',
-            'region-' . $region_name_class . '-title'
+            'region-' . $region_name_class . '-title',
           ],
           'no_striping' => TRUE,
           'data' => [

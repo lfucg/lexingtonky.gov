@@ -1,0 +1,40 @@
+# For PHP 5.5 and lower testing we need to stick to Ubuntu 14.04.
+dist: trusty
+language: php
+sudo: false
+
+# Cache composer vendor directories to speed up the composer install step.
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - vendor
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 5.5
+    - php: 5.6
+    - php: 7.0
+    - php: 7.1
+    - php: 7.2
+    - php: 7.3
+
+before_install:
+  # Speed up build time by disabling Xdebug when its not needed.
+  - phpenv config-rm xdebug.ini || echo 'No xdebug config.'
+
+before_script:
+  # Running composer install without a lock file will also update cached
+  # dependencies in vendor.
+  - composer install
+
+script:
+  - ./vendor/bin/phpunit
+  # Check that the sniffs themselves follow the PHPCS coding standard.
+  - ./vendor/bin/phpcs -p
+  # Ensure that a custom standard can be invoked and the auto-loading of
+  # abstract classes works.
+  - ./vendor/bin/phpcs -p --standard=coder_sniffer/Drupal/Test/phpcs-ruleset.xml coder_sniffer/Drupal/Test/good/ --ignore=coder_sniffer/Drupal/Test/good/GoodUnitTest.php
+  # Ensure that the DrupalPractice standard can be invoked standalone and the
+  # auto-loading of abstract classes works.
+  - ./vendor/bin/phpcs -p --standard=coder_sniffer/DrupalPractice coder_sniffer/DrupalPractice/Test/good/ --ignore=coder_sniffer/DrupalPractice/Test/good/GoodUnitTest.php

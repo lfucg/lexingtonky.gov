@@ -15,7 +15,7 @@ class ConfigFieldDefinitionTest extends FieldKernelTestBase {
   /**
    * The entity manager service.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface;
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityManager;
 
@@ -43,6 +43,7 @@ class ConfigFieldDefinitionTest extends FieldKernelTestBase {
     $this->entityManager = $this->container->get('entity.manager');
 
     // Create a second field on 'entity_test_rev'.
+    $this->installEntitySchema('entity_test_rev');
     $this->createFieldWithStorage('_rev', 'entity_test_rev', 'entity_test_rev');
   }
 

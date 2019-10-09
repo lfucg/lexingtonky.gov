@@ -56,17 +56,17 @@ class UnroutedUrlAssemblerTest extends UnitTestCase {
 
   /**
    * @covers ::assemble
-   * @expectedException \InvalidArgumentException
    */
   public function testAssembleWithNeitherExternalNorDomainLocalUri() {
+    $this->setExpectedException(\InvalidArgumentException::class);
     $this->unroutedUrlAssembler->assemble('wrong-url');
   }
 
   /**
    * @covers ::assemble
-   * @expectedException \InvalidArgumentException
    */
   public function testAssembleWithLeadingSlash() {
+    $this->setExpectedException(\InvalidArgumentException::class);
     $this->unroutedUrlAssembler->assemble('/drupal.org');
   }
 
@@ -96,6 +96,10 @@ class UnroutedUrlAssemblerTest extends UnitTestCase {
       ['http://example.com/test', ['https' => TRUE], 'https://example.com/test'],
       ['https://example.com/test', ['https' => FALSE], 'http://example.com/test'],
       ['https://example.com/test?foo=1#bar', [], 'https://example.com/test?foo=1#bar'],
+      'override-query' => ['https://example.com/test?foo=1#bar', ['query' => ['foo' => 2]], 'https://example.com/test?foo=2#bar'],
+      'override-query-merge' => ['https://example.com/test?foo=1#bar', ['query' => ['bar' => 2]], 'https://example.com/test?foo=1&bar=2#bar'],
+      'override-deep-query-merge' => ['https://example.com/test?foo=1#bar', ['query' => ['bar' => ['baz' => 'foo']]], 'https://example.com/test?foo=1&bar%5Bbaz%5D=foo#bar'],
+      'override-fragment' => ['https://example.com/test?foo=1#bar', ['fragment' => 'baz'], 'https://example.com/test?foo=1#baz'],
       ['//www.drupal.org', [], '//www.drupal.org'],
     ];
   }
@@ -121,10 +125,10 @@ class UnroutedUrlAssemblerTest extends UnitTestCase {
       ['base:example', ['query' => ['foo' => 'bar']], FALSE, '/example?foo=bar'],
       ['base:example', ['query' => ['foo' => '"bar"']], FALSE, '/example?foo=%22bar%22'],
       ['base:example', ['query' => ['foo' => '"bar"', 'zoo' => 'baz']], FALSE, '/example?foo=%22bar%22&zoo=baz'],
-      ['base:example', ['fragment' => 'example', ], FALSE, '/example#example'],
+      ['base:example', ['fragment' => 'example'], FALSE, '/example#example'],
       ['base:example', [], TRUE, '/subdir/example'],
       ['base:example', ['query' => ['foo' => 'bar']], TRUE, '/subdir/example?foo=bar'],
-      ['base:example', ['fragment' => 'example', ], TRUE, '/subdir/example#example'],
+      ['base:example', ['fragment' => 'example'], TRUE, '/subdir/example#example'],
       ['base:/drupal.org', [], FALSE, '/drupal.org'],
     ];
   }
@@ -147,7 +151,7 @@ class UnroutedUrlAssemblerTest extends UnitTestCase {
     $this->setupRequestStack(FALSE);
     $this->pathProcessor->expects($this->exactly(2))
       ->method('processOutbound')
-      ->willReturnCallback(function($path, &$options = [], Request $request = NULL, BubbleableMetadata $bubbleable_metadata = NULL) {
+      ->willReturnCallback(function ($path, &$options = [], Request $request = NULL, BubbleableMetadata $bubbleable_metadata = NULL) {
         if ($bubbleable_metadata) {
           $bubbleable_metadata->setCacheContexts(['some-cache-context']);
         }

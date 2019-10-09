@@ -1,0 +1,6 @@
+services:
+  twig_vardumper.twig_extension:
+    class: Drupal\twig_vardumper\TwigExtension
+    arguments: []
+    tags:
+      - { name: twig.extension }

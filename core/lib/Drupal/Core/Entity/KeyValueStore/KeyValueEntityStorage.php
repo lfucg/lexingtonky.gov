@@ -3,6 +3,7 @@
 namespace Drupal\Core\Entity\KeyValueStore;
 
 use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\Core\Config\Entity\Exception\ConfigEntityIdLengthException;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -60,9 +61,11 @@ class KeyValueEntityStorage extends EntityStorageBase {
    *   The UUID service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
+   * @param \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface $memory_cache
+   *   The memory cache.
    */
-  public function __construct(EntityTypeInterface $entity_type, KeyValueStoreInterface $key_value_store, UuidInterface $uuid_service, LanguageManagerInterface $language_manager) {
-    parent::__construct($entity_type);
+  public function __construct(EntityTypeInterface $entity_type, KeyValueStoreInterface $key_value_store, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, MemoryCacheInterface $memory_cache = NULL) {
+    parent::__construct($entity_type, $memory_cache);
     $this->keyValueStore = $key_value_store;
     $this->uuidService = $uuid_service;
     $this->languageManager = $language_manager;
@@ -79,16 +82,17 @@ class KeyValueEntityStorage extends EntityStorageBase {
       $entity_type,
       $container->get('keyvalue')->get('entity_storage__' . $entity_type->id()),
       $container->get('uuid'),
-      $container->get('language_manager')
+      $container->get('language_manager'),
+      $container->get('entity.memory_cache')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function doCreate(array $values = array()) {
+  public function doCreate(array $values = []) {
     // Set default language to site default if not provided.
-    $values += array($this->getEntityType()->getKey('langcode') => $this->languageManager->getDefaultLanguage()->getId());
+    $values += [$this->getEntityType()->getKey('langcode') => $this->languageManager->getDefaultLanguage()->getId()];
     $entity = new $this->entityClass($values, $this->entityTypeId);
 
     // @todo This is handled by ContentEntityStorageBase, which assumes
@@ -185,6 +189,13 @@ class KeyValueEntityStorage extends EntityStorageBase {
    */
   protected function has($id, EntityInterface $entity) {
     return $this->keyValueStore->has($id);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasData() {
+    return (bool) $this->keyValueStore->getAll();
   }
 
   /**

@@ -8,6 +8,7 @@ namespace Drupal\Core\Ajax;
  * @ingroup ajax
  */
 class OpenModalDialogCommand extends OpenDialogCommand {
+
   /**
    * Constructs an OpenModalDialog object.
    *
@@ -29,7 +30,7 @@ class OpenModalDialogCommand extends OpenDialogCommand {
    *   on the content of the dialog. If left empty, the settings will be
    *   populated automatically from the current request.
    */
-  public function __construct($title, $content, array $dialog_options = array(), $settings = NULL) {
+  public function __construct($title, $content, array $dialog_options = [], $settings = NULL) {
     $dialog_options['modal'] = TRUE;
     parent::__construct('#drupal-modal', $title, $content, $dialog_options, $settings);
   }

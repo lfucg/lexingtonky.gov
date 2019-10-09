@@ -49,14 +49,14 @@ class Theme extends Updater implements UpdaterInterface {
   public function isInstalled() {
     // Check if the theme exists in the file system, regardless of whether it
     // is enabled or not.
-    $themes = \Drupal::state()->get('system.theme.files', array());
+    $themes = \Drupal::state()->get('system.theme.files', []);
     return isset($themes[$this->name]);
   }
 
   /**
    * {@inheritdoc}
    */
-  static function canUpdateDirectory($directory) {
+  public static function canUpdateDirectory($directory) {
     $info = static::getExtensionInfo($directory);
 
     return (isset($info['type']) && $info['type'] == 'theme');
@@ -87,7 +87,7 @@ class Theme extends Updater implements UpdaterInterface {
    * {@inheritdoc}
    */
   public function postInstallTasks() {
-    // Since this is being called outsite of the primary front controller,
+    // Since this is being called outside of the primary front controller,
     // the base_url needs to be set explicitly to ensure that links are
     // relative to the site root.
     // @todo Simplify with https://www.drupal.org/node/2548095

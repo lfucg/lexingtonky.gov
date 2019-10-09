@@ -45,7 +45,7 @@ class RendererBubblingTest extends RendererTestBase {
     $element = [
       '#type' => 'container',
       '#cache' => [
-        'keys' => ['simpletest', 'drupal_render', 'children_attached'],
+        'keys' => ['simpletest', 'renderer', 'children_attached'],
       ],
       '#attached' => ['library' => ['test/parent']],
       '#title' => 'Parent',
@@ -67,7 +67,7 @@ class RendererBubblingTest extends RendererTestBase {
 
     // Load the element from cache and verify the presence of the #attached
     // JavaScript.
-    $element = ['#cache' => ['keys' => ['simpletest', 'drupal_render', 'children_attached']]];
+    $element = ['#cache' => ['keys' => ['simpletest', 'renderer', 'children_attached']]];
     $this->assertTrue(strlen($this->renderer->renderRoot($element)) > 0, 'The element was retrieved from cache.');
     $this->assertEquals($element['#attached']['library'], $expected_libraries, 'The element, child and subchild #attached libraries are included.');
   }
@@ -79,13 +79,13 @@ class RendererBubblingTest extends RendererTestBase {
     $bin = $this->randomMachineName();
 
     $this->setUpRequest();
-    $this->memoryCache = new MemoryBackend('render');
-    $custom_cache = new MemoryBackend($bin);
+    $this->memoryCache = new MemoryBackend();
+    $custom_cache = new MemoryBackend();
 
     $this->cacheFactory->expects($this->atLeastOnce())
       ->method('get')
       ->with($bin)
-      ->willReturnCallback(function($requested_bin) use ($bin, $custom_cache) {
+      ->willReturnCallback(function ($requested_bin) use ($bin, $custom_cache) {
         if ($requested_bin === $bin) {
           return $custom_cache;
         }
@@ -290,6 +290,42 @@ class RendererBubblingTest extends RendererTestBase {
     ];
     $data[] = [$test_element, ['bar', 'foo'], $expected_cache_items];
 
+    // Ensure that bubbleable metadata has been collected from children and set
+    // correctly to the main level of the render array. That ensures that correct
+    // bubbleable metadata exists if render array gets rendered multiple times.
+    $test_element = [
+      '#cache' => [
+        'keys' => ['parent'],
+        'tags' => ['yar', 'har'],
+      ],
+      '#markup' => 'parent',
+      'child' => [
+        '#render_children' => TRUE,
+        'subchild' => [
+          '#cache' => [
+            'contexts' => ['foo'],
+            'tags' => ['fiddle', 'dee'],
+          ],
+          '#attached' => [
+            'library' => ['foo/bar'],
+          ],
+          '#markup' => '',
+        ],
+      ],
+    ];
+    $expected_cache_items = [
+      'parent:foo' => [
+        '#attached' => ['library' => ['foo/bar']],
+        '#cache' => [
+          'contexts' => ['foo'],
+          'tags' => ['dee', 'fiddle', 'har', 'yar'],
+          'max-age' => Cache::PERMANENT,
+        ],
+        '#markup' => 'parent',
+      ],
+    ];
+    $data[] = [$test_element, ['foo'], $expected_cache_items];
+
     return $data;
   }
 
@@ -314,7 +350,7 @@ class RendererBubblingTest extends RendererTestBase {
           'tags' => ['b'],
         ],
         'grandchild' => [
-          '#access_callback' => function() use (&$current_user_role) {
+          '#access_callback' => function () use (&$current_user_role) {
             // Only role A cannot access this subtree.
             return $current_user_role !== 'A';
           },
@@ -502,7 +538,7 @@ class RendererBubblingTest extends RendererTestBase {
     $this->setupMemoryCache();
 
     // Mock the State service.
-    $memory_state = new State(new KeyValueMemoryFactory());;
+    $memory_state = new State(new KeyValueMemoryFactory());
     \Drupal::getContainer()->set('state', $memory_state);
     $this->controllerResolver->expects($this->any())
       ->method('getControllerFromDefinition')
@@ -553,26 +589,29 @@ class RendererBubblingTest extends RendererTestBase {
     $data = [];
 
     // Test element without theme.
-    $data[] = [[
-      'foo' => [
-        '#pre_render' => [__NAMESPACE__ . '\\BubblingTest::bubblingPreRender'],
-      ]]];
+    $data[] = [
+      [
+        'foo' => [
+          '#pre_render' => [__NAMESPACE__ . '\\BubblingTest::bubblingPreRender'],
+        ],
+      ],
+    ];
 
     // Test element with theme.
-    $data[] = [[
-      '#theme' => 'common_test_render_element',
-      'foo' => [
-        '#pre_render' => [__NAMESPACE__ . '\\BubblingTest::bubblingPreRender'],
-      ]]];
+    $data[] = [
+      [
+        '#theme' => 'common_test_render_element',
+        'foo' => [
+          '#pre_render' => [__NAMESPACE__ . '\\BubblingTest::bubblingPreRender'],
+        ],
+      ],
+    ];
 
     return $data;
   }
 
   /**
    * Tests that an element's cache keys cannot be changed during its rendering.
-   *
-   * @expectedException \LogicException
-   * @expectedExceptionMessage Cache keys may not be changed after initial setup. Use the contexts property instead to bubble additional metadata.
    */
   public function testOverWriteCacheKeys() {
     $this->setUpRequest();
@@ -585,6 +624,7 @@ class RendererBubblingTest extends RendererTestBase {
        ],
       '#pre_render' => [__NAMESPACE__ . '\\BubblingTest::bubblingCacheOverwritePrerender'],
     ];
+    $this->setExpectedException(\LogicException::class, 'Cache keys may not be changed after initial setup. Use the contexts property instead to bubble additional metadata.');
     $this->renderer->renderRoot($data);
   }
 

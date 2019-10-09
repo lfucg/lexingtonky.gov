@@ -41,6 +41,13 @@ class ThemeInitialization implements ThemeInitializationInterface {
   protected $extensions;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * Constructs a new ThemeInitialization object.
    *
    * @param string $root
@@ -100,7 +107,7 @@ class ThemeInitialization implements ThemeInitializationInterface {
     }
 
     // Find all our ancestor themes and put them in an array.
-    $base_themes = array();
+    $base_themes = [];
     $ancestor = $theme_name;
     while ($ancestor && isset($themes[$ancestor]->base_theme)) {
       $ancestor = $themes[$ancestor]->base_theme;
@@ -133,18 +140,18 @@ class ThemeInitialization implements ThemeInitializationInterface {
       include_once $this->root . '/' . $active_theme->getOwner();
 
       if (function_exists($theme_engine . '_init')) {
-        foreach ($active_theme->getBaseThemes() as $base) {
-          call_user_func($theme_engine . '_init', $base->getExtension());
+        foreach ($active_theme->getBaseThemeExtensions() as $base) {
+          call_user_func($theme_engine . '_init', $base);
         }
         call_user_func($theme_engine . '_init', $active_theme->getExtension());
       }
     }
     else {
       // include non-engine theme files
-      foreach ($active_theme->getBaseThemes() as $base) {
+      foreach ($active_theme->getBaseThemeExtensions() as $base) {
         // Include the theme file or the engine.
-        if ($base->getOwner()) {
-          include_once $this->root . '/' . $base->getOwner();
+        if ($base->owner) {
+          include_once $this->root . '/' . $base->owner;
         }
       }
       // and our theme gets one too.
@@ -165,6 +172,15 @@ class ThemeInitialization implements ThemeInitializationInterface {
 
     $values['path'] = $theme_path;
     $values['name'] = $theme->getName();
+
+    // Use the logo declared in this themes info file, otherwise use logo.svg
+    // from the themes root.
+    if (!empty($theme->info['logo'])) {
+      $values['logo'] = $theme->getPath() . '/' . $theme->info['logo'];
+    }
+    else {
+      $values['logo'] = $theme->getPath() . '/logo.svg';
+    }
 
     // @todo Remove in Drupal 9.0.x.
     $values['stylesheets_remove'] = $this->prepareStylesheetsRemove($theme, $base_themes);
@@ -220,7 +236,7 @@ class ThemeInitialization implements ThemeInitializationInterface {
     }
 
     // Do basically the same as the above for libraries
-    $values['libraries'] = array();
+    $values['libraries'] = [];
 
     // Grab libraries from base theme
     foreach ($base_themes as $base) {
@@ -242,12 +258,12 @@ class ThemeInitialization implements ThemeInitializationInterface {
     $values['owner'] = isset($theme->owner) ? $theme->owner : NULL;
     $values['extension'] = $theme;
 
-    $base_active_themes = array();
+    $base_active_themes = [];
     foreach ($base_themes as $base_theme) {
-      $base_active_themes[$base_theme->getName()] = $this->getActiveTheme($base_theme, array_slice($base_themes, 1));
+      $base_active_themes[$base_theme->getName()] = $base_theme;
     }
 
-    $values['base_themes'] = $base_active_themes;
+    $values['base_theme_extensions'] = $base_active_themes;
     if (!empty($theme->info['regions'])) {
       $values['regions'] = $theme->info['regions'];
     }
@@ -310,7 +326,7 @@ class ThemeInitialization implements ThemeInitializationInterface {
     // Prepare stylesheets from this theme as well as all ancestor themes.
     // We work it this way so that we can have child themes remove CSS files
     // easily from parent.
-    $stylesheets_remove = array();
+    $stylesheets_remove = [];
     // Grab stylesheets from base theme.
     foreach ($base_themes as $base) {
       if (!empty($base->info['stylesheets-remove'])) {

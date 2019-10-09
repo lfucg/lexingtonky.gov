@@ -14,7 +14,7 @@ class Html {
    *
    * @var array
    */
-  protected static $classes = array();
+  protected static $classes = [];
 
   /**
    * An array of the initial IDs used in one request.
@@ -61,15 +61,17 @@ class Html {
    * Do not pass one string containing multiple classes as they will be
    * incorrectly concatenated with dashes, i.e. "one two" will become "one-two".
    *
-   * @param string $class
-   *   The class name to clean.
+   * @param mixed $class
+   *   The class name to clean. It can be a string or anything that can be cast
+   *   to string.
    *
    * @return string
    *   The cleaned class name.
    */
   public static function getClass($class) {
+    $class = (string) $class;
     if (!isset(static::$classes[$class])) {
-      static::$classes[$class] = static::cleanCssIdentifier(Unicode::strtolower($class));
+      static::$classes[$class] = static::cleanCssIdentifier(mb_strtolower($class));
     }
     return static::$classes[$class];
   }
@@ -77,9 +79,10 @@ class Html {
   /**
    * Prepares a string for use as a CSS identifier (element, class, or ID name).
    *
-   * http://www.w3.org/TR/CSS21/syndata.html#characters shows the syntax for
-   * valid CSS identifiers (including element names, classes, and IDs in
-   * selectors.)
+   * Link below shows the syntax for valid CSS identifiers (including element
+   * names, classes, and IDs in selectors).
+   *
+   * @see http://www.w3.org/TR/CSS21/syndata.html#characters
    *
    * @param string $identifier
    *   The identifier to clean.
@@ -89,13 +92,13 @@ class Html {
    * @return string
    *   The cleaned identifier.
    */
-  public static function cleanCssIdentifier($identifier, array $filter = array(
+  public static function cleanCssIdentifier($identifier, array $filter = [
     ' ' => '-',
     '_' => '-',
     '/' => '-',
     '[' => '-',
     ']' => '',
-  )) {
+  ]) {
     // We could also use strtr() here but its much slower than str_replace(). In
     // order to keep '__' to stay '__' we first replace it with a different
     // placeholder after checking that it is not defined as a filter.
@@ -120,10 +123,10 @@ class Html {
     // We strip out any character not in the above list.
     $identifier = preg_replace('/[^\x{002D}\x{0030}-\x{0039}\x{0041}-\x{005A}\x{005F}\x{0061}-\x{007A}\x{00A1}-\x{FFFF}]/u', '', $identifier);
     // Identifiers cannot start with a digit, two hyphens, or a hyphen followed by a digit.
-    $identifier = preg_replace(array(
+    $identifier = preg_replace([
       '/^[0-9]/',
-      '/^(-[0-9])|^(--)/'
-    ), array('_', '__'), $identifier);
+      '/^(-[0-9])|^(--)/',
+    ], ['_', '__'], $identifier);
     return $identifier;
   }
 
@@ -176,7 +179,7 @@ class Html {
     // @todo Remove all that code once we switch over to random IDs only,
     // see https://www.drupal.org/node/1090592.
     if (!isset(static::$seenIdsInit)) {
-      static::$seenIdsInit = array();
+      static::$seenIdsInit = [];
     }
     if (!isset(static::$seenIds)) {
       static::$seenIds = static::$seenIdsInit;
@@ -213,7 +216,7 @@ class Html {
    * @see self::getUniqueId()
    */
   public static function getId($id) {
-    $id = str_replace([' ', '_', '[', ']'], ['-', '-', '-', ''], Unicode::strtolower($id));
+    $id = str_replace([' ', '_', '[', ']'], ['-', '-', '-', ''], mb_strtolower($id));
 
     // As defined in http://www.w3.org/TR/html4/types.html#type-name, HTML IDs can
     // only contain letters, digits ([0-9]), hyphens ("-"), underscores ("_"),
@@ -279,7 +282,7 @@ EOD;
     // PHP's \DOMDocument serialization adds extra whitespace when the markup
     // of the wrapping document contains newlines, so ensure we remove all
     // newlines before injecting the actual HTML body to be processed.
-    $document = strtr($document, array("\n" => '', '!html' => $html));
+    $document = strtr($document, ["\n" => '', '!html' => $html]);
 
     $dom = new \DOMDocument();
     // Ignore warnings during HTML soup loading.
@@ -449,9 +452,9 @@ EOD;
    *   The updated (X)HTML snippet.
    */
   public static function transformRootRelativeUrlsToAbsolute($html, $scheme_and_host) {
-    assert('empty(array_diff(array_keys(parse_url($scheme_and_host)), ["scheme", "host", "port"]))', '$scheme_and_host contains scheme, host and port at most.');
-    assert('isset(parse_url($scheme_and_host)["scheme"])', '$scheme_and_host is absolute and hence has a scheme.');
-    assert('isset(parse_url($scheme_and_host)["host"])', '$base_url is absolute and hence has a host.');
+    assert(empty(array_diff(array_keys(parse_url($scheme_and_host)), ["scheme", "host", "port"])), '$scheme_and_host contains scheme, host and port at most.');
+    assert(isset(parse_url($scheme_and_host)["scheme"]), '$scheme_and_host is absolute and hence has a scheme.');
+    assert(isset(parse_url($scheme_and_host)["host"]), '$base_url is absolute and hence has a host.');
 
     $html_dom = Html::load($html);
     $xpath = new \DOMXpath($html_dom);

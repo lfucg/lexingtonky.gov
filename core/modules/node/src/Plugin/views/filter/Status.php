@@ -14,15 +14,21 @@ use Drupal\views\Plugin\views\filter\FilterPluginBase;
  */
 class Status extends FilterPluginBase {
 
-  public function adminSummary() { }
+  public function adminSummary() {}
 
-  protected function operatorForm(&$form, FormStateInterface $form_state) { }
+  protected function operatorForm(&$form, FormStateInterface $form_state) {}
 
-  public function canExpose() { return FALSE; }
+  public function canExpose() {
+    return FALSE;
+  }
 
   public function query() {
     $table = $this->ensureMyTable();
-    $this->query->addWhereExpression($this->options['group'], "$table.status = 1 OR ($table.uid = ***CURRENT_USER*** AND ***CURRENT_USER*** <> 0 AND ***VIEW_OWN_UNPUBLISHED_NODES*** = 1) OR ***BYPASS_NODE_ACCESS*** = 1");
+    $snippet = "$table.status = 1 OR ($table.uid = ***CURRENT_USER*** AND ***CURRENT_USER*** <> 0 AND ***VIEW_OWN_UNPUBLISHED_NODES*** = 1) OR ***BYPASS_NODE_ACCESS*** = 1";
+    if ($this->moduleHandler->moduleExists('content_moderation')) {
+      $snippet .= ' OR ***VIEW_ANY_UNPUBLISHED_NODES*** = 1';
+    }
+    $this->query->addWhereExpression($this->options['group'], $snippet);
   }
 
   /**

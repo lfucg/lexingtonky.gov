@@ -15,7 +15,7 @@ class RenderAttachedTestController {
    */
   public function teapotHeaderStatus() {
     $render = [];
-    $render['#attached']['http_header'][] = ['Status', "418 I'm a teapot."];
+    $render['#attached']['http_header'][] = ['Status', 418];
     return $render;
   }
 
@@ -66,6 +66,20 @@ class RenderAttachedTestController {
   public function feed() {
     $render = [];
     $render['#attached']['feed'][] = ['test://url', 'Your RSS feed.'];
+    return $render;
+  }
+
+  /**
+   * Test HTTP header rendering for link.
+   *
+   * @return array
+   *   A render array using the 'html_head_link' directive.
+   */
+  public function htmlHeaderLink() {
+    $render = [];
+    $render['#attached']['html_head_link'][] = [['href' => '/foo?bar=<baz>&baz=false', 'rel' => 'alternate'], TRUE];
+    $render['#attached']['html_head_link'][] = [['href' => '/not-added-to-http-headers', 'rel' => 'alternate'], FALSE];
+    $render['#attached']['html_head_link'][] = [['href' => '/foo/bar', 'hreflang' => 'nl', 'rel' => 'alternate'], TRUE];
     return $render;
   }
 

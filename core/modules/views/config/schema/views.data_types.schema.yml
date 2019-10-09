@@ -777,7 +777,7 @@ views_filter_group_item:
       type: string
       label: 'Operator'
     value:
-      type: label
+      type: views.filter_value.[%parent.%parent.%parent.%parent.plugin_id]
       label: 'Value'
 
 views_relationship:
@@ -820,3 +820,20 @@ views_cache:
 views_display_extender:
   type: mapping
   label: 'Display extender settings'
+
+views_field_bulk_form:
+  type: views_field
+  label: 'Bulk operation'
+  mapping:
+    action_title:
+      type: label
+      label: 'Action title'
+    include_exclude:
+      type: string
+      label: 'Available actions'
+    selected_actions:
+      type: sequence
+      label: 'Available actions'
+      sequence:
+        type: string
+        label: 'Action'

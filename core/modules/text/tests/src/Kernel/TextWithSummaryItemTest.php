@@ -21,12 +21,12 @@ class TextWithSummaryItemTest extends FieldKernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('filter');
+  public static $modules = ['filter'];
 
   /**
    * Field storage entity.
    *
-   * @var \Drupal\field\Entity\FieldStorageConfig.
+   * @var \Drupal\field\Entity\FieldStorageConfig
    */
   protected $fieldStorage;
 
@@ -37,18 +37,17 @@ class TextWithSummaryItemTest extends FieldKernelTestBase {
    */
   protected $field;
 
-
   protected function setUp() {
     parent::setUp();
 
     $this->installEntitySchema('entity_test_rev');
 
     // Create the necessary formats.
-    $this->installConfig(array('filter'));
-    FilterFormat::create(array(
+    $this->installConfig(['filter']);
+    FilterFormat::create([
       'format' => 'no_filters',
-      'filters' => array(),
-    ))->save();
+      'filters' => [],
+    ])->save();
   }
 
   /**
@@ -100,14 +99,14 @@ class TextWithSummaryItemTest extends FieldKernelTestBase {
    */
   protected function createField($entity_type) {
     // Create a field .
-    $this->fieldStorage = FieldStorageConfig::create(array(
+    $this->fieldStorage = FieldStorageConfig::create([
       'field_name' => 'summary_field',
       'entity_type' => $entity_type,
       'type' => 'text_with_summary',
-      'settings' => array(
+      'settings' => [
         'max_length' => 10,
-      )
-    ));
+      ],
+    ]);
     $this->fieldStorage->save();
     $this->field = FieldConfig::create([
       'field_storage' => $this->fieldStorage,

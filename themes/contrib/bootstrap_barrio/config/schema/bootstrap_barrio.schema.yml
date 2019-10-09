@@ -1,0 +1,63 @@
+# Schema for the configuration files of the Bootstrap Barrio theme.
+
+bootstrap_barrio.settings:
+  type: theme_settings
+  label: 'Bootstrap Barrio settings'
+  mapping:
+    bootstrap_barrio_library:
+      type: integer
+      label: 'Library'
+    bootstrap_barrio_sidebar_position:
+      type: text
+      label: 'Sidebar Position'
+    bootstrap_barrio_content_offset:
+      type: integer
+      label: 'Offset'
+    bootstrap_barrio_sidebar_first_width:
+      type: integer
+      label: 'Width'
+    bootstrap_barrio_sidebar_first_offset:
+      type: integer
+      label: 'Offset'
+    bootstrap_barrio_sidebar_second_width:
+      type: integer
+      label: 'Width'
+    bootstrap_barrio_sidebar_second_offset:
+      type: integer
+      label: 'Offset'
+    bootstrap_barrio_footer_layout:
+      type: text
+      label: 'Layout'
+    bootstrap_barrio_fluid_container:
+      type: integer
+      label: 'Enabled'
+    bootstrap_barrio_button_size:
+      type: text
+      label: 'Size'
+    bootstrap_barrio_button_outline:
+      type: integer
+      label: 'Button outline'
+    bootstrap_barrio_navbar_top_position:
+      type: text
+      label: 'Position'
+    bootstrap_barrio_navbar_top_color:
+      type: integer
+      label: 'Color'
+    bootstrap_barrio_navbar_top_background:
+      type: text
+      label: 'Background'
+    bootstrap_barrio_navbar_position:
+      type: text
+      label: 'Position'
+    bootstrap_barrio_navbar_color:
+      type: integer
+      label: 'Color'
+    bootstrap_barrio_navbar_background:
+      type: text
+      label: 'Background'
+    bootstrap_barrio_navbar_toggle:
+      type: integer
+      label: 'Enable'
+    bootstrap_barrio_navbar_container:
+      type: text
+      label: 'Container'

@@ -17,16 +17,13 @@ class FeedStorageSchema extends SqlContentEntityStorageSchema {
     $schema = parent::getSharedTableFieldSchema($storage_definition, $table_name, $column_mapping);
     $field_name = $storage_definition->getName();
 
-    if ($table_name == 'aggregator_feed') {
+    if ($table_name == $this->storage->getBaseTable()) {
       switch ($field_name) {
         case 'url':
           $this->addSharedTableFieldIndex($storage_definition, $schema, TRUE, 255);
           break;
 
         case 'queued':
-          $this->addSharedTableFieldIndex($storage_definition, $schema, TRUE);
-          break;
-
         case 'title':
           $this->addSharedTableFieldIndex($storage_definition, $schema, TRUE);
           break;

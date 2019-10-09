@@ -3,7 +3,6 @@
 namespace Drupal\Component\Render;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\UrlHelper;
 
 /**
@@ -62,6 +61,13 @@ use Drupal\Component\Utility\UrlHelper;
 class FormattableMarkup implements MarkupInterface, \Countable {
 
   /**
+   * The string containing placeholders.
+   *
+   * @var string
+   */
+  protected $string;
+
+  /**
    * The arguments to replace placeholders with.
    *
    * @var array
@@ -100,7 +106,7 @@ class FormattableMarkup implements MarkupInterface, \Countable {
    *   The length of the string.
    */
   public function count() {
-    return Unicode::strlen($this->string);
+    return mb_strlen($this->string);
   }
 
   /**
@@ -147,7 +153,7 @@ class FormattableMarkup implements MarkupInterface, \Countable {
    *     A call like:
    *     @code
    *       $string = "%output_text";
-   *       $arguments = ['output_text' => 'text output here.'];
+   *       $arguments = ['%output_text' => 'text output here.'];
    *       $this->placeholderFormat($string, $arguments);
    *     @endcode
    *     makes the following HTML code:

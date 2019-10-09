@@ -7,8 +7,8 @@
 namespace Drupal\Tests\workbench_moderation\Functional;
 
 use Drupal\node\Entity\Node;
-use Drupal\node\Entity\NodeType;
-use Drupal\simpletest\BrowserTestBase;
+use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\workbench_moderation\WorkbenchModerationTestTrait;
 
 /**
  * Tests the view access control handler for moderation state entities.
@@ -20,6 +20,8 @@ use Drupal\simpletest\BrowserTestBase;
  * @preserveGlobalState disabled
  */
 class ModerationStateAccessTest extends BrowserTestBase {
+
+  use WorkbenchModerationTestTrait;
 
   /**
    * {@inheritdoc}
@@ -105,29 +107,6 @@ class ModerationStateAccessTest extends BrowserTestBase {
     $this->assertTrue($page->hasLink('Needs Review'));
     $this->assertTrue($page->hasLink('Archived'));
     $this->assertFalse($page->hasLink('Published'));
-  }
-
-  /**
-   * Creates a new node type.
-   *
-   * @param string $label
-   *   The human-readable label of the type to create.
-   * @param string $machine_name
-   *   The machine name of the type to create.
-   *
-   * @return NodeType
-   *   The node type just created.
-   */
-  protected function createNodeType($label, $machine_name) {
-    /** @var NodeType $node_type */
-    $node_type = NodeType::create([
-      'type' => $machine_name,
-      'label' => $label,
-    ]);
-    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
-    $node_type->save();
-
-    return $node_type;
   }
 
 }

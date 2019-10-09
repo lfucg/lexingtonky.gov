@@ -135,7 +135,7 @@ class ConfigImporter {
    *
    * @var array
    */
-  protected $errors = array();
+  protected $errors = [];
 
   /**
    * The total number of extensions to process.
@@ -253,16 +253,16 @@ class ConfigImporter {
    *   An empty list of extensions to process.
    */
   protected function getEmptyExtensionsProcessedList() {
-    return array(
-      'module' => array(
-        'install' => array(),
-        'uninstall' => array(),
-      ),
-      'theme' => array(
-        'install' => array(),
-        'uninstall' => array(),
-      ),
-    );
+    return [
+      'module' => [
+        'install' => [],
+        'uninstall' => [],
+      ],
+      'theme' => [
+        'install' => [],
+        'uninstall' => [],
+      ],
+    ];
   }
 
   /**
@@ -273,7 +273,7 @@ class ConfigImporter {
    */
   public function hasUnprocessedConfigurationChanges() {
     foreach ($this->storageComparer->getAllCollectionNames() as $collection) {
-      foreach (array('delete', 'create', 'rename', 'update') as $op) {
+      foreach (['delete', 'create', 'rename', 'update'] as $op) {
         if (count($this->getUnprocessedConfiguration($op, $collection))) {
           return TRUE;
         }
@@ -405,6 +405,14 @@ class ConfigImporter {
     $module_list = array_reverse($module_list);
     $this->extensionChangelist['module']['install'] = array_intersect(array_keys($module_list), $install);
 
+    // If we're installing the install profile ensure it comes last. This will
+    // occur when installing a site from configuration.
+    $install_profile_key = array_search($new_extensions['profile'], $this->extensionChangelist['module']['install'], TRUE);
+    if ($install_profile_key !== FALSE) {
+      unset($this->extensionChangelist['module']['install'][$install_profile_key]);
+      $this->extensionChangelist['module']['install'][] = $new_extensions['profile'];
+    }
+
     // Work out what themes to install and to uninstall.
     $this->extensionChangelist['theme']['install'] = array_keys(array_diff_key($new_extensions['theme'], $current_extensions['theme']));
     $this->extensionChangelist['theme']['uninstall'] = array_keys(array_diff_key($current_extensions['theme'], $new_extensions['theme']));
@@ -440,10 +448,10 @@ class ConfigImporter {
    */
   protected function getUnprocessedExtensions($type) {
     $changelist = $this->getExtensionChangelist($type);
-    return array(
+    return [
       'install' => array_diff($changelist['install'], $this->processedExtensions[$type]['install']),
       'uninstall' => array_diff($changelist['uninstall'], $this->processedExtensions[$type]['uninstall']),
-    );
+    ];
   }
 
   /**
@@ -459,7 +467,7 @@ class ConfigImporter {
       $sync_steps = $this->initialize();
 
       foreach ($sync_steps as $step) {
-        $context = array();
+        $context = [];
         do {
           $this->doSyncStep($step, $context);
         } while ($context['finished'] < 1);
@@ -489,7 +497,7 @@ class ConfigImporter {
     }
     elseif (is_callable($sync_step)) {
       \Drupal::service('config.installer')->setSyncing(TRUE);
-      call_user_func_array($sync_step, array(&$context, $this));
+      call_user_func_array($sync_step, [&$context, $this]);
     }
     else {
       throw new \InvalidArgumentException('Invalid configuration synchronization step');
@@ -517,13 +525,13 @@ class ConfigImporter {
       throw new ConfigImporterException(sprintf('%s is already importing', static::LOCK_NAME));
     }
 
-    $sync_steps = array();
+    $sync_steps = [];
     $modules = $this->getUnprocessedExtensions('module');
-    foreach (array('install', 'uninstall') as $op) {
+    foreach (['install', 'uninstall'] as $op) {
       $this->totalExtensionsToProcess += count($modules[$op]);
     }
     $themes = $this->getUnprocessedExtensions('theme');
-    foreach (array('install', 'uninstall') as $op) {
+    foreach (['install', 'uninstall'] as $op) {
       $this->totalExtensionsToProcess += count($themes[$op]);
     }
 
@@ -542,14 +550,14 @@ class ConfigImporter {
   /**
    * Processes extensions as a batch operation.
    *
-   * @param array|\ArrayAccess $context.
+   * @param array|\ArrayAccess $context
    *   The batch context.
    */
   protected function processExtensions(&$context) {
     $operation = $this->getNextExtensionOperation();
     if (!empty($operation)) {
       $this->processExtension($operation['type'], $operation['op'], $operation['name']);
-      $context['message'] = t('Synchronizing extensions: @op @name.', array('@op' => $operation['op'], '@name' => $operation['name']));
+      $context['message'] = t('Synchronizing extensions: @op @name.', ['@op' => $operation['op'], '@name' => $operation['name']]);
       $processed_count = count($this->processedExtensions['module']['install']) + count($this->processedExtensions['module']['uninstall']);
       $processed_count += count($this->processedExtensions['theme']['uninstall']) + count($this->processedExtensions['theme']['install']);
       $context['finished'] = $processed_count / $this->totalExtensionsToProcess;
@@ -562,7 +570,7 @@ class ConfigImporter {
   /**
    * Processes configuration as a batch operation.
    *
-   * @param array|\ArrayAccess $context.
+   * @param array|\ArrayAccess $context
    *   The batch context.
    */
   protected function processConfigurations(&$context) {
@@ -573,7 +581,7 @@ class ConfigImporter {
     if ($this->totalConfigurationToProcess == 0) {
       $this->storageComparer->reset();
       foreach ($this->storageComparer->getAllCollectionNames() as $collection) {
-        foreach (array('delete', 'create', 'rename', 'update') as $op) {
+        foreach (['delete', 'create', 'rename', 'update'] as $op) {
           $this->totalConfigurationToProcess += count($this->getUnprocessedConfiguration($op, $collection));
         }
       }
@@ -584,14 +592,14 @@ class ConfigImporter {
         $this->processConfiguration($operation['collection'], $operation['op'], $operation['name']);
       }
       if ($operation['collection'] == StorageInterface::DEFAULT_COLLECTION) {
-        $context['message'] = $this->t('Synchronizing configuration: @op @name.', array('@op' => $operation['op'], '@name' => $operation['name']));
+        $context['message'] = $this->t('Synchronizing configuration: @op @name.', ['@op' => $operation['op'], '@name' => $operation['name']]);
       }
       else {
-        $context['message'] = $this->t('Synchronizing configuration: @op @name in @collection.', array('@op' => $operation['op'], '@name' => $operation['name'], '@collection' => $operation['collection']));
+        $context['message'] = $this->t('Synchronizing configuration: @op @name in @collection.', ['@op' => $operation['op'], '@name' => $operation['name'], '@collection' => $operation['collection']]);
       }
       $processed_count = 0;
       foreach ($this->storageComparer->getAllCollectionNames() as $collection) {
-        foreach (array('delete', 'create', 'rename', 'update') as $op) {
+        foreach (['delete', 'create', 'rename', 'update'] as $op) {
           $processed_count += count($this->processedConfiguration[$collection][$op]);
         }
       }
@@ -605,7 +613,7 @@ class ConfigImporter {
   /**
    * Handles processing of missing content.
    *
-   * @param array|\ArrayAccess $context.
+   * @param array|\ArrayAccess $context
    *   Standard batch context.
    */
   protected function processMissingContent(&$context) {
@@ -637,7 +645,7 @@ class ConfigImporter {
   /**
    * Finishes the batch.
    *
-   * @param array|\ArrayAccess $context.
+   * @param array|\ArrayAccess $context
    *   The batch context.
    */
   protected function finish(&$context) {
@@ -657,15 +665,15 @@ class ConfigImporter {
    *   on. If there is nothing left to do returns FALSE;
    */
   protected function getNextExtensionOperation() {
-    foreach (array('module', 'theme') as $type) {
-      foreach (array('install', 'uninstall') as $op) {
+    foreach (['module', 'theme'] as $type) {
+      foreach (['install', 'uninstall'] as $op) {
         $unprocessed = $this->getUnprocessedExtensions($type);
         if (!empty($unprocessed[$op])) {
-          return array(
+          return [
             'op' => $op,
             'type' => $type,
             'name' => array_shift($unprocessed[$op]),
-          );
+          ];
         }
       }
     }
@@ -683,14 +691,14 @@ class ConfigImporter {
     // The order configuration operations is processed is important. Deletes
     // have to come first so that recreates can work.
     foreach ($this->storageComparer->getAllCollectionNames() as $collection) {
-      foreach (array('delete', 'create', 'rename', 'update') as $op) {
+      foreach (['delete', 'create', 'rename', 'update'] as $op) {
         $config_names = $this->getUnprocessedConfiguration($op, $collection);
         if (!empty($config_names)) {
-          return array(
+          return [
             'op' => $op,
             'name' => array_shift($config_names),
             'collection' => $collection,
-          );
+          ];
         }
       }
     }
@@ -716,16 +724,17 @@ class ConfigImporter {
         $old_entity_type_id = $this->configManager->getEntityTypeIdByName($names['old_name']);
         $new_entity_type_id = $this->configManager->getEntityTypeIdByName($names['new_name']);
         if ($old_entity_type_id != $new_entity_type_id) {
-          $this->logError($this->t('Entity type mismatch on rename. @old_type not equal to @new_type for existing configuration @old_name and staged configuration @new_name.', array('@old_type' => $old_entity_type_id, '@new_type' => $new_entity_type_id, '@old_name' => $names['old_name'], '@new_name' => $names['new_name'])));
+          $this->logError($this->t('Entity type mismatch on rename. @old_type not equal to @new_type for existing configuration @old_name and staged configuration @new_name.', ['@old_type' => $old_entity_type_id, '@new_type' => $new_entity_type_id, '@old_name' => $names['old_name'], '@new_name' => $names['new_name']]));
         }
         // Has to be a configuration entity.
         if (!$old_entity_type_id) {
-          $this->logError($this->t('Rename operation for simple configuration. Existing configuration @old_name and staged configuration @new_name.', array('@old_name' => $names['old_name'], '@new_name' => $names['new_name'])));
+          $this->logError($this->t('Rename operation for simple configuration. Existing configuration @old_name and staged configuration @new_name.', ['@old_name' => $names['old_name'], '@new_name' => $names['new_name']]));
         }
       }
       $this->eventDispatcher->dispatch(ConfigEvents::IMPORT_VALIDATE, new ConfigImporterEvent($this));
       if (count($this->getErrors())) {
-        throw new ConfigImporterException('There were errors validating the config synchronization.');
+        $errors = array_merge(['There were errors validating the config synchronization.'], $this->getErrors());
+        throw new ConfigImporterException(implode(PHP_EOL, $errors));
       }
       else {
         $this->validated = TRUE;
@@ -760,7 +769,7 @@ class ConfigImporter {
       }
     }
     catch (\Exception $e) {
-      $this->logError($this->t('Unexpected error during import with operation @op for @name: @message', array('@op' => $op, '@name' => $name, '@message' => $e->getMessage())));
+      $this->logError($this->t('Unexpected error during import with operation @op for @name: @message', ['@op' => $op, '@name' => $name, '@message' => $e->getMessage()]));
       // Error for that operation was logged, mark it as processed so that
       // the import can continue.
       $this->setProcessedConfiguration($collection, $op, $name);
@@ -783,14 +792,13 @@ class ConfigImporter {
     \Drupal::service('config.installer')
       ->setSourceStorage($this->storageComparer->getSourceStorage());
     if ($type == 'module') {
-      $this->moduleInstaller->$op(array($name), FALSE);
+      $this->moduleInstaller->$op([$name], FALSE);
       // Installing a module can cause a kernel boot therefore reinject all the
       // services.
       $this->reInjectMe();
       // During a module install or uninstall the container is rebuilt and the
-      // module handler is called from drupal_get_complete_schema(). This causes
-      // the container's instance of the module handler not to have loaded all
-      // the enabled modules.
+      // module handler is called. This causes the container's instance of the
+      // module handler not to have loaded all the enabled modules.
       $this->moduleHandler->loadAll();
     }
     if ($type == 'theme') {
@@ -803,7 +811,7 @@ class ConfigImporter {
         $this->configManager->getConfigFactory()->reset('system.theme');
         $this->processedSystemTheme = TRUE;
       }
-      $this->themeHandler->$op(array($name));
+      $this->themeHandler->$op([$name]);
     }
 
     $this->setProcessedExtension($type, $op, $name);
@@ -859,15 +867,15 @@ class ConfigImporter {
           // If the target already exists, use the entity storage to delete it
           // again, if is a simple config, delete it directly.
           if ($entity_type_id = $this->configManager->getEntityTypeIdByName($name)) {
-            $entity_storage = $this->configManager->getEntityManager()->getStorage($entity_type_id);
-            $entity_type = $this->configManager->getEntityManager()->getDefinition($entity_type_id);
+            $entity_storage = $this->configManager->getEntityTypeManager()->getStorage($entity_type_id);
+            $entity_type = $this->configManager->getEntityTypeManager()->getDefinition($entity_type_id);
             $entity = $entity_storage->load($entity_storage->getIDFromConfigName($name, $entity_type->getConfigPrefix()));
             $entity->delete();
-            $this->logError($this->t('Deleted and replaced configuration entity "@name"', array('@name' => $name)));
+            $this->logError($this->t('Deleted and replaced configuration entity "@name"', ['@name' => $name]));
           }
           else {
             $this->storageComparer->getTargetStorage($collection)->delete($name);
-            $this->logError($this->t('Deleted and replaced configuration "@name"', array('@name' => $name)));
+            $this->logError($this->t('Deleted and replaced configuration "@name"', ['@name' => $name]));
           }
           return TRUE;
         }
@@ -875,7 +883,7 @@ class ConfigImporter {
 
       case 'update':
         if (!$target_exists) {
-          $this->logError($this->t('Update target "@name" is missing.', array('@name' => $name)));
+          $this->logError($this->t('Update target "@name" is missing.', ['@name' => $name]));
           // Mark as processed so that the synchronization continues. Once the
           // the current synchronization is complete it will show up as a
           // create.
@@ -912,7 +920,7 @@ class ConfigImporter {
     }
     else {
       $data = $this->storageComparer->getSourceStorage($collection)->read($name);
-      $config->setData($data ? $data : array());
+      $config->setData($data ? $data : []);
       $config->save();
     }
     $this->setProcessedConfiguration($collection, $op, $name);
@@ -962,7 +970,7 @@ class ConfigImporter {
       }
 
       $method = 'import' . ucfirst($op);
-      $entity_storage = $this->configManager->getEntityManager()->getStorage($entity_type);
+      $entity_storage = $this->configManager->getEntityTypeManager()->getStorage($entity_type);
       // Call to the configuration entity's storage to handle the configuration
       // change.
       if (!($entity_storage instanceof ImportableEntityStorageInterface)) {
@@ -1008,7 +1016,7 @@ class ConfigImporter {
       $new_config->setData($data);
     }
 
-    $entity_storage = $this->configManager->getEntityManager()->getStorage($entity_type_id);
+    $entity_storage = $this->configManager->getEntityTypeManager()->getStorage($entity_type_id);
     // Call to the configuration entity's storage to handle the configuration
     // change.
     if (!($entity_storage instanceof ImportableEntityStorageInterface)) {
@@ -1037,7 +1045,7 @@ class ConfigImporter {
    * keep the services used by the importer in sync.
    */
   protected function reInjectMe() {
-    $this->_serviceIds = array();
+    $this->_serviceIds = [];
     $vars = get_object_vars($this);
     foreach ($vars as $key => $value) {
       if (is_object($value) && isset($value->_serviceId)) {

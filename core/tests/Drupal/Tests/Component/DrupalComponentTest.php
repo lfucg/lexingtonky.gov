@@ -2,15 +2,15 @@
 
 namespace Drupal\Tests\Component;
 
-use Drupal\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * General tests for \Drupal\Component that can't go anywhere else.
  *
  * @group Component
  */
-class DrupalComponentTest extends UnitTestCase {
+class DrupalComponentTest extends TestCase {
 
   /**
    * Tests that classes in Component do not use any Core class.
@@ -33,6 +33,34 @@ class DrupalComponentTest extends UnitTestCase {
   }
 
   /**
+   * Tests LICENSE.txt is present and has the correct content.
+   *
+   * @param $component_path
+   *   The path to the component.
+   * @dataProvider \Drupal\Tests\Component\DrupalComponentTest::getComponents
+   */
+  public function testComponentLicence($component_path) {
+    $this->assertFileExists($component_path . DIRECTORY_SEPARATOR . 'LICENSE.txt');
+    $this->assertSame('e84dac1d9fbb5a4a69e38654ce644cea769aa76b', hash_file('sha1', $component_path . DIRECTORY_SEPARATOR . 'LICENSE.txt'));
+  }
+
+  /**
+   * Data provider.
+   *
+   * @return array
+   */
+  public function getComponents() {
+    $root_component_path = dirname(substr(__DIR__, 0, -strlen(__NAMESPACE__))) . '/lib/Drupal/Component';
+    $component_paths = [];
+    foreach (new \DirectoryIterator($root_component_path) as $file) {
+      if ($file->isDir() && !$file->isDot()) {
+        $component_paths[$file->getBasename()] = [$file->getPathname()];
+      }
+    }
+    return $component_paths;
+  }
+
+  /**
    * Searches a directory recursively for PHP classes.
    *
    * @param string $dir
@@ -42,7 +70,7 @@ class DrupalComponentTest extends UnitTestCase {
    *   An array of class paths.
    */
   protected function findPhpClasses($dir) {
-    $classes = array();
+    $classes = [];
     foreach (new \DirectoryIterator($dir) as $file) {
       if ($file->isDir() && !$file->isDot()) {
         $classes = array_merge($classes, $this->findPhpClasses($file->getPathname()));
@@ -64,7 +92,7 @@ class DrupalComponentTest extends UnitTestCase {
   protected function assertNoCoreUsage($class_path) {
     $contents = file_get_contents($class_path);
     preg_match_all('/^.*Drupal\\\Core.*$/m', $contents, $matches);
-    $matches = array_filter($matches[0], function($line) {
+    $matches = array_filter($matches[0], function ($line) {
       // Filter references to @see as they don't really matter.
       return strpos($line, '@see') === FALSE;
     });
@@ -80,26 +108,26 @@ class DrupalComponentTest extends UnitTestCase {
    *   - File data as a string. This will be used as a virtual file.
    */
   public function providerAssertNoCoreUseage() {
-    return array(
-      array(
+    return [
+      [
         TRUE,
         '@see \\Drupal\\Core\\Something',
-      ),
-      array(
+      ],
+      [
         FALSE,
         '\\Drupal\\Core\\Something',
-      ),
-      array(
+      ],
+      [
         FALSE,
         "@see \\Drupal\\Core\\Something\n" .
         '\\Drupal\\Core\\Something',
-      ),
-      array(
+      ],
+      [
         FALSE,
         "\\Drupal\\Core\\Something\n" .
         '@see \\Drupal\\Core\\Something',
-      ),
-    );
+      ],
+    ];
   }
 
   /**

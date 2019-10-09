@@ -29,7 +29,8 @@ abstract class TextItemBase extends FieldItemBase {
       ->setDescription(t('The text with the text format applied.'))
       ->setComputed(TRUE)
       ->setClass('\Drupal\text\TextProcessed')
-      ->setSetting('text source', 'value');
+      ->setSetting('text source', 'value')
+      ->setInternal(FALSE);
 
     return $properties;
   }
@@ -39,7 +40,7 @@ abstract class TextItemBase extends FieldItemBase {
    */
   public function applyDefaultValue($notify = TRUE) {
     // @todo: Add in the filter default format here.
-    $this->setValue(array('format' => NULL), $notify);
+    $this->setValue(['format' => NULL], $notify);
     return $this;
   }
 
@@ -82,11 +83,11 @@ abstract class TextItemBase extends FieldItemBase {
       $value = substr($random->sentences(mt_rand(1, $settings['max_length'] / 3), FALSE), 0, $settings['max_length']);
     }
 
-    $values = array(
+    $values = [
       'value' => $value,
       'summary' => $value,
       'format' => filter_fallback_format(),
-    );
+    ];
     return $values;
   }
 

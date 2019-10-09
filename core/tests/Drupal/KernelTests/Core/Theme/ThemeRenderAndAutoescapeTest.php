@@ -73,7 +73,7 @@ class ThemeRenderAndAutoescapeTest extends KernelTestBase {
       'type markup with EM tags is rendered' => [['#markup' => '<em>hi</em>'], '<em>hi</em>'],
       'SCRIPT tag in string is escaped' => [
         '<script>alert(123)</script>',
-        Html::escape('<script>alert(123)</script>')
+        Html::escape('<script>alert(123)</script>'),
       ],
       'type plain_text render array EM tag is escaped' => [['#plain_text' => '<em>hi</em>'], Html::escape('<em>hi</em>')],
       'type hidden render array is rendered' => [['#type' => 'hidden', '#name' => 'foo', '#value' => 'bar'], "<input type=\"hidden\" name=\"foo\" value=\"bar\" />\n"],
@@ -82,10 +82,9 @@ class ThemeRenderAndAutoescapeTest extends KernelTestBase {
 
   /**
    * Ensures invalid content is handled correctly.
-   *
-   * @expectedException \Exception
    */
   public function testThemeEscapeAndRenderNotPrintable() {
+    $this->setExpectedException(\Exception::class);
     theme_render_and_autoescape(new NonPrintable());
   }
 
@@ -135,4 +134,4 @@ class ThemeRenderAndAutoescapeTest extends KernelTestBase {
 
 }
 
-class NonPrintable { }
+class NonPrintable {}

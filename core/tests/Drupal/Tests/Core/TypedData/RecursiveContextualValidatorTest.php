@@ -83,7 +83,7 @@ class RecursiveContextualValidatorTest extends UnitTestCase {
     $translator = $this->getMock('Drupal\Core\Validation\TranslatorInterface');
     $translator->expects($this->any())
       ->method('trans')
-      ->willReturnCallback(function($id) {
+      ->willReturnCallback(function ($id) {
         return $id;
       });
     $this->contextFactory = new ExecutionContextFactory($translator);
@@ -95,10 +95,9 @@ class RecursiveContextualValidatorTest extends UnitTestCase {
    * Ensures that passing an explicit group is not supported.
    *
    * @covers ::validate
-   *
-   * @expectedException \LogicException
    */
   public function testValidateWithGroups() {
+    $this->setExpectedException(\LogicException::class);
     $this->recursiveValidator->validate('test', NULL, 'test group');
   }
 
@@ -106,10 +105,9 @@ class RecursiveContextualValidatorTest extends UnitTestCase {
    * Ensures that passing a non typed data value is not supported.
    *
    * @covers ::validate
-   *
-   * @expectedException \InvalidArgumentException
    */
   public function testValidateWithoutTypedData() {
+    $this->setExpectedException(\InvalidArgumentException::class);
     $this->recursiveValidator->validate('test');
   }
 
@@ -131,7 +129,7 @@ class RecursiveContextualValidatorTest extends UnitTestCase {
         ->addConstraint('Callback', [
           'callback' => function ($value, ExecutionContextInterface $context) {
             $context->addViolation('test violation: ' . $value);
-          }
+          },
         ])
     );
     $typed_data->setValue('foo');
@@ -149,7 +147,7 @@ class RecursiveContextualValidatorTest extends UnitTestCase {
     $options = [
       'callback' => function ($value, ExecutionContextInterface $context) {
         $context->addViolation('test violation');
-      }
+      },
     ];
     $typed_data = $this->typedDataManager->create(
       DataDefinition::create('string')
@@ -228,8 +226,6 @@ class RecursiveContextualValidatorTest extends UnitTestCase {
 
   /**
    * @covers ::validateProperty
-   *
-   * @expectedException \LogicException
    */
   public function testValidatePropertyWithCustomGroup() {
     $tree = [
@@ -239,6 +235,7 @@ class RecursiveContextualValidatorTest extends UnitTestCase {
       ],
     ];
     $typed_data = $this->setupTypedData($tree, 'test_name');
+    $this->setExpectedException(\LogicException::class);
     $this->recursiveValidator->validateProperty($typed_data, 'key1', 'test group');
   }
 
@@ -246,10 +243,9 @@ class RecursiveContextualValidatorTest extends UnitTestCase {
    * @covers ::validateProperty
    *
    * @dataProvider providerTestValidatePropertyWithInvalidObjects
-   *
-   * @expectedException \InvalidArgumentException
    */
   public function testValidatePropertyWithInvalidObjects($object) {
+    $this->setExpectedException(\InvalidArgumentException::class);
     $this->recursiveValidator->validateProperty($object, 'key1', NULL);
   }
 
@@ -289,10 +285,9 @@ class RecursiveContextualValidatorTest extends UnitTestCase {
    * @covers ::validatePropertyValue
    *
    * @dataProvider providerTestValidatePropertyWithInvalidObjects
-   *
-   * @expectedException \InvalidArgumentException
    */
   public function testValidatePropertyValueWithInvalidObjects($object) {
+    $this->setExpectedException(\InvalidArgumentException::class);
     $this->recursiveValidator->validatePropertyValue($object, 'key1', [], NULL);
   }
 
@@ -325,7 +320,7 @@ class RecursiveContextualValidatorTest extends UnitTestCase {
       'value' => [
         'key1' => 'value1',
         'key2' => 'value2',
-        'key_with_properties' => $subkey_value
+        'key_with_properties' => $subkey_value,
       ],
     ];
     $tree['properties'] = [

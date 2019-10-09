@@ -1,0 +1,27 @@
+uuid: 7c64bdb2-af64-4e48-ae23-c1f1836e249b
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_local_tasks
+theme: lex_planning_commission
+region: breadcrumb
+weight: -24
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  provider: core
+  label_display: '0'
+  primary: true
+  secondary: true
+visibility:
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/browse/*"
+    negate: true
+    context_mapping: {  }

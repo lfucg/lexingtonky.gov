@@ -9,7 +9,6 @@ use Drupal\migrate\Plugin\migrate\process\Download;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\Row;
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
 
 /**
  * Tests the download process plugin.
@@ -52,7 +51,7 @@ class DownloadTest extends FileTestBase {
     $destination_uri = $this->createUri('another_existing_file.txt');
 
     // Test non-destructive download.
-    $actual_destination = $this->doTransform($destination_uri, ['rename' => TRUE]);
+    $actual_destination = $this->doTransform($destination_uri, ['file_exists' => 'rename']);
     $this->assertSame('public://another_existing_file_0.txt', $actual_destination, 'Import returned a renamed destination');
     $this->assertFileExists($actual_destination, 'Downloaded file was created');
   }
@@ -60,7 +59,7 @@ class DownloadTest extends FileTestBase {
   /**
    * Tests that an exception is thrown if the destination URI is not writable.
    */
-  public function testWriteProectedDestination() {
+  public function testWriteProtectedDestination() {
     // Create a pre-existing file at the destination, to test overwrite behavior.
     $destination_uri = $this->createUri('not-writable.txt');
 
@@ -100,14 +99,8 @@ class DownloadTest extends FileTestBase {
    *   The local URI of the downloaded file.
    */
   protected function doTransform($destination_uri, $configuration = []) {
-    // The HTTP client will return a file with contents 'It worked!'
-    $body = fopen('data://text/plain;base64,SXQgd29ya2VkIQ==', 'r');
-
     // Prepare a mock HTTP client.
     $this->container->set('http_client', $this->getMock(Client::class));
-    $this->container->get('http_client')
-      ->method('get')
-      ->willReturn(new Response(200, [], $body));
 
     // Instantiate the plugin statically so it can pull dependencies out of
     // the container.

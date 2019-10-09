@@ -1,0 +1,30 @@
+uuid: 840db485-660b-454a-afdf-6ed3e3639dc8
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.most-active-pages
+  module:
+    - system
+  theme:
+    - lex_home
+id: lex_home_mostactivepages
+theme: lex_home
+region: hero
+weight: -23
+provider: null
+plugin: 'system_menu_block:most-active-pages'
+settings:
+  id: 'system_menu_block:most-active-pages'
+  label: 'Most active pages'
+  provider: system
+  label_display: visible
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

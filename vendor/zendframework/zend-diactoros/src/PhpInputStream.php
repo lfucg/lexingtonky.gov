@@ -1,13 +1,13 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @see       http://github.com/zendframework/zend-diactoros for the canonical source repository
- * @copyright Copyright (c) 2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/zendframework/zend-diactoros for the canonical source repository
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-diactoros/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Diactoros;
+
+use function stream_get_contents;
 
 /**
  * Caching version of php://input
@@ -26,12 +26,10 @@ class PhpInputStream extends Stream
 
     /**
      * @param  string|resource $stream
-     * @param  string $mode
      */
-    public function __construct($stream = 'php://input', $mode = 'r')
+    public function __construct($stream = 'php://input')
     {
-        $mode = 'r';
-        parent::__construct($stream, $mode);
+        parent::__construct($stream, 'r');
     }
 
     /**
@@ -61,7 +59,7 @@ class PhpInputStream extends Stream
     public function read($length)
     {
         $content = parent::read($length);
-        if ($content && ! $this->reachedEof) {
+        if (! $this->reachedEof) {
             $this->cache .= $content;
         }
 

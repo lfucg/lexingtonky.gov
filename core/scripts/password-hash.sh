@@ -2,6 +2,7 @@
 <?php
 
 /**
+ * @file
  * Drupal hash script - to generate a hash from a plaintext password
  *
  * @param password1 [password2 [password3 ...]]
@@ -16,7 +17,7 @@ if (PHP_SAPI !== 'cli') {
 }
 
 if (version_compare(PHP_VERSION, '5.4.5') < 0) {
-  $version  = PHP_VERSION;
+  $version = PHP_VERSION;
   echo <<<EOF
 
 ERROR: This script requires at least PHP version 5.4.5. You invoked it with
@@ -64,7 +65,6 @@ $kernel->boot();
 $password_hasher = $kernel->getContainer()->get('password');
 
 foreach ($passwords as $password) {
-  print("\npassword: $password \t\thash: ". $password_hasher->hash($password) ."\n");
+  print("\npassword: $password \t\thash: " . $password_hasher->hash($password) . "\n");
 }
 print("\n");
-

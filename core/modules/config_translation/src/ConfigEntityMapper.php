@@ -5,7 +5,8 @@ namespace Drupal\config_translation;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
@@ -13,6 +14,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\locale\LocaleConfigManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -20,12 +22,21 @@ use Symfony\Component\Routing\Route;
  */
 class ConfigEntityMapper extends ConfigNamesMapper {
 
+  use DeprecatedServicePropertyTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $deprecatedProperties = [
+    'entityManager' => 'entity.manager',
+  ];
+
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Configuration entity type name.
@@ -69,16 +80,18 @@ class ConfigEntityMapper extends ConfigNamesMapper {
    *   The route provider.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $translation_manager
    *   The string translation manager.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
    */
-  public function __construct($plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, TypedConfigManagerInterface $typed_config, LocaleConfigManager $locale_config_manager, ConfigMapperManagerInterface $config_mapper_manager, RouteProviderInterface $route_provider, TranslationInterface $translation_manager, EntityManagerInterface $entity_manager, LanguageManagerInterface $language_manager) {
-    parent::__construct($plugin_id, $plugin_definition, $config_factory, $typed_config, $locale_config_manager, $config_mapper_manager, $route_provider, $translation_manager, $language_manager);
+  public function __construct($plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, TypedConfigManagerInterface $typed_config, LocaleConfigManager $locale_config_manager, ConfigMapperManagerInterface $config_mapper_manager, RouteProviderInterface $route_provider, TranslationInterface $translation_manager, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager, EventDispatcherInterface $event_dispatcher = NULL) {
+    parent::__construct($plugin_id, $plugin_definition, $config_factory, $typed_config, $locale_config_manager, $config_mapper_manager, $route_provider, $translation_manager, $language_manager, $event_dispatcher);
     $this->setType($plugin_definition['entity_type']);
 
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -87,7 +100,7 @@ class ConfigEntityMapper extends ConfigNamesMapper {
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     // Note that we ignore the plugin $configuration because mappers have
     // nothing to configure in themselves.
-    return new static (
+    return new static(
       $plugin_id,
       $plugin_definition,
       $container->get('config.factory'),
@@ -96,8 +109,9 @@ class ConfigEntityMapper extends ConfigNamesMapper {
       $container->get('plugin.manager.config_translation.mapper'),
       $container->get('router.route_provider'),
       $container->get('string_translation'),
-      $container->get('entity.manager'),
-      $container->get('language_manager')
+      $container->get('entity_type.manager'),
+      $container->get('language_manager'),
+      $container->get('event_dispatcher')
     );
   }
 
@@ -105,15 +119,15 @@ class ConfigEntityMapper extends ConfigNamesMapper {
    * {@inheritdoc}
    */
   public function populateFromRouteMatch(RouteMatchInterface $route_match) {
-    parent::populateFromRouteMatch($route_match);
     $entity = $route_match->getParameter($this->entityType);
     $this->setEntity($entity);
+    parent::populateFromRouteMatch($route_match);
   }
 
   /**
    * Gets the entity instance for this mapper.
    *
-   * @return \Drupal\Core\Config\Entity\ConfigEntityInterface $entity
+   * @return \Drupal\Core\Config\Entity\ConfigEntityInterface
    *   The configuration entity.
    */
   public function getEntity() {
@@ -148,7 +162,7 @@ class ConfigEntityMapper extends ConfigNamesMapper {
     // entity. This is not a Drupal 8 best practice (ideally the configuration
     // would have pluggable components), but this may happen as well.
     /** @var \Drupal\Core\Config\Entity\ConfigEntityTypeInterface $entity_type_info */
-    $entity_type_info = $this->entityManager->getDefinition($this->entityType);
+    $entity_type_info = $this->entityTypeManager->getDefinition($this->entityType);
     $this->addConfigName($entity_type_info->getConfigPrefix() . '.' . $entity->id());
 
     return TRUE;
@@ -165,7 +179,7 @@ class ConfigEntityMapper extends ConfigNamesMapper {
    * {@inheritdoc}
    */
   public function getBaseRouteParameters() {
-    return array($this->entityType => $this->entity->id());
+    return [$this->entityType => $this->entity->id()];
   }
 
   /**
@@ -204,7 +218,7 @@ class ConfigEntityMapper extends ConfigNamesMapper {
    * {@inheritdoc}
    */
   public function getTypeName() {
-    $entity_type_info = $this->entityManager->getDefinition($this->entityType);
+    $entity_type_info = $this->entityTypeManager->getDefinition($this->entityType);
     return $entity_type_info->getLabel();
   }
 
@@ -212,7 +226,7 @@ class ConfigEntityMapper extends ConfigNamesMapper {
    * {@inheritdoc}
    */
   public function getTypeLabel() {
-    $entityType = $this->entityManager->getDefinition($this->entityType);
+    $entityType = $this->entityTypeManager->getDefinition($this->entityType);
     return $entityType->getLabel();
   }
 
@@ -220,14 +234,14 @@ class ConfigEntityMapper extends ConfigNamesMapper {
    * {@inheritdoc}
    */
   public function getOperations() {
-    return array(
-      'list' => array(
+    return [
+      'list' => [
         'title' => $this->t('List'),
         'url' => Url::fromRoute('config_translation.entity_list', [
           'mapper_id' => $this->getPluginId(),
         ]),
-      ),
-    );
+      ],
+    ];
   }
 
   /**
@@ -259,12 +273,12 @@ class ConfigEntityMapper extends ConfigNamesMapper {
    */
   protected function processRoute(Route $route) {
     // Add entity upcasting information.
-    $parameters = $route->getOption('parameters') ?: array();
-    $parameters += array(
-      $this->entityType => array(
+    $parameters = $route->getOption('parameters') ?: [];
+    $parameters += [
+      $this->entityType => [
         'type' => 'entity:' . $this->entityType,
-      )
-    );
+      ],
+    ];
     $route->setOption('parameters', $parameters);
   }
 

@@ -20,7 +20,7 @@ abstract class MigrateSourceTestBase extends KernelTestBase {
   /**
    * The mocked migration.
    *
-   * @var MigrationInterface|\Prophecy\Prophecy\ObjectProphecy
+   * @var \Drupal\migrate\Plugin\MigrationInterface|\Prophecy\Prophecy\ObjectProphecy
    */
   protected $migration;
 
@@ -135,14 +135,24 @@ abstract class MigrateSourceTestBase extends KernelTestBase {
    *   value (like FALSE or 'nope'), the source plugin will not be counted.
    * @param array $configuration
    *   (optional) Configuration for the source plugin.
+   * @param mixed $high_water
+   *   (optional) The value of the high water field.
    *
    * @dataProvider providerSource
    */
-  public function testSource(array $source_data, array $expected_data, $expected_count = NULL, array $configuration = []) {
+  public function testSource(array $source_data, array $expected_data, $expected_count = NULL, array $configuration = [], $high_water = NULL) {
     $plugin = $this->getPlugin($configuration);
 
     // All source plugins must define IDs.
     $this->assertNotEmpty($plugin->getIds());
+
+    // If there is a high water mark, set it in the high water storage.
+    if (isset($high_water)) {
+      $this->container
+        ->get('keyvalue')
+        ->get('migrate:high_water')
+        ->set($this->migration->reveal()->id(), $high_water);
+    }
 
     if (is_null($expected_count)) {
       $expected_count = count($expected_data);
@@ -165,15 +175,21 @@ abstract class MigrateSourceTestBase extends KernelTestBase {
       foreach ($expected as $key => $value) {
         $this->assertArrayHasKey($key, $actual);
 
+        $msg = sprintf("Value at 'array[%s][%s]' is not correct.", $i - 1, $key);
         if (is_array($value)) {
           ksort($value);
           ksort($actual[$key]);
-          $this->assertEquals($value, $actual[$key]);
+          $this->assertEquals($value, $actual[$key], $msg);
         }
         else {
-          $this->assertSame((string) $value, (string) $actual[$key]);
+          $this->assertEquals((string) $value, (string) $actual[$key], $msg);
         }
       }
+    }
+    // False positives occur if the foreach is not entered. So, confirm the
+    // foreach loop was entered if the expected count is greater than 0.
+    if ($expected_count > 0) {
+      $this->assertGreaterThan(0, $i);
     }
   }
 

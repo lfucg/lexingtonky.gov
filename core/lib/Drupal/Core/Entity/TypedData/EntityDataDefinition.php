@@ -18,13 +18,35 @@ class EntityDataDefinition extends ComplexDataDefinitionBase implements EntityDa
    *
    * @return static
    */
-  public static function create($entity_type_id = NULL) {
-    $definition = new static(array());
-    // Set the passed entity type.
+  public static function create($entity_type_id = NULL, $bundle = NULL) {
+    // If the entity type is known, use the derived definition.
     if (isset($entity_type_id)) {
+      $data_type = "entity:{$entity_type_id}";
+
+      // If a bundle was given, use the bundle-specific definition.
+      if ($bundle) {
+        $data_type .= ":{$bundle}";
+      }
+
+      // It's possible that the given entity type ID or bundle wasn't discovered
+      // by the TypedData plugin manager and/or weren't created by the
+      // EntityDeriver. In that case, this is a new definition and we'll just
+      // create the definition from defaults by using an empty array.
+      $values = \Drupal::typedDataManager()->getDefinition($data_type, FALSE);
+      $definition = new static(is_array($values) ? $values : []);
+
+      // Set the EntityType constraint using the given entity type ID.
       $definition->setEntityTypeId($entity_type_id);
+
+      // If available, set the Bundle constraint.
+      if ($bundle) {
+        $definition->setBundles([$bundle]);
+      }
+
+      return $definition;
     }
-    return $definition;
+
+    return new static([]);
   }
 
   /**
@@ -35,15 +57,10 @@ class EntityDataDefinition extends ComplexDataDefinitionBase implements EntityDa
     if ($parts[0] != 'entity') {
       throw new \InvalidArgumentException('Data type must be in the form of "entity:ENTITY_TYPE:BUNDLE."');
     }
-    $definition = static::create();
-    // Set the passed entity type and bundle.
-    if (isset($parts[1])) {
-      $definition->setEntityTypeId($parts[1]);
-    }
-    if (isset($parts[2])) {
-      $definition->setBundles(array($parts[2]));
-    }
-    return $definition;
+    return static::create(
+      isset($parts[1]) ? $parts[1] : NULL,
+      isset($parts[2]) ? $parts[2] : NULL
+    );
   }
 
   /**
@@ -55,7 +72,7 @@ class EntityDataDefinition extends ComplexDataDefinitionBase implements EntityDa
         // Return an empty array for entities that are not content entities.
         $entity_type_class = \Drupal::entityManager()->getDefinition($entity_type_id)->getClass();
         if (!in_array('Drupal\Core\Entity\FieldableEntityInterface', class_implements($entity_type_class))) {
-          $this->propertyDefinitions = array();
+          $this->propertyDefinitions = [];
         }
         else {
           // @todo: Add support for handling multiple bundles.
@@ -71,7 +88,7 @@ class EntityDataDefinition extends ComplexDataDefinitionBase implements EntityDa
       }
       else {
         // No entity type given.
-        $this->propertyDefinitions = array();
+        $this->propertyDefinitions = [];
       }
     }
     return $this->propertyDefinitions;
@@ -115,7 +132,7 @@ class EntityDataDefinition extends ComplexDataDefinitionBase implements EntityDa
    */
   public function getBundles() {
     $bundle = isset($this->definition['constraints']['Bundle']) ? $this->definition['constraints']['Bundle'] : NULL;
-    return is_string($bundle) ? array($bundle) : $bundle;
+    return is_string($bundle) ? [$bundle] : $bundle;
   }
 
   /**

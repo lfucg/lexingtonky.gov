@@ -47,7 +47,7 @@ abstract class MigrateTestBase extends KernelTestBase implements MigrateMessageI
    */
   protected $sourceDatabase;
 
-  public static $modules = array('migrate');
+  public static $modules = ['migrate'];
 
   /**
    * {@inheritdoc}
@@ -180,6 +180,7 @@ abstract class MigrateTestBase extends KernelTestBase implements MigrateMessageI
     array_walk($ids, function ($id) use ($manager) {
       // This is possibly a base plugin ID and we want to run all derivatives.
       $instances = $manager->createInstances($id);
+      $this->assertNotEmpty($instances, sprintf("No migrations created for id '%s'.", $id));
       array_walk($instances, [$this, 'executeMigration']);
     });
   }
@@ -201,7 +202,7 @@ abstract class MigrateTestBase extends KernelTestBase implements MigrateMessageI
    */
   public function startCollectingMessages() {
     $this->collectMessages = TRUE;
-    $this->migrateMessages = array();
+    $this->migrateMessages = [];
   }
 
   /**
@@ -230,7 +231,9 @@ abstract class MigrateTestBase extends KernelTestBase implements MigrateMessageI
       $migration = $this->getMigration($migration);
     }
     /** @var \Drupal\migrate\Plugin\MigrationInterface $migration */
-    $destination = array_map(function() { return NULL; }, $migration->getDestinationPlugin()->getIds());
+    $destination = array_map(function () {
+      return NULL;
+    }, $migration->getDestinationPlugin()->getIds());
     $row = new Row($row, $migration->getSourcePlugin()->getIds());
     $migration->getIdMap()->saveIdMapping($row, $destination, $status);
   }

@@ -2,7 +2,6 @@
 
 namespace Drupal\user\Plugin\migrate\destination;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -12,9 +11,56 @@ use Drupal\Core\Password\PasswordInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Plugin\migrate\destination\EntityContentBase;
 use Drupal\migrate\Row;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Provides a destination plugin for migrating user entities.
+ *
+ * Example:
+ *
+ * The example below migrates users and preserves original passwords from a
+ * source that has passwords as MD5 hashes without salt. The passwords will be
+ * salted and re-hashed before they are saved to the destination Drupal
+ * database. The MD5 hash used in the example is a hash of 'password'.
+ *
+ * The example uses the EmbeddedDataSource source plugin for the sake of
+ * simplicity. The mapping between old user_ids and new Drupal uids is saved in
+ * the migration map table.
+ * @code
+ * id: custom_user_migration
+ * label: Custom user migration
+ * source:
+ *   plugin: embedded_data
+ *   data_rows:
+ *     -
+ *       user_id: 1
+ *       name: johnsmith
+ *       mail: johnsmith@example.com
+ *       hash: '5f4dcc3b5aa765d61d8327deb882cf99'
+ *   ids:
+ *     user_id:
+ *       type: integer
+ * process:
+ *   name: name
+ *   mail: mail
+ *   pass: hash
+ *   status:
+ *     plugin: default_value
+ *     default_value: 1
+ * destination:
+ *   plugin: entity:user
+ *   md5_passwords: true
+ * @endcode
+ *
+ * For configuration options inherited from the parent class, refer to
+ * \Drupal\migrate\Plugin\migrate\destination\EntityContentBase.
+ *
+ * The example above is about migrating an MD5 password hash. For more examples
+ * on different password hash types and a list of other user properties, refer
+ * to the handbook documentation:
+ * @see https://www.drupal.org/docs/8/api/migrate-api/migrate-destination-plugins-examples/migrating-users
+ *
  * @MigrateDestination(
  *   id = "entity:user"
  * )
@@ -39,7 +85,7 @@ class EntityUser extends EntityContentBase {
    *   The plugin implementation definition.
    * @param \Drupal\migrate\Plugin\MigrationInterface $migration
    *   The migration.
-   * @param EntityStorageInterface $storage
+   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
    *   The storage for this entity type.
    * @param array $bundles
    *   The list of bundles this entity type has.
@@ -66,7 +112,7 @@ class EntityUser extends EntityContentBase {
       $plugin_definition,
       $migration,
       $container->get('entity.manager')->getStorage($entity_type),
-      array_keys($container->get('entity.manager')->getBundleInfo($entity_type)),
+      array_keys($container->get('entity_type.bundle.info')->getBundleInfo($entity_type)),
       $container->get('entity.manager'),
       $container->get('plugin.manager.field.field_type'),
       $container->get('password')
@@ -77,7 +123,7 @@ class EntityUser extends EntityContentBase {
    * {@inheritdoc}
    * @throws \Drupal\migrate\MigrateException
    */
-  public function import(Row $row, array $old_destination_id_values = array()) {
+  public function import(Row $row, array $old_destination_id_values = []) {
     // Do not overwrite the root account password.
     if ($row->getDestinationProperty('uid') == 1) {
       $row->removeDestinationProperty('pass');
@@ -88,7 +134,7 @@ class EntityUser extends EntityContentBase {
   /**
    * {@inheritdoc}
    */
-  protected function save(ContentEntityInterface $entity, array $old_destination_id_values = array()) {
+  protected function save(ContentEntityInterface $entity, array $old_destination_id_values = []) {
     // Do not overwrite the root account password.
     if ($entity->id() != 1) {
       // Set the pre_hashed password so that the PasswordItem field does not hash
@@ -122,9 +168,23 @@ class EntityUser extends EntityContentBase {
     if (is_array($name)) {
       $name = reset($name);
     }
-    if (Unicode::strlen($name) > USERNAME_MAX_LENGTH) {
-      $row->setDestinationProperty('name', Unicode::substr($name, 0, USERNAME_MAX_LENGTH));
+    if (mb_strlen($name) > UserInterface::USERNAME_MAX_LENGTH) {
+      $row->setDestinationProperty('name', mb_substr($name, 0, UserInterface::USERNAME_MAX_LENGTH));
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getHighestId() {
+    $highest_id = parent::getHighestId();
+
+    // Every Drupal site must have a user with UID of 1 and it's normal for
+    // migrations to overwrite this user.
+    if ($highest_id === 1) {
+      return 0;
+    }
+    return $highest_id;
   }
 
 }

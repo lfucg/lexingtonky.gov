@@ -1,0 +1,18 @@
+{% extends 'page.html.twig' %}
+{% block page_main %}
+<main role="main">
+  <section class="main browse lex-slab lex-slab-grey" aria-labelledby="services-and-information-label" id="services-and-information">
+    <div class="usa-grid-full lex-grid-full browse-panes {{ browse_level }}" data-state="{{ browse_level }}">
+      {% if browse_level == 'subsection' %}
+        <div id="subsection" class="pane">
+          <div class="pane-inner alphabetical">
+            {{ page.content }}
+            {{ page.after_content}}
+          </div>
+        </div>
+      {% endif %}
+      {{ page.sidebar }}
+    </div>
+  </section>
+</main>
+{% endblock %}

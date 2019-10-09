@@ -2,6 +2,8 @@
 
 namespace Drupal\Core\Template;
 
+use Twig\Node\CheckToStringNode;
+
 /**
  * A class that defines the Twig 'trans' tag for Drupal.
  *
@@ -18,12 +20,17 @@ class TwigNodeTrans extends \Twig_Node {
    * {@inheritdoc}
    */
   public function __construct(\Twig_Node $body, \Twig_Node $plural = NULL, \Twig_Node_Expression $count = NULL, \Twig_Node_Expression $options = NULL, $lineno, $tag = NULL) {
-    parent::__construct(array(
-      'count' => $count,
-      'body' => $body,
-      'plural' => $plural,
-      'options' => $options,
-    ), array(), $lineno, $tag);
+    $nodes['body'] = $body;
+    if ($count !== NULL) {
+      $nodes['count'] = $count;
+    }
+    if ($plural !== NULL) {
+      $nodes['plural'] = $plural;
+    }
+    if ($options !== NULL) {
+      $nodes['options'] = $options;
+    }
+    parent::__construct($nodes, [], $lineno, $tag);
   }
 
   /**
@@ -32,12 +39,10 @@ class TwigNodeTrans extends \Twig_Node {
   public function compile(\Twig_Compiler $compiler) {
     $compiler->addDebugInfo($this);
 
-    $options = $this->getNode('options');
-
     list($singular, $tokens) = $this->compileString($this->getNode('body'));
     $plural = NULL;
 
-    if (NULL !== $this->getNode('plural')) {
+    if ($this->hasNode('plural')) {
       list($plural, $pluralTokens) = $this->compileString($this->getNode('plural'));
       $tokens = array_merge($tokens, $pluralTokens);
     }
@@ -67,8 +72,8 @@ class TwigNodeTrans extends \Twig_Node {
     $compiler->raw(')');
 
     // Write any options passed.
-    if (!empty($options)) {
-      $compiler->raw(', ')->subcompile($options);
+    if ($this->hasNode('options')) {
+      $compiler->raw(', ')->subcompile($this->getNode('options'));
     }
 
     // Write function closure.
@@ -95,10 +100,10 @@ class TwigNodeTrans extends \Twig_Node {
    */
   protected function compileString(\Twig_Node $body) {
     if ($body instanceof \Twig_Node_Expression_Name || $body instanceof \Twig_Node_Expression_Constant || $body instanceof \Twig_Node_Expression_TempName) {
-      return array($body, array());
+      return [$body, []];
     }
 
-    $tokens = array();
+    $tokens = [];
     if (count($body)) {
       $text = '';
 
@@ -113,6 +118,9 @@ class TwigNodeTrans extends \Twig_Node {
             $n = $n->getNode('node');
           }
 
+          if ($n instanceof CheckToStringNode) {
+            $n = $n->getNode('expr');
+          }
           $args = $n;
 
           // Support TwigExtension->renderVar() function in chain.
@@ -134,8 +142,11 @@ class TwigNodeTrans extends \Twig_Node {
             }
             $args = $args->getNode('node');
           }
+          if ($args instanceof CheckToStringNode) {
+            $args = $args->getNode('expr');
+          }
           if ($args instanceof \Twig_Node_Expression_GetAttr) {
-            $argName = array();
+            $argName = [];
             // Reuse the incoming expression.
             $expr = $args;
             // Assemble a valid argument name by walking through the expression.
@@ -157,7 +168,7 @@ class TwigNodeTrans extends \Twig_Node {
             if (!is_null($args)) {
               $argName = $args->getAttribute('name');
             }
-            $expr = new \Twig_Node_Expression_Name($argName, $n->getLine());
+            $expr = new \Twig_Node_Expression_Name($argName, $n->getTemplateLine());
           }
           $placeholder = sprintf('%s%s', $argPrefix, $argName);
           $text .= $placeholder;
@@ -176,7 +187,10 @@ class TwigNodeTrans extends \Twig_Node {
       $text = $body->getAttribute('data');
     }
 
-    return array(new \Twig_Node(array(new \Twig_Node_Expression_Constant(trim($text), $body->getLine()))), $tokens);
+    return [
+      new \Twig_Node([new \Twig_Node_Expression_Constant(trim($text), $body->getTemplateLine())]),
+      $tokens,
+    ];
   }
 
 }

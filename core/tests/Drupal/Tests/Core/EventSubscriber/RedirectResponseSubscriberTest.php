@@ -11,7 +11,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -67,7 +66,7 @@ class RedirectResponseSubscriberTest extends UnitTestCase {
   /**
    * Test destination detection and redirection.
    *
-   * @param Request $request
+   * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object with destination query set.
    * @param string|bool $expected
    *   The expected target URL or FALSE.
@@ -82,7 +81,7 @@ class RedirectResponseSubscriberTest extends UnitTestCase {
     $request->headers->set('HOST', 'example.com');
 
     $listener = new RedirectResponseSubscriber($this->urlAssembler, $this->requestContext);
-    $dispatcher->addListener(KernelEvents::RESPONSE, array($listener, 'checkRedirectUrl'));
+    $dispatcher->addListener(KernelEvents::RESPONSE, [$listener, 'checkRedirectUrl']);
     $event = new FilterResponseEvent($kernel, $request, HttpKernelInterface::SUB_REQUEST, $response);
     $dispatcher->dispatch(KernelEvents::RESPONSE, $event);
 
@@ -101,22 +100,20 @@ class RedirectResponseSubscriberTest extends UnitTestCase {
    * @see \Drupal\Tests\Core\EventSubscriber\RedirectResponseSubscriberTest::testDestinationRedirect()
    */
   public static function providerTestDestinationRedirect() {
-    return array(
-      array(new Request(), FALSE),
-      array(new Request(array('destination' => 'test')), 'http://example.com/drupal/test'),
-      array(new Request(array('destination' => '/drupal/test')), 'http://example.com/drupal/test'),
-      array(new Request(array('destination' => 'example.com')), 'http://example.com/drupal/example.com'),
-      array(new Request(array('destination' => 'example:com')), 'http://example.com/drupal/example:com'),
-      array(new Request(array('destination' => 'javascript:alert(0)')), 'http://example.com/drupal/javascript:alert(0)'),
-      array(new Request(array('destination' => 'http://example.com/drupal/')), 'http://example.com/drupal/'),
-      array(new Request(array('destination' => 'http://example.com/drupal/test')), 'http://example.com/drupal/test'),
-    );
+    return [
+      [new Request(), FALSE],
+      [new Request(['destination' => 'test']), 'http://example.com/drupal/test'],
+      [new Request(['destination' => '/drupal/test']), 'http://example.com/drupal/test'],
+      [new Request(['destination' => 'example.com']), 'http://example.com/drupal/example.com'],
+      [new Request(['destination' => 'example:com']), 'http://example.com/drupal/example:com'],
+      [new Request(['destination' => 'javascript:alert(0)']), 'http://example.com/drupal/javascript:alert(0)'],
+      [new Request(['destination' => 'http://example.com/drupal/']), 'http://example.com/drupal/'],
+      [new Request(['destination' => 'http://example.com/drupal/test']), 'http://example.com/drupal/test'],
+    ];
   }
 
   /**
    * @dataProvider providerTestDestinationRedirectToExternalUrl
-   *
-   * @expectedException \PHPUnit_Framework_Error
    */
   public function testDestinationRedirectToExternalUrl($request, $expected) {
     $dispatcher = new EventDispatcher();
@@ -124,11 +121,10 @@ class RedirectResponseSubscriberTest extends UnitTestCase {
     $response = new RedirectResponse('http://other-example.com');
 
     $listener = new RedirectResponseSubscriber($this->urlAssembler, $this->requestContext);
-    $dispatcher->addListener(KernelEvents::RESPONSE, array($listener, 'checkRedirectUrl'));
+    $dispatcher->addListener(KernelEvents::RESPONSE, [$listener, 'checkRedirectUrl']);
     $event = new FilterResponseEvent($kernel, $request, HttpKernelInterface::SUB_REQUEST, $response);
+    $this->setExpectedException(\PHPUnit_Framework_Error::class);
     $dispatcher->dispatch(KernelEvents::RESPONSE, $event);
-
-    $this->assertEquals(400, $event->getResponse()->getStatusCode());
   }
 
   /**
@@ -142,7 +138,7 @@ class RedirectResponseSubscriberTest extends UnitTestCase {
     $request->headers->set('HOST', 'example.com');
 
     $listener = new RedirectResponseSubscriber($this->urlAssembler, $this->requestContext);
-    $dispatcher->addListener(KernelEvents::RESPONSE, array($listener, 'checkRedirectUrl'));
+    $dispatcher->addListener(KernelEvents::RESPONSE, [$listener, 'checkRedirectUrl']);
     $event = new FilterResponseEvent($kernel, $request, HttpKernelInterface::SUB_REQUEST, $response);
     $dispatcher->dispatch(KernelEvents::RESPONSE, $event);
 
@@ -165,8 +161,6 @@ class RedirectResponseSubscriberTest extends UnitTestCase {
   }
 
   /**
-   * @expectedException \PHPUnit_Framework_Error
-   *
    * @dataProvider providerTestDestinationRedirectWithInvalidUrl
    */
   public function testDestinationRedirectWithInvalidUrl(Request $request) {
@@ -175,11 +169,10 @@ class RedirectResponseSubscriberTest extends UnitTestCase {
     $response = new RedirectResponse('http://example.com/drupal');
 
     $listener = new RedirectResponseSubscriber($this->urlAssembler, $this->requestContext);
-    $dispatcher->addListener(KernelEvents::RESPONSE, array($listener, 'checkRedirectUrl'));
+    $dispatcher->addListener(KernelEvents::RESPONSE, [$listener, 'checkRedirectUrl']);
     $event = new FilterResponseEvent($kernel, $request, HttpKernelInterface::SUB_REQUEST, $response);
+    $this->setExpectedException(\PHPUnit_Framework_Error::class);
     $dispatcher->dispatch(KernelEvents::RESPONSE, $event);
-
-    $this->assertEquals(400, $event->getResponse()->getStatusCode());
   }
 
   /**
@@ -187,83 +180,13 @@ class RedirectResponseSubscriberTest extends UnitTestCase {
    */
   public function providerTestDestinationRedirectWithInvalidUrl() {
     $data = [];
-    $data[] = [new Request(array('destination' => '//example:com'))];
-    $data[] = [new Request(array('destination' => '//example:com/test'))];
+    $data[] = [new Request(['destination' => '//example:com'])];
+    $data[] = [new Request(['destination' => '//example:com/test'])];
     $data['absolute external url'] = [new Request(['destination' => 'http://example.com'])];
     $data['absolute external url with folder'] = [new Request(['destination' => 'http://example.ca/drupal'])];
     $data['path without drupal basepath'] = [new Request(['destination' => '/test'])];
     $data['path with URL'] = [new Request(['destination' => '/example.com'])];
     $data['path with URL and two slashes'] = [new Request(['destination' => '//example.com'])];
-
-    return $data;
-  }
-
-  /**
-   * Tests that $_GET only contain internal URLs.
-   *
-   * @covers ::sanitizeDestination
-   *
-   * @dataProvider providerTestSanitizeDestination
-   *
-   * @see \Drupal\Component\Utility\UrlHelper::isExternal
-   */
-  public function testSanitizeDestinationForGet($input, $output) {
-    $request = new Request();
-    $request->query->set('destination', $input);
-
-    $listener = new RedirectResponseSubscriber($this->urlAssembler, $this->requestContext);
-    $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
-    $event = new GetResponseEvent($kernel, $request, HttpKernelInterface::MASTER_REQUEST);
-
-    $dispatcher = new EventDispatcher();
-    $dispatcher->addListener(KernelEvents::REQUEST, [$listener, 'sanitizeDestination'], 100);
-    $dispatcher->dispatch(KernelEvents::REQUEST, $event);
-
-    $this->assertEquals($output, $request->query->get('destination'));
-  }
-
-  /**
-   * Tests that $_REQUEST['destination'] only contain internal URLs.
-   *
-   * @covers ::sanitizeDestination
-   *
-   * @dataProvider providerTestSanitizeDestination
-   *
-   * @see \Drupal\Component\Utility\UrlHelper::isExternal
-   */
-  public function testSanitizeDestinationForPost($input, $output) {
-    $request = new Request();
-    $request->request->set('destination', $input);
-
-    $listener = new RedirectResponseSubscriber($this->urlAssembler, $this->requestContext);
-    $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
-    $event = new GetResponseEvent($kernel, $request, HttpKernelInterface::MASTER_REQUEST);
-
-    $dispatcher = new EventDispatcher();
-    $dispatcher->addListener(KernelEvents::REQUEST, [$listener, 'sanitizeDestination'], 100);
-    $dispatcher->dispatch(KernelEvents::REQUEST, $event);
-
-    $this->assertEquals($output, $request->request->get('destination'));
-  }
-
-  /**
-   * Data provider for testSanitizeDestination().
-   */
-  public function providerTestSanitizeDestination() {
-    $data = [];
-    // Standard internal example node path is present in the 'destination'
-    // parameter.
-    $data[] = ['node', 'node'];
-    // Internal path with one leading slash is allowed.
-    $data[] = ['/example.com', '/example.com'];
-    // External URL without scheme is not allowed.
-    $data[] = ['//example.com/test', ''];
-    // Internal URL using a colon is allowed.
-    $data[] = ['example:test', 'example:test'];
-    // External URL is not allowed.
-    $data[] = ['http://example.com', ''];
-    // Javascript URL is allowed because it is treated as an internal URL.
-    $data[] = ['javascript:alert(0)', 'javascript:alert(0)'];
 
     return $data;
   }

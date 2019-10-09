@@ -7,6 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Form controller for search_embedded_form form.
+ *
+ * @internal
  */
 class SearchEmbeddedForm extends FormBase {
 
@@ -23,20 +25,20 @@ class SearchEmbeddedForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $count = \Drupal::state()->get('search_embedded_form.submit_count');
 
-    $form['name'] = array(
+    $form['name'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Your name'),
       '#maxlength' => 255,
       '#default_value' => '',
       '#required' => TRUE,
-      '#description' => $this->t('Times form has been submitted: %count', array('%count' => $count)),
-    );
+      '#description' => $this->t('Times form has been submitted: %count', ['%count' => $count]),
+    ];
 
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array(
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Send away'),
-    );
+    ];
 
     return $form;
   }
@@ -48,7 +50,7 @@ class SearchEmbeddedForm extends FormBase {
     $state = \Drupal::state();
     $submit_count = (int) $state->get('search_embedded_form.submit_count');
     $state->set('search_embedded_form.submit_count', $submit_count + 1);
-    drupal_set_message($this->t('Test form was submitted'));
+    $this->messenger()->addStatus($this->t('Test form was submitted'));
   }
 
 }

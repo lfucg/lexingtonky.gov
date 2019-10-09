@@ -12,8 +12,8 @@ dependencies:
     - lex
 id: contentfield
 theme: lex
-region: sidebar_second
-weight: -17
+region: sidebar
+weight: -19
 provider: null
 plugin: 'fieldblock:node'
 settings:

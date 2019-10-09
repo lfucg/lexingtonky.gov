@@ -1,0 +1,5 @@
+# Permissions for the addtoany module
+'administer addtoany':
+  title: 'Administer AddToAny'
+  description: 'Perform administration tasks for the AddToAny module.'
+  restrict access: TRUE

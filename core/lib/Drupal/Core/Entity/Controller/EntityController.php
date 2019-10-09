@@ -2,6 +2,7 @@
 
 namespace Drupal\Core\Entity\Controller;
 
+use Drupal\Core\Entity\EntityDescriptionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
@@ -176,7 +177,7 @@ class EntityController implements ContainerInjectionInterface {
    *   The entity type ID.
    *
    * @return string
-   *    The title for the entity add page.
+   *   The title for the entity add page.
    */
   public function addTitle($entity_type_id) {
     $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
@@ -194,7 +195,7 @@ class EntityController implements ContainerInjectionInterface {
    *   The name of the route parameter that holds the bundle.
    *
    * @return string
-   *    The title for the entity add page, if the bundle was found.
+   *   The title for the entity add page, if the bundle was found.
    */
   public function addBundleTitle(RouteMatchInterface $route_match, $entity_type_id, $bundle_parameter) {
     $bundles = $this->entityTypeBundleInfo->getBundleInfo($entity_type_id);
@@ -307,7 +308,7 @@ class EntityController implements ContainerInjectionInterface {
    *   The expanded array of bundle information.
    */
   protected function loadBundleDescriptions(array $bundles, EntityTypeInterface $bundle_entity_type) {
-    if (!$bundle_entity_type->isSubclassOf('\Drupal\Core\Entity\EntityDescriptionInterface')) {
+    if (!$bundle_entity_type->entityClassImplements(EntityDescriptionInterface::class)) {
       return $bundles;
     }
     $bundle_names = array_keys($bundles);

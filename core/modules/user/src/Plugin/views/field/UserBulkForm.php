@@ -3,8 +3,8 @@
 namespace Drupal\user\Plugin\views\field;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\system\Plugin\views\field\BulkForm;
 use Drupal\user\UserInterface;
+use Drupal\views\Plugin\views\field\BulkForm;
 
 /**
  * Defines a user operations bulk form element.
@@ -25,7 +25,7 @@ class UserBulkForm extends BulkForm {
       foreach ($this->view->result as $row_index => $result) {
         $account = $result->_entity;
         if ($account instanceof UserInterface) {
-          $form[$this->options['id']][$row_index]['#title'] = $this->t('Update the user %name', array('%name' => $account->label()));
+          $form[$this->options['id']][$row_index]['#title'] = $this->t('Update the user %name', ['%name' => $account->label()]);
         }
       }
     }

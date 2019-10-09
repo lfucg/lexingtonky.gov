@@ -1,0 +1,24 @@
+uuid: a722dfa4-85d7-454f-9a93-3a06c4cde92c
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_resources_list
+field_name: field_resources_list
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: 'ONE Lexington'
+      label: 'ONE Lexington'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -23,11 +23,17 @@ chosen.settings:
     disable_search:
       type: boolean
       label: 'Disable search box'
+    allow_single_deselect:
+      type: boolean
+      label: 'Allow deselect on single selects.'
     disabled_themes:
       type: sequence
       label: 'Disable the default Chosen theme for the following themes'
       sequence:
         type: string
+    chosen_include:
+      type: integer
+      label: 'Use chosen for admin pages and/or front end pages'
     placeholder_text_multiple:
       type: label
       label: 'Placeholder text of multiple selects'

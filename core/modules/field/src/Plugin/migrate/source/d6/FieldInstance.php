@@ -10,7 +10,7 @@ use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
  *
  * @MigrateSource(
  *   id = "d6_field_instance",
- *   source_provider = "content"
+ *   source_module = "content"
  * )
  */
 class FieldInstance extends DrupalSqlBase {
@@ -25,6 +25,8 @@ class FieldInstance extends DrupalSqlBase {
     }
     $query->join('content_node_field', 'cnf', 'cnf.field_name = cnfi.field_name');
     $query->fields('cnf');
+    $query->orderBy('cnfi.field_name');
+    $query->orderBy('cnfi.type_name');
 
     return $query;
   }
@@ -33,7 +35,7 @@ class FieldInstance extends DrupalSqlBase {
    * {@inheritdoc}
    */
   public function fields() {
-    return array(
+    return [
       'field_name' => $this->t('The machine name of field.'),
       'type_name' => $this->t('Content type where this field is in use.'),
       'weight' => $this->t('Weight.'),
@@ -45,7 +47,7 @@ class FieldInstance extends DrupalSqlBase {
       'widget_module' => $this->t('Module that implements widget.'),
       'widget_active' => $this->t('Status of widget'),
       'module' => $this->t('The module that provides the field.'),
-    );
+    ];
   }
 
   /**
@@ -59,6 +61,17 @@ class FieldInstance extends DrupalSqlBase {
     $row->setSourceProperty('widget_settings', $widget_settings);
     $row->setSourceProperty('display_settings', $display_settings);
     $row->setSourceProperty('global_settings', $global_settings);
+
+    // Determine the translatable setting.
+    $translatable = TRUE;
+    $synchronized_fields = $this->variableGet('i18nsync_nodeapi_' . $row->getSourceProperty('type_name'), NULL);
+    if ($synchronized_fields) {
+      if (in_array($row->getSourceProperty('field_name'), $synchronized_fields)) {
+        $translatable = FALSE;
+      }
+    }
+    $row->setSourceProperty('translatable', $translatable);
+
     return parent::prepareRow($row);
   }
 
@@ -66,15 +79,15 @@ class FieldInstance extends DrupalSqlBase {
    * {@inheritdoc}
    */
   public function getIds() {
-    $ids = array(
-      'field_name' => array(
+    $ids = [
+      'field_name' => [
         'type' => 'string',
         'alias' => 'cnfi',
-      ),
-      'type_name' => array(
+      ],
+      'type_name' => [
         'type' => 'string',
-      ),
-    );
+      ],
+    ];
     return $ids;
   }
 

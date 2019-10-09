@@ -1,0 +1,33 @@
+uuid: ba3e8182-7fb6-4fb3-a13e-9db8e15dbdc6
+langcode: en
+status: true
+dependencies:
+  module:
+    - lex_calendar
+    - node
+  theme:
+    - lex
+id: meetingsblock
+theme: lex
+region: sidebar
+weight: -17
+provider: null
+plugin: Lex_calendar_list_block
+settings:
+  id: Lex_calendar_list_block
+  label: Meetings
+  provider: lex_calendar
+  label_display: visible
+  display_limit: '5'
+  content_type: meeting
+  show_all: 'no'
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      organization_page: organization_page
+      board_commission: board_commission
+      page: page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

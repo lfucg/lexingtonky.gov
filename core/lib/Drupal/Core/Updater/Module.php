@@ -49,8 +49,9 @@ class Module extends Updater implements UpdaterInterface {
   public function isInstalled() {
     // Check if the module exists in the file system, regardless of whether it
     // is enabled or not.
-    $modules = \Drupal::state()->get('system.module.files', array());
-    return isset($modules[$this->name]);
+    /** @var \Drupal\Core\Extension\ExtensionList $module_extension_list */
+    $module_extension_list = \Drupal::service('extension.list.module');
+    return $module_extension_list->exists($this->name);
   }
 
   /**
@@ -84,12 +85,12 @@ class Module extends Updater implements UpdaterInterface {
     require_once DRUPAL_ROOT . '/core/includes/update.inc';
 
     if (!self::canUpdate($this->name)) {
-      return array();
+      return [];
     }
     module_load_include('install', $this->name);
 
     if (!$updates = drupal_get_schema_versions($this->name)) {
-      return array();
+      return [];
     }
     $modules_with_updates = update_get_update_list();
     if ($updates = $modules_with_updates[$this->name]) {
@@ -97,14 +98,14 @@ class Module extends Updater implements UpdaterInterface {
         return $updates['pending'];
       }
     }
-    return array();
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
   public function postInstallTasks() {
-    // Since this is being called outsite of the primary front controller,
+    // Since this is being called outside of the primary front controller,
     // the base_url needs to be set explicitly to ensure that links are
     // relative to the site root.
     // @todo Simplify with https://www.drupal.org/node/2548095

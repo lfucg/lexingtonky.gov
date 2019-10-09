@@ -56,9 +56,9 @@ class EntityUrlLanguageTest extends LanguageTestBase {
    * Ensures that entity URLs in a language have the right language prefix.
    */
   public function testEntityUrlLanguage() {
-    $this->assertTrue(strpos($this->entity->urlInfo()->toString(), '/en/entity_test/' . $this->entity->id()) !== FALSE);
-    $this->assertTrue(strpos($this->entity->getTranslation('es')->urlInfo()->toString(), '/es/entity_test/' . $this->entity->id()) !== FALSE);
-    $this->assertTrue(strpos($this->entity->getTranslation('fr')->urlInfo()->toString(), '/fr/entity_test/' . $this->entity->id()) !== FALSE);
+    $this->assertTrue(strpos($this->entity->toUrl()->toString(), '/en/entity_test/' . $this->entity->id()) !== FALSE);
+    $this->assertTrue(strpos($this->entity->getTranslation('es')->toUrl()->toString(), '/es/entity_test/' . $this->entity->id()) !== FALSE);
+    $this->assertTrue(strpos($this->entity->getTranslation('fr')->toUrl()->toString(), '/fr/entity_test/' . $this->entity->id()) !== FALSE);
   }
 
   /**
@@ -74,7 +74,7 @@ class EntityUrlLanguageTest extends LanguageTestBase {
     $config->set('configurable', [LanguageInterface::TYPE_INTERFACE, LanguageInterface::TYPE_CONTENT]);
     $config->set('negotiation.language_content.enabled', [
       LanguageNegotiationContentEntity::METHOD_ID => 0,
-      LanguageNegotiationUrl::METHOD_ID => 1
+      LanguageNegotiationUrl::METHOD_ID => 1,
     ]);
     $config->save();
 
@@ -89,16 +89,16 @@ class EntityUrlLanguageTest extends LanguageTestBase {
     // The method language-content-entity should run before language-url and
     // append query parameter for the content language and prevent language-url
     // from overwriting the url.
-    $this->assertTrue(strpos($this->entity->urlInfo('canonical')->toString(), '/en/entity_test/' . $this->entity->id() . '?' . LanguageNegotiationContentEntity::QUERY_PARAMETER . '=en') !== FALSE);
-    $this->assertTrue(strpos($this->entity->getTranslation('es')->urlInfo('canonical')->toString(), '/en/entity_test/' . $this->entity->id() . '?' . LanguageNegotiationContentEntity::QUERY_PARAMETER . '=es') !== FALSE);
-    $this->assertTrue(strpos($this->entity->getTranslation('fr')->urlInfo('canonical')->toString(), '/en/entity_test/' . $this->entity->id() . '?' . LanguageNegotiationContentEntity::QUERY_PARAMETER . '=fr') !== FALSE);
+    $this->assertTrue(strpos($this->entity->toUrl('canonical')->toString(), '/en/entity_test/' . $this->entity->id() . '?' . LanguageNegotiationContentEntity::QUERY_PARAMETER . '=en') !== FALSE);
+    $this->assertTrue(strpos($this->entity->getTranslation('es')->toUrl('canonical')->toString(), '/en/entity_test/' . $this->entity->id() . '?' . LanguageNegotiationContentEntity::QUERY_PARAMETER . '=es') !== FALSE);
+    $this->assertTrue(strpos($this->entity->getTranslation('fr')->toUrl('canonical')->toString(), '/en/entity_test/' . $this->entity->id() . '?' . LanguageNegotiationContentEntity::QUERY_PARAMETER . '=fr') !== FALSE);
 
     // Define the method language-url with a higher priority than
     // language-content-entity. This configuration should match the default one,
     // where the language-content-entity is turned off.
     $config->set('negotiation.language_content.enabled', [
       LanguageNegotiationUrl::METHOD_ID => 0,
-      LanguageNegotiationContentEntity::METHOD_ID => 1
+      LanguageNegotiationContentEntity::METHOD_ID => 1,
     ]);
     $config->save();
 

@@ -2,22 +2,22 @@
 
 namespace Drupal\serialization\Normalizer;
 
+use Drupal\Component\Render\MarkupInterface;
+
 /**
  * Normalizes MarkupInterface objects into a string.
  */
 class MarkupNormalizer extends NormalizerBase {
 
   /**
-   * The interface or class that this Normalizer supports.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  protected $supportedInterfaceOrClass = array('Drupal\Component\Render\MarkupInterface');
+  protected $supportedInterfaceOrClass = MarkupInterface::class;
 
   /**
    * {@inheritdoc}
    */
-  public function normalize($object, $format = NULL, array $context = array()) {
+  public function normalize($object, $format = NULL, array $context = []) {
     return (string) $object;
   }
 

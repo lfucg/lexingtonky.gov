@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 /*
- * This file is part of the Diff package.
+ * This file is part of sebastian/diff.
  *
  * (c) Sebastian Bergmann <sebastian@phpunit.de>
  *
@@ -10,15 +10,7 @@
 
 namespace SebastianBergmann\Diff;
 
-/**
- * @package    Diff
- * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @author     Kore Nordmann <mail@kore-nordmann.de>
- * @copyright  Sebastian Bergmann <sebastian@phpunit.de>
- * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @link       http://www.github.com/sebastianbergmann/diff
- */
-class Diff
+final class Diff
 {
     /**
      * @var string
@@ -40,25 +32,19 @@ class Diff
      * @param string  $to
      * @param Chunk[] $chunks
      */
-    public function __construct($from, $to, array $chunks = array())
+    public function __construct(string $from, string $to, array $chunks = [])
     {
         $this->from   = $from;
         $this->to     = $to;
         $this->chunks = $chunks;
     }
 
-    /**
-     * @return string
-     */
-    public function getFrom()
+    public function getFrom(): string
     {
         return $this->from;
     }
 
-    /**
-     * @return string
-     */
-    public function getTo()
+    public function getTo(): string
     {
         return $this->to;
     }
@@ -66,7 +52,7 @@ class Diff
     /**
      * @return Chunk[]
      */
-    public function getChunks()
+    public function getChunks(): array
     {
         return $this->chunks;
     }

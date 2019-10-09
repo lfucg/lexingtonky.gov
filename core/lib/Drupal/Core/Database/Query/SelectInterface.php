@@ -95,7 +95,7 @@ interface SelectInterface extends ConditionInterface, AlterableInterface, Extend
    * Note that this method must be called by reference as well:
    *
    * @code
-   * $fields =& $query->getTables();
+   * $tables =& $query->getTables();
    * @endcode
    *
    * @return
@@ -214,7 +214,7 @@ interface SelectInterface extends ConditionInterface, AlterableInterface, Extend
    * @return \Drupal\Core\Database\Query\SelectInterface
    *   The called object.
    */
-  public function fields($table_alias, array $fields = array());
+  public function fields($table_alias, array $fields = []);
 
   /**
    * Adds an expression to the list of "fields" to be SELECTed.
@@ -235,7 +235,7 @@ interface SelectInterface extends ConditionInterface, AlterableInterface, Extend
    * @return
    *   The unique alias that was assigned for this expression.
    */
-  public function addExpression($expression, $alias = NULL, $arguments = array());
+  public function addExpression($expression, $alias = NULL, $arguments = []);
 
   /**
    * Default Join against another table in the database.
@@ -263,7 +263,7 @@ interface SelectInterface extends ConditionInterface, AlterableInterface, Extend
    * @return
    *   The unique alias that was assigned for this table.
    */
-  public function join($table, $alias = NULL, $condition = NULL, $arguments = array());
+  public function join($table, $alias = NULL, $condition = NULL, $arguments = []);
 
   /**
    * Inner Join against another table in the database.
@@ -289,7 +289,7 @@ interface SelectInterface extends ConditionInterface, AlterableInterface, Extend
    * @return
    *   The unique alias that was assigned for this table.
    */
-  public function innerJoin($table, $alias = NULL, $condition = NULL, $arguments = array());
+  public function innerJoin($table, $alias = NULL, $condition = NULL, $arguments = []);
 
   /**
    * Left Outer Join against another table in the database.
@@ -315,7 +315,7 @@ interface SelectInterface extends ConditionInterface, AlterableInterface, Extend
    * @return
    *   The unique alias that was assigned for this table.
    */
-  public function leftJoin($table, $alias = NULL, $condition = NULL, $arguments = array());
+  public function leftJoin($table, $alias = NULL, $condition = NULL, $arguments = []);
 
   /**
    * Right Outer Join against another table in the database.
@@ -346,8 +346,10 @@ interface SelectInterface extends ConditionInterface, AlterableInterface, Extend
    *   db_query('A')->rightJoin('B') is identical to
    *   db_query('B')->leftJoin('A'). This functionality has been deprecated
    *   because SQLite does not support it.
+   *
+   * @see https://www.drupal.org/node/2765249
    */
-  public function rightJoin($table, $alias = NULL, $condition = NULL, $arguments = array());
+  public function rightJoin($table, $alias = NULL, $condition = NULL, $arguments = []);
 
   /**
    * Join against another table in the database.
@@ -380,7 +382,7 @@ interface SelectInterface extends ConditionInterface, AlterableInterface, Extend
    * @return
    *   The unique alias that was assigned for this table.
    */
-  public function addJoin($type, $table, $alias = NULL, $condition = NULL, $arguments = array());
+  public function addJoin($type, $table, $alias = NULL, $condition = NULL, $arguments = []);
 
   /**
    * Orders the result set by a given field.
@@ -402,10 +404,10 @@ interface SelectInterface extends ConditionInterface, AlterableInterface, Extend
    *   on.
    *
    *   Example:
-   *   <code>
+   *   @code
    *   $query->addExpression('SUBSTRING(thread, 1, (LENGTH(thread) - 1))', 'order_field');
    *   $query->orderBy('order_field', 'ASC');
-   *   </code>
+   *   @endcode
    * @param $direction
    *   The direction to sort. Legal values are "ASC" and "DESC". Any other value
    *   will be converted to "ASC".
@@ -574,7 +576,7 @@ interface SelectInterface extends ConditionInterface, AlterableInterface, Extend
    *
    * @return $this
    */
-  public function having($snippet, $args = array());
+  public function having($snippet, $args = []);
 
   /**
    * Compiles the HAVING clause for later retrieval.

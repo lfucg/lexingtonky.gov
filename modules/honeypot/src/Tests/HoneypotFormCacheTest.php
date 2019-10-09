@@ -1,13 +1,7 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\honeypot\Tests\HoneypotFormCacheTest.
- */
-
 namespace Drupal\honeypot\Tests;
 
-use Drupal\Core\Url;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\contact\Entity\ContactForm;
@@ -28,9 +22,10 @@ class HoneypotFormCacheTest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('honeypot', 'node', 'comment', 'contact');
+  public static $modules = ['honeypot', 'node', 'comment', 'contact'];
 
   protected $node;
+
   /**
    * {@inheritdoc}
    */
@@ -78,8 +73,9 @@ class HoneypotFormCacheTest extends WebTestBase {
     $contact_settings->set('default_form', 'feedback')->save();
 
     // Give anonymous users permission to view contact form.
-    Role::load(RoleInterface::ANONYMOUS_ID)->grantPermission('access site-wide contact form')
-     ->save();
+    Role::load(RoleInterface::ANONYMOUS_ID)
+      ->grantPermission('access site-wide contact form')
+      ->save();
 
     // Prime the cache.
     $this->drupalGet('contact/feedback');
@@ -89,13 +85,18 @@ class HoneypotFormCacheTest extends WebTestBase {
     $this->assertEqual($this->drupalGetHeader('X-Drupal-Cache'), '', 'Page was not cached.');
 
     // Disable time limit.
-    $honeypot_config = \Drupal::configFactory()->getEditable('honeypot.settings')->set('time_limit', 0)->save();
+    \Drupal::configFactory()->getEditable('honeypot.settings')->set('time_limit', 0)->save();
 
     // Prime the cache.
     $this->drupalGet('contact/feedback');
     // Test on cache header with time limit disabled, cache should hit.
     $this->drupalGet('contact/feedback');
     $this->assertEqual($this->drupalGetHeader('X-Drupal-Cache'), 'HIT', 'Page was cached.');
+
+    // Re-enable the time limit, we should not be seeing the cached version.
+    \Drupal::configFactory()->getEditable('honeypot.settings')->set('time_limit', 5)->save();
+    $this->drupalGet('contact/feedback');
+    $this->assertEqual($this->drupalGetHeader('X-Drupal-Cache'), '', 'Page was not cached.');
   }
 
   /**
@@ -109,8 +110,10 @@ class HoneypotFormCacheTest extends WebTestBase {
     ]);
 
     // Give anonymous users permission to post comments.
-    Role::load(RoleInterface::ANONYMOUS_ID)->grantPermission('post comments')->grantPermission('access comments')
-     ->save();
+    Role::load(RoleInterface::ANONYMOUS_ID)
+      ->grantPermission('post comments')
+      ->grantPermission('access comments')
+      ->save();
 
     // Prime the cache.
     $this->drupalGet('node/' . $this->node->id());
@@ -120,7 +123,7 @@ class HoneypotFormCacheTest extends WebTestBase {
     $this->assertEqual($this->drupalGetHeader('X-Drupal-Cache'), '', 'Page was not cached.');
 
     // Disable time limit.
-    $honeypot_config = \Drupal::configFactory()->getEditable('honeypot.settings')->set('time_limit', 0)->save();
+    \Drupal::configFactory()->getEditable('honeypot.settings')->set('time_limit', 0)->save();
 
     // Prime the cache.
     $this->drupalGet('node/' . $this->node->id());

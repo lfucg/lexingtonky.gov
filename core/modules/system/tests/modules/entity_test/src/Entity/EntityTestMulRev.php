@@ -2,6 +2,9 @@
 
 namespace Drupal\entity_test\Entity;
 
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+
 /**
  * Defines the test entity class.
  *
@@ -27,6 +30,7 @@ namespace Drupal\entity_test\Entity;
  *   revision_data_table = "entity_test_mulrev_property_revision",
  *   admin_permission = "administer entity_test content",
  *   translatable = TRUE,
+ *   show_revision_ui = TRUE,
  *   entity_keys = {
  *     "id" = "id",
  *     "uuid" = "uuid",
@@ -45,5 +49,19 @@ namespace Drupal\entity_test\Entity;
  * )
  */
 class EntityTestMulRev extends EntityTestRev {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    $fields = parent::baseFieldDefinitions($entity_type);
+
+    $fields['non_mul_field'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Non translatable'))
+      ->setDescription(t('A non-translatable string field'))
+      ->setRevisionable(TRUE);
+
+    return $fields;
+  }
 
 }

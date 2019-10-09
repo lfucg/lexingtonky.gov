@@ -7,6 +7,8 @@ use Drupal\Core\Url;
 
 /**
  * Provides a form for deleting a feed.
+ *
+ * @internal
  */
 class FeedDeleteForm extends ContentEntityDeleteForm {
 
@@ -28,9 +30,9 @@ class FeedDeleteForm extends ContentEntityDeleteForm {
    * {@inheritdoc}
    */
   protected function getDeletionMessage() {
-    return $this->t('The feed %label has been deleted.', array(
+    return $this->t('The feed %label has been deleted.', [
       '%label' => $this->entity->label(),
-    ));
+    ]);
   }
 
 }

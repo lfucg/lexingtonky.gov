@@ -9,8 +9,8 @@ is_admin: null
 permissions:
   - 'create final_order content'
   - 'delete any final_order content'
-  - 'delete own final_order content'
   - 'delete final_order revisions'
+  - 'delete own final_order content'
   - 'edit any final_order content'
   - 'edit own final_order content'
   - 'revert final_order revisions'

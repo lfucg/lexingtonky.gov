@@ -1,0 +1,6 @@
+services:
+  lex_themecontrol.theme.negotiator.default:
+    class: Drupal\lex_themecontrol\LexThemeNegotiator
+    arguments: ['@config.factory']
+    tags:
+      - { name: theme_negotiator, priority: -60 }

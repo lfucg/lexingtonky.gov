@@ -1,0 +1,79 @@
+{#
+/**
+ * @file
+ * Root Page Layout schema.  Other page layouts, such as the homepage, extend
+ * from this base and override the blocks seen here.
+
+ * - content_attributes (added by City of Lexington)
+ * - attributes.layout_class (added by City of Lexington for fullbleed layout)
+ *
+ * NOTE: Region names are sometimes misleading for backwards compatibility
+ * reasons. See the info.yml of the theme to see what machine name links to
+ * which admin displayed theme.
+ */
+#}
+{% block page_notices %}
+<div id="top-alert">
+  {{ page.notices }}
+</div>
+{% endblock %}
+
+{% block page_header %}
+  {% include "@components/components/header.twig" with { menu: page.sitemast } %}
+{% endblock %}
+
+{# {% block page_hero %}
+  {% block hero_start %}
+    {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
+      {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
+      {% set hero_alt = node.field_lex_custom_banner_image.alt %}
+      <div class="lex-hero" style="background-image: url({{ hero }})">
+          <img src="{{ hero }}" alt="{{ hero_alt }}">
+    {% else %}
+      {{ drupal_view('headers', 'block_2') }}
+    {% endif %}
+  {% endblock %}
+    <div>
+      {% block page_hero_body %}
+        {{ page.hero }}
+      {% endblock %}
+    </div>
+  </div>
+{% endblock %} #}
+{% block page_breadcrumb %}
+{{ page.breadcrumb }}
+{% endblock %}
+
+{% block page_main %}
+<a id="main-content" name="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
+<main role="main">
+  <div>
+  {% block page_title_main %}
+    {{ page.title }}
+  {% endblock %}
+  {% block content %}
+    {{ page.content }}
+  {% endblock %}
+  {% block after_content %}
+    {{ page.after_content }}
+  {% endblock %}
+  </div>
+  {% block sidebar %}
+  {% if page.sidebar is not empty %}
+  <div>
+    {{ page.sidebar }}
+  </div>
+  {% endif %}
+  {% endblock %}
+</main>
+{% endblock %}
+
+{% block page_feedback %}
+  {{ page.feedback }}
+{% endblock %}
+
+<footer>
+{% block page_footer %}
+  {{ page.footer }}
+{% endblock %}
+</footer>

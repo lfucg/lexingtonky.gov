@@ -2,12 +2,12 @@
 
 namespace Drupal\taxonomy\Entity;
 
-use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\Core\Entity\EntityChangedTrait;
+use Drupal\Core\Entity\EditorialContentEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\taxonomy\TermInterface;
+use Drupal\user\StatusItem;
 
 /**
  * Defines the taxonomy term entity.
@@ -15,11 +15,19 @@ use Drupal\taxonomy\TermInterface;
  * @ContentEntityType(
  *   id = "taxonomy_term",
  *   label = @Translation("Taxonomy term"),
+ *   label_collection = @Translation("Taxonomy terms"),
+ *   label_singular = @Translation("taxonomy term"),
+ *   label_plural = @Translation("taxonomy terms"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count taxonomy term",
+ *     plural = "@count taxonomy terms",
+ *   ),
  *   bundle_label = @Translation("Vocabulary"),
  *   handlers = {
  *     "storage" = "Drupal\taxonomy\TermStorage",
  *     "storage_schema" = "Drupal\taxonomy\TermStorageSchema",
- *     "view_builder" = "Drupal\taxonomy\TermViewBuilder",
+ *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
+ *     "list_builder" = "Drupal\Core\Entity\EntityListBuilder",
  *     "access" = "Drupal\taxonomy\TermAccessControlHandler",
  *     "views_data" = "Drupal\taxonomy\TermViewsData",
  *     "form" = {
@@ -30,14 +38,23 @@ use Drupal\taxonomy\TermInterface;
  *   },
  *   base_table = "taxonomy_term_data",
  *   data_table = "taxonomy_term_field_data",
+ *   revision_table = "taxonomy_term_revision",
+ *   revision_data_table = "taxonomy_term_field_revision",
  *   uri_callback = "taxonomy_term_uri",
  *   translatable = TRUE,
  *   entity_keys = {
  *     "id" = "tid",
+ *     "revision" = "revision_id",
  *     "bundle" = "vid",
  *     "label" = "name",
  *     "langcode" = "langcode",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "published" = "status",
+ *   },
+ *   revision_metadata_keys = {
+ *     "revision_user" = "revision_user",
+ *     "revision_created" = "revision_created",
+ *     "revision_log_message" = "revision_log_message",
  *   },
  *   bundle_entity_type = "taxonomy_vocabulary",
  *   field_ui_base_route = "entity.taxonomy_vocabulary.overview_form",
@@ -46,13 +63,15 @@ use Drupal\taxonomy\TermInterface;
  *     "canonical" = "/taxonomy/term/{taxonomy_term}",
  *     "delete-form" = "/taxonomy/term/{taxonomy_term}/delete",
  *     "edit-form" = "/taxonomy/term/{taxonomy_term}/edit",
+ *     "create" = "/taxonomy/term",
  *   },
- *   permission_granularity = "bundle"
+ *   permission_granularity = "bundle",
+ *   constraints = {
+ *     "TaxonomyHierarchy" = {}
+ *   }
  * )
  */
-class Term extends ContentEntityBase implements TermInterface {
-
-  use EntityChangedTrait;
+class Term extends EditorialContentEntityBase implements TermInterface {
 
   /**
    * {@inheritdoc}
@@ -61,39 +80,42 @@ class Term extends ContentEntityBase implements TermInterface {
     parent::postDelete($storage, $entities);
 
     // See if any of the term's children are about to be become orphans.
-    $orphans = array();
-    foreach (array_keys($entities) as $tid) {
-      if ($children = $storage->loadChildren($tid)) {
+    $orphans = [];
+    /** @var \Drupal\taxonomy\TermInterface $term */
+    foreach ($entities as $tid => $term) {
+      if ($children = $storage->getChildren($term)) {
+        /** @var \Drupal\taxonomy\TermInterface $child */
         foreach ($children as $child) {
+          $parent = $child->get('parent');
+          // Update child parents item list.
+          $parent->filter(function ($item) use ($tid) {
+            return $item->target_id != $tid;
+          });
+
           // If the term has multiple parents, we don't delete it.
-          $parents = $storage->loadParents($child->id());
-          if (empty($parents)) {
-            $orphans[] = $child->id();
+          if ($parent->count()) {
+            $child->save();
+          }
+          else {
+            $orphans[] = $child;
           }
         }
       }
     }
 
-    // Delete term hierarchy information after looking up orphans but before
-    // deleting them so that their children/parent information is consistent.
-    $storage->deleteTermHierarchy(array_keys($entities));
-
     if (!empty($orphans)) {
-      entity_delete_multiple('taxonomy_term', $orphans);
+      $storage->delete($orphans);
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
-    parent::postSave($storage, $update);
-
-    // Only change the parents if a value is set, keep the existing values if
-    // not.
-    if (isset($this->parent->target_id)) {
-      $storage->deleteTermHierarchy(array($this->id()));
-      $storage->updateTermHierarchy($this);
+  public function preSave(EntityStorageInterface $storage) {
+    parent::preSave($storage);
+    // Terms with no parents are mandatory children of <root>.
+    if (!$this->get('parent')->count()) {
+      $this->parent->target_id = 0;
     }
   }
 
@@ -103,6 +125,10 @@ class Term extends ContentEntityBase implements TermInterface {
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     /** @var \Drupal\Core\Field\BaseFieldDefinition[] $fields */
     $fields = parent::baseFieldDefinitions($entity_type);
+
+    // @todo Remove the usage of StatusItem in
+    //   https://www.drupal.org/project/drupal/issues/2936864.
+    $fields['status']->getItemDefinition()->setClass(StatusItem::class);
 
     $fields['tid']->setLabel(t('Term ID'))
       ->setDescription(t('The term ID.'));
@@ -116,35 +142,35 @@ class Term extends ContentEntityBase implements TermInterface {
 
     $fields['name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Name'))
-      ->setDescription(t('The term name.'))
       ->setTranslatable(TRUE)
+      ->setRevisionable(TRUE)
       ->setRequired(TRUE)
       ->setSetting('max_length', 255)
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'string',
         'weight' => -5,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -5,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['description'] = BaseFieldDefinition::create('text_long')
       ->setLabel(t('Description'))
-      ->setDescription(t('A description of the term.'))
       ->setTranslatable(TRUE)
-      ->setDisplayOptions('view', array(
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'text_default',
         'weight' => 0,
-      ))
+      ])
       ->setDisplayConfigurable('view', TRUE)
-      ->setDisplayOptions('form', array(
+      ->setDisplayOptions('form', [
         'type' => 'text_textfield',
         'weight' => 0,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['weight'] = BaseFieldDefinition::create('integer')
@@ -156,14 +182,30 @@ class Term extends ContentEntityBase implements TermInterface {
       ->setLabel(t('Term Parents'))
       ->setDescription(t('The parents of this term.'))
       ->setSetting('target_type', 'taxonomy_term')
-      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
-      ->setCustomStorage(TRUE);
+      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED);
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the term was last edited.'))
-      ->setTranslatable(TRUE);
+      ->setTranslatable(TRUE)
+      ->setRevisionable(TRUE);
 
+    // @todo Keep this field hidden until we have a revision UI for terms.
+    // @see https://www.drupal.org/project/drupal/issues/2936995
+    $fields['revision_log_message']->setDisplayOptions('form', [
+      'region' => 'hidden',
+    ]);
+
+    return $fields;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function bundleFieldDefinitions(EntityTypeInterface $entity_type, $bundle, array $base_field_definitions) {
+    // Only terms in the same bundle can be a parent.
+    $fields['parent'] = clone $base_field_definitions['parent'];
+    $fields['parent']->setSetting('handler_settings', ['target_bundles' => [$bundle => $bundle]]);
     return $fields;
   }
 
@@ -231,7 +273,8 @@ class Term extends ContentEntityBase implements TermInterface {
    * {@inheritdoc}
    */
   public function getVocabularyId() {
-    return $this->get('vid')->target_id;
+    @trigger_error('The ' . __METHOD__ . ' method is deprecated since version 8.4.0 and will be removed before 9.0.0. Use ' . __CLASS__ . '::bundle() instead to get the vocabulary ID.', E_USER_DEPRECATED);
+    return $this->bundle();
   }
 
 }

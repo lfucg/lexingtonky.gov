@@ -2,25 +2,29 @@
 
 namespace Drupal\taxonomy\Tests;
 
-use Drupal\Component\Utility\Unicode;
+@trigger_error(__NAMESPACE__ . '\TaxonomyTestTrait is deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0. Instead, use \Drupal\Tests\taxonomy\Functional\TaxonomyTestTrait', E_USER_DEPRECATED);
+
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\taxonomy\Entity\Term;
 
 /**
  * Provides common helper methods for Taxonomy module tests.
+ *
+ * @deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0.
+ * Use \Drupal\Tests\taxonomy\Functional\TaxonomyTestTrait
  */
 trait TaxonomyTestTrait {
 
   /**
    * Returns a new vocabulary with random properties.
    */
-  function createVocabulary() {
+  public function createVocabulary() {
     // Create a vocabulary.
     $vocabulary = Vocabulary::create([
       'name' => $this->randomMachineName(),
       'description' => $this->randomMachineName(),
-      'vid' => Unicode::strtolower($this->randomMachineName()),
+      'vid' => mb_strtolower($this->randomMachineName()),
       'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
       'weight' => mt_rand(0, 10),
     ]);
@@ -40,7 +44,7 @@ trait TaxonomyTestTrait {
    * @return \Drupal\taxonomy\Entity\Term
    *   The new taxonomy term object.
    */
-  function createTerm(Vocabulary $vocabulary, $values = array()) {
+  public function createTerm(Vocabulary $vocabulary, $values = []) {
     $filter_formats = filter_formats();
     $format = array_pop($filter_formats);
     $term = Term::create($values + [

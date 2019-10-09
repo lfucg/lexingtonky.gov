@@ -1,0 +1,8 @@
+Search API Patheon 8.x-1.x-alpha2
+--------------------------------------------------
+- Issue #2818001 by stevector: Refactor for SolrConnector Plugin
+- Issue #2761831 by stevector: Update .gitattributes file
+
+Search API Patheon 8.x-1.x-alpha1
+--------------------------------------------------
+- Issue #2821769 by stevector: Initial release. Compatible with Search API Solr alpha6.

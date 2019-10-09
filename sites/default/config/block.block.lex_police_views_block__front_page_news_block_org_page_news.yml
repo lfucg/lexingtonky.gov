@@ -1,0 +1,32 @@
+uuid: 7a8fb532-a8c3-47c6-ad52-1890b06a1494
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.front_page_news
+  module:
+    - ctools
+    - views
+  theme:
+    - lex_police
+id: lex_police_views_block__front_page_news_block_org_page_news
+theme: lex_police
+region: content
+weight: -25
+provider: null
+plugin: 'views_block:front_page_news-block_org_page_news'
+settings:
+  id: 'views_block:front_page_news-block_org_page_news'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      organization_page: organization_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

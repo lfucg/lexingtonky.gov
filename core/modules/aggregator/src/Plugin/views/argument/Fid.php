@@ -23,7 +23,7 @@ class Fid extends NumericArgument {
   protected $entityManager;
 
   /**
-   * Constructs a Drupal\Component\Plugin\PluginBase object.
+   * Constructs a \Drupal\aggregator\Plugin\views\argument\Fid object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -50,7 +50,7 @@ class Fid extends NumericArgument {
    * {@inheritdoc}
    */
   public function titleQuery() {
-    $titles = array();
+    $titles = [];
 
     $feeds = $this->entityManager->getStorage('aggregator_feed')->loadMultiple($this->value);
     foreach ($feeds as $feed) {

@@ -1,0 +1,30 @@
+uuid: 6b6719be-4f48-415e-ba93-6406f69af2b1
+langcode: en
+status: false
+dependencies:
+  config:
+    - views.view.front_page_news
+  module:
+    - system
+    - views
+  theme:
+    - lex_police
+id: lex_police_views_block__front_page_news_block_1
+theme: lex_police
+region: notices
+weight: -11
+provider: null
+plugin: 'views_block:front_page_news-block_1'
+settings:
+  id: 'views_block:front_page_news-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

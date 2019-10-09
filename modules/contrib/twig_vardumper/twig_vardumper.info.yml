@@ -1,0 +1,11 @@
+name: Twig vardumper
+type: module
+description: Twig vardumper
+# core: 8.x
+package: Development
+
+# Information added by Drupal.org packaging script on 2019-04-25
+version: '8.x-1.2'
+core: '8.x'
+project: 'twig_vardumper'
+datestamp: 1556212690

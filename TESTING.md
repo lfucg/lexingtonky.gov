@@ -87,3 +87,15 @@ Behat help
 We [use CircleCI](circle.yml) to test against the Pantheon environment where our
 live site is hosted. The tests run against cloned versions of the live site.
 
+Environment variables to set up CircleCI
+
+* PANTHEON_REPO (from Pantheon dashboard): ssh://get.from.pantheon.dashboard:2222/~/repository.git
+* SITE_NAME lexky-d8
+* FROM_ENV (env to clone for tests) live
+* MACHINE_TOKEN (From Pantheon): create a machine token for a user with 'developer' permissions. Then can only use [multi-dev and dev environments](https://pantheon.io/docs/change-management/)
+
+Set up SSH permissions so that CircleCI can push to Pantheon:
+
+* Generate an SSH key
+* Login to Pantheon as MACHINE_TOKEN user, add public SSH key
+* CircleCI > Settings for the project > Org > Repo > Permissions > SSH Permissions > Add private SSH Key

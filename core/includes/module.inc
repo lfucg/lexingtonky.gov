@@ -14,51 +14,49 @@ use Drupal\Core\Extension\ExtensionDiscovery;
  *   The type of list to return:
  *   - theme: All installed themes.
  *
- * @return
+ * @return array
  *   An associative array of themes, keyed by name.
  *   For $type 'theme', the array values are objects representing the
  *   respective database row, with the 'info' property already unserialized.
  *
+ * @deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. Use
+ *   \Drupal::service('theme_handler')->listInfo() instead.
+ *
+ * @see https://www.drupal.org/node/2709919
  * @see \Drupal\Core\Extension\ThemeHandler::listInfo()
  */
 function system_list($type) {
-  $lists = &drupal_static(__FUNCTION__);
-  if ($cached = \Drupal::cache('bootstrap')->get('system_list')) {
-    $lists = $cached->data;
-  }
-  else {
-    $lists = array(
-      'theme' => array(),
-      'filepaths' => array(),
-    );
-    // ThemeHandler maintains the 'system.theme.data' state record.
-    $theme_data = \Drupal::state()->get('system.theme.data', array());
-    foreach ($theme_data as $name => $theme) {
-      $lists['theme'][$name] = $theme;
-      $lists['filepaths'][] = array(
-        'type' => 'theme',
-        'name' => $name,
-        'filepath' => $theme->getPathname(),
-      );
-    }
-    \Drupal::cache('bootstrap')->set('system_list', $lists);
-  }
-  // To avoid a separate database lookup for the filepath, prime the
-  // drupal_get_filename() static cache with all enabled themes.
-  foreach ($lists['filepaths'] as $item) {
-    system_register($item['type'], $item['name'], $item['filepath']);
-  }
+  @trigger_error('system_list() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. Use \Drupal::service(\'theme_handler\')->listInfo() instead. See https://www.drupal.org/node/2709919', E_USER_DEPRECATED);
 
+  $lists = [
+    'theme' => \Drupal::service('theme_handler')->listInfo(),
+    'filepaths' => [],
+  ];
+  foreach ($lists['theme'] as $name => $theme) {
+    $lists['filepaths'][] = [
+      'type' => 'theme',
+      'name' => $name,
+      'filepath' => $theme->getPathname(),
+    ];
+  }
   return $lists[$type];
 }
 
 /**
  * Resets all system_list() caches.
+ *
+ * @deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. There
+ *   is no direct replacement. Call each
+ *   \Drupal::service('extension.list.TYPE')->reset() as necessary.
+ *
+ * @see https://www.drupal.org/node/2709919
  */
 function system_list_reset() {
-  drupal_static_reset('system_list');
-  drupal_static_reset('system_rebuild_module_data');
-  \Drupal::cache('bootstrap')->delete('system_list');
+  @trigger_error("system_list_reset() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. There is no direct replacement. Call each \Drupal::service('extension.list.TYPE')->reset() as necessary. See https://www.drupal.org/node/2709919.", E_USER_DEPRECATED);
+  \Drupal::service('extension.list.profile')->reset();
+  \Drupal::service('extension.list.module')->reset();
+  \Drupal::service('extension.list.theme_engine')->reset();
+  \Drupal::service('extension.list.theme')->reset();
 }
 
 /**
@@ -146,7 +144,7 @@ function module_load_include($type, $module, $name = NULL) {
 function drupal_required_modules() {
   $listing = new ExtensionDiscovery(\Drupal::root());
   $files = $listing->scan('module');
-  $required = array();
+  $required = [];
 
   // Unless called by the installer, an installation profile is required and
   // must always be loaded. drupal_get_profile() also returns the installation
@@ -191,7 +189,7 @@ function module_set_weight($module, $weight) {
     $current_module_filenames = $module_handler->getModuleList();
     $current_modules = array_fill_keys(array_keys($current_module_filenames), 0);
     $current_modules = module_config_sort(array_merge($current_modules, $extension_config->get('module')));
-    $module_filenames = array();
+    $module_filenames = [];
     foreach ($current_modules as $name => $weight) {
       $module_filenames[$name] = $current_module_filenames[$name];
     }
@@ -222,7 +220,7 @@ function module_config_sort($data) {
   // two modules and weights (spaces added for clarity):
   // - Block with weight -5: 0 0000000000000000005 block
   // - Node  with weight  0: 1 0000000000000000000 node
-  $sort = array();
+  $sort = [];
   foreach ($data as $name => $weight) {
     // Prefix negative weights with 0, positive weights with 1.
     // +/- signs cannot be used, since + (ASCII 43) is before - (ASCII 45).

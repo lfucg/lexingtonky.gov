@@ -7,6 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Form constructor for testing form state persistence.
+ *
+ * @internal
  */
 class FormTestStatePersistForm extends FormBase {
 
@@ -21,18 +23,18 @@ class FormTestStatePersistForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['title'] = array(
+    $form['title'] = [
       '#type' => 'textfield',
       '#title' => 'title',
       '#default_value' => 'DEFAULT',
       '#required' => TRUE,
-    );
+    ];
     $form_state->set('value', 'State persisted.');
 
-    $form['submit'] = array(
+    $form['submit'] = [
       '#type' => 'submit',
       '#value' => t('Submit'),
-    );
+    ];
     return $form;
   }
 
@@ -40,7 +42,7 @@ class FormTestStatePersistForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    drupal_set_message($form_state->get('value'));
+    $this->messenger()->addStatus($form_state->get('value'));
     $form_state->setRebuild();
   }
 

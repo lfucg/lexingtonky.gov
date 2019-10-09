@@ -4,12 +4,15 @@ status: true
 dependencies:
   config:
     - field.field.node.organization_page.body
+    - field.field.node.organization_page.field_keywords
     - field.field.node.organization_page.field_lex_custom_banner_image
     - field.field.node.organization_page.field_lex_site_nav
+    - field.field.node.organization_page.field_metatags
     - field.field.node.organization_page.field_office_to_contact
     - field.field.node.organization_page.field_organization_image
     - field.field.node.organization_page.field_organization_taxonomy_term
     - field.field.node.organization_page.field_page_section
+    - field.field.node.organization_page.field_related_departments
     - field.field.node.organization_page.field_related_documents
     - field.field.node.organization_page.field_top_services
     - image.style.thumbnail
@@ -18,6 +21,7 @@ dependencies:
     - file
     - image
     - link
+    - metatag
     - paragraphs
     - path
     - text
@@ -29,50 +33,73 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 7
+    weight: 6
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
     third_party_settings: {  }
+    region: content
   created:
     type: datetime_timestamp
     weight: 2
     settings: {  }
     third_party_settings: {  }
+    region: content
+  field_keywords:
+    weight: 12
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_lex_custom_banner_image:
-    weight: 6
+    type: image_image
+    weight: 10
+    region: content
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
-    type: image_image
   field_lex_site_nav:
     type: options_select
-    weight: 8
+    weight: 7
     settings: {  }
     third_party_settings: {  }
+    region: content
+  field_metatags:
+    weight: 11
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
+    region: content
   field_office_to_contact:
     weight: 5
     settings: {  }
     third_party_settings: {  }
     type: options_select
+    region: content
   field_page_section:
-    weight: 26
+    weight: 8
     settings:
       title: section
       title_plural: sections
       edit_mode: open
       add_mode: dropdown
       form_display_mode: default
+      default_paragraph_type: ''
     third_party_settings: {  }
     type: entity_reference_paragraphs
+    region: content
   field_related_documents:
-    weight: 27
+    type: file_generic
+    weight: 9
+    region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
-    type: file_generic
   field_top_services:
     weight: 4
     settings:
@@ -80,11 +107,20 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
   path:
     type: path
     weight: 3
     settings: {  }
     third_party_settings: {  }
+    region: content
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 13
+    third_party_settings: {  }
+    region: content
   title:
     type: string_textfield
     weight: 0
@@ -92,6 +128,7 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 1
@@ -100,8 +137,10 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
 hidden:
   field_organization_image: true
   field_organization_taxonomy_term: true
+  field_related_departments: true
   promote: true
   sticky: true

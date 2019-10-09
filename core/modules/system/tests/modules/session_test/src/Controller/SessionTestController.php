@@ -21,7 +21,7 @@ class SessionTestController extends ControllerBase {
   public function get() {
     return empty($_SESSION['session_test_value'])
       ? []
-      : ['#markup' => $this->t('The current value of the stored session variable is: %val', array('%val' => $_SESSION['session_test_value']))];
+      : ['#markup' => $this->t('The current value of the stored session variable is: %val', ['%val' => $_SESSION['session_test_value']])];
   }
 
   /**
@@ -37,7 +37,7 @@ class SessionTestController extends ControllerBase {
     $value = $request->getSession()->get("session_test_key");
     return empty($value)
       ? []
-      : ['#markup' => $this->t('The current value of the stored session variable is: %val', array('%val' => $value))];
+      : ['#markup' => $this->t('The current value of the stored session variable is: %val', ['%val' => $value])];
   }
 
   /**
@@ -84,7 +84,7 @@ class SessionTestController extends ControllerBase {
   public function set($test_value) {
     $_SESSION['session_test_value'] = $test_value;
 
-    return ['#markup' => $this->t('The current value of the stored session variable has been set to %val', array('%val' => $test_value))];
+    return ['#markup' => $this->t('The current value of the stored session variable has been set to %val', ['%val' => $test_value])];
   }
 
   /**
@@ -100,7 +100,7 @@ class SessionTestController extends ControllerBase {
   public function noSet($test_value) {
     \Drupal::service('session_handler.write_safe')->setSessionWritable(FALSE);
     $this->set($test_value);
-    return ['#markup' => $this->t('session saving was disabled, and then %val was set', array('%val' => $test_value))];
+    return ['#markup' => $this->t('session saving was disabled, and then %val was set', ['%val' => $test_value])];
   }
 
   /**
@@ -110,7 +110,7 @@ class SessionTestController extends ControllerBase {
    *   A notification message.
    */
   public function setMessage() {
-    drupal_set_message($this->t('This is a dummy message.'));
+    $this->messenger()->addStatus($this->t('This is a dummy message.'));
     return new Response($this->t('A message was set.'));
     // Do not return anything, so the current request does not result in a themed
     // page with messages. The message will be displayed in the following request

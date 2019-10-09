@@ -7,6 +7,7 @@ dependencies:
     - field.field.block_content.list_of_links.field_lex_link
   module:
     - link
+    - workbench_moderation
 id: block_content.list_of_links.default
 targetEntityType: block_content
 bundle: list_of_links
@@ -19,6 +20,7 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
   info:
     type: string_textfield
     weight: -5
@@ -26,4 +28,5 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
 hidden: {  }

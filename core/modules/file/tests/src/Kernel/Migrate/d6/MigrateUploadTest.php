@@ -16,6 +16,17 @@ class MigrateUploadTest extends MigrateDrupal6TestBase {
   /**
    * {@inheritdoc}
    */
+  public static $modules = [
+    'language',
+    'content_translation',
+    'menu_ui',
+    // Required for translation migrations.
+    'migrate_drupal_multilingual',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() {
     parent::setUp();
 
@@ -24,10 +35,10 @@ class MigrateUploadTest extends MigrateDrupal6TestBase {
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('node', ['node_access']);
 
-    $id_mappings = array('d6_file' => array());
+    $id_mappings = ['d6_file' => []];
     // Create new file entities.
     for ($i = 1; $i <= 3; $i++) {
-      $file = File::create(array(
+      $file = File::create([
         'fid' => $i,
         'uid' => 1,
         'filename' => 'druplicon.txt',
@@ -36,17 +47,17 @@ class MigrateUploadTest extends MigrateDrupal6TestBase {
         'created' => 1,
         'changed' => 1,
         'status' => FILE_STATUS_PERMANENT,
-      ));
+      ]);
       $file->enforceIsNew();
       file_put_contents($file->getFileUri(), 'hello world');
 
       // Save it, inserting a new record.
       $file->save();
-      $id_mappings['d6_file'][] = array(array($i), array($i));
+      $id_mappings['d6_file'][] = [[$i], [$i]];
     }
     $this->prepareMigrations($id_mappings);
 
-    $this->migrateContent();
+    $this->migrateContent(['translations']);
     // Since we are only testing a subset of the file migration, do not check
     // that the full file migration has been run.
     $migration = $this->getMigration('d6_upload');
@@ -57,19 +68,21 @@ class MigrateUploadTest extends MigrateDrupal6TestBase {
   /**
    * Test upload migration from Drupal 6 to Drupal 8.
    */
-  function testUpload() {
+  public function testUpload() {
     $this->container->get('entity.manager')
       ->getStorage('node')
-      ->resetCache([1, 2]);
+      ->resetCache([1, 2, 12]);
 
-    $nodes = Node::loadMultiple([1, 2]);
+    $nodes = Node::loadMultiple([1, 2, 12]);
     $node = $nodes[1];
+    $this->assertEquals('en', $node->langcode->value);
     $this->assertIdentical(1, count($node->upload));
     $this->assertIdentical('1', $node->upload[0]->target_id);
     $this->assertIdentical('file 1-1-1', $node->upload[0]->description);
     $this->assertIdentical(FALSE, $node->upload[0]->isDisplayed());
 
     $node = $nodes[2];
+    $this->assertEquals('en', $node->langcode->value);
     $this->assertIdentical(2, count($node->upload));
     $this->assertIdentical('3', $node->upload[0]->target_id);
     $this->assertIdentical('file 2-3-3', $node->upload[0]->description);
@@ -77,6 +90,13 @@ class MigrateUploadTest extends MigrateDrupal6TestBase {
     $this->assertIdentical('2', $node->upload[1]->target_id);
     $this->assertIdentical(TRUE, $node->upload[1]->isDisplayed());
     $this->assertIdentical('file 2-3-2', $node->upload[1]->description);
+
+    $node = $nodes[12];
+    $this->assertEquals('zu', $node->langcode->value);
+    $this->assertEquals(1, count($node->upload));
+    $this->assertEquals('3', $node->upload[0]->target_id);
+    $this->assertEquals('file 12-15-3', $node->upload[0]->description);
+    $this->assertEquals(FALSE, $node->upload[0]->isDisplayed());
   }
 
 }

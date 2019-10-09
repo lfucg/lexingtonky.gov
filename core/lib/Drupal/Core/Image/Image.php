@@ -128,8 +128,7 @@ class Image implements ImageInterface {
       $this->fileSize = filesize($destination);
       $this->source = $destination;
 
-      // @todo Use File utility when https://www.drupal.org/node/2050759 is in.
-      if ($this->chmod($destination)) {
+      if (\Drupal::service('file_system')->chmod($destination)) {
         return $return;
       }
     }
@@ -139,7 +138,7 @@ class Image implements ImageInterface {
   /**
    * {@inheritdoc}
    */
-  public function apply($operation, array $arguments = array()) {
+  public function apply($operation, array $arguments = []) {
     return $this->getToolkit()->apply($operation, $arguments);
   }
 
@@ -147,56 +146,56 @@ class Image implements ImageInterface {
    * {@inheritdoc}
    */
   public function createNew($width, $height, $extension = 'png', $transparent_color = '#ffffff') {
-    return $this->apply('create_new', array('width' => $width, 'height' => $height, 'extension' => $extension, 'transparent_color' => $transparent_color));
+    return $this->apply('create_new', ['width' => $width, 'height' => $height, 'extension' => $extension, 'transparent_color' => $transparent_color]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function convert($extension) {
-    return $this->apply('convert', array('extension' => $extension));
+    return $this->apply('convert', ['extension' => $extension]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function crop($x, $y, $width, $height = NULL) {
-    return $this->apply('crop', array('x' => $x, 'y' => $y, 'width' => $width, 'height' => $height));
+    return $this->apply('crop', ['x' => $x, 'y' => $y, 'width' => $width, 'height' => $height]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function desaturate() {
-    return $this->apply('desaturate', array());
+    return $this->apply('desaturate', []);
   }
 
   /**
    * {@inheritdoc}
    */
   public function resize($width, $height) {
-    return $this->apply('resize', array('width' => $width, 'height' => $height));
+    return $this->apply('resize', ['width' => $width, 'height' => $height]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function rotate($degrees, $background = NULL) {
-    return $this->apply('rotate', array('degrees' => $degrees, 'background' => $background));
+    return $this->apply('rotate', ['degrees' => $degrees, 'background' => $background]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function scaleAndCrop($width, $height) {
-    return $this->apply('scale_and_crop', array('width' => $width, 'height' => $height));
+    return $this->apply('scale_and_crop', ['width' => $width, 'height' => $height]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function scale($width, $height = NULL, $upscale = FALSE) {
-    return $this->apply('scale', array('width' => $width, 'height' => $height, 'upscale' => $upscale));
+    return $this->apply('scale', ['width' => $width, 'height' => $height, 'upscale' => $upscale]);
   }
 
   /**
@@ -208,15 +207,18 @@ class Image implements ImageInterface {
    *   Integer value for the permissions. Consult PHP chmod() documentation for
    *   more information.
    *
-   * @see drupal_chmod()
-   *
-   * @todo Remove when https://www.drupal.org/node/2050759 is in.
-   *
    * @return bool
    *   TRUE for success, FALSE in the event of an error.
+   *
+   * @deprecated in Drupal 8.0.0, will be removed before Drupal 9.0.0.
+   *   Use \Drupal\Core\File\FileSystem::chmod().
+   *
+   * @see \Drupal\Core\File\FileSystemInterface::chmod()
+   * @see https://www.drupal.org/node/2418133
    */
   protected function chmod($uri, $mode = NULL) {
-    return drupal_chmod($uri, $mode);
+    @trigger_error('chmod() is deprecated in Drupal 8.0.0 and will be removed before Drupal 9.0.0. Use \Drupal\Core\File\FileSystemInterface::chmod(). See https://www.drupal.org/node/2418133.', E_USER_DEPRECATED);
+    return \Drupal::service('file_system')->chmod($uri, $mode);
   }
 
 }

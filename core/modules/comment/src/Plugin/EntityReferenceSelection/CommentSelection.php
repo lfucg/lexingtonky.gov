@@ -42,7 +42,7 @@ class CommentSelection extends DefaultSelection {
 
     // In order to create a referenceable comment, it needs to published.
     /** @var \Drupal\comment\CommentInterface $comment */
-    $comment->setPublished(TRUE);
+    $comment->setPublished();
 
     return $comment;
   }
@@ -66,6 +66,8 @@ class CommentSelection extends DefaultSelection {
    * {@inheritdoc}
    */
   public function entityQueryAlter(SelectInterface $query) {
+    parent::entityQueryAlter($query);
+
     $tables = $query->getTables();
     $data_table = 'comment_field_data';
     if (!isset($tables['comment_field_data']['alias'])) {
@@ -83,7 +85,7 @@ class CommentSelection extends DefaultSelection {
 
     // Passing the query to node_query_node_access_alter() is sadly
     // insufficient for nodes.
-    // @see SelectionEntityTypeNode::entityQueryAlter()
+    // @see \Drupal\node\Plugin\EntityReferenceSelection\NodeSelection::buildEntityQuery()
     if (!$this->currentUser->hasPermission('bypass node access') && !count($this->moduleHandler->getImplementations('node_grants'))) {
       $query->condition($node_alias . '.status', 1);
     }

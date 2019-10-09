@@ -1,0 +1,24 @@
+// color loop for easily accessing colors throughout
+@function color($name: wildcat-blue, $scheme: $colors) {
+  @if map-has-key($scheme, $name) {
+    @return map-get($scheme, $name);
+  }
+  @return $color-undefined;
+}
+
+@mixin rgba-background($hexcolor, $opacity) {
+  background-color: $hexcolor;
+  background-color: rgba($hexcolor, $opacity);
+}
+
+
+$colors: (
+  lex-blue: #004585,
+  med-blue: #0558A7,
+  light-blue: #3887BA,
+  gray: #787878,
+  dark-gray: #353535,
+  yellow: #E1B111,
+  white: #fefEfe,
+);
+

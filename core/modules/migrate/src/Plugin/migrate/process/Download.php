@@ -6,19 +6,57 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
-use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
 use GuzzleHttp\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Downloads a file from a remote location into the local file system.
+ * Downloads a file from a HTTP(S) remote location into the local file system.
+ *
+ * The source value is an array of two values:
+ * - source URL, e.g. 'http://www.example.com/img/foo.img'
+ * - destination URI, e.g. 'public://images/foo.img'
+ *
+ * Available configuration keys:
+ * - file_exists: (optional) Replace behavior when the destination file already
+ *   exists:
+ *   - 'replace' - (default) Replace the existing file.
+ *   - 'rename' - Append _{incrementing number} until the filename is
+ *     unique.
+ *   - 'use existing' - Do nothing and return FALSE.
+ * - guzzle_options: (optional)
+ *   @link http://docs.guzzlephp.org/en/latest/request-options.html Array of request options for Guzzle. @endlink
+ *
+ * Examples:
+ *
+ * @code
+ * process:
+ *   plugin: download
+ *   source:
+ *     - source_url
+ *     - destination_uri
+ * @endcode
+ *
+ * This will download source_url to destination_uri.
+ *
+ * @code
+ * process:
+ *   plugin: download
+ *   source:
+ *     - source_url
+ *     - destination_uri
+ *   file_exists: rename
+ * @endcode
+ *
+ * This will download source_url to destination_uri and ensure that the
+ * destination URI is unique. If a file with the same name exists at the
+ * destination, a numbered suffix like '_0' will be appended to make it unique.
  *
  * @MigrateProcessPlugin(
  *   id = "download"
  * )
  */
-class Download extends ProcessPluginBase implements ContainerFactoryPluginInterface {
+class Download extends FileProcessBase implements ContainerFactoryPluginInterface {
 
   /**
    * The file system service.
@@ -50,7 +88,6 @@ class Download extends ProcessPluginBase implements ContainerFactoryPluginInterf
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, FileSystemInterface $file_system, Client $http_client) {
     $configuration += [
-      'rename' => FALSE,
       'guzzle_options' => [],
     ];
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -83,19 +120,21 @@ class Download extends ProcessPluginBase implements ContainerFactoryPluginInterf
     list($source, $destination) = $value;
 
     // Modify the destination filename if necessary.
-    $replace = !empty($this->configuration['rename']) ?
-      FILE_EXISTS_RENAME :
-      FILE_EXISTS_REPLACE;
-    $final_destination = file_destination($destination, $replace);
+    $final_destination = $this->fileSystem->getDestinationFilename($destination, $this->configuration['file_exists']);
 
-    // Try opening the file first, to avoid calling file_prepare_directory()
+    // Reuse if file exists.
+    if (!$final_destination) {
+      return $destination;
+    }
+
+    // Try opening the file first, to avoid calling prepareDirectory()
     // unnecessarily. We're suppressing fopen() errors because we want to try
     // to prepare the directory before we give up and fail.
     $destination_stream = @fopen($final_destination, 'w');
     if (!$destination_stream) {
       // If fopen didn't work, make sure there's a writable directory in place.
       $dir = $this->fileSystem->dirname($final_destination);
-      if (!file_prepare_directory($dir, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
+      if (!$this->fileSystem->prepareDirectory($dir, FileSystemInterface:: CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
         throw new MigrateException("Could not create or write to directory '$dir'");
       }
       // Let's try that fopen again.
@@ -108,8 +147,13 @@ class Download extends ProcessPluginBase implements ContainerFactoryPluginInterf
     // Stream the request body directly to the final destination stream.
     $this->configuration['guzzle_options']['sink'] = $destination_stream;
 
-    // Make the request. Guzzle throws an exception for anything other than 200.
-    $this->httpClient->get($source, $this->configuration['guzzle_options']);
+    try {
+      // Make the request. Guzzle throws an exception for anything but 200.
+      $this->httpClient->get($source, $this->configuration['guzzle_options']);
+    }
+    catch (\Exception $e) {
+      throw new MigrateException("{$e->getMessage()} ($source)");
+    }
 
     return $final_destination;
   }

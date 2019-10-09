@@ -1,22 +1,28 @@
-uuid: 5aee4798-9ee0-486f-aa00-d2df4e18caa2
+uuid: 95721d6c-246b-4581-ba34-992477e8f8c8
 langcode: en
 status: true
 dependencies:
   config:
     - field.field.node.page.body
+    - field.field.node.page.field_keywords
     - field.field.node.page.field_lex_custom_banner_image
+    - field.field.node.page.field_lex_grid_ref
     - field.field.node.page.field_lex_site_nav
+    - field.field.node.page.field_metatags
     - field.field.node.page.field_office_to_contact
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
+    - field.field.node.page.field_photo_grid
     - field.field.node.page.field_related_departments
     - field.field.node.page.field_related_documents
     - field.field.node.page.field_sidebar_section
     - image.style.thumbnail
     - node.type.page
   module:
+    - chosen_field
     - file
     - image
+    - metatag
     - paragraphs
     - path
     - text
@@ -29,67 +35,137 @@ content:
   created:
     type: datetime_timestamp
     weight: 3
+    region: content
     settings: {  }
     third_party_settings: {  }
+  field_keywords:
+    weight: 13
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_lex_custom_banner_image:
-    weight: 26
+    type: image_image
+    weight: 9
+    region: content
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
-    type: image_image
+  field_lex_grid_ref:
+    type: entity_reference_paragraphs
+    weight: 16
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
   field_lex_site_nav:
+    type: entity_reference_autocomplete
     weight: 6
+    region: content
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_metatags:
+    type: metatag_firehose
+    weight: 12
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: options_select
   field_office_to_contact:
+    type: entity_reference_autocomplete
     weight: 7
-    settings: {  }
+    region: content
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
-    type: options_select
   field_page_overview:
+    type: text_textarea_with_summary
     weight: 1
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea_with_summary
   field_page_section:
     type: entity_reference_paragraphs
     weight: 5
+    region: content
     settings:
       title: Paragraph
       title_plural: Paragraphs
       edit_mode: open
       add_mode: dropdown
       form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+  field_photo_grid:
+    type: entity_reference_paragraphs
+    weight: 15
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_related_departments:
+    type: chosen_select
+    weight: 8
+    region: content
+    settings: {  }
     third_party_settings: {  }
   field_related_documents:
-    weight: 8
+    type: file_generic
+    weight: 10
+    region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
-    type: file_generic
   field_sidebar_section:
     type: entity_reference_paragraphs
-    weight: 27
+    weight: 11
+    region: content
     settings:
       title: Paragraph
       title_plural: Paragraphs
       edit_mode: open
       add_mode: dropdown
       form_display_mode: default
+      default_paragraph_type: ''
     third_party_settings: {  }
   path:
     type: path
     weight: 4
+    region: content
     settings: {  }
     third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 14
+    third_party_settings: {  }
+    region: content
   title:
     type: string_textfield
     weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
@@ -101,9 +177,9 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+    region: content
     third_party_settings: {  }
 hidden:
   body: true
-  field_related_departments: true
   promote: true
   sticky: true

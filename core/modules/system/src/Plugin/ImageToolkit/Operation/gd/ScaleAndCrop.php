@@ -19,14 +19,24 @@ class ScaleAndCrop extends GDImageToolkitOperationBase {
    * {@inheritdoc}
    */
   protected function arguments() {
-    return array(
-      'width' => array(
+    return [
+      'x' => [
+        'description' => 'The horizontal offset for the start of the crop, in pixels',
+        'required' => FALSE,
+        'default' => NULL,
+      ],
+      'y' => [
+        'description' => 'The vertical offset for the start the crop, in pixels',
+        'required' => FALSE,
+        'default' => NULL,
+      ],
+      'width' => [
         'description' => 'The target width, in pixels',
-      ),
-      'height' => array(
+      ],
+      'height' => [
         'description' => 'The target height, in pixels',
-      ),
-    );
+      ],
+    ];
   }
 
   /**
@@ -38,12 +48,16 @@ class ScaleAndCrop extends GDImageToolkitOperationBase {
 
     $scaleFactor = max($arguments['width'] / $actualWidth, $arguments['height'] / $actualHeight);
 
-    $arguments['x'] = (int) round(($actualWidth * $scaleFactor - $arguments['width']) / 2);
-    $arguments['y'] = (int) round(($actualHeight * $scaleFactor - $arguments['height']) / 2);
-    $arguments['resize'] = array(
+    $arguments['x'] = isset($arguments['x']) ?
+      (int) round($arguments['x']) :
+      (int) round(($actualWidth * $scaleFactor - $arguments['width']) / 2);
+    $arguments['y'] = isset($arguments['y']) ?
+      (int) round($arguments['y']) :
+      (int) round(($actualHeight * $scaleFactor - $arguments['height']) / 2);
+    $arguments['resize'] = [
       'width' => (int) round($actualWidth * $scaleFactor),
       'height' => (int) round($actualHeight * $scaleFactor),
-    );
+    ];
 
     // Fail when width or height are 0 or negative.
     if ($arguments['width'] <= 0) {
@@ -59,7 +73,7 @@ class ScaleAndCrop extends GDImageToolkitOperationBase {
   /**
    * {@inheritdoc}
    */
-  protected function execute(array $arguments = array()) {
+  protected function execute(array $arguments = []) {
     return $this->getToolkit()->apply('resize', $arguments['resize'])
         && $this->getToolkit()->apply('crop', $arguments);
   }

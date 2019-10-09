@@ -11,13 +11,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base form for vocabulary edit forms.
+ *
+ * @internal
  */
 class VocabularyForm extends BundleEntityFormBase {
 
   /**
    * The vocabulary storage.
    *
-   * @var \Drupal\taxonomy\VocabularyStorageInterface.
+   * @var \Drupal\taxonomy\VocabularyStorageInterface
    */
   protected $vocabularyStorage;
 
@@ -52,59 +54,59 @@ class VocabularyForm extends BundleEntityFormBase {
       $form['#title'] = $this->t('Edit vocabulary');
     }
 
-    $form['name'] = array(
+    $form['name'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Name'),
       '#default_value' => $vocabulary->label(),
       '#maxlength' => 255,
       '#required' => TRUE,
-    );
-    $form['vid'] = array(
+    ];
+    $form['vid'] = [
       '#type' => 'machine_name',
       '#default_value' => $vocabulary->id(),
       '#maxlength' => EntityTypeInterface::BUNDLE_MAX_LENGTH,
-      '#machine_name' => array(
-        'exists' => array($this, 'exists'),
-        'source' => array('name'),
-      ),
-    );
-    $form['description'] = array(
+      '#machine_name' => [
+        'exists' => [$this, 'exists'],
+        'source' => ['name'],
+      ],
+    ];
+    $form['description'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Description'),
       '#default_value' => $vocabulary->getDescription(),
-    );
+    ];
 
     // $form['langcode'] is not wrapped in an
     // if ($this->moduleHandler->moduleExists('language')) check because the
     // language_select form element works also without the language module being
     // installed. https://www.drupal.org/node/1749954 documents the new element.
-    $form['langcode'] = array(
+    $form['langcode'] = [
       '#type' => 'language_select',
       '#title' => $this->t('Vocabulary language'),
       '#languages' => LanguageInterface::STATE_ALL,
       '#default_value' => $vocabulary->language()->getId(),
-    );
+    ];
     if ($this->moduleHandler->moduleExists('language')) {
-      $form['default_terms_language'] = array(
+      $form['default_terms_language'] = [
         '#type' => 'details',
-        '#title' => $this->t('Terms language'),
+        '#title' => $this->t('Term language'),
         '#open' => TRUE,
-      );
-      $form['default_terms_language']['default_language'] = array(
+      ];
+      $form['default_terms_language']['default_language'] = [
         '#type' => 'language_configuration',
-        '#entity_information' => array(
+        '#entity_information' => [
           'entity_type' => 'taxonomy_term',
           'bundle' => $vocabulary->id(),
-        ),
+        ],
         '#default_value' => ContentLanguageSettings::loadByEntityTypeBundle('taxonomy_term', $vocabulary->id()),
-      );
+      ];
     }
     // Set the hierarchy to "multiple parents" by default. This simplifies the
     // vocabulary form and standardizes the term form.
-    $form['hierarchy'] = array(
+    $form['hierarchy'] = [
       '#type' => 'value',
       '#value' => '0',
-    );
+    ];
 
     $form = parent::form($form, $form_state);
     return $this->protectBundleIdElement($form);
@@ -120,18 +122,18 @@ class VocabularyForm extends BundleEntityFormBase {
     $vocabulary->set('name', trim($vocabulary->label()));
 
     $status = $vocabulary->save();
-    $edit_link = $this->entity->link($this->t('Edit'));
+    $edit_link = $this->entity->toLink($this->t('Edit'), 'edit-form')->toString();
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created new vocabulary %name.', array('%name' => $vocabulary->label())));
-        $this->logger('taxonomy')->notice('Created new vocabulary %name.', array('%name' => $vocabulary->label(), 'link' => $edit_link));
-        $form_state->setRedirectUrl($vocabulary->urlInfo('overview-form'));
+        $this->messenger()->addStatus($this->t('Created new vocabulary %name.', ['%name' => $vocabulary->label()]));
+        $this->logger('taxonomy')->notice('Created new vocabulary %name.', ['%name' => $vocabulary->label(), 'link' => $edit_link]);
+        $form_state->setRedirectUrl($vocabulary->toUrl('overview-form'));
         break;
 
       case SAVED_UPDATED:
-        drupal_set_message($this->t('Updated vocabulary %name.', array('%name' => $vocabulary->label())));
-        $this->logger('taxonomy')->notice('Updated vocabulary %name.', array('%name' => $vocabulary->label(), 'link' => $edit_link));
-        $form_state->setRedirectUrl($vocabulary->urlInfo('collection'));
+        $this->messenger()->addStatus($this->t('Updated vocabulary %name.', ['%name' => $vocabulary->label()]));
+        $this->logger('taxonomy')->notice('Updated vocabulary %name.', ['%name' => $vocabulary->label(), 'link' => $edit_link]);
+        $form_state->setRedirectUrl($vocabulary->toUrl('collection'));
         break;
     }
 

@@ -1,0 +1,37 @@
+uuid: 96fa5cd8-165d-48fc-ad44-fe0aee13f83d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_image
+  module:
+    - fieldblock
+    - image
+    - node
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_contentfield
+theme: lex_planning_commission
+region: sidebar
+weight: -19
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'News article image'
+  provider: fieldblock
+  label_display: '0'
+  label_from_field: 0
+  field_name: field_image
+  formatter_id: image
+  formatter_settings:
+    image_style: one_column
+    image_link: ''
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      news_article: news_article
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

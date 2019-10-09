@@ -10,7 +10,8 @@ use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
  * Drupal 7 file source from database.
  *
  * @MigrateSource(
- *   id = "d7_file"
+ *   id = "d7_file",
+ *   source_module = "file"
  * )
  */
 class File extends DrupalSqlBase {
@@ -42,18 +43,21 @@ class File extends DrupalSqlBase {
   public function query() {
     $query = $this->select('file_managed', 'f')
       ->fields('f')
+      ->condition('uri', 'temporary://%', 'NOT LIKE')
       ->orderBy('f.timestamp');
 
     // Filter by scheme(s), if configured.
     if (isset($this->configuration['scheme'])) {
-      $schemes = array();
+      $schemes = [];
+      // Remove 'temporary' scheme.
+      $valid_schemes = array_diff((array) $this->configuration['scheme'], ['temporary']);
       // Accept either a single scheme, or a list.
-      foreach ((array) $this->configuration['scheme'] as $scheme) {
+      foreach ((array) $valid_schemes as $scheme) {
         $schemes[] = rtrim($scheme) . '://';
       }
       $schemes = array_map([$this->getDatabase(), 'escapeLike'], $schemes);
 
-      // uri LIKE 'public://%' OR uri LIKE 'private://%'
+      // Add conditions, uri LIKE 'public://%' OR uri LIKE 'private://%'.
       $conditions = new Condition('OR');
       foreach ($schemes as $scheme) {
         $conditions->condition('uri', $scheme . '%', 'LIKE');
@@ -93,7 +97,7 @@ class File extends DrupalSqlBase {
    * {@inheritdoc}
    */
   public function fields() {
-    return array(
+    return [
       'fid' => $this->t('File ID'),
       'uid' => $this->t('The {users}.uid who added the file. If set to 0, this file was added by an anonymous user.'),
       'filename' => $this->t('File name'),
@@ -101,7 +105,7 @@ class File extends DrupalSqlBase {
       'filemime' => $this->t('File MIME Type'),
       'status' => $this->t('The published status of a file.'),
       'timestamp' => $this->t('The time that the file was added.'),
-    );
+    ];
   }
 
   /**

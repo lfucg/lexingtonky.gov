@@ -1,0 +1,77 @@
+.fc-state-default
+  background: $color-primary-4
+
+  &.fc-state-active
+    background: $color-secondary-2
+    color: #000
+
+.fc-row .fc-content-skeleton td.fc-past
+  background: $color-secondary-1
+
+.fc-center h2
+  margin-top: 0
+
+.fc
+  table
+    margin: 0
+    border: inherit
+
+  th
+    background: inherit
+    color: inherit
+
+    &.fc-day-header
+      border: none
+
+  tr:nth-child(even) td
+    background: inherit
+
+  button
+    text-shadow: none !important
+    color: #fff
+
+  .fc-widget-header
+    background: $color-secondary-1
+    table
+      margin: 0.5em 0
+
+
+  tr:not(.fc-list-item) a:visited
+    color: #fff
+
+#calendar
+  margin-top: 2em
+
+#calendar table td.fc-today
+  background: lighten($color-primary-1, 10%)
+
+.fc-month-view .fc-scroller
+  height: auto !important
+  overflow-y: hidden !important
+
+@media (min-width: 1px)
+  .usa-width-two-thirds.lex-calendar-page
+    width: 100%
+    margin-left: 0
+
+@media (max-width: 767px)
+  #calendar
+    display: none
+
+  #mobileCalendar
+    .fc-left
+      width: 100%
+
+      .fc-button-group
+        width: 100%
+        display: flex
+        flex: row nowrap
+
+        button.fc-button
+          width: 33%
+          float: none
+
+@media (min-width: 768px)
+  #mobileCalendar
+    display: none
+

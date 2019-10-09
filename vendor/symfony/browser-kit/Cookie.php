@@ -21,10 +21,8 @@ class Cookie
     /**
      * Handles dates as defined by RFC 2616 section 3.3.1, and also some other
      * non-standard, but common formats.
-     *
-     * @var array
      */
-    private static $dateFormats = array(
+    private static $dateFormats = [
         'D, d M Y H:i:s T',
         'D, d-M-y H:i:s T',
         'D, d-M-Y H:i:s T',
@@ -32,7 +30,7 @@ class Cookie
         'D, d-m-Y H:i:s T',
         'D M j G:i:s Y',
         'D M d H:i:s Y T',
-    );
+    ];
 
     protected $name;
     protected $value;
@@ -42,33 +40,36 @@ class Cookie
     protected $secure;
     protected $httponly;
     protected $rawValue;
+    private $samesite;
 
     /**
      * Sets a cookie.
      *
-     * @param string $name         The cookie name
-     * @param string $value        The value of the cookie
-     * @param string $expires      The time the cookie expires
-     * @param string $path         The path on the server in which the cookie will be available on
-     * @param string $domain       The domain that the cookie is available
-     * @param bool   $secure       Indicates that the cookie should only be transmitted over a secure HTTPS connection from the client
-     * @param bool   $httponly     The cookie httponly flag
-     * @param bool   $encodedValue Whether the value is encoded or not
+     * @param string      $name         The cookie name
+     * @param string      $value        The value of the cookie
+     * @param string|null $expires      The time the cookie expires
+     * @param string|null $path         The path on the server in which the cookie will be available on
+     * @param string      $domain       The domain that the cookie is available
+     * @param bool        $secure       Indicates that the cookie should only be transmitted over a secure HTTPS connection from the client
+     * @param bool        $httponly     The cookie httponly flag
+     * @param bool        $encodedValue Whether the value is encoded or not
+     * @param string|null $samesite     The cookie samesite attribute
      */
-    public function __construct($name, $value, $expires = null, $path = null, $domain = '', $secure = false, $httponly = true, $encodedValue = false)
+    public function __construct(string $name, ?string $value, string $expires = null, string $path = null, string $domain = '', bool $secure = false, bool $httponly = true, bool $encodedValue = false, string $samesite = null)
     {
         if ($encodedValue) {
             $this->value = urldecode($value);
             $this->rawValue = $value;
         } else {
             $this->value = $value;
-            $this->rawValue = urlencode($value);
+            $this->rawValue = rawurlencode($value);
         }
         $this->name = $name;
         $this->path = empty($path) ? '/' : $path;
         $this->domain = $domain;
-        $this->secure = (bool) $secure;
-        $this->httponly = (bool) $httponly;
+        $this->secure = $secure;
+        $this->httponly = $httponly;
+        $this->samesite = $samesite;
 
         if (null !== $expires) {
             $timestampAsDateTime = \DateTime::createFromFormat('U', $expires);
@@ -76,16 +77,12 @@ class Cookie
                 throw new \UnexpectedValueException(sprintf('The cookie expiration time "%s" is not valid.', $expires));
             }
 
-            $this->expires = $timestampAsDateTime->getTimestamp();
+            $this->expires = $timestampAsDateTime->format('U');
         }
     }
 
     /**
      * Returns the HTTP representation of the Cookie.
-     *
-     * @return string The HTTP representation of the Cookie
-     *
-     * @throws \UnexpectedValueException
      */
     public function __toString()
     {
@@ -112,16 +109,20 @@ class Cookie
             $cookie .= '; httponly';
         }
 
+        if (null !== $this->samesite) {
+            $cookie .= '; samesite='.$this->samesite;
+        }
+
         return $cookie;
     }
 
     /**
      * Creates a Cookie instance from a Set-Cookie header value.
      *
-     * @param string $cookie A Set-Cookie header value
-     * @param string $url    The base URL
+     * @param string      $cookie A Set-Cookie header value
+     * @param string|null $url    The base URL
      *
-     * @return Cookie A Cookie instance
+     * @return static
      *
      * @throws \InvalidArgumentException
      */
@@ -135,7 +136,7 @@ class Cookie
 
         list($name, $value) = explode('=', array_shift($parts), 2);
 
-        $values = array(
+        $values = [
             'name' => trim($name),
             'value' => trim($value),
             'expires' => null,
@@ -144,7 +145,8 @@ class Cookie
             'secure' => false,
             'httponly' => false,
             'passedRawValue' => true,
-        );
+            'samesite' => null,
+        ];
 
         if (null !== $url) {
             if ((false === $urlParts = parse_url($url)) || !isset($urlParts['host'])) {
@@ -175,7 +177,7 @@ class Cookie
                 continue;
             }
 
-            if (2 === count($elements = explode('=', $part, 2))) {
+            if (2 === \count($elements = explode('=', $part, 2))) {
                 if ('expires' === strtolower($elements[0])) {
                     $elements[1] = self::parseDate($elements[1]);
                 }
@@ -192,29 +194,28 @@ class Cookie
             $values['domain'],
             $values['secure'],
             $values['httponly'],
-            $values['passedRawValue']
+            $values['passedRawValue'],
+            $values['samesite']
         );
     }
 
     private static function parseDate($dateValue)
     {
         // trim single quotes around date if present
-        if (($length = strlen($dateValue)) > 1 && "'" === $dateValue[0] && "'" === $dateValue[$length - 1]) {
+        if (($length = \strlen($dateValue)) > 1 && "'" === $dateValue[0] && "'" === $dateValue[$length - 1]) {
             $dateValue = substr($dateValue, 1, -1);
         }
 
         foreach (self::$dateFormats as $dateFormat) {
             if (false !== $date = \DateTime::createFromFormat($dateFormat, $dateValue, new \DateTimeZone('GMT'))) {
-                return $date->getTimestamp();
+                return $date->format('U');
             }
         }
 
         // attempt a fallback for unusual formatting
         if (false !== $date = date_create($dateValue, new \DateTimeZone('GMT'))) {
-            return $date->getTimestamp();
+            return $date->format('U');
         }
-
-        throw new \InvalidArgumentException(sprintf('Could not parse date "%s".', $dateValue));
     }
 
     /**
@@ -250,7 +251,7 @@ class Cookie
     /**
      * Gets the expires time of the cookie.
      *
-     * @return string The cookie expires time
+     * @return string|null The cookie expires time
      */
     public function getExpiresTime()
     {
@@ -304,6 +305,16 @@ class Cookie
      */
     public function isExpired()
     {
-        return null !== $this->expires && 0 !== $this->expires && $this->expires < time();
+        return null !== $this->expires && 0 != $this->expires && $this->expires < time();
+    }
+
+    /**
+     * Gets the samesite attribute of the cookie.
+     *
+     * @return string|null The cookie samesite attribute
+     */
+    public function getSameSite(): ?string
+    {
+        return $this->samesite;
     }
 }

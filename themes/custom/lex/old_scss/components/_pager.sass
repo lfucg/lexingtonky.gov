@@ -1,0 +1,53 @@
+/**
+ * @file
+ * Styles for Bartik's pagination.
+ */
+.pager
+  ul
+    width: 100%
+
+  ul li
+    display: inline-block
+
+  [aria-hidden=true]
+    display: inherit !important
+
+  .pager__item
+    font-size: 0.929em
+    padding: 10px 15px
+
+  a
+    color: $color-primary-3
+    display: inline-block
+    text-decoration: underline
+
+  .pager__item.is-active a
+    color: $color-primary-5
+    border-bottom: 0
+    text-decoration: none
+
+  .pager__item--first,
+  .pager__item--previous
+    padding: 1em 1em 1em 0 /* LTR */
+
+  [dir="rtl"] .pager__item--first,
+  [dir="rtl"] .pager__item--previous
+    padding-left: 1em
+    padding-right: 0
+
+  .pager__item--ellipsis
+    padding: 10px 0
+
+  .pager__item--last,
+  .pager__item--next
+    padding: 1em 0 1em 1em /* LTR */
+
+  [dir="rtl"] .pager__item--last,
+  [dir="rtl"] .pager__item--next
+    padding-left: 0
+    padding-right: 1em
+
+  .pager__items
+    text-align: center
+
+

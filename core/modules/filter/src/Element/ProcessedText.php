@@ -3,6 +3,7 @@
 namespace Drupal\filter\Element;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\Element\RenderElement;
 use Drupal\filter\Entity\FilterFormat;
@@ -21,15 +22,15 @@ class ProcessedText extends RenderElement {
    */
   public function getInfo() {
     $class = get_class($this);
-    return array(
+    return [
       '#text' => '',
       '#format' => NULL,
-      '#filter_types_to_skip' => array(),
+      '#filter_types_to_skip' => [],
       '#langcode' => '',
-      '#pre_render' => array(
-        array($class, 'preRenderText'),
-      ),
-    );
+      '#pre_render' => [
+        [$class, 'preRenderText'],
+      ],
+    ];
   }
 
   /**
@@ -69,7 +70,12 @@ class ProcessedText extends RenderElement {
     $langcode = $element['#langcode'];
 
     if (!isset($format_id)) {
-      $format_id = static::configFactory()->get('filter.settings')->get('fallback_format');
+      $filter_settings = static::configFactory()->get('filter.settings');
+      $format_id = $filter_settings->get('fallback_format');
+      // Ensure 'filter.settings' config's cacheability is respected.
+      CacheableMetadata::createFromRenderArray($element)
+        ->addCacheableDependency($filter_settings)
+        ->applyTo($element);
     }
     /** @var \Drupal\filter\Entity\FilterFormat $format **/
     $format = FilterFormat::load($format_id);
@@ -77,12 +83,12 @@ class ProcessedText extends RenderElement {
     // cannot be filtered.
     if (!$format || !$format->status()) {
       $message = !$format ? 'Missing text format: %format.' : 'Disabled text format: %format.';
-      static::logger('filter')->alert($message, array('%format' => $format_id));
+      static::logger('filter')->alert($message, ['%format' => $format_id]);
       $element['#markup'] = '';
       return $element;
     }
 
-    $filter_must_be_applied = function(FilterInterface $filter) use ($filter_types_to_skip) {
+    $filter_must_be_applied = function (FilterInterface $filter) use ($filter_types_to_skip) {
       $enabled = $filter->status === TRUE;
       $type = $filter->getType();
       // Prevent FilterInterface::TYPE_HTML_RESTRICTOR from being skipped.
@@ -92,7 +98,7 @@ class ProcessedText extends RenderElement {
 
     // Convert all Windows and Mac newlines to a single newline, so filters only
     // need to deal with one possibility.
-    $text = str_replace(array("\r\n", "\r"), "\n", $text);
+    $text = str_replace(["\r\n", "\r"], "\n", $text);
 
     // Get a complete list of filters, ordered properly.
     /** @var \Drupal\filter\Plugin\FilterInterface[] $filters **/

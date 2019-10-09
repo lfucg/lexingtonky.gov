@@ -27,14 +27,12 @@ interface ClassMetadataInterface
     /**
      * Returns the name of the backing PHP class.
      *
-     * @return string The name of the backing class.
+     * @return string The name of the backing class
      */
     public function getName();
 
     /**
      * Adds an {@link AttributeMetadataInterface}.
-     *
-     * @param AttributeMetadataInterface $attributeMetadata
      */
     public function addAttributeMetadata(AttributeMetadataInterface $attributeMetadata);
 
@@ -47,10 +45,8 @@ interface ClassMetadataInterface
 
     /**
      * Merges a {@link ClassMetadataInterface} in the current one.
-     *
-     * @param ClassMetadataInterface $classMetadata
      */
-    public function merge(ClassMetadataInterface $classMetadata);
+    public function merge(self $classMetadata);
 
     /**
      * Returns a {@link \ReflectionClass} instance for this class.

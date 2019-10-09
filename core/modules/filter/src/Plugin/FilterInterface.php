@@ -2,8 +2,10 @@
 
 namespace Drupal\filter\Plugin;
 
-use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Component\Plugin\ConfigurableInterface;
+use Drupal\Component\Plugin\DependentPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -32,7 +34,7 @@ use Drupal\Core\Form\FormStateInterface;
  * should then actually change the content: transform URLs into hyperlinks,
  * convert smileys into images, etc.
  *
- * @see filter_process_text()
+ * @see \Drupal\filter\Plugin\FilterInterface::process()
  * @see check_markup()
  *
  * Typically, only text processing is applied, but in more advanced use cases,
@@ -75,7 +77,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @see \Drupal\filter\Plugin\FilterBase
  * @see plugin_api
  */
-interface FilterInterface extends ConfigurablePluginInterface, PluginInspectionInterface {
+interface FilterInterface extends ConfigurableInterface, DependentPluginInterface, ConfigurablePluginInterface, PluginInspectionInterface {
 
   /**
    * Non-HTML markup language filters that generate HTML.

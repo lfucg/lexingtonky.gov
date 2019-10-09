@@ -9,6 +9,8 @@ use Drupal\Core\Url;
 
 /**
  * Defines a confirmation form for deleting a browser language negotiation mapping.
+ *
+ * @internal
  */
 class NegotiationBrowserDeleteForm extends ConfirmFormBase {
   use ConfigFormBaseTrait;
@@ -27,12 +29,11 @@ class NegotiationBrowserDeleteForm extends ConfirmFormBase {
     return ['language.mappings'];
   }
 
-
   /**
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return $this->t('Are you sure you want to delete %browser_langcode?', array('%browser_langcode' => $this->browserLangcode));
+    return $this->t('Are you sure you want to delete %browser_langcode?', ['%browser_langcode' => $this->browserLangcode]);
   }
 
   /**
@@ -68,13 +69,13 @@ class NegotiationBrowserDeleteForm extends ConfirmFormBase {
       ->clear('map.' . $this->browserLangcode)
       ->save();
 
-    $args = array(
+    $args = [
       '%browser' => $this->browserLangcode,
-    );
+    ];
 
     $this->logger('language')->notice('The browser language detection mapping for the %browser browser language code has been deleted.', $args);
 
-    drupal_set_message($this->t('The mapping for the %browser browser language code has been deleted.', $args));
+    $this->messenger()->addStatus($this->t('The mapping for the %browser browser language code has been deleted.', $args));
 
     $form_state->setRedirect('language.negotiation_browser');
   }

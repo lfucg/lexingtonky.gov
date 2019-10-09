@@ -38,7 +38,7 @@ class TypedDataTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('system', 'field', 'file', 'user');
+  public static $modules = ['system', 'field', 'file', 'user'];
 
   protected function setUp() {
     parent::setup();
@@ -66,7 +66,7 @@ class TypedDataTest extends KernelTestBase {
    */
   public function testGetAndSet() {
     // Boolean type.
-    $typed_data = $this->createTypedData(array('type' => 'boolean'), TRUE);
+    $typed_data = $this->createTypedData(['type' => 'boolean'], TRUE);
     $this->assertTrue($typed_data instanceof BooleanInterface, 'Typed data object is an instance of BooleanInterface.');
     $this->assertTrue($typed_data->getValue() === TRUE, 'Boolean value was fetched.');
     $this->assertEqual($typed_data->validate()->count(), 0);
@@ -82,7 +82,7 @@ class TypedDataTest extends KernelTestBase {
 
     // String type.
     $value = $this->randomString();
-    $typed_data = $this->createTypedData(array('type' => 'string'), $value);
+    $typed_data = $this->createTypedData(['type' => 'string'], $value);
     $this->assertTrue($typed_data instanceof StringInterface, 'Typed data object is an instance of StringInterface.');
     $this->assertTrue($typed_data->getValue() === $value, 'String value was fetched.');
     $this->assertEqual($typed_data->validate()->count(), 0);
@@ -95,12 +95,12 @@ class TypedDataTest extends KernelTestBase {
     $typed_data->setValue(NULL);
     $this->assertNull($typed_data->getValue(), 'String wrapper is null-able.');
     $this->assertEqual($typed_data->validate()->count(), 0);
-    $typed_data->setValue(array('no string'));
+    $typed_data->setValue(['no string']);
     $this->assertEqual($typed_data->validate()->count(), 1, 'Validation detected invalid value.');
 
     // Integer type.
     $value = rand();
-    $typed_data = $this->createTypedData(array('type' => 'integer'), $value);
+    $typed_data = $this->createTypedData(['type' => 'integer'], $value);
     $this->assertTrue($typed_data instanceof IntegerInterface, 'Typed data object is an instance of IntegerInterface.');
     $this->assertTrue($typed_data->getValue() === $value, 'Integer value was fetched.');
     $this->assertEqual($typed_data->validate()->count(), 0);
@@ -117,7 +117,7 @@ class TypedDataTest extends KernelTestBase {
 
     // Float type.
     $value = 123.45;
-    $typed_data = $this->createTypedData(array('type' => 'float'), $value);
+    $typed_data = $this->createTypedData(['type' => 'float'], $value);
     $this->assertTrue($typed_data instanceof FloatInterface, 'Typed data object is an instance of FloatInterface.');
     $this->assertTrue($typed_data->getValue() === $value, 'Float value was fetched.');
     $this->assertEqual($typed_data->validate()->count(), 0);
@@ -132,18 +132,20 @@ class TypedDataTest extends KernelTestBase {
     $typed_data->setValue('invalid');
     $this->assertEqual($typed_data->validate()->count(), 1, 'Validation detected invalid value.');
 
-    // Date Time type.
+    // Date Time type; values with timezone offset.
     $value = '2014-01-01T20:00:00+00:00';
-    $typed_data = $this->createTypedData(array('type' => 'datetime_iso8601'), $value);
+    $typed_data = $this->createTypedData(['type' => 'datetime_iso8601'], $value);
     $this->assertTrue($typed_data instanceof DateTimeInterface, 'Typed data object is an instance of DateTimeInterface.');
     $this->assertTrue($typed_data->getValue() == $value, 'Date value was fetched.');
     $this->assertEqual($typed_data->getValue(), $typed_data->getDateTime()->format('c'), 'Value representation of a date is ISO 8601');
+    $this->assertSame('+00:00', $typed_data->getDateTime()->getTimezone()->getName());
     $this->assertEqual($typed_data->validate()->count(), 0);
     $new_value = '2014-01-02T20:00:00+00:00';
     $typed_data->setValue($new_value);
     $this->assertTrue($typed_data->getDateTime()->format('c') === $new_value, 'Date value was changed and set by an ISO8601 date.');
     $this->assertEqual($typed_data->validate()->count(), 0);
     $this->assertTrue($typed_data->getDateTime()->format('Y-m-d') == '2014-01-02', 'Date value was changed and set by date string.');
+    $this->assertSame('+00:00', $typed_data->getDateTime()->getTimezone()->getName());
     $this->assertEqual($typed_data->validate()->count(), 0);
     $typed_data->setValue(NULL);
     $this->assertNull($typed_data->getDateTime(), 'Date wrapper is null-able.');
@@ -151,16 +153,54 @@ class TypedDataTest extends KernelTestBase {
     $typed_data->setValue('invalid');
     $this->assertEqual($typed_data->validate()->count(), 1, 'Validation detected invalid value.');
     // Check implementation of DateTimeInterface.
-    $typed_data = $this->createTypedData(array('type' => 'datetime_iso8601'), '2014-01-01T20:00:00+00:00');
+    $typed_data = $this->createTypedData(['type' => 'datetime_iso8601'], '2014-01-01T20:00:00+00:00');
     $this->assertTrue($typed_data->getDateTime() instanceof DrupalDateTime);
+    $this->assertSame('+00:00', $typed_data->getDateTime()->getTimezone()->getName());
     $typed_data->setDateTime(new DrupalDateTime('2014-01-02T20:00:00+00:00'));
+    $this->assertSame('+00:00', $typed_data->getDateTime()->getTimezone()->getName());
     $this->assertEqual($typed_data->getValue(), '2014-01-02T20:00:00+00:00');
+    $typed_data->setValue(NULL);
+    $this->assertNull($typed_data->getDateTime());
+
+    // Date Time type; values without timezone offset.
+    $value = '2014-01-01T20:00';
+    $typed_data = $this->createTypedData(['type' => 'datetime_iso8601'], $value);
+    $this->assertTrue($typed_data instanceof DateTimeInterface, 'Typed data object is an instance of DateTimeInterface.');
+    $this->assertTrue($typed_data->getValue() == $value, 'Date value was fetched.');
+    // @todo Uncomment this assertion in https://www.drupal.org/project/drupal/issues/2716891.
+    // $this->assertEqual($typed_data->getValue(), $typed_data->getDateTime()->format('c'), 'Value representation of a date is ISO 8601');
+    $this->assertSame('UTC', $typed_data->getDateTime()->getTimezone()->getName());
+    $this->assertEqual($typed_data->validate()->count(), 0);
+    $new_value = '2014-01-02T20:00';
+    $typed_data->setValue($new_value);
+    // @todo Uncomment this assertion in https://www.drupal.org/project/drupal/issues/2716891.
+    // $this->assertTrue($typed_data->getDateTime()->format('c') === $new_value, 'Date value was changed and set by an ISO8601 date.');
+    $this->assertEqual($typed_data->validate()->count(), 0);
+    $this->assertTrue($typed_data->getDateTime()->format('Y-m-d') == '2014-01-02', 'Date value was changed and set by date string.');
+    $this->assertSame('UTC', $typed_data->getDateTime()->getTimezone()->getName());
+    $this->assertEqual($typed_data->validate()->count(), 0);
+    $typed_data->setValue(NULL);
+    $this->assertNull($typed_data->getDateTime(), 'Date wrapper is null-able.');
+    $this->assertEqual($typed_data->validate()->count(), 0);
+    $typed_data->setValue('invalid');
+    $this->assertEqual($typed_data->validate()->count(), 1, 'Validation detected invalid value.');
+    // Check implementation of DateTimeInterface.
+    $typed_data = $this->createTypedData(['type' => 'datetime_iso8601'], '2014-01-01T20:00:00');
+    $this->assertTrue($typed_data->getDateTime() instanceof DrupalDateTime);
+    $this->assertSame('UTC', $typed_data->getDateTime()->getTimezone()->getName());
+    // When setting datetime without a timezone offset, the default timezone is
+    // used (Australia/Sydney). DateTimeIso8601::setDateTime() converts this
+    // DrupalDateTime object to a string using ::format('c'), it gets converted
+    // to an offset. The offset for Australia/Sydney is +11:00.
+    $typed_data->setDateTime(new DrupalDateTime('2014-01-02T20:00:00'));
+    $this->assertSame('+11:00', $typed_data->getDateTime()->getTimezone()->getName());
+    $this->assertEqual($typed_data->getValue(), '2014-01-02T20:00:00+11:00');
     $typed_data->setValue(NULL);
     $this->assertNull($typed_data->getDateTime());
 
     // Timestamp type.
     $value = REQUEST_TIME;
-    $typed_data = $this->createTypedData(array('type' => 'timestamp'), $value);
+    $typed_data = $this->createTypedData(['type' => 'timestamp'], $value);
     $this->assertTrue($typed_data instanceof DateTimeInterface, 'Typed data object is an instance of DateTimeInterface.');
     $this->assertTrue($typed_data->getValue() == $value, 'Timestamp value was fetched.');
     $this->assertEqual($typed_data->validate()->count(), 0);
@@ -174,7 +214,7 @@ class TypedDataTest extends KernelTestBase {
     $typed_data->setValue('invalid');
     $this->assertEqual($typed_data->validate()->count(), 1, 'Validation detected invalid value.');
     // Check implementation of DateTimeInterface.
-    $typed_data = $this->createTypedData(array('type' => 'timestamp'), REQUEST_TIME);
+    $typed_data = $this->createTypedData(['type' => 'timestamp'], REQUEST_TIME);
     $this->assertTrue($typed_data->getDateTime() instanceof DrupalDateTime);
     $typed_data->setDateTime(DrupalDateTime::createFromTimestamp(REQUEST_TIME + 1));
     $this->assertEqual($typed_data->getValue(), REQUEST_TIME + 1);
@@ -183,7 +223,7 @@ class TypedDataTest extends KernelTestBase {
 
     // DurationIso8601 type.
     $value = 'PT20S';
-    $typed_data = $this->createTypedData(array('type' => 'duration_iso8601'), $value);
+    $typed_data = $this->createTypedData(['type' => 'duration_iso8601'], $value);
     $this->assertTrue($typed_data instanceof DurationInterface, 'Typed data object is an instance of DurationInterface.');
     $this->assertIdentical($typed_data->getValue(), $value, 'DurationIso8601 value was fetched.');
     $this->assertEqual($typed_data->validate()->count(), 0);
@@ -197,7 +237,7 @@ class TypedDataTest extends KernelTestBase {
     $typed_data->setValue('invalid');
     $this->assertEqual($typed_data->validate()->count(), 1, 'Validation detected invalid value.');
     // Check implementation of DurationInterface.
-    $typed_data = $this->createTypedData(array('type' => 'duration_iso8601'), 'PT20S');
+    $typed_data = $this->createTypedData(['type' => 'duration_iso8601'], 'PT20S');
     $this->assertTrue($typed_data->getDuration() instanceof \DateInterval);
     $typed_data->setDuration(new \DateInterval('P40D'));
     // @todo: Should we make this "nicer"?
@@ -207,7 +247,7 @@ class TypedDataTest extends KernelTestBase {
 
     // Time span type.
     $value = 20;
-    $typed_data = $this->createTypedData(array('type' => 'timespan'), $value);
+    $typed_data = $this->createTypedData(['type' => 'timespan'], $value);
     $this->assertTrue($typed_data instanceof DurationInterface, 'Typed data object is an instance of DurationInterface.');
     $this->assertIdentical($typed_data->getValue(), $value, 'Time span value was fetched.');
     $this->assertEqual($typed_data->validate()->count(), 0);
@@ -221,7 +261,7 @@ class TypedDataTest extends KernelTestBase {
     $typed_data->setValue('invalid');
     $this->assertEqual($typed_data->validate()->count(), 1, 'Validation detected invalid value.');
     // Check implementation of DurationInterface.
-    $typed_data = $this->createTypedData(array('type' => 'timespan'), 20);
+    $typed_data = $this->createTypedData(['type' => 'timespan'], 20);
     $this->assertTrue($typed_data->getDuration() instanceof \DateInterval);
     $typed_data->setDuration(new \DateInterval('PT4H'));
     $this->assertEqual($typed_data->getValue(), 60 * 60 * 4);
@@ -230,7 +270,7 @@ class TypedDataTest extends KernelTestBase {
 
     // URI type.
     $uri = 'http://example.com/foo/';
-    $typed_data = $this->createTypedData(array('type' => 'uri'), $uri);
+    $typed_data = $this->createTypedData(['type' => 'uri'], $uri);
     $this->assertTrue($typed_data instanceof UriInterface, 'Typed data object is an instance of UriInterface.');
     $this->assertTrue($typed_data->getValue() === $uri, 'URI value was fetched.');
     $this->assertEqual($typed_data->validate()->count(), 0);
@@ -247,10 +287,10 @@ class TypedDataTest extends KernelTestBase {
     $this->assertEqual($typed_data->validate()->count(), 0, 'Filename with spaces is valid.');
 
     // Generate some files that will be used to test the binary data type.
-    $files = array();
+    $files = [];
     for ($i = 0; $i < 3; $i++) {
       $path = "public://example_$i.png";
-      file_unmanaged_copy(\Drupal::root() . '/core/misc/druplicon.png', $path);
+      \Drupal::service('file_system')->copy($this->root . '/core/misc/druplicon.png', $path);
       $image = File::create(['uri' => $path]);
       $image->save();
       $files[] = $image;
@@ -258,7 +298,7 @@ class TypedDataTest extends KernelTestBase {
 
     // Email type.
     $value = $this->randomString();
-    $typed_data = $this->createTypedData(array('type' => 'email'), $value);
+    $typed_data = $this->createTypedData(['type' => 'email'], $value);
     $this->assertTrue($typed_data instanceof StringInterface, 'Typed data object is an instance of StringInterface.');
     $this->assertIdentical($typed_data->getValue(), $value, 'Email value was fetched.');
     $new_value = 'test@example.com';
@@ -273,7 +313,7 @@ class TypedDataTest extends KernelTestBase {
     $this->assertEqual($typed_data->validate()->count(), 1, 'Validation detected invalid value.');
 
     // Binary type.
-    $typed_data = $this->createTypedData(array('type' => 'binary'), $files[0]->getFileUri());
+    $typed_data = $this->createTypedData(['type' => 'binary'], $files[0]->getFileUri());
     $this->assertTrue($typed_data instanceof BinaryInterface, 'Typed data object is an instance of BinaryInterface.');
     $this->assertTrue(is_resource($typed_data->getValue()), 'Binary value was fetched.');
     $this->assertEqual($typed_data->validate()->count(), 0);
@@ -294,8 +334,8 @@ class TypedDataTest extends KernelTestBase {
     $this->assertEqual($typed_data->validate()->count(), 1, 'Validation detected invalid value.');
 
     // Any type.
-    $value = array('foo');
-    $typed_data = $this->createTypedData(array('type' => 'any'), $value);
+    $value = ['foo'];
+    $typed_data = $this->createTypedData(['type' => 'any'], $value);
     $this->assertIdentical($typed_data->getValue(), $value, 'Any value was fetched.');
     $new_value = 'test@example.com';
     $typed_data->setValue($new_value);
@@ -307,9 +347,9 @@ class TypedDataTest extends KernelTestBase {
     $this->assertEqual($typed_data->validate()->count(), 0);
     // We cannot test invalid values as everything is valid for the any type,
     // but make sure an array or object value passes validation also.
-    $typed_data->setValue(array('entry'));
+    $typed_data->setValue(['entry']);
     $this->assertEqual($typed_data->validate()->count(), 0);
-    $typed_data->setValue((object) array('entry'));
+    $typed_data->setValue((object) ['entry']);
     $this->assertEqual($typed_data->validate()->count(), 0);
   }
 
@@ -318,7 +358,7 @@ class TypedDataTest extends KernelTestBase {
    */
   public function testTypedDataLists() {
     // Test working with an existing list of strings.
-    $value = array('one', 'two', 'three');
+    $value = ['one', 'two', 'three'];
     $typed_data = $this->createTypedData(ListDataDefinition::create('string'), $value);
     $this->assertEqual($typed_data->getValue(), $value, 'List value has been set.');
     // Test iterating.
@@ -347,14 +387,14 @@ class TypedDataTest extends KernelTestBase {
     $clone = clone $typed_data;
     $this->assertTrue($typed_data->getValue() === $clone->getValue());
     $this->assertTrue($typed_data[0] !== $clone[0]);
-    $clone->setValue(array());
+    $clone->setValue([]);
     $this->assertTrue($clone->isEmpty());
 
     // Make sure that resetting the value using NULL results in an empty array.
-    $clone->setValue(array());
+    $clone->setValue([]);
     $typed_data->setValue(NULL);
-    $this->assertIdentical($typed_data->getValue(), array());
-    $this->assertIdentical($clone->getValue(), array());
+    $this->assertIdentical($typed_data->getValue(), []);
+    $this->assertIdentical($clone->getValue(), []);
 
     // Test dealing with NULL items.
     $typed_data[] = NULL;
@@ -367,7 +407,7 @@ class TypedDataTest extends KernelTestBase {
     $this->assertFalse($typed_data->isEmpty());
     $this->assertEqual(count($typed_data), 3);
 
-    $this->assertEqual($typed_data->getValue(), array(NULL, '', 'three'));
+    $this->assertEqual($typed_data->getValue(), [NULL, '', 'three']);
     // Test unsetting.
     unset($typed_data[1]);
     $this->assertEqual(count($typed_data), 2);
@@ -379,7 +419,7 @@ class TypedDataTest extends KernelTestBase {
     $this->assertEqual(count($typed_data), 2);
 
     // Test setting the list with less values.
-    $typed_data->setValue(array('one'));
+    $typed_data->setValue(['one']);
     $this->assertEqual($typed_data->count(), 1);
 
     // Test setting invalid values.
@@ -397,9 +437,9 @@ class TypedDataTest extends KernelTestBase {
    */
   public function testTypedDataListsFilter() {
     // Check that an all-pass filter leaves the list untouched.
-    $value = array('zero', 'one');
+    $value = ['zero', 'one'];
     $typed_data = $this->createTypedData(ListDataDefinition::create('string'), $value);
-    $typed_data->filter(function(TypedDataInterface $item) {
+    $typed_data->filter(function (TypedDataInterface $item) {
       return TRUE;
     });
     $this->assertEqual($typed_data->count(), 2);
@@ -409,17 +449,17 @@ class TypedDataTest extends KernelTestBase {
     $this->assertEqual($typed_data[1]->getName(), 1);
 
     // Check that a none-pass filter empties the list.
-    $value = array('zero', 'one');
+    $value = ['zero', 'one'];
     $typed_data = $this->createTypedData(ListDataDefinition::create('string'), $value);
-    $typed_data->filter(function(TypedDataInterface $item) {
+    $typed_data->filter(function (TypedDataInterface $item) {
       return FALSE;
     });
     $this->assertEqual($typed_data->count(), 0);
 
     // Check that filtering correctly renumbers elements.
-    $value = array('zero', 'one', 'two');
+    $value = ['zero', 'one', 'two'];
     $typed_data = $this->createTypedData(ListDataDefinition::create('string'), $value);
-    $typed_data->filter(function(TypedDataInterface $item) {
+    $typed_data->filter(function (TypedDataInterface $item) {
       return $item->getValue() !== 'one';
     });
     $this->assertEqual($typed_data->count(), 2);
@@ -434,11 +474,11 @@ class TypedDataTest extends KernelTestBase {
    */
   public function testTypedDataMaps() {
     // Test working with a simple map.
-    $value = array(
+    $value = [
       'one' => 'eins',
       'two' => 'zwei',
       'three' => 'drei',
-    );
+    ];
     $definition = MapDataDefinition::create()
       ->setPropertyDefinition('one', DataDefinition::create('string'))
       ->setPropertyDefinition('two', DataDefinition::create('string'))
@@ -467,11 +507,11 @@ class TypedDataTest extends KernelTestBase {
     $this->assertEqual($typed_data->get('one')->getValue(), 'uno');
     // Make sure the update is reflected in the value of the map also.
     $value = $typed_data->getValue();
-    $this->assertEqual($value, array(
+    $this->assertEqual($value, [
       'one' => 'uno',
       'two' => 'zwei',
-      'three' => 'drei'
-    ));
+      'three' => 'drei',
+    ]);
 
     $properties = $typed_data->getProperties();
     $this->assertEqual(array_keys($properties), array_keys($value));
@@ -479,12 +519,12 @@ class TypedDataTest extends KernelTestBase {
 
     // Test setting a not defined property. It shouldn't show up in the
     // properties, but be kept in the values.
-    $typed_data->setValue(array('foo' => 'bar'));
-    $this->assertEqual(array_keys($typed_data->getProperties()), array('one', 'two', 'three'));
-    $this->assertEqual(array_keys($typed_data->getValue()), array('foo', 'one', 'two', 'three'));
+    $typed_data->setValue(['foo' => 'bar']);
+    $this->assertEqual(array_keys($typed_data->getProperties()), ['one', 'two', 'three']);
+    $this->assertEqual(array_keys($typed_data->getValue()), ['foo', 'one', 'two', 'three']);
 
     // Test getting the string representation.
-    $typed_data->setValue(array('one' => 'eins', 'two' => '', 'three' => 'drei'));
+    $typed_data->setValue(['one' => 'eins', 'two' => '', 'three' => 'drei']);
     $this->assertEqual($typed_data->getString(), 'eins, drei');
 
     // Test isEmpty and cloning.
@@ -492,14 +532,14 @@ class TypedDataTest extends KernelTestBase {
     $clone = clone $typed_data;
     $this->assertTrue($typed_data->getValue() === $clone->getValue());
     $this->assertTrue($typed_data->get('one') !== $clone->get('one'));
-    $clone->setValue(array());
+    $clone->setValue([]);
     $this->assertTrue($clone->isEmpty());
 
     // Make sure the difference between NULL (not set) and an empty array is
     // kept.
     $typed_data->setValue(NULL);
     $this->assertNull($typed_data->getValue());
-    $typed_data->setValue(array());
+    $typed_data->setValue([]);
     $value = $typed_data->getValue();
     $this->assertTrue(isset($value) && is_array($value));
 
@@ -535,9 +575,9 @@ class TypedDataTest extends KernelTestBase {
    */
   public function testTypedDataValidation() {
     $definition = DataDefinition::create('integer')
-      ->setConstraints(array(
-        'Range' => array('min' => 5),
-      ));
+      ->setConstraints([
+        'Range' => ['min' => 5],
+      ]);
     $violations = $this->typedDataManager->create($definition, 10)->validate();
     $this->assertEqual($violations->count(), 0);
 
@@ -546,27 +586,27 @@ class TypedDataTest extends KernelTestBase {
     $this->assertEqual($violations->count(), 1);
 
     // Test translating violation messages.
-    $message = t('This value should be %limit or more.', array('%limit' => 5));
+    $message = t('This value should be %limit or more.', ['%limit' => 5]);
     $this->assertEqual($violations[0]->getMessage(), $message, 'Translated violation message retrieved.');
     $this->assertEqual($violations[0]->getPropertyPath(), '');
     $this->assertIdentical($violations[0]->getRoot(), $integer, 'Root object returned.');
 
     // Test translating violation messages when pluralization is used.
     $definition = DataDefinition::create('string')
-      ->setConstraints(array(
-        'Length' => array('min' => 10),
-      ));
+      ->setConstraints([
+        'Length' => ['min' => 10],
+      ]);
     $violations = $this->typedDataManager->create($definition, "short")->validate();
     $this->assertEqual($violations->count(), 1);
-    $message = t('This value is too short. It should have %limit characters or more.', array('%limit' => 10));
+    $message = t('This value is too short. It should have %limit characters or more.', ['%limit' => 10]);
     $this->assertEqual($violations[0]->getMessage(), $message, 'Translated violation message retrieved.');
 
     // Test having multiple violations.
     $definition = DataDefinition::create('integer')
-      ->setConstraints(array(
-        'Range' => array('min' => 5),
-        'Null' => array(),
-      ));
+      ->setConstraints([
+        'Range' => ['min' => 5],
+        'Null' => [],
+      ]);
     $violations = $this->typedDataManager->create($definition, 10)->validate();
     $this->assertEqual($violations->count(), 1);
     $violations = $this->typedDataManager->create($definition, 1)->validate();
@@ -575,12 +615,12 @@ class TypedDataTest extends KernelTestBase {
     // Test validating property containers and make sure the NotNull and Null
     // constraints work with typed data containers.
     $definition = BaseFieldDefinition::create('integer')
-      ->setConstraints(array('NotNull' => array()));
-    $field_item = $this->typedDataManager->create($definition, array('value' => 10));
+      ->setConstraints(['NotNull' => []]);
+    $field_item = $this->typedDataManager->create($definition, ['value' => 10]);
     $violations = $field_item->validate();
     $this->assertEqual($violations->count(), 0);
 
-    $field_item = $this->typedDataManager->create($definition, array('value' => 'no integer'));
+    $field_item = $this->typedDataManager->create($definition, ['value' => 'no integer']);
     $violations = $field_item->validate();
     $this->assertEqual($violations->count(), 1);
     $this->assertEqual($violations[0]->getPropertyPath(), '0.value');
@@ -592,8 +632,8 @@ class TypedDataTest extends KernelTestBase {
 
     // Test the Null constraint with typed data containers.
     $definition = BaseFieldDefinition::create('float')
-      ->setConstraints(array('Null' => array()));
-    $field_item = $this->typedDataManager->create($definition, array('value' => 11.5));
+      ->setConstraints(['Null' => []]);
+    $field_item = $this->typedDataManager->create($definition, ['value' => 11.5]);
     $violations = $field_item->validate();
     $this->assertEqual($violations->count(), 1);
     $field_item = $this->typedDataManager->create($definition);
@@ -622,9 +662,9 @@ class TypedDataTest extends KernelTestBase {
     // Test validating a list of a values and make sure property paths starting
     // with "0" are created.
     $definition = BaseFieldDefinition::create('integer');
-    $violations = $this->typedDataManager->create($definition, array(array('value' => 10)))->validate();
+    $violations = $this->typedDataManager->create($definition, [['value' => 10]])->validate();
     $this->assertEqual($violations->count(), 0);
-    $violations = $this->typedDataManager->create($definition, array(array('value' => 'string')))->validate();
+    $violations = $this->typedDataManager->create($definition, [['value' => 'string']])->validate();
     $this->assertEqual($violations->count(), 1);
 
     $this->assertEqual($violations[0]->getInvalidValue(), 'string');

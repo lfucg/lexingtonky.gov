@@ -43,7 +43,6 @@ class PathautoNodeWebTest extends WebTestBase {
       'administer pathauto',
       'administer url aliases',
       'create url aliases',
-      'administer nodes',
       'bypass node access',
       'access content overview',
     );
@@ -64,7 +63,7 @@ class PathautoNodeWebTest extends WebTestBase {
     // Create a node by saving the node form.
     $title = ' Testing: node title [';
     $automatic_alias = '/content/testing-node-title';
-    $this->drupalPostForm(NULL, array('title[0][value]' => $title), t('Save and publish'));
+    $this->drupalPostForm(NULL, array('title[0][value]' => $title), t('Save'));
     $node = $this->drupalGetNodeByTitle($title);
 
     // Look for alias generated in the form.
@@ -82,7 +81,7 @@ class PathautoNodeWebTest extends WebTestBase {
       'path[0][pathauto]' => FALSE,
       'path[0][alias]' => $manual_alias,
     );
-    $this->drupalPostForm($node->toUrl('edit-form'), $edit, t('Save and keep published'));
+    $this->drupalPostForm($node->toUrl('edit-form'), $edit, t('Save'));
     $this->assertText(t('@type @title has been updated.', array('@type' => 'page', '@title' => $title)));
 
     // Check that the automatic alias checkbox is now unchecked by default.
@@ -91,7 +90,7 @@ class PathautoNodeWebTest extends WebTestBase {
     $this->assertFieldByName('path[0][alias]', $manual_alias);
 
     // Submit the node form with the default values.
-    $this->drupalPostForm(NULL, array('path[0][pathauto]' => FALSE), t('Save and keep published'));
+    $this->drupalPostForm(NULL, array('path[0][pathauto]' => FALSE), t('Save'));
     $this->assertText(t('@type @title has been updated.', array('@type' => 'page', '@title' => $title)));
 
     // Test that the old (automatic) alias has been deleted and only accessible
@@ -109,7 +108,7 @@ class PathautoNodeWebTest extends WebTestBase {
       'path[0][pathauto]' => TRUE,
       'path[0][alias]' => '/should-not-get-created',
     );
-    $this->drupalPostForm('node/add/page', $edit, t('Save and publish'));
+    $this->drupalPostForm('node/add/page', $edit, t('Save'));
     $this->assertNoAliasExists(array('alias' => 'should-not-get-created'));
     $node = $this->drupalGetNodeByTitle($title);
     $this->assertEntityAlias($node, '/content/automatic-title');
@@ -130,7 +129,7 @@ class PathautoNodeWebTest extends WebTestBase {
     $edit = array();
     $edit['title'] = 'My test article';
     $this->drupalCreateNode($edit);
-    //$this->drupalPostForm(NULL, $edit, t('Save and keep published'));
+    //$this->drupalPostForm(NULL, $edit, t('Save'));
     $node = $this->drupalGetNodeByTitle($edit['title']);
 
     // Pathauto checkbox should still not exist.
@@ -150,12 +149,21 @@ class PathautoNodeWebTest extends WebTestBase {
     // Delete all current URL aliases.
     $this->deleteAllAliases();
 
+    $this->drupalGet('admin/content');
+
+    // Check which of the two nodes is first.
+    if (strpos($this->getTextContent(), 'node1') < strpos($this->getTextContent(), 'node2')) {
+      $index = 0;
+    }
+    else {
+      $index = 1;
+    }
+
     $edit = array(
       'action' => 'pathauto_update_alias_node',
-      // @todo - here we expect the $node1 to be at 0 position, any better way?
-      'node_bulk_form[0]' => TRUE,
+      'node_bulk_form[' . $index . ']' => TRUE,
     );
-    $this->drupalPostForm('admin/content', $edit, t('Apply to selected items'));
+    $this->drupalPostForm(NULL, $edit, t('Apply to selected items'));
     $this->assertText('Update URL alias was applied to 1 item.');
 
     $this->assertEntityAlias($node1, '/content/' . $node1->getTitle());
@@ -262,7 +270,7 @@ class PathautoNodeWebTest extends WebTestBase {
       'title[0][value]' => 'Sample article',
       'path[0][alias]' => '/sample-article',
     ];
-    $this->drupalPostForm('node/add/article', $edit, t('Save and publish'));
+    $this->drupalPostForm('node/add/article', $edit, t('Save'));
     $this->assertText(t('article Sample article has been created.'));
 
     // Test the alias.

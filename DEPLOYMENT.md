@@ -21,6 +21,9 @@ And commit the merge
 
 ## Life cycle of upgrading, testing, and deploying
 
+It's important to know your site aliases for drush commands to remotely update the site quickly.
+`lando terminus drush <site-name>.<env> <command>` will take care of all deployment/management of drupal config. 
+
 1. Local: make changes to branch
 2. Local: push to GitHub
 3. CircleCI: creates throwaway pantheon environment to run tests against

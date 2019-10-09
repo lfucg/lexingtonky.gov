@@ -8,8 +8,8 @@ dependencies:
     - lex
 id: lex_help
 theme: lex
-region: help
-weight: -14
+region: breadcrumb
+weight: -25
 provider: null
 plugin: help_block
 settings:

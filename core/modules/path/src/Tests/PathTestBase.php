@@ -2,10 +2,17 @@
 
 namespace Drupal\path\Tests;
 
+@trigger_error(__NAMESPACE__ . '\PathTestBase is deprecated for removal before Drupal 9.0.0. Use Drupal\Tests\path\Functional\PathTestBase instead. See https://www.drupal.org/node/2999939', E_USER_DEPRECATED);
+
 use Drupal\simpletest\WebTestBase;
 
 /**
  * Provides a base class for testing the Path module.
+ *
+ * @deprecated Scheduled for removal in Drupal 9.0.0.
+ *   Use \Drupal\Tests\path\Functional\PathTestBase instead.
+ *
+ * @see https://www.drupal.org/node/2999939
  */
 abstract class PathTestBase extends WebTestBase {
 
@@ -14,15 +21,15 @@ abstract class PathTestBase extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('node', 'path');
+  public static $modules = ['node', 'path'];
 
   protected function setUp() {
     parent::setUp();
 
     // Create Basic page and Article node types.
     if ($this->profile != 'standard') {
-      $this->drupalCreateContentType(array('type' => 'page', 'name' => 'Basic page'));
-      $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
+      $this->drupalCreateContentType(['type' => 'page', 'name' => 'Basic page']);
+      $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
     }
   }
 

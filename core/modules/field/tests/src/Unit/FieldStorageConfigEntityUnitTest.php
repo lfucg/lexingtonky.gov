@@ -8,6 +8,9 @@
 namespace Drupal\Tests\field\Unit;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldException;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\FieldTypePluginManagerInterface;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -21,11 +24,11 @@ use Drupal\Tests\UnitTestCase;
 class FieldStorageConfigEntityUnitTest extends UnitTestCase {
 
   /**
-   * The entity manager used for testing.
+   * The entity type manager used for testing.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * The ID of the type of the entity under test.
@@ -52,14 +55,19 @@ class FieldStorageConfigEntityUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
-    $this->entityManager = $this->getMock('\Drupal\Core\Entity\EntityManagerInterface');
+    $entity_manager = new EntityManager();
+    $this->entityTypeManager = $this->getMock(EntityTypeManagerInterface::class);
     $this->uuid = $this->getMock('\Drupal\Component\Uuid\UuidInterface');
     $this->fieldTypeManager = $this->getMock(FieldTypePluginManagerInterface::class);
 
     $container = new ContainerBuilder();
-    $container->set('entity.manager', $this->entityManager);
+    $container->set('entity.manager', $entity_manager);
+    $container->set('entity_type.manager', $this->entityTypeManager);
     $container->set('uuid', $this->uuid);
     $container->set('plugin.manager.field.field_type', $this->fieldTypeManager);
+    // Inject the container into entity.manager so it can defer to
+    // entity_type.manager.
+    $entity_manager->setContainer($container);
     \Drupal::setContainer($container);
   }
 
@@ -84,7 +92,7 @@ class FieldStorageConfigEntityUnitTest extends UnitTestCase {
     // ConfigEntityBase::addDependency() to get the provider of the field config
     // entity type and once in FieldStorageConfig::calculateDependencies() to
     // get the provider of the entity type that field is attached to.
-    $this->entityManager->expects($this->any())
+    $this->entityTypeManager->expects($this->any())
       ->method('getDefinition')
       ->willReturnMap([
         ['field_storage_config', TRUE, $fieldStorageConfigentityType],
@@ -108,6 +116,104 @@ class FieldStorageConfigEntityUnitTest extends UnitTestCase {
     $dependencies = $field_storage->calculateDependencies()->getDependencies();
     $this->assertEquals(['entity_provider_module', 'entity_test', 'test_module'], $dependencies['module']);
     $this->assertEquals(['stark'], $dependencies['theme']);
+  }
+
+  /**
+   * Tests stored cardinality.
+   *
+   * @covers ::getCardinality
+   */
+  public function testStoredCardinality() {
+    $this->fieldTypeManager->expects($this->any())
+      ->method('getDefinition')
+      ->with('test_field_type')
+      ->willReturn([
+        'class' => TestFieldType::class,
+        // The field type definition has no enforced cardinality.
+        'cardinality' => NULL,
+      ]);
+
+    $field_storage = new FieldStorageConfig([
+      'entity_type' => 'entity_test',
+      'field_name' => 'test_field',
+      'type' => 'test_field_type',
+      'module' => 'test_module',
+    ]);
+    $field_storage->setCardinality(8);
+
+    // Check that the stored cardinality is returned.
+    $this->assertEquals(8, $field_storage->getCardinality());
+  }
+
+  /**
+   * Tests enforced cardinality.
+   *
+   * @covers ::getCardinality
+   */
+  public function testEnforcedCardinality() {
+    $this->fieldTypeManager->expects($this->any())
+      ->method('getDefinition')
+      ->with('test_field_type')
+      ->willReturn([
+        'class' => TestFieldType::class,
+        // This field type defines an enforced cardinality.
+        'cardinality' => 21,
+      ]);
+
+    $field_storage = new FieldStorageConfig([
+      'entity_type' => 'entity_test',
+      'field_name' => 'test_field',
+      'type' => 'test_field_type',
+      'module' => 'test_module',
+    ]);
+    // Custom cardinality tentative.
+    $field_storage->setCardinality(8);
+
+    // Check that the enforced cardinality is returned.
+    $this->assertEquals(21, $field_storage->getCardinality());
+  }
+
+  /**
+   * Tests invalid enforced cardinality.
+   *
+   * @covers ::getCardinality
+   * @dataProvider providerInvalidEnforcedCardinality
+   *
+   * @param mixed $enforced_cardinality
+   *   Enforced cardinality
+   */
+  public function testInvalidEnforcedCardinality($enforced_cardinality) {
+    $this->fieldTypeManager->expects($this->any())
+      ->method('getDefinition')
+      ->with('test_field_type')
+      ->willReturn([
+        'class' => TestFieldType::class,
+        'cardinality' => $enforced_cardinality,
+      ]);
+
+    $field_storage = new FieldStorageConfig([
+      'entity_type' => 'entity_test',
+      'field_name' => 'test_field',
+      'type' => 'test_field_type',
+      'module' => 'test_module',
+    ]);
+
+    $this->setExpectedException(FieldException::class, "Invalid enforced cardinality '$enforced_cardinality'. Allowed values: a positive integer or -1.");
+    $field_storage->getCardinality();
+  }
+
+  /**
+   * Data provider for ::testInvalidEnforcedCardinality()
+   *
+   * @return array
+   *   Test cases.
+   */
+  public function providerInvalidEnforcedCardinality() {
+    return [
+      'zero' => [0],
+      'negative_other_than_-1' => [-70],
+      'non_numeric' => ['abc%$#@!'],
+    ];
   }
 
 }

@@ -1,0 +1,11 @@
+lex_calendar:
+  version: 1.x
+  css:
+    layout:
+      css/fullcalendar.min.css: {}
+  js:
+    js/moment.min.js: {}
+    js/fullcalendar.min.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.ui.dialog

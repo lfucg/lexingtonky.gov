@@ -31,16 +31,16 @@ class TestRunnerKernel extends DrupalKernel {
     // Prime the module list and corresponding Extension objects.
     // @todo Remove System module. Needed because
     //   \Drupal\Core\Datetime\DateFormatter has a (needless) dependency on the
-    //   'date_format' entity, so calls to format_date()/format_interval() cause
-    //   a plugin not found exception.
-    $this->moduleList = array(
+    //   'date_format' entity, so calls to DateFormatter::format() and
+    //   DateFormatter::formatInterval() cause a plugin not found exception.
+    $this->moduleList = [
       'system' => 0,
       'simpletest' => 0,
-    );
-    $this->moduleData = array(
+    ];
+    $this->moduleData = [
       'system' => new Extension($this->root, 'module', 'core/modules/system/system.info.yml', 'system.module'),
       'simpletest' => new Extension($this->root, 'module', 'core/modules/simpletest/simpletest.info.yml', 'simpletest.module'),
-    );
+    ];
   }
 
   /**
@@ -49,13 +49,13 @@ class TestRunnerKernel extends DrupalKernel {
   public function boot() {
     // Ensure that required Settings exist.
     if (!Settings::getAll()) {
-      new Settings(array(
+      new Settings([
         'hash_salt' => 'run-tests',
         'container_yamls' => [],
         // If there is no settings.php, then there is no parent site. In turn,
         // there is no public files directory; use a custom public files path.
         'file_public_path' => 'sites/default/files',
-      ));
+      ]);
     }
 
     // Remove Drupal's error/exception handlers; they are designed for HTML
@@ -70,7 +70,7 @@ class TestRunnerKernel extends DrupalKernel {
 
     $this->getContainer()->get('module_handler')->loadAll();
 
-    simpletest_classloader_register();
+    $this->getContainer()->get('test_discovery')->registerTestNamespaces();
 
     // Register stream wrappers.
     $this->getContainer()->get('stream_wrapper_manager')->register();

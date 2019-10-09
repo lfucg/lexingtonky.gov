@@ -3,6 +3,7 @@
 namespace Drupal\file\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\file\FileInterface;
 
 /**
  * Plugin implementation of the 'file_url_plain' formatter.
@@ -21,15 +22,16 @@ class UrlPlainFormatter extends FileFormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = array();
+    $elements = [];
 
     foreach ($this->getEntitiesToView($items, $langcode) as $delta => $file) {
-      $elements[$delta] = array(
-        '#markup' => file_url_transform_relative(file_create_url($file->getFileUri())),
-        '#cache' => array(
+      assert($file instanceof FileInterface);
+      $elements[$delta] = [
+        '#markup' => $file->createFileUrl(),
+        '#cache' => [
           'tags' => $file->getCacheTags(),
-        ),
-      );
+        ],
+      ];
     }
 
     return $elements;

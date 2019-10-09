@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\RequestContext;
 
 /**
@@ -126,7 +127,7 @@ class CustomPageExceptionHtmlSubscriberTest extends UnitTestCase {
    * Tests onHandleException with a POST request.
    */
   public function testHandleWithPostRequest() {
-    $request = Request::create('/test', 'POST', array('name' => 'druplicon', 'pass' => '12345'));
+    $request = Request::create('/test', 'POST', ['name' => 'druplicon', 'pass' => '12345']);
 
     $request_context = new RequestContext();
     $request_context->fromRequest($request);
@@ -138,7 +139,7 @@ class CustomPageExceptionHtmlSubscriberTest extends UnitTestCase {
       return new HtmlResponse($request->getMethod());
     }));
 
-    $event = new GetResponseForExceptionEvent($this->kernel, $request, 'foo', new NotFoundHttpException('foo'));
+    $event = new GetResponseForExceptionEvent($this->kernel, $request, HttpKernelInterface::MASTER_REQUEST, new NotFoundHttpException('foo'));
 
     $this->customPageSubscriber->onException($event);
 
@@ -152,7 +153,7 @@ class CustomPageExceptionHtmlSubscriberTest extends UnitTestCase {
    * Tests onHandleException with a GET request.
    */
   public function testHandleWithGetRequest() {
-    $request = Request::create('/test', 'GET', array('name' => 'druplicon', 'pass' => '12345'));
+    $request = Request::create('/test', 'GET', ['name' => 'druplicon', 'pass' => '12345']);
     $request->attributes->set(AccessAwareRouterInterface::ACCESS_RESULT, AccessResult::forbidden()->addCacheTags(['druplicon']));
 
     $request_context = new RequestContext();
@@ -165,7 +166,7 @@ class CustomPageExceptionHtmlSubscriberTest extends UnitTestCase {
       return new Response($request->getMethod() . ' ' . UrlHelper::buildQuery($request->query->all()));
     }));
 
-    $event = new GetResponseForExceptionEvent($this->kernel, $request, 'foo', new NotFoundHttpException('foo'));
+    $event = new GetResponseForExceptionEvent($this->kernel, $request, HttpKernelInterface::MASTER_REQUEST, new NotFoundHttpException('foo'));
     $this->customPageSubscriber->onException($event);
 
     $response = $event->getResponse();

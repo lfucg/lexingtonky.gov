@@ -2,16 +2,15 @@
 
 namespace Drupal\accept_header_routing_test\Routing;
 
-use Drupal\Core\Routing\RouteFilterInterface;
+use Drupal\Core\Routing\FilterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
-use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
  * Filters routes based on the media type specified in the HTTP Accept headers.
  */
-class AcceptHeaderMatcher implements RouteFilterInterface {
+class AcceptHeaderMatcher implements FilterInterface {
 
   /**
    * {@inheritdoc}
@@ -20,7 +19,7 @@ class AcceptHeaderMatcher implements RouteFilterInterface {
     // Generates a list of Symfony formats matching the acceptable MIME types.
     // @todo replace by proper content negotiation library.
     $acceptable_mime_types = $request->getAcceptableContentTypes();
-    $acceptable_formats = array_filter(array_map(array($request, 'getFormat'), $acceptable_mime_types));
+    $acceptable_formats = array_filter(array_map([$request, 'getFormat'], $acceptable_mime_types));
     $primary_format = $request->getRequestFormat();
 
     foreach ($collection as $name => $route) {
@@ -57,13 +56,6 @@ class AcceptHeaderMatcher implements RouteFilterInterface {
     // \Symfony\Component\Routing\Exception\ResourceNotFoundException here
     // because we don't want to return a 404 status code, but rather a 406.
     throw new NotAcceptableHttpException('No route found for the specified formats ' . implode(' ', $acceptable_mime_types));
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function applies(Route $route) {
-    return TRUE;
   }
 
 }

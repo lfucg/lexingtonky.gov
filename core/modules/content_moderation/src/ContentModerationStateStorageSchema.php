@@ -16,12 +16,25 @@ class ContentModerationStateStorageSchema extends SqlContentEntityStorageSchema 
   protected function getEntitySchema(ContentEntityTypeInterface $entity_type, $reset = FALSE) {
     $schema = parent::getEntitySchema($entity_type, $reset);
 
-    // Creates an index to ensure that the lookup in
-    // \Drupal\content_moderation\Plugin\Field\ModerationStateFieldItemList::getModerationState()
-    // is performant.
-    $schema['content_moderation_state_field_data']['indexes'] += array(
-      'content_moderation_state__lookup' => array('content_entity_type_id', 'content_entity_id', 'content_entity_revision_id'),
-    );
+    // Creates unique keys to guarantee the integrity of the entity and to make
+    // the lookup in ModerationStateFieldItemList::getModerationState() fast.
+    $unique_keys = [
+      'content_entity_type_id',
+      'content_entity_id',
+      'content_entity_revision_id',
+      'workflow',
+      'langcode',
+    ];
+    if ($data_table = $this->storage->getDataTable()) {
+      $schema[$data_table]['unique keys'] += [
+        'content_moderation_state__lookup' => $unique_keys,
+      ];
+    }
+    if ($revision_data_table = $this->storage->getRevisionDataTable()) {
+      $schema[$revision_data_table]['unique keys'] += [
+        'content_moderation_state__lookup' => $unique_keys,
+      ];
+    }
 
     return $schema;
   }

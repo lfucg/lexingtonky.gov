@@ -8,8 +8,8 @@ dependencies:
     - lex
 id: lex_messages
 theme: lex
-region: help
-weight: -15
+region: breadcrumb
+weight: -25
 provider: null
 plugin: system_messages_block
 settings:

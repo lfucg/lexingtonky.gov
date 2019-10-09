@@ -31,12 +31,16 @@ class BlockContentListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultOperations(EntityInterface $entity) {
-    $operations = parent::getDefaultOperations($entity);
-    if (isset($operations['edit'])) {
-      $operations['edit']['query']['destination'] = $entity->url('collection');
+  protected function getEntityIds() {
+    $query = $this->getStorage()->getQuery()
+      ->sort($this->entityType->getKey('id'));
+    $query->condition('reusable', TRUE);
+
+    // Only add the pager if a limit is specified.
+    if ($this->limit) {
+      $query->pager($this->limit);
     }
-    return $operations;
+    return $query->execute();
   }
 
 }

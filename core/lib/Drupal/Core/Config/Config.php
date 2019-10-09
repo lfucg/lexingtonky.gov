@@ -155,10 +155,10 @@ class Config extends StorableConfigBase {
   protected function setOverriddenData() {
     $this->overriddenData = $this->data;
     if (isset($this->moduleOverrides) && is_array($this->moduleOverrides)) {
-      $this->overriddenData = NestedArray::mergeDeepArray(array($this->overriddenData, $this->moduleOverrides), TRUE);
+      $this->overriddenData = NestedArray::mergeDeepArray([$this->overriddenData, $this->moduleOverrides], TRUE);
     }
     if (isset($this->settingsOverrides) && is_array($this->settingsOverrides)) {
-      $this->overriddenData = NestedArray::mergeDeepArray(array($this->overriddenData, $this->settingsOverrides), TRUE);
+      $this->overriddenData = NestedArray::mergeDeepArray([$this->overriddenData, $this->settingsOverrides], TRUE);
     }
     return $this;
   }
@@ -219,6 +219,10 @@ class Config extends StorableConfigBase {
       }
     }
 
+    // Potentially configuration schema could have changed the underlying data's
+    // types.
+    $this->resetOverriddenData();
+
     $this->storage->write($this->name, $this->data);
     if (!$this->isNew) {
       Cache::invalidateTags($this->getCacheTags());
@@ -226,9 +230,6 @@ class Config extends StorableConfigBase {
     $this->isNew = FALSE;
     $this->eventDispatcher->dispatch(ConfigEvents::SAVE, new ConfigCrudEvent($this));
     $this->originalData = $this->data;
-    // Potentially configuration schema could have changed the underlying data's
-    // types.
-    $this->resetOverriddenData();
     return $this;
   }
 
@@ -239,7 +240,7 @@ class Config extends StorableConfigBase {
    *   The configuration object.
    */
   public function delete() {
-    $this->data = array();
+    $this->data = [];
     $this->storage->delete($this->name);
     Cache::invalidateTags($this->getCacheTags());
     $this->isNew = TRUE;
@@ -281,10 +282,10 @@ class Config extends StorableConfigBase {
     if ($apply_overrides) {
       // Apply overrides.
       if (isset($this->moduleOverrides) && is_array($this->moduleOverrides)) {
-        $original_data = NestedArray::mergeDeepArray(array($original_data, $this->moduleOverrides), TRUE);
+        $original_data = NestedArray::mergeDeepArray([$original_data, $this->moduleOverrides], TRUE);
       }
       if (isset($this->settingsOverrides) && is_array($this->settingsOverrides)) {
-        $original_data = NestedArray::mergeDeepArray(array($original_data, $this->settingsOverrides), TRUE);
+        $original_data = NestedArray::mergeDeepArray([$original_data, $this->settingsOverrides], TRUE);
       }
     }
 
@@ -300,6 +301,44 @@ class Config extends StorableConfigBase {
         $value = NestedArray::getValue($original_data, $parts, $key_exists);
         return $key_exists ? $value : NULL;
       }
+    }
+  }
+
+  /**
+   * Determines if overrides are applied to a key for this configuration object.
+   *
+   * @param string $key
+   *   (optional) A string that maps to a key within the configuration data.
+   *   For instance in the following configuration array:
+   *   @code
+   *   array(
+   *     'foo' => array(
+   *       'bar' => 'baz',
+   *     ),
+   *   );
+   *   @endcode
+   *   A key of 'foo.bar' would map to the string 'baz'. However, a key of 'foo'
+   *   would map to the array('bar' => 'baz').
+   *   If not supplied TRUE will be returned if there are any overrides at all
+   *   for this configuration object.
+   *
+   * @return bool
+   *   TRUE if there are any overrides for the key, otherwise FALSE.
+   */
+  public function hasOverrides($key = '') {
+    if (empty($key)) {
+      return !(empty($this->moduleOverrides) && empty($this->settingsOverrides));
+    }
+    else {
+      $parts = explode('.', $key);
+      $override_exists = FALSE;
+      if (isset($this->moduleOverrides) && is_array($this->moduleOverrides)) {
+        $override_exists = NestedArray::keyExists($this->moduleOverrides, $parts);
+      }
+      if (!$override_exists && isset($this->settingsOverrides) && is_array($this->settingsOverrides)) {
+        $override_exists = NestedArray::keyExists($this->settingsOverrides, $parts);
+      }
+      return $override_exists;
     }
   }
 

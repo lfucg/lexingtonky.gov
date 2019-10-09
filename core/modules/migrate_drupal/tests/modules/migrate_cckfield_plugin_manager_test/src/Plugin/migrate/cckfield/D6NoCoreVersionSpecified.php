@@ -7,15 +7,12 @@ use Drupal\migrate\Plugin\MigrationInterface;
 
 /**
  * @MigrateCckField(
- *   id = "d6_no_core_version_specified"
+ *   id = "d6_no_core_version_specified",
+ *   source_module = "foo",
+ *   destination_module = "bar",
  * )
  */
 class D6NoCoreVersionSpecified extends CckFieldPluginBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFieldFormatterMap() {}
 
   /**
    * {@inheritdoc}

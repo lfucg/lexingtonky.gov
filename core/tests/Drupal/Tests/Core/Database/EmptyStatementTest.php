@@ -12,10 +12,11 @@ use Drupal\Tests\UnitTestCase;
  * @group Database
  */
 class EmptyStatementTest extends UnitTestCase {
+
   /**
    * Tests that the empty result set behaves as empty.
    */
-  function testEmpty() {
+  public function testEmpty() {
     $result = new StatementEmpty();
 
     $this->assertTrue($result instanceof StatementInterface, 'Class implements expected interface');
@@ -25,7 +26,7 @@ class EmptyStatementTest extends UnitTestCase {
   /**
    * Tests that the empty result set iterates safely.
    */
-  function testEmptyIteration() {
+  public function testEmptyIteration() {
     $result = new StatementEmpty();
     $this->assertSame(0, iterator_count($result), 'Empty result set should not iterate.');
   }
@@ -33,10 +34,10 @@ class EmptyStatementTest extends UnitTestCase {
   /**
    * Tests that the empty result set mass-fetches in an expected way.
    */
-  function testEmptyFetchAll() {
+  public function testEmptyFetchAll() {
     $result = new StatementEmpty();
 
-    $this->assertEquals($result->fetchAll(), array(), 'Empty array returned from empty result set.');
+    $this->assertEquals($result->fetchAll(), [], 'Empty array returned from empty result set.');
   }
 
 }

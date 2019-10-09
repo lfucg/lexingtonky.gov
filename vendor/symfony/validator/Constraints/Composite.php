@@ -24,8 +24,6 @@ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
  * let {@link getCompositeOption()} return the name of the property which
  * contains the nested constraints.
  *
- * @since  2.6
- *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 abstract class Composite extends Constraint
@@ -63,22 +61,26 @@ abstract class Composite extends Constraint
         $compositeOption = $this->getCompositeOption();
         $nestedConstraints = $this->$compositeOption;
 
-        if (!is_array($nestedConstraints)) {
-            $nestedConstraints = array($nestedConstraints);
+        if (!\is_array($nestedConstraints)) {
+            $nestedConstraints = [$nestedConstraints];
         }
 
         foreach ($nestedConstraints as $constraint) {
             if (!$constraint instanceof Constraint) {
-                throw new ConstraintDefinitionException(sprintf('The value %s is not an instance of Constraint in constraint %s', $constraint, get_class($this)));
+                if (\is_object($constraint)) {
+                    $constraint = \get_class($constraint);
+                }
+
+                throw new ConstraintDefinitionException(sprintf('The value %s is not an instance of Constraint in constraint %s', $constraint, \get_class($this)));
             }
 
             if ($constraint instanceof Valid) {
-                throw new ConstraintDefinitionException(sprintf('The constraint Valid cannot be nested inside constraint %s. You can only declare the Valid constraint directly on a field or method.', get_class($this)));
+                throw new ConstraintDefinitionException(sprintf('The constraint Valid cannot be nested inside constraint %s. You can only declare the Valid constraint directly on a field or method.', \get_class($this)));
             }
         }
 
         if (!property_exists($this, 'groups')) {
-            $mergedGroups = array();
+            $mergedGroups = [];
 
             foreach ($nestedConstraints as $constraint) {
                 foreach ($constraint->groups as $group) {
@@ -96,14 +98,8 @@ abstract class Composite extends Constraint
             if (property_exists($constraint, 'groups')) {
                 $excessGroups = array_diff($constraint->groups, $this->groups);
 
-                if (count($excessGroups) > 0) {
-                    throw new ConstraintDefinitionException(sprintf(
-                        'The group(s) "%s" passed to the constraint %s '.
-                        'should also be passed to its containing constraint %s',
-                        implode('", "', $excessGroups),
-                        get_class($constraint),
-                        get_class($this)
-                    ));
+                if (\count($excessGroups) > 0) {
+                    throw new ConstraintDefinitionException(sprintf('The group(s) "%s" passed to the constraint %s should also be passed to its containing constraint %s', implode('", "', $excessGroups), \get_class($constraint), \get_class($this)));
                 }
             } else {
                 $constraint->groups = $this->groups;

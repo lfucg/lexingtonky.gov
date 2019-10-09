@@ -1,5 +1,9 @@
 [
   {
+    "old_path": "/meeting-notices",
+    "new_path": "/calendar/meetings"
+  },
+  {
     "old_path": "/index.aspx?page=1918",
     "new_path": "/traffic-ticker"
   },
@@ -81,7 +85,7 @@
   },
   {
     "old_path": "/index.aspx?page=263",
-    "new_path": "/departments/play-golf-lexington"
+    "new_path": "/golf-splash"
   },
   {
     "old_path": "/index.aspx?page=3518",
@@ -1300,10 +1304,6 @@
     "new_path": "/plans-studies-and-surveys"
   },
   {
-    "old_path": "/index.aspx?page=2602",
-    "new_path": "/do-your-duty"
-  },
-  {
     "old_path": "/index.aspx?page=2605",
     "new_path": "/environmentally-friendly-lawncare"
   },
@@ -1676,10 +1676,6 @@
     "new_path": "/basic-training-academy"
   },
   {
-    "old_path": "/recycle",
-    "new_path": "/browse/utilities-and-streets/recycling"
-  },
-  {
     "old_path": "/recyclingdropoff",
     "new_path": "/drop-off-locations"
   },
@@ -1793,7 +1789,7 @@
   },
   {
     "old_path": "/newuser",
-    "new_path": "https://parks.lexingtonky.gov/wbwsc/webtrac.wsc/wbsa0100.html?tv=42213&wbsi=nosi&xxac=a&lang=CUSTM"
+    "new_path": "https://parks.lexingtonky.gov/wbwsc/webtrac.wsc/household.html?option=add"
   },
   {
     "old_path": "/ozone",

@@ -4,6 +4,7 @@ namespace Drupal\Core\Entity\Query;
 
 use Drupal\Core\Database\Query\PagerSelectExtender;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Utility\TableSort;
 
 /**
  * The base entity query class.
@@ -29,7 +30,7 @@ abstract class QueryBase implements QueryInterface {
    *
    * @var array
    */
-  protected $sort = array();
+  protected $sort = [];
 
   /**
    * TRUE if this is a count query, FALSE if it isn't.
@@ -50,14 +51,14 @@ abstract class QueryBase implements QueryInterface {
    *
    * @var array
    */
-  protected $aggregate = array();
+  protected $aggregate = [];
 
   /**
    * The list of columns to group on.
    *
    * @var array
    */
-  protected $groupBy = array();
+  protected $groupBy = [];
 
   /**
    * Aggregate Conditions
@@ -71,14 +72,14 @@ abstract class QueryBase implements QueryInterface {
    *
    * @var array
    */
-  protected $sortAggregate = array();
+  protected $sortAggregate = [];
 
   /**
    * The query range.
    *
    * @var array
    */
-  protected $range = array();
+  protected $range = [];
 
   /**
    * The query metadata for alter purposes.
@@ -109,20 +110,27 @@ abstract class QueryBase implements QueryInterface {
   protected $allRevisions = FALSE;
 
   /**
+   * Flag indicating whether to query the latest revision.
+   *
+   * @var bool
+   */
+  protected $latestRevision = FALSE;
+
+  /**
    * The query pager data.
    *
    * @var array
    *
    * @see Query::pager()
    */
-  protected $pager = array();
+  protected $pager = [];
 
   /**
    * List of potential namespaces of the classes belonging to this query.
    *
    * @var array
    */
-  protected $namespaces = array();
+  protected $namespaces = [];
 
   /**
    * Constructs this object.
@@ -181,10 +189,10 @@ abstract class QueryBase implements QueryInterface {
    * {@inheritdoc}
    */
   public function range($start = NULL, $length = NULL) {
-    $this->range = array(
+    $this->range = [
       'start' => $start,
       'length' => $length,
-    );
+    ];
     return $this;
   }
 
@@ -223,11 +231,11 @@ abstract class QueryBase implements QueryInterface {
    * {@inheritdoc}
    */
   public function sort($field, $direction = 'ASC', $langcode = NULL) {
-    $this->sort[] = array(
+    $this->sort[] = [
       'field' => $field,
       'direction' => strtoupper($direction),
       'langcode' => $langcode,
-    );
+    ];
     return $this;
   }
 
@@ -252,6 +260,16 @@ abstract class QueryBase implements QueryInterface {
    */
   public function currentRevision() {
     $this->allRevisions = FALSE;
+    $this->latestRevision = FALSE;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function latestRevision() {
+    $this->allRevisions = TRUE;
+    $this->latestRevision = TRUE;
     return $this;
   }
 
@@ -260,6 +278,7 @@ abstract class QueryBase implements QueryInterface {
    */
   public function allRevisions() {
     $this->allRevisions = TRUE;
+    $this->latestRevision = FALSE;
     return $this;
   }
 
@@ -276,10 +295,10 @@ abstract class QueryBase implements QueryInterface {
       PagerSelectExtender::$maxElement = $element + 1;
     }
 
-    $this->pager = array(
+    $this->pager = [
       'limit' => $limit,
       'element' => $element,
-    );
+    ];
     return $this;
   }
 
@@ -311,8 +330,8 @@ abstract class QueryBase implements QueryInterface {
       }
     }
 
-    $order = tablesort_get_order($headers);
-    $direction = tablesort_get_sort($headers);
+    $order = TableSort::getOrder($headers, \Drupal::request());
+    $direction = TableSort::getSort($headers, \Drupal::request());
     foreach ($headers as $header) {
       if (is_array($header) && ($header['data'] == $order['name'])) {
         $this->sort($header['specifier'], $direction, isset($header['langcode']) ? $header['langcode'] : NULL);
@@ -325,7 +344,7 @@ abstract class QueryBase implements QueryInterface {
   /**
    * Makes sure that the Condition object is cloned as well.
    */
-  function __clone() {
+  public function __clone() {
     $this->condition = clone $this->condition;
   }
 
@@ -348,14 +367,14 @@ abstract class QueryBase implements QueryInterface {
    * {@inheritdoc}
    */
   public function hasAllTags() {
-    return !(boolean)array_diff(func_get_args(), array_keys($this->alterTags));
+    return !(boolean) array_diff(func_get_args(), array_keys($this->alterTags));
   }
 
   /**
    * {@inheritdoc}
    */
   public function hasAnyTag() {
-    return (boolean)array_intersect(func_get_args(), array_keys($this->alterTags));
+    return (boolean) array_intersect(func_get_args(), array_keys($this->alterTags));
   }
 
   /**
@@ -381,12 +400,12 @@ abstract class QueryBase implements QueryInterface {
       $alias = $this->getAggregationAlias($field, $function);
     }
 
-    $this->aggregate[$alias] = array(
+    $this->aggregate[$alias] = [
       'field' => $field,
       'function' => $function,
       'alias' => $alias,
       'langcode' => $langcode,
-    );
+    ];
 
     return $this;
   }
@@ -407,12 +426,12 @@ abstract class QueryBase implements QueryInterface {
   public function sortAggregate($field, $function, $direction = 'ASC', $langcode = NULL) {
     $alias = $this->getAggregationAlias($field, $function);
 
-    $this->sortAggregate[$alias] = array(
+    $this->sortAggregate[$alias] = [
       'field' => $field,
       'function' => $function,
       'direction' => $direction,
       'langcode' => $langcode,
-    );
+    ];
     $this->aggregate($field, $function, $langcode, $alias);
 
     return $this;
@@ -422,16 +441,16 @@ abstract class QueryBase implements QueryInterface {
    * {@inheritdoc}
    */
   public function groupBy($field, $langcode = NULL) {
-    $this->groupBy[] = array(
+    $this->groupBy[] = [
       'field' => $field,
       'langcode' => $langcode,
-    );
+    ];
 
     return $this;
   }
 
   /**
-   * Generates an alias for a field and it's aggregated function.
+   * Generates an alias for a field and its aggregated function.
    *
    * @param string $field
    *   The field name used in the alias.
@@ -456,7 +475,7 @@ abstract class QueryBase implements QueryInterface {
    *   parent of the class and so on and so on.
    */
   public static function getNamespaces($object) {
-    $namespaces = array();
+    $namespaces = [];
     for ($class = get_class($object); $class; $class = get_parent_class($class)) {
       $namespaces[] = substr($class, 0, strrpos($class, '\\'));
     }

@@ -113,12 +113,12 @@ interface ViewsPluginInterface extends PluginInspectionInterface, DerivativeInsp
    * @return array
    *   An array of available token replacement info or tokens, grouped by type.
    */
-  public function getAvailableGlobalTokens($prepared = FALSE, array $types = array());
+  public function getAvailableGlobalTokens($prepared = FALSE, array $types = []);
 
   /**
    * Flattens the structure of form elements.
    *
-   * If a form element has #flatten = TRUE, then all of it's children get moved
+   * If a form element has #flatten = TRUE, then all of its children get moved
    * to the same level as the element itself. So $form['to_be_flattened'][$key]
    * becomes $form[$key], and $form['to_be_flattened'] gets unset.
    *
@@ -141,7 +141,7 @@ interface ViewsPluginInterface extends PluginInspectionInterface, DerivativeInsp
    * @return string
    *   The tokenized string.
    */
-  public function globalTokenReplace($string = '', array $options = array());
+  public function globalTokenReplace($string = '', array $options = []);
 
   /**
    * Clears a plugin.

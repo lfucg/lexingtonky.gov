@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Simpletest tests for autologout.
- */
-
 namespace Drupal\autologout\Tests;
 
 use Drupal\simpletest\WebTestBase;
@@ -104,7 +99,7 @@ class AutologoutTest extends WebTestBase {
     $autologout_settings = $this->configFactory->getEditable('autologout.settings');
     $autologout_role_settings = $this->configFactory->getEditable('autologout.role.authenticated');
     $uid = $this->privilegedUser->id();
-    $autologout_user_settings = $this->configFactory->getEditable('autologout.user.' . $uid);
+    $autologout_user_settings = \Drupal::service('user.data');
 
     // Default used if no role is specified.
     $autologout_settings->set('timeout', 100)
@@ -145,9 +140,8 @@ class AutologoutTest extends WebTestBase {
     $autologout_role_settings->set('enabled', TRUE)
       ->set('timeout', 200)
       ->save();
-    $autologout_user_settings->set('enabled', FALSE)
-      ->set('timeout', '')
-      ->save();
+    $autologout_user_settings->set('autologout', $uid, 'timeout', '');
+    $autologout_user_settings->set('autologout', $uid, 'enabled', FALSE);
     $this->assertAutotimeout($uid, 200, 'User timeout uses role value if personal value is the empty string.');
 
     // Default timeout used if personal timeout is empty string.
@@ -156,9 +150,8 @@ class AutologoutTest extends WebTestBase {
     $autologout_role_settings->set('enabled', FALSE)
       ->set('timeout', 200)
       ->save();
-    $autologout_user_settings->set('enabled', FALSE)
-      ->set('timeout', '')
-      ->save();
+    $autologout_user_settings->set('autologout', $uid, 'timeout', '');
+    $autologout_user_settings->set('autologout', $uid, 'enabled', FALSE);
     $this->assertAutotimeout($uid, 100, 'User timeout uses default value if personal value is the empty string and no role timeout is specified.');
 
     // Personal timeout used if set.
@@ -167,9 +160,8 @@ class AutologoutTest extends WebTestBase {
     $autologout_role_settings->set('enabled', FALSE)
       ->set('timeout', 200)
       ->save();
-    $autologout_user_settings->set('enabled', TRUE)
-      ->set('timeout', 300)
-      ->save();
+    $autologout_user_settings->set('autologout', $uid, 'timeout', 300);
+    $autologout_user_settings->set('autologout', $uid, 'enabled', TRUE);
     $this->assertAutotimeout($uid, 300, 'User timeout uses default value if personal value is the empty string and no role timeout is specified.');
   }
 
@@ -183,7 +175,7 @@ class AutologoutTest extends WebTestBase {
     $this->assertText('Log out', 'User is still logged in.');
 
     // Wait for timeout period to elapse.
-    sleep(20);
+    sleep(30);
 
     // Check we are now logged out.
     $this->drupalGet('node');
@@ -215,7 +207,7 @@ class AutologoutTest extends WebTestBase {
    * Test the behaviour of the settings for submission.
    */
   public function testAutologoutSettingsForm() {
-    $edit = array();
+    $edit = [];
     $autologout_settings = $this->configFactory->getEditable('autologout.settings');
     $autologout_settings->set('max_timeout', 1000)
       ->save();
@@ -303,7 +295,7 @@ class AutologoutTest extends WebTestBase {
     $this->assertText(t("Here you can find a short overview of your site's parameters as well as any problems detected with your installation."), 'User can access elements of the admin page.');
 
     // Wait for timeout period to elapse.
-    sleep(20);
+    sleep(30);
 
     // Check we are now logged out.
     $this->drupalGet('admin/reports/status');
@@ -328,7 +320,7 @@ class AutologoutTest extends WebTestBase {
     $this->assertText(t('Log out'), 'User is still logged in.');
 
     // Wait for timeout period to elapse.
-    sleep(20);
+    sleep(30);
 
     // Check we are still logged in.
     $this->drupalGet('node');
@@ -352,7 +344,7 @@ class AutologoutTest extends WebTestBase {
       ->save();
 
     // Wait for 20 seconds for timeout.
-    sleep(20);
+    sleep(30);
 
     // Access the admin page and verify user is logged out and custom message
     // is displayed.
@@ -377,7 +369,7 @@ class AutologoutTest extends WebTestBase {
     $this->assertResponse('200', 'Admin pages are accessible');
 
     // Wait until timeout.
-    sleep(20);
+    sleep(30);
 
     // Verify admin should be logged out.
     $this->drupalGet('admin/reports/status');

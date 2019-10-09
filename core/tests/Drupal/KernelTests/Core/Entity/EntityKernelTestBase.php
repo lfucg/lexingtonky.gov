@@ -4,13 +4,22 @@ namespace Drupal\KernelTests\Core\Entity;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\user\Entity\Role;
-use Drupal\user\Entity\User;
+use Drupal\Tests\user\Traits\UserCreationTrait;
 
 /**
  * Defines an abstract test base for entity kernel tests.
  */
 abstract class EntityKernelTestBase extends KernelTestBase {
+
+  use UserCreationTrait {
+    checkPermissions as drupalCheckPermissions;
+    createAdminRole as drupalCreateAdminRole;
+    createRole as drupalCreateRole;
+    createUser as drupalCreateUser;
+    grantPermissions as drupalGrantPermissions;
+    setCurrentUser as drupalSetCurrentUser;
+    setUpCurrentUser as drupalSetUpCurrentUser;
+  }
 
   /**
    * Modules to enable.
@@ -27,11 +36,18 @@ abstract class EntityKernelTestBase extends KernelTestBase {
   protected $entityManager;
 
   /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * A list of generated identifiers.
    *
    * @var array
    */
-  protected $generatedIds = array();
+  protected $generatedIds = [];
 
   /**
    * The state service.
@@ -44,6 +60,7 @@ abstract class EntityKernelTestBase extends KernelTestBase {
     parent::setUp();
 
     $this->entityManager = $this->container->get('entity.manager');
+    $this->entityTypeManager = $this->container->get('entity_type.manager');
     $this->state = $this->container->get('state');
 
     $this->installSchema('system', 'sequences');
@@ -62,7 +79,7 @@ abstract class EntityKernelTestBase extends KernelTestBase {
         // Only check the modules, if the $modules property was not inherited.
         $rp = new \ReflectionProperty($class, 'modules');
         if ($rp->class == $class) {
-          foreach (array_intersect(array('node', 'comment'), $class::$modules) as $module) {
+          foreach (array_intersect(['node', 'comment'], $class::$modules) as $module) {
             $this->installEntitySchema($module);
           }
           if (in_array('forum', $class::$modules, TRUE)) {
@@ -70,8 +87,8 @@ abstract class EntityKernelTestBase extends KernelTestBase {
             // enabled in. The comment, node and taxonomy config and the
             // taxonomy_term schema need to be installed before the forum config
             // which in turn needs to be installed before field config.
-            $this->installConfig(['comment', 'node', 'taxonomy']);
             $this->installEntitySchema('taxonomy_term');
+            $this->installConfig(['comment', 'node', 'taxonomy']);
             $this->installConfig(['forum']);
           }
         }
@@ -79,7 +96,7 @@ abstract class EntityKernelTestBase extends KernelTestBase {
       $class = get_parent_class($class);
     }
 
-    $this->installConfig(array('field'));
+    $this->installConfig(['field']);
   }
 
   /**
@@ -93,25 +110,8 @@ abstract class EntityKernelTestBase extends KernelTestBase {
    * @return \Drupal\user\Entity\User
    *   The created user entity.
    */
-  protected function createUser($values = array(), $permissions = array()) {
-    if ($permissions) {
-      // Create a new role and apply permissions to it.
-      $role = Role::create(array(
-        'id' => strtolower($this->randomMachineName(8)),
-        'label' => $this->randomMachineName(8),
-      ));
-      $role->save();
-      user_role_grant_permissions($role->id(), $permissions);
-      $values['roles'][] = $role->id();
-    }
-
-    $account = User::create($values + array(
-      'name' => $this->randomMachineName(),
-      'status' => 1,
-    ));
-    $account->enforceIsNew();
-    $account->save();
-    return $account;
+  protected function createUser($values = [], $permissions = []) {
+    return $this->drupalCreateUser($permissions ?: [], NULL, FALSE, $values ?: []);
   }
 
   /**
@@ -125,7 +125,7 @@ abstract class EntityKernelTestBase extends KernelTestBase {
    */
   protected function reloadEntity(EntityInterface $entity) {
     $controller = $this->entityManager->getStorage($entity->getEntityTypeId());
-    $controller->resetCache(array($entity->id()));
+    $controller->resetCache([$entity->id()]);
     return $controller->load($entity->id());
   }
 
@@ -138,7 +138,7 @@ abstract class EntityKernelTestBase extends KernelTestBase {
   protected function getHooksInfo() {
     $key = 'entity_test.hooks';
     $hooks = $this->state->get($key);
-    $this->state->set($key, array());
+    $this->state->set($key, []);
     return $hooks;
   }
 
@@ -149,7 +149,7 @@ abstract class EntityKernelTestBase extends KernelTestBase {
    *   The module to install.
    */
   protected function installModule($module) {
-    $this->enableModules(array($module));
+    $this->enableModules([$module]);
     $this->refreshServices();
   }
 
@@ -160,7 +160,7 @@ abstract class EntityKernelTestBase extends KernelTestBase {
    *   The module to uninstall.
    */
   protected function uninstallModule($module) {
-    $this->disableModules(array($module));
+    $this->disableModules([$module]);
     $this->refreshServices();
   }
 
@@ -170,6 +170,7 @@ abstract class EntityKernelTestBase extends KernelTestBase {
   protected function refreshServices() {
     $this->container = \Drupal::getContainer();
     $this->entityManager = $this->container->get('entity.manager');
+    $this->entityTypeManager = $this->container->get('entity_type.manager');
     $this->state = $this->container->get('state');
   }
 

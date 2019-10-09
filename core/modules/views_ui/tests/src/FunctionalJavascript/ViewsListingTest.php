@@ -2,7 +2,7 @@
 
 namespace Drupal\Tests\views_ui\FunctionalJavascript;
 
-use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
+use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 
 /**
  * Tests the JavaScript filtering on the Views listing page.
@@ -10,7 +10,7 @@ use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
  * @see core/modules/views_ui/js/views_ui.listing.js
  * @group views_ui
  */
-class ViewsListingTest extends JavascriptTestBase {
+class ViewsListingTest extends WebDriverTestBase {
 
   /**
    * {@inheritdoc}
@@ -34,6 +34,10 @@ class ViewsListingTest extends JavascriptTestBase {
    * Tests the filtering on the Views listing page.
    */
   public function testFilterViewsListing() {
+    $enabled_views_count = 6;
+    $disabled_views_count = 2;
+    $content_views_count = 3;
+
     $this->drupalGet('admin/structure/views');
 
     $session = $this->assertSession();
@@ -47,8 +51,8 @@ class ViewsListingTest extends JavascriptTestBase {
     $disabled_rows = $this->filterVisibleElements($disabled_rows);
 
     // Test that we see some rows of views in both tables.
-    $this->assertCount(6, $enabled_rows);
-    $this->assertCount(2, $disabled_rows);
+    $this->assertCount($enabled_views_count, $enabled_rows);
+    $this->assertCount($disabled_views_count, $disabled_rows);
 
     // Filter on the string 'people'. This should only show the people view.
     $search_input = $page->find('css', '.views-filter-text.form-search');
@@ -70,8 +74,8 @@ class ViewsListingTest extends JavascriptTestBase {
     $disabled_rows = $page->findAll('css', 'tr.views-ui-list-disabled');
     $disabled_rows = $this->filterVisibleElements($disabled_rows);
 
-    $this->assertCount(3, $enabled_rows);
-    $this->assertCount(2, $disabled_rows);
+    $this->assertCount($content_views_count, $enabled_rows);
+    $this->assertCount($disabled_views_count, $disabled_rows);
 
     // Reset the search string and check that we are back to the initial stage.
     $search_input->setValue('');
@@ -83,11 +87,12 @@ class ViewsListingTest extends JavascriptTestBase {
     $disabled_rows = $page->findAll('css', 'tr.views-ui-list-disabled');
     $disabled_rows = $this->filterVisibleElements($disabled_rows);
 
-    $this->assertCount(6, $enabled_rows);
-    $this->assertCount(2, $disabled_rows);
+    $this->assertCount($enabled_views_count, $enabled_rows);
+    $this->assertCount($disabled_views_count, $disabled_rows);
 
     // Disable a View and see if it moves to the disabled listing.
     $enabled_view = $page->find('css', 'tr.views-ui-list-enabled');
+    $view_description = $enabled_view->find('css', '.views-ui-view-name h3')->getText();
     // Open the dropdown with additional actions.
     $enabled_view->find('css', 'li.dropbutton-toggle button')->click();
     $disable_button = $enabled_view->find('css', 'li.disable.dropbutton-action a');
@@ -103,8 +108,20 @@ class ViewsListingTest extends JavascriptTestBase {
     $disabled_rows = $this->filterVisibleElements($disabled_rows);
 
     // Test that one enabled View has been moved to the disabled list.
-    $this->assertCount(5, $enabled_rows);
-    $this->assertCount(3, $disabled_rows);
+    $this->assertCount($enabled_views_count - 1, $enabled_rows);
+    $this->assertCount($disabled_views_count + 1, $disabled_rows);
+
+    // Test that the keyboard focus is on the dropdown button of the View we
+    // just disabled.
+    $this->assertTrue($this->getSession()->evaluateScript("jQuery(document.activeElement).parent().is('li.enable.dropbutton-action')"));
+    $this->assertEquals($view_description, $this->getSession()->evaluateScript("jQuery(document.activeElement).parents('tr').find('h3').text()"));
+
+    // Enable the view again and ensure we have the focus on the edit button.
+    $this->getSession()->evaluateScript('jQuery(document.activeElement).click()');
+    $session->assertWaitOnAjaxRequest();
+
+    $this->assertTrue($this->getSession()->evaluateScript("jQuery(document.activeElement).parent().is('li.edit.dropbutton-action')"));
+    $this->assertEquals($view_description, $this->getSession()->evaluateScript("jQuery(document.activeElement).parents('tr').find('h3').text()"));
   }
 
   /**
@@ -114,7 +131,7 @@ class ViewsListingTest extends JavascriptTestBase {
    * @return array
    */
   protected function filterVisibleElements($elements) {
-    $elements = array_filter($elements, function($element) {
+    $elements = array_filter($elements, function ($element) {
       return $element->isVisible();
     });
     return $elements;

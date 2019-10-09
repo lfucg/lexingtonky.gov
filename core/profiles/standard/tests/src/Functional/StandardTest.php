@@ -2,12 +2,15 @@
 
 namespace Drupal\Tests\standard\Functional;
 
-use Drupal\config\Tests\SchemaCheckTestTrait;
+use Drupal\Component\Utility\Html;
+use Drupal\media\Entity\MediaType;
+use Drupal\Tests\SchemaCheckTestTrait;
 use Drupal\contact\Entity\ContactForm;
 use Drupal\Core\Url;
 use Drupal\dynamic_page_cache\EventSubscriber\DynamicPageCacheSubscriber;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\RequirementsPageTrait;
 use Drupal\user\Entity\Role;
 
 /**
@@ -18,6 +21,7 @@ use Drupal\user\Entity\Role;
 class StandardTest extends BrowserTestBase {
 
   use SchemaCheckTestTrait;
+  use RequirementsPageTrait;
 
   protected $profile = 'standard';
 
@@ -31,27 +35,27 @@ class StandardTest extends BrowserTestBase {
   /**
    * Tests Standard installation profile.
    */
-  function testStandard() {
+  public function testStandard() {
     $this->drupalGet('');
     $this->assertLink(t('Contact'));
     $this->clickLink(t('Contact'));
     $this->assertResponse(200);
 
     // Test anonymous user can access 'Main navigation' block.
-    $this->adminUser = $this->drupalCreateUser(array(
+    $this->adminUser = $this->drupalCreateUser([
       'administer blocks',
       'post comments',
       'skip comment approval',
       'create article content',
       'create page content',
-    ));
+    ]);
     $this->drupalLogin($this->adminUser);
     // Configure the block.
     $this->drupalGet('admin/structure/block/add/system_menu_block:main/bartik');
-    $this->drupalPostForm(NULL, array(
+    $this->drupalPostForm(NULL, [
       'region' => 'sidebar_first',
       'id' => 'main_navigation',
-    ), t('Save block'));
+    ], t('Save block'));
     // Verify admin user can see the block.
     $this->drupalGet('');
     $this->assertText('Main navigation');
@@ -59,18 +63,18 @@ class StandardTest extends BrowserTestBase {
     // Verify we have role = aria on system_powered_by and help_block
     // blocks.
     $this->drupalGet('admin/structure/block');
-    $elements = $this->xpath('//div[@role=:role and @id=:id]', array(
+    $elements = $this->xpath('//div[@role=:role and @id=:id]', [
       ':role' => 'complementary',
       ':id' => 'block-bartik-help',
-    ));
+    ]);
 
     $this->assertEqual(count($elements), 1, 'Found complementary role on help block.');
 
     $this->drupalGet('');
-    $elements = $this->xpath('//div[@role=:role and @id=:id]', array(
+    $elements = $this->xpath('//div[@role=:role and @id=:id]', [
       ':role' => 'complementary',
       ':id' => 'block-bartik-powered',
-    ));
+    ]);
     $this->assertEqual(count($elements), 1, 'Found complementary role on powered by block.');
 
     // Verify anonymous user can see the block.
@@ -79,22 +83,22 @@ class StandardTest extends BrowserTestBase {
 
     // Ensure comments don't show in the front page RSS feed.
     // Create an article.
-    $this->drupalCreateNode(array(
+    $this->drupalCreateNode([
       'type' => 'article',
       'title' => 'Foobar',
       'promote' => 1,
       'status' => 1,
-      'body' => array(array('value' => 'Then she picked out two somebodies,<br />Sally and me', 'format' => 'basic_html')),
-    ));
+      'body' => [['value' => 'Then she picked out two somebodies,<br />Sally and me', 'format' => 'basic_html']],
+    ]);
 
     // Add a comment.
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('node/1');
     $this->assertRaw('Then she picked out two somebodies,<br />Sally and me', 'Found a line break.');
-    $this->drupalPostForm(NULL, array(
+    $this->drupalPostForm(NULL, [
       'subject[0][value]' => 'Barfoo',
       'comment_body[0][value]' => 'Then she picked out two somebodies, Sally and me',
-    ), t('Save'));
+    ], t('Save'));
     // Fetch the feed.
     $this->drupalGet('rss.xml');
     $this->assertText('Foobar');
@@ -131,9 +135,9 @@ class StandardTest extends BrowserTestBase {
       $filter->removeFilter('editor_file_reference');
       $filter->save();
     }
-    \Drupal::service('module_installer')->uninstall(array('editor', 'ckeditor'));
+    \Drupal::service('module_installer')->uninstall(['editor', 'ckeditor']);
     $this->rebuildContainer();
-    \Drupal::service('module_installer')->install(array('editor'));
+    \Drupal::service('module_installer')->install(['editor']);
     /** @var \Drupal\contact\ContactFormInterface $contact_form */
     $contact_form = ContactForm::load('feedback');
     $recipients = $contact_form->getRecipients();
@@ -153,6 +157,8 @@ class StandardTest extends BrowserTestBase {
     // Ensure that there are no pending updates after installation.
     $this->drupalLogin($this->rootUser);
     $this->drupalGet('update.php/selection');
+    $this->updateRequirementsProblem();
+    $this->drupalGet('update.php/selection');
     $this->assertText('No pending updates.');
 
     // Ensure that there are no pending entity updates after installation.
@@ -167,7 +173,7 @@ class StandardTest extends BrowserTestBase {
 
     // Make sure the optional image styles are installed after enabling
     // the responsive_image module.
-    \Drupal::service('module_installer')->install(array('responsive_image'));
+    \Drupal::service('module_installer')->install(['responsive_image']);
     $this->rebuildContainer();
     $this->drupalGet('admin/config/media/image-styles');
     $this->assertText('Max 325x325');
@@ -197,6 +203,60 @@ class StandardTest extends BrowserTestBase {
     $this->drupalGet($url);
     $this->drupalGet($url);
     $this->assertEqual('HIT', $this->drupalGetHeader(DynamicPageCacheSubscriber::HEADER), 'User profile page is cached by Dynamic Page Cache.');
+
+    // Make sure the editorial workflow is installed after enabling the
+    // content_moderation module.
+    \Drupal::service('module_installer')->install(['content_moderation']);
+    $role = Role::create([
+      'id' => 'admin_workflows',
+      'label' => 'Admin workflow',
+    ]);
+    $role->grantPermission('administer workflows');
+    $role->save();
+    $this->adminUser->addRole($role->id());
+    $this->adminUser->save();
+    $this->rebuildContainer();
+    $this->drupalGet('admin/config/workflow/workflows/manage/editorial');
+    $this->assertText('Draft');
+    $this->assertText('Published');
+    $this->assertText('Archived');
+    $this->assertText('Create New Draft');
+    $this->assertText('Publish');
+    $this->assertText('Archive');
+    $this->assertText('Restore to Draft');
+    $this->assertText('Restore');
+
+    \Drupal::service('module_installer')->install(['media']);
+    $role = Role::create([
+      'id' => 'admin_media',
+      'label' => 'Admin media',
+    ]);
+    $role->grantPermission('administer media');
+    $role->save();
+    $this->adminUser->addRole($role->id());
+    $this->adminUser->save();
+    $assert_session = $this->assertSession();
+    $page = $this->getSession()->getPage();
+    /** @var \Drupal\media\Entity\MediaType $media_type */
+    foreach (MediaType::loadMultiple() as $media_type) {
+      $media_type_machine_name = $media_type->id();
+      $this->drupalGet('media/add/' . $media_type_machine_name);
+      // Get the form element, and its HTML representation.
+      $form_selector = '#media-' . Html::cleanCssIdentifier($media_type_machine_name) . '-add-form';
+      $form = $assert_session->elementExists('css', $form_selector);
+      $form_html = $form->getOuterHtml();
+
+      // The name field should be hidden.
+      $assert_session->fieldNotExists('Name', $form);
+      // The source field should be shown before the vertical tabs.
+      $test_source_field = $assert_session->fieldExists($media_type->getSource()->getSourceFieldDefinition($media_type)->getLabel(), $form)->getOuterHtml();
+      $vertical_tabs = $assert_session->elementExists('css', '.form-type-vertical-tabs', $form)->getOuterHtml();
+      $this->assertTrue(strpos($form_html, $vertical_tabs) > strpos($form_html, $test_source_field));
+      // The "Published" checkbox should be the last element.
+      $date_field = $assert_session->fieldExists('Date', $form)->getOuterHtml();
+      $published_checkbox = $assert_session->fieldExists('Published', $form)->getOuterHtml();
+      $this->assertTrue(strpos($form_html, $published_checkbox) > strpos($form_html, $date_field));
+    }
   }
 
 }

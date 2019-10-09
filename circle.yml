@@ -1,16 +1,25 @@
 machine:
   php:
-    version: 5.6.17
+    version: 7.0.17
   node:
     version: 6.1.0
   hosts:
     localhost: 127.0.0.1
   environment:
     PATH: $HOME/$CIRCLE_PROJECT_REPONAME/vendor/bin:$PATH
+    APP_ENV: testing
+    APP_URL: 127.0.0.1
+    DB_HOST: 127.0.0.1
+    DB_URL: 127.0.0.1
+    DB_NAME: circle_test
+    DB_USER: ubuntu
+    DB_PASSWORD:
 dependencies:
   pre:
     - echo "date.timezone = America/New_York" > /opt/circleci/php/$(phpenv global)/etc/conf.d/timezone.ini
     - rm /opt/circleci/php/$(phpenv global)/etc/conf.d/xdebug.ini # slight performance boost
+    # - composer global require drush/drush:6.2.0
+    # - export PATH="$HOME/.composer/vendor/bin:$PATH"
   cache_directories:
     - "~/.composer/cache"    # keep from having to install terminus every single time
   override:
@@ -29,8 +38,9 @@ test:
     - cd themes/custom/lex && npm test:
         environment:
           MOCHA_FILE: $CIRCLE_TEST_REPORTS/junit/test-results.xml
-    - phpunit modules/custom/tests
-    - vendor/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat:
-        timeout: 2000
+    - chmod +x vendor/phpunit/phpunit/phpunit
+    - cd core && ../vendor/phpunit/phpunit/phpunit --testsuite=unit
+    # - chmod +x vendor/behat/behat/bin/behat
+    # - vendor/behat/behat/bin/behat --config=behat-pantheon.yml --format junit --out $CIRCLE_TEST_REPORTS/behat
   post:
     - if [ "$CIRCLE_BRANCH" != "master" ]; then terminus site delete-env --site=$SITE_NAME --env=$CIRCLE_BRANCH --yes; fi

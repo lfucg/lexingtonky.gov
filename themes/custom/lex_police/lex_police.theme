@@ -1,0 +1,9 @@
+<?php
+/**
+ * Alter name suggestions for the blocks so subthemes will work.
+ */
+function lex_police_theme_suggestions_block_alter(&$suggestions, $variables) {
+  foreach ($suggestions as &$suggestion) {
+    $suggestion = str_replace('lex_police_', '', $suggestion);
+  }
+}

@@ -3,7 +3,6 @@
 namespace Drupal\Tests\migrate\Kernel;
 
 use Drupal\migrate\Event\MigratePostRowSaveEvent;
-use Drupal\migrate\MigrateMessage;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Event\MigrateEvents;
 use Drupal\migrate\MigrateExecutable;
@@ -29,7 +28,7 @@ class MigrateInterruptionTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
     \Drupal::service('event_dispatcher')->addListener(MigrateEvents::POST_ROW_SAVE,
-      array($this, 'postRowSaveEventRecorder'));
+      [$this, 'postRowSaveEventRecorder']);
   }
 
   /**
@@ -56,7 +55,7 @@ class MigrateInterruptionTest extends KernelTestBase {
 
     $migration = \Drupal::service('plugin.manager.migration')->createStubMigration($definition);
 
-    $executable = new MigrateExecutable($migration, new MigrateMessage());
+    $executable = new MigrateExecutable($migration);
     // When the import runs, the first row imported will trigger an
     // interruption.
     $result = $executable->import();
@@ -70,7 +69,7 @@ class MigrateInterruptionTest extends KernelTestBase {
   /**
    * Reacts to post-row-save event.
    *
-   * @param \Drupal\Migrate\Event\MigratePostRowSaveEvent $event
+   * @param \Drupal\migrate\Event\MigratePostRowSaveEvent $event
    *   The migration event.
    * @param string $name
    *   The event name.

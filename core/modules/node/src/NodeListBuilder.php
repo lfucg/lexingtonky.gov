@@ -26,13 +26,6 @@ class NodeListBuilder extends EntityListBuilder {
   protected $dateFormatter;
 
   /**
-   * The redirect destination service.
-   *
-   * @var \Drupal\Core\Routing\RedirectDestinationInterface
-   */
-  protected $redirectDestination;
-
-  /**
    * Constructs a new NodeListBuilder object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -57,7 +50,7 @@ class NodeListBuilder extends EntityListBuilder {
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
       $entity_type,
-      $container->get('entity.manager')->getStorage($entity_type->id()),
+      $container->get('entity_type.manager')->getStorage($entity_type->id()),
       $container->get('date.formatter'),
       $container->get('redirect.destination')
     );
@@ -68,27 +61,27 @@ class NodeListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     // Enable language column and filter if multiple languages are added.
-    $header = array(
+    $header = [
       'title' => $this->t('Title'),
-      'type' => array(
+      'type' => [
         'data' => $this->t('Content type'),
-        'class' => array(RESPONSIVE_PRIORITY_MEDIUM),
-      ),
-      'author' => array(
+        'class' => [RESPONSIVE_PRIORITY_MEDIUM],
+      ],
+      'author' => [
         'data' => $this->t('Author'),
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
       'status' => $this->t('Status'),
-      'changed' => array(
+      'changed' => [
         'data' => $this->t('Updated'),
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-    );
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+    ];
     if (\Drupal::languageManager()->isMultilingual()) {
-      $header['language_name'] = array(
+      $header['language_name'] = [
         'data' => $this->t('Language'),
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      );
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ];
     }
     return $header + parent::buildHeader();
   }
@@ -98,26 +91,26 @@ class NodeListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     /** @var \Drupal\node\NodeInterface $entity */
-    $mark = array(
+    $mark = [
       '#theme' => 'mark',
       '#mark_type' => node_mark($entity->id(), $entity->getChangedTime()),
-    );
+    ];
     $langcode = $entity->language()->getId();
-    $uri = $entity->urlInfo();
+    $uri = $entity->toUrl();
     $options = $uri->getOptions();
-    $options += ($langcode != LanguageInterface::LANGCODE_NOT_SPECIFIED && isset($languages[$langcode]) ? array('language' => $languages[$langcode]) : array());
+    $options += ($langcode != LanguageInterface::LANGCODE_NOT_SPECIFIED && isset($languages[$langcode]) ? ['language' => $languages[$langcode]] : []);
     $uri->setOptions($options);
-    $row['title']['data'] = array(
+    $row['title']['data'] = [
       '#type' => 'link',
       '#title' => $entity->label(),
-      '#suffix' => ' ' . drupal_render($mark),
+      '#suffix' => ' ' . \Drupal::service('renderer')->render($mark),
       '#url' => $uri,
-    );
+    ];
     $row['type'] = node_get_type_label($entity);
-    $row['author']['data'] = array(
+    $row['author']['data'] = [
       '#theme' => 'username',
       '#account' => $entity->getOwner(),
-    );
+    ];
     $row['status'] = $entity->isPublished() ? $this->t('published') : $this->t('not published');
     $row['changed'] = $this->dateFormatter->format($entity->getChangedTime(), 'short');
     $language_manager = \Drupal::languageManager();
@@ -126,19 +119,6 @@ class NodeListBuilder extends EntityListBuilder {
     }
     $row['operations']['data'] = $this->buildOperations($entity);
     return $row + parent::buildRow($entity);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getDefaultOperations(EntityInterface $entity) {
-    $operations = parent::getDefaultOperations($entity);
-
-    $destination = $this->redirectDestination->getAsArray();
-    foreach ($operations as $key => $operation) {
-      $operations[$key]['query'] = $destination;
-    }
-    return $operations;
   }
 
 }

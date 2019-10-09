@@ -2,6 +2,7 @@
 
 namespace Drupal\file_test\Form;
 
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -21,48 +22,48 @@ class FileTestForm implements FormInterface {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['file_test_upload'] = array(
+    $form['file_test_upload'] = [
       '#type' => 'file',
       '#title' => t('Upload a file'),
-    );
-    $form['file_test_replace'] = array(
+    ];
+    $form['file_test_replace'] = [
       '#type' => 'select',
       '#title' => t('Replace existing image'),
-      '#options' => array(
-        FILE_EXISTS_RENAME => t('Appends number until name is unique'),
-        FILE_EXISTS_REPLACE => t('Replace the existing file'),
-        FILE_EXISTS_ERROR => t('Fail with an error'),
-      ),
-      '#default_value' => FILE_EXISTS_RENAME,
-    );
-    $form['file_subdir'] = array(
+      '#options' => [
+        FileSystemInterface::EXISTS_RENAME => t('Appends number until name is unique'),
+        FileSystemInterface::EXISTS_REPLACE => t('Replace the existing file'),
+        FileSystemInterface::EXISTS_ERROR => t('Fail with an error'),
+      ],
+      '#default_value' => FileSystemInterface::EXISTS_RENAME,
+    ];
+    $form['file_subdir'] = [
       '#type' => 'textfield',
       '#title' => t('Subdirectory for test file'),
       '#default_value' => '',
-    );
+    ];
 
-    $form['extensions'] = array(
+    $form['extensions'] = [
       '#type' => 'textfield',
       '#title' => t('Allowed extensions.'),
       '#default_value' => '',
-    );
+    ];
 
-    $form['allow_all_extensions'] = array(
+    $form['allow_all_extensions'] = [
       '#type' => 'checkbox',
       '#title' => t('Allow all extensions?'),
       '#default_value' => FALSE,
-    );
+    ];
 
-    $form['is_image_file'] = array(
+    $form['is_image_file'] = [
       '#type' => 'checkbox',
       '#title' => t('Is this an image file?'),
       '#default_value' => TRUE,
-    );
+    ];
 
-    $form['submit'] = array(
+    $form['submit'] = [
       '#type' => 'submit',
       '#value' => t('Submit'),
-    );
+    ];
     return $form;
   }
 
@@ -79,28 +80,28 @@ class FileTestForm implements FormInterface {
     // form value for the $replace parameter.
     if (!$form_state->isValueEmpty('file_subdir')) {
       $destination = 'temporary://' . $form_state->getValue('file_subdir');
-      file_prepare_directory($destination, FILE_CREATE_DIRECTORY);
+      \Drupal::service('file_system')->prepareDirectory($destination, FileSystemInterface::CREATE_DIRECTORY);
     }
     else {
       $destination = FALSE;
     }
 
     // Setup validators.
-    $validators = array();
+    $validators = [];
     if ($form_state->getValue('is_image_file')) {
-      $validators['file_validate_is_image'] = array();
+      $validators['file_validate_is_image'] = [];
     }
 
     if ($form_state->getValue('allow_all_extensions')) {
-      $validators['file_validate_extensions'] = array();
+      $validators['file_validate_extensions'] = [];
     }
     elseif (!$form_state->isValueEmpty('extensions')) {
-      $validators['file_validate_extensions'] = array($form_state->getValue('extensions'));
+      $validators['file_validate_extensions'] = [$form_state->getValue('extensions')];
     }
 
-    // The test for drupal_move_uploaded_file() triggering a warning is
-    // unavoidable. We're interested in what happens afterwards in
-    // file_save_upload().
+    // The test for \Drupal::service('file_system')->moveUploadedFile()
+    // triggering a warning is unavoidable. We're interested in what happens
+    // afterwards in file_save_upload().
     if (\Drupal::state()->get('file_test.disable_error_collection')) {
       define('SIMPLETEST_COLLECT_ERRORS', FALSE);
     }
@@ -108,13 +109,13 @@ class FileTestForm implements FormInterface {
     $file = file_save_upload('file_test_upload', $validators, $destination, 0, $form_state->getValue('file_test_replace'));
     if ($file) {
       $form_state->setValue('file_test_upload', $file);
-      drupal_set_message(t('File @filepath was uploaded.', array('@filepath' => $file->getFileUri())));
-      drupal_set_message(t('File name is @filename.', array('@filename' => $file->getFilename())));
-      drupal_set_message(t('File MIME type is @mimetype.', array('@mimetype' => $file->getMimeType())));
-      drupal_set_message(t('You WIN!'));
+      \Drupal::messenger()->addStatus(t('File @filepath was uploaded.', ['@filepath' => $file->getFileUri()]));
+      \Drupal::messenger()->addStatus(t('File name is @filename.', ['@filename' => $file->getFilename()]));
+      \Drupal::messenger()->addStatus(t('File MIME type is @mimetype.', ['@mimetype' => $file->getMimeType()]));
+      \Drupal::messenger()->addStatus(t('You WIN!'));
     }
     elseif ($file === FALSE) {
-      drupal_set_message(t('Epic upload FAIL!'), 'error');
+      \Drupal::messenger()->addError(t('Epic upload FAIL!'));
     }
   }
 

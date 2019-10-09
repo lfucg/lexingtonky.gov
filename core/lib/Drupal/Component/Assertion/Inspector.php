@@ -13,7 +13,7 @@ use Traversable;
  *
  * Example call:
  * @code
- *   assert('Drupal\\Component\\Assertion\\Inspector::assertAllStrings($array)');
+ *   assert(Inspector::assertAllStrings($array));
  * @endcode
  *
  * @ingroup php_assert
@@ -187,8 +187,8 @@ class Inspector {
    * As an example, this assertion tests for the keys of a theme registry.
    *
    * @code
-   *   assert('Drupal\\Component\\Assertion\\Inspector::assertAllHaveKey(
-   *     $arrayToTest, "type", "theme path", "function", "template", "variables", "render element", "preprocess functions")');
+   *   assert(Inspector::assertAllHaveKey(
+   *     $arrayToTest, "type", "theme path", "function", "template", "variables", "render element", "preprocess functions"));
    * @endcode
    *
    * Note: If a method requires certain keys to be present it will usually be
@@ -205,9 +205,9 @@ class Inspector {
    * @return bool
    *   TRUE if $traversable can be traversed and all members have all keys.
    */
-  public static function assertAllHaveKey() {
+  public static function assertAllHaveKey($traversable) {
     $args = func_get_args();
-    $traversable = array_shift($args);
+    unset($args[0]);
 
     if (static::assertTraversable($traversable)) {
       foreach ($traversable as $member) {
@@ -333,7 +333,6 @@ class Inspector {
     return FALSE;
   }
 
-
   /**
    * Asserts that all members are strings matching a regular expression.
    *
@@ -375,16 +374,13 @@ class Inspector {
    * Here are some examples:
    * @code
    *   // Just test all are objects, like a cache.
-   *   assert('Drupal\\Component\\Assertion\\Inspector::assertAllObjects(
-   *     $collection');
+   *   assert(Inspector::assertAllObjects($collection));
    *
    *   // Test if traversable objects (arrays won't pass this)
-   *   assert('Drupal\\Component\\Assertion\\Inspector::assertAllObjects(
-   *     $collection', \'\\Traversable\');
+   *   assert(Inspector::assertAllObjects($collection, '\\Traversable'));
    *
    *   // Test for the Foo class or Bar\None interface
-   *   assert('Drupal\\Component\\Assertion\\Inspector::assertAllObjects(
-   *     $collection', \'\\Foo\', \'\\Bar\\None\'');
+   *   assert(Inspector::assertAllObjects($collection, '\\Foo', '\\Bar\\None'));
    * @endcode
    *
    * @param mixed $traversable
@@ -396,9 +392,9 @@ class Inspector {
    *   TRUE if $traversable can be traversed and all members are objects with
    *   at least one of the listed classes or interfaces.
    */
-  public static function assertAllObjects() {
+  public static function assertAllObjects($traversable) {
     $args = func_get_args();
-    $traversable = array_shift($args);
+    unset($args[0]);
 
     if (static::assertTraversable($traversable)) {
       foreach ($traversable as $member) {

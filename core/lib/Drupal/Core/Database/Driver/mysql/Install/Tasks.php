@@ -33,10 +33,10 @@ class Tasks extends InstallTasks {
    * Constructs a \Drupal\Core\Database\Driver\mysql\Install\Tasks object.
    */
   public function __construct() {
-    $this->tasks[] = array(
-      'arguments' => array(),
+    $this->tasks[] = [
+      'arguments' => [],
       'function' => 'ensureInnoDbAvailable',
-    );
+    ];
   }
 
   /**
@@ -50,6 +50,10 @@ class Tasks extends InstallTasks {
    * {@inheritdoc}
    */
   public function minimumVersion() {
+    // This can not be increased above '5.5.5' without dropping support for all
+    // MariaDB versions. MariaDB prefixes its version string with '5.5.5-'. For
+    // more information, see
+    // https://github.com/MariaDB/server/blob/f6633bf058802ad7da8196d01fd19d75c53f7274/include/mysql_com.h#L42.
     return '5.5.3';
   }
 
@@ -59,15 +63,15 @@ class Tasks extends InstallTasks {
   protected function connect() {
     try {
       // This doesn't actually test the connection.
-      db_set_active();
+      Database::setActiveConnection();
       // Now actually do a check.
       try {
         Database::getConnection();
       }
       catch (\Exception $e) {
-        // Detect utf8mb4 incompability.
+        // Detect utf8mb4 incompatibility.
         if ($e->getCode() == Connection::UNSUPPORTED_CHARSET || ($e->getCode() == Connection::SQLSTATE_SYNTAX_ERROR && $e->errorInfo[1] == Connection::UNKNOWN_CHARSET)) {
-          $this->fail(t('Your MySQL server and PHP MySQL driver must support utf8mb4 character encoding. Make sure to use a database system that supports this (such as MySQL/MariaDB/Percona 5.5.3 and up), and that the utf8mb4 character set is compiled in. See the <a href=":documentation" target="_blank">MySQL documentation</a> for more information.', array(':documentation' => 'https://dev.mysql.com/doc/refman/5.0/en/cannot-initialize-character-set.html')));
+          $this->fail(t('Your MySQL server and PHP MySQL driver must support utf8mb4 character encoding. Make sure to use a database system that supports this (such as MySQL/MariaDB/Percona 5.5.3 and up), and that the utf8mb4 character set is compiled in. See the <a href=":documentation" target="_blank">MySQL documentation</a> for more information.', [':documentation' => 'https://dev.mysql.com/doc/refman/5.0/en/cannot-initialize-character-set.html']));
           $info = Database::getConnectionInfo();
           $info_copy = $info;
           // Set a flag to fall back to utf8. Note: this flag should only be
@@ -108,17 +112,27 @@ class Tasks extends InstallTasks {
           // Now, attempt the connection again; if it's successful, attempt to
           // create the database.
           Database::getConnection()->createDatabase($database);
+          Database::closeConnection();
+
+          // Now, restore the database config.
+          Database::removeConnection('default');
+          $connection_info['default']['database'] = $database;
+          Database::addConnectionInfo('default', 'default', $connection_info['default']);
+
+          // Check the database connection.
+          Database::getConnection();
+          $this->pass('Drupal can CONNECT to the database ok.');
         }
         catch (DatabaseNotFoundException $e) {
           // Still no dice; probably a permission issue. Raise the error to the
           // installer.
-          $this->fail(t('Database %database not found. The server reports the following message when attempting to create the database: %error.', array('%database' => $database, '%error' => $e->getMessage())));
+          $this->fail(t('Database %database not found. The server reports the following message when attempting to create the database: %error.', ['%database' => $database, '%error' => $e->getMessage()]));
         }
       }
       else {
         // Database connection failed for some other reason than the database
         // not existing.
-        $this->fail(t('Failed to connect to your database server. The server reports the following message: %error.<ul><li>Is the database server running?</li><li>Does the database exist or does the database user have sufficient privileges to create the database?</li><li>Have you entered the correct database name?</li><li>Have you entered the correct username and password?</li><li>Have you entered the correct database hostname?</li></ul>', array('%error' => $e->getMessage())));
+        $this->fail(t('Failed to connect to your database server. The server reports the following message: %error.<ul><li>Is the database server running?</li><li>Does the database exist or does the database user have sufficient privileges to create the database?</li><li>Have you entered the correct database name?</li><li>Have you entered the correct username and password?</li><li>Have you entered the correct database hostname?</li></ul>', ['%error' => $e->getMessage()]));
         return FALSE;
       }
     }
@@ -140,7 +154,7 @@ class Tasks extends InstallTasks {
   /**
    * Ensure that InnoDB is available.
    */
-  function ensureInnoDbAvailable() {
+  public function ensureInnoDbAvailable() {
     $engines = Database::getConnection()->query('SHOW ENGINES')->fetchAllKeyed();
     if (isset($engines['MyISAM']) && $engines['MyISAM'] == 'DEFAULT' && !isset($engines['InnoDB'])) {
       $this->fail(t('The MyISAM storage engine is not supported.'));
@@ -159,13 +173,13 @@ class Tasks extends InstallTasks {
       // The mysqlnd driver supports utf8mb4 starting at version 5.0.9.
       $version = preg_replace('/^\D+([\d.]+).*/', '$1', $version);
       if (version_compare($version, self::MYSQLND_MINIMUM_VERSION, '<')) {
-        $this->fail(t("The MySQLnd driver version %version is less than the minimum required version. Upgrade to MySQLnd version %mysqlnd_minimum_version or up, or alternatively switch mysql drivers to libmysqlclient version %libmysqlclient_minimum_version or up.", array('%version' => $version, '%mysqlnd_minimum_version' => self::MYSQLND_MINIMUM_VERSION, '%libmysqlclient_minimum_version' => self::LIBMYSQLCLIENT_MINIMUM_VERSION)));
+        $this->fail(t("The MySQLnd driver version %version is less than the minimum required version. Upgrade to MySQLnd version %mysqlnd_minimum_version or up, or alternatively switch mysql drivers to libmysqlclient version %libmysqlclient_minimum_version or up.", ['%version' => $version, '%mysqlnd_minimum_version' => self::MYSQLND_MINIMUM_VERSION, '%libmysqlclient_minimum_version' => self::LIBMYSQLCLIENT_MINIMUM_VERSION]));
       }
     }
     else {
       // The libmysqlclient driver supports utf8mb4 starting at version 5.5.3.
       if (version_compare($version, self::LIBMYSQLCLIENT_MINIMUM_VERSION, '<')) {
-        $this->fail(t("The libmysqlclient driver version %version is less than the minimum required version. Upgrade to libmysqlclient version %libmysqlclient_minimum_version or up, or alternatively switch mysql drivers to MySQLnd version %mysqlnd_minimum_version or up.", array('%version' => $version, '%libmysqlclient_minimum_version' => self::LIBMYSQLCLIENT_MINIMUM_VERSION, '%mysqlnd_minimum_version' => self::MYSQLND_MINIMUM_VERSION)));
+        $this->fail(t("The libmysqlclient driver version %version is less than the minimum required version. Upgrade to libmysqlclient version %libmysqlclient_minimum_version or up, or alternatively switch mysql drivers to MySQLnd version %mysqlnd_minimum_version or up.", ['%version' => $version, '%libmysqlclient_minimum_version' => self::LIBMYSQLCLIENT_MINIMUM_VERSION, '%mysqlnd_minimum_version' => self::MYSQLND_MINIMUM_VERSION]));
       }
     }
   }

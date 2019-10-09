@@ -31,7 +31,9 @@ class RouteCompiler extends SymfonyRouteCompiler implements RouteCompilerInterfa
    *   A CompiledRoute instance.
    */
   public static function compile(Route $route) {
-
+    // Symfony 4 requires that all UTF-8 route patterns have the "utf8" option
+    // set and Drupal does not support non UTF-8 routes.
+    $route->setOption('utf8', TRUE);
     $symfony_compiled = parent::compile($route);
 
     // The Drupal-specific compiled information.
@@ -46,8 +48,14 @@ class RouteCompiler extends SymfonyRouteCompiler implements RouteCompilerInterfa
       $fit,
       $pattern_outline,
       $num_parts,
-      // These are the Symfony compiled parts.
-      $symfony_compiled->getStaticPrefix(),
+
+      // The following parameters are what Symfony uses in
+      // \Symfony\Component\Routing\Matcher\UrlMatcher::matchCollection().
+
+      // Set the static prefix to an empty string since it is redundant to
+      // the matching in \Drupal\Core\Routing\RouteProvider::getRoutesByPath()
+      // and by skipping it we more easily make the routing case-insensitive.
+      '',
       $symfony_compiled->getRegex(),
       $symfony_compiled->getTokens(),
       $symfony_compiled->getPathVariables(),
@@ -55,14 +63,14 @@ class RouteCompiler extends SymfonyRouteCompiler implements RouteCompilerInterfa
       $symfony_compiled->getHostTokens(),
       $symfony_compiled->getHostVariables(),
       $symfony_compiled->getVariables()
-      );
+    );
   }
 
   /**
    * Returns the pattern outline.
    *
    * The pattern outline is the path pattern but normalized so that all
-   * placeholders are equal strings and default values are removed.
+   * placeholders are the string '%'.
    *
    * @param string $path
    *   The path for which we want the normalized outline.
@@ -124,7 +132,7 @@ class RouteCompiler extends SymfonyRouteCompiler implements RouteCompilerInterfa
 
     // Remove placeholders with default values from the outline, so that they
     // will still match.
-    $remove = array_map(function($a) {
+    $remove = array_map(function ($a) {
       return '/{' . $a . '}';
     }, array_keys($defaults));
     $path = str_replace($remove, '', $path);

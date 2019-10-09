@@ -2,7 +2,9 @@
 
 namespace Drupal\image;
 
+use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Component\Plugin\DependentPluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Image\ImageInterface;
 
@@ -16,7 +18,7 @@ use Drupal\Core\Image\ImageInterface;
  * @see \Drupal\image\ImageEffectManager
  * @see plugin_api
  */
-interface ImageEffectInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
+interface ImageEffectInterface extends PluginInspectionInterface, ConfigurableInterface, DependentPluginInterface, ConfigurablePluginInterface {
 
   /**
    * Applies an image effect to the image object.
@@ -50,8 +52,7 @@ interface ImageEffectInterface extends PluginInspectionInterface, ConfigurablePl
   public function transformDimensions(array &$dimensions, $uri);
 
   /**
-   * Returns the extension the derivative would have have after applying this
-   * image effect.
+   * Returns the extension of the derivative after applying this image effect.
    *
    * @param string $extension
    *   The file extension the derivative has before applying.

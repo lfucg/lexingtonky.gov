@@ -16,8 +16,8 @@ class ExtensionMimeTypeGuesser implements MimeTypeGuesserInterface {
    * @var array
    *   Array of mimetypes correlated to the extensions that relate to them.
    */
-  protected $defaultMapping = array(
-    'mimetypes' => array(
+  protected $defaultMapping = [
+    'mimetypes' => [
       0 => 'application/andrew-inset',
       1 => 'application/atom',
       2 => 'application/atomcat+xml',
@@ -26,6 +26,7 @@ class ExtensionMimeTypeGuesser implements MimeTypeGuesserInterface {
       5 => 'application/cu-seeme',
       6 => 'application/dsptype',
       350 => 'application/epub+zip',
+      359 => 'application/gzip',
       7 => 'application/hta',
       8 => 'application/java-archive',
       9 => 'application/java-serialized-object',
@@ -377,10 +378,10 @@ class ExtensionMimeTypeGuesser implements MimeTypeGuesserInterface {
       343 => 'x-conference/x-cooltalk',
       344 => 'x-epoc/x-sisx-app',
       345 => 'x-world/x-vrml',
-    ),
+    ],
 
     // Extensions added to this list MUST be lower-case.
-    'extensions' => array(
+    'extensions' => [
       'ez' => 0,
       'atom' => 1,
       'atomcat' => 2,
@@ -856,8 +857,9 @@ class ExtensionMimeTypeGuesser implements MimeTypeGuesserInterface {
       'weba' => 356,
       'webm' => 357,
       'vtt' => 358,
-    ),
-  );
+      'gz' => 359,
+    ],
+  ];
 
   /**
    * The MIME types mapping array after going through the module handler.
@@ -895,7 +897,7 @@ class ExtensionMimeTypeGuesser implements MimeTypeGuesserInterface {
     }
 
     $extension = '';
-    $file_parts = explode('.', drupal_basename($path));
+    $file_parts = explode('.', \Drupal::service('file_system')->basename($path));
 
     // Remove the first part: a full filename should not match an extension.
     array_shift($file_parts);

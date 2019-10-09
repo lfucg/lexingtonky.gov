@@ -40,13 +40,13 @@ class Rss extends RssPluginBase {
   protected $entityTypeId = 'comment';
 
   public function preRender($result) {
-    $cids = array();
+    $cids = [];
 
     foreach ($result as $row) {
       $cids[] = $row->cid;
     }
 
-    $this->comments = $this->entityManager->getStorage('comment')->loadMultiple($cids);
+    $this->comments = $this->entityTypeManager->getStorage('comment')->loadMultiple($cids);
   }
 
   /**
@@ -79,27 +79,27 @@ class Rss extends RssPluginBase {
       return;
     }
 
-    $comment->link = $comment->url('canonical', array('absolute' => TRUE));
-    $comment->rss_namespaces = array();
-    $comment->rss_elements = array(
-      array(
+    $comment->link = $comment->toUrl('canonical', ['absolute' => TRUE])->toString();
+    $comment->rss_namespaces = [];
+    $comment->rss_elements = [
+      [
         'key' => 'pubDate',
         'value' => gmdate('r', $comment->getCreatedTime()),
-      ),
-      array(
+      ],
+      [
         'key' => 'dc:creator',
         'value' => $comment->getAuthorName(),
-      ),
-      array(
+      ],
+      [
         'key' => 'guid',
         'value' => 'comment ' . $comment->id() . ' at ' . $base_url,
-        'attributes' => array('isPermaLink' => 'false'),
-      ),
-    );
+        'attributes' => ['isPermaLink' => 'false'],
+      ],
+    ];
 
     // The comment gets built and modules add to or modify
     // $comment->rss_elements and $comment->rss_namespaces.
-    $build = $this->entityManager->getViewBuilder('comment')->view($comment, 'rss');
+    $build = $this->entityTypeManager->getViewBuilder('comment')->view($comment, 'rss');
     unset($build['#theme']);
 
     if (!empty($comment->rss_namespaces)) {
@@ -118,12 +118,12 @@ class Rss extends RssPluginBase {
     $item->elements = &$comment->rss_elements;
     $item->cid = $comment->id();
 
-    $build = array(
+    $build = [
       '#theme' => $this->themeFunctions(),
       '#view' => $this->view,
       '#options' => $this->options,
       '#row' => $item,
-    );
+    ];
     return $build;
   }
 

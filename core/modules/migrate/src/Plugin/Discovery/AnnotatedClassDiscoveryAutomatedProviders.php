@@ -48,7 +48,6 @@ class AnnotatedClassDiscoveryAutomatedProviders extends AnnotatedClassDiscovery 
     $this->finder = new ClassFinder();
   }
 
-
   /**
    * {@inheritdoc}
    */
@@ -73,7 +72,7 @@ class AnnotatedClassDiscoveryAutomatedProviders extends AnnotatedClassDiscovery 
    * {@inheritdoc}
    */
   public function getDefinitions() {
-    $definitions = array();
+    $definitions = [];
 
     $reader = $this->getAnnotationReader();
 

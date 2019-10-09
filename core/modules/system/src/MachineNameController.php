@@ -3,12 +3,11 @@
 namespace Drupal\system;
 
 use Drupal\Component\Transliteration\TransliterationInterface;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -73,15 +72,15 @@ class MachineNameController implements ContainerInjectionInterface {
 
     $transliterated = $this->transliteration->transliterate($text, $langcode, '_');
     if ($lowercase) {
-      $transliterated = Unicode::strtolower($transliterated);
+      $transliterated = mb_strtolower($transliterated);
     }
 
     if (isset($replace_pattern) && isset($replace)) {
       if (!isset($replace_token)) {
-        throw new AccessDeniedException("Missing 'replace_token' query parameter.");
+        throw new AccessDeniedHttpException("Missing 'replace_token' query parameter.");
       }
       elseif (!$this->tokenGenerator->validate($replace_token, $replace_pattern)) {
-        throw new AccessDeniedException("Invalid 'replace_token' query parameter.");
+        throw new AccessDeniedHttpException("Invalid 'replace_token' query parameter.");
       }
 
       // Quote the pattern delimiter and remove null characters to avoid the e

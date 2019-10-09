@@ -1,0 +1,20 @@
+uuid: 28aecbd2-3a77-45a8-bd78-88edc81caa96
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_content
+theme: lex_planning_commission
+region: notices
+weight: -14
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Main page content'
+  provider: system
+  label_display: '0'
+visibility: {  }

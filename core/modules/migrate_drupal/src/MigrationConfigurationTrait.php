@@ -4,6 +4,7 @@ namespace Drupal\migrate_drupal;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Database;
+use Drupal\Core\Database\DatabaseExceptionWrapper;
 use Drupal\migrate\Exception\RequirementsException;
 use Drupal\migrate\Plugin\RequirementsInterface;
 
@@ -11,6 +12,13 @@ use Drupal\migrate\Plugin\RequirementsInterface;
  * Configures the appropriate migrations for a given source Drupal database.
  */
 trait MigrationConfigurationTrait {
+
+  /**
+   * The follow-up migration tags.
+   *
+   * @var string[]
+   */
+  protected $followUpMigrationTags;
 
   /**
    * Gets the database connection for the source Drupal database.
@@ -49,7 +57,7 @@ trait MigrationConfigurationTrait {
         $system_data[$result['type']][$result['name']] = $result;
       }
     }
-    catch (\Exception $e) {
+    catch (DatabaseExceptionWrapper $e) {
       // The table might not exist for example in tests.
     }
     return $system_data;
@@ -96,6 +104,19 @@ trait MigrationConfigurationTrait {
     $all_migrations = $plugin_manager->createInstancesByTag($version_tag);
     $migrations = [];
     foreach ($all_migrations as $migration) {
+      // Skip migrations tagged with any of the follow-up migration tags. They
+      // will be derived and executed after the migrations on which they depend
+      // have been successfully executed.
+      // @see Drupal\migrate_drupal\Plugin\MigrationWithFollowUpInterface
+      if (!empty(array_intersect($migration->getMigrationTags(), $this->getFollowUpMigrationTags()))) {
+        continue;
+      }
+      // Multilingual migrations require migrate_drupal_multilingual.
+      $tags = $migration->getMigrationTags() ?: [];
+      if (in_array('Multilingual', $tags, TRUE) && (!\Drupal::service('module_handler')->moduleExists('migrate_drupal_multilingual'))) {
+        throw new RequirementsException(sprintf("Install migrate_drupal_multilingual to run migration '%s'.", $migration->getPluginId()));
+      }
+
       try {
         // @todo https://drupal.org/node/2681867 We should be able to validate
         //   the entire migration at this point.
@@ -120,13 +141,27 @@ trait MigrationConfigurationTrait {
   }
 
   /**
+   * Returns the follow-up migration tags.
+   *
+   * @return string[]
+   */
+  protected function getFollowUpMigrationTags() {
+    if ($this->followUpMigrationTags === NULL) {
+      $this->followUpMigrationTags = \Drupal::configFactory()
+        ->get('migrate_drupal.settings')
+        ->get('follow_up_migration_tags') ?: [];
+    }
+    return $this->followUpMigrationTags;
+  }
+
+  /**
    * Determines what version of Drupal the source database contains.
    *
    * @param \Drupal\Core\Database\Connection $connection
    *   The database connection object.
    *
-   * @return int|false
-   *   An integer representing the major branch of Drupal core (e.g. '6' for
+   * @return string|false
+   *   A string representing the major branch of Drupal core (e.g. '6' for
    *   Drupal 6.x), or FALSE if no valid version is matched.
    */
   protected function getLegacyDrupalVersion(Connection $connection) {
@@ -155,10 +190,18 @@ trait MigrationConfigurationTrait {
     // For Drupal 8 (and we're predicting beyond) the schema version is in the
     // key_value store.
     elseif ($connection->schema()->tableExists('key_value')) {
-      $result = $connection
-        ->query("SELECT value FROM {key_value} WHERE collection = :system_schema  and name = :module", [':system_schema' => 'system.schema', ':module' => 'system'])
-        ->fetchField();
-      $version_string = unserialize($result);
+      try {
+        $result = $connection
+          ->query("SELECT value FROM {key_value} WHERE collection = :system_schema  and name = :module", [
+            ':system_schema' => 'system.schema',
+            ':module' => 'system',
+          ])
+          ->fetchField();
+        $version_string = unserialize($result);
+      }
+      catch (DatabaseExceptionWrapper $e) {
+        $version_string = FALSE;
+      }
     }
     else {
       $version_string = FALSE;

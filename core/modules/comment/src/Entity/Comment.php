@@ -7,12 +7,13 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
+use Drupal\Core\Entity\EntityPublishedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\Entity\User;
-use Drupal\user\UserInterface;
+use Drupal\user\EntityOwnerTrait;
 
 /**
  * Defines the comment entity class.
@@ -20,6 +21,12 @@ use Drupal\user\UserInterface;
  * @ContentEntityType(
  *   id = "comment",
  *   label = @Translation("Comment"),
+ *   label_singular = @Translation("comment"),
+ *   label_plural = @Translation("comments"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count comment",
+ *     plural = "@count comments",
+ *   ),
  *   bundle_label = @Translation("Comment type"),
  *   handlers = {
  *     "storage" = "Drupal\comment\CommentStorage",
@@ -43,12 +50,16 @@ use Drupal\user\UserInterface;
  *     "bundle" = "comment_type",
  *     "label" = "subject",
  *     "langcode" = "langcode",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "published" = "status",
+ *     "owner" = "uid",
  *   },
  *   links = {
  *     "canonical" = "/comment/{comment}",
  *     "delete-form" = "/comment/{comment}/delete",
+ *     "delete-multiple-form" = "/admin/content/comment/delete",
  *     "edit-form" = "/comment/{comment}/edit",
+ *     "create" = "/comment",
  *   },
  *   bundle_entity_type = "comment_type",
  *   field_ui_base_route  = "entity.comment_type.edit_form",
@@ -60,9 +71,13 @@ use Drupal\user\UserInterface;
 class Comment extends ContentEntityBase implements CommentInterface {
 
   use EntityChangedTrait;
+  use EntityOwnerTrait;
+  use EntityPublishedTrait;
 
   /**
    * The thread for which a lock was acquired.
+   *
+   * @var string
    */
   protected $threadLock = '';
 
@@ -72,10 +87,6 @@ class Comment extends ContentEntityBase implements CommentInterface {
   public function preSave(EntityStorageInterface $storage) {
     parent::preSave($storage);
 
-    if (is_null($this->get('status')->value)) {
-      $published = \Drupal::currentUser()->hasPermission('skip comment approval') ? CommentInterface::PUBLISHED : CommentInterface::NOT_PUBLISHED;
-      $this->setPublished($published);
-    }
     if ($this->isNew()) {
       // Add the comment to database. This next section builds the thread field.
       // @see \Drupal\comment\CommentViewBuilder::buildComponents()
@@ -133,14 +144,15 @@ class Comment extends ContentEntityBase implements CommentInterface {
         } while (!\Drupal::lock()->acquire($lock_name));
         $this->threadLock = $lock_name;
       }
-      // We test the value with '===' because we need to modify anonymous
-      // users as well.
-      if ($this->getOwnerId() === \Drupal::currentUser()->id() && \Drupal::currentUser()->isAuthenticated()) {
-        $this->setAuthorName(\Drupal::currentUser()->getUsername());
-      }
-      // Add the values which aren't passed into the function.
       $this->setThread($thread);
-      $this->setHostname(\Drupal::request()->getClientIP());
+    }
+    // The entity fields for name and mail have no meaning if the user is not
+    // Anonymous. Set them to NULL to make it clearer that they are not used.
+    // For anonymous users see \Drupal\comment\CommentForm::form() for mail,
+    // and \Drupal\comment\CommentForm::buildEntity() for name setting.
+    if (!$this->getOwner()->isAnonymous()) {
+      $this->set('name', NULL);
+      $this->set('mail', NULL);
     }
   }
 
@@ -199,7 +211,7 @@ class Comment extends ContentEntityBase implements CommentInterface {
    * {@inheritdoc}
    */
   public function permalink() {
-    $uri = $this->urlInfo();
+    $uri = $this->toUrl();
     $uri->setOption('fragment', 'comment-' . $this->id());
     return $uri;
   }
@@ -210,6 +222,8 @@ class Comment extends ContentEntityBase implements CommentInterface {
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     /** @var \Drupal\Core\Field\BaseFieldDefinition[] $fields */
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields += static::publishedBaseFieldDefinitions($entity_type);
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
 
     $fields['cid']->setLabel(t('Comment ID'))
       ->setDescription(t('The comment ID.'));
@@ -220,6 +234,9 @@ class Comment extends ContentEntityBase implements CommentInterface {
       ->setDescription(t('The comment type.'));
 
     $fields['langcode']->setDescription(t('The comment language code.'));
+
+    // Set the default value callback for the status field.
+    $fields['status']->setDefaultValueCallback('Drupal\comment\Entity\Comment::getDefaultStatus');
 
     $fields['pid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Parent ID'))
@@ -235,19 +252,15 @@ class Comment extends ContentEntityBase implements CommentInterface {
       ->setLabel(t('Subject'))
       ->setTranslatable(TRUE)
       ->setSetting('max_length', 64)
-      ->setDisplayOptions('form', array(
+      ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         // Default comment body field has weight 20.
         'weight' => 10,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE);
 
-    $fields['uid'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('User ID'))
-      ->setDescription(t('The user ID of the comment author.'))
-      ->setTranslatable(TRUE)
-      ->setSetting('target_type', 'user')
-      ->setDefaultValue(0);
+    $fields['uid']
+      ->setDescription(t('The user ID of the comment author.'));
 
     $fields['name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Name'))
@@ -273,7 +286,8 @@ class Comment extends ContentEntityBase implements CommentInterface {
       ->setLabel(t('Hostname'))
       ->setDescription(t("The comment author's hostname."))
       ->setTranslatable(TRUE)
-      ->setSetting('max_length', 128);
+      ->setSetting('max_length', 128)
+      ->setDefaultValueCallback(static::class . '::getDefaultHostname');
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
@@ -285,12 +299,6 @@ class Comment extends ContentEntityBase implements CommentInterface {
       ->setDescription(t('The time that the comment was last edited.'))
       ->setTranslatable(TRUE);
 
-    $fields['status'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the comment is published.'))
-      ->setTranslatable(TRUE)
-      ->setDefaultValue(TRUE);
-
     $fields['thread'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Thread place'))
       ->setDescription(t("The alphadecimal representation of the comment's place in a thread, consisting of a base 36 string prefixed by an integer indicating its length."))
@@ -298,17 +306,26 @@ class Comment extends ContentEntityBase implements CommentInterface {
 
     $fields['entity_type'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Entity type'))
+      ->setRequired(TRUE)
       ->setDescription(t('The entity type to which this comment is attached.'))
       ->setSetting('is_ascii', TRUE)
       ->setSetting('max_length', EntityTypeInterface::ID_MAX_LENGTH);
 
     $fields['field_name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Comment field name'))
+      ->setRequired(TRUE)
       ->setDescription(t('The field name through which this comment was added.'))
       ->setSetting('is_ascii', TRUE)
       ->setSetting('max_length', FieldStorageConfig::NAME_MAX_LENGTH);
 
     return $fields;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getDefaultEntityOwner() {
+    return 0;
   }
 
   /**
@@ -320,7 +337,7 @@ class Comment extends ContentEntityBase implements CommentInterface {
       $fields['entity_id']->setSetting('target_type', $comment_type->getTargetEntityTypeId());
       return $fields;
     }
-    return array();
+    return [];
   }
 
   /**
@@ -470,23 +487,8 @@ class Comment extends ContentEntityBase implements CommentInterface {
   /**
    * {@inheritdoc}
    */
-  public function isPublished() {
-    return $this->get('status')->value == CommentInterface::PUBLISHED;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getStatus() {
     return $this->get('status')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPublished($status) {
-    $this->set('status', $status ? CommentInterface::PUBLISHED : CommentInterface::NOT_PUBLISHED);
-    return $this;
   }
 
   /**
@@ -531,29 +533,6 @@ class Comment extends ContentEntityBase implements CommentInterface {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function getOwnerId() {
-    return $this->get('uid')->target_id;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setOwnerId($uid) {
-    $this->set('uid', $uid);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setOwner(UserInterface $account) {
-    $this->set('uid', $account->id());
-    return $this;
-  }
-
-  /**
    * Get the comment type ID for this comment.
    *
    * @return string
@@ -561,6 +540,31 @@ class Comment extends ContentEntityBase implements CommentInterface {
    */
   public function getTypeId() {
     return $this->bundle();
+  }
+
+  /**
+   * Default value callback for 'status' base field definition.
+   *
+   * @see ::baseFieldDefinitions()
+   *
+   * @return bool
+   *   TRUE if the comment should be published, FALSE otherwise.
+   */
+  public static function getDefaultStatus() {
+    return \Drupal::currentUser()->hasPermission('skip comment approval') ? CommentInterface::PUBLISHED : CommentInterface::NOT_PUBLISHED;
+  }
+
+  /**
+   * Returns the default value for entity hostname base field.
+   *
+   * @return string
+   *   The client host name.
+   */
+  public static function getDefaultHostname() {
+    if (\Drupal::config('comment.settings')->get('log_ip_addresses')) {
+      return \Drupal::request()->getClientIP();
+    }
+    return '';
   }
 
 }

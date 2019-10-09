@@ -7,21 +7,58 @@
 
 use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Config\BootstrapConfigStorageFactory;
 use Drupal\Core\Logger\RfcLogLevel;
-use Drupal\Core\Render\Markup;
-use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Test\TestDatabase;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Site\Settings;
 use Drupal\Core\Utility\Error;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+
+/**
+ * Minimum allowed version of PHP.
+ *
+ * Below this version:
+ * - The installer cannot be run.
+ * - Updates cannot be run.
+ * - Modules and themes cannot be enabled.
+ * - If a site managed to bypass all of the above, then an error is shown in
+ *   the status report and various fatal errors occur on various pages.
+ *
+ * @see install.php
+ *
+ * @todo Move this to an appropriate autoloadable class. See
+ *   https://www.drupal.org/project/drupal/issues/2908079
+ */
+const DRUPAL_MINIMUM_PHP = '5.5.9';
 
 /**
  * Minimum supported version of PHP.
+ *
+ * Below this version:
+ * - New sites cannot be installed, except from within tests.
+ * - Updates from previous Drupal versions can be run, but users are warned
+ *   that Drupal no longer supports that PHP version.
+ * - An error is shown in the status report that the PHP version is too old.
+ *
+ * @todo Move this to an appropriate autoloadable class. See
+ *   https://www.drupal.org/project/drupal/issues/2908079
  */
-const DRUPAL_MINIMUM_PHP = '5.5.9';
+const DRUPAL_MINIMUM_SUPPORTED_PHP = '7.0.8';
+
+/**
+ * Minimum recommended version of PHP.
+ *
+ * Sites installing Drupal on PHP versions lower than this will see a warning
+ * message, but Drupal can still be installed. Used for (e.g.) PHP versions
+ * that have reached their EOL or will in the near future.
+ *
+ * @todo Move this to an appropriate autoloadable class. See
+ *   https://www.drupal.org/project/drupal/issues/2908079
+ */
+const DRUPAL_RECOMMENDED_PHP = '7.2';
 
 /**
  * Minimum recommended value of PHP memory_limit.
@@ -29,6 +66,9 @@ const DRUPAL_MINIMUM_PHP = '5.5.9';
  * 64M was chosen as a minimum requirement in order to allow for additional
  * contributed modules to be installed prior to hitting the limit. However,
  * 40M is the target for the Standard installation profile.
+ *
+ * @todo Move this to an appropriate autoloadable class. See
+ *   https://www.drupal.org/project/drupal/issues/2908079
  */
 const DRUPAL_MINIMUM_PHP_MEMORY_LIMIT = '64M';
 
@@ -58,6 +98,8 @@ const ERROR_REPORTING_DISPLAY_VERBOSE = 'verbose';
  * @deprecated in Drupal 8.0.0, will be removed before Drupal 9.0.0.
  *   Use Drupal\Core\Session\AccountInterface::ANONYMOUS_ROLE or
  *   \Drupal\user\RoleInterface::ANONYMOUS_ID instead.
+ *
+ * @see https://www.drupal.org/node/1619504
  */
 const DRUPAL_ANONYMOUS_RID = AccountInterface::ANONYMOUS_ROLE;
 
@@ -67,6 +109,8 @@ const DRUPAL_ANONYMOUS_RID = AccountInterface::ANONYMOUS_ROLE;
  * @deprecated in Drupal 8.0.0, will be removed before Drupal 9.0.0.
  *   Use Drupal\Core\Session\AccountInterface::AUTHENTICATED_ROLE or
  *   \Drupal\user\RoleInterface::AUTHENTICATED_ID instead.
+ *
+ * @see https://www.drupal.org/node/1619504
  */
 const DRUPAL_AUTHENTICATED_RID = AccountInterface::AUTHENTICATED_ROLE;
 
@@ -84,6 +128,11 @@ const DRUPAL_EXTENSION_NAME_MAX_LENGTH = 50;
  *
  * @see http://php.net/manual/reserved.variables.server.php
  * @see http://php.net/manual/function.time.php
+ *
+ * @deprecated in Drupal 8.3.0, will be removed before Drupal 9.0.0.
+ *   Use \Drupal::time()->getRequestTime();
+ *
+ * @see https://www.drupal.org/node/2785211
  */
 define('REQUEST_TIME', (int) $_SERVER['REQUEST_TIME']);
 
@@ -101,6 +150,8 @@ const DRUPAL_PHP_FUNCTION_PATTERN = '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*';
  *
  * @deprecated in Drupal 8.0.x and will be removed before 9.0.0. Drupal core no
  *   longer creates an active directory.
+ *
+ * @see https://www.drupal.org/node/2501187
  */
 const CONFIG_ACTIVE_DIRECTORY = 'active';
 
@@ -119,6 +170,8 @@ const CONFIG_SYNC_DIRECTORY = 'sync';
  *
  * @deprecated in Drupal 8.0.x and will be removed before 9.0.0. The staging
  *   directory was renamed to sync.
+ *
+ * @see https://www.drupal.org/node/2574957
  */
 const CONFIG_STAGING_DIRECTORY = 'staging';
 
@@ -187,14 +240,10 @@ function config_get_config_directory($type) {
  *   The filename of the item if it is to be set explicitly rather
  *   than by consulting the database.
  *
- * @return
+ * @return string
  *   The filename of the requested item or NULL if the item is not found.
  */
 function drupal_get_filename($type, $name, $filename = NULL) {
-  // The location of files will not change during the request, so do not use
-  // drupal_static().
-  static $files = array();
-
   // Type 'core' only exists to simplify application-level logic; it always maps
   // to the /core directory, whereas $name is ignored. It is only requested via
   // drupal_get_path(). /core/core.info.yml does not exist, but is required
@@ -203,42 +252,30 @@ function drupal_get_filename($type, $name, $filename = NULL) {
     return 'core/core.info.yml';
   }
 
-  // Profiles are converted into modules in system_rebuild_module_data().
-  // @todo Remove false-exposure of profiles as modules.
-  if ($type == 'profile') {
-    $type = 'module';
-  }
-  if (!isset($files[$type])) {
-    $files[$type] = array();
-  }
-
-  if (isset($filename)) {
-    $files[$type][$name] = $filename;
-  }
-  elseif (!isset($files[$type][$name])) {
-    // If the pathname of the requested extension is not known, try to retrieve
-    // the list of extension pathnames from various providers, checking faster
-    // providers first.
-    // Retrieve the current module list (derived from the service container).
-    if ($type == 'module' && \Drupal::hasService('module_handler')) {
-      foreach (\Drupal::moduleHandler()->getModuleList() as $module_name => $module) {
-        $files[$type][$module_name] = $module->getPathname();
-      }
+  try {
+    /** @var \Drupal\Core\Extension\ExtensionList $extension_list */
+    $extension_list = \Drupal::service("extension.list.$type");
+    if (isset($filename)) {
+      // Manually add the info file path of an extension.
+      $extension_list->setPathname($name, $filename);
     }
-    // If still unknown, retrieve the file list prepared in state by
-    // system_rebuild_module_data() and
-    // \Drupal\Core\Extension\ThemeHandlerInterface::rebuildThemeData().
-    if (!isset($files[$type][$name]) && \Drupal::hasService('state')) {
-      $files[$type] += \Drupal::state()->get('system.' . $type . '.files', array());
-    }
-    // If still unknown, create a user-level error message.
-    if (!isset($files[$type][$name])) {
-      trigger_error(SafeMarkup::format('The following @type is missing from the file system: @name', array('@type' => $type, '@name' => $name)), E_USER_WARNING);
-    }
+    return $extension_list->getPathname($name);
   }
-
-  if (isset($files[$type][$name])) {
-    return $files[$type][$name];
+  catch (ServiceNotFoundException $e) {
+    // Catch the exception. This will result in triggering an error.
+    // If the service is unknown, create a user-level error message.
+    trigger_error(
+      sprintf('Unknown type specified: "%s". Must be one of: "core", "profile", "module", "theme", or "theme_engine".', $type),
+      E_USER_WARNING
+    );
+  }
+  catch (\InvalidArgumentException $e) {
+    // Catch the exception. This will result in triggering an error.
+    // If the filename is still unknown, create a user-level error message.
+    trigger_error(
+      sprintf('The following %s is missing from the file system: %s', $type, $name),
+      E_USER_WARNING
+    );
   }
 }
 
@@ -252,7 +289,7 @@ function drupal_get_filename($type, $name, $filename = NULL) {
  *   The name of the item for which the path is requested. Ignored for
  *   $type 'core'.
  *
- * @return
+ * @return string
  *   The path to the requested item or an empty string if the item is not found.
  */
 function drupal_get_path($type, $name) {
@@ -297,7 +334,7 @@ function drupal_get_path($type, $name) {
  *
  * @ingroup sanitization
  */
-function t($string, array $args = array(), array $options = array()) {
+function t($string, array $args = [], array $options = []) {
   return new TranslatableMarkup($string, $args, $options);
 }
 
@@ -311,9 +348,11 @@ function t($string, array $args = array(), array $options = array()) {
  *
  * @deprecated in Drupal 8.0.0, will be removed before Drupal 9.0.0.
  *   Use \Drupal\Component\Render\FormattableMarkup.
+ *
+ * @see https://www.drupal.org/node/2302363
  */
 function format_string($string, array $args) {
-  return SafeMarkup::format($string, $args);
+  return new FormattableMarkup($string, $args);
 }
 
 /**
@@ -344,6 +383,8 @@ function format_string($string, array $args) {
  *
  * @deprecated in Drupal 8.0.0, will be removed before Drupal 9.0.0.
  *   Use \Drupal\Component\Utility\Unicode::validateUtf8().
+ *
+ * @see https://www.drupal.org/node/1992584
  */
 function drupal_validate_utf8($text) {
   return Unicode::validateUtf8($text);
@@ -372,7 +413,7 @@ function drupal_validate_utf8($text) {
  *
  * @see \Drupal\Core\Utility\Error::decodeException()
  */
-function watchdog_exception($type, Exception $exception, $message = NULL, $variables = array(), $severity = RfcLogLevel::ERROR, $link = NULL) {
+function watchdog_exception($type, Exception $exception, $message = NULL, $variables = [], $severity = RfcLogLevel::ERROR, $link = NULL) {
 
   // Use a default value if $message is not set.
   if (empty($message)) {
@@ -439,30 +480,18 @@ function watchdog_exception($type, Exception $exception, $message = NULL, $varia
  *
  * @see drupal_get_messages()
  * @see status-messages.html.twig
+ * @see https://www.drupal.org/node/2774931
+ *
+ * @deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0.
+ *   Use \Drupal\Core\Messenger\MessengerInterface::addMessage() instead.
  */
 function drupal_set_message($message = NULL, $type = 'status', $repeat = FALSE) {
+  @trigger_error('drupal_set_message() is deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0. Use \Drupal\Core\Messenger\MessengerInterface::addMessage() instead. See https://www.drupal.org/node/2774931', E_USER_DEPRECATED);
+  $messenger = \Drupal::messenger();
   if (isset($message)) {
-    if (!isset($_SESSION['messages'][$type])) {
-      $_SESSION['messages'][$type] = array();
-    }
-
-    // Convert strings which are safe to the simplest Markup objects.
-    if (!($message instanceof Markup) && $message instanceof MarkupInterface) {
-      $message = Markup::create((string) $message);
-    }
-
-    // Do not use strict type checking so that equivalent string and
-    // MarkupInterface objects are detected.
-    if ($repeat || !in_array($message, $_SESSION['messages'][$type])) {
-      $_SESSION['messages'][$type][] = $message;
-    }
-
-    // Mark this page as being uncacheable.
-    \Drupal::service('page_cache_kill_switch')->trigger();
+    $messenger->addMessage($message, $type, $repeat);
   }
-
-  // Messages not set when DB connection fails.
-  return isset($_SESSION['messages']) ? $_SESSION['messages'] : NULL;
+  return $messenger->all();
 }
 
 /**
@@ -489,29 +518,39 @@ function drupal_set_message($message = NULL, $type = 'status', $repeat = FALSE) 
  *
  * @see drupal_set_message()
  * @see status-messages.html.twig
+ * @see https://www.drupal.org/node/2774931
+ *
+ * @deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0.
+ *   Use \Drupal\Core\Messenger\MessengerInterface::all() or
+ *   \Drupal\Core\Messenger\MessengerInterface::messagesByType() instead.
  */
 function drupal_get_messages($type = NULL, $clear_queue = TRUE) {
-  if ($messages = drupal_set_message()) {
+  @trigger_error('drupal_get_message() is deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0. Use \Drupal\Core\Messenger\MessengerInterface::all() or \Drupal\Core\Messenger\MessengerInterface::messagesByType() instead. See https://www.drupal.org/node/2774931', E_USER_DEPRECATED);
+  $messenger = \Drupal::messenger();
+  if ($messages = $messenger->all()) {
     if ($type) {
       if ($clear_queue) {
-        unset($_SESSION['messages'][$type]);
+        $messenger->deleteByType($type);
       }
       if (isset($messages[$type])) {
-        return array($type => $messages[$type]);
+        return [$type => $messages[$type]];
       }
     }
     else {
       if ($clear_queue) {
-        unset($_SESSION['messages']);
+        $messenger->deleteAll();
       }
       return $messages;
     }
   }
-  return array();
+  return [];
 }
 
 /**
  * Returns the time zone of the current user.
+ *
+ * @return string
+ *   The name of the current user's timezone or the name of the default timezone.
  */
 function drupal_get_user_timezone() {
   $user = \Drupal::currentUser();
@@ -536,14 +575,14 @@ function drupal_get_user_timezone() {
  * @param $message
  *   The error message.
  * @param $filename
- *   The filename that the error was raised in.
+ *   (optional) The filename that the error was raised in.
  * @param $line
- *   The line number the error was raised at.
+ *   (optional) The line number the error was raised at.
  * @param $context
- *   An array that points to the active symbol table at the point the error
- *   occurred.
+ *   (optional) An array that points to the active symbol table at the point the
+ *   error occurred.
  */
-function _drupal_error_handler($error_level, $message, $filename, $line, $context) {
+function _drupal_error_handler($error_level, $message, $filename = NULL, $line = NULL, $context = NULL) {
   require_once __DIR__ . '/errors.inc';
   _drupal_error_handler_real($error_level, $message, $filename, $line, $context);
 }
@@ -724,12 +763,22 @@ function drupal_installation_attempted() {
  * When this function is called during Drupal's initial installation process,
  * the name of the profile that's about to be installed is stored in the global
  * installation state. At all other times, the "install_profile" setting will be
- * available in settings.php.
+ * available in container as a parameter.
  *
- * @return string|null $profile
+ * @return string|null
  *   The name of the installation profile or NULL if no installation profile is
  *   currently active. This is the case for example during the first steps of
  *   the installer or during unit tests.
+ *
+ * @deprecated in Drupal 8.3.0, will be removed before Drupal 9.0.0.
+ *   Use the install_profile container parameter or \Drupal::installProfile()
+ *   instead. If you are accessing the value before it is written to
+ *   configuration during the installer use the $install_state global. If you
+ *   need to access the value before container is available you can use
+ *   BootstrapConfigStorageFactory to load the value directly from
+ *   configuration.
+ *
+ * @see https://www.drupal.org/node/2538996
  */
 function drupal_get_profile() {
   global $install_state;
@@ -744,8 +793,12 @@ function drupal_get_profile() {
     }
   }
   else {
-    // Fall back to NULL, if there is no 'install_profile' setting.
-    $profile = Settings::get('install_profile');
+    if (\Drupal::hasContainer()) {
+      $profile = \Drupal::installProfile();
+    }
+    else {
+      $profile = BootstrapConfigStorageFactory::getDatabaseStorage()->read('core.extension')['profile'];
+    }
   }
 
   return $profile;
@@ -871,13 +924,13 @@ function drupal_classloader_register($name, $path) {
  *   internally and should not be passed in; use drupal_static_reset() instead.
  *   (This function's return value should not be used when TRUE is passed in.)
  *
- * @return
+ * @return array
  *   Returns a variable by reference.
  *
  * @see drupal_static_reset()
  */
 function &drupal_static($name, $default_value = NULL, $reset = FALSE) {
-  static $data = array(), $default = array();
+  static $data = [], $default = [];
   // First check if dealing with a previously defined static variable.
   if (isset($data[$name]) || array_key_exists($name, $data)) {
     // Non-NULL $name and both $data[$name] and $default[$name] statics exist.
@@ -925,12 +978,12 @@ function drupal_static_reset($name = NULL) {
  * Formats text for emphasized display in a placeholder inside a sentence.
  *
  * @deprecated in Drupal 8.0.0, will be removed before Drupal 9.0.0. Use
- *   \Drupal\Component\Utility\SafeMarkup::format() or Twig's "placeholder"
- *   filter instead. Note this method should not be used to simply emphasize a
- *   string and therefore has few valid use-cases. Note also, that this method
- *   does not mark the string as safe.
+ *   \Drupal\Component\Render\FormattableMarkup or Twig's "placeholder" filter
+ *   instead. Note this method should not be used to simply emphasize a string
+ *   and therefore has few valid use-cases. Note also, that this method does not
+ *   mark the string as safe.
  *
- * @see \Drupal\Component\Utility\SafeMarkup::format()
+ * @see https://www.drupal.org/node/2302363
  */
 function drupal_placeholder($text) {
   return '<em class="placeholder">' . Html::escape($text) . '</em>';
@@ -942,12 +995,12 @@ function drupal_placeholder($text) {
  * Wrapper for register_shutdown_function() that catches thrown exceptions to
  * avoid "Exception thrown without a stack frame in Unknown".
  *
- * @param $callback
+ * @param callable $callback
  *   The shutdown function to register.
  * @param ...
  *   Additional arguments to pass to the shutdown function.
  *
- * @return
+ * @return array
  *   Array of shutdown functions to be executed.
  *
  * @see register_shutdown_function()
@@ -956,7 +1009,7 @@ function drupal_placeholder($text) {
 function &drupal_register_shutdown_function($callback = NULL) {
   // We cannot use drupal_static() here because the static cache is reset during
   // batch processing, which breaks batch handling.
-  static $callbacks = array();
+  static $callbacks = [];
 
   if (isset($callback)) {
     // Only register the internal shutdown function once.
@@ -967,7 +1020,7 @@ function &drupal_register_shutdown_function($callback = NULL) {
     // Remove $callback from the arguments.
     unset($args[0]);
     // Save callback and arguments
-    $callbacks[] = array('callback' => $callback, 'arguments' => $args);
+    $callbacks[] = ['callback' => $callback, 'arguments' => $args];
   }
   return $callbacks;
 }
@@ -983,8 +1036,12 @@ function _drupal_shutdown_function() {
   chdir(DRUPAL_ROOT);
 
   try {
-    while (list($key, $callback) = each($callbacks)) {
+    reset($callbacks);
+    // Do not use foreach() here because it is possible that the callback will
+    // add to the $callbacks array via drupal_register_shutdown_function().
+    while ($callback = current($callbacks)) {
       call_user_func_array($callback['callback'], $callback['arguments']);
+      next($callbacks);
     }
   }
   // PHP 7 introduces Throwable, which covers both Error and

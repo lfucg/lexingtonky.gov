@@ -1,0 +1,25 @@
+uuid: c62c2bdb-7329-4245-8a28-bcd70b3d2347
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.resource_links.field_link_to_
+    - field.field.node.resource_links.field_resources_list
+    - node.type.resource_links
+  module:
+    - user
+id: node.resource_links.teaser
+targetEntityType: node
+bundle: resource_links
+mode: teaser
+content:
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  addtoany: true
+  field_link_to_: true
+  field_resources_list: true

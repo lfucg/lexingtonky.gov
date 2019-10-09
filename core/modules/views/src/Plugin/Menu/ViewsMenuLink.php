@@ -18,7 +18,7 @@ class ViewsMenuLink extends MenuLinkBase implements ContainerFactoryPluginInterf
   /**
    * {@inheritdoc}
    */
-  protected $overrideAllowed = array(
+  protected $overrideAllowed = [
     'menu_name' => 1,
     'parent' => 1,
     'weight' => 1,
@@ -26,7 +26,7 @@ class ViewsMenuLink extends MenuLinkBase implements ContainerFactoryPluginInterf
     'enabled' => 1,
     'title' => 1,
     'description' => 1,
-  );
+  ];
 
   /**
    * The entity manager.
@@ -125,7 +125,6 @@ class ViewsMenuLink extends MenuLinkBase implements ContainerFactoryPluginInterf
   public function isExpanded() {
     return (bool) $this->loadView()->display_handler->getOption('menu')['expanded'];
   }
-
 
   /**
    * {@inheritdoc}

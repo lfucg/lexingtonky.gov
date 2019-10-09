@@ -1,6 +1,5 @@
-(function() {
-  var $ = jQuery;
-
+;
+(function($) {
   $('.lex-hide-unless-javascript').removeClass('lex-hide-unless-javascript');
 
   // smooth scroll in-page: https://css-tricks.com/snippets/jquery/smooth-scrolling/
@@ -60,4 +59,59 @@
 
   /* duplicated in browse-columns.js, lex-gis.js */
   $.LexingtonFilterBlock(document.getElementsByClassName('js-lex-filter-block')[0]);
-}());
+
+  // Now correct titles and search terms on the search pages.
+  if ($('body.path-search')) {
+    var search = getParameterByName('search_api_fulltext');
+    if (search) {
+      $('input[type="search"]').val(search);
+      $('h1').append(' for "' + search + '"');
+    }
+  }
+
+}(jQuery));
+
+
+function googleTranslateElementInit() {
+  if (document.querySelector('body > header > section') && !document.querySelector('body > header > section > nav')) {
+    document.querySelector('body > header > section').classList.add('nonav');
+  }
+
+  if(document.getElementById('#google_translate_element')) {
+    document.getElementById('#google_translate_element').innerHTML = '';
+  }
+  else {
+    var e = document.createElement('div');
+    e.id = 'google_translate_element';
+
+    if (document.querySelector('body > header > .region')) {
+      document.querySelector('body > header > .region').appendChild(e);
+    }
+    else {
+      document.querySelector('body > header').appendChild(e);
+    }
+  }
+
+  /* empty the translate element in case it has contents */
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    includedLanguages: 'en,es,fr',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, 'google_translate_element');
+
+  /* override default "Select Language" */
+  var label = document.getElementsByClassName('goog-te-menu-value')[0];
+  if (label && ! label.innerHTML.match('Translate')) {
+    label.innerHTML = '<span class="lex-translatelink">Translate</span>';
+  }
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}

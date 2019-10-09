@@ -1,0 +1,8 @@
+uuid: da858d3a-18d2-40eb-92df-c5974f70cd35
+langcode: en
+status: true
+dependencies: {  }
+name: Keywords
+vid: keywords
+description: 'Keywords will be used to help return relevant search results when keyword terms are searched for in the index.'
+weight: 0

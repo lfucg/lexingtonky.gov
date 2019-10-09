@@ -7,6 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Form constructor to test the #required property.
+ *
+ * @internal
  */
 class FormTestValidateRequiredForm extends FormBase {
 
@@ -21,50 +23,50 @@ class FormTestValidateRequiredForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $options = array('foo' => 'foo', 'bar' => 'bar');
-    $validate = array('::elementValidateRequired');
+    $options = ['foo' => 'foo', 'bar' => 'bar'];
+    $validate = ['::elementValidateRequired'];
 
-    $form['textfield'] = array(
+    $form['textfield'] = [
       '#type' => 'textfield',
       '#title' => 'Name',
       '#required' => TRUE,
       '#required_error' => t('Please enter a name.'),
-    );
-    $form['checkboxes'] = array(
+    ];
+    $form['checkboxes'] = [
       '#type' => 'checkboxes',
       '#title' => 'Checkboxes',
       '#options' => $options,
       '#required' => TRUE,
       '#form_test_required_error' => t('Please choose at least one option.'),
       '#element_validate' => $validate,
-    );
-    $form['select'] = array(
+    ];
+    $form['select'] = [
       '#type' => 'select',
       '#title' => 'Select',
       '#options' => $options,
       '#required' => TRUE,
       '#form_test_required_error' => t('Please select something.'),
       '#element_validate' => $validate,
-    );
-    $form['radios'] = array(
+    ];
+    $form['radios'] = [
       '#type' => 'radios',
       '#title' => 'Radios',
       '#options' => $options,
       '#required' => TRUE,
-    );
-    $form['radios_optional'] = array(
+    ];
+    $form['radios_optional'] = [
       '#type' => 'radios',
       '#title' => 'Radios (optional)',
       '#options' => $options,
-    );
-    $form['radios_optional_default_value_false'] = array(
+    ];
+    $form['radios_optional_default_value_false'] = [
       '#type' => 'radios',
       '#title' => 'Radios (optional, with a default value of FALSE)',
       '#options' => $options,
       '#default_value' => FALSE,
-    );
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array('#type' => 'submit', '#value' => 'Submit');
+    ];
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = ['#type' => 'submit', '#value' => 'Submit'];
     return $form;
   }
 
@@ -82,7 +84,7 @@ class FormTestValidateRequiredForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    drupal_set_message('The form_test_validate_required_form form was submitted successfully.');
+    $this->messenger()->addStatus('The form_test_validate_required_form form was submitted successfully.');
   }
 
 }

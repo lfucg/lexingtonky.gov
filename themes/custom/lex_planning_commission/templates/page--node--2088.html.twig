@@ -1,0 +1,15 @@
+{% extends '@lex/pages/page.html.twig' %}
+{% block page_hero %}
+<div class="lex-hero splash" style="background-image: url(/themes/custom/lex_planning_commission/img/bg.png)">
+  {% block page_features %}
+    <img src="/themes/custom/lex_planning_commission/img/imagine_lexington.svg">
+    <div>
+    {{ page.title }}
+    {{ page.hero }}
+    </div>
+  {% endblock %}
+</div>
+{% endblock %}
+
+{% block page_title_main %}{% endblock %}
+

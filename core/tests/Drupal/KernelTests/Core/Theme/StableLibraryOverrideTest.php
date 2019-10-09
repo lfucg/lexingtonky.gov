@@ -49,7 +49,7 @@ class StableLibraryOverrideTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['system'];
+  public static $modules = ['system', 'user'];
 
   /**
    * {@inheritdoc}
@@ -71,6 +71,7 @@ class StableLibraryOverrideTest extends KernelTestBase {
     });
     $this->allModules = array_keys($all_modules);
     $this->allModules[] = 'system';
+    $this->allModules[] = 'user';
     sort($this->allModules);
     $this->container->get('module_installer')->install($this->allModules);
 
@@ -94,7 +95,6 @@ class StableLibraryOverrideTest extends KernelTestBase {
     $libraries_after = $this->getAllLibraries();
     $libraries_after = $this->removeVendorAssets($libraries_after);
 
-    $root = \Drupal::root();
     foreach ($libraries_before as $extension => $libraries) {
       foreach ($libraries as $library_name => $library) {
         // Allow skipping libraries.
@@ -173,10 +173,9 @@ class StableLibraryOverrideTest extends KernelTestBase {
 
     $libraries['core'] = $this->libraryDiscovery->getLibrariesByExtension('core');
 
-    $root = \Drupal::root();
     foreach ($modules as $module_name => $module) {
       $library_file = $module->getPath() . '/' . $module_name . '.libraries.yml';
-      if (is_file($root . '/' . $library_file)) {
+      if (is_file($this->root . '/' . $library_file)) {
         $libraries[$module_name] = $this->libraryDiscovery->getLibrariesByExtension($module_name);
       }
     }

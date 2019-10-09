@@ -7,6 +7,8 @@ use Drupal\Core\Config\ConfigManagerInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Diff\DiffFormatter;
+use Drupal\Core\File\Exception\FileException;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Url;
 use Drupal\system\FileDownloadController;
@@ -54,6 +56,13 @@ class ConfigController implements ContainerInjectionInterface {
   protected $diffFormatter;
 
   /**
+   * The file system.
+   *
+   * @var \Drupal\Core\File\FileSystemInterface
+   */
+  protected $fileSystem;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
@@ -62,7 +71,8 @@ class ConfigController implements ContainerInjectionInterface {
       $container->get('config.storage.sync'),
       $container->get('config.manager'),
       new FileDownloadController(),
-      $container->get('diff.formatter')
+      $container->get('diff.formatter'),
+      $container->get('file_system')
     );
   }
 
@@ -72,23 +82,35 @@ class ConfigController implements ContainerInjectionInterface {
    * @param \Drupal\Core\Config\StorageInterface $target_storage
    *   The target storage.
    * @param \Drupal\Core\Config\StorageInterface $source_storage
-   *   The source storage
+   *   The source storage.
+   * @param \Drupal\Core\Config\ConfigManagerInterface $config_manager
+   *   The config manager.
    * @param \Drupal\system\FileDownloadController $file_download_controller
    *   The file download controller.
+   * @param \Drupal\Core\Diff\DiffFormatter $diff_formatter
+   *   The diff formatter.
+   * @param \Drupal\Core\File\FileSystemInterface $file_system
+   *   The file system.
    */
-  public function __construct(StorageInterface $target_storage, StorageInterface $source_storage, ConfigManagerInterface $config_manager, FileDownloadController $file_download_controller, DiffFormatter $diff_formatter) {
+  public function __construct(StorageInterface $target_storage, StorageInterface $source_storage, ConfigManagerInterface $config_manager, FileDownloadController $file_download_controller, DiffFormatter $diff_formatter, FileSystemInterface $file_system) {
     $this->targetStorage = $target_storage;
     $this->sourceStorage = $source_storage;
     $this->configManager = $config_manager;
     $this->fileDownloadController = $file_download_controller;
     $this->diffFormatter = $diff_formatter;
+    $this->fileSystem = $file_system;
   }
 
   /**
    * Downloads a tarball of the site configuration.
    */
   public function downloadExport() {
-    file_unmanaged_delete(file_directory_temp() . '/config.tar.gz');
+    try {
+      $this->fileSystem->delete(file_directory_temp() . '/config.tar.gz');
+    }
+    catch (FileException $e) {
+      // Ignore failed deletes.
+    }
 
     $archiver = new ArchiveTar(file_directory_temp() . '/config.tar.gz', 'gz');
     // Get raw configuration data without overrides.
@@ -103,7 +125,7 @@ class ConfigController implements ContainerInjectionInterface {
       }
     }
 
-    $request = new Request(array('file' => 'config.tar.gz'));
+    $request = new Request(['file' => 'config.tar.gz']);
     return $this->fileDownloadController->download($request, 'temporary');
   }
 
@@ -129,34 +151,34 @@ class ConfigController implements ContainerInjectionInterface {
     $diff = $this->configManager->diff($this->targetStorage, $this->sourceStorage, $source_name, $target_name, $collection);
     $this->diffFormatter->show_header = FALSE;
 
-    $build = array();
+    $build = [];
 
-    $build['#title'] = t('View changes of @config_file', array('@config_file' => $source_name));
+    $build['#title'] = t('View changes of @config_file', ['@config_file' => $source_name]);
     // Add the CSS for the inline diff.
     $build['#attached']['library'][] = 'system/diff';
 
-    $build['diff'] = array(
+    $build['diff'] = [
       '#type' => 'table',
-      '#attributes' => array(
-        'class' => array('diff'),
-      ),
-      '#header' => array(
-        array('data' => t('Active'), 'colspan' => '2'),
-        array('data' => t('Staged'), 'colspan' => '2'),
-      ),
+      '#attributes' => [
+        'class' => ['diff'],
+      ],
+      '#header' => [
+        ['data' => t('Active'), 'colspan' => '2'],
+        ['data' => t('Staged'), 'colspan' => '2'],
+      ],
       '#rows' => $this->diffFormatter->format($diff),
-    );
+    ];
 
-    $build['back'] = array(
+    $build['back'] = [
       '#type' => 'link',
-      '#attributes' => array(
-        'class' => array(
+      '#attributes' => [
+        'class' => [
           'dialog-cancel',
-        ),
-      ),
+        ],
+      ],
       '#title' => "Back to 'Synchronize configuration' page.",
       '#url' => Url::fromRoute('config.sync'),
-    );
+    ];
 
     return $build;
   }

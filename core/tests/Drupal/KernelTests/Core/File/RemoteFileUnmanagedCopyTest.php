@@ -7,14 +7,14 @@ namespace Drupal\KernelTests\Core\File;
  *
  * @group File
  */
-class RemoteFileUnmanagedCopyTest extends UnmanagedCopyTest {
+class RemoteFileUnmanagedCopyTest extends FileCopyTest {
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = array('file_test');
+  public static $modules = ['file_test'];
 
   /**
    * A stream wrapper scheme to register for the test.

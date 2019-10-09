@@ -7,4 +7,5 @@ Feature: Translating the site
 Scenario: Translating the homepage
     Given I am on the homepage
     When I wait for AJAX to finish
+    And I wait for 4000 miliseconds
     Then I should see the link 'Translate'

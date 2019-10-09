@@ -1,0 +1,25 @@
+uuid: f3a0a871-11d8-4bfd-951e-c20c441e5787
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_browsenav_subcategory_term
+theme: bootstrap_barrio
+region: content
+weight: -24
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Browse navigation: sub-category term'
+  provider: core
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '/browse/*/*'
+    negate: false
+    context_mapping: {  }

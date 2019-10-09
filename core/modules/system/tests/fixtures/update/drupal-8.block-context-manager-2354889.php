@@ -23,16 +23,16 @@ $block_configs[] = Yaml::decode(file_get_contents(__DIR__ . '/block.block.thirdt
 
 foreach ($block_configs as $block_config) {
   $connection->insert('config')
-    ->fields(array(
+    ->fields([
       'collection',
       'name',
       'data',
-    ))
-    ->values(array(
+    ])
+    ->values([
       'collection' => '',
       'name' => 'block.block.' . $block_config['id'],
       'data' => serialize($block_config),
-    ))
+    ])
     ->execute();
 }
 
@@ -47,7 +47,7 @@ $existing_blocks = unserialize($existing_blocks);
 
 $connection->update('key_value')
   ->fields([
-    'value' => serialize(array_merge($existing_blocks, ['block.block.testfor2354889', 'block.block.secondtestfor2354889', 'block.block.thirdtestfor2354889']))
+    'value' => serialize(array_merge($existing_blocks, ['block.block.testfor2354889', 'block.block.secondtestfor2354889', 'block.block.thirdtestfor2354889'])),
   ])
   ->condition('collection', 'config.entity.key_store.block')
   ->condition('name', 'theme:bartik')

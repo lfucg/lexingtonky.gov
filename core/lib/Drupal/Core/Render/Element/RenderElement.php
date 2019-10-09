@@ -32,7 +32,7 @@ use Drupal\Core\Url;
  * strings, if they are literals provided by your module, should be
  * internationalized and translated; see the
  * @link i18n Internationalization topic @endlink for more information. Note
- * that although in the properies list that follows, they are designated to be
+ * that although in the properties list that follows, they are designated to be
  * of type string, they would generally end up being
  * \Drupal\Core\StringTranslation\TranslatableMarkup objects instead.
  *
@@ -126,10 +126,10 @@ abstract class RenderElement extends PluginBase implements ElementInterface {
   /**
    * {@inheritdoc}
    */
-  public static function setAttributes(&$element, $class = array()) {
+  public static function setAttributes(&$element, $class = []) {
     if (!empty($class)) {
       if (!isset($element['#attributes']['class'])) {
-        $element['#attributes']['class'] = array();
+        $element['#attributes']['class'] = [];
       }
       $element['#attributes']['class'] = array_merge($element['#attributes']['class'], $class);
     }
@@ -308,6 +308,7 @@ abstract class RenderElement extends PluginBase implements ElementInterface {
         case 'radio':
         case 'checkbox':
         case 'select':
+        case 'date':
           $element['#ajax']['event'] = 'change';
           break;
 
@@ -398,7 +399,7 @@ abstract class RenderElement extends PluginBase implements ElementInterface {
 
       // Convert a simple #ajax['progress'] string into an array.
       if (isset($settings['progress']) && is_string($settings['progress'])) {
-        $settings['progress'] = array('type' => $settings['progress']);
+        $settings['progress'] = ['type' => $settings['progress']];
       }
       // Change progress path to a full URL.
       if (isset($settings['progress']['url']) && $settings['progress']['url'] instanceof Url) {

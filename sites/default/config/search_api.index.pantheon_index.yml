@@ -1,0 +1,221 @@
+uuid: 158f6609-6c5c-4145-98d7-3b70f89535d1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - field.storage.node.field_keywords
+    - field.storage.taxonomy_term.field_keywords
+    - field.storage.paragraph.field_section_body
+    - search_api.server.pantheon
+    - core.entity_view_mode.node.teaser
+  module:
+    - taxonomy
+    - search_api
+    - node
+    - paragraphs
+id: pantheon_index
+name: 'Pantheon Index'
+description: ''
+read_only: false
+field_settings:
+  url:
+    label: URI
+    property_path: search_api_url
+    type: text
+    boost: !!float 3
+  rendered_item:
+    label: 'Rendered HTML output'
+    property_path: rendered_item
+    type: text
+    configuration:
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:node':
+          article: teaser
+          board_commission: teaser
+          event: teaser
+          final_order: ''
+          landing_page: teaser
+          meeting: teaser
+          news_article: teaser
+          organization_page: teaser
+          page: teaser
+          site_wide_notice: ''
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: text
+    boost: !!float 8
+  body:
+    label: Body
+    datasource_id: 'entity:node'
+    property_path: body
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.body
+  field_keywords:
+    label: 'Keywords » Taxonomy term » Keywords'
+    datasource_id: 'entity:node'
+    property_path: 'field_keywords:entity:field_keywords'
+    type: text
+    boost: !!float 8
+    dependencies:
+      config:
+        - field.storage.node.field_keywords
+        - field.storage.taxonomy_term.field_keywords
+      module:
+        - taxonomy
+  field_keywords_1:
+    label: Keywords
+    datasource_id: 'entity:node'
+    property_path: field_keywords
+    type: text
+    boost: !!float 8
+    dependencies:
+      config:
+        - field.storage.node.field_keywords
+  name:
+    label: 'Keywords » Taxonomy term » Name'
+    datasource_id: 'entity:node'
+    property_path: 'field_keywords:entity:name'
+    type: text
+    boost: !!float 8
+    dependencies:
+      config:
+        - field.storage.node.field_keywords
+      module:
+        - taxonomy
+  field_section_body:
+    label: 'Section body'
+    datasource_id: 'entity:paragraph'
+    property_path: field_section_body
+    type: text
+    dependencies:
+      config:
+        - field.storage.paragraph.field_section_body
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: true
+      selected:
+        - final_order
+    languages:
+      default: true
+      selected: {  }
+  'entity:paragraph':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+  'entity:taxonomy_term':
+    bundles:
+      default: true
+      selected:
+        - keywords
+    languages:
+      default: true
+      selected: {  }
+processor_settings:
+  add_url: {  }
+  html_filter:
+    all_fields: false
+    fields:
+      - url
+      - rendered_item
+      - title
+      - body
+      - field_section_body
+    title: true
+    alt: true
+    tags:
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      b: 2
+    weights:
+      preprocess_index: -47
+      preprocess_query: -47
+  aggregated_field: {  }
+  rendered_item: {  }
+  entity_status: {  }
+  type_boost:
+    boosts:
+      'entity:node':
+        datasource_boost: !!float 5
+        bundle_boosts:
+          article: !!float 3
+          board_commission: !!float 0
+          event: !!float 5
+          landing_page: !!float 0
+          meeting: !!float 8
+          news_article: !!float 0
+          organization_page: !!float 13
+          page: !!float 21
+          site_wide_notice: !!float 0
+      'entity:paragraph':
+        datasource_boost: !!float 1
+        bundle_boosts:
+          paragraphs_media_contact: !!float 0
+          paragraphs_page_section: !!float 0
+          paragraph_sidebar_section: !!float 0
+      'entity:taxonomy_term':
+        datasource_boost: !!float 5
+        bundle_boosts:
+          locations: !!float 0
+          organizations: !!float 0
+          site_navigation: !!float 0
+          tags: !!float 0
+    weights:
+      preprocess_index: -48
+  stemmer:
+    all_fields: false
+    fields:
+      - url
+      - rendered_item
+      - title
+      - body
+      - field_section_body
+    exceptions:
+      pva: property+valuation+administrator
+      GIS: geographic+information+services
+      gis: geographic+information+services
+      ESP: extended+school+program
+      esp: extended+school+program
+      REAL: recreation+enrichment+and+learning+program
+      GTV3: lextv
+      gtv3: lextv
+      gtv: lextv
+      bid: current+bids+quotes
+      Form+222: current+year+occupational+tax+forms
+      form+222: current+year+occupational+tax+forms
+      222: current+year+occupational+tax+forms
+      noise: code+of+ordinances+and+zoning+ordinance
+      RFP: current+bids+quotes
+      rfp: current+bids+quotes
+      PDR: purchase+of+development+rights
+      pdr: purchase+of+development+rights
+      228: current+year+occupational+tax+forms
+      bail: inmate+information
+      DMV: county+clerk
+      dmv: county+clerk
+      Cafr: accounting
+      cafr: accounting
+      garbage: waste+management
+      trash: waste+management
+    weights:
+      preprocess_index: -49
+      preprocess_query: -49
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  index_directly: true
+  cron_limit: 50
+server: pantheon

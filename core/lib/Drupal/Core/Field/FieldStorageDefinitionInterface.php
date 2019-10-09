@@ -97,7 +97,11 @@ interface FieldStorageDefinitionInterface extends CacheableDependencyInterface {
   public function setTranslatable($translatable);
 
   /**
-   * Returns whether the field is revisionable.
+   * Returns whether the field storage is revisionable.
+   *
+   * Note that if the entity type is revisionable and the field storage has a
+   * cardinality higher than 1, the field storage is considered revisionable
+   * by default.
    *
    * @return bool
    *   TRUE if the field is revisionable.
@@ -109,6 +113,12 @@ interface FieldStorageDefinitionInterface extends CacheableDependencyInterface {
    *
    * @return bool
    *   TRUE if the field is queryable.
+   *
+   * @deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0. Use
+   *   \Drupal\Core\Field\FieldStorageDefinitionInterface::hasCustomStorage()
+   *   instead.
+   *
+   * @see https://www.drupal.org/node/2856563
    */
   public function isQueryable();
 
@@ -327,10 +337,18 @@ interface FieldStorageDefinitionInterface extends CacheableDependencyInterface {
   public function isBaseField();
 
   /**
-   * Returns a unique identifier for the field.
+   * Returns a unique identifier for the field storage.
    *
    * @return string
    */
   public function getUniqueStorageIdentifier();
+
+  /**
+   * Returns whether the field is deleted or not.
+   *
+   * @return bool
+   *   TRUE if the field is deleted, FALSE otherwise.
+   */
+  public function isDeleted();
 
 }

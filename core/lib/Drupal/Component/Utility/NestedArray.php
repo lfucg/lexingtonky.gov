@@ -69,7 +69,7 @@ class NestedArray {
   public static function &getValue(array &$array, array $parents, &$key_exists = NULL) {
     $ref = &$array;
     foreach ($parents as $parent) {
-      if (is_array($ref) && array_key_exists($parent, $ref)) {
+      if (is_array($ref) && (isset($ref[$parent]) || array_key_exists($parent, $ref))) {
         $ref = &$ref[$parent];
       }
       else {
@@ -150,7 +150,7 @@ class NestedArray {
       // PHP auto-creates container arrays and NULL entries without error if $ref
       // is NULL, but throws an error if $ref is set, but not an array.
       if ($force && isset($ref) && !is_array($ref)) {
-        $ref = array();
+        $ref = [];
       }
       $ref = &$ref[$parent];
     }
@@ -219,7 +219,7 @@ class NestedArray {
   public static function unsetValue(array &$array, array $parents, &$key_existed = NULL) {
     $unset_key = array_pop($parents);
     $ref = &self::getValue($array, $parents, $key_existed);
-    if ($key_existed && is_array($ref) && array_key_exists($unset_key, $ref)) {
+    if ($key_existed && is_array($ref) && (isset($ref[$unset_key]) || array_key_exists($unset_key, $ref))) {
       $key_existed = TRUE;
       unset($ref[$unset_key]);
     }
@@ -322,18 +322,18 @@ class NestedArray {
    * @see NestedArray::mergeDeep()
    */
   public static function mergeDeepArray(array $arrays, $preserve_integer_keys = FALSE) {
-    $result = array();
+    $result = [];
     foreach ($arrays as $array) {
       foreach ($array as $key => $value) {
         // Renumber integer keys as array_merge_recursive() does unless
         // $preserve_integer_keys is set to TRUE. Note that PHP automatically
         // converts array keys that are integer strings (e.g., '1') to integers.
-        if (is_integer($key) && !$preserve_integer_keys) {
+        if (is_int($key) && !$preserve_integer_keys) {
           $result[] = $value;
         }
         // Recurse when both values are arrays.
         elseif (isset($result[$key]) && is_array($result[$key]) && is_array($value)) {
-          $result[$key] = self::mergeDeepArray(array($result[$key], $value), $preserve_integer_keys);
+          $result[$key] = self::mergeDeepArray([$result[$key], $value], $preserve_integer_keys);
         }
         // Otherwise, use the latter value, overriding any previous value.
         else {

@@ -7,8 +7,15 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\Entity\FieldConfig;
 
+@trigger_error(__NAMESPACE__ . '\EntityWithUriCacheTagsTestBase is deprecated in Drupal 8.6.x and will be removed before Drupal 9.0.0. Instead, use \Drupal\Tests\system\Functional\Entity\EntityWithUriCacheTagsTestBase. See https://www.drupal.org/node/2946549.', E_USER_DEPRECATED);
+
 /**
  * Provides helper methods for Entity cache tags tests; for entities with URIs.
+ *
+ * @deprecated in Drupal 8.6.x and will be removed before Drupal 9.0.0.
+ * Use \Drupal\Tests\system\Functional\Entity\EntityWithUriCacheTagsTestBase.
+ *
+ * @see https://www.drupal.org/node/2946549
  */
 abstract class EntityWithUriCacheTagsTestBase extends EntityCacheTagsTestBase {
 
@@ -20,7 +27,7 @@ abstract class EntityWithUriCacheTagsTestBase extends EntityCacheTagsTestBase {
    * - "<entity_type>:<entity ID>"
    */
   public function testEntityUri() {
-    $entity_url = $this->entity->urlInfo();
+    $entity_url = $this->entity->toUrl();
     $entity_type = $this->entity->getEntityTypeId();
 
     // Selects the view mode that will be used.
@@ -33,7 +40,6 @@ abstract class EntityWithUriCacheTagsTestBase extends EntityCacheTagsTestBase {
     $cache_tag = $this->entity->getCacheTags();
     $view_cache_tag = \Drupal::entityManager()->getViewBuilder($entity_type)->getCacheTags();
     $render_cache_tag = 'rendered';
-
 
     $this->pass("Test entity.", 'Debug');
     $this->verifyPageCache($entity_url, 'MISS');
@@ -53,7 +59,7 @@ abstract class EntityWithUriCacheTagsTestBase extends EntityCacheTagsTestBase {
       }
       $expected_cache_tags = Cache::mergeTags($cache_tag, $view_cache_tag);
       $expected_cache_tags = Cache::mergeTags($expected_cache_tags, $this->getAdditionalCacheTagsForEntity($this->entity));
-      $expected_cache_tags = Cache::mergeTags($expected_cache_tags, array($render_cache_tag));
+      $expected_cache_tags = Cache::mergeTags($expected_cache_tags, [$render_cache_tag]);
       $this->verifyRenderCache($cid, $expected_cache_tags, $redirected_cid);
     }
 
@@ -65,7 +71,6 @@ abstract class EntityWithUriCacheTagsTestBase extends EntityCacheTagsTestBase {
     // Verify a cache hit.
     $this->verifyPageCache($entity_url, 'HIT');
 
-
     // Verify that after modifying the entity's display, there is a cache miss.
     $this->pass("Test modification of entity's '$view_mode' display.", 'Debug');
     $entity_display = entity_get_display($entity_type, $this->entity->bundle(), $view_mode);
@@ -74,7 +79,6 @@ abstract class EntityWithUriCacheTagsTestBase extends EntityCacheTagsTestBase {
 
     // Verify a cache hit.
     $this->verifyPageCache($entity_url, 'HIT');
-
 
     if ($bundle_entity_type_id = $this->entity->getEntityType()->getBundleEntityType()) {
       // Verify that after modifying the corresponding bundle entity, there is a
@@ -89,7 +93,6 @@ abstract class EntityWithUriCacheTagsTestBase extends EntityCacheTagsTestBase {
       // Verify a cache hit.
       $this->verifyPageCache($entity_url, 'HIT');
     }
-
 
     if ($this->entity->getEntityType()->get('field_ui_base_route')) {
       // Verify that after modifying a configurable field on the entity, there
@@ -115,7 +118,6 @@ abstract class EntityWithUriCacheTagsTestBase extends EntityCacheTagsTestBase {
       $this->verifyPageCache($entity_url, 'HIT');
     }
 
-
     // Verify that after invalidating the entity's cache tag directly, there is
     // a cache miss.
     $this->pass("Test invalidation of entity's cache tag.", 'Debug');
@@ -125,7 +127,6 @@ abstract class EntityWithUriCacheTagsTestBase extends EntityCacheTagsTestBase {
     // Verify a cache hit.
     $this->verifyPageCache($entity_url, 'HIT');
 
-
     // Verify that after invalidating the generic entity type's view cache tag
     // directly, there is a cache miss.
     $this->pass("Test invalidation of entity's 'view' cache tag.", 'Debug');
@@ -134,7 +135,6 @@ abstract class EntityWithUriCacheTagsTestBase extends EntityCacheTagsTestBase {
 
     // Verify a cache hit.
     $this->verifyPageCache($entity_url, 'HIT');
-
 
     // Verify that after deleting the entity, there is a cache miss.
     $this->pass('Test deletion of entity.', 'Debug');

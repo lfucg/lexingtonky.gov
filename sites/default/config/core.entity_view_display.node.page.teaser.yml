@@ -5,13 +5,16 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.page.body
+    - field.field.node.page.field_keywords
     - field.field.node.page.field_lex_custom_banner_image
     - field.field.node.page.field_lex_site_nav
+    - field.field.node.page.field_metatags
     - field.field.node.page.field_office_to_contact
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
     - field.field.node.page.field_related_departments
     - field.field.node.page.field_related_documents
+    - field.field.node.page.field_sidebar_section
     - node.type.page
   module:
     - text
@@ -21,6 +24,11 @@ targetEntityType: node
 bundle: page
 mode: teaser
 content:
+  addtoany:
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   field_page_overview:
     type: text_summary_or_trimmed
     weight: 0
@@ -28,14 +36,21 @@ content:
     settings:
       trim_length: 600
     third_party_settings: {  }
+    region: content
   workbench_moderation_control:
     weight: -20
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   body: true
+  field_keywords: true
   field_lex_custom_banner_image: true
   field_lex_site_nav: true
+  field_metatags: true
   field_office_to_contact: true
   field_page_section: true
   field_related_departments: true
   field_related_documents: true
+  field_sidebar_section: true
   links: true

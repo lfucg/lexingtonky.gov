@@ -94,7 +94,7 @@ class TokenTest extends UnitTestCase {
     $container = new ContainerBuilder();
     $this->cacheContextManager = new CacheContextsManager($container, [
       'current_user',
-      'custom_context'
+      'custom_context',
     ]);
     $container->set('cache_contexts_manager', $this->cacheContextManager);
     \Drupal::setContainer($container);
@@ -104,13 +104,13 @@ class TokenTest extends UnitTestCase {
    * @covers ::getInfo
    */
   public function testGetInfo() {
-    $token_info = array(
-      'types' => array(
-        'foo' => array(
+    $token_info = [
+      'types' => [
+        'foo' => [
           'name' => $this->randomMachineName(),
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
     $this->language->expects($this->atLeastOnce())
       ->method('getId')
@@ -170,7 +170,7 @@ class TokenTest extends UnitTestCase {
     $this->assertEquals(['node:1'], $bubbleable_metadata->getCacheTags());
     $this->assertEquals([
       'current_user',
-      'custom_context'
+      'custom_context',
     ], $bubbleable_metadata->getCacheContexts());
     $this->assertEquals(10, $bubbleable_metadata->getCacheMaxAge());
   }
@@ -205,7 +205,7 @@ class TokenTest extends UnitTestCase {
     $this->assertEquals(['node:1'], $bubbleable_metadata->getCacheTags());
     $this->assertEquals([
       'current_user',
-      'custom_context'
+      'custom_context',
     ], $bubbleable_metadata->getCacheContexts());
     $this->assertEquals(10, $bubbleable_metadata->getCacheMaxAge());
   }
@@ -243,7 +243,7 @@ class TokenTest extends UnitTestCase {
     $this->assertEquals(['node:1'], $bubbleable_metadata->getCacheTags());
     $this->assertEquals([
       'current_user',
-      'custom_context'
+      'custom_context',
     ], $bubbleable_metadata->getCacheContexts());
     $this->assertEquals(10, $bubbleable_metadata->getCacheMaxAge());
   }

@@ -6,6 +6,8 @@ use Drupal\Core\Entity\EntityDeleteForm;
 
 /**
  * Defines a confirmation form for deleting a language entity.
+ *
+ * @internal
  */
 class LanguageDeleteForm extends EntityDeleteForm {
 
@@ -27,14 +29,14 @@ class LanguageDeleteForm extends EntityDeleteForm {
    * {@inheritdoc}
    */
   protected function getDeletionMessage() {
-    return $this->t('The %language (%langcode) language has been removed.', array('%language' => $this->entity->label(), '%langcode' => $this->entity->id()));
+    return $this->t('The %language (%langcode) language has been removed.', ['%language' => $this->entity->label(), '%langcode' => $this->entity->id()]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function logDeletionMessage() {
-    $this->logger('language')->notice('The %language (%langcode) language has been removed.', array('%language' => $this->entity->label(), '%langcode' => $this->entity->id()));
+    $this->logger('language')->notice('The %language (%langcode) language has been removed.', ['%language' => $this->entity->label(), '%langcode' => $this->entity->id()]);
   }
 
 }

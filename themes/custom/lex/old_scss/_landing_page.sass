@@ -1,0 +1,72 @@
+body.bundle-landing_page
+  main
+    padding: 0% 5% 2% 5%
+
+  .lex-hero.splash
+    height: 75vh
+    @media (max-width: $screen-phone-max)
+      height: auto
+
+    -webkit-background-size: cover !important
+    -moz-background-size: cover !important
+    -o-background-size: cover !important
+    background-size: cover !important
+
+    @media (max-width: $screen-phone-max)
+      overflow: scroll
+
+    .mobile-image
+      display: none
+      @media (max-width: $screen-phone-max)
+        display: block
+        width: 100%
+
+    h1
+      background-color: rgba(0,0,0,0.15)
+      margin-top: 0px
+      margin-bottom: 0px
+      padding-top: 8px
+      padding-bottom: 8px
+      padding-left: 48px
+      @media (max-width: $screen-phone-max)
+        padding-left: 8px
+
+    >div
+      padding-left: 0px
+
+    .lex-region-hero
+      >div
+        width: 100%
+        padding-top: 12px
+        padding-bottom: 20px
+        padding-left: 48px
+        @media (max-width: $screen-phone-max)
+          padding-left: 0px
+        .usa-width-one-half
+          width: calc(33% - 16px)
+          display: inline-block
+          @media (max-width: $screen-phone-max)
+            width: 100%
+
+    .lex-card-title
+      padding: 8px
+      a
+        color: white
+        text-decoration: none
+        display: inline-block
+
+        &:after
+          content: ''
+          display: block
+          width: 0
+          height: 1px
+          background: #fff
+          transition: width .2s
+
+        &:hover
+          &:after
+            width: 100%
+
+  &.lex-planning-commission
+    #block-lex-planning-commission-pagetitle
+      margin-bottom: 0px

@@ -4,6 +4,10 @@ namespace Drupal\Tests\migrate\Kernel\Plugin;
 
 use Drupal\Core\Database\Database;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\migrate\Exception\RequirementsException;
+use Drupal\migrate\Plugin\migrate\source\SqlBase;
+use Drupal\migrate\Plugin\RequirementsInterface;
+use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
 
 /**
  * Tests the migration plugin manager.
@@ -12,6 +16,8 @@ use Drupal\KernelTests\KernelTestBase;
  * @group migrate
  */
 class MigrationPluginListTest extends KernelTestBase {
+
+  use EntityReferenceTestTrait;
 
   /**
    * {@inheritdoc}
@@ -27,6 +33,7 @@ class MigrationPluginListTest extends KernelTestBase {
     'book',
     'comment',
     'contact',
+    'content_translation',
     'dblog',
     'field',
     'file',
@@ -38,6 +45,7 @@ class MigrationPluginListTest extends KernelTestBase {
     'menu_link_content',
     'menu_ui',
     'node',
+    'options',
     'path',
     'search',
     'shortcut',
@@ -53,9 +61,23 @@ class MigrationPluginListTest extends KernelTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+
+    $this->installEntitySchema('user');
+  }
+
+  /**
    * @covers ::getDefinitions
    */
   public function testGetDefinitions() {
+    // Create an entity reference field to make sure that migrations derived by
+    // EntityReferenceTranslationDeriver do not get discovered without
+    // migrate_drupal enabled.
+    $this->createEntityReferenceField('user', 'user', 'field_entity_reference', 'Entity Reference', 'node');
+
     // Make sure retrieving all the core migration plugins does not throw any
     // errors.
     $migration_plugins = $this->container->get('plugin.manager.migration')->getDefinitions();
@@ -79,6 +101,33 @@ class MigrationPluginListTest extends KernelTestBase {
 
     // Enable migrate_drupal to test that the plugins can now be discovered.
     $this->enableModules(['migrate_drupal']);
+
+    // Make sure retrieving these migration plugins in the absence of a database
+    // connection does not throw any errors.
+    $migration_plugins = $this->container->get('plugin.manager.migration')->createInstances([]);
+    // Any database-based source plugins should fail a requirements test in the
+    // absence of a source database connection (e.g., a connection with the
+    // 'migrate' key).
+    $source_plugins = array_map(function ($migration_plugin) {
+      return $migration_plugin->getSourcePlugin();
+    }, $migration_plugins);
+    foreach ($source_plugins as $id => $source_plugin) {
+      if ($source_plugin instanceof RequirementsInterface) {
+        try {
+          $source_plugin->checkRequirements();
+        }
+        catch (RequirementsException $e) {
+          unset($source_plugins[$id]);
+        }
+      }
+    }
+
+    // Without a connection defined, no database-based plugins should be
+    // returned.
+    foreach ($source_plugins as $id => $source_plugin) {
+      $this->assertNotInstanceOf(SqlBase::class, $source_plugin);
+    }
+
     // Set up a migrate database connection so that plugin discovery works.
     // Clone the current connection and replace the current prefix.
     $connection_info = Database::getConnectionInfo('migrate');
@@ -101,6 +150,11 @@ class MigrationPluginListTest extends KernelTestBase {
     $migration_plugins = $this->container->get('plugin.manager.migration')->getDefinitions();
     // All the plugins provided by core depend on migrate_drupal.
     $this->assertNotEmpty($migration_plugins);
+
+    // Test that migrations derived by EntityReferenceTranslationDeriver are
+    // discovered now that migrate_drupal is enabled.
+    $this->assertArrayHasKey('d6_entity_reference_translation:user__user', $migration_plugins);
+    $this->assertArrayHasKey('d7_entity_reference_translation:user__user', $migration_plugins);
   }
 
 }

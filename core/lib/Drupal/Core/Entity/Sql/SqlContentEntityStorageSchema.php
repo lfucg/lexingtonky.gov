@@ -3,17 +3,21 @@
 namespace Drupal\Core\Entity\Sql;
 
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Database\DatabaseException;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
+use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Exception\FieldStorageDefinitionUpdateForbiddenException;
 use Drupal\Core\Entity\Schema\DynamicallyFieldableEntityStorageSchemaInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldException;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\field\FieldStorageConfigInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Site\Settings;
 
 /**
  * Defines a schema handler that supports revisionable, translatable entities.
@@ -26,13 +30,29 @@ use Drupal\field\FieldStorageConfigInterface;
 class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorageSchemaInterface {
 
   use DependencySerializationTrait;
+  use DeprecatedServicePropertyTrait;
+  use SqlFieldableEntityTypeListenerTrait {
+    onFieldableEntityTypeUpdate as traitOnFieldableEntityTypeUpdate;
+  }
 
   /**
-   * The entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * {@inheritdoc}
    */
-  protected $entityManager;
+  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The entity field manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
 
   /**
    * The entity type this schema builder is responsible for.
@@ -47,14 +67,6 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    * @var \Drupal\Core\Field\FieldStorageDefinitionInterface[]
    */
   protected $fieldStorageDefinitions;
-
-  /**
-   * The original storage field definitions for this entity type. Used during
-   * field schema updates.
-   *
-   * @var \Drupal\Core\Field\FieldDefinitionInterface[]
-   */
-  protected $originalDefinitions;
 
   /**
    * The storage object for the given entity type.
@@ -85,23 +97,45 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
   protected $installedStorageSchema;
 
   /**
+   * The key-value collection for tracking entity update backup repository.
+   *
+   * @var \Drupal\Core\KeyValueStore\KeyValueStoreInterface
+   */
+  protected $updateBackupRepository;
+
+  /**
+   * The deleted fields repository.
+   *
+   * @var \Drupal\Core\Field\DeletedFieldsRepositoryInterface
+   */
+  protected $deletedFieldsRepository;
+
+  /**
    * Constructs a SqlContentEntityStorageSchema.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type
    *   The entity type.
    * @param \Drupal\Core\Entity\Sql\SqlContentEntityStorage $storage
    *   The storage of the entity type. This must be an SQL-based storage.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection to be used.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   The entity field manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, ContentEntityTypeInterface $entity_type, SqlContentEntityStorage $storage, Connection $database) {
-    $this->entityManager = $entity_manager;
-    $this->entityType = $entity_type;
-    $this->fieldStorageDefinitions = $entity_manager->getFieldStorageDefinitions($entity_type->id());
-    $this->storage = $storage;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ContentEntityTypeInterface $entity_type, SqlContentEntityStorage $storage, Connection $database, EntityFieldManagerInterface $entity_field_manager = NULL) {
+    $this->entityTypeManager = $entity_type_manager;
+    $this->storage = clone $storage;
     $this->database = $database;
+    if (!$entity_field_manager) {
+      @trigger_error('Calling SqlContentEntityStorageSchema::__construct() with the $entity_field_manager argument is supported in drupal:8.7.0 and will be required before drupal:9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
+      $entity_field_manager = \Drupal::service('entity_field.manager');
+    }
+    $this->entityFieldManager = $entity_field_manager;
+
+    $this->entityType = $entity_type_manager->getActiveDefinition($entity_type->id());
+    $this->fieldStorageDefinitions = $entity_field_manager->getActiveFieldStorageDefinitions($entity_type->id());
   }
 
   /**
@@ -121,11 +155,69 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
   }
 
   /**
+   * Gets the deleted fields repository.
+   *
+   * @return \Drupal\Core\Field\DeletedFieldsRepositoryInterface
+   *   The deleted fields repository.
+   *
+   * @todo Inject this dependency in the constructor once this class can be
+   *   instantiated as a regular entity handler:
+   *   https://www.drupal.org/node/2332857.
+   */
+  protected function deletedFieldsRepository() {
+    if (!isset($this->deletedFieldsRepository)) {
+      $this->deletedFieldsRepository = \Drupal::service('entity_field.deleted_fields_repository');
+    }
+    return $this->deletedFieldsRepository;
+  }
+
+  /**
+   * Gets the key/value collection for tracking the entity update backups.
+   *
+   * @return \Drupal\Core\KeyValueStore\KeyValueStoreInterface
+   *   A key/value collection.
+   *
+   * @todo Inject this dependency in the constructor once this class can be
+   *   instantiated as a regular entity handler.
+   *   @see https://www.drupal.org/node/2332857
+   */
+  protected function updateBackupRepository() {
+    if (!isset($this->updateBackupRepository)) {
+      $this->updateBackupRepository = \Drupal::keyValue('entity.update_backup');
+    }
+    return $this->updateBackupRepository;
+  }
+
+  /**
+   * Refreshes the table mapping with updated definitions.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   An entity type definition.
+   * @param \Drupal\Core\Field\FieldStorageDefinitionInterface[]|null $storage_definitions
+   *   (optional) An array of field storage definitions. Defaults to the last
+   *   installed field storage definition.
+   *
+   * @return \Drupal\Core\Entity\Sql\DefaultTableMapping
+   *   A table mapping object.
+   */
+  protected function getTableMapping(EntityTypeInterface $entity_type, array $storage_definitions = NULL) {
+    // Allow passing a single field storage definition when updating a field.
+    if ($storage_definitions && count($storage_definitions) === 1) {
+      $storage_definition = reset($storage_definitions);
+      $field_storage_definitions = [$storage_definition->getName() => $storage_definition] + $this->fieldStorageDefinitions;
+    }
+    else {
+      $field_storage_definitions = $storage_definitions ?: $this->fieldStorageDefinitions;
+    }
+
+    return $this->storage->getCustomTableMapping($entity_type, $field_storage_definitions);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function requiresEntityStorageSchemaChanges(EntityTypeInterface $entity_type, EntityTypeInterface $original) {
-    return
-      $this->hasSharedTableStructureChange($entity_type, $original) ||
+    return $this->hasSharedTableStructureChange($entity_type, $original) ||
       // Detect changes in key or index definitions.
       $this->getEntitySchemaData($entity_type, $this->getEntitySchema($entity_type, TRUE)) != $this->loadEntitySchemaData($original);
   }
@@ -143,8 +235,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   a table has been renamed.
    */
   protected function hasSharedTableStructureChange(EntityTypeInterface $entity_type, EntityTypeInterface $original) {
-    return
-      $entity_type->isRevisionable() != $original->isRevisionable() ||
+    return $entity_type->isRevisionable() != $original->isRevisionable() ||
       $entity_type->isTranslatable() != $original->isTranslatable() ||
       $this->hasSharedTableNameChanges($entity_type, $original);
   }
@@ -161,18 +252,25 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   Returns TRUE if there have been changes.
    */
   protected function hasSharedTableNameChanges(EntityTypeInterface $entity_type, EntityTypeInterface $original) {
-    return
-      $entity_type->getBaseTable() != $original->getBaseTable() ||
-      $entity_type->getDataTable() != $original->getDataTable() ||
-      $entity_type->getRevisionTable() != $original->getRevisionTable() ||
-      $entity_type->getRevisionDataTable() != $original->getRevisionDataTable();
+    $base_table = $this->database->schema()->tableExists($entity_type->getBaseTable());
+    $data_table = $this->database->schema()->tableExists($entity_type->getDataTable());
+    $revision_table = $this->database->schema()->tableExists($entity_type->getRevisionTable());
+    $revision_data_table = $this->database->schema()->tableExists($entity_type->getRevisionDataTable());
+
+    // We first check if the new table already exists because the storage might
+    // have created it even though it wasn't specified in the entity type
+    // definition.
+    return (!$base_table && $entity_type->getBaseTable() != $original->getBaseTable()) ||
+      (!$data_table && $entity_type->getDataTable() != $original->getDataTable()) ||
+      (!$revision_table && $entity_type->getRevisionTable() != $original->getRevisionTable()) ||
+      (!$revision_data_table && $entity_type->getRevisionDataTable() != $original->getRevisionDataTable());
   }
 
   /**
    * {@inheritdoc}
    */
   public function requiresFieldStorageSchemaChanges(FieldStorageDefinitionInterface $storage_definition, FieldStorageDefinitionInterface $original) {
-    $table_mapping = $this->storage->getTableMapping();
+    $table_mapping = $this->getTableMapping($this->entityType);
 
     if (
       $storage_definition->hasCustomStorage() != $original->hasCustomStorage() ||
@@ -192,7 +290,12 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
       return FALSE;
     }
 
-    return $this->getSchemaFromStorageDefinition($storage_definition) != $this->loadFieldSchemaData($original);
+    $current_schema = $this->getSchemaFromStorageDefinition($storage_definition);
+    $this->processFieldStorageSchema($current_schema);
+    $installed_schema = $this->loadFieldSchemaData($original);
+    $this->processFieldStorageSchema($installed_schema);
+
+    return $current_schema != $installed_schema;
   }
 
   /**
@@ -206,8 +309,8 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   The schema data.
    */
   protected function getSchemaFromStorageDefinition(FieldStorageDefinitionInterface $storage_definition) {
-    assert('!$storage_definition->hasCustomStorage();');
-    $table_mapping = $this->storage->getTableMapping();
+    assert(!$storage_definition->hasCustomStorage());
+    $table_mapping = $this->getTableMapping($this->entityType, [$storage_definition]);
     $schema = [];
     if ($table_mapping->requiresDedicatedTableStorage($storage_definition)) {
       $schema = $this->getDedicatedTableSchema($storage_definition);
@@ -241,9 +344,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
       return FALSE;
     }
 
-    // Use the original entity type since the storage has not been updated.
-    $original_storage = $this->entityManager->createHandlerInstance($original_storage_class, $original);
-    return $original_storage->hasData();
+    return $this->storage->hasData();
   }
 
   /**
@@ -257,6 +358,11 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    * {@inheritdoc}
    */
   public function onEntityTypeCreate(EntityTypeInterface $entity_type) {
+    // When installing an entity type, we have to use the live (in-code) entity
+    // type and field storage definitions.
+    $this->entityType = $entity_type;
+    $this->fieldStorageDefinitions = $this->entityFieldManager->getFieldStorageDefinitions($entity_type->id());
+
     $this->checkEntityType($entity_type);
     $schema_handler = $this->database->schema();
 
@@ -269,9 +375,8 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
     }
 
     // Create dedicated field tables.
-    $field_storage_definitions = $this->entityManager->getFieldStorageDefinitions($entity_type->id());
-    $table_mapping = $this->storage->getTableMapping($field_storage_definitions);
-    foreach ($field_storage_definitions as $field_storage_definition) {
+    $table_mapping = $this->getTableMapping($this->entityType);
+    foreach ($this->fieldStorageDefinitions as $field_storage_definition) {
       if ($table_mapping->requiresDedicatedTableStorage($field_storage_definition)) {
         $this->createDedicatedTableSchema($field_storage_definition);
       }
@@ -298,44 +403,20 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
       return;
     }
 
-    // If a migration is required, we can't proceed.
-    if ($this->requiresEntityDataMigration($entity_type, $original)) {
-      throw new EntityStorageException('The SQL storage cannot change the schema for an existing entity type (' . $entity_type->id() . ') with data.');
+    // If shared table schema changes are needed, we can't proceed.
+    if (!class_exists($original->getStorageClass()) || $this->hasSharedTableStructureChange($entity_type, $original)) {
+      throw new EntityStorageException('It is not possible to change the entity type schema outside of a batch context. Use EntityDefinitionUpdateManagerInterface::updateFieldableEntityType() instead.');
     }
 
-    // If we have no data just recreate the entity schema from scratch.
-    if ($this->isTableEmpty($this->storage->getBaseTable())) {
-      if ($this->database->supportsTransactionalDDL()) {
-        // If the database supports transactional DDL, we can go ahead and rely
-        // on it. If not, we will have to rollback manually if something fails.
-        $transaction = $this->database->startTransaction();
-      }
-      try {
-        $this->onEntityTypeDelete($original);
-        $this->onEntityTypeCreate($entity_type);
-      }
-      catch (\Exception $e) {
-        if ($this->database->supportsTransactionalDDL()) {
-          $transaction->rollback();
-        }
-        else {
-          // Recreate original schema.
-          $this->onEntityTypeCreate($original);
-        }
-        throw $e;
-      }
-    }
-    else {
-      // Drop original indexes and unique keys.
-      $this->deleteEntitySchemaIndexes($this->loadEntitySchemaData($entity_type));
+    // Drop original indexes and unique keys.
+    $this->deleteEntitySchemaIndexes($this->loadEntitySchemaData($entity_type));
 
-      // Create new indexes and unique keys.
-      $entity_schema = $this->getEntitySchema($entity_type, TRUE);
-      $this->createEntitySchemaIndexes($entity_schema);
+    // Create new indexes and unique keys.
+    $entity_schema = $this->getEntitySchema($entity_type, TRUE);
+    $this->createEntitySchemaIndexes($entity_schema);
 
-      // Store the updated entity schema.
-      $this->saveEntitySchemaData($entity_type, $entity_schema);
-    }
+    // Store the updated entity schema.
+    $this->saveEntitySchemaData($entity_type, $entity_schema);
   }
 
   /**
@@ -344,36 +425,18 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
   public function onEntityTypeDelete(EntityTypeInterface $entity_type) {
     $this->checkEntityType($entity_type);
     $schema_handler = $this->database->schema();
-    $actual_definition = $this->entityManager->getDefinition($entity_type->id());
-    // @todo Instead of switching the wrapped entity type, we should be able to
-    //   instantiate a new table mapping for each entity type definition. See
-    //   https://www.drupal.org/node/2274017.
-    $this->storage->setEntityType($entity_type);
 
-    // Delete entity tables.
-    foreach ($this->getEntitySchemaTables() as $table_name) {
+    // Delete entity and field tables.
+    foreach ($this->getTableMapping($entity_type)->getTableNames() as $table_name) {
       if ($schema_handler->tableExists($table_name)) {
         $schema_handler->dropTable($table_name);
       }
     }
 
-    // Delete dedicated field tables.
-    $field_storage_definitions = $this->entityManager->getLastInstalledFieldStorageDefinitions($entity_type->id());
-    $this->originalDefinitions = $field_storage_definitions;
-    $table_mapping = $this->storage->getTableMapping($field_storage_definitions);
-    foreach ($field_storage_definitions as $field_storage_definition) {
-      // If we have a field having dedicated storage we need to drop it,
-      // otherwise we just remove the related schema data.
-      if ($table_mapping->requiresDedicatedTableStorage($field_storage_definition)) {
-        $this->deleteDedicatedTableSchema($field_storage_definition);
-      }
-      elseif ($table_mapping->allowsSharedTableStorage($field_storage_definition)) {
-        $this->deleteFieldSchemaData($field_storage_definition);
-      }
+    // Delete the field schema data.
+    foreach ($this->fieldStorageDefinitions as $field_storage_definition) {
+      $this->deleteFieldSchemaData($field_storage_definition);
     }
-    $this->originalDefinitions = NULL;
-
-    $this->storage->setEntityType($actual_definition);
 
     // Delete the entity schema.
     $this->deleteEntitySchemaData($entity_type);
@@ -382,7 +445,209 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
   /**
    * {@inheritdoc}
    */
+  public function onFieldableEntityTypeUpdate(EntityTypeInterface $entity_type, EntityTypeInterface $original, array $field_storage_definitions, array $original_field_storage_definitions, array &$sandbox = NULL) {
+    $this->traitOnFieldableEntityTypeUpdate($entity_type, $original, $field_storage_definitions, $original_field_storage_definitions, $sandbox);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function preUpdateEntityTypeSchema(EntityTypeInterface $entity_type, EntityTypeInterface $original, array $field_storage_definitions, array $original_field_storage_definitions, array &$sandbox = NULL) {
+    $temporary_prefix = static::getTemporaryTableMappingPrefix($entity_type, $field_storage_definitions);
+    $sandbox['temporary_table_mapping'] = $this->storage->getCustomTableMapping($entity_type, $field_storage_definitions, $temporary_prefix);
+    $sandbox['new_table_mapping'] = $this->storage->getCustomTableMapping($entity_type, $field_storage_definitions);
+    $sandbox['original_table_mapping'] = $this->storage->getCustomTableMapping($original, $original_field_storage_definitions);
+
+    $backup_prefix = static::getTemporaryTableMappingPrefix($original, $original_field_storage_definitions, 'old_');
+    $sandbox['backup_table_mapping'] = $this->storage->getCustomTableMapping($original, $original_field_storage_definitions, $backup_prefix);
+    $sandbox['backup_prefix_key'] = substr($backup_prefix, 4);
+    $sandbox['backup_request_time'] = \Drupal::time()->getRequestTime();
+
+    // Create temporary tables based on the new entity type and field storage
+    // definitions.
+    $temporary_table_names = array_combine($sandbox['new_table_mapping']->getTableNames(), $sandbox['temporary_table_mapping']->getTableNames());
+    $this->entityType = $entity_type;
+    $this->fieldStorageDefinitions = $field_storage_definitions;
+
+    // Update the storage's entity type and field storage definitions because
+    // ::getEntitySchema() and ::getSharedTableFieldSchema() overrides are
+    // retrieving table names from these definitions.
+    $this->storage->setEntityType($entity_type);
+    $this->storage->setFieldStorageDefinitions($field_storage_definitions);
+    $this->storage->setTableMapping($sandbox['new_table_mapping']);
+
+    $schema = $this->getEntitySchema($entity_type, TRUE);
+    $sandbox['new_entity_schema'] = $schema;
+
+    // Filter out tables which are not part of the table mapping.
+    $schema = array_intersect_key($schema, $temporary_table_names);
+
+    // Create entity tables.
+    foreach ($schema as $table_name => $table_schema) {
+      $this->database->schema()->createTable($temporary_table_names[$table_name], $table_schema);
+    }
+
+    // Create dedicated field tables.
+    foreach ($field_storage_definitions as $field_storage_definition) {
+      if ($sandbox['temporary_table_mapping']->requiresDedicatedTableStorage($field_storage_definition)) {
+        $schema = $this->getDedicatedTableSchema($field_storage_definition, $entity_type);
+
+        // Filter out tables which are not part of the table mapping.
+        $schema = array_intersect_key($schema, $temporary_table_names);
+        foreach ($schema as $table_name => $table_schema) {
+          $this->database->schema()->createTable($temporary_table_names[$table_name], $table_schema);
+        }
+      }
+    }
+
+    // Restore the original definitions and table mapping so the data copying
+    // step can load existing data properly.
+    $this->storage->setEntityType($original);
+    $this->storage->setFieldStorageDefinitions($original_field_storage_definitions);
+    $this->storage->setTableMapping($sandbox['original_table_mapping']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function postUpdateEntityTypeSchema(EntityTypeInterface $entity_type, EntityTypeInterface $original, array $field_storage_definitions, array $original_field_storage_definitions, array &$sandbox = NULL) {
+    /** @var \Drupal\Core\Entity\Sql\TableMappingInterface $temporary_table_mapping */
+    $temporary_table_mapping = $sandbox['temporary_table_mapping'];
+    /** @var \Drupal\Core\Entity\Sql\TableMappingInterface $original_table_mapping */
+    $original_table_mapping = $sandbox['original_table_mapping'];
+    /** @var \Drupal\Core\Entity\Sql\TableMappingInterface $new_table_mapping */
+    $new_table_mapping = $sandbox['new_table_mapping'];
+    /** @var \Drupal\Core\Entity\Sql\TableMappingInterface $backup_table_mapping */
+    $backup_table_mapping = $sandbox['backup_table_mapping'];
+
+    // Rename the original tables so we can put them back in place in case
+    // anything goes wrong.
+    $backup_table_names = array_combine($original_table_mapping->getTableNames(), $backup_table_mapping->getTableNames());
+    $renamed_tables = [];
+    try {
+      foreach ($backup_table_names as $original_table_name => $backup_table_name) {
+        $this->database->schema()->renameTable($original_table_name, $backup_table_name);
+        $renamed_tables[$original_table_name] = $backup_table_name;
+      }
+    }
+    catch (\Exception $e) {
+      foreach ($renamed_tables as $original_table_name => $backup_table_name) {
+        $this->database->schema()->renameTable($backup_table_name, $original_table_name);
+      }
+
+      // Re-throw the original exception.
+      throw $e;
+    }
+
+    // Put the new tables in place and update the entity type and field storage
+    // definitions.
+    try {
+      $table_name_mapping = array_combine($temporary_table_mapping->getTableNames(), $new_table_mapping->getTableNames());
+      foreach ($table_name_mapping as $temp_table_name => $current_table_name) {
+        $this->database->schema()->renameTable($temp_table_name, $current_table_name);
+      }
+
+      // Store the updated entity schema.
+      $new_entity_schema = $sandbox['new_entity_schema'];
+      $this->schema[$entity_type->id()] = $new_entity_schema;
+      $this->entityType = $entity_type;
+      $this->fieldStorageDefinitions = $field_storage_definitions;
+      $this->saveEntitySchemaData($entity_type, $new_entity_schema);
+
+      // Store the updated field schema for each field storage.
+      foreach ($field_storage_definitions as $field_storage_definition) {
+        if ($new_table_mapping->requiresDedicatedTableStorage($field_storage_definition)) {
+          $this->createDedicatedTableSchema($field_storage_definition, TRUE);
+        }
+        elseif ($new_table_mapping->allowsSharedTableStorage($field_storage_definition)) {
+          // The shared tables are already fully created, but we need to save
+          // the per-field schema definitions for later use.
+          $this->createSharedTableSchema($field_storage_definition, TRUE);
+        }
+      }
+    }
+    catch (\Exception $e) {
+      // Something went wrong, bring back the original tables.
+      foreach ($backup_table_names as $original_table_name => $backup_table_name) {
+        // We are in the 'original data recovery' phase, so we need to be sure
+        // that the initial tables can be properly restored.
+        if ($this->database->schema()->tableExists($original_table_name)) {
+          $this->database->schema()->dropTable($original_table_name);
+        }
+
+        $this->database->schema()->renameTable($backup_table_name, $original_table_name);
+      }
+
+      // Re-throw the original exception.
+      throw $e;
+    }
+
+    // At this point the update process either finished successfully or any
+    // error has been thrown already. We can either keep the backup tables in
+    // place or drop them.
+    if (Settings::get('entity_update_backup', TRUE)) {
+      $backup_key = $sandbox['backup_prefix_key'];
+      $backup = [
+        'entity_type' => $original,
+        'field_storage_definitions' => $original_field_storage_definitions,
+        'table_mapping' => $backup_table_mapping,
+        'request_time' => $sandbox['backup_request_time'],
+      ];
+      $this->updateBackupRepository()->set("{$original->id()}.$backup_key", $backup);
+    }
+    else {
+      foreach ($backup_table_names as $original_table_name => $backup_table_name) {
+        $this->database->schema()->dropTable($backup_table_name);
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function handleEntityTypeSchemaUpdateExceptionOnDataCopy(EntityTypeInterface $entity_type, EntityTypeInterface $original, array &$sandbox) {
+    // In case of an error during the save process, we need to clean up the
+    // temporary tables.
+    /** @var \Drupal\Core\Entity\Sql\TableMappingInterface $temporary_table_mapping */
+    $temporary_table_mapping = $sandbox['temporary_table_mapping'];
+    foreach ($temporary_table_mapping->getTableNames() as $table_name) {
+      $this->database->schema()->dropTable($table_name);
+    }
+  }
+
+  /**
+   * Gets a string to be used as a prefix for a temporary table mapping object.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   An entity type definition.
+   * @param \Drupal\Core\Field\FieldStorageDefinitionInterface[] $field_storage_definitions
+   *   An array of field storage definitions.
+   * @param string $first_prefix_part
+   *   (optional) The first part of the prefix. Defaults to 'tmp_'.
+   *
+   * @return string
+   *   A temporary table mapping prefix.
+   *
+   * @internal
+   */
+  public static function getTemporaryTableMappingPrefix(EntityTypeInterface $entity_type, array $field_storage_definitions, $first_prefix_part = 'tmp_') {
+    // Construct a unique prefix based on the contents of the entity type and
+    // field storage definitions.
+    $prefix_parts[] = spl_object_hash($entity_type);
+    foreach ($field_storage_definitions as $storage_definition) {
+      $prefix_parts[] = spl_object_hash($storage_definition);
+    }
+    $prefix_parts[] = \Drupal::time()->getRequestTime();
+    $hash = hash('sha256', implode('', $prefix_parts));
+
+    return $first_prefix_part . substr($hash, 0, 6);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function onFieldStorageDefinitionCreate(FieldStorageDefinitionInterface $storage_definition) {
+    $this->fieldStorageDefinitions[$storage_definition->getName()] = $storage_definition;
     $this->performFieldSchemaOperation('create', $storage_definition);
   }
 
@@ -390,38 +655,29 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    * {@inheritdoc}
    */
   public function onFieldStorageDefinitionUpdate(FieldStorageDefinitionInterface $storage_definition, FieldStorageDefinitionInterface $original) {
-    // Store original definitions so that switching between shared and dedicated
-    // field table layout works.
-    $this->originalDefinitions = $this->fieldStorageDefinitions;
-    $this->originalDefinitions[$original->getName()] = $original;
+    $this->fieldStorageDefinitions[$storage_definition->getName()] = $storage_definition;
     $this->performFieldSchemaOperation('update', $storage_definition, $original);
-    $this->originalDefinitions = NULL;
   }
 
   /**
    * {@inheritdoc}
    */
   public function onFieldStorageDefinitionDelete(FieldStorageDefinitionInterface $storage_definition) {
-    // Only configurable fields currently support purging, so prevent deletion
-    // of ones we can't purge if they have existing data.
-    // @todo Add purging to all fields: https://www.drupal.org/node/2282119.
-    try {
-      if (!($storage_definition instanceof FieldStorageConfigInterface) && $this->storage->countFieldData($storage_definition, TRUE)) {
-        throw new FieldStorageDefinitionUpdateForbiddenException('Unable to delete a field (' . $storage_definition->getName() . ' in ' . $storage_definition->getTargetEntityTypeId() . ' entity) with data that cannot be purged.');
-      }
-    }
-    catch (DatabaseException $e) {
-      // This may happen when changing field storage schema, since we are not
-      // able to use a table mapping matching the passed storage definition.
-      // @todo Revisit this once we are able to instantiate the table mapping
-      //   properly. See https://www.drupal.org/node/2274017.
+    // If the field storage does not have any data, we can safely delete its
+    // schema.
+    if (!$this->storage->countFieldData($storage_definition, TRUE)) {
+      $this->performFieldSchemaOperation('delete', $storage_definition);
       return;
     }
 
-    // Retrieve a table mapping which contains the deleted field still.
-    $table_mapping = $this->storage->getTableMapping(
-      $this->entityManager->getLastInstalledFieldStorageDefinitions($this->entityType->id())
-    );
+    // There's nothing else we can do if the field storage has a custom storage.
+    if ($storage_definition->hasCustomStorage()) {
+      return;
+    }
+
+    $table_mapping = $this->getTableMapping($this->entityType, [$storage_definition]);
+    $field_table_name = $table_mapping->getFieldTableName($storage_definition->getName());
+
     if ($table_mapping->requiresDedicatedTableStorage($storage_definition)) {
       // Move the table to a unique name while the table contents are being
       // deleted.
@@ -434,12 +690,76 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
         $this->database->schema()->renameTable($revision_table, $revision_new_table);
       }
     }
+    else {
+      // Move the field data from the shared table to a dedicated one in order
+      // to allow it to be purged like any other field.
+      $shared_table_field_columns = $table_mapping->getColumnNames($storage_definition->getName());
 
-    // @todo Remove when finalizePurge() is invoked from the outside for all
-    //   fields: https://www.drupal.org/node/2282119.
-    if (!($storage_definition instanceof FieldStorageConfigInterface)) {
-      $this->performFieldSchemaOperation('delete', $storage_definition);
+      // Refresh the table mapping to use the deleted storage definition.
+      $deleted_storage_definition = $this->deletedFieldsRepository()->getFieldStorageDefinitions()[$storage_definition->getUniqueStorageIdentifier()];
+      $table_mapping = $this->getTableMapping($this->entityType, [$deleted_storage_definition]);
+
+      $dedicated_table_field_schema = $this->getDedicatedTableSchema($deleted_storage_definition);
+      $dedicated_table_field_columns = $table_mapping->getColumnNames($deleted_storage_definition->getName());
+
+      $dedicated_table_name = $table_mapping->getDedicatedDataTableName($deleted_storage_definition, TRUE);
+      $dedicated_table_name_mapping[$table_mapping->getDedicatedDataTableName($deleted_storage_definition)] = $dedicated_table_name;
+      if ($this->entityType->isRevisionable()) {
+        $dedicated_revision_table_name = $table_mapping->getDedicatedRevisionTableName($deleted_storage_definition, TRUE);
+        $dedicated_table_name_mapping[$table_mapping->getDedicatedRevisionTableName($deleted_storage_definition)] = $dedicated_revision_table_name;
+      }
+
+      // Create the dedicated field tables using "deleted" table names.
+      foreach ($dedicated_table_field_schema as $name => $table) {
+        if (!$this->database->schema()->tableExists($dedicated_table_name_mapping[$name])) {
+          $this->database->schema()->createTable($dedicated_table_name_mapping[$name], $table);
+        }
+        else {
+          throw new EntityStorageException('The field ' . $storage_definition->getName() . ' has already been deleted and it is in the process of being purged.');
+        }
+      }
+
+      if ($this->database->supportsTransactionalDDL()) {
+        // If the database supports transactional DDL, we can go ahead and rely
+        // on it. If not, we will have to rollback manually if something fails.
+        $transaction = $this->database->startTransaction();
+      }
+      try {
+        // Copy the data from the base table.
+        $this->database->insert($dedicated_table_name)
+          ->from($this->getSelectQueryForFieldStorageDeletion($field_table_name, $shared_table_field_columns, $dedicated_table_field_columns))
+          ->execute();
+
+        // Copy the data from the revision table.
+        if (isset($dedicated_revision_table_name)) {
+          if ($this->entityType->isTranslatable()) {
+            $revision_table = $storage_definition->isRevisionable() ? $this->storage->getRevisionDataTable() : $this->storage->getDataTable();
+          }
+          else {
+            $revision_table = $storage_definition->isRevisionable() ? $this->storage->getRevisionTable() : $this->storage->getBaseTable();
+          }
+          $this->database->insert($dedicated_revision_table_name)
+            ->from($this->getSelectQueryForFieldStorageDeletion($revision_table, $shared_table_field_columns, $dedicated_table_field_columns, $field_table_name))
+            ->execute();
+        }
+      }
+      catch (\Exception $e) {
+        if (isset($transaction)) {
+          $transaction->rollBack();
+        }
+        else {
+          // Delete the dedicated tables.
+          foreach ($dedicated_table_field_schema as $name => $table) {
+            $this->database->schema()->dropTable($dedicated_table_name_mapping[$name]);
+          }
+        }
+        throw $e;
+      }
+
+      // Delete the field from the shared tables.
+      $this->deleteSharedTableSchema($storage_definition);
     }
+    unset($this->fieldStorageDefinitions[$storage_definition->getName()]);
   }
 
   /**
@@ -447,6 +767,80 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    */
   public function finalizePurge(FieldStorageDefinitionInterface $storage_definition) {
     $this->performFieldSchemaOperation('delete', $storage_definition);
+  }
+
+  /**
+   * Returns a SELECT query suitable for inserting data into a dedicated table.
+   *
+   * @param string $table_name
+   *   The entity table name to select from.
+   * @param array $shared_table_field_columns
+   *   An array of field column names for a shared table schema.
+   * @param array $dedicated_table_field_columns
+   *   An array of field column names for a dedicated table schema.
+   * @param string $base_table
+   *   (optional) The name of the base entity table. Defaults to NULL.
+   *
+   * @return \Drupal\Core\Database\Query\SelectInterface
+   *   A database select query.
+   */
+  protected function getSelectQueryForFieldStorageDeletion($table_name, array $shared_table_field_columns, array $dedicated_table_field_columns, $base_table = NULL) {
+    // Create a SELECT query that generates a result suitable for writing into
+    // a dedicated field table.
+    $select = $this->database->select($table_name, 'entity_table');
+
+    // Add the bundle column.
+    if ($bundle = $this->entityType->getKey('bundle')) {
+      if ($base_table) {
+        $select->join($base_table, 'base_table', "entity_table.{$this->entityType->getKey('id')} = %alias.{$this->entityType->getKey('id')}");
+        $select->addField('base_table', $bundle, 'bundle');
+      }
+      else {
+        $select->addField('entity_table', $bundle, 'bundle');
+      }
+    }
+    else {
+      $select->addExpression(':bundle', 'bundle', [':bundle' => $this->entityType->id()]);
+    }
+
+    // Add the deleted column.
+    $select->addExpression(':deleted', 'deleted', [':deleted' => 1]);
+
+    // Add the entity_id column.
+    $select->addField('entity_table', $this->entityType->getKey('id'), 'entity_id');
+
+    // Add the revision_id column.
+    if ($this->entityType->isRevisionable()) {
+      $select->addField('entity_table', $this->entityType->getKey('revision'), 'revision_id');
+    }
+    else {
+      $select->addField('entity_table', $this->entityType->getKey('id'), 'revision_id');
+    }
+
+    // Add the langcode column.
+    if ($langcode = $this->entityType->getKey('langcode')) {
+      $select->addField('entity_table', $langcode, 'langcode');
+    }
+    else {
+      $select->addExpression(':langcode', 'langcode', [':langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED]);
+    }
+
+    // Add the delta column and set it to 0 because we are only dealing with
+    // single cardinality fields.
+    $select->addExpression(':delta', 'delta', [':delta' => 0]);
+
+    // Add all the dynamic field columns.
+    $or = $select->orConditionGroup();
+    foreach ($shared_table_field_columns as $field_column_name => $schema_column_name) {
+      $select->addField('entity_table', $schema_column_name, $dedicated_table_field_columns[$field_column_name]);
+      $or->isNotNull('entity_table.' . $schema_column_name);
+    }
+    $select->condition($or);
+
+    // Lock the table rows.
+    $select->forUpdate(TRUE);
+
+    return $select;
   }
 
   /**
@@ -485,23 +879,16 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    * @return array
    *   A Schema API array describing the entity schema, excluding dedicated
    *   field tables.
-   *
-   * @throws \Drupal\Core\Field\FieldException
    */
   protected function getEntitySchema(ContentEntityTypeInterface $entity_type, $reset = FALSE) {
     $this->checkEntityType($entity_type);
     $entity_type_id = $entity_type->id();
 
     if (!isset($this->schema[$entity_type_id]) || $reset) {
-      // Back up the storage definition and replace it with the passed one.
-      // @todo Instead of switching the wrapped entity type, we should be able
-      //   to instantiate a new table mapping for each entity type definition.
-      //   See https://www.drupal.org/node/2274017.
-      $actual_definition = $this->entityManager->getDefinition($entity_type_id);
-      $this->storage->setEntityType($entity_type);
-
       // Prepare basic information about the entity type.
-      $tables = $this->getEntitySchemaTables();
+      /** @var \Drupal\Core\Entity\Sql\DefaultTableMapping $table_mapping */
+      $table_mapping = $this->getTableMapping($entity_type, $this->fieldStorageDefinitions);
+      $tables = $this->getEntitySchemaTables($table_mapping);
 
       // Initialize the table schema.
       $schema[$tables['base_table']] = $this->initializeBaseTable($entity_type);
@@ -516,21 +903,19 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
       }
 
       // We need to act only on shared entity schema tables.
-      $table_mapping = $this->storage->getTableMapping();
       $table_names = array_diff($table_mapping->getTableNames(), $table_mapping->getDedicatedTableNames());
-      $storage_definitions = $this->entityManager->getFieldStorageDefinitions($entity_type_id);
       foreach ($table_names as $table_name) {
         if (!isset($schema[$table_name])) {
-          $schema[$table_name] = array();
+          $schema[$table_name] = [];
         }
         foreach ($table_mapping->getFieldNames($table_name) as $field_name) {
-          if (!isset($storage_definitions[$field_name])) {
+          if (!isset($this->fieldStorageDefinitions[$field_name])) {
             throw new FieldException("Field storage definition for '$field_name' could not be found.");
           }
           // Add the schema for base field definitions.
-          elseif ($table_mapping->allowsSharedTableStorage($storage_definitions[$field_name])) {
+          elseif ($table_mapping->allowsSharedTableStorage($this->fieldStorageDefinitions[$field_name])) {
             $column_names = $table_mapping->getColumnNames($field_name);
-            $storage_definition = $storage_definitions[$field_name];
+            $storage_definition = $this->fieldStorageDefinitions[$field_name];
             $schema[$table_name] = array_merge_recursive($schema[$table_name], $this->getSharedTableFieldSchema($storage_definition, $table_name, $column_names));
           }
         }
@@ -548,10 +933,27 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
         $this->processRevisionDataTable($entity_type, $schema[$tables['revision_data_table']]);
       }
 
-      $this->schema[$entity_type_id] = $schema;
+      // Add an index for the 'published' entity key.
+      if (is_subclass_of($entity_type->getClass(), EntityPublishedInterface::class)) {
+        $published_key = $entity_type->getKey('published');
+        if ($published_key
+            && isset($this->fieldStorageDefinitions[$published_key])
+            && !$this->fieldStorageDefinitions[$published_key]->hasCustomStorage()) {
+          $published_field_table = $table_mapping->getFieldTableName($published_key);
+          $id_key = $entity_type->getKey('id');
+          if ($bundle_key = $entity_type->getKey('bundle')) {
+            $key = "{$published_key}_{$bundle_key}";
+            $columns = [$published_key, $bundle_key, $id_key];
+          }
+          else {
+            $key = $published_key;
+            $columns = [$published_key, $id_key];
+          }
+          $schema[$published_field_table]['indexes'][$this->getEntityIndexName($entity_type, $key)] = $columns;
+        }
+      }
 
-      // Restore the actual definition.
-      $this->storage->setEntityType($actual_definition);
+      $this->schema[$entity_type_id] = $schema;
     }
 
     return $this->schema[$entity_type_id];
@@ -560,16 +962,20 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
   /**
    * Gets a list of entity type tables.
    *
+   * @param \Drupal\Core\Entity\Sql\TableMappingInterface $table_mapping
+   *   A table mapping object.
+   *
    * @return array
    *   A list of entity type tables, keyed by table key.
    */
-  protected function getEntitySchemaTables() {
-    return array_filter(array(
-      'base_table' => $this->storage->getBaseTable(),
-      'revision_table' => $this->storage->getRevisionTable(),
-      'data_table' => $this->storage->getDataTable(),
-      'revision_data_table' => $this->storage->getRevisionDataTable(),
-    ));
+  protected function getEntitySchemaTables(TableMappingInterface $table_mapping) {
+    /** @var \Drupal\Core\Entity\Sql\DefaultTableMapping $table_mapping */
+    return array_filter([
+      'base_table' => $table_mapping->getBaseTable(),
+      'revision_table' => $table_mapping->getRevisionTable(),
+      'data_table' => $table_mapping->getDataTable(),
+      'revision_data_table' => $table_mapping->getRevisionDataTable(),
+    ]);
   }
 
   /**
@@ -591,9 +997,8 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
     // Collect all possible field schema identifiers for shared table fields.
     // These will be used to detect entity schema data in the subsequent loop.
     $field_schema_identifiers = [];
-    $storage_definitions = $this->entityManager->getFieldStorageDefinitions($entity_type_id);
-    $table_mapping = $this->storage->getTableMapping($storage_definitions);
-    foreach ($storage_definitions as $field_name => $storage_definition) {
+    $table_mapping = $this->getTableMapping($entity_type);
+    foreach ($this->fieldStorageDefinitions as $field_name => $storage_definition) {
       if ($table_mapping->allowsSharedTableStorage($storage_definition)) {
         // Make sure both base identifier names and suffixed names are listed.
         $name = $this->getFieldSchemaIdentifierName($entity_type_id, $field_name);
@@ -674,22 +1079,22 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   The schema definition for the specified key.
    */
   protected function getFieldSchemaData($field_name, array $field_schema, array $column_mapping, $schema_key) {
-    $data = array();
+    $data = [];
 
+    $entity_type_id = $this->entityType->id();
     foreach ($field_schema[$schema_key] as $key => $columns) {
       // To avoid clashes with entity-level indexes or unique keys we use
       // "{$entity_type_id}_field__" as a prefix instead of just
       // "{$entity_type_id}__". We additionally namespace the specifier by the
       // field name to avoid clashes when multiple fields of the same type are
       // added to an entity type.
-      $entity_type_id = $this->entityType->id();
       $real_key = $this->getFieldSchemaIdentifierName($entity_type_id, $field_name, $key);
       foreach ($columns as $column) {
         // Allow for indexes and unique keys to specified as an array of column
         // name and length.
         if (is_array($column)) {
           list($column_name, $length) = $column;
-          $data[$real_key][] = array($column_mapping[$column_name], $length);
+          $data[$real_key][] = [$column_mapping[$column_name], $length];
         }
         else {
           $data[$real_key][] = $column_mapping[$column];
@@ -742,7 +1147,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   The schema definition for the foreign keys.
    */
   protected function getFieldForeignKeys($field_name, array $field_schema, array $column_mapping) {
-    $foreign_keys = array();
+    $foreign_keys = [];
 
     foreach ($field_schema['foreign keys'] as $specifier => $specification) {
       // To avoid clashes with entity-level foreign keys we use
@@ -771,7 +1176,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   The entity schema data array.
    */
   protected function loadEntitySchemaData(EntityTypeInterface $entity_type) {
-    return $this->installedStorageSchema()->get($entity_type->id() . '.entity_schema_data', array());
+    return $this->installedStorageSchema()->get($entity_type->id() . '.entity_schema_data', []);
   }
 
   /**
@@ -807,7 +1212,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   The field schema data array.
    */
   protected function loadFieldSchemaData(FieldStorageDefinitionInterface $storage_definition) {
-    return $this->installedStorageSchema()->get($storage_definition->getTargetEntityTypeId() . '.field_schema_data.' . $storage_definition->getName(), array());
+    return $this->installedStorageSchema()->get($storage_definition->getTargetEntityTypeId() . '.field_schema_data.' . $storage_definition->getName(), []);
   }
 
   /**
@@ -819,6 +1224,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   The field schema data array.
    */
   protected function saveFieldSchemaData(FieldStorageDefinitionInterface $storage_definition, $schema) {
+    $this->processFieldStorageSchema($schema);
     $this->installedStorageSchema()->set($storage_definition->getTargetEntityTypeId() . '.field_schema_data.' . $storage_definition->getName(), $schema);
   }
 
@@ -844,21 +1250,21 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
   protected function initializeBaseTable(ContentEntityTypeInterface $entity_type) {
     $entity_type_id = $entity_type->id();
 
-    $schema = array(
+    $schema = [
       'description' => "The base table for $entity_type_id entities.",
-      'primary key' => array($entity_type->getKey('id')),
-      'indexes' => array(),
-      'foreign keys' => array(),
-    );
+      'primary key' => [$entity_type->getKey('id')],
+      'indexes' => [],
+      'foreign keys' => [],
+    ];
 
     if ($entity_type->hasKey('revision')) {
       $revision_key = $entity_type->getKey('revision');
       $key_name = $this->getEntityIndexName($entity_type, $revision_key);
-      $schema['unique keys'][$key_name] = array($revision_key);
-      $schema['foreign keys'][$entity_type_id . '__revision'] = array(
+      $schema['unique keys'][$key_name] = [$revision_key];
+      $schema['foreign keys'][$entity_type_id . '__revision'] = [
         'table' => $this->storage->getRevisionTable(),
-        'columns' => array($revision_key => $revision_key),
-      );
+        'columns' => [$revision_key => $revision_key],
+      ];
     }
 
     $this->addTableDefaults($schema);
@@ -880,19 +1286,19 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
     $id_key = $entity_type->getKey('id');
     $revision_key = $entity_type->getKey('revision');
 
-    $schema = array(
+    $schema = [
       'description' => "The revision table for $entity_type_id entities.",
-      'primary key' => array($revision_key),
-      'indexes' => array(),
-      'foreign keys' => array(
-        $entity_type_id . '__revisioned' => array(
+      'primary key' => [$revision_key],
+      'indexes' => [],
+      'foreign keys' => [
+        $entity_type_id . '__revisioned' => [
           'table' => $this->storage->getBaseTable(),
-          'columns' => array($id_key => $id_key),
-        ),
-      ),
-    );
+          'columns' => [$id_key => $id_key],
+        ],
+      ],
+    ];
 
-    $schema['indexes'][$this->getEntityIndexName($entity_type, $id_key)] = array($id_key);
+    $schema['indexes'][$this->getEntityIndexName($entity_type, $id_key)] = [$id_key];
 
     $this->addTableDefaults($schema);
 
@@ -912,23 +1318,23 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
     $entity_type_id = $entity_type->id();
     $id_key = $entity_type->getKey('id');
 
-    $schema = array(
+    $schema = [
       'description' => "The data table for $entity_type_id entities.",
-      'primary key' => array($id_key, $entity_type->getKey('langcode')),
-      'indexes' => array(
-        $entity_type_id . '__id__default_langcode__langcode' => array($id_key, $entity_type->getKey('default_langcode'), $entity_type->getKey('langcode')),
-      ),
-      'foreign keys' => array(
-        $entity_type_id => array(
+      'primary key' => [$id_key, $entity_type->getKey('langcode')],
+      'indexes' => [
+        $entity_type_id . '__id__default_langcode__langcode' => [$id_key, $entity_type->getKey('default_langcode'), $entity_type->getKey('langcode')],
+      ],
+      'foreign keys' => [
+        $entity_type_id => [
           'table' => $this->storage->getBaseTable(),
-          'columns' => array($id_key => $id_key),
-        ),
-      ),
-    );
+          'columns' => [$id_key => $id_key],
+        ],
+      ],
+    ];
 
     if ($entity_type->hasKey('revision')) {
       $key = $entity_type->getKey('revision');
-      $schema['indexes'][$this->getEntityIndexName($entity_type, $key)] = array($key);
+      $schema['indexes'][$this->getEntityIndexName($entity_type, $key)] = [$key];
     }
 
     $this->addTableDefaults($schema);
@@ -950,23 +1356,23 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
     $id_key = $entity_type->getKey('id');
     $revision_key = $entity_type->getKey('revision');
 
-    $schema = array(
+    $schema = [
       'description' => "The revision data table for $entity_type_id entities.",
-      'primary key' => array($revision_key, $entity_type->getKey('langcode')),
-      'indexes' => array(
-        $entity_type_id . '__id__default_langcode__langcode' => array($id_key, $entity_type->getKey('default_langcode'), $entity_type->getKey('langcode')),
-      ),
-      'foreign keys' => array(
-        $entity_type_id => array(
+      'primary key' => [$revision_key, $entity_type->getKey('langcode')],
+      'indexes' => [
+        $entity_type_id . '__id__default_langcode__langcode' => [$id_key, $entity_type->getKey('default_langcode'), $entity_type->getKey('langcode')],
+      ],
+      'foreign keys' => [
+        $entity_type_id => [
           'table' => $this->storage->getBaseTable(),
-          'columns' => array($id_key => $id_key),
-        ),
-        $entity_type_id . '__revision' => array(
+          'columns' => [$id_key => $id_key],
+        ],
+        $entity_type_id . '__revision' => [
           'table' => $this->storage->getRevisionTable(),
-          'columns' => array($revision_key => $revision_key),
-        )
-      ),
-    );
+          'columns' => [$revision_key => $revision_key],
+        ],
+      ],
+    ];
 
     $this->addTableDefaults($schema);
 
@@ -980,12 +1386,12 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   The schema definition array for a single table, passed by reference.
    */
   protected function addTableDefaults(&$schema) {
-    $schema += array(
-      'fields' => array(),
-      'unique keys' => array(),
-      'indexes' => array(),
-      'foreign keys' => array(),
-    );
+    $schema += [
+      'fields' => [],
+      'unique keys' => [],
+      'indexes' => [],
+      'foreign keys' => [],
+    ];
   }
 
   /**
@@ -995,12 +1401,12 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   The entity type.
    * @param array $schema
    *   The table schema, passed by reference.
-   *
-   * @return array
-   *   A partial schema array for the base table.
    */
   protected function processBaseTable(ContentEntityTypeInterface $entity_type, array &$schema) {
-    $this->processIdentifierSchema($schema, $entity_type->getKey('id'));
+    // Process the schema for the 'id' entity key only if it exists.
+    if ($entity_type->hasKey('id')) {
+      $this->processIdentifierSchema($schema, $entity_type->getKey('id'));
+    }
   }
 
   /**
@@ -1010,12 +1416,12 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   The entity type.
    * @param array $schema
    *   The table schema, passed by reference.
-   *
-   * @return array
-   *   A partial schema array for the base table.
    */
   protected function processRevisionTable(ContentEntityTypeInterface $entity_type, array &$schema) {
-    $this->processIdentifierSchema($schema, $entity_type->getKey('revision'));
+    // Process the schema for the 'revision' entity key only if it exists.
+    if ($entity_type->hasKey('revision')) {
+      $this->processIdentifierSchema($schema, $entity_type->getKey('revision'));
+    }
   }
 
   /**
@@ -1069,6 +1475,23 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
   }
 
   /**
+   * Processes the schema for a field storage definition.
+   *
+   * @param array &$field_storage_schema
+   *   An array that contains the schema data for a field storage definition.
+   */
+  protected function processFieldStorageSchema(array &$field_storage_schema) {
+    // Clean up some schema properties that should not be taken into account
+    // after a field storage has been created.
+    foreach ($field_storage_schema as $table_name => $table_schema) {
+      foreach ($table_schema['fields'] as $key => $schema) {
+        unset($field_storage_schema[$table_name]['fields'][$key]['initial']);
+        unset($field_storage_schema[$table_name]['fields'][$key]['initial_from_field']);
+      }
+    }
+  }
+
+  /**
    * Performs the specified operation on a field.
    *
    * This figures out whether the field is stored in a dedicated or shared table
@@ -1083,7 +1506,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   required) only for updates. Defaults to NULL.
    */
   protected function performFieldSchemaOperation($operation, FieldStorageDefinitionInterface $storage_definition, FieldStorageDefinitionInterface $original = NULL) {
-    $table_mapping = $this->storage->getTableMapping();
+    $table_mapping = $this->getTableMapping($this->entityType, [$storage_definition]);
     if ($table_mapping->requiresDedicatedTableStorage($storage_definition)) {
       $this->{$operation . 'DedicatedTableSchema'}($storage_definition, $original);
     }
@@ -1097,14 +1520,22 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *
    * @param \Drupal\Core\Field\FieldStorageDefinitionInterface $storage_definition
    *   The storage definition of the field being created.
+   * @param bool $only_save
+   *   (optional) Whether to skip modification of database tables and only save
+   *   the schema data for future comparison. For internal use only. This is
+   *   used by postUpdateEntityTypeSchema() after it has already fully created
+   *   the dedicated tables.
    */
-  protected function createDedicatedTableSchema(FieldStorageDefinitionInterface $storage_definition) {
+  protected function createDedicatedTableSchema(FieldStorageDefinitionInterface $storage_definition, $only_save = FALSE) {
     $schema = $this->getDedicatedTableSchema($storage_definition);
-    foreach ($schema as $name => $table) {
-      // Check if the table exists because it might already have been
-      // created as part of the earlier entity type update event.
-      if (!$this->database->schema()->tableExists($name)) {
-        $this->database->schema()->createTable($name, $table);
+
+    if (!$only_save) {
+      foreach ($schema as $name => $table) {
+        // Check if the table exists because it might already have been
+        // created as part of the earlier entity type update event.
+        if (!$this->database->schema()->tableExists($name)) {
+          $this->database->schema()->createTable($name, $table);
+        }
       }
     }
     $this->saveFieldSchemaData($storage_definition, $schema);
@@ -1123,25 +1554,37 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    */
   protected function createSharedTableSchema(FieldStorageDefinitionInterface $storage_definition, $only_save = FALSE) {
     $created_field_name = $storage_definition->getName();
-    $table_mapping = $this->storage->getTableMapping();
+    $table_mapping = $this->getTableMapping($this->entityType, [$storage_definition]);
     $column_names = $table_mapping->getColumnNames($created_field_name);
     $schema_handler = $this->database->schema();
     $shared_table_names = array_diff($table_mapping->getTableNames(), $table_mapping->getDedicatedTableNames());
 
     // Iterate over the mapped table to find the ones that will host the created
     // field schema.
-    $schema = array();
+    $schema = [];
     foreach ($shared_table_names as $table_name) {
       foreach ($table_mapping->getFieldNames($table_name) as $field_name) {
         if ($field_name == $created_field_name) {
           // Create field columns.
           $schema[$table_name] = $this->getSharedTableFieldSchema($storage_definition, $table_name, $column_names);
           if (!$only_save) {
+            // The entity schema needs to be checked because the field schema is
+            // potentially incomplete.
+            // @todo Fix this in https://www.drupal.org/node/2929120.
+            $entity_schema = $this->getEntitySchema($this->entityType);
             foreach ($schema[$table_name]['fields'] as $name => $specifier) {
+              // Check if the field is part of the primary keys and pass along
+              // this information when adding the field.
+              // @see \Drupal\Core\Database\Schema::addField()
+              $new_keys = [];
+              if (isset($entity_schema[$table_name]['primary key']) && array_intersect($column_names, $entity_schema[$table_name]['primary key'])) {
+                $new_keys = ['primary key' => $entity_schema[$table_name]['primary key']];
+              }
+
               // Check if the field exists because it might already have been
               // created as part of the earlier entity type update event.
               if (!$schema_handler->fieldExists($table_name, $name)) {
-                $schema_handler->addField($table_name, $name, $specifier);
+                $schema_handler->addField($table_name, $name, $specifier, $new_keys);
               }
             }
             if (!empty($schema[$table_name]['indexes'])) {
@@ -1168,7 +1611,11 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
     if (!$only_save) {
       // Make sure any entity index involving this field is re-created if
       // needed.
-      $this->createEntitySchemaIndexes($this->getEntitySchema($this->entityType), $storage_definition);
+      $entity_schema = $this->getEntitySchema($this->entityType);
+      $this->createEntitySchemaIndexes($entity_schema, $storage_definition);
+
+      // Store the updated entity schema.
+      $this->saveEntitySchemaData($this->entityType, $entity_schema);
     }
   }
 
@@ -1179,16 +1626,16 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   The storage definition of the field being deleted.
    */
   protected function deleteDedicatedTableSchema(FieldStorageDefinitionInterface $storage_definition) {
-    // When switching from dedicated to shared field table layout we need need
-    // to delete the field tables with their regular names. When this happens
-    // original definitions will be defined.
-    $deleted = !$this->originalDefinitions;
-    $table_mapping = $this->storage->getTableMapping();
-    $table_name = $table_mapping->getDedicatedDataTableName($storage_definition, $deleted);
-    $this->database->schema()->dropTable($table_name);
+    $table_mapping = $this->getTableMapping($this->entityType, [$storage_definition]);
+    $table_name = $table_mapping->getDedicatedDataTableName($storage_definition, $storage_definition->isDeleted());
+    if ($this->database->schema()->tableExists($table_name)) {
+      $this->database->schema()->dropTable($table_name);
+    }
     if ($this->entityType->isRevisionable()) {
-      $revision_name = $table_mapping->getDedicatedRevisionTableName($storage_definition, $deleted);
-      $this->database->schema()->dropTable($revision_name);
+      $revision_table_name = $table_mapping->getDedicatedRevisionTableName($storage_definition, $storage_definition->isDeleted());
+      if ($this->database->schema()->tableExists($revision_table_name)) {
+        $this->database->schema()->dropTable($revision_table_name);
+      }
     }
     $this->deleteFieldSchemaData($storage_definition);
   }
@@ -1204,9 +1651,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
     $this->deleteEntitySchemaIndexes($this->loadEntitySchemaData($this->entityType), $storage_definition);
 
     $deleted_field_name = $storage_definition->getName();
-    $table_mapping = $this->storage->getTableMapping(
-      $this->entityManager->getLastInstalledFieldStorageDefinitions($this->entityType->id())
-    );
+    $table_mapping = $this->getTableMapping($this->entityType, [$storage_definition]);
     $column_names = $table_mapping->getColumnNames($deleted_field_name);
     $schema_handler = $this->database->schema();
     $shared_table_names = array_diff($table_mapping->getTableNames(), $table_mapping->getDedicatedTableNames());
@@ -1271,7 +1716,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
       }
       catch (\Exception $e) {
         if ($this->database->supportsTransactionalDDL()) {
-          $transaction->rollback();
+          $transaction->rollBack();
         }
         else {
           // Recreate tables.
@@ -1287,7 +1732,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
       // There is data, so there are no column changes. Drop all the prior
       // indexes and create all the new ones, except for all the priors that
       // exist unchanged.
-      $table_mapping = $this->storage->getTableMapping();
+      $table_mapping = $this->getTableMapping($this->entityType, [$storage_definition]);
       $table = $table_mapping->getDedicatedDataTableName($original);
       $revision_table = $table_mapping->getDedicatedRevisionTableName($original);
 
@@ -1310,15 +1755,15 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
       foreach ($schema['indexes'] as $name => $columns) {
         if (!isset($original_schema['indexes'][$name]) || $columns != $original_schema['indexes'][$name]) {
           $real_name = $this->getFieldIndexName($storage_definition, $name);
-          $real_columns = array();
+          $real_columns = [];
           foreach ($columns as $column_name) {
             // Indexes can be specified as either a column name or an array with
             // column name and length. Allow for either case.
             if (is_array($column_name)) {
-              $real_columns[] = array(
+              $real_columns[] = [
                 $table_mapping->getFieldColumnName($storage_definition, $column_name[0]),
                 $column_name[1],
-              );
+              ];
             }
             else {
               $real_columns[] = $table_mapping->getFieldColumnName($storage_definition, $column_name);
@@ -1362,7 +1807,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
       }
       catch (\Exception $e) {
         if ($this->database->supportsTransactionalDDL()) {
-          $transaction->rollback();
+          $transaction->rollBack();
         }
         else {
           // Recreate original schema.
@@ -1377,14 +1822,14 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
       }
 
       $updated_field_name = $storage_definition->getName();
-      $table_mapping = $this->storage->getTableMapping();
+      $table_mapping = $this->getTableMapping($this->entityType, [$storage_definition]);
       $column_names = $table_mapping->getColumnNames($updated_field_name);
       $schema_handler = $this->database->schema();
 
       // Iterate over the mapped table to find the ones that host the deleted
       // field schema.
       $original_schema = $this->loadFieldSchemaData($original);
-      $schema = array();
+      $schema = [];
       foreach ($table_mapping->getTableNames() as $table_name) {
         foreach ($table_mapping->getFieldNames($table_name) as $field_name) {
           if ($field_name == $updated_field_name) {
@@ -1400,7 +1845,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
                 }
                 $column_schema = $original_schema[$table_name]['fields'][$column_name];
                 $column_schema['not null'] = $not_null;
-                $schema_handler->changeField($table_name, $field_name, $field_name, $column_schema);
+                $schema_handler->changeField($table_name, $column_name, $column_name, $column_schema);
               }
             }
 
@@ -1452,7 +1897,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
     $schema_handler = $this->database->schema();
 
     if ($storage_definition) {
-      $table_mapping = $this->storage->getTableMapping();
+      $table_mapping = $this->getTableMapping($this->entityType, [$storage_definition]);
       $column_names = $table_mapping->getColumnNames($storage_definition->getName());
     }
 
@@ -1473,7 +1918,9 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
             // involving them. Only indexes for which all columns exist are
             // actually created.
             $create = FALSE;
-            $specifier_columns = array_map(function($item) { return is_string($item) ? $item : reset($item); }, $specifier);
+            $specifier_columns = array_map(function ($item) {
+              return is_string($item) ? $item : reset($item);
+            }, $specifier);
             if (!isset($column_names) || array_intersect($specifier_columns, $column_names)) {
               $create = TRUE;
               foreach ($specifier_columns as $specifier_column_name) {
@@ -1509,7 +1956,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
     $schema_handler = $this->database->schema();
 
     if ($storage_definition) {
-      $table_mapping = $this->storage->getTableMapping();
+      $table_mapping = $this->getTableMapping($this->entityType, [$storage_definition]);
       $column_names = $table_mapping->getColumnNames($storage_definition->getName());
     }
 
@@ -1522,7 +1969,9 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
       foreach ($index_keys as $key => $drop_method) {
         if (!empty($schema[$key])) {
           foreach ($schema[$key] as $name => $specifier) {
-            $specifier_columns = array_map(function($item) { return is_string($item) ? $item : reset($item); }, $specifier);
+            $specifier_columns = array_map(function ($item) {
+              return is_string($item) ? $item : reset($item);
+            }, $specifier);
             if (!isset($column_names) || array_intersect($specifier_columns, $column_names)) {
               $schema_handler->{$drop_method}($table_name, $name);
             }
@@ -1576,32 +2025,62 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    *   - foreign keys: The schema definition for the foreign keys.
    *
    * @throws \Drupal\Core\Field\FieldException
-   *   Exception thrown if the schema contains reserved column names.
+   *   Exception thrown if the schema contains reserved column names or if the
+   *   initial values definition is invalid.
    */
   protected function getSharedTableFieldSchema(FieldStorageDefinitionInterface $storage_definition, $table_name, array $column_mapping) {
-    $schema = array();
+    $schema = [];
+    $table_mapping = $this->getTableMapping($this->entityType, [$storage_definition]);
     $field_schema = $storage_definition->getSchema();
 
     // Check that the schema does not include forbidden column names.
-    if (array_intersect(array_keys($field_schema['columns']), $this->storage->getTableMapping()->getReservedColumns())) {
+    if (array_intersect(array_keys($field_schema['columns']), $table_mapping->getReservedColumns())) {
       throw new FieldException("Illegal field column names on {$storage_definition->getName()}");
     }
 
     $field_name = $storage_definition->getName();
     $base_table = $this->storage->getBaseTable();
 
+    // Define the initial values, if any.
+    $initial_value = $initial_value_from_field = [];
+    $storage_definition_is_new = empty($this->loadFieldSchemaData($storage_definition));
+    if ($storage_definition_is_new && $storage_definition instanceof BaseFieldDefinition && $table_mapping->allowsSharedTableStorage($storage_definition)) {
+      if (($initial_storage_value = $storage_definition->getInitialValue()) && !empty($initial_storage_value)) {
+        // We only support initial values for fields that are stored in shared
+        // tables (i.e. single-value fields).
+        // @todo Implement initial value support for multi-value fields in
+        //   https://www.drupal.org/node/2883851.
+        $initial_value = reset($initial_storage_value);
+      }
+
+      if ($initial_value_field_name = $storage_definition->getInitialValueFromField()) {
+        // Check that the field used for populating initial values is valid.
+        if (!isset($this->fieldStorageDefinitions[$initial_value_field_name])) {
+          throw new FieldException("Illegal initial value definition on {$storage_definition->getName()}: The field $initial_value_field_name does not exist.");
+        }
+
+        if ($storage_definition->getType() !== $this->fieldStorageDefinitions[$initial_value_field_name]->getType()) {
+          throw new FieldException("Illegal initial value definition on {$storage_definition->getName()}: The field types do not match.");
+        }
+
+        if (!$table_mapping->allowsSharedTableStorage($this->fieldStorageDefinitions[$initial_value_field_name])) {
+          throw new FieldException("Illegal initial value definition on {$storage_definition->getName()}: Both fields have to be stored in the shared entity tables.");
+        }
+
+        $initial_value_from_field = $table_mapping->getColumnNames($initial_value_field_name);
+      }
+    }
+
     // A shared table contains rows for entities where the field is empty
     // (since other fields stored in the same table might not be empty), thus
     // the only columns that can be 'not null' are those for required
-    // properties of required fields. However, even those would break in the
-    // case where a new field is added to a table that contains existing rows.
-    // For now, we only hardcode 'not null' to a couple "entity keys", in order
-    // to keep their indexes optimized.
-    // @todo Revisit once we have support for 'initial' in
-    //   https://www.drupal.org/node/2346019.
+    // properties of required fields. For now, we only hardcode 'not null' to a
+    // few "entity keys", in order to keep their indexes optimized.
+    // @todo Fix this in https://www.drupal.org/node/2841291.
     $not_null_keys = $this->entityType->getKeys();
-    // Label fields are not necessarily required.
-    unset($not_null_keys['label']);
+    // Label and the 'revision_translation_affected' fields are not necessarily
+    // required.
+    unset($not_null_keys['label'], $not_null_keys['revision_translation_affected']);
     // Because entity ID and revision ID are both serial fields in the base and
     // revision table respectively, the revision ID is not known yet, when
     // inserting data into the base table. Instead the revision ID in the base
@@ -1617,6 +2096,14 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
 
       $schema['fields'][$schema_field_name] = $column_schema;
       $schema['fields'][$schema_field_name]['not null'] = in_array($field_name, $not_null_keys);
+
+      // Use the initial value of the field storage, if available.
+      if ($initial_value && isset($initial_value[$field_column_name])) {
+        $schema['fields'][$schema_field_name]['initial'] = drupal_schema_get_field_value($column_schema, $initial_value[$field_column_name]);
+      }
+      if (!empty($initial_value_from_field)) {
+        $schema['fields'][$schema_field_name]['initial_from_field'] = $initial_value_from_field[$field_column_name];
+      }
     }
 
     if (!empty($field_schema['indexes'])) {
@@ -1651,7 +2138,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
   protected function addSharedTableFieldIndex(FieldStorageDefinitionInterface $storage_definition, &$schema, $not_null = FALSE, $size = NULL) {
     $name = $storage_definition->getName();
     $real_key = $this->getFieldSchemaIdentifierName($storage_definition->getTargetEntityTypeId(), $name);
-    $schema['indexes'][$real_key] = array($size ? array($name, $size) : $name);
+    $schema['indexes'][$real_key] = [$size ? [$name, $size] : $name];
     if ($not_null) {
       $schema['fields'][$name]['not null'] = TRUE;
     }
@@ -1671,7 +2158,7 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
   protected function addSharedTableFieldUniqueKey(FieldStorageDefinitionInterface $storage_definition, &$schema) {
     $name = $storage_definition->getName();
     $real_key = $this->getFieldSchemaIdentifierName($storage_definition->getTargetEntityTypeId(), $name);
-    $schema['unique keys'][$real_key] = array($name);
+    $schema['unique keys'][$real_key] = [$name];
     $schema['fields'][$name]['not null'] = TRUE;
   }
 
@@ -1690,10 +2177,10 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
   protected function addSharedTableFieldForeignKey(FieldStorageDefinitionInterface $storage_definition, &$schema, $foreign_table, $foreign_column) {
     $name = $storage_definition->getName();
     $real_key = $this->getFieldSchemaIdentifierName($storage_definition->getTargetEntityTypeId(), $name);
-    $schema['foreign keys'][$real_key] = array(
+    $schema['foreign keys'][$real_key] = [
       'table' => $foreign_table,
-      'columns' => array($name => $foreign_column),
-    );
+      'columns' => [$name => $foreign_column],
+    ];
   }
 
   /**
@@ -1702,8 +2189,8 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    * @param \Drupal\Core\Field\FieldStorageDefinitionInterface $storage_definition
    *   The field storage definition.
    * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type
-   *   (optional) The entity type definition. Defaults to the one returned by
-   *   the entity manager.
+   *   (optional) The entity type definition. Defaults to the one provided by
+   *   the entity storage.
    *
    * @return array
    *   The schema definition for the table with the following keys:
@@ -1718,93 +2205,94 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
    * @see hook_schema()
    */
   protected function getDedicatedTableSchema(FieldStorageDefinitionInterface $storage_definition, ContentEntityTypeInterface $entity_type = NULL) {
+    $entity_type = $entity_type ?: $this->entityType;
     $description_current = "Data storage for {$storage_definition->getTargetEntityTypeId()} field {$storage_definition->getName()}.";
     $description_revision = "Revision archive storage for {$storage_definition->getTargetEntityTypeId()} field {$storage_definition->getName()}.";
 
-    $id_definition = $this->fieldStorageDefinitions[$this->entityType->getKey('id')];
+    $id_definition = $this->fieldStorageDefinitions[$entity_type->getKey('id')];
     if ($id_definition->getType() == 'integer') {
-      $id_schema = array(
+      $id_schema = [
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'The entity id this data is attached to',
-      );
+      ];
     }
     else {
-      $id_schema = array(
+      $id_schema = [
         'type' => 'varchar_ascii',
         'length' => 128,
         'not null' => TRUE,
         'description' => 'The entity id this data is attached to',
-      );
+      ];
     }
 
     // Define the revision ID schema.
-    if (!$this->entityType->isRevisionable()) {
+    if (!$entity_type->isRevisionable()) {
       $revision_id_schema = $id_schema;
       $revision_id_schema['description'] = 'The entity revision id this data is attached to, which for an unversioned entity type is the same as the entity id';
     }
-    elseif ($this->fieldStorageDefinitions[$this->entityType->getKey('revision')]->getType() == 'integer') {
-      $revision_id_schema = array(
+    elseif ($this->fieldStorageDefinitions[$entity_type->getKey('revision')]->getType() == 'integer') {
+      $revision_id_schema = [
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'The entity revision id this data is attached to',
-      );
+      ];
     }
     else {
-      $revision_id_schema = array(
+      $revision_id_schema = [
         'type' => 'varchar',
         'length' => 128,
         'not null' => TRUE,
         'description' => 'The entity revision id this data is attached to',
-      );
+      ];
     }
 
-    $data_schema = array(
+    $data_schema = [
       'description' => $description_current,
-      'fields' => array(
-        'bundle' => array(
+      'fields' => [
+        'bundle' => [
           'type' => 'varchar_ascii',
           'length' => 128,
           'not null' => TRUE,
           'default' => '',
           'description' => 'The field instance bundle to which this row belongs, used when deleting a field instance',
-        ),
-        'deleted' => array(
+        ],
+        'deleted' => [
           'type' => 'int',
           'size' => 'tiny',
           'not null' => TRUE,
           'default' => 0,
-          'description' => 'A boolean indicating whether this data item has been deleted'
-        ),
+          'description' => 'A boolean indicating whether this data item has been deleted',
+        ],
         'entity_id' => $id_schema,
         'revision_id' => $revision_id_schema,
-        'langcode' => array(
+        'langcode' => [
           'type' => 'varchar_ascii',
           'length' => 32,
           'not null' => TRUE,
           'default' => '',
           'description' => 'The language code for this data item.',
-        ),
-        'delta' => array(
+        ],
+        'delta' => [
           'type' => 'int',
           'unsigned' => TRUE,
           'not null' => TRUE,
           'description' => 'The sequence number for this data item, used for multi-value fields',
-        ),
-      ),
-      'primary key' => array('entity_id', 'deleted', 'delta', 'langcode'),
-      'indexes' => array(
-        'bundle' => array('bundle'),
-        'revision_id' => array('revision_id'),
-      ),
-    );
+        ],
+      ],
+      'primary key' => ['entity_id', 'deleted', 'delta', 'langcode'],
+      'indexes' => [
+        'bundle' => ['bundle'],
+        'revision_id' => ['revision_id'],
+      ],
+    ];
 
     // Check that the schema does not include forbidden column names.
     $schema = $storage_definition->getSchema();
     $properties = $storage_definition->getPropertyDefinitions();
-    $table_mapping = $this->storage->getTableMapping();
+    $table_mapping = $this->getTableMapping($entity_type, [$storage_definition]);
     if (array_intersect(array_keys($schema['columns']), $table_mapping->getReservedColumns())) {
       throw new FieldException("Illegal field column names on {$storage_definition->getName()}");
     }
@@ -1826,10 +2314,10 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
         // Indexes can be specified as either a column name or an array with
         // column name and length. Allow for either case.
         if (is_array($column_name)) {
-          $data_schema['indexes'][$real_name][] = array(
+          $data_schema['indexes'][$real_name][] = [
             $table_mapping->getFieldColumnName($storage_definition, $column_name[0]),
             $column_name[1],
-          );
+          ];
         }
         else {
           $data_schema['indexes'][$real_name][] = $table_mapping->getFieldColumnName($storage_definition, $column_name);
@@ -1844,10 +2332,10 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
         // Unique keys can be specified as either a column name or an array with
         // column name and length. Allow for either case.
         if (is_array($column_name)) {
-          $data_schema['unique keys'][$real_name][] = array(
+          $data_schema['unique keys'][$real_name][] = [
             $table_mapping->getFieldColumnName($storage_definition, $column_name[0]),
             $column_name[1],
-          );
+          ];
         }
         else {
           $data_schema['unique keys'][$real_name][] = $table_mapping->getFieldColumnName($storage_definition, $column_name);
@@ -1865,17 +2353,16 @@ class SqlContentEntityStorageSchema implements DynamicallyFieldableEntityStorage
       }
     }
 
-    $dedicated_table_schema = array($table_mapping->getDedicatedDataTableName($storage_definition) => $data_schema);
+    $dedicated_table_schema = [$table_mapping->getDedicatedDataTableName($storage_definition) => $data_schema];
 
     // If the entity type is revisionable, construct the revision table.
-    $entity_type = $entity_type ?: $this->entityType;
     if ($entity_type->isRevisionable()) {
       $revision_schema = $data_schema;
       $revision_schema['description'] = $description_revision;
-      $revision_schema['primary key'] = array('entity_id', 'revision_id', 'deleted', 'delta', 'langcode');
+      $revision_schema['primary key'] = ['entity_id', 'revision_id', 'deleted', 'delta', 'langcode'];
       $revision_schema['fields']['revision_id']['not null'] = TRUE;
       $revision_schema['fields']['revision_id']['description'] = 'The entity revision id this data is attached to';
-      $dedicated_table_schema += array($table_mapping->getDedicatedRevisionTableName($storage_definition) => $revision_schema);
+      $dedicated_table_schema += [$table_mapping->getDedicatedRevisionTableName($storage_definition) => $revision_schema];
     }
 
     return $dedicated_table_schema;

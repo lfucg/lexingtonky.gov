@@ -9,6 +9,7 @@
  */
 namespace org\bovigo\vfs;
 use org\bovigo\vfs\content\LargeFileContent;
+use org\bovigo\vfs\content\FileContent;
 use org\bovigo\vfs\visitor\vfsStreamVisitor;
 /**
  * Some utility methods for vfsStream.
@@ -66,7 +67,16 @@ class vfsStream
      */
     public static function url($path)
     {
-        return self::SCHEME . '://' . str_replace('\\', '/', $path);
+        return self::SCHEME . '://' . join(
+                '/',
+                array_map(
+                        'rawurlencode',    // ensure singe path parts are correctly urlencoded
+                        explode(
+                                '/',
+                                str_replace('\\', '/', $path)  // ensure correct directory separator
+                        )
+                )
+        );
     }
 
     /**
@@ -83,7 +93,7 @@ class vfsStream
         $path = str_replace('\\', '/', $path);
         // replace double slashes with single slashes
         $path = str_replace('//', '/', $path);
-        return urldecode($path);
+        return rawurldecode($path);
     }
 
     /**
@@ -232,6 +242,10 @@ class vfsStream
                 } else {
                     self::newFile($name)->withContent($data)->at($baseDir);
                 }
+            } elseif ($data instanceof FileContent) {
+                self::newFile($name)->withContent($data)->at($baseDir);
+            } elseif ($data instanceof vfsStreamFile) {
+                $baseDir->addChild($data);
             }
         }
 
@@ -337,7 +351,7 @@ class vfsStream
      */
     public static function newDirectory($name, $permissions = null)
     {
-        if ('/' === $name{0}) {
+        if ('/' === substr($name, 0, 1)) {
             $name = substr($name, 1);
         }
 
@@ -349,7 +363,10 @@ class vfsStream
         $ownName   = substr($name, 0, $firstSlash);
         $subDirs   = substr($name, $firstSlash + 1);
         $directory = new vfsStreamDirectory($ownName, $permissions);
-        self::newDirectory($subDirs, $permissions)->at($directory);
+        if (is_string($subDirs) && strlen($subDirs) > 0) {
+            self::newDirectory($subDirs, $permissions)->at($directory);
+        }
+
         return $directory;
     }
 

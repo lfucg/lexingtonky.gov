@@ -5,6 +5,11 @@ namespace Drupal\form_test\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Builds a simple form to test vertical tabs.
+ *
+ * @internal
+ */
 class FormTestVerticalTabsForm extends FormBase {
 
   /**
@@ -20,23 +25,23 @@ class FormTestVerticalTabsForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $tab_count = 3;
 
-    $form['vertical_tabs'] = array(
+    $form['vertical_tabs'] = [
       '#type' => 'vertical_tabs',
       '#default_tab' => 'edit-tab' . $tab_count,
-    );
+    ];
 
     for ($i = 1; $i <= $tab_count; $i++) {
-      $form['tab' . $i] = array(
+      $form['tab' . $i] = [
         '#type' => 'fieldset',
-        '#title' => t('Tab @num', array('@num' => $i)),
+        '#title' => t('Tab @num', ['@num' => $i]),
         '#group' => 'vertical_tabs',
         '#access' => \Drupal::currentUser()->hasPermission('access vertical_tab_test tabs'),
-      );
-      $form['tab' . $i]['field' . $i] = array(
-        '#title' => t('Field @num', array('@num' => $i)),
+      ];
+      $form['tab' . $i]['field' . $i] = [
+        '#title' => t('Field @num', ['@num' => $i]),
         '#type' => 'textfield',
 
-      );
+      ];
     }
 
     return $form;

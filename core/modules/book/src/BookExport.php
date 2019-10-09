@@ -2,7 +2,7 @@
 
 namespace Drupal\book;
 
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -36,14 +36,14 @@ class BookExport {
   /**
    * Constructs a BookExport object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entityManager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\book\BookManagerInterface $book_manager
    *   The book manager.
    */
-  public function __construct(EntityManagerInterface $entityManager, BookManagerInterface $book_manager) {
-    $this->nodeStorage = $entityManager->getStorage('node');
-    $this->viewBuilder = $entityManager->getViewBuilder('node');
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, BookManagerInterface $book_manager) {
+    $this->nodeStorage = $entity_type_manager->getStorage('node');
+    $this->viewBuilder = $entity_type_manager->getViewBuilder('node');
     $this->bookManager = $book_manager;
   }
 
@@ -73,8 +73,8 @@ class BookExport {
     }
 
     $tree = $this->bookManager->bookSubtreeData($node->book);
-    $contents = $this->exportTraverse($tree, array($this, 'bookNodeExport'));
-    return array(
+    $contents = $this->exportTraverse($tree, [$this, 'bookNodeExport']);
+    return [
       '#theme' => 'book_export_html',
       '#title' => $node->label(),
       '#contents' => $contents,
@@ -82,7 +82,7 @@ class BookExport {
       '#cache' => [
         'tags' => $node->getEntityType()->getListCacheTags(),
       ],
-    );
+    ];
   }
 
   /**
@@ -101,9 +101,9 @@ class BookExport {
    */
   protected function exportTraverse(array $tree, $callable) {
     // If there is no valid callable, use the default callback.
-    $callable = !empty($callable) ? $callable : array($this, 'bookNodeExport');
+    $callable = !empty($callable) ? $callable : [$this, 'bookNodeExport'];
 
-    $build = array();
+    $build = [];
     foreach ($tree as $data) {
       // Note- access checking is already performed when building the tree.
       if ($node = $this->nodeStorage->load($data['link']['nid'])) {
@@ -133,12 +133,12 @@ class BookExport {
     $build = $this->viewBuilder->view($node, 'print', NULL);
     unset($build['#theme']);
 
-    return array(
+    return [
       '#theme' => 'book_node_export_html',
       '#content' => $build,
       '#node' => $node,
       '#children' => $children,
-    );
+    ];
   }
 
 }

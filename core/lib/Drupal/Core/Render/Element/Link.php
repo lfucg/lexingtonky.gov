@@ -12,15 +12,15 @@ use Drupal\Core\Url as CoreUrl;
  *
  * Properties:
  * - #title: The link text.
- * - #url: \Drupal\Url object containing URL information pointing to a internal
- *   or external link . See \Drupal\Core\Utility\LinkGeneratorInterface.
+ * - #url: \Drupal\Core\Url object containing URL information pointing to a
+ *   internal or external link. See \Drupal\Core\Utility\LinkGeneratorInterface.
  *
  * Usage example:
  * @code
  * $build['examples_link'] = [
  *   '#title' => $this->t('Examples'),
  *   '#type' => 'link',
- *   '#url' => Url::fromRoute('examples.description')
+ *   '#url' => \Drupal\Core\Url::fromRoute('examples.description')
  * ];
  * @endcode
  *
@@ -33,11 +33,11 @@ class Link extends RenderElement {
    */
   public function getInfo() {
     $class = get_class($this);
-    return array(
-      '#pre_render' => array(
-        array($class, 'preRenderLink'),
-      ),
-    );
+    return [
+      '#pre_render' => [
+        [$class, 'preRenderLink'],
+      ],
+    ];
   }
 
   /**
@@ -58,12 +58,12 @@ class Link extends RenderElement {
   public static function preRenderLink($element) {
     // By default, link options to pass to the link generator are normally set
     // in #options.
-    $element += array('#options' => array());
+    $element += ['#options' => []];
     // However, within the scope of renderable elements, #attributes is a valid
     // way to specify attributes, too. Take them into account, but do not override
     // attributes from #options.
     if (isset($element['#attributes'])) {
-      $element['#options'] += array('attributes' => array());
+      $element['#options'] += ['attributes' => []];
       $element['#options']['attributes'] += $element['#attributes'];
     }
 

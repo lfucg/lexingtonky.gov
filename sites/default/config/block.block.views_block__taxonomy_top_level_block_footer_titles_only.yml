@@ -10,8 +10,8 @@ dependencies:
     - lex
 id: views_block__taxonomy_top_level_block_footer_titles_only
 theme: lex
-region: footer_second
-weight: -15
+region: footer
+weight: -24
 provider: null
 plugin: 'views_block:taxonomy_top_level-block_2'
 settings:

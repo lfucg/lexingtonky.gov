@@ -10,6 +10,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines the configuration import form.
+ *
+ * @internal
  */
 class ConfigImportForm extends FormBase {
 
@@ -53,19 +55,19 @@ class ConfigImportForm extends FormBase {
     $directory = config_get_config_directory(CONFIG_SYNC_DIRECTORY);
     $directory_is_writable = is_writable($directory);
     if (!$directory_is_writable) {
-      drupal_set_message($this->t('The directory %directory is not writable.', ['%directory' => $directory]), 'error');
+      $this->messenger()->addError($this->t('The directory %directory is not writable.', ['%directory' => $directory]));
     }
-    $form['import_tarball'] = array(
+    $form['import_tarball'] = [
       '#type' => 'file',
       '#title' => $this->t('Configuration archive'),
-      '#description' => $this->t('Allowed types: @extensions.', array('@extensions' => 'tar.gz tgz tar.bz2')),
-    );
+      '#description' => $this->t('Allowed types: @extensions.', ['@extensions' => 'tar.gz tgz tar.bz2']),
+    ];
 
-    $form['submit'] = array(
+    $form['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Upload'),
       '#disabled' => !$directory_is_writable,
-    );
+    ];
     return $form;
   }
 
@@ -93,16 +95,16 @@ class ConfigImportForm extends FormBase {
       $this->configStorage->deleteAll();
       try {
         $archiver = new ArchiveTar($path, 'gz');
-        $files = array();
+        $files = [];
         foreach ($archiver->listContent() as $file) {
           $files[] = $file['filename'];
         }
         $archiver->extractList($files, config_get_config_directory(CONFIG_SYNC_DIRECTORY));
-        drupal_set_message($this->t('Your configuration files were successfully uploaded and are ready for import.'));
+        $this->messenger()->addStatus($this->t('Your configuration files were successfully uploaded and are ready for import.'));
         $form_state->setRedirect('config.sync');
       }
       catch (\Exception $e) {
-        drupal_set_message($this->t('Could not extract the contents of the tar file. The error message is <em>@message</em>', array('@message' => $e->getMessage())), 'error');
+        $this->messenger()->addError($this->t('Could not extract the contents of the tar file. The error message is <em>@message</em>', ['@message' => $e->getMessage()]));
       }
       drupal_unlink($path);
     }

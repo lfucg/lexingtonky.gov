@@ -36,6 +36,8 @@ class EntityDisplayModeListBuilder extends ConfigEntityListBuilder {
   public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, array $entity_types) {
     parent::__construct($entity_type, $storage);
 
+    // Override the default limit (50) in order to display all view modes.
+    $this->limit = FALSE;
     $this->entityTypes = $entity_types;
   }
 
@@ -43,11 +45,11 @@ class EntityDisplayModeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
-    $entity_manager = $container->get('entity.manager');
+    $entity_type_manager = $container->get('entity_type.manager');
     return new static(
       $entity_type,
-      $entity_manager->getStorage($entity_type->id()),
-      $entity_manager->getDefinitions()
+      $entity_type_manager->getStorage($entity_type->id()),
+      $entity_type_manager->getDefinitions()
     );
   }
 
@@ -71,7 +73,7 @@ class EntityDisplayModeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function load() {
-    $entities = array();
+    $entities = [];
     foreach (parent::load() as $entity) {
       $entities[$entity->getTargetType()][] = $entity;
     }
@@ -82,7 +84,7 @@ class EntityDisplayModeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function render() {
-    $build = array();
+    $build = [];
     foreach ($this->load() as $entity_type => $entities) {
       if (!isset($this->entityTypes[$entity_type])) {
         continue;
@@ -93,12 +95,12 @@ class EntityDisplayModeListBuilder extends ConfigEntityListBuilder {
         continue;
       }
 
-      $table = array(
+      $table = [
         '#prefix' => '<h2>' . $this->entityTypes[$entity_type]->getLabel() . '</h2>',
         '#type' => 'table',
         '#header' => $this->buildHeader(),
-        '#rows' => array(),
-      );
+        '#rows' => [],
+      ];
       foreach ($entities as $entity) {
         if ($row = $this->buildRow($entity)) {
           $table['#rows'][$entity->id()] = $row;
@@ -110,15 +112,15 @@ class EntityDisplayModeListBuilder extends ConfigEntityListBuilder {
         $table['#weight'] = -10;
       }
 
-      $short_type = str_replace(array('entity_', '_mode'), '', $this->entityTypeId);
-      $table['#rows']['_add_new'][] = array(
-        'data' => array(
+      $short_type = str_replace(['entity_', '_mode'], '', $this->entityTypeId);
+      $table['#rows']['_add_new'][] = [
+        'data' => [
           '#type' => 'link',
           '#url' => Url::fromRoute($short_type == 'view' ? 'entity.entity_view_mode.add_form' : 'entity.entity_form_mode.add_form', ['entity_type_id' => $entity_type]),
-          '#title' => $this->t('Add new %label @entity-type', array('%label' => $this->entityTypes[$entity_type]->getLabel(), '@entity-type' => $this->entityType->getLowercaseLabel())),
-        ),
+          '#title' => $this->t('Add new @entity-type %label', ['@entity-type' => $this->entityTypes[$entity_type]->getLabel(), '%label' => $this->entityType->getLowercaseLabel()]),
+        ],
         'colspan' => count($table['#header']),
-      );
+      ];
       $build[$entity_type] = $table;
     }
     return $build;

@@ -8,6 +8,8 @@ use Drupal\Core\Url;
 
 /**
  * Provides a deletion confirmation form for items that belong to a feed.
+ *
+ * @internal
  */
 class FeedItemsDeleteForm extends ContentEntityConfirmFormBase {
 
@@ -15,7 +17,7 @@ class FeedItemsDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return $this->t('Are you sure you want to delete all items from the feed %feed?', array('%feed' => $this->entity->label()));
+    return $this->t('Are you sure you want to delete all items from the feed %feed?', ['%feed' => $this->entity->label()]);
   }
 
   /**

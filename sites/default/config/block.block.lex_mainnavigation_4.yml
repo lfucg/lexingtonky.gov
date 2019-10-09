@@ -10,8 +10,8 @@ dependencies:
     - lex
 id: lex_mainnavigation_4
 theme: lex
-region: primary_menu
-weight: -9
+region: sidebar
+weight: -25
 provider: null
 plugin: 'system_menu_block:main'
 settings:
@@ -21,6 +21,7 @@ settings:
   label_display: '0'
   level: 1
   depth: 0
+  expand_all_items: false
 visibility:
   request_path:
     id: request_path

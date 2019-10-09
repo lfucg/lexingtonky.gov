@@ -93,7 +93,7 @@ class RecursiveContextualValidator implements ContextualValidatorInterface {
     // You can pass a single constraint or an array of constraints.
     // Make sure to deal with an array in the rest of the code.
     if (isset($constraints) && !is_array($constraints)) {
-      $constraints = array($constraints);
+      $constraints = [$constraints];
     }
 
     $this->validateNode($data, $constraints, $is_root_call);
@@ -126,10 +126,16 @@ class RecursiveContextualValidator implements ContextualValidatorInterface {
     $metadata = $this->metadataFactory->getMetadataFor($data);
     $cache_key = spl_object_hash($data);
     $property_path = $is_root_call ? '' : PropertyPath::append($previous_path, $data->getName());
+
+    // Prefer a specific instance of the typed data manager stored by the data
+    // if it is available. This is necessary for specialized typed data objects,
+    // for example those using the typed config subclass of the manager.
+    $typed_data_manager = method_exists($data, 'getTypedDataManager') ? $data->getTypedDataManager() : $this->typedDataManager;
+
     // Pass the canonical representation of the data as validated value to
     // constraint validators, such that they do not have to care about Typed
     // Data.
-    $value = $this->typedDataManager->getCanonicalRepresentation($data);
+    $value = $typed_data_manager->getCanonicalRepresentation($data);
     $this->context->setNode($value, $data, $metadata, $property_path);
 
     if (isset($constraints) || !$this->context->isGroupValidated($cache_key, Constraint::DEFAULT_GROUP)) {

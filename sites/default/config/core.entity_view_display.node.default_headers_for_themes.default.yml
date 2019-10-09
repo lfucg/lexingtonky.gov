@@ -1,0 +1,40 @@
+uuid: 86a264ec-70e6-4bd5-8f2b-b389f38022f7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.default_headers_for_themes.field_organization_image
+    - field.field.node.default_headers_for_themes.field_theme
+    - node.type.default_headers_for_themes
+  module:
+    - image
+    - options
+    - user
+id: node.default_headers_for_themes.default
+targetEntityType: node
+bundle: default_headers_for_themes
+mode: default
+content:
+  field_organization_image:
+    weight: 102
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_theme:
+    weight: 103
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  addtoany: true

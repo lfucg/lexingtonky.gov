@@ -23,6 +23,7 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
   field_feedback_url:
     type: string_textfield
     weight: 0
@@ -30,6 +31,7 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
   field_internal_notes:
     weight: 5
     settings:
@@ -37,12 +39,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textarea
+    region: content
   field_optional_email:
     weight: 3
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: email_default
+    region: content
   field_optional_name:
     weight: 2
     settings:
@@ -50,6 +54,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_page_suggestion:
     weight: 1
     settings:
@@ -57,6 +62,12 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textarea
+    region: content
+  preview:
+    weight: 50
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   copy: true
   mail: true

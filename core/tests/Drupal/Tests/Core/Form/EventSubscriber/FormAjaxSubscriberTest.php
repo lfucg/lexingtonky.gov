@@ -8,6 +8,7 @@ use Drupal\Core\Form\Exception\BrokenPostRequestException;
 use Drupal\Core\Form\FormAjaxException;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,6 +45,13 @@ class FormAjaxSubscriberTest extends UnitTestCase {
   protected $stringTranslation;
 
   /**
+   * The mocked messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $messenger;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp() {
@@ -52,7 +60,8 @@ class FormAjaxSubscriberTest extends UnitTestCase {
     $this->httpKernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
     $this->formAjaxResponseBuilder = $this->getMock('Drupal\Core\Form\FormAjaxResponseBuilderInterface');
     $this->stringTranslation = $this->getStringTranslationStub();
-    $this->subscriber = new FormAjaxSubscriber($this->formAjaxResponseBuilder, $this->stringTranslation);
+    $this->messenger = $this->createMock(MessengerInterface::class);
+    $this->subscriber = new FormAjaxSubscriber($this->formAjaxResponseBuilder, $this->stringTranslation, $this->messenger);
   }
 
   /**
@@ -76,7 +85,8 @@ class FormAjaxSubscriberTest extends UnitTestCase {
       ->willReturn($response);
 
     $event = $this->assertResponseFromException($request, $exception, $response);
-    $this->assertSame(200, $event->getResponse()->headers->get('X-Status-Code'));
+    $this->assertTrue($event->isAllowingCustomResponseCode());
+    $this->assertSame(200, $event->getResponse()->getStatusCode());
   }
 
   /**
@@ -100,7 +110,8 @@ class FormAjaxSubscriberTest extends UnitTestCase {
       ->willReturn($response);
 
     $event = $this->assertResponseFromException($request, $exception, $response);
-    $this->assertSame(200, $event->getResponse()->headers->get('X-Status-Code'));
+    $this->assertTrue($event->isAllowingCustomResponseCode());
+    $this->assertSame(200, $event->getResponse()->getStatusCode());
   }
 
   /**
@@ -145,13 +156,19 @@ class FormAjaxSubscriberTest extends UnitTestCase {
   public function testOnExceptionBrokenPostRequest() {
     $this->formAjaxResponseBuilder->expects($this->never())
       ->method('buildResponse');
+
+    $this->messenger->expects($this->once())
+      ->method('addError');
+
     $this->subscriber = $this->getMockBuilder('\Drupal\Core\Form\EventSubscriber\FormAjaxSubscriber')
-      ->setConstructorArgs([$this->formAjaxResponseBuilder, $this->getStringTranslationStub()])
-      ->setMethods(['drupalSetMessage', 'formatSize'])
+      ->setConstructorArgs([
+        $this->formAjaxResponseBuilder,
+        $this->getStringTranslationStub(),
+        $this->messenger,
+      ])
+      ->setMethods(['formatSize'])
       ->getMock();
-    $this->subscriber->expects($this->once())
-      ->method('drupalSetMessage')
-      ->willReturn('asdf');
+
     $this->subscriber->expects($this->once())
       ->method('formatSize')
       ->with(32 * 1e6)
@@ -176,12 +193,13 @@ class FormAjaxSubscriberTest extends UnitTestCase {
 
     $event = new GetResponseForExceptionEvent($this->httpKernel, $request, HttpKernelInterface::MASTER_REQUEST, $exception);
     $this->subscriber->onException($event);
+    $this->assertTrue($event->isAllowingCustomResponseCode());
     $actual_response = $event->getResponse();
     $this->assertInstanceOf('\Drupal\Core\Ajax\AjaxResponse', $actual_response);
-    $this->assertSame(200, $actual_response->headers->get('X-Status-Code'));
+    $this->assertSame(200, $actual_response->getStatusCode());
     $expected_commands[] = [
       'command' => 'insert',
-      'method' => 'replaceWith',
+      'method' => 'prepend',
       'selector' => NULL,
       'data' => $rendered_output,
       'settings' => NULL,

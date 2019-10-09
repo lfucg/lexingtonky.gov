@@ -107,24 +107,25 @@ class HelpController extends ControllerBase {
    *   A module name to display a help page for.
    *
    * @return array
-   *   A render array as expected by drupal_render().
+   *   A render array as expected by
+   *   \Drupal\Core\Render\RendererInterface::render().
    *
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
   public function helpPage($name) {
-    $build = array();
+    $build = [];
     if ($this->moduleHandler()->implementsHook($name, 'help')) {
       $module_name = $this->moduleHandler()->getName($name);
       $build['#title'] = $module_name;
 
       $info = system_get_info('module', $name);
       if ($info['package'] === 'Core (Experimental)') {
-        drupal_set_message($this->t('This module is experimental. <a href=":url">Experimental modules</a> are provided for testing purposes only. Use at your own risk.', [':url' => 'https://www.drupal.org/core/experimental']), 'warning');
+        $this->messenger()->addWarning($this->t('This module is experimental. <a href=":url">Experimental modules</a> are provided for testing purposes only. Use at your own risk.', [':url' => 'https://www.drupal.org/core/experimental']));
       }
 
-      $temp = $this->moduleHandler()->invoke($name, 'help', array("help.page.$name", $this->routeMatch));
+      $temp = $this->moduleHandler()->invoke($name, 'help', ["help.page.$name", $this->routeMatch]);
       if (empty($temp)) {
-        $build['top'] = ['#markup' => $this->t('No help is available for module %module.', array('%module' => $module_name))];
+        $build['top'] = ['#markup' => $this->t('No help is available for module %module.', ['%module' => $module_name])];
       }
       else {
         if (!is_array($temp)) {
@@ -137,20 +138,20 @@ class HelpController extends ControllerBase {
       // any such pages associated with it.
       $admin_tasks = system_get_module_admin_tasks($name, system_get_info('module', $name));
       if (!empty($admin_tasks)) {
-        $links = array();
+        $links = [];
         foreach ($admin_tasks as $task) {
           $link['url'] = $task['url'];
           $link['title'] = $task['title'];
           $links[] = $link;
         }
-        $build['links'] = array(
+        $build['links'] = [
           '#theme' => 'links__help',
-          '#heading' => array(
+          '#heading' => [
             'level' => 'h3',
-            'text' => $this->t('@module administration pages', array('@module' => $module_name)),
-          ),
+            'text' => $this->t('@module administration pages', ['@module' => $module_name]),
+          ],
           '#links' => $links,
-        );
+        ];
       }
       return $build;
     }

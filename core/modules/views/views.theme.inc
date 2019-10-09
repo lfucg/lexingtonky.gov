@@ -9,6 +9,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\Core\Utility\TableSort;
 
 /**
  * Prepares variables for view templates.
@@ -34,8 +35,17 @@ function template_preprocess_views_view(&$variables) {
 
   $css_class = $view->display_handler->getOption('css_class');
   if (!empty($css_class)) {
-    $variables['css_class'] = preg_replace('/[^a-zA-Z0-9- ]/', '-', $css_class);
-    $variables['attributes']['class'][] = $variables['css_class'];
+    // Views uses its own sanitization method. This is preserved to keep
+    // backwards compatibility.
+    // @todo https://www.drupal.org/project/drupal/issues/2977950 Decide what to
+    //   do with the backwards compatibility layer.
+    $bc_classes = explode(' ', preg_replace('/[^a-zA-Z0-9- ]/', '-', $css_class));
+    // Sanitize the classes using the classes using the proper API.
+    $sanitized_classes = array_map('\Drupal\Component\Utility\Html::cleanCssIdentifier', explode(' ', $css_class));
+    $view_classes = array_unique(array_merge($bc_classes, $sanitized_classes));
+    // Merge the view display classes into any existing classes if they exist.
+    $variables['attributes']['class'] = !empty($variables['attributes']['class']) ? array_merge($variables['attributes']['class'], $view_classes) : $view_classes;
+    $variables['css_class'] = implode(' ', $view_classes);
   }
 
   // contextual_preprocess() only works on render elements, and since this theme
@@ -90,7 +100,8 @@ function template_preprocess_views_view_fields(&$variables) {
 
   // Loop through the fields for this view.
   $previous_inline = FALSE;
-  $variables['fields'] = array(); // ensure it's at least an empty array.
+  // Ensure it's at least an empty array.
+  $variables['fields'] = [];
   /** @var \Drupal\views\ResultRow $row */
   $row = $variables['row'];
   foreach ($view->field as $id => $field) {
@@ -107,7 +118,7 @@ function template_preprocess_views_view_fields(&$variables) {
 
       $object->element_type = $object->handler->elementType(TRUE, !$variables['options']['default_field_elements'], $object->inline);
       if ($object->element_type) {
-        $attributes = array();
+        $attributes = [];
         if ($object->handler->options['element_default_classes']) {
           $attributes['class'][] = 'field-content';
         }
@@ -123,7 +134,8 @@ function template_preprocess_views_view_fields(&$variables) {
         $object->raw = $row->{$view->field[$id]->field_alias};
       }
       else {
-        $object->raw = NULL; // make sure it exists to reduce NOTICE
+        // Make sure it exists to reduce NOTICE.
+        $object->raw = NULL;
       }
 
       if (!empty($variables['options']['separator']) && $previous_inline && $object->inline && $object->content) {
@@ -141,7 +153,7 @@ function template_preprocess_views_view_fields(&$variables) {
 
       // Set up field wrapper attributes if field wrapper was set.
       if ($object->wrapper_element) {
-        $attributes = array();
+        $attributes = [];
         if ($object->handler->options['element_default_classes']) {
           $attributes['class'][] = 'views-field';
           $attributes['class'][] = 'views-field-' . $object->class;
@@ -169,7 +181,7 @@ function template_preprocess_views_view_fields(&$variables) {
 
         // Set up label attributes.
         if ($object->label_element) {
-          $attributes = array();
+          $attributes = [];
           if ($object->handler->options['element_default_classes']) {
             $attributes['class'][] = 'views-label';
             $attributes['class'][] = 'views-label-' . $object->class;
@@ -241,28 +253,28 @@ function template_preprocess_views_view_summary(&$variables) {
   $view = $variables['view'];
   $argument = $view->argument[$view->build_info['summary_level']];
 
-  $url_options = array();
+  $url_options = [];
 
   if (!empty($view->exposed_raw_input)) {
     $url_options['query'] = $view->exposed_raw_input;
   }
 
-  $active_urls = array(
+  $active_urls = [
     // Force system path.
-    \Drupal::url('<current>', [], ['alias' => TRUE]),
+    Url::fromRoute('<current>', [], ['alias' => TRUE])->toString(),
     // Force system path.
     Url::fromRouteMatch(\Drupal::routeMatch())->setOption('alias', TRUE)->toString(),
     // Could be an alias.
-    \Drupal::url('<current>'),
+    Url::fromRoute('<current>')->toString(),
     // Could be an alias.
     Url::fromRouteMatch(\Drupal::routeMatch())->toString(),
-  );
+  ];
   $active_urls = array_combine($active_urls, $active_urls);
 
   // Collect all arguments foreach row, to be able to alter them for example
   // by the validator. This is not done per single argument value, because this
   // could cause performance problems.
-  $row_args = array();
+  $row_args = [];
 
   foreach ($variables['rows'] as $id => $row) {
     $row_args[$id] = $argument->summaryArgument($row);
@@ -270,7 +282,7 @@ function template_preprocess_views_view_summary(&$variables) {
   $argument->processSummaryArguments($row_args);
 
   foreach ($variables['rows'] as $id => $row) {
-    $variables['rows'][$id]->attributes = array();
+    $variables['rows'][$id]->attributes = [];
     $variables['rows'][$id]->link = $argument->summaryName($row);
     $args = $view->args;
     $args[$argument->position] = $row_args[$id];
@@ -329,25 +341,25 @@ function template_preprocess_views_view_summary_unformatted(&$variables) {
   $view = $variables['view'];
   $argument = $view->argument[$view->build_info['summary_level']];
 
-  $url_options = array();
+  $url_options = [];
 
   if (!empty($view->exposed_raw_input)) {
     $url_options['query'] = $view->exposed_raw_input;
   }
 
   $count = 0;
-  $active_urls = array(
+  $active_urls = [
     // Force system path.
-    \Drupal::url('<current>', [], ['alias' => TRUE]),
+    Url::fromRoute('<current>', [], ['alias' => TRUE])->toString(),
     // Could be an alias.
-    \Drupal::url('<current>'),
-  );
+    Url::fromRoute('<current>')->toString(),
+  ];
   $active_urls = array_combine($active_urls, $active_urls);
 
   // Collect all arguments for each row, to be able to alter them for example
   // by the validator. This is not done per single argument value, because
   // this could cause performance problems.
-  $row_args = array();
+  $row_args = [];
   foreach ($variables['rows'] as $id => $row) {
     $row_args[$id] = $argument->summaryArgument($row);
   }
@@ -358,7 +370,7 @@ function template_preprocess_views_view_summary_unformatted(&$variables) {
     if ($count++) {
       $variables['rows'][$id]->separator = Xss::filterAdmin($variables['options']['separator']);
     }
-    $variables['rows'][$id]->attributes = array();
+    $variables['rows'][$id]->attributes = [];
     $variables['rows'][$id]->link = $argument->summaryName($row);
     $args = $view->args;
     $args[$argument->position] = $row_args[$id];
@@ -417,8 +429,8 @@ function template_preprocess_views_view_table(&$variables) {
   // so that it can get rebuilt.
   // Store rows so that they may be used by further preprocess functions.
   $result = $variables['result'] = $variables['rows'];
-  $variables['rows'] = array();
-  $variables['header'] = array();
+  $variables['rows'] = [];
+  $variables['header'] = [];
 
   $options = $view->style_plugin->options;
   $handler = $view->style_plugin;
@@ -438,7 +450,7 @@ function template_preprocess_views_view_table(&$variables) {
   // working URLs.
   $route_name = !empty($view->live_preview) ? '<current>' : '<none>';
 
-  $query = tablesort_get_query_parameters();
+  $query = TableSort::getQueryParameters(\Drupal::request());
   if (isset($view->exposed_raw_input)) {
     $query += $view->exposed_raw_input;
   }
@@ -466,19 +478,19 @@ function template_preprocess_views_view_table(&$variables) {
           $initial = ($order == 'asc') ? 'desc' : 'asc';
         }
 
-        $title = t('sort by @s', array('@s' => $label));
+        $title = t('sort by @s', ['@s' => $label]);
         if ($active == $field) {
-          $variables['header'][$field]['sort_indicator'] = array(
+          $variables['header'][$field]['sort_indicator'] = [
             '#theme' => 'tablesort_indicator',
             '#style' => $initial,
-          );
+          ];
         }
 
         $query['order'] = $field;
         $query['sort'] = $initial;
-        $link_options = array(
+        $link_options = [
           'query' => $query,
-        );
+        ];
         $url = new Url($route_name, [], $link_options);
         $variables['header'][$field]['url'] = $url->toString();
         $variables['header'][$field]['content'] = $label;
@@ -487,7 +499,7 @@ function template_preprocess_views_view_table(&$variables) {
 
       $variables['header'][$field]['default_classes'] = $fields[$field]->options['element_default_classes'];
       // Set up the header label class.
-      $variables['header'][$field]['attributes'] = array();
+      $variables['header'][$field]['attributes'] = [];
       $class = $fields[$field]->elementLabelClasses(0);
       if ($class) {
         $variables['header'][$field]['attributes']['class'][] = $class;
@@ -543,7 +555,7 @@ function template_preprocess_views_view_table(&$variables) {
 
       // Add field classes.
       if (!isset($column_reference['attributes'])) {
-        $column_reference['attributes'] = array();
+        $column_reference['attributes'] = [];
       }
 
       if ($classes = $fields[$field]->elementClasses($num)) {
@@ -557,7 +569,7 @@ function template_preprocess_views_view_table(&$variables) {
 
       // Improves accessibility of complex tables.
       if (isset($variables['header'][$field]['attributes']['id'])) {
-        $column_reference['attributes']['headers'] = array($variables['header'][$field]['attributes']['id']);
+        $column_reference['attributes']['headers'] = [$variables['header'][$field]['attributes']['id']];
       }
 
       if (!empty($fields[$field])) {
@@ -573,12 +585,12 @@ function template_preprocess_views_view_table(&$variables) {
           if (!empty($column_reference['content']) && !empty($options['info'][$column]['separator'])) {
             $column_reference['content'][] = [
               'separator' => ['#markup' => $options['info'][$column]['separator']],
-              'field_output' => ['#markup' => $field_output]
+              'field_output' => ['#markup' => $field_output],
             ];
           }
           else {
             $column_reference['content'][] = [
-              'field_output' => ['#markup' => $field_output]
+              'field_output' => ['#markup' => $field_output],
             ];
           }
         }
@@ -604,11 +616,11 @@ function template_preprocess_views_view_table(&$variables) {
 
   // Hide table header if all labels are empty.
   if (!$has_header_labels) {
-    $variables['header'] = array();
+    $variables['header'] = [];
   }
 
   foreach ($variables['rows'] as $num => $row) {
-    $variables['rows'][$num]['attributes'] = array();
+    $variables['rows'][$num]['attributes'] = [];
     if ($row_class = $handler->getRowClass($num)) {
       $variables['rows'][$num]['attributes']['class'][] = $row_class;
     }
@@ -618,12 +630,12 @@ function template_preprocess_views_view_table(&$variables) {
   if (empty($variables['rows']) && !empty($options['empty_table'])) {
     $build = $view->display_handler->renderArea('empty');
     $variables['rows'][0]['columns'][0]['content'][0]['field_output'] = $build;
-    $variables['rows'][0]['attributes'] = new Attribute(array('class' => 'odd'));
+    $variables['rows'][0]['attributes'] = new Attribute(['class' => ['odd']]);
     // Calculate the amounts of rows with output.
-    $variables['rows'][0]['columns'][0]['attributes'] = new Attribute(array(
+    $variables['rows'][0]['columns'][0]['attributes'] = new Attribute([
       'colspan' => count($variables['header']),
-      'class' => 'views-empty',
-    ));
+      'class' => ['views-empty'],
+    ]);
   }
 
   $variables['sticky'] = FALSE;
@@ -678,7 +690,7 @@ function template_preprocess_views_view_grid(&$variables) {
 
   $col = 0;
   $row = 0;
-  $items = array();
+  $items = [];
   $remainders = count($variables['rows']) % $options['columns'];
   $num_rows = floor(count($variables['rows']) / $options['columns']);
 
@@ -695,7 +707,7 @@ function template_preprocess_views_view_grid(&$variables) {
 
     // Create attributes for rows.
     if (!$horizontal || ($horizontal && empty($items[$row]['attributes']))) {
-      $row_attributes = array('class' => array());
+      $row_attributes = ['class' => []];
       // Add custom row classes.
       $row_class = array_filter(explode(' ', $variables['view']->style_plugin->getCustomClass($result_index, 'row')));
       if (!empty($row_class)) {
@@ -712,7 +724,7 @@ function template_preprocess_views_view_grid(&$variables) {
 
     // Create attributes for columns.
     if ($horizontal || (!$horizontal && empty($items[$col]['attributes']))) {
-      $col_attributes = array('class' => array());
+      $col_attributes = ['class' => []];
       // Add default views column classes.
       // Add custom column classes.
       $col_class = array_filter(explode(' ', $variables['view']->style_plugin->getCustomClass($result_index, 'col')));
@@ -781,7 +793,7 @@ function template_preprocess_views_view_unformatted(&$variables) {
 
   $variables['default_row_class'] = !empty($options['default_row_class']);
   foreach ($rows as $id => $row) {
-    $variables['rows'][$id] = array();
+    $variables['rows'][$id] = [];
     $variables['rows'][$id]['content'] = $row;
     $variables['rows'][$id]['attributes'] = new Attribute();
     if ($row_class = $view->style_plugin->getRowClass($id)) {
@@ -800,7 +812,7 @@ function template_preprocess_views_view_unformatted(&$variables) {
  *   - view: A View object.
  */
 function template_preprocess_views_view_list(&$variables) {
-  $handler  = $variables['view']->style_plugin;
+  $handler = $variables['view']->style_plugin;
 
   // Fetch classes from handler options.
   if ($handler->options['class']) {
@@ -808,7 +820,7 @@ function template_preprocess_views_view_list(&$variables) {
     $class = array_map('\Drupal\Component\Utility\Html::cleanCssIdentifier', $class);
 
     // Initialize a new attribute class for $class.
-    $variables['list']['attributes'] = new Attribute(array('class' => $class));
+    $variables['list']['attributes'] = new Attribute(['class' => $class]);
   }
 
   // Fetch wrapper classes from handler options.
@@ -833,7 +845,7 @@ function template_preprocess_views_view_list(&$variables) {
  *   - rows: The raw row data.
  */
 function template_preprocess_views_view_rss(&$variables) {
-  $view  = $variables['view'];
+  $view = $variables['view'];
   $items = $variables['rows'];
   $style = $view->style_plugin;
 
@@ -858,13 +870,14 @@ function template_preprocess_views_view_rss(&$variables) {
   // Figure out which display which has a path we're using for this feed. If
   // there isn't one, use the global $base_url
   $link_display_id = $view->display_handler->getLinkDisplay();
-  if ($link_display_id && $display = $view->displayHandlers->get($link_display_id)) {
+  /** @var \Drupal\views\Plugin\views\display\DisplayPluginBase $display */
+  if ($link_display_id && ($display = $view->displayHandlers->get($link_display_id)) && $display->isEnabled()) {
     $url = $view->getUrl(NULL, $link_display_id);
   }
 
   /** @var \Drupal\Core\Url $url */
-  if ($url) {
-    $url_options = array('absolute' => TRUE);
+  if (!empty($url)) {
+    $url_options = ['absolute' => TRUE];
     if (!empty($view->exposed_raw_input)) {
       $url_options['query'] = $view->exposed_raw_input;
     }
@@ -913,7 +926,7 @@ function template_preprocess_views_view_row_rss(&$variables) {
     $variables['description'] = (string) \Drupal::service('renderer')->render($item->description);
   }
 
-  $variables['item_elements'] = array();
+  $variables['item_elements'] = [];
   foreach ($item->elements as $element) {
     if (isset($element['attributes']) && is_array($element['attributes'])) {
       $element['attributes'] = new Attribute($element['attributes']);
@@ -933,7 +946,7 @@ function template_preprocess_views_view_row_rss(&$variables) {
  *   - rows: The raw row data.
  */
 function template_preprocess_views_view_opml(&$variables) {
-  $view  = $variables['view'];
+  $view = $variables['view'];
   $items = $variables['rows'];
 
   $config = \Drupal::config('system.site');
@@ -1022,10 +1035,10 @@ function template_preprocess_views_mini_pager(&$variables) {
   $variables['items']['current'] = $pager_page_array[$element] + 1;
 
   if ($pager_total[$element] > 1 && $pager_page_array[$element] > 0) {
-    $options = array(
+    $options = [
       'query' => pager_query_add_page($parameters, $element, $pager_page_array[$element] - 1),
-    );
-    $variables['items']['previous']['href'] = \Drupal::url('<current>', [], $options);
+    ];
+    $variables['items']['previous']['href'] = Url::fromRoute('<current>', [], $options)->toString();
     if (isset($tags[1])) {
       $variables['items']['previous']['text'] = $tags[1];
     }
@@ -1033,10 +1046,10 @@ function template_preprocess_views_mini_pager(&$variables) {
   }
 
   if ($pager_page_array[$element] < ($pager_total[$element] - 1)) {
-    $options = array(
+    $options = [
       'query' => pager_query_add_page($parameters, $element, $pager_page_array[$element] + 1),
-    );
-    $variables['items']['next']['href'] = \Drupal::url('<current>', [], $options);
+    ];
+    $variables['items']['next']['href'] = Url::fromRoute('<current>', [], $options)->toString();
     if (isset($tags[3])) {
       $variables['items']['next']['text'] = $tags[3];
     }

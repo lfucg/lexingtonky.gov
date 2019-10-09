@@ -3,7 +3,7 @@
 namespace Drupal\Tests\Core\EventSubscriber;
 
 use Drupal\Tests\UnitTestCase;
-use \Drupal\Core\EventSubscriber\PsrResponseSubscriber;
+use Drupal\Core\EventSubscriber\PsrResponseSubscriber;
 
 /**
  * @coversDefaultClass \Drupal\Core\EventSubscriber\PsrResponseSubscriber
@@ -54,7 +54,6 @@ class PsrResponseSubscriberTest extends UnitTestCase {
     $this->psrResponseSubscriber->onKernelView($event);
   }
 
-
   /**
    * Tests altering and finished event.
    *
@@ -77,10 +76,10 @@ class PsrResponseSubscriberTest extends UnitTestCase {
    * Sets up an alias event that return $controllerResult.
    *
    * @param mixed $controller_result
-   *    The return Object.
+   *   The return Object.
    *
    * @return \Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent|\PHPUnit_Framework_MockObject_MockObject
-   *    A mock object to test.
+   *   A mock object to test.
    */
   protected function createEventMock($controller_result) {
     $event = $this->getMock('Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent', [], [], '', NULL);

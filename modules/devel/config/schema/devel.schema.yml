@@ -28,6 +28,16 @@ devel.settings:
       type: string
       label: 'Devel variable dumper'
 
+devel.toolbar.settings:
+  type: config_object
+  label: 'Devel Toolbar settings'
+  mapping:
+    toolbar_items:
+      type: sequence
+      label: 'Toolbar items'
+      sequence:
+        type: string
+
 block.settings.devel_switch_user:
   type: block_settings
   label: 'Switch user block'

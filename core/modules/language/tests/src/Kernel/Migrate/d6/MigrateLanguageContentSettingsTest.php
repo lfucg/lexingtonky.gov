@@ -16,7 +16,7 @@ class MigrateLanguageContentSettingsTest extends MigrateDrupal6TestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'text', 'language', 'content_translation'];
+  public static $modules = ['node', 'text', 'language', 'content_translation', 'menu_ui'];
 
   /**
    * {@inheritdoc}
@@ -25,6 +25,7 @@ class MigrateLanguageContentSettingsTest extends MigrateDrupal6TestBase {
     parent::setUp();
 
     $this->installConfig(['node']);
+    $this->installEntitySchema('node');
     $this->executeMigrations(['d6_node_type', 'd6_language_content_settings']);
   }
 

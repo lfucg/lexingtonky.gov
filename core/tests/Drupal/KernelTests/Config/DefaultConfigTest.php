@@ -6,6 +6,7 @@ use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Config\InstallStorage;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\KernelTests\AssertConfigTrait;
+use Drupal\KernelTests\FileSystemModuleDiscoveryDataProviderTrait;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -16,6 +17,7 @@ use Drupal\KernelTests\KernelTestBase;
 class DefaultConfigTest extends KernelTestBase {
 
   use AssertConfigTrait;
+  use FileSystemModuleDiscoveryDataProviderTrait;
 
   /**
    * {@inheritdoc}
@@ -30,7 +32,7 @@ class DefaultConfigTest extends KernelTestBase {
   /**
    * The following config entries are changed on module install.
    *
-   * Compare them does not make sense.
+   * Comparing them does not make sense.
    *
    * @todo Figure out why simpletest.settings is not installed.
    *
@@ -43,25 +45,9 @@ class DefaultConfigTest extends KernelTestBase {
   ];
 
   /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-
-    // @todo ModuleInstaller calls system_rebuild_module_data which is part of
-    //   system.module, see https://www.drupal.org/node/2208429.
-    include_once $this->root . '/core/modules/system/system.module';
-
-    // Set up the state values so we know where to find the files when running
-    // drupal_get_filename().
-    // @todo Remove as part of https://www.drupal.org/node/2186491
-    system_rebuild_module_data();
-  }
-
-  /**
    * Tests if installed config is equal to the exported config.
    *
-   * @dataProvider providerTestModuleConfig
+   * @dataProvider coreModuleListDataProvider
    */
   public function testModuleConfig($module) {
     // System and user are required in order to be able to install some of the
@@ -79,14 +65,8 @@ class DefaultConfigTest extends KernelTestBase {
     /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
     $module_installer = $this->container->get('module_installer');
 
-    // @todo https://www.drupal.org/node/2308745 Rest has an implicit dependency
-    //   on the Node module remove once solved.
-    if (in_array($module, ['rest', 'hal'])) {
-      $module_installer->install(['node']);
-    }
-
     // Work out any additional modules and themes that need installing to create
-    // and optional config.
+    // an optional config.
     $optional_config_storage = new FileStorage($module_path . InstallStorage::CONFIG_OPTIONAL_DIRECTORY, StorageInterface::DEFAULT_COLLECTION);
     $modules_to_install = [$module];
     $themes_to_install = [];
@@ -130,7 +110,7 @@ class DefaultConfigTest extends KernelTestBase {
         // recalculation of dependencies does not cause config change.
         if ($entity_type = $config_manager->getEntityTypeIdByName($config_name)) {
           $entity_storage = $config_manager
-            ->getEntityManager()
+            ->getEntityTypeManager()
             ->getStorage($entity_type);
           $id = $entity_storage->getIDFromConfigName($config_name, $entity_storage->getEntityType()
             ->getConfigPrefix());
@@ -140,26 +120,6 @@ class DefaultConfigTest extends KernelTestBase {
         $this->assertConfigDiff($result, $config_name, static::$skippedConfig);
       }
     }
-  }
-
-  /**
-   * Test data provider for ::testModuleConfig().
-   *
-   * @return array
-   *   An array of module names to test.
-   */
-  public function providerTestModuleConfig() {
-    $module_dirs = array_keys(iterator_to_array(new \FilesystemIterator(__DIR__ . '/../../../../modules/')));
-    $module_names = array_map(function($path) {
-      return str_replace(__DIR__ . '/../../../../modules/', '', $path);
-    }, $module_dirs);
-    $modules_keyed = array_combine($module_names, $module_names);
-
-    $data = array_map(function ($module) {
-      return [$module];
-    }, $modules_keyed);
-
-    return $data;
   }
 
 }

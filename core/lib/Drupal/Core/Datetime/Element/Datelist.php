@@ -19,22 +19,22 @@ class Datelist extends DateElementBase {
    */
   public function getInfo() {
     $class = get_class($this);
-    return array(
+    return [
       '#input' => TRUE,
-      '#element_validate' => array(
-        array($class, 'validateDatelist'),
-      ),
-      '#process' => array(
-        array($class, 'processDatelist'),
-      ),
+      '#element_validate' => [
+        [$class, 'validateDatelist'],
+      ],
+      '#process' => [
+        [$class, 'processDatelist'],
+      ],
       '#theme' => 'datetime_form',
-      '#theme_wrappers' => array('datetime_wrapper'),
-      '#date_part_order' => array('year', 'month', 'day', 'hour', 'minute'),
+      '#theme_wrappers' => ['datetime_wrapper'],
+      '#date_part_order' => ['year', 'month', 'day', 'hour', 'minute'],
       '#date_year_range' => '1900:2050',
       '#date_increment' => 1,
-      '#date_date_callbacks' => array(),
-      '#date_timezone' => '',
-    );
+      '#date_date_callbacks' => [],
+      '#date_timezone' => drupal_get_user_timezone(),
+    ];
   }
 
   /**
@@ -60,9 +60,8 @@ class Datelist extends DateElementBase {
           }
           unset($input['ampm']);
         }
-        $timezone = !empty($element['#date_timezone']) ? $element['#date_timezone'] : NULL;
         try {
-          $date = DrupalDateTime::createFromArray($input, $timezone);
+          $date = DrupalDateTime::createFromArray($input, $element['#date_timezone']);
         }
         catch (\Exception $e) {
           $form_state->setError($element, t('Selected combination of day and month is not valid.'));
@@ -77,6 +76,7 @@ class Datelist extends DateElementBase {
       if (!empty($element['#default_value'])) {
         $date = $element['#default_value'];
         if ($date instanceof DrupalDateTime && !$date->hasErrors()) {
+          $date->setTimezone(new \DateTimeZone($element['#date_timezone']));
           static::incrementRound($date, $increment);
           foreach ($parts as $part) {
             switch ($part) {
@@ -147,12 +147,8 @@ class Datelist extends DateElementBase {
    *   - #date_increment: The increment to use for minutes and seconds, i.e.
    *     '15' would show only :00, :15, :30 and :45. Defaults to 1 to show every
    *     minute.
-   *   - #date_timezone: The local timezone to use when creating dates. Generally
-   *     this should be left empty and it will be set correctly for the user using
-   *     the form. Useful if the default value is empty to designate a desired
-   *     timezone for dates created in form processing. If a default date is
-   *     provided, this value will be ignored, the timezone in the default date
-   *     takes precedence. Defaults to the value returned by
+   *   - #date_timezone: The local timezone to use when displaying or
+   *     interpreting dates. Defaults to the value returned by
    *     drupal_get_user_timezone().
    *
    * Example usage:
@@ -183,22 +179,11 @@ class Datelist extends DateElementBase {
     // The value callback has populated the #value array.
     $date = !empty($element['#value']['object']) ? $element['#value']['object'] : NULL;
 
-    // Set a fallback timezone.
-    if ($date instanceof DrupalDateTime) {
-      $element['#date_timezone'] = $date->getTimezone()->getName();
-    }
-    elseif (!empty($element['#timezone'])) {
-      $element['#date_timezone'] = $element['#date_timezone'];
-    }
-    else {
-      $element['#date_timezone'] = drupal_get_user_timezone();
-    }
-
     $element['#tree'] = TRUE;
 
     // Determine the order of the date elements.
-    $order = !empty($element['#date_part_order']) ? $element['#date_part_order'] : array('year', 'month', 'day');
-    $text_parts = !empty($element['#date_text_parts']) ? $element['#date_text_parts'] : array();
+    $order = !empty($element['#date_part_order']) ? $element['#date_part_order'] : ['year', 'month', 'day'];
+    $text_parts = !empty($element['#date_text_parts']) ? $element['#date_text_parts'] : [];
 
     // Output multi-selector for date.
     foreach ($order as $part) {
@@ -248,7 +233,7 @@ class Datelist extends DateElementBase {
 
         default:
           $format = '';
-          $options = array();
+          $options = [];
           $title = '';
       }
 
@@ -259,7 +244,7 @@ class Datelist extends DateElementBase {
       }
 
       $element['#attributes']['title'] = $title;
-      $element[$part] = array(
+      $element[$part] = [
         '#type' => in_array($part, $text_parts) ? 'textfield' : 'select',
         '#title' => $title,
         '#title_display' => 'invisible',
@@ -269,7 +254,7 @@ class Datelist extends DateElementBase {
         '#required' => $element['#required'],
         '#error_no_message' => FALSE,
         '#empty_option' => $title,
-      );
+      ];
     }
 
     // Allows custom callbacks to alter the element.
@@ -302,6 +287,8 @@ class Datelist extends DateElementBase {
   public static function validateDatelist(&$element, FormStateInterface $form_state, &$complete_form) {
     $input_exists = FALSE;
     $input = NestedArray::getValue($form_state->getValues(), $element['#parents'], $input_exists);
+    $title = static::getElementTitle($element, $complete_form);
+
     if ($input_exists) {
       $all_empty = static::checkEmptyInputs($input, $element['#date_part_order']);
 
@@ -311,11 +298,12 @@ class Datelist extends DateElementBase {
       }
       // If there's empty input and the field is required, set an error.
       elseif (empty($input['year']) && empty($input['month']) && empty($input['day']) && $element['#required']) {
-        $form_state->setError($element, t('The %field date is required.'));
+        $form_state->setError($element, t('The %field date is required.', ['%field' => $title]));
       }
       elseif (!empty($all_empty)) {
         foreach ($all_empty as $value) {
-          $form_state->setError($element[$value], t('A value must be selected for %part.', array('%part' => $value)));
+          $form_state->setError($element, t('The %field date is incomplete.', ['%field' => $title]));
+          $form_state->setError($element[$value], t('A value must be selected for %part.', ['%part' => $value]));
         }
       }
       else {
@@ -326,7 +314,7 @@ class Datelist extends DateElementBase {
         }
         // If the input is invalid and an error doesn't exist, set one.
         elseif ($form_state->getError($element) === NULL) {
-          $form_state->setError($element, t('The %field date is invalid.', array('%field' => !empty($element['#title']) ? $element['#title'] : '')));
+          $form_state->setError($element, t('The %field date is invalid.', ['%field' => $title]));
         }
       }
     }

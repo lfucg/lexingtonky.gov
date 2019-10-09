@@ -10,6 +10,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\Tests\field\Kernel\FieldKernelTestBase;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
+use Drupal\user\Entity\Role;
 
 /**
  * Tests using entity fields of the file field type.
@@ -23,7 +24,7 @@ class FileItemTest extends FieldKernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('file');
+  public static $modules = ['file'];
 
   /**
    * Created file entity.
@@ -42,21 +43,29 @@ class FileItemTest extends FieldKernelTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->installEntitySchema('file');
-    $this->installSchema('file', array('file_usage'));
+    $this->installEntitySchema('user');
+    $this->installConfig(['user']);
+    // Give anonymous users permission to access content, so they can view and
+    // download public files.
+    $anonymous_role = Role::load(Role::ANONYMOUS_ID);
+    $anonymous_role->grantPermission('access content');
+    $anonymous_role->save();
 
-    FieldStorageConfig::create(array(
+    $this->installEntitySchema('file');
+    $this->installSchema('file', ['file_usage']);
+
+    FieldStorageConfig::create([
       'field_name' => 'file_test',
       'entity_type' => 'entity_test',
       'type' => 'file',
       'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
-    ))->save();
+    ])->save();
     $this->directory = $this->getRandomGenerator()->name(8);
     FieldConfig::create([
       'entity_type' => 'entity_test',
       'field_name' => 'file_test',
       'bundle' => 'entity_test',
-      'settings' => array('file_directory' => $this->directory),
+      'settings' => ['file_directory' => $this->directory],
     ])->save();
     file_put_contents('public://example.txt', $this->randomMachineName());
     $this->file = File::create([
@@ -90,7 +99,6 @@ class FileItemTest extends FieldKernelTestBase {
     $this->assertEqual($entity->file_test->display, 1);
     $this->assertEqual($entity->file_test->description, $description);
     $this->assertEqual($entity->file_test->entity->getFileUri(), $this->file->getFileUri());
-    $this->assertEqual($entity->file_test->entity->url(), $url = file_create_url($this->file->getFileUri()));
     $this->assertEqual($entity->file_test->entity->id(), $this->file->id());
     $this->assertEqual($entity->file_test->entity->uuid(), $this->file->uuid());
 
@@ -131,7 +139,7 @@ class FileItemTest extends FieldKernelTestBase {
       'weight' => 1,
     ])->save();
     $entity = EntityTest::create();
-    $entity->file_test = array('entity' => $file3);
+    $entity->file_test = ['entity' => $file3];
     $uri = $file3->getFileUri();
     $output = entity_view($entity, 'default');
     \Drupal::service('renderer')->renderRoot($output);

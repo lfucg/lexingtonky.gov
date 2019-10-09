@@ -3,8 +3,10 @@
 namespace Drupal\editor\Plugin\Filter;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\file\FileInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\filter\Plugin\FilterBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,13 +24,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class EditorFileReference extends FilterBase implements ContainerFactoryPluginInterface {
+  use DeprecatedServicePropertyTrait;
 
   /**
-   * An entity manager object.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * {@inheritdoc}
    */
-  protected $entityManager;
+  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
+
+  /**
+   * The entity repository.
+   *
+   * @var \Drupal\Core\Entity\EntityRepositoryInterface
+   */
+  protected $entityRepository;
 
   /**
    * Constructs a \Drupal\editor\Plugin\Filter\EditorFileReference object.
@@ -39,23 +47,23 @@ class EditorFileReference extends FilterBase implements ContainerFactoryPluginIn
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   An entity manager object.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager) {
-    $this->entityManager = $entity_manager;
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityRepositoryInterface $entity_repository) {
+    $this->entityRepository = $entity_repository;
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
    * {@inheritdoc}
    */
-  static public function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.manager')
+      $container->get('entity.repository')
     );
   }
 
@@ -68,16 +76,16 @@ class EditorFileReference extends FilterBase implements ContainerFactoryPluginIn
     if (stristr($text, 'data-entity-type="file"') !== FALSE) {
       $dom = Html::load($text);
       $xpath = new \DOMXPath($dom);
-      $processed_uuids = array();
+      $processed_uuids = [];
       foreach ($xpath->query('//*[@data-entity-type="file" and @data-entity-uuid]') as $node) {
         $uuid = $node->getAttribute('data-entity-uuid');
 
         // If there is a 'src' attribute, set it to the file entity's current
         // URL. This ensures the URL works even after the file location changes.
         if ($node->hasAttribute('src')) {
-          $file = $this->entityManager->loadEntityByUuid('file', $uuid);
-          if ($file) {
-            $node->setAttribute('src', file_url_transform_relative(file_create_url($file->getFileUri())));
+          $file = $this->entityRepository->loadEntityByUuid('file', $uuid);
+          if ($file instanceof FileInterface) {
+            $node->setAttribute('src', $file->createFileUrl());
           }
         }
 
@@ -85,8 +93,8 @@ class EditorFileReference extends FilterBase implements ContainerFactoryPluginIn
         if (!isset($processed_uuids[$uuid])) {
           $processed_uuids[$uuid] = TRUE;
 
-          $file = $this->entityManager->loadEntityByUuid('file', $uuid);
-          if ($file) {
+          $file = $this->entityRepository->loadEntityByUuid('file', $uuid);
+          if ($file instanceof FileInterface) {
             $result->addCacheTags($file->getCacheTags());
           }
         }

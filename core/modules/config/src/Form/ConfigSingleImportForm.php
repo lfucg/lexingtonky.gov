@@ -7,10 +7,12 @@ use Drupal\config\StorageReplaceDataWrapper;
 use Drupal\Core\Config\ConfigImporter;
 use Drupal\Core\Config\ConfigImporterException;
 use Drupal\Core\Config\ConfigManagerInterface;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Config\StorageComparer;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\ModuleInstallerInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
@@ -25,15 +27,26 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Provides a form for importing a single configuration file.
+ *
+ * @internal
  */
 class ConfigSingleImportForm extends ConfirmFormBase {
 
+  use DeprecatedServicePropertyTrait;
+
   /**
-   * The entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * {@inheritdoc}
    */
-  protected $entityManager;
+  protected $deprecatedProperties = [
+    'entityManager' => 'entity.manager',
+  ];
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
 
   /**
    * The config storage.
@@ -59,7 +72,7 @@ class ConfigSingleImportForm extends ConfirmFormBase {
   /**
    * The configuration manager.
    *
-   * @var \Drupal\Core\Config\ConfigManagerInterface;
+   * @var \Drupal\Core\Config\ConfigManagerInterface
    */
   protected $configManager;
 
@@ -110,13 +123,13 @@ class ConfigSingleImportForm extends ConfirmFormBase {
    *
    * @var array
    */
-  protected $data = array();
+  protected $data = [];
 
   /**
    * Constructs a new ConfigSingleImportForm.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\Core\Config\StorageInterface $config_storage
    *   The config storage.
    * @param \Drupal\Core\Render\RendererInterface $renderer
@@ -136,8 +149,8 @@ class ConfigSingleImportForm extends ConfirmFormBase {
    * @param \Drupal\Core\Extension\ThemeHandlerInterface $theme_handler
    *   The theme handler.
    */
-  public function __construct(EntityManagerInterface $entity_manager, StorageInterface $config_storage, RendererInterface $renderer, EventDispatcherInterface $event_dispatcher, ConfigManagerInterface $config_manager, LockBackendInterface $lock, TypedConfigManagerInterface $typed_config, ModuleHandlerInterface $module_handler, ModuleInstallerInterface $module_installer, ThemeHandlerInterface $theme_handler) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, StorageInterface $config_storage, RendererInterface $renderer, EventDispatcherInterface $event_dispatcher, ConfigManagerInterface $config_manager, LockBackendInterface $lock, TypedConfigManagerInterface $typed_config, ModuleHandlerInterface $module_handler, ModuleInstallerInterface $module_installer, ThemeHandlerInterface $theme_handler) {
+    $this->entityTypeManager = $entity_type_manager;
     $this->configStorage = $config_storage;
     $this->renderer = $renderer;
 
@@ -156,7 +169,7 @@ class ConfigSingleImportForm extends ConfirmFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('config.storage'),
       $container->get('renderer'),
       $container->get('event_dispatcher'),
@@ -192,15 +205,15 @@ class ConfigSingleImportForm extends ConfirmFormBase {
       $type = $this->t('simple configuration');
     }
     else {
-      $definition = $this->entityManager->getDefinition($this->data['config_type']);
+      $definition = $this->entityTypeManager->getDefinition($this->data['config_type']);
       $name = $this->data['import'][$definition->getKey('id')];
       $type = $definition->getLowercaseLabel();
     }
 
-    $args = array(
+    $args = [
       '%name' => $name,
       '@type' => strtolower($type),
-    );
+    ];
     if ($this->configExists) {
       $question = $this->t('Are you sure you want to update the %name @type?', $args);
     }
@@ -219,57 +232,57 @@ class ConfigSingleImportForm extends ConfirmFormBase {
       return parent::buildForm($form, $form_state);
     }
 
-    $entity_types = array();
-    foreach ($this->entityManager->getDefinitions() as $entity_type => $definition) {
-      if ($definition->isSubclassOf('Drupal\Core\Config\Entity\ConfigEntityInterface')) {
+    $entity_types = [];
+    foreach ($this->entityTypeManager->getDefinitions() as $entity_type => $definition) {
+      if ($definition->entityClassImplements(ConfigEntityInterface::class)) {
         $entity_types[$entity_type] = $definition->getLabel();
       }
     }
     // Sort the entity types by label, then add the simple config to the top.
     uasort($entity_types, 'strnatcasecmp');
-    $config_types = array(
+    $config_types = [
       'system.simple' => $this->t('Simple configuration'),
-    ) + $entity_types;
-    $form['config_type'] = array(
+    ] + $entity_types;
+    $form['config_type'] = [
       '#title' => $this->t('Configuration type'),
       '#type' => 'select',
       '#options' => $config_types,
       '#required' => TRUE,
-    );
-    $form['config_name'] = array(
+    ];
+    $form['config_name'] = [
       '#title' => $this->t('Configuration name'),
       '#description' => $this->t('Enter the name of the configuration file without the <em>.yml</em> extension. (e.g. <em>system.site</em>)'),
       '#type' => 'textfield',
-      '#states' => array(
-        'required' => array(
-          ':input[name="config_type"]' => array('value' => 'system.simple'),
-        ),
-        'visible' => array(
-          ':input[name="config_type"]' => array('value' => 'system.simple'),
-        ),
-      ),
-    );
-    $form['import'] = array(
+      '#states' => [
+        'required' => [
+          ':input[name="config_type"]' => ['value' => 'system.simple'],
+        ],
+        'visible' => [
+          ':input[name="config_type"]' => ['value' => 'system.simple'],
+        ],
+      ],
+    ];
+    $form['import'] = [
       '#title' => $this->t('Paste your configuration here'),
       '#type' => 'textarea',
       '#rows' => 24,
       '#required' => TRUE,
-    );
-    $form['advanced'] = array(
+    ];
+    $form['advanced'] = [
       '#type' => 'details',
       '#title' => $this->t('Advanced'),
-    );
-    $form['advanced']['custom_entity_id'] = array(
+    ];
+    $form['advanced']['custom_entity_id'] = [
       '#title' => $this->t('Custom Entity ID'),
       '#type' => 'textfield',
       '#description' => $this->t('Specify a custom entity ID. This will override the entity ID in the configuration above.'),
-    );
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array(
+    ];
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Import'),
       '#button_type' => 'primary',
-    );
+    ];
     return $form;
   }
 
@@ -292,7 +305,7 @@ class ConfigSingleImportForm extends ConfirmFormBase {
 
     // Validate for config entities.
     if ($form_state->getValue('config_type') !== 'system.simple') {
-      $definition = $this->entityManager->getDefinition($form_state->getValue('config_type'));
+      $definition = $this->entityTypeManager->getDefinition($form_state->getValue('config_type'));
       $id_key = $definition->getKey('id');
 
       // If a custom entity ID is specified, override the value in the
@@ -301,10 +314,10 @@ class ConfigSingleImportForm extends ConfirmFormBase {
         $data[$id_key] = $form_state->getValue('custom_entity_id');
       }
 
-      $entity_storage = $this->entityManager->getStorage($form_state->getValue('config_type'));
+      $entity_storage = $this->entityTypeManager->getStorage($form_state->getValue('config_type'));
       // If an entity ID was not specified, set an error.
       if (!isset($data[$id_key])) {
-        $form_state->setErrorByName('import', $this->t('Missing ID key "@id_key" for this @entity_type import.', array('@id_key' => $id_key, '@entity_type' => $definition->getLabel())));
+        $form_state->setErrorByName('import', $this->t('Missing ID key "@id_key" for this @entity_type import.', ['@id_key' => $id_key, '@entity_type' => $definition->getLabel()]));
         return;
       }
 
@@ -322,7 +335,7 @@ class ConfigSingleImportForm extends ConfirmFormBase {
         }
       }
       // If there is no entity with a matching ID, check for a UUID match.
-      elseif (isset($data['uuid']) && $entity_storage->loadByProperties(array('uuid' => $data['uuid']))) {
+      elseif (isset($data['uuid']) && $entity_storage->loadByProperties(['uuid' => $data['uuid']])) {
         $form_state->setErrorByName('import', $this->t('An entity with this UUID already exists but the machine name does not match.'));
       }
     }
@@ -336,11 +349,7 @@ class ConfigSingleImportForm extends ConfirmFormBase {
     if (!$form_state->getErrors()) {
       $source_storage = new StorageReplaceDataWrapper($this->configStorage);
       $source_storage->replaceData($config_name, $data);
-      $storage_comparer = new StorageComparer(
-        $source_storage,
-        $this->configStorage,
-        $this->configManager
-      );
+      $storage_comparer = new StorageComparer($source_storage, $this->configStorage);
 
       if (!$storage_comparer->createChangelist()->hasChanges()) {
         $form_state->setErrorByName('import', $this->t('There are no changes to import.'));
@@ -392,7 +401,7 @@ class ConfigSingleImportForm extends ConfirmFormBase {
     /** @var \Drupal\Core\Config\ConfigImporter $config_importer */
     $config_importer = $form_state->get('config_importer');
     if ($config_importer->alreadyImporting()) {
-      drupal_set_message($this->t('Another request may be importing configuration already.'), 'error');
+      $this->messenger()->addError($this->t('Another request may be importing configuration already.'));
     }
     else {
       try {
@@ -413,9 +422,9 @@ class ConfigSingleImportForm extends ConfirmFormBase {
       }
       catch (ConfigImporterException $e) {
         // There are validation errors.
-        drupal_set_message($this->t('The configuration import failed for the following reasons:'), 'error');
+        $this->messenger()->addError($this->t('The configuration import failed for the following reasons:'));
         foreach ($config_importer->getErrors() as $message) {
-          drupal_set_message($message, 'error');
+          $this->messenger()->addError($message);
         }
       }
     }

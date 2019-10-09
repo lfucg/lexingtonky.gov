@@ -1,0 +1,27 @@
+uuid: 7471d478-8de6-47a4-95ca-251898d1e4e7
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_local_tasks
+theme: bootstrap_barrio
+region: breadcrumb
+weight: -24
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  provider: core
+  label_display: '0'
+  primary: true
+  secondary: true
+visibility:
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/browse/*"
+    negate: true
+    context_mapping: {  }

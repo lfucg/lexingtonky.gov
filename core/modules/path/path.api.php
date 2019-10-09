@@ -15,16 +15,16 @@
  *
  * @param array $path
  *   The array structure is identical to that of the return value of
- *   \Drupal\Core\Path\PathInterface::save().
+ *   \Drupal\Core\Path\AliasStorageInterface::save().
  *
- * @see \Drupal\Core\Path\PathInterface::save()
+ * @see \Drupal\Core\Path\AliasStorageInterface::save()
  */
 function hook_path_insert($path) {
-  db_insert('mytable')
-    ->fields(array(
+  \Drupal::database()->insert('mytable')
+    ->fields([
       'alias' => $path['alias'],
       'pid' => $path['pid'],
-    ))
+    ])
     ->execute();
 }
 
@@ -33,14 +33,14 @@ function hook_path_insert($path) {
  *
  * @param array $path
  *   The array structure is identical to that of the return value of
- *   \Drupal\Core\Path\PathInterface::save().
+ *   \Drupal\Core\Path\AliasStorageInterface::save().
  *
- * @see \Drupal\Core\Path\PathInterface::save()
+ * @see \Drupal\Core\Path\AliasStorageInterface::save()
  */
 function hook_path_update($path) {
   if ($path['alias'] != $path['original']['alias']) {
-    db_update('mytable')
-      ->fields(array('alias' => $path['alias']))
+    \Drupal::database()->update('mytable')
+      ->fields(['alias' => $path['alias']])
       ->condition('pid', $path['pid'])
       ->execute();
   }
@@ -51,12 +51,12 @@ function hook_path_update($path) {
  *
  * @param array $path
  *   The array structure is identical to that of the return value of
- *   \Drupal\Core\Path\PathInterface::save().
+ *   \Drupal\Core\Path\AliasStorageInterface::save().
  *
- * @see \Drupal\Core\Path\PathInterface::delete()
+ * @see \Drupal\Core\Path\AliasStorageInterface::delete()
  */
 function hook_path_delete($path) {
-  db_delete('mytable')
+  \Drupal::database()->delete('mytable')
     ->condition('pid', $path['pid'])
     ->execute();
 }

@@ -1,0 +1,31 @@
+uuid: 7673325e-db59-48f5-b4f8-8c71e2e6e73c
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
+  module:
+    - block_content
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_inline_page_feedback_form
+theme: lex_planning_commission
+region: feedback
+weight: -25
+provider: null
+plugin: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
+settings:
+  id: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
+  label: 'Inline page feedback form'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    pages: '/contact/*'
+    negate: true
+    context_mapping: {  }

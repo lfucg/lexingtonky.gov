@@ -36,7 +36,7 @@ class EntityTestAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\entity_test\Entity\EntityTest $entity */
 
     // Always forbid access to entities with the label 'forbid_access', used for
-    // \Drupal\system\Tests\Entity\EntityAccessHControlandlerTest::testDefaultEntityAccess().
+    // \Drupal\system\Tests\Entity\EntityAccessControlHandlerTest::testDefaultEntityAccess().
     if ($entity->label() == 'forbid_access') {
       return AccessResult::forbidden();
     }
@@ -45,13 +45,13 @@ class EntityTestAccessControlHandler extends EntityAccessControlHandler {
       // Viewing the label of the 'entity_test_label' entity type is allowed.
       return AccessResult::allowed();
     }
-    elseif (in_array($operation, array('view', 'view label'))) {
+    elseif (in_array($operation, ['view', 'view label'])) {
       if (!$entity->isDefaultTranslation()) {
         return AccessResult::allowedIfHasPermission($account, 'view test entity translations');
       }
       return AccessResult::allowedIfHasPermission($account, 'view test entity');
     }
-    elseif (in_array($operation, array('update', 'delete'))) {
+    elseif (in_array($operation, ['update', 'delete'])) {
       return AccessResult::allowedIfHasPermission($account, 'administer entity_test content');
     }
 

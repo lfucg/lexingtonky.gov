@@ -22,10 +22,10 @@ function views_test_data_views_query_substitutions(ViewExecutable $view) {
 function views_test_data_views_form_substitutions() {
   \Drupal::state()->set('views_hook_test_views_form_substitutions', TRUE);
   $render = ['#markup' => '<em>unescaped</em>'];
-  return array(
+  return [
     '<!--will-be-escaped-->' => '<em>escaped</em>',
     '<!--will-be-not-escaped-->' => \Drupal::service('renderer')->renderPlain($render),
-  );
+  ];
 }
 
 /**
@@ -74,6 +74,11 @@ function views_test_data_placeholders() {
  */
 function views_test_data_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
   \Drupal::state()->set('views_hook_test_views_post_render', TRUE);
+  if ($view->storage->id() === 'test_page_display' && $view->current_display === 'empty_row') {
+    for ($i = 0; $i < 5; $i++) {
+      $output['#rows'][0]['#rows'][] = [];
+    }
+  }
 }
 
 /**

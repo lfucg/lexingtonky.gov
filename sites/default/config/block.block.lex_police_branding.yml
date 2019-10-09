@@ -1,0 +1,23 @@
+uuid: 251f6d41-fdaf-4744-be2c-5a71904c3d59
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_branding
+theme: lex_police
+region: notices
+weight: -5
+provider: null
+plugin: system_branding_block
+settings:
+  id: system_branding_block
+  label: 'Site branding'
+  provider: system
+  label_display: '0'
+  use_site_logo: true
+  use_site_name: true
+  use_site_slogan: true
+visibility: {  }

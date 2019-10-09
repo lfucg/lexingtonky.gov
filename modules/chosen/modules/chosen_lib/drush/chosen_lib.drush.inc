@@ -2,13 +2,13 @@
 
 /**
  * @file
- *   Drush integration for chosen.
+ * Drush integration for chosen.
  */
 
 /**
  * The Chosen plugin URI.
  */
-define('CHOSEN_DOWNLOAD_URI', 'https://github.com/harvesthq/chosen/releases/download/v1.5.0/chosen_v1.5.0.zip');
+define('CHOSEN_DOWNLOAD_URI', 'https://github.com/harvesthq/chosen/releases/download/v1.8.2/chosen_v1.8.2.zip');
 
 /**
  * Implements hook_drush_command().
@@ -17,10 +17,11 @@ function chosen_lib_drush_command() {
   $items = array();
 
   // The key in the $items array is the name of the command.
+  // No bootstrap.
   $items['chosen-plugin'] = array(
     'callback' => 'drush_chosen_lib_plugin',
     'description' => dt('Download and install the Chosen plugin.'),
-    'bootstrap' => DRUSH_BOOTSTRAP_DRUSH, // No bootstrap.
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
     'arguments' => array(
       'path' => dt('Optional. A path where to install the Chosen plugin. If omitted Drush will use the default location.'),
     ),

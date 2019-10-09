@@ -24,10 +24,9 @@ use Symfony\Component\Routing\RouteCollection;
  * - edit-form
  * - delete-form
  * - collection
+ * - delete-multiple-form
  *
  * @see \Drupal\Core\Entity\Routing\AdminHtmlRouteProvider.
- *
- * @internal
  */
 class DefaultHtmlRouteProvider implements EntityRouteProviderInterface, EntityHandlerInterface {
 
@@ -98,6 +97,10 @@ class DefaultHtmlRouteProvider implements EntityRouteProviderInterface, EntityHa
 
     if ($collection_route = $this->getCollectionRoute($entity_type)) {
       $collection->add("entity.{$entity_type_id}.collection", $collection_route);
+    }
+
+    if ($delete_multiple_route = $this->getDeleteMultipleFormRoute($entity_type)) {
+      $collection->add('entity.' . $entity_type->id() . '.delete_multiple_form', $delete_multiple_route);
     }
 
     return $collection;
@@ -255,7 +258,7 @@ class DefaultHtmlRouteProvider implements EntityRouteProviderInterface, EntityHa
       $route
         ->setDefaults([
           '_entity_form' => "{$entity_type_id}.{$operation}",
-          '_title_callback' => '\Drupal\Core\Entity\Controller\EntityController::editTitle'
+          '_title_callback' => '\Drupal\Core\Entity\Controller\EntityController::editTitle',
         ])
         ->setRequirement('_entity_access', "{$entity_type_id}.update")
         ->setOption('parameters', [
@@ -316,13 +319,16 @@ class DefaultHtmlRouteProvider implements EntityRouteProviderInterface, EntityHa
     // If the entity type does not provide an admin permission, there is no way
     // to control access, so we cannot provide a route in a sensible way.
     if ($entity_type->hasLinkTemplate('collection') && $entity_type->hasListBuilderClass() && ($admin_permission = $entity_type->getAdminPermission())) {
+      /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
+      $label = $entity_type->getCollectionLabel();
+
       $route = new Route($entity_type->getLinkTemplate('collection'));
       $route
         ->addDefaults([
           '_entity_list' => $entity_type->id(),
-          // @todo Improve this in https://www.drupal.org/node/2767025
-          '_title' => '@label entities',
-          '_title_arguments' => ['@label' => $entity_type->getLabel()],
+          '_title' => $label->getUntranslatedString(),
+          '_title_arguments' => $label->getArguments(),
+          '_title_context' => $label->getOption('context'),
         ])
         ->setRequirement('_permission', $admin_permission);
 
@@ -341,12 +347,31 @@ class DefaultHtmlRouteProvider implements EntityRouteProviderInterface, EntityHa
    *   type does not support fields.
    */
   protected function getEntityTypeIdKeyType(EntityTypeInterface $entity_type) {
-    if (!$entity_type->isSubclassOf(FieldableEntityInterface::class)) {
+    if (!$entity_type->entityClassImplements(FieldableEntityInterface::class)) {
       return NULL;
     }
 
     $field_storage_definitions = $this->entityFieldManager->getFieldStorageDefinitions($entity_type->id());
     return $field_storage_definitions[$entity_type->getKey('id')]->getType();
+  }
+
+  /**
+   * Returns the delete multiple form route.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type.
+   *
+   * @return \Symfony\Component\Routing\Route|null
+   *   The generated route, if available.
+   */
+  protected function getDeleteMultipleFormRoute(EntityTypeInterface $entity_type) {
+    if ($entity_type->hasLinkTemplate('delete-multiple-form') && $entity_type->hasHandlerClass('form', 'delete-multiple-confirm')) {
+      $route = new Route($entity_type->getLinkTemplate('delete-multiple-form'));
+      $route->setDefault('_form', $entity_type->getFormClass('delete-multiple-confirm'));
+      $route->setDefault('entity_type_id', $entity_type->id());
+      $route->setRequirement('_entity_delete_multiple_access', $entity_type->id());
+      return $route;
+    }
   }
 
 }

@@ -16,7 +16,7 @@ class TermTranslationHandler extends ContentTranslationHandler {
    */
   public function entityFormAlter(array &$form, FormStateInterface $form_state, EntityInterface $entity) {
     parent::entityFormAlter($form, $form_state, $entity);
-    $form['actions']['submit']['#submit'][] = array($this, 'entityFormSave');
+    $form['actions']['submit']['#submit'][] = [$this, 'entityFormSave'];
   }
 
   /**
@@ -26,13 +26,13 @@ class TermTranslationHandler extends ContentTranslationHandler {
    *
    * @see \Drupal\Core\Entity\EntityForm::build()
    */
-  function entityFormSave(array $form, FormStateInterface $form_state) {
+  public function entityFormSave(array $form, FormStateInterface $form_state) {
     if ($this->getSourceLangcode($form_state)) {
       $entity = $form_state->getFormObject()->getEntity();
       // We need a redirect here, otherwise we would get an access denied page,
       // since the current URL would be preserved and we would try to add a
       // translation for a language that already has a translation.
-      $form_state->setRedirectUrl($entity->urlInfo('edit-form'));
+      $form_state->setRedirectUrl($entity->toUrl('edit-form'));
     }
   }
 

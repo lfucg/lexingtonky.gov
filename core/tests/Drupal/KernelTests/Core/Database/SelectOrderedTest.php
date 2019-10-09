@@ -12,8 +12,8 @@ class SelectOrderedTest extends DatabaseTestBase {
   /**
    * Tests basic ORDER BY.
    */
-  function testSimpleSelectOrdered() {
-    $query = db_select('test');
+  public function testSimpleSelectOrdered() {
+    $query = $this->connection->select('test');
     $query->addField('test', 'name');
     $age_field = $query->addField('test', 'age', 'age');
     $query->orderBy($age_field);
@@ -33,8 +33,8 @@ class SelectOrderedTest extends DatabaseTestBase {
   /**
    * Tests multiple ORDER BY.
    */
-  function testSimpleSelectMultiOrdered() {
-    $query = db_select('test');
+  public function testSimpleSelectMultiOrdered() {
+    $query = $this->connection->select('test');
     $query->addField('test', 'name');
     $age_field = $query->addField('test', 'age', 'age');
     $job_field = $query->addField('test', 'job');
@@ -43,12 +43,12 @@ class SelectOrderedTest extends DatabaseTestBase {
     $result = $query->execute();
 
     $num_records = 0;
-    $expected = array(
-      array('Ringo', 28, 'Drummer'),
-      array('John', 25, 'Singer'),
-      array('George', 27, 'Singer'),
-      array('Paul', 26, 'Songwriter'),
-    );
+    $expected = [
+      ['Ringo', 28, 'Drummer'],
+      ['John', 25, 'Singer'],
+      ['George', 27, 'Singer'],
+      ['Paul', 26, 'Songwriter'],
+    ];
     $results = $result->fetchAll(\PDO::FETCH_NUM);
     foreach ($expected as $k => $record) {
       $num_records++;
@@ -64,8 +64,8 @@ class SelectOrderedTest extends DatabaseTestBase {
   /**
    * Tests ORDER BY descending.
    */
-  function testSimpleSelectOrderedDesc() {
-    $query = db_select('test');
+  public function testSimpleSelectOrderedDesc() {
+    $query = $this->connection->select('test');
     $query->addField('test', 'name');
     $age_field = $query->addField('test', 'age', 'age');
     $query->orderBy($age_field, 'DESC');

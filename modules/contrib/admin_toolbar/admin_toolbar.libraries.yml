@@ -1,0 +1,21 @@
+toolbar.tree:
+  css:
+    theme:
+      css/admin.toolbar.css: {}
+  js:
+    js/jquery.hoverIntent.js: {}
+    js/admin_toolbar.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+search:
+  css:
+    theme:
+      css/admin.toolbar_search.css: {}
+  js:
+    js/admin_toolbar_search.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/jquery.once
+    - core/jquery.ui.autocomplete

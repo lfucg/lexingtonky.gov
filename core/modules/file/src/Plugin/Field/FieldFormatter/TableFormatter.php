@@ -15,39 +15,41 @@ use Drupal\Core\Field\FieldItemListInterface;
  *   }
  * )
  */
-class TableFormatter extends FileFormatterBase {
+class TableFormatter extends DescriptionAwareFileFormatterBase {
 
   /**
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = array();
+    $elements = [];
 
     if ($files = $this->getEntitiesToView($items, $langcode)) {
-      $header = array(t('Attachment'), t('Size'));
-      $rows = array();
+      $header = [t('Attachment'), t('Size')];
+      $rows = [];
       foreach ($files as $delta => $file) {
-        $rows[] = array(
-          array(
-            'data' => array(
+        $item = $file->_referringItem;
+        $rows[] = [
+          [
+            'data' => [
               '#theme' => 'file_link',
               '#file' => $file,
-              '#cache' => array(
+              '#description' => $this->getSetting('use_description_as_link_text') ? $item->description : NULL,
+              '#cache' => [
                 'tags' => $file->getCacheTags(),
-              ),
-            ),
-          ),
-          array('data' => format_size($file->getSize())),
-        );
+              ],
+            ],
+          ],
+          ['data' => format_size($file->getSize())],
+        ];
       }
 
-      $elements[0] = array();
+      $elements[0] = [];
       if (!empty($rows)) {
-        $elements[0] = array(
+        $elements[0] = [
           '#theme' => 'table__file_formatter_table',
           '#header' => $header,
           '#rows' => $rows,
-        );
+        ];
       }
     }
 

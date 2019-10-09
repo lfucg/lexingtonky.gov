@@ -84,7 +84,7 @@ function hook_path_alias_types_alter(array &$definitions) {
 function hook_pathauto_is_alias_reserved($alias, $source, $langcode) {
   // Check our module's list of paths and return TRUE if $alias matches any of
   // them.
-  return (bool) db_query("SELECT 1 FROM {mytable} WHERE path = :path", array(':path' => $alias))->fetchField();
+  return (bool) \Drupal::database()->query("SELECT 1 FROM {mytable} WHERE path = :path", [':path' => $alias])->fetchField();
 }
 
 /**

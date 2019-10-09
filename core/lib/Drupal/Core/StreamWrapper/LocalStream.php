@@ -52,19 +52,19 @@ abstract class LocalStream implements StreamWrapperInterface {
    * @return string
    *   String specifying the path.
    */
-  abstract function getDirectoryPath();
+  abstract public function getDirectoryPath();
 
   /**
    * {@inheritdoc}
    */
-  function setUri($uri) {
+  public function setUri($uri) {
     $this->uri = $uri;
   }
 
   /**
    * {@inheritdoc}
    */
-  function getUri() {
+  public function getUri() {
     return $this->uri;
   }
 
@@ -98,7 +98,7 @@ abstract class LocalStream implements StreamWrapperInterface {
   /**
    * {@inheritdoc}
    */
-  function realpath() {
+  public function realpath() {
     return $this->getLocalPath();
   }
 
@@ -134,7 +134,7 @@ abstract class LocalStream implements StreamWrapperInterface {
     $realpath = realpath($path);
     if (!$realpath) {
       // This file does not yet exist.
-      $realpath = realpath(dirname($path)) . '/' . drupal_basename($path);
+      $realpath = realpath(dirname($path)) . '/' . \Drupal::service('file_system')->basename($path);
     }
     $directory = realpath($this->getDirectoryPath());
     if (!$realpath || !$directory || strpos($realpath, $directory) !== 0) {
@@ -189,7 +189,7 @@ abstract class LocalStream implements StreamWrapperInterface {
    * @see http://php.net/manual/streamwrapper.stream-lock.php
    */
   public function stream_lock($operation) {
-    if (in_array($operation, array(LOCK_SH, LOCK_EX, LOCK_UN, LOCK_NB))) {
+    if (in_array($operation, [LOCK_SH, LOCK_EX, LOCK_UN, LOCK_NB])) {
       return flock($this->handle, $operation);
     }
 
@@ -380,7 +380,7 @@ abstract class LocalStream implements StreamWrapperInterface {
   /**
    * Support for rename().
    *
-   * @param string $from_uri,
+   * @param string $from_uri
    *   The URI to the file to rename.
    * @param string $to_uri
    *   The new URI for file.
@@ -397,9 +397,9 @@ abstract class LocalStream implements StreamWrapperInterface {
   /**
    * Gets the name of the directory from a given path.
    *
-   * This method is usually accessed through drupal_dirname(), which wraps
-   * around the PHP dirname() function because it does not support stream
-   * wrappers.
+   * This method is usually accessed through
+   * \Drupal\Core\File\FileSystemInterface::dirname(), which wraps around the
+   * PHP dirname() function because it does not support stream wrappers.
    *
    * @param string $uri
    *   A URI or path.
@@ -407,7 +407,7 @@ abstract class LocalStream implements StreamWrapperInterface {
    * @return string
    *   A string containing the directory name.
    *
-   * @see drupal_dirname()
+   * @see \Drupal\Core\File\FileSystemInterface::dirname()
    */
   public function dirname($uri = NULL) {
     list($scheme) = explode('://', $uri, 2);
@@ -447,11 +447,13 @@ abstract class LocalStream implements StreamWrapperInterface {
     else {
       $localpath = $this->getLocalPath($uri);
     }
+    /** @var \Drupal\Core\File\FileSystemInterface $file_system */
+    $file_system = \Drupal::service('file_system');
     if ($options & STREAM_REPORT_ERRORS) {
-      return drupal_mkdir($localpath, $mode, $recursive);
+      return $file_system->mkdir($localpath, $mode, $recursive);
     }
     else {
-      return @drupal_mkdir($localpath, $mode, $recursive);
+      return @$file_system->mkdir($localpath, $mode, $recursive);
     }
   }
 
@@ -470,11 +472,13 @@ abstract class LocalStream implements StreamWrapperInterface {
    */
   public function rmdir($uri, $options) {
     $this->uri = $uri;
+    /** @var \Drupal\Core\File\FileSystemInterface $file_system */
+    $file_system = \Drupal::service('file_system');
     if ($options & STREAM_REPORT_ERRORS) {
-      return drupal_rmdir($this->getLocalPath());
+      return $file_system->rmdir($this->getLocalPath());
     }
     else {
-      return @drupal_rmdir($this->getLocalPath());
+      return @$file_system->rmdir($this->getLocalPath());
     }
   }
 

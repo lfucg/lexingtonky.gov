@@ -199,9 +199,7 @@ function pathauto_update_8100() {
           ]);
 
           // Add the context relationship for this language.
-          $new_definition = new ContextDefinition('language', 'Language');
-          $new_context = new Context($new_definition);
-          $pattern->addContext($language_mapping, $new_context);
+          $pattern->addRelationship($language_mapping, 'Language');
 
           $pattern->save();
         }

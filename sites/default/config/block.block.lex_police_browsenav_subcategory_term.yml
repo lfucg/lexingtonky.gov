@@ -1,0 +1,25 @@
+uuid: 0bc1a956-ef87-4615-917b-c5eb2681450d
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_browsenav_subcategory_term
+theme: lex_police
+region: content
+weight: -25
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Browse navigation: sub-category term'
+  provider: core
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '/browse/*/*'
+    negate: false
+    context_mapping: {  }

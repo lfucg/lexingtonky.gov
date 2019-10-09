@@ -4,9 +4,9 @@ namespace Drupal\Tests\views\Kernel\Handler;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\entity_test\Entity\EntityTest;
-use Drupal\simpletest\UserCreationTrait;
-use Drupal\user\Entity\Role;
+use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\Tests\views\Kernel\ViewsKernelTestBase;
+use Drupal\user\Entity\Role;
 use Drupal\views\Views;
 
 /**
@@ -23,14 +23,14 @@ class FieldEntityLinkTest extends ViewsKernelTestBase {
    *
    * @var array
    */
-  public static $testViews = array('test_entity_test_link');
+  public static $testViews = ['test_entity_test_link'];
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = array('user', 'entity_test');
+  public static $modules = ['user', 'entity_test'];
 
   /**
    * An admin user account.
@@ -45,7 +45,9 @@ class FieldEntityLinkTest extends ViewsKernelTestBase {
   protected function setUpFixtures() {
     parent::setUpFixtures();
 
-    $this->installEntitySchema('user');
+    // Create the anonymous user account and set it as current user.
+    $this->setUpCurrentUser(['uid' => 0]);
+
     $this->installEntitySchema('entity_test');
     $this->installConfig(['user']);
 
@@ -67,11 +69,11 @@ class FieldEntityLinkTest extends ViewsKernelTestBase {
    */
   public function testEntityLink() {
     // Anonymous users cannot see edit/delete links.
-    $expected_results = ['canonical' => TRUE, 'edit-form' => FALSE, 'delete-form' => FALSE];
+    $expected_results = ['canonical' => TRUE, 'edit-form' => FALSE, 'delete-form' => FALSE, 'canonical_raw' => TRUE, 'canonical_raw_absolute' => TRUE];
     $this->doTestEntityLink(\Drupal::currentUser(), $expected_results);
 
     // Admin users cannot see all links.
-    $expected_results = ['canonical' => TRUE, 'edit-form' => TRUE, 'delete-form' => TRUE];
+    $expected_results = ['canonical' => TRUE, 'edit-form' => TRUE, 'delete-form' => TRUE, 'canonical_raw' => TRUE, 'canonical_raw_absolute' => TRUE];
     $this->doTestEntityLink($this->adminUser, $expected_results);
   }
 
@@ -94,16 +96,39 @@ class FieldEntityLinkTest extends ViewsKernelTestBase {
         'label' => 'View entity test',
         'field_id' => 'view_entity_test',
         'destination' => FALSE,
+        'link' => TRUE,
+        'options' => [],
+        'relationship' => 'canonical',
       ],
       'edit-form' => [
         'label' => 'Edit entity test',
         'field_id' => 'edit_entity_test',
         'destination' => TRUE,
+        'link' => TRUE,
+        'options' => [],
+        'relationship' => 'edit-form',
       ],
       'delete-form' => [
         'label' => 'Delete entity test',
         'field_id' => 'delete_entity_test',
         'destination' => TRUE,
+        'link' => TRUE,
+        'options' => [],
+        'relationship' => 'delete-form',
+      ],
+      'canonical_raw' => [
+        'field_id' => 'canonical_entity_test',
+        'destination' => FALSE,
+        'link' => FALSE,
+        'options' => [],
+        'relationship' => 'canonical',
+      ],
+      'canonical_raw_absolute' => [
+        'field_id' => 'absolute_entity_test',
+        'destination' => FALSE,
+        'link' => FALSE,
+        'options' => ['absolute' => TRUE],
+        'relationship' => 'canonical',
       ],
     ];
 
@@ -112,9 +137,14 @@ class FieldEntityLinkTest extends ViewsKernelTestBase {
       foreach ($expected_results as $template => $expected_result) {
         $expected_link = '';
         if ($expected_result) {
-          $path = $entity->url($template);
+          $path = $entity->toUrl($info[$template]['relationship'], $info[$template]['options'])->toString();
           $destination = $info[$template]['destination'] ? '?destination=/' : '';
-          $expected_link = '<a href="' . $path . $destination . '" hreflang="en">' . $info[$template]['label'] . '</a>';
+          if ($info[$template]['link']) {
+            $expected_link = '<a href="' . $path . $destination . '" hreflang="en">' . $info[$template]['label'] . '</a>';
+          }
+          else {
+            $expected_link = $path;
+          }
         }
         $link = $view->style_plugin->getField($index, $info[$template]['field_id']);
         $this->assertEqual($link, $expected_link);

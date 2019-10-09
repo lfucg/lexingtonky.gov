@@ -1,0 +1,18 @@
+name: Entity Embed
+type: module
+description: 'Allows entities to be embedded using a text editor.'
+# core: 8.x
+package: Filters
+dependencies:
+  - drupal:editor
+  - embed:embed
+  - drupal:filter
+  - drupal:system (>=8.4.0)
+test_dependencies:
+  - entity_browser:entity_browser
+
+# Information added by Drupal.org packaging script on 2019-06-28
+version: '8.x-1.0'
+core: '8.x'
+project: 'entity_embed'
+datestamp: 1561765985

@@ -33,7 +33,7 @@ class FieldUninstallValidator implements ModuleUninstallValidatorInterface {
    * Constructs a new FieldUninstallValidator.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity manager.
+   *   The entity type manager.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    * @param \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager
@@ -84,7 +84,6 @@ class FieldUninstallValidator implements ModuleUninstallValidatorInterface {
   protected function getFieldStoragesByModule($module) {
     return $this->fieldStorageConfigStorage->loadByProperties(['module' => $module, 'include_deleted' => TRUE]);
   }
-
 
   /**
    * Returns the label for a specified field type.

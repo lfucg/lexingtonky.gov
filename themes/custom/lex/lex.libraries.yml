@@ -1,6 +1,7 @@
 global-css:
   css:
     theme:
+      css/main.css: {}
       css/styles.css: {}
 
 global-js:
@@ -12,9 +13,18 @@ global-js:
     js/browse-columns.js: {}
     js/webdesignstandards-accordion.js: {}
     js/lex-geocoder.js: {}
+    js/takeover-navigation.js: {}
   dependencies:
     - core/jquery
     - core/jquery.ui.autocomplete
+
+bootstrap_cdn:
+  js:
+    //cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js: {}
+    //stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js: {}
+  css:
+    component:
+      //stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css: {}
 
 lex-sidenav-list:
   js:

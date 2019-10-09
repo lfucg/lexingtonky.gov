@@ -8,6 +8,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
@@ -49,6 +50,7 @@ class ManagedFile extends FormElement {
       '#attached' => [
         'library' => ['file/drupal.file'],
       ],
+      '#accept' => NULL,
     ];
   }
 
@@ -107,7 +109,7 @@ class ManagedFile extends FormElement {
                 // submissions of the same form, so to allow that, check for the
                 // token added by $this->processManagedFile().
                 elseif (\Drupal::currentUser()->isAnonymous()) {
-                  $token = NestedArray::getValue($form_state->getUserInput(), array_merge($element['#parents'], array('file_' . $file->id(), 'fid_token')));
+                  $token = NestedArray::getValue($form_state->getUserInput(), array_merge($element['#parents'], ['file_' . $file->id(), 'fid_token']));
                   if ($token !== Crypt::hmacBase64('file-' . $file->id(), \Drupal::service('private_key')->get() . Settings::getHashSalt())) {
                     $force_default = TRUE;
                     break;
@@ -174,6 +176,9 @@ class ManagedFile extends FormElement {
 
     $form_parents = explode('/', $request->query->get('element_parents'));
 
+    // Sanitize form parents before using them.
+    $form_parents = array_filter($form_parents, [Element::class, 'child']);
+
     // Retrieve the element to be rendered.
     $form = NestedArray::getValue($form, $form_parents);
 
@@ -212,7 +217,7 @@ class ManagedFile extends FormElement {
 
     // Set some default element properties.
     $element['#progress_indicator'] = empty($element['#progress_indicator']) ? 'none' : $element['#progress_indicator'];
-    $element['#files'] = !empty($fids) ? File::loadMultiple($fids) : FALSE;
+    $element['#files'] = !empty($fids) ? File::loadMultiple($fids) : [];
     $element['#tree'] = TRUE;
 
     // Generate a unique wrapper HTML ID.
@@ -294,20 +299,43 @@ class ManagedFile extends FormElement {
 
       // Add the upload progress callback.
       $element['upload_button']['#ajax']['progress']['url'] = Url::fromRoute('file.ajax_progress', ['key' => $upload_progress_key]);
+
+      // Set a custom submit event so we can modify the upload progress
+      // identifier element before the form gets submitted.
+      $element['upload_button']['#ajax']['event'] = 'fileUpload';
     }
+
+    // Use a manually generated ID for the file upload field so the desired
+    // field label can be associated with it below. Use the same method for
+    // setting the ID that the form API autogenerator does.
+    // @see \Drupal\Core\Form\FormBuilder::doBuildForm()
+    $id = Html::getUniqueId('edit-' . implode('-', array_merge($element['#parents'], ['upload'])));
 
     // The file upload field itself.
     $element['upload'] = [
       '#name' => 'files[' . $parents_prefix . ']',
       '#type' => 'file',
+      // This #title will not actually be used as the upload field's HTML label,
+      // since the theme function for upload fields never passes the element
+      // through theme('form_element'). Instead the parent element's #title is
+      // used as the label (see below). That is usually a more meaningful label
+      // anyway.
       '#title' => t('Choose a file'),
       '#title_display' => 'invisible',
+      '#id' => $id,
       '#size' => $element['#size'],
       '#multiple' => $element['#multiple'],
       '#theme_wrappers' => [],
       '#weight' => -10,
       '#error_no_message' => TRUE,
     ];
+    if (!empty($element['#accept'])) {
+      $element['upload']['#attributes'] = ['accept' => $element['#accept']];
+    }
+
+    // Indicate that $element['#title'] should be used as the HTML label for the
+    // file upload field.
+    $element['#label_for'] = $element['upload']['#id'];
 
     if (!empty($fids) && $element['#files']) {
       foreach ($element['#files'] as $delta => $file) {
@@ -330,10 +358,10 @@ class ManagedFile extends FormElement {
         // of the same form (for example, after an Ajax upload or form
         // validation error).
         if ($file->isTemporary() && \Drupal::currentUser()->isAnonymous()) {
-          $element['file_' . $delta]['fid_token'] = array(
+          $element['file_' . $delta]['fid_token'] = [
             '#type' => 'hidden',
             '#value' => Crypt::hmacBase64('file-' . $delta, \Drupal::service('private_key')->get() . Settings::getHashSalt()),
-          );
+          ];
         }
       }
     }
@@ -341,12 +369,8 @@ class ManagedFile extends FormElement {
     // Add the extension list to the page as JavaScript settings.
     if (isset($element['#upload_validators']['file_validate_extensions'][0])) {
       $extension_list = implode(',', array_filter(explode(' ', $element['#upload_validators']['file_validate_extensions'][0])));
-      $element['upload']['#attached']['drupalSettings']['file']['elements']['#' . $element['#id']] = $extension_list;
+      $element['upload']['#attached']['drupalSettings']['file']['elements']['#' . $id] = $extension_list;
     }
-
-    // Let #id point to the file element, so the field label's 'for' corresponds
-    // with it.
-    $element['#id'] = &$element['upload']['#id'];
 
     // Prefix and suffix used for Ajax replacement.
     $element['#prefix'] = '<div id="' . $ajax_wrapper_id . '">';
@@ -394,15 +418,23 @@ class ManagedFile extends FormElement {
    * Render API callback: Validates the managed_file element.
    */
   public static function validateManagedFile(&$element, FormStateInterface $form_state, &$complete_form) {
-    // If referencing an existing file, only allow if there are existing
-    // references. This prevents unmanaged files from being deleted if this
-    // item were to be deleted.
     $clicked_button = end($form_state->getTriggeringElement()['#parents']);
     if ($clicked_button != 'remove_button' && !empty($element['fids']['#value'])) {
       $fids = $element['fids']['#value'];
       foreach ($fids as $fid) {
         if ($file = File::load($fid)) {
-          if ($file->isPermanent()) {
+          // If referencing an existing file, only allow if there are existing
+          // references. This prevents unmanaged files from being deleted if
+          // this item were to be deleted. When files that are no longer in use
+          // are automatically marked as temporary (now disabled by default),
+          // it is not safe to reference a permanent file without usage. Adding
+          // a usage and then later on removing it again would delete the file,
+          // but it is unknown if and where it is currently referenced. However,
+          // when files are not marked temporary (and then removed)
+          // automatically, it is safe to add and remove usages, as it would
+          // simply return to the current state.
+          // @see https://www.drupal.org/node/2891902
+          if ($file->isPermanent() && \Drupal::config('file.settings')->get('make_unused_managed_files_temporary')) {
             $references = static::fileUsage()->listUsage($file);
             if (empty($references)) {
               // We expect the field name placeholder value to be wrapped in t()

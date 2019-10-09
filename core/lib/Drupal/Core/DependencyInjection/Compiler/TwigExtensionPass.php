@@ -2,14 +2,15 @@
 
 namespace Drupal\Core\DependencyInjection\Compiler;
 
+use Drupal\Component\Utility\Crypt;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Adds the twig_extension_hash parameter to the container.
  *
- * twig_extension_hash is a hash of all extension mtimes for Twig template
- * invalidation.
+ * Parameter twig_extension_hash is a hash of all extension mtimes for Twig
+ * template invalidation.
  */
 class TwigExtensionPass implements CompilerPassInterface {
 
@@ -26,7 +27,7 @@ class TwigExtensionPass implements CompilerPassInterface {
       $twig_extension_hash .= $class_name . filemtime($reflection->getFileName());
     }
 
-    $container->setParameter('twig_extension_hash', hash('crc32b', $twig_extension_hash));
+    $container->setParameter('twig_extension_hash', Crypt::hashBase64($twig_extension_hash));
   }
 
 }

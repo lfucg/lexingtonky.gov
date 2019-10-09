@@ -40,6 +40,13 @@ class TipPluginText extends TipPluginBase implements ContainerFactoryPluginInter
   protected $location;
 
   /**
+   * Unique aria-id.
+   *
+   * @var string
+   */
+  protected $ariaId;
+
+  /**
    * Constructs a \Drupal\tour\Plugin\tour\tip\TipPluginText object.
    *
    * @param array $configuration
@@ -70,11 +77,10 @@ class TipPluginText extends TipPluginBase implements ContainerFactoryPluginInter
    *   A unique id to be used to generate aria attributes.
    */
   public function getAriaId() {
-    static $id;
-    if (!isset($id)) {
-      $id = Html::getUniqueId($this->get('id'));
+    if (!$this->ariaId) {
+      $this->ariaId = Html::getUniqueId($this->get('id'));
     }
-    return $id;
+    return $this->ariaId;
   }
 
   /**
@@ -116,7 +122,7 @@ class TipPluginText extends TipPluginBase implements ContainerFactoryPluginInter
   public function getOutput() {
     $output = '<h2 class="tour-tip-label" id="tour-tip-' . $this->getAriaId() . '-label">' . Html::escape($this->getLabel()) . '</h2>';
     $output .= '<p class="tour-tip-body" id="tour-tip-' . $this->getAriaId() . '-contents">' . $this->token->replace($this->getBody()) . '</p>';
-    return array('#markup' => $output);
+    return ['#markup' => $output];
   }
 
 }

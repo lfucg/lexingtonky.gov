@@ -2,8 +2,10 @@
 
 namespace Drupal\Tests\views\Kernel\Plugin;
 
+use Drupal\Core\Url;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\views\Entity\View;
 use Drupal\views\Views;
 use Drupal\Tests\views\Kernel\ViewsKernelTestBase;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,14 +24,14 @@ class DisplayPageTest extends ViewsKernelTestBase {
    *
    * @var array
    */
-  public static $testViews = array('test_page_display', 'test_page_display_route', 'test_page_display_menu');
+  public static $testViews = ['test_page_display', 'test_page_display_route', 'test_page_display_menu', 'test_display_more'];
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = array('system', 'user', 'field');
+  public static $modules = ['system', 'user', 'field', 'views_test_data'];
 
   /**
    * The router dumper to get all routes.
@@ -130,7 +132,7 @@ class DisplayPageTest extends ViewsKernelTestBase {
    */
   public function testDependencies() {
     $view = Views::getView('test_page_display');
-    $this->assertIdentical([], $view->getDependencies());
+    $this->assertIdentical(['module' => ['views_test_data']], $view->getDependencies());
 
     $view = Views::getView('test_page_display_route');
     $expected = [
@@ -145,8 +147,114 @@ class DisplayPageTest extends ViewsKernelTestBase {
         'system.menu.admin',
         'system.menu.tools',
       ],
+      'module' => [
+        'views_test_data',
+      ],
     ];
     $this->assertIdentical($expected, $view->getDependencies());
+  }
+
+  /**
+   * Tests the readmore functionality.
+   */
+  public function testReadMore() {
+    /** @var \Drupal\Core\Render\RendererInterface $renderer */
+    $renderer = $this->container->get('renderer');
+
+    $expected_more_text = 'custom more text';
+
+    $view = Views::getView('test_display_more');
+    $this->executeView($view);
+
+    $output = $view->preview();
+    $output = $renderer->renderRoot($output);
+
+    $this->setRawContent($output);
+    $result = $this->xpath('//div[@class=:class]/a', [':class' => 'more-link']);
+    $this->assertEqual($result[0]->attributes()->href, Url::fromRoute('view.test_display_more.page_1')->toString(), 'The right more link is shown.');
+    $this->assertEqual(trim($result[0][0]), $expected_more_text, 'The right link text is shown.');
+
+    // Test the renderMoreLink method directly. This could be directly unit
+    // tested.
+    $more_link = $view->display_handler->renderMoreLink();
+    $more_link = $renderer->renderRoot($more_link);
+    $this->setRawContent($more_link);
+    $result = $this->xpath('//div[@class=:class]/a', [':class' => 'more-link']);
+    $this->assertEqual($result[0]->attributes()->href, Url::fromRoute('view.test_display_more.page_1')->toString(), 'The right more link is shown.');
+    $this->assertEqual(trim($result[0][0]), $expected_more_text, 'The right link text is shown.');
+
+    // Test the useMoreText method directly. This could be directly unit
+    // tested.
+    $more_text = $view->display_handler->useMoreText();
+    $this->assertEqual($more_text, $expected_more_text, 'The right more text is chosen.');
+
+    $view = Views::getView('test_display_more');
+    $view->setDisplay();
+    $view->display_handler->setOption('use_more', 0);
+    $this->executeView($view);
+    $output = $view->preview();
+    $output = $renderer->renderRoot($output);
+    $this->setRawContent($output);
+    $result = $this->xpath('//div[@class=:class]/a', [':class' => 'more-link']);
+    $this->assertTrue(empty($result), 'The more link is not shown.');
+
+    $view = Views::getView('test_display_more');
+    $view->setDisplay();
+    $view->display_handler->setOption('use_more', 0);
+    $view->display_handler->setOption('use_more_always', 0);
+    $view->display_handler->setOption('pager', [
+      'type' => 'some',
+      'options' => [
+        'items_per_page' => 1,
+        'offset' => 0,
+      ],
+    ]);
+    $this->executeView($view);
+    $output = $view->preview();
+    $output = $renderer->renderRoot($output);
+    $this->setRawContent($output);
+    $result = $this->xpath('//div[@class=:class]/a', [':class' => 'more-link']);
+    $this->assertTrue(empty($result), 'The more link is not shown when view has more records.');
+
+    // Test the default value of use_more_always.
+    $view = View::create()->getExecutable();
+    $this->assertTrue($view->getDisplay()->getOption('use_more_always'), 'Always display the more link by default.');
+  }
+
+  /**
+   * Tests the templates with empty rows.
+   */
+  public function testEmptyRow() {
+    $view = Views::getView('test_page_display');
+    $view->initDisplay();
+    $view->newDisplay('page', 'Page', 'empty_row');
+    $view->save();
+
+    $styles = [
+      'default' => '//div[@class="views-row"]',
+      'grid' => '//div[contains(@class, "views-col")]',
+      'html_list' => '//div[@class="item-list"]//li',
+    ];
+
+    $themes = ['bartik', 'classy', 'seven', 'stable', 'stark'];
+
+    foreach ($themes as $theme) {
+      \Drupal::service('theme_handler')->install([$theme]);
+      \Drupal::theme()->setActiveTheme(\Drupal::service('theme.initialization')->initTheme($theme));
+      foreach ($styles as $type => $xpath) {
+        $view = Views::getView('test_page_display');
+        $view->storage->invalidateCaches();
+        $view->initDisplay();
+        $view->setDisplay('empty_row');
+        $view->displayHandlers->get('empty_row')->default_display->options['style']['type'] = $type;
+        $view->initStyle();
+        $this->executeView($view);
+        $output = $view->preview();
+        $output = \Drupal::service('renderer')->renderRoot($output);
+        $this->setRawContent($output);
+        $this->assertCount(5, $this->xpath("{$xpath}[not(text()) and not(node())]"), "Empty rows in theme '$theme', type '$type'.");
+      }
+    }
   }
 
 }

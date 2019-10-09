@@ -45,7 +45,8 @@ class ConfigTranslationListController extends ControllerBase {
    *   The name of the mapper.
    *
    * @return array
-   *   A render array as expected by drupal_render().
+   *   A render array as expected by
+   *   \Drupal\Core\Render\RendererInterface::render().
    *
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    *   Throws an exception if a mapper plugin could not be instantiated from the
@@ -62,7 +63,7 @@ class ConfigTranslationListController extends ControllerBase {
     // controller defined, use it. Other mappers, for examples the ones for
     // node_type and block, fallback to the generic configuration translation
     // list controller.
-    $build = $this->entityManager()
+    $build = $this->entityTypeManager()
       ->getHandler($entity_type, 'config_translation_list')
       ->setMapperDefinition($mapper_definition)
       ->render();

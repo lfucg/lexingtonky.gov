@@ -2,7 +2,6 @@
 
 namespace Drupal\Core\Updater;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\FileTransfer\FileTransferException;
 use Drupal\Core\FileTransfer\FileTransfer;
 
@@ -86,7 +85,7 @@ class Updater {
     $updaters = drupal_get_updaters();
     foreach ($updaters as $updater) {
       $class = $updater['class'];
-      if (call_user_func(array($class, 'canUpdateDirectory'), $directory)) {
+      if (call_user_func([$class, 'canUpdateDirectory'], $directory)) {
         return $class;
       }
     }
@@ -112,7 +111,7 @@ class Updater {
       return FALSE;
     }
     foreach ($info_files as $info_file) {
-      if (Unicode::substr($info_file->filename, 0, -9) == drupal_basename($directory)) {
+      if (mb_substr($info_file->filename, 0, -9) == \Drupal::service('file_system')->basename($directory)) {
         // Info file Has the same name as the directory, return it.
         return $info_file->uri;
       }
@@ -156,7 +155,7 @@ class Updater {
    *   The name of the project.
    */
   public static function getProjectName($directory) {
-    return drupal_basename($directory);
+    return \Drupal::service('file_system')->basename($directory);
   }
 
   /**
@@ -174,7 +173,7 @@ class Updater {
     $info_file = self::findInfoFile($directory);
     $info = \Drupal::service('info_parser')->parse($info_file);
     if (empty($info)) {
-      throw new UpdaterException(t('Unable to parse info file: %info_file.', array('%info_file' => $info_file)));
+      throw new UpdaterException(t('Unable to parse info file: %info_file.', ['%info_file' => $info_file]));
     }
     return $info['name'];
   }
@@ -188,12 +187,12 @@ class Updater {
    * @return array
    *   An array of configuration parameters for an update or install operation.
    */
-  protected function getInstallArgs($overrides = array()) {
-    $args = array(
+  protected function getInstallArgs($overrides = []) {
+    $args = [
       'make_backup' => FALSE,
       'install_dir' => $this->getInstallDirectory(),
       'backup_dir'  => $this->getBackupDir(),
-    );
+    ];
     return array_merge($args, $overrides);
   }
 
@@ -212,7 +211,7 @@ class Updater {
    * @throws \Drupal\Core\Updater\UpdaterException
    * @throws \Drupal\Core\Updater\UpdaterFileTransferException
    */
-  public function update(&$filetransfer, $overrides = array()) {
+  public function update(&$filetransfer, $overrides = []) {
     try {
       // Establish arguments with possible overrides.
       $args = $this->getInstallArgs($overrides);
@@ -249,7 +248,7 @@ class Updater {
       return $this->postUpdateTasks();
     }
     catch (FileTransferException $e) {
-      throw new UpdaterFileTransferException(t('File Transfer failed, reason: @reason', array('@reason' => strtr($e->getMessage(), $e->arguments))));
+      throw new UpdaterFileTransferException(t('File Transfer failed, reason: @reason', ['@reason' => strtr($e->getMessage(), $e->arguments)]));
     }
   }
 
@@ -266,7 +265,7 @@ class Updater {
    *
    * @throws \Drupal\Core\Updater\UpdaterFileTransferException
    */
-  public function install(&$filetransfer, $overrides = array()) {
+  public function install(&$filetransfer, $overrides = []) {
     try {
       // Establish arguments with possible overrides.
       $args = $this->getInstallArgs($overrides);
@@ -287,7 +286,7 @@ class Updater {
       return $this->postInstallTasks();
     }
     catch (FileTransferException $e) {
-      throw new UpdaterFileTransferException(t('File Transfer failed, reason: @reason', array('@reason' => strtr($e->getMessage(), $e->arguments))));
+      throw new UpdaterFileTransferException(t('File Transfer failed, reason: @reason', ['@reason' => strtr($e->getMessage(), $e->arguments)]));
     }
   }
 
@@ -326,7 +325,7 @@ class Updater {
           }
           catch (FileTransferException $e) {
             $message = t($e->getMessage(), $e->arguments);
-            $throw_message = t('Unable to create %directory due to the following: %reason', array('%directory' => $directory, '%reason' => $message));
+            $throw_message = t('Unable to create %directory due to the following: %reason', ['%directory' => $directory, '%reason' => $message]);
             throw new UpdaterException($throw_message);
           }
         }
@@ -395,7 +394,7 @@ class Updater {
    *   Links which provide actions to take after the install is finished.
    */
   public function postInstallTasks() {
-    return array();
+    return [];
   }
 
   /**
@@ -405,7 +404,7 @@ class Updater {
    *   Links which provide actions to take after the update is finished.
    */
   public function postUpdateTasks() {
-    return array();
+    return [];
   }
 
 }

@@ -1,0 +1,51 @@
+uuid: 9dc5914b-edb5-4a6f-94ba-93125054574e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.lexidme_case.field_card_photo
+    - field.field.paragraph.lexidme_case.field_case_subtitle
+    - field.field.paragraph.lexidme_case.field_case_title
+    - field.field.paragraph.lexidme_case.field_lexid_reference
+    - paragraphs.paragraphs_type.lexidme_case
+  module:
+    - image
+    - text
+id: paragraph.lexidme_case.default
+targetEntityType: paragraph
+bundle: lexidme_case
+mode: default
+content:
+  field_card_photo:
+    weight: 3
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_case_subtitle:
+    weight: 1
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_case_title:
+    weight: 2
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_lexid_reference:
+    weight: 0
+    label: above
+    settings:
+      link: true
+      view_mode: default
+    third_party_settings: {  }
+    type: entity_reference_entity_view
+    region: content
+hidden: {  }

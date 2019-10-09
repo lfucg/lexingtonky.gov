@@ -39,10 +39,10 @@ class FormController implements FormInterface {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = $this->condition->buildConfigurationForm($form, $form_state);
-    $form['actions']['submit'] = array(
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => t('Submit'),
-    );
+    ];
     return $form;
   }
 
@@ -60,13 +60,13 @@ class FormController implements FormInterface {
     $this->condition->submitConfigurationForm($form, $form_state);
     $config = $this->condition->getConfig();
     foreach ($config['bundles'] as $bundle) {
-      drupal_set_message('Bundle: ' . $bundle);
+      \Drupal::messenger()->addStatus('Bundle: ' . $bundle);
     }
 
     $article = Node::load(1);
     $this->condition->setContextValue('node', $article);
     if ($this->condition->execute()) {
-      drupal_set_message(t('Executed successfully.'));
+      \Drupal::messenger()->addStatus(t('Executed successfully.'));
     }
   }
 

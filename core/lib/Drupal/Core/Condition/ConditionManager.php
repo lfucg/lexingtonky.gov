@@ -8,8 +8,9 @@ use Drupal\Core\Executable\ExecutableManagerInterface;
 use Drupal\Core\Executable\ExecutableInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\CategorizingPluginManagerTrait;
-use Drupal\Core\Plugin\Context\ContextAwarePluginManagerTrait;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\Core\Plugin\FilteredPluginManagerInterface;
+use Drupal\Core\Plugin\FilteredPluginManagerTrait;
 
 /**
  * A plugin manager for condition plugins.
@@ -20,10 +21,10 @@ use Drupal\Core\Plugin\DefaultPluginManager;
  *
  * @ingroup plugin_api
  */
-class ConditionManager extends DefaultPluginManager implements ExecutableManagerInterface, CategorizingPluginManagerInterface {
+class ConditionManager extends DefaultPluginManager implements ExecutableManagerInterface, CategorizingPluginManagerInterface, FilteredPluginManagerInterface {
 
   use CategorizingPluginManagerTrait;
-  use ContextAwarePluginManagerTrait;
+  use FilteredPluginManagerTrait;
 
   /**
    * Constructs a ConditionManager object.
@@ -46,7 +47,14 @@ class ConditionManager extends DefaultPluginManager implements ExecutableManager
   /**
    * {@inheritdoc}
    */
-  public function createInstance($plugin_id, array $configuration = array()) {
+  protected function getType() {
+    return 'condition';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createInstance($plugin_id, array $configuration = []) {
     $plugin = $this->getFactory()->createInstance($plugin_id, $configuration);
 
     // If we receive any context values via config set it into the plugin.

@@ -1,24 +1,51 @@
 # Development
 
-The following instructions to set up a local development environment for the city's Drupal site.
+The following instructions to set up a local development environment for the city's Drupal site. (NOTE: With Kalabox no longer being supported, the instructions below will help get a local environment set up with the new version of Kalabox which is called [Lando](https://docs.devwithlando.io/))
 
 ## Install the site locally
 
-Install Kalabox and authenticate with Pantheon to pull down the site code/files/db
+(UPDATED 12/23/2017)
+
+Install Lando and authenticate with Pantheon to pull down the site code/files/db. Follow instructions to pull Github code from Pantheon OR do a `lando init pantheon` with an empty directory.
+
+[Getting Started with Lando Docs](https://docs.devwithlando.io/started.html)
+
+From start to finish in terminal:
+```
+$ lando init pantheon
+$ lando start
+$ terminus auth:login --machine-token=[token_from_pantheon]
+$ lando pull
+```
+`lando pull`: You will need a machine token from Pantheon user account page. The output will ask where to pull the code, database, and site files from. 
+
+```
+$ lando restart
+$ lando drush user-login --uri=<<LOCALHOST PORT>>
+```
+
+##### For updating the Solr configuration and getting it to work locally
+
+Anytime you need to get the Solr server to connect you will:
+* `$ lando rebuild -s`
+* Go to Home Administration > Configuration > Search and metadata > Search API > Server > Edit then click save to resave it
+* Reindex at Administration > Configuration > Search and metadata > Search API > Pantheon Index
+
+The site should now be served locally on one of the ports listed in the CLI. 
+
+For information on all running services: `$ lando info`
 
 ### Import/export of configuration changes
 
 As you make changes to the site through the UI, you'll want to export your configuration changes:
 
-`kbox drush config-export -y`
+`lando drush config-export -y`
 
 And to set the local database to the configuration stored in git:
 
-`kbox drush config-import -y`
+`lando drush config-import -y`
 
 ### Theme development
-
-install npm
 
 ```
 cd themes/custom/lex
@@ -49,20 +76,16 @@ $settings['rebuild_access'] = FALSE;
 $settings['hash_salt'] = 'somethingunique';
 ```
 
-## Debugging issues reported by contributors
+## Log in to administration backend
 
 * Test on your local machine.
   * Download data (described below)
-  * Login via `drush user-login --uri=localhost:8888`
-* Or: create a multi-dev environment with content cloned from live.
-* Go to the contributor's page and 'Masquerade as jsmith` to reproduce the issue.
+  * Login via `lando drush user-login --uri=localhost:8888` (Use the uri from lando's current localhost server (e.g. --uri=localhost:32750))
 
 ## Getting data
 
-* Install [terminus](https://github.com/pantheon-systems/terminus)
-* Get machine token [from Pantheon](https://dashboard.pantheon.io/users/#account/)
-* Run `terminus auth login --machine-token=<copied-from-pantheon>`
-* Download DB `terminus site backups get --site=lexky-d8 --element=database --env=live --to=. --latest`
+* `lando pull`
+* Follow prompts for code, database, and files.
 
 ## Running tests locally
 

@@ -1,0 +1,20 @@
+uuid: f8cc499c-ab77-4a29-9994-9e1d4b2caae4
+langcode: en
+status: true
+dependencies:
+  module:
+    - paragraphs
+    - text
+id: paragraph.field_case_subtitle
+field_name: field_case_subtitle
+entity_type: paragraph
+type: text
+settings:
+  max_length: 100
+module: text
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

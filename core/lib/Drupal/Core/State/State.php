@@ -21,7 +21,7 @@ class State implements StateInterface {
    *
    * @var array
    */
-  protected $cache = array();
+  protected $cache = [];
 
   /**
    * Constructs a State object.
@@ -29,7 +29,7 @@ class State implements StateInterface {
    * @param \Drupal\Core\KeyValueStore\KeyValueFactoryInterface $key_value_factory
    *   The key value store to use.
    */
-  function __construct(KeyValueFactoryInterface $key_value_factory) {
+  public function __construct(KeyValueFactoryInterface $key_value_factory) {
     $this->keyValueStore = $key_value_factory->get('state');
   }
 
@@ -37,7 +37,7 @@ class State implements StateInterface {
    * {@inheritdoc}
    */
   public function get($key, $default = NULL) {
-    $values = $this->getMultiple(array($key));
+    $values = $this->getMultiple([$key]);
     return isset($values[$key]) ? $values[$key] : $default;
   }
 
@@ -45,8 +45,8 @@ class State implements StateInterface {
    * {@inheritdoc}
    */
   public function getMultiple(array $keys) {
-    $values = array();
-    $load = array();
+    $values = [];
+    $load = [];
     foreach ($keys as $key) {
       // Check if we have a value in the cache.
       if (isset($this->cache[$key])) {
@@ -98,7 +98,7 @@ class State implements StateInterface {
    * {@inheritdoc}
    */
   public function delete($key) {
-    $this->deleteMultiple(array($key));
+    $this->deleteMultiple([$key]);
   }
 
   /**
@@ -115,7 +115,7 @@ class State implements StateInterface {
    * {@inheritdoc}
    */
   public function resetCache() {
-    $this->cache = array();
+    $this->cache = [];
   }
 
 }

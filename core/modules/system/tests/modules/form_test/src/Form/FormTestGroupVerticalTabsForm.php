@@ -7,6 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Builds a simple form to test the #group property on #type 'vertical_tabs'.
+ *
+ * @internal
  */
 class FormTestGroupVerticalTabsForm extends FormBase {
 
@@ -21,27 +23,27 @@ class FormTestGroupVerticalTabsForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['vertical_tabs'] = array(
+    $form['vertical_tabs'] = [
       '#type' => 'vertical_tabs',
-    );
-    $form['meta'] = array(
+    ];
+    $form['meta'] = [
       '#type' => 'details',
       '#title' => 'First group element',
       '#group' => 'vertical_tabs',
-    );
-    $form['meta']['element'] = array(
+    ];
+    $form['meta']['element'] = [
       '#type' => 'textfield',
       '#title' => 'First nested element in details element',
-    );
-    $form['meta_2'] = array(
+    ];
+    $form['meta_2'] = [
       '#type' => 'details',
       '#title' => 'Second group element',
       '#group' => 'vertical_tabs',
-    );
-    $form['meta_2']['element_2'] = array(
+    ];
+    $form['meta_2']['element_2'] = [
       '#type' => 'textfield',
       '#title' => 'Second nested element in details element',
-    );
+    ];
     return $form;
   }
 

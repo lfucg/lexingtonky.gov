@@ -23,12 +23,12 @@ class UserSession implements AccountInterface {
    *
    * @var array
    */
-  protected $roles = array(AccountInterface::ANONYMOUS_ROLE);
+  protected $roles = [AccountInterface::ANONYMOUS_ROLE];
 
   /**
    * The Unix timestamp when the user last accessed the site.
    *
-   * @var string.
+   * @var string
    */
   protected $access;
 
@@ -73,7 +73,7 @@ class UserSession implements AccountInterface {
    * @param array $values
    *   Array of initial values for the user session.
    */
-  public function __construct(array $values = array()) {
+  public function __construct(array $values = []) {
     foreach ($values as $key => $value) {
       $this->$key = $value;
     }
@@ -93,7 +93,7 @@ class UserSession implements AccountInterface {
     $roles = $this->roles;
 
     if ($exclude_locked_roles) {
-      $roles = array_values(array_diff($roles, array(AccountInterface::ANONYMOUS_ROLE, AccountInterface::AUTHENTICATED_ROLE)));
+      $roles = array_values(array_diff($roles, [AccountInterface::ANONYMOUS_ROLE, AccountInterface::AUTHENTICATED_ROLE]));
     }
 
     return $roles;
@@ -128,7 +128,7 @@ class UserSession implements AccountInterface {
   /**
    * {@inheritdoc}
    */
-  function getPreferredLangcode($fallback_to_default = TRUE) {
+  public function getPreferredLangcode($fallback_to_default = TRUE) {
     $language_list = \Drupal::languageManager()->getLanguages();
     if (!empty($this->preferred_langcode) && isset($language_list[$this->preferred_langcode])) {
       return $language_list[$this->preferred_langcode]->getId();
@@ -141,7 +141,7 @@ class UserSession implements AccountInterface {
   /**
    * {@inheritdoc}
    */
-  function getPreferredAdminLangcode($fallback_to_default = TRUE) {
+  public function getPreferredAdminLangcode($fallback_to_default = TRUE) {
     $language_list = \Drupal::languageManager()->getLanguages();
     if (!empty($this->preferred_admin_langcode) && isset($language_list[$this->preferred_admin_langcode])) {
       return $language_list[$this->preferred_admin_langcode]->getId();
@@ -155,6 +155,7 @@ class UserSession implements AccountInterface {
    * {@inheritdoc}
    */
   public function getUsername() {
+    @trigger_error('\Drupal\Core\Session\AccountInterface::getUsername() is deprecated in Drupal 8.0.0, will be removed before Drupal 9.0.0. Use \Drupal\Core\Session\AccountInterface::getAccountName() or \Drupal\user\UserInterface::getDisplayName() instead. See https://www.drupal.org/node/2572493', E_USER_DEPRECATED);
     return $this->getAccountName();
   }
 

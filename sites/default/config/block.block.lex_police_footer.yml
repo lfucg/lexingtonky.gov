@@ -1,0 +1,25 @@
+uuid: 411f7902-9538-45ab-9559-d33382252fec
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.footer
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_footer
+theme: lex_police
+region: footer
+weight: -24
+provider: null
+plugin: 'system_menu_block:footer'
+settings:
+  id: 'system_menu_block:footer'
+  label: Services
+  provider: system
+  label_display: visible
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility: {  }

@@ -2,7 +2,7 @@
 
 namespace Drupal\search;
 
-use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Database\Query\SelectExtender;
 use Drupal\Core\Database\Query\SelectInterface;
 
@@ -96,7 +96,7 @@ class SearchQuery extends SelectExtender {
    *
    * @var array
    */
-  protected $keys = array('positive' => array(), 'negative' => array());
+  protected $keys = ['positive' => [], 'negative' => []];
 
   /**
    * Indicates whether the query conditions are simple or complex (LIKE).
@@ -111,7 +111,7 @@ class SearchQuery extends SelectExtender {
    * This is always used for the second step in the query, but is not part of
    * the preparation step unless $this->simple is FALSE.
    *
-   * @var DatabaseCondition
+   * @var Drupal\Core\Database\Query\ConditionInterface[]
    */
   protected $conditions;
 
@@ -129,7 +129,7 @@ class SearchQuery extends SelectExtender {
    *
    * @var array
    */
-  protected $words = array();
+  protected $words = [];
 
   /**
    * Multiplier to normalize the keyword score.
@@ -164,14 +164,14 @@ class SearchQuery extends SelectExtender {
    *
    * @see SearchQuery::addScore()
    */
-  protected $scores = array();
+  protected $scores = [];
 
   /**
    * Arguments for the score expressions.
    *
    * @var array
    */
-  protected $scoresArguments = array();
+  protected $scoresArguments = [];
 
   /**
    * The number of 'i.relevance' occurrences in score expressions.
@@ -185,7 +185,7 @@ class SearchQuery extends SelectExtender {
    *
    * @var array
    */
-  protected $multiply = array();
+  protected $multiply = [];
 
   /**
    * Sets the search query expression.
@@ -205,7 +205,7 @@ class SearchQuery extends SelectExtender {
     $this->addTag('search_' . $type);
 
     // Initialize conditions and status.
-    $this->conditions = db_and();
+    $this->conditions = new Condition('AND');
     $this->status = 0;
 
     return $this;
@@ -258,7 +258,7 @@ class SearchQuery extends SelectExtender {
       $words = search_simplify($match[2]);
       // Re-explode in case simplification added more words, except when
       // matching a phrase.
-      $words = $phrase ? array($words) : preg_split('/ /', $words, -1, PREG_SPLIT_NO_EMPTY);
+      $words = $phrase ? [$words] : preg_split('/ /', $words, -1, PREG_SPLIT_NO_EMPTY);
       // Negative matches.
       if ($match[1] == '-') {
         $this->keys['negative'] = array_merge($this->keys['negative'], $words);
@@ -269,7 +269,7 @@ class SearchQuery extends SelectExtender {
         $last = array_pop($this->keys['positive']);
         // Starting a new OR?
         if (!is_array($last)) {
-          $last = array($last);
+          $last = [$last];
         }
         $this->keys['positive'][] = $last;
         $in_or = TRUE;
@@ -313,7 +313,7 @@ class SearchQuery extends SelectExtender {
         }
         $has_or = TRUE;
         $has_new_scores = FALSE;
-        $queryor = db_or();
+        $queryor = new Condition('OR');
         foreach ($key as $or) {
           list($num_new_scores) = $this->parseWord($or);
           $has_new_scores |= $num_new_scores;
@@ -363,7 +363,7 @@ class SearchQuery extends SelectExtender {
     $split = explode(' ', $word);
     foreach ($split as $s) {
       $num = is_numeric($s);
-      if ($num || Unicode::strlen($s) >= \Drupal::config('search.settings')->get('index.minimum_word_size')) {
+      if ($num || mb_strlen($s) >= \Drupal::config('search.settings')->get('index.minimum_word_size')) {
         if (!isset($this->words[$s])) {
           $this->words[$s] = $s;
           $num_new_scores++;
@@ -373,7 +373,7 @@ class SearchQuery extends SelectExtender {
     }
 
     // Return matching snippet and number of added words.
-    return array($num_new_scores, $num_valid_words);
+    return [$num_new_scores, $num_valid_words];
   }
 
   /**
@@ -401,7 +401,7 @@ class SearchQuery extends SelectExtender {
     }
 
     // Build the basic search query: match the entered keywords.
-    $or = db_or();
+    $or = new Condition('OR');
     foreach ($this->words as $word) {
       $or->condition('i.word', $word);
     }
@@ -419,7 +419,7 @@ class SearchQuery extends SelectExtender {
     // simple queries, this condition could lead to incorrectly deciding not
     // to continue with the full query.
     if ($this->simple) {
-      $this->having('COUNT(*) >= :matches', array(':matches' => $this->matches));
+      $this->having('COUNT(*) >= :matches', [':matches' => $this->matches]);
     }
 
     // Clone the query object to calculate normalization.
@@ -498,7 +498,7 @@ class SearchQuery extends SelectExtender {
    *
    * @return $this
    */
-  public function addScore($score, $arguments = array(), $multiply = FALSE) {
+  public function addScore($score, $arguments = [], $multiply = FALSE) {
     if ($multiply) {
       $i = count($this->multiply);
       // Modify the score expression so it is multiplied by the multiplier,
@@ -570,10 +570,9 @@ class SearchQuery extends SelectExtender {
       }
     }
 
-
     // Add arguments for the keyword relevance normalization number.
     $normalization = 1.0 / $this->normalize;
-    for ($i = 0; $i < $this->relevance_count; $i++ ) {
+    for ($i = 0; $i < $this->relevance_count; $i++) {
       $this->scoresArguments[':normalization_' . $i] = $normalization;
     }
 
@@ -589,7 +588,7 @@ class SearchQuery extends SelectExtender {
     // Add query metadata.
     $this
       ->addMetaData('normalize', $this->normalize)
-      ->fields('i', array('type', 'sid'));
+      ->fields('i', ['type', 'sid']);
     return $this->query->execute();
   }
 
@@ -617,12 +616,12 @@ class SearchQuery extends SelectExtender {
     // Remove existing fields and expressions, they are not needed for a count
     // query.
     $fields =& $inner->getFields();
-    $fields = array();
+    $fields = [];
     $expressions =& $inner->getExpressions();
-    $expressions = array();
+    $expressions = [];
 
     // Add sid as the only field and count them as a subquery.
-    $count = db_select($inner->fields('i', array('sid')), NULL, array('target' => 'replica'));
+    $count = $this->connection->select($inner->fields('i', ['sid']), NULL);
 
     // Add the COUNT() expression.
     $count->addExpression('COUNT(*)');

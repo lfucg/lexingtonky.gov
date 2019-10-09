@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\image\Kernel;
 
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
@@ -10,6 +11,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\Tests\field\Kernel\FieldKernelTestBase;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
+use Drupal\user\Entity\Role;
 
 /**
  * Tests using entity fields of the image field type.
@@ -23,7 +25,7 @@ class ImageItemTest extends FieldKernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('file', 'image');
+  public static $modules = ['file', 'image'];
 
   /**
    * Created file entity.
@@ -40,15 +42,23 @@ class ImageItemTest extends FieldKernelTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->installEntitySchema('file');
-    $this->installSchema('file', array('file_usage'));
+    $this->installEntitySchema('user');
+    $this->installConfig(['user']);
+    // Give anonymous users permission to access content, so that we can view
+    // and download public file.
+    $anonymous_role = Role::load(Role::ANONYMOUS_ID);
+    $anonymous_role->grantPermission('access content');
+    $anonymous_role->save();
 
-    FieldStorageConfig::create(array(
+    $this->installEntitySchema('file');
+    $this->installSchema('file', ['file_usage']);
+
+    FieldStorageConfig::create([
       'entity_type' => 'entity_test',
       'field_name' => 'image_test',
       'type' => 'image',
       'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
-    ))->save();
+    ])->save();
     FieldConfig::create([
       'entity_type' => 'entity_test',
       'field_name' => 'image_test',
@@ -57,7 +67,7 @@ class ImageItemTest extends FieldKernelTestBase {
         'file_extensions' => 'jpg',
       ],
     ])->save();
-    file_unmanaged_copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example.jpg');
+    \Drupal::service('file_system')->copy($this->root . '/core/misc/druplicon.png', 'public://example.jpg');
     $this->image = File::create([
       'uri' => 'public://example.jpg',
     ]);
@@ -90,7 +100,7 @@ class ImageItemTest extends FieldKernelTestBase {
     $this->assertEqual($entity->image_test->entity->uuid(), $this->image->uuid());
 
     // Make sure the computed entity reflects updates to the referenced file.
-    file_unmanaged_copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example-2.jpg');
+    \Drupal::service('file_system')->copy($this->root . '/core/misc/druplicon.png', 'public://example-2.jpg');
     $image2 = File::create([
       'uri' => 'public://example-2.jpg',
     ]);
@@ -114,11 +124,11 @@ class ImageItemTest extends FieldKernelTestBase {
 
     // Delete the image and try to save the entity again.
     $this->image->delete();
-    $entity = EntityTest::create(array('mame' => $this->randomMachineName()));
+    $entity = EntityTest::create(['mame' => $this->randomMachineName()]);
     $entity->save();
 
     // Test image item properties.
-    $expected = array('target_id', 'entity', 'alt', 'title', 'width', 'height');
+    $expected = ['target_id', 'entity', 'alt', 'title', 'width', 'height'];
     $properties = $entity->getFieldDefinition('image_test')->getFieldStorageDefinition()->getPropertyDefinitions();
     $this->assertEqual(array_keys($properties), $expected);
 
@@ -127,6 +137,28 @@ class ImageItemTest extends FieldKernelTestBase {
     $entity->image_test->generateSampleItems();
     $this->entityValidateAndSave($entity);
     $this->assertEqual($entity->image_test->entity->get('filemime')->value, 'image/jpeg');
+  }
+
+  /**
+   * Tests a malformed image.
+   */
+  public function testImageItemMalformed() {
+    // Validate entity is an image and don't gather dimensions if it is not.
+    $entity = EntityTest::create();
+    $entity->image_test = NULL;
+    $entity->image_test->target_id = 9999;
+    // PHPUnit re-throws E_USER_WARNING as an exception.
+    try {
+      $entity->save();
+      $this->fail('Exception did not fail');
+    }
+    catch (EntityStorageException $exception) {
+      $this->assertInstanceOf(\PHPUnit_Framework_Error_Warning::class, $exception->getPrevious());
+      $this->assertEquals($exception->getMessage(), 'Missing file with ID 9999.');
+      $this->assertEmpty($entity->image_test->width);
+      $this->assertEmpty($entity->image_test->height);
+    }
+
   }
 
 }

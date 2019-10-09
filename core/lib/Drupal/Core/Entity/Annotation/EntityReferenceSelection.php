@@ -60,10 +60,10 @@ class EntityReferenceSelection extends Plugin {
    *
    * @var array (optional)
    */
-  public $entity_types = array();
+  public $entity_types = [];
 
   /**
-   * The weight of the plugin in it's group.
+   * The weight of the plugin in its group.
    *
    * @var int
    */

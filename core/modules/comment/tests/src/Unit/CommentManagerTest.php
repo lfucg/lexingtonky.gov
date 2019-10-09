@@ -3,6 +3,10 @@
 namespace Drupal\Tests\comment\Unit;
 
 use Drupal\comment\CommentManager;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -23,34 +27,34 @@ class CommentManagerTest extends UnitTestCase {
       ->method('getClass')
       ->will($this->returnValue('Node'));
     $entity_type->expects($this->any())
-      ->method('isSubclassOf')
-      ->with('\Drupal\Core\Entity\FieldableEntityInterface')
+      ->method('entityClassImplements')
+      ->with(FieldableEntityInterface::class)
       ->will($this->returnValue(TRUE));
 
-    $entity_manager = $this->getMock('Drupal\Core\Entity\EntityManagerInterface');
+    $entity_field_manager = $this->createMock(EntityFieldManagerInterface::class);
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
 
-    $entity_manager->expects($this->once())
+    $entity_field_manager->expects($this->once())
       ->method('getFieldMapByFieldType')
-      ->will($this->returnValue(array(
-        'node' => array(
-          'field_foobar' => array(
+      ->will($this->returnValue([
+        'node' => [
+          'field_foobar' => [
             'type' => 'comment',
-          ),
-        ),
-      )));
+          ],
+        ],
+      ]));
 
-    $entity_manager->expects($this->any())
+    $entity_type_manager->expects($this->any())
       ->method('getDefinition')
       ->will($this->returnValue($entity_type));
 
     $comment_manager = new CommentManager(
-      $entity_manager,
-      $this->getMockBuilder('Drupal\Core\Entity\Query\QueryFactory')->disableOriginalConstructor()->getMock(),
+      $entity_type_manager,
       $this->getMock('Drupal\Core\Config\ConfigFactoryInterface'),
       $this->getMock('Drupal\Core\StringTranslation\TranslationInterface'),
-      $this->getMock('Drupal\Core\Routing\UrlGeneratorInterface'),
       $this->getMock('Drupal\Core\Extension\ModuleHandlerInterface'),
-      $this->getMock('Drupal\Core\Session\AccountInterface')
+      $this->createMock(AccountInterface::class),
+      $entity_field_manager
     );
     $comment_fields = $comment_manager->getFields('node');
     $this->assertArrayHasKey('field_foobar', $comment_fields);

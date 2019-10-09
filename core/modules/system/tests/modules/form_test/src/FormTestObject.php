@@ -7,6 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Provides a test form object.
+ *
+ * @internal
  */
 class FormTestObject extends ConfigFormBase {
 
@@ -28,18 +30,23 @@ class FormTestObject extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['element'] = array('#markup' => 'The FormTestObject::buildForm() method was used for this form.');
+    $form['element'] = ['#markup' => 'The FormTestObject::buildForm() method was used for this form.'];
 
-    $form['bananas'] = array(
+    $form['bananas'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Bananas'),
-    );
+    ];
+    $form['strawberry'] = [
+      '#type' => 'hidden',
+      '#value' => 'red',
+      '#attributes' => ['id' => 'redstrawberryhiddenfield'],
+    ];
 
     $form['actions']['#type'] = 'actions';
-    $form['actions']['submit'] = array(
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Save'),
-    );
+    ];
 
     $form['#title'] = 'Test dynamic title';
 
@@ -50,14 +57,14 @@ class FormTestObject extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    drupal_set_message($this->t('The FormTestObject::validateForm() method was used for this form.'));
+    $this->messenger()->addStatus($this->t('The FormTestObject::validateForm() method was used for this form.'));
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    drupal_set_message($this->t('The FormTestObject::submitForm() method was used for this form.'));
+    $this->messenger()->addStatus($this->t('The FormTestObject::submitForm() method was used for this form.'));
     $this->config('form_test.object')
       ->set('bananas', $form_state->getValue('bananas'))
       ->save();

@@ -1,0 +1,10 @@
+uuid: c6feb82f-4e98-4499-83bd-618ecfbcfa68
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.front_page_news
+label: 'Front Page News'
+targetEntityType: node
+cache: true

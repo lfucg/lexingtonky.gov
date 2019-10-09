@@ -12,12 +12,11 @@
 namespace Symfony\Component\Validator\Validator;
 
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
  * A validator in a specific execution context.
- *
- * @since  2.5
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
@@ -31,7 +30,7 @@ interface ContextualValidatorInterface
      *
      * @param string $path The path to append
      *
-     * @return ContextualValidatorInterface This validator
+     * @return $this
      */
     public function atPath($path);
 
@@ -41,14 +40,11 @@ interface ContextualValidatorInterface
      * If no constraint is passed, the constraint
      * {@link \Symfony\Component\Validator\Constraints\Valid} is assumed.
      *
-     * @param mixed                   $value       The value to validate
-     * @param Constraint|Constraint[] $constraints The constraint(s) to validate
-     *                                             against
-     * @param array|null              $groups      The validation groups to
-     *                                             validate. If none is given,
-     *                                             "Default" is assumed
+     * @param mixed                                              $value       The value to validate
+     * @param Constraint|Constraint[]                            $constraints The constraint(s) to validate against
+     * @param string|GroupSequence|(string|GroupSequence)[]|null $groups      The validation groups to validate. If none is given, "Default" is assumed
      *
-     * @return ContextualValidatorInterface This validator
+     * @return $this
      */
     public function validate($value, $constraints = null, $groups = null);
 
@@ -56,12 +52,11 @@ interface ContextualValidatorInterface
      * Validates a property of an object against the constraints specified
      * for this property.
      *
-     * @param object     $object       The object
-     * @param string     $propertyName The name of the validated property
-     * @param array|null $groups       The validation groups to validate. If
-     *                                 none is given, "Default" is assumed
+     * @param object                                             $object       The object
+     * @param string                                             $propertyName The name of the validated property
+     * @param string|GroupSequence|(string|GroupSequence)[]|null $groups       The validation groups to validate. If none is given, "Default" is assumed
      *
-     * @return ContextualValidatorInterface This validator
+     * @return $this
      */
     public function validateProperty($object, $propertyName, $groups = null);
 
@@ -69,14 +64,12 @@ interface ContextualValidatorInterface
      * Validates a value against the constraints specified for an object's
      * property.
      *
-     * @param object|string $objectOrClass The object or its class name
-     * @param string        $propertyName  The name of the property
-     * @param mixed         $value         The value to validate against the
-     *                                     property's constraints
-     * @param array|null    $groups        The validation groups to validate. If
-     *                                     none is given, "Default" is assumed
+     * @param object|string                                      $objectOrClass The object or its class name
+     * @param string                                             $propertyName  The name of the property
+     * @param mixed                                              $value         The value to validate against the property's constraints
+     * @param string|GroupSequence|(string|GroupSequence)[]|null $groups        The validation groups to validate. If none is given, "Default" is assumed
      *
-     * @return ContextualValidatorInterface This validator
+     * @return $this
      */
     public function validatePropertyValue($objectOrClass, $propertyName, $value, $groups = null);
 

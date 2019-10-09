@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\migrate\Unit\process;
 
+use Drupal\migrate\MigrateException;
 use Drupal\migrate\Plugin\migrate\process\Concat;
 
 /**
@@ -28,16 +29,15 @@ class ConcatTest extends MigrateProcessTestCase {
    * Test concat works without a delimiter.
    */
   public function testConcatWithoutDelimiter() {
-    $value = $this->plugin->transform(array('foo', 'bar'), $this->migrateExecutable, $this->row, 'destinationproperty');
-    $this->assertSame($value, 'foobar');
+    $value = $this->plugin->transform(['foo', 'bar'], $this->migrateExecutable, $this->row, 'destinationproperty');
+    $this->assertSame('foobar', $value);
   }
 
   /**
    * Test concat fails properly on non-arrays.
-   *
-   * @expectedException \Drupal\migrate\MigrateException
    */
   public function testConcatWithNonArray() {
+    $this->setExpectedException(MigrateException::class);
     $this->plugin->transform('foo', $this->migrateExecutable, $this->row, 'destinationproperty');
   }
 
@@ -46,13 +46,14 @@ class ConcatTest extends MigrateProcessTestCase {
    */
   public function testConcatWithDelimiter() {
     $this->plugin->setDelimiter('_');
-    $value = $this->plugin->transform(array('foo', 'bar'), $this->migrateExecutable, $this->row, 'destinationproperty');
-    $this->assertSame($value, 'foo_bar');
+    $value = $this->plugin->transform(['foo', 'bar'], $this->migrateExecutable, $this->row, 'destinationproperty');
+    $this->assertSame('foo_bar', $value);
   }
 
 }
 
 class TestConcat extends Concat {
+
   public function __construct() {
   }
 

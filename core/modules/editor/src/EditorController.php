@@ -38,7 +38,7 @@ class EditorController extends ControllerBase {
 
     // Direct text editing is only supported for single-valued fields.
     $field = $entity->getTranslation($langcode)->$field_name;
-    $editable_text = check_markup($field->value, $field->format, $langcode, array(FilterInterface::TYPE_TRANSFORM_REVERSIBLE, FilterInterface::TYPE_TRANSFORM_IRREVERSIBLE));
+    $editable_text = check_markup($field->value, $field->format, $langcode, [FilterInterface::TYPE_TRANSFORM_REVERSIBLE, FilterInterface::TYPE_TRANSFORM_IRREVERSIBLE]);
     $response->addCommand(new GetUntransformedTextCommand($editable_text));
 
     return $response;
@@ -70,7 +70,7 @@ class EditorController extends ControllerBase {
     $original_format_id = $request->request->get('original_format_id');
     $original_format = NULL;
     if (isset($original_format_id)) {
-      $original_format = $this->entityManager()
+      $original_format = $this->entityTypeManager()
         ->getStorage('filter_format')
         ->load($original_format_id);
     }

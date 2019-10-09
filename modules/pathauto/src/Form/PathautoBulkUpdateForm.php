@@ -4,8 +4,10 @@ namespace Drupal\pathauto\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\pathauto\AliasTypeBatchUpdateInterface;
 use Drupal\pathauto\AliasTypeManager;
+use Drupal\pathauto\PathautoGeneratorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -57,7 +59,7 @@ class PathautoBulkUpdateForm extends FormBase {
 
     $form['update'] = array(
       '#type' => 'checkboxes',
-      '#title' => $this->t('Select the types of un-aliased paths for which to generate URL aliases'),
+      '#title' => $this->t('Select the types of paths for which to generate URL aliases'),
       '#options' => array(),
       '#default_value' => array(),
     );
@@ -69,6 +71,26 @@ class PathautoBulkUpdateForm extends FormBase {
       if ($alias_type instanceof AliasTypeBatchUpdateInterface) {
         $form['update']['#options'][$id] = $alias_type->getLabel();
       }
+    }
+
+    $form['action'] = array(
+      '#type' => 'radios',
+      '#title' => $this->t('Select which URL aliases to generate'),
+      '#options' => ['create' => $this->t('Generate a URL alias for un-aliased paths only')],
+      '#default_value' => 'create',
+    );
+
+    $config = $this->config('pathauto.settings');
+
+    if ($config->get('update_action') == PathautoGeneratorInterface::UPDATE_ACTION_NO_NEW) {
+      // Existing aliases should not be updated.
+      $form['warning'] = array(
+        '#markup' => $this->t('<a href=":url">Pathauto settings</a> are set to ignore paths which already have a URL alias. You can only create URL aliases for paths having none.', [':url' => Url::fromRoute('pathauto.settings.form')->toString()]),
+      );
+    }
+    else {
+      $form['action']['#options']['update'] = $this->t('Update the URL alias for paths having an old URL alias');
+      $form['action']['#options']['all'] = $this->t('Regenerate URL aliases for all paths');
     }
 
     $form['actions']['#type'] = 'actions';
@@ -92,9 +114,11 @@ class PathautoBulkUpdateForm extends FormBase {
       'finished' => 'Drupal\pathauto\Form\PathautoBulkUpdateForm::batchFinished',
     );
 
+    $action = $form_state->getValue('action');
+
     foreach ($form_state->getValue('update') as $id) {
       if (!empty($id)) {
-        $batch['operations'][] = array('Drupal\pathauto\Form\PathautoBulkUpdateForm::batchProcess', array($id));
+        $batch['operations'][] = array('Drupal\pathauto\Form\PathautoBulkUpdateForm::batchProcess', [$id, $action]);
       }
     }
 
@@ -102,11 +126,10 @@ class PathautoBulkUpdateForm extends FormBase {
   }
 
   /**
-   * Batch callback; count the current number of URL aliases for comparison later.
+   * Batch callback; initialize the number of updated aliases.
    */
   public static function batchStart(&$context) {
-    $storage_helper = \Drupal::service('pathauto.alias_storage_helper');
-    $context['results']['count_before'] = $storage_helper->countAll();
+    $context['results']['updates'] = 0;
   }
 
   /**
@@ -114,10 +137,10 @@ class PathautoBulkUpdateForm extends FormBase {
    *
    * Required to load our include the proper batch file.
    */
-  public static function batchProcess($id, &$context) {
+  public static function batchProcess($id, $action, &$context) {
     /** @var \Drupal\pathauto\AliasTypeBatchUpdateInterface $alias_type */
     $alias_type = \Drupal::service('plugin.manager.alias_type')->createInstance($id);
-    $alias_type->batchUpdate($context);
+    $alias_type->batchUpdate($action, $context);
   }
 
   /**
@@ -125,13 +148,8 @@ class PathautoBulkUpdateForm extends FormBase {
    */
   public static function batchFinished($success, $results, $operations) {
     if ($success) {
-      // Count the current number of URL aliases after the batch is completed
-      // and compare to the count before the batch started.
-      $storage_helper = \Drupal::service('pathauto.alias_storage_helper');
-      $results['count_after'] = $storage_helper->countAll();
-      $results['count_changed'] = max($results['count_after'] - $results['count_before'], 0);
-      if ($results['count_changed']) {
-        drupal_set_message(\Drupal::translation()->formatPlural($results['count_changed'], 'Generated 1 URL alias.', 'Generated @count URL aliases.'));
+      if ($results['updates']) {
+        drupal_set_message(\Drupal::translation()->formatPlural($results['updates'], 'Generated 1 URL alias.', 'Generated @count URL aliases.'));
       }
       else {
         drupal_set_message(t('No new URL aliases to generate.'));

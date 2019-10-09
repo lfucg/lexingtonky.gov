@@ -1,0 +1,14 @@
+<div class="lex-event-list">
+{% for date in dates %}
+  <h3>{{lexDate(date.title)}}</h3>
+  <ol>
+  {% for event in date.events %}
+    <li>
+      <h4><a href="{{event.url}}">{{event.title}}</a></h4>
+      <p>{{lexTimeRange(event)}}</p>
+    </li>
+  {% endfor %}
+  </ol>
+{% endfor %}
+<div class="more-link usa-button lex-morelink lex-button"><a href="/calendar/{{content_type}}s">more</a></div>
+</div>

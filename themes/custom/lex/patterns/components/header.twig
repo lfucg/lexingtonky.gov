@@ -1,0 +1,23 @@
+<header role="banner">
+  {% block page_header_nav %}
+    {{ menu }}
+  {% endblock %}
+  <div class="row">
+    <div class="col-9 col-lg-3">
+      <a id="logo" href="/" accesskey="1" title="Home" aria-label="Home">
+        <img class="" src="/themes/custom/lex/img/lexington-logo.svg" alt="City of Lexington, Kentucky, The Horse Capital of the World&reg;">
+      </a>
+    </div>
+    <div class="navbar-button col-3 col-lg-9 text-right d-flex justify-content-end">
+      <div class="menu-label d-none d-lg-inline-block align-self-center">Menu</div>
+      <div id="nav-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+</header>
+{# TODO: Move navigation into this div. For now this is to demonstrate the show and hide functionality of the menu #}
+<div class="" id="takeoverNav"></div>

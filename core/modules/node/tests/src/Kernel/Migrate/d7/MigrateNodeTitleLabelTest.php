@@ -12,16 +12,15 @@ use Drupal\Tests\migrate_drupal\Kernel\d7\MigrateDrupal7TestBase;
  */
 class MigrateNodeTitleLabelTest extends MigrateDrupal7TestBase {
 
-  public static $modules = ['node', 'text'];
+  public static $modules = ['node', 'text', 'menu_ui'];
 
   /**
    * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
-    $this->installConfig(static::$modules);
-    $this->installEntitySchema('node');
-    $this->executeMigrations(['d7_node_type', 'd7_node_title_label']);
+    $this->migrateContentTypes();
+    $this->executeMigration('d7_node_title_label');
   }
 
   /**

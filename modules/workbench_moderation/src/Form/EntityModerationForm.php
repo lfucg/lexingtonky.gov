@@ -5,6 +5,7 @@ namespace Drupal\workbench_moderation\Form;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\workbench_moderation\Entity\ModerationState;
@@ -16,20 +17,36 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EntityModerationForm extends FormBase {
 
   /**
+   * Moderation info service.
+   *
    * @var \Drupal\workbench_moderation\ModerationInformationInterface
    */
   protected $moderationInfo;
 
   /**
+   * State transition validation service.
+   *
    * @var \Drupal\workbench_moderation\StateTransitionValidation
    */
   protected $validation;
 
   /**
+   * Entity type manager service.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
+  /**
+   * EntityModerationForm constructor.
+   *
+   * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_info
+   *   Moderation info service.
+   * @param \Drupal\workbench_moderation\StateTransitionValidation $validation
+   *   State transition validation service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager service.
+   */
   public function __construct(ModerationInformationInterface $moderation_info, StateTransitionValidation $validation, EntityTypeManagerInterface $entity_type_manager) {
     $this->moderationInfo = $moderation_info;
     $this->validation = $validation;
@@ -121,7 +138,10 @@ class EntityModerationForm extends FormBase {
     $new_state = $form_state->getValue('new_state');
     $entity->moderation_state->target_id = $new_state;
 
-    $entity->revision_log = $form_state->getValue('revision_log');
+    if ($entity instanceof RevisionLogInterface) {
+      $entity->setRevisionLogMessage($form_state->getValue('revision_log'));
+      $entity->setRevisionUserId($this->currentUser()->id());
+    }
 
     $entity->save();
 

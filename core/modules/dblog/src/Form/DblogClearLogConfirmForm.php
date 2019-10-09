@@ -10,6 +10,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a confirmation form before clearing out the logs.
+ *
+ * @internal
  */
 class DblogClearLogConfirmForm extends ConfirmFormBase {
 
@@ -64,9 +66,9 @@ class DblogClearLogConfirmForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $_SESSION['dblog_overview_filter'] = array();
+    $_SESSION['dblog_overview_filter'] = [];
     $this->connection->truncate('watchdog')->execute();
-    drupal_set_message($this->t('Database log cleared.'));
+    $this->messenger()->addStatus($this->t('Database log cleared.'));
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
 

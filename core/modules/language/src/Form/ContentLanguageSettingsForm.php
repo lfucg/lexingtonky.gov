@@ -2,8 +2,10 @@
 
 namespace Drupal\language\Form;
 
+use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\language\Entity\ContentLanguageSettings;
@@ -11,24 +13,53 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure the content language settings for this site.
+ *
+ * @internal
  */
 class ContentLanguageSettingsForm extends FormBase {
+  use DeprecatedServicePropertyTrait;
 
   /**
-   * The entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * {@inheritdoc}
    */
-  protected $entityManager;
+  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
-   * Constructs a ContentLanguageSettingsForm object.
+   * The entity type manager.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  public function __construct(EntityManagerInterface $entity_manager) {
-    $this->entityManager = $entity_manager;
+  protected $entityTypeManager;
+
+  /**
+   * The entity bundle info.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
+   */
+  protected $entityTypeBundleInfo;
+
+  /**
+   * If this validator can handle multiple arguments.
+   *
+   * @var bool
+   */
+  protected $multipleCapable = TRUE;
+
+  /**
+   * Constructs an \Drupal\views\Plugin\views\argument_validator\Entity object.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle info.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL) {
+    $this->entityTypeManager = $entity_type_manager;
+    if (!$entity_type_bundle_info) {
+      @trigger_error('Calling ContentLanguageSettingsForm::__construct() with the $entity_type_bundle_info argument is supported in drupal:8.7.0 and will be required before drupal:9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
+      $entity_type_bundle_info = \Drupal::service('entity_type.bundle.info');
+    }
+    $this->entityTypeBundleInfo = $entity_type_bundle_info;
   }
 
   /**
@@ -36,7 +67,8 @@ class ContentLanguageSettingsForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager')
+      $container->get('entity_type.manager'),
+      $container->get('entity_type.bundle.info')
     );
   }
 
@@ -51,12 +83,12 @@ class ContentLanguageSettingsForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $entity_types = $this->entityManager->getDefinitions();
-    $labels = array();
-    $default = array();
+    $entity_types = $this->entityTypeManager->getDefinitions();
+    $labels = [];
+    $default = [];
 
-    $bundles = $this->entityManager->getAllBundleInfo();
-    $language_configuration = array();
+    $bundles = $this->entityTypeBundleInfo->getAllBundleInfo();
+    $language_configuration = [];
     foreach ($entity_types as $entity_type_id => $entity_type) {
       if (!$entity_type instanceof ContentEntityTypeInterface || !$entity_type->hasKey('langcode') || !isset($bundles[$entity_type_id])) {
         continue;
@@ -76,65 +108,65 @@ class ContentLanguageSettingsForm extends FormBase {
 
     asort($labels);
 
-    $form = array(
+    $form = [
       '#labels' => $labels,
-      '#attached' => array(
-        'library' => array(
+      '#attached' => [
+        'library' => [
           'language/drupal.language.admin',
-        ),
-      ),
-      '#attributes' => array(
+        ],
+      ],
+      '#attributes' => [
         'class' => 'language-content-settings-form',
-      ),
-    );
+      ],
+    ];
 
-    $form['entity_types'] = array(
+    $form['entity_types'] = [
       '#title' => $this->t('Custom language settings'),
       '#type' => 'checkboxes',
       '#options' => $labels,
       '#default_value' => $default,
-    );
+    ];
 
-    $form['settings'] = array('#tree' => TRUE);
+    $form['settings'] = ['#tree' => TRUE];
 
     foreach ($labels as $entity_type_id => $label) {
       $entity_type = $entity_types[$entity_type_id];
 
-      $form['settings'][$entity_type_id] = array(
+      $form['settings'][$entity_type_id] = [
         '#title' => $label,
         '#type' => 'container',
         '#entity_type' => $entity_type_id,
         '#theme' => 'language_content_settings_table',
         '#bundle_label' => $entity_type->getBundleLabel() ?: $label,
-        '#states' => array(
-          'visible' => array(
-            ':input[name="entity_types[' . $entity_type_id . ']"]' => array('checked' => TRUE),
-          ),
-        ),
-      );
+        '#states' => [
+          'visible' => [
+            ':input[name="entity_types[' . $entity_type_id . ']"]' => ['checked' => TRUE],
+          ],
+        ],
+      ];
 
       foreach ($bundles[$entity_type_id] as $bundle => $bundle_info) {
-        $form['settings'][$entity_type_id][$bundle]['settings'] = array(
+        $form['settings'][$entity_type_id][$bundle]['settings'] = [
           '#type' => 'item',
           '#label' => $bundle_info['label'],
-          'language' => array(
+          'language' => [
             '#type' => 'language_configuration',
-            '#entity_information' => array(
+            '#entity_information' => [
               'entity_type' => $entity_type_id,
               'bundle' => $bundle,
-            ),
+            ],
             '#default_value' => $language_configuration[$entity_type_id][$bundle],
-          ),
-        );
+          ],
+        ];
       }
     }
 
     $form['actions']['#type'] = 'actions';
-    $form['actions']['submit'] = array(
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Save configuration'),
       '#button_type' => 'primary',
-    );
+    ];
 
     return $form;
   }
@@ -143,15 +175,19 @@ class ContentLanguageSettingsForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $entity_types = $form_state->getValue('entity_types');
     foreach ($form_state->getValue('settings') as $entity_type => $entity_settings) {
       foreach ($entity_settings as $bundle => $bundle_settings) {
         $config = ContentLanguageSettings::loadByEntityTypeBundle($entity_type, $bundle);
+        if (empty($entity_types[$entity_type])) {
+          $bundle_settings['settings']['language']['language_alterable'] = FALSE;
+        }
         $config->setDefaultLangcode($bundle_settings['settings']['language']['langcode'])
           ->setLanguageAlterable($bundle_settings['settings']['language']['language_alterable'])
           ->save();
       }
     }
-    drupal_set_message($this->t('Settings successfully updated.'));
+    $this->messenger()->addStatus($this->t('Settings successfully updated.'));
   }
 
 }

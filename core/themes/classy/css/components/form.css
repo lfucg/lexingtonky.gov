@@ -8,20 +8,20 @@ form .field-multiple-table {
 }
 form .field-multiple-table .field-multiple-drag {
   width: 30px;
-  padding-right: 0; /*LTR*/
+  padding-right: 0; /* LTR */
 }
 [dir="rtl"] form .field-multiple-table .field-multiple-drag {
   padding-left: 0;
 }
 form .field-multiple-table .field-multiple-drag .tabledrag-handle {
-  padding-right: .5em; /*LTR*/
+  padding-right: 0.5em; /* LTR */
 }
 [dir="rtl"] form .field-multiple-table .field-multiple-drag .tabledrag-handle {
   padding-right: 0;
-  padding-left: .5em;
+  padding-left: 0.5em;
 }
 form .field-add-more-submit {
-  margin: .5em 0 0;
+  margin: 0.5em 0 0;
 }
 
 /**
@@ -47,11 +47,11 @@ label.option {
 }
 .form-composite > legend,
 .label {
-  display:inline;
-  font-size: inherit;
-  font-weight: bold;
+  display: inline;
   margin: 0;
   padding: 0;
+  font-size: inherit;
+  font-weight: bold;
 }
 .form-checkboxes .form-item,
 .form-radios .form-item {
@@ -64,23 +64,23 @@ label.option {
 }
 [dir="rtl"] .form-type-radio .description,
 [dir="rtl"] .form-type-checkbox .description {
-   margin-left: 0;
-   margin-right: 2.4em;
+  margin-right: 2.4em;
+  margin-left: 0;
 }
 .marker {
   color: #e00;
 }
 .form-required:after {
-  content: '';
-  vertical-align: super;
   display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 0.3em;
+  content: "";
+  vertical-align: super;
   /* Use a background image to prevent screen readers from announcing the text. */
   background-image: url(../../../../misc/icons/ee0000/required.svg);
   background-repeat: no-repeat;
   background-size: 6px 6px;
-  width: 6px;
-  height: 6px;
-  margin: 0 0.3em;
 }
 abbr.tabledrag-changed,
 abbr.ajax-changed {
@@ -94,10 +94,10 @@ abbr.ajax-changed {
 
 /* Inline error messages. */
 .form-item--error-message:before {
-  content: '';
   display: inline-block;
-  height: 14px;
   width: 14px;
+  height: 14px;
+  content: "";
   vertical-align: sub;
   background: url(../../../../misc/icons/e32700/error.svg) no-repeat;
   background-size: contain;

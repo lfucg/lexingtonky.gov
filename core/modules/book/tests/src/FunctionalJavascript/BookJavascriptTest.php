@@ -4,7 +4,7 @@ namespace Drupal\Tests\book\FunctionalJavascript;
 
 use Behat\Mink\Exception\ExpectationException;
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
+use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Drupal\node\Entity\Node;
 
 /**
@@ -12,7 +12,7 @@ use Drupal\node\Entity\Node;
  *
  * @group book
  */
-class BookJavascriptTest extends JavascriptTestBase {
+class BookJavascriptTest extends WebDriverTestBase {
 
   /**
    * {@inheritdoc}
@@ -73,7 +73,7 @@ class BookJavascriptTest extends JavascriptTestBase {
     $dragged->dragTo($target);
 
     // Give javascript some time to manipulate the DOM.
-    $this->getSession()->wait(1000, 'jQuery(".tabledrag-changed-warning").is(":visible")');
+    $this->assertJsCondition('jQuery(".tabledrag-changed-warning").is(":visible")');
 
     // Check that the 'unsaved changes' text appeared in the message area.
     $this->assertSession()->pageTextContains('You have unsaved changes.');

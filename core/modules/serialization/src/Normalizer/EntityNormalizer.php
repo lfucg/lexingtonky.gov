@@ -2,8 +2,11 @@
 
 namespace Drupal\serialization\Normalizer;
 
-use Drupal\Core\Entity\EntityManagerInterface;
-use Symfony\Component\Serializer\Exception\UnexpectedValueException;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityTypeRepositoryInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 /**
@@ -11,76 +14,67 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
  */
 class EntityNormalizer extends ComplexDataNormalizer implements DenormalizerInterface {
 
-  /**
-   * The interface or class that this Normalizer supports.
-   *
-   * @var array
-   */
-  protected $supportedInterfaceOrClass = array('Drupal\Core\Entity\EntityInterface');
+  use FieldableEntityNormalizerTrait;
 
   /**
-   * The entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * {@inheritdoc}
    */
-  protected $entityManager;
+  protected $supportedInterfaceOrClass = EntityInterface::class;
 
   /**
    * Constructs an EntityNormalizer object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityTypeRepositoryInterface $entity_type_repository
+   *   The entity type repository.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   The entity field manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityTypeRepositoryInterface $entity_type_repository = NULL, EntityFieldManagerInterface $entity_field_manager = NULL) {
+    $this->entityTypeManager = $entity_type_manager;
+    if (!$entity_type_repository) {
+      @trigger_error('The entity_type.repository service must be passed to EntityNormalizer::__construct(), it is required before Drupal 9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
+      $entity_type_repository = \Drupal::service('entity_type.repository');
+    }
+    $this->entityTypeRepository = $entity_type_repository;
+    if (!$entity_field_manager) {
+      @trigger_error('The entity_field.manager service must be passed to EntityNormalizer::__construct(), it is required before Drupal 9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
+      $entity_field_manager = \Drupal::service('entity_field.manager');
+    }
+    $this->entityFieldManager = $entity_field_manager;
   }
 
   /**
    * {@inheritdoc}
    */
   public function denormalize($data, $class, $format = NULL, array $context = []) {
-    // Get the entity type ID while letting context override the $class param.
-    $entity_type_id = !empty($context['entity_type']) ? $context['entity_type'] : $this->entityManager->getEntityTypeFromClass($class);
+    $entity_type_id = $this->determineEntityTypeId($class, $context);
+    $entity_type_definition = $this->getEntityTypeDefinition($entity_type_id);
 
-    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type_definition */
-    // Get the entity type definition.
-    $entity_type_definition = $this->entityManager->getDefinition($entity_type_id, FALSE);
-
-    // Don't try to create an entity without an entity type id.
-    if (!$entity_type_definition) {
-      throw new UnexpectedValueException(sprintf('The specified entity type "%s" does not exist. A valid etnity type is required for denormalization', $entity_type_id));
-    }
-
-    // The bundle property will be required to denormalize a bundleable entity.
-    if ($entity_type_definition->hasKey('bundle')) {
-      $bundle_key = $entity_type_definition->getKey('bundle');
-      // Get the base field definitions for this entity type.
-      $base_field_definitions = $this->entityManager->getBaseFieldDefinitions($entity_type_id);
-
-      // Get the ID key from the base field definition for the bundle key or
-      // default to 'value'.
-      $key_id = isset($base_field_definitions[$bundle_key]) ? $base_field_definitions[$bundle_key]->getFieldStorageDefinition()->getMainPropertyName() : 'value';
-
-      // Normalize the bundle if it is not explicitly set.
-      $data[$bundle_key] = isset($data[$bundle_key][0][$key_id]) ? $data[$bundle_key][0][$key_id] : (isset($data[$bundle_key]) ? $data[$bundle_key] : NULL);
-
-      // Get the bundle entity type from the entity type definition.
-      $bundle_type_id = $entity_type_definition->getBundleEntityType();
-      $bundle_types = $bundle_type_id ? $this->entityManager->getStorage($bundle_type_id)->getQuery()->execute() : [];
-
-      // Make sure a bundle has been provided.
-      if (!is_string($data[$bundle_key])) {
-        throw new UnexpectedValueException('A string must be provided as a bundle value.');
+    // The bundle property will be required to denormalize a bundleable
+    // fieldable entity.
+    if ($entity_type_definition->entityClassImplements(FieldableEntityInterface::class)) {
+      // Extract bundle data to pass into entity creation if the entity type uses
+      // bundles.
+      if ($entity_type_definition->hasKey('bundle')) {
+        // Get an array containing the bundle only. This also remove the bundle
+        // key from the $data array.
+        $create_params = $this->extractBundleData($data, $entity_type_definition);
+      }
+      else {
+        $create_params = [];
       }
 
-      // Make sure the submitted bundle is a valid bundle for the entity type.
-      if ($bundle_types && !in_array($data[$bundle_key], $bundle_types)) {
-        throw new UnexpectedValueException(sprintf('"%s" is not a valid bundle type for denormalization.', $data[$bundle_key]));
-      }
-    }
+      // Create the entity from bundle data only, then apply field values after.
+      $entity = $this->entityTypeManager->getStorage($entity_type_id)->create($create_params);
 
-    // Create the entity from data.
-    $entity = $this->entityManager->getStorage($entity_type_id)->create($data);
+      $this->denormalizeFieldData($data, $entity, $format, $context);
+    }
+    else {
+      // Create the entity from all data.
+      $entity = $this->entityTypeManager->getStorage($entity_type_id)->create($data);
+    }
 
     // Pass the names of the fields whose values can be merged.
     // @todo https://www.drupal.org/node/2456257 remove this.

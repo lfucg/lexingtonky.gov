@@ -13,7 +13,7 @@ class ContentTranslationMetadataWrapper implements ContentTranslationMetadataWra
   /**
    * The wrapped entity translation.
    *
-   * @var \Drupal\Core\Entity\EntityInterface|\Drupal\Core\Entity\FieldableEntityInterface|\Drupal\Core\TypedData\TranslatableInterface
+   * @var \Drupal\Core\Entity\FieldableEntityInterface|\Drupal\Core\TypedData\TranslatableInterface
    */
   protected $translation;
 
@@ -27,7 +27,7 @@ class ContentTranslationMetadataWrapper implements ContentTranslationMetadataWra
   /**
    * Initializes an instance of the content translation metadata handler.
    *
-   * @param EntityInterface $translation
+   * @param \Drupal\Core\Entity\EntityInterface $translation
    *   The entity translation to be wrapped.
    * @param ContentTranslationHandlerInterface $handler
    *   The content translation handler.

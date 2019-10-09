@@ -8,7 +8,7 @@
 namespace Drupal\Tests\Component\HttpFoundation;
 
 use Drupal\Component\HttpFoundation\SecuredRedirectResponse;
-use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  * @group Routing
  * @coversDefaultClass \Drupal\Component\HttpFoundation\SecuredRedirectResponse
  */
-class SecuredRedirectResponseTest extends UnitTestCase {
+class SecuredRedirectResponseTest extends TestCase {
 
   /**
    * Test copying of redirect response.
@@ -30,7 +30,7 @@ class SecuredRedirectResponseTest extends UnitTestCase {
     $redirect = new RedirectResponse('/magic_redirect_url', 301, ['x-cache-foobar' => 123]);
     $redirect->setProtocolVersion('2.0');
     $redirect->setCharset('ibm-943_P14A-2000');
-    $redirect->headers->setCookie(new Cookie('name', 'value'));
+    $redirect->headers->setCookie(new Cookie('name', 'value', 0, '/', NULL, FALSE, TRUE, FALSE, NULL));
 
     // Make a cloned redirect.
     $secureRedirect = SecuredRedirectStub::createFromRedirectResponse($redirect);

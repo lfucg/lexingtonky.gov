@@ -2,7 +2,7 @@
 
 namespace Drupal\KernelTests\Core\Command;
 
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Command\DbDumpApplication;
 use Drupal\Core\Config\DatabaseStorage;
 use Drupal\Core\Database\Database;
@@ -70,7 +70,8 @@ class DbDumpTest extends KernelTestBase {
     parent::register($container);
     $container->register('cache_factory', 'Drupal\Core\Cache\DatabaseBackendFactory')
       ->addArgument(new Reference('database'))
-      ->addArgument(new Reference('cache_tags.invalidator.checksum'));
+      ->addArgument(new Reference('cache_tags.invalidator.checksum'))
+      ->addArgument(new Reference('settings'));
   }
 
   /**
@@ -129,6 +130,8 @@ class DbDumpTest extends KernelTestBase {
       'key_value_expire',
       'menu_link_content',
       'menu_link_content_data',
+      'menu_link_content_revision',
+      'menu_link_content_field_revision',
       'sequences',
       'sessions',
       'url_alias',
@@ -204,9 +207,9 @@ class DbDumpTest extends KernelTestBase {
     foreach ($this->tables as $table) {
       $this->assertTrue(Database::getConnection()
         ->schema()
-        ->tableExists($table), SafeMarkup::format('Table @table created by the database script.', ['@table' => $table]));
-      $this->assertIdentical($this->originalTableSchemas[$table], $this->getTableSchema($table), SafeMarkup::format('The schema for @table was properly restored.', ['@table' => $table]));
-      $this->assertIdentical($this->originalTableIndexes[$table], $this->getTableIndexes($table), SafeMarkup::format('The indexes for @table were properly restored.', ['@table' => $table]));
+        ->tableExists($table), new FormattableMarkup('Table @table created by the database script.', ['@table' => $table]));
+      $this->assertSame($this->originalTableSchemas[$table], $this->getTableSchema($table), new FormattableMarkup('The schema for @table was properly restored.', ['@table' => $table]));
+      $this->assertSame($this->originalTableIndexes[$table], $this->getTableIndexes($table), new FormattableMarkup('The indexes for @table were properly restored.', ['@table' => $table]));
     }
 
     // Ensure the test config has been replaced.

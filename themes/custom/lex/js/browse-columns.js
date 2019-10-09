@@ -356,10 +356,12 @@
       return {'html': $(fullPageHTML).find(section).html()};
     },
     lexUpdateBreadcrumbs: function(state){
+
       var $breadcrumbItems = this.$breadcrumbs.find('li');
+
       if(state.subsection){
         var sectionSlug = state.section;
-        var sectionTitle = this.$section.find('h1').text();
+        var sectionTitle = this.$section.find('h2').text();
 
         if($breadcrumbItems.length === 1){
           var $sectionBreadcrumb = $('<li class="lex-breadcrumb-item"/>');

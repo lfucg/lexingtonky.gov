@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\user\Unit;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserAuth;
 
@@ -59,8 +60,9 @@ class UserAuthTest extends UnitTestCase {
   protected function setUp() {
     $this->userStorage = $this->getMock('Drupal\Core\Entity\EntityStorageInterface');
 
-    $entity_manager = $this->getMock('Drupal\Core\Entity\EntityManagerInterface');
-    $entity_manager->expects($this->any())
+    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface|\PHPUnit_Framework_MockObject_MockObject $entity_type_manager */
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->expects($this->any())
       ->method('getStorage')
       ->with('user')
       ->will($this->returnValue($this->userStorage));
@@ -69,10 +71,10 @@ class UserAuthTest extends UnitTestCase {
 
     $this->testUser = $this->getMockBuilder('Drupal\user\Entity\User')
       ->disableOriginalConstructor()
-      ->setMethods(array('id', 'setPassword', 'save', 'getPassword'))
+      ->setMethods(['id', 'setPassword', 'save', 'getPassword'])
       ->getMock();
 
-    $this->userAuth = new UserAuth($entity_manager, $this->passwordService);
+    $this->userAuth = new UserAuth($entity_type_manager, $this->passwordService);
   }
 
   /**
@@ -95,12 +97,12 @@ class UserAuthTest extends UnitTestCase {
    * @return array
    */
   public function providerTestAuthenticateWithMissingCredentials() {
-    return array(
-      array(NULL, NULL),
-      array(NULL, ''),
-      array('', NULL),
-      array('', ''),
-    );
+    return [
+      [NULL, NULL],
+      [NULL, ''],
+      ['', NULL],
+      ['', ''],
+    ];
   }
 
   /**
@@ -111,8 +113,8 @@ class UserAuthTest extends UnitTestCase {
   public function testAuthenticateWithNoAccountReturned() {
     $this->userStorage->expects($this->once())
       ->method('loadByProperties')
-      ->with(array('name' => $this->username))
-      ->will($this->returnValue(array()));
+      ->with(['name' => $this->username])
+      ->will($this->returnValue([]));
 
     $this->assertFalse($this->userAuth->authenticate($this->username, $this->password));
   }
@@ -125,8 +127,8 @@ class UserAuthTest extends UnitTestCase {
   public function testAuthenticateWithIncorrectPassword() {
     $this->userStorage->expects($this->once())
       ->method('loadByProperties')
-      ->with(array('name' => $this->username))
-      ->will($this->returnValue(array($this->testUser)));
+      ->with(['name' => $this->username])
+      ->will($this->returnValue([$this->testUser]));
 
     $this->passwordService->expects($this->once())
       ->method('check')
@@ -148,8 +150,8 @@ class UserAuthTest extends UnitTestCase {
 
     $this->userStorage->expects($this->once())
       ->method('loadByProperties')
-      ->with(array('name' => $this->username))
-      ->will($this->returnValue(array($this->testUser)));
+      ->with(['name' => $this->username])
+      ->will($this->returnValue([$this->testUser]));
 
     $this->passwordService->expects($this->once())
       ->method('check')
@@ -175,8 +177,8 @@ class UserAuthTest extends UnitTestCase {
 
     $this->userStorage->expects($this->once())
       ->method('loadByProperties')
-      ->with(array('name' => $this->username))
-      ->will($this->returnValue(array($this->testUser)));
+      ->with(['name' => $this->username])
+      ->will($this->returnValue([$this->testUser]));
 
     $this->passwordService->expects($this->once())
       ->method('check')
@@ -203,8 +205,8 @@ class UserAuthTest extends UnitTestCase {
 
     $this->userStorage->expects($this->once())
       ->method('loadByProperties')
-      ->with(array('name' => $this->username))
-      ->will($this->returnValue(array($this->testUser)));
+      ->with(['name' => $this->username])
+      ->will($this->returnValue([$this->testUser]));
 
     $this->passwordService->expects($this->once())
       ->method('check')

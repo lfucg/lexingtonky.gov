@@ -1,89 +1,54 @@
-'use strict';
-
 var gulp = require('gulp');
-var watch = require('gulp-watch');
-var imagemin = require('gulp-imagemin');
-var newer = require('gulp-newer');
-var concat = require('gulp-concat');
-var rename = require('gulp-rename');
-var svgmin = require('gulp-svgmin');
+var livereload = require('gulp-livereload')
+var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
-var cssmin = require('gulp-minify-css');
+var autoprefixer = require('autoprefixer');
+var postcss = require('gulp-postcss');
 var sourcemaps = require('gulp-sourcemaps');
-var autoprefixer = require('gulp-autoprefixer');
-var runSequence = require('run-sequence');
-var mocha = require('gulp-mocha');
-var jshint = require('gulp-jshint');
+var imagemin = require('gulp-imagemin');
+var pngquant = require('imagemin-pngquant');
+sass.compiler = require('node-sass');
 
-// paths
-// todo: include webdesign standards in the image min
-// var imgSrc = './webdesignstandards/img/**/*.png';
-var imgSrc = './img-src/*';
-var imgDest = './img';
-var svgSrc = './svg-src/**/*.svg';
-var svgDest = './img';
-var sassSrc = ['./scss/**/*.scss'];
-var sassDest = './css';
+var autoprefixerOptions = {
+  overrideBrowserslist: ['> 0%', 'IE 9'],
+  cascade: false,
+};
 
+gulp.task('imagemin', function () {
+    return gulp.src('./images/*')
+        .pipe(imagemin({
+            progressive: true,
+            svgoPlugins: [{removeViewBox: false}],
+            use: [pngquant()]
+        }))
+        .pipe(gulp.dest('./images'));
+});
 gulp.task('sass', function () {
-gulp.src(sassSrc)
-  .pipe(sourcemaps.init())
-  .pipe(sass({
-    errLogToConsole: true
-    }))
-  .pipe(autoprefixer('last 2 version'))
-  .pipe(sourcemaps.write())
-  .pipe(gulp.dest(sassDest));
+    return gulp.src('./scss/**/*.scss')
+        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+        .pipe(postcss([autoprefixer(autoprefixerOptions)]))
+        .pipe(gulp.dest('./css'));
+});
+gulp.task('old_sass', function () {
+    return gulp.src('./old_scss/**/*.*')
+        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+        .pipe(postcss([autoprefixer(autoprefixerOptions)]))
+        .pipe(gulp.dest('./css'));
 });
 
-gulp.task('cssmin', function() {
-  return gulp.src('./css/styles.css')
-    .pipe(cssmin())
-    .pipe(rename('styles.min.css'))
-    .pipe(gulp.dest(sassDest));
+gulp.task('uglify', function() {
+  gulp.src('./lib/*.js')
+    .pipe(uglify('main.js'))
+    .pipe(gulp.dest('./js'))
 });
 
-// add image minify task
-gulp.task('imagemin', function() {
-  return gulp.src(imgSrc)
-    .pipe(newer(imgSrc))
-    .pipe(imagemin())
-    .pipe(gulp.dest(imgDest));
-});
-
-// add svg minify task
-gulp.task('svgmin', function() {
-  return gulp.src(svgSrc)
-    .pipe(newer(svgSrc))
-    .pipe(svgmin())
-    .pipe(gulp.dest(svgDest));
-});
-
-gulp.task('test', function() {
-  return gulp.src(['js/lex-traffic-ticker-test.js', 'js/lex-traffic-ticker.js'], {read: false})
-    .pipe(mocha({reporter: 'nyan'}));
-});
-
-// Run tasks without watching.
-gulp.task('build', function(callback) {
-  runSequence('sass', 'imagemin', 'svgmin', 'cssmin', callback);
-});
-
-
-gulp.task('lintjs', function(callback) {
-  return gulp.src(['js/lex-traffic-ticker.js'])
-          .pipe(jshint())
-          .pipe(jshint.reporter('default'));
-});
-
-// Rerun the task when a file changes
-gulp.task('watch', function() {
-  gulp.watch(sassSrc, ['sass']);
-  gulp.watch('./css/styles.css', ['cssmin']);
-  gulp.watch(imgSrc, ['imagemin']);
-  gulp.watch(svgSrc, ['svgmin']);
-});
-
-gulp.task('default', function(callback) {
-  runSequence('sass', 'imagemin', 'svgmin', 'cssmin', 'watch', callback);
+gulp.task('watch', function(){
+    livereload.listen();
+    gulp.watch('./scss/**/*.scss', ['sass']);
+    gulp.watch('./old_scss/**/*.sass', ['old_sass']);
+    gulp.watch('./old_scss/**/*.scss', ['old_sass']);
+    gulp.watch('./lib/*.js', ['uglify']);
+    gulp.watch(['/css/style.css', './**/*.twig', './js/*.js'], function (files){
+        livereload.changed(files)
+    });
 });

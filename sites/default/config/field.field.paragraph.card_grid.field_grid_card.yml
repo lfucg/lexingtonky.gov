@@ -1,0 +1,50 @@
+uuid: 2b4266c1-cdd5-4523-bef2-b528bbff2825
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_grid_card
+    - paragraphs.paragraphs_type.card_grid
+  module:
+    - entity_reference_revisions
+id: paragraph.card_grid.field_grid_card
+field_name: field_grid_card
+entity_type: paragraph
+bundle: card_grid
+label: 'Grid Card'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles: {  }
+    target_bundles_drag_drop:
+      card:
+        enabled: true
+        weight: 9
+      card_grid:
+        weight: 10
+        enabled: false
+      lexidme_case:
+        weight: 11
+        enabled: false
+      lexidme_grid:
+        weight: 12
+        enabled: false
+      paragraph_sidebar_section:
+        weight: 13
+        enabled: false
+      paragraphs_media_contact:
+        weight: 14
+        enabled: false
+      paragraphs_page_section:
+        weight: 15
+        enabled: false
+      photo_grid:
+        weight: 16
+        enabled: false
+field_type: entity_reference_revisions

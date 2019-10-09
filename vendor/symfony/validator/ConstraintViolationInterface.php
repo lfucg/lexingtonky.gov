@@ -19,11 +19,9 @@ namespace Symfony\Component\Validator;
  * element in the validation graph and the root element that was originally
  * passed to the validator. For example, take the following graph:
  *
- * <pre>
- * (Person)---(firstName: string)
- *      \
- *   (address: Address)---(street: string)
- * </pre>
+ *     (Person)---(firstName: string)
+ *          \
+ *       (address: Address)---(street: string)
  *
  * If the <tt>Person</tt> object is validated and validation fails for the
  * "firstName" property, the generated violation has the <tt>Person</tt>
@@ -38,7 +36,7 @@ interface ConstraintViolationInterface
     /**
      * Returns the violation message.
      *
-     * @return string The violation message.
+     * @return string The violation message
      */
     public function getMessage();
 
@@ -46,23 +44,22 @@ interface ConstraintViolationInterface
      * Returns the raw violation message.
      *
      * The raw violation message contains placeholders for the parameters
-     * returned by {@link getMessageParameters}. Typically you'll pass the
+     * returned by {@link getParameters}. Typically you'll pass the
      * message template and parameters to a translation engine.
      *
-     * @return string The raw violation message.
+     * @return string The raw violation message
      */
     public function getMessageTemplate();
 
     /**
      * Returns the parameters to be inserted into the raw violation message.
      *
-     * @return array A possibly empty list of parameters indexed by the names
-     *               that appear in the message template.
+     * @return array a possibly empty list of parameters indexed by the names
+     *               that appear in the message template
      *
      * @see getMessageTemplate()
-     * @deprecated since version 2.7, to be replaced by getParameters() in 3.0.
      */
-    public function getMessageParameters();
+    public function getParameters();
 
     /**
      * Returns a number for pluralizing the violation message.
@@ -78,11 +75,9 @@ interface ConstraintViolationInterface
      * This method returns the value of the parameter for choosing the right
      * pluralization form (in this case "choices").
      *
-     * @return int|null The number to use to pluralize of the message.
-     *
-     * @deprecated since version 2.7, to be replaced by getPlural() in 3.0.
+     * @return int|null The number to use to pluralize of the message
      */
-    public function getMessagePluralization();
+    public function getPlural();
 
     /**
      * Returns the root element of the validation.
@@ -111,15 +106,15 @@ interface ConstraintViolationInterface
     /**
      * Returns the value that caused the violation.
      *
-     * @return mixed The invalid value that caused the validated constraint to
-     *               fail.
+     * @return mixed the invalid value that caused the validated constraint to
+     *               fail
      */
     public function getInvalidValue();
 
     /**
      * Returns a machine-digestible error code for the violation.
      *
-     * @return string|null The error code.
+     * @return string|null The error code
      */
     public function getCode();
 }

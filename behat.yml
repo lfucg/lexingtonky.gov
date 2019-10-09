@@ -8,21 +8,35 @@ default:
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\DrushContext
   extensions:
-    jarnaiz\JUnitFormatter\JUnitFormatterExtension:
+#    jarnaiz\JUnitFormatter\JUnitFormatterExtension:
     Behat\MinkExtension:
-      goutte: ~
-      selenium2: ~
-      base_url: http://localhost:8888
+      default_session: selenium2
+      selenium2:
+        # For the moment this has to be redone everytime the kalabox restarts.
+        # run  docker inspect lexkyd8_selenium_1 to get the ip for the selenium
+        # server.
+        wd_host: "http://selenium:4444/wd/hub"
+        capabilities: { "browser" : "chrome" }
+      base_url: "http://lexky-d8.kbox.host"
       browser_name: chrome
     Drupal\DrupalExtension:
       blackbox: ~
       api_driver: "drupal"
       drupal:
         drupal_root: "."
+      # api_driver: "drush"
+      # drush:
+      #   alias: @pantheon.PANTHEON_ALIAS
       region_map:
-        help: ".lex-region-help"
-        breadcrumb: ".lex-breadcrumb"
+        notices: ".lex-region-notices"
+        sitemast: ".lex-region-sitemast"
+        hero: ".lex-region-hero"
+        breadcrumb: ".lex-region-breadcrumb"
         content: ".lex-region-content"
-        featured_bottom_first: ".lex-region-featured_bottom_first"
+        after_content: ".lex-region-after_content"
+        sidebar: ".lex-region-sidebar"
+        postscript: ".lex-region-postscript"
+        feedback: ".lex-region-feedback"
+        footer: ".lex-region-footer"
       selectors:
         error_message_selector: '.messages.messages--error'

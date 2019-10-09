@@ -7,6 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * A form containing a language select element.
+ *
+ * @internal
  */
 class LanguageConfigurationElementTest extends FormBase {
 
@@ -21,11 +23,11 @@ class LanguageConfigurationElementTest extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['langcode'] = array(
+    $form['langcode'] = [
       '#title' => t('Language select'),
       '#type' => 'language_select',
       '#default_value' => language_get_default_langcode('entity_test', 'some_bundle'),
-    );
+    ];
     return $form;
   }
 

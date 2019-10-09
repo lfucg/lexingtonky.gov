@@ -42,6 +42,9 @@
  *   parent: system.admin_reports
  *   description: 'View events that have recently been logged.'
  *   route_name: dblog.overview
+ *   options:
+ *     query:
+ *       uid: 1
  *   weight: -1
  * @endcode
  * Some notes:
@@ -50,6 +53,9 @@
  * - parent: The machine name of the menu link that is the parent in the
  *   administrative hierarchy. See system.links.menu.yml to find the main
  *   skeleton of the hierarchy.
+ * - options: Define additional route options such as query parameters. See
+ *   https://www.drupal.org/docs/8/api/menu-api/providing-module-defined-menu-links
+ *   for more information.
  * - weight: Lower (negative) numbers come before higher (positive) numbers,
  *   for menu items with the same parent.
  *
@@ -201,7 +207,7 @@
  * // Finally, build a renderable array from the transformed tree.
  * $menu = $menu_tree->build($tree);
  *
- * $menu_html = drupal_render($menu);
+ * $menu_html = \Drupal::service('renderer')->render($menu);
  * @endcode
  *
  * @}
@@ -268,20 +274,21 @@ function hook_menu_links_discovered_alter(&$links) {
   $links['user.logout']['title'] = new \Drupal\Core\StringTranslation\TranslatableMarkup('Logout');
   // Conditionally add an additional link with a title that's not translated.
   if (\Drupal::moduleHandler()->moduleExists('search')) {
-    $links['menu.api.search'] = array(
+    $links['menu.api.search'] = [
       'title' => \Drupal::config('system.site')->get('name'),
       'route_name' => 'menu.api.search',
       'description' => new \Drupal\Core\StringTranslation\TranslatableMarkup('View popular search phrases for this site.'),
       'parent' => 'system.admin_reports',
-    );
+    ];
   }
 }
 
 /**
  * Alter local tasks displayed on the page before they are rendered.
  *
- * This hook is invoked by menu_local_tasks(). The system-determined tabs and
- * actions are passed in by reference. Additional tabs may be added.
+ * This hook is invoked by \Drupal\Core\Menu\LocalTaskManager::getLocalTasks().
+ * The system-determined tabs and actions are passed in by reference. Additional
+ * tabs may be added.
  *
  * The local tasks are under the 'tabs' element and keyed by plugin ID.
  *
@@ -301,24 +308,28 @@ function hook_menu_links_discovered_alter(&$links) {
  *   as described above.
  * @param string $route_name
  *   The route name of the page.
+ * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $cacheability
+ *   The cacheability metadata for the current route's local tasks.
  *
  * @ingroup menu
  */
-function hook_menu_local_tasks_alter(&$data, $route_name) {
+function hook_menu_local_tasks_alter(&$data, $route_name, \Drupal\Core\Cache\RefinableCacheableDependencyInterface &$cacheability) {
 
   // Add a tab linking to node/add to all pages.
-  $data['tabs'][0]['node.add_page'] = array(
+  $data['tabs'][0]['node.add_page'] = [
       '#theme' => 'menu_local_task',
-      '#link' => array(
+      '#link' => [
           'title' => t('Example tab'),
           'url' => Url::fromRoute('node.add_page'),
-          'localized_options' => array(
-              'attributes' => array(
+          'localized_options' => [
+              'attributes' => [
                   'title' => t('Add content'),
-              ),
-          ),
-      ),
-  );
+              ],
+          ],
+      ],
+  ];
+  // The tab we're adding is dependent on a user's access to add content.
+  $cacheability->addCacheTags(['user.permissions']);
 }
 
 /**
@@ -374,7 +385,7 @@ function hook_local_tasks_alter(&$local_tasks) {
  *   links.
  * @param string $group
  *   The group of contextual links being rendered.
- * @param array $route_parameters.
+ * @param array $route_parameters
  *   The route parameters passed to each route_name of the contextual links.
  *   For example:
  *   @code
@@ -390,7 +401,7 @@ function hook_contextual_links_alter(array &$links, $group, array $route_paramet
     // Dynamically use the menu name for the title of the menu_edit contextual
     // link.
     $menu = \Drupal::entityManager()->getStorage('menu')->load($route_parameters['menu']);
-    $links['menu_edit']['title'] = t('Edit menu: @label', array('@label' => $menu->label()));
+    $links['menu_edit']['title'] = t('Edit menu: @label', ['@label' => $menu->label()]);
   }
 }
 
@@ -445,7 +456,7 @@ function hook_system_breadcrumb_alter(\Drupal\Core\Breadcrumb\Breadcrumb &$bread
  *   The following keys can be altered:
  *   - text: The link text for the anchor tag. If the hook implementation
  *     changes this text it needs to preserve the safeness of the original text.
- *     Using t() or \Drupal\Component\Utility\SafeMarkup::format() with
+ *     Using t() or \Drupal\Component\Render\FormattableMarkup with
  *     @placeholder is recommended as this will escape the original text if
  *     necessary. If the resulting text is not marked safe it will be escaped.
  *   - url_is_active: Whether or not the link points to the currently active

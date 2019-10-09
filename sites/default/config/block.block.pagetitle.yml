@@ -8,8 +8,8 @@ dependencies:
     - lex
 id: pagetitle
 theme: lex
-region: highlighted
-weight: -27
+region: title
+weight: -25
 provider: null
 plugin: page_title_block
 settings:
@@ -20,6 +20,6 @@ settings:
 visibility:
   request_path:
     id: request_path
-    pages: "<front>\r\n/browse/*"
+    pages: "<front>\r\n/browse/*\r\n/search"
     negate: true
     context_mapping: {  }

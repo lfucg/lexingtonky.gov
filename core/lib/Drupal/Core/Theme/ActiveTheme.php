@@ -20,6 +20,13 @@ class ActiveTheme {
   protected $name;
 
   /**
+   * The path to the logo.
+   *
+   * @var string
+   */
+  protected $logo;
+
+  /**
    * The path to the theme.
    *
    * @var string
@@ -44,8 +51,20 @@ class ActiveTheme {
    * An array of base theme active theme objects keyed by name.
    *
    * @var static[]
+   *
+   * @deprecated in Drupal 8.7.0 and will be removed before Drupal 9. Use
+   *   $this->baseThemeExtensions instead.
+   *
+   * @see https://www.drupal.org/node/3019948
    */
   protected $baseThemes;
+
+  /**
+   * An array of base theme extension objects keyed by name.
+   *
+   * @var \Drupal\Core\Extension\Extension[]
+   */
+  protected $baseThemeExtensions = [];
 
   /**
    * The extension object.
@@ -83,6 +102,13 @@ class ActiveTheme {
   protected $librariesOverride;
 
   /**
+   * The list of libraries-extend definitions.
+   *
+   * @var array
+   */
+  protected $librariesExtend;
+
+  /**
    * Constructs an ActiveTheme object.
    *
    * @param array $values
@@ -93,23 +119,32 @@ class ActiveTheme {
       'path' => '',
       'engine' => 'twig',
       'owner' => 'twig',
+      'logo' => '',
       'stylesheets_remove' => [],
       'libraries' => [],
       'extension' => 'html.twig',
-      'base_themes' => [],
+      'base_theme_extensions' => [],
       'regions' => [],
       'libraries_override' => [],
       'libraries_extend' => [],
     ];
 
     $this->name = $values['name'];
+    $this->logo = $values['logo'];
     $this->path = $values['path'];
     $this->engine = $values['engine'];
     $this->owner = $values['owner'];
     $this->styleSheetsRemove = $values['stylesheets_remove'];
     $this->libraries = $values['libraries'];
     $this->extension = $values['extension'];
-    $this->baseThemes = $values['base_themes'];
+    $this->baseThemeExtensions = $values['base_theme_extensions'];
+    if (!empty($values['base_themes']) && empty($this->baseThemeExtensions)) {
+      @trigger_error("The 'base_themes' key is deprecated in Drupal 8.7.0  and support for it will be removed in Drupal 9.0.0. Use 'base_theme_extensions' instead. See https://www.drupal.org/node/3019948", E_USER_DEPRECATED);
+      foreach ($values['base_themes'] as $base_theme) {
+        $this->baseThemeExtensions[$base_theme->getName()] = $base_theme->getExtension();
+      }
+    }
+
     $this->regions = $values['regions'];
     $this->librariesOverride = $values['libraries_override'];
     $this->librariesExtend = $values['libraries_extend'];
@@ -145,7 +180,7 @@ class ActiveTheme {
   /**
    * Returns the path to the theme engine for root themes.
    *
-   * @see \Drupal\Core\Extension\ThemeHandler::rebuildThemeData
+   * @see \Drupal\Core\Extension\ThemeExtensionList::doList()
    *
    * @return mixed
    */
@@ -177,6 +212,8 @@ class ActiveTheme {
    * @return mixed
    *
    * @deprecated in Drupal 8.0.0, will be removed before Drupal 9.0.0.
+   *
+   * @see https://www.drupal.org/node/2497313
    */
   public function getStyleSheetsRemove() {
     return $this->styleSheetsRemove;
@@ -189,9 +226,40 @@ class ActiveTheme {
    * the dependency chain.
    *
    * @return static[]
+   *
+   * @deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. Use
+   *   \Drupal\Core\Theme\ActiveTheme::getBaseThemeExtensions() instead.
+   *
+   * @see https://www.drupal.org/node/3019948
    */
   public function getBaseThemes() {
-    return $this->baseThemes;
+    @trigger_error('\Drupal\Core\Theme\ActiveTheme::getBaseThemes() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. Use \Drupal\Core\Theme\ActiveTheme::getBaseThemeExtensions() instead. See https://www.drupal.org/node/3019948', E_USER_DEPRECATED);
+    /** @var \Drupal\Core\Theme\ThemeInitialization $theme_initialisation */
+    $theme_initialisation = \Drupal::service('theme.initialization');
+    $base_themes = array_combine(array_keys($this->baseThemeExtensions), array_keys($this->baseThemeExtensions));
+    return array_map([$theme_initialisation, 'getActiveThemeByName'], $base_themes);
+  }
+
+  /**
+   * Returns an array of base theme extension objects keyed by name.
+   *
+   * The order starts with the base theme of $this and ends with the root of
+   * the dependency chain.
+   *
+   * @return \Drupal\Core\Extension\Extension[]
+   */
+  public function getBaseThemeExtensions() {
+    return $this->baseThemeExtensions;
+  }
+
+  /**
+   * Returns the logo provided by the theme.
+   *
+   * @return string
+   *   The logo path.
+   */
+  public function getLogo() {
+    return $this->logo;
   }
 
   /**

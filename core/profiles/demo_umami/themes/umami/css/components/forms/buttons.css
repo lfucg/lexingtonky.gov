@@ -1,0 +1,13 @@
+/**
+ * @file
+ * This file is used to style form buttons generically, with overrides per form
+ */
+.form-actions {
+  display: inline-flex;
+}
+.form-actions .button {
+  margin-left: 1em;
+}
+.form-actions .button:first-child {
+  margin-left: 0;
+}

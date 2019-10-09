@@ -48,6 +48,9 @@ use Drupal\user\UserInterface;
  *   },
  *   field_ui_base_route = "entity.entity_test.admin_form",
  * )
+ *
+ * Note that this entity type annotation intentionally omits the "create" link
+ * template. See https://www.drupal.org/node/2293697.
  */
 class EntityTest extends ContentEntityBase implements EntityOwnerInterface {
 
@@ -72,15 +75,15 @@ class EntityTest extends ContentEntityBase implements EntityOwnerInterface {
       ->setDescription(t('The name of the test entity.'))
       ->setTranslatable(TRUE)
       ->setSetting('max_length', 32)
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'string',
         'weight' => -5,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -5,
-      ));
+      ]);
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Authored on'))
@@ -94,19 +97,19 @@ class EntityTest extends ContentEntityBase implements EntityOwnerInterface {
       ->setSetting('handler', 'default')
       // Default EntityTest entities to have the root user as the owner, to
       // simplify testing.
-      ->setDefaultValue(array(0 => array('target_id' => 1)))
+      ->setDefaultValue([0 => ['target_id' => 1]])
       ->setTranslatable(TRUE)
-      ->setDisplayOptions('form', array(
+      ->setDisplayOptions('form', [
         'type' => 'entity_reference_autocomplete',
         'weight' => -1,
-        'settings' => array(
+        'settings' => [
           'match_operator' => 'CONTAINS',
           'size' => '60',
           'placeholder' => '',
-        ),
-      ));
+        ],
+      ]);
 
-    return $fields;
+    return $fields + \Drupal::state()->get($entity_type->id() . '.additional_base_field_definitions', []);
   }
 
   /**
@@ -159,6 +162,17 @@ class EntityTest extends ContentEntityBase implements EntityOwnerInterface {
    */
   public function getName() {
     return $this->get('name')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEntityKey($key) {
+    // Typically this protected method is used internally by entity classes and
+    // exposed publicly through more specific getter methods. So that test cases
+    // are able to set and access entity keys dynamically, update the visibility
+    // of this method to public.
+    return parent::getEntityKey($key);
   }
 
 }

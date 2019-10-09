@@ -1,0 +1,51 @@
+<div id="calendar"></div>
+<div id="mobileCalendar"></div>
+<script>
+window.addEventListener( 'load', function(){
+  (function($) {
+     moment.updateLocale('en', {
+       meridiem: function(hour, minute, isLowerCase) {
+        if ($('button.fc-month-button').hasClass('fc-state-active')) {
+          return hour < 12 ? 'a':'p';
+        }
+        else {
+          return hour < 12 ? ' a.m.' : ' p.m.';
+        }
+       }
+     });
+
+    $('#calendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month, agendaWeek, listMonth',
+      },
+      editable: false,
+      eventsLimit: true,
+      events: '/calendar/{{ fc_callback }}',
+      defaultDate: '{{ "now"|date("Y-m-d") }}',
+      views: {
+        month: {
+          titleFormat: 'MMMM'
+        },
+        day: {
+          titleFormat: 'dddd, MMMM d'
+        }
+      }
+    });
+
+    $('#mobileCalendar').fullCalendar({
+      header: {
+        left: 'prev,today,next',
+        center: 'title',
+        right: ''
+      },
+      editable: false,
+      eventsLimit: true,
+      defaultView: 'listMonth',
+      events: '/calendar/{{ fc_callback }}',
+      defaultDate: '{{ "now"|date("Y-m-d") }}',
+    });
+  })(jQuery);
+});
+</script>

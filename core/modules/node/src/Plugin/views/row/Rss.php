@@ -2,7 +2,8 @@
 
 namespace Drupal\node\Plugin\views\row;
 
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\views\Plugin\views\row\RssPluginBase;
 
 /**
@@ -27,7 +28,7 @@ class Rss extends RssPluginBase {
   public $base_field = 'nid';
 
   // Stores the nodes loaded with preRender.
-  public $nodes = array();
+  public $nodes = [];
 
   /**
    * {@inheritdoc}
@@ -50,12 +51,14 @@ class Rss extends RssPluginBase {
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
+   *   The entity display repository.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_manager);
-    $this->nodeStorage = $entity_manager->getStorage('node');
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityDisplayRepositoryInterface $entity_display_repository = NULL) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $entity_display_repository);
+    $this->nodeStorage = $entity_type_manager->getStorage('node');
   }
 
   /**
@@ -74,7 +77,7 @@ class Rss extends RssPluginBase {
   }
 
   public function preRender($values) {
-    $nids = array();
+    $nids = [];
     foreach ($values as $row) {
       $nids[] = $row->{$this->field_alias};
     }
@@ -103,23 +106,23 @@ class Rss extends RssPluginBase {
       return;
     }
 
-    $node->link = $node->url('canonical', array('absolute' => TRUE));
-    $node->rss_namespaces = array();
-    $node->rss_elements = array(
-      array(
+    $node->link = $node->toUrl('canonical', ['absolute' => TRUE])->toString();
+    $node->rss_namespaces = [];
+    $node->rss_elements = [
+      [
         'key' => 'pubDate',
         'value' => gmdate('r', $node->getCreatedTime()),
-      ),
-      array(
+      ],
+      [
         'key' => 'dc:creator',
         'value' => $node->getOwner()->getDisplayName(),
-      ),
-      array(
+      ],
+      [
         'key' => 'guid',
         'value' => $node->id() . ' at ' . $base_url,
-        'attributes' => array('isPermaLink' => 'false'),
-      ),
-    );
+        'attributes' => ['isPermaLink' => 'false'],
+      ],
+    ];
 
     // The node gets built and modules add to or modify $node->rss_elements
     // and $node->rss_namespaces.
@@ -135,7 +138,7 @@ class Rss extends RssPluginBase {
     elseif (function_exists('rdf_get_namespaces')) {
       // Merge RDF namespaces in the XML namespaces in case they are used
       // further in the RSS content.
-      $xml_rdf_namespaces = array();
+      $xml_rdf_namespaces = [];
       foreach (rdf_get_namespaces() as $prefix => $uri) {
         $xml_rdf_namespaces['xmlns:' . $prefix] = $uri;
       }
@@ -153,12 +156,12 @@ class Rss extends RssPluginBase {
     // template_preprocess_views_view_row_rss() can still access it.
     $item->elements = &$node->rss_elements;
     $item->nid = $node->id();
-    $build = array(
+    $build = [
       '#theme' => $this->themeFunctions(),
       '#view' => $this->view,
       '#options' => $this->options,
       '#row' => $item,
-    );
+    ];
 
     return $build;
   }

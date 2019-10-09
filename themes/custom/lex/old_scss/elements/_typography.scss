@@ -1,0 +1,115 @@
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0em;
+  font-family: $font-sans;
+}
+
+/* for basic document readability */
+.lex-region-content {
+  h1, h2, h3, h4, h5, h6 {
+    /* return to uswds value */
+    margin-top: 1em;
+  }
+  h1, h2 {
+    font-weight: $font-weight-medium;
+  }
+
+  h3, h4, h5, h6 {
+    font-weight: $font-weight-medium-heavy;
+  }
+
+  ul li {
+    line-height: 1.5em;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  p {
+    margin-top: 0;
+  }
+}
+
+.lex-node .lex-region-content {
+  a {
+    text-decoration: underline;
+  }
+  a.lex-calltoaction {
+    text-decoration: none;
+  }
+}
+
+/* org page, service guide */
+.lex-region-content, .layout-sidebar-second {
+  .lex-block {
+    .lex-section-heading.lex-heading, h2 {
+      font-weight: $font-weight-heavy;
+      margin-top: 0;
+      padding-top: 0;
+      text-transform: none;
+    }
+    /* for blocks that are the whole page like /meeting-notices */
+    .lex-block-light-title {
+      font-weight: $font-weight-regular;
+      a {
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.lex-pagetitle {
+  font-size: 4rem;
+  margin: 0.5em 0;
+}
+
+a.lex-font-muted, a.lex-font-muted:visited {
+  color: $lex-dark-grey;
+}
+
+.lex-font-muted {
+  color: $lex-dark-grey;
+}
+
+// a:visited {
+//   color: $lex-visited-link;
+// }
+
+a:not(.toolbar-icon):focus {
+  box-shadow: none;
+  background-color: $lex-extra-light-blue;
+  outline: 3px solid $lex-extra-light-blue;
+}
+
+a.lex-font-standout, a.lex-font-standout:visited {
+  color: $lex-blue;
+  text-decoration: underline;
+}
+
+
+.lex-font-standout {
+  color: $color-primary;
+}
+
+.lex-font-lightcolor {
+  color: $lex-white;
+  a, a:visited {
+    color: $lex-white;
+  }
+}
+
+
+.lex-font-light {
+  @include media($large-screen) {
+    font-weight: $font-weight-light;
+  }
+}
+
+.lex-link-literal {
+  color: $lex-green;
+}
+
+.lex-standoutlinks {
+  .lex-card-title {
+    text-transform: uppercase;
+  }
+}
+

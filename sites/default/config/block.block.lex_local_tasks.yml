@@ -8,8 +8,8 @@ dependencies:
     - lex
 id: lex_local_tasks
 theme: lex
-region: highlighted
-weight: -25
+region: breadcrumb
+weight: -24
 provider: null
 plugin: local_tasks_block
 settings:

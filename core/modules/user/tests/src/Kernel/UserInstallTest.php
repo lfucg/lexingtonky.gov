@@ -16,7 +16,7 @@ class UserInstallTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('user');
+  public static $modules = ['user'];
 
   /**
    * {@inheritdoc}
@@ -27,7 +27,6 @@ class UserInstallTest extends KernelTestBase {
     $this->installEntitySchema('user');
     user_install();
   }
-
 
   /**
    * Test that the initial users have correct values.

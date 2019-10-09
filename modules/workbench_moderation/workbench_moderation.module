@@ -10,6 +10,8 @@
  */
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Action\Plugin\Action\PublishAction;
+use Drupal\Core\Action\Plugin\Action\UnpublishAction;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -211,6 +213,12 @@ function workbench_moderation_action_info_alter(&$definitions) {
   }
   if (isset($definitions['node_unpublish_action']['class']) && $definitions['node_unpublish_action']['class'] == UnpublishNode::class) {
     $definitions['node_unpublish_action']['class'] = ModerationOptOutUnpublishNode::class;
+  }
+  if (isset($definitions['entity:publish_action:node']['class']) && $definitions['entity:publish_action:node']['class'] == PublishAction::class) {
+    $definitions['entity:publish_action:node']['class'] = ModerationOptOutPublishNode::class;
+  }
+  if (isset($definitions['entity:unpublish_action:node']['class']) && $definitions['entity:unpublish_action:node']['class'] == UnpublishAction::class) {
+    $definitions['entity:publish_action:node']['class'] = ModerationOptOutUnpublishNode::class;
   }
 }
 

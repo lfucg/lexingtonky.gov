@@ -1,0 +1,29 @@
+uuid: 132f42ae-66e3-462c-99e8-a37e001bd6e1
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.solr_search
+  module:
+    - system
+    - views
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_exposedformsolr_searchpage_1
+theme: bootstrap_barrio
+region: top_header
+weight: 0
+provider: null
+plugin: 'views_exposed_filter_block:solr_search-page_1'
+settings:
+  id: 'views_exposed_filter_block:solr_search-page_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+visibility:
+  request_path:
+    id: request_path
+    pages: /search
+    negate: true
+    context_mapping: {  }

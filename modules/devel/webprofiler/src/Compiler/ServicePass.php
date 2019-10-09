@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\webprofiler\Compiler\ServicePass.
- */
-
 namespace Drupal\webprofiler\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -55,7 +50,6 @@ class ServicePass implements CompilerPassInterface {
           $inEdges[] = [
             'id' => $edge->getSourceNode()->getId(),
             'invalidBehavior' => $edgeValue ? $edgeValue->getInvalidBehavior() : NULL,
-            'strict' => $edgeValue ? $edgeValue->isStrict() : NULL,
           ];
         }
 
@@ -68,7 +62,6 @@ class ServicePass implements CompilerPassInterface {
           $outEdges[] = [
             'id' => $edge->getDestNode()->getId(),
             'invalidBehavior' => $edgeValue ? $edgeValue->getInvalidBehavior() : NULL,
-            'strict' => $edgeValue ? $edgeValue->isStrict() : NULL,
           ];
         }
       }

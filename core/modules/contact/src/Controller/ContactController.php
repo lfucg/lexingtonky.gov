@@ -47,7 +47,8 @@ class ContactController extends ControllerBase {
    *   The contact form to use.
    *
    * @return array
-   *   The form as render array as expected by drupal_render().
+   *   The form as render array as expected by
+   *   \Drupal\Core\Render\RendererInterface::render().
    *
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    *   Exception is thrown when user tries to access non existing default
@@ -58,15 +59,16 @@ class ContactController extends ControllerBase {
 
     // Use the default form if no form has been passed.
     if (empty($contact_form)) {
-      $contact_form = $this->entityManager()
+      $contact_form = $this->entityTypeManager()
         ->getStorage('contact_form')
         ->load($config->get('default_form'));
       // If there are no forms, do not display the form.
       if (empty($contact_form)) {
         if ($this->currentUser()->hasPermission('administer contact forms')) {
-          drupal_set_message($this->t('The contact form has not been configured. <a href=":add">Add one or more forms</a> .', array(
-            ':add' => $this->url('contact.form_add'))), 'error');
-          return array();
+          $this->messenger()->addError($this->t('The contact form has not been configured. <a href=":add">Add one or more forms</a> .', [
+            ':add' => $this->url('contact.form_add'),
+          ]));
+          return [];
         }
         else {
           throw new NotFoundHttpException();
@@ -74,11 +76,11 @@ class ContactController extends ControllerBase {
       }
     }
 
-    $message = $this->entityManager()
+    $message = $this->entityTypeManager()
       ->getStorage('contact_message')
-      ->create(array(
+      ->create([
         'contact_form' => $contact_form->id(),
-      ));
+      ]);
 
     $form = $this->entityFormBuilder()->getForm($message);
     $form['#title'] = $contact_form->label();
@@ -94,7 +96,8 @@ class ContactController extends ControllerBase {
    *   The account for which a personal contact form should be generated.
    *
    * @return array
-   *   The personal contact form as render array as expected by drupal_render().
+   *   The personal contact form as render array as expected by
+   *   \Drupal\Core\Render\RendererInterface::render().
    *
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    *   Exception is thrown when user tries to access a contact form for a
@@ -106,13 +109,13 @@ class ContactController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
-    $message = $this->entityManager()->getStorage('contact_message')->create(array(
+    $message = $this->entityTypeManager()->getStorage('contact_message')->create([
       'contact_form' => 'personal',
       'recipient' => $user->id(),
-    ));
+    ]);
 
     $form = $this->entityFormBuilder()->getForm($message);
-    $form['#title'] = $this->t('Contact @username', array('@username' => $user->getDisplayName()));
+    $form['#title'] = $this->t('Contact @username', ['@username' => $user->getDisplayName()]);
     $form['#cache']['contexts'][] = 'user.permissions';
     return $form;
   }

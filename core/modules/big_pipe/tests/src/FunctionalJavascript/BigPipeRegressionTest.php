@@ -11,16 +11,16 @@ use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Url;
 use Drupal\editor\Entity\Editor;
 use Drupal\filter\Entity\FilterFormat;
-use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
-use Drupal\simpletest\ContentTypeCreationTrait;
-use Drupal\simpletest\NodeCreationTrait;
+use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
+use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
+use Drupal\Tests\node\Traits\NodeCreationTrait;
 
 /**
  * BigPipe regression tests.
  *
  * @group big_pipe
  */
-class BigPipeRegressionTest extends JavascriptTestBase {
+class BigPipeRegressionTest extends WebDriverTestBase {
 
   use CommentTestTrait;
   use ContentTypeCreationTrait;
@@ -182,6 +182,18 @@ JS;
       $this->drupalGet(Url::fromRoute('render_placeholder_message_test.queued'));
       $assert->responseNotContains($messages_markup);
     }
+  }
+
+  /**
+   * Ensure default BigPipe placeholder HTML cannot split paragraphs.
+   *
+   * @see https://www.drupal.org/node/2802923
+   */
+  public function testPlaceholderInParagraph_2802923() {
+    $this->drupalLogin($this->drupalCreateUser());
+    $this->drupalGet(Url::fromRoute('big_pipe_regression_test.2802923'));
+
+    $this->assertJsCondition('document.querySelectorAll(\'p\').length === 1');
   }
 
 }

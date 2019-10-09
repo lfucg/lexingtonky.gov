@@ -9,11 +9,6 @@ use Drupal\rest\Entity\RestResourceConfig;
 use Drupal\rest\RestResourceConfigInterface;
 
 /**
- * @addtogroup updates-8.1.x-to-8.2.x
- * @{
- */
-
-/**
  * Create REST resource configuration entities.
  *
  * @see rest_update_8201()
@@ -58,7 +53,7 @@ function rest_post_update_resource_granularity() {
         $resource_config_entity->set('configuration', [
           'methods' => array_keys($configuration),
           'formats' => $configuration[$first_method]['supported_formats'],
-          'authentication' => $configuration[$first_method]['supported_auth']
+          'authentication' => $configuration[$first_method]['supported_auth'],
         ]);
         $resource_config_entity->set('granularity', RestResourceConfigInterface::RESOURCE_GRANULARITY);
         $resource_config_entity->save();
@@ -67,7 +62,9 @@ function rest_post_update_resource_granularity() {
   }
 }
 
-
 /**
- * @} End of "addtogroup updates-8.1.x-to-8.2.x".
+ * Clear caches due to changes in route definitions.
  */
+function rest_post_update_161923() {
+  // Empty post-update hook.
+}

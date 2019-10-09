@@ -2,8 +2,7 @@
 
 namespace Drupal\views;
 
-use Drupal\Component\Utility\Unicode;
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Render\FormattableMarkup;
 
 /**
  * Defines a helper class for stuff related to views data.
@@ -20,7 +19,7 @@ class ViewsDataHelper {
   /**
    * A prepared list of all fields, keyed by base_table and handler type.
    *
-   * @param array
+   * @var array
    */
   protected $fields;
 
@@ -37,7 +36,7 @@ class ViewsDataHelper {
   /**
    * Fetches a list of all fields available for a given base type.
    *
-   * @param (array|string) $base
+   * @param array|string $base
    *   A list or a single base_table, for example node.
    * @param string $type
    *   The handler type, for example field or filter.
@@ -64,9 +63,9 @@ class ViewsDataHelper {
       // each field have a cheap kind of inheritance.
 
       foreach ($data as $table => $table_data) {
-        $bases = array();
-        $strings = array();
-        $skip_bases = array();
+        $bases = [];
+        $strings = [];
+        $skip_bases = [];
         foreach ($table_data as $field => $info) {
           // Collect table data from this table
           if ($field == 'table') {
@@ -78,7 +77,7 @@ class ViewsDataHelper {
             $bases[] = $table;
             continue;
           }
-          foreach (array('field', 'sort', 'filter', 'argument', 'relationship', 'area') as $key) {
+          foreach (['field', 'sort', 'filter', 'argument', 'relationship', 'area'] as $key) {
             if (!empty($info[$key])) {
               if ($grouping && !empty($info[$key]['no group by'])) {
                 continue;
@@ -96,7 +95,7 @@ class ViewsDataHelper {
                   $skip_bases[$field][$key][$base_name] = TRUE;
                 }
               }
-              foreach (array('title', 'group', 'help', 'base', 'aliases') as $string) {
+              foreach (['title', 'group', 'help', 'base', 'aliases'] as $string) {
                 // First, try the lowest possible level
                 if (!empty($info[$key][$string])) {
                   $strings[$field][$key][$string] = $info[$key][$string];
@@ -120,7 +119,7 @@ class ViewsDataHelper {
                 }
                 else {
                   if ($string != 'base') {
-                    $strings[$field][$key][$string] = SafeMarkup::format("Error: missing @component", array('@component' => $string));
+                    $strings[$field][$key][$string] = new FormattableMarkup("Error: missing @component", ['@component' => $string]);
                   }
                 }
               }
@@ -143,21 +142,21 @@ class ViewsDataHelper {
     // all and add them together. Duplicate keys will be lost and that's
     // Just Fine.
     if (is_array($base)) {
-      $strings = array();
+      $strings = [];
       foreach ($base as $base_table) {
         if (isset($this->fields[$base_table][$type])) {
           $strings += $this->fields[$base_table][$type];
         }
       }
-      uasort($strings, array('self', 'fetchedFieldSort'));
+      uasort($strings, ['self', 'fetchedFieldSort']);
       return $strings;
     }
 
     if (isset($this->fields[$base][$type])) {
-      uasort($this->fields[$base][$type], array($this, 'fetchedFieldSort'));
+      uasort($this->fields[$base][$type], [$this, 'fetchedFieldSort']);
       return $this->fields[$base][$type];
     }
-    return array();
+    return [];
   }
 
   /**
@@ -174,14 +173,14 @@ class ViewsDataHelper {
    *   decided.
    */
   protected static function fetchedFieldSort($a, $b) {
-    $a_group = Unicode::strtolower($a['group']);
-    $b_group = Unicode::strtolower($b['group']);
+    $a_group = mb_strtolower($a['group']);
+    $b_group = mb_strtolower($b['group']);
     if ($a_group != $b_group) {
       return $a_group < $b_group ? -1 : 1;
     }
 
-    $a_title = Unicode::strtolower($a['title']);
-    $b_title = Unicode::strtolower($b['title']);
+    $a_title = mb_strtolower($a['title']);
+    $b_title = mb_strtolower($b['title']);
     if ($a_title != $b_title) {
       return $a_title < $b_title ? -1 : 1;
     }

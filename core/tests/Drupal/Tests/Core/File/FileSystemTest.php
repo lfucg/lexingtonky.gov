@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\Core\File;
 
+use Drupal\Core\File\Exception\FileException;
 use Drupal\Core\File\FileSystem;
 use Drupal\Core\Site\Settings;
 use Drupal\Tests\UnitTestCase;
@@ -15,7 +16,7 @@ use org\bovigo\vfs\vfsStream;
 class FileSystemTest extends UnitTestCase {
 
   /**
-   * @var \Drupal\Core\File\FileSystem
+   * @var \Drupal\Core\File\FileSystemInterface
    */
   protected $fileSystem;
 
@@ -119,7 +120,7 @@ class FileSystemTest extends UnitTestCase {
     $data[] = [
       'public://dir/test.txt',
       'test',
-      '.txt'
+      '.txt',
     ];
     return $data;
   }
@@ -173,6 +174,18 @@ class FileSystemTest extends UnitTestCase {
       $expected_mode = $expected_mode | $expected_mode >> 3 | $expected_mode >> 6;
     }
     $this->assertSame($expected_mode, $actual_mode, $message);
+  }
+
+  /**
+   * Tests that invalid UTF-8 results in an exception.
+   *
+   * @covers ::createFilename
+   */
+  public function testInvalidUTF8() {
+    vfsStream::setup('dir');
+    $filename = "a\xFFsdf\x80€" . '.txt';
+    $this->setExpectedException(FileException::class, "Invalid filename '$filename'");
+    $this->fileSystem->createFilename($filename, 'vfs://dir');
   }
 
 }

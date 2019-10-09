@@ -1,0 +1,32 @@
+uuid: 3ba9bb2e-ee27-4f76-955e-351c16956f36
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.sibling_pages
+  module:
+    - ctools
+    - views
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_views_block__sibling_pages_full_bleed
+theme: bootstrap_barrio
+region: top_header
+weight: -25
+provider: null
+plugin: 'views_block:sibling_pages-block_2'
+settings:
+  id: 'views_block:sibling_pages-block_2'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      landing_page: landing_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

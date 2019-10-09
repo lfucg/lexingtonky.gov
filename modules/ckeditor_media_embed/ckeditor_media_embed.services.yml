@@ -1,0 +1,9 @@
+services:
+  ckeditor_media_embed:
+    class: Drupal\ckeditor_media_embed\Embed
+    arguments: ['@http_client', '@unrouted_url_assembler', '@request_stack']
+  ckeditor_media_embed_install:
+    class: Drupal\ckeditor_media_embed\Command\InstallCommand
+    arguments: ['@plugin.manager.ckeditor.plugin', '@library.discovery', '@http_client']
+    tags:
+      - { name: drupal.command }

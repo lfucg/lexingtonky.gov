@@ -15,13 +15,11 @@
  * Available variables:
  * - message_list: List of messages to be displayed, grouped by type.
  * - status_headings: List of all status types.
- * - display: (optional) May have a value of 'status' or 'error' when only
- *   displaying messages of that specific type.
  * - attributes: HTML attributes for the element, including:
  *   - class: HTML classes.
  */
 #}
-{{ attach_library('classy/messages') }}
+<div data-drupal-messages>
 {% block messages %}
 {% for type, messages in message_list %}
   {%
@@ -54,3 +52,4 @@
   {% set attributes = attributes.removeClass(classes) %}
 {% endfor %}
 {% endblock messages %}
+</div>

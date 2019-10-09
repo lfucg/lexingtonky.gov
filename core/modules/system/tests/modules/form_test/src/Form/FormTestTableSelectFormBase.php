@@ -7,6 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Provides a base class for tableselect forms.
+ *
+ * @internal
  */
 abstract class FormTestTableSelectFormBase extends FormBase {
 
@@ -23,12 +25,12 @@ abstract class FormTestTableSelectFormBase extends FormBase {
    * @return array
    *   A form with a tableselect element and a submit button.
    */
-  function tableselectFormBuilder($form, FormStateInterface $form_state, $element_properties) {
+  public function tableselectFormBuilder($form, FormStateInterface $form_state, $element_properties) {
     list($header, $options) = _form_test_tableselect_get_data();
 
     $form['tableselect'] = $element_properties;
 
-    $form['tableselect'] += array(
+    $form['tableselect'] += [
       '#prefix' => '<div id="tableselect-wrapper">',
       '#suffix' => '</div>',
       '#type' => 'tableselect',
@@ -36,16 +38,16 @@ abstract class FormTestTableSelectFormBase extends FormBase {
       '#options' => $options,
       '#multiple' => FALSE,
       '#empty' => t('Empty text.'),
-      '#ajax' => array(
+      '#ajax' => [
         'callback' => 'form_test_tableselect_ajax_callback',
         'wrapper' => 'tableselect-wrapper',
-      ),
-    );
+      ],
+    ];
 
-    $form['submit'] = array(
+    $form['submit'] = [
       '#type' => 'submit',
       '#value' => t('Submit'),
-    );
+    ];
 
     return $form;
   }

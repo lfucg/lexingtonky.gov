@@ -1,0 +1,30 @@
+uuid: 049d55d7-d597-4a16-a711-6e73ebae191a
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.boards_directory
+  module:
+    - system
+    - views
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_views_block__boards_directory_block
+theme: bootstrap_barrio
+region: top_header
+weight: -25
+provider: null
+plugin: 'views_block:boards_directory-block_1'
+settings:
+  id: 'views_block:boards_directory-block_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: /browse/government/boards-commissions
+    negate: false
+    context_mapping: {  }

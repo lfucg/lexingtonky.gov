@@ -13,8 +13,8 @@ dependencies:
     - lex
 id: fieldblock_field_organization_services
 theme: lex
-region: sidebar_second
-weight: -21
+region: sidebar
+weight: -22
 provider: null
 plugin: 'fieldblock:node'
 settings:

@@ -36,7 +36,7 @@ class PluralFormula implements PluralFormulaInterface {
    *   ],
    * ]
    * @endcode
-   * @var []
+   * @var array
    */
   protected $formulae;
 
@@ -92,7 +92,7 @@ class PluralFormula implements PluralFormulaInterface {
   /**
    * Loads the formulae and stores them on the PluralFormula object if not set.
    *
-   * @return []
+   * @return array
    */
   protected function loadFormulae() {
     if (!isset($this->formulae)) {

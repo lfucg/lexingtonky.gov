@@ -13,9 +13,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  *
  * Manually checks the translation status without the use of cron.
  *
- * @see locale_menu()
+ * @deprecated in Drupal 8.5.0 and will be removed before 9.0.0. It is unused by
+ *   Drupal core. Duplicate this function in your own extension if you need its
+ *   behavior.
+ *
+ * @see https://www.drupal.org/node/2931188
  */
 function locale_translation_manual_status() {
+  @trigger_error('locale_translation_manual_status() is deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0. It is unused by Drupal core. Duplicate this function in your own extension if you need its behavior.', E_USER_DEPRECATED);
   module_load_include('compare.inc', 'locale');
 
   // Check the translation status of all translatable projects in all languages.
@@ -29,7 +34,7 @@ function locale_translation_manual_status() {
   if (batch_get()) {
     return batch_process('admin/reports/translations');
   }
-  return new RedirectResponse(\Drupal::url('locale.translate_status', array(), array('absolute' => TRUE)));
+  return new RedirectResponse(Url::fromRoute('locale.translate_status', [], ['absolute' => TRUE])->toString());
 }
 
 /**
@@ -72,5 +77,5 @@ function template_preprocess_locale_translation_last_check(array &$variables) {
   $last = $variables['last'];
   $variables['last_checked'] = ($last != NULL);
   $variables['time'] = \Drupal::service('date.formatter')->formatTimeDiffSince($last);
-  $variables['link'] = \Drupal::l(t('Check manually'), new Url('locale.check_translation', array(), array('query' => \Drupal::destination()->getAsArray())));
+  $variables['link'] = \Drupal::l(t('Check manually'), new Url('locale.check_translation', [], ['query' => \Drupal::destination()->getAsArray()]));
 }

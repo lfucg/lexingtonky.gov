@@ -20,7 +20,7 @@ class ArgumentValidatorTest extends ViewsKernelTestBase {
    */
   public static $testViews = ['test_view_argument_validate_numeric', 'test_view'];
 
-  function testArgumentValidateNumeric() {
+  public function testArgumentValidateNumeric() {
     $view = Views::getView('test_view_argument_validate_numeric');
     $view->initHandlers();
     $this->assertFalse($view->argument['null']->validateArgument($this->randomString()));
@@ -41,8 +41,8 @@ class ArgumentValidatorTest extends ViewsKernelTestBase {
     $options = [
       'specify_validation' => TRUE,
       'validate' => [
-        'type' => 'argument_validator_test'
-      ]
+        'type' => 'argument_validator_test',
+      ],
     ];
     $id = $view->addHandler('default', 'argument', 'views_test_data', 'name', $options);
     $view->initHandlers();

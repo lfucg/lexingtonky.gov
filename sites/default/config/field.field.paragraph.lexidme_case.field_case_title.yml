@@ -1,0 +1,21 @@
+uuid: 06aecd51-dbd9-4e19-9323-0c8557d4d3f6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_case_title
+    - paragraphs.paragraphs_type.lexidme_case
+  module:
+    - text
+id: paragraph.lexidme_case.field_case_title
+field_name: field_case_title
+entity_type: paragraph
+bundle: lexidme_case
+label: 'Card Title'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text

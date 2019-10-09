@@ -2,6 +2,7 @@
 CONTENTS OF THIS FILE
 ---------------------
 
+ * Quickstart
  * Requirements and notes
  * Optional server requirements
  * Installation
@@ -9,6 +10,35 @@ CONTENTS OF THIS FILE
  * Building and customizing your site
  * Multisite configuration
  * Multilingual configuration
+
+QUICKSTART
+----------------------
+
+Prerequisites:
+- PHP 5.5.9 (or greater) (https://php.net).
+
+In the instructions below, replace the version x.y.z with the specific version
+you wish to download. Example: 8.6.0.zip. You can find the latest stable version
+at https://www.drupal.org/project/drupal.
+
+Download and extract the Drupal package:
+- curl -sS https://ftp.drupal.org/files/projects/drupal-x.y.z.zip --output drupal-x.y.z.zip
+- unzip drupal-x.y.z.zip
+- cd /path/to/drupal-x.y.z
+- php core/scripts/drupal quick-start
+
+Wait… installation can take a minute or two. A successful installation will
+result in opening the new site in your browser.
+
+Run the following command for a list of available options that you may need to
+configure quick-start:
+- php core/scripts/drupal quick-start --help
+
+Follow the instructions in the REINSTALL section below to start over.
+
+NOTE: This quick start solution uses PHP's built-in web server and is not
+intended for production use. Read more about how to run Drupal in a production
+environment below.
 
 REQUIREMENTS AND NOTES
 ----------------------
@@ -88,7 +118,7 @@ INSTALLATION
    directory within your web server's document root or your public HTML
    directory, continue with this command:
 
-     mv drupal-x.y.z/* drupal-x.y.z/.htaccess drupal-x.y.z/.csslintrc drupal-x.y.z/.editorconfig drupal-x.y.z/.eslintignore drupal-x.y.z/.eslintrc drupal-x.y.z/.gitattributes /path/to/your/installation
+     mv drupal-x.y.z/* drupal-x.y.z/.htaccess drupal-x.y.z/.csslintrc drupal-x.y.z/.editorconfig drupal-x.y.z/.eslintignore drupal-x.y.z/.eslintrc.json drupal-x.y.z/.gitattributes /path/to/your/installation
 
    You can also download the latest version of Drupal using Git on the command
    line and set up a repository by following the instructions at
@@ -208,7 +238,7 @@ INSTALLATION
    maintenance account on a "Welcome" page. If the default Drupal theme is not
    displaying properly and links on the page result in "Page Not Found" errors,
    you may be experiencing problems with clean URLs. Visit
-   https://www.drupal.org/getting-started/clean-urls to troubleshoot.
+   https://www.drupal.org/docs/8/clean-urls-in-drupal-8 to troubleshoot.
 
 5. Change file system storage settings (optional).
 
@@ -266,7 +296,7 @@ INSTALLATION
    this optional security measure, from a Unix/Linux command line you can use
    the following command:
 
-     chmod a-r CHANGELOG.txt
+     chmod a-r core/CHANGELOG.txt
 
    Note that the example only affects CHANGELOG.txt. To completely hide all
    documentation files from public view, repeat this command for each of the
@@ -353,7 +383,7 @@ Never edit Drupal's core modules and themes; instead, use the hooks available in
 the Drupal API. To modify the behavior of Drupal, develop a module as described
 at https://www.drupal.org/developing/modules. To modify the look of Drupal,
 create a subtheme as described at https://www.drupal.org/node/2165673, or a
-completely new theme as described at https://www.drupal.org/documentation/theme
+completely new theme as described at https://www.drupal.org/docs/8/theming
 
 MULTISITE CONFIGURATION
 -----------------------
@@ -375,7 +405,7 @@ The new directory name is constructed from the site's URL. The configuration
 for www.example.com could be in 'sites/example.com/settings.php' (note that
 'www.' should be omitted if users can access your site at http://example.com/).
 
-  $ cp sites/default/defaults.settings.php sites/example.com/settings.php
+  $ cp sites/default/default.settings.php sites/example.com/settings.php
 
 Sites do not have to have a different domain. You can also use subdomains and
 subdirectories for Drupal sites. For example, example.com, sub.example.com, and
@@ -418,7 +448,7 @@ accessible to other sites, the setup would look like this:
     modules/custom_module
 
 For more information about multiple virtual hosts or the configuration
-settings, consult https://www.drupal.org/documentation/install/multi-site
+settings, consult https://www.drupal.org/docs/8/multisite
 
 For more information on configuring Drupal's file system path in a multisite
 configuration, see step 6 above.
@@ -430,4 +460,4 @@ By default, Drupal is installed in one language, and further languages may be
 installed later.
 
 For detailed instructions, visit
-https://www.drupal.org/documentation/multilingual
+https://www.drupal.org/docs/8/multilingual

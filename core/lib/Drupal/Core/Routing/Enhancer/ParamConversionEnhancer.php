@@ -4,6 +4,7 @@ namespace Drupal\Core\Routing\Enhancer;
 
 use Drupal\Core\ParamConverter\ParamConverterManagerInterface;
 use Drupal\Core\ParamConverter\ParamNotConvertedException;
+use Drupal\Core\Routing\EnhancerInterface;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -11,12 +12,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Routing\Route;
 
 /**
  * Provides a route enhancer that handles parameter conversion.
  */
-class ParamConversionEnhancer implements RouteEnhancerInterface, EventSubscriberInterface {
+class ParamConversionEnhancer implements EnhancerInterface, EventSubscriberInterface {
 
   /**
    * The parameter conversion manager.
@@ -62,7 +62,7 @@ class ParamConversionEnhancer implements RouteEnhancerInterface, EventSubscriber
     // Foreach will copy the values from the array it iterates. Even if they
     // are references, use it to break them. This avoids any scenarios where raw
     // variables also get replaced with converted values.
-    $raw_variables = array();
+    $raw_variables = [];
     foreach (array_intersect_key($defaults, $variables) as $key => $value) {
       $raw_variables[$key] = $value;
     }
@@ -85,15 +85,8 @@ class ParamConversionEnhancer implements RouteEnhancerInterface, EventSubscriber
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    $events[KernelEvents::EXCEPTION][] = array('onException', 75);
+    $events[KernelEvents::EXCEPTION][] = ['onException', 75];
     return $events;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function applies(Route $route) {
-    return TRUE;
   }
 
 }

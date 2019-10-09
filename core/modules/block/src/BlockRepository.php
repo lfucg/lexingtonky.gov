@@ -3,7 +3,7 @@
 namespace Drupal\block;
 
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Context\ContextHandlerInterface;
 use Drupal\Core\Theme\ThemeManagerInterface;
 
@@ -29,15 +29,15 @@ class BlockRepository implements BlockRepositoryInterface {
   /**
    * Constructs a new BlockRepository.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager service.
    * @param \Drupal\Core\Theme\ThemeManagerInterface $theme_manager
    *   The theme manager.
    * @param \Drupal\Core\Plugin\Context\ContextHandlerInterface $context_handler
    *   The plugin context handler.
    */
-  public function __construct(EntityManagerInterface $entity_manager, ThemeManagerInterface $theme_manager, ContextHandlerInterface $context_handler) {
-    $this->blockStorage = $entity_manager->getStorage('block');
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ThemeManagerInterface $theme_manager, ContextHandlerInterface $context_handler) {
+    $this->blockStorage = $entity_type_manager->getStorage('block');
     $this->themeManager = $theme_manager;
     $this->contextHandler = $context_handler;
   }
@@ -48,10 +48,10 @@ class BlockRepository implements BlockRepositoryInterface {
   public function getVisibleBlocksPerRegion(array &$cacheable_metadata = []) {
     $active_theme = $this->themeManager->getActiveTheme();
     // Build an array of the region names in the right order.
-    $empty = array_fill_keys($active_theme->getRegions(), array());
+    $empty = array_fill_keys($active_theme->getRegions(), []);
 
-    $full = array();
-    foreach ($this->blockStorage->loadByProperties(array('theme' => $active_theme->getName())) as $block_id => $block) {
+    $full = [];
+    foreach ($this->blockStorage->loadByProperties(['theme' => $active_theme->getName()]) as $block_id => $block) {
       /** @var \Drupal\block\BlockInterface $block */
       $access = $block->access('view', NULL, TRUE);
       $region = $block->getRegion();

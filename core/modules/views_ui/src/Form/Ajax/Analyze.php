@@ -7,6 +7,8 @@ use Drupal\views\Views;
 
 /**
  * Displays analysis information for a view.
+ *
+ * @internal
  */
 class Analyze extends ViewsFormBase {
 
@@ -36,11 +38,11 @@ class Analyze extends ViewsFormBase {
     $analyzer = Views::analyzer();
     $messages = $analyzer->getMessages($view->getExecutable());
 
-    $form['analysis'] = array(
+    $form['analysis'] = [
       '#prefix' => '<div class="js-form-item form-item">',
       '#suffix' => '</div>',
       '#markup' => $analyzer->formatMessages($messages),
-    );
+    ];
 
     // Inform the standard button function that we want an OK button.
     $form_state->set('ok_button', TRUE);
@@ -54,7 +56,7 @@ class Analyze extends ViewsFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     /** @var $view \Drupal\views_ui\ViewUI */
     $view = $form_state->get('view');
-    $form_state->setRedirectUrl($view->urlInfo('edit-form'));
+    $form_state->setRedirectUrl($view->toUrl('edit-form'));
   }
 
 }

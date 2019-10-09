@@ -20,6 +20,7 @@ use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 
 /**
  * Provides the default local task manager using YML as primary definition.
@@ -29,11 +30,11 @@ class LocalTaskManager extends DefaultPluginManager implements LocalTaskManagerI
   /**
    * {@inheritdoc}
    */
-  protected $defaults = array(
+  protected $defaults = [
     // (required) The name of the route this task links to.
     'route_name' => '',
     // Parameters for route variables when generating a link.
-    'route_parameters' => array(),
+    'route_parameters' => [],
     // The static title for the local task.
     'title' => '',
     // The route name where the root tab appears.
@@ -43,17 +44,32 @@ class LocalTaskManager extends DefaultPluginManager implements LocalTaskManagerI
     // The weight of the tab.
     'weight' => NULL,
     // The default link options.
-    'options' => array(),
+    'options' => [],
     // Default class for local task implementations.
     'class' => 'Drupal\Core\Menu\LocalTaskDefault',
     // The plugin id. Set by the plugin system based on the top-level YAML key.
     'id' => '',
-  );
+  ];
+
+  /**
+   * An argument resolver object.
+   *
+   * @var \Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface
+   */
+  protected $argumentResolver;
 
   /**
    * A controller resolver object.
    *
-   * @var \Drupal\Core\Controller\ControllerResolverInterface
+   * @var \Symfony\Component\HttpKernel\Controller\ControllerResolverInterface
+   *
+   * @deprecated
+   *   Using the 'controller_resolver' service as the first argument is
+   *   deprecated, use the 'http_kernel.controller.argument_resolver' instead.
+   *   If your subclass requires the 'controller_resolver' service add it as an
+   *   additional argument.
+   *
+   * @see https://www.drupal.org/node/2959408
    */
   protected $controllerResolver;
 
@@ -76,7 +92,7 @@ class LocalTaskManager extends DefaultPluginManager implements LocalTaskManagerI
    *
    * @var array
    */
-  protected $instances = array();
+  protected $instances = [];
 
   /**
    * The local task render arrays for the current route.
@@ -109,8 +125,8 @@ class LocalTaskManager extends DefaultPluginManager implements LocalTaskManagerI
   /**
    * Constructs a \Drupal\Core\Menu\LocalTaskManager object.
    *
-   * @param \Drupal\Core\Controller\ControllerResolverInterface $controller_resolver
-   *   An object to use in introspecting route methods.
+   * @param \Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface $argument_resolver
+   *   An object to use in resolving route arguments.
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   The request object to use for building titles and paths for plugin instances.
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
@@ -128,9 +144,13 @@ class LocalTaskManager extends DefaultPluginManager implements LocalTaskManagerI
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The current user.
    */
-  public function __construct(ControllerResolverInterface $controller_resolver, RequestStack $request_stack, RouteMatchInterface $route_match, RouteProviderInterface $route_provider, ModuleHandlerInterface $module_handler, CacheBackendInterface $cache, LanguageManagerInterface $language_manager, AccessManagerInterface $access_manager, AccountInterface $account) {
+  public function __construct(ArgumentResolverInterface $argument_resolver, RequestStack $request_stack, RouteMatchInterface $route_match, RouteProviderInterface $route_provider, ModuleHandlerInterface $module_handler, CacheBackendInterface $cache, LanguageManagerInterface $language_manager, AccessManagerInterface $access_manager, AccountInterface $account) {
     $this->factory = new ContainerFactory($this, '\Drupal\Core\Menu\LocalTaskInterface');
-    $this->controllerResolver = $controller_resolver;
+    $this->argumentResolver = $argument_resolver;
+    if ($argument_resolver instanceof ControllerResolverInterface) {
+      @trigger_error("Using the 'controller_resolver' service as the first argument is deprecated, use the 'http_kernel.controller.argument_resolver' instead. If your subclass requires the 'controller_resolver' service add it as an additional argument. See https://www.drupal.org/node/2959408.", E_USER_DEPRECATED);
+      $this->controllerResolver = $argument_resolver;
+    }
     $this->requestStack = $request_stack;
     $this->routeMatch = $route_match;
     $this->routeProvider = $route_provider;
@@ -138,7 +158,7 @@ class LocalTaskManager extends DefaultPluginManager implements LocalTaskManagerI
     $this->account = $account;
     $this->moduleHandler = $module_handler;
     $this->alterInfo('local_tasks');
-    $this->setCacheBackend($cache, 'local_task_plugins:' . $language_manager->getCurrentLanguage()->getId(), array('local_task'));
+    $this->setCacheBackend($cache, 'local_task_plugins:' . $language_manager->getCurrentLanguage()->getId(), ['local_task']);
   }
 
   /**
@@ -168,9 +188,9 @@ class LocalTaskManager extends DefaultPluginManager implements LocalTaskManagerI
    * {@inheritdoc}
    */
   public function getTitle(LocalTaskInterface $local_task) {
-    $controller = array($local_task, 'getTitle');
+    $controller = [$local_task, 'getTitle'];
     $request = $this->requestStack->getCurrentRequest();
-    $arguments = $this->controllerResolver->getArguments($request, $controller);
+    $arguments = $this->argumentResolver->getArguments($request, $controller);
     return call_user_func_array($controller, $arguments);
   }
 
@@ -196,7 +216,7 @@ class LocalTaskManager extends DefaultPluginManager implements LocalTaskManagerI
    */
   public function getLocalTasksForRoute($route_name) {
     if (!isset($this->instances[$route_name])) {
-      $this->instances[$route_name] = array();
+      $this->instances[$route_name] = [];
       if ($cache = $this->cacheBackend->get($this->cacheKey . ':' . $route_name)) {
         $base_routes = $cache->data['base_routes'];
         $parents = $cache->data['parents'];
@@ -206,9 +226,9 @@ class LocalTaskManager extends DefaultPluginManager implements LocalTaskManagerI
         $definitions = $this->getDefinitions();
         // We build the hierarchy by finding all tabs that should
         // appear on the current route.
-        $base_routes = array();
-        $parents = array();
-        $children = array();
+        $base_routes = [];
+        $parents = [];
+        $children = [];
         foreach ($definitions as $plugin_id => $task_info) {
           // Fill in the base_route from the parent to insure consistency.
           if (!empty($task_info['parent_id']) && !empty($definitions[$task_info['parent_id']])) {
@@ -234,7 +254,7 @@ class LocalTaskManager extends DefaultPluginManager implements LocalTaskManagerI
         if ($base_routes) {
           // Find all the plugins with the same root and that are at the top
           // level or that have a visible parent.
-          foreach ($definitions  as $plugin_id => $task_info) {
+          foreach ($definitions as $plugin_id => $task_info) {
             if (!empty($base_routes[$task_info['base_route']]) && (empty($task_info['parent_id']) || !empty($parents[$task_info['parent_id']]))) {
               // Concat '> ' with root ID for the parent of top-level tabs.
               $parent = empty($task_info['parent_id']) ? '> ' . $task_info['base_route'] : $task_info['parent_id'];
@@ -242,11 +262,11 @@ class LocalTaskManager extends DefaultPluginManager implements LocalTaskManagerI
             }
           }
         }
-        $data = array(
+        $data = [
           'base_routes' => $base_routes,
           'parents' => $parents,
           'children' => $children,
-        );
+        ];
         $this->cacheBackend->set($this->cacheKey . ':' . $route_name, $data, Cache::PERMANENT, $this->cacheTags);
       }
       // Create a plugin instance for each element of the hierarchy.
@@ -288,10 +308,10 @@ class LocalTaskManager extends DefaultPluginManager implements LocalTaskManagerI
    */
   public function getTasksBuild($current_route_name, RefinableCacheableDependencyInterface &$cacheability) {
     $tree = $this->getLocalTasksForRoute($current_route_name);
-    $build = array();
+    $build = [];
 
     // Collect all route names.
-    $route_names = array();
+    $route_names = [];
     foreach ($tree as $instances) {
       foreach ($instances as $child) {
         $route_names[] = $child->getRouteName();

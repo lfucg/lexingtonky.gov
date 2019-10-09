@@ -28,8 +28,8 @@ class InstallerServiceProvider implements ServiceProviderInterface, ServiceModif
     // Replace services with in-memory implementations.
     $definition = $container->getDefinition('cache_factory');
     $definition->setClass('Drupal\Core\Cache\MemoryBackendFactory');
-    $definition->setArguments(array());
-    $definition->setMethodCalls(array());
+    $definition->setArguments([]);
+    $definition->setMethodCalls([]);
     $container
       ->register('keyvalue', 'Drupal\Core\KeyValueStore\KeyValueMemoryFactory');
     $container
@@ -59,6 +59,9 @@ class InstallerServiceProvider implements ServiceProviderInterface, ServiceModif
       // The core router builder, but there is no reason here to be lazy, so
       // we don't need to ship with a custom proxy class.
       ->setLazy(FALSE);
+
+    // Use a performance optimised module extension list.
+    $container->getDefinition('extension.list.module')->setClass('Drupal\Core\Installer\InstallerModuleExtensionList');
   }
 
   /**

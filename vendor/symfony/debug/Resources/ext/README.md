@@ -1,7 +1,9 @@
-Symfony Debug Extension
-=======================
+Symfony Debug Extension for PHP 5
+=================================
 
 This extension publishes several functions to help building powerful debugging tools.
+It is compatible with PHP 5.3, 5.4, 5.5 and 5.6; with ZTS and non-ZTS modes.
+It is not required thus not provided for PHP 7.
 
 symfony_zval_info()
 -------------------
@@ -23,41 +25,41 @@ function symfony_zval_info($key, $array, $options = 0)
         return null;
     }
 
-    $info = array(
+    $info = [
         'type' => gettype($array[$key]),
         'zval_hash' => /* hashed memory address of $array[$key] */,
         'zval_refcount' => /* internal zval refcount of $array[$key] */,
         'zval_isref' => /* is_ref status of $array[$key] */,
-    );
+    ];
 
     switch ($info['type']) {
         case 'object':
-            $info += array(
+            $info += [
                 'object_class' => get_class($array[$key]),
                 'object_refcount' => /* internal object refcount of $array[$key] */,
                 'object_hash' => spl_object_hash($array[$key]),
                 'object_handle' => /* internal object handle $array[$key] */,
-            );
+            ];
             break;
 
         case 'resource':
-            $info += array(
+            $info += [
                 'resource_handle' => (int) $array[$key],
                 'resource_type' => get_resource_type($array[$key]),
                 'resource_refcount' => /* internal resource refcount of $array[$key] */,
-            );
+            ];
             break;
 
         case 'array':
-            $info += array(
+            $info += [
                 'array_count' => count($array[$key]),
-            );
+            ];
             break;
 
         case 'string':
-            $info += array(
+            $info += [
                 'strlen' => strlen($array[$key]),
-            );
+            ];
             break;
     }
 
@@ -122,7 +124,6 @@ array(3) {
 Usage
 -----
 
-The extension is compatible with ZTS mode, and should be supported by PHP5.3, 5.4, 5.5 and 5.6.
 To enable the extension from source, run:
 
 ```

@@ -10,23 +10,24 @@ use Drupal\file\Entity\File;
  * @group file
  */
 class SaveDataTest extends FileManagedUnitTestBase {
+
   /**
    * Test the file_save_data() function when no filename is provided.
    */
-  function testWithoutFilename() {
+  public function testWithoutFilename() {
     $contents = $this->randomMachineName(8);
 
     $result = file_save_data($contents);
     $this->assertTrue($result, 'Unnamed file saved correctly.');
 
     $this->assertEqual(file_default_scheme(), file_uri_scheme($result->getFileUri()), "File was placed in Drupal's files directory.");
-    $this->assertEqual($result->getFilename(), drupal_basename($result->getFileUri()), "Filename was set to the file's basename.");
+    $this->assertEqual($result->getFilename(), \Drupal::service('file_system')->basename($result->getFileUri()), "Filename was set to the file's basename.");
     $this->assertEqual($contents, file_get_contents($result->getFileUri()), 'Contents of the file are correct.');
     $this->assertEqual($result->getMimeType(), 'application/octet-stream', 'A MIME type was set.');
     $this->assertTrue($result->isPermanent(), "The file's status was set to permanent.");
 
     // Check that the correct hooks were called.
-    $this->assertFileHooksCalled(array('insert'));
+    $this->assertFileHooksCalled(['insert']);
 
     // Verify that what was returned is what's in the database.
     $this->assertFileUnchanged($result, File::load($result->id()));
@@ -35,7 +36,7 @@ class SaveDataTest extends FileManagedUnitTestBase {
   /**
    * Test the file_save_data() function when a filename is provided.
    */
-  function testWithFilename() {
+  public function testWithFilename() {
     $contents = $this->randomMachineName(8);
 
     // Using filename with non-latin characters.
@@ -45,13 +46,13 @@ class SaveDataTest extends FileManagedUnitTestBase {
     $this->assertTrue($result, 'Unnamed file saved correctly.');
 
     $this->assertEqual('public', file_uri_scheme($result->getFileUri()), "File was placed in Drupal's files directory.");
-    $this->assertEqual($filename, drupal_basename($result->getFileUri()), 'File was named correctly.');
+    $this->assertEqual($filename, \Drupal::service('file_system')->basename($result->getFileUri()), 'File was named correctly.');
     $this->assertEqual($contents, file_get_contents($result->getFileUri()), 'Contents of the file are correct.');
     $this->assertEqual($result->getMimeType(), 'text/plain', 'A MIME type was set.');
     $this->assertTrue($result->isPermanent(), "The file's status was set to permanent.");
 
     // Check that the correct hooks were called.
-    $this->assertFileHooksCalled(array('insert'));
+    $this->assertFileHooksCalled(['insert']);
 
     // Verify that what was returned is what's in the database.
     $this->assertFileUnchanged($result, File::load($result->id()));
@@ -60,7 +61,7 @@ class SaveDataTest extends FileManagedUnitTestBase {
   /**
    * Test file_save_data() when renaming around an existing file.
    */
-  function testExistingRename() {
+  public function testExistingRename() {
     // Setup a file to overwrite.
     $existing = $this->createFile();
     $contents = $this->randomMachineName(8);
@@ -75,7 +76,7 @@ class SaveDataTest extends FileManagedUnitTestBase {
     $this->assertTrue($result->isPermanent(), "The file's status was set to permanent.");
 
     // Check that the correct hooks were called.
-    $this->assertFileHooksCalled(array('insert'));
+    $this->assertFileHooksCalled(['insert']);
 
     // Ensure that the existing file wasn't overwritten.
     $this->assertDifferentFile($existing, $result);
@@ -88,7 +89,7 @@ class SaveDataTest extends FileManagedUnitTestBase {
   /**
    * Test file_save_data() when replacing an existing file.
    */
-  function testExistingReplace() {
+  public function testExistingReplace() {
     // Setup a file to overwrite.
     $existing = $this->createFile();
     $contents = $this->randomMachineName(8);
@@ -103,7 +104,7 @@ class SaveDataTest extends FileManagedUnitTestBase {
     $this->assertTrue($result->isPermanent(), "The file's status was set to permanent.");
 
     // Check that the correct hooks were called.
-    $this->assertFileHooksCalled(array('load', 'update'));
+    $this->assertFileHooksCalled(['load', 'update']);
 
     // Verify that the existing file was re-used.
     $this->assertSameFile($existing, $result);
@@ -115,7 +116,7 @@ class SaveDataTest extends FileManagedUnitTestBase {
   /**
    * Test that file_save_data() fails overwriting an existing file.
    */
-  function testExistingError() {
+  public function testExistingError() {
     $contents = $this->randomMachineName(8);
     $existing = $this->createFile(NULL, $contents);
 
@@ -125,7 +126,7 @@ class SaveDataTest extends FileManagedUnitTestBase {
     $this->assertEqual($contents, file_get_contents($existing->getFileUri()), 'Contents of existing file were unchanged.');
 
     // Check that no hooks were called while failing.
-    $this->assertFileHooksCalled(array());
+    $this->assertFileHooksCalled([]);
 
     // Ensure that the existing file wasn't overwritten.
     $this->assertFileUnchanged($existing, File::load($existing->id()));

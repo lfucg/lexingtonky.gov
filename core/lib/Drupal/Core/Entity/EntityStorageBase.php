@@ -3,18 +3,12 @@
 namespace Drupal\Core\Entity;
 
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 
 /**
  * A base entity storage class.
  */
 abstract class EntityStorageBase extends EntityHandlerBase implements EntityStorageInterface, EntityHandlerInterface {
-
-  /**
-   * Static cache of entities, keyed by entity ID.
-   *
-   * @var array
-   */
-  protected $entities = array();
 
   /**
    * Entity type ID for this storage.
@@ -73,18 +67,41 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
   protected $entityClass;
 
   /**
+   * The memory cache.
+   *
+   * @var \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface
+   */
+  protected $memoryCache;
+
+  /**
+   * The memory cache cache tag.
+   *
+   * @var string
+   */
+  protected $memoryCacheTag;
+
+  /**
    * Constructs an EntityStorageBase instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition.
+   * @param \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface|null $memory_cache
+   *   The memory cache.
    */
-  public function __construct(EntityTypeInterface $entity_type) {
+  public function __construct(EntityTypeInterface $entity_type, MemoryCacheInterface $memory_cache = NULL) {
     $this->entityTypeId = $entity_type->id();
     $this->entityType = $entity_type;
     $this->idKey = $this->entityType->getKey('id');
     $this->uuidKey = $this->entityType->getKey('uuid');
     $this->langcodeKey = $this->entityType->getKey('langcode');
     $this->entityClass = $this->entityType->getClass();
+
+    if (!isset($memory_cache)) {
+      @trigger_error('The $memory_cache parameter was added in Drupal 8.6.x and will be required in 9.0.0. See https://www.drupal.org/node/2973262', E_USER_DEPRECATED);
+      $memory_cache = \Drupal::service('entity.memory_cache');
+    }
+    $this->memoryCache = $memory_cache;
+    $this->memoryCacheTag = 'entity.memory_cache:' . $this->entityTypeId;
   }
 
   /**
@@ -102,10 +119,23 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
   }
 
   /**
+   * Builds the cache ID for the passed in entity ID.
+   *
+   * @param int $id
+   *   Entity ID for which the cache ID should be built.
+   *
+   * @return string
+   *   Cache ID that can be passed to the cache backend.
+   */
+  protected function buildCacheId($id) {
+    return "values:{$this->entityTypeId}:$id";
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function loadUnchanged($id) {
-    $this->resetCache(array($id));
+    $this->resetCache([$id]);
     return $this->load($id);
   }
 
@@ -115,11 +145,12 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
   public function resetCache(array $ids = NULL) {
     if ($this->entityType->isStaticallyCacheable() && isset($ids)) {
       foreach ($ids as $id) {
-        unset($this->entities[$id]);
+        $this->memoryCache->delete($this->buildCacheId($id));
       }
     }
     else {
-      $this->entities = array();
+      // Call the backend method directly.
+      $this->memoryCache->invalidateTags([$this->memoryCacheTag]);
     }
   }
 
@@ -130,13 +161,17 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
    *   If not empty, return entities that match these IDs.
    *
    * @return \Drupal\Core\Entity\EntityInterface[]
-   *   Array of entities from the entity cache.
+   *   Array of entities from the entity cache, keyed by entity ID.
    */
   protected function getFromStaticCache(array $ids) {
-    $entities = array();
+    $entities = [];
     // Load any available entities from the internal cache.
-    if ($this->entityType->isStaticallyCacheable() && !empty($this->entities)) {
-      $entities += array_intersect_key($this->entities, array_flip($ids));
+    if ($this->entityType->isStaticallyCacheable()) {
+      foreach ($ids as $id) {
+        if ($cached = $this->memoryCache->get($this->buildCacheId($id))) {
+          $entities[$id] = $cached->data;
+        }
+      }
     }
     return $entities;
   }
@@ -149,7 +184,9 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
    */
   protected function setStaticCache(array $entities) {
     if ($this->entityType->isStaticallyCacheable()) {
-      $this->entities += $entities;
+      foreach ($entities as $id => $entity) {
+        $this->memoryCache->set($this->buildCacheId($entity->id()), $entity, MemoryCacheInterface::CACHE_PERMANENT, [$this->memoryCacheTag]);
+      }
     }
   }
 
@@ -157,22 +194,22 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
    * Invokes a hook on behalf of the entity.
    *
    * @param string $hook
-   *   One of 'presave', 'insert', 'update', 'predelete', 'delete', or
+   *   One of 'create', 'presave', 'insert', 'update', 'predelete', 'delete', or
    *   'revision_delete'.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity object.
    */
   protected function invokeHook($hook, EntityInterface $entity) {
     // Invoke the hook.
-    $this->moduleHandler()->invokeAll($this->entityTypeId . '_' . $hook, array($entity));
+    $this->moduleHandler()->invokeAll($this->entityTypeId . '_' . $hook, [$entity]);
     // Invoke the respective entity-level hook.
-    $this->moduleHandler()->invokeAll('entity_' . $hook, array($entity));
+    $this->moduleHandler()->invokeAll('entity_' . $hook, [$entity]);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function create(array $values = array()) {
+  public function create(array $values = []) {
     $entity_class = $this->entityClass;
     $entity_class::preCreate($this, $values);
 
@@ -209,7 +246,7 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
    * {@inheritdoc}
    */
   public function load($id) {
-    $entities = $this->loadMultiple(array($id));
+    $entities = $this->loadMultiple([$id]);
     return isset($entities[$id]) ? $entities[$id] : NULL;
   }
 
@@ -217,26 +254,38 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
    * {@inheritdoc}
    */
   public function loadMultiple(array $ids = NULL) {
-    $entities = array();
+    $entities = [];
 
     // Create a new variable which is either a prepared version of the $ids
     // array for later comparison with the entity cache, or FALSE if no $ids
     // were passed. The $ids array is reduced as items are loaded from cache,
-    // and we need to know if it's empty for this reason to avoid querying the
+    // and we need to know if it is empty for this reason to avoid querying the
     // database when all requested entities are loaded from cache.
-    $passed_ids = !empty($ids) ? array_flip($ids) : FALSE;
+    $flipped_ids = $ids ? array_flip($ids) : FALSE;
     // Try to load entities from the static cache, if the entity type supports
     // static caching.
-    if ($this->entityType->isStaticallyCacheable() && $ids) {
+    if ($ids) {
       $entities += $this->getFromStaticCache($ids);
-      // If any entities were loaded, remove them from the ids still to load.
-      if ($passed_ids) {
-        $ids = array_keys(array_diff_key($passed_ids, $entities));
-      }
+      // If any entities were loaded, remove them from the IDs still to load.
+      $ids = array_keys(array_diff_key($flipped_ids, $entities));
+    }
+
+    // Gather entities from a 'preload' method. This method can invoke a hook to
+    // be used by modules that need, for example, to swap the default revision
+    // of an entity with a different one. Even though the base entity storage
+    // class does not actually invoke any preload hooks, we need to call the
+    // method here so we can add the pre-loaded entity objects to the static
+    // cache below.
+    $preloaded_entities = $this->preLoad($ids);
+    if (!empty($preloaded_entities)) {
+      $entities += $preloaded_entities;
+
+      // Add pre-loaded entities to the cache.
+      $this->setStaticCache($preloaded_entities);
     }
 
     // Load any remaining entities from the database. This is the case if $ids
-    // is set to NULL (so we load all entities) or if there are any ids left to
+    // is set to NULL (so we load all entities) or if there are any IDs left to
     // load.
     if ($ids === NULL || $ids) {
       $queried_entities = $this->doLoadMultiple($ids);
@@ -248,24 +297,17 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
     if (!empty($queried_entities)) {
       $this->postLoad($queried_entities);
       $entities += $queried_entities;
-    }
 
-    if ($this->entityType->isStaticallyCacheable()) {
-      // Add entities to the cache.
-      if (!empty($queried_entities)) {
-        $this->setStaticCache($queried_entities);
-      }
+      // Add queried entities to the cache.
+      $this->setStaticCache($queried_entities);
     }
 
     // Ensure that the returned array is ordered the same as the original
-    // $ids array if this was passed in and remove any invalid ids.
-    if ($passed_ids) {
-      // Remove any invalid ids from the array.
-      $passed_ids = array_intersect_key($passed_ids, $entities);
-      foreach ($entities as $entity) {
-        $passed_ids[$entity->id()] = $entity;
-      }
-      $entities = $passed_ids;
+    // $ids array if this was passed in and remove any invalid IDs.
+    if ($flipped_ids) {
+      // Remove any invalid IDs from the array and preserve the order passed in.
+      $flipped_ids = array_intersect_key($flipped_ids, $entities);
+      $entities = array_replace($flipped_ids, $entities);
     }
 
     return $entities;
@@ -285,6 +327,20 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
    *   Associative array of entities, keyed on the entity ID.
    */
   abstract protected function doLoadMultiple(array $ids = NULL);
+
+  /**
+   * Gathers entities from a 'preload' step.
+   *
+   * @param array|null &$ids
+   *   If not empty, return entities that match these IDs. IDs that were found
+   *   will be removed from the list.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface[]
+   *   Associative array of entities, keyed by the entity ID.
+   */
+  protected function preLoad(array &$ids = NULL) {
+    return [];
+  }
 
   /**
    * Attaches data to entities upon loading.
@@ -317,7 +373,7 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
    *   An array of entity objects implementing the EntityInterface.
    */
   protected function mapFromStorageRecords(array $records) {
-    $entities = array();
+    $entities = [];
     foreach ($records as $record) {
       $entity = new $this->entityClass($record, $this->entityTypeId);
       $entities[$entity->id()] = $entity;
@@ -460,7 +516,7 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
    *   Specifies whether the entity is being updated or created.
    */
   protected function doPostSave(EntityInterface $entity, $update) {
-    $this->resetCache(array($entity->id()));
+    $this->resetCache([$entity->id()]);
 
     // The entity is no longer new.
     $entity->enforceIsNew(FALSE);
@@ -475,6 +531,17 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
     $entity->setOriginalId($entity->id());
 
     unset($entity->original);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function restore(EntityInterface $entity) {
+    // Allow code to run before saving.
+    $entity->preSave($this);
+
+    // The restore process does not invoke any post-save operations.
+    $this->doSave($entity->id(), $entity);
   }
 
   /**
@@ -496,12 +563,23 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
   /**
    * {@inheritdoc}
    */
-  public function loadByProperties(array $values = array()) {
+  public function loadByProperties(array $values = []) {
     // Build a query to fetch the entity IDs.
     $entity_query = $this->getQuery();
+    $entity_query->accessCheck(FALSE);
     $this->buildPropertyQuery($entity_query, $values);
     $result = $entity_query->execute();
-    return $result ? $this->loadMultiple($result) : array();
+    return $result ? $this->loadMultiple($result) : [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasData() {
+    return (bool) $this->getQuery()
+      ->accessCheck(FALSE)
+      ->range(0, 1)
+      ->execute();
   }
 
   /**

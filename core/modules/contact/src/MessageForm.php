@@ -2,9 +2,11 @@
 
 namespace Drupal\contact;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\ContentEntityForm;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -12,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Form controller for contact message forms.
+ *
+ * @internal
  */
 class MessageForm extends ContentEntityForm {
 
@@ -53,8 +57,8 @@ class MessageForm extends ContentEntityForm {
   /**
    * Constructs a MessageForm object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository.
    * @param \Drupal\Core\Flood\FloodInterface $flood
    *   The flood control mechanism.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
@@ -63,9 +67,13 @@ class MessageForm extends ContentEntityForm {
    *   The contact mail handler service.
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date service.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle service.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    */
-  public function __construct(EntityManagerInterface $entity_manager, FloodInterface $flood, LanguageManagerInterface $language_manager, MailHandlerInterface $mail_handler, DateFormatterInterface $date_formatter) {
-    parent::__construct($entity_manager);
+  public function __construct(EntityRepositoryInterface $entity_repository, FloodInterface $flood, LanguageManagerInterface $language_manager, MailHandlerInterface $mail_handler, DateFormatterInterface $date_formatter, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
+    parent::__construct($entity_repository, $entity_type_bundle_info, $time);
     $this->flood = $flood;
     $this->languageManager = $language_manager;
     $this->mailHandler = $mail_handler;
@@ -77,11 +85,13 @@ class MessageForm extends ContentEntityForm {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager'),
+      $container->get('entity.repository'),
       $container->get('flood'),
       $container->get('language_manager'),
       $container->get('contact.mail_handler'),
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('datetime.time')
     );
   }
 
@@ -95,24 +105,24 @@ class MessageForm extends ContentEntityForm {
     $form['#attributes']['class'][] = 'contact-form';
 
     if (!empty($message->preview)) {
-      $form['preview'] = array(
-        '#theme_wrappers' => array('container__preview'),
-        '#attributes' => array('class' => array('preview')),
-      );
-      $form['preview']['message'] = $this->entityManager->getViewBuilder('contact_message')->view($message, 'full');
+      $form['preview'] = [
+        '#theme_wrappers' => ['container__preview'],
+        '#attributes' => ['class' => ['preview']],
+      ];
+      $form['preview']['message'] = $this->entityTypeManager->getViewBuilder('contact_message')->view($message, 'full');
     }
 
-    $form['name'] = array(
+    $form['name'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Your name'),
       '#maxlength' => 255,
       '#required' => TRUE,
-    );
-    $form['mail'] = array(
+    ];
+    $form['mail'] = [
       '#type' => 'email',
       '#title' => $this->t('Your email address'),
       '#required' => TRUE,
-    );
+    ];
     if ($user->isAnonymous()) {
       $form['#attached']['library'][] = 'core/drupal.form';
       $form['#attributes']['data-user-info-from-browser'] = TRUE;
@@ -133,24 +143,24 @@ class MessageForm extends ContentEntityForm {
 
     // The user contact form has a preset recipient.
     if ($message->isPersonal()) {
-      $form['recipient'] = array(
+      $form['recipient'] = [
         '#type' => 'item',
         '#title' => $this->t('To'),
         '#value' => $message->getPersonalRecipient()->id(),
-        'name' => array(
+        'name' => [
           '#theme' => 'username',
           '#account' => $message->getPersonalRecipient(),
-        ),
-      );
+        ],
+      ];
     }
 
-    $form['copy'] = array(
+    $form['copy'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Send yourself a copy'),
       // Do not allow anonymous users to send themselves a copy, because it can
       // be abused to spam people.
       '#access' => $user->isAuthenticated(),
-    );
+    ];
     return $form;
   }
 
@@ -160,11 +170,11 @@ class MessageForm extends ContentEntityForm {
   public function actions(array $form, FormStateInterface $form_state) {
     $elements = parent::actions($form, $form_state);
     $elements['submit']['#value'] = $this->t('Send message');
-    $elements['preview'] = array(
+    $elements['preview'] = [
       '#type' => 'submit',
       '#value' => $this->t('Preview'),
-      '#submit' => array('::submitForm', '::preview'),
-    );
+      '#submit' => ['::submitForm', '::preview'],
+    ];
     return $elements;
   }
 
@@ -189,10 +199,10 @@ class MessageForm extends ContentEntityForm {
       $interval = $this->config('contact.settings')->get('flood.interval');
 
       if (!$this->flood->isAllowed('contact', $limit, $interval)) {
-        $form_state->setErrorByName('', $this->t('You cannot send more than %limit messages in @interval. Try again later.', array(
+        $form_state->setErrorByName('', $this->t('You cannot send more than %limit messages in @interval. Try again later.', [
           '%limit' => $limit,
           '@interval' => $this->dateFormatter->formatInterval($interval),
-        )));
+        ]));
       }
     }
 
@@ -205,26 +215,26 @@ class MessageForm extends ContentEntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     $message = $this->entity;
     $user = $this->currentUser();
+    // Save the message. In core this is a no-op but should contrib wish to
+    // implement message storage, this will make the task of swapping in a real
+    // storage controller straight-forward.
+    $message->save();
     $this->mailHandler->sendMailMessages($message, $user);
     $contact_form = $message->getContactForm();
 
     $this->flood->register('contact', $this->config('contact.settings')->get('flood.interval'));
     if ($submission_message = $contact_form->getMessage()) {
-      drupal_set_message($submission_message);
+      $this->messenger()->addStatus($submission_message);
     }
 
     // To avoid false error messages caused by flood control, redirect away from
     // the contact form; either to the contacted user account or the front page.
     if ($message->isPersonal() && $user->hasPermission('access user profiles')) {
-      $form_state->setRedirectUrl($message->getPersonalRecipient()->urlInfo());
+      $form_state->setRedirectUrl($message->getPersonalRecipient()->toUrl());
     }
     else {
       $form_state->setRedirectUrl($contact_form->getRedirectUrl());
     }
-    // Save the message. In core this is a no-op but should contrib wish to
-    // implement message storage, this will make the task of swapping in a real
-    // storage controller straight-forward.
-    $message->save();
   }
 
 }

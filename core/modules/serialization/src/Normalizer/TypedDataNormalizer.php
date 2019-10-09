@@ -2,23 +2,29 @@
 
 namespace Drupal\serialization\Normalizer;
 
+use Drupal\Core\TypedData\TypedDataInterface;
+
 /**
  * Converts typed data objects to arrays.
  */
 class TypedDataNormalizer extends NormalizerBase {
 
   /**
-   * The interface or class that this Normalizer supports.
-   *
-   * @var string
+   * {@inheritdoc}
    */
-  protected $supportedInterfaceOrClass = 'Drupal\Core\TypedData\TypedDataInterface';
+  protected $supportedInterfaceOrClass = TypedDataInterface::class;
 
   /**
    * {@inheritdoc}
    */
-  public function normalize($object, $format = NULL, array $context = array()) {
-    return $object->getValue();
+  public function normalize($object, $format = NULL, array $context = []) {
+    $this->addCacheableDependency($context, $object);
+    $value = $object->getValue();
+    // Support for stringable value objects: avoid numerous custom normalizers.
+    if (is_object($value) && method_exists($value, '__toString')) {
+      $value = (string) $value;
+    }
+    return $value;
   }
 
 }

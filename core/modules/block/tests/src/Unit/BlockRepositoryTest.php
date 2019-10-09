@@ -10,6 +10,7 @@ namespace Drupal\Tests\block\Unit;
 use Drupal\block\BlockRepository;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\Tests\UnitTestCase;
 
@@ -66,12 +67,13 @@ class BlockRepositoryTest extends UnitTestCase {
 
     $this->contextHandler = $this->getMock('Drupal\Core\Plugin\Context\ContextHandlerInterface');
     $this->blockStorage = $this->getMock('Drupal\Core\Entity\EntityStorageInterface');
-    $entity_manager = $this->getMock('Drupal\Core\Entity\EntityManagerInterface');
-    $entity_manager->expects($this->any())
+    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface|\PHPUnit_Framework_MockObject_MockObject $entity_type_manager */
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->expects($this->any())
       ->method('getStorage')
       ->willReturn($this->blockStorage);
 
-    $this->blockRepository = new BlockRepository($entity_manager, $theme_manager, $this->contextHandler);
+    $this->blockRepository = new BlockRepository($entity_type_manager, $theme_manager, $this->contextHandler);
   }
 
   /**
@@ -116,25 +118,25 @@ class BlockRepositoryTest extends UnitTestCase {
   }
 
   public function providerBlocksConfig() {
-    $blocks_config = array(
-      'block1' => array(
-        AccessResult::allowed(), 'top', 0
-      ),
+    $blocks_config = [
+      'block1' => [
+        AccessResult::allowed(), 'top', 0,
+      ],
       // Test a block without access.
-      'block2' => array(
-        AccessResult::forbidden(), 'bottom', 0
-      ),
+      'block2' => [
+        AccessResult::forbidden(), 'bottom', 0,
+      ],
       // Test some blocks in the same region with specific weight.
-      'block4' => array(
-        AccessResult::allowed(), 'bottom', 5
-      ),
-      'block3' => array(
-        AccessResult::allowed(), 'bottom', 5
-      ),
-      'block5' => array(
-        AccessResult::allowed(), 'bottom', -5
-      ),
-    );
+      'block4' => [
+        AccessResult::allowed(), 'bottom', 5,
+      ],
+      'block3' => [
+        AccessResult::allowed(), 'bottom', 5,
+      ],
+      'block5' => [
+        AccessResult::allowed(), 'bottom', -5,
+      ],
+    ];
 
     $test_cases = [];
     $test_cases[] = [$blocks_config,
@@ -142,7 +144,7 @@ class BlockRepositoryTest extends UnitTestCase {
         'top' => ['block1'],
         'center' => [],
         'bottom' => ['block5', 'block3', 'block4'],
-      ]
+      ],
     ];
     return $test_cases;
   }

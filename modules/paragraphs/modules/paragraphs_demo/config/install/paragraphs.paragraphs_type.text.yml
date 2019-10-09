@@ -3,3 +3,4 @@ status: true
 dependencies: {  }
 id: text
 label: Text
+description: 'Use <em>Text</em> for adding a text.'

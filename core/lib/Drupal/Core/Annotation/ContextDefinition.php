@@ -14,16 +14,14 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * interactions through providing limits, and mapping contexts to appropriate
  * plugins. Context definitions can be provided as such:
  * @code
- *   context = {
+ *   context_definitions = {
  *     "node" = @ContextDefinition("entity:node")
  *   }
  * @endcode
- * Remove spaces after @ in your actual plugin - these are put into this sample
- * code so that it is not recognized as an annotation.
  *
  * To add a label to a context definition use the "label" key:
  * @code
- *   context = {
+ *   context_definitions = {
  *     "node" = @ContextDefinition("entity:node", label = @Translation("Node"))
  *   }
  * @endcode
@@ -31,7 +29,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * Contexts are required unless otherwise specified. To make an optional
  * context use the "required" key:
  * @code
- *   context = {
+ *   context_definitions = {
  *     "node" = @ContextDefinition("entity:node", required = FALSE, label = @Translation("Node"))
  *   }
  * @endcode
@@ -39,7 +37,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * To define multiple contexts, simply provide different key names in the
  * context array:
  * @code
- *   context = {
+ *   context_definitions = {
  *     "artist" = @ContextDefinition("entity:node", label = @Translation("Artist")),
  *     "album" = @ContextDefinition("entity:node", label = @Translation("Album"))
  *   }
@@ -47,7 +45,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  *
  * Specifying a default value for the context definition:
  * @code
- *   context = {
+ *   context_definitions = {
  *     "message" = @ContextDefinition("string",
  *       label = @Translation("Message"),
  *       default_value = @Translation("Checkout complete! Thank you for your purchase.")
@@ -99,11 +97,11 @@ class ContextDefinition extends Plugin {
    *   ContextDefinitionInterface implementing class.
    */
   public function __construct(array $values) {
-    $values += array(
+    $values += [
       'required' => TRUE,
       'multiple' => FALSE,
       'default_value' => NULL,
-    );
+    ];
     // Annotation classes extract data from passed annotation classes directly
     // used in the classes they pass to.
     foreach (['label', 'description'] as $key) {
@@ -118,8 +116,40 @@ class ContextDefinition extends Plugin {
     if (isset($values['class']) && !in_array('Drupal\Core\Plugin\Context\ContextDefinitionInterface', class_implements($values['class']))) {
       throw new \Exception('ContextDefinition class must implement \Drupal\Core\Plugin\Context\ContextDefinitionInterface.');
     }
-    $class = isset($values['class']) ? $values['class'] : 'Drupal\Core\Plugin\Context\ContextDefinition';
+
+    $class = $this->getDefinitionClass($values);
     $this->definition = new $class($values['value'], $values['label'], $values['required'], $values['multiple'], $values['description'], $values['default_value']);
+
+    if (isset($values['constraints'])) {
+      foreach ($values['constraints'] as $constraint_name => $options) {
+        $this->definition->addConstraint($constraint_name, $options);
+      }
+    }
+  }
+
+  /**
+   * Determines the context definition class to use.
+   *
+   * If the annotation specifies a specific context definition class, we use
+   * that. Otherwise, we use \Drupal\Core\Plugin\Context\EntityContextDefinition
+   * if the data type starts with 'entity:', since it contains specialized logic
+   * specific to entities. Otherwise, we fall back to the generic
+   * \Drupal\Core\Plugin\Context\ContextDefinition class.
+   *
+   * @param array $values
+   *   The annotation values.
+   *
+   * @return string
+   *   The fully-qualified name of the context definition class.
+   */
+  protected function getDefinitionClass(array $values) {
+    if (isset($values['class'])) {
+      return $values['class'];
+    }
+    if (strpos($values['value'], 'entity:') === 0) {
+      return 'Drupal\Core\Plugin\Context\EntityContextDefinition';
+    }
+    return 'Drupal\Core\Plugin\Context\ContextDefinition';
   }
 
   /**

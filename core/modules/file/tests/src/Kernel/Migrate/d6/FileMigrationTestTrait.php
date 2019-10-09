@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\Tests\file\Kernel\Migrate\d6;
+
 use Drupal\migrate\Plugin\MigrationInterface;
 
 /**
@@ -29,7 +30,7 @@ trait FileMigrationTestTrait {
       // Make sure we have a single trailing slash.
       $source = $migration->getSourceConfiguration();
       $source['site_path'] = 'core/modules/simpletest';
-      $source['constants']['source_base_path'] = \Drupal::root() . '/';
+      $source['constants']['source_base_path'] = $this->root . '/';
       $migration->set('source', $source);
     }
   }

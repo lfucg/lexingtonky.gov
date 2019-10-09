@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\action\Functional;
 
-use Drupal\Component\Utility\Crypt;
 use Drupal\system\Entity\Action;
 use Drupal\Tests\BrowserTestBase;
 
@@ -19,30 +18,32 @@ class ConfigurationTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = array('action');
+  public static $modules = ['action'];
 
   /**
    * Tests configuration of advanced actions through administration interface.
    */
-  function testActionConfiguration() {
+  public function testActionConfiguration() {
     // Create a user with permission to view the actions administration pages.
-    $user = $this->drupalCreateUser(array('administer actions'));
+    $user = $this->drupalCreateUser(['administer actions']);
     $this->drupalLogin($user);
 
     // Make a POST request to admin/config/system/actions.
-    $edit = array();
-    $edit['action'] = Crypt::hashBase64('action_goto_action');
+    $edit = [];
+    $edit['action'] = 'action_goto_action';
     $this->drupalPostForm('admin/config/system/actions', $edit, t('Create'));
     $this->assertResponse(200);
 
     // Make a POST request to the individual action configuration page.
-    $edit = array();
+    $edit = [];
     $action_label = $this->randomMachineName();
     $edit['label'] = $action_label;
     $edit['id'] = strtolower($action_label);
     $edit['url'] = 'admin';
-    $this->drupalPostForm('admin/config/system/actions/add/' . Crypt::hashBase64('action_goto_action'), $edit, t('Save'));
+    $this->drupalPostForm('admin/config/system/actions/add/action_goto_action', $edit, t('Save'));
     $this->assertResponse(200);
+
+    $action_id = $edit['id'];
 
     // Make sure that the new complex action was saved properly.
     $this->assertText(t('The action has been successfully saved.'), "Make sure we get a confirmation that we've successfully saved the complex action.");
@@ -50,9 +51,8 @@ class ConfigurationTest extends BrowserTestBase {
 
     // Make another POST request to the action edit page.
     $this->clickLink(t('Configure'));
-    preg_match('|admin/config/system/actions/configure/(.+)|', $this->getUrl(), $matches);
-    $aid = $matches[1];
-    $edit = array();
+
+    $edit = [];
     $new_action_label = $this->randomMachineName();
     $edit['label'] = $new_action_label;
     $edit['url'] = 'admin';
@@ -72,17 +72,17 @@ class ConfigurationTest extends BrowserTestBase {
     $this->drupalGet('admin/config/system/actions');
     $this->clickLink(t('Delete'));
     $this->assertResponse(200);
-    $edit = array();
-    $this->drupalPostForm("admin/config/system/actions/configure/$aid/delete", $edit, t('Delete'));
+    $edit = [];
+    $this->drupalPostForm(NULL, $edit, t('Delete'));
     $this->assertResponse(200);
 
     // Make sure that the action was actually deleted.
-    $this->assertRaw(t('The action %action has been deleted.', array('%action' => $new_action_label)), 'Make sure that we get a delete confirmation message.');
+    $this->assertRaw(t('The action %action has been deleted.', ['%action' => $new_action_label]), 'Make sure that we get a delete confirmation message.');
     $this->drupalGet('admin/config/system/actions');
     $this->assertResponse(200);
     $this->assertNoText($new_action_label, "Make sure the action label does not appear on the overview page after we've deleted the action.");
 
-    $action = Action::load($aid);
+    $action = Action::load($action_id);
     $this->assertFalse($action, 'Make sure the action is gone after being deleted.');
   }
 

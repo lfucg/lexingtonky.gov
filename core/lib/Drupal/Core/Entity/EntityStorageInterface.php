@@ -79,6 +79,12 @@ interface EntityStorageInterface {
    *
    * @return \Drupal\Core\Entity\EntityInterface|null
    *   The specified entity revision or NULL if not found.
+   *
+   * @todo Deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0.
+   *   Use \Drupal\Core\Entity\RevisionableStorageInterface instead.
+   *
+   * @see https://www.drupal.org/node/2926958
+   * @see https://www.drupal.org/node/2927226
    */
   public function loadRevision($revision_id);
 
@@ -89,6 +95,12 @@ interface EntityStorageInterface {
    *
    * @param int $revision_id
    *   The revision id.
+   *
+   * @todo Deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0.
+   *   Use \Drupal\Core\Entity\RevisionableStorageInterface instead.
+   *
+   * @see https://www.drupal.org/node/2926958
+   * @see https://www.drupal.org/node/2927226
    */
   public function deleteRevision($revision_id);
 
@@ -102,7 +114,7 @@ interface EntityStorageInterface {
    * @return \Drupal\Core\Entity\EntityInterface[]
    *   An array of entity objects indexed by their ids.
    */
-  public function loadByProperties(array $values = array());
+  public function loadByProperties(array $values = []);
 
   /**
    * Constructs a new entity object, without permanently saving it.
@@ -114,7 +126,7 @@ interface EntityStorageInterface {
    * @return \Drupal\Core\Entity\EntityInterface
    *   A new entity object.
    */
-  public function create(array $values = array());
+  public function create(array $values = []);
 
   /**
    * Deletes permanently saved entities.
@@ -141,6 +153,31 @@ interface EntityStorageInterface {
    *   In case of failures, an exception is thrown.
    */
   public function save(EntityInterface $entity);
+
+  /**
+   * Restores a previously saved entity.
+   *
+   * Note that the entity is assumed to be in a valid state for the storage, so
+   * the restore process does not invoke any hooks, nor does it perform any
+   * post-save operations.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to restore.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   *   In case of failures, an exception is thrown.
+   *
+   * @internal
+   */
+  public function restore(EntityInterface $entity);
+
+  /**
+   * Determines if the storage contains any data.
+   *
+   * @return bool
+   *   TRUE if the storage contains data, FALSE if not.
+   */
+  public function hasData();
 
   /**
    * Gets an entity query instance.

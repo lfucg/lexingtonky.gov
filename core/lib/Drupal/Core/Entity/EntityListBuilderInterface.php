@@ -22,7 +22,9 @@ interface EntityListBuilderInterface {
    * sorting the loaded entities.
    *
    * @return \Drupal\Core\Entity\EntityInterface[]
-   *   An array of entities implementing \Drupal\Core\Entity\EntityInterface.
+   *   An array of entities implementing \Drupal\Core\Entity\EntityInterface
+   *   indexed by their IDs. Returns an empty array if no matching entities are
+   *   found.
    */
   public function load();
 
@@ -45,7 +47,8 @@ interface EntityListBuilderInterface {
    * Builds a listing of entities for the given entity type.
    *
    * @return array
-   *   A render array as expected by drupal_render().
+   *   A render array as expected by
+   *   \Drupal\Core\Render\RendererInterface::render().
    */
   public function render();
 

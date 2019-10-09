@@ -40,7 +40,7 @@ class UserData implements UserDataInterface {
       $query->condition('name', $name);
     }
     $result = $query->execute();
-    // If $module, $uid, and $name was passed, return the value.
+    // If $module, $uid, and $name were passed, return the value.
     if (isset($name) && isset($uid)) {
       $result = $result->fetchAllAssoc('uid');
       if (isset($result[$uid])) {
@@ -48,51 +48,46 @@ class UserData implements UserDataInterface {
       }
       return NULL;
     }
-    // If $module and $uid was passed, return the name/value pairs.
-    elseif (isset($uid)) {
-      $return = array();
+    $return = [];
+    // If $module and $uid were passed, return data keyed by name.
+    if (isset($uid)) {
       foreach ($result as $record) {
         $return[$record->name] = ($record->serialized ? unserialize($record->value) : $record->value);
       }
       return $return;
     }
-    // If $module and $name was passed, return the uid/value pairs.
-    elseif (isset($name)) {
-      $return = array();
+    // If $module and $name were passed, return data keyed by uid.
+    if (isset($name)) {
       foreach ($result as $record) {
         $return[$record->uid] = ($record->serialized ? unserialize($record->value) : $record->value);
       }
       return $return;
     }
     // If only $module was passed, return data keyed by uid and name.
-    else {
-      $return = array();
-      foreach ($result as $record) {
-        $return[$record->uid][$record->name] = ($record->serialized ? unserialize($record->value) : $record->value);
-      }
-      return $return;
+    foreach ($result as $record) {
+      $return[$record->uid][$record->name] = ($record->serialized ? unserialize($record->value) : $record->value);
     }
+    return $return;
   }
 
   /**
    * {@inheritdoc}
    */
   public function set($module, $uid, $name, $value) {
-    $serialized = 0;
-    if (!is_scalar($value)) {
+    $serialized = (int) !is_scalar($value);
+    if ($serialized) {
       $value = serialize($value);
-      $serialized = 1;
     }
     $this->connection->merge('users_data')
-      ->keys(array(
+      ->keys([
         'uid' => $uid,
         'module' => $module,
         'name' => $name,
-      ))
-      ->fields(array(
+      ])
+      ->fields([
         'value' => $value,
         'serialized' => $serialized,
-      ))
+      ])
       ->execute();
   }
 

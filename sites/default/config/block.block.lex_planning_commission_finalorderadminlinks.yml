@@ -1,0 +1,30 @@
+uuid: 5781e1f0-316d-4d3d-8bb2-5bafa462b429
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.final-order-admin
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_finalorderadminlinks
+theme: lex_planning_commission
+region: notices
+weight: -19
+provider: null
+plugin: 'system_menu_block:final-order-admin'
+settings:
+  id: 'system_menu_block:final-order-admin'
+  label: 'Final order admin links - view'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    pages: /final-orders
+    negate: false
+    context_mapping: {  }

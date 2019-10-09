@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\devel_generate\Plugin\DevelGenerate\MenuDevelGenerate.
- */
-
 namespace Drupal\devel_generate\Plugin\DevelGenerate;
 
 use Drupal\Component\Utility\Unicode;
@@ -226,14 +221,14 @@ class MenuDevelGenerate extends DevelGenerateBase implements ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function validateDrushParams($args) {
+  public function validateDrushParams($args, $options = []) {
 
     $link_types = array('node', 'front', 'external');
     $values = array(
       'num_menus' => array_shift($args),
       'num_links' => array_shift($args),
-      'kill' => drush_get_option('kill'),
-      'pipe' => drush_get_option('pipe'),
+      'kill' => $this->isDrush8() ? drush_get_option('kill') : $options['kill'],
+      'pipe' => $this->isDrush8() ? drush_get_option('pipe') : $options['pipe'],
       'link_types' => array_combine($link_types, $link_types),
     );
 
@@ -245,16 +240,16 @@ class MenuDevelGenerate extends DevelGenerateBase implements ContainerFactoryPlu
     $values['existing_menus']['__new-menu__'] = TRUE;
 
     if ($this->isNumber($values['num_menus']) == FALSE) {
-      return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Invalid number of menus'));
+      throw new \Exception(dt('Invalid number of menus'));
     }
     if ($this->isNumber($values['num_links']) == FALSE) {
-      return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Invalid number of links'));
+      throw new \Exception(dt('Invalid number of links'));
     }
     if ($this->isNumber($values['max_depth']) == FALSE || $values['max_depth'] > 9 || $values['max_depth'] < 1) {
-      return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Invalid maximum link depth. Use a value between 1 and 9'));
+      throw new \Exception(dt('Invalid maximum link depth. Use a value between 1 and 9'));
     }
     if ($this->isNumber($values['max_width']) == FALSE || $values['max_width'] < 1) {
-      return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Invalid maximum menu width. Use a positive numeric value.'));
+      throw new \Exception(dt('Invalid maximum menu width. Use a positive numeric value.'));
     }
 
     return $values;
@@ -305,19 +300,17 @@ class MenuDevelGenerate extends DevelGenerateBase implements ContainerFactoryPlu
   protected function generateMenus($num_menus, $title_length = 12) {
     $menus = array();
 
-    if ($this->moduleHandler->moduleExists('menu_ui')) {
-      for ($i = 1; $i <= $num_menus; $i++) {
-        $name = $this->getRandom()->word(mt_rand(2, max(2, $title_length)));
+    for ($i = 1; $i <= $num_menus; $i++) {
+      $name = $this->getRandom()->word(mt_rand(2, max(2, $title_length)));
 
-        $menu = $this->menuStorage->create(array(
-          'label' => $name,
-          'id' => 'devel-' . Unicode::strtolower($name),
-          'description' => $this->t('Description of @name', array('@name' => $name)),
-        ));
+      $menu = $this->menuStorage->create(array(
+        'label' => $name,
+        'id' => 'devel-' . Unicode::strtolower($name),
+        'description' => $this->t('Description of @name', array('@name' => $name)),
+      ));
 
-        $menu->save();
-        $menus[$menu->id()] = $menu->label();
-      }
+      $menu->save();
+      $menus[$menu->id()] = $menu->label();
     }
 
     return $menus;

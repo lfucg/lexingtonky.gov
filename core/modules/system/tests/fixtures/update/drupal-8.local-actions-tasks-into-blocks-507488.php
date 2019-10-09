@@ -31,16 +31,16 @@ foreach ($block_configs as $block_config) {
 
 // Update the config entity query "index".
 $existing_blocks = $connection->select('key_value')
-    ->fields('key_value', ['value'])
-    ->condition('collection', 'config.entity.key_store.block')
-    ->condition('name', 'theme:seven')
-    ->execute()
-    ->fetchField();
+  ->fields('key_value', ['value'])
+  ->condition('collection', 'config.entity.key_store.block')
+  ->condition('name', 'theme:seven')
+  ->execute()
+  ->fetchField();
 $existing_blocks = unserialize($existing_blocks);
 
 $connection->update('key_value')
   ->fields([
-    'value' => serialize(array_merge($existing_blocks, ['block.block.seven_local_actions']))
+    'value' => serialize(array_merge($existing_blocks, ['block.block.seven_local_actions'])),
   ])
   ->condition('collection', 'config.entity.key_store.block')
   ->condition('name', 'theme:seven')
@@ -55,7 +55,7 @@ $extensions = $connection->select('config')
 $extensions = unserialize($extensions);
 $connection->update('config')
   ->fields([
-    'data' => serialize(array_merge_recursive($extensions, ['theme' => ['test_theme' => 0]]))
+    'data' => serialize(array_merge_recursive($extensions, ['theme' => ['test_theme' => 0]])),
   ])
   ->condition('name', 'core.extension')
   ->execute();

@@ -1,3 +1,1 @@
-.cke_editable {
-  padding-left: 1em;
-}
+.cke_editable{padding-left:1em}.cke_editable img{max-width:100%;height:auto}.cke_widget_drupalentity:after{content:'';display:block;clear:both}drupal-entity{display:block}drupal-entity[data-align="left"]::after{content:'This -moz-element is set to float to the left of any text that follows it on desktop. On mobile devices it will be centered.';content:'This element is set to float to the left of any text that follows it on desktop. On mobile devices it will be centered.';color:red;display:block}drupal-entity[data-align="right"]::after{content:'This -moz-element is set to float to the right of any text that follows it on desktop. On mobile devices it will be centered.';content:'This element is set to float to the right of any text that follows it on desktop. On mobile devices it will be centered.';color:red;display:block}

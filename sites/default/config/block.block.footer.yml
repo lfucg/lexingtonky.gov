@@ -10,15 +10,16 @@ dependencies:
     - lex
 id: footer
 theme: lex
-region: footer_second
-weight: -14
+region: footer
+weight: -23
 provider: null
 plugin: 'system_menu_block:footer'
 settings:
   id: 'system_menu_block:footer'
-  label: Footer
+  label: Services
   provider: system
   label_display: visible
   level: 1
   depth: 0
+  expand_all_items: false
 visibility: {  }

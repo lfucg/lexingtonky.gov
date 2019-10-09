@@ -9,6 +9,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Url;
+use Drupal\file\FileInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatterBase;
 use Drupal\responsive_image\Entity\ResponsiveImageStyle;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -23,13 +24,16 @@ use Drupal\Core\Utility\LinkGeneratorInterface;
  *   label = @Translation("Responsive image"),
  *   field_types = {
  *     "image",
+ *   },
+ *   quickedit = {
+ *     "editor" = "image"
  *   }
  * )
  */
 class ResponsiveImageFormatter extends ImageFormatterBase implements ContainerFactoryPluginInterface {
 
   /**
-   * @var EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $responsiveImageStyleStorage;
 
@@ -112,17 +116,17 @@ class ResponsiveImageFormatter extends ImageFormatterBase implements ContainerFa
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
+    return [
       'responsive_image_style' => '',
       'image_link' => '',
-    ) + parent::defaultSettings();
+    ] + parent::defaultSettings();
   }
 
   /**
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $responsive_image_options = array();
+    $responsive_image_options = [];
     $responsive_image_styles = $this->responsiveImageStyleStorage->loadMultiple();
     if ($responsive_image_styles && !empty($responsive_image_styles)) {
       foreach ($responsive_image_styles as $machine_name => $responsive_image_style) {
@@ -132,29 +136,29 @@ class ResponsiveImageFormatter extends ImageFormatterBase implements ContainerFa
       }
     }
 
-    $elements['responsive_image_style'] = array(
+    $elements['responsive_image_style'] = [
       '#title' => t('Responsive image style'),
       '#type' => 'select',
-      '#default_value' => $this->getSetting('responsive_image_style'),
+      '#default_value' => $this->getSetting('responsive_image_style') ?: NULL,
       '#required' => TRUE,
       '#options' => $responsive_image_options,
-      '#description' => array(
+      '#description' => [
         '#markup' => $this->linkGenerator->generate($this->t('Configure Responsive Image Styles'), new Url('entity.responsive_image_style.collection')),
         '#access' => $this->currentUser->hasPermission('administer responsive image styles'),
-        ),
-    );
+        ],
+    ];
 
-    $link_types = array(
+    $link_types = [
       'content' => t('Content'),
       'file' => t('File'),
-    );
-    $elements['image_link'] = array(
+    ];
+    $elements['image_link'] = [
       '#title' => t('Link image to'),
       '#type' => 'select',
       '#default_value' => $this->getSetting('image_link'),
       '#empty_option' => t('Nothing'),
       '#options' => $link_types,
-    );
+    ];
 
     return $elements;
   }
@@ -163,16 +167,16 @@ class ResponsiveImageFormatter extends ImageFormatterBase implements ContainerFa
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    $summary = array();
+    $summary = [];
 
     $responsive_image_style = $this->responsiveImageStyleStorage->load($this->getSetting('responsive_image_style'));
     if ($responsive_image_style) {
-      $summary[] = t('Responsive image style: @responsive_image_style', array('@responsive_image_style' => $responsive_image_style->label()));
+      $summary[] = t('Responsive image style: @responsive_image_style', ['@responsive_image_style' => $responsive_image_style->label()]);
 
-      $link_types = array(
+      $link_types = [
         'content' => t('Linked to content'),
         'file' => t('Linked to file'),
-      );
+      ];
       // Display this setting only if image is linked.
       if (isset($link_types[$this->getSetting('image_link')])) {
         $summary[] = $link_types[$this->getSetting('image_link')];
@@ -189,7 +193,7 @@ class ResponsiveImageFormatter extends ImageFormatterBase implements ContainerFa
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = array();
+    $elements = [];
     $files = $this->getEntitiesToView($items, $langcode);
 
     // Early opt-out if the field is empty.
@@ -202,7 +206,7 @@ class ResponsiveImageFormatter extends ImageFormatterBase implements ContainerFa
     if ($this->getSetting('image_link') == 'content') {
       $entity = $items->getEntity();
       if (!$entity->isNew()) {
-        $url = $entity->urlInfo();
+        $url = $entity->toUrl();
       }
     }
     elseif ($this->getSetting('image_link') == 'file') {
@@ -211,7 +215,7 @@ class ResponsiveImageFormatter extends ImageFormatterBase implements ContainerFa
 
     // Collect cache tags to be added for each item in the field.
     $responsive_image_style = $this->responsiveImageStyleStorage->load($this->getSetting('responsive_image_style'));
-    $image_styles_to_load = array();
+    $image_styles_to_load = [];
     $cache_tags = [];
     if ($responsive_image_style) {
       $cache_tags = Cache::mergeTags($cache_tags, $responsive_image_style->getCacheTags());
@@ -224,9 +228,10 @@ class ResponsiveImageFormatter extends ImageFormatterBase implements ContainerFa
     }
 
     foreach ($files as $delta => $file) {
+      assert($file instanceof FileInterface);
       // Link the <picture> element to the original file.
       if (isset($link_file)) {
-        $url = file_url_transform_relative(file_create_url($file->getFileUri()));
+        $url = $file->createFileUrl();
       }
       // Extract field item attributes for the theme function, and unset them
       // from the $item so that the field template does not re-render them.
@@ -234,16 +239,16 @@ class ResponsiveImageFormatter extends ImageFormatterBase implements ContainerFa
       $item_attributes = $item->_attributes;
       unset($item->_attributes);
 
-      $elements[$delta] = array(
+      $elements[$delta] = [
         '#theme' => 'responsive_image_formatter',
         '#item' => $item,
         '#item_attributes' => $item_attributes,
         '#responsive_image_style_id' => $responsive_image_style ? $responsive_image_style->id() : '',
         '#url' => $url,
-        '#cache' => array(
+        '#cache' => [
           'tags' => $cache_tags,
-        ),
-      );
+        ],
+      ];
     }
     return $elements;
   }

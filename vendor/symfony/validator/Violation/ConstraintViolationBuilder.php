@@ -20,68 +20,22 @@ use Symfony\Component\Validator\Util\PropertyPath;
 /**
  * Default implementation of {@link ConstraintViolationBuilderInterface}.
  *
- * @since  2.5
- *
  * @author Bernhard Schussek <bschussek@gmail.com>
  *
- * @internal You should not instantiate or use this class. Code against
- *           {@link ConstraintViolationBuilderInterface} instead.
+ * @internal since version 2.5. Code against ConstraintViolationBuilderInterface instead.
  */
 class ConstraintViolationBuilder implements ConstraintViolationBuilderInterface
 {
-    /**
-     * @var ConstraintViolationList
-     */
     private $violations;
-
-    /**
-     * @var string
-     */
     private $message;
-
-    /**
-     * @var array
-     */
     private $parameters;
-
-    /**
-     * @var mixed
-     */
     private $root;
-
-    /**
-     * @var mixed
-     */
     private $invalidValue;
-
-    /**
-     * @var string
-     */
     private $propertyPath;
-
-    /**
-     * @var TranslatorInterface
-     */
     private $translator;
-
-    /**
-     * @var string|null
-     */
     private $translationDomain;
-
-    /**
-     * @var int|null
-     */
     private $plural;
-
-    /**
-     * @var Constraint
-     */
     private $constraint;
-
-    /**
-     * @var mixed
-     */
     private $code;
 
     /**
@@ -199,7 +153,7 @@ class ConstraintViolationBuilder implements ConstraintViolationBuilderInterface
                     $this->message,
                     $this->plural,
                     $this->parameters,
-                    $this->translationDomain#
+                    $this->translationDomain
                 );
             } catch (\InvalidArgumentException $e) {
                 $translatedMessage = $this->translator->trans(

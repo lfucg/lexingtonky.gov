@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\webprofiler\DataCollector\HttpDataCollector.
- */
-
 namespace Drupal\webprofiler\DataCollector;
 
 use Drupal\webprofiler\Http\HttpClientMiddleware;
@@ -68,7 +63,7 @@ class HttpDataCollector extends DataCollector implements DrupalDataCollectorInte
           'request_target' => $request->getRequestTarget(),
           'stats' => [
             'transferTime' => $stats->getTransferTime(),
-            'handlerStats' => $stats->getHandlerStats()
+            'handlerStats' => $stats->getHandlerStats(),
           ],
         ],
         'response' => [
@@ -76,7 +71,7 @@ class HttpDataCollector extends DataCollector implements DrupalDataCollectorInte
           'status' => $response->getStatusCode(),
           'headers' => $response->getHeaders(),
           'protocol' => $response->getProtocolVersion(),
-        ]
+        ],
       ];
     }
 
@@ -87,7 +82,7 @@ class HttpDataCollector extends DataCollector implements DrupalDataCollectorInte
       $response = $data['response'];
 
       $uri = $request->getUri();
-      $this->data['failed'][] = [
+      $failureData = [
         'request' => [
           'method' => $request->getMethod(),
           'uri' => [
@@ -102,13 +97,18 @@ class HttpDataCollector extends DataCollector implements DrupalDataCollectorInte
           'protocol' => $request->getProtocolVersion(),
           'request_target' => $request->getRequestTarget(),
         ],
-        'response' => [
+      ];
+
+      if ($response) {
+        $failureData['response'] = [
           'phrase' => $response->getReasonPhrase(),
           'status' => $response->getStatusCode(),
           'headers' => $response->getHeaders(),
           'protocol' => $response->getProtocolVersion(),
-        ]
-      ];
+        ];
+      }
+
+      $this->data['failed'][] = $failureData;
     }
   }
 
@@ -158,10 +158,12 @@ class HttpDataCollector extends DataCollector implements DrupalDataCollectorInte
    * {@inheritdoc}
    */
   public function getPanelSummary() {
-    return $this->t('Completed @completed, error @error', [
+    return $this->t(
+      'Completed @completed, error @error', [
       '@completed' => $this->getCompletedRequestsCount(),
-      '@error' => $this->getFailedRequestsCount()
-    ]);
+      '@error' => $this->getFailedRequestsCount(),
+    ]
+    );
   }
 
   /**
