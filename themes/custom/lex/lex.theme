@@ -64,9 +64,17 @@ function lex_preprocess_input__submit(&$variables) {
 }
 
 function lex_preprocess_block(&$variables) {
-  $variables['attributes']['class'][] = 'lex-block';
+  // $variables['attributes']['class'][] = 'lex-block';
   if (isset($variables['elements']['#id'])) {
     $element_id = $variables['elements']['#id'];
+    switch($element_id) {
+      case 'lex_home_headerquicklinks':
+      case 'lex_headerquicklinks':
+        $variables['attributes']['class'][] = 'slab--lex-blue';
+        break;
+      default:
+        break;
+    }
 
     if (stristr($element_id, 'inline_page_feedback_form')) {
       # get contact form field to render inline

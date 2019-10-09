@@ -1,3 +1,18 @@
 @import './colors';
-@import './slab';
 @import './fonts';
+@import './slab';
+@import './variables';
+@import './regions/header';
+@import './regions/takeover_nav';
+
+.no-scroll {
+  overflow: hidden;
+}
+
+ol, ul, dl {
+  margin-bottom: 0;
+}
+
+#toolbar-administration * {
+  font-size: 14px;
+}

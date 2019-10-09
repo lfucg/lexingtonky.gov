@@ -1,0 +1,100 @@
+body header {
+  height: 90px;
+  @include screens-below(sm) {
+    height: 80px;
+  }
+
+  #logo {
+    img {
+      margin: 10px 0 10px 100px;
+      max-height: 35px;
+      max-width: max-content;
+      @include screens-below(sm) {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  #block-lex-home-headerquicklinks, #block-lex-headerquicklinks {
+    padding-right: 5%;
+    text-align: right;
+    ul {
+      li {
+        display: inline-block;
+        line-height: 1.5rem;
+        a {
+          font-size: .8rem;
+          font-weight: 400;
+        }
+      }
+    }
+  }
+
+  .navbar-button {
+    padding-right: 6vw;
+  }
+
+  #nav-icon {
+    cursor: pointer;
+    display: inline-block;
+    height: 100%;
+    position: relative;
+    margin-left: 12px;
+    transform: rotate(0deg);
+    transition: .5s ease-in-out;
+    width: 60px;
+    z-index: 8;
+
+    span {
+        display: block;
+        background: color(lex-blue);
+        border-radius: 10px;
+        height: 3px;
+        left: 25%;
+        position: absolute;
+        opacity: 1;
+        transform: rotate(0deg);
+        transition: .25s ease-in-out;
+        width: 50%;
+        &:nth-child(1) {
+          top: 12px;
+        }
+
+        &:nth-child(2),
+        &:nth-child(3) {
+          top: 25px;
+        }
+
+        &:nth-child(4) {
+          top: 38px;
+        }
+    }
+
+    &.open {
+      background-color: color(lex-blue);
+      span {
+        background-color: color(yellow);
+        &:nth-child(1) {
+            top: 12px;
+            width: 0%;
+            left: 50%;
+        }
+
+        &:nth-child(2) {
+            transform: rotate(45deg);
+        }
+
+        &:nth-child(3) {
+            transform: rotate(-45deg);
+        }
+
+        &:nth-child(4) {
+            top: 12px;
+            width: 0%;
+            left: 50%;
+        }
+      }
+    }
+
+  }
+}

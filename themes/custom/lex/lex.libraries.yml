@@ -13,6 +13,7 @@ global-js:
     js/browse-columns.js: {}
     js/webdesignstandards-accordion.js: {}
     js/lex-geocoder.js: {}
+    js/takeover-navigation.js: {}
   dependencies:
     - core/jquery
     - core/jquery.ui.autocomplete
