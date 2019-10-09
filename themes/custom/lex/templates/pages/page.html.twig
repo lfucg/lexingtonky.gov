@@ -17,16 +17,12 @@
   {{ page.notices }}
 </div>
 {% endblock %}
+
 {% block page_header %}
-<header role="banner">
-  <a id="logo" href="/" accesskey="1" title="Home" aria-label="Home">City of Lexington, Kentucky, The Horse Capital of the World&reg;</a>
-  {% block page_header_nav %}
-    {{ page.sitemast }}
-  {% endblock %}
-</header>
+  {% include "@components/components/header.twig" with { menu: page.sitemast } %}
 {% endblock %}
 
-{% block page_hero %}
+{# {% block page_hero %}
   {% block hero_start %}
     {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
       {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
@@ -43,7 +39,7 @@
       {% endblock %}
     </div>
   </div>
-{% endblock %}
+{% endblock %} #}
 {% block page_breadcrumb %}
 {{ page.breadcrumb }}
 {% endblock %}

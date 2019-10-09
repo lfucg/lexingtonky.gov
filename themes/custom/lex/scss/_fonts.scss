@@ -42,3 +42,20 @@ a, p {
   font-family: $font__roboto;
   font-size: 1rem;
 }
+
+a {
+  color: color(med-blue);
+  &.dark-bg {
+    color: color(white);
+  }
+
+  &.light-bg {
+    color: color(med-blue);
+  }
+
+  &:hover {
+    color: color(yellow);
+    text-decoration: none;
+    border-bottom: 1px solid color(yellow);
+  }
+}
