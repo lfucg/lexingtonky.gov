@@ -8,10 +8,6 @@
 
 /* remove clashes with admin toolbar */
 .toolbar {
-  a:visited {
-    color: $lex-dark-grey;
-  }
-
   ul {
     display: block;
   }

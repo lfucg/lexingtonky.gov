@@ -29,6 +29,12 @@ gulp.task('sass', function () {
         .pipe(postcss([autoprefixer(autoprefixerOptions)]))
         .pipe(gulp.dest('./css'));
 });
+gulp.task('old_sass', function () {
+    return gulp.src('./old_scss/**/*.*')
+        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+        .pipe(postcss([autoprefixer(autoprefixerOptions)]))
+        .pipe(gulp.dest('./css'));
+});
 
 gulp.task('uglify', function() {
   gulp.src('./lib/*.js')
@@ -39,6 +45,8 @@ gulp.task('uglify', function() {
 gulp.task('watch', function(){
     livereload.listen();
     gulp.watch('./scss/**/*.scss', ['sass']);
+    gulp.watch('./old_scss/**/*.sass', ['old_sass']);
+    gulp.watch('./old_scss/**/*.scss', ['old_sass']);
     gulp.watch('./lib/*.js', ['uglify']);
     gulp.watch(['/css/style.css', './**/*.twig', './js/*.js'], function (files){
         livereload.changed(files)

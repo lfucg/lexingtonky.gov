@@ -1,0 +1,12 @@
+#takeoverNav {
+  @include rgba-background(color(lex-blue), 0.8);
+  position: fixed;
+  height: 0;
+  transition: height 1000ms;
+  width: 100%;
+  z-index: 100;
+}
+
+#takeoverNav.show{
+  height: 100%;
+}

@@ -1,221 +1,221 @@
-.lex-site-header {
+// .lex-site-header {
 
-  .lex-quicklinks {
-    li {
-      display: none;
-      &#google_translate_element {
-        /* display for all screens and pages */
-        display: inline-block;
-      }
-      @include media($medium-screen) {
-        padding-left: 2em;
-      }
-    }
-  }
-}
+//   .lex-quicklinks {
+//     li {
+//       display: none;
+//       &#google_translate_element {
+//         /* display for all screens and pages */
+//         display: inline-block;
+//       }
+//       @include media($medium-screen) {
+//         padding-left: 2em;
+//       }
+//     }
+//   }
+// }
 
-#block-edithomepagebanner {
-  position: absolute;
-  left: 10px;
-}
+// #block-edithomepagebanner {
+//   position: absolute;
+//   left: 10px;
+// }
 
-.lex-frontpage .lex-quicklinks li {
-  /* show full set of quicklinks on front page */
-  @include media($large-screen) {
-    display: inline-block;
-  }
-}
+// .lex-frontpage .lex-quicklinks li {
+//   /* show full set of quicklinks on front page */
+//   @include media($large-screen) {
+//     display: inline-block;
+//   }
+// }
 
-@mixin logo_dimensions($height) {
-  height: $height;
-  @include calc(width, "#{$height} * 5.2");
-}
+// @mixin logo_dimensions($height) {
+//   height: $height;
+//   @include calc(width, "#{$height} * 5.2");
+// }
 
-.lex-site-navbar {
-  background: #fff;
-  border-bottom: 1px solid $lex-grey;
-  padding-top: 1em;
-  padding-bottom: 1em;
-  /* todo logo => .lex-logo-container */
-  .logo {
-    max-width: 75%;
-    float: left;
-  }
-  .lex-logo {
-    position: relative;
-    @include logo_dimensions(40px);
-    background-image: url('../img/lexington-logo.png');
-    background-image: url('../img/lexington-logo.svg');
-    background-repeat: no-repeat;
+// .lex-site-navbar {
+//   background: #fff;
+//   border-bottom: 1px solid $lex-grey;
+//   padding-top: 1em;
+//   padding-bottom: 1em;
+//   /* todo logo => .lex-logo-container */
+//   .logo {
+//     max-width: 75%;
+//     float: left;
+//   }
+//   .lex-logo {
+//     position: relative;
+//     @include logo_dimensions(40px);
+//     background-image: url('../img/lexington-logo.png');
+//     background-image: url('../img/lexington-logo.svg');
+//     background-repeat: no-repeat;
 
-    &:hover::after {
-      content: '';
-      display: block;
-      border-top: 1px solid $lex-horse-blue;
-      position: absolute;
-      width: 100%;
-      bottom: -0.25em;
-    }
-  }
+//     &:hover::after {
+//       content: '';
+//       display: block;
+//       border-top: 1px solid $lex-horse-blue;
+//       position: absolute;
+//       width: 100%;
+//       bottom: -0.25em;
+//     }
+//   }
 
 
-}
+// }
 
-.lex-region-search_header {
-  float: left;
-  width: 100%;
-  margin-top: 5px;
-  max-width: 400px;
-  @include media(700px) {
-    float: right;
-  }
-  @include media($large-screen) {
-    margin-top: 10px;
-  }
-}
+// .lex-region-search_header {
+//   float: left;
+//   width: 100%;
+//   margin-top: 5px;
+//   max-width: 400px;
+//   @include media(700px) {
+//     float: right;
+//   }
+//   @include media($large-screen) {
+//     margin-top: 10px;
+//   }
+// }
 
-.lex-slab-blue-alpha {
-  background-color: rgba($lex-dark-blue, $lex-alpha-level);
-}
+// .lex-slab-blue-alpha {
+//   background-color: rgba($lex-dark-blue, $lex-alpha-level);
+// }
 
-.lex-frontpage .lex-slab-blue-alpha {
-  padding-top: 0;
-  background-color: $lex-dark-blue;
+// .lex-frontpage .lex-slab-blue-alpha {
+//   padding-top: 0;
+//   background-color: $lex-dark-blue;
 
-  @media (min-width: 875px) {
-    background-color: rgba($lex-dark-blue, $lex-alpha-level);
-    height: 12em;
-    margin-top: -12em;
-    position: relative;
-  }
+//   @media (min-width: 875px) {
+//     background-color: rgba($lex-dark-blue, $lex-alpha-level);
+//     height: 12em;
+//     margin-top: -12em;
+//     position: relative;
+//   }
 
-}
+// }
 
-.lex-layout-fullbleed {
-  height: 100%;
+// .lex-layout-fullbleed {
+//   height: 100%;
 
-  .search-block-form {
-    display: none;
-  }
+//   .search-block-form {
+//     display: none;
+//   }
 
-  .lex-site-header {
-    background-size: initial;
-  }
+//   .lex-site-header {
+//     background-size: initial;
+//   }
 
-  .lex-slab-blue-alpha {
-    background-color: $lex-dark-blue;
-    margin-top: 250px;
+//   .lex-slab-blue-alpha {
+//     background-color: $lex-dark-blue;
+//     margin-top: 250px;
 
-    @include media($medium-screen) {
-      background-color: rgba($lex-dark-blue, $lex-alpha-level);
-    }
-  }
+//     @include media($medium-screen) {
+//       background-color: rgba($lex-dark-blue, $lex-alpha-level);
+//     }
+//   }
 
-  .lex-pagetitle {
-    margin: 0;
-  }
+//   .lex-pagetitle {
+//     margin: 0;
+//   }
 
-  .lex-slab {
-    padding-bottom: $lex-section-gutter;
-  }
+//   .lex-slab {
+//     padding-bottom: $lex-section-gutter;
+//   }
 
-  .lex-breadcrumb {
-    padding: 0;
-  }
+//   .lex-breadcrumb {
+//     padding: 0;
+//   }
 
-  .lex-breadcrumb-wrapper {
-    /* fix double padding because of nested lex-grid-full */
-    padding-left: 0;
-  }
+//   .lex-breadcrumb-wrapper {
+//     /* fix double padding because of nested lex-grid-full */
+//     padding-left: 0;
+//   }
 
-  .lex-title-list .lex-card-title {
-    display: block;
-    padding-bottom: 1rem;
-  }
+//   .lex-title-list .lex-card-title {
+//     display: block;
+//     padding-bottom: 1rem;
+//   }
 
-  /* EDS: can't figure out the block logic to hide these w/o removing
-    breadcrumbs from /news, /events, etc
-    so hide with css */
-  .lex-region-secondary_menu .lex-breadcrumb,
-  .lex-region-highlighted .lex-pagetitle {
-    display: none;
-  }
-  /* anon view includes extra useless padding */
-  .lex-region-highlighted {
-    padding-bottom: 0;
-  }
+//   /* EDS: can't figure out the block logic to hide these w/o removing
+//     breadcrumbs from /news, /events, etc
+//     so hide with css */
+//   .lex-region-secondary_menu .lex-breadcrumb,
+//   .lex-region-highlighted .lex-pagetitle {
+//     display: none;
+//   }
+//   /* anon view includes extra useless padding */
+//   .lex-region-highlighted {
+//     padding-bottom: 0;
+//   }
 
-  @include media($medium-screen) {
-    .search-block-form {
-      display: block;
-    }
-    .lex-site-header {
-      background-size: cover;
-      position: relative;
-      height: 100vh;
-    }
-    .lex-slab-blue-alpha {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-    }
-    .lex-slab {
-      padding: $lex-section-gutter;
-    }
-    .lex-pagetitle {
-      margin: 0;
-    }
-    .lex-title-list .lex-card-title:last-of-type {
-      padding-bottom: 0;
-    }
-  }
-}
+//   @include media($medium-screen) {
+//     .search-block-form {
+//       display: block;
+//     }
+//     .lex-site-header {
+//       background-size: cover;
+//       position: relative;
+//       height: 100vh;
+//     }
+//     .lex-slab-blue-alpha {
+//       position: absolute;
+//       bottom: 0;
+//       width: 100%;
+//     }
+//     .lex-slab {
+//       padding: $lex-section-gutter;
+//     }
+//     .lex-pagetitle {
+//       margin: 0;
+//     }
+//     .lex-title-list .lex-card-title:last-of-type {
+//       padding-bottom: 0;
+//     }
+//   }
+// }
 
-.lex-mostactive {
-  padding: 1em;
-  background-color: rgba($lex-white, $lex-alpha-level);
+// .lex-mostactive {
+//   padding: 1em;
+//   background-color: rgba($lex-white, $lex-alpha-level);
 
-  @include media($medium-screen) {
-    padding-top: 1em;
-  }
+//   @include media($medium-screen) {
+//     padding-top: 1em;
+//   }
 
-  .lex-section-heading {
-    color: $lex-dark-grey;
-  }
-  .lex-font-standout a, .lex-font-standout a:visited {
-    text-decoration: underline;
-  }
-}
+//   .lex-section-heading {
+//     color: $lex-dark-grey;
+//   }
+//   .lex-font-standout a, .lex-font-standout a:visited {
+//     text-decoration: underline;
+//   }
+// }
 
-.lex-site-navbar-secondary {
-  float: right;
-  margin-top: 12px;
-  font-size: $small-font-size;
-  .lex-translatelink {
-    font-size: $small-font-size;
-  }
-  @include media($medium-screen) {
-    margin-top: 10px;
-    font-size: $base-font-size;
-    .lex-translatelink {
-      font-size: $base-font-size;
-    }
-  }
-  @include media($large-screen) {
-    margin-top: 13px;
-  }
-}
+// .lex-site-navbar-secondary {
+//   float: right;
+//   margin-top: 12px;
+//   font-size: $small-font-size;
+//   .lex-translatelink {
+//     font-size: $small-font-size;
+//   }
+//   @include media($medium-screen) {
+//     margin-top: 10px;
+//     font-size: $base-font-size;
+//     .lex-translatelink {
+//       font-size: $base-font-size;
+//     }
+//   }
+//   @include media($large-screen) {
+//     margin-top: 13px;
+//   }
+// }
 
-.lex-hero {
-  position: relative;
-  img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-  border-bottom: 1px solid $lex-grey;
-}
+// .lex-hero {
+//   position: relative;
+//   img {
+//     display: block;
+//     width: 100%;
+//     height: auto;
+//   }
+//   border-bottom: 1px solid $lex-grey;
+// }
 
-@media (max-width: 899px) {
+// @media (max-width: 899px) {
 
-}
+// }

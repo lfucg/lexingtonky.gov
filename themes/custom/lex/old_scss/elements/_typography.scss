@@ -69,9 +69,9 @@ a.lex-font-muted, a.lex-font-muted:visited {
   color: $lex-dark-grey;
 }
 
-a:visited {
-  color: $lex-visited-link;
-}
+// a:visited {
+//   color: $lex-visited-link;
+// }
 
 a:not(.toolbar-icon):focus {
   box-shadow: none;

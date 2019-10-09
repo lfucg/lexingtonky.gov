@@ -67,7 +67,6 @@ h1,h2,h3,h4,h5,h6
   font-weight: normal
   margin: 1em 0 0.5em 0
   line-height: 1.1
-  @include link_hover_underline
 
 h1, h3, h5
   font-weight: bold
@@ -137,9 +136,6 @@ tr:nth-child(even) td
 // Inline
 a
   color: $color-primary-4
-
-  &:visited
-    color: $color-primary-3
 
 sup
   vertical-align: top
@@ -390,8 +386,8 @@ main
         content: ' / '
       &:last-child:after
         content: ''
-  a, a:visited
-    color: $color-secondary-4
+  // a, a:visited
+  //   color: $color-secondary-4
 
   .lex-aside-list li:last-child, .usa-unstyled-list li:last-child
     margin-bottom: 0
