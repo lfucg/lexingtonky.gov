@@ -5,5 +5,4 @@ dependencies: {  }
 name: Keywords
 vid: keywords
 description: 'Keywords will be used to help return relevant search results when keyword terms are searched for in the index.'
-hierarchy: 0
 weight: 0

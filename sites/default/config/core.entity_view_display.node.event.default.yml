@@ -17,6 +17,8 @@ dependencies:
     - field.field.node.event.field_recurring_event
     - field.field.node.event.field_related_departments
     - field.field.node.event.field_related_documents
+    - field.field.node.event.field_related_organization
+    - field.field.node.event.field_show_on_calendar
     - node.type.event
   module:
     - datetime
@@ -128,6 +130,14 @@ content:
     third_party_settings: {  }
     type: list_default
     region: content
+  field_related_organization:
+    weight: 13
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
   links:
     weight: 1
     region: content
@@ -143,3 +153,5 @@ hidden:
   field_keywords: true
   field_related_departments: true
   field_related_documents: true
+  field_show_on_calendar: true
+  search_api_excerpt: true

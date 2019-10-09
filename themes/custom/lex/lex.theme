@@ -223,6 +223,9 @@ function lex_preprocess_field(&$variables) {
     $class = 'lex-social-link ' . $classes[$element['#field_name']];
     $variables['items'][0]['content']['#options']['attributes']['class'][] = $class;
   }
+  if ($node = \Drupal::request()->attributes->get('node')) {
+     $variables['nid'] = $node->id();
+   }
 }
 
 /**
