@@ -1,13 +1,13 @@
 body header {
-  height: 80px;
-  @include screens-above(lg) {
-    height: 90px;
+  height: 90px;
+  @include screens-below(sm) {
+    height: 80px;
   }
 
   #logo {
     img {
       margin: 10px 0 10px 100px;
-      height: 35px;
+      max-height: 35px;
       max-width: max-content;
       @include screens-below(sm) {
         margin-left: 10px;

@@ -1,11 +1,11 @@
 (function($) {
 
   let windowWidth = $( window ).width();
-  $( window ).resize( function() {
+  $( window ).resize( () => {
     windowWidth = $( window ).width();
   });
 
-  $('.navbar-button,.menu-label').click( function() {
+  $('.navbar-button,.menu-label').click( () => {
     $("#nav-icon").toggleClass('open');
     $("#takeoverNav").toggleClass('show');
     $("body").toggleClass('no-scroll');
@@ -19,11 +19,5 @@
       console.log('littlescreens');
     }
   });
-
-  $('.level-1').click(function(e) {
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      alert('Not so fast! We\'re still working on this stuff!');
-  })
 
 }(jQuery));
