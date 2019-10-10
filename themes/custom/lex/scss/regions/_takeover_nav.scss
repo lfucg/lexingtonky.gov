@@ -1,12 +1,38 @@
 #takeoverNav {
-  @include rgba-background(color(lex-blue), 0.8);
+  @include rgba-background(color(lex-blue), 0.9);
   position: fixed;
   height: 0;
+  overflow: hidden;
   transition: height 1000ms;
   width: 100%;
-  z-index: 100;
+  z-index: 1000;
 }
 
 #takeoverNav.show{
   height: 100%;
+  padding-bottom: 200px;
+  overflow: scroll;
+}
+
+.navigation--top-level {
+  color: white;
+  border-right: 1px solid color(yellow);
+  display: inline-block;
+  margin-left: 8.333333%;
+  width: 33%;
+  @include screens-below(sm) {
+    width: 100%;
+    margin-left: 0;
+  }
+  .level-1 {
+    cursor: pointer;
+    box-sizing: border-box;
+    padding: 5px 15px;
+    border:  1px solid transparent;
+    &:hover {
+      border: 1px solid color(yellow);
+      color: color(yellow);
+      transition: all .5s ease;
+    }
+  }
 }
