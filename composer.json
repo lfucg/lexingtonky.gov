@@ -18,7 +18,8 @@
         "drupal/media_entity": "^1.8",
         "drupal/entity_browser": "^1.7",
         "drupal/twig_vardumper": "^1.1",
-        "drupal/viewsreference": "^1.4"
+        "drupal/viewsreference": "^1.4",
+        "drupal/contentimport": "^4.1"
     },
     "replace": {
         "drupal/core": "^8.6"

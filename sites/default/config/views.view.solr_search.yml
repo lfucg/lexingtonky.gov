@@ -276,6 +276,7 @@ display:
               webmaster: '0'
               administrator: '0'
               final_order_admin: '0'
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -288,7 +289,7 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          parse_mode: phrase
+          parse_mode: terms
           min_length: null
           fields: {  }
           plugin_id: search_api_fulltext

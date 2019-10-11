@@ -1834,6 +1834,55 @@
         ]
     },
     {
+        "name": "drupal/contentimport",
+        "version": "4.1.0",
+        "version_normalized": "4.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/contentimport.git",
+            "reference": "8.x-4.1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/contentimport-8.x-4.1.zip",
+            "reference": "8.x-4.1",
+            "shasum": "880048420b8bb75c76f5dc72bfb698493503a520"
+        },
+        "require": {
+            "drupal/core": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-4.x": "4.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-4.1",
+                "datestamp": "1518785880",
+                "security-coverage": {
+                    "status": "not-covered",
+                    "message": "Project has not opted into security advisory coverage!"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "dhayanandan_k",
+                "homepage": "https://www.drupal.org/user/3534286"
+            }
+        ],
+        "description": "To Import content from CSV file",
+        "homepage": "https://www.drupal.org/project/contentimport",
+        "support": {
+            "source": "https://git.drupalcode.org/project/contentimport"
+        }
+    },
+    {
         "name": "drupal/draggableviews",
         "version": "1.2.0",
         "version_normalized": "1.2.0.0",

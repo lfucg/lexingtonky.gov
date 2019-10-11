@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Module file for Contentimport.
+ */
+
+/**
+ * Implements contentimport_preprocess_page().
+ */
+function contentimport_preprocess_page(&$variables) {
+  $variables['page']['#cache']['contexts'][] = 'route';
+  $urlRoute = \Drupal::routeMatch()->getRouteName();
+  if (($urlRoute == 'contentimport.admin_settings')) {
+    $variables['#attached']['library'][] = 'contentimport/common-styling';
+  }
+}
