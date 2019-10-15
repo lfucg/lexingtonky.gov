@@ -1,8 +1,5 @@
 body header {
   height: 80px;
-  @include screens-above(lg) {
-    height: 90px;
-  }
 
   #logo {
     img {
