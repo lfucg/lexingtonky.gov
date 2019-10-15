@@ -29,9 +29,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .lex-node .lex-region-content {
-  a {
-    text-decoration: underline;
-  }
   a.lex-calltoaction {
     text-decoration: none;
   }
@@ -81,7 +78,6 @@ a:not(.toolbar-icon):focus {
 
 a.lex-font-standout, a.lex-font-standout:visited {
   color: $lex-blue;
-  text-decoration: underline;
 }
 
 
