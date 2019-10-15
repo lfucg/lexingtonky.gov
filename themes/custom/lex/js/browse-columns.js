@@ -1,14 +1,6 @@
-// https://github.com/alphagov/collections/blob/master/app/assets/javascripts/browse-columns.js
 (function() {
   "use strict";
   window.GOVUK = window.GOVUK || {};
-
-  // https://github.com/alphagov/frontend/blob/master/app/assets/javascripts/support.js
-  if(typeof window.GOVUK.support === 'undefined'){ window.GOVUK.support = {}; }
-  window.GOVUK.support.history = function() {
-    return window.history && window.history.pushState && window.history.replaceState;
-  }
-
   var $ = window.jQuery;
 
   function BrowseColumns(options){
@@ -20,17 +12,17 @@
     this.$root = this.$el.find('#root');
     this.$section = this.$el.find('#section');
     this.$subsection = this.$el.find('#subsection');
-    this.$breadcrumbs = $('#global-breadcrumb ol');
+    this.$breadcrumbs = $('.gem-c-breadcrumbs');
     this.animateSpeed = 330;
 
     if(this.$section.length === 0){
-      this.$section = $('<div id="section" class="pane with-sort" />');
+      this.$section = $('<div id="section" class="section-pane pane with-sort" />');
       this.$el.prepend(this.$section);
       this.$el.addClass('section');
     }
 
     if(this.$subsection.length === 0){
-      this.$subsection = $('<div id="subsection" class="pane" />').hide();
+      this.$subsection = $('<div id="subsection" class="subsection-pane pane" />').hide();
       this.$el.prepend(this.$subsection);
     } else {
       this.$subsection.show();
@@ -67,7 +59,7 @@
       } else {
         loadPromise = this.loadSectionFromState(state, true);
       }
-      loadPromise.done(function(){
+      loadPromise.then(function(){
         this.trackPageview(state);
       }.bind(this));
     },
@@ -77,11 +69,10 @@
         // load the section then load the subsection after
         var sectionPathname = window.location.pathname.split('/').slice(0,-1).join('/');
         var sectionState = this.parsePathname(sectionPathname);
-        var sectionPromise = this.loadSectionFromState(sectionState, true);
-        sectionPromise.pipe(function(){
-          return this.loadSectionFromState(state, true);
-        }.bind(this));
-        return sectionPromise;
+        return this.loadSectionFromState(sectionState, true)
+          .then(function(){
+            return this.loadSectionFromState(state, true);
+          }.bind(this));
       } else {
         return this.loadSectionFromState(state, true);
       }
@@ -99,12 +90,14 @@
     showRoot: function(){
       this.$section.html('');
       this.displayState = 'root';
-      this.$root.find('h1').focus();
+      this.$root.find('.js-heading').focus();
 
       var out = new $.Deferred()
       return out.resolve();
     },
     showSection: function(state){
+      this.setContentIDMetaTag(state.sectionData.content_id);
+      this.setNavigationPageTypeMetaTag(state.sectionData.navigation_page_type);
       state.title = this.getTitle(state.slug);
       this.setTitle(state.title);
       this.$section.html(state.sectionData.html)
@@ -112,7 +105,6 @@
       this.highlightSection('root', state.path);
       this.removeLoading();
       this.updateBreadcrumbs(state);
-      this.lexUpdateTranslation();
 
       var animationDone;
       if(this.displayState === 'subsection'){
@@ -124,8 +116,8 @@
         animationDone = new $.Deferred();
         animationDone.resolve();
       }
-      animationDone.done(function(){
-        this.$section.find('h1').focus();
+      return animationDone.then(function(){
+        this.$section.find('.js-heading').focus();
       }.bind(this));
     },
     animateSubsectionToSectionDesktop: function(){
@@ -140,7 +132,6 @@
         this.$root.attr('style', '');
         out.resolve();
       }
-
 
       // animate to the right position and update the data
       this.$root.css({ position: 'absolute', width: this.$root.width() });
@@ -178,15 +169,15 @@
       return out.resolve();
     },
     showSubsection: function(state){
+      this.setContentIDMetaTag(state.sectionData.content_id);
+      this.setNavigationPageTypeMetaTag(state.sectionData.navigation_page_type);
       state.title = this.getTitle(state.slug);
-
       this.setTitle(state.title);
       this.$subsection.html(state.sectionData.html);
       this.highlightSection('section', state.path);
       this.highlightSection('root', '/browse/' + state.section);
       this.removeLoading();
       this.updateBreadcrumbs(state);
-      this.lexOnSubsectionUpdated();
 
       var animationDone;
       if(this.displayState !== 'subsection'){
@@ -195,12 +186,12 @@
         animationDone = new $.Deferred();
         animationDone.resolve();
       }
-      animationDone.done(function(){
-        this.$subsection.find('h1').focus();
+      return animationDone.then(function(){
+        this.$subsection.find('.js-heading').focus();
       }.bind(this));
     },
     animateSectionToSubsectionDesktop: function(){
-      var out = new $.Deferred()
+      var out = new $.Deferred();
       // animate to the right position and update the data
       this.$root.css({ position: 'absolute', width: this.$root.width() });
       this.$section.find('.sort-order').hide();
@@ -244,7 +235,13 @@
       }
     },
     setTitle: function(title){
-      $('title').text(title);
+      $('title').text(title + ' - GOV.UK');
+    },
+    setContentIDMetaTag: function(content_id){
+      $('meta[name="govuk:content-id"]').attr('content', content_id);
+    },
+    setNavigationPageTypeMetaTag: function(navigation_page_type){
+      $('meta[name="govuk:navigation-page-type"]').attr('content', navigation_page_type);
     },
     addLoading: function($el){
       this.$el.attr('aria-busy', 'true');
@@ -261,7 +258,7 @@
     getSectionData: function(state){
       var cacheForSlug = this.sectionCache('section', state.slug),
           out = new $.Deferred(),
-          url = '/browse/' + state.slug
+          url = '/browse/' + state.slug + '.json';
 
       if(typeof state.sectionData !== 'undefined'){
         out.resolve(state.sectionData);
@@ -270,8 +267,7 @@
       } else {
         $.ajax({
           url: url
-        }).done(function(data){
-          data = this.lexParseFullPage(data, state.slug);
+        }).then(function(data){
           this.sectionCache('section', state.slug, data);
 
           out.resolve(data);
@@ -312,30 +308,32 @@
         donePromise = $.when(sectionPromise);
       }
 
-      donePromise.done(function(sectionData){
-        state.sectionData = sectionData;
-        this.scrollToBrowse();
+      return donePromise
+        .then(function(sectionData){
+          state.sectionData = sectionData;
+          this.scrollToBrowse();
 
-        if(state.subsection){
-          this.showSubsection(state);
-        } else {
-          this.showSection(state);
-        }
+          this.lastState = state;
 
-        if(typeof poppingState === 'undefined'){
-          history.pushState(state, '', state.path);
-          this.trackPageview(state);
-        }
-        this.lastState = state;
-      }.bind(this));
-
-      return donePromise;
+          if(state.subsection){
+            return this.showSubsection(state);
+          } else {
+            return this.showSection(state);
+          }
+        }.bind(this))
+        .then(function() {
+          if(typeof poppingState === 'undefined'){
+            history.pushState(state, '', state.path);
+            this.trackPageview(state);
+          }
+        }.bind(this));
     },
     navigate: function(e){
       if(e.currentTarget.pathname.match(/^\/browse\/[^\/]+(\/[^\/]+)?$/)){
-        e.preventDefault();
 
         var $target = $(e.currentTarget);
+        e.preventDefault();
+
         var state = this.parsePathname(e.currentTarget.pathname);
         state.title = $target.text();
 
@@ -347,54 +345,38 @@
         this.loadSectionFromState(state);
       }
     },
-    updateBreadcrumbs: function(state){
-      return this.lexUpdateBreadcrumbs(state);
-    },
-    lexParseFullPage: function(fullPage, slug) {
-      var fullPageHTML = $.parseHTML(fullPage);
-      var section = (slug.indexOf('/') > -1 ? '#subsection' : '#section');
-      return {'html': $(fullPageHTML).find(section).html()};
-    },
-    lexUpdateBreadcrumbs: function(state){
-
-      var $breadcrumbItems = this.$breadcrumbs.find('li');
-
-      if(state.subsection){
-        var sectionSlug = state.section;
-        var sectionTitle = this.$section.find('h2').text();
-
-        if($breadcrumbItems.length === 1){
-          var $sectionBreadcrumb = $('<li class="lex-breadcrumb-item"/>');
-          this.$breadcrumbs.append($sectionBreadcrumb);
-        } else {
-          var $sectionBreadcrumb = $breadcrumbItems.slice(1);
-        }
-
-        $sectionBreadcrumb.html('<a class="lex-font-muted" href="/browse/'+sectionSlug+'">'+sectionTitle+'</a>');
-      } else {
-        this.$breadcrumbs.find('li').slice(1).remove();
-      }
-    },
-    lexUpdateTranslation: function(){
-      $.getScript("//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit");
+    updateBreadcrumbs: function(state) {
+      // Calling `.last()` is necessary because the breadcrumbs component has 2
+      // elements, the breadcrumbs and the schema.org data.
+      // https://govuk-publishing-components.herokuapp.com/component-guide/breadcrumbs
+      var $newBreadcrumbs = $(state.sectionData.breadcrumbs).last();
+      this.$breadcrumbs.html($newBreadcrumbs.html());
     },
     trackPageview: function(state){
-      // lexington: handled via GTM
+      var sectionTitle = this.$section.find('h1').text();
+      sectionTitle = sectionTitle ? sectionTitle.toLowerCase() : 'browse';
+      var navigationPageType = 'none';
+
+      if(this.displayState == 'section') {
+        navigationPageType = 'First Level Browse';
+      } else if(this.displayState == 'subsection') {
+        navigationPageType = 'Second Level Browse';
+      }
+
+      if (GOVUK.analytics && GOVUK.analytics.trackPageview) {
+        GOVUK.analytics.trackPageview(
+          state.path,
+          null,
+          {
+            dimension1: sectionTitle,
+            dimension32: navigationPageType
+          }
+        );
+      }
     }
   };
 
   GOVUK.BrowseColumns = BrowseColumns;
 
-  $(function(){
-    GOVUK.browseColumns = new BrowseColumns({$el: $('.browse-panes')});
-    GOVUK.browseColumns.lexOnSubsectionUpdated = function () {
-      $('.lex-hide-unless-javascript').removeClass('lex-hide-unless-javascript');
-      $.LexingtonGeocoder({
-        $addressInput: jQuery('.js-lex-district-address'),
-      });
-
-      /* For /browse/government/departments. Duplicated in scripts.js */
-      $.LexingtonFilterBlock(document.getElementsByClassName('js-lex-filter-block')[0]);
-    };
-  })
+  $(function(){ GOVUK.browseColumns = new BrowseColumns({$el: $('.browse-panes')}); })
 }());

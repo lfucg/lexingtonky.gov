@@ -4,7 +4,7 @@ body header {
   #logo {
     img {
       margin: 10px 0 10px 100px;
-      max-height: 35px;
+      height: 35px;
       max-width: max-content;
       @include screens-below(sm) {
         margin-left: 10px;
