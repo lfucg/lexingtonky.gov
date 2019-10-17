@@ -4,6 +4,10 @@
 $font__open_sans : 'Open Sans';
 $font__roboto : 'Roboto';
 
+#toolbar-administration * {
+  font-size: 14px;
+}
+
 html {
   font-size: 16px;
 }
@@ -27,16 +31,21 @@ h1, h2 {
 
 h1 {
   font-size: 2rem;
+  color: color(lex-blue);
 }
 
 h2 {
   font-size: 1.6rem;
+  color: color(gray);
 }
 
 h3, h4 {
   font-family: $font__open_sans;
   font-size: 1.4rem;
 }
+
+h3 { color: color(gray); }
+h4 { color: color(light-blue); }
 
 a, p {
   font-family: $font__roboto;

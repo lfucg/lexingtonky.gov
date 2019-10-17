@@ -1,7 +1,8 @@
 @import './colors';
-@import './fonts';
+@import './typography';
 @import './slab';
 @import './variables';
+@import './regions/footer';
 @import './regions/header';
 @import './regions/takeover_nav';
 
@@ -15,8 +16,4 @@
 
 ol, ul, dl {
   margin-bottom: 0;
-}
-
-#toolbar-administration * {
-  font-size: 14px;
 }

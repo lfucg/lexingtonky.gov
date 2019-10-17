@@ -5,7 +5,6 @@
 .lex-card-subtitle {
   margin: 0.5em 0;
   padding: 0;
-  font-weight: $font-weight-light;
 }
 
 .lex-eventcard {
@@ -18,7 +17,6 @@
   text-transform: uppercase;
   border-bottom: 1px solid $lex-grey;
   width: 100%;
-  font-weight: $font-weight-medium;
   &.lex-card-title {
     margin-bottom: $lex-section-half-gutter;
   }
@@ -53,7 +51,6 @@
 .lex-card-title, h3.lex-card-title, h2.lex-card-title {
   // todo: remote margin and add lex-card-firstitem to elements
   margin: 0;
-  font-weight: $font-weight-regular;
   display: inline-block;
 
   &.lex-card-title-small {
