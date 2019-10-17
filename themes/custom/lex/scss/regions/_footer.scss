@@ -1,0 +1,8 @@
+body footer {
+  a {
+    color: color(white);
+    &:hover {
+      color: color(yellow);
+    }
+  }
+}

@@ -150,14 +150,6 @@ $desktop: 770px;
     }
   }
 
-  #root, #section {
-    @include media($tablet) {
-      h1, a {
-        padding-left: 15px;
-      }
-    }
-  }
-
   #subsection {
     @include media($tablet) {
       .pane-inner {
@@ -180,10 +172,6 @@ $desktop: 770px;
   }
 
   #subsection {
-    h1 {
-      @extend .lex-card-title;
-      @extend .lex-card-title-heading;
-    }
     /* same as lex-title-list */
     li {
       padding-bottom: $lex-section-rem-gutter-half;
