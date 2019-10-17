@@ -1,21 +1,6 @@
-h1, h2, h3, h4, h5, h6 {
-  margin-top: 0em;
-  font-family: $font-sans;
-}
 
 /* for basic document readability */
 .lex-region-content {
-  h1, h2, h3, h4, h5, h6 {
-    /* return to uswds value */
-    margin-top: 1em;
-  }
-  h1, h2 {
-    font-weight: $font-weight-medium;
-  }
-
-  h3, h4, h5, h6 {
-    font-weight: $font-weight-medium-heavy;
-  }
 
   ul li {
     line-height: 1.5em;
@@ -37,15 +22,13 @@ h1, h2, h3, h4, h5, h6 {
 /* org page, service guide */
 .lex-region-content, .layout-sidebar-second {
   .lex-block {
-    .lex-section-heading.lex-heading, h2 {
-      font-weight: $font-weight-heavy;
+    .lex-section-heading.lex-heading {
       margin-top: 0;
       padding-top: 0;
       text-transform: none;
     }
     /* for blocks that are the whole page like /meeting-notices */
     .lex-block-light-title {
-      font-weight: $font-weight-regular;
       a {
         text-decoration: none;
       }
@@ -92,12 +75,6 @@ a.lex-font-standout, a.lex-font-standout:visited {
   }
 }
 
-
-.lex-font-light {
-  @include media($large-screen) {
-    font-weight: $font-weight-light;
-  }
-}
 
 .lex-link-literal {
   color: $lex-green;
