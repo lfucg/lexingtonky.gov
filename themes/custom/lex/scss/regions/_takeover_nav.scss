@@ -28,11 +28,19 @@
     cursor: pointer;
     box-sizing: border-box;
     padding: 5px 15px;
+    color: color(white);
     border:  1px solid transparent;
     &:hover {
       border: 1px solid color(yellow);
-      color: color(yellow);
+      color: color(yellow) !important;
       transition: all .5s ease;
+      h3.lex-card-title {
+        color: inherit;
+      }
+    }
+    .lex-card-title {
+      color: color(white);
     }
   }
+
 }
