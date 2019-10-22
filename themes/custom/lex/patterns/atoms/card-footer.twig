@@ -1,0 +1,9 @@
+<span class="footer-text">
+    {% if email != null %}
+        <a href="mailto:{{email|raw}}">
+            {{text}}
+        </a>
+    {% else %}
+        {{text}}
+    {% endif %}
+</span>
