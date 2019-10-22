@@ -1,0 +1,97 @@
+.contact-card {
+    width: 265px;
+    background-color: #EFEFEF;
+    text-align: center;
+    display: inline-block;
+
+
+    .contact-img-container {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        margin: 20px auto 10px;
+        overflow: hidden;
+        display: inline-block;
+    }
+
+    .contact-img {
+        max-width: none;
+        left: -40px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .contact-heading {
+        color: #0558A7;
+        font-size: 18pt;
+        font-family: 'Open Sans';
+    }
+
+    .contact-subheading {
+        color: #0558A7;
+        font-size: 16pt;
+        font-family: 'Roboto';
+    }
+
+    .description {
+        color: black;
+        font-size: 12pt;
+        font-family: 'Roboto';
+        margin-bottom: 15px;
+    }
+
+    .contact-footer {
+        height: 35px;
+        background-color: #0558A7;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .footer-text {
+        a {
+            color: #ffff;
+            font-size: 16pt;
+            font-family: 'Roboto';
+
+            &:hover {
+                text-decoration: none !important;
+                border-bottom: none !important;
+            }
+        }
+    }
+
+    &:hover {
+        width: 291px;
+        background-color: #0558A7;
+
+        .contact-heading {
+            color: white;
+            font-size: 22pt;
+        }
+
+        .contact-subheading {
+            color: white;
+            font-size: 18pt;
+        }
+
+        .description {
+            color: white;
+            font-size: 14pt;
+        }
+
+        .contact-footer {
+            height: 40px;
+            background-color: #004585;
+        }
+
+        .footer-text {
+            a {
+                color: #E1B111;
+                font-size: 18pt;
+            }
+        }
+
+
+        
+    }
+}

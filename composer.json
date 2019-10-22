@@ -19,7 +19,8 @@
         "drupal/entity_browser": "^1.7",
         "drupal/twig_vardumper": "^1.1",
         "drupal/bootstrap_barrio": "^4.22",
-        "drupal/components": "^1.1"
+        "drupal/components": "^1.1",
+        "drupal/viewsreference": "^1.4"
     },
     "replace": {
         "drupal/core": "^8.6"
