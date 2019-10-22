@@ -50,3 +50,4 @@ hidden:
   field_related_documents: true
   field_top_services: true
   links: true
+  search_api_excerpt: true

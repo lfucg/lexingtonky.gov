@@ -1,0 +1,19 @@
+uuid: bc2f34fa-17e9-4c8e-a1f2-a3871da87710
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_contact_name
+    - paragraphs.paragraphs_type.contact_card
+id: paragraph.contact_card.field_contact_name
+field_name: field_contact_name
+entity_type: paragraph
+bundle: contact_card
+label: 'Contact name'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

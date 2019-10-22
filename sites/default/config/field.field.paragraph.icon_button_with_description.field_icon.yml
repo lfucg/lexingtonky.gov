@@ -1,0 +1,21 @@
+uuid: 908d4f89-cca4-4b6d-8b9c-b53c99948a42
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_icon
+    - paragraphs.paragraphs_type.icon_button_with_description
+  module:
+    - text
+id: paragraph.icon_button_with_description.field_icon
+field_name: field_icon
+entity_type: paragraph
+bundle: icon_button_with_description
+label: icon
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text
