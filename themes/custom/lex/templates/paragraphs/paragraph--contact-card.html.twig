@@ -7,7 +7,6 @@
   ]
 %}
 
-{# <div{{ attributes.addClass(classes, 'pb-5 col-lg-8 offset-lg-2') }}> #}
 <div{{ attributes.addClass(classes, 'pb-5') }}>
     {% include '@components/molecules/contact-card.twig' with {heading: content.field_contact_name, img: content.field_image[0]['#markup'], subheading: content.field_contact_position, footer: content.field_contact_email, description: content.field_contact_phone[0]['#context'].value, text: 'Send an Email', email: content.field_contact_email[0]['#context'].value} %}
 </div>
