@@ -9,7 +9,7 @@ dependencies:
 id: lex_home_help
 theme: lex_home
 region: breadcrumb
-weight: -25
+weight: -5
 provider: null
 plugin: help_block
 settings:

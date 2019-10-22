@@ -9,7 +9,7 @@ dependencies:
 id: lex_home_local_tasks
 theme: lex_home
 region: breadcrumb
-weight: -26
+weight: -6
 provider: null
 plugin: local_tasks_block
 settings:

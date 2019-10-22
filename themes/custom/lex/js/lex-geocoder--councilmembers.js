@@ -16,7 +16,6 @@
   *   esri-leaflet
   */
   $.LexingtonGeocoder = function(options) {
-
     var $addressInput = options.$addressInput;
     var political = L.esri.query({url: 'https://maps.lexingtonky.gov/lfucggis/rest/services/political/MapServer/1'});
 

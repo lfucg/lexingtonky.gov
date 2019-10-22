@@ -1,0 +1,7 @@
+# lookup_services.ajax_submit_demo:
+#   path: 'ajax-form-submit'
+#   defaults:
+#     _form:  '\Drupal\lookup_services\Form\LookupServicesBlockForm'
+#     _title: 'Ajax Submit Form Demo'
+#   requirements:
+#     _permission: 'access content'
