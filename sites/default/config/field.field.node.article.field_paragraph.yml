@@ -11,7 +11,7 @@ id: node.article.field_paragraph
 field_name: field_paragraph
 entity_type: node
 bundle: article
-label: Paragraph
+label: 'Page Section'
 description: ''
 required: false
 translatable: false
@@ -29,11 +29,17 @@ settings:
       card_grid:
         weight: 10
         enabled: false
+      card_button:
+        weight: 11
+        enabled: false
       lexidme_case:
         weight: 11
         enabled: false
       lexidme_grid:
         weight: 12
+        enabled: false
+      contact_card:
+        weight: 13
         enabled: false
       paragraph_sidebar_section:
         weight: 13

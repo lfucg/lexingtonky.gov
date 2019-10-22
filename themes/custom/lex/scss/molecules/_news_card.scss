@@ -13,8 +13,8 @@
         margin: 5px 0 15px 0;
         border-bottom: 1px solid #0558A7;
         color: #0558A7;
-        font-size: 18pt;
-        font-family: 'Open Sans';
+        font-size: 1.12rem;
+        font-family: $font__open_sans ;
     }
 
     .description {
@@ -31,8 +31,8 @@
 
     .footer-text {
         color: #ffff;
-        font-size: 16pt;
-        font-family: 'Roboto';
+        font-size: 1rem;
+        font-family: $font__roboto;
 
 
         &:hover {
@@ -44,13 +44,13 @@
             .card-heading {
                 margin-bottom: 12px;
                 color: #ffff;
-                font-size: 22pt;
+                font-size: 1.375rem;
             }
 
             .description {
                 margin-bottom: 12px;
                 color: #ffff;
-                font-size: 14pt;
+                font-size: 0.87rem;
 
             }
         }
