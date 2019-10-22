@@ -1,0 +1,56 @@
+.icon-desc-button {
+    height: auto;
+    width: 250px;
+    background-color: #0558A7;
+    color: #ffff;
+
+    img {
+        height: 25px;
+        width: 35px;
+    }
+    .button-heading {
+        margin: 0 0 15px 0;
+    }
+    .row {
+        padding-top: 15px;
+    }
+
+    .description {
+        font-size: 1rem;
+    }
+
+    .button-icon {
+        font-size: 1.6em;
+    }
+
+    .button-arrow {
+        float: right;
+        margin-top: 3px;
+    }
+
+     &:hover {
+        background-color: #E1B111;
+        height: auto;
+        width: 275px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;
+        
+        .row {
+            padding: 20px 0 5px;
+        }
+
+        .button-heading, .button-icon {
+            font-size: 1.75rem;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            div {
+                padding-bottom: 15px;
+            }
+        }
+
+        .button-arrow {
+            font-size: 1.1rem;
+        }
+    }
+}

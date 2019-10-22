@@ -1,0 +1,36 @@
+.card-button {
+    border: 1px solid #0558A7;
+    width: 250px;
+    background-color: #ffff;
+    color: #0558A7;
+
+    // img:before {
+    //     display: block;
+    //     position: absolute;
+    //     height: 100%;
+    //     width: 100%;
+    //     bottom: 0;
+    //     transition: height 0.5s ease-out;
+    //     background: linear-gradient(to bottom, trasnparent 0%, #E1B111 100%);
+    // }
+
+    &:hover {
+        background-color: #E1B111;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;
+        color: #ffff;
+        border: none;
+        height: 289.5px;
+    }
+
+    img {
+        height: auto;
+        width: 100%;
+    }
+
+    .button-heading {
+        margin: 10px 0 5px;
+    }
+    .description {
+        margin-bottom: 10px;
+    }
+}
