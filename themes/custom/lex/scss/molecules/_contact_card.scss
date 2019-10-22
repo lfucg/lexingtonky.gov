@@ -1,6 +1,6 @@
 .contact-card {
     width: 265px;
-    background-color: #EFEFEF;
+    background-color: color(white);
     text-align: center;
     display: inline-block;
 
@@ -22,27 +22,27 @@
     }
 
     .contact-heading {
-        color: #0558A7;
-        font-size: 18pt;
-        font-family: 'Open Sans';
+        color: color(med-blue);
+        font-size: 1.12rem;
+        font-family: $font__open_sans ;
     }
 
     .contact-subheading {
-        color: #0558A7;
-        font-size: 16pt;
-        font-family: 'Roboto';
+        color: color(med-blue);
+        font-size: 1rem;
+        font-family: $font__roboto;
     }
 
     .description {
         color: black;
-        font-size: 12pt;
-        font-family: 'Roboto';
+        font-size: 0.75rem;
+        font-family: $font__roboto;
         margin-bottom: 15px;
     }
 
     .contact-footer {
         height: 35px;
-        background-color: #0558A7;
+        background-color: color(med-blue);
         width: 100%;
         margin-top: 10px;
     }
@@ -50,8 +50,10 @@
     .footer-text {
         a {
             color: #ffff;
-            font-size: 16pt;
-            font-family: 'Roboto';
+            font-size: 1rem;
+            font-family: $font__roboto;
+            margin-top: .4rem;
+            display: block;
 
             &:hover {
                 text-decoration: none !important;
@@ -61,22 +63,22 @@
     }
 
     &:hover {
-        width: 291px;
-        background-color: #0558A7;
+        transform: scale(1.1);
+        background-color: color(med-blue);
 
         .contact-heading {
-            color: white;
-            font-size: 22pt;
+            color: color(white);
+            font-size: 1.37rem;
         }
 
         .contact-subheading {
-            color: white;
-            font-size: 18pt;
+            color: color(white);
+            font-size: 1.12rem;
         }
 
         .description {
-            color: white;
-            font-size: 14pt;
+            color: color(white);
+            font-size: 0.875rem;
         }
 
         .contact-footer {
@@ -86,8 +88,8 @@
 
         .footer-text {
             a {
-                color: #E1B111;
-                font-size: 18pt;
+                color: color(yellow);
+                font-size: 1.12rem;
             }
         }
 

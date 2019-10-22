@@ -1,9 +1,14 @@
 .card-button {
-    border: 1px solid #0558A7;
+    border: 1px solid color(med-blue);
     width: 250px;
-    background-color: #ffff;
-    color: #0558A7;
+    background-color: color(white);
+    color: color(med-blue);
 
+    .button-heading {
+        color: color(med-blue);
+    }
+
+    //Keeping this in for now, while working on the image gradient
     // img:before {
     //     display: block;
     //     position: absolute;
@@ -15,9 +20,9 @@
     // }
 
     &:hover {
-        background-color: #E1B111;
+        background-color: color(yellow);
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;
-        color: #ffff;
+        color: color(white);
         border: none;
         height: 289.5px;
     }
@@ -29,6 +34,7 @@
 
     .button-heading {
         margin: 10px 0 5px;
+        color: color(white);
     }
     .description {
         margin-bottom: 10px;
