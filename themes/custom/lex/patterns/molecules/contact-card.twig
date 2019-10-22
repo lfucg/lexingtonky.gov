@@ -1,0 +1,16 @@
+<div class="contact-card">
+    <div class="contact-body">
+        <div class="row">
+            <div class="col-12">
+                {% include '@components/atoms/card-img.twig' with {img: img} %}
+                {% include '@components/atoms/card-heading.twig' with {heading: heading} %}
+                {% include '@components/atoms/card-subheading.twig' with {subheading: subheading} %}
+                {% include '@components/atoms/description.twig' with {description: description} %}
+            </div>
+            <div class="contact-footer">
+                {% include '@components/atoms/card-footer.twig' with {text: text, email: email} %}
+            </div>
+        </div>
+    </div>
+</div>
+
