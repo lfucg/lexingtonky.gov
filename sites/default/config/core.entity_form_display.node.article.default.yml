@@ -8,12 +8,14 @@ dependencies:
     - field.field.node.article.field_image
     - field.field.node.article.field_keywords
     - field.field.node.article.field_lex_custom_banner_image
+    - field.field.node.article.field_paragraph
     - field.field.node.article.field_tags
     - image.style.thumbnail
     - node.type.article
   module:
     - comment
     - image
+    - paragraphs
     - path
     - text
     - workbench_moderation
@@ -67,6 +69,18 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
     type: image_image
+    region: content
+  field_paragraph:
+    type: entity_reference_paragraphs
+    weight: 26
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
     region: content
   field_tags:
     type: entity_reference_autocomplete_tags

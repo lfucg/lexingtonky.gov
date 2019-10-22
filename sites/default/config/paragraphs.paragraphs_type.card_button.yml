@@ -1,0 +1,9 @@
+uuid: d59dcc96-50ac-4f27-93c6-6d01fe480b5a
+langcode: en
+status: true
+dependencies: {  }
+id: card_button
+label: 'Card Button'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

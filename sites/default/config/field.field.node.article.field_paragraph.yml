@@ -1,0 +1,50 @@
+uuid: 66152656-0291-4c22-9994-805062079bac
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_paragraph
+    - node.type.article
+  module:
+    - entity_reference_revisions
+id: node.article.field_paragraph
+field_name: field_paragraph
+entity_type: node
+bundle: article
+label: Paragraph
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles: null
+    target_bundles_drag_drop:
+      icon_button_with_description:
+        weight: 9
+        enabled: false
+      card_grid:
+        weight: 10
+        enabled: false
+      lexidme_case:
+        weight: 11
+        enabled: false
+      lexidme_grid:
+        weight: 12
+        enabled: false
+      paragraph_sidebar_section:
+        weight: 13
+        enabled: false
+      paragraphs_media_contact:
+        weight: 14
+        enabled: false
+      paragraphs_page_section:
+        weight: 15
+        enabled: false
+      photo_grid:
+        weight: 16
+        enabled: false
+field_type: entity_reference_revisions
