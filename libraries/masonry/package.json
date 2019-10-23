@@ -12,7 +12,7 @@
     "jquery-bridget": "1.1.x",
     "doc-ready": "1.x",
     "qunitjs": "^1.12",
-    "jquery": ">=1.4.3 <2",
+    "jquery": ">=1.4.3 <4",
     "grunt": "^0.4.4",
     "grunt-contrib-jshint": "^0.9.2",
     "grunt-contrib-uglify": "^0.4.0",
