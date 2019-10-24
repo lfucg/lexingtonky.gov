@@ -36,6 +36,7 @@ module:
   embed: 0
   entity: 0
   entity_browser: 0
+  entity_browser_entity_form: 0
   entity_embed: 0
   entity_reference_revisions: 0
   field: 0
@@ -48,6 +49,7 @@ module:
   history: 0
   honeypot: 0
   image: 0
+  inline_entity_form: 0
   kint: 0
   lex_calendar: 0
   lex_custom: 0
@@ -64,6 +66,7 @@ module:
   node: 0
   options: 0
   page_cache: 0
+  paragraphs_inline_entity_form: 0
   path: 0
   quickedit: 0
   rdf: 0

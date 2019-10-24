@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'file:file:91609058-826f-4b55-905f-072da9ad68cb'
+id: paragraphs_ief_twitter
+label: Twitter
+icon_uuid: 91609058-826f-4b55-905f-072da9ad68cb
+description: ''
+behavior_plugins: {  }

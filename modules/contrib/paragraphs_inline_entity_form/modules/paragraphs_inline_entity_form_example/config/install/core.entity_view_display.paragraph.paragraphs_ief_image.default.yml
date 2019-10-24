@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.paragraphs_ief_image.field_ief_image
+    - paragraphs.paragraphs_type.paragraphs_ief_image
+  module:
+    - image
+id: paragraph.paragraphs_ief_image.default
+targetEntityType: paragraph
+bundle: paragraphs_ief_image
+mode: default
+content:
+  field_ief_image:
+    weight: 0
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+hidden: {  }

@@ -1,0 +1,24 @@
+uuid: 85850f3f-c120-4f5b-8ce1-0870faa43154
+langcode: en
+status: true
+dependencies:
+  config:
+    - entity_browser.browser.paragraph_items
+  content:
+    - 'file:file:6900721a-7e88-422c-a28a-97ca7a0fe1b1'
+  module:
+    - entity_embed
+    - paragraphs
+_core:
+  default_config_hash: txaXSGgHLGDIyIKPjO0w0inaF5-5z-7qgO7d66xHIkM
+label: Paragraphs
+id: paragraphs_inline_entity_form
+type_id: entity
+type_settings:
+  entity_type: paragraph
+  bundles: {  }
+  display_plugins: {  }
+  entity_browser: paragraph_items
+  entity_browser_settings:
+    display_review: false
+icon_uuid: 6900721a-7e88-422c-a28a-97ca7a0fe1b1

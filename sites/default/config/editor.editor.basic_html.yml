@@ -46,9 +46,9 @@ settings:
             - Copy
             - PasteText
         -
-          name: Paragraphs
+          name: 'Page Sections'
           items:
-            - paragraph
+            - paragraphs_inline_entity_form
   plugins:
     stylescombo:
       styles: "a.lex-calltoaction|Call to action\r\np.test|Test"

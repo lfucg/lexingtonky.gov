@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'file:file:25286377-6909-4f27-a47c-0b979d4cb91f'
+id: paragraphs_ief_facebook
+label: Facebook
+icon_uuid: 25286377-6909-4f27-a47c-0b979d4cb91f
+description: ''
+behavior_plugins: {  }
