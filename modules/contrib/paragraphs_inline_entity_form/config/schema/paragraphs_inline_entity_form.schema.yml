@@ -1,0 +1,17 @@
+# Schema for configuration files of the Entity browser module.
+entity_browser.browser.widget.paragraph_entity_form:
+  type: mapping
+  label: 'Paragraph items widget configuration'
+  mapping:
+    submit_text:
+      type: label
+      label: 'Button label'
+    entity_type:
+      type: string
+      label: 'Entity type'
+    bundle:
+      type: string
+      label: 'Bundle'
+    form_mode:
+      type: string
+      label: 'Form mode'

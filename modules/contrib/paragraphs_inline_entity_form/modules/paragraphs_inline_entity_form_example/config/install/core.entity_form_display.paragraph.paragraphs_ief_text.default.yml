@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.paragraphs_ief_text.field_ief_text
+    - paragraphs.paragraphs_type.paragraphs_ief_text
+  module:
+    - text
+id: paragraph.paragraphs_ief_text.default
+targetEntityType: paragraph
+bundle: paragraphs_ief_text
+mode: default
+content:
+  field_ief_text:
+    weight: 0
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

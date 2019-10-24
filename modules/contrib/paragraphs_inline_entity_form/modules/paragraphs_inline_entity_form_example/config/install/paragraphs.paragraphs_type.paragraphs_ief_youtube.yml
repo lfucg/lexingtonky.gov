@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'file:file:3f619acd-46d4-4258-80eb-b6ca3a23de4c'
+id: paragraphs_ief_youtube
+label: Youtube
+icon_uuid: 3f619acd-46d4-4258-80eb-b6ca3a23de4c
+description: ''
+behavior_plugins: {  }

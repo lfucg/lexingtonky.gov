@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.search_result
+    - field.field.node.paragraphs_ief_example.body
+    - node.type.paragraphs_ief_example
+  module:
+    - text
+    - user
+id: node.paragraphs_ief_example.search_result
+targetEntityType: node
+bundle: paragraphs_ief_example
+mode: search_result
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden: {  }

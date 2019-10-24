@@ -1,0 +1,9 @@
+dialog:
+  version: VERSION
+  css:
+    theme:
+      css/paragraphs_inline_entity_form.dialog.css: {}
+  js:
+    js/paragraphs_inline_entity_form.dialog.js: {}
+  dependencies:
+    - core/jquery

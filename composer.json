@@ -20,7 +20,9 @@
         "drupal/twig_vardumper": "^1.1",
         "drupal/bootstrap_barrio": "^4.22",
         "drupal/components": "^1.1",
-        "drupal/viewsreference": "^1.4"
+        "drupal/viewsreference": "^1.4",
+        "drupal/inline_entity_form": "^1.9",
+        "drupal/paragraphs_inline_entity_form": "^1.0"
     },
     "replace": {
         "drupal/core": "^8.6"

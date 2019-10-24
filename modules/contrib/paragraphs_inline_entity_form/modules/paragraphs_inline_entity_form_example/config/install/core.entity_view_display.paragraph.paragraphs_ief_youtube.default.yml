@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.paragraphs_ief_youtube.field_ief_embed
+    - paragraphs.paragraphs_type.paragraphs_ief_youtube
+  module:
+    - text
+id: paragraph.paragraphs_ief_youtube.default
+targetEntityType: paragraph
+bundle: paragraphs_ief_youtube
+mode: default
+content:
+  field_ief_embed:
+    weight: 0
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+hidden: {  }

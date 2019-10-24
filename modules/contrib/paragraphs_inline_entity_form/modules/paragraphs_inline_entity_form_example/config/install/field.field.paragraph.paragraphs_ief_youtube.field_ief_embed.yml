@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_ief_embed
+    - paragraphs.paragraphs_type.paragraphs_ief_youtube
+  module:
+    - text
+id: paragraph.paragraphs_ief_youtube.field_ief_embed
+field_name: field_ief_embed
+entity_type: paragraph
+bundle: paragraphs_ief_youtube
+label: Embed
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long
