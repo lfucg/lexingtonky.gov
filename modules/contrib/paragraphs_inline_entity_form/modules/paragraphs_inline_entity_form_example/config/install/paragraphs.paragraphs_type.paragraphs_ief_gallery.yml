@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'file:file:f5253f57-7989-455f-8984-e7cd53e01079'
+id: paragraphs_ief_gallery
+label: Gallery
+icon_uuid: f5253f57-7989-455f-8984-e7cd53e01079
+description: ''
+behavior_plugins: {  }

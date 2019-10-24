@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'file:file:0f8b85ce-a195-4e6e-b77c-966f5795ae96'
+id: paragraphs_ief_instagram
+label: Instagram
+icon_uuid: 0f8b85ce-a195-4e6e-b77c-966f5795ae96
+description: ''
+behavior_plugins: {  }

@@ -1,0 +1,38 @@
+<?php
+/**
+ * @file Install file.
+ */
+
+use Drupal\paragraphs\Entity\ParagraphsType;
+
+/**
+ * Implements hook_install().
+ */
+function paragraphs_inline_entity_form_example_install() {
+  // Creates the paragraph icons.
+  $embed_types = [
+    'block',
+    'columns',
+    'facebook',
+    'gallery',
+    'image',
+    'instagram',
+    'text',
+    'twitter',
+    'view',
+    'youtube',
+  ];
+  // Create and set icons.
+  foreach ($embed_types as $type) {
+    $filename = $type . '_thumb.jpg';
+    $icon = drupal_get_path('module', 'paragraphs_inline_entity_form_example') . '/images/' . $filename;
+    $data = file_get_contents($icon);
+    if ($file = file_save_data($data, 'public://' . $filename, FILE_EXISTS_REPLACE)) {
+      $paragraphs_type = 'paragraphs_ief_' . $type;
+      if ($paragraphs_type_entity = ParagraphsType::load($paragraphs_type)) {
+        $paragraphs_type_entity->set('icon_uuid', $file->uuid());
+        $paragraphs_type_entity->save();
+      }
+    }
+  }
+}

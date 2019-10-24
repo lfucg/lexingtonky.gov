@@ -1,0 +1,85 @@
+//
+// @file
+// Paragraphs summary CSS.
+//
+
+@import "variables";
+
+.paragraphs {
+  &-badge {
+    display: inline-block;
+    padding: $badge-padding-y $badge-padding-x;
+    background: $badge-color;
+    border-radius: $border-radius;
+    color: #fff;
+    cursor: default;
+    font-size: 90%;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    margin: 3px 0;
+
+    // Empty badges collapse automatically
+    &:empty {
+      display: none;
+    }
+  }
+}
+
+// We are using .js prefix here mainly because we want to apply this style rules
+// only for JS version of the element.
+.js {
+  .paragraphs-description {
+    .paragraphs-content-wrapper,
+    .paragraphs-plugin-wrapper {
+      position: relative;
+      height: 1.538em;
+      overflow: hidden;
+      word-break: break-all;
+      line-height: 1.538em;
+
+      // Fade out text element.
+      &::after {
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 3em;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #fff 100%);
+        content: "\00a0";
+      }
+    }
+
+    .summary-plugin-label::after {
+      content: ": ";
+    }
+
+    .summary-content {
+      color: $content-summary-color;
+    }
+
+    .summary-plugin {
+      padding-right: 5px;
+      font-size: 0.7rem;
+      color: $behavior-summary-color;
+
+      &:not(:last-child) {
+        border-right: 2px solid $light-grey;
+      }
+      &:not(:first-child) {
+        padding: 0 5px;
+      }
+    }
+  }
+
+  // Hide plugin summary when on behavior tab and paragraph is collapsed.
+  .behavior-active .paragraphs-expanded-description .paragraphs-plugin-wrapper {
+    display: none;
+  }
+
+  // Hide content summary when on content tab and paragraph is collapsed.
+  .content-active .paragraphs-expanded-description .paragraphs-content-wrapper {
+    display: none;
+  }
+}

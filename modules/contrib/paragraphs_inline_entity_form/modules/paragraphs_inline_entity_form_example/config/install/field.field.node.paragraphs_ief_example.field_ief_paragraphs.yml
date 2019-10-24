@@ -1,0 +1,58 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ief_paragraphs
+    - node.type.paragraphs_ief_example
+  module:
+    - entity_reference_revisions
+id: node.paragraphs_ief_example.field_ief_paragraphs
+field_name: field_ief_paragraphs
+entity_type: node
+bundle: paragraphs_ief_example
+label: Paragraphs
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles: null
+    target_bundles_drag_drop:
+      from_library:
+        weight: 12
+        enabled: false
+      paragraphs_ief_block:
+        weight: 13
+        enabled: false
+      paragraphs_ief_columns:
+        weight: 14
+        enabled: false
+      paragraphs_ief_facebook:
+        weight: 15
+        enabled: false
+      paragraphs_ief_gallery:
+        weight: 16
+        enabled: false
+      paragraphs_ief_image:
+        weight: 17
+        enabled: false
+      paragraphs_ief_instagram:
+        weight: 18
+        enabled: false
+      paragraphs_ief_text:
+        weight: 19
+        enabled: false
+      paragraphs_ief_twitter:
+        weight: 20
+        enabled: false
+      paragraphs_ief_view:
+        weight: 21
+        enabled: false
+      paragraphs_ief_youtube:
+        weight: 22
+        enabled: false
+field_type: entity_reference_revisions

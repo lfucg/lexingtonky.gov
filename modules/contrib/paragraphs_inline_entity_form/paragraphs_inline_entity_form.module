@@ -1,0 +1,72 @@
+<?php
+/**
+ * @file Module.
+ */
+
+use Drupal\core\Url;
+
+/**
+ * Implements hook_form_alter().
+ */
+function paragraphs_inline_entity_form_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  /* @var Drupal\Core\Entity\FieldableEntityInterface $entity */
+  $formObject = $form_state->getFormObject();
+  if ($formObject instanceof \Drupal\Core\Entity\EntityFormInterface) {
+    $form['#attached']['library'][] = 'paragraphs_inline_entity_form/dialog';
+  }
+
+  if ($formObject instanceof \Drupal\entity_embed\Form\EntityEmbedDialog) {
+    if (paragraphs_inline_entity_form_entity_browser_is_paragraph_item($form)) {
+      $form['#attached']['library'][] = 'paragraphs_inline_entity_form/dialog';
+      switch ($form_state->get('step')) {
+        case 'select':
+          break;
+
+        case 'embed':
+          // Change the back button to link to the paragraph edit form.
+          $entity_uuid = $form['attributes']['data-entity-uuid']['#value'];
+          $entity_type_manager = \Drupal::service('entity_type.manager');
+          $entity = $entity_type_manager->getStorage('paragraph')
+            ->loadByProperties(['uuid' => $entity_uuid]);
+          $paragraph = current($entity);
+
+          $form['actions']['back'] = [
+            '#type' => 'submit',
+            '#value' => t('Back'),
+            '#submit' => [],
+            '#ajax' => [
+              'url' => Url::fromRoute('entity_browser.edit_form', [
+                'entity_type' => 'paragraph',
+                'entity' => $paragraph->id(),
+              ]),
+              'event' => 'click',
+            ],
+          ];
+          //@todo update widget
+//          $details_id = $request->query->get('details_id');
+//          if (!empty($details_id)) {
+//            $response->addCommand(new ValueUpdatedCommand($details_id));
+//          }
+//          return $response;
+          break;
+      }
+    }
+  }
+}
+
+/**
+ * Checks that the browser type is a paragraph_item.
+ *
+ * @param $form The form.
+ * @return TRUE If it is a paragraph_item entity browser.
+ */
+function paragraphs_inline_entity_form_entity_browser_is_paragraph_item($form) {
+  if (isset($form['entity_browser']['#entity_browser'])
+    && $form['entity_browser']['#entity_browser'] == 'paragraph_items') {
+    return TRUE;
+  }
+  if (isset($form['attributes']['data-embed-button'])
+    && $form['attributes']['data-embed-button']['#value'] == 'paragraphs_inline_entity_form') {
+    return TRUE;
+  }
+}
