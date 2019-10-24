@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'file:file:50e42c16-c161-4ce2-8de8-34fb21dbae29'
+  module:
+    - entity_embed
+    - paragraphs
+label: Paragraphs
+id: paragraphs_inline_entity_form
+type_id: entity
+type_settings:
+  entity_type: paragraph
+  bundles: {  }
+  display_plugins: {  }
+  entity_browser: paragraph_items
+  entity_browser_settings:
+    display_review: false
+icon_uuid: 50e42c16-c161-4ce2-8de8-34fb21dbae29

@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.paragraphs_ief_example
+  module:
+    - text
+id: node.paragraphs_ief_example.body
+field_name: body
+entity_type: node
+bundle: paragraphs_ief_example
+label: Body
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    summary: ''
+    value: "<p>Example text</p>\r\n"
+    format: paragraphs_ief_example
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary
