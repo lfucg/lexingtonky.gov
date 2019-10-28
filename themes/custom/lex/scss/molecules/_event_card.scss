@@ -1,0 +1,85 @@
+.event-card {
+    height: auto;
+    width: 300px;
+    background-color: color(med-blue);
+    color: color(white);
+
+    img {
+        height: 25px;
+        width: 35px;
+    }
+    .button-heading {
+        margin: 0 0 15px 0;
+        color: color(white);
+    }
+    .row {
+        padding-top: 15px;
+    }
+
+    .button-heading {
+        border-bottom: 1px solid color(white);
+    }
+
+    .description {
+        font-size: 1rem;
+    }
+
+    .button-icon {
+        font-size: 1.6em;
+    }
+
+    .event-footer {
+        height: 35px;
+        background-color: color(med-blue);
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .footer-text {
+        a {
+            color: #ffff;
+            font-size: 1rem;
+            font-family: $font__roboto;
+            margin-top: .4rem;
+            display: block;
+
+            &:hover {
+                text-decoration: none !important;
+                border-bottom: none !important;
+            }
+        }
+    }
+
+     &:hover {
+        background-color: #E1B111;
+        height: auto;
+        transform: scale(1.1);
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;
+        
+        .row {
+            padding: 20px 0 5px;
+        }
+
+        .button-heading, .button-icon {
+            font-size: 1.75rem;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            div {
+                padding-bottom: 15px;
+            }
+        }
+
+        .button-arrow {
+            font-size: 1.1rem;
+        }
+
+        .footer-text {
+            a {
+                color: color(yellow);
+                font-size: 1.12rem;
+            }
+        }
+    }
+}

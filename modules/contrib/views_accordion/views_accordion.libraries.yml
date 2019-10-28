@@ -1,0 +1,6 @@
+views_accordion.accordion:
+  js:
+    views-accordion.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery.ui.accordion

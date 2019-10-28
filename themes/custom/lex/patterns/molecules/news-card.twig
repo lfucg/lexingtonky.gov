@@ -5,8 +5,8 @@
             {% include '@components/atoms/card-heading.twig' with {heading: heading} %}
             {% include '@components/atoms/description.twig' with {description: description} %}
         </div>
-        <div class="card-footer">
-            <span class="card-footer">Learn More</span>
+        <div class="news-footer">
+            {% include '@components/atoms/card-footer.twig' with {text: text} %}
         </div>
     </div>
 </a>
