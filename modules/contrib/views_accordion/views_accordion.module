@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * Provides an accordion display style for Views.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function views_accordion_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.views_accordion':
+      $output = '<p>' . t('The Views Accordion module is a Views style plugin that displays the results in a JQuery accordion style. For more updated information visit the <a href="@link">Views Accordion documentation page</a>.', ['@link' => 'http://drupal.org/node/366263']) . '</p>';
+
+      $output .= '<h3>' . t('How to use the plugin') . '</h3>';
+      $output .= t('<strong>IMPORTANT:</strong> The first field in order of appearance will be the one used as the "header" or "trigger" of the accordion action.') . '<br />';
+
+      $output .= '<h4>' . t('Your view must meet these requirements:') . '</h4>';
+      $output .= '<ul>';
+      $output .= '<li>' . t('<em>Row style</em> must be set to <em>Fields</em>.') . '</li>';
+      $output .= '</ul>';
+
+      $output .= '<h4>' . t('Choose <em>Views Accordion</em> in the <em>Style</em> dialog within your view, which will prompt you to configure the jquery.ui.accordion settings.') . '</h4>';
+      return $output;
+  }
+}
+
+/**
+ * Preprocess function for views_accordion_view template.
+ *
+ * Default template: views-accordion-view.html.twig.
+ *
+ * @{inheritdoc}
+ *
+ * We just want our own template to be able to guarantee some markup.
+ * @see template_preprocess_views_view_unformatted()
+ */
+function template_preprocess_views_accordion_view(&$variables) {
+  \Drupal::moduleHandler()->loadInclude('views', 'inc', 'views.theme');
+  template_preprocess_views_view_unformatted($variables);
+}

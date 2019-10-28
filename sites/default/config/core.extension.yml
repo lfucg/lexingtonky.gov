@@ -89,6 +89,7 @@ module:
   twig_vardumper: 0
   update: 0
   user: 0
+  views_accordion: 0
   views_ui: 0
   viewsreference: 0
   workbench_moderation: 0
