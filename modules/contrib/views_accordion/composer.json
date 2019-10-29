@@ -1,0 +1,10 @@
+{
+  "name": "drupal/views_accordion",
+  "description": "Provides an accordion views display plugin.",
+  "type": "drupal-module",
+  "homepage": "https://www.drupal.org/project/views_accordion",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/views_accordion"
+  },
+  "license": "GPL-2.0+"
+}
