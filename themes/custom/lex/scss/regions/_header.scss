@@ -1,5 +1,10 @@
 body header {
   height: 80px;
+  background: white;
+
+  &.sticky-top {
+    z-index: 500;
+  }
 
   #logo {
     img {
@@ -42,7 +47,7 @@ body header {
     width: 60px;
     z-index: 8;
 
-    span {
+    span.hamburger-line {
         display: block;
         background: color(lex-blue);
         border-radius: 10px;
@@ -54,17 +59,27 @@ body header {
         transition: .25s ease-in-out;
         width: 50%;
         &:nth-child(1) {
-          top: 12px;
+          top: 10px;
         }
 
         &:nth-child(2),
         &:nth-child(3) {
-          top: 25px;
+          top: 20px;
         }
 
         &:nth-child(4) {
-          top: 38px;
+          top: 30px;
         }
+    }
+
+    .menu-label {
+      margin: auto;
+      width: 100%;
+      display: block;
+      text-align: center;
+      font-size: 0.6rem;
+      top: 40px;
+      position: relative;
     }
 
     &.open {
