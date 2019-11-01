@@ -5,9 +5,10 @@
     windowWidth = $( window ).width();
   });
 
-  $('.navbar-button,.menu-label').click( function() {
+  $('.navbar-button,.menu-label,.fade').click( function() {
     $("#nav-icon").toggleClass('open');
     $("#takeoverNav").toggleClass('show');
+    $(".fade").toggleClass('show');
     $("body").toggleClass('no-scroll');
     $('.menu-label').html($('.menu-label').html() == 'Menu' ? 'Close' : 'Menu');
 
@@ -19,11 +20,4 @@
       console.log('littlescreens');
     }
   });
-
-  $('.level-1').click(function(e) {
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      alert('Not so fast! We\'re still working on this stuff!');
-  })
-
 }(jQuery));
