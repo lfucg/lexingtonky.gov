@@ -2,19 +2,15 @@
   @include rgba-background(color(lex-blue), 0.9);
   height: 100%;
   overflow: hidden;
-  position: fixed;
+  position: absolute;
   right: -40%;
   transition: all 1000ms;
-  width: 40%;
+  width: 0px;
   z-index: 1000;
-  @include screens-below(sm) {
-    width: 100%;
-    right: -100%;
-  }
 }
 div.fade {
   @include rgba-background(#000, 0.5);
-  position: fixed;
+  position: absolute;
   width: 100vw;
   z-index: 50;
   opacity: 0;
@@ -30,6 +26,10 @@ div.fade {
   overflow: scroll;
   padding-bottom: 200px;
   right: 0;
+  width: 40%;
+  @include screens-below(sm) {
+    width: 100%;
+  }
 }
 
 .navigation--top-level {
