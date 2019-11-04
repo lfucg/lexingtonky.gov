@@ -17,7 +17,10 @@ body header {
     }
   }
 
-  #block-lex-home-headerquicklinks, #block-lex-headerquicklinks {
+  #block-lex-home-headerquicklinks,
+  #block-lex-police-headerquicklinks,
+  #block-headerquicklinks,
+  #block-lex-headerquicklinks {
     padding-right: 5%;
     text-align: right;
     display: flex;
