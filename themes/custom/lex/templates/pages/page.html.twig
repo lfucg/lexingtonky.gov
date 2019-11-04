@@ -72,8 +72,16 @@
   {{ page.feedback }}
 {% endblock %}
 
-<footer>
+<footer class="slab--dark-blue">
 {% block page_footer %}
   {{ page.footer }}
 {% endblock %}
+<div class="slab--lex-blue footer-bottom">
+  {% include "@lex/includes/lexington-copyright.html.twig"
+    with {
+      section_class: 'd-flex d-md-none',
+      wordmark_class: 'mt-1',
+    }
+  %}
+  </div>
 </footer>

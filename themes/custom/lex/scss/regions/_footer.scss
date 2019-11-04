@@ -1,8 +1,74 @@
 body footer {
+  border-top: 10px solid color(lex-blue);
+  color: color(white);
+  padding: 5rem 0 0;
+  @include screens-below(sm) {
+    padding: 0;
+  }
+  .lex-region-footer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0 0 5rem;
+    @include screens-below(sm) {
+      padding: 2rem 3rem 0;
+    }
+  }
+
+  .footer-seal {
+    height: 100px;
+    width: 100px;
+    margin: 0px 30px;
+    @include screens-below(sm) {
+      height: 50px;
+      width: 50px;
+      margin: 0px 15px;
+    }
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  #block-lex-home-footer, #block-footer {
+    flex: 0 0 30%;
+    @include screens-below(sm) {
+      flex: 100%;
+    }
+    & > ul {
+      column-count: 2;
+      height: 125px;
+      @include screens-below(sm) {
+        column-count: 1;
+        height: auto;
+        padding-bottom: 2rem;
+      }
+    }
+
+  }
+
   a {
     color: color(white);
     &:hover {
       color: color(yellow);
+    }
+  }
+
+  h2 {
+    color: color(yellow);
+  }
+
+  .lex-social-links {
+    column-count: 5;
+    margin-top: 5px;
+  }
+
+  .footer-bottom {
+    min-height: 100px;
+    @include screens-below(sm) {
+      padding: 2rem 2rem 5rem;
+      margin-top: 2rem;
+      font-size: .7rem;
     }
   }
 }
