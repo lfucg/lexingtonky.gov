@@ -1,5 +1,11 @@
 {% extends 'region.html.twig' %}
 {% block region_content %}
+  {% include "@lex/includes/lexington-copyright.html.twig"
+    with {
+      section_class: 'd-none col-lg-6 d-md-flex',
+      wordmark_class: 'mt-2',
+    }
+  %}
   {{ parent() }}
   <nav>
     <h2>Get in touch</h2>
@@ -18,22 +24,18 @@
         {% include "@lex/includes/phone.html.twig" with { phone_number: "(859) 425-2255" } %}
       </li>
       <li>
-        <ul class="usa-unstyled-list lex-horizontal-list lex-social-links">
+        <ul class="lex-social-links text-center">
           <li>
-            <a href="https://twitter.com/LexingtonKyGov"><i class="lex-card-title lex-card-title-large lex-font-standout fa fa-twitter"></i><span class="visually-hidden">twitter</span></a>
+            <a href="https://twitter.com/LexingtonKyGov"><i class="lex-card-title lex-card-title-large lex-font-standout fa fa-2x fa-twitter"></i><span class="visually-hidden">twitter</span></a>
           </li>
           <li>
-            <a href="https://www.facebook.com/LexingtonKyGov"><i class="lex-card-title lex-card-title-large lex-font-standout fa fa-facebook"></i><span class="visually-hidden">facebook</span></a>
+            <a href="https://www.facebook.com/LexingtonKyGov"><i class="lex-card-title lex-card-title-large lex-font-standout fa fa-2x fa-facebook"></i><span class="visually-hidden">facebook</span></a>
+          </li>
+          <li>
+            <a href="https://www.instagram.com/lexingtonkygov/"><i class="lex-card-title lex-card-title-large lex-font-standout fa fa-2x fa-instagram"></i><span class="visually-hidden">instagram</span></a>
           </li>
         </ul>
       </li>
     </ul>
   </nav>
-  <section>
-    <ul>
-      <li>&copy; {{ "now"|date("Y") }} Lexington-Fayette Urban County Government</li>
-      <li>Lexington KY, Horse Capital of the World <sup>&#174;</sup></li>
-      <li><a href="/terms-of-use">Terms of use</a></li>
-    </ul>
-  </section>
 {% endblock %}
