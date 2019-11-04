@@ -5,7 +5,7 @@
     windowWidth = $( window ).width();
   });
 
-  $('.navbar-button,.menu-label,.fade').click( function() {
+  $('.fade, #nav-icon').click( function() {
     $("#nav-icon").toggleClass('open');
     $("#takeoverNav").toggleClass('show');
     $(".fade").toggleClass('show');

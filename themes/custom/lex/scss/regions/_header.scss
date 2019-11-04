@@ -1,5 +1,5 @@
 body header {
-  height: 80px;
+  height: 120px;
   background: white;
 
   &.sticky-top {
@@ -8,8 +8,8 @@ body header {
 
   #logo {
     img {
-      margin: 10px 0 10px 100px;
-      height: 35px;
+      margin: 15px 0 15px 100px;
+      height: 50px;
       max-width: max-content;
       @include screens-below(sm) {
         margin-left: 10px;
@@ -20,13 +20,18 @@ body header {
   #block-lex-home-headerquicklinks, #block-lex-headerquicklinks {
     padding-right: 5%;
     text-align: right;
+    display: flex;
+    height: 40px;
+    justify-content: flex-end;
     ul {
       li {
         display: inline-block;
-        line-height: 1.5rem;
+        line-height: 40px;
         a {
           font-size: .8rem;
-          font-weight: 400;
+          &:hover {
+            font-weight: 600;
+          }
         }
       }
     }
@@ -59,16 +64,16 @@ body header {
         transition: .25s ease-in-out;
         width: 50%;
         &:nth-child(1) {
-          top: 10px;
+          top: 20px;
         }
 
         &:nth-child(2),
         &:nth-child(3) {
-          top: 20px;
+          top: 30px;
         }
 
         &:nth-child(4) {
-          top: 30px;
+          top: 40px;
         }
     }
 
@@ -78,7 +83,7 @@ body header {
       display: block;
       text-align: center;
       font-size: 0.6rem;
-      top: 40px;
+      top: 50px;
       position: relative;
     }
 
