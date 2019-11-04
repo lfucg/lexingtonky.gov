@@ -1,4 +1,4 @@
-uuid: f7073c32-5d2b-46c4-8481-261fb441327a
+uuid: 4783b17b-8bb1-4278-9ac8-7434f3443357
 langcode: en
 status: true
 dependencies:
@@ -7,16 +7,16 @@ dependencies:
   module:
     - system
   theme:
-    - lex_police
-id: lex_police_headerquicklinks
-theme: lex_police
+    - lex_planning_commission
+id: headerquicklinks
+theme: lex_planning_commission
 region: sitemast
-weight: -18
+weight: 0
 provider: null
 plugin: 'system_menu_block:header-quick-links'
 settings:
   id: 'system_menu_block:header-quick-links'
-  label: 'Homepage Header Links'
+  label: 'Header quick links'
   provider: system
   label_display: '0'
   level: 1
