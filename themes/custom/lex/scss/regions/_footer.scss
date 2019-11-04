@@ -13,6 +13,22 @@ body footer {
     @include screens-below(sm) {
       padding: 2rem 3rem 0;
     }
+    nav.contextual-region {
+      flex: 0 0 30%;
+      @include screens-below(sm) {
+        flex: 100%;
+      }
+      & > ul {
+        column-count: 2;
+        height: 125px;
+        @include screens-below(sm) {
+          column-count: 1;
+          height: auto;
+          padding-bottom: 2rem;
+        }
+      }
+
+    }
   }
 
   .footer-seal {
@@ -30,22 +46,7 @@ body footer {
     list-style: none;
   }
 
-  #block-lex-home-footer, #block-footer {
-    flex: 0 0 30%;
-    @include screens-below(sm) {
-      flex: 100%;
-    }
-    & > ul {
-      column-count: 2;
-      height: 125px;
-      @include screens-below(sm) {
-        column-count: 1;
-        height: auto;
-        padding-bottom: 2rem;
-      }
-    }
 
-  }
 
   a {
     color: color(white);

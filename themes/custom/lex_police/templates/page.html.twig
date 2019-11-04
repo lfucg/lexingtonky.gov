@@ -1,15 +1,11 @@
 {% extends "@lex/pages/page.html.twig" %}
 
-{% block hero_start %}
-  {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
-    {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
-    {% set hero_alt = node.field_lex_custom_banner_image.alt %}
-    <div class="lex-hero" style="background-image: url({{ hero }})">
-        <img src="{{ hero }}" alt="{{ hero_alt }}">
-  {% else %}
-    {{ drupal_view('headers', 'block_1') }}
-  {% endif %}
-
+{% block page_hero %}
+  {% include "@lex/includes/hero.html.twig" with {
+    hero: file_url(node.field_lex_custom_banner_image.entity.fileuri),
+    hero_alt: node.field_lex_custom_banner_image.alt,
+    block: 'block_1'
+  } %}
 {% endblock %}
 
 {% block sidebar %}

@@ -69,6 +69,8 @@ function lex_preprocess_block(&$variables) {
     $element_id = $variables['elements']['#id'];
     switch($element_id) {
       case 'lex_home_headerquicklinks':
+      case 'lex_police_headerquicklinks':
+      case 'headerquicklinks':
       case 'lex_headerquicklinks':
         $variables['attributes']['class'][] = 'slab--lex-blue';
         break;

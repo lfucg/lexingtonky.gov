@@ -1,6 +1,6 @@
 uuid: 74d3badb-99f2-44bb-9b1a-834431bd7518
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - views.view.solr_search
@@ -11,7 +11,7 @@ dependencies:
 id: exposedformsolr_searchpage_1_3
 theme: lex_planning_commission
 region: sitemast
-weight: 0
+weight: -24
 provider: null
 plugin: 'views_exposed_filter_block:solr_search-page_1'
 settings:

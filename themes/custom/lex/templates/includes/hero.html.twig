@@ -1,0 +1,14 @@
+{% block hero_start %}
+  {% if hero %}
+    <div class="lex-hero" style="background-image: url({{ hero }})">
+        <img src="{{ hero }}" alt="{{ hero_alt }}">
+  {% else %}
+    {{ drupal_view('headers', '{{ block }}') }}
+  {% endif %}
+{% endblock %}
+  <div>
+    {% block page_hero_body %}
+      {{ page.hero }}
+    {% endblock %}
+  </div>
+</div>
