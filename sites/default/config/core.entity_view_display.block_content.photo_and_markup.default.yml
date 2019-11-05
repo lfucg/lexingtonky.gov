@@ -1,0 +1,35 @@
+uuid: 87b74858-2bc8-4dbd-b082-c65d41c06cb7
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.photo_and_markup
+    - field.field.block_content.photo_and_markup.field_image
+    - field.field.block_content.photo_and_markup.field_markup
+    - image.style.4x3
+  module:
+    - image
+    - text
+id: block_content.photo_and_markup.default
+targetEntityType: block_content
+bundle: photo_and_markup
+mode: default
+content:
+  field_image:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: 4x3
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_markup:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+hidden:
+  search_api_excerpt: true

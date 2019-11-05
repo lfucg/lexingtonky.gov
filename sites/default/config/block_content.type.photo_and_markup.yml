@@ -1,0 +1,8 @@
+uuid: 06db5209-8ee5-46ee-976b-336132e1d156
+langcode: en
+status: true
+dependencies: {  }
+id: photo_and_markup
+label: '33/66 Photo and Markup'
+revision: 1
+description: ''
