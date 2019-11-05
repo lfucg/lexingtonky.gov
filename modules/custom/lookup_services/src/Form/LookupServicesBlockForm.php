@@ -34,62 +34,6 @@ class LookupServicesBlockForm extends FormBase {
       ],
     ];
 
-    $form['trash'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'p',
-      '#attributes' => [
-        'class' => 'trash',
-      ],
-    ];
-
-    $form['political'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'p',
-      '#attributes' => [
-        'class' => 'political',
-      ],
-    ];
-
-    $form['police'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'p',
-      '#attributes' => [
-        'class' => 'police',
-      ],
-    ];
-
-    $form['zip'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'p',
-      '#attributes' => [
-        'class' => 'zip',
-      ],
-
-    ];
-    $form['neighborhood'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'p',
-      '#attributes' => [
-        'class' => 'neighborhood',
-      ],
-
-    ];
-    $form['watershed'] = [
-      '#type' => 'html_tag',      '#tag' => 'p',
-      '#attributes' => [
-        'class' => 'watershed',
-      ],
-
-    ];
-
-
-    // $form['actions'] = [    //   '#type' => 'button',
-    //   '#value' => $this->t('Submit'),
-    //   '#ajax' => [
-    //     'callback' => '::setMessage',
-    //   ],
-    // ];
-
     $form['#attached']['library'][] = 'lookup_services/global';
     $form['#attributes']['class'][] = 'mx-auto text-center';
 
