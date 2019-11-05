@@ -1,0 +1,20 @@
+name: Paragraphs Inline Entity Form
+type: module
+description: 'Paragraphs selector for Entity Browser and integration with Entity Embed Wysiwyg'
+# core: 8.x
+package: Paragraphs
+dependencies:
+  - drupal:ckeditor
+  - paragraphs:paragraphs
+  - entity:entity
+  - entity_embed:entity_embed
+  - entity_browser:entity_browser
+  - entity_browser:entity_browser_entity_form
+  - entity_embed:entity_embed
+  - inline_entity_form:inline_entity_form
+
+# Information added by Drupal.org packaging script on 2019-06-19
+version: '8.x-1.0-beta1'
+core: '8.x'
+project: 'paragraphs_inline_entity_form'
+datestamp: 1560941295

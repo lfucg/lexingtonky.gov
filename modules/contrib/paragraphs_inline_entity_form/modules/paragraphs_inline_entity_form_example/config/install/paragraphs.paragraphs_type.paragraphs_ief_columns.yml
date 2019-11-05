@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'file:file:0d83e99f-7fda-42d4-b6fa-b2716902dbf1'
+id: paragraphs_ief_columns
+label: Columns
+icon_uuid: 0d83e99f-7fda-42d4-b6fa-b2716902dbf1
+description: ''
+behavior_plugins: {  }

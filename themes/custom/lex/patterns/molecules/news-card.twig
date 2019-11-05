@@ -1,0 +1,14 @@
+<a href="{{ url }}">
+    <div class="news-card">
+        {% include '@components/atoms/card-img.twig' with {img: img} %}
+        <div class="col-10 offset-1">
+            {% include '@components/atoms/card-heading.twig' with {heading: heading} %}
+            {% include '@components/atoms/description.twig' with {description: description} %}
+        </div>
+        <div class="news-footer">
+            {% include '@components/atoms/card-footer.twig' with {text: text} %}
+        </div>
+    </div>
+</a>
+
+

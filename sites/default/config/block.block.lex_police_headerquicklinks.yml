@@ -1,6 +1,6 @@
 uuid: f7073c32-5d2b-46c4-8481-261fb441327a
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - system.menu.header-quick-links
@@ -10,7 +10,7 @@ dependencies:
     - lex_police
 id: lex_police_headerquicklinks
 theme: lex_police
-region: notices
+region: sitemast
 weight: -18
 provider: null
 plugin: 'system_menu_block:header-quick-links'
@@ -22,9 +22,4 @@ settings:
   level: 1
   depth: 0
   expand_all_items: false
-visibility:
-  request_path:
-    id: request_path
-    pages: '<front>'
-    negate: false
-    context_mapping: {  }
+visibility: {  }

@@ -22,24 +22,16 @@
   {% include "@components/components/header.twig" with { menu: page.sitemast } %}
 {% endblock %}
 
-{# {% block page_hero %}
-  {% block hero_start %}
-    {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
-      {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
-      {% set hero_alt = node.field_lex_custom_banner_image.alt %}
-      <div class="lex-hero" style="background-image: url({{ hero }})">
-          <img src="{{ hero }}" alt="{{ hero_alt }}">
-    {% else %}
-      {{ drupal_view('headers', 'block_2') }}
-    {% endif %}
-  {% endblock %}
-    <div>
-      {% block page_hero_body %}
-        {{ page.hero }}
-      {% endblock %}
-    </div>
-  </div>
-{% endblock %} #}
+{% block page_hero %}
+    {% set hero = is_front ? file_url(node.field_lex_custom_banner_image.entity.fileuri|image_style('hero_image')) : file_url(node.field_lex_custom_banner_image.entity.fileuri|image_style('hero_image')) %}
+  {% include "@lex/includes/hero.html.twig" with {
+    page: page,
+    hero: hero,
+    hero_alt: node.field_lex_custom_banner_image.alt,
+    block: 'block_1',
+  } %}
+{% endblock %}
+
 {% block page_breadcrumb %}
 {{ page.breadcrumb }}
 {% endblock %}
@@ -72,8 +64,16 @@
   {{ page.feedback }}
 {% endblock %}
 
-<footer>
+<footer class="slab--dark-blue">
 {% block page_footer %}
   {{ page.footer }}
 {% endblock %}
+<div class="slab--lex-blue footer-bottom">
+  {% include "@lex/includes/lexington-copyright.html.twig"
+    with {
+      section_class: 'd-flex d-md-none',
+      wordmark_class: 'mt-1',
+    }
+  %}
+  </div>
 </footer>

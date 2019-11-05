@@ -1,0 +1,38 @@
+/**
+ * @file
+ * Default styling for paragraphs-wysiwyg dialogs.
+ */
+
+#paragraphs-wysiwyg .paragraphs-wysiwyg-add-type {
+  border: 2px solid #ffffff;
+  display: inline-block;
+  margin-right: 30px;
+  min-width: 100px;
+  padding-left: 10px;
+  padding-right: 10px;
+  vertical-align: top;
+}
+
+#paragraphs-wysiwyg .paragraphs-wysiwyg-add-type:hover {
+  border: 2px solid rgb(85, 142, 213);
+}
+
+#paragraphs-wysiwyg .paragraphs-wysiwyg-add-type input {
+  border: none;
+  padding: 0;
+}
+
+#paragraphs-wysiwyg .paragraphs-wysiwyg-add-type span {
+  display: block;
+  text-align: center;
+  max-width: 100px;
+  overflow: hidden;
+}
+
+body.page--entity_browser-paragraph_type-paragraph_items #main-content .block-page-title-block {
+  min-height: 5px;
+}
+
+body.page--entity_browser-paragraph_type-paragraph_items #main-content .page-content {
+  margin-bottom: 0;
+}

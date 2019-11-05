@@ -17,6 +17,8 @@ dependencies:
     - field.field.node.event.field_recurring_event
     - field.field.node.event.field_related_departments
     - field.field.node.event.field_related_documents
+    - field.field.node.event.field_related_organization
+    - field.field.node.event.field_show_on_calendar
     - node.type.event
   module:
     - chosen_field
@@ -141,6 +143,21 @@ content:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
+    region: content
+  field_related_organization:
+    weight: 27
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_show_on_calendar:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
     region: content
   path:
     type: path

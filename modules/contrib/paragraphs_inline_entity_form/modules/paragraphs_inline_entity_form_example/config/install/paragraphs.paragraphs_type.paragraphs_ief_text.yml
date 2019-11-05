@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'file:file:ded9ddf2-de72-4063-bdf3-9ad413adf0b4'
+id: paragraphs_ief_text
+label: Text
+icon_uuid: ded9ddf2-de72-4063-bdf3-9ad413adf0b4
+description: ''
+behavior_plugins: {  }

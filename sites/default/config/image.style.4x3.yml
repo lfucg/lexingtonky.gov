@@ -1,0 +1,15 @@
+uuid: 47eeaaac-b12e-4b11-abd6-4aef46a99733
+langcode: en
+status: true
+dependencies: {  }
+name: 4x3
+label: 4x3
+effects:
+  191941ee-941c-4e9c-a352-6490d5416299:
+    uuid: 191941ee-941c-4e9c-a352-6490d5416299
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 800
+      height: 600
+      anchor: center-center

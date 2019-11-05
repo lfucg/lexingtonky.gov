@@ -1,0 +1,20 @@
+{% extends "block.html.twig" %}
+
+{% block title %}
+  {% if label %}
+    <div class="row">
+      <h1{{ title_attributes }}>{{ label }}</h1>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-lg-5 col-12">
+      <img src="{{ content.field_image.0['#markup'] }}" alt="" class="img-fluid">
+    </div>
+    <div class="col-lg-7 col-12">
+      {{ content.field_markup }}
+    </div>
+  </div>
+{% endblock %}

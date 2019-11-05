@@ -1,0 +1,19 @@
+uuid: 58bca4d8-2d82-4104-9fec-4fc4e2415c65
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_contact_position
+    - paragraphs.paragraphs_type.contact_card
+id: paragraph.contact_card.field_contact_position
+field_name: field_contact_position
+entity_type: paragraph
+bundle: contact_card
+label: 'Contact Position'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

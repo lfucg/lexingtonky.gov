@@ -1,6 +1,6 @@
 uuid: 53b0d939-d5ca-429c-addc-ae6da8430ece
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - system.menu.header-quick-links
@@ -10,8 +10,8 @@ dependencies:
     - lex_planning_commission
 id: lex_planning_commission_headerquicklinks
 theme: lex_planning_commission
-region: notices
-weight: -18
+region: sitemast
+weight: -23
 provider: null
 plugin: 'system_menu_block:header-quick-links'
 settings:
@@ -25,6 +25,6 @@ settings:
 visibility:
   request_path:
     id: request_path
-    pages: '<front>'
-    negate: false
+    pages: ''
+    negate: true
     context_mapping: {  }

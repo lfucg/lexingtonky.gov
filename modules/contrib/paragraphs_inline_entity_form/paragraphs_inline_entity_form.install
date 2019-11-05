@@ -1,0 +1,21 @@
+<?php
+/**
+ * @file Install file.
+ */
+
+use Drupal\embed\Entity\EmbedButton;
+
+/**
+ * Implements hook_install().
+ */
+function paragraphs_inline_entity_form_install() {
+  // Set the default icon.
+  $icon = drupal_get_path('module', 'paragraphs_inline_entity_form') . '/images/paragraph_icon.png';
+  $data = file_get_contents($icon);
+  if ($file = file_save_data($data, 'public://paragraph_icon.png', FILE_EXISTS_REPLACE)) {
+    if ($embed_button = EmbedButton::load('paragraphs_inline_entity_form')) {
+      $embed_button->set('icon_uuid', $file->uuid());
+      $embed_button->save();
+    }
+  }
+}

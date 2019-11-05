@@ -1,0 +1,19 @@
+uuid: f0bc2809-a8b0-4788-9ea4-a72449d0e3b6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_contact_email
+    - paragraphs.paragraphs_type.icon_button_with_description
+id: paragraph.icon_button_with_description.field_contact_email
+field_name: field_contact_email
+entity_type: paragraph
+bundle: icon_button_with_description
+label: 'Contact email'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: email

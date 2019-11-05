@@ -1,0 +1,16 @@
+<a href="{{ url }}">
+    <div class="event-card">
+        <div class="row">
+            <div class="col-2">
+                {% include '@components/atoms/button-icon.twig' with {icon: icon} %}
+            </div>
+            <div class="col-10">
+                {% include '@components/atoms/button-heading.twig' with {heading: heading} %}
+                {% include '@components/atoms/description.twig' with {description: description} %}
+            </div>
+        </div>
+         <div class="event-footer">
+            {% include '@components/atoms/card-footer.twig' with {text: text} %}
+        </div>
+    </div>
+</a>

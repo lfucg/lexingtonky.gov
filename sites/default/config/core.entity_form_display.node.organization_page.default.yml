@@ -15,6 +15,7 @@ dependencies:
     - field.field.node.organization_page.field_related_departments
     - field.field.node.organization_page.field_related_documents
     - field.field.node.organization_page.field_top_services
+    - field.field.node.organization_page.field_upcoming_events
     - image.style.thumbnail
     - node.type.organization_page
   module:
@@ -25,6 +26,7 @@ dependencies:
     - paragraphs
     - path
     - text
+    - viewsreference
     - workbench_moderation
 id: node.organization_page.default
 targetEntityType: node
@@ -107,6 +109,15 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
+    region: content
+  field_upcoming_events:
+    weight: 26
+    settings:
+      match_operator: CONTAINS
+      size: '60'
+      placeholder: ''
+    third_party_settings: {  }
+    type: viewsreference_autocomplete
     region: content
   path:
     type: path

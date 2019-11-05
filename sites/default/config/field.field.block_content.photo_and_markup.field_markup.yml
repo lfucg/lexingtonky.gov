@@ -1,0 +1,21 @@
+uuid: 8b2d8207-23f7-4705-8db3-fd3f407f6cd9
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.photo_and_markup
+    - field.storage.block_content.field_markup
+  module:
+    - text
+id: block_content.photo_and_markup.field_markup
+field_name: field_markup
+entity_type: block_content
+bundle: photo_and_markup
+label: Markup
+description: 'Add the markup to the body of the block here. '
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

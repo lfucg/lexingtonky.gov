@@ -1,0 +1,16 @@
+name: Content Import
+type: module
+description: 'To Import content from CSV file'
+package: Other
+configure: contentimport.admin_settings
+dependencies:
+  - node
+# Information added by Drupal.org packaging script on 2017-08-02
+# core: '8.x'
+# datestamp: 1501674846
+
+# Information added by Drupal.org packaging script on 2018-02-16
+version: '8.x-4.1'
+core: '8.x'
+project: 'contentimport'
+datestamp: 1518786074

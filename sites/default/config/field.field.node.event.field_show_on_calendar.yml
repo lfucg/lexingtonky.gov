@@ -1,0 +1,23 @@
+uuid: 126d40d6-c3f5-46dc-b1d2-70ea54e2f9da
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_show_on_calendar
+    - node.type.event
+  module:
+    - options
+id: node.event.field_show_on_calendar
+field_name: field_show_on_calendar
+entity_type: node
+bundle: event
+label: 'Show on Calendar'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 'Yes'
+default_value_callback: ''
+settings: {  }
+field_type: list_string

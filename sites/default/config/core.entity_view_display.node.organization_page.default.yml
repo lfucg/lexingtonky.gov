@@ -15,10 +15,12 @@ dependencies:
     - field.field.node.organization_page.field_related_departments
     - field.field.node.organization_page.field_related_documents
     - field.field.node.organization_page.field_top_services
+    - field.field.node.organization_page.field_upcoming_events
     - node.type.organization_page
   module:
     - metatag
     - user
+    - viewsreference
 id: node.organization_page.default
 targetEntityType: node
 bundle: organization_page
@@ -30,6 +32,15 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: metatag_empty_formatter
+    region: content
+  field_upcoming_events:
+    weight: 2
+    label: above
+    settings:
+      plugin_types:
+        - block
+    third_party_settings: {  }
+    type: viewsreference_formatter
     region: content
   workbench_moderation_control:
     weight: 0
@@ -50,3 +61,4 @@ hidden:
   field_related_documents: true
   field_top_services: true
   links: true
+  search_api_excerpt: true

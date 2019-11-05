@@ -1,0 +1,15 @@
+uuid: 7eebbb32-c2ab-4698-b621-0f82ea868e1b
+langcode: en
+status: true
+dependencies: {  }
+name: contact_image
+label: 'Contact Image'
+effects:
+  ce74c500-b754-4cc5-b8b0-2deb5018a510:
+    uuid: ce74c500-b754-4cc5-b8b0-2deb5018a510
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 300
+      height: 200
+      anchor: center-center

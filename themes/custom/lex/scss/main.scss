@@ -3,8 +3,16 @@
 @import './slab';
 @import './variables';
 @import './regions/footer';
+@import './paragraphs';
+@import './homepage/hero__homepage';
+@import './homepage/mayor_block';
 @import './regions/header';
 @import './regions/takeover_nav';
+@import './molecules/icon_button_with_description';
+@import './molecules/card_button';
+@import './molecules/contact_card';
+@import'./molecules/event_card';
+@import './accordions';
 
 .no-scroll {
   overflow: hidden;
