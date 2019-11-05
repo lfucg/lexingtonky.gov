@@ -58,31 +58,31 @@ label {
   }
 }
 
-.lex-search {
-  .lex-search-submit {
-    border-radius: 0;
-    background-color: white;
-  }
-  input {
-    max-width: none;
-    border-top: 1px solid $lex-grey;
-    border-bottom: 1px solid $lex-grey;
-    border-left: 1px solid $lex-grey;
-  }
+// .lex-search {
+//   .lex-search-submit {
+//     border-radius: 0;
+//     background-color: white;
+//   }
+//   input {
+//     max-width: none;
+//     border-top: 1px solid $lex-grey;
+//     border-bottom: 1px solid $lex-grey;
+//     border-left: 1px solid $lex-grey;
+//   }
 
-  /* right-align search icon */
-  .lex-search-submit {
-    text-align: right;
-    padding-right: 1em;
-    border-top: 1px solid $lex-grey;
-    border-right: 1px solid $lex-grey;
-    border-bottom: 1px solid $lex-grey;
-  }
+//   /* right-align search icon */
+//   .lex-search-submit {
+//     text-align: right;
+//     padding-right: 1em;
+//     border-top: 1px solid $lex-grey;
+//     border-right: 1px solid $lex-grey;
+//     border-bottom: 1px solid $lex-grey;
+//   }
 
-  .lex-icon {
-    color: $lex-dark-grey;
-  }
-  .lex-submit-drupalprovided {
-    display: none;
-  }
-}
+//   .lex-icon {
+//     color: $lex-dark-grey;
+//   }
+//   .lex-submit-drupalprovided {
+//     display: none;
+//   }
+// }
