@@ -93,14 +93,18 @@
             let feature = featureCollection.features[0];
             call.fields.map((field) => {
               if (call.hasOwnProperty('field_keys')) {
-                $(`.${call.id}`).append(`${call.field_keys[feature.properties[field]]} `);
+                $(`.${call.id}`).html(`${call.field_keys[feature.properties[field]]} `);
               } else {
-                $(`.${call.id}`).append(`${field.toUpperCase()}:  ${feature.properties[field]}, `);
+                $(`.${call.id}`).html(`${feature.properties[field]}`);
               }
             })
           });
       })
 
+      if ($('.service').hasClass('hide')) {
+        $('.service').toggleClass('hide');
+        $('.service-label').toggleClass('open');
+      }
       $addressInput.removeClass('loading');
     };
 
@@ -125,6 +129,7 @@
       },
       select: function( event, ui ) {
         $addressInput.addClass('loading');
+
         $.get("https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates", {
           outSr: 4326,
           forStorage: false,

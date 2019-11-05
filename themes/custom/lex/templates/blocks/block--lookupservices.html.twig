@@ -1,0 +1,65 @@
+<div{{attributes.addClass('row text-left')}}>
+  <div class="col-lg-3 col-12 text-left lex-find">
+    <h1><i class="fas fa-map-marker-alt"></i>&nbsp;Lex Find</h1>
+    <small>Search for your address</small>
+    <div>
+      {{ content }}
+    </div>
+  </div>
+  <div class="col-lg-9 col-12">
+    <div class="row">
+      <h3>Enter your address to find information about the following city services:</h3>
+    </div>
+    <div class="row">
+      <div class="col-6 col-lg-3">
+        <div class="service-label d-flex flex-row align-items-center">
+            <i class="fas fa-trash"></i>
+            <h5>Waste Services</h5>
+        </div>
+        <div class="hide service">
+          <span><strong>Pick up day:</strong></span>
+          <span class="trash"></span>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="service-label d-flex flex-row align-items-center">
+            <i class="fas fa-first-aid"></i>
+            <h5>Emergency Services</h5>
+        </div>
+        <div class="hide service">
+          <span><strong>Police sector: </strong></span>
+          <span class="police"></span>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="service-label d-flex flex-row align-items-center">
+            <i class="fas fa-university"></i>
+            <h5>Political Info</h5>
+        </div>
+        <div class="hide service">
+          <span></span>
+          <span class="political"></span>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="service-label d-flex flex-row align-items-center">
+            <i class="fas fa-home"></i>
+            <h5>General Location Info</h5>
+        </div>
+        <div class="hide service">
+          <span><strong>Zipcode: </strong></span>
+          <span class="zip"></span>
+        </div>
+        <div class="hide service">
+          <span><strong>Neighborhood association: </strong></span>
+          <span class="neighborhood"></span>
+        </div>
+        <div class="hide service">
+          <span><strong>Watershed: </strong></span>
+          <span class="watershed"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
