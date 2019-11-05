@@ -13,12 +13,6 @@ ul, ol {
   background-color: $lex-light-blue;
 }
 
-.lex-search-hero .usa-search input {
-  @include media($medium-screen) {
-    max-width: calc(100% - #{$usa-btn-medium-width});
-  }
-}
-
 .usa-sr-only {
   position: absolute;
   left: -999em;

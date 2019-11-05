@@ -23,12 +23,13 @@
 {% endblock %}
 
 {% block page_hero %}
-    {% include "@lex/includes/hero.html.twig" with {
-      page: page,
-      hero: file_url(node.field_lex_custom_banner_image.entity.fileuri),
-      hero_alt: node.field_lex_custom_banner_image.alt,
-      block: 'block_2'
-    } %}
+    {% set hero = is_front ? file_url(node.field_lex_custom_banner_image.entity.fileuri|image_style('hero_image')) : file_url(node.field_lex_custom_banner_image.entity.fileuri|image_style('hero_image')) %}
+  {% include "@lex/includes/hero.html.twig" with {
+    page: page,
+    hero: hero,
+    hero_alt: node.field_lex_custom_banner_image.alt,
+    block: 'block_1',
+  } %}
 {% endblock %}
 
 {% block page_breadcrumb %}
