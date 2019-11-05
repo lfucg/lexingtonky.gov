@@ -1,0 +1,8 @@
+uuid: 541df63e-7755-4bbc-b917-ecc404b155ed
+langcode: en
+status: true
+dependencies: {  }
+id: most-popular-searches
+label: 'Most Popular Searches'
+description: ''
+locked: false
