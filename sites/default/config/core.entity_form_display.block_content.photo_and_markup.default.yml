@@ -1,0 +1,43 @@
+uuid: 180f7a7f-05f7-4294-b042-be6efd91655c
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.photo_and_markup
+    - field.field.block_content.photo_and_markup.field_image
+    - field.field.block_content.photo_and_markup.field_markup
+    - image.style.thumbnail
+  module:
+    - image
+    - text
+    - workbench_moderation
+id: block_content.photo_and_markup.default
+targetEntityType: block_content
+bundle: photo_and_markup
+mode: default
+content:
+  field_image:
+    weight: 26
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
+    region: content
+  field_markup:
+    weight: 27
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  info:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }
