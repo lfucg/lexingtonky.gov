@@ -15,12 +15,13 @@ body footer {
     }
     nav.contextual-region {
       flex: 0 0 30%;
+      overflow: hidden;
       @include screens-below(sm) {
         flex: 100%;
       }
       & > ul {
         column-count: 2;
-        height: 125px;
+        min-height: 125px;
         @include screens-below(sm) {
           column-count: 1;
           height: auto;
