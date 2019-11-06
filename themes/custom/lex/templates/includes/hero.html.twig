@@ -1,8 +1,8 @@
 {% block hero_start %}
-  {% if hero %}
+    {% if hero %}
     <div class="lex-hero">
       <img class="w-100" src="{{ hero }}" alt="{{ hero_alt }}">
-    {% elseif block %}
+    {% else %}
       {{ drupal_view('headers', '{{ block }}') }}
     {% endif %}
   {% endblock %}

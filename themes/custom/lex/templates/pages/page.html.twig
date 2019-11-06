@@ -23,11 +23,16 @@
 {% endblock %}
 
 {% block page_hero %}
-    {% set hero = is_front ? file_url(node.field_lex_custom_banner_image.entity.fileuri|image_style('hero_image')) : file_url(node.field_lex_custom_banner_image.entity.fileuri|image_style('hero_image')) %}
+  {% if is_front or node.field_lex_custom_banner_image.entit.fileuri %}
+    {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri|image_style('hero_image')) %}
+    {% set hero_alt = node.field_lex_custom_banner_image.alt %}
+  {% else %}
+    {% set hero = '' %}
+  {% endif %}
   {% include "@lex/includes/hero.html.twig" with {
     page: page,
     hero: hero,
-    hero_alt: node.field_lex_custom_banner_image.alt,
+    hero_alt: hero_alt,
     block: 'block_1',
   } %}
 {% endblock %}
