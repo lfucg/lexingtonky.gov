@@ -19,7 +19,7 @@ bundle: contact_card
 mode: default
 content:
   field_contact_email:
-    weight: 10
+    weight: 4
     settings:
       size: 60
       placeholder: ''
@@ -27,7 +27,7 @@ content:
     type: email_default
     region: content
   field_contact_name:
-    weight: 7
+    weight: 1
     settings:
       size: 60
       placeholder: ''
@@ -35,7 +35,7 @@ content:
     type: string_textfield
     region: content
   field_contact_phone:
-    weight: 8
+    weight: 3
     settings:
       size: 60
       placeholder: ''
@@ -43,7 +43,7 @@ content:
     type: string_textfield
     region: content
   field_contact_position:
-    weight: 9
+    weight: 2
     settings:
       size: 60
       placeholder: ''
@@ -51,7 +51,7 @@ content:
     type: string_textfield
     region: content
   field_image:
-    weight: 6
+    weight: 0
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail

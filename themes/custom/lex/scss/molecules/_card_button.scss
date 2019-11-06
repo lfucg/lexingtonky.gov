@@ -6,6 +6,7 @@
 
     .button-heading {
         color: color(med-blue);
+        margin: 10px 0 5px;
     }
 
     //Keeping this in for now, while working on the image gradient
@@ -31,11 +32,13 @@
         }
 
         .button-heading {
-            margin: 10px 0 5px;
+            margin: 15px 0 5px;
             color: color(white);
         }
         .description {
-            margin-bottom: 10px;
+            div {
+                padding-bottom: 10px;
+            }
         }
     }
 }
