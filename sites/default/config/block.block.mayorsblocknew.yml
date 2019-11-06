@@ -1,9 +1,9 @@
-uuid: db2e77ef-7938-4ba3-8fec-e9b1a6bc1ece
+uuid: d0b53c0c-d891-4fe2-a890-5f28d044b73c
 langcode: en
 status: true
 dependencies:
   content:
-    - 'block_content:photo_and_markup:06a5bd7d-2ff7-4217-8e95-c708a2f18077'
+    - 'block_content:photo_and_markup:4dee1e8b-c2ae-4970-b6ab-b440e2f0b9db'
   module:
     - block_content
     - system
@@ -14,9 +14,9 @@ theme: lex_home
 region: postscript
 weight: 0
 provider: null
-plugin: 'block_content:06a5bd7d-2ff7-4217-8e95-c708a2f18077'
+plugin: 'block_content:4dee1e8b-c2ae-4970-b6ab-b440e2f0b9db'
 settings:
-  id: 'block_content:06a5bd7d-2ff7-4217-8e95-c708a2f18077'
+  id: 'block_content:4dee1e8b-c2ae-4970-b6ab-b440e2f0b9db'
   label: 'Mayor Linda Gorton'
   provider: block_content
   label_display: visible
