@@ -77,6 +77,7 @@
 
     &:hover {
         background-color: color(med-blue);
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;
 
         .contact-heading {
             color: color(white);
