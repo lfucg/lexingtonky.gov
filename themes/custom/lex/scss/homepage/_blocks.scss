@@ -13,7 +13,7 @@
   }
   .lex-region-postscript {
     div[id^="block-"] {
-      padding: 10% 3rem;
+      padding: 0 3rem 3rem;
       @include screens-below(sm) {
         padding: 1rem;
         img {
