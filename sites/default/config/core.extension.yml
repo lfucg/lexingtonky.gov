@@ -55,6 +55,7 @@ module:
   lex_custom: 0
   lex_themecontrol: 0
   link: 0
+  lookup_services: 0
   masquerade: 0
   media_entity: 0
   menu_ui: 0

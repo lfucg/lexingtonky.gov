@@ -1,0 +1,64 @@
+#block-lookupservices {
+  background-color: color(light-gray);
+  min-height: 250px;
+  padding: 1rem;
+  position: relative;
+  top: -40px;
+  width: 85%;
+
+  @include screens-below(sm){
+    top: -10px;
+    width: 90%;
+  }
+
+  .lex-find {
+    border-right: 1px solid color(lex-blue);
+    @include screens-below(sm){
+      border-right: none;
+      border-bottom: 1px solid color(lex-blue);
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
+  }
+
+  #edit-address {
+    &:focus {
+      border: 1px solid color(lex-blue);
+    }
+  }
+
+  h3 {
+    color: color(lex-blue);
+  }
+
+  i.fas {
+    color: color(lex-blue);
+    font-size: 2.0rem;
+  }
+
+  h5 {
+    color: color(gray);
+    font-size: 1.1rem;
+    padding-left: 12px;
+    padding-top: 8px;
+    text-align: left;
+  }
+
+  .service-label {
+    height: 90px;
+    &.open {
+      border-bottom: solid 1px color(lex-blue);
+    }
+  }
+
+  .service {
+    padding-top: 1rem;
+    span {
+      padding-bottom: 1rem;
+    }
+  }
+
+  .hide {
+    display: none;
+  }
+}

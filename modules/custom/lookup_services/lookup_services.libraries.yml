@@ -1,0 +1,6 @@
+global:
+  js:
+    js/lex-lookup-services.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.ui.autocomplete
