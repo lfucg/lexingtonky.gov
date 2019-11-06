@@ -12,7 +12,7 @@ field_name: field_icon
 entity_type: paragraph
 bundle: icon_button_with_description
 label: icon
-description: ''
+description: "Use this field to render icons from: https://fontawesome.com/icons?d=gallery\r\n\r\nJust copy and paste the code for the icon in this field. It is denoted by a an opening tag (<i>) and a closing tag (</i>) and everything in between.\r\n\r\nEx: <i class=\"fas fa-ad\"></i>"
 required: false
 translatable: false
 default_value: {  }
