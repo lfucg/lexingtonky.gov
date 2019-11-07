@@ -55,9 +55,13 @@ body header {
     width: 60px;
     z-index: 8;
 
+    &:hover:not(.open) {
+      background-color: color(light-gray);
+    }
+
     span.hamburger-line {
         display: block;
-        background: color(lex-blue);
+        background: color(gray);
         border-radius: 10px;
         height: 3px;
         left: 25%;
@@ -91,7 +95,7 @@ body header {
     }
 
     &.open {
-      background-color: color(lex-blue);
+      background-color: color(dark-blue);
       span {
         background-color: color(yellow);
         &:nth-child(1) {

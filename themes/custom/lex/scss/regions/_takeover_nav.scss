@@ -1,5 +1,5 @@
 #takeoverNav {
-  @include rgba-background(color(lex-blue), 0.9);
+  @include rgba-background(color(dark-blue), 0.9);
   height: 100%;
   overflow: hidden;
   position: absolute;
@@ -35,7 +35,6 @@ div.fade {
 .navigation--top-level {
   color: white;
   display: inline-block;
-  padding-left: 1rem;
   width: 100%;
   .level-1 {
     cursor: pointer;
