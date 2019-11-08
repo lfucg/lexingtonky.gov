@@ -1,8 +1,10 @@
 .event-card {
-    height: auto;
-    width: 300px;
+    height: 150px;
     background-color: color(med-blue);
     color: color(white);
+    width: 350px;
+    margin: 10px;
+    float: left;
 
     img {
         height: 25px;
@@ -18,21 +20,22 @@
 
     .button-heading {
         border-bottom: 1px solid color(white);
+        font-size: 1.1em;
+        padding-bottom: 10px;
     }
 
     .description {
-        font-size: 1rem;
+        font-size: 1em;
     }
 
     .button-icon {
         font-size: 1.6em;
+        margin-left: 10px;
     }
 
-    .event-footer {
-        height: 35px;
-        background-color: color(med-blue);
-        width: 100%;
-        margin-top: 10px;
+    .event-time {
+        display: block;
+        font-size: .9em;
     }
 
     .footer-text {
@@ -52,16 +55,19 @@
 
      &:hover {
         background-color: #E1B111;
-        height: auto;
-        transform: scale(1.1);
+        max-height: 175px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;
         
         .row {
             padding: 20px 0 5px;
         }
 
-        .button-heading, .button-icon {
-            font-size: 1.75rem;
+        .button-heading {
+            font-size: 1.2rem;
+        }
+
+        .button-icon {
+                font-size: 1.8em;
         }
 
         .description {
@@ -74,12 +80,34 @@
         .button-arrow {
             font-size: 1.1rem;
         }
+    }
+}
 
-        .footer-text {
-            a {
-                color: color(yellow);
-                font-size: 1.12rem;
-            }
+.home-events-block {
+    h2 {
+        line-height: 1.2;
+        font-size: 2rem;
+        color: #004585;
+        margin: 0 0 5px 12px;
+    }
+
+    .more-link {
+        margin-right: 5px;
+    }
+}
+
+.meetings-block {
+    .event-card {
+        background-color: color(green);
+
+        &:hover {
+            background-color: color(yellow);
         }
+    }
+}
+
+.events-block {
+    .more-link {
+        margin-right: 10px;
     }
 }

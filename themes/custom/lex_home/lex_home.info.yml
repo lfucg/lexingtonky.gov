@@ -10,6 +10,7 @@ regions:
   sitemast: 'Header Navigation'
   hero: 'Page Features'
   breadcrumb: 'Breadcrumbs and Notices'
+  events: 'Events and Meetings'
   title: 'Page Title'
   content: 'Content'
   after_content: 'Additional Content following Page Content in Main Area'
