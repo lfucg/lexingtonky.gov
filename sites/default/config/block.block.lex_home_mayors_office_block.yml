@@ -1,6 +1,6 @@
 uuid: 732d60f6-8f00-4692-8148-13b11400246f
 langcode: en
-status: false
+status: true
 dependencies:
   content:
     - 'block_content:html_block:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'
@@ -12,7 +12,7 @@ dependencies:
 id: lex_home_mayors_office_block
 theme: lex_home
 region: postscript
-weight: -26
+weight: -8
 provider: null
 plugin: 'block_content:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'
 settings:

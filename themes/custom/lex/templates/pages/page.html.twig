@@ -41,6 +41,10 @@
 {{ page.breadcrumb }}
 {% endblock %}
 
+{% block page_events %}
+{{page.events}}
+{% endblock %}
+
 {% block page_main %}
 <a id="main-content" name="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
 <main role="main">

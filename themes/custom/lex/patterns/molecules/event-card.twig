@@ -1,16 +1,14 @@
 <a href="{{ url }}">
-    <div class="event-card">
+    <div class="event-card expandable rounded">
         <div class="row">
             <div class="col-2">
-                {% include '@components/atoms/button-icon.twig' with {icon: icon} %}
+                <span class="button-icon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
             </div>
             <div class="col-10">
                 {% include '@components/atoms/button-heading.twig' with {heading: heading} %}
                 {% include '@components/atoms/description.twig' with {description: description} %}
+                <span class="event-time">{% include '@components/atoms/description.twig' with {description: text} %}</span>
             </div>
-        </div>
-         <div class="event-footer">
-            {% include '@components/atoms/card-footer.twig' with {text: text} %}
         </div>
     </div>
 </a>

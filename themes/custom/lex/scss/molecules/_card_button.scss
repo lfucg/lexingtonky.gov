@@ -9,6 +9,17 @@
         margin: 10px 0 5px;
     }
 
+    img {
+        height: auto;
+        width: 100%;
+    }
+
+    .description {
+        div {
+            padding-bottom: 10px;
+        }
+    }
+
     //Keeping this in for now, while working on the image gradient
     // img:before {
     //     display: block;
@@ -26,19 +37,8 @@
         color: color(white);
         border: none;
 
-        img {
-            height: auto;
-            width: 100%;
-        }
-
         .button-heading {
-            margin: 15px 0 5px;
             color: color(white);
-        }
-        .description {
-            div {
-                padding-bottom: 10px;
-            }
         }
     }
 }
