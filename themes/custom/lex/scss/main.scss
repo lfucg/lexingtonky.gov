@@ -13,6 +13,7 @@
 @import './molecules/card_button';
 @import './molecules/contact_card';
 @import'./molecules/event_card';
+@import'./molecules/news_card';
 @import './accordions';
 
 .no-scroll {
@@ -29,4 +30,16 @@ ol, ul, dl {
 
 .rounded {
   border-radius: 15px;
+}
+
+.lex-region-events {
+  background-color: color(light-gray);
+}
+
+.lex-events-container {
+  min-height: 250px;
+  padding: 0 1rem;
+  position: relative;
+  width: 85%;
+  margin: auto;
 }
