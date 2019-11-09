@@ -1,25 +1,25 @@
-uuid: f0dde3d6-1f74-4962-a480-a861f057ff98
+uuid: 5cd72914-bdc9-4674-b950-67c50daf16bd
 langcode: en
 status: true
 dependencies:
   content:
-    - 'block_content:html_block:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
+    - 'block_content:html_block:8e18148c-fe80-426d-ad57-6d3a44ea0e15'
   module:
     - block_content
     - system
   theme:
     - lex_home
-id: lex_home_urbancountycouncilhtml
+id: urbancountycouncilnew
 theme: lex_home
 region: postscript
-weight: -7
+weight: 0
 provider: null
-plugin: 'block_content:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
+plugin: 'block_content:8e18148c-fe80-426d-ad57-6d3a44ea0e15'
 settings:
-  id: 'block_content:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
+  id: 'block_content:8e18148c-fe80-426d-ad57-6d3a44ea0e15'
   label: 'Urban County Council'
   provider: block_content
-  label_display: '0'
+  label_display: visible
   status: true
   info: ''
   view_mode: full
