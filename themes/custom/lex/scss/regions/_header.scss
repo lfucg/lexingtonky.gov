@@ -4,11 +4,12 @@ body header {
 
   .sticky-top {
     z-index: 500;
+    padding-left: 5%;
   }
 
   #logo {
     img {
-      margin: 15px 0 15px 100px;
+      margin: 15px 0;
       height: 50px;
       max-width: max-content;
       @include screens-below(sm) {
@@ -41,7 +42,7 @@ body header {
   }
 
   .navbar-button {
-    padding-right: 6vw;
+    padding-right: 5%;
   }
 
   #nav-icon {

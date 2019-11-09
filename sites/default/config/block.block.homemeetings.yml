@@ -9,7 +9,7 @@ dependencies:
 id: homemeetings
 theme: lex_home
 region: events
-weight: -7
+weight: -8
 provider: null
 plugin: Lex_calendar_list_block
 settings:
