@@ -11,7 +11,7 @@ dependencies:
 id: lex_home_views_block__site_wide_notice_block
 theme: lex_home
 region: notices
-weight: -26
+weight: -10
 provider: null
 plugin: 'views_block:site_wide_notice-block_1'
 settings:
