@@ -1,21 +1,20 @@
 #block-lookupservices {
   background-color: color(light-gray);
-  min-height: 250px;
-  padding: 1rem;
+  min-height: 200px;
+  padding: 2rem 1rem;
   position: relative;
   top: -40px;
-  width: 85%;
+  width: 90%;
 
   @include screens-below(sm){
     top: -10px;
-    width: 90%;
   }
 
   .lex-find {
-    border-right: 1px solid color(lex-blue);
+    border-right: 1px solid color(med-blue);
     @include screens-below(sm){
       border-right: none;
-      border-bottom: 1px solid color(lex-blue);
+      border-bottom: 1px solid color(med-blue);
       padding-bottom: 1rem;
       margin-bottom: 1rem;
     }
@@ -23,16 +22,17 @@
 
   #edit-address {
     &:focus {
-      border: 1px solid color(lex-blue);
+      border: 1px solid color(med-blue);
     }
   }
 
   h3 {
-    color: color(lex-blue);
+    color: color(med-blue);
+    font-weight: 800;
   }
 
   i.fas {
-    color: color(lex-blue);
+    color: color(med-blue);
     font-size: 2.0rem;
   }
 
@@ -45,20 +45,29 @@
   }
 
   .service-label {
-    height: 90px;
+    height: 80px;
     &.open {
-      border-bottom: solid 1px color(lex-blue);
+      border-bottom: solid 1px color(med-blue);
     }
   }
 
   .service {
-    padding-top: 1rem;
+    padding-top: .3rem;
+    font-size: .8rem;
+    text-align: left;
     span {
-      padding-bottom: 1rem;
+      &:first-child {
+        font-weight: 600;;
+      }
     }
   }
 
   .hide {
     display: none;
+  }
+
+  input {
+    border-radius: 5px;
+    border: 1px solid color(med-blue);
   }
 }
