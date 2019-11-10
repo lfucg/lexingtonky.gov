@@ -7,15 +7,13 @@
     {% endif %}
   {% endblock %}
   {% block page_hero_body %}
-    {% if is_front %}
-      <div class="welcome-block">
-        <h1>Welcome to the Horse Capital of the World<sup>&reg;</sup>
-        </h1>
-        <p>The best place to find city services and information for Lexington, KY</p>
-        {{ page.hero }}
-      </div>
-    {% else %}
+    <div class="{{ is_front ? 'welcome-block' : 'search-block hide'}}">
+      {% if is_front %}
+          <h1>Welcome to the Horse Capital of the World<sup>&reg;</sup>
+          </h1>
+          <p>The best place to find city services and information for Lexington, KY</p>
+      {% endif %}
       {{ page.hero }}
-    {% endif %}
+    </div>
   {% endblock %}
 </div>
