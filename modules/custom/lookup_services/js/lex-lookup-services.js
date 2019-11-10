@@ -27,7 +27,7 @@
         'COUNREP',
         'SENREP',
         'LEGREP',
-      ]
+      ],
     },
     {
       id: 'police',
@@ -69,6 +69,14 @@
 
   ]
 
+  function titleCase(str) {
+    if (typeof str !== 'string') return str;
+
+    return str.toLowerCase().split(' ').map((word) => {
+      return word.replace(word[0], word[0].toUpperCase());
+    }).join(' ');
+  }
+
   /*
   * requires:
   *   jquery
@@ -92,10 +100,13 @@
           .run(function(error, featureCollection, response){
             let feature = featureCollection.features[0];
             call.fields.map((field) => {
-              if (call.hasOwnProperty('field_keys')) {
-                $(`.${call.id}`).html(`${call.field_keys[feature.properties[field]]} `);
-              } else {
-                $(`.${call.id}`).html(`${feature.properties[field]}`);
+              if (call.id === 'political') {
+                $(`.${field.toLowerCase()}`).html(`${titleCase(feature.properties[field]) || 'N/A'} `);
+              } else if (call.hasOwnProperty('field_keys')) {
+                $(`.${call.id}`).html(`${call.field_keys[feature.properties[field]] || 'N/A'} `);
+              }
+              else {
+                $(`.${call.id}`).html(`${titleCase(feature.properties[field]) || 'N/A'}`);
               }
             })
           });
@@ -105,6 +116,9 @@
         $('.service').toggleClass('hide');
         $('.service-label').toggleClass('open');
       }
+      $('.instructions').html('Service Information');
+      $('.instructions').toggleClass('text-center');
+      $('.instructions').toggleClass('mx-auto');
       $addressInput.removeClass('loading');
     };
 

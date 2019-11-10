@@ -1,14 +1,14 @@
 <div{{attributes.addClass('row text-left')}}>
   <div class="col-lg-3 col-12 text-left lex-find">
     <h1><i class="fas fa-map-marker-alt"></i>&nbsp;Lex Find</h1>
-    <small>Search for your address</small>
+    <small>Enter an address then select one from the dropdown</small>
     <div>
       {{ content }}
     </div>
   </div>
   <div class="col-lg-9 col-12">
-    <div class="row">
-      <h3>Enter your address to find information about the following city services:</h3>
+    <div class="row w-75 text-center mx-auto">
+      <h3 class="instructions">Enter your address to find information about the following city services:</h3>
     </div>
     <div class="row">
       <div class="col-6 col-lg-3">
@@ -17,8 +17,11 @@
             <h5>Waste Services</h5>
         </div>
         <div class="hide service">
-          <span><strong>Pick up day:</strong></span>
+          <span>Pick up day: </span>
           <span class="trash"></span>
+        </div>
+        <div class="hide service">
+          <sub>*all containers will be picked up on this day</sub>
         </div>
       </div>
       <div class="col-6 col-lg-3">
@@ -27,7 +30,7 @@
             <h5>Emergency Services</h5>
         </div>
         <div class="hide service">
-          <span><strong>Police sector: </strong></span>
+          <span>Police sector: </span>
           <span class="police"></span>
         </div>
       </div>
@@ -37,8 +40,24 @@
             <h5>Political Info</h5>
         </div>
         <div class="hide service">
-          <span></span>
-          <span class="political"></span>
+          <span>Voting precinct: </span>
+          <span class="name"></span>
+        </div>
+        <div class="hide service">
+          <span>Council disctrict: </span>
+          <span class="council"></span>
+        </div>
+        <div class="hide service">
+          <span>Councilmember: </span>
+          <span class="counrep"></span>
+        </div>
+        <div class="hide service">
+          <span>State senator: </span>
+          <span class="senrep"></span>
+        </div>
+        <div class="hide service">
+          <span>State representative: </span>
+          <span class="legrep"></span>
         </div>
       </div>
       <div class="col-6 col-lg-3">
@@ -47,15 +66,15 @@
             <h5>General Location Info</h5>
         </div>
         <div class="hide service">
-          <span><strong>Zipcode: </strong></span>
+          <span>Zipcode: </span>
           <span class="zip"></span>
         </div>
         <div class="hide service">
-          <span><strong>Neighborhood association: </strong></span>
+          <span>Neighborhood association: </span>
           <span class="neighborhood"></span>
         </div>
         <div class="hide service">
-          <span><strong>Watershed: </strong></span>
+          <span>Watershed: </span>
           <span class="watershed"></span>
         </div>
       </div>
