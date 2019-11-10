@@ -1,9 +1,10 @@
-body.path-frontpage {
+body {
   .lex-hero {
     position: relative;
   }
-  .welcome-block {
-    @include rgba-background(color(dark-blue), 0.7);
+
+  .welcome-block, .search-block {
+    @include rgba-background(color(dark-blue), 0.8);
     color: #fff;
     margin: 0 5%;
     padding: 1rem 2rem;
@@ -11,6 +12,7 @@ body.path-frontpage {
     text-align: center;
     top: 0;
     width: 90%;
+    z-index: 500;
 
     @include screens-below(sm) {
       background-color: rgba(color(dark-blue),1);
@@ -28,6 +30,14 @@ body.path-frontpage {
     }
 
 
+  }
+
+  .search-block {
+    top: initial !important;
+
+    &.hide {
+      display: none;
+    }
   }
 
   .lex-search {
@@ -82,7 +92,8 @@ body.path-frontpage {
     }
   }
 
-  #block-mostpopularsearches {
+  #block-mostpopularsearches,
+  #block-mostpopularsearches-2 {
     align-items: center;
     display: flex;
     flex-direction: row;

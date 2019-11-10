@@ -44,8 +44,10 @@ body header {
   .navbar-button {
     padding-right: 5%;
   }
-
-  #nav-icon {
+  #search-icon.open {
+    color: color(yellow);
+  }
+  #nav-icon, #search-icon {
     cursor: pointer;
     display: inline-block;
     height: 100%;
@@ -58,6 +60,13 @@ body header {
 
     &:hover:not(.open) {
       background-color: color(light-gray);
+    }
+
+    i {
+      position: relative;
+      top: 18px;
+      font-size: 1.7rem;
+      left: -17px;
     }
 
     span.hamburger-line {
