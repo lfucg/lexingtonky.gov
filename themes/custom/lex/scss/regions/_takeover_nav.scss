@@ -8,7 +8,7 @@
   width: 0px;
   z-index: 1000;
 }
-div.fade {
+div.fade, div.search-fade {
   @include rgba-background(#000, 0.5);
   position: absolute;
   width: 100vw;
@@ -19,6 +19,9 @@ div.fade {
   &.show {
     opacity: 100;
     height: 100vh;
+  }
+  @include screens-below(sm) {
+    z-index: 0;
   }
 }
 

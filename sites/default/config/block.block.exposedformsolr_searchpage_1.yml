@@ -1,6 +1,6 @@
 uuid: a8755488-de00-47ed-9cf5-fe525022aebb
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - views.view.solr_search
@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: exposedformsolr_searchpage_1
 theme: lex
-region: sitemast
-weight: 0
+region: hero
+weight: -16
 provider: null
 plugin: 'views_exposed_filter_block:solr_search-page_1'
 settings:
