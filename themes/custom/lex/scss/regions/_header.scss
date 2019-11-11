@@ -13,7 +13,8 @@ body header {
       height: 50px;
       max-width: max-content;
       @include screens-below(sm) {
-        margin-left: 10px;
+        margin: 20px 0;
+        height: 40px;
       }
     }
   }
