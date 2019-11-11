@@ -15,5 +15,9 @@
       {% endif %}
       {{ page.hero }}
     </div>
+    {% if not is_front %}
+      <div class="search-fade"></div>
+    {% endif %}
+
   {% endblock %}
 </div>
