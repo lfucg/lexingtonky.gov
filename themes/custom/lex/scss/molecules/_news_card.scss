@@ -55,7 +55,7 @@
     .description-container {
         margin: 20px 0 !important;
 
-        @include screens-above(xl) {
+        @include screens-above(xxl) {
             font-size: 20px;
         }
     }
@@ -77,10 +77,19 @@
         width: 100%;
     }
 
+    .description-container {
+        max-height: 120px;
+    }
+
     .description {
         display: inline-block;
         color: black;
         min-height: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;        
     }
 
     .news-footer {
@@ -98,6 +107,11 @@
         padding: 5px 15px;
         text-align: right;
         width: 100%;
+
+        @include screens-above(xxl) {
+            font-size: 20px;
+            padding-top: 2px;
+        }
 
         &:hover {
             text-decoration: none !important;
@@ -118,6 +132,7 @@
 
         .date-overlay {
             background-color: color(yellow) !important;
+            width: 27.5%;
         }
 
         .contact-heading {
@@ -135,7 +150,6 @@
 
         .footer-text {
             color: color(yellow);
-            font-size: 1.12em;
         }
     }
 
@@ -144,6 +158,11 @@
 .news-container {
     .more-link {
         margin-right: 15px;
+        text-transform: capitalize !important;
+
+        a {
+            padding: 0.5em;
+        }
 
         @media (max-width: 467px) {
             padding-left: 30px;
