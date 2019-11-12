@@ -1,6 +1,6 @@
 .news-container {
     min-height: 250px;
-    padding: 1rem;
+    padding: 1em;
     position: relative;
     top: -40px;
     width: 85%;
@@ -8,7 +8,7 @@
 
     .front-news-header {
     line-height: 1.2;
-    font-size: 2rem;
+    font-size: 2em;
     color: #004585;
     margin: 35px 0 25px 12px;
     }
@@ -34,7 +34,7 @@
 
     .date-overlay {
         position: absolute;
-        width: 100px;
+        width: 25%;
         opacity: 75%;
         z-index: 100;
         top: 10%;
@@ -54,6 +54,10 @@
 
     .description-container {
         margin: 20px 0 !important;
+        
+        @media (min-width: 1400px) {
+            font-size: 20px;
+        }
     }
 
     .contact-heading {
@@ -61,7 +65,11 @@
         margin: 15px 0;
         color: #0558A7;
         font-family: $font__open_sans ;
-        font-size: 1.1rem;
+        font-size: 1.1em;
+    }
+
+    .contact-img-container {
+        width: 100%;
     }
 
     .description {
@@ -79,7 +87,7 @@
 
    .footer-text {
         color: #ffff;
-        font-size: 1rem;
+        font-size: 1em;
         font-family: $font__roboto;
         display: block;
         padding: 5px 15px;
@@ -122,7 +130,7 @@
 
         .footer-text {
             color: color(yellow);
-            font-size: 1.12rem;
+            font-size: 1.12em;
         }
     }
 
@@ -131,5 +139,9 @@
 .news-container {
     .more-link {
         margin-right: 15px;
+
+        @media (max-width: 467px) {
+            padding-left: 30px;
+        }
     }
 }
