@@ -16,9 +16,6 @@
       padding: 0 3rem 3rem;
       @include screens-below(sm) {
         padding: 1rem;
-        img {
-          margin: .8rem 0;
-        }
       }
       h1 {
         margin-left: 12px;
