@@ -13,10 +13,8 @@
   }
   .lex-region-postscript {
     div[id^="block-"] {
-      padding: 0 3rem 3rem;
-      @include screens-below(sm) {
-        padding: 1rem;
-      }
+      padding-bottom: 3rem;
+      margin: 0 5%;
       h1 {
         margin-left: 12px;
       }
