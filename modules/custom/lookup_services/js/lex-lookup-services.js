@@ -118,7 +118,6 @@
       }
       $('.instructions').html('Service Information');
       $('.instructions').toggleClass('text-center');
-      $('.instructions').toggleClass('mx-auto');
       $addressInput.removeClass('loading');
     };
 
