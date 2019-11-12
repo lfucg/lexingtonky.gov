@@ -32,7 +32,6 @@
             $(this).hover(
                 function() {
                     expandheight = parseInt($(this).css('height'));
-                    console.log(height, expandheight, width, expandwidth);
                     $(this).css({'margin-top': margtop+(height-expandheight)/2, 'margin-bottom': margbottom+(height-expandheight)/2, 'margin-right': margright+(width-expandwidth)/2, 'margin-left': margleft+(width-expandwidth)/2, 'width': expandwidth + 'px'});
                 },
                 //Returns everything to normal on mouseout.
