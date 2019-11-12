@@ -55,7 +55,7 @@
     .description-container {
         margin: 20px 0 !important;
         
-        @media (min-width: 1400px) {
+        @include screens-above(xl) {
             font-size: 20px;
         }
     }
