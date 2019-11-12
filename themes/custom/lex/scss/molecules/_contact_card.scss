@@ -26,11 +26,6 @@
         color: color(med-blue);
         font-size: 1.2rem;
         font-family: $font__open_sans;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
         div{
             margin-left: 15px;
             width: fit-content;
