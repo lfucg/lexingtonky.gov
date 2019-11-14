@@ -5,6 +5,9 @@ body header {
   .sticky-top {
     z-index: 500;
     padding-left: 5%;
+    .logo-container {
+      padding-left: 0;
+    }
   }
 
   #logo {

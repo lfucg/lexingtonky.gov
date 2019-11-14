@@ -4,7 +4,7 @@
 {% include "@stable/block/block.html.twig" %}
 {% endblock %}
 #}
-<div{{ attributes }}>
+<div{{ attributes.addClass('section-padding') }}>
   {% block title_prefix %}
   {{ title_prefix }}
   {% endblock %}
