@@ -1,4 +1,13 @@
 .path-frontpage {
+  .lex-pagefeedback-container {
+    padding: 0 5%;
+    ul {
+      padding-left: 15px;
+    }
+  }
+  main {
+    display: none;;
+  }
   div[id^="block-urban"] {
     > div {
       display: flex;
@@ -12,9 +21,21 @@
     }
   }
   .lex-region-postscript {
+    .paragraph--type--icon-button-with-description {
+      margin-top: 0px;
+      padding-bottom: 0px !important;
+      .icon-desc-button {
+        width: auto;
+        height: auto;
+        .row {
+          padding: 8px;
+          .button-heading {
+            margin: 0;
+          }
+        }
+      }
+    }
     div[id^="block-"] {
-      padding-bottom: 3rem;
-      margin: 0 5%;
       h1 {
         margin-left: 12px;
       }

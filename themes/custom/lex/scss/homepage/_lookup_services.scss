@@ -69,5 +69,17 @@
   input {
     border-radius: 5px;
     border: 1px solid color(med-blue);
+    width: 90%;
+    margin: 0;
+    position: relative;
+    left: -5%;
+  }
+
+  .instructions {
+    padding-left: 15px;
+  }
+  .lexfind-link {
+    color: color(med-blue);
+    font-weight: 600;
   }
 }
