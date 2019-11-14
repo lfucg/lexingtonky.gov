@@ -1,6 +1,7 @@
 <section class="{{ section_class }}">
-  <img class="img-fluid footer-seal" src="/themes/custom/lex/img/lexington-seal.png" alt="Lexington Seal">
-  <div class="{{ wordmark_class }}">
+  {# <img class="img-fluid footer-seal" src="/themes/custom/lex/img/lexington-seal.png" alt="Lexington Seal"> #}
+  {% include "@lex/../img/lexington-seal.svg" %}
+  <div class="{{ wordmark_class }} seal-information">
     <ul>
       <li>&copy;
         {{ "now"|date("Y") }}
@@ -8,7 +9,6 @@
       <li>Lexington KY, Horse Capital of the World
         <sup>&#174;</sup>
       </li>
-      <li>&nbsp;</li>
       <li>
         <a href="/terms-of-use">Terms of use</a>&nbsp;/&nbsp;
         <a href="/terms-of-use">Privacy</a>&nbsp;/&nbsp;

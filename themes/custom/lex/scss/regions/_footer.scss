@@ -30,10 +30,11 @@ body footer {
     }
   }
 
-  .footer-seal {
+  svg {
     height: 75px;
     width: 75px;
-    margin: 10px;
+    margin: 10px 10px 10px 0px;
+    fill: color(light-gray);
     @include screens-below(sm) {
       height: 50px;
       width: 50px;
@@ -42,8 +43,15 @@ body footer {
 
   ul {
     list-style: none;
+    color: color(light-gray);
     li {
       font-size: 1rem;
+    }
+  }
+
+  .seal-information {
+    li:last-child {
+      padding-top: 8px;
     }
   }
 
