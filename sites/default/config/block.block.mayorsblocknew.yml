@@ -2,17 +2,14 @@ uuid: d0b53c0c-d891-4fe2-a890-5f28d044b73c
 langcode: en
 status: true
 dependencies:
-  content:
-    - 'block_content:photo_and_markup:4dee1e8b-c2ae-4970-b6ab-b440e2f0b9db'
   module:
-    - block_content
     - system
   theme:
     - lex_home
 id: mayorsblocknew
 theme: lex_home
 region: postscript
-weight: 0
+weight: -10
 provider: null
 plugin: 'block_content:4dee1e8b-c2ae-4970-b6ab-b440e2f0b9db'
 settings:

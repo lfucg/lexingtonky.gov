@@ -12,7 +12,7 @@ dependencies:
 id: lex_police_views_block__sibling_pages_full_bleed
 theme: lex_police
 region: hero
-weight: -25
+weight: -26
 provider: null
 plugin: 'views_block:sibling_pages-block_2'
 settings:

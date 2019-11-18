@@ -12,7 +12,7 @@ div.fade, div.search-fade {
   @include rgba-background(#000, 0.5);
   position: absolute;
   width: 100vw;
-  z-index: 50;
+  z-index: 100;
   opacity: 0;
   left: 0;
   height: 0;
