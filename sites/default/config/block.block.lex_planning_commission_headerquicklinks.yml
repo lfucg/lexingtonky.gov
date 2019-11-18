@@ -11,7 +11,7 @@ dependencies:
 id: lex_planning_commission_headerquicklinks
 theme: lex_planning_commission
 region: sitemast
-weight: -23
+weight: -26
 provider: null
 plugin: 'system_menu_block:header-quick-links'
 settings:

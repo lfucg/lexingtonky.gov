@@ -50,6 +50,14 @@ body header {
   }
   #search-icon.open {
     color: color(yellow);
+
+    .fa-search {
+      display: none;
+    }
+
+    .fa-times {
+      display: block;
+    }
   }
   #nav-icon, #search-icon {
     cursor: pointer;
@@ -61,7 +69,7 @@ body header {
     transition: .5s ease-in-out;
     width: 60px;
     z-index: 8;
-
+    
     &:hover:not(.open) {
       background-color: color(light-gray);
     }
@@ -134,5 +142,15 @@ body header {
       }
     }
 
+  }
+}
+
+.search-lines {
+    display: none;
+  }
+
+#search-icon.open {
+  .search-lines {
+    display: block;
   }
 }

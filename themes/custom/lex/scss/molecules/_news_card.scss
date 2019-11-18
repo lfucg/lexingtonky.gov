@@ -1,9 +1,8 @@
 .news-container {
     min-height: 250px;
-    padding: 1em;
     position: relative;
     top: -40px;
-    width: 85%;
+    // width: 85%;
     margin: auto;
 
     .front-news-header {
@@ -60,12 +59,11 @@
         }
     }
 
-    .contact-heading {
+    .news-heading {
         display: inline-block;
         margin: 15px 0;
         color: #0558A7;
         font-family: $font__open_sans ;
-        font-size: 1.1em;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
@@ -83,7 +81,7 @@
 
     .description {
         display: inline-block;
-        color: black;
+        color: color(dark-gray);
         min-height: 120px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -128,14 +126,19 @@
         border: none;
         transform: scale(1.1);
         position: relative;
+        border-radius: 0 !important;
 
+
+        .heading-container {
+            border-bottom: 1px solid color(white);
+        }
 
         .date-overlay {
             background-color: color(yellow) !important;
             width: 27.5%;
         }
 
-        .contact-heading {
+        .news-heading {
             margin-bottom: 12px;
             color: #ffff;
         }
@@ -146,6 +149,7 @@
 
         .news-footer {
             height: 40px;
+            background-color: color(dark-blue);
         }
 
         .footer-text {

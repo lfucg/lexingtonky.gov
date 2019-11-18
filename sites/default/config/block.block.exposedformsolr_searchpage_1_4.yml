@@ -1,6 +1,6 @@
 uuid: 8bb737e0-17af-4d28-9a42-431e4c306d6d
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - views.view.solr_search
@@ -10,8 +10,8 @@ dependencies:
     - lex_police
 id: exposedformsolr_searchpage_1_4
 theme: lex_police
-region: sitemast
-weight: 0
+region: hero
+weight: -25
 provider: null
 plugin: 'views_exposed_filter_block:solr_search-page_1'
 settings:
