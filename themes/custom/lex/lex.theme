@@ -46,6 +46,8 @@ function lex_preprocess_page__taxonomy__term(&$variables) {
   $path = \Drupal::service('path.current')->getPath();
   $alias = \Drupal::service('path.alias_manager')->getAliasByPath($path);
   $variables['browse_level'] = preg_match('|/browse/.*/|', $alias) == 1 ? 'subsection' : 'section';
+
+   unset($variables['page']['breadcrumb']);
 }
 
 function lex_preprocess_menu(&$variables) {
