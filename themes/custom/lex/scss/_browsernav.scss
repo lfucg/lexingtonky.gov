@@ -1,0 +1,117 @@
+body.path-taxonomy {
+    main {
+        background-color: color(dark-blue);
+        color: color(white) !important;
+    }
+
+    #root {
+        border-right: 1px solid color(yellow);
+
+        li {
+            padding-left: 1rem !important;
+            
+            a:hover {
+                color: color(white);
+            }
+        }
+    }
+
+    #section { 
+        padding: 0;
+
+        .lex-card-title-heading {
+            padding-left: 1rem;
+            color: color(light-gray) !important;
+        }
+
+        .lex-card-title, .lex-browsenav-description {
+            color: color(light-gray) !important;
+        }
+
+        ul {
+            li {
+                padding-left: 1rem;
+                color: color(light-gray);
+            }
+            
+            .active {
+                a {
+                    .lex-card-title, .lex-browsenav-description {
+                        color: color(dark-blue) !important;
+                    }
+                }
+            }
+        }
+    }
+}
+
+body.path-taxonomy {
+    .browse-panes {
+        #root, #section {
+            background-color: color(dark-blue);
+            color: color(white);
+
+            ul {
+                li {
+                    a {
+                        color: color(white);
+                    }
+                }
+            }
+
+            .active {
+                background-color: color(yellow);
+
+                a {
+                    color: color(dark-blue) !important;
+                }
+            }
+        }
+
+        #root {
+            ul {
+                li {
+                    a {
+                        color: color(light-gray);
+                        
+                        &:hover {
+                            color: color(light-gray);
+                        }
+                    }
+                }
+            }
+        }
+
+        #section {
+            padding: 0;
+            border-left: 1px solid color(yellow) !important;
+            border-right: 1px solid color(yellow);
+            // border-right: 1px solid color(yellow);
+            a {
+                .lex-card-title {
+                    color: color(white);
+                }
+            }
+
+            .lex-card-title {
+                color: color(white);
+            }
+        }
+    }
+}
+
+.pane-inner {
+    a, h1 {
+        color: color(light-gray);
+    }
+
+    #block-browsenav-subcategory-term {
+        padding-left: 0 !important;
+    }
+}
+
+.taxonomy-wrapper {
+    #nav-icon {
+        display: none;
+    }
+}
