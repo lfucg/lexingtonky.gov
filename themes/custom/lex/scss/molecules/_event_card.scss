@@ -134,7 +134,7 @@
     }
 
     .more-link {
-        margin: 10px 10px 20px 10px;
+        margin: 10px 100px 20px 10px;
         float: left !important;
         text-transform: capitalize !important;
 
@@ -159,7 +159,7 @@
         }
 
         @include screens-above(xxl) {
-            margin-right: 10%;
+            margin-right: 15%;
         }
     }
 }
