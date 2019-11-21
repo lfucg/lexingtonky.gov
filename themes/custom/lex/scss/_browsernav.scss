@@ -9,9 +9,14 @@ body.path-taxonomy {
 
         li {
             padding-left: 1rem !important;
+
+            a {
+                border: 1px solid transparent;
+            }
             
             a:hover {
-                color: color(white);
+                color: color(yellow) !important;
+                border: 1px solid color(yellow) !important;
             }
         }
     }
@@ -96,6 +101,12 @@ body.path-taxonomy {
             .lex-card-title {
                 color: color(white);
             }
+            a:hover {
+                border: none;
+                .lex-card-title, .lex-browsenav-description {
+                    color: color(yellow) !important;
+                }
+            }
         }
     }
 }
@@ -103,6 +114,11 @@ body.path-taxonomy {
 .pane-inner {
     a, h1 {
         color: color(light-gray);
+    }
+
+    a:hover {
+        color: color(yellow);
+        border: none;
     }
 
     #block-browsenav-subcategory-term {
