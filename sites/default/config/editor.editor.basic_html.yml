@@ -51,7 +51,7 @@ settings:
             - paragraphs_inline_entity_form
   plugins:
     stylescombo:
-      styles: "a.lex-calltoaction|Call to action\r\np.test|Test"
+      styles: "a.lex-calltoaction|Call to action\r\np.small|Small"
     language:
       language_list: un
     autoembed:
