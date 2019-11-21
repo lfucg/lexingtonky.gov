@@ -35,13 +35,12 @@ ol, ul, dl {
 
 .lex-region-events {
   background-color: color(light-gray);
+  display: inline-block;
 }
 
 .lex-events-container {
   min-height: 250px;
-  padding: 2rem 1rem;
   position: relative;
-  width: 85%;
   margin: auto;
 }
 
