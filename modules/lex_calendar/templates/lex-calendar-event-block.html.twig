@@ -4,7 +4,7 @@
   <ol> #}
   {% for event in date.events %}
     {% set title = event.title %}
-    {% include '@components/molecules/event-card.twig' with {heading: title|length > 40 ? title|slice(0, 40)|raw ~ '...' : title|raw, description: lexDate(date.title) , text: lexTimeRange(event)|escape('html'), url: event.url} %}
+    {% include '@components/molecules/event-card.twig' with {heading: title, description: lexDate(date.title) , text: lexTimeRange(event)|escape('html'), url: event.url} %}
   {% endfor %}
 {% endfor %}
 <div class="more-link usa-button lex-morelink lex-button"><a href="/calendar/{{content_type}}s">more {{content_type}}s</a></div>

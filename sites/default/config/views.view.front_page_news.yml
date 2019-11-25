@@ -378,7 +378,7 @@ display:
           type: timestamp
           settings:
             date_format: custom
-            custom_date_format: 'M j, Y g:i a'
+            custom_date_format: 'M. j, Y g:i a'
             timezone: ''
           group_column: value
           group_columns: {  }

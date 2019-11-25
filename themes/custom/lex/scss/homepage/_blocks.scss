@@ -65,13 +65,14 @@
 .quick-link {
   background-color: color(med-blue);
   color: white;
-  padding-top: .5rem;
+  display: flex;
+  align-items: center;
   min-height: 40px;
   max-width: 350px;
   margin: 1rem auto;
 
-  @include screens-above(xl) {
-    padding-top: 1%;
+  .row {
+    width: 100%;
   }
 
   a {

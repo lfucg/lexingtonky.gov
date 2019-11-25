@@ -60,6 +60,13 @@
         font-weight: 600;;
       }
     }
+
+    .lexfind-link {
+      font-size: .8rem;
+      &:hover {
+        color: color(yellow);
+      }
+    }
   }
 
   .hide {

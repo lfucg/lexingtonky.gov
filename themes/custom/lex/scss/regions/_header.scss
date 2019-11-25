@@ -145,11 +145,22 @@ body header {
   }
 }
 
+#search-icon {
+  display: flex !important;
+  align-items: center;
+
+  img {
+    height: 3.5rem;
+  }
+}
 .search-lines {
     display: none;
   }
 
 #search-icon.open {
+  img {
+    display: none;
+  }
   .search-lines {
     display: block;
   }
