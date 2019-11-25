@@ -47,3 +47,13 @@ ol, ul, dl {
 .section-padding {
   padding: 2rem 5%;
 }
+
+.lex-aside-list {
+  .lex-street-address, .p-locality {
+    color: color(gray);
+
+    &:hover {
+      color: color(gray);
+    }
+  }
+}

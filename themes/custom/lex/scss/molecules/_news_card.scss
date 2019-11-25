@@ -2,7 +2,6 @@
     min-height: 250px;
     position: relative;
     top: -40px;
-    // width: 85%;
     margin: auto;
 
     .front-news-header {
@@ -82,11 +81,11 @@
     .description {
         display: inline-block;
         color: color(dark-gray);
-        min-height: 120px;
+        min-height: 70px;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;        
     }
 
@@ -126,7 +125,6 @@
         border: none;
         transform: scale(1.1);
         position: relative;
-        border-radius: 0 !important;
 
 
         .heading-container {
@@ -150,6 +148,7 @@
         .news-footer {
             height: 40px;
             background-color: color(dark-blue);
+            border-radius: 0 0 5px 5px;
         }
 
         .footer-text {
