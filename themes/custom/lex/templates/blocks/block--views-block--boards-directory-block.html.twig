@@ -3,6 +3,21 @@
     <label class="lex-department-filter-label">Type the name of a board or commission <input type="text" class="lex-filter-search search" placeholder="planning commission"></label>
   </div>
   <div>
-    {% include 'block.html.twig' %}
+    <div>
+      {% block title_prefix %}
+        {{ title_prefix }}
+      {% endblock %}
+      {% block title %}
+        {% if label %}
+          <h2{{ title_attributes }}>{{ label }}</h2>
+        {% endif %}
+      {% endblock %}
+      {% block title_suffix %}
+        {{ title_suffix }}
+      {% endblock %}
+      {% block content %}
+        {{ content }}
+      {% endblock %}
+    </div>
   </div>
 </div>

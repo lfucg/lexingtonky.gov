@@ -90,8 +90,6 @@ body.path-taxonomy {
         #section {
             padding: 0;
             border-left: 1px solid color(yellow) !important;
-            border-right: 1px solid color(yellow);
-            // border-right: 1px solid color(yellow);
             a {
                 .lex-card-title {
                     color: color(white);
@@ -106,6 +104,12 @@ body.path-taxonomy {
                 .lex-card-title, .lex-browsenav-description {
                     color: color(yellow) !important;
                 }
+            }
+        }
+
+        &.subsection {
+            #section {
+                border-right: 1px solid color(yellow) !important;
             }
         }
     }
@@ -130,4 +134,8 @@ body.path-taxonomy {
     #nav-icon {
         display: none;
     }
+}
+
+.lex-pagefeedback-container {
+    padding: 0 5%;
 }
