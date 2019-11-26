@@ -150,7 +150,7 @@ body header {
   align-items: center;
 
   img {
-    height: 3.5rem;
+    height: 60px;
   }
 }
 .search-lines {
@@ -164,4 +164,8 @@ body header {
   .search-lines {
     display: block;
   }
+}
+
+#block-lex-police-pagetitle {
+  padding-left: 0 !important;
 }
