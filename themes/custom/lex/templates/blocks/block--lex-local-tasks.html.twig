@@ -1,0 +1,16 @@
+<div>
+  {% block title_prefix %}
+  {{ title_prefix }}
+  {% endblock %}
+  {% block title %}
+  {% if label %}
+    <h2{{ title_attributes }}>{{ label }}</h2>
+  {% endif %}
+  {% endblock %}
+  {% block title_suffix %}
+  {{ title_suffix }}
+  {% endblock %}
+  {% block content %}
+    {{ content }}
+  {% endblock %}
+</div>
