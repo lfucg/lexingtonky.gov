@@ -9,20 +9,13 @@
 {% endif %}
 
 {% block page_hero %}
-  {% block hero_start %}
-    {% include "@lex/includes/hero.html.twig"
-      with {
-        page: page,
-        hero: hero,
-        hero_alt: hero_alt,
-      }
-    %}
-  {% endblock %}
-  <div>
-    {% block page_hero_body %}
-      {{ page.hero }}
-    {% endblock %}
-  </div>
+  {% include "@lex/includes/hero.html.twig"
+    with {
+      page: page,
+      hero: hero,
+      hero_alt: hero_alt,
+    }
+  %}
 {% endblock %}
 
 
