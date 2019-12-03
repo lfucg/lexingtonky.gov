@@ -61,3 +61,24 @@ ol, ul, dl {
     }
   }
 }
+
+.lex-region-sidebar {
+  #block-eventsblock, #block-meetingsblock {
+    padding: 2rem 0 !important;
+
+    .lex-event-list {
+      .event-card {
+        margin-left: 0 !important;
+      }
+      .more-link {
+        float: left;
+      }
+    }
+  }
+}
+
+a.lex-calltoaction {
+  &:hover {
+    background-color: color(yellow) !important;
+  }
+}
