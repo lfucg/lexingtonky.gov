@@ -69,7 +69,7 @@ body header {
     transition: .5s ease-in-out;
     width: 60px;
     z-index: 8;
-    
+
     &:hover:not(.open) {
       background-color: color(light-gray);
     }
@@ -164,9 +164,4 @@ body header {
   .search-lines {
     display: block;
   }
-}
-
-
-#block-lex-police-local-tasks.section-padding {
-  padding: 0 !important;
 }

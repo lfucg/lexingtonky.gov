@@ -1,0 +1,37 @@
+#landing-page-container {
+  background: linear-gradient(0deg, rgba(0,26,73,1) 40%, rgba(255,255,255,0) 100%);
+  bottom: 0;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+
+  section.lex-region-title {
+    position: absolute;
+    bottom: 0;
+    height: 30%;
+    width: 100%;
+  }
+
+  h1 {
+    color: color(white);
+    font-size: 1.5rem;
+    margin-left: 8px;
+  }
+  #block-pagetitle {
+    margin: 0;
+  }
+
+  .section-padding {
+    padding: 0 5% !important;
+  }
+
+  .views-view-grid {
+    display: flex;
+    .lex-card-title {
+      a:hover {
+        border-bottom: none !important;
+      }
+    }
+  }
+
+}

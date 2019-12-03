@@ -10,7 +10,7 @@ dependencies:
 id: lookupservicesblock
 theme: lex
 region: breadcrumb
-weight: -16
+weight: -14
 provider: null
 plugin: lookup_services_block
 settings:
