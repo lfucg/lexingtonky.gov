@@ -33,6 +33,7 @@ body {
   }
 
   .search-block {
+    top: initial !important;
 
     &.hide {
       display: none;
@@ -130,5 +131,11 @@ body {
         padding: 0 1rem;
       }
     }
+  }
+}
+
+.lex-hero {
+  .search-block {
+    top: 0 !important;
   }
 }
