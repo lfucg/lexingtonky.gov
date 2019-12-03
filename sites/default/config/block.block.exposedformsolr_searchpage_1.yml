@@ -11,7 +11,7 @@ dependencies:
 id: exposedformsolr_searchpage_1
 theme: lex
 region: hero
-weight: -16
+weight: -18
 provider: null
 plugin: 'views_exposed_filter_block:solr_search-page_1'
 settings:

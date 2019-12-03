@@ -11,8 +11,8 @@ dependencies:
     - lex
 id: views_block__sibling_pages_full_bleed
 theme: lex
-region: hero
-weight: -17
+region: title
+weight: -16
 provider: null
 plugin: 'views_block:sibling_pages-block_2'
 settings:

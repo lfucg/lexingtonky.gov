@@ -12,7 +12,7 @@ dependencies:
 id: exposedformsolr_searchpage_1_5
 theme: lex
 region: title
-weight: -24
+weight: -14
 provider: null
 plugin: 'views_exposed_filter_block:solr_search-page_1'
 settings:
