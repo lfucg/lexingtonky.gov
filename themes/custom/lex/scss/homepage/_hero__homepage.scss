@@ -125,7 +125,7 @@ body {
       display: flex;
       flex-wrap: wrap;
       @include screens-below(sm) {
-        justify-content: space-between;
+        justify-content: space-evenly;
       }
       li {
         padding: 0 1rem;
