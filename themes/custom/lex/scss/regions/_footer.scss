@@ -3,7 +3,8 @@ body footer {
   color: color(white);
   padding: 2rem 5%;
   @include screens-below(sm) {
-    padding: 0;
+    padding: 0 !important;
+
   }
   .lex-region-footer {
     display: flex;
@@ -46,6 +47,9 @@ body footer {
     color: color(light-gray);
     li {
       font-size: 1rem;
+      @include screens-below(sm) {
+        font-size: .9rem;
+      }
     }
   }
 

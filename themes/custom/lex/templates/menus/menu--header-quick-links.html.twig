@@ -12,7 +12,7 @@
     {% endif %}
     {% for item in items %}
       <li{{ item.attributes }}>
-        {{ link(item.title, item.url, { 'class':['dark-bg', 'ml-3'] }) }}
+        {{ link(item.title, item.url, { 'class':['dark-bg', 'ml-3 ml-xs-1'] }) }}
         {% if item.below %}
           {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
         {% endif %}
