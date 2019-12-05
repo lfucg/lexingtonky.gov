@@ -1,5 +1,5 @@
 lex_calendar.eventPage:
-  path: 'calendar/events'
+  path: 'calendar'
   defaults:
     _controller:
       '\Drupal\lex_calendar\Controller\PageController::eventPage'
@@ -14,11 +14,11 @@ lex_calendar.meetingPage:
   requirements:
     _permission: 'access content'
 
-lex_calendar.fetchEvents:
-  path: 'calendar/fetchEvents'
+lex_calendar.fetchEventsAndMeetings:
+  path: 'calendar/fetchEventsAndMeetings'
   defaults:
     _controller:
-      '\Drupal\lex_calendar\Controller\CalendarController::fetchEvents'
+      '\Drupal\lex_calendar\Controller\CalendarController::fetchEventsAndMeetings'
   requirements:
     _permission: 'access content'
 

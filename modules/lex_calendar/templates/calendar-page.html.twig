@@ -1,4 +1,11 @@
-<div id="calendar"></div>
+<div class="calendar-container row">
+  <div class="col-8">
+    <div id="calendar"></div>
+  </div>
+  <div class="col-4">
+    <div id="sidebar-calendar"></div>
+  </div>
+</div>
 <div id="mobileCalendar"></div>
 <script>
 window.addEventListener( 'load', function(){
@@ -18,10 +25,11 @@ window.addEventListener( 'load', function(){
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month, agendaWeek, listMonth',
+        right: 'month',
       },
       editable: false,
       eventsLimit: true,
+      defaultView: 'month',
       events: '/calendar/{{ fc_callback }}',
       defaultDate: '{{ "now"|date("Y-m-d") }}',
       views: {
@@ -32,6 +40,14 @@ window.addEventListener( 'load', function(){
           titleFormat: 'dddd, MMMM d'
         }
       }
+    });
+
+    $('#sidebar-calendar').fullCalendar({
+      editable: false,
+      eventsLimit: true,
+      defaultView: 'listMonth',
+      events: '/calendar/{{ fc_callback }}',
+      defaultDate: '{{ "now"|date("Y-m-d") }}',
     });
 
     $('#mobileCalendar').fullCalendar({
