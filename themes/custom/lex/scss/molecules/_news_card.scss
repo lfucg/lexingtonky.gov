@@ -38,6 +38,11 @@
         top: 10%;
         background-color: color(med-blue);
 
+        @media (max-width: 400px) {
+            width: 32%;
+        }
+
+
         .lex-card-fulldate {
             margin-bottom: 0 !important;
             color: color(white);
@@ -134,6 +139,10 @@
         .date-overlay {
             background-color: color(yellow) !important;
             width: 27.5%;
+
+            @media (max-width: 400px) {
+                width: 32%;
+            }
         }
 
         .news-heading {

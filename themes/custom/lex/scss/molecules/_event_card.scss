@@ -173,3 +173,9 @@
         }
     }
 }
+
+.home-meetings-block, .home-levents-block {
+    @media (min-width: 1200px) and (max-width: 1283px) {
+        max-width: 50%;
+    }
+}
