@@ -1,9 +1,11 @@
 uuid: 2402a32e-e3c3-4974-8a0a-d2db08bb1f64
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  content:
+    - 'file:file:792debd9-64eb-4ba2-b1ac-7905467ddf7b'
 id: icon_button_with_description
 label: 'Icon Button with Description'
-icon_uuid: null
+icon_uuid: 792debd9-64eb-4ba2-b1ac-7905467ddf7b
 description: ''
 behavior_plugins: {  }

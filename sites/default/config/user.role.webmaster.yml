@@ -8,10 +8,13 @@ weight: -7
 is_admin: null
 permissions:
   - 'access administration pages'
+  - 'access paragraph_items entity browser pages'
   - 'access toolbar'
   - 'access user profiles'
   - 'administer account settings'
   - 'administer contact forms'
+  - 'administer embed buttons'
+  - 'administer entity browsers'
   - 'administer menu'
   - 'administer permissions'
   - 'administer taxonomy'

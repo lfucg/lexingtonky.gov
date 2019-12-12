@@ -3,9 +3,8 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.paragraph.preview
     - entity_browser.browser.paragraph_items
-  content:
-    - 'file:file:6900721a-7e88-422c-a28a-97ca7a0fe1b1'
   module:
     - entity_embed
     - paragraphs
@@ -17,8 +16,9 @@ type_id: entity
 type_settings:
   entity_type: paragraph
   bundles: {  }
-  display_plugins: {  }
+  display_plugins:
+    - 'view_mode:paragraph.preview'
   entity_browser: paragraph_items
   entity_browser_settings:
     display_review: false
-icon_uuid: 6900721a-7e88-422c-a28a-97ca7a0fe1b1
+icon_uuid: null
