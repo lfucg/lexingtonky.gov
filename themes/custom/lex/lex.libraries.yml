@@ -16,6 +16,7 @@ global-js:
     js/takeover-navigation.js: {}
     js/internal-search-block.js: {}
     js/cards.js: {}
+    js/lex-cal.js: {}
   dependencies:
     - core/jquery
     - core/jquery.ui.autocomplete

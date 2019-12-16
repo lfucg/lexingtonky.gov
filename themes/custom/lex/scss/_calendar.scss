@@ -1,0 +1,156 @@
+
+.fc-event {
+  width: 8px;
+  height: 10px;
+  border-radius: 100%;
+  display: inline-block;
+
+  .fc-content {
+    display: none;
+  }
+}
+
+.fc-day-number {
+  margin-left: 100%;
+}
+
+.fc-day-top {
+  padding-left: 1.5% !important;
+}
+
+.fc-widget-header, .fc-head-container {
+  background: none !important;
+  border: none !important;
+}
+
+.fc-button {
+  background: transparent !important;
+  color: black !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.fc-list-heading {
+  border-bottom: 1px solid color(gray);
+
+  .fc-widget-header {
+    height: 100%;
+    min-width: 50%;
+  }
+  .dot-event {
+    margin-right: 10px;
+    margin-top: 8px;
+  }
+}
+
+.details-link {
+  font-size: .8em;
+  opacity: 0;
+}
+
+.list-event-container {
+  margin: 8px 0;
+  padding: 0 8px;
+  display: flex;
+
+  a {
+    background-color: none;
+    width: 100% !important;
+    display: inline-block;
+  }
+  &:hover {
+    background-color: color(yellow);
+    
+    .list-text-container {
+      color: white;
+    }
+    .list-dot {
+      background-color: white !important;
+      border: none;
+    }
+    .details-link {
+      opacity: 100%;
+    }
+  }
+}
+
+.list-text-container {
+  width: 90%;
+  display: block;
+  float: right;
+  color: color(dark-blue);
+}
+
+.list-event-title, .list-event-date, .list-event-time {
+  width: 100%;
+  display: block;
+}
+
+.list-event-title {
+  font-size: 1.25em;
+}
+
+.list-event-time {
+  font-size: .8em;
+}
+
+.fc-list-heading-main {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1.5em;
+  color: color(dark-blue);
+}
+
+#sidebar-calendar {
+  background-color: color(light-gray);
+}
+
+.calendar-container {
+  max-height: 525px;
+  margin-bottom: 50px;
+}
+
+.fc-scroller {
+  max-height: 490px !important;
+  height: auto !important;
+}
+
+.mobile-switch {
+  display: none;
+  width: 100%;
+  border: 1px solid color(dark-gray);
+  font-size: 1.5em;
+  text-align: center;
+  line-height: 65px;
+
+  .month-switch {
+    color: color(lex-blue);
+    border-right: 1px solid color(dark-gray);
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .list-switch {
+    color: color(dark-gray);
+    background-color: color(light-gray);
+    border-left: 1px solid color(dark-gray);
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  @media (max-width: 767px) {
+    display: flex;
+  }
+}
+
+.calendar-key {
+    padding-left: 15px;
+
+    .meeting-dot {
+        background-color: rgb(81, 164, 124);
+    }
+}

@@ -5,8 +5,8 @@
     background: $color-secondary-2
     color: #000
 
-.fc-row .fc-content-skeleton td.fc-past
-  background: $color-secondary-1
+// .fc-row .fc-content-skeleton td.fc-past
+//   background: $color-secondary-1
 
 .fc-center h2
   margin-top: 0
@@ -55,25 +55,9 @@
     margin-left: 0
 
 @media (max-width: 767px)
-  #calendar, #sidebar-calendar
-    display: none
+  #sidebar-calendar
+    opacity: 0;
 
-  #mobileCalendar
-    .fc-left
-      width: 100%
-
-      .fc-button-group
-        width: 100%
-        display: flex
-        flex: row nowrap
-
-        button.fc-button
-          width: 33%
-          float: none
-
-@media (min-width: 768px)
-  #mobileCalendar
-    display: none
 
 
 #sidebar-calendar 

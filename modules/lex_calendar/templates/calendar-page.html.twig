@@ -1,12 +1,23 @@
-<div class="calendar-container row">
-  <div class="col-8">
-    <div id="calendar"></div>
+<div class="mobile-switch row">
+  <div class="month-switch col-6">
+    Month
   </div>
-  <div class="col-4">
-    <div id="sidebar-calendar"></div>
+  <div class="list-switch col-6">
+    List
   </div>
 </div>
-<div id="mobileCalendar"></div>
+<div class="calendar-container row">
+  <div class="col-12 col-md-8">
+    <div id="calendar"></div>
+  </div>
+  <div class="col-12 col-md-4">
+    <div id="sidebar-calendar"></div>
+  </div>
+  <div class="calendar-key">
+    <span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event" title=""></span> Event
+    <span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event meeting-dot" title=""></span> Meeting
+  </div>
+</div>
 <script>
 window.addEventListener( 'load', function(){
   (function($) {
@@ -23,9 +34,9 @@ window.addEventListener( 'load', function(){
 
     $('#calendar').fullCalendar({
       header: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'month',
+        left: 'prev,next title',
+        center: '',
+        right: '',
       },
       editable: false,
       eventsLimit: true,
@@ -34,23 +45,71 @@ window.addEventListener( 'load', function(){
       defaultDate: '{{ "now"|date("Y-m-d") }}',
       views: {
         month: {
-          titleFormat: 'MMMM'
+          titleFormat: 'MMMM YYYY'
         },
         day: {
           titleFormat: 'dddd, MMMM d'
+        }
+      },
+      eventAfterAllRender: function() {
+        var view = $('#calendar').fullCalendar('getView');
+
+        // reset calendar dots
+        $('#calendar').find('.fc-event').remove();
+
+        // manage dots
+        var events = $('#calendar').fullCalendar('clientEvents');
+
+        for (var i = 0; i < events.length; i++) {
+            var event = events[i];
+            var name = event.title;
+            var now = event.start.clone();
+
+        // loop through event dates
+            var $dot = $('<span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event " title=""></span>');
+            $dot.css('background-color', event.color);
+            // append to calendar day
+            $('.fc-day-top[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($dot);
+            now.add(1, 'days');
         }
       }
     });
 
     $('#sidebar-calendar').fullCalendar({
+      header: {
+        left: 'prev,today,next',
+        center: '',
+        right: '',
+      },
       editable: false,
       eventsLimit: true,
       defaultView: 'listMonth',
       events: '/calendar/{{ fc_callback }}',
       defaultDate: '{{ "now"|date("Y-m-d") }}',
+      listDayFormat: 'MMM D',
+      eventAfterAllRender: function() {
+        var view = $('#sidebar-calendar').fullCalendar('getView');
+                
+        $('#sidebar-calendar').find('.fc-list-item').remove();
+        $('#sidebar-calendar').find('.fc-list-heading-alt').remove();
+
+        var events = $('#sidebar-calendar').fullCalendar('clientEvents');
+
+        for (var i = 0; i < events.length; i++) {
+          var event = events[i];
+          var name = event.title;
+          var now = event.start.clone();
+
+          var $listBlock = $('<div class="list-event-container"><a href="' + event.url + '"><span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event list-dot " style="background-color:' + event.color +'" title=""></span><div class="list-text-container"><span class="list-event-title">' + event.title + '</span><span class="list-event-date">' + event.start.format('MMMM D, YYYY') + '</span><span class="list-event-time">' + event.start.format('h:mm a') + '</span><span class="details-link">Details <i class="fas fa-chevron-right"></i></div></a></div>');
+
+          // append to calendar day
+          $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($listBlock);
+          now.add(1, 'days');
+        }
+      }
     });
 
-    $('#mobileCalendar').fullCalendar({
+    /*$('#mobileCalendar').fullCalendar({
       header: {
         left: 'prev,today,next',
         center: 'title',
@@ -62,6 +121,7 @@ window.addEventListener( 'load', function(){
       events: '/calendar/{{ fc_callback }}',
       defaultDate: '{{ "now"|date("Y-m-d") }}',
     });
+    */
   })(jQuery);
 });
 </script>
