@@ -145,6 +145,7 @@ class FullCalendarService {
         'start' => $start,
         'url' => $event->url(),
         'description' => $event->body->value,
+        'color' => $event->bundle() === 'meeting' ? '#51A47C' : '#004585',
       ];
     }
   }

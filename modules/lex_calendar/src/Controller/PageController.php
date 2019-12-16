@@ -16,8 +16,8 @@ class PageController extends ControllerBase {
     return [
       '#type' => 'markup',
       '#theme' => 'calendar_page',
-      '#title' => $this->t('City events calendar'),
-      '#fc_callback' => 'fetchEvents',
+      '#title' => $this->t('City Calendar'),
+      '#fc_callback' => 'fetchEventsAndMeetings',
       '#attached' => [
         'library' => [
           'lex_calendar/lex_calendar',

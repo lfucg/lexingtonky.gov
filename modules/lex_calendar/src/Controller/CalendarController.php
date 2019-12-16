@@ -89,30 +89,31 @@ class CalendarController extends ControllerBase {
   }
 
   /**
-   * Responder for route /calendar/fetchEvents.
+   * Responder for route /calendar/fetchEventsAndMeetings.
    */
-  public function fetchEvents() {
-    return $this->jsonFetch('event');
+  public function fetchEventsAndMeetings() {
+    return $this->jsonFetch(['event', 'meeting']);
   }
 
   /**
    * Compose and return a JSON object of calendar data.
    *
-   * @param string $contentType
+   * @param array $contentTypes
    *   The Content Type to fetch, for now mettings or events.
    */
-  protected function jsonFetch($contentType) {
-    /*
-     * Load the date range to search into the FullCalendar service.
-     */
-    $request = $this->requestStack->getCurrentRequest();
-    $this->queryEvents($contentType, $request->query->get('start'), $request->query->get('end'));
+  protected function jsonFetch($contentTypes) {
+     foreach($contentTypes as $ct) { 
+      /*
+      * Load the date range to search into the FullCalendar service.
+      */
+      $request = $this->requestStack->getCurrentRequest();
+      $this->queryEvents($ct, $request->query->get('start'), $request->query->get('end'));
 
-    /*
-     * Pack the results up and send them out the door.
-     */
-    $this->response->setData($this->events->getEvents());
+      /*
+      * Pack the results up and send them out the door.
+      */
+      $this->response->setData($this->events->getEvents());
+    }
     return $this->response;
   }
-
 }

@@ -5,8 +5,6 @@
     background: $color-secondary-2
     color: #000
 
-.fc-row .fc-content-skeleton td.fc-past
-  background: $color-secondary-1
 
 .fc-center h2
   margin-top: 0
@@ -39,7 +37,7 @@
   tr:not(.fc-list-item) a:visited
     color: #fff
 
-#calendar
+#calendar, #sidebar-calendar
   margin-top: 2em
 
 #calendar table td.fc-today
@@ -55,23 +53,11 @@
     margin-left: 0
 
 @media (max-width: 767px)
-  #calendar
+  #sidebar-calendar
+    opacity: 0;
+
+
+
+#sidebar-calendar 
+  .fc-header-toolbar 
     display: none
-
-  #mobileCalendar
-    .fc-left
-      width: 100%
-
-      .fc-button-group
-        width: 100%
-        display: flex
-        flex: row nowrap
-
-        button.fc-button
-          width: 33%
-          float: none
-
-@media (min-width: 768px)
-  #mobileCalendar
-    display: none
-

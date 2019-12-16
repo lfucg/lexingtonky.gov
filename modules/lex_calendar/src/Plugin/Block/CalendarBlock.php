@@ -192,10 +192,6 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
 
     $events = $this->events->getEvents();
 
-    // foreach($events as $event) {
-    //   var_dump($event);
-    // }
-
     if (count($events) > 0) {
       $events = array_chunk($events, $config['display_limit'])[0];
 
