@@ -2,7 +2,6 @@
     var $ = jQuery;
 
     $('.list-switch').click(function () {
-        console.log('hey');
         $('.list-switch').css({
             'background-color': 'white',
             'color': '#004585'
