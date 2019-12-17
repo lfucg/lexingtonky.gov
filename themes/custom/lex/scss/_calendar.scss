@@ -4,6 +4,7 @@
   height: 10px;
   border-radius: 100%;
   display: inline-block;
+  border: none !important;
 
   .fc-content {
     display: none;
@@ -103,29 +104,38 @@
 
 #sidebar-calendar {
   background-color: color(light-gray);
+
+    @media (max-width: 767px) {
+        margin-top: 2em !important;
+        height: auto !important;
+    }
 }
 
 .calendar-container {
   max-height: 525px;
   margin-bottom: 50px;
+  display: inline-block;
 }
 
 .fc-scroller {
-  max-height: 490px !important;
   height: auto !important;
+
+    @media (max-width: 767px) {
+       height: 226px !important;
+       max-height: none !important;
+    }
 }
 
 .mobile-switch {
   display: none;
-  width: 100%;
-  border: 1px solid color(dark-gray);
+  width: 100vw;
+  margin-left: -5% !important;
   font-size: 1.5em;
   text-align: center;
   line-height: 65px;
 
   .month-switch {
     color: color(lex-blue);
-    border-right: 1px solid color(dark-gray);
 
     &:hover {
       cursor: pointer;
@@ -135,7 +145,6 @@
   .list-switch {
     color: color(dark-gray);
     background-color: color(light-gray);
-    border-left: 1px solid color(dark-gray);
 
     &:hover {
       cursor: pointer;
@@ -152,5 +161,49 @@
 
     .meeting-dot {
         background-color: rgb(81, 164, 124);
+    }
+}
+
+.placeholder-col {
+    @media (max-width: 767px) {
+        display: none;
+    }
+}
+
+.sidecal-col {
+    position: absolute !important;
+    right: 0;
+    top: 0;
+
+    #sidebar-calendar {
+        position: absolute;
+    }
+
+    @media (max-width: 767px) {
+        position: unset !important;
+
+        #sidebar-calendar {
+            position: unset;
+        }
+  }
+}
+
+.fc-week {
+    @media (min-width: 768px) {
+        height: 100px !important;
+    }
+}
+
+#calendar-main {
+    padding-top: 2% !important;
+
+    #block-pagetitle {
+        margin-bottom: 0 !important;
+    }
+}
+
+.month-dot {
+    &:hover {
+        cursor: pointer;
     }
 }
