@@ -19,10 +19,7 @@
 
     var num = '';
 
-    
-    $(window).on('load', function () {
-        //get the natural page height -set it in variable above.
-
+    function heightCalc() {
         height = parseInt($('main').height());
         paddingTop = parseInt($('main').css('padding-top'));
         paddingBottom = parseInt($('main').css('padding-bottom'));
@@ -33,7 +30,7 @@
 
         if (parseInt($('#toolbar-bar').height()) > 0) {
             toolbarHeight = parseInt($('#toolbar-bar').height());
-        }else {
+        } else {
             toolbarHeight = 0;
         }
 
@@ -51,6 +48,14 @@
             'margin-top': combinedTopMarg + 'px'
         });
         $('.fc-scroller').css('max-height', combinedHeight + 'px');
+    }
+
+    $(window).on('load', function () {
+        //get the natural page height -set it in variable above.
+
+        if ($(window).width() >= 768) {
+            heightCalc();
+        }
     });
 
     $('.list-switch').click(function () {
@@ -92,10 +97,11 @@
                 'color': '#353535'
             });
             $('#sidebar-calendar').css({
-                'display': 'block',
-                'opacity': '100%'
+                'display': 'inline-block',
             });
-            $('.sidecal-col').css('height', 'auto');
+            $('.sidecal-col').css({
+                'height': 'auto',
+        });
             $('#calendar').css('display', 'none');
             $('.calendar-key').css('display', 'none');
         }else if (dualMode == true) {
@@ -111,11 +117,13 @@
             monthMode = false;
             listMode = false;
             modeCheck();
+            heightCalc();
         }else {
             monthMode = true;
             dualMode = false;
             listMode = false;
             modeCheck();
+            heightCalc();
         }
     });
 
