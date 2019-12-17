@@ -7,5 +7,5 @@
     {% include '@components/molecules/event-card.twig' with {heading: title, description: lexDate(date.title) , text: lexTimeRange(event)|escape('html'), url: event.url} %}
   {% endfor %}
 {% endfor %}
-<div class="more-link usa-button lex-morelink lex-button"><a href="/calendar/{{content_type}}s">more {{content_type}}s</a></div>
+<div class="more-link usa-button lex-morelink lex-button"><a href="/calendar">more {{content_type}}s</a></div>
 </div>
