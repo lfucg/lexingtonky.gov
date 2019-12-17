@@ -10,6 +10,8 @@
     var feedbackPaddingTop = '';
     var feedbackPaddingBottom = '';
     var feedbackTotal = '';
+    var toolbarHeight = '';
+    var adminHeight = '';
 
     var listMode = '';
     var monthMode = '';
@@ -28,8 +30,21 @@
         feedbackPaddingTop = parseInt($('.lex-region-feedback').css('padding-top'));
         feedbackPaddingBottom = parseInt($('.lex-region-feedback').css('padding-bottom'))
         feedbackTotal = feedbackHeight + feedbackPaddingTop + feedbackPaddingBottom;
+
+        if (parseInt($('#toolbar-bar').height()) > 0) {
+            toolbarHeight = parseInt($('#toolbar-bar').height());
+        }else {
+            toolbarHeight = 0;
+        }
+
+        if (parseInt($('#toolbar-item-administration-tray').height()) > 0) {
+            adminHeight = parseInt($('#toolbar-item-administration-tray').height());
+        } else {
+            adminHeight = 0;
+        }
+
         combinedHeight = height + feedbackTotal + paddingTop + paddingBottom;
-        combinedTopMarg = parseInt($('.lex-region-breadcrumb').height() + $('.sticky-top').height() + $('#block-lex-headerquicklinks').height());
+        combinedTopMarg = parseInt($('.lex-region-breadcrumb').height() + $('.sticky-top').height() + $('#block-lex-headerquicklinks').height() + toolbarHeight + adminHeight);
 
         $('#sidebar-calendar').css({
             'height': combinedHeight + 'px',
