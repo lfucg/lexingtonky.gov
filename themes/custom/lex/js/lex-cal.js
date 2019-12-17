@@ -56,8 +56,10 @@
         //get the natural page height -set it in variable above.
 
         if ($(window).width() >= 768) {
+            dualMode = true;
             heightCalc();
         }else {
+            monthMode = true;
             $('#sidebar-calendar').css('display', 'none');
         }
     });
