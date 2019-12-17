@@ -1,6 +1,8 @@
 (function () {
     var $ = jQuery;
 
+    $('#sidebar-calendar').css('display', 'inline-block');
+
     var combinedHeight= '';
     var combinedTopMarg= '';
     var height= '';
@@ -55,6 +57,8 @@
 
         if ($(window).width() >= 768) {
             heightCalc();
+        }else {
+            $('#sidebar-calendar').css('display', 'none');
         }
     });
 
@@ -101,7 +105,7 @@
             });
             $('.sidecal-col').css({
                 'height': 'auto',
-        });
+            });
             $('#calendar').css('display', 'none');
             $('.calendar-key').css('display', 'none');
         }else if (dualMode == true) {
@@ -128,12 +132,26 @@
     });
 
     $(document).on('click', '.month-dot', function () {
-        num = $(this).attr('id').substr(6);
+        if (dualMode==true) {
+            num = $(this).attr('id').substr(6);
 
-        $('.list-event-container').each(function () {
-            if ($(this).attr('id').substr(5) == num) {
-                $(this)[0].scrollIntoView();
-            }
-        });
+            $('.list-event-container').each(function () {
+                if ($(this).attr('id').substr(5) == num) {
+                    $(this)[0].scrollIntoView();
+                }
+            });
+        }else {
+            num = $(this).attr('id').substr(6);
+            dualMode = false;
+            monthMode= false;
+            listMode = true;
+            modeCheck();
+
+            $('.list-event-container').each(function () {
+                if ($(this).attr('id').substr(5) == num) {
+                    $(this)[0].scrollIntoView();
+                }
+            });
+        }
     });
 }());
