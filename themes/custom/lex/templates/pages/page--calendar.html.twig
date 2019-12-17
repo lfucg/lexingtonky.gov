@@ -1,54 +1,6 @@
+{% extends 'page.html.twig' %}
 {% set content_attributes = content_attributes.addClass('lex-calendar-page') %}
 
-{#
-/**
- * @file
- * Root Page Layout schema.  Other page layouts, such as the homepage, extend
- * from this base and override the blocks seen here.
-
- * - content_attributes (added by City of Lexington)
- * - attributes.layout_class (added by City of Lexington for fullbleed layout)
- *
- * NOTE: Region names are sometimes misleading for backwards compatibility
- * reasons. See the info.yml of the theme to see what machine name links to
- * which admin displayed theme.
- */
-#}
-{% block page_notices %}
-<div id="top-alert">
-  {{ page.notices }}
-</div>
-{% endblock %}
-
-{% block page_header %}
-  {% include "@components/components/header.twig" with { menu: page.sitemast } %}
-{% endblock %}
-
-{% block page_hero %}
-  {% if is_front %}
-    {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri|image_style('hero_image')) %}
-    {% set hero_alt = node.field_lex_custom_banner_image.alt %}
-  {% elseif node.field_lex_custom_banner_image.entity.fileuri %}
-    {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
-    {% set hero_alt = node.field_lex_custom_banner_image.alt %}
-  {% else %}
-    {% set hero = '' %}
-  {% endif %}
-  {% include "@lex/includes/hero.html.twig" with {
-    page: page,
-    hero: hero,
-    hero_alt: hero_alt,
-    block: 'block_1',
-  } %}
-{% endblock %}
-
-{% block page_breadcrumb %}
-{{ page.breadcrumb }}
-{% endblock %}
-
-{% block page_events %}
-{{page.events}}
-{% endblock %}
 
 {% block page_main %}
 <a id="main-content" name="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
@@ -73,22 +25,3 @@
   {% endblock %}
 </main>
 {% endblock %}
-
-{% block page_feedback %}
-  {{ page.feedback }}
-{% endblock %}
-
-<footer class="slab--dark-blue section-padding">
-{% block page_footer %}
-  {{ page.footer }}
-{% endblock %}
-<div class="slab--lex-blue footer-bottom">
-  {% include "@lex/includes/lexington-copyright.html.twig"
-    with {
-      section_class: 'd-flex d-md-none',
-      wordmark_class: 'mt-2',
-    }
-  %}
-  </div>
-</footer>
-
