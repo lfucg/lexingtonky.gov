@@ -5,7 +5,6 @@ dependencies:
   config:
     - field.storage.node.field_page_section
     - node.type.page
-    - paragraphs.paragraphs_type.paragraphs_page_section
   module:
     - entity_reference_revisions
 id: node.page.field_page_section
@@ -21,18 +20,20 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
-    target_bundles:
-      paragraphs_page_section: paragraphs_page_section
+    negate: 1
+    target_bundles: null
     target_bundles_drag_drop:
       paragraphs_page_section:
-        enabled: true
         weight: 2
+        enabled: false
       card_button:
         weight: 11
         enabled: false
       card_grid:
         weight: 12
+        enabled: false
+      rendered_block:
+        weight: 13
         enabled: false
       contact_card:
         weight: 13
@@ -54,5 +55,8 @@ settings:
         enabled: false
       photo_grid:
         weight: 20
+        enabled: false
+      views_block:
+        weight: 24
         enabled: false
 field_type: entity_reference_revisions

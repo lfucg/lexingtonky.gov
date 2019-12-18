@@ -7,6 +7,7 @@ module:
   automated_cron: 0
   block: 0
   block_content: 0
+  block_field: 0
   breakpoint: 0
   captcha: 0
   chosen: 0

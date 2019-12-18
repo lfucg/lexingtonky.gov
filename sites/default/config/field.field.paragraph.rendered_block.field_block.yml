@@ -1,0 +1,23 @@
+uuid: 1f1149e8-ed11-4802-bdb5-4eaee6a8a9af
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_block
+    - paragraphs.paragraphs_type.rendered_block
+  module:
+    - block_field
+id: paragraph.rendered_block.field_block
+field_name: field_block
+entity_type: paragraph
+bundle: rendered_block
+label: Block
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  plugin_ids:
+    Lex_calendar_list_block: Lex_calendar_list_block
+field_type: block_field

@@ -6,6 +6,8 @@ dependencies:
     - field.storage.node.field_sidebar_section
     - node.type.page
     - paragraphs.paragraphs_type.paragraph_sidebar_section
+    - paragraphs.paragraphs_type.rendered_block
+    - paragraphs.paragraphs_type.views_block
   module:
     - entity_reference_revisions
 id: node.page.field_sidebar_section
@@ -21,8 +23,11 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
+    negate: 0
     target_bundles:
       paragraph_sidebar_section: paragraph_sidebar_section
+      rendered_block: rendered_block
+      views_block: views_block
     target_bundles_drag_drop:
       paragraph_sidebar_section:
         enabled: true
@@ -33,4 +38,31 @@ settings:
       paragraphs_page_section:
         weight: 6
         enabled: false
+      rendered_block:
+        enabled: true
+        weight: 13
+      card_button:
+        weight: 14
+        enabled: false
+      card_grid:
+        weight: 15
+        enabled: false
+      contact_card:
+        weight: 16
+        enabled: false
+      icon_button_with_description:
+        weight: 17
+        enabled: false
+      lexidme_case:
+        weight: 18
+        enabled: false
+      lexidme_grid:
+        weight: 19
+        enabled: false
+      photo_grid:
+        weight: 23
+        enabled: false
+      views_block:
+        enabled: true
+        weight: 24
 field_type: entity_reference_revisions

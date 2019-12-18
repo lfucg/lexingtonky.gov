@@ -11,7 +11,7 @@ id: paragraph.card_button.field_image
 field_name: field_image
 entity_type: paragraph
 bundle: card_button
-label: image
+label: Image
 description: ''
 required: false
 translatable: false

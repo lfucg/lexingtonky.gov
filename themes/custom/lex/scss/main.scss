@@ -3,6 +3,7 @@
 @import './slab';
 @import './variables';
 @import './regions/footer';
+@import './regions/sidebar';
 @import './paragraphs';
 @import './homepage/hero__homepage';
 @import './homepage/lookup_services';
@@ -13,8 +14,8 @@
 @import './molecules/icon_button_with_description';
 @import './molecules/card_button';
 @import './molecules/contact_card';
-@import'./molecules/event_card';
-@import'./molecules/news_card';
+@import './molecules/event_card';
+@import './molecules/news_card';
 @import './accordions';
 @import './browsernav';
 @import './calendar';
