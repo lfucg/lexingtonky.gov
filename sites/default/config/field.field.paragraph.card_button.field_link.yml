@@ -11,7 +11,7 @@ id: paragraph.card_button.field_link
 field_name: field_link
 entity_type: paragraph
 bundle: card_button
-label: link
+label: Link
 description: ''
 required: false
 translatable: false

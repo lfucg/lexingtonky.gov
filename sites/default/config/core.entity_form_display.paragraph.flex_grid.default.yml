@@ -1,0 +1,31 @@
+uuid: 9ad5102f-61c5-4373-ae62-d51801bc75b5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.flex_grid.field_item
+    - paragraphs.paragraphs_type.flex_grid
+  module:
+    - paragraphs
+    - workbench_moderation
+id: paragraph.flex_grid.default
+targetEntityType: paragraph
+bundle: flex_grid
+mode: default
+content:
+  field_item:
+    type: entity_reference_paragraphs
+    weight: 6
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

@@ -1,3 +1,12 @@
 .paragraph--type--card-button, .paragraph--type--icon-button-with-description, .paragraph--type--contact-card {
     width: fit-content;
 }
+
+.paragraph--type--flex-grid {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    .paragraph {
+        margin: auto 12px;
+    }
+}

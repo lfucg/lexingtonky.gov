@@ -1,0 +1,9 @@
+uuid: 1d5c0dad-5b13-4dde-b66f-92d6d8209308
+langcode: en
+status: true
+dependencies: {  }
+id: flex_grid
+label: 'Flex Grid'
+icon_uuid: null
+description: 'Gives a display: flex; attribute to a grid that will automatically place other elements on the page and wrap them in the section. '
+behavior_plugins: {  }

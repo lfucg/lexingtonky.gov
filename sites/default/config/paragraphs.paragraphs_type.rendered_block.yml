@@ -1,0 +1,9 @@
+uuid: 747e5aab-51d4-42c6-ae75-ea82d1d0279a
+langcode: en
+status: true
+dependencies: {  }
+id: rendered_block
+label: 'Rendered Block'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

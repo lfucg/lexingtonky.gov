@@ -1,0 +1,9 @@
+uuid: 1f672847-c311-4e1c-a0cf-360ea9e5cb71
+langcode: en
+status: true
+dependencies: {  }
+id: views_block
+label: 'Views Block'
+icon_uuid: null
+description: 'Block from a view. '
+behavior_plugins: {  }
