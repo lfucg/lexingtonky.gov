@@ -6,6 +6,13 @@
     List
   </div>
 </div>
+<div class="filter-container">
+  <label class="mb-1" for="calendar-filter">Filter Calendar By Department</label>
+  </br>
+  <select id="calendar-filter">
+    <option value="default">Show Main Calendar</option>
+  </select>
+</div>
 <div class="calendar-container row">
   <div class="col-12 col-md-8">
     <div id="calendar"></div>
@@ -54,25 +61,44 @@ window.addEventListener( 'load', function(){
       },
       eventAfterAllRender: function() {
         var view = $('#calendar').fullCalendar('getView');
-
+        var relatedDepts = [];
         // reset calendar dots
         $('#calendar').find('.fc-event').remove();
 
         // manage dots
         var events = $('#calendar').fullCalendar('clientEvents');
 
-        for (var i = 0; i < events.length; i++) {
-            var event = events[i];
+       events.map((event) => {
+          var name = event.title;
+          var now = event.start.clone();
+          var arrayTest = $.inArray(event.relatedDepartments, relatedDepts);
+          if (arrayTest === -1 && event.relatedDepartments != null) {
+            relatedDepts.push(event.relatedDepartments);
+          }
+        })
+        relatedDepts.map((dept) => {
+          $('#calendar-filter').append(`<option value="${dept}">${dept}</option>`);
+        });
+
+        dateBuild();
+
+        function dateBuild() {
+          events.map((event) => {
             var name = event.title;
             var now = event.start.clone();
-
-        // loop through event dates
-            var $dot = $('<span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event month-dot " id="event-' + event.id + '" title=""></span>');
-            $dot.css('background-color', event.color);
-            // append to calendar day
-            $('.fc-day-top[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($dot);
-            now.add(1, 'days');
+            if ($('#calendar-filter').val() == 'default' || event.relatedDepartments == $('#calendar-filter').val()) {
+              var $dot = $(`<span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event month-dot id="event-${event.id}" title=""></span>`);
+              $dot.css('background-color', event.color);
+              // append to calendar day
+              $('.fc-day-top[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($dot);
+              now.add(1, 'days');
+            }
+          })
         }
+        $('#calendar-filter').change(function() {
+          $('#calendar').find('.month-dot').remove();
+          dateBuild();
+        });
       }
     });
 
@@ -97,28 +123,40 @@ window.addEventListener( 'load', function(){
 
         var events = $('#sidebar-calendar').fullCalendar('clientEvents');
 
-        for (var i = 0; i < events.length; i++) {
-          var event = events[i];
-          var name = event.title;
-          var now = event.start.clone();
+        listBuild();
 
-          if (event.start.format('h:mm a')=='12:00 p.m.') {
-            startTime = 'noon';
-          }else if(event.start.format('mm')=='00') {
-            startTime = event.start.format('h a')
-          }else {
-            startTime = event.start.format('h:mm a');
-          }
+        function listBuild() {
+          events.map((event) => {
+            var name = event.title;
+            var now = event.start.clone();
 
+            if (event.start.format('h:mm a')=='12:00 p.m.') {
+                startTime = 'noon';
+              }else if(event.start.format('mm')=='00') {
+                startTime = event.start.format('h a')
+              }else {
+                startTime = event.start.format('h:mm a');
+              }
 
-
-          var $listBlock = $(
-            '<div class="list-event-container" id="list-' + event.id + '"><a href="' + event.url + '"><span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event list-dot " style="background-color:' + event.color +'" title=""></span><div class="list-text-container"><span class="list-event-title">' + event.title + '</span><span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '</span><span class="list-event-time">' + startTime + '</span><span class="details-link">Details <i class="fas fa-chevron-right"></i></div></a></div>');
-
-          // append to calendar day
-          $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($listBlock);
-          now.add(1, 'days');
+            if ($('#calendar-filter').val() == 'default' || event.relatedDepartments == $('#calendar-filter').val()) {
+              var $listBlock = $(
+                  '<div class="list-event-container" id="list-' + event.id + '"><a href="' + event.url + '"><span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event list-dot " style="background-color:' + event.color +'" title=""></span><div class="list-text-container"><span class="list-event-title">' + event.title + '</span><span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '</span><span class="list-event-time">' + startTime + '</span><span class="details-link">Details <i class="fas fa-chevron-right"></i></div></a></div>');
+              $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'table-row');
+              $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').addClass('displayList');
+              $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($listBlock);
+            }else {
+              if ($('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'table-row')) {
+                $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'none');
+              }
+              now.add(1, 'days');
+            }
+          })
         }
+        $('#calendar-filter').change(function() {
+          $('#sidebar-calendar').find('.fc-list-heading').removeClass('displayList');
+          $('#sidebar-calendar').find('.list-event-container').remove();
+          listBuild();
+        });
       }
     });
   })(jQuery);

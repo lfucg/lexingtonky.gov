@@ -3,6 +3,7 @@
 namespace Drupal\lex_calendar;
 
 use Drupal\node\Entity\Node;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Translates Drupal node collections into fullcalendar.js data.
@@ -146,9 +147,11 @@ class FullCalendarService {
         'url' => $event->url(),
         'description' => $event->body->value,
         'color' => $event->bundle() === 'meeting' ? '#51A47C' : '#004585',
+        'relatedDepartments' => Term::load($event->get(field_related_departments)->target_id)->name->value,
       ];
     }
   }
+
 
   /**
    * Translate node event data to fullcalendar.js format and add it.
