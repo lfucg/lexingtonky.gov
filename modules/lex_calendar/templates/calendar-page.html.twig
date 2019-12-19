@@ -72,7 +72,7 @@ window.addEventListener( 'load', function(){
           var name = event.title;
           var now = event.start.clone();
           var arrayTest = $.inArray(event.relatedDepartments, relatedDepts);
-          if (arrayTest === -1 && event.relatedDepartments != null) {
+          if (arrayTest === -1 && event.relatedDepartments != null && now.month() == view.intervalStart.month()) {
             relatedDepts.push(event.relatedDepartments);
           }
         })
@@ -87,7 +87,7 @@ window.addEventListener( 'load', function(){
             var name = event.title;
             var now = event.start.clone();
             if ($('#calendar-filter').val() == 'default' || event.relatedDepartments == $('#calendar-filter').val()) {
-              var $dot = $(`<span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event month-dot id="event-${event.id}" title=""></span>`);
+              var $dot = $(`<span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event month-dot" id="event-${event.id}" title=""></span>`);
               $dot.css('background-color', event.color);
               // append to calendar day
               $('.fc-day-top[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($dot);
@@ -123,6 +123,12 @@ window.addEventListener( 'load', function(){
 
         var events = $('#sidebar-calendar').fullCalendar('clientEvents');
 
+        $('.fc-list-heading').each( function () {
+          if ($('#calendar-filter').val() == 'default' && $(this).not(':has(.list-event-container)')) {
+            $(this).css('display', 'none');
+          }
+        });
+
         listBuild();
 
         function listBuild() {
@@ -132,11 +138,11 @@ window.addEventListener( 'load', function(){
 
             if (event.start.format('h:mm a')=='12:00 p.m.') {
                 startTime = 'noon';
-              }else if(event.start.format('mm')=='00') {
-                startTime = event.start.format('h a')
-              }else {
-                startTime = event.start.format('h:mm a');
-              }
+            }else if(event.start.format('mm')=='00') {
+              startTime = event.start.format('h a')
+            }else {
+              startTime = event.start.format('h:mm a');
+            }
 
             if ($('#calendar-filter').val() == 'default' || event.relatedDepartments == $('#calendar-filter').val()) {
               var $listBlock = $(
