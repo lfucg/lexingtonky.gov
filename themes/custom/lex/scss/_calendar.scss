@@ -52,6 +52,7 @@
   margin: 8px 0;
   padding: 0 8px;
   display: flex;
+  min-width: 370px;
 
   a {
     background-color: none;
@@ -204,5 +205,19 @@
 .month-dot {
     &:hover {
         cursor: pointer;
+    }
+}
+
+.displayList {
+    display: table-row !important;
+}
+
+.filter-container {
+    @media (max-width: 767px) {
+        margin-top: 1em;
+    }
+
+    #calendar-filter {
+        border: 1px solid color(gray);
     }
 }
