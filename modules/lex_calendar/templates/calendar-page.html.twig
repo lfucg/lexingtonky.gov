@@ -71,17 +71,6 @@ window.addEventListener( 'load', function(){
         // manage dots
         var events = $('#calendar').fullCalendar('clientEvents');
 
-       events.map((event) => {
-          var name = event.title;
-          var now = event.start.clone();
-          var arrayTest = $.inArray(event.relatedDepartments, relatedDepts);
-          if (arrayTest === -1 && event.relatedDepartments != null && now.month() == view.intervalStart.month()) {
-            relatedDepts.push(event.relatedDepartments);
-          }
-        })
-        relatedDepts.map((dept) => {
-          $('#calendar-filter').append(`<option value="${dept}">${dept}</option>`);
-        });
         deptBuild();
 
         function deptBuild () {
