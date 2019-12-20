@@ -60,7 +60,7 @@
             heightCalc();
         }else {
             monthMode = true;
-            $('#sidebar-calendar').css('display', 'none');
+            $('#sidebar-calendar').css('visibility', 'hidden');
         }
     });
 
@@ -90,7 +90,7 @@
                 'background-color': '#EFEFEF',
                 'color': '#353535'
             });
-            $('#sidebar-calendar').css('display', 'none');
+            $('#sidebar-calendar').css('visibility', 'hidden');
             $('#calendar').css('display', 'block');
             $('.calendar-key').css('display', 'block');
         }else if (listMode == true) {
@@ -104,6 +104,7 @@
             });
             $('#sidebar-calendar').css({
                 'display': 'inline-block',
+                'visibility': 'visible'
             });
             $('.sidecal-col').css({
                 'height': 'auto',
@@ -155,5 +156,12 @@
                 }
             });
         }
+    });
+
+    $(document).on('click', '.main-prev', function () {
+        $('.side-prev').trigger('click');
+    });
+    $(document).on('click', '.main-next', function () {
+        $('.side-next').trigger('click');
     });
 }());
