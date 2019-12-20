@@ -63,6 +63,9 @@ window.addEventListener( 'load', function(){
         var view = $('#calendar').fullCalendar('getView');
         var relatedDepts = [];
         // reset calendar dots
+
+        $('#calendar').find('.fc-prev-button').addClass('main-prev');
+        $('#calendar').find('.fc-next-button').addClass('main-next');
         $('#calendar').find('.fc-event').remove();
 
         // manage dots
@@ -79,6 +82,21 @@ window.addEventListener( 'load', function(){
         relatedDepts.map((dept) => {
           $('#calendar-filter').append(`<option value="${dept}">${dept}</option>`);
         });
+        deptBuild();
+
+        function deptBuild () {
+          events.map((event) => {
+            var name = event.title;
+            var now = event.start.clone();
+            var arrayTest = $.inArray(event.relatedDepartments, relatedDepts);
+            if (arrayTest === -1 && event.relatedDepartments != null && now.month() == view.intervalStart.month()) {
+              relatedDepts.push(event.relatedDepartments);
+            }
+          })
+          relatedDepts.map((dept) => {
+            $('#calendar-filter').append(`<option class="dynamicOption" value="${dept}">${dept}</option>`);
+          });
+        }
 
         dateBuild();
 
@@ -99,6 +117,14 @@ window.addEventListener( 'load', function(){
           $('#calendar').find('.month-dot').remove();
           dateBuild();
         });
+        $(document).on('click', '.main-prev', function () {
+          relatedDepartments = [];
+          $('#calendar-filter').find('.dynamicOption').remove()
+        });
+        $(document).on('click', '.main-next', function () {
+          relatedDepartments = [];
+          $('#calendar-filter').find('.dynamicOption').remove()
+        });
       }
     });
 
@@ -117,6 +143,9 @@ window.addEventListener( 'load', function(){
       eventAfterAllRender: function() {
         var view = $('#sidebar-calendar').fullCalendar('getView');
         var startTime = '';
+
+        $('#sidebar-calendar').find('.fc-prev-button').addClass('side-prev');
+        $('#sidebar-calendar').find('.fc-next-button').addClass('side-next');
                 
         $('#sidebar-calendar').find('.fc-list-item').remove();
         $('#sidebar-calendar').find('.fc-list-heading-alt').remove();
