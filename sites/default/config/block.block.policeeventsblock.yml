@@ -10,7 +10,7 @@ dependencies:
 id: policeeventsblock
 theme: lex_police
 region: sidebar
-weight: 0
+weight: -20
 provider: null
 plugin: Lex_calendar_list_block
 settings:

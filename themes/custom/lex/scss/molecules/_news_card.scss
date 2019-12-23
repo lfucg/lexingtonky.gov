@@ -19,6 +19,7 @@
 }
 
 .news-card {
+    position: relative;
     border: 1px solid #0558A7;
     background-color: #ffff;
     color: #0558A7;
@@ -180,4 +181,95 @@
             padding-left: 30px;
         }
     }
+}
+
+.all-news {
+    .row {
+        max-width: 850px;
+
+        a {
+            margin-bottom: 30px;
+        }
+    }
+
+}
+
+.news-extended { 
+    width: 100%;
+    margin-bottom: 0 !important;
+
+    .date-overlay {
+        color: color(white);
+        width: 100px !important;
+    }
+
+    .contact-img-container {
+        height: 100%;
+
+        img {
+            height: 100%;
+
+            @include screens-below(sm) {
+                margin: 0 !important;
+            }
+        }
+    }
+
+    .heading-container, .description-container {
+        margin-left: 1em !important;
+        margin-right: 1em !important;
+    }
+
+    .description-container {
+        margin-bottom: 5% !important;
+    }
+    
+    &:hover {
+        .news-footer {
+            border-radius: 0 0 5px;
+        }
+    }
+}
+
+.extended-img-col {
+    padding-left: 0;
+    padding-right: 0;
+}
+.extended-content-col, .extended-content {
+    padding: 0 !important;
+}
+
+
+body.path-news {
+    .views-exposed-form {
+        @media  (max-width: 1314px) {
+            position: static !important;
+        }
+    }
+}
+
+.article-info, .article-share {
+    padding: 0 !important;
+
+    .col-12 {
+        padding: 0 !important;
+    }
+}
+
+.byline-contact {
+    font-size: 12px;
+    margin-top: 15px;
+}
+
+.article-share {
+    text-align: right;
+}
+
+.share-header {
+    padding-right: 115px;
+    text-transform: capitalize;
+}
+
+.article-row {
+    margin-top: -1.5rem !important;
 }

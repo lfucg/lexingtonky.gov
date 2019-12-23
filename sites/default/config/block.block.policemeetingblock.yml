@@ -10,7 +10,7 @@ dependencies:
 id: policemeetingblock
 theme: lex_police
 region: sidebar
-weight: 0
+weight: -19
 provider: null
 plugin: Lex_calendar_list_block
 settings:

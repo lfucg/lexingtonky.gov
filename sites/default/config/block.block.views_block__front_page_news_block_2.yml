@@ -1,32 +1,32 @@
-uuid: 75049e24-8949-40f7-b6d5-3e9513f168d7
+uuid: 975b6b64-4f58-449b-8ace-6a40fc8bb688
 langcode: en
 status: true
 dependencies:
   config:
-    - views.view.sibling_pages
+    - views.view.front_page_news
   module:
     - ctools
     - views
   theme:
-    - lex_police
-id: lex_police_views_block__sibling_pages_block_sidebar
-theme: lex_police
+    - lex
+id: views_block__front_page_news_block_2
+theme: lex
 region: sidebar
-weight: -23
+weight: 0
 provider: null
-plugin: 'views_block:sibling_pages-block_1'
+plugin: 'views_block:front_page_news-block_2'
 settings:
-  id: 'views_block:sibling_pages-block_1'
+  id: 'views_block:front_page_news-block_2'
   label: ''
   provider: views
-  label_display: '0'
+  label_display: visible
   views_label: ''
   items_per_page: none
 visibility:
   'entity_bundle:node':
     id: 'entity_bundle:node'
     bundles:
-      page: page
+      news_article: news_article
     negate: false
     context_mapping:
       node: '@node.node_route_context:node'
