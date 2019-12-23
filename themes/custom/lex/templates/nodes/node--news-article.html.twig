@@ -17,7 +17,9 @@
           <time>{{ lexDate(node.getCreatedTime()) }}</time>
         </div>
         <div class="col-12 byline-contact">
-          By {{node.field_media_contact[0].entity.field_contact_name.value}}
+          {% if node.field_media_contact[0].entity.field_contact_name.value != [] %}
+            By {{node.field_media_contact[0].entity.field_contact_name.value}}
+          {% endif %}
         </div>
       </div>
       <div class="col-6 article-share">

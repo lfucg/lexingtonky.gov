@@ -12,7 +12,7 @@ dependencies:
 id: lex_police_content_field_sidebar_section
 theme: lex_police
 region: sidebar
-weight: -20
+weight: -21
 provider: null
 plugin: 'fieldblock:node'
 settings:
