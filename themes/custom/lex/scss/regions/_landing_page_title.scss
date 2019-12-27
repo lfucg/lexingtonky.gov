@@ -8,7 +8,7 @@
   section.lex-region-title {
     position: absolute;
     bottom: 0;
-    height: 30%;
+    height: auto;
     width: 100%;
 
     @include screens-below(sm) {
