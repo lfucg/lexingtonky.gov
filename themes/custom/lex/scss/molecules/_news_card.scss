@@ -200,7 +200,12 @@
 
     .date-overlay {
         color: color(white);
-        width: 100px !important;
+        width: 40% !important;
+        padding: 5px;
+
+        @include screens-below(sm) {
+            width: 35% !important;
+        }
     }
 
     .contact-img-container {

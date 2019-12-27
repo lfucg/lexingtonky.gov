@@ -54,7 +54,7 @@
   <div>
   {% block page_title_main %}
     {% if node.bundle == 'news_article' %}
-      <img class="mb-4" src="{{file_url(node.field_image[0].entity.uri.value)}}">
+      <img class="mb-4 w-100" src="{{file_url(node.field_image[0].entity.uri.value)}}">
     {% endif %}
     {{ page.title }}
   {% endblock %}
@@ -67,7 +67,7 @@
   </div>
   {% block sidebar %}
   <div>
-    {% if node.field_media_contact %}
+    {% if node.field_media_contact[0].entity.field_contact_name.value %}
       <div id="block-field-block-field-office-to-contact" class="lex-block">
       <h2>Contact</h2>
       <div>
