@@ -227,6 +227,10 @@ views.filter.search_api_datasource:
   type: views.filter.search_api_options
   label: 'Search API datasource'
 
+views.filter.search_api_date:
+  type: views.filter.date
+  label: 'Search API date'
+
 views.filter.search_api_fulltext:
   type: views_filter
   label: 'Search API fulltext search'

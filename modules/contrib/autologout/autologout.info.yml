@@ -1,0 +1,11 @@
+name: Automated Logout
+type: module
+description: 'Adds automated timed logout.'
+# core: 8.x
+configure: autologout.set_admin
+
+# Information added by Drupal.org packaging script on 2017-05-08
+version: '8.x-1.0'
+core: '8.x'
+project: 'autologout'
+datestamp: 1494237191

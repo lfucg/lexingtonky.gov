@@ -3,11 +3,13 @@
 namespace Drupal\FunctionalTests\Update;
 
 use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Test\TestRunnerKernel;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\Tests\SchemaCheckTestTrait;
 use Drupal\Core\Database\Database;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Url;
 use Drupal\Tests\RequirementsPageTrait;
@@ -185,7 +187,12 @@ abstract class UpdatePathTestBase extends BrowserTestBase {
     $this->installDrupal();
 
     // Add the config directories to settings.php.
-    drupal_install_config_directories();
+    $sync_directory = Settings::get('config_sync_directory');
+    \Drupal::service('file_system')->prepareDirectory($sync_directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+
+    // Ensure the default temp directory exist and is writable. The configured
+    // temp directory may be removed during update.
+    \Drupal::service('file_system')->prepareDirectory($this->tempFilesDirectory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
 
     // Set the container. parent::rebuildAll() would normally do this, but this
     // not safe to do here, because the database has not been updated yet.
@@ -271,6 +278,12 @@ abstract class UpdatePathTestBase extends BrowserTestBase {
     // Force every update hook to only run one entity per batch.
     $settings['entity_update_batch_size'] = (object) [
       'value' => 1,
+      'required' => TRUE,
+    ];
+
+    // Set up sync directory.
+    $settings['settings']['config_sync_directory'] = (object) [
+      'value' => $this->publicFilesDirectory . '/config_sync',
       'required' => TRUE,
     ];
 
@@ -367,9 +380,17 @@ abstract class UpdatePathTestBase extends BrowserTestBase {
       // executed. But once the update has been completed, it needs to be valid
       // again. Assert the schema of all configuration objects now.
       $names = $this->container->get('config.storage')->listAll();
+
+      // Allow tests to opt out of checking specific configuration.
+      $exclude = $this->getConfigSchemaExclusions();
       /** @var \Drupal\Core\Config\TypedConfigManagerInterface $typed_config */
       $typed_config = $this->container->get('config.typed');
       foreach ($names as $name) {
+        if (in_array($name, $exclude, TRUE)) {
+          // Skip checking schema if the config is listed in the
+          // $configSchemaCheckerExclusions property.
+          continue;
+        }
         $config = $this->config($name);
         $this->assertConfigSchema($typed_config, $name, $config->get());
       }

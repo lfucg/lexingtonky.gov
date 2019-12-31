@@ -2,13 +2,56 @@
 
 namespace Drupal\captcha\Form;
 
+use Drupal\captcha\Service\CaptchaService;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Entity Form to edit CAPTCHA points.
  */
 class CaptchaPointForm extends EntityForm {
+
+  /**
+   * The CAPTCHA helper service.
+   *
+   * @var \Drupal\captcha\Service\CaptchaService
+   */
+  protected $captchaService;
+
+  /**
+   * The request stack.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  protected $requestStack;
+
+  /**
+   * CaptchaPointForm constructor.
+   *
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   Constructor.
+   */
+  public function __construct(RequestStack $request_stack, CaptchaService $captcha_service) {
+    $this->requestStack = $request_stack;
+    $this->captchaService = $captcha_service;
+  }
+
+  /**
+   * Create Captcha Points.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Event to create Captcha points.
+   *
+   * @return static
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('request_stack'),
+      $container->get('captcha.helper')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -22,7 +65,7 @@ class CaptchaPointForm extends EntityForm {
     $captcha_point = $this->entity;
 
     // Support to set a default form_id through a query argument.
-    $request = \Drupal::request();
+    $request = $this->requestStack->getCurrentRequest();
     if ($captcha_point->isNew() && !$captcha_point->id() && $request->query->has('form_id')) {
       $captcha_point->set('formId', $request->query->get('form_id'));
       $captcha_point->set('label', $request->query->get('form_id'));
@@ -31,6 +74,7 @@ class CaptchaPointForm extends EntityForm {
     $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Form ID'),
+      '#description' => $this->t('Also works with the base form ID.'),
       '#default_value' => $captcha_point->label(),
       '#required' => TRUE,
     ];
@@ -50,9 +94,8 @@ class CaptchaPointForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Challenge type'),
       '#description' => $this->t('The CAPTCHA type to use for this form.'),
-      '#default_value' => ($captcha_point->getCaptchaType() ?: $this->config('captcha.settings')
-        ->get('default_challenge')),
-      '#options' => _captcha_available_challenge_types(),
+      '#default_value' => $captcha_point->getCaptchaType() ?: $this->config('captcha.settings')->get('default_challenge'),
+      '#options' => $this->captchaService->getAvailableChallengeTypes(),
     ];
 
     return $form;
@@ -67,12 +110,12 @@ class CaptchaPointForm extends EntityForm {
     $status = $captcha_point->save();
 
     if ($status == SAVED_NEW) {
-      drupal_set_message($this->t('Captcha Point for %form_id form was created.', [
+      $this->messenger()->addMessage($this->t('Captcha Point for %form_id form was created.', [
         '%form_id' => $captcha_point->getFormId(),
       ]));
     }
     else {
-      drupal_set_message($this->t('Captcha Point for %form_id form was updated.', [
+      $this->messenger()->addMessage($this->t('Captcha Point for %form_id form was updated.', [
         '%form_id' => $captcha_point->getFormId(),
       ]));
     }

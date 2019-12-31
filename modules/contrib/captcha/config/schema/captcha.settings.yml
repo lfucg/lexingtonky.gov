@@ -5,6 +5,9 @@ captcha.settings:
   type: config_object
   label: 'External Links Settings'
   mapping:
+    enabled_default:
+      type: integer
+      label: 'Add captcha to all forms.'
     default_challenge:
       type: string
       label: 'The default challenge for captcha.'

@@ -1,0 +1,28 @@
+#
+# behat.yml file for testing with a Drupal site on Pantheon.
+#
+default:
+  suites:
+    default:
+      paths:
+        - %paths.base%/features
+      contexts:
+        #- FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\DrushContext
+        - Drupal\DrupalExtension\Context\MinkContext
+  extensions:
+    Behat\MinkExtension:
+      goutte: ~
+      selenium2: ~
+      files_path: './data-files'
+# Supplied by env variable.
+#      base_url: http://dev-persch-d8-solr.pantheonsite.io/
+    Drupal\DrupalExtension:
+      blackbox: ~
+      region_map:
+        index_percentage: ".progress__percentage"
+      api_driver: 'drush'
+      drush:
+# Supplied by env variable.
+#        alias: '@pantheon.persch-d8-solr.dev'

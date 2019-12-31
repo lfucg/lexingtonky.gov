@@ -277,3 +277,33 @@
 .paragraphs-behavior {
   display: none;
 }
+
+.first-paragraph {
+  transition: background-color .3s linear;
+}
+
+.paragraph-hover {
+  background-color: $paragraph-hover-bg;
+}
+
+@media (min-width: map-get($grid-breakpoints, 'md')) {
+  /* Basic node form sticky paragraph tabs implementation. */
+  .is-horizontal .paragraphs-tabs:first-of-type {
+    position: sticky;
+    top: 0;
+    margin-top: 0;
+    padding-top: 5px !important;
+    /* Toolbar bar minimum z-index is 501 so we need to be lower, other way
+       our sticky tabs will be on top of toolbar menu. */
+    z-index: 500;
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+
+  .toolbar-fixed .is-horizontal .paragraphs-tabs:first-of-type {
+    top: 39px;
+  }
+
+  .toolbar-fixed.toolbar-horizontal.toolbar-tray-open .is-horizontal .paragraphs-tabs:first-of-type {
+    top: 79px;
+  }
+}

@@ -1,0 +1,236 @@
+<?php
+
+use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function autologout_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.autologout':
+      $seconds = \Drupal::service('autologout.manager')->getUserTimeout();
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t("This module allows you to force site users to be logged out after a given amount of time due to inactivity after first being presented with a confirmation dialog. Your current logout threshold is %seconds seconds.", ['%seconds' => $seconds]) . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Adds a field to user/edit to change that users logout.
+ */
+function autologout_form_user_form_alter(&$form, FormStateInterface $form_state) {
+  $user = \Drupal::currentUser();
+  $account = $form_state->getFormObject()->getEntity();
+  $user_id = $account->id();
+  $access = FALSE;
+
+  // If user has access to change, and they are changing their own and only
+  // their own timeout. Or they are an admin.
+  if (!\Drupal::currentUser()->isAnonymous() && (($user->hasPermission('change own logout threshold') && $user->id() == $user_id) || $user->hasPermission('administer autologout'))) {
+    $access = TRUE;
+    $autologout_data = \Drupal::service('user.data')->get('autologout', $user_id, 'timeout');
+  }
+
+  if ($access) {
+    $form['user_' . $user_id] = [
+      '#type' => 'textfield',
+      '#title' => t('Your current logout threshold'),
+      '#default_value' => isset($autologout_data) ? $autologout_data : '',
+      '#size' => 8,
+      '#description' => t('How many seconds to give a user to respond to the logout dialog before ending their session.'),
+      '#element_validate' => ['_autologout_user_uid_timeout_validate'],
+    ];
+
+    $form['actions']['submit']['#submit'][] = 'autologout_user_profile_submit';
+  }
+}
+
+/**
+ * Form validation.
+ */
+function _autologout_user_uid_timeout_validate($element, FormStateInterface $form_state) {
+  $max_timeout = \Drupal::config('autologout.settings')->get('max_timeout');
+  $timeout = $element['#value'];
+
+  // Set error if timeout isn't strictly a number between 60 and max.
+  if ($timeout != "" && ($timeout < 10 || ($timeout > 0 && $timeout < 60) || $timeout > $max_timeout || !is_numeric($timeout))) {
+    $form_state->setError($element, t('The timeout must be an integer greater than 60, and less then %max.', ['%max' => $max_timeout]));
+  }
+}
+
+/**
+ * Handle submission of timeout threshold in user/edit.
+ */
+function autologout_user_profile_submit(&$form, FormStateInterface $form_state) {
+  $user_id = $form_state->getFormObject()->getEntity()->id();
+
+  $timeout = $form_state->getValue('user_' . $user_id);
+  $enabled = ($timeout != '') ? TRUE : FALSE;
+
+  \Drupal::service('user.data')->set('autologout', $user_id, 'timeout', $timeout);
+}
+
+/**
+ * Implements hook_autologout_prevent().
+ */
+function autologout_autologout_prevent() {
+  $user = \Drupal::currentUser();
+
+  // Don't include autologout JS checks on ajax callbacks.
+  $paths = [
+    'system',
+    'autologout_ajax_get_time_left',
+    'autologout_ahah_logout',
+    'autologout_ahah_set_last',
+  ];
+  // getPath is used because Url::fromRoute('<current>')->toString() doesn't
+  // give correct path for XHR request.
+  $url = \Drupal::service('path.current')->getPath();
+  $path_args = explode('/', $url);
+  if (in_array($path_args[1], $paths)) {
+    return TRUE;
+  }
+
+  // If user is anonymous or has no timeout set.
+  if ($user->id() == 0 || (!\Drupal::service('autologout.manager')->getUserTimeout())) {
+    return TRUE;
+  }
+
+  // If the user has checked remember_me via the remember_me module.
+  $remember_me = \Drupal::service('user.data')->get('remember_me', $user->id(), 'remember_me');
+  if (!empty($remember_me)) {
+    return TRUE;
+  }
+}
+
+/**
+ * Implements hook_autologout_refresh_only().
+ */
+function autologout_autologout_refresh_only() {
+  if (!\Drupal::config('autologout.settings')->get('enforce_admin') && \Drupal::service('router.admin_context')->isAdminRoute(\Drupal::routeMatch()->getRouteObject())) {
+    return TRUE;
+  }
+}
+
+/**
+ * Implements hook_page_attachments().
+ *
+ * Add a form element to every page which is used to detect if the page was
+ * loaded from browser cache. This happens when the browser's back button is
+ * pressed for example. The JS will set the value of the hidden input element
+ * to 1 after initial load. If this is 1 on subsequent loads, the page was
+ * loaded from cache and an autologout timeout refresh needs to be triggered.
+ */
+function autologout_page_attachments(array &$page) {
+  $autologout_manager = \Drupal::service('autologout.manager');
+
+  // Check if JS should be included on this request.
+  if ($autologout_manager->preventJs()) {
+    return;
+  }
+
+  // Check if anything wants to be refresh only. This URL would include the
+  // javascript but will keep the login alive whilst that page is opened.
+  $refresh_only = $autologout_manager->refreshOnly();
+
+  $settings = \Drupal::config('autologout.settings');
+
+  $timeout = $autologout_manager->getUserTimeout();
+  $timeout_padding = $settings->get('padding');
+  $redirect_url = $settings->get('redirect_url');
+  $redirect_query = \Drupal::service('redirect.destination')->getAsArray() + ['autologout_timeout' => 1];
+  $no_dialog = $settings->get('no_dialog');
+  $use_alt_logout_method = $settings->get('use_alt_logout_method');
+
+  // Get all settings JS will need for dialog.
+  $msg = t('@msg', ['@msg' => $settings->get('message')]);
+  $settings = [
+    'timeout' => $refresh_only ? ($timeout * 500) : ($timeout * 1000),
+    'timeout_padding' => $timeout_padding * 1000,
+    'message' => t('@msg', ['@msg' => $msg]),
+    'redirect_url' => Url::fromUserInput($redirect_url, ['query' => $redirect_query])->toString(),
+    'title' => t('@name Alert', ['@name' => \Drupal::config('system.site')->get('name')]),
+    'refresh_only' => $refresh_only,
+    'no_dialog' => $no_dialog,
+    'use_alt_logout_method' => $use_alt_logout_method,
+  ];
+  // If this is an AJAX request, then the logout redirect url should still be
+  // referring to the page that generated this request.
+  if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+    global $base_url;
+    $relative_url = str_replace($base_url . '/', '', $_SERVER['HTTP_REFERER']);
+    $settings['redirect_url'] = Url::fromUserInput($redirect_url, [
+      'query' => ['destination' => urlencode($relative_url)],
+      'autologout_timeout' => 1,
+    ]);
+  }
+
+  autologout_attach_js($page, $settings, TRUE);
+
+}
+
+/**
+ * Implements hook_page_bottom().
+ */
+function autologout_page_bottom() {
+  if (!\Drupal::service('autologout.manager')->preventJs()) {
+    $page_bottom['autologout'] = [
+      '#markup' => '<form id="autologout-cache-check"><input type="hidden" id="autologout-cache-check-bit" value="0" /></form>',
+    ];
+  }
+}
+
+/**
+ * Adds the necessary js and libraries.
+ *
+ * @param array $element
+ *   The renderable array element to #attach the js to.
+ * @param array $settings
+ *   The JS Settings.
+ */
+function autologout_attach_js(&$element, $settings) {
+  $element['#attached']['drupalSettings']['autologout'] = $settings;
+  $element['#attached']['library'][] = 'autologout/drupal.autologout';
+}
+
+/**
+ * Implements hook_user_login().
+ *
+ * Delete stale sessions for the user on login. This stops
+ * session_limit module thinking the user has reached their
+ * session limit.
+ */
+function autologout_user_login($account) {
+  // Cleanup old sessions.
+  $timeout = \Drupal::service('autologout.manager')->getUserTimeout($account->id());
+
+  if (empty($timeout)) {
+    // Users that don't get logged have their sessions left.
+    return;
+  }
+
+  $timeout_padding = \Drupal::config('autologout.settings')->get('padding');
+  $timestamp = REQUEST_TIME - ($timeout + $timeout_padding);
+
+  // Find all stale sessions.
+  $database = \Drupal::database();
+  $sids = $database->select('sessions', 's')
+    ->fields('s', ['sid'])
+    ->condition('uid', $account->id())
+    ->condition('timestamp', $timestamp, '<')
+    ->orderBy('timestamp', 'DESC')
+    ->execute()
+    ->fetchCol();
+
+  if (!empty($sids)) {
+    // Delete stale sessions at login.
+    $database->delete('sessions')
+      ->condition('sid', $sids, 'IN')
+      ->execute();
+  }
+}

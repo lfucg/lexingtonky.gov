@@ -4,6 +4,7 @@ namespace Drupal\Tests\paragraphs\FunctionalJavascript;
 
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
+use Drupal\paragraphs\Entity\ParagraphsType;
 
 /**
  * Test paragraphs user interface.
@@ -39,12 +40,10 @@ class ParagraphsExperimentalEditPerspectivesUiTest extends WebDriverTestBase {
   }
 
   /**
-   * Test paragraphs user interface.
+   * Tests visibility of elements when switching perspectives.
    */
   public function testEditPerspectives() {
-
     $this->loginAsAdmin([
-      'access content overview',
       'edit behavior plugin settings'
     ]);
 
@@ -57,39 +56,59 @@ class ParagraphsExperimentalEditPerspectivesUiTest extends WebDriverTestBase {
     $page->checkField('behavior_plugins[test_text_color][enabled]');
     $page->pressButton('Save and manage fields');
 
-    $this->drupalGet('admin/structure/types/add');
-    $page->fillField('name', 'TestContent');
-    $this->assertSession()->waitForElementVisible('css', '#edit-name-machine-name-suffix .link');
-    $page->pressButton('Edit');
-    $page->fillField('type', 'testcontent');
-    $page->pressButton('Save and manage fields');
+    $this->addParagraphedContentType('testcontent', 'field_testparagraphfield');
+    $this->addFieldtoParagraphType('testplugin', 'body', 'string_long');
 
-    $this->drupalGet('admin/structure/types/manage/testcontent/fields/add-field');
-    $page->selectFieldOption('new_storage_type', 'field_ui:entity_reference_revisions:paragraph');
-    $page->fillField('label', 'testparagraphfield');
-    $this->assertSession()->waitForElementVisible('css', '#edit-name-machine-name-suffix .link');
-    $page->pressButton('Edit');
-    $page->fillField('field_name', 'testparagraphfield');
-    $page->pressButton('Save and continue');
-
-    $edit = [
-      'settings[target_type]' => 'paragraph',
-    ];
-    $this->drupalPostForm(NULL, $edit, t('Save field settings'));
-    $edit = [
-      'settings[handler_settings][target_bundles_drag_drop][testplugin][enabled]' => TRUE,
-    ];
-    $this->drupalPostForm(NULL, $edit, t('Save settings'));
-    $this->drupalGet('admin/structure/types/manage/testcontent/form-display');
-    $page->selectFieldOption('fields[field_testparagraphfield][type]', 'paragraphs');
-    $this->assertSession()->assertWaitOnAjaxRequest();
-    $this->drupalPostForm(NULL, [], t('Save'));
     $this->drupalGet('node/add/testcontent');
+    $add_wrapper = $page->find('css', '.paragraphs-add-wrapper');
+    $this->assertTrue($add_wrapper->isVisible());
     $this->clickLink('Behavior');
+    $this->assertFalse($add_wrapper->isVisible());
     $style_selector = $page->find('css', '.form-item-field-testparagraphfield-0-behavior-plugins-test-text-color-text-color');
     $this->assertTrue($style_selector->isVisible());
     $this->clickLink('Content');
     $this->assertFalse($style_selector->isVisible());
+
+    // Assert scroll position when switching tabs.
+    $this->getSession()->resizeWindow(800, 500);
+    $this->drupalGet('node/add/testcontent');
+    $button = $this->getSession ()->getPage()->findButton('Add TestPlugin');
+    $button->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $button->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $button->press();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    // First move to the last paragraph, assert that the tabs are
+    // still visible, then move back up to the second.
+    $this->getSession()->getPage()->find('css', '.field--widget-paragraphs tbody > tr:nth-child(4)')->mouseOver();
+    $this->assertSession()->assertVisibleInViewport('css', '.paragraphs-tabs');
+    $this->getSession()->getPage()->find('css', '.field--widget-paragraphs tbody > tr:nth-child(2)')->mouseOver();
+    $this->getSession()->evaluateScript('window.scrollBy(0, -10);');
+
+    // As a result, only paragraph 2 and 3 are fully visible on the content tab.
+    $this->assertSession()->assertNotVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:first-child');
+    $this->assertSession()->assertVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:nth-child(2)');
+    $this->assertSession()->assertVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:nth-child(3)');
+    $this->assertSession()->assertNotVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:nth-child(4)');
+    $this->assertSession()->assertNotVisibleInViewport('css', '.field-add-more-submit');
+
+    // When clicking the Behavior tab, paragraph 2, 3 and 4 are in the viewport
+    // because the behavior settings take less space.
+    $this->clickLink('Behavior');
+    $this->assertSession()->assertVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:nth-child(2)');
+    $this->assertSession()->assertVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:nth-child(3)');
+    $this->assertSession()->assertVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:nth-child(4)');
+
+    // When we switch back to the Content tab, we should stay on the same
+    // scroll position as before.
+    $this->clickLink('Content');
+    $this->assertSession()->assertNotVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:first-child');
+    $this->assertSession()->assertVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:nth-child(2)');
+    $this->assertSession()->assertVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:nth-child(3)');
+    $this->assertSession()->assertNotVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:nth-child(4)');
+    $this->assertSession()->assertNotVisibleInViewport('css', '.field-add-more-submit');
   }
 
   /**

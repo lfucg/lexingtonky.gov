@@ -4,7 +4,7 @@ namespace Drupal\search_api\Plugin\views;
 
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\views\Entity\Render\TranslationLanguageRenderer;
-use Drupal\views\ResultRow;
+use Drupal\views\ResultRow as ViewsResultRow;
 
 /**
  * Renders entity translations in their row language.
@@ -14,7 +14,7 @@ class EntityTranslationRenderer extends TranslationLanguageRenderer {
   /**
    * {@inheritdoc}
    */
-  public function getLangcode(ResultRow $row) {
+  public function getLangcode(ViewsResultRow $row) {
     if (!empty($row->search_api_language)) {
       return $row->search_api_language;
     }

@@ -148,7 +148,7 @@ class NodeTypeForm extends BundleEntityFormBase {
       'status' => $node->status->value,
       'promote' => $node->promote->value,
       'sticky' => $node->sticky->value,
-      'revision' => $type->isNewRevision(),
+      'revision' => $type->shouldCreateNewRevision(),
     ];
     // Prepare workflow options to be used for 'checkboxes' form element.
     $keys = array_keys(array_filter($workflow_options));
@@ -203,7 +203,6 @@ class NodeTypeForm extends BundleEntityFormBase {
   protected function actions(array $form, FormStateInterface $form_state) {
     $actions = parent::actions($form, $form_state);
     $actions['submit']['#value'] = t('Save content type');
-    $actions['delete']['#value'] = t('Delete content type');
     return $actions;
   }
 

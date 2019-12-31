@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Core\Database\DatabaseException;
 use Drupal\Core\Link;
 use Drupal\search_api\Entity\Server;
 use Drupal\Core\Url;
@@ -310,4 +311,23 @@ function search_api_update_8105() {
     return t('Updated the configuration schema of the "Ignore characters" processor.');
   }
   return NULL;
+}
+
+/**
+ * Remove remnants of the search_api_views_taxonomy module.
+ */
+function search_api_update_8106() {
+  try {
+    \Drupal::database()
+      ->delete('key_value')
+      ->condition('collection', 'system.schema')
+      ->condition('name', 'search_api_views_taxonomy')
+      ->execute();
+  }
+  catch (DatabaseException $e) {
+    // The admin might have done this already to get rid of the warning
+    // themselves. It's not really important enough to fail on this, in any
+    // case. In the worst case, the warning just remains. So, just ignore any
+    // exception. (Site could also use an alternate key/value store.)
+  }
 }

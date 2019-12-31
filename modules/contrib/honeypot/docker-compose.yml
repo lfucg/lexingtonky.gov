@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  drupal:
+    image: geerlingguy/drupal
+    container_name: honeypot
+    environment:
+      DRUPAL_DATABASE_HOST: 'mysql'
+      DRUPAL_DATABASE_PORT: '3306'
+      DRUPAL_DATABASE_NAME: 'drupal'
+      DRUPAL_DATABASE_USERNAME: 'drupal'
+      DRUPAL_DATABASE_PASSWORD: 'drupal'
+      DRUPAL_HASH_SALT: 'fe918c992fb1bcfa01f32303c8b21f3d0a0'
+      DRUPAL_DOWNLOAD_IF_NOT_PRESENT: 'true'
+      DRUPAL_DOWNLOAD_METHOD: 'composer'
+      DRUPAL_PROJECT_ROOT: /var/www/html
+      APACHE_DOCUMENT_ROOT: /var/www/html/web
+    ports:
+      - "80:80"
+    restart: always
+    volumes:
+      - ./:/opt/honeypot/:rw,delegated
+
+  mysql:
+    image: mysql:5.7
+    container_name: drupal-mysql
+    command: ['--max_allowed_packet=32505856']
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: drupal
+    ports:
+      - "3306:3306"
+    volumes:
+      - /var/lib/mysql

@@ -60,7 +60,7 @@ class PreviewTest extends EmbedTestBase {
     if (!isset($value)) {
       $value = static::SUCCESS;
     }
-    return $this->drupalGet($url, ['query' => ['value' => $value]]);
+    return $this->drupalGet($url, ['query' => ['text' => $value]]);
   }
 
 }

@@ -1,0 +1,114 @@
+<?php
+
+/**
+ * @file
+ * Install file for the CKEditor Media Embed plugin module.
+ */
+
+use Drupal\ckeditor_media_embed\AssetManager;
+
+use Drupal\Core\Render\Markup;
+
+/**
+ * Implements hook_install().
+ */
+function ckeditor_media_embed_install() {
+  $version = AssetManager::getCKEditorVersion(\Drupal::service('library.discovery'), \Drupal::service('config.factory'));
+
+  if (!AssetManager::pluginsAreInstalled($version)) {
+    \Drupal::messenger()->addWarning(_ckeditor_media_embed_get_install_instructions());
+  }
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function ckeditor_media_embed_requirements($phase) {
+  $requirements = [];
+
+  if ($phase === 'runtime') {
+    $library_discovery = \Drupal::service('library.discovery');
+    $config_factory = \Drupal::service('config.factory');
+
+    $version = AssetManager::getPluginsVersion($library_discovery, $config_factory);
+    $plugin_statuses = AssetManager::getPluginsInstallStatuses($version);
+    $installed_plugins = array_filter($plugin_statuses);
+    $missing_plugins = array_filter($plugin_statuses, function ($is_installed) {
+      return !$is_installed;
+    });
+
+    $mixed_version = ($version != AssetManager::getCKEditorVersion($library_discovery, $config_factory));
+
+    $has_error = !empty($missing_plugins) || $mixed_version ? TRUE : FALSE;
+
+    $value = t('Installed');
+    if (!empty($missing_plugins)) {
+      $value = t('Missing plugins');
+    }
+    elseif ($mixed_version) {
+      $value = t('Mixed versions');
+    }
+
+    $requirements["ckeditor_media_embed"] = [
+      'title' => 'CKEditor Media Embed plugin',
+      'value' => $value,
+      'description' => _ckeditor_media_embed_requirments_build_description($installed_plugins, $missing_plugins, $mixed_version),
+      'severity' => ($has_error) ? REQUIREMENT_ERROR : REQUIREMENT_INFO,
+    ];
+  }
+
+  return $requirements;
+}
+
+/**
+ * Retrieve the requirements description.
+ *
+ * @param array $installed_plugins
+ *   An array of our CKEditor plugins that are installed.
+ * @param array $missing_plugins
+ *   An array of our CKEditor plugins that are missing.
+ * @param bool $mixed_version
+ *   Determines if we should show the mixed version message.
+ *
+ * @return string|\Drupal\Component\Render\MarkupInterface
+ *   A safe string representation of the requirements description.
+ */
+function _ckeditor_media_embed_requirments_build_description(array $installed_plugins, array $missing_plugins, $mixed_version) {
+  $description = '';
+
+  if (!empty($missing_plugins)) {
+    $description .= t('The following CKEditor plugins are missing: <strong>%plugins</strong>.', ['%plugins' => implode(', ', array_keys($missing_plugins))]) . '<br />';
+    $description .= _ckeditor_media_embed_get_install_instructions(FALSE) . '<br />';
+  }
+
+  if (!empty($installed_plugins)) {
+    $description .= t('The following CKEditor plugins are installed: %plugins.', ['%plugins' => implode(', ', array_keys($installed_plugins))]) . '<br />';
+  }
+
+  if (empty($missing_plugins)) {
+    if ($mixed_version) {
+      $description .= t('The installed CKEditor plugins have a different version than the installed CKEditor. Please consider updating the plugins.') . '<br />';
+      $description .= _ckeditor_media_embed_get_install_instructions(FALSE, TRUE) . '<br />';
+    }
+
+    $installed_plugin_versions = AssetManager::getPluginsInstalledVersion(\Drupal::service('config.factory'));
+    if (!empty($installed_plugin_versions)) {
+      $description .= t('Installed plugins version: @version', ['@version' => $installed_plugin_versions]) . '<br />';
+    }
+  }
+
+  $description .= t('CKEditor version: @version', ['@version' => AssetManager::getCKEditorVersion(\Drupal::service('library.discovery'), \Drupal::service('config.factory'))]);
+
+  return Markup::Create($description);
+}
+
+/**
+ * WARNING: This release breaks the current CKEditor Media Embed plugin dev as
+ * we are no longer including the libraries as part of the module. Please run
+ * "drupal ckeditor_media_embed:install" if you have Drupal Console installed
+ * or see the README.md for installation instructions for additional
+ * installation instructions.
+ */
+function ckeditor_media_embed_update_8101() {
+  \Drupal::service('plugin.manager.ckeditor.plugin')->clearCachedDefinitions();
+}

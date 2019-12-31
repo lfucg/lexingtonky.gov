@@ -2,11 +2,11 @@
 
 namespace Drupal\Tests\paragraphs_library\Functional;
 
-use Drupal\field_ui\Tests\FieldUiTestTrait;
 use Drupal\node\Entity\Node;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\paragraphs\Entity\ParagraphsType;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\field_ui\Traits\FieldUiTestTrait;
 use Drupal\Tests\paragraphs\FunctionalJavascript\ParagraphsTestBaseTrait;
 
 /**

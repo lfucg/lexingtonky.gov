@@ -10,6 +10,7 @@ captcha_examples:
   path: '/admin/config/people/captcha/examples/{module}/{challenge}'
   defaults:
     _form: '\Drupal\captcha\Form\CaptchaExamplesForm'
+    _title: 'CAPTCHA examples'
     module: ''
     challenge: ''
   requirements:

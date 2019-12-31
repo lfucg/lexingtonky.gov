@@ -90,9 +90,8 @@ class XmlDumper extends Dumper
     /**
      * Adds a service.
      *
-     * @param Definition  $definition
-     * @param string      $id
-     * @param \DOMElement $parent
+     * @param Definition $definition
+     * @param string     $id
      */
     private function addService($definition, $id, \DOMElement $parent)
     {
@@ -221,9 +220,7 @@ class XmlDumper extends Dumper
     /**
      * Adds a service alias.
      *
-     * @param string      $alias
-     * @param Alias       $id
-     * @param \DOMElement $parent
+     * @param string $alias
      */
     private function addServiceAlias($alias, Alias $id, \DOMElement $parent)
     {
@@ -261,10 +258,8 @@ class XmlDumper extends Dumper
     /**
      * Converts parameters.
      *
-     * @param array       $parameters
-     * @param string      $type
-     * @param \DOMElement $parent
-     * @param string      $keyAttribute
+     * @param string $type
+     * @param string $keyAttribute
      */
     private function convertParameters(array $parameters, $type, \DOMElement $parent, $keyAttribute = 'key')
     {
@@ -309,6 +304,11 @@ class XmlDumper extends Dumper
                 if (\in_array($value, ['null', 'true', 'false'], true)) {
                     $element->setAttribute('type', 'string');
                 }
+
+                if (\is_string($value) && (is_numeric($value) || preg_match('/^0b[01]*$/', $value) || preg_match('/^0x[0-9a-f]++$/i', $value))) {
+                    $element->setAttribute('type', 'string');
+                }
+
                 $text = $this->document->createTextNode(self::phpToXml($value));
                 $element->appendChild($text);
             }

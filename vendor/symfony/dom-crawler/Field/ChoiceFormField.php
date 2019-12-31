@@ -113,7 +113,7 @@ class ChoiceFormField extends FormField
     /**
      * Sets the value of the field.
      *
-     * @param string|array $value The value of the field
+     * @param string|array|bool $value The value of the field
      *
      * @throws \InvalidArgumentException When value type provided is not correct
      */
@@ -154,8 +154,6 @@ class ChoiceFormField extends FormField
 
     /**
      * Adds a choice to the current ones.
-     *
-     * @param \DOMElement $node
      *
      * @throws \LogicException When choice provided is not multiple nor radio
      *

@@ -925,6 +925,7 @@ class ParagraphsWidget extends WidgetBase {
         'class' => [
           'paragraph-type-add-modal',
           'first-button',
+          'paragraphs-add-wrapper',
         ],
       ],
       '#access' => $this->allowReferenceChanges(),
@@ -1547,7 +1548,7 @@ class ParagraphsWidget extends WidgetBase {
   protected function buildDropbutton(array $elements = []) {
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['paragraphs-dropbutton-wrapper']],
+      '#attributes' => ['class' => ['paragraphs-dropbutton-wrapper', 'paragraphs-add-wrapper']],
     ];
 
     $operations = [];
@@ -1582,15 +1583,13 @@ class ParagraphsWidget extends WidgetBase {
     $add_mode = $this->getSetting('add_mode');
     $paragraphs_type_storage = \Drupal::entityTypeManager()->getStorage('paragraphs_type');
 
-    // Build the buttons.
-    $add_more_elements = [];
     foreach ($options as $machine_name => $label) {
       $button_key = 'add_more_button_' . $machine_name;
       $add_more_elements[$button_key] = $this->expandButton([
         '#type' => 'submit',
         '#name' => $this->fieldIdPrefix . '_' . $machine_name . '_add_more',
         '#value' => $add_mode == 'modal' ? $label : $this->t('Add @type', ['@type' => $label]),
-        '#attributes' => ['class' => ['field-add-more-submit']],
+        '#attributes' => ['class' => ['field-add-more-submit', 'paragraphs-add-wrapper']],
         '#limit_validation_errors' => [array_merge($this->fieldParents, [$this->fieldDefinition->getName(), 'add_more'])],
         '#submit' => [[get_class($this), 'addMoreSubmit']],
         '#ajax' => [
@@ -1630,6 +1629,14 @@ class ParagraphsWidget extends WidgetBase {
     $field_title = $this->fieldDefinition->getLabel();
     $setting_title = $this->getSetting('title');
     $select_options = $this->getAccessibleOptions();
+
+    $add_more_elements = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['paragraphs-add-wrapper'],
+      ],
+    ];
+
     $add_more_elements['add_more_select'] = [
       '#type' => 'select',
       '#options' => $select_options,

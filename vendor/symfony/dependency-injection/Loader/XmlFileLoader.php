@@ -86,8 +86,7 @@ class XmlFileLoader extends FileLoader
     /**
      * Parses parameters.
      *
-     * @param \DOMDocument $xml
-     * @param string       $file
+     * @param string $file
      */
     private function parseParameters(\DOMDocument $xml, $file)
     {
@@ -99,8 +98,7 @@ class XmlFileLoader extends FileLoader
     /**
      * Parses imports.
      *
-     * @param \DOMDocument $xml
-     * @param string       $file
+     * @param string $file
      */
     private function parseImports(\DOMDocument $xml, $file)
     {
@@ -121,8 +119,7 @@ class XmlFileLoader extends FileLoader
     /**
      * Parses multiple definitions.
      *
-     * @param \DOMDocument $xml
-     * @param string       $file
+     * @param string $file
      */
     private function parseDefinitions(\DOMDocument $xml, $file, $defaults)
     {
@@ -193,9 +190,7 @@ class XmlFileLoader extends FileLoader
     /**
      * Parses an individual Definition.
      *
-     * @param \DOMElement $service
-     * @param string      $file
-     * @param array       $defaults
+     * @param string $file
      *
      * @return Definition|null
      */
@@ -211,7 +206,7 @@ class XmlFileLoader extends FileLoader
                 $alias->setPublic($defaults['public']);
             }
 
-            return;
+            return null;
         }
 
         if ($this->isLoadingInstanceof) {
@@ -283,7 +278,7 @@ class XmlFileLoader extends FileLoader
             $definition->setDeprecated(true, $deprecated[0]->nodeValue ?: null);
         }
 
-        $definition->setArguments($this->getArgumentsAsPhp($service, 'argument', $file, false, $definition instanceof ChildDefinition));
+        $definition->setArguments($this->getArgumentsAsPhp($service, 'argument', $file, $definition instanceof ChildDefinition));
         $definition->setProperties($this->getArgumentsAsPhp($service, 'property', $file));
 
         if ($factories = $this->getChildren($service, 'factory')) {
@@ -394,9 +389,8 @@ class XmlFileLoader extends FileLoader
     /**
      * Processes anonymous services.
      *
-     * @param \DOMDocument $xml
-     * @param string       $file
-     * @param array        $defaults
+     * @param string $file
+     * @param array  $defaults
      */
     private function processAnonymousServices(\DOMDocument $xml, $file, $defaults)
     {
@@ -456,14 +450,12 @@ class XmlFileLoader extends FileLoader
     /**
      * Returns arguments as valid php types.
      *
-     * @param \DOMElement $node
-     * @param string      $name
-     * @param string      $file
-     * @param bool        $lowercase
+     * @param string $name
+     * @param string $file
      *
      * @return mixed
      */
-    private function getArgumentsAsPhp(\DOMElement $node, $name, $file, $lowercase = true, $isChildDefinition = false)
+    private function getArgumentsAsPhp(\DOMElement $node, $name, $file, $isChildDefinition = false)
     {
         $arguments = [];
         foreach ($this->getChildren($node, $name) as $arg) {
@@ -513,10 +505,10 @@ class XmlFileLoader extends FileLoader
                     $arguments[$key] = new Expression($arg->nodeValue);
                     break;
                 case 'collection':
-                    $arguments[$key] = $this->getArgumentsAsPhp($arg, $name, $file, false);
+                    $arguments[$key] = $this->getArgumentsAsPhp($arg, $name, $file);
                     break;
                 case 'iterator':
-                    $arg = $this->getArgumentsAsPhp($arg, $name, $file, false);
+                    $arg = $this->getArgumentsAsPhp($arg, $name, $file);
                     try {
                         $arguments[$key] = new IteratorArgument($arg);
                     } catch (InvalidArgumentException $e) {
@@ -546,8 +538,7 @@ class XmlFileLoader extends FileLoader
     /**
      * Get child elements by name.
      *
-     * @param \DOMNode $node
-     * @param mixed    $name
+     * @param mixed $name
      *
      * @return \DOMElement[]
      */
@@ -565,8 +556,6 @@ class XmlFileLoader extends FileLoader
 
     /**
      * Validates a documents XML schema.
-     *
-     * @param \DOMDocument $dom
      *
      * @return bool
      *
@@ -645,8 +634,7 @@ EOF
     /**
      * Validates an alias.
      *
-     * @param \DOMElement $alias
-     * @param string      $file
+     * @param string $file
      */
     private function validateAlias(\DOMElement $alias, $file)
     {
@@ -666,8 +654,7 @@ EOF
     /**
      * Validates an extension.
      *
-     * @param \DOMDocument $dom
-     * @param string       $file
+     * @param string $file
      *
      * @throws InvalidArgumentException When no extension is found corresponding to a tag
      */
@@ -688,8 +675,6 @@ EOF
 
     /**
      * Loads from an extension.
-     *
-     * @param \DOMDocument $xml
      */
     private function loadFromExtensions(\DOMDocument $xml)
     {
@@ -724,7 +709,7 @@ EOF
      *
      * @param \DOMElement $element A \DOMElement instance
      *
-     * @return array A PHP array
+     * @return mixed
      */
     public static function convertDomElementToArray(\DOMElement $element)
     {

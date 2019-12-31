@@ -61,7 +61,7 @@ class Datetime extends DateElementBase {
       '#date_time_callbacks' => [],
       '#date_year_range' => '1900:2050',
       '#date_increment' => 1,
-      '#date_timezone' => drupal_get_user_timezone(),
+      '#date_timezone' => date_default_timezone_get(),
     ];
   }
 
@@ -188,9 +188,9 @@ class Datetime extends DateElementBase {
    *     "seconds"-component will not be shown in the input. Used for HTML5 step
    *     values and jQueryUI datepicker settings. Defaults to 1 to show every
    *     second.
-   *   - #date_timezone: The local timezone to use when displaying or
-   *     interpreting dates. Defaults to the value returned by
-   *     drupal_get_user_timezone().
+   *   - #date_timezone: The Time Zone Identifier (TZID) to use when displaying
+   *     or interpreting dates, i.e: 'Asia/Kolkata'. Defaults to the value
+   *     returned by date_default_timezone_get().
    *
    * Example usage:
    * @code
@@ -200,6 +200,7 @@ class Datetime extends DateElementBase {
    *     '#date_date_element' => 'date',
    *     '#date_time_element' => 'none',
    *     '#date_year_range' => '2010:+3',
+   *     '#date_timezone' => 'Asia/Kolkata',
    *   );
    * @endcode
    *
@@ -396,7 +397,7 @@ class Datetime extends DateElementBase {
    * The format is important because these elements will not work with any other
    * format.
    *
-   * @param string $element
+   * @param array $element
    *   The $element to assess.
    *
    * @return string
@@ -423,7 +424,7 @@ class Datetime extends DateElementBase {
    * The format is important because these elements will not work with any other
    * format.
    *
-   * @param string $element
+   * @param array $element
    *   The $element to assess.
    *
    * @return string

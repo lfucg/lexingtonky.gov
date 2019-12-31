@@ -161,7 +161,7 @@ class IndexController extends ControllerBase {
     }
     else {
       // Notify the user that the status change did not succeed.
-      $this->getMessenger()->addStatus($this->t('The search index %name could not be enabled. Check if its server is set and enabled.', ['%name' => $search_api_index->label()]));
+      $this->getMessenger()->addWarning($this->t('The search index %name could not be enabled. Check if its server is set and enabled.', ['%name' => $search_api_index->label()]));
     }
 
     // Redirect to the index's "View" page.

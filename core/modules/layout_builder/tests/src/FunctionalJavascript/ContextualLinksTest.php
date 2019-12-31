@@ -23,11 +23,15 @@ class ContextualLinksTest extends WebDriverTestBase {
     'layout_builder',
     'layout_builder_views_test',
     'layout_test',
-    'layout_builder_test_css_transitions',
     'block',
     'node',
     'contextual',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'classy';
 
   /**
    * {@inheritdoc}
@@ -99,20 +103,21 @@ class ContextualLinksTest extends WebDriverTestBase {
    * Adds block to the layout via Layout Builder's UI.
    *
    * @param string $block_name
-   *   The block name as it appears in the Add Block form.
+   *   The block name as it appears in the Add block form.
    */
   protected function addBlock($block_name) {
     $assert_session = $this->assertSession();
     $page = $this->getSession()->getPage();
 
-    $assert_session->linkExists('Add Block');
-    $page->clickLink('Add Block');
+    $assert_session->linkExists('Add block');
+    $page->clickLink('Add block');
     $assert_session->assertWaitOnAjaxRequest();
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', "#drupal-off-canvas a:contains('$block_name')"));
     $page->clickLink($block_name);
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', '[data-drupal-selector=\'edit-actions-submit\']'));
-    $page->pressButton('Add Block');
-    $this->waitForNoElement('#drupal-off-canvas');
+
+    $page->pressButton('Add block');
+    $assert_session->assertNoElementAfterWait('css', '#drupal-off-canvas');
     $assert_session->assertWaitOnAjaxRequest();
   }
 
@@ -147,21 +152,6 @@ class ContextualLinksTest extends WebDriverTestBase {
     // Ensure that the contextual links that are hidden in Layout Builder UI
     // are visible on node view.
     $this->assertNotEmpty($page->findAll('css', '.layout-content [data-contextual-id]'));
-  }
-
-  /**
-   * Waits for an element to be removed from the page.
-   *
-   * @param string $selector
-   *   CSS selector.
-   * @param int $timeout
-   *   (optional) Timeout in milliseconds, defaults to 10000.
-   *
-   * @todo Remove in https://www.drupal.org/node/2892440.
-   */
-  protected function waitForNoElement($selector, $timeout = 10000) {
-    $condition = "(typeof jQuery !== 'undefined' && jQuery('$selector').length === 0)";
-    $this->assertJsCondition($condition, $timeout);
   }
 
 }

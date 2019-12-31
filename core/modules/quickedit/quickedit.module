@@ -12,9 +12,9 @@
  */
 
 use Drupal\Core\Url;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -79,8 +79,8 @@ function quickedit_library_info_alter(&$libraries, $extension) {
 
     // First let the base theme modify the library, then the actual theme.
     $alter_library = function (&$library, $theme) use (&$alter_library) {
-      if (isset($theme) && $theme_path = drupal_get_path('theme', $theme)) {
-        $info = system_get_info('theme', $theme);
+      if (!empty($theme) && $theme_path = drupal_get_path('theme', $theme)) {
+        $info = \Drupal::service('extension.list.theme')->getExtensionInfo($theme);
         // Recurse to process base theme(s) first.
         if (isset($info['base theme'])) {
           $alter_library($library, $info['base theme']);
@@ -134,7 +134,7 @@ function quickedit_preprocess_field(&$variables) {
   /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
   $entity = $element['#object'];
 
-  if (!\Drupal::currentUser()->hasPermission('access in-place editing') || !$entity->isLatestRevision()) {
+  if (!\Drupal::currentUser()->hasPermission('access in-place editing') || ($entity instanceof RevisionableInterface && !$entity->isLatestRevision())) {
     return;
   }
 
@@ -158,9 +158,12 @@ function quickedit_preprocess_field(&$variables) {
  * Implements hook_entity_view_alter().
  */
 function quickedit_entity_view_alter(&$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
-  /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+  if (isset($build['#embed'])) {
+    return;
+  }
+
   $build['#cache']['contexts'][] = 'user.permissions';
-  if (!\Drupal::currentUser()->hasPermission('access in-place editing') || !$entity->isLatestRevision()) {
+  if (!\Drupal::currentUser()->hasPermission('access in-place editing') || ($entity instanceof RevisionableInterface && !$entity->isLatestRevision())) {
     return;
   }
 
@@ -170,20 +173,20 @@ function quickedit_entity_view_alter(&$build, EntityInterface $entity, EntityVie
 /**
  * Check if a loaded entity is the latest revision.
  *
- * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+ * @param \Drupal\Core\Entity\RevisionableInterface $entity
  *   The entity to check.
  *
  * @return bool
  *   TRUE if the loaded entity is the latest revision, FALSE otherwise.
  *
- * @deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0. Use
+ * @deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use
  *   \Drupal\Core\Entity\RevisionableInterface::isLatestRevision() instead.
  *   As internal API, _quickedit_entity_is_latest_revision() may also be removed
  *   in a minor release.
  *
  * @internal
  */
-function _quickedit_entity_is_latest_revision(ContentEntityInterface $entity) {
+function _quickedit_entity_is_latest_revision(RevisionableInterface $entity) {
   @trigger_error('_quickedit_entity_is_latest_revision() is deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0. Use \Drupal\Core\Entity\RevisionableInterface::isLatestRevision() instead. As internal API, _quickedit_entity_is_latest_revision() may also be removed in a minor release.', E_USER_DEPRECATED);
   return $entity->isLatestRevision();
 }

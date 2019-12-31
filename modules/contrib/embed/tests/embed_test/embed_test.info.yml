@@ -1,14 +1,14 @@
 name: 'Embed test'
 type: module
 description: 'Support module for the Embed module tests.'
-# core: 8.x
+core: 8.x
+core_version_requirement: ^8 || ^9
 package: Testing
 dependencies:
   - embed
   - node
 
-# Information added by Drupal.org packaging script on 2017-03-29
-version: '8.x-1.0'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2019-12-18
+version: '8.x-1.3'
 project: 'embed'
-datestamp: 1490755690
+datestamp: 1576704501

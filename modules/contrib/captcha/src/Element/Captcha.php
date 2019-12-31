@@ -2,15 +2,54 @@
 
 namespace Drupal\captcha\Element;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element\FormElement;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines the CAPTCHA form element with default properties.
  *
  * @FormElement("captcha")
  */
-class Captcha extends FormElement {
+class Captcha extends FormElement implements ContainerFactoryPluginInterface {
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * Captcha constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The configuration factory.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $configFactory) {
+    $this->configFactory = $configFactory;
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('config.factory')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -32,7 +71,7 @@ class Captcha extends FormElement {
     // Override the default CAPTCHA validation function for case
     // insensitive validation.
     // TODO: shouldn't this be done somewhere else, e.g. in form_alter?
-    if (CAPTCHA_DEFAULT_VALIDATION_CASE_INSENSITIVE == \Drupal::config('captcha.settings')
+    if (CAPTCHA_DEFAULT_VALIDATION_CASE_INSENSITIVE == $this->configFactory->get('captcha.settings')
       ->get('default_validation')
     ) {
       $captcha_element['#captcha_validate'] = 'captcha_validate_case_insensitive_equality';
@@ -50,7 +89,7 @@ class Captcha extends FormElement {
     // Add JavaScript for general CAPTCHA functionality.
     $element['#attached']['library'][] = 'captcha/base';
 
-    if ($form_state->getTriggeringElement() && is_array($form_state->getTriggeringElement()['#limit_validation_errors'])) {
+    if ($form_state->getTriggeringElement() && isset($form_state->getTriggeringElement()['#limit_validation_errors']) && is_array($form_state->getTriggeringElement()['#limit_validation_errors'])) {
       // This is a partial (ajax) submission with limited validation. Do not
       // change anything about the captcha element, assume that it will not
       // update the captcha element, do not generate anything, which keeps the
@@ -60,7 +99,9 @@ class Captcha extends FormElement {
 
     // Get the form ID of the form we are currently processing (which is not
     // necessary the same form that is submitted (if any).
-    $this_form_id = $complete_form['form_id']['#value'];
+    $this_form_id = isset($complete_form['form_id']['#value']) ?
+      preg_replace("/[^a-z0-9_]/", "", (string) $complete_form['form_id']['#value'])
+      : NULL;
 
     // Get the CAPTCHA session ID.
     // If there is a submitted form: try to retrieve and reuse the
@@ -74,7 +115,7 @@ class Captcha extends FormElement {
       // not reuse one from a posted form.
       $captcha_sid = _captcha_generate_captcha_session($this_form_id, CAPTCHA_STATUS_UNSOLVED);
       $captcha_token = md5(mt_rand());
-      db_update('captcha_sessions')
+      \Drupal::database()->update('captcha_sessions')
         ->fields(['token' => $captcha_token])
         ->condition('csid', $captcha_sid)
         ->execute();
@@ -90,13 +131,14 @@ class Captcha extends FormElement {
       '#value' => $captcha_sid,
     ];
 
-    // Additional one time CAPTCHA token: store in database and send with form.
-    // $captcha_token = hash('sha256', mt_rand());
-    // db_update('captcha_sessions')
-    //   ->fields(['token' => $captcha_token])
-    //   ->condition('csid', $captcha_sid)
-    //   ->execute();
-    $captcha_token = db_query("SELECT token FROM {captcha_sessions} WHERE csid = :csid", [':csid' => $captcha_sid])->fetchField();
+    // Store CAPTCHA token as hidden field.
+    $captcha_token = \Drupal::database()
+      ->select('captcha_sessions', 'cs')
+      ->fields('cs', ['token'])
+      ->condition('csid', $captcha_sid)
+      ->execute()
+      ->fetchField();
+
     $element['captcha_token'] = [
       '#type' => 'hidden',
       '#value' => $captcha_token,
@@ -111,12 +153,16 @@ class Captcha extends FormElement {
     //   useful in _captcha_get_posted_captcha_info().
     // - $element['#captcha_info'], for post processing functions that do not
     //   receive a $form_state argument (e.g. the pre_render callback).
+    // Added a new access attribute,
+    // by default it will be true if access attribute
+    // not defined in a custom form.
     $form_state->set('captcha_info', [
       'this_form_id' => $this_form_id,
       'posted_form_id' => $posted_form_id,
       'captcha_sid' => $captcha_sid,
       'module' => $captcha_type_module,
       'captcha_type' => $captcha_type_challenge,
+      'access' => isset($element['#access']) ? $element['#access'] : CAPTCHA_FIELD_DEFAULT_ACCESS,
     ]);
     $element['#captcha_info'] = [
       'form_id' => $this_form_id,
@@ -178,6 +224,19 @@ class Captcha extends FormElement {
 
       // Store the solution in the #captcha_info array.
       $element['#captcha_info']['solution'] = $captcha['solution'];
+
+      // Store if this captcha type is cacheable:
+      // A cacheable captcha must not depend on the sid or solution, but be
+      // independent - like for example recaptcha.
+      $element['#captcha_info']['cacheable'] = !empty($captcha['cacheable']);
+
+      if (!empty($element['#captcha_info']['cacheable'])) {
+        // This is only used to avoid the re-use message.
+        $element['captcha_cacheable'] = [
+          '#type' => 'hidden',
+          '#value' => 1,
+        ];
+      }
 
       // Make sure we can use a top level form value
       // $form_state->getValue('captcha_response'),

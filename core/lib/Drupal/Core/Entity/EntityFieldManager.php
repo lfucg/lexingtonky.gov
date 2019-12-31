@@ -325,10 +325,11 @@ class EntityFieldManager implements EntityFieldManagerInterface {
    * {@inheritdoc}
    */
   public function getFieldDefinitions($entity_type_id, $bundle) {
-    if (!isset($this->fieldDefinitions[$entity_type_id][$bundle])) {
+    $langcode = $this->languageManager->getCurrentLanguage()->getId();
+    if (!isset($this->fieldDefinitions[$entity_type_id][$bundle][$langcode])) {
       $base_field_definitions = $this->getBaseFieldDefinitions($entity_type_id);
       // Not prepared, try to load from cache.
-      $cid = 'entity_bundle_field_definitions:' . $entity_type_id . ':' . $bundle . ':' . $this->languageManager->getCurrentLanguage()->getId();
+      $cid = 'entity_bundle_field_definitions:' . $entity_type_id . ':' . $bundle . ':' . $langcode;
       if ($cache = $this->cacheGet($cid)) {
         $bundle_field_definitions = $cache->data;
       }
@@ -341,9 +342,9 @@ class EntityFieldManager implements EntityFieldManagerInterface {
       // base fields, merge them together. Use array_replace() to replace base
       // fields with by bundle overrides and keep them in order, append
       // additional by bundle fields.
-      $this->fieldDefinitions[$entity_type_id][$bundle] = array_replace($base_field_definitions, $bundle_field_definitions);
+      $this->fieldDefinitions[$entity_type_id][$bundle][$langcode] = array_replace($base_field_definitions, $bundle_field_definitions);
     }
-    return $this->fieldDefinitions[$entity_type_id][$bundle];
+    return $this->fieldDefinitions[$entity_type_id][$bundle][$langcode];
   }
 
   /**
@@ -508,12 +509,13 @@ class EntityFieldManager implements EntityFieldManagerInterface {
 
         // In the second step, the per-bundle fields are added, based on the
         // persistent bundle field map stored in a key value collection. This
-        // data is managed in the EntityManager::onFieldDefinitionCreate()
-        // and EntityManager::onFieldDefinitionDelete() methods. Rebuilding this
-        // information in the same way as base fields would not scale, as the
-        // time to query would grow exponentially with more fields and bundles.
-        // A cache would be deleted during cache clears, which is the only time
-        // it is needed, so a key value collection is used.
+        // data is managed in the
+        // FieldDefinitionListener::onFieldDefinitionCreate() and
+        // FieldDefinitionListener::onFieldDefinitionDelete() methods.
+        // Rebuilding this information in the same way as base fields would not
+        // scale, as the time to query would grow exponentially with more fields
+        // and bundles. A cache would be deleted during cache clears, which is
+        // the only time it is needed, so a key value collection is used.
         $bundle_field_maps = $this->keyValueFactory->get('entity.definitions.bundle_field_map')->getAll();
         foreach ($bundle_field_maps as $entity_type_id => $bundle_field_map) {
           foreach ($bundle_field_map as $field_name => $map_entry) {

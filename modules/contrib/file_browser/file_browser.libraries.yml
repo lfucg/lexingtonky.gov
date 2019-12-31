@@ -18,11 +18,23 @@ view:
     theme:
       css/file_browser.view.css: {}
   dependencies:
-    - core/drupal
     - core/jquery
+    - core/drupal
     - core/jquery.once
     - file_browser/imagesloaded
     - file_browser/masonry
+
+preview:
+  version: VERSION
+  js:
+    js/file_browser.preview.js: {}
+  css:
+    theme:
+      css/file_browser.preview.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/jquery.once
 
 imagesloaded:
   remote: https://github.com/desandro/imagesloaded

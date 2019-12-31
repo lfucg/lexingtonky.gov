@@ -25,11 +25,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textarea_with_summary
+    region: content
   created:
     type: datetime_timestamp
     weight: 4
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_file_browser_image:
     weight: 2
     settings:
@@ -40,28 +42,33 @@ content:
       open: false
     third_party_settings: {  }
     type: entity_browser_file
+    region: content
   langcode:
     type: language_select
     weight: 5
     settings: {  }
     third_party_settings: {  }
+    region: content
   path:
     type: path
     weight: 8
     settings: {  }
     third_party_settings: {  }
+    region: content
   promote:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 6
     third_party_settings: {  }
+    region: content
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 7
     third_party_settings: {  }
+    region: content
   title:
     type: string_textfield
     weight: 0
@@ -69,6 +76,7 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 3
@@ -77,4 +85,5 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
 hidden: {  }

@@ -11,15 +11,14 @@ use Drupal\media\OEmbed\ResourceFetcherInterface;
 use Drupal\media\OEmbed\UrlResolverInterface;
 use Drupal\media\Plugin\media\Source\OEmbedInterface;
 use Drupal\media_library\MediaLibraryUiBuilder;
+use Drupal\media_library\OpenerResolverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Creates a form to create media entities from oEmbed URLs.
  *
  * @internal
- *   Media Library is an experimental module and its internal code may be
- *   subject to change in minor releases. External code should not instantiate
- *   or extend this class.
+ *   Form classes are internal.
  */
 class OEmbedForm extends AddFormBase {
 
@@ -48,9 +47,11 @@ class OEmbedForm extends AddFormBase {
    *   The oEmbed URL resolver service.
    * @param \Drupal\media\OEmbed\ResourceFetcherInterface $resource_fetcher
    *   The oEmbed resource fetcher service.
+   * @param \Drupal\media_library\OpenerResolverInterface $opener_resolver
+   *   The opener resolver.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, UrlResolverInterface $url_resolver, ResourceFetcherInterface $resource_fetcher) {
-    parent::__construct($entity_type_manager, $library_ui_builder);
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, MediaLibraryUiBuilder $library_ui_builder, UrlResolverInterface $url_resolver, ResourceFetcherInterface $resource_fetcher, OpenerResolverInterface $opener_resolver = NULL) {
+    parent::__construct($entity_type_manager, $library_ui_builder, $opener_resolver);
     $this->urlResolver = $url_resolver;
     $this->resourceFetcher = $resource_fetcher;
   }
@@ -63,8 +64,16 @@ class OEmbedForm extends AddFormBase {
       $container->get('entity_type.manager'),
       $container->get('media_library.ui_builder'),
       $container->get('media.oembed.url_resolver'),
-      $container->get('media.oembed.resource_fetcher')
+      $container->get('media.oembed.resource_fetcher'),
+      $container->get('media_library.opener_resolver')
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
+    return $this->getBaseFormId() . '_oembed';
   }
 
   /**
@@ -86,17 +95,12 @@ class OEmbedForm extends AddFormBase {
    * {@inheritdoc}
    */
   protected function buildInputElement(array $form, FormStateInterface $form_state) {
-    $form['#attributes']['class'][] = 'media-library-add-form--oembed';
-
     $media_type = $this->getMediaType($form_state);
     $providers = $media_type->getSource()->getProviders();
 
     // Add a container to group the input elements for styling purposes.
     $form['container'] = [
       '#type' => 'container',
-      '#attributes' => [
-        'class' => ['media-library-add-form__input-wrapper'],
-      ],
     ];
 
     $form['container']['url'] = [
@@ -110,7 +114,6 @@ class OEmbedForm extends AddFormBase {
       '#required' => TRUE,
       '#attributes' => [
         'placeholder' => 'https://',
-        'class' => ['media-library-add-form-oembed-url'],
       ],
     ];
 
@@ -134,9 +137,6 @@ class OEmbedForm extends AddFormBase {
             FormBuilderInterface::AJAX_FORM_REQUEST => TRUE,
           ],
         ],
-      ],
-      '#attributes' => [
-        'class' => ['media-library-add-form-oembed-submit'],
       ],
     ];
     return $form;

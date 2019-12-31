@@ -7,6 +7,7 @@
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Link;
 
 define('IMAGE_CAPTCHA_ALLOWED_CHARACTERS', 'aAbBCdEeFfGHhijKLMmNPQRrSTtWXYZ23456789');
 
@@ -55,7 +56,7 @@ function _image_captcha_get_enabled_fonts() {
  * @return array
  *   List($readable_fonts, $problem_fonts).
  */
-function _image_captcha_check_fonts($fonts) {
+function _image_captcha_check_fonts(array $fonts) {
   $readable_fonts = [];
   $problem_fonts = [];
 
@@ -171,7 +172,7 @@ function _image_captcha_check_setup($check_fonts = TRUE) {
  *   The utf8 string which will be used to split in characters.
  *
  * @return array
- *   Array($width, $heigh).
+ *   [$width, $heigh].
  */
 function _image_captcha_image_size($code) {
   $config = \Drupal::config('image_captcha.settings');
@@ -211,8 +212,8 @@ function image_captcha_captcha($op, $captcha_type = '', $captcha_sid = NULL) {
         // the request for the image itself won't succeed (only ?q=user
         // is permitted for unauthenticated users). We fall back to the
         // Math CAPTCHA in that case.
-        if (defined('MAINTENANCE_MODE') && \Drupal::currentUser()
-            ->isAnonymous()
+        if (\Drupal::state()->get('system.maintenance_mode')
+        && \Drupal::currentUser()->isAnonymous()
         ) {
           return captcha_captcha('generate', 'Math');
         }
@@ -237,7 +238,7 @@ function image_captcha_captcha($op, $captcha_type = '', $captcha_sid = NULL) {
           '#theme' => 'image',
           '#uri' => Url::fromRoute('image_captcha.generator', [
             'session_id' => $captcha_sid,
-            'timestamp' => REQUEST_TIME,
+            'timestamp' => \Drupal::time()->getRequestTime(),
           ])->toString(),
           '#width' => $width,
           '#height' => $height,
@@ -275,4 +276,66 @@ function image_captcha_captcha($op, $captcha_type = '', $captcha_sid = NULL) {
       }
       break;
   }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function image_captcha_theme() {
+  return [
+    'image_captcha_refresh' => [
+      'variables' => ['captcha_refresh_link' => NULL],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function image_captcha_element_info_alter(array &$element) {
+  if (isset($element['captcha'])) {
+    $element['captcha']['#process'][] = 'image_captcha_after_build_process';
+  }
+}
+
+/**
+ * Add image refresh button to captcha form element.
+ *
+ * @return array
+ *   The processed element.
+ *
+ * @see captcha_element_info()
+ * @see image_captcha_element_info_alter()
+ */
+function image_captcha_after_build_process($element) {
+  $form_id = $element['#captcha_info']['form_id'];
+  $captcha_point = captcha_get_form_id_setting($form_id);
+
+  $is_image_captcha = FALSE;
+  if (isset($captcha_point->captchaType) && $captcha_point->captchaType == 'image_captcha/Image') {
+    $is_image_captcha = TRUE;
+  }
+  elseif (isset($captcha_point->captchaType) && $captcha_point->captchaType == 'default') {
+    $default_challenge = \Drupal::service('config.manager')
+      ->getConfigFactory()
+      ->get('captcha.settings')
+      ->get('default_challenge');
+    if ($default_challenge == 'image_captcha/Image') {
+      $is_image_captcha = TRUE;
+    }
+  }
+
+  if ($is_image_captcha && isset($element['captcha_widgets']['captcha_image'])) {
+    $uri = Link::fromTextAndUrl(t('Get new captcha!'),
+      new Url('image_captcha.refresh',
+        ['form_id' => $form_id],
+        ['attributes' => ['class' => ['reload-captcha']]]
+      )
+    );
+    $element['captcha_widgets']['captcha_refresh'] = [
+      '#theme' => 'image_captcha_refresh',
+      '#captcha_refresh_link' => $uri,
+    ];
+  }
+  return $element;
 }

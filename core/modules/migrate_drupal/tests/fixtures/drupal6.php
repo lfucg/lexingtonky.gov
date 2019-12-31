@@ -8353,7 +8353,7 @@ $connection->insert('files')
   'fid' => '1',
   'uid' => '1',
   'filename' => 'Image1.png',
-  'filepath' => 'core/modules/simpletest/files/image-1.png',
+  'filepath' => 'core/tests/fixtures/files/image-1.png',
   'filemime' => 'image/png',
   'filesize' => '39325',
   'status' => '1',
@@ -8363,7 +8363,7 @@ $connection->insert('files')
   'fid' => '2',
   'uid' => '1',
   'filename' => 'Image2.jpg',
-  'filepath' => 'core/modules/simpletest/files/image-2.jpg',
+  'filepath' => 'core/tests/fixtures/files/image-2.jpg',
   'filemime' => 'image/jpeg',
   'filesize' => '1831',
   'status' => '1',
@@ -8373,7 +8373,7 @@ $connection->insert('files')
   'fid' => '3',
   'uid' => '1',
   'filename' => 'Image-test.gif',
-  'filepath' => 'core/modules/simpletest/files/image-test.gif',
+  'filepath' => 'core/tests/fixtures/files/image-test.gif',
   'filemime' => 'image/jpeg',
   'filesize' => '183',
   'status' => '1',
@@ -8383,7 +8383,7 @@ $connection->insert('files')
   'fid' => '5',
   'uid' => '1',
   'filename' => 'html-1.txt',
-  'filepath' => 'core/modules/simpletest/files/html-1.txt',
+  'filepath' => 'core/tests/fixtures/files/html-1.txt',
   'filemime' => 'text/plain',
   'filesize' => '24',
   'status' => '1',
@@ -8710,6 +8710,16 @@ $connection->insert('history')
   'uid',
   'nid',
   'timestamp',
+))
+->values(array(
+  'uid' => '1',
+  'nid' => '1',
+  'timestamp' => '1549874910',
+))
+->values(array(
+  'uid' => '1',
+  'nid' => '2',
+  'timestamp' => '1549874910',
 ))
 ->values(array(
   'uid' => '1',
@@ -10635,6 +10645,14 @@ $connection->insert('imagecache_action')
   'action' => 'imagecache_rotate',
   'data' => 'a:3:{s:7:"degrees";s:2:"55";s:6:"random";i:0;s:7:"bgcolor";s:0:"";}',
 ))
+  ->values(array(
+  'actionid' => '7',
+  'presetid' => '2',
+  'weight' => '0',
+  'module' => 'imagecache',
+  'action' => '',
+  'data' => 'a:3:{s:7:"degrees";s:2:"55";s:6:"random";i:0;s:7:"bgcolor";s:0:"";}',
+  ))
 ->execute();
 $connection->schema()->createTable('imagecache_preset', array(
   'fields' => array(
@@ -27772,8 +27790,48 @@ $connection->insert('locales_target')
   'i18n_status' => '0',
 ))
 ->values(array(
+  'lid' => '1672',
+  'translation' => 'fr - Type',
+  'language' => 'fr',
+  'plid' => '0',
+  'plural' => '0',
+  'i18n_status' => '0',
+))
+->values(array(
   'lid' => '1678',
   'translation' => 'fr - I really, really, really love migrating ',
+  'language' => 'fr',
+  'plid' => '0',
+  'plural' => '0',
+  'i18n_status' => '0',
+))
+->values(array(
+  'lid' => '1690',
+  'translation' => 'Noir',
+  'language' => 'fr',
+  'plid' => '0',
+  'plural' => '0',
+  'i18n_status' => '0',
+))
+->values(array(
+  'lid' => '1692',
+  'translation' => 'fr - Talos IV',
+  'language' => 'fr',
+  'plid' => '0',
+  'plural' => '0',
+  'i18n_status' => '0',
+))
+->values(array(
+  'lid' => '1694',
+  'translation' => 'fr - The home of Captain Christopher Pike.',
+  'language' => 'fr',
+  'plid' => '0',
+  'plural' => '0',
+  'i18n_status' => '0',
+))
+->values(array(
+  'lid' => '1696',
+  'translation' => "fr - 10\r\nfr - 20\r\nfr - 50\r\nfr - 100\r\nfr - 1000",
   'language' => 'fr',
   'plid' => '0',
   'plural' => '0',
@@ -27908,33 +27966,9 @@ $connection->insert('locales_target')
   'i18n_status' => '0',
 ))
 ->values(array(
-  'lid' => '1690',
-  'translation' => 'Noir',
-  'language' => 'fr',
-  'plid' => '0',
-  'plural' => '0',
-  'i18n_status' => '0',
-))
-->values(array(
   'lid' => '1691',
   'translation' => 'Mhlophe',
   'language' => 'zu',
-  'plid' => '0',
-  'plural' => '0',
-  'i18n_status' => '0',
-))
-->values(array(
-  'lid' => '1672',
-  'translation' => 'fr - Type',
-  'language' => 'fr',
-  'plid' => '0',
-  'plural' => '0',
-  'i18n_status' => '0',
-))
-->values(array(
-  'lid' => '1692',
-  'translation' => 'fr - Talos IV',
-  'language' => 'fr',
   'plid' => '0',
   'plural' => '0',
   'i18n_status' => '0',
@@ -27951,22 +27985,6 @@ $connection->insert('locales_target')
   'lid' => '1694',
   'translation' => 'zu - The home of Captain Christopher Pike.',
   'language' => 'zu',
-  'plid' => '0',
-  'plural' => '0',
-  'i18n_status' => '0',
-))
-->values(array(
-  'lid' => '1694',
-  'translation' => 'fr - The home of Captain Christopher Pike.',
-  'language' => 'fr',
-  'plid' => '0',
-  'plural' => '0',
-  'i18n_status' => '0',
-))
-->values(array(
-  'lid' => '1696',
-  'translation' => "fr - 10\r\nfr - 20\r\nfr - 50\r\nfr - 100\r\nfr - 1000",
-  'language' => 'fr',
   'plid' => '0',
   'plural' => '0',
   'i18n_status' => '0',
@@ -33161,8 +33179,8 @@ $connection->insert('menu_links')
   'menu_name' => 'navigation',
   'mlid' => '411',
   'plid' => '0',
-  'link_path' => 'core/modules/simpletest/files/imagecache',
-  'router_path' => 'core/modules/simpletest/files/imagecache',
+  'link_path' => 'core/tests/fixtures/files/imagecache',
+  'router_path' => 'core/tests/fixtures/files/imagecache',
   'link_title' => '',
   'options' => 'a:0:{}',
   'module' => 'system',
@@ -42835,7 +42853,7 @@ $connection->insert('menu_router')
   'file' => 'sites/all/modules/cck/includes/content.node_form.inc',
 ))
 ->values(array(
-  'path' => 'core/modules/simpletest/files/imagecache',
+  'path' => 'core/tests/fixtures/files/imagecache',
   'load_functions' => '',
   'to_arg_functions' => '',
   'access_callback' => '_imagecache_menu_access_public_files',
@@ -42845,7 +42863,7 @@ $connection->insert('menu_router')
   'fit' => '31',
   'number_parts' => '5',
   'tab_parent' => '',
-  'tab_root' => 'core/modules/simpletest/files/imagecache',
+  'tab_root' => 'core/tests/fixtures/files/imagecache',
   'title' => '',
   'title_callback' => 't',
   'title_arguments' => '',
@@ -48071,6 +48089,16 @@ $connection->insert('term_node')
   'tid' => '4',
 ))
 ->values(array(
+  'nid' => '21',
+  'vid' => '2002',
+  'tid' => '4',
+))
+->values(array(
+  'nid' => '18',
+  'vid' => '21',
+  'tid' => '5',
+))
+->values(array(
   'nid' => '1',
   'vid' => '2001',
   'tid' => '5',
@@ -48079,6 +48107,26 @@ $connection->insert('term_node')
   'nid' => '19',
   'vid' => '22',
   'tid' => '8',
+))
+->values(array(
+  'nid' => '22',
+  'vid' => '2003',
+  'tid' => '9',
+))
+->values(array(
+  'nid' => '22',
+  'vid' => '2003',
+  'tid' => '14',
+))
+->values(array(
+  'nid' => '18',
+  'vid' => '21',
+  'tid' => '15',
+))
+->values(array(
+  'nid' => '21',
+  'vid' => '2002',
+  'tid' => '15',
 ))
 ->execute();
 $connection->schema()->createTable('term_relation', array(
@@ -48545,7 +48593,7 @@ $connection->insert('users')
   'status' => '1',
   'timezone' => '3600',
   'language' => 'fr',
-  'picture' => 'core/modules/simpletest/files/image-test.jpg',
+  'picture' => 'core/tests/fixtures/files/image-test.jpg',
   'init' => 'doe@example.com',
   'data' => 'a:2:{s:7:"contact";i:1;s:13:"form_build_id";s:48:"form-qu_DMjE-Vfg01arT5J4VbuBCkOgx_LeySJx4qrPOSuA";}',
   'timezone_name' => 'Europe/Berlin',
@@ -48570,7 +48618,7 @@ $connection->insert('users')
   'status' => '1',
   'timezone' => '7200',
   'language' => 'ro',
-  'picture' => 'core/modules/simpletest/files/image-test.png',
+  'picture' => 'core/tests/fixtures/files/image-test.png',
   'init' => 'roe@example.com',
   'data' => 'a:2:{s:7:"contact";i:0;s:13:"form_build_id";s:48:"form-1TxjbL2_1dEHIxEu2Db6OvEsSN1x9ILH1VCgnvsO6LE";}',
   'timezone_name' => 'Europe/Helsinki',
@@ -49527,7 +49575,7 @@ $connection->insert('variable')
 ))
 ->values(array(
   'name' => 'file_directory_path',
-  'value' => 's:29:"core/modules/simpletest/files";',
+  'value' => 's:25:"core/tests/fixtures/files";',
 ))
 ->values(array(
   'name' => 'file_directory_temp',
@@ -50192,7 +50240,7 @@ $connection->insert('vocabulary')
   'description' => 'description of vocabulary 3 (i=2)',
   'help' => '',
   'relations' => '1',
-  'hierarchy' => '2',
+  'hierarchy' => '0',
   'multiple' => '1',
   'required' => '0',
   'tags' => '0',
@@ -50220,7 +50268,7 @@ $connection->insert('vocabulary')
   'description' => 'description of vocabulary name much longer than thirty two characters',
   'help' => '',
   'relations' => '1',
-  'hierarchy' => '3',
+  'hierarchy' => '0',
   'multiple' => '1',
   'required' => '0',
   'tags' => '0',
@@ -50288,6 +50336,14 @@ $connection->insert('vocabulary_node_types')
 ->values(array(
   'vid' => '4',
   'type' => 'article',
+))
+->values(array(
+  'vid' => '3',
+  'type' => 'employee',
+))
+->values(array(
+  'vid' => '5',
+  'type' => 'employee',
 ))
 ->values(array(
   'vid' => '7',

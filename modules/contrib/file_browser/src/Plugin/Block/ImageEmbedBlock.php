@@ -74,7 +74,7 @@ class ImageEmbedBlock extends BlockBase {
    * @return array
    *   A render array representing Entity Browser components.
    */
-  public function browserForm($files) {
+  public function browserForm(array $files) {
     $selection = [
       '#type' => 'container',
       '#attributes' => ['id' => 'image-embed-block-browser'],
@@ -229,7 +229,7 @@ class ImageEmbedBlock extends BlockBase {
           '#theme' => 'image',
           '#width' => $width,
           '#height' => $height,
-          '#alt' => isset($info['settings']['alt']) ? $this->t($info['settings']['alt']) : '',
+          '#alt' => isset($info['settings']['alt']) ? $info['settings']['alt'] : '',
           '#uri' => $uri,
         ];
 

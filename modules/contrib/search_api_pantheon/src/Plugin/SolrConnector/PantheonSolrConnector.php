@@ -141,7 +141,7 @@ class PantheonSolrConnector extends StandardSolrConnector {
     // When this plugin is reloaded, $this->configuration, will be repopulated
     // with $this->internalConfiguration().
     $this->configuration = $form_state->getValues();
-    $this->schemaPoster->postSchema($this->configuration['schema']);
+    $this->postSchema();
   }
 
   /**
@@ -161,13 +161,40 @@ class PantheonSolrConnector extends StandardSolrConnector {
   }
 
   /**
+   * Post the configured schema file to the Solr Service.
+   */
+  protected function postSchema() {
+    return $this->schemaPoster->postSchema($this->configuration['schema']);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function pingServer() {
     // The path used in the parent class, admin/info/system, fails.
     // I don't know why.
-    // @todo, remove this entire class: https://www.drupal.org/node/2761121
-    return $this->doPing(['handler' => 'admin/system'], 'server');
+    $ping = $this->doPing(['handler' => 'admin/system'], 'server');
+    // If the ping fails, there is a good chance it is because the code
+    // is being run on a new multidev environment in which the schema has not
+    // yet been posted.
+    if ($ping === FALSE) {
+      $this->postSchema();
+      // Try again after posting the schema.
+      return $this->doPing(['handler' => 'admin/system'], 'server');
+    }
+    else {
+      return $ping;
+    }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function getDataFromHandler($endpoint, $handler, $reset = FALSE) {
+    // First make sure the server is up.
+    // If a multidev environment has just been made,
+    // it may be necessary to post the schema.
+    $this->pingServer();
+    return parent::getDataFromHandler($endpoint, $handler, $reset = FALSE);
+  }
 }

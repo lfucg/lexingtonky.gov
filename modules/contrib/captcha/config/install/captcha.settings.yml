@@ -1,3 +1,4 @@
+enabled_default: 0
 default_challenge: 'captcha/Math'
 description: 'This question is for testing whether or not you are a human visitor and to prevent automated spam submissions.'
 administration_mode: false

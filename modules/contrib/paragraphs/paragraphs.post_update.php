@@ -160,8 +160,8 @@ function paragraphs_post_update_rebuild_parent_fields(array &$sandbox) {
         $column_names = $table_mapping->getColumnNames($field_name);
         $revision_column = $column_names['target_revision_id'];
 
-        if ($field_storage instanceof BaseFieldDefinition) {
-          $field_revision_table = $storage->getRevisionDataTable();
+        if ($field_storage instanceof BaseFieldDefinition && $field_storage->getCardinality() === 1) {
+          $field_revision_table = $storage->getRevisionDataTable() ?: $storage->getRevisionTable();
           $entity_id_column = $entity_type_definition->getKey('id');
         }
         else {

@@ -1,5 +1,5 @@
 description: 'Provides multilingual demo Paragraphs types.'
-# core: 8.x
+core: 8.x
 dependencies:
   - paragraphs:paragraphs
   - drupal:field
@@ -21,8 +21,7 @@ name: Paragraphs Demo
 package: Paragraphs
 type: module
 
-# Information added by Drupal.org packaging script on 2019-08-15
-version: '8.x-1.9'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2019-11-01
+version: '8.x-1.10'
 project: 'paragraphs'
-datestamp: 1565881391
+datestamp: 1572617588

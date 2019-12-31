@@ -2,19 +2,14 @@
 
 namespace Drupal\Tests\paragraphs\Functional;
 
-use Drupal\Tests\BrowserTestBase;
-use Drupal\Tests\paragraphs\FunctionalJavascript\LoginAdminTrait;
-use Drupal\Tests\paragraphs\FunctionalJavascript\ParagraphsTestBaseTrait;
+use Drupal\Tests\paragraphs\Functional\Experimental\ParagraphsExperimentalTestBase;
 
 /**
  * Tests the Paragraphs user interface.
  *
  * @group paragraphs
  */
-class ParagraphsExperimentalUiTest extends BrowserTestBase {
-
-  use LoginAdminTrait;
-  use ParagraphsTestBaseTrait;
+class ParagraphsExperimentalUiTest extends ParagraphsExperimentalTestBase {
 
   /**
    * Modules to enable.

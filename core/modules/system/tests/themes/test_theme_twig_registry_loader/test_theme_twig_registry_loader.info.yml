@@ -1,11 +1,6 @@
 name: 'Twig registry loader test'
 type: theme
+base theme: stable
 description: 'Support module for Twig registry loader testing.'
-# version: VERSION
-# core: 8.x
-
-# Information added by Drupal.org packaging script on 2019-05-08
-version: '8.7.1'
-core: '8.x'
-project: 'drupal'
-datestamp: 1557336198
+version: VERSION
+core: 8.x

@@ -1,0 +1,12 @@
+services:
+  autologout_event_subscriber:
+    class: Drupal\autologout\EventSubscriber\AutologoutSubscriber
+    tags:
+      - {name: event_subscriber}
+    arguments: ['@autologout.manager']
+
+  autologout.manager:
+    class: Drupal\autologout\AutologoutManager
+    tags:
+      - {name: autologout_manager}
+    arguments: ['@module_handler', '@config.factory']

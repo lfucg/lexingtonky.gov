@@ -10,7 +10,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 /**
  * Defines a schema converter for entity types with existing data.
  *
- * @deprecated in Drupal 8.7.0, will be removed before Drupal 9.0.0.
+ * @deprecated in drupal:8.7.0 and is removed from drupal:9.0.0.
  *   Use \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface::updateFieldableEntityType()
  *   instead.
  *
@@ -96,7 +96,7 @@ class SqlContentEntityStorageSchemaConverter {
 
     /** @var \Drupal\Core\Entity\EntityLastInstalledSchemaRepositoryInterface $last_installed_schema_repository */
     $last_installed_schema_repository = \Drupal::service('entity.last_installed_schema.repository');
-    $field_storage_definitions = $last_installed_schema_repository->getLastInstalledFieldStorageDefinitions('entity_test_update');
+    $field_storage_definitions = $last_installed_schema_repository->getLastInstalledFieldStorageDefinitions($this->entityTypeId);
 
     // Add the revision ID field.
     $field_name = $entity_type->getKey('revision');

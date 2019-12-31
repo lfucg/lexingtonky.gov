@@ -751,8 +751,6 @@ class Database extends BackendPluginBase implements PluginFormInterface {
    *   (optional) The type of table being created. Either "index" (for the
    *   denormalized table for an entire index) or "field" (for field-specific
    *   tables).
-   *
-   * @todo Write a test to ensure a field named "value" doesn't break this.
    */
   protected function createFieldTable(FieldInterface $field = NULL, array $db, $type = 'field') {
     $new_table = !$this->database->schema()->tableExists($db['table']);
@@ -1946,7 +1944,11 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       elseif ($neg) {
         $db_query->fields('t', ['item_id']);
       }
-      elseif ($not_nested) {
+      elseif ($not_nested && $match_parts) {
+        $db_query->fields('t', ['item_id']);
+        $db_query->addExpression('SUM(t.score)', 'score');
+      }
+      elseif ($not_nested || $match_parts) {
         $db_query->fields('t', ['item_id', 'score']);
       }
       else {
@@ -1954,16 +1956,13 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       }
 
       if (!$match_parts) {
-        $db_query->condition('word', $words, 'IN');
+        $db_query->condition('t.word', $words, 'IN');
       }
       else {
         $db_or = new Condition('OR');
-        // GROUP BY all existing non-grouped, non-aggregated columns – except
-        // "word", which we remove since it will be useless to us in this case.
-        $columns = &$db_query->getFields();
-        unset($columns['word']);
-        foreach (array_keys($columns) as $column) {
-          $db_query->groupBy($column);
+        // GROUP BY all existing non-aggregated columns.
+        foreach ($db_query->getFields() as $column) {
+          $db_query->groupBy("{$column['table']}.{$column['field']}");
         }
 
         foreach ($words as $i => $word) {
@@ -1992,7 +1991,9 @@ class Database extends BackendPluginBase implements PluginFormInterface {
         $db_query->condition($db_or);
       }
 
-      $db_query->condition('field_name', array_map([__CLASS__, 'getTextFieldName'], array_keys($fields)), 'IN');
+      $field_names = array_keys($fields);
+      $field_names = array_map([__CLASS__, 'getTextFieldName'], $field_names);
+      $db_query->condition('t.field_name', $field_names, 'IN');
     }
 
     if ($nested) {
@@ -2003,7 +2004,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
           if (!$match_parts) {
             $word .= ' ';
             $var = ':word' . strlen($word);
-            $query->addExpression($var, 'word', [$var => $word]);
+            $query->addExpression($var, 't.word', [$var => $word]);
           }
           else {
             $i += $word_count;
@@ -2694,11 +2695,11 @@ class Database extends BackendPluginBase implements PluginFormInterface {
         }
         $field_query = $this->database->select($fields[$field]['table'], 't');
         $field_query->fields('t', ['word', 'item_id'])
-          ->condition('field_name', $field)
-          ->condition('item_id', $all_results, 'IN');
+          ->condition('t.field_name', $field)
+          ->condition('t.item_id', $all_results, 'IN');
         if ($pass == 1) {
-          $field_query->condition('word', $incomplete_like, 'LIKE')
-            ->condition('word', $keys, 'NOT IN');
+          $field_query->condition('t.word', $incomplete_like, 'LIKE')
+            ->condition('t.word', $keys, 'NOT IN');
         }
         if (!isset($word_query)) {
           $word_query = $field_query;
@@ -2711,10 +2712,10 @@ class Database extends BackendPluginBase implements PluginFormInterface {
         return [];
       }
       $db_query = $this->database->select($word_query, 't');
-      $db_query->addExpression('COUNT(DISTINCT item_id)', 'results');
+      $db_query->addExpression('COUNT(DISTINCT t.item_id)', 'results');
       $db_query->fields('t', ['word'])
-        ->groupBy('word')
-        ->having('COUNT(DISTINCT item_id) <= :max', [':max' => $max_occurrences])
+        ->groupBy('t.word')
+        ->having('COUNT(DISTINCT t.item_id) <= :max', [':max' => $max_occurrences])
         ->orderBy('results', 'DESC')
         ->range(0, $limit);
       $incomp_len = strlen($incomplete_key);

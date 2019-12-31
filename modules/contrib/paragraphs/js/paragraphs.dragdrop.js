@@ -80,18 +80,16 @@
        *   The Sortable event.
        */
       function handleReorder(evt) {
-        var $item = $(evt.item);
-        var $parent = $item.closest('.paragraphs-dragdrop__list');
-        var $children = $parent.children('li');
-        var $srcParent = $(evt.to);
-        var $srcChildren = $srcParent.children('li');
-
         // Update both the source and target children.
-        updateWeightsAndPath($srcChildren);
-        updateWeightsAndPath($children);
+        if (evt.from === evt.to) {
+          updateWeightsAndPath($(evt.to).children('li'));
+        }
+        else {
+          updateWeightsAndPath($(evt.from).children('li'));
+          updateWeightsAndPath($(evt.to).children('li'));
+        }
         endDragClasses();
       }
-
 
       /**
        * Update weight and recursively update path of the provided paragraphs.
@@ -236,6 +234,12 @@
        */
       function startDragClasses() {
         $('html').addClass('is-dragging-paragraphs');
+        // Fix race condition when the drag event start results in a scrollbar
+        // position change triggered by a collapsing item with children. Add a
+        // min-height for the current height as a workaround.
+        $('.paragraphs-dragdrop__list').eq(0).css('min-height', function() {
+          return $(this).height();
+        });
       }
 
       /**
@@ -260,6 +264,8 @@
       function endDragClasses() {
         $('html').removeClass('is-dragging-paragraphs');
         $('.is-droppable-target').removeClass('is-droppable-target');
+        // Remove the custom min-height definition added in startDragClasses().
+        $('.paragraphs-dragdrop__list').eq(0).removeAttr('style');
       }
 
       // Fix for an iOS 10 bug. Binding empty event handler on the touchmove

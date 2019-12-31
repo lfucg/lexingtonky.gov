@@ -15,6 +15,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\Exception\BrokenPostRequestException;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\ElementInfoManagerInterface;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\FileBag;
@@ -26,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @ingroup form_api
  */
-class FormBuilder implements FormBuilderInterface, FormValidatorInterface, FormSubmitterInterface, FormCacheInterface {
+class FormBuilder implements FormBuilderInterface, FormValidatorInterface, FormSubmitterInterface, FormCacheInterface, TrustedCallbackInterface {
 
   /**
    * The module handler.
@@ -220,9 +221,9 @@ class FormBuilder implements FormBuilderInterface, FormValidatorInterface, FormS
   /**
    * {@inheritdoc}
    */
-  public function buildForm($form_id, FormStateInterface &$form_state) {
+  public function buildForm($form_arg, FormStateInterface &$form_state) {
     // Ensure the form ID is prepared.
-    $form_id = $this->getFormId($form_id, $form_state);
+    $form_id = $this->getFormId($form_arg, $form_state);
 
     $request = $this->requestStack->getCurrentRequest();
 
@@ -1404,6 +1405,13 @@ class FormBuilder implements FormBuilderInterface, FormValidatorInterface, FormS
       $this->currentUser = \Drupal::currentUser();
     }
     return $this->currentUser;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['renderPlaceholderFormAction', 'renderFormTokenPlaceholder'];
   }
 
 }

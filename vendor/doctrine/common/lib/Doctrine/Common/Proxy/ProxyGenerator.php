@@ -66,14 +66,14 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
      *      three parameters, being respectively the proxy object to be initialized, the method that triggered the
      *      initialization process and an array of ordered parameters that were passed to that method.
      *
-     * @see \Doctrine\Common\Persistence\Proxy::__setInitializer
+     * @see \Doctrine\Common\Proxy\Proxy::__setInitializer
      */
     public $__initializer__;
 
     /**
      * @var \Closure the callback responsible of loading properties that need to be copied in the cloned object
      *
-     * @see \Doctrine\Common\Persistence\Proxy::__setCloner
+     * @see \Doctrine\Common\Proxy\Proxy::__setCloner
      */
     public $__cloner__;
 
@@ -88,7 +88,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
      * @var array properties to be lazy loaded, with keys being the property
      *            names and values being their default values
      *
-     * @see \Doctrine\Common\Persistence\Proxy::__getLazyProperties
+     * @see \Doctrine\Common\Proxy\Proxy::__getLazyProperties
      */
     public static $lazyPropertiesDefaults = [<lazyPropertiesDefaults>];
 
@@ -856,7 +856,7 @@ EOT;
         );
 
         if ($cheapCheck) {
-            $code = file($method->getDeclaringClass()->getFileName());
+            $code = file($method->getFileName());
             $code = trim(implode(' ', array_slice($code, $startLine - 1, $endLine - $startLine + 1)));
 
             $pattern = sprintf(self::PATTERN_MATCH_ID_METHOD, $method->getName(), $identifier);
@@ -930,8 +930,6 @@ EOT;
     }
 
     /**
-     * @param ClassMetadata $class
-     * @param \ReflectionMethod $method
      * @param \ReflectionParameter $parameter
      *
      * @return string|null
@@ -1023,7 +1021,7 @@ EOT;
         \ReflectionMethod $method,
         \ReflectionParameter $parameter = null
     ) {
-        $name      = (string) $type;
+        $name      = $type->getName();
         $nameLower = strtolower($name);
 
         if ('self' === $nameLower) {

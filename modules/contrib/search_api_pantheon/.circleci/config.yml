@@ -1,0 +1,49 @@
+version: 2
+# https://circleci.com/docs/configuration#machine
+jobs:
+    build:
+        docker:
+            - image: quay.io/pantheon-public/build-tools-ci:1.x
+        working_directory: ~/working
+        environment:
+            BASH_ENV: ~/.bashrc
+            TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+            TERMINUS_SITE: search-api-pantheon-d8
+        steps:
+            - checkout
+            - run:
+                name: log in
+                command: |
+                  git config --global user.email "$GitEmail"
+                  git config --global user.name "Circle CI"
+                  mkdir -p $HOME/.ssh && echo "StrictHostKeyChecking no" >> "$HOME/.ssh/config"
+                  terminus auth:login -n --machine-token="$TERMINUS_TOKEN"
+                  terminus env:list --field=id $TERMINUS_SITE | grep -v '[a-z]' | grep -Eo '[0-9]{1,9}' | sort --numeric-sort --reverse | sed 1,7d | xargs -n1 -I ENV terminus env:delete --yes $TERMINUS_SITE.ENV
+
+            - restore_cache:
+                key: dependency-cache-{{ checksum "composer.json" }}
+            - run:
+                name: Composer install
+                command: |
+                  # Remove this dependency before install because it will lead to installing all of Drupal core.
+                  composer remove drupal/search_api_solr --no-update
+                  composer install
+                  drush help
+            - save_cache:
+                key: dependency-cache-{{ checksum "composer.json" }}
+                paths:
+                  - ~/.composer/cache
+
+            - run:
+                name: all the things
+                command: |
+                  export TERMINUS_ENV=$CIRCLE_BUILD_NUM
+                  export SITE_ENV=$TERMINUS_SITE.$TERMINUS_ENV
+                  ./vendor/bin/phpcs --report=full --extensions=php,module,inc,theme,info,install --standard=vendor/drupal/coder/coder_sniffer/Drupal . --ignore=vendor,modules,core,drush,patches,tests
+                  cd .circleci
+                  ./create-fresh-d8-site.sh
+                  ./setup-d8-repo.sh
+                  ./enable-modules.sh
+                  ./verify-solr.sh
+
+

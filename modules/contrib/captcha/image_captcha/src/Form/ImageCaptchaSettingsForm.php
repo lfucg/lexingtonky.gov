@@ -11,6 +11,7 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\File\FileSystemInterface;
 
 /**
  * Displays the pants settings form.
@@ -25,16 +26,26 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
   protected $languageManager;
 
   /**
+   * The file_system service.
+   *
+   * @var \Drupal\Core\File\FileSystemInterface
+   */
+  protected $fileSystem;
+
+  /**
    * Constructs a \Drupal\image_captcha\Form\ImageCaptchaSettingsForm object.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   * @param ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   * @param LanguageManagerInterface $language_manager
    *   The language manager.
+   * @param FileSystemInterface $fileSystem
+   *   The file_system service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, LanguageManagerInterface $language_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, LanguageManagerInterface $language_manager, FileSystemInterface $fileSystem) {
     parent::__construct($config_factory);
     $this->languageManager = $language_manager;
+    $this->fileSystem = $fileSystem;
   }
 
   /**
@@ -43,7 +54,8 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('language_manager')
+      $container->get('language_manager'),
+      $container->get('file_system')
     );
   }
 
@@ -72,10 +84,10 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
     // First some error checking.
     $setup_status = _image_captcha_check_setup(FALSE);
     if ($setup_status & IMAGE_CAPTCHA_ERROR_NO_GDLIB) {
-      drupal_set_message($this->t(
+      $this->messenger()->addError($this->t(
         'The Image CAPTCHA module can not generate images because your PHP setup does not support it (no <a href="!gdlib" target="_blank">GD library</a> with JPEG support).',
         ['!gdlib' => 'http://php.net/manual/en/book.image.php']
-      ), 'error');
+      ));
       // It is no use to continue building the rest of the settings form.
       return $form;
     }
@@ -336,7 +348,7 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
       // Put these fonts with preview image in the list.
       foreach ($fonts as $token => $font) {
 
-        $title = t('Font preview of @font (@file)', [
+        $title = $this->t('Font preview of @font (@file)', [
           '@font' => $font['name'],
           '@file' => $font['uri'],
         ]);
@@ -350,14 +362,14 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
       }
 
       // Append the PHP built-in font at the end.
-      $title = t('Preview of built-in font');
+      $title = $this->t('Preview of built-in font');
       $attributes = [
         'src' => Url::fromRoute('image_captcha.font_preview', ['token' => 'BUILTIN'])
           ->toString(),
         'alt' => $title,
         'title' => $title,
       ];
-      $available_fonts['BUILTIN'] = (string) t('PHP built-in font: font_preview', [
+      $available_fonts['BUILTIN'] = (string) $this->t('PHP built-in font: font_preview', [
         'font_preview' => '<img' . new Attribute($attributes) . ' />',
       ]);
 
@@ -440,7 +452,7 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
     // Collect the font information.
     $fonts = [];
     foreach ($directories as $directory) {
-      foreach (file_scan_directory($directory, '/\.[tT][tT][fF]$/') as $filename => $font) {
+      foreach ($this->fileSystem->scanDirectory($directory, '/\.[tT][tT][fF]$/') as $filename => $font) {
         $fonts[hash('sha256', $filename)] = $font;
       }
     }

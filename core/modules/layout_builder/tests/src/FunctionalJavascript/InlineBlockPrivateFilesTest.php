@@ -27,6 +27,11 @@ class InlineBlockPrivateFilesTest extends InlineBlockTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'classy';
+
+  /**
    * The file system service.
    *
    * @var \Drupal\Core\File\FileSystemInterface
@@ -81,6 +86,9 @@ class InlineBlockPrivateFilesTest extends InlineBlockTestBase {
       'create and edit custom blocks',
     ]));
     $this->drupalGet('node/1/layout');
+    // @todo Occasionally SQLite has database locks here. Waiting seems to
+    //   resolve it. https://www.drupal.org/project/drupal/issues/3055983
+    $assert_session->assertWaitOnAjaxRequest();
     $file = $this->createPrivateFile('drupal.txt');
 
     $file_real_path = $this->fileSystem->realpath($file->getFileUri());
@@ -192,7 +200,7 @@ class InlineBlockPrivateFilesTest extends InlineBlockTestBase {
   protected function addInlineFileBlockToLayout($title, File $file) {
     $assert_session = $this->assertSession();
     $page = $this->getSession()->getPage();
-    $page->clickLink('Add Block');
+    $page->clickLink('Add block');
     $assert_session->assertWaitOnAjaxRequest();
     $this->assertNotEmpty($assert_session->waitForLink('Create custom block'));
     $this->clickLink('Create custom block');
@@ -200,7 +208,7 @@ class InlineBlockPrivateFilesTest extends InlineBlockTestBase {
     $assert_session->fieldValueEquals('Title', '');
     $page->findField('Title')->setValue($title);
     $this->attachFileToBlockForm($file);
-    $page->pressButton('Add Block');
+    $page->pressButton('Add block');
     $this->assertDialogClosedAndTextVisible($file->label(), static::INLINE_BLOCK_LOCATOR);
   }
 

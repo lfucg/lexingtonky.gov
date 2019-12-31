@@ -19,6 +19,23 @@ function search_api_solr_requirements($phase) {
     }
   }
   elseif ($phase == 'runtime') {
+    if (strtotime("1 January 2020") < time()) {
+      $ret['search_api_solr_eol'] = [
+        'title' => t('Search API Solr 8.x-1.x'),
+        'value' => t('The 1.x version reached EOL at 2019-12-31!'),
+        'description' => t('Search API Solr 8.x-1.x is unsupported. Upgrade to 8.x-3.x or newer.'),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    }
+    else {
+      $ret['search_api_solr_eol'] = [
+        'title' => t('Search API Solr 8.x-1.x'),
+        'value' => t('The 1.x version will reach EOL at 2019-12-31!'),
+        'description' => t('The support for Search API Solr 8.x-1.x ends 2019-12-31. Ensure to upgrade to 8.x-3.x or newer before that date.'),
+        'severity' => REQUIREMENT_WARNING,
+      ];
+    }
+
     $servers = search_api_solr_get_active_servers();
     $count = 0;
     $unavailable = 0;
@@ -44,7 +61,7 @@ function search_api_solr_requirements($phase) {
       ++$count;
     }
     if (!$count) {
-      return array();
+      return $ret;
     }
     $ret['search_api_solr'] = array(
       'title' => \Drupal::translation()->translate('Solr servers'),

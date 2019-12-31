@@ -1,0 +1,6 @@
+entity.taxonomy_menu.add_form:
+  route_name: 'entity.taxonomy_menu.add_form'
+  title: 'Add Taxonomy menu'
+  appears_on:
+    - entity.taxonomy_menu.collection
+

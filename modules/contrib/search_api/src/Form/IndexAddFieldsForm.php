@@ -357,6 +357,7 @@ class IndexAddFieldsForm extends EntityForm {
           $item['expand_link'] = [
             '#type' => 'link',
             '#title' => '(-) ',
+            '#attributes' => ['data-disable-refocus' => ['true']],
             '#url' => $link_url,
             '#ajax' => [
               'wrapper' => $this->formIdAttribute,
@@ -372,6 +373,7 @@ class IndexAddFieldsForm extends EntityForm {
           $item['expand_link'] = [
             '#type' => 'link',
             '#title' => '(+) ',
+            '#attributes' => ['data-disable-refocus' => ['true']],
             '#url' => $link_url,
             '#ajax' => [
               'wrapper' => $this->formIdAttribute,
@@ -391,6 +393,7 @@ class IndexAddFieldsForm extends EntityForm {
           '#name' => Utility::createCombinedId($datasource_id, $this_path),
           '#value' => $this->t('Add'),
           '#submit' => ['::addField', '::save'],
+          '#attributes' => ['data-disable-refocus' => ['true']],
           '#property' => $property,
           '#prefixed_label' => $label_prefix . $label,
           '#data_type' => $type_mapping[$type],

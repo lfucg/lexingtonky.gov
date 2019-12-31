@@ -5,6 +5,8 @@
  * Contains functions used in the backend forms.
  */
 
+use Symfony\Component\HttpFoundation\Response;
+
 /**
  * Menu handler for font preview request.
  *
@@ -57,8 +59,8 @@ function image_captcha_font_preview($font_token) {
     imagettftext($image, $font_size, 0, 1, 1.5 * $font_size, $color, realpath($font), $text);
   }
 
-  // Set content type.
-  drupal_add_http_header('Content-Type', 'image/png');
+  $response = new Response();
+  $response->headers->set('Content-Type', 'image/png');
   // Dump image data to client.
   imagepng($image);
   // Release image memory.

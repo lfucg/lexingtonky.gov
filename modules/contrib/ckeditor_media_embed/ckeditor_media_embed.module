@@ -1,0 +1,131 @@
+<?php
+
+/**
+ * @file
+ * Module file for the CKEditor Media Embed plugin module.
+ */
+
+use Drupal\ckeditor_media_embed\AssetManager;
+
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_help().
+ */
+function ckeditor_media_embed_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.ckeditor_media_embed':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>';
+      $output .= t('The CKEditor Media Embed module adds support for CKEditor plugins <a href=":embed" target="_blank">Media Embed</a>, <a href=":embedsemantic" target="_blank">Semantic Media Embed</a>, and <a href=":autoembed" target="_blank">Auto Embed</a> to Drupal core\'s CKEditor.',
+        [
+          ':embed' => 'http://ckeditor.com/addon/embed',
+          ':embedsemantic' => 'http://ckeditor.com/addon/embedsemantic',
+          ':autoembed' => 'http://ckeditor.com/addon/autoembed',
+        ]);
+      $output .= '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Embed media resoruces') . '</dt>';
+      $output .= '<dd>' . t('During content creation the author may add embed resources (videos, images, tweets, etc.) hosted by other services (called the "content providers") in content via CKEditor. By default the plugin uses the <a href=":iframely" target="_blank">Iframely</a> proxy service which supports over <a href=":providers" target="blank">1715 content providers</a> such as Youtube, Vimeo, Twitter, Insagram, Imgur, GitHub, and Google Maps.', [':iframely' => 'https://iframely.com/', ':providers' => 'https://iframely.com/domains']) . '</dd>';
+      $output .= '</dl>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Media resource field') . '</dt>';
+      $output .= '<dd>' . t('Provides a link field formatter that will render the link using the configured oembed media provider.') . '</dd>';
+      $output .= '</dl>';
+      $output .= '<h3>' . t('Provider') . '</h3>';
+      $output .= '<p>' . t('Only a single provider may be configured at a time, however, it is recommended to use a proxy service like <a href=":iframely" target="_blank">Iframely</a> or <a href=":noembed" target="_blank">Noembed</a> so that many different media providers can be supported. You may also use a specific media provider so the embeds are limited to the embed types it supports.', [':iframely' => 'https://iframely.com/', ':noembed' => 'https://noembed.com/']) . '</p>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Provider URL') . '</dt>';
+      $output .= '<dd>' . t('The service provider is configured on the @settings_link.', ['@settings_link' => \Drupal::service('ckeditor_media_embed')->getSettingsLink()]) . '</dd>';
+      $output .= '<dd>' . t('The service provider is configured using a single url as the provider with a <code>{url}</code> and <code>{callback}</code> token.') . '</dd>';
+      $output .= '<dd><ul>';
+      $output .= '<li><code>{url}</code> - ' . t('Token will be replaced during the request with the correct requested url, e.g. https://twitter.com/ckeditor/status/401373919157821441.') . '</li>';
+      $output .= '<li><code>{callback}</code> - ' . t('Token will be replaced during the request with the correct globally available callback used for JSONP requests.') . '</li>';
+      $output .= '</ul></dd>';
+      $output .= '<dt>' . t('Service provider URL examples') . '</dt>';
+      $output .= '<dd>' . t('<a href=":url" target="_blank">Iframely</a> - <code>//iframe.ly/api/oembed?url={url}&callback={callback}&api_key=MyAPITOKEN</code>', [':url' => 'https://iframely.com/']) . '</dd>';
+      $output .= '<dd>' . t('<a href=":url" target="_blank">Noembed</a> - <code>//noembed.com/embed?url={url}&callback={callback}</code>', [':url' => 'https://noembed.com/']) . '</dd>';
+      $output .= '<dd>' . t('<a href=":url" target="_blank">embed.ly</a> - <code>//api.embed.ly/1/oembed?url={url}&callback={callback}&key=MYAPITOKEN</code>', [':url' => 'http://embed.ly/']) . '</dd>';
+      $output .= '<dd>' . t('Many <a href=":url">others</a>', [':url' => 'http://oembed.com/#section7.1']) . '</dd>';
+      $output .= '</dl>';
+      $output .= '<dl>';
+      $output .= '<h3>' . t('Two different approaches') . '</h3>';
+      $output .= '<p>' . t('Two buttons as supplied with the module. The "Media Embed" button and the "Semantic Media Embed" this related to the two different approaches used by the CKEditor plugins.') . '</p>';
+      $output .= '<dt>' . t('Media Embed') . '</dt>';
+      $output .= '<dd>' . t('Inserts the retrieved HTML from the provider directly into the field and it is the HTML that is saved to the database.') . '</dd>';
+      $output .= '<dt>' . t('Semantic Media Embed') . '</dt>';
+      $output .= '<dd>' . t('Inserts the <code>&lt;oembed&gt;</code> tag into the field and is saved to the database instead of the embed HTML. We use a filter to transform the <code>&lt;oembed&gt;</code> tag to the media embed html on render.<br />
+        <strong>In order to use the Semantic Embed the "Convert Oembed tags to media embeds" filter must be enabled on the text format that uses it.</strong>') . '</dd>';
+      $output .= '<h3>' . t('Autoembed') . '</h3>';
+      $output .= '<p>' . t('Depending on which option is selected "Media Embed" or "Semantic Media Embed" when a media URL is inserted in to the field it will automatically be replaced with the correct media embed automatically.') . '</p>';
+      $output .= '<h3>' . t('Changing the CKEditor Version') . '</h3>';
+      $output .= '<p>' . t('By default, when running "drupal ckeditor_media_embed:install" to download the required plugins, the Drupal Core CKEditor version is parsed for and used. If you wish to use a different version of CKEditor, you can change the version by running either "drupal cdit" with DrupalConsole or "drush config-edit" with Drush, selecting ckeditor_media_embed.settings, and changing the ckeditor_version key to the version you would like to use. Be sure to run "drupal ckeditor_media_embed:install" again to actually download the new plugins.') . '</p>';
+      $output .= '</dl>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_ckeditor_plugin_info_alter().
+ */
+function ckeditor_media_embed_ckeditor_plugin_info_alter(array &$plugins) {
+  $version = AssetManager::getPluginsVersion(\Drupal::service('library.discovery'), \Drupal::service('config.factory'));
+  $plugin_statuses = AssetManager::getPluginsInstallStatuses($version);
+
+  $all_installed = array_reduce($plugin_statuses, function ($acc, $plugin_status) {
+    if ($acc && $plugin_status == FALSE) {
+      $acc = $plugin_status;
+    }
+
+    return $acc;
+  }, TRUE);
+
+  $uninstalled_plugins = [];
+  foreach ($plugin_statuses as $plugin_name => $is_installed) {
+    if (!$all_installed && !empty($plugins[$plugin_name])) {
+      unset($plugins[$plugin_name]);
+    }
+
+    if (!$is_installed) {
+      $uninstalled_plugins[] = $plugin_name;
+    }
+  }
+
+  if (!$all_installed) {
+    \Drupal::logger('ckeditor_media_embed')->error('The following plugins are missing: @uninstalled_plugins. <br />@install_message', [
+      '@uninstalled_plugins' => implode(', ', $uninstalled_plugins),
+      '@install_message' => _ckeditor_media_embed_get_install_instructions(FALSE),
+    ]);
+  }
+}
+
+/**
+ * Retrieve the install instructions message.
+ *
+ * @param bool $prefix
+ *   (Optional) Determine if the prefix should be prepended to the install
+ *   message. Defaults to true.
+ *
+ * @return string|\Drupal\Component\Render\MarkupInterface
+ *   A safe string representation of the install instructions.
+ */
+function _ckeditor_media_embed_get_install_instructions($prefix = TRUE, $update = FALSE) {
+  $message_prefix = '';
+
+  if ($prefix) {
+    $message_prefix = t('The required CKEditor plugs are missing.');
+  }
+
+  return Markup::Create(t('@prefix To :op the CKEditor plugins run <strong><code>drupal ckeditor_media_embed::op</code></strong> if you have <a href=":drupal_console" target="_blank">Drupal Console</a> installed. Otherwise, please see the <a href=":project_page" target="_blank">installation instructions</a> on the page for additional :op methods.',
+    [
+      ':op' => $update ? 'update' : 'install',
+      ':drupal_console' => URL::fromUri('https://drupalconsole.com/', ['absolute' => TRUE])->toString(),
+      ':project_page' => URL::fromUri('https://www.drupal.org/project/ckeditor_media_embed', ['absolute' => TRUE, 'fragment' => 'ckeditor-media-embed--install'])->toString(),
+      '@prefix' => $message_prefix,
+    ]
+  ));
+}

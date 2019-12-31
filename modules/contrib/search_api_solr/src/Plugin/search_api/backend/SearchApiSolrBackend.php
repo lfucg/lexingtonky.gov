@@ -181,6 +181,8 @@ class SearchApiSolrBackend extends BackendPluginBase implements SolrBackendInter
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    drupal_set_message($this->t('Search API Solr 8.x-1.x support ends 2019-12-31. Ensure to upgrade to 8.x-3.x or newer.'), 'warning');
+
     if (!$this->server->isNew()) {
       // Editing this server.
       $form['server_description'] = array(
