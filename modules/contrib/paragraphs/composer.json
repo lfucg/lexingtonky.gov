@@ -14,7 +14,7 @@
     "drupal/diff": "~1.0",
     "drupal/replicate": "~1.0",
     "drupal/inline_entity_form": "~1.0",
-    "drupal/field_group": "~1.0",
+    "drupal/field_group": "3.x-dev",
     "drupal/block_field": "~1.0",
     "drupal/ctools": "3.x-dev",
     "drupal/entity_browser": "2.x-dev",

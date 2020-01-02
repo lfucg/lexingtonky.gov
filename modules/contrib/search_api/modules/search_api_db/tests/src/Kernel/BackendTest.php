@@ -68,6 +68,30 @@ class BackendTest extends BackendTestBase {
     ]);
 
     $this->installConfig(['search_api_test_db']);
+
+    // Add additional fields to the search index that have the same ID as
+    // column names used by this backend, to see whether this leads to any
+    // conflicts.
+    $index = $this->getIndex();
+    $fields_helper = \Drupal::getContainer()->get('search_api.fields_helper');
+    $column_names = [
+      'item_id',
+      'field_name',
+      'word',
+      'score',
+      'value',
+    ];
+    $field_info = [
+      'datasource_id' => 'entity:entity_test_mulrev_changed',
+      'property_path' => 'type',
+      'type' => 'string',
+    ];
+    foreach ($column_names as $column_name) {
+      $field_info['label'] = "Test field $column_name";
+      $field = $fields_helper->createField($index, $column_name, $field_info);
+      $index->addField($field);
+    }
+    $index->save();
   }
 
   /**
@@ -77,7 +101,7 @@ class BackendTest extends BackendTestBase {
     $this->checkMultiValuedInfo();
     $this->setServerMatchMode();
     $this->searchSuccessPartial();
-    $this->editServerStartsWith();
+    $this->setServerMatchMode('prefix');
     $this->searchSuccessStartsWith();
     $this->editServerMinChars();
     $this->searchSuccessMinChars();
@@ -97,6 +121,7 @@ class BackendTest extends BackendTestBase {
     $this->regressionTest2938646();
     $this->regressionTest2925464();
     $this->regressionTest2994022();
+    $this->regressionTest2916534();
   }
 
   /**
@@ -111,13 +136,18 @@ class BackendTest extends BackendTestBase {
       'body',
       'category',
       'created',
+      'field_name',
       'id',
+      'item_id',
       'keywords',
       'name',
+      'score',
       'search_api_datasource',
       'search_api_language',
       'type',
+      'value',
       'width',
+      'word',
     ];
     $actual_fields = array_keys($field_infos);
     sort($actual_fields);
@@ -277,18 +307,6 @@ class BackendTest extends BackendTestBase {
     $query->addConditionGroup($conditions);
     $results = $query->execute();
     $this->assertResults([1, 2, 3, 4], $results, 'Partial search with multi-field fulltext filter');
-  }
-
-  /**
-   * Edits the server to enable prefix matching.
-   */
-  protected function editServerStartsWith() {
-    $server = $this->getServer();
-    $backend_config = $server->getBackendConfig();
-    $backend_config['matching'] = 'prefix';
-    $server->setBackendConfig($backend_config);
-    $this->assertTrue((bool) $server->save(), 'The server was successfully edited.');
-    $this->resetEntityCache();
   }
 
   /**
@@ -692,6 +710,31 @@ class BackendTest extends BackendTestBase {
     $category_facets = $results->getExtraData('search_api_facets')['category'];
     usort($category_facets, [$this, 'facetCompare']);
     $this->assertEquals($expected, $category_facets, 'Correct facets were returned for minimum count 0');
+  }
+
+  /**
+   * Tests edge cases for partial matching.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   *
+   * @see https://www.drupal.org/node/2916534
+   */
+  protected function regressionTest2916534() {
+    $old = $this->getServer()->getBackendConfig()['matching'];
+    $this->setServerMatchMode();
+
+    $entity_id = count($this->entities) + 1;
+    $entity = $this->addTestEntity($entity_id, [
+      'name' => 'foo foobar foobar',
+      'type' => 'article',
+    ]);
+    $this->indexItems($this->indexId);
+
+    $results = $this->buildSearch('foo', [], ['name'])->execute();
+    $this->assertResults([1, 2, 4, $entity_id], $results, 'Partial search for »foo«');
+
+    $entity->delete();
+    $this->setServerMatchMode($old);
   }
 
   /**

@@ -73,7 +73,7 @@ class FieldLink extends ProcessPluginBase {
       // according to link module in Drupal 7. Every character between &#x00BF;
       // and &#x00FF; (except × &#x00D7; and ÷ &#x00F7;) with the addition of
       // &#x0152;, &#x0153; and &#x0178;.
-      // @see http://cgit.drupalcode.org/link/tree/link.module?h=7.x-1.5-beta2#n1382
+      // @see https://git.drupalcode.org/project/link/blob/7.x-1.5-beta2/link.module#L1382
       $link_ichars = '¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿŒœŸ';
 
       // Pattern specific to internal links.
@@ -119,7 +119,9 @@ class FieldLink extends ProcessPluginBase {
       $attributes = unserialize($attributes);
     }
 
-    if (!$attributes) {
+    // In rare cases Drupal 6/7 link attributes are triple serialized. To avoid
+    // further problems with them we set them to an empty array in this case.
+    if (!is_array($attributes)) {
       $attributes = [];
     }
 

@@ -292,7 +292,7 @@ class CommandHelper implements LoggerAwareInterface {
       else {
         $arguments = [
           '@remaining' => $remaining,
-          '@limit' => $limit ? $limit : $this->t('all'),
+          '@limit' => $limit ?: $this->t('all'),
           '@index' => $index->label(),
         ];
         $this->logger->info($this->t("Found @remaining items to index for @index. Indexing @limit items.", $arguments));

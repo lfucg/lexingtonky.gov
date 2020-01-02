@@ -1,0 +1,9 @@
+ckeditor_media_embed.ckeditor_media_embed_settings_form:
+  path: '/admin/config/media/ckeditor-media-embed/settings'
+  defaults:
+    _form: '\Drupal\ckeditor_media_embed\Form\CKEditorMediaEmbedSettingsForm'
+    _title: 'CKEditor Media Embed'
+  requirements:
+    _permission: 'administer filters'
+  options:
+    _admin_route: TRUE

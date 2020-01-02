@@ -21,7 +21,7 @@ class EmbedButtonEditorAccessCheck implements AccessInterface {
    * @code
    * pattern: '/foo/{editor}/{embed_button}'
    * requirements:
-   *   _embed_button_filter_access: 'TRUE'
+   *   _embed_button_editor_access: 'TRUE'
    * @endcode
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match

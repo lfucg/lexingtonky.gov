@@ -5,9 +5,9 @@
  * Defines library requirements and install routines for File Browser.
  */
 
-use \Drupal\Core\Config\ExtensionInstallStorage;
-use \Drupal\image\Entity\ImageStyle;
-use \Drupal\views\Entity\View;
+use Drupal\Core\Config\ExtensionInstallStorage;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\views\Entity\View;
 
 /**
  * Implements hook_install().
@@ -18,11 +18,13 @@ function file_browser_install() {
     $data = file_get_contents(dirname(__FILE__) . '/file_browser_icon.png');
     /** @var \Drupal\file\FileInterface $file */
     $file = file_save_data($data, 'public://file_browser_icon.png', FILE_EXISTS_REPLACE);
-    // Set file uuid same as default config.
-    $uuid = (new ExtensionInstallStorage(\Drupal::service('config.storage')))->read('embed.button.file_browser')['icon_uuid'];
-    $file->set('uuid', $uuid);
-    $file->save();
-    \Drupal::service('file.usage')->add($file, 'embed', 'embed_button', 'file_browser');
+    if ($file) {
+      // Set file uuid same as default config.
+      $uuid = (new ExtensionInstallStorage(\Drupal::service('config.storage')))->read('embed.button.file_browser')['icon_uuid'];
+      $file->set('uuid', $uuid);
+      $file->save();
+      \Drupal::service('file.usage')->add($file, 'embed', 'embed_button', 'file_browser');
+    }
   }
 }
 
@@ -53,29 +55,30 @@ function file_browser_requirements($phase) {
   }
 
   if (!file_exists($imagesloaded_path)) {
-    $requirements['imagesloaded'] = array(
+    $requirements['imagesloaded'] = [
       'title' => t('imagesLoaded library missing'),
       'description' => t(
     'File Browser requires the imagesLoaded library. Download the newest release
 from https://github.com/desandro/imagesloaded releases and place it in /libraries'
       ),
       'severity' => REQUIREMENT_ERROR,
-    );
+    ];
   }
 
   if (!file_exists($masonry_path)) {
-    $requirements['masonry'] = array(
-      'title' => t('Dropzone library missing'),
+    $requirements['masonry'] = [
+      'title' => t('Masonry library missing'),
       'description' => t(
     'File Browser requires the Masonry library. Download the newest release from
 https://github.com/desandro/masonry/releases and place it in /libraries'
       ),
       'severity' => REQUIREMENT_ERROR,
-    );
+    ];
   }
 
   // Prevent installation if the webserver cannot write to "public://" .
-  if (!\Drupal::isConfigSyncing() && !is_writable('public://')) {
+  $public_path = \Drupal::service('file_system')->realpath('public://');
+  if (!\Drupal::isConfigSyncing() && !is_writable($public_path)) {
     $requirements['public_files_not_writable'] = [
       'title' => t('Public files directory not writable'),
       'description' => t('The webserver needs to be able to write to the public files directory (public://). Please check your server configuration and try again.'),
@@ -120,7 +123,9 @@ function file_browser_update_8002() {
     if (in_array($name, $list, TRUE)) {
       $entity_browser = $config_factory->getEditable($name);
       $entity_browser->set('selection_display_configuration.selection_hidden', FALSE);
-      $entity_browser->set('widgets.a4ad947c-9669-497c-9988-24351955a02f.settings.auto_select', TRUE);
+      if ($entity_browser->get('widgets.a4ad947c-9669-497c-9988-24351955a02f')) {
+        $entity_browser->set('widgets.a4ad947c-9669-497c-9988-24351955a02f.settings.auto_select', TRUE);
+      }
       $entity_browser->save();
     }
   }
@@ -217,7 +222,32 @@ function file_browser_update_8004() {
     foreach (['entity_browser.browser.browse_files', 'entity_browser.browser.browse_files_modal'] as $name) {
       if (in_array($name, $list, TRUE)) {
         $entity_browser = $config_factory->getEditable($name);
-        $entity_browser->set('widgets.a4ad947c-9669-497c-9988-24351955a02f.settings.view', 'file_entity_browser');
+        if ($entity_browser->get('widgets.a4ad947c-9669-497c-9988-24351955a02f')) {
+          $entity_browser->set('widgets.a4ad947c-9669-497c-9988-24351955a02f.settings.view', 'file_entity_browser');
+        }
+        $entity_browser->save();
+      }
+    }
+  }
+}
+
+/**
+ * Fix widget configuration if it was broken by a previous update.
+ */
+function file_browser_update_8005() {
+  /** @var \Drupal\Core\Config\ConfigFactoryInterface $config_factory */
+  $config_factory = \Drupal::service('config.factory');
+  $list = $config_factory->listAll('entity_browser.browser');
+
+  $default_uuid = 'a4ad947c-9669-497c-9988-24351955a02f';
+
+  foreach (['entity_browser.browser.browse_files', 'entity_browser.browser.browse_files_modal'] as $name) {
+    if (in_array($name, $list, TRUE)) {
+      $entity_browser = $config_factory->getEditable($name);
+      $widgets = $entity_browser->get('widgets');
+      // If the UUID exists but has no plugin ID, it was added accidentally.
+      if (isset($widgets[$default_uuid]) && !isset($widgets[$default_uuid]['id'])) {
+        $entity_browser->clear("widgets.$default_uuid");
         $entity_browser->save();
       }
     }

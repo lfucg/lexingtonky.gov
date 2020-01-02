@@ -1,0 +1,6 @@
+fieldblock.settings:
+  title: 'Field as Block settings'
+  parent: system.admin_config_system
+  description: 'Set Entity Types available as field blocks.'
+  route_name: fieldblock.field_block_config_form
+  weight: 50

@@ -2,6 +2,8 @@
 
 namespace Drupal\file_browser\Plugin\views\field;
 
+use Drupal\Core\Url;
+use Drupal\file\FileInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 
@@ -20,6 +22,48 @@ class FileBrowserPreview extends FieldPluginBase {
     $file = $this->getEntity($values);
     $build = [];
 
+    $build['image'] = $this->getFilePreview($file, 'file_entity_browser_thumbnail');
+
+    $build['preview'] = [
+      '#title' => $this->t('Preview'),
+      '#type' => 'link',
+      '#url' => Url::fromRoute('file_browser.preview', [
+        'file' => $file->id(),
+      ]),
+      '#attributes' => [
+        'class' => ['file-browser-preview-button', 'use-ajax'],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => '{"classes": {"ui-dialog": "ui-corner-all file-browser-preview-dialog"}, "show": "fadeIn", "hide": "fadeOut"}',
+      ],
+    ];
+
+    return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function query() {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function clickSortable() {
+    return FALSE;
+  }
+
+  /**
+   * Renders a preview of an arbitrary file.
+   *
+   * @param \Drupal\file\FileInterface $file
+   *   The file you want to render a preview of.
+   * @param string $image_style
+   *   (Optional) An image style to render the preview in.
+   *
+   * @return array
+   *   A render array representing the file preview.
+   */
+  public static function getFilePreview(FileInterface $file, $image_style = '') {
     // Check if this file is an image.
     $image_factory = \Drupal::service('image.factory');
 
@@ -35,11 +79,10 @@ class FileBrowserPreview extends FieldPluginBase {
       $item->title = $file->getFilename();
       $item->entity = $file;
 
-      // Render the original image, Masonry takes care of scaling.
       $build = [
         '#theme' => 'image_formatter',
         '#item' => $item,
-        '#image_style' => 'file_entity_browser_thumbnail',
+        '#image_style' => $image_style,
       ];
     }
     // Use a placeholder image for now.
@@ -48,25 +91,12 @@ class FileBrowserPreview extends FieldPluginBase {
       $path = drupal_get_path('module', 'file_browser');
       $build = [
         '#theme' => 'image',
-        '#attributes' => array(
+        '#attributes' => [
           'src' => base_path() . $path . '/images/document_placeholder.svg',
-        ),
+        ],
       ];
     }
-
     return $build;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function query() {}
-
-  /**
-   * {@inheritdoc}
-   */
-  public function clickSortable() {
-    return FALSE;
   }
 
 }

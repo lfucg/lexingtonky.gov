@@ -1,15 +1,14 @@
 name: Paragraphs test
 type: module
 description: Resources for Paragraphs tests
-# core: 8.x
+core: 8.x
 hidden: true
 package: Paragraphs
 
 dependencies:
   - paragraphs:paragraphs
 
-# Information added by Drupal.org packaging script on 2019-08-15
-version: '8.x-1.9'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2019-11-01
+version: '8.x-1.10'
 project: 'paragraphs'
-datestamp: 1565881391
+datestamp: 1572617588

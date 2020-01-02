@@ -271,13 +271,31 @@ function paragraphs_update_8015() {
  * Remove the uid and revision_uid fields.
  */
 function paragraphs_update_8016() {
+  $database = \Drupal::database();
+
+  $spec = array(
+    'type' => 'varchar',
+    'description' => "Revision UID",
+    'length' => 20,
+    'not null' => FALSE,
+  );
+
+  $schema = $database->schema();
+
+  if (!$schema->fieldExists('paragraphs_item_field_data', 'revision_uid')) {
+    $schema->addField('paragraphs_item_field_data', 'revision_uid', $spec);
+  }
+
+  if (!$schema->fieldExists('paragraphs_item_revision_field_data', 'revision_uid')) {
+    $schema->addField('paragraphs_item_revision_field_data', 'revision_uid', $spec);
+  }
+
   $tables_fields = [
     'paragraphs_item_revision' => 'revision_uid',
     'paragraphs_item_field_data' => 'uid',
     'paragraphs_item_revision_field_data' => 'uid',
   ];
 
-  $database = \Drupal::database();
   $entity_definition_update_manager = \Drupal::entityDefinitionUpdateManager();
 
   foreach ($tables_fields as $table => $field) {

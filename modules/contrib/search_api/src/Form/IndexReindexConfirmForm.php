@@ -71,11 +71,11 @@ class IndexReindexConfirmForm extends EntityConfirmFormBase {
 
     try {
       $index->reindex();
-      $this->messenger->addStatus($this->t('The search index %name was successfully reindexed.', ['%name' => $index->label()]));
+      $this->messenger->addStatus($this->t('The search index %name was successfully queued for reindexing.', ['%name' => $index->label()]));
     }
     catch (SearchApiException $e) {
-      $this->messenger->addError($this->t('Failed to reindex items for the search index %name.', ['%name' => $index->label()]));
-      $message = '%type while trying to reindex items on index %name: @message in %function (line %line of %file)';
+      $this->messenger->addError($this->t('Failed to queue items for reindexing on search index %name.', ['%name' => $index->label()]));
+      $message = '%type while trying to queue items for reindexing on index %name: @message in %function (line %line of %file)';
       $variables = [
         '%name' => $index->label(),
       ];

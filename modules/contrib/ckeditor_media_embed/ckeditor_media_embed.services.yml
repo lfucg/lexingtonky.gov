@@ -1,0 +1,14 @@
+services:
+  ckeditor_media_embed:
+    class: Drupal\ckeditor_media_embed\Embed
+    arguments: ['@http_client', '@unrouted_url_assembler', '@request_stack', '@messenger', '@config.factory', '@path.current']
+  ckeditor_media_embed_install:
+    class: Drupal\ckeditor_media_embed\Command\InstallCommand
+    arguments: ['@plugin.manager.ckeditor.plugin', '@library.discovery', '@http_client', '@config.factory']
+    tags:
+      - { name: drupal.command }
+  ckeditor_media_embed_update:
+    class: Drupal\ckeditor_media_embed\Command\UpdateCommand
+    arguments: ['@plugin.manager.ckeditor.plugin', '@library.discovery', '@http_client', '@config.factory']
+    tags:
+      - { name: drupal.command }

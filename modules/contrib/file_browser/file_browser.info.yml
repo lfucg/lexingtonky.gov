@@ -1,25 +1,24 @@
 name: File Browser
 description: 'Provides a default Entity Browser for files, using Masonry and Imagesloaded.'
 type: module
-# core: 8.x
+core: 8.x
 dependencies:
-  - entity_browser
-  - entity_embed
-  - dropzonejs
-  - dropzonejs_eb_widget
-  - field
-  - file
-  - image
-  - menu_ui
-  - node
-  - path
-  - text
-  - views
+  - entity_browser:entity_browser
+  - entity_embed:entity_embed
+  - dropzonejs:dropzonejs
+  - dropzonejs:dropzonejs_eb_widget
+  - drupal:field
+  - drupal:file
+  - drupal:image
+  - drupal:menu_ui
+  - drupal:node
+  - drupal:path
+  - drupal:text
+  - drupal:views
 test_dependencies:
-  - ctools:ctools
+  - coder:coder
 
-# Information added by Drupal.org packaging script on 2017-04-26
-version: '8.x-1.1'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2019-10-01
+version: '8.x-1.2'
 project: 'file_browser'
-datestamp: 1493226857
+datestamp: 1569940088

@@ -124,22 +124,13 @@ class IndexProcessorsForm extends EntityForm {
 
     $enabled_processors = $this->entity->getProcessors();
 
-    $backend_discouraged_processors = [];
+    $discouraged_processors = [];
+    $discouraged_warning = '';
     if ($this->entity->getServerInstance()) {
-      $backend_discouraged_processors = $this->entity->getServerInstance()
+      $discouraged_processors = $this->entity->getServerInstance()
         ->getDiscouragedProcessors();
-
-      foreach ($backend_discouraged_processors as $processor_id) {
-        if (!isset($enabled_processors[$processor_id])) {
-          // Remove processors from the overview.
-          unset($all_processors[$processor_id]);
-
-          // Remove processors from the stages.
-          foreach ($processors_by_stage as $stage => $processors) {
-            unset($processors_by_stage[$stage][$processor_id]);
-          }
-        }
-      }
+      $discouraged_processors = array_flip($discouraged_processors);
+      $discouraged_warning = '<br /><strong>' . $this->t('It is recommended not to use this processor with the selected server.') . '</strong>';
     }
 
     $form['#tree'] = TRUE;
@@ -159,10 +150,13 @@ class IndexProcessorsForm extends EntityForm {
     ];
     foreach ($all_processors as $processor_id => $processor) {
       $clean_css_id = Html::cleanCssIdentifier($processor_id);
+      $is_enabled = !empty($enabled_processors[$processor_id]);
+      $is_locked = $processor->isLocked();
+      $is_discouraged = isset($discouraged_processors[$processor_id]);
       $form['status'][$processor_id] = [
         '#type' => 'checkbox',
         '#title' => $processor->label(),
-        '#default_value' => $processor->isLocked() || !empty($enabled_processors[$processor_id]),
+        '#default_value' => $is_locked || $is_enabled,
         '#description' => $processor->getDescription(),
         '#attributes' => [
           'class' => [
@@ -170,11 +164,11 @@ class IndexProcessorsForm extends EntityForm {
           ],
           'data-id' => $clean_css_id,
         ],
-        '#disabled' => $processor->isLocked(),
+        '#disabled' => $is_locked || (!$is_enabled && $is_discouraged),
         '#access' => !$processor->isHidden(),
       ];
-      if (in_array($processor_id, $backend_discouraged_processors)) {
-        $form['status'][$processor_id]['#description'] .= '<br /><strong>' . $this->t('It is recommended not to use this processor with the selected server.') . '</strong>';
+      if ($is_discouraged) {
+        $form['status'][$processor_id]['#description'] .= $discouraged_warning;
       }
     }
 
@@ -207,7 +201,9 @@ class IndexProcessorsForm extends EntityForm {
       // Sort the processors by weight for this stage.
       $processor_weights = [];
       foreach ($processors as $processor_id => $processor) {
-        $processor_weights[$processor_id] = $processor->getWeight($stage);
+        if (!isset($discouraged_processors[$processor_id])) {
+          $processor_weights[$processor_id] = $processor->getWeight($stage);
+        }
       }
       asort($processor_weights);
 

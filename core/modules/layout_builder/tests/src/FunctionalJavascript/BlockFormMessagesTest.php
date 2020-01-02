@@ -29,6 +29,11 @@ class BlockFormMessagesTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'classy';
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() {
     parent::setUp();
     $this->createContentType(['type' => 'bundle_with_section_field']);
@@ -38,6 +43,9 @@ class BlockFormMessagesTest extends WebDriverTestBase {
    * Tests that validation messages are shown on the block form.
    */
   public function testValidationMessage() {
+    // @todo Work out why this fixes random fails in this test.
+    //    https://www.drupal.org/project/drupal/issues/3055982
+    $this->getSession()->resizeWindow(800, 1000);
     $assert_session = $this->assertSession();
     $page = $this->getSession()->getPage();
 
@@ -56,18 +64,19 @@ class BlockFormMessagesTest extends WebDriverTestBase {
     );
     $this->clickElementWhenClickable($page->findLink('Manage layout'));
     $assert_session->addressEquals($field_ui_prefix . '/display/default/layout');
-    $this->clickElementWhenClickable($page->findLink('Add Block'));
+    $this->clickElementWhenClickable($page->findLink('Add block'));
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', '#drupal-off-canvas .block-categories'));
     $this->clickElementWhenClickable($page->findLink('Powered by Drupal'));
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', '#drupal-off-canvas [name="settings[label]"]'));
     $page->findField('Title')->setValue('');
-    $this->clickElementWhenClickable($page->findButton('Add Block'));
+    $this->clickElementWhenClickable($page->findButton('Add block'));
     $this->assertMessagesDisplayed();
     $page->findField('Title')->setValue('New title');
-    $page->pressButton('Add Block');
+    $page->pressButton('Add block');
     $block_css_locator = '#layout-builder .block-system-powered-by-block';
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', $block_css_locator));
-    $this->waitForNoElement('#drupal-off-canvas');
+
+    $assert_session->assertNoElementAfterWait('css', '#drupal-off-canvas');
     $assert_session->assertWaitOnAjaxRequest();
     $this->drupalGet($this->getUrl());
     $this->clickElementWhenClickable($page->findButton('Save layout'));
@@ -81,21 +90,6 @@ class BlockFormMessagesTest extends WebDriverTestBase {
     $page->findField('Title')->setValue('');
     $this->clickElementWhenClickable($page->findButton('Update'));
     $this->assertMessagesDisplayed();
-  }
-
-  /**
-   * Waits for an element to be removed from the page.
-   *
-   * @param string $selector
-   *   CSS selector.
-   * @param int $timeout
-   *   (optional) Timeout in milliseconds, defaults to 10000.
-   *
-   * @todo Remove in https://www.drupal.org/node/2892440.
-   */
-  protected function waitForNoElement($selector, $timeout = 10000) {
-    $condition = "(typeof jQuery !== 'undefined' && jQuery('$selector').length === 0)";
-    $this->assertJsCondition($condition, $timeout);
   }
 
   /**

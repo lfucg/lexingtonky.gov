@@ -24,8 +24,9 @@ class UpdatePathTestBaseTest extends UpdatePathTestBase {
    */
   protected function setDatabaseDumpFiles() {
     $this->databaseDumpFiles = [
-      __DIR__ . '/../../../../modules/system/tests/fixtures/update/drupal-8.bare.standard.php.gz',
+      __DIR__ . '/../../../../modules/system/tests/fixtures/update/drupal-8.8.0.bare.standard.php.gz',
       __DIR__ . '/../../../../modules/system/tests/fixtures/update/drupal-8.update-test-schema-enabled.php',
+      __DIR__ . '/../../../../modules/system/tests/fixtures/update/drupal-8.update-test-semver-update-n-enabled.php',
     ];
   }
 
@@ -36,8 +37,8 @@ class UpdatePathTestBaseTest extends UpdatePathTestBase {
     // Set a value in the cache to prove caches are cleared.
     \Drupal::service('cache.default')->set(__CLASS__, 'Test');
 
-    foreach (['user', 'node', 'system', 'update_test_schema'] as $module) {
-      $this->assertEqual(drupal_get_installed_schema_version($module), 8000, new FormattableMarkup('Module @module schema is 8000', ['@module' => $module]));
+    foreach (['user' => 8100, 'node' => 8700, 'system' => 8805, 'update_test_schema' => 8000] as $module => $schema) {
+      $this->assertEqual(drupal_get_installed_schema_version($module), $schema, new FormattableMarkup('Module @module schema is @schema', ['@module' => $module, '@schema' => $schema]));
     }
 
     // Ensure that all {router} entries can be unserialized. If they cannot be
@@ -99,8 +100,11 @@ class UpdatePathTestBaseTest extends UpdatePathTestBase {
 
     // Ensure schema has changed.
     $this->assertEqual(drupal_get_installed_schema_version('update_test_schema', TRUE), 8001);
+    $this->assertEqual(drupal_get_installed_schema_version('update_test_semver_update_n', TRUE), 8001);
     // Ensure the index was added for column a.
     $this->assertTrue($connection->schema()->indexExists('update_test_schema_table', 'test'), 'Version 8001 of the update_test_schema module is installed.');
+    // Ensure update_test_semver_update_n_update_8001 was run.
+    $this->assertEquals(\Drupal::state()->get('update_test_semver_update_n_update_8001'), 'Yes, I was run. Thanks for testing!');
   }
 
   /**
@@ -108,14 +112,25 @@ class UpdatePathTestBaseTest extends UpdatePathTestBase {
    */
   public function testPathAliasProcessing() {
     // Add a path alias for the '/admin' system path.
+    $values = [
+      'path' => '/admin/structure',
+      'alias' => '/admin-structure-alias',
+      'langcode' => 'und',
+      'status' => 1,
+    ];
+
     $database = \Drupal::database();
-    $database->insert('url_alias')
-      ->fields(['source', 'alias', 'langcode'])
-      ->values([
-        'source' => '/admin/structure',
-        'alias' => '/admin-structure-alias',
-        'langcode' => 'und',
-      ])
+    $id = $database->insert('path_alias')
+      ->fields($values + ['uuid' => \Drupal::service('uuid')->generate()])
+      ->execute();
+
+    $revision_id = $database->insert('path_alias_revision')
+      ->fields($values + ['id' => $id, 'revision_default' => 1])
+      ->execute();
+
+    $database->update('path_alias')
+      ->fields(['revision_id' => $revision_id])
+      ->condition('id', $id)
       ->execute();
 
     // Increment the schema version.
@@ -180,6 +195,20 @@ class UpdatePathTestBaseTest extends UpdatePathTestBase {
 
     // Ensure the test runners cache has been cleared.
     $this->assertFalse(\Drupal::service('cache.default')->get(__CLASS__));
+  }
+
+  /**
+   * Tests that schema can be excluded from testing.
+   *
+   * @see \Drupal\FunctionalTests\Update\UpdatePathTestBase::runUpdates()
+   * @see \Drupal\Core\Test\TestSetupTrait::$configSchemaCheckerExclusions
+   */
+  public function testSchemaChecking() {
+    // Create some configuration that should be skipped.
+    $this->config('config_schema_test.noschema')->set('foo', 'bar')->save();
+    $this->runUpdates();
+    $this->assertSame('bar', $this->config('config_schema_test.noschema')->get('foo'));
+
   }
 
 }

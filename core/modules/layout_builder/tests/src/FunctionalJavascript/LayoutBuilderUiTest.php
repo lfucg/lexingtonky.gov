@@ -29,8 +29,12 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
     'block_content',
     'contextual',
     'views',
-    'layout_builder_test_css_transitions',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'classy';
 
   /**
    * {@inheritdoc}
@@ -65,19 +69,19 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
 
     // Remove all of the sections from the page.
     $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default/layout');
-    $page->clickLink('Remove section');
+    $page->clickLink('Remove Section 1');
     $assert_session->assertWaitOnAjaxRequest();
     $page->pressButton('Remove');
     $assert_session->assertWaitOnAjaxRequest();
     // Assert that there are no sections on the page.
-    $assert_session->pageTextNotContains('Remove section');
-    $assert_session->pageTextNotContains('Add Block');
+    $assert_session->pageTextNotContains('Remove Section 1');
+    $assert_session->pageTextNotContains('Add block');
 
     // Reload the page.
     $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default/layout');
     // Assert that there are no sections on the page.
-    $assert_session->pageTextNotContains('Remove section');
-    $assert_session->pageTextNotContains('Add Block');
+    $assert_session->pageTextNotContains('Remove Section 1');
+    $assert_session->pageTextNotContains('Add block');
   }
 
   /**
@@ -110,10 +114,12 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
     $page = $this->getSession()->getPage();
 
     $this->drupalGet($path);
-    $page->clickLink('Add Section');
+    $page->clickLink('Add section');
     $assert_session->assertWaitOnAjaxRequest();
     $assert_session->pageTextNotContains('You have unsaved changes.');
     $page->clickLink('One column');
+    $assert_session->assertWaitOnAjaxRequest();
+    $page->pressButton('Add section');
     $assert_session->assertWaitOnAjaxRequest();
     $assert_session->pageTextContainsOnce('You have unsaved changes.');
 
@@ -140,7 +146,7 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
     $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default/layout');
     $assert_session->elementsCount('css', '.layout-builder__add-section', 2);
     $assert_session->elementNotExists('css', '.is-layout-builder-highlighted');
-    $page->clickLink('Add Section');
+    $page->clickLink('Add section');
     $this->assertNotEmpty($assert_session->waitForElement('css', '#drupal-off-canvas .item-list'));
     $assert_session->assertWaitOnAjaxRequest();
 
@@ -162,14 +168,14 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
     $assert_session->elementsCount('css', '.layout-builder__add-block', 3);
 
     // Add a custom block.
-    $page->clickLink('Add Block');
+    $page->clickLink('Add block');
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', 'a:contains("Create custom block")'));
     $assert_session->assertWaitOnAjaxRequest();
 
     // Highlight is present with ChooseBlockController::build().
     $this->assertHighlightedElement('[data-layout-builder-highlight-id="block-0-first"]');
     $page->clickLink('Create custom block');
-    $this->assertNotEmpty($assert_session->waitForElementVisible('css', '#drupal-off-canvas input[value="Add Block"]'));
+    $this->assertNotEmpty($assert_session->waitForElementVisible('css', '#drupal-off-canvas input[value="Add block"]'));
     $assert_session->assertWaitOnAjaxRequest();
 
     // Highlight is present with ChooseBlockController::inlineBlockList().
@@ -178,12 +184,12 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
     $this->assertHighlightNotExists();
 
     // The highlight should persist with all block config dialogs.
-    $page->clickLink('Add Block');
+    $page->clickLink('Add block');
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', 'a:contains("Recent content")'));
     $assert_session->assertWaitOnAjaxRequest();
     $this->assertHighlightedElement('[data-layout-builder-highlight-id="block-0-first"]');
     $page->clickLink('Recent content');
-    $this->assertNotEmpty($assert_session->waitForElementVisible('css', '#drupal-off-canvas input[value="Add Block"]'));
+    $this->assertNotEmpty($assert_session->waitForElementVisible('css', '#drupal-off-canvas input[value="Add block"]'));
 
     // The highlight is present with ConfigureBlockFormBase::doBuildForm().
     $this->assertHighlightedElement('[data-layout-builder-highlight-id="block-0-first"]');
@@ -191,14 +197,14 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
     $this->assertHighlightNotExists();
 
     // The highlight is present when the "Configure section" dialog is open.
-    $page->clickLink('Configure section');
+    $page->clickLink('Configure Section 1');
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', '#drupal-off-canvas'));
     $this->assertHighlightedElement('[data-layout-builder-highlight-id="section-update-0"]');
     $page->pressButton('Close');
     $this->assertHighlightNotExists();
 
-    // The highlight is present when the "Remove section" dialog is open.
-    $page->clickLink('Remove section');
+    // The highlight is present when the "Remove Section" dialog is open.
+    $page->clickLink('Remove Section 1');
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', '#drupal-off-canvas'));
     $assert_session->assertWaitOnAjaxRequest();
     $this->assertHighlightedElement('[data-layout-builder-highlight-id="section-update-0"]');
@@ -255,23 +261,10 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
    * Waits for the dialog to close and confirms no highlights are present.
    */
   private function assertHighlightNotExists() {
-    $this->waitForNoElement('#drupal-off-canvas');
-    $this->waitForNoElement('.is-layout-builder-highlighted');
-  }
+    $assert_session = $this->assertSession();
 
-  /**
-   * Waits for an element to be removed from the page.
-   *
-   * @param string $selector
-   *   CSS selector.
-   * @param int $timeout
-   *   (optional) Timeout in milliseconds, defaults to 10000.
-   *
-   * @todo Remove in https://www.drupal.org/node/2892440.
-   */
-  protected function waitForNoElement($selector, $timeout = 10000) {
-    $condition = "(typeof jQuery !== 'undefined' && jQuery('$selector').length === 0)";
-    $this->assertJsCondition($condition, $timeout);
+    $assert_session->assertNoElementAfterWait('css', '#drupal-off-canvas');
+    $assert_session->assertNoElementAfterWait('css', '.is-layout-builder-highlighted');
   }
 
 }

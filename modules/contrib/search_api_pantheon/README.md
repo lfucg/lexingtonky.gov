@@ -54,13 +54,13 @@ See the [Drupal.org for complete documentation on Search API](https://www.drupal
   * It is a best practice in Drupal 8 to export your changes to `yml` files. Using Terminus while in SFTP mode, you can run `terminus --env=dev drush "config-export -y"` to export the configuration changes you have made. Once committed, these changes can be deployed out to Test and Live environments.
 
 
-### Solr versions and schemas.
+### Solr versions and schemas
 
-Currently, the version of Solr on Pantheon is Solr 3. Officially, the lowest supported version of Solr in Search API Solr is Solr 4. [Pantheon will soon offer a higher version of Solr](https://www.drupal.org/node/2775595). Until then, you can use the schema for Solr 4 that Search API Pantheon provides.
+The version of Solr on Pantheon is Apache Solr v3.6. To accommodate this older version of Solr, use the 8.x-1.x branch of [Search API Solr](https://www.drupal.org/project/search_api_solr) and its Solr 4 schema file.
 
 ### Pantheon environments
 
-Each Pantheon environment (Dev, Test, Live, and Multidevs) has its own Solr server. So indexing and searching in one environment does not impact any other environment. This also means that the schema file has to be posted to each environment's Solr server. Do to so, resave the search API server. [Before this module is released as a Beta, reposting will be done automatically.](https://www.drupal.org/node/2775549)
+Each Pantheon environment (Dev, Test, Live, and Multidevs) has its own Solr server. Indexing and searching in one environment does not impact any other environment.
 
 ### Feedback and collaboration
 

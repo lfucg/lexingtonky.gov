@@ -2,12 +2,11 @@ type: module
 name: Database Search
 description: Offers an implementation of the Search API that uses database tables for indexing content.
 package: Search
-# core: 8.x
+core: 8.x
 dependencies:
   - search_api:search_api
 
-# Information added by Drupal.org packaging script on 2019-07-08
-version: '8.x-1.14'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2019-11-07
+version: '8.x-1.15'
 project: 'search_api'
-datestamp: 1562600012
+datestamp: 1573122789

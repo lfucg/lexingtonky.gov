@@ -26,8 +26,12 @@ class LayoutBuilderQuickEditTest extends QuickEditJavascriptTestBase {
   public static $modules = [
     'node',
     'layout_builder',
-    'layout_builder_test_css_transitions',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'classy';
 
   /**
    * The article node under test.
@@ -96,12 +100,12 @@ class LayoutBuilderQuickEditTest extends QuickEditJavascriptTestBase {
     $assert_session = $this->assertSession();
     $this->loginLayoutAdmin();
     $this->drupalGet('admin/structure/types/manage/article/display/default/layout');
-    $page->clickLink('Add Block');
+    $page->clickLink('Add block');
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', '#drupal-off-canvas'));
     $assert_session->assertWaitOnAjaxRequest();
     $page->clickLink('Body');
     $assert_session->assertWaitOnAjaxRequest();
-    $page->pressButton('Add Block');
+    $page->pressButton('Add block');
     $assert_session->assertWaitOnAjaxRequest();
     $page->pressButton('Save layout');
     $this->assertNotEmpty($assert_session->waitForElement('css', '.messages--status'));

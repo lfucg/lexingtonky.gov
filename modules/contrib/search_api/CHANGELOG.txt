@@ -1,3 +1,46 @@
+Search API 1.15 (2019-11-07):
+-----------------------------
+- #3022881 by MahtabAlam, drunken monkey, borisson_: Fixed unintentional
+  scrolling in the "Add fields" dialog.
+- #3068180 by drunken monkey: Fixed ambiguous column names in SQL queries
+  constructed by the database backend.
+- #3068645 by drunken monkey: Fixed problem with entity references in Views.
+- #3081885 by mkalkbrenner, drunken monkey, borisson_: Changed discouraged
+  processors to be visible but disabled in UI.
+- #3089960 by drunken monkey, borisson_: Changed to use PHP ternary operator
+  where possible.
+- #3064479 by ducktape, drunken monkey, mpp, borisson_: Fixed taxonomy term
+  Views argument title not translated.
+- #2931562 by drunken monkey, RajabNatshah, nedjo, borisson_: Fixed problem
+  running batch process during module install.
+- #2916534 by drunken monkey, Johnny vd Laar, ricovandevin, Marty2081: Fixed
+  duplicate results for partial matching with database backend.
+- #3084839 by ckaotik, drunken monkey: Fixed missing config schema for Views
+  date filter.
+- #3083923 by aalin, drunken monkey: Fixed ResultRow name conflict in PHP 5.
+- #3083269 by leontin, drunken monkey: Fixed error when combining multiple
+  fulltext keywords.
+- #3086004 by drunken monkey: Fixed failing tests.
+- #3079147 by drunken monkey: Fixed Views click-sorting for ID and datasource.
+- #3067640 by DamienMcKenna, drunken monkey: Fixed "missing module" error for
+  search_api_views_taxonomy.
+- #3071591 by pfrenssen, drunken monkey: Fixed plugin not found error during
+  site/config install.
+- #3075417 by Adrian Liegmann, drunken monkey: Fixed handling of 'is_list' =>
+  FALSE in property definitions.
+- #3074852 by littlepixiez, drunken monkey: Fixed message class for failed
+  status change.
+- #3068196 by Adrian Liegmann, lpeabody, drunken monkey: Fixed problem with
+  multiple Drush batch operations in Drush 9.6+.
+- #1960684 by drunken monkey, geek.merlin aka axel.rutz, mkalkbrenner,
+  borisson_, andypost, DanielVeza: Added support for language fallbacks.
+- #3067143 by drunken monkey, mpp, borisson_: Fixed potential fatal error when
+  accessing parse mode of broken Views.
+- #3073283 by mkalkbrenner, idebr, drunken monkey: Fixed failing tests on Drupal
+  Core 8.8.x.
+- #3062400 by drunken monkey, jonathan_hunt, borisson_: Fixed the reindexing
+  message in the UI.
+
 Search API 1.14 (2019-07-08):
 -----------------------------
 - #3065550 by mkalkbrenner, drunken monkey: Declared a conflict for most older

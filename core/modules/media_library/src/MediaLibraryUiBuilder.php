@@ -17,9 +17,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  * Service which builds the media library.
  *
  * @internal
- *   Media Library is an experimental module and its internal code may be
- *   subject to change in minor releases. External code should not instantiate
- *   or extend this class.
+ *   This service is an internal part of the modal media library dialog and
+ *   does not provide any extension points.
  */
 class MediaLibraryUiBuilder {
 
@@ -54,6 +53,13 @@ class MediaLibraryUiBuilder {
   protected $viewsExecutableFactory;
 
   /**
+   * The media library opener resolver.
+   *
+   * @var \Drupal\media_library\OpenerResolverInterface
+   */
+  protected $openerResolver;
+
+  /**
    * Constructs a MediaLibraryUiBuilder instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -64,12 +70,19 @@ class MediaLibraryUiBuilder {
    *   The views executable factory.
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
    *   The currently active request object.
+   * @param \Drupal\media_library\OpenerResolverInterface $opener_resolver
+   *   The opener resolver.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, RequestStack $request_stack, ViewExecutableFactory $views_executable_factory, FormBuilderInterface $form_builder) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, RequestStack $request_stack, ViewExecutableFactory $views_executable_factory, FormBuilderInterface $form_builder, OpenerResolverInterface $opener_resolver = NULL) {
     $this->entityTypeManager = $entity_type_manager;
     $this->request = $request_stack->getCurrentRequest();
     $this->viewsExecutableFactory = $views_executable_factory;
     $this->formBuilder = $form_builder;
+    if (!$opener_resolver) {
+      @trigger_error('The media_library.opener_resolver service must be passed to ' . __METHOD__ . ' and will be required before Drupal 9.0.0.', E_USER_DEPRECATED);
+      $opener_resolver = \Drupal::service('media_library.opener_resolver');
+    }
+    $this->openerResolver = $opener_resolver;
   }
 
   /**
@@ -109,11 +122,9 @@ class MediaLibraryUiBuilder {
     }
     else {
       return [
-        '#type' => 'html_tag',
-        '#tag' => 'div',
+        '#theme' => 'media_library_wrapper',
         '#attributes' => [
           'id' => 'media-library-wrapper',
-          'class' => ['media-library-wrapper'],
         ],
         'menu' => $this->buildMediaTypeMenu($state),
         'content' => $this->buildLibraryContent($state),
@@ -143,12 +154,12 @@ class MediaLibraryUiBuilder {
    */
   protected function buildLibraryContent(MediaLibraryState $state) {
     return [
-      '#type' => 'html_tag',
-      '#tag' => 'div',
+      '#type' => 'container',
+      '#theme_wrappers' => [
+        'container__media_library_content',
+      ],
       '#attributes' => [
         'id' => 'media-library-content',
-        'class' => ['media-library-content'],
-        'tabindex' => -1,
       ],
       'form' => $this->buildMediaTypeAddForm($state),
       'view' => $this->buildMediaLibraryView($state),
@@ -159,7 +170,7 @@ class MediaLibraryUiBuilder {
    * Check access to the media library.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
-   *   (optional) Run access checks for this account.
+   *   Run access checks for this account.
    * @param \Drupal\media_library\MediaLibraryState $state
    *   (optional) The current state of the media library, derived from the
    *   current request.
@@ -167,10 +178,10 @@ class MediaLibraryUiBuilder {
    * @return \Drupal\Core\Access\AccessResult
    *   The access result.
    */
-  public function checkAccess(AccountInterface $account = NULL, MediaLibraryState $state = NULL) {
+  public function checkAccess(AccountInterface $account, MediaLibraryState $state = NULL) {
     if (!$state) {
       try {
-        MediaLibraryState::fromRequest($this->request);
+        $state = MediaLibraryState::fromRequest($this->request);
       }
       catch (BadRequestHttpException $e) {
         return AccessResult::forbidden($e->getMessage());
@@ -189,8 +200,16 @@ class MediaLibraryUiBuilder {
       return AccessResult::forbidden('The media library widget display does not exist.')
         ->addCacheableDependency($view);
     }
-    return AccessResult::allowedIfHasPermission($account, 'view media')
+
+    // The user must at least be able to view media in order to access the media
+    // library.
+    $can_view_media = AccessResult::allowedIfHasPermission($account, 'view media')
       ->addCacheableDependency($view);
+
+    // Delegate any further access checking to the opener service nominated by
+    // the media library state.
+    return $this->openerResolver->get($state)->checkAccess($state, $account)
+      ->andIf($can_view_media);
   }
 
   /**
@@ -213,10 +232,10 @@ class MediaLibraryUiBuilder {
     // @todo: Add a class to the li element.
     //   https://www.drupal.org/project/drupal/issues/3029227
     $menu = [
-      '#theme' => 'links',
+      '#theme' => 'links__media_library_menu',
       '#links' => [],
       '#attributes' => [
-        'class' => ['media-library-menu', 'js-media-library-menu'],
+        'class' => ['js-media-library-menu'],
       ],
     ];
 
@@ -224,26 +243,30 @@ class MediaLibraryUiBuilder {
 
     $selected_type_id = $state->getSelectedTypeId();
     foreach ($allowed_types as $allowed_type_id => $allowed_type) {
-      $link_state = MediaLibraryState::create($state->getOpenerId(), $state->getAllowedTypeIds(), $allowed_type_id, $state->getAvailableSlots());
+      $link_state = MediaLibraryState::create($state->getOpenerId(), $state->getAllowedTypeIds(), $allowed_type_id, $state->getAvailableSlots(), $state->getOpenerParameters());
       // Add the 'media_library_content' parameter so the response will contain
       // only the updated content for the tab.
       // @see self::buildUi()
       $link_state->set('media_library_content', 1);
 
       $title = $allowed_type->label();
+      $display_title = [
+        '#markup' => $this->t('<span class="visually-hidden">Show </span>@title<span class="visually-hidden"> media</span>', ['@title' => $title]),
+      ];
       if ($allowed_type_id === $selected_type_id) {
-        $title = [
-          '#markup' => $this->t('@title<span class="active-tab visually-hidden"> (active tab)</span>', ['@title' => $title]),
+        $display_title = [
+          '#markup' => $this->t('<span class="visually-hidden">Show </span>@title<span class="visually-hidden"> media</span><span class="active-tab visually-hidden"> (selected)</span>', ['@title' => $title]),
         ];
       }
 
       $menu['#links']['media-library-menu-' . $allowed_type_id] = [
-        'title' => $title,
+        'title' => $display_title,
         'url' => Url::fromRoute('media_library.ui', [], [
           'query' => $link_state->all(),
         ]),
         'attributes' => [
-          'class' => ['media-library-menu__link'],
+          'role' => 'button',
+          'data-title' => $title,
         ],
       ];
     }
@@ -304,7 +327,7 @@ class MediaLibraryUiBuilder {
     //   https://www.drupal.org/project/drupal/issues/2971209
     $view = $this->entityTypeManager->getStorage('view')->load('media_library');
     $view_executable = $this->viewsExecutableFactory->get($view);
-    $display_id = 'widget';
+    $display_id = $state->get('views_display_id', 'widget');
 
     // Make sure the state parameters are set in the request so the view can
     // pass the parameters along in the pager, filters etc.

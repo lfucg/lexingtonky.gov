@@ -3,7 +3,6 @@
 namespace Drupal\search_api\Plugin\views\filter;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\ParseMode\ParseModePluginManager;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
@@ -299,7 +298,7 @@ class SearchApiFulltext extends FilterPluginBase {
       return;
     }
     $fields = $this->options['fields'];
-    $fields = $fields ? $fields : array_keys($this->getFulltextFields());
+    $fields = $fields ?: array_keys($this->getFulltextFields());
     $query = $this->getQuery();
 
     // Save any keywords that were already set.
@@ -373,8 +372,11 @@ class SearchApiFulltext extends FilterPluginBase {
           // Otherwise, just add all individual words from the old keys to the
           // new ones.
           else {
-            foreach (Element::children($old) as $i) {
-              $keys[] = $old[$i];
+            foreach ($old as $key => $value) {
+              if (substr($key, 0, 1) === '#') {
+                continue;
+              }
+              $keys[] = $value;
             }
           }
         }

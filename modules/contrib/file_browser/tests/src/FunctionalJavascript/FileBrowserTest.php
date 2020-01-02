@@ -2,14 +2,14 @@
 
 namespace Drupal\Tests\file_browser\FunctionalJavascript;
 
-use Drupal\Tests\entity_browser\FunctionalJavascript\EntityBrowserJavascriptTestBase;
+use Drupal\Tests\entity_browser\FunctionalJavascript\EntityBrowserWebDriverTestBase;
 
 /**
  * Tests the file_browser module.
  *
  * @group entity_browser
  */
-class FileBrowserTest extends EntityBrowserJavascriptTestBase {
+class FileBrowserTest extends EntityBrowserWebDriverTestBase {
 
   /**
    * {@inheritdoc}
@@ -55,12 +55,12 @@ class FileBrowserTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->switchToIFrame('entity_browser_iframe_browse_files');
     $this->getSession()->getPage()->clickLink('Files listing');
     $this->clickViewEntity('file:' . $image->id());
-    $this->waitForAjaxToFinish();
+    $this->assertSession()->assertWaitOnAjaxRequest();
     $this->getSession()->getPage()->pressButton('Use selected');
 
     // Switch back to the main page and assert that the file was selected.
     $this->getSession()->switchToIFrame();
-    $this->waitForAjaxToFinish();
+    $this->assertSession()->assertWaitOnAjaxRequest();
     $this->assertSession()->pageTextContains('llama.jpg');
   }
 
@@ -72,7 +72,7 @@ class FileBrowserTest extends EntityBrowserJavascriptTestBase {
    */
   protected function clickViewEntity($entityId) {
     $xpathViewRow = '//*[./*[contains(@class, "views-field-entity-browser-select") and .//input[@name="entity_browser_select[' . $entityId . ']"]]]';
-    $this->clickXpathSelector($xpathViewRow, FALSE);
+    $this->assertSession()->elementExists('xpath', $xpathViewRow)->click();
   }
 
 }

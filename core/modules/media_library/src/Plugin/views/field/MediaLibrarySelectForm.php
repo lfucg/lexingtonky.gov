@@ -2,17 +2,15 @@
 
 namespace Drupal\media_library\Plugin\views\field;
 
-use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseDialogCommand;
-use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\media_library\MediaLibraryState;
-use Drupal\media_library\Plugin\Field\FieldWidget\MediaLibraryWidget;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\Render\ViewsRenderPipelineMarkup;
 use Drupal\views\ResultRow;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Defines a field that outputs a checkbox and form for selecting media.
@@ -20,9 +18,7 @@ use Drupal\views\ResultRow;
  * @ViewsField("media_library_select_form")
  *
  * @internal
- *   Media Library is an experimental module and its internal code may be
- *   subject to change in minor releases. External code should not instantiate
- *   or extend this class.
+ *   Plugin classes are internal.
  */
 class MediaLibrarySelectForm extends FieldPluginBase {
 
@@ -49,13 +45,12 @@ class MediaLibrarySelectForm extends FieldPluginBase {
    *   The current state of the form.
    */
   public function viewsForm(array &$form, FormStateInterface $form_state) {
-    $form['#attributes'] = [
-      'class' => ['media-library-views-form', 'js-media-library-views-form'],
-    ];
+    $form['#attributes']['class'] = ['js-media-library-views-form'];
 
-    // Add the view to the form state so the opener ID can be fetched from the
-    // view request object in ::updateWidget().
-    $form_state->set('view', $this->view);
+    // Add an attribute that identifies the media type displayed in the form.
+    if (isset($this->view->args[0])) {
+      $form['#attributes']['data-drupal-media-type'] = $this->view->args[0];
+    }
 
     // Render checkboxes for all rows.
     $form[$this->options['id']]['#tree'] = TRUE;
@@ -86,11 +81,11 @@ class MediaLibrarySelectForm extends FieldPluginBase {
     // Currently the default URL for all AJAX form elements is the current URL,
     // not the form action. This causes bugs when this form is rendered from an
     // AJAX path like /views/ajax, which cannot process AJAX form submits.
-    $url = parse_url($form['#action'], PHP_URL_PATH);
     $query = $this->view->getRequest()->query->all();
     $query[FormBuilderInterface::AJAX_FORM_REQUEST] = TRUE;
+    $query['views_display_id'] = $this->view->getDisplay()->display['id'];
     $form['actions']['submit']['#ajax'] = [
-      'url' => Url::fromUserInput($url),
+      'url' => Url::fromRoute('media_library.ui'),
       'options' => [
         'query' => $query,
       ],
@@ -108,10 +103,7 @@ class MediaLibrarySelectForm extends FieldPluginBase {
     // the opener, and the opener should be responsible for moving the focus. An
     // example of this can be seen in MediaLibraryWidget::updateWidget().
     // @see \Drupal\media_library\Plugin\Field\FieldWidget\MediaLibraryWidget::updateWidget()
-    $form['actions']['submit']['#attributes'] = [
-      'class' => ['media-library-select'],
-      'data-disable-refocus' => 'true',
-    ];
+    $form['actions']['submit']['#attributes']['data-disable-refocus'] = 'true';
   }
 
   /**
@@ -121,27 +113,24 @@ class MediaLibrarySelectForm extends FieldPluginBase {
    *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request.
    *
    * @return \Drupal\Core\Ajax\AjaxResponse
    *   A command to send the selection to the current field widget.
    */
-  public static function updateWidget(array &$form, FormStateInterface $form_state) {
+  public static function updateWidget(array &$form, FormStateInterface $form_state, Request $request) {
     $field_id = $form_state->getTriggeringElement()['#field_id'];
-    $selected = array_filter(explode(',', $form_state->getValue($field_id, [])));
+    $selected_ids = $form_state->getValue($field_id);
+    $selected_ids = $selected_ids ? array_filter(explode(',', $selected_ids)) : [];
 
-    $response = new AjaxResponse();
-    $response->addCommand(new CloseDialogCommand());
+    // Allow the opener service to handle the selection.
+    $state = MediaLibraryState::fromRequest($request);
 
-    $ids = implode(',', $selected);
-
-    $opener_id = MediaLibraryState::fromRequest($form_state->get('view')->getRequest())->getOpenerId();
-    if ($field_id = MediaLibraryWidget::getOpenerFieldId($opener_id)) {
-      $response
-        ->addCommand(new InvokeCommand("[data-media-library-widget-value=\"$field_id\"]", 'val', [$ids]))
-        ->addCommand(new InvokeCommand("[data-media-library-widget-update=\"$field_id\"]", 'trigger', ['mousedown']));
-    }
-
-    return $response;
+    return \Drupal::service('media_library.opener_resolver')
+      ->get($state)
+      ->getSelectionResponse($state, $selected_ids)
+      ->addCommand(new CloseDialogCommand());
   }
 
   /**

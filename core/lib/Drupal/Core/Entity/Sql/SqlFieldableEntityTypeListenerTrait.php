@@ -11,6 +11,9 @@ use Drupal\Core\Site\Settings;
  *
  * @see \Drupal\Core\Entity\EntityTypeListenerInterface
  *
+ * @property \Drupal\Core\Entity\EntityTypeManagerInterface entityTypeManager
+ * @property \Drupal\Core\Database\Connection database
+ *
  * @internal
  */
 trait SqlFieldableEntityTypeListenerTrait {
@@ -174,6 +177,7 @@ trait SqlFieldableEntityTypeListenerTrait {
     /** @var \Drupal\Core\Entity\ContentEntityInterface[] $entities */
     $entities = $load_revisions ? $this->storage->loadMultipleRevisions($entity_identifiers) : $this->storage->loadMultiple($entity_identifiers);
 
+    /** @var \Drupal\Core\Entity\Sql\SqlContentEntityStorage $temporary_storage */
     $temporary_storage = $this->entityTypeManager->createHandlerInstance($entity_type->getStorageClass(), $entity_type);
     $temporary_storage->setEntityType($entity_type);
     $temporary_storage->setFieldStorageDefinitions($field_storage_definitions);
@@ -219,6 +223,9 @@ trait SqlFieldableEntityTypeListenerTrait {
       $sandbox['progress']++;
       $sandbox['current_id'] = $identifier;
     }
+
+    // Reset the cache in order to free memory as we progress.
+    \Drupal::service('entity.memory_cache')->deleteAll();
 
     // Get an updated count of entities that still need to migrated to the new
     // storage.

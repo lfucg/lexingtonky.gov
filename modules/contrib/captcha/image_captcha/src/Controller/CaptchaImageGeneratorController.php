@@ -4,7 +4,7 @@ namespace Drupal\image_captcha\Controller;
 
 use Drupal\Core\Config\Config;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Logger\LoggerChannelInterface;
+use Psr\Log\LoggerInterface;
 use Drupal\Core\PageCache\ResponsePolicy\KillSwitch;
 use Drupal\image_captcha\Response\CaptchaImageResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -17,14 +17,14 @@ class CaptchaImageGeneratorController implements ContainerInjectionInterface {
   /**
    * Image Captcha config storage.
    *
-   * @var Config
+   * @var \Drupal\Core\Config\Config
    */
   protected $config;
 
   /**
    * Watchdog logger channel for captcha.
    *
-   * @var LoggerChannelInterface
+   * @var \Psr\Log\LoggerInterface
    */
   protected $logger;
 
@@ -38,7 +38,7 @@ class CaptchaImageGeneratorController implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public function __construct(Config $config, LoggerChannelInterface $logger, KillSwitch $kill_switch) {
+  public function __construct(Config $config, LoggerInterface $logger, KillSwitch $kill_switch) {
     $this->config = $config;
     $this->logger = $logger;
     $this->killSwitch = $kill_switch;
@@ -58,7 +58,7 @@ class CaptchaImageGeneratorController implements ContainerInjectionInterface {
   /**
    * Main method that throw ImageResponse object to generate image.
    *
-   * @return CaptchaImageResponse
+   * @return \Drupal\image_captcha\Response\CaptchaImageResponse
    *   Make a CaptchaImageResponse with the correct configuration and return it.
    */
   public function image() {

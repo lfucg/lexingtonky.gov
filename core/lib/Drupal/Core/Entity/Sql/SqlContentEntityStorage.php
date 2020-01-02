@@ -164,7 +164,7 @@ class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEnt
    *   The array of base field definitions for the entity type, keyed by field
    *   name.
    *
-   * @deprecated in Drupal 8.7.0, will be removed before Drupal 9.0.0.
+   * @deprecated in drupal:8.7.0 and is removed from drupal:9.0.0.
    *   Use \Drupal\Core\Entity\EntityFieldManagerInterface::getActiveFieldStorageDefinitions()
    *   instead.
    *
@@ -710,9 +710,8 @@ class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEnt
    * the class can be extended, and the default query can be constructed by
    * calling parent::buildQuery(). This is usually necessary when the object
    * being loaded needs to be augmented with additional data from another
-   * table, such as loading node type into comments or vocabulary machine name
-   * into terms, however it can also support $conditions on different tables.
-   * See Drupal\comment\CommentStorage::buildQuery() for an example.
+   * table, such as loading vocabulary machine name into terms, however it
+   * can also support $conditions on different tables.
    *
    * @param array|null $ids
    *   An array of entity IDs, or NULL to load all entities.
@@ -720,7 +719,7 @@ class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEnt
    *   The IDs of the revisions to load, or FALSE if this query is asking for
    *   the default revisions. Defaults to FALSE.
    *
-   * @return \Drupal\Core\Database\Query\Select
+   * @return \Drupal\Core\Database\Query\SelectInterface
    *   A SelectQuery object for loading the entity.
    */
   protected function buildQuery($ids, $revision_ids = FALSE) {
@@ -854,13 +853,9 @@ class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEnt
   public function restore(EntityInterface $entity) {
     $transaction = $this->database->startTransaction();
     try {
-      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-      // Allow code to run before saving.
-      $entity->preSave($this);
-      $this->invokeFieldMethod('preSave', $entity);
-
       // Insert the entity data in the base and data tables only for default
       // revisions.
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
       if ($entity->isDefaultRevision()) {
         $record = $this->mapToStorageRecord($entity->getUntranslated(), $this->baseTable);
         $this->database
@@ -1060,7 +1055,7 @@ class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEnt
    * @param string $table_name
    *   (optional) The table name to map records to. Defaults to the base table.
    *
-   * @return \stdClass
+   * @return object
    *   The record to store.
    */
   protected function mapToStorageRecord(ContentEntityInterface $entity, $table_name = NULL) {
@@ -1097,7 +1092,7 @@ class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEnt
         // Do not set serial fields if we do not have a value. This supports all
         // SQL database drivers.
         // @see https://www.drupal.org/node/2279395
-        $value = drupal_schema_get_field_value($definition->getSchema()['columns'][$column_name], $value);
+        $value = SqlContentEntityStorageSchema::castValue($definition->getSchema()['columns'][$column_name], $value);
         if (!(empty($value) && $this->isColumnSerial($table_name, $schema_name))) {
           $record->$schema_name = $value;
         }
@@ -1145,7 +1140,7 @@ class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEnt
    * @param string $table_name
    *   (optional) The table name to map records to. Defaults to the data table.
    *
-   * @return \stdClass
+   * @return object
    *   The record to store.
    */
   protected function mapToDataStorageRecord(EntityInterface $entity, $table_name = NULL) {
@@ -1398,7 +1393,7 @@ class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEnt
             if (!empty($attributes['serialize'])) {
               $value = serialize($value);
             }
-            $record[$column_name] = drupal_schema_get_field_value($attributes, $value);
+            $record[$column_name] = SqlContentEntityStorageSchema::castValue($attributes, $value);
           }
           $query->values($record);
           if ($this->entityType->isRevisionable()) {
@@ -1531,6 +1526,15 @@ class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEnt
   public function onEntityTypeDelete(EntityTypeInterface $entity_type) {
     $this->wrapSchemaException(function () use ($entity_type) {
       $this->getStorageSchema()->onEntityTypeDelete($entity_type);
+    });
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onFieldableEntityTypeCreate(EntityTypeInterface $entity_type, array $field_storage_definitions) {
+    $this->wrapSchemaException(function () use ($entity_type, $field_storage_definitions) {
+      $this->getStorageSchema()->onFieldableEntityTypeCreate($entity_type, $field_storage_definitions);
     });
   }
 
@@ -1815,7 +1819,7 @@ class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEnt
    * @return bool
    *   Whether the field has been already deleted.
    *
-   * @deprecated in Drupal 8.5.x, will be removed before Drupal 9.0.0. Use
+   * @deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use
    *   \Drupal\Core\Field\FieldStorageDefinitionInterface::isDeleted() instead.
    *
    * @see https://www.drupal.org/node/2907785

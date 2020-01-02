@@ -6,6 +6,7 @@ use Drupal\Core\TempStore\Lock;
 use Drupal\Tests\UnitTestCase;
 use Drupal\Core\TempStore\SharedTempStore;
 use Drupal\Core\TempStore\TempStoreException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -18,14 +19,14 @@ class SharedTempStoreTest extends UnitTestCase {
   /**
    * The mock key value expirable backend.
    *
-   * @var \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface|\PHPUnit\Framework\MockObject\MockObject
    */
   protected $keyValue;
 
   /**
    * The mock lock backend.
    *
-   * @var \Drupal\Core\Lock\LockBackendInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Lock\LockBackendInterface|\PHPUnit\Framework\MockObject\MockObject
    */
   protected $lock;
 
@@ -70,8 +71,8 @@ class SharedTempStoreTest extends UnitTestCase {
   protected function setUp() {
     parent::setUp();
 
-    $this->keyValue = $this->getMock('Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface');
-    $this->lock = $this->getMock('Drupal\Core\Lock\LockBackendInterface');
+    $this->keyValue = $this->createMock('Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface');
+    $this->lock = $this->createMock('Drupal\Core\Lock\LockBackendInterface');
     $this->requestStack = new RequestStack();
     $request = Request::createFromGlobals();
     $this->requestStack->push($request);
@@ -151,7 +152,7 @@ class SharedTempStoreTest extends UnitTestCase {
     $this->keyValue->expects($this->once())
       ->method('getCollectionName');
 
-    $this->setExpectedException(TempStoreException::class);
+    $this->expectException(TempStoreException::class);
     $this->tempStore->set('test', 'value');
   }
 
@@ -346,7 +347,7 @@ class SharedTempStoreTest extends UnitTestCase {
     $this->keyValue->expects($this->once())
       ->method('getCollectionName');
 
-    $this->setExpectedException(TempStoreException::class);
+    $this->expectException(TempStoreException::class);
     $this->tempStore->delete('test');
   }
 
@@ -380,6 +381,34 @@ class SharedTempStoreTest extends UnitTestCase {
     $this->assertTrue($this->tempStore->deleteIfOwner('test_1'));
     $this->assertTrue($this->tempStore->deleteIfOwner('test_2'));
     $this->assertFalse($this->tempStore->deleteIfOwner('test_3'));
+  }
+
+  /**
+   * Tests the serialization of a shared temp store.
+   */
+  public function testSerialization() {
+    // Add an unserializable request to the request stack. If the tempstore
+    // didn't use DependencySerializationTrait, the exception would be thrown
+    // when we try to serialize the tempstore.
+    $request = $this->prophesize(Request::class);
+    $request->willImplement('\Serializable');
+    $request->serialize()->willThrow(new \LogicException('Oops!'));
+    $unserializable_request = $request->reveal();
+
+    $this->requestStack->push($unserializable_request);
+    $this->requestStack->_serviceId = 'request_stack';
+
+    $container = $this->prophesize(ContainerInterface::class);
+    $container->get('request_stack')->willReturn($this->requestStack);
+    $container->has('request_stack')->willReturn(TRUE);
+    \Drupal::setContainer($container->reveal());
+
+    $store = unserialize(serialize($this->tempStore));
+    $this->assertInstanceOf(SharedTempStore::class, $store);
+
+    $request_stack = $this->getObjectAttribute($store, 'requestStack');
+    $this->assertEquals($this->requestStack, $request_stack);
+    $this->assertSame($unserializable_request, $request_stack->pop());
   }
 
 }

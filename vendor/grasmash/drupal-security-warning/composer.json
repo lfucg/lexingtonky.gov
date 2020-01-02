@@ -1,0 +1,36 @@
+{
+  "name": "grasmash/drupal-security-warning",
+  "description": "Warns users installing Drupal project versions not supported by Security Team.",
+  "keywords": [ "drupal", "security" ],
+  "authors": [
+    {
+      "name": "Matthew Grasmick"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/grasmash/drupal-security-warning/issues"
+  },
+  "type": "composer-plugin",
+  "license": "GPL-2.0",
+  "require": {
+    "composer-plugin-api": "^1.0"
+  },
+  "require-dev": {
+    "composer/composer": "^1.0",
+    "squizlabs/php_codesniffer": "^2.7",
+    "phpunit/phpunit": "^5.7.0",
+    "symfony/filesystem": "^3.2.0",
+    "symfony/process": "^3.2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "grasmash\\DrupalSecurityWarning\\": "src/"
+    }
+  },
+  "extra": {
+    "class": "grasmash\\DrupalSecurityWarning\\Composer\\Plugin",
+    "branch-alias": {
+      "dev-master": "1.x-dev"
+    }
+  }
+}

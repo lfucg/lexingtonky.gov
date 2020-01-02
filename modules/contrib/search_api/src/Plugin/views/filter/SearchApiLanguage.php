@@ -29,10 +29,11 @@ class SearchApiLanguage extends LanguageFilter {
     // Only set the languages using $query->setLanguages() if the condition
     // would be placed directly on the query, as an AND condition.
     $query = $this->getQuery();
-    $direct_condition = $this->operator == 'in'
+    $direct_language_condition = $this->realField === 'search_api_language'
+      && $this->operator == 'in'
       && $query->getGroupType($this->options['group'])
       && $query->getGroupOperator() == 'AND';
-    if ($direct_condition) {
+    if ($direct_language_condition) {
       $query->setLanguages($this->value);
     }
     else {

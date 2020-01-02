@@ -223,7 +223,7 @@ class NodeForm extends ContentEntityForm {
    *
    * @see \Drupal\node\NodeForm::form()
    *
-   * @deprecated in Drupal 8.4.x, will be removed before Drupal 9.0.0.
+   * @deprecated in drupal:8.4.0 and is removed from drupal:9.0.0.
    *   The "Publish" button was removed.
    */
   public function updateStatus($entity_type_id, NodeInterface $node, array $form, FormStateInterface $form_state) {
@@ -251,8 +251,9 @@ class NodeForm extends ContentEntityForm {
       '#submit' => ['::submitForm', '::preview'],
     ];
 
-    $element['delete']['#access'] = $node->access('delete');
-    $element['delete']['#weight'] = 100;
+    if (array_key_exists('delete', $element)) {
+      $element['delete']['#weight'] = 100;
+    }
 
     return $element;
   }

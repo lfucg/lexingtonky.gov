@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * The installation instructions for the SMTP Authentication Support.
+ */
+
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_uninstall().
+ */
+function smtp_uninstall() {
+  $config = \Drupal::service('config.factory');
+  $smtp_config = $config->getEditable('smtp.settings');
+
+  // Restore previous mail system.
+  $default_system_mail = 'php_mail';
+  $mail_config = $config->getEditable('system.mail');
+  $default_interface = (!$smtp_config->get('prev_mail_system')) ? $smtp_config->get('prev_mail_system') : $default_system_mail;
+  $mail_config->set('interface.default', $default_interface)
+    ->save();
+
+  // Cleaning garbage.
+  $smtp_config->delete();
+}
+
+/**
+ * Implements hook_install().
+ */
+function smtp_install() {
+  drupal_set_message(t('Thanks for installing SMTP Authentication Support'));
+  drupal_set_message(t('Settings on <a href="@url_settings">Home &raquo; Admin &raquo; Config &raquo; System &raquo; SMTP</a> or <a href="@url_settings">@url_settings</a>', [
+    '@url_settings' => Url::fromRoute('smtp.config')->toString(),
+  ]));
+}

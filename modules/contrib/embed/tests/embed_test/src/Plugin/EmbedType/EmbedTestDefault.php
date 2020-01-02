@@ -23,7 +23,7 @@ class EmbedTestDefault extends EmbedTypeBase {
    * {@inheritdoc}
    */
   public function getDefaultIconUrl() {
-    return '';
+    return '/default.png';
   }
 
 }

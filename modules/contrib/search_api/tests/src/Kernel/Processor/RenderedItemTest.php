@@ -57,6 +57,13 @@ class RenderedItemTest extends ProcessorTestBase {
   public function setUp($processor = NULL) {
     parent::setUp('rendered_item');
 
+    // Drupal 8.8 converted path aliases to entities, which means there will be
+    // one more entity type enabled by default (which we need to install for
+    // this test, to make sure the processor breaks for none of them).
+    // @todo Remove if once we depend on Drupal 8.8+.
+    if (\Drupal::entityTypeManager()->hasDefinition('path_alias')) {
+      $this->installEntitySchema('path_alias');
+    }
     // Load additional configuration and needed schemas. (The necessary schemas
     // for using nodes are already installed by the parent method.)
     $this->installConfig(['system', 'filter', 'node', 'comment', 'user']);

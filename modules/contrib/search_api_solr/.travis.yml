@@ -1,90 +1,85 @@
 language: php
-cache:
-  bundler: true
-  directories:
-    - $HOME/tmp/drush
-    - $HOME/.bundle
-    - $HOME/.composer
-    - $HOME/downloads
-  apt: true
 
-git:
- depth: 10000
+dist: trusty
 
 php:
-  - 7.0
-  - 5.5
+  - 7.1
+  - 7.3
 
 env:
-  # 4.5.1 is the oldest version we support
-  - PATH=$PATH:/home/travis/.composer/vendor/bin SOLR_VERSION=4.5.1 SOLR_CORE=d8 SOLR_CONFS="$TRAVIS_BUILD_DIR/solr-conf/4.x"
-  # 5.5.0 introduced major changes for boolean operators.
-  - PATH=$PATH:/home/travis/.composer/vendor/bin SOLR_VERSION=5.5.4 SOLR_CORE=d8 SOLR_CONFS="$TRAVIS_BUILD_DIR/solr-conf/5.x"
-  # 6.6.0 is the latest currently supported release.
-  - PATH=$PATH:/home/travis/.composer/vendor/bin SOLR_VERSION=6.6.0 SOLR_CORE=d8 SOLR_CONFS="$TRAVIS_BUILD_DIR/solr-conf/6.x"
+  - SOLR_VERSION=4.5.1 SOLR_CORE=d8 SEARCH_API_SOLR_CONF=4.x DRUPAL_BRANCH=8.7.x DRUSH_VERSION=~9.6.0
+  - SOLR_VERSION=5.5.4 SOLR_CORE=d8 SEARCH_API_SOLR_CONF=5.x DRUPAL_BRANCH=8.7.x DRUSH_VERSION=~9.6.0
+  - SOLR_VERSION=6.6.6 SOLR_CORE=d8 SEARCH_API_SOLR_CONF=6.x DRUPAL_BRANCH=8.7.x DRUSH_VERSION=~9.6.0
+  - SOLR_VERSION=6.6.6 SOLR_CORE=d8 SEARCH_API_SOLR_CONF=6.x DRUPAL_BRANCH=8.8.x DRUSH_VERSION=~9.6.0
 
-notifications:
-  irc:
-    - "chat.freenode.net#drupal-search-api"
+git:
+  # The depth needs to be increased. The default of 50 leads to fatal: reference
+  # repository '/home/travis/.cache/composer/vcs/-home-travis-build-mkalkbrenner
+  # -search-api-solr/' is shallow.
+  depth: 10000
 
-# This will create the database
-mysql:
-  database: drupal
-  username: root
-  encoding: utf8
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - solr_downloads
 
-# To be able to run a webbrowser
-# If we need anything more powerful
-# than e.g. phantomjs
+services:
+  - mysql
+
 before_install:
-  - phpenv config-rm xdebug.ini
+  - phpenv config-rm xdebug.ini || true
   - composer global require "hirak/prestissimo:^0.3"
-  - sudo apt-get update -qq > /dev/null
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
+  - ls solr_downloads/
+  - wget -nc --continue -v --tries=3 --directory-prefix=solr_downloads "http://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.tgz"
+  - tar -xzf solr_downloads/solr-${SOLR_VERSION}.tgz
+  - mysql -e 'CREATE DATABASE drupal;'
 
 install:
-  - git tag 999.0.0
-  # Make sure we don't fail when checking out projects
+  - git tag 999.1.0
+  # Make sure we don't fail when checking out projects.
   - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - echo -e "Host git.drupal.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   # Set sendmail so drush doesn't throw an error during site install.
   - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
   # Forward the errors to the syslog so we can print them
   - echo "error_log=syslog" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
-  # Get latest Drupal 8 core
+  # Get the Drupal core.
   - cd $TRAVIS_BUILD_DIR/..
-  - git clone --depth=1 --branch 8.4.x https://git.drupal.org/project/drupal.git
+  - git clone --depth=1 --branch $DRUPAL_BRANCH https://git.drupal.org/project/drupal.git
   - cd $TRAVIS_BUILD_DIR/../drupal
   - composer install
   - composer config repositories.search_api_solr vcs $TRAVIS_BUILD_DIR
-  - composer require drupal/search_api:1.x-dev drupal/search_api_autocomplete:1.x-dev drupal/search_api_solr:999.0.0 drupal/search_api_location:1.x-dev drupal/facets:1.x-dev drupal/geofield:1.x-dev drush/drush
+  - composer require drupal/search_api:1.x-dev drupal/search_api_autocomplete:1.x-dev drupal/search_api_solr:999.1.0 drupal/facets:1.x-dev drupal/geofield:1.x-dev drush/drush:$DRUSH_VERSION
+  - |
+    if [ ${DRUPAL_BRANCH} != "8.8.x" ]; then
+      composer run-script drupal-phpunit-upgrade
+    fi
   # Patch template.
   #########################################
   # to be removed once #2824932 is resolved
-  #- cd modules/search_api
-  #- curl https://www.drupal.org/files/issues/2824932.patch | patch -p1
+  #- cd modules/contrib/search_api
+  #- curl https://www.drupal.org/files/issues/2018-12-20/3021717.patch | patch -p1
   #- cd $TRAVIS_BUILD_DIR/../drupal
   #########################################
 
 before_script:
-  # Start the built-in php web server (mysql is already started) and
-  # suppress web-server access logs output.
+  - export SOLR_INDEX_WAIT=4
+  - export SYMFONY_DEPRECATIONS_HELPER=disabled
+  - export SIMPLETEST_DB=mysql://root:@localhost/drupal
+  - export SIMPLETEST_BASE_URL=http://localhost:8888
+  # Start the built-in php web server (mysql is already started) and suppress
+  # web server access logs output.
   - php -S localhost:8888 >& /dev/null &
-  # Install the site
-  - ./vendor/bin/drush -v site-install minimal --db-url=mysql://root:@localhost/drupal --yes
-  - ./vendor/bin/drush en --yes simpletest
-  # Install Solr
-  - cat $TRAVIS_BUILD_DIR/travis-solr.sh | bash
+  # Start Solr
+  - $TRAVIS_BUILD_DIR/solr-${SOLR_VERSION}/bin/solr start -e techproducts || travis_terminate 1;
+  - $TRAVIS_BUILD_DIR/solr-${SOLR_VERSION}/bin/solr create -c d8 -d $TRAVIS_BUILD_DIR/solr-conf/${SEARCH_API_SOLR_CONF} || travis_terminate 1;
 
 script:
   # Run the tests
   - cd $TRAVIS_BUILD_DIR/../drupal
-  - export SIMPLETEST_DB=mysql://root:@localhost/drupal
-  - export SIMPLETEST_BASE_URL=http://localhost:8888
-  - ./vendor/bin/phpunit -c core --group search_api_solr --verbose --debug | tee ; export TEST_PHPUNIT=${PIPESTATUS[0]} ; echo $TEST_PHPUNIT
-  # Re-enable when trying to get CodeSniffer doesn't return a 403 anymore.
-  #- /home/travis/.composer/vendor/bin/phpcs --standard=/home/travis/.composer/vendor/drupal/coder/coder_sniffer/Drupal --extensions=php,inc,test,module,install --ignore=css/ $TRAVIS_BUILD_DIR/../drupal/modules/search_api
-  # Exit the build
-  - echo $TEST_PHPUNIT
-  - if [ $TEST_PHPUNIT -eq 0 ]; then exit 0; else exit 1; fi
+  - vendor/bin/phpunit -c core --group search_api_solr --verbose --debug modules/contrib/search_api_solr/tests/src || travis_terminate 1;
+
+matrix:
+  allow_failures:
+    - php: 7.1
+      env: SOLR_VERSION=6.6.6 SOLR_CORE=d8 SEARCH_API_SOLR_CONF=6.x DRUPAL_BRANCH=8.8.x DRUSH_VERSION=~9.6.0

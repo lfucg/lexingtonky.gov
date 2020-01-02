@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains hook implementations for file_browser.
+ */
+
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -34,17 +39,17 @@ function file_browser_form_alter(&$form, FormStateInterface &$form_state) {
 /**
  * Attach the file_browser functionality into a form.
  *
- * @param $form
+ * @param array $form
  *   Nested array of form elements that comprise the form.
  */
-function file_browser_attach_file_browser_to_form(&$form) {
+function file_browser_attach_file_browser_to_form(array &$form) {
   // Attach our library.
   $form['#attached']['library'][] = 'file_browser/view';
   $form['#attached']['library'][] = 'file_browser/dropzone_css';
 
   if (isset($form['selection_display'])) {
     $form['selection_display']['#type'] = 'container';
-    $form['selection_display']['#attributes']['class'] = 'file-browser-actions';
+    $form['selection_display']['#attributes']['class'] = ['file-browser-actions'];
   }
 
   // Add a class for generic styling.

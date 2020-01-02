@@ -2,19 +2,14 @@
 
 namespace Drupal\Tests\paragraphs\Functional;
 
-use Drupal\paragraphs\Tests\Classic\ParagraphsCoreVersionUiTestTrait;
-use Drupal\Tests\BrowserTestBase;
-use Drupal\Tests\paragraphs\FunctionalJavascript\ParagraphsTestBaseTrait;
+use Drupal\Tests\paragraphs\Functional\Experimental\ParagraphsExperimentalTestBase;
 
 /**
  * Tests support for Paragraphs behavior plugins.
  *
  * @group paragraphs
  */
-class ParagraphsExperimentalBehaviorsTest extends BrowserTestBase {
-
-  use ParagraphsCoreVersionUiTestTrait;
-  use ParagraphsTestBaseTrait;
+class ParagraphsExperimentalBehaviorsTest extends ParagraphsExperimentalTestBase {
 
   /**
    * Modules to enable.

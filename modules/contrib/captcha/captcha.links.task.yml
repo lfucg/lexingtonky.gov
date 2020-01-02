@@ -10,5 +10,5 @@ captcha_examples:
 
 captcha_points.list:
   route_name: captcha_point.list
-  title: 'CAPTCHA Points'
+  title: 'Form settings'
   base_route: captcha_settings

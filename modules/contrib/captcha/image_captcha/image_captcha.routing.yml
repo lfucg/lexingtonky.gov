@@ -18,3 +18,10 @@ image_captcha.generator:
     _controller: '\Drupal\image_captcha\Controller\CaptchaImageGeneratorController::image'
   requirements:
     _access: 'TRUE'
+
+image_captcha.refresh:
+  path: '/image-captcha-refresh/{form_id}'
+  defaults:
+    _controller: '\Drupal\image_captcha\Controller\CaptchaImageRefresh::refreshCaptcha'
+  requirements:
+    _access: 'TRUE'
