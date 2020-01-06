@@ -148,6 +148,7 @@ class FullCalendarService {
         'description' => $event->body->value,
         'color' => $event->bundle() === 'meeting' ? '#51A47C' : '#004585',
         'relatedDepartments' => $event->get('field_related_departments')->target_id ? Term::load($event->get('field_related_departments')->target_id)->name->value : NULL,
+        'showCal' => $event->field_show_on_calendar->value,
       ];
     }
   }
