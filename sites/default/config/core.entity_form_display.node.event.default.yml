@@ -17,7 +17,6 @@ dependencies:
     - field.field.node.event.field_recurring_event
     - field.field.node.event.field_related_departments
     - field.field.node.event.field_related_documents
-    - field.field.node.event.field_related_organization
     - field.field.node.event.field_show_on_calendar
     - node.type.event
   module:
@@ -42,6 +41,7 @@ content:
       rows: 9
       summary_rows: 3
       placeholder: ''
+      show_summary: false
     third_party_settings: {  }
     region: content
   created:
@@ -78,7 +78,7 @@ content:
     type: datetime_default
     region: content
   field_event_website:
-    weight: 16
+    weight: 17
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -86,18 +86,19 @@ content:
     type: link_default
     region: content
   field_hide_times:
-    weight: 14
+    weight: 15
     settings:
       display_label: true
     third_party_settings: {  }
     type: boolean_checkbox
     region: content
   field_keywords:
-    weight: 19
+    weight: 20
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
@@ -108,7 +109,7 @@ content:
     type: options_select
     region: content
   field_media_contact:
-    weight: 15
+    weight: 16
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -120,7 +121,7 @@ content:
     type: entity_reference_paragraphs
     region: content
   field_metatags:
-    weight: 18
+    weight: 19
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
@@ -138,23 +139,14 @@ content:
     type: chosen_select
     region: content
   field_related_documents:
-    weight: 17
+    weight: 18
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
     region: content
-  field_related_organization:
-    weight: 27
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_show_on_calendar:
-    weight: 26
+    weight: 14
     settings: {  }
     third_party_settings: {  }
     type: options_select
@@ -176,7 +168,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 20
+    weight: 21
     third_party_settings: {  }
     region: content
   sticky:
@@ -201,6 +193,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     region: content
 hidden: {  }

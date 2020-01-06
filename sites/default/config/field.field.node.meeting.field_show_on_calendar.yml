@@ -1,0 +1,21 @@
+uuid: ab8eb283-c224-4ad9-a5d7-bb8ee1566582
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_show_on_calendar
+    - node.type.meeting
+  module:
+    - options
+id: node.meeting.field_show_on_calendar
+field_name: field_show_on_calendar
+entity_type: node
+bundle: meeting
+label: 'Show on Calendar'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string
