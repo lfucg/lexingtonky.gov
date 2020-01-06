@@ -62,6 +62,9 @@ window.addEventListener( 'load', function(){
       eventAfterAllRender: function() {
         var view = $('#calendar').fullCalendar('getView');
         var relatedDepts = [];
+
+        var referer = '';
+
         // reset calendar dots
 
         $('#calendar').find('.fc-prev-button').addClass('main-prev');
@@ -94,11 +97,13 @@ window.addEventListener( 'load', function(){
             var name = event.title;
             var now = event.start.clone();
             if ($('#calendar-filter').val() == 'default' || event.relatedDepartments == $('#calendar-filter').val()) {
-              var $dot = $(`<span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event month-dot" id="event-${event.id}" title=""></span>`);
-              $dot.css('background-color', event.color);
-              // append to calendar day
-              $('.fc-day-top[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($dot);
-              now.add(1, 'days');
+              if (event.showCal != 'No') {
+                var $dot = $(`<span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event month-dot" id="event-${event.id}" title=""></span>`);
+                $dot.css('background-color', event.color);
+                // append to calendar day
+                $('.fc-day-top[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($dot);
+                now.add(1, 'days');
+              }
             }
           })
         }
@@ -163,11 +168,13 @@ window.addEventListener( 'load', function(){
             }
 
             if ($('#calendar-filter').val() == 'default' || event.relatedDepartments == $('#calendar-filter').val()) {
-              var $listBlock = $(
-                  '<div class="list-event-container" id="list-' + event.id + '"><a href="' + event.url + '"><span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event list-dot " style="background-color:' + event.color +'" title=""></span><div class="list-text-container"><span class="list-event-title">' + event.title + '</span><span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '</span><span class="list-event-time">' + startTime + '</span><span class="details-link">Details <i class="fas fa-chevron-right"></i></div></a></div>');
-              $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'table-row');
-              $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').addClass('displayList');
-              $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($listBlock);
+              if (event.showCal != 'No') {
+                var $listBlock = $(
+                    '<div class="list-event-container" id="list-' + event.id + '"><a href="' + event.url + '"><span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event list-dot " style="background-color:' + event.color +'" title=""></span><div class="list-text-container"><span class="list-event-title">' + event.title + '</span><span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '</span><span class="list-event-time">' + startTime + '</span><span class="details-link">Details <i class="fas fa-chevron-right"></i></div></a></div>');
+                $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'table-row');
+                $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').addClass('displayList');
+                $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($listBlock);
+              }
             }else {
               if ($('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'table-row')) {
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'none');
@@ -181,6 +188,25 @@ window.addEventListener( 'load', function(){
           $('#sidebar-calendar').find('.list-event-container').remove();
           listBuild();
         });
+        
+        if(document.referrer.search('/departments/') != -1) {
+          referrer = document.referrer.split('/departments/')[1];
+
+          $('.dynamicOption').each( function () {
+            var refVal = this.value;
+            var refText = refVal.toString();
+            
+            refText = refText.replace(/ /g, '-');
+            refText = refText.replace(/\&/g, '');
+            refText = refText.replace(/\,/g, '');
+            refText = refText.replace(/\--/g, '-');
+            refText = refText.toLowerCase();
+
+            if(refText == referrer) {
+              $('#calendar-filter').val(refVal);
+            }
+         });
+        }
       }
     });
   })(jQuery);
