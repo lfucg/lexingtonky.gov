@@ -62,6 +62,9 @@ window.addEventListener( 'load', function(){
       eventAfterAllRender: function() {
         var view = $('#calendar').fullCalendar('getView');
         var relatedDepts = [];
+
+        var referer = '';
+
         // reset calendar dots
 
         $('#calendar').find('.fc-prev-button').addClass('main-prev');
@@ -181,6 +184,25 @@ window.addEventListener( 'load', function(){
           $('#sidebar-calendar').find('.list-event-container').remove();
           listBuild();
         });
+        
+        if(document.referrer.search('/departments/') != -1) {
+          referrer = document.referrer.split('/departments/')[1];
+
+          $('.dynamicOption').each( function () {
+            var refVal = this.value;
+            var refText = refVal.toString();
+            
+            refText = refText.replace(/ /g, '-');
+            refText = refText.replace(/\&/g, '');
+            refText = refText.replace(/\,/g, '');
+            refText = refText.replace(/\--/g, '-');
+            refText = refText.toLowerCase();
+
+            if(refText == referrer) {
+              $('#calendar-filter').val(refVal);
+            }
+         });
+        }
       }
     });
   })(jQuery);
