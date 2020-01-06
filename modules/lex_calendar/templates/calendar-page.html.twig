@@ -90,6 +90,25 @@ window.addEventListener( 'load', function(){
           });
         }
 
+        if(document.referrer.search('/departments/') != -1) {
+          referrer = document.referrer.split('/departments/')[1];
+
+          $('.dynamicOption').each( function () {
+            var refVal = this.value;
+            var refText = refVal.toString();
+            
+            refText = refText.replace(/ /g, '-');
+            refText = refText.replace(/\&/g, '');
+            refText = refText.replace(/\,/g, '');
+            refText = refText.replace(/\--/g, '-');
+            refText = refText.toLowerCase();
+
+            if(refText == referrer) {
+              $('#calendar-filter').val(refVal);
+            }
+         });
+        }
+
         dateBuild();
 
         function dateBuild() {
@@ -188,25 +207,6 @@ window.addEventListener( 'load', function(){
           $('#sidebar-calendar').find('.list-event-container').remove();
           listBuild();
         });
-        
-        if(document.referrer.search('/departments/') != -1) {
-          referrer = document.referrer.split('/departments/')[1];
-
-          $('.dynamicOption').each( function () {
-            var refVal = this.value;
-            var refText = refVal.toString();
-            
-            refText = refText.replace(/ /g, '-');
-            refText = refText.replace(/\&/g, '');
-            refText = refText.replace(/\,/g, '');
-            refText = refText.replace(/\--/g, '-');
-            refText = refText.toLowerCase();
-
-            if(refText == referrer) {
-              $('#calendar-filter').val(refVal);
-            }
-         });
-        }
       }
     });
   })(jQuery);

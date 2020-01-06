@@ -72,13 +72,15 @@ ol, ul, dl {
     .lex-event-list {
       .event-card {
         margin-left: 0 !important;
-        margin-right: 10%;
       }
       .more-link {
         float: left;
-        margin-right: 100%;
       }
     }
+  }
+
+  #block-eventsblock {
+    margin-bottom: 100%;
   }
 }
 
