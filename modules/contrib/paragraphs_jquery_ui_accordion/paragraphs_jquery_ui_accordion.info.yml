@@ -1,0 +1,15 @@
+name: Paragraphs jQuery UI Accordion
+description: Adds jQuery UI Accordion for paragraphs.
+type: module
+package: Paragraphs
+# core: 8.x
+dependencies:
+  - paragraphs:paragraphs
+libraries:
+  - paragraphs_jquery_ui_accordion/accordion
+
+# Information added by Drupal.org packaging script on 2018-12-24
+version: '8.x-1.3'
+core: '8.x'
+project: 'paragraphs_jquery_ui_accordion'
+datestamp: 1545611284
