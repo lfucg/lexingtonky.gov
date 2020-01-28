@@ -15,6 +15,7 @@ dependencies:
     - field.field.node.page.field_photo_grid
     - field.field.node.page.field_related_departments
     - field.field.node.page.field_related_documents
+    - field.field.node.page.field_related_page
     - field.field.node.page.field_sidebar_section
     - image.style.thumbnail
     - node.type.page
@@ -44,6 +45,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
@@ -75,6 +77,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
   field_metatags:
     type: metatag_firehose
@@ -90,6 +93,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
   field_page_overview:
     type: text_textarea_with_summary
@@ -137,6 +141,16 @@ content:
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
+  field_related_page:
+    weight: 26
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_sidebar_section:
     type: entity_reference_paragraphs
     weight: 11
@@ -177,6 +191,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     region: content
     third_party_settings: {  }
 hidden:

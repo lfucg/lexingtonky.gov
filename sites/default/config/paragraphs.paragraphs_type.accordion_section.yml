@@ -1,0 +1,9 @@
+uuid: 75a3c533-ace1-44da-929a-5a778975c402
+langcode: en
+status: true
+dependencies: {  }
+id: accordion_section
+label: 'Accordion Section'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

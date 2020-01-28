@@ -3,29 +3,70 @@
 }
 
 .ui-accordion-header-collapsed, .ui-state-default {
-    background-color: color(med-blue);
-    color: color(white);
-    font-size: 1.4rem;
-    font-family: $font__open_sans;
+    background-color: color(med-blue) !important;
+    color: color(white) !important;
+    font-size: 1.4rem !important;
+    font-family: $font__open_sans !important;
+    a {
+        color: color(white) !important;
+        font-size: 1.4rem !important;
+        font-family: $font__open_sans !important;
+    }
 }
 
 .ui-accordion-header-active {
-    background-color: color(lex-blue);
-    color: color(yellow);
-    font-size: 1.4rem;
-    font-family: $font__open_sans;
+    background-color: color(lex-blue) !important;
+    color: color(yellow) !important;
+    font-size: 1.4rem !important;
+    font-family: $font__open_sans !important;
+    a {
+        color: color(yellow) !important;
+        font-size: 1.4rem !important;
+        font-family: $font__open_sans !important;
+    }
 }
 
 .ui-accordion-content-active {
-    color: black;
-    background-color: color(white);
-    font-family: $font__roboto;
-    font-size: 1rem;
+    color: black !important;
+    background-color: color(white) !important;
+    font-family: $font__roboto !important;
+    font-size: 1rem !important;
 
     .accordion-content-heading {
-        font-family: $font__open_sans;
-        font-size: 1.4rem;
+        font-family: $font__open_sans !important;
+        font-size: 1.4rem !important;
     }
+}
+
+
+.paragraph--type--accordion-block {
+    margin: 1em 0 !important;
+
+    .ui-icon {
+        display: none !important;
+    }
+    .opened-icon {
+        display: none;
+    }
+
+    .ui-state-active {
+        .opened-icon {
+            display: inline-block;
+        }
+        .closed-icon {
+            display: none;
+        }
+    }
+
+    .ui-accordion-header-collapsed {
+        .opened-icon {
+            display: none;
+        }
+        .closed-icon {
+            display: inline-block;
+        }
+    }
+
 }
 
 

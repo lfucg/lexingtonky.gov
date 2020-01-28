@@ -1,0 +1,43 @@
+.path-search {
+    .search-result-title {
+        a {
+            font-size: 1em !important;
+            color: color(lex-blue) !important;
+        }
+    }
+
+    .views-row {
+        position: relative;
+        padding: 1em 0;
+
+        &:hover {
+            background-color: color(light-gray);
+        }
+    }
+
+    .lex-card-subtitle {
+        a {
+            font-size: 1.1em;
+        }
+    }
+
+    .search-result-html {
+        color: black;
+    }
+
+    .views-field-type {
+        display: inline;
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: inherit;
+        color: color(gray);
+    }
+}
+
+.results-header {
+    padding: 0 5%;
+    margin-top: 1em;
+    display: inline-block;
+    font-style: italic;
+}

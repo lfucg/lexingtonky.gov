@@ -7,13 +7,16 @@ dependencies:
     - field.field.node.page.body
     - field.field.node.page.field_keywords
     - field.field.node.page.field_lex_custom_banner_image
+    - field.field.node.page.field_lex_grid_ref
     - field.field.node.page.field_lex_site_nav
     - field.field.node.page.field_metatags
     - field.field.node.page.field_office_to_contact
     - field.field.node.page.field_page_overview
     - field.field.node.page.field_page_section
+    - field.field.node.page.field_photo_grid
     - field.field.node.page.field_related_departments
     - field.field.node.page.field_related_documents
+    - field.field.node.page.field_related_page
     - field.field.node.page.field_sidebar_section
     - node.type.page
   module:
@@ -46,11 +49,15 @@ hidden:
   body: true
   field_keywords: true
   field_lex_custom_banner_image: true
+  field_lex_grid_ref: true
   field_lex_site_nav: true
   field_metatags: true
   field_office_to_contact: true
   field_page_section: true
+  field_photo_grid: true
   field_related_departments: true
   field_related_documents: true
+  field_related_page: true
   field_sidebar_section: true
   links: true
+  search_api_excerpt: true
