@@ -15,6 +15,7 @@ dependencies:
     - field.field.node.page.field_photo_grid
     - field.field.node.page.field_related_departments
     - field.field.node.page.field_related_documents
+    - field.field.node.page.field_related_page
     - field.field.node.page.field_sidebar_section
     - node.type.page
   module:
@@ -73,6 +74,14 @@ content:
       link: ''
     third_party_settings: {  }
     region: content
+  field_related_page:
+    weight: 8
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
   links:
     weight: 1
     region: content
@@ -92,3 +101,4 @@ hidden:
   field_related_departments: true
   field_related_documents: true
   field_sidebar_section: true
+  search_api_excerpt: true

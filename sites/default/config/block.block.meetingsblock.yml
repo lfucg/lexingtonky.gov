@@ -20,7 +20,7 @@ settings:
   label_display: visible
   display_limit: '3'
   content_type: meeting
-  show_all: 'no'
+  show_all: 'yes'
 visibility:
   node_type:
     id: node_type

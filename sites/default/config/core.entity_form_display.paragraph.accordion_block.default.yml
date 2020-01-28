@@ -1,0 +1,31 @@
+uuid: 301ae22e-938e-48de-a023-7dc0047a91eb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.accordion_block.field_accordion_section
+    - paragraphs.paragraphs_type.accordion_block
+  module:
+    - paragraphs
+    - workbench_moderation
+id: paragraph.accordion_block.default
+targetEntityType: paragraph
+bundle: accordion_block
+mode: default
+content:
+  field_accordion_section:
+    type: entity_reference_paragraphs
+    weight: 6
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true
