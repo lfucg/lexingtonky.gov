@@ -34,6 +34,7 @@ trait EventFetch {
 
     $query = $this->modifyEventQuery($query);
 
+
     $this->events->addEvents($this->entityManager->getStorage('node')->loadMultiple($query->execute()));
 
     /*

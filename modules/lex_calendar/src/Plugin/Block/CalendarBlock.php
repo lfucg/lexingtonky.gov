@@ -149,6 +149,8 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
 
   protected function setQueryModification() {
     $entity = $this->routeMatch->getParameter('node');
+    $entype= $entity->getType();
+    $entid = $entity->nid->value;
     try {
       $related = $entity->get('field_organization_taxonomy_term')->getValue();
     }
@@ -159,9 +161,11 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
       catch( \InvalidArgumentException $e) {}
       }
 
-      if (!empty($related)) {
-      $this->targetDepartment = $related[0]['target_id'];
-    }
+      if (!empty($related) && $entype != 'page') {
+        $this->targetDepartment = $related[0]['target_id'];
+      }else if (empty($related) && $entype == 'page') {
+        $this->targetPage = $entid;
+      }
   }
 
   /**
@@ -223,8 +227,12 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
   }
 
   protected function modifyEventQuery($query) {
-    return $this->targetDepartment ?
-      $query->condition('field_related_departments', $this->targetDepartment) :
-      $query;
+    if ($this->targetPage) {
+      return $query->condition('field_related_page', $this->targetPage);
+    }else if ($this->targetDepartment) {
+      return $query->condition('field_related_departments', $this->targetDepartment);
+    }else {
+      return $query;
+    }
   }
 }

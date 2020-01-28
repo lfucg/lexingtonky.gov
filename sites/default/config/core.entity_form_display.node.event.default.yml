@@ -17,6 +17,7 @@ dependencies:
     - field.field.node.event.field_recurring_event
     - field.field.node.event.field_related_departments
     - field.field.node.event.field_related_documents
+    - field.field.node.event.field_related_page
     - field.field.node.event.field_show_on_calendar
     - node.type.event
   module:
@@ -36,7 +37,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 9
+    weight: 10
     settings:
       rows: 9
       summary_rows: 3
@@ -46,19 +47,19 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 6
     settings: {  }
     third_party_settings: {  }
     region: content
   field_all_day:
-    weight: 12
+    weight: 13
     settings:
       display_label: true
     third_party_settings: {  }
     type: boolean_checkbox
     region: content
   field_cost:
-    weight: 3
+    weight: 4
     settings:
       size: 60
       placeholder: ''
@@ -66,19 +67,19 @@ content:
     type: string_textfield
     region: content
   field_date:
-    weight: 10
-    settings: {  }
-    third_party_settings: {  }
-    type: datetime_default
-    region: content
-  field_date_end:
     weight: 11
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
     region: content
+  field_date_end:
+    weight: 12
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
   field_event_website:
-    weight: 17
+    weight: 18
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -86,14 +87,14 @@ content:
     type: link_default
     region: content
   field_hide_times:
-    weight: 15
+    weight: 16
     settings:
       display_label: true
     third_party_settings: {  }
     type: boolean_checkbox
     region: content
   field_keywords:
-    weight: 20
+    weight: 21
     settings:
       match_operator: CONTAINS
       size: 60
@@ -109,7 +110,7 @@ content:
     type: options_select
     region: content
   field_media_contact:
-    weight: 16
+    weight: 17
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -121,13 +122,13 @@ content:
     type: entity_reference_paragraphs
     region: content
   field_metatags:
-    weight: 19
+    weight: 20
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
     region: content
   field_recurring_event:
-    weight: 13
+    weight: 14
     settings: {  }
     third_party_settings: {  }
     type: options_select
@@ -139,21 +140,31 @@ content:
     type: chosen_select
     region: content
   field_related_documents:
-    weight: 18
+    weight: 19
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
     region: content
+  field_related_page:
+    weight: 3
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_show_on_calendar:
-    weight: 14
+    weight: 15
     settings: {  }
     third_party_settings: {  }
     type: options_select
     region: content
   path:
     type: path
-    weight: 8
+    weight: 9
     settings: {  }
     third_party_settings: {  }
     region: content
@@ -161,21 +172,21 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 7
     third_party_settings: {  }
     region: content
   status:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 21
+    weight: 22
     third_party_settings: {  }
     region: content
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 8
     third_party_settings: {  }
     region: content
   title:
@@ -188,7 +199,7 @@ content:
     region: content
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 5
     settings:
       match_operator: CONTAINS
       size: 60

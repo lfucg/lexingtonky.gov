@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.meeting.field_recurring_event
     - field.field.node.meeting.field_related_departments
     - field.field.node.meeting.field_related_documents
+    - field.field.node.meeting.field_related_page
     - field.field.node.meeting.field_show_on_calendar
     - node.type.meeting
   module:
@@ -101,5 +102,6 @@ hidden:
   field_keywords: true
   field_related_departments: true
   field_related_documents: true
+  field_related_page: true
   field_show_on_calendar: true
   search_api_excerpt: true

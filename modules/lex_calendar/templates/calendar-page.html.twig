@@ -10,7 +10,14 @@
   <label class="mb-1" for="calendar-filter">Filter Calendar By Department</label>
   </br>
   <select id="calendar-filter">
-    <option value="default">Show Main Calendar</option>
+    <option value="default">Unfiltered</option>
+  </select>
+</div>
+<div class="filter-container">
+  <label class="mb-1" for="page-filter">Filter Calendar by Relevant Page or Program</label>
+  </br>
+  <select id="page-filter">
+    <option value="default">Unfiltered</option>
   </select>
 </div>
 <div class="calendar-container row">
@@ -62,6 +69,7 @@ window.addEventListener( 'load', function(){
       eventAfterAllRender: function() {
         var view = $('#calendar').fullCalendar('getView');
         var relatedDepts = [];
+        var relatedPages = [];
 
         var referer = '';
 
@@ -81,12 +89,19 @@ window.addEventListener( 'load', function(){
             var name = event.title;
             var now = event.start.clone();
             var arrayTest = $.inArray(event.relatedDepartments, relatedDepts);
+            var pageTest = $.inArray(event.relatedPages, relatedPages);
             if (arrayTest === -1 && event.relatedDepartments != null && now.month() == view.intervalStart.month()) {
               relatedDepts.push(event.relatedDepartments);
+            }
+            if (pageTest == -1 && event.relatedPages != null && now.month() == view.intervalStart.month()) {
+              relatedPages.push(event.relatedPages);
             }
           })
           relatedDepts.map((dept) => {
             $('#calendar-filter').append(`<option class="dynamicOption" value="${dept}">${dept}</option>`);
+          });
+          relatedPages.map((page) => {
+            $('#page-filter').append(`<option class="dynamicOption" value="${page}">${page}</option>`);
           });
         }
 
@@ -115,7 +130,7 @@ window.addEventListener( 'load', function(){
           events.map((event) => {
             var name = event.title;
             var now = event.start.clone();
-            if ($('#calendar-filter').val() == 'default' || event.relatedDepartments == $('#calendar-filter').val()) {
+            if ($('#calendar-filter').val() == 'default' && $('#page-filter').val() == 'default' || event.relatedDepartments == $('#calendar-filter').val() || event.relatedPages == $('#page-filter').val()) {
               if (event.showCal != 'No') {
                 var $dot = $(`<span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event month-dot" id="event-${event.id}" title=""></span>`);
                 $dot.css('background-color', event.color);
@@ -127,6 +142,10 @@ window.addEventListener( 'load', function(){
           })
         }
         $('#calendar-filter').change(function() {
+          $('#calendar').find('.month-dot').remove();
+          dateBuild();
+        });
+        $('#page-filter').change(function() {
           $('#calendar').find('.month-dot').remove();
           dateBuild();
         });
@@ -186,7 +205,7 @@ window.addEventListener( 'load', function(){
               startTime = event.start.format('h:mm a');
             }
 
-            if ($('#calendar-filter').val() == 'default' || event.relatedDepartments == $('#calendar-filter').val()) {
+            if ($('#calendar-filter').val() == 'default' && $('#page-filter').val() == 'default' || event.relatedDepartments == $('#calendar-filter').val() || event.relatedPages == $('#page-filter').val()) {
               if (event.showCal != 'No') {
                 var $listBlock = $(
                     '<div class="list-event-container" id="list-' + event.id + '"><a href="' + event.url + '"><span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event list-dot " style="background-color:' + event.color +'" title=""></span><div class="list-text-container"><span class="list-event-title">' + event.title + '</span><span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '</span><span class="list-event-time">' + startTime + '</span><span class="details-link">Details <i class="fas fa-chevron-right"></i></div></a></div>');
@@ -203,6 +222,11 @@ window.addEventListener( 'load', function(){
           })
         }
         $('#calendar-filter').change(function() {
+          $('#sidebar-calendar').find('.fc-list-heading').removeClass('displayList');
+          $('#sidebar-calendar').find('.list-event-container').remove();
+          listBuild();
+        });
+        $('#page-filter').change(function() {
           $('#sidebar-calendar').find('.fc-list-heading').removeClass('displayList');
           $('#sidebar-calendar').find('.list-event-container').remove();
           listBuild();
