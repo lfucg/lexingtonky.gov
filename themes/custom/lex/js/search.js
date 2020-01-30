@@ -12,11 +12,12 @@
     $('.views-field-type').each(function () {
         var text = $(this).find('.field-content').text();
 
-        text.replace('Service guide', 'Page');
-        text.replace('Organization page', 'Page');
-        text.replace('Full-bleed landing page', 'Page');
-        text.replace('Meeting/notice', 'Meeting');
-
+        if (text == 'Service guide' || text == 'Organization page' || text == 'Full-bleed landing page') {
+            text = text.replace('Service guide', 'Page');
+        }else if (text == 'Meeting/notice') {
+            text = text.replace('Meeting/notice', 'Meeting');
+        }
+        
         $(this).find('.field-content').text() == text;
     });
 
