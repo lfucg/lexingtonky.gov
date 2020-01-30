@@ -10,12 +10,14 @@
     });
 
     $('.views-field-type').each(function () {
-        console.log($(this).find('.field-content').text());
-        
-        $(this).find('.field-content').text().replace('Service guide', 'Page');
-        $(this).find('.field-content').text().replace('Organization page', 'Page');
-        $(this).find('.field-content').text().replace('Full-bleed landing page', 'Page');
-        $(this).find('.field-content').text().replace('Meeting/notice', 'Meeting');
+        var text = $(this).find('.field-content').text();
+
+        text.replace('Service guide', 'Page');
+        text.replace('Organization page', 'Page');
+        text.replace('Full-bleed landing page', 'Page');
+        text.replace('Meeting/notice', 'Meeting');
+
+        $(this).find('.field-content').text() == text;
     });
 
 
