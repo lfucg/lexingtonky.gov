@@ -197,12 +197,19 @@
     }
 }
 
-#calendar-main {
-    padding-top: 2% !important;
+#calendar {
+  margin-top: 1em !important;
+}
 
-    #block-pagetitle {
-        margin-bottom: 0 !important;
-    }
+#calendar-main {
+  .lex-region-content {
+    margin-top: 1em;
+  }
+  padding-top: 2% !important;
+
+  #block-pagetitle {
+      margin-bottom: 0 !important;
+  }
 }
 
 .month-dot {
