@@ -165,6 +165,8 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
         $this->targetDepartment = $related[0]['target_id'];
       }else if (empty($related) && $entype == 'page') {
         $this->targetPage = $entid;
+      }else if (!empty($related) && $entype == 'page') {
+        $this->targetPage = $entid;
       }
   }
 
@@ -181,7 +183,7 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
 
     $this->setQueryModification();
 
-    if ($config['show_all'] === 'no' && empty($this->targetDepartment)) {
+    if ($config['show_all'] === 'no' && empty($this->targetDepartment) && empty($this->targetPage)) {
       return ['#cache' => ['max-age' => 0]];
     }
 
