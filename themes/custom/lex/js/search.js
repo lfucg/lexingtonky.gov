@@ -16,9 +16,11 @@
             text = text.replace('Service guide', 'Page');
         }else if (text == 'Meeting/notice') {
             text = text.replace('Meeting/notice', 'Meeting');
+        }else {
+            return text;
         }
         
-        $(this).find('.field-content').text() == text;
+        $(this).find('.field-content').text(text);
     });
 
 
