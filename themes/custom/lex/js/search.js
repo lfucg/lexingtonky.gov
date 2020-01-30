@@ -9,6 +9,12 @@
         $(this).text('Results for: ' + searchTerm);
     });
 
+    $('.views-element-container').each(function () {
+        var text = $(this).find('.js-view-dom-id-32207e6735f7d828021fb806b2fb97bf43fd7e816ae87f5a7603c00f314a4b8b').text();
+
+        console.log(text);
+    });
+
     $('.views-field-type').each(function () {
         var text = $(this).find('.field-content').text();
 
@@ -20,7 +26,7 @@
             return text;
         }
         
-        $(this).find('.field-content').text(text);
+        $(this).find('.field-content').text().replace($(this).find('.field-content').text(), text);
     });
 
 
