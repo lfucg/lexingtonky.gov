@@ -45,29 +45,55 @@
     .ui-icon {
         display: none !important;
     }
-    .opened-icon {
+    .opened-icon, .closed-icon {
+        display: inline-block;
+        height: 1.5rem;
+
+        .accordion-icon {
+            display: inline-block;
+            height: 2rem;
+        }
+    }
+
+    .closed-icon {
         display: none;
     }
 
     .ui-state-active {
         .opened-icon {
             display: inline-block;
+            
+            .accordion-icon {
+                display: inline-block;
+            }
         }
         .closed-icon {
             display: none;
+
+            .accordion-icon {
+                display: none;
+            }
         }
     }
 
     .ui-accordion-header-collapsed {
+         .closed-icon {
+            display: inline-block;
+            .accordion-icon {
+                display: inline-block;
+            }
+        }
         .opened-icon {
             display: none;
-        }
-        .closed-icon {
-            display: inline-block;
+            .accordion-icon {
+                display: none;
+            }
         }
     }
 
 }
+
+
 
 
 
