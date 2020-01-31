@@ -22,6 +22,9 @@
   }
   .lex-region-postscript {
     .paragraph--type--icon-button-with-description {
+      @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        max-width: 200px;
+      }
       margin-top: 0px;
       padding-bottom: 0px !important;
       .icon-desc-button {
