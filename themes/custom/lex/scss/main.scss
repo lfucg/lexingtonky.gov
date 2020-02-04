@@ -111,3 +111,9 @@ a.lex-calltoaction {
     background-color: color(gray);
   }
 }
+
+.paragraph--type--flex-grid {
+  div:first-child {
+    display: flex;
+  }
+}
