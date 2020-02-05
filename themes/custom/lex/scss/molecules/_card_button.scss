@@ -1,6 +1,9 @@
 .card-button {
     border: 1px solid color(med-blue);
     width: 250px;
+     @include screens-above(xxl) {
+        width: 400px;
+    }
     background-color: color(white);
     color: color(med-blue);
     display: block !important;
