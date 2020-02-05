@@ -112,8 +112,12 @@ a.lex-calltoaction {
   }
 }
 
-.paragraph--type--flex-grid {
-  div:first-child {
-    display: flex;
-  }
+.flex-heading {
+  margin-left: 12px;
+  margin-bottom: 1.5em;
+}
+
+.flex-content {
+  display: flex;
+  align-items: flex-start;
 }
