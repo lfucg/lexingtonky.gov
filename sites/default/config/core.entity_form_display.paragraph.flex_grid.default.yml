@@ -3,19 +3,29 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.flex_grid.field_heading
     - field.field.paragraph.flex_grid.field_item
     - paragraphs.paragraphs_type.flex_grid
   module:
     - paragraphs
+    - text
     - workbench_moderation
 id: paragraph.flex_grid.default
 targetEntityType: paragraph
 bundle: flex_grid
 mode: default
 content:
+  field_heading:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textfield
+    region: content
   field_item:
     type: entity_reference_paragraphs
-    weight: 6
+    weight: 1
     settings:
       title: Paragraph
       title_plural: Paragraphs
