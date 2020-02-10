@@ -124,6 +124,23 @@ window.addEventListener( 'load', function(){
               $('#calendar-filter').val(refVal);
             }
          });
+        }else if (document.referrer.search('/') != -1) {
+          referrer = document.referrer.split('/').pop();
+
+          $('.dynamicOption').each( function () {
+            var refVal = this.value;
+            var refText = refVal.toString();
+            
+            refText = refText.replace(/ /g, '-');
+            refText = refText.replace(/\&/g, '');
+            refText = refText.replace(/\,/g, '');
+            refText = refText.replace(/\--/g, '-');
+            refText = refText.toLowerCase();
+
+            if(refText == referrer) {
+              $('#page-filter').val(refVal);
+            }
+          });
         }
 
         dateBuild();
