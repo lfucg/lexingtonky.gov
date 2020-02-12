@@ -11,8 +11,8 @@ id: node.event.field_show_on_calendar
 field_name: field_show_on_calendar
 entity_type: node
 bundle: event
-label: 'Show on Calendar'
-description: ''
+label: 'Show on Main Calendar'
+description: 'A ''Yes'' value in this field means that the event will show up on both the filtered calendar modes as well as the unfiltered. ''No'' or ''None'' will set the event to be hidden on the main calendar, but visible when filtering the calendar.'
 required: false
 translatable: false
 default_value:

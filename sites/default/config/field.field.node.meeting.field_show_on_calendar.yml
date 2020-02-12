@@ -11,11 +11,13 @@ id: node.meeting.field_show_on_calendar
 field_name: field_show_on_calendar
 entity_type: node
 bundle: meeting
-label: 'Show on Calendar'
-description: ''
+label: 'Show on Main Calendar'
+description: 'A ''Yes'' value in this field means that the meeting will show up on both the filtered calendar modes as well as the unfiltered. ''No'' or ''None'' will set the meeting to be hidden on the main calendar, but visible when filtering the calendar.'
 required: false
 translatable: true
-default_value: {  }
+default_value:
+  -
+    value: 'Yes'
 default_value_callback: ''
 settings: {  }
 field_type: list_string
