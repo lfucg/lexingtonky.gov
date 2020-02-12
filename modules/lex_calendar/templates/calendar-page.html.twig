@@ -149,7 +149,7 @@ window.addEventListener( 'load', function(){
           events.map((event) => {
             var name = event.title;
             var now = event.start.clone();
-            if ($('#calendar-filter').val() == 'default' && $('#page-filter').val() == 'default' || event.relatedDepartments == $('#calendar-filter').val() || event.relatedPages == $('#page-filter').val()) {
+            if ($('#calendar-filter').val() == 'default' && $('#page-filter').val() == 'default') {
               if (event.showCal != 'No') {
                 var $dot = $(`<span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event month-dot" id="event-${event.id}" title=""></span>`);
                 $dot.css('background-color', event.color);
@@ -157,6 +157,12 @@ window.addEventListener( 'load', function(){
                 $('.fc-day-top[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($dot);
                 now.add(1, 'days');
               }
+            }else if (event.relatedDepartments == $('#calendar-filter').val() || event.relatedPages == $('#page-filter').val()) {
+                var $dot = $(`<span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event month-dot" id="event-${event.id}" title=""></span>`);
+                $dot.css('background-color', event.color);
+                // append to calendar day
+                $('.fc-day-top[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($dot);
+                now.add(1, 'days');
             }
           })
         }
@@ -224,7 +230,7 @@ window.addEventListener( 'load', function(){
               startTime = event.start.format('h:mm a');
             }
 
-            if ($('#calendar-filter').val() == 'default' && $('#page-filter').val() == 'default' || event.relatedDepartments == $('#calendar-filter').val() || event.relatedPages == $('#page-filter').val()) {
+            if ($('#calendar-filter').val() == 'default' && $('#page-filter').val() == 'default') {
               if (event.showCal != 'No') {
                 var $listBlock = $(
                     '<div class="list-event-container" id="list-' + event.id + '"><a href="' + event.url + '"><span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event list-dot " style="background-color:' + event.color +'" title=""></span><div class="list-text-container"><span class="list-event-title">' + event.title + '</span><span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '</span><span class="list-event-time">' + startTime + '</span><span class="details-link">Details <i class="fas fa-chevron-right"></i></div></a></div>');
@@ -232,6 +238,12 @@ window.addEventListener( 'load', function(){
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').addClass('displayList');
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($listBlock);
               }
+            }else if (event.relatedDepartments == $('#calendar-filter').val() || event.relatedPages == $('#page-filter').val()) {
+              var $listBlock = $(
+                  '<div class="list-event-container" id="list-' + event.id + '"><a href="' + event.url + '"><span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event list-dot " style="background-color:' + event.color +'" title=""></span><div class="list-text-container"><span class="list-event-title">' + event.title + '</span><span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '</span><span class="list-event-time">' + startTime + '</span><span class="details-link">Details <i class="fas fa-chevron-right"></i></div></a></div>');
+                $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'table-row');
+                $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').addClass('displayList');
+                $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($listBlock);
             }else {
               if ($('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'table-row')) {
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'none');
