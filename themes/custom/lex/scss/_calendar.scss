@@ -49,7 +49,7 @@
 }
 
 .list-event-container {
-  margin: 8px 0;
+  margin: 8px 0 !important;
   padding: 0 8px;
   display: flex;
     
@@ -177,9 +177,11 @@
     position: absolute !important;
     right: 0;
     top: 0;
+    padding-right: 0 !important;
 
     #sidebar-calendar {
-        position: absolute;
+        position: relative;
+        max-width: 100%;
     }
 
     @media (max-width: 767px) {
@@ -229,7 +231,8 @@
         margin-top: 1em;
     }
 
-    #calendar-filter {
+    #calendar-filter, #page-filter {
         border: 1px solid color(gray);
+        max-width: 100%;
     }
 }
