@@ -220,6 +220,7 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
         '#theme' => 'lex_calendar_event_block',
         '#dates' => $dates,
         '#content_type' => $this->contentType,
+        '#is_front' => \Drupal::service('path.matcher')->isFrontPage(),
         '#cache' => ['max-age' => 0]
       ];
     }

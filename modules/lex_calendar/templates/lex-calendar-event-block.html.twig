@@ -1,11 +1,38 @@
-<div class="lex-event-list">
-{% for date in dates %}
-  {# <h3>{{lexDate(date.title)}}</h3>
-  <ol> #}
-  {% for event in date.events %}
-    {% set title = event.title %}
-    {% include '@components/molecules/event-card.twig' with {heading: title, description: lexDate(date.title) , text: lexTimeRange(event)|escape('html'), url: event.url} %}
-  {% endfor %}
-{% endfor %}
-<div class="more-link usa-button lex-morelink lex-button"><a href="/calendar">more {{content_type}}s</a></div>
-</div>
+{% if is_front == TRUE %}
+  {% set eventCount = 0 %}
+  {% set meetingCount = 0 %}
+  <div class="lex-event-list">
+    {% for date in dates %}
+      {# <h3>{{lexDate(date.title)}}</h3>
+      <ol> #}
+      {% for event in date.events %}
+        {% if event.url|slice(1,5) == 'event' %}
+          {% if event.showCal != 'No' and eventCount <= 5 %}
+            {% set title = event.title %}
+            {% set eventCount = eventCount +1 %}
+            {% include '@components/molecules/event-card.twig' with {heading: title, description: lexDate(date.title) , text: lexTimeRange(event)|escape('html'), url: event.url} %}
+          {% endif %}
+        {% else %}
+          {% if event.showCal != 'No' and meetingCount <= 2 %}
+            {% set title = event.title %}
+            {% set meetingCount = meetingCount +1 %}
+            {% include '@components/molecules/event-card.twig' with {heading: title, description: lexDate(date.title) , text: lexTimeRange(event)|escape('html'), url: event.url} %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+    <div class="more-link usa-button lex-morelink lex-button"><a href="/calendar">more {{content_type}}s</a></div>
+  </div>
+{% else %}
+  <div class="lex-event-list">
+    {% for date in dates %}
+      {# <h3>{{lexDate(date.title)}}</h3>
+      <ol> #}
+      {% for event in date.events %}
+        {% set title = event.title %}
+        {% include '@components/molecules/event-card.twig' with {heading: title, description: lexDate(date.title) , text: lexTimeRange(event)|escape('html'), url: event.url} %}
+      {% endfor %}
+    {% endfor %}
+    <div class="more-link usa-button lex-morelink lex-button"><a href="/calendar">more {{content_type}}s</a></div>
+  </div>
+{% endif %}

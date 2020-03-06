@@ -121,6 +121,7 @@ a.lex-calltoaction {
 }
 
 .flex-content {
+  flex-flow: row wrap;
   display: flex;
   align-items: flex-start;
 }
