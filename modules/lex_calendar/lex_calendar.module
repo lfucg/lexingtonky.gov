@@ -13,8 +13,24 @@ function lex_calendar_theme($existing, $type, $theme, $path) {
     'lex_calendar_event_block' => [
       'variables' => [
         'dates' => NULL,
-        'content_type' => ''
+        'content_type' => '',
+        'is_front' => ''
+
       ]
     ]
   ];
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function lex_calendar_preprocess_lex_calendar_event_block(&$variables) {
+  // An exception might be thrown.
+  try {
+    $variables['is_front'] = \Drupal::service('path.matcher')->isFrontPage();
+  }
+  catch (Exception $e) {
+    // If the database is not yet available, set the default value.
+    $variables['is_front'] = FALSE;
+  }  
 }

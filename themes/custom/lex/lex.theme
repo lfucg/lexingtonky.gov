@@ -71,6 +71,10 @@ function lex_preprocess_block(&$variables) {
       case 'lex_home_headerquicklinks':
       case 'lex_police_headerquicklinks':
       case 'headerquicklinks':
+      case 'homemeetings':
+        $variables['is_front'] = \Drupal::service('path.matcher')->isFrontPage();
+      case 'homeevents':
+        $variables['is_front'] = \Drupal::service('path.matcher')->isFrontPage();
       case 'lex_headerquicklinks':
         $variables['attributes']['class'][] = 'slab--lex-blue';
         break;
