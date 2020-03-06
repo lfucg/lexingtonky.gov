@@ -17,7 +17,7 @@ settings:
   label: Meetings
   provider: lex_calendar
   label_display: visible
-  display_limit: '3'
+  display_limit: '50'
   content_type: meeting
   show_all: 'yes'
 visibility: {  }

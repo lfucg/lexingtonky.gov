@@ -17,7 +17,7 @@ settings:
   label: Events
   provider: lex_calendar
   label_display: visible
-  display_limit: '6'
+  display_limit: '50'
   content_type: event
   show_all: 'yes'
 visibility: {  }
