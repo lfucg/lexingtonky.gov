@@ -15,7 +15,7 @@
     </select>
   </div>
   <div class="filter-container secondary-filter col-6 col-md-4">
-    <label class="mb-1" for="page-filter">Filter calendar by relevant page or program</label>
+    <label class="mb-1" for="page-filter">Filter calendar by page or program</label>
     </br>
     <select id="page-filter">
       <option value="default">Unfiltered</option>
@@ -233,7 +233,7 @@ window.addEventListener( 'load', function(){
             if ($('#calendar-filter').val() == 'default' && $('#page-filter').val() == 'default') {
               if (event.showCal != 'No') {
                 var $listBlock = $(
-                    '<div class="list-event-container" id="list-' + event.id + '"><a href="' + event.url + '"><span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event list-dot " style="background-color:' + event.color +'" title=""></span><div class="list-text-container"><span class="list-event-title">' + event.title + '</span><span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '</span><span class="list-event-time">' + startTime + '</span><span class="details-link">Details <i class="fas fa-chevron-right"></i></div></a></div>');
+                    '<div class="list-event-container row" id="list-' + event.id + '"><a href="' + event.url + '"><div class="col-12 col-sm-8 col-md-10"><span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event list-dot " style="background-color:' + event.color +'" title=""></span><div class="list-text-container"><span class="list-event-title">' + event.title + '</span><span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '</span><span class="list-event-time">' + startTime + '</span><span class="details-link">Details <i class="fas fa-chevron-right"></i></div></div></a></div>');
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'table-row');
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').addClass('displayList');
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($listBlock);

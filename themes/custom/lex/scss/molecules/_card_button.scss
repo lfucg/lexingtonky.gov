@@ -11,6 +11,13 @@
     .button-heading {
         color: color(med-blue);
         margin: 10px 0 5px;
+        min-height: 2.5em;
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 
     img {
@@ -22,6 +29,15 @@
         div {
             padding-bottom: 10px;
             display: block !important;
+            p {
+                min-height: 4.5em;
+                overflow: hidden;
+                -o-text-overflow: ellipsis;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+            }
         }
     }
 

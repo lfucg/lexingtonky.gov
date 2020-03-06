@@ -55,7 +55,7 @@
     $(window).on('load', function () {
         //get the natural page height -set it in variable above.
 
-        if ($(window).width() >= 768) {
+        if ($(window).width() >= 767) {
             dualMode = true;
             heightCalc();
         }else {
@@ -114,12 +114,13 @@
         }else if (dualMode == true) {
             $('#calendar').css('display', 'block');
             $('#sidebar-calendar').css('display', 'block');
+            $('#sidebar-calendar').css('visibility', 'visible');
         }
     }
 
 
     $(window).resize(function () {
-        if ($(window).width() >= 768) {
+        if ($(window).width() >= 767) {
             dualMode = true;
             monthMode = false;
             listMode = false;
