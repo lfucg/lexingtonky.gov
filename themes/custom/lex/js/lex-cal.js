@@ -165,4 +165,11 @@
     $(document).on('click', '.main-next', function () {
         $('.side-next').trigger('click');
     });
+
+    if ($(location).attr('href').search('/events/') != -1|$(location).attr('href').search('/meeting-notices/') != 1) {
+        if ($('.lex-breadcrumb-wrapper').find('.usa-unstyled-list').children().length == 3) { 
+            $('.lex-breadcrumb-wrapper').find('.lex-breadcrumb-item:nth-child(2)').css('display', 'none');
+        }
+        $('.lex-breadcrumb-wrapper').find('.lex-breadcrumb-item').last().before('<li class="lex-breadcrumb-item"><span><a href="/calendar">Calendar</a></span></li>');
+    }
 }());
