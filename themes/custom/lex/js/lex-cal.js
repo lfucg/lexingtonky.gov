@@ -166,7 +166,8 @@
         $('.side-next').trigger('click');
     });
 
-    if ($(location).attr('href').search('/events/') != -1|$(location).attr('href').search('/meeting-notices/') != 1) {
+    if ((window.location.href.indexOf("/events/") >= 0)| window.location.href.indexOf('/meeting-notices/') >=0) {
+        console.log('hey there', window.location.href);
         if ($('.lex-breadcrumb-wrapper').find('.usa-unstyled-list').children().length == 3) { 
             $('.lex-breadcrumb-wrapper').find('.lex-breadcrumb-item:nth-child(2)').css('display', 'none');
         }
