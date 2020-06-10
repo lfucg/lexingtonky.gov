@@ -4,10 +4,12 @@
     background-color: color(med-blue);
     color: color(white);
 
-    img {
-        height: 25px;
-        width: 35px;
+    .icon-img-button {
+        margin-top: 1em;
+        margin-left: .25em;
+        transform: scale(4);
     }
+    
     .button-heading {
         margin: 0 0 15px 0;
         color: color(white);

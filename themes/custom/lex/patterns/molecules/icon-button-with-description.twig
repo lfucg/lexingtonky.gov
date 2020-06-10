@@ -11,6 +11,16 @@
                         {% include '@components/atoms/description.twig' with {description: description} %}
                     {% endif %}
                 </div>
+            {% elseif img[0]['#markup'] != null %}
+                <div class="col-2">
+                    <img class="icon-img-button" src={{ img[0]['#markup'] }}>
+                </div>
+                <div class="col-10">
+                    {% include '@components/atoms/button-heading.twig' with {heading: heading} %}
+                    {% if description[0]['#text']!= null %}
+                        {% include '@components/atoms/description.twig' with {description: description} %}
+                    {% endif %}
+                </div>
             {% else %}
                 <div class="col-10">
                     <span class="text-center">{% include '@components/atoms/button-heading.twig' with {heading: heading} %}</span>
