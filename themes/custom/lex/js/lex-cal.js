@@ -42,8 +42,14 @@
             adminHeight = 0;
         }
 
+        if (parseInt($('.lex-alertcontainer-warning').height()) > 0) {
+            alertHeight = parseInt($('.lex-alertcontainer-warning').parent().height());
+        } else {
+            alertHeight = 0;
+        }
+
         combinedHeight = height + feedbackTotal + paddingTop + paddingBottom;
-        combinedTopMarg = parseInt($('.lex-region-breadcrumb').height() + $('.sticky-top').height() + $('#block-lex-headerquicklinks').height() + toolbarHeight + adminHeight);
+        combinedTopMarg = parseInt($('.lex-region-breadcrumb').height() + $('.sticky-top').height() + $('#block-lex-headerquicklinks').height() + toolbarHeight + adminHeight + alertHeight);
 
         $('#sidebar-calendar').css({
             'height': combinedHeight + 'px',
@@ -167,7 +173,6 @@
     });
 
     if ((window.location.href.indexOf("/events/") >= 0)| window.location.href.indexOf('/meeting-notices/') >=0) {
-        console.log('hey there', window.location.href);
         if ($('.lex-breadcrumb-wrapper').find('.usa-unstyled-list').children().length == 3) { 
             $('.lex-breadcrumb-wrapper').find('.lex-breadcrumb-item:nth-child(2)').css('display', 'none');
         }
