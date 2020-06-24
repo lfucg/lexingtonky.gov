@@ -1,0 +1,12 @@
+# Define the 'local' links for the module
+imce.settings:
+  route_name: imce.admin
+  title: IMCE Settings
+  base_route: imce.admin
+  weight: 2
+
+imce.help:
+  route_name: imce.help
+  title: IMCE Help
+  base_route: imce.admin
+  weight: 3

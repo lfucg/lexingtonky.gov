@@ -1,0 +1,176 @@
+<?php
+
+/**
+ * @file
+ * Defines Drupal hooks for imce module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Field\WidgetInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\imce\ImceFileField;
+use Drupal\imce\Imce;
+
+/**
+ * Implements hook_theme().
+ */
+function imce_theme() {
+  return [
+    'imce_page' => [
+      'render element' => 'page',
+      'function' => 'imce_page_render',
+    ],
+    'imce_help' => [
+      'variables' => [
+        'videos' => [],
+        'markup' => '',
+      ],
+    ],
+  ];
+}
+
+/**
+ * Renders imce page.
+ */
+function imce_page_render($variables) {
+  return \Drupal::service('renderer')->render($variables['page']);
+}
+
+/**
+ * Implements hook_file_download().
+ */
+function imce_file_download($uri) {
+  if (Imce::accessFileUri($uri, \Drupal::currentUser())) {
+    return [
+      'Content-type' => \Drupal::service('file.mime_type.guesser')->guess($uri),
+      'Content-Length' => filesize($uri),
+    ];
+  }
+}
+
+/**
+ * Implements hook_field_widget_third_party_settings_form().
+ *
+ * Returns imce settings form for supported file widgets.
+ */
+function imce_field_widget_third_party_settings_form(WidgetInterface $widget, FieldDefinitionInterface $field_definition, $form_mode, $form, FormStateInterface $form_state) {
+  return ImceFileField::widgetSettingsForm($widget, $field_definition, $form_mode, $form, $form_state);
+}
+
+/**
+ * Implements hook_field_widget_settings_summary_alter().
+ *
+ * Sets imce settings summary for supported file widgets.
+ */
+function imce_field_widget_settings_summary_alter(&$summary, $context) {
+  return ImceFileField::alterWidgetSettingsSummary($summary, $context);
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ *
+ * Alters widget forms that have imce enabled.
+ */
+function imce_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  if ($context['widget']->getThirdPartySetting('imce', 'enabled')) {
+    $scheme = $context['items'][$context['delta']]->getFieldDefinition()->getSetting('uri_scheme');
+    if (Imce::access(\Drupal::currentUser(), $scheme)) {
+      $element['#scheme'] = $scheme;
+      $class = 'Drupal\imce\ImceFileField';
+      $element['#process'][] = [$class, 'processWidget'];
+      // Make sure default value callbacks are added.
+      if (empty($element['#file_value_callbacks'])) {
+        $info = \Drupal::service('element_info')->getInfo($element['#type']);
+        if (!empty($info['#file_value_callbacks'])) {
+          $element['#file_value_callbacks'] = $info['#file_value_callbacks'];
+        }
+      }
+      $element['#file_value_callbacks'][] = [$class, 'setWidgetValue'];
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for editor_link_dialog form.
+ */
+function imce_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
+  imce_process_url_element($form['attributes']['href'], 'link');
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for editor_image_dialog form.
+ */
+function imce_form_editor_image_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
+  imce_process_url_element($form['attributes']['src'], 'image');
+}
+
+/**
+ * Integrates Imce into an URL element.
+ */
+function imce_process_url_element(&$element, $type = 'link') {
+  if ($element && Imce::access()) {
+    $element['#attributes']['class'][] = 'imce-url-input';
+    $element['#attributes']['data-imce-type'] = $type;
+    $element['#attached']['library'][] = 'imce/drupal.imce.input';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for filter_format_form.
+ */
+function imce_form_filter_format_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($form['editor']['settings']['subform']['plugins']['drupalimage']['image_upload']['status'])) {
+    $desc = &$form['editor']['settings']['subform']['plugins']['drupalimage']['image_upload']['status']['#description'];
+    $str = t('Disable to use IMCE file browser.');
+    $desc = $desc ? $desc . ' ' . $str : $str;
+  }
+}
+
+/**
+ * Implements hook_help().
+ */
+function imce_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the imce module.
+    case 'help.page.imce':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('IMCE is an image/file uploader and browser that supports personal directories and quota.') . '</p>';
+      $output .= '<h3>CKEditor Iintegration</h3>';
+      $output .= '<ol>';
+      $output .= '<li type="1">' . t('Go to Administration > Configuration >
+        Content Authoring > Text formats and editors >
+        and <b>edit</b> a text format that uses CKEditor;') . '</li>';
+      $output .= '<li type="1">' . t('Enable CKEditor image button without image uploads.') . '</li>';
+      $output .= '</ol>';
+      $output .= '<p><b>Note:</b> Image uploads must be disabled in order for IMCE link appear in the image
+dialog. There is also an image button provided by Imce but it can\'t be used for
+editing existing images. </p>';
+      $output .= '<br/>';
+
+      $output .= '<h3>BUEditor Integration</h3>';
+      $output .= '<ol>';
+      $output .= '<li type="1">' . t('Edit your editor at :path', [':path' => '/admin/config/content/bueditor;']) . '</li>';
+      $output .= '<li type="1">' . t('Select Imce File Manager as the File browser under Settings.') . '</li>';
+      $output .= '</ol>';
+      $output .= '<br/>';
+
+      $output .= '<h3>FILE/IMAGE Field Integration</h3>';
+      $output .= '<ol>';
+      $output .= '<li type="1">' . t('Go to form settings of your content type;');
+      $output .= '<br/>';
+      $output .= 'Ex: /admin/structure/types/manage/article/form-display.</li>';
+      $output .= '<li type="1">' . t('Edit widget settings of a file/image field;') . '</li>';
+      $output .= '<li type="1">' . t('Check the box saying "Allow users to select files from Imce File Manager
+        for this field." Save;') . '</li>';
+      $output .= '<li type="1">' . t('You should now see the "Open File Browser" link above the upload widget
+        in the content form.') . '</li>';
+      $output .= '</ol>';
+      $output .= '<br/>';
+
+      return $output;
+
+    default:
+  }
+}
