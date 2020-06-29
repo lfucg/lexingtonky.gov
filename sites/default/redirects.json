@@ -1773,7 +1773,7 @@
   },
   {
     "old_path": "/permits",
-    "new_path": "https://aca3.accela.com/lexky/"
+    "new_path": "https://aca-prod.accela.com/LEXKY"
   },
   {
     "old_path": "/plans",
@@ -1781,7 +1781,7 @@
   },
   {
     "old_path": "/acella",
-    "new_path": "https://av3.accela.com/security/hostSignon.do?successUrl=https://av3.accela.com/portlets/spa/dashboard.do"
+    "new_path": "https://LEXKY-prod-av.accela.com"
   },
   {
     "old_path": "/KLB",
