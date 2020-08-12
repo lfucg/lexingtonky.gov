@@ -148,7 +148,7 @@ class FieldSqlStorageTest extends EntityKernelTestBase {
           $this->assertEqual($entity->{$this->fieldName}[$delta]->value, $value);
         }
         else {
-          $this->assertFalse(array_key_exists($delta, $entity->{$this->fieldName}));
+          $this->assertArrayNotHasKey($delta, $entity->{$this->fieldName});
         }
       }
     }
@@ -160,7 +160,7 @@ class FieldSqlStorageTest extends EntityKernelTestBase {
         $this->assertEqual($entity->{$this->fieldName}[$delta]->value, $value);
       }
       else {
-        $this->assertFalse(array_key_exists($delta, $entity->{$this->fieldName}));
+        $this->assertArrayNotHasKey($delta, $entity->{$this->fieldName});
       }
     }
 
@@ -171,7 +171,7 @@ class FieldSqlStorageTest extends EntityKernelTestBase {
     $connection->insert($this->table)->fields($columns)->values($values)->execute();
     $connection->insert($this->revisionTable)->fields($columns)->values($values)->execute();
     $entity = $storage->load($entity->id());
-    $this->assertFalse(array_key_exists($unavailable_langcode, $entity->{$this->fieldName}));
+    $this->assertArrayNotHasKey($unavailable_langcode, $entity->{$this->fieldName});
   }
 
   /**
@@ -266,7 +266,7 @@ class FieldSqlStorageTest extends EntityKernelTestBase {
     $entity->{$this->fieldName} = NULL;
     $entity->save();
     $rows = $connection->select($this->table, 't')->fields('t')->execute()->fetchAllAssoc('delta', \PDO::FETCH_ASSOC);
-    $this->assertEqual(count($rows), 0);
+    $this->assertCount(0, $rows);
   }
 
   /**
@@ -339,13 +339,8 @@ class FieldSqlStorageTest extends EntityKernelTestBase {
 
     // Attempt to update the field in a way that would work without data.
     $field_storage->setSetting('scale', 3);
-    try {
-      $field_storage->save();
-      $this->fail('Cannot update field schema with data.');
-    }
-    catch (FieldStorageDefinitionUpdateForbiddenException $e) {
-      $this->pass('Cannot update field schema with data.');
-    }
+    $this->expectException(FieldStorageDefinitionUpdateForbiddenException::class);
+    $field_storage->save();
   }
 
   /**
@@ -373,7 +368,7 @@ class FieldSqlStorageTest extends EntityKernelTestBase {
       $this->fail('Update succeeded.');
     }
     catch (\Exception $e) {
-      $this->pass('Update properly failed.');
+      // Expected exception; just continue testing.
     }
 
     // Ensure that the field tables are still there.

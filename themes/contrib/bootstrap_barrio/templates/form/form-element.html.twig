@@ -45,6 +45,10 @@
  */
 #}
 
+{%
+  set label_attributes = label_attributes ? label_attributes : create_attribute()
+%}
+
 {% if type == 'checkbox' %}
   {% if customtype == 'custom' %}
     {% set wrapperclass = "custom-control custom-checkbox" %}
@@ -104,13 +108,13 @@
       </div>
     {% endif %}
     {% if label_display == 'before' %}
-      <label {{ attributes.addClass(labelclass).setAttribute('for', input_attributes.id) }}>
+      <label {{ label_attributes.addClass(labelclass).setAttribute('for', input_attributes.id) }}>
         {{ input_title | raw }}
       </label>
     {% endif %}
     <input{{ input_attributes.addClass(inputclass) }}>
     {% if label_display == 'after' %}
-      <label {{ attributes.addClass(labelclass).setAttribute('for', input_attributes.id) }}>
+      <label {{ label_attributes.addClass(labelclass).setAttribute('for', input_attributes.id) }}>
         {{ input_title | raw }}
       </label>
     {% endif %}
@@ -129,12 +133,17 @@
     {% endif %}
   </div>
 {% else %}
-  <fieldset{{ attributes.addClass(classes, 'form-group col-auto') }}>
+  <fieldset{{ attributes.addClass(classes, 'form-group') }}>
     {% if label_display in ['before', 'invisible'] %}
       {{ label }}
     {% endif %}
+    {% if (prefix is not empty) or (suffix is not empty) %}
+      <div class="input-group">
+    {% endif %}
     {% if prefix is not empty %}
-      <span class="field-prefix">{{ prefix }}</span>
+      <div class="input-group-prepend">
+        <span class="field-prefix input-group-text">{{ prefix }}</span>
+      </div>
     {% endif %}
     {% if description_display == 'before' and description.content %}
       <div{{ description.attributes }}>
@@ -143,7 +152,12 @@
     {% endif %}
     {{ children }}
     {% if suffix is not empty %}
-      <span class="field-suffix">{{ suffix }}</span>
+      <div class="input-group-append">
+        <span class="field-suffix input-group-text">{{ suffix }}</span>
+      </div>
+    {% endif %}
+    {% if (prefix is not empty) or (suffix is not empty) %}
+      </div>
     {% endif %}
     {% if label_display == 'after' %}
       {{ label }}

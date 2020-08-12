@@ -103,7 +103,7 @@ class EntityQueryAlter implements ContainerInjectionInterface {
 
     /** @var \Drupal\entity\QueryAccess\QueryAccessHandlerInterface $query_access */
     $query_access = $this->entityTypeManager->getHandler($entity_type_id, 'query_access');
-    $conditions = $query_access->getConditions('view');
+    $conditions = $query_access->getConditions($query->getMetaData('op') ?: 'view');
     if ($conditions->isAlwaysFalse()) {
       $query->where('1 = 0');
     }

@@ -2,13 +2,14 @@
 
 namespace Drupal\entity_browser;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Component\Plugin\ConfigurableInterface;
+use Drupal\Component\Plugin\DependentPluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
 /**
  * Defines the interface for entity browser widget validations.
  */
-interface WidgetValidationInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
+interface WidgetValidationInterface extends PluginInspectionInterface, ConfigurableInterface, DependentPluginInterface {
 
   /**
    * Returns the widget validation label.

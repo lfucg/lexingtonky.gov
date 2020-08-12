@@ -11,15 +11,17 @@ use Drupal\metatag\MetatagToken;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\metatag_views\MetatagViewsValuesCleanerTrait;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
- * Class MetatagViewsEditForm.
+ * Defines a form for translating meta tags for views.
  *
  * @package Drupal\metatag_views\Form
  */
 class MetatagViewsTranslationForm extends FormBase {
 
   use MetatagViewsValuesCleanerTrait;
+  use StringTranslationTrait;
 
   /**
    * Drupal\metatag\MetatagManager definition.
@@ -101,9 +103,9 @@ class MetatagViewsTranslationForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(MetatagManagerInterface $metatag_manager, EntityTypeManagerInterface $entity_manager, MetatagToken $token, MetatagTagPluginManager $tagPluginManager, ConfigurableLanguageManagerInterface $language_manager) {
+  public function __construct(MetatagManagerInterface $metatag_manager, EntityTypeManagerInterface $entity_type_manager, MetatagToken $token, MetatagTagPluginManager $tagPluginManager, ConfigurableLanguageManagerInterface $language_manager) {
     $this->metatagManager = $metatag_manager;
-    $this->viewsManager = $entity_manager->getStorage('view');
+    $this->viewsManager = $entity_type_manager->getStorage('view');
     $this->tokenService = $token;
     $this->tagPluginManager = $tagPluginManager;
     $this->languageManager = $language_manager;
@@ -177,12 +179,12 @@ class MetatagViewsTranslationForm extends FormBase {
     ]);
 
     $form['metatags'] = $this->form($form, $this->prepareValues());
-    $form['metatags']['#title'] = t('Metatags');
+    $form['metatags']['#title'] = $this->t('Metatags');
     $form['metatags']['#type'] = 'fieldset';
 
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => t('Submit'),
+      '#value' => $this->t('Submit'),
     ];
 
     return $form;

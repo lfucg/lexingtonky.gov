@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\ElementInfoManagerInterface;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\search_api\Item\FieldInterface;
 use Drupal\search_api\Utility\DataTypeHelperInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
@@ -41,7 +42,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * - preprocess_index
  * - preprocess_query
  */
-abstract class FieldsProcessorPluginBase extends ProcessorPluginBase implements PluginFormInterface {
+abstract class FieldsProcessorPluginBase extends ProcessorPluginBase implements PluginFormInterface, TrustedCallbackInterface {
 
   use PluginFormTrait;
 
@@ -116,6 +117,13 @@ abstract class FieldsProcessorPluginBase extends ProcessorPluginBase implements 
   public function setElementInfoManager(ElementInfoManagerInterface $element_info_manager) {
     $this->elementInfoManager = $element_info_manager;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['preRenderFieldsCheckboxes'];
   }
 
   /**

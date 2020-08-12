@@ -51,7 +51,7 @@ class ServerStorageTest extends KernelTestBase {
    * Tests all CRUD operations as a queue of operations.
    */
   public function testServerCrud() {
-    $this->assertTrue($this->storage instanceof ConfigEntityStorage, 'The Search API Server storage controller is loaded.');
+    $this->assertInstanceOf(ConfigEntityStorage::class, $this->storage, 'The Search API Server storage controller is loaded.');
 
     $server = $this->serverCreate();
     $this->serverLoad($server);
@@ -73,7 +73,7 @@ class ServerStorageTest extends KernelTestBase {
     ];
     $server = $this->storage->create($server_data);
 
-    $this->assertTrue($server instanceof ServerInterface, 'The newly created entity is a Search API Server.');
+    $this->assertInstanceOf(ServerInterface::class, $server, 'The newly created entity is a Search API Server.');
     $server->save();
 
     $key = 'search_api_test.methods_called.' . $server->id();

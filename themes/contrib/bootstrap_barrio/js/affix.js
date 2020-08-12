@@ -10,11 +10,11 @@
 
   Drupal.behaviors.bootstrap_barrio_affix = {
     attach: function (context, settings) {
-      var toggleAffix = function(affixElement, scrollElement, wrapper) {
-  
+      var toggleAffix = function (affixElement, scrollElement, wrapper) {
+
         var height = affixElement.outerHeight(),
             top = wrapper.offset().top;
-    
+
         if (scrollElement.scrollTop() >= top){
             wrapper.height(height);
             affixElement.addClass("affix");
@@ -23,18 +23,18 @@
             affixElement.removeClass("affix");
             wrapper.height('auto');
         }
-      
+
       };
 
-      $('[data-toggle="affix"]').once().each(function() {
+      $('[data-toggle="affix"]').once().each(function () {
         var ele = $(this),
             wrapper = $('<div></div>');
-    
+
         ele.before(wrapper);
-        $(window).on('scroll resize', function() {
+        $(window).on('scroll resize', function () {
             toggleAffix(ele, $(this), wrapper);
         });
-    
+
         // init
         toggleAffix(ele, $(window), wrapper);
       });

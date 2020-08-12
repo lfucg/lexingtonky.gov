@@ -126,6 +126,7 @@ display:
           empty_zero: false
           hide_alter_empty: true
           entity_type: file
+          use_field_cardinality: false
           plugin_id: entity_browser_select
         filename:
           id: filename

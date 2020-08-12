@@ -14,7 +14,12 @@ class NodeAccessTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['diff', 'node', 'node_access_test'];
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = ['diff', 'node', 'node_access_test'];
 
   /**
    * {@inheritdoc}

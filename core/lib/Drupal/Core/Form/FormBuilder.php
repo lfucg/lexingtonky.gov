@@ -19,6 +19,7 @@ use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\FileBag;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -385,6 +386,17 @@ class FormBuilder implements FormBuilderInterface, FormValidatorInterface, FormS
       $form_state->setCached();
     }
 
+    // \Drupal\Component\Utility\Html::getUniqueId() maintains a cache of
+    // element IDs it has seen, so it can prevent duplicates. We want to be
+    // sure we reset that cache when a form is processed, so scenarios that
+    // result in the form being built behind the scenes and again for the
+    // browser don't increment all the element IDs needlessly.
+    if (!FormState::hasAnyErrors()) {
+      // We only reset HTML ID's when there are no validation errors as this can
+      // cause ID collisions with other forms on the page otherwise.
+      Html::resetSeenIds();
+    }
+
     // If only parts of the form will be returned to the browser (e.g., Ajax or
     // RIA clients), or if the form already had a new build ID regenerated when
     // it was retrieved from the form cache, reuse the existing #build_id.
@@ -575,16 +587,6 @@ class FormBuilder implements FormBuilderInterface, FormValidatorInterface, FormS
         $form_state->setTriggeringElement(reset($buttons));
       }
       $this->formValidator->validateForm($form_id, $form, $form_state);
-
-      // \Drupal\Component\Utility\Html::getUniqueId() maintains a cache of
-      // element IDs it has seen, so it can prevent duplicates. We want to be
-      // sure we reset that cache when a form is processed, so scenarios that
-      // result in the form being built behind the scenes and again for the
-      // browser don't increment all the element IDs needlessly.
-      if (!FormState::hasAnyErrors()) {
-        // In case of errors, do not break HTML IDs of other forms.
-        Html::resetSeenIds();
-      }
 
       // If there are no errors and the form is not rebuilding, submit the form.
       if (!$form_state->isRebuilding() && !FormState::hasAnyErrors()) {
@@ -956,8 +958,16 @@ class FormBuilder implements FormBuilderInterface, FormValidatorInterface, FormS
             // This value is checked in self::handleInputElement().
             $form_state->setInvalidToken(TRUE);
 
+            // Ignore all submitted values.
+            $form_state->setUserInput([]);
+
+            $request = $this->requestStack->getCurrentRequest();
+            // Do not trust any POST data.
+            $request->request = new ParameterBag();
             // Make sure file uploads do not get processed.
-            $this->requestStack->getCurrentRequest()->files = new FileBag();
+            $request->files = new FileBag();
+            // Ensure PHP globals reflect these changes.
+            $request->overrideGlobals();
           }
         }
       }

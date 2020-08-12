@@ -135,7 +135,7 @@ class FieldsSettingsForm extends ConfigFormBase {
           continue;
         }
 
-        $key = $entity_type_name . '.' . $field_name;
+        $key = $entity_type_name . '__' . $field_name;
         // Build a row in the table for this field.
         $form['fields'][$key] = $this->buildFieldRow($entity_type, $field_definition, $form_state);
       }
@@ -172,7 +172,7 @@ class FieldsSettingsForm extends ConfigFormBase {
     $entity_type_label = $entity_type->getLabel();
     $field_name = $field_definition->getName();
     $field_type = $field_definition->getType();
-    $field_key = $entity_type->id() . '.' . $field_name;
+    $field_key = $entity_type->id() . '__' . $field_name;
 
     $display_options = $this->diffBuilderManager->getSelectedPluginForFieldStorageDefinition($field_definition);
     $plugin_options = $this->diffBuilderManager->getApplicablePluginOptions($field_definition);
@@ -222,7 +222,7 @@ class FieldsSettingsForm extends ConfigFormBase {
       // In case settings are not identical to the ones in the config display
       // a warning message. Don't display it twice.
       if ($modified && empty($_SESSION['messages']['warning'])) {
-        drupal_set_message($this->t('You have unsaved changes.'), 'warning');
+        $this->messenger()->addWarning($this->t('You have unsaved changes.'));
       }
       $display_options['settings'] = $plugin_settings[$field_key]['settings'];
     }
@@ -444,8 +444,9 @@ class FieldsSettingsForm extends ConfigFormBase {
 
     // Save the settings.
     foreach ($fields as $field_key => $field_values) {
+      $config_key = preg_replace('/__/', '.', $field_key, 1);
       if ($field_values['plugin']['type'] == 'hidden') {
-        $config->set('fields.' . $field_key, ['type' => 'hidden', 'settings' => []]);
+        $config->set('fields.' . $config_key, ['type' => 'hidden', 'settings' => []]);
       }
       else {
 
@@ -453,8 +454,8 @@ class FieldsSettingsForm extends ConfigFormBase {
         // existing settings, otherwise let it fall back to the default
         // settings.
         $configuration = [];
-        if ($config->get('fields.' . $field_key . '.type') == $field_values['plugin']['type'] && $config->get('fields.' . $field_key . '.settings')) {
-          $configuration = $config->get('fields.' . $field_key . '.settings');
+        if ($config->get('fields.' . $config_key . '.type') == $field_values['plugin']['type'] && $config->get('fields.' . $config_key . '.settings')) {
+          $configuration = $config->get('fields.' . $config_key . '.settings');
         }
         $plugin = $this->diffBuilderManager->createInstance($field_values['plugin']['type'], $configuration);
 
@@ -479,7 +480,7 @@ class FieldsSettingsForm extends ConfigFormBase {
           $plugin->submitConfigurationForm($form, $state);
         }
 
-        $config->set('fields.' . $field_key, [
+        $config->set('fields.' . $config_key, [
           'type' => $field_values['plugin']['type'],
           'settings' => $plugin->getConfiguration(),
         ]);
@@ -487,7 +488,7 @@ class FieldsSettingsForm extends ConfigFormBase {
     }
     $config->save();
 
-    drupal_set_message($this->t('Your settings have been saved.'));
+    $this->messenger()->addStatus($this->t('Your settings have been saved.'));
   }
 
   /**

@@ -72,7 +72,7 @@ class PatternEditForm extends EntityForm {
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager service.
    */
-  function __construct(AliasTypeManager $manager, EntityTypeBundleInfoInterface $entity_type_bundle_info, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager) {
+  public function __construct(AliasTypeManager $manager, EntityTypeBundleInfoInterface $entity_type_bundle_info, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager) {
     $this->manager = $manager;
     $this->entityTypeBundleInfo = $entity_type_bundle_info;
     $this->entityTypeManager = $entity_type_manager;
@@ -139,7 +139,7 @@ class PatternEditForm extends EntityForm {
 
         $default_bundles = [];
         $default_languages = [];
-        foreach ($this->entity->getSelectionConditions() as $condition_id => $condition) {
+        foreach ($this->entity->getSelectionConditions() as $condition) {
           if (in_array($condition->getPluginId(), ['entity_bundle:' . $entity_type->id(), 'node_type'])) {
             $default_bundles = $condition->getConfiguration()['bundles'];
           }
@@ -256,7 +256,7 @@ class PatternEditForm extends EntityForm {
             ]
           ]
         );
-        $entity->addRelationship($language_mapping, t('Language'));
+        $entity->addRelationship($language_mapping, $this->t('Language'));
       }
 
     }

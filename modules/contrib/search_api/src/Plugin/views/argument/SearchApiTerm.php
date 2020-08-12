@@ -3,7 +3,7 @@
 namespace Drupal\search_api\Plugin\views\argument;
 
 use Drupal\Core\Entity\EntityRepositoryInterface;
-use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\TermStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -29,6 +29,13 @@ class SearchApiTerm extends SearchApiStandard {
   protected $entityRepository;
 
   /**
+   * The term storage.
+   *
+   * @var \Drupal\taxonomy\TermStorageInterface
+   */
+  protected $termStorage;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -36,6 +43,8 @@ class SearchApiTerm extends SearchApiStandard {
     $plugin = parent::create($container, $configuration, $plugin_id, $plugin_definition);
 
     $plugin->setEntityRepository($container->get('entity.repository'));
+    $plugin->setTermStorage($container->get('entity_type.manager')
+      ->getStorage('taxonomy_term'));
 
     return $plugin;
   }
@@ -64,6 +73,30 @@ class SearchApiTerm extends SearchApiStandard {
   }
 
   /**
+   * Retrieves the term storage.
+   *
+   * @return \Drupal\taxonomy\TermStorageInterface
+   *   The term storage.
+   */
+  public function getTermStorage() {
+    return $this->termStorage ?: \Drupal::service('entity_type.manager')
+      ->getStorage('taxonomy_term');
+  }
+
+  /**
+   * Sets the term storage.
+   *
+   * @param \Drupal\taxonomy\TermStorageInterface $term_storage
+   *   The term storage.
+   *
+   * @return $this
+   */
+  public function setTermStorage(TermStorageInterface $term_storage) {
+    $this->termStorage = $term_storage;
+    return $this;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function title() {
@@ -71,7 +104,7 @@ class SearchApiTerm extends SearchApiStandard {
       $this->fillValue();
       $terms = [];
       foreach ($this->value as $tid) {
-        $taxonomy_term = Term::load($tid);
+        $taxonomy_term = $this->getTermStorage()->load($tid);
         if ($taxonomy_term) {
           $terms[] = $this->getEntityRepository()
             ->getTranslationFromContext($taxonomy_term)

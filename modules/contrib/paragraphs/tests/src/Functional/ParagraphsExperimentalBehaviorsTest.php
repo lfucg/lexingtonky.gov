@@ -46,6 +46,7 @@ class ParagraphsExperimentalBehaviorsTest extends ParagraphsExperimentalTestBase
       'behavior_plugins[test_bold_text][enabled]' => TRUE,
     ];
     $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->assertSame(['test_bold_text' => ['enabled' => TRUE]], \Drupal::config("paragraphs.paragraphs_type.$paragraph_type")->get('behavior_plugins'));
 
     // Add a note that uses the behavior plugin give it an empty setting.
     $this->drupalGet('node/add/paragraphed_test');
@@ -56,7 +57,7 @@ class ParagraphsExperimentalBehaviorsTest extends ParagraphsExperimentalTestBase
     ];
     $this->drupalPostForm(NULL, $edit, 'Save');
     $bolded_elements = $this->getSession()->getPage()->findAll('css', '.bold_plugin_text');
-    $this->assertFalse(count($bolded_elements), 'Test plugin did not add a CSS class.');
+    $this->assertEmpty(count($bolded_elements), 'Test plugin did not add a CSS class.');
 
     // Check that empty leaves are not saved in the behavior settings.
     $node = $this->getNodeByTitle('Test Node', TRUE);
@@ -74,7 +75,7 @@ class ParagraphsExperimentalBehaviorsTest extends ParagraphsExperimentalTestBase
     ];
     $this->drupalPostForm(NULL, $edit, 'Save');
     $bolded_elements = $this->getSession()->getPage()->findAll('css', '.bold_plugin_text');
-    $this->assertTrue(count($bolded_elements), 'Test plugin added a CSS class.');
+    $this->assertGreaterThan(0, count($bolded_elements), 'Test plugin added a CSS class.');
 
     // Check that non-empty leaves are saved in the behavior settings.
     \Drupal::entityTypeManager()->getStorage('paragraph')->resetCache();

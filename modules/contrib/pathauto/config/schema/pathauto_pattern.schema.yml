@@ -8,8 +8,6 @@ pathauto.pattern.*:
     label:
       type: label
       label: 'Label'
-    uuid:
-      type: string
     type:
       type: string
       label: 'Pattern type'

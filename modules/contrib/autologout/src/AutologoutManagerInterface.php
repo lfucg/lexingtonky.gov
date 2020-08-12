@@ -2,6 +2,8 @@
 
 namespace Drupal\autologout;
 
+use Drupal\user\Entity\User;
+
 /**
  * Interface for AutologoutManager.
  */
@@ -32,6 +34,14 @@ interface AutologoutManagerInterface {
   public function getRoleTimeout();
 
   /**
+   * Iterate roles to get the per-role logout URL, default is the global URL.
+   *
+   * @return array
+   *   List of roles with logout URL.
+   */
+  public function getRoleUrl();
+
+  /**
    * Get a user's timeout in seconds.
    *
    * @param int $uid
@@ -45,6 +55,17 @@ interface AutologoutManagerInterface {
   public function getUserTimeout($uid = NULL);
 
   /**
+   * Get a user's logout URL.
+   *
+   * @param null|int $uid
+   *   User id or NULL to use current logged in user.
+   *
+   * @return null|string
+   *   User's logout URL or NULL for anonymous user.
+   */
+  public function getUserRedirectUrl($uid = NULL);
+
+  /**
    * Perform Logout.
    *
    * Helper to perform the actual logout. Destroys the session of the logged
@@ -54,8 +75,14 @@ interface AutologoutManagerInterface {
 
   /**
    * Helper to determine if a given user should be autologged out.
+   *
+   * @param \Drupal\user\Entity\User $user
+   *   User entity.
+   *
+   * @return bool
+   *   TRUE if the user should be autologged out, otherwise FALSE.
    */
-  public function logoutRole($user);
+  public function logoutRole(User $user);
 
   /**
    * Display the inactivity message if required when the user is logged out.

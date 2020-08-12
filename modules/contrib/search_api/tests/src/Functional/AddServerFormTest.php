@@ -21,6 +21,13 @@ class AddServerFormTest extends BrowserTestBase {
   ];
 
   /**
+   * The theme to install as the default for testing.
+   *
+   * @var string
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {

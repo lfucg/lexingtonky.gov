@@ -42,8 +42,8 @@ class ParagraphsContactTest extends ParagraphsTestBase {
     $this->drupalGet('contact/test_contact_form');
     $this->drupalPostForm(NULL, [], 'paragraphs_paragraphs_contact_add_more');
     // Check that the paragraph is displayed.
-    $this->assertText('paragraphs_contact');
+    $this->assertSession()->pageTextContains('paragraphs_contact');
     $this->drupalPostForm(NULL, [], 'paragraphs_0_remove');
-    $this->assertText('Deleted Paragraph: paragraphs_contact');
+    $this->assertSession()->pageTextContains('Deleted Paragraph: paragraphs_contact');
   }
 }

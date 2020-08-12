@@ -13,6 +13,7 @@ use Drupal\search_api\Item\FieldInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
 use Drupal\search_api\Plugin\search_api\data_type\value\TextValue;
 use Drupal\search_api\Processor\ProcessorPluginBase;
+use Drupal\search_api\SearchApiException;
 use Drupal\search_api\Utility\Utility;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -111,7 +112,16 @@ class AddHierarchy extends ProcessorPluginBase implements PluginFormInterface {
       $field_options = [];
 
       foreach ($this->index->getFields() as $field_id => $field) {
-        $definition = $field->getDataDefinition();
+        try {
+          $definition = $field->getDataDefinition();
+        }
+        catch (SearchApiException $e) {
+          $vars = [
+            '%index' => $this->index->label(),
+          ];
+          watchdog_exception('search_api', $e, '%type while trying to retrieve a list of hierarchical fields on index %index: @message in %function (line %line of %file).', $vars);
+          continue;
+        }
         if ($definition instanceof ComplexDataDefinitionInterface) {
           $properties = $this->getFieldsHelper()
             ->getNestedProperties($definition);
@@ -269,7 +279,21 @@ class AddHierarchy extends ProcessorPluginBase implements PluginFormInterface {
             $entity_id = $entity_id->getOriginalText();
           }
           if (is_scalar($entity_id)) {
-            $this->addHierarchyValues($entity_type_id, $entity_id, $property, $field);
+            try {
+              $this->addHierarchyValues($entity_type_id, $entity_id, $property, $field);
+            }
+            // @todo Replace with multi-catch for
+            //   InvalidPluginDefinitionException and PluginNotFoundException
+            //   once we depend on PHP 7.1+.
+            catch (\Exception $e) {
+              $vars = [
+                '%index' => $this->index->label(),
+                '%field' => $field->getLabel(),
+                '%field_id' => $field->getFieldIdentifier(),
+              ];
+              watchdog_exception('search_api', $e, '%type while trying to add hierarchy values to field %field (%field_id) on index %index: @message in %function (line %line of %file).', $vars);
+              continue;
+            }
           }
         }
       }
@@ -288,6 +312,11 @@ class AddHierarchy extends ProcessorPluginBase implements PluginFormInterface {
    *   to the parent entities.
    * @param \Drupal\search_api\Item\FieldInterface $field
    *   The field to which values should be added.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *   Thrown if a referenced entity type does not exist.
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   *   Thrown if a referenced entity's storage handler couldn't be loaded.
    */
   protected function addHierarchyValues($entityTypeId, $entityId, $property, FieldInterface $field) {
     if ("$entityTypeId-$property" == 'taxonomy_term-parent') {

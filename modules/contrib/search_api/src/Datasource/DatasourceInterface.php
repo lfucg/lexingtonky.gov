@@ -257,4 +257,20 @@ interface DatasourceInterface extends IndexPluginInterface {
    */
   public function getFieldDependencies(array $fields);
 
+  /**
+   * Returns the list cache contexts associated with this datasource.
+   *
+   * List cache contexts ensure that if items from a datasource are included in
+   * a list that any caches containing this list are varied as necessary. For
+   * example a view might contain a number of items from this datasource that
+   * are visible only by users that have a certain role. These list cache
+   * contexts will ensure that separate cached versions exist for users with
+   * this role and without it. These contexts should be included whenever a list
+   * is rendered that contains items from this datasource.
+   *
+   * @return string[]
+   *   The list cache contexts associated with this datasource.
+   */
+  public function getListCacheContexts();
+
 }

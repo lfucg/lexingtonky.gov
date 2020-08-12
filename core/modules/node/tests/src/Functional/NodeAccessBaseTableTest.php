@@ -100,7 +100,10 @@ class NodeAccessBaseTableTest extends NodeTestBase {
     // Array of nids marked private.
     $private_nodes = [];
     for ($i = 0; $i < $num_simple_users; $i++) {
-      $simple_users[$i] = $this->drupalCreateUser(['access content', 'create article content']);
+      $simple_users[$i] = $this->drupalCreateUser([
+        'access content',
+        'create article content',
+      ]);
     }
     foreach ($simple_users as $this->webUser) {
       $this->drupalLogin($this->webUser);
@@ -145,7 +148,7 @@ class NodeAccessBaseTableTest extends NodeTestBase {
           else {
             $should_be_visible = TRUE;
           }
-          $this->assertResponse($should_be_visible ? 200 : 403, strtr('A %private node by user %uid is %visible for user %current_uid.', [
+          $this->assertSession()->statusCodeEquals($should_be_visible ? 200 : 403, strtr('A %private node by user %uid is %visible for user %current_uid.', [
             '%private' => $is_private ? 'private' : 'public',
             '%uid' => $uid,
             '%visible' => $should_be_visible ? 'visible' : 'not visible',
@@ -160,13 +163,18 @@ class NodeAccessBaseTableTest extends NodeTestBase {
     }
 
     // Now test that a user with 'node test view' permissions can view content.
-    $access_user = $this->drupalCreateUser(['access content', 'create article content', 'node test view', 'search content']);
+    $access_user = $this->drupalCreateUser([
+      'access content',
+      'create article content',
+      'node test view',
+      'search content',
+    ]);
     $this->drupalLogin($access_user);
 
     foreach ($this->nodesByUser as $private_status) {
       foreach ($private_status as $nid => $is_private) {
         $this->drupalGet('node/' . $nid);
-        $this->assertResponse(200);
+        $this->assertSession()->statusCodeEquals(200);
       }
     }
 
@@ -182,7 +190,7 @@ class NodeAccessBaseTableTest extends NodeTestBase {
     foreach ($this->nodesByUser as $private_status) {
       foreach ($private_status as $nid => $is_private) {
         $this->drupalGet('node/' . $nid);
-        $this->assertResponse(200);
+        $this->assertSession()->statusCodeEquals(200);
       }
     }
 

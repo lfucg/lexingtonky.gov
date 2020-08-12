@@ -26,47 +26,9 @@ class Paragraphs extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function processFieldWidget(MigrationInterface $migration) {
-    // Backwards compatibility with D8.5.
-    // @todo replace with parent::alterFieldWidgetMigration
-    // @see https://www.drupal.org/project/paragraphs/issues/2994933
-    // @see https://www.drupal.org/node/2944598
-    parent::processFieldWidget($migration);
-    $this->paragraphAlterFieldWidgetMigration($migration);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function alterFieldWidgetMigration(MigrationInterface $migration) {
     parent::alterFieldWidgetMigration($migration);
     $this->paragraphAlterFieldWidgetMigration($migration);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function processFieldFormatter(MigrationInterface $migration) {
-    $this->addViewModeProcess($migration);
-
-    // Workaround for Drupal 8.4. In D8.5+ this should only call the parent.
-    // @todo Remove all but parent call after Drupal 8.6 is released.
-    // @see https://www.drupal.org/project/paragraphs/issues/2950492
-    //
-    // Core issue:
-    // @see https://www.drupal.org/project/drupal/issues/2843617
-    $process = $migration->getProcess();
-    if (is_array($process['options/type'][0]['source'])) {
-      // Backwards compatibility with D8.5.
-      // @todo replace with parent::alterFieldFormatterMigration
-      // @see https://www.drupal.org/project/paragraphs/issues/2994933
-      // @see https://www.drupal.org/node/2944598
-      parent::processFieldFormatter($migration);
-    }
-    else {
-      $options_type[0]['map']['paragraphs_view'] = 'entity_reference_revisions_entity_view';
-      $migration->mergeProcessOfProperty('options/type', $options_type);
-    }
   }
 
   /**
@@ -98,13 +60,6 @@ class Paragraphs extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function processField(MigrationInterface $migration) {
-    $this->alterFieldMigration($migration);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function alterFieldMigration(MigrationInterface $migration) {
 
     $settings = [
@@ -113,13 +68,6 @@ class Paragraphs extends FieldPluginBase {
       ],
     ];
     $migration->mergeProcessOfProperty('settings', $settings);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function processFieldInstance(MigrationInterface $migration) {
-    $this->alterFieldInstanceMigration($migration);
   }
 
   /**

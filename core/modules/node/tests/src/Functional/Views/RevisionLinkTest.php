@@ -32,7 +32,13 @@ class RevisionLinkTest extends NodeTestBase {
     // Create one user which can view/revert and delete and one which can only
     // do one of them.
     $this->drupalCreateContentType(['name' => 'page', 'type' => 'page']);
-    $account = $this->drupalCreateUser(['revert all revisions', 'view all revisions', 'delete all revisions', 'edit any page content', 'delete any page content']);
+    $account = $this->drupalCreateUser([
+      'revert all revisions',
+      'view all revisions',
+      'delete all revisions',
+      'edit any page content',
+      'delete any page content',
+    ]);
     $this->drupalLogin($account);
     // Create two nodes, one without an additional revision and one with a
     // revision.
@@ -48,7 +54,7 @@ class RevisionLinkTest extends NodeTestBase {
     $second_revision = $nodes[1]->getRevisionId();
 
     $this->drupalGet('test-node-revision-links');
-    $this->assertResponse(200, 'Test view can be accessed in the path expected');
+    $this->assertSession()->statusCodeEquals(200);
     // The first node revision should link to the node directly as you get an
     // access denied if you link to the revision.
     $url = $nodes[0]->toUrl()->toString();
@@ -70,8 +76,14 @@ class RevisionLinkTest extends NodeTestBase {
 
     $accounts = [
       'view' => $this->drupalCreateUser(['view all revisions']),
-      'revert' => $this->drupalCreateUser(['revert all revisions', 'edit any page content']),
-      'delete' => $this->drupalCreateUser(['delete all revisions', 'delete any page content']),
+      'revert' => $this->drupalCreateUser([
+        'revert all revisions',
+        'edit any page content',
+      ]),
+      'delete' => $this->drupalCreateUser([
+        'delete all revisions',
+        'delete any page content',
+      ]),
     ];
 
     $url = $nodes[1]->toUrl()->toString();

@@ -30,6 +30,12 @@ use Drupal\workbench_moderation\ModerationStateInterface;
  *     "edit-form" = "/admin/structure/moderation-state/states/{moderation_state}/edit",
  *     "delete-form" = "/admin/structure/moderation-state/states/{moderation_state}/delete",
  *     "collection" = "/admin/structure/moderation-state/states"
+ *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "published",
+ *     "default_revision",
  *   }
  * )
  */

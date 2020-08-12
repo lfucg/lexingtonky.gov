@@ -4,6 +4,7 @@ namespace Drupal\search_api\Plugin\search_api\datasource;
 
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -29,6 +30,7 @@ use Drupal\search_api\Datasource\DatasourcePluginBase;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Plugin\PluginFormTrait;
 use Drupal\search_api\IndexInterface;
+use Drupal\search_api\Utility\Dependencies;
 use Drupal\search_api\Utility\FieldsHelperInterface;
 use Drupal\search_api\Utility\Utility;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -41,7 +43,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   deriver = "Drupal\search_api\Plugin\search_api\datasource\ContentEntityDeriver"
  * )
  */
-class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInterface, PluginFormInterface {
+class ContentEntity extends DatasourcePluginBase implements PluginFormInterface {
 
   use PluginFormTrait;
 
@@ -126,7 +128,7 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
-    if (!empty($configuration['#index']) && $configuration['#index'] instanceof IndexInterface) {
+    if (($configuration['#index'] ?? NULL) instanceof IndexInterface) {
       $this->setIndex($configuration['#index']);
       unset($configuration['#index']);
     }
@@ -896,7 +898,7 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
     $function = $configuration['bundles']['default'] ? 'array_diff_key' : 'array_intersect_key';
     $entity_bundles = $function($entity_bundles, $selected_bundles);
     foreach ($entity_bundles as $bundle_id => $bundle_info) {
-      $bundles[$bundle_id] = isset($bundle_info['label']) ? $bundle_info['label'] : $bundle_id;
+      $bundles[$bundle_id] = $bundle_info['label'] ?? $bundle_id;
     }
     return $bundles ?: [$this->getEntityTypeId() => $this->label()];
   }
@@ -1033,27 +1035,25 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
    *   mapping dependency types to arrays of dependency names.
    */
   protected function getPropertyPathDependencies($property_path, array $properties) {
-    $dependencies = [];
-
     list($key, $nested_path) = Utility::splitPropertyPath($property_path, FALSE);
     if (!isset($properties[$key])) {
-      return $dependencies;
+      return [];
     }
 
+    $dependencies = new Dependencies();
     $property = $properties[$key];
     if ($property instanceof FieldConfigInterface) {
       $storage = $property->getFieldStorageDefinition();
       if ($storage instanceof FieldStorageConfigInterface) {
         $name = $storage->getConfigDependencyName();
-        $dependencies[$storage->getConfigDependencyKey()][$name] = $name;
+        $dependencies->addDependency($storage->getConfigDependencyKey(), $name);
       }
     }
 
     // The field might be provided by a module which is not the provider of the
     // entity type, therefore we need to add a dependency on that module.
     if ($property instanceof FieldStorageDefinitionInterface) {
-      $provider = $property->getProvider();
-      $dependencies['module'][$provider] = $provider;
+      $dependencies->addDependency('module', $property->getProvider());
     }
 
     $property = $this->getFieldsHelper()->getInnerProperty($property);
@@ -1063,7 +1063,7 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
         ->getDefinition($property->getEntityTypeId());
       if ($entity_type_definition) {
         $module = $entity_type_definition->getProvider();
-        $dependencies['module'][$module] = $module;
+        $dependencies->addDependency('module', $module);
       }
     }
 
@@ -1071,13 +1071,10 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
         && $property instanceof ComplexDataDefinitionInterface) {
       $nested = $this->getFieldsHelper()->getNestedProperties($property);
       $nested_dependencies = $this->getPropertyPathDependencies($nested_path, $nested);
-      foreach ($nested_dependencies as $type => $names) {
-        $dependencies += [$type => []];
-        $dependencies[$type] += $names;
-      }
+      $dependencies->addDependencies($nested_dependencies);
     }
 
-    return array_map('array_values', $dependencies);
+    return $dependencies->toArray();
   }
 
   /**
@@ -1157,6 +1154,15 @@ class ContentEntity extends DatasourcePluginBase implements EntityDatasourceInte
       }
     }
     return $valid_ids;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getListCacheContexts() {
+    $contexts = parent::getListCacheContexts();
+    $entity_list_contexts = $this->getEntityType()->getListCacheContexts();
+    return Cache::mergeContexts($entity_list_contexts, $contexts);
   }
 
 }

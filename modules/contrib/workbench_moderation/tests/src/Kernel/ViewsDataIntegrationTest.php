@@ -68,11 +68,11 @@ class ViewsDataTest extends ViewsKernelTestBase {
         'nid' => $node->id(),
         'revision_id' => $revision->getRevisionId(),
         'title' => $revision->label(),
-        'moderation_state_revision' => 'published',
+        'moderation_state_revision' => 'draft',
         'moderation_state' => 'published',
       ],
     ];
-    $this->assertIdenticalResultset($view, $expected_result, ['nid' => 'nid', 'workbench_revision_tracker_revision_id' => 'revision_id', 'moderation_state_revision' => 'moderation_state_revision', 'moderation_state' => 'moderation_state']);
+    $this->assertIdenticalResultset($view, $expected_result, ['title' => 'title', 'nid' => 'nid', 'workbench_revision_tracker_revision_id' => 'revision_id', 'moderation_state_revision' => 'moderation_state_revision', 'moderation_state' => 'moderation_state']);
   }
 
 }

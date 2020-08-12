@@ -9,6 +9,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Behat\Mink\Element\NodeElement;
+use Drupal\language\Entity\ConfigurableLanguage;
 
 /**
  * Base class for Entity browser Javascript functional tests.
@@ -18,12 +19,18 @@ use Behat\Mink\Element\NodeElement;
 abstract class EntityBrowserWebDriverTestBase extends WebDriverTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Modules to enable.
    *
    * @var array
    */
   public static $modules = [
     'entity_browser_test',
+    'contextual',
     'views',
     'block',
     'node',
@@ -32,6 +39,7 @@ abstract class EntityBrowserWebDriverTestBase extends WebDriverTestBase {
     'field_ui',
     'views_ui',
     'system',
+    'language',
   ];
 
   /**
@@ -82,6 +90,8 @@ abstract class EntityBrowserWebDriverTestBase extends WebDriverTestBase {
         'open' => TRUE,
       ],
     ])->save();
+
+    ConfigurableLanguage::createFromLangcode('fr')->save();
 
     $account = $this->drupalCreateUser(static::$userPermissions);
     $this->drupalLogin($account);
@@ -221,6 +231,74 @@ abstract class EntityBrowserWebDriverTestBase extends WebDriverTestBase {
     })();";
 
     $this->getSession()->executeScript($jsCode);
+  }
+
+  /**
+   * Checks that a specific radio input element exists on the current page.
+   *
+   * @param string $value
+   *   The string value of the radio element.
+   *
+   * @return \Behat\Mink\Element\NodeElement
+   *   The radio input form element.
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   */
+  protected function assertRadioExistsByValue($value) {
+    $value = (string) $value;
+    return $this->assertSession()
+      ->elementExists('xpath', "//input[contains(@type, 'radio') and contains(@value, '" . $value . "')]");
+  }
+
+  /**
+   * Checks that a specific radio input element does not exist on the current page.
+   *
+   * @param string $value
+   *   The string value of the radio element.
+   *
+   * @return \Behat\Mink\Element\NodeElement
+   *   The radio input form element.
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   */
+  protected function assertRadioNotExistsByValue($value) {
+    $value = (string) $value;
+    return $this->assertSession()
+      ->elementNotExists('xpath', "//input[contains(@type, 'radio') and contains(@value, '" . $value . "')]");
+  }
+
+  /**
+   * Checks that a specific checkbox input element exists on the current page.
+   *
+   * @param string $value
+   *   The string value of the radio element.
+   *
+   * @return \Behat\Mink\Element\NodeElement
+   *   The radio input form element.
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   */
+  protected function assertCheckboxExistsByValue($value) {
+    $value = (string) $value;
+    return $this->assertSession()
+      ->elementExists('xpath', "//input[contains(@type, 'checkbox') and contains(@value, '" . $value . "')]");
+  }
+
+  /**
+   * Checks that a specific checkbox input element does not exist on the current page.
+   *
+   * @param string $value
+   *   The string value of the radio element.
+   *
+   * @return \Behat\Mink\Element\NodeElement
+   *   The radio input form element.
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   */
+  protected function assertCheckboxNotExistsByValue($value) {
+    $value = (string) $value;
+    return $this->assertSession()
+      ->elementNotExists('xpath', "//input[contains(@type, 'checkbox') and contains(@value, '" . $value . "')]");
   }
 
 }

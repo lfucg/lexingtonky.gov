@@ -4,13 +4,13 @@ namespace Drupal\masquerade;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\SessionManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\PermissionHandlerInterface;
 use Drupal\user\UserInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Defines a masquerade service to switch user account.
@@ -26,11 +26,11 @@ class Masquerade {
   protected $currentUser;
 
   /**
-   * The entity type manager.
+   * The user storage.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\user\UserStorageInterface
    */
-  protected $entityTypeManager;
+  protected $userStorage;
 
   /**
    * The module handler.
@@ -38,6 +38,13 @@ class Masquerade {
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
+
+  /**
+   * The session.
+   *
+   * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
+   */
+  protected $session;
 
   /**
    * The session manager.
@@ -71,18 +78,52 @@ class Masquerade {
    *   The module handler.
    * @param \Drupal\Core\Session\SessionManagerInterface $session_manager
    *   The session manager.
+   * @param \Symfony\Component\HttpFoundation\Session\SessionInterface $session
+   *   The session.
    * @param \Psr\Log\LoggerInterface $logger
    *   The logger instance.
    * @param \Drupal\user\PermissionHandlerInterface $permission_handler
    *   The permission handler.
    */
-  public function __construct(AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, SessionManagerInterface $session_manager, LoggerInterface $logger, PermissionHandlerInterface $permission_handler) {
+  public function __construct(AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, SessionManagerInterface $session_manager, SessionInterface $session, LoggerInterface $logger, PermissionHandlerInterface $permission_handler) {
     $this->currentUser = $current_user;
-    $this->entityTypeManager = $entity_type_manager;
+    $this->userStorage = $entity_type_manager->getStorage('user');
     $this->moduleHandler = $module_handler;
     $this->sessionManager = $session_manager;
     $this->logger = $logger;
     $this->permissionHandler = $permission_handler;
+    $this->session = $session;
+  }
+
+  /**
+   * Logs out current user and logs in as pointed user.
+   *
+   * @param \Drupal\user\UserInterface $user
+   *   The user entity to switch to.
+   *
+   * @return \Drupal\user\UserInterface
+   *   The previous user entity.
+   *
+   * @see \Drupal\Core\Session\SessionHandler::write()
+   * @see \Drupal\user\Authentication\Provider\Cookie::getUserFromSession()
+   */
+  protected function switchUser(UserInterface $user) {
+    /** @var \Drupal\user\UserInterface $previous */
+    $previous = $this->userStorage->load($this->currentUser->id());
+    // Call logout hooks when switching from original user.
+    $this->moduleHandler->invokeAll('user_logout', [$previous]);
+
+    // Regenerate the session ID to prevent against session fixation attacks.
+    $this->sessionManager->regenerate();
+
+    // Supposed "safe" user switch method https://www.drupal.org/node/218104
+    // @todo Use `Drupal::service('account_switcher')` but care about session.
+    $this->currentUser->setAccount($user);
+    $this->session->set('uid', $user->id());
+
+    // Call all login hooks when making user login.
+    $this->moduleHandler->invokeAll('user_login', [$user]);
+    return $previous;
   }
 
   /**
@@ -92,8 +133,8 @@ class Masquerade {
    *   TRUE when already masquerading, FALSE otherwise.
    */
   public function isMasquerading() {
-    // @todo Check to use some session related service.
-    return !empty($_SESSION['masquerading']);
+    // Do not start new session trying to access its attributes.
+    return $this->session->isStarted() && $this->session->has('masquerading');
   }
 
   /**
@@ -106,30 +147,18 @@ class Masquerade {
    *   TRUE when masqueraded, FALSE otherwise.
    */
   public function switchTo(UserInterface $target_account) {
-    $account = $this->currentUser->getAccount();
 
-    // Call logout hooks when switching from original user.
-    $this->moduleHandler->invokeAll('user_logout', [$account]);
+    // Save previous account ID to session storage, set this before
+    // switching so that other modules can react to it, e.g. during
+    // hook_user_logout().
+    $this->session->set('masquerading', $this->currentUser->id());
 
-    // Regenerate the session ID to prevent against session fixation attacks.
-    $this->sessionManager->regenerate();
-
-    $_SESSION['masquerading'] = $account->id();
-
-    // Supposed "safe" user switch method:
-    // https://www.drupal.org/node/218104
-    //$accountSwitcher = Drupal::service('account_switcher');
-    //$accountSwitcher->switchTo(new UserSession(['uid' => $account->id()]));
-    $this->currentUser->setAccount($target_account);
-    \Drupal::service('session')->set('uid', $target_account->id());
-
-    // Call all login hooks when switching to masquerading user.
-    $this->moduleHandler->invokeAll('user_login', [$target_account]);
+    $account = $this->switchUser($target_account);
 
     $this->logger->info('User %username masqueraded as %target_username.', [
       '%username' => $account->getDisplayName(),
       '%target_username' => $target_account->getDisplayName(),
-      'link' => Link::fromTextAndUrl($this->t('view'), $target_account->toUrl())->toString(),
+      'link' => $target_account->toLink($this->t('view'))->toString(),
     ]);
     return TRUE;
   }
@@ -141,36 +170,28 @@ class Masquerade {
    *   TRUE when switched back, FALSE otherwise.
    */
   public function switchBack() {
-    if (empty($_SESSION['masquerading'])) {
+    if (!$this->session->isStarted() && !$this->session->has('masquerading')) {
       return FALSE;
     }
-    $new_user = $this->entityTypeManager
-      ->getStorage('user')
-      ->load($_SESSION['masquerading']);
-
-    // Ensure the flag is cleared.
-    unset($_SESSION['masquerading']);
-    if (!$new_user) {
+    // Load previous user account.
+    $user = $this->userStorage->load($this->session->get('masquerading'));
+    if (!$user) {
+      // Ensure the flag is cleared.
+      $this->session->remove('masquerading');
+      // User could be canceled while masquerading.
       return FALSE;
     }
 
-    $account = $this->currentUser->getAccount();
-    // Call logout hooks when switching from masquerading user.
-    $this->moduleHandler->invokeAll('user_logout', [$account]);
-    // Regenerate the session ID to prevent against session fixation attacks.
-    // @todo Maybe session service migrate.
-    $this->sessionManager->regenerate();
+    $account = $this->switchUser($user);
 
-    $this->currentUser->setAccount($new_user);
-    \Drupal::service('session')->set('uid', $new_user->id());
-
-    // Call all login hooks when switching back to original user.
-    $this->moduleHandler->invokeAll('user_login', [$new_user]);
+    // Clear the masquerading flag after switching the user so that hook
+    // implementations can differentiate this from a real logout/login.
+    $this->session->remove('masquerading');
 
     $this->logger->info('User %username stopped masquerading as %old_username.', [
-      '%username' => $new_user->getDisplayName(),
+      '%username' => $user->getDisplayName(),
       '%old_username' => $account->getDisplayName(),
-      'link' => Link::fromTextAndUrl($this->t('view'), $new_user->toUrl())->toString(),
+      'link' => $user->toLink($this->t('view'))->toString(),
     ]);
     return TRUE;
   }

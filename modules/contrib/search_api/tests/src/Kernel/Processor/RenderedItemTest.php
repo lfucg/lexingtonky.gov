@@ -49,6 +49,7 @@ class RenderedItemTest extends ProcessorTestBase {
     'comment',
     'system',
     'filter',
+    'path_alias'
   ];
 
   /**
@@ -57,13 +58,10 @@ class RenderedItemTest extends ProcessorTestBase {
   public function setUp($processor = NULL) {
     parent::setUp('rendered_item');
 
-    // Drupal 8.8 converted path aliases to entities, which means there will be
-    // one more entity type enabled by default (which we need to install for
-    // this test, to make sure the processor breaks for none of them).
-    // @todo Remove if once we depend on Drupal 8.8+.
-    if (\Drupal::entityTypeManager()->hasDefinition('path_alias')) {
-      $this->installEntitySchema('path_alias');
-    }
+    // Enable the optional "path_alias" entity type as well to make sure the
+    // processor doesn't break for any of the default types.
+    $this->installEntitySchema('path_alias');
+
     // Load additional configuration and needed schemas. (The necessary schemas
     // for using nodes are already installed by the parent method.)
     $this->installConfig(['system', 'filter', 'node', 'comment', 'user']);
@@ -172,8 +170,8 @@ class RenderedItemTest extends ProcessorTestBase {
     // Enable the classy and stable themes as the tests rely on markup from
     // that. Set stable as the active theme, but make classy the default. The
     // processor should switch to classy to perform the rendering.
-    \Drupal::service('theme_handler')->install(['classy']);
-    \Drupal::service('theme_handler')->install(['stable']);
+    \Drupal::service('theme_installer')->install(['classy']);
+    \Drupal::service('theme_installer')->install(['stable']);
     \Drupal::configFactory()->getEditable('system.theme')->set('default', 'classy')->save();
     \Drupal::theme()->setActiveTheme(\Drupal::service('theme.initialization')->initTheme('stable'));
   }
@@ -246,7 +244,7 @@ class RenderedItemTest extends ProcessorTestBase {
       // object, which contains a string (not, for example, some markup object).
       $this->assertInstanceOf('Drupal\search_api\Plugin\search_api\data_type\value\TextValueInterface', $values[0], "$type item $entity_id rendered value is properly wrapped in a text value object.");
       $field_value = $values[0]->getText();
-      $this->assertInternalType('string', $field_value, "$type item $entity_id rendered value is a string.");
+      $this->assertIsString($field_value, "$type item $entity_id rendered value is a string.");
       $this->assertEquals(1, count($values), "$type item $entity_id rendered value is a single value.");
 
       switch ($datasource_id) {
@@ -285,17 +283,17 @@ class RenderedItemTest extends ProcessorTestBase {
     $nid = $node->id();
     $full_view = $node->bundle() === 'page';
     $view_mode = $full_view ? 'full' : 'teaser';
-    $this->assertContains("view-mode-$view_mode", $field_value, 'Node item ' . $nid . " rendered in view-mode \"$view_mode\".");
-    $this->assertContains('field--name-title', $field_value, 'Node item ' . $nid . ' has a rendered title field.');
-    $this->assertContains('>' . $node->label() . '<', $field_value, 'Node item ' . $nid . ' has a rendered title inside HTML-Tags.');
-    $this->assertContains('>Member for<', $field_value, 'Node item ' . $nid . ' has rendered member information HTML-Tags.');
+    $this->assertStringContainsString("view-mode-$view_mode", $field_value, 'Node item ' . $nid . " rendered in view-mode \"$view_mode\".");
+    $this->assertStringContainsString('field--name-title', $field_value, 'Node item ' . $nid . ' has a rendered title field.');
+    $this->assertStringContainsString('>' . $node->label() . '<', $field_value, 'Node item ' . $nid . ' has a rendered title inside HTML-Tags.');
+    $this->assertStringContainsString('>Member for<', $field_value, 'Node item ' . $nid . ' has rendered member information HTML-Tags.');
     if ($full_view) {
       $body_value = $node->get('body')->getValue()[0]['value'] . '<';
     }
     else {
       $body_value = $node->get('body')->getValue()[0]['summary'] . '<';
     }
-    $this->assertContains('>' . $body_value, $field_value, 'Node item ' . $nid . ' has rendered content inside HTML-Tags.');
+    $this->assertStringContainsString('>' . $body_value, $field_value, 'Node item ' . $nid . ' has rendered content inside HTML-Tags.');
   }
 
   /**
@@ -307,7 +305,7 @@ class RenderedItemTest extends ProcessorTestBase {
    *   The rendered field value.
    */
   protected function checkRenderedUser(UserInterface $user, $field_value) {
-    $this->assertContains('>Member for<', $field_value);
+    $this->assertStringContainsString('>Member for<', $field_value);
   }
 
   /**
@@ -319,7 +317,7 @@ class RenderedItemTest extends ProcessorTestBase {
    *   The rendered field value.
    */
   protected function checkRenderedComment(CommentInterface $comment, $field_value) {
-    $this->assertContains('>' . $comment->label() . '<', $field_value);
+    $this->assertStringContainsString('>' . $comment->label() . '<', $field_value);
   }
 
   /**
@@ -393,7 +391,7 @@ class RenderedItemTest extends ProcessorTestBase {
     $values = $rendered_item->getValues();
     $this->assertCount(1, $values);
     $this->assertInstanceOf(TextValueInterface::class, $values[0]);
-    $this->assertContains($test_value, (string) $values[0]);
+    $this->assertStringContainsString($test_value, (string) $values[0]);
   }
 
   /**
@@ -402,9 +400,9 @@ class RenderedItemTest extends ProcessorTestBase {
   public function testAlterPropertyDefinitions() {
     // Check for added properties when no datasource is given.
     $properties = $this->processor->getPropertyDefinitions(NULL);
-    $this->assertTrue(array_key_exists('rendered_item', $properties), 'The Properties where modified with the "rendered_item".');
+    $this->assertArrayHasKey('rendered_item', $properties, 'The Properties where modified with the "rendered_item".');
     $this->assertInstanceOf('Drupal\search_api\Plugin\search_api\processor\Property\RenderedItemProperty', $properties['rendered_item'], 'Added property has the correct class.');
-    $this->assertTrue(($properties['rendered_item'] instanceof DataDefinitionInterface), 'The "rendered_item" contains a valid DataDefinition instance.');
+    $this->assertInstanceOf(DataDefinitionInterface::class, $properties['rendered_item'], 'The "rendered_item" contains a valid DataDefinition instance.');
     $this->assertEquals('search_api_html', $properties['rendered_item']->getDataType(), 'Correct DataType set in the DataDefinition.');
 
     // Verify that there are no properties if a datasource is given.

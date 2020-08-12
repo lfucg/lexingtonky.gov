@@ -5,8 +5,8 @@
  * Module file for the CKEditor Media Embed plugin module.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\ckeditor_media_embed\AssetManager;
-
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
@@ -29,7 +29,7 @@ function ckeditor_media_embed_help($route_name, RouteMatchInterface $route_match
       $output .= '</p>';
       $output .= '<h3>' . t('Uses') . '</h3>';
       $output .= '<dl>';
-      $output .= '<dt>' . t('Embed media resoruces') . '</dt>';
+      $output .= '<dt>' . t('Embed media resources') . '</dt>';
       $output .= '<dd>' . t('During content creation the author may add embed resources (videos, images, tweets, etc.) hosted by other services (called the "content providers") in content via CKEditor. By default the plugin uses the <a href=":iframely" target="_blank">Iframely</a> proxy service which supports over <a href=":providers" target="blank">1715 content providers</a> such as Youtube, Vimeo, Twitter, Insagram, Imgur, GitHub, and Google Maps.', [':iframely' => 'https://iframely.com/', ':providers' => 'https://iframely.com/domains']) . '</dd>';
       $output .= '</dl>';
       $output .= '<dl>';
@@ -128,4 +128,24 @@ function _ckeditor_media_embed_get_install_instructions($prefix = TRUE, $update 
       '@prefix' => $message_prefix,
     ]
   ));
+}
+
+/**
+ * Implements hook_ckeditor_media_embed_object_alter().
+ */
+function ckeditor_media_embed_ckeditor_media_embed_object_alter(&$embed) {
+  $title_exists = (
+    !empty($embed->title)
+    && $title = Html::escape($embed->title)
+  );
+
+  if ($title_exists && $document = Html::load(trim($embed->html))) {
+    if ($iframes = $document->getElementsByTagName('iframe')) {
+      foreach ($iframes as $iframe) {
+        $iframe->setAttribute('title', $title);
+      }
+
+      $embed->html = Html::serialize($document);
+    }
+  }
 }

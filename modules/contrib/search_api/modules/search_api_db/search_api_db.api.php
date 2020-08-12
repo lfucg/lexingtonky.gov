@@ -22,7 +22,11 @@
  * @param \Drupal\search_api\Query\QueryInterface $query
  *   The search query that is being executed.
  *
+ * @deprecated in search_api:8.x-1.16 and will be removed in search_api:9.x-1.0.
+ *   Please use the "search_api_db.query_pre_execute" event instead.
+ *
  * @see \Drupal\search_api_db\Plugin\search_api\backend\Database::preQuery()
+ * @see https://www.drupal.org/node/3103591
  */
 function hook_search_api_db_query_alter(\Drupal\Core\Database\Query\SelectInterface &$db_query, \Drupal\search_api\Query\QueryInterface $query) {
   // If the option was set on the query, add additional SQL conditions.

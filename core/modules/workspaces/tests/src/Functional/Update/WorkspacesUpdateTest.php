@@ -25,7 +25,7 @@ class WorkspacesUpdateTest extends UpdatePathTestBase {
    */
   public function setDatabaseDumpFiles() {
     $this->databaseDumpFiles = [
-      __DIR__ . '/../../../../../system/tests/fixtures/update/drupal-8.filled.standard.php.gz',
+      __DIR__ . '/../../../../../system/tests/fixtures/update/drupal-8.4.0.bare.standard.php.gz',
       __DIR__ . '/../../../fixtures/update/drupal-8.6.0-workspaces_installed.php',
     ];
   }
@@ -125,28 +125,6 @@ class WorkspacesUpdateTest extends UpdatePathTestBase {
     // Check that the 'parent' field is hidden in the Deploy form display.
     $form_display = EntityFormDisplay::load('workspace.workspace.deploy');
     $this->assertNull($form_display->getComponent('parent'));
-  }
-
-  /**
-   * Tests that there is no active workspace during database updates.
-   */
-  public function testActiveWorkspaceDuringUpdate() {
-    /** @var \Drupal\workspaces\WorkspaceManagerInterface $workspace_manager */
-    $workspace_manager = \Drupal::service('workspaces.manager');
-
-    // Check that we have an active workspace before running the updates.
-    $this->assertTrue($workspace_manager->hasActiveWorkspace());
-    $this->assertEquals('test', $workspace_manager->getActiveWorkspace()->id());
-
-    $this->runUpdates();
-
-    // Check that we didn't have an active workspace while running the updates.
-    // @see workspace_update_test_post_update_check_active_workspace()
-    $this->assertFalse(\Drupal::state()->get('workspace_update_test.has_active_workspace'));
-
-    // Check that we have an active workspace after running the updates.
-    $this->assertTrue($workspace_manager->hasActiveWorkspace());
-    $this->assertEquals('test', $workspace_manager->getActiveWorkspace()->id());
   }
 
   /**

@@ -23,6 +23,7 @@ cd $CUSTOM_BARRIO
 for file in *bootstrap_barrio_subtheme.*; do mv $file ${file//bootstrap_barrio_subtheme/$CUSTOM_BARRIO}; done
 for file in config/*/*bootstrap_barrio_subtheme.*; do mv $file ${file//bootstrap_barrio_subtheme/$CUSTOM_BARRIO}; done
 mv {_,}$CUSTOM_BARRIO.theme
+mv {_,}$CUSTOM_BARRIO.layouts.yml
 grep -Rl bootstrap_barrio_subtheme .|xargs sed -i '' -e "s/bootstrap_barrio_subtheme/$CUSTOM_BARRIO/"
-sed -i '' -e "s/Bootstrap Barrio Subtheme/$CUSTOM_BARRIO_NAME/" $CUSTOM_BARRIO.info.yml
+sed -i -e "s/Bootstrap Barrio Subtheme/$CUSTOM_BARRIO_NAME/" $CUSTOM_BARRIO.info.yml
 echo "# Check the themes/custom folder for your new sub-theme."

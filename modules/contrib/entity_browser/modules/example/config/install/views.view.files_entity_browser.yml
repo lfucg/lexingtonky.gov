@@ -181,6 +181,7 @@ display:
           hide_alter_empty: true
           entity_type: file
           plugin_id: entity_browser_select
+          use_field_cardinality: false
         filename:
           id: filename
           table: file_managed

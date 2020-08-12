@@ -17,6 +17,11 @@ class PathautoUiTest extends WebDriverTestBase {
   use PathautoTestHelperTrait;
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stable';
+
+  /**
    * Modules to enable.
    *
    * @var array
@@ -33,7 +38,7 @@ class PathautoUiTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     $this->drupalCreateContentType(['type' => 'page', 'name' => 'Basic page']);
@@ -52,7 +57,7 @@ class PathautoUiTest extends WebDriverTestBase {
     $this->drupalLogin($this->adminUser);
   }
 
-  function testSettingsValidation() {
+  public function testSettingsValidation() {
     $this->drupalGet('/admin/config/search/path/settings');
 
     $this->assertSession()->fieldExists('max_length');
@@ -62,16 +67,16 @@ class PathautoUiTest extends WebDriverTestBase {
     $this->assertSession()->elementAttributeContains('css', '#edit-max-component-length', 'min', '1');
   }
 
-  function testPatternsWorkflow() {
-    $this->drupalPlaceBlock('local_tasks_block');
+  public function testPatternsWorkflow() {
+    $this->drupalPlaceBlock('local_tasks_block', ['id' => 'local-tasks-block']);
     $this->drupalPlaceBlock('local_actions_block');
     $this->drupalPlaceBlock('page_title_block');
 
     $this->drupalGet('admin/config/search/path');
-    $this->assertSession()->elementContains('css', '.block-local-tasks-block', 'Patterns');
-    $this->assertSession()->elementContains('css', '.block-local-tasks-block', 'Settings');
-    $this->assertSession()->elementContains('css', '.block-local-tasks-block', 'Bulk generate');
-    $this->assertSession()->elementContains('css', '.block-local-tasks-block', 'Delete aliases');
+    $this->assertSession()->elementContains('css', '#block-local-tasks-block', 'Patterns');
+    $this->assertSession()->elementContains('css', '#block-local-tasks-block', 'Settings');
+    $this->assertSession()->elementContains('css', '#block-local-tasks-block', 'Bulk generate');
+    $this->assertSession()->elementContains('css', '#block-local-tasks-block', 'Delete aliases');
 
     $this->drupalGet('admin/config/search/path/patterns');
     $this->clickLink('Add Pathauto pattern');
@@ -194,7 +199,7 @@ class PathautoUiTest extends WebDriverTestBase {
     $this->drupalPostForm(NULL, [], t('Delete'));
     $this->assertSession()->pageTextContains('The pathauto pattern Test has been deleted.');
 
-    $this->assertFalse(PathautoPattern::load('page_pattern'));
+    $this->assertEmpty(PathautoPattern::load('page_pattern'));
   }
 
 }

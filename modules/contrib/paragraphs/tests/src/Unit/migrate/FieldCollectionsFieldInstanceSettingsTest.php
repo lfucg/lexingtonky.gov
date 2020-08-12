@@ -56,7 +56,8 @@ class FieldCollectionsFieldInstanceSettingsTest extends ProcessTestCase {
         ['type', 'field_collection'],
         ['bundle', 'non_existent_bundle'],
       ]);
-    $this->setExpectedException(MigrateSkipRowException::class, 'No target paragraph bundle found for field_collection');
+    $this->expectException(MigrateSkipRowException::class);
+    $this->expectExceptionMessage("No target paragraph bundle found for field_collection");
     $this->plugin->transform([], $this->migrateExecutable, $this->row, 'settings');
   }
 

@@ -3,10 +3,9 @@
 namespace Drupal\metatag_views\Plugin\views\display_extender;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\metatag\MetatagManagerInterface;
-use Drupal\metatag\MetatagTagPluginManager;
 use Drupal\views\Plugin\views\display_extender\DisplayExtenderPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Metatag display extender plugin.
@@ -21,6 +20,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class MetatagDisplayExtender extends DisplayExtenderPluginBase {
+
+  use StringTranslationTrait;
 
   /**
    * The metatag manager.
@@ -37,37 +38,15 @@ class MetatagDisplayExtender extends DisplayExtenderPluginBase {
   protected $metatagTagManager;
 
   /**
-   * Constructs the plugin.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\metatag\MetatagTagPluginManager $metatag_plugin_manager
-   *   The plugin manager for metatag tags.
-   * @param \Drupal\metatag\MetatagManagerInterface $metatag_manager
-   *   The metatag manager.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MetatagTagPluginManager $metatag_plugin_manager, MetatagManagerInterface $metatag_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->metatagTagManager = $metatag_plugin_manager;
-    $this->metatagManager = $metatag_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('plugin.manager.metatag.tag'),
-      $container->get('metatag.manager')
-    );
+    /** @var \Drupal\metatag_views\Plugin\views\display_extender\MetatagDisplayExtender */
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->metatagTagManager = $container->get('plugin.manager.metatag.tag');
+    $instance->metatagManager = $container->get('metatag.manager');
+
+    return $instance;
   }
 
   /**
@@ -76,7 +55,7 @@ class MetatagDisplayExtender extends DisplayExtenderPluginBase {
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
 
     if ($form_state->get('section') == 'metatags') {
-      $form['#title'] .= t('The meta tags for this display');
+      $form['#title'] .= $this->t('The meta tags for this display');
       $metatags = $this->getMetatags();
 
       // Build/inject the Metatag form.
@@ -130,13 +109,13 @@ class MetatagDisplayExtender extends DisplayExtenderPluginBase {
    */
   public function optionsSummary(&$categories, &$options) {
     $categories['metatags'] = [
-      'title' => t('Meta tags'),
+      'title' => $this->t('Meta tags'),
       'column' => 'second',
     ];
     $options['metatags'] = [
       'category' => 'metatags',
-      'title' => t('Meta tags'),
-      'value' => $this->hasMetatags() ? t('Overridden') : t('Using defaults'),
+      'title' => $this->t('Meta tags'),
+      'value' => $this->hasMetatags() ? $this->t('Overridden') : $this->t('Using defaults'),
     ];
   }
 

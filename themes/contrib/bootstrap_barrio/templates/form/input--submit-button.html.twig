@@ -10,4 +10,4 @@
  * @see template_preprocess_input()
  */
 #}
-<button{{ attributes }}>{{ attributes.value }}</button>{{ children }}
+<button{{ attributes }}>{{ safe_value_label | raw }}</button>{{ children }}

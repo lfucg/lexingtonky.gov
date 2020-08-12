@@ -33,6 +33,11 @@ class ParagraphsLibraryItemTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'classy';
+
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
     $this->addParagraphedContentType('paragraphed_test', 'field_paragraphs');
@@ -192,8 +197,8 @@ class ParagraphsLibraryItemTest extends BrowserTestBase {
       ->find('xpath', '(//tbody//tr)[2]//a')
       ->click();
     $revision_url = $this->getSession()->getCurrentUrl();
-    $this->assertContains('/node/' . $node->id() . '/revisions/', $revision_url);
-    $this->assertContains('view', $revision_url);
+    $this->assertStringContainsString('/node/' . $node->id() . '/revisions/', $revision_url);
+    $this->assertStringContainsString('view', $revision_url);
 
     // Check that the child text paragraph is still present in this revision.
     $this->assertSession()->pageTextContains('Test text 1');
@@ -293,6 +298,7 @@ class ParagraphsLibraryItemTest extends BrowserTestBase {
     $assert_session->elementContains('css', 'table tbody tr td:nth-child(2)', 'Paragraph');
     $assert_session->elementContains('css', 'table tbody tr td:nth-child(3)', 'English');
     $assert_session->elementContains('css', 'table tbody tr td:nth-child(4)', 'Reusable paragraph');
+    $assert_session->elementContains('css', 'table tbody tr td:nth-child(5)', 'Published');
 
     // Assert breadcrumb.
     $assert_session->elementContains('css', '.breadcrumb ol li:nth-child(1)', 'Home');
@@ -311,13 +317,13 @@ class ParagraphsLibraryItemTest extends BrowserTestBase {
     $this->clickLink('Usage');
     $assert_session->pageTextContains('Entity usage information for Test usage nested paragraph');
 
-    // No usage shows up on this page.
-    // @todo once 2954039 lands, we expect to have a row here indicating that
-    // the host node references the paragraph in a non-default revision.
-    // Alternatively, if 2971131 lands first, we would have here an extra row
-    // with possibly a generic label (just with the entity ID or similar). In
-    // both cases this test will need to be updated.
-    $assert_session->elementNotExists('css', 'table tbody tr');
+    // Assert there is a row here indicating that the host node references the
+    // paragraph in a non-default revision.
+    $assert_session->elementContains('css', 'table tbody tr td:nth-child(1)', 'Test content &gt; field_paragraphs (previous revision)');
+    $assert_session->elementContains('css', 'table tbody tr td:nth-child(2)', 'Paragraph');
+    $assert_session->elementContains('css', 'table tbody tr td:nth-child(3)', 'English');
+    $assert_session->elementContains('css', 'table tbody tr td:nth-child(4)', 'Reusable paragraph');
+    $assert_session->elementContains('css', 'table tbody tr td:nth-child(5)', 'Published');
   }
 
   /**

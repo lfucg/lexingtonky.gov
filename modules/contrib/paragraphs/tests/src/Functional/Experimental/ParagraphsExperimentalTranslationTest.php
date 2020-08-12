@@ -98,11 +98,11 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     $this->drupalGet('admin/config/regional/content-language');
 
     // Check the settings are saved correctly.
-    $this->assertFieldChecked('edit-entity-types-paragraph');
-    $this->assertFieldChecked('edit-settings-node-paragraphed-content-demo-translatable');
-    $this->assertFieldChecked('edit-settings-paragraph-text-image-translatable');
-    $this->assertFieldChecked('edit-settings-paragraph-images-columns-field-images-demo-alt');
-    $this->assertFieldChecked('edit-settings-paragraph-images-columns-field-images-demo-title');
+    $this->assertSession()->checkboxChecked('edit-entity-types-paragraph');
+    $this->assertSession()->checkboxChecked('edit-settings-node-paragraphed-content-demo-translatable');
+    $this->assertSession()->checkboxChecked('edit-settings-paragraph-text-image-translatable');
+    $this->assertSession()->checkboxChecked('edit-settings-paragraph-images-columns-field-images-demo-alt');
+    $this->assertSession()->checkboxChecked('edit-settings-paragraph-images-columns-field-images-demo-title');
 
     // Check if the publish/unpublish option works.
     $this->drupalGet('admin/structure/paragraphs_type/text_image/form-display');
@@ -125,13 +125,13 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     $this->drupalPostForm(NULL, $edit, t('Save'));
     $this->drupalGet('node/add/paragraphed_content_demo');
     $this->drupalPostForm(NULL, NULL, t('Add text_image'));
-    $this->assertRaw('edit-field-paragraphs-demo-0-subform-status-value');
+    $this->assertSession()->responseContains('edit-field-paragraphs-demo-0-subform-status-value');
     $edit = [
       'title[0][value]' => 'example_publish_unpublish',
       'field_paragraphs_demo[0][subform][field_text_demo][0][value]' => 'Example published and unpublished',
     ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
-    $this->assertText(t('Example published and unpublished'));
+    $this->assertSession()->pageTextContains(t('Example published and unpublished'));
     $this->clickLink(t('Edit'));
 
     $this->drupalPostForm(NULL, NULL, 'field_paragraphs_demo_nested_paragraph_add_more');
@@ -141,7 +141,7 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
       'field_paragraphs_demo[1][subform][field_paragraphs_demo][0][subform][field_text_demo][0][value]' => 'Dummy text'
     ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
-    $this->assertNoText(t('Example published and unpublished'));
+    $this->assertSession()->pageTextNotContains(t('Example published and unpublished'));
 
     // Check the parent fields are set properly. Get the node.
     $node = $this->drupalGetNodeByTitle('example_publish_unpublish');
@@ -149,16 +149,16 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     foreach ($node->field_paragraphs_demo->referencedEntities() as $paragraph) {
       $node_paragraph = Paragraph::load($paragraph->id())->toArray();
       // Check if the fields are set properly.
-      $this->assertEqual($node_paragraph['parent_id'][0]['value'], $node->id());
-      $this->assertEqual($node_paragraph['parent_type'][0]['value'], 'node');
-      $this->assertEqual($node_paragraph['parent_field_name'][0]['value'], 'field_paragraphs_demo');
+      $this->assertEquals($node_paragraph['parent_id'][0]['value'], $node->id());
+      $this->assertEquals($node_paragraph['parent_type'][0]['value'], 'node');
+      $this->assertEquals($node_paragraph['parent_field_name'][0]['value'], 'field_paragraphs_demo');
       // If the paragraph is nested type load the child.
       if ($node_paragraph['type'][0]['target_id'] == 'nested_paragraph') {
         $nested_paragraph = Paragraph::load($node_paragraph['field_paragraphs_demo'][0]['target_id'])->toArray();
         // Check if the fields are properly set.
-        $this->assertEqual($nested_paragraph['parent_id'][0]['value'], $paragraph->id());
-        $this->assertEqual($nested_paragraph['parent_type'][0]['value'], 'paragraph');
-        $this->assertEqual($nested_paragraph['parent_field_name'][0]['value'], 'field_paragraphs_demo');
+        $this->assertEquals($nested_paragraph['parent_id'][0]['value'], $paragraph->id());
+        $this->assertEquals($nested_paragraph['parent_type'][0]['value'], 'paragraph');
+        $this->assertEquals($nested_paragraph['parent_field_name'][0]['value'], 'field_paragraphs_demo');
       }
     }
 
@@ -170,22 +170,22 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
       'field_paragraphs_demo[0][subform][field_text_demo][0][value]' => 'Text in english',
     );
     // The button to remove a paragraph is present.
-    $this->assertRaw(t('Remove'));
+    $this->assertSession()->responseContains(t('Remove'));
     $this->drupalPostForm(NULL, $edit, t('Save'));
     $node = $this->drupalGetNodeByTitle('Title in english');
     // The text is present when editing again.
     $this->clickLink(t('Edit'));
-    $this->assertText('Title in english');
-    $this->assertText('Text in english');
+    $this->assertSession()->pageTextContains('Title in english');
+    $this->assertSession()->pageTextContains('Text in english');
 
     // Add french translation.
     $this->clickLink(t('Translate'));
     $this->clickLink(t('Add'), 1);
     // Make sure the Add / Remove paragraph buttons are hidden.
-    $this->assertNoRaw(t('Remove'));
-    $this->assertNoRaw(t('Add text_image'));
+    $this->assertSession()->responseNotContains(t('Remove'));
+    $this->assertSession()->responseNotContains(t('Add text_image'));
     // Make sure that the original paragraph text is displayed.
-    $this->assertText('Text in english');
+    $this->assertSession()->pageTextContains('Text in english');
 
     $edit = array(
       'title[0][value]' => 'Title in french',
@@ -194,24 +194,24 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
       'revision_log[0][value]' => 'french 1',
     );
     $this->drupalPostForm(NULL, $edit, t('Save (this translation)'));
-    $this->assertText('paragraphed_content_demo Title in french has been updated.');
+    $this->assertSession()->pageTextContains('paragraphed_content_demo Title in french has been updated.');
 
     // Check the english translation.
     $this->drupalGet('node/' . $node->id());
-    $this->assertText('Title in english');
-    $this->assertText('Text in english');
-    $this->assertNoText('Title in french');
-    $this->assertNoText('Text in french');
+    $this->assertSession()->pageTextContains('Title in english');
+    $this->assertSession()->pageTextContains('Text in english');
+    $this->assertSession()->pageTextNotContains('Title in french');
+    $this->assertSession()->pageTextNotContains('Text in french');
 
     // Check the french translation.
     $this->drupalGet('fr/node/' . $node->id());
-    $this->assertText('Title in french');
-    $this->assertText('Text in french');
-    $this->assertNoText('Title in english');
+    $this->assertSession()->pageTextContains('Title in french');
+    $this->assertSession()->pageTextContains('Text in french');
+    $this->assertSession()->pageTextNotContains('Title in english');
     // The translation is still present when editing again.
     $this->clickLink(t('Edit'));
-    $this->assertText('Title in french');
-    $this->assertText('Text in french');
+    $this->assertSession()->pageTextContains('Title in french');
+    $this->assertSession()->pageTextContains('Text in french');
     $edit = array(
       'title[0][value]' => 'Title Change in french',
       'field_paragraphs_demo[0][subform][field_text_demo][0][value]' => 'New text in french',
@@ -219,17 +219,17 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
       'revision_log[0][value]' => 'french 2',
     );
     $this->drupalPostForm(NULL, $edit, t('Save (this translation)'));
-    $this->assertText('Title Change in french');
-    $this->assertText('New text in french');
+    $this->assertSession()->pageTextContains('Title Change in french');
+    $this->assertSession()->pageTextContains('New text in french');
 
     // Back to the source language.
     $this->drupalGet('node/' . $node->id());
     $this->clickLink(t('Edit'));
-    $this->assertText('Title in english');
-    $this->assertText('Text in english');
+    $this->assertSession()->pageTextContains('Title in english');
+    $this->assertSession()->pageTextContains('Text in english');
     // Save the original content on second request.
     $this->drupalPostForm(NULL, NULL, t('Save (this translation)'));
-    $this->assertText('paragraphed_content_demo Title in english has been updated.');
+    $this->assertSession()->pageTextContains('paragraphed_content_demo Title in english has been updated.');
 
     // Test if reverting to old paragraphs revisions works, make sure that
     // the reverted node can be saved again.
@@ -237,17 +237,17 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     $this->clickLink(t('Revert'));
     $this->drupalPostForm(NULL, ['revert_untranslated_fields' => TRUE], t('Revert'));
     $this->clickLink(t('Edit'));
-    $this->assertRaw('Title in french');
-    $this->assertText('Text in french');
+    $this->assertSession()->responseContains('Title in french');
+    $this->assertSession()->pageTextContains('Text in french');
     $this->drupalPostForm(NULL, [], t('Save (this translation)'));
-    $this->assertNoRaw('The content has either been modified by another user, or you have already submitted modifications');
-    $this->assertText('Text in french');
+    $this->assertSession()->responseNotContains('The content has either been modified by another user, or you have already submitted modifications');
+    $this->assertSession()->pageTextContains('Text in french');
 
     //Add paragraphed content with untranslatable language
     $this->drupalGet('node/add/paragraphed_content_demo');
     $edit = array('langcode[0][value]' => LanguageInterface::LANGCODE_NOT_SPECIFIED);
     $this->drupalPostForm(NULL, $edit, t('Add text_image'));
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     // Make 'Images' paragraph field translatable, enable alt and title fields.
     $this->drupalGet('admin/structure/paragraphs_type/images/fields');
@@ -282,7 +282,7 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
       'field_paragraphs_demo[0][subform][field_images_demo][0][title]' => 'Image title FR',
     ];
     $this->drupalPostForm(NULL, $edit, t('Save (this translation)'));
-    $this->assertRaw('Title FR');
+    $this->assertSession()->responseContains('Title FR');
 
     $this->drupalGet('node/add/paragraphed_content_demo');
     $this->drupalPostForm(NULL, [], t('Add text'));
@@ -325,17 +325,17 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     ]);
     $this->drupalGet('node/' . $node->id() . '/edit');
     $this->drupalPostForm(NULL, [], t('Save'));
-    $this->assertText('paragraphed_content_demo ' . $node->label() . ' has been updated.');
+    $this->assertSession()->pageTextContains('paragraphed_content_demo ' . $node->label() . ' has been updated.');
     // Check that first paragraph langcode has been updated.
     \Drupal::entityTypeManager()->getStorage('paragraph')->resetCache([$paragraph_1->id(), $paragraph_2->id()]);
     $paragraph = Paragraph::load($paragraph_1->id());
-    $this->assertEqual($paragraph->language()->getId(), 'de');
+    $this->assertEquals($paragraph->language()->getId(), 'de');
     $this->assertFalse($paragraph->hasTranslation('en'));
     // Check that second paragraph has two translations.
     $paragraph = Paragraph::load($paragraph_2->id());
     $this->assertTrue($paragraph->hasTranslation('de'));
     $this->assertTrue($paragraph->hasTranslation('en'));
-    $this->assertRaw('german_text');
+    $this->assertSession()->responseContains('german_text');
 
     // Create an english translation of the node.
     $edit = [
@@ -346,12 +346,12 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     // Attempt to create a french translation.
     $this->drupalGet('node/' . $node->id() . '/translations/add/de/fr');
     // Check that the german translation of the paragraphs is displayed.
-    $this->assertFieldByName('field_paragraphs_demo[0][subform][field_text_demo][0][value]', 'english_text_1');
-    $this->assertFieldByName('field_paragraphs_demo[1][subform][field_text_demo][0][value]', 'german_text_2');
+    $this->assertSession()->fieldValueEquals('field_paragraphs_demo[0][subform][field_text_demo][0][value]', 'english_text_1');
+    $this->assertSession()->fieldValueEquals('field_paragraphs_demo[1][subform][field_text_demo][0][value]', 'german_text_2');
     $this->drupalPostForm(NULL, ['source_langcode[source]' => 'en'], t('Change'));
     // Check that the english translation of the paragraphs is displayed.
-    $this->assertFieldByName('field_paragraphs_demo[0][subform][field_text_demo][0][value]', 'english_translation_1');
-    $this->assertFieldByName('field_paragraphs_demo[1][subform][field_text_demo][0][value]', 'english_translation_2');
+    $this->assertSession()->fieldValueEquals('field_paragraphs_demo[0][subform][field_text_demo][0][value]', 'english_translation_1');
+    $this->assertSession()->fieldValueEquals('field_paragraphs_demo[1][subform][field_text_demo][0][value]', 'english_translation_2');
 
     // Create a node with empty Paragraphs.
     $this->drupalGet('node/add/paragraphed_content_demo');
@@ -362,7 +362,7 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     $this->clickLink(t('Translate'));
     $this->clickLink(t('Add'));
     // Check the add button is not displayed.
-    $this->assertEqual(count($this->xpath('//*[@name="field_paragraphs_demo_0_subform_field_paragraphs_demo_images_add_more"]')), 0);
+    $this->assertEquals(count($this->xpath('//*[@name="field_paragraphs_demo_0_subform_field_paragraphs_demo_images_add_more"]')), 0);
 
     // Add a non translatable field to Text Paragraph type.
     $edit = [
@@ -396,10 +396,10 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
 
     // Attempt to add a translation.
     $this->drupalGet('node/' . $node->id() . '/translations/add/de/fr');
-    $this->assertText('untranslatable_field (all languages)');
-    $this->assertText('untranslatable_ref_field (all languages)');
-    $this->assertText('untranslatable_link_field (all languages)');
-    $this->assertNoText('Text (all languages)');
+    $this->assertSession()->pageTextContains('untranslatable_field (all languages)');
+    $this->assertSession()->pageTextContains('untranslatable_ref_field (all languages)');
+    $this->assertSession()->pageTextContains('untranslatable_link_field (all languages)');
+    $this->assertSession()->pageTextNotContains('Text (all languages)');
 
     // Enable translations for the reference and link field.
     $edit = [
@@ -410,10 +410,10 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
 
     // Attempt to add a translation.
     $this->drupalGet('node/' . $node->id() . '/translations/add/de/fr');
-    $this->assertText('untranslatable_field (all languages)');
-    $this->assertNoText('untranslatable_link_field (all languages)');
-    $this->assertNoText('untranslatable_ref_field (all languages)');
-    $this->assertNoText('Text (all languages)');
+    $this->assertSession()->pageTextContains('untranslatable_field (all languages)');
+    $this->assertSession()->pageTextNotContains('untranslatable_link_field (all languages)');
+    $this->assertSession()->pageTextNotContains('untranslatable_ref_field (all languages)');
+    $this->assertSession()->pageTextNotContains('Text (all languages)');
 
     // Test the summary in multilingual scenarios.
     // Case 1: Nested Paragraphs.
@@ -430,7 +430,7 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
       'field_paragraphs_demo[1][subform][field_paragraphs_demo][0][subform][field_text_demo][0][value]' => 'EN nested text llama',
     ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
-    $this->assertText('paragraphed_content_demo EN llama has been created.');
+    $this->assertSession()->pageTextContains('paragraphed_content_demo EN llama has been created.');
     // Create a german translation.
     $node = $this->drupalGetNodeByTitle('EN llama');
     $this->drupalGet('node/' . $node->id() . '/translations/add/en/de');
@@ -443,9 +443,9 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     $this->drupalPostForm(NULL, $edit, t('Save (this translation)'));
     // Assert that the summary is displayed in the current language.
     $this->drupalGet('de/node/' . $node->id() . '/edit');
-    $this->assertFieldByName('title[0][value]', 'DE llama');
-    $this->assertRaw('<span class="summary-content">DE text llama</span></div></div>');
-    $this->assertRaw('<span class="summary-content">DE nested text llama</span></div></div>');
+    $this->assertSession()->fieldValueEquals('title[0][value]', 'DE llama');
+    $this->assertSession()->responseContains('<span class="summary-content">DE text llama</span></div></div>');
+    $this->assertSession()->responseContains('<span class="summary-content">DE nested text llama</span></div></div>');
 
     // Case 2: Referenced entities.
     $this->addParagraphsType('node_reference');
@@ -473,7 +473,7 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     $this->drupalPostForm(NULL, $edit, t('Save (this translation)'));
     // Edit the node again and check the paragraph summary.
     $this->drupalGet('de/node/' . $referencing_node->id() . '/edit');
-    $this->assertRaw('<span class="summary-content">DE llama</span></div></div>');
+    $this->assertSession()->responseContains('<span class="summary-content">DE llama</span></div></div>');
   }
 
   /**
@@ -512,7 +512,7 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     $this->drupalPostForm(NULL, $edit, t('Upload'));
     $this->assertParagraphsButtons(1);
     $this->drupalPostForm(NULL, NULL, t('Save'));
-    $this->assertText('Title in english');
+    $this->assertSession()->pageTextContains('Title in english');
     $node = $this->drupalGetNodeByTitle('Title in english');
     // Check the paragraph langcode is 'en'.
     $this->assertParagraphsLangcode($node->id());
@@ -528,9 +528,9 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     ];
     $this->drupalPostForm(NULL, $edit, t('Save (this translation)'));
     $this->assertParagraphsLangcode($node->id(), 'en', 'fr');
-    $this->assertText('paragraphed_content_demo Title in french has been updated.');
-    $this->assertText('Title in french');
-    $this->assertNoText('Title in english');
+    $this->assertSession()->pageTextContains('paragraphed_content_demo Title in french has been updated.');
+    $this->assertSession()->pageTextContains('Title in french');
+    $this->assertSession()->pageTextNotContains('Title in english');
     // Check the original node and the paragraph langcode is still 'en'.
     $this->assertParagraphsLangcode($node->id());
 
@@ -545,13 +545,13 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     $this->assertParagraphsLangcode($node->id(), 'en', 'fr');
     $this->assertNoParagraphsButtons(1);
     $this->drupalPostForm(NULL, NULL, t('Save (this translation)'));
-    $this->assertText('Title in french');
-    $this->assertNoText('Title in english');
+    $this->assertSession()->pageTextContains('Title in french');
+    $this->assertSession()->pageTextNotContains('Title in english');
 
     // Back to the original node.
     $this->drupalGet('node/' . $node->id());
-    $this->assertText('Title in english');
-    $this->assertNoText('Title in french');
+    $this->assertSession()->pageTextContains('Title in english');
+    $this->assertSession()->pageTextNotContains('Title in french');
     // Check the original node and the paragraph langcode are still 'en' and
     // check that the paragraphs buttons are still displayed.
     $this->clickLink('Edit');
@@ -580,15 +580,15 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     $this->assertParagraphsLangcode($node->id());
     $this->assertParagraphsButtons(2);
     $this->drupalPostForm(NULL, NULL, t('Save (this translation)'));
-    $this->assertText('Title in english (de)');
-    $this->assertNoText('Title in french');
+    $this->assertSession()->pageTextContains('Title in english (de)');
+    $this->assertSession()->pageTextNotContains('Title in french');
     // Check the original node and the paragraphs langcode are now 'de'.
     $this->assertParagraphsLangcode($node->id(), 'de');
 
     // Check the french translation.
     $this->drupalGet('fr/node/' . $node->id());
-    $this->assertText('Title in french');
-    $this->assertNoText('Title in english (de)');
+    $this->assertSession()->pageTextContains('Title in french');
+    $this->assertSession()->pageTextNotContains('Title in english (de)');
     // Check editing a translation does not affect the source langcode and
     // check that the paragraphs buttons are still hidden.
     $this->clickLink('Edit');
@@ -628,13 +628,13 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     $this->drupalPostForm(NULL, NULL, t('Save (this translation)'));
     // Check the paragraphs langcode are still 'de' after saving the translation.
     $this->assertParagraphsLangcode($node->id(), 'de', 'fr');
-    $this->assertText('Title in french');
-    $this->assertNoText('Title in english (de)');
+    $this->assertSession()->pageTextContains('Title in french');
+    $this->assertSession()->pageTextNotContains('Title in english (de)');
 
     // Back to the original node.
     $this->drupalGet('de/node/' . $node->id());
-    $this->assertText('Title in english (de)');
-    $this->assertNoText('Title in french');
+    $this->assertSession()->pageTextContains('Title in english (de)');
+    $this->assertSession()->pageTextNotContains('Title in french');
     // Check the original node and the paragraphs langcode are still 'de' and
     // check that the paragraphs buttons are still displayed.
     $this->clickLink('Edit');
@@ -688,7 +688,8 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     $form_display->save();
     // Create a node and check that the node langcode is 'english'.
     $this->drupalGet('node/add/paragraphed_content_demo');
-    $this->assertOptionSelected('edit-langcode-0-value', 'en');
+    $option_field = $this->assertSession()->optionExists('edit-langcode-0-value', 'en');
+    $this->assertTrue($option_field->hasAttribute('selected'));
     // Change the node langcode to 'german' and add a 'Nested Paragraph'.
     $edit = [
       'title[0][value]' => 'Title in german',
@@ -706,7 +707,7 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     ], t('Upload'));
     $this->assertParagraphsButtons(1);
     $this->drupalPostForm(NULL, NULL, t('Save'));
-    $this->assertText('Title in german');
+    $this->assertSession()->pageTextContains('Title in german');
     $node1 = $this->getNodeByTitle('Title in german');
 
     // Check the paragraph langcode is 'de' and its buttons are displayed.
@@ -741,7 +742,8 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     // Create another node.
     $this->drupalGet('node/add/paragraphed_content_demo');
     // Check that the node langcode is 'english' and add a 'Nested Paragraph'.
-    $this->assertOptionSelected('edit-langcode-0-value', 'en');
+    $option_field = $this->assertSession()->optionExists('edit-langcode-0-value', 'en');
+    $this->assertTrue($option_field->hasAttribute('selected'));
     $this->drupalPostForm(NULL, NULL, t('Add nested_paragraph'));
     // Check that the paragraphs buttons are displayed and add an 'Images'
     // paragraph inside the nested paragraph.
@@ -756,7 +758,7 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     $this->drupalPostForm(NULL, $edit, t('Upload'));
     $this->assertParagraphsButtons(1);
     $this->drupalPostForm(NULL, NULL, t('Save'));
-    $this->assertText('Title in english');
+    $this->assertSession()->pageTextContains('Title in english');
     $node2 = $this->drupalGetNodeByTitle('Title in english');
 
     // Check the paragraph langcode is 'en' and its buttons are displayed.
@@ -885,10 +887,10 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     for ($i = 0; $i < $count; $i++) {
       $remove_button = $this->xpath('//*[@name="field_paragraphs_demo_' . $i . '_remove"]');
       if (!$hidden) {
-        $this->assertNotEqual(count($remove_button), 0);
+        $this->assertNotEquals(count($remove_button), 0);
       }
       else {
-        $this->assertEqual(count($remove_button), 0);
+        $this->assertEquals(count($remove_button), 0);
       }
     }
 
@@ -896,10 +898,10 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     // the add more buttons presence for this test class.
     $add_button = $this->xpath('//input[@value="Add images"]');
     if (!$hidden) {
-      $this->assertNotEqual(count($add_button), 0);
+      $this->assertNotEquals(count($add_button), 0);
     }
     else {
-      $this->assertEqual(count($add_button), 0);
+      $this->assertEquals(count($add_button), 0);
     }
   }
 
@@ -919,13 +921,13 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     /** @var \Drupal\node\NodeInterface $node */
     $node = Node::load($node_id);
     $node_langcode = $node->langcode->value;
-    $this->assertEqual($node_langcode, $source_lang, 'Host langcode matches.');
+    $this->assertEquals($node_langcode, $source_lang, 'Host langcode matches.');
 
     /** @var \Drupal\Core\Entity\ContentEntityBase $paragraph */
     foreach ($node->field_paragraphs_demo->referencedEntities() as $paragraph) {
       $paragraph_langcode = $paragraph->language()->getId();
       $message = new FormattableMarkup('Node langcode is "@node", paragraph item langcode is "@item".', ['@node' => $source_lang, '@item' => $paragraph_langcode]);
-      $this->assertEqual($paragraph_langcode, $source_lang, $message);
+      $this->assertEquals($paragraph_langcode, $source_lang, $message);
     }
 
     // Check the translation.
@@ -935,7 +937,7 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
     if ($node->hasTranslation($trans_lang)) {
       $trans_node = $node->getTranslation($trans_lang);
       $trans_node_langcode = $trans_node->language()->getId();
-      $this->assertEqual($trans_node_langcode, $trans_lang, 'Translated node langcode matches.');
+      $this->assertEquals($trans_node_langcode, $trans_lang, 'Translated node langcode matches.');
 
       // Check the paragraph item langcode matching the translated node langcode.
       foreach ($trans_node->field_paragraphs_demo->referencedEntities() as $paragraph) {
@@ -943,7 +945,7 @@ class ParagraphsExperimentalTranslationTest extends ParagraphsExperimentalTestBa
           $trans_item = $paragraph->getTranslation($trans_lang);
           $paragraph_langcode = $trans_item->language()->getId();
           $message = new FormattableMarkup('Translated node langcode is "@node", paragraph item langcode is "@item".', ['@node' => $trans_lang, '@item' => $paragraph_langcode]);
-          $this->assertEqual($paragraph_langcode, $trans_lang, $message);
+          $this->assertEquals($paragraph_langcode, $trans_lang, $message);
         }
       }
     }

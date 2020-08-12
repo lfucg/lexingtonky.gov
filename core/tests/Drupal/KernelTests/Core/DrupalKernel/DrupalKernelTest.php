@@ -3,6 +3,7 @@
 namespace Drupal\KernelTests\Core\DrupalKernel;
 
 use Drupal\Core\DrupalKernel;
+use Drupal\Core\DrupalKernelInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -137,7 +138,7 @@ class DrupalKernelTest extends KernelTestBase {
     // Check that the container itself is not among the persist IDs because it
     // does not make sense to persist the container itself.
     $persist_ids = $container->getParameter('persist_ids');
-    $this->assertSame(FALSE, array_search('service_container', $persist_ids));
+    $this->assertNotContains('service_container', $persist_ids);
   }
 
   /**
@@ -158,10 +159,8 @@ class DrupalKernelTest extends KernelTestBase {
       $kernel = DrupalKernel::createFromRequest($request, $class_loader, $environment);
       $this->setSetting('container_yamls', []);
       $this->setSetting('hash_salt', $this->databasePrefix);
-      $kernel->boot();
+      $this->assertInstanceOf(DrupalKernelInterface::class, $kernel->boot(), "Environment $environment should boot.");
     }
-
-    $this->pass('Repeatedly loaded compiled DIC with different environment');
   }
 
   /**

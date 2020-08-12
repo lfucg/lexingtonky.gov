@@ -2,7 +2,8 @@
 
 namespace Drupal\entity_browser;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Component\Plugin\ConfigurableInterface;
+use Drupal\Component\Plugin\DependentPluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -17,7 +18,7 @@ use Drupal\Core\Form\FormStateInterface;
  * - Displaying the entity browser in an iframe.
  * - Displaying the entity browser in a modal dialog box.
  */
-interface DisplayInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
+interface DisplayInterface extends PluginInspectionInterface, ConfigurableInterface, PluginFormInterface, DependentPluginInterface {
 
   /**
    * Returns the display label.

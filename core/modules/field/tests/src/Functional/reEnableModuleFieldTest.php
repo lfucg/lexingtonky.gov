@@ -12,7 +12,7 @@ use Drupal\Tests\Traits\Core\CronRunTrait;
  *
  * @group field
  */
-class reEnableModuleFieldTest extends BrowserTestBase {
+class ReEnableModuleFieldTest extends BrowserTestBase {
 
   use CronRunTrait;
 
@@ -96,7 +96,10 @@ class reEnableModuleFieldTest extends BrowserTestBase {
 
     // Test that the module can't be uninstalled from the UI while there is data
     // for its fields.
-    $admin_user = $this->drupalCreateUser(['access administration pages', 'administer modules']);
+    $admin_user = $this->drupalCreateUser([
+      'access administration pages',
+      'administer modules',
+    ]);
     $this->drupalLogin($admin_user);
     $this->drupalGet('admin/modules/uninstall');
     $this->assertText("The Telephone number field type is used in the following field: node.field_telephone");

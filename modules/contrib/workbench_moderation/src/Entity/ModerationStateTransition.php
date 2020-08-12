@@ -32,6 +32,13 @@ use Drupal\workbench_moderation\ModerationStateTransitionInterface;
  *     "edit-form" = "/admin/structure/moderation-state/transitions/{moderation_state_transition}/edit",
  *     "delete-form" = "/admin/structure/moderation-state/transitions/{moderation_state_transition}/delete",
  *     "collection" = "/admin/structure/moderation-state/transitions"
+ *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "stateFrom",
+ *     "stateTo",
+ *     "weight",
  *   }
  * )
  */

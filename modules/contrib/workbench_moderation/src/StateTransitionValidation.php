@@ -4,7 +4,6 @@ namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\workbench_moderation\Entity\ModerationState;
 use Drupal\workbench_moderation\Entity\ModerationStateTransition;
@@ -20,11 +19,6 @@ class StateTransitionValidation {
   protected $entityTypeManager;
 
   /**
-   * @var \Drupal\Core\Entity\Query\QueryFactory
-   */
-  protected $queryFactory;
-
-  /**
    * Stores the possible state transitions.
    *
    * @var array
@@ -36,12 +30,9 @@ class StateTransitionValidation {
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
-   * @param \Drupal\Core\Entity\Query\QueryFactory $query_factory
-   *   The entity query factory.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
     $this->entityTypeManager = $entity_type_manager;
-    $this->queryFactory = $query_factory;
   }
 
   /**
@@ -243,7 +234,7 @@ class StateTransitionValidation {
    *   A transition state query.
    */
   protected function transitionStateQuery() {
-    return $this->queryFactory->get('moderation_state_transition', 'AND');
+    return $this->entityTypeManager->getStorage('moderation_state_transition')->getQuery('AND');;
   }
 
   /**

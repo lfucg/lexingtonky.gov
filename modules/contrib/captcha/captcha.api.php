@@ -28,6 +28,13 @@
  *   - $captcha['solution']: this is the solution of your challenge
  *   - $captcha['form']: an array of the form elements you want to add to the
  *     form.
+ *   - $captcha['cacheable']: (optional) boolean indicating whether the captcha
+ *     type is compatible with the form being cached. Defaults to FALSE. Note
+ *     that if this TRUE, the 'captcha_validate' key must be set to a callback
+ *     that ignores the solution.
+ *   - $captcha['captcha_validate']: (optional) The name of a function to call
+ *     to compare the solution with the given response. Defaults to
+ *     captcha_validate_strict_equality().
  *
  * There should be a key 'captcha_response' in this array, which points to
  * the form element where the user enters the answer.

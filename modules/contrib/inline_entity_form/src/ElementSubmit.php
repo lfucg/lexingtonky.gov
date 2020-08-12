@@ -72,7 +72,7 @@ class ElementSubmit {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public static function trigger($form, FormStateInterface $form_state) {
+  public static function trigger(&$form, FormStateInterface $form_state) {
     $triggered_element = $form_state->getTriggeringElement();
     if (!empty($triggered_element['#ief_submit_trigger_all'])) {
       // The parent form was submitted, process all IEFs and their children.
@@ -95,7 +95,7 @@ class ElementSubmit {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public static function doSubmit($element, FormStateInterface $form_state) {
+  public static function doSubmit(&$element, FormStateInterface $form_state) {
     // Recurse through all children.
     foreach (Element::children($element) as $key) {
       if (!empty($element[$key])) {

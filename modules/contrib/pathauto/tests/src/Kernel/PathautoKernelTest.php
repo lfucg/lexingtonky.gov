@@ -27,7 +27,7 @@ class PathautoKernelTest extends KernelTestBase {
 
   use PathautoTestHelperTrait;
 
-  public static $modules = ['system', 'field', 'text', 'user', 'node', 'path', 'pathauto', 'taxonomy', 'token', 'filter', 'ctools', 'language'];
+  public static $modules = ['system', 'field', 'text', 'user', 'node', 'path', 'path_alias', 'pathauto', 'pathauto_custom_punctuation_test', 'taxonomy', 'token', 'filter', 'ctools', 'language'];
 
   protected $currentUser;
 
@@ -43,7 +43,6 @@ class PathautoKernelTest extends KernelTestBase {
 
   public function setUp() {
     parent::setup();
-
 
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
@@ -193,6 +192,11 @@ class PathautoKernelTest extends KernelTestBase {
 
     // Test with default settings defined in pathauto.settings.yml.
     $this->installConfig(['pathauto']);
+
+    // Add a custom setting for the copyright symbol defined in
+    // pathauto_custom_punctuation_test_pathauto_punctuation_chars_alter().
+    $this->config('pathauto.settings')->set('punctuation.copyright', PathautoGeneratorInterface::PUNCTUATION_REMOVE);
+
     \Drupal::service('pathauto.generator')->resetCaches();
 
     $tests = [];
@@ -215,6 +219,9 @@ class PathautoKernelTest extends KernelTestBase {
 
     // Transliteration.
     $tests['ľščťžýáíéňô'] = 'lsctzyaieno';
+
+    // Transliteration of special chars that are converted to punctuation.
+    $tests['© “Drupal”'] = 'drupal';
 
     foreach ($tests as $input => $expected) {
       $output = \Drupal::service('pathauto.alias_cleaner')->cleanString($input);
@@ -251,18 +258,18 @@ class PathautoKernelTest extends KernelTestBase {
    * Test pathauto_path_delete_multiple().
    */
   public function testPathDeleteMultiple() {
-    $this->saveAlias('/node/1', '/node-1-alias');
-    $this->saveAlias('/node/1/view', '/node-1-alias/view');
-    $this->saveAlias('/node/1', '/node-1-alias-en', 'en');
-    $this->saveAlias('/node/1', '/node-1-alias-fr', 'fr');
-    $this->saveAlias('/node/2', '/node-2-alias');
-    $this->saveAlias('/node/10', '/node-10-alias');
+    $this->createPathAlias('/node/1', '/node-1-alias');
+    $this->createPathAlias('/node/1/view', '/node-1-alias/view');
+    $this->createPathAlias('/node/1', '/node-1-alias-en', 'en');
+    $this->createPathAlias('/node/1', '/node-1-alias-fr', 'fr');
+    $this->createPathAlias('/node/2', '/node-2-alias');
+    $this->createPathAlias('/node/10', '/node-10-alias');
 
     \Drupal::service('pathauto.alias_storage_helper')->deleteBySourcePrefix('/node/1');
-    $this->assertNoAliasExists(['source' => "/node/1"]);
-    $this->assertNoAliasExists(['source' => "/node/1/view"]);
-    $this->assertAliasExists(['source' => "/node/2"]);
-    $this->assertAliasExists(['source' => "/node/10"]);
+    $this->assertNoAliasExists(['path' => "/node/1"]);
+    $this->assertNoAliasExists(['path' => "/node/1/view"]);
+    $this->assertAliasExists(['path' => "/node/2"]);
+    $this->assertAliasExists(['path' => "/node/10"]);
   }
 
   /**
@@ -293,7 +300,7 @@ class PathautoKernelTest extends KernelTestBase {
     $node->setTitle('Third title');
     $node->save();
     $this->assertEntityAlias($node, '/content/third-title');
-    $this->assertAliasExists(['source' => '/' . $node->toUrl()->getInternalPath(), 'alias' => '/content/second-title']);
+    $this->assertAliasExists(['path' => '/' . $node->toUrl()->getInternalPath(), 'alias' => '/content/second-title']);
 
     $config->set('update_action', PathautoGeneratorInterface::UPDATE_ACTION_DELETE);
     $config->save();
@@ -302,8 +309,8 @@ class PathautoKernelTest extends KernelTestBase {
     $this->assertEntityAlias($node, '/content/fourth-title');
     $this->assertNoAliasExists(['alias' => '/content/third-title']);
     // The older second alias is not deleted yet.
-    $older_path = $this->assertAliasExists(['source' => '/' . $node->toUrl()->getInternalPath(), 'alias' => '/content/second-title']);
-    \Drupal::service('path.alias_storage')->delete($older_path);
+    $older_path = $this->assertAliasExists(['path' => '/' . $node->toUrl()->getInternalPath(), 'alias' => '/content/second-title']);
+    \Drupal::service('entity_type.manager')->getStorage('path_alias')->delete([$older_path]);
 
     $config->set('update_action', PathautoGeneratorInterface::UPDATE_ACTION_NO_NEW);
     $config->save();
@@ -364,7 +371,7 @@ class PathautoKernelTest extends KernelTestBase {
   /**
    * Test using fields for path structures.
    */
-  function testParentChildPathTokens() {
+  public function testParentChildPathTokens() {
     // First create a field which will be used to create the path. It must
     // begin with a letter.
     $this->installEntitySchema('taxonomy_term');
@@ -377,7 +384,7 @@ class PathautoKernelTest extends KernelTestBase {
     $field = FieldConfig::create(['field_storage' => $field_storage, 'bundle' => 'tags']);
     $field->save();
 
-    $display = entity_get_display('taxonomy_term', 'tags', 'default');
+    $display = \Drupal::service('entity_display.repository')->getViewDisplay('taxonomy_term', 'tags');
     $display->setComponent($fieldname, ['type' => 'string']);
     $display->save();
 
@@ -404,7 +411,7 @@ class PathautoKernelTest extends KernelTestBase {
    */
   public function testTaxonomyPattern() {
     // Create a vocabulary and test that it's pattern variable works.
-    $vocab = $this->addVocabulary(['vid' => 'name']);
+    $this->addVocabulary(['vid' => 'name']);
     $this->createPattern('taxonomy_term', 'base');
     $pattern = $this->createPattern('taxonomy_term', 'bundle', -1);
     $this->addBundleCondition($pattern, 'taxonomy_term', 'name');
@@ -412,7 +419,7 @@ class PathautoKernelTest extends KernelTestBase {
     $this->assertEntityPattern('taxonomy_term', 'name', Language::LANGCODE_NOT_SPECIFIED, 'bundle');
   }
 
-  function testNoExistingPathAliases() {
+  public function testNoExistingPathAliases() {
     $this->config('pathauto.settings')
       ->set('punctuation.period', PathautoGeneratorInterface::PUNCTUATION_DO_NOTHING)
       ->save();
@@ -445,7 +452,7 @@ class PathautoKernelTest extends KernelTestBase {
   /**
    * Test programmatic entity creation for aliases.
    */
-  function testProgrammaticEntityCreation() {
+  public function testProgrammaticEntityCreation() {
     $node = $this->drupalCreateNode(['title' => 'Test node', 'path' => ['pathauto' => TRUE]]);
     $this->assertEntityAlias($node, '/content/test-node');
 
@@ -475,7 +482,7 @@ class PathautoKernelTest extends KernelTestBase {
   /**
    * Tests word safe alias truncating.
    */
-  function testPathAliasUniquifyWordsafe() {
+  public function testPathAliasUniquifyWordsafe() {
     $this->config('pathauto.settings')
       ->set('max_length', 26)
       ->save();
@@ -493,7 +500,7 @@ class PathautoKernelTest extends KernelTestBase {
   /**
    * Test if aliases are (not) generated with enabled/disabled patterns.
    */
-  function testPatternStatus() {
+  public function testPatternStatus() {
     // Create a node to get an alias for.
     $title = 'Pattern enabled';
     $alias = '/content/pattern-enabled';

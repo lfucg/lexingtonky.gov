@@ -8,6 +8,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
+use Drupal\Tests\TestFileCreationTrait;
 
 /**
  * Tests the image field widget.
@@ -15,6 +16,8 @@ use Drupal\node\Entity\Node;
  * @group entity_browser
  */
 class ImageFieldTest extends EntityBrowserWebDriverTestBase {
+
+  use TestFileCreationTrait;
 
   /**
    * Created file entity.
@@ -49,7 +52,15 @@ class ImageFieldTest extends EntityBrowserWebDriverTestBase {
       ],
     ])->save();
 
-    \Drupal::service('file_system')->copy(\Drupal::root() . '/core/modules/simpletest/files/image-test.jpg', 'public://example.jpg');
+    $test_files = $this->getTestFiles('image');
+    foreach ($test_files as $test_file) {
+      if ($test_file->filename === 'image-test.jpg') {
+        break;
+      }
+    }
+
+    $file_system = $this->container->get('file_system');
+    $file_system->copy($file_system->realpath($test_file->uri), 'public://example.jpg');
     $this->image = File::create([
       'uri' => 'public://example.jpg',
     ]);
@@ -155,7 +166,14 @@ class ImageFieldTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->pageTextNotContains('example.jpg');
     $this->assertSession()->linkExists('Select entities');
     // Test the Replace functionality.
-    \Drupal::service('file_system')->copy(\Drupal::root() . '/core/modules/simpletest/files/image-test.jpg', 'public://example2.jpg');
+    $test_files = $this->getTestFiles('image');
+    foreach ($test_files as $test_file) {
+      if ($test_file->filename === 'image-test.jpg') {
+        break;
+      }
+    }
+    $file_system = $this->container->get('file_system');
+    $file_system->copy($file_system->realpath($test_file->uri), 'public://example2.jpg');
     $image2 = File::create(['uri' => 'public://example2.jpg']);
     $image2->save();
     \Drupal::service('file.usage')->add($image2, 'entity_browser', 'test', '1');
@@ -181,8 +199,18 @@ class ImageFieldTest extends EntityBrowserWebDriverTestBase {
   public function testImageFieldSettings() {
     $root = \Drupal::root();
     $file_wrong_type = $root . '/core/misc/druplicon.png';
-    $file_too_big = $root . '/core/modules/simpletest/files/image-2.jpg';
-    $file_just_right = $root . '/core/modules/simpletest/files/image-test.jpg';
+
+    $test_files = $this->getTestFiles('image');
+    $file_system = $this->container->get('file_system');
+    foreach ($test_files as $test_file) {
+      if ($test_file->filename === 'image-test.jpg') {
+        $file_just_right = $file_system->realpath($test_file->uri);
+      }
+      elseif ($test_file->filename === 'image-2.jpg') {
+        $file_too_big = $file_system->realpath($test_file->uri);
+      }
+    }
+
     $this->drupalGet('node/add/article');
     $this->assertSession()->linkExists('Select images');
     $this->getSession()->getPage()->clickLink('Select images');

@@ -3,6 +3,10 @@
 namespace Drupal\Tests\entity_browser\FunctionalJavascript;
 
 use Drupal\file\Entity\File;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\entity_browser\Element\EntityBrowserElement;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Entity Browser views widget tests.
@@ -31,6 +35,8 @@ class EntityBrowserViewsWidgetTest extends EntityBrowserWebDriverTestBase {
 
     $user = $this->drupalCreateUser([
       'access test_entity_browser_file entity browser pages',
+      'access test_double_underscore entity browser pages',
+      'bypass node access',
     ]);
     $this->drupalLogin($user);
   }
@@ -107,9 +113,81 @@ class EntityBrowserViewsWidgetTest extends EntityBrowserWebDriverTestBase {
     $this->getSession()->getPage()->fillField('entity_browser_select[file:2]', TRUE);
     $this->getSession()->getPage()->pressButton('Select entities');
 
-    $this->assertSession()->pageTextContains('You can not select more than 1 entity.');
+    $this->assertSession()->pageTextContains('You can only select one item.');
     $this->assertSession()->checkboxNotChecked('entity_browser_select[file:1]');
     $this->assertSession()->checkboxNotChecked('entity_browser_select[file:2]');
+
+    // Test entity_browser.view.js adding AJAX to exposed forms.
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => 'field_alderaan',
+      'type' => 'entity_reference',
+      'entity_type' => 'node',
+      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
+      'settings' => [
+        'target_type' => 'node',
+      ],
+    ]);
+    $field_storage->save();
+
+    $field = FieldConfig::create([
+      'field_name' => 'field_alderaan',
+      'entity_type' => 'node',
+      'bundle' => 'article',
+      'label' => 'Referenced articles',
+      'settings' => [],
+    ]);
+    $field->save();
+
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
+    $form_display = $this->container->get('entity_type.manager')
+      ->getStorage('entity_form_display')
+      ->load('node.article.default');
+
+    $form_display->setComponent('field_alderaan', [
+      'type' => 'entity_browser_entity_reference',
+      'settings' => [
+        'entity_browser' => 'test_double_underscore',
+        'open' => TRUE,
+        'field_widget_edit' => TRUE,
+        'field_widget_remove' => TRUE,
+        'field_widget_replace' => FALSE,
+        'selection_mode' => EntityBrowserElement::SELECTION_MODE_APPEND,
+        'field_widget_display' => 'label',
+        'field_widget_display_settings' => [],
+      ],
+    ])->save();
+
+    $nodes = [
+      'Happy families are all alike',
+      'Call me Ishmael',
+    ];
+
+    foreach ($nodes as $title) {
+      $this->createNode([
+        'title' => $title,
+        'type' => 'article',
+      ]);
+    }
+
+    $this->drupalGet('/node/add/article');
+    $this->assertSession()->waitForElementVisible('css', '#entity-browser-test-double-underscore-form');
+
+    $this->getSession()->switchToIFrame('entity_browser_iframe_test_double_underscore');
+    foreach ($nodes as $title) {
+      $this->assertSession()->pageTextContains($title);
+    }
+
+    $this->assertSession()->fieldExists('title')->setValue('Ishmael');
+    $this->assertSession()->buttonExists('Apply')->press();
+    $this->waitForAjaxToFinish();
+    $this->assertSession()->pageTextContains('Call me Ishmael');
+    $this->assertSession()->pageTextNotContains('Happy families are all alike');
+    $this->assertSession()->fieldExists('title')->setValue('families');
+    $this->assertSession()->buttonExists('Apply')->press();
+    $this->waitForAjaxToFinish();
+    $this->assertSession()->pageTextNotContains('Call me Ishmael');
+    $this->assertSession()->pageTextContains('Happy families are all alike');
+
   }
 
 }

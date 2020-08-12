@@ -25,7 +25,15 @@ class MasqueradeCacheContext extends RequestStackCacheContextBase implements Cac
    * {@inheritdoc}
    */
   public function getContext() {
-    return !empty($_SESSION['masquerading']) ? '1' : '0';
+    if ($request = $this->requestStack->getCurrentRequest()) {
+      if ($request->hasSession() && ($session = $request->getSession())) {
+        if ($session->has('masquerading')) {
+          // Previous account supposed to be Authenticated.
+          return '1';
+        }
+      }
+    }
+    return '0';
   }
 
   /**

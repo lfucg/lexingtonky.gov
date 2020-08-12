@@ -23,8 +23,8 @@ function hook_autologout_prevent() {
   $path_args = explode('/', current_path());
   $blacklist = [
     'ajax',
-    'autologout_ahah_logout',
-    'autologout_ahah_set_last',
+    'autologout_ajax_logout',
+    'autologout_ajax_set_last',
   ];
 
   if (in_array($path_args[0], $blacklist)) {

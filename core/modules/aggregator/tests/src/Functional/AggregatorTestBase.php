@@ -27,7 +27,13 @@ abstract class AggregatorTestBase extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['block', 'node', 'aggregator', 'aggregator_test', 'views'];
+  public static $modules = [
+    'block',
+    'node',
+    'aggregator',
+    'aggregator_test',
+    'views',
+  ];
 
   /**
    * {@inheritdoc}
@@ -40,7 +46,12 @@ abstract class AggregatorTestBase extends BrowserTestBase {
       $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
     }
 
-    $this->adminUser = $this->drupalCreateUser(['access administration pages', 'administer news feeds', 'access news feeds', 'create article content']);
+    $this->adminUser = $this->drupalCreateUser([
+      'access administration pages',
+      'administer news feeds',
+      'access news feeds',
+      'create article content',
+    ]);
     $this->drupalLogin($this->adminUser);
     $this->drupalPlaceBlock('local_tasks_block');
   }
@@ -175,22 +186,19 @@ abstract class AggregatorTestBase extends BrowserTestBase {
   public function updateFeedItems(FeedInterface $feed, $expected_count = NULL) {
     // First, let's ensure we can get to the rss xml.
     $this->drupalGet($feed->getUrl());
-    $this->assertResponse(200, new FormattableMarkup(':url is reachable.', [':url' => $feed->getUrl()]));
+    $this->assertSession()->statusCodeEquals(200);
 
     // Attempt to access the update link directly without an access token.
     $this->drupalGet('admin/config/services/aggregator/update/' . $feed->id());
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
 
     // Refresh the feed (simulated link click).
     $this->drupalGet('admin/config/services/aggregator');
     $this->clickLink('Update items');
 
     // Ensure we have the right number of items.
-    $iids = \Drupal::entityQuery('aggregator_item')->condition('fid', $feed->id())->execute();
-    $feed->items = [];
-    foreach ($iids as $iid) {
-      $feed->items[] = $iid;
-    }
+    $item_ids = \Drupal::entityQuery('aggregator_item')->condition('fid', $feed->id())->execute();
+    $feed->items = array_values($item_ids);
 
     if ($expected_count !== NULL) {
       $feed->item_count = count($feed->items);

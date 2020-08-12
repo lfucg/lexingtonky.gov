@@ -23,7 +23,12 @@ class ToolbarMenuTranslationTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['toolbar', 'toolbar_test', 'locale', 'locale_test'];
+  public static $modules = [
+    'toolbar',
+    'toolbar_test',
+    'locale',
+    'locale_test',
+  ];
 
   /**
    * {@inheritdoc}
@@ -34,7 +39,12 @@ class ToolbarMenuTranslationTest extends BrowserTestBase {
     parent::setUp();
 
     // Create an administrative user and log it in.
-    $this->adminUser = $this->drupalCreateUser(['access toolbar', 'translate interface', 'administer languages', 'access administration pages']);
+    $this->adminUser = $this->drupalCreateUser([
+      'access toolbar',
+      'translate interface',
+      'administer languages',
+      'access administration pages',
+    ]);
     $this->drupalLogin($this->adminUser);
   }
 
@@ -66,7 +76,7 @@ class ToolbarMenuTranslationTest extends BrowserTestBase {
 
     // Check that the class is on the item before we translate it.
     $xpath = $this->xpath('//a[contains(@class, "icon-system-admin-structure")]');
-    $this->assertEqual(count($xpath), 1, 'The menu item class ok before translation.');
+    $this->assertCount(1, $xpath, 'The menu item class ok before translation.');
 
     // Translate the menu item.
     $menu_item_translated = $this->randomMachineName();
@@ -95,7 +105,7 @@ class ToolbarMenuTranslationTest extends BrowserTestBase {
     // Toolbar icons are included based on the presence of a specific class on
     // the menu item. Ensure that class also exists for a translated menu item.
     $xpath = $this->xpath('//a[contains(@class, "icon-system-admin-structure")]');
-    $this->assertEqual(count($xpath), 1, 'The menu item class is the same.');
+    $this->assertCount(1, $xpath, 'The menu item class is the same.');
   }
 
 }

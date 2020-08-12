@@ -17,7 +17,16 @@ class MetatagSerializationTest extends FieldKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['metatag', 'serialization'];
+  public static $modules = [
+    // Core modules.
+    'serialization',
+
+    // Contrib modules.
+    'token',
+
+    // This module.
+    'metatag',
+  ];
 
   /**
    * The serializer service.
@@ -57,7 +66,8 @@ class MetatagSerializationTest extends FieldKernelTestBase {
     $json = json_decode($this->serializer->serialize($entity, 'json'), TRUE);
     $json['field_test'][0]['value'] = 'string data';
     $serialized = json_encode($json, TRUE);
-    $this->setExpectedException(\LogicException::class, 'The generic FieldItemNormalizer cannot denormalize string values for "value" properties of the "field_test" field (field item class: Drupal\metatag\Plugin\Field\FieldType\MetatagFieldItem).');
+    $this->expectException(\LogicException::class);
+    $this->expectExceptionMessage('The generic FieldItemNormalizer cannot denormalize string values for "value" properties of the "field_test" field (field item class: Drupal\metatag\Plugin\Field\FieldType\MetatagFieldItem).');
     $this->serializer->deserialize($serialized, EntityTest::class, 'json');
   }
 

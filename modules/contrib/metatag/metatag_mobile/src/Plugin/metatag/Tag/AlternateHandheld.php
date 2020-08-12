@@ -17,7 +17,7 @@ namespace Drupal\metatag_mobile\Plugin\metatag\Tag;
  *   multiple = FALSE
  * )
  */
-class alternateHandheld extends LinkMediaBase {
+class AlternateHandheld extends LinkMediaBase {
 
   /**
    * {@inheritdoc}

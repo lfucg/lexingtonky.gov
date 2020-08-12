@@ -52,3 +52,6 @@ CONFIGURATION
 * So if a user has a user timeout set, that is their timeout threshold,
   if none is set the lowest timeout value based on all the roles the user
   belongs to is used, if none is set the global timeout is used.
+* Make sure the timeout value in seconds is smaller than the value for
+  session.gc_maxlifetime. Otherwise your session will be destroyed before
+  autologout kicks in.

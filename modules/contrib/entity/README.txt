@@ -13,3 +13,4 @@ Current functionality:
 - Bundle plugin API (plugin-based entity bundles, currently not proposed for core inclusion)
 - A generic UI for revisions (WIP, see #2625122)
 - Duplicate entity UI
+- EntityViewsData handler with many improvements over the one in core.

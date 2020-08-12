@@ -14,7 +14,7 @@ class MetatagDublinCoreTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  private $tags = [
+  protected $tags = [
     'dcterms_contributor',
     'dcterms_coverage',
     'dcterms_creator',
@@ -43,7 +43,7 @@ class MetatagDublinCoreTagsTest extends MetatagTagsTestBase {
   /**
    * Each of these meta tags has a different tag name vs its internal name.
    */
-  private function getTestTagName($tag_name) {
+  protected function getTestTagName($tag_name) {
     return str_replace('_', '.', $tag_name);
   }
 

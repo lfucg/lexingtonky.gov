@@ -10,13 +10,14 @@ use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Tests\UnitTestCase;
 use Drupal\workbench_moderation\ModerationInformation;
 
 /**
  * @coversDefaultClass \Drupal\workbench_moderation\ModerationInformation
  * @group workbench_moderation
  */
-class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
+class ModerationInformationTest extends UnitTestCase {
 
   /**
    * Builds a mock user.

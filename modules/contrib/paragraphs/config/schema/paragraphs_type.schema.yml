@@ -11,12 +11,16 @@ paragraphs.paragraphs_type.*:
     icon_uuid:
       type: string
       label: 'Icon uuid'
+    icon_default:
+      type: string
+      label: 'Default icon'
     description:
       type: text
       label: 'Description'
     behavior_plugins:
       type: sequence
       label: 'Plugins'
+      orderby: key
       sequence:
         type: paragraphs.behavior.settings.[%key]
         label: 'Behavior plugins'
@@ -41,6 +45,7 @@ entity_reference_selection.default:paragraph:
       type: integer
     target_bundles_drag_drop:
       type: sequence
+      orderby: key
       sequence:
         type: mapping
         mapping:
@@ -98,5 +103,6 @@ field.widget.settings.paragraphs:
       type: string
     features:
       type: sequence
+      orderby: key
       sequence:
         type: string

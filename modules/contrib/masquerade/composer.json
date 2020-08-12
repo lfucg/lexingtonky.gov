@@ -35,6 +35,9 @@
     "irc": "irc://irc.freenode.org/drupal-contribute",
     "source": "https://git.drupal.org/project/masquerade.git"
   },
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "drupal/core": "^8.7.7 || ^9"
+  },
   "minimum-stability": "dev"
 }

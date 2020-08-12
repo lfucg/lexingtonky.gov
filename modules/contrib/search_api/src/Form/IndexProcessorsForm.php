@@ -136,7 +136,7 @@ class IndexProcessorsForm extends EntityForm {
     $form['#tree'] = TRUE;
     $form['#attached']['library'][] = 'search_api/drupal.search_api.processors';
     $form['#title'] = $this->t('Manage processors for search index %label', ['%label' => $this->entity->label()]);
-    $form['description']['#markup'] = '<p>' . $this->t('Configure processors which will pre- and post-process data at index and search time.') . '</p>';
+    $form['description']['#markup'] = '<p>' . $this->t('Configure processors which will pre- and post-process data at index and search time. Find more information on the <a href=":url" target="_blank">processors documentation page</a>.', [':url' => 'https://www.drupal.org/docs/8/modules/search-api/getting-started/processors']) . '</p>';
 
     // Add the list of processors with checkboxes to enable/disable them.
     $form['status'] = [

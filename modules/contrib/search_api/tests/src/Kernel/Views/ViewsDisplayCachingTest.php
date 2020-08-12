@@ -317,15 +317,16 @@ class ViewsDisplayCachingTest extends KernelTestBase {
       // Views. This is expected to disable caching.
       [
         'none',
-        // It is expected that only the configuration of the view itself is
-        // available as a cache tag.
+        // Cache tags for index and view config are included at the query level,
+        // so should still be present even when disabling caching.
         [
+          'config:search_api.index.database_search_index',
           'config:views.view.search_api_test_cache',
         ],
         // No specific cache contexts are expected to be present.
         [],
-        // It is expected that the cache max-age is set to zero, effectively
-        // disabling the cache.
+        // The cache max-age should be returned as zero, effectively disabling
+        // the cache.
         0,
         // It is expected that no results are cached.
         FALSE,
@@ -337,9 +338,9 @@ class ViewsDisplayCachingTest extends KernelTestBase {
       [
         'tag',
         [
-          // It is expected that the configuration of the view itself is
-          // available as a cache tag, so that the caches are invalidated if the
-          // view configuration changes.
+          // The cache should be invalidated when either index or view are
+          // modified.
+          'config:search_api.index.database_search_index',
           'config:views.view.search_api_test_cache',
           // The view shows an entity, so it should be invalidated when that
           // entity changes.
@@ -362,9 +363,9 @@ class ViewsDisplayCachingTest extends KernelTestBase {
       [
         'time',
         [
-          // It is expected that the configuration of the view itself is
-          // available as a cache tag, so that the caches are invalidated if the
-          // view configuration changes. No other tags should be available.
+          // The cache should be invalidated when either index or view are
+          // modified.
+          'config:search_api.index.database_search_index',
           'config:views.view.search_api_test_cache',
         ],
         // No specific cache contexts are expected to be present.

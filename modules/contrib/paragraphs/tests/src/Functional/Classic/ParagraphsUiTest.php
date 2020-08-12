@@ -99,7 +99,7 @@ class ParagraphsUiTest extends ParagraphsTestBase {
     $title = 'Empty';
     $this->drupalGet('node/add/paragraphed_content_demo');
     $this->drupalPostForm(NULL, ['title[0][value]' => $title], t('Save'));
-    $this->assertText($field_title . ' field is required');
+    $this->assertSession()->pageTextContains($field_title . ' field is required');
 
     // Attempt to create a paragraphed node with only a paragraph in the
     // "remove" mode in the required field.
@@ -107,9 +107,9 @@ class ParagraphsUiTest extends ParagraphsTestBase {
     $this->drupalGet('node/add/paragraphed_content_demo');
     $this->drupalPostForm(NULL, [], 'field_content_text_image_add_more');
     $this->drupalPostForm(NULL, [], 'field_content_0_remove');
-    $this->assertNoText($field_title . ' field is required');
+    $this->assertSession()->pageTextNotContains($field_title . ' field is required');
     $this->drupalPostForm(NULL, ['title[0][value]' => $title], t('Save'));
-    $this->assertText($field_title . ' field is required');
+    $this->assertSession()->pageTextContains($field_title . ' field is required');
   }
 
 }

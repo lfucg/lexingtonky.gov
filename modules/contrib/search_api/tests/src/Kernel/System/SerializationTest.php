@@ -132,7 +132,7 @@ class SerializationTest extends KernelTestBase {
     $query = $this->createTestQuery();
     // Since Drupal's DB layer sometimes has problems with side-effects of
     // __toString(), we here try to make sure this won't happen to us.
-    $this->assertInternalType('string', (string) $query);
+    $this->assertIsString((string) $query);
 
     $clone = clone $query;
 

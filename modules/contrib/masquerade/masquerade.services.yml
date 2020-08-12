@@ -1,7 +1,7 @@
 services:
   masquerade:
     class: Drupal\masquerade\Masquerade
-    arguments: ['@current_user', '@entity_type.manager', '@module_handler', '@session_manager', '@logger.channel.masquerade', '@user.permissions']
+    arguments: ['@current_user', '@entity_type.manager', '@module_handler', '@session_manager', '@session', '@logger.channel.masquerade', '@user.permissions']
   logger.channel.masquerade:
     parent: logger.channel_base
     arguments: ['masquerade']
@@ -20,3 +20,6 @@ services:
     arguments: ['@request_stack']
     tags:
       - { name: cache.context }
+  masquerade.callbacks:
+    class: Drupal\masquerade\MasqueradeCallbacks
+    arguments: ['@entity_type.manager', '@masquerade']

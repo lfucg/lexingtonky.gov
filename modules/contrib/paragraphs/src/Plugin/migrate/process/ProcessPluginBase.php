@@ -2,7 +2,7 @@
 
 namespace Drupal\paragraphs\Plugin\migrate\process;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Base class for Paragraphs process plugins.
  */
-abstract class ProcessPluginBase extends MigrateProcessPluginBase implements ConfigurablePluginInterface, ContainerFactoryPluginInterface {
+abstract class ProcessPluginBase extends MigrateProcessPluginBase implements ConfigurableInterface, ContainerFactoryPluginInterface {
 
   /**
    * The entity bundle info service.
@@ -60,13 +60,6 @@ abstract class ProcessPluginBase extends MigrateProcessPluginBase implements Con
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function calculateDependencies() {
     return [];
   }
 

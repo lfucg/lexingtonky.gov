@@ -96,7 +96,7 @@ trait TestItemsTrait {
       foreach ($fields as $combined_property_path => $field_info) {
         list($field_info['datasource_id'], $field_info['property_path']) = Utility::splitCombinedId($combined_property_path);
         // Only add fields of the right datasource.
-        if (isset($field_info['datasource_id']) && $field_info['datasource_id'] != $datasource_id) {
+        if (!in_array($field_info['datasource_id'], [NULL, $datasource_id], TRUE)) {
           continue;
         }
         $fields_helper = \Drupal::getContainer()

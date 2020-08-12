@@ -15,12 +15,10 @@ class EntityTranslationRenderer extends TranslationLanguageRenderer {
    * {@inheritdoc}
    */
   public function getLangcode(ViewsResultRow $row) {
-    if (!empty($row->search_api_language)) {
-      return $row->search_api_language;
-    }
-    // If our normal query plugin is used, this shouldn't really ever happen,
-    // but if it does we fall back to the current request's content language.
-    return $this->languageManager
+    // If our normal query plugin is used, the fallback shouldn't really ever be
+    // needed, but if it is we fall back to the current request's content
+    // language.
+    return $row->search_api_language ?? $this->languageManager
       ->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)
       ->getId();
   }

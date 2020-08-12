@@ -28,7 +28,7 @@ class Cardinality extends WidgetValidationBase {
     $count = count($entities);
     $max = $options['cardinality'];
     if ($max !== EntityBrowserElement::CARDINALITY_UNLIMITED && $count > $max) {
-      $message = $this->formatPlural($max, 'You can not select more than 1 entity.', 'You can not select more than @count entities.');
+      $message = $this->formatPlural($max, 'You can only select one item.', 'You can only select up to @number items.', ['@number' => $max]);
       $violation = new ConstraintViolation($message, $message, [], $count, '', $count);
       $violations->add($violation);
     }

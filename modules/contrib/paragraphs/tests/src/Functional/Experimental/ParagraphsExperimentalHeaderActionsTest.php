@@ -53,18 +53,18 @@ class ParagraphsExperimentalHeaderActionsTest extends ParagraphsExperimentalTest
 
     // Add 2 paragraphs and check for Collapse/Edit all button.
     $this->drupalGet('node/add/paragraphed_test');
-    $this->assertNoRaw('field_paragraphs_collapse_all');
-    $this->assertNoRaw('field_paragraphs_edit_all');
-    $this->assertRaw('field_paragraphs_dragdrop_mode');
+    $this->assertSession()->responseNotContains('field_paragraphs_collapse_all');
+    $this->assertSession()->responseNotContains('field_paragraphs_edit_all');
+    $this->assertSession()->responseContains('field_paragraphs_dragdrop_mode');
 
     // Ensure there is only a single table row.
     $table_rows = $this->xpath('//table[contains(@class, :class)]/tbody/tr', [':class' => 'field-multiple-table']);
-    $this->assertEqual(1, count($table_rows));
+    $this->assertEquals(1, count($table_rows));
 
     // Add second paragraph and check for Collapse/Edit all button.
     $this->drupalPostForm(NULL, [], 'field_paragraphs_text_paragraph_add_more');
-    $this->assertRaw('field_paragraphs_collapse_all');
-    $this->assertRaw('field_paragraphs_edit_all');
+    $this->assertSession()->responseContains('field_paragraphs_collapse_all');
+    $this->assertSession()->responseContains('field_paragraphs_edit_all');
 
     $edit = [
       'field_paragraphs[0][subform][field_text][0][value]' => 'First text',
@@ -73,24 +73,24 @@ class ParagraphsExperimentalHeaderActionsTest extends ParagraphsExperimentalTest
     $this->drupalPostForm(NULL, $edit, 'Collapse all');
 
     // Checks that after collapsing all we can edit again these paragraphs.
-    $this->assertRaw('field_paragraphs_0_edit');
-    $this->assertRaw('field_paragraphs_1_edit');
+    $this->assertSession()->responseContains('field_paragraphs_0_edit');
+    $this->assertSession()->responseContains('field_paragraphs_1_edit');
 
     // Test Edit all button.
     $this->drupalPostForm(NULL, [], 'field_paragraphs_edit_all');
-    $this->assertRaw('field_paragraphs_0_collapse');
-    $this->assertRaw('field_paragraphs_1_collapse');
+    $this->assertSession()->responseContains('field_paragraphs_0_collapse');
+    $this->assertSession()->responseContains('field_paragraphs_1_collapse');
 
     $edit = [
       'title[0][value]' => 'Test',
     ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
-    $this->assertText('paragraphed_test Test has been created.');
+    $this->assertSession()->pageTextContains('paragraphed_test Test has been created.');
 
     $node = $this->getNodeByTitle('Test');
     $this->drupalGet('node/' . $node->id());
     $this->clickLink('Edit');
-    $this->assertNoText('No Paragraph added yet.');
+    $this->assertSession()->pageTextNotContains('No Paragraph added yet.');
 
     // Add and remove another paragraph.
     $this->drupalPostForm(NULL, [], 'field_paragraphs_text_paragraph_add_more');
@@ -102,26 +102,26 @@ class ParagraphsExperimentalHeaderActionsTest extends ParagraphsExperimentalTest
     // Check that pressing "Collapse all" does not restore the removed
     // paragraph.
     $this->drupalPostForm(NULL, [], 'field_paragraphs_edit_all');
-    $this->assertText('First text');
-    $this->assertText('Second text');
-    $this->assertNoText('Third text');
+    $this->assertSession()->pageTextContains('First text');
+    $this->assertSession()->pageTextContains('Second text');
+    $this->assertSession()->pageTextNotContains('Third text');
 
     // Check that pressing "Edit all" does not restore the removed paragraph,
     // either.
     $this->drupalPostForm(NULL, [], 'field_paragraphs_collapse_all');
-    $this->assertText('First text');
-    $this->assertText('Second text');
-    $this->assertNoText('Third text');
-    $this->assertField('field_paragraphs_collapse_all');
-    $this->assertField('field_paragraphs_edit_all');
+    $this->assertSession()->pageTextContains('First text');
+    $this->assertSession()->pageTextContains('Second text');
+    $this->assertSession()->pageTextNotContains('Third text');
+    $this->assertSession()->buttonExists('field_paragraphs_collapse_all');
+    $this->assertSession()->buttonExists('field_paragraphs_edit_all');
     $this->drupalPostForm(NULL, [], t('Save'));
 
     // Check that the drag and drop button is present when there is a paragraph
     // and that it is not shown when the paragraph is deleted.
     $this->drupalGet('node/add/paragraphed_test');
-    $this->assertRaw('name="field_paragraphs_dragdrop_mode"');
+    $this->assertSession()->responseContains('name="field_paragraphs_dragdrop_mode"');
     $this->drupalPostForm(NULL, [], 'field_paragraphs_0_remove');
-    $this->assertNoRaw('name="field_paragraphs_dragdrop_mode"');
+    $this->assertSession()->responseNotContains('name="field_paragraphs_dragdrop_mode"');
 
     // Disable show multiple actions.
     $this->drupalGet('admin/structure/types/manage/paragraphed_test/form-display');
@@ -130,9 +130,9 @@ class ParagraphsExperimentalHeaderActionsTest extends ParagraphsExperimentalTest
     $this->drupalPostForm(NULL, [], 'Save');
     $this->drupalGet('node/' . $node->id() . '/edit');
     // Check that the collapse/edit all actions are not present.
-    $this->assertNoField('field_paragraphs_collapse_all');
-    $this->assertNoField('field_paragraphs_edit_all');
-    $this->assertFieldByName('field_paragraphs[0][subform][field_text][0][value]', 'First text');
+    $this->assertSession()->buttonNotExists('field_paragraphs_collapse_all');
+    $this->assertSession()->buttonNotExists('field_paragraphs_edit_all');
+    $this->assertSession()->fieldValueEquals('field_paragraphs[0][subform][field_text][0][value]', 'First text');
 
     // Enable show "Collapse / Edit all" actions.
     $this->drupalGet('admin/structure/types/manage/paragraphed_test/form-display');
@@ -141,9 +141,9 @@ class ParagraphsExperimentalHeaderActionsTest extends ParagraphsExperimentalTest
     $this->drupalPostForm(NULL, [], 'Save');
     $this->drupalGet('node/' . $node->id() . '/edit');
     // Check that the collapse/edit all actions are present.
-    $this->assertField('field_paragraphs_collapse_all');
-    $this->assertField('field_paragraphs_edit_all');
-    $this->assertFieldByName('field_paragraphs[0][subform][field_text][0][value]', 'First text');
+    $this->assertSession()->buttonExists('field_paragraphs_collapse_all');
+    $this->assertSession()->buttonExists('field_paragraphs_edit_all');
+    $this->assertSession()->fieldValueEquals('field_paragraphs[0][subform][field_text][0][value]', 'First text');
   }
 
   /**
@@ -193,33 +193,33 @@ class ParagraphsExperimentalHeaderActionsTest extends ParagraphsExperimentalTest
     $this->drupalGet('node/add/paragraphed_test');
     $this->drupalPostForm(NULL, [], 'field_paragraphs_nested_paragraph_add_more');
     $this->drupalPostForm(NULL, [], 'field_paragraphs_text_add_more');
-    $this->assertRaw('field_paragraphs_collapse_all');
-    $this->assertRaw('field_paragraphs_edit_all');
+    $this->assertSession()->responseContains('field_paragraphs_collapse_all');
+    $this->assertSession()->responseContains('field_paragraphs_edit_all');
 
     $this->drupalPostForm(NULL, [], 'field_paragraphs_text_add_more');
     $this->drupalPostForm(NULL, [], 'field_paragraphs_0_subform_field_nested_text_add_more');
-    $this->assertNoRaw('field_paragraphs_0_collapse_all');
-    $this->assertNoRaw('field_paragraphs_0_edit_all');
+    $this->assertSession()->responseNotContains('field_paragraphs_0_collapse_all');
+    $this->assertSession()->responseNotContains('field_paragraphs_0_edit_all');
     $edit = [
       'field_paragraphs[0][subform][field_nested][0][subform][field_text][0][value]' => 'Nested text',
       'field_paragraphs[1][subform][field_text][0][value]' => 'Second text paragraph',
     ];
     $this->drupalPostForm(NULL, $edit, 'Collapse all');
-    $this->assertRaw('field-paragraphs-0-edit');
-    $this->assertFieldByXPath((new CssSelectorConverter())->toXPath('[name="field_paragraphs_1_edit"] + .paragraphs-dropdown'));
+    $this->assertSession()->responseContains('field-paragraphs-0-edit');
+    $this->assertSession()->elementExists('css', '[name="field_paragraphs_1_edit"] + .paragraphs-dropdown');
     $this->drupalPostForm(NULL, [], 'field_paragraphs_edit_all');
-    $this->assertRaw('field-paragraphs-0-collapse');
+    $this->assertSession()->responseContains('field-paragraphs-0-collapse');
 
     $edit = [
       'title[0][value]' => 'Test',
     ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
-    $this->assertText('paragraphed_test Test has been created.');
+    $this->assertSession()->pageTextContains('paragraphed_test Test has been created.');
 
     $node = $this->getNodeByTitle('Test');
     $this->drupalGet('node/' . $node->id());
     $this->clickLink('Edit');
-    $this->assertNoText('No Paragraph added yet.');
+    $this->assertSession()->pageTextNotContains('No Paragraph added yet.');
 
     $this->drupalPostForm(NULL, [], 'field_paragraphs_0_subform_field_nested_text_add_more');
     $edit = [
@@ -227,8 +227,8 @@ class ParagraphsExperimentalHeaderActionsTest extends ParagraphsExperimentalTest
     ];
     $this->drupalPostForm(NULL, $edit, 'field_paragraphs_0_collapse');
     $this->drupalPostForm(NULL, [], 'field_paragraphs_0_edit');
-    $this->assertRaw('field_paragraphs_0_subform_field_nested_collapse_all');
-    $this->assertRaw('field_paragraphs_0_subform_field_nested_edit_all');
+    $this->assertSession()->responseContains('field_paragraphs_0_subform_field_nested_collapse_all');
+    $this->assertSession()->responseContains('field_paragraphs_0_subform_field_nested_edit_all');
   }
 
   /**
@@ -275,10 +275,10 @@ class ParagraphsExperimentalHeaderActionsTest extends ParagraphsExperimentalTest
     $this->drupalPostForm(NULL, [], 'field_second_text_paragraph_add_more');
 
     // Checks that we have Collapse\Edit all for each field.
-    $this->assertRaw('field_paragraphs_collapse_all');
-    $this->assertRaw('field_paragraphs_edit_all');
-    $this->assertRaw('field_second_collapse_all');
-    $this->assertRaw('field_second_edit_all');
+    $this->assertSession()->responseContains('field_paragraphs_collapse_all');
+    $this->assertSession()->responseContains('field_paragraphs_edit_all');
+    $this->assertSession()->responseContains('field_second_collapse_all');
+    $this->assertSession()->responseContains('field_second_edit_all');
 
     $edit = [
       'field_second[0][subform][field_text][0][value]' => 'Second field',
@@ -286,26 +286,26 @@ class ParagraphsExperimentalHeaderActionsTest extends ParagraphsExperimentalTest
     $this->drupalPostForm(NULL, $edit, 'field_second_collapse_all');
 
     // Checks that we collapsed only children from second field.
-    $this->assertNoRaw('field_paragraphs_0_edit');
-    $this->assertRaw('field_second_0_edit');
+    $this->assertSession()->responseNotContains('field_paragraphs_0_edit');
+    $this->assertSession()->responseContains('field_second_0_edit');
 
     $this->drupalPostForm(NULL, [], 'field_paragraphs_collapse_all');
-    $this->assertRaw('field_paragraphs_0_edit');
-    $this->assertRaw('field_second_0_edit');
+    $this->assertSession()->responseContains('field_paragraphs_0_edit');
+    $this->assertSession()->responseContains('field_second_0_edit');
 
     $this->drupalPostForm(NULL, [], 'field_second_edit_all');
-    $this->assertRaw('field_second_0_collapse');
+    $this->assertSession()->responseContains('field_second_0_collapse');
 
     $edit = [
       'title[0][value]' => 'Test',
     ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
-    $this->assertText('paragraphed_test Test has been created.');
+    $this->assertSession()->pageTextContains('paragraphed_test Test has been created.');
 
     $node = $this->getNodeByTitle('Test');
     $this->drupalGet('node/' . $node->id());
     $this->clickLink('Edit');
-    $this->assertNoText('No Paragraph added yet.');
+    $this->assertSession()->pageTextNotContains('No Paragraph added yet.');
   }
 
   /**
@@ -342,7 +342,7 @@ class ParagraphsExperimentalHeaderActionsTest extends ParagraphsExperimentalTest
 
     $this->drupalGet('node/add/paragraphed_test');
     // Assert that the drag and drop button is present.
-    $this->assertRaw('name="field_paragraphs_dragdrop_mode"');
+    $this->assertSession()->responseContains('name="field_paragraphs_dragdrop_mode"');
     $edit = [
       'title[0][value]' => 'Title',
       'field_paragraphs[0][subform][field_text][0][value]' => 'First',
@@ -351,8 +351,8 @@ class ParagraphsExperimentalHeaderActionsTest extends ParagraphsExperimentalTest
     $this->clickLink('Translate');
     $this->clickLink('Add');
     // Assert that the drag and drop button is not present while translating.
-    $this->assertNoRaw('name="field_paragraphs_dragdrop_mode"');
-    $this->assertText('First');
+    $this->assertSession()->responseNotContains('name="field_paragraphs_dragdrop_mode"');
+    $this->assertSession()->pageTextContains('First');
   }
 
 }

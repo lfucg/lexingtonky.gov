@@ -62,11 +62,6 @@ class ParagraphsIsChangedTest extends KernelTestBase {
     $paragraph->save();
     $this->assertFalse($paragraph->isChanged(), 'Paragraph::isChanged() found no changes after the entity has been saved.');
 
-    // Update the revision author field, which should be skipped from checking
-    // for changes in Paragraph::isChanged().
-    $paragraph->setRevisionAuthorId(3);
-    $this->assertFalse($paragraph->isChanged(), 'Paragraph::isChanged() found no changes after updating revision_uid field.');
-
     $paragraph->set('text', 'New text');
     $this->assertTrue($paragraph->isChanged(), 'Paragraph::isChanged() found changes after updating text field.');
   }

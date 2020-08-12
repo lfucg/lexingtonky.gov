@@ -8,7 +8,7 @@ namespace Drupal\metatag\Plugin\metatag\Tag;
  * @MetatagTag(
  *   id = "refresh",
  *   label = @Translation("Refresh"),
- *   description = @Translation("The number of seconds to wait before refreshing the page. May also force redirect to another page using the format '5; url=http://example.com/', which would be triggered after five seconds."),
+ *   description = @Translation("The number of seconds to wait before refreshing the page. May also force redirect to another page using the format '5; url=https://example.com/', which would be triggered after five seconds."),
  *   name = "refresh",
  *   group = "advanced",
  *   weight = 5,

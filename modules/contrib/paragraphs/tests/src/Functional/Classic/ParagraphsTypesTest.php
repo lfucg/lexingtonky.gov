@@ -25,7 +25,7 @@ class ParagraphsTypesTest extends ParagraphsTestBase {
     // Attempt to delete the content type not used yet.
     $this->drupalGet('admin/structure/paragraphs_type');
     $this->clickLink(t('Delete'));
-    $this->assertText('This action cannot be undone.');
+    $this->assertSession()->pageTextContains('This action cannot be undone.');
     $this->clickLink(t('Cancel'));
 
     // Add a test node with a Paragraph.
@@ -33,12 +33,12 @@ class ParagraphsTypesTest extends ParagraphsTestBase {
     $this->drupalPostForm(NULL, [], 'paragraphs_paragraph_type_test_add_more');
     $edit = ['title[0][value]' => 'test_node'];
     $this->drupalPostForm(NULL, $edit, t('Save'));
-    $this->assertText('paragraphed_test test_node has been created.');
+    $this->assertSession()->pageTextContains('paragraphed_test test_node has been created.');
 
     // Attempt to delete the paragraph type already used.
     $this->drupalGet('admin/structure/paragraphs_type');
     $this->clickLink(t('Delete'));
-    $this->assertText('paragraph_type_test Paragraphs type is used by 1 piece of content on your site. You can not remove this paragraph_type_test Paragraphs type until you have removed all from the content.');
+    $this->assertSession()->pageTextContains('paragraph_type_test Paragraphs type is used by 1 piece of content on your site. You can not remove this paragraph_type_test Paragraphs type until you have removed all from the content.');
 
   }
 
@@ -60,7 +60,7 @@ class ParagraphsTypesTest extends ParagraphsTestBase {
     $this->drupalLogin($admin_user);
     // Add the paragraph type with icon.
     $this->drupalGet('admin/structure/paragraphs_type/add');
-    $this->assertText('Paragraph type icon');
+    $this->assertSession()->pageTextContains('Paragraph type icon');
     $test_files = $this->getTestFiles('image');
     $fileSystem = \Drupal::service('file_system');
     $edit = [
@@ -69,24 +69,24 @@ class ParagraphsTypesTest extends ParagraphsTestBase {
       'files[icon_file]' => $fileSystem->realpath($test_files[0]->uri),
     ];
     $this->drupalPostForm(NULL, $edit, t('Save and manage fields'));
-    $this->assertText('Saved the Test paragraph type Paragraphs type.');
+    $this->assertSession()->pageTextContains('Saved the Test paragraph type Paragraphs type.');
 
     // Check if the icon has been saved.
     $this->drupalGet('admin/structure/paragraphs_type');
-    $this->assertRaw('image-test.png');
+    $this->assertSession()->responseContains('image-test.png');
     $this->clickLink('Edit');
-    $this->assertText('image-test.png');
+    $this->assertSession()->pageTextContains('image-test.png');
 
     // Check that the icon file usage has been registered.
     $paragraph_type = ParagraphsType::load('test_paragraph_type_icon');
     $file = $entity_repository->loadEntityByUuid('file', $paragraph_type->get('icon_uuid'));
     $usages = $file_usage->listUsage($file);
-    $this->assertEqual($usages['paragraphs']['paragraphs_type']['test_paragraph_type_icon'], 1);
+    $this->assertEquals($usages['paragraphs']['paragraphs_type']['test_paragraph_type_icon'], 1);
 
     // Tests calculateDependencies method.
     $dependencies = $paragraph_type->getDependencies();
     $dependencies_uuid[] = explode(':', $dependencies['content'][0]);
-    $this->assertEqual($paragraph_type->get('icon_uuid'), $dependencies_uuid[0][2]);
+    $this->assertEquals($paragraph_type->get('icon_uuid'), $dependencies_uuid[0][2]);
 
     // Delete the icon.
     $this->drupalGet('admin/structure/paragraphs_type/test_paragraph_type_icon');
@@ -95,7 +95,47 @@ class ParagraphsTypesTest extends ParagraphsTestBase {
 
     // Check that the icon file usage has been deregistered.
     $usages = $file_usage->listUsage($file);
-    $this->assertEqual($usages, []);
+    $this->assertEquals($usages, []);
+  }
+
+  /**
+   * Tests the paragraph type default icon settings.
+   */
+  public function testParagraphTypeDefaultIcon() {
+    /** @var \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository */
+    $entity_repository = \Drupal::service('entity.repository');
+
+    $admin_user = $this->drupalCreateUser([
+      'administer paragraphs types',
+      'access files overview',
+    ]);
+    $this->drupalLogin($admin_user);
+    // Add the paragraph type with icon.
+    $this->drupalGet('admin/structure/paragraphs_type/add');
+    $this->assertSession()->pageTextContains('Paragraph type icon');
+    $test_files = $this->getTestFiles('image');
+    $fileSystem = \Drupal::service('file_system');
+    $edit = [
+      'label' => 'Test paragraph type',
+      'id' => 'test_paragraph_type_icon',
+      'files[icon_file]' => $fileSystem->realpath($test_files[0]->uri),
+    ];
+    $this->drupalPostForm(NULL, $edit, t('Save and manage fields'));
+    $this->assertSession()->pageTextContains('Saved the Test paragraph type Paragraphs type.');
+
+    // Check if the icon is created from defaults if not exists.
+    $paragraph_type = ParagraphsType::load('test_paragraph_type_icon');
+    $file = $entity_repository->loadEntityByUuid('file', $paragraph_type->get('icon_uuid'));
+    $file->delete();
+    $this->resetAll();
+    $this->drupalGet('admin/structure/paragraphs_type');
+    // New default icon name.
+    $default_icon_name = 'test_paragraph_type_icon-default-icon.png';
+    $this->assertSession()->responseContains($default_icon_name);
+    $this->clickLink('Edit');
+    $this->assertSession()->pageTextContains($default_icon_name);
+    $file = $entity_repository->loadEntityByUuid('file', $paragraph_type->get('icon_uuid'));
+    $this->assertNotEmpty($file);
   }
 
   /**
@@ -106,7 +146,7 @@ class ParagraphsTypesTest extends ParagraphsTestBase {
     $this->drupalLogin($admin_user);
     // Add the paragraph type with description.
     $this->drupalGet('admin/structure/paragraphs_type/add');
-    $this->assertText('Description');
+    $this->assertSession()->pageTextContains('Description');
     $label = 'Test paragraph type';
     $description_markup = 'Use <em>Test paragraph type</em> to test the functionality of descriptions.';
     $description_text = 'Use Test paragraph type to test the functionality of descriptions.';
@@ -116,19 +156,19 @@ class ParagraphsTypesTest extends ParagraphsTestBase {
       'description' => $description_markup,
     ];
     $this->drupalPostForm(NULL, $edit, t('Save and manage fields'));
-    $this->assertText("Saved the $label Paragraphs type.");
+    $this->assertSession()->pageTextContains("Saved the $label Paragraphs type.");
 
     // Check if the description has been saved.
     $this->drupalGet('admin/structure/paragraphs_type');
-    $this->assertText('Description');
-    $this->assertText($description_text);
-    $this->assertRaw($description_markup);
-    //Check if description is at Description column
+    $this->assertSession()->pageTextContains('Description');
+    $this->assertSession()->pageTextContains($description_text);
+    $this->assertSession()->responseContains($description_markup);
+    // Check if description is at Description column.
     $header_position = count($this->xpath('//table/thead/tr/th[.="Description"]/preceding-sibling::th'));
     $row_position = count($this->xpath('//table/tbody/tr/td[.="' . $description_text . '"]/preceding-sibling::td'));
-    $this->assertEqual($header_position, $row_position);
+    $this->assertEquals($header_position, $row_position);
     $this->clickLink('Edit');
-    $this->assertText('Use &lt;em&gt;Test paragraph type&lt;/em&gt; to test the functionality of descriptions.');
+    $this->assertSession()->responseContains('Use &lt;em&gt;Test paragraph type&lt;/em&gt; to test the functionality of descriptions.');
   }
 
 }

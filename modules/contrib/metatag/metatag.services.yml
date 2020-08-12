@@ -9,7 +9,7 @@ services:
 
   metatag.token:
     class: Drupal\metatag\MetatagToken
-    arguments: ['@token']
+    arguments: ['@token', '@token.entity_mapper']
 
   metatag.manager:
     class: Drupal\metatag\MetatagManager

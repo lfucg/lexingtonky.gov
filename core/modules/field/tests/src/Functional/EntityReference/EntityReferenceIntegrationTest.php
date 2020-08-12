@@ -59,7 +59,11 @@ class EntityReferenceIntegrationTest extends BrowserTestBase {
     parent::setUp();
 
     // Create a test user.
-    $web_user = $this->drupalCreateUser(['administer entity_test content', 'administer entity_test fields', 'view test entity']);
+    $web_user = $this->drupalCreateUser([
+      'administer entity_test content',
+      'administer entity_test fields',
+      'view test entity',
+    ]);
     $this->drupalLogin($web_user);
   }
 
@@ -163,7 +167,7 @@ class EntityReferenceIntegrationTest extends BrowserTestBase {
       // Ensure the configuration has the expected dependency on the entity that
       // is being used a default value.
       $field = FieldConfig::loadByName($this->entityType, $this->bundle, $this->fieldName);
-      $this->assertTrue(in_array($referenced_entities[0]->getConfigDependencyName(), $field->getDependencies()[$key]), new FormattableMarkup('Expected @type dependency @name found', ['@type' => $key, '@name' => $referenced_entities[0]->getConfigDependencyName()]));
+      $this->assertContains($referenced_entities[0]->getConfigDependencyName(), $field->getDependencies()[$key], new FormattableMarkup('Expected @type dependency @name found', ['@type' => $key, '@name' => $referenced_entities[0]->getConfigDependencyName()]));
       // Ensure that the field can be imported without change even after the
       // default value deleted.
       $referenced_entities[0]->delete();

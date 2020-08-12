@@ -39,6 +39,11 @@ class DisabledDefaultTags extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() {
     parent::setUp();
 
@@ -75,13 +80,13 @@ class DisabledDefaultTags extends BrowserTestBase {
    */
   public function testFrontpage() {
     $metatag = $this->loadMetatagDefault('front');
-    $metatag->overwriteTags(['canonical_url' => 'http://test.canonical']);
+    $metatag->overwriteTags(['canonical_url' => 'https://test.canonical']);
     $metatag->save();
 
     $this->drupalGet('<front>');
     $this->assertSession()->statusCodeEquals(200);
     $xpath = $this->xpath("//link[@rel='canonical']");
-    $this->assertEquals((string) $xpath[0]->getAttribute('href'), 'http://test.canonical');
+    $this->assertEquals((string) $xpath[0]->getAttribute('href'), 'https://test.canonical');
 
     // Now disable the default. Canonical should then fall back
     // to Global's default, which is page url.
@@ -102,13 +107,13 @@ class DisabledDefaultTags extends BrowserTestBase {
    */
   public function test404() {
     $metatag = $this->loadMetatagDefault('404');
-    $metatag->overwriteTags(['canonical_url' => 'http://test.canonical']);
+    $metatag->overwriteTags(['canonical_url' => 'https://test.canonical']);
     $metatag->save();
 
     $this->drupalGet('i-dont-exist');
     $this->assertSession()->statusCodeEquals(404);
     $xpath = $this->xpath("//link[@rel='canonical']");
-    $this->assertEquals((string) $xpath[0]->getAttribute('href'), 'http://test.canonical');
+    $this->assertEquals((string) $xpath[0]->getAttribute('href'), 'https://test.canonical');
 
     // Now disable the default. Canonical should then fall back
     // to Global's default, which is page url.
@@ -129,13 +134,13 @@ class DisabledDefaultTags extends BrowserTestBase {
    */
   public function test403() {
     $metatag = $this->loadMetatagDefault('403');
-    $metatag->overwriteTags(['canonical_url' => 'http://test.canonical']);
+    $metatag->overwriteTags(['canonical_url' => 'https://test.canonical']);
     $metatag->save();
 
     $this->drupalGet('admin/content');
     $this->assertSession()->statusCodeEquals(403);
     $xpath = $this->xpath("//link[@rel='canonical']");
-    $this->assertEquals((string) $xpath[0]->getAttribute('href'), 'http://test.canonical');
+    $this->assertEquals((string) $xpath[0]->getAttribute('href'), 'https://test.canonical');
 
     // Now disable the default. Canonical should then fall back
     // to Global's default, which is page url.
@@ -173,7 +178,7 @@ class DisabledDefaultTags extends BrowserTestBase {
       ->getStorage('metatag_defaults');
     /** @var \Drupal\metatag\Entity\MetatagDefaults $entity_metatags */
     $entity_metatags = $global_metatag_manager->load('node');
-    $entity_metatags->overwriteTags(['canonical_url' => 'http://test.canonical']);
+    $entity_metatags->overwriteTags(['canonical_url' => 'https://test.canonical']);
     $entity_metatags->save();
 
     // Load the node's entity page.
@@ -182,7 +187,7 @@ class DisabledDefaultTags extends BrowserTestBase {
 
     // Check the meta tags.
     $xpath = $this->xpath("//link[@rel='canonical']");
-    $this->assertEquals((string) $xpath[0]->getAttribute('href'), 'http://test.canonical');
+    $this->assertEquals((string) $xpath[0]->getAttribute('href'), 'https://test.canonical');
 
     // Now disable this metatag.
     $entity_metatags->set('status', 0);
@@ -220,7 +225,7 @@ class DisabledDefaultTags extends BrowserTestBase {
       ->getStorage('metatag_defaults');
     /** @var \Drupal\metatag\Entity\MetatagDefaults $entity_metatags */
     $entity_metatags = $global_metatag_manager->create(['id' => 'node__metatag_test']);
-    $entity_metatags->overwriteTags(['canonical_url' => 'http://test.canonical']);
+    $entity_metatags->overwriteTags(['canonical_url' => 'https://test.canonical']);
     $entity_metatags->save();
 
     // Load the node's entity page.
@@ -229,7 +234,7 @@ class DisabledDefaultTags extends BrowserTestBase {
 
     // Check the meta tags.
     $xpath = $this->xpath("//link[@rel='canonical']");
-    $this->assertEquals((string) $xpath[0]->getAttribute('href'), 'http://test.canonical');
+    $this->assertEquals((string) $xpath[0]->getAttribute('href'), 'https://test.canonical');
 
     // Now disable this metatag.
     $entity_metatags->set('status', 0);

@@ -1062,12 +1062,15 @@ function drupal_flush_all_caches() {
   // sufficient, since the list of enabled modules might have been adjusted
   // above due to changed code.
   $files = [];
+  $modules = [];
   foreach ($module_data as $name => $extension) {
     if ($extension->status) {
       $files[$name] = $extension;
+      $modules[$name] = $extension->weight;
     }
   }
-  \Drupal::service('kernel')->updateModules($module_handler->getModuleList(), $files);
+  $modules = module_config_sort($modules);
+  \Drupal::service('kernel')->updateModules($modules, $files);
   // New container, new module handler.
   $module_handler = \Drupal::moduleHandler();
 
@@ -1202,7 +1205,7 @@ function archiver_get_archiver($file) {
   // Archivers can only work on local paths
   $filepath = \Drupal::service('file_system')->realpath($file);
   if (!is_file($filepath)) {
-    throw new Exception(t('Archivers can only operate on local files: %file not supported', ['%file' => $file]));
+    throw new Exception("Archivers can only operate on local files: '$file' not supported");
   }
   return \Drupal::service('plugin.manager.archiver')->getInstance(['filepath' => $filepath]);
 }

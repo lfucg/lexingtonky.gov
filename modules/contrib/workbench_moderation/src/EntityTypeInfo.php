@@ -272,7 +272,7 @@ class EntityTypeInfo {
       // @todo write a test for this.
       ->setDisplayOptions('view', [
         'label' => 'hidden',
-        'type' => 'hidden',
+        'region' => 'hidden',
         'weight' => -5,
       ])
       // @todo write a custom widget/selection handler plugin instead of

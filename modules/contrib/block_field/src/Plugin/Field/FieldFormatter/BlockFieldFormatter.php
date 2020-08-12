@@ -3,6 +3,7 @@
 namespace Drupal\block_field\Plugin\Field\FieldFormatter;
 
 use Drupal\Component\Plugin\Exception\ContextException;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
@@ -57,9 +58,10 @@ class BlockFieldFormatter extends FormatterBase {
         'content' => $block_instance->build(),
       ];
 
-      /** @var \Drupal\Core\Render\RendererInterface $renderer */
-      $renderer = \Drupal::service('renderer');
-      $renderer->addCacheableDependency($elements[$delta], $block_instance);
+      CacheableMetadata::createFromRenderArray($elements[$delta])
+        ->merge(CacheableMetadata::createFromRenderArray($elements[$delta]['content']))
+        ->addCacheableDependency($block_instance)
+        ->applyTo($elements[$delta]);
     }
     return $elements;
   }

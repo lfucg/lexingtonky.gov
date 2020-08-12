@@ -286,7 +286,7 @@ abstract class MetaNameBase extends PluginBase {
 
     // Optional handling for secure paths.
     if (!empty($this->secure)) {
-      $form['#description'] .= ' ' . $this->t('Any links containing http:// will be converted to https://');
+      $form['#description'] .= ' ' . $this->t('Any URLs which start with "http://" will be converted to "https://".');
     }
 
     return $form;

@@ -15,7 +15,12 @@ class SearchDateIntervalTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['language', 'search_date_query_alter', 'node', 'search'];
+  protected static $modules = [
+    'language',
+    'search_date_query_alter',
+    'node',
+    'search',
+  ];
 
   /**
    * {@inheritdoc}
@@ -28,7 +33,15 @@ class SearchDateIntervalTest extends BrowserTestBase {
     $this->drupalCreateContentType(['type' => 'page', 'name' => 'Basic page']);
 
     // Create and log in user.
-    $test_user = $this->drupalCreateUser(['access content', 'search content', 'use advanced search', 'administer nodes', 'administer languages', 'access administration pages', 'administer site configuration']);
+    $test_user = $this->drupalCreateUser([
+      'access content',
+      'search content',
+      'use advanced search',
+      'administer nodes',
+      'administer languages',
+      'access administration pages',
+      'administer site configuration',
+    ]);
     $this->drupalLogin($test_user);
 
     // Add a new language.
@@ -73,8 +86,8 @@ class SearchDateIntervalTest extends BrowserTestBase {
 
     // The nodes must have the same node ID but the created date is different.
     // So only the Spanish translation must appear.
-    $this->assertLink('Node ES', 0, 'Spanish translation found in search results');
-    $this->assertNoLink('Node EN', 'Search results do not contain English node');
+    $this->assertSession()->linkExists('Node ES', 0, 'Spanish translation found in search results');
+    $this->assertSession()->linkNotExists('Node EN', 'Search results do not contain English node');
   }
 
 }

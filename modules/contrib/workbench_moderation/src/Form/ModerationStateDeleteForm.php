@@ -37,7 +37,7 @@ class ModerationStateDeleteForm extends EntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    drupal_set_message(
+    $this->messenger()->addMessage(
       $this->t('Moderation state %label deleted.',
         [
           '%label' => $this->entity->label()

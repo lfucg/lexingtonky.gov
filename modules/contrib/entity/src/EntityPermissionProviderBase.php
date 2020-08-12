@@ -52,7 +52,9 @@ class EntityPermissionProviderBase implements EntityPermissionProviderInterface,
     $plural_label = $entity_type->getPluralLabel();
 
     $permissions = [];
-    $permissions["administer {$entity_type_id}"] = [
+
+    $admin_permission = $entity_type->getAdminPermission() ?: "administer {$entity_type_id}";
+    $permissions[$admin_permission] = [
       'title' => $this->t('Administer @type', ['@type' => $plural_label]),
       'restrict access' => TRUE,
     ];

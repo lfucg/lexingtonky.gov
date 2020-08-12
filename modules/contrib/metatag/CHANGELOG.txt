@@ -1,3 +1,121 @@
+Metatag 8.x-1.14, 2020-08-11
+----------------------------
+#3129664 by phenaproxima: Fix failure in MetatagPageManagerTest.
+#3154149 by alexpott, DamienMcKenna, mrinalini9, rokzabukovec: Refactored
+  entity migration test to use new API added in 8.9.x; skip this test on 8.8.
+#3154891 by DamienMcKenna: Rename test fixtures to be one file per source
+  module.
+#3129863 by DamienMcKenna, kyuubi, azedan, lcontreras, havran, markie: Revert
+  compatibility with GraphQL 4 to avoid breaking existing sites.
+#3131380 by lolandese, volkswagenchick: License "GPL-2.0+" is a deprecated SPDX
+  license identifier.
+#3130250 by Andrew Gorokhovets: Typo in the comment class name
+  (MetatagViewsTranslationForm).
+#3134665 by Neslee Canil Pinto, rokzabukovec: Correct description of
+  OgImageWidth.php file.
+#3158613 by huzooka, DamienMcKenna, Wim Leers: Metatag field instance migration
+  source plugins report incorrect number of items.
+#3136075 by s_leu, fjgarlin, mirom, DamienMcKenna: D9 Compatibility -
+  pre_render should be method implementing TrustedCallbackInterface.
+#3153911 by alexpott, mrinalini9: Improve logic in metatag_page_attachments()
+  and make code comments more clear.
+#3077782 by DamienMcKenna, rokzabukovec, rahulrasgon: Add missing OG tags.
+
+
+Metatag 8.x-1.13, 2020-04-21
+----------------------------
+#3123520 by DamienMcKenna, phenaproxima: Remove Schema.org Metatag dependency
+  for D9.
+#3123582 by DamienMcKenna: Remove Devel dependency for D9.
+#3123577 by DamienMcKenna: Remove RestUI dependency for D9.
+#3042590 by phenaproxima, SerShevchyk, chr.fritsch, Berdir, pixlkat, abramm,
+  Cary_Dean, pguillard, gmangones, DamienMcKenna, josephdpurcell, waverate,
+  joshi.rohit100, baikho, valthebald: Drupal 9 compatibility fixes.
+#3124039 by Grayle: Migration plugins alter does not check for presence of
+  migration_tags.
+#3124042 by Neslee Canil Pinto: t() calls should be avoided in classes, use
+  \Drupal\Core\StringTranslation\StringTranslationTrait and $this->t() instead.
+#3042590 by Berdir: Reworked NodewordsFieldInstance to make it compatible with
+  core 8.7.
+#3039627 by larowlan, acbramley: metatag_entity_view_alter runs for every
+  paragraph, resulting in a performance hit.
+#3124175 by Neslee Canil Pinto: Remove Unused .module file inside
+  tests/modules/metatag_test_tag.
+#3124205 by DamienMcKenna, Berdir: Remove test_dependencies from
+  metatag.info.yml.
+#3123578 by DamienMcKenna, Berdir: Add NodeJsonOutput test back again.
+#3124042 by Neslee Canil Pinto: Follow-up with more changes.
+#3123578 by DamienMcKenna: Removed restui dependency from test's modules list.
+#3123578 by DamienMcKenna: Some follow-up on D9 test compatibility.
+#3128281 by DamienMcKenna: Fix Page Manager tests in the 8.x-1.x branch.
+#3123665 by DamienMcKenna, Greenhorn, milan.durovic, explorerinruins, floown,
+  karenann, maxilein, Dave Reid, HNS-IT-Solutions, doar1004, sthomen: Filler
+  update script to trigger rebuild of caches due to service changes.
+#3129331 by DamienMcKenna: Resolve problems with MetatagViewsBasicsTest::
+  testViewsUi.
+#3129357 by DamienMcKenna: Standardize on assertSession()->statusCodeEquals
+  instead of assertResponse().
+
+
+Metatag 8.x-1.12, 2020-03-30
+-------------------------------
+#3102937 by yasmeensalah, Berdir: Plugin AlternateHandheld is misnamed.
+#3103725 by thalles: Create kernel test to Form\MetatagSettingsForm.
+#3105837 by Berdir: Remove metatag_install().
+#3105343 by Kionn, DenisCi: Maintenance mode message shown on settings forms
+  when site is not in maintenance mode.
+#3102582 by DamienMcKenna, dbourrion: Change uses of http:// to https://.
+#3101532 by DamienMcKenna, heddn, slv_: Only attach Metatag migration field
+  logic on 'Drupal 7' migrations, e.g. core upgrades.
+#3102602 by jedihe, Gnanagowthaman sankar, thalles, DamienMcKenna, Berdir: Use
+  DI to add services to the settings form.
+#3106609 by bygeoffthompson, Daniel Korte, DamienMcKenna, Maya Slatinek,
+  mrshowerman, BryanDeNijs: The Basic Description field has a maxlength of 255
+  but recommends 320 or less.
+#2841737 by DamienMcKenna, andyg5000, harold20, jmolivas, jim22: DrupalConsole
+  commands not working.
+#3111878 by Hardik_Patel_12: Remove unused GenerateTagCommand::
+  validateGroupExist().
+#3111875 by Hardik_Patel_12: Replace \Drupal calls with dependency injection in
+  MetatagFirehose.php.
+#3111900 by Hardik_Patel_12: Replace \Drupal calls with dependency injection in
+  MetatagViewsTranslationController.
+#3109835 by phenaproxima: Declare compatibility with Drupal 9.
+#3113481 by thalles: Fix subclassing and stop overriding constructors in
+  metatag_views\Plugin\views\display_extender\MetatagDisplayExtender.
+By DamienMcKenna: Minor code readability tweak.
+#3045641 by DamienMcKenna, heddn, mikelutz: Migrations: Nodewords-D6 per-entity
+  data.
+#3112784 by thalles: Missing doc comment into Create method to $instance
+  metatag\Form\MetatagSettingsForm.
+#2844696 by DamienMcKenna, Michelle: Allow the field to control whether it is
+  displayed in the sidebar or not.
+#2993991 by DamienMcKenna, jcnventura, raphaeltbm, Geolim4, SteffenR, xurubo93,
+  GuillaumeDuveau, joehuggans, mmaldonado: Metatag_hreflang - duplicate
+  alternate hreflang meta.
+#3110152 by DamienMcKenna, antongp: testTagsArePresent() and
+  testTagsInputOutput() methods of the MetatagTagsTestBase class do not loop
+  through child classes $tags property; updated all tests as necessary.
+#3114120 by felribeiro, DamienMcKenna: Recommend "description" tag be less than
+  ~160 characters.
+#3115634 by DamienMcKenna: Refactor MetatagManager::generateRawElements() to
+  create token arguments once per call.
+#3001282 by maximpodorov, DamienMcKenna: Support hasAffectingChanges method of
+  FieldItemList.
+#3106870 by DamienMcKenna: Improve UX around OG "secure" meta tags.
+#3120981 by DamienMcKenna: NodewordsFieldInstanceTest uses the wrong source
+  plugin.
+#3120331 by thalles: Add directive docs into support section of composer file.
+#3121289 by Dave Reid, DamienMcKenna: Normalize token types using the Token
+  module mapper service.
+#3120947 by DamienMcKenna, quietone: Expand FieldInstanceTest classes to handle
+  multiple bundles per entity type.
+#3122683 by Neslee Canil Pinto: Capitalize the name of the module in .info file.
+#3110152 by DamienMcKenna, antongp, Lendude: testTagsArePresent() and
+  testTagsInputOutput() methods of the MetatagTagsTestBase class do not loop
+  through child classes $tags property.
+
+
 Metatag 8.x-1.11, 2019-12-20
 ----------------------------
 #3074603 by jrockowitz, thejimbirch, cindytwilliams, DamienMcKenna: Add

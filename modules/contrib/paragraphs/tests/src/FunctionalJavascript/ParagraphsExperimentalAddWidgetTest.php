@@ -37,6 +37,11 @@ class ParagraphsExperimentalAddWidgetTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp()
   {
     parent::setUp();
@@ -121,17 +126,18 @@ class ParagraphsExperimentalAddWidgetTest extends WebDriverTestBase {
     $page->pressButton('Add Paragraph');
     $this->assertSession()->assertWaitOnAjaxRequest();
     $this->assertSession()->elementTextContains('css', '.ui-dialog-title', 'Add Paragraph');
-    $page->pressButton('nested_test');
+    $paragraphs_dialog = $this->assertSession()->waitForElementVisible('css', 'div.ui-dialog');
+    $paragraphs_dialog->pressButton('nested_test');
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Verify that the paragraphs type icons are being displayed.
     $button_one = $this->assertSession()->buttonExists($paragraph_type);
     $button_two = $this->assertSession()->buttonExists('text');
-    $this->assertContains($icon_one->getFilename(), $button_one->getAttribute('style'));
-    $this->assertContains($icon_two->getFilename(), $button_two->getAttribute('style'));
+    $this->assertStringContainsString($icon_one->getFilename(), $button_one->getAttribute('style'));
+    $this->assertStringContainsString($icon_two->getFilename(), $button_two->getAttribute('style'));
 
     // Find the add button in the nested paragraph with xpath.
-    $element = $this->xpath('//div[contains(@class, "form-item")]/div/div[contains(@class, "paragraph-type-add-modal")]/input');
+    $element = $this->xpath('//div[contains(@class, "form-item")]/div/div/div[contains(@class, "paragraph-type-add-modal")]/input');
     $element[0]->click();
     $this->assertSession()->assertWaitOnAjaxRequest();
 
@@ -419,20 +425,19 @@ class ParagraphsExperimentalAddWidgetTest extends WebDriverTestBase {
     $this->drupalGet('node/add/test_modal_delta');
     // Add a new Paragraph.
     $page->find('xpath', '//*[@name="button_add_modal"]')->click();
-    $this->assertSession()->assertWaitOnAjaxRequest();
-    $page->find('xpath', '//*[contains(@class, "paragraphs-add-dialog") and contains(@class, "ui-dialog-content")]//*[contains(@name, "test_1")]')->click();
+    $paragraphs_dialog = $this->assertSession()->waitForElementVisible('css', 'div.ui-dialog');
+    $paragraphs_dialog->find('xpath', '//*[contains(@class, "paragraphs-add-dialog") and contains(@class, "ui-dialog-content")]//*[contains(@name, "test_1")]')->press();
     $this->assertSession()->assertWaitOnAjaxRequest();
     // Attempt to add a new Paragraph above and cancel.
     $page->find('xpath', '//*[@name="button_add_modal"]')->click();
-    $this->assertSession()->assertWaitOnAjaxRequest();
     $this->getSession()->executeScript("jQuery('input.paragraph-type-add-modal-delta').first().val(0)");
     $this->assertSession()->elementExists('css', '.ui-dialog-titlebar-close')->press();
     $delta = $this->getSession()->evaluateScript("jQuery('paragraph-type-add-modal-delta').val()");
     $this->assertEquals($delta, '');
     // Add a new Paragraph with the Add button at the bottom.
     $page->find('xpath', '//*[@name="button_add_modal"]')->click();
-    $this->assertSession()->assertWaitOnAjaxRequest();
-    $page->find('xpath', '//*[contains(@class, "paragraphs-add-dialog") and contains(@class, "ui-dialog-content")]//*[contains(@name, "test_2")]')->click();
+    $paragraphs_dialog = $this->assertSession()->waitForElementVisible('css', 'div.ui-dialog');
+    $paragraphs_dialog->find('xpath', '//*[contains(@class, "paragraphs-add-dialog") and contains(@class, "ui-dialog-content")]//*[contains(@name, "test_2")]')->press();
     $this->assertSession()->assertWaitOnAjaxRequest();
     // The position of it should be below the first added Paragraph.
     $base_paragraphs = $page->findAll('xpath', '//*[contains(@class, "paragraph-type-label") and not(ancestor::div[contains(@class, "paragraphs-nested")])]');

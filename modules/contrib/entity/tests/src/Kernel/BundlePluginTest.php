@@ -26,12 +26,10 @@ class BundlePluginTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->installSchema('system', 'router');
-
     // Install the modules properly. Putting them into static::$modules doesn't trigger the install
     // hooks, like hook_modules_installed, so entity_modules_installed is not triggered().
     /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
-    $module_installer = \Drupal::service('module_installer');
+    $module_installer = $this->container->get('module_installer');
     $module_installer->install(['entity_module_bundle_plugin_test', 'entity_module_bundle_plugin_examples_test']);
   }
 
@@ -46,7 +44,7 @@ class BundlePluginTest extends KernelTestBase {
     $this->assertTrue($entity_type->hasHandlerClass('bundle_plugin'));
 
     /** @var \Drupal\Core\Entity\EntityTypeBundleInfo $entity_type_bundle_info */
-    $entity_type_bundle_info = \Drupal::service('entity_type.bundle.info');
+    $entity_type_bundle_info = $this->container->get('entity_type.bundle.info');
     $bundle_info = $entity_type_bundle_info->getBundleInfo('entity_test_bundle_plugin');
     $this->assertEquals(2, count($bundle_info));
     $this->assertArrayHasKey('first', $bundle_info);
@@ -55,7 +53,7 @@ class BundlePluginTest extends KernelTestBase {
     $this->assertEquals('Some description', $bundle_info['first']['description']);
 
     /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager */
-    $entity_field_manager = \Drupal::service('entity_field.manager');
+    $entity_field_manager = $this->container->get('entity_field.manager');
     $field_storage_definitions = $entity_field_manager->getFieldStorageDefinitions('entity_test_bundle_plugin');
     $this->assertArrayHasKey('first_mail', $field_storage_definitions);
     $this->assertArrayHasKey('second_mail', $field_storage_definitions);
@@ -83,13 +81,13 @@ class BundlePluginTest extends KernelTestBase {
     $this->assertEquals('admin@example.com', $second_entity->second_mail->value);
 
     // Also test entity queries.
-    $result = \Drupal::entityTypeManager()->getStorage('entity_test_bundle_plugin')
+    $result = $this->container->get('entity_type.manager')->getStorage('entity_test_bundle_plugin')
       ->getQuery()
       ->condition('second_mail', 'admin@example.com')
       ->execute();
     $this->assertEquals([$second_entity->id() => $second_entity->id()], $result);
 
-    $result = \Drupal::entityTypeManager()->getStorage('entity_test_bundle_plugin')
+    $result = $this->container->get('entity_type.manager')->getStorage('entity_test_bundle_plugin')
       ->getQuery()
       ->condition('type', 'first')
       ->execute();
@@ -102,7 +100,7 @@ class BundlePluginTest extends KernelTestBase {
    */
   public function testBundlePluginModuleUninstallation() {
     /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
-    $module_installer = \Drupal::service('module_installer');
+    $module_installer = $this->container->get('module_installer');
 
     // One should be possible to uninstall without any actual content.
     $violations = $module_installer->validateUninstall(['entity_module_bundle_plugin_examples_test']);

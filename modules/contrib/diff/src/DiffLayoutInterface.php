@@ -2,14 +2,14 @@
 
 namespace Drupal\diff;
 
+use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
 
 /**
  * Builds a diff layout.
  */
-interface DiffLayoutInterface extends PluginFormInterface, ConfigurablePluginInterface {
+interface DiffLayoutInterface extends PluginFormInterface, ConfigurableInterface {
 
   /**
    * Builds a diff comparison between two revisions.

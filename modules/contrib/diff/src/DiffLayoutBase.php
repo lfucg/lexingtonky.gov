@@ -330,11 +330,4 @@ abstract class DiffLayoutBase extends PluginBase implements DiffLayoutInterface,
     $config->save();
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function calculateDependencies() {
-    return [];
-  }
-
 }

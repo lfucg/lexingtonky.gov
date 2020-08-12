@@ -158,9 +158,6 @@ class CaptchaImageResponse extends Response {
     }
     imagefilledrectangle($image, 0, 0, $width, $height, $background_color);
 
-    // Do we need to draw in RTL mode?
-    global $language;
-
     $result = $this->printString($image, $width, $height, $fonts, $font_size, $code);
     if (!$result) {
       return FALSE;
@@ -342,7 +339,6 @@ class CaptchaImageResponse extends Response {
     $character_quantity = count($characters);
 
     $foreground_rgb = $this->hexToRgb($this->config->get('image_captcha_foreground_color'));
-    $background_rgb = $this->hexToRgb($this->config->get('image_captcha_background_color'));
     $foreground_color = imagecolorallocate($image, $foreground_rgb[0], $foreground_rgb[1], $foreground_rgb[2]);
     // Precalculate the value ranges for color randomness.
     $foreground_randomness = $this->config->get('image_captcha_foreground_color_randomness');

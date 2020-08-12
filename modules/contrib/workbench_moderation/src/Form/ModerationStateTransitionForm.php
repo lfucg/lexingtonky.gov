@@ -4,7 +4,6 @@ namespace Drupal\workbench_moderation\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -21,25 +20,19 @@ class ModerationStateTransitionForm extends EntityForm {
   protected $entityTypeManager;
 
   /**
-   * @var \Drupal\Core\Entity\Query\QueryFactory
-   */
-  protected $queryFactory;
-
-  /**
    * Constructs a new ModerationStateTransitionForm.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
     $this->entityTypeManager = $entity_type_manager;
-    $this->queryFactory = $query_factory;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity_type.manager'), $container->get('entity.query'));
+    return new static($container->get('entity_type.manager'));
   }
 
   /**
@@ -101,7 +94,7 @@ class ModerationStateTransitionForm extends EntityForm {
     // Make sure there's always at least a wide enough delta on weight to cover
     // the current value or the total number of transitions. That way we
     // never end up forcing a transition to change its weight needlessly.
-    $num_transitions = $this->queryFactory->get('moderation_state_transition')->count()->execute();
+    $num_transitions = $this->entityTypeManager->getStorage('moderation_state_transition')->getQuery()->count()->execute();
     $delta = max(abs($moderation_state_transition->getWeight()), $num_transitions);
 
     $form['weight'] = [
@@ -125,13 +118,13 @@ class ModerationStateTransitionForm extends EntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Moderation state transition.', [
+        $this->messenger()->addMessage($this->t('Created the %label Moderation state transition.', [
           '%label' => $moderation_state_transition->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label Moderation state transition.', [
+        $this->messenger()->addMessage($this->t('Saved the %label Moderation state transition.', [
           '%label' => $moderation_state_transition->label(),
         ]));
     }

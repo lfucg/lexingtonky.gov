@@ -19,7 +19,12 @@ class SearchKeywordsConditionsTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['comment', 'search', 'search_extra_type', 'test_page_test'];
+  protected static $modules = [
+    'comment',
+    'search',
+    'search_extra_type',
+    'test_page_test',
+  ];
 
   /**
    * {@inheritdoc}
@@ -37,7 +42,12 @@ class SearchKeywordsConditionsTest extends BrowserTestBase {
     parent::setUp();
 
     // Create searching user.
-    $this->searchingUser = $this->drupalCreateUser(['search content', 'access content', 'access comments', 'skip comment approval']);
+    $this->searchingUser = $this->drupalCreateUser([
+      'search content',
+      'access content',
+      'access comments',
+      'skip comment approval',
+    ]);
     // Log in with sufficient privileges.
     $this->drupalLogin($this->searchingUser);
   }

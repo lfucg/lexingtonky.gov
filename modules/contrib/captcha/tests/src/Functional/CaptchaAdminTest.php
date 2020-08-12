@@ -306,6 +306,8 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
 
     // Check in database.
     $result = $this->getCaptchaPointSettingFromDatabase($captcha_point_form_id);
+    $this->assertInstanceOf(CaptchaPoint::class, $result, 'Disabled CAPTCHA point should be in database');
+    $this->assertFalse($result->status());
 
     // Set CAPTCHA point via admin/user/captcha/captcha/captcha_point/$form_id.
     $form_values = [
@@ -325,7 +327,7 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
       'Deleting of CAPTCHA point');
 
     $result = $this->getCaptchaPointSettingFromDatabase($captcha_point_form_id);
-    $this->assertFalse($result, 'Deleted CAPTCHA point should be in database');
+    $this->assertNull($result, 'Deleted CAPTCHA point should not be in database');
   }
 
   /**

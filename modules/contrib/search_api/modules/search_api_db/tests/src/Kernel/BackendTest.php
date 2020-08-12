@@ -477,13 +477,23 @@ class BackendTest extends BackendTestBase {
   }
 
   /**
-   * Checks whether the module's specific alter hooks work correctly.
+   * Checks whether the module's specific alter hook and event work correctly.
    */
   protected function checkDbQueryAlter() {
     $query = $this->buildSearch();
     $query->setOption('search_api_test_db_search_api_db_query_alter', TRUE);
     $results = $query->execute();
     $this->assertResults([], $results, 'Query triggering custom alter hook');
+
+    $query = $this->buildSearch();
+    $query->setOption('search_api_test_db.event.query_pre_execute.1', TRUE);
+    $results = $query->execute();
+    $this->assertResults([], $results, 'Query triggering custom alter event 1');
+
+    $query = $this->buildSearch();
+    $query->setOption('search_api_test_db.event.query_pre_execute.2', TRUE);
+    $results = $query->execute();
+    $this->assertResults([], $results, 'Query triggering custom alter event 2');
   }
 
   /**

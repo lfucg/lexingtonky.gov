@@ -32,10 +32,10 @@ trait EntityCreationTrait {
     \Drupal::service('router.builder')->rebuild();
 
     if ($this instanceof \PHPUnit_Framework_TestCase) {
-      $this->assertSame($status, SAVED_NEW, (new FormattableMarkup('Created entity %id of type %type.', ['%id' => $entity->id(), '%type' => $entity_type]))->__toString());
+      $this->assertSame(SAVED_NEW, $status, (new FormattableMarkup('Created entity %id of type %type.', ['%id' => $entity->id(), '%type' => $entity_type]))->__toString());
     }
     else {
-      $this->assertEqual($status, SAVED_NEW, (new FormattableMarkup('Created entity %id of type %type.', ['%id' => $entity->id(), '%type' => $entity_type]))->__toString());
+      $this->assertEquals(SAVED_NEW, $status, (new FormattableMarkup('Created entity %id of type %type.', ['%id' => $entity->id(), '%type' => $entity_type]))->__toString());
     }
 
     return $entity;

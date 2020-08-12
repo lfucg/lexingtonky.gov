@@ -20,7 +20,7 @@
   "support": {
     "issues": "https://www.drupal.org/project/issues/search_api",
     "irc": "irc://irc.freenode.org/drupal-search-api",
-    "source": "http://git.drupal.org/project/search_api.git"
+    "source": "https://git.drupalcode.org/project/search_api"
   },
   "license": "GPL-2.0+",
   "require-dev": {

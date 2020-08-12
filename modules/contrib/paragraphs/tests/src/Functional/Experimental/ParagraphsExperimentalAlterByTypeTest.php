@@ -36,6 +36,6 @@ class ParagraphsExperimentalAlterByTypeTest extends ParagraphsExperimentalTestBa
     // Check that the form alteration based on Paragraphs type works.
     // See paragraphs_test_field_widget_entity_reference_paragraphs_form_alter()
     $this->drupalGet('node/add/paragraphed_test');
-    $this->assertText('Altered title');
+    $this->assertSession()->pageTextContains('Altered title');
   }
 }

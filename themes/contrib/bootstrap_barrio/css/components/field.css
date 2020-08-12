@@ -82,6 +82,7 @@
   padding: 0 0 0 1em;
   float: right;
 }
-.field--label-inline .field__label, .field--label-inline .field__item {
-  display: inline-block
+.field--label-inline .field__label,
+.field--label-inline .field__item {
+  display: inline-block;
 }

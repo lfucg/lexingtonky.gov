@@ -1,7 +1,6 @@
 name: 'Entity Embed test'
 type: module
 description: 'Support module for the Entity Embed module tests.'
-# core: 8.x
 package: Testing
 dependencies:
  - drupal:file
@@ -14,8 +13,7 @@ dependencies:
  - embed:embed
  - entity_embed:entity_embed
 
-# Information added by Drupal.org packaging script on 2019-06-28
-version: '8.x-1.0'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-03-26
+version: '8.x-1.1'
 project: 'entity_embed'
-datestamp: 1561765985
+datestamp: 1585252809

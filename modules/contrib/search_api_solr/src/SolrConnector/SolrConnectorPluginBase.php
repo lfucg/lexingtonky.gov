@@ -339,9 +339,8 @@ abstract class SolrConnectorPluginBase extends ConfigurablePluginBase implements
       // number as integer. In this case we will expand it to the minimum
       // corresponding full version string.
       $min_version = ['0', '0', '0'];
-      $version = explode('.', $this->configuration['solr_version']) + $min_version;
-
-      return implode('.', $version);
+      $version = implode('.', explode('.', $this->configuration['solr_version']) + $min_version);
+      return '4.0.0' === $version ? '4.5.0' : $version;
     }
 
     $info = [];

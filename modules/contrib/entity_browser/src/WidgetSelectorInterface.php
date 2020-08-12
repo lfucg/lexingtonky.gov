@@ -2,7 +2,8 @@
 
 namespace Drupal\entity_browser;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Component\Plugin\ConfigurableInterface;
+use Drupal\Component\Plugin\DependentPluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
@@ -15,7 +16,7 @@ use Drupal\Core\Plugin\PluginFormInterface;
  * if the user wants to tab between widgets, the tab set will be created and
  * managed by the widget selector.
  */
-interface WidgetSelectorInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
+interface WidgetSelectorInterface extends PluginInspectionInterface, ConfigurableInterface, PluginFormInterface, DependentPluginInterface {
 
   /**
    * Returns the widget selector label.

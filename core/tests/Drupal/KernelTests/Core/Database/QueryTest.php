@@ -14,10 +14,10 @@ class QueryTest extends DatabaseTestBase {
    */
   public function testArraySubstitution() {
     $names = $this->connection->query('SELECT name FROM {test} WHERE age IN ( :ages[] ) ORDER BY age', [':ages[]' => [25, 26, 27]])->fetchAll();
-    $this->assertEqual(count($names), 3, 'Correct number of names returned');
+    $this->assertCount(3, $names, 'Correct number of names returned');
 
     $names = $this->connection->query('SELECT name FROM {test} WHERE age IN ( :ages[] ) ORDER BY age', [':ages[]' => [25]])->fetchAll();
-    $this->assertEqual(count($names), 1, 'Correct number of names returned');
+    $this->assertCount(1, $names, 'Correct number of names returned');
   }
 
   /**
@@ -28,8 +28,8 @@ class QueryTest extends DatabaseTestBase {
       $names = $this->connection->query('SELECT name FROM {test} WHERE age IN ( :ages[] ) ORDER BY age', [':ages[]' => 25])->fetchAll();
       $this->fail('Array placeholder with scalar argument should result in an exception.');
     }
-    catch (\InvalidArgumentException $e) {
-      $this->pass('Array placeholder with scalar argument should result in an exception.');
+    catch (\Exception $e) {
+      $this->assertInstanceOf(\InvalidArgumentException::class, $e);
     }
 
   }
@@ -48,7 +48,7 @@ class QueryTest extends DatabaseTestBase {
       $this->fail('SQL injection attempt via array arguments should result in a database exception.');
     }
     catch (\InvalidArgumentException $e) {
-      $this->pass('SQL injection attempt via array arguments should result in a database exception.');
+      // Expected exception; just continue testing.
     }
 
     // Test that the insert query that was used in the SQL injection attempt did
@@ -85,7 +85,7 @@ class QueryTest extends DatabaseTestBase {
       $this->fail('Should not be able to attempt SQL injection via condition operator.');
     }
     catch (\ErrorException $e) {
-      $this->pass('SQL injection attempt via condition arguments should result in a database exception.');
+      // Expected exception; just continue testing.
     }
 
     // Test that the insert query that was used in the SQL injection attempt did
@@ -113,7 +113,7 @@ class QueryTest extends DatabaseTestBase {
       $this->fail('Should not be able to attempt SQL injection via operator.');
     }
     catch (\ErrorException $e) {
-      $this->pass('SQL injection attempt via condition arguments should result in a database exception.');
+      // Expected exception; just continue testing.
     }
 
     // Attempt SQLi via union query - uppercase tablename.
@@ -130,7 +130,7 @@ class QueryTest extends DatabaseTestBase {
       $this->fail('Should not be able to attempt SQL injection via operator.');
     }
     catch (\ErrorException $e) {
-      $this->pass('SQL injection attempt via condition arguments should result in a database exception.');
+      // Expected exception; just continue testing.
     }
     restore_error_handler();
   }
@@ -142,13 +142,12 @@ class QueryTest extends DatabaseTestBase {
    * @see http://bugs.php.net/bug.php?id=45259
    */
   public function testNumericExpressionSubstitution() {
-    $count = $this->connection->query('SELECT COUNT(*) >= 3 FROM {test}')->fetchField();
-    $this->assertEqual((bool) $count, TRUE);
+    $count_expected = $this->connection->query('SELECT COUNT(*) + 3 FROM {test}')->fetchField();
 
-    $count = $this->connection->query('SELECT COUNT(*) >= :count FROM {test}', [
+    $count = $this->connection->query('SELECT COUNT(*) + :count FROM {test}', [
       ':count' => 3,
     ])->fetchField();
-    $this->assertEqual((bool) $count, TRUE);
+    $this->assertEqual($count, $count_expected);
   }
 
 }

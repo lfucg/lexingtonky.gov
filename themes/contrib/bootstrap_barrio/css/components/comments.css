@@ -4,10 +4,7 @@
  */
 
 /* This is required to win over specificity of #content h2 */
-#content .comment-wrapper h2 {
-  margin-bottom: 1em;
-}
-#content .comment-wrapper h2.comment-form__title {
+.main-content .comment-wrapper .comment-form__title {
   margin-bottom: 1em;
 }
 .field-node--comment {
@@ -43,14 +40,16 @@
   margin: 4px 0;
   line-height: 1.2;
 }
-.comment__time, .comment__permalink {
+.comment__time,
+.comment__permalink {
   margin-bottom: 4px;
   color: #68696b;
   font-size: 0.733em;
   line-height: 1.2;
   padding: 0 0.5em 0 0; /* LTR */
 }
-[dir="rtl"] .comment__time, .comment__permalink {
+[dir="rtl"] .comment__time,
+.comment__permalink {
   padding: 0 0 0 0.5em;
 }
 .comment__permalink {

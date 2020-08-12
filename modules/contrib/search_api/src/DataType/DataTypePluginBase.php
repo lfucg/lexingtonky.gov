@@ -60,7 +60,7 @@ abstract class DataTypePluginBase extends HideablePluginBase implements DataType
    * {@inheritdoc}
    */
   public function getFallbackType() {
-    return !empty($this->pluginDefinition['fallback_type']) ? $this->pluginDefinition['fallback_type'] : 'string';
+    return $this->pluginDefinition['fallback_type'] ?? 'string';
   }
 
   /**

@@ -71,11 +71,11 @@ class NodeNewComments extends NumericField {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->database = $database;
     if (!$entity_type_manager) {
-      @trigger_error("Not passing the entity type manager to the NodeNewComments constructor is deprecated in drupal:8.8.0 and will be required in drupal 9.0.0. @see https://www.drupal.org/node/3047897");
+      @trigger_error("Not passing the entity type manager to the NodeNewComments constructor is deprecated in drupal:8.8.0 and will be required in drupal:9.0.0. @see https://www.drupal.org/node/3047897", E_USER_DEPRECATED);
       $entity_type_manager = \Drupal::entityTypeManager();
     }
     if (!$entity_field_manager) {
-      @trigger_error("Not passing the entity type manager to the NodeNewComments constructor is deprecated in drupal:8.8.0 and will be required in drupal 9.0.0. @see https://www.drupal.org/node/3047897");
+      @trigger_error("Not passing the entity type manager to the NodeNewComments constructor is deprecated in drupal:8.8.0 and will be required in drupal:9.0.0. @see https://www.drupal.org/node/3047897", E_USER_DEPRECATED);
       $entity_field_manager = \Drupal::service('entity_field.manager');
     }
     $this->entityTypeManager = $entity_type_manager;
@@ -163,7 +163,7 @@ class NodeNewComments extends NumericField {
     }
 
     if ($nids) {
-      $result = $this->database->query("SELECT n.nid, COUNT(c.cid) as num_comments FROM {node} n INNER JOIN {comment_field_data} c ON n.nid = c.entity_id AND c.entity_type = 'node' AND c.default_langcode = 1
+      $result = $this->database->query("SELECT n.nid, COUNT(c.cid) AS num_comments FROM {node} n INNER JOIN {comment_field_data} c ON n.nid = c.entity_id AND c.entity_type = 'node' AND c.default_langcode = 1
         LEFT JOIN {history} h ON h.nid = n.nid AND h.uid = :h_uid WHERE n.nid IN ( :nids[] )
         AND c.changed > GREATEST(COALESCE(h.timestamp, :timestamp1), :timestamp2) AND c.status = :status GROUP BY n.nid", [
         ':status' => CommentInterface::PUBLISHED,

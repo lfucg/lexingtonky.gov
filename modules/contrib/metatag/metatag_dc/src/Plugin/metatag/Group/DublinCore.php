@@ -10,7 +10,7 @@ use Drupal\metatag\Plugin\metatag\Group\GroupBase;
  * @MetatagGroup(
  *   id = "dublin_core",
  *   label = @Translation("Dublin Core"),
- *   description = @Translation("Provides the fifteen <a href=':docs'>Dublin Core Metadata Element Set 1.1</a> meta tags from the <a href=':link'>Dublin Core Metadata Institute</a>", arguments = { ":docs" = "http://dublincore.org/documents/dces/", ":link" = "http://dublincore.org/"}),
+ *   description = @Translation("Provides the fifteen <a href=':docs'>Dublin Core Metadata Element Set 1.1</a> meta tags from the <a href=':link'>Dublin Core Metadata Institute</a>", arguments = { ":docs" = "https://dublincore.org/documents/dces/", ":link" = "https://dublincore.org/"}),
  *   weight = 4
  * )
  */

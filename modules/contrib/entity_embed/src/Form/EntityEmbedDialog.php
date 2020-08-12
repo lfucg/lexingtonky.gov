@@ -262,7 +262,7 @@ class EntityEmbedDialog extends FormBase {
       }
     }
 
-    $form['#title'] = $this->t('Select @type to embed', ['@type' => $entity_type->getLowercaseLabel()]);
+    $form['#title'] = $this->t('Select @type to embed', ['@type' => $entity_type->getSingularLabel()]);
 
     if ($this->entityBrowser) {
       $this->eventDispatcher->addListener(Events::REGISTER_JS_CALLBACKS, [$this, 'registerJSCallback']);
@@ -340,7 +340,7 @@ class EntityEmbedDialog extends FormBase {
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = $form_state->get('entity');
 
-    $form['#title'] = $this->t('Review selected @type', ['@type' => $entity->getEntityType()->getLowercaseLabel()]);
+    $form['#title'] = $this->t('Review selected @type', ['@type' => $entity->getEntityType()->getSingularLabel()]);
 
     $form['selection'] = [
       '#markup' => $entity->label(),
@@ -404,7 +404,7 @@ class EntityEmbedDialog extends FormBase {
     $entity = $form_state->get('entity');
     $values = $form_state->getValues();
 
-    $form['#title'] = $this->t('Embed @type', ['@type' => $entity->getEntityType()->getLowercaseLabel()]);
+    $form['#title'] = $this->t('Embed @type', ['@type' => $entity->getEntityType()->getSingularLabel()]);
 
     try {
       if ($entity->getEntityType()->hasLinkTemplate('canonical')) {

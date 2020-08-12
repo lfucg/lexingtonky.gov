@@ -33,6 +33,11 @@ class EntityReferenceRevisionsAutocompleteTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() {
     parent::setUp();
     // Create article content type.

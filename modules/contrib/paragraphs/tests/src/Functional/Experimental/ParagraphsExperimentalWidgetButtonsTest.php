@@ -60,9 +60,9 @@ class ParagraphsExperimentalWidgetButtonsTest extends ParagraphsExperimentalTest
 
     // Test the 'Open' edit mode.
     $this->drupalGet('node/' . $node->id() . '/edit');
-    $this->assertFieldByName('field_paragraphs[0][subform][field_text][0][value]', $text);
+    $this->assertSession()->fieldValueEquals('field_paragraphs[0][subform][field_text][0][value]', $text);
     $this->drupalPostForm(NULL, [], t('Save'));
-    $this->assertText($text);
+    $this->assertSession()->pageTextContains($text);
 
     // Test the 'Closed' edit mode.
     $this->setParagraphsWidgetMode('paragraphed_test', 'field_paragraphs', 'closed');
@@ -70,7 +70,7 @@ class ParagraphsExperimentalWidgetButtonsTest extends ParagraphsExperimentalTest
     // Click "Edit" button.
     $this->drupalPostForm(NULL, [], 'field_paragraphs_0_edit');
     $this->drupalPostForm(NULL, [], 'field_paragraphs_1_edit');
-    $this->assertFieldByName('field_paragraphs[0][subform][field_text][0][value]', $text);
+    $this->assertSession()->fieldValueEquals('field_paragraphs[0][subform][field_text][0][value]', $text);
     $closed_mode_text = 'closed_mode_text';
     // Click "Collapse" button on both paragraphs.
     $edit = ['field_paragraphs[0][subform][field_text][0][value]' => $closed_mode_text];
@@ -78,36 +78,36 @@ class ParagraphsExperimentalWidgetButtonsTest extends ParagraphsExperimentalTest
     $edit = ['field_paragraphs[1][subform][field_text][0][value]' => $closed_mode_text];
     $this->drupalPostForm(NULL, $edit, 'field_paragraphs_1_collapse');
     // Verify that we have warning message for each paragraph.
-    $this->assertEqual(2, count($this->xpath("//*[contains(@class, 'paragraphs-icon-changed')]")));
-    $this->assertRaw('<span class="summary-content">' . $closed_mode_text);
+    $this->assertEquals(2, count($this->xpath("//*[contains(@class, 'paragraphs-icon-changed')]")));
+    $this->assertSession()->responseContains('<span class="summary-content">' . $closed_mode_text);
     $this->drupalPostForm(NULL, [], t('Save'));
-    $this->assertText('paragraphed_test ' . $node->label() . ' has been updated.');
-    $this->assertText($closed_mode_text);
+    $this->assertSession()->pageTextContains('paragraphed_test ' . $node->label() . ' has been updated.');
+    $this->assertSession()->pageTextContains($closed_mode_text);
 
     // Test the 'Preview' closed mode.
     $this->setParagraphsWidgetSettings('paragraphed_test', 'field_paragraphs', ['closed_mode' => 'preview']);
     $this->drupalGet('node/' . $node->id() . '/edit');
     // Click "Edit" button.
     $this->drupalPostForm(NULL, [], 'field_paragraphs_0_edit');
-    $this->assertFieldByName('field_paragraphs[0][subform][field_text][0][value]', $closed_mode_text);
+    $this->assertSession()->fieldValueEquals('field_paragraphs[0][subform][field_text][0][value]', $closed_mode_text);
     $preview_mode_text = 'preview_mode_text';
     $edit = ['field_paragraphs[0][subform][field_text][0][value]' => $preview_mode_text];
     // Click "Collapse" button.
     $this->drupalPostForm(NULL, $edit, 'field_paragraphs_0_collapse');
-    $this->assertText('You have unsaved changes on this Paragraph item.');
-    $this->assertEqual(1, count($this->xpath("//*[contains(@class, 'paragraphs-icon-changed')]")));
-    $this->assertText($preview_mode_text);
+    $this->assertSession()->pageTextContains('You have unsaved changes on this Paragraph item.');
+    $this->assertEquals(1, count($this->xpath("//*[contains(@class, 'paragraphs-icon-changed')]")));
+    $this->assertSession()->pageTextContains($preview_mode_text);
     $this->drupalPostForm(NULL, [], t('Save'));
-    $this->assertText('paragraphed_test ' . $node->label() . ' has been updated.');
-    $this->assertText($preview_mode_text);
+    $this->assertSession()->pageTextContains('paragraphed_test ' . $node->label() . ' has been updated.');
+    $this->assertSession()->pageTextContains($preview_mode_text);
 
     // Test the remove function.
     $this->drupalGet('node/' . $node->id() . '/edit');
     // Click "Remove" button.
     $this->drupalPostForm(NULL, [], 'field_paragraphs_0_remove');
     $this->drupalPostForm(NULL, [], t('Save'));
-    $this->assertText('paragraphed_test ' . $node->label() . ' has been updated.');
-    $this->assertNoText($preview_mode_text);
+    $this->assertSession()->pageTextContains('paragraphed_test ' . $node->label() . ' has been updated.');
+    $this->assertSession()->pageTextNotContains($preview_mode_text);
   }
 
   /**
@@ -149,23 +149,23 @@ class ParagraphsExperimentalWidgetButtonsTest extends ParagraphsExperimentalTest
 
     // Checking visible buttons on "Open" mode.
     $this->drupalGet('node/' . $node->id() . '/edit');
-    $this->assertField('field_paragraphs_0_collapse');
-    $this->assertField('field_paragraphs_0_remove');
-    $this->assertField('field_paragraphs_0_duplicate');
+    $this->assertSession()->buttonExists('field_paragraphs_0_collapse');
+    $this->assertSession()->buttonExists('field_paragraphs_0_remove');
+    $this->assertSession()->buttonExists('field_paragraphs_0_duplicate');
 
     // Checking visible buttons on "Closed" mode.
     $this->setParagraphsWidgetMode('paragraphed_test', 'field_paragraphs', 'closed');
     $this->drupalGet('node/' . $node->id() . '/edit');
-    $this->assertField('field_paragraphs_0_edit');
-    $this->assertField('field_paragraphs_0_remove');
-    $this->assertField('field_paragraphs_0_duplicate');
+    $this->assertSession()->buttonExists('field_paragraphs_0_edit');
+    $this->assertSession()->buttonExists('field_paragraphs_0_remove');
+    $this->assertSession()->buttonExists('field_paragraphs_0_duplicate');
 
     // Checking visible buttons on "Preview" mode.
     $this->setParagraphsWidgetMode('paragraphed_test', 'field_paragraphs', 'closed');
     $this->drupalGet('node/' . $node->id() . '/edit');
-    $this->assertField('field_paragraphs_0_edit');
-    $this->assertField('field_paragraphs_0_remove');
-    $this->assertField('field_paragraphs_0_duplicate');
+    $this->assertSession()->buttonExists('field_paragraphs_0_edit');
+    $this->assertSession()->buttonExists('field_paragraphs_0_remove');
+    $this->assertSession()->buttonExists('field_paragraphs_0_duplicate');
 
     // Checking always show collapse and edit actions.
     $this->addParagraphsType('nested_paragraph');
@@ -182,17 +182,17 @@ class ParagraphsExperimentalWidgetButtonsTest extends ParagraphsExperimentalTest
     $this->drupalPostForm(NULL, [], 'field_paragraphs_nested_paragraph_add_more');
     $this->drupalPostForm(NULL, [], 'field_paragraphs_2_subform_field_nested_nested_paragraph_add_more');
     // Collapse is present on each nesting level.
-    $this->assertFieldByName('field_paragraphs_2_collapse');
-    $this->assertFieldByName('field_paragraphs_2_subform_field_nested_0_collapse');
+    $this->assertSession()->buttonExists('field_paragraphs_2_collapse');
+    $this->assertSession()->buttonExists('field_paragraphs_2_subform_field_nested_0_collapse');
 
     // Tests hook_paragraphs_widget_actions_alter.
     $this->drupalGet('node/add/paragraphed_test');
     $this->drupalPostForm(NULL, NULL, t('Add text'));
-    $this->assertNoField('edit-field-paragraphs-0-top-links-test-button');
+    $this->assertSession()->buttonNotExists('edit-field-paragraphs-0-top-links-test-button');
     \Drupal::state()->set('paragraphs_test_dropbutton', TRUE);
     $this->drupalGet('node/add/paragraphed_test');
     $this->drupalPostForm(NULL, NULL, t('Add text'));
-    $this->assertNoField('edit-field-paragraphs-0-top-links-test-button');
+    $this->assertSession()->buttonNotExists('edit-field-paragraphs-0-top-links-test-button');
 
     ConfigurableLanguage::createFromLangcode('sr')->save();
 
@@ -206,11 +206,11 @@ class ParagraphsExperimentalWidgetButtonsTest extends ParagraphsExperimentalTest
 
     // Check that operation is hidden during translation.
     $this->drupalGet('sr/node/' . $node->id() . '/translations/add/en/sr');
-    $this->assertNoField('edit-field-paragraphs-1-top-actions-dropdown-actions-test-button');
+    $this->assertSession()->buttonNotExists('edit-field-paragraphs-1-top-actions-dropdown-actions-test-button');
 
     // Check that "Duplicate" is hidden during translation.
-    $this->assertNoField('field_paragraphs_0_duplicate');
-    $this->assertNoRaw('value="Duplicate"');
+    $this->assertSession()->buttonNotExists('field_paragraphs_0_duplicate');
+    $this->assertSession()->responseNotContains('value="Duplicate"');
   }
 
   /**
@@ -256,11 +256,13 @@ class ParagraphsExperimentalWidgetButtonsTest extends ParagraphsExperimentalTest
     ]);
     $field->save();
 
-    $form_display = entity_get_form_display($entity_type, $content_type_name, 'default')
+    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
+    $display_repository = \Drupal::service('entity_display.repository');
+    $form_display = $display_repository->getFormDisplay($entity_type, $content_type_name)
       ->setComponent($paragraphs_field_name, ['type' => $widget_type]);
     $form_display->save();
 
-    $view_display = entity_get_display($entity_type, $content_type_name, 'default')
+    $view_display = $display_repository->getViewDisplay($entity_type, $content_type_name)
       ->setComponent($paragraphs_field_name, ['type' => 'entity_reference_revisions_entity_view']);
     $view_display->save();
 
@@ -285,18 +287,18 @@ class ParagraphsExperimentalWidgetButtonsTest extends ParagraphsExperimentalTest
 
     // Checking hidden button on "Open" mode.
     $this->drupalGet('node/add/paragraphed_test');
-    $this->assertNoField('field_paragraphs_0_remove');
-    $this->assertFieldByName('field_paragraphs[0][subform][field_text][0][value]', '');
+    $this->assertSession()->buttonNotExists('field_paragraphs_0_remove');
+    $this->assertSession()->fieldValueEquals('field_paragraphs[0][subform][field_text][0][value]', '');
 
     // Checking hidden button on "Closed" mode.
     $this->setParagraphsWidgetMode('paragraphed_test', 'field_paragraphs', 'closed');
     $this->drupalGet('node/add/paragraphed_test');
-    $this->assertNoField('field_paragraphs_0_remove');
-    $this->assertFieldByName('field_paragraphs[0][subform][field_text][0][value]', '');
+    $this->assertSession()->buttonNotExists('field_paragraphs_0_remove');
+    $this->assertSession()->fieldValueEquals('field_paragraphs[0][subform][field_text][0][value]', '');
 
     // Checking that the "Duplicate" button is not shown when cardinality is 1.
     $this->drupalGet('node/add/paragraphed_test');
-    $this->assertNoField('field_paragraphs_0_duplicate');
+    $this->assertSession()->buttonNotExists('field_paragraphs_0_duplicate');
   }
 
 }

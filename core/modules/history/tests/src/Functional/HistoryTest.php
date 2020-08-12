@@ -47,7 +47,10 @@ class HistoryTest extends BrowserTestBase {
 
     $this->drupalCreateContentType(['type' => 'page', 'name' => 'Basic page']);
 
-    $this->user = $this->drupalCreateUser(['create page content', 'access content']);
+    $this->user = $this->drupalCreateUser([
+      'create page content',
+      'access content',
+    ]);
     $this->drupalLogin($this->user);
     $this->testNode = $this->drupalCreateNode(['type' => 'page', 'uid' => $this->user->id()]);
   }
@@ -112,14 +115,14 @@ class HistoryTest extends BrowserTestBase {
     // JavaScript present to record the node read.
     $settings = $this->getDrupalSettings();
     $libraries = explode(',', $settings['ajaxPageState']['libraries']);
-    $this->assertTrue(in_array('history/mark-as-read', $libraries), 'history/mark-as-read library is present.');
+    $this->assertContains('history/mark-as-read', $libraries, 'history/mark-as-read library is present.');
     $this->assertEqual([$nid => TRUE], $settings['history']['nodesToMarkAsRead'], 'drupalSettings to mark node as read are present.');
 
     // Simulate JavaScript: perform HTTP request to mark node as read.
     $response = $this->markNodeAsRead($nid);
     $this->assertEquals(200, $response->getStatusCode());
     $timestamp = Json::decode($response->getBody());
-    $this->assertTrue(is_numeric($timestamp), 'Node has been marked as read. Timestamp received.');
+    $this->assertIsNumeric($timestamp);
 
     // Retrieve "last read" timestamp for test node, for the current user.
     $response = $this->getNodeReadTimestamps([$nid]);

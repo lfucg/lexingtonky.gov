@@ -221,7 +221,7 @@ class AddToAnySettingsForm extends ConfigFormBase {
       $entityId = $entity->id();
       $entityType = $entity->getBundleEntityType();
       // Get all available bundles for the current entity.
-      $bundles = \Drupal::service('entity.manager')->getBundleInfo($entityId);
+      $bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo($entityId);
       $links = [];
 
       foreach($bundles as $machine_name => $bundle) {

@@ -11,12 +11,10 @@
  * - message: A string containing information to be displayed.
  */
 #}
-{{ attach_library('bootstrap_barrio/progress') }}
+{% if label %}
+  <label class="progress-bar-label">{{ label }}</label>
+{% endif %}
 <div class="progress" data-drupal-progress>
-  {% if label %}
-    <div class="progress__label">{{ label }}</div>
-  {% endif %}
-  <div class="progress__track"><div class="progress__bar" style="width: {{ percent }}%"></div></div>
-  <div class="progress__percentage">{{ percent }}%</div>
-  <div class="progress__description">{{ message }}</div>
-</div
+  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ percent }}%">{{ percent }}%</div>
+</div>
+<small class="form-text text-muted progress-bar-message">{{ message }}</small>

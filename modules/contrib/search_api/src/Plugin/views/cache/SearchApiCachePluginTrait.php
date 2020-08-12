@@ -117,7 +117,7 @@ trait SearchApiCachePluginTrait {
     $view = $this->getView();
     $data = [
       'result' => $view->result,
-      'total_rows' => isset($view->total_rows) ? $view->total_rows : 0,
+      'total_rows' => $view->total_rows ?? 0,
       'current_page' => $view->getCurrentPage(),
       'search_api results' => $this->getQuery()->getSearchApiResults(),
     ];
@@ -173,8 +173,7 @@ trait SearchApiCachePluginTrait {
    */
   public function generateResultsKey() {
     if (!isset($this->resultsKey)) {
-      $query = $this->getQuery()->getSearchApiQuery();
-      $query->preExecute();
+      $this->getQuery()->getSearchApiQuery()->preExecute();
 
       $view = $this->getView();
       $build_info = $view->build_info;
@@ -188,6 +187,9 @@ trait SearchApiCachePluginTrait {
         ],
       ];
 
+      // Vary the results key by the cache contexts of the display handler.
+      // These cache contexts are calculated when the view is saved in the Views
+      // UI and stored in the view config entity.
       $display_handler_cache_contexts = $this->displayHandler
         ->getCacheMetadata()
         ->getCacheContexts();

@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("Forum"),
  *   types = {"term"},
  *   provider = "forum",
- *   context = {
+ *   context_definitions = {
  *     "taxonomy_term" = @ContextDefinition("entity:taxonomy_term")
  *   }
  * )

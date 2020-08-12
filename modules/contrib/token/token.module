@@ -130,28 +130,28 @@ function token_field_info_alter(&$info) {
 }
 
 /**
- * Implements hook_date_format_insert().
+ * Implements hook_ENTITY_TYPE_insert().
  */
 function token_date_format_insert() {
   token_clear_cache();
 }
 
 /**
- * Implements hook_date_format_delete().
+ * Implements hook_ENTITY_TYPE_delete().
  */
 function token_date_format_delete() {
   token_clear_cache();
 }
 
 /**
- * Implements hook_field_storage_config_presave().
+ * Implements hook_ENTITY_TYPE_presave().
  */
 function token_field_config_presave($instance) {
   token_clear_cache();
 }
 
 /**
- * Implements hook_field_storage_config_delete().
+ * Implements hook_ENTITY_TYPE_delete().
  */
 function token_field_config_delete($instance) {
   token_clear_cache();
@@ -204,10 +204,6 @@ function token_entity_type_alter(array &$entity_types) {
     }
   }
 }
-
-/**
- * Implements hook_entity_view_modes_info().
- */
 
 /**
  * Implements hook_module_implements_alter().
@@ -677,7 +673,9 @@ function token_entity_base_field_info(EntityTypeInterface $entity_type) {
       ->setDescription(t('Computed menu link for the node (only available during node saving).'))
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'menu_link_content')
+      ->setClass('\Drupal\token\MenuLinkFieldItemList')
       ->setTranslatable(TRUE)
+      ->setInternal(TRUE)
       ->setDisplayOptions('view', [
         'label' => 'hidden',
         'region' => 'hidden',
@@ -702,12 +700,6 @@ function token_entity_base_field_info(EntityTypeInterface $entity_type) {
  */
 function token_form_node_form_alter(&$form, FormStateInterface $form_state) {
   if (!\Drupal::moduleHandler()->moduleExists('menu_ui')) {
-    return;
-  }
-  /** @var \Drupal\node\NodeForm $form_object */
-  if (!\Drupal::currentUser()->hasPermission('administer menu')) {
-    // We're only interested in when the node is unsaved and the editor has
-    // permission to create new menu links.
     return;
   }
   $form['#entity_builders'][] = 'token_node_menu_link_submit';
@@ -765,6 +757,7 @@ function token_node_menu_link_submit($entity_type, NodeInterface $node, &$form, 
       $entity->menu_name->value = $values['menu_name'];
       $entity->parent->value = $values['parent'];
       $entity->weight->value = isset($values['weight']) ? $values['weight'] : 0;
+      $entity->isDefaultRevision($node->isDefaultRevision());
       $entity->save();
       $node->menu_link = $entity;
       // Leave this for _menu_ui_node_save() to pick up so we don't end up with

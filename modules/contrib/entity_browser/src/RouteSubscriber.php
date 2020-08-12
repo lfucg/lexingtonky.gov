@@ -28,7 +28,7 @@ class RouteSubscriber {
    * Constructs a \Drupal\views\EventSubscriber\RouteSubscriber instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity manager.
+   *   The entity type manager.
    * @param \Drupal\entity_browser\DisplayManager $display_manager
    *   The display manager.
    */

@@ -2,7 +2,6 @@
 
 namespace Drupal\workbench_moderation;
 
-use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\workbench_moderation\Entity\ModerationState;
 use Drupal\workbench_moderation\Entity\ModerationStateTransition;
@@ -13,7 +12,6 @@ use Drupal\workbench_moderation\Entity\ModerationStateTransition;
 class Permissions {
 
   use StringTranslationTrait;
-  use UrlGeneratorTrait;
 
   /**
    * Returns an array of transition permissions.

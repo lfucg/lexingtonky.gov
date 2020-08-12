@@ -3,7 +3,7 @@ entity_browser.browser.widget.dropzonejs:
   label: 'DropzoneJS widget configuration'
   mapping:
     submit_text:
-      type: string
+      type: text
       label: 'Submit button text'
     auto_select:
       type: boolean
@@ -12,7 +12,7 @@ entity_browser.browser.widget.dropzonejs:
       type: string
       label: 'Upload location'
     dropzone_description:
-      type: string
+      type: text
       label: 'Dropzone drag-n-drop zone text'
     max_filesize:
       type: string

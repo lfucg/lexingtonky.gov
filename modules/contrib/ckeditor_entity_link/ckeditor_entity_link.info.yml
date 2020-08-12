@@ -1,15 +1,15 @@
 name: CKEditor Entity Link
 type: module
 description: Allows to insert entity links in CKEditor.
-# core: 8.x
+core: 8.x
+core_version_requirement: ^8 || ^9
 package: Other
 configure: ckeditor_entity_link.config_form
 dependencies:
-  - ckeditor
-  - editor
+  - drupal:ckeditor
+  - drupal:editor
 
-# Information added by Drupal.org packaging script on 2017-03-29
-version: '8.x-1.0-alpha2'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-07-09
+version: '8.x-1.2'
 project: 'ckeditor_entity_link'
-datestamp: 1490814185
+datestamp: 1594326644

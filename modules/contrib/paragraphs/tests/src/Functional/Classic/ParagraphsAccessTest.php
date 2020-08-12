@@ -72,8 +72,8 @@ class ParagraphsAccessTest extends ParagraphsTestBase {
     ];
     $this->drupalPostForm('admin/config/regional/content-language', $edit, t('Save configuration'));
 
-    $view_display = entity_get_display('paragraph', 'images', 'default')
-      ->setComponent('field_images_demo', ['settings' => ['image_style' => 'medium']]);
+    $view_display = \Drupal::service('entity_display.repository')->getViewDisplay('paragraph', 'images');
+    $view_display->setComponent('field_images_demo', ['settings' => ['image_style' => 'medium']]);
     $view_display->save();
   }
 
@@ -118,13 +118,14 @@ class ParagraphsAccessTest extends ParagraphsTestBase {
 
     $images = $this->getTestFiles('image');
 
+    $file_system = \Drupal::service('file_system');
     // Create a file, upload it.
-    file_unmanaged_copy($images[0]->uri, 'temporary://privateImage.jpg');
+    $file_system->copy($images[0]->uri, 'temporary://privateImage.jpg');
     $file_path = $this->container->get('file_system')
       ->realpath('temporary://privateImage.jpg');
 
     // Create a file, upload it.
-    file_unmanaged_copy($images[1]->uri, 'temporary://privateImage2.jpg');
+    $file_system->copy($images[1]->uri, 'temporary://privateImage2.jpg');
     $file_path_2 = $this->container->get('file_system')
       ->realpath('temporary://privateImage2.jpg');
 
@@ -143,7 +144,7 @@ class ParagraphsAccessTest extends ParagraphsTestBase {
     $image_style = ImageStyle::load('medium');
     $img1_url = $image_style->buildUrl('private://' . date('Y-m') . '/privateImage.jpg');
     $image_url = file_url_transform_relative($img1_url);
-    $this->assertRaw($image_url, 'Image was found in preview');
+    $this->assertSession()->responseContains($image_url);
     $this->clickLink(t('Back to content editing'));
     $this->drupalPostForm(NULL, [], t('Save'));
 
@@ -152,10 +153,10 @@ class ParagraphsAccessTest extends ParagraphsTestBase {
     $this->drupalGet('node/' . $node->id());
 
     // Check the text and image after publish.
-    $this->assertRaw($image_url, 'Image was found in content');
+    $this->assertSession()->responseContains($image_url);
 
     $this->drupalGet($img1_url);
-    $this->assertResponse(200, 'Image could be downloaded');
+    $this->assertSession()->statusCodeEquals(200);
 
     // Logout to become anonymous.
     $this->drupalLogout();
@@ -165,17 +166,17 @@ class ParagraphsAccessTest extends ParagraphsTestBase {
     $img_url = $image_style->buildUrl('private://' . date('Y-m') . '/privateImage2.jpg');
     $image_url = file_url_transform_relative($img_url);
     // Check the text and image after publish. Anonymous should not see content.
-    $this->assertNoRaw($image_url, 'Image was not found in content');
+    $this->assertSession()->responseNotContains($image_url);
 
     $this->drupalGet($img_url);
-    $this->assertResponse(403, 'Image could not be downloaded');
+    $this->assertSession()->statusCodeEquals(403);
 
     // Login as admin with no delete permissions.
     $this->loginAsAdmin($admin_user);
     // Create a new demo node.
     $this->drupalGet('node/add/paragraphed_content_demo');
     $this->drupalPostForm(NULL, NULL, t('Add text'));
-    $this->assertText('Text');
+    $this->assertSession()->pageTextContains('Text');
     $edit = [
       'title[0][value]' => 'delete_permissions',
       'field_paragraphs_demo[0][subform][field_text_demo][0][value]' => 'Test',
@@ -190,6 +191,6 @@ class ParagraphsAccessTest extends ParagraphsTestBase {
     $this->drupalPostForm(NULL, [], 'field_paragraphs_demo_0_confirm_remove');
     $this->drupalPostForm(NULL, [], t('Save'));
     $node = $this->getNodeByTitle('delete_permissions');
-    $this->assertUrl('node/' . $node->id());
+    $this->assertSession()->addressEquals('node/' . $node->id());
   }
 }

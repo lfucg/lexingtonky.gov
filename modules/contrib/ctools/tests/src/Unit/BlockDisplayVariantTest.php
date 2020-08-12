@@ -36,7 +36,23 @@ class BlockDisplayVariantTest extends UnitTestCase {
     $block_manager = $this->prophesize(BlockManager::class);
     $condition_manager = $this->prophesize(ConditionManager::class);
 
-    $display_variant = new TestBlockDisplayVariant([], '', [], $context_handler->reveal(), $account->reveal(), $uuid_generator->reveal(), $token->reveal(), $block_manager->reveal(), $condition_manager->reveal());
+    $display_variant = new class([], '', [], $context_handler->reveal(), $account->reveal(), $uuid_generator->reveal(), $token->reveal(), $block_manager->reveal(), $condition_manager->reveal()) extends BlockDisplayVariant {
+
+      /**
+       * {@inheritdoc}
+       */
+      public function build() {
+        return [];
+      }
+
+      public function getRegionNames() {
+        return [
+          'top' => 'Top',
+          'bottom' => 'Bottom',
+        ];
+      }
+
+    };
 
     $form = [];
     $form_state = (new FormState())->setValues($values);
@@ -67,24 +83,6 @@ class BlockDisplayVariantTest extends UnitTestCase {
       ],
     ];
     return $data;
-  }
-
-}
-
-class TestBlockDisplayVariant extends BlockDisplayVariant {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function build() {
-    return [];
-  }
-
-  public function getRegionNames() {
-    return [
-      'top' => 'Top',
-      'bottom' => 'Bottom',
-    ];
   }
 
 }

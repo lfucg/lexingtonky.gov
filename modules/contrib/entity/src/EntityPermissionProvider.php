@@ -11,7 +11,9 @@ use Drupal\Core\Entity\EntityTypeInterface;
  * on a single "administer" permission.
  *
  * Provided permissions:
- * - administer $entity_type
+ * - The declared "admin_permission" of the entity type (or
+ *   "administer $entity_type" if the entity type does not declare an
+ *   administrative permission)
  * - access $entity_type overview
  * - view own unpublished $entity_type
  * - view ($bundle) $entity_type

@@ -132,8 +132,8 @@ class ContactFormCloneForm extends ContactFormEditForm {
 
     // Redirect and show messge.
     $form_state->setRedirect('entity.contact_form.edit_form', ['contact_form' => $contact_form->id()]);
-    $edit_link = $this->entity->link($this->t('Edit'));
-    drupal_set_message($this->t('Contact form %label has been added.', ['%label' => $contact_form->label()]));
+    $edit_link = $this->entity->toLink($this->t('Edit'))->toString();
+    $this->messenger()->addStatus($this->t('Contact form %label has been added.', ['%label' => $contact_form->label()]));
     $this->logger('contact')->notice('Contact form %label has been added.', ['%label' => $contact_form->label(), 'link' => $edit_link]);
   }
 

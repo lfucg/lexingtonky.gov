@@ -190,8 +190,7 @@ function search_api_update_8102() {
     if ($displays['default']['display_options']['query']['type'] === 'search_api_query') {
       $change = FALSE;
       foreach ($displays as $id => $display) {
-        if (!empty($display['display_options']['cache']['type']) && in_array($display['display_options']['cache']['type'], ['tag', 'time'])
-        ) {
+        if (in_array($display['display_options']['cache']['type'] ?? '', ['tag', 'time'])) {
           $displays[$id]['display_options']['cache']['type'] = 'none';
           $change = TRUE;
         }
@@ -259,7 +258,7 @@ function search_api_update_8104() {
 
     $updated = FALSE;
     foreach ($displays as $id => $display) {
-      if (!empty($display['display_options']['cache']['type']) && $display['display_options']['cache']['type'] === 'search_api') {
+      if (($display['display_options']['cache']['type'] ?? '') === 'search_api') {
         $displays[$id]['display_options']['cache']['type'] = 'search_api_time';
         $updated = TRUE;
       }

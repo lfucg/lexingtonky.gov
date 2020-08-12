@@ -2,7 +2,7 @@ buttons_size: 32
 additional_html: |
   <a class="a2a_button_facebook"></a>
   <a class="a2a_button_twitter"></a>
-  <a class="a2a_button_google_plus"></a>
+  <a class="a2a_button_email"></a>
 additional_css: ''
 additional_js: ''
 universal_button: default

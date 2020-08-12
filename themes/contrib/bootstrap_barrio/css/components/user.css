@@ -66,7 +66,8 @@
 }
 
 /* Login page stype */
-.page-user-login main .region-content, .page-user-password main .region-content {
+.page-user-login main .region-content,
+.page-user-password main .region-content {
   max-width: 400px;
   background: white;
   padding: 15px 25px;

@@ -2,7 +2,7 @@
 
 namespace Drupal\ctools_block\Plugin\Deriver;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
+use Drupal\Core\Plugin\Context\EntityContextDefinition;
 use Drupal\ctools\Plugin\Deriver\EntityDeriverBase;
 
 /**
@@ -51,8 +51,8 @@ class EntityFieldDeriver extends EntityDeriverBase {
         $derivative = $base_plugin_definition;
         $derivative['category'] = $this->t('@entity', ['@entity' => $entity_type_labels[$entity_type_id]]);
         $derivative['admin_label'] = $admin_label;
-        $derivative['context'] = [
-          'entity' => new ContextDefinition('entity:' . $entity_type_id, $entity_type_labels[$entity_type_id], TRUE),
+        $derivative['context_definitions'] = [
+          'entity' => new EntityContextDefinition('entity:' . $entity_type_id, $entity_type_labels[$entity_type_id], TRUE),
         ];
 
         $this->derivatives[$derivative_id] = $derivative;

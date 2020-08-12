@@ -47,7 +47,10 @@ class MenuLinkContentFormTest extends BrowserTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->adminUser = $this->drupalCreateUser(['administer menu', 'link to any page']);
+    $this->adminUser = $this->drupalCreateUser([
+      'administer menu',
+      'link to any page',
+    ]);
     $this->basicUser = $this->drupalCreateUser(['administer menu']);
     $this->drupalLogin($this->adminUser);
   }
@@ -67,12 +70,12 @@ class MenuLinkContentFormTest extends BrowserTestBase {
     // The user should be able to edit a menu link to the page, even though
     // the user cannot access the page itself.
     $this->drupalGet('/admin/structure/menu/item/' . $menu_link->id() . '/edit');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     $this->drupalLogin($this->basicUser);
 
     $this->drupalGet('/admin/structure/menu/item/' . $menu_link->id() . '/edit');
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
   }
 
   /**

@@ -6,6 +6,7 @@ use Drupal\entity_test\Entity\EntityTest;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\Tests\user\Traits\UserCreationTrait;
 
 /**
  * @coversDefaultClass \Drupal\workbench_moderation\ParamConverter\EntityRevisionConverter
@@ -13,6 +14,7 @@ use Drupal\node\Entity\NodeType;
  */
 class EntityRevisionConverterTest extends KernelTestBase {
 
+  use UserCreationTrait;
   public static $modules = ['user', 'entity_test', 'system', 'workbench_moderation', 'node'];
 
   /**
@@ -24,8 +26,7 @@ class EntityRevisionConverterTest extends KernelTestBase {
     $this->installEntitySchema('entity_test');
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
-    $this->installSchema('system', 'router');
-    $this->installSchema('system', 'sequences');
+    $this->setUpCurrentUser();
     $this->installSchema('node', 'node_access');
     \Drupal::service('router.builder')->rebuild();
   }

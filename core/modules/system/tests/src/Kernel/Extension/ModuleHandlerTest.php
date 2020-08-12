@@ -96,7 +96,7 @@ class ModuleHandlerTest extends KernelTestBase {
       $this->fail('ModuleInstaller::install() throws an exception if dependencies are missing.');
     }
     catch (MissingDependencyException $e) {
-      $this->pass('ModuleInstaller::install() throws an exception if dependencies are missing.');
+      // Expected exception; just continue testing.
     }
 
     $this->assertFalse($this->moduleHandler()->moduleExists('color'), 'ModuleInstaller::install() aborts if dependencies are missing.');
@@ -292,7 +292,7 @@ class ModuleHandlerTest extends KernelTestBase {
       $this->fail($message);
     }
     catch (ModuleUninstallValidatorException $e) {
-      $this->pass(get_class($e) . ': ' . $e->getMessage());
+      // Expected exception; just continue testing.
     }
 
     // Uninstalling help needs entity_test to be un-installable.
@@ -302,7 +302,7 @@ class ModuleHandlerTest extends KernelTestBase {
       $this->fail($message);
     }
     catch (ModuleUninstallValidatorException $e) {
-      $this->pass(get_class($e) . ': ' . $e->getMessage());
+      // Expected exception; just continue testing.
     }
 
     // Deleting the entity.
@@ -324,7 +324,8 @@ class ModuleHandlerTest extends KernelTestBase {
     // Use 0 if mtime isn't present, to avoid an array index notice.
     $test_mtime = !empty($modules['system']->info['mtime']) ? $modules['system']->info['mtime'] : 0;
     // Ensure the mtime field contains a number that is greater than zero.
-    $this->assertTrue(is_numeric($test_mtime) && ($test_mtime > 0), 'The system.info.yml file modification time field contains a timestamp.');
+    $this->assertIsNumeric($test_mtime);
+    $this->assertGreaterThan(0, $test_mtime);
   }
 
   /**
@@ -355,7 +356,8 @@ class ModuleHandlerTest extends KernelTestBase {
     // Use 0 if mtime isn't present, to avoid an array index notice.
     $test_mtime = !empty($themes['bartik']->info['mtime']) ? $themes['bartik']->info['mtime'] : 0;
     // Ensure the mtime field contains a number that is greater than zero.
-    $this->assertTrue(is_numeric($test_mtime) && ($test_mtime > 0), 'The bartik.info.yml file modification time field contains a timestamp.');
+    $this->assertIsNumeric($test_mtime);
+    $this->assertGreaterThan(0, $test_mtime);
   }
 
   /**

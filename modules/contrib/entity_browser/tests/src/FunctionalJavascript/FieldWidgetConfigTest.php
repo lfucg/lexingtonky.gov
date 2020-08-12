@@ -19,6 +19,11 @@ use Drupal\entity_browser\Element\EntityBrowserElement;
 class FieldWidgetConfigTest extends WebDriverTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Modules to enable.
    *
    * @var array

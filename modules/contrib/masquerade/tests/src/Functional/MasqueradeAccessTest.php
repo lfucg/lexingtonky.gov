@@ -21,19 +21,30 @@ class MasqueradeAccessTest extends MasqueradeWebTestBase {
    * - root » admin
    * - admin » root
    * - admin » moderator (more roles but less privileges)
+   * - admin » super (administrator and editor roles)
+   * - admin » lead (editor roles)
    * - admin » masquerade (different role)
    * - admin » auth (less roles)
    * - moderator ! root
    * - moderator ! admin (less roles but more privileges)
    * - moderator ! editor (different roles + privileges)
-   * - moderator » masquerade (less roles)
+   * - moderator » super (administrator and editor roles)
+   * - moderator » lead (editor roles)
    * - moderator » auth
    * - [editor is access-logic-wise equal to moderator, so skipped]
    * - masquerade ! root
    * - masquerade ! admin (different role with more privileges)
    * - masquerade ! moderator (more roles)
+   * - masquerade ! lead (editor roles)
+   * - masquerade ! super (administrator and editor roles)
    * - masquerade » auth
    * - masquerade ! masquerade (self)
+   * - lead ! root
+   * - lead ! admin (different role with more privileges)
+   * - lead ! moderator (more roles)
+   * - lead ! super (administrator and editor roles)
+   * - lead » editor
+   * - lead » auth
    * - auth ! *
    */
   public function testAccess() {
@@ -45,6 +56,8 @@ class MasqueradeAccessTest extends MasqueradeWebTestBase {
     $this->assertCanMasqueradeAs($this->rootUser);
     // Permission 'masquerade as any user' granted by default.
     $this->assertCanMasqueradeAs($this->moderator_user);
+    $this->assertCanMasqueradeAs($this->superUser);
+    $this->assertCanMasqueradeAs($this->leadEditorUser);
     $this->assertCanMasqueradeAs($this->editor_user);
     $this->assertCanMasqueradeAs($this->masquerade_user);
     $this->assertCanMasqueradeAs($this->auth_user);
@@ -53,6 +66,8 @@ class MasqueradeAccessTest extends MasqueradeWebTestBase {
     $this->drupalLogin($this->moderator_user);
     $this->assertCanNotMasqueradeAs($this->rootUser);
     $this->assertCanMasqueradeAs($this->admin_user);
+    $this->assertCanMasqueradeAs($this->superUser);
+    $this->assertCanMasqueradeAs($this->leadEditorUser);
     $this->assertCanMasqueradeAs($this->editor_user);
     $this->assertCanMasqueradeAs($this->masquerade_user);
     $this->assertCanMasqueradeAs($this->auth_user);
@@ -62,7 +77,19 @@ class MasqueradeAccessTest extends MasqueradeWebTestBase {
     $this->assertCanNotMasqueradeAs($this->rootUser);
     $this->assertCanNotMasqueradeAs($this->admin_user);
     $this->assertCanNotMasqueradeAs($this->moderator_user);
+    $this->assertCanNotMasqueradeAs($this->superUser);
+    $this->assertCanNotMasqueradeAs($this->leadEditorUser);
     $this->assertCanMasqueradeAs($this->masquerade_user);
+    $this->assertCanMasqueradeAs($this->auth_user);
+
+    // Test 'masquerade as @role' permission.
+    $this->drupalLogin($this->leadEditorUser);
+    $this->assertCanNotMasqueradeAs($this->rootUser);
+    $this->assertCanNotMasqueradeAs($this->admin_user);
+    $this->assertCanNotMasqueradeAs($this->moderator_user);
+    $this->assertCanNotMasqueradeAs($this->superUser);
+    $this->assertCanNotMasqueradeAs($this->masquerade_user);
+    $this->assertCanMasqueradeAs($this->editor_user);
     $this->assertCanMasqueradeAs($this->auth_user);
 
     // Test 'masquerade as authenticated' permission.
@@ -70,6 +97,8 @@ class MasqueradeAccessTest extends MasqueradeWebTestBase {
     $this->assertCanNotMasqueradeAs($this->rootUser);
     $this->assertCanNotMasqueradeAs($this->admin_user);
     $this->assertCanNotMasqueradeAs($this->moderator_user);
+    $this->assertCanNotMasqueradeAs($this->superUser);
+    $this->assertCanNotMasqueradeAs($this->leadEditorUser);
     $this->assertCanNotMasqueradeAs($this->editor_user);
     $this->assertCanMasqueradeAs($this->auth_user);
 

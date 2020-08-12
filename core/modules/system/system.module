@@ -7,6 +7,7 @@
 
 use Drupal\Component\FileSecurity\FileSecurity;
 use Drupal\Component\Gettext\PoItem;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Render\PlainTextOutput;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Asset\AttachedAssetsInterface;
@@ -15,6 +16,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Extension\Dependency;
 use Drupal\Core\Extension\Extension;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Field\Plugin\Field\FieldWidget\EntityReferenceAutocompleteWidget;
 use Drupal\Core\File\Exception\FileException;
@@ -27,8 +29,9 @@ use Drupal\Core\PageCache\RequestPolicyInterface;
 use Drupal\Core\Queue\QueueGarbageCollectionInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\StackedRouteMatchInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
-use Drupal\user\UserInterface;
+use Drupal\path_alias\PathAliasInterface;
 use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -80,22 +83,14 @@ const DRUPAL_REQUIRED = 2;
 /**
  * Return only visible regions.
  *
- * @deprecated in drupal:8.3.0 and is removed from drupal:9.0.0.
- *   Use \Drupal\block\BlockRepositoryInterface::REGIONS_VISIBLE instead.
- *
  * @see system_region_list()
- * @see https://www.drupal.org/node/2831620
  */
 const REGIONS_VISIBLE = 'visible';
 
 /**
  * Return all regions.
  *
- * @deprecated in drupal:8.3.0 and is removed from drupal:9.0.0.
- *   Use \Drupal\block\BlockRepositoryInterface::REGIONS_ALL instead.
- *
  * @see system_region_list()
- * @see https://www.drupal.org/node/2831620
  */
 const REGIONS_ALL = 'all';
 
@@ -448,13 +443,14 @@ function template_preprocess_entity_add_list(&$variables) {
 /**
  * Setup a given callback to run via authorize.php with elevated privileges.
  *
- * To use authorize.php, certain variables must be stashed into $_SESSION. This
- * function sets up all the necessary $_SESSION variables. The calling function
- * should then redirect to authorize.php, using the full path returned by
- * system_authorized_get_url(). That initiates the workflow that will eventually
- * lead to the callback being invoked. The callback will be invoked at a low
- * bootstrap level, without all modules being invoked, so it needs to be careful
- * not to assume any code exists. Example (system_authorized_run()):
+ * To use authorize.php, certain variables must be stashed in the user's
+ * session. This function sets up all the necessary session variables. The
+ * calling function should then redirect to authorize.php, using the full path
+ * returned by system_authorized_get_url(). That initiates the workflow that
+ * will eventually lead to the callback being invoked. The callback will be
+ * invoked at a low bootstrap level, without all modules being invoked, so it
+ * needs to be careful not to assume any code exists.
+ * Example (system_authorized_run()):
  * @code
  *   system_authorized_init($callback, $file, $arguments, $page_title);
  *   return new RedirectResponse(system_authorized_get_url()->toString());
@@ -477,24 +473,26 @@ function template_preprocess_entity_add_list(&$variables) {
  *   object created by authorize.php when the user authorizes the operation.
  * @param $page_title
  *   Optional string to use as the page title once redirected to authorize.php.
+ *
  * @return
  *   Nothing, this function just initializes variables in the user's session.
  */
 function system_authorized_init($callback, $file, $arguments = [], $page_title = NULL) {
+  $session = \Drupal::request()->getSession();
   // First, figure out what file transfer backends the site supports, and put
   // all of those in the SESSION so that authorize.php has access to all of
   // them via the class autoloader, even without a full bootstrap.
-  $_SESSION['authorize_filetransfer_info'] = drupal_get_filetransfer_info();
+  $session->set('authorize_filetransfer_info', drupal_get_filetransfer_info());
 
   // Now, define the callback to invoke.
-  $_SESSION['authorize_operation'] = [
+  $session->set('authorize_operation', [
     'callback' => $callback,
     'file' => $file,
     'arguments' => $arguments,
-  ];
+  ]);
 
   if (isset($page_title)) {
-    $_SESSION['authorize_page_title'] = $page_title;
+    $session->set('authorize_page_title', $page_title);
   }
 }
 
@@ -503,6 +501,7 @@ function system_authorized_init($callback, $file, $arguments = [], $page_title =
  *
  * @param array $options
  *   Optional array of options to set on the \Drupal\Core\Url object.
+ *
  * @return \Drupal\Core\Url
  *   The full URL to authorize.php, using HTTPS if available.
  *
@@ -817,53 +816,13 @@ function system_form_alter(&$form, FormStateInterface $form_state) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter() for \Drupal\user\AccountForm.
- */
-function system_form_user_form_alter(&$form, FormStateInterface $form_state) {
-  if (\Drupal::config('system.date')->get('timezone.user.configurable')) {
-    system_user_timezone($form, $form_state);
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter() for \Drupal\user\RegisterForm.
- */
-function system_form_user_register_form_alter(&$form, FormStateInterface $form_state) {
-  $config = \Drupal::config('system.date');
-  if ($config->get('timezone.user.configurable') && $config->get('timezone.user.default') == DRUPAL_USER_TIMEZONE_SELECT) {
-    system_user_timezone($form, $form_state);
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_presave() for user entities.
- */
-function system_user_presave(UserInterface $account) {
-  $config = \Drupal::config('system.date');
-  if ($config->get('timezone.user.configurable') && !$account->getTimeZone() && !$config->get('timezone.user.default')) {
-    $account->timezone = $config->get('timezone.default');
-  }
-}
-
-/**
- * Implements hook_user_login().
- */
-function system_user_login(UserInterface $account) {
-  $config = \Drupal::config('system.date');
-  // If the user has a NULL time zone, notify them to set a time zone.
-  if (!$account->getTimezone() && $config->get('timezone.user.configurable') && $config->get('timezone.user.warn')) {
-    \Drupal::messenger()
-      ->addStatus(t('Configure your <a href=":user-edit">account time zone setting</a>.', [
-        ':user-edit' => $account->toUrl('edit-form', [
-          'query' => \Drupal::destination()->getAsArray(),
-          'fragment' => 'edit-timezone',
-        ])->toString(),
-      ]));
-  }
-}
-
-/**
  * Add the time zone field to the user edit and register forms.
+ *
+ * @internal
+ *   This functions exists only to be used by System module's form alters which
+ *   have been removed.
+ *
+ * @see https://www.drupal.org/node/3113062
  */
 function system_user_timezone(&$form, FormStateInterface $form_state) {
   $user = \Drupal::currentUser();
@@ -909,10 +868,6 @@ function system_preprocess_block(&$variables) {
           '#markup' => $variables['content']['site_slogan']['#markup'],
         ];
       }
-      break;
-
-    case 'system_powered_by_block':
-      $variables['attributes']['role'] = 'complementary';
       break;
   }
 }
@@ -1074,6 +1029,7 @@ function system_rebuild_module_data() {
  * @param $show
  *   Possible values: REGIONS_ALL or REGIONS_VISIBLE. Visible excludes hidden
  *   regions.
+ *
  * @return
  *   An array of regions in the form $region['name'] = 'description'.
  */
@@ -1139,6 +1095,7 @@ function system_system_info_alter(&$info, Extension $file, $type) {
  *
  * @param $theme
  *   The name of a theme.
+ *
  * @return
  *   A string that is the region name.
  */
@@ -1460,10 +1417,8 @@ function system_modules_uninstalled($modules) {
 
   $entity_definition_update_manager = \Drupal::entityDefinitionUpdateManager();
   foreach ($entity_definition_update_manager->getEntityTypes() as $entity_type) {
-    $revision_metadata_keys = $entity_type->get('revision_metadata_keys');
-    if ($revision_metadata_keys && array_key_exists('workspace', $revision_metadata_keys)) {
-      unset($revision_metadata_keys['workspace']);
-      $entity_type->set('revision_metadata_keys', $revision_metadata_keys);
+    if ($entity_type instanceof ContentEntityTypeInterface && $entity_type->hasRevisionMetadataKey('workspace')) {
+      $entity_type->setRevisionMetadataKey('workspace', NULL);
       $entity_definition_update_manager->updateEntityType($entity_type);
     }
   }
@@ -1495,5 +1450,28 @@ function system_entity_form_display_presave(EntityFormDisplayInterface $display)
       $component['settings']['match_limit'] = 10;
       $display->setComponent($field_name, $component);
     }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function system_path_alias_presave(PathAliasInterface $path_alias) {
+  // Prevent path aliases from being saved if the "url_alias" migration was not
+  // performed yet. This avoids the risk of introducing duplicate aliases or get
+  // the new path alias schema in an inconsistent state.
+  if (Settings::get('system.path_alias_schema_check', TRUE) && drupal_get_installed_schema_version('system') < 8804) {
+    /** @var \Drupal\system\Access\DbUpdateAccessCheck $db_update_access */
+    $db_update_access = \Drupal::service('access_check.db_update');
+    if ($db_update_access->access(\Drupal::currentUser())->isAllowed()) {
+      $args = [':url' => Url::fromUri('base://update.php')->toString()];
+      \Drupal::messenger()->addError(t('Path aliases cannot be saved until <a href=":url">database updates</a> are performed.', $args));
+    }
+    else {
+      \Drupal::messenger()->addError(t('Path aliases cannot be saved until <em>database updates</em> are performed.'));
+    }
+    $message = 'Path alias "@alias" ("@path") could not be saved because the "system_update_8804" database update was not applied yet.';
+    $args = ['@path' => $path_alias->getPath(), '@alias' => $path_alias->getAlias()];
+    throw new \LogicException(new FormattableMarkup($message, $args));
   }
 }

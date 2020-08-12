@@ -10,6 +10,13 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 interface ParagraphsTypeInterface extends ConfigEntityInterface {
 
   /**
+   * Icon upload location.
+   *
+   * @var string
+   */
+  const ICON_UPLOAD_LOCATION = 'public://paragraphs_type_icon/';
+
+  /**
    * Returns the ordered collection of feature plugin instances.
    *
    * @return \Drupal\paragraphs\ParagraphsBehaviorCollection

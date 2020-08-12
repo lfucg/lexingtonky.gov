@@ -105,7 +105,7 @@ class EntityAccessControlHandlerBase extends CoreEntityAccessControlHandler {
     $result = parent::checkCreateAccess($account, $context, $entity_bundle);
     if ($result->isNeutral()) {
       $permissions = [
-        'administer ' . $this->entityTypeId,
+        $this->entityType->getAdminPermission() ?: 'administer ' . $this->entityTypeId,
         'create ' . $this->entityTypeId,
       ];
       if ($entity_bundle) {

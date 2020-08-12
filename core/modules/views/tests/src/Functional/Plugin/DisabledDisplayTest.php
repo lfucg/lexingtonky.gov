@@ -38,7 +38,9 @@ class DisabledDisplayTest extends ViewTestBase {
 
     $this->drupalPlaceBlock('page_title_block');
 
-    $admin_user = $this->drupalCreateUser(['administer site configuration']);
+    $admin_user = $this->drupalCreateUser([
+      'administer site configuration',
+    ]);
     $this->drupalLogin($admin_user);
   }
 
@@ -67,7 +69,7 @@ class DisabledDisplayTest extends ViewTestBase {
 
     // Disabled page view should 404.
     $this->drupalGet('test-disabled-display-2');
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
 
     // Enable each disabled display and save the view.
     foreach ($display_ids as $display_id) {
@@ -96,11 +98,11 @@ class DisabledDisplayTest extends ViewTestBase {
 
     // Check that the page_1 display still works.
     $this->drupalGet('test-disabled-display');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     // Check that the page_2 display is now disabled again.
     $this->drupalGet('test-disabled-display-2');
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
   }
 
 }

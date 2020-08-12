@@ -7,6 +7,7 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Render\Element;
+use Drupal\search_api\LoggerTrait;
 use Drupal\search_api\Plugin\PluginFormTrait;
 use Drupal\search_api\Processor\ProcessorPluginBase;
 use Drupal\search_api\Query\QueryInterface;
@@ -30,6 +31,7 @@ use Drupal\search_api\Utility\DataTypeHelperInterface;
  */
 class Highlight extends ProcessorPluginBase implements PluginFormInterface {
 
+  use LoggerTrait;
   use PluginFormTrait;
 
   /**
@@ -391,6 +393,9 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
     }
 
     $keywords_in = preg_split(static::$split, $keys);
+    if (!$keywords_in) {
+      return [];
+    }
     // Assure there are no duplicates. (This is actually faster than
     // array_unique() by a factor of 3 to 4.)
     // Remove quotes from keywords.
@@ -622,6 +627,13 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
   protected function highlightField($text, array $keys, $html = TRUE) {
     if ($html) {
       $texts = preg_split('#((?:</?[[:alpha:]](?:[^>"\']*|"[^"]*"|\'[^\']\')*>)+)#i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+      if ($texts === FALSE) {
+        $args = [
+          '%error_num' => preg_last_error(),
+        ];
+        $this->getLogger()->warning('A PCRE error (#%error_num) occurred during results highlighting.', $args);
+        return $text;
+      }
       $textsCount = count($texts);
       for ($i = 0; $i < $textsCount; $i += 2) {
         $texts[$i] = $this->highlightField($texts[$i], $keys, FALSE);

@@ -35,6 +35,7 @@
     "source": "http://cgit.drupalcode.org/diff"
   },
   "require":{
-    "mkalkbrenner/php-htmldiff-advanced": "~0.0.8"
+    "mkalkbrenner/php-htmldiff-advanced": "~0.0.8",
+    "drupal/core": "^8.7.7 || ^9"
   }
 }

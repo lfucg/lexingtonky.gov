@@ -10,8 +10,17 @@ use Drupal\Core\Config\ConfigFactory;
  * The AssetManager facade for managing CKEditor plugins.
  */
 class AssetManager {
-
+  /**
+   * Drupal\ckeditor_media_embed\libraryVersion definition.
+   *
+   * @var string
+   */
   private static $libraryVersion = '4.5.x';
+  /**
+   * Drupal\ckeditor_media_embed\packagePrefix definition.
+   *
+   * @var string
+   */
   private static $packagePrefix = 'ckeditor4';
 
   /**

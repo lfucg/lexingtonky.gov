@@ -10,9 +10,15 @@ autologout.settings:
     padding:
       type: integer
       label: 'Seconds to give a user to respond'
+    no_individual_logout_threshold:
+      type: boolean
+      label: 'Disable user-specific logout thresholds'
     role_logout:
       type: boolean
       label: 'Enable role timeout'
+    role_logout_max:
+      type: boolean
+      label: 'Use highest role timeout value'
     redirect_url:
       type: string
       label: 'Redirect url'
@@ -20,11 +26,14 @@ autologout.settings:
       type: boolean
       label: 'Integer label'
     message:
-      type: string
+      type: text
       label: 'Message to display'
     inactivity_message:
-      type: string
+      type: text
       label: 'Message displayed after logging out'
+    inactivity_message_type:
+      type: string
+      label: 'Type of the message displayed'
     enforce_admin:
       type: boolean
       label: 'Enable admin logout'
@@ -40,25 +49,32 @@ autologout.settings:
     use_watchdog:
       type: boolean
       label: 'Use watchdog'
+    dialog_title:
+      type: string
+      label: 'Title'
+    disable_buttons:
+      type: boolean
+      label: 'Disable buttons'
+    yes_button:
+      type: string
+      label: 'Button text'
+    no_button:
+      type: string
+      label: 'Button text'
+    whitelisted_ip_addresses:
+      type: text
+      label: 'Whitelisted IP addresses'
 
 autologout.role.*:
-    type: config_object
-    label: 'Role Settings'
-    mapping:
-      enabled:
-        type: boolean
-        label: 'Enabled'
-      timeout:
-        type: integer
-        label: 'Timeout'
-
-autologout.user.*:
-      type: config_object
-      label: 'User Settings'
-      mapping:
-        enabled:
-          type: boolean
-          label: 'Enabled'
-        timeout:
-          type: integer
-          label: 'Timeout'
+  type: config_object
+  label: 'Role Settings'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Enabled'
+    timeout:
+      type: integer
+      label: 'Timeout'
+    url:
+      type: string
+      label: 'redirect_url'

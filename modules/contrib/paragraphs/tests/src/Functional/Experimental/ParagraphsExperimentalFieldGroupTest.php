@@ -59,8 +59,8 @@ class ParagraphsExperimentalFieldGroupTest extends ParagraphsExperimentalTestBas
     $this->drupalPostForm('node/add/' . $content_type, [], 'field_paragraphs_paragraph_type_test_add_more');
 
     // Test if the new field group is displayed.
-    $this->assertText('field_group');
-    $this->assertFieldByXPath("//fieldset", NULL, t('Fieldset present'));
+    $this->assertSession()->pageTextContains('field_group');
+    $this->assertSession()->elementExists('css', 'fieldset');
 
     // Save the node.
     $edit = [

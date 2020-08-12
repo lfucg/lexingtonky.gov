@@ -85,25 +85,25 @@ class ParagraphsExperimentalEntityTranslationWithNonTranslatableParagraphs exten
     $this->clickLink(t('Translate'));
     $this->clickLink(t('Add'), 1);
     // Make sure that the original paragraph text is displayed.
-    $this->assertText('Title English');
+    $this->assertSession()->pageTextContains('Title English');
 
     $edit = array(
       'title[0][value]' => 'Title French',
     );
     $this->drupalPostForm(NULL, $edit, t('Save (this translation)'));
-    $this->assertText('article Title French has been updated.');
+    $this->assertSession()->pageTextContains('article Title French has been updated.');
 
     // Add german translation.
     $this->clickLink(t('Translate'));
     $this->clickLink(t('Add'));
     // Make sure that the original paragraph text is displayed.
-    $this->assertText('Title English');
+    $this->assertSession()->pageTextContains('Title English');
 
     $edit = array(
       'title[0][value]' => 'Title German',
     );
     $this->drupalPostForm(NULL, $edit, t('Save (this translation)'));
-    $this->assertText('article Title German has been updated.');
+    $this->assertSession()->pageTextContains('article Title German has been updated.');
   }
 
 }

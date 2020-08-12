@@ -169,11 +169,7 @@ class IndexTaskManager implements IndexTaskManagerInterface, EventSubscriberInte
    * {@inheritdoc}
    */
   public function startTracking(IndexInterface $index, array $datasource_ids = NULL) {
-    if (!isset($datasource_ids)) {
-      $datasource_ids = $index->getDatasourceIds();
-    }
-
-    foreach ($datasource_ids as $datasource_id) {
+    foreach ($datasource_ids ?? $index->getDatasourceIds() as $datasource_id) {
       $data = [
         'datasource' => $datasource_id,
         'page' => 0,

@@ -103,8 +103,9 @@ function _ckeditor_media_embed_requirments_build_description(array $installed_pl
 }
 
 /**
- * WARNING: This release breaks the current CKEditor Media Embed plugin dev as
- * we are no longer including the libraries as part of the module. Please run
+ * WARNING: This release breaks the current CKEditor Media Embed plugin dev.
+ *
+ * As we are no longer including the libraries as part of the module. Please run
  * "drupal ckeditor_media_embed:install" if you have Drupal Console installed
  * or see the README.md for installation instructions for additional
  * installation instructions.

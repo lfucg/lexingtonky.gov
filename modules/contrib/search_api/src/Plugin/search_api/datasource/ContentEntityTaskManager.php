@@ -90,16 +90,15 @@ class ContentEntityTaskManager implements EventSubscriberInterface {
     $datasource_id = $data['datasource'];
     $reschedule = FALSE;
     if ($index->isValidDatasource($datasource_id)) {
+      /** @var \Drupal\search_api\Plugin\search_api\datasource\ContentEntity $datasource */
       $datasource = $index->getDatasource($datasource_id);
-      if ($datasource instanceof EntityDatasourceInterface) {
-        $raw_ids = $datasource->getPartialItemIds($data['page'], $data['bundles'], $data['languages']);
-        if ($raw_ids !== NULL) {
-          $reschedule = TRUE;
-          if ($raw_ids) {
-            $index->startBatchTracking();
-            $index->$method($datasource_id, $raw_ids);
-            $index->stopBatchTracking();
-          }
+      $raw_ids = $datasource->getPartialItemIds($data['page'], $data['bundles'], $data['languages']);
+      if ($raw_ids !== NULL) {
+        $reschedule = TRUE;
+        if ($raw_ids) {
+          $index->startBatchTracking();
+          $index->$method($datasource_id, $raw_ids);
+          $index->stopBatchTracking();
         }
       }
     }

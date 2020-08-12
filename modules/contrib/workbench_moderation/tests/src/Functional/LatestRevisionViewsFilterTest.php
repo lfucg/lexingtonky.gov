@@ -4,7 +4,7 @@ namespace Drupal\Tests\workbench_moderation\Functional;
 
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
-use Drupal\simpletest\BrowserTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests the "Latest Revision" views filter.
@@ -19,7 +19,21 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['workbench_moderation_test_views', 'workbench_moderation', 'node', 'views', 'options', 'user', 'system'];
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
+  public static $modules = [
+    'workbench_moderation_test_views',
+    'workbench_moderation',
+    'node',
+    'views',
+    'options',
+    'user',
+    'system',
+    'publishing_dropbutton',
+  ];
 
   /**
    *
@@ -106,7 +120,8 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
     $this->assertFalse($page->hasContent('Node 2 - Rev 1'));
     $this->assertFalse($page->hasContent('Node 3 - Rev 1'));
     $this->assertFalse($page->hasContent('Node 3 - Rev 2'));
-    $this->assertFalse($page->hasContent('Node 0 - Rev 1'));
+    // This will be there from the left-join.
+    $this->assertTrue($page->hasContent('Node 0 - Rev 1'));
   }
 
   /**

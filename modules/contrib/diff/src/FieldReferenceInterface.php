@@ -2,14 +2,14 @@
 
 namespace Drupal\diff;
 
+use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
 
 /**
  * Provides referenced entities to recurse in diff.
  */
-interface FieldReferenceInterface extends PluginFormInterface, ConfigurablePluginInterface {
+interface FieldReferenceInterface extends PluginFormInterface, ConfigurableInterface {
 
   /**
    * Builds an array of entities.

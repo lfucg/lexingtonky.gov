@@ -14,7 +14,7 @@ use Drupal\node\NodeInterface;
 function search_api_test_node_grants(AccountInterface $account, $op) {
   $grants = [];
 
-  if (\Drupal::state()->get('search_api_test_add_node_access_grant', TRUE)) {
+  if (\Drupal::state()->get('search_api_test_add_node_access_grant', FALSE)) {
     $grants['search_api_test'] = [$account->id()];
   }
 
@@ -27,7 +27,7 @@ function search_api_test_node_grants(AccountInterface $account, $op) {
 function search_api_test_node_access_records(NodeInterface $node) {
   $grants = [];
 
-  if (\Drupal::state()->get('search_api_test_add_node_access_grant', TRUE)) {
+  if (\Drupal::state()->get('search_api_test_add_node_access_grant', FALSE)) {
     $grants[] = [
       'realm' => 'search_api_test',
       'gid' => $node->getOwnerId(),

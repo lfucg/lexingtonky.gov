@@ -234,7 +234,7 @@ class EntityAliasTypeBase extends ContextAwarePluginBase implements AliasTypeInt
 
     PathautoState::bulkDelete($this->getEntityTypeId(), $pids_by_id);
     $context['sandbox']['count'] += count($pids_by_id);
-    $context['sandbox']['current'] = max($pids_by_id);
+    $context['sandbox']['current'] = !empty($pids_by_id) ? max($pids_by_id) : 0;
     $context['results']['deletions'][] = $this->getLabel();
 
     if ($context['sandbox']['count'] != $context['sandbox']['total']) {

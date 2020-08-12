@@ -291,7 +291,7 @@ function template_preprocess_paragraph(&$variables) {
   }
 
   $paragraph_type = $variables['elements']['#paragraph']->getParagraphType();
-  foreach ($paragraph_type->getEnabledBehaviorPlugins() as $plugin_id => $plugin_value) {
+  foreach ($paragraph_type->getEnabledBehaviorPlugins() as $plugin_value) {
     $plugin_value->preprocess($variables);
   }
 
@@ -392,86 +392,6 @@ function paragraphs_preprocess_field_multiple_value_form(&$variables) {
 }
 
 /**
- * Implements hook_libraries_info().
- */
-function paragraphs_libraries_info() {
-  $libraries = [
-    'Sortable' => [
-      'name' => 'Sortable',
-      'vendor url' => 'https://github.com/RubaXa/Sortable',
-      'download url' => 'https://github.com/RubaXa/Sortable/releases',
-      'files' => [
-        'js' => [
-          'Sortable.min.js' => [],
-        ],
-      ],
-      'version arguments' => [
-        // The version is at the end of the file, which is currently about 15k
-        // characters long.
-        'file' => 'Sortable.min.js',
-        'pattern' => '/\.version="(.*?)"/',
-        'lines' => 5,
-        'cols' => 20000
-      ]
-    ],
-  ];
-  return $libraries;
-}
-
-/**
- * Implements hook_library_info_alter().
- */
-function paragraphs_library_info_alter(&$libraries, $extension) {
-  if ($extension != 'paragraphs') {
-    return;
-  }
-
-  if (\Drupal::moduleHandler()->moduleExists('libraries')) {
-    $info = libraries_detect('Sortable');
-  }
-  else {
-    // If the library module is not installed, hardcode the path and fetch
-    // the required information ourself.
-    $library_path = 'libraries/Sortable';
-    $file = 'Sortable.min.js';
-    $path = DRUPAL_ROOT . '/' . $library_path . '/' . $file;
-    if (file_exists($path)) {
-      if (preg_match('/\.version="(.*?)"/', file_get_contents($path), $version)) {
-        $info = [
-          'installed' => TRUE,
-          'version' => $version[1],
-          'library path' => $library_path,
-          'files' => [
-            'js' => [
-              $file => [],
-            ],
-          ],
-        ];
-      }
-    }
-  }
-
-  if (!empty($info['installed'])) {
-    $libraries['sortable'] += [
-      'version' => $info['version'],
-    ];
-    // Self hosted player, use files from library definition.
-    if (!empty($info['files']['js'])) {
-      foreach ($info['files']['js'] as $filename => $options) {
-        $libraries['sortable']['js']["/{$info['library path']}/{$filename}"] = $options;
-      }
-    }
-  }
-  else {
-    // Unset the libraries if we failed to detect them.
-    unset($libraries['sortable']);
-    unset($libraries['paragraphs-dragdrop']);
-  }
-
-  return $libraries;
-}
-
-/**
  * Implements hook_migration_plugins_alter().
  *
  * @todo refactor/rethink this when
@@ -483,7 +403,7 @@ function paragraphs_migration_plugins_alter(array &$migrations) {
   /** @var \Drupal\migrate\Plugin\MigrateSourcePluginManager $source_plugin_manager */
   $source_plugin_manager = \Drupal::service('plugin.manager.migrate.source');
 
-  foreach ($migrations as $key => &$migration) {
+  foreach ($migrations as &$migration) {
     if (!empty($migration['source'])) {
       $configuration = $migration['source'];
       $migration_stub = $migration_plugin_manager->createStubMigration($migration);

@@ -16,7 +16,7 @@ class MessageEditForm extends ContentEntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\contact\MessageInterface $message */
     $message = $this->entity;
-    $form = parent::form($form, $form_state, $message);
+    $form = parent::form($form, $form_state);
 
     $form['name'] = [
       '#type' => 'textfield',
@@ -40,7 +40,7 @@ class MessageEditForm extends ContentEntityForm {
     $this->entity->save();
     $this->logger('contact')->notice('The contact message %subject has been updated.', [
       '%subject' => $this->entity->getSubject(),
-      'link' => $this->getEntity()->link($this->t('Edit'), 'edit-form'),
+      'link' => $this->getEntity()->toLink($this->t('Edit'), 'edit-form')->toString(),
     ]);
   }
 

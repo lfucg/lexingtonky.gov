@@ -5,9 +5,10 @@
  * Defines library requirements and install routines for File Browser.
  */
 
-use Drupal\Core\Config\ExtensionInstallStorage;
+use Drupal\Component\Serialization\Yaml;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\views\Entity\View;
+use Drupal\Core\File\FileSystemInterface;
 
 /**
  * Implements hook_install().
@@ -17,10 +18,10 @@ function file_browser_install() {
   if (!\Drupal::isConfigSyncing()) {
     $data = file_get_contents(dirname(__FILE__) . '/file_browser_icon.png');
     /** @var \Drupal\file\FileInterface $file */
-    $file = file_save_data($data, 'public://file_browser_icon.png', FILE_EXISTS_REPLACE);
+    $file = file_save_data($data, 'public://file_browser_icon.png', FileSystemInterface::EXISTS_REPLACE);
     if ($file) {
       // Set file uuid same as default config.
-      $uuid = (new ExtensionInstallStorage(\Drupal::service('config.storage')))->read('embed.button.file_browser')['icon_uuid'];
+      $uuid = Yaml::decode(file_get_contents(dirname(__FILE__) . '/config/install/embed.button.file_browser.yml'))['icon_uuid'];
       $file->set('uuid', $uuid);
       $file->save();
       \Drupal::service('file.usage')->add($file, 'embed', 'embed_button', 'file_browser');
@@ -78,7 +79,7 @@ https://github.com/desandro/masonry/releases and place it in /libraries'
 
   // Prevent installation if the webserver cannot write to "public://" .
   $public_path = \Drupal::service('file_system')->realpath('public://');
-  if (!\Drupal::isConfigSyncing() && !is_writable($public_path)) {
+  if ($public_path !== FALSE && !\Drupal::isConfigSyncing() && !is_writable($public_path)) {
     $requirements['public_files_not_writable'] = [
       'title' => t('Public files directory not writable'),
       'description' => t('The webserver needs to be able to write to the public files directory (public://). Please check your server configuration and try again.'),

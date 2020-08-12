@@ -69,6 +69,8 @@ class FileBrowserTest extends EntityBrowserWebDriverTestBase {
    *
    * @param string $entityId
    *   Entity ID that will be selected. Format: "file:1".
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
    */
   protected function clickViewEntity($entityId) {
     $xpathViewRow = '//*[./*[contains(@class, "views-field-entity-browser-select") and .//input[@name="entity_browser_select[' . $entityId . ']"]]]';

@@ -10,7 +10,7 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
  * @MetatagTag(
  *   id = "bing",
  *   label = @Translation("Bing"),
- *   description = @Translation("A string provided by <a href=':bing'>Bing</a>, full details are available from the <a href=':verify_url'>Bing online help</a>.", arguments = { ":bing" = "http://www.bing.com/", ":verify_url" = "http://www.bing.com/webmaster/help/how-to-verify-ownership-of-your-site-afcfefc6" }),
+ *   description = @Translation("A string provided by <a href=':bing'>Bing</a>, full details are available from the <a href=':verify_url'>Bing online help</a>.", arguments = { ":bing" = "https://www.bing.com/", ":verify_url" = "https://www.bing.com/webmaster/help/how-to-verify-ownership-of-your-site-afcfefc6" }),
  *   name = "msvalidate.01",
  *   group = "site_verification",
  *   weight = 3,

@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\contact_storage\Functional;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\views\Tests\ViewTestData;
 
 /**
@@ -11,6 +12,11 @@ use Drupal\views\Tests\ViewTestData;
  * @see \Drupal\contact_storage\Plugin\views\field\MessageBulkForm
  */
 class BulkFormTest extends ContactStorageTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * Modules to be enabled.
@@ -47,7 +53,7 @@ class BulkFormTest extends ContactStorageTestBase {
     $this->drupalLogout();
 
     // Ensure that anonymous can submit site-wide contact form.
-    user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, ['access site-wide contact form']);
+    user_role_grant_permissions(AccountInterface::ANONYMOUS_ROLE, ['access site-wide contact form']);
     $this->drupalGet('contact');
     $this->assertText('Your email address');
     // Submit contact form few times.

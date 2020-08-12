@@ -57,8 +57,8 @@ class ExposedFormTest extends ViewTestBase {
   public function testSubmitButton() {
     // Test the submit button value defaults to 'Apply'.
     $this->drupalGet('test_exposed_form_buttons');
-    $this->assertResponse(200);
-    $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', t('Apply'));
+    $this->assertSession()->statusCodeEquals(200);
+    $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', 'Apply');
 
     // Rename the label of the submit button.
     $view = Views::getView('test_exposed_form_buttons');
@@ -84,7 +84,7 @@ class ExposedFormTest extends ViewTestBase {
 
     // Make sure the submit button label shows 'Apply'.
     $this->drupalGet('test_exposed_form_buttons');
-    $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', t('Apply'));
+    $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', 'Apply');
   }
 
   /**
@@ -164,7 +164,7 @@ class ExposedFormTest extends ViewTestBase {
 
     // Test the reset works.
     $this->drupalGet('test_exposed_form_buttons', ['query' => ['op' => 'Reset']]);
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     // Test the type has been reset.
     $this->assertFieldById('edit-type', 'All', 'Article type filter has been reset.');
 
@@ -173,7 +173,7 @@ class ExposedFormTest extends ViewTestBase {
 
     // Test the reset works with type set.
     $this->drupalGet('test_exposed_form_buttons', ['query' => ['type' => 'article', 'op' => 'Reset']]);
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertFieldById('edit-type', 'All', 'Article type filter has been reset.');
 
     // Test the button is hidden after reset.
@@ -191,7 +191,7 @@ class ExposedFormTest extends ViewTestBase {
 
     // Look whether the reset button label changed.
     $this->drupalGet('test_exposed_form_buttons', ['query' => ['type' => 'article']]);
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     $this->helperButtonHasLabel('edit-reset', $expected_label);
   }
@@ -233,7 +233,7 @@ class ExposedFormTest extends ViewTestBase {
     // Test there is an exposed form in a block.
     $xpath = $this->buildXPathQuery('//div[@id=:id]/form/@id', [':id' => Html::getUniqueId('block-' . $block->id())]);
     $result = $this->xpath($xpath);
-    $this->assertEquals(1, count($result));
+    $this->assertCount(1, $result);
 
     // Test there is not an exposed form in the view page content area.
     $xpath = $this->buildXPathQuery('//div[@class="view-content"]/form/@id', [':id' => Html::getUniqueId('block-' . $block->id())]);
@@ -241,15 +241,15 @@ class ExposedFormTest extends ViewTestBase {
 
     // Test there is only one views exposed form on the page.
     $elements = $this->xpath('//form[@id=:id]', [':id' => $this->getExpectedExposedFormId($view)]);
-    $this->assertEqual(count($elements), 1, 'One exposed form block found.');
+    $this->assertCount(1, $elements, 'One exposed form block found.');
 
     // Test that the correct option is selected after form submission.
     $this->assertCacheContext('url');
-    $this->assertOptionSelected('edit-type', 'All');
+    $this->assertOptionSelected('Content: Type', 'All');
     foreach (['All', 'article', 'page'] as $argument) {
       $this->drupalGet('test_exposed_block', ['query' => ['type' => $argument]]);
       $this->assertCacheContext('url');
-      $this->assertOptionSelected('edit-type', $argument);
+      $this->assertOptionSelected('Content: Type', $argument);
     }
   }
 
@@ -263,18 +263,18 @@ class ExposedFormTest extends ViewTestBase {
     $view->save();
 
     $this->drupalGet('test_exposed_form_buttons');
-    $this->assertResponse(200);
-    $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', t('Apply'));
+    $this->assertSession()->statusCodeEquals(200);
+    $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', 'Apply');
 
     // Ensure that no results are displayed.
     $rows = $this->xpath("//div[contains(@class, 'views-row')]");
-    $this->assertEqual(count($rows), 0, 'No rows are displayed by default when no input is provided.');
+    $this->assertCount(0, $rows, 'No rows are displayed by default when no input is provided.');
 
     $this->drupalGet('test_exposed_form_buttons', ['query' => ['type' => 'article']]);
 
     // Ensure that results are displayed.
     $rows = $this->xpath("//div[contains(@class, 'views-row')]");
-    $this->assertEqual(count($rows), 5, 'All rows are displayed by default when input is provided.');
+    $this->assertCount(5, $rows, 'All rows are displayed by default when input is provided.');
   }
 
   /**
@@ -333,6 +333,27 @@ class ExposedFormTest extends ViewTestBase {
     $this->drupalGet('test_exposed_form_sort_items_per_page', ['query' => ['sort_order' => 'DESC', 'items_per_page' => 25, 'offset' => 10]]);
     $this->assertCacheContexts($contexts);
     $this->assertIds(range(40, 16, 1));
+
+    // Change the label to something with special characters.
+    $view = Views::getView('test_exposed_form_sort_items_per_page');
+    $view->setDisplay();
+    $sorts = $view->display_handler->getOption('sorts');
+    $sorts['id']['expose']['label'] = $expected_label = "<script>alert('unsafe&dangerous');</script>";
+    $view->display_handler->setOption('sorts', $sorts);
+    $view->save();
+
+    $this->drupalGet('test_exposed_form_sort_items_per_page');
+    $options = $this->xpath('//select[@id=:id]/option', [':id' => 'edit-sort-by']);
+    $this->assertCount(1, $options);
+    $this->assertSession()->optionExists('edit-sort-by', $expected_label);
+    $escape_1 = Html::escape($expected_label);
+    $escape_2 = Html::escape($escape_1);
+    // Make sure we see the single-escaped string in the raw output.
+    $this->assertRaw($escape_1);
+    // But no double-escaped string.
+    $this->assertNoRaw($escape_2);
+    // And not the raw label, either.
+    $this->assertNoRaw($expected_label);
   }
 
   /**
@@ -372,14 +393,14 @@ class ExposedFormTest extends ViewTestBase {
    */
   public function testFormErrorWithExposedForm() {
     $this->drupalGet('views_test_data_error_form_page');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $form = $this->cssSelect('form.views-exposed-form');
     $this->assertNotEmpty($form, 'The exposed form element was found.');
     $this->assertRaw(t('Apply'), 'Ensure the exposed form is rendered before submitting the normal form.');
     $this->assertRaw('<div class="views-row">', 'Views result shown.');
 
     $this->drupalPostForm(NULL, [], t('Submit'));
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $form = $this->cssSelect('form.views-exposed-form');
     $this->assertNotEmpty($form, 'The exposed form element was found.');
     $this->assertRaw(t('Apply'), 'Ensure the exposed form is rendered after submitting the normal form.');

@@ -64,8 +64,6 @@ class ParagraphsFieldMigrationTest extends ParagraphsMigrationTestBase {
 
     $total_bundles = count(ParagraphsType::loadMultiple());
 
-    $bundles_from_field_collections = count($this->getMigration('d7_field_collection_type')->getSourcePlugin());
-
     $this->assertFieldInstanceExists('node', 'paragraphs_test', 'field_field_collection_test');
     $field = FieldConfig::loadByName('node', 'paragraphs_test', 'field_field_collection_test');
 
@@ -79,7 +77,7 @@ class ParagraphsFieldMigrationTest extends ParagraphsMigrationTestBase {
     $field = FieldConfig::loadByName('node', 'paragraphs_test', 'field_any_paragraph');
     $handler_settings = $field->getSetting('handler_settings');
     $this->assertEquals(0, $handler_settings['negate']);
-    $this->assertNULL($handler_settings['target_bundles']);
+    $this->assertEmpty($handler_settings['target_bundles']);
     $this->assertCount($total_bundles, $handler_settings['target_bundles_drag_drop']);
 
     $this->assertFieldInstanceExists('node', 'paragraphs_test', 'field_paragraph_one_only');
@@ -140,7 +138,7 @@ class ParagraphsFieldMigrationTest extends ParagraphsMigrationTestBase {
     $field_paragraph_one_only = $viewDisplay->getComponent('field_paragraph_one_only');
     $this->assertNotNull($field_any_paragraph);
     $this->assertNotNull($field_collection_test);
-    $this->assertNull($field_paragraph_one_only);
+    $this->assertEmpty($field_paragraph_one_only);
     $this->assertEquals('paragraphs_editor_preview', $field_any_paragraph['settings']['view_mode']);
   }
 

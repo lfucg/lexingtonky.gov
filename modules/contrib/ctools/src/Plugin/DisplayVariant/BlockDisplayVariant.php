@@ -3,7 +3,7 @@
 namespace Drupal\ctools\Plugin\DisplayVariant;
 
 use Drupal\Component\Uuid\UuidInterface;
-use Drupal\Core\Block\BlockManager;
+use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Display\VariantBase;
 use Drupal\Core\Display\ContextAwareVariantInterface;
@@ -78,12 +78,12 @@ abstract class BlockDisplayVariant extends VariantBase implements ContextAwareVa
    *   The UUID generator.
    * @param \Drupal\Core\Utility\Token $token
    *   The token service.
-   * @param \Drupal\Core\Block\BlockManager $block_manager
+   * @param \Drupal\Core\Block\BlockManagerInterface $block_manager
    *   The block manager.
    * @param \Drupal\Core\Condition\ConditionManager $condition_manager
    *   The condition manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ContextHandlerInterface $context_handler, AccountInterface $account, UuidInterface $uuid_generator, Token $token, BlockManager $block_manager, ConditionManager $condition_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ContextHandlerInterface $context_handler, AccountInterface $account, UuidInterface $uuid_generator, Token $token, BlockManagerInterface $block_manager, ConditionManager $condition_manager) {
     // Inject dependencies as early as possible, so they can be used in
     // configuration.
     $this->contextHandler = $context_handler;

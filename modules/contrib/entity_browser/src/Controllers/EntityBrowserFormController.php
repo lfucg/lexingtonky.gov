@@ -3,7 +3,6 @@
 namespace Drupal\entity_browser\Controllers;
 
 use Drupal\Component\Utility\Xss;
-use Drupal\Core\Controller\ControllerResolverInterface;
 use Drupal\Core\Controller\HtmlFormController;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -12,6 +11,7 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 
 /**
  * Standalone entity browser page.
@@ -42,8 +42,8 @@ class EntityBrowserFormController extends HtmlFormController implements Containe
   /**
    * Constructs Entity browser form controller.
    *
-   * @param \Drupal\Core\Controller\ControllerResolverInterface $controller_resolver
-   *   The controller resolver.
+   * @param \Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface $argument_resolver
+   *   The argument resolver.
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
    *   The form builder.
    * @param \Drupal\Core\DependencyInjection\ClassResolverInterface $class_resolver
@@ -55,8 +55,8 @@ class EntityBrowserFormController extends HtmlFormController implements Containe
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   Current request.
    */
-  public function __construct(ControllerResolverInterface $controller_resolver, FormBuilderInterface $form_builder, ClassResolverInterface $class_resolver, RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, Request $request) {
-    parent::__construct($controller_resolver, $form_builder, $class_resolver);
+  public function __construct(ArgumentResolverInterface $argument_resolver, FormBuilderInterface $form_builder, ClassResolverInterface $class_resolver, RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, Request $request) {
+    parent::__construct($argument_resolver, $form_builder, $class_resolver);
     $this->currentRouteMatch = $route_match;
     $this->browserStorage = $entity_type_manager->getStorage('entity_browser');
     $this->request = $request;
@@ -68,11 +68,11 @@ class EntityBrowserFormController extends HtmlFormController implements Containe
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('controller_resolver'),
+      $container->get('http_kernel.controller.argument_resolver'),
       $container->get('form_builder'),
       $container->get('class_resolver'),
       $container->get('current_route_match'),
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('request_stack')->getCurrentRequest()
     );
   }

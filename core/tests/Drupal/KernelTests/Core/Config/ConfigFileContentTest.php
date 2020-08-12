@@ -111,10 +111,10 @@ class ConfigFileContentTest extends KernelTestBase {
     $this->assertEqual($config->get($nested_array_key), $array_value, 'Nested array configuration value found.');
 
     // Read a top level value that doesn't exist.
-    $this->assertNull($config->get('i_dont_exist'), 'Non-existent top level value returned NULL.');
+    $this->assertNull($config->get('i_do_not_exist'), 'Non-existent top level value returned NULL.');
 
     // Read a nested value that doesn't exist.
-    $this->assertNull($config->get('i.dont.exist'), 'Non-existent nested value returned NULL.');
+    $this->assertNull($config->get('i.do.not.exist'), 'Non-existent nested value returned NULL.');
 
     // Read false value.
     $this->assertFalse($config->get($false_key), "Boolean FALSE value returned the FALSE.");
@@ -159,17 +159,17 @@ class ConfigFileContentTest extends KernelTestBase {
     // Get file listing for all files starting with 'foo'. Should return
     // two elements.
     $files = $storage->listAll('foo');
-    $this->assertEqual(count($files), 2, 'Two files listed with the prefix \'foo\'.');
+    $this->assertCount(2, $files, 'Two files listed with the prefix \'foo\'.');
 
     // Get file listing for all files starting with 'biff'. Should return
     // one element.
     $files = $storage->listAll('biff');
-    $this->assertEqual(count($files), 1, 'One file listed with the prefix \'biff\'.');
+    $this->assertCount(1, $files, 'One file listed with the prefix \'biff\'.');
 
     // Get file listing for all files starting with 'foo.bar'. Should return
     // one element.
     $files = $storage->listAll('foo.bar');
-    $this->assertEqual(count($files), 1, 'One file listed with the prefix \'foo.bar\'.');
+    $this->assertCount(1, $files, 'One file listed with the prefix \'foo.bar\'.');
 
     // Get file listing for all files starting with 'bar'. Should return
     // an empty array.

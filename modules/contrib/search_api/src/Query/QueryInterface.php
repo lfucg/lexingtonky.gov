@@ -307,9 +307,6 @@ interface QueryInterface extends ConditionSetInterface {
    * This method should always be called by execute() and contain all necessary
    * operations that have to be execute before the query is passed to the
    * server's search() method.
-   *
-   * @throws \Drupal\search_api\SearchApiException
-   *   Thrown if any wrong options were discovered.
    */
   public function preExecute();
 

@@ -337,9 +337,9 @@ class ModerationStateFieldItemListTest extends KernelTestBase {
   }
 
   /**
-   * Test customising the default moderation state.
+   * Test customizing the default moderation state.
    */
-  public function testWorkflowCustomisedInitialState() {
+  public function testWorkflowCustomizedInitialState() {
     $workflow = Workflow::load('editorial');
     $configuration = $workflow->getTypePlugin()->getConfiguration();
 
@@ -399,6 +399,35 @@ class ModerationStateFieldItemListTest extends KernelTestBase {
     $translation = $node->getTranslation('de');
     $this->assertEquals('published', $node->moderation_state->value);
     $this->assertEquals('published', $translation->moderation_state->value);
+  }
+
+  /**
+   * Tests field item list translation support with unmoderated content.
+   */
+  public function testTranslationWithExistingUnmoderatedContent() {
+    $node = Node::create([
+      'title' => 'Published en',
+      'langcode' => 'en',
+      'type' => 'unmoderated',
+    ]);
+    $node->setPublished();
+    $node->save();
+
+    $workflow = Workflow::load('editorial');
+    $workflow->getTypePlugin()->addEntityTypeAndBundle('node', 'unmoderated');
+    $workflow->save();
+
+    $translation = $node->addTranslation('de');
+    $translation->moderation_state = 'draft';
+    $translation->save();
+
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $node = $node_storage->loadRevision($node_storage->getLatestRevisionId($node->id()));
+
+    $this->assertEquals('published', $node->moderation_state->value);
+    $this->assertEquals('draft', $translation->moderation_state->value);
+    $this->assertTrue($node->isPublished());
+    $this->assertFalse($translation->isPublished());
   }
 
 }

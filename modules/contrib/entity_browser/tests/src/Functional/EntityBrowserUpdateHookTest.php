@@ -12,6 +12,11 @@ use Drupal\FunctionalTests\Update\UpdatePathTestBase;
 class EntityBrowserUpdateHookTest extends UpdatePathTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Set database dump files to be used.
    */
   protected function setDatabaseDumpFiles() {

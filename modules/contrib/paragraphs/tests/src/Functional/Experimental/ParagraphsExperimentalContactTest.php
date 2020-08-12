@@ -41,11 +41,11 @@ class ParagraphsExperimentalContactTest extends ParagraphsExperimentalTestBase {
     $this->drupalGet('contact/test_contact_form');
     $this->drupalPostForm(NULL, [], 'paragraphs_paragraphs_contact_add_more');
     // Check that the paragraph is displayed.
-    $this->assertText('paragraphs_contact');
+    $this->assertSession()->pageTextContains('paragraphs_contact');
     $this->drupalPostForm(NULL, [], 'paragraphs_0_remove');
     $elements = $this->xpath('//table[starts-with(@id, :id)]/tbody', [':id' => 'paragraphs-values']);
     $header = $this->xpath('//table[starts-with(@id, :id)]/thead', [':id' => 'paragraphs-values']);
-    $this->assertEqual($elements, []);
-    $this->assertNotEqual($header, []);
+    $this->assertEquals($elements, []);
+    $this->assertNotEquals($header, []);
   }
 }

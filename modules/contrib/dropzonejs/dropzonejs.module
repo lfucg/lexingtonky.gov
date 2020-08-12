@@ -65,14 +65,22 @@ function template_preprocess_dropzonejs(array &$variables) {
 function dropzonejs_library_info_build() {
   $libraries = [];
 
-  if (\Drupal::moduleHandler()->moduleExists('libraries')) {
+  // @todo Remove this conditional structure in favor of using the libraries
+  // directory file finder service when Drupal 8.9 is the minimum supported
+  // version of core.
+  if (\Drupal::hasService('library.libraries_directory_file_finder')) {
+    /** @var \Drupal\Core\Asset\LibrariesDirectoryFileFinder $library_file_finder */
+    $library_file_finder = \Drupal::service('library.libraries_directory_file_finder');
+    $exif_path = $library_file_finder->find('exif-js/exif.js');
+  }
+  elseif (\Drupal::moduleHandler()->moduleExists('libraries')) {
     $exif_path = libraries_get_path('exif-js') . '/exif.js';
   }
   else {
     $exif_path = DRUPAL_ROOT . '/libraries/exif-js/exif.js';
   }
 
-  if ($exif_found = file_exists($exif_path)) {
+  if ($exif_path && file_exists($exif_path)) {
     $libraries['exif-js'] = [
       'title' => 'Exif',
       'website' => 'https://github.com/exif-js/exif-js',

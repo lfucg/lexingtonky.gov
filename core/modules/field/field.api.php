@@ -17,8 +17,8 @@
  *
  * In the Field API, each field has a type, which determines what kind of data
  * (integer, string, date, etc.) the field can hold, which settings it provides,
- * and so on. The data type(s) accepted by a field are defined in
- * hook_field_schema().
+ * and so on. The data type(s) accepted by a field are defined in the class
+ * implementing \Drupal\Core\Field\FieldItemInterface::schema() method.
  *
  * Field types are plugins annotated with class
  * \Drupal\Core\Field\Annotation\FieldType, and implement plugin interface
@@ -53,7 +53,7 @@
 function hook_field_info_alter(&$info) {
   // Change the default widget for fields of type 'foo'.
   if (isset($info['foo'])) {
-    $info['foo']['default widget'] = 'mymodule_widget';
+    $info['foo']['default_widget'] = 'mymodule_widget';
   }
 }
 
@@ -111,7 +111,7 @@ function hook_field_storage_config_update_forbid(\Drupal\field\FieldStorageConfi
     $prior_allowed_values = $prior_field_storage->getSetting('allowed_values');
     $lost_keys = array_keys(array_diff_key($prior_allowed_values, $allowed_values));
     if (_options_values_in_use($field_storage->getTargetEntityTypeId(), $field_storage->getName(), $lost_keys)) {
-      throw new \Drupal\Core\Entity\Exception\FieldStorageDefinitionUpdateForbiddenException(t('A list field (@field_name) with existing data cannot have its keys changed.', ['@field_name' => $field_storage->getName()]));
+      throw new \Drupal\Core\Entity\Exception\FieldStorageDefinitionUpdateForbiddenException("A list field '{$field_storage->getName()}' with existing data cannot have its keys changed.");
     }
   }
 }

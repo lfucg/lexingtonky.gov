@@ -41,7 +41,7 @@ abstract class ParagraphsExperimentalTestBase extends ParagraphsTestBase {
   protected function removeDefaultParagraphType($content_type) {
     $this->drupalGet('node/add/' . $content_type);
     $this->drupalPostForm(NULL, [], 'Remove');
-    $this->assertNoText('No paragraphs added yet.');
+    $this->assertSession()->pageTextNotContains('No paragraphs added yet.');
   }
 
 }

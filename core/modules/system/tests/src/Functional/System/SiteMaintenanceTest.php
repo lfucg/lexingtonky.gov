@@ -41,7 +41,10 @@ class SiteMaintenanceTest extends BrowserTestBase {
     // Create a user allowed to access site in maintenance mode.
     $this->user = $this->drupalCreateUser(['access site in maintenance mode']);
     // Create an administrative user.
-    $this->adminUser = $this->drupalCreateUser(['administer site configuration', 'access site in maintenance mode']);
+    $this->adminUser = $this->drupalCreateUser([
+      'administer site configuration',
+      'access site in maintenance mode',
+    ]);
     $this->drupalLogin($this->adminUser);
   }
 
@@ -158,11 +161,10 @@ class SiteMaintenanceTest extends BrowserTestBase {
     \Drupal::state()->set('system.maintenance_mode', TRUE);
     $formats = ['json', 'xml', 'non-existing'];
     foreach ($formats as $format) {
-      $this->pass('Testing format ' . $format);
       $this->drupalGet('<front>', ['query' => ['_format' => $format]]);
-      $this->assertResponse(503);
+      $this->assertSession()->statusCodeEquals(503);
       $this->assertRaw('Drupal is currently under maintenance. We should be back shortly. Thank you for your patience.');
-      $this->assertHeader('Content-Type', 'text/plain; charset=UTF-8');
+      $this->assertSession()->responseHeaderEquals('Content-Type', 'text/plain; charset=UTF-8');
     }
   }
 

@@ -44,7 +44,7 @@ class ContactFormEnableForm extends EntityConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->enable()->save();
-    drupal_set_message($this->t('Enabled contact form %form.', ['%form' => $this->entity->label()]));
+    $this->messenger()->addStatus($this->t('Enabled contact form %form.', ['%form' => $this->entity->label()]));
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
 

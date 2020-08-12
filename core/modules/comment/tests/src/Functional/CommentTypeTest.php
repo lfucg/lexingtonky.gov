@@ -59,13 +59,14 @@ class CommentTypeTest extends CommentTestBase {
     $type = $this->createCommentType('other');
 
     $comment_type = CommentType::load('other');
-    $this->assertInstanceOf(CommentType::class, $comment_type, 'The new comment type has been created.');
+    $this->assertInstanceOf(CommentType::class, $comment_type);
 
     // Log in a test user.
     $this->drupalLogin($this->adminUser);
 
+    // Ensure that the new comment type admin page can be accessed.
     $this->drupalGet('admin/structure/comment/manage/' . $type->id());
-    $this->assertResponse(200, 'The new comment type can be accessed at the edit form.');
+    $this->assertSession()->statusCodeEquals(200);
 
     // Create a comment type via the user interface.
     $edit = [
@@ -76,7 +77,7 @@ class CommentTypeTest extends CommentTestBase {
     ];
     $this->drupalPostForm('admin/structure/comment/types/add', $edit, t('Save'));
     $comment_type = CommentType::load('foo');
-    $this->assertInstanceOf(CommentType::class, $comment_type, 'The new comment type has been created.');
+    $this->assertInstanceOf(CommentType::class, $comment_type);
 
     // Check that the comment type was created in site default language.
     $default_langcode = \Drupal::languageManager()->getDefaultLanguage()->getId();
@@ -185,7 +186,7 @@ class CommentTypeTest extends CommentTestBase {
       $this->fail('Exception not thrown.');
     }
     catch (\InvalidArgumentException $e) {
-      $this->pass('Exception thrown if attempting to re-use comment-type from another entity type.');
+      // Expected exception; just continue testing.
     }
 
     // Delete the comment type.

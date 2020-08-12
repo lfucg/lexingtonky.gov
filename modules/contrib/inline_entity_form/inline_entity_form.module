@@ -51,7 +51,6 @@ function inline_entity_form_theme() {
   return [
     'inline_entity_form_entity_table' => [
       'render element' => 'form',
-      'function' => 'theme_inline_entity_form_entity_table',
     ],
   ];
 }
@@ -317,13 +316,15 @@ function inline_entity_form_get_element($form, FormStateInterface $form_state) {
 }
 
 /**
- * Themes the table showing existing entity references in the widget.
+ * Prepares variables for inline_entity_form_entity_table form templates.
+ *
+ * Default template: inline-entity-form-entity-table.html.twig.
  *
  * @param array $variables
- *   Contains the form element data from $element['entities'].
+ *   An associative array containing:
+ *   - form: A render element representing the form.
  */
-function theme_inline_entity_form_entity_table($variables) {
-  $renderer = \Drupal::service('renderer');
+function template_preprocess_inline_entity_form_entity_table(array &$variables) {
   $form = $variables['form'];
   $entity_type = $form['#entity_type'];
 
@@ -359,8 +360,8 @@ function theme_inline_entity_form_entity_table($variables) {
     $row_classes = ['ief-row-entity'];
     $cells = [];
     if ($has_tabledrag) {
-      $cells[] = ['data' => '', 'class' => ['ief-tabledrag-handle']];
-      $cells[] = $renderer->render($form[$key]['delta']);
+      $cells[] = ['data' => ['#plain_text' => ''], '#wrapper_attributes' => ['class' => ['ief-tabledrag-handle']]];
+      $cells[] = ['data' => $form[$key]['delta']];
       $row_classes[] = 'draggable';
     }
     // Add a special class to rows that have a form underneath, to allow
@@ -371,7 +372,7 @@ function theme_inline_entity_form_entity_table($variables) {
 
     foreach ($fields as $field_name => $field) {
       if ($field['type'] == 'label') {
-        $data = $variables['form'][$key]['#label'];
+        $data = ['#markup' => $variables['form'][$key]['#label']];
       }
       elseif ($field['type'] == 'field' && $entity->hasField($field_name)) {
         $display_options = ['label' => 'hidden'];
@@ -390,24 +391,30 @@ function theme_inline_entity_form_entity_table($variables) {
         }
 
         $data = call_user_func_array($field['callback'], $arguments);
+
+        // Backward compatibility for callbacks that just provide a string not an array.
+        if(!is_array($data)) {
+          $data = ['#markup' => $data];
+        }
       }
       else {
-        $data = t('N/A');
+        $data = ['#markup' => t('N/A')];
       }
 
-      $cells[] = ['data' => $data, 'class' => ['inline-entity-form-' . $entity_type . '-' . $field_name]];
+      $cells[$field_name] = array_merge($data, ['#wrapper_attributes' => ['class' => ['inline-entity-form-' . $entity_type . '-' . $field_name]]]);
     }
 
-    // Add the buttons belonging to the "Operations" column.
-    $cells[] = $renderer->render($form[$key]['actions']);
+    // Add the buttons belonging to the "Operations" column, when entity is not
+    // being displayed as a form.
+    if (empty($form[$key]['form'])) {
+      $cells['actions'] = $form[$key]['actions'];
+    }
     // Create the row.
-    $rows[] = ['data' => $cells, 'class' => $row_classes];
+    $rows[] = $cells + ['#attributes' => ['class' => $row_classes]];
     // If the current entity array specifies a form, output it in the next row.
     if (!empty($form[$key]['form'])) {
-      $row = [
-        ['data' => $renderer->render($form[$key]['form']), 'colspan' => count($fields) + 1],
-      ];
-      $rows[] = ['data' => $row, 'class' => ['ief-row-form'], 'no_striping' => TRUE];
+      $row[] = $form[$key]['form'] + ['#wrapper_attributes' => ['colspan' => count($fields) + 1]];
+      $rows[] = $row + ['#attributes' => ['class' => ['ief-row-form'], 'no_striping' => TRUE]];
     }
   }
 
@@ -423,17 +430,14 @@ function theme_inline_entity_form_entity_table($variables) {
       ];
     }
 
-    $table = [
+    $variables['table'] = [
       '#type' => 'table',
       '#header' => $header,
-      '#rows' => $rows,
       '#attributes' => [
         'id' => 'ief-entity-table-' . $form['#id'],
         'class' => ['ief-entity-table'],
       ],
       '#tabledrag' => $tabledrag,
-    ];
-
-    return $renderer->render($table);
+    ] + $rows;
   }
 }

@@ -9,6 +9,7 @@
  * to solve.
  */
 
+use Drupal\captcha\Element\Captcha;
 use Drupal\captcha\Entity\CaptchaPoint;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Form\BaseFormIdInterface;
@@ -110,10 +111,10 @@ function captcha_cron() {
   // Get request time.
   $request_time = \Drupal::time()->getRequestTime();
 
-  // Remove challenges older than 1 day.
+  // Remove challenges older than PHP's session.gc_maxlifetime value.
   $connection = Database::getConnection();
   $connection->delete('captcha_sessions')
-    ->condition('timestamp', $request_time - 60 * 60 * 24, '<')
+    ->condition('timestamp', $request_time - ini_get('session.gc_maxlifetime'), '<')
     ->execute();
 }
 
@@ -396,7 +397,7 @@ function _captcha_get_posted_captcha_info(array $element, FormStateInterface $fo
       (int) $input['captcha_sid']
       : NULL;
     $posted_captcha_token = isset($input['captcha_token']) ?
-      preg_replace("/[^a-zA-Z0-9]/", "", (string) $input['captcha_token'])
+      preg_replace("/[^a-zA-Z0-9-_]/", "", (string) $input['captcha_token'])
       : NULL;
 
     if ($posted_form_id == $this_form_id) {
@@ -498,8 +499,22 @@ function captcha_validate($element, FormStateInterface &$form_state) {
     // we also provide the CAPTCHA $element and $form_state
     // arrays for more advanced use cases.
     if ($captcha_validate($solution, $captcha_response, $element, $form_state)) {
-      // Correct answer.
-      $_SESSION['captcha_success_form_ids'][$form_id] = $form_id;
+
+      // Get the CAPTCHA persistence setting.
+      $captcha_persistence = \Drupal::config('captcha.settings')
+        ->get('persistence');
+
+      if (in_array($captcha_persistence,
+        [
+          CAPTCHA_PERSISTENCE_SKIP_ONCE_SUCCESSFUL,
+          CAPTCHA_PERSISTENCE_SKIP_ONCE_SUCCESSFUL_PER_FORM_TYPE,
+        ])) {
+        // Only save the success in $_SESSION if it is actually needed for
+        // further validation in _captcha_required_for_user(). Setting
+        // this kills the page cache so let's not be cavalier about it.
+        $_SESSION['captcha_success_form_ids'][$form_id] = $form_id;
+      }
+
       // Record success.
       \Drupal::database()->update('captcha_sessions')
         ->condition('csid', $csid)
@@ -550,39 +565,13 @@ function captcha_validate($element, FormStateInterface &$form_state) {
  *
  * @return array
  *   The manipulated element.
+ *
+ * @deprecated in captcha:8.x-1.0 and is removed from captcha:8.x-2.0.
+ *   Use \Drupal\captcha\Element\Captcha::preRenderProcess() instead.
+ * @see https://www.drupal.org/project/captcha/issues/1949682
  */
 function captcha_pre_render_process(array $element) {
-  module_load_include('inc', 'captcha');
-
-  // Get form and CAPTCHA information.
-  $captcha_info = $element['#captcha_info'];
-  $form_id = $captcha_info['form_id'];
-  $captcha_sid = (int) ($captcha_info['captcha_sid']);
-  // Check if CAPTCHA is still required.
-  // This check is done in a first phase during the element processing
-  // (@see captcha_process), but it is also done here for better support
-  // of multi-page forms. Take previewing a node submission for example:
-  // when the challenge is solved correctely on preview, the form is still
-  // not completely submitted, but the CAPTCHA can be skipped.
-  if (_captcha_required_for_user($captcha_sid, $form_id) || $element['#captcha_admin_mode']) {
-    // Update captcha_sessions table: store the solution
-    // of the generated CAPTCHA.
-    _captcha_update_captcha_session($captcha_sid, $captcha_info['solution']);
-
-    // Handle the response field if it is available and if it is a textfield.
-    if (isset($element['captcha_widgets']['captcha_response']['#type']) && $element['captcha_widgets']['captcha_response']['#type'] == 'textfield') {
-      // Before rendering: presolve an admin mode challenge or
-      // empty the value of the captcha_response form item.
-      $value = $element['#captcha_admin_mode'] ? $captcha_info['solution'] : '';
-      $element['captcha_widgets']['captcha_response']['#value'] = $value;
-    }
-  }
-  else {
-    // Remove CAPTCHA widgets from form.
-    unset($element['captcha_widgets']);
-  }
-
-  return $element;
+  return Captcha::preRenderProcess($element);
 }
 
 /**

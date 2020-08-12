@@ -130,6 +130,11 @@ class Condition extends ConditionBase {
             return TRUE;
           }
         }
+        // If the parent does not exist, it's safe to say the actual property
+        // we're checking for is also NULL.
+        elseif ($condition['operator'] === 'IS NULL') {
+          return TRUE;
+        }
       }
       // Only try to match a scalar if there are no remaining keys in
       // $needs_matching as this indicates that we are looking for a specific
@@ -169,26 +174,37 @@ class Condition extends ConditionBase {
       switch ($condition['operator']) {
         case '=':
           return $value == $condition['value'];
+
         case '>':
           return $value > $condition['value'];
+
         case '<':
           return $value < $condition['value'];
+
         case '>=':
           return $value >= $condition['value'];
+
         case '<=':
           return $value <= $condition['value'];
+
         case '<>':
           return $value != $condition['value'];
+
         case 'IN':
           return array_search($value, $condition['value']) !== FALSE;
+
         case 'NOT IN':
           return array_search($value, $condition['value']) === FALSE;
+
         case 'STARTS_WITH':
           return strpos($value, $condition['value']) === 0;
+
         case 'CONTAINS':
           return strpos($value, $condition['value']) !== FALSE;
+
         case 'ENDS_WITH':
           return substr($value, -strlen($condition['value'])) === (string) $condition['value'];
+
         default:
           throw new QueryException('Invalid condition operator.');
       }

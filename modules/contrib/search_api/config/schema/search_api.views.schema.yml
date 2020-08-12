@@ -130,6 +130,10 @@ views.field.search_api_boolean:
       type: string
       label: 'Separator for multiple values'
 
+views.field.search_api_bulk_form:
+  type: views.field.bulk_form
+  label: 'Search API bulk form'
+
 views.field.search_api_date:
   type: views.field.date
   label: 'Search API date'

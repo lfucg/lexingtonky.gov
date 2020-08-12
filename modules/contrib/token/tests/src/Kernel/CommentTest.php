@@ -62,7 +62,7 @@ class CommentTest extends KernelTestBase {
     $parent_comment->save();
 
     // Fix http://example.com/index.php/comment/1 fails 'url:path' test.
-    $parent_comment_path = $parent_comment->url();
+    $parent_comment_path = $parent_comment->toUrl()->toString();
 
     $tokens = [
       'url' => $parent_comment->toUrl('canonical', ['fragment' => "comment-{$parent_comment->id()}"])->setAbsolute()->toString(),

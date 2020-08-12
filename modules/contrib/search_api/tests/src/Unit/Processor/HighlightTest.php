@@ -810,9 +810,9 @@ END;
     $this->assertEquals('Title <strong>foo</strong>', $fields['title'][0], 'Highlighting is correctly applied to title field.');
 
     $excerpt = $items[$this->itemIds[0]]->getExcerpt();
-    $this->assertContains('Some <strong>foo</strong> value', $excerpt);
-    $this->assertContains('<strong>foo</strong> bar', $excerpt);
-    $this->assertContains('Title <strong>foo</strong>', $excerpt);
+    $this->assertStringContainsString('Some <strong>foo</strong> value', $excerpt);
+    $this->assertStringContainsString('<strong>foo</strong> bar', $excerpt);
+    $this->assertStringContainsString('Title <strong>foo</strong>', $excerpt);
     $this->assertEquals(4, substr_count($excerpt, '…'));
   }
 

@@ -10,6 +10,7 @@ use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\inline_entity_form\TranslationHelper;
+use Drupal\Component\Utility\Crypt;
 
 /**
  * Simple inline widget.
@@ -18,7 +19,8 @@ use Drupal\inline_entity_form\TranslationHelper;
  *   id = "inline_entity_form_simple",
  *   label = @Translation("Inline entity form - Simple"),
  *   field_types = {
- *     "entity_reference"
+ *     "entity_reference",
+ *     "entity_reference_revisions",
  *   },
  *   multiple_values = false
  * )
@@ -32,7 +34,7 @@ class InlineEntityFormSimple extends InlineEntityFormBase {
     // Trick inline_entity_form_form_alter() into attaching the handlers,
     // WidgetSubmit will be needed once extractFormValues fills the $form_state.
     $parents = array_merge($element['#field_parents'], [$items->getName()]);
-    $ief_id = sha1(implode('-', $parents));
+    $ief_id = Crypt::hashBase64(implode('-', $parents));
     $form_state->set(['inline_entity_form', $ief_id], []);
 
     $element = [
@@ -152,7 +154,7 @@ class InlineEntityFormSimple extends InlineEntityFormBase {
 
     // Populate the IEF form state with $items so that WidgetSubmit can
     // perform the necessary saves.
-    $ief_id = sha1(implode('-', $parents));
+    $ief_id = Crypt::hashBase64(implode('-', $parents));
     $widget_state = [
       'instance' => $this->fieldDefinition,
       'delete' => [],

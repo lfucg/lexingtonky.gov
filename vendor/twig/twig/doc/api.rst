@@ -19,8 +19,7 @@ to have multiple environments side by side, with different configurations.
 The typical way to configure Twig to load templates for an application looks
 roughly like this::
 
-    require_once '/path/to/lib/Twig/Autoloader.php';
-    Twig_Autoloader::register();
+    require_once '/path/to/vendor/autoload.php';
 
     $loader = new \Twig\Loader\FilesystemLoader('/path/to/templates');
     $twig = new \Twig\Environment($loader, [
@@ -154,10 +153,7 @@ Compilation Cache
 ~~~~~~~~~~~~~~~~~
 
 All template loaders can cache the compiled templates on the filesystem for
-future reuse. It speeds up Twig a lot as templates are only compiled once; and
-the performance boost is even larger if you use a PHP accelerator such as
-OPCache. See the ``cache`` and ``auto_reload`` options of ``\Twig\Environment``
-above for more information.
+future reuse. It speeds up Twig a lot as templates are only compiled once.
 
 Built-in Loaders
 ~~~~~~~~~~~~~~~~
@@ -357,8 +353,8 @@ This section describes the features added by the built-in extensions.
 
 .. tip::
 
-    Read the chapter about extending Twig to learn how to create your own
-    extensions.
+    Read the chapter about :doc:`extending Twig <advanced>` to learn how to
+    create your own extensions.
 
 Core Extension
 ~~~~~~~~~~~~~~
@@ -417,7 +413,7 @@ The escaping rules are implemented as follows:
         {% set text = "Twig<br />" %}
         {{ text }} {# will be escaped #}
 
-* Expressions which the result is always a literal or a variable marked safe
+* Expressions which the result is a literal or a variable marked safe
   are never automatically escaped:
 
   .. code-block:: twig
@@ -425,13 +421,11 @@ The escaping rules are implemented as follows:
         {{ foo ? "Twig<br />" : "<br />Twig" }} {# won't be escaped #}
 
         {% set text = "Twig<br />" %}
-        {{ foo ? text : "<br />Twig" }} {# will be escaped #}
+        {{ true ? text : "<br />Twig" }} {# will be escaped #}
+        {{ false ? text : "<br />Twig" }} {# won't be escaped #}
 
         {% set text = "Twig<br />" %}
         {{ foo ? text|raw : "<br />Twig" }} {# won't be escaped #}
-
-        {% set text = "Twig<br />" %}
-        {{ foo ? text|escape : "<br />Twig" }} {# the result of the expression won't be escaped #}
 
 * Escaping is applied before printing, after any other filter is applied:
 

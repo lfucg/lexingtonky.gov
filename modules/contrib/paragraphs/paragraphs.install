@@ -220,6 +220,30 @@ function paragraphs_update_8013() {
   $definition_update_manager = \Drupal::entityDefinitionUpdateManager();
   $entity_type = $definition_update_manager->getEntityType('paragraph');
 
+  // Update the field storage definitions of the parent fields
+  // as done in 8019.
+  $last_installed_schema = \Drupal::service('entity.last_installed_schema.repository');
+  foreach (['parent_id', 'parent_type', 'parent_field_name'] as $field_name) {
+    $column_schema = [
+      'type' => 'varchar_ascii',
+      'length' => $field_name == 'parent_id' ? 255 : 32,
+      'binary' => FALSE,
+      'not null' => FALSE,
+    ];
+    // Update the field storage repository.
+    $storage_definition = $definition_update_manager->getFieldStorageDefinition($field_name, 'paragraph');
+    $storage_definition->setRevisionable(TRUE);
+    $last_installed_schema->setLastInstalledFieldStorageDefinition($storage_definition);
+
+    // Update the stored field schema.
+    // @todo: There has to be a better way to do this.
+    $key = 'paragraph.field_schema_data.' . $field_name;
+    $field_schema = \Drupal::keyValue('entity.storage_schema.sql')->get($key);
+    $field_schema['paragraphs_item_revision_field_data']['fields'][$field_name] = $column_schema;
+    \Drupal::keyValue('entity.storage_schema.sql')->set($key, $field_schema);
+  }
+
+
   // Update the revision metadata keys to remove revision uid which is removed
   // in 8017 and 8021.
   if ($metadata_keys = $entity_type->get('revision_metadata_keys')) {
@@ -318,16 +342,8 @@ function paragraphs_update_8016() {
  * Update the revision metadata keys to remove revision uid.
  */
 function paragraphs_update_8017() {
-  $entity_definition_update_manager = \Drupal::entityDefinitionUpdateManager();
-  $entity_type = $entity_definition_update_manager->getEntityType('paragraph');
-  if ($metadata_keys = $entity_type->get('revision_metadata_keys')) {
-    if (is_array($metadata_keys) && isset($metadata_keys['revision_user'])) {
-      unset($metadata_keys['revision_user']);
-      $metadata_keys['revision_default'] = 'revision_default';
-      $entity_type->set('revision_metadata_keys', $metadata_keys);
-      $entity_definition_update_manager->updateEntityType($entity_type);
-    }
-  }
+  // Moved function content to paragraphs_update_8021(), see
+  // https://www.drupal.org/project/paragraphs/issues/2833935.
 }
 
 /**
@@ -445,4 +461,14 @@ function paragraphs_update_8021() {
       $entity_definition_update_manager->updateEntityType($entity_type);
     }
   }
+}
+
+/**
+ * Ensure that the parent indexes are added to the revision data table.
+ */
+function paragraphs_update_8022() {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+
+  // Regenerate entity type indexes.
+  $manager->updateEntityType($manager->getEntityType('paragraph'));
 }

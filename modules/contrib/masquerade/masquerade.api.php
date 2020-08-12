@@ -5,6 +5,8 @@
  * Hooks provided by the Masquerade module.
  */
 
+use Drupal\user\UserInterface;
+
 /**
  * @addtogroup hooks
  * @{
@@ -30,7 +32,7 @@
  *   - NULL or nothing to not affect the operation. If no module explicitly
  *     grants access, access is denied.
  */
-function hook_masquerade_access(\Drupal\user\UserInterface $user, \Drupal\user\UserInterface $target_account) {
+function hook_masquerade_access(UserInterface $user, UserInterface $target_account) {
   // Explicitly deny access for uid 1.
   if ($target_account->id() == 1) {
     return FALSE;

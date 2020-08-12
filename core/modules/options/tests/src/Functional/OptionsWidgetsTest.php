@@ -19,7 +19,14 @@ class OptionsWidgetsTest extends FieldTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'options', 'entity_test', 'options_test', 'taxonomy', 'field_ui'];
+  public static $modules = [
+    'node',
+    'options',
+    'entity_test',
+    'options_test',
+    'taxonomy',
+    'field_ui',
+  ];
 
   /**
    * {@inheritdoc}
@@ -105,7 +112,10 @@ class OptionsWidgetsTest extends FieldTestBase {
     $this->float->save();
 
     // Create a web user.
-    $this->drupalLogin($this->drupalCreateUser(['view test entity', 'administer entity_test content']));
+    $this->drupalLogin($this->drupalCreateUser([
+      'view test entity',
+      'administer entity_test content',
+    ]));
   }
 
   /**

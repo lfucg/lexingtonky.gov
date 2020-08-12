@@ -299,7 +299,7 @@ class TestBackend extends BackendPluginBase implements PluginFormInterface {
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return !empty($this->configuration['dependencies']) ? $this->configuration['dependencies'] : [];
+    return $this->configuration['dependencies'] ?? [];
   }
 
   /**

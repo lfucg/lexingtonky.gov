@@ -3,10 +3,10 @@
 namespace Drupal\paragraphs_library\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Component\Datetime\TimeInterface;
 
@@ -19,30 +19,6 @@ class LibraryItemForm extends ContentEntityForm {
    * @var \Drupal\paragraphs_library\LibraryItemInterface
    */
   protected $entity;
-
-  /**
-   * Provides messenger service.
-   *
-   * @var \Drupal\Core\Messenger\Messenger
-   */
-  protected $messenger;
-
-  /**
-   * Constructs a LibraryItemForm object.
-   *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger service.
-   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
-   *   The entity type bundle service.
-   * @param \Drupal\Component\Datetime\TimeInterface $time
-   *   The time service.
-   */
-  public function __construct(EntityManagerInterface $entity_manager, MessengerInterface $messenger, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
-    parent::__construct($entity_manager, $entity_type_bundle_info, $time);
-    $this->messenger = $messenger;
-  }
 
   /**
    * {@inheritdoc}
@@ -61,12 +37,9 @@ class LibraryItemForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity.manager'),
-      $container->get('messenger'),
-      $container->get('entity_type.bundle.info'),
-      $container->get('datetime.time')
-    );
+    $form = parent::create($container);
+    $form->setMessenger($container->get('messenger'));
+    return $form;
   }
 
   /**

@@ -21,7 +21,7 @@ class RandomTest extends KernelTestBase {
     $first_set = $this->assertTokens('random', [], $tokens, ['regex' => TRUE]);
     $second_set = $this->assertTokens('random', [], $tokens, ['regex' => TRUE]);
     foreach ($first_set as $token => $value) {
-      $this->assertNotIdentical($first_set[$token], $second_set[$token]);
+      $this->assertNotSame($first_set[$token], $second_set[$token]);
     }
   }
 

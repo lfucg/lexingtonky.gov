@@ -58,7 +58,7 @@ class InstallTest extends BrowserTestBase {
 
     $post_update_key_value = \Drupal::keyValue('post_update');
     $existing_updates = $post_update_key_value->get('existing_updates', []);
-    $this->assertTrue(in_array('module_test_post_update_test', $existing_updates));
+    $this->assertContains('module_test_post_update_test', $existing_updates);
   }
 
   /**
@@ -69,7 +69,7 @@ class InstallTest extends BrowserTestBase {
 
     $post_update_key_value = \Drupal::keyValue('post_update');
     $existing_updates = $post_update_key_value->get('existing_updates', []);
-    $this->assertFalse(in_array('module_test_post_update_test', $existing_updates));
+    $this->assertNotContains('module_test_post_update_test', $existing_updates);
   }
 
   /**
@@ -82,8 +82,8 @@ class InstallTest extends BrowserTestBase {
       $this->container->get('module_installer')->install([$module_name]);
       $this->fail($message);
     }
-    catch (ExtensionNameLengthException $e) {
-      $this->pass($message);
+    catch (\Exception $e) {
+      $this->assertInstanceOf(ExtensionNameLengthException::class, $e);
     }
 
     // Since for the UI, the submit callback uses FALSE, test that too.
@@ -92,8 +92,8 @@ class InstallTest extends BrowserTestBase {
       $this->container->get('module_installer')->install([$module_name], FALSE);
       $this->fail($message);
     }
-    catch (ExtensionNameLengthException $e) {
-      $this->pass($message);
+    catch (\Exception $e) {
+      $this->assertInstanceOf(ExtensionNameLengthException::class, $e);
     }
   }
 

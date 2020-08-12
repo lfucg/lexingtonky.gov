@@ -18,6 +18,11 @@ class ModerationFormAccessTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = [
     'workbench_moderation',
     'node',

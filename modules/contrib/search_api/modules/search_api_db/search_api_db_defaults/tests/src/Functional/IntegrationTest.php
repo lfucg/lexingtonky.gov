@@ -5,7 +5,7 @@ namespace Drupal\Tests\search_api_db_defaults\Functional;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\field\Tests\EntityReference\EntityReferenceTestTrait;
+use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\Tests\BrowserTestBase;
@@ -79,10 +79,10 @@ class IntegrationTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('The server was successfully saved.');
 
     $server = Server::load('default_server');
-    $this->assertTrue($server, 'Server can be loaded');
+    $this->assertInstanceOf(Server::class, $server, 'Server can be loaded');
 
     $index = Index::load('default_index');
-    $this->assertTrue($index, 'Index can be loaded');
+    $this->assertInstanceOf(Index::class, $index, 'Index can be loaded');
 
     $this->drupalLogin($this->authenticatedUser);
     $this->drupalGet('search/content');

@@ -2,10 +2,14 @@
 
 namespace Drupal\captcha\Service;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 /**
  * Helper service for CAPTCHA module.
  */
 class CaptchaService {
+
+  use StringTranslationTrait;
 
   /**
    * Return an array with the available CAPTCHA types.
@@ -24,7 +28,7 @@ class CaptchaService {
     $challenges = [];
 
     if ($add_special_options) {
-      $challenges['default'] = t('Default challenge type');
+      $challenges['default'] = $this->t('Default challenge type');
     }
 
     // We do our own version of Drupal's module_invoke_all() here because
@@ -33,7 +37,7 @@ class CaptchaService {
       $result = call_user_func_array($module . '_captcha', ['list']);
       if (is_array($result)) {
         foreach ($result as $type) {
-          $challenges["$module/$type"] = t('@type (from module @module)', [
+          $challenges["$module/$type"] = $this->t('@type (from module @module)', [
             '@type' => $type,
             '@module' => $module,
           ]);
@@ -63,7 +67,7 @@ class CaptchaService {
    * @param array $captcha_element
    *   the CAPTCHA element to insert.
    */
-  function insertCaptchaElement(array &$form, array $placement, array $captcha_element) {
+  public function insertCaptchaElement(array &$form, array $placement, array $captcha_element) {
     // Get path, target and target weight or use defaults if not available.
     $target_key = isset($placement['key']) ? $placement['key'] : NULL;
     $target_weight = isset($placement['weight']) ? $placement['weight'] : NULL;

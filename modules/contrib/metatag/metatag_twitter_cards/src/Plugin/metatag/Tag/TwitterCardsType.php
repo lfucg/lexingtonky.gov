@@ -3,6 +3,7 @@
 namespace Drupal\metatag_twitter_cards\Plugin\metatag\Tag;
 
 use Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * The Twitter Cards Type-tag.
@@ -21,6 +22,8 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
  */
 class TwitterCardsType extends MetaNameBase {
 
+  use StringTranslationTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -30,15 +33,15 @@ class TwitterCardsType extends MetaNameBase {
       '#title' => $this->label(),
       '#description' => $this->description(),
       '#options' => [
-        'summary' => t('Summary Card'),
-        'summary_large_image' => t('Summary Card with large image'),
-        'photo' => t('Photo Card'),
-        'gallery' => t('Gallery Card'),
-        'app' => t('App Card'),
-        'player' => t('Player Card'),
-        'product' => t('Product Card'),
+        'summary' => $this->t('Summary Card'),
+        'summary_large_image' => $this->t('Summary Card with large image'),
+        'photo' => $this->t('Photo Card'),
+        'gallery' => $this->t('Gallery Card'),
+        'app' => $this->t('App Card'),
+        'player' => $this->t('Player Card'),
+        'product' => $this->t('Product Card'),
       ],
-      '#empty_option' => t('- None -'),
+      '#empty_option' => $this->t('- None -'),
       '#empty_value' => '',
       '#default_value' => $this->value(),
       '#required' => isset($element['#required']) ? $element['#required'] : FALSE,

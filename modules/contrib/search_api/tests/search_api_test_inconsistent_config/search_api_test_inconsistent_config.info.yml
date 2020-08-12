@@ -5,10 +5,10 @@ package: Testing
 dependencies:
   - search_api:search_api
   - search_api:search_api_test
-core: 8.x
+core_version_requirement: ^8.8 || ^9
 hidden: true
 
-# Information added by Drupal.org packaging script on 2019-11-07
-version: '8.x-1.15'
+# Information added by Drupal.org packaging script on 2020-06-02
+version: '8.x-1.17'
 project: 'search_api'
-datestamp: 1573122789
+datestamp: 1591128372

@@ -12,6 +12,11 @@ use Drupal\Tests\BrowserTestBase;
 class BlockFieldTest extends BrowserTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'classy';
+
+  /**
    * Modules to enable.
    *
    * @var array
@@ -157,7 +162,7 @@ class BlockFieldTest extends BrowserTestBase {
     $assert->responseNotContains($time);
 
     $this->drupalGet('admin/structure/types/manage/block_field_test/fields/node.block_field_test.field_block_field_test');
-    $this->drupalPostForm(NULL, ['settings[plugin_ids][page_title_block]' => FALSE], 'Save settings');
+    $this->drupalPostForm(NULL, ['settings[selection_settings][plugin_ids][page_title_block]' => FALSE], 'Save settings');
 
     $this->drupalGet('admin/structure/types/manage/block_field_test/fields/node.block_field_test.field_block_field_test');
     $assert->statusCodeEquals(200);

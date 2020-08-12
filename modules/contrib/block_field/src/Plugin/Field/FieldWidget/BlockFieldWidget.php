@@ -2,8 +2,10 @@
 
 namespace Drupal\block_field\Plugin\Field\FieldWidget;
 
+use Drupal\block_field\BlockFieldSelectionManager;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Block\BlockManagerInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormState;
@@ -34,29 +36,34 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
   protected $blockManager;
 
   /**
-   * Set the block manager.
+   * The block field selection manager.
    *
-   * @param \Drupal\Core\Block\BlockManagerInterface $block_manager
-   *   The block manager.
+   * @var \Drupal\block_field\BlockFieldSelectionManager
    */
-  public function setBlockManager(BlockManagerInterface $block_manager) {
+  protected $blockFieldSelectionManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, BlockManagerInterface $block_manager, BlockFieldSelectionManager $block_field_selection_manager) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->blockManager = $block_manager;
+    $this->blockFieldSelectionManager = $block_field_selection_manager;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $instance = new static(
+    return new static(
       $plugin_id,
       $plugin_definition,
       $configuration['field_definition'],
       $configuration['settings'],
-      $configuration['third_party_settings']
+      $configuration['third_party_settings'],
+      $container->get('plugin.manager.block'),
+      $container->get('plugin.manager.block_field_selection')
     );
-    $instance->setBlockManager($container->get('plugin.manager.block'));
-
-    return $instance;
   }
 
   /**
@@ -110,8 +117,6 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
       [$field_name, $delta, 'settings']
     ));
 
-    $plugin_ids = $this->fieldDefinition->getSetting('plugin_ids');
-
     $values = $form_state->getValues();
     $item->plugin_id = (isset($values[$field_name][$delta]['plugin_id'])) ? $values[$field_name][$delta]['plugin_id'] : $item->plugin_id;
     if (!empty($values[$field_name][$delta]['settings'])) {
@@ -121,27 +126,13 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
       $item->settings = $item->settings ?: [];
     }
 
-    $options = [];
-    /** @var \Drupal\block_field\BlockFieldManagerInterface $block_field_manager */
-    $block_field_manager = \Drupal::service('block_field.manager');
-    $definitions = $block_field_manager->getBlockDefinitions();
-    foreach ($definitions as $id => $definition) {
-      // If allowed plugin ids are set then check that this block should be
-      // included.
-      if ($plugin_ids && !isset($plugin_ids[$id])) {
-        // Remove the definition, so that we have an accurate list of allowed
-        // blocks definitions.
-        unset($definitions[$id]);
-        continue;
+    $options = $this->blockFieldSelectionManager->getWidgetOptions($this->fieldDefinition);
+    if ($item->plugin_id) {
+      // If plugin_id not in second level arrays, unset plugin_id and settings..
+      if (!in_array($item->plugin_id, array_keys(call_user_func_array('array_merge', $options)), TRUE)) {
+        $item->plugin_id = '';
+        $item->setting = [];
       }
-      $category = (string) $definition['category'];
-      $options[$category][$id] = $definition['admin_label'];
-    }
-
-    // Make sure the plugin id is allowed, if not clear all settings.
-    if ($item->plugin_id && !isset($definitions[$item->plugin_id])) {
-      $item->plugin_id = '';
-      $item->setting = [];
     }
 
     $element['plugin_id'] = [

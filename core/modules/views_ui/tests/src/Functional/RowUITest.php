@@ -52,7 +52,7 @@ class RowUITest extends UITestBase {
     $this->assertFieldByName('row_options[test_option]', $random_name, 'Make sure the custom settings form field has the expected value stored.');
 
     $this->drupalPostForm($view_edit_url, [], t('Save'));
-    $this->assertLink(t('Test row plugin'), 0, 'Make sure the test row plugin is shown in the UI');
+    $this->assertSession()->linkExists(t('Test row plugin'), 0, 'Make sure the test row plugin is shown in the UI');
 
     $view = Views::getView($view_name);
     $view->initDisplay();
@@ -62,7 +62,7 @@ class RowUITest extends UITestBase {
 
     $this->drupalPostForm($row_plugin_url, ['row[type]' => 'fields'], 'Apply');
     $this->drupalGet($row_plugin_url);
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertFieldByName('row[type]', 'fields', 'Make sure that the fields got saved as used row plugin.');
 
     // Ensure that entity row plugins appear.

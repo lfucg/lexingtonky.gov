@@ -27,7 +27,10 @@ class EntityFormTest extends BrowserTestBase {
 
   protected function setUp() {
     parent::setUp();
-    $web_user = $this->drupalCreateUser(['administer entity_test content', 'view test entity']);
+    $web_user = $this->drupalCreateUser([
+      'administer entity_test content',
+      'view test entity',
+    ]);
     $this->drupalLogin($web_user);
 
     // Add a language.
@@ -62,7 +65,7 @@ class EntityFormTest extends BrowserTestBase {
   public function testEntityFormDisplayAlter() {
     $this->drupalGet('entity_test/add');
     $altered_field = $this->xpath('//input[@name="field_test_text[0][value]" and @size="42"]');
-    $this->assertTrue(count($altered_field) === 1, 'The altered field has the correct size value.');
+    $this->assertCount(1, $altered_field, 'The altered field has the correct size value.');
   }
 
   /**
