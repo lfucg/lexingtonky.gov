@@ -4,7 +4,7 @@ services:
     arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
   entity_embed.twig.entity_embed_twig_extension:
     class: Drupal\entity_embed\Twig\EntityEmbedTwigExtension
-    arguments: ['@entity.manager', '@entity_embed.builder']
+    arguments: ['@entity_type.manager', '@entity_embed.builder']
     tags:
       - { name: twig.extension }
   entity_embed.builder:

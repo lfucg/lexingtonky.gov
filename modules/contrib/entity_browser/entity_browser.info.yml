@@ -2,7 +2,7 @@ name: Entity Browser
 description: 'Provide a generic entity browser/picker/selector.'
 type: module
 package: Media
-# core: 8.x
+core_version_requirement: ^8.7.7 || ^9
 test_dependencies:
   - token:token
   - inline_entity_form:inline_entity_form
@@ -12,8 +12,7 @@ test_dependencies:
   - entity_embed:entity_embed
 configure: entity.entity_browser.collection
 
-# Information added by Drupal.org packaging script on 2019-07-04
-version: '8.x-1.8'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-01-20
+version: '8.x-1.10'
 project: 'entity_browser'
-datestamp: 1562241187
+datestamp: 1579563796

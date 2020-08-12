@@ -116,15 +116,13 @@ class TypeBoost extends ProcessorPluginBase implements PluginFormInterface {
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
     foreach ($this->index->getDatasourceIds() as $datasource_id) {
-      if (!empty($values['boosts'][$datasource_id]['bundle_boosts'])) {
-        foreach ($values['boosts'][$datasource_id]['bundle_boosts'] as $bundle => $boost) {
-          if ($boost === '') {
-            unset($values['boosts'][$datasource_id]['bundle_boosts'][$bundle]);
-          }
+      foreach ($values['boosts'][$datasource_id]['bundle_boosts'] ?? [] as $bundle => $boost) {
+        if ($boost === '') {
+          unset($values['boosts'][$datasource_id]['bundle_boosts'][$bundle]);
         }
-        if (!$values['boosts'][$datasource_id]['bundle_boosts']) {
-          unset($values['boosts'][$datasource_id]['bundle_boosts']);
-        }
+      }
+      if (empty($values['boosts'][$datasource_id]['bundle_boosts'])) {
+        unset($values['boosts'][$datasource_id]['bundle_boosts']);
       }
     }
     $form_state->setValues($values);
@@ -142,7 +140,7 @@ class TypeBoost extends ProcessorPluginBase implements PluginFormInterface {
       $datasource_id = $item->getDatasourceId();
       $bundle = $item->getDatasource()->getItemBundle($item->getOriginalObject());
 
-      $item_boost = (double) isset($boosts[$datasource_id]['datasource_boost']) ? $boosts[$datasource_id]['datasource_boost'] : 1.0;
+      $item_boost = (double) $boosts[$datasource_id]['datasource_boost'] ?? 1.0;
       if ($bundle && isset($boosts[$datasource_id]['bundle_boosts'][$bundle])) {
         $item_boost = (double) $boosts[$datasource_id]['bundle_boosts'][$bundle];
       }

@@ -35,7 +35,11 @@ class PathTaxonomyTermTest extends PathTestBase {
     $vocabulary->save();
 
     // Create and log in user.
-    $web_user = $this->drupalCreateUser(['administer url aliases', 'administer taxonomy', 'access administration pages']);
+    $web_user = $this->drupalCreateUser([
+      'administer url aliases',
+      'administer taxonomy',
+      'access administration pages',
+    ]);
     $this->drupalLogin($web_user);
   }
 
@@ -76,7 +80,7 @@ class PathTaxonomyTermTest extends PathTestBase {
     // Confirm that the old alias no longer works.
     $this->drupalGet(trim($edit['path[0][alias]'], '/'));
     $this->assertNoText($description, 'Old URL alias has been removed after altering.');
-    $this->assertResponse(404, 'Old URL alias returns 404.');
+    $this->assertSession()->statusCodeEquals(404);
 
     // Remove the term's URL alias.
     $edit3 = [];
@@ -86,7 +90,7 @@ class PathTaxonomyTermTest extends PathTestBase {
     // Confirm that the alias no longer works.
     $this->drupalGet(trim($edit2['path[0][alias]'], '/'));
     $this->assertNoText($description, 'Old URL alias has been removed after altering.');
-    $this->assertResponse(404, 'Old URL alias returns 404.');
+    $this->assertSession()->statusCodeEquals(404);
   }
 
 }

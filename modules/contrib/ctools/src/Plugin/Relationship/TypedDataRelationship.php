@@ -6,6 +6,7 @@ use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\Core\Plugin\Context\ContextInterface;
+use Drupal\Core\Plugin\Context\EntityContextDefinition;
 use Drupal\Core\TypedData\DataReferenceInterface;
 use Drupal\Core\TypedData\ListInterface;
 use Drupal\ctools\Annotation\Relationship;
@@ -26,7 +27,12 @@ class TypedDataRelationship extends RelationshipBase {
     $plugin_definition = $this->getPluginDefinition();
 
     $data_type = $plugin_definition['data_type'];
-    $context_definition = new ContextDefinition($data_type, $plugin_definition['label']);
+    if (strpos($data_type, 'entity:') === 0) {
+      $context_definition = new EntityContextDefinition($data_type, $plugin_definition['label']);
+    }
+    else {
+      $context_definition = new ContextDefinition($data_type, $plugin_definition['label']);
+    }
     $context_value = NULL;
 
     // If the 'base' context has a value, then get the property value to put on

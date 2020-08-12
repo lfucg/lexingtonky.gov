@@ -32,6 +32,7 @@ abstract class BackendTestBase extends KernelTestBase {
     'user',
     'system',
     'entity_test',
+    'filter',
     'text',
     'search_api_test_example_content',
   ];
@@ -147,7 +148,7 @@ abstract class BackendTestBase extends KernelTestBase {
    */
   protected function checkDefaultServer() {
     $server = $this->getServer();
-    $this->assertTrue((bool) $server, 'The server was successfully created.');
+    $this->assertInstanceOf(Server::class, $server, 'The server was successfully created.');
   }
 
   /**
@@ -155,7 +156,7 @@ abstract class BackendTestBase extends KernelTestBase {
    */
   protected function checkDefaultIndex() {
     $index = $this->getIndex();
-    $this->assertTrue((bool) $index, 'The index was successfully created.');
+    $this->assertInstanceOf(Index::class, $index, 'The index was successfully created.');
 
     $this->assertEquals(["entity:entity_test_mulrev_changed"], $index->getDatasourceIds(), 'Datasources are set correctly.');
     $this->assertEquals('default', $index->getTrackerId(), 'Tracker is set correctly.');
@@ -576,7 +577,7 @@ abstract class BackendTestBase extends KernelTestBase {
     $query->range(0, 0);
     $results = $query->execute();
     $this->assertEquals(5, $results->getResultCount(), 'Multi-field OR keywords returned correct number of results.');
-    $this->assertFalse($results->getResultItems(), 'Multi-field OR keywords returned correct result.');
+    $this->assertEmpty($results->getResultItems(), 'Multi-field OR keywords returned correct result.');
     $this->assertEmpty($results->getIgnoredSearchKeys());
     $this->assertEmpty($results->getWarnings());
 
@@ -936,7 +937,7 @@ abstract class BackendTestBase extends KernelTestBase {
     $index = $this->getIndex();
     $this->addField($index, 'prices', 'decimal');
     $success = $index->save();
-    $this->assertTrue($success, 'The index field settings were successfully changed.');
+    $this->assertNotEmpty($success, 'The index field settings were successfully changed.');
 
     // Reset the static cache so the new values will be available.
     $this->resetEntityCache('server');

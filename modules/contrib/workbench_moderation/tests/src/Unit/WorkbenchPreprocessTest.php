@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\workbench_moderation\Unit;
 
+use Drupal\Tests\UnitTestCase;
 use Drupal\workbench_moderation\WorkbenchPreprocess;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\node\Entity\Node;
@@ -13,7 +14,7 @@ use Drupal\node\Entity\Node;
  * @coversDefaultClass \Drupal\workbench_moderation\WorkbenchPreprocess
  * @group workbench_moderation
  */
-class WorkbenchPreprocessTest extends \PHPUnit_Framework_TestCase {
+class WorkbenchPreprocessTest extends UnitTestCase {
 
   /**
    * @covers ::isLatestVersionPage

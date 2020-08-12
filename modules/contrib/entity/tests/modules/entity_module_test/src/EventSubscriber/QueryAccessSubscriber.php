@@ -13,8 +13,35 @@ class QueryAccessSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return [
+      'entity.query_access' => 'onGenericQueryAccess',
       'entity.query_access.entity_test_enhanced' => 'onQueryAccess',
+      'entity.query_access.node' => 'onEventOnlyQueryAccess',
     ];
+  }
+
+  /**
+   * Modifies the access conditions based on the entity type.
+   *
+   * This is just a convenient example for testing the catch-all event. A real
+   * subscriber would probably extend the conditions based on the third party
+   * settings it set on the entity type(s).
+   *
+   * @param \Drupal\entity\QueryAccess\QueryAccessEvent $event
+   *   The event.
+   */
+  public function onGenericQueryAccess(QueryAccessEvent $event) {
+    $conditions = $event->getConditions();
+    $email = $event->getAccount()->getEmail();
+    if ($event->getEntityTypeId() == 'entity_test_enhanced_with_owner') {
+      // Disallow access to entity_test_enhanced_with_owner for the user with
+      // email address user9000@example.com. Anyone else has access.
+      if ($email == 'user9000@example.com') {
+        $conditions->alwaysFalse();
+      }
+      elseif ($email == 'user9001@example.com') {
+        $conditions->alwaysFalse(FALSE);
+      }
+    }
   }
 
   /**
@@ -52,6 +79,23 @@ class QueryAccessSubscriber implements EventSubscriberInterface {
         // Confirm that explicitly specifying the property name works.
         ->addCondition('assigned.value', 'marketing')
       );
+    }
+  }
+
+  /**
+   * Modifies the access conditions based on the node type.
+   *
+   * This is just a convenient example for testing whether the event-only query
+   * access subscriber is added to entity types that do not specify a query
+   * access handler; in this case: node.
+   *
+   * @param \Drupal\entity\QueryAccess\QueryAccessEvent $event
+   *   The event.
+   */
+  public function onEventOnlyQueryAccess(QueryAccessEvent $event) {
+    if (\Drupal::state()->get('test_event_only_query_access')) {
+      $conditions = $event->getConditions();
+      $conditions->addCondition('type', 'foo');
     }
   }
 

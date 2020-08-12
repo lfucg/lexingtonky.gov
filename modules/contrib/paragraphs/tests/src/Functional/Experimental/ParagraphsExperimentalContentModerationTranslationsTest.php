@@ -304,7 +304,9 @@ class ParagraphsExperimentalContentModerationTranslationsTest extends Paragraphs
     $assert_session->pageTextContains('Draft paragraph container text EN');
     $assert_session->pageTextContains('Untranslatable container draft text');
 
-    entity_get_form_display('node', 'paragraphed_test', 'default')
+    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
+    $display_repository = \Drupal::service('entity_display.repository');
+    $display_repository->getFormDisplay('node', 'paragraphed_test')
       ->setComponent('field_paragraphs', [
         'type' => 'paragraphs',
         'settings' => [
@@ -317,7 +319,7 @@ class ParagraphsExperimentalContentModerationTranslationsTest extends Paragraphs
         ],
       ])
       ->save();
-    entity_get_form_display('paragraph', 'container', 'default')
+    $display_repository->getFormDisplay('paragraph', 'container')
       ->setComponent('field_paragraphs', [
         'type' => 'paragraphs',
         'settings' => [

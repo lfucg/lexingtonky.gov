@@ -67,8 +67,17 @@ class ModerationStateNodeTypeTest extends ModerationStateTestBase {
     ], t('Save'));
     $this->assertText('Not moderated Test has been created.');
 
+    // Check that the 'Create new revision' is not disabled.
+    $this->drupalGet('/admin/structure/types/manage/not_moderated');
+    $this->assertNull($this->assertSession()->fieldExists('options[revision]')->getAttribute('disabled'));
+
     // Now enable moderation state.
     $this->enableModerationThroughUi('not_moderated');
+
+    // Check that the 'Create new revision' checkbox is checked and disabled.
+    $this->drupalGet('/admin/structure/types/manage/not_moderated');
+    $this->assertSession()->checkboxChecked('options[revision]');
+    $this->assertSession()->fieldDisabled('options[revision]');
 
     // And make sure it works.
     $nodes = \Drupal::entityTypeManager()->getStorage('node')
@@ -79,16 +88,16 @@ class ModerationStateNodeTypeTest extends ModerationStateTestBase {
     }
     $node = reset($nodes);
     $this->drupalGet('node/' . $node->id());
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertLinkByHref('node/' . $node->id() . '/edit');
     $this->drupalGet('node/' . $node->id() . '/edit');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->optionExists('moderation_state[0][state]', 'draft');
     $this->assertSession()->optionNotExists('moderation_state[0][state]', 'published');
 
     $this->drupalLogin($editor_with_publish);
     $this->drupalGet('node/' . $node->id() . '/edit');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->optionExists('moderation_state[0][state]', 'draft');
     $this->assertSession()->optionExists('moderation_state[0][state]', 'published');
   }

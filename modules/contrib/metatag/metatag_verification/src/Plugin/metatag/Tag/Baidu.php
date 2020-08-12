@@ -10,7 +10,7 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
  * @MetatagTag(
  *   id = "baidu",
  *   label = @Translation("Baidu"),
- *   description = @Translation("A string provided by <a href=':baidu'>Baidu</a>.", arguments = { ":baidu"  = "http://www.baidu.com/" }),
+ *   description = @Translation("A string provided by <a href=':baidu'>Baidu</a>.", arguments = { ":baidu"  = "https://www.baidu.com/" }),
  *   name = "baidu-site-verification",
  *   group = "site_verification",
  *   weight = 2,

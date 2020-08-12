@@ -1,12 +1,12 @@
 services:
   paramconverter.latest_revision:
     class: Drupal\workbench_moderation\ParamConverter\EntityRevisionConverter
-    arguments: ['@entity.manager', '@workbench_moderation.moderation_information']
+    arguments: ['@entity_type.manager', '@workbench_moderation.moderation_information', '@entity.repository']
     tags:
       - { name: paramconverter, priority: 5 }
   workbench_moderation.state_transition_validation:
-    class: \Drupal\workbench_moderation\StateTransitionValidation
-    arguments: ['@entity_type.manager', '@entity.query']
+    class: Drupal\workbench_moderation\StateTransitionValidation
+    arguments: ['@entity_type.manager']
   workbench_moderation.moderation_information:
     class: Drupal\workbench_moderation\ModerationInformation
     arguments: ['@entity_type.manager', '@current_user']
@@ -17,7 +17,7 @@ services:
     class: Drupal\workbench_moderation\EntityOperations
     arguments: ['@workbench_moderation.moderation_information', '@entity_type.manager', '@form_builder', '@event_dispatcher', '@workbench_moderation.revision_tracker', '@current_user']
   workbench_moderation.inline_editing_disabler:
-    class: \Drupal\workbench_moderation\InlineEditingDisabler
+    class: Drupal\workbench_moderation\InlineEditingDisabler
     arguments: ['@workbench_moderation.moderation_information']
   workbench_moderation.workbench_preprocess:
     class: Drupal\workbench_moderation\WorkbenchPreprocess
@@ -33,5 +33,5 @@ services:
     tags:
      - { name: backend_overridable }
   workbench_moderation.views_data:
-    class: \Drupal\workbench_moderation\ViewsData
+    class: Drupal\workbench_moderation\ViewsData
     arguments: ['@entity_type.manager', '@workbench_moderation.moderation_information']

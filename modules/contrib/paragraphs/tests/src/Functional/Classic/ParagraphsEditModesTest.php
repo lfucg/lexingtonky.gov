@@ -60,8 +60,8 @@ class ParagraphsEditModesTest extends ParagraphsTestBase {
 
     // Assert the summary is correctly generated.
     $this->clickLink(t('Edit'));
-    $this->assertRaw('<span class="summary-content">' . $files[0]->filename . '</span>, <span class="summary-content">text_summary</span>');
-    $this->assertRaw('<span class="summary-content">Title example');
+    $this->assertSession()->responseContains('<span class="summary-content">' . $files[0]->filename . '</span>, <span class="summary-content">text_summary</span>');
+    $this->assertSession()->responseContains('<span class="summary-content">Title example');
 
     // Edit and remove alternative text.
     $this->drupalPostForm(NULL, [], 'field_paragraphs_0_edit');
@@ -70,7 +70,7 @@ class ParagraphsEditModesTest extends ParagraphsTestBase {
     ];
     $this->drupalPostForm(NULL, $edit, 'field_paragraphs_0_collapse');
     // Assert the summary is correctly generated.
-    $this->assertRaw('<span class="summary-content">alternative_text_summary</span>, <span class="summary-content">text_summary</span>');
+    $this->assertSession()->responseContains('<span class="summary-content">alternative_text_summary</span>, <span class="summary-content">text_summary</span>');
 
     // Remove image.
     $this->drupalPostForm(NULL, [], 'field_paragraphs_0_edit');
@@ -79,7 +79,7 @@ class ParagraphsEditModesTest extends ParagraphsTestBase {
 
     // Assert the summary is correctly generated.
     $this->clickLink(t('Edit'));
-    $this->assertRaw('<span class="summary-content">text_summary');
+    $this->assertSession()->responseContains('<span class="summary-content">text_summary');
 
     // Add a Block Paragraphs type.
     $this->addParagraphsType('block_paragraph');
@@ -94,7 +94,7 @@ class ParagraphsEditModesTest extends ParagraphsTestBase {
     ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
     $this->clickLink(t('Edit'));
-    $this->assertRaw('<span class="summary-content">Breadcrumbs');
+    $this->assertSession()->responseContains('<span class="summary-content">Breadcrumbs');
   }
 
 }

@@ -264,7 +264,7 @@ class CommandHelper implements LoggerAwareInterface {
    *   index all items at once.
    *
    * @return bool
-   *   TRUE if any indexes could be loaded, FALSE otherwise.
+   *   TRUE if indexing for any index was queued, FALSE otherwise.
    *
    * @throws \Drupal\search_api\ConsoleException
    *   Thrown if an indexing batch process could not be created.
@@ -277,7 +277,7 @@ class CommandHelper implements LoggerAwareInterface {
       return FALSE;
     }
 
-    $batch_set = FALSE;
+    $batchSet = FALSE;
     foreach ($indexes as $index) {
       if (!$index->status() || $index->isReadOnly()) {
         continue;
@@ -302,37 +302,40 @@ class CommandHelper implements LoggerAwareInterface {
       // to index all items.
       $current_limit = $limit ?: -1;
 
-      // Get the default batch size.
-      if (!$batchSize) {
+      // Get the batch size to use for this index (in case none was specified in
+      // the command).
+      $currentBatchSize = $batchSize;
+      if (!$currentBatchSize) {
         $cron_limit = $index->getOption('cron_limit');
-        $batchSize = $cron_limit ?: \Drupal::configFactory()
+        $currentBatchSize = $cron_limit ?: \Drupal::configFactory()
           ->get('search_api.settings')
           ->get('default_cron_limit');
       }
 
-      // Get the number items to index.
-      if (!is_int($current_limit += 0) || $current_limit <= 0) {
+      // Get the number of items to index.
+      $current_limit += 0;
+      if (!is_int($current_limit) || $current_limit <= 0) {
         $current_limit = $remaining;
       }
 
       $arguments = [
         '@index' => $index->label(),
         '@limit' => $current_limit,
-        '@batch_size' => $batchSize,
+        '@batch_size' => $currentBatchSize,
       ];
       $this->logger->info($this->t("Indexing a maximum number of @limit items (@batch_size items per batch run) for the index '@index'.", $arguments));
 
       // Create the batch.
       try {
-        IndexBatchHelper::create($index, $batchSize, $current_limit);
-        $batch_set = TRUE;
+        IndexBatchHelper::create($index, $currentBatchSize, $current_limit);
+        $batchSet = TRUE;
       }
       catch (SearchApiException $e) {
         throw new ConsoleException($this->t("Couldn't create a batch, please check the batch size and limit parameters."));
       }
     }
 
-    return $batch_set;
+    return $batchSet;
   }
 
   /**
@@ -387,6 +390,31 @@ class CommandHelper implements LoggerAwareInterface {
       }
     }
 
+    return TRUE;
+  }
+
+  /**
+   * Rebuilds the tracker for an index.
+   *
+   * @param string[]|null $indexIds
+   *   (optional) An array of index IDs, or NULL if we should reset the trackers
+   *   of all indexes.
+   *
+   * @return bool
+   *   TRUE if any index was affected, FALSE otherwise.
+   */
+  public function rebuildTrackerCommand(array $indexIds = NULL) {
+    $indexes = $this->loadIndexes($indexIds);
+    if (!$indexes) {
+      return FALSE;
+    }
+
+    foreach ($indexes as $index) {
+      if ($index->status()) {
+        $index->rebuildTracker();
+        $this->logger->info($this->t('The tracking information for search index %name will be rebuilt.', ['%name' => $index->label()]));
+      }
+    }
     return TRUE;
   }
 

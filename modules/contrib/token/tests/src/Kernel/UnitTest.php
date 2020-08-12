@@ -103,7 +103,7 @@ class UnitTest extends KernelTestBase {
 
       sort($invalid_tokens);
       sort($test['invalid tokens']);
-      $this->assertEqual($invalid_tokens, $test['invalid tokens'], 'Invalid tokens detected properly: ' . implode(', ', $invalid_tokens));
+      $this->assertEquals($test['invalid tokens'], $invalid_tokens, 'Invalid tokens detected properly: ' . implode(', ', $invalid_tokens));
     }
   }
 

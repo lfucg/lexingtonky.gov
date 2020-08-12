@@ -44,24 +44,24 @@ class EntityTest extends KernelTestBase {
   function testEntityMapping() {
     /** @var \Drupal\token\TokenEntityMapperInterface $mapper */
     $mapper = \Drupal::service('token.entity_mapper');
-    $this->assertIdentical($mapper->getEntityTypeForTokenType('node'), 'node');
-    $this->assertIdentical($mapper->getEntityTypeForTokenType('term'), 'taxonomy_term');
-    $this->assertIdentical($mapper->getEntityTypeForTokenType('vocabulary'), 'taxonomy_vocabulary');
-    $this->assertIdentical($mapper->getEntityTypeForTokenType('invalid'), FALSE);
-    $this->assertIdentical($mapper->getEntityTypeForTokenType('invalid', TRUE), 'invalid');
-    $this->assertIdentical($mapper->getTokenTypeForEntityType('node'), 'node');
-    $this->assertIdentical($mapper->getTokenTypeForEntityType('taxonomy_term'), 'term');
-    $this->assertIdentical($mapper->getTokenTypeForEntityType('taxonomy_vocabulary'), 'vocabulary');
-    $this->assertIdentical($mapper->getTokenTypeForEntityType('invalid'), FALSE);
-    $this->assertIdentical($mapper->getTokenTypeForEntityType('invalid', TRUE), 'invalid');
+    $this->assertSame('node', $mapper->getEntityTypeForTokenType('node'));
+    $this->assertSame('taxonomy_term', $mapper->getEntityTypeForTokenType('term'));
+    $this->assertSame('taxonomy_vocabulary', $mapper->getEntityTypeForTokenType('vocabulary'));
+    $this->assertSame(FALSE, $mapper->getEntityTypeForTokenType('invalid'));
+    $this->assertSame('invalid', $mapper->getEntityTypeForTokenType('invalid', TRUE));
+    $this->assertSame('node', $mapper->getTokenTypeForEntityType('node'));
+    $this->assertSame('term', $mapper->getTokenTypeForEntityType('taxonomy_term'));
+    $this->assertSame('vocabulary', $mapper->getTokenTypeForEntityType('taxonomy_vocabulary'));
+    $this->assertSame(FALSE, $mapper->getTokenTypeForEntityType('invalid'));
+    $this->assertSame('invalid', $mapper->getTokenTypeForEntityType('invalid', TRUE));
 
     // Test that when we send the mis-matched entity type into
     // Drupal\Core\Utility\Token::replace() that we still get the tokens
     // replaced.
     $vocabulary = Vocabulary::load('tags');
     $term = $this->addTerm($vocabulary);
-    $this->assertIdentical(\Drupal::token()->replace('[vocabulary:name]', ['taxonomy_vocabulary' => $vocabulary]), $vocabulary->label());
-    $this->assertIdentical(\Drupal::token()->replace('[term:name][term:vocabulary:name]', ['taxonomy_term' => $term]), $term->label() . $vocabulary->label());
+    $this->assertSame($vocabulary->label(), \Drupal::token()->replace('[vocabulary:name]', ['taxonomy_vocabulary' => $vocabulary]));
+    $this->assertSame($term->label() . $vocabulary->label(), \Drupal::token()->replace('[term:name][term:vocabulary:name]', ['taxonomy_term' => $term]));
   }
 
   function addTerm(VocabularyInterface $vocabulary, array $term = []) {

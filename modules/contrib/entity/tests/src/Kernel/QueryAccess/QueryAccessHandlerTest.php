@@ -110,14 +110,6 @@ class QueryAccessHandlerTest extends EntityKernelTestBase {
    */
   public function testUpdateDuplicateDelete() {
     foreach (['update', 'duplicate', 'delete'] as $operation) {
-      // Entity type permission.
-      $user = $this->createUser([], ["$operation entity_test_enhanced"]);
-      $conditions = $this->handler->getConditions($operation, $user);
-      $this->assertEquals(0, $conditions->count());
-      $this->assertEquals(['user.permissions'], $conditions->getCacheContexts());
-      $this->assertFalse($conditions->isAlwaysFalse());
-
-      // Bundle permission.
       $user = $this->createUser([], [
         "$operation first entity_test_enhanced",
         "$operation second entity_test_enhanced",

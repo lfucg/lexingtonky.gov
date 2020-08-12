@@ -76,7 +76,7 @@ class MultipleDistributionsProfileTest extends InstallerTestBase {
    */
   public function testInstalled() {
     $this->assertUrl('user/1');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     // Confirm that we are logged-in after installation.
     $this->assertText($this->rootUser->getAccountName());
 
@@ -85,7 +85,6 @@ class MultipleDistributionsProfileTest extends InstallerTestBase {
     $this->assertEqual($this->config('core.extension')->get('profile'), 'distribution_one', 'The install profile has been written to core.extension configuration.');
 
     $this->rebuildContainer();
-    $this->pass('Container can be rebuilt as distribution is written to configuration.');
     $this->assertEqual(\Drupal::installProfile(), 'distribution_one');
   }
 

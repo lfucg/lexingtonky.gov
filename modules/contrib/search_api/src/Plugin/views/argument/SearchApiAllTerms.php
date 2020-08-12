@@ -62,10 +62,8 @@ class SearchApiAllTerms extends SearchApiTerm {
       $vocabulary_id = $term->bundle();
       $term_id = $term->id();
       $term_conditions = $this->query->createConditionGroup($conjunction);
-      if (!empty($vocabulary_fields[$vocabulary_id])) {
-        foreach ($vocabulary_fields[$vocabulary_id] as $field) {
-          $term_conditions->addCondition($field, $term_id, $operator);
-        }
+      foreach ($vocabulary_fields[$vocabulary_id] ?? [] as $field) {
+        $term_conditions->addCondition($field, $term_id, $operator);
       }
       foreach ($vocabulary_fields[''] as $field) {
         $term_conditions->addCondition($field, $term_id, $operator);

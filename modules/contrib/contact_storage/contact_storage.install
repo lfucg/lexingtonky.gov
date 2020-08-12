@@ -125,3 +125,16 @@ function contact_storage_update_8200() {
 function contact_storage_update_8201() {
   \Drupal::service('module_installer')->install(['options']);
 }
+
+/**
+ * Fix the last installed definition for the 'contact_message' entity type.
+ */
+function contact_storage_update_8202() {
+  $entity_type = \Drupal::entityDefinitionUpdateManager()->getEntityType('contact_message');
+  $keys = $entity_type->getKeys();
+  if (empty($keys['langcode'])) {
+    $keys['langcode'] = 'langcode';
+    $entity_type->set('entity_keys', $keys);
+    \Drupal::entityDefinitionUpdateManager()->updateEntityType($entity_type);
+  }
+}

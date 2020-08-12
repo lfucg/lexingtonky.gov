@@ -60,7 +60,8 @@ interface InlineFormInterface extends EntityHandlerInterface {
    *      - 'field': A field value from the entity. The name of the field is
    *        given by the key in this array.
    *      - 'callback': A callback, given by the 'callback' property.
-   *     See theme_inline_entity_form_entity_table() for the handling of these.
+   *     @see template_preprocess_inline_entity_form_entity_table() for the
+   *     handling of these.
    *   - label: the title of the table field's column in the IEF table.
    *   - weight: the sort order of the column in the IEF table.
    *   - display_options: (optional) used for 'field' type table columns, an

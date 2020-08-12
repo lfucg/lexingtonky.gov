@@ -87,7 +87,8 @@ abstract class QueryAccessHandlerBase implements EntityHandlerInterface, QueryAc
     $conditions = $this->buildConditions($operation, $account);
 
     // Allow other modules to modify the conditions before they are used.
-    $event = new QueryAccessEvent($conditions, $operation, $account);
+    $event = new QueryAccessEvent($conditions, $operation, $account, $entity_type_id);
+    $this->eventDispatcher->dispatch("entity.query_access", $event);
     $this->eventDispatcher->dispatch("entity.query_access.{$entity_type_id}", $event);
 
     return $conditions;
@@ -110,14 +111,15 @@ abstract class QueryAccessHandlerBase implements EntityHandlerInterface, QueryAc
     $has_owner = $this->entityType->entityClassImplements(EntityOwnerInterface::class);
     $has_published = $this->entityType->entityClassImplements(EntityPublishedInterface::class);
     // Guard against broken/incomplete entity type definitions.
-    if ($has_owner && !$this->entityType->hasKey('uid')) {
-      throw new \RuntimeException(sprintf('The "%s" entity type did not define a "uid" key.', $entity_type_id));
+    if ($has_owner && !$this->entityType->hasKey('owner') && !$this->entityType->hasKey('uid')) {
+      throw new \RuntimeException(sprintf('The "%s" entity type did not define an "owner" or "uid" key.', $entity_type_id));
     }
     if ($has_published && !$this->entityType->hasKey('published')) {
       throw new \RuntimeException(sprintf('The "%s" entity type did not define a "published" key', $entity_type_id));
     }
 
-    if ($account->hasPermission("administer {$entity_type_id}")) {
+    $admin_permission = $this->entityType->getAdminPermission() ?: "administer {$entity_type_id}";
+    if ($account->hasPermission($admin_permission)) {
       // The user has full access to all operations, no conditions needed.
       $conditions = new ConditionGroup('OR');
       $conditions->addCacheContexts(['user.permissions']);
@@ -133,7 +135,7 @@ abstract class QueryAccessHandlerBase implements EntityHandlerInterface, QueryAc
 
     $conditions = NULL;
     if ($operation == 'view' && $has_published) {
-      $uid_key = $this->entityType->getKey('uid');
+      $owner_key = $this->entityType->hasKey('owner') ? $this->entityType->getKey('owner') : $this->entityType->getKey('uid');
       $published_key = $this->entityType->getKey('published');
       $published_conditions = NULL;
       $unpublished_conditions = NULL;
@@ -148,7 +150,7 @@ abstract class QueryAccessHandlerBase implements EntityHandlerInterface, QueryAc
       if ($has_owner && $account->hasPermission("view own unpublished $entity_type_id")) {
         $unpublished_conditions = new ConditionGroup('AND');
         $unpublished_conditions->addCacheContexts(['user']);
-        $unpublished_conditions->addCondition($uid_key, $account->id());
+        $unpublished_conditions->addCondition($owner_key, $account->id());
         $unpublished_conditions->addCondition($published_key, '0');
       }
 
@@ -193,7 +195,7 @@ abstract class QueryAccessHandlerBase implements EntityHandlerInterface, QueryAc
    */
   protected function buildEntityOwnerConditions($operation, AccountInterface $account) {
     $entity_type_id = $this->entityType->id();
-    $uid_key = $this->entityType->getKey('uid');
+    $owner_key = $this->entityType->hasKey('owner') ? $this->entityType->getKey('owner') : $this->entityType->getKey('uid');
     $bundle_key = $this->entityType->getKey('bundle');
 
     $conditions = new ConditionGroup('OR');
@@ -207,7 +209,7 @@ abstract class QueryAccessHandlerBase implements EntityHandlerInterface, QueryAc
     // Own $entity_type permission.
     if ($account->hasPermission("$operation own $entity_type_id")) {
       $conditions->addCacheContexts(['user']);
-      $conditions->addCondition($uid_key, $account->id());
+      $conditions->addCondition($owner_key, $account->id());
     }
 
     $bundles = array_keys($this->bundleInfo->getBundleInfo($entity_type_id));
@@ -229,7 +231,7 @@ abstract class QueryAccessHandlerBase implements EntityHandlerInterface, QueryAc
     if ($bundles_with_own_permission) {
       $conditions->addCacheContexts(['user']);
       $conditions->addCondition((new ConditionGroup('AND'))
-        ->addCondition($uid_key, $account->id())
+        ->addCondition($owner_key, $account->id())
         ->addCondition($bundle_key, $bundles_with_own_permission)
       );
     }

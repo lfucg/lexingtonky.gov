@@ -121,7 +121,7 @@ final class ConfigEvents {
    * fire the event again to continue processing missing content dependencies.
    *
    * @see \Drupal\Core\Config\ConfigImporter::processMissingContent()
-   * @see \Drupal\Core\Config\MissingContentEvent
+   * @see \Drupal\Core\Config\Importer\MissingContentEvent
    */
   const IMPORT_MISSING_CONTENT = 'config.importer.missing_content';
 
@@ -154,7 +154,7 @@ final class ConfigEvents {
    * Together with \Drupal\Core\Config\ConfigEvents::STORAGE_TRANSFORM_EXPORT
    * subscribers can alter the active configuration in a config sync workflow
    * instead of just overriding at runtime via the config-override system.
-   * This allows a complete customisation of the workflow including additional
+   * This allows a complete customization of the workflow including additional
    * modules and editable configuration in different environments.
    *
    * @code

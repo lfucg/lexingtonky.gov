@@ -51,12 +51,12 @@ class AutologoutBlockForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['reset'] = [
       '#type' => 'button',
-      '#value' => t('Reset Timeout'),
+      '#value' => $this->t('Reset Timeout'),
       '#weight' => 1,
       '#limit_validation_errors' => FALSE,
       '#executes_submit_callback' => FALSE,
       '#ajax' => [
-        'callback' => 'autologout_ahah_set_last',
+        'callback' => 'autologout_ajax_set_last',
       ],
     ];
 

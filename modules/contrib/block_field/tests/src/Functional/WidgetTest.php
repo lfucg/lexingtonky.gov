@@ -14,6 +14,11 @@ class WidgetTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = [
     'node',
     'user',
@@ -70,7 +75,7 @@ class WidgetTest extends BrowserTestBase {
     $items_per_page_element = $page->findField('Items per block');
     $this->assertNotNull($items_per_page_element);
     $this->assertEquals('none', $items_per_page_element->getValue());
-    $this->assertContains('1 (default setting)', $items_per_page_element->getText());
+    $assert_session->elementContains('named', ['field', 'Items per block'], '1 (default setting)');
     $page->selectFieldOption('Items per block', 10);
     // This view has a contextual filter to exclude the node from the URL from
     // showing up if the context is present. Initially we do not choose that
@@ -82,12 +87,13 @@ class WidgetTest extends BrowserTestBase {
     $page->pressButton('Save');
     $assert_session->pageTextContains("Block node {$this->blockNode->getTitle()} has been updated");
 
+    $css_selector = '.views-element-container';
     foreach ($items as $item) {
-      $this->assertSession()->pageTextContains($item->getTitle());
+      $this->assertSession()->elementContains('css', $css_selector, $item->getTitle());
     }
+
     // The node we are visiting shows up in the views results.
-    $first_result = $this->assertSession()->elementExists('css', '.view-items .view-content > .views-row:nth-child(1)');
-    $this->assertEquals('Block field test', $first_result->getText());
+    $this->assertSession()->elementContains('css', $css_selector, 'Block field test');
 
     // Select the context to exclude the node from the URL and try again.
     $this->drupalGet($this->blockNode->toUrl('edit-form'));
@@ -96,12 +102,10 @@ class WidgetTest extends BrowserTestBase {
     $assert_session->pageTextContains("Block node {$this->blockNode->getTitle()} has been updated");
 
     foreach ($items as $item) {
-      $this->assertSession()->pageTextContains($item->getTitle());
+      $this->assertSession()->elementContains('css', $css_selector, $item->getTitle());
     }
     // The node we are visiting does not show up anymore.
-    $first_result = $this->assertSession()->elementExists('css', '.view-items .view-content > .views-row:nth-child(1)');
-    $this->assertNotEquals('Block field test', $first_result->getText());
-    $this->assertEquals($items[0]->getTitle(), $first_result->getText());
+    $this->assertSession()->elementNotContains('css', $css_selector, 'Block field test');
   }
 
   /**

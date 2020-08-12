@@ -73,6 +73,9 @@ function paragraphs_library_paragraphs_widget_actions_alter(&$widget_actions, &$
         'wrapper' => $widget_state['ajax_wrapper_id'],
         'effect' => 'fade',
       ],
+      '#attributes' => [
+        'class' => ['button--small'],
+      ],
     ];
   }
   elseif ($allow_library_conversion) {
@@ -89,6 +92,9 @@ function paragraphs_library_paragraphs_widget_actions_alter(&$widget_actions, &$
         'wrapper' => $widget_state['ajax_wrapper_id'],
       ],
       '#access' => \Drupal::entityTypeManager()->getAccessControlHandler('paragraphs_library_item')->createAccess(),
+      '#attributes' => [
+        'class' => ['button--small'],
+      ],
     ];
   }
 }
@@ -136,10 +142,13 @@ function paragraphs_library_preprocess_paragraph(&$variables) {
     if ($library_item->access('view')) {
       $view_builder = \Drupal::entityTypeManager()
         ->getViewBuilder('paragraphs_library_item');
-      $library_item_render_array = $view_builder->view($library_item);
+      $library_item_render_array = $view_builder->view($library_item, $variables['elements']['field_reusable_paragraph'][0]['#view_mode']);
 
       // This will remove all fields other then field_reusable_paragraph.
-      $variables['content'] = $view_builder->build($library_item_render_array)['paragraphs'];
+      $build = $view_builder->build($library_item_render_array);
+      if (!empty($build['paragraphs'])) {
+        $variables['content'] = $build['paragraphs'];
+      }
     }
   }
 }
@@ -168,7 +177,7 @@ function paragraphs_library_views_pre_render(ViewExecutable $view) {
  */
 function _paragraphs_library_count_usage(array $usage_data) {
   $count = 0;
-  foreach ($usage_data as $entity_type => $entities) {
+  foreach ($usage_data as $entities) {
     // We only want to register usages by different entities, ignoring usages
     // accross revisions / translations / fields of the same entity.
     $count += count($entities);

@@ -21,6 +21,11 @@ class ParagraphsUninstallTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
@@ -55,10 +60,10 @@ class ParagraphsUninstallTest extends BrowserTestBase {
     // Uninstall the module paragraphs.
     $this->drupalPostForm('admin/modules/uninstall', ['uninstall[paragraphs]' => TRUE], t('Uninstall'));
     $this->drupalPostForm(NULL, [], t('Uninstall'));
-    $this->assertText(t('The selected modules have been uninstalled.'));
-    $this->assertNoText(t('Paragraphs demo'));
-    $this->assertNoText(t('Paragraphs library'));
-    $this->assertNoText(t('Paragraphs'));
+    $this->assertSession()->pageTextContains(t('The selected modules have been uninstalled.'));
+    $this->assertSession()->pageTextNotContains(t('Paragraphs demo'));
+    $this->assertSession()->pageTextNotContains(t('Paragraphs library'));
+    $this->assertSession()->pageTextNotContains(t('Paragraphs'));
   }
 
 }

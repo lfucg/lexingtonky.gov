@@ -24,18 +24,7 @@
   overflow: hidden;
   word-break: break-all;
   line-height: 1.538em;
-}
-
-.js .paragraphs-description .paragraphs-content-wrapper::after,
-.js .paragraphs-description .paragraphs-plugin-wrapper::after {
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 3em;
-  background: -webkit-gradient(linear, left top, right top, from(rgba(255, 255, 255, 0)), to(#fff));
-  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #fff 100%);
-  content: "\00a0";
+  text-overflow: ellipsis;
 }
 
 .js .paragraphs-description .summary-plugin-label::after {
@@ -47,6 +36,7 @@
 }
 
 .js .paragraphs-description .summary-plugin {
+  display: inline-block;
   padding-right: 5px;
   font-size: 0.7rem;
   color: #888888;
@@ -60,8 +50,13 @@
   padding: 0 5px;
 }
 
-.js .behavior-active .paragraphs-expanded-description .paragraphs-plugin-wrapper {
+.js .behavior-active .paragraphs-expanded-description .paragraphs-plugin-wrapper,
+.js .behavior-active .paragraphs-content {
   display: none;
+}
+
+.js .behavior-active .paragraphs-behavior {
+  display: block;
 }
 
 .js .content-active .paragraphs-expanded-description .paragraphs-content-wrapper {
@@ -164,9 +159,28 @@
   }
 }
 
+.js .field--widget-paragraphs .paragraphs-nested .tabledrag-toggle-weight-wrapper {
+  display: none;
+}
+
 .js .field--widget-paragraphs th .paragraphs-actions {
   float: right;
   margin-right: -11px;
+}
+
+.js .field--widget-paragraphs .form-actions {
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.js .field--widget-paragraphs .form-actions .dropbutton-multiple {
+  margin-right: .5rem;
+}
+
+.js .field--widget-paragraphs .form-actions .placeholder {
+  margin-left: .25em;
 }
 
 .js .field--widget-paragraphs .paragraphs-dropbutton-wrapper {
@@ -174,16 +188,18 @@
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
   display: inline-flex;
+  margin: 0;
+  padding: 0;
+}
+
+.js .field--widget-paragraphs .paragraphs-dropbutton-wrapper .dropbutton-multiple {
+  margin: 0;
 }
 
 .js .field--widget-paragraphs .dropbutton-wrapper {
   width: auto;
   margin-right: 0;
   padding-right: 0;
-}
-
-.js .field--widget-paragraphs .dropbutton-widget {
-  position: static;
 }
 
 .js .field--widget-paragraphs .field-multiple-table {
@@ -199,7 +215,13 @@
 }
 
 .js .field--widget-paragraphs .draggable .tabledrag-handle {
+  min-width: 50px;
   margin-left: 0;
+}
+
+.js .field--widget-paragraphs .draggable .tabledrag-handle:focus::before {
+  margin-left: .1em;
+  margin-right: .1em;
 }
 
 .js .field--widget-paragraphs .tabledrag-handle .handle {
@@ -255,6 +277,8 @@
   -ms-grid-row: 2;
   -ms-grid-row-span: 1;
   grid-row: 2 / span 1;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 @media (min-width: 600px) {
@@ -338,18 +362,12 @@ tr:hover .paragraphs-description::after {
 
 @media (min-width: 600px) {
   .js .paragraph-type-add-modal {
-    width: 100%;
-    padding: 10px 0;
-    height: 30px;
-    margin-top: -1.8em;
-    margin-bottom: -0.2em;
-    display: inline;
+    display: inline-block;
   }
 }
 
 .js .paragraph-type-add-modal-button {
   display: inline-block;
-  margin: 0 auto;
 }
 
 .js .paragraph-type-add-modal-button:hover {

@@ -115,7 +115,7 @@ class SearchApiDate extends Date {
    */
   protected function opSimple($field) {
     $value = intval(strtotime($this->value['value'], 0));
-    if (!empty($this->value['type']) && $this->value['type'] == 'offset') {
+    if (($this->value['type'] ?? '') == 'offset') {
       $time = $this->getTimeService()->getRequestTime();
       $value = strtotime($this->value['value'], $time);
     }

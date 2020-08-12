@@ -30,18 +30,19 @@
   {% import _self as menus %}
   {% if items %}
     {% if menu_level == 0 %}
-      <ul{{ attributes.addClass('nav') }}>
+      <div{{ attributes.addClass('nav') }}>
       {% for item in items %}
         {%
           set classes = [
            'nav-link',
             item.in_active_trail ? 'active',
             item.url.getOption('attributes').class ? item.url.getOption('attributes').class | join(' '),
+            'nav-link-' ~ item.url.toString() | clean_class,
           ]
         %}
         {{ link(item.title, item.url, {'class': classes}) }}
       {% endfor %}
-      </ul>
+      </div>
     {% endif %}
   {% endif %}
 {% endmacro %}

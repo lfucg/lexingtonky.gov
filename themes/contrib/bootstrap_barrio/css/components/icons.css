@@ -21,5 +21,6 @@
   text-indent: -9999px;
   display: block;
   width: 16px;
+  direction: ltr;
   height: 16px;
 }

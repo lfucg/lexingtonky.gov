@@ -28,6 +28,11 @@ class RemoveCoreMetaTags extends BrowserTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Tests core tags are removed on taxonomy term pages.
    */
   public function testTaxonomyPage() {

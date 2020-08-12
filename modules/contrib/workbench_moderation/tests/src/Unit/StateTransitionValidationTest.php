@@ -4,8 +4,8 @@ namespace Drupal\Tests\workbench_moderation\Unit;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Tests\UnitTestCase;
 use Drupal\workbench_moderation\ModerationStateInterface;
 use Drupal\workbench_moderation\ModerationStateTransitionInterface;
 use Drupal\workbench_moderation\StateTransitionValidation;
@@ -15,7 +15,7 @@ use Prophecy\Argument;
  * @coversDefaultClass \Drupal\workbench_moderation\StateTransitionValidation
  * @group workbench_moderation
  */
-class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
+class StateTransitionValidationTest extends UnitTestCase {
 
   /**
    * Builds a mock storage object for Transitions.
@@ -141,22 +141,11 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Builds a mocked query factory that does nothing.
-   *
-   * @return QueryFactory
-   */
-  protected function setupQueryFactory() {
-    $factory = $this->prophesize(QueryFactory::class);
-
-    return $factory->reveal();
-  }
-
-  /**
    * @covers ::isTransitionAllowed
    * @covers ::calculatePossibleTransitions
    */
   public function testIsTransitionAllowedWithValidTransition() {
-    $state_transition_validation = new StateTransitionValidation($this->setupEntityTypeManager(), $this->setupQueryFactory());
+    $state_transition_validation = new StateTransitionValidation($this->setupEntityTypeManager());
 
     $this->assertTrue($state_transition_validation->isTransitionAllowed('draft', 'draft'));
     $this->assertTrue($state_transition_validation->isTransitionAllowed('draft', 'needs_review'));
@@ -171,7 +160,7 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
    * @covers ::calculatePossibleTransitions
    */
   public function testIsTransitionAllowedWithInValidTransition() {
-    $state_transition_validation = new StateTransitionValidation($this->setupEntityTypeManager(), $this->setupQueryFactory());
+    $state_transition_validation = new StateTransitionValidation($this->setupEntityTypeManager());
 
     $this->assertFalse($state_transition_validation->isTransitionAllowed('published', 'needs_review'));
     $this->assertFalse($state_transition_validation->isTransitionAllowed('published', 'staging'));
@@ -205,7 +194,7 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
     $user->hasPermission($permission)->willReturn($allowed);
     $user->hasPermission(Argument::type('string'))->willReturn(FALSE);
 
-    $validator = new Validator($this->setupEntityTypeManager(), $this->setupQueryFactory());
+    $validator = new Validator($this->setupEntityTypeManager());
 
     $this->assertEquals($result, $validator->userMayTransition($from, $to, $user->reveal()));
   }

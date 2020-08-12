@@ -48,7 +48,7 @@ class ContentEntityDatasourceTest extends KernelTestBase {
   /**
    * The datasource used for testing.
    *
-   * @var \Drupal\search_api\Plugin\search_api\datasource\EntityDatasourceInterface
+   * @var \Drupal\search_api\Plugin\search_api\datasource\ContentEntity
    */
   protected $datasource;
 
@@ -294,7 +294,7 @@ class ContentEntityDatasourceTest extends KernelTestBase {
    * @return string[]
    *   All discovered item IDs.
    *
-   * @see \Drupal\search_api\Plugin\search_api\datasource\EntityDatasourceInterface::getPartialItemIds()
+   * @see \Drupal\search_api\Plugin\search_api\datasource\ContentEntity::getPartialItemIds()
    */
   protected function getItemIds(array $bundles = NULL, array $languages = NULL) {
     $discovered_ids = [];

@@ -2,7 +2,6 @@
 
 namespace Drupal\views\Plugin\views\exposed_form;
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Form\FormState;
@@ -208,7 +207,7 @@ abstract class ExposedFormPluginBase extends PluginBase implements CacheableDepe
     $exposed_sorts = [];
     foreach ($this->view->sort as $id => $handler) {
       if ($handler->canExpose() && $handler->isExposed()) {
-        $exposed_sorts[$id] = Html::escape($handler->options['expose']['label']);
+        $exposed_sorts[$id] = $handler->options['expose']['label'];
       }
     }
 
@@ -245,7 +244,6 @@ abstract class ExposedFormPluginBase extends PluginBase implements CacheableDepe
           '#default_value' => $default_sort_order,
         ];
       }
-      $form['submit']['#weight'] = 10;
     }
 
     if (!empty($this->options['reset_button'])) {
@@ -366,9 +364,9 @@ abstract class ExposedFormPluginBase extends PluginBase implements CacheableDepe
 
     // Merge in cache contexts for all exposed filters to prevent display of
     // cached forms.
-    foreach ($this->displayHandler->getHandlers('filter') as $filter_hander) {
-      if ($filter_hander->isExposed()) {
-        $contexts = Cache::mergeContexts($contexts, $filter_hander->getCacheContexts());
+    foreach ($this->displayHandler->getHandlers('filter') as $filter_handler) {
+      if ($filter_handler->isExposed()) {
+        $contexts = Cache::mergeContexts($contexts, $filter_handler->getCacheContexts());
       }
     }
 

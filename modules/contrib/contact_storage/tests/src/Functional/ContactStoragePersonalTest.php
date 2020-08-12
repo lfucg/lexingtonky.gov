@@ -46,6 +46,11 @@ class ContactStoragePersonalTest extends BrowserTestBase {
    */
   private $contactUser;
 
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
   protected function setUp() {
     parent::setUp();
 

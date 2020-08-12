@@ -40,7 +40,6 @@ class ParagraphsExperimentalDragAndDropModeTest extends ParagraphsExperimentalTe
       'region' => 'content',
       'settings' => [
         'edit_mode' => 'closed',
-        'add_mode' => 'modal',
         'form_display_mode' => 'default',
       ],
     ];
@@ -873,6 +872,25 @@ class ParagraphsExperimentalDragAndDropModeTest extends ParagraphsExperimentalTe
     $text_paragraph_2 = $container->get('paragraphs_container_paragraphs')->get(2)->entity;
     $this->assertEquals('paragraph', $text_paragraph_2->get('parent_type')->value);
     $this->assertEquals($container->id(), $text_paragraph_2->get('parent_id')->value);
+  }
+
+  /**
+   * Tests enabling and saving drag and drop with an empty node title.
+   */
+  public function testEmptyNodeTitle() {
+
+    // Create node.
+    $this->drupalGet('/node/add/paragraphed_test');
+    $this->getSession()->getPage()->pressButton('Add text');
+
+    // Enable drag and drop.
+    $this->drupalPostForm(NULL, [], 'Drag & drop');
+
+    // Complete drag and drop.
+    $this->drupalPostForm(NULL, [], 'Complete drag & drop');
+    $this->assertSession()->fieldExists('field_paragraphs[0][subform][field_text][0][value]');
+    $this->assertSession()->pageTextNotContains('Title field is required.');
+
   }
 
 }

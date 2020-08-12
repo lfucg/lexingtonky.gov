@@ -11,7 +11,6 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Form\FormBuilder;
 
 abstract class ManageConditions extends FormBase {
 
@@ -39,7 +38,7 @@ abstract class ManageConditions extends FormBase {
     );
   }
 
-  function __construct(PluginManagerInterface $manager, FormBuilder $form_builder) {
+  function __construct(PluginManagerInterface $manager, FormBuilderInterface $form_builder) {
     $this->manager = $manager;
     $this->formBuilder = $form_builder;
   }

@@ -60,7 +60,7 @@ class ContactFormDisableForm extends EntityConfirmFormBase {
     // Save the default disabled form message.
     $this->entity->setThirdPartySetting('contact_storage', 'disabled_form_message', $form_state->getValue('contact_storage_disabled_form_message'));
     $this->entity->disable()->save();
-    drupal_set_message($this->t('Disabled contact form %form.', ['%form' => $this->entity->label()]));
+    $this->messenger()->addStatus($this->t('Disabled contact form %form.', ['%form' => $this->entity->label()]));
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
 

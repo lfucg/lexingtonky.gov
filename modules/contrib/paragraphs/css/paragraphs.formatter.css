@@ -24,18 +24,7 @@
   overflow: hidden;
   word-break: break-all;
   line-height: 1.538em;
-}
-
-.js .paragraphs-description .paragraphs-content-wrapper::after,
-.js .paragraphs-description .paragraphs-plugin-wrapper::after {
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 3em;
-  background: -webkit-gradient(linear, left top, right top, from(rgba(255, 255, 255, 0)), to(#fff));
-  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #fff 100%);
-  content: "\00a0";
+  text-overflow: ellipsis;
 }
 
 .js .paragraphs-description .summary-plugin-label::after {
@@ -47,6 +36,7 @@
 }
 
 .js .paragraphs-description .summary-plugin {
+  display: inline-block;
   padding-right: 5px;
   font-size: 0.7rem;
   color: #888888;
@@ -60,8 +50,13 @@
   padding: 0 5px;
 }
 
-.js .behavior-active .paragraphs-expanded-description .paragraphs-plugin-wrapper {
+.js .behavior-active .paragraphs-expanded-description .paragraphs-plugin-wrapper,
+.js .behavior-active .paragraphs-content {
   display: none;
+}
+
+.js .behavior-active .paragraphs-behavior {
+  display: block;
 }
 
 .js .content-active .paragraphs-expanded-description .paragraphs-content-wrapper {

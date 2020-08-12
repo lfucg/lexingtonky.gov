@@ -3,7 +3,7 @@
 namespace Drupal\Tests\paragraphs_library\FunctionalJavascript;
 
 use Behat\Mink\Element\Element;
-use Drupal\field_ui\Tests\FieldUiTestTrait;
+use Drupal\Tests\field_ui\Traits\FieldUiTestTrait;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Drupal\Tests\paragraphs\FunctionalJavascript\ParagraphsTestBaseTrait;
 use Drupal\Tests\paragraphs\Traits\ParagraphsLastEntityQueryTrait;
@@ -49,6 +49,11 @@ class ParagraphsContentModerationTest extends WebDriverTestBase {
     'field_ui',
     'content_moderation',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'classy';
 
   /**
    * {@inheritdoc}
@@ -265,7 +270,7 @@ class ParagraphsContentModerationTest extends WebDriverTestBase {
     $page->fillField('revision_log[0][value]', 'Node revision #4');
     $page->pressButton('Save');
     // The admin is currently at /node/*/latest.
-    $this->assertTrue(strpos($session->getCurrentUrl(), "/node/{$host_node_id}/latest") !== FALSE);
+    $this->assertNotEmpty(strpos($session->getCurrentUrl(), "/node/{$host_node_id}/latest") !== FALSE);
     $assert_session->pageTextContains('paragraphed_moderated_test Host page 1 (rev 4) has been updated.');
     // The admin user should be seeing the latest, forward-revision.
     $assert_session->pageTextNotContains('Direct paragraph text 3');
@@ -429,8 +434,8 @@ class ParagraphsContentModerationTest extends WebDriverTestBase {
     $this->addParagraphsType('rich_paragraph');
     $this->addFieldtoParagraphType('rich_paragraph', 'field_intermediate_text', 'text');
     $this->addFieldtoParagraphType('rich_paragraph', 'field_nested_paragraphs', 'entity_reference', ['target_type' => 'paragraphs_library_item']);
-    entity_get_display('paragraph', 'rich_paragraph', 'default')
-      ->setComponent('field_nested_paragraphs', [
+    $display = \Drupal::service('entity_display.repository')->getViewDisplay('paragraph', 'rich_paragraph');
+    $display->setComponent('field_nested_paragraphs', [
         'type' => 'entity_reference_entity_view',
       ])->save();
 

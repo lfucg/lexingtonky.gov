@@ -25,6 +25,7 @@ entity.contact_form.enable:
 entity.contact.multiple_delete_confirm:
   path: '/admin/structure/contact/messages/delete'
   defaults:
-    _form: '\Drupal\contact_storage\Form\DeleteMultiple'
+    _form: 'Drupal\Core\Entity\Form\DeleteMultipleForm'
+    entity_type_id: 'contact_message'
   requirements:
     _permission: 'administer contact forms'

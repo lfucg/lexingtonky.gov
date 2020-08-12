@@ -55,7 +55,7 @@ class FieldConfigurationForm extends EntityForm {
    * Constructs a FieldConfigurationForm object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity manager.
+   *   The entity type manager.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer to use.
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter

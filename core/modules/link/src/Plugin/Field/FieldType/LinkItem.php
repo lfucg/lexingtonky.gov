@@ -127,9 +127,11 @@ class LinkItem extends FieldItemBase implements LinkItemInterface {
         case DRUPAL_DISABLED:
           $values['title'] = '';
           break;
+
         case DRUPAL_REQUIRED:
           $values['title'] = $random->sentences(4);
           break;
+
         case DRUPAL_OPTIONAL:
           // In case of optional title, randomize its generation.
           $values['title'] = mt_rand(0, 1) ? $random->sentences(4) : '';
@@ -185,12 +187,12 @@ class LinkItem extends FieldItemBase implements LinkItemInterface {
       $values += [
         'options' => [],
       ];
-    }
-    // Unserialize the values, this is deprecated as the storage takes care of
-    // this, options must not be passed as a string anymore.
-    if (is_string($values['options'])) {
-      @trigger_error('Support for passing options as a serialized string is deprecated in 8.7.0 and will be removed before Drupal 9.0.0. Pass them as an array instead. See https://www.drupal.org/node/2961643.', E_USER_DEPRECATED);
-      $values['options'] = unserialize($values['options'], ['allowed_classes' => FALSE]);
+      // Unserialize the values, this is deprecated as the storage takes care of
+      // this, options must not be passed as a string anymore.
+      if (is_string($values['options'])) {
+        @trigger_error('Support for passing options as a serialized string is deprecated in 8.7.0 and will be removed before Drupal 9.0.0. Pass them as an array instead. See https://www.drupal.org/node/2961643.', E_USER_DEPRECATED);
+        $values['options'] = unserialize($values['options'], ['allowed_classes' => FALSE]);
+      }
     }
     parent::setValue($values, $notify);
   }

@@ -33,6 +33,11 @@ class EntityReferenceRevisionsDiffTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() {
     parent::setUp();
     // Create article content type.
@@ -98,7 +103,7 @@ class EntityReferenceRevisionsDiffTest extends BrowserTestBase {
 
     // Check the plugin is set.
     $this->drupalGet('admin/config/content/diff/fields');
-    $this->drupalPostForm(NULL, ['fields[node.field_err_field][plugin][type]' => 'entity_reference_revisions_field_diff_builder'], t('Save'));
+    $this->drupalPostForm(NULL, ['fields[node__field_err_field][plugin][type]' => 'entity_reference_revisions_field_diff_builder'], t('Save'));
 
     // Update the referenced node of the err field and create a new revision.
     $node = $this->drupalGetNodeByTitle($title);

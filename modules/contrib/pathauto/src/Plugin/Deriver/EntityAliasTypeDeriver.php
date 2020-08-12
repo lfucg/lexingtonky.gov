@@ -6,7 +6,6 @@ use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
-use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\Core\Plugin\Context\EntityContextDefinition;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -86,8 +85,8 @@ class EntityAliasTypeDeriver extends DeriverBase implements ContainerDeriverInte
         $this->derivatives[$entity_type_id]['label'] = $entity_type->getLabel();
         $this->derivatives[$entity_type_id]['types'] = [$this->tokenEntityMapper->getTokenTypeForEntityType($entity_type_id)];
         $this->derivatives[$entity_type_id]['provider'] = $entity_type->getProvider();
-        $this->derivatives[$entity_type_id]['context'] = [
-          $entity_type_id => EntityContextDefinition::fromEntityType($entity_type)->setLabel($this->t('@label being aliased', ['@label' => $entity_type->getLabel()]))
+        $this->derivatives[$entity_type_id]['context_definitions'] = [
+          $entity_type_id => new EntityContextDefinition("entity:$entity_type_id", $this->t('@label being aliased', ['@label' => $entity_type->getLabel()]))
         ];
       }
     }

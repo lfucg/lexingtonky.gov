@@ -9,7 +9,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Form\FormBuilder;
+use Drupal\Core\Form\FormBuilderInterface;
 
 abstract class RequiredContext extends FormBase {
 
@@ -21,7 +21,7 @@ abstract class RequiredContext extends FormBase {
   /**
    * The builder of form.
    *
-   * @var \Drupal\Core\Form\FormBuilder
+   * @var \Drupal\Core\Form\FormBuilderInterface
    */
   protected $formBuilder;
 
@@ -40,7 +40,7 @@ abstract class RequiredContext extends FormBase {
     );
   }
 
-  public function __construct(PluginManagerInterface $typed_data_manager, FormBuilder $form_builder) {
+  public function __construct(PluginManagerInterface $typed_data_manager, FormBuilderInterface $form_builder) {
     $this->typedDataManager = $typed_data_manager;
     $this->formBuilder = $form_builder;
   }

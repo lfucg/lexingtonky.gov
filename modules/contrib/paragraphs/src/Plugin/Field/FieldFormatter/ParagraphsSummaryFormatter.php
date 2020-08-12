@@ -63,7 +63,7 @@ class ParagraphsSummaryFormatter extends EntityReferenceFormatterBase {
     $target_type = $field_definition->getSetting('target_type');
     $paragraph_type = \Drupal::entityTypeManager()->getDefinition($target_type);
     if ($paragraph_type) {
-      return $paragraph_type->isSubclassOf(ParagraphInterface::class);
+      return $paragraph_type->entityClassImplements(ParagraphInterface::class);
     }
 
     return FALSE;

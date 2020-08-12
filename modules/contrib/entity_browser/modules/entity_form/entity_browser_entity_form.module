@@ -65,6 +65,7 @@ function entity_browser_entity_form_inline_entity_form_reference_form_alter(&$re
     '#widget_context' => [
       'target_bundles' => $bundles,
       'target_entity_type' => $target_entity_type,
+      'cardinality' => $cardinality,
     ],
   ];
   $reference_form['#attached']['library'][] = 'entity_browser_entity_form/ief_autocomplete';

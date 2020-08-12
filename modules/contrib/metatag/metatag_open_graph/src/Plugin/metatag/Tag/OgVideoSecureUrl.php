@@ -10,7 +10,7 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
  * @MetatagTag(
  *   id = "og_video_secure_url",
  *   label = @Translation("Video Secure URL"),
- *   description = @Translation("The secure URL (HTTPS) of an video which should represent the content. The video must be at least 50px by 50px and have a maximum aspect ratio of 3:1. Supports PNG, JPEG and GIF formats. All 'http://' URLs will automatically be converted to 'https://'."),
+ *   description = @Translation("The secure URL (HTTPS) of an video which should represent the content."),
  *   name = "og:video:secure_url",
  *   group = "open_graph",
  *   weight = 11,

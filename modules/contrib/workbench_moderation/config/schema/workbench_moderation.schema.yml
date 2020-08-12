@@ -52,7 +52,6 @@ block_content.type.*.third_party.workbench_moderation:
 views.filter.latest_revision:
   type: views_filter
   label: 'Latest revision'
-  type: mapping
   mapping:
     value:
       type: string

@@ -50,10 +50,26 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  * )
  */
 class CaptchaPoint extends ConfigEntityBase implements CaptchaPointInterface {
+
+  /**
+   * The captcha type.
+   *
+   * @var string
+   */
   public $captchaType;
 
+  /**
+   * The captcha label.
+   *
+   * @var string
+   */
   protected $label;
 
+  /**
+   * The formid associated with the captcha.
+   *
+   * @var string
+   */
   public $formId;
 
   /**

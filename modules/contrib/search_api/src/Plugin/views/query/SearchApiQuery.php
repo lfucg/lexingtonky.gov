@@ -3,6 +3,8 @@
 namespace Drupal\search_api\Plugin\views\query;
 
 use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Database\Query\ConditionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -260,7 +262,7 @@ class SearchApiQuery extends QueryPluginBase {
       if ($display_type === 'rest_export') {
         $display_type = 'rest';
       }
-      $this->query->setSearchId("views_$display_type:" . $view->id() . '__' . $view->current_display);
+      $this->query->setSearchId("views_$display_type:" . $view->id() . '__' . $display->display['id']);
       $this->query->setOption('search_api_view', $view);
     }
     catch (\Exception $e) {
@@ -699,6 +701,49 @@ class SearchApiQuery extends QueryPluginBase {
 
       $view->result[] = new ResultRow($values);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    $query = $this->getSearchApiQuery();
+    if ($query instanceof CacheableDependencyInterface) {
+      return $query->getCacheContexts();
+    }
+
+    // We are not returning the cache contexts from the parent class since these
+    // are based on the default SQL storage from Views, while our results are
+    // coming from the search engine.
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    $tags = parent::getCacheTags();
+
+    $query = $this->getSearchApiQuery();
+    if ($query instanceof CacheableDependencyInterface) {
+      $tags = Cache::mergeTags($query->getCacheTags(), $tags);
+    }
+
+    return $tags;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheMaxAge() {
+    $max_age = parent::getCacheMaxAge();
+
+    $query = $this->getSearchApiQuery();
+    if ($query instanceof CacheableDependencyInterface) {
+      $max_age = Cache::mergeMaxAges($query->getCacheMaxAge(), $max_age);
+    }
+
+    return $max_age;
   }
 
   /**

@@ -3,19 +3,19 @@
 namespace Drupal\workbench_moderation\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Action\Plugin\Action\PublishAction;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\node\Plugin\Action\PublishNode;
 use Drupal\workbench_moderation\ModerationInformationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Alternate action plugin that knows to opt-out of modifying moderated entites.
  *
- * @see PublishNode
+ * @see PublishAction
  */
-class ModerationOptOutPublishNode extends PublishNode implements ContainerFactoryPluginInterface {
+class ModerationOptOutPublishNode extends PublishAction implements ContainerFactoryPluginInterface {
 
   /**
    * @var \Drupal\workbench_moderation\ModerationInformationInterface
@@ -43,7 +43,7 @@ class ModerationOptOutPublishNode extends PublishNode implements ContainerFactor
    */
   public function execute($entity = NULL) {
     if ($entity && $this->moderationInfo->isModeratableEntity($entity)) {
-      drupal_set_message($this->t('One or more entities were skipped as they are under moderation and may not be directly published or unpublished.'));
+      $this->messenger()->addMessage($this->t('One or more entities were skipped as they are under moderation and may not be directly published or unpublished.'));
       return;
     }
 

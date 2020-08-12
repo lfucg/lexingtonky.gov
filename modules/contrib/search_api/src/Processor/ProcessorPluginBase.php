@@ -116,10 +116,7 @@ abstract class ProcessorPluginBase extends IndexPluginBase implements ProcessorI
       return $this->configuration['weights'][$stage];
     }
     $plugin_definition = $this->getPluginDefinition();
-    if (isset($plugin_definition['stages'][$stage])) {
-      return (int) $plugin_definition['stages'][$stage];
-    }
-    return 0;
+    return (int) ($plugin_definition['stages'][$stage] ?? 0);
   }
 
   /**
@@ -230,7 +227,7 @@ abstract class ProcessorPluginBase extends IndexPluginBase implements ProcessorI
     }
 
     $field->setIndexedLocked();
-    if (isset($type)) {
+    if ($type !== NULL) {
       $field->setTypeLocked();
     }
     return $field;
@@ -254,7 +251,7 @@ abstract class ProcessorPluginBase extends IndexPluginBase implements ProcessorI
   protected function findField($datasource_id, $property_path, $type = NULL) {
     foreach ($this->index->getFieldsByDatasource($datasource_id) as $field) {
       if ($field->getPropertyPath() === $property_path) {
-        if (!isset($type) || $field->getType() === $type) {
+        if ($type === NULL || $field->getType() === $type) {
           return $field;
         }
       }

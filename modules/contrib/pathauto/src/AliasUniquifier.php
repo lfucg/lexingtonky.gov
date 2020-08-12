@@ -6,8 +6,8 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
+use Drupal\path_alias\AliasManagerInterface;
 
 /**
  * Provides a utility for creating a unique path alias.
@@ -45,7 +45,7 @@ class AliasUniquifier implements AliasUniquifierInterface {
   /**
    * The alias manager.
    *
-   * @var \Drupal\Core\Path\AliasManagerInterface
+   * @var \Drupal\path_alias\AliasManagerInterface
    */
   protected $aliasManager;
 
@@ -60,7 +60,7 @@ class AliasUniquifier implements AliasUniquifierInterface {
    *   The module handler.
    * @param \Drupal\Core\Routing\RouteProviderInterface $route_provider
    *   The route provider service.
-   * @param \Drupal\Core\Path\AliasManagerInterface $alias_manager
+   * @param \Drupal\path_alias\AliasManagerInterface $alias_manager
    *   The alias manager.
    */
   public function __construct(ConfigFactoryInterface $config_factory, AliasStorageHelperInterface $alias_storage_helper, ModuleHandlerInterface $module_handler, RouteProviderInterface $route_provider, AliasManagerInterface $alias_manager) {

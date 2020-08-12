@@ -72,6 +72,7 @@ class EntityPermissionProviderTest extends UnitTestCase {
     $entity_type->id()->willReturn('green_entity');
     $entity_type->getSingularLabel()->willReturn('green entity');
     $entity_type->getPluralLabel()->willReturn('green entities');
+    $entity_type->getAdminPermission()->willReturn('administer green_entity');
     $entity_type->hasLinkTemplate('collection')->willReturn(FALSE);
     $entity_type->hasLinkTemplate('duplicate-form')->willReturn(TRUE);
     $entity_type->entityClassImplements(EntityOwnerInterface::class)->willReturn(FALSE);
@@ -93,6 +94,7 @@ class EntityPermissionProviderTest extends UnitTestCase {
     $entity_type->id()->willReturn('blue_entity');
     $entity_type->getSingularLabel()->willReturn('blue entity');
     $entity_type->getPluralLabel()->willReturn('blue entities');
+    $entity_type->getAdminPermission()->willReturn('administer blue_entity');
     $entity_type->hasLinkTemplate('collection')->willReturn(TRUE);
     $entity_type->hasLinkTemplate('duplicate-form')->willReturn(TRUE);
     $entity_type->entityClassImplements(EntityOwnerInterface::class)->willReturn(TRUE);
@@ -118,6 +120,7 @@ class EntityPermissionProviderTest extends UnitTestCase {
     $entity_type->id()->willReturn('white_entity');
     $entity_type->getSingularLabel()->willReturn('white entity');
     $entity_type->getPluralLabel()->willReturn('white entities');
+    $entity_type->getAdminPermission()->willReturn('administer white_entity');
     $entity_type->hasLinkTemplate('collection')->willReturn(TRUE);
     $entity_type->hasLinkTemplate('duplicate-form')->willReturn(TRUE);
     $entity_type->entityClassImplements(EntityOwnerInterface::class)->willReturn(FALSE);
@@ -146,6 +149,7 @@ class EntityPermissionProviderTest extends UnitTestCase {
     $entity_type->id()->willReturn('black_entity');
     $entity_type->getSingularLabel()->willReturn('black entity');
     $entity_type->getPluralLabel()->willReturn('black entities');
+    $entity_type->getAdminPermission()->willReturn('administer black_entity');
     $entity_type->hasLinkTemplate('collection')->willReturn(TRUE);
     $entity_type->hasLinkTemplate('duplicate-form')->willReturn(TRUE);
     $entity_type->entityClassImplements(EntityOwnerInterface::class)->willReturn(TRUE);
@@ -172,6 +176,7 @@ class EntityPermissionProviderTest extends UnitTestCase {
     $entity_type->id()->willReturn('pink_entity');
     $entity_type->getSingularLabel()->willReturn('pink entity');
     $entity_type->getPluralLabel()->willReturn('pink entities');
+    $entity_type->getAdminPermission()->willReturn('administer pink_entity');
     $entity_type->hasLinkTemplate('collection')->willReturn(TRUE);
     $entity_type->hasLinkTemplate('duplicate-form')->willReturn(TRUE);
     $entity_type->entityClassImplements(EntityOwnerInterface::class)->willReturn(TRUE);

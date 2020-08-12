@@ -3,6 +3,7 @@
 namespace Drupal\masquerade\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\masquerade\Masquerade;
@@ -24,16 +25,26 @@ class SwitchController extends ControllerBase {
   protected $masquerade;
 
   /**
+   * The redirect destination helper.
+   *
+   * @var \Drupal\Core\Routing\RedirectDestinationInterface
+   */
+  private $destination;
+
+  /**
    * Constructs a new SwitchController object.
    *
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    * @param \Drupal\masquerade\Masquerade $masquerade
    *   The masquerade service.
+   * @param \Drupal\Core\Routing\RedirectDestinationInterface $destination
+   *   The redirect destination helper.
    */
-  public function __construct(AccountInterface $current_user, Masquerade $masquerade) {
+  public function __construct(AccountInterface $current_user, Masquerade $masquerade, RedirectDestinationInterface $destination) {
     $this->currentUser = $current_user;
     $this->masquerade = $masquerade;
+    $this->destination = $destination;
   }
 
   /**
@@ -42,7 +53,8 @@ class SwitchController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('current_user'),
-      $container->get('masquerade')
+      $container->get('masquerade'),
+      $container->get('redirect.destination')
     );
   }
 
@@ -54,27 +66,29 @@ class SwitchController extends ControllerBase {
    *
    * @param \Drupal\user\UserInterface $user
    *   The user account object to masquerade as.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request object.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Redirect to previous page.
    *
    * @see this::getRedirectResponse()
    */
-  public function switchTo(UserInterface $user) {
+  public function switchTo(UserInterface $user, Request $request) {
     // Store current user for messages.
     $account = $this->currentUser;
     $error = masquerade_switch_user_validate($user);
     if (empty($error)) {
       if ($this->masquerade->switchTo($user)) {
-        drupal_set_message($this->t('You are now masquerading as @user.', [
+        $this->messenger()->addStatus($this->t('You are now masquerading as @user.', [
           '@user' => $account->getDisplayName(),
         ]));
       }
     }
     else {
-      drupal_set_message($error, 'error');
+      $this->messenger()->addError($error);
     }
-    return $this->getRedirectResponse();
+    return $this->getRedirectResponse($request);
   }
 
   /**
@@ -92,14 +106,14 @@ class SwitchController extends ControllerBase {
     // Store current user name for messages.
     $account_name = $this->currentUser->getDisplayName();
     if ($this->masquerade->switchBack()) {
-      drupal_set_message($this->t('You are no longer masquerading as @user.', [
+      $this->messenger()->addStatus($this->t('You are no longer masquerading as @user.', [
         '@user' => $account_name,
       ]));
     }
     else {
-      drupal_set_message($this->t('Error trying unmasquerading as @user.', [
+      $this->messenger()->addError($this->t('Error trying unmasquerading as @user.', [
         '@user' => $account_name,
-      ]), 'error');
+      ]));
     }
     return $this->getRedirectResponse($request);
   }
@@ -107,20 +121,16 @@ class SwitchController extends ControllerBase {
   /**
    * Returns redirect response to previous page.
    *
-   * @param \Symfony\Component\HttpFoundation\Request|null $request
-   *   (Optional) The request object.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request object.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   The redirect.
    *
    * @see \Drupal\Core\EventSubscriber\RedirectResponseSubscriber::checkRedirectUrl()
    */
-  protected function getRedirectResponse($request = NULL) {
-    if (!isset($request)) {
-      $request = \Drupal::request();
-    }
-    $destination = \Drupal::destination();
-    if ($destination_path = $destination->get()) {
+  protected function getRedirectResponse(Request $request) {
+    if ($destination_path = $this->destination->get()) {
       // When Drupal is installed in a sub-directory, destination path have to
       // cut off the baseUrl part.
       $destination_path = preg_replace('/^' . preg_quote($request->getBaseUrl(), '/') . '/', '', $destination_path);
@@ -144,7 +154,7 @@ class SwitchController extends ControllerBase {
     if ($destination_path) {
       // Override destination because it will take over response.
       $request->query->set('destination', $url);
-      $destination->set($url);
+      $this->destination->set($url);
     }
     return new RedirectResponse($url);
   }

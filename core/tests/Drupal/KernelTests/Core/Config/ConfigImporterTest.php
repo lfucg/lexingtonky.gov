@@ -84,14 +84,9 @@ class ConfigImporterTest extends KernelTestBase {
    * fails.
    */
   public function testEmptyImportFails() {
-    try {
-      $this->container->get('config.storage.sync')->deleteAll();
-      $this->configImporter->reset()->import();
-      $this->fail('ConfigImporterException thrown, successfully stopping an empty import.');
-    }
-    catch (ConfigImporterException $e) {
-      $this->pass('ConfigImporterException thrown, successfully stopping an empty import.');
-    }
+    $this->expectException(ConfigImporterException::class);
+    $this->container->get('config.storage.sync')->deleteAll();
+    $this->configImporter->reset()->import();
   }
 
   /**
@@ -157,7 +152,7 @@ class ConfigImporterTest extends KernelTestBase {
 
     $this->assertFalse($this->configImporter->hasUnprocessedConfigurationChanges());
     $logs = $this->configImporter->getErrors();
-    $this->assertEqual(count($logs), 0);
+    $this->assertCount(0, $logs);
   }
 
   /**
@@ -211,7 +206,7 @@ class ConfigImporterTest extends KernelTestBase {
     // Verify that there is nothing more to import.
     $this->assertFalse($this->configImporter->hasUnprocessedConfigurationChanges());
     $logs = $this->configImporter->getErrors();
-    $this->assertEqual(count($logs), 0);
+    $this->assertCount(0, $logs);
   }
 
   /**
@@ -256,7 +251,7 @@ class ConfigImporterTest extends KernelTestBase {
     $this->assertEqual($secondary->label(), $values_secondary['label']);
 
     $logs = $this->configImporter->getErrors();
-    $this->assertEqual(count($logs), 1);
+    $this->assertCount(1, $logs);
     $this->assertEqual($logs[0], new FormattableMarkup('Deleted and replaced configuration entity "@name"', ['@name' => $name_secondary]));
   }
 
@@ -302,7 +297,7 @@ class ConfigImporterTest extends KernelTestBase {
     $this->assertEqual($secondary->label(), $values_secondary['label']);
 
     $logs = $this->configImporter->getErrors();
-    $this->assertEqual(count($logs), 1);
+    $this->assertCount(1, $logs);
     $this->assertEqual($logs[0], Html::escape("Unexpected error during import with operation create for $name_primary: 'config_test' entity with ID 'secondary' already exists."));
   }
 
@@ -384,7 +379,7 @@ class ConfigImporterTest extends KernelTestBase {
     $this->assertEqual($other->label(), $values_other['label']);
 
     $logs = $this->configImporter->getErrors();
-    $this->assertEqual(count($logs), 1);
+    $this->assertCount(1, $logs);
     $this->assertEqual($logs[0], new FormattableMarkup('Update target "@name" is missing.', ['@name' => $name_deletee]));
   }
 
@@ -435,7 +430,7 @@ class ConfigImporterTest extends KernelTestBase {
     $this->assertNull($entity_storage->load('deleter'));
     $this->assertNull($entity_storage->load('deletee'));
     $logs = $this->configImporter->getErrors();
-    $this->assertEqual(count($logs), 0);
+    $this->assertCount(0, $logs);
   }
 
   /**
@@ -477,7 +472,7 @@ class ConfigImporterTest extends KernelTestBase {
     // delete occurred in \Drupal\config_test\Entity\ConfigTest::postDelete()
     // this does not matter.
     $logs = $this->configImporter->getErrors();
-    $this->assertEqual(count($logs), 0);
+    $this->assertCount(0, $logs);
   }
 
   /**
@@ -534,7 +529,7 @@ class ConfigImporterTest extends KernelTestBase {
     // Verify that there is nothing more to import.
     $this->assertFalse($this->configImporter->hasUnprocessedConfigurationChanges());
     $logs = $this->configImporter->getErrors();
-    $this->assertEqual(count($logs), 0);
+    $this->assertCount(0, $logs);
   }
 
   /**
@@ -619,7 +614,7 @@ class ConfigImporterTest extends KernelTestBase {
         'Configuration <em class="placeholder">unknown.config</em> depends on the <em class="placeholder">unknown</em> extension that will not be installed after import.',
       ];
       foreach ($expected as $expected_message) {
-        $this->assertTrue(in_array($expected_message, $error_log), $expected_message);
+        $this->assertContains($expected_message, $error_log, $expected_message);
       }
     }
 
@@ -667,7 +662,7 @@ class ConfigImporterTest extends KernelTestBase {
         'Configuration <em class="placeholder">config_test.dynamic.dotted.theme</em> depends on themes (<em class="placeholder">unknown, Seven</em>) that will not be installed after import.',
       ];
       foreach ($expected as $expected_message) {
-        $this->assertTrue(in_array($expected_message, $error_log), $expected_message);
+        $this->assertContains($expected_message, $error_log, $expected_message);
       }
     }
   }
@@ -834,7 +829,7 @@ class ConfigImporterTest extends KernelTestBase {
       $this->fail('Expected \InvalidArgumentException thrown');
     }
     catch (\InvalidArgumentException $e) {
-      $this->pass('Expected \InvalidArgumentException thrown');
+      // Expected exception; just continue testing.
     }
     $this->assertFalse(\Drupal::isConfigSyncing(), 'After an invalid step \Drupal::isConfigSyncing() returns FALSE');
   }

@@ -137,13 +137,6 @@ abstract class FieldDiffBuilderBase extends PluginBase implements FieldDiffBuild
   /**
    * {@inheritdoc}
    */
-  public function calculateDependencies() {
-    return array();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function isApplicable(FieldStorageDefinitionInterface $field_definition) {
     return TRUE;
   }

@@ -2,6 +2,48 @@
 # could get longer, especially ones which use a textarea field instead of a
 # textfield.
 
+metatag.metatag_tag.article_author:
+  type: label
+  label: 'Article author'
+metatag.metatag_tag.article_expiration_time:
+  type: label
+  label: 'Article expiration time'
+metatag.metatag_tag.article_modified_time:
+  type: label
+  label: 'Article modified time'
+metatag.metatag_tag.article_published_time:
+  type: label
+  label: 'Article published time'
+metatag.metatag_tag.article_publisher:
+  type: label
+  label: 'Article publisher'
+metatag.metatag_tag.article_section:
+  type: label
+  label: 'Article section'
+metatag.metatag_tag.article_tag:
+  type: label
+  label: 'Article tag(s)'
+metatag.metatag_tag.book_author:
+  type: label
+  label: 'Book Author'
+metatag.metatag_tag.book_isbn:
+  type: label
+  label: 'Book ISBN'
+metatag.metatag_tag.book_release_date:
+  type: label
+  label: 'Book Release Date'
+metatag.metatag_tag.book_tag:
+  type: label
+  label: 'Book Tags'
+metatag.metatag_tag.og_audio:
+  type: label
+  label: 'Audio URL'
+metatag.metatag_tag.og_audio_secure_url:
+  type: label
+  label: 'Audio secure URL'
+metatag.metatag_tag.og_audio_type:
+  type: label
+  label: 'Audio type'
 metatag.metatag_tag.og_country_name:
   type: label
   label: 'Open Graph: Country name'
@@ -101,36 +143,36 @@ metatag.metatag_tag.og_video_type:
 metatag.metatag_tag.og_video_width:
   type: label
   label: 'Open Graph: Video width'
-metatag.metatag_tag.article_author:
+metatag.metatag_tag.profile_first_name:
   type: label
-  label: 'Article author'
-metatag.metatag_tag.article_expiration_time:
+  label: 'First name'
+metatag.metatag_tag.profile_gender:
   type: label
-  label: 'Article expiration time'
-metatag.metatag_tag.article_modified_time:
+  label: 'Gender'
+metatag.metatag_tag.profile_last_name:
   type: label
-  label: 'Article modified time'
-metatag.metatag_tag.article_published_time:
+  label: 'Last name'
+metatag.metatag_tag.profile_username:
   type: label
-  label: 'Article published time'
-metatag.metatag_tag.article_publisher:
+  label: 'Username'
+metatag.metatag_tag.video_actor:
   type: label
-  label: 'Article publisher'
-metatag.metatag_tag.article_section:
+  label: 'Actor(s)'
+metatag.metatag_tag.video_actor_role:
   type: label
-  label: 'Article section'
-metatag.metatag_tag.article_tag:
+  label: "Actor's role"
+metatag.metatag_tag.video_director:
   type: label
-  label: 'Article tag(s)'
-metatag.metatag_tag.book_author:
+  label: 'Director(s)'
+metatag.metatag_tag.video_release_date:
   type: label
-  label: 'Book Author'
-metatag.metatag_tag.book_isbn:
+  label: 'Release date'
+metatag.metatag_tag.video_series:
   type: label
-  label: 'Book ISBN'
-metatag.metatag_tag.book_release_date:
+  label: 'Series'
+metatag.metatag_tag.video_tag:
   type: label
-  label: 'Book Release Date'
-metatag.metatag_tag.book_tag:
+  label: 'Tag words'
+metatag.metatag_tag.video_writer:
   type: label
-  label: 'Book Tags'
+  label: 'Scriptwriter(s)'

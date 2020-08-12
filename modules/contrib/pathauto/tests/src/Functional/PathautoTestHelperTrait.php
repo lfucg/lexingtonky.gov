@@ -10,11 +10,14 @@ use Drupal\pathauto\PathautoPatternInterface;
 use Drupal\taxonomy\VocabularyInterface;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\Tests\Traits\Core\PathAliasTestTrait;
 
 /**
  * Helper test class with some added functions for testing.
  */
 trait PathautoTestHelperTrait {
+
+  use PathAliasTestTrait;
 
   /**
    * Creates a pathauto pattern.
@@ -76,17 +79,12 @@ trait PathautoTestHelperTrait {
     $this->assertSame($tokens[$token], $expected, t("Token value for [@type:@token] was '@actual', expected value '@expected'.", ['@type' => $type, '@token' => $token, '@actual' => $tokens[$token], '@expected' => $expected]));
   }
 
-  public function saveAlias($source, $alias, $langcode = Language::LANGCODE_NOT_SPECIFIED) {
-    \Drupal::service('path.alias_storage')->delete(['source' => $source, 'langcode' => $langcode]);
-    return \Drupal::service('path.alias_storage')->save($source, $alias, $langcode);
-  }
-
   public function saveEntityAlias(EntityInterface $entity, $alias, $langcode = NULL) {
     // By default, use the entity language.
     if (!$langcode) {
       $langcode = $entity->language()->getId();
     }
-    return $this->saveAlias('/' . $entity->toUrl()->getInternalPath(), $alias, $langcode);
+    return $this->createPathAlias('/' . $entity->toUrl()->getInternalPath(), $alias, $langcode);
   }
 
   public function assertEntityAlias(EntityInterface $entity, $expected_alias, $langcode = NULL) {
@@ -98,7 +96,7 @@ trait PathautoTestHelperTrait {
   }
 
   public function assertEntityAliasExists(EntityInterface $entity) {
-    return $this->assertAliasExists(['source' => '/' . $entity->toUrl()->getInternalPath()]);
+    return $this->assertAliasExists(['path' => '/' . $entity->toUrl()->getInternalPath()]);
   }
 
   public function assertNoEntityAlias(EntityInterface $entity, $langcode = NULL) {
@@ -110,7 +108,7 @@ trait PathautoTestHelperTrait {
   }
 
   public function assertNoEntityAliasExists(EntityInterface $entity, $alias = NULL) {
-    $path = ['source' => '/' . $entity->toUrl()->getInternalPath()];
+    $path = ['path' => '/' . $entity->toUrl()->getInternalPath()];
     if (!empty($alias)) {
       $path['alias'] = $alias;
     }
@@ -118,29 +116,29 @@ trait PathautoTestHelperTrait {
   }
 
   public function assertAlias($source, $expected_alias, $langcode = Language::LANGCODE_NOT_SPECIFIED) {
-    \Drupal::service('path.alias_manager')->cacheClear($source);
+    \Drupal::service('path_alias.manager')->cacheClear($source);
     $entity_type_manager = \Drupal::entityTypeManager();
     if ($entity_type_manager->hasDefinition('path_alias')) {
       $entity_type_manager->getStorage('path_alias')->resetCache();
     }
-    $this->assertEquals($expected_alias, \Drupal::service('path.alias_manager')->getAliasByPath($source, $langcode), t("Alias for %source with language '@language' is correct.",
+    $this->assertEquals($expected_alias, \Drupal::service('path_alias.manager')->getAliasByPath($source, $langcode), t("Alias for %source with language '@language' is correct.",
       ['%source' => $source, '@language' => $langcode]));
   }
 
   public function assertAliasExists($conditions) {
-    $path = \Drupal::service('path.alias_storage')->load($conditions);
-    $this->assertTrue($path, t('Alias with conditions @conditions found.', ['@conditions' => var_export($conditions, TRUE)]));
+    $path = $this->loadPathAliasByConditions($conditions);
+    $this->assertNotEmpty($path, t('Alias with conditions @conditions found.', ['@conditions' => var_export($conditions, TRUE)]));
     return $path;
   }
 
   public function assertNoAliasExists($conditions) {
-    $alias = \Drupal::service('path.alias_storage')->load($conditions);
-    $this->assertFalse($alias, t('Alias with conditions @conditions not found.', ['@conditions' => var_export($conditions, TRUE)]));
+    $alias = $this->loadPathAliasByConditions($conditions);
+    $this->assertEmpty($alias, t('Alias with conditions @conditions not found.', ['@conditions' => var_export($conditions, TRUE)]));
   }
 
   public function deleteAllAliases() {
     \Drupal::service('pathauto.alias_storage_helper')->deleteAll();
-    \Drupal::service('path.alias_manager')->cacheClear();
+    \Drupal::service('path_alias.manager')->cacheClear();
   }
 
   /**

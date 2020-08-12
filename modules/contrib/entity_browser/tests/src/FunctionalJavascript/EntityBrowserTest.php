@@ -51,6 +51,76 @@ class EntityBrowserTest extends EntityBrowserWebDriverTestBase {
   }
 
   /**
+   * Tests the field widget with a single-cardinality field.
+   */
+  public function testSingleCardinalityField() {
+    $this->container->get('entity_type.manager')
+      ->getStorage('field_storage_config')
+      ->load('node.field_reference')
+      ->setCardinality(1)
+      ->save();
+
+    // Create a file.
+    $image = $this->createFile('llama');
+
+    $this->drupalGet('node/add/article');
+
+    $this->assertSession()->linkExists('Select entities');
+    $this->assertSession()->pageTextContains('You can select one file.');
+    $this->getSession()->getPage()->clickLink('Select entities');
+
+    $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
+
+    $this->getSession()->getPage()->checkField('entity_browser_select[file:' . $image->id() . ']');
+    $this->getSession()->getPage()->pressButton('Select entities');
+
+    // Switch back to the main page.
+    $this->getSession()->switchToIFrame();
+    $this->waitForAjaxToFinish();
+    // A selection has been made, so the message is no longer necessary.
+    $this->assertSession()->pageTextNotContains('You can select one file.');
+  }
+
+  /**
+   * Tests the field widget with a multi-cardinality field.
+   */
+  public function testMultiCardinalityField() {
+    $assert_session = $this->assertSession();
+    $session = $this->getSession();
+    $page = $session->getPage();
+
+    $this->container->get('entity_type.manager')
+      ->getStorage('field_storage_config')
+      ->load('node.field_reference')
+      ->setCardinality(3)
+      ->save();
+
+    // Create a few files to choose.
+    $images = [];
+    array_push($images, $this->createFile('llama'));
+    array_push($images, $this->createFile('sloth'));
+    array_push($images, $this->createFile('puppy'));
+
+    $this->drupalGet('node/add/article');
+
+    $assert_session->linkExists('Select entities');
+    $assert_session->pageTextContains('You can select up to 3 files (3 left).');
+    $page->clickLink('Select entities');
+
+    $session->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
+
+    $page->checkField('entity_browser_select[file:' . $images[0]->id() . ']');
+    $page->checkField('entity_browser_select[file:' . $images[1]->id() . ']');
+    $page->pressButton('Select entities');
+
+    // Switch back to the main page.
+    $session->switchToIFrame();
+    $this->waitForAjaxToFinish();
+    // Selections have been made, so the message should be different.
+    $assert_session->pageTextContains('You can select up to 3 files (1 left).');
+  }
+
+  /**
    * Tests tabs widget selector.
    */
   public function testTabsWidgetSelector() {

@@ -59,7 +59,8 @@ class BundleEntityDuplicatorTest extends EntityKernelTestBase {
    * @covers ::duplicate
    */
   public function testDuplicateInvalidEntity() {
-    $this->setExpectedException(\InvalidArgumentException::class, 'The "action" entity type is not a bundle entity type.');
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionMessage('The "action" entity type is not a bundle entity type.');
     $this->duplicator->duplicate(Action::create(), []);
   }
 
@@ -67,7 +68,8 @@ class BundleEntityDuplicatorTest extends EntityKernelTestBase {
    * @covers ::duplicate
    */
   public function testDuplicateNoId() {
-    $this->setExpectedException(\InvalidArgumentException::class, 'The $values[\'id\'] key is empty or missing.');
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionMessage('The $values[\'id\'] key is empty or missing.');
     $this->duplicator->duplicate($this->bundleEntity, []);
   }
 
@@ -130,7 +132,8 @@ class BundleEntityDuplicatorTest extends EntityKernelTestBase {
    * @covers ::duplicateFields
    */
   public function testDuplicateFieldsInvalidEntity() {
-    $this->setExpectedException(\InvalidArgumentException::class, 'The "action" entity type is not a bundle entity type.');
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionMessage('The "action" entity type is not a bundle entity type.');
     $this->duplicator->duplicateFields(Action::create(), 'test2');
   }
 
@@ -138,7 +141,8 @@ class BundleEntityDuplicatorTest extends EntityKernelTestBase {
    * @covers ::duplicateFields
    */
   public function testDuplicateFieldsEmptyTarget() {
-    $this->setExpectedException(\InvalidArgumentException::class, 'The $target_bundle_id must not be empty.');
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionMessage('The $target_bundle_id must not be empty.');
     $this->duplicator->duplicateFields($this->bundleEntity, '');
   }
 
@@ -168,7 +172,8 @@ class BundleEntityDuplicatorTest extends EntityKernelTestBase {
    * @covers ::duplicateDisplays
    */
   public function testDuplicateDisplaysInvalidEntity() {
-    $this->setExpectedException(\InvalidArgumentException::class, 'The "action" entity type is not a bundle entity type.');
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionMessage('The "action" entity type is not a bundle entity type.');
     $this->duplicator->duplicateDisplays(Action::create(), 'test2');
   }
 
@@ -176,7 +181,8 @@ class BundleEntityDuplicatorTest extends EntityKernelTestBase {
    * @covers ::duplicateDisplays
    */
   public function testDuplicateDisplaysEmptyTarget() {
-    $this->setExpectedException(\InvalidArgumentException::class, 'The $target_bundle_id must not be empty.');
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionMessage('The $target_bundle_id must not be empty.');
     $this->duplicator->duplicateDisplays($this->bundleEntity, '');
   }
 

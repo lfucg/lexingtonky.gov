@@ -28,6 +28,7 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
       'access test_entity_browser_iframe_node_view entity browser pages',
       'bypass node access',
       'administer node form display',
+      'access contextual links',
     ]);
 
   }
@@ -72,8 +73,10 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
         'field_widget_remove' => TRUE,
         'field_widget_replace' => FALSE,
         'selection_mode' => EntityBrowserElement::SELECTION_MODE_APPEND,
-        'field_widget_display' => 'label',
-        'field_widget_display_settings' => [],
+        'field_widget_display' => 'rendered_entity',
+        'field_widget_display_settings' => [
+          'view_mode' => 'teaser',
+        ],
       ],
     ])->save();
 
@@ -84,6 +87,10 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     ]);
     $target_node->save();
 
+    $target_node_translation = $target_node->addTranslation('fr', $target_node->toArray());
+    $target_node_translation->setTitle('le Morse');
+    $target_node_translation->save();
+
     $this->drupalGet('/node/add/article');
     $this->assertSession()->fieldExists('title[0][value]')->setValue('Referencing node 1');
     $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_iframe_node_view');
@@ -91,18 +98,25 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->fieldExists('entity_browser_select[node:1]')->check();
     $this->assertSession()->buttonExists('Select entities')->press();
     $this->getSession()->switchToIFrame();
-    $this->waitForAjaxToFinish();
+    $this->assertTrue($this->assertSession()->waitForText('Walrus'));
     $this->assertSession()->buttonExists('Save')->press();
 
     $this->assertSession()->pageTextContains('Article Referencing node 1 has been created.');
     $nid = $this->container->get('entity.query')->get('node')->condition('title', 'Referencing node 1')->execute();
     $nid = reset($nid);
 
+    // Assert correct translation appears.
+    // @see Drupal\entity_browser\Plugin\EntityBrowser\FieldWidgetDisplay\EntityLabel
+    $this->drupalGet('fr/node/' . $nid . '/edit');
+    $this->assertSession()->pageTextContains('le Morse');
     $this->drupalGet('node/' . $nid . '/edit');
     $this->assertSession()->pageTextContains('Walrus');
+
     // Make sure both "Edit" and "Remove" buttons are visible.
     $this->assertSession()->buttonExists('edit-field-entity-reference1-current-items-0-remove-button');
     $this->assertSession()->buttonExists('edit-field-entity-reference1-current-items-0-edit-button')->press();
+    // Make sure the contextual links are not present.
+    $this->assertSession()->elementNotExists('css', '.contextual-links');
 
     // Test edit dialog by changing title of referenced entity.
     $edit_dialog = $this->assertSession()->waitForElement('xpath', '//div[contains(@id, "node-' . $target_node->id() . '-edit-dialog")]');

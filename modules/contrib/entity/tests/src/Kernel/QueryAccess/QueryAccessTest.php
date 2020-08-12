@@ -93,7 +93,7 @@ class QueryAccessTest extends EntityKernelTestBase {
     $third_entity->save();
 
     $this->entities = [$first_entity, $second_entity, $third_entity];
-    $this->storage = \Drupal::entityTypeManager()->getStorage('entity_test_enhanced');
+    $this->storage = $this->entityTypeManager->getStorage('entity_test_enhanced');
   }
 
   /**
@@ -102,7 +102,7 @@ class QueryAccessTest extends EntityKernelTestBase {
   public function testEntityQuery() {
     // Admin permission, full access.
     $admin_user = $this->createUser([], ['administer entity_test_enhanced']);
-    \Drupal::currentUser()->setAccount($admin_user);
+    $this->container->get('current_user')->setAccount($admin_user);
 
     $result = $this->storage->getQuery()->sort('id')->execute();
     $this->assertEquals([
@@ -113,14 +113,14 @@ class QueryAccessTest extends EntityKernelTestBase {
 
     // No view permissions, no access.
     $user = $this->createUser([], ['access content']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     $result = $this->storage->getQuery()->execute();
     $this->assertEmpty($result);
 
     // View (published-only).
     $user = $this->createUser([], ['view entity_test_enhanced']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     $result = $this->storage->getQuery()->sort('id')->execute();
     $this->assertEquals([
@@ -130,7 +130,7 @@ class QueryAccessTest extends EntityKernelTestBase {
 
     // View $bundle (published-only).
     $user = $this->createUser([], ['view first entity_test_enhanced']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     $result = $this->storage->getQuery()->sort('id')->execute();
     $this->assertEquals([
@@ -144,7 +144,7 @@ class QueryAccessTest extends EntityKernelTestBase {
   public function testEntityQueryWithRevisions() {
     // Admin permission, full access.
     $admin_user = $this->createUser([], ['administer entity_test_enhanced']);
-    \Drupal::currentUser()->setAccount($admin_user);
+    $this->container->get('current_user')->setAccount($admin_user);
 
     $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
     $this->assertEquals([
@@ -158,14 +158,14 @@ class QueryAccessTest extends EntityKernelTestBase {
 
     // No view permissions, no access.
     $user = $this->createUser([], ['access content']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     $result = $this->storage->getQuery()->execute();
     $this->assertEmpty($result);
 
     // View (published-only).
     $user = $this->createUser([], ['view entity_test_enhanced']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
     $this->assertEquals([
@@ -177,7 +177,7 @@ class QueryAccessTest extends EntityKernelTestBase {
 
     // View $bundle (published-only).
     $user = $this->createUser([], ['view first entity_test_enhanced']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
     $this->assertEquals([
@@ -192,7 +192,7 @@ class QueryAccessTest extends EntityKernelTestBase {
   public function testViews() {
     // Admin permission, full access.
     $admin_user = $this->createUser([], ['administer entity_test_enhanced']);
-    \Drupal::currentUser()->setAccount($admin_user);
+    $this->container->get('current_user')->setAccount($admin_user);
 
     $view = Views::getView('entity_test_enhanced');
     $view->execute();
@@ -204,7 +204,7 @@ class QueryAccessTest extends EntityKernelTestBase {
 
     // No view permissions, no access.
     $user = $this->createUser([], ['access content']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     $view = Views::getView('entity_test_enhanced');
     $view->execute();
@@ -212,7 +212,7 @@ class QueryAccessTest extends EntityKernelTestBase {
 
     // View (published-only).
     $user = $this->createUser([], ['view entity_test_enhanced']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     $view = Views::getView('entity_test_enhanced');
     $view->execute();
@@ -223,7 +223,7 @@ class QueryAccessTest extends EntityKernelTestBase {
 
     // View $bundle (published-only).
     $user = $this->createUser([], ['view first entity_test_enhanced']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     $view = Views::getView('entity_test_enhanced');
     $view->execute();
@@ -238,7 +238,7 @@ class QueryAccessTest extends EntityKernelTestBase {
   public function testViewsWithRevisions() {
     // Admin permission, full access.
     $admin_user = $this->createUser([], ['administer entity_test_enhanced']);
-    \Drupal::currentUser()->setAccount($admin_user);
+    $this->container->get('current_user')->setAccount($admin_user);
 
     $view = Views::getView('entity_test_enhanced_revisions');
     $view->execute();
@@ -253,7 +253,7 @@ class QueryAccessTest extends EntityKernelTestBase {
 
     // No view permissions, no access.
     $user = $this->createUser([], ['access content']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     $view = Views::getView('entity_test_enhanced');
     $view->execute();
@@ -261,7 +261,7 @@ class QueryAccessTest extends EntityKernelTestBase {
 
     // View (published-only).
     $user = $this->createUser([], ['view entity_test_enhanced']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     $view = Views::getView('entity_test_enhanced_revisions');
     $view->execute();
@@ -274,7 +274,7 @@ class QueryAccessTest extends EntityKernelTestBase {
 
     // View $bundle (published-only).
     $user = $this->createUser([], ['view first entity_test_enhanced']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     $view = Views::getView('entity_test_enhanced_revisions');
     $view->execute();
@@ -333,7 +333,7 @@ class QueryAccessTest extends EntityKernelTestBase {
     $user = $this->createUser([
       'mail' => 'user3@example.com',
     ], ['access content']);
-    \Drupal::currentUser()->setAccount($user);
+    $this->container->get('current_user')->setAccount($user);
 
     // EntityQuery.
     $result = $this->storage->getQuery()->sort('id')->execute();

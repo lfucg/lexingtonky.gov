@@ -2,6 +2,7 @@
 
 namespace Drupal\search_api\Plugin\views\row;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\search_api\LoggerTrait;
@@ -150,10 +151,17 @@ class SearchApiRow extends RowPluginBase {
    */
   public function preRender($result) {
     // Load all result objects at once, before rendering.
+    // Set $entity->view property to be accessible in preprocess functions.
     $items_to_load = [];
     foreach ($result as $i => $row) {
       if (empty($row->_object)) {
         $items_to_load[$i] = $row->search_api_id;
+      }
+      else {
+        $entity = $row->_object->getValue();
+        if ($entity instanceof EntityInterface && !isset($entity->view)) {
+          $entity->view = $this->view;
+        }
       }
     }
 
@@ -162,6 +170,11 @@ class SearchApiRow extends RowPluginBase {
       if (isset($items[$item_id])) {
         $result[$i]->_object = $items[$item_id];
         $result[$i]->_item->setOriginalObject($items[$item_id]);
+
+        $entity = $items[$item_id]->getValue();
+        if ($entity instanceof EntityInterface && !isset($entity->view)) {
+          $entity->view = $this->view;
+        }
       }
     }
   }
@@ -191,11 +204,8 @@ class SearchApiRow extends RowPluginBase {
     }
     // Always use the default view mode if it was not set explicitly in the
     // options.
-    $view_mode = 'default';
     $bundle = $this->index->getDatasource($datasource_id)->getItemBundle($row->_object);
-    if (isset($this->options['view_modes'][$datasource_id][$bundle])) {
-      $view_mode = $this->options['view_modes'][$datasource_id][$bundle];
-    }
+    $view_mode = $this->options['view_modes'][$datasource_id][$bundle] ?? 'default';
 
     try {
       $build = $this->index->getDatasource($datasource_id)

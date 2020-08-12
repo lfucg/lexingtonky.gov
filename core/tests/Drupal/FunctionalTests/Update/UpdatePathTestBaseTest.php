@@ -23,11 +23,9 @@ class UpdatePathTestBaseTest extends UpdatePathTestBase {
    * {@inheritdoc}
    */
   protected function setDatabaseDumpFiles() {
-    $this->databaseDumpFiles = [
-      __DIR__ . '/../../../../modules/system/tests/fixtures/update/drupal-8.8.0.bare.standard.php.gz',
-      __DIR__ . '/../../../../modules/system/tests/fixtures/update/drupal-8.update-test-schema-enabled.php',
-      __DIR__ . '/../../../../modules/system/tests/fixtures/update/drupal-8.update-test-semver-update-n-enabled.php',
-    ];
+    $this->databaseDumpFiles[] = __DIR__ . '/../../../../modules/system/tests/fixtures/update/drupal-8.8.0.bare.standard.php.gz';
+    $this->databaseDumpFiles[] = __DIR__ . '/../../../../modules/system/tests/fixtures/update/drupal-8.update-test-schema-enabled.php';
+    $this->databaseDumpFiles[] = __DIR__ . '/../../../../modules/system/tests/fixtures/update/drupal-8.update-test-semver-update-n-enabled.php';
   }
 
   /**
@@ -63,6 +61,7 @@ class UpdatePathTestBaseTest extends UpdatePathTestBase {
     // Before accessing the site we need to run updates first or the site might
     // be broken.
     $this->runUpdates();
+    $this->assertEquals('standard', \Drupal::config('core.extension')->get('profile'));
     $this->assertEqual(\Drupal::config('system.site')->get('name'), 'Site-Install');
     $this->drupalGet('<front>');
     $this->assertText('Site-Install');
@@ -209,6 +208,13 @@ class UpdatePathTestBaseTest extends UpdatePathTestBase {
     $this->runUpdates();
     $this->assertSame('bar', $this->config('config_schema_test.noschema')->get('foo'));
 
+  }
+
+  /**
+   * Test the database fixtures are setup correctly.
+   */
+  public function testFixturesSetup() {
+    $this->assertCount(3, $this->databaseDumpFiles);
   }
 
 }

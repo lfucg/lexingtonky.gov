@@ -10,5 +10,8 @@
     "issues": "http://drupal.org/project/issues/workbench_moderation",
     "source": "http://cgit.drupalcode.org/workbench_moderation"
   },
-  "require": { }
+  "require": { },
+    "require-dev": {
+        "drupal/publishing_dropbutton": "~1.0"
+    }
 }

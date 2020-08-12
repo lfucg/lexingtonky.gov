@@ -25,9 +25,12 @@ process:
     -
       plugin: migration_lookup
       migration:
+        - d7_node_complete
         - d7_node
         - d7_node_translation
       source: nid
+    -
+      plugin: node_complete_node_lookup
     -
       plugin: skip_on_empty
       method: row
@@ -40,7 +43,11 @@ process:
     -
       plugin: skip_on_empty
       method: row
-  langcode: language
+  # Comments migrated from Drupal 6 to Drupal 7 may not have a language.
+  langcode:
+    plugin: default_value
+    source: language
+    default_value: und
   field_name: '@comment_type'
   subject: subject
   uid: uid

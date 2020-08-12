@@ -13,6 +13,7 @@ use Drupal\Core\TypedData\DataDefinition;
  *   id = "metatag",
  *   label = @Translation("Meta tags"),
  *   description = @Translation("This field stores code meta tags."),
+ *   list_class = "\Drupal\metatag\Plugin\Field\FieldType\MetatagFieldItemList",
  *   default_widget = "metatag_firehose",
  *   default_formatter = "metatag_empty_formatter",
  *   serialized_property_names = {

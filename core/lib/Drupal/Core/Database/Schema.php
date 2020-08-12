@@ -2,7 +2,6 @@
 
 namespace Drupal\Core\Database;
 
-use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Database\Query\PlaceholderInterface;
 
 /**
@@ -150,7 +149,7 @@ abstract class Schema implements PlaceholderInterface {
     // Retrieve the table name and schema
     $table_info = $this->getPrefixInfo($table_name, $add_prefix);
 
-    $condition = new Condition('AND');
+    $condition = $this->connection->condition('AND');
     $condition->condition('table_catalog', $info['database']);
     $condition->condition('table_schema', $table_info['schema']);
     $condition->condition('table_name', $table_info['table'], $operator);
@@ -201,7 +200,7 @@ abstract class Schema implements PlaceholderInterface {
     // couldn't use \Drupal::database()->select() here because it would prefix
     // information_schema.tables and the query would fail.
     // Don't use {} around information_schema.tables table.
-    $results = $this->connection->query("SELECT table_name as table_name FROM information_schema.tables WHERE " . (string) $condition, $condition->arguments());
+    $results = $this->connection->query("SELECT table_name AS table_name FROM information_schema.tables WHERE " . (string) $condition, $condition->arguments());
     foreach ($results as $table) {
       // Take into account tables that have an individual prefix.
       if (isset($individually_prefixed_tables[$table->table_name])) {
@@ -650,7 +649,7 @@ abstract class Schema implements PlaceholderInterface {
    */
   public function createTable($name, $table) {
     if ($this->tableExists($name)) {
-      throw new SchemaObjectExistsException(t('Table @name already exists.', ['@name' => $name]));
+      throw new SchemaObjectExistsException("Table '$name' already exists.");
     }
     $statements = $this->createTableSql($name, $table);
     foreach ($statements as $statement) {

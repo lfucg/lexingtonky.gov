@@ -3,10 +3,10 @@ services:
     class: Drupal\autologout\EventSubscriber\AutologoutSubscriber
     tags:
       - {name: event_subscriber}
-    arguments: ['@autologout.manager']
+    arguments: ['@autologout.manager', '@current_user', '@config.factory','@theme.manager','@datetime.time']
 
   autologout.manager:
     class: Drupal\autologout\AutologoutManager
     tags:
       - {name: autologout_manager}
-    arguments: ['@module_handler', '@config.factory']
+    arguments: ['@module_handler', '@config.factory', '@messenger', '@current_user', '@logger.factory', '@session_manager', '@user.data', '@datetime.time']

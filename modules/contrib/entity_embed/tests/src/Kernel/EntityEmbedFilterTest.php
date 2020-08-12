@@ -274,12 +274,12 @@ class EntityEmbedFilterTest extends EntityEmbedFilterTestBase {
       'node; valid UUID but for a deleted entity' => [
         'node',
         static::EMBEDDED_ENTITY_UUID,
-        'Missing content.',
+        'Missing content item.',
       ],
       'node; invalid UUID' => [
         'node',
         'invalidUUID',
-        'Missing content.',
+        'Missing content item.',
       ],
       'user; invalid UUID' => [
         'user',

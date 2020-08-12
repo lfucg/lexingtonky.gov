@@ -300,7 +300,7 @@ class Server extends ConfigEntityBase implements ServerInterface {
 
     $task_manager = \Drupal::getContainer()
       ->get('search_api.task_manager');
-    $task_manager->addTask(__FUNCTION__, $this, $index, isset($index->original) ? $index->original : NULL);
+    $task_manager->addTask(__FUNCTION__, $this, $index, $index->original ?? NULL);
   }
 
   /**

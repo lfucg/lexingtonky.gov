@@ -35,6 +35,11 @@ class ParagraphsExperimentalEditPerspectivesUiTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() {
     parent::setUp();
   }
@@ -60,10 +65,7 @@ class ParagraphsExperimentalEditPerspectivesUiTest extends WebDriverTestBase {
     $this->addFieldtoParagraphType('testplugin', 'body', 'string_long');
 
     $this->drupalGet('node/add/testcontent');
-    $add_wrapper = $page->find('css', '.paragraphs-add-wrapper');
-    $this->assertTrue($add_wrapper->isVisible());
     $this->clickLink('Behavior');
-    $this->assertFalse($add_wrapper->isVisible());
     $style_selector = $page->find('css', '.form-item-field-testparagraphfield-0-behavior-plugins-test-text-color-text-color');
     $this->assertTrue($style_selector->isVisible());
     $this->clickLink('Content');
@@ -109,6 +111,61 @@ class ParagraphsExperimentalEditPerspectivesUiTest extends WebDriverTestBase {
     $this->assertSession()->assertVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:nth-child(3)');
     $this->assertSession()->assertNotVisibleInViewport('css', '.field--widget-paragraphs tbody > tr:nth-child(4)');
     $this->assertSession()->assertNotVisibleInViewport('css', '.field-add-more-submit');
+  }
+
+  /**
+   * Tests visibility of add modes actions when switching perspectives.
+   */
+  public function testPerspectivesAddModesVisibility() {
+    $this->loginAsAdmin([
+      'edit behavior plugin settings'
+    ]);
+
+    $page = $this->getSession()->getPage();
+    $this->drupalGet('admin/structure/paragraphs_type/add');
+    $page->fillField('label', 'TestPlugin');
+    $this->assertSession()->waitForElementVisible('css', '#edit-name-machine-name-suffix .link');
+    $page->pressButton('Edit');
+    $page->fillField('id', 'testplugin');
+    $page->checkField('behavior_plugins[test_text_color][enabled]');
+    $page->pressButton('Save and manage fields');
+
+    $this->addParagraphedContentType('testcontent', 'field_testparagraphfield');
+    $this->addFieldtoParagraphType('testplugin', 'body', 'string_long');
+    $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('node', 'testcontent');
+    $component = $form_display->getComponent('field_testparagraphfield');
+
+    $component['settings']['add_mode'] = 'button';
+    $form_display->setComponent('field_testparagraphfield', $component)->save();
+    $this->drupalGet('node/add/testcontent');
+    $add_wrapper = $page->find('css', '.paragraphs-add-wrapper');
+    $this->assertTrue($add_wrapper->isVisible());
+    $this->clickLink('Behavior');
+    $this->assertFalse($add_wrapper->isVisible());
+
+    $component['settings']['add_mode'] = 'select';
+    $form_display->setComponent('field_testparagraphfield', $component)->save();
+    $this->drupalGet('node/add/testcontent');
+    $add_wrapper = $page->find('css', '.paragraphs-add-wrapper');
+    $this->assertTrue($add_wrapper->isVisible());
+    $this->clickLink('Behavior');
+    $this->assertFalse($add_wrapper->isVisible());
+
+    $component['settings']['add_mode'] = 'modal';
+    $form_display->setComponent('field_testparagraphfield', $component)->save();
+    $this->drupalGet('node/add/testcontent');
+    $add_wrapper = $page->find('css', '.paragraphs-add-wrapper');
+    $this->assertTrue($add_wrapper->isVisible());
+    $this->clickLink('Behavior');
+    $this->assertFalse($add_wrapper->isVisible());
+
+    $component['settings']['add_mode'] = 'dropdown';
+    $form_display->setComponent('field_testparagraphfield', $component)->save();
+    $this->drupalGet('node/add/testcontent');
+    $add_wrapper = $page->find('css', '.paragraphs-add-wrapper');
+    $this->assertTrue($add_wrapper->isVisible());
+    $this->clickLink('Behavior');
+    $this->assertFalse($add_wrapper->isVisible());
   }
 
   /**

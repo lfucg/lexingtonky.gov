@@ -6,6 +6,7 @@ use Composer\Util\Filesystem;
 use Drupal\Tests\Composer\Plugin\Scaffold\Fixtures;
 use Drupal\Tests\Composer\Plugin\Scaffold\AssertUtilsTrait;
 use Drupal\Tests\Composer\Plugin\Scaffold\ExecTrait;
+use Drupal\Tests\PhpunitCompatibilityTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,6 +21,7 @@ use PHPUnit\Framework\TestCase;
 class ManageGitIgnoreTest extends TestCase {
   use ExecTrait;
   use AssertUtilsTrait;
+  use PhpunitCompatibilityTrait;
 
   /**
    * The root of this project.
@@ -112,18 +114,18 @@ class ManageGitIgnoreTest extends TestCase {
     $this->assertFileExists($sut . '/docroot/autoload.php');
     $this->assertFileExists($sut . '/docroot/index.php');
     $expected = <<<EOT
-build
-.csslintrc
-.editorconfig
-.eslintignore
-.eslintrc.json
-.gitattributes
-.ht.router.php
-autoload.php
-index.php
-robots.txt
-update.php
-web.config
+/build
+/.csslintrc
+/.editorconfig
+/.eslintignore
+/.eslintrc.json
+/.gitattributes
+/.ht.router.php
+/autoload.php
+/index.php
+/robots.txt
+/update.php
+/web.config
 EOT;
     // At this point we should have a .gitignore file, because although we did
     // not explicitly ask for .gitignore tracking, the vendor directory is not

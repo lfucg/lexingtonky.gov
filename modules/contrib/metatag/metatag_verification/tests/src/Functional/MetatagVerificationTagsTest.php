@@ -14,7 +14,7 @@ class MetatagVerificationTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  private $tags = [
+  protected $tags = [
     'baidu',
     'bing',
     'google',
@@ -36,7 +36,7 @@ class MetatagVerificationTagsTest extends MetatagTagsTestBase {
   /**
    * Each of these meta tags has a different tag name vs its internal name.
    */
-  private function getTestTagName($tag_name) {
+  protected function getTestTagName($tag_name) {
     if ($tag_name == 'baidu') {
       $tag_name = 'baidu-site-verification';
     }

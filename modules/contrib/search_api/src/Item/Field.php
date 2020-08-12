@@ -550,7 +550,7 @@ class Field implements \IteratorAggregate, FieldInterface {
    * {@inheritdoc}
    */
   public function getBoost() {
-    return isset($this->boost) ? $this->boost : 1.0;
+    return $this->boost ?? 1.0;
   }
 
   /**

@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Component\Utility\Crypt;
 
 /**
  * Defines the CAPTCHA form element with default properties.
@@ -114,7 +115,7 @@ class Captcha extends FormElement implements ContainerFactoryPluginInterface {
       // Generate a new CAPTCHA session if we could
       // not reuse one from a posted form.
       $captcha_sid = _captcha_generate_captcha_session($this_form_id, CAPTCHA_STATUS_UNSOLVED);
-      $captcha_token = md5(mt_rand());
+      $captcha_token = Crypt::randomBytesBase64();
       \Drupal::database()->update('captcha_sessions')
         ->fields(['token' => $captcha_token])
         ->condition('csid', $captcha_sid)
@@ -220,7 +221,7 @@ class Captcha extends FormElement implements ContainerFactoryPluginInterface {
       if (!isset($element['#pre_render'])) {
         $element['#pre_render'] = [];
       }
-      $element['#pre_render'][] = 'captcha_pre_render_process';
+      $element['#pre_render'][] = [Captcha::class, 'preRenderProcess'];
 
       // Store the solution in the #captcha_info array.
       $element['#captcha_info']['solution'] = $captcha['solution'];
@@ -242,6 +243,53 @@ class Captcha extends FormElement implements ContainerFactoryPluginInterface {
       // $form_state->getValue('captcha_response'),
       // even if the form has #tree=true.
       $element['#tree'] = FALSE;
+    }
+
+    return $element;
+  }
+
+  /**
+   * Pre-render callback for additional processing of a CAPTCHA form element.
+   *
+   * This encompasses tasks that should happen after the general FAPI processing
+   * (building, submission and validation) but before rendering
+   * (e.g. storing the solution).
+   *
+   * @param array $element
+   *   The CAPTCHA form element.
+   *
+   * @return array
+   *   The manipulated element.
+   */
+  public static function preRenderProcess(array $element) {
+    module_load_include('inc', 'captcha');
+
+    // Get form and CAPTCHA information.
+    $captcha_info = $element['#captcha_info'];
+    $form_id = $captcha_info['form_id'];
+    $captcha_sid = (int) ($captcha_info['captcha_sid']);
+    // Check if CAPTCHA is still required.
+    // This check is done in a first phase during the element processing
+    // (@see captcha_process), but it is also done here for better support
+    // of multi-page forms. Take previewing a node submission for example:
+    // when the challenge is solved correctely on preview, the form is still
+    // not completely submitted, but the CAPTCHA can be skipped.
+    if (_captcha_required_for_user($captcha_sid, $form_id) || $element['#captcha_admin_mode']) {
+      // Update captcha_sessions table: store the solution
+      // of the generated CAPTCHA.
+      _captcha_update_captcha_session($captcha_sid, $captcha_info['solution']);
+
+      // Handle the response field if it is available and if it is a textfield.
+      if (isset($element['captcha_widgets']['captcha_response']['#type']) && $element['captcha_widgets']['captcha_response']['#type'] == 'textfield') {
+        // Before rendering: presolve an admin mode challenge or
+        // empty the value of the captcha_response form item.
+        $value = $element['#captcha_admin_mode'] ? $captcha_info['solution'] : '';
+        $element['captcha_widgets']['captcha_response']['#value'] = $value;
+      }
+    }
+    else {
+      // Remove CAPTCHA widgets from form.
+      unset($element['captcha_widgets']);
     }
 
     return $element;

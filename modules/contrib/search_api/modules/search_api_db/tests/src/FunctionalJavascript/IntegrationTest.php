@@ -20,6 +20,13 @@ class IntegrationTest extends WebDriverTestBase {
   ];
 
   /**
+   * The theme to install as the default for testing.
+   *
+   * @var string
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Tests that adding a server works.
    */
   public function testAddingServer() {

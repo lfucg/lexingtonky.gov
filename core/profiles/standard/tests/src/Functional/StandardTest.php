@@ -38,9 +38,9 @@ class StandardTest extends BrowserTestBase {
    */
   public function testStandard() {
     $this->drupalGet('');
-    $this->assertLink(t('Contact'));
+    $this->assertSession()->linkExists(t('Contact'));
     $this->clickLink(t('Contact'));
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     // Test anonymous user can access 'Main navigation' block.
     $this->adminUser = $this->drupalCreateUser([
@@ -61,22 +61,14 @@ class StandardTest extends BrowserTestBase {
     $this->drupalGet('');
     $this->assertText('Main navigation');
 
-    // Verify we have role = aria on system_powered_by and help_block
-    // blocks.
+    // Verify we have role = complementary on help_block blocks.
     $this->drupalGet('admin/structure/block');
     $elements = $this->xpath('//div[@role=:role and @id=:id]', [
       ':role' => 'complementary',
       ':id' => 'block-bartik-help',
     ]);
 
-    $this->assertEqual(count($elements), 1, 'Found complementary role on help block.');
-
-    $this->drupalGet('');
-    $elements = $this->xpath('//div[@role=:role and @id=:id]', [
-      ':role' => 'complementary',
-      ':id' => 'block-bartik-powered',
-    ]);
-    $this->assertEqual(count($elements), 1, 'Found complementary role on powered by block.');
+    $this->assertCount(1, $elements, 'Found complementary role on help block.');
 
     // Verify anonymous user can see the block.
     $this->drupalLogout();
@@ -153,7 +145,7 @@ class StandardTest extends BrowserTestBase {
     $this->adminUser->addRole($role->id());
     $this->adminUser->save();
     $this->drupalGet('node/add');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     // Ensure that there are no pending updates after installation.
     $this->drupalLogin($this->rootUser);

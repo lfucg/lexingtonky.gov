@@ -3,6 +3,7 @@
 namespace Drupal\workbench_moderation\ParamConverter;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\ParamConverter\EntityConverter;
 use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\workbench_moderation\ModerationInformationInterface;
@@ -22,16 +23,15 @@ class EntityRevisionConverter extends EntityConverter {
   /**
    * EntityRevisionConverter constructor.
    *
-   * @todo: If the parent class is ever cleaned up to use EntityTypeManager
-   * instead of Entity manager, this method will also need to be adjusted.
-   *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager, needed by the parent class.
    * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_info
    *   The moderation info utility service.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   Entity repository.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModerationInformationInterface $moderation_info) {
-    parent::__construct($entity_type_manager);
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModerationInformationInterface $moderation_info, EntityRepositoryInterface $entity_repository) {
+    parent::__construct($entity_type_manager, $entity_repository);
     $this->moderationInformation = $moderation_info;
   }
 
@@ -71,11 +71,11 @@ class EntityRevisionConverter extends EntityConverter {
     if ($default = $route->getDefault('_entity_form') ) {
       // If no operation is provided, use 'default'.
       $default .= '.default';
-      list($entity_type_id, $operation) = explode('.', $default);
-      if (!$this->entityManager->hasDefinition($entity_type_id)) {
+      [$entity_type_id, $operation] = explode('.', $default);
+      if (!$this->entityTypeManager->hasDefinition($entity_type_id)) {
         return FALSE;
       }
-      $entity_type = $this->entityManager->getDefinition($entity_type_id);
+      $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
       return $operation == 'edit' && $entity_type && $entity_type->isRevisionable();
     }
   }
@@ -93,7 +93,7 @@ class EntityRevisionConverter extends EntityConverter {
       // If the entity type is translatable, ensure we return the proper
       // translation object for the current context.
       if ($entity instanceof EntityInterface && $entity instanceof TranslatableInterface) {
-        $entity = $this->entityManager->getTranslationFromContext($entity, NULL, array('operation' => 'entity_upcast'));
+        $entity = $this->entityRepository->getTranslationFromContext($entity, NULL, array('operation' => 'entity_upcast'));
       }
     }
 

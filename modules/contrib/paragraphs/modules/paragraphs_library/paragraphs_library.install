@@ -65,7 +65,7 @@ function paragraphs_library_install() {
  */
 function paragraphs_library_update_8001() {
 
-  \Drupal::service('entity.manager')->clearCachedDefinitions();
+  \Drupal::service('entity_type.manager')->clearCachedDefinitions();
 
   // Load all library items and store their values in memory.
   $library_values = \Drupal::database()->query('SELECT * FROM {paragraphs_library_item}')->fetchAll(PDO::FETCH_ASSOC);
@@ -110,7 +110,7 @@ function paragraphs_library_update_8001() {
   $entity_definition_update_manager->installFieldStorageDefinition('langcode', $entity_type->id(), 'paragraphs_library', $langcode_field);
   $entity_definition_update_manager->installFieldStorageDefinition('default_langcode', $entity_type->id(), 'paragraphs_library', $default_langcode_field);
 
-  \Drupal::entityManager()->clearCachedDefinitions();
+  \Drupal::entityTypeManager()->clearCachedDefinitions();
   foreach ($library_values as $library_value) {
     $library_value['paragraphs'] = [
       'target_id' => $library_value['paragraphs__target_id'],

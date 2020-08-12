@@ -2,13 +2,52 @@
 
 namespace Drupal\metatag\Form;
 
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\metatag\MetatagManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines the configuration export form.
  */
 class MetatagSettingsForm extends ConfigFormBase {
+
+  /**
+   * The metatag.manager service.
+   *
+   * @var \Drupal\metatag\MetatagManagerInterface
+   */
+  protected $metatagManager;
+
+  /**
+   * The entity_type.bundle.info service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
+   */
+  protected $entityTypeBundleInfo;
+
+  /**
+   * The state service.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    /**
+     * @var \Drupal\metatag\Form\MetatagSettingsForm
+     */
+    $instance = parent::create($container);
+    $instance->entityTypeBundleInfo = $container->get('entity_type.bundle.info');
+    $instance->metatagManager = $container->get('metatag.manager');
+    $instance->state = $container->get('state');
+
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -28,8 +67,9 @@ class MetatagSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    drupal_set_message($this->t('Please note that while the site is in maintenance mode none of the usual meta tags will be output.'));
-
+    if ($this->state->get('system.maintenance_mode')) {
+      $this->messenger()->addMessage($this->t('Please note that while the site is in maintenance mode none of the usual meta tags will be output.'));
+    }
     $settings = $this->config('metatag.settings')->get('entity_type_groups');
 
     $form['entity_type_groups'] = [
@@ -40,12 +80,10 @@ class MetatagSettingsForm extends ConfigFormBase {
       '#tree' => TRUE,
     ];
 
-    $metatag_manager = \Drupal::service('metatag.manager');
-    $bundle_manager = \Drupal::service('entity_type.bundle.info');
-    $metatag_groups = $metatag_manager->sortedGroups();
+    $metatag_groups = $this->metatagManager->sortedGroups();
     $entity_types = MetatagDefaultsForm::getSupportedEntityTypes();
     foreach ($entity_types as $entity_type => $entity_label) {
-      $bundles = $bundle_manager->getBundleInfo($entity_type);
+      $bundles = $this->entityTypeBundleInfo->getBundleInfo($entity_type);
       foreach ($bundles as $bundle_id => $bundle_info) {
         // Create an option list for each bundle.
         $options = [];
@@ -81,7 +119,8 @@ class MetatagSettingsForm extends ConfigFormBase {
         $value[$entity_type][$bundle_id] = $groups[0];
       }
     }
-    $settings->set('entity_type_groups', $value)->save();
+    $settings->set('entity_type_groups', $value);
+    $settings->save();
     parent::submitForm($form, $form_state);
   }
 

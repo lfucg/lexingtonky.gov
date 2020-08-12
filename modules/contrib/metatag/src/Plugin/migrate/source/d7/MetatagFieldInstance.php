@@ -2,7 +2,7 @@
 
 namespace Drupal\metatag\Plugin\migrate\source\d7;
 
-use Drupal\Core\Entity\EntityTypeBundleInfo;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,33 +18,30 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MetatagFieldInstance extends DrupalSqlBase {
 
   /**
-   * The EntityTypeBundleInfo for this entity type.
+   * The entity type bundle service.
    *
-   * @var \Drupal\Core\Entity\EntityTypeBundleInfo
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
    */
   protected $entityTypeBundleInfo;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, $migration, $state, $entity_manager, $entity_type_bundle_info) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $migration, $state, $entity_manager);
-    $this->entityTypeBundleInfo = $entity_type_bundle_info;
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration = NULL) {
+    /** @var static $source */
+    $source = parent::create($container, $configuration, $plugin_id, $plugin_definition, $migration);
+    $source->setEntityTypeBundleInfo($container->get('entity_type.bundle.info'));
+    return $source;
   }
 
   /**
-   * {@inheritdoc}
+   * Sets the entity type bundle info service.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle info service.
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration = NULL) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $migration,
-      $container->get('state'),
-      $container->get('entity.manager'),
-      $container->get('entity_type.bundle.info')
-    );
+  public function setEntityTypeBundleInfo(EntityTypeBundleInfoInterface $entity_type_bundle_info) {
+    $this->entityTypeBundleInfo = $entity_type_bundle_info;
   }
 
   /**
@@ -91,6 +88,13 @@ class MetatagFieldInstance extends DrupalSqlBase {
     $ids['entity_type']['type'] = 'string';
     $ids['bundle']['type'] = 'string';
     return $ids;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function count($refresh = FALSE) {
+    return $this->initializeIterator()->count();
   }
 
 }

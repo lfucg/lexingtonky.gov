@@ -87,12 +87,12 @@ trait ParagraphsTestBaseTrait {
     ]);
     $field->save();
 
-    $form_display = entity_get_form_display($entity_type, $bundle, 'default')
-      ->setComponent($paragraphs_field_name, ['type' => $widget_type]);
+    $form_display = \Drupal::service('entity_display.repository')->getFormDisplay($entity_type, $bundle);
+    $form_display = $form_display->setComponent($paragraphs_field_name, ['type' => $widget_type]);
     $form_display->save();
 
-    $view_display = entity_get_display($entity_type, $bundle, 'default')
-      ->setComponent($paragraphs_field_name, ['type' => 'entity_reference_revisions_entity_view']);
+    $view_display = \Drupal::service('entity_display.repository')->getViewDisplay($entity_type, $bundle);
+    $view_display->setComponent($paragraphs_field_name, ['type' => 'entity_reference_revisions_entity_view']);
     $view_display->save();
   }
 
@@ -126,7 +126,9 @@ trait ParagraphsTestBaseTrait {
 
     // Create a copy of the image, so that multiple file entities don't
     // reference the same file.
-    $copy_uri = file_unmanaged_copy($uri);
+    /** @var \Drupal\Core\File\FileSystemInterface $file_system */
+    $file_system = \Drupal::service('file_system');
+    $copy_uri = $file_system->copy($uri, 'public://' . $file_system->basename($uri));
 
     // Create a new file entity.
     $file_entity = File::create([
@@ -173,13 +175,13 @@ trait ParagraphsTestBaseTrait {
 
     $field_type_definition = \Drupal::service('plugin.manager.field.field_type')->getDefinition($field_type);
 
-    entity_get_form_display('paragraph', $paragraph_type_id, 'default')
-      ->setComponent($field_name, ['type' => $field_type_definition['default_widget']])
+    $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('paragraph', $paragraph_type_id);
+    $form_display->setComponent($field_name, ['type' => $field_type_definition['default_widget']])
       ->save();
 
-    entity_get_display('paragraph', $paragraph_type_id, 'default')
-      ->setComponent($field_name, ['type' => $field_type_definition['default_formatter']])
-      ->save();
+    $view_display = \Drupal::service('entity_display.repository')->getViewDisplay('paragraph', $paragraph_type_id);
+    $view_display->setComponent($field_name, ['type' => $field_type_definition['default_formatter']]);
+    $view_display->save();
   }
 
   /**

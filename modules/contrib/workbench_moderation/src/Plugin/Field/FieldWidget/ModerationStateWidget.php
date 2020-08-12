@@ -93,12 +93,10 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
    *   Moderation state storage.
    * @param \Drupal\Core\Entity\EntityStorageInterface $moderation_state_transition_storage
    *   Moderation state transition storage.
-   * @param \Drupal\Core\Entity\Query\QueryInterface $entity_query
-   *   Moderation transation entity query service.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, EntityStorageInterface $moderation_state_storage, EntityStorageInterface $moderation_state_transition_storage, QueryInterface $entity_query, ModerationInformation $moderation_information, StateTransitionValidation $validator) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, EntityStorageInterface $moderation_state_storage, EntityStorageInterface $moderation_state_transition_storage, ModerationInformation $moderation_information, StateTransitionValidation $validator) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
-    $this->moderationStateTransitionEntityQuery = $entity_query;
+    $this->moderationStateTransitionEntityQuery = $entity_type_manager->getStorage('moderation_state_transition')->getQuery();
     $this->moderationStateTransitionStorage = $moderation_state_transition_storage;
     $this->moderationStateStorage = $moderation_state_storage;
     $this->entityTypeManager = $entity_type_manager;
@@ -121,7 +119,6 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       $container->get('entity_type.manager'),
       $container->get('entity_type.manager')->getStorage('moderation_state'),
       $container->get('entity_type.manager')->getStorage('moderation_state_transition'),
-      $container->get('entity.query')->get('moderation_state_transition', 'AND'),
       $container->get('workbench_moderation.moderation_information'),
       $container->get('workbench_moderation.state_transition_validation')
     );

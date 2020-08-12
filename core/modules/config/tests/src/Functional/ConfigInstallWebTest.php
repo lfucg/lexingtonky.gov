@@ -34,7 +34,11 @@ class ConfigInstallWebTest extends BrowserTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->adminUser = $this->drupalCreateUser(['administer modules', 'administer themes', 'administer site configuration']);
+    $this->adminUser = $this->drupalCreateUser([
+      'administer modules',
+      'administer themes',
+      'administer site configuration',
+    ]);
 
     // Ensure the global variable being asserted by this test does not exist;
     // a previous test executed in this request/process might have set it.
@@ -198,7 +202,7 @@ class ConfigInstallWebTest extends BrowserTestBase {
     $this->drupalPostForm('admin/modules', ['modules[config_other_module_config_test][enable]' => TRUE], t('Install'));
     $this->drupalPostForm('admin/modules', ['modules[config_install_dependency_test][enable]' => TRUE], t('Install'));
     $this->rebuildContainer();
-    $this->assertInstanceOf(ConfigTest::class, \Drupal::entityTypeManager()->getStorage('config_test')->load('other_module_test_with_dependency'), 'The config_test.dynamic.other_module_test_with_dependency configuration has been created during install.');
+    $this->assertInstanceOf(ConfigTest::class, \Drupal::entityTypeManager()->getStorage('config_test')->load('other_module_test_with_dependency'));
   }
 
   /**

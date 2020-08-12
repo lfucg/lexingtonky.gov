@@ -41,7 +41,10 @@ class UserAdminLanguageTest extends BrowserTestBase {
   protected function setUp() {
     parent::setUp();
     // User to add and remove language.
-    $this->adminUser = $this->drupalCreateUser(['administer languages', 'access administration pages']);
+    $this->adminUser = $this->drupalCreateUser([
+      'administer languages',
+      'access administration pages',
+    ]);
     // User to check non-admin access.
     $this->regularUser = $this->drupalCreateUser();
   }
@@ -81,8 +84,9 @@ class UserAdminLanguageTest extends BrowserTestBase {
   /**
    * Tests that the admin language is configurable only for administrators.
    *
-   * If a user has the permission "access administration pages", they should
-   * be able to see the setting to pick the language they want those pages in.
+   * If a user has the permission "access administration pages" or
+   * "view the administration theme", they should be able to see the setting to
+   * pick the language they want those pages in.
    *
    * If a user does not have that permission, it would confusing for them to
    * have a setting for pages they cannot access, so they should not be able to
@@ -97,6 +101,13 @@ class UserAdminLanguageTest extends BrowserTestBase {
     $this->drupalGet($path);
     // Ensure administration pages language setting is visible for admin.
     $this->assertFieldByXPath($this->constructFieldXpath('id', 'edit-preferred-admin-langcode'), NULL, 'Administration pages language selector available for admins.');
+
+    // Ensure administration pages language setting is visible for editors.
+    $editor = $this->drupalCreateUser(['view the administration theme']);
+    $this->drupalLogin($editor);
+    $path = 'user/' . $editor->id() . '/edit';
+    $this->drupalGet($path);
+    $this->assertFieldByXPath($this->constructFieldXpath('id', 'edit-preferred-admin-langcode'), NULL, 'Administration pages language selector available for editors.');
 
     // Ensure administration pages language setting is hidden for non-admins.
     $this->drupalLogin($this->regularUser);

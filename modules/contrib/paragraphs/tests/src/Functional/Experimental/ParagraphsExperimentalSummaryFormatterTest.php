@@ -61,8 +61,8 @@ class ParagraphsExperimentalSummaryFormatterTest extends ParagraphsExperimentalT
     $this->drupalPostForm(NULL, $edit, t('Save'));
 
     // Assert the summary is correctly generated.
-    $this->assertText($this->admin_user->label());
-    $this->assertText('Title example');
+    $this->assertSession()->pageTextContains($this->admin_user->label());
+    $this->assertSession()->pageTextContains('Title example');
   }
 
 }

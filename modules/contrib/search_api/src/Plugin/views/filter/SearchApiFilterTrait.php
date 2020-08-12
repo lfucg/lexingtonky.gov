@@ -23,10 +23,8 @@ trait SearchApiFilterTrait {
   protected function valueForm(&$form, FormStateInterface $form_state) {
     parent::valueForm($form, $form_state);
 
-    if (isset($form['value']['min'])) {
-      if (!$this->operatorValues(2)) {
-        unset($form['value']['min'], $form['value']['max']);
-      }
+    if (isset($form['value']['min']) && !$this->operatorValues(2)) {
+      unset($form['value']['min'], $form['value']['max']);
     }
   }
 

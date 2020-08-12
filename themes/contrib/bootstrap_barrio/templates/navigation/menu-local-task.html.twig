@@ -21,6 +21,7 @@
     'nav-link',
     is_active ? 'active',
     item.url.getOption('attributes').class ? item.url.getOption('attributes').class | join(' '),
+    'nav-link-' ~ item.url.toString() | clean_class,
   ]
 %}
 <li{{ attributes.addClass(is_active ? 'active', 'nav-item') }}>{{ link(item.text, item.url, {'class': classes}) }}</li>

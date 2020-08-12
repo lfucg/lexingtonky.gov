@@ -17,6 +17,12 @@ smtp.settings:
     smtp_protocol:
       type: string
       label: 'Use encrypted protocol'
+    smtp_autotls:
+      type: boolean
+      label: 'Enable TLS encryption automatically when supported by the remote host'
+    smtp_timeout:
+      type: integer
+      label: 'Amount of seconds for the SMTP command to timeout'
     smtp_username:
       type: string
       label: 'Username'
@@ -47,3 +53,6 @@ smtp.settings:
     prev_mail_system:
       type: string
       label: 'Previous mail system'
+    smtp_keepalive:
+      type: boolean
+      label: 'Enable the connection keep alive function'

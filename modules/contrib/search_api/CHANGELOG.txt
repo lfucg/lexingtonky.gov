@@ -1,3 +1,89 @@
+Search API 1.17 (2020-06-02):
+-----------------------------
+- #3126751 by douggreen, drunken monkey, Berdir: Fixed calls to deprecated
+  PHPUnit methods.
+- #3121637 by mbovan, drunken monkey, Berdir: Replaced theme functions with
+  templates.
+- #3133011 by drunken monkey: Cleaned up
+  AutocompleteTest::assertSuggestionsEqual().
+- #3119335 by chr.fritsch, drunken monkey, Ivan616: Added a "rebuild-tracker"
+  Drush command.
+- #3115343 by drunken monkey: Fixed warning in Highlight processor when
+  preg_split() doesn't work.
+- #3116489 by drunken monkey: Improved the warning message for missing
+  "Rendered item" configuration during indexing.
+- #3123173 by drunken monkey: Fixed uncaught exception when trying to change
+  locked field type.
+- #3126120 by drunken monkey: Fixed coding standards.
+- #3125383 by marassa, drunken monkey: Added negation support to the "Multiple
+  words" parser.
+- #3125444 by Rajesh Kairamkonda, drunken monkey: Removed $this->container from
+  Functional tests.
+- #3120909 by drunken monkey: Cleaned up @throws tags in Drush code.
+- #3023170 by drunken monkey, Berdir, milindk, pfrenssen, phenaproxima,
+  geek-merlin, chr.fritsch: Updated Core requirement to 8.8 and removed all
+  use of deprecated Core code.
+
+Search API 1.16 (2020-04-08):
+-----------------------------
+- #3120997 by thalles, drunken monkey: Updated the "source" composer value.
+- #3117171 by claudiu.cristea, drunken monkey, pfrenssen: Added support for the
+  Views Bulk Form field.
+- #3115214 by mpp, drunken monkey: Added Search API support for the Behat
+  Drupal extension.
+- #3118224 by JeroenT, drunken monkey: Fixed DisplayPluginManager no longer
+  implementing DisplayPluginManagerInterface.
+- #3111130 by bwaindwain, drunken monkey: Fixed reference to out-dated
+  "Drupal.WhiteSpace.OperatorSpacing" PhpCs sniff.
+- #3106515 by drunken monkey, nbaosullivan: Added support for Views filters on
+  any bundle entity type.
+- #3056940 by drunken monkey: Fixed error handling in the "Add hierarchy"
+  processor.
+- #3102603 by drunken monkey: Deprecated EntityDatasourceInterface.
+- #3103594 by drunken monkey: Cleaned up the Database backend plugin code.
+- #3103585 by drunken monkey: Converted hook_search_api_db_query_alter() to an
+  event.
+- #3044782 by drunken monkey, stefvanlooveren: Increased PHP version
+  requirement to 7.0.
+- #3100556 by JeroenT, drunken monkey: Fixed "Rendered entity" Views row style
+  not immediately available when creating first index.
+- #3101607 by manuel.adan, drunken monkey: Added support for nested data
+  properties.
+- #3109755 by Vladimirrem, drunken monkey: Added $view property to entities
+  when viewed via the Views "Rendered entity" row plugin.
+- #3111635 by alexpott, drunken monkey, borisson_: Fixed duplicate dependencies
+  in index config.
+- #3098350 by abrar_arshad, drunken monkey: Fixed immediate indexing of items
+  marked during indexing.
+- #3102662 by drunken monkey: Declared IndexingItemsEvent class as final.
+- #3099001 by drunken monkey, mkalkbrenner: Marked PluginDependencyTrait
+  methods in ConfigurablePluginBase as deprecated.
+- #3099048 by andreyjan, drunken monkey, Berdir: Fixed Drupal 8.8 deprecations
+  that do not require Drupal 8.8.
+- #3096581 by andreyjan, drunken monkey: Converted TaxonomyTermArgumentTest to
+  a unit test.
+- #3101998 by lostkangaroo, drunken monkey: Fixed small bug in "results alter"
+  event processing.
+- #3004270 by stefvanlooveren, drunken monkey: Fixed caching of the "Execute
+  pending tasks" local action.
+- #3092347 by drunken monkey: Fixed batch size when indexing for multiple
+  indexes via Drush.
+- #3091785 by cedric_a, drunken monkey, borisson_: Improved styling of disabled
+  servers/indexes in overview.
+- #3096573 by mudassar774, drunken monkey: Fixed warning in Highlight processor
+  in some edge cases.
+- #2824640 by pfrenssen, drunken monkey, sardara, idimopoulos, geek.merlin aka
+  axel.rutz, borisson_, claudiu.cristea: Fixed caching of Views results.
+- #3001743 by drunken monkey: Adapted to use the new
+  ConditionInterface::alwaysFalse() method.
+- #3098722 by drunken monkey, milindk: Increased the Core version requirement to
+  8.7.
+- #3065112 by gdejonghe, mbovan, wengerk, drunken monkey: Adapted the
+  SearchApiTerm Views argument plugin to use dependency injection for loading
+  terms.
+- #2381823 by cedric_a, drunken monkey, borisson_: Added a link to the
+  documentation to the Processors tab.
+
 Search API 1.15 (2019-11-07):
 -----------------------------
 - #3022881 by MahtabAlam, drunken monkey, borisson_: Fixed unintentional

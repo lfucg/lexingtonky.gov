@@ -10,7 +10,7 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
  * @MetatagTag(
  *   id = "og_image_width",
  *   label = @Translation("Image width"),
- *   description = @Translation("The height of the above image(s). Note: if both the unsecured and secured images are provided, they should both be the same size."),
+ *   description = @Translation("The width of the above image(s). Note: if both the unsecured and secured images are provided, they should both be the same size."),
  *   name = "og:image:width",
  *   group = "open_graph",
  *   weight = 13,

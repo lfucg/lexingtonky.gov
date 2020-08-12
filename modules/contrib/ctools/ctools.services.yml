@@ -1,10 +1,10 @@
 services:
   ctools.wizard.form:
     class: Drupal\ctools\Controller\WizardFormController
-    arguments: ['@controller_resolver', '@form_builder', '@ctools.wizard.factory']
+    arguments: ['@http_kernel.controller.argument_resolver', '@form_builder', '@ctools.wizard.factory']
   ctools.wizard.entity.form:
     class: Drupal\ctools\Controller\WizardEntityFormController
-    arguments: ['@controller_resolver', '@form_builder', '@ctools.wizard.factory', '@entity_type.manager']
+    arguments: ['@http_kernel.controller.argument_resolver', '@form_builder', '@ctools.wizard.factory', '@entity_type.manager']
   ctools.wizard_enhancer:
     class: Drupal\ctools\Routing\Enhancer\WizardEnhancer
     tags:

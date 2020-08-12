@@ -36,6 +36,11 @@ class ParagraphsExperimentalClientsideButtonsTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() {
     parent::setUp();
     // Place the breadcrumb, tested in fieldUIAddNewField().
@@ -61,7 +66,7 @@ class ParagraphsExperimentalClientsideButtonsTest extends WebDriverTestBase {
       'create paragraphed_test content',
     ]);
     // Set the add mode on the content type to modal form widget.
-    $form_display = entity_get_form_display('node', 'paragraphed_test', 'default');
+    $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('node', 'paragraphed_test');
     $form_display->setComponent('field_paragraphs', [
       'type' => 'paragraphs',
       'settings' => [
@@ -208,8 +213,8 @@ class ParagraphsExperimentalClientsideButtonsTest extends WebDriverTestBase {
     $this->addParagraphsType('rich_paragraph');
     $this->addFieldtoParagraphType('rich_paragraph', 'field_intermediate_text', 'text');
     $this->addFieldtoParagraphType('rich_paragraph', 'field_nested_paragraphs', 'entity_reference_revisions', ['target_type' => 'paragraph']);
-    entity_get_form_display('paragraph', 'rich_paragraph', 'default')
-      ->setComponent('field_nested_paragraphs', [
+    $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('paragraph', 'rich_paragraph');
+    $form_display->setComponent('field_nested_paragraphs', [
         'type' => 'paragraphs',
         'settings' => [
           'title' => 'Paragraph',

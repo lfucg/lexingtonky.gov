@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\FileSystem\FileSystem as FileSystemComponent;
+use Drupal\Component\Utility\Bytes;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Utility\Environment;
 use Drupal\Component\Utility\OpCodeCache;
@@ -16,9 +17,12 @@ use Drupal\Core\DrupalKernel;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+use Drupal\Core\Entity\Sql\SqlContentEntityStorageSchema;
 use Drupal\Core\Extension\Extension;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\StringTranslation\PluralTranslatableMarkup;
 use Drupal\path_alias\Entity\PathAlias;
 use Drupal\path_alias\PathAliasStorage;
 use Drupal\Core\Site\Settings;
@@ -33,6 +37,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 function system_requirements($phase) {
   global $install_state;
+  // Reset the extension lists.
+  \Drupal::service('extension.list.module')->reset();
+  \Drupal::service('extension.list.theme')->reset();
   $requirements = [];
 
   // Report Drupal version
@@ -309,6 +316,46 @@ function system_requirements($phase) {
     $requirements['php_opcache']['title'] = t('PHP OPcode caching');
   }
 
+  // Check to see if APCu is installed and configured correctly.
+  if ($phase == 'runtime' && PHP_SAPI != 'cli') {
+    $requirements['php_apcu']['title'] = t('PHP APCu caching');
+    if (extension_loaded('apcu') && filter_var(ini_get('apc.enabled'), FILTER_VALIDATE_BOOLEAN)) {
+      $memory_info = apcu_sma_info(TRUE);
+      $apcu_actual_size = format_size($memory_info['seg_size']);
+      $apcu_recommended_size = '32 MB';
+      $requirements['php_apcu']['value'] = t('Enabled (@size)', ['@size' => $apcu_actual_size]);
+      if (Bytes::toInt($apcu_actual_size) < Bytes::toInt($apcu_recommended_size)) {
+        $requirements['php_apcu']['severity'] = REQUIREMENT_WARNING;
+        $requirements['php_apcu']['description'] = t('Depending on your configuration, Drupal can run with a @apcu_size APCu limit. However, a @apcu_default_size APCu limit (the default) or above is recommended, especially if your site uses additional custom or contributed modules.', [
+          '@apcu_size' => $apcu_actual_size,
+          '@apcu_default_size' => $apcu_recommended_size,
+        ]);
+      }
+      else {
+        $memory_available = $memory_info['avail_mem'] / $memory_info['seg_size'];
+        if ($memory_available < 0.1) {
+          $requirements['php_apcu']['severity'] = REQUIREMENT_ERROR;
+        }
+        elseif ($memory_available < 0.25) {
+          $requirements['php_apcu']['severity'] = REQUIREMENT_WARNING;
+        }
+        else {
+          $requirements['php_apcu']['severity'] = REQUIREMENT_OK;
+        }
+        $requirements['php_apcu']['description'] = t('Memory available: @available.', [
+          '@available' => format_size($memory_info['avail_mem']),
+        ]);
+      }
+    }
+    else {
+      $requirements['php_apcu'] += [
+        'value' => t('Not enabled'),
+        'severity' => REQUIREMENT_INFO,
+        'description' => t('PHP APCu caching can improve your site\'s performance considerably. It is <strong>highly recommended</strong> to have <a href="https://www.php.net/manual/apcu.installation.php" target="_blank">APCu</a> installed on your server.'),
+      ];
+    }
+  }
+
   if ($phase != 'update') {
     // Test whether we have a good source of random bytes.
     $requirements['php_random_bytes'] = [
@@ -317,7 +364,7 @@ function system_requirements($phase) {
     try {
       $bytes = random_bytes(10);
       if (strlen($bytes) != 10) {
-        throw new \Exception(t('Tried to generate 10 random bytes, generated @count', ['@count' => strlen($bytes)]));
+        throw new \Exception("Tried to generate 10 random bytes, generated '" . strlen($bytes) . "'");
       }
       $requirements['php_random_bytes']['value'] = t('Successful');
     }
@@ -388,9 +435,11 @@ function system_requirements($phase) {
       $requirements['database_extensions']['value'] = t('Enabled');
     }
   }
-  else {
+
+  if ($phase === 'runtime' || $phase === 'update') {
     // Database information.
     $class = Database::getConnection()->getDriverClass('Install\\Tasks');
+    /** @var \Drupal\Core\Database\Install\Tasks $tasks */
     $tasks = new $class();
     $requirements['database_system'] = [
       'title' => t('Database system'),
@@ -400,6 +449,19 @@ function system_requirements($phase) {
       'title' => t('Database system version'),
       'value' => Database::getConnection()->version(),
     ];
+
+    $errors = $tasks->engineVersionRequirementsCheck();
+    $error_count = count($errors);
+    if ($error_count > 0) {
+      $error_message = [
+        '#theme' => 'item_list',
+        '#items' => $errors,
+        // Use the comma-list style to display a single error without bullets.
+        '#context' => ['list_style' => $error_count === 1 ? 'comma-list' : ''],
+      ];
+      $requirements['database_system_version']['severity'] = REQUIREMENT_ERROR;
+      $requirements['database_system_version']['description'] = $error_message;
+    }
   }
 
   // Test PHP memory_limit
@@ -856,28 +918,65 @@ function system_requirements($phase) {
   }
 
   // Display an error if a newly introduced dependency in a module is not resolved.
-  if ($phase == 'update') {
+  if ($phase === 'update' || $phase === 'runtime') {
+    $create_extension_incompatibility_list = function ($extension_names, $description, $title) {
+      // Use an inline twig template to:
+      // - Concatenate two MarkupInterface objects and preserve safeness.
+      // - Use the item_list theme for the extension list.
+      $template = [
+        '#type' => 'inline_template',
+        '#template' => '{{ description }}{{ extensions }}',
+        '#context' => [
+          'extensions' => [
+            '#theme' => 'item_list',
+          ],
+        ],
+      ];
+      $template['#context']['extensions']['#items'] = $extension_names;
+      $template['#context']['description'] = $description;
+      return [
+        'title' => $title,
+        'value' => [
+          'list' => $template,
+          'handbook_link' => [
+            '#markup' => t(
+              'Review the <a href=":url"> suggestions for resolving this incompatibility</a> to repair your installation, and then re-run update.php.',
+              [':url' => 'https://www.drupal.org/docs/8/update/troubleshooting-database-updates']
+            ),
+          ],
+        ],
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    };
     $profile = \Drupal::installProfile();
     $files = \Drupal::service('extension.list.module')->getList();
-    foreach ($files as $module => $file) {
-      // Ignore disabled modules and installation profiles.
-      if (!$file->status || $module == $profile) {
+    $files += \Drupal::service('extension.list.theme')->getList();
+    $core_incompatible_extensions = [];
+    $php_incompatible_extensions = [];
+    foreach ($files as $extension_name => $file) {
+      // Ignore uninstalled extensions and installation profiles.
+      if (!$file->status || $extension_name == $profile) {
         continue;
       }
-      // Check the module's PHP version.
+
       $name = $file->info['name'];
+      if (!empty($file->info['core_incompatible'])) {
+        $core_incompatible_extensions[$file->info['type']][] = $name;
+      }
+
+      // Check the extension's PHP version.
       $php = $file->info['php'];
       if (version_compare($php, PHP_VERSION, '>')) {
-        $requirements['php']['description'] .= t('@name requires at least PHP @version.', ['@name' => $name, '@version' => $php]);
-        $requirements['php']['severity'] = REQUIREMENT_ERROR;
+        $php_incompatible_extensions[$file->info['type']][] = $name;
       }
+
       // Check the module's required modules.
       /** @var \Drupal\Core\Extension\Dependency $requirement */
       foreach ($file->requires as $requirement) {
         $required_module = $requirement->getName();
         // Check if the module exists.
         if (!isset($files[$required_module])) {
-          $requirements["$module-$required_module"] = [
+          $requirements["$extension_name-$required_module"] = [
             'title' => t('Unresolved dependency'),
             'description' => t('@name requires this module.', ['@name' => $name]),
             'value' => t('@required_name (Missing)', ['@required_name' => $required_module]),
@@ -890,7 +989,7 @@ function system_requirements($phase) {
         $required_name = $required_file->info['name'];
         $version = str_replace(\Drupal::CORE_COMPATIBILITY . '-', '', $required_file->info['version']);
         if (!$requirement->isCompatible($version)) {
-          $requirements["$module-$required_module"] = [
+          $requirements["$extension_name-$required_module"] = [
             'title' => t('Unresolved dependency'),
             'description' => t('@name requires this module and version. Currently using @required_name version @version', ['@name' => $name, '@required_name' => $required_name, '@version' => $version]),
             'value' => t('@required_name (Version @compatibility required)', ['@required_name' => $required_name, '@compatibility' => $requirement->getConstraintString()]),
@@ -899,6 +998,115 @@ function system_requirements($phase) {
           continue;
         }
       }
+    }
+    if (!empty($core_incompatible_extensions['module'])) {
+      $requirements['module_core_incompatible'] = $create_extension_incompatibility_list(
+        $core_incompatible_extensions['module'],
+        new PluralTranslatableMarkup(
+          count($core_incompatible_extensions['module']),
+        'The following module is installed, but it is incompatible with Drupal @version:',
+        'The following modules are installed, but they are incompatible with Drupal @version:',
+        ['@version' => \Drupal::VERSION]
+        ),
+        new PluralTranslatableMarkup(
+          count($core_incompatible_extensions['module']),
+          'Incompatible module',
+          'Incompatible modules'
+        )
+      );
+    }
+    if (!empty($core_incompatible_extensions['theme'])) {
+      $requirements['theme_core_incompatible'] = $create_extension_incompatibility_list(
+        $core_incompatible_extensions['theme'],
+        new PluralTranslatableMarkup(
+          count($core_incompatible_extensions['theme']),
+          'The following theme is installed, but it is incompatible with Drupal @version:',
+          'The following themes are installed, but they are incompatible with Drupal @version:',
+          ['@version' => \Drupal::VERSION]
+        ),
+        new PluralTranslatableMarkup(
+          count($core_incompatible_extensions['theme']),
+          'Incompatible theme',
+          'Incompatible themes'
+        )
+      );
+    }
+    if (!empty($php_incompatible_extensions['module'])) {
+      $requirements['module_php_incompatible'] = $create_extension_incompatibility_list(
+        $php_incompatible_extensions['module'],
+        new PluralTranslatableMarkup(
+          count($php_incompatible_extensions['module']),
+          'The following module is installed, but it is incompatible with PHP @version:',
+          'The following modules are installed, but they are incompatible with PHP @version:',
+          ['@version' => phpversion()]
+        ),
+        new PluralTranslatableMarkup(
+          count($php_incompatible_extensions['module']),
+          'Incompatible module',
+          'Incompatible modules'
+        )
+      );
+    }
+    if (!empty($php_incompatible_extensions['theme'])) {
+      $requirements['theme_php_incompatible'] = $create_extension_incompatibility_list(
+        $php_incompatible_extensions['theme'],
+        new PluralTranslatableMarkup(
+          count($php_incompatible_extensions['theme']),
+          'The following theme is installed, but it is incompatible with PHP @version:',
+          'The following themes are installed, but they are incompatible with PHP @version:',
+          ['@version' => phpversion()]
+        ),
+        new PluralTranslatableMarkup(
+          count($php_incompatible_extensions['theme']),
+          'Incompatible theme',
+          'Incompatible themes'
+        )
+      );
+    }
+
+    // Look for invalid modules.
+    $extension_config = \Drupal::configFactory()->get('core.extension');
+    /** @var \Drupal\Core\Extension\ExtensionList $extension_list */
+    $extension_list = \Drupal::service('extension.list.module');
+    $is_missing_extension = function ($extension_name) use (&$extension_list) {
+      return !$extension_list->exists($extension_name);
+    };
+
+    $invalid_modules = array_filter(array_keys($extension_config->get('module')), $is_missing_extension);
+
+    if (!empty($invalid_modules)) {
+      $requirements['invalid_module'] = $create_extension_incompatibility_list(
+        $invalid_modules,
+        new PluralTranslatableMarkup(
+          count($invalid_modules),
+          'The following module is marked as installed in the core.extension configuration, but it is missing:',
+          'The following modules are marked as installed in the core.extension configuration, but they are missing:'
+        ),
+        new PluralTranslatableMarkup(
+          count($invalid_modules),
+          'Missing or invalid module',
+          'Missing or invalid modules'
+        )
+      );
+    }
+
+    // Look for invalid themes.
+    $extension_list = \Drupal::service('extension.list.theme');
+    $invalid_themes = array_filter(array_keys($extension_config->get('theme')), $is_missing_extension);
+    if (!empty($invalid_themes)) {
+      $requirements['invalid_theme'] = $create_extension_incompatibility_list(
+        $invalid_themes,
+        new PluralTranslatableMarkup(
+          count($invalid_themes),
+          'The following theme is marked as installed in the core.extension configuration, but it is missing:',
+          'The following themes are marked as installed in the core.extension configuration, but they are missing:'
+        ),
+        new PluralTranslatableMarkup(
+          count($invalid_themes),
+          'Missing or invalid theme',
+          'Missing or invalid themes'
+        )
+      );
     }
   }
 
@@ -1098,7 +1306,7 @@ function system_requirements($phase) {
   if ($phase === 'install' || $phase === 'update') {
     if (\Drupal::moduleHandler()->moduleExists('pathauto')) {
       $info = \Drupal::service('extension.list.module')->getExtensionInfo('pathauto');
-      if (version_compare($info['version'], '8.x-1.5') <= 0) {
+      if ($info['version'] && version_compare($info['version'], '8.x-1.5') <= 0) {
         $requirements['pathauto_module_incompatibility'] = [
           'title' => t('Pathauto'),
           'description' => t('The Pathauto module is not compatible with the current version of Drupal core. Update the <a href=":url">Pathauto</a> module to 8.x-1.6 or later.', [
@@ -1106,6 +1314,69 @@ function system_requirements($phase) {
           ]),
           'severity' => REQUIREMENT_ERROR,
         ];
+      }
+    }
+  }
+
+  // Ensure that no module has a current schema version that is lower than the
+  // one that was last removed.
+  if ($phase == 'update') {
+    $module_handler = \Drupal::moduleHandler();
+    $module_list = [];
+    foreach ($module_handler->getImplementations('update_last_removed') as $module) {
+      $last_removed = $module_handler->invoke($module, 'update_last_removed');
+      if ($last_removed && $last_removed > drupal_get_installed_schema_version($module)) {
+
+        /** @var \Drupal\Core\Extension\Extension $module_info */
+        $module_info = \Drupal::service('extension.list.module')->get($module);
+        $module_list[$module_info->info['package']][$module] = [
+          'info' => $module_info,
+          'last_removed' => $last_removed,
+          'installed_version' => drupal_get_installed_schema_version($module),
+        ];
+      }
+    }
+
+    foreach ($module_list as $package => $package_modules) {
+      foreach ($package_modules as $module => $data) {
+        $requirements[$module . '_update_last_removed'] = [
+          'title' => t('Unsupported schema version: @module', ['@module' => $data['info']->info['name']]),
+          'description' => t('The installed version of the %module module is too old to update. Update to an intermediate version first (last removed version: @last_removed_version, installed version: @installed_version).', [
+            '%module' => $data['info']->info['name'],
+            '@last_removed_version' => $data['last_removed'],
+            '@installed_version' => $data['installed_version'],
+          ]),
+          'severity' => REQUIREMENT_ERROR,
+        ];
+      }
+    }
+    // Also check post-updates. Only do this if we're not already showing an
+    // error for hook_update_N().
+    if (empty($module_list)) {
+      $existing_updates = \Drupal::service('keyvalue')->get('post_update')->get('existing_updates', []);
+      $post_update_registry = \Drupal::service('update.post_update_registry');
+      $modules = \Drupal::moduleHandler()->getModuleList();
+      $module_extension_list = \Drupal::service('extension.list.module');
+      foreach ($modules as $module => $extension) {
+        $module_info = $module_extension_list->get($module);
+        $removed_post_updates = $post_update_registry->getRemovedPostUpdates($module);
+        if ($missing_updates = array_diff(array_keys($removed_post_updates), $existing_updates)) {
+          $versions = array_unique(array_intersect_key($removed_post_updates, array_flip($missing_updates)));
+          $description = new PluralTranslatableMarkup(count($versions),
+            'The installed version of the %module module is too old to update. Update to a version prior to @versions first (missing updates: @missing_updates).',
+            'The installed version of the %module module is too old to update. Update first to a version prior to all of the following: @versions (missing updates: @missing_updates).',
+            [
+              '%module' => $module_info->info['name'],
+              '@missing_updates' => implode(', ', $missing_updates),
+              '@versions' => implode(', ', $versions),
+            ]
+          );
+          $requirements[$module . '_post_update_removed'] = [
+            'title' => t('Missing updates for: @module', ['@module' => $module_info->info['name']]),
+            'description' => $description,
+            'severity' => REQUIREMENT_ERROR,
+          ];
+        }
       }
     }
   }
@@ -2517,6 +2788,62 @@ function system_update_8805() {
       if ($field_storage_definition->isBaseField()) {
         $field_storage_definition->setProvider('path_alias');
         $last_installed_schema_repository->setLastInstalledFieldStorageDefinition($field_storage_definition);
+      }
+    }
+  }
+}
+
+/**
+ * Update the stored schema data for entity identifier fields.
+ */
+function system_update_8901() {
+  $definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $installed_storage_schema = \Drupal::keyValue('entity.storage_schema.sql');
+
+  foreach ($definition_update_manager->getEntityTypes() as $entity_type_id => $entity_type) {
+    // Ensure that we are dealing with a non-deleted entity type that uses the
+    // default SQL storage.
+    if (!$entity_type_manager->hasDefinition($entity_type_id)) {
+      continue;
+    }
+
+    $storage = $entity_type_manager->getStorage($entity_type_id);
+    if (!$storage instanceof SqlContentEntityStorage) {
+      continue;
+    }
+
+    foreach (['id', 'revision'] as $key) {
+      if (!$entity_type->hasKey($key)) {
+        continue;
+      }
+
+      $field_name = $entity_type->getKey($key);
+      $field_storage_definition = $definition_update_manager->getFieldStorageDefinition($field_name, $entity_type_id);
+      if (!$field_storage_definition) {
+        continue;
+      }
+      if ($field_storage_definition->getType() !== 'integer') {
+        continue;
+      }
+
+      // Retrieve the storage schema in order to use its own method for updating
+      // the identifier schema - ::processIdentifierSchema(). This is needed
+      // because some storage schemas might not use serial identifiers.
+      // @see \Drupal\user\UserStorageSchema::processIdentifierSchema()
+      $ref_get_storage_schema = new \ReflectionMethod($storage, 'getStorageSchema');
+      $ref_get_storage_schema->setAccessible(TRUE);
+      $storage_schema = $ref_get_storage_schema->invoke($storage);
+
+      if ($storage_schema instanceof SqlContentEntityStorageSchema) {
+        $field_schema_data = $installed_storage_schema->get($entity_type_id . '.field_schema_data.' . $field_storage_definition->getName(), []);
+        $table = $key === 'id' ? $entity_type->getBaseTable() : $entity_type->getRevisionTable();
+
+        $ref_process_identifier_schema = new \ReflectionMethod($storage_schema, 'processIdentifierSchema');
+        $ref_process_identifier_schema->setAccessible(TRUE);
+        $ref_process_identifier_schema->invokeArgs($storage_schema, [&$field_schema_data[$table], $field_name]);
+
+        $installed_storage_schema->set($entity_type_id . '.field_schema_data.' . $field_storage_definition->getName(), $field_schema_data);
       }
     }
   }

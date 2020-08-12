@@ -31,6 +31,12 @@ class MetatagCustomRouteTest extends BrowserTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+
+  /**
    * Run tests on the custom route.
    */
   public function testCustomRoute() {
@@ -48,7 +54,7 @@ class MetatagCustomRouteTest extends BrowserTestBase {
     ])->save();
 
     $this->drupalGet('metatag_test_custom_route/' . $entity_test->id());
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $xpath = $this->xpath("//meta[@name='keywords']");
     $this->assertEqual(count($xpath), 1);
     $this->assertEqual($xpath[0]->getAttribute('content'), 'test');

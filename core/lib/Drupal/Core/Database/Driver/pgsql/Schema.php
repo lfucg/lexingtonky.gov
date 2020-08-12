@@ -99,6 +99,7 @@ class Schema extends DatabaseSchema {
    *
    * @param $table_name
    *   The non-prefixed name of the table.
+   *
    * @return
    *   An object with two member variables:
    *     - 'blob_fields' that lists all the blob fields in the table.
@@ -140,7 +141,7 @@ WHERE pg_attribute.attnum > 0
 AND NOT pg_attribute.attisdropped
 AND pg_attribute.attrelid = :key::regclass
 AND (format_type(pg_attribute.atttypid, pg_attribute.atttypmod) = 'bytea'
-OR pg_attrdef.adsrc LIKE 'nextval%')
+OR pg_get_expr(pg_attrdef.adbin, pg_attribute.attrelid) LIKE 'nextval%')
 EOD;
         $result = $this->connection->query($sql, [
           ':key' => $key,
@@ -264,6 +265,7 @@ EOD;
    *   The name of the table to create.
    * @param $table
    *   A Schema API table definition array.
+   *
    * @return
    *   An array of SQL statements to create the table.
    */
@@ -396,7 +398,8 @@ EOD;
         case 'smallint':
           $field['pgsql_type'] = $map['int:medium'];
           break;
-        case 'int' :
+
+        case 'int':
           $field['pgsql_type'] = $map['int:big'];
           break;
       }
@@ -546,10 +549,10 @@ EOD;
    */
   public function renameTable($table, $new_name) {
     if (!$this->tableExists($table)) {
-      throw new SchemaObjectDoesNotExistException(t("Cannot rename @table to @table_new: table @table doesn't exist.", ['@table' => $table, '@table_new' => $new_name]));
+      throw new SchemaObjectDoesNotExistException("Cannot rename '$table' to '$new_name': table '$table' doesn't exist.");
     }
     if ($this->tableExists($new_name)) {
-      throw new SchemaObjectExistsException(t("Cannot rename @table to @table_new: table @table_new already exists.", ['@table' => $table, '@table_new' => $new_name]));
+      throw new SchemaObjectExistsException("Cannot rename '$table' to '$new_name': table '$new_name' already exists.");
     }
 
     // Get the schema and tablename for the old table.
@@ -626,10 +629,10 @@ EOD;
    */
   public function addField($table, $field, $spec, $new_keys = []) {
     if (!$this->tableExists($table)) {
-      throw new SchemaObjectDoesNotExistException(t("Cannot add field @table.@field: table doesn't exist.", ['@field' => $field, '@table' => $table]));
+      throw new SchemaObjectDoesNotExistException("Cannot add field '$table.$field': table doesn't exist.");
     }
     if ($this->fieldExists($table, $field)) {
-      throw new SchemaObjectExistsException(t("Cannot add field @table.@field: field already exists.", ['@field' => $field, '@table' => $table]));
+      throw new SchemaObjectExistsException("Cannot add field '$table.$field': field already exists.");
     }
 
     // Fields that are part of a PRIMARY KEY must be added as NOT NULL.
@@ -700,9 +703,9 @@ EOD;
    * {@inheritdoc}
    */
   public function fieldSetDefault($table, $field, $default) {
-    @trigger_error('fieldSetDefault() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. Instead, call ::changeField() passing a full field specification. See https://www.drupal.org/node/2999035', E_USER_DEPRECATED);
+    @trigger_error('fieldSetDefault() is deprecated in drupal:8.7.0 and will be removed before drupal:9.0.0. Instead, call ::changeField() passing a full field specification. See https://www.drupal.org/node/2999035', E_USER_DEPRECATED);
     if (!$this->fieldExists($table, $field)) {
-      throw new SchemaObjectDoesNotExistException(t("Cannot set default value of field @table.@field: field doesn't exist.", ['@table' => $table, '@field' => $field]));
+      throw new SchemaObjectDoesNotExistException("Cannot set default value of field '$table.$field': field doesn't exist.");
     }
 
     $default = $this->escapeDefaultValue($default);
@@ -714,9 +717,9 @@ EOD;
    * {@inheritdoc}
    */
   public function fieldSetNoDefault($table, $field) {
-    @trigger_error('fieldSetNoDefault() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. Instead, call ::changeField() passing a full field specification. See https://www.drupal.org/node/2999035', E_USER_DEPRECATED);
+    @trigger_error('fieldSetNoDefault() is deprecated in drupal:8.7.0 and will be removed before drupal:9.0.0. Instead, call ::changeField() passing a full field specification. See https://www.drupal.org/node/2999035', E_USER_DEPRECATED);
     if (!$this->fieldExists($table, $field)) {
-      throw new SchemaObjectDoesNotExistException(t("Cannot remove default value of field @table.@field: field doesn't exist.", ['@table' => $table, '@field' => $field]));
+      throw new SchemaObjectDoesNotExistException("Cannot remove default value of field '$table.$field': field doesn't exist.");
     }
 
     $this->connection->query('ALTER TABLE {' . $table . '} ALTER COLUMN "' . $field . '" DROP DEFAULT');
@@ -779,10 +782,10 @@ EOD;
    */
   public function addPrimaryKey($table, $fields) {
     if (!$this->tableExists($table)) {
-      throw new SchemaObjectDoesNotExistException(t("Cannot add primary key to table @table: table doesn't exist.", ['@table' => $table]));
+      throw new SchemaObjectDoesNotExistException("Cannot add primary key to table '$table': table doesn't exist.");
     }
     if ($this->constraintExists($table, 'pkey')) {
-      throw new SchemaObjectExistsException(t("Cannot add primary key to table @table: primary key already exists.", ['@table' => $table]));
+      throw new SchemaObjectExistsException("Cannot add primary key to table '$table': primary key already exists.");
     }
 
     $this->connection->query('ALTER TABLE {' . $table . '} ADD CONSTRAINT ' . $this->ensureIdentifiersLength($table, '', 'pkey') . ' PRIMARY KEY (' . $this->createPrimaryKeySql($fields) . ')');
@@ -830,10 +833,10 @@ EOD;
    */
   public function addUniqueKey($table, $name, $fields) {
     if (!$this->tableExists($table)) {
-      throw new SchemaObjectDoesNotExistException(t("Cannot add unique key @name to table @table: table doesn't exist.", ['@table' => $table, '@name' => $name]));
+      throw new SchemaObjectDoesNotExistException("Cannot add unique key '$name' to table '$table': table doesn't exist.");
     }
     if ($this->constraintExists($table, $name . '__key')) {
-      throw new SchemaObjectExistsException(t("Cannot add unique key @name to table @table: unique key already exists.", ['@table' => $table, '@name' => $name]));
+      throw new SchemaObjectExistsException("Cannot add unique key '$name' to table '$table': unique key already exists.");
     }
 
     $this->connection->query('ALTER TABLE {' . $table . '} ADD CONSTRAINT ' . $this->ensureIdentifiersLength($table, $name, 'key') . ' UNIQUE (' . implode(',', $fields) . ')');
@@ -858,10 +861,10 @@ EOD;
    */
   public function addIndex($table, $name, $fields, array $spec) {
     if (!$this->tableExists($table)) {
-      throw new SchemaObjectDoesNotExistException(t("Cannot add index @name to table @table: table doesn't exist.", ['@table' => $table, '@name' => $name]));
+      throw new SchemaObjectDoesNotExistException("Cannot add index '$name' to table '$table': table doesn't exist.");
     }
     if ($this->indexExists($table, $name)) {
-      throw new SchemaObjectExistsException(t("Cannot add index @name to table @table: index already exists.", ['@table' => $table, '@name' => $name]));
+      throw new SchemaObjectExistsException("Cannot add index '$name' to table '$table': index already exists.");
     }
 
     $this->connection->query($this->_createIndexSql($table, $name, $fields));
@@ -918,10 +921,10 @@ EOD;
    */
   public function changeField($table, $field, $field_new, $spec, $new_keys = []) {
     if (!$this->fieldExists($table, $field)) {
-      throw new SchemaObjectDoesNotExistException(t("Cannot change the definition of field @table.@name: field doesn't exist.", ['@table' => $table, '@name' => $field]));
+      throw new SchemaObjectDoesNotExistException("Cannot change the definition of field '$table.$field': field doesn't exist.");
     }
     if (($field != $field_new) && $this->fieldExists($table, $field_new)) {
-      throw new SchemaObjectExistsException(t("Cannot rename field @table.@name to @name_new: target field already exists.", ['@table' => $table, '@name' => $field, '@name_new' => $field_new]));
+      throw new SchemaObjectExistsException("Cannot rename field '$table.$field' to '$field_new': target field already exists.");
     }
     if (isset($new_keys['primary key']) && in_array($field_new, $new_keys['primary key'], TRUE)) {
       $this->ensureNotNullPrimaryKey($new_keys['primary key'], [$field_new => $spec]);
@@ -1073,6 +1076,7 @@ EOD;
    *
    * @param $data
    *   String to be hashed.
+   *
    * @return string
    *   A base-64 encoded sha-256 hash, with + and / replaced with _ and any =
    *   padding characters removed.

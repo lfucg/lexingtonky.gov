@@ -49,9 +49,9 @@ class MetatagViewsEditForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(MetatagManagerInterface $metatag_manager, EntityTypeManagerInterface $entity_manager) {
+  public function __construct(MetatagManagerInterface $metatag_manager, EntityTypeManagerInterface $entity_type_manager) {
     $this->metatagManager = $metatag_manager;
-    $this->viewsManager = $entity_manager->getStorage('view');
+    $this->viewsManager = $entity_type_manager->getStorage('view');
   }
 
   /**

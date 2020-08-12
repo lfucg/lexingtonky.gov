@@ -5,6 +5,9 @@
  * Primary module hooks for Twig Tweak test module.
  */
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\node\NodeInterface;
+
 /**
  * Implements hook_page_bottom().
  */
@@ -25,4 +28,19 @@ function twig_tweak_test_theme() {
  */
 function template_preprocess_twig_tweak_test(&$vars) {
   $vars['node'] = Drupal::routeMatch()->getParameter('node');
+}
+
+/**
+ * Implements hook_node_access().
+ *
+ * @see \Drupal\Tests\twig_tweak\Kernel\AccessTest
+ */
+function twig_tweak_test_node_access(NodeInterface $node) {
+  if ($node->getTitle() == 'Entity access test') {
+    $result = AccessResult::allowed();
+    $result->addCacheTags(['tag_from_' . __FUNCTION__]);
+    $result->cachePerUser();
+    $result->setCacheMaxAge(50);
+    return $result;
+  }
 }

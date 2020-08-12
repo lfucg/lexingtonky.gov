@@ -51,7 +51,17 @@ class ManageDisplayTest extends WebDriverTestBase {
     $this->drupalPlaceBlock('system_breadcrumb_block');
 
     // Create a test user.
-    $admin_user = $this->drupalCreateUser(['access content', 'administer content types', 'administer node fields', 'administer node form display', 'administer node display', 'administer users', 'administer account settings', 'administer user display', 'bypass node access']);
+    $admin_user = $this->drupalCreateUser([
+      'access content',
+      'administer content types',
+      'administer node fields',
+      'administer node form display',
+      'administer node display',
+      'administer users',
+      'administer account settings',
+      'administer user display',
+      'bypass node access',
+    ]);
     $this->drupalLogin($admin_user);
 
     // Create content type, with underscores.
@@ -143,7 +153,7 @@ class ManageDisplayTest extends WebDriverTestBase {
     $field_test_format_type->setValue('field_test_multiple');
     $assert_session->assertWaitOnAjaxRequest();
     $plugin_summary = $page->find('css', '#field-test .field-plugin-summary');
-    $this->assertContains("test_formatter_setting_multiple: dummy test string", $plugin_summary->getText(), 'The expected summary is displayed.');
+    $this->assertStringContainsString("test_formatter_setting_multiple: dummy test string", $plugin_summary->getText(), 'The expected summary is displayed.');
 
     // Submit the form and assert that
     // hook_field_formatter_settings_summary_alter() is called.
@@ -173,7 +183,7 @@ class ManageDisplayTest extends WebDriverTestBase {
     /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display */
     $display = $display_storage->loadUnchanged($id);
     $this->assertEquals($display->getRenderer('field_test')->getThirdPartySetting('field_third_party_test', 'field_test_field_formatter_third_party_settings_form'), 'foo');
-    $this->assertTrue(in_array('field_third_party_test', $display->calculateDependencies()->getDependencies()['module']), 'The display has a dependency on field_third_party_test module.');
+    $this->assertContains('field_third_party_test', $display->calculateDependencies()->getDependencies()['module'], 'The display has a dependency on field_third_party_test module.');
 
     // Change the formatter to an empty setting and validate it's initialized
     // correctly.
@@ -226,7 +236,7 @@ class ManageDisplayTest extends WebDriverTestBase {
     /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display */
     $display = $display_storage->loadUnchanged($display_id);
     $component = $display->getComponent('field_test');
-    $this->assertFalse(array_key_exists('field_third_party_test', $component['third_party_settings']));
+    $this->assertArrayNotHasKey('field_third_party_test', $component['third_party_settings']);
   }
 
   /**
@@ -320,7 +330,7 @@ class ManageDisplayTest extends WebDriverTestBase {
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
     $display = $form_storage->loadUnchanged('node.' . $this->type . '.default');
     $this->assertEquals($display->getRenderer('field_test')->getThirdPartySetting('field_third_party_test', 'field_test_widget_third_party_settings_form'), 'foo');
-    $this->assertTrue(in_array('field_third_party_test', $display->calculateDependencies()->getDependencies()['module']), 'Form display does not have a dependency on field_third_party_test module.');
+    $this->assertContains('field_third_party_test', $display->calculateDependencies()->getDependencies()['module'], 'Form display does not have a dependency on field_third_party_test module.');
 
     // Creates a new field that can not be used with the multiple formatter.
     // Reference: Drupal\field_test\Plugin\Field\FieldWidget\TestFieldWidgetMultiple::isApplicable().

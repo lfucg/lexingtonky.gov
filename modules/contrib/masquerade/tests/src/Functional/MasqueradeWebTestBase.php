@@ -10,6 +10,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Tests\block\Functional\AssertBlockAppearsTrait;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\user\Entity\Role;
+use Drupal\Tests\system\Functional\Cache\AssertPageCacheContextsAndTagsTrait;
 
 /**
  * Base test class for Masquerade module web tests.
@@ -22,13 +23,17 @@ abstract class MasqueradeWebTestBase extends BrowserTestBase {
 
   use AssertBlockAppearsTrait;
   use StringTranslationTrait;
+  use AssertPageCacheContextsAndTagsTrait;
 
   /**
-   * Modules to install.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = ['masquerade', 'user', 'block'];
+  protected static $modules = ['masquerade', 'user', 'block'];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * Various users for the tests.
@@ -38,11 +43,32 @@ abstract class MasqueradeWebTestBase extends BrowserTestBase {
   protected $admin_user, $auth_user, $editor_user, $masquerade_user, $moderator_user;
 
   /**
+   * Lead editor user.
+   *
+   * @var \Drupal\user\UserInterface
+   */
+  protected $leadEditorUser;
+
+  /**
+   * Super user.
+   *
+   * @var \Drupal\user\UserInterface
+   */
+  protected $superUser;
+
+  /**
    * Various roles for the tests.
    *
    * @var \Drupal\user\RoleInterface
    */
   protected $admin_role, $editor_role, $masquerade_role, $moderator_role;
+
+  /**
+   * Lead role.
+   *
+   * @var \Drupal\user\RoleInterface
+   */
+  protected $leadRole;
 
   /**
    * {@inheritdoc}
@@ -78,6 +104,16 @@ abstract class MasqueradeWebTestBase extends BrowserTestBase {
       ->grantPermission('masquerade as authenticated')
       ->save();
 
+    // Create a 'lead' role to masquerade as editors.
+    $this->leadRole = Role::create([
+      'id' => 'lead',
+      'label' => 'Lead Editor',
+    ]);
+    $this->leadRole
+      ->grantPermission('masquerade as editor')
+      ->grantPermission('masquerade as authenticated')
+      ->save();
+
     // Create an additional 'moderator' role to check 'masquerade as any user'.
     $this->moderator_role = Role::create([
       'id' => 'moderator',
@@ -105,6 +141,19 @@ abstract class MasqueradeWebTestBase extends BrowserTestBase {
     $this->editor_user->setUsername('editor_user');
     $this->editor_user->addRole($this->editor_role->id());
     $this->editor_user->save();
+
+    // Lead editor user.
+    $this->leadEditorUser = $this->drupalCreateUser();
+    $this->leadEditorUser->setUsername('lead_editor_user');
+    $this->leadEditorUser->addRole($this->leadRole->id());
+    $this->leadEditorUser->save();
+
+    // Super user.
+    $this->superUser = $this->drupalCreateUser();
+    $this->superUser->setUsername('super_user');
+    $this->superUser->addRole($this->editor_role->id());
+    $this->superUser->addRole($this->admin_role->id());
+    $this->superUser->save();
 
     // Masquerade user.
     $this->masquerade_user = $this->drupalCreateUser();
@@ -187,9 +236,10 @@ abstract class MasqueradeWebTestBase extends BrowserTestBase {
    *   NULL to assert that the session data is not set.
    */
   protected function assertSessionByUid($uid, $masquerading = NULL) {
-    $result = \Drupal::database()->query('SELECT * FROM {sessions} WHERE uid = :uid', [
-      ':uid' => $uid,
-    ])->fetchAll();
+    $result = \Drupal::database()
+      ->query('SELECT * FROM {sessions} WHERE uid = :uid', [
+        ':uid' => $uid,
+      ])->fetchAll();
     if (empty($result)) {
       $this->fail("No session found for uid $uid");
     }
@@ -198,20 +248,19 @@ abstract class MasqueradeWebTestBase extends BrowserTestBase {
       $this->fail("Found more than 1 session for uid $uid.");
     }
     else {
-      $this->assertTrue(TRUE, "Found session for uid $uid.");
       $session = reset($result);
 
       // Careful: PHP does not provide a utility function that decodes session
       // data only. Using string comparison because rely on default storage.
       if ($masquerading) {
-        $expected = 'masquerading|s:' . strlen($masquerading) . ':"' . $masquerading . '"';
-        self::assertNotFalse(strpos($session->session, $expected), new FormattableMarkup('$_SESSION[\'masquerading\'] equals @uid.', [
+        $expected = '"masquerading";s:' . strlen($masquerading) . ':"' . $masquerading . '"';
+        self::assertNotFalse(strpos($session->session, $expected), new FormattableMarkup('Session flag "masquerading" equals @uid.', [
           '@uid' => $masquerading,
         ]));
       }
       else {
         $expected = empty($session->session) || strpos($session->session, 'masquerading') === FALSE;
-        self::assertTrue($expected, '$_SESSION[\'masquerading\'] is not set.');
+        self::assertTrue($expected, 'Session flag "masquerading" is not set.');
       }
     }
   }

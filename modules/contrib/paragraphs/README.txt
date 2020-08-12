@@ -36,10 +36,8 @@ and move paragraphs including their children around and into other paragraphs.
 During drag & drop mode, paragraphs are also displayed as a summary only, which
 results in a very compact display that makes it easier to move them around.
 
-To use this, an additional library is necessary, which needs to be put in the
-/libraries folder. Download from https://github.com/RubaXa/Sortable/releases,
-make sure that the folder name is Sortable (with uppercase S) so that the path
-to the javascript file is /libraries/Sortable/Sortable.min.js.
+Starting with Drupal 8.8.0, the necessary library is part of Drupal core and
+this feature is always available.
 
 Use the version 1.10+ as it's tested and approved. Older versions may introduce
 bugs with nested drag & drop functionality.

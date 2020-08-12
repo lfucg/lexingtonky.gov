@@ -8,7 +8,6 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Drupal\Component\Utility\Unicode;
 
 /**
  * Handles files uploaded by Dropzone.
@@ -45,11 +44,11 @@ class UploadHandler implements UploadHandlerInterface {
   protected $languageManager;
 
   /**
-   * The scheme (stream wrapper) used to store uploaded files.
+   * The settings of dropzonejs.
    *
-   * @var string
+   * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $tmpUploadScheme;
+  protected $dropzoneSettings;
 
   /**
    * Constructs dropzone upload controller route controller.
@@ -67,7 +66,7 @@ class UploadHandler implements UploadHandlerInterface {
     $this->request = $request_stack->getCurrentRequest();
     $this->transliteration = $transliteration;
     $this->languageManager = $language_manager;
-    $this->tmpUploadScheme = $config_factory->get('dropzonejs.settings')->get('tmp_upload_scheme');
+    $this->dropzoneSettings = $config_factory->get('dropzonejs.settings');
   }
 
   /**
@@ -80,6 +79,10 @@ class UploadHandler implements UploadHandlerInterface {
     // which we use to separate filenames.
     if (!isset($original_name)) {
       throw new UploadException(UploadException::FILENAME_ERROR);
+    }
+
+    if (!$this->dropzoneSettings->get('filename_transliteration')) {
+      return $original_name . '.txt';
     }
 
     // @todo The following filename sanitization steps replicate the behaviour
@@ -96,14 +99,12 @@ class UploadHandler implements UploadHandlerInterface {
     // Remove multiple consecutive non-alphabetical characters.
     $filename = preg_replace('/(_)_+|(\.)\.+|(-)-+/', '\\1\\2\\3', $filename);
     // Force lowercase to prevent issues on case-insensitive file systems.
-    $filename = Unicode::strtolower($filename);
+    $filename = strtolower($filename);
 
     // For security reasons append the txt extension. It will be removed in
     // Drupal\dropzonejs\Element::valueCallback when we will know the valid
     // extension and we will be able to properly sanitize the filename.
-    $processed_filename = $filename . '.txt';
-
-    return $processed_filename;
+    return $filename . '.txt';
   }
 
   /**
@@ -137,7 +138,7 @@ class UploadHandler implements UploadHandlerInterface {
     }
 
     // Open temp file.
-    $tmp = $this->tmpUploadScheme . '://' . $this->getFilename($file);
+    $tmp = $this->dropzoneSettings->get('tmp_upload_scheme') . '://' . $this->getFilename($file);
     if (!($out = fopen($tmp, $this->request->request->get('chunk', 0) ? 'ab' : 'wb'))) {
       throw new UploadException(UploadException::OUTPUT_ERROR);
     }

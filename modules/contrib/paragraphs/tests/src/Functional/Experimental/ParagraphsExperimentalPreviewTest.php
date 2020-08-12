@@ -38,7 +38,7 @@ class ParagraphsExperimentalPreviewTest extends ParagraphsExperimentalTestBase {
     $this->addParagraphsType('text');
     // Create field types for the text.
     $this->fieldUIAddNewField('admin/structure/paragraphs_type/text', 'text', 'Text', 'text', array(), array());
-    $this->assertText('Saved Text configuration.');
+    $this->assertSession()->pageTextContains('Saved Text configuration.');
 
     $test_text_1 = 'dummy_preview_text_1';
     $test_text_2 = 'dummy_preview_text_2';
@@ -53,17 +53,19 @@ class ParagraphsExperimentalPreviewTest extends ParagraphsExperimentalTestBase {
     // Preview the article.
     $this->drupalPostForm(NULL, $edit, t('Preview'));
     // Check if the text is displayed.
-    $this->assertRaw($test_text_1);
+    $this->assertSession()->responseContains($test_text_1);
 
     // Check that the parent is set correctly on all paragraphs.
-    $this->assertNoText('Parent: //');
-    $this->assertNoUniqueText('Parent: node//field_paragraphs');
+    $this->assertSession()->pageTextNotContains('Parent: //');
+    $page_text = $this->getSession()->getPage()->getText();
+    $nr_found = substr_count($page_text, 'Parent: node//field_paragraphs');
+    $this->assertGreaterThan(1, $nr_found);
 
     // Go back to the editing form.
     $this->clickLink('Back to content editing');
 
     $paragraph_1 = $this->xpath('//*[@id="edit-field-paragraphs-0-subform-field-text-0-value"]')[0];
-    $this->assertEqual($paragraph_1->getValue(), $test_text_1);
+    $this->assertEquals($paragraph_1->getValue(), $test_text_1);
 
     $this->drupalPostForm(NULL, $edit, t('Save'));
 
@@ -74,8 +76,8 @@ class ParagraphsExperimentalPreviewTest extends ParagraphsExperimentalTestBase {
     ];
     // Preview the article.
     $this->drupalPostForm(NULL, $edit, t('Preview'));
-    $this->assertRaw($test_text_1);
-    $this->assertRaw($test_text_2);
+    $this->assertSession()->responseContains($test_text_1);
+    $this->assertSession()->responseContains($test_text_2);
 
     // Go back to the editing form.
     $this->clickLink('Back to content editing');
@@ -86,24 +88,26 @@ class ParagraphsExperimentalPreviewTest extends ParagraphsExperimentalTestBase {
     ];
     // Preview the article.
     $this->drupalPostForm(NULL, $edit, t('Preview'));
-    $this->assertRaw($test_text_1);
-    $this->assertRaw($new_test_text_2);
+    $this->assertSession()->responseContains($test_text_1);
+    $this->assertSession()->responseContains($new_test_text_2);
 
     // Check that the parent is set correctly on all paragraphs.
-    $this->assertNoText('Parent: //');
-    $this->assertNoUniqueText('Parent: node/1/field_paragraphs');
+    $this->assertSession()->pageTextNotContains('Parent: //');
+    $page_text = $this->getSession()->getPage()->getText();
+    $nr_found = substr_count($page_text, 'Parent: node/1/field_paragraphs');
+    $this->assertGreaterThan(1, $nr_found);
 
     // Go back to the editing form.
     $this->clickLink('Back to content editing');
     $paragraph_1 = $this->xpath('//*[@id="edit-field-paragraphs-0-subform-field-text-0-value"]')[0];
     $paragraph_2 = $this->xpath('//*[@id="edit-field-paragraphs-1-subform-field-text-0-value"]')[0];
-    $this->assertEqual($paragraph_1->getValue(), $test_text_1);
-    $this->assertEqual($paragraph_2->getValue(), $new_test_text_2);
+    $this->assertEquals($paragraph_1->getValue(), $test_text_1);
+    $this->assertEquals($paragraph_2->getValue(), $new_test_text_2);
     $this->drupalPostForm(NULL, [], t('Save'));
 
-    $this->assertRaw($test_text_1);
-    $this->assertRaw($new_test_text_2);
-    $this->assertRaw('Page_title');
+    $this->assertSession()->responseContains($test_text_1);
+    $this->assertSession()->responseContains($new_test_text_2);
+    $this->assertSession()->responseContains('Page_title');
   }
 
 }

@@ -17,7 +17,6 @@ use Drupal\search_api\Entity\Index;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\search_api\datasource\ContentEntity;
 use Drupal\search_api\Plugin\search_api\datasource\ContentEntityTaskManager;
-use Drupal\search_api\Plugin\search_api\datasource\EntityDatasourceInterface;
 use Drupal\search_api\Plugin\views\argument\SearchApiTerm as TermArgument;
 use Drupal\search_api\Plugin\views\argument\SearchApiAllTerms;
 use Drupal\search_api\Plugin\views\filter\SearchApiTerm as TermFilter;
@@ -27,6 +26,11 @@ use Drupal\search_api\Task\IndexTaskManager;
 use Drupal\views\ViewEntityInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+
+/*
+ * Load all theme functions.
+ */
+require_once __DIR__ . '/search_api.theme.inc';
 
 /**
  * Implements hook_help().
@@ -398,37 +402,50 @@ function search_api_theme() {
   return [
     'search_api_admin_fields_table' => [
       'render element' => 'element',
-      'function' => 'theme_search_api_admin_fields_table',
-      'file' => 'search_api.theme.inc',
     ],
     'search_api_admin_data_type_table' => [
       'variables' => [
         'data_types' => [],
-        'fallback_mapping' => []
+        'fallback_mapping' => [],
+        'table' => NULL,
       ],
-      'function' => 'theme_search_api_admin_data_type_table',
-      'file' => 'search_api.theme.inc',
     ],
     'search_api_form_item_list' => [
       'render element' => 'element',
-      'function' => 'theme_search_api_form_item_list',
-      'file' => 'search_api.theme.inc',
     ],
     'search_api_server' => [
-      'variables' => ['server' => NULL],
-      'function' => 'theme_search_api_server',
-      'file' => 'search_api.theme.inc',
+      'variables' => [
+        'server' => NULL,
+        'server_info_table' => NULL,
+        'description' => NULL,
+      ],
     ],
     'search_api_index' => [
       'variables' => [
         'index' => NULL,
         'server_count' => NULL,
         'server_count_error' => NULL,
+        'index_process' => NULL,
+        'description' => NULL,
+        'table' => NULL,
       ],
-      'function' => 'theme_search_api_index',
-      'file' => 'search_api.theme.inc',
     ],
   ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for type "search_api_index".
+ *
+ * Clears the Views row plugin cache, so our row plugin will become available
+ * for new indexes right away.
+ *
+ * @see search_api_views_plugins_row_alter()
+ */
+function search_api_search_api_index_insert(Index $index) {
+  if (\Drupal::hasService('plugin.manager.views.row')) {
+    \Drupal::getContainer()->get('plugin.manager.views.row')
+      ->clearCachedDefinitions();
+  }
 }
 
 /**
@@ -450,8 +467,7 @@ function search_api_search_api_index_update(IndexInterface $index) {
 
   foreach ($index->getDatasources() as $datasource_id => $datasource) {
     if ($datasource->getBaseId() != 'entity'
-      || !($datasource instanceof EntityDatasourceInterface)
-      || !$original->isValidDatasource($datasource_id)) {
+        || !$original->isValidDatasource($datasource_id)) {
       continue;
     }
     $old_datasource = $original->getDatasource($datasource_id);
@@ -575,7 +591,7 @@ function search_api_view_insert(ViewEntityInterface $view) {
   if ($displays['default']['display_options']['query']['type'] === 'search_api_query') {
     $change = FALSE;
     foreach ($displays as $id => $display) {
-      if (isset($display['display_options']['cache']['type']) && in_array($display['display_options']['cache']['type'], ['tag', 'time'])) {
+      if (in_array($display['display_options']['cache']['type'] ?? '', ['tag', 'time'])) {
         $displays[$id]['display_options']['cache']['type'] = 'none';
         $change = TRUE;
       }
@@ -647,6 +663,26 @@ function _search_api_views_get_allowed_values($entity_type, $bundle, $field_name
     }
   }
   return NULL;
+}
+
+/**
+ * Returns an options list for bundles of the given entity type.
+ *
+ * @param string $entity_type_id
+ *   The entity type for which to retrieve the bundle names.
+ *
+ * @return array
+ *   An array of allowed values, mapping bundle keys to their (translated)
+ *   identifiers.
+ *
+ * @see _search_api_views_handler_adjustments()
+ */
+function _search_api_views_get_bundle_names(string $entity_type_id) {
+  $bundles = \Drupal::service('entity_type.bundle.info')
+    ->getBundleInfo($entity_type_id);
+  return array_map(function ($bundle_info) {
+    return $bundle_info['label'];
+  }, $bundles);
 }
 
 /**

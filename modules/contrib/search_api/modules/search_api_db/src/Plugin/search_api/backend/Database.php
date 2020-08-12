@@ -32,7 +32,10 @@ use Drupal\search_api_autocomplete\SearchInterface;
 use Drupal\search_api_autocomplete\Suggestion\SuggestionFactory;
 use Drupal\search_api_db\DatabaseCompatibility\DatabaseCompatibilityHandlerInterface;
 use Drupal\search_api_db\DatabaseCompatibility\GenericDatabase;
+use Drupal\search_api_db\Event\QueryPreExecuteEvent;
+use Drupal\search_api_db\Event\SearchApiDbEvents;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Indexes and searches items using the database.
@@ -125,18 +128,18 @@ class Database extends BackendPluginBase implements PluginFormInterface {
   protected $keyValueStore;
 
   /**
-   * The transliteration service to use.
-   *
-   * @var \Drupal\Component\Transliteration\TransliterationInterface
-   */
-  protected $transliterator;
-
-  /**
    * The date formatter.
    *
    * @var \Drupal\Core\Datetime\DateFormatterInterface|null
    */
   protected $dateFormatter;
+
+  /**
+   * The event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|null
+   */
+  protected $eventDispatcher;
 
   /**
    * The data type helper.
@@ -201,6 +204,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     $backend->setLogger($container->get('logger.channel.search_api_db'));
     $backend->setKeyValueStore($container->get('keyvalue')->get(self::INDEXES_KEY_VALUE_STORE_ID));
     $backend->setDateFormatter($container->get('date.formatter'));
+    $backend->setEventDispatcher($container->get('event_dispatcher'));
     $backend->setDataTypeHelper($container->get('search_api.data_type_helper'));
 
     // For a new backend plugin, the database might not be set yet. In that case
@@ -351,6 +355,29 @@ class Database extends BackendPluginBase implements PluginFormInterface {
    */
   public function setDateFormatter(DateFormatterInterface $date_formatter) {
     $this->dateFormatter = $date_formatter;
+    return $this;
+  }
+
+  /**
+   * Retrieves the event dispatcher.
+   *
+   * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   *   The event dispatcher.
+   */
+  public function getEventDispatcher() {
+    return $this->eventDispatcher ?: \Drupal::service('event_dispatcher');
+  }
+
+  /**
+   * Sets the event dispatcher.
+   *
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The new event dispatcher.
+   *
+   * @return $this
+   */
+  public function setEventDispatcher(EventDispatcherInterface $event_dispatcher) {
+    $this->eventDispatcher = $event_dispatcher;
     return $this;
   }
 
@@ -751,8 +778,13 @@ class Database extends BackendPluginBase implements PluginFormInterface {
    *   (optional) The type of table being created. Either "index" (for the
    *   denormalized table for an entire index) or "field" (for field-specific
    *   tables).
+   *
+   * @throws \Drupal\search_api\SearchApiException
+   *   Thrown if creating the table failed.
    */
-  protected function createFieldTable(FieldInterface $field = NULL, array $db, $type = 'field') {
+  protected function createFieldTable(FieldInterface $field = NULL, array $db = [], $type = 'field') {
+    // @todo Make $field required but nullable (and $db required again) once we
+    //   depend on PHP 7.1+.
     $new_table = !$this->database->schema()->tableExists($db['table']);
     if ($new_table) {
       $table = [
@@ -781,7 +813,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       return;
     }
 
-    $column = isset($db['column']) ? $db['column'] : 'value';
+    $column = $db['column'] ?? 'value';
     $db_field = $this->sqlType($field->getType());
     $db_field += [
       'description' => "The field's value for this item",
@@ -1245,7 +1277,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
 
           // Don't add NULL values to the array of values. Also, adding an empty
           // array is, of course, a waste of time.
-          if (isset($converted_value) && $converted_value !== []) {
+          if (($converted_value ?? []) !== []) {
             $values = array_merge($values, is_array($converted_value) ? $converted_value : [$converted_value]);
           }
         }
@@ -1739,7 +1771,13 @@ class Database extends BackendPluginBase implements PluginFormInterface {
 
     // Allow subclasses and other modules to alter the query (before a count
     // query is constructed from it).
-    $this->getModuleHandler()->alter('search_api_db_query', $db_query, $query);
+    $event_base_name = SearchApiDbEvents::QUERY_PRE_EXECUTE;
+    $event = new QueryPreExecuteEvent($db_query, $query);
+    $this->getEventDispatcher()->dispatch($event_base_name, $event);
+    $db_query = $event->getDbQuery();
+
+    $description = 'This hook is deprecated in search_api 8.x-1.16 and will be removed in 9.x-1.0. Please use the "search_api_db.query_pre_execute" event instead. See https://www.drupal.org/node/3103591';
+    $this->getModuleHandler()->alterDeprecated($description, 'search_api_db_query', $db_query, $query);
     $this->preQuery($db_query, $query);
 
     return $db_query;
@@ -2009,7 +2047,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
           else {
             $i += $word_count;
             for ($j = 0; $j < $subs; ++$j) {
-              $alias = isset($keyword_hits[$j]) ? $keyword_hits[$j] : "w$j";
+              $alias = $keyword_hits[$j] ?? "w$j";
               $keyword_hits[$j] = $query->addExpression($i == $j ? '1' : '0', $alias);
             }
           }
@@ -2387,7 +2425,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       }
       $field = $fields[$facet['field']];
 
-      if (empty($facet['operator']) || $facet['operator'] != 'or') {
+      if (($facet['operator'] ?? 'and') != 'or') {
         // First, check whether this can even possibly have any results.
         if ($result_count !== NULL && $result_count < $facet['min_count']) {
           continue;
@@ -2467,9 +2505,9 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       foreach ($select->execute() as $row) {
         $terms[] = [
           'count' => $row->num,
-          'filter' => isset($row->value) ? '"' . $row->value . '"' : '!',
+          'filter' => $row->value !== NULL ? '"' . $row->value . '"' : '!',
         ];
-        if (isset($row->value)) {
+        if ($row->value !== NULL) {
           $values[] = $row->value;
         }
         else {
@@ -2549,6 +2587,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     try {
       $result = $this->database->queryTemporary((string) $db_query, $args);
     }
+    // @todo Use a multi-catch once we depend on PHP 7.1+.
     catch (\PDOException $e) {
       $this->logException($e, '%type while trying to create a temporary table: @message in %function (line %line of %file).');
       return FALSE;

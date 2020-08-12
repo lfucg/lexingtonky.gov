@@ -10,7 +10,7 @@
 
   Drupal.behaviors.bootstrap_barrio_sidebar = {
     attach: function (context, settings) {
-      $('[data-toggle=offcanvas]').click(function() {
+      $('[data-toggle=offcanvas]').click(function () {
         $('.row-offcanvas').toggleClass('active');
       });
     }

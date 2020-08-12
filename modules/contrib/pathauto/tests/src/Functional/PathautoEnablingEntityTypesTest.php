@@ -17,6 +17,11 @@ class PathautoEnablingEntityTypesTest extends BrowserTestBase {
   use CommentTestTrait;
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stable';
+
+  /**
    * Modules to enable.
    *
    * @var array
@@ -33,7 +38,7 @@ class PathautoEnablingEntityTypesTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     $this->drupalCreateContentType(['type' => 'article']);
@@ -55,7 +60,7 @@ class PathautoEnablingEntityTypesTest extends BrowserTestBase {
    * ability to define alias patterns for a given entity type works. Test with
    * the comment module, as it is not enabled by default.
    */
-  function testEnablingEntityTypes() {
+  public function testEnablingEntityTypes() {
     // Verify that the comment entity type is not available when trying to add
     // a new pattern, nor "broken".
     $this->drupalGet('/admin/config/search/path/patterns/add');

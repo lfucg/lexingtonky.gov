@@ -105,7 +105,7 @@ class CaptchaExamplesForm extends FormBase {
   protected function buildChallenge($module, $challenge) {
     return [
       '#type' => 'captcha',
-      '#captcha_type' => $module . '/' . $type,
+      '#captcha_type' => $module . '/' . $challenge,
       '#captcha_admin_mode' => TRUE,
     ];
   }

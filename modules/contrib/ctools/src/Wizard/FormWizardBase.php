@@ -16,6 +16,7 @@ use Drupal\ctools\Event\WizardEvent;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * The base class for all form wizard.
@@ -164,8 +165,8 @@ abstract class FormWizardBase extends FormBase implements FormWizardInterface {
     if (!empty($operations[$step])) {
       return $operations[$step];
     }
-    $operation = reset($operations);
-    return $operation;
+
+    throw new NotFoundHttpException();
   }
 
   /**

@@ -208,10 +208,10 @@ function workbench_moderation_action_info_alter(&$definitions) {
   // their implementations out for alternates that will become a no-op on a
   // moderated node. If another module has already swapped out those classes,
   // though, we'll be polite and do nothing.
-  if (isset($definitions['node_publish_action']['class']) && $definitions['node_publish_action']['class'] == PublishNode::class) {
+  if (isset($definitions['node_publish_action']['class']) && $definitions['node_publish_action']['class'] == PublishAction::class) {
     $definitions['node_publish_action']['class'] = ModerationOptOutPublishNode::class;
   }
-  if (isset($definitions['node_unpublish_action']['class']) && $definitions['node_unpublish_action']['class'] == UnpublishNode::class) {
+  if (isset($definitions['node_unpublish_action']['class']) && $definitions['node_unpublish_action']['class'] == UnpublishAction::class) {
     $definitions['node_unpublish_action']['class'] = ModerationOptOutUnpublishNode::class;
   }
   if (isset($definitions['entity:publish_action:node']['class']) && $definitions['entity:publish_action:node']['class'] == PublishAction::class) {

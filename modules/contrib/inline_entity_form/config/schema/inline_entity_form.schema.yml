@@ -11,10 +11,10 @@ field.widget.settings.inline_entity_form_simple:
       type: boolean
       label: "Override labels"
     label_singular:
-      type: string
+      type: label
       label: "Label (singular)"
     label_plural:
-      type: string
+      type: label
       label: "Label (plural)"
     allow_new:
       type: boolean
@@ -31,6 +31,9 @@ field.widget.settings.inline_entity_form_simple:
     collapsed:
       type: boolean
       label: "Collapsed by default"
+    revision:
+      type: boolean
+      label: "Create new revision"
 
 field.widget.settings.inline_entity_form_complex:
   type: mapping
@@ -43,10 +46,10 @@ field.widget.settings.inline_entity_form_complex:
       type: boolean
       label: "Override labels"
     label_singular:
-      type: string
+      type: label
       label: "Label (singular)"
     label_plural:
-      type: string
+      type: label
       label: "Label (plural)"
     allow_new:
       type: boolean
@@ -66,3 +69,6 @@ field.widget.settings.inline_entity_form_complex:
     collapsed:
       type: boolean
       label: "Collapsed by default"
+    revision:
+      type: boolean
+      label: "Create new revision"

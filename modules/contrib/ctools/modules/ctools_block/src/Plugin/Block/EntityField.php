@@ -96,6 +96,8 @@ class EntityField extends BlockBase implements ContextAwarePluginInterface, Cont
    *   The entity type manager.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   The entity field manager.
+   * @param \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager
+   *   The field type manager.
    * @param \Drupal\Core\Field\FormatterPluginManager $formatter_manager
    *   The formatter manager.
    */
@@ -294,6 +296,7 @@ class EntityField extends BlockBase implements ContextAwarePluginInterface, Cont
    * Gets the field definition.
    *
    * @return \Drupal\Core\Field\FieldDefinitionInterface
+   *   The field defination.
    */
   protected function getFieldDefinition() {
     if (empty($this->fieldDefinition)) {
@@ -309,6 +312,7 @@ class EntityField extends BlockBase implements ContextAwarePluginInterface, Cont
    * Gets the field storage definition.
    *
    * @return \Drupal\Core\Field\FieldStorageDefinitionInterface
+   *   The field storage defination.
    */
   protected function getFieldStorageDefinition() {
     if (empty($this->fieldStorageDefinition)) {
@@ -354,7 +358,7 @@ class EntityField extends BlockBase implements ContextAwarePluginInterface, Cont
    *   The formatter object.
    */
   protected function getFormatter($type, $label, array $settings, array $third_party_settings) {
-     return $this->formatterManager->createInstance($type, [
+    return $this->formatterManager->createInstance($type, [
       'field_definition' => $this->getFieldDefinition(),
       'view_mode' => 'default',
       'prepare' => TRUE,
@@ -364,12 +368,14 @@ class EntityField extends BlockBase implements ContextAwarePluginInterface, Cont
     ]);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function __wakeup() {
     parent::__wakeup();
     // @todo figure out why this happens.
     // prevent $fieldStorageDefinition being erroneously set to $this.
     $this->fieldStorageDefinition = NULL;
   }
-
 
 }

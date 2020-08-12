@@ -22,7 +22,7 @@
     {% set universal_button %}
       <a class="a2a_dd addtoany_share" href="https://www.addtoany.com/share#url={{ link_url|url_encode }}&amp;title={{ link_title|url_encode }}">
         {% if button_image %}
-          <img src="{{ button_image }}">
+          <img src="{{ button_image }}" alt="{{ 'Share'|t }}">
         {% endif %}
       </a>
     {% endset  %}

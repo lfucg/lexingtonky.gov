@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @see \Drupal\search_api\Display\DisplayPluginBase
  * @see plugin_api
  */
-class DisplayPluginManager extends SearchApiPluginManager {
+class DisplayPluginManager extends SearchApiPluginManager implements DisplayPluginManagerInterface {
 
   /**
    * Static cache for the display plugins.

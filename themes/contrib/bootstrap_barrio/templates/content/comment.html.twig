@@ -99,7 +99,7 @@
   </div>
 
   <div{{ content_attributes.addClass(['comment__content', 'col-sm-9', 'card']) }}>
-    <div class="card-block">
+    <div class="card-body">
       {% if title %}
         {{ title_prefix }}
         <h3{{ title_attributes.addClass('card-title') }}>{{ title }}</h3>
@@ -110,7 +110,7 @@
         <nav>{{ content.links }}</nav>
       {% endif %}
     </div>
-    <div class="card-block">
+    <div class="card-body">
       <span class="comment__time">{{ created }}</span>
       <span class="comment__permalink">{{ permalink }}</span>
     </div>

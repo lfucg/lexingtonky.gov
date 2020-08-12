@@ -15,6 +15,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * The default CKEditor Media Embed class.
@@ -66,6 +67,13 @@ class Embed implements EmbedInterface {
   protected $currentPath;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * Constructs an Embed object.
    *
    * @param \GuzzleHttp\ClientInterface $http_client
@@ -80,14 +88,17 @@ class Embed implements EmbedInterface {
    *   The config factory service.
    * @param \Drupal\Core\Path\CurrentPathStack $current_path
    *   The current path service.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
-  public function __construct(ClientInterface $http_client, UnroutedUrlAssemblerInterface $url_assembler, RequestStack $request_stack, MessengerInterface $messenger, ConfigFactory $config_factory, CurrentPathStack $current_path) {
+  public function __construct(ClientInterface $http_client, UnroutedUrlAssemblerInterface $url_assembler, RequestStack $request_stack, MessengerInterface $messenger, ConfigFactory $config_factory, CurrentPathStack $current_path, ModuleHandlerInterface $module_handler) {
     $this->httpClient = $http_client;
     $this->urlAssembler = $url_assembler;
     $this->requestStack = $request_stack;
     $this->configFactory = $config_factory;
     $this->messenger = $messenger;
     $this->currentPath = $current_path;
+    $this->moduleHandler = $module_handler;
 
     $embed_provider = $this->configFactory->get('ckeditor_media_embed.settings')->get('embed_provider');
     $this->setEmbedProvider($embed_provider);
@@ -121,6 +132,8 @@ class Embed implements EmbedInterface {
       $this->messenger->addWarning($this->t('Unable to retrieve @url at this time, please check again later.', ['@url' => $url]));
       watchdog_exception('ckeditor_media_embed', $e);
     }
+
+    $this->moduleHandler->alter('ckeditor_media_embed_object', $embed);
 
     return $embed;
   }
@@ -183,7 +196,7 @@ class Embed implements EmbedInterface {
     $embed_node->setAttribute('class', $this->getClass($embed));
 
     $child = NULL;
-    $embed_body_node = HTML::load($embed->html)->getElementsByTagName('body')->item(0);
+    $embed_body_node = HTML::load(trim($embed->html))->getElementsByTagName('body')->item(0);
     foreach ($embed_body_node->childNodes as $child) {
       if ($child = $node->ownerDocument->importNode($child, TRUE)) {
         $embed_node->appendChild($child);

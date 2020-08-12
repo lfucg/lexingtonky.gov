@@ -4,6 +4,7 @@ namespace Drupal\ctools\Plugin\Deriver;
 
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
+use Drupal\Core\Plugin\Context\EntityContextDefinition;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\field\FieldConfigInterface;
@@ -33,12 +34,17 @@ class TypedDataRelationshipDeriver extends TypedDataPropertyDeriverBase implemen
       ]);
       $derivative['data_type'] = $property_definition->getFieldStorageDefinition()->getPropertyDefinition($property_definition->getFieldStorageDefinition()->getMainPropertyName())->getDataType();
       $derivative['property_name'] = $property_name;
-      $context_definition = new ContextDefinition($base_data_type, $this->typedDataManager->createDataDefinition($base_data_type));
+      if (strpos($base_data_type, 'entity:') === 0) {
+        $context_definition = new EntityContextDefinition($base_data_type, $this->typedDataManager->createDataDefinition($base_data_type));
+      }
+      else {
+        $context_definition = new ContextDefinition($base_data_type, $this->typedDataManager->createDataDefinition($base_data_type));
+      }
       // Add the constraints of the base definition to the context definition.
       if ($base_definition->getConstraint('Bundle')) {
         $context_definition->addConstraint('Bundle', $base_definition->getConstraint('Bundle'));
       }
-      $derivative['context'] = [
+      $derivative['context_definitions'] = [
         'base' => $context_definition,
       ];
       $derivative['property_name'] = $property_name;
@@ -64,7 +70,7 @@ class TypedDataRelationshipDeriver extends TypedDataPropertyDeriverBase implemen
       $this->derivatives[$base_data_type . ':' . $property_name]['label'] = $this->t($string, $arguments);
       if ($base_definition->getConstraint('Bundle')) {
         // Add bundle constraints
-        $context_definition = $derivative['context']['base'];
+        $context_definition = $derivative['context_definitions']['base'];
         $bundles = $context_definition->getConstraint('Bundle') ?: [];
         $bundles = array_merge($bundles, $base_definition->getConstraint('Bundle'));
         $context_definition->addConstraint('Bundle', $bundles);

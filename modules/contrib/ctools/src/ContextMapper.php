@@ -5,6 +5,7 @@ namespace Drupal\ctools;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\Context\ContextDefinition;
+use Drupal\Core\Plugin\Context\EntityContextDefinition;
 use Drupal\ctools\Context\EntityLazyLoadContext;
 
 /**
@@ -35,11 +36,12 @@ class ContextMapper implements ContextMapperInterface {
   public function getContextValues(array $context_configurations) {
     $contexts = [];
     foreach ($context_configurations as $name => $context_configuration) {
-      $context_definition = new ContextDefinition($context_configuration['type'], $context_configuration['label'], TRUE, FALSE, $context_configuration['description']);
       if (strpos($context_configuration['type'], 'entity:') === 0) {
+        $context_definition = new EntityContextDefinition($context_configuration['type'], $context_configuration['label'], TRUE, FALSE, $context_configuration['description']);
         $context = new EntityLazyLoadContext($context_definition, $this->entityRepository, $context_configuration['value']);
       }
       else {
+        $context_definition = new ContextDefinition($context_configuration['type'], $context_configuration['label'], TRUE, FALSE, $context_configuration['description']);
         $context = new Context($context_definition, $context_configuration['value']);
       }
       $contexts[$name] = $context;

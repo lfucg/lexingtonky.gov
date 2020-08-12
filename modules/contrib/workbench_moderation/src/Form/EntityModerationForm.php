@@ -146,7 +146,7 @@ class EntityModerationForm extends FormBase {
 
     $entity->save();
 
-    drupal_set_message($this->t('The moderation state has been updated.'));
+    $this->messenger()->addMessage($this->t('The moderation state has been updated.'));
 
     /** @var ModerationState $state */
     $state = $this->entityTypeManager->getStorage('moderation_state')->load($new_state);

@@ -103,7 +103,7 @@ class DistributionProfileTranslationTest extends InstallerTestBase {
    */
   public function testInstalled() {
     $this->assertUrl('user/1');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     // Confirm that we are logged-in after installation.
     $this->assertText($this->rootUser->getDisplayName());
@@ -119,6 +119,7 @@ class DistributionProfileTranslationTest extends InstallerTestBase {
    *
    * @param string $langcode
    *   The language code.
+   *
    * @return string
    *   Contents for the test .po file.
    */

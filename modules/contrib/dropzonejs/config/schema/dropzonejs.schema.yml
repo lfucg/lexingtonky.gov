@@ -5,3 +5,6 @@ dropzonejs.settings:
     tmp_upload_scheme:
       type: string
       label: 'Upload scheme'
+    filename_transliteration:
+      type: boolean
+      label: 'Transliterate names of uploaded files'

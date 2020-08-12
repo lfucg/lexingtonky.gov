@@ -80,7 +80,7 @@ class EntityEmbedDisplayManagerTest extends BrowserTestBase {
     $entity_embed_path = $this->container->get('module_handler')
       ->getModule('entity_embed')
       ->getPath();
-    file_unmanaged_copy($entity_embed_path . '/js/plugins/drupalentity/entity.png', 'public://example1.png');
+    \Drupal::service('file_system')->copy($entity_embed_path . '/js/plugins/drupalentity/entity.png', 'public://example1.png');
 
     // Resize the test image so that it will be scaled down during token
     // replacement.

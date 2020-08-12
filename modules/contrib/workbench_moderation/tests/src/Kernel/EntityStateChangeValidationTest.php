@@ -96,8 +96,6 @@ class EntityStateChangeValidationTest extends KernelTestBase {
 
   /**
    * Verifies that content without prior moderation information can be moderated.
-   *
-   * @legacy
    */
   public function testContent() {
     $this->setCurrentUser($this->adminUser);
@@ -137,8 +135,6 @@ class EntityStateChangeValidationTest extends KernelTestBase {
 
   /**
    * Verifies that content without prior moderation information can be translated.
-   *
-   * @legacy
    */
   public function testMultilingualContent() {
     // Enable French

@@ -7,4 +7,3 @@ ckeditor:
     gpl-compatible: true
   js:
     assets/vendor/ckeditor/ckeditor.js: { preprocess: false, minified: true }
-

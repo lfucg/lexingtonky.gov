@@ -56,7 +56,7 @@ class DisplayKernelTest extends ViewsKernelTestBase {
    *
    * @var array
    */
-  public static $testViews = ['test_display_defaults'];
+  public static $testViews = ['test_display_defaults', 'test_view'];
 
   /**
    * Tests the default display options.
@@ -94,13 +94,13 @@ class DisplayKernelTest extends ViewsKernelTestBase {
     $view->initDisplay();
     $display_handler = $view->display_handler;
 
-    $this->assertTrue($display_handler->getPlugin('access') instanceof AccessPluginBase, 'An access plugin instance was returned.');
-    $this->assertTrue($display_handler->getPlugin('cache') instanceof CachePluginBase, 'A cache plugin instance was returned.');
-    $this->assertTrue($display_handler->getPlugin('exposed_form') instanceof ExposedFormPluginInterface, 'An exposed_form plugin instance was returned.');
-    $this->assertTrue($display_handler->getPlugin('pager') instanceof PagerPluginBase, 'A pager plugin instance was returned.');
-    $this->assertTrue($display_handler->getPlugin('query') instanceof QueryPluginBase, 'A query plugin instance was returned.');
-    $this->assertTrue($display_handler->getPlugin('row') instanceof RowPluginBase, 'A row plugin instance was returned.');
-    $this->assertTrue($display_handler->getPlugin('style') instanceof StylePluginBase, 'A style plugin instance was returned.');
+    $this->assertInstanceOf(AccessPluginBase::class, $display_handler->getPlugin('access'));
+    $this->assertInstanceOf(CachePluginBase::class, $display_handler->getPlugin('cache'));
+    $this->assertInstanceOf(ExposedFormPluginInterface::class, $display_handler->getPlugin('exposed_form'));
+    $this->assertInstanceOf(PagerPluginBase::class, $display_handler->getPlugin('pager'));
+    $this->assertInstanceOf(QueryPluginBase::class, $display_handler->getPlugin('query'));
+    $this->assertInstanceOf(RowPluginBase::class, $display_handler->getPlugin('row'));
+    $this->assertInstanceOf(StylePluginBase::class, $display_handler->getPlugin('style'));
     // Test that nothing is returned when an invalid type is requested.
     $this->assertNull($display_handler->getPlugin('invalid'), 'NULL was returned for an invalid instance');
     // Test that nothing was returned for an instance with no 'type' in options.
@@ -113,6 +113,53 @@ class DisplayKernelTest extends ViewsKernelTestBase {
     $first = spl_object_hash($display_handler->getPlugin('style'));
     $second = spl_object_hash($display_handler->getPlugin('style'));
     $this->assertIdentical($first, $second, 'The same plugin instance was returned.');
+  }
+
+  /**
+   * Tests the ::isIdentifierUnique method.
+   */
+  public function testisIdentifierUnique() {
+    $view = Views::getView('test_view');
+    $view->initDisplay();
+
+    // Add a handler that doesn't have an Identifier when exposed.
+    $sorts = [
+      'name' => [
+        'id' => 'name',
+        'field' => 'name',
+        'table' => 'views_test_data',
+        'plugin_id' => 'standard',
+        'order' => 'asc',
+        'expose' => ['label' => 'id'],
+        'exposed' => TRUE,
+      ],
+    ];
+    // Add a handler that does have an Identifier when exposed.
+    $filters = [
+      'id' => [
+        'field' => 'id',
+        'id' => 'id',
+        'table' => 'views_test_data',
+        'value' => [],
+        'plugin_id' => 'numeric',
+        'exposed' => TRUE,
+        'expose' => [
+          'operator_id' => '',
+          'label' => 'Id',
+          'description' => '',
+          'identifier' => 'id',
+          'required' => FALSE,
+          'remember' => FALSE,
+          'multiple' => FALSE,
+        ],
+      ],
+    ];
+    $view->display_handler->setOption('sorts', $sorts);
+    $view->display_handler->setOption('filters', $filters);
+    $view->save();
+
+    $this->assertTrue($view->display_handler->isIdentifierUnique('some_id', 'some_id'));
+    $this->assertFalse($view->display_handler->isIdentifierUnique('some_id', 'id'));
   }
 
 }

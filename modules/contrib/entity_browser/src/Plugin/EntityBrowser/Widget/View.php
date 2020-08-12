@@ -165,7 +165,22 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
   public function validate(array &$form, FormStateInterface $form_state) {
     $user_input = $form_state->getUserInput();
     if (isset($user_input['entity_browser_select'])) {
-      $selected_rows = array_values(array_filter($user_input['entity_browser_select']));
+      if (is_array($user_input['entity_browser_select'])) {
+        $selected_rows = array_values(array_filter($user_input['entity_browser_select']));
+      }
+      else {
+        $selected_rows = [$user_input['entity_browser_select']];
+      }
+
+      $use_field_cardinality = !empty($user_input['entity_browser_select_form_metadata']['use_field_cardinality']);
+      if ($use_field_cardinality) {
+        $cardinality = !empty($user_input['entity_browser_select_form_metadata']['cardinality']) ? $user_input['entity_browser_select_form_metadata']['cardinality'] : 0;
+        if ($cardinality > 0 && count($selected_rows) > $cardinality) {
+          $message = $this->formatPlural($cardinality, 'You can only select one item.', 'You can only select up to @number items.', ['@number' => $cardinality]);
+          $form_state->setError($form['widget']['view']['entity_browser_select'], $message);
+        }
+      }
+
       foreach ($selected_rows as $row) {
         // Verify that the user input is a string and split it.
         // Each $row is in the format entity_type:id.
@@ -203,13 +218,22 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   protected function prepareEntities(array $form, FormStateInterface $form_state) {
-    $selected_rows = array_values(array_filter($form_state->getUserInput()['entity_browser_select']));
+    if (is_array($form_state->getUserInput()['entity_browser_select'])) {
+      $selected_rows = array_values(array_filter($form_state->getUserInput()['entity_browser_select']));
+    }
+    else {
+      $selected_rows = [$form_state->getUserInput()['entity_browser_select']];
+    }
+
     $entities = [];
     foreach ($selected_rows as $row) {
-      list($type, $id) = explode(':', $row);
-      $storage = $this->entityTypeManager->getStorage($type);
-      if ($entity = $storage->load($id)) {
-        $entities[] = $entity;
+      $item = explode(':', $row);
+      if (count($item) == 2) {
+        list($type, $id) = $item;
+        $storage = $this->entityTypeManager->getStorage($type);
+        if ($entity = $storage->load($id)) {
+          $entities[] = $entity;
+        }
       }
     }
     return $entities;

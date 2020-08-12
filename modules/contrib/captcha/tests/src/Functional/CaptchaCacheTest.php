@@ -40,7 +40,7 @@ class CaptchaCacheTest extends CaptchaWebTestBase {
     captcha_set_form_id_setting('user_login_form', 'captcha/Math');
     $this->drupalGet('');
     $sid = $this->getCaptchaSidFromForm();
-    $this->assertFalse($this->drupalGetHeader('x-drupal-cache'), 'Cache is disabled');
+    $this->assertNull($this->drupalGetHeader('x-drupal-cache'), 'Cache is disabled');
     $this->drupalGet('');
     $this->assertNotEqual($sid, $this->getCaptchaSidFromForm());
 
@@ -48,18 +48,18 @@ class CaptchaCacheTest extends CaptchaWebTestBase {
     captcha_set_form_id_setting('user_login_form', 'captcha/Test');
     $this->drupalGet('');
     $sid = $this->getCaptchaSidFromForm();
-    $this->assertFalse($this->drupalGetHeader('x-drupal-cache'), 'Cache is disabled');
+    $this->assertNull($this->drupalGetHeader('x-drupal-cache'), 'Cache is disabled');
     $this->drupalGet('');
     $this->assertNotEqual($sid, $this->getCaptchaSidFromForm());
 
     // Switch challenge to image_captcha/Image, check the captcha isn't cached.
     captcha_set_form_id_setting('user_login_form', 'image_captcha/Image');
     $this->drupalGet('');
-    $image_path = $this->xpath('//div[@class="details-wrapper"]/img')[0]->getAttribute('src');
-    $this->assertFalse($this->drupalGetHeader('x-drupal-cache'), 'Cache disabled');
+    $image_path = $this->getSession()->getPage()->find('css', '.captcha img')->getAttribute('src');
+    $this->assertNull($this->drupalGetHeader('x-drupal-cache'), 'Cache disabled');
     // Check that we get a new image when vising the page again.
     $this->drupalGet('');
-    $this->assertNotEqual($image_path, $this->xpath('//div[@class="details-wrapper"]/img')[0]->getAttribute('src'));
+    $this->assertNotEqual($image_path, $this->getSession()->getPage()->find('css', '.captcha img')->getAttribute('src'));
     // Check image caching, remove the base path since drupalGet() expects the
     // internal path.
     $this->drupalGet(substr($image_path, strlen($base_path)));

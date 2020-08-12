@@ -26,7 +26,7 @@ class FileSecurity {
    *   TRUE if the file already exists or was created. FALSE otherwise.
    */
   public static function writeHtaccess($directory, $deny_public_access = TRUE, $force = FALSE) {
-    return self::writeFile($directory, '/.htaccess', self::htaccessLines($deny_public_access), $force);
+    return self::writeFile($directory, '.htaccess', self::htaccessLines($deny_public_access), $force);
   }
 
   /**
@@ -72,9 +72,6 @@ SetHandler Drupal_Security_Do_Not_Remove_See_SA_2006_006
 </Files>
 
 # If we know how to do it safely, disable the PHP engine entirely.
-<IfModule mod_php5.c>
-  php_flag engine off
-</IfModule>
 <IfModule mod_php7.c>
   php_flag engine off
 </IfModule>
@@ -113,7 +110,7 @@ EOF;
    *   TRUE if the file already exists or was created. FALSE otherwise.
    */
   public static function writeWebConfig($directory, $force = FALSE) {
-    return self::writeFile($directory, '/web.config', self::webConfigLines(), $force);
+    return self::writeFile($directory, 'web.config', self::webConfigLines(), $force);
   }
 
   /**
@@ -155,7 +152,12 @@ EOT;
     if (file_exists($file_path) && !$force) {
       return TRUE;
     }
-    if (file_exists($directory) && is_writable($directory) && file_put_contents($file_path, $contents)) {
+    // Writing the file can fail if:
+    // - concurrent requests are both trying to write at the same time.
+    // - $directory does not exist or is not writable.
+    // Testing for these conditions introduces windows for concurrency issues to
+    // occur.
+    if (@file_put_contents($file_path, $contents)) {
       return @chmod($file_path, 0444);
     }
     return FALSE;

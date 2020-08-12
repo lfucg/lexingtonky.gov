@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\Event;
 /**
  * Wraps an indexing items event.
  */
-class IndexingItemsEvent extends Event {
+final class IndexingItemsEvent extends Event {
 
   /**
    * The index on which items will be indexed.

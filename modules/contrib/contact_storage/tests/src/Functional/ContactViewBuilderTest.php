@@ -33,6 +33,11 @@ class ContactViewBuilderTest extends ContactStorageTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() {
     parent::setUp();
 
@@ -92,7 +97,7 @@ class ContactViewBuilderTest extends ContactStorageTestBase {
     $field->save();
 
     // Configure the contact reference field form Entity form display.
-    entity_get_form_display($entity_type, $bundle_name, 'default')
+    $this->container->get('entity_display.repository')->getFormDisplay($entity_type, $bundle_name)
       ->setComponent($field_name, [
         'type' => 'options_select',
         'settings' => [
@@ -102,7 +107,7 @@ class ContactViewBuilderTest extends ContactStorageTestBase {
       ->save();
 
     // Configure the contact reference field form Entity view display.
-    entity_get_display('node', 'article', 'default')
+    $this->container->get('entity_display.repository')->getViewDisplay('node', 'article')
       ->setComponent($field_name, [
         'label' => 'above',
         'type' => 'entity_reference_entity_view',

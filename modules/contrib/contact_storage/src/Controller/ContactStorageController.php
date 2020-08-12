@@ -3,8 +3,9 @@
 namespace Drupal\contact_storage\Controller;
 
 use Drupal\contact\ContactFormInterface;
+use Drupal\contact\Controller\ContactController;
+use Drupal\Core\Url;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use  Drupal\contact\Controller\ContactController;
 
 /**
  * Controller routines for contact storage routes.
@@ -29,8 +30,9 @@ class ContactStorageController extends ContactController {
       // If there are no forms, do not display the form.
       if (empty($contact_form)) {
         if ($this->currentUser()->hasPermission('administer contact forms')) {
-          drupal_set_message($this->t('The contact form has not been configured. <a href=":add">Add one or more forms</a> .', [
-            ':add' => $this->url('contact.form_add')]), 'error');
+          $this->messenger()->addError($this->t('The contact form has not been configured. <a href=":add">Add one or more forms</a> .', [
+            ':add' => Url::fromRoute('contact.form_add')->toString(),
+          ]));
           return [];
         }
         else {

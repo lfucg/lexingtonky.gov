@@ -212,7 +212,7 @@ class RevisionOverviewForm extends FormBase {
         if ($revision->hasTranslation($langcode) && $revision->getTranslation($langcode)->isRevisionTranslationAffected()) {
           $username = array(
             '#theme' => 'username',
-            '#account' => $revision->getRevisionAuthor(),
+            '#account' => $revision->getRevisionUser(),
           );
           $revision_date = $this->date->format($revision->getRevisionCreationTime(), 'short');
           // Use revision link to link to revisions that are not active.

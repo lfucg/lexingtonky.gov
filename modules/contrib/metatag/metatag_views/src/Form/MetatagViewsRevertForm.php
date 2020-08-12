@@ -37,8 +37,8 @@ class MetatagViewsRevertForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeManagerInterface $entity_manager) {
-    $this->viewsManager = $entity_manager->getStorage('view');
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->viewsManager = $entity_type_manager->getStorage('view');
   }
 
   /**

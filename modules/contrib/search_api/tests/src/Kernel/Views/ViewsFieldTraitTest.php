@@ -32,6 +32,7 @@ class ViewsFieldTraitTest extends KernelTestBase {
     'user',
     'system',
     'entity_test',
+    'filter',
     'text',
   ];
 

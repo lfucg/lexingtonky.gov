@@ -75,6 +75,10 @@ class MasqueradeBlock extends BlockBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   protected function blockAccess(AccountInterface $account) {
+    if ($account->isAnonymous()) {
+      // Do not allow masquerade as anonymous user, use private browsing.
+      return AccessResult::forbidden();
+    }
     if ($this->masquerade->isMasquerading()) {
       return AccessResult::forbidden()
         ->addCacheContexts(['session.is_masquerading']);

@@ -9,6 +9,7 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\field_ui\FieldUI;
 use Drupal\paragraphs\ParagraphsBehaviorManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\paragraphs\ParagraphsTypeInterface;
 
 /**
  * Form controller for paragraph type forms.
@@ -95,7 +96,7 @@ class ParagraphsTypeForm extends EntityForm {
     $form['icon_file'] = [
       '#title' => $this->t('Paragraph type icon'),
       '#type' => 'managed_file',
-      '#upload_location' => 'public://paragraphs_type_icon/',
+      '#upload_location' => ParagraphsTypeInterface::ICON_UPLOAD_LOCATION,
       '#upload_validators' => [
         'file_validate_extensions' => ['png jpg svg'],
       ],
@@ -168,12 +169,16 @@ class ParagraphsTypeForm extends EntityForm {
     $paragraphs_type = $this->entity;
 
     $icon_file = $form_state->getValue(['icon_file', '0']);
-    // Set the file UUID to the paragraph configuration.
+    // Set the icon file UUID and default value to the paragraph configuration.
     if (!empty($icon_file) && $file = $this->entityTypeManager->getStorage('file')->load($icon_file)) {
       $paragraphs_type->set('icon_uuid', $file->uuid());
+      $paragraphs_type->set(
+        'icon_default',
+        'data:' . $file->getMimeType() . ';base64,' . base64_encode(file_get_contents($file->getFileUri())));
     }
     else {
       $paragraphs_type->set('icon_uuid', NULL);
+      $paragraphs_type->set('icon_default', NULL);
     }
 
     if ($behavior_plugin_definitions = $this->paragraphsBehaviorManager->getApplicableDefinitions($paragraphs_type)) {
@@ -208,8 +213,8 @@ class ParagraphsTypeForm extends EntityForm {
           }
         }
         else {
-          // The plugin is not enabled, reset to default configuration.
-          $behavior_plugin->setConfiguration([]);
+          // The plugin is not enabled, remove it from the paragraphs type.
+          $paragraphs_type->getBehaviorPlugins()->removeInstanceId($id);
         }
       }
     }

@@ -69,13 +69,13 @@ class ModerationStateForm extends EntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Moderation state.', [
+        $this->messenger()->addMessage($this->t('Created the %label Moderation state.', [
           '%label' => $moderation_state->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label Moderation state.', [
+        $this->messenger()->addMessage($this->t('Saved the %label Moderation state.', [
           '%label' => $moderation_state->label(),
         ]));
     }

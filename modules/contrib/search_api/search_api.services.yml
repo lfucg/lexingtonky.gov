@@ -5,7 +5,7 @@ services:
 
   paramconverter.search_api:
     class: Drupal\search_api\ParamConverter\SearchApiConverter
-    arguments: ['@entity.manager', '@tempstore.shared', '@current_user']
+    arguments: ['@entity_type.manager', '@entity.repository', '@tempstore.shared', '@current_user']
     tags:
       - { name: paramconverter, priority: 10 }
     lazy: true

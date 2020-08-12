@@ -33,7 +33,7 @@ class ParagraphsSettingsForm extends ConfigFormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Show unpublished Paragraphs'),
       '#default_value' => $config->get('show_unpublished'),
-      '#description' => $this->t('Allow users with "View unpublished paragraphs" permission to see unpublished Paragraphs.')
+      '#description' => $this->t('Allow users with "View unpublished paragraphs" permission to see unpublished Paragraphs. Disable this if unpublished paragraphs should be hidden for all users, including super administrators.')
     ];
 
     return parent::buildForm($form, $form_state);

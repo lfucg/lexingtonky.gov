@@ -44,7 +44,7 @@ class SearchApiDbUpdate8102Test extends UpdatePathTestBase {
    */
   protected function setDatabaseDumpFiles() {
     $this->databaseDumpFiles = [
-      DRUPAL_ROOT . '/core/modules/system/tests/fixtures/update/drupal-8.bare.standard.php.gz',
+      DRUPAL_ROOT . '/core/modules/system/tests/fixtures/update/drupal-8.8.0.bare.standard.php.gz',
       __DIR__ . '/../../../tests/fixtures/update/search-api-db-base.php',
       __DIR__ . '/../../../tests/fixtures/update/search-api-db-update-8102.php',
     ];

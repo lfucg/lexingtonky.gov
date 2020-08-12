@@ -231,16 +231,21 @@ class AliasCleaner implements AliasCleanerInterface {
     $output = Html::decodeEntities($string);
     $output = PlainTextOutput::renderFromHtml($output);
 
+    // Replace or drop punctuation based on user settings.
+    $output = strtr($output, $this->cleanStringCache['punctuation']);
+    
     // Optionally transliterate.
     if ($this->cleanStringCache['transliterate']) {
       // If the reduce strings to letters and numbers is enabled, don't bother
       // replacing unknown characters with a question mark. Use an empty string
       // instead.
       $output = $this->transliteration->transliterate($output, $langcode, $this->cleanStringCache['reduce_ascii'] ? '' : '?');
+
+      // Replace or drop punctuation again as the transliteration process can
+      // convert special characters to punctuation.
+      $output = strtr($output, $this->cleanStringCache['punctuation']);
     }
 
-    // Replace or drop punctuation based on user settings.
-    $output = strtr($output, $this->cleanStringCache['punctuation']);
 
     // Reduce strings to letters and numbers.
     if ($this->cleanStringCache['reduce_ascii']) {

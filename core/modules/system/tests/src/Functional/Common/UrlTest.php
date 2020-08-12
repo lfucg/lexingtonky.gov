@@ -39,11 +39,13 @@ class UrlTest extends BrowserTestBase {
     $encoded_path = "3CSCRIPT%3Ealert%28%27XSS%27%29%3C/SCRIPT%3E";
 
     $link = Link::fromTextAndUrl($text, Url::fromUserInput('/' . $path))->toString();
-    $this->assertTrue(strpos($link, $encoded_path) !== FALSE && strpos($link, $path) === FALSE, new FormattableMarkup('XSS attack @path was filtered by \Drupal\Core\Utility\LinkGeneratorInterface::generate().', ['@path' => $path]));
+    $this->assertStringContainsString($encoded_path, $link, new FormattableMarkup('XSS attack @path was filtered by \Drupal\Core\Utility\LinkGeneratorInterface::generate().', ['@path' => $path]));
+    $this->assertStringNotContainsString($path, $link, new FormattableMarkup('XSS attack @path was filtered by \Drupal\Core\Utility\LinkGeneratorInterface::generate().', ['@path' => $path]));
 
     // Test \Drupal\Core\Url.
     $link = Url::fromUri('base:' . $path)->toString();
-    $this->assertTrue(strpos($link, $encoded_path) !== FALSE && strpos($link, $path) === FALSE, new FormattableMarkup('XSS attack @path was filtered by #theme', ['@path' => $path]));
+    $this->assertStringContainsString($encoded_path, $link, new FormattableMarkup('XSS attack @path was filtered by #theme', ['@path' => $path]));
+    $this->assertStringNotContainsString($path, $link, new FormattableMarkup('XSS attack @path was filtered by #theme', ['@path' => $path]));
   }
 
   /**
@@ -69,7 +71,6 @@ class UrlTest extends BrowserTestBase {
         '#url' => Url::fromUri($uri),
       ];
       \Drupal::service('renderer')->renderRoot($link);
-      $this->pass($title);
       $this->assertEqual($expected_cacheability, $link['#cache']);
       $this->assertEqual($expected_attachments, $link['#attached']);
     }
@@ -308,6 +309,11 @@ class UrlTest extends BrowserTestBase {
 
     // Verify external URL can contain a query string.
     $url = $test_url . '?drupal=awesome';
+    $result = Url::fromUri($url)->toString();
+    $this->assertEqual($url, $result);
+
+    // Verify external URL can contain a query string with an integer key.
+    $url = $test_url . '?120=1';
     $result = Url::fromUri($url)->toString();
     $this->assertEqual($url, $result);
 

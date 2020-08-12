@@ -22,10 +22,10 @@ class ParagraphsExperimentalAddModesTest extends ParagraphsExperimentalTestBase 
     $this->clickLink(t('Edit'));
 
     // Check that the current field does not allow to add default values.
-    $this->assertText('No widget available for: field_paragraphs.');
+    $this->assertSession()->pageTextContains('No widget available for: field_paragraphs.');
     $this->drupalPostForm(NULL, [], t('Save settings'));
-    $this->assertText('Saved field_paragraphs configuration.');
-    $this->assertResponse(200);
+    $this->assertSession()->pageTextContains('Saved field_paragraphs configuration.');
+    $this->assertSession()->statusCodeEquals(200);
   }
 
   /**
@@ -39,7 +39,7 @@ class ParagraphsExperimentalAddModesTest extends ParagraphsExperimentalTestBase 
     $this->drupalGet('admin/structure/types/manage/paragraphed_test/fields');
     $this->clickLink(t('Edit'));
     $this->drupalPostForm(NULL, [], t('Save settings'));
-    $this->assertText('Saved field_paragraphs configuration.');
+    $this->assertSession()->pageTextContains('Saved field_paragraphs configuration.');
   }
 
   /**
@@ -118,12 +118,12 @@ class ParagraphsExperimentalAddModesTest extends ParagraphsExperimentalTestBase 
    */
   protected function assertAddButtons($options) {
     $this->drupalGet('node/add/paragraphed_test');
-    $buttons = $this->xpath('//input[@class="field-add-more-submit paragraphs-add-wrapper button js-form-submit form-submit"]');
+    $buttons = $this->xpath('//input[@class="field-add-more-submit button js-form-submit form-submit"]');
     // Check if the buttons are in the same order as the given array.
     foreach ($buttons as $key => $button) {
-      $this->assertEqual($button->getValue(), $options[$key]);
+      $this->assertEquals($button->getValue(), $options[$key]);
     }
-    $this->assertTrue(count($buttons) == count($options), 'The amount of drop down options matches with the given array');
+    $this->assertEquals(count($buttons), count($options), 'The amount of drop down options matches with the given array');
   }
 
   /**
@@ -139,10 +139,10 @@ class ParagraphsExperimentalAddModesTest extends ParagraphsExperimentalTestBase 
     $buttons = $this->xpath('//*[@name="' . $paragraphs_field . '[add_more][add_more_select]"]/option');
     // Check if the options are in the same order as the given array.
     foreach ($buttons as $key => $button) {
-      $this->assertEqual($button->getValue(), $options[$key]);
+      $this->assertEquals($button->getValue(), $options[$key]);
     }
-    $this->assertTrue(count($buttons) == count($options), 'The amount of select options matches with the given array');
-    $this->assertNotEqual($this->xpath('//*[@name="' . $paragraphs_field .'_add_more"]'), [], 'The add button is displayed');
+    $this->assertEquals(count($buttons), count($options), 'The amount of select options matches with the given array');
+    $this->assertNotEquals($this->xpath('//*[@name="' . $paragraphs_field .'_add_more"]'), [], 'The add button is displayed');
   }
 
   /**
@@ -172,7 +172,7 @@ class ParagraphsExperimentalAddModesTest extends ParagraphsExperimentalTestBase 
 
     // Check if default paragraph type is showing.
     $this->drupalGet('node/add/paragraphed_test');
-    $this->assertText('Text + Image');
+    $this->assertSession()->pageTextContains('Text + Image');
     $this->removeDefaultParagraphType('paragraphed_test');
 
     // Disable text_image as default paragraph type.
@@ -182,8 +182,8 @@ class ParagraphsExperimentalAddModesTest extends ParagraphsExperimentalTestBase 
     $this->drupalGet('node/add/paragraphed_test');
     $elements = $this->xpath('//table[@id="paragraphs-values"]/tbody');
     $header = $this->xpath('//table[@id="paragraphs-values"]/thead');
-    $this->assertEqual($elements, []);
-    $this->assertNotEqual($header, []);
+    $this->assertEquals($elements, []);
+    $this->assertNotEquals($header, []);
 
     // Check if default type is created only for new host
     $this->setDefaultParagraphType('paragraphed_test', 'paragraphs', 'paragraphs_settings_edit', 'text_image');
@@ -193,8 +193,8 @@ class ParagraphsExperimentalAddModesTest extends ParagraphsExperimentalTestBase 
     $this->drupalGet('node/1/edit');
     $elements = $this->xpath('//table[@id="paragraphs-values"]/tbody');
     $header = $this->xpath('//table[@id="paragraphs-values"]/thead');
-    $this->assertEqual($elements, []);
-    $this->assertNotEqual($header, []);
+    $this->assertEquals($elements, []);
+    $this->assertNotEquals($header, []);
   }
 
   /**
@@ -220,8 +220,8 @@ class ParagraphsExperimentalAddModesTest extends ParagraphsExperimentalTestBase 
     $this->drupalGet('node/add/paragraphed_test');
     $elements = $this->xpath('//table[@id="paragraphs-values"]/tbody');
     $header = $this->xpath('//table[@id="paragraphs-values"]/thead');
-    $this->assertNotEqual($elements, []);
-    $this->assertNotEqual($header, []);
+    $this->assertNotEquals($elements, []);
+    $this->assertNotEquals($header, []);
 
     // Check that no paragraph type is automatically added, if the defaut
     // setting was set to '- None -'.
@@ -229,7 +229,7 @@ class ParagraphsExperimentalAddModesTest extends ParagraphsExperimentalTestBase 
     $this->drupalGet('node/add/paragraphed_test');
     $elements = $this->xpath('//table[@id="paragraphs-values"]/tbody');
     $header = $this->xpath('//table[@id="paragraphs-values"]/thead');
-    $this->assertEqual($elements, []);
-    $this->assertNotEqual($header, []);
+    $this->assertEquals($elements, []);
+    $this->assertNotEquals($header, []);
   }
 }

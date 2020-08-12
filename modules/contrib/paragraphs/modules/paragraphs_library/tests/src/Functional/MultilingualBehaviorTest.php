@@ -86,7 +86,7 @@ class MultilingualBehaviorTest extends ParagraphsExperimentalTestBase {
       'paragraphs[0][subform][field_err_field][0][subform][field_paragraphs_text][0][value]' => 'En label Example text for test in nested paragraph.',
     ];
     $this->drupalPostForm(NULL, $edit, 'Save');
-    $this->assertText('Paragraph En label Test nested paragraph has been created.');
+    $this->assertSession()->pageTextContains('Paragraph En label Test nested paragraph has been created.');
 
     // Translate nested paragraphs library item.
     $this->clickLink('Translate');
@@ -114,10 +114,10 @@ class MultilingualBehaviorTest extends ParagraphsExperimentalTestBase {
     $this->drupalPostForm('de/node/' . $node->id() . '/translations/add/en/de', $edit, 'Save (this translation)');
 
     $this->drupalGet('node/' . $node->id());
-    $this->assertText('En label Example text for test in nested paragraph.');
+    $this->assertSession()->pageTextContains('En label Example text for test in nested paragraph.');
 
     $this->drupalGet('de/node/' . $node->id());
-    $this->assertText('De label Beispieltext fur den Test in geschachteltem Absatz.');
+    $this->assertSession()->pageTextContains('De label Beispieltext fur den Test in geschachteltem Absatz.');
 
     // Update translation of library item.
     $edit = [
@@ -127,7 +127,7 @@ class MultilingualBehaviorTest extends ParagraphsExperimentalTestBase {
 
     // Check updated content.
     $this->drupalGet('de/node/' . $node->id());
-    $this->assertText('De label Beispieltext fur den Test geander.');
+    $this->assertSession()->pageTextContains('De label Beispieltext fur den Test geander.');
   }
 
   /**
@@ -163,14 +163,14 @@ class MultilingualBehaviorTest extends ParagraphsExperimentalTestBase {
 
     // Check translation.
     $this->drupalGet($node->toUrl());
-    $this->assertText('En label Example text for test in nested paragraph');
+    $this->assertSession()->pageTextContains('En label Example text for test in nested paragraph');
 
     $this->drupalGet('de/node/' . $node->id());
-    $this->assertText('De label Beispieltext fur den Test in geschachteltem Absatz.');
+    $this->assertSession()->pageTextContains('De label Beispieltext fur den Test in geschachteltem Absatz.');
 
     // Check library item after converting translated paragraph.
     $this->drupalGet('de/admin/content/paragraphs/1');
-    $this->assertText('De label Beispieltext fur den Test in geschachteltem Absatz.');
+    $this->assertSession()->pageTextContains('De label Beispieltext fur den Test in geschachteltem Absatz.');
   }
 
   /**
@@ -188,7 +188,7 @@ class MultilingualBehaviorTest extends ParagraphsExperimentalTestBase {
       'paragraphs[0][subform][field_err_field][0][subform][field_paragraphs_text][0][value]' => 'En label Example text for test.'
     ];
     $this->drupalPostForm(NULL, $edit, 'Save');
-    $this->assertText('Paragraph En label Test nested paragraph has been created.');
+    $this->assertSession()->pageTextContains('Paragraph En label Test nested paragraph has been created.');
 
     // Translate nested paragraphs library item.
     $this->clickLink('Translate');
@@ -215,18 +215,18 @@ class MultilingualBehaviorTest extends ParagraphsExperimentalTestBase {
     ];
     $this->drupalPostForm('de/node/' . $node->id() . '/translations/add/en/de', $edit, 'Save (this translation)');
 
-    $this->assertText('De label Beispieltext fur den Test in geschachteltem Absatz.');
+    $this->assertSession()->pageTextContains('De label Beispieltext fur den Test in geschachteltem Absatz.');
 
     // The detach action is not visible while translating.
     $this->clickLink('Edit');
-    $this->assertNoText('Unlink from library');
+    $this->assertSession()->pageTextNotContains('Unlink from library');
 
     // Detach from library an check content.
     $this->drupalGet('node/' . $node->id());
-    $this->assertText('En label Example text for test.');
+    $this->assertSession()->pageTextContains('En label Example text for test.');
     $this->clickLink('Edit');
     $this->drupalPostForm(NULL, NULL, 'field_paragraphs_0_unlink_from_library');
-    $this->assertText('En label Example text for test.');
+    $this->assertSession()->pageTextContains('En label Example text for test.');
   }
 
   /**
@@ -244,7 +244,7 @@ class MultilingualBehaviorTest extends ParagraphsExperimentalTestBase {
       'paragraphs[0][subform][field_err_field][0][subform][field_paragraphs_text][0][value]' => 'En label Example text for test.'
     ];
     $this->drupalPostForm(NULL, $edit, 'Save');
-    $this->assertText('Paragraph En label Test nested paragraph has been created.');
+    $this->assertSession()->pageTextContains('Paragraph En label Test nested paragraph has been created.');
 
     // Translate nested paragraphs library item.
     $this->clickLink('Translate');
@@ -272,10 +272,10 @@ class MultilingualBehaviorTest extends ParagraphsExperimentalTestBase {
     $node = $this->drupalGetNodeByTitle('En label Test node nested');
     $this->drupalPostForm('de/node/' . $node->id() . '/translations/add/en/de', NULL, 'Save (this translation)');
 
-    $this->assertText('De label Beispieltext fur den Test in geschachteltem Absatz.');
+    $this->assertSession()->pageTextContains('De label Beispieltext fur den Test in geschachteltem Absatz.');
 
     $this->drupalGet('node/' . $node->id());
-    $this->assertText('En label Example text for test.');
+    $this->assertSession()->pageTextContains('En label Example text for test.');
   }
 
   /**

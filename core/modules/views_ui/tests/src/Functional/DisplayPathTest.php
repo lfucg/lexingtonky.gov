@@ -57,7 +57,7 @@ class DisplayPathTest extends UITestBase {
     // Add a new page display and check the appearing text.
     $this->drupalPostForm(NULL, [], 'Add Page');
     $this->assertText(t('No path is set'), 'The right text appears if no path was set.');
-    $this->assertNoLink(t('View @display', ['@display' => 'page']), 'No view page link found on the page.');
+    $this->assertSession()->linkNotExists(t('View @display', ['@display' => 'page']), 'No view page link found on the page.');
 
     // Save a path and make sure the summary appears as expected.
     $random_path = $this->randomMachineName();
@@ -68,7 +68,7 @@ class DisplayPathTest extends UITestBase {
     $this->drupalPostForm('admin/structure/views/nojs/display/test_view/page_1/path', ['path' => $random_path], t('Apply'));
     $this->assertText('/' . $random_path, 'The custom path appears in the summary.');
     $display_link_text = t('View @display', ['@display' => 'Page']);
-    $this->assertLink($display_link_text, 0, 'view page link found on the page.');
+    $this->assertSession()->linkExists($display_link_text, 0, 'view page link found on the page.');
     $this->clickLink($display_link_text);
     $this->assertUrl($random_path);
   }
@@ -151,21 +151,21 @@ class DisplayPathTest extends UITestBase {
     $this->drupalGet('admin/structure/views/view/test_view');
 
     $this->drupalPostForm('admin/structure/views/nojs/display/test_view/page_1/menu', ['menu[type]' => 'default tab', 'menu[title]' => 'Test tab title'], t('Apply'));
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertUrl('admin/structure/views/nojs/display/test_view/page_1/tab_options');
 
     $this->drupalPostForm(NULL, ['tab_options[type]' => 'tab', 'tab_options[title]' => $this->randomString()], t('Apply'));
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertUrl('admin/structure/views/view/test_view/edit/page_1');
 
     $this->drupalGet('admin/structure/views/view/test_view');
-    $this->assertLink(t('Tab: @title', ['@title' => 'Test tab title']));
+    $this->assertSession()->linkExists(t('Tab: @title', ['@title' => 'Test tab title']));
     // If it's a default tab, it should also have an additional settings link.
     $this->assertLinkByHref('admin/structure/views/nojs/display/test_view/page_1/tab_options');
 
     // Ensure that you can select a parent in case the parent does not exist.
     $this->drupalGet('admin/structure/views/nojs/display/test_page_display_menu/page_5/menu');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $menu_parent = $this->xpath('//select[@id="edit-menu-parent"]');
     $menu_options = (array) $menu_parent[0]->findAll('css', 'option');
     unset($menu_options['@attributes']);
@@ -256,7 +256,7 @@ class DisplayPathTest extends UITestBase {
 
     $this->drupalPostForm(NULL, [], t('Save'));
     // Assert that saving the view will not cause an exception.
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
 }

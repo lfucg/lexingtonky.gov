@@ -8,6 +8,27 @@
   'use strict';
 
   /**
+   * Used to lower the cpu burden for activity tracking on browser events.
+   */
+  function debounce(f) {
+      var timeout;
+      return function () {
+          var savedContext = this;
+          var savedArguments = arguments;
+          var finalRun = function () {
+              timeout = null;
+              f.apply(savedContext, savedArguments);
+          };
+
+          if (!timeout) {
+            f.apply(savedContext, savedArguments);
+          }
+          clearTimeout(timeout);
+          timeout = setTimeout(finalRun, 500);
+      };
+  }
+
+  /**
    * Attaches the batch behavior for autologout.
    *
    * @type {Drupal~behavior}
@@ -46,23 +67,23 @@
         activity = false;
 
         // Bind formUpdated events to preventAutoLogout event.
-        $('body').bind('formUpdated', function (event) {
+        $('body').bind('formUpdated', debounce(function (event) {
           $(event.target).trigger('preventAutologout');
-        });
+        }));
 
         // Bind formUpdated events to preventAutoLogout event.
-        $('body').bind('mousemove', function (event) {
+        $('body').bind('mousemove', debounce(function (event) {
           $(event.target).trigger('preventAutologout');
-        });
+        }));
 
         // Support for CKEditor.
         if (typeof CKEDITOR !== 'undefined') {
           CKEDITOR.on('instanceCreated', function (e) {
             e.editor.on('contentDom', function () {
-              e.editor.document.on('keyup', function (event) {
+              e.editor.document.on('keyup', debounce(function (event) {
                 // Keyup event in ckeditor should prevent autologout.
                 $(e.editor.element.$).trigger('preventAutologout');
-              });
+              }));
             });
           });
         }
@@ -118,17 +139,23 @@
       }
 
       function dialog() {
-        var buttons = {};
-        buttons[Drupal.t('Yes')] = function () {
-          $(this).dialog("destroy");
-          clearTimeout(paddingTimer);
-          refresh();
-        };
+        var disableButtons = settings.autologout.disable_buttons;
 
-        buttons[Drupal.t('No')] = function () {
-          $(this).dialog("destroy");
-          logout();
-        };
+        var buttons = {};
+        if (!disableButtons) {
+          var yesButton = settings.autologout.yes_button;
+          buttons[Drupal.t(yesButton)] = function () {
+            $(this).dialog("destroy");
+            clearTimeout(paddingTimer);
+            refresh();
+          };
+
+          var noButton = settings.autologout.no_button;
+          buttons[Drupal.t(noButton)] = function () {
+            $(this).dialog("destroy");
+            logout();
+          };
+        }
 
         return $('<div id="autologout-confirm">' + localSettings.message + '</div>').dialog({
           modal: true,
@@ -160,15 +187,15 @@
 
       function logout() {
         if (localSettings.use_alt_logout_method) {
-          window.location = drupalSettings.path.baseUrl + "autologout_ahah_logout";
+          window.location = drupalSettings.path.baseUrl + "autologout_alt_logout";
         }
         else {
           $.ajax({
-            url: drupalSettings.path.baseUrl + "autologout_ahah_logout",
+            url: drupalSettings.path.baseUrl + "autologout_ajax_logout",
             type: "POST",
             beforeSend: function (xhr) {
               xhr.setRequestHeader('X-Requested-With', {
-                toString: function (){
+                toString: function () {
                   return '';
                 }
               });
@@ -282,7 +309,7 @@
       Drupal.Ajax['autologout.refresh'] = Drupal.ajax({
         base: null,
         element: document.body,
-        url: drupalSettings.path.baseUrl + 'autologout_ahah_set_last',
+        url: drupalSettings.path.baseUrl + 'autologout_ajax_set_last',
         event: 'autologout.refresh',
         error: function (XMLHttpRequest, textStatus) {
           // Disable error reporting to the screen.

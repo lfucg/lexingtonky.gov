@@ -12,6 +12,8 @@ use Drupal\filter\Entity\FilterFormat;
  */
 class ConfigurationUiTest extends EntityEmbedTestBase {
 
+  use SortableTestTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -106,9 +108,12 @@ class ConfigurationUiTest extends EntityEmbedTestBase {
     // Verify that after dragging the Entity Embed CKEditor plugin button into
     // the active toolbar, the <drupal-entity> tag is allowed, as well as some
     // attributes.
-    $target = $this->assertSession()->waitForElementVisible('css', 'ul.ckeditor-toolbar-group-buttons');
-    $button_element = $this->assertSession()->elementExists('xpath', '//li[@data-drupal-ckeditor-button-name="test_media_entity_embed"]');
-    $button_element->dragTo($target);
+    $item = 'li[data-drupal-ckeditor-button-name="test_media_entity_embed"]';
+    $from = "ul $item";
+    $target = 'ul.ckeditor-toolbar-group-buttons';
+
+    $this->assertSession()->waitForElementVisible('css', $target);
+    $this->sortableTo($item, $from, $target);
 
     if ($allowed_html == 'default' && $entity_embed_status) {
       // Unfortunately the <drupal-entity> tag is not yet allowed due to
@@ -179,9 +184,12 @@ class ConfigurationUiTest extends EntityEmbedTestBase {
     // Verify that after dragging the Entity Embed CKEditor plugin button into
     // the active toolbar, the <drupal-entity> tag is allowed, as well as some
     // attributes.
-    $target = $this->assertSession()->waitForElementVisible('css', 'ul.ckeditor-toolbar-group-buttons');
-    $button_element = $this->assertSession()->elementExists('xpath', '//li[@data-drupal-ckeditor-button-name="test_media_entity_embed"]');
-    $button_element->dragTo($target);
+    $item = 'li[data-drupal-ckeditor-button-name="test_media_entity_embed"]';
+    $from = "ul $item";
+    $target = 'ul.ckeditor-toolbar-group-buttons';
+
+    $this->assertSession()->waitForElementVisible('css', $target);
+    $this->sortableTo($item, $from, $target);
 
     if ($allowed_html == 'default' && $entity_embed_status) {
       $allowed_html = $this->assertSession()->fieldExists('filters[filter_html][settings][allowed_html]')->getValue();

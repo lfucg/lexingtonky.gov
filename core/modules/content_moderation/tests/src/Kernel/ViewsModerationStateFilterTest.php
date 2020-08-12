@@ -7,6 +7,7 @@ use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\Tests\content_moderation\Traits\ContentModerationTestTrait;
+use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\Tests\views\Kernel\ViewsKernelTestBase;
 use Drupal\views\Views;
 use Drupal\workflows\Entity\Workflow;
@@ -21,6 +22,7 @@ use Drupal\workflows\Entity\Workflow;
 class ViewsModerationStateFilterTest extends ViewsKernelTestBase {
 
   use ContentModerationTestTrait;
+  use UserCreationTrait;
 
   /**
    * {@inheritdoc}
@@ -150,7 +152,7 @@ class ViewsModerationStateFilterTest extends ViewsKernelTestBase {
       'moderation_state' => 'editorial-draft',
     ], 'test_content_moderation_state_filter_revision_table');
     // Creating a new forward revision of node three, creates a second published
-    // revision of of the original language, hence there are two published
+    // revision of the original language, hence there are two published
     // revisions of node three.
     $this->assertNodesWithFilters([$node, $third_node, $third_node], [
       'moderation_state' => 'editorial-published',
@@ -181,6 +183,52 @@ class ViewsModerationStateFilterTest extends ViewsKernelTestBase {
     ]);
     $view->execute();
     $this->assertIdenticalResultset($view, [['id' => $test_entity->id()]], ['id' => 'id']);
+  }
+
+  /**
+   * Tests the moderation state filter on an entity added via a relationship.
+   */
+  public function testModerationStateFilterOnJoinedEntity() {
+    $workflow = Workflow::load('editorial');
+    $workflow->getTypePlugin()->addEntityTypeAndBundle('node', 'example');
+    $workflow->save();
+
+    // Create some sample content that will satisfy a view of users with a
+    // relationship to an item of content.
+    $user = $this->createUser([], 'Test user');
+    $node = Node::create([
+      'type' => 'example',
+      'title' => 'Test node',
+      'moderation_state' => 'published',
+      'uid' => $user->id(),
+    ]);
+    $node->save();
+
+    // When filtering by published nodes, the sample content will appear.
+    $view = Views::getView('test_content_moderation_filter_via_relationship');
+    $view->setExposedInput([
+      'moderation_state' => 'editorial-published',
+    ]);
+    $view->execute();
+    $this->assertIdenticalResultset($view, [
+      [
+        'name' => 'Test user',
+        'title' => 'Test node',
+        'moderation_state' => 'published',
+      ],
+    ], [
+      'name' => 'name',
+      'title' => 'title',
+      'moderation_state' => 'moderation_state',
+    ]);
+
+    // Filtering by the draft state will filter out the sample content.
+    $view = Views::getView('test_content_moderation_filter_via_relationship');
+    $view->setExposedInput([
+      'moderation_state' => 'editorial-draft',
+    ]);
+    $view->execute();
+    $this->assertIdenticalResultset($view, [], ['name' => 'name']);
   }
 
   /**
@@ -297,8 +345,11 @@ class ViewsModerationStateFilterTest extends ViewsKernelTestBase {
     $this->assertEquals('vid', $configuration['left_field']);
     $this->assertEquals('content_entity_type_id', $configuration['extra'][0]['field']);
     $this->assertEquals('node', $configuration['extra'][0]['value']);
-    $this->assertEquals('langcode', $configuration['extra'][1]['field']);
-    $this->assertEquals('langcode', $configuration['extra'][1]['left_field']);
+
+    $this->assertEquals('content_entity_id', $configuration['extra'][1]['field']);
+    $this->assertEquals('nid', $configuration['extra'][1]['left_field']);
+    $this->assertEquals('langcode', $configuration['extra'][2]['field']);
+    $this->assertEquals('langcode', $configuration['extra'][2]['left_field']);
 
     $expected_result = [];
     foreach ($nodes as $node) {

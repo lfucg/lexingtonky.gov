@@ -4,7 +4,7 @@
   "type": "drupal-module",
   "license": "GPL-2.0",
   "require": {
-    "drupal/core": "~8",
+    "drupal/core": "~8 || ~9",
     "drupal/entity_browser": "^2 || ^1",
     "drupal/dropzonejs": "^2",
     "drupal/embed": "^1",

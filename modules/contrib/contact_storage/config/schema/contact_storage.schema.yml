@@ -62,6 +62,6 @@ contact_storage.settings:
       type: boolean
       label: 'Whether the mail should be sent as HTML'
 
-action.configuration.message_delete_action:
+action.configuration.entity:delete_action:contact_message:
   type: action_configuration_default
-  label: 'Delete message configuration'
+  label: 'Delete contact message configuration'

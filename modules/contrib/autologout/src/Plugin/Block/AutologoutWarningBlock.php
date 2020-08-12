@@ -2,10 +2,12 @@
 
 namespace Drupal\autologout\Plugin\Block;
 
+use Drupal\autologout\AutologoutManager;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\FormBuilder;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -42,13 +44,27 @@ class AutologoutWarningBlock extends BlockBase implements ContainerFactoryPlugin
   protected $autoLogoutSettings;
 
   /**
+   * The AutologoutManager service.
+   *
+   * @var \Drupal\autologout\AutologoutManager
+   */
+  protected $manager;
+
+  /**
+   * The FormBuilder service.
+   *
+   * @var \Drupal\Core\Form\FormBuilder
+   */
+  protected $builder;
+
+  /**
    * Constructs an AutologoutWarningBlock object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
    *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
+   * @param string $plugin_definition
    *   The plugin implementation definition.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module manager service.
@@ -56,25 +72,47 @@ class AutologoutWarningBlock extends BlockBase implements ContainerFactoryPlugin
    *   The date formatter service.
    * @param \Drupal\Core\Config\Config $autologout_settings
    *   The config object for 'autologout.settings'.
+   * @param \Drupal\autologout\AutologoutManager $manager
+   *   The AutologoutManager service.
+   * @param \Drupal\Core\Form\FormBuilder $builder
+   *   The FormBuilder service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler, DateFormatterInterface $date_formatter, Config $autologout_settings) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    ModuleHandlerInterface $module_handler,
+    DateFormatterInterface $date_formatter,
+    Config $autologout_settings,
+    AutologoutManager $manager,
+    FormBuilder $builder
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->moduleHandler = $module_handler;
     $this->dateFormatter = $date_formatter;
     $this->autoLogoutSettings = $autologout_settings;
+    $this->manager = $manager;
+    $this->builder = $builder;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(
+    ContainerInterface $container,
+    array $configuration,
+    $plugin_id,
+    $plugin_definition
+  ) {
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $container->get('module_handler'),
       $container->get('date.formatter'),
-      $container->get('config.factory')->get('autologout.settings')
+      $container->get('config.factory')->get('autologout.settings'),
+      $container->get('autologout.manager'),
+      $container->get('form_builder')
     );
   }
 
@@ -84,15 +122,6 @@ class AutologoutWarningBlock extends BlockBase implements ContainerFactoryPlugin
   public function defaultConfiguration() {
     // @todo: This is not the place where we should be doing this.
     $return = [];
-    //if ($this->moduleHandler->moduleExists('jstimer')) {
-    //  if (!$this->moduleHandler->moduleExists(('jst_timer'))) {
-    //    drupal_set_message($this->t('The "Widget: timer" module must also be enabled for the dynamic countdown to work in the automated logout block.'), 'error');
-    //  }
-
-    //  if ($this->autoLogoutSettings->get('jstimer_js_load_option') != 1) {
-    //    drupal_set_message($this->t("The Javascript timer module's 'Javascript load options' setting should be set to 'Every page' for the dynamic countdown to work in the automated logout block."), 'error');
-    //  }
-    //}
     return $return;
   }
 
@@ -100,7 +129,7 @@ class AutologoutWarningBlock extends BlockBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public function build() {
-    $autologout_manager = \Drupal::service('autologout.manager');
+    $autologout_manager = $this->manager;
     if ($autologout_manager->preventJs()) {
 
       // Don't display the block if the user is not going
@@ -113,10 +142,10 @@ class AutologoutWarningBlock extends BlockBase implements ContainerFactoryPlugin
          you will be kept logged in whilst this page remains open.');
     }
     elseif ($this->moduleHandler->moduleExists('jstimer') && $this->moduleHandler->moduleExists('jst_timer')) {
-      return \Drupal::formBuilder()->getForm('Drupal\autologout\Form\AutologoutBlockForm');
+      return $this->builder->getForm('Drupal\autologout\Form\AutologoutBlockForm');
     }
     else {
-      $timeout = (int) $this->autoLogoutSettings->get('timeout');
+      $timeout = (int) $autologout_manager->getUserTimeout();
       $markup = $this->t('You will be logged out in @time if this page is not refreshed before then.', ['@time' => $this->dateFormatter->formatInterval($timeout)]);
     }
 

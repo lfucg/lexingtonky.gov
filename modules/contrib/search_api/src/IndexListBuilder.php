@@ -157,10 +157,7 @@ class IndexListBuilder extends ConfigEntityListBuilder {
     return [
       'type' => $this->t('Type'),
       'title' => $this->t('Name'),
-      'status' => [
-        'data' => $this->t('Status'),
-        'class' => ['checkbox'],
-      ],
+      'status' => $this->t('Status'),
     ] + parent::buildHeader();
   }
 
@@ -172,24 +169,6 @@ class IndexListBuilder extends ConfigEntityListBuilder {
     $row = parent::buildRow($entity);
 
     $status = $entity->status();
-    $status_server = TRUE;
-    $status_label = $status ? $this->t('Enabled') : $this->t('Disabled');
-
-    if ($entity instanceof ServerInterface && $entity->status() && !$entity->isAvailable()) {
-      $status = FALSE;
-      $status_server = FALSE;
-      $status_label = $this->t('Unavailable');
-    }
-
-    $status_icon = [
-      '#theme' => 'image',
-      '#uri' => $status ? 'core/misc/icons/73b355/check.svg' : 'core/misc/icons/e32700/error.svg',
-      '#width' => 18,
-      '#height' => 18,
-      '#alt' => $status_label,
-      '#title' => $status_label,
-    ];
-
     $row = [
       'data' => [
         'type' => [
@@ -200,13 +179,12 @@ class IndexListBuilder extends ConfigEntityListBuilder {
           'data' => [
             '#type' => 'link',
             '#title' => $entity->label(),
-            '#suffix' => '<div>' . $entity->get('description') . '</div>',
           ] + $entity->toUrl('canonical')->toRenderArray(),
           'class' => ['search-api-title'],
         ],
         'status' => [
-          'data' => $status_icon,
-          'class' => ['checkbox'],
+          'data' => $status ? $this->t('Enabled') : $this->t('Disabled'),
+          'class' => ['search-api-status'],
         ],
         'operations' => $row['operations'],
       ],
@@ -218,7 +196,15 @@ class IndexListBuilder extends ConfigEntityListBuilder {
       ],
     ];
 
-    if (!$status_server) {
+    $description = $entity->get('description');
+    if ($description) {
+      $row['data']['title']['data']['#suffix'] = '<div class="description">' . $description . '</div>';
+    }
+
+    if ($status
+        && $entity instanceof ServerInterface
+        && !$entity->isAvailable()) {
+      $row['data']['status']['data'] = $this->t('Unavailable');
       $row['class'][] = 'color-error';
     }
 
@@ -240,7 +226,10 @@ class IndexListBuilder extends ConfigEntityListBuilder {
       '#empty' => '',
       '#attributes' => [
         'id' => 'search-api-entity-list',
-        'class' => ['search-api-entity-list'],
+        'class' => [
+          'search-api-entity-list',
+          'search-api-entity-list--servers-with-indexes',
+        ],
       ],
     ];
     foreach ($entity_groups['servers'] as $server_groups) {
@@ -257,6 +246,13 @@ class IndexListBuilder extends ConfigEntityListBuilder {
         '#type' => 'table',
         '#header' => $this->buildHeader(),
         '#rows' => [],
+        '#attributes' => [
+          'id' => 'search-api-entity-list',
+          'class' => [
+            'search-api-entity-list',
+            'search-api-entity-list--unattached-indexes',
+          ],
+        ],
       ];
 
       foreach ($entity_groups['lone_indexes'] as $entity) {

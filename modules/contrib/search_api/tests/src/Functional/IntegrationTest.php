@@ -11,6 +11,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\Entity\Node;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
+use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\search_api\tracker\Basic;
 use Drupal\search_api\SearchApiException;
 use Drupal\search_api\Utility\Utility;
@@ -341,7 +342,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
 
     $index = $this->getIndex(TRUE);
 
-    $this->assertTrue($index, 'Index was correctly created.');
+    $this->assertInstanceOf(IndexInterface::class, $index, 'Index was correctly created.');
     $this->assertEquals($edit['name'], $index->label(), 'Name correctly inserted.');
     $this->assertEquals($edit['id'], $index->id(), 'Index ID correctly inserted.');
     $this->assertTrue($index->status(), 'Index status correctly inserted.');
@@ -456,8 +457,8 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     // Verify that everything was changed correctly.
     $index = $this->getIndex(TRUE);
     $tracker = $index->getTrackerInstance();
-    $this->assertTrue($tracker instanceof TestTracker, get_class($tracker));
-    $this->assertTrue($tracker instanceof TestTracker, 'Tracker was successfully switched.');
+    $this->assertInstanceOf(TestTracker::class, $tracker, get_class($tracker));
+    $this->assertInstanceOf(TestTracker::class, $tracker, 'Tracker was successfully switched.');
     $configuration = [
       'foo' => 'foobar',
       'dependencies' => [],
@@ -476,7 +477,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $this->assertSession()->pageTextContains('The index was successfully saved.');
     $index = $this->getIndex(TRUE);
     $tracker = $index->getTrackerInstance();
-    $this->assertTrue($tracker instanceof Basic, 'Tracker was successfully switched.');
+    $this->assertInstanceOf(Basic::class, $tracker, 'Tracker was successfully switched.');
   }
 
   /**
@@ -828,7 +829,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $index = $this->getIndex(TRUE);
     $fields = $index->getFields();
 
-    $this->assertTrue(empty($fields['nid']), 'Field changes have not been persisted.');
+    $this->assertArrayNotHasKey('nid', $fields, 'Field changes have not been persisted.');
     $this->drupalGet($this->getIndexPath('fields'));
     $this->submitForm([], 'Save changes');
     $this->assertSession()->pageTextContains('The changes were successfully saved.');
@@ -902,8 +903,9 @@ class IntegrationTest extends SearchApiBrowserTestBase {
    */
   protected function checkDataTypesTable() {
     $this->drupalGet($this->getIndexPath('fields'));
-    $rows = $this->xpath('//*[@id="search-api-data-types-table"]/*/table/tbody/tr');
-    $this->assertTrue(is_array($rows) && !empty($rows), 'Found a datatype listing.');
+    $rows = $this->xpath('//*[@id="search-api-data-types-table"]//table/tbody/tr');
+    $this->assertIsArray($rows);
+    $this->assertNotEmpty($rows);
 
     /** @var \Behat\Mink\Element\NodeElement $row */
     foreach ($rows as $row) {
@@ -1044,7 +1046,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     // Find the "Remove" link for the "body" field.
     $links = $this->xpath('//a[@data-drupal-selector=:id]', [':id' => 'edit-fields-body-remove']);
     $this->assertNotEmpty($links, 'Found "Remove" link for body field');
-    $this->assertInternalType('array', $links);
+    $this->assertIsArray($links);
     $url_target = $this->getAbsoluteUrl($links[0]->getAttribute('href'));
     $this->drupalGet($url_target);
     $this->drupalGet($this->getIndexPath('fields'));
@@ -1083,18 +1085,16 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $this->drupalGet($this->getIndexPath('fields/add/nojs'));
     $this->assertSession()->responseContains($message_parts[0]);
     $this->assertSession()->responseContains($message_parts[1]);
-    $this->assertFalse($this->xpath('//input[not(@disabled)]'));
+    $this->assertSession()->elementNotExists('xpath', '//input[not(@disabled)]');
     $this->drupalGet($this->getIndexPath('fields/edit/rendered_item'));
     $this->assertSession()->responseContains($message_parts[0]);
     $this->assertSession()->responseContains($message_parts[1]);
-    $this->assertFalse($this->xpath('//input[not(@disabled)]'));
+    $this->assertSession()->elementNotExists('xpath', '//input[not(@disabled)]');
     $this->drupalGet($this->getIndexPath('fields'));
     $this->assertSession()->responseContains($message_parts[0]);
     $this->assertSession()->responseContains($message_parts[1]);
-    $this->assertFalse($this->xpath('//input[not(@disabled)]'));
-    $match_result = preg_match('#fields/break-lock">([^<>]*?)</a>#', $message, $m);
-    $this->assertTrue($match_result);
-    $this->clickLink($m[1]);
+    $this->assertSession()->elementNotExists('xpath', '//input[not(@disabled)]');
+    $this->clickLink('break this lock');
 
     $this->assertSession()->responseContains(new FormattableMarkup('By breaking this lock, any unsaved changes made by @user will be lost.', $args));
     $this->submitForm([], 'Break lock');
@@ -1107,7 +1107,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     // Find the "Remove" link for the "title" field.
     $links = $this->xpath('//a[@data-drupal-selector=:id]', [':id' => 'edit-fields-title-remove']);
     $this->assertNotEmpty($links, 'Found "Remove" link for title field');
-    $this->assertInternalType('array', $links);
+    $this->assertIsArray($links);
     $url_target = $this->getAbsoluteUrl($links[0]->getAttribute('href'));
     $this->drupalGet($url_target);
 
@@ -1542,14 +1542,14 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     // Confirm deletion.
     $this->submitForm([], 'Delete');
     $this->assertSession()->responseContains(new FormattableMarkup('The search server %name has been deleted.', ['%name' => $server->label()]));
-    $this->assertFalse(Server::load($this->serverId), 'Server could not be found anymore.');
+    $this->assertNull(Server::load($this->serverId), 'Server could not be found anymore.');
     $this->assertSession()->addressEquals('admin/config/search/search-api');
 
     // Confirm that the index hasn't been deleted.
     $this->indexStorage->resetCache([$this->indexId]);
     /** @var \Drupal\search_api\IndexInterface $index */
     $index = $this->indexStorage->load($this->indexId);
-    $this->assertTrue($index, 'The index associated with the server was not deleted.');
+    $this->assertInstanceOf(IndexInterface::class, $index, 'The index associated with the server was not deleted.');
     $this->assertFalse($index->status(), 'The index associated with the server was disabled.');
     $this->assertNull($index->getServerId(), 'The index was removed from the server.');
   }

@@ -14,7 +14,7 @@ class MetatagGooglePlusTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  private $tags = [
+  protected $tags = [
     'google_plus_author',
     'google_plus_description',
     'google_plus_image',
@@ -25,7 +25,7 @@ class MetatagGooglePlusTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
-  private $testNameAttribute = 'itemprop';
+  protected $testNameAttribute = 'itemprop';
 
   /**
    * {@inheritdoc}
@@ -38,39 +38,35 @@ class MetatagGooglePlusTagsTest extends MetatagTagsTestBase {
   /**
    * Each of these meta tags has a different tag name vs its internal name.
    */
-  private function getTestTagName($tag_name) {
-    $tag_name = str_replace('google_plus_', 'itemprop:', $tag_name);
-    if ($tag_name == 'itemprop:publisher') {
-      $tag_name = 'publisher';
-    }
-    return $tag_name;
+  protected function getTestTagName($tag_name) {
+    return str_replace('google_plus_', '', $tag_name);
   }
 
   /**
    * Implements {tag_name}TestNameAttribute() for 'author'.
    */
-  private function googlePlusAuthorTestOutputXpath() {
+  protected function googlePlusAuthorTestOutputXpath() {
     return "//link[@rel='author']";
   }
 
   /**
    * Implements {tag_name}TestValueAttribute() for 'author'.
    */
-  private function googlePlusAuthorTestValueAttribute() {
+  protected function googlePlusAuthorTestValueAttribute() {
     return 'href';
   }
 
   /**
    * Implements {tag_name}TestNameAttribute() for 'publisher'.
    */
-  private function googlePlusPublisherTestOutputXpath() {
+  protected function googlePlusPublisherTestOutputXpath() {
     return "//link[@rel='publisher']";
   }
 
   /**
    * Implements {tag_name}TestValueAttribute() for 'publisher'.
    */
-  private function googlePlusPublisherTestValueAttribute() {
+  protected function googlePlusPublisherTestValueAttribute() {
     return 'href';
   }
 

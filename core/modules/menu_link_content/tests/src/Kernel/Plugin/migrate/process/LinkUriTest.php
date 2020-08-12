@@ -85,6 +85,10 @@ class LinkUriTest extends KernelTestBase {
     $expected = 'internal:/';
     $tests['front'] = [$value, $expected];
 
+    $value = '<nolink>';
+    $expected = 'route:<nolink>';
+    $tests['nolink'] = [$value, $expected];
+
     return $tests;
   }
 
@@ -195,7 +199,7 @@ class LinkUriTest extends KernelTestBase {
     $executable = $this->prophesize(MigrateExecutableInterface::class)->reveal();
 
     $plugin = new LinkUri($configuration, 'link_uri', [], $entityTypeManager, $routeBuilder);
-    $actual = $plugin->transform($value, $executable, $row, 'destinationproperty');
+    $actual = $plugin->transform($value, $executable, $row, 'destination_property');
 
     return $actual;
   }

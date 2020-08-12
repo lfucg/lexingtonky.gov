@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\paragraphs_type_permissions\Tests;
+namespace Drupal\Tests\paragraphs_type_permissions\Functional;
 
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\Tests\BrowserTestBase;
@@ -19,11 +19,9 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
   use FieldUiTestTrait, ParagraphsCoreVersionUiTestTrait, ParagraphsTestBaseTrait;
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array(
+  protected static $modules = array(
     'content_translation',
     'image',
     'field',
@@ -33,6 +31,11 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
     'node',
     'paragraphs_type_permissions',
   );
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * {@inheritdoc}
@@ -86,7 +89,9 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
       'type' => 'image',
       'settings' => ['image_style' => 'medium', 'image_link' => 'file'],
     ];
-    $display = entity_get_display('paragraph', 'images', 'default');
+    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
+    $display_repository = \Drupal::service('entity_display.repository');
+    $display = $display_repository->getViewDisplay('paragraph', 'images');
     $display->setComponent('field_images_demo', $display_options)
       ->save();
 
@@ -94,7 +99,7 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
       'type' => 'image',
       'settings' => ['image_style' => 'large', 'image_link' => 'file'],
     ];
-    $display = entity_get_display('paragraph', 'text_image', 'default');
+    $display = $display_repository->getViewDisplay('paragraph', 'text_image');
     $display->setComponent('field_image_demo', $display_options)
       ->save();
   }
@@ -127,8 +132,8 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
       'text',
     ];
     foreach ($paragraph_types as $paragraph_type) {
-      entity_get_form_display('paragraph', $paragraph_type, 'default')
-        ->setComponent('status', [
+      $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('paragraph', $paragraph_type);
+      $form_display->setComponent('status', [
           'type' => 'boolean_checkbox'
         ])
         ->save();
@@ -140,11 +145,11 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
     $this->drupalPostForm(NULL, NULL, t('Add images'));
     $this->drupalPostForm(NULL, NULL, t('Add text'));
 
-    $image_text = $this->drupalGetTestFiles('image')[0];
+    $image_text = $this->getTestFiles('image')[0];
     $this->drupalPostForm(NULL, [
       'files[field_paragraphs_demo_0_subform_field_image_demo_0]' => $image_text->uri,
     ], t('Upload'));
-    $images = $this->drupalGetTestFiles('image')[1];
+    $images = $this->getTestFiles('image')[1];
     $this->drupalPostForm(NULL, [
       'files[field_paragraphs_demo_1_subform_field_images_demo_0][]' => $images->uri,
     ], t('Upload'));
@@ -163,26 +168,26 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
     $images_tag = '/files/styles/medium/public/' . date('Y-m') . '/image-test_0.png?itok=';
 
     // Check that all paragraphs are shown for admin user.
-    $this->assertRaw($image_text_tag);
-    $this->assertRaw($images_tag);
-    $this->assertText('Paragraph type Image + Text');
-    $this->assertText('Paragraph type Text');
+    $this->assertSession()->responseContains($image_text_tag);
+    $this->assertSession()->responseContains($images_tag);
+    $this->assertSession()->pageTextContains('Paragraph type Image + Text');
+    $this->assertSession()->pageTextContains('Paragraph type Text');
 
     // Logout, check that no paragraphs are shown for anonymous user.
     $this->drupalLogout();
     $this->drupalGet('node/' . $node->id());
-    $this->assertNoRaw($image_text_tag);
-    $this->assertNoRaw($images_tag);
-    $this->assertNoText('Paragraph type Image + Text');
-    $this->assertNoText('Paragraph type Text');
+    $this->assertSession()->responseNotContains($image_text_tag);
+    $this->assertSession()->responseNotContains($images_tag);
+    $this->assertSession()->pageTextNotContains('Paragraph type Image + Text');
+    $this->assertSession()->pageTextNotContains('Paragraph type Text');
 
     // Login as authenticated user, check that no paragraphs are shown for him.
     $this->drupalLogin($authenticated_user);
     $this->drupalGet('node/' . $node->id());
-    $this->assertNoRaw($image_text_tag);
-    $this->assertNoRaw($images_tag);
-    $this->assertNoText('Paragraph type Image + Text');
-    $this->assertNoText('Paragraph type Text');
+    $this->assertSession()->responseNotContains($image_text_tag);
+    $this->assertSession()->responseNotContains($images_tag);
+    $this->assertSession()->pageTextNotContains('Paragraph type Image + Text');
+    $this->assertSession()->pageTextNotContains('Paragraph type Text');
 
     // Login as admin
     $this->drupalLogout();
@@ -196,17 +201,17 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
 
     // Unpublish the 'Image + Text' paragraph type.
     $this->drupalGet('node/' . $node->id() . '/edit');
-    $this->assertFieldChecked('edit-field-paragraphs-demo-0-subform-status-value');
+    $this->assertSession()->checkboxChecked('edit-field-paragraphs-demo-0-subform-status-value');
     $edit = [
       'field_paragraphs_demo[0][subform][status][value]' => FALSE,
     ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
 
     // Check that 'Image + Text' paragraph is not shown anymore for admin user.
-    $this->assertNoRaw($image_text_tag);
-    $this->assertRaw($images_tag);
-    $this->assertNoText('Paragraph type Image + Text');
-    $this->assertText('Paragraph type Text');
+    $this->assertSession()->responseNotContains($image_text_tag);
+    $this->assertSession()->responseContains($images_tag);
+    $this->assertSession()->pageTextNotContains('Paragraph type Image + Text');
+    $this->assertSession()->pageTextContains('Paragraph type Text');
 
     $this->drupalLogout();
 
@@ -228,18 +233,18 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
 
     // Check that the anonymous user can only view the 'Text' paragraph.
     $this->drupalGet('node/' . $node->id());
-    $this->assertNoRaw($image_text_tag);
-    $this->assertNoRaw($images_tag);
-    $this->assertNoText('Paragraph type Image + Text');
-    $this->assertText('Paragraph type Text');
+    $this->assertSession()->responseNotContains($image_text_tag);
+    $this->assertSession()->responseNotContains($images_tag);
+    $this->assertSession()->pageTextNotContains('Paragraph type Image + Text');
+    $this->assertSession()->pageTextContains('Paragraph type Text');
 
     // Check that the authenticated user can only view the 'Images' paragraph.
     $this->drupalLogin($authenticated_user);
     $this->drupalGet('node/' . $node->id());
-    $this->assertNoRaw($image_text_tag);
-    $this->assertRaw($images_tag);
-    $this->assertNoText('Paragraph type Image + Text');
-    $this->assertNoText('Paragraph type Text');
+    $this->assertSession()->responseNotContains($image_text_tag);
+    $this->assertSession()->responseContains($images_tag);
+    $this->assertSession()->pageTextNotContains('Paragraph type Image + Text');
+    $this->assertSession()->pageTextNotContains('Paragraph type Text');
 
     // Check the authenticated user with edit permission.
     $authenticated_role->grantPermission('update paragraph content text_image');
@@ -247,23 +252,23 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
     $authenticated_role->save();
     $this->drupalLogin($authenticated_user);
     $this->drupalGet('node/' . $node->id() . '/edit');
-    $this->assertRaw('Image + Text');
-    $this->assertText('Paragraph type Image + Text');
-    $this->assertText('You are not allowed to remove this Paragraph.');
-    $this->assertText('Published');
-    $this->assertText('Images');
-    $this->assertText('You are not allowed to edit or remove this Paragraph.');
-    $this->assertRaw('paragraphs-collapsed-description"><div class="paragraphs-content-wrapper"><span class="summary-content">image-test_0.png<');
-    $this->assertNoRaw('paragraphs-collapsed-description"><div class="paragraphs-content-wrapper"><span class="summary-content">Paragraph type Text<');
+    $this->assertSession()->responseContains('Image + Text');
+    $this->assertSession()->pageTextContains('Paragraph type Image + Text');
+    $this->assertSession()->pageTextContains('You are not allowed to remove this Paragraph.');
+    $this->assertSession()->pageTextContains('Published');
+    $this->assertSession()->pageTextContains('Images');
+    $this->assertSession()->pageTextContains('You are not allowed to edit or remove this Paragraph.');
+    $this->assertSession()->responseContains('paragraphs-collapsed-description"><div class="paragraphs-content-wrapper"><span class="summary-content">image-test_0.png<');
+    $this->assertSession()->responseNotContains('paragraphs-collapsed-description"><div class="paragraphs-content-wrapper"><span class="summary-content">Paragraph type Text<');
 
     // Check that the paragraph is collapsed by asserting the content summary.
     $authenticated_role->grantPermission('view paragraph content text');
     $authenticated_role->save();
     $this->drupalLogin($authenticated_user);
     $this->drupalGet('node/' . $node->id() . '/edit');
-    $this->assertText('You are not allowed to edit or remove this Paragraph.');
-    $this->assertRaw('paragraphs-collapsed-description"><div class="paragraphs-content-wrapper"><span class="summary-content">image-test_0.png<');
-    $this->assertRaw('paragraphs-collapsed-description"><div class="paragraphs-content-wrapper"><span class="summary-content">Paragraph type Text<');
+    $this->assertSession()->pageTextContains('You are not allowed to edit or remove this Paragraph.');
+    $this->assertSession()->responseContains('paragraphs-collapsed-description"><div class="paragraphs-content-wrapper"><span class="summary-content">image-test_0.png<');
+    $this->assertSession()->responseContains('paragraphs-collapsed-description"><div class="paragraphs-content-wrapper"><span class="summary-content">Paragraph type Text<');
   }
 
 }

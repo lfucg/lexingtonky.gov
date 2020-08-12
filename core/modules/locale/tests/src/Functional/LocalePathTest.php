@@ -44,7 +44,14 @@ class LocalePathTest extends BrowserTestBase {
    */
   public function testPathLanguageConfiguration() {
     // User to add and remove language.
-    $admin_user = $this->drupalCreateUser(['administer languages', 'create page content', 'administer url aliases', 'create url aliases', 'access administration pages', 'access content overview']);
+    $admin_user = $this->drupalCreateUser([
+      'administer languages',
+      'create page content',
+      'administer url aliases',
+      'create url aliases',
+      'access administration pages',
+      'access content overview',
+    ]);
 
     // Add custom language.
     $this->drupalLogin($admin_user);
@@ -69,7 +76,7 @@ class LocalePathTest extends BrowserTestBase {
     // Check that the "xx" front page is readily available because path prefix
     // negotiation is pre-configured.
     $this->drupalGet($prefix);
-    $this->assertText(t('Welcome to Drupal'), 'The "xx" front page is readibly available.');
+    $this->assertText(t('Welcome to Drupal'), 'The "xx" front page is readily available.');
 
     // Create a node.
     $node = $this->drupalCreateNode(['type' => 'page']);

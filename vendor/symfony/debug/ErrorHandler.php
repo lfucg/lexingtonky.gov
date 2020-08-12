@@ -226,14 +226,14 @@ class ErrorHandler
             if (!\is_array($log)) {
                 $log = [$log];
             } elseif (!\array_key_exists(0, $log)) {
-                throw new \InvalidArgumentException('No logger provided');
+                throw new \InvalidArgumentException('No logger provided.');
             }
             if (null === $log[0]) {
                 $this->loggedErrors &= ~$type;
             } elseif ($log[0] instanceof LoggerInterface) {
                 $this->loggedErrors |= $type;
             } else {
-                throw new \InvalidArgumentException('Invalid logger provided');
+                throw new \InvalidArgumentException('Invalid logger provided.');
             }
             $this->loggers[$type] = $log + $prev[$type];
 
@@ -403,19 +403,7 @@ class ErrorHandler
         }
         $scope = $this->scopedErrors & $type;
 
-        if (4 < $numArgs = \func_num_args()) {
-            $context = $scope ? (func_get_arg(4) ?: []) : [];
-        } else {
-            $context = [];
-        }
-
-        if (isset($context['GLOBALS']) && $scope) {
-            $e = $context;                  // Whatever the signature of the method,
-            unset($e['GLOBALS'], $context); // $context is always a reference in 5.3
-            $context = $e;
-        }
-
-        if (false !== strpos($message, "class@anonymous\0")) {
+        if (false !== strpos($message, "@anonymous\0")) {
             $logMessage = $this->levels[$type].': '.(new FlattenException())->setMessage($message)->getMessage();
         } else {
             $logMessage = $this->levels[$type].': '.$message;
@@ -476,6 +464,8 @@ class ErrorHandler
                         // `return trigger_error($e, E_USER_ERROR);` allows this error handler
                         // to make $e get through the __toString() barrier.
 
+                        $context = 4 < \func_num_args() ? (func_get_arg(4) ?: []) : [];
+
                         foreach ($context as $e) {
                             if ($e instanceof \Throwable && $e->__toString() === $message) {
                                 self::$toStringException = $e;
@@ -499,7 +489,7 @@ class ErrorHandler
         if ($this->isRecursive) {
             $log = 0;
         } else {
-            if (!\defined('HHVM_VERSION')) {
+            if (\PHP_VERSION_ID < (\PHP_VERSION_ID < 70400 ? 70316 : 70404) && !\defined('HHVM_VERSION')) {
                 $currentErrorHandler = set_error_handler('var_dump');
                 restore_error_handler();
             }
@@ -511,7 +501,7 @@ class ErrorHandler
             } finally {
                 $this->isRecursive = false;
 
-                if (!\defined('HHVM_VERSION')) {
+                if (\PHP_VERSION_ID < (\PHP_VERSION_ID < 70400 ? 70316 : 70404) && !\defined('HHVM_VERSION')) {
                     set_error_handler($currentErrorHandler);
                 }
             }
@@ -540,7 +530,7 @@ class ErrorHandler
         $handlerException = null;
 
         if (($this->loggedErrors & $type) || $exception instanceof FatalThrowableError) {
-            if (false !== strpos($message = $exception->getMessage(), "class@anonymous\0")) {
+            if (false !== strpos($message = $exception->getMessage(), "@anonymous\0")) {
                 $message = (new FlattenException())->setMessage($message)->getMessage();
             }
             if ($exception instanceof FatalErrorException) {

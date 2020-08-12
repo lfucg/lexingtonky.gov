@@ -1,5 +1,12 @@
 <?php
+
+/**
+ * @file
+ * Install and update functions for the autologout module.
+ */
+
 use Drupal\Core\Database\Database;
+
 /**
  * Transfer logouts time settings from configs to states.
  */
@@ -28,4 +35,23 @@ function autologout_update_8001(&$sandbox) {
   if ($sandbox['#finished'] >= 1) {
     return t('Autologout settings are successfully updated. Updated @users', ["@users" => $sandbox['max']]);
   }
+}
+
+/**
+ * Configure default value for dialog title.
+ */
+function autologout_update_8002(&$sandbox) {
+  $autologout_settings = \Drupal::service('config.factory')->getEditable('autologout.settings');
+  $default_dialog_title = \Drupal::config('system.site')->get('name') . ' Alert';
+  $autologout_settings->set('dialog_title', $default_dialog_title)->save();
+}
+
+/**
+ * Store default value for setting 'Disable user-specific logout thresholds'.
+ */
+function autologout_update_8003(&$sandbox) {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('autologout.settings');
+  $config->set('no_individual_logout_threshold', FALSE);
+  $config->save(TRUE);
 }

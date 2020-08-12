@@ -45,4 +45,11 @@ class BlockFieldManager implements BlockFieldManagerInterface {
     return $this->blockManager->getSortedDefinitions($definitions);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockCategories() {
+    return $this->blockManager->getCategories();
+  }
+
 }

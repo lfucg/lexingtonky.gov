@@ -7,6 +7,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Render\Renderer;
 use Drupal\paragraphs_library\Entity\LibraryItem;
 use Drupal\paragraphs_library\LibraryItemInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -28,16 +29,26 @@ class LibraryItemController extends ControllerBase implements ContainerInjection
   protected $entityTypeManager;
 
   /**
+   * The renderer service.
+   *
+   * @var \Drupal\Core\Render\Renderer
+   */
+  protected $renderer;
+
+  /**
    * LibraryItemController constructor.
    *
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
+   * @param \Drupal\Core\Render\Renderer $renderer
+   *   The renderer service.
    */
-  public function __construct(DateFormatterInterface $date_formatter, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(DateFormatterInterface $date_formatter, EntityTypeManagerInterface $entity_type_manager, Renderer $renderer) {
     $this->dateFormatter = $date_formatter;
     $this->entityTypeManager = $entity_type_manager;
+    $this->renderer = $renderer;
   }
 
   /**
@@ -46,8 +57,9 @@ class LibraryItemController extends ControllerBase implements ContainerInjection
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('date.formatter'),
-      $container->get('entity_type.manager')
-      );
+      $container->get('entity_type.manager'),
+      $container->get('renderer')
+    );
   }
 
   /**
@@ -83,7 +95,7 @@ class LibraryItemController extends ControllerBase implements ContainerInjection
           '#context' => [
             'date' => $revision->toLink($date, $revision->isDefaultRevision() ? 'canonical' : 'revision')->toString(),
             'label' => $revision->label(),
-            'author' => \Drupal::service('renderer')->renderPlain($username),
+            'author' => $this->renderer->renderPlain($username),
             'message' => ['#markup' => $revision->get('revision_log')->value, '#allowed_tags' => Xss::getHtmlTagList()],
           ],
         ],

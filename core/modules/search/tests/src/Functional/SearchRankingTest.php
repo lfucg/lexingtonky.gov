@@ -49,7 +49,12 @@ class SearchRankingTest extends BrowserTestBase {
     $this->nodeSearch = SearchPage::load('node_search');
 
     // Log in with sufficient privileges.
-    $this->drupalLogin($this->drupalCreateUser(['post comments', 'skip comment approval', 'create page content', 'administer search']));
+    $this->drupalLogin($this->drupalCreateUser([
+      'post comments',
+      'skip comment approval',
+      'create page content',
+      'administer search',
+    ]));
   }
 
   public function testRankings() {
@@ -81,13 +86,16 @@ class SearchRankingTest extends BrowserTestBase {
             case 'promote':
               $settings[$node_rank] = 1;
               break;
+
             case 'relevance':
               $settings['body'][0]['value'] .= " really rocks";
               break;
+
             case 'recent':
               // Node is 1 hour hold.
               $settings['created'] = REQUEST_TIME - 3600;
               break;
+
             case 'comments':
               $settings['comment'][0]['status'] = CommentItemInterface::OPEN;
               break;
@@ -233,9 +241,11 @@ class SearchRankingTest extends BrowserTestBase {
         case 'a':
           $settings['body'] = [['value' => Link::fromTextAndUrl('Drupal Rocks', Url::fromRoute('<front>'))->toString(), 'format' => 'full_html']];
           break;
+
         case 'notag':
           $settings['body'] = [['value' => 'Drupal Rocks']];
           break;
+
         default:
           $settings['body'] = [['value' => "<$tag>Drupal Rocks</$tag>", 'format' => 'full_html']];
           break;

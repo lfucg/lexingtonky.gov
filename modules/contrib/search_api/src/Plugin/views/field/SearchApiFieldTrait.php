@@ -432,11 +432,7 @@ trait SearchApiFieldTrait {
    * @see \Drupal\views\Plugin\views\field\FieldHandlerInterface::getValue()
    */
   public function getValue(ResultRow $values, $field = NULL) {
-    if (isset($this->overriddenValues[$field])) {
-      return $this->overriddenValues[$field];
-    }
-
-    return parent::getValue($values, $field);
+    return $this->overriddenValues[$field] ?? parent::getValue($values, $field);
   }
 
   /**
@@ -507,8 +503,7 @@ trait SearchApiFieldTrait {
         // In case the property is configurable, create a new, unique combined
         // property path for this field so adding multiple fields based on the
         // same property works correctly.
-        if (isset($index_properties[$property_path])
-            && $index_properties[$property_path] instanceof ConfigurablePropertyInterface
+        if (($index_properties[$property_path] ?? NULL) instanceof ConfigurablePropertyInterface
             && !empty($this->definition['search_api field'])) {
           $new_path = $combined_property_path . '|' . $this->definition['search_api field'];
           $this->propertyReplacements[$combined_property_path] = $new_path;

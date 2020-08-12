@@ -5,6 +5,7 @@
  * Post update functions for Paragraphs.
  */
 
+use Drupal\Core\Database\Database;
 use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Entity\Sql\SqlEntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -202,7 +203,7 @@ function paragraphs_post_update_rebuild_parent_fields(array &$sandbox) {
   }
 
   $current_field = $sandbox['paragraph_field_ids'][$sandbox['current_index']];
-  $revision_column = $current_field['revision_column'];
+  $revision_column = !empty($current_field['revision_column']) ? ($current_field['revision_column']) : $current_field['field_name'] . '_target_revision_id';
   $entity_id_column = $current_field['entity_id_column'];
   $entity_type_id = $current_field['entity_type_id'];
   $field_name = $current_field['field_name'];
@@ -216,7 +217,13 @@ function paragraphs_post_update_rebuild_parent_fields(array &$sandbox) {
 
   // Select paragraphs with at least one wrong parent field.
   $or_group = new Condition('OR');
-  $or_group->where("p.parent_id <> f.$entity_id_column");
+  // Only use CAST if the db driver is Postgres.
+  if (Database::getConnection()->databaseType() == 'pgsql') {
+    $or_group->where("CAST(p.parent_id as TEXT) <> CAST(f.$entity_id_column as TEXT)");
+  }
+  else {
+    $or_group->where("p.parent_id <> f.$entity_id_column");
+  }
   $or_group->condition('p.parent_type', $entity_type_id, '<>');
   $or_group->condition('p.parent_field_name', $field_name, '<>');
   $query->condition($or_group);

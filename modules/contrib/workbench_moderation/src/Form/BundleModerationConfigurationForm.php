@@ -186,6 +186,6 @@ class BundleModerationConfigurationForm extends EntityForm {
 
     parent::submitForm( $form, $form_state);
 
-    drupal_set_message($this->t('Your settings have been saved.'));
+    $this->messenger()->addMessage($this->t('Your settings have been saved.'));
   }
 }

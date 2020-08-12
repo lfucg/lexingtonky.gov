@@ -11,7 +11,7 @@ use org\bovigo\vfs\vfsStream;
  * Tests InfoParser class and exception.
  *
  * Files for this test are stored in core/modules/system/tests/fixtures and end
- * with .info.txt instead of info.yml in order not not be considered as real
+ * with .info.txt instead of info.yml in order not to be considered as real
  * extensions.
  *
  * @coversDefaultClass \Drupal\Core\Extension\InfoParser
@@ -111,7 +111,6 @@ MISSINGKEYS;
   public function testMissingCoreCoreVersionRequirement() {
     $missing_core_and_core_version_requirement = <<<MISSING_CORE_AND_CORE_VERSION_REQUIREMENT
 # info.yml for testing core and core_version_requirement.
-package: Core
 version: VERSION
 type: module
 name: Skynet
@@ -139,6 +138,30 @@ MISSING_CORE_AND_CORE_VERSION_REQUIREMENT;
 
       $this->infoParser->parse(vfsStream::url('modules/fixtures/missing_core_and_core_version_requirement-duplicate.info.txt'));
     }
+  }
+
+  /**
+   * Tests that Testing package modules use a default core_version_requirement.
+   *
+   * @covers ::parse
+   */
+  public function testTestingPackageMissingCoreCoreVersionRequirement() {
+    $missing_core_and_core_version_requirement = <<<MISSING_CORE_AND_CORE_VERSION_REQUIREMENT
+# info.yml for testing core and core_version_requirement.
+package: Testing
+version: VERSION
+type: module
+name: Skynet
+MISSING_CORE_AND_CORE_VERSION_REQUIREMENT;
+
+    vfsStream::setup('modules');
+    vfsStream::create([
+      'fixtures' => [
+        'missing_core_and_core_version_requirement.info.txt' => $missing_core_and_core_version_requirement,
+      ],
+    ]);
+    $info_values = $this->infoParser->parse(vfsStream::url('modules/fixtures/missing_core_and_core_version_requirement.info.txt'));
+    $this->assertSame($info_values['core_version_requirement'], \Drupal::VERSION);
   }
 
   /**
@@ -506,8 +529,8 @@ UNPARSABLE_CORE_VERSION_REQUIREMENT;
         'unparsable_core_version_requirement.info.txt' => $unparsable_core_version_requirement,
       ],
     ]);
-    $this->expectException(\UnexpectedValueException::class);
-    $this->expectExceptionMessage('Could not parse version constraint not-this-version: Invalid version string "not-this-version"');
+    $this->expectException(InfoParserException::class);
+    $this->expectExceptionMessage("The 'core_version_requirement' constraint (not-this-version) is not a valid value in vfs://modules/fixtures/unparsable_core_version_requirement.info.txt");
     $this->infoParser->parse(vfsStream::url('modules/fixtures/unparsable_core_version_requirement.info.txt'));
   }
 

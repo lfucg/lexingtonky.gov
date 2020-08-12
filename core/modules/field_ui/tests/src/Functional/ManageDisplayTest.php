@@ -25,7 +25,15 @@ class ManageDisplayTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'field_ui', 'taxonomy', 'search', 'field_test', 'field_third_party_test', 'block'];
+  public static $modules = [
+    'node',
+    'field_ui',
+    'taxonomy',
+    'search',
+    'field_test',
+    'field_third_party_test',
+    'block',
+  ];
 
   /**
    * {@inheritdoc}
@@ -41,7 +49,20 @@ class ManageDisplayTest extends BrowserTestBase {
     $this->drupalPlaceBlock('local_tasks_block');
 
     // Create a test user.
-    $admin_user = $this->drupalCreateUser(['access content', 'administer content types', 'administer node fields', 'administer node form display', 'administer node display', 'administer taxonomy', 'administer taxonomy_term fields', 'administer taxonomy_term display', 'administer users', 'administer account settings', 'administer user display', 'bypass node access']);
+    $admin_user = $this->drupalCreateUser([
+      'access content',
+      'administer content types',
+      'administer node fields',
+      'administer node form display',
+      'administer node display',
+      'administer taxonomy',
+      'administer taxonomy_term fields',
+      'administer taxonomy_term display',
+      'administer users',
+      'administer account settings',
+      'administer user display',
+      'bypass node access',
+    ]);
     $this->drupalLogin($admin_user);
 
     // Create content type, with underscores.
@@ -141,12 +162,12 @@ class ManageDisplayTest extends BrowserTestBase {
   public function testViewModeLocalTasks() {
     $manage_display = 'admin/structure/types/manage/' . $this->type . '/display';
     $this->drupalGet($manage_display);
-    $this->assertNoLink('Full content');
-    $this->assertLink('Teaser');
+    $this->assertSession()->linkNotExists('Full content');
+    $this->assertSession()->linkExists('Teaser');
 
     $this->drupalGet($manage_display . '/teaser');
-    $this->assertNoLink('Full content');
-    $this->assertLink('Default');
+    $this->assertSession()->linkNotExists('Full content');
+    $this->assertSession()->linkExists('Default');
   }
 
   /**
@@ -217,6 +238,7 @@ class ManageDisplayTest extends BrowserTestBase {
    *   Plain text to look for.
    * @param $message
    *   Message to display.
+   *
    * @return
    *   TRUE on pass, FALSE on fail.
    */
@@ -254,9 +276,12 @@ class ManageDisplayTest extends BrowserTestBase {
     $output = (string) \Drupal::service('renderer')->renderRoot($element);
     $this->verbose(t('Rendered node - view mode: @view_mode', ['@view_mode' => $view_mode]) . '<hr />' . $output);
 
-    $method = $not_exists ? 'assertNotContains' : 'assertContains';
-
-    $this->{$method}((string) $text, $output, $message);
+    if ($not_exists) {
+      $this->assertStringNotContainsString((string) $text, $output, $message);
+    }
+    else {
+      $this->assertStringContainsString((string) $text, $output, $message);
+    }
   }
 
   /**

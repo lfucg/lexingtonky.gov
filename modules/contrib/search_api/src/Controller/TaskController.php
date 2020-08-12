@@ -74,13 +74,11 @@ class TaskController extends ControllerBase {
    *   The access result.
    */
   public function executeTasksAccess(AccountInterface $account) {
-    // @todo Once we depend on Drupal 8.7+, check whether this can't just use
-    //   the "search_api_task_list" cache tag instead. (See #2722237.)
     if ($this->taskManager->getTasksCount()) {
       return AccessResult::allowedIfHasPermission($account, 'administer search_api')
-        ->setCacheMaxAge(0);
+        ->addCacheTags(['search_api_task_list']);
     }
-    return AccessResult::forbidden()->setCacheMaxAge(0);
+    return AccessResult::forbidden()->addCacheTags(['search_api_task_list']);
   }
 
 }

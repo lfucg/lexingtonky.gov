@@ -7,9 +7,9 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Path\AliasRepositoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\path_alias\AliasRepositoryInterface;
 
 /**
  * Provides helper methods for accessing alias storage.
@@ -35,7 +35,7 @@ class AliasStorageHelper implements AliasStorageHelperInterface {
   /**
    * The alias repository.
    *
-   * @var \Drupal\Core\Path\AliasRepositoryInterface
+   * @var \Drupal\path_alias\AliasRepositoryInterface
    */
   protected $aliasRepository;
 
@@ -65,7 +65,7 @@ class AliasStorageHelper implements AliasStorageHelperInterface {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
-   * @param \Drupal\Core\Path\AliasRepositoryInterface $alias_repository
+   * @param \Drupal\path_alias\AliasRepositoryInterface $alias_repository
    *   The alias repository.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.

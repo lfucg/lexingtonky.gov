@@ -165,7 +165,7 @@ class EntityReferenceRevisionsCompositeTest extends EntityKernelTestBase {
     // Test that changing composite reference results in translation changes.
     $changed_composite_reference = $composite;
     $changed_composite_reference->set('name', 'Changing composite reference');
-    $this->assertTrue($changed_composite_reference->isRevisionTranslationAffected());
+    $this->assertTrue((bool) $changed_composite_reference->isRevisionTranslationAffected());
 
     $node->set('composite_reference', $changed_composite_reference);
     $node->setNewRevision();

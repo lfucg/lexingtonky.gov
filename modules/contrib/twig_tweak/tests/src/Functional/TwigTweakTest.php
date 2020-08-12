@@ -25,6 +25,11 @@ class TwigTweakTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'classy';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = [
     'twig_tweak',
     'twig_tweak_test',
@@ -176,7 +181,9 @@ class TwigTweakTest extends BrowserTestBase {
 
     // Grant require permissions and test the forms again.
     $permissions = ['create page content', 'edit any page content'];
-    $this->grantPermissions(Role::load(Role::ANONYMOUS_ID), $permissions);
+    /** @var \Drupal\user\RoleInterface $role */
+    $role = Role::load(Role::ANONYMOUS_ID);
+    $this->grantPermissions($role, $permissions);
     $this->drupalGet('/node/2');
 
     // -- Test entity add form.
@@ -290,7 +297,9 @@ class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class="tt-contextual-links" and not(div[@data-contextual-id])]';
     $this->assertByXpath($xpath);
 
-    $this->grantPermissions(Role::load(Role::ANONYMOUS_ID), ['access contextual links']);
+    /** @var \Drupal\user\RoleInterface $role */
+    $role = Role::load(Role::ANONYMOUS_ID);
+    $this->grantPermissions($role, ['access contextual links']);
     $this->drupalGet($this->getUrl());
     $xpath = '//div[@class="tt-contextual-links" and div[@data-contextual-id]]';
     $this->assertByXpath($xpath);
@@ -310,6 +319,10 @@ class TwigTweakTest extends BrowserTestBase {
     // -- Test text format.
     $xpath = '//div[@class = "tt-check-markup"]';
     self::assertEquals('<b>bold</b> strong', trim($this->xpath($xpath)[0]->getHtml()));
+
+    // -- Format size.
+    $xpath = '//div[@class = "tt-format-size"]';
+    self::assertSame('12.06 KB', $this->xpath($xpath)[0]->getHtml());
 
     // -- Test truncation.
     $xpath = '//div[@class = "tt-truncate" and text() = "Hello…"]';
@@ -340,12 +353,28 @@ class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class = "tt-field-item-view" and text() = "Beta"]';
     $this->assertByXpath($xpath);
 
+    // -- Test file URI from image field.
+    $this->drupalGet('/node/1');
+    $xpath = '//div[@class = "tt-file-uri-from-image-field" and contains(text(), "public://image-test.png")]';
+    $this->assertByXpath($xpath);
+
+    // -- Test file URI from a specific image field item.
+    $xpath = '//div[@class = "tt-file-uri-from-image-field-delta" and contains(text(), "public://image-test.png")]';
+    $this->assertByXpath($xpath);
+
+    // -- Test file URI from media field.
+    $xpath = '//div[@class = "tt-file-uri-from-media-field" and contains(text(), "public://image-1.png")]';
+    $this->assertByXpath($xpath);
+
+    // -- Test image style from file URI from media field.
+    $xpath = '//div[@class = "tt-image-style-from-file-uri-from-media-field" and contains(text(), "styles/thumbnail/public/image-1.png")]';
+    $this->assertByXpath($xpath);
+
     // -- Test file URL from URI.
     $xpath = '//div[@class = "tt-file-url-from-uri" and contains(text(), "/files/image-test.png")]';
     $this->assertByXpath($xpath);
 
     // -- Test file URL from image field.
-    $this->drupalGet('/node/1');
     $xpath = '//div[@class = "tt-file-url-from-image-field" and contains(text(), "/files/image-test.png")]';
     $this->assertByXpath($xpath);
 

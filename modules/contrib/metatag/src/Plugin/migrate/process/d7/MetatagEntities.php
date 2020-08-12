@@ -8,7 +8,7 @@ use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
 
 /**
- * Migrate data from Metatag-D7.
+ * Migrate entity data from Metatag on D7.
  *
  * @MigrateProcessPlugin(
  *   id = "d7_metatag_entities",
@@ -26,51 +26,49 @@ class MetatagEntities extends ProcessPluginBase {
       return NULL;
     }
 
+    // Re-shape D7 entries into for D8 entries.
+    $old_tags = unserialize($value);
+
+    // This is expected to be an array, if it isn't then something went wrong.
+    if (!is_array($old_tags)) {
+      throw new MigrateException('Data from Metatag-D7 was not a serialized array.');
+    }
+
     $tags_map = $this->tagsMap();
 
     $metatags = [];
 
-    // Re-shape D7 entries into for D8 entries.
-    $old_tags = unserialize($value);
-
-    // This is expected to be an array, if it isn't something went wrong.
-    if (!is_array($old_tags)) {
-      throw new MigrateException('Data from Metatag was not a serialized array.');
-    }
-
-    foreach ($old_tags as $d7_metatag_name => $data) {
+    foreach ($old_tags as $d7_metatag_name => $metatag_value) {
       // If there's no data for this tag, ignore everything.
-      if (empty($data)) {
+      if (empty($metatag_value)) {
         continue;
       }
 
       // @todo Skip these values for now, maybe some version supported these?
-      if (!is_array($data) || empty($data['value'])) {
+      if (!is_array($metatag_value) || empty($metatag_value['value'])) {
         continue;
       }
 
       // Convert the D7 meta tag name to the D8 equivalent. If this meta tag
       // is not recognized, skip it.
-      if (empty([$d7_metatag_name])) {
+      if (empty($tags_map[$d7_metatag_name])) {
         continue;
       }
-
-      // There's a D8 equivalent for this meta tag.
       $d8_metatag_name = $tags_map[$d7_metatag_name];
 
       // Convert the nested arrays to a flat structure.
-      if (is_array($data['value'])) {
+      if (is_array($metatag_value['value'])) {
         // Remove empty values.
-        $data['value'] = array_filter($data['value']);
+        $metatag_value['value'] = array_filter($metatag_value['value']);
         // Convert the array into a comma-separated list.
-        $data = implode(', ', $data['value']);
+        $metatag_value = implode(', ', $metatag_value['value']);
       }
       else {
-        $data = $data['value'];
+        $metatag_value = $metatag_value['value'];
       }
 
       // Keep the entire data structure.
-      $metatags[$d8_metatag_name] = $data;
+      $metatags[$d8_metatag_name] = $metatag_value;
     }
 
     return serialize($metatags);
@@ -82,7 +80,7 @@ class MetatagEntities extends ProcessPluginBase {
    * @return array
    *   An array of D7 tags to their D8 counterparts.
    */
-  public function tagsMap() {
+  protected function tagsMap() {
     $map = [
       // From the main Metatag module.
       'abstract' => 'abstract',
@@ -249,10 +247,7 @@ class MetatagEntities extends ProcessPluginBase {
       // 'hreflang_' . $langcode => 'hreflang_per_language',
       // From metatag_mobile.metatag.inc:
       'alternate_handheld' => 'alternate_handheld',
-      // This won't be added, it should be handled by the system implementing
-      // the AMP specification. Also, AMP is dramatic overreach by Google to
-      // reshape and replatform the web to its monetary goals, and is an abuse
-      // of its monopolistic power over the internet.
+      // @todo https://www.drupal.org/project/metatag/issues/3077781
       // 'amphtml' => '',
       'android-app-link-alternative' => 'android_app_link_alternative',
       'android-manifest' => 'android_manifest',
@@ -288,7 +283,7 @@ class MetatagEntities extends ProcessPluginBase {
       'x-ua-compatible' => 'x_ua_compatible',
 
       // From metatag_opengraph.metatag.inc:
-      // @todo https://www.drupal.org/project/metatag/issues/3077782
+      // https://www.drupal.org/project/metatag/issues/3077782
       'article:author' => 'article_author',
       'article:expiration_time' => 'article_expiration_time',
       'article:modified_time' => 'article_modified_time',
@@ -300,9 +295,9 @@ class MetatagEntities extends ProcessPluginBase {
       'book:isbn' => 'book_isbn',
       'book:release_date' => 'book_release_date',
       'book:tag' => 'book_tag',
-      // @todo 'og:audio' => '',
-      // @todo 'og:audio:secure_url' => '',
-      // @todo 'og:audio:type' => '',
+      'og:audio' => 'og_audio',
+      'og:audio:secure_url' => 'og_audio_secure_url',
+      'og:audio:type' => 'og_audio_type',
       'og:country_name' => 'og_country_name',
       'og:description' => 'og_description',
       'og:determiner' => 'og_determiner',
@@ -331,28 +326,28 @@ class MetatagEntities extends ProcessPluginBase {
       'og:updated_time' => 'og_updated_time',
       'og:url' => 'og_url',
       // @todo '' => 'og_video',
-      // @todo https://www.drupal.org/project/metatag/issues/3089445
+      // https://www.drupal.org/project/metatag/issues/3089445
       // @todo '' => 'og_video_duration',
       'og:video:height' => 'og_video_height',
       'og:video:secure_url' => 'og_video_secure_url',
       'og:video:type' => 'og_video_type',
       'og:video:url' => 'og_video_url',
       'og:video:width' => 'og_video_width',
-      // @todo 'profile:first_name' => '',
-      // @todo 'profile:gender' => '',
-      // @todo 'profile:last_name' => '',
-      // @todo 'profile:username' => '',
-      // @todo 'video:actor' => '',
-      // @todo 'video:actor:role' => '',
-      // @todo 'video:director' => '',
+      'profile:first_name' => 'profile_first_name',
+      'profile:gender' => 'profile_gender',
+      'profile:last_name' => 'profile_last_name',
+      'profile:username' => 'profile_username',
+      'video:actor' => 'video_actor',
+      'video:actor:role' => 'video_actor_role',
+      'video:director' => 'video_director',
       // @todo 'video:duration' => '',
-      // @todo 'video:release_date' => '',
-      // @todo 'video:series' => '',
-      // @todo 'video:tag' => '',
-      // @todo 'video:writer' => '',
+      'video:release_date' => 'video_release_date',
+      'video:series' => 'video_series',
+      'video:tag' => 'video_tag',
+      'video:writer' => 'video_writer',
 
       // From metatag_opengraph_products.metatag.inc:
-      // @todo https://www.drupal.org/project/metatag/issues/2835925
+      // https://www.drupal.org/project/metatag/issues/2835925
       'product:price:amount' => 'product_price_amount',
       'product:price:currency' => 'product_price_currency',
       // @todo 'product:availability' => '',
@@ -381,7 +376,6 @@ class MetatagEntities extends ProcessPluginBase {
       // @todo 'product:condition' => '',
 
       // Pinterest.
-      // @todo https://www.drupal.org/project/metatag/issues/2957361
       // @todo '' => 'pinterest_id',
       // @todo '' => 'pinterest_description',
       // @todo '' => 'pinterest_nohover',
@@ -434,9 +428,8 @@ class MetatagEntities extends ProcessPluginBase {
       'msvalidate.01' => 'google',
       'norton-safeweb-site-verification' => 'norton_safe_web',
       'p:domain_verify' => 'pinterest',
-      'pocket-site-verification' => 'pocket',
+      // @todo '' => 'pocket',
       'yandex-verification' => 'yandex',
-      'zoom-domain-verification' => 'zoom-domain-verification',
     ];
 
     // Trigger hook_metatag_migrate_metatagd7_tags_map_alter().

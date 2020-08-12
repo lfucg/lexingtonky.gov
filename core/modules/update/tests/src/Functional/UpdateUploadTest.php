@@ -32,7 +32,11 @@ class UpdateUploadTest extends UpdateTestBase {
 
   protected function setUp() {
     parent::setUp();
-    $admin_user = $this->drupalCreateUser(['administer modules', 'administer software updates', 'administer site configuration']);
+    $admin_user = $this->drupalCreateUser([
+      'administer modules',
+      'administer software updates',
+      'administer site configuration',
+    ]);
     $this->drupalLogin($admin_user);
   }
 
@@ -73,7 +77,7 @@ class UpdateUploadTest extends UpdateTestBase {
     $updaters = drupal_get_updaters();
     $moduleUpdater = $updaters['module']['class'];
     $installedInfoFilePath = $this->container->get('update.root') . '/' . $moduleUpdater::getRootDirectoryRelativePath() . '/update_test_new_module/update_test_new_module.info.yml';
-    $this->assertFalse(file_exists($installedInfoFilePath), 'The new module does not exist in the filesystem before it is installed with the Update Manager.');
+    $this->assertFileNotExists($installedInfoFilePath);
     $validArchiveFile = __DIR__ . '/../../update_test_new_module/8.x-1.0/update_test_new_module.tar.gz';
     $edit = [
       'files[project_upload]' => $validArchiveFile,
@@ -85,18 +89,18 @@ class UpdateUploadTest extends UpdateTestBase {
     // Check for a success message on the page, and check that the installed
     // module now exists in the expected place in the filesystem.
     $this->assertRaw(t('Installed %project_name successfully', ['%project_name' => 'update_test_new_module']));
-    $this->assertTrue(file_exists($installedInfoFilePath), 'The new module exists in the filesystem after it is installed with the Update Manager.');
+    $this->assertFileExists($installedInfoFilePath);
     // Ensure the links are relative to the site root and not
     // core/authorize.php.
-    $this->assertLink(t('Install another module'));
+    $this->assertSession()->linkExists(t('Install another module'));
     $this->assertLinkByHref(Url::fromRoute('update.module_install')->toString());
-    $this->assertLink(t('Enable newly added modules'));
+    $this->assertSession()->linkExists(t('Enable newly added modules'));
     $this->assertLinkByHref(Url::fromRoute('system.modules_list')->toString());
-    $this->assertLink(t('Administration pages'));
+    $this->assertSession()->linkExists(t('Administration pages'));
     $this->assertLinkByHref(Url::fromRoute('system.admin')->toString());
     // Ensure we can reach the "Install another module" link.
     $this->clickLink(t('Install another module'));
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertUrl('admin/modules/install');
 
     // Check that the module has the correct version before trying to update
@@ -143,9 +147,9 @@ class UpdateUploadTest extends UpdateTestBase {
   public function testFileNameExtensionMerging() {
     $this->drupalGet('admin/modules/install');
     // Make sure the bogus extension supported by update_test.module is there.
-    $this->assertPattern('/file extensions are supported:.*update-test-extension/', "Found 'update-test-extension' extension.");
+    $this->assertPattern('/file extensions are supported:.*update-test-extension/');
     // Make sure it didn't clobber the first option from core.
-    $this->assertPattern('/file extensions are supported:.*tar/', "Found 'tar' extension.");
+    $this->assertPattern('/file extensions are supported:.*tar/');
   }
 
   /**

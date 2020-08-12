@@ -63,6 +63,11 @@ class InfoParserDynamic implements InfoParserInterface {
           // modules are allowed to provide these for testing purposes.
           $parsed_info['core_version_requirement'] = \Drupal::VERSION;
         }
+        elseif (isset($parsed_info['package']) && $parsed_info['package'] === 'Testing') {
+          // Modules in the testing package are exempt as well. This makes it
+          // easier for contrib to use test modules.
+          $parsed_info['core_version_requirement'] = \Drupal::VERSION;
+        }
         else {
           // Non-core extensions must specify core compatibility.
           throw new InfoParserException("The 'core' or the 'core_version_requirement' key must be present in " . $filename);
@@ -72,7 +77,12 @@ class InfoParserDynamic implements InfoParserInterface {
         throw new InfoParserException("Invalid 'core' value \"{$parsed_info['core']}\" in " . $filename);
       }
       if (isset($parsed_info['core_version_requirement'])) {
-        $supports_pre_core_version_requirement_version = static::isConstraintSatisfiedByPreviousVersion($parsed_info['core_version_requirement'], static::FIRST_CORE_VERSION_REQUIREMENT_SUPPORTED_VERSION);
+        try {
+          $supports_pre_core_version_requirement_version = static::isConstraintSatisfiedByPreviousVersion($parsed_info['core_version_requirement'], static::FIRST_CORE_VERSION_REQUIREMENT_SUPPORTED_VERSION);
+        }
+        catch (\UnexpectedValueException $e) {
+          throw new InfoParserException("The 'core_version_requirement' constraint ({$parsed_info['core_version_requirement']}) is not a valid value in $filename");
+        }
         // If the 'core_version_requirement' constraint does not satisfy any
         // Drupal 8 versions before 8.7.7 then 'core' cannot be set or it will
         // effectively support all versions of Drupal 8 because

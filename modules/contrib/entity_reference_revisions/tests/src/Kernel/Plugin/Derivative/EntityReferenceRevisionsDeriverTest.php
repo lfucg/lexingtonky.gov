@@ -24,7 +24,7 @@ class EntityReferenceRevisionsDeriverTest extends KernelTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->installConfig($this->modules);
+    $this->installConfig(static::$modules);
   }
 
   /**

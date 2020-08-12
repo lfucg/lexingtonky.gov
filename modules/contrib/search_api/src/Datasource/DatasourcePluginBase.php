@@ -164,4 +164,11 @@ abstract class DatasourcePluginBase extends IndexPluginBase implements Datasourc
     return [];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getListCacheContexts() {
+    return [];
+  }
+
 }

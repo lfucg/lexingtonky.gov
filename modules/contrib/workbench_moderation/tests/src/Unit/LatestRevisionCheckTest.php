@@ -9,6 +9,7 @@ use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\node\Entity\Node;
+use Drupal\Tests\UnitTestCase;
 use Drupal\workbench_moderation\Access\LatestRevisionCheck;
 use Drupal\workbench_moderation\ModerationInformation;
 use Drupal\workbench_moderation\ModerationInformationInterface;
@@ -18,7 +19,7 @@ use Symfony\Component\Routing\Route;
  * @coversDefaultClass \Drupal\workbench_moderation\Access\LatestRevisionCheck
  * @group workbench_moderation
  */
-class LatestRevisionCheckTest extends \PHPUnit_Framework_TestCase {
+class LatestRevisionCheckTest extends UnitTestCase {
 
   /**
    * Test the access check of the LatestRevisionCheck service.

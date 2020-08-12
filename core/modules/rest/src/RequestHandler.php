@@ -284,9 +284,15 @@ class RequestHandler implements ContainerInjectionInterface {
     }
 
     if (in_array($request->getMethod(), ['PATCH', 'POST'], TRUE)) {
-      $upcasted_route_arguments['entity'] = $unserialized;
-      $upcasted_route_arguments['data'] = $unserialized;
-      $upcasted_route_arguments['unserialized'] = $unserialized;
+      if (is_object($unserialized)) {
+        $upcasted_route_arguments['entity'] = $unserialized;
+        $upcasted_route_arguments['data'] = $unserialized;
+        $upcasted_route_arguments['unserialized'] = $unserialized;
+      }
+      else {
+        $raw_route_arguments['data'] = $unserialized;
+        $raw_route_arguments['unserialized'] = $unserialized;
+      }
       $upcasted_route_arguments['original_entity'] = $route_arguments_entity;
     }
     else {
@@ -330,7 +336,7 @@ class RequestHandler implements ContainerInjectionInterface {
     $parameters = [];
     // Filter out all internal parameters starting with "_".
     foreach ($route_parameters as $key => $parameter) {
-      if ($key{0} !== '_') {
+      if (substr((string) $key, 0, 1) !== '_') {
         $parameters[] = $parameter;
       }
     }

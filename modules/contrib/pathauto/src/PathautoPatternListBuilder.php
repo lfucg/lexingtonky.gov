@@ -60,7 +60,7 @@ class PathautoPatternListBuilder extends DraggableListBuilder {
     }
 
     $operations['duplicate'] = [
-      'title' => t('Duplicate'),
+      'title' => $this->t('Duplicate'),
       'weight' => 0,
       'url' => $this->ensureDestination($entity->toUrl('duplicate-form')),
     ];

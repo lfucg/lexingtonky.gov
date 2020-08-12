@@ -62,7 +62,14 @@ class EntityMaskTest extends KernelTestBase {
       ->getAllViewModes();
     $this->assertSame($view_modes['block_content'], $view_modes['fake_block_content']);
 
-    $display = entity_get_display('fake_block_content', 'basic', 'default');
+    $storage = $this->container->get('entity_type.manager')->getStorage('entity_view_display');
+    $display = $storage->create([
+      'targetEntityType' => 'fake_block_content',
+      'bundle' => 'basic',
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+
     $this->assertTrue($display->isNew());
 
     $components = $display->getComponents();
@@ -86,7 +93,14 @@ class EntityMaskTest extends KernelTestBase {
       ->getAllFormModes();
     $this->assertSame($form_modes['block_content'], $form_modes['fake_block_content']);
 
-    $display = entity_get_form_display('fake_block_content', 'basic', 'default');
+    $storage = $this->container->get('entity_type.manager')->getStorage('entity_form_display');
+    $display = $storage->create([
+      'targetEntityType' => 'fake_block_content',
+      'bundle' => 'basic',
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+
     $this->assertTrue($display->isNew());
 
     $components = $display->getComponents();
@@ -188,6 +202,11 @@ class EntityMaskTest extends KernelTestBase {
   public function testDelete() {
     $block = BlockContent::create(['type' => 'basic']);
     $block->save();
+
+    // Check we created a saved block.
+    $id = $block->id();
+    $this->assertNotEmpty($id);
+
     $block->delete();
   }
 

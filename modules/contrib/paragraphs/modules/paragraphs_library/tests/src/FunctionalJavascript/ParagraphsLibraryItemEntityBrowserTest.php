@@ -35,6 +35,11 @@ class ParagraphsLibraryItemEntityBrowserTest extends EntityBrowserWebDriverTestB
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'classy';
+
+  /**
    * Tests a flow of adding/removing references with paragraphs.
    */
   public function testEntityBrowserWidget() {
@@ -128,7 +133,7 @@ JS;
     $this->waitForAjaxToFinish();
     // Check that there is only one translation of the paragraph listed.
     $rows = $this->xpath('//*[@id="entity-browser-paragraphs-library-items-form"]/div[1]/div[2]/table/tbody/tr');
-    $this->assertTrue(count($rows) == 1);
+    $this->assertCount(1, $rows);
 
     // Add a text paragraph in a new library item.
     $this->drupalGet('admin/content/paragraphs/add/default');

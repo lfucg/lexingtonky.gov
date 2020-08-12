@@ -44,7 +44,7 @@ use Drupal\entity\Revision\RevisionableContentEntityBase;
  *       "default" = "\Drupal\entity\Menu\DefaultEntityLocalTaskProvider",
  *     },
  *     "list_builder" = "\Drupal\Core\Entity\EntityListBuilder",
- *     "views_data" = "\Drupal\views\EntityViewsData",
+ *     "views_data" = "\Drupal\entity\EntityViewsData",
  *   },
  *   base_table = "entity_test_enhanced",
  *   data_table = "entity_test_enhanced_field_data",
@@ -61,6 +61,11 @@ use Drupal\entity\Revision\RevisionableContentEntityBase;
  *     "langcode" = "langcode",
  *     "label" = "name",
  *     "published" = "status",
+ *   },
+ *   revision_metadata_keys = {
+ *     "revision_user" = "revision_user",
+ *     "revision_created" = "revision_created",
+ *     "revision_log_message" = "revision_log_message"
  *   },
  *   links = {
  *     "add-page" = "/entity_test_enhanced/add",

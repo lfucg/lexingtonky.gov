@@ -1,7 +1,7 @@
 name: 'Entity browser entityqueue integration test'
 type: module
 description: 'Support module for Entity browser entityqueue integration test.'
-# core: 8.x
+core_version_requirement: ^8.7.7 || ^9
 package: Testing
 dependencies:
   - drupal:node
@@ -10,8 +10,7 @@ dependencies:
   - entity_browser:entity_browser
   - entity_browser_test:entity_browser_test
 
-# Information added by Drupal.org packaging script on 2019-07-04
-version: '8.x-1.8'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-01-20
+version: '8.x-1.10'
 project: 'entity_browser'
-datestamp: 1562241187
+datestamp: 1579563796
