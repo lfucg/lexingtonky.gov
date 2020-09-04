@@ -1,27 +1,27 @@
 ;
 (function($) {
-  $('.lex-hide-unless-javascript').removeClass('lex-hide-unless-javascript');
+  // $('.lex-hide-unless-javascript').removeClass('lex-hide-unless-javascript');
 
-  // smooth scroll in-page: https://css-tricks.com/snippets/jquery/smooth-scrolling/
-  $('a[href*="#"]:not([href="#"])').click(function() {
-    var openAccordion = function(container) {
-      if (container.find('.js-accordion-content:visible').length === 0) {
-        container.find('.js-accordion-control').click();
-      }
-    }
+  // // smooth scroll in-page: https://css-tricks.com/snippets/jquery/smooth-scrolling/
+  // $('a[href*="#"]:not([href="#"])').click(function() {
+  //   var openAccordion = function(container) {
+  //     if (container.find('.js-accordion-content:visible').length === 0) {
+  //       container.find('.js-accordion-control').click();
+  //     }
+  //   }
 
-    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
-      var target = $(this.hash);
-      target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
-      if (target.length) {
-        openAccordion(target);
-        $('html, body').animate({
-          scrollTop: target.offset().top,
-        }, 1000);
-        return false;
-      }
-    }
-  });
+  //   if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+  //     var target = $(this.hash);
+  //     target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+  //     if (target.length) {
+  //       openAccordion(target);
+  //       $('html, body').animate({
+  //         scrollTop: target.offset().top,
+  //       }, 1000);
+  //       return false;
+  //     }
+  //   }
+  // });
 
 
   $('.js-accordion-content #contact-message-page-feedback-form').submit(function(e) {

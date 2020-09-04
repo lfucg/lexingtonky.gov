@@ -6,9 +6,9 @@ dependencies:
     module:
       - contact_storage
   module:
-    - contact_storage
-id: message_delete_action
+    - contact
+id: contact_message_delete_action
 label: 'Delete message'
 type: contact_message
-plugin: message_delete_action
+plugin: 'entity:delete_action:contact_message'
 configuration: {  }

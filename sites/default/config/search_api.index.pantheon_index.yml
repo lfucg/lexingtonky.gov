@@ -2,6 +2,11 @@ uuid: 158f6609-6c5c-4145-98d7-3b70f89535d1
 langcode: en
 status: true
 dependencies:
+  module:
+    - node
+    - taxonomy
+    - search_api
+    - paragraphs
   config:
     - field.storage.node.body
     - field.storage.node.field_keywords
@@ -9,11 +14,6 @@ dependencies:
     - field.storage.paragraph.field_section_body
     - search_api.server.pantheon
     - core.entity_view_mode.node.teaser
-  module:
-    - taxonomy
-    - search_api
-    - node
-    - paragraphs
 id: pantheon_index
 name: 'Pantheon Index'
 description: ''
@@ -49,6 +49,9 @@ field_settings:
     property_path: title
     type: text
     boost: !!float 8
+    dependencies:
+      module:
+        - node
   body:
     label: Body
     datasource_id: 'entity:node'
@@ -122,58 +125,6 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  add_url: {  }
-  html_filter:
-    all_fields: false
-    fields:
-      - url
-      - rendered_item
-      - title
-      - body
-      - field_section_body
-    title: true
-    alt: true
-    tags:
-      h1: 5
-      h2: 3
-      h3: 2
-      strong: 2
-      b: 2
-    weights:
-      preprocess_index: -47
-      preprocess_query: -47
-  aggregated_field: {  }
-  rendered_item: {  }
-  entity_status: {  }
-  type_boost:
-    boosts:
-      'entity:node':
-        datasource_boost: !!float 5
-        bundle_boosts:
-          article: !!float 3
-          board_commission: !!float 0
-          event: !!float 5
-          landing_page: !!float 0
-          meeting: !!float 8
-          news_article: !!float 0
-          organization_page: !!float 13
-          page: !!float 21
-          site_wide_notice: !!float 0
-      'entity:paragraph':
-        datasource_boost: !!float 1
-        bundle_boosts:
-          paragraphs_media_contact: !!float 0
-          paragraphs_page_section: !!float 0
-          paragraph_sidebar_section: !!float 0
-      'entity:taxonomy_term':
-        datasource_boost: !!float 5
-        bundle_boosts:
-          locations: !!float 0
-          organizations: !!float 0
-          site_navigation: !!float 0
-          tags: !!float 0
-    weights:
-      preprocess_index: -48
   stemmer:
     all_fields: false
     fields:
@@ -212,6 +163,59 @@ processor_settings:
     weights:
       preprocess_index: -49
       preprocess_query: -49
+  rendered_item: {  }
+  add_url: {  }
+  aggregated_field: {  }
+  entity_status: {  }
+  type_boost:
+    boosts:
+      'entity:node':
+        datasource_boost: !!float 5
+        bundle_boosts:
+          article: !!float 3
+          board_commission: !!float 0
+          event: !!float 5
+          landing_page: !!float 0
+          meeting: !!float 8
+          news_article: !!float 0
+          organization_page: !!float 13
+          page: !!float 21
+          site_wide_notice: !!float 0
+      'entity:paragraph':
+        datasource_boost: !!float 1
+        bundle_boosts:
+          paragraphs_media_contact: !!float 0
+          paragraphs_page_section: !!float 0
+          paragraph_sidebar_section: !!float 0
+      'entity:taxonomy_term':
+        datasource_boost: !!float 5
+        bundle_boosts:
+          locations: !!float 0
+          organizations: !!float 0
+          site_navigation: !!float 0
+          tags: !!float 0
+    weights:
+      preprocess_index: -48
+  language_with_fallback: {  }
+  html_filter:
+    all_fields: false
+    fields:
+      - url
+      - rendered_item
+      - title
+      - body
+      - field_section_body
+    title: true
+    alt: true
+    tags:
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      b: 2
+    weights:
+      preprocess_index: -47
+      preprocess_query: -47
 tracker_settings:
   default:
     indexing_order: fifo

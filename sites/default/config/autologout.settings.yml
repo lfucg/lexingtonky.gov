@@ -13,3 +13,5 @@ use_alt_logout_method: false
 use_watchdog: true
 _core:
   default_config_hash: B77DRkEEMfvFWjtyYFRrMQUbPyaFTBiQ-A4Yg-BJzQk
+dialog_title: 'City of Lexington Alert'
+no_individual_logout_threshold: false
