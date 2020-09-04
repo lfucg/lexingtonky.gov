@@ -7,9 +7,12 @@ dependencies:
     - field.field.paragraph.icon_button_with_description.field_description
     - field.field.paragraph.icon_button_with_description.field_heading
     - field.field.paragraph.icon_button_with_description.field_icon
+    - field.field.paragraph.icon_button_with_description.field_image
     - field.field.paragraph.icon_button_with_description.field_link
+    - image.style.thumbnail
     - paragraphs.paragraphs_type.icon_button_with_description
   module:
+    - image
     - link
     - text
 id: paragraph.icon_button_with_description.default
@@ -44,6 +47,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: text_default
+    region: content
+  field_image:
+    weight: 6
+    label: hidden
+    settings:
+      image_style: thumbnail
+    third_party_settings: {  }
+    type: image_url
     region: content
   field_link:
     weight: 3

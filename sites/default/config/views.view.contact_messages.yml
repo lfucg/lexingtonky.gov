@@ -22,7 +22,6 @@ description: 'View and manage messages sent through contact forms.'
 tag: ''
 base_table: contact_message
 base_field: id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -542,6 +541,8 @@ display:
               webmaster: '0'
               administrator: '0'
             placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: true
           group_info:
             label: 'Email provided?'
@@ -596,6 +597,8 @@ display:
             placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: true
           group_info:
             label: 'We''ve handled the feedback?'

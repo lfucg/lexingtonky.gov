@@ -7,9 +7,12 @@ dependencies:
     - field.field.paragraph.icon_button_with_description.field_description
     - field.field.paragraph.icon_button_with_description.field_heading
     - field.field.paragraph.icon_button_with_description.field_icon
+    - field.field.paragraph.icon_button_with_description.field_image
     - field.field.paragraph.icon_button_with_description.field_link
+    - image.style.thumbnail
     - paragraphs.paragraphs_type.icon_button_with_description
   module:
+    - image
     - link
     - text
     - workbench_moderation
@@ -49,6 +52,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textfield
+    region: content
+  field_image:
+    weight: 12
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
     region: content
   field_link:
     weight: 9
