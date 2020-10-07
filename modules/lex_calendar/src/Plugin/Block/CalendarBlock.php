@@ -230,6 +230,10 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
   }
 
   protected function modifyEventQuery($query) {
+    if ($this->targetPage == '13197') {
+      return $query;
+    }
+
     if ($this->targetPage) {
       return $query->condition('field_related_page', $this->targetPage);
     }else if ($this->targetDepartment) {
