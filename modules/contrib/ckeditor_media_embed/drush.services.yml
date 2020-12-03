@@ -1,0 +1,12 @@
+services:
+  ckeditor_media_embed.commands:
+    class: Drupal\ckeditor_media_embed\Command\Drush\CKEditorMediaEmbedCommands
+    arguments: ['@ckeditor_media_embed_install', '@ckeditor_media_embed_update']
+    tags:
+      - { name: drush.command }
+  ckeditor_media_embed_install:
+    class: Drupal\ckeditor_media_embed\Command\Drush\InstallCommand
+    arguments: ['@ckeditor_media_embed_cli_commands']
+  ckeditor_media_embed_update:
+    class: Drupal\ckeditor_media_embed\Command\Drush\UpdateCommand
+    arguments: ['@ckeditor_media_embed_cli_commands']

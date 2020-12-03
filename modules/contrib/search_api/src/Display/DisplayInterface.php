@@ -48,10 +48,10 @@ interface DisplayInterface extends HideablePluginInterface, PluginInspectionInte
    * @return \Drupal\Core\Url|null
    *   The URL of the display, or NULL if there is no specific URL for it.
    *
-   * @deprecated in favor of getPath(). Creating an URL object from a path needs
-   *   a lot of Core's API which might lead to errors when used in certain
-   *   situations. This method will be removed in a future version of the Search
-   *   API module.
+   * @deprecated in search_api:8.x-1.0-beta5 and is removed from
+   *   search_api:2.0.0. Use getPath() instead.
+   *
+   * @see https://www.drupal.org/node/2856050
    */
   public function getUrl();
 

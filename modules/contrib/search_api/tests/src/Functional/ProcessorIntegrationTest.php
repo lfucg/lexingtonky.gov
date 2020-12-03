@@ -15,8 +15,6 @@ use Drupal\search_api_test\PluginTestTrait;
 /**
  * Tests the admin UI for processors.
  *
- * @todo Move this whole class into a single IntegrationTest check*() method?
- *
  * @group search_api
  */
 class ProcessorIntegrationTest extends SearchApiBrowserTestBase {
@@ -102,7 +100,7 @@ class ProcessorIntegrationTest extends SearchApiBrowserTestBase {
       'add_url',
       'aggregated_field',
       'language_with_fallback',
-      'rendered_item'
+      'rendered_item',
     ];
     $actual_processors = array_keys($this->loadIndex()->getProcessors());
     sort($actual_processors);
@@ -269,7 +267,7 @@ class ProcessorIntegrationTest extends SearchApiBrowserTestBase {
     // After disabling some datasource, all related processors should be
     // disabled also.
     $this->drupalGet('admin/config/search/search-api/index/' . $this->indexId . '/edit');
-    $this->drupalPostForm(NULL, ['datasources[entity:user]' => FALSE], 'Save');
+    $this->submitForm(['datasources[entity:user]' => FALSE], 'Save');
     $processors = $this->loadIndex()->getProcessors();
     $this->assertArrayNotHasKey('role_filter', $processors);
     $this->drupalGet('admin/config/search/search-api/index/' . $this->indexId . '/processors');

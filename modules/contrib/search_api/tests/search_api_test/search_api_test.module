@@ -40,3 +40,15 @@ function search_api_test_node_access_records(NodeInterface $node) {
 
   return $grants;
 }
+
+/**
+ * Implements hook_ENTITY_TYPE_load() for "search_api_server".
+ */
+function search_api_test_search_api_server_load($servers) {
+  /** @var \Drupal\search_api\ServerInterface $server */
+  foreach ($servers as $server) {
+    if ($server->hasValidBackend()) {
+      $server->getBackend();
+    }
+  }
+}

@@ -269,13 +269,13 @@ class RenderedItem extends ProcessorPluginBase {
 
       try {
         $build = $datasource->viewItem($item->getOriginalObject(), $view_mode);
-        // Add the excerpt to the render array to allow adding it to view modes.
-        if ($item->getExcerpt()) {
+        if ($build) {
+          // Add the excerpt to the render array to allow adding it to view modes.
           $build['#search_api_excerpt'] = $item->getExcerpt();
-        }
-        $value = (string) $this->getRenderer()->renderPlain($build);
-        if ($value) {
-          $field->addValue($value);
+          $value = (string) $this->getRenderer()->renderPlain($build);
+          if ($value) {
+            $field->addValue($value);
+          }
         }
       }
       catch (\Exception $e) {

@@ -316,7 +316,7 @@ class SearchApiEntity extends SearchApiStandard {
     }
 
     $view_mode = $this->options['display_methods'][$bundle]['view_mode'];
-    $build = $this->getEntityFieldManager()
+    $build = $this->getEntityTypeManager()
       ->getViewBuilder($entity->getEntityTypeId())
       ->view($entity, $view_mode);
     return [

@@ -17,6 +17,8 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+// phpcs:disable DrupalPractice.General.ExceptionT.ExceptionT
+
 /**
  * Provides functionality to be used by CLI tools.
  */
@@ -373,7 +375,7 @@ class CommandHelper implements LoggerAwareInterface {
             $reindexed_datasources[] = $datasource->label();
           }
         }
-        $description = 'This hook is deprecated in search_api 8.x-1.14 and will be removed in 9.x-1.0. Please use the "search_api.reindex_scheduled" event instead. See https://www.drupal.org/node/3059866';
+        $description = 'This hook is deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0. Please use the "search_api.reindex_scheduled" event instead. See https://www.drupal.org/node/3059866';
         $this->moduleHandler->invokeAllDeprecated($description, 'search_api_index_reindex', [$index, FALSE]);
         $event_name = SearchApiEvents::REINDEX_SCHEDULED;
         $event = new ReindexScheduledEvent($index, FALSE);

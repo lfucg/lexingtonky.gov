@@ -8,7 +8,6 @@ third_party_settings:
     available_menus:
       - main
     parent: 'main:'
-  scheduler:
 name: 'Paragraphs IEF Example'
 type: paragraphs_ief_example
 description: ''

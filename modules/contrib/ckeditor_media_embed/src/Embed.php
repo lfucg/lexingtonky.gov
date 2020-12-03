@@ -177,7 +177,7 @@ class Embed implements EmbedInterface {
    * {@inheritdoc}
    */
   public function getSettingsLink() {
-    $url = URL::fromRoute('ckeditor_media_embed.ckeditor_media_embed_settings_form', ['destination' => $this->currentPath->getPath()]);
+    $url = Url::fromRoute('ckeditor_media_embed.ckeditor_media_embed_settings_form', ['destination' => $this->currentPath->getPath()]);
     return Markup::create(Link::fromTextAndUrl($this->t('CKEditor Media Embed plugin settings page'), $url)->toString());
   }
 
@@ -196,7 +196,7 @@ class Embed implements EmbedInterface {
     $embed_node->setAttribute('class', $this->getClass($embed));
 
     $child = NULL;
-    $embed_body_node = HTML::load(trim($embed->html))->getElementsByTagName('body')->item(0);
+    $embed_body_node = Html::load(trim($embed->html))->getElementsByTagName('body')->item(0);
     foreach ($embed_body_node->childNodes as $child) {
       if ($child = $node->ownerDocument->importNode($child, TRUE)) {
         $embed_node->appendChild($child);
@@ -218,7 +218,7 @@ class Embed implements EmbedInterface {
    *   The safe HTML class string to apply the new embed html node.
    */
   protected function getClass($embed) {
-    return 'embed-media ' . HTML::getClass("embed-media--$embed->type-$embed->provider_name");
+    return 'embed-media ' . Html::getClass("embed-media--$embed->type-$embed->provider_name");
   }
 
 }

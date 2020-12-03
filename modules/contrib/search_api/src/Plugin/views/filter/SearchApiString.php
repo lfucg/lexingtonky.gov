@@ -26,7 +26,7 @@ class SearchApiString extends SearchApiNumeric {
       $operator = $this->operator == 'between' ? 'BETWEEN' : 'NOT BETWEEN';
       $this->getQuery()->addWhere($this->options['group'], $field, [
         $this->value['min'],
-        $this->value['max']
+        $this->value['max'],
       ], $operator);
     }
     elseif ($this->value['min'] != '') {

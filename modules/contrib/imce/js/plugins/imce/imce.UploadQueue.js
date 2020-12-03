@@ -196,8 +196,9 @@
       data: formData,
       processData: false,
       contentType: false,
-      custombeforeSend: imce.xUqItemBeforeSend,
+      customBeforeSend: imce.xUqItemBeforeSend,
       customComplete: imce.xUqItemComplete,
+      xhr: imce.xUqItemXhr,
       itemId: Item.id,
       activeFolder: Folder
     });
@@ -371,14 +372,22 @@
    * Ajax beforeSend handler of upload queue.
    */
   imce.xUqItemBeforeSend = function (xhr) {
+    // Replaced by imce.xUqItemXhr
+  };
+
+  /**
+   * Ajax xhr handler of upload queue.
+   */
+  imce.xUqItemXhr = function () {
     var id = this.itemId;
+    var xhr = new XMLHttpRequest();
     xhr.upload.onprogress = function (e) {
       var Item = imce.activeUq.getItem(id);
       if (Item) {
         Item.progress(parseInt(e.loaded * 100 / e.total));
       }
     };
-    xhr = null;
+    return xhr;
   };
 
   /**

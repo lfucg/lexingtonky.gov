@@ -22,10 +22,10 @@ class DropzoneJsTestForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['dropzonejs'] = [
-      '#title' => $this->t('DropzoneJs element'),
+      '#title' => $this->t('DropzoneJS element'),
       '#type' => 'dropzonejs',
       '#required' => TRUE,
-      '#dropzone_description' => 'DropzoneJs description',
+      '#dropzone_description' => 'DropzoneJS description',
       '#max_filesize' => '1M',
       '#extensions' => 'jpg png',
     ];

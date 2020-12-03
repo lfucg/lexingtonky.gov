@@ -416,7 +416,7 @@ class Item implements \IteratorAggregate, ItemInterface {
    * {@inheritdoc}
    */
   public function checkAccess(AccountInterface $account = NULL) {
-    @trigger_error('\Drupal\search_api\Item\ItemInterface::checkAccess() is deprecated in search_api:8.x-1.14 and is removed from search_api:9.x-1.0. Use getAccessResult() instead. See https://www.drupal.org/node/3051902', E_USER_DEPRECATED);
+    @trigger_error('\Drupal\search_api\Item\ItemInterface::checkAccess() is deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0. Use getAccessResult() instead. See https://www.drupal.org/node/3051902', E_USER_DEPRECATED);
     return $this->getAccessResult($account)->isAllowed();
   }
 

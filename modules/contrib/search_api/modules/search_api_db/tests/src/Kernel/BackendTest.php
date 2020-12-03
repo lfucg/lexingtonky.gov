@@ -122,6 +122,7 @@ class BackendTest extends BackendTestBase {
     $this->regressionTest2925464();
     $this->regressionTest2994022();
     $this->regressionTest2916534();
+    $this->regressionTest2873023();
   }
 
   /**
@@ -725,8 +726,6 @@ class BackendTest extends BackendTestBase {
   /**
    * Tests edge cases for partial matching.
    *
-   * @throws \Drupal\Core\Entity\EntityStorageException
-   *
    * @see https://www.drupal.org/node/2916534
    */
   protected function regressionTest2916534() {
@@ -745,6 +744,50 @@ class BackendTest extends BackendTestBase {
 
     $entity->delete();
     $this->setServerMatchMode($old);
+  }
+
+  /**
+   * Tests whether keywords with special characters work correctly.
+   *
+   * @see https://www.drupal.org/node/2873023
+   */
+  protected function regressionTest2873023() {
+    $keyword = 'regression@test@2873023';
+
+    $entity_id = count($this->entities) + 1;
+    $entity = $this->addTestEntity($entity_id, [
+      'name' => $keyword,
+      'type' => 'article',
+    ]);
+
+    $index = $this->getIndex();
+    $this->assertFalse($index->isValidProcessor('tokenizer'));
+    $this->indexItems($this->indexId);
+    $results = $this->buildSearch($keyword, [], ['name'])->execute();
+    $this->assertResults([$entity_id], $results, 'Keywords with special characters (Tokenizer disabled)');
+
+    $processor = \Drupal::getContainer()->get('search_api.plugin_helper')
+      ->createProcessorPlugin($index, 'tokenizer');
+    $index->addProcessor($processor);
+    $index->save();
+    $this->assertTrue($index->isValidProcessor('tokenizer'));
+    $this->indexItems($this->indexId);
+    $results = $this->buildSearch($keyword, [], ['name'])->execute();
+    $this->assertResults([$entity_id], $results, 'Keywords with special characters (Tokenizer enabled)');
+
+    $index->getProcessor('tokenizer')->setConfiguration([
+      'spaces' => '\s',
+    ]);
+    $index->save();
+    $this->indexItems($this->indexId);
+    $results = $this->buildSearch($keyword, [], ['name'])->execute();
+    $this->assertResults([$entity_id], $results, 'Keywords with special characters (Tokenizer with special config)');
+
+    $index->removeProcessor('tokenizer');
+    $index->save();
+    $this->assertFalse($index->isValidProcessor('tokenizer'));
+
+    $entity->delete();
   }
 
   /**

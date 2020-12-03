@@ -281,7 +281,7 @@ class SearchApiFulltext extends FilterPluginBase {
     if (!$words) {
       $vars['@count'] = $this->options['min_length'];
       $msg = $this->t('You must include at least one positive keyword with @count characters or more.', $vars);
-      $form_state->setError($form[$identifier], $msg);
+      $form_state->setErrorByName($identifier, $msg);
     }
     $input = implode(' ', $words);
   }

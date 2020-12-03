@@ -54,7 +54,7 @@ class ImceSettingsFormTest extends KernelTestBase {
    * Test formId().
    */
   public function testFormId() {
-    $this->assertTrue(is_string($this->imceSettingsForm->getFormId()));
+    $this->assertIsString($this->imceSettingsForm->getFormId());
     $this->assertEquals('imce_settings_form', $this->imceSettingsForm->getFormId());
   }
 
@@ -63,7 +63,7 @@ class ImceSettingsFormTest extends KernelTestBase {
    */
   public function testProfileOptions() {
     $options = $this->imceSettingsForm->getProfileOptions();
-    $this->assertTrue(is_array($options));
+    $this->assertIsArray($options);
     $this->assertArraySubset($options, ['' => '-' . $this->t('None') . '-']);
   }
 
@@ -72,16 +72,16 @@ class ImceSettingsFormTest extends KernelTestBase {
    */
   public function testBuildHeaderProfilesTable() {
     $headerProfiles = $this->imceSettingsForm->buildHeaderProfilesTable();
-    $this->assertTrue(is_array($headerProfiles));
+    $this->assertIsArray($headerProfiles);
   }
 
   /**
    * Test method buildRolesProfilesTable().
    */
   public function testBuildRolesProfilesTable() {
-    $this->assertTrue(is_array(
+    $this->assertIsArray(
       $this->imceSettingsForm->buildRolesProfilesTable($this->imceConfig->get('roles_profiles')  ?: [])
-    ));
+    );
   }
 
   /**

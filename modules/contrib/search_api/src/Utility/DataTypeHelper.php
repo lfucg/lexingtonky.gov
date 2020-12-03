@@ -138,7 +138,7 @@ class DataTypeHelper implements DataTypeHelperInterface {
 
       // Allow other modules to intercept and define what default type they want
       // to use for their data type.
-      $description = 'This hook is deprecated in search_api 8.x-1.14 and will be removed in 9.x-1.0. Please use the "search_api.mapping_field_types" event instead. See https://www.drupal.org/node/3059866';
+      $description = 'This hook is deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0. Please use the "search_api.mapping_field_types" event instead. See https://www.drupal.org/node/3059866';
       $hook = 'search_api_field_type_mapping';
       $this->moduleHandler->alterDeprecated($description, $hook, $mapping);
       $eventName = SearchApiEvents::MAPPING_FIELD_TYPES;

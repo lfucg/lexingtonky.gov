@@ -1,5 +1,5 @@
 type: ief_simple_single
-name: IEF single simple
+name: IEF simple single
 description: 'Content type for testing simple IEF widget on a single-value field.'
 help: ''
 new_revision: false

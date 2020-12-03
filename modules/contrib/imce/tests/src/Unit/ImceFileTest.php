@@ -32,7 +32,7 @@ class ImceFileTest extends UnitTestCase {
    */
   public function testType() {
     $this->assertNotEmpty($this->imceFile->type);
-    $this->assertTrue(is_string($this->imceFile->type));
+    $this->assertIsString($this->imceFile->type);
     $this->assertEquals('file', $this->imceFile->type);
   }
 

@@ -18,12 +18,12 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
    *
    * @var array
    */
-  public static $modules = ['inline_entity_form_test'];
+  protected static $modules = ['inline_entity_form_test'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->user = $this->createUser([
@@ -78,7 +78,7 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
         $assert_session->elementExists('xpath', $first_nested_title_field_xpath)->setValue('Nested single node');
         $assert_session->elementExists('xpath', $first_positive_int_field_xpath)->setValue(42);
         $page->pressButton('Save');
-        $assert_session->pageTextContains('IEF single simple Host node has been created.');
+        $assert_session->pageTextContains('IEF simple single Host node has been created.');
         $host_node = $this->getNodeByTitle('Host node');
       }
       elseif ($cardinality === 2) {
@@ -90,7 +90,7 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
         $assert_session->elementExists('xpath', $second_nested_title_field_xpath)->setValue('Nested single node 3');
         $assert_session->elementExists('xpath', $second_positive_int_field_xpath)->setValue(42);
         $page->pressButton('Save');
-        $assert_session->pageTextContains('IEF single simple Host node 2 has been created.');
+        $assert_session->pageTextContains('IEF simple single Host node 2 has been created.');
         $host_node = $this->getNodeByTitle('Host node 2');
       }
       elseif ($cardinality === FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED) {
@@ -117,7 +117,7 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
         $assert_session->elementExists('xpath', $third_nested_title_field_xpath)->setValue('Nested single node 6');
         $assert_session->elementExists('xpath', $third_positive_int_field_xpath)->setValue(42);
         $page->pressButton('Save');
-        $assert_session->pageTextContains('IEF single simple Host node 3 has been created.');
+        $assert_session->pageTextContains('IEF simple single Host node 3 has been created.');
         $host_node = $this->getNodeByTitle('Host node 3');
       }
       $this->checkEditAccess($host_node, $number_of_items, $cardinality);
@@ -150,7 +150,7 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
     $page->pressButton('Save');
 
     // Assert title validation fires on Inline Entity Form widget.
-    $assert_session->pageTextNotContains('IEF single simple Host Validation Node has been created.');
+    $assert_session->pageTextNotContains('IEF simple single Host Validation Node has been created.');
     // Assert that we're still on form due to to validation error.
     $this->assertSession()->addressEquals('node/add/ief_simple_single');
 
@@ -159,7 +159,7 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
     $assert_session->elementExists('xpath', $positive_int_field_xpath)->setValue(-1);
     $page->pressButton('Save');
     // Assert field validation fires on Inline Entity Form widget.
-    $assert_session->pageTextNotContains('IEF single simple Host Validation Node has been created.');
+    $assert_session->pageTextNotContains('IEF simple single Host Validation Node has been created.');
     // Assert that we're still on form due to to validation error.
     $this->assertSession()->addressEquals('node/add/ief_simple_single');
 
@@ -169,7 +169,7 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
     $assert_session->pageTextNotContains('Title field is required.');
     // Assert field validation fires on Inline Entity Form widget.
     $assert_session->pageTextNotContains('Positive int must be higher than or equal to 1');
-    $assert_session->pageTextContains('IEF single simple Host Validation Node has been created.');
+    $assert_session->pageTextContains('IEF simple single Host Validation Node has been created.');
 
     // Check that nodes were created correctly.
     $host_node = $this->getNodeByTitle($host_node_title);
@@ -260,7 +260,7 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
       $child_node = $host_node->single[$delta]->entity;
       // Assert the form of child node with edit access is found.
       $delta_field = $assert_session->fieldExists("single[$delta][inline_entity_form][title][0][value]");
-      $this->assertContains($child_node->label(), $delta_field->getValue());
+      $this->assertStringContainsString($child_node->label(), $delta_field->getValue());
       $delta++;
     }
     // Check that there is NOT an extra "add" form when editing.
@@ -301,7 +301,7 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
       $edit["single[$delta][inline_entity_form][title][0][value]"] = $new_titles[$delta];
     }
     $this->drupalPostForm(NULL, $edit, t('Save'));
-    $assert_session->pageTextContains("IEF single simple {$host_node->label()} has been updated.");
+    $assert_session->pageTextContains("IEF simple single {$host_node->label()} has been updated.");
 
     // Reset cache for nodes.
     $node_ids = [$host_node->id()];

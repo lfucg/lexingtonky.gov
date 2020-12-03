@@ -2,6 +2,7 @@
 
 namespace Drupal\search_api\Datasource;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\search_api\Plugin\IndexPluginInterface;
@@ -138,7 +139,7 @@ interface DatasourceInterface extends IndexPluginInterface {
    * @return bool
    *   TRUE if access is granted, FALSE otherwise.
    *
-   * @deprecated in search_api:8.x-1.14 and is removed from search_api:9.x-1.0.
+   * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
    *   Use getItemAccessResult() instead.
    *
    * @see https://www.drupal.org/node/3051902
@@ -243,6 +244,62 @@ interface DatasourceInterface extends IndexPluginInterface {
    *   this and all following pages.
    */
   public function getItemIds($page = NULL);
+
+  /**
+   * Determines whether this datasource can contain entity references.
+   *
+   * If this method returns TRUE, the Search API will attempt to mark items for
+   * reindexing if indexed data in entities referenced by those items changes,
+   * using the datasource property information and the
+   * getAffectedItemsForEntityChange() method.
+   *
+   * @return bool
+   *   TRUE if this datasource can contain entity references, FALSE otherwise.
+   *
+   * @see \Drupal\search_api\Datasource\DatasourceInterface::getAffectedItemsForEntityChange()
+   * @see \Drupal\search_api\Utility\TrackingHelper::trackReferencedEntityUpdate()
+   */
+  public function canContainEntityReferences(): bool;
+
+  /**
+   * Identifies items affected by a change to a referenced entity.
+   *
+   * A "change" in this context means an entity getting updated or deleted. (It
+   * won't get called for entities being inserted, as new entities cannot
+   * already have references pointing to them.)
+   *
+   * This method usually doesn't have to return the specified entity itself,
+   * even if it is part of this datasource. This method should instead only be
+   * used to detect items that are indirectly affected by this change.
+   *
+   * For instance, if an index contains nodes, and nodes can contain tags (which
+   * are taxonomy term references), and the search index contains the name of
+   * the tags as one of its fields, then a change of a term name should result
+   * in all nodes being reindexed that contain that term as a tag. So, the item
+   * IDs of those nodes should be returned by this method (in case this
+   * datasource contains them).
+   *
+   * This method will only be called if this datasource plugin returns TRUE in
+   * canContainEntityReferences().
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity that just got changed.
+   * @param array[] $foreign_entity_relationship_map
+   *   Map of known entity relationships that exist in the index. Its structure
+   *   is identical to the return value of the
+   *   \Drupal\search_api\Utility\TrackingHelper::getForeignEntityRelationsMap()
+   *   method.
+   * @param \Drupal\Core\Entity\EntityInterface|null $original_entity
+   *   (optional) The original entity before the change. If this argument is
+   *   NULL, it means the entity got deleted.
+   *
+   * @return string[]
+   *   Array of item IDs that are affected by the changes between $entity and
+   *   $original_entity entities.
+   *
+   * @see \Drupal\search_api\Datasource\DatasourceInterface::canContainEntityReferences()
+   */
+  public function getAffectedItemsForEntityChange(EntityInterface $entity, array $foreign_entity_relationship_map, EntityInterface $original_entity = NULL): array;
 
   /**
    * Retrieves any dependencies of the given fields.

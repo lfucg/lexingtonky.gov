@@ -12,6 +12,13 @@ use Countable;
 use IteratorAggregate;
 use Serializable;
 
+use function array_map;
+use function count;
+use function get_class;
+use function serialize;
+use function sprintf;
+use function unserialize;
+
 /**
  * Re-usable, serializable priority queue implementation
  *
@@ -34,7 +41,7 @@ class PriorityQueue implements Countable, IteratorAggregate, Serializable
      * Inner queue class to use for iteration
      * @var string
      */
-    protected $queueClass = 'Laminas\Stdlib\SplPriorityQueue';
+    protected $queueClass = SplPriorityQueue::class;
 
     /**
      * Actual items aggregated in the priority queue. Each item is an array
@@ -146,7 +153,34 @@ class PriorityQueue implements Countable, IteratorAggregate, Serializable
      */
     public function extract()
     {
-        return $this->getQueue()->extract();
+        $value = $this->getQueue()->extract();
+
+        $keyToRemove = null;
+        $highestPriority = null;
+        foreach ($this->items as $key => $item) {
+            if ($item['data'] !== $value) {
+                continue;
+            }
+
+            if (null === $highestPriority) {
+                $highestPriority = $item['priority'];
+                $keyToRemove = $key;
+                continue;
+            }
+
+            if ($highestPriority >= $item['priority']) {
+                continue;
+            }
+
+            $highestPriority = $item['priority'];
+            $keyToRemove = $key;
+        }
+
+        if ($keyToRemove !== null) {
+            unset($this->items[$keyToRemove]);
+        }
+
+        return $value;
     }
 
     /**

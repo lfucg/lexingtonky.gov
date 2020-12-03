@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\entity\Kernel\QueryAccess;
 
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Render\RenderContext;
 use Drupal\KernelTests\Core\Entity\EntityKernelTestBase;
 
 /**
@@ -28,16 +30,50 @@ class EventOnlyQueryAccessHandlerTest extends EntityKernelTestBase {
     parent::setUp();
     $this->installEntitySchema('node');
 
-    // Create uid: 1 here so that it's skipped in test cases.
-    $admin_user = $this->createUser();
+    \Drupal::state()->set('test_event_only_query_access', TRUE);
+  }
+
+  /**
+   * Tests cacheability with the event only query_access handler.
+   *
+   * If there is no additional cacheablility provided to the conditions, there
+   * should be no render conrexts leaked.
+   */
+  public function testCacheableMetadataLeaks() {
+    $renderer = $this->container->get('renderer');
+    $render_context = new RenderContext();
+
+    $node_type_storage = $this->entityTypeManager->getStorage('node_type');
+    $node_type_storage->create(['type' => 'foo', 'name' => $this->randomString()])->save();
+
+    $node_storage = $this->entityTypeManager->getStorage('node');
+    $node_1 = $node_storage->create(['type' => 'foo', 'title' => $this->randomString()]);
+    $node_1->save();
+    $node_2 = $node_storage->create(['type' => 'bar', 'title' => $this->randomString()]);
+    $node_2->save();
+
+    $renderer->executeInRenderContext($render_context, static function () use ($node_storage) {
+      $node_storage->getQuery()->execute();
+    });
+    $this->assertTrue($render_context->isEmpty(), 'Empty cacheability was not bubbled.');
+
+    $cacheability = new CacheableMetadata();
+    $cacheability->addCacheContexts(['user.permissions']);
+    \Drupal::state()->set('event_only_query_acccess_cacheability', $cacheability);
+
+    $render_context = new RenderContext();
+    $renderer->executeInRenderContext($render_context, static function () use ($node_storage) {
+      $node_storage->getQuery()->execute();
+    });
+    $this->assertFalse($render_context->isEmpty(), 'Cacheability was bubbled');
+    $this->assertCount(1, $render_context);
+    $this->assertEquals(['user.permissions'], $render_context[0]->getCacheContexts());
   }
 
   /**
    * Tests that entity types without a query access handler still fire events.
    */
   public function testEventOnlyQueryAccessHandlerEventSubscriber() {
-    \Drupal::state()->set('test_event_only_query_access', TRUE);
-
     $node_type_storage = $this->entityTypeManager->getStorage('node_type');
     $node_type_storage->create(['type' => 'foo', 'name' => $this->randomString()])->save();
     $node_type_storage->create(['type' => 'bar', 'name' => $this->randomString()])->save();

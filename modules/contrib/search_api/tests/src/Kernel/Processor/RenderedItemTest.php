@@ -49,7 +49,7 @@ class RenderedItemTest extends ProcessorTestBase {
     'comment',
     'system',
     'filter',
-    'path_alias'
+    'path_alias',
   ];
 
   /**

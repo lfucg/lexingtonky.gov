@@ -27,7 +27,7 @@ namespace Drupal\Tests\ckeditor_media_embed\Unit {
      */
     public function testGetPlugins() {
       $plugins = AssetManager::getPlugins();
-      $this->assertTrue(is_array($plugins));
+      $this->assertIsArray($plugins);
       $this->assertCount(7, $plugins, 'There should be 7 plugins.');
     }
 

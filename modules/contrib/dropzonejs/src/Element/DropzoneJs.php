@@ -23,7 +23,7 @@ use Drupal\Core\Url;
  *   Will be visible inside the upload area.
  * - #max_filesize (string)
  *   Used by dropzonejs and expressed in number + unit (i.e. 1.1M) This will be
- *   converted to a form that DropzoneJs understands. See:
+ *   converted to a form that DropzoneJS understands. See:
  *   http://www.dropzonejs.com/#config-maxFilesize
  * - #extensions (string)
  *   A string of valid extensions separated by a space.
@@ -138,6 +138,7 @@ class DropzoneJs extends FormElement {
           'dictDefaultMessage' => Html::escape($element['#dropzone_description']),
           'acceptedFiles' => '.' . str_replace(' ', ',.', self::getValidExtensions($element)),
           'maxFiles' => $element['#max_files'],
+          'timeout' => \Drupal::configFactory()->get('dropzonejs.settings')->get('upload_timeout_ms'),
         ],
       ],
     ];

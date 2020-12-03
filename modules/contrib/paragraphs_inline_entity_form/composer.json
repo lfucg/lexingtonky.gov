@@ -1,0 +1,25 @@
+{
+  "name": "drupal/paragraphs_inline_entity_form",
+  "description": "Extends Inline Entity Form to add support for Paragraphs",
+  "type": "drupal-module",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "license": "GPL-2.0",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    },
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ],
+  "require": {
+    "drupal/paragraphs": "~1.0",
+    "drupal/entity": "~1.0",
+    "drupal/entity_browser": "~1.0|~2.0",
+    "drupal/entity_embed": "~1.0",
+    "drupal/inline_entity_form": "~1.0"
+  }
+}

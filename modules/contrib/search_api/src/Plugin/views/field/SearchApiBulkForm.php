@@ -84,6 +84,7 @@ class SearchApiBulkForm extends BulkForm {
   }
 
   // phpcs:disable Drupal.Commenting.FunctionComment.TypeHintMissing
+
   /**
    * Form constructor for the bulk form.
    *
@@ -157,6 +158,8 @@ class SearchApiBulkForm extends BulkForm {
       unset($form['actions']);
     }
   }
+
+  // phpcs:enable Drupal.Commenting.FunctionComment.TypeHintMissing
 
   /**
    * {@inheritdoc}

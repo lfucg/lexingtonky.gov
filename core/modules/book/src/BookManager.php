@@ -121,7 +121,7 @@ class BookManager implements BookManagerInterface {
       // @todo: use route name for links, not system path.
       foreach ($book_links as $link) {
         $nid = $link['nid'];
-        if (isset($nodes[$nid]) && $nodes[$nid]->status) {
+        if (isset($nodes[$nid]) && $nodes[$nid]->access('view')) {
           $link['url'] = $nodes[$nid]->toUrl();
           $link['title'] = $nodes[$nid]->label();
           $link['type'] = $nodes[$nid]->bundle();
@@ -227,7 +227,7 @@ class BookManager implements BookManagerInterface {
       // The node can become a new book, if it is not one already.
       $options = [$nid => $this->t('- Create a new book -')] + $options;
     }
-    if (!$node->book['bid']) {
+    if (!$node->book['bid'] || $nid === 'new' || $node->book['original_bid'] === 0) {
       // The node is not currently in the hierarchy.
       $options = [0 => $this->t('- None -')] + $options;
     }

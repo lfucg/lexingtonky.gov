@@ -1,3 +1,48 @@
+Search API 1.18 (2020-10-22):
+-----------------------------
+- #3153153 by mkalkbrenner, cristiroma, drunken monkey: Fixed serialization of
+  backends using BackendPluginBase.
+- #3169531 by akalam, drunken monkey: Fixed warning when non-array "f"
+  parameter is present in URL.
+- #3173400 by drunken monkey: Removed drupalPostForm() calls from functional
+  tests.
+- #3160757 by JordanDukart, drunken monkey: Fixed handling of NULL values in
+  "Ignore characters" processor.
+- #2936043 by froboy, drunken monkey, ressa, agentrickard, navneet0693: Added
+  an option to the "URI" field to make the created URL absolute.
+- #3151966 by robin.ingelbrecht, drunken monkey: Fixed parsing of keywords with
+  stand-alone dash (-).
+- #3157958 by maximpodorov, ankithashetty, ressa, drunken monkey: Fixed display
+  of Media entities in Views.
+- #3137627 by SimeonKesmev, drunken monkey: Added a test for field value
+  extraction in edge cases.
+- #3150764 by bendev, drunken monkey: Fixed documentation for Drush "sapi-i"
+  command.
+- #3145955 by b_sharpe, drunken monkey: Added Tokenizer option to configure
+  ignored characters.
+- #3164255 by drunken monkey, borisson_: Added support for the excerpt field to
+  the Views "Rendered item" field.
+- #3157397 by Murz, drunken monkey: Fixed indexing of complex properties with
+  computed main properties.
+- #3155965 by Ramya Balasubramanian, solideogloria, drunken monkey: Fixed
+  missing single quote in search_api.index.schema.yml.
+- #3136543 by deulenko, drunken monkey: Replaced assertTrue(isset()) with
+  assertArrayNotHasKey() where appropriate.
+- #3168114 by drunken monkey: Fixed test fails against Drupal 9.1.x.
+- #3165015 by penyaskito: search_api_test_example_content_references test
+  module broke D9 build
+- #3131384 by lolandese, drunken monkey: Fixed Composer license value.
+- #2007692 by bucefal91, drunken monkey, marassa: Added automatic re-indexing
+  when indexed related entities are changed.
+- #3082868 by Raunak.singh, drunken monkey: Changed README.txt to README.md.
+- #3158559 by drunken monkey: Updated coding standards and fixed adherence.
+- #3126367 by drunken monkey: Fixed fatal error after module upgrade due to
+  changed service definition.
+- #2976339 by drunken monkey, sker101, vflirt: Fixed bug when importing server
+  configs.
+- #2873023 by drunken monkey, borisson_: Fixed handling of special characters
+  in searches on DB backend.
+
 Search API 1.17 (2020-06-02):
 -----------------------------
 - #3126751 by douggreen, drunken monkey, Berdir: Fixed calls to deprecated

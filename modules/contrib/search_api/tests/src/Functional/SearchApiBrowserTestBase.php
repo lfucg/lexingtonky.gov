@@ -148,7 +148,7 @@ abstract class SearchApiBrowserTestBase extends BrowserTestBase {
       $server = Server::create([
         'id' => 'webtest_server',
         'name' => 'WebTest server',
-        'description' => 'WebTest server' . ' description',
+        'description' => 'WebTest server description',
         'backend' => 'search_api_test',
         'backend_config' => [],
       ]);
@@ -171,7 +171,7 @@ abstract class SearchApiBrowserTestBase extends BrowserTestBase {
       $index = Index::create([
         'id' => $this->indexId,
         'name' => 'WebTest index',
-        'description' => 'WebTest index' . ' description',
+        'description' => 'WebTest index description',
         'server' => 'webtest_server',
         'datasource_settings' => [
           'entity:node' => [],

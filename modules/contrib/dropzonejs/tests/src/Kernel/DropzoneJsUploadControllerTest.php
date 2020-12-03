@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Drupal\language\Entity\ConfigurableLanguage;
 
 /**
- * Tests dropzoneJs upload controller.
+ * Tests DropzoneJS upload controller.
  *
- * @group DropzoneJs
+ * @group dropzonejs
  */
 class DropzoneJsUploadControllerTest extends KernelTestBase {
 
@@ -43,7 +43,7 @@ class DropzoneJsUploadControllerTest extends KernelTestBase {
    *
    * @var string
    */
-  protected $testfileData = 'DropzoneJs test file data';
+  protected $testfileData = 'DropzoneJS test file data';
 
   /**
    * Modules to enable.
@@ -68,7 +68,7 @@ class DropzoneJsUploadControllerTest extends KernelTestBase {
   }
 
   /**
-   * Test that dropzoneJs correctly handles uploads.
+   * Test that DropzoneJS correctly handles uploads.
    */
   public function testDropzoneJsUploadController() {
     $this->container->get('router.builder')->rebuild();
@@ -99,7 +99,7 @@ class DropzoneJsUploadControllerTest extends KernelTestBase {
   }
 
   /**
-   * Tests that dropzoneJs ignores filename transliteration.
+   * Tests that DropzoneJS ignores filename transliteration.
    */
   public function testIgnoreTransliteration() {
     $this->container->get('router.builder')->rebuild();

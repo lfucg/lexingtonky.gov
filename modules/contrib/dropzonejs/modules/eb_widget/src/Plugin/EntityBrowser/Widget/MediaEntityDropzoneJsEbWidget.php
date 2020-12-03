@@ -104,6 +104,11 @@ class MediaEntityDropzoneJsEbWidget extends DropzoneJsEbWidget {
       ]);
     }
 
+    // Remove these config options as these are propagated from the field.
+    $form['max_filesize']['#access'] = FALSE;
+    $form['extensions']['#access'] = FALSE;
+    $form['upload_location']['#access'] = FALSE;
+
     return $form;
   }
 
@@ -165,6 +170,20 @@ class MediaEntityDropzoneJsEbWidget extends DropzoneJsEbWidget {
 
     $this->selectEntities($media_entities, $form_state);
     $this->clearFormValues($element, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function handleWidgetContext($widget_context) {
+    parent::handleWidgetContext($widget_context);
+    $bundle = $this->getType();
+    $source = $bundle->getSource();
+    $field = $source->getSourceFieldDefinition($bundle);
+    $field_storage = $field->getFieldStorageDefinition();
+    $this->configuration['upload_location'] = $field_storage->getSettings()['uri_scheme'] . '://' . $field->getSettings()['file_directory'];
+    $this->configuration['max_filesize'] = $field->getSettings()['max_filesize'];
+    $this->configuration['extensions'] = $field->getSettings()['file_extensions'];
   }
 
 }

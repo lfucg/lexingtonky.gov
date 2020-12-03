@@ -71,7 +71,7 @@ class SearchApiPluginManager extends DefaultPluginManager {
         $this->moduleHandler->alter($this->alterHook, $definitions);
         return;
       }
-      $description = "This hook is deprecated in search_api 8.x-1.14 and will be removed in 9.x-1.0. Please use the \"{$this->alterEventName}\" event instead. See https://www.drupal.org/node/3059866";
+      $description = "This hook is deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0. Please use the \"{$this->alterEventName}\" event instead. See https://www.drupal.org/node/3059866";
       $this->moduleHandler->alterDeprecated($description, $this->alterHook, $definitions);
     }
 

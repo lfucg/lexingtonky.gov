@@ -476,6 +476,7 @@ class TwigExtension extends AbstractExtension {
     if ($wrapper && !Element::isEmpty($build['content'])) {
       $build += [
         '#theme' => 'block',
+        '#id' => $configuration['id'] ?? NULL,
         '#attributes' => [],
         '#contextual_links' => [],
         '#configuration' => $block_plugin->getConfiguration(),
@@ -516,7 +517,10 @@ class TwigExtension extends AbstractExtension {
 
     $build = [];
 
-    $cache_metadata = new CacheableMetadata();
+    $entity_type = $entity_type_manager->getDefinition('block');
+    $cache_metadata = (new CacheableMetadata())
+      ->addCacheTags($entity_type->getListCacheTags())
+      ->addCacheContexts($entity_type->getListCacheContexts());
 
     /* @var $blocks \Drupal\block\BlockInterface[] */
     foreach ($blocks as $id => $block) {
@@ -537,8 +541,8 @@ class TwigExtension extends AbstractExtension {
     if ($build) {
       $build['#region'] = $region;
       $build['#theme_wrappers'] = ['region'];
-      $cache_metadata->applyTo($build);
     }
+    $cache_metadata->applyTo($build);
 
     return $build;
   }

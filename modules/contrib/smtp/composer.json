@@ -8,8 +8,8 @@
     "issues": "https://www.drupal.org/project/issues/smtp"
   },
   "require": {
-    "drupal/core": "^8.7.7 || ^9",
-    "phpmailer/phpmailer": "^6.1.5"
+    "drupal/core": "^8.8 || ^9",
+    "phpmailer/phpmailer": "^6.1.7"
   },
   "extra": {
     "branch-alias": {

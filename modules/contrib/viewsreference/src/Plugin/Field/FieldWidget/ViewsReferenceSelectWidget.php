@@ -25,6 +25,11 @@ class ViewsReferenceSelectWidget extends OptionsSelectWidget {
   /**
    * {@inheritdoc}
    */
+  protected function getEmptyLabel() {}
+
+  /**
+   * {@inheritdoc}
+   */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
 
     $select_element['target_id'] = parent::formElement($items, $delta, $element, $form, $form_state);

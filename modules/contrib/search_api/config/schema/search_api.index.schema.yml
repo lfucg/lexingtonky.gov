@@ -7,7 +7,7 @@ search_api.index.*:
       label: 'ID'
     name:
       type: label
-      label: Name'
+      label: 'Name'
     description:
       type: text
       label: 'Description'

@@ -38,7 +38,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->fieldStorageConfigStorage = $this->container->get('entity_type.manager')->getStorage('field_storage_config');
     $this->fieldConfigStorage = $this->container->get('entity_type.manager')->getStorage('field_config');
@@ -284,6 +284,21 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    */
   protected function getXpathForButtonWithValue($value, $index) {
     return "(//input[@type='submit' and @value='{$value}'][{$index}])";
+  }
+
+  /**
+   * Returns xpath selector for fieldset label.
+   *
+   * @param string $label
+   *   The label text to select.
+   * @param int $index
+   *   The index of the fieldset label to select.
+   *
+   * @return string
+   *   The xpath selector for the fieldset label to select.
+   */
+  protected function getXpathForFieldsetLabel($label, $index) {
+    return "(//fieldset/legend/span[.='{$label}'])[{$index}]";
   }
 
   /**

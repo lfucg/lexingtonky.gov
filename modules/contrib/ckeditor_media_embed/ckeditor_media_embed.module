@@ -123,8 +123,8 @@ function _ckeditor_media_embed_get_install_instructions($prefix = TRUE, $update 
   return Markup::Create(t('@prefix To :op the CKEditor plugins run <strong><code>drupal ckeditor_media_embed::op</code></strong> if you have <a href=":drupal_console" target="_blank">Drupal Console</a> installed. Otherwise, please see the <a href=":project_page" target="_blank">installation instructions</a> on the page for additional :op methods.',
     [
       ':op' => $update ? 'update' : 'install',
-      ':drupal_console' => URL::fromUri('https://drupalconsole.com/', ['absolute' => TRUE])->toString(),
-      ':project_page' => URL::fromUri('https://www.drupal.org/project/ckeditor_media_embed', ['absolute' => TRUE, 'fragment' => 'ckeditor-media-embed--install'])->toString(),
+      ':drupal_console' => Url::fromUri('https://drupalconsole.com/', ['absolute' => TRUE])->toString(),
+      ':project_page' => Url::fromUri('https://www.drupal.org/project/ckeditor_media_embed', ['absolute' => TRUE, 'fragment' => 'ckeditor-media-embed--install'])->toString(),
       '@prefix' => $message_prefix,
     ]
   ));

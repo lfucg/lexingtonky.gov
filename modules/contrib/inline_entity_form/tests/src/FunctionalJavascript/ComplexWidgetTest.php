@@ -22,7 +22,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'inline_entity_form_test',
     'field',
     'field_ui',
@@ -45,7 +45,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->user = $this->createUser([
@@ -79,10 +79,18 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
     $first_name_field_xpath = $this->getXpathForNthInputByLabelText('First name', 1);
     $last_name_field_xpath = $this->getXpathForNthInputByLabelText('Last name', 1);
 
+    // Get the xpath selectors for the fieldset labels in this test.
+    $fieldset_label_all_bundles_xpath = $this->getXpathForFieldsetLabel('All bundles', 1);
+    $fieldset_label_multi_xpath = $this->getXpathForFieldsetLabel('Multiple nodes', 1);
+
     $assert_session = $this->assertSession();
     // Don't allow addition of existing nodes.
     $this->updateSetting('allow_existing', FALSE);
     $this->drupalGet($this->formContentAddUrl);
+
+    // Assert fieldset title on inline form exists.
+    $assert_session->elementExists('xpath', $fieldset_label_all_bundles_xpath);
+    $assert_session->elementExists('xpath', $fieldset_label_multi_xpath);
 
     // Assert title field on inline form exists.
     $assert_session->elementExists('xpath', $inner_title_field_xpath);
@@ -99,6 +107,8 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
     $this->drupalGet($this->formContentAddUrl);
     $multi_fieldset = $assert_session
       ->elementExists('css', 'fieldset[data-drupal-selector="edit-multi"]');
+    // Assert fieldset titles.
+    $assert_session->elementExists('xpath', $fieldset_label_multi_xpath);
     // Assert title field does not appear.
     $assert_session->elementNotExists('xpath', $inner_title_field_xpath);
     // Assert first name field does not appear.
@@ -108,6 +118,8 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
     $assert_session->buttonExists('Add existing node', $multi_fieldset);
     // Now submit 'Add new node' button in the 'Multiple nodes' fieldset.
     $multi_fieldset->pressButton('Add new node');
+    // Assert fieldset title.
+    $assert_session->elementExists('xpath', $fieldset_label_multi_xpath);
     // Assert title field on inline form exists.
     $this->assertNotEmpty($assert_session->waitForElement('xpath', $inner_title_field_xpath));
     // Assert first name field on inline form exists.
@@ -220,11 +232,17 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
     $nested_title_field_xpath = $this->getXpathForNthInputByLabelText('Title', 2);
     $double_nested_title_field_xpath = $this->getXpathForNthInputByLabelText('Title', 3);
 
+    // Get the xpath selectors for the fieldset labels in this test.
+    $top_fieldset_label_xpath = $this->getXpathForFieldsetLabel('Multiple nodes', 1);
+    $nested_fieldset_label_xpath = $this->getXpathForFieldsetLabel('Multiple nodes', 2);
+
     $page = $this->getSession()->getPage();
     $assert_session = $this->assertSession();
 
     foreach ([FALSE, TRUE] as $required) {
       $this->setupNestedComplexForm($required);
+      $assert_session->elementExists('xpath', $top_fieldset_label_xpath);
+      $assert_session->elementExists('xpath', $nested_fieldset_label_xpath);
       $required_string = ($required) ? ' required' : ' unrequired';
       $double_nested_title = 'Dream within a dream' . $required_string;
       $nested_title = 'Dream' . $required_string;
@@ -266,10 +284,16 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
     $nested_title_field_xpath = $this->getXpathForNthInputByLabelText('Title', 2);
     $double_nested_title_field_xpath = $this->getXpathForNthInputByLabelText('Title', 3);
 
+    // Get the xpath selectors for the fieldset labels in this test.
+    $top_fieldset_label_xpath = $this->getXpathForFieldsetLabel('Multiple nodes', 1);
+    $nested_fieldset_label_xpath = $this->getXpathForFieldsetLabel('Multiple nodes', 2);
+
     $page = $this->getSession()->getPage();
     $assert_session = $this->assertSession();
     foreach ([FALSE, TRUE] as $required) {
       $this->setupNestedComplexForm($required);
+      $assert_session->elementExists('xpath', $top_fieldset_label_xpath);
+      $assert_session->elementExists('xpath', $nested_fieldset_label_xpath);
       $required_string = ($required) ? ' required' : ' unrequired';
       $double_nested_title = 'Dream within a dream' . $required_string;
       $nested_title = 'Dream' . $required_string;

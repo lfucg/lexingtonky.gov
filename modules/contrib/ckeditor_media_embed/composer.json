@@ -5,8 +5,15 @@
     "homepage": "https://www.drupal.org/project/embed",
     "license": "GPL-2.0+",
     "support": {
-      "issues": "https://drupal.org/project/issues/ckeditor_media_embed",
-      "source": "https://drupal.org/project/ckeditor_media_embed"
+        "issues": "https://drupal.org/project/issues/ckeditor_media_embed",
+        "source": "https://drupal.org/project/ckeditor_media_embed"
     },
-    "require": {}
+    "require": {},
+    "extra": {
+        "drush": {
+            "services": {
+                "drush.services.yml": "^9"
+            }
+        }
+    }
 }

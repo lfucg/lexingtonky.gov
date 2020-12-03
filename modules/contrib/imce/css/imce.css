@@ -671,10 +671,11 @@
   display: inline-block;
 }
 
-.thumbnail-grid .imce-folder-content .imce-item .imce-item-height::after{
+.thumbnail-grid .imce-folder-content .imce-item .imce-item-width::after{
   content: " X ";
 }
 
 .thumbnail-grid .imce-folder-content .imce-item .imce-item-width{
   display: inline-block;
+  float: left;
 }

@@ -593,7 +593,7 @@ class Query implements QueryInterface, RefinableCacheableDependencyInterface {
         $this->getEventDispatcher()->dispatch($event_name, $event);
       }
 
-      $description = 'This hook is deprecated in search_api 8.x-1.14 and will be removed in 9.x-1.0. Please use the "search_api.query_pre_execute" event instead. See https://www.drupal.org/node/3059866';
+      $description = 'This hook is deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0. Please use the "search_api.query_pre_execute" event instead. See https://www.drupal.org/node/3059866';
       $this->getModuleHandler()->alterDeprecated($description, $hooks, $this);
     }
   }
@@ -623,7 +623,7 @@ class Query implements QueryInterface, RefinableCacheableDependencyInterface {
       $this->getEventDispatcher()->dispatch("$event_base_name.$tag", $event);
       $this->results = $event->getResults();
     }
-    $description = 'This hook is deprecated in search_api 8.x-1.14 and will be removed in 9.x-1.0. Please use the "search_api.processing_results" event instead. See https://www.drupal.org/node/3059866';
+    $description = 'This hook is deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0. Please use the "search_api.processing_results" event instead. See https://www.drupal.org/node/3059866';
     $this->getModuleHandler()->alterDeprecated($description, $hooks, $this->results);
 
     // Store the results in the static cache.
@@ -799,7 +799,7 @@ class Query implements QueryInterface, RefinableCacheableDependencyInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Implements the magic __clone() method to properly clone nested objects.
    */
   public function __clone() {
     $this->results = $this->getResults()->getCloneForQuery($this);

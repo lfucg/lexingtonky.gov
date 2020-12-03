@@ -115,6 +115,9 @@ class IgnoreCharacters extends FieldsProcessorPluginBase {
    * {@inheritdoc}
    */
   protected function process(&$value) {
+    if ($value === NULL) {
+      return;
+    }
     if ($this->configuration['ignorable']) {
       if (!isset($this->ignorable)) {
         $this->ignorable = str_replace('/', '\/', $this->configuration['ignorable']);

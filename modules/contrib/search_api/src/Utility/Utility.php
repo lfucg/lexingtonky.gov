@@ -137,7 +137,7 @@ class Utility {
    *   always contain a single property name (without any colons) and index 1
    *   might be NULL. If $separate_last is TRUE it's the exact other way round.
    */
-  public static function splitPropertyPath($property_path, $separate_last = TRUE, $separator = ':') {
+  public static function splitPropertyPath($property_path, $separate_last = TRUE, $separator = IndexInterface::PROPERTY_PATH_SEPARATOR) {
     $function = $separate_last ? 'strrpos' : 'strpos';
     $pos = $function($property_path, $separator);
     if ($pos !== FALSE) {

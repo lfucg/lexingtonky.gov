@@ -107,7 +107,7 @@
         {{ description.content }}
       </div>
     {% endif %}
-    {% if label_display == 'before' %}
+    {% if label_display in ['before', 'invisible'] %}
       <label {{ label_attributes.addClass(labelclass).setAttribute('for', input_attributes.id) }}>
         {{ input_title | raw }}
       </label>

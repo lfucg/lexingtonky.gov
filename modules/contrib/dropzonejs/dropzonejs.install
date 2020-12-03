@@ -72,3 +72,14 @@ function dropzonejs_update_8002() {
   $config->set('filename_transliteration', TRUE);
   $config->save(TRUE);
 }
+
+/**
+ * Set default value for upload timeout.
+ */
+function dropzonejs_update_8003() {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('dropzonejs.settings');
+  $config->clear('upload_timeout_ms');
+  $config->set('upload_timeout_ms', 0);
+  $config->save(TRUE);
+}

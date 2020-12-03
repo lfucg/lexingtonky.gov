@@ -1,11 +1,11 @@
 name: 'Views Reference Field'
 description: 'Enables Views to be embedded in an entity reference field'
-# core: 8.x
+core: 8.x
+core_version_requirement: ^8 || ^9
 package: Views
 type: module
 
-# Information added by Drupal.org packaging script on 2018-12-13
-version: '8.x-1.4'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-10-01
+version: '8.x-1.6'
 project: 'viewsreference'
-datestamp: 1544740087
+datestamp: 1601529308

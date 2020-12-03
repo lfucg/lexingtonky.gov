@@ -125,6 +125,21 @@ final class SearchApiEvents {
   const MAPPING_FIELD_TYPES = 'search_api.mapping_field_types';
 
   /**
+   * The name of the event fired when mapping foreign relationships of an index.
+   *
+   * Foreign relationships of an index help Search API to mark for reindexing
+   * search items affected by changes to entities that are indirectly indexed.
+   *
+   * This event can be leveraged to alter the map of foreign
+   * relationships discovered for any particular search index.
+   *
+   * @Event
+   *
+   * @see \Drupal\search_api\Event\MappingForeignRelationshipsEvent
+   */
+  const MAPPING_FOREIGN_RELATIONSHIPS = 'search_api.mapping_foreign_relationships';
+
+  /**
    * The name of the event fired when building a map of Views field handlers.
    *
    * This is used in the Search API Views integration to create Search

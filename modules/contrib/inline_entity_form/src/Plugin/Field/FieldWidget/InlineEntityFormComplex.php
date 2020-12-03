@@ -575,12 +575,6 @@ class InlineEntityFormComplex extends InlineEntityFormBase implements ContainerF
         }
         $process_element['#process'][] = [get_class($this), 'hideCancel'];
       }
-
-      // No entities have been added. Remove the outer fieldset to reduce
-      // visual noise caused by having two titles.
-      if (empty($entities)) {
-        $element['#type'] = 'container';
-      }
     }
 
     return $element;
