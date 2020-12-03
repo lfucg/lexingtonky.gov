@@ -31,6 +31,19 @@ interface IndexInterface extends ConfigEntityInterface {
   const DATASOURCE_ID_SEPARATOR = '/';
 
   /**
+   * String used to separate individual properties within a property path.
+   *
+   * Property paths are used throughout the Search API to reference properties
+   * that are not (necessarily) present directly on some entity or item, but
+   * could be nested in some referenced entity/item, even over multiple levels.
+   * Properties in such a path are separated by this value.
+   *
+   * An example for a property path would be "field_tags:entity:name" for the
+   * name of the associated tag(s) of an entity.
+   */
+  const PROPERTY_PATH_SEPARATOR = ':';
+
+  /**
    * Retrieves the index description.
    *
    * @return string

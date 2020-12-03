@@ -78,7 +78,7 @@ class UploadTest extends KernelTestBasePlugin {
    */
   public function testPermissionInfo() {
     $permissionInfo = $this->upload->permissionInfo();
-    $this->assertTrue(is_array($permissionInfo));
+    $this->assertIsArray($permissionInfo);
     $this->assertTrue(in_array('Upload files', $permissionInfo));
   }
 
@@ -87,7 +87,7 @@ class UploadTest extends KernelTestBasePlugin {
    */
   public function testMessages() {
     $messages = $this->imceFM->getMessages();
-    $this->assertTrue(is_array($messages));
+    $this->assertIsArray($messages);
     $this->assertEquals([], $messages);
   }
 

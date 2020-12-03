@@ -76,7 +76,7 @@ class FileLoaderTest extends TestCase
                 ['foo', 'bar'],
             ],
             'mixedcase' => ['MixedCaseKey' => 'value'],
-            'constant' => PHP_EOL,
+            'constant' => \PHP_EOL,
             'bar' => '%foo%',
             'escape' => '@escapeme',
             'foo_bar' => new Reference('foo_bar'),
@@ -185,7 +185,7 @@ class FileLoaderTest extends TestCase
 
         $this->assertTrue($container->has(MissingParent::class));
 
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             '{Class "?Symfony\\\\Component\\\\DependencyInjection\\\\Tests\\\\Fixtures\\\\Prototype\\\\BadClasses\\\\MissingClass"? not found}',
             $container->getDefinition(MissingParent::class)->getErrors()[0]
         );

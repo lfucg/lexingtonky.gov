@@ -176,7 +176,7 @@ class FieldBlockConfigForm extends ConfigFormBase {
           // Find and delete the remaining blocks for this entity type.
           $this->storage->deleteBlocksForEntityType($entity_type);
           $clear_cache = TRUE;
-          drupal_set_message($this->t('Remaining field blocks for the %type entity have been deleted.', ['%type' => $entity_type]));
+          $this->messenger()->addStatus($this->t('Remaining field blocks for the %type entity have been deleted.', ['%type' => $entity_type]));
         }
         else {
           if (in_array($entity_type, $this->getAllEntityTypes())) {

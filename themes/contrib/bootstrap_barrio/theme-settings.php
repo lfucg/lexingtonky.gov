@@ -42,7 +42,7 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
       ],
       '#empty_option' => t('None'),
       '#description' => t('If none is selected, you should load the library via Bootstrap Library or manually. If CDN is selected, the library version must be configured in the @bootstrap_library_link.',
-      ['@bootstrap_library_link' => Link::fromTextAndUrl('Bootstrap Library Settings', Url::fromRoute('bootstrap_library.admin'))]),
+      ['@bootstrap_library_link' => Link::fromTextAndUrl('Bootstrap Library Settings', Url::fromRoute('bootstrap_library.admin'))->toString()]),
     ];
   }
 

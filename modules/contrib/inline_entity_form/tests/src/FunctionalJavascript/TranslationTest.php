@@ -16,7 +16,7 @@ class TranslationTest extends InlineEntityFormTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'content_translation',
     'inline_entity_form_translation_test',
     'language',
@@ -25,7 +25,7 @@ class TranslationTest extends InlineEntityFormTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->user = $this->createUser([

@@ -420,7 +420,8 @@ class ImceFM {
    */
   public function addItemToJs(ImceItem $item) {
     if ($parent = $item->parent) {
-      if ($path = $parent->getPath()) {
+      $path = $parent->getPath();
+      if (isset($path)) {
         $name = $item->name;
         $uri = $item->getUri();
         if ($item->type === 'folder') {

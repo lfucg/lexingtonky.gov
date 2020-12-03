@@ -8,7 +8,7 @@ dependencies:
 core: 8.x
 hidden: true
 
-# Information added by Drupal.org packaging script on 2020-05-23
-version: '8.x-1.5'
+# Information added by Drupal.org packaging script on 2020-10-19
+version: '8.x-1.6'
 project: 'search_api_solr'
-datestamp: 1590238568
+datestamp: 1603090856

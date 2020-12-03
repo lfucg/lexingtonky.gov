@@ -38,6 +38,8 @@ class SearchApiConverter extends EntityConverter implements ParamConverterInterf
    */
   protected $currentUser;
 
+  // phpcs:disable Drupal.Commenting.FunctionComment.TypeHintMissing
+
   /**
    * Constructs a new SearchApiConverter.
    *
@@ -50,12 +52,34 @@ class SearchApiConverter extends EntityConverter implements ParamConverterInterf
    * @param \Drupal\Core\Session\AccountInterface $user
    *   The current user.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityRepositoryInterface $entity_repository, SharedTempStoreFactory $temp_store_factory, AccountInterface $user) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, $entity_repository, $temp_store_factory, $user = NULL) {
+    // For backwards-compatibility, we still support passing just
+    // ($entity_manager, $temp_store_factory, $user).
+    if (!$user) {
+      @trigger_error('Constructing \Drupal\search_api\ParamConverter\SearchApiConverter with ($entity_manager, $temp_store_factory, $user) is deprecated in search_api 8.x-1.18 and will stop working in 2.0.0. Pass ($entity_type_manager, $entity_repository, $temp_store_factory, $user) instead. See https://www.drupal.org/node/3164248', E_USER_DEPRECATED);
+      $user = $temp_store_factory;
+      $temp_store_factory = $entity_repository;
+      $entity_repository = \Drupal::getContainer()->get('entity.repository');
+    }
+    $type_checks = [
+      2 => [$entity_repository, EntityRepositoryInterface::class],
+      3 => [$temp_store_factory, SharedTempStoreFactory::class],
+      4 => [$user, AccountInterface::class],
+    ];
+    foreach ($type_checks as $i => list($object, $expected)) {
+      if (!($object instanceof $expected)) {
+        $actual = get_class($object);
+        throw new \TypeError("Argument $i passed to Drupal\search_api\ParamConverter\SearchApiConverter::__construct() must implement interface $expected, instance of $actual given");
+      }
+    }
+
     parent::__construct($entity_type_manager, $entity_repository);
 
     $this->tempStoreFactory = $temp_store_factory;
     $this->currentUser = $user;
   }
+
+  // phpcs:enable Drupal.Commenting.FunctionComment.TypeHintMissing
 
   /**
    * {@inheritdoc}

@@ -148,6 +148,17 @@ abstract class BackendPluginBase extends ConfigurablePluginBase implements Backe
   /**
    * {@inheritdoc}
    */
+  public function setConfiguration(array $configuration) {
+    parent::setConfiguration($configuration);
+
+    if ($this->server && $this->server->getBackendConfig() !== $configuration) {
+      $this->server->setBackendConfig($configuration);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getServer() {
     return $this->server;
   }
@@ -329,6 +340,7 @@ abstract class BackendPluginBase extends ConfigurablePluginBase implements Backe
     }
     $properties = array_flip(parent::__sleep());
     unset($properties['server']);
+    unset($properties['logger']);
     return array_keys($properties);
   }
 

@@ -167,7 +167,12 @@ class Server extends ConfigEntityBase implements ServerInterface {
    */
   public function setBackendConfig(array $backend_config) {
     $this->backend_config = $backend_config;
-    $this->getBackend()->setConfiguration($backend_config);
+    // In case the backend plugin is already loaded, make sure the configuration
+    // stays in sync.
+    if ($this->backendPlugin
+        && $this->getBackend()->getConfiguration() !== $backend_config) {
+      $this->getBackend()->setConfiguration($backend_config);
+    }
     return $this;
   }
 
@@ -209,7 +214,7 @@ class Server extends ConfigEntityBase implements ServerInterface {
       if ($this->hasValidBackend()) {
         $this->features = $this->getBackend()->getSupportedFeatures();
       }
-      $description = 'This hook is deprecated in search_api 8.x-1.14 and will be removed in 9.x-1.0. Please use the "search_api.determining_server_features" event instead. See https://www.drupal.org/node/3059866';
+      $description = 'This hook is deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0. Please use the "search_api.determining_server_features" event instead. See https://www.drupal.org/node/3059866';
       \Drupal::moduleHandler()
         ->alterDeprecated($description, 'search_api_server_features', $this->features, $this);
       /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher */
@@ -559,24 +564,6 @@ class Server extends ConfigEntityBase implements ServerInterface {
       }
       \Drupal::getContainer()->get('search_api.server_task_manager')->delete($server);
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function toArray() {
-    // @todo It's a bug that we have to do this. Backend configuration should
-    //   always be set via the server's setBackendConfiguration() method,
-    //   otherwise the two can diverge causing this and other problems. The
-    //   alternative would be to call $server->setBackendConfiguration() in the
-    //   backend's setConfiguration() method and use a second $propagate
-    //   parameter to avoid an infinite loop. Similar things go for the index's
-    //   various plugins. Maybe using plugin bags is the solution here?
-    $properties = parent::toArray();
-    if ($this->hasValidBackend()) {
-      $properties['backend_config'] = $this->getBackend()->getConfiguration();
-    }
-    return $properties;
   }
 
   /**

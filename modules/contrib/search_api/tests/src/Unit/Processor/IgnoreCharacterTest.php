@@ -118,7 +118,7 @@ class IgnoreCharacterTest extends UnitTestCase {
   public function testIgnorableCharacters($passed_value, $expected_value, $ignorable) {
     $this->processor->setConfiguration(['ignorable' => $ignorable, 'ignorable_classes' => []]);
     $this->invokeMethod('process', [&$passed_value, 'text']);
-    $this->assertEquals($expected_value, $passed_value);
+    $this->assertSame($expected_value, $passed_value);
   }
 
   /**
@@ -133,6 +133,7 @@ class IgnoreCharacterTest extends UnitTestCase {
       [['abcde', 'abcdef'], ['ace', 'ace'], '[bdf]'],
       ["ab.c'de", "a.'de", '[b-c]'],
       ['foo 13$%& (bar)[93]', 'foo $%& (bar)[]', '\d'],
+      [NULL, NULL, "['¿¡!?,.:;]"],
     ];
   }
 

@@ -67,7 +67,7 @@ class ImceFolderTest extends KernelTestBasePlugin {
    */
   public function testFiles() {
     $files = $this->imceFolder->files;
-    $this->assertTrue(is_array(($files)));
+    $this->assertIsArray(($files));
   }
 
   /**
@@ -75,14 +75,14 @@ class ImceFolderTest extends KernelTestBasePlugin {
    */
   public function testSubfolders() {
     $subfolders = $this->imceFolder->subfolders;
-    $this->assertTrue(is_array(($subfolders)));
+    $this->assertIsArray(($subfolders));
   }
 
   /**
    * Test variable ImceFolder::name after scan.
    */
   public function testName() {
-    $this->assertTrue(is_string($this->imceFolder->name));
+    $this->assertIsString($this->imceFolder->name);
     $this->assertEqual($this->imceFolder->name, 'js');
   }
 
@@ -92,7 +92,7 @@ class ImceFolderTest extends KernelTestBasePlugin {
   public function testPath() {
     $this->imceFolder->setPath('js');
     $path = $this->imceFolder->getPath();
-    $this->assertTrue(is_string($path));
+    $this->assertIsString($path);
   }
 
   /**
@@ -100,7 +100,7 @@ class ImceFolderTest extends KernelTestBasePlugin {
    */
   public function testItem() {
     $items = $this->imceFolder->items;
-    $this->assertTrue(is_array(($items)));
+    $this->assertIsArray(($items));
   }
 
   /**

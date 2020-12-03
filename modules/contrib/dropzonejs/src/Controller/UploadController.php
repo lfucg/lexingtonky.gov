@@ -55,7 +55,7 @@ class UploadController extends ControllerBase {
   }
 
   /**
-   * Handles DropzoneJs uploads.
+   * Handles DropzoneJS uploads.
    */
   public function handleUploads() {
     $file = $this->request->files->get('file');
@@ -65,10 +65,12 @@ class UploadController extends ControllerBase {
 
     // @todo: Implement file_validate_size();
     try {
+      /* @var \Drupal\Core\File\FileSystem $file_system */
+      $file_system = \Drupal::service('file_system');
       // Return JSON-RPC response.
       return new AjaxResponse([
         'jsonrpc' => '2.0',
-        'result' => basename($this->uploadHandler->handleUpload($file)),
+        'result' => $file_system->basename($this->uploadHandler->handleUpload($file)),
         'id' => 'id',
       ]);
     }

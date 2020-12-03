@@ -3,7 +3,6 @@ status: true
 dependencies:
   config:
     - field.storage.paragraph.field_ief_view
-    - node.type.article
     - paragraphs.paragraphs_type.paragraphs_ief_view
   module:
     - entity_reference_revisions

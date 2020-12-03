@@ -7,6 +7,7 @@ use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\file\Entity\File;
@@ -371,6 +372,13 @@ class AccessTest extends KernelTestBase {
     $view_builder->expects($this->any())
       ->method('view')
       ->willReturn($content);
+    $entity_type = $this->createMock(EntityTypeInterface::class);
+    $entity_type->expects($this->any())
+      ->method('getListCacheTags')
+      ->willReturn([]);
+    $entity_type->expects($this->any())
+      ->method('getListCacheContexts')
+      ->willReturn([]);
 
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->expects($this->any())
@@ -379,6 +387,9 @@ class AccessTest extends KernelTestBase {
     $entity_type_manager->expects($this->any())
       ->method('getViewBuilder')
       ->willReturn($view_builder);
+    $entity_type_manager->expects($this->any())
+      ->method('getDefinition')
+      ->willReturn($entity_type);
 
     $this->container->set('entity_type.manager', $entity_type_manager);
 

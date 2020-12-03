@@ -6,7 +6,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\file\FileInterface;
 
 /**
- * Provides an interface for classes that save DropzoneJs uploads.
+ * Provides an interface for classes that save DropzoneJS uploads.
  */
 interface DropzoneJsUploadSaveInterface {
 

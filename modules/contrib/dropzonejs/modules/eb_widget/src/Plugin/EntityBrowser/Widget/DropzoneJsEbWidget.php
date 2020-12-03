@@ -603,4 +603,18 @@ class DropzoneJsEbWidget extends WidgetBase {
     return $ajax;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function handleWidgetContext($widget_context) {
+    parent::handleWidgetContext($widget_context);
+    $validators = isset($widget_context['upload_validators']) ? $widget_context['upload_validators'] : [];
+    if (isset($validators['file_validate_size'])) {
+      $this->configuration['max_filesize'] = $validators['file_validate_size'][0];
+    }
+    if (isset($validators['file_validate_extensions'])) {
+      $this->configuration['extensions'] = $validators['file_validate_extensions'][0];
+    }
+  }
+
 }

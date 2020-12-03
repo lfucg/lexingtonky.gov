@@ -19,7 +19,6 @@ function imce_theme() {
   return [
     'imce_page' => [
       'render element' => 'page',
-      'function' => 'imce_page_render',
     ],
     'imce_help' => [
       'variables' => [
@@ -28,13 +27,6 @@ function imce_theme() {
       ],
     ],
   ];
-}
-
-/**
- * Renders imce page.
- */
-function imce_page_render($variables) {
-  return \Drupal::service('renderer')->render($variables['page']);
 }
 
 /**

@@ -8,10 +8,9 @@ php:
   - 7.3
 
 env:
-  - SOLR_VERSION=6.6.6 SEARCH_API_SOLR_CONF=6.x DRUPAL_BRANCH=8.8.x DRUSH_VERSION=~10.1.0
-  - SOLR_VERSION=6.6.6 SEARCH_API_SOLR_CONF=6.x DRUPAL_BRANCH=8.7.x DRUSH_VERSION=~10.1.0
-  - SOLR_VERSION=5.5.5 SEARCH_API_SOLR_CONF=5.x DRUPAL_BRANCH=8.8.x DRUSH_VERSION=~10.1.0
-  - SOLR_VERSION=4.5.1 SEARCH_API_SOLR_CONF=4.x DRUPAL_BRANCH=8.8.x DRUSH_VERSION=~10.1.0
+  - SOLR_VERSION=6.6.6 SEARCH_API_SOLR_CONF=6.x DRUPAL_BRANCH=8.9.x DRUSH_VERSION=~10.1.0
+  - SOLR_VERSION=5.5.5 SEARCH_API_SOLR_CONF=5.x DRUPAL_BRANCH=8.9.x DRUSH_VERSION=~10.1.0
+  - SOLR_VERSION=4.5.1 SEARCH_API_SOLR_CONF=4.x DRUPAL_BRANCH=8.9.x DRUSH_VERSION=~10.1.0
 
 git:
   # The depth needs to be increased. The default of 50 leads to fatal: reference
@@ -29,6 +28,7 @@ services:
 
 before_install:
   - phpenv config-rm xdebug.ini || true
+  - echo "memory_limit=2G" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - composer global require "hirak/prestissimo:^0.3"
   - ls solr_downloads/
   - wget -nc --continue -v --tries=3 --directory-prefix=solr_downloads "http://archive.apache.org/dist/lucene/solr/${SOLR_VERSION}/solr-${SOLR_VERSION}.tgz"
@@ -51,10 +51,6 @@ install:
   - composer install
   - composer config repositories.search_api_solr vcs $TRAVIS_BUILD_DIR
   - composer require drupal/search_api_autocomplete drupal/search_api_solr:1.99 drupal/search_api_location drupal/facets drupal/geofield drush/drush:$DRUSH_VERSION
-  - |
-    if [ ${DRUPAL_BRANCH} == "8.7.x" ]; then
-      composer run-script drupal-phpunit-upgrade
-    fi
   # Patch template.
   #########################################
   # to be removed once #2824932 is resolved

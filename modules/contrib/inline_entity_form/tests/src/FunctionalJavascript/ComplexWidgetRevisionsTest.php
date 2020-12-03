@@ -14,7 +14,7 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'field',
     'field_ui',
     'entity_test',
@@ -32,7 +32,7 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
   /**
    * Prepares environment for testing.
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->user = $this->createUser([

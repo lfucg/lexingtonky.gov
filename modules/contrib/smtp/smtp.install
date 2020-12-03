@@ -104,7 +104,7 @@ function smtp_requirements(string $phase) {
       return $requirements;
     }
     else {
-      $required_version = '6.1.5';
+      $required_version = '6.1.7';
       $installed_version = $mail::VERSION;
       $reflector = new \ReflectionClass('\PHPMailer\PHPMailer\PHPMailer');
 

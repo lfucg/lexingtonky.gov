@@ -110,6 +110,7 @@ class AggregatedFields extends ProcessorPluginBase {
             $values = [reset($values)];
           }
           break;
+
         case 'last':
           if ($values) {
             $values = [end($values)];

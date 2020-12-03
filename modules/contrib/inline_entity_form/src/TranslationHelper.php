@@ -69,7 +69,7 @@ class TranslationHelper {
    * @return bool
    *   TRUE if the entity langcode was updated, FALSE otherwise.
    */
-  public static function updateEntityLangcode(ContentEntityInterface $entity, $form_state) {
+  public static function updateEntityLangcode(ContentEntityInterface $entity, FormStateInterface $form_state) {
     $changed = FALSE;
     // This method is first called during form validation, at which point
     // the 'langcode' form state flag hasn't been updated with the new value.

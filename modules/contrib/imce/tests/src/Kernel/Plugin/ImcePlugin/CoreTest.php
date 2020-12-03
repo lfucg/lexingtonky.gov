@@ -93,8 +93,8 @@ class CoreTest extends KernelTestBasePlugin {
    * Test ImceFM::tree.
    */
   public function testTree() {
-    $this->assertTrue(is_array($this->imceFM->tree));
-    $this->assert((count($this->imceFM->tree) > 0));
+    $this->assertIsArray($this->imceFM->tree);
+    $this->assertTrue((count($this->imceFM->tree) > 0));
   }
 
   /**
@@ -102,8 +102,8 @@ class CoreTest extends KernelTestBasePlugin {
    */
   public function testSubfolders() {
     $subFolders = $this->imceFM->activeFolder->subfolders;
-    $this->assertTrue(is_array($subFolders));
-    $this->assert((count($subFolders) > 0));
+    $this->assertIsArray($subFolders);
+    $this->assertTrue((count($subFolders) > 0));
   }
 
   /**
@@ -111,7 +111,7 @@ class CoreTest extends KernelTestBasePlugin {
    */
   public function testPermissionInfo() {
     $permissionInfo = $this->core->permissionInfo();
-    $this->assertTrue(is_array($permissionInfo));
+    $this->assertIsArray($permissionInfo);
     $this->assertTrue(in_array('Browse files', $permissionInfo));
     $this->assertTrue(in_array('Browse subfolders', $permissionInfo));
   }
@@ -129,7 +129,7 @@ class CoreTest extends KernelTestBasePlugin {
    */
   public function testMessages() {
     $messages = $this->imceFM->getMessages();
-    $this->assertTrue(is_array($messages));
+    $this->assertIsArray($messages);
     $this->assertEquals([], $messages);
   }
 

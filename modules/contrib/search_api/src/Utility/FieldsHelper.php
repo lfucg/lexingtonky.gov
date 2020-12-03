@@ -199,7 +199,7 @@ class FieldsHelper implements FieldsHelperInterface {
     // Process complex data types.
     if ($definition instanceof ComplexDataDefinitionInterface) {
       $main_property_name = $definition->getMainPropertyName();
-      $data_properties = $data->getProperties();
+      $data_properties = $data->getProperties(TRUE);
       if (isset($data_properties[$main_property_name])) {
         return $this->extractFieldValues($data_properties[$main_property_name]);
       }

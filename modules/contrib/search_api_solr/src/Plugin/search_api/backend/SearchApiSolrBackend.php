@@ -2342,7 +2342,7 @@ class SearchApiSolrBackend extends BackendPluginBase implements SolrBackendInter
     foreach ($keys as $key_nr => $key) {
       // We cannot use \Drupal\Core\Render\Element::children() anymore because
       // $keys is not a valid render array.
-      if ($key_nr[0] === '#' || !$key) {
+      if ((is_string($key_nr) && $key_nr[0] === '#') || !$key) {
         continue;
       }
       if (is_array($key)) {

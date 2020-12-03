@@ -89,7 +89,7 @@ class IndexListBuilder extends ConfigEntityListBuilder {
           if (!isset($fields[$required_field])) {
             $errors[$required_type_id . ':' . $required_field] = t('Field @field in content type @node_type not found. Database Search Defaults module could not be installed', [
               '@node_type' => $required_type_id,
-              '@field' => $required_field
+              '@field' => $required_field,
             ]);
           }
         }

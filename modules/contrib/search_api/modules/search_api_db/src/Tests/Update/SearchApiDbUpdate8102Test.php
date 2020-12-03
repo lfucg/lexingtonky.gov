@@ -27,7 +27,7 @@ class SearchApiDbUpdate8102Test extends UpdatePathTestBase {
     $entity_type_ids = [
       'search_api_index',
       'search_api_server',
-      'search_api_task'
+      'search_api_task',
     ];
     foreach ($entity_type_ids as $entity_type_id) {
       $entity_type = \Drupal::getContainer()

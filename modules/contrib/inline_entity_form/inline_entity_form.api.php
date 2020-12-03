@@ -8,12 +8,12 @@
 /**
  * Perform alterations before an entity form is included in the IEF widget.
  *
- * @param $entity_form
+ * @param array $entity_form
  *   Nested array of form elements that comprise the entity form.
- * @param $form_state
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state of the parent form.
  */
-function hook_inline_entity_form_entity_form_alter(&$entity_form, &$form_state) {
+function hook_inline_entity_form_entity_form_alter(array &$entity_form, FormStateInterface &$form_state) {
   if ($entity_form['#entity_type'] == 'commerce_line_item') {
     $entity_form['quantity']['#description'] = t('New quantity description.');
   }
@@ -25,12 +25,12 @@ function hook_inline_entity_form_entity_form_alter(&$entity_form, &$form_state) 
  * The reference form is used to add existing entities through an autocomplete
  * field
  *
- * @param $reference_form
+ * @param array $reference_form
  *   Nested array of form elements that comprise the reference form.
- * @param $form_state
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state of the parent form.
  */
-function hook_inline_entity_form_reference_form_alter(&$reference_form, &$form_state) {
+function hook_inline_entity_form_reference_form_alter(array &$reference_form, FormStateInterface &$form_state) {
   $reference_form['entity_id']['#description'] = t('New autocomplete description');
 }
 
@@ -49,7 +49,7 @@ function hook_inline_entity_form_reference_form_alter(&$reference_form, &$form_s
  *
  * @see \Drupal\inline_entity_form\InlineFormInterface::getTableFields()
  */
-function hook_inline_entity_form_table_fields_alter(&$fields, $context) {
+function hook_inline_entity_form_table_fields_alter(array &$fields, array $context) {
   if ($context['entity_type'] == 'commerce_product_variation') {
     $fields['field_category'] = [
       'type' => 'field',

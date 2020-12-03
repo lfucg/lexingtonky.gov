@@ -1,0 +1,422 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\search_api\Plugin\search_api\datasource;
+
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\search_api\IndexInterface;
+use Drupal\search_api\SearchApiException;
+use Drupal\search_api\Task\TaskManagerInterface;
+use Drupal\search_api\Utility\Utility;
+
+/**
+ * Provides hook implementations on behalf of the Content Entity datasource.
+ *
+ * @see \Drupal\search_api\Plugin\search_api\datasource\ContentEntity
+ */
+class ContentEntityTrackingManager {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManager
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
+   * The Search API task manager.
+   *
+   * @var \Drupal\search_api\Task\TaskManagerInterface
+   */
+  protected $taskManager;
+
+  /**
+   * Constructs a new class instance.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManager $entityTypeManager
+   *   The entity type manager.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
+   *   The language manager.
+   * @param \Drupal\search_api\Task\TaskManagerInterface $taskManager
+   *   The task manager.
+   */
+  public function __construct(EntityTypeManager $entityTypeManager, LanguageManagerInterface $languageManager, TaskManagerInterface $taskManager) {
+    $this->entityTypeManager = $entityTypeManager;
+    $this->languageManager = $languageManager;
+    $this->taskManager = $taskManager;
+  }
+
+  /**
+   * Implements hook_entity_insert().
+   *
+   * Adds entries for all languages of the new entity to the tracking table for
+   * each index that tracks entities of this type.
+   *
+   * By setting the $entity->search_api_skip_tracking property to a true-like
+   * value before this hook is invoked, you can prevent this behavior and make the
+   * Search API ignore this new entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The new entity.
+   *
+   * @see search_api_entity_insert()
+   */
+  public function entityInsert(EntityInterface $entity) {
+    // Check if the entity is a content entity.
+    if (!($entity instanceof ContentEntityInterface) || $entity->search_api_skip_tracking) {
+      return;
+    }
+    $indexes = $this->getIndexesForEntity($entity);
+    if (!$indexes) {
+      return;
+    }
+
+    // Compute the item IDs for all languages of the entity.
+    $item_ids = [];
+    $entity_id = $entity->id();
+    foreach (array_keys($entity->getTranslationLanguages()) as $langcode) {
+      $item_ids[] = $entity_id . ':' . $langcode;
+    }
+    $datasource_id = 'entity:' . $entity->getEntityTypeId();
+    foreach ($indexes as $index) {
+      $filtered_item_ids = $this->filterValidItemIds($index, $datasource_id, $item_ids);
+      $index->trackItemsInserted($datasource_id, $filtered_item_ids);
+    }
+  }
+
+  /**
+   * Implements hook_entity_update().
+   *
+   * Updates the corresponding tracking table entries for each index that tracks
+   * this entity.
+   *
+   * Also takes care of new or deleted translations.
+   *
+   * By setting the $entity->search_api_skip_tracking property to a true-like
+   * value before this hook is invoked, you can prevent this behavior and make the
+   * Search API ignore this update.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The updated entity.
+   *
+   * @see search_api_entity_update()
+   */
+  public function entityUpdate(EntityInterface $entity) {
+    // Check if the entity is a content entity.
+    if (!($entity instanceof ContentEntityInterface) || $entity->search_api_skip_tracking) {
+      return;
+    }
+
+    $indexes = $this->getIndexesForEntity($entity);
+    if (!$indexes) {
+      return;
+    }
+
+    // Compare old and new languages for the entity to identify inserted,
+    // updated and deleted translations (and, therefore, search items).
+    $entity_id = $entity->id();
+    $inserted_item_ids = [];
+    $updated_item_ids = $entity->getTranslationLanguages();
+    $deleted_item_ids = [];
+    $old_translations = $entity->original->getTranslationLanguages();
+    foreach ($old_translations as $langcode => $language) {
+      if (!isset($updated_item_ids[$langcode])) {
+        $deleted_item_ids[] = $langcode;
+      }
+    }
+    foreach ($updated_item_ids as $langcode => $language) {
+      if (!isset($old_translations[$langcode])) {
+        unset($updated_item_ids[$langcode]);
+        $inserted_item_ids[] = $langcode;
+      }
+    }
+
+    $datasource_id = 'entity:' . $entity->getEntityTypeId();
+    $combine_id = function ($langcode) use ($entity_id) {
+      return $entity_id . ':' . $langcode;
+    };
+    $inserted_item_ids = array_map($combine_id, $inserted_item_ids);
+    $updated_item_ids = array_map($combine_id, array_keys($updated_item_ids));
+    $deleted_item_ids = array_map($combine_id, $deleted_item_ids);
+    foreach ($indexes as $index) {
+      if ($inserted_item_ids) {
+        $filtered_item_ids = $this->filterValidItemIds($index, $datasource_id, $inserted_item_ids);
+        $index->trackItemsInserted($datasource_id, $filtered_item_ids);
+      }
+      if ($updated_item_ids) {
+        $index->trackItemsUpdated($datasource_id, $updated_item_ids);
+      }
+      if ($deleted_item_ids) {
+        $index->trackItemsDeleted($datasource_id, $deleted_item_ids);
+      }
+    }
+  }
+
+  /**
+   * Implements hook_entity_delete().
+   *
+   * Deletes all entries for this entity from the tracking table for each index
+   * that tracks this entity type.
+   *
+   * By setting the $entity->search_api_skip_tracking property to a true-like
+   * value before this hook is invoked, you can prevent this behavior and make the
+   * Search API ignore this deletion. (Note that this might lead to stale data in
+   * the tracking table or on the server, since the item will not removed from
+   * there (if it has been added before).)
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The deleted entity.
+   *
+   * @see search_api_entity_delete()
+   */
+  public function entityDelete(EntityInterface $entity) {
+    // Check if the entity is a content entity.
+    if (!($entity instanceof ContentEntityInterface) || $entity->search_api_skip_tracking) {
+      return;
+    }
+
+    $indexes = $this->getIndexesForEntity($entity);
+    if (!$indexes) {
+      return;
+    }
+
+    // Remove the search items for all the entity's translations.
+    $item_ids = [];
+    $entity_id = $entity->id();
+    foreach (array_keys($entity->getTranslationLanguages()) as $langcode) {
+      $item_ids[] = $entity_id . ':' . $langcode;
+    }
+    $datasource_id = 'entity:' . $entity->getEntityTypeId();
+    foreach ($indexes as $index) {
+      $index->trackItemsDeleted($datasource_id, $item_ids);
+    }
+  }
+
+  /**
+   * Retrieves all indexes that are configured to index the given entity.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity for which to check.
+   *
+   * @return \Drupal\search_api\IndexInterface[]
+   *   All indexes that are configured to index the given entity (using the
+   *   default Content Entity datasource plugin).
+   */
+  public function getIndexesForEntity(ContentEntityInterface $entity): array {
+    // @todo This is called for every single entity insert, update or deletion
+    //   on the whole site. Should maybe be cached?
+    $datasource_id = 'entity:' . $entity->getEntityTypeId();
+    $entity_bundle = $entity->bundle();
+    $has_bundles = $entity->getEntityType()->hasKey('bundle');
+
+    /** @var \Drupal\search_api\IndexInterface[] $indexes */
+    $indexes = [];
+    try {
+      $indexes = $this->entityTypeManager->getStorage('search_api_index')
+        ->loadMultiple();
+    }
+    // @todo Replace with multi-catch once we depend on PHP 7.1+.
+    catch (InvalidPluginDefinitionException $e) {
+      // Can't really happen, but play it safe to appease static code analysis.
+    }
+    catch (PluginNotFoundException $e) {
+      // Can't really happen, but play it safe to appease static code analysis.
+    }
+
+    foreach ($indexes as $index_id => $index) {
+      // Filter out indexes that don't contain the datasource in question.
+      if (!$index->isValidDatasource($datasource_id)) {
+        unset($indexes[$index_id]);
+      }
+      elseif ($has_bundles) {
+        // If the entity type supports bundles, we also have to filter out
+        // indexes that exclude the entity's bundle.
+        try {
+          $config = $index->getDatasource($datasource_id)->getConfiguration();
+        }
+        catch (SearchApiException $e) {
+          // Can't really happen, but play it safe to appease static code
+          // analysis.
+          unset($indexes[$index_id]);
+          continue;
+        }
+        if (!Utility::matches($entity_bundle, $config['bundles'])) {
+          unset($indexes[$index_id]);
+        }
+      }
+    }
+
+    return $indexes;
+  }
+
+  /**
+   * Implements hook_ENTITY_TYPE_update() for type "search_api_index".
+   *
+   * Detects changes in the selected bundles or languages and adds/removes items
+   * to/from tracking accordingly.
+   *
+   * @param \Drupal\search_api\IndexInterface $index
+   *   The index that was updated.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *   Thrown if a datasource referenced an unknown entity type.
+   * @throws \Drupal\search_api\SearchApiException
+   *   Never thrown, but static analysis tools think it could be.
+   *
+   * @see search_api_search_api_index_update()
+   */
+  public function indexUpdate(IndexInterface $index) {
+    if (!$index->status()) {
+      return;
+    }
+    /** @var \Drupal\search_api\IndexInterface $original */
+    $original = $index->original ?? NULL;
+    if (!$original || !$original->status()) {
+      return;
+    }
+
+    foreach ($index->getDatasources() as $datasource_id => $datasource) {
+      if ($datasource->getBaseId() != 'entity'
+          || !$original->isValidDatasource($datasource_id)) {
+        continue;
+      }
+      $old_datasource = $original->getDatasource($datasource_id);
+      $old_config = $old_datasource->getConfiguration();
+      $new_config = $datasource->getConfiguration();
+
+      if ($old_config != $new_config) {
+        // Bundles and languages share the same structure, so changes can be
+        // processed in a unified way.
+        $tasks = [];
+        $insert_task = ContentEntityTaskManager::INSERT_ITEMS_TASK_TYPE;
+        $delete_task = ContentEntityTaskManager::DELETE_ITEMS_TASK_TYPE;
+        $settings = [];
+        $entity_type = $this->entityTypeManager
+          ->getDefinition($datasource->getEntityTypeId());
+        if ($entity_type->hasKey('bundle')) {
+          $settings['bundles'] = $datasource->getBundles();
+        }
+        if ($entity_type->isTranslatable()) {
+          $settings['languages'] = $this->languageManager->getLanguages();
+        }
+
+        // Determine which bundles/languages have been newly selected or
+        // deselected and then assign them to the appropriate actions depending
+        // on the current "default" setting.
+        foreach ($settings as $setting => $all) {
+          $old_selected = array_flip($old_config[$setting]['selected']);
+          $new_selected = array_flip($new_config[$setting]['selected']);
+
+          // First, check if the "default" setting changed and invert the checked
+          // items for the old config, so the following comparison makes sense.
+          if ($old_config[$setting]['default'] != $new_config[$setting]['default']) {
+            $old_selected = array_diff_key($all, $old_selected);
+          }
+
+          $newly_selected = array_keys(array_diff_key($new_selected, $old_selected));
+          $newly_unselected = array_keys(array_diff_key($old_selected, $new_selected));
+          if ($new_config[$setting]['default']) {
+            $tasks[$insert_task][$setting] = $newly_unselected;
+            $tasks[$delete_task][$setting] = $newly_selected;
+          }
+          else {
+            $tasks[$insert_task][$setting] = $newly_selected;
+            $tasks[$delete_task][$setting] = $newly_unselected;
+          }
+        }
+
+        // This will keep only those tasks where at least one of "bundles" or
+        // "languages" is non-empty.
+        $tasks = array_filter($tasks, 'array_filter');
+        foreach ($tasks as $task => $data) {
+          $data += [
+            'datasource' => $datasource_id,
+            'page' => 0,
+          ];
+          $this->taskManager->addTask($task, NULL, $index, $data);
+        }
+
+        // If we added any new tasks, set a batch for them. (If we aren't in a
+        // form submission, this will just be ignored.)
+        if ($tasks) {
+          $this->taskManager->setTasksBatch([
+            'index_id' => $index->id(),
+            'type' => array_keys($tasks),
+          ]);
+        }
+      }
+    }
+  }
+
+  /**
+   * Filters a set of datasource-specific item IDs.
+   *
+   * Returns only those item IDs that are valid for the given datasource and
+   * index. This method only checks the item language, though â€“ whether an
+   * entity with that ID actually exists, or whether it has a bundle included
+   * for that datasource, is not verified.
+   *
+   * @param \Drupal\search_api\IndexInterface $index
+   *   The index for which to validate.
+   * @param string $datasource_id
+   *   The ID of the datasource on the index for which to validate.
+   * @param string[] $item_ids
+   *   The item IDs to be validated.
+   *
+   * @return string[]
+   *   All given item IDs that are valid for that index and datasource.
+   */
+  protected function filterValidItemIds(IndexInterface $index, string $datasource_id, array $item_ids): array {
+    if (!$index->isValidDatasource($datasource_id)) {
+      return $item_ids;
+    }
+
+    try {
+      $config = $index->getDatasource($datasource_id)->getConfiguration();
+    }
+    catch (SearchApiException $e) {
+      // Can't really happen, but play it safe to appease static code analysis.
+      return $item_ids;
+    }
+
+    // If the entity type doesn't allow translations, we just accept all IDs.
+    // (If the entity type were translatable, the config key would have been set
+    // with the default configuration.)
+    if (!isset($config['languages']['selected'])) {
+      return $item_ids;
+    }
+    $always_valid = [
+      LanguageInterface::LANGCODE_NOT_SPECIFIED,
+      LanguageInterface::LANGCODE_NOT_APPLICABLE,
+    ];
+    $valid_ids = [];
+    foreach ($item_ids as $item_id) {
+      $pos = strrpos($item_id, ':');
+      // Item IDs without colons are always invalid.
+      if ($pos === FALSE) {
+        continue;
+      }
+      $langcode = substr($item_id, $pos + 1);
+      if (Utility::matches($langcode, $config['languages'])
+          || in_array($langcode, $always_valid)) {
+        $valid_ids[] = $item_id;
+      }
+    }
+    return $valid_ids;
+  }
+
+}

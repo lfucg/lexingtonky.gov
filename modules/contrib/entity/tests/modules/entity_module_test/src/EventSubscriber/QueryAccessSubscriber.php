@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_module_test\EventSubscriber;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\entity\QueryAccess\ConditionGroup;
 use Drupal\entity\QueryAccess\QueryAccessEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -96,6 +97,11 @@ class QueryAccessSubscriber implements EventSubscriberInterface {
     if (\Drupal::state()->get('test_event_only_query_access')) {
       $conditions = $event->getConditions();
       $conditions->addCondition('type', 'foo');
+
+      $cacheability = \Drupal::state()->get('event_only_query_acccess_cacheability');
+      if ($cacheability instanceof CacheableDependencyInterface) {
+        $conditions->addCacheableDependency($cacheability);
+      }
     }
   }
 

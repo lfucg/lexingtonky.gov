@@ -8,3 +8,6 @@ dropzonejs.settings:
     filename_transliteration:
       type: boolean
       label: 'Transliterate names of uploaded files'
+    upload_timeout_ms:
+      type: integer
+      label: 'Upload timeout'

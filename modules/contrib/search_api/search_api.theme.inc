@@ -49,7 +49,7 @@ function template_preprocess_search_api_admin_fields_table(array &$variables) {
   $variables['note'] = $form['note'] ?? '';
   unset($form['note'], $form['submit']);
 
-  $variables['table']  = [
+  $variables['table'] = [
     '#theme' => 'table',
     '#header' => $form['#header'],
     '#rows' => $rows,

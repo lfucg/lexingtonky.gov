@@ -158,9 +158,9 @@ plugin.plugin_configuration.search_api_processor.tokenizer:
     spaces:
       type: string
       label: 'Regular expression for spaces'
-    ignorable:
+    ignored:
       type: string
-      label: 'Regular expression for ignorable characters'
+      label: 'Regular expression for ignored characters'
     overlap_cjk:
       type: integer
       label: 'Defines if simple CJK handling should be enabled.'
@@ -239,3 +239,11 @@ search_api.property_configuration.rendered_item:
         sequence:
           type: string
           label: 'The view mode used to render the entity for the specified bundle'
+
+search_api.property_configuration.search_api_url:
+  type: mapping
+  label: 'Add URL configuration'
+  mapping:
+    absolute:
+      type: boolean
+      label: 'Whether to generate an absolute URL'

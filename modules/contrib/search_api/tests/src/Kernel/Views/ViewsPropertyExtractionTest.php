@@ -195,7 +195,7 @@ class ViewsPropertyExtractionTest extends KernelTestBase {
 
     $field->preRender($values);
 
-    $this->assertTrue(isset($row->$property_path), "\"$property_path\" property is set on \$row");
+    $this->assertObjectHasAttribute($property_path, $row);
     $this->assertEquals((array) $expected, $row->$property_path);
 
     // Check that $field->propertyReplacements was set correctly (if

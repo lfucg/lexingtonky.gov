@@ -1,19 +1,21 @@
 name: Paragraphs Inline Entity Form Example
 type: module
 description: 'Provides Test scaffolds for Paragraphs Inline Entity Form Test module.'
-# core: 8.x
+core: 8.x
+core_version_requirement: ^8 || ^9
 package: Paragraphs
 dependencies:
+  - drupal:node
   - drupal:image
   - drupal:block
   - drupal:block_content
   - drupal:path
   - drupal:menu_ui
   - drupal:views
+  - drupal:datetime
   - paragraphs_inline_entity_form:paragraphs_inline_entity_form
 
-# Information added by Drupal.org packaging script on 2019-06-19
-version: '8.x-1.0-beta1'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-11-30
+version: '8.x-1.0-beta3'
 project: 'paragraphs_inline_entity_form'
-datestamp: 1560941295
+datestamp: 1606730795

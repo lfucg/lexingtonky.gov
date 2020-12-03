@@ -7,9 +7,9 @@ use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 
 /**
- * Tests related to the dropzoneJs element.
+ * Tests related to the DropzoneJS element.
  *
- * @group DropzoneJs
+ * @group dropzonejs
  */
 class DropzoneJsElementTest extends KernelTestBase {
 
@@ -49,8 +49,8 @@ class DropzoneJsElementTest extends KernelTestBase {
 
     $xpath_base = "//div[contains(@class, 'form-item-dropzonejs')]";
     // Label.
-    $this->assertEmpty($this->xpath("$xpath_base/label[text()='Not DropzoneJs element']"));
-    $this->assertNotEmpty($this->xpath("$xpath_base/label[text()='DropzoneJs element']"));
+    $this->assertEmpty($this->xpath("$xpath_base/label[text()='Not DropzoneJS element']"));
+    $this->assertNotEmpty($this->xpath("$xpath_base/label[text()='DropzoneJS element']"));
     // Element where dropzonejs is attached to.
     $this->assertNotEmpty($this->xpath("$xpath_base/div[contains(@class, 'dropzone-enable')]"));
     // Uploaded files input.

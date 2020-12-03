@@ -112,7 +112,7 @@ class SearchApiRenderedItem extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function query() {
+  public function query($use_groupby = FALSE) {
     $this->addRetrievedProperty('_object');
   }
 
@@ -144,7 +144,13 @@ class SearchApiRenderedItem extends FieldPluginBase {
     $view_mode = $this->options['view_modes'][$datasource_id][$bundle] ?? 'default';
 
     try {
-      return $this->index->getDatasource($datasource_id)->viewItem($row->_object, $view_mode);
+      $build = $this->index->getDatasource($datasource_id)
+        ->viewItem($row->_object, $view_mode);
+      if ($build) {
+        // Add the excerpt to the render array to allow adding it to view modes.
+        $render['#search_api_excerpt'] = $row->_item->getExcerpt();
+      }
+      return $build;
     }
     catch (SearchApiException $e) {
       $this->logException($e);

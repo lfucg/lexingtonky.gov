@@ -112,14 +112,14 @@ abstract class ConfigurablePluginBase extends HideablePluginBase implements Conf
    * @return array
    *   An array of dependencies keyed by the type of dependency.
    *
-   * @deprecated in search_api:8.x-1.16 and is removed from search_api:9.x-1.0.
+   * @deprecated in search_api:8.x-1.16 and is removed from search_api:2.0.0.
    *   Add \Drupal\Core\Plugin\PluginDependencyTrait manually for your class if
    *   you need it.
    *
    * @see https://www.drupal.org/node/3099004
    */
   protected function getPluginDependencies(PluginInspectionInterface $instance) {
-    @trigger_error('The use of \Drupal\Core\Plugin\PluginDependencyTrait via \Drupal\search_api\Plugin\ConfigurablePluginBase is deprecated in search_api:8.x-1.16 and is removed from search_api:9.x-1.0. Add \Drupal\Core\Plugin\PluginDependencyTrait manually for your class if you need it. See https://www.drupal.org/node/3099004', E_USER_DEPRECATED);
+    @trigger_error('The use of \Drupal\Core\Plugin\PluginDependencyTrait via \Drupal\search_api\Plugin\ConfigurablePluginBase is deprecated in search_api:8.x-1.16 and is removed from search_api:2.0.0. Add \Drupal\Core\Plugin\PluginDependencyTrait manually for your class if you need it. See https://www.drupal.org/node/3099004', E_USER_DEPRECATED);
     return $this->traitGetPluginDependencies($instance);
   }
 
@@ -134,14 +134,14 @@ abstract class ConfigurablePluginBase extends HideablePluginBase implements Conf
    * @param \Drupal\Component\Plugin\PluginInspectionInterface $instance
    *   The plugin instance.
    *
-   * @deprecated in search_api:8.x-1.16 and is removed from search_api:9.x-1.0.
+   * @deprecated in search_api:8.x-1.16 and is removed from search_api:2.0.0.
    *   Add \Drupal\Core\Plugin\PluginDependencyTrait manually for your class if
    *   you need it.
    *
    * @see https://www.drupal.org/node/3099004
    */
   protected function calculatePluginDependencies(PluginInspectionInterface $instance) {
-    @trigger_error('The use of \Drupal\Core\Plugin\PluginDependencyTrait via \Drupal\search_api\Plugin\ConfigurablePluginBase is deprecated in search_api:8.x-1.16 and is removed from search_api:9.x-1.0. Add \Drupal\Core\Plugin\PluginDependencyTrait manually for your class if you need it. See https://www.drupal.org/node/3099004', E_USER_DEPRECATED);
+    @trigger_error('The use of \Drupal\Core\Plugin\PluginDependencyTrait via \Drupal\search_api\Plugin\ConfigurablePluginBase is deprecated in search_api:8.x-1.16 and is removed from search_api:2.0.0. Add \Drupal\Core\Plugin\PluginDependencyTrait manually for your class if you need it. See https://www.drupal.org/node/3099004', E_USER_DEPRECATED);
     $this->traitCalculatePluginDependencies($instance);
   }
 
@@ -151,14 +151,14 @@ abstract class ConfigurablePluginBase extends HideablePluginBase implements Conf
    * @return \Drupal\Core\Extension\ModuleHandlerInterface
    *   The module handler.
    *
-   * @deprecated in search_api:8.x-1.16 and is removed from search_api:9.x-1.0.
+   * @deprecated in search_api:8.x-1.16 and is removed from search_api:2.0.0.
    *   Add \Drupal\Core\Plugin\PluginDependencyTrait manually for your class if
    *   you need it.
    *
    * @see https://www.drupal.org/node/3099004
    */
   protected function moduleHandler() {
-    @trigger_error('The use of \Drupal\Core\Plugin\PluginDependencyTrait via \Drupal\search_api\Plugin\ConfigurablePluginBase is deprecated in search_api:8.x-1.16 and is removed from search_api:9.x-1.0. Add \Drupal\Core\Plugin\PluginDependencyTrait manually for your class if you need it. See https://www.drupal.org/node/3099004', E_USER_DEPRECATED);
+    @trigger_error('The use of \Drupal\Core\Plugin\PluginDependencyTrait via \Drupal\search_api\Plugin\ConfigurablePluginBase is deprecated in search_api:8.x-1.16 and is removed from search_api:2.0.0. Add \Drupal\Core\Plugin\PluginDependencyTrait manually for your class if you need it. See https://www.drupal.org/node/3099004', E_USER_DEPRECATED);
     return $this->traitModuleHandler();
   }
 
@@ -168,14 +168,14 @@ abstract class ConfigurablePluginBase extends HideablePluginBase implements Conf
    * @return \Drupal\Core\Extension\ThemeHandlerInterface
    *   The theme handler.
    *
-   * @deprecated in search_api:8.x-1.16 and is removed from search_api:9.x-1.0.
+   * @deprecated in search_api:8.x-1.16 and is removed from search_api:2.0.0.
    *   Add \Drupal\Core\Plugin\PluginDependencyTrait manually for your class if
    *   you need it.
    *
    * @see https://www.drupal.org/node/3099004
    */
   protected function themeHandler() {
-    @trigger_error('The use of \Drupal\Core\Plugin\PluginDependencyTrait via \Drupal\search_api\Plugin\ConfigurablePluginBase is deprecated in search_api:8.x-1.16 and is removed from search_api:9.x-1.0. Add \Drupal\Core\Plugin\PluginDependencyTrait manually for your class if you need it. See https://www.drupal.org/node/3099004', E_USER_DEPRECATED);
+    @trigger_error('The use of \Drupal\Core\Plugin\PluginDependencyTrait via \Drupal\search_api\Plugin\ConfigurablePluginBase is deprecated in search_api:8.x-1.16 and is removed from search_api:2.0.0. Add \Drupal\Core\Plugin\PluginDependencyTrait manually for your class if you need it. See https://www.drupal.org/node/3099004', E_USER_DEPRECATED);
     return $this->traitThemeHandler();
   }
 

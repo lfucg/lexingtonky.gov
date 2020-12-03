@@ -102,8 +102,8 @@ function search_api_requirements($phase) {
             'The following search servers are not available: @servers',
             ['@servers' => implode(', ', $unavailable_servers)]
           ),
-          'severity' => REQUIREMENT_ERROR
-        ]
+          'severity' => REQUIREMENT_ERROR,
+        ],
       ];
     }
 

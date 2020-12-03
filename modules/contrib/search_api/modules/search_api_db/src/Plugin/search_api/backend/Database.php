@@ -893,6 +893,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     switch ($type) {
       case 'text':
         return ['type' => 'varchar', 'length' => 30];
+
       case 'string':
       case 'uri':
         return ['type' => 'varchar', 'length' => 255];
@@ -1709,7 +1710,8 @@ class Database extends BackendPluginBase implements PluginFormInterface {
   protected function createDbQuery(QueryInterface $query, array $fields) {
     $keys = &$query->getKeys();
     $keys_set = (boolean) $keys;
-    $keys = $this->prepareKeys($keys);
+    $tokenizer_active = $query->getIndex()->isValidProcessor('tokenizer');
+    $keys = $this->prepareKeys($keys, $tokenizer_active);
 
     // Only filter by fulltext keys if there are any real keys present.
     if ($keys && (!is_array($keys) || count($keys) > 2 || (!isset($keys['#negation']) && count($keys) > 1))) {
@@ -1776,7 +1778,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     $this->getEventDispatcher()->dispatch($event_base_name, $event);
     $db_query = $event->getDbQuery();
 
-    $description = 'This hook is deprecated in search_api 8.x-1.16 and will be removed in 9.x-1.0. Please use the "search_api_db.query_pre_execute" event instead. See https://www.drupal.org/node/3103591';
+    $description = 'This hook is deprecated in search_api:8.x-1.16 and is removed from search_api:2.0.0. Please use the "search_api_db.query_pre_execute" event instead. See https://www.drupal.org/node/3103591';
     $this->getModuleHandler()->alterDeprecated($description, 'search_api_db_query', $db_query, $query);
     $this->preQuery($db_query, $query);
 
@@ -1790,24 +1792,28 @@ class Database extends BackendPluginBase implements PluginFormInterface {
    *
    * @param array|string|null $keys
    *   The keys which should be preprocessed.
+   * @param bool $tokenizer_active
+   *   (optional) TRUE if we can rely on the "Tokenizer" processor already
+   *   having preprocessed the keywords.
    *
    * @return array|string|null
    *   The preprocessed keys.
    */
-  protected function prepareKeys($keys) {
+  protected function prepareKeys($keys, bool $tokenizer_active = FALSE) {
     if (is_scalar($keys)) {
-      $keys = $this->splitKeys($keys);
+      $keys = $this->splitKeys($keys, $tokenizer_active);
       return is_array($keys) ? $this->eliminateDuplicates($keys) : $keys;
     }
     elseif (!$keys) {
       return NULL;
     }
-    $keys = $this->eliminateDuplicates($this->splitKeys($keys));
+    $keys = $this->splitKeys($keys, $tokenizer_active);
+    $keys = $this->eliminateDuplicates($keys);
     $conj = $keys['#conjunction'];
     $neg = !empty($keys['#negation']);
     foreach ($keys as $i => &$nested) {
       if (is_array($nested)) {
-        $nested = $this->prepareKeys($nested);
+        $nested = $this->prepareKeys($nested, $tokenizer_active);
         if (is_array($nested) && $neg == !empty($nested['#negation'])) {
           if ($nested['#conjunction'] == $conj) {
             unset($nested['#conjunction'], $nested['#negation']);
@@ -1839,11 +1845,14 @@ class Database extends BackendPluginBase implements PluginFormInterface {
    *
    * @param array|string $keys
    *   The keys to split.
+   * @param bool $tokenizer_active
+   *   (optional) TRUE if we can rely on the "Tokenizer" processor already
+   *   having preprocessed the keywords.
    *
    * @return array|string|null
    *   The keys split into separate words.
    */
-  protected function splitKeys($keys) {
+  protected function splitKeys($keys, bool $tokenizer_active = FALSE) {
     if (is_scalar($keys)) {
       $processed_keys = $this->dbmsCompatibility->preprocessIndexValue(trim($keys));
       if (is_numeric($processed_keys)) {
@@ -1853,9 +1862,14 @@ class Database extends BackendPluginBase implements PluginFormInterface {
         $this->ignored[$keys] = 1;
         return NULL;
       }
-      $words = static::splitIntoWords($processed_keys);
+      if ($tokenizer_active) {
+        $words = array_filter(explode(' ', $processed_keys), 'strlen');
+      }
+      else {
+        $words = static::splitIntoWords($processed_keys);
+      }
       if (count($words) > 1) {
-        $processed_keys = $this->splitKeys($words);
+        $processed_keys = $this->splitKeys($words, $tokenizer_active);
         if ($processed_keys) {
           $processed_keys['#conjunction'] = 'AND';
         }
@@ -1867,7 +1881,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     }
     foreach ($keys as $i => $key) {
       if (Element::child($i)) {
-        $keys[$i] = $this->splitKeys($key);
+        $keys[$i] = $this->splitKeys($key, $tokenizer_active);
       }
     }
     return array_filter($keys);
@@ -2238,7 +2252,8 @@ class Database extends BackendPluginBase implements PluginFormInterface {
           }
         }
         elseif ($this->getDataTypeHelper()->isTextType($field_info['type'])) {
-          $keys = $this->prepareKeys($value);
+          $tokenizer_active = $index->isValidProcessor('tokenizer');
+          $keys = $this->prepareKeys($value, $tokenizer_active);
           if (!isset($keys)) {
             continue;
           }
@@ -2627,7 +2642,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     $settings = $this->configuration['autocomplete'];
 
     // If none of the options is checked, the user apparently chose a very
-    // roundabout way of telling us he doesn't want autocompletion.
+    // roundabout way of telling us they don't want autocompletion.
     if (!array_filter($settings)) {
       return [];
     }
@@ -2669,7 +2684,12 @@ class Database extends BackendPluginBase implements PluginFormInterface {
 
     // Also collect all keywords already contained in the query so we don't
     // suggest them.
-    $keys = static::splitIntoWords($user_input);
+    if ($query->getIndex()->isValidProcessor('tokenizer')) {
+      $keys = array_filter(explode(' ', $user_input), 'strlen');
+    }
+    else {
+      $keys = static::splitIntoWords($user_input);
+    }
     $keys = array_combine($keys, $keys);
 
     foreach ($passes as $pass) {
@@ -2816,7 +2836,6 @@ class Database extends BackendPluginBase implements PluginFormInterface {
   public function __sleep() {
     $properties = array_flip(parent::__sleep());
     unset($properties['database']);
-    unset($properties['logger']);
     return array_keys($properties);
   }
 

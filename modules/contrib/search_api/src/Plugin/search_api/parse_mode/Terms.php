@@ -35,8 +35,12 @@ class Terms extends ParseModePluginBase {
 
       // Check for negation.
       if ($token[0] === '-' && !$quoted) {
-        $negated = TRUE;
         $token = ltrim($token, '-');
+        // If token is empty after trimming, ignore it.
+        if ($token === '') {
+          continue;
+        }
+        $negated = TRUE;
       }
 
       // Depending on whether we are currently in a quoted phrase, or maybe just

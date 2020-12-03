@@ -1,0 +1,11 @@
+services:
+  ckeditor_media_embed_install:
+    class: Drupal\ckeditor_media_embed\Command\InstallCommand
+    arguments: ['@ckeditor_media_embed_cli_commands']
+    tags:
+      - { name: drupal.command }
+  ckeditor_media_embed_update:
+    class: Drupal\ckeditor_media_embed\Command\UpdateCommand
+    arguments: ['@ckeditor_media_embed_cli_commands']
+    tags:
+      - { name: drupal.command }

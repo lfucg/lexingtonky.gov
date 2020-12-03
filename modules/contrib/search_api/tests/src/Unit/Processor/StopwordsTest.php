@@ -23,7 +23,7 @@ class StopwordsTest extends UnitTestCase {
   protected function setUp() {
     parent::setUp();
     $this->setUpMockContainer();
-    $this->processor = new Stopwords([], 'stopwords', []);;
+    $this->processor = new Stopwords([], 'stopwords', []);
   }
 
   /**

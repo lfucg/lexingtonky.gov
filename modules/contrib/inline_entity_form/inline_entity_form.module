@@ -66,7 +66,7 @@ function inline_entity_form_theme() {
  * @return array
  *   The form array containing the embedded form.
  */
-function inline_entity_form_reference_form($reference_form, &$form_state) {
+function inline_entity_form_reference_form($reference_form, FormStateInterface &$form_state) {
   $labels = $reference_form['#ief_labels'];
   $ief_id = $reference_form['#ief_id'];
   /** @var \Drupal\field\Entity\FieldConfig $instance */
@@ -413,6 +413,7 @@ function template_preprocess_inline_entity_form_entity_table(array &$variables) 
     $rows[] = $cells + ['#attributes' => ['class' => $row_classes]];
     // If the current entity array specifies a form, output it in the next row.
     if (!empty($form[$key]['form'])) {
+      $row = [];
       $row[] = $form[$key]['form'] + ['#wrapper_attributes' => ['colspan' => count($fields) + 1]];
       $rows[] = $row + ['#attributes' => ['class' => ['ief-row-form'], 'no_striping' => TRUE]];
     }

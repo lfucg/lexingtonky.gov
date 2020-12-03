@@ -296,7 +296,7 @@ interface ItemInterface extends \Traversable {
    * @return bool
    *   TRUE if access is granted, FALSE otherwise.
    *
-   * @deprecated in search_api:8.x-1.14 and is removed from search_api:9.x-1.0.
+   * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
    *   Use getAccessResult() instead.
    *
    * @see https://www.drupal.org/node/3051902

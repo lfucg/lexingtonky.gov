@@ -21,7 +21,7 @@
  * @param array $backend_info
  *   The Search API backend info array, keyed by backend ID.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.gathering_backends" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -42,7 +42,7 @@ function hook_search_api_backend_info_alter(array &$backend_info) {
  * @param \Drupal\search_api\ServerInterface $server
  *   The search server in question.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.determining_server_features" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -65,7 +65,7 @@ function hook_search_api_server_features_alter(array &$features, \Drupal\search_
  * @param array $infos
  *   The datasource info array, keyed by datasource IDs.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.gathering_data_sources" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -87,7 +87,7 @@ function hook_search_api_datasource_info_alter(array &$infos) {
  * @param array $processors
  *   The processor information to be altered, keyed by processor IDs.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.gathering_processors" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -105,7 +105,7 @@ function hook_search_api_processor_info_alter(array &$processors) {
  * @param array $data_type_definitions
  *   The definitions of the parse mode plugins.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.gathering_data_types" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -123,7 +123,7 @@ function hook_search_api_data_type_info_alter(array &$data_type_definitions) {
  * @param array $parse_mode_definitions
  *   The definitions of the parse mode plugins.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.gathering_parse_modes" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -141,7 +141,7 @@ function hook_search_api_parse_mode_info_alter(array &$parse_mode_definitions) {
  * @param array $tracker_info
  *   The Search API tracker info array, keyed by tracker ID.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.gathering_trackers" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -160,7 +160,7 @@ function hook_search_api_tracker_info_alter(array &$tracker_info) {
  * @param array $displays
  *   The Search API display info array, keyed by display ID.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.gathering_displays" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -180,7 +180,7 @@ function hook_search_api_displays_alter(array &$displays) {
  *   corresponding Search API data types. A value of FALSE means that fields of
  *   that type should be ignored by the Search API.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.mapping_field_types" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -206,7 +206,7 @@ function hook_search_api_field_type_mapping_alter(array &$mapping) {
  *   (with "ENTITY_TYPE" being the machine name of an entity type) for entities
  *   of that type.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.mapping_views_handlers" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -247,7 +247,7 @@ function hook_search_api_views_handler_mapping_alter(array &$mapping) {
  *   ones. The "*" mapping therefore is the default if no other match could be
  *   found.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.mapping_views_field_handlers" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -276,7 +276,7 @@ function hook_search_api_views_field_handler_mapping_alter(array &$mapping) {
  * @param \Drupal\search_api\Item\ItemInterface[] $items
  *   The items that will be indexed.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.indexing_items" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -304,7 +304,7 @@ function hook_search_api_index_items_alter(\Drupal\search_api\IndexInterface $in
  * @param array $item_ids
  *   An array containing the successfully indexed items' IDs.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.items_indexed" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -327,7 +327,7 @@ function hook_search_api_items_indexed(\Drupal\search_api\IndexInterface $index,
  * @param \Drupal\search_api\Query\QueryInterface $query
  *   The query that will be executed.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.query_pre_execute" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -356,7 +356,7 @@ function hook_search_api_query_alter(\Drupal\search_api\Query\QueryInterface $qu
  * @param \Drupal\search_api\Query\QueryInterface $query
  *   The query that will be executed.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.query_pre_execute.TAG" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -382,7 +382,7 @@ function hook_search_api_query_TAG_alter(\Drupal\search_api\Query\QueryInterface
  * @param \Drupal\search_api\Query\ResultSetInterface $results
  *   The search results to alter.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.processing_results" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -400,7 +400,7 @@ function hook_search_api_results_alter(\Drupal\search_api\Query\ResultSetInterfa
  * @param \Drupal\search_api\Query\ResultSetInterface $results
  *   The search results to alter.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.processing_results.TAG" event instead.
  *
  * @see https://www.drupal.org/node/3059866
@@ -417,7 +417,7 @@ function hook_search_api_results_TAG_alter(\Drupal\search_api\Query\ResultSetInt
  * @param bool $clear
  *   Boolean indicating whether the index was also cleared.
  *
- * @deprecated in search_api:8.x-1.14 and will be removed in search_api:9.x-1.0.
+ * @deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0.
  *   Please use the "search_api.reindex_scheduled" event instead.
  *
  * @see https://www.drupal.org/node/3059866

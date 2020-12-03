@@ -433,7 +433,7 @@ class ViewsTest extends SearchApiBrowserTestBase {
       \Drupal::getContainer()->get('cache.page')->deleteAll();
       \Drupal::getContainer()->get('cache.dynamic_page_cache')->deleteAll();
       $this->submitForm([], 'Search');
-      $this->assertSession()->addressEquals('search-api-test');
+      $this->assertSession()->addressMatches('#^/search-api-test#');
       $this->assertSession()->responseNotContains('Error message');
       $this->assertSession()->pageTextNotContains('search results');
       // Make sure the Views cache was used, none of the two page caches.
