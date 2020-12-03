@@ -23,6 +23,9 @@
   //   }
   // });
 
+  $('#js-feedback-button').find('a').click(function () {
+    $('.lex-pagefeedback-container').find('.js-accordion-control').click();
+  });
 
   $('.js-accordion-content #contact-message-page-feedback-form').submit(function(e) {
     e.preventDefault();
