@@ -32,7 +32,8 @@ $settings['trusted_host_patterns'] = array(
   '^www\.lexingtonky\.gov$',
   '^lexky-d8\.lndo\.site$', // windows & Mac
   '^web$',
-  '^localhost$'
+  '^localhost$',
+  '^www\.covid19renterhelp\.org$'
 );
 
 $config_overrides = __DIR__ . "/config.overrides.php";
