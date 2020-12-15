@@ -1,12 +1,5 @@
 <?php
 
-
-$incoming_path = $_SERVER['REQUEST_URI'];
-
-if ($incoming_path.search('covid19renter') != -1) {
-    header('Location: ' . 'https://www.lexingtonky.gov/how-do-i-get-help');
-}
-
 function _lexky_get_redirects()
 {
   $redirectsFile = 'sites/default/redirects.json';
@@ -109,6 +102,7 @@ function _lexky_get_legacy_document_redirect($incoming_path) {
   }
 }
 
+$incoming_path = $_SERVER['REQUEST_URI'];
 $legacy_document_redirect = _lexky_get_legacy_document_redirect($incoming_path);
 $redirect_table_path = _lexky_get_redirect_from_table($incoming_path);
 
