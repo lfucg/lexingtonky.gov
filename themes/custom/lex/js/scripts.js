@@ -23,6 +23,14 @@
   //   }
   // });
 
+  covidRedirect();
+
+  function covidRedirect () {
+    if ($(location.attr('href')).search('covid19renterhelp') != -1 ) {
+      $(location).attr('href', 'https://lexingtonky.gov/how-do-i-get-help');
+    }
+  }
+
   $('#js-feedback-button').find('a').click(function () {
     $('.lex-pagefeedback-container').find('.js-accordion-control').click();
   });
