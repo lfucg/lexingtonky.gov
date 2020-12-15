@@ -1,5 +1,11 @@
 <?php
 
+$custom_domain = $_SERVER['HTTP_HOST'];
+
+if (strpos($custom_domain, 'covid19renterhelp') !== false) {
+  header('Location: https://lexingtonky.gov/how-do-i-get-help');
+}
+
 function _lexky_get_redirects()
 {
   $redirectsFile = 'sites/default/redirects.json';
@@ -101,8 +107,8 @@ function _lexky_get_legacy_document_redirect($incoming_path) {
     return 'http://previous.lexingtonky.gov' . str_replace('?', '@', $incoming_path);
   }
 }
-
 $incoming_path = $_SERVER['REQUEST_URI'];
+
 $legacy_document_redirect = _lexky_get_legacy_document_redirect($incoming_path);
 $redirect_table_path = _lexky_get_redirect_from_table($incoming_path);
 
