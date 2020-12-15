@@ -186,7 +186,10 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
  * your site in the dashboard.
  */
 if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-  $settings['trusted_host_patterns'][] = '.*';
+  $settings['trusted_host_patterns'][] = array(
+    '.*',
+    '^www.covid19renterhelp.org'
+  );
 }
 
 /**
