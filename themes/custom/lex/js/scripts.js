@@ -23,22 +23,22 @@
   //   }
   // });
 
-  covidRedirect();
+  // covidRedirect();
 
-  // This is a temporary solution that allows a redirect to a main-domain node from a connected custom domain
-  function covidRedirect () {
-    $url = window.location.href;
-    $referrer = document.referrer;
+  // // This is a temporary solution that allows a redirect to a main-domain node from a connected custom domain
+  // function covidRedirect () {
+  //   $url = window.location.href;
+  //   $referrer = document.referrer;
 
 
-    if ($url.search('covid19renterhelp') != -1) {
-      window.location.replace('https://lexingtonky.gov/how-do-i-get-help');
-    }
+  //   if ($url.search('covid19renterhelp') != -1) {
+  //     window.location.replace('https://lexingtonky.gov/how-do-i-get-help');
+  //   }
 
-    if ($referrer.search('covid19renterhelp') != -1) {
-      window.location.replace('https://lexingtonky.gov/how-do-i-get-help');
-    }
-  }
+  //   if ($referrer.search('covid19renterhelp') != -1) {
+  //     window.location.replace('https://lexingtonky.gov/how-do-i-get-help');
+  //   }
+  // }
 
   $('#js-feedback-button').find('a').click(function () {
     $('.lex-pagefeedback-container').find('.js-accordion-control').click();
