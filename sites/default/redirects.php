@@ -4,10 +4,8 @@ $custom_domain = $_SERVER['HTTP_HOST'];
 
 if (strpos($custom_domain, 'covid19renterhelp') !== false) {
   header('Location: https://lexingtonky.gov/how-do-i-get-help');
-}else {
-  echo('e' . $custom_domain);
-  echo('i' . $_SERVER['HTTP_REFERER']);
 }
+
 
 function _lexky_get_redirects()
 {
