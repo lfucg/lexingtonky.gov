@@ -17,7 +17,7 @@
   */
   $.LexingtonGeocoder = function(options) {
     var $addressInput = options.$addressInput;
-    var political = L.esri.query({url: 'https://devgisweb1.lexingtonky.gov/arcgis/rest/services/political/MapServer/1'});
+    var political = L.esri.query({url: 'https://maps.lexingtonky.gov/lfucggis/rest/services/political/MapServer/1'});
 
     var handleFindAddressResponse = function(error, featureCollection, response) {
       var responseJson = error;
