@@ -43,7 +43,7 @@
   }
 
   var query = L.esri.query({
-    url: "//devgisweb1.lexingtonky.gov/arcgis/rest/services/planning/MapServer/0"
+    url: "//maps.lexingtonky.gov/lfucggis/rest/services/planning/MapServer/0"
   });
   query.orderBy('Assoc_Name', 'DESC');
   query.run(function(error, featureCollection, response){

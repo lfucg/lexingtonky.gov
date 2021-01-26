@@ -17,7 +17,7 @@
       }
 
       var serverAuth = function(callback) {
-        L.esri.post('https://devgisweb1.lexingtonky.gov/arcgis/tokens/generateToken', {
+        L.esri.post('https://maps.lexingtonky.gov/lfucggis/tokens/generateToken', {
           // lexKeys is set in a block visible to authenticated users
           username: lexKeys.finalOrderGIS.username,
           password: lexKeys.finalOrderGIS.password,
@@ -32,7 +32,7 @@
       var parcels;
       serverAuth(function(error, response) {
         parcels = L.esri.featureLayer({
-          url: 'https://devgisweb1.lexingtonky.gov/arcgis/rest/services/LFUCG_Apps/property/MapServer/1',
+          url: 'https://maps.lexingtonky.gov/lfucggis/rest/services/LFUCG_Apps/property/MapServer/1',
           token:  response.token
         });
 
