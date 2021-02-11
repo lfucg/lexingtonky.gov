@@ -138,7 +138,7 @@ class MetatagViewsTranslationForm extends FormBase {
     $config_name = $this->view->getConfigDependencyName();
     $config_path = 'display.' . $this->displayId . '.display_options.display_extenders.metatag_display_extender.metatags';
 
-    $configuration = \Drupal::service('config.factory')->get($config_name);
+    $configuration = $this->configFactory()->get($config_name);
     $this->baseData = $configuration->getOriginal($config_path, FALSE);
 
     // Set the translation target language on the configuration factory.
@@ -146,7 +146,7 @@ class MetatagViewsTranslationForm extends FormBase {
     $this->languageManager->setConfigOverrideLanguage($this->language);
 
     // Read in translated values.
-    $configuration = \Drupal::service('config.factory')->get($config_name);
+    $configuration = $this->configFactory()->get($config_name);
     $translated_values = $configuration->get($config_path);
 
     // Set the configuration language back.
@@ -160,9 +160,9 @@ class MetatagViewsTranslationForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Get the parameters from request.
-    $this->viewId = \Drupal::request()->get('view_id');
-    $this->displayId = \Drupal::request()->get('display_id');
-    $langcode = \Drupal::request()->get('langcode');
+    $this->viewId = $this->getRequest()->get('view_id');
+    $this->displayId = $this->getRequest()->get('display_id');
+    $langcode = $this->getRequest()->get('langcode');
 
     $this->view = $this->viewsManager->load($this->viewId);
     $this->language = $this->languageManager->getLanguage($langcode);

@@ -256,9 +256,15 @@ views.filter.search_api_fulltext:
       type: mapping
       label: 'Exposed'
       mapping:
+        expose_fields:
+          type: boolean
+          label: 'Expose the list of searched fields'
         placeholder:
           type: label
           label: 'Placeholder'
+        searched_fields_id:
+          type: string
+          label: 'Searched fields identifier'
 
 views.filter.search_api_language:
   type: views.filter.language

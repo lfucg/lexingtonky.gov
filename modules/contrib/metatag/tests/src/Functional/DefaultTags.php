@@ -145,7 +145,7 @@ class DefaultTags extends BrowserTestBase {
     foreach ($routes as $route) {
       // Identify the path to load.
       $this_page_url = $this->buildUrl($route, ['absolute' => TRUE]);
-      $this->assertTrue(!empty($this_page_url));
+      $this->assertNotEmpty($this_page_url);
 
       // Load the path.
       $this->drupalGet($this_page_url);

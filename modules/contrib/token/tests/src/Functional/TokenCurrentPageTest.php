@@ -23,7 +23,7 @@ class TokenCurrentPageTest extends TokenTestBase {
     // initial request.
     $this->rebuildAll();
     $tokens = [
-      '[current-page:title]' => t('Log in'),
+      '[current-page:title]' => 'Log in',
       '[current-page:url]' => Url::fromRoute('user.login', [], ['absolute' => TRUE])->toString(),
       '[current-page:url:absolute]' => Url::fromRoute('user.login', [], ['absolute' => TRUE])->toString(),
       '[current-page:url:relative]' => Url::fromRoute('user.login')->toString(),

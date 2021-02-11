@@ -37,7 +37,7 @@ trait TokenTreeTestTrait {
       $message = "Token group $token_group found.";
     }
 
-    $this->assertTrue(in_array($token_group, $groups), $message);
+    $this->assertContains($token_group, $groups, $message);
   }
 
   /**
@@ -56,7 +56,7 @@ trait TokenTreeTestTrait {
       $message = "Token group $token_group not found.";
     }
 
-    $this->assertFalse(in_array($token_group, $groups), $message);
+    $this->assertNotContains($token_group, $groups, $message);
   }
 
   /**

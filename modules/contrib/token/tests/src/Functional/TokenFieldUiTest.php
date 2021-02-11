@@ -104,11 +104,11 @@ class TokenFieldUiTest extends TokenTestBase {
     $this->drupalGet('admin/structure/types/manage/article/fields/node.article.field_image');
 
     // Ensure the 'Browse available tokens' link is present and correct.
-    $this->assertLink('Browse available tokens.');
-    $this->assertLinkByHref('token/tree');
+    $this->assertSession()->linkExists('Browse available tokens.');
+    $this->assertSession()->linkByHrefExists('token/tree');
 
     // Ensure that the default file directory value validates correctly.
-    $this->drupalPostForm(NULL, [], t('Save settings'));
+    $this->drupalPostForm(NULL, [], 'Save settings');
     $this->assertText(t('Saved Image configuration.'));
   }
 

@@ -206,7 +206,7 @@ trait ViewsReferenceTrait {
 
     $options = [];
     $view_plugins = array_diff($this->getFieldSetting('plugin_types'), ["0"]);
-    if ($view = \Drupal::service('entity.manager')->getStorage('view')->load($view_id)) {
+    if ($view = \Drupal::service('entity_type.manager')->getStorage('view')->load($view_id)) {
       foreach ($view->get('display') as $display) {
         if (in_array($display['display_plugin'], $view_plugins)) {
           $options[$display['id']] = $display['display_title'];

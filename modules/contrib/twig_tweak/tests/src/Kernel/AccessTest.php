@@ -270,7 +270,10 @@ class AccessTest extends KernelTestBase {
     self::assertSame($expected_cache, $build['#cache']);
 
     // -- Privileged user with access check.
-    $this->setUpCurrentUser(['name' => 'User 2'], ['access content', 'create article content']);
+    $this->setUpCurrentUser(
+      ['name' => 'User 2'],
+      ['access content', 'create article content'],
+    );
 
     $build = $this->twigExtension->drupalEntityForm('node', NULL, 'default', $node_values);
     self::assertArrayHasKey('form_id', $build);
@@ -319,7 +322,7 @@ class AccessTest extends KernelTestBase {
     self::assertSame($expected_content, $build['content']);
     $expected_cache = [
       'contexts' => ['user'],
-      'tags' => ['tag_from_blockAccess'],
+      'tags' => ['tag_from_blockAccess', 'tag_twig_tweak_test_foo_plugin'],
       'max-age' => 35,
     ];
     self::assertSame($expected_cache, $build['#cache']);

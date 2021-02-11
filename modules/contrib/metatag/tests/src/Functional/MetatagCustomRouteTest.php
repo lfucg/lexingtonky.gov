@@ -56,7 +56,7 @@ class MetatagCustomRouteTest extends BrowserTestBase {
     $this->drupalGet('metatag_test_custom_route/' . $entity_test->id());
     $this->assertSession()->statusCodeEquals(200);
     $xpath = $this->xpath("//meta[@name='keywords']");
-    $this->assertEqual(count($xpath), 1);
+    $this->assertCount(1, $xpath);
     $this->assertEqual($xpath[0]->getAttribute('content'), 'test');
   }
 

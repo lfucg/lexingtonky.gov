@@ -280,7 +280,7 @@ class Highlight extends ProcessorPluginBase implements PluginFormInterface {
       // We call array_merge() using call_user_func_array() to prevent having to
       // use it in a loop because it is a resource greedy construction.
       // @see https://github.com/kalessil/phpinspectionsea/blob/master/docs/performance.md#slow-array-function-used-in-loop
-      $text = call_user_func_array('array_merge', $item);
+      $text = call_user_func_array('array_merge', array_values($item));
       $item_keys = $keys;
 
       // If the backend already did highlighting and told us the exact keys it

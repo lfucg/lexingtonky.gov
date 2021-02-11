@@ -469,27 +469,6 @@ function token_render_array_value($value, array $options = []) {
 }
 
 /**
- * Copy of drupal_render_cache_get() that does not care about request method.
- */
-function token_render_cache_get($elements) {
-  if (!$cid = drupal_render_cid_create($elements)) {
-    return FALSE;
-  }
-  $bin = isset($elements['#cache']['bin']) ? $elements['#cache']['bin'] : 'render';
-
-  if (!empty($cid) && $cache = \Drupal::cache($bin)->get($cid)) {
-    // Add additional libraries, JavaScript, CSS and other data attached
-    // to this element.
-    if (isset($cache->data['#attached'])) {
-      drupal_process_attached($cache->data);
-    }
-    // Return the rendered output.
-    return $cache->data['#markup'];
-  }
-  return FALSE;
-}
-
-/**
  * Coyp of drupal_render_cache_set() that does not care about request method.
  */
 function token_render_cache_set(&$markup, $elements) {
@@ -556,8 +535,10 @@ function token_menu_link_translated_title(MenuLinkInterface $menu_link, $langcod
   if (isset($metadata['entity_id']) && $menu_link->getProvider() == 'menu_link_content') {
     /** @var \Drupal\menu_link_content\MenuLinkContentInterface $entity */
     $entity = \Drupal::entityTypeManager()->getStorage('menu_link_content')->load($metadata['entity_id']);
-    $entity = \Drupal::service('entity.repository')->getTranslationFromContext($entity, $langcode);
-    return $entity->getTitle();
+    if (!empty($entity)) {
+      $entity = \Drupal::service('entity.repository')->getTranslationFromContext($entity, $langcode);
+      return $entity->getTitle();
+    }
   }
   return $menu_link->getTitle();
 }
@@ -605,7 +586,7 @@ function token_element_children(&$elements, $sort = FALSE) {
   $children = [];
   $sortable = FALSE;
   foreach ($elements as $key => $value) {
-    if ($key === '' || $key[0] !== '#') {
+    if (is_int($key) || $key === '' || $key[0] !== '#') {
       $children[$key] = $value;
       if (is_array($value) && isset($value['#weight'])) {
         $sortable = TRUE;
@@ -736,6 +717,10 @@ function token_node_menu_link_submit($entity_type, NodeInterface $node, &$form, 
       }
       else {
         if ($node->isNew()) {
+          // Don't create a menu link if the node is being previewed.
+          if ($form_state->getTriggeringElement()['#id'] == 'edit-preview') {
+            return;
+          }
           // Create a new menu_link_content entity.
           $entity = MenuLinkContent::create([
             // Lets just reference the UUID for now, the link is not important for

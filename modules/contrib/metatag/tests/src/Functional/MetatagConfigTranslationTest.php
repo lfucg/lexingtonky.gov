@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\metatag\Functional;
 
+use Drupal\language\Entity\ConfigurableLanguage;
+use Drupal\metatag\Entity\MetatagDefaults;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -37,6 +39,7 @@ class MetatagConfigTranslationTest extends BrowserTestBase {
     'metatag',
     'language',
     'config_translation',
+    'node',
   ];
 
   /**
@@ -72,16 +75,7 @@ class MetatagConfigTranslationTest extends BrowserTestBase {
     $this->drupalLogin($this->adminUser);
 
     // Enable the French language.
-    $this->drupalGet('admin/config/regional/language/add');
-    $this->assertSession()->statusCodeEquals(200);
-    $edit = [
-      'predefined_langcode' => 'fr',
-    ];
-    $this->drupalPostForm(NULL, $edit, $this->t('Add language'));
-    $this->assertRaw($this->t(
-      'The language %language has been created and can now be used.',
-      ['%language' => $this->t('French')]
-    ));
+    ConfigurableLanguage::createFromLangcode('fr')->save();
   }
 
   /**
@@ -163,6 +157,31 @@ class MetatagConfigTranslationTest extends BrowserTestBase {
     $this->drupalPostForm(NULL, $edit, $this->t('Save translation'));
     $this->assertSession()->statusCodeEquals(200);
     $this->assertText($this->t('Successfully saved French translation'));
+
+    // Delete the node metatag defaults to simplify the test.
+    MetatagDefaults::load('node')->delete();
+
+    // Create a node in french, request default tags for it. Ensure that the
+    // config translation language is afterwards still/again set to EN and
+    // tags are returned in FR.
+    $this->drupalCreateContentType(['type' => 'page']);
+    $node = $this->drupalCreateNode([
+      'title' => 'Metatag Test FR',
+      'langcode' => 'fr',
+    ]);
+
+    $language_manager = \Drupal::languageManager();
+    $this->assertEquals('en', $language_manager->getConfigOverrideLanguage()->getId());
+    $fr_default_tags = metatag_get_default_tags($node);
+    $this->assertEquals('Le title', $fr_default_tags['title']);
+    $this->assertEquals('Le description', $fr_default_tags['description']);
+    $this->assertEquals('en', $language_manager->getConfigOverrideLanguage()->getId());
+
+    // Delete the default tags as well to test the early return.
+    MetatagDefaults::load('global')->delete();
+    $fr_default_tags = metatag_get_default_tags($node);
+    $this->assertNull($fr_default_tags);
+    $this->assertEquals('en', $language_manager->getConfigOverrideLanguage()->getId());
   }
 
 }

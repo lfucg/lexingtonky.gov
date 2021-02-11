@@ -32,10 +32,10 @@ class AutocompleteTest extends TokenTestBase {
       ],
     ]));
 
-    $this->assertTrue(isset($response['[node:nid]']));
-    $this->assertTrue(isset($response['[node:author]']));
-    $this->assertTrue(isset($response['[node:url]']));
-    $this->assertTrue(isset($response['[node:url:']));
+    $this->assertArrayHasKey('[node:nid]', $response);
+    $this->assertArrayHasKey('[node:author]', $response);
+    $this->assertArrayHasKey('[node:url]', $response);
+    $this->assertArrayHasKey('[node:url:', $response);
 
     $url = $url_prefix . 'Title of [node:url:';
     $response = Json::decode($this->drupalGet($url, [
@@ -44,8 +44,8 @@ class AutocompleteTest extends TokenTestBase {
       ],
     ]));
 
-    $this->assertTrue(isset($response['[node:url:path]']));
-    $this->assertTrue(isset($response['[node:url:absolute]']));
+    $this->assertArrayHasKey('[node:url:path]', $response);
+    $this->assertArrayHasKey('[node:url:absolute]', $response);
   }
 
   /**
@@ -61,10 +61,10 @@ class AutocompleteTest extends TokenTestBase {
       ],
     ]));
 
-    $this->assertTrue(isset($response['[user:uid]']));
-    $this->assertTrue(isset($response['[user:original]']));
-    $this->assertTrue(isset($response['[user:url]']));
-    $this->assertTrue(isset($response['[user:url:']));
+    $this->assertArrayHasKey('[user:uid]', $response);
+    $this->assertArrayHasKey('[user:original]', $response);
+    $this->assertArrayHasKey('[user:url]', $response);
+    $this->assertArrayHasKey('[user:url:', $response);
 
     $url = $url_prefix . 'Title of [user:original:';
     $response = Json::decode($this->drupalGet($url, [
@@ -73,6 +73,6 @@ class AutocompleteTest extends TokenTestBase {
       ],
     ]));
 
-    $this->assertTrue(isset($response['[user:original:uid]']));
+    $this->assertArrayHasKey('[user:original:uid]', $response);
   }
 }

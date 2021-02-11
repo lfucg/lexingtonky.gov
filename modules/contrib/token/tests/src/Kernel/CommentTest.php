@@ -35,7 +35,7 @@ class CommentTest extends KernelTestBase {
     $this->installEntitySchema('comment');
     $this->installSchema('comment', ['comment_entity_statistics']);
 
-    $node_type = NodeType::create(['type' => 'page', 'name' => t('Page')]);
+    $node_type = NodeType::create(['type' => 'page', 'name' => 'Page']);
     $node_type->save();
 
     $this->installConfig(['comment']);

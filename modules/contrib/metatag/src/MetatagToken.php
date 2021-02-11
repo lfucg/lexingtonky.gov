@@ -77,17 +77,28 @@ class MetatagToken {
    *
    * @param array $token_types
    *   The token types to filter the tokens list by. Defaults to an empty array.
+   * @param bool $image_help
+   *   Whether to include an extra message about how image field tokens should
+   *   be processed.
    *
    * @return array
    *   If token module is installed, a popup browser plus a help text. If not
    *   only the help text.
    */
-  public function tokenBrowser(array $token_types = []) {
+  public function tokenBrowser(array $token_types = [], $image_help = FALSE) {
     $form = [];
 
     $form['intro_text'] = [
-      '#markup' => '<p>' . $this->t('<strong>Configure the meta tags below.</strong><br /> To view a summary of the individual meta tags and the pattern for a specific configuration, click on its name below. Use tokens to avoid redundant meta data and search engine penalization. For example, a \'keyword\' value of "example" will be shown on all content using this configuration, whereas using the [node:field_keywords] automatically inserts the "keywords" values from the current entity (node, term, etc).') . '</p>',
+      '#markup' => '<p>' . $this->t('Use tokens to avoid redundant meta data and search engine penalization. For example, a \'keyword\' value of "example" will be shown on all content using this configuration, whereas using the [node:field_keywords] automatically inserts the "keywords" values from the current entity (node, term, etc).') . '</p>',
+      // Define a specific weight.
+      '#weight' => -10,
     ];
+    if ($image_help) {
+      $form['image_help'] = [
+        '#markup' => '<p>' . $this->t('To use tokens to image fields, the image field on that entity bundle (content type, term, etc) must have the "Token" display settings enabled, the image field must not be hidden, and it must be set to output as an image, e.g. using the "Thumbnail" field formatter. It is also recommended to use an appropriate image style that resizes the image rather than output the original image; see individual meta tag descriptions for size recommendations.') . '</strong></p>',
+        '#weight' => -9,
+      ];
+    }
 
     // Normalize token types.
     if (!empty($token_types)) {

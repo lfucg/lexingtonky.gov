@@ -17,7 +17,7 @@ backend_config:
     host: localhost
     port: '8983'
     path: /solr
-    core: d8
+    core: drupal
     timeout: 5
     index_timeout: 5
     optimize_timeout: 5

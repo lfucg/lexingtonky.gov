@@ -591,6 +591,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       'search_api_autocomplete',
       'search_api_facets',
       'search_api_facets_operator_or',
+      'search_api_random_sort',
     ];
   }
 
@@ -850,7 +851,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
     // index with the same as the first table, which conflicts in SQLite.
     //
     // The core issue addressing this (https://www.drupal.org/node/1008128) was
-    // closed as it fixed the PostgresSQL part. The SQLite fix is added in
+    // closed as it fixed the PostgreSQL part. The SQLite fix is added in
     // https://www.drupal.org/node/2625664
     // We prevent this by adding an extra underscore (which is also the proposed
     // solution in the original core issue).
@@ -2356,7 +2357,7 @@ class Database extends BackendPluginBase implements PluginFormInterface {
   protected function preQuery(SelectInterface &$db_query, QueryInterface $query) {}
 
   /**
-   * Adds the approiate "ORDER BY" statements to a search database query.
+   * Adds the appropriate "ORDER BY" statements to a search database query.
    *
    * @param \Drupal\search_api\Query\QueryInterface $query
    *   The search query whose sorts should be applied.
@@ -2384,6 +2385,11 @@ class Database extends BackendPluginBase implements PluginFormInterface {
         }
         if ($field_name == 'search_api_relevance') {
           $db_query->orderBy('score', $order);
+          continue;
+        }
+
+        if ($field_name == 'search_api_random') {
+          $this->dbmsCompatibility->orderByRandom($db_query);
           continue;
         }
 

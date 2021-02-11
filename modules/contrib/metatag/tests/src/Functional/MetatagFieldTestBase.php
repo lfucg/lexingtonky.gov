@@ -354,7 +354,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $entities = \Drupal::entityTypeManager()
       ->getStorage($this->entityType)
       ->loadByProperties([$this->entityTitleField => $title]);
-    $this->assertEqual(1, count($entities), 'Entity was saved');
+    $this->assertCount(1, $entities, 'Entity was saved');
     $entity = reset($entities);
 
     // @todo Confirm the values output correctly.
@@ -436,7 +436,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $entities = \Drupal::entityTypeManager()
       ->getStorage($this->entityType)
       ->loadByProperties([$this->entityTitleField => $title]);
-    $this->assertEqual(1, count($entities), 'Entity was saved');
+    $this->assertCount(1, $entities, 'Entity was saved');
     $entity = reset($entities);
 
     // @todo Confirm the values output correctly.
@@ -477,7 +477,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $entities = \Drupal::entityTypeManager()
       ->getStorage('entity_test')
       ->loadByProperties([$this->entityTitleField => 'Barfoo']);
-    $this->assertEqual(1, count($entities), 'Entity was saved');
+    $this->assertCount(1, $entities, 'Entity was saved');
     $entity = reset($entities);
 
     // Make sure tags that have a field value but no default value still show
@@ -485,7 +485,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $this->drupalGet($entity->toUrl());
     $this->assertSession()->statusCodeEquals(200);
     $elements = $this->cssSelect('meta[name=metatag_test_tag]');
-    $this->assertTrue(count($elements) === 1, 'Found keywords metatag_test_tag from defaults');
+    $this->assertCount(1, $elements, 'Found keywords metatag_test_tag from defaults');
     $this->assertEqual((string) $elements[0]['content'], 'Kilimanjaro', 'Field value for metatag_test_tag found when no default set.');
 
     // @todo This should not be required, but meta tags does not invalidate
@@ -503,7 +503,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $this->drupalGet($entity->toUrl());
     $this->assertSession()->statusCodeEquals(200);
     $elements = $this->cssSelect('meta[name=metatag_test_tag]');
-    $this->assertTrue(count($elements) === 1, 'Found test metatag from defaults');
+    $this->assertCount(1, $elements, 'Found test metatag from defaults');
     $this->verbose('<pre>' . print_r($elements, TRUE) . '</pre>');
     $this->assertEqual((string) $elements[0]['content'], $values['metatag_test_tag']);
   }

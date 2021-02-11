@@ -401,13 +401,6 @@ class ComposerStaticInitDrupal8
                 0 => __DIR__ . '/..' . '/solarium/solarium/library',
             ),
         ),
-        'K' => 
-        array (
-            'KubAT\\PhpSimple\\HtmlDomParser' => 
-            array (
-                0 => __DIR__ . '/..' . '/kub-at/php-simple-html-dom-parser/src',
-            ),
-        ),
         'H' => 
         array (
             'HTMLPurifier' => 
@@ -456,11 +449,8 @@ class ComposerStaticInitDrupal8
         'Caxy\\HtmlDiff\\HtmlDiff' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/HtmlDiff.php',
         'Caxy\\HtmlDiff\\HtmlDiffConfig' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/HtmlDiffConfig.php',
         'Caxy\\HtmlDiff\\LcsService' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/LcsService.php',
-        'Caxy\\HtmlDiff\\ListDiff' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/ListDiff.php',
         'Caxy\\HtmlDiff\\ListDiffLines' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/ListDiffLines.php',
-        'Caxy\\HtmlDiff\\ListDiff\\DiffList' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/ListDiff/DiffList.php',
-        'Caxy\\HtmlDiff\\ListDiff\\DiffListItem' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/ListDiff/DiffListItem.php',
-        'Caxy\\HtmlDiff\\Match' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Match.php',
+        'Caxy\\HtmlDiff\\MatchingBlock' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/MatchingBlock.php',
         'Caxy\\HtmlDiff\\Operation' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Operation.php',
         'Caxy\\HtmlDiff\\Preprocessor' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Preprocessor.php',
         'Caxy\\HtmlDiff\\Strategy\\EqualMatchStrategy' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/Strategy/EqualMatchStrategy.php',
@@ -544,6 +534,7 @@ class ComposerStaticInitDrupal8
         'Composer\\Installers\\Plugin' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/Plugin.php',
         'Composer\\Installers\\PortoInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/PortoInstaller.php',
         'Composer\\Installers\\PrestashopInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/PrestashopInstaller.php',
+        'Composer\\Installers\\ProcessWireInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ProcessWireInstaller.php',
         'Composer\\Installers\\PuppetInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/PuppetInstaller.php',
         'Composer\\Installers\\PxcmsInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/PxcmsInstaller.php',
         'Composer\\Installers\\RadPHPInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/RadPHPInstaller.php',
@@ -555,6 +546,7 @@ class ComposerStaticInitDrupal8
         'Composer\\Installers\\ShopwareInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ShopwareInstaller.php',
         'Composer\\Installers\\SilverStripeInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/SilverStripeInstaller.php',
         'Composer\\Installers\\SiteDirectInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/SiteDirectInstaller.php',
+        'Composer\\Installers\\StarbugInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/StarbugInstaller.php',
         'Composer\\Installers\\SyDESInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/SyDESInstaller.php',
         'Composer\\Installers\\SyliusInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/SyliusInstaller.php',
         'Composer\\Installers\\Symfony1Installer' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/Symfony1Installer.php',
@@ -2947,7 +2939,6 @@ class ComposerStaticInitDrupal8
         'HTMLPurifier_VarParser_Flexible' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/VarParser/Flexible.php',
         'HTMLPurifier_VarParser_Native' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/VarParser/Native.php',
         'HTMLPurifier_Zipper' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/Zipper.php',
-        'KubAT\\PhpSimple\\HtmlDomParser' => __DIR__ . '/..' . '/kub-at/php-simple-html-dom-parser/src/KubAT/PhpSimple/HtmlDomParser.php',
         'Laminas\\Diactoros\\AbstractSerializer' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/AbstractSerializer.php',
         'Laminas\\Diactoros\\CallbackStream' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/CallbackStream.php',
         'Laminas\\Diactoros\\Exception\\DeprecatedMethodException' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/Exception/DeprecatedMethodException.php',

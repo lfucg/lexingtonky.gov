@@ -17,6 +17,7 @@ class MetatagVerificationTagsTest extends MetatagTagsTestBase {
   protected $tags = [
     'baidu',
     'bing',
+    'facebook_domain_verification',
     'google',
     'norton_safe_web',
     'pinterest',
@@ -42,6 +43,9 @@ class MetatagVerificationTagsTest extends MetatagTagsTestBase {
     }
     elseif ($tag_name == 'bing') {
       $tag_name = 'msvalidate.01';
+    }
+    elseif ($tag_name == 'facebook_domain_verification') {
+      $tag_name = 'facebook-domain-verification';
     }
     elseif ($tag_name == 'google') {
       $tag_name = 'google-site-verification';

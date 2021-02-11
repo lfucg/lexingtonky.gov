@@ -1,16 +1,16 @@
 dropzonejs:
   title: 'Dropzonejs'
   website: http://www.dropzonejs.com
-  version: 4.0.1
+  version: 5.7.2
   license:
     name: MIT
     url: https://github.com/enyo/dropzone/blob/master/LICENSE
     gpl-compatible: true
   js:
-    /libraries/dropzone/dist/min/dropzone.min.js: {}
+    /libraries/dropzone/dist/min/dropzone.min.js: { minified: true }
   css:
     component:
-      /libraries/dropzone/dist/min/dropzone.min.css: {}
+      /libraries/dropzone/dist/min/dropzone.min.css: { minified: true }
 widget:
   version: VERSION
   css:

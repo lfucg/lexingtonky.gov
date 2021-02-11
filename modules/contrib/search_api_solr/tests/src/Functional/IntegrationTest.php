@@ -118,7 +118,7 @@ class IntegrationTest extends \Drupal\Tests\search_api\Functional\IntegrationTes
       'backend_config[connector_config][host]' => 'localhost',
       'backend_config[connector_config][port]' => '8983',
       'backend_config[connector_config][path]' => '/solr',
-      'backend_config[connector_config][core]' => 'd8',
+      'backend_config[connector_config][core]' => 'drupal',
     ];
     $this->submitForm($edit, 'Save');
     $this->assertSession()->pageTextContains('The Solr server could be reached.');

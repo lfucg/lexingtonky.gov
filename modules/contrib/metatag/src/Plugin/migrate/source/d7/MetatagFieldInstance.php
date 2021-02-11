@@ -48,9 +48,45 @@ class MetatagFieldInstance extends DrupalSqlBase {
    * {@inheritdoc}
    */
   public function query() {
-    return $this->select('metatag', 'm')
+    $base_query = $this->select('metatag', 'm')
       ->fields('m', ['entity_type'])
       ->groupBy('entity_type');
+
+    if (isset($this->configuration['entity_type_id'])) {
+      $entity_type_id = $this->configuration['entity_type_id'];
+      $base_query->condition('m.entity_type', $entity_type_id);
+
+      if (isset($this->configuration['bundle'])) {
+        $bundle = $this->configuration['bundle'];
+        switch ($entity_type_id) {
+          case 'node':
+            // We want to get a per-node-type metatag migration. So we inner join
+            // the base query on node table based on the parsed node ID.
+            $base_query->join('node', 'n', "n.nid = m.entity_id");
+            $base_query->condition('n.type', $bundle);
+            $base_query->addField('n', 'type', 'bundle');
+            $base_query->groupBy('bundle');
+            break;
+
+          case 'taxonomy_term':
+            // Join the taxonomy term data table to the base query; based on
+            // the parsed taxonomy term ID.
+            $base_query->join('taxonomy_term_data', 'ttd', "ttd.tid = m.entity_id");
+            $base_query->fields('ttd', ['vid']);
+            // Since the "taxonomy_term_data" table contains only the taxonomy
+            // vocabulary ID, but not the vocabulary name, we have to inner
+            // join the "taxonomy_vocabulary" table as well.
+            $base_query->join('taxonomy_vocabulary', 'tv', 'ttd.vid = tv.vid');
+            $base_query->condition('tv.machine_name', $bundle);
+            $base_query->addField('tv', 'machine_name', 'bundle');
+            $base_query->groupBy('ttd.vid');
+            $base_query->groupBy('bundle');
+            break;
+        }
+      }
+    }
+
+    return $base_query;
   }
 
   /**
@@ -69,6 +105,14 @@ class MetatagFieldInstance extends DrupalSqlBase {
   public function initializeIterator() {
     $bundles = [];
     foreach (parent::initializeIterator() as $instance) {
+      // For entity types for which we support creating derivatives, do not
+      // retrieve the bundles using the D8|9 entity type bundle info service,
+      // because then we will end up creating meta tag fields even for bundles
+      // that do not use meta tags.
+      if (isset($instance['bundle'])) {
+        $bundles[] = $instance;
+        continue;
+      }
       $bundle_info = $this->entityTypeBundleInfo
         ->getBundleInfo($instance['entity_type']);
       foreach (array_keys($bundle_info) as $bundle) {

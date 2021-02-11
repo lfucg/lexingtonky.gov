@@ -20,6 +20,13 @@ class SearchApiFulltext extends FilterPluginBase {
   use SearchApiFilterTrait;
 
   /**
+   * The list of fields selected for the search.
+   *
+   * @var array
+   */
+  public $searchedFields = [];
+
+  /**
    * The parse mode manager.
    *
    * @var \Drupal\search_api\ParseMode\ParseModePluginManager|null
@@ -126,8 +133,19 @@ class SearchApiFulltext extends FilterPluginBase {
     $options['min_length'] = ['default' => ''];
     $options['fields'] = ['default' => []];
     $options['expose']['contains']['placeholder'] = ['default' => ''];
+    $options['expose']['contains']['expose_fields'] = ['default' => FALSE];
+    $options['expose']['contains']['searched_fields_id'] = ['default' => ''];
 
     return $options;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultExposeOptions() {
+    parent::defaultExposeOptions();
+
+    $this->options['expose']['searched_fields_id'] = $this->options['id'] . '_searched_fields';
   }
 
   /**
@@ -203,6 +221,58 @@ class SearchApiFulltext extends FilterPluginBase {
       '#size' => 40,
       '#description' => $this->t('Hint text that appears inside the field when empty.'),
     ];
+
+    $form['expose']['expose_fields'] = [
+      '#type' => 'checkbox',
+      '#default_value' => $this->options['expose']['expose_fields'],
+      '#title' => $this->t('Expose searched fields'),
+      '#description' => $this->t('Expose the list of searched fields. This allows users to narrow the search to the desired fields.'),
+    ];
+    $form['expose']['searched_fields_id'] = [
+      '#type' => 'textfield',
+      '#default_value' => $this->options['expose']['searched_fields_id'],
+      '#title' => $this->t('Searched fields identifier'),
+      '#size' => 40,
+      '#description' => $this->t('This will appear in the URL after the ? to identify this searched fields form element.'),
+      '#states' => [
+        'visible' => [
+          ':input[name="options[expose][expose_fields]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildExposedForm(&$form, FormStateInterface $form_state) {
+    parent::buildExposedForm($form, $form_state);
+
+    if (empty($this->options['exposed'])) {
+      return;
+    }
+
+    if ($this->options['expose']['expose_fields']) {
+      $fields = $this->getFulltextFields();
+      $configured_fields = $this->options['fields'];
+      // Only keep the configured fields.
+      if (!empty($configured_fields)) {
+        $configured_fields = array_flip($configured_fields);
+        $fields = array_intersect_key($fields, $configured_fields);
+      }
+
+      $searched_fields_identifier = $this->options['id'] . '_searched_fields';
+      if (!empty($this->options['expose']['searched_fields_id'])) {
+        $searched_fields_identifier = $this->options['expose']['searched_fields_id'];
+      }
+      $form[$searched_fields_identifier] = [
+        '#type' => 'select',
+        '#title' => $this->t('Search fields'),
+        '#options' => $fields,
+        '#multiple' => TRUE,
+        '#size' => min(count($fields), 5),
+      ];
+    }
   }
 
   /**
@@ -242,6 +312,13 @@ class SearchApiFulltext extends FilterPluginBase {
     if (empty($this->options['exposed']) || empty($this->options['expose']['identifier'])) {
       return;
     }
+
+    // Store searched fields.
+    $searched_fields_identifier = $this->options['id'] . '_searched_fields';
+    if (!empty($this->options['expose']['searched_fields_id'])) {
+      $searched_fields_identifier = $this->options['expose']['searched_fields_id'];
+    }
+    $this->searchedFields = $form_state->getValue($searched_fields_identifier, []);
 
     $identifier = $this->options['expose']['identifier'];
     $input = &$form_state->getValue($identifier, '');
@@ -299,6 +376,10 @@ class SearchApiFulltext extends FilterPluginBase {
     }
     $fields = $this->options['fields'];
     $fields = $fields ?: array_keys($this->getFulltextFields());
+    // Override the search fields, if exposed.
+    if (!empty($this->searchedFields)) {
+      $fields = array_intersect($fields, $this->searchedFields);
+    }
     $query = $this->getQuery();
 
     // Save any keywords that were already set.

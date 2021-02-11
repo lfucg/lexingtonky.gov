@@ -18,6 +18,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\State\StateInterface;
@@ -28,8 +29,9 @@ use Drupal\field\FieldConfigInterface;
 use Drupal\field\FieldStorageConfigInterface;
 use Drupal\search_api\Datasource\DatasourcePluginBase;
 use Drupal\search_api\IndexInterface;
-use Drupal\search_api\Utility\Dependencies;
+use Drupal\search_api\LoggerTrait;
 use Drupal\search_api\Plugin\PluginFormTrait;
+use Drupal\search_api\Utility\Dependencies;
 use Drupal\search_api\Utility\FieldsHelperInterface;
 use Drupal\search_api\Utility\Utility;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -44,6 +46,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ContentEntity extends DatasourcePluginBase implements PluginFormInterface {
 
+  use LoggerTrait;
   use PluginFormTrait;
 
   /**
@@ -157,6 +160,7 @@ class ContentEntity extends DatasourcePluginBase implements PluginFormInterface 
     $datasource->setFieldsHelper($container->get('search_api.fields_helper'));
     $datasource->setState($container->get('state'));
     $datasource->setEntityMemoryCache($container->get('entity.memory_cache'));
+    $datasource->setLogger($container->get('logger.channel.search_api'));
 
     return $datasource;
   }
@@ -1039,6 +1043,11 @@ class ContentEntity extends DatasourcePluginBase implements PluginFormInterface 
     $ids_to_reindex = [];
     $path_separator = IndexInterface::PROPERTY_PATH_SEPARATOR;
     foreach ($foreign_entity_relationship_map as $relation_info) {
+      // Ignore relationships belonging to other datasources.
+      if (!empty($relation_info['datasource'])
+          && $relation_info['datasource'] !== $this->getPluginId()) {
+        continue;
+      }
       // Check whether entity type and (if specified) bundles match the entity.
       if ($relation_info['entity_type'] !== $entity->getEntityTypeId()) {
         continue;
@@ -1073,7 +1082,29 @@ class ContentEntity extends DatasourcePluginBase implements PluginFormInterface 
         try {
           $entity_ids = array_values($query->execute());
         }
-        catch (\Exception $e) {
+        // @todo Switch back to \Exception once Core bug #2893747 is fixed.
+        catch (\Throwable $e) {
+          // We don't want to catch all PHP \Error objects thrown, but just the
+          // ones caused by #2893747.
+          if (!($e instanceof \Exception)
+              && (get_class($e) !== \Error::class || $e->getMessage() !== 'Call to a member function getColumns() on bool')) {
+            throw $e;
+          }
+          $vars = [
+            '%index' => $this->index->label(),
+            '%entity_type' => $entity->getEntityType()->getLabel(),
+            '@entity_id' => $entity->id(),
+          ];
+          try {
+            $link = $entity->toLink($this->t('Go to changed %entity_type with ID "@entity_id"', $vars))
+              ->toString()->getGeneratedLink();
+          }
+          catch (\Throwable $e) {
+            // Ignore any errors here, it's not that important that the log
+            // message contains a link.
+            $link = NULL;
+          }
+          $this->logException($e, '%type while attempting to find indexed entities referencing changed %entity_type with ID "@entity_id" for index %index: @message in %function (line %line of %file).', $vars, RfcLogLevel::ERROR, $link);
           continue;
         }
         foreach ($entity_ids as $entity_id) {

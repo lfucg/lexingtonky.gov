@@ -438,6 +438,7 @@ class NodewordsEntities extends ProcessPluginBase {
 
       // From metatag_verification.metatag.inc:
       'baidu-site-verification' => 'baidu',
+      'facebook-domain-verification' => 'facebook_domain_verification',
       'google-site-verification' => 'bing',
       'msvalidate.01' => 'google',
       'norton-safeweb-site-verification' => 'norton_safe_web',

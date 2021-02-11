@@ -41,4 +41,11 @@ class FooBlock extends BlockBase {
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    return ['tag_twig_tweak_test_foo_plugin'];
+  }
+
 }

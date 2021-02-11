@@ -25,7 +25,24 @@
         // Initiate dropzonejs.
         var config = {
           url: input.attr('data-upload-path'),
-          addRemoveLinks: false
+          addRemoveLinks: false,
+          dictDefaultMessage: Drupal.t('Drop files here to upload'),
+          dictFallbackMessage: Drupal.t('Your browser does not support drag\'n\'drop file uploads.'),
+          dictFallbackText: Drupal.t('Please use the fallback form below to upload your files like in the olden days.'),
+          dictFileTooBig: Drupal.t('File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.'),
+          dictInvalidFileType: Drupal.t('You can\'t upload files of this type.'),
+          dictResponseError: Drupal.t('Server responded with {{statusCode}} code.'),
+          dictCancelUpload: Drupal.t('Cancel upload'),
+          dictCancelUploadConfirmation: Drupal.t('Are you sure you want to cancel this upload?'),
+          dictRemoveFile: Drupal.t('Remove file'),
+          dictMaxFilesExceeded: Drupal.t('You can not upload any more files.'),
+          dictFileSizeUnits: {
+            tb: Drupal.t('TB'),
+            gb: Drupal.t('GB'),
+            mb: Drupal.t('MB'),
+            kb: Drupal.t('KB'),
+            b: Drupal.t('b')
+          },
         };
         var instanceConfig = drupalSettings.dropzonejs.instances[selector.attr('id')];
 

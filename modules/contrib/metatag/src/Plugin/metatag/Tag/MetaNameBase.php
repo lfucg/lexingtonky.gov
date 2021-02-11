@@ -3,6 +3,7 @@
 namespace Drupal\metatag\Plugin\metatag\Tag;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Component\Render\PlainTextOutput;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -277,7 +278,7 @@ abstract class MetaNameBase extends PluginBase {
 
     // Optional handling for images.
     if ((!empty($this->type())) && ($this->type() === 'image')) {
-      $form['#description'] .= ' ' . $this->t('This will be able to extract the URL from an image field.');
+      $form['#description'] .= ' ' . $this->t('This will be able to extract the URL from an image field if the field is configured properly.');
     }
 
     if (!empty($this->absolute_url)) {
@@ -337,8 +338,14 @@ abstract class MetaNameBase extends PluginBase {
       return $this->multiple() ? [] : '';
     }
 
-    // Parse out the image URL, if needed.
-    $value = $this->parseImageUrl();
+    // If this contains embedded image tags, extract the image URLs.
+    if ($this->type() === 'image') {
+      $value = $this->parseImageUrl($this->value);
+    }
+    else {
+      $value = PlainTextOutput::renderFromHtml($this->value);
+    }
+
     $values = $this->multiple() ? explode(',', $value) : [$value];
     $elements = [];
     foreach ($values as $value) {
@@ -391,41 +398,43 @@ abstract class MetaNameBase extends PluginBase {
    *   A comma separated list of any image URLs found in the meta tag's value,
    *   or the original string if no images were identified.
    */
-  protected function parseImageUrl() {
-    $value = $this->value();
+  protected function parseImageUrl($value) {
+    global $base_root;
 
-    // If this contains embedded image tags, extract the image URLs.
-    if ($this->type() === 'image') {
-      // If image tag src is relative (starts with /), convert to an absolute
-      // link; ignore protocol-relative URLs.
-      global $base_root;
-      if (strpos($value, '<img src="/') !== FALSE && strpos($value, '<img src="//') === FALSE) {
-        $value = str_replace('<img src="/', '<img src="' . $base_root . '/', $value);
-      }
-
-      if ($this->multiple()) {
-        // Split the string into an array, remove empty items.
-        $values = array_filter(explode(',', $value));
-      }
-      else {
-        $values = [$value];
-      }
-
-      // Check through the value(s) to see if there are any image tags.
-      foreach ($values as $key => $val) {
-        $matches = [];
-        preg_match('/src="([^"]*)"/', $val, $matches);
-        if (!empty($matches[1])) {
-          $values[$key] = $matches[1];
-        }
-      }
-      $value = implode(',', $values);
-
-      // Remove any HTML tags that might remain.
-      $value = strip_tags($value);
+    // If image tag src is relative (starts with /), convert to an absolute
+    // link; ignore protocol-relative URLs.
+    if (strpos($value, '<img src="/') !== FALSE && strpos($value, '<img src="//') === FALSE) {
+      $value = str_replace('<img src="/', '<img src="' . $base_root . '/', $value);
     }
 
-    return $value;
+    if ($this->multiple()) {
+      // Split the string into an array, remove empty items.
+      $values = array_filter(explode(',', $value));
+    }
+    else {
+      $values = [$value];
+    }
+
+    // Check through the value(s) to see if there are any image tags.
+    foreach ($values as $key => $val) {
+      $matches = [];
+      preg_match('/src="([^"]*)"/', $val, $matches);
+      if (!empty($matches[1])) {
+        $values[$key] = $matches[1];
+      }
+
+      // If an image wasn't found then remove any other HTML tags in the string.
+      else {
+        $values[$key] = PlainTextOutput::renderFromHtml($val);
+      }
+    }
+
+    // Make sure there aren't any blank items in the array.
+    $values = array_filter($values);
+
+    // Convert the array back into a comma-delimited string before sending it
+    // back.
+    return implode(',', $values);
   }
 
 }

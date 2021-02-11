@@ -258,7 +258,7 @@ Two migration processes are supported:
  2. A custom migration using Migrate Plus [3] and possibly Migrate Tools [4].
     This will require manually creating the meta tag fields and assigning a
     custom process plugin as the source for its data. For example, if the name
-    of the field is "field_meta_tags" the lines fron the "process" section of
+    of the field is "field_meta_tags" the lines from the "process" section of
     the migration yml file would need to look line the following:
 
     For migrating from Nodewords on D6:
