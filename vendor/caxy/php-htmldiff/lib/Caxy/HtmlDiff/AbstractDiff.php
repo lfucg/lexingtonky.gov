@@ -3,6 +3,8 @@
 namespace Caxy\HtmlDiff;
 
 use Caxy\HtmlDiff\Util\MbStringUtil;
+use HTMLPurifier;
+use HTMLPurifier_Config;
 
 /**
  * Class AbstractDiff.
@@ -66,12 +68,12 @@ abstract class AbstractDiff
     protected $diffCaches = array();
 
     /**
-     * @var \HTMLPurifier
+     * @var HTMLPurifier|null
      */
     protected $purifier;
 
     /**
-     * @var \HTMLPurifier_Config|null
+     * @var HTMLPurifier_Config|null
      */
     protected $purifierConfig = null;
 
@@ -129,7 +131,7 @@ abstract class AbstractDiff
         if (null !== $this->purifierConfig) {
             $HTMLPurifierConfig  = $this->purifierConfig;
         } else {
-            $HTMLPurifierConfig = \HTMLPurifier_Config::createDefault();
+            $HTMLPurifierConfig = HTMLPurifier_Config::createDefault();
         }
 
         // Cache.SerializerPath defaults to Null and sets
@@ -144,7 +146,7 @@ abstract class AbstractDiff
         // created by the web/php user (www-user, php-fpm, etc.)
         $HTMLPurifierConfig->set('Cache.SerializerPermissions', 0777);
 
-        $this->purifier = new \HTMLPurifier($HTMLPurifierConfig);
+        $this->purifier = new HTMLPurifier($HTMLPurifierConfig);
     }
 
     /**
@@ -154,6 +156,10 @@ abstract class AbstractDiff
      */
     protected function prepare()
     {
+        if (false === $this->config->isPurifierEnabled()) {
+            return;
+        }
+
         $this->initPurifier($this->config->getPurifierCacheLocation());
 
         $this->oldText = $this->purifyHtml($this->oldText);
@@ -369,31 +375,11 @@ abstract class AbstractDiff
     }
 
     /**
-     * @param \HTMLPurifier_Config $config
+     * @param HTMLPurifier_Config $config
      */
-    public function setHTMLPurifierConfig(\HTMLPurifier_Config $config)
+    public function setHTMLPurifierConfig(HTMLPurifier_Config $config)
     {
         $this->purifierConfig = $config;
-    }
-
-    /**
-     * @param string $tag
-     *
-     * @return string
-     */
-    protected function getOpeningTag($tag)
-    {
-        return '/<'.$tag.'[^>]*/i';
-    }
-
-    /**
-     * @param string $tag
-     *
-     * @return string
-     */
-    protected function getClosingTag($tag)
-    {
-        return '</'.$tag.'>';
     }
 
     /**
@@ -403,6 +389,10 @@ abstract class AbstractDiff
      */
     protected function purifyHtml($html)
     {
+        if (null === $this->purifier) {
+            return $html;
+        }
+
         return $this->purifier->purify($html);
     }
 

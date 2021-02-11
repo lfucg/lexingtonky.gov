@@ -10,7 +10,7 @@ use Drupal\metatag\Plugin\metatag\Group\GroupBase;
  * @MetatagGroup(
  *   id = "facebook",
  *   label = @Translation("facebook"),
- *   description = @Translation("A set of meta tags specially for controlling advanced functionality with <a href=':fb'>Facebook</a>.", arguments = { ":fb" = "https://www.facebook.com/" }),
+ *   description = @Translation("A set of meta tags specially for controlling advanced functionality with <a href=':fb'>Facebook</a>.<br><br>The Facebook <a href='https://developers.facebook.com/tools/debug/'>Sharing Debugger</a> lets you preview how your content will look when it's shared to Facebook and debug any issues with your Open Graph tags.", arguments = { ":fb" = "https://www.facebook.com/" }),
  *   weight = 4
  * )
  */

@@ -1,3 +1,31 @@
+Search API 1.19 (2021-02-01):
+-----------------------------
+- #3182306 by drunken monkey: Improved output from the "rebuild tracker" batch
+  job.
+- #3111383 by liquidcms, drunken monkey: Fixed problems with exposed, grouped
+  Views date filters.
+- #3127099 by Grimreaper, drunken monkey: Added option to expose searched
+  fields in Views fulltext filter.
+- #2944371 by Upchuk, jasonschweb, drunken monkey: Fixed random sort for DB
+  backend.
+- Issue #3194016 by mkalkbrenner, borisson_: Fixed PHP 8 compatibility.
+- #3181827 by brunodbo, drunken monkey: Fixed wrong @var type doc in
+  ContentEntityTrackingManager.
+- #3179045 by sebish, joelpittet, drunken monkey: Fixed parameter type hint in
+  ContentEntityTrackingManager.
+- #3178417 by SivaprasadC, drunken monkey: Fixed two typos in the Database
+  backend plugin class.
+- #3174778 by drunken monkey: Fixed some encoding errors.
+- #3178941 by drunken monkey, cspitzlay, MegaChriz, ooziedie, bakulahluwalia:
+  Fixed fatal error when saving entities with certain setups.
+- #3036504 by kfritsche, drunken monkey: Fixed memory issues during indexing
+  via Drush.
+- #3136277 by drunken monkey, pfrenssen, Berdir, dwinters, calmforce: Fixed
+  issue with modifying condition group via pre-execute event/hook.
+- #3174657 by drunken monkey: Fixed "keep facets" feature for search views when
+  facet source wasn't saved.
+- #3181936 by drunken monkey: Fixed tests on Drupal 9.1.x HEAD.
+
 Search API 1.18 (2020-10-22):
 -----------------------------
 - #3153153 by mkalkbrenner, cristiroma, drunken monkey: Fixed serialization of

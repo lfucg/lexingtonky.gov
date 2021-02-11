@@ -89,10 +89,13 @@ interface MetatagManagerInterface {
    *   Available group plugins.
    * @param array $included_tags
    *   Available tag plugins.
+   * @param bool $verbose_help
+   *   Whether to include extra help text at the top of the form or keep it
+   *   short.
    *
    * @return array
    *   Render array for metatag form.
    */
-  public function form(array $values, array $element, array $token_types = [], array $included_groups = NULL, array $included_tags = NULL);
+  public function form(array $values, array $element, array $token_types = [], array $included_groups = NULL, array $included_tags = NULL, $verbose_help = FALSE);
 
 }

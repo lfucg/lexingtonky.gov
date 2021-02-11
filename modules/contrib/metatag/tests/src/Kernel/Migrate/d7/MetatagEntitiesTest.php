@@ -120,7 +120,7 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
   public function testMetatag() {
     /** @var \Drupal\node\Entity\Node $node */
     $node = Node::load(998);
-    $this->assertTrue($node instanceof NodeInterface);
+    $this->assertInstanceOf(NodeInterface::class, $node);
     $this->assertTrue($node->hasField('field_metatag'));
     // This should have the "current revision" keywords value, indicating it is
     // the current revision.
@@ -132,7 +132,7 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
     $this->assertSame(serialize($expected), $node->field_metatag->value);
 
     $node = node_revision_load(998);
-    $this->assertTrue($node instanceof NodeInterface);
+    $this->assertInstanceOf(NodeInterface::class, $node);
     $this->assertTrue($node->hasField('field_metatag'));
     // This should have the "old revision" keywords value, indicating it is
     // a non-current revision.
@@ -145,7 +145,7 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
 
     /** @var \Drupal\user\Entity\User $user */
     $user = User::load(2);
-    $this->assertTrue($user instanceof UserInterface);
+    $this->assertInstanceOf(UserInterface::class, $user);
     $this->assertTrue($user->hasField('field_metatag'));
     $expected = [
       'keywords' => 'a user',
@@ -155,7 +155,7 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
 
     /** @var \Drupal\taxonomy\Entity\Term $term */
     $term = Term::load(152);
-    $this->assertTrue($term instanceof TermInterface);
+    $this->assertInstanceOf(TermInterface::class, $term);
     $this->assertTrue($term->hasField('field_metatag'));
     $expected = [
       'keywords' => 'a taxonomy',

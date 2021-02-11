@@ -13,7 +13,7 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
  *   description = @Translation("A string provided by <a href=':bing'>Bing</a>, full details are available from the <a href=':verify_url'>Bing online help</a>.", arguments = { ":bing" = "https://www.bing.com/", ":verify_url" = "https://www.bing.com/webmaster/help/how-to-verify-ownership-of-your-site-afcfefc6" }),
  *   name = "msvalidate.01",
  *   group = "site_verification",
- *   weight = 3,
+ *   weight = 2,
  *   type = "label",
  *   secure = FALSE,
  *   multiple = FALSE

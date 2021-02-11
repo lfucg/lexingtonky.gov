@@ -66,6 +66,34 @@ class Robots extends MetaNameBase {
         'noimageindex' => $this->t('noimageindex - Prevent search engines from indexing images on this page.'),
         'notranslate' => $this->t('notranslate - Prevent search engines from offering to translate this page in search results.'),
       ],
+      'index' => [
+        '#states' => [
+          'disabled' => [
+            ':input[name="robots[noindex]"]' => ['checked' => TRUE],
+          ],
+        ],
+      ],
+      'noindex' => [
+        '#states' => [
+          'disabled' => [
+            ':input[name="robots[index]"]' => ['checked' => TRUE],
+          ],
+        ],
+      ],
+      'follow' => [
+        '#states' => [
+          'disabled' => [
+            ':input[name="robots[nofollow]"]' => ['checked' => TRUE],
+          ],
+        ],
+      ],
+      'nofollow' => [
+        '#states' => [
+          'disabled' => [
+            ':input[name="robots[follow]"]' => ['checked' => TRUE],
+          ],
+        ],
+      ],
       '#default_value' => $default_value,
       '#required' => isset($element['#required']) ? $element['#required'] : FALSE,
       '#element_validate' => [[get_class($this), 'validateTag']],

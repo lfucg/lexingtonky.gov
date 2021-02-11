@@ -150,7 +150,7 @@ class MetatagNodeTranslationTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
 
     $xpath = $this->xpath("//meta[@name='description']");
-    $this->assertEqual(count($xpath), 1, 'Exactly one description meta tag found.');
+    $this->assertCount(1, $xpath, 'Exactly one description meta tag found.');
     $value = $xpath[0]->getAttribute('content');
     $this->assertEqual($value, 'French summary.');
 
@@ -170,7 +170,7 @@ class MetatagNodeTranslationTest extends BrowserTestBase {
     $this->drupalGet('es/node/1');
     $this->assertSession()->statusCodeEquals(200);
     $xpath = $this->xpath("//meta[@name='description']");
-    $this->assertEqual(count($xpath), 1, 'Exactly one description meta tag found.');
+    $this->assertCount(1, $xpath, 'Exactly one description meta tag found.');
     $value = $xpath[0]->getAttribute('content');
     $this->assertEqual($value, 'Spanish summary.');
     $this->assertNotEqual($value, 'French summary.');
@@ -192,7 +192,7 @@ class MetatagNodeTranslationTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
 
     $xpath = $this->xpath("//meta[@name='description']");
-    $this->assertEqual(count($xpath), 1, 'Exactly one description meta tag found.');
+    $this->assertCount(1, $xpath, 'Exactly one description meta tag found.');
     $value = $xpath[0]->getAttribute('content');
     $this->assertEqual($value, 'Overridden French description.');
     $this->assertNotEqual($value, 'Spanish summary.');
@@ -207,7 +207,7 @@ class MetatagNodeTranslationTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
 
     $xpath = $this->xpath("//meta[@name='description']");
-    $this->assertEqual(count($xpath), 1, 'Exactly one description meta tag found.');
+    $this->assertCount(1, $xpath, 'Exactly one description meta tag found.');
     $value = $xpath[0]->getAttribute('content');
     $this->assertEqual($value, 'Overridden Spanish description.');
     $this->assertNotEqual($value, 'Spanish summary.');

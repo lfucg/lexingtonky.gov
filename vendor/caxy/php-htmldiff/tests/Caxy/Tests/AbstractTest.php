@@ -2,9 +2,11 @@
 
 namespace Caxy\Tests;
 
-abstract class AbstractTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+abstract class AbstractTest extends TestCase
 {
-    protected function stripExtraWhitespaceAndNewLines($text)
+    protected function stripExtraWhitespaceAndNewLines(string $text)
     {
         return trim(
             preg_replace(

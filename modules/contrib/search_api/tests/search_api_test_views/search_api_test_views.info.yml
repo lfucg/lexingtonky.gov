@@ -11,7 +11,7 @@ dependencies:
 core_version_requirement: ^8.8 || ^9
 hidden: true
 
-# Information added by Drupal.org packaging script on 2020-10-22
-version: '8.x-1.18'
+# Information added by Drupal.org packaging script on 2021-02-01
+version: '8.x-1.19'
 project: 'search_api'
-datestamp: 1603359377
+datestamp: 1612192043

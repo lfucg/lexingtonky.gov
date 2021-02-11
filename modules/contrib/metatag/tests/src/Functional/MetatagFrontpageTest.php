@@ -79,13 +79,13 @@ class MetatagFrontpageTest extends BrowserTestBase {
     foreach ($edit as $metatag => $metatag_value) {
       $xpath = $this->xpath("//meta[@name='" . $metatag . "']");
       if ($metatag == 'title') {
-        $this->assertEqual(count($xpath), 0, 'Title meta tag not found.');
+        $this->assertCount(0, $xpath, 'Title meta tag not found.');
         $xpath = $this->xpath("//title");
-        $this->assertEqual(count($xpath), 1, 'Head title tag found.');
+        $this->assertCount(1, $xpath, 'Head title tag found.');
         $value = $xpath[0]->getText();
       }
       else {
-        $this->assertEqual(count($xpath), 1, 'Exactly one ' . $metatag . ' meta tag found.');
+        $this->assertCount(1, $xpath, 'Exactly one ' . $metatag . ' meta tag found.');
         $value = $xpath[0]->getAttribute('content');
       }
       $this->assertEqual($value, $metatag_value);
@@ -97,13 +97,13 @@ class MetatagFrontpageTest extends BrowserTestBase {
     foreach ($edit as $metatag => $metatag_value) {
       $xpath = $this->xpath("//meta[@name='" . $metatag . "']");
       if ($metatag == 'title') {
-        $this->assertEqual(count($xpath), 0, 'Title meta tag not found.');
+        $this->assertCount(0, $xpath, 'Title meta tag not found.');
         $xpath = $this->xpath("//title");
-        $this->assertEqual(count($xpath), 1, 'Head title tag found.');
+        $this->assertCount(1, $xpath, 'Head title tag found.');
         $value = $xpath[0]->getText();
       }
       else {
-        $this->assertEqual(count($xpath), 1, 'Exactly one ' . $metatag . ' meta tag found.');
+        $this->assertCount(1, $xpath, 'Exactly one ' . $metatag . ' meta tag found.');
         $value = $xpath[0]->getAttribute('content');
       }
       $this->assertEqual($value, $metatag_value);
@@ -124,7 +124,7 @@ class MetatagFrontpageTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
     foreach ($edit as $metatag => $metatag_value) {
       $xpath = $this->xpath("//meta[@name='" . $metatag . "']");
-      $this->assertEqual(count($xpath), 1, 'Exactly one ' . $metatag . ' meta tag found.');
+      $this->assertCount(1, $xpath, 'Exactly one ' . $metatag . ' meta tag found.');
       $value = $xpath[0]->getAttribute('content');
       $this->assertEqual($value, $metatag_value);
     }
@@ -154,13 +154,13 @@ class MetatagFrontpageTest extends BrowserTestBase {
     foreach ($edit as $metatag => $metatag_value) {
       $xpath = $this->xpath("//meta[@name='" . $metatag . "']");
       if ($metatag == 'title') {
-        $this->assertEqual(count($xpath), 0, 'Title meta tag not found.');
+        $this->assertCount(0, $xpath, 'Title meta tag not found.');
         $xpath = $this->xpath("//title");
-        $this->assertEqual(count($xpath), 1, 'Head title tag found.');
+        $this->assertCount(1, $xpath, 'Head title tag found.');
         $value = $xpath[0]->getText();
       }
       else {
-        $this->assertEqual(count($xpath), 1, 'Exactly one ' . $metatag . ' meta tag found.');
+        $this->assertCount(1, $xpath, 'Exactly one ' . $metatag . ' meta tag found.');
         $value = $xpath[0]->getAttribute('content');
       }
       $this->assertEqual($value, $metatag_value);
@@ -192,13 +192,13 @@ class MetatagFrontpageTest extends BrowserTestBase {
     foreach ($edit as $metatag => $metatag_value) {
       $xpath = $this->xpath("//meta[@name='" . $metatag . "']");
       if ($metatag == 'title') {
-        $this->assertEqual(count($xpath), 0, 'Title meta tag not found.');
+        $this->assertCount(0, $xpath, 'Title meta tag not found.');
         $xpath = $this->xpath("//title");
-        $this->assertEqual(count($xpath), 1, 'Head title tag found.');
+        $this->assertCount(1, $xpath, 'Head title tag found.');
         $value = $xpath[0]->getText();
       }
       else {
-        $this->assertEqual(count($xpath), 1, 'Exactly one ' . $metatag . ' meta tag found.');
+        $this->assertCount(1, $xpath, 'Exactly one ' . $metatag . ' meta tag found.');
         $value = $xpath[0]->getAttribute('content');
       }
       $this->assertEqual($value, $metatag_value);

@@ -136,7 +136,7 @@ class TreeTest extends TokenTestBase {
    */
   protected function getTokenTreeUrl($options = []) {
     $this->drupalGet('token_module_test/browse');
-    $this->assertTitle('Available Tokens | Drupal');
+    $this->assertSession()->titleEquals('Available Tokens | Drupal');
     $links = $this->xpath('//a[contains(@href, :href)]/@href', [':href' => 'token/tree']);
     $link = $this->getAbsoluteUrl(current($links)->getText());
     if (!empty($options)) {

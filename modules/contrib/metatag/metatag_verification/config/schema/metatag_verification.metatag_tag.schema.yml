@@ -11,6 +11,9 @@ metatag.metatag_tag.baidu:
 metatag.metatag_tag.bing:
   type: label
   label: 'Site validation: Bing'
+metatag.metatag_tag.facebook_domain_verification:
+  type: label
+  label: 'Site validation: Facebook'
 metatag.metatag_tag.google:
   type: label
   label: 'Site validation: Google'

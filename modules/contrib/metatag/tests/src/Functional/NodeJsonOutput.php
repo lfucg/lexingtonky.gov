@@ -64,10 +64,10 @@ class NodeJsonOutput extends BrowserTestBase {
 
     // Decode the JSON output.
     $response = $this->getRawContent();
-    $this->assertTrue(!empty($response));
+    $this->assertNotEmpty($response);
     $json = json_decode($response);
     $this->verbose($json, 'JSON output');
-    $this->assertTrue(!empty($json));
+    $this->assertNotEmpty($json);
 
     // Confirm the JSON object's values.
     $this->assertTrue(isset($json->nid));

@@ -6,6 +6,8 @@ id: d7_metatag_field_instance_widget_settings
 label: Metatag field instance widget settings
 migration_tags:
   - Drupal 7
+  - Configuration
+deriver: Drupal\metatag\Plugin\migrate\source\d7\MetatagFieldInstanceDeriver
 source:
   plugin: d7_metatag_field_instance
   source_module: metatag

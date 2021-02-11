@@ -76,8 +76,8 @@ class MetatagViewsEditForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Get the parameters from request.
-    $view_id = \Drupal::request()->get('view_id');
-    $display_id = \Drupal::request()->get('display_id');
+    $view_id = $this->getRequest()->get('view_id');
+    $display_id = $this->getRequest()->get('display_id');
 
     // Get meta tags from the view entity.
     $metatags = [];
@@ -110,13 +110,13 @@ class MetatagViewsEditForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function form(array $values, array $element, array $token_types = [], array $included_groups = NULL, array $included_tags = NULL) {
+  public function form(array $values, array $element, array $token_types = [], array $included_groups = NULL, array $included_tags = NULL, $verbose_help = FALSE) {
     // Add the outer fieldset.
     $element += [
       '#type' => 'details',
     ];
 
-    $element += $this->tokenService->tokenBrowser($token_types);
+    $element += $this->tokenService->tokenBrowser($token_types, $verbose_help);
 
     $groups_and_tags = $this->sortedGroupsWithTags();
 

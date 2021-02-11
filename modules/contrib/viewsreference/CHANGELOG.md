@@ -83,3 +83,7 @@ Updates for Drupal 9
 
 8.x-1.6
 Variable not defined: https://www.drupal.org/project/viewsreference/issues/3030943
+
+8.x-1.7
+Non-existent entity manager: https://www.drupal.org/project/viewsreference/issues/3191175
+Merge changes: https://www.drupal.org/project/viewsreference/issues/3174304

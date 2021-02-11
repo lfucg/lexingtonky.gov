@@ -576,19 +576,23 @@ function search_api_form_views_exposed_form_alter(&$form, FormStateInterface $fo
     && $query_plugin instanceof SearchApiQuery
     && \Drupal::moduleHandler()->moduleExists('facets');
   if ($preserve_facets) {
-    // Retrieve the facet source.
+    $filter_key = 'f';
+
+    // Attempt to retrieve the facet source to use the actual facets filter
+    // parameter as configured by the admin. (Facet source config entities are
+    // not always actually saved in the storage, if the admin didn't change
+    // their settings.)
     $query = $query_plugin->getSearchApiQuery();
     $display_id = $query->getSearchId(FALSE);
     $facet_source_id = str_replace(':', '__', 'search_api:' . $display_id);
     $facet_source = \Drupal::entityTypeManager()
       ->getStorage('facets_facet_source')
       ->load($facet_source_id);
-    if (!$facet_source) {
-      return;
+    if ($facet_source) {
+      $filter_key = $facet_source->getFilterKey() ?: 'f';
     }
 
     // Get the active facet filters from the query parameters.
-    $filter_key = $facet_source->getFilterKey() ?: 'f';
     $filters = \Drupal::request()->query->get($filter_key, []);
 
     // Do not iterate over facet filters if the parameter is not an array.

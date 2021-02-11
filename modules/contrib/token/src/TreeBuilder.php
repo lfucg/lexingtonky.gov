@@ -72,10 +72,6 @@ class TreeBuilder implements TreeBuilderInterface {
     ];
 
     // @todo Find a way to use the render cache for this.
-    /*if ($cached_output = token_render_cache_get($element)) {
-      return $cached_output;
-    }*/
-
     $tree_options = [
       'flat' => TRUE,
       'restricted' => $options['show_restricted'],
@@ -232,7 +228,8 @@ class TreeBuilder implements TreeBuilderInterface {
         // parent.
         $token_parents[] = $token_type;
       }
-      elseif (in_array($token, array_slice($token_parents, 1), TRUE)) {
+      // The 'entity' token will be repeated on nested entity reference fields.
+      elseif ($token !== 'entity' && in_array($token, array_slice($token_parents, 1), TRUE)) {
         // Prevent duplicate recursive tokens. For example, this will prevent
         // the tree from generating the following tokens or deeper:
         // [comment:parent:parent]

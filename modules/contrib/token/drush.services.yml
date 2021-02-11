@@ -1,5 +1,5 @@
 services:
-  devel.command:
+  token.commands:
     class: Drupal\token\Commands\TokenCommands
     arguments:
       - '@module_handler'

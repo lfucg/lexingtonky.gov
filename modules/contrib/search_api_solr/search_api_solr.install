@@ -19,20 +19,20 @@ function search_api_solr_requirements($phase) {
     }
   }
   elseif ($phase == 'runtime') {
-    if (strtotime('1 January 2021') < time()) {
+    if (strtotime('1 January 2022') < time()) {
       $ret['search_api_solr_eol'] = [
         'title' => t('Search API Solr 8.x-1.x'),
-        'value' => t('The 1.x version reached EOL at 2020-12-31!'),
-        'description' => t('Search API Solr 8.x-1.x is unsupported. Upgrade to 8.x-3.x or newer.'),
+        'value' => t('The 1.x version reached EOL at 2021-12-31!'),
+        'description' => t('Search API Solr 8.x-1.x is unsupported. Upgrade to 4.1.x or newer.'),
         'severity' => REQUIREMENT_ERROR,
       ];
     }
     elseif (\Drupal::moduleHandler()->moduleExists('acquia_search')) {
-      if (strtotime('15 October 2020') < time()) {
+      if (strtotime('15 October 2021') < time()) {
         $ret['search_api_solr_eol'] = [
           'title' => t('Search API Solr 8.x-1.x'),
-          'value' => t('The 1.x version will reach EOL at 2020-12-31!'),
-          'description' => t('The support for Search API Solr 8.x-1.x ends 2020-12-31. Ensure to upgrade to 4.x or newer before that date.'),
+          'value' => t('The 1.x version will reach EOL at 2021-12-31!'),
+          'description' => t('The support for Search API Solr 8.x-1.x ends 2021-12-31. Ensure to upgrade to 4.1.x or newer before that date.'),
           'severity' => REQUIREMENT_WARNING,
         ];
       }
@@ -40,8 +40,8 @@ function search_api_solr_requirements($phase) {
     else {
       $ret['search_api_solr_eol'] = [
         'title' => t('Search API Solr 8.x-1.x'),
-        'value' => t('The 1.x version will reach EOL at 2020-12-31!'),
-        'description' => t('The support for Search API Solr 8.x-1.x ends 2020-12-31. Ensure to upgrade to 4.x or newer before that date.'),
+        'value' => t('The 1.x version will reach EOL at 2021-12-31!'),
+        'description' => t('The support for Search API Solr 8.x-1.x ends 2021-12-31. Ensure to upgrade to 4.1.x or newer before that date.'),
         'severity' => REQUIREMENT_WARNING,
       ];
     }

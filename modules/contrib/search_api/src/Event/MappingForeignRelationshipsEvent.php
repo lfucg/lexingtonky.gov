@@ -67,6 +67,8 @@ final class MappingForeignRelationshipsEvent extends Event {
    *   A (numerically keyed) array of foreign relationship mappings. Each
    *   sub-array here represents a single known relationship. Such sub-arrays
    *   will have the following structure:
+   *   - datasource: (string) The ID of the datasource which contains this
+   *     relationship.
    *   - entity_type: (string) Entity type that is referred to from the index.
    *   - bundles: (array) Optional array of particular entity bundles that are
    *     referred to from the index. Empty array here means index refers to

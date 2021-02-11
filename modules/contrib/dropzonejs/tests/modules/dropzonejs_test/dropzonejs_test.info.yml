@@ -9,7 +9,7 @@ dependencies:
  - dropzonejs:dropzonejs
  - dropzonejs:dropzonejs_eb_widget
 
-# Information added by Drupal.org packaging script on 2020-09-17
-version: '8.x-2.3'
+# Information added by Drupal.org packaging script on 2021-01-15
+version: '8.x-2.4'
 project: 'dropzonejs'
-datestamp: 1600310563
+datestamp: 1610726520

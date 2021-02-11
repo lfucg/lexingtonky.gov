@@ -63,21 +63,6 @@ class SearchApiDate extends Date {
       return TRUE;
     }
 
-    // Unfortunately, this is necessary due to a bug in our parent filter. See
-    // #2704077.
-    if (!empty($this->options['expose']['identifier'])) {
-      $value = &$input[$this->options['expose']['identifier']];
-      if (!is_array($value)) {
-        $value = [
-          'value' => $value,
-        ];
-      }
-      $value += [
-        'min' => '',
-        'max' => '',
-      ];
-    }
-
     $return = parent::acceptExposedInput($input);
 
     if (!$return) {

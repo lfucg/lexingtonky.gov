@@ -13,7 +13,7 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
  *   description = @Translation("A string provided by <a href=':baidu'>Baidu</a>.", arguments = { ":baidu"  = "https://www.baidu.com/" }),
  *   name = "baidu-site-verification",
  *   group = "site_verification",
- *   weight = 2,
+ *   weight = 1,
  *   type = "label",
  *   secure = FALSE,
  *   multiple = FALSE

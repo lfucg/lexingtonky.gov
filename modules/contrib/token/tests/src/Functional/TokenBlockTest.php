@@ -51,9 +51,9 @@ class TokenBlockTest extends TokenTestBase {
     $this->drupalGet($block->toUrl());
     // Ensure that the link to available tokens is present and correctly
     // positioned.
-    $this->assertLink('Browse available tokens.');
+    $this->assertSession()->linkExists('Browse available tokens.');
     $this->assertText('This field supports tokens. Browse available tokens.');
-    $this->drupalPostForm(NULL, [], t('Save block'));
+    $this->drupalPostForm(NULL, [], 'Save block');
     // Ensure token validation is working on the block.
     $this->assertText('Title is using the following invalid tokens: [user:name].');
 
@@ -68,6 +68,6 @@ class TokenBlockTest extends TokenTestBase {
     $node = $this->drupalCreateNode(['title' => "Site's first node"]);
     $this->drupalGet('node/' . $node->id());
     // The apostraphe should only be escaped once.
-    $this->assertRaw("Site&#039;s first node block title");
+    $this->assertSession()->responseContains("Site&#039;s first node block title");
   }
 }

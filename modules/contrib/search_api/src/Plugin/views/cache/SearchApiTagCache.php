@@ -3,6 +3,7 @@
 namespace Drupal\search_api\Plugin\views\cache;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\views\Plugin\views\cache\Tag;
@@ -113,6 +114,17 @@ class SearchApiTagCache extends Tag {
     }
 
     return $tags;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function alterCacheMetadata(CacheableMetadata $cache_metadata) {
+    // Allow modules that alter the query to add their cache metadata to the
+    // view.
+    $query = $this->getQuery()->getSearchApiQuery();
+    $query->preExecute();
+    $cache_metadata->addCacheableDependency($query);
   }
 
 }

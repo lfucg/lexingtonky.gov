@@ -6,6 +6,8 @@ id: d7_metatag_field
 label: Metatag field
 migration_tags:
   - Drupal 7
+  - Configuration
+deriver: Drupal\metatag\Plugin\migrate\source\d7\MetatagFieldDeriver
 source:
   plugin: d7_metatag_field
   source_module: metatag

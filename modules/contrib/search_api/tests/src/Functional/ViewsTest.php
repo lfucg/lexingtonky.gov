@@ -309,6 +309,9 @@ class ViewsTest extends SearchApiBrowserTestBase {
 
     $this->regressionTests();
 
+    // Check special functionality that requires editing the view.
+    $this->checkExposedSearchFields();
+
     // Make sure there was a display plugin created for this view.
     /** @var \Drupal\search_api\Display\DisplayInterface[] $displays */
     $displays = \Drupal::getContainer()
@@ -373,6 +376,7 @@ class ViewsTest extends SearchApiBrowserTestBase {
   protected function regressionTests() {
     $this->regressionTest2869121();
     $this->regressionTest3031991();
+    $this->regressionTest3136277();
   }
 
   /**
@@ -456,6 +460,59 @@ class ViewsTest extends SearchApiBrowserTestBase {
       'search_api_fulltext_2_op' => 'not',
     ];
     $this->checkResults($query, [4], 'Search with multiple fulltext filters');
+  }
+
+  /**
+   * Tests that query preprocessing works correctly for block views.
+   *
+   * @see https://www.drupal.org/node/3136277
+   */
+  protected function regressionTest3136277() {
+    $block = $this->drupalPlaceBlock('views_block:search_api_test_block_view-block_1', [
+      'region' => 'content',
+    ]);
+    /** @var \Drupal\search_api\IndexInterface $index */
+    $index = Index::load($this->indexId);
+    $processor = \Drupal::getContainer()
+      ->get('search_api.plugin_helper')
+      ->createProcessorPlugin($index, 'ignorecase');
+    $index->addProcessor($processor)->save();
+
+    $this->drupalGet('<front>');
+    $this->assertSession()->pageTextContains('Search API Test Block View: Found 4 items');
+
+    $index->removeProcessor('ignorecase')->save();
+    $block->delete();
+  }
+
+  /**
+   * Verifies that exposed fulltext fields work correctly.
+   */
+  protected function checkExposedSearchFields() {
+    $key = 'display.default.display_options.filters.search_api_fulltext.expose.expose_fields';
+    $view = \Drupal::configFactory()
+      ->getEditable('views.view.search_api_test_view');
+    $view->set($key, TRUE);
+    $view->save();
+
+    $query = [
+      'search_api_fulltext' => 'foo',
+      'search_api_fulltext_searched_fields' => [
+        'name',
+      ],
+    ];
+    $this->checkResults($query, [1, 2, 4], 'Search for results in name field only');
+
+    $query = [
+      'search_api_fulltext' => 'foo',
+      'search_api_fulltext_searched_fields' => [
+        'body',
+      ],
+    ];
+    $this->checkResults($query, [5], 'Search for results in body field only');
+
+    $view->set($key, FALSE);
+    $view->save();
   }
 
   /**

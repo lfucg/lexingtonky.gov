@@ -1008,12 +1008,18 @@ class Index extends ConfigEntityBase implements IndexInterface {
       $description = 'This hook is deprecated in search_api:8.x-1.14 and is removed from search_api:2.0.0. Please use the "search_api.items_indexed" event instead. See https://www.drupal.org/node/3059866';
       \Drupal::moduleHandler()->invokeAllDeprecated($description, 'search_api_items_indexed', [$this, $processed_ids]);
 
-      /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
       $dispatcher = \Drupal::getContainer()->get('event_dispatcher');
       $dispatcher->dispatch(SearchApiEvents::ITEMS_INDEXED, new ItemsIndexedEvent($this, $processed_ids));
 
       // Clear search api list caches.
       Cache::invalidateTags(['search_api_list:' . $this->id]);
+    }
+
+    // When indexing via Drush, multiple iterations of a batch will happen in
+    // the same PHP process, so the static cache will quickly fill up. To
+    // prevent this, clear it after each batch of items gets indexed.
+    if (function_exists('drush_backend_batch_process') && batch_get()) {
+      \Drupal::getContainer()->get('entity.memory_cache')->deleteAll();
     }
 
     return $processed_ids;

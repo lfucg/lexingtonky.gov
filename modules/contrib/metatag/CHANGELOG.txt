@@ -1,3 +1,44 @@
+Metatag 8.x-1.15, 2020-12-05
+----------------------------
+#3165112 by Wim Leers, tim.plunkett: Metatag migrations should be tagged
+  "Configuration".
+#2782797 by DamienMcKenna, Rolf van de Krol, michaelpetri, mvwensen, mxr576,
+  Alex G: Allow each tag to have its own permission (merge Metatag Access).
+#3180470 by SivaprasadC: Typos in couple of files.
+#3169952 by Wim Leers, tim.plunkett: Derive metatag migrations by entity type
+  (and bundle).
+#3171660 by richgerdes, DamienMcKenna: Migration Plugin Alter breaks with
+  commerce_migrate_commerce.
+#3176513 by mglaman: \Drupal\metatag\MetatagManager::defaultTagsFromEntity
+  should not return null.
+#3166569 by munish.kumar, yogeshmpawar, Dom.: Add Facebook verification meta
+  header.
+#2994433 by DamienMcKenna, ChandeepKhosa, vishnukumar, Berdir, joakland,
+  pdenooijer, benstjohn, muranod: Automatically parse URLs from image field
+  tokens.
+#3171302 by ankithashetty, DamienMcKenna: \Drupal calls should be avoided in
+  classes, use dependency injection instead.
+#2996883 by rokzabukovec, mrinalini9, thejimbirch, DamienMcKenna, Nchase,
+  Schwarz Developing: Sorting the output of meta tags.
+#3135365 by novchuk.v, mero.S: Replace assertions involving calls to empty()
+  with assertEmpty()/assertNotEmpty()/assertArrayNotHasKey().
+#2782797 by DamienMcKenna: Added missing $defaultTheme test variable.
+#3159192 by heddn: Hide from translation system from unsupported entities.
+#3175269 by mbovan, DamienMcKenna: Pass optional bubbleable metadata parameter
+  to generateRawElements to avoid issues with early rendering and JSON:API.
+#3154416 by novchuk.v: Replace assert* involving an instanceof operator with
+  assertInstanceOf()/assertNotInstanceOf().
+#3170298 by thejimbirch: Provide link to Facebook Open Graph debugger.
+#3136470 by novchuk.v: Replace assertEqual()/assertSame() with count() with
+  assertCount().
+#3108052 by Berdir, SpadXIII: metatag_get_default_tags() does not revert config
+  override language.
+#2862747 by JeroenT, DanielVeza, rwohleb, joshua.boltz, henrikakselsen,
+  Vitalyos, Phil Wolstenholme: Tokens to access individual meta tag values.
+#3154513 by rokzabukovec: Exclusive robots metatags (index, noindex, follow,
+  nofollow).
+
+
 Metatag 8.x-1.14, 2020-08-11
 ----------------------------
 #3129664 by phenaproxima: Fix failure in MetatagPageManagerTest.

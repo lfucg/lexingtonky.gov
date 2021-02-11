@@ -8,6 +8,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
+use Drupal\search_api\Utility\TrackingHelper;
 use Drupal\search_api\Utility\Utility;
 
 /**
@@ -76,6 +77,7 @@ class ReferencedEntitiesReindexingTest extends KernelTestBase {
             'selected' => ['parent'],
           ],
         ],
+        'entity:user' => [],
       ],
       'server' => 'server',
       'field_settings' => [
@@ -290,6 +292,56 @@ class ReferencedEntitiesReindexingTest extends KernelTestBase {
     }
 
     return $entities;
+  }
+
+  /**
+   * Tests whether relationships are correctly separated between datasources.
+   *
+   * @see https://www.drupal.org/node/3178941
+   */
+  public function testUnrelatedDatasourceUnaffected() {
+    // First, check whether the tracking helper correctly includes "datasource"
+    // keys with all foreign relationship entries.
+    $tracking_helper = \Drupal::getContainer()
+      ->get('search_api.tracking_helper');
+    $method = new \ReflectionMethod(TrackingHelper::class, 'getForeignEntityRelationsMap');
+    $method->setAccessible(TRUE);
+    /** @see \Drupal\search_api\Utility\TrackingHelper::getForeignEntityRelationsMap() */
+    $map = $method->invoke($tracking_helper, $this->index);
+    $expected = [
+      [
+        'datasource' => 'entity:node',
+        'entity_type' => 'node',
+        // Note: It's unspecified that this array has string keys, only its
+        // values are important. Still, it's easier to just reflect the current
+        // implementation, when checking for equality.
+        'bundles' => ['child' => 'child'],
+        'property_path_to_foreign_entity' => 'entity_reference',
+        'field_name' => 'indexed',
+      ],
+    ];
+    $this->assertEquals($expected, $map);
+
+    // Then, check whether datasources correctly ignore relationships from other
+    // datasources, or that they at least don't lead to an exception/error.
+    $datasource = $this->index->getDatasource('entity:user');
+    $entities = $this->createEntitiesFromMap([
+      'child' => [
+        'title' => 'Child',
+        'indexed' => 'Indexed value',
+        'not_indexed' => 'Not indexed value.',
+      ],
+    ], [], 'child');
+    $child = reset($entities);
+    $original_child = clone $child;
+    $child->get('indexed')->setValue(['New value']);
+    $result = $datasource->getAffectedItemsForEntityChange($child, $map, $original_child);
+    $this->assertEquals([], $result);
+
+    // Change foreign relationships map slightly to trigger #3178941 on purpose.
+    $map[0]['property_path_to_foreign_entity'] = 'entity_reference:entity';
+    $result = $datasource->getAffectedItemsForEntityChange($child, $map, $original_child);
+    $this->assertEquals([], $result);
   }
 
 }

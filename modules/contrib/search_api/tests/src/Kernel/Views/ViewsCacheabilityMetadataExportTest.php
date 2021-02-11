@@ -155,6 +155,7 @@ class ViewsCacheabilityMetadataExportTest extends KernelTestBase {
     // Activate the alter hook and resave the view so it will recalculate the
     // cacheability metadata.
     $this->state->set('search_api_test_views.alter_query_cacheability_metadata', TRUE);
+    $view = $this->getView();
     $view->save();
 
     // Check that the altered metadata is now present in the view and the

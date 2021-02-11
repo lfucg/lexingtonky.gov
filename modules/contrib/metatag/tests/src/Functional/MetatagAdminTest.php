@@ -188,13 +188,13 @@ class MetatagAdminTest extends BrowserTestBase {
 
     // Check through the values that are in the 'select' list, make sure that
     // unwanted items are not present.
-    $this->assertFalse(isset($types['block_content']), 'Custom block entities are not supported.');
-    $this->assertFalse(isset($types['comment']), 'Comment entities are not supported.');
-    $this->assertFalse(isset($types['menu_link_content']), 'Menu link entities are not supported.');
-    $this->assertFalse(isset($types['shortcut']), 'Shortcut entities are not supported.');
-    $this->assertTrue(isset($types['node__page']), 'Nodes are supported.');
-    $this->assertTrue(isset($types['user__user']), 'Users are supported.');
-    $this->assertTrue(isset($types['entity_test']), 'Test entities are supported.');
+    $this->assertArrayNotHasKey('block_content', $types, 'Custom block entities are not supported.');
+    $this->assertArrayNotHasKey('comment', $types, 'Comment entities are not supported.');
+    $this->assertArrayNotHasKey('menu_link_content', $types, 'Menu link entities are not supported.');
+    $this->assertArrayNotHasKey('shortcut', $types, 'Shortcut entities are not supported.');
+    $this->assertArrayHasKey('node__page', $types, 'Nodes are supported.');
+    $this->assertArrayHasKey('user__user', $types, 'Users are supported.');
+    $this->assertArrayHasKey('entity_test', $types, 'Test entities are supported.');
   }
 
   /**

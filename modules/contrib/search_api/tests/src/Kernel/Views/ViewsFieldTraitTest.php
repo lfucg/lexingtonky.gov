@@ -103,7 +103,7 @@ class ViewsFieldTraitTest extends KernelTestBase {
         'aggregated_field' => [
           'label' => 'Aggregated field',
           'property_path' => 'aggregated_field',
-          'type' => 'text',
+          'type' => 'string',
           'configuration' => [
             'type' => 'union',
             'fields' => [

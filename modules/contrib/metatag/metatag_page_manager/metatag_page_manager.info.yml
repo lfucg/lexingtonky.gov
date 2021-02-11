@@ -7,7 +7,7 @@ dependencies:
   - page_manager:page_manager
   - metatag:metatag
 
-# Information added by Drupal.org packaging script on 2020-08-11
-version: '8.x-1.14'
+# Information added by Drupal.org packaging script on 2020-12-05
+version: '8.x-1.15'
 project: 'metatag'
-datestamp: 1597183854
+datestamp: 1607188982

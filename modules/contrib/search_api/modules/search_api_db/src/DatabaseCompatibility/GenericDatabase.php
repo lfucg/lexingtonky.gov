@@ -4,6 +4,7 @@ namespace Drupal\search_api_db\DatabaseCompatibility;
 
 use Drupal\Component\Transliteration\TransliterationInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\SelectInterface;
 
 /**
  * Represents any database for which no specifics are known.
@@ -66,6 +67,14 @@ class GenericDatabase implements DatabaseCompatibilityHandlerInterface {
       return $value;
     }
     return mb_strtolower($this->transliterator->transliterate($value));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function orderByRandom(SelectInterface $query) {
+    $alias = $query->addExpression('random()', 'random_order_field');
+    $query->orderBy($alias);
   }
 
 }

@@ -5,7 +5,7 @@ core_version_requirement: ^8 || ^9
 package: Views
 type: module
 
-# Information added by Drupal.org packaging script on 2020-10-01
-version: '8.x-1.6'
+# Information added by Drupal.org packaging script on 2021-01-13
+version: '8.x-1.7'
 project: 'viewsreference'
-datestamp: 1601529308
+datestamp: 1610571204
