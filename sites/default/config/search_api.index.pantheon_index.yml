@@ -19,39 +19,6 @@ name: 'Pantheon Index'
 description: ''
 read_only: false
 field_settings:
-  url:
-    label: URI
-    property_path: search_api_url
-    type: text
-    boost: !!float 3
-  rendered_item:
-    label: 'Rendered HTML output'
-    property_path: rendered_item
-    type: text
-    configuration:
-      roles:
-        anonymous: anonymous
-      view_mode:
-        'entity:node':
-          article: teaser
-          board_commission: teaser
-          event: teaser
-          final_order: ''
-          landing_page: teaser
-          meeting: teaser
-          news_article: teaser
-          organization_page: teaser
-          page: teaser
-          site_wide_notice: ''
-  title:
-    label: Title
-    datasource_id: 'entity:node'
-    property_path: title
-    type: text
-    boost: !!float 8
-    dependencies:
-      module:
-        - node
   body:
     label: Body
     datasource_id: 'entity:node'
@@ -81,6 +48,14 @@ field_settings:
     dependencies:
       config:
         - field.storage.node.field_keywords
+  field_section_body:
+    label: 'Section body'
+    datasource_id: 'entity:paragraph'
+    property_path: field_section_body
+    type: text
+    dependencies:
+      config:
+        - field.storage.paragraph.field_section_body
   name:
     label: 'Keywords » Taxonomy term » Name'
     datasource_id: 'entity:node'
@@ -92,14 +67,39 @@ field_settings:
         - field.storage.node.field_keywords
       module:
         - taxonomy
-  field_section_body:
-    label: 'Section body'
-    datasource_id: 'entity:paragraph'
-    property_path: field_section_body
+  rendered_item:
+    label: 'Rendered HTML output'
+    property_path: rendered_item
     type: text
+    configuration:
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:node':
+          article: teaser
+          board_commission: teaser
+          event: teaser
+          final_order: ''
+          landing_page: teaser
+          meeting: teaser
+          news_article: teaser
+          organization_page: teaser
+          page: teaser
+          site_wide_notice: ''
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: text
+    boost: !!float 8
     dependencies:
-      config:
-        - field.storage.paragraph.field_section_body
+      module:
+        - node
+  url:
+    label: URI
+    property_path: search_api_url
+    type: text
+    boost: !!float 3
 datasource_settings:
   'entity:node':
     bundles:
@@ -125,48 +125,68 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  stemmer:
-    all_fields: false
-    fields:
-      - url
-      - rendered_item
-      - title
-      - body
-      - field_section_body
-    exceptions:
-      pva: property+valuation+administrator
-      GIS: geographic+information+services
-      gis: geographic+information+services
-      ESP: extended+school+program
-      esp: extended+school+program
-      REAL: recreation+enrichment+and+learning+program
-      GTV3: lextv
-      gtv3: lextv
-      gtv: lextv
-      bid: current+bids+quotes
-      Form+222: current+year+occupational+tax+forms
-      form+222: current+year+occupational+tax+forms
-      222: current+year+occupational+tax+forms
-      noise: code+of+ordinances+and+zoning+ordinance
-      RFP: current+bids+quotes
-      rfp: current+bids+quotes
-      PDR: purchase+of+development+rights
-      pdr: purchase+of+development+rights
-      228: current+year+occupational+tax+forms
-      bail: inmate+information
-      DMV: county+clerk
-      dmv: county+clerk
-      Cafr: accounting
-      cafr: accounting
-      garbage: waste+management
-      trash: waste+management
-    weights:
-      preprocess_index: -49
-      preprocess_query: -49
-  rendered_item: {  }
   add_url: {  }
   aggregated_field: {  }
   entity_status: {  }
+  html_filter:
+    all_fields: false
+    fields:
+      - body
+      - field_section_body
+      - rendered_item
+      - title
+      - url
+    title: true
+    alt: true
+    tags:
+      b: 2
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+    weights:
+      preprocess_index: -47
+      preprocess_query: -47
+  language_with_fallback: {  }
+  rendered_item: {  }
+  stemmer:
+    all_fields: false
+    fields:
+      - body
+      - field_section_body
+      - rendered_item
+      - title
+      - url
+    exceptions:
+      Cafr: accounting
+      DMV: county+clerk
+      ESP: extended+school+program
+      Form+222: current+year+occupational+tax+forms
+      GIS: geographic+information+services
+      GTV3: lextv
+      PDR: purchase+of+development+rights
+      REAL: recreation+enrichment+and+learning+program
+      RFP: current+bids+quotes
+      bail: inmate+information
+      bid: current+bids+quotes
+      cafr: accounting
+      dmv: county+clerk
+      esp: extended+school+program
+      form+222: current+year+occupational+tax+forms
+      garbage: waste+management
+      gis: geographic+information+services
+      gtv: lextv
+      gtv3: lextv
+      noise: code+of+ordinances+and+zoning+ordinance
+      pdr: purchase+of+development+rights
+      pva: property+valuation+administrator
+      rfp: current+bids+quotes
+      trash: waste+management
+      222: current+year+occupational+tax+forms
+      228: current+year+occupational+tax+forms
+    weights:
+      preprocess_index: -49
+      preprocess_query: -49
   type_boost:
     boosts:
       'entity:node':
@@ -184,9 +204,9 @@ processor_settings:
       'entity:paragraph':
         datasource_boost: !!float 1
         bundle_boosts:
+          paragraph_sidebar_section: !!float 0
           paragraphs_media_contact: !!float 0
           paragraphs_page_section: !!float 0
-          paragraph_sidebar_section: !!float 0
       'entity:taxonomy_term':
         datasource_boost: !!float 5
         bundle_boosts:
@@ -196,26 +216,6 @@ processor_settings:
           tags: !!float 0
     weights:
       preprocess_index: -48
-  language_with_fallback: {  }
-  html_filter:
-    all_fields: false
-    fields:
-      - url
-      - rendered_item
-      - title
-      - body
-      - field_section_body
-    title: true
-    alt: true
-    tags:
-      h1: 5
-      h2: 3
-      h3: 2
-      strong: 2
-      b: 2
-    weights:
-      preprocess_index: -47
-      preprocess_query: -47
 tracker_settings:
   default:
     indexing_order: fifo

@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.page.body
+    - field.field.node.page.field_econdev_hero_text
     - field.field.node.page.field_keywords
     - field.field.node.page.field_lex_custom_banner_image
     - field.field.node.page.field_lex_grid_ref
@@ -47,6 +48,7 @@ content:
     third_party_settings: {  }
 hidden:
   body: true
+  field_econdev_hero_text: true
   field_keywords: true
   field_lex_custom_banner_image: true
   field_lex_grid_ref: true

@@ -16,29 +16,29 @@ bundle: page_feedback
 mode: default
 content:
   field_feedback_url:
-    weight: 1
+    type: string
+    weight: 5
+    region: content
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
-    region: content
   field_internal_notes:
-    weight: 5
+    type: basic_string
+    weight: 8
+    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
-    region: content
   field_optional_email:
-    weight: 4
+    weight: 7
     label: above
     settings: {  }
     third_party_settings: {  }
     type: basic_string
     region: content
   field_optional_name:
-    weight: 3
+    weight: 6
     label: above
     settings:
       link_to_entity: false
@@ -46,36 +46,36 @@ content:
     type: string
     region: content
   field_page_suggestion:
-    weight: 2
+    type: basic_string
+    weight: 4
+    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
-    region: content
   mail:
-    weight: -2
+    type: basic_string
+    weight: 1
+    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
-    region: content
   message:
     type: basic_string
-    weight: 0
+    weight: 3
+    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
-    region: content
   name:
-    weight: -3
+    type: string
+    weight: 0
+    region: content
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
-    region: content
   subject:
-    weight: -1
+    weight: 2
     label: above
     settings:
       link_to_entity: false
@@ -84,3 +84,4 @@ content:
     region: content
 hidden:
   field_city_response_from: true
+  search_api_excerpt: true

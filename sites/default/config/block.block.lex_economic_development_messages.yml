@@ -1,0 +1,20 @@
+uuid: 89d67b2b-35d8-4e49-9cd9-a054de34d161
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_economic_development
+id: lex_economic_development_messages
+theme: lex_economic_development
+region: breadcrumb
+weight: -16
+provider: null
+plugin: system_messages_block
+settings:
+  id: system_messages_block
+  label: 'Status messages'
+  provider: system
+  label_display: '0'
+visibility: {  }

@@ -1,0 +1,30 @@
+uuid: 0f5f5e03-b39a-442f-8542-04e730d07c40
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.boards_directory
+  module:
+    - system
+    - views
+  theme:
+    - lex_economic_development
+id: lex_economic_development_views_block__boards_directory_block
+theme: lex_economic_development
+region: after_content
+weight: -25
+provider: null
+plugin: 'views_block:boards_directory-block_1'
+settings:
+  id: 'views_block:boards_directory-block_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: /browse/government/boards-commissions
+    negate: false
+    context_mapping: {  }

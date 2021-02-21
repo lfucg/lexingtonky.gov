@@ -1,0 +1,9 @@
+<a href="{{ url }}">
+    <div class="card-button rounded">
+        {% include '@components/atoms/button-img.twig' with {img: img} %}
+        <div class="col-12">
+            {% include '@components/atoms/econ-button-heading.twig' with {heading: heading} %}
+            {% include '@components/atoms/description.twig' with {description: description} %}
+        </div>
+    </div>
+</a>

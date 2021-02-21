@@ -70,6 +70,10 @@ function lex_preprocess_block(&$variables) {
     switch($element_id) {
       case 'lex_home_headerquicklinks':
       case 'lex_police_headerquicklinks':
+      case 'lex_economic_development_headerquicklinks':
+        $variables['attributes']['class'][] = 'slab--lex-blue';
+      case 'econdevheaderquicklinks':
+        $variables['attributes']['class'][] = 'slab--lex-med-blue';
       case 'headerquicklinks':
       case 'homemeetings':
         $variables['is_front'] = \Drupal::service('path.matcher')->isFrontPage();

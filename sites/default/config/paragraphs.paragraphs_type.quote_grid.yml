@@ -1,0 +1,9 @@
+uuid: 9459b239-5016-4ff9-8f2a-e726a82d9d41
+langcode: en
+status: true
+dependencies: {  }
+id: quote_grid
+label: 'Quote Grid'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

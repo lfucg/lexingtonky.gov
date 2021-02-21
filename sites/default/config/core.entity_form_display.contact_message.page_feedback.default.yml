@@ -28,11 +28,11 @@ content:
   field_feedback_url:
     type: string_textfield
     weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_internal_notes:
     weight: 5
     settings:
@@ -45,6 +45,7 @@ content:
     weight: 3
     settings:
       placeholder: ''
+      size: 60
     third_party_settings: {  }
     type: email_default
     region: content
@@ -65,7 +66,7 @@ content:
     type: string_textarea
     region: content
   preview:
-    weight: 50
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }

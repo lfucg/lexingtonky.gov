@@ -44,10 +44,10 @@ gulp.task('uglify', function() {
 
 gulp.task('watch', function(){
     livereload.listen();
-    gulp.watch('./scss/**/*.scss', ['sass']);
-    gulp.watch('./old_scss/**/*.sass', ['old_sass']);
-    gulp.watch('./old_scss/**/*.scss', ['old_sass']);
-    gulp.watch('./lib/*.js', ['uglify']);
+    gulp.watch('./scss/**/*.scss', gulp.series('sass'));
+    gulp.watch('./old_scss/**/*.sass', gulp.series('old_sass'));
+    gulp.watch('./old_scss/**/*.scss', gulp.series('old_sass'));
+    gulp.watch('./lib/*.js', gulp.series('uglify'));
     gulp.watch(['/css/style.css', './**/*.twig', './js/*.js'], function (files){
         livereload.changed(files)
     });

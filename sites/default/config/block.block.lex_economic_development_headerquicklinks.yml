@@ -1,0 +1,25 @@
+uuid: 58a6c4e9-c164-4212-81ee-97a91831d98c
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.header-quick-links
+  module:
+    - system
+  theme:
+    - lex_economic_development
+id: lex_economic_development_headerquicklinks
+theme: lex_economic_development
+region: sitemast
+weight: -18
+provider: null
+plugin: 'system_menu_block:header-quick-links'
+settings:
+  id: 'system_menu_block:header-quick-links'
+  label: 'Homepage Header Links'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility: {  }

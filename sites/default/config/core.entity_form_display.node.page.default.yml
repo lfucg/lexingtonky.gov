@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.page.body
+    - field.field.node.page.field_econdev_hero_text
     - field.field.node.page.field_keywords
     - field.field.node.page.field_lex_custom_banner_image
     - field.field.node.page.field_lex_grid_ref
@@ -39,8 +40,20 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_econdev_hero_text:
+    type: entity_reference_paragraphs
+    weight: 10
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
   field_keywords:
-    weight: 13
+    weight: 14
     settings:
       match_operator: CONTAINS
       size: 60
@@ -59,7 +72,7 @@ content:
     third_party_settings: {  }
   field_lex_grid_ref:
     type: entity_reference_paragraphs
-    weight: 16
+    weight: 17
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -81,7 +94,7 @@ content:
     third_party_settings: {  }
   field_metatags:
     type: metatag_firehose
-    weight: 12
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -119,7 +132,7 @@ content:
     third_party_settings: {  }
   field_photo_grid:
     type: entity_reference_paragraphs
-    weight: 15
+    weight: 16
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -137,13 +150,13 @@ content:
     third_party_settings: {  }
   field_related_documents:
     type: file_generic
-    weight: 10
+    weight: 11
     region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
   field_related_page:
-    weight: 26
+    weight: 18
     settings:
       match_operator: CONTAINS
       match_limit: 10
@@ -154,7 +167,7 @@ content:
     region: content
   field_sidebar_section:
     type: entity_reference_paragraphs
-    weight: 11
+    weight: 12
     region: content
     settings:
       title: Paragraph
@@ -174,7 +187,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 14
+    weight: 15
     third_party_settings: {  }
     region: content
   title:
