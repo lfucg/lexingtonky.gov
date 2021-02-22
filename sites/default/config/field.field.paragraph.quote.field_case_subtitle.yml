@@ -1,0 +1,21 @@
+uuid: 1f5ead1a-baa8-4e17-8b97-0ea81d8892bb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_case_subtitle
+    - paragraphs.paragraphs_type.quote
+  module:
+    - text
+id: paragraph.quote.field_case_subtitle
+field_name: field_case_subtitle
+entity_type: paragraph
+bundle: quote
+label: Attribution
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text

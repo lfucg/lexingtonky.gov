@@ -30,6 +30,7 @@ class LexThemeNegotiator extends DefaultNegotiator {
               switch($department['target_id']) {
                 case 2: return 'lex_police';
                 case 440: return 'lex_planning_commission';
+                case 1226: return 'lex_economic_development';
               }
             }
           }

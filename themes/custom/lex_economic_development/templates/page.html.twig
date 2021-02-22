@@ -1,0 +1,156 @@
+{#
+/**
+ * @file
+ * Root Page Layout schema.  Other page layouts, such as the homepage, extend
+ * from this base and override the blocks seen here.
+
+ * - content_attributes (added by City of Lexington)
+ * - attributes.layout_class (added by City of Lexington for fullbleed layout)
+ *
+ * NOTE: Region names are sometimes misleading for backwards compatibility
+ * reasons. See the info.yml of the theme to see what machine name links to
+ * which admin displayed theme.
+ */
+#}
+{% block page_notices %}
+<div id="top-alert">
+  {{ page.notices }}
+</div>
+{% endblock %}
+
+{% block page_header %}
+  <div class="econdev-sitemast">
+    {% include "@components/components/econdev-header.twig" with { menu: page.sitemast } %}
+  </div>
+{% endblock %}
+
+{% block page_hero %}
+  <div class="econ-hero">
+    {% if is_front %}
+        {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri|image_style('hero_image')) %}
+        {% set hero_alt = node.field_lex_custom_banner_image.alt %}
+    {% elseif node.field_lex_custom_banner_image.entity.fileuri %}
+        {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
+        {% set hero_alt = node.field_lex_custom_banner_image.alt %}
+    {% else %}
+        {% set hero = '' %}
+    {% endif %}
+    {% if node.field_econdev_hero_text[0] %}
+        {% if node.field_econdev_hero_text[0].entity.type.value[0].target_id == "econdev_main_hero_text" %}
+            {% include "@lex/includes/hero-text-centered.html.twig"  with {
+                hero: hero,
+                page: page,
+                hero_alt: hero_alt,
+                block: 'block_1',
+                heading: node.field_econdev_hero_text[0].entity.field_heading.value,
+            } %}
+        {% endif %}
+    {% else %}
+        {% include "@lex/includes/hero-text-left.html.twig"  with {
+                hero: hero,
+                page: page,
+                hero_alt: hero_alt,
+                block: 'block_1',
+                heading: node.title.value,
+            }%}
+    {% endif %}
+  </div>
+{% endblock %}
+
+{# May not need this at all #}
+{# {% block page_term %}
+{% endblock %} #}
+
+{# May also not need this? #}
+{# {% block page_events %}
+{{page.events}}
+{% endblock %} #}
+
+{% block page_main %}
+<div class="econdev-content">
+    <div class="ed-help">{{page.breadcrumb}}</div>
+    <a id="main-content" name="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
+    <main role="main">
+    <div class="ed-main">
+    {% block page_title_main %}
+        {% if node.bundle == 'news_article' %}
+        <img class="mb-4 w-100" src="{{file_url(node.field_image[0].entity.uri.value)}}">
+        {% endif %}
+        {# {{ page.title }} #}
+    {% endblock %}
+    {% block content %}
+        {{ page.content }}
+    {% endblock %}
+    {% block after_content %}
+        {{ page.after_content }}
+    {% endblock %}
+    </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block page_feedback %}
+  {{ page.feedback }}
+{% endblock %}
+
+
+{% block page_breadcrumb %}
+  <div class="econdev-contact econ-section econ-component">
+    <h2 class="econdev-contact-heading">Contact</h2>
+    <div class="contact-content">
+      <div class="contact-block">
+        <div class="contact-icon">
+          <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <div class="contact-text">
+          Economic Development </br>
+          200 E. Main St. </br>
+          Lexington, KY
+        </div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-icon">
+          <i class="fas fa-phone"></i>
+        </div>
+        <div class="contact-text">
+          (859)258-3100 </br>
+          Fax: (859)258-3194 </br>
+          Email Us
+        </div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-icon">
+          <i class="fas fa-user-alt"></i>
+        </div>
+        <div class="contact-text">
+          Kevin Atkins </br>
+          Chief Development Officer
+        </div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="contact-text">
+          Monday - Friday </br>
+          9 a.m - 5 p.m.
+        </div>
+      </div>
+    </div>
+  </div>
+  {{ page.breadcrumb.lex_economic_development_breadcrumbs }}
+{% endblock %}
+
+<footer class="slab--dark-blue section-padding">
+{% block page_footer %}
+  {{ page.footer }}
+{% endblock %}
+<div class="slab--lex-blue footer-bottom">
+  {% include "@lex/includes/lexington-copyright.html.twig"
+    with {
+      section_class: 'd-flex d-md-none',
+      wordmark_class: 'mt-2',
+    }
+  %}
+  </div>
+</footer>

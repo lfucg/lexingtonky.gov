@@ -1,0 +1,9 @@
+uuid: 8f3466fa-487c-4fbd-9603-546d99b7ada6
+langcode: en
+status: true
+dependencies: {  }
+id: standalone_link
+label: 'Standalone Link'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

@@ -1,0 +1,27 @@
+uuid: b117bd65-69f7-413a-89b0-b1ccd3ff1e95
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_economic_development
+id: lex_economic_development_local_tasks
+theme: lex_economic_development
+region: breadcrumb
+weight: -15
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  provider: core
+  label_display: '0'
+  primary: true
+  secondary: true
+visibility:
+  request_path:
+    id: request_path
+    pages: "<front>\r\n/browse/*"
+    negate: true
+    context_mapping: {  }

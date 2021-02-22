@@ -1,0 +1,9 @@
+uuid: f162e119-bd9a-4933-b3d1-1ddfda074bdf
+langcode: en
+status: true
+dependencies: {  }
+id: econdev_main_hero_text
+label: 'EconDev Main Hero Text'
+icon_uuid: null
+description: ''
+behavior_plugins: {  }

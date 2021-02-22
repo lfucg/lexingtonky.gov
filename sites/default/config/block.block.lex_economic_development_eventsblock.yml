@@ -1,0 +1,33 @@
+uuid: 35a313aa-cc86-488e-ab63-5bd558715011
+langcode: en
+status: true
+dependencies:
+  module:
+    - lex_calendar
+    - node
+  theme:
+    - lex_economic_development
+id: lex_economic_development_eventsblock
+theme: lex_economic_development
+region: notices
+weight: -18
+provider: null
+plugin: Lex_calendar_list_block
+settings:
+  id: Lex_calendar_list_block
+  label: Events
+  provider: lex_calendar
+  label_display: visible
+  display_limit: '3'
+  content_type: event
+  show_all: 'no'
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      page: page
+      board_commission: board_commission
+      organization_page: organization_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

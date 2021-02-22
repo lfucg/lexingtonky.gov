@@ -1,0 +1,30 @@
+uuid: 732cc062-99ed-44dd-9bc8-c68f75239a68
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.final_orders
+  module:
+    - system
+    - views
+  theme:
+    - lex_economic_development
+id: lex_economic_development_views_block__final_orders_block_1
+theme: lex_economic_development
+region: content
+weight: -25
+provider: null
+plugin: 'views_block:final_orders-block_1'
+settings:
+  id: 'views_block:final_orders-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: /final-orders
+    negate: false
+    context_mapping: {  }

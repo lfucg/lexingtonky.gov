@@ -125,3 +125,202 @@ a.lex-calltoaction {
   display: flex;
   align-items: flex-start;
 }
+
+.ed-main:first-child {
+  float: none;
+  width: 100%;
+  margin: auto;
+}
+
+.ed-help {
+  .lex-breadcrumb {
+    display: none !important;
+  }
+}
+
+
+.econ-hero {
+  .lex-hero {
+    border-bottom: 25px solid #0558A7;
+    .hero-text {
+      display: inline;
+      position: absolute;
+      top: 0;
+      left: 10%;
+      font-size: 3.5rem;
+      max-width: 600px;
+      background-color: rgba(0,26,73,0.8);
+      color: white;
+      padding: 50px;
+      line-height: 4rem;
+      
+      @media screen and (max-width: 900px ) {
+        font-size: 2rem;
+        padding: 10px;
+      }
+    }
+    .centered-hero-text {
+      position: absolute;
+      bottom: 0;
+      text-align: center;
+      font-size: 60px;
+      left: 0;
+      right: 0;
+      color: white;
+      background-color: rgba(0,26,73,0.8);
+      margin: 0 5rem;
+      text-align: left;
+      padding: 10px 50px;
+
+      @media screen and (max-width: 900px ) {
+        font-size: 2rem;
+        padding: 10px;
+      }
+    }
+  }
+}
+
+.econdev-separator {
+  color: #3887BA;
+  margin-left: 15px;
+  margin-right: 20px;
+}
+
+// Need to move to correct format after development
+.slab--lex-med-blue {
+  background-color: #0558A7 !important;
+}
+
+.econdev-content {
+  main {
+    padding: 2% 0;
+
+    .section-padding {
+      padding: 1rem 10%;
+    }
+
+    .flex-content {
+      justify-content: space-evenly;
+    }
+
+    .card-button {
+      width: 275px;
+    }
+
+    @media screen and (max-width: 900px) {
+      iframe {
+        height: auto;
+      }
+    }
+
+    h2 {
+      color: #004585;
+    }
+  }
+
+  .paragraph--type--quote-grid {
+
+    .flex-content {
+      justify-content: space-between; 
+
+    }
+    .paragraph--type--quote {
+      max-width: 200px;
+
+      .quote-heading {
+        font-size: 20px;
+        color: #004585
+      }
+
+      .quote-attribution {
+        font-size: 16px;
+      }
+    }
+  }
+
+  .paragraph--type--standalone-link {
+    a {
+      font-size: 22px;
+    }
+  }
+}
+
+.econ-component {
+    padding: 10px 10%;
+
+    div {
+      h2 {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .contact-block {
+    display: inline;
+    width: auto;
+
+    @media screen and (max-width: 900px) {
+      margin-bottom: 10px;
+    }
+  }
+
+  .contact-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    @media screen and (max-width: 900px) {
+      flex-direction: column;
+    }
+  }
+
+  .contact-icon, .contact-text {
+    display: inline-block;
+  }
+
+  .contact-icon {
+    font-size: 45px;
+    color: #0558A7;
+    vertical-align: top;
+    margin-right: 20px;
+
+    i {
+      vertical-align: top;
+    }
+  }
+
+  .econdev-contact-heading {
+    color: #0558A7;
+    margin-bottom: 25px;
+  }
+
+  .econdev-contact {
+    margin: 20px auto 40px auto;
+  }
+
+.econ-section:nth-child(even) {
+  background-color: #EFEFEF;
+}
+
+.econdev-sitemast {
+  #search-icon {
+    display: none !important;
+  }
+
+  @media screen and (max-width: 900px) {
+    #block-econdevheaderquicklinks {
+      display: none;
+    }
+  }
+  
+}
+
+.ed-help {
+  .lex-button {
+    a {
+      @media screen and (max-width: 900px) {
+        padding: 0.5em !important;
+      }
+    }
+  }
+}

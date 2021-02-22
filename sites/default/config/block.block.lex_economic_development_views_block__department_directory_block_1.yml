@@ -1,0 +1,30 @@
+uuid: bcf3b554-792a-4e15-be61-d3590b282188
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.department_directory
+  module:
+    - system
+    - views
+  theme:
+    - lex_economic_development
+id: lex_economic_development_views_block__department_directory_block_1
+theme: lex_economic_development
+region: content
+weight: -21
+provider: null
+plugin: 'views_block:department_directory-block_1'
+settings:
+  id: 'views_block:department_directory-block_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: /browse/government/departments
+    negate: false
+    context_mapping: {  }

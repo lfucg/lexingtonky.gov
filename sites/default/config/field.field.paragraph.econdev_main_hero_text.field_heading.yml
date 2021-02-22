@@ -1,0 +1,21 @@
+uuid: 4dba4223-f704-4e13-ac29-ae1f19e6b367
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_heading
+    - paragraphs.paragraphs_type.econdev_main_hero_text
+  module:
+    - text
+id: paragraph.econdev_main_hero_text.field_heading
+field_name: field_heading
+entity_type: paragraph
+bundle: econdev_main_hero_text
+label: Heading
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text

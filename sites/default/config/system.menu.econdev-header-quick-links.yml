@@ -1,0 +1,8 @@
+uuid: 6e4ee24f-9da9-46eb-8b43-00f85a0c9f6d
+langcode: en
+status: true
+dependencies: {  }
+id: econdev-header-quick-links
+label: 'EconDev Header Quick Links'
+description: ''
+locked: false

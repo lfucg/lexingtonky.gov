@@ -1,0 +1,13 @@
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+
+<div{{ attributes.addClass(classes, 'pb-5') }}>
+    <span class="quote-heading">{{content.field_heading}}</span>
+    <span class="quote-attribution">{{content.field_case_subtitle}}</span>
+</div>
