@@ -125,4 +125,9 @@ a.lex-calltoaction {
   flex-flow: row wrap;
   display: flex;
   align-items: flex-start;
+  width: 100%;
+
+  div:first-child {
+    width: 100%;
+  }
 }

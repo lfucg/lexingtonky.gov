@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.contact_card.field_contact_email
+    - field.field.paragraph.contact_card.field_contact_link
     - field.field.paragraph.contact_card.field_contact_name
     - field.field.paragraph.contact_card.field_contact_phone
     - field.field.paragraph.contact_card.field_contact_position
@@ -12,6 +13,7 @@ dependencies:
     - paragraphs.paragraphs_type.contact_card
   module:
     - image
+    - link
     - workbench_moderation
 id: paragraph.contact_card.default
 targetEntityType: paragraph
@@ -25,6 +27,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: email_default
+    region: content
+  field_contact_link:
+    weight: 6
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
     region: content
   field_contact_name:
     weight: 1
