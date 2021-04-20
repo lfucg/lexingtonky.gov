@@ -21,5 +21,6 @@ settings:
   selection: blocks
   selection_settings:
     plugin_ids:
+      lookup_services_block: lookup_services_block
       Lex_calendar_list_block: Lex_calendar_list_block
 field_type: block_field

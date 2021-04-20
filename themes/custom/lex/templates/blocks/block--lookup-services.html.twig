@@ -1,0 +1,29 @@
+<div{{attributes.addClass('row text-left mini-lookup')}} id="block-lookupservices">
+  <div class="col-lg-6 col-12 text-left lex-find">
+    <h1><i class="fas fa-map-marker-alt"></i>&nbsp;Lex Find</h1>
+    <small>Enter an address then select one from the dropdown</small>
+    <div>
+      {{ content }}
+    </div>
+  </div>
+  <div class="col-lg-6 col-12">
+    <div class="row w-75 text-left">
+      <h3 class="instructions">Enter your address to find information about the following city services:</h3>
+    </div>
+      <div class="col-6">
+        <div class="service-label d-flex flex-row align-items-center">
+            <i class="fas fa-trash"></i>
+            <h5>Waste Services</h5>
+        </div>
+        <div class="hide service">
+          <span>Pick up day: </span>
+          <span class="trash"></span>
+        </div>
+        <div class="hide service">
+          <sub>*This day is only for residents who receive city waste collection. Private collection days may differ.</sub>
+          <sub>All containers will be collected.</sub>
+        </div>
+      </div>
+  </div>
+</div>
+

@@ -71,6 +71,14 @@
         border-radius: 0 0 5px 5px;
     }
 
+    .contact-card-link {
+        width: 100%;
+        &:hover {
+            text-decoration: none !important;
+            border-bottom: none !important;
+        }
+    }
+
     .footer-text {
         a {
             color: #ffff;
