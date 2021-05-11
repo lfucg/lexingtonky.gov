@@ -22,7 +22,7 @@ class ImceFolderTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp() : void {
     parent::setUp();
     $this->imceFolder = $this->createMock(ImceFolder::class);
   }

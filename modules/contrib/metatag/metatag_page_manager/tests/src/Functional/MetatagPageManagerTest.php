@@ -19,7 +19,7 @@ class MetatagPageManagerTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     // This module.
     'metatag_page_manager',
     'page_manager_ui',

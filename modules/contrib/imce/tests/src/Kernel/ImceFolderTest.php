@@ -27,7 +27,7 @@ class ImceFolderTest extends KernelTestBasePlugin {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'user',
     'system',
     'imce',
@@ -36,7 +36,7 @@ class ImceFolderTest extends KernelTestBasePlugin {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
     $this->imceFolder = new ImceFolder('js', $this->getConf());
     $this->imceFolder->setFm($this->getImceFM());
@@ -83,7 +83,7 @@ class ImceFolderTest extends KernelTestBasePlugin {
    */
   public function testName() {
     $this->assertIsString($this->imceFolder->name);
-    $this->assertEqual($this->imceFolder->name, 'js');
+    $this->assertEquals($this->imceFolder->name, 'js');
   }
 
   /**

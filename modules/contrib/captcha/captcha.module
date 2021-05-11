@@ -19,6 +19,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Site\Settings;
 
 /**
  * Constants for CAPTCHA persistence.
@@ -288,6 +289,22 @@ function captcha_form_alter(array &$form, FormStateInterface $form_state, $form_
       '#markup' => '<div class="messages messages--warning">' . t('Most CAPTCHA methods will disable the caching of pages that contain a CAPTCHA element. Check the different implementations to know more about how it affects caching.') . '</div>',
     ];
   }
+
+  // Disable captcha if override is set.
+  if (Settings::get('disable_captcha', FALSE) === TRUE) {
+    $override_notice = [
+      '#type' => 'html_tag',
+      '#tag' => 'strong',
+      '#value' => t('Captcha is currently disabled via settings.php.'),
+    ];
+    if (isset($form['elements']['captcha'])) {
+      $form['elements']['captcha'] = $override_notice;
+    }
+    if (isset($form['captcha'])) {
+      $form['captcha'] = $override_notice;
+    }
+  }
+
 }
 
 /**
@@ -465,71 +482,34 @@ function captcha_validate($element, FormStateInterface &$form_state) {
   // TODO: is this correct in all cases: see comments in previous revisions?
   $csid = $captcha_info['captcha_sid'];
 
-  $solution = \Drupal::database()
-    ->select('captcha_sessions', 'cs')
-    ->fields('cs', ['solution'])
-    ->condition('csid', $csid)
-    ->execute()
-    ->fetchField();
-
   // Bypass captcha validation if access attribute value is false.
   if (empty($captcha_info['access'])) {
     return FALSE;
   }
 
-  // @todo: what is the result when there is no entry for
-  // the captcha_session? in D6 it was FALSE, what in D7?
-  if ($solution === FALSE) {
-    // Unknown challenge_id.
-    // TODO: this probably never happens anymore now that there is detection
-    // for CAPTCHA session reuse attacks in _captcha_get_posted_captcha_info().
-    $form_state->setErrorByName('captcha', t('CAPTCHA validation error: unknown CAPTCHA session ID. Contact the site administrator if this problem persists.'));
-    \Drupal::logger('CAPTCHA')->error(
-      'CAPTCHA validation error: unknown CAPTCHA session ID (%csid).',
-      ['%csid' => var_export($csid, TRUE)]);
-  }
-  else {
-    // Get CAPTCHA validate function or fall back on strict equality.
+  // If the form is cacheable where all solution validation is handed off or if
+  // we found a session with a solution then continue with validation.
+  $is_cacheable = (bool) $form_state->getValue('captcha_cacheable', FALSE);
+
+  if ($is_cacheable) {
+    // Completely ignore the captcha_sessions table,
+    // since the captcha_sid can get reused by the cache.
+    $solution = FALSE;
     $captcha_validate = $element['#captcha_validate'];
     if (!function_exists($captcha_validate)) {
-      $captcha_validate = 'captcha_validate_strict_equality';
+      // Cacheable CAPTCHAs must provide their own validation function.
+      $form_state->setErrorByName('captcha', t('CAPTCHA configuration error: Contact the site administrator.'));
+      \Drupal::logger('CAPTCHA')->error(
+        'CAPTCHA configuration error: cacheable CAPTCHA type %challenge did not provide a validation function.',
+        ['%challenge' => $captcha_info['captcha_type']]);
     }
     // Check the response with the CAPTCHA validation function.
     // Apart from the traditional expected $solution and received $response,
     // we also provide the CAPTCHA $element and $form_state
     // arrays for more advanced use cases.
-    if ($captcha_validate($solution, $captcha_response, $element, $form_state)) {
-
-      // Get the CAPTCHA persistence setting.
-      $captcha_persistence = \Drupal::config('captcha.settings')
-        ->get('persistence');
-
-      if (in_array($captcha_persistence,
-        [
-          CAPTCHA_PERSISTENCE_SKIP_ONCE_SUCCESSFUL,
-          CAPTCHA_PERSISTENCE_SKIP_ONCE_SUCCESSFUL_PER_FORM_TYPE,
-        ])) {
-        // Only save the success in $_SESSION if it is actually needed for
-        // further validation in _captcha_required_for_user(). Setting
-        // this kills the page cache so let's not be cavalier about it.
-        $_SESSION['captcha_success_form_ids'][$form_id] = $form_id;
-      }
-
-      // Record success.
-      \Drupal::database()->update('captcha_sessions')
-        ->condition('csid', $csid)
-        ->fields(['status' => CAPTCHA_STATUS_SOLVED])
-        ->expression('attempts', 'attempts + 1')
-        ->execute();
-    }
-    else {
+    if (!$captcha_validate($solution, $captcha_response, $element, $form_state)) {
       // Wrong answer.
-      \Drupal::database()->update('captcha_sessions')
-        ->condition('csid', $csid)
-        ->expression('attempts', 'attempts + 1')
-        ->execute();
-
-      $form_state->setErrorByName('captcha_response', t('The answer you entered for the CAPTCHA was not correct.'));
+      $form_state->setErrorByName('captcha_response', _captcha_get_error_message());
       // Update wrong response counter.
       if (\Drupal::config('captcha.settings')->get('enable_stats', FALSE)) {
         Drupal::state()->set('captcha.wrong_response_counter', Drupal::state()
@@ -540,15 +520,95 @@ function captcha_validate($element, FormStateInterface &$form_state) {
         ->get('log_wrong_responses', FALSE)
       ) {
         \Drupal::logger('CAPTCHA')->notice(
-          '%form_id post blocked by CAPTCHA module: challenge %challenge (by module %module), user answered "@response", but the solution was "@solution".',
+          '%form_id post blocked by CAPTCHA module: challenge %challenge (by module %module).',
           [
             '%form_id' => $form_id,
-            '@response' => $captcha_response,
-            '@solution' => $solution,
             '%challenge' => $captcha_info['captcha_type'],
             '%module' => $captcha_info['module'],
           ]);
       }
+    }
+  }
+  else {
+    $solution = \Drupal::database()
+      ->select('captcha_sessions', 'cs')
+      ->fields('cs', ['solution'])
+      ->condition('csid', $csid)
+      ->execute()
+      ->fetchField();
+
+    if ($solution !== FALSE) {
+      // Get CAPTCHA validate function or fall back on strict equality.
+      $captcha_validate = $element['#captcha_validate'];
+      if (!function_exists($captcha_validate)) {
+        $captcha_validate = 'captcha_validate_strict_equality';
+      }
+      // Check the response with the CAPTCHA validation function.
+      // Apart from the traditional expected $solution and received $response,
+      // we also provide the CAPTCHA $element and $form_state
+      // arrays for more advanced use cases.
+      if ($captcha_validate($solution, $captcha_response, $element, $form_state)) {
+
+        // Get the CAPTCHA persistence setting.
+        $captcha_persistence = \Drupal::config('captcha.settings')
+          ->get('persistence');
+
+        if (in_array($captcha_persistence,
+          [
+            CAPTCHA_PERSISTENCE_SKIP_ONCE_SUCCESSFUL,
+            CAPTCHA_PERSISTENCE_SKIP_ONCE_SUCCESSFUL_PER_FORM_TYPE,
+          ])) {
+          // Only save the success in $_SESSION if it is actually needed for
+          // further validation in _captcha_required_for_user(). Setting
+          // this kills the page cache so let's not be cavalier about it.
+          $_SESSION['captcha_success_form_ids'][$form_id] = $form_id;
+        }
+
+        // Record success.
+        \Drupal::database()->update('captcha_sessions')
+          ->condition('csid', $csid)
+          ->fields(['status' => CAPTCHA_STATUS_SOLVED])
+          ->expression('attempts', 'attempts + 1')
+          ->execute();
+      }
+      else {
+        // Wrong answer.
+        \Drupal::database()->update('captcha_sessions')
+          ->condition('csid', $csid)
+          ->expression('attempts', 'attempts + 1')
+          ->execute();
+
+        $form_state->setErrorByName('captcha_response', _captcha_get_error_message());
+        // Update wrong response counter.
+        if (\Drupal::config('captcha.settings')->get('enable_stats', FALSE)) {
+          Drupal::state()->set('captcha.wrong_response_counter', Drupal::state()
+            ->get('captcha.wrong_response_counter', 0) + 1);
+        }
+
+        if (\Drupal::config('captcha.settings')
+          ->get('log_wrong_responses', FALSE)
+        ) {
+          \Drupal::logger('CAPTCHA')->notice(
+            '%form_id post blocked by CAPTCHA module: challenge %challenge (by module %module), user answered "@response", but the solution was "@solution".',
+            [
+              '%form_id' => $form_id,
+              '@response' => $captcha_response,
+              '@solution' => $solution,
+              '%challenge' => $captcha_info['captcha_type'],
+              '%module' => $captcha_info['module'],
+            ]);
+        }
+      }
+    }
+    else {
+      // If the session is gone and we can't confirm a solution error.
+      // Note: _captcha_get_posted_captcha_info() validates and triggers session
+      // rebuilds for re-use attacks during element processing so this should be
+      // rare if it ever happens.
+      $form_state->setErrorByName('captcha', t('CAPTCHA validation error: unknown CAPTCHA session ID. Contact the site administrator if this problem persists.'));
+      \Drupal::logger('CAPTCHA')->error(
+        'CAPTCHA validation error: unknown CAPTCHA session ID (%csid).',
+        ['%csid' => var_export($csid, TRUE)]);
     }
   }
 }

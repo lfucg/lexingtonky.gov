@@ -25,6 +25,48 @@ before enabling it on production, to help ensure these problems are not
 encountered.
 
 
+Updating from Metatag Access
+--------------------------------------------------------------------------------
+The original sandbox module for this functionality was called "Metatag Access".
+Sites which used that submodule should switch to this module. Rather than
+loosing their configuration, use the following update script to convert the
+permissions.
+
+/**
+ * Replace Metatag Access with Metatag Extended Perms.
+ */
+function mysite_update_9001() {
+  $installer = \Drupal::service('module_installer');
+
+  // Install the Metatag Extended Permissions module.
+  $installer->install(['metatag_extended_perms']);
+
+  // Update the permissions.
+  foreach (Role::loadMultiple() as $role) {
+    // Keep track of whether the permissions changed for this role.
+    $changed = FALSE;
+    foreach ($role->getPermissions() as $key => $perm) {
+      // Look for permissions that started with the old permission string.
+      if (strpos($perm, 'access metatag tag') !== FALSE) {
+        // Grand the new permission.
+        $role->grantPermission(str_replace('access metatag tag', 'access metatag', $perm));
+
+        // Track that the role's permissions changed.
+        $changed = TRUE;
+      }
+    }
+
+    // If the permissions changed, save the role.
+    if ($changed) {
+      $role->trustData()->save();
+    }
+  }
+
+  // Uninstall the Metatag Access module.
+  $installer->uninstall(['metatag_access']);
+}
+
+
 Credits / contact
 --------------------------------------------------------------------------------
 Originally written by Michael Petri [1].

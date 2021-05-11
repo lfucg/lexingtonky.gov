@@ -117,6 +117,9 @@ class MetatagDefaultsForm extends EntityForm {
 
     $token_types = empty($default_type) ? [] : [explode('__', $default_type)[0]];
 
+    // Add the token browser at the top.
+    $form += $this->metatagToken->tokenBrowser($token_types);
+
     // If this is a new Metatag defaults, then list available bundles.
     if ($metatag_defaults->isNew()) {
       $options = $this->getAvailableBundles();

@@ -15,6 +15,11 @@ class MetatagHreflangTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
+  protected static $modules = ['language', 'metatag_hreflang'];
+
+  /**
+   * {@inheritdoc}
+   */
   protected $tags = [
     'hreflang_xdefault',
     // @todo Work out how to do this as these values are kinda complicated.
@@ -42,10 +47,6 @@ class MetatagHreflangTagsTest extends MetatagTagsTestBase {
    * {@inheritdoc}
    */
   protected function setUp() {
-    // Need the Language module in order for any of this to work.
-    parent::$modules[] = 'language';
-    // This module.
-    parent::$modules[] = 'metatag_hreflang';
     parent::setUp();
 
     // Enable additional languages.

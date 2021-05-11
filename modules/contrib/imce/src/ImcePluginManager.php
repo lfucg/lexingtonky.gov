@@ -118,7 +118,13 @@ class ImcePluginManager extends DefaultPluginManager {
    * Returns folder permission definitions.
    */
   public function permissionInfo() {
-    return call_user_func_array('array_merge', array_filter($this->invokeAll('permissionInfo')));
+    $perms = [];
+    foreach ($this->invokeAll('permissionInfo') as $data) {
+      if ($data) {
+        $perms = array_merge($perms, $data);
+      }
+    }
+    return $perms;
   }
 
   /**

@@ -17,11 +17,9 @@ class RemoveCoreMetaTags extends BrowserTestBase {
   use MetatagHelperTrait;
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'token',
     'metatag',
     'taxonomy',

@@ -8,7 +8,7 @@ image_captcha.settings:
 image_captcha.font_preview:
   path: '/admin/config/people/captcha/image_captcha/font_preview/{token}'
   defaults:
-    _controller: '\Drupal\image_captcha\Controller\CaptchaFontPreview::content'
+    _controller: '\Drupal\image_captcha\Controller\CaptchaFontPreviewController::getFont'
   requirements:
     _permission: 'administer CAPTCHA settings'
 

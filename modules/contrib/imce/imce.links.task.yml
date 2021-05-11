@@ -10,3 +10,9 @@ imce.help:
   title: IMCE Help
   base_route: imce.admin
   weight: 3
+
+imce.admin_browser:
+  route_name: imce.admin_browser
+  title: IMCE File Browser
+  base_route: imce.admin
+  weight: 4

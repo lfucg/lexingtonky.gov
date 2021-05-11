@@ -1,0 +1,11 @@
+name: 'Captcha Test'
+type: module
+description: 'Provides captcha types for tests.'
+package: Testing
+core_version_requirement: ^8.8 || ^9
+hidden: true
+
+# Information added by Drupal.org packaging script on 2021-04-29
+version: '8.x-1.2'
+project: 'captcha'
+datestamp: 1619673377

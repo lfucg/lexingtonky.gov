@@ -62,7 +62,7 @@ class MetatagXssTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'views',
     'system',
@@ -120,33 +120,34 @@ class MetatagXssTest extends BrowserTestBase {
    */
   public function testXssMetatagConfig() {
     $this->drupalGet('admin/config/search/metatag/global');
-    $this->assertSession()->statusCodeEquals(200);
+    $session = $this->assertSession();
+    $session->statusCodeEquals(200);
     $values = [
       'title' => $this->xssTitleString,
       'abstract' => $this->xssString,
       'image_src' => $this->xssImageString,
     ];
     $this->drupalPostForm(NULL, $values, 'Save');
-    $this->assertText('Saved the Global Metatag defaults.');
+    $session->pageTextContains('Saved the Global Metatag defaults.');
     $this->rebuildAll();
 
     // Load the Views-based front page.
     $this->drupalGet('node');
-    $this->assertSession()->statusCodeEquals(200);
-    $this->assertText($this->t('No front page content has been created yet.'));
+    $session->statusCodeEquals(200);
+    $session->pageTextContains('No front page content has been created yet.');
 
     // Check for the title tag, which will have the HTML tags removed and then
     // be lightly HTML encoded.
-    $this->assertEscaped(strip_tags($this->xssTitleString));
-    $this->assertNoRaw($this->xssTitleString);
+    $session->assertEscaped(strip_tags($this->xssTitleString));
+    $session->responseNotContains($this->xssTitleString);
 
     // Check for the basic meta tag.
-    $this->assertRaw($this->escapedXssTag);
-    $this->assertNoRaw($this->xssString);
+    $session->responseContains($this->escapedXssTag);
+    $session->responseNotContains($this->xssString);
 
     // Check for the image meta tag.
-    $this->assertRaw($this->escapedXssImageTag);
-    $this->assertNoRaw($this->xssImageString);
+    $session->responseContains($this->escapedXssImageTag);
+    $session->responseNotContains($this->xssImageString);
   }
 
   /**
@@ -156,7 +157,8 @@ class MetatagXssTest extends BrowserTestBase {
     $save_label = (floatval(\Drupal::VERSION) <= 8.3) ? $this->t('Save and publish') : $this->t('Save');
 
     $this->drupalGet('node/add/metatag_node');
-    $this->assertSession()->statusCodeEquals(200);
+    $session = $this->assertSession();
+    $session->statusCodeEquals(200);
     $edit = [
       'title[0][value]' => $this->randomString(32),
       'field_metatag_field[0][basic][title]' => $this->xssTitleString,
@@ -167,16 +169,16 @@ class MetatagXssTest extends BrowserTestBase {
 
     // Check for the title tag, which will have the HTML tags removed and then
     // be lightly HTML encoded.
-    $this->assertEscaped(strip_tags($this->xssTitleString));
-    $this->assertNoRaw($this->xssTitleString);
+    $session->assertEscaped(strip_tags($this->xssTitleString));
+    $session->responseNotContains($this->xssTitleString);
 
     // Check for the basic meta tag.
-    $this->assertRaw($this->escapedXssTag);
-    $this->assertNoRaw($this->xssString);
+    $session->responseContains($this->escapedXssTag);
+    $session->responseNotContains($this->xssString);
 
     // Check for the image meta tag.
-    $this->assertRaw($this->escapedXssImageTag);
-    $this->assertNoRaw($this->xssImageString);
+    $session->responseContains($this->escapedXssImageTag);
+    $session->responseNotContains($this->xssImageString);
   }
 
   /**
@@ -186,7 +188,8 @@ class MetatagXssTest extends BrowserTestBase {
     $save_label = (floatval(\Drupal::VERSION) <= 8.3) ? $this->t('Save and publish') : $this->t('Save');
 
     $this->drupalGet('node/add/metatag_node');
-    $this->assertSession()->statusCodeEquals(200);
+    $session = $this->assertSession();
+    $session->statusCodeEquals(200);
     $edit = [
       'title[0][value]' => $this->xssTitleString,
       'body[0][value]' => $this->randomString() . ' ' . $this->randomString(),
@@ -195,8 +198,8 @@ class MetatagXssTest extends BrowserTestBase {
 
     // Check for the title tag, which will have the HTML tags removed and then
     // be lightly HTML encoded.
-    $this->assertEscaped(strip_tags($this->xssTitleString));
-    $this->assertNoRaw($this->xssTitleString);
+    $session->assertEscaped(strip_tags($this->xssTitleString));
+    $session->responseNotContains($this->xssTitleString);
   }
 
   /**
@@ -206,7 +209,8 @@ class MetatagXssTest extends BrowserTestBase {
     $save_label = (floatval(\Drupal::VERSION) <= 8.3) ? $this->t('Save and publish') : $this->t('Save');
 
     $this->drupalGet('node/add/metatag_node');
-    $this->assertSession()->statusCodeEquals(200);
+    $session = $this->assertSession();
+    $session->statusCodeEquals(200);
     $edit = [
       'title[0][value]' => $this->randomString(),
       'body[0][value]' => $this->xssTitleString,
@@ -217,7 +221,7 @@ class MetatagXssTest extends BrowserTestBase {
     // {@code}
     // $this->assertNoTitle($this->xssTitleString);
     // {@endcode}
-    $this->assertNoRaw($this->xssTitleString);
+    $session->responseNotContains($this->xssTitleString);
   }
 
 }

@@ -104,9 +104,12 @@ class PermissionsTest extends BrowserTestBase {
     $session = $this->assertSession();
     $session->statusCodeEquals(200);
 
-    // Confirm that the page contains the standard text iddicating this is the
+    // Confirm that the page contains the standard text indicating this is the
     // permissions page.
-    $session->pageTextContains('Administer menus and menu items');
+    $session->pageTextContains('Administer modules');
+    $session->pageTextContains('Administer site configuration');
+    $session->pageTextContains('Administer themes');
+    $session->pageTextContains('Administer software updates');
 
     // Look for each of the meta tags.
     foreach ($this->permissions as $group => $perms) {

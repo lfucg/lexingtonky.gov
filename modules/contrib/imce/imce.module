@@ -11,6 +11,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\imce\ImceFileField;
 use Drupal\imce\Imce;
+use Drupal\imce\Controller\ImceHelpController;
 
 /**
  * Implements hook_theme().
@@ -123,46 +124,7 @@ function imce_form_filter_format_form_alter(&$form, FormStateInterface $form_sta
  * Implements hook_help().
  */
 function imce_help($route_name, RouteMatchInterface $route_match) {
-  switch ($route_name) {
-    // Main module help for the imce module.
-    case 'help.page.imce':
-      $output = '';
-      $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('IMCE is an image/file uploader and browser that supports personal directories and quota.') . '</p>';
-      $output .= '<h3>CKEditor Iintegration</h3>';
-      $output .= '<ol>';
-      $output .= '<li type="1">' . t('Go to Administration > Configuration >
-        Content Authoring > Text formats and editors >
-        and <b>edit</b> a text format that uses CKEditor;') . '</li>';
-      $output .= '<li type="1">' . t('Enable CKEditor image button without image uploads.') . '</li>';
-      $output .= '</ol>';
-      $output .= '<p><b>Note:</b> Image uploads must be disabled in order for IMCE link appear in the image
-dialog. There is also an image button provided by Imce but it can\'t be used for
-editing existing images. </p>';
-      $output .= '<br/>';
-
-      $output .= '<h3>BUEditor Integration</h3>';
-      $output .= '<ol>';
-      $output .= '<li type="1">' . t('Edit your editor at :path', [':path' => '/admin/config/content/bueditor;']) . '</li>';
-      $output .= '<li type="1">' . t('Select Imce File Manager as the File browser under Settings.') . '</li>';
-      $output .= '</ol>';
-      $output .= '<br/>';
-
-      $output .= '<h3>FILE/IMAGE Field Integration</h3>';
-      $output .= '<ol>';
-      $output .= '<li type="1">' . t('Go to form settings of your content type;');
-      $output .= '<br/>';
-      $output .= 'Ex: /admin/structure/types/manage/article/form-display.</li>';
-      $output .= '<li type="1">' . t('Edit widget settings of a file/image field;') . '</li>';
-      $output .= '<li type="1">' . t('Check the box saying "Allow users to select files from Imce File Manager
-        for this field." Save;') . '</li>';
-      $output .= '<li type="1">' . t('You should now see the "Open File Browser" link above the upload widget
-        in the content form.') . '</li>';
-      $output .= '</ol>';
-      $output .= '<br/>';
-
-      return $output;
-
-    default:
+  if ($route_name === 'help.page.imce') {
+    return ImceHelpController::htmlHelp();
   }
 }

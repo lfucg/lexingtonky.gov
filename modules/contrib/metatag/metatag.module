@@ -156,15 +156,18 @@ function metatag_page_attachments(array &$attachments) {
       // Also add a HTTP header "Link:" for canonical URLs and shortlinks.
       // See HtmlResponseAttachmentsProcessor::processHtmlHeadLink() for the
       // implementation of the functionality in core.
-      if (in_array($item[1], ['canonical_url', 'shortlink'])) {
-        $attributes = $item[0]['#attributes'];
+      if (isset($item[0]['#attributes']['href'])) {
+        if (in_array($item[1], ['canonical_url', 'shortlink'])) {
+          $attributes = $item[0]['#attributes'];
 
-        $href = '<' . Html::escape($attributes['href']) . '>';
-        unset($attributes['href']);
-        if ($param = HtmlResponseAttachmentsProcessor::formatHttpHeaderAttributes($attributes)) {
-          $href .= ';' . $param;
+          $href = '<' . Html::escape($attributes['href']) . '>';
+          unset($attributes['href']);
+          $param = HtmlResponseAttachmentsProcessor::formatHttpHeaderAttributes($attributes);
+          if (!empty($param)) {
+            $href .= ';' . $param;
+          }
+          $head_links[] = $href;
         }
-        $head_links[] = $href;
       }
     }
 
@@ -209,6 +212,12 @@ function metatag_page_attachments_alter(array &$attachments) {
  * Implements hook_entity_view_alter().
  */
 function metatag_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  // Don't proceed any further if the entity being viewed isn't the route
+  // entity.
+  if (!_metatag_is_entity_route_entity($entity)) {
+    return;
+  }
+
   if (!$entity->getEntityType()->hasLinkTemplate('canonical')) {
     return;
   }
@@ -232,6 +241,29 @@ function metatag_entity_view_alter(array &$build, EntityInterface $entity, Entit
   }
 
   _metatag_remove_duplicate_entity_tags($build);
+}
+
+/**
+ * A function to determine whether the entity in question is the route entity.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The entity.
+ *
+ * @return bool
+ *   The result.
+ */
+function _metatag_is_entity_route_entity(EntityInterface $entity): bool {
+  static $cached_entity_uuid;
+  if (!$cached_entity_uuid) {
+    foreach (\Drupal::routeMatch()->getParameters() as $route_parameter) {
+      if ($route_parameter instanceof EntityInterface) {
+        if ($route_parameter->uuid() === $entity->uuid()) {
+          $cached_entity_uuid = $entity->uuid();
+        }
+      }
+    }
+  }
+  return ($cached_entity_uuid === $entity->uuid());
 }
 
 /**
@@ -669,9 +701,16 @@ function metatag_migrate_prepare_row(Row $row, MigrateSourceInterface $source, M
     return;
   }
 
-  // Work out what sort of migration to do.
-  // Metatag-D7.
-  if ($source->getDatabase()->schema()->tableExists('metatag')) {
+  // Work out what sort of migration to do. Cache the results of this logic so
+  // that it isn't checked on every single row being processed.
+  static $metatag_table_exists, $nodewords_table_exists;
+  if (!isset($metatag_table_exists)) {
+    $metatag_table_exists = $source->getDatabase()->schema()->tableExists('metatag');
+    $nodewords_table_exists = $source->getDatabase()->schema()->tableExists('nodewords');
+  }
+
+  // The source is Metatag-D7.
+  if ($metatag_table_exists) {
     // @todo Write a more general version rather than hard-coded.
     // Support a know subset of D7 sources.
     if (is_a($source, Node7::class)) {
@@ -735,8 +774,8 @@ function metatag_migrate_prepare_row(Row $row, MigrateSourceInterface $source, M
     }
   }
 
-  // Nodewords-D6.
-  elseif ($source->getDatabase()->schema()->tableExists('nodewords')) {
+  // The source is Nodewords-D6.
+  elseif ($nodewords_table_exists) {
     // @todo Write a more general version rather than hard-coded.
     // Support a know subset of D6 sources.
     if (is_a($source, Node6::class)) {
@@ -858,14 +897,14 @@ function metatag_migration_plugins_alter(array &$definitions) {
         // d7_node_complete, which has dependencies on d7_field_instance and
         // d7_comment_field_instance to ensure correct migration order.
         if ($bundle_id && isset($definitions["d7_metatag_field_instance:$entity_type_id:$bundle_id"])) {
-          $definition['migration_dependencies']['required'][] = "d7_metatag_field:$entity_type_id";
-          $definition['migration_dependencies']['required'][] = "d7_metatag_field_instance:$entity_type_id:$bundle_id";
-          $definition['migration_dependencies']['required'][] = "d7_metatag_field_instance_widget_settings:$entity_type_id:$bundle_id";
+          $definition['migration_dependencies']['optional'][] = "d7_metatag_field:$entity_type_id";
+          $definition['migration_dependencies']['optional'][] = "d7_metatag_field_instance:$entity_type_id:$bundle_id";
+          $definition['migration_dependencies']['optional'][] = "d7_metatag_field_instance_widget_settings:$entity_type_id:$bundle_id";
         }
         elseif (isset($definitions["d7_metatag_field_instance:$entity_type_id"])) {
-          $definition['migration_dependencies']['required'][] = "d7_metatag_field:$entity_type_id";
-          $definition['migration_dependencies']['required'][] = "d7_metatag_field_instance:$entity_type_id";
-          $definition['migration_dependencies']['required'][] = "d7_metatag_field_instance_widget_settings:$entity_type_id";
+          $definition['migration_dependencies']['optional'][] = "d7_metatag_field:$entity_type_id";
+          $definition['migration_dependencies']['optional'][] = "d7_metatag_field_instance:$entity_type_id";
+          $definition['migration_dependencies']['optional'][] = "d7_metatag_field_instance_widget_settings:$entity_type_id";
         }
       }
     }
@@ -891,7 +930,16 @@ function _metatag_is_migration_plugin_supported(array $definition) {
   if (empty($definition['migration_tags'])) {
     return FALSE;
   }
+  if (!is_array($definition['migration_tags'])) {
+    return FALSE;
+  }
   if (!array_intersect(['Drupal 6', 'Drupal 7'], $definition['migration_tags'])) {
+    return FALSE;
+  }
+
+  // Support for migrate_upgrade module, to avoid adding dependencies on already
+  // processed migration procedures.
+  if (!empty($definition['migration_group'])) {
     return FALSE;
   }
 

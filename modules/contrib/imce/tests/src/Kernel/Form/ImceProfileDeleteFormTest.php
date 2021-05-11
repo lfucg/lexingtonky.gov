@@ -29,14 +29,14 @@ class ImceProfileDeleteFormTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'imce',
   ];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
     $this->profileDeleteForm = new ImceProfileDeleteForm();
   }
@@ -59,7 +59,7 @@ class ImceProfileDeleteFormTest extends KernelTestBase {
     $confirmText = $this->profileDeleteForm->getConfirmText();
     $this->assertInstanceOf(TranslatableMarkup::class, $confirmText);
     $this->assertIsString($confirmText->__toString());
-    $this->assertEqual($this->t('Delete'), $confirmText);
+    $this->assertEquals($this->t('Delete'), $confirmText);
   }
 
 }

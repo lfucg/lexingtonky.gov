@@ -1,3 +1,50 @@
+Metatag 8.x-1.16, 2021-03-15
+----------------------------
+#3186893 by DamienMcKenna: Document how to update from Metatag Access to Metatag
+  Extended Perms.
+#3187583 by jrb: Syntax error when running PHP 7.0.
+#3187898 by rutiolma: Comply with migrations using migrate_upgrade.
+#3182548 by DamienMcKenna: Fix tests on 8.x-1.x branch for D9.1.
+#3158186 by siddhant.bhosale, rahulrasgon, rokzabukovec, sabina.h,
+  DamienMcKenna: Replace usages of assertions that are deprecated.
+#3186770 by mortim07: System status report page indicates Metatag's token types
+  do not have any tokens defined.
+#3188806 by mortim07, acbramley, DamienMcKenna: Check if the entity being viewed
+  is the route entity.
+#3188839 by mortim07, DamienMcKenna, mrshowerman, FiNeX, bwaindwain: Node tokens
+  missing.
+#3189138 by bwaindwain, DamienMcKenna: Form element still visible even though
+  permissions turned off.
+#3191109 by thalles: Replace deprecated Drupal\KernelTests\AssertLegacyTrait
+  ::assertEqual by $this->assertEquals().
+#3190808 by Wim Leers, DamienMcKenna: Do not run a "table exists" query for
+  every migrated row of data (regardless of whether it's a metatag row or not!).
+#3193523 by DamienMcKenna: Removed files accidentally committed.
+#3189850 by cmod, DamienMcKenna, J-Lee: Undefined index: href in
+  metatag_page_attachments().
+#3077781 by thejimbirch, DamienMcKenna, mmbk, cindytwilliams: Remove references
+  to the amphtml meta tag.
+#3193502 by DaliaMoh, aritrika.d, DamienMcKenna: Extra if() statement in
+  _metatag_is_migration_plugin_supported().
+#3123583 by DamienMcKenna, Berdir, jonathan1055: Add Devel dependency, tests
+  back again.
+#3199122 by DamienMcKenna, thejimbirch: Fix compatibility with Drupal 9.
+#3199060 by Santhosh-Kumar-Rengasamy, DamienMcKenna: Custom Migration dependency
+  issue for d7 migrate process plugin.
+#2930291 by dobe, trobey, DamienMcKenna, sylus: Expand all text fields to allow
+  1,024 characters.
+#3202865 by stmh, DamienMcKenna: logic in generateRawElements does not work with
+  hreflangs.
+#2941632 by bgilhome, rokzabukovec, DamienMcKenna, yannickoo, thejimbirch:
+  og:latitude/longitude have been replaced by place:location:latitude/longitude.
+#3196133 by leopathu, DamienMcKenna: Exclusive robots metatags (index, noindex,
+  follow, nofollow) in Entity Form.
+#3145078 by DamienMcKenna, mrinalini9, amjad1233, vijaycs85, dww: Possibly wrong
+  use of $modules array in setUp() for functional tests.
+#3196067 by Ruslan Piskarov, DamienMcKenna, mohit.bansal623: Notice: Undefined
+  offset: 2 in metatag_tokens() (line 218 of metatag.tokens.inc).
+
+
 Metatag 8.x-1.15, 2020-12-05
 ----------------------------
 #3165112 by Wim Leers, tim.plunkett: Metatag migrations should be tagged

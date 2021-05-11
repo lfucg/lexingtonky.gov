@@ -29,7 +29,7 @@ abstract class KernelTestBasePlugin extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'user',
     'config',
     'file',
@@ -40,7 +40,7 @@ abstract class KernelTestBasePlugin extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
     $this->installSchema('system', ['sequences']);
     $this->installConfig(static::$modules);

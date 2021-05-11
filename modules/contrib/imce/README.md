@@ -40,6 +40,9 @@ This module requires no modules outside of Drupal core.
    Drupal module. Visit https://www.drupal.org/node/1897420 for further
    information.
 
+## MENU INTEGRATION
+
+ * Create a custom menu item with /imce path
 
 ## CKEDITOR INTEGRATION
 

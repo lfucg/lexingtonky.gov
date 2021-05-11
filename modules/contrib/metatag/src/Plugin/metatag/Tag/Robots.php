@@ -69,28 +69,36 @@ class Robots extends MetaNameBase {
       'index' => [
         '#states' => [
           'disabled' => [
-            ':input[name="robots[noindex]"]' => ['checked' => TRUE],
+            [':input[name="robots[noindex]"]' => ['checked' => TRUE]],
+            'or',
+            [':input[name*="[robots][noindex]"]' => ['checked' => TRUE]],
           ],
         ],
       ],
       'noindex' => [
         '#states' => [
           'disabled' => [
-            ':input[name="robots[index]"]' => ['checked' => TRUE],
+            [':input[name="robots[index]"]' => ['checked' => TRUE]],
+            'or',
+            [':input[name*="[robots][index]"]' => ['checked' => TRUE]],
           ],
         ],
       ],
       'follow' => [
         '#states' => [
           'disabled' => [
-            ':input[name="robots[nofollow]"]' => ['checked' => TRUE],
+            [':input[name="robots[nofollow]"]' => ['checked' => TRUE]],
+            'or',
+            [':input[name*="[robots][nofollow]"]' => ['checked' => TRUE]],
           ],
         ],
       ],
       'nofollow' => [
         '#states' => [
           'disabled' => [
-            ':input[name="robots[follow]"]' => ['checked' => TRUE],
+            [':input[name="robots[follow]"]' => ['checked' => TRUE]],
+            'or',
+            [':input[name*="[robots][follow]"]' => ['checked' => TRUE]],
           ],
         ],
       ],

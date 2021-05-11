@@ -14,6 +14,11 @@ class MetatagFacebookTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
+  protected static $modules = ['metatag_facebook'];
+
+  /**
+   * {@inheritdoc}
+   */
   protected $tags = [
     'fb_admins',
     'fb_app_id',
@@ -24,14 +29,6 @@ class MetatagFacebookTagsTest extends MetatagTagsTestBase {
    * {@inheritdoc}
    */
   protected $testNameAttribute = 'property';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::$modules[] = 'metatag_facebook';
-    parent::setUp();
-  }
 
   /**
    * Each of these meta tags has a different tag name vs its internal name.

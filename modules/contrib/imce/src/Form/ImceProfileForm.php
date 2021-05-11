@@ -162,8 +162,17 @@ class ImceProfileForm extends EntityForm {
     $conf['dimensions']['description'] = [
       '#markup' => '<div class="description">' . $this->t('Images exceeding the limit will be scaled down.') . '</div>',
     ];
+    
+    // Advanced settings
+    $conf['advanced'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Advanced settings'),
+      '#open' => FALSE,
+      '#parents' => ['conf'],
+      '#weight' => 9,
+    ];
     // Replace method.
-    $conf['replace'] = [
+    $conf['advanced']['replace'] = [
       '#type' => 'radios',
       '#title' => $this->t('Upload replace method'),
       '#default_value' => $imce_profile->getConf('replace', FileSystemInterface::EXISTS_RENAME),
@@ -177,21 +186,27 @@ class ImceProfileForm extends EntityForm {
     ];
     // Image thumbnails.
     if (function_exists('image_style_options')) {
-      $conf['thumbnail_style'] = [
+      $conf['advanced']['thumbnail_style'] = [
         '#type' => 'select',
         '#title' => $this->t('Thumbnail style'),
         '#options' => image_style_options(),
         '#default_value' => $imce_profile->getConf('thumbnail_style'),
         '#description' => $this->t('Select a thumbnail style from the list to make the file browser display inline image previews. Note that this could reduce the performance of the file browser drastically.'),
       ];
-
-      $conf['thumbnail_grid_style'] = [
+      $conf['advanced']['thumbnail_grid_style'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Thumbnail grid style'),
         '#default_value' => $imce_profile->getConf('thumbnail_grid_style'),
         '#description' => $this->t('Check it if you want to display the thumbnail in a grid. If not checked it will display the thumbnail in a list.'),
       ];
     }
+    $conf['advanced']['ignore_usage'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Ignore file usage.'),
+      '#default_value' => $imce_profile->getConf('ignore_usage'),
+      '#description' => $this->t('IMCE avoids deletion or overwriting of files that are in use by other Drupal modules. Enabling this option skips the file usage check. Not recommended!'),
+    ];
+    
     // Folders.
     $conf['folders'] = [
       '#type' => 'fieldset',

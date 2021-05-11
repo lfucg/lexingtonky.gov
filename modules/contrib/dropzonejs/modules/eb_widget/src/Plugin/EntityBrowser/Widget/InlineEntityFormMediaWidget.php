@@ -141,6 +141,9 @@ class InlineEntityFormMediaWidget extends MediaEntityDropzoneJsEbWidget {
       $file = $media_entity->$source_field->entity;
       $file->save();
       $media_entity->$source_field->target_id = $file->id();
+      if (method_exists($media_entity, 'prepareSave')) {
+        $media_entity->prepareSave();
+      }
 
       /** @var \Drupal\dropzonejs\Events\DropzoneMediaEntityCreateEvent $event */
       $event = $this->eventDispatcher->dispatch(Events::MEDIA_ENTITY_PRECREATE, new DropzoneMediaEntityCreateEvent($media_entity, $file, $form, $form_state, $form));

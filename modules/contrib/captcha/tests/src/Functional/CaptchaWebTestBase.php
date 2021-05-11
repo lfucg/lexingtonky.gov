@@ -44,7 +44,7 @@ abstract class CaptchaWebTestBase extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['captcha', 'comment'];
+  protected static $modules = ['captcha', 'comment'];
 
   /**
    * {@inheritdoc}
@@ -120,12 +120,12 @@ abstract class CaptchaWebTestBase extends BrowserTestBase {
    */
   protected function assertCaptchaResponseAccepted() {
     // There should be no error message about unknown CAPTCHA session ID.
-    $this->assertNoText(self::CAPTCHA_UNKNOWN_CSID_ERROR_MESSAGE,
+    $this->assertSession()->pageTextNotContains(self::CAPTCHA_UNKNOWN_CSID_ERROR_MESSAGE,
       'CAPTCHA response should be accepted (known CSID).',
       'CAPTCHA'
     );
     // There should be no error message about wrong response.
-    $this->assertNoText(self::CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE,
+    $this->assertSession()->pageTextNotContains(self::CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE,
       'CAPTCHA response should be accepted (correct response).',
       'CAPTCHA'
     );
@@ -139,12 +139,12 @@ abstract class CaptchaWebTestBase extends BrowserTestBase {
    */
   protected function assertCaptchaPresence($presence) {
     if ($presence) {
-      $this->assertText(_captcha_get_description(),
+      $this->assertSession()->pageTextContains(_captcha_get_description(),
         'There should be a CAPTCHA on the form.', 'CAPTCHA'
       );
     }
     else {
-      $this->assertNoText(_captcha_get_description(),
+      $this->assertSession()->pageTextNotContains(_captcha_get_description(),
         'There should be no CAPTCHA on the form.', 'CAPTCHA'
       );
     }
@@ -236,9 +236,9 @@ abstract class CaptchaWebTestBase extends BrowserTestBase {
     else {
       $elements = $this->xpath('//form[@id="' . $form_html_id . '"]//div[contains(@class, "form-item-captcha-response")]/span[@class="field-prefix"]');
     }
-    $this->assert('pass', json_encode($elements));
+    $this->assertTrue('pass', json_encode($elements));
     $challenge = (string) $elements[0];
-    $this->assert('pass', $challenge);
+    $this->assertTrue('pass', $challenge);
     // Extract terms and operator from challenge.
     $matches = [];
     preg_match('/\\s*(\\d+)\\s*(-|\\+)\\s*(\\d+)\\s*=\\s*/', $challenge, $matches);

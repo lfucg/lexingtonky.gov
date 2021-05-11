@@ -3,6 +3,8 @@
 namespace Drupal\image_captcha\Controller;
 
 use Drupal\Core\Config\Config;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Psr\Log\LoggerInterface;
 use Drupal\Core\PageCache\ResponsePolicy\KillSwitch;
@@ -15,11 +17,25 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class CaptchaImageGeneratorController implements ContainerInjectionInterface {
 
   /**
+   * Connection container.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $connection;
+
+  /**
    * Image Captcha config storage.
    *
    * @var \Drupal\Core\Config\Config
    */
   protected $config;
+
+  /**
+   * File System Service.
+   *
+   * @var \Drupal\Core\File\FileSystemInterface
+   */
+  protected $fileSystem;
 
   /**
    * Watchdog logger channel for captcha.
@@ -38,10 +54,12 @@ class CaptchaImageGeneratorController implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public function __construct(Config $config, LoggerInterface $logger, KillSwitch $kill_switch) {
+  public function __construct(Config $config, LoggerInterface $logger, KillSwitch $kill_switch, Connection $connection, FileSystemInterface $file_system) {
     $this->config = $config;
     $this->logger = $logger;
     $this->killSwitch = $kill_switch;
+    $this->connection = $connection;
+    $this->fileSystem = $file_system;
   }
 
   /**
@@ -51,7 +69,9 @@ class CaptchaImageGeneratorController implements ContainerInjectionInterface {
     return new static(
       $container->get('config.factory')->get('image_captcha.settings'),
       $container->get('logger.factory')->get('captcha'),
-      $container->get('page_cache_kill_switch')
+      $container->get('page_cache_kill_switch'),
+      $container->get('database'),
+      $container->get('file_system')
     );
   }
 
@@ -63,7 +83,7 @@ class CaptchaImageGeneratorController implements ContainerInjectionInterface {
    */
   public function image() {
     $this->killSwitch->trigger();
-    return new CaptchaImageResponse($this->config, $this->logger);
+    return new CaptchaImageResponse($this->config, $this->logger, $this->connection, $this->fileSystem);
   }
 
 }

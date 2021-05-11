@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\inline_entity_form\FunctionalJavascript;
 
+use Behat\Mink\Element\NodeElement;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\TestFileCreationTrait;
@@ -345,7 +346,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
     $assert_session->elementExists('xpath', $first_name_field_xpath)->setValue('John');
     $assert_session->elementExists('xpath', $last_name_field_xpath)->setValue('Doe');
     $page->pressButton('Update node');
-    $this->assertNotEmpty($this->waitForElementRemoved('css', 'div[data-drupal-selector="edit-multi-form-inline-entity-form-entities-1-form"]'));
+    $this->assertNotEmpty($assert_session->waitForElementRemoved('css', 'div[data-drupal-selector="edit-multi-form-inline-entity-form-entities-1-form"]'));
     $this->waitForRowByTitle('Some reference 2');
 
     // Save the ief_test_complex node.
@@ -690,7 +691,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
 
     // Close the nested IEF form.
     $page->pressButton('Update node 2');
-    $this->assertNotEmpty($this->waitForElementRemoved('css', 'div[data-drupal-selector="edit-test-ref-nested1-form-inline-entity-form-entities-0-form"]'));
+    $this->assertNotEmpty($assert_session->waitForElementRemoved('css', 'div[data-drupal-selector="edit-test-ref-nested1-form-inline-entity-form-entities-0-form"]'));
     $this->waitForRowByTitle($nested_node->label());
     // Save the top level node.
     $page->pressButton('Save');
@@ -827,9 +828,9 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
     $field = $assert_session->waitForElement('xpath', $this->getXpathForAutoCompleteInput());
     $field->setValue($existing_node_text);
     $page->pressButton('Add node');
-    $this->assertNotEmpty($assert_session->waitForText($expected_error));
+    $this->assertNotNull($assert_session->waitForText($expected_error));
     $assert_session->buttonExists('Cancel')->press();
-    $this->assertNotEmpty($this->waitForElementRemoved('xpath', $this->getXpathForAutoCompleteInput()));
+    $this->assertNotEmpty($assert_session->waitForElementRemoved('xpath', $this->getXpathForAutoCompleteInput()));
   }
 
   /**
@@ -857,8 +858,8 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
 
     $this->drupalGet('node/add/ief_test_complex');
     $assert_session->fieldExists('all_bundles[actions][bundle]');
-    $this->assertOption('edit-all-bundles-actions-bundle', 'ief_reference_type');
-    $this->assertOption('edit-all-bundles-actions-bundle', 'ief_test_complex');
+    $this->assertSession()->optionExists('edit-all-bundles-actions-bundle', 'ief_reference_type');
+    $this->assertSession()->optionExists('edit-all-bundles-actions-bundle', 'ief_test_complex');
     $assert_session->elementExists('xpath', $nested_title_field_xpath);
   }
 
@@ -928,6 +929,170 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
       // double_nested_title present.
       $this->assertNoRowByTitle($double_nested_title);
     }
+  }
+
+  /**
+   * Tests that create and edit of nested data won#t clash.
+   *
+   * When creating, then editing a nested IEF, the internal widget state must
+   * use the same IEF ID on create and edit. Otherwise on saving, the entity
+   * will be saved twice, and cause a WSOD.
+   *
+   * @dataProvider simpleFalseTrueDataProvider
+   */
+  public function testNestedCreateAndEditWontClash(bool $required) {
+    // Get the xpath selectors for the input fields in this test.
+    $top_title_field_xpath = $this->getXpathForNthInputByLabelText('Title', 1);
+    $nested_title_field_xpath = $this->getXpathForNthInputByLabelText('Title', 2);
+    $double_nested_title_field_xpath = $this->getXpathForNthInputByLabelText('Title', 3);
+
+    $second_edit_button_xpath = $this->getXpathForButtonWithValue('Edit', 2);
+
+    $page = $this->getSession()->getPage();
+    $assert_session = $this->assertSession();
+
+    $this->setupNestedComplexForm($required);
+    $required_string = ($required) ? ' required' : ' unrequired';
+    $title_1 = 'Rationality' . $required_string;
+    $title_1_2 = 'Drain' . $required_string;
+    $title_1_2_3 = 'Drain within a drain' . $required_string;
+    $title_i_2_3a = "Drone within a drain" . $required_string;
+    $title_1_2a = 'Drone' . $required_string;
+    $title_1_2a_3 = 'Drain within a drone' . $required_string;
+    $title_i_2a_3a = "Drone within a drain" . $required_string;
+
+    $this->elementWithXpath($top_title_field_xpath)
+      ->setValue($title_1);
+    $this->elementWithXpath($nested_title_field_xpath)
+      ->setValue($title_1_2);
+    $this->elementWithXpath($double_nested_title_field_xpath)
+      ->setValue($title_1_2_3);
+
+    // Close all subforms.
+    $this->elementWithXpath($this->buttonXpath('Create node 3'))->press();
+    $this->waitForXpath($this->buttonXpath('Add new node 3'));
+    $this->elementWithXpath($this->buttonXpath('Create node 2'))->press();
+    $this->waitForXpath($this->buttonXpath('Add new node 2'));
+
+    // Re-open all subforms and add a second node 3.
+    $this->elementWithXpath($this->buttonXpath('Edit'))->press();
+    $this->waitForXpath($this->buttonXpath('Update node 2'));
+    $this->elementWithXpath($this->buttonXpath('Add new node 3'))->press();
+    $this->assertNotNull($assert_session->waitForButton('Create node 3'));
+    $assert_session->elementExists('xpath', $double_nested_title_field_xpath)
+      ->setValue($title_i_2_3a);
+    $this->elementWithXpath($this->buttonXpath('Create node 3'))->press();
+    $this->waitForXpath($this->buttonXpath('Add new node 3'));
+    $this->elementWithXpath($this->buttonXpath('Update node 2'))->press();
+    $this->waitForXpathRemoved($this->buttonXpath('Update node 2'));
+
+    // Repeat. Add node 2a and 2a_3
+    $this->elementWithXpath($this->buttonXpath('Add new node 2'))->press();
+    $this->waitForXpath($this->buttonXpath('Create node 2'));
+    if (!$required) {
+      $this->elementWithXpath($this->buttonXpath('Add new node 3'))->press();
+      $this->waitForXpath($this->buttonXpath('Create node 3'));
+    }
+
+    $assert_session->elementExists('xpath', $nested_title_field_xpath)
+      ->setValue($title_1_2a);
+    $assert_session->elementExists('xpath', $double_nested_title_field_xpath)
+      ->setValue($title_1_2a_3);
+
+    // Close all subforms.
+    $this->elementWithXpath($this->buttonXpath('Create node 3'))->press();
+    $this->waitForXpath($this->buttonXpath('Add new node 3'));
+    $this->elementWithXpath($this->buttonXpath('Create node 2'))->press();
+    $this->waitForXpathRemoved($this->buttonXpath('Create node 2'));
+
+    // Re-open all subforms and add a second node 2a_3a.
+    $this->waitForXpath($second_edit_button_xpath)->press();
+    $this->waitForXpath($this->buttonXpath('Update node 2'));
+    $this->elementWithXpath($this->buttonXpath('Add new node 3'))->press();
+    $this->waitForXpath($this->buttonXpath('Create node 3'));
+    $assert_session->elementExists('xpath', $double_nested_title_field_xpath)
+      ->setValue($title_i_2a_3a);
+    $this->elementWithXpath($this->buttonXpath('Create node 3'))->press();
+    $this->waitForXpath($this->buttonXpath('Add new node 3'));
+
+    // Save everything and assert message.
+    $this->elementWithXpath($this->buttonXpath('Save'))->press();
+    $this->htmlOutput();
+    $assert_session->pageTextContains("IEF test nested 1 $title_1 has been created.");
+  }
+
+  /**
+   * Data provider: FALSE, TRUE.
+   */
+  public function simpleFalseTrueDataProvider() {
+    return [
+      [FALSE],
+      [TRUE],
+    ];
+  }
+
+  /**
+   * Assert and return an element via XPath. On fail, save output and throw.
+   *
+   * @param string $xpath
+   *   The XPath.
+   * @return \Behat\Mink\Element\NodeElement
+   *   The element.
+   */
+  public function elementWithXpath(string $xpath): NodeElement {
+    return $this->waitForXpath($xpath, 0);
+  }
+
+  /**
+   * Wait, assert, and return an element via XPath. On fail, save output and throw.
+   *
+   * @param string $xpath
+   *   The XPath.
+   * @param int $timeout
+   *   The timeout in milliseconds.
+   * @return \Behat\Mink\Element\NodeElement
+   *   The element.
+   */
+  public function waitForXpath(string $xpath, int $timeout = 10000): NodeElement {
+    $element = $this->assertSession()->waitForElement('xpath', $xpath, $timeout);
+    if (!$element) {
+      $this->htmlOutput();
+      $this->assertNotNull($element);
+    }
+    return $element;
+  }
+
+  /**
+   * Wait and assert removal of an element via XPath. On fail, save output and throw.
+   *
+   * @param string $xpath
+   *   The XPath.
+   * @param int $timeout
+   *   The timeout in milliseconds.
+   * @return bool
+   *   Returna always true (else throws).
+   */
+  public function waitForXpathRemoved(string $xpath, int $timeout = 10000): bool {
+    $removed = $this->assertSession()->waitForElementRemoved('xpath', $xpath, $timeout);
+    if (!$removed) {
+      $this->htmlOutput();
+      $this->assert($removed);
+    }
+    return $removed;
+  }
+
+  /**
+   * Get xpath for a button.
+   *
+   * @param string $label
+   *  The button's label.
+   * @param int $index
+   *   The button's index, defaults to 1.
+   * @return string
+   *   The XPath.
+   */
+  protected function buttonXpath(string $label, int $index = 1): string {
+    return $this->getXpathForButtonWithValue($label, $index);
   }
 
 }

@@ -21,7 +21,11 @@ class NodewordsFieldTest extends MigrateSqlSourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['metatag', 'migrate_drupal', 'token'];
+  public static $modules = [
+    'metatag',
+    'migrate_drupal',
+    'token',
+  ];
 
   /**
    * {@inheritdoc}

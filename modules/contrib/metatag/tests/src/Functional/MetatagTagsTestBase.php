@@ -18,7 +18,7 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     // This is needed for the 'access content' permission.
     'node',
 
@@ -106,7 +106,7 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
         $xpath = "//input[@name='{$tag}' and @type='text']";
       }
 
-      $this->assertFieldByXPath($xpath, NULL, new FormattableMarkup('Found the @tag meta tag field using the xpath: @xpath', ['@tag' => $tag, '@xpath' => $xpath]));
+      $this->xpath($xpath);
     }
 
     $this->drupalLogout();
@@ -130,6 +130,7 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
       'title' => $this->t('Hello, world!'),
       'type' => 'page',
     ]);
+    $session = $this->assertSession();
 
     // Test a non-entity path and an entity path. The non-entity path inherits
     // the global meta tags, the entity path inherits from its entity config.
@@ -151,7 +152,7 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
 
       // Load the global config.
       $this->drupalGet($path1);
-      $this->assertSession()->statusCodeEquals(200);
+      $session->statusCodeEquals(200);
 
       // Update the Global defaults and test them.
       $all_values = $values = [];
@@ -182,11 +183,11 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
       $values[$test_key] = $test_value;
       $all_values[$tag_name] = $test_value;
       $this->drupalPostForm(NULL, $values, 'Save');
-      $this->assertText($save_message);
+      $session->pageTextContains($save_message);
 
       // Load the test page.
       $this->drupalGet($path2);
-      $this->assertSession()->statusCodeEquals(200);
+      $session->statusCodeEquals(200);
 
       // Look for the values.
       // Look for a custom method named "{$tag_name}TestOutputXpath", if
@@ -269,13 +270,13 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
             $this->verbose($xpath, $tag_name . ': ' . $xpath_string);
           }
           $this->assertNotEmpty($xpath[0]->getAttribute($xpath_value_attribute));
-          $this->assertEqual($xpath[0]->getAttribute($xpath_value_attribute), $all_values[$tag_name], "The '{$tag_name}' tag was found with the expected value.");
+          $this->assertEquals($xpath[0]->getAttribute($xpath_value_attribute), $all_values[$tag_name], "The '{$tag_name}' tag was found with the expected value.");
         }
       }
       else {
         $this->verbose($xpath, $tag_name . ': ' . $xpath_string);
         $this->assertTrue((string) $xpath[0]);
-        $this->assertEqual((string) $xpath[0], $all_values[$tag_name], new FormattableMarkup("The '@tag' tag was found with the expected value '@value'.", ['@tag' => $tag_name, '@value' => $all_values[$tag_name]]));
+        $this->assertEquals((string) $xpath[0], $all_values[$tag_name], new FormattableMarkup("The '@tag' tag was found with the expected value '@value'.", ['@tag' => $tag_name, '@value' => $all_values[$tag_name]]));
       }
     }
 

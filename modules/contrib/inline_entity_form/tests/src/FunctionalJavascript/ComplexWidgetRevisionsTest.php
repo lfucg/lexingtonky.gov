@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\inline_entity_form\FunctionalJavascript;
 
+use Drupal\Core\Entity\Display\EntityDisplayInterface;
+
 /**
  * IEF complex entity reference revisions tests.
  *
@@ -30,6 +32,13 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
   protected $formContentAddUrl;
 
   /**
+   * Entity form display storage.
+   *
+   * @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface
+   */
+  protected $entityFormDisplayStorage;
+
+  /**
    * Prepares environment for testing.
    */
   protected function setUp(): void {
@@ -53,12 +62,31 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
     $this->drupalLogin($this->user);
 
     $this->formContentAddUrl = 'node/add/err_level_1';
+    $this->entityFormDisplayStorage = $this->container->get('entity_type.manager')->getStorage('entity_form_display');
+  }
+
+  /**
+   * Data provider for ::testRevisionsAtDepth.
+   */
+  public function testRevisionsAtDepthDataProvider(): array {
+    return [
+      [FALSE],
+      [TRUE],
+    ];
   }
 
   /**
    * Tests saving entity reference revisions' field types at depth.
+   *
+   * @dataProvider testRevisionsAtDepthDataProvider
    */
-  public function testRevisionsAtDepth() {
+  public function testRevisionsAtDepth(bool $inner_widget_adds_revisions) {
+    $level_2_display_config = $this->entityFormDisplayStorage->load('node.err_level_2.default');
+    $component = $level_2_display_config->getComponent('field_level_3_items');
+    $component['settings']['revision'] = $inner_widget_adds_revisions;
+    $level_2_display_config->setComponent('field_level_3_items', $component);
+    $level_2_display_config->save();
+
     // Get the xpath selectors for the input fields in this test.
     $top_title_field_xpath = $this->getXpathForNthInputByLabelText('Title', 1);
     $nested_title_field_xpath = $this->getXpathForNthInputByLabelText('Title', 2);
@@ -76,7 +104,7 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
 
     // Open up level 2 and 3 IEF forms.
     $assert_session->elementExists('xpath', $first_add_new_node_button_xpath)->press();
-    $this->waitForElementRemoved('xpath', $first_add_new_node_button_xpath);
+    $assert_session->waitForElementRemoved('xpath', $first_add_new_node_button_xpath);
     $assert_session->elementExists('xpath', $first_add_new_node_button_xpath)->press();
 
     // Fill in and save level 3 IEF form.
@@ -92,7 +120,7 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
 
     // Save the top level entity.
     $assert_session->elementExists('xpath', $top_title_field_xpath)->setValue('Level 1');
-    $this->waitForElementRemoved('xpath', $first_edit_button_xpath);
+    $assert_session->waitForElementRemoved('xpath', $first_edit_button_xpath);
     $page->pressButton('Save');
 
     // Re-edit the created node to test for revisions.
@@ -101,7 +129,7 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
 
     // Open up level 2 and 3 IEF forms.
     $assert_session->elementExists('xpath', $first_edit_button_xpath)->press();
-    $this->waitForElementRemoved('xpath', $first_edit_button_xpath);
+    $assert_session->waitForElementRemoved('xpath', $first_edit_button_xpath);
     $assert_session->elementExists('xpath', $first_edit_button_xpath)->press();
 
     // Change level 3 IEF node title.
@@ -117,7 +145,7 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
 
     // Save the top level entity.
     $assert_session->elementExists('xpath', $top_title_field_xpath)->setValue('Level 1.1');
-    $this->waitForElementRemoved('xpath', $first_edit_button_xpath);
+    $assert_session->waitForElementRemoved('xpath', $first_edit_button_xpath);
     $page->pressButton('Save');
 
     // Assert that the entities are correctly saved.
@@ -138,7 +166,7 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
 
     // Open up level 2 and 3 IEF forms.
     $assert_session->elementExists('xpath', $first_edit_button_xpath)->press();
-    $this->waitForElementRemoved('xpath', $first_edit_button_xpath);
+    $assert_session->waitForElementRemoved('xpath', $first_edit_button_xpath);
     $assert_session->elementExists('xpath', $first_edit_button_xpath)->press();
 
     // Change level 3 IEF node title.
@@ -154,7 +182,7 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
 
     // Save the top level entity.
     $assert_session->elementExists('xpath', $top_title_field_xpath)->setValue('Level 1.2');
-    $this->waitForElementRemoved('xpath', $first_edit_button_xpath);
+    $assert_session->waitForElementRemoved('xpath', $first_edit_button_xpath);
     $page->pressButton('Save');
 
     // Assert that the entities are correctly saved.
@@ -172,14 +200,19 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
     $node_level_2_vid_new = $node_level_2->getLoadedRevisionId();
 
     // Assert that a new revision created.
-    $this->assertNotEqual($node_level_2_vid, $node_level_2_vid_new);
+    $this->assertNotEquals($node_level_2_vid, $node_level_2_vid_new);
 
     // Load the current revision id of the Level 3 node.
     $node_level_3 = $this->drupalGetNodeByTitle('Level 3.2');
     $node_level_3_vid_new = $node_level_3->getLoadedRevisionId();
 
-    // Assert that no new revision created.
-    $this->assertEqual($node_level_3_vid, $node_level_3_vid_new);
+    // Assert that (no) new revision created.
+    if ($inner_widget_adds_revisions) {
+      $this->assertNotEquals($node_level_3_vid, $node_level_3_vid_new);
+    }
+    else {
+      $this->assertEquals($node_level_3_vid, $node_level_3_vid_new);
+    }
   }
 
   /**
@@ -202,13 +235,13 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
 
     // Open up test entity with no bundle IEF form.
     $assert_session->elementExists('xpath', $first_add_new_no_bundle_node_button)->press();
-    $this->waitForElementRemoved('xpath', $first_add_new_no_bundle_node_button);
+    $assert_session->waitForElementRemoved('xpath', $first_add_new_no_bundle_node_button);
     $this->assertNotEmpty($assert_session->waitForElement('xpath', $first_no_bundle_create_node_button));
 
     // Save level 2 test entity without bundle IEF form.
     $assert_session->elementExists('xpath', $name_field_xpath)->setValue('Level 2 entity without bundle');
     $assert_session->elementExists('xpath', $first_no_bundle_create_node_button)->press();
-    $this->waitForElementRemoved('xpath', $first_add_new_no_bundle_node_button);
+    $assert_session->waitForElementRemoved('xpath', $first_add_new_no_bundle_node_button);
     $this->assertNotEmpty($assert_session->waitForElement('xpath', $first_no_bundle_node_edit_button));
 
     // Save the top level entity.
@@ -257,7 +290,7 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
     $entity_no_bundle_vid_new = $entity_no_bundle->getLoadedRevisionId();
 
     // Assert that new revision was created.
-    $this->assertNotEqual($entity_no_bundle_vid, $entity_no_bundle_vid_new);
+    $this->assertNotEquals($entity_no_bundle_vid, $entity_no_bundle_vid_new);
   }
 
 }

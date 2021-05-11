@@ -8,6 +8,7 @@
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\Core\DrupalKernel;
 
 define('IMAGE_CAPTCHA_ALLOWED_CHARACTERS', 'aAbBCdEeFfGHhijKLMmNPQRrSTtWXYZ23456789');
 
@@ -45,6 +46,61 @@ function _image_captcha_get_enabled_fonts() {
     return \Drupal::config('image_captcha.settings')
       ->get('image_captcha_fonts');
   }
+}
+
+/**
+ * Helper function to get font(s).
+ *
+ * @return string|array
+ *   URI of file hash or List of font paths.
+ */
+function _image_captcha_get_font_uri($token = NULL) {
+  $fonts = [
+    'BUILTIN' => 'BUILTIN',
+  ];
+  $available_fonts = _image_captcha_get_available_fonts_from_directories();
+  foreach ($available_fonts as $file_token => $font_info) {
+    $fonts[$file_token] = $font_info['uri'];
+  }
+  return ((!empty($token) && !empty($fonts[$token])) ? $fonts[$token] : $fonts);
+}
+
+/**
+ * Helper function to get fonts from the given directories.
+ *
+ * @param array|null $directories
+ *   (Optional) an array of directories
+ *   to recursively search through, if not given, the default
+ *   directories will be used.
+ *
+ * @return array
+ *   Fonts file objects (with fields 'name',
+ *   'basename' and 'filename'), keyed on the sha256 hash of the font
+ *   path (to have an easy token that can be used in an url
+ *   without en/decoding issues).
+ */
+function _image_captcha_get_available_fonts_from_directories($directories = NULL) {
+  // If no fonts directories are given: use the default.
+  if ($directories === NULL) {
+    $request = \Drupal::service('request_stack')->getCurrentRequest();
+    $directories = [
+      drupal_get_path('module', 'image_captcha') . '/fonts',
+      'sites/all/libraries/fonts',
+      DrupalKernel::findSitePath($request) . '/libraries/fonts',
+    ];
+  }
+  // Collect the font information.
+  $fonts = [];
+  foreach ($directories as $directory) {
+    if (\Drupal::service('file_system')->prepareDirectory($directory)) {
+      $files = \Drupal::service('file_system')->scanDirectory($directory, '/\.[tT][tT][fF]$/');
+      foreach ($files as $filename => $font) {
+        $fonts[hash('sha256', $filename)] = (array) $font;
+      }
+    }
+  }
+
+  return $fonts;
 }
 
 /**

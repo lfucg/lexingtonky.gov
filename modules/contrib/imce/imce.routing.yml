@@ -23,6 +23,14 @@ imce.help:
   requirements:
     _permission: 'administer imce'
 
+imce.admin_browser:
+  path: '/admin/imce/browser'
+  defaults:
+    _controller: '\Drupal\imce\Controller\ImceAdminBrowserController::page'
+    _title: 'IMCE File Browser'
+  requirements:
+    _permission: 'administer imce'
+
 imce.profile_add:
   path: '/admin/config/media/imce/add-profile'
   defaults:

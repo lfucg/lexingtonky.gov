@@ -37,7 +37,7 @@ class DeleteTest extends KernelTestBasePlugin {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'user',
     'config',
     'file',
@@ -48,7 +48,7 @@ class DeleteTest extends KernelTestBasePlugin {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
     $this->imceFM = $this->getImceFM();
     $this->delete = new Delete([], "delete", []);
