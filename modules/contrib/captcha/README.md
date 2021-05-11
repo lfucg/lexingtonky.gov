@@ -83,3 +83,9 @@ MAINTAINERS
 Supporting organizations:
 
  * Chuva Inc. - https://www.drupal.org/chuva-inc
+
+DEVELOPMENT
+-------------
+  You can disable captcha in your local or test environment by adding the
+  following line to settings.php:
+  $settings['disable_captcha'] = TRUE;

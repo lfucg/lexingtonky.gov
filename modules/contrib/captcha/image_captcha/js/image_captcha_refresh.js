@@ -24,6 +24,8 @@
         var date = new Date();
         var baseUrl = document.location.origin;
         var url = baseUrl + '/' + $(this).attr('href') + '?' + date.getTime();
+        // Adding loader.
+        $('.captcha').append('<div class="image_captcha_refresh_loader"></div>');
         $.get(
           url,
           {},
@@ -32,6 +34,7 @@
               $('.captcha', $form).find('img').attr('src', response.data.url);
               $('input[name=captcha_sid]', $form).val(response.data.sid);
               $('input[name=captcha_token]', $form).val(response.data.token);
+              $('.captcha .image_captcha_refresh_loader').remove();
             }
             else {
               alert(response.message);

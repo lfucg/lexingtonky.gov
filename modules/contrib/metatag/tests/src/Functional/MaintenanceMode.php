@@ -18,7 +18,7 @@ class MaintenanceMode extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     // Modules for core functionality.
     'node',
     'field',
@@ -43,10 +43,11 @@ class MaintenanceMode extends BrowserTestBase {
   public function testUser1() {
     // Load the user 1 profile page.
     $this->drupalGet('/user/1');
+    $session = $this->assertSession();
     // Confirm the page title is correct.
-    $this->assertRaw('<title>Access denied | ');
-    $this->assertNoRaw('<title>admin | ');
-    $this->assertNoRaw('<title>Site under maintenance | ');
+    $session->responseContains('<title>Access denied | ');
+    $session->responseNotContains('<title>admin | ');
+    $session->responseNotContains('<title>Site under maintenance | ');
 
     // Put the site into maintenance mode.
     \Drupal::state()->set('system.maintenance_mode', TRUE);
@@ -55,9 +56,9 @@ class MaintenanceMode extends BrowserTestBase {
     // Load the user 1 profile page again.
     $this->drupalGet('/user/1');
     // Confirm the page title has changed.
-    $this->assertNoRaw('<title>Access denied | ');
-    $this->assertNoRaw('<title>admin | ');
-    $this->assertRaw('<title>Site under maintenance | ');
+    $session->responseNotContains('<title>Access denied | ');
+    $session->responseNotContains('<title>admin | ');
+    $session->responseContains('<title>Site under maintenance | ');
   }
 
 }

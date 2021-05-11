@@ -175,12 +175,6 @@ class AddToAnySettingsForm extends ConfigFormBase {
       '#description'   => $this->t('You can add special CSS code for AddToAny. See <a href="https://www.addtoany.com/buttons/customize/drupal" target="_blank">AddToAny documentation</a>.'),
       '#attributes' => $attributes_for_code,
     ];
-    $form['addtoany_additional_settings']['addtoany_no_3p'] = [
-      '#type'          => 'checkbox',
-      '#title'         => $this->t('Disable 3rd party cookies'),
-      '#default_value' => $addtoany_settings->get('no_3p'),
-      '#description'   => $this->t('Disabling may affect analytics and limit some functionality.'),
-    ];
 
     if ($this->moduleHandler->moduleExists('token')) {
       $form['tokens'] = [
@@ -275,8 +269,7 @@ class AddToAnySettingsForm extends ConfigFormBase {
       ->set('buttons_size', $values['addtoany_buttons_size'])
       ->set('custom_universal_button', $values['addtoany_custom_universal_button'])
       ->set('universal_button', $values['addtoany_universal_button'])
-      ->set('universal_button_placement', $values['addtoany_universal_button_placement'])
-      ->set('no_3p', $values['addtoany_no_3p']);
+      ->set('universal_button_placement', $values['addtoany_universal_button_placement']);
 
     foreach(self::getContentEntities() as $entity) {
       $entityId = $entity->id();

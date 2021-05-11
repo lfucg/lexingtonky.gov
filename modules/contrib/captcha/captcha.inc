@@ -179,6 +179,20 @@ function _captcha_get_description() {
 }
 
 /**
+ * Gets the error message for when a user enters an incorrect CAPTCHA answer.
+ *
+ * @return string
+ *   Error message.
+ */
+function _captcha_get_error_message() {
+  $error_message = \Drupal::config('captcha.settings')->get('wrong_captcha_response_message');
+  if ($error_message) {
+    return Xss::filter($error_message);
+  }
+  return t('The answer you entered for the CAPTCHA was not correct.');
+}
+
+/**
  * Parse or interpret the given captcha_type.
  *
  * @param string $captcha_type

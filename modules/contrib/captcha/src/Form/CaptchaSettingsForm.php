@@ -164,6 +164,16 @@ class CaptchaSettingsForm extends ConfigFormBase {
       ],
     ];
 
+    // Field for the wrong captcha response error message.
+    $form['wrong_captcha_response_message'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Wrong CAPTCHA response error message'),
+      '#description' => $this->t('Configurable error message that the user gets when it enters an incorrect CAPTCHA answer.'),
+      '#default_value' => _captcha_get_error_message(),
+      '#maxlength' => 256,
+      '#required' => TRUE,
+    ];
+
     // Option for case sensitive/insensitive validation of the responses.
     $form['default_validation'] = [
       '#type' => 'radios',
@@ -241,6 +251,7 @@ class CaptchaSettingsForm extends ConfigFormBase {
     // Save (or reset) the CAPTCHA descriptions.
     $config->set('description', $form_state->getValue('description'));
 
+    $config->set('wrong_captcha_response_message', $form_state->getValue('wrong_captcha_response_message'));
     $config->set('default_validation', $form_state->getValue('default_validation'));
     $config->set('persistence', $form_state->getValue('persistence'));
     $config->set('enable_stats', $form_state->getValue('enable_stats'));
@@ -256,7 +267,7 @@ class CaptchaSettingsForm extends ConfigFormBase {
    *
    * @param array $form
    *   Form structured array.
-   * @param Drupal\Core\Form\FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state structured array.
    */
   public function clearCaptchaPlacementCacheSubmit(array $form, FormStateInterface $form_state) {

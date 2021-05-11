@@ -38,7 +38,7 @@ function image_captcha_install() {
   $config = \Drupal::configFactory()->getEditable('image_captcha.settings');
 
   $config->set('image_captcha_fonts', [
-    drupal_get_path('module', 'image_captcha') . '/fonts/Tesox/tesox.ttf',
-    drupal_get_path('module', 'image_captcha') . '/fonts/Tuffy/Tuffy.ttf',
+    hash('sha256', drupal_get_path('module', 'image_captcha') . '/fonts/Tesox/tesox.ttf'),
+    hash('sha256', drupal_get_path('module', 'image_captcha') . '/fonts/Tuffy/Tuffy.ttf'),
   ])->save(TRUE);
 }

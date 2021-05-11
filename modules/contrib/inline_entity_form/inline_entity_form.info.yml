@@ -3,3 +3,4 @@ description: "Provides a widget for inline management (creation, modification, r
 type: module
 package: Fields
 core_version_requirement: ^8.8 || ^9
+php: 7.1

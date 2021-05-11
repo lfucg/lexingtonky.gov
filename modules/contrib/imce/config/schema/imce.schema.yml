@@ -70,6 +70,10 @@ imce.profile_conf.thumbnail_grid_style:
   type: boolean
   label: 'Thumbnail grid style'
 
+imce.profile_conf.ignore_usage:
+  type: boolean
+  label: 'Ignore file usage'
+
 imce.profile_conf.folders:
   type: sequence
   label: 'Folders'

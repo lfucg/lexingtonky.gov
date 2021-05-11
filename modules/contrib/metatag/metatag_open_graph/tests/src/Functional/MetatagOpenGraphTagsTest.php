@@ -14,6 +14,11 @@ class MetatagOpenGraphTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
+  protected static $modules = ['metatag_open_graph'];
+
+  /**
+   * {@inheritdoc}
+   */
   protected $tags = [
     'article_author',
     'article_expiration_time',
@@ -87,17 +92,16 @@ class MetatagOpenGraphTagsTest extends MetatagTagsTestBase {
   protected $testNameAttribute = 'property';
 
   /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::$modules[] = 'metatag_open_graph';
-    parent::setUp();
-  }
-
-  /**
    * Each of these meta tags has a different tag name vs its internal name.
    */
   protected function getTestTagName($tag_name) {
+    if ($tag_name == 'og_latitude') {
+      $tag_name = 'place:location:latitude';
+    }
+    elseif ($tag_name == 'og_longitude') {
+      $tag_name = 'place:location:longitude';
+    }
+
     // Replace the first underline with a colon.
     $tag_name = str_replace('og_', 'og:', $tag_name);
     $tag_name = str_replace('article_', 'article:', $tag_name);

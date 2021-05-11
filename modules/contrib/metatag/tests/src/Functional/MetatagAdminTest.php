@@ -20,7 +20,7 @@ class MetatagAdminTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     // Core modules.
     // @see testAvailableConfigEntities
     'block',
@@ -85,77 +85,77 @@ class MetatagAdminTest extends BrowserTestBase {
 
     // Check that the user can see the list of metatag defaults.
     $this->drupalGet('admin/config/search/metatag');
-    $this->assertSession()->statusCodeEquals(200);
+    $session = $this->assertSession();
+    $session->statusCodeEquals(200);
 
     // Check that the Global defaults were created.
-    $this->assertLinkByHref('admin/config/search/metatag/global', 0, $this->t('Global defaults were created on installation.'));
+    $session->linkByHrefExists('admin/config/search/metatag/global');
 
     // Check that Global and entity defaults can't be deleted.
-    $this->assertNoLinkByHref('admin/config/search/metatag/global/delete', 0, $this->t("Global defaults can't be deleted"));
-    $this->assertNoLinkByHref('admin/config/search/metatag/node/delete', 0, $this->t("Entity defaults can't be deleted"));
+    $session->linkByHrefNotExists('admin/config/search/metatag/global/delete');
+    $session->linkByHrefNotExists('admin/config/search/metatag/node/delete');
 
     // Check that the module defaults were injected into the Global config
     // entity.
     $this->drupalGet('admin/config/search/metatag/global');
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     $this->assertFieldById('edit-title', $metatag_defaults->get('title'), $this->t('Metatag defaults were injected into the Global configuration entity.'));
-
     // Update the Global defaults and test them.
     $this->drupalGet('admin/config/search/metatag/global');
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     $values = [
       'title' => 'Test title',
       'description' => 'Test description',
     ];
     $this->drupalPostForm(NULL, $values, 'Save');
-    $this->assertText('Saved the Global Metatag defaults.');
+    $session->pageTextContains('Saved the Global Metatag defaults.');
     $this->drupalGet('hit-a-404');
-    $this->assertSession()->statusCodeEquals(404);
+    $session->statusCodeEquals(404);
     foreach ($values as $metatag => $value) {
-      $this->assertRaw($value, $this->t('Updated metatag @tag was found in the HEAD section of the page.', ['@tag' => $metatag]));
+      $session->responseContains($value, $this->t('Updated metatag @tag was found in the HEAD section of the page.', ['@tag' => $metatag]));
     }
 
     // Check that tokens are processed.
     $this->drupalGet('admin/config/search/metatag/global');
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     $values = [
       'title' => '[site:name] | Test title',
       'description' => '[site:name] | Test description',
     ];
     $this->drupalPostForm(NULL, $values, 'Save');
-    $this->assertText('Saved the Global Metatag defaults.');
+    $session->pageTextContains('Saved the Global Metatag defaults.');
     drupal_flush_all_caches();
     $this->drupalGet('hit-a-404');
-    $this->assertSession()->statusCodeEquals(404);
+    $session->statusCodeEquals(404);
     foreach ($values as $metatag => $value) {
       $processed_value = \Drupal::token()->replace($value);
-      $this->assertRaw($processed_value, $this->t('Processed token for metatag @tag was found in the HEAD section of the page.', ['@tag' => $metatag]));
+      $session->responseContains($processed_value, $this->t('Processed token for metatag @tag was found in the HEAD section of the page.', ['@tag' => $metatag]));
     }
 
     // Test the Robots plugin.
     $this->drupalGet('admin/config/search/metatag/global');
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     $robots_values = ['index', 'follow', 'noydir'];
     $values = [];
     foreach ($robots_values as $value) {
       $values['robots[' . $value . ']'] = TRUE;
     }
     $this->drupalPostForm(NULL, $values, 'Save');
-    $this->assertText('Saved the Global Metatag defaults.');
+    $session->pageTextContains('Saved the Global Metatag defaults.');
     drupal_flush_all_caches();
 
     // Trigger a 404 request.
     $this->drupalGet('hit-a-404');
-    $this->assertSession()->statusCodeEquals(404);
+    $session->statusCodeEquals(404);
     $robots_value = implode(', ', $robots_values);
-    $this->assertRaw($robots_value, $this->t('Robots metatag has the expected values.'));
+    $session->responseContains($robots_value, $this->t('Robots metatag has the expected values.'));
 
     // Test reverting global configuration to its defaults.
     $this->drupalGet('admin/config/search/metatag/global/revert');
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     $this->drupalPostForm(NULL, [], 'Revert');
-    $this->assertText('Reverted Global defaults.');
-    $this->assertText($default_title, 'Global title was reverted to its default value.');
+    $session->pageTextContains('Reverted Global defaults.');
+    $session->pageTextContains($default_title);
 
     $this->drupalLogout();
   }
@@ -174,10 +174,11 @@ class MetatagAdminTest extends BrowserTestBase {
 
     // Load the default-add page.
     $this->drupalGet('admin/config/search/metatag/add');
-    $this->assertSession()->statusCodeEquals(200);
+    $session = $this->assertSession();
+    $session->statusCodeEquals(200);
 
     // Confirm the 'type' field exists.
-    $this->assertFieldByName('id');
+    $session->fieldExists('id');
 
     // Compile a list of entities from the list.
     $options = $this->cssSelect('select[name="id"] option');
@@ -208,41 +209,42 @@ class MetatagAdminTest extends BrowserTestBase {
 
     // Adjust the front page and test it.
     $this->drupalGet('admin/config/search/metatag/front');
-    $this->assertSession()->statusCodeEquals(200);
+    $session = $this->assertSession();
+    $session->statusCodeEquals(200);
     $values = [
       'description' => 'Front page description',
     ];
     $this->drupalPostForm(NULL, $values, 'Save');
-    $this->assertText('Saved the Front page Metatag defaults.');
+    $session->pageTextContains('Saved the Front page Metatag defaults.');
     $this->drupalGet('<front>');
-    $this->assertSession()->statusCodeEquals(200);
-    $this->assertRaw($values['description'], $this->t('Front page defaults are used at the front page.'));
+    $session->statusCodeEquals(200);
+    $session->responseContains($values['description'], $this->t('Front page defaults are used at the front page.'));
 
     // Adjust the 403 page and test it.
     $this->drupalGet('admin/config/search/metatag/403');
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     $values = [
       'description' => '403 page description.',
     ];
     $this->drupalPostForm(NULL, $values, 'Save');
-    $this->assertText('Saved the 403 access denied Metatag defaults.');
+    $session->pageTextContains('Saved the 403 access denied Metatag defaults.');
     $this->drupalLogout();
     $this->drupalGet('admin/config/search/metatag');
-    $this->assertSession()->statusCodeEquals(403);
-    $this->assertRaw($values['description'], $this->t('403 page defaults are used at 403 pages.'));
+    $session->statusCodeEquals(403);
+    $session->responseContains($values['description'], $this->t('403 page defaults are used at 403 pages.'));
 
     // Adjust the 404 page and test it.
     $this->drupalLogin($account);
     $this->drupalGet('admin/config/search/metatag/404');
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     $values = [
       'description' => '404 page description.',
     ];
     $this->drupalPostForm(NULL, $values, 'Save');
-    $this->assertText('Saved the 404 page not found Metatag defaults.');
+    $session->pageTextContains('Saved the 404 page not found Metatag defaults.');
     $this->drupalGet('foo');
-    $this->assertSession()->statusCodeEquals(404);
-    $this->assertRaw($values['description'], $this->t('404 page defaults are used at 404 pages.'));
+    $session->statusCodeEquals(404);
+    $session->responseContains($values['description'], $this->t('404 page defaults are used at 404 pages.'));
     $this->drupalLogout();
   }
 
@@ -265,13 +267,14 @@ class MetatagAdminTest extends BrowserTestBase {
 
     // Update the Metatag Node defaults.
     $this->drupalGet('admin/config/search/metatag/node');
-    $this->assertSession()->statusCodeEquals(200);
+    $session = $this->assertSession();
+    $session->statusCodeEquals(200);
     $values = [
       'title' => 'Test title for a node.',
       'description' => 'Test description for a node.',
     ];
     $this->drupalPostForm(NULL, $values, 'Save');
-    $this->assertText('Saved the Content Metatag defaults.');
+    $session->pageTextContains('Saved the Content Metatag defaults.');
 
     // Create a test node.
     $node = $this->drupalCreateNode([
@@ -281,32 +284,32 @@ class MetatagAdminTest extends BrowserTestBase {
 
     // Check that the new values are found in the response.
     $this->drupalGet('node/' . $node->id());
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     foreach ($values as $metatag => $value) {
-      $this->assertRaw($value, $this->t('Node metatag @tag overrides Global defaults.', ['@tag' => $metatag]));
+      $session->responseContains($value, $this->t('Node metatag @tag overrides Global defaults.', ['@tag' => $metatag]));
     }
 
     // Check that when the node defaults don't define a metatag, the Global one
     // is used.
     // First unset node defaults.
     $this->drupalGet('admin/config/search/metatag/node');
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     $values = [
       'title' => '',
       'description' => '',
     ];
     $this->drupalPostForm(NULL, $values, 'Save');
-    $this->assertText('Saved the Content Metatag defaults.');
+    $session->pageTextContains('Saved the Content Metatag defaults.');
 
     // Then, set global ones.
     $this->drupalGet('admin/config/search/metatag/global');
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     $values = [
       'title' => 'Global title',
       'description' => 'Global description',
     ];
     $this->drupalPostForm(NULL, $values, 'Save');
-    $this->assertText('Saved the Global Metatag defaults.');
+    $session->pageTextContains('Saved the Global Metatag defaults.');
 
     // Next, test that global defaults are rendered since node ones are empty.
     // We are creating a new node as doing a get on the previous one would
@@ -319,21 +322,21 @@ class MetatagAdminTest extends BrowserTestBase {
       'type' => 'article',
     ]);
     $this->drupalGet('node/' . $node->id());
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     foreach ($values as $metatag => $value) {
-      $this->assertRaw($value, $this->t('Found global @tag tag as Node does not set it.', ['@tag' => $metatag]));
+      $session->responseContains($value, $this->t('Found global @tag tag as Node does not set it.', ['@tag' => $metatag]));
     }
 
     // Now create article overrides and then test them.
     $this->drupalGet('admin/config/search/metatag/add');
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     $values = [
       'id' => 'node__article',
       'title' => 'Article title override',
       'description' => 'Article description override',
     ];
     $this->drupalPostForm(NULL, $values, 'Save');
-    $this->assertText(strip_tags($this->t('Created the %label Metatag defaults.', ['%label' => 'Content: Article'])));
+    $session->pageTextContains(strip_tags('Created the Content: Article Metatag defaults.'));
 
     // Confirm the fields load properly on the node/add/article page.
     $node = $this->drupalCreateNode([
@@ -341,17 +344,17 @@ class MetatagAdminTest extends BrowserTestBase {
       'type' => 'article',
     ]);
     $this->drupalGet('node/' . $node->id());
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     unset($values['id']);
     foreach ($values as $metatag => $value) {
-      $this->assertRaw($value, $this->t('Found bundle override for tag @tag.', ['@tag' => $metatag]));
+      $session->responseContains($value, $this->t('Found bundle override for tag @tag.', ['@tag' => $metatag]));
     }
 
     // Test deleting the article defaults.
     $this->drupalGet('admin/config/search/metatag/node__article/delete');
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     $this->drupalPostForm(NULL, [], 'Delete');
-    $this->assertText($this->t('Deleted @label defaults.', ['@label' => 'Content: Article']));
+    $session->pageTextContains('Deleted Content: Article defaults.');
   }
 
   /**
@@ -377,7 +380,8 @@ class MetatagAdminTest extends BrowserTestBase {
 
     // Add a Metatag field to the Article content type.
     $this->drupalGet('admin/structure/types/manage/article/fields/add-field');
-    $this->assertSession()->statusCodeEquals(200);
+    $session = $this->assertSession();
+    $session->statusCodeEquals(200);
     $edit = [
       'new_storage_type' => 'metatag',
       'label' => 'Meta tags',
@@ -385,33 +389,33 @@ class MetatagAdminTest extends BrowserTestBase {
     ];
     $this->drupalPostForm(NULL, $edit, $this->t('Save and continue'));
     $this->drupalPostForm(NULL, [], $this->t('Save field settings'));
-    $this->assertText(strip_tags($this->t('Updated field %label field settings.', ['%label' => 'Meta tags'])));
+    $session->pageTextContains(strip_tags('Updated field Meta tags field settings.'));
     $this->drupalPostForm(NULL, [], $this->t('Save settings'));
-    $this->assertText(strip_tags($this->t('Saved %label configuration.', ['%label' => 'Meta tags'])));
+    $session->pageTextContains(strip_tags('Saved Meta tags configuration.'));
 
     // Try creating an article, confirm the fields are present. This should be
     // the node default values that are shown.
     $this->drupalGet('node/add/article');
-    $this->assertSession()->statusCodeEquals(200);
-    $this->assertFieldByName('field_meta_tags[0][basic][title]', '[node:title] | [site:name]');
-    $this->assertFieldByName('field_meta_tags[0][basic][description]', '[node:summary]');
+    $session->statusCodeEquals(200);
+    $session->fieldValueEquals('field_meta_tags[0][basic][title]', '[node:title] | [site:name]');
+    $session->fieldValueEquals('field_meta_tags[0][basic][description]', '[node:summary]');
 
     // Customize the Article content type defaults.
     $this->drupalGet('admin/config/search/metatag/add');
-    $this->assertSession()->statusCodeEquals(200);
+    $session->statusCodeEquals(200);
     $values = [
       'id' => 'node__article',
       'title' => 'Article title override',
       'description' => 'Article description override',
     ];
     $this->drupalPostForm(NULL, $values, 'Save');
-    $this->assertText(strip_tags($this->t('Created the %label Metatag defaults.', ['%label' => 'Content: Article'])));
+    $session->pageTextContains(strip_tags('Created the Content: Article Metatag defaults.'));
 
     // Try creating an article, this time with the overridden defaults.
     $this->drupalGet('node/add/article');
-    $this->assertSession()->statusCodeEquals(200);
-    $this->assertFieldByName('field_meta_tags[0][basic][title]', 'Article title override');
-    $this->assertFieldByName('field_meta_tags[0][basic][description]', 'Article description override');
+    $session->statusCodeEquals(200);
+    $session->fieldValueEquals('field_meta_tags[0][basic][title]', 'Article title override');
+    $session->fieldValueEquals('field_meta_tags[0][basic][description]', 'Article description override');
   }
 
   /**
@@ -422,6 +426,7 @@ class MetatagAdminTest extends BrowserTestBase {
     $permissions = ['administer site configuration', 'administer meta tags'];
     $account = $this->drupalCreateUser($permissions);
     $this->drupalLogin($account);
+    $session = $this->assertSession();
 
     // Add default metatag for Articles.
     $edit = [
@@ -431,25 +436,25 @@ class MetatagAdminTest extends BrowserTestBase {
 
     // Check that protected defaults contains "Revert" link instead of "Delete".
     foreach (MetatagManager::protectedDefaults() as $protected) {
-      $this->assertLinkByHref('/admin/config/search/metatag/' . $protected);
-      $this->assertLinkByHref('/admin/config/search/metatag/' . $protected . '/revert');
-      $this->assertNoLinkByHref('/admin/config/search/metatag/' . $protected . '/delete');
+      $session->linkByHrefExists('/admin/config/search/metatag/' . $protected);
+      $session->linkByHrefExists('/admin/config/search/metatag/' . $protected . '/revert');
+      $session->linkByHrefNotExists('/admin/config/search/metatag/' . $protected . '/delete');
     }
 
     // Confirm that non protected defaults can be deleted.
-    $this->assertLinkByHref('/admin/config/search/metatag/node__article');
-    $this->assertNoLinkByHref('/admin/config/search/metatag/node__article/revert');
-    $this->assertLinkByHref('/admin/config/search/metatag/node__article/delete');
+    $session->linkByHrefExists('/admin/config/search/metatag/node__article');
+    $session->linkByHrefNotExists('/admin/config/search/metatag/node__article/revert');
+    $session->linkByHrefExists('/admin/config/search/metatag/node__article/delete');
 
     // Visit each protected default page to confirm "Delete" button is hidden.
     foreach (MetatagManager::protectedDefaults() as $protected) {
       $this->drupalGet('/admin/config/search/metatag/' . $protected);
-      $this->assertNoLink('Delete');
+      $session->linkNotExists('Delete');
     }
 
     // Confirm that non protected defaults can be deleted.
     $this->drupalGet('/admin/config/search/metatag/node__article');
-    $this->assertLink('Delete');
+    $session->linkExists('Delete');
   }
 
   /**
@@ -457,16 +462,17 @@ class MetatagAdminTest extends BrowserTestBase {
    */
   public function testListPager() {
     $this->loginUser1();
+    $session = $this->assertSession();
 
     $this->drupalGet('admin/config/search/metatag');
-    $this->assertSession()->statusCodeEquals(200);
-    $this->assertLinkByHref('/admin/config/search/metatag/global');
-    $this->assertLinkByHref('/admin/config/search/metatag/front');
-    $this->assertLinkByHref('/admin/config/search/metatag/403');
-    $this->assertLinkByHref('/admin/config/search/metatag/404');
-    $this->assertLinkByHref('/admin/config/search/metatag/node');
-    $this->assertLinkByHref('/admin/config/search/metatag/taxonomy_term');
-    $this->assertLinkByHref('/admin/config/search/metatag/user');
+    $session->statusCodeEquals(200);
+    $session->linkByHrefExists('/admin/config/search/metatag/global');
+    $session->linkByHrefExists('/admin/config/search/metatag/front');
+    $session->linkByHrefExists('/admin/config/search/metatag/403');
+    $session->linkByHrefExists('/admin/config/search/metatag/404');
+    $session->linkByHrefExists('/admin/config/search/metatag/node');
+    $session->linkByHrefExists('/admin/config/search/metatag/taxonomy_term');
+    $session->linkByHrefExists('/admin/config/search/metatag/user');
 
     // Create 50 vocabularies and generate metatag defaults for all of them.
     for ($i = 0; $i < 50; $i++) {
@@ -479,27 +485,26 @@ class MetatagAdminTest extends BrowserTestBase {
 
     // Reload the page.
     $this->drupalGet('admin/config/search/metatag');
-    $this->assertLinkByHref('/admin/config/search/metatag/global');
-    $this->assertLinkByHref('/admin/config/search/metatag/front');
-    $this->assertLinkByHref('/admin/config/search/metatag/403');
-    $this->assertLinkByHref('/admin/config/search/metatag/404');
-    $this->assertLinkByHref('/admin/config/search/metatag/node');
-    $this->assertLinkByHref('/admin/config/search/metatag/taxonomy_term');
+    $session->linkByHrefExists('/admin/config/search/metatag/global');
+    $session->linkByHrefExists('/admin/config/search/metatag/front');
+    $session->linkByHrefExists('/admin/config/search/metatag/403');
+    $session->linkByHrefExists('/admin/config/search/metatag/404');
+    $session->linkByHrefExists('/admin/config/search/metatag/node');
+    $session->linkByHrefExists('/admin/config/search/metatag/taxonomy_term');
     // User entity not visible because it has been pushed to the next page.
-    $this->assertNoLinkByHref('/admin/config/search/metatag/user');
+    $session->linkByHrefNotExists('/admin/config/search/metatag/user');
     $this->clickLink('Next');
 
     // Go to next page and confirm that parents are loaded and user us present.
-    $this->assertLinkByHref('/admin/config/search/metatag/global');
-    $this->assertLinkByHref('/admin/config/search/metatag/taxonomy_term');
+    $session->linkByHrefExists('/admin/config/search/metatag/global');
+    $session->linkByHrefExists('/admin/config/search/metatag/taxonomy_term');
     // Main links not visible in the 2nd page.
-    $this->assertNoLinkByHref('/admin/config/search/metatag/front');
-    $this->assertNoLinkByHref('/admin/config/search/metatag/403');
-    $this->assertNoLinkByHref('/admin/config/search/metatag/404');
-    $this->assertNoLinkByHref('/admin/config/search/metatag/node');
+    $session->linkByHrefNotExists('/admin/config/search/metatag/front');
+    $session->linkByHrefNotExists('/admin/config/search/metatag/403');
+    $session->linkByHrefNotExists('/admin/config/search/metatag/404');
+    $session->linkByHrefNotExists('/admin/config/search/metatag/node');
     // User is present because was pushed to page 2.
-    $this->assertLinkByHref('/admin/config/search/metatag/user');
-
+    $session->linkByHrefExists('/admin/config/search/metatag/user');
   }
 
 }

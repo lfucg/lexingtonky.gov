@@ -14,6 +14,13 @@ class MetatagVerificationTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
+  protected static $modules = [
+    'metatag_verification',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
   protected $tags = [
     'baidu',
     'bing',
@@ -23,16 +30,8 @@ class MetatagVerificationTagsTest extends MetatagTagsTestBase {
     'pinterest',
     'pocket',
     'yandex',
-    'zoom_domain_verification'
+    'zoom_domain_verification',
   ];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::$modules[] = 'metatag_verification';
-    parent::setUp();
-  }
 
   /**
    * Each of these meta tags has a different tag name vs its internal name.

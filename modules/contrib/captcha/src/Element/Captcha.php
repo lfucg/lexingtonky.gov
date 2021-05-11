@@ -101,7 +101,7 @@ class Captcha extends FormElement implements ContainerFactoryPluginInterface {
     // Get the form ID of the form we are currently processing (which is not
     // necessary the same form that is submitted (if any).
     $this_form_id = isset($complete_form['form_id']['#value']) ?
-      preg_replace("/[^a-z0-9_]/", "", (string) $complete_form['form_id']['#value'])
+      preg_replace("/[^a-z0-9_-]/", "", (string) $complete_form['form_id']['#value'])
       : NULL;
 
     // Get the CAPTCHA session ID.

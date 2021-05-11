@@ -265,7 +265,7 @@ abstract class MetaNameBase extends PluginBase {
       '#type' => $this->isLong() ? 'textarea' : 'textfield',
       '#title' => $this->label(),
       '#default_value' => $this->value(),
-      '#maxlength' => 255,
+      '#maxlength' => 1024,
       '#required' => isset($element['#required']) ? $element['#required'] : FALSE,
       '#description' => $this->description(),
       '#element_validate' => [[get_class($this), 'validateTag']],

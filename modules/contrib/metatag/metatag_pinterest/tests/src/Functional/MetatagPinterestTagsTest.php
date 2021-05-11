@@ -14,6 +14,11 @@ class MetatagPinterestTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
+  protected static $modules = ['metatag_pinterest'];
+
+  /**
+   * {@inheritdoc}
+   */
   protected $tags = [
     'pinterest_description',
     'pinterest_id',
@@ -34,14 +39,6 @@ class MetatagPinterestTagsTest extends MetatagTagsTestBase {
    * {@inheritdoc}
    */
   protected $testNameAttribute = 'property';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::$modules[] = 'metatag_pinterest';
-    parent::setUp();
-  }
 
   /**
    * Each of these meta tags has a different tag name vs its internal name.

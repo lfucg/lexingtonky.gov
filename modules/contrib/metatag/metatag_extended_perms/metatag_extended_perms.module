@@ -16,6 +16,8 @@ function metatag_extended_perms_field_widget_form_alter(&$element, FormStateInte
   if ($context['widget'] instanceof MetatagFirehose) {
     $group_manager = \Drupal::getContainer()->get('plugin.manager.metatag.group');
 
+    // Prevent access to the element until at least one permission is granted.
+    $element['#access'] = FALSE;
     foreach (Element::children($element) as $group_id) {
       $group = $group_manager->getDefinition($group_id, FALSE);
       if ($group === NULL) {
@@ -33,9 +35,10 @@ function metatag_extended_perms_field_widget_form_alter(&$element, FormStateInte
         $element[$group_id][$tag_id]['#access'] = \Drupal::currentUser()
           ->hasPermission('access metatag ' . $group_id . '__' . $tag_id);
 
-        // Make the group accessible if user has access to the tag.
+        // Make the parent and group accessible if user has access to the tag.
         if ($element[$group_id][$tag_id]['#access']) {
           $element[$group_id]['#access'] = TRUE;
+          $element['#access'] = TRUE;
         }
       }
     }

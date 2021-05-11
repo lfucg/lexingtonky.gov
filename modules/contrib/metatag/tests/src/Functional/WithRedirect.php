@@ -12,7 +12,7 @@ class WithRedirect extends MetatagAdminTest {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'field_ui',
     'test_page_test',

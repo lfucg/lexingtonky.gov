@@ -3,6 +3,7 @@
 namespace Drupal\imce;
 
 use Drupal\Component\Utility\Environment;
+use Drupal\user\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -121,7 +122,7 @@ class Imce {
     $ret = [];
     $token_service = \Drupal::token();
     $meta = new BubbleableMetadata();
-    $token_data = ['user' => $user];
+    $token_data = ['user' => User::load($user->id())];
     foreach ($folders as $folder) {
       $path = $token_service->replace($folder['path'], $token_data, [], $meta);
       if (static::regularPath($path)) {

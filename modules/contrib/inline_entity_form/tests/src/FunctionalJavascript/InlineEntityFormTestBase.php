@@ -113,7 +113,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
     $node = $this->getNodeByTitle($title, TRUE);
     $this->assertNotEmpty($node, $message);
     if ($content_type) {
-      $this->assertEqual($node->bundle(), $content_type, "Node is correct content type: $content_type");
+      $this->assertEquals($node->bundle(), $content_type, "Node is correct content type: $content_type");
     }
   }
 
@@ -215,7 +215,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    *   The title of the row for which to wait.
    */
   protected function waitForRowRemovedByTitle($title) {
-    $this->assertNotEmpty($this->waitForElementRemoved('xpath', '//td[@class="inline-entity-form-node-label" and text()="' . $title . '"]'));
+    $this->assertNotEmpty($this->assertSession()->waitForElementRemoved('xpath', '//td[@class="inline-entity-form-node-label" and text()="' . $title . '"]'));
   }
 
   /**
@@ -283,7 +283,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    *   The xpath selector for the button to select.
    */
   protected function getXpathForButtonWithValue($value, $index) {
-    return "(//input[@type='submit' and @value='{$value}'][{$index}])";
+    return "(//input[@type='submit' and @value='{$value}'])[{$index}]";
   }
 
   /**
@@ -299,36 +299,6 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    */
   protected function getXpathForFieldsetLabel($label, $index) {
     return "(//fieldset/legend/span[.='{$label}'])[{$index}]";
-  }
-
-  /**
-   * Looks for the specified selector and returns TRUE when it is unavailable.
-   *
-   * @todo Remove when tests are running on Drupal 8.8. or greater. Then
-   * we can use $assert_session->waitForElementRemoved(). This is will be when
-   * Drupal 8.7 reaches EOL (which is when 8.9 is released in June 2020).
-   *
-   * @param string $selector
-   *   The selector engine name. See ElementInterface::findAll() for the
-   *   supported selectors.
-   * @param string|array $locator
-   *   The selector locator.
-   * @param int $timeout
-   *   (Optional) Timeout in milliseconds, defaults to 10000.
-   *
-   * @return bool
-   *   TRUE if not found, FALSE if found.
-   *
-   * @see \Drupal\FunctionalJavascriptTests\JSWebAssert::waitForElementRemoved
-   */
-  public function waitForElementRemoved($selector, $locator, $timeout = 10000) {
-    $page = $this->getSession()->getPage();
-
-    $result = $page->waitFor($timeout / 1000, function () use ($page, $selector, $locator) {
-      return !$page->find($selector, $locator);
-    });
-
-    return $result;
   }
 
 }

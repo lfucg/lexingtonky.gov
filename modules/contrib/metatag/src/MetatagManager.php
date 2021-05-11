@@ -553,9 +553,9 @@ class MetatagManager implements MetatagManagerInterface {
     array_multisort($group, SORT_ASC, $weight, SORT_ASC, $metatag_tags);
 
     $ordered_tags = [];
-    foreach ($metatag_tags as $metatag) {
-      if (isset($tags[$metatag['id']])) {
-        $ordered_tags[$metatag['id']] = $tags[$metatag['id']];
+    foreach ($metatag_tags as $id => $metatag) {
+      if (isset($tags[$id])) {
+        $ordered_tags[$id] = $tags[$id];
       }
     }
 

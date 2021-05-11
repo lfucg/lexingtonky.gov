@@ -54,46 +54,51 @@ class ImceHelpController extends ControllerBase {
    */
   public function index() {
     $build = [];
-    $name = 'imce';
     $build['#theme'] = 'imce_help';
-    $module_name = $this->moduleHandler()->getName($name);
     $build['#title'] = 'Imce File Manager Help';
-    $temp = $this->moduleHandler()->invoke($name, 'help', ["help.page.$name", $this->routeMatch]);
-
-    if (!is_array($temp)) {
-      $temp = ['#markup' => $temp];
-      $build['#markup'] = $temp['#markup'];
-    }
-    $build['top'] = $temp;
-
+    $build['#markup'] = static::htmlHelp();
     $build['#videos'][1]['title'] = 'IMCE with CKEditor in Drupal 8';
     $build['#videos'][1]['video'] = 'https://www.youtube.com/embed/wnOmlvG4tRo';
-
     $build['#videos'][2]['title'] = 'Integration IMCE with image/file field in Drupal 8';
     $build['#videos'][2]['video'] = 'https://www.youtube.com/embed/MAHonUyKVc0';
-
-    // Only print list of administration pages if the module in question has
-    // any such pages associated with it.
-    $extension_info = $this->extensionListModule->getExtensionInfo($name);
-    $admin_tasks = system_get_module_admin_tasks($name, $extension_info);
-    if (!empty($admin_tasks)) {
-      $links = [];
-      foreach ($admin_tasks as $task) {
-        $link['url'] = $task['url'];
-        $link['title'] = $task['title'];
-        $links[] = $link;
-      }
-      $build['links'] = [
-        '#theme' => 'links__help',
-        '#heading' => [
-          'level' => 'h3',
-          'text' => $this->t('@module administration pages', ['@module' => $module_name]),
-        ],
-        '#links' => $links,
-      ];
-    }
-
     return $build;
+  }
+
+  /**
+   * Returns html help.
+   */
+  public static function htmlHelp() {
+    return '
+      <h3>' . t('About') . '</h3>
+      <p>' . t('IMCE is an image/file uploader and browser that supports personal directories and quota.') . '</p>
+
+      <h3>Menu Integration</h3>
+      <p>Create a custom menu item with /imce path.</p>
+
+      <h3>CKEditor Iintegration</h3>
+      <ol>
+        <li type="1">' . t('Go to Administration > Configuration > Content Authoring > Text formats and editors > and <b>edit</b> a text format that uses CKEditor.') . '</li>
+        <li type="1">' . t('Enable CKEditor image button without image uploads.') . '</li>
+      </ol>
+      <p><b>Note:</b> Image uploads must be disabled in order for IMCE link appear in the image
+  dialog. There is also an image button provided by Imce but it can\'t be used for
+  editing existing images.</p>
+
+      <h3>BUEditor Integration</h3>
+      <ol>
+        <li type="1">' . t('Edit your editor at /admin/config/content/bueditor') . '</li>
+        <li type="1">' . t('Select Imce File Manager as the File browser under Settings.') . '</li>
+      </ol>
+
+      <h3>File/Image Field Integration</h3>
+      <ol>
+        <li type="1">' . t('Go to form settings of your content type.') . '<br/>Ex: /admin/structure/types/manage/article/form-display.</li>
+        <li type="1">' . t('Edit widget settings of a file/image field.') . '</li>
+        <li type="1">' . t('Check the box saying "Allow users to select files from Imce File Manager
+          for this field." and save.') . '</li>
+        <li type="1">' . t('You should now see the "Open File Browser" link above the upload widget
+          in the content form.') . '</li>
+      </ol>';
   }
 
 }

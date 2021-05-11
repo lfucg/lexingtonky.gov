@@ -54,6 +54,12 @@ function metatag_token_info() {
       'nested' => TRUE,
     ];
 
+    $info['tokens'][$metatag_token_name]['value'] = [
+      'name' => Html::escape($label),
+      'module' => 'metatag',
+      'description' => $description,
+    ];
+
     // Tag list token type.
     if ($multiple) {
       $info['types']["list<$metatag_token_name>"] = [
@@ -200,7 +206,7 @@ function metatag_tokens($type, $tokens, array $data, array $options, BubbleableM
         // For [metatag:tag_name:0], [metatag:tag_name:0:value] and
         // [metatag:tag_name:value] tokens.
         else {
-          [$tag_name, $delta] = explode(':', $name, 2);
+          list($tag_name, $delta) = explode(':', $name, 2);
           if (!is_numeric($delta)) {
             unset($delta);
           }
@@ -215,10 +221,15 @@ function metatag_tokens($type, $tokens, array $data, array $options, BubbleableM
 
         // Render only one delta.
         if (isset($delta)) {
-          $replacements[$original] = $processed_tags[$tag_name][$delta];
+          $replacements[$original] = $processed_tags[$tag_name][$delta] ?? NULL;
         }
         else {
-          $replacements[$original] = is_array($processed_tags[$tag_name]) ? implode(',', $processed_tags[$tag_name]) : $processed_tags[$tag_name];
+          if (is_array($processed_tags[$tag_name])) {
+            $replacements[$original] = implode(',', $processed_tags[$tag_name]);
+          }
+          else {
+            $replacements[$original] = $processed_tags[$tag_name];
+          }
         }
       }
       break;

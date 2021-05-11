@@ -23,6 +23,9 @@ captcha.settings:
     add_captcha_description:
       type: boolean
       label: 'Add a description to the CAPTCHA'
+    wrong_captcha_response_message:
+      type: label
+      label: 'The error message when a user has entered an incorrect CAPTCHA answer.'
     default_validation:
       type: integer
       label: 'Default CAPTCHA validation'

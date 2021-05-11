@@ -14,6 +14,11 @@ class MetatagFaviconsTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
+  protected static $modules = ['metatag_favicons'];
+
+  /**
+   * {@inheritdoc}
+   */
   protected $tags = [
     'shortcut_icon',
     // 'mask_icon'.
@@ -53,14 +58,6 @@ class MetatagFaviconsTagsTest extends MetatagTagsTestBase {
    * {@inheritdoc}
    */
   protected $testValueAttribute = 'href';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::$modules[] = 'metatag_favicons';
-    parent::setUp();
-  }
 
   /**
    * Implements {tag_name}TestValueAttribute() for 'shortcut icon'.

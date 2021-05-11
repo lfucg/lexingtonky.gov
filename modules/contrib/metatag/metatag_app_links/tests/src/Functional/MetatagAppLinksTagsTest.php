@@ -14,6 +14,11 @@ class MetatagAppLinksTagsTest extends MetatagTagsTestBase {
   /**
    * {@inheritdoc}
    */
+  protected static $modules = ['metatag_app_links'];
+
+  /**
+   * {@inheritdoc}
+   */
   protected $tags = [
     'al_android_app_name',
     'al_android_class',
@@ -45,14 +50,6 @@ class MetatagAppLinksTagsTest extends MetatagTagsTestBase {
    * {@inheritdoc}
    */
   protected $testNameAttribute = 'property';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::$modules[] = 'metatag_app_links';
-    parent::setUp();
-  }
 
   /**
    * Each of these meta tags has a different tag name vs its internal name.

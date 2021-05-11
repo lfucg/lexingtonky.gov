@@ -300,7 +300,7 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
       $new_titles[$delta] = 'Title for new child';
       $edit["single[$delta][inline_entity_form][title][0][value]"] = $new_titles[$delta];
     }
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, 'Save');
     $assert_session->pageTextContains("IEF simple single {$host_node->label()} has been updated.");
 
     // Reset cache for nodes.

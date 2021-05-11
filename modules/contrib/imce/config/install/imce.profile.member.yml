@@ -11,6 +11,7 @@ conf:
   replace: 0
   thumbnail_style: ''
   thumbnail_grid_style: false
+  ignore_usage: false
   folders:
     -
       path: 'users/user[user:uid]'

@@ -44,3 +44,10 @@
   margin: 0;
   display: inline-block;
 }
+
+iframe.imce-browser {
+  height: 600px;
+  width: 100%;
+  border: 0;
+}
+
