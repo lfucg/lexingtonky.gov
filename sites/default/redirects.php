@@ -4,7 +4,7 @@ $custom_domain = $_SERVER['HTTP_HOST'];
 
 if (strpos($custom_domain, 'covid19renterhelp') !== false) {
   header('HTTP/1.0 301 Moved Permanently');
-  header('Location: https://lexingtonky.gov/how-do-i-get-help');
+  header('Location: https://www.lexingtonky.gov/renthelp');
   exit();
 }
 
