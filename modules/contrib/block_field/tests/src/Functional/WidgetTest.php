@@ -52,7 +52,8 @@ class WidgetTest extends BrowserTestBase {
       'bypass node access',
     ]));
 
-    $this->drupalPostForm('node/add/block_node', [
+    $this->drupalGet('node/add/block_node');
+    $this->submitForm([
       'title[0][value]' => 'Block field test',
       'field_block[0][plugin_id]' => 'views_block:items-block_1',
     ], 'Save');
@@ -123,11 +124,11 @@ class WidgetTest extends BrowserTestBase {
 
     // Configuration form: hidden.
     $this->drupalGet('admin/structure/types/manage/block_node/form-display');
-    $this->drupalPostForm(NULL, [], 'field_block_settings_edit');
+    $this->submitForm([], 'field_block_settings_edit');
     $edit = [
       'fields[field_block][settings_edit_form][settings][configuration_form]' => 'hidden',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->drupalGet($this->blockNode->toUrl('edit-form'));
     $assert->fieldNotExists('field_block[0][settings][label_display]');
     $assert->fieldNotExists('field_block[0][settings][override][items_per_page]');
@@ -140,7 +141,8 @@ class WidgetTest extends BrowserTestBase {
    */
   public function testBlockFieldValidation() {
     $assert = $this->assertSession();
-    $this->drupalPostForm('node/add/block_node', [
+    $this->drupalGet('node/add/block_node');
+    $this->submitForm([
       'title[0][value]' => 'Block field validation test',
       'field_block[0][plugin_id]' => 'block_field_test_validation',
     ], 'Save');

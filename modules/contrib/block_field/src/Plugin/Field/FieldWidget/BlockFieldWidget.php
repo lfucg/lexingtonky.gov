@@ -13,6 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
+use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,6 +28,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The Drupal context repository.
+   *
+   * @var \Drupal\context\Entity\ContextRepositoryInterface
+   */
+  protected $contextRepository;
 
   /**
    * The block manager.
@@ -45,10 +53,12 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
   /**
    * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, BlockManagerInterface $block_manager, BlockFieldSelectionManager $block_field_selection_manager) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, BlockManagerInterface $block_manager, BlockFieldSelectionManager $block_field_selection_manager, ContextRepositoryInterface $contextRepository) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->blockManager = $block_manager;
     $this->blockFieldSelectionManager = $block_field_selection_manager;
+    $this->contextRepository = $contextRepository;
+    $this->blockManager = $block_manager;
   }
 
   /**
@@ -62,7 +72,8 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
       $configuration['settings'],
       $configuration['third_party_settings'],
       $container->get('plugin.manager.block'),
-      $container->get('plugin.manager.block_field_selection')
+      $container->get('plugin.manager.block_field_selection'),
+      $container->get('context.repository')
     );
   }
 
@@ -129,7 +140,7 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
     $options = $this->blockFieldSelectionManager->getWidgetOptions($this->fieldDefinition);
     if ($item->plugin_id) {
       // If plugin_id not in second level arrays, unset plugin_id and settings..
-      if (!in_array($item->plugin_id, array_keys(call_user_func_array('array_merge', $options)), TRUE)) {
+      if (!in_array($item->plugin_id, array_keys(call_user_func_array('array_merge', array_values($options))), TRUE)) {
         $item->plugin_id = '';
         $item->setting = [];
       }
@@ -160,9 +171,7 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
 
       // If block plugin exists get the block's configuration form.
       if ($block_instance = $item->getBlock()) {
-        /** @var \Drupal\Core\Plugin\Context\ContextRepositoryInterface $context_repository */
-        $context_repository = \Drupal::service('context.repository');
-        $form_state->setTemporaryValue('gathered_contexts', $context_repository->getAvailableContexts());
+        $form_state->setTemporaryValue('gathered_contexts', $this->contextRepository->getAvailableContexts());
 
         $element['settings'] += $block_instance->buildConfigurationForm([], $form_state);
 
@@ -202,10 +211,8 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
 
     // Set the label #value to the default block instance's label.
     $plugin_id = $trigger_element['#value'];
-    /** @var \Drupal\Core\Block\BlockManagerInterface $block_manager */
-    $block_manager = \Drupal::service('plugin.manager.block');
     /** @var \Drupal\Core\Block\BlockPluginInterface $block_instance */
-    if ($block_instance = $block_manager->createInstance($plugin_id)) {
+    if ($block_instance = $this->blockManager->createInstance($plugin_id)) {
       $settings_element['label']['#value'] = $block_instance->label();
     }
 
@@ -271,7 +278,7 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
     // values during the first submission.
     $form_state = clone $form_state;
 
-    foreach ($values as $delta => &$value) {
+    foreach ($values as &$value) {
       // Execute block submit configuration in order to transform the form
       // values into block configuration.
       if (!empty($value['plugin_id']) && !empty($value['settings']) && $block = $this->blockManager->createInstance($value['plugin_id'])) {

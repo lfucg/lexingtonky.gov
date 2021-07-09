@@ -95,7 +95,7 @@ class BlockFieldItem extends FieldItemBase implements BlockFieldItemInterface {
     ];
     $form['selection'] = [
       '#type' => 'details',
-      '#title' => t('Available blocks'),
+      '#title' => $this->t('Available blocks'),
       '#open' => TRUE,
       '#tree' => TRUE,
       '#process' => [[get_class($this), 'formProcessMergeParent']],
@@ -103,7 +103,7 @@ class BlockFieldItem extends FieldItemBase implements BlockFieldItemInterface {
 
     $form['selection']['selection'] = [
       '#type' => 'select',
-      '#title' => t('Selection method'),
+      '#title' => $this->t('Selection method'),
       '#options' => $options,
       '#default_value' => $field->getSetting('selection'),
       '#required' => TRUE,
@@ -112,7 +112,7 @@ class BlockFieldItem extends FieldItemBase implements BlockFieldItemInterface {
     ];
     $form['selection']['selection_submit'] = [
       '#type' => 'submit',
-      '#value' => t('Change selection'),
+      '#value' => $this->t('Change selection'),
       '#limit_validation_errors' => [],
       '#attributes' => [
         'class' => ['js-hide'],

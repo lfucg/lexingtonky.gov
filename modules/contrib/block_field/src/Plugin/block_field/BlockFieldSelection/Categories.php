@@ -57,7 +57,7 @@ class Categories extends BlockFieldSelectionBase {
       ],
       '#options' => $options,
       '#js_select' => TRUE,
-      '#empty' => t('No categories are available.'),
+      '#empty' => $this->t('No categories are available.'),
       '#required' => TRUE,
       '#default_value' => array_combine($default_value, $default_value),
     ];

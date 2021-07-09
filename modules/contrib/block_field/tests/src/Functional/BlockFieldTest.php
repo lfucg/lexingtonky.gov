@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\block_field\Functional;
 
+use Drupal\block_content\Entity\BlockContent;
 use Drupal\Tests\BrowserTestBase;
 
 /**
@@ -34,6 +35,12 @@ class BlockFieldTest extends BrowserTestBase {
    * Tests block field.
    */
   public function testBlockField() {
+    $block_content = BlockContent::create([
+      'info' => $this->randomMachineName(),
+      'type' => 'basic',
+      'status' => 1,
+    ]);
+    $block_content->save();
     $assert = $this->assertSession();
 
     $admin_user = $this->drupalCreateUser([
@@ -47,21 +54,23 @@ class BlockFieldTest extends BrowserTestBase {
 
     // Create block field test using the three test blocks.
     // Check that add more and ajax callbacks are working as expected.
-    $this->drupalPostForm('node/add/block_field_test', [
+    $this->drupalGet('node/add/block_field_test');
+    $this->submitForm([
       'title[0][value]' => 'Block field test',
     ], 'Add another item');
-    $this->drupalPostForm(NULL, [], 'Add another item');
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([], 'Add another item');
+    $this->submitForm([
       'field_block_field_test[0][plugin_id]' => 'block_field_test_authenticated',
       'field_block_field_test[1][plugin_id]' => 'block_field_test_content',
       'field_block_field_test[2][plugin_id]' => 'block_field_test_time',
     ], 'Add another item');
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'field_block_field_test[0][plugin_id]' => 'block_field_test_authenticated',
       'field_block_field_test[1][plugin_id]' => 'block_field_test_content',
       'field_block_field_test[2][plugin_id]' => 'block_field_test_time',
+      'field_block_field_test[3][plugin_id]' => 'block_content:' . $block_content->uuid(),
     ], 'Add another item');
-    $this->drupalPostForm(NULL, [], 'Save');
+    $this->submitForm([], 'Save');
 
     // Check blocks displayed to authenticated.
     $node = $this->drupalGetNodeByTitle('Block field test');
@@ -72,14 +81,23 @@ class BlockFieldTest extends BrowserTestBase {
     $assert->elementContains('css', $selector, '<h2>You are logged in as...</h2>');
     $assert->elementTextContains('css', $selector, $admin_user->label());
     $assert->elementContains('css', $selector, '<h2>Block field test content</h2>');
+    $assert->elementContains('css', $selector, '<div class="block-field-test-content-block--custom-class ');
+    $assert->elementContains('css', $selector, ' data-custom-attr="block-field-test-content-block--custom-data-attribute"');
     $assert->elementTextContains('css', $selector, 'This block was created at');
     $assert->elementContains('css', $selector, '<h2>The time is...</h2>');
     $assert->responseMatches('/\d\d:\d\d:\d\d/');
+    $assert->elementTextContains('css', $selector, $block_content->label());
+
+    // Check that a referenced block that is not published is not visible.
+    $block_content->status = 0;
+    $block_content->save();
+    $this->drupalGet($node->toUrl());
+    $assert->elementTextNotContains('css', $selector, $block_content->label());
 
     // Check adjusting block weights maintains plugin settings.
     $this->drupalGet($node->toUrl('edit-form'));
     // Switch the position of block 1 and 2.
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'field_block_field_test[0][_weight]' => 1,
       'field_block_field_test[1][_weight]' => 0,
     ], 'Save');
@@ -118,6 +136,25 @@ class BlockFieldTest extends BrowserTestBase {
     $this->drupalLogout();
     $this->drupalGet($block_node->toUrl());
     $assert->elementNotExists('css', $selector);
+
+    // Check custom block.
+    $block_node->field_block_field_test->plugin_id = 'block_content:' . $block_content->uuid();
+    $block_node->field_block_field_test->settings = [
+      'label' => $block_content->label(),
+      'label_display' => TRUE,
+    ];
+    $block_node->save();
+    $this->drupalGet($block_node->toUrl());
+
+    // When the block is not published anonymous users can't see it.
+    $assert->elementNotExists('css', $selector);
+
+    // Check the cache metadata of the referenced block is propagated by
+    // publishing it and checking if it is visible for anonymous users.
+    $block_content->status = 1;
+    $block_content->save();
+    $this->drupalGet($block_node->toUrl());
+    $assert->elementTextContains('css', $selector, $block_content->label());
 
     // Check content block.
     $block_node->field_block_field_test->plugin_id = 'block_field_test_content';
@@ -161,8 +198,22 @@ class BlockFieldTest extends BrowserTestBase {
     $assert->responseMatches('/\d\d:\d\d:\d\d \(\d+\)/');
     $assert->responseNotContains($time);
 
+    // Use the Block Field Label formatter for the field_block_field_test
+    // display.
+    \Drupal::service('entity_display.repository')
+      ->getViewDisplay('node', 'block_field_test', 'default')
+      ->setComponent('field_block_field_test', [
+        'type' => 'block_field_label',
+      ])
+      ->save();
+
+    // Assert only the label is shown.
+    $this->drupalGet($block_node->toUrl());
+    $assert->responseNotMatches('/\d\d:\d\d:\d\d \(\d+\)/');
+    $assert->elementContains('css', $selector, 'Time');
+
     $this->drupalGet('admin/structure/types/manage/block_field_test/fields/node.block_field_test.field_block_field_test');
-    $this->drupalPostForm(NULL, ['settings[selection_settings][plugin_ids][page_title_block]' => FALSE], 'Save settings');
+    $this->submitForm(['settings[selection_settings][plugin_ids][page_title_block]' => FALSE], 'Save settings');
 
     $this->drupalGet('admin/structure/types/manage/block_field_test/fields/node.block_field_test.field_block_field_test');
     $assert->statusCodeEquals(200);

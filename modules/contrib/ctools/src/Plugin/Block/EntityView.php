@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
+use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -96,6 +97,21 @@ class EntityView extends BlockBase implements ContextAwarePluginInterface, Conta
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['view_mode'] = $form_state->getValue('view_mode');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access(AccountInterface $account, $return_as_object = FALSE) {
+    // Check the parent's access.
+    $parent_access = parent::access($account, TRUE);
+    if (!$parent_access->isAllowed()) {
+      return $return_as_object ? $parent_access : $parent_access->isAllowed();
+    }
+
+    /** @var $entity \Drupal\Core\Entity\EntityInterface */
+    $entity = $this->getContextValue('entity');
+    return $entity->access('view', $account, $return_as_object);
   }
 
   /**
