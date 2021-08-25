@@ -73,6 +73,10 @@ class SearchApiRenderedItem extends FieldPluginBase {
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
 
+    $no_view_mode_option = [
+      '' => $this->t("Don't include the rendered item."),
+    ];
+
     foreach ($this->index->getDatasources() as $datasource_id => $datasource) {
       $datasource_label = $datasource->label();
       $bundles = $datasource->getBundles();
@@ -98,7 +102,7 @@ class SearchApiRenderedItem extends FieldPluginBase {
         }
         $form['view_modes'][$datasource_id][$bundle_id] = [
           '#type' => 'select',
-          '#options' => $view_modes,
+          '#options' => $no_view_mode_option + $view_modes,
           '#title' => $title,
           '#default_value' => key($view_modes),
         ];
@@ -142,13 +146,16 @@ class SearchApiRenderedItem extends FieldPluginBase {
     // options.
     $bundle = $this->index->getDatasource($datasource_id)->getItemBundle($row->_object);
     $view_mode = $this->options['view_modes'][$datasource_id][$bundle] ?? 'default';
+    if ($view_mode === '') {
+      return '';
+    }
 
     try {
       $build = $this->index->getDatasource($datasource_id)
         ->viewItem($row->_object, $view_mode);
       if ($build) {
         // Add the excerpt to the render array to allow adding it to view modes.
-        $render['#search_api_excerpt'] = $row->_item->getExcerpt();
+        $build['#search_api_excerpt'] = $row->_item->getExcerpt();
       }
       return $build;
     }

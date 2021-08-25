@@ -337,8 +337,8 @@ class FieldsHelper implements FieldsHelperInterface {
       $entity_type_id = $property->getEntityTypeId();
       $is_content_type = $this->isContentEntityType($entity_type_id);
       if ($is_content_type) {
-        $bundles = $this->entityBundleInfo->getBundleInfo($entity_type_id);
-        foreach ($bundles as $bundle => $bundleLabel) {
+        $bundles = $property->getBundles() ?: array_keys($this->entityBundleInfo->getBundleInfo($entity_type_id));
+        foreach ($bundles as $bundle) {
           $bundleProperties = $this->entityFieldManager
             ->getFieldDefinitions($entity_type_id, $bundle);
           $nestedProperties += $bundleProperties;

@@ -333,7 +333,7 @@ class IndexFieldsForm extends EntityForm {
       $build['fields'][$key]['boost'] = [
         '#type' => 'select',
         '#options' => $boosts,
-        '#default_value' => sprintf('%.1f', $field->getBoost()),
+        '#default_value' => sprintf('%.1F', $field->getBoost()),
         '#states' => [
           'visible' => [
             ':input[name="fields[' . $key . '][type]"]' => $fulltext_types,
@@ -414,7 +414,7 @@ class IndexFieldsForm extends EntityForm {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $field_values = $form_state->getValues()['fields'];
+    $field_values = $form_state->getValue('fields', []);
     $new_ids = [];
 
     foreach ($field_values as $field_id => $field) {

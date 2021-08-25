@@ -1,3 +1,52 @@
+Search API 1.20 (2021-07-19):
+-----------------------------
+- #3216762 by mkalkbrenner, drunken monkey: Fixed problems with boost factors
+  on non-English locales.
+- #3207578 by penyaskito, drunken monkey: Fixed logging of Basic tracker
+  exceptions.
+- #3199355 by drunken monkey: Fixed error when indexing strings with trailing
+  spaces in the DB backend.
+- #3168161 by gabesullice, drunken monkey: Fixed deprecated use of constructor
+  of database Condition class.
+- #3219648 by mkalkbrenner, drunken monkey: Fixed backend-defined fields
+  without datasource do not appear in Views.
+- #3215658 by mkalkbrenner, drunken monkey: Fixed handling of multi-byte spaces
+  in the "Multiple words" parse mode.
+- #3055173 by mkalkbrenner, drunken monkey: Added the "Number field-based
+  boosting" processor.
+- #3055173 by mkalkbrenner, drunken monkey: Added the "Number field-based
+  boosting" processor.
+- #3198944 by bogdan.racz, drunken monkey: Fixed ignored changes in the
+  "indexing items" event.
+- #3196782 by Ericmaster, drunken monkey: Issue #3196782 by Ericmaster, drunken
+  monkey: Fixed use of excerpt in Views "Rendered item" field.
+- #3195587 by dewalt, drunken monkey: Fixed bundles for custom fields not
+  reflected in "Add fields" UI.
+- #3194931 by kaszarobert, drunken monkey: Added a "select all" checkbox to the
+  Views bulk form.
+- #3195590 by dewalt, drunken monkey: Fixed "Add fields" dialog to not show
+  plus (+) icon for properties with only hidden sub-properties.
+- #3195389 by attiks, drunken monkey: Fixed error in Views when target of
+  entity reference field is not available.
+- #3193312 by cgoffin, drunken monkey: Added entity objects to Views result set.
+- #3187134 by drunken monkey: Fixed display of date range end values in Views.
+- #3106342 by claudiu.cristea, drunken monkey, borisson_: Added a public method
+  for indexing a given entity.
+- #3192387 by shelane, drunken monkey: Fixed too narrow Drush version
+  constraint.
+- #3202693 by drunken monkey: Added a "Don't include" option for individual
+  bundles in the Views "Rendered item" field.
+- #3202696 by drunken monkey: Fixed error handling when creating links in Views.
+- #3199552 by drunken monkey: Cleaned up Views code.
+- #3190751 by drunken monkey: Fixed unsafe form value access in several config
+  forms.
+- #3178307 by carolpettirossi, drunken monkey: Fixed changes in related
+  entities not being re-indexed for all levels of entity references.
+- #2898334 by andreasderijcke, drunken monkey, Sam152, DrColossos, borisson_:
+  Added the "Role-based access" processor.
+- #1396222 by drunken monkey, loziju, capysara: Added the "First letter"
+  aggregation type.
+
 Search API 1.19 (2021-02-01):
 -----------------------------
 - #3182306 by drunken monkey: Improved output from the "rebuild tracker" batch

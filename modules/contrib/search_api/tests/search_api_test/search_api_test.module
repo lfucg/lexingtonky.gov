@@ -5,6 +5,8 @@
  * Provides a fake search server and other help for testing purposes.
  */
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
@@ -39,6 +41,28 @@ function search_api_test_node_access_records(NodeInterface $node) {
   }
 
   return $grants;
+}
+
+/**
+ * Implements hook_entity_access().
+ *
+ * @see \Drupal\Tests\search_api\Kernel\Processor\RoleAccessTest
+ */
+function search_api_test_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  // When this switch is activated, ensure that access is controlled as a
+  // combination of the user's role and the label of the entity. If the name of
+  // the given role appears at all in the label of the entity, for any of the
+  // roles the user has access to, grant access, otherwise deny access.
+  if (\Drupal::state()->get('search_api_test_add_role_access_control', FALSE)) {
+    foreach ($account->getRoles() as $role) {
+      if (strpos($entity->label(), $role) !== FALSE) {
+        return AccessResult::allowed();
+      }
+    }
+    return AccessResult::forbidden();
+  }
+
+  return AccessResult::neutral();
 }
 
 /**

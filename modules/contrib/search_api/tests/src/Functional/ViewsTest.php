@@ -3,11 +3,15 @@
 namespace Drupal\Tests\search_api\Functional;
 
 use Drupal\block\Entity\Block;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\datetime_range\Plugin\Field\FieldType\DateRangeItem;
 use Drupal\entity_test\Entity\EntityTestMulRevChanged;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Utility\Utility;
@@ -374,6 +378,7 @@ class ViewsTest extends SearchApiBrowserTestBase {
    * Contains regression tests for previous, fixed bugs.
    */
   protected function regressionTests() {
+    $this->regressionTest3187134();
     $this->regressionTest2869121();
     $this->regressionTest3031991();
     $this->regressionTest3136277();
@@ -483,6 +488,81 @@ class ViewsTest extends SearchApiBrowserTestBase {
 
     $index->removeProcessor('ignorecase')->save();
     $block->delete();
+  }
+
+  /**
+   * Tests that date range end dates can be displayed.
+   *
+   * @see https://www.drupal.org/node/3187134
+   */
+  protected function regressionTest3187134() {
+    // Install the Datetime Range module.
+    // @see \Drupal\Core\Test\FunctionalTestSetupTrait::installModulesFromClassProperty()
+    $modules = ['datetime', 'datetime_range'];
+    $success = $this->container->get('module_installer')
+      ->install($modules, TRUE);
+    $this->assertTrue($success, new FormattableMarkup('Enabled modules: %modules', ['%modules' => implode(', ', $modules)]));
+
+    // Create a date range field and add its end date to the index.
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => 'field_date_range',
+      'entity_type' => 'entity_test_mulrev_changed',
+      'type' => 'daterange',
+      'settings' => [
+        'datetime_type' => DateRangeItem::DATETIME_TYPE_DATETIME,
+      ],
+      'cardinality' => 1,
+    ]);
+    $field_storage->save();
+    FieldConfig::create([
+      'field_storage' => $field_storage,
+      'bundle' => 'item',
+    ])->save();
+    /** @var \Drupal\search_api\IndexInterface $index */
+    $index = Index::load($this->indexId);
+    $field = \Drupal::getContainer()
+      ->get('search_api.fields_helper')
+      ->createField($index, 'field_date_range_end', [
+        'label' => 'Date range (end)',
+        'type' => 'date',
+        'datasource_id' => 'entity:entity_test_mulrev_changed',
+        'property_path' => 'field_date_range:end_value',
+      ]);
+    $index->addField($field)->save();
+
+    // Make sure this all worked correctly.
+    $this->assertNotEmpty($field->getDataDefinition());
+
+    // Set values for the new field and re-index.
+    $entity = EntityTestMulRevChanged::load(reset($this->entities)->id());
+    $this->assertEquals('item', $entity->bundle());
+    $entity->field_date_range = [
+      'value' => '2021-01-11T10:12:02',
+      'end_value' => '2021-01-22T10:12:02',
+    ];
+    $entity->save();
+    $this->indexItems($this->indexId);
+
+    // Finally, add the field to the view. (We use the "page_2" display as that
+    // already uses the "Fields" row style.
+    $key = 'display.page_2.display_options.fields';
+    $view = \Drupal::configFactory()->getEditable('views.view.search_api_test_view');
+    $fields = $view->get($key);
+    $fields['field_date_range_end'] = [
+      'id' => 'field_date_range_end',
+      'table' => 'search_api_index_database_search_index',
+      'field' => 'field_date_range_end',
+      'plugin_id' => 'search_api_date',
+      'date_format' => 'custom',
+      'custom_date_format' => 'Y-m-d',
+      'timezone' => 'UTC',
+    ];
+    $view->set($key, $fields);
+    $view->save();
+
+    // Now visit the page and check if it goes "boom".
+    $this->drupalGet('search-api-test-operations');
+    $this->assertSession()->pageTextContains('2021-01-22');
   }
 
   /**

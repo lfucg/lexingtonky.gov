@@ -40,6 +40,20 @@ class MySql extends GenericDatabase {
   /**
    * {@inheritdoc}
    */
+  public function preprocessIndexValue($value, $type = 'text') {
+    $value = parent::preprocessIndexValue($value, $type);
+    // As MySQL removes trailing whitespace when computing primary keys, we need
+    // to do the same or pseudo-duplicates could cause an exception ("Integrity
+    // constraint violation: Duplicate entry") during indexing.
+    if ($type !== 'text') {
+      $value = rtrim($value);
+    }
+    return $value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function orderByRandom(SelectInterface $query) {
     $alias = $query->addExpression('rand()', 'random_order_field');
     $query->orderBy($alias);

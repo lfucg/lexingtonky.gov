@@ -76,25 +76,8 @@ class ContentEntityTrackingManager {
    * @see search_api_entity_insert()
    */
   public function entityInsert(EntityInterface $entity) {
-    // Check if the entity is a content entity.
-    if (!($entity instanceof ContentEntityInterface) || $entity->search_api_skip_tracking) {
-      return;
-    }
-    $indexes = $this->getIndexesForEntity($entity);
-    if (!$indexes) {
-      return;
-    }
-
-    // Compute the item IDs for all languages of the entity.
-    $item_ids = [];
-    $entity_id = $entity->id();
-    foreach (array_keys($entity->getTranslationLanguages()) as $langcode) {
-      $item_ids[] = $entity_id . ':' . $langcode;
-    }
-    $datasource_id = 'entity:' . $entity->getEntityTypeId();
-    foreach ($indexes as $index) {
-      $filtered_item_ids = $this->filterValidItemIds($index, $datasource_id, $item_ids);
-      $index->trackItemsInserted($datasource_id, $filtered_item_ids);
+    if ($entity instanceof ContentEntityInterface) {
+      $this->trackEntityChange($entity, TRUE);
     }
   }
 
@@ -116,8 +99,31 @@ class ContentEntityTrackingManager {
    * @see search_api_entity_update()
    */
   public function entityUpdate(EntityInterface $entity) {
+    if ($entity instanceof ContentEntityInterface) {
+      $this->trackEntityChange($entity);
+    }
+  }
+
+  /**
+   * Queues an entity for indexing.
+   *
+   * If "Index items immediately" is enabled for the index, the entity will be
+   * indexed right at the end of the page request.
+   *
+   * When calling this method with an existing entity
+   * (@code $new = FALSE @endcode), changes in the existing translations will
+   * only be recognized if an appropriate @code $entity->original @endcode value
+   * is set.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The content entity to be indexed.
+   * @param bool $new
+   *   (optional) TRUE if this is a new entity, FALSE if it already existed (and
+   *   should already be known to the tracker).
+   */
+  public function trackEntityChange(ContentEntityInterface $entity, bool $new = FALSE) {
     // Check if the entity is a content entity.
-    if (!($entity instanceof ContentEntityInterface) || $entity->search_api_skip_tracking) {
+    if (!empty($entity->search_api_skip_tracking)) {
       return;
     }
 
@@ -129,39 +135,36 @@ class ContentEntityTrackingManager {
     // Compare old and new languages for the entity to identify inserted,
     // updated and deleted translations (and, therefore, search items).
     $entity_id = $entity->id();
-    $inserted_item_ids = [];
-    $updated_item_ids = $entity->getTranslationLanguages();
-    $deleted_item_ids = [];
-    $old_translations = $entity->original->getTranslationLanguages();
-    foreach ($old_translations as $langcode => $language) {
-      if (!isset($updated_item_ids[$langcode])) {
-        $deleted_item_ids[] = $langcode;
-      }
+    $new_translations = array_keys($entity->getTranslationLanguages());
+    $old_translations = [];
+    if (!$new) {
+      // In case we don't have the original, fall back to the current entity,
+      // and assume no new translations were added.
+      $original = $entity->original ?? $entity;
+      $old_translations = array_keys($original->getTranslationLanguages());
     }
-    foreach ($updated_item_ids as $langcode => $language) {
-      if (!isset($old_translations[$langcode])) {
-        unset($updated_item_ids[$langcode]);
-        $inserted_item_ids[] = $langcode;
-      }
-    }
+    $deleted_translations = array_diff($old_translations, $new_translations);
+    $inserted_translations = array_diff($new_translations, $old_translations);
+    $updated_translations = array_diff($new_translations, $inserted_translations);
 
     $datasource_id = 'entity:' . $entity->getEntityTypeId();
-    $combine_id = function ($langcode) use ($entity_id) {
+    $get_ids = function (string $langcode) use ($entity_id): string {
       return $entity_id . ':' . $langcode;
     };
-    $inserted_item_ids = array_map($combine_id, $inserted_item_ids);
-    $updated_item_ids = array_map($combine_id, array_keys($updated_item_ids));
-    $deleted_item_ids = array_map($combine_id, $deleted_item_ids);
+    $inserted_ids = array_map($get_ids, $inserted_translations);
+    $updated_ids = array_map($get_ids, $updated_translations);
+    $deleted_ids = array_map($get_ids, $deleted_translations);
+
     foreach ($indexes as $index) {
-      if ($inserted_item_ids) {
-        $filtered_item_ids = $this->filterValidItemIds($index, $datasource_id, $inserted_item_ids);
+      if ($inserted_ids) {
+        $filtered_item_ids = $this->filterValidItemIds($index, $datasource_id, $inserted_ids);
         $index->trackItemsInserted($datasource_id, $filtered_item_ids);
       }
-      if ($updated_item_ids) {
-        $index->trackItemsUpdated($datasource_id, $updated_item_ids);
+      if ($updated_ids) {
+        $index->trackItemsUpdated($datasource_id, $updated_ids);
       }
-      if ($deleted_item_ids) {
-        $index->trackItemsDeleted($datasource_id, $deleted_item_ids);
+      if ($deleted_ids) {
+        $index->trackItemsDeleted($datasource_id, $deleted_ids);
       }
     }
   }
@@ -185,7 +188,8 @@ class ContentEntityTrackingManager {
    */
   public function entityDelete(EntityInterface $entity) {
     // Check if the entity is a content entity.
-    if (!($entity instanceof ContentEntityInterface) || $entity->search_api_skip_tracking) {
+    if (!($entity instanceof ContentEntityInterface)
+        || !empty($entity->search_api_skip_tracking)) {
       return;
     }
 

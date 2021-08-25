@@ -124,6 +124,7 @@ class BackendTest extends BackendTestBase {
     $this->regressionTest2994022();
     $this->regressionTest2916534();
     $this->regressionTest2873023();
+    $this->regressionTest3199355();
   }
 
   /**
@@ -819,6 +820,34 @@ class BackendTest extends BackendTestBase {
     $this->assertFalse($index->isValidProcessor('tokenizer'));
 
     $entity->delete();
+    unset($this->entities[$entity_id]);
+  }
+
+  /**
+   * Tests whether string field values with trailing spaces work correctly.
+   *
+   * @see https://www.drupal.org/node/3199355
+   */
+  protected function regressionTest3199355() {
+    // Index all items before adding a new one, so we can better predict the
+    // expected count.
+    $this->indexItems($this->indexId);
+
+    $entity_id = count($this->entities) + 1;
+    $entity = $this->addTestEntity($entity_id, [
+      'keywords' => ['foo', 'foo ', ' foo', ' foo '],
+      'type' => 'article',
+    ]);
+
+    $count = $this->indexItems($this->indexId);
+    $this->assertEquals(1, $count);
+    $results = $this->buildSearch()
+      ->addCondition('keywords', 'foo ')
+      ->execute();
+    $this->assertResults([$entity_id], $results, 'String filter with trailing space');
+
+    $entity->delete();
+    unset($this->entities[$entity_id]);
   }
 
   /**

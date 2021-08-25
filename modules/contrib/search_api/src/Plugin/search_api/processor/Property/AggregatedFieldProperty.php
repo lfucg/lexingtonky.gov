@@ -42,6 +42,7 @@ class AggregatedFieldProperty extends ConfigurablePropertyBase {
     $form['type'] = [
       '#type' => 'radios',
       '#title' => $this->t('Aggregation type'),
+      '#description' => $this->t('Apart from the @union type, all types will result in just a single value.', ['@union' => $this->t('Union')]),
       '#options' => $this->getTypes(),
       '#default_value' => $configuration['type'],
       '#required' => TRUE,
@@ -166,6 +167,7 @@ class AggregatedFieldProperty extends ConfigurablePropertyBase {
           'min' => $this->t('Minimum'),
           'first' => $this->t('First'),
           'last' => $this->t('Last'),
+          'first_char' => $this->t('First letter'),
         ];
 
       case 'description':
@@ -178,6 +180,7 @@ class AggregatedFieldProperty extends ConfigurablePropertyBase {
           'min' => $this->t('The Minimum aggregation computes the numerically smallest contained field value.'),
           'first' => $this->t('The First aggregation will simply keep the first encountered field value.'),
           'last' => $this->t('The Last aggregation will keep the last encountered field value.'),
+          'first_char' => $this->t('The “First letter” aggregation uses just the first letter of the first encountered field value as the aggregated value. This can, for example, be used to build a Glossary view.'),
         ];
 
     }

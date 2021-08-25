@@ -244,8 +244,8 @@ class Basic extends TrackerPluginBase implements PluginFormInterface {
       }
     }
     catch (\Exception $e) {
-      $this->logException($e);
       $transaction->rollBack();
+      $this->logException($e);
     }
   }
 
@@ -277,8 +277,8 @@ class Basic extends TrackerPluginBase implements PluginFormInterface {
       }
     }
     catch (\Exception $e) {
-      $this->logException($e);
       $transaction->rollBack();
+      $this->logException($e);
     }
   }
 
@@ -299,8 +299,8 @@ class Basic extends TrackerPluginBase implements PluginFormInterface {
       $update->execute();
     }
     catch (\Exception $e) {
-      $this->logException($e);
       $transaction->rollBack();
+      $this->logException($e);
     }
   }
 
@@ -321,8 +321,8 @@ class Basic extends TrackerPluginBase implements PluginFormInterface {
       }
     }
     catch (\Exception $e) {
-      $this->logException($e);
       $transaction->rollBack();
+      $this->logException($e);
     }
   }
 
@@ -344,8 +344,8 @@ class Basic extends TrackerPluginBase implements PluginFormInterface {
       }
     }
     catch (\Exception $e) {
-      $this->logException($e);
       $transaction->rollBack();
+      $this->logException($e);
     }
   }
 
@@ -362,8 +362,8 @@ class Basic extends TrackerPluginBase implements PluginFormInterface {
       $delete->execute();
     }
     catch (\Exception $e) {
-      $this->logException($e);
       $transaction->rollBack();
+      $this->logException($e);
     }
   }
 

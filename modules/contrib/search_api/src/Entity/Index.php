@@ -969,6 +969,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
     $event = new IndexingItemsEvent($this, $items);
     \Drupal::getContainer()->get('event_dispatcher')
       ->dispatch(SearchApiEvents::INDEXING_ITEMS, $event);
+    $items = $event->getItems();
     foreach ($items as $item) {
       // This will cache the extracted fields so processors, etc., can retrieve
       // them directly.

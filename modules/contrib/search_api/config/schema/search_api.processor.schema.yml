@@ -112,6 +112,25 @@ plugin.plugin_configuration.search_api_processor.ignore_character:
         type: string
         label: 'Character set'
 
+plugin.plugin_configuration.search_api_processor.number_field_boost:
+  type: search_api.default_processor_configuration
+  label: 'Number field-based boosting processor configuration'
+  mapping:
+    boosts:
+      type: sequence
+      label: 'Boost settings'
+      orderby: key
+      sequence:
+        type: mapping
+        label: 'Field boost settings'
+        mapping:
+          boost_factor:
+            type: float
+            label: 'The boost factor for this field'
+          aggregation:
+            type: string
+            label: 'The aggregation function for multi-valued fields'
+
 plugin.plugin_configuration.search_api_processor.stemmer:
   type: search_api.fields_processor_configuration
   label: 'Stemmer processor configuration'
