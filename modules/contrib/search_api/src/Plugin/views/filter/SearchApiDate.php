@@ -47,7 +47,15 @@ class SearchApiDate extends Date {
   }
 
   /**
-   * {@inheritdoc}
+   * Defines the operators supported by this filter.
+   *
+   * @return array[]
+   *   An associative array of operators, keyed by operator ID, with information
+   *   about that operator:
+   *   - title: The full title of the operator (translated).
+   *   - short: The short title of the operator (translated).
+   *   - method: The method to call for this operator in query().
+   *   - values: The number of values that this operator expects/needs.
    */
   public function operators() {
     $operators = parent::operators();
@@ -96,7 +104,10 @@ class SearchApiDate extends Date {
   }
 
   /**
-   * {@inheritdoc}
+   * Filters by a simple operator (=, !=, >, etc.).
+   *
+   * @param string $field
+   *   The views field.
    */
   protected function opSimple($field) {
     $value = intval(strtotime($this->value['value'], 0));

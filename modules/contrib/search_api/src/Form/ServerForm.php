@@ -277,7 +277,7 @@ class ServerForm extends EntityForm {
       // be discarded.
       $input = &$form_state->getUserInput();
       $input['backend_config'] = [];
-      $new_backend = $this->backendPluginManager->createInstance($form_state->getValues()['backend']);
+      $new_backend = $this->backendPluginManager->createInstance($form_state->getValue('backend'));
       if ($new_backend instanceof PluginFormInterface) {
         $form_state->setRebuild();
       }

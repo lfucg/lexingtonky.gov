@@ -319,6 +319,15 @@ class IndexAddFieldsForm extends EntityForm {
             }
           }
         }
+
+        // Remove hidden properties right away so we don't even show a "+" link
+        // in case all sub-properties are hidden.
+        foreach ($nested_properties as $nested_key => $nested_property) {
+          if ($nested_property instanceof ProcessorPropertyInterface
+              && $nested_property->isHidden()) {
+            unset($nested_properties[$nested_key]);
+          }
+        }
       }
 
       // Don't allow indexing of properties with unmapped types. Also, prefer

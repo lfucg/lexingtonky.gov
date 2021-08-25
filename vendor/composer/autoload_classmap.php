@@ -193,6 +193,7 @@ return array(
     'Doctrine\\Common\\Cache\\Psr6\\CacheItem' => $vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/CacheItem.php',
     'Doctrine\\Common\\Cache\\Psr6\\DoctrineProvider' => $vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/DoctrineProvider.php',
     'Doctrine\\Common\\Cache\\Psr6\\InvalidArgument' => $vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/InvalidArgument.php',
+    'Doctrine\\Common\\Cache\\Psr6\\TypedCacheItem' => $vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/TypedCacheItem.php',
     'Doctrine\\Common\\Cache\\RedisCache' => $vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache/RedisCache.php',
     'Doctrine\\Common\\Cache\\SQLite3Cache' => $vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache/SQLite3Cache.php',
     'Doctrine\\Common\\Cache\\Version' => $vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache/Version.php',

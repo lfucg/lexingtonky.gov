@@ -279,6 +279,14 @@ class AggregatedFieldsTest extends UnitTestCase {
           [],
         ],
       ],
+      '"First letter" aggregation' => [
+        'first_char',
+        [
+          ['F'],
+          ['F'],
+          [],
+        ],
+      ],
     ];
   }
 

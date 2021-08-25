@@ -216,8 +216,17 @@ class TrackingHelper implements TrackingHelperInterface {
         }
 
         $entity_reference = $this->isEntityReferenceDataDefinition($property_definition, $cacheability);
-        if ($entity_reference
-            && $relation_info['entity_type'] !== $entity_reference['entity_type']) {
+        if ($entity_reference) {
+          // Unfortunately, the nested "entity" property for entity reference
+          // fields comes without a bundles restriction, so we need to copy the
+          // bundles information from the level above (on the field itself), if
+          // any.
+          if ($relation_info['entity_type'] === $entity_reference['entity_type']
+              && empty($entity_reference['bundles'])
+              && !empty($relation_info['bundles'])
+              && $field_property[0] === 'entity') {
+            $entity_reference['bundles'] = $relation_info['bundles'];
+          }
           $relation_info = $entity_reference;
           $relation_info['property_path_to_foreign_entity'] = implode(IndexInterface::PROPERTY_PATH_SEPARATOR, $seen_path_chunks);
           $relation_info['datasource'] = $datasource->getPluginId();

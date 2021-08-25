@@ -217,6 +217,13 @@ class ProcessorIntegrationTest extends SearchApiBrowserTestBase {
     sort($actual_processors);
     $this->assertEquals($enabled, $actual_processors);
 
+    $this->checkNumberFieldBoostIntegration();
+    $enabled[] = 'number_field_boost';
+    sort($enabled);
+    $actual_processors = array_keys($this->loadIndex()->getProcessors());
+    sort($actual_processors);
+    $this->assertEquals($enabled, $actual_processors);
+
     // The 'add_url' processor is not available to be removed because it's
     // locked.
     $this->checkUrlFieldIntegration();
@@ -681,6 +688,27 @@ TAGS
       'exceptions' => 'indian=india',
     ];
     $this->editSettingsForm($configuration, 'stemmer', $form_values);
+  }
+
+  /**
+   * Tests the UI for the "Number field-based boosting" processor.
+   */
+  public function checkNumberFieldBoostIntegration() {
+    $this->enableProcessor('number_field_boost');
+    $configuration = $form_values = [
+      'boosts' => [
+        'term_field' => [
+          'boost_factor' => '8.0',
+          'aggregation' => 'avg',
+        ],
+        'parent_reference' => [
+          'boost_factor' => '',
+          'aggregation' => 'sum',
+        ],
+      ],
+    ];
+    unset($configuration['boosts']['parent_reference']);
+    $this->editSettingsForm($configuration, 'number_field_boost', $form_values);
   }
 
   /**

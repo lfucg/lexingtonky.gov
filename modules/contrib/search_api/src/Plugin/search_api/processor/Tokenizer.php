@@ -115,8 +115,10 @@ class Tokenizer extends FieldsProcessorPluginBase {
     parent::validateConfigurationForm($form, $form_state);
 
     foreach (['spaces', 'ignored'] as $field) {
-      $field_value = str_replace('/', '\/', trim($form_state->getValues()[$field]));
-      if ($field_value !== '' && @preg_match('/[' . $field_value . ']+/u', '') === FALSE) {
+      $field_value = $form_state->getValue($field, '');
+      $field_value = str_replace('/', '\/', trim($field_value));
+      if ($field_value !== ''
+          && @preg_match('/[' . $field_value . ']+/u', '') === FALSE) {
         $form_state->setError($form[$field], $form[$field]['#title'] . ': ' . $this->t('The entered text is no valid PCRE character class.'));
       }
     }

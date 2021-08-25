@@ -125,6 +125,14 @@ class TermsParseModeTest extends UnitTestCase {
           ],
         ],
       ],
+      'multi-byte space' => [
+        'keys' => '神奈川県　連携',
+        'expected' => [
+          '#conjunction' => 'AND',
+          '神奈川県',
+          '連携',
+        ],
+      ],
     ];
   }
 

@@ -109,7 +109,6 @@ class SearchApiRow extends RowPluginBase {
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
 
-    /** @var \Drupal\search_api\Datasource\DatasourceInterface $datasource */
     foreach ($this->index->getDatasources() as $datasource_id => $datasource) {
       $datasource_label = $datasource->label();
       $bundles = $datasource->getBundles();

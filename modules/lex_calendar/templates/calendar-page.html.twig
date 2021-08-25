@@ -121,9 +121,30 @@ window.addEventListener( 'load', function(){
             refText = refText.toLowerCase();
 
             if(refText == referrer) {
+              $('#calendar-filter').val('default');
               $('#calendar-filter').val(refVal);
+              dateBuild();
             }
          });
+        }else if (window.location.href.indexOf('?department=') != -1){
+          referrer = window.location.href.split('?department=')[1];
+
+          $('.dynamicOption').each( function () {
+            var refVal = this.value;
+            var refText = refVal.toString();
+            
+            refText = refText.replace(/ /g, '-');
+            refText = refText.replace(/\&/g, '');
+            refText = refText.replace(/\,/g, '');
+            refText = refText.replace(/\--/g, '-');
+            refText = refText.toLowerCase();
+
+            if(refText == referrer) {
+              $('#calendar-filter').val('default');
+              $('#calendar-filter').val(refVal);
+              dateBuild();
+            }
+          });
         }else if (document.referrer.search('/') != -1) {
           referrer = document.referrer.split('/').pop();
 
@@ -139,11 +160,12 @@ window.addEventListener( 'load', function(){
 
             if(refText == referrer) {
               $('#page-filter').val(refVal);
+              dateBuild();
             }
           });
+        }else {
+          dateBuild();
         }
-
-        dateBuild();
 
         function dateBuild() {
           events.map((event) => {
@@ -215,7 +237,63 @@ window.addEventListener( 'load', function(){
           }
         });
 
-        listBuild();
+        if(document.referrer.search('/departments/') != -1) {
+          referrer = document.referrer.split('/departments/')[1];
+
+          $('.dynamicOption').each( function () {
+            var refVal = this.value;
+            var refText = refVal.toString();
+            
+            refText = refText.replace(/ /g, '-');
+            refText = refText.replace(/\&/g, '');
+            refText = refText.replace(/\,/g, '');
+            refText = refText.replace(/\--/g, '-');
+            refText = refText.toLowerCase();
+
+            if(refText == referrer) {
+              $('#calendar-filter').val(refVal);
+              listBuild();
+            }
+          });
+        }else if (window.location.href.indexOf('?department=') != -1){
+          referrer = window.location.href.split('?department=')[1];
+
+          $('.dynamicOption').each( function () {
+            var refVal = this.value;
+            var refText = refVal.toString();
+            
+            refText = refText.replace(/ /g, '-');
+            refText = refText.replace(/\&/g, '');
+            refText = refText.replace(/\,/g, '');
+            refText = refText.replace(/\--/g, '-');
+            refText = refText.toLowerCase();
+
+            if(refText == referrer) {
+              $('#calendar-filter').val(refVal);
+              listBuild();
+            }
+          });
+        }else if (document.referrer.search('/') != -1) {
+          referrer = document.referrer.split('/').pop();
+
+          $('.dynamicOption').each( function () {
+            var refVal = this.value;
+            var refText = refVal.toString();
+            
+            refText = refText.replace(/ /g, '-');
+            refText = refText.replace(/\&/g, '');
+            refText = refText.replace(/\,/g, '');
+            refText = refText.replace(/\--/g, '-');
+            refText = refText.toLowerCase();
+
+            if(refText == referrer) {
+              $('#page-filter').val(refVal);
+              listBuild();
+            }
+          });
+        }else {
+          listBuild();
+        }
 
         function listBuild() {
           events.map((event) => {

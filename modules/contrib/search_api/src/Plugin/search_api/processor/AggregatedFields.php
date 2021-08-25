@@ -116,6 +116,14 @@ class AggregatedFields extends ProcessorPluginBase {
             $values = [end($values)];
           }
           break;
+
+        case 'first_char':
+          $first_value = reset($values);
+          $values = [];
+          if ($first_value) {
+            $values[] = mb_strtoupper(mb_substr($first_value, 0, 1));
+          }
+          break;
       }
 
       // Do not use setValues(), since that doesn't preprocess the values

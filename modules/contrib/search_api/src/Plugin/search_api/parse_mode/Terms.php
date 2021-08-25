@@ -19,7 +19,10 @@ class Terms extends ParseModePluginBase {
    * {@inheritdoc}
    */
   public function parseInput($keys) {
-    $tokens = explode(' ', $keys);
+    // Split the keys into tokens. Any whitespace is considered as a delimiter
+    // for tokens. This covers ASCII white spaces as well as multi-byte "spaces"
+    // which for example are common in Japanese.
+    $tokens = preg_split('/\s+/u', $keys);
     $quoted = FALSE;
     $negated = FALSE;
     $phrase_contents = [];
