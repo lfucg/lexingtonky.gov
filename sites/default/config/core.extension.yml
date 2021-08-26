@@ -45,6 +45,7 @@ module:
   fieldblock: 0
   file: 0
   filter: 0
+  flood_control: 0
   gis_api: 0
   help: 0
   history: 0
