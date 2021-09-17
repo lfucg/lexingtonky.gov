@@ -1,0 +1,31 @@
+---
+label: "Unblocking IP addresses and User ID's"
+related:
+  - user.overview
+  - core.security
+---
+{% set people_url = render_var(url('entity.user.collection')) %}
+{% set fu_url = render_var(url('flood_control.unblock_form')) %}
+{% set perms_url = render_var(url('user.admin_permissions')) %}
+<h2>{% trans %}Goal{% endtrans %}</h2>
+<p>{% trans %}Flood Control provides an <a href="{{ fu_url }}">interface</a> that
+  makes possible for site administrators to remove IP addresses and user ID's from the
+  flood table.{% endtrans %}</p>
+<p>{% trans %}Drupal prevents brute force attacks on accounts. It does so by
+    refusing login attempts when more than 5 attempts failed. The amount
+    of failed logins is recorded in the table 'flood'. You can either
+    wait before trying to login again or clean the flood table with the
+    procedure below.{% endtrans %}</p>
+<h3>{% trans %}Permissions{% endtrans %}</h3>
+<p>{% trans %}Users with the <em>access flood unblock</em> <a href="{{ perms_url }}">permission</a> can access the <a href="{{ fu_url}}"><em>Flood Unblock</em></a> page.{% endtrans %}</p>
+<h2>{% trans %}Steps{% endtrans %}</h2>
+<ol>
+  <li>{% trans %}In the <em>Manage</em> administrative menu, navigate to <a href="{{ people_url}}"><em>People</em></a>.{% endtrans %}</li>
+  <li>{% trans %}Click <a href="{{ fu_url}}"><em>Flood Unblock</em></a>.{% endtrans %}</li>
+  <li>{% trans %}Select (all) the IP addresses and User ID's that you want to unblock.{% endtrans %}</li>
+  <li>{% trans %}Click <em>Remove</em>. The IP addresses and User ID's have been unblocked and it should be possible again to try to login.{% endtrans %}</li>
+</ol>
+<h2>More information</h2>
+<ul>
+  <li>{% trans %}<a href="https://www.drupal.org/project/flood_control">Flood Control on drupal.org</a>{% endtrans %}</li>
+</ul>

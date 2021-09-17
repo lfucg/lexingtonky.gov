@@ -121,11 +121,10 @@ window.addEventListener( 'load', function(){
             refText = refText.toLowerCase();
 
             if(refText == referrer) {
-              $('#calendar-filter').val('default');
               $('#calendar-filter').val(refVal);
-              dateBuild();
             }
          });
+         dateBuild();
         }else if (window.location.href.indexOf('?department=') != -1){
           referrer = window.location.href.split('?department=')[1];
 
@@ -140,11 +139,10 @@ window.addEventListener( 'load', function(){
             refText = refText.toLowerCase();
 
             if(refText == referrer) {
-              $('#calendar-filter').val('default');
               $('#calendar-filter').val(refVal);
-              dateBuild();
             }
           });
+          dateBuild();
         }else if (document.referrer.search('/') != -1) {
           referrer = document.referrer.split('/').pop();
 
@@ -160,9 +158,9 @@ window.addEventListener( 'load', function(){
 
             if(refText == referrer) {
               $('#page-filter').val(refVal);
-              dateBuild();
             }
           });
+          dateBuild();
         }else {
           dateBuild();
         }
@@ -252,9 +250,9 @@ window.addEventListener( 'load', function(){
 
             if(refText == referrer) {
               $('#calendar-filter').val(refVal);
-              listBuild();
             }
           });
+          listBuild();
         }else if (window.location.href.indexOf('?department=') != -1){
           referrer = window.location.href.split('?department=')[1];
 
@@ -270,9 +268,9 @@ window.addEventListener( 'load', function(){
 
             if(refText == referrer) {
               $('#calendar-filter').val(refVal);
-              listBuild();
             }
           });
+          listBuild();
         }else if (document.referrer.search('/') != -1) {
           referrer = document.referrer.split('/').pop();
 
@@ -288,9 +286,9 @@ window.addEventListener( 'load', function(){
 
             if(refText == referrer) {
               $('#page-filter').val(refVal);
-              listBuild();
             }
           });
+          listBuild();
         }else {
           listBuild();
         }

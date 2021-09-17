@@ -18,6 +18,7 @@ function lex_views_pre_render($view) {
 }
 
 function lex_preprocess_html(&$variables) {
+  $url = \Drupal\Core\Url::fromRoute('<current>')->toString();
 
   if ($variables['root_path']) {
     $path_class = 'path-' . Html::getClass($variables['root_path']);
@@ -37,6 +38,10 @@ function lex_preprocess_html(&$variables) {
 
   if(\Drupal::currentUser()->id()) {
     $variables['attributes']['class'][] = 'logged-in';
+  }
+
+  if ($url == '/joinlexpolice') {
+    $variables['#attached']['library'][] = 'lex/lex-join-police';
   }
 
 }
