@@ -8,11 +8,10 @@
                     {% include '@components/atoms/card-subheading.twig' with {subheading: subheading} %}
                     {% include '@components/atoms/description.twig' with {description: description} %}
                 </div>
-                <div class="contact-footer">
-                    {# {{dd(link[0]['#url'])}} #}
-                    {% include '@components/atoms/card-footer.twig' with {text: text, email: email} %}
-                </div>
             </a>
+            <div class="contact-footer">
+                {% include '@components/atoms/card-footer.twig' with {text: text, email: email} %}
+            </div>
         </div>
     </div>
 </div>
