@@ -54,4 +54,3 @@ lex-neighborhood-associations:
 lex-join-police:
   js:
     js/join-police.js: {}
-
