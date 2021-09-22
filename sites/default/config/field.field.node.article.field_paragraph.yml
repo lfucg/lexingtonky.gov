@@ -5,6 +5,10 @@ dependencies:
   config:
     - field.storage.node.field_paragraph
     - node.type.article
+    - paragraphs.paragraphs_type.accordion_block
+    - paragraphs.paragraphs_type.flex_grid
+    - paragraphs.paragraphs_type.paragraphs_page_section
+    - paragraphs.paragraphs_type.quote_grid
   module:
     - entity_reference_revisions
 id: node.article.field_paragraph
@@ -21,7 +25,11 @@ settings:
   handler: 'default:paragraph'
   handler_settings:
     negate: 0
-    target_bundles: null
+    target_bundles:
+      paragraphs_page_section: paragraphs_page_section
+      accordion_block: accordion_block
+      flex_grid: flex_grid
+      quote_grid: quote_grid
     target_bundles_drag_drop:
       icon_button_with_description:
         weight: 9
@@ -48,9 +56,39 @@ settings:
         weight: 14
         enabled: false
       paragraphs_page_section:
+        enabled: true
         weight: 15
-        enabled: false
       photo_grid:
         weight: 16
+        enabled: false
+      accordion_block:
+        enabled: true
+        weight: 21
+      accordion_section:
+        weight: 22
+        enabled: false
+      econdev_main_hero_text:
+        weight: 26
+        enabled: false
+      econdev_secondary_hero_text:
+        weight: 27
+        enabled: false
+      flex_grid:
+        enabled: true
+        weight: 28
+      quote:
+        weight: 36
+        enabled: false
+      quote_grid:
+        enabled: true
+        weight: 37
+      rendered_block:
+        weight: 38
+        enabled: false
+      standalone_link:
+        weight: 39
+        enabled: false
+      views_block:
+        weight: 40
         enabled: false
 field_type: entity_reference_revisions
