@@ -16,7 +16,7 @@ global-js:
     js/takeover-navigation.js: {}
     js/internal-search-block.js: {}
     js/cards.js: {}
-    js/accordion.js: {}
+    # js/accordion.js: {}
     js/lex-cal.js: {}
     js/search.js: {}
   dependencies:
