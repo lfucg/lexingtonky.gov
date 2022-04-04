@@ -25,7 +25,7 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
  *      a local development environment, to insure that
  *      the site settings remain consistent.
  */
-include __DIR__ . "/settings.pantheon.php";
+include_once __DIR__ . "/settings.pantheon.php";
 
 $settings['trusted_host_patterns'] = array(
   '^.+lexky-d8\.pantheonsite\.io$',
@@ -39,7 +39,7 @@ $settings['trusted_host_patterns'] = array(
 
 $config_overrides = __DIR__ . "/config.overrides.php";
 if (file_exists($config_overrides)) {
-  include $config_overrides;
+  include_once $config_overrides;
 }
 
 if (! (isset($_ENV['PANTHEON_ENVIRONMENT']) && $_ENV['PANTHEON_ENVIRONMENT'] == 'live')) {
@@ -51,7 +51,7 @@ if (! (isset($_ENV['PANTHEON_ENVIRONMENT']) && $_ENV['PANTHEON_ENVIRONMENT'] == 
  */
 $local_settings = __DIR__ . "/settings.local.php";
 if (file_exists($local_settings)) {
-  include $local_settings;
+  include_once $local_settings;
 }
 $settings['install_profile'] = 'standard';
 
@@ -86,5 +86,5 @@ $settings['deployment_identifier'] = '1';
 $settings['php_storage']['twig']['secret'] = $settings['hash_salt'] . $settings['deployment_identifier'];
 
 if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
-  include $app_root . '/' . $site_path . '/settings.local.php';
+  include_once $app_root . '/' . $site_path . '/settings.local.php';
 }
