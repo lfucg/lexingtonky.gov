@@ -39,10 +39,7 @@ class IgnoreCase extends FieldsProcessorPluginBase {
    * {@inheritdoc}
    */
   protected function process(&$value) {
-    // We don't touch integers, NULL values or the like.
-    if (is_string($value)) {
-      $value = mb_strtolower($value);
-    }
+    $value = mb_strtolower($value);
   }
 
 }

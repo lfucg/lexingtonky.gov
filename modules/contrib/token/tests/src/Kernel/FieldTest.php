@@ -97,6 +97,7 @@ class FieldTest extends KernelTestBase {
 
     $this->testFormat = FilterFormat::create([
       'format' => 'test',
+      'name' => 'Test format',
       'weight' => 1,
       'filters' => [
         'filter_html_escape' => ['status' => TRUE],

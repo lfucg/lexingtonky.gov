@@ -79,8 +79,8 @@ class ComplexSimpleWidgetTest extends InlineEntityFormTestBase {
             ->press();
           $this->assertNotEmpty($assert_session->waitForElement('xpath', $outer_title_field_xpath));
         }
-        $outer_title = $this->randomMachineName(8);
-        $inner_title = $this->randomMachineName(8);
+        $outer_title = $this->randomMachineName();
+        $inner_title = $this->randomMachineName();
         $assert_session->elementExists('xpath', $outer_title_field_xpath)->setValue($outer_title);
         // Simple widget is required so should always show up. No need for
         // add submit.
@@ -97,7 +97,7 @@ class ComplexSimpleWidgetTest extends InlineEntityFormTestBase {
         $this->assertNoNodeByTitle($outer_title, 'Outer node was not created when widget submitted.');
         $this->assertNoNodeByTitle($inner_title, 'Inner node was not created when widget submitted.');
 
-        $host_title = $this->randomMachineName(8);
+        $host_title = $this->randomMachineName();
         $assert_session->elementExists('xpath', $first_title_field_xpath)->setValue($host_title);
         $page->pressButton('Save');
         $assert_session->pageTextContains("$host_title has been created.");

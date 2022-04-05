@@ -286,10 +286,11 @@ function search_api_node_access_records_alter(array &$grants, NodeInterface $nod
 
         case 'comment':
           if (!isset($comments)) {
-            $entity_query = \Drupal::entityQuery('comment');
-            $entity_query->condition('entity_id', (int) $node->id());
-            $entity_query->condition('entity_type', 'node');
-            $comment_ids = $entity_query->execute();
+            $comment_ids = \Drupal::entityQuery('comment')
+              ->accessCheck(FALSE)
+              ->condition('entity_id', (int) $node->id())
+              ->condition('entity_type', 'node')
+              ->execute();
             /** @var \Drupal\comment\CommentInterface[] $comments */
             $comments = Comment::loadMultiple($comment_ids);
           }

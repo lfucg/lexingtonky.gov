@@ -25,7 +25,7 @@ install:
   # Structure the codebase and install necessary dependencies.
   - docker-compose exec drupal bash -c 'apt-get update && apt-get install -y sudo'
   - docker-compose exec drupal bash -c 'composer config platform --unset'
-  - docker-compose exec drupal bash -c 'composer require --dev drush/drush'
+  - docker-compose exec drupal bash -c 'composer require --prefer-source --no-interaction --dev drush/drush'
   - docker-compose exec drupal bash -c 'composer update phpunit/phpunit symfony/phpunit-bridge phpspec/prophecy symfony/yaml --with-dependencies'
   - docker-compose exec drupal ln -s /opt/honeypot/ /var/www/html/web/modules/honeypot
 

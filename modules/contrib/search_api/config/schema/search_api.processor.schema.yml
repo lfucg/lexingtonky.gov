@@ -58,6 +58,9 @@ plugin.plugin_configuration.search_api_processor.highlight:
     excerpt:
       type: boolean
       label: 'When enabled, an excerpt will be created for searches with keywords, containing all occurrences of keywords in a fulltext field.'
+    excerpt_always:
+      type: boolean
+      label: 'When enabled, an excerpt will be created even with an empty query string.'
     excerpt_length:
       type: integer
       label: 'The requested length of the excerpt, in characters'

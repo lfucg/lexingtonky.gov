@@ -18,8 +18,8 @@
   *   Main paragraph region.
   */
   var setUpTab = function ($parWidget, $parTabs, $parContent, $parBehavior, $mainRegion) {
-    var $tabContent = $parTabs.find('#content');
-    var $tabBehavior = $parTabs.find('#behavior');
+    var $tabContent = $parTabs.find('.paragraphs_content_tab');
+    var $tabBehavior = $parTabs.find('.paragraphs_behavior_tab');
     if ($tabBehavior.hasClass('is-active')) {
       $parWidget.removeClass('content-active').addClass('behavior-active');
       $tabContent.removeClass('is-active');
@@ -57,7 +57,7 @@
     $clickedTabParent.addClass('is-active');
 
     $parWidget.removeClass('behavior-active content-active');
-    if ($clickedTabParent.attr('id') === 'content') {
+    if ($clickedTabParent.hasClass('paragraphs_content_tab')) {
       $parWidget.addClass('content-active');
       $parWidget.find('.paragraphs-add-wrapper').parent().removeClass('hidden');
     }

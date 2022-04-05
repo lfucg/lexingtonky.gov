@@ -211,12 +211,15 @@
 }
 
 .js .field--widget-paragraphs .field-multiple-drag {
-  vertical-align: top;
+  vertical-align: middle;
+  min-width: 40px;
 }
 
 .js .field--widget-paragraphs .draggable .tabledrag-handle {
-  min-width: 50px;
   margin-left: 0;
+  margin-top: 3px;
+  padding-right: .25em;
+  width: 23px;
 }
 
 .js .field--widget-paragraphs .draggable .tabledrag-handle:focus::before {
@@ -224,8 +227,24 @@
   margin-right: .1em;
 }
 
+.js .field--widget-paragraphs .draggable .tabledrag-handle::after {
+  margin-left: 0;
+  padding: .5rem;
+}
+
+.js .field--widget-paragraphs .draggable .tabledrag-handle:hover .handle {
+  -webkit-transform: scale(1.25);
+          transform: scale(1.25);
+}
+
+.js .field--widget-paragraphs .tabledrag-changed {
+  text-decoration: none;
+}
+
 .js .field--widget-paragraphs .tabledrag-handle .handle {
   height: 22px;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .js .field--widget-paragraphs .delta-order {

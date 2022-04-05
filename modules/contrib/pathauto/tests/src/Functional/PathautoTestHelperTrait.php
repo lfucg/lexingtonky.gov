@@ -169,7 +169,7 @@ trait PathautoTestHelperTrait {
     return $term;
   }
 
-  public function assertEntityPattern($entity_type, $bundle, $langcode = Language::LANGCODE_NOT_SPECIFIED, $expected) {
+  public function assertEntityPattern($entity_type, $bundle, $langcode, $expected) {
 
     $values = [
       'langcode' => $langcode,

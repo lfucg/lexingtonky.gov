@@ -28,6 +28,16 @@ class Item implements \IteratorAggregate, ItemInterface {
   protected $index;
 
   /**
+   * The ID of the index with which this item is associated.
+   *
+   * This is only used to avoid serialization of the index in __sleep() and
+   * __wakeup().
+   *
+   * @var string
+   */
+  protected $indexId;
+
+  /**
    * The ID of this item.
    *
    * @var string
@@ -445,6 +455,7 @@ class Item implements \IteratorAggregate, ItemInterface {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function getIterator() {
     return new \ArrayIterator($this->getFields());
   }
@@ -464,6 +475,39 @@ class Item implements \IteratorAggregate, ItemInterface {
     foreach ($this->extraData as $key => $data) {
       if (is_object($data)) {
         $this->extraData[$key] = clone $data;
+      }
+    }
+  }
+
+  /**
+   * Implements the magic __sleep() method to avoid serializing the index.
+   */
+  public function __sleep() {
+    $this->indexId = $this->index->id();
+    $properties = get_object_vars($this);
+    // Don't serialize objects that can easily be loaded again. (We cannot be
+    // sure about the "original object", so we do serialize that.
+    unset($properties['index']);
+    unset($properties['datasource']);
+    unset($properties['accessResults']);
+    return array_keys($properties);
+  }
+
+  /**
+   * Implements the magic __wakeup() method to control object unserialization.
+   */
+  public function __wakeup() {
+    // Make sure we have a container to do this. Otherwise, there could be
+    // errors when displaying failed tests.
+    if ($this->indexId && \Drupal::hasContainer()) {
+      $this->index = \Drupal::entityTypeManager()
+        ->getStorage('search_api_index')
+        ->load($this->indexId);
+      $this->indexId = NULL;
+      if ($this->index && $this->fields) {
+        foreach ($this->fields as $field) {
+          $field->setIndex($this->index);
+        }
       }
     }
   }

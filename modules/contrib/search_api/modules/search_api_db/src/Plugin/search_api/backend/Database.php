@@ -4,6 +4,7 @@ namespace Drupal\search_api_db\Plugin\search_api\backend;
 
 use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Database as CoreDatabase;
 use Drupal\Core\Database\DatabaseException;
@@ -16,6 +17,7 @@ use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Render\Element;
 use Drupal\search_api\Backend\BackendPluginBase;
+use Drupal\search_api\Contrib\AutocompleteBackendInterface;
 use Drupal\search_api\DataType\DataTypePluginManager;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\IndexInterface;
@@ -70,7 +72,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *   description = @Translation("Indexes items in the database. Supports several advanced features, but should not be used for large sites.")
  * )
  */
-class Database extends BackendPluginBase implements PluginFormInterface {
+class Database extends BackendPluginBase implements AutocompleteBackendInterface, PluginFormInterface {
 
   use PluginFormTrait;
 
@@ -539,9 +541,15 @@ class Database extends BackendPluginBase implements PluginFormInterface {
   public function viewSettings() {
     $info = [];
 
+    if ($this->configuration['database']) {
+      $database = str_replace(':', ' > ', $this->configuration['database']);
+    }
+    else {
+      $database = $this->t('None selected yet');
+    }
     $info[] = [
       'label' => $this->t('Database'),
-      'info' => str_replace(':', ' > ', $this->configuration['database']),
+      'info' => $database,
     ];
     if ($this->configuration['min_chars'] > 1) {
       $info[] = [
@@ -1641,41 +1649,56 @@ class Database extends BackendPluginBase implements PluginFormInterface {
 
     $results = $query->getResults();
 
-    $skip_count = $query->getOption('skip result count');
-    $count = NULL;
-    if (!$skip_count) {
-      $count_query = $db_query->countQuery();
-      $count = $count_query->execute()->fetchField();
-      $results->setResultCount($count);
+    try {
+      $skip_count = $query->getOption('skip result count');
+      $count = NULL;
+      if (!$skip_count) {
+        $count_query = $db_query->countQuery();
+        $count = $count_query->execute()->fetchField();
+        $results->setResultCount($count);
+      }
+
+      // With a "min_count" of 0, some facets can even be available if there are
+      // no results.
+      if ($query->getOption('search_api_facets')) {
+        $facets = $this->getFacets($query, clone $db_query, $count);
+        $results->setExtraData('search_api_facets', $facets);
+      }
+      // Everything else can be skipped if the count is 0.
+      if ($skip_count || $count) {
+        $query_options = $query->getOptions();
+        if (isset($query_options['offset']) || isset($query_options['limit'])) {
+          $offset = $query_options['offset'] ?? 0;
+          $limit = $query_options['limit'] ?? 1000000;
+          $db_query->range($offset, $limit);
+        }
+
+        $this->setQuerySort($query, $db_query, $fields);
+
+        $result = $db_query->execute();
+
+        foreach ($result as $row) {
+          $item = $this->getFieldsHelper()->createItem($index, $row->item_id);
+          $item->setScore($row->score / self::SCORE_MULTIPLIER);
+          $results->addResultItem($item);
+        }
+        if ($skip_count && !empty($item)) {
+          $results->setResultCount(1);
+        }
+      }
     }
-
-    // With a "min_count" of 0, some facets can even be available if there are
-    // no results.
-    if ($query->getOption('search_api_facets')) {
-      $facets = $this->getFacets($query, clone $db_query, $count);
-      $results->setExtraData('search_api_facets', $facets);
+    // @todo Replace with multi-catch once we depend on PHP 7.1+.
+    catch (DatabaseException $e) {
+      if ($query instanceof RefinableCacheableDependencyInterface) {
+        $query->mergeCacheMaxAge(0);
+      }
+      throw new SearchApiException('A database exception occurred while searching.', $e->getCode(), $e);
     }
-    // Everything else can be skipped if the count is 0.
-    if ($skip_count || $count) {
-      $query_options = $query->getOptions();
-      if (isset($query_options['offset']) || isset($query_options['limit'])) {
-        $offset = isset($query_options['offset']) ? $query_options['offset'] : 0;
-        $limit = isset($query_options['limit']) ? $query_options['limit'] : 1000000;
-        $db_query->range($offset, $limit);
+    catch (\PDOException $e) {
+      if ($query instanceof RefinableCacheableDependencyInterface) {
+        $query->mergeCacheMaxAge(0);
       }
-
-      $this->setQuerySort($query, $db_query, $fields);
-
-      $result = $db_query->execute();
-
-      foreach ($result as $row) {
-        $item = $this->getFieldsHelper()->createItem($index, $row->item_id);
-        $item->setScore($row->score / self::SCORE_MULTIPLIER);
-        $results->addResultItem($item);
-      }
-      if ($skip_count && !empty($item)) {
-        $results->setResultCount(1);
-      }
+      throw new SearchApiException('A database exception occurred while searching.', $e->getCode(), $e);
     }
 
     // Add additional warnings and ignored keys.
@@ -1991,17 +2014,21 @@ class Database extends BackendPluginBase implements PluginFormInterface {
       $field = reset($fields);
       $db_query = $this->database->select($field['table'], 't');
       $mul_words = ($word_count > 1);
+      // Depending on several factors, a different set of columns is expected to
+      // be returned in this query (that will potentially be nested later).
+      // Also, grouping might be added for some combinations, in which case we
+      // need to SUM() the score so it doesn't get grouped as well.
       if ($neg_nested) {
         $db_query->fields('t', ['item_id', 'word']);
       }
       elseif ($neg) {
         $db_query->fields('t', ['item_id']);
       }
-      elseif ($not_nested && $match_parts) {
+      elseif ($match_parts) {
         $db_query->fields('t', ['item_id']);
         $db_query->addExpression('SUM(t.score)', 'score');
       }
-      elseif ($not_nested || $match_parts) {
+      elseif ($not_nested) {
         $db_query->fields('t', ['item_id', 'score']);
       }
       else {
@@ -2621,30 +2648,9 @@ class Database extends BackendPluginBase implements PluginFormInterface {
   }
 
   /**
-   * Retrieves autocompletion suggestions for some user input.
-   *
-   * @param \Drupal\search_api\Query\QueryInterface $query
-   *   A query representing the base search, with all completely entered words
-   *   in the user input so far as the search keys.
-   * @param \Drupal\search_api_autocomplete\SearchInterface $search
-   *   An object containing details about the search the user is on, and
-   *   settings for the autocompletion. See the class documentation for details.
-   *   Especially $search->getOptions() should be checked for settings, like
-   *   whether to try and estimate result counts for returned suggestions.
-   * @param string $incomplete_key
-   *   The start of another fulltext keyword for the search, which should be
-   *   completed. Might be empty, in which case all user input up to now was
-   *   considered completed. Then, additional keywords for the search could be
-   *   suggested.
-   * @param string $user_input
-   *   The complete user input for the fulltext search keywords so far.
-   *
-   * @return \Drupal\search_api_autocomplete\Suggestion\SuggestionInterface[]
-   *   An array of autocomplete suggestions.
-   *
-   * @see \Drupal\search_api_autocomplete\AutocompleteBackendInterface::getAutocompleteSuggestions()
+   * {@inheritdoc}
    */
-  public function getAutocompleteSuggestions(QueryInterface $query, SearchInterface $search, $incomplete_key, $user_input) {
+  public function getAutocompleteSuggestions(QueryInterface $query, SearchInterface $search, string $incomplete_key, string $user_input): array {
     $settings = $this->configuration['autocomplete'];
 
     // If none of the options is checked, the user apparently chose a very
@@ -2763,8 +2769,9 @@ class Database extends BackendPluginBase implements PluginFormInterface {
           ->condition('t.field_name', $field)
           ->condition('t.item_id', $all_results, 'IN');
         if ($pass == 1) {
-          $field_query->condition('t.word', $incomplete_like, 'LIKE')
-            ->condition('t.word', $keys, 'NOT IN');
+          $field_query
+            ->condition('t.word', $keys, 'NOT IN')
+            ->condition('t.word', $incomplete_like, 'LIKE');
         }
         if (!isset($word_query)) {
           $word_query = $field_query;

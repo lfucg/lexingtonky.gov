@@ -1,11 +1,11 @@
-name: honeypot_test
+name: Honeypot Test
 type: module
 description: Support module for Honeypot internal testing purposes.
 core: 8.x
 package: Testing
 hidden: true
 
-# Information added by Drupal.org packaging script on 2019-12-13
-version: '8.x-1.30'
+# Information added by Drupal.org packaging script on 2021-11-24
+version: '8.x-1.31'
 project: 'honeypot'
-datestamp: 1576274291
+datestamp: 1637735550

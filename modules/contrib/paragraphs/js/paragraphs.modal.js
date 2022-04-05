@@ -47,7 +47,7 @@
     var $element = $(element);
 
     // Get the delta element before moving $element to dialog element.
-    var $modalDelta = $element.parent().find('.paragraph-type-add-modal-delta');
+    var $modalDelta = $element.parent().find('.paragraph-type-add-delta');
 
     // Deep clone with all attached events. We need to work on cloned element
     // and not directly on origin because Drupal dialog.ajax.js

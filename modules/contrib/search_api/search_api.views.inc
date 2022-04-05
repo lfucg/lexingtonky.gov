@@ -160,6 +160,7 @@ function search_api_views_plugins_row_alter(array &$plugins) {
   }
 
   $plugins['search_api']['base'] = $bases;
+  $plugins['search_api_data']['base'] = $bases;
 }
 
 /**

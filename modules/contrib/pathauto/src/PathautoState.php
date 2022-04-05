@@ -33,14 +33,19 @@ class PathautoState extends TypedData {
   protected $parent;
 
   /**
+   * Pathauto State Original value.
+   *
+   * @var int
+   */
+  protected $originalValue;
+
+  /**
    * {@inheritdoc}
    */
   public function getValue() {
     if ($this->value === NULL) {
-      // If no value has been set or loaded yet, try to load a value if this
-      // entity has already been saved.
-      $this->value = \Drupal::keyValue($this->getCollection())
-        ->get(static::getPathautoStateKey($this->parent->getEntity()->id()));
+      $this->value = $this->getOriginalValue();
+
       // If it was not yet saved or no value was found, then set the flag to
       // create the alias if there is a matching pattern.
       if ($this->value === NULL) {
@@ -50,6 +55,23 @@ class PathautoState extends TypedData {
       }
     }
     return $this->value;
+  }
+
+  /**
+   * Gets the data value currently stored in database.
+   *
+   * @return mixed
+   *   The data value.
+   */
+  protected function getOriginalValue() {
+    if ($this->originalValue === NULL) {
+      // If no value has been set or loaded yet, try to load a value if this
+      // entity has already been saved.
+      $this->originalValue = \Drupal::keyValue($this->getCollection())
+        ->get(static::getPathautoStateKey($this->parent->getEntity()->id()));
+    }
+
+    return $this->originalValue;
   }
 
   /**
@@ -74,6 +96,11 @@ class PathautoState extends TypedData {
    * Persists the state.
    */
   public function persist() {
+    // Do nothing if current value is same as original value.
+    if ($this->getValue() === $this->getOriginalValue()) {
+      return;
+    }
+
     \Drupal::keyValue($this->getCollection())
       ->set(static::getPathautoStateKey($this->parent->getEntity()->id()), $this->getValue());
   }

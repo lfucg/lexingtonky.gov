@@ -44,7 +44,7 @@ class ParagraphsLibraryItemTranslationTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->addParagraphedContentType('paragraphed_test');
 
@@ -92,14 +92,15 @@ class ParagraphsLibraryItemTranslationTest extends BrowserTestBase {
       'settings[paragraphs_library_item][paragraphs_library_item][translatable]' => TRUE,
       'settings[node][paragraphed_test][settings][language][language_alterable]' => TRUE
     ];
-    $this->drupalPostForm('admin/config/regional/content-language', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/regional/content-language');
+    $this->submitForm($edit, 'Save configuration');
 
     $assert_session = $this->assertSession();
     $page = $this->getSession()->getPage();
 
     // Add a node and translate it.
     $this->drupalGet('node/add/paragraphed_test');
-    $this->drupalPostForm(NULL, NULL, 'Add text');
+    $this->submitForm([], 'Add text');
 
     $assert_session->buttonExists('field_paragraphs_0_promote_to_library');
     $assert_session->buttonExists('Promote to library');
@@ -107,7 +108,7 @@ class ParagraphsLibraryItemTranslationTest extends BrowserTestBase {
       'title[0][value]' => 'EN Title',
       'field_paragraphs[0][subform][field_text][0][value]' => 'EN Library text',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $assert_session->pageTextContains('paragraphed_test EN Title has been created.');
 
     $this->clickLink('Translate');
@@ -117,7 +118,7 @@ class ParagraphsLibraryItemTranslationTest extends BrowserTestBase {
       'title[0][value]' => 'DE Title',
       'field_paragraphs[0][subform][field_text][0][value]' => 'DE Library text',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save (this translation)');
+    $this->submitForm($edit, 'Save (this translation)');
     $assert_session->pageTextContains('paragraphed_test DE Title has been updated.');
 
     // Convert the text to a library item and make sure it is displayed
@@ -126,7 +127,7 @@ class ParagraphsLibraryItemTranslationTest extends BrowserTestBase {
     $this->drupalGet('node/' . $node->id() . '/edit');
     $page->pressButton('Promote to library');
     $assert_session->fieldValueEquals('Reusable paragraph', 'text: EN Library text (1)');
-    $this->drupalPostForm(NULL, NULL, 'Save');
+    $this->submitForm([], 'Save');
 
     $assert_session->pageTextContains('EN Title');
     $assert_session->pageTextContains('EN Library text');
@@ -152,13 +153,13 @@ class ParagraphsLibraryItemTranslationTest extends BrowserTestBase {
 
     // Add a node with a text paragraph.
     $this->drupalGet('node/add/paragraphed_test');
-    $this->drupalPostForm(NULL, NULL, 'Add text');
+    $this->submitForm([], 'Add text');
     $edit = [
       'title[0][value]' => 'DE Llama Test',
       'langcode[0][value]' => 'de',
       'field_paragraphs[0][subform][field_text][0][value]' => 'DE Text Paragraph',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $assert_session->pageTextContains('paragraphed_test DE Llama Test has been created.');
 
     // Translate the node to the default language.
@@ -168,7 +169,7 @@ class ParagraphsLibraryItemTranslationTest extends BrowserTestBase {
       'title[0][value]' => 'EN Llama Test',
       'field_paragraphs[0][subform][field_text][0][value]' => 'EN Library text',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save (this translation)');
+    $this->submitForm($edit, 'Save (this translation)');
     $assert_session->pageTextContains('paragraphed_test EN Llama Test has been updated.');
 
     // Assert the original node can promote paragraphs to the library.
@@ -176,7 +177,7 @@ class ParagraphsLibraryItemTranslationTest extends BrowserTestBase {
     $this->drupalGet('de/node/' . $node->id() . '/edit');
     $page->pressButton('field_paragraphs_0_promote_to_library');
     $assert_session->fieldValueEquals('Reusable paragraph', 'text: DE Text Paragraph (2)');
-    $this->drupalPostForm(NULL, NULL, 'Save');
+    $this->submitForm([], 'Save');
     $assert_session->pageTextContains('paragraphed_test DE Llama Test has been updated.');
     $this->drupalGet('node/' . $node->id() . '/edit');
     $assert_session->pageTextContains('Reusable paragraph');

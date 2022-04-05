@@ -26,7 +26,7 @@ class FieldCollectionFieldInstanceSettings extends ProcessPluginBase {
     if ($type == 'field_collection') {
       $bundles = $this->entityTypeBundleInfo->getBundleInfo('paragraph');
 
-      $target_bundle = $row->getSourceProperty('field_name');
+      $target_bundle = $row->getSourceProperty('field_name') ?? '';
       // Remove field_ prefix for new bundle.
       $target_bundle = substr($target_bundle, FieldCollection::FIELD_COLLECTION_PREFIX_LENGTH);
 

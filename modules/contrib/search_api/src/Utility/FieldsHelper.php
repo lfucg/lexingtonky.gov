@@ -498,7 +498,7 @@ class FieldsHelper implements FieldsHelperInterface {
    * {@inheritdoc}
    */
   public function compareFieldLabels(FieldInterface $a, FieldInterface $b) {
-    return strnatcasecmp($a->getLabel(), $b->getLabel());
+    return strnatcasecmp((string) $a->getLabel(), (string) $b->getLabel());
   }
 
 }

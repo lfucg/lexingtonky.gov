@@ -2,9 +2,8 @@
 
 namespace Drupal\ckeditor_media_embed\Plugin\CKEditorPlugin;
 
-use Drupal\ckeditor_media_embed\AssetManager;
-
 use Drupal\ckeditor\CKEditorPluginBase;
+use Drupal\ckeditor_media_embed\AssetManager;
 use Drupal\editor\Entity\Editor;
 
 /**
@@ -26,6 +25,8 @@ class SemanticMediaEmbed extends CKEditorPluginBase {
       'embedbase',
       'notificationaggregator',
       'notification',
+      'fakeobjects',
+      'link',
     ];
   }
 

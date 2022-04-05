@@ -45,6 +45,11 @@ class MediaImageTest extends EntityEmbedTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stable';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['entity_embed_test'];
 
   /**
@@ -117,7 +122,7 @@ class MediaImageTest extends EntityEmbedTestBase {
 
     // Assert that the review step displays the selected entity with the label.
     $text = $form->getText();
-    $this->assertContains('Red-lipped batfish', $text);
+    $this->assertStringContainsString('Red-lipped batfish', $text);
 
     $select = $this->assertSession()
       ->selectExists('attributes[data-entity-embed-display]');
@@ -158,7 +163,7 @@ class MediaImageTest extends EntityEmbedTestBase {
 
     // Assert that the review step displays the selected entity with the label.
     $text = $form->getText();
-    $this->assertContains('Screaming hairy armadillo', $text);
+    $this->assertStringContainsString('Screaming hairy armadillo', $text);
 
     $select = $this->assertSession()
       ->selectExists('attributes[data-entity-embed-display]');
@@ -503,8 +508,8 @@ class MediaImageTest extends EntityEmbedTestBase {
     $this->pressEditorButton('source');
     $source = $this->assertSession()->elementExists('css', "textarea.cke_source");
     $value = $source->getValue();
-    $this->assertContains('https://www.drupal.org/project/drupal', $value);
-    $this->assertNotContains('data-cke-saved-href', $value);
+    $this->assertStringContainsString('https://www.drupal.org/project/drupal', $value);
+    $this->assertStringNotContainsString('data-cke-saved-href', $value);
 
     // Save the entity.
     $this->assertSession()->buttonExists('Save')->press();

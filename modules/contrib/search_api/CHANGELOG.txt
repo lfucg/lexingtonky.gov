@@ -1,3 +1,74 @@
+Search API 1.23 (2022-01-21):
+-----------------------------
+- #3247781 (follow-up) by drunken monkey: Fixed missing update for Task entity
+  storage schema.
+
+Search API 1.22 (2022-01-12):
+-----------------------------
+- #3247781 by Taran2L, drunken monkey: Fixed error on database update because
+  of task table UNIQUE key.
+- #3228382 by mikran, drunken monkey: Added an "Entity type" field.
+- #3222644 by johne, drunken monkey: Made
+  ContentEntityTrackingManager::filterValidItemIds() public.
+- #3256114 by drunken monkey: Fixed wrong static method calls in
+  UnsavedIndexConfiguration.
+- #2869103 by osopolar, drunken monkey: Fixed problems with theme cache when
+  indexing the "Rendered HTML output" field.
+- #3229495 by AndyF, drunken monkey: Fixed "start batch tracking" functionality
+  for indexes.
+- #3238635 by drunken monkey, mkalkbrenner: Added the
+  AutocompleteBackendInterface.
+- #3221103 by drunken monkey: Fixed small bug in Views fulltext search filter.
+- #3255474 by murilohp, drunken monkey: Removed outdated test helper interfaces.
+- #2983640 by Nick_vh, L_VanDamme, drunken monkey, Marios Anagnostopoulos,
+  estoyausente, jsst, yogeshmpawar, borisson_, legolasbo: Added an option to
+  create an excerpt even when no keywords are present.
+- #3221345 by drunken monkey, jan kellermann: Fixed handling of invalid date
+  values during indexing.
+- #3220283 by james.williams, drunken monkey: Fixed automatic reindexing of
+  related entities with undefined languages.
+- #3225675 by mdupont, drunken monkey: Fixed score calculation in DB backend
+  when multiple fields have the same score.
+- #3253738 by mkalkbrenner, alexpott, drunken monkey: Fixed deprecation
+  warnings in PHP 8.1.
+- #3091198 by alexpott, drunken monkey: Fixed problems on MySQL 5.6/5.7.
+- #3249801 by paulocs, beatrizrodrigues, drunken monkey: Fixed failing tests
+  against Drupal HEAD.
+- #3249792 by kim.pepper, borisson_: Fixed deprecation warning "$modules
+  property must be declared protected".
+
+Search API 1.21 (2021-11-04):
+-----------------------------
+- #3199906 by carolpettirossi, drunken monkey: Added an option for disabling
+  tracking of changes in related entities.
+- #3230791 by Anul, drunken monkey: Converted the remaining README.txt files to
+  markdown.
+- #2958811 by drunken monkey, Niklan, Andriy Khomych: Fixed bug in AddURL
+  processor during REST requests.
+- #3228533 by drunken monkey: Fixed mock object type hints in comments.
+- #3212925 by drunken monkey, DiegoPino: Fixed some processors removing "(not)
+  empty" conditions.
+- #3228210 by drunken monkey, DiegoPino: Fixed current test failures.
+- #3201305 by mkalkbrenner, drunken monkey, Sam152: Added more options
+  (including customized ones) for fulltext field boost values.
+- #3206362 by drunken monkey, zviryatko: Fixed serialization of fields.
+- #3226933 by drunken monkey: Fixed some exception handling problems.
+- #3065771 by New Zeal, drunken monkey, onedotover, PaulDinelle: Fixed passing
+  multiple values to "All taxonomy term fields" Views contextual filter.
+- #3220988 by varshith, drunken monkey: Fixed display of Stemmer processor on
+  non-English sites.
+- #3198412 by drunken monkey: Fixed error handling in tracker plugin methods.
+- #3193690 by jungle, drunken monkey, Charlie ChX Negyesi, longwave: Fixed
+  creation of duplicate tasks.
+- #3195199 by drunken monkey, claudiu.cristea: Fixed config schema for Views
+  bulk form.
+- #3013663 by chr.fritsch, drunken monkey, merauluka: Added performance
+  improvement for item tracking.
+- #3226699 by drunken monkey: Added explicit accessCheck() call to all entity
+  queries.
+- #2348117 by ekes, drunken monkey: Added support for core REST data views.
+- #3226642 by drunken monkey: Added "lifecycle" key to .info.yml file.
+
 Search API 1.20 (2021-07-19):
 -----------------------------
 - #3216762 by mkalkbrenner, drunken monkey: Fixed problems with boost factors
@@ -12,8 +83,6 @@ Search API 1.20 (2021-07-19):
   without datasource do not appear in Views.
 - #3215658 by mkalkbrenner, drunken monkey: Fixed handling of multi-byte spaces
   in the "Multiple words" parse mode.
-- #3055173 by mkalkbrenner, drunken monkey: Added the "Number field-based
-  boosting" processor.
 - #3055173 by mkalkbrenner, drunken monkey: Added the "Number field-based
   boosting" processor.
 - #3198944 by bogdan.racz, drunken monkey: Fixed ignored changes in the
@@ -579,11 +648,7 @@ Search API 1.6 (2017-12-24):
   views on PHP 5.
 - #2905562 by drunken monkey, borisson_: Increased the minimum Core version to
   8.4.
-- #2905562 by drunken monkey, borisson_: Increased the minimum Core version to
-  8.4.
 - #2916208 by drunken monkey: Fixed AJAX display of plugin forms.
-- #2278433 by drunken monkey, borisson_: Added option to Views field handlers
-  to use highlighted fields data.
 - #2278433 by drunken monkey, borisson_: Added option to Views field handlers
   to use highlighted fields data.
 

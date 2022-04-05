@@ -8,7 +8,7 @@ configure: ckeditor_media_embed.ckeditor_media_embed_settings_form
 dependencies:
   - drupal:ckeditor
 
-# Information added by Drupal.org packaging script on 2020-10-31
-version: '8.x-1.10'
+# Information added by Drupal.org packaging script on 2022-01-30
+version: '8.x-1.11'
 project: 'ckeditor_media_embed'
-datestamp: 1604155439
+datestamp: 1643570798

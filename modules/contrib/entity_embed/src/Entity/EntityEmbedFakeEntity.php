@@ -13,6 +13,7 @@ use Drupal\Core\Entity\ContentEntityBase;
  *   handlers = {
  *     "storage" = "Drupal\Core\Entity\ContentEntityNullStorage",
  *   },
+ *   internal = true,
  * )
  */
 class EntityEmbedFakeEntity extends ContentEntityBase {

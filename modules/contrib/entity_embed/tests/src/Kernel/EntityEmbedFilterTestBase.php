@@ -122,12 +122,12 @@ abstract class EntityEmbedFilterTestBase extends KernelTestBase {
    * @see \Drupal\KernelTests\AssertContentTrait::setRawContent()
    */
   protected function applyFilter($text, $langcode = 'en') {
-    $this->assertContains('<drupal-entity', $text);
-    $this->assertContains('This placeholder should not be rendered.', $text);
+    $this->assertStringContainsString('<drupal-entity', $text);
+    $this->assertStringContainsString('This placeholder should not be rendered.', $text);
     $filter_result = $this->processText($text, $langcode);
     $output = $filter_result->getProcessedText();
-    $this->assertNotContains('<drupal-entity', $output);
-    $this->assertNotContains('This placeholder should not be rendered.', $output);
+    $this->assertStringNotContainsString('<drupal-entity', $output);
+    $this->assertStringNotContainsString('This placeholder should not be rendered.', $output);
     $this->setRawContent($output);
     return $filter_result;
   }

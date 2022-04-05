@@ -22,7 +22,7 @@ class QueryTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'search_api',
     'search_api_test',
     'search_api_test_hooks',

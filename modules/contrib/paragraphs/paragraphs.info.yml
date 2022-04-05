@@ -16,7 +16,7 @@ test_dependencies:
   - field_group:field_group
   - block_field:block_field
 
-# Information added by Drupal.org packaging script on 2020-05-21
-version: '8.x-1.12'
+# Information added by Drupal.org packaging script on 2022-03-01
+version: '8.x-1.13'
 project: 'paragraphs'
-datestamp: 1590061337
+datestamp: 1646121719

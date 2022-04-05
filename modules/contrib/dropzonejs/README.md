@@ -36,10 +36,15 @@ installed to the `libraries` folder automatically.
 
 #### The composer way 2
 
-Copy the following into the root `composer.json` file's `repository` key
+Add a custom package to the root `composer.json` file. Its `repositories` key
+looks like the following.
 
 ```
     "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
         {
             "type": "package",
             "package": {

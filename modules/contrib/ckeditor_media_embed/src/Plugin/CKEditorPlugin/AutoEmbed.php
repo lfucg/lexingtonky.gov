@@ -32,6 +32,8 @@ class AutoEmbed extends CKEditorVersionAwarePluginBase implements CKEditorPlugin
       'embedbase',
       'notificationaggregator',
       'notification',
+      'fakeobjects',
+      'link',
     ];
 
     if ($this->needsTextMatchDependency()) {

@@ -23,7 +23,7 @@ function honeypot_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<dt>' . t('Configuring Honeypot') . '</dt>';
       $output .= '<dd>' . t('All settings for this module are on the Honeypot configuration page, under the Configuration section, in the Content authoring settings. You can visit the configuration page directly from the Honeypot configuration link below. The configuration settings are described in the <a href=":url">online documentation for the Honeypot module</a>.', [':url' => 'https://www.drupal.org/docs/8/modules/honeypot/using-honeypot']) . '</dd>';
       $output .= '<dt>' . t('Setting up Honeypot in your own forms') . '</dt>';
-      $output .= '<dd>' . t('Honeypot protection can be bypassed for certain user roles. For instance, site administrators, who just might be able to fill out a form in less than 5 seconds.  And, Honeypot protection can be enabled only for certain forms. Or, it can protect all forms on the site. Finally, honeypot protection can be used in any of your own forms by simply including a little code snippet included on the module\'s project page.') . '</dd>';
+      $output .= '<dd>' . t("Honeypot protection can be bypassed for certain user roles. For instance, site administrators, who just might be able to fill out a form in less than 5 seconds.  And, Honeypot protection can be enabled only for certain forms. Or, it can protect all forms on the site. Finally, honeypot protection can be used in any of your own forms by simply including a little code snippet included on the module's project page.") . '</dd>';
       $output .= '</dl>';
       return $output;
   }
@@ -140,7 +140,7 @@ function honeypot_add_form_protection(&$form, FormStateInterface $form_state, ar
     $honeypot_class = $honeypot_element . '-textfield';
     $form[$honeypot_element] = [
       '#theme_wrappers' => [
-        'form_element',
+        0 => 'form_element',
         'container' => [
           '#id' => NULL,
           '#attributes' => [
@@ -169,7 +169,7 @@ function honeypot_add_form_protection(&$form, FormStateInterface $form_state, ar
     $input = $form_state->getUserInput();
     if (empty($input['honeypot_time'])) {
       $identifier = Crypt::randomBytesBase64();
-      \Drupal::service('keyvalue.expirable')->get('honeypot_time_restriction')->setWithExpire($identifier, time(), 3600*24);
+      \Drupal::service('keyvalue.expirable')->get('honeypot_time_restriction')->setWithExpire($identifier, \Drupal::time()->getCurrentTime(), 3600 * 24);
     }
     else {
       $identifier = $input['honeypot_time'];
@@ -189,7 +189,7 @@ function honeypot_add_form_protection(&$form, FormStateInterface $form_state, ar
     if ($account->id() == 0) {
       // TODO D8 - Use DIC? See: http://drupal.org/node/1539454
       // Should this now set 'omit_vary_cookie' instead?
-      Drupal::service('page_cache_kill_switch')->trigger();
+      \Drupal::service('page_cache_kill_switch')->trigger();
     }
   }
 
@@ -240,7 +240,7 @@ function _honeypot_time_restriction_validate($element, FormStateInterface $form_
   if (!$honeypot_time || \Drupal::time()->getRequestTime() < ($honeypot_time + $time_limit)) {
     _honeypot_log($form_state->getValue('form_id'), 'honeypot_time');
     $time_limit = honeypot_get_time_limit();
-    \Drupal::service('keyvalue.expirable')->get('honeypot_time_restriction')->setWithExpire($identifier, \Drupal::time()->getRequestTime(), 3600*24);
+    \Drupal::service('keyvalue.expirable')->get('honeypot_time_restriction')->setWithExpire($identifier, \Drupal::time()->getRequestTime(), 3600 * 24);
     $form_state->setErrorByName('', t('There was a problem with your form submission. Please wait @limit seconds and try again.', ['@limit' => $time_limit]));
   }
 }
@@ -262,7 +262,7 @@ function _honeypot_log($form_id, $type) {
       '%form'  => $form_id,
       '@cause' => ($type == 'honeypot') ? t('submission of a value in the honeypot field') : t('submission of the form in less than minimum required time'),
     ];
-    \Drupal::logger('honeypot')->notice(t('Blocked submission of %form due to @cause.', $variables));
+    \Drupal::logger('honeypot')->notice('Blocked submission of %form due to @cause.', $variables);
   }
 }
 
@@ -327,7 +327,7 @@ function honeypot_log_failure($form_id, $type) {
   \Drupal::database()->insert('honeypot_user')
     ->fields([
       'uid' => $uid,
-      'hostname' => Drupal::request()->getClientIp(),
+      'hostname' => \Drupal::request()->getClientIp(),
       'timestamp' => \Drupal::time()->getRequestTime(),
     ])
     ->execute();

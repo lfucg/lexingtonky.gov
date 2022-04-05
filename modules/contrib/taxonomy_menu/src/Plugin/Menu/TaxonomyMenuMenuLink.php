@@ -91,16 +91,15 @@ class TaxonomyMenuMenuLink extends MenuLinkBase implements ContainerFactoryPlugi
    * {@inheritdoc}
    */
   public function getTitle() {
-    /* @var $link \Drupal\taxonomy\Entity\Term. */
+    /** @var \Drupal\taxonomy\Entity\Term. $link */
     $link = $this->entityTypeManager->getStorage('taxonomy_term')
       ->load($this->pluginDefinition['metadata']['taxonomy_term_id']);
 
     $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
-    if ($link->hasTranslation($language)) {
+    if (!empty($link) && $link->hasTranslation($language)) {
       $translation = $link->getTranslation($language);
       return $translation->label();
-    }
-    else {
+    } else if ($link) {
       return $link->label();
     }
 
@@ -111,17 +110,17 @@ class TaxonomyMenuMenuLink extends MenuLinkBase implements ContainerFactoryPlugi
    * {@inheritdoc}
    */
   public function getDescription() {
-    /* @var $link \Drupal\taxonomy\Entity\Term. */
+    /** @var \Drupal\taxonomy\Entity\Term. $link */
     $link = $this->entityTypeManager->getStorage('taxonomy_term')
       ->load($this->pluginDefinition['metadata']['taxonomy_term_id']);
 
     // Get the description field name.
     $taxonomy_menu = $this->entityTypeManager->getStorage('taxonomy_menu')->load($this->pluginDefinition['metadata']['taxonomy_menu_id']);
-    $description_field_name = $taxonomy_menu->getDescriptionFieldName();
+    $description_field_name = !empty($taxonomy_menu) ? $taxonomy_menu->getDescriptionFieldName() : '';
 
     $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
 
-    if ($link->hasTranslation($language)) {
+    if (!empty($link) && $link->hasTranslation($language)) {
       $translation = $link->getTranslation($language);
       if (!empty($translation) && $translation->hasField($description_field_name)) {
         return $translation->{$description_field_name}->value;
@@ -130,7 +129,6 @@ class TaxonomyMenuMenuLink extends MenuLinkBase implements ContainerFactoryPlugi
     elseif (!empty($link) && $link->hasField($description_field_name)) {
       return $link->{$description_field_name}->value;
     }
-    return NULL;
   }
 
   /**
@@ -141,7 +139,7 @@ class TaxonomyMenuMenuLink extends MenuLinkBase implements ContainerFactoryPlugi
     // Update the definition.
     $this->pluginDefinition = $overrides + $this->pluginDefinition;
     if ($persist) {
-      // TODO - consider any "persistence" back to TaxonomyMenu and/or Taxonomy
+      // @todo consider any "persistence" back to TaxonomyMenu and/or Taxonomy
       // upon menu link update.
       // Always save the menu name as an override to avoid defaulting to tools.
       $overrides['menu_name'] = $this->pluginDefinition['menu_name'];
@@ -163,4 +161,11 @@ class TaxonomyMenuMenuLink extends MenuLinkBase implements ContainerFactoryPlugi
   public function deleteLink() {
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function isResettable() {
+    $override = $this->staticOverride->loadOverride($this->getPluginId());
+    return $override !== NULL && !empty($override);
+  }
 }

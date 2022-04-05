@@ -27,8 +27,8 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
  *
  * @FieldWidget(
  *   id = "paragraphs",
- *   label = @Translation("Paragraphs EXPERIMENTAL"),
- *   description = @Translation("An experimental paragraphs inline form widget."),
+ *   label = @Translation("Paragraphs (stable)"),
+ *   description = @Translation("The stable paragraphs inline form widget."),
  *   field_types = {
  *     "entity_reference_revisions"
  *   }
@@ -957,19 +957,6 @@ class ParagraphsWidget extends WidgetBase {
       ],
     ];
 
-    // Hidden field provided by "Modal" mode. Field is provided for additional
-    // integrations, where also position of addition can be specified. It should
-    // be used by sub-modules or other paragraphs integration. CSS class is used
-    // to support easier element selecting in JavaScript.
-    $element['add_modal_form_area']['add_more_delta'] = [
-      '#type' => 'hidden',
-      '#attributes' => [
-        'class' => [
-          'paragraph-type-add-modal-delta',
-        ],
-      ],
-    ];
-
     $element['#attached']['library'][] = 'paragraphs/drupal.paragraphs.modal';
     if ($this->isFeatureEnabled('add_above')) {
       $element['#attached']['library'][] = 'paragraphs/drupal.paragraphs.add_above_button';
@@ -1062,7 +1049,7 @@ class ParagraphsWidget extends WidgetBase {
     $is_multiple = $this->fieldDefinition->getFieldStorageDefinition()->isMultiple();
 
     $field_title = $this->fieldDefinition->getLabel();
-    $description = FieldFilteredMarkup::create(\Drupal::token()->replace($this->fieldDefinition->getDescription()));
+    $description = FieldFilteredMarkup::create(\Drupal::token()->replace($this->fieldDefinition->getDescription() ?? ''));
 
     $elements = array();
     $tabs = '';
@@ -1074,7 +1061,7 @@ class ParagraphsWidget extends WidgetBase {
     $field_prefix = strtr($this->fieldIdPrefix, '_', '-');
     if (count($this->fieldParents) == 0) {
       if ($items->getEntity()->getEntityTypeId() != 'paragraph') {
-        $tabs = '<ul class="paragraphs-tabs tabs primary clearfix"><li id="content" class="tabs__tab"><a href="#' . $field_prefix . '-values">' . $this->t('Content', [], ['context' => 'paragraphs']) . '</a></li><li id="behavior" class="tabs__tab"><a href="#' . $field_prefix . '-values">' . $this->t('Behavior', [], ['context' => 'paragraphs']) . '</a></li></ul>';
+        $tabs = '<ul class="paragraphs-tabs tabs primary clearfix"><li class="tabs__tab paragraphs_content_tab"><a href="#' . $field_prefix . '-values">' . $this->t('Content', [], ['context' => 'paragraphs']) . '</a></li><li class="tabs__tab paragraphs_behavior_tab"><a href="#' . $field_prefix . '-values">' . $this->t('Behavior', [], ['context' => 'paragraphs']) . '</a></li></ul>';
       }
     }
     if (count($this->fieldParents) > 0) {
@@ -1200,11 +1187,29 @@ class ParagraphsWidget extends WidgetBase {
       $elements['add_more'] = $this->buildAddActions();
       // Add the class to hide the add actions in the Behavior perspective.
       $elements['add_more']['#attributes']['class'][] = 'paragraphs-add-wrapper';
+
+      // Hidden field is provided for additional integrations, where also
+      // position of addition can be specified. It should be used by sub-modules
+      // or other paragraphs integration. CSS class is used to support easier
+      // element selecting in JavaScript.
+      $elements['add_more']['add_more_delta'] = [
+        '#type' => 'hidden',
+        '#attributes' => [
+          'class' => [
+            'paragraph-type-add-delta',
+            $this->getSetting('add_mode')
+          ],
+        ],
+      ];
     }
 
     $elements['#allow_reference_changes'] = $this->allowReferenceChanges();
     $elements['#paragraphs_widget'] = TRUE;
     $elements['#attached']['library'][] = 'paragraphs/drupal.paragraphs.widget';
+
+    if (\Drupal::theme()->getActiveTheme()->getName() == 'seven') {
+      $elements['#attached']['library'][] = 'paragraphs/paragraphs.seven';
+    }
 
     return $elements;
   }
@@ -1607,7 +1612,7 @@ class ParagraphsWidget extends WidgetBase {
         '#type' => 'submit',
         '#name' => $this->fieldIdPrefix . '_' . $machine_name . '_add_more',
         '#value' => $add_mode == 'modal' ? $label : $this->t('Add @type', ['@type' => $label]),
-        '#attributes' => ['class' => ['field-add-more-submit']],
+        '#attributes' => ['class' => ['field-add-more-submit', 'button--small']],
         '#limit_validation_errors' => [array_merge($this->fieldParents, [$this->fieldDefinition->getName(), 'add_more'])],
         '#submit' => [[get_class($this), 'addMoreSubmit']],
         '#ajax' => [
@@ -1710,7 +1715,7 @@ class ParagraphsWidget extends WidgetBase {
     // Clear the Add more delta.
     NestedArray::setValue(
       $element,
-      ['add_more', 'add_modal_form_area', 'add_more_delta', '#value'],
+      ['add_more', 'add_more_delta', '#value'],
       ''
     );
 
@@ -1776,7 +1781,7 @@ class ParagraphsWidget extends WidgetBase {
     }
 
     // Add information into delta mapping for the new element.
-    $original_deltas_size = count($widget_state['original_deltas']);
+    $original_deltas_size = count($widget_state['original_deltas'] ?? []);
     $new_original_deltas[$new_delta] = $original_deltas_size;
     $user_input[$original_deltas_size]['_weight'] = $new_delta;
 
@@ -1794,7 +1799,7 @@ class ParagraphsWidget extends WidgetBase {
       $field_path = array_merge($submit['element']['#field_parents'], [$submit['element']['#field_name']]);
       $add_more_delta = NestedArray::getValue(
         $submit['element'],
-        ['add_more', 'add_modal_form_area', 'add_more_delta', '#value']
+        ['add_more', 'add_more_delta', '#value']
       );
 
       static::prepareDeltaPosition($submit['widget_state'], $form_state, $field_path, $add_more_delta);
@@ -2207,7 +2212,7 @@ class ParagraphsWidget extends WidgetBase {
     $widget_state = static::getWidgetState($elements['#field_parents'], $field_name, $form_state);
 
     if ($elements['#required'] && $widget_state['real_item_count'] < 1) {
-      $form_state->setError($elements, t('@name field is required.', ['@name' => $this->fieldDefinition->getLabel()]));
+      $form_state->setError($elements, $this->t('@name field is required.', ['@name' => $this->fieldDefinition->getLabel()]));
     }
 
     static::setWidgetState($elements['#field_parents'], $field_name, $form_state, $widget_state);

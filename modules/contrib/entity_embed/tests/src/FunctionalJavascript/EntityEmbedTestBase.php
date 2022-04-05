@@ -12,6 +12,11 @@ abstract class EntityEmbedTestBase extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'entity_embed',
     'entity_embed_test',

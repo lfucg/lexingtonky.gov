@@ -312,7 +312,7 @@ class PathautoSettingsForm extends ConfigFormBase {
         $value = $enabled_entity_types;
       }
       elseif ($key == 'safe_tokens') {
-        $value = array_filter(array_map('trim', explode(',', $value)));
+        $value = array_filter(array_map('trim', explode(',', $value ?? '')));
       }
       $config->set($key, $value);
     }

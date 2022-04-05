@@ -2,13 +2,11 @@
 
 namespace Drupal\draggableviews\Plugin\views\field;
 
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\draggableviews\DraggableViews;
-use Drupal\system\Plugin\views\field\BulkForm;
 use Drupal\Core\Render\Markup;
-use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\draggableviews\DraggableViews;
+use Drupal\views\Plugin\views\field\BulkForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -116,6 +114,15 @@ class DraggableViewsField extends BulkForm {
     foreach ($this->view->result as $row_index => $row) {
       $form[$this->options['id']][$row_index] = [
         '#tree' => TRUE,
+      ];
+
+      // Add weight.
+      $form[$this->options['id']][$row_index]['weight'] = [
+        '#type' => 'textfield',
+        '#size' => '5',
+        '#maxlength' => '5',
+        '#value' => $row->draggableviews_structure_weight,
+        '#attributes' => ['class' => ['draggableviews-weight']],
       ];
 
       // Item to keep id of the entity.

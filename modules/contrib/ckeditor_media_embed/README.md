@@ -24,7 +24,7 @@ Install CKEditor plugins
   * Easiest
 
     With [Drush](https://www.drush.org/)
-    1. [Install Drupal Console](https://www.drush.org/install).
+    1. [Install Drush](https://www.drush.org/install).
     2. Enable [CKEditor media embed](https://www.drupal.org/project/ckeditor_media_embed) module.
     3. Run `drush ckeditor_media_embed:install`.
 
@@ -54,6 +54,8 @@ Install CKEditor plugins
       * [Notification](http://ckeditor.com/addon/notification)
       * [Notification Aggregator](http://ckeditor.com/addon/notificationaggregator)
       * [Text Match](https://ckeditor.com/cke4/addon/textmatch) (As of CKEditor 4.11)
+      * [Link](http://ckeditor.com/addon/link)
+      * [Fake Objects](https://ckeditor.com/cke4/addon/fakeobjects)
 
     2. Unzip and place the contents for each plugin in the the following
        directory:

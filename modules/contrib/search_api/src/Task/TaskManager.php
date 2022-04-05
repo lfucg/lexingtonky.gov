@@ -107,9 +107,14 @@ class TaskManager implements TaskManagerInterface {
    *   An entity query for search tasks.
    */
   protected function getTasksQuery(array $conditions = []) {
-    $query = $this->getTaskStorage()->getQuery();
+    $query = $this->getTaskStorage()->getQuery()->accessCheck(FALSE);
     foreach ($conditions as $property => $values) {
-      $query->condition($property, $values, is_array($values) ? 'IN' : '=');
+      if ($values === NULL) {
+        $query->notExists($property);
+      }
+      else {
+        $query->condition($property, $values, is_array($values) ? 'IN' : '=');
+      }
     }
     $query->sort('id');
     return $query;
@@ -126,6 +131,8 @@ class TaskManager implements TaskManagerInterface {
    * {@inheritdoc}
    */
   public function addTask($type, ServerInterface $server = NULL, IndexInterface $index = NULL, $data = NULL) {
+    $server_id = $server ? $server->id() : NULL;
+    $index_id = $index ? $index->id() : NULL;
     if (isset($data)) {
       if ($data instanceof EntityInterface) {
         $data = [
@@ -136,10 +143,20 @@ class TaskManager implements TaskManagerInterface {
       $data = serialize($data);
     }
 
+    $result = $this->getTasksQuery([
+      'type' => $type,
+      'server_id' => $server_id,
+      'index_id' => $index_id,
+      'data' => $data,
+    ])->execute();
+    if ($result) {
+      return $this->getTaskStorage()->load(reset($result));
+    }
+
     $task = $this->getTaskStorage()->create([
       'type' => $type,
-      'server_id' => $server ? $server->id() : NULL,
-      'index_id' => $index ? $index->id() : NULL,
+      'server_id' => $server_id,
+      'index_id' => $index_id,
       'data' => $data,
     ]);
     $task->save();

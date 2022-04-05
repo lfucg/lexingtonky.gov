@@ -26,7 +26,7 @@ class EntityPermissionProviderTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $entity_type_bundle_info = $this->prophesize(EntityTypeBundleInfoInterface::class);

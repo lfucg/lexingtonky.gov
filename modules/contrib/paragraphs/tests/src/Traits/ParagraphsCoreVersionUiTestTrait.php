@@ -35,21 +35,21 @@ trait ParagraphsCoreVersionUiTestTrait {
     if ($drupal_version > 8.3) {
       switch ($submit) {
         case  t('Save and unpublish'):
-          $submit = t('Save');
+          $submit = 'Save';
           $edit['status[value]'] = FALSE;
           break;
 
-        case t('Save and publish'):
-          $submit = t('Save');
+        case 'Save and publish':
+          $submit = 'Save';
           $edit['status[value]'] = TRUE;
           break;
 
-        case t('Save and keep published (this translation)'):
-          $submit = t('Save (this translation)');
+        case 'Save and keep published (this translation)':
+          $submit = 'Save (this translation)';
           break;
 
         default:
-          $submit = t('Save');
+          $submit = 'Save';
       }
     }
     parent::drupalPostForm($path, $edit, $submit, $options, $headers, $form_html_id, $extra_post);

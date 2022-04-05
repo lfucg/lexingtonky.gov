@@ -322,6 +322,12 @@ class IndexForm extends EntityForm {
       '#description' => $this->t('Immediately index new or updated items instead of waiting for the next cron run. This might have serious performance drawbacks and is generally not advised for larger sites.'),
       '#default_value' => $index->getOption('index_directly'),
     ];
+    $form['options']['track_changes_in_references'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Track changes in referenced entities'),
+      '#description' => $this->t('Automatically queue items for re-indexing if one of the field values indexed from entities they reference is changed. (For instance, when indexing the name of a taxonomy term in a Content index, this would lead to re-indexing when the term’s name changes.) Enabling this setting can lead to performance problems on large sites when saving some types of entities (an often-used taxonomy term in our example). However, when the setting is disabled, fields from referenced entities can go stale in the search index and other steps should be taken to prevent this.'),
+      '#default_value' => $index->getOption('track_changes_in_references'),
+    ];
     $form['options']['cron_limit'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Cron batch size'),

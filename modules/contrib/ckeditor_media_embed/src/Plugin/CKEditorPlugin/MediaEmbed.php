@@ -26,6 +26,8 @@ class MediaEmbed extends CKEditorPluginBase {
       'embedbase',
       'notificationaggregator',
       'notification',
+      'fakeobjects',
+      'link',
     ];
   }
 

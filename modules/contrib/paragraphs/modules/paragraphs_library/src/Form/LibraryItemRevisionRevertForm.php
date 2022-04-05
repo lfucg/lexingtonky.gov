@@ -102,7 +102,7 @@ class LibraryItemRevisionRevertForm extends ConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $original_revision_timestamp = $this->revision->getChangedTime();
     $this->revision = $this->prepareRevertedRevision($this->revision);
-    $this->revision->revision_log = t('Copy of the revision from %date.', [
+    $this->revision->revision_log = $this->t('Copy of the revision from %date.', [
       '%date' => $this->dateFormatter->format($original_revision_timestamp)
     ]);
     $this->revision->setChangedTime($this->time->getRequestTime());

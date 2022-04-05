@@ -15,6 +15,7 @@ services:
       DRUPAL_DOWNLOAD_METHOD: 'composer'
       DRUPAL_PROJECT_ROOT: /var/www/html
       APACHE_DOCUMENT_ROOT: /var/www/html/web
+      COMPOSER_MEMORY_LIMIT: '-1'
     ports:
       - "80:80"
     restart: always

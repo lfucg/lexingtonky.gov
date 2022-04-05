@@ -17,6 +17,11 @@ abstract class EntityEmbedTestBase extends BrowserTestBase {
   use TestFileCreationTrait;
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Modules to enable.
    *
    * @var array

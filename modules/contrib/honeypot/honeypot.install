@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Url;
-use Drupal\Core\Link;
 
 /**
  * Implements hook_schema().

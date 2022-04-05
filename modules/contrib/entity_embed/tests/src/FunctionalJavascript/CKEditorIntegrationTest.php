@@ -27,6 +27,11 @@ class CKEditorIntegrationTest extends EntityEmbedTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * The test button.
    *
    * @var Drupal\embed\Entity\EmbedButton
@@ -152,7 +157,7 @@ class CKEditorIntegrationTest extends EntityEmbedTestBase {
 
     // Verify the <drupal-entity> tag is not yet allowed.
     $allowed_html = $this->assertSession()->fieldExists('filters[filter_html][settings][allowed_html]')->getValue();
-    $this->assertNotContains('drupal-entity', $allowed_html);
+    $this->assertStringNotContainsString('drupal-entity', $allowed_html);
 
     // Verify that after dragging the Entity Embed CKEditor plugin button into
     // the active toolbar, the <drupal-entity> tag is allowed, as well as some
@@ -166,7 +171,7 @@ class CKEditorIntegrationTest extends EntityEmbedTestBase {
     $allowed_html_updated = $this->assertSession()
       ->fieldExists('filters[filter_html][settings][allowed_html]')
       ->getValue();
-    $this->assertContains('drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button', $allowed_html_updated);
+    $this->assertStringContainsString('drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button', $allowed_html_updated);
 
     $this->assertSession()->buttonExists('Save configuration')->press();
     $this->assertSession()->responseContains('The text format <em class="placeholder">Embed format</em> has been updated.');
@@ -177,7 +182,7 @@ class CKEditorIntegrationTest extends EntityEmbedTestBase {
     $settings = $filterFormat->filters('filter_html')->settings;
     $allowed_html = $settings['allowed_html'];
 
-    $this->assertContains('drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button', $allowed_html);
+    $this->assertStringContainsString('drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button', $allowed_html);
 
     // Verify that the Entity Embed button shows up and results in an
     // operational entity embedding experience in the text editor.
@@ -206,7 +211,7 @@ class CKEditorIntegrationTest extends EntityEmbedTestBase {
     $this->getSession()->switchToIFrame('ckeditor');
     $this->assertSession()->pageTextContains('Billy Bones');
     $this->getSession()->switchToIFrame();
-    $this->assertSame(3, $this->getCkeditorUndoSnapshotCount());
+    $this->assertSame(4, $this->getCkeditorUndoSnapshotCount());
     $this->getSession()
       ->getPage()
       ->find('css', 'input[name="title[0][value]"]')

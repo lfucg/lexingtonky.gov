@@ -1,6 +1,6 @@
 //
 // @file
-// Experimental paragraphs widget CSS.
+// Stable paragraphs widget CSS.
 //
 
 @import "variables";
@@ -143,12 +143,15 @@
     }
 
     .field-multiple-drag {
-      vertical-align: top;
+      vertical-align: middle;
+      min-width: 40px;
     }
 
     .draggable .tabledrag-handle {
-      min-width: 50px;
       margin-left: 0;
+      margin-top: 3px;
+      padding-right: .25em;
+      width: 23px;
 
       // Fix active focus.
       &:focus {
@@ -157,10 +160,27 @@
           margin-right: .1em;
         }
       }
+
+      // Claro theme fix for the handle icon position.
+      &::after {
+        margin-left: 0;
+        padding: .5rem;
+      }
+
+      // Scale the icon on hover.
+      &:hover .handle {
+        transform: scale(1.25);
+      }
+    }
+
+    .tabledrag-changed {
+      text-decoration: none;
     }
 
     .tabledrag-handle .handle {
       height: 22px;
+      margin-left: 0;
+      margin-right: 0;
     }
 
     .delta-order {

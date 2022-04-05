@@ -22,7 +22,7 @@ class QueryAccessEventTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'entity',
     'entity_module_test',
   ];
@@ -30,7 +30,7 @@ class QueryAccessEventTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('entity_test_enhanced');

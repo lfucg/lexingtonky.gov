@@ -231,14 +231,22 @@ class RenderedItem extends ProcessorPluginBase {
    * {@inheritdoc}
    */
   public function addFieldValues(ItemInterface $item) {
-    // Switch to the default theme in case the admin theme is enabled.
+    // Switch to the default theme in case the admin theme (or any other theme)
+    // is enabled.
     $active_theme = $this->getThemeManager()->getActiveTheme();
     $default_theme = $this->getConfigFactory()
       ->get('system.theme')
       ->get('default');
     $default_theme = $this->getThemeInitializer()
       ->getActiveThemeByName($default_theme);
-    $this->getThemeManager()->setActiveTheme($default_theme);
+    $active_theme_switched = FALSE;
+    if ($default_theme->getName() !== $active_theme->getName()) {
+      $this->getThemeManager()->setActiveTheme($default_theme);
+      // Ensure that static cached default variables are set correctly,
+      // especially the directory variable.
+      drupal_static_reset('template_preprocess');
+      $active_theme_switched = TRUE;
+    }
 
     // Fields for which some view mode config is missing.
     $unset_view_modes = [];
@@ -294,8 +302,14 @@ class RenderedItem extends ProcessorPluginBase {
 
     // Restore the original user.
     $this->getAccountSwitcher()->switchBack();
-    // Restore the original theme.
-    $this->getThemeManager()->setActiveTheme($active_theme);
+
+    // Restore the original theme if themes got switched before.
+    if ($active_theme_switched) {
+      $this->getThemeManager()->setActiveTheme($active_theme);
+      // Ensure that static cached default variables are set correctly,
+      // especially the directory variable.
+      drupal_static_reset('template_preprocess');
+    }
 
     if ($unset_view_modes > 0) {
       foreach ($unset_view_modes as $field_id => $field_label) {

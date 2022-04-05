@@ -330,13 +330,13 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
     $this->updateSetting('allow_existing', TRUE);
 
     // Create three ief_reference_type entities.
-    $referenceNodes = $this->createReferenceContent(3);
+    $referenceNodes = $this->createReferenceContent();
     $this->drupalCreateNode([
       'type' => 'ief_test_complex',
       'title' => 'Some title',
       'multi' => array_values($referenceNodes),
     ]);
-    /** @var \Drupal\node\NodeInterface $parent_node */
+
     $parent_node = $this->drupalGetNodeByTitle('Some title');
 
     // Edit the second entity.
@@ -391,7 +391,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
     $this->drupalGet('node/' . $parent_node->id() . '/edit');
     $assert_session->elementsCount('css', 'tr.ief-row-entity', 2);
     $assert_session->elementExists('xpath', '(//input[@value="Remove"])[2]')->press();
-    $this->assertNotEmpty($confirm_checkbox = $assert_session->waitForElement('xpath', $first_delete_checkbox_xpath));
+    $this->assertNotEmpty($assert_session->waitForElement('xpath', $first_delete_checkbox_xpath));
     $assert_session->pageTextContains('Are you sure you want to remove Some reference 3?');
     $assert_session->elementExists('xpath', '(//input[@value="Remove"])[2]')->press();
     $this->waitForRowRemovedByTitle('Some reference 3');
@@ -423,7 +423,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
     $this->updateSetting('allow_existing', TRUE);
 
     // Create three ief_reference_type entities.
-    $referenceNodes = $this->createReferenceContent(3);
+    $referenceNodes = $this->createReferenceContent();
 
     // Create a node for every bundle available.
     $bundle_nodes = $this->createNodeForEveryBundle();
@@ -474,7 +474,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
 
     // Check if all remaining nodes from all bundles are referenced.
     $assert_session->elementsCount('css', 'fieldset[data-drupal-selector="edit-all-bundles"] tr.ief-row-entity', 12);
-    foreach ($bundle_nodes as $id => $title) {
+    foreach ($bundle_nodes as $title) {
       $this->assertRowByTitle($title);
     }
   }
@@ -569,7 +569,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
       'title' => 'Some title',
       'multi' => array_values($referenceNodes),
     ]);
-    /** @var \Drupal\node\NodeInterface $parent_node */
+
     $parent_node = $this->drupalGetNodeByTitle('Some title');
 
     $this->drupalGet('node/' . $parent_node->id() . '/edit');
@@ -739,7 +739,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
    * @param mixed $value
    *   The value to set.
    */
-  protected function updateSetting($name, $value) {
+  protected function updateSetting(string $name, $value) {
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
     $display = $this->entityFormDisplayStorage->load('node.ief_test_complex.default');
     $component = $display->getComponent('multi');
@@ -775,7 +775,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
    * @param bool $required
    *   Whether the fields are required.
    */
-  protected function setupNestedComplexForm($required) {
+  protected function setupNestedComplexForm(bool $required) {
     $assert_session = $this->assertSession();
     $page = $this->getSession()->getPage();
     /** @var \Drupal\Core\Field\FieldConfigInterface $ief_test_nested1 */
@@ -821,7 +821,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
    * @param string $expected_error
    *   The error message that is expected to be shown.
    */
-  protected function checkExistingValidationExpectation($existing_node_text, $expected_error) {
+  protected function checkExistingValidationExpectation(string $existing_node_text, string $expected_error) {
     $page = $this->getSession()->getPage();
     $assert_session = $this->assertSession();
     $this->openMultiExistingForm();
@@ -945,10 +945,8 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
     $top_title_field_xpath = $this->getXpathForNthInputByLabelText('Title', 1);
     $nested_title_field_xpath = $this->getXpathForNthInputByLabelText('Title', 2);
     $double_nested_title_field_xpath = $this->getXpathForNthInputByLabelText('Title', 3);
-
     $second_edit_button_xpath = $this->getXpathForButtonWithValue('Edit', 2);
 
-    $page = $this->getSession()->getPage();
     $assert_session = $this->assertSession();
 
     $this->setupNestedComplexForm($required);
@@ -986,7 +984,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
     $this->elementWithXpath($this->buttonXpath('Update node 2'))->press();
     $this->waitForXpathRemoved($this->buttonXpath('Update node 2'));
 
-    // Repeat. Add node 2a and 2a_3
+    // Repeat. Add node 2a and 2a_3.
     $this->elementWithXpath($this->buttonXpath('Add new node 2'))->press();
     $this->waitForXpath($this->buttonXpath('Create node 2'));
     if (!$required) {
@@ -1036,6 +1034,7 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
    *
    * @param string $xpath
    *   The XPath.
+   *
    * @return \Behat\Mink\Element\NodeElement
    *   The element.
    */
@@ -1044,12 +1043,15 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
   }
 
   /**
-   * Wait, assert, and return an element via XPath. On fail, save output and throw.
+   * Wait, assert, and return an element via XPath.
+   *
+   * On fail, save output and throw.
    *
    * @param string $xpath
    *   The XPath.
    * @param int $timeout
    *   The timeout in milliseconds.
+   *
    * @return \Behat\Mink\Element\NodeElement
    *   The element.
    */
@@ -1063,20 +1065,23 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
   }
 
   /**
-   * Wait and assert removal of an element via XPath. On fail, save output and throw.
+   * Wait and assert removal of an element via XPath.
+   *
+   * On fail, save output and throw.
    *
    * @param string $xpath
    *   The XPath.
    * @param int $timeout
    *   The timeout in milliseconds.
+   *
    * @return bool
-   *   Returna always true (else throws).
+   *   Returns always true (else throws).
    */
   public function waitForXpathRemoved(string $xpath, int $timeout = 10000): bool {
     $removed = $this->assertSession()->waitForElementRemoved('xpath', $xpath, $timeout);
     if (!$removed) {
       $this->htmlOutput();
-      $this->assert($removed);
+      $this->assertTrue($removed);
     }
     return $removed;
   }
@@ -1085,9 +1090,10 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
    * Get xpath for a button.
    *
    * @param string $label
-   *  The button's label.
+   *   The button's label.
    * @param int $index
    *   The button's index, defaults to 1.
+   *
    * @return string
    *   The XPath.
    */

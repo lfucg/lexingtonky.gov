@@ -112,6 +112,10 @@ function paragraphs_library_make_library_item_submit(array $form, FormStateInter
 
   // Replacing element in the array.
   $library_item = LibraryItem::createFromParagraph($submit['widget_state']['paragraphs'][$submit['delta']]['entity']);
+  // If the item has a moderation field, set it to published.
+  if ($library_item->hasField('moderation_state')) {
+    $library_item->set('moderation_state', 'published');
+  }
   $library_item->save();
 
   // Replace this paragraph with a library reference one.
@@ -139,7 +143,7 @@ function paragraphs_library_preprocess_paragraph(&$variables) {
     // Only replace the content if access is allowed to the library. Access
     // cacheability metadata is already returned by the original widget in case
     // access is not allowed.
-    if ($library_item->access('view')) {
+    if ($library_item->access('view') && isset($variables['elements']['field_reusable_paragraph'][0]['#view_mode'])) {
       $view_builder = \Drupal::entityTypeManager()
         ->getViewBuilder('paragraphs_library_item');
       $library_item_render_array = $view_builder->view($library_item, $variables['elements']['field_reusable_paragraph'][0]['#view_mode']);

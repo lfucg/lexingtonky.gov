@@ -4,7 +4,6 @@ namespace Drupal\ckeditor_media_embed\Plugin\CKEditorPlugin;
 
 use Drupal\ckeditor_media_embed\AssetManager;
 use Drupal\ckeditor_media_embed\CKEditorVersionAwarePluginBase;
-
 use Drupal\editor\Entity\Editor;
 
 /**
@@ -22,7 +21,9 @@ class AutoLink extends CKEditorVersionAwarePluginBase {
    * {@inheritdoc}
    */
   public function getDependencies(Editor $editor) {
-    $dependencies = [];
+    $dependencies = [
+      'link',
+    ];
 
     if ($this->needsTextMatchDependency()) {
       $dependencies[] = 'textmatch';

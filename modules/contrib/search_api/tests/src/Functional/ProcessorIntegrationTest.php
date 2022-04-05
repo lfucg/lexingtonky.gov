@@ -5,6 +5,7 @@ namespace Drupal\Tests\search_api\Functional;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\search_api\Utility\Utility;
 use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
@@ -25,7 +26,7 @@ class ProcessorIntegrationTest extends SearchApiBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'filter',
     'taxonomy',
     'search_api_test_no_ui',
@@ -99,6 +100,7 @@ class ProcessorIntegrationTest extends SearchApiBrowserTestBase {
     $enabled = [
       'add_url',
       'aggregated_field',
+      'entity_type',
       'language_with_fallback',
       'rendered_item',
     ];
@@ -428,17 +430,29 @@ class ProcessorIntegrationTest extends SearchApiBrowserTestBase {
     $configuration = [
       'boosts' => [
         'entity:node' => [
-          'datasource_boost' => '3.0',
+          'datasource_boost' => 3.0,
           'bundle_boosts' => [
-            'article' => '5.0',
+            'article' => 5.0,
           ],
         ],
         'entity:user' => [
-          'datasource_boost' => '1.0',
+          'datasource_boost' => 1.0,
         ],
       ],
     ];
-    $form_values = $configuration;
+    $form_values = [
+      'boosts' => [
+        'entity:node' => [
+          'datasource_boost' => Utility::formatBoostFactor(3),
+          'bundle_boosts' => [
+            'article' => Utility::formatBoostFactor(5),
+          ],
+        ],
+        'entity:user' => [
+          'datasource_boost' => Utility::formatBoostFactor(1),
+        ],
+      ],
+    ];
     $form_values['boosts']['entity:node']['bundle_boosts']['page'] = '';
 
     $this->editSettingsForm($configuration, 'type_boost', $form_values);
@@ -695,14 +709,22 @@ TAGS
    */
   public function checkNumberFieldBoostIntegration() {
     $this->enableProcessor('number_field_boost');
-    $configuration = $form_values = [
+    $configuration = [
       'boosts' => [
         'term_field' => [
-          'boost_factor' => '8.0',
+          'boost_factor' => 8.0,
+          'aggregation' => 'avg',
+        ],
+      ],
+    ];
+    $form_values = [
+      'boosts' => [
+        'term_field' => [
+          'boost_factor' => Utility::formatBoostFactor(8),
           'aggregation' => 'avg',
         ],
         'parent_reference' => [
-          'boost_factor' => '',
+          'boost_factor' => Utility::formatBoostFactor(0),
           'aggregation' => 'sum',
         ],
       ],

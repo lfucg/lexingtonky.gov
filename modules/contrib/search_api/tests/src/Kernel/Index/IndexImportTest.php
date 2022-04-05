@@ -24,7 +24,7 @@ class IndexImportTest extends KernelTestBase {
    *
    * @var string[]
    */
-  public static $modules = [
+  protected static $modules = [
     'field',
     'search_api',
     'search_api_db',
