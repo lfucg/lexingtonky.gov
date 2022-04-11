@@ -2,4 +2,4 @@ type: module
 name: Theme Control
 description: 'Changes active theme according to the relevant department'
 package: Lexington
-core: 8.x
+core_version_requirement: ^8 || ^9
