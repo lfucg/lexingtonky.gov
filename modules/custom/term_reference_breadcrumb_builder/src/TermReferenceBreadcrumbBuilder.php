@@ -9,7 +9,7 @@ namespace Drupal\term_reference_breadcrumb_builder;
 
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -24,7 +24,7 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityManager;
 
@@ -38,10 +38,10 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   /**
    * Constructs the TermBreadcrumbBuilder.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entityManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityManager
    *   The entity manager.
    */
-  public function __construct(EntityManagerInterface $entityManager) {
+  public function __construct(EntityTypeManagerInterface $entityManager) {
     $this->entityManager = $entityManager;
     $this->termStorage = $entityManager->getStorage('taxonomy_term');
   }
