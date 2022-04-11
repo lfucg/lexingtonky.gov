@@ -13,7 +13,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\webprofiler\DataCollector\MailDataCollector;
 
 /**
- * Class MailManagerWrapper
+ * Class MailManagerWrapper.
  */
 class MailManagerWrapper extends DefaultPluginManager implements MailManagerInterface {
 
@@ -48,7 +48,7 @@ class MailManagerWrapper extends DefaultPluginManager implements MailManagerInte
    *
    * @var array
    */
-  protected $instances = array();
+  protected $instances = [];
 
   /**
    * Constructs the MailManager object.
@@ -83,7 +83,7 @@ class MailManagerWrapper extends DefaultPluginManager implements MailManagerInte
   /**
    * {@inheritdoc}
    */
-  public function mail($module, $key, $to, $langcode, $params = array(), $reply = NULL, $send = TRUE) {
+  public function mail($module, $key, $to, $langcode, $params = [], $reply = NULL, $send = TRUE) {
     $message = $this->mailManager->mail($module, $key, $to, $langcode, $params, $reply, $send);
 
     $instance = $this->mailManager->getInstance(['module' => $module, 'key' => $key]);
@@ -91,4 +91,16 @@ class MailManagerWrapper extends DefaultPluginManager implements MailManagerInte
 
     return $message;
   }
+
+  /**
+   * {@inheritdoc}
+   *
+   * Must call getInstance on the decorated MailManager.
+   *
+   * @see https://www.drupal.org/node/2625554
+   */
+  public function getInstance(array $options) {
+    return $this->mailManager->getInstance($options);
+  }
+
 }

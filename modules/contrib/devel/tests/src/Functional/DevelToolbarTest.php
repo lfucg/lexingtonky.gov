@@ -3,14 +3,13 @@
 namespace Drupal\Tests\devel\Functional;
 
 use Drupal\Core\Menu\MenuTreeParameters;
-use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests devel toolbar module functionality.
  *
  * @group devel
  */
-class DevelToolbarTest extends BrowserTestBase {
+class DevelToolbarTest extends DevelBrowserTestBase {
 
   /**
    * {@inheritdoc}
@@ -40,7 +39,6 @@ class DevelToolbarTest extends BrowserTestBase {
     'devel.cache_clear',
     'devel.container_info.service',
     'devel.admin_settings_link',
-    'devel.execute_php',
     'devel.menu_rebuild',
     'devel.reinstall',
     'devel.route_info',
@@ -59,7 +57,6 @@ class DevelToolbarTest extends BrowserTestBase {
     $this->develUser = $this->drupalCreateUser([
       'administer site configuration',
       'access devel information',
-      'execute php code',
       'access toolbar',
     ]);
     $this->toolbarUser = $this->drupalCreateUser([
@@ -71,17 +68,19 @@ class DevelToolbarTest extends BrowserTestBase {
    * Tests configuration form.
    */
   public function testConfigurationForm() {
-    // Ensures that the page is accessible ony to users with the adequate
+    // Ensures that the page is accessible only to users with the adequate
     // permissions.
     $this->drupalGet('admin/config/development/devel/toolbar');
     $this->assertSession()->statusCodeEquals(403);
 
     // Ensures that the config page is accessible for users with the adequate
-    // permissions and exists the Devel toolbar local task.
+    // permissions and the Devel toolbar local task and content are shown.
     $this->drupalLogin($this->develUser);
     $this->drupalGet('admin/config/development/devel/toolbar');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->elementExists('css', '.tabs .primary a:contains("Toolbar Settings")');
+    $this->assertSession()
+      ->elementExists('xpath', '//h2[text()="Primary tabs"]/following-sibling::ul//a[contains(text(), "Toolbar Settings")]');
+    $this->assertSession()->elementExists('xpath', '//fieldset[@id="edit-toolbar-items--wrapper"]');
     $this->assertSession()->pageTextContains('Devel Toolbar Settings');
 
     // Ensures and that all devel menu links are listed in the configuration
@@ -101,7 +100,7 @@ class DevelToolbarTest extends BrowserTestBase {
       'toolbar_items[devel.event_info]' => 'devel.event_info',
       'toolbar_items[devel.theme_registry]' => 'devel.theme_registry',
     ];
-    $this->drupalPostForm('admin/config/development/devel/toolbar', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/development/devel/toolbar', $edit, 'Save configuration');
     $this->assertSession()->pageTextContains('The configuration options have been saved.');
 
     $expected_items = array_merge($this->defaultToolbarItems, ['devel.event_info', 'devel.theme_registry']);
@@ -147,7 +146,7 @@ class DevelToolbarTest extends BrowserTestBase {
    * Tests toolbar integration.
    */
   public function testToolbarIntegration() {
-    $library_css_url = 'devel/css/devel.toolbar.css';
+    $library_css_url = 'css/devel.toolbar.css';
     $toolbar_selector = '#toolbar-bar .toolbar-tab';
     $toolbar_tab_selector = '#toolbar-bar .toolbar-tab a.toolbar-icon-devel';
     $toolbar_tray_selector = '#toolbar-bar .toolbar-tab #toolbar-item-devel-tray';
@@ -188,8 +187,9 @@ class DevelToolbarTest extends BrowserTestBase {
     foreach ($devel_menu_items as $link) {
       $item_selector = sprintf('ul.toolbar-menu a:contains("%s")', $link['title']);
       $item = $this->assertSession()->elementExists('css', $item_selector, $toolbar_tray);
-      // TODO: find a more correct way to test link url.
-      $this->assertContains(strtok($link['url'], '?'), $item->getAttribute('href'));
+      // Only test the url up to the ? as the destination and token parameters
+      // will vary and are not checkable.
+      $this->assertEquals(strtok($link['url'], '?'), strtok($item->getAttribute('href'), '?'));
 
       $not_visible = !in_array($link['id'], $this->defaultToolbarItems);
       $this->assertTrue($not_visible === $item->hasClass('toolbar-horizontal-item-hidden'));
@@ -232,10 +232,10 @@ class DevelToolbarTest extends BrowserTestBase {
     $this->drupalGet('admin/config/development/devel/toolbar');
     $this->assertSession()->statusCodeEquals(404);
 
-    // Primary local task should not contains toolbar tab.
+    // Primary local task should not contain toolbar tab.
     $this->drupalGet('admin/config/development/devel');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->elementNotExists('css', '.tabs .primary a:contains("Toolbar Settings")');
+    $this->assertSession()->elementNotExists('xpath', '//a[contains(text(), "Toolbar Settings")]');
 
     // Toolbar setting config and devel menu cache tags sholud not present.
     $this->drupalGet('');

@@ -11,12 +11,12 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class EntityViewBuilderDecorator
+ * Class EntityViewBuilderDecorator.
  */
 class EntityViewBuilderDecorator extends EntityDecorator implements EntityHandlerInterface, EntityViewBuilderInterface {
 
   /**
-   * @param EntityViewBuilderInterface $controller
+   * @param \Drupal\Core\Entity\EntityViewBuilderInterface $controller
    */
   public function __construct(EntityViewBuilderInterface $controller) {
     parent::__construct($controller);
@@ -76,7 +76,7 @@ class EntityViewBuilderDecorator extends EntityDecorator implements EntityHandle
    * {@inheritdoc}
    */
   public function getCacheTags() {
-    return $this->getOriginalObject()->getCacheTag();
+    return $this->getOriginalObject()->getCacheTags();
   }
 
   /**
@@ -85,8 +85,9 @@ class EntityViewBuilderDecorator extends EntityDecorator implements EntityHandle
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
       $entity_type,
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('language_manager')
     );
   }
+
 }

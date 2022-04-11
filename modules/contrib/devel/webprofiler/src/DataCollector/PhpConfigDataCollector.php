@@ -2,7 +2,6 @@
 
 namespace Drupal\webprofiler\DataCollector;
 
-use Drupal\Core\Routing\LinkGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\webprofiler\DrupalDataCollectorInterface;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -14,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PhpConfigDataCollector extends DataCollector implements DrupalDataCollectorInterface {
 
-  use StringTranslationTrait, DrupalDataCollectorTrait, LinkGeneratorTrait;
+  use StringTranslationTrait, DrupalDataCollectorTrait;
 
   /**
    * {@inheritdoc}
@@ -30,7 +29,7 @@ class PhpConfigDataCollector extends DataCollector implements DrupalDataCollecto
       'xcache_enabled' => extension_loaded('xcache') && ini_get('xcache.cacher'),
       'wincache_enabled' => extension_loaded('wincache') && ini_get('wincache.ocenabled'),
       'zend_opcache_enabled' => extension_loaded('Zend OPcache') && ini_get('opcache.enable'),
-      'sapi_name' => php_sapi_name()
+      'sapi_name' => php_sapi_name(),
     ];
   }
 
@@ -89,7 +88,7 @@ class PhpConfigDataCollector extends DataCollector implements DrupalDataCollecto
   }
 
   /**
-   * Returns true if Zend OPcache is enabled
+   * Returns true if Zend OPcache is enabled.
    *
    * @return Boolean true if Zend OPcache is enabled, false otherwise
    */
@@ -160,4 +159,5 @@ class PhpConfigDataCollector extends DataCollector implements DrupalDataCollecto
   public function getIcon() {
     return 'iVBORw0KGgoAAAANSUhEUgAAABUAAAAcCAMAAAC5xgRsAAAAZlBMVEX///////////////////////////////////////////////////////////////////////////////////////////+ZmZmZmZlISEhJSUmdnZ1HR0fR0dFZWVlpaWlfX18/Pz+puygPAAAAIXRSTlMACwwlJygpLzIzNjs8QEtMUmd6e32AucDBw8fIydTm6u5l8MjvAAAAo0lEQVR42r2P2Q6CMBBFL6XsZRGRfZv//0nbDBNEE19MnJeTc5ILKf58ahiUwzy/AJpIWwREwQnEXRdbGCLjrO+djWRvVMiJcigxB7viGogxDdJpSmHEmCVPS7YczJvgUu+CS30IvtbNYZMvsGVo2mVpG/kbm4auiCpdcC3YPCAhSpAdUzaAn6qPKZtUT6ZSzb4bi2hdo9MQ1nX4ASjfV+/4/Z40pyCHrNTbIgAAAABJRU5ErkJggg==';
   }
+
 }

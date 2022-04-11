@@ -45,10 +45,10 @@ class EntityDebugController extends ControllerBase {
    * Returns the entity type definition of the current entity.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *    A RouteMatch object.
+   *   A RouteMatch object.
    *
    * @return array
-   *    Array of page elements to render.
+   *   Array of page elements to render.
    */
   public function entityTypeDefinition(RouteMatchInterface $route_match) {
     $output = [];
@@ -66,10 +66,10 @@ class EntityDebugController extends ControllerBase {
    * Returns the loaded structure of the current entity.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *    A RouteMatch object.
+   *   A RouteMatch object.
    *
    * @return array
-   *    Array of page elements to render.
+   *   Array of page elements to render.
    */
   public function entityLoad(RouteMatchInterface $route_match) {
     $output = [];
@@ -81,7 +81,7 @@ class EntityDebugController extends ControllerBase {
       // By calling ::getFieldDefinitions() we are sure that field definitions
       // are populated and available in the dump output.
       // @see https://www.drupal.org/node/2311557
-      if($entity instanceof FieldableEntityInterface) {
+      if ($entity instanceof FieldableEntityInterface) {
         $entity->getFieldDefinitions();
       }
 
@@ -95,10 +95,10 @@ class EntityDebugController extends ControllerBase {
    * Returns the render structure of the current entity.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *    A RouteMatch object.
+   *   A RouteMatch object.
    *
    * @return array
-   *    Array of page elements to render.
+   *   Array of page elements to render.
    */
   public function entityRender(RouteMatchInterface $route_match) {
     $output = [];
@@ -136,8 +136,7 @@ class EntityDebugController extends ControllerBase {
    */
   protected function getEntityFromRouteMatch(RouteMatchInterface $route_match) {
     $parameter_name = $route_match->getRouteObject()->getOption('_devel_entity_type_id');
-    $entity = $route_match->getParameter($parameter_name);
-    return $entity;
+    return $route_match->getParameter($parameter_name);
   }
 
 }

@@ -1,0 +1,12 @@
+type: module
+name: 'Search API Solr Admin'
+description: 'Provides various Solr administration tasks.'
+core_version_requirement: ^8.8 || ^9
+package: Search
+dependencies:
+  - search_api_solr:search_api_solr
+
+# Information added by Drupal.org packaging script on 2021-08-13
+version: '4.2.1'
+project: 'search_api_solr'
+datestamp: 1628871714

@@ -1,0 +1,35 @@
+langcode: en
+name: 'Solr Server'
+description: 'Default Solr server created by the Solr Search Defaults module'
+status: true
+id: default_solr_server
+backend: search_api_solr
+backend_config:
+  connector: standard
+  connector_config:
+    scheme: http
+    host: localhost
+    port: 8983
+    path: /
+    core: drupal
+    timeout: 5
+    index_timeout: 10
+    optimize_timeout: 15
+    finalize_timeout: 30
+    commit_within: 10
+    solr_version: ''
+    http_method: AUTO
+    jmx: false
+    jts: false
+    solr_install_dir: ''
+    skip_schema_check: false
+  retrieve_data: false
+  highlight_data: false
+  domain: generic
+  site_hash: true
+  server_prefix: ''
+  optimize: false
+  fallback_multiple: true
+dependencies:
+  module:
+    - search_api_solr

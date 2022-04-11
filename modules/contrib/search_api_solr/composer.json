@@ -3,7 +3,7 @@
     "description": "Offers an implementation of the Search API that uses an Apache Solr server for indexing content.",
     "type": "drupal-module",
     "homepage": "https://www.drupal.org/project/search_api_solr",
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Markus Kalkbrenner",
@@ -11,27 +11,52 @@
         },
         {
             "name": "Other contributors",
-            "homepage":"https://www.drupal.org/node/982682/committers"
+            "homepage": "https://www.drupal.org/node/982682/committers"
         }
     ],
     "support": {
         "issues": "https://www.drupal.org/project/issues/search_api_solr",
-        "irc": "irc://irc.freenode.org/drupal-search-api",
+        "chat": "https://drupalchat.me/channel/search",
         "source": "http://git.drupal.org/project/search_api_solr.git"
     },
     "require": {
-        "solarium/solarium": "3.8.*",
-        "drupal/search_api": "~1.3"
+        "php": "^7.3|^8.0",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "ext-simplexml": "*",
+        "drupal/search_api": "~1.17",
+        "composer/semver": "^1.0|^3.0",
+        "consolidation/annotated-command": "^2.12|^4.1",
+        "maennchen/zipstream-php": "^1.2|^2.0",
+        "solarium/solarium": "^6.1.5",
+        "laminas/laminas-stdlib": "^3.2"
     },
     "require-dev": {
-        "phayes/geophp": "dev-master",
+        "phayes/geophp": "^1.2",
+        "monolog/monolog": "^1.25",
+        "drupal/devel": "^4.0",
         "drupal/facets": "1.x-dev",
         "drupal/geofield": "1.x-dev",
         "drupal/search_api_autocomplete": "1.x-dev",
-        "drupal/search_api_location": "1.x-dev"
+        "drupal/search_api_location": "1.x-dev",
+        "drupal/search_api_spellcheck": "3.x-dev"
+    },
+    "conflict": {
+        "drupal/acquia_search_solr": "<1.0.0-beta8",
+        "drupal/search_api_solr_multilingual": "<3.0.0"
     },
     "suggest": {
         "drupal/facets": "Provides facetted search.",
-        "drupal/search_api_solr_multilingual": "Highly recommended if installation is multilingual or uses a language different than English."
+        "drupal/search_api_autocomplete": "Provides auto complete for search boxes.",
+        "drupal/search_api_location": "Provides location searches.",
+        "drupal/search_api_spellcheck": "Provides spell checking and 'Did You Mean?'.",
+        "drupal/search_api_solr_nlp": "Highly recommended! Provides Solr field types based on natural language processing (NLP)."
+    },
+    "extra": {
+        "drush": {
+            "services": {
+                "drush.services.yml": "^9"
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace Drupal\devel_test\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
+use Drupal\Core\State\State;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -11,10 +12,27 @@ use Symfony\Component\Routing\RouteCollection;
 class TestRouteSubscriber extends RouteSubscriberBase {
 
   /**
+   * The state store.
+   *
+   * @var Drupal\Core\State\State
+   */
+  protected $state;
+
+  /**
+   * Constructor method.
+   *
+   * @param Drupal\Core\State\State $state
+   *   The object State.
+   */
+  public function __construct(State $state) {
+    $this->state = $state;
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection) {
-    \Drupal::state()->set('devel_test_route_rebuild','Router rebuild fired');
+    $this->state->set('devel_test_route_rebuild', 'Router rebuild fired');
   }
 
 }

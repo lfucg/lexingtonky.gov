@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\devel\Kernel;
 
+use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
@@ -12,6 +13,8 @@ use Drupal\user\Entity\User;
  * @group devel
  */
 class DevelQueryDebugTest extends KernelTestBase {
+
+  use MessengerTrait;
 
   /**
    * {@inheritdoc}
@@ -37,6 +40,7 @@ class DevelQueryDebugTest extends KernelTestBase {
 
     $devel_role = Role::create([
       'id' => 'admin',
+      'label' => 'Admin',
       'permissions' => ['access devel information'],
     ]);
     $devel_role->save();
@@ -69,7 +73,7 @@ class DevelQueryDebugTest extends KernelTestBase {
     // permissions. We expect only one status message containing the SQL for
     // the debugged query.
     \Drupal::currentUser()->setAccount($this->develUser);
-    $expected_message = "SELECT u.uid AS uid\nFROM \n{users} u";
+    $expected_message = "SELECT u.uid AS uid\nFROM\n{users} u";
 
     $query = \Drupal::database()->select('users', 'u');
     $query->fields('u', ['uid']);
@@ -77,9 +81,13 @@ class DevelQueryDebugTest extends KernelTestBase {
     $query->execute();
 
     $messages = $this->getDrupalMessages();
-    $this->assertTrue(!empty($messages['status']));
+    $this->assertNotEmpty($messages['status']);
     $this->assertCount(1, $messages['status']);
-    $this->assertEquals(strip_tags($messages['status'][0]), $expected_message);
+    $actual_message = strip_tags($messages['status'][0]);
+    // In Drupal 9 the literals are quoted, but not in Drupal 8. We only need
+    // the actual content, so remove all quotes from the actual message found.
+    $actual_message = str_replace(['"', "'"], ['', ''], $actual_message);
+    $this->assertEquals($expected_message, $actual_message);
   }
 
   /**
@@ -102,26 +110,28 @@ class DevelQueryDebugTest extends KernelTestBase {
     // permissions. We expect only one status message containing the SQL for
     // the debugged entity query.
     \Drupal::currentUser()->setAccount($this->develUser);
-    $expected_message = "SELECT base_table.uid AS uid, base_table.uid AS base_table_uid\nFROM \n{users} base_table";
+    $expected_message = "SELECT base_table.uid AS uid, base_table.uid AS base_table_uid\nFROM\n{users} base_table";
 
     $query = \Drupal::entityQuery('user');
     $query->addTag('debug');
     $query->execute();
 
     $messages = $this->getDrupalMessages();
-    $this->assertTrue(!empty($messages['status']));
+    $this->assertNotEmpty($messages['status']);
     $this->assertCount(1, $messages['status']);
-    $this->assertEquals(strip_tags($messages['status'][0]), $expected_message);
+    $actual_message = strip_tags($messages['status'][0]);
+    $actual_message = str_replace(['"', "'"], ['', ''], $actual_message);
+    $this->assertEquals($expected_message, $actual_message);
   }
 
   /**
-   * Retrieves the drupal messages.
+   * Retrieves and removes the drupal messages.
    *
    * @return array
    *   The messages
    */
   protected function getDrupalMessages() {
-    return drupal_get_messages();
+    return $this->messenger()->deleteAll();
   }
 
 }

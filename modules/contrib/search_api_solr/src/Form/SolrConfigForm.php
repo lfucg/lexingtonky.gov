@@ -4,17 +4,45 @@ namespace Drupal\search_api_solr\Form;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\search_api\SearchApiException;
 use Drupal\search_api\ServerInterface;
 use Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend;
 use Drupal\search_api_solr\Utility\Utility as SearchApiSolrUtility;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A basic form with a passed entity with an interface.
  */
 class SolrConfigForm extends FormBase {
+
+  /**
+   * The date formatter service.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
+   */
+  protected $dateFormatter;
+
+  /**
+   * Constructs a SolrConfigForm object.
+   *
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
+   *   The date formatter service.
+   */
+  public function __construct(DateFormatterInterface $date_formatter) {
+    $this->dateFormatter = $date_formatter;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('date.formatter')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -31,30 +59,31 @@ class SolrConfigForm extends FormBase {
 
     try {
       // Retrieve the list of available files.
-      $files_list = SearchApiSolrUtility::getServerFiles($search_api_server);
+      $files_list = $search_api_server ? SearchApiSolrUtility::getServerFiles($search_api_server) : [];
 
       if (empty($files_list)) {
         $form['info']['#markup'] = $this->t('No files found.');
         return $form;
       }
 
-      $form['files_tabs'] = array(
+      $form['files_tabs'] = [
         '#type' => 'vertical_tabs',
-      );
+      ];
 
       // Generate a fieldset for each file.
       foreach ($files_list as $file_name => $file_info) {
-        $file_date = \Drupal::service('date.formatter')->format(strtotime($file_info['modified']));
         $escaped_file_name = Html::escape($file_name);
 
-        $form['files'][$file_name] = array(
+        $form['files'][$file_name] = [
           '#type'  => 'details',
           '#title' => $escaped_file_name,
           '#group' => 'files_tabs',
-        );
+        ];
 
         $data = '<h3>' . $escaped_file_name . '</h3>';
-        $data .= '<p><em>' . $this->t('Last modified: @time.', array('@time' => $file_date)) . '</em></p>';
+        if (isset($file_info['modified'])) {
+          $data .= '<p><em>' . $this->t('Last modified: @time.', ['@time' => $this->dateFormatter->format(strtotime($file_info['modified']))]) . '</em></p>';
+        }
 
         if ($file_info['size'] > 0) {
           /** @var \Drupal\search_api_solr\SolrBackendInterface $backend */
@@ -70,7 +99,7 @@ class SolrConfigForm extends FormBase {
       }
     }
     catch (SearchApiException $e) {
-      watchdog_exception('search_api_solr', $e, '%type while retrieving config files of Solr server @server: @message in %function (line %line of %file).', array('@server' => $search_api_server->label()));
+      watchdog_exception('search_api_solr', $e, '%type while retrieving config files of Solr server @server: @message in %function (line %line of %file).', ['@server' => $search_api_server->label()]);
       $form['info']['#markup'] = $this->t('An error occured while trying to load the list of files.');
     }
 
@@ -91,9 +120,11 @@ class SolrConfigForm extends FormBase {
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
+   *
+   * @throws \Drupal\search_api\SearchApiException
    */
   public function access(ServerInterface $search_api_server) {
-    return AccessResult::allowedIf($search_api_server->hasValidBackend() && $search_api_server->getBackend() instanceof SearchApiSolrBackend)->cacheUntilEntityChanges($search_api_server);
+    return AccessResult::allowedIf($search_api_server->hasValidBackend() && $search_api_server->getBackend() instanceof SearchApiSolrBackend)->addCacheableDependency($search_api_server);
   }
 
 }

@@ -1,0 +1,22 @@
+plugin.plugin_configuration.search_api_datasource.solr_document:
+  type: mapping
+  label: "Solr document datasource configuration"
+  mapping:
+    id_field:
+      type: string
+      label: "ID field"
+    request_handler:
+      type: string
+      label: "Request handler"
+    default_query:
+      type: string
+      label: "Default query"
+    label_field:
+      type: string
+      label: "Label field"
+    language_field:
+      type: string
+      label: "Language field"
+    url_field:
+      type: string
+      label: "URL field"

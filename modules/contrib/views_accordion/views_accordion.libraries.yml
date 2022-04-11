@@ -3,4 +3,4 @@ views_accordion.accordion:
     views-accordion.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.ui.accordion
+    - jquery_ui_accordion/accordion

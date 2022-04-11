@@ -18,14 +18,6 @@ use Drupal\Component\Annotation\Plugin;
  * @see \Drupal\devel_generate\DevelGenerateBaseInterface
  */
 class DevelGenerate extends Plugin {
-
-  /**
-   * The plugin ID.
-   *
-   * @var string
-   */
-  public $id;
-
   /**
    * The human-readable name of the DevelGenerate type.
    *
@@ -73,7 +65,7 @@ class DevelGenerate extends Plugin {
    *
    * @var array
    */
-  public $settings = array();
+  public $settings = [];
 
   /**
    * An array whose keys are the settings available to the
@@ -81,6 +73,13 @@ class DevelGenerate extends Plugin {
    *
    * @var array
    */
-  public $drushSettings = array();
+  public $drushSettings = [];
+
+  /**
+   * Modules that should be enabled in order to make the plugin discoverable.
+   *
+   * @var array
+   */
+  public $dependencies = [];
 
 }

@@ -58,8 +58,9 @@
             });
 
             if (typeof hljs != "undefined") {
+                var highlightBlock = (typeof hljs.highlightElement === "function") ? hljs.highlightElement : hljs.highlightBlock;
                 $('code.sql').each(function (i, block) {
-                    hljs.highlightBlock(block);
+                    highlightBlock(block);
                 });
             }
         }

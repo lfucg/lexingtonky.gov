@@ -31,7 +31,7 @@ class AssetsDataCollectorTest extends DataCollectorBaseTest {
     parent::setUp();
 
     $this->assetDataCollector = new AssetsDataCollector(AssetsDataCollectorTest::ROOT);
-    $this->assetCollectionRendererInterface = $this->getMock('Drupal\Core\Asset\AssetCollectionRendererInterface');
+    $this->assetCollectionRendererInterface = $this->createMock('Drupal\Core\Asset\AssetCollectionRendererInterface');
   }
 
   /**

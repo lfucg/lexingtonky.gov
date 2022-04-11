@@ -5,5 +5,5 @@ services:
     ports:
       - "8983:8983"
     volumes:
-      - ../../solr-conf/5.x:/opt/solr/server/solr/configsets/drupal/conf
-    command: bash -c "docker-entrypoint.sh solr start; solr create -c drupal -d server/solr/configsets/drupal/conf -n drupal; solr restart -f"
+      - ./cloud-config-set:/opt/solr/server/solr/configsets/drupal/conf
+    command: bash -c "docker-entrypoint.sh solr start -c; solr create -c drupal -d server/solr/configsets/drupal/conf -n drupal; solr restart -c -f"

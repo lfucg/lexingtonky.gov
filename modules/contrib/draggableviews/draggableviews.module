@@ -25,7 +25,8 @@ function draggableviews_views_data_alter(&$data) {
       'id' => 'numeric',
     ],
     'sort' => [
-      'id' => 'standard',
+      'id' => 'draggable_views_sort_default',
+      'help' => t('Sort by the weight value.'),
     ],
     'filter' => [
       'help' => t('Filter by the draggableviews weight value (Native handler only).'),
@@ -217,32 +218,5 @@ function draggableviews_views_submit(&$form, FormStateInterface $form_state) {
     $transaction->rollback();
     \Drupal::logger('draggableviews')->error('Failed with @message', ['@message' => $e->getMessage()]);
     \Drupal::messenger()->addMessage(t('There was an error while saving the data. Please, try again.'), 'warning');
-  }
-}
-
-/**
- * Implements hook_views_query_alter().
- */
-function draggableviews_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  // Add additional `join condition` for fixing table join.
-  // Cannot add it in the draggableviews_views_data_alter because we need view
-  // data.
-  if ($query instanceof Sql && isset($query->getTableQueue()['draggableviews_structure'])) {
-    /** @var \Drupal\views\Plugin\views\join\Standard $join */
-    $join = $query->getTableQueue()['draggableviews_structure']['join'];
-    $join->extra = [
-      [
-        'field' => 'view_name',
-        'operator' => '=',
-        'value' => $view->id(),
-        'numeric' => FALSE,
-      ],
-      [
-        'field' => 'view_display',
-        'operator' => '=',
-        'value' => $view->current_display,
-        'numeric' => FALSE,
-      ],
-    ];
   }
 }

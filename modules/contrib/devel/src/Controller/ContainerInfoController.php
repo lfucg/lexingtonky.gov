@@ -2,6 +2,7 @@
 
 namespace Drupal\devel\Controller;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DrupalKernelInterface;
 use Drupal\Core\Url;
@@ -78,15 +79,15 @@ class ContainerInfoController extends ControllerBase implements ContainerAwareIn
 
         $row['id'] = [
           'data' => $service_id,
-          'class' => 'table-filter-text-source',
+          'filter' => TRUE,
         ];
         $row['class'] = [
           'data' => isset($service['class']) ? $service['class'] : '',
-          'class' => 'table-filter-text-source',
+          'filter' => TRUE,
         ];
         $row['alias'] = [
           'data' => array_search($service_id, $container['aliases']) ?: '',
-          'class' => 'table-filter-text-source',
+          'filter' => TRUE,
         ];
         $row['operations']['data'] = [
           '#type' => 'operations',
@@ -94,6 +95,14 @@ class ContainerInfoController extends ControllerBase implements ContainerAwareIn
             'devel' => [
               'title' => $this->t('Devel'),
               'url' => Url::fromRoute('devel.container_info.service.detail', ['service_id' => $service_id]),
+              'attributes' => [
+                'class' => ['use-ajax'],
+                'data-dialog-type' => 'modal',
+                'data-dialog-options' => Json::encode([
+                  'width' => 700,
+                  'minHeight' => 500,
+                ]),
+              ],
             ],
           ],
         ];
@@ -104,34 +113,17 @@ class ContainerInfoController extends ControllerBase implements ContainerAwareIn
       ksort($rows);
     }
 
-    $output['#attached']['library'][] = 'system/drupal.system.modules';
-
-    $output['filters'] = [
-      '#type' => 'container',
-      '#attributes' => [
-        'class' => ['table-filter', 'js-show'],
-      ],
-    ];
-    $output['filters']['text'] = [
-      '#type' => 'search',
-      '#title' => $this->t('Search'),
-      '#size' => 30,
-      '#placeholder' => $this->t('Enter service id, alias or class'),
-      '#attributes' => [
-        'class' => ['table-filter-text'],
-        'data-table' => '.devel-filter-text',
-        'autocomplete' => 'off',
-        'title' => $this->t('Enter a part of the service id, service alias or class to filter by.'),
-      ],
-    ];
     $output['services'] = [
-      '#type' => 'table',
+      '#type' => 'devel_table_filter',
+      '#filter_label' => $this->t('Search'),
+      '#filter_placeholder' => $this->t('Enter service id, alias or class'),
+      '#filter_description' => $this->t('Enter a part of the service id, service alias or class to filter by.'),
       '#header' => $headers,
       '#rows' => $rows,
       '#empty' => $this->t('No services found.'),
       '#sticky' => TRUE,
       '#attributes' => [
-        'class' => ['devel-service-list', 'devel-filter-text'],
+        'class' => ['devel-service-list'],
       ],
     ];
 
@@ -196,7 +188,7 @@ class ContainerInfoController extends ControllerBase implements ContainerAwareIn
       foreach ($container['parameters'] as $parameter_name => $definition) {
         $row['name'] = [
           'data' => $parameter_name,
-          'class' => 'table-filter-text-source',
+          'filter' => TRUE,
         ];
         $row['operations']['data'] = [
           '#type' => 'operations',
@@ -204,6 +196,14 @@ class ContainerInfoController extends ControllerBase implements ContainerAwareIn
             'devel' => [
               'title' => $this->t('Devel'),
               'url' => Url::fromRoute('devel.container_info.parameter.detail', ['parameter_name' => $parameter_name]),
+              'attributes' => [
+                'class' => ['use-ajax'],
+                'data-dialog-type' => 'modal',
+                'data-dialog-options' => Json::encode([
+                  'width' => 700,
+                  'minHeight' => 500,
+                ]),
+              ],
             ],
           ],
         ];
@@ -214,34 +214,17 @@ class ContainerInfoController extends ControllerBase implements ContainerAwareIn
       ksort($rows);
     }
 
-    $output['#attached']['library'][] = 'system/drupal.system.modules';
-
-    $output['filters'] = [
-      '#type' => 'container',
-      '#attributes' => [
-        'class' => ['table-filter', 'js-show'],
-      ],
-    ];
-    $output['filters']['text'] = [
-      '#type' => 'search',
-      '#title' => $this->t('Search'),
-      '#size' => 30,
-      '#placeholder' => $this->t('Enter parameter name'),
-      '#attributes' => [
-        'class' => ['table-filter-text'],
-        'data-table' => '.devel-filter-text',
-        'autocomplete' => 'off',
-        'title' => $this->t('Enter a part of the parameter name to filter by.'),
-      ],
-    ];
     $output['parameters'] = [
-      '#type' => 'table',
+      '#type' => 'devel_table_filter',
+      '#filter_label' => $this->t('Search'),
+      '#filter_placeholder' => $this->t('Enter parameter name'),
+      '#filter_description' => $this->t('Enter a part of the parameter name to filter by.'),
       '#header' => $headers,
       '#rows' => $rows,
       '#empty' => $this->t('No parameters found.'),
       '#sticky' => TRUE,
       '#attributes' => [
-        'class' => ['devel-parameter-list', 'devel-filter-text'],
+        'class' => ['devel-parameter-list'],
       ],
     ];
 

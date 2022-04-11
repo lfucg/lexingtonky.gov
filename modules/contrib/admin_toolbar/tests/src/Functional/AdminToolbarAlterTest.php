@@ -23,6 +23,11 @@ class AdminToolbarAlterTest extends BrowserTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * A test user with permission to access the administrative toolbar.
    *
    * @var \Drupal\user\UserInterface
@@ -32,7 +37,7 @@ class AdminToolbarAlterTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create and log in an administrative user.

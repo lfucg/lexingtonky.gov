@@ -2,13 +2,12 @@ name: Chosen
 type: module
 description: Makes select elements more user-friendly using <a href="https://harvesthq.github.com/chosen/">Chosen</a>.
 package: User interface
-core_version_requirement: ^8 || ^9
-core: 8.x
+core_version_requirement: ^8.8 || ^9 || ^10
 configure: chosen.admin
 dependencies:
   - chosen:chosen_lib
 
-# Information added by Drupal.org packaging script on 2020-08-13
-version: '8.x-2.10'
+# Information added by Drupal.org packaging script on 2022-03-06
+version: '3.0.2'
 project: 'chosen'
-datestamp: 1597305741
+datestamp: 1646557970

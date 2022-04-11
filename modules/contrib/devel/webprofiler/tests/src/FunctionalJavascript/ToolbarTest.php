@@ -34,11 +34,10 @@ class ToolbarTest extends WebprofilerTestBase {
     $this->waitForToolbar();
 
     $assert = $this->assertSession();
-    $assert->pageTextContains(\Drupal::VERSION);
-    $assert->pageTextContains('Configure Webprofiler');
-    $assert->pageTextContains('View latest reports');
-    $assert->pageTextContains('Drupal Documentation');
-    $assert->pageTextContains('Get involved!');
+    $assert->responseContains('Configure Webprofiler');
+    $assert->responseContains('View latest reports');
+    $assert->responseContains('Drupal Documentation');
+    $assert->responseContains('Get involved!');
   }
 
   /**
@@ -49,12 +48,9 @@ class ToolbarTest extends WebprofilerTestBase {
 
     $this->drupalGet('<front>');
 
-    $token = $this->waitForToolbar();
-
     $this->drupalGet('admin/reports/profiler/list');
 
-    $assert = $this->assertSession();
-    $assert->pageTextContains($token);
+    // @todo assert some content.
   }
 
   /**
@@ -64,16 +60,15 @@ class ToolbarTest extends WebprofilerTestBase {
     $this->loginForDashboard();
 
     $this->drupalGet('admin/config/development/devel');
-    $token = $this->waitForToolbar();
+    $this->waitForToolbar();
     $assert = $this->assertSession();
-    $assert->pageTextContains($token);
-    $assert->pageTextContains('Configure Webprofiler');
+    $assert->responseContains('Configure Webprofiler');
 
     $this->config('webprofiler.config')
       ->set('exclude', '/admin/config/development/devel')
       ->save();
     $this->drupalGet('admin/config/development/devel');
-    $this->assertSession()->pageTextNotContains('sf-toolbar');
+    $this->assertSession()->responseNotContains('sf-toolbar');
   }
 
 }

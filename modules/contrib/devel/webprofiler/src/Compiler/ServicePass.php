@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
 /**
- * Class ServicePass
+ * Class ServicePass.
  */
 class ServicePass implements CompilerPassInterface {
 
@@ -53,7 +53,6 @@ class ServicePass implements CompilerPassInterface {
           ];
         }
 
-
         /** @var \Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraphEdge $edge */
         foreach ($node->getOutEdges() as $edge) {
           /** @var \Symfony\Component\DependencyInjection\Reference $edgeValue */
@@ -72,7 +71,8 @@ class ServicePass implements CompilerPassInterface {
         try {
           $reflectedClass = new \ReflectionClass($class);
           $file = $reflectedClass->getFileName();
-        } catch (\ReflectionException $e) {
+        }
+        catch (\ReflectionException $e) {
           $file = NULL;
         }
 
@@ -105,4 +105,5 @@ class ServicePass implements CompilerPassInterface {
 
     return $data;
   }
+
 }

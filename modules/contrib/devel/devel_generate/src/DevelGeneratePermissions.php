@@ -3,6 +3,7 @@
 namespace Drupal\devel_generate;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -10,10 +11,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class DevelGeneratePermissions implements ContainerInjectionInterface {
 
+  use StringTranslationTrait;
+
   /**
    * The plugin manager.
    *
-   * @var \Drupal\devel_generate\DevelGeneratePluginManager;
+   * @var \Drupal\devel_generate\DevelGeneratePluginManager
    */
   protected $develGeneratePluginManager;
 
@@ -34,28 +37,24 @@ class DevelGeneratePermissions implements ContainerInjectionInterface {
     return new static($container->get('plugin.manager.develgenerate'));
   }
 
-  /*
+  /**
    * A permissions callback.
    *
-   * @see devel_generate.permissions.yml.
+   * @see devel_generate.permissions.yml
    *
    * @return array
+   *   An array of permissions for all plugins.
    */
-  function permissions() {
+  public function permissions() {
     $devel_generate_plugins = $this->develGeneratePluginManager->getDefinitions();
     foreach ($devel_generate_plugins as $plugin) {
 
       $permission = $plugin['permission'];
-      $permissions[$permission] = array(
-        'title' => t($permission),
-      );
+      $permissions[$permission] = [
+        'title' => $this->t('@permission', ['@permission' => $permission]),
+      ];
     }
 
-//    $permissions = array(
-//      'administer devel_generate' => array(
-//        'title' => t('Administer devel generate'),
-//      ),
-//    );
     return $permissions;
   }
 

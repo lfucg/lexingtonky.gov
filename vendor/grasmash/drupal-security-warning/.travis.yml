@@ -1,0 +1,28 @@
+# Note that the example .travis.yml file for child projects lives in /install.
+sudo: required
+language: php
+
+php:
+  - 7
+  - 5.6
+
+cache:
+  bundler: true
+  apt: true
+  directories:
+  - "$HOME/.composer/cache"
+
+before_install:
+  - composer selfupdate
+  # Disable xdebug.
+  - phpenv config-rm xdebug.ini
+  - composer validate --no-check-all --ansi
+
+install:
+  # Load composer dependencies.
+  - composer install
+  - export PATH=$TRAVIS_BUILD_DIR/vendor/bin:$PATH
+
+script:
+  - phpcs --standard=PSR2 src --exclude=Generic.Files.LineLength
+  - ./vendor/bin/phpunit

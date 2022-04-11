@@ -51,7 +51,7 @@ entity_reference:
   dependencies:
     - entity_browser/common
     - entity_browser/entity_list
-    - core/jquery.ui.sortable
+    - core/sortable
 
 file_browser:
   version: VERSION
@@ -105,4 +105,4 @@ multi_step_display:
     js/entity_browser.multi_step_display.js: {}
   dependencies:
     - entity_browser/entity_list
-    - core/jquery.ui.sortable
+    - core/sortable

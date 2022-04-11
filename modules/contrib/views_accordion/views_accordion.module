@@ -23,7 +23,7 @@ function views_accordion_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<li>' . t('<em>Row style</em> must be set to <em>Fields</em>.') . '</li>';
       $output .= '</ul>';
 
-      $output .= '<h4>' . t('Choose <em>Views Accordion</em> in the <em>Style</em> dialog within your view, which will prompt you to configure the jquery.ui.accordion settings.') . '</h4>';
+      $output .= '<h4>' . t('Choose <em>Views Accordion</em> in the <em>Style</em> dialog within your view, which will prompt you to configure the jQuery UI Accordion settings.') . '</h4>';
       return $output;
   }
 }

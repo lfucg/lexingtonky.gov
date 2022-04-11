@@ -79,7 +79,7 @@ class RouterRebuildConfirmForm extends ConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->routeBuilder->rebuild();
-    drupal_set_message($this->t('The router has been rebuilt.'));
+    $this->messenger()->addMessage($this->t('The router has been rebuilt.'));
     $form_state->setRedirect('<front>');
   }
 

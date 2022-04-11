@@ -5,7 +5,7 @@ libraries:
   highlightjs:
     download:
       type: "git"
-      url: "https://github.com/isagalaev/highlight.js.git"
+      url: "https://github.com/highlightjs/highlight.js.git"
   d3:
     download:
       type: "git"

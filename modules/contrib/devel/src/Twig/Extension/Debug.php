@@ -42,35 +42,27 @@ class Debug extends \Twig_Extension {
    * {@inheritdoc}
    */
   public function getFunctions() {
-    $functions = [];
+    $options = [
+      'is_safe' => ['html'],
+      'needs_environment' => TRUE,
+      'needs_context' => TRUE,
+      'is_variadic' => TRUE,
+    ];
 
-    foreach (['devel_dump', 'kpr'] as $function) {
-      $functions[] = new \Twig_SimpleFunction($function, [$this, 'dump'], [
-        'is_safe' => ['html'],
+    return [
+      new \Twig_SimpleFunction('devel_dump', [$this, 'dump'], $options),
+      new \Twig_SimpleFunction('kpr', [$this, 'dump'], $options),
+      //  Preserve familiar kint() function for dumping
+      new \Twig_SimpleFunction('kint', [$this, 'kint'], $options),
+      new \Twig_SimpleFunction('devel_message', [$this, 'message'], $options),
+      new \Twig_SimpleFunction('dpm', [$this, 'message'], $options),
+      new \Twig_SimpleFunction('dsm', [$this, 'message'], $options),
+      new \Twig_SimpleFunction('devel_breakpoint', [$this, 'breakpoint'], [
         'needs_environment' => TRUE,
         'needs_context' => TRUE,
         'is_variadic' => TRUE,
-      ]);
-    }
-
-    foreach (['devel_message', 'dpm', 'dsm'] as $function) {
-      $functions[] = new \Twig_SimpleFunction($function, [$this, 'message'], [
-        'is_safe' => ['html'],
-        'needs_environment' => TRUE,
-        'needs_context' => TRUE,
-        'is_variadic' => TRUE,
-      ]);
-    }
-
-    foreach (['devel_breakpoint'] as $function) {
-      $functions[] = new \Twig_SimpleFunction($function, [$this, 'breakpoint'], [
-        'needs_environment' => TRUE,
-        'needs_context' => TRUE,
-        'is_variadic' => TRUE,
-      ]);
-    }
-
-    return $functions;
+      ]),
+    ];
   }
 
   /**
@@ -91,8 +83,20 @@ class Debug extends \Twig_Extension {
    * @see \Drupal\devel\DevelDumperManager::dump()
    */
   public function dump(\Twig_Environment $env, array $context, array $args = []) {
+    return $this->doDump($env, $context, $args);
+  }
+
+  /**
+   * @param \Twig_Environment $env
+   * @param array $context
+   * @param array $args
+   * @param null $plugin_id
+   *
+   * @return false|string|null
+   */
+  private function doDump(\Twig_Environment $env, array $context, array $args = [], $plugin_id = NULL) {
     if (!$env->isDebug()) {
-      return;
+      return NULL;
     }
 
     ob_start();
@@ -100,15 +104,39 @@ class Debug extends \Twig_Extension {
     // No arguments passed, display full Twig context.
     if (empty($args)) {
       $context_variables = $this->getContextVariables($context);
-      $this->dumper->dump($context_variables, 'Twig context');
+      $this->dumper->dump($context_variables, 'Twig context', $plugin_id);
     }
     else {
-      foreach ($args as $variable) {
-        $this->dumper->dump($variable);
+      $parameters = $this->guessTwigFunctionParameters();
+
+      foreach ($args as $index => $variable) {
+        $name = !empty($parameters[$index]) ? $parameters[$index] : NULL;
+        $this->dumper->dump($variable, $name, $plugin_id);
       }
     }
 
     return ob_get_clean();
+  }
+
+  /**
+   * Similar to dump() but always uses the kint dumper if available.
+   *
+   * Handles 0, 1, or multiple arguments.
+   *
+   * @param \Twig_Environment $env
+   *   The twig environment instance.
+   * @param array $context
+   *   An array of parameters passed to the template.
+   * @param array $args
+   *   An array of parameters passed the function.
+   *
+   * @return string
+   *   String representation of the input variables.
+   *
+   * @see \Drupal\devel\DevelDumperManager::dump()
+   */
+  public function kint(\Twig_Environment $env, array $context, array $args = []) {
+    return $this->doDump($env, $context, $args, 'kint');
   }
 
   /**
@@ -123,8 +151,6 @@ class Debug extends \Twig_Extension {
    * @param array $args
    *   An array of parameters passed the function.
    *
-   * @return void
-   *
    * @see \Drupal\devel\DevelDumperManager::message()
    */
   public function message(\Twig_Environment $env, array $context, array $args = []) {
@@ -138,8 +164,11 @@ class Debug extends \Twig_Extension {
       $this->dumper->message($context_variables, 'Twig context');
     }
     else {
-      foreach ($args as $variable) {
-        $this->dumper->message($variable);
+      $parameters = $this->guessTwigFunctionParameters();
+
+      foreach ($args as $index => $variable) {
+        $name = !empty($parameters[$index]) ? $parameters[$index] : NULL;
+        $this->dumper->message($variable, $name);
       }
     }
 
@@ -183,7 +212,7 @@ class Debug extends \Twig_Extension {
    * Filters the Twig context variable.
    *
    * @param array $context
-   *  The Twig context.
+   *   The Twig context.
    *
    * @return array
    *   An array Twig context variables.
@@ -196,6 +225,52 @@ class Debug extends \Twig_Extension {
       }
     }
     return $context_variables;
+  }
+
+  /**
+   * Gets the twig function parameters for the current invocation.
+   *
+   * @return array
+   *   The detected twig function parameters.
+   */
+  protected function guessTwigFunctionParameters() {
+    $callee = NULL;
+    $template = NULL;
+
+    $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT);
+
+    foreach ($backtrace as $index => $trace) {
+      if (isset($trace['object']) && $trace['object'] instanceof \Twig_Template && 'Twig_Template' !== get_class($trace['object'])) {
+        $template = $trace['object'];
+        $callee = $backtrace[$index - 1];
+        break;
+      }
+    }
+
+    $parameters = [];
+
+    /** @var \Twig_Template $template */
+    if (NULL !== $template && NULL !== $callee) {
+      $line_number = $callee['line'];
+      $debug_infos = $template->getDebugInfo();
+
+      if (isset($debug_infos[$line_number])) {
+        $source_line = $debug_infos[$line_number];
+        $source_file_name = $template->getTemplateName();
+
+        if (is_readable($source_file_name)) {
+          $source = file($source_file_name, FILE_IGNORE_NEW_LINES);
+          $line = $source[$source_line - 1];
+
+          preg_match('/\((.+)\)/', $line, $matches);
+          if (isset($matches[1])) {
+            $parameters = array_map('trim', explode(',', $matches[1]));
+          }
+        }
+      }
+    }
+
+    return $parameters;
   }
 
 }

@@ -35,11 +35,14 @@ jobs:
                   - ~/.composer/cache
 
             - run:
-                name: all the things
+                name: Code sniff
+                command: ./vendor/bin/phpcs --report=full --extensions=php,module,inc,theme,info,install --standard=vendor/drupal/coder/coder_sniffer/Drupal . --ignore=vendor,modules,core,drush,patches,tests
+
+            - run:
+                name: Behavioral tests
                 command: |
                   export TERMINUS_ENV=$CIRCLE_BUILD_NUM
                   export SITE_ENV=$TERMINUS_SITE.$TERMINUS_ENV
-                  ./vendor/bin/phpcs --report=full --extensions=php,module,inc,theme,info,install --standard=vendor/drupal/coder/coder_sniffer/Drupal . --ignore=vendor,modules,core,drush,patches,tests
                   cd .circleci
                   ./create-fresh-d8-site.sh
                   ./setup-d8-repo.sh

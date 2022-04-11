@@ -12,9 +12,9 @@
   ],
   "support": {
     "issues": "https://www.drupal.org/project/issues/twig_vardumper",
-    "source": "http://cgit.drupalcode.org/twig_vardumper"
+    "source": "https://git.drupalcode.org/project/twig_vardumper"
   },
   "require": {
-    "symfony/var-dumper":  "~3.4|~4.2"
+    "symfony/var-dumper":  "~4.2|~5"
   }
 }

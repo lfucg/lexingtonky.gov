@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\entity_browser\FunctionalJavascript;
 
+use Drupal\FunctionalJavascriptTests\SortableTestTrait;
+
 /**
  * Test for integration of entity browser and inline entity form.
  *
@@ -10,6 +12,8 @@ namespace Drupal\Tests\entity_browser\FunctionalJavascript;
  * @package Drupal\Tests\entity_browser\FunctionalJavascript
  */
 class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
+
+  use SortableTestTrait;
 
   /**
    * {@inheritdoc}
@@ -68,7 +72,7 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
 
     $this->assertSession()->assertWaitOnAjaxRequest();
 
-    $page->fillField('Media name', 'Test Bundle Media');
+    $page->fillField('Name', 'Test Bundle Media');
     $page->clickLink('Select entities');
 
     $this->getSession()
@@ -95,8 +99,9 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Test reorder of elements.
-    $dragged = $this->xpath("//div[@data-drupal-selector='edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-bundle-file-field-current-items-0']")[0];
-    $this->dragDropElement($dragged, 150, 0);
+    $list_selector = '[data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-type-file-field-current"]';
+    $item_selector = "$list_selector .item-container";
+    $this->sortableAfter("$item_selector:first-child", "$item_selector:last-child", $list_selector);
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     $page->pressButton('Update Test File Media');
@@ -106,14 +111,14 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Check that element on second position is test_file1 (file:1).
-    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-bundle-file-field-current"]/div[2]');
+    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-type-file-field-current"]/div[2]');
     if (empty($secondElement)) {
       throw new \Exception('Element is not found.');
     }
     $this->assertSame('file:1', $secondElement->getAttribute('data-entity-id'));
 
     // Test remove of element.
-    $this->click('input[name*="ief_media_bundle_file_field_remove_1_1"]');
+    $this->click('input[name*="ief_media_type_file_field_remove_1_1"]');
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     $page->pressButton('Update Test File Media');
@@ -124,7 +129,7 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
 
     // Check that remote button does not exist for already removed entity.
     $this->assertSession()
-      ->elementNotExists('css', '[name*="ief_media_bundle_file_field_remove_1_1"]');
+      ->elementNotExists('css', '[name*="ief_media_type_file_field_remove_1_1"]');
 
     // Test add inside Entity Browser.
     $page->clickLink('Select entities');
@@ -147,7 +152,7 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Check that element on second position is test_file3 (file:3).
-    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-bundle-file-field-current"]/div[2]');
+    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-type-file-field-current"]/div[2]');
     if (empty($secondElement)) {
       throw new \Exception('Element is not found.');
     }
@@ -159,8 +164,9 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
     $this->getSession()
       ->switchToIFrame('entity_browser_iframe_ief_entity_browser_file');
 
-    $dragged = $this->xpath("//div[@data-drupal-selector='edit-selected-items-2-0']")[0];
-    $this->dragDropElement($dragged, 150, 0);
+    $list_selector = '[data-drupal-selector="edit-selected"]';
+    $item_selector = "$list_selector .item-container";
+    $this->sortableAfter("$item_selector:first-child", "$item_selector:last-child", $list_selector);
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     $page->pressButton('Use selected');
@@ -174,7 +180,7 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Check that element on second position is test_file2 (file:2).
-    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-bundle-file-field-current"]/div[2]');
+    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-type-file-field-current"]/div[2]');
     if (empty($secondElement)) {
       throw new \Exception('Element is not found.');
     }
@@ -201,7 +207,7 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Check that element on first position is test_file2 (file:2).
-    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-bundle-file-field-current"]/div[1]');
+    $secondElement = $page->find('xpath', '//div[@data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-type-file-field-current"]/div[1]');
     if (empty($secondElement)) {
       throw new \Exception('Element is not found.');
     }
@@ -407,8 +413,20 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
 
     $ief_table = $this->assertSession()->elementExists('xpath', '//table[contains(@id, "ief-entity-table-edit-field-nodes-entities")]');
     $table_text = $ief_table->getText();
-    $this->assertContains('Boxer', $table_text);
-    $this->assertContains('Napoleon', $table_text);
+    $this->assertStringContainsString('Boxer', $table_text);
+    $this->assertStringContainsString('Napoleon', $table_text);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function sortableUpdate($item, $from, $to = NULL) {
+    list ($container) = explode(' ', $item, 2);
+
+    $js = <<<END
+(Drupal.entityBrowserEntityReference || Drupal.entityBrowserMultiStepDisplay).entitiesReordered(document.querySelector("$container"));
+END;
+    $this->getSession()->executeScript($js);
   }
 
 }

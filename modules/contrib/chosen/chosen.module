@@ -66,6 +66,11 @@ function chosen_field_widget_form_alter(&$element, FormStateInterface $form_stat
 function chosen_attach_library(array &$element) {
   $element['#attached']['library'][] = 'chosen/drupal.chosen';
 
+  // Add specific styling for Claro.
+  if (\Drupal::theme()->getActiveTheme()->getName() === 'claro') {
+    $element['#attached']['library'][] = 'chosen/chosen.claro';
+  }
+
   $chosen_conf = \Drupal::config('chosen.settings');
 
   $css_disabled_themes = $chosen_conf->get('disabled_themes');

@@ -153,4 +153,5 @@ class ExtensionDataCollector extends DataCollector implements DrupalDataCollecto
       $extension->public_extension_filename = $extension->getExtensionFilename();
     }
   }
+
 }

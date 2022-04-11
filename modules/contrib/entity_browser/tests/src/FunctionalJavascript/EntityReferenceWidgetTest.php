@@ -6,6 +6,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\entity_browser\Element\EntityBrowserElement;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\FunctionalJavascriptTests\SortableTestTrait;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\Role;
 
@@ -15,6 +16,8 @@ use Drupal\user\Entity\Role;
  * @group entity_browser
  */
 class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
+
+  use SortableTestTrait;
 
   /**
    * {@inheritdoc}
@@ -102,7 +105,7 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->buttonExists('Save')->press();
 
     $this->assertSession()->pageTextContains('Article Referencing node 1 has been created.');
-    $nid = $this->container->get('entity.query')->get('node')->condition('title', 'Referencing node 1')->execute();
+    $nid = \Drupal::entityQuery('node')->condition('title', 'Referencing node 1')->execute();
     $nid = reset($nid);
 
     // Assert correct translation appears.
@@ -208,6 +211,7 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
         'auto_open' => FALSE,
       ]);
     $browser->save();
+
     // We'll need a third node to be able to make a new selection.
     $target_node2 = Node::create([
       'title' => 'Target example node 2',
@@ -337,14 +341,41 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
    * Tests that drag and drop functions properly.
    */
   public function testDragAndDrop() {
+    $assert_session = $this->assertSession();
 
-    $gatsby = $this->createNode(['type' => 'shark', 'title' => 'Gatsby']);
-    $daisy = $this->createNode(['type' => 'jet', 'title' => 'Daisy']);
-    $nick = $this->createNode(['type' => 'article', 'title' => 'Nick']);
+    $time = time();
 
-    $santa = $this->createNode(['type' => 'shark', 'title' => 'Santa Claus']);
-    $easter_bunny = $this->createNode(['type' => 'jet', 'title' => 'Easter Bunny']);
-    $pumpkin_king = $this->createNode(['type' => 'article', 'title' => 'Pumpkin King']);
+    $gatsby = $this->createNode([
+      'type' => 'shark',
+      'title' => 'Gatsby',
+      'created' => $time--,
+    ]);
+    $daisy = $this->createNode([
+      'type' => 'jet',
+      'title' => 'Daisy',
+      'created' => $time--,
+    ]);
+    $nick = $this->createNode([
+      'type' => 'article',
+      'title' => 'Nick',
+      'created' => $time--,
+    ]);
+
+    $santa = $this->createNode([
+      'type' => 'shark',
+      'title' => 'Santa Claus',
+      'created' => $time--,
+    ]);
+    $easter_bunny = $this->createNode([
+      'type' => 'jet',
+      'title' => 'Easter Bunny',
+      'created' => $time--,
+    ]);
+    $pumpkin_king = $this->createNode([
+      'type' => 'article',
+      'title' => 'Pumpkin King',
+      'created' => $time--,
+    ]);
 
     $field1_storage_config = [
       'field_name' => 'field_east_egg',
@@ -490,8 +521,12 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
     // Open details 1.
     $this->assertSession()->elementExists('xpath', '(//summary)[1]')->click();
 
-    $first_item = $this->assertSession()->elementExists('xpath', "(//div[contains(@class, 'item-container')])[1]");
-    $this->dragDropElement($first_item, 160, 0);
+    // In the first set of selections, drag the first item into the second
+    // position.
+    $list_selector = '[data-drupal-selector="edit-field-east-egg-current"]';
+    $item_selector = "$list_selector .item-container";
+    $assert_session->elementsCount('css', $item_selector, 3);
+    $this->sortableAfter("$item_selector:first-child", "$item_selector:nth-child(2)", $list_selector);
     $this->waitForAjaxToFinish();
 
     $this->assertSession()->fieldExists('title[0][value]')->setValue('Hello World');
@@ -513,8 +548,12 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
         ->elementContains('xpath', "(//div[contains(@class, 'item-container')])[" . $key . "]", $value);
     }
 
-    $fourth = $this->assertSession()->elementExists('xpath', "(//div[contains(@class, 'item-container')])[4]");
-    $this->dragDropElement($fourth, 160, 0);
+    // In the second set of selections, drag the first item into the second
+    // position.
+    $list_selector = '[data-drupal-selector="edit-field-east-egg2-current"]';
+    $item_selector = "$list_selector .item-container";
+    $assert_session->elementsCount('css', $item_selector, 3);
+    $this->sortableAfter("$item_selector:first-child", "$item_selector:nth-child(2)", $list_selector);
 
     $correct_order = [
       4 => 'Easter Bunny',
@@ -542,6 +581,18 @@ class EntityReferenceWidgetTest extends EntityBrowserWebDriverTestBase {
       $this->assertSession()
         ->elementContains('xpath', "(//div[contains(@class, 'item-container')])[" . $key . "]", $value);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function sortableUpdate($item, $from, $to = NULL) {
+    list ($container) = explode(' ', $item, 2);
+
+    $js = <<<END
+Drupal.entityBrowserEntityReference.entitiesReordered(document.querySelector("$container"));
+END;
+    $this->getSession()->executeScript($js);
   }
 
 }

@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
 /**
- * Class ProfilerPass
+ * Class ProfilerPass.
  */
 class ProfilerPass implements CompilerPassInterface {
 
@@ -18,7 +18,7 @@ class ProfilerPass implements CompilerPassInterface {
    * @throws \InvalidArgumentException
    */
   public function process(ContainerBuilder $container) {
-    // configure the profiler service
+    // Configure the profiler service.
     if (FALSE === $container->hasDefinition('profiler')) {
       return;
     }
@@ -42,7 +42,7 @@ class ProfilerPass implements CompilerPassInterface {
         $template = [
           $attributes[0]['id'],
           $attributes[0]['template'],
-          $attributes[0]['title']
+          $attributes[0]['title'],
         ];
       }
 
@@ -57,8 +57,9 @@ class ProfilerPass implements CompilerPassInterface {
 
     $container->setParameter('data_collector.templates', $templates);
 
-    // set parameter to store the public folder path
+    // Set parameter to store the public folder path.
     $path = 'file:' . DRUPAL_ROOT . '/' . PublicStream::basePath() . '/profiler';
     $container->setParameter('data_collector.storage', $path);
   }
+
 }

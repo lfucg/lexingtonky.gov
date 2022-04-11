@@ -3,6 +3,7 @@
 namespace Drupal\entity_browser\Plugin\views\display;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 
 /**
@@ -23,7 +24,7 @@ use Drupal\views\Plugin\views\display\DisplayPluginBase;
  *   entity_browser_display = TRUE
  * )
  */
-class EntityBrowser extends DisplayPluginBase {
+class EntityBrowser extends DisplayPluginBase implements TrustedCallbackInterface {
 
   /**
    * {@inheritdoc}
@@ -219,6 +220,13 @@ class EntityBrowser extends DisplayPluginBase {
     $content = str_replace($search, $replace, $content);
 
     return $content;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['preRenderAddFieldsetMarkup', 'postRender', 'elementPreRender'];
   }
 
 }

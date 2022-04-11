@@ -15,7 +15,6 @@ use Symfony\Component\VarDumper\Dumper\HtmlDumper;
  *   label = @Translation("Symfony var-dumper"),
  *   description = @Translation("Wrapper for <a href='https://github.com/symfony/var-dumper'>Symfony var-dumper</a> debugging tool."),
  * )
- *
  */
 class VarDumper extends DevelDumperBase {
 

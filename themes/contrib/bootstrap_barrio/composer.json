@@ -5,7 +5,7 @@
   "license": "GPL-2.0-or-later",
   "homepage": "https://www.drupal.org/project/bootstrap_barrio",
   "require": {
-    "twbs/bootstrap": "^4.4.1"
+    "twbs/bootstrap": "^5.0.0"
   },
   "authors": [{
     "name": "Alberto Siles",

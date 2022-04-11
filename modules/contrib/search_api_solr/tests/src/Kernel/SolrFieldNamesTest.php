@@ -23,15 +23,17 @@ class SolrFieldNamesTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array(
+  public static $modules = [
     'field',
     'node',
     'user',
     'link',
+    'language',
     'search_api',
     'search_api_solr',
+    'search_api_solr_test',
     'system',
-  );
+  ];
 
   /**
    * @covers ::getSolrFieldNames
@@ -90,14 +92,38 @@ class SolrFieldNamesTest extends KernelTestBase {
     $backend = SearchApiSolrBackend::create($this->container, [], 'test', []);
     $fields = $backend->getSolrFieldNames($index);
 
-    $this->assertSame($fields['title'], 'sm_title');
-    $this->assertSame($fields['bio'], 'ss_bio');
+    $this->assertSame('sm_title', $fields['title']);
+    $this->assertSame('ss_bio', $fields['bio']);
 
     $fields = $index->getFields();
     $cardinality = $this->invokeMethod($backend, 'getPropertyPathCardinality', [$fields['title']->getPropertyPath(), $fields['title']->getDatasource()->getPropertyDefinitions()]);
-    $this->assertEqual(FieldStorageConfigInterface::CARDINALITY_UNLIMITED, $cardinality);
+    $this->assertEquals(FieldStorageConfigInterface::CARDINALITY_UNLIMITED, $cardinality);
     $cardinality = $this->invokeMethod($backend, 'getPropertyPathCardinality', [$fields['bio']->getPropertyPath(), $fields['bio']->getDatasource()->getPropertyDefinitions()]);
-    $this->assertEqual(1, $cardinality);
+    $this->assertEquals(1, $cardinality);
+
+    // Test Typed Data.
+    $index = Index::create([
+      'id' => 'typed_data_index',
+      'datasource_settings' => [
+        'search_api_solr_test_widget' => [
+          'plugin_id' => 'search_api_solr_test_widget',
+          'settings' => [],
+        ],
+      ],
+      'field_settings' => [
+        'widget_types' => [
+          'label' => 'Widget Types',
+          'type' => 'string',
+          'datasource_id' => 'search_api_solr_test_widget',
+          'property_path' => 'widget_types',
+        ],
+      ],
+    ]);
+
+    $backend = SearchApiSolrBackend::create($this->container, [], 'test', []);
+    $fields = $backend->getSolrFieldNames($index);
+
+    $this->assertSame('sm_widget_types', $fields['widget_types']);
   }
 
 }

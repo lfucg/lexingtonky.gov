@@ -2,14 +2,12 @@
 
 namespace Drupal\Tests\devel\Functional;
 
-use Drupal\Tests\BrowserTestBase;
-
 /**
  * Tests layout info pages and links.
  *
  * @group devel
  */
-class DevelLayoutInfoTest extends BrowserTestBase {
+class DevelLayoutInfoTest extends DevelBrowserTestBase {
 
   /**
    * {@inheritdoc}
@@ -17,27 +15,11 @@ class DevelLayoutInfoTest extends BrowserTestBase {
   public static $modules = ['devel', 'block', 'layout_discovery'];
 
   /**
-   * The user for the test.
-   *
-   * @var \Drupal\user\UserInterface
-   */
-  protected $develUser;
-
-  /**
    * {@inheritdoc}
    */
   protected function setUp() {
-    // TODO find a cleaner way to skip layout info tests when running tests on
-    // Drupal branch < 8.3.x.
-    if (version_compare(\Drupal::VERSION, '8.3', '<')) {
-      $this->markTestSkipped('Devel Layout Info Tests only available on version 8.3.x+.');
-    }
-
     parent::setUp();
-
     $this->drupalPlaceBlock('page_title_block');
-
-    $this->develUser = $this->drupalCreateUser(['access devel information']);
     $this->drupalLogin($this->develUser);
   }
 
@@ -70,11 +52,18 @@ class DevelLayoutInfoTest extends BrowserTestBase {
     $this->assertNotNull($table);
 
     // Ensures that the expected table headers are found.
-    /** @var $headers \Behat\Mink\Element\NodeElement[] */
+    /* @var $headers \Behat\Mink\Element\NodeElement[] */
     $headers = $table->findAll('css', 'thead th');
     $this->assertEquals(6, count($headers));
 
-    $expected_headers = ['Icon', 'Label', 'Description', 'Category', 'Regions', 'Provider'];
+    $expected_headers = [
+      'Icon',
+      'Label',
+      'Description',
+      'Category',
+      'Regions',
+      'Provider',
+    ];
     $actual_headers = array_map(function ($element) {
       return $element->getText();
     }, $headers);

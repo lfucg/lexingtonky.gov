@@ -268,7 +268,10 @@ class DiffEntityComparison {
     $revision_summary = '';
     // Check if the revision has a revision log message.
     if ($revision instanceof RevisionLogInterface) {
-      $revision_summary = Xss::filter($revision->getRevisionLogMessage());
+      $revision_log_message = $revision->getRevisionLogMessage();
+      if ($revision_log_message !== NULL) {
+        $revision_summary = Xss::filter($revision_log_message);
+      }
     }
 
     // @todo Autogenerate summary again.

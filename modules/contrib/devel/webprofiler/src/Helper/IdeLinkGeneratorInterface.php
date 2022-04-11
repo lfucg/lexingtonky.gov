@@ -14,4 +14,5 @@ interface IdeLinkGeneratorInterface {
    * @return string
    */
   public function generateLink($file, $line);
+
 }

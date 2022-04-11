@@ -1,0 +1,13 @@
+<!-- phpunit.xml.dist -->
+<phpunit>
+    <testsuites>
+        <testsuite name="Drupal Security Warning Test Suite">
+            <directory>tests/phpunit</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
+</phpunit>

@@ -1,17 +1,12 @@
 <?php
 
-/**
- * @file
- * Post a schema file to to the Pantheon Solr server.
- */
-
 namespace Drupal\search_api_pantheon;
 
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\Client;
 
 /**
- * Class SchemaPoster.
+ * Provides custom logic for integrating with Pantheon's Solr system.
  *
  * @package Drupal\search_api_pantheon
  */
@@ -20,14 +15,14 @@ class SchemaPoster {
   /**
    * Drupal\Core\Logger\LoggerChannelFactory definition.
    *
-   * @var Drupal\Core\Logger\LoggerChannelFactory
+   * @var \Drupal\Core\Logger\LoggerChannelFactory
    */
   protected $loggerFactory;
 
   /**
    * GuzzleHttp\Client definition.
    *
-   * @var GuzzleHttp\Client
+   * @var \GuzzleHttp\Client
    */
   protected $httpClient;
 
@@ -43,7 +38,6 @@ class SchemaPoster {
    * Post a schema file to to the Pantheon Solr server.
    */
   public function postSchema($schema) {
-
     // Check for empty schema.
     if (filesize($schema) < 1) {
       $this->loggerFactory->get('search_api_pantheon')->error('Empty schema not posting');
@@ -65,26 +59,26 @@ class SchemaPoster {
 
     $file = fopen($schema, 'r');
     // Set URL and other appropriate options.
-    $opts = array(
+    $opts = [
       CURLOPT_URL => $url,
       CURLOPT_PORT => getenv('PANTHEON_INDEX_PORT'),
       CURLOPT_RETURNTRANSFER => 1,
       CURLOPT_SSLCERT => $client_cert,
-      CURLOPT_HTTPHEADER => array('Content-type:text/xml; charset=utf-8'),
+      CURLOPT_HTTPHEADER => ['Content-type:text/xml; charset=utf-8'],
       CURLOPT_PUT => TRUE,
       CURLOPT_BINARYTRANSFER => 1,
       CURLOPT_INFILE => $file,
       CURLOPT_INFILESIZE => filesize($schema),
-    );
+    ];
     curl_setopt_array($ch, $opts);
     $response = curl_exec($ch);
     $info = curl_getinfo($ch);
-    $success_codes = array(
+    $success_codes = [
       '200',
       '201',
       '202',
       '204',
-    );
+    ];
 
     $success = (in_array($info['http_code'], $success_codes));
     fclose($file);

@@ -56,6 +56,16 @@ devel.config_edit:
   requirements:
     _permission: 'administer site configuration'
 
+devel.config_delete:
+  path: '/devel/config/delete/{config_name}'
+  defaults:
+    _form: '\Drupal\devel\Form\ConfigDeleteForm'
+    _title: 'Delete configuration object: @config_name'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer site configuration'
+
 devel.state_system_page:
   path: '/devel/state'
   defaults:
@@ -95,16 +105,6 @@ devel.field_info_page:
     _admin_route: TRUE
   requirements:
     _permission: 'access devel information'
-
-devel.execute_php:
-  path: '/devel/php'
-  defaults:
-    _form: '\Drupal\devel\Form\ExecutePHP'
-    _title: 'Execute PHP code'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _permission: 'execute php code'
 
 devel.session:
   path: '/devel/session'
@@ -272,6 +272,16 @@ devel.entity_info_page.detail:
   defaults:
     _controller: '\Drupal\devel\Controller\EntityTypeInfoController::entityTypeDetail'
     _title: 'Entity type @entity_type_id'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _permission: 'access devel information'
+
+devel.entity_info_page.fields:
+  path: '/devel/entity/fields/{entity_type_id}'
+  defaults:
+    _controller: '\Drupal\devel\Controller\EntityTypeInfoController::entityTypeFields'
+    _title: 'Entity fields @entity_type_id'
   options:
     _admin_route: TRUE
   requirements:

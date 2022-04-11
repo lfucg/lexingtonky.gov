@@ -5,7 +5,7 @@ namespace Drupal\webprofiler\StringTranslation;
 use Drupal\Core\StringTranslation\TranslationManager;
 
 /**
- * Class TranslationManagerWrapper
+ * Class TranslationManagerWrapper.
  */
 class TranslationManagerWrapper extends TranslationManager {
 
@@ -34,7 +34,7 @@ class TranslationManagerWrapper extends TranslationManager {
   /**
    * {@inheritdoc}
    */
-  protected function doTranslate($string, array $options = array()) {
+  protected function doTranslate($string, array $options = []) {
     // Merge in defaults.
     if (empty($options['langcode'])) {
       $options['langcode'] = $this->defaultLangcode;
@@ -44,9 +44,10 @@ class TranslationManagerWrapper extends TranslationManager {
     }
     $translation = $this->getStringTranslation($options['langcode'], $string, $options['context']);
 
-    if($translation) {
+    if ($translation) {
       $this->translated[$string] = $translation;
-    } else {
+    }
+    else {
       $this->untranslated[$string] = $string;
     }
 
@@ -66,4 +67,5 @@ class TranslationManagerWrapper extends TranslationManager {
   public function getUntranslated() {
     return $this->untranslated;
   }
+
 }

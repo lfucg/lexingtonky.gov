@@ -16,7 +16,7 @@ function devel_requirements($phase) {
     // https://www.drupal.org/node/2834400.
     $requirements['devel'] = [
       'title' => t('Devel module enabled'),
-      'description' => t('The Devel module provides access to internal debugging information; therefore it\'s recommended to disable this module on sites in production.'),
+      'description' => t("The Devel module provides access to internal debugging information; therefore it's recommended to disable this module on sites in production."),
       'severity' => REQUIREMENT_INFO,
     ];
   }
@@ -39,7 +39,7 @@ function devel_update_8001() {
 }
 
 /**
- * Add enforced dependencies to system.menu.devel
+ * Add enforced dependencies to system.menu.devel.
  */
 function devel_update_8002() {
   $config = \Drupal::configFactory()->getEditable('system.menu.devel');

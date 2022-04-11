@@ -30,7 +30,7 @@
   {% import _self as menus %}
   {% if items %}
     {% if menu_level == 0 %}
-      <div{{ attributes.addClass('nav') }}>
+      <div{{ attributes.addClass('nav')|without('id') }}>
       {% for item in items %}
         {%
           set classes = [

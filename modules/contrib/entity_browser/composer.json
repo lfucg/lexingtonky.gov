@@ -28,16 +28,15 @@
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
   "require": {
-    "drupal/core": "^8.7.7 || ^9"
+    "drupal/core": "^8.8 || ^9"
   },
   "require-dev": {
     "drupal/token": "~1.0",
-    "drupal/inline_entity_form": "~1.0",
-    "drupal/paragraphs": "~1.0",
-    "drupal/entity": "~1.0",
-    "drupal/media_entity": "~1.0",
+    "drupal/inline_entity_form": "1.x-dev",
+    "drupal/paragraphs": "1.x-dev",
     "drupal/embed": "~1.0",
-    "drupal/entity_embed": "~1.0",
-    "drupal/entityqueue": "~1.0"
+    "drupal/entity_embed": "1.x-dev",
+    "drupal/entityqueue": "1.x-dev",
+    "drupal/entity_reference_revisions": "1.x-dev"
   }
 }

@@ -7,7 +7,7 @@ use Drupal\webprofiler\Helper\IdeLinkGeneratorInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
- * Class ProfilerExtension
+ * Class ProfilerExtension.
  */
 class ProfilerExtension extends \Twig_Extension_Profiler {
 
@@ -90,4 +90,5 @@ class ProfilerExtension extends \Twig_Extension_Profiler {
   public function getIdeLink($file, $line) {
     return $this->ideLink->generateLink($file, $line);
   }
+
 }

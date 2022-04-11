@@ -16,7 +16,7 @@ dependencies:
 hidden: false
 package: Views
 
-# Information added by Drupal.org packaging script on 2021-11-28
-version: '8.x-1.3'
+# Information added by Drupal.org packaging script on 2021-05-13
+version: '2.0.1'
 project: 'draggableviews'
-datestamp: 1638128883
+datestamp: 1620931212

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -x
-
 terminus drush $SITE_ENV -- cache-rebuild
 terminus drush $SITE_ENV -- pml
 # Uninstall core search to reduce confusion in the UI.

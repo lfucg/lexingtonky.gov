@@ -4,7 +4,6 @@ namespace Drupal\webprofiler\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
-use Drupal\webprofiler\DataCollector\DatabaseDataCollector;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -12,7 +11,7 @@ use Symfony\Component\HttpKernel\Profiler\Profile;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 
 /**
- * Class DatabaseController
+ * Class DatabaseController.
  */
 class DatabaseController extends ControllerBase {
 
@@ -48,10 +47,10 @@ class DatabaseController extends ControllerBase {
   }
 
   /**
-   * @param Profile $profile
+   * @param \Symfony\Component\HttpKernel\Profiler\Profile $profile
    * @param int $qid
    *
-   * @return JsonResponse
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function explainAction(Profile $profile, $qid) {
     $query = $this->getQuery($profile, $qid);
@@ -71,7 +70,7 @@ class DatabaseController extends ControllerBase {
   }
 
   /**
-   * @param $profile ->getToken()
+   * @param \Symfony\Component\HttpKernel\Profiler\Profile $profile
    * @param int $qid
    *
    * @return array
@@ -84,7 +83,7 @@ class DatabaseController extends ControllerBase {
       throw new NotFoundHttpException($this->t('Token @token does not exist.', ['@token' => $token]));
     }
 
-    /** @var DatabaseDataCollector $databaseCollector */
+    /** @var \Drupal\webprofiler\DataCollector\DatabaseDataCollector $databaseCollector */
     $databaseCollector = $profile->getCollector('database');
 
     $queries = $databaseCollector->getQueries();
@@ -92,4 +91,5 @@ class DatabaseController extends ControllerBase {
 
     return $query;
   }
+
 }

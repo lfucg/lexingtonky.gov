@@ -1,0 +1,516 @@
+search_api_solr.solr_field_type.*:
+  type: config_entity
+  label: 'Solr Field Type Config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    minimum_solr_version:
+      type: string
+      label: 'The minimum version the Solr server'
+    custom_code:
+      type: string
+      label: 'Custom Code targeted by this Solr Field Type'
+    field_type_language_code:
+      type: string
+      label: 'The language targeted by this Solr Field Type'
+    domains:
+      type: sequence
+      sequence:
+        type: string
+    field_type:
+      type: search_api_solr.solr_common_field_type
+    unstemmed_field_type:
+      type: search_api_solr.solr_common_field_type
+      nullable: true
+    spellcheck_field_type:
+      type: mapping
+      nullable: true
+      mapping:
+        name:
+          type: string
+          label: 'The Solr field name'
+        class:
+          type: string
+          label: 'The Solr field type'
+        positionIncrementGap:
+          type: integer
+          label: 'Solr field attribute positionIncrementGap'
+        analyzer:
+          type: mapping
+          mapping:
+            charFilters:
+              type: sequence
+              nullable: true
+              sequence:
+                type: mapping
+                mapping:
+                  class:
+                    type: string
+                    label: 'The char filter class'
+                  mapping:
+                    type: string
+                    label: 'The char filter mapping file name'
+                    nullable: true
+            tokenizer:
+              type: mapping
+              mapping:
+                class:
+                  type: string
+                  label: 'The tokenizer class'
+                pattern:
+                  type: string
+                  label: 'SimplePatternSplitTokenizer::'
+                mode:
+                  type: string
+                  label: 'JapaneseTokenizerFactory::'
+            filters:
+              type: search_api_solr.solr_field_type_filters
+    collated_field_type:
+      type: mapping
+      nullable: true
+      mapping:
+        name:
+          type: string
+          label: 'The Solr collate field name'
+        class:
+          type: string
+          label: 'The Solr collate field type'
+        locale:
+          type: string
+          label: 'The Solr collate language'
+        strength:
+          type: string
+          label: 'The Solr collate strength'
+        caseLevel:
+          type: boolean
+          label: 'The Solr collate caseLevel'
+    solr_configs:
+      type: search_api_solr.solr_configs
+    text_files:
+      type: mapping
+      mapping:
+        stopwords:
+          type: string
+          label: 'Stop words'
+        protwords:
+          type: string
+          label: 'Protected words'
+        accents:
+          type: string
+          label: 'Accent char mapping'
+        synonyms:
+          type: string
+          label: 'Synonym words'
+        nouns:
+          type: string
+          label: 'Nouns'
+        stoptags:
+          type: string
+          label: 'Stop tags'
+
+search_api_solr.solr_common_field_type:
+  type: mapping
+  mapping:
+    name:
+      type: string
+      label: 'The Solr field name'
+    class:
+      type: string
+      label: 'The Solr field type'
+    positionIncrementGap:
+      type: integer
+      label: 'Solr field attribute positionIncrementGap'
+    analyzers:
+      type: sequence
+      sequence:
+        type: mapping
+        mapping:
+          type:
+            type: string
+            label: 'The analyzer type'
+          charFilters:
+            type: sequence
+            nullable: true
+            sequence:
+              type: mapping
+              mapping:
+                class:
+                  type: string
+                  label: 'The char filter class'
+                mapping:
+                  type: string
+                  label: 'The char filter mapping file name'
+                  nullable: true
+          tokenizer:
+            type: mapping
+            mapping:
+              class:
+                type: string
+                label: 'The tokenizer class'
+              pattern:
+                type: string
+                label: 'SimplePatternSplitTokenizer::'
+              mode:
+                type: string
+                label: 'JapaneseTokenizerFactory::'
+          filters:
+            type: search_api_solr.solr_field_type_filters
+    similarity:
+      type: mapping
+      nullable: true
+      mapping:
+        class:
+          type: string
+          label: 'The similarity class'
+        str:
+          type: search_api_solr.scalar_values
+        int:
+          type: search_api_solr.scalar_values
+        float:
+          type: search_api_solr.scalar_values
+
+search_api_solr.solr_field_type_filters:
+  type: sequence
+  sequence:
+    type: mapping
+    mapping:
+      class:
+        type: string
+        label: 'The filter class'
+      catenateNumbers:
+        type: integer
+        label: 'WordDelimiterGraphFilter:: WordDelimiterFilter::catenateNumbers'
+        nullable: true
+      generateNumberParts:
+        type: integer
+        label: 'WordDelimiterGraphFilter:: WordDelimiterFilter::generateNumberParts'
+        nullable: true
+      protected:
+        type: string
+        label: 'ProtectedTermFilter:: WordDelimiterGraphFilter:: WordDelimiterFilter:: SnowballPorterFilter::protected'
+        nullable: true
+      splitOnCaseChange:
+        type: integer
+        label: 'WordDelimiterGraphFilter:: WordDelimiterFilter::splitOnCaseChange'
+        nullable: true
+      splitOnNumerics:
+        type: integer
+        label: 'WordDelimiterGraphFilter:: WordDelimiterFilter::splitOnNumerics'
+        nullable: true
+      generateWordParts:
+        type: integer
+        label: 'WordDelimiterGraphFilter:: WordDelimiterFilter::generateWordParts'
+        nullable: true
+      preserveOriginal:
+        # @todo ASCIIFoldingFilter expects a boolean
+        type: integer
+        label: 'WordDelimiterGraphFilter:: ASCIIFoldingFilter:: WordDelimiterFilter::preserveOriginal'
+        nullable: true
+      catenateAll:
+        type: integer
+        label: 'WordDelimiterGraphFilter:: WordDelimiterFilter::catenateAll'
+        nullable: true
+      catenateWords:
+        type: integer
+        label: 'WordDelimiterGraphFilter:: WordDelimiterFilter::catenateWords'
+        nullable: true
+      stemEnglishPossessive:
+        type: integer
+        label: 'WordDelimiterGraphFilter:: WordDelimiterFilter::stemEnglishPossessive'
+        nullable: true
+      min:
+        type: integer
+        label: 'LengthFilter::min'
+        nullable: true
+      max:
+        type: integer
+        label: 'LengthFilter::max'
+        nullable: true
+      dictionary:
+        type: string
+        label: 'OpenNLPLemmatizerFilter:: HunspellStemFilter:: MorfologikFilterFactory:: DictionaryCompoundWordTokenFilter::dictionary'
+        nullable: true
+      lemmatizerModel:
+        type: string
+        label: 'OpenNLPLemmatizerFilter::lemmatizerModel'
+        nullable: true
+      affix:
+        type: string
+        label: 'HunspellStemFilter::affix'
+        nullable: true
+      strictAffixParsing:
+        type: boolean
+        label: 'HunspellStemFilter::strictAffixParsing'
+        nullable: true
+      minWordSize:
+        type: integer
+        label: 'DictionaryCompoundWordTokenFilter::minWordSize'
+        nullable: true
+      minSubwordSize:
+        type: integer
+        label: 'DictionaryCompoundWordTokenFilter::minSubwordSize'
+        nullable: true
+      maxSubwordSize:
+        type: integer
+        label: 'DictionaryCompoundWordTokenFilter::maxSubwordSize'
+        nullable: true
+      onlyLongestMatch:
+        type: boolean
+        label: 'DictionaryCompoundWordTokenFilter::onlyLongestMatch'
+        nullable: true
+      ignoreCase:
+        type: boolean
+        label: 'ElisionFilter:: SynonymGraphFilter:: SuggestStopFilter:: StopFilter:: ProtectedTermFilter:: HunspellStemFilter:: KeepWordFilter:: StopFilter:: CommonGramsFilter:: SynonymFilter::ignoreCase'
+        nullable: true
+      wrappedFilters:
+        type: string
+        label: 'ProtectedTermFilter::wrappedFilters'
+        nullable: true
+      types:
+        type: string
+        label: 'WordDelimiterGraphFilter:: TypeTokenFilter::types'
+        nullable: true
+      useWhitelist:
+        type: boolean
+        label: 'TypeTokenFilter::useWhitelist'
+        nullable: true
+      enablePositionIncrements:
+        type: boolean
+        label: 'JapanesePartOfSpeechStopFilter:: TypeTokenFilter:: StopFilter:: LengthFilter:: KeepWordFilter::enablePositionIncrements'
+        nullable: true
+      words:
+        type: string
+        label: 'SuggestStopFilter:: KeepWordFilter:: CommonGramsFilter:: StopFilter::words'
+        nullable: true
+      format:
+        type: string
+        label: 'SynonymGraphFilter:: SuggestStopFilter:: StopFilter:: CommonGramsFilter::format'
+        nullable: true
+      wordset:
+        type: string
+        label: 'SuggestStopFilter::wordset'
+        nullable: true
+      snowball:
+        type: string
+        label: 'SuggestStopFilter::snowball'
+        nullable: true
+      language:
+        type: string
+        label: 'SnowballPorterFilter::language'
+        nullable: true
+      synonyms:
+        type: string
+        label: 'SynonymGraphFilter:: SynonymFilter::synonyms'
+        nullable: true
+      expand:
+        type: boolean
+        label: 'SynonymGraphFilter:: SynonymFilter:: ManagedSynonymFilter::expand'
+        nullable: true
+      tokenizerFactory:
+        type: string
+        label: 'SynonymGraphFilter::tokenizerFactory'
+        nullable: true
+      analyzer:
+        type: string
+        label: 'SynonymGraphFilter::analyzer'
+        nullable: true
+      managed:
+        type: string
+        label: 'ManagedSynonymGraphFilter:: ManagedStopFilter::managed'
+        nullable: true
+      articles:
+        type: string
+        label: 'ElisionFilter::articles'
+        nullable: true
+      minGramSize:
+        type: integer
+        label: 'NGramFilter:: EdgeNGramFilter::minGramSize'
+        nullable: true
+      maxGramSize:
+        type: integer
+        label: 'NGramFilter:: EdgeNGramFilter::maxGramSize'
+        nullable: true
+      languageSet:
+        type: string
+        label: 'BeiderMorseFilter::languageSet'
+        nullable: true
+      nameType:
+        type: string
+        label: 'BeiderMorseFilter::nameType'
+        nullable: true
+      ruleType:
+        type: string
+        label: 'BeiderMorseFilter::ruleType'
+        nullable: true
+      concat:
+        type: boolean
+        label: 'BeiderMorseFilter::concat'
+        nullable: true
+      han:
+        type: boolean
+        label: 'CJKBigramFilterFactory::han'
+        nullable: true
+      hiragana:
+        type: boolean
+        label: 'CJKBigramFilterFactory::hiragana'
+        nullable: true
+      katakana:
+        type: boolean
+        label: 'CJKBigramFilterFactory::katakana'
+        nullable: true
+      hangul:
+        type: boolean
+        label: 'CJKBigramFilterFactory::hangul'
+        nullable: true
+      outputUnigrams:
+        type: boolean
+        label: 'ShingleFilter:: CJKBigramFilterFactory::outputUnigrams'
+        nullable: true
+      outputUnigramsIfNoShingles:
+        type: boolean
+        label: 'ShingleFilter::outputUnigramsIfNoShingles'
+        nullable: true
+      inject:
+        type: boolean
+        label: 'PhoneticFilter:: DoubleMetaphoneFilter:: DaitchMokotoffSoundexFilter::inject'
+        nullable: true
+      maxCodeLength:
+        type: integer
+        label: 'PhoneticFilter:: DoubleMetaphoneFilter::maxCodeLength'
+        nullable: true
+      encoder:
+        type: string
+        label: 'PhoneticFilter::encoder'
+        nullable: true
+      separator:
+        type: string
+        label: 'FingerprintFilter::separator'
+        nullable: true
+      maxOutputTokenSize:
+        type: integer
+        label: 'FingerprintFilter::maxOutputTokenSize'
+        nullable: true
+      filter:
+        type: string
+        label: 'ICUNormalizer2Filter:: ICUFoldingFilter::filter'
+        nullable: true
+      name:
+        type: string
+        label: 'ICUNormalizer2Filter::name'
+        nullable: true
+      mode:
+        type: string
+        label: 'ICUNormalizer2Filter::mode'
+        nullable: true
+      id:
+        type: string
+        label: 'ICUTransformFilter::id'
+        nullable: true
+      maxTokenCount:
+        type: integer
+        label: 'LimitTokenCountFilter::maxTokenCount'
+        nullable: true
+      consumeAllTokens:
+        type: boolean
+        label: 'LimitTokenPositionFilter:: LimitTokenOffsetFilter:: LimitTokenCountFilter::consumeAllTokens'
+        nullable: true
+      maxStartOffset:
+        type: integer
+        label: 'LimitTokenOffsetFilter::maxStartOffset'
+        nullable: true
+      maxTokenPosition:
+        type: integer
+        label: 'LimitTokenPositionFilter::maxTokenPosition'
+        nullable: true
+      payload:
+        type: float
+        label: 'NumericPayloadTokenFilter::payload'
+        nullable: true
+      typeMatch:
+        type: string
+        label: 'NumericPayloadTokenFilter::typeMatch'
+        nullable: true
+      pattern:
+        type: string
+        label: 'PatternReplaceFilter::pattern'
+        nullable: true
+      replacement:
+        type: string
+        label: 'PatternReplaceFilter::replacement'
+        nullable: true
+      replace:
+        type: string
+        label: 'PatternReplaceFilter::replace'
+        nullable: true
+      withOriginal:
+        type: boolean
+        label: 'ReversedWildcardFilter::withOriginal'
+        nullable: true
+      maxPosAsterisk:
+        type: integer
+        label: 'ReversedWildcardFilter::maxPosAsterisk'
+        nullable: true
+      maxPosQuestion:
+        type: integer
+        label: 'ReversedWildcardFilter::maxPosQuestion'
+        nullable: true
+      maxFractionAsterisk:
+        type: float
+        label: 'ReversedWildcardFilter::maxFractionAsterisk'
+        nullable: true
+      minTrailing:
+        type: integer
+        label: 'ReversedWildcardFilter::minTrailing'
+        nullable: true
+      minShingleSize:
+        type: integer
+        label: 'ShingleFilter::minShingleSize'
+        nullable: true
+      maxShingleSize:
+        type: integer
+        label: 'ShingleFilter::maxShingleSize'
+        nullable: true
+      tokenSeparator:
+        type: string
+        label: 'ShingleFilter::tokenSeparator'
+        nullable: true
+      updateOffsets:
+        type: boolean
+        label: 'TrimFilter::updateOffsets'
+        nullable: true
+      prefix:
+        type: string
+        label: 'TypeAsSynonymFilter::prefix'
+        nullable: true
+      posTaggerModel:
+        type: string
+        label: 'OpenNLPPOSFilter::posTaggerModel'
+        nullable: true
+      normalizeKanji:
+        type: boolean
+        label: 'JapaneseIterationMarkCharFilter::normalizeKanji'
+        nullable: true
+      normalizeKana:
+        type: boolean
+        label: 'JapaneseIterationMarkCharFilter::normalizeKana'
+        nullable: true
+      tags:
+        type: string
+        label: 'JapanesePartOfSpeechStopFilter::tags'
+        nullable: true
+      minimumLength:
+        type: integer
+        label: 'JapaneseKatakanaStemFilter::minimumLength'
+        nullable: true
+      variant:
+        type: string
+        label: 'NorwegianLightStemFilter:: NorwegianMinimalStemFilter::variant'
+        nullable: true
+      haircut:
+        type: string
+        label: 'SerbianNormalizationFilter::haircut'
+        nullable: true

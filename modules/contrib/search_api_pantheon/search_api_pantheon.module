@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * Primary hook implementations for Search API Pantheon.
+ */
+
+use Drupal\search_api\Query\QueryInterface;
+use Solarium\Core\Query\QueryInterface as SolariumQueryInterface;
+
+/**
+ * Implements hook_search_api_solr_query_alter().
+ */
+function search_api_pantheon_search_api_solr_query_alter(SolariumQueryInterface $solarium_query, QueryInterface $query) {
+  $server_config = $query->getIndex()->getServerInstance()->getBackendConfig();
+  if (isset($server_config['connector']) && $server_config['connector'] === 'pantheon' && $solarium_query->getType() === 'select') {
+    /** @var Solarium\QueryType\Select\Query\Query $solarium_query */
+    $edismax = $solarium_query->getEDisMax();
+    $query_fields = $edismax->getQueryFields();
+    $solarium_query->addParam('qf', $query_fields);
+    $solarium_query->addParam('defType', 'edismax');
+  }
+}
+
+/**
+ * Implements hook_search_api_solr_converted_query_alter().
+ */
+function search_api_pantheon_search_api_solr_converted_query_alter(SolariumQueryInterface $solarium_query, QueryInterface $query) {
+  $server_config = $query->getIndex()->getServerInstance()->getBackendConfig();
+  if (isset($server_config['connector']) && $server_config['connector'] === 'pantheon' && $solarium_query->getType() === 'select') {
+    $options = $solarium_query->getOptions();
+
+    // Empty searches don't work with Pantheon's old SOLR. So replace with *:*
+    // *:* can't be wrapped in quotes, but other queries do need to be.
+    if (empty($options['query'])) {
+      $options['query'] = '*:*';
+    }
+
+    $solarium_query->setOptions($options);
+  }
+}

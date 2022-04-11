@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
 /**
- * Class WebprofilerRequestMatcher
+ * Class WebprofilerRequestMatcher.
  */
 class WebprofilerRequestMatcher implements RequestMatcherInterface {
 
@@ -23,7 +23,7 @@ class WebprofilerRequestMatcher implements RequestMatcherInterface {
   private $pathMatcher;
 
   /**
-   * @param ConfigFactoryInterface $configFactory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    * @param \Drupal\Core\Path\PathMatcherInterface $pathMatcher
    */
   public function __construct(ConfigFactoryInterface $configFactory, PathMatcherInterface $pathMatcher) {
@@ -39,12 +39,13 @@ class WebprofilerRequestMatcher implements RequestMatcherInterface {
 
     $patterns = $this->configFactory->get('webprofiler.config')->get('exclude');
 
-    // never add Webprofiler to phpinfo page.
+    // Never add Webprofiler to phpinfo page.
     $patterns .= "\r\n/admin/reports/status/php";
 
-    // never add Webprofiler to uninstall confirm page.
+    // Never add Webprofiler to uninstall confirm page.
     $patterns .= "\r\n/admin/modules/uninstall/*";
 
     return !$this->pathMatcher->matchPath($path, $patterns);
   }
+
 }

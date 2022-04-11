@@ -10,12 +10,12 @@ use Symfony\Component\HttpKernel\Profiler\Profiler as SymfonyProfiler;
 use Symfony\Component\HttpKernel\Profiler\ProfilerStorageInterface;
 
 /**
- * Class Profiler
+ * Class Profiler.
  */
 class Profiler extends SymfonyProfiler {
 
   /**
-   * @var \Drupal\Core\Config\ConfigFactoryInterface $config
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   private $config;
 
@@ -31,9 +31,9 @@ class Profiler extends SymfonyProfiler {
    * Constructor.
    *
    * @param \Symfony\Component\HttpKernel\Profiler\ProfilerStorageInterface $storage
-   *   A ProfilerStorageInterface instance
+   *   A ProfilerStorageInterface instance.
    * @param \Psr\Log\LoggerInterface $logger
-   *   A LoggerInterface instance
+   *   A LoggerInterface instance.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config
    */
   public function __construct(ProfilerStorageInterface $storage, LoggerInterface $logger = NULL, ConfigFactoryInterface $config) {
@@ -51,7 +51,7 @@ class Profiler extends SymfonyProfiler {
    * {@inheritdoc}
    */
   public function add(DataCollectorInterface $collector) {
-    // drupal collector should not be disabled
+    // Drupal collector should not be disabled.
     if ($collector->getName() == 'drupal') {
       parent::add($collector);
     }
@@ -74,4 +74,5 @@ class Profiler extends SymfonyProfiler {
 
     return $ret;
   }
+
 }

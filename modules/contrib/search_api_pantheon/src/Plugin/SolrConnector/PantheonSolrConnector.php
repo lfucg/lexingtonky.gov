@@ -1,58 +1,69 @@
 <?php
 
-/**
- * @file
- * Provide a connection to Pantheon's Solr instance.
- */
-
 namespace Drupal\search_api_pantheon\Plugin\SolrConnector;
 
-use Drupal\search_api_solr\Plugin\SolrConnector\StandardSolrConnector;
-use Drupal\Core\Annotation\Translation;
+use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
+use Drupal\search_api_pantheon\Solarium\PantheonCurl;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\search_api_solr\Annotation\SolrConnector;
-use Solarium\Core\Client\Endpoint;
-use Solarium\Core\Client\Request;
+use Drupal\search_api_solr\Solarium\EventDispatcher\Psr14Bridge;
+use Drupal\search_api_solr_legacy\Plugin\SolrConnector\Solr36Connector;
+use Solarium\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\search_api_pantheon\SchemaPoster;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\search_api_solr\SolrBackendInterface;
-use Solarium\Client;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use RegexIterator;
 
 /**
- * Standard Solr connector.
+ * Pantheon Solr connector.
  *
  * @SolrConnector(
  *   id = "pantheon",
  *   label = @Translation("Pantheon"),
- *   description = @Translation("A connector for Pantheon's Solr server")
+ *   description = @Translation("A connector for Pantheon's Solr 3.6 server")
  * )
  */
-class PantheonSolrConnector extends StandardSolrConnector {
+class PantheonSolrConnector extends Solr36Connector {
+
+  /**
+   * The event dispatcher.
+   *
+   * @var \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher
+   */
+  protected $eventDispatcher;
+
+  /**
+   * Variable SchemaPoster.
+   *
+   * @var \Drupal\search_api_pantheon\SchemaPoster
+   */
+  protected $schemaPoster;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, SchemaPoster $schema_poster) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, SchemaPoster $schema_poster, ContainerAwareEventDispatcher $eventDispatcher) {
     $configuration += $this->internalConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->schemaPoster = $schema_poster;
+    if (class_exists('\Drupal\Component\EventDispatcher\Event')) {
+      // Drupal >= 9.1.
+      $this->eventDispatcher = $eventDispatcher;
+    }
+    else {
+      // Drupal <= 9.0.
+      $this->eventDispatcher = new Psr14Bridge($eventDispatcher);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $plugin = new static($configuration, $plugin_id, $plugin_definition, $container->get('search_api_pantheon.schema_poster'));
-
-    /** @var \Drupal\Core\StringTranslation\TranslationInterface $translation */
-    $translation = $container->get('string_translation');
-    $plugin->setStringTranslation($translation);
-
-    return $plugin;
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('search_api_pantheon.schema_poster'),
+      $container->get('event_dispatcher')
+    );
   }
 
   /**
@@ -72,16 +83,17 @@ class PantheonSolrConnector extends StandardSolrConnector {
       ];
     }
 
-    return $pantheon_specific_configuration + parent::defaultConfiguration();
+    return $pantheon_specific_configuration + $this->defaultConfiguration();
   }
 
   /**
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array(
+    return [
       'schema' => '',
-    );
+      'solr_version' => '3.6.2',
+    ] + parent::defaultConfiguration();
   }
 
   /**
@@ -99,9 +111,9 @@ class PantheonSolrConnector extends StandardSolrConnector {
    */
   public function findSchemaFiles() {
     $return = [];
-    $directory = new RecursiveDirectoryIterator('modules');
-    $flattened = new RecursiveIteratorIterator($directory);
-    $files = new RegexIterator($flattened, '/schema.xml$/');
+    $directory = new \RecursiveDirectoryIterator('modules');
+    $flattened = new \RecursiveIteratorIterator($directory);
+    $files = new \RegexIterator($flattened, '/schema.xml$/');
 
     foreach ($files as $file) {
       $relative_path = str_replace(DRUPAL_ROOT . '/', '', $file->getRealPath());
@@ -115,21 +127,15 @@ class PantheonSolrConnector extends StandardSolrConnector {
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
 
-    $form['schema'] = array(
+    $form['schema'] = [
       '#type' => 'radios',
       '#title' => $this->t('Schema file'),
       '#options' => $this->findSchemaFiles(),
-      '#description' => $this->t('Select a Solr schema file to be POSTed to Pantheon\'s Solr server'),
+      '#description' => $this->t("Select a Solr schema file to be POSTed to Pantheon's Solr server"),
       '#default_value' => $this->configuration['schema'],
-    );
+    ];
 
     return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
   }
 
   /**
@@ -145,19 +151,12 @@ class PantheonSolrConnector extends StandardSolrConnector {
   }
 
   /**
-   * Prepares the connection to the Solr server.
+   * Create a Client.
    */
-  protected function connect() {
-    if (!$this->solr) {
-      $this->solr = new Client();
-
-      // The parent method is overridden so that this alternate adapter class
-      // can be set. This line is the only difference from the parent method.
-      $this->solr->setAdapter('Drupal\search_api_pantheon\Solarium\PantheonCurl');
-
-      $this->solr->createEndpoint($this->configuration + ['key' => 'core'], TRUE);
-      $this->attachServerEndpoint();
-    }
+  protected function createClient(array &$configuration) {
+    $configuration[self::QUERY_TIMEOUT] = 5;
+    $adapter = new PantheonCurl($configuration);
+    return new Client($adapter, $this->eventDispatcher);
   }
 
   /**
@@ -171,16 +170,14 @@ class PantheonSolrConnector extends StandardSolrConnector {
    * {@inheritdoc}
    */
   public function pingServer() {
-    // The path used in the parent class, admin/info/system, fails.
-    // I don't know why.
-    $ping = $this->doPing(['handler' => 'admin/system'], 'server');
+    $ping = parent::pingServer();
     // If the ping fails, there is a good chance it is because the code
     // is being run on a new multidev environment in which the schema has not
     // yet been posted.
     if ($ping === FALSE) {
       $this->postSchema();
       // Try again after posting the schema.
-      return $this->doPing(['handler' => 'admin/system'], 'server');
+      return parent::pingServer();
     }
     else {
       return $ping;
@@ -190,11 +187,10 @@ class PantheonSolrConnector extends StandardSolrConnector {
   /**
    * {@inheritdoc}
    */
-  protected function getDataFromHandler($endpoint, $handler, $reset = FALSE) {
-    // First make sure the server is up.
-    // If a multidev environment has just been made,
-    // it may be necessary to post the schema.
+  protected function getDataFromHandler($handler, $reset = FALSE) {
+    // Ensure server is up and post schema if necessary, ex new Multi-dev.
     $this->pingServer();
-    return parent::getDataFromHandler($endpoint, $handler, $reset = FALSE);
+    return parent::getDataFromHandler($handler, $reset);
   }
+
 }

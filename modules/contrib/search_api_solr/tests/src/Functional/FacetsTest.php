@@ -8,6 +8,7 @@ use Drupal\Tests\facets\Functional\ExampleContentTrait;
 use Drupal\Tests\facets\Functional\TestHelperTrait;
 use Drupal\search_api\Entity\Index;
 use Drupal\Tests\search_api\Functional\SearchApiBrowserTestBase;
+use Drupal\search_api_solr\Utility\SolrCommitTrait;
 use Drupal\views\Entity\View;
 
 /**
@@ -17,6 +18,7 @@ use Drupal\views\Entity\View;
  */
 class FacetsTest extends SearchApiBrowserTestBase {
 
+  use SolrCommitTrait;
   use BlockTestTrait;
   use ExampleContentTrait {
     indexItems as doIndexItems;
@@ -26,22 +28,23 @@ class FacetsTest extends SearchApiBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array(
+  public static $modules = [
     'block',
     'views',
     'search_api_solr',
     'search_api_solr_test',
     'search_api_solr_test_facets',
     'facets',
-  );
+  ];
 
   /**
    * {@inheritdoc}
    */
-  protected function tearDown() {
+  protected function tearDown(): void {
     if ($this->indexId) {
-      Index::load($this->indexId)->clear();
-      sleep(2);
+      $index = Index::load($this->indexId);
+      $index->clear();
+      $this->ensureCommit($index);
     }
     parent::tearDown();
   }
@@ -75,7 +78,8 @@ class FacetsTest extends SearchApiBrowserTestBase {
     // Create a facet, enable 'show numbers'.
     $this->createFacet('Owl', 'owl');
     $edit = ['widget' => 'links', 'widget_config[show_numbers]' => '1'];
-    $this->drupalPostForm('admin/config/search/facets/owl/edit', $edit, 'Save');
+    $this->drupalGet('admin/config/search/facets/owl/edit');
+    $this->submitForm($edit, 'Save');
 
     // Verify that the facet results are correct.
     $this->drupalGet('search-api-test-fulltext');
@@ -93,10 +97,13 @@ class FacetsTest extends SearchApiBrowserTestBase {
    *
    * @return int
    *   The number of successfully indexed items.
+   *
+   * @throws \Drupal\search_api\SearchApiException
    */
   protected function indexItems($index_id) {
     $index_status = $this->doindexItems($index_id);
-    sleep(2);
+    $index = Index::load($this->indexId);
+    $this->ensureCommit($index);
     return $index_status;
   }
 
@@ -136,15 +143,20 @@ class FacetsTest extends SearchApiBrowserTestBase {
     // Cast MarkupInterface objects to string.
     $label = (string) $label;
     $url_before = $this->getUrl();
-    $urls = $this->xpath($pattern, array(':label' => $label));
+    $urls = $this->xpath($pattern, [':label' => $label]);
     if (isset($urls[$index])) {
       /** @var \Behat\Mink\Element\NodeElement $url */
       $url = $urls[$index];
       $url_target = $this->getAbsoluteUrl($url->getAttribute('href'));
-      $this->assertTrue(TRUE, new FormattableMarkup('Clicked link %label (@url_target) from @url_before', array('%label' => $label, '@url_target' => $url_target, '@url_before' => $url_before)));
+      $message = new FormattableMarkup('Clicked link %label (@url_target) from @url_before', [
+        '%label' => $label,
+        '@url_target' => $url_target,
+        '@url_before' => $url_before,
+      ]);
+      $this->assertTrue(TRUE, $message);
       return $this->drupalGet($url_target);
     }
-    $this->assertTrue(FALSE, new FormattableMarkup('Link %label does not exist on @url_before', array('%label' => $label, '@url_before' => $url_before)));
+    $this->assertTrue(FALSE, new FormattableMarkup('Link %label does not exist on @url_before', ['%label' => $label, '@url_before' => $url_before]));
     return FALSE;
   }
 

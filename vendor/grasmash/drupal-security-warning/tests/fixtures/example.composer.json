@@ -1,0 +1,22 @@
+{
+  "repositories": {
+    "local": {
+      "type": "path",
+      "url": "../drupal-security-warning",
+      "options": {
+        "symlink": true
+      }
+    },
+    "drupal": {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  },
+  "require": {
+    "grasmash/drupal-security-warning": "*@dev",
+    "drupal/ctools": "3.0.0.0-alpha27",
+    "drupal/token": "1.0.0"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

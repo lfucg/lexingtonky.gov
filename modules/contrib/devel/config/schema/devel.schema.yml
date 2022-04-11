@@ -27,6 +27,12 @@ devel.settings:
     devel_dumper:
       type: string
       label: 'Devel variable dumper'
+    debug_logfile:
+      type: string
+      label: 'Devel debug log file'
+    debug_pre:
+      type: boolean
+      label: 'Wrap debug output in pre tags'
 
 devel.toolbar.settings:
   type: config_object

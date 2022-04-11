@@ -2,7 +2,7 @@
   "name": "drupal/diff",
   "description": "Compares two entity revisions",
   "type": "drupal-module",
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "Miro Dietiker (miro_dietiker)",

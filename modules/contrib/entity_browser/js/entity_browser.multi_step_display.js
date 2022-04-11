@@ -2,7 +2,7 @@
  * @file entity_browser.multi_step_display.js
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, Sortable) {
 
   'use strict';
 
@@ -10,12 +10,26 @@
    * Registers behaviours related to selected entities.
    */
   Drupal.behaviors.entityBrowserMultiStepDisplay = {
+
+    /**
+     * Counter for proxy elements when adding items to selection.
+     *
+     * @see Drupal.entityBrowserMultiStepDisplay.addEntities
+     */
+    uuid: 1,
+
     attach: function (context) {
-      var $entities = $(context).find('.entities-list');
-      $entities.sortable({
-        stop: Drupal.entityBrowserMultiStepDisplay.entitiesReordered
+      var sortableSelector = context.querySelectorAll('.entities-list');
+      sortableSelector.forEach(function (widget) {
+        Sortable.create(widget, {
+          draggable: '.item-container',
+          onEnd: function onEnd() {
+            return Drupal.entityBrowserMultiStepDisplay.entitiesReordered(widget);
+          }
+        });
       });
 
+      var $entities = $(context).find('.entities-list');
       // Register add/remove entities event handlers.
       $entities.once('register-add-entities')
         .bind('add-entities', Drupal.entityBrowserMultiStepDisplay.addEntities);
@@ -61,13 +75,11 @@
   /**
    * Reacts on sorting of the entities.
    *
-   * @param {object} event
-   *   Event object.
-   * @param {object} ui
-   *   Object with detailed information about the sort event.
+   * @param {object} widget
+   *   Object with the sortable area.
    */
-  Drupal.entityBrowserMultiStepDisplay.entitiesReordered = function (event, ui) {
-    var items = $(this).find('.item-container');
+  Drupal.entityBrowserMultiStepDisplay.entitiesReordered = function (widget) {
+    var items = $(widget).find('.item-container');
     for (var i = 0; i < items.length; i++) {
       $(items[i]).find('.weight').val(i);
     }
@@ -121,7 +133,7 @@
 
     for (i = 0; i < entity_ids.length; i++) {
       // Add proxy element that will be replaced with returned Ajax Command.
-      var proxy_element = $('<div></div>').uniqueId();
+      var proxy_element = $('<div></div>').attr("id", "ui-id-" + ( ++Drupal.behaviors.entityBrowserMultiStepDisplay.uuid ));
       entities_list.append(proxy_element);
 
       Drupal.entityBrowserCommandQueue.queueCommand(
@@ -136,4 +148,4 @@
     entities_list.siblings('[name=ajax_commands_handler]').trigger('execute-commands', [true]);
   };
 
-}(jQuery, Drupal));
+}(jQuery, Drupal, Sortable));

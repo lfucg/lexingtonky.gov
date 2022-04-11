@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Install file for search_api_pantheon module.
+ */
+
+/**
+ * Ensure that the Search API Solr Legacy module is installed.
+ */
+function search_api_pantheon_update_8001() {
+  \Drupal::service('module_installer')->install(['search_api_solr_legacy']);
+}

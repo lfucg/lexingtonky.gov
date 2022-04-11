@@ -45,7 +45,7 @@ class AvailableTestDumper extends DevelDumperBase {
 
     return [
       '#attached' => [
-        'library' => ['devel_dumper_test/devel_dumper_test']
+        'library' => ['devel_dumper_test/devel_dumper_test'],
       ],
       '#markup' => $this->setSafeMarkup($input),
     ];
@@ -57,4 +57,5 @@ class AvailableTestDumper extends DevelDumperBase {
   public static function checkRequirements() {
     return TRUE;
   }
+
 }

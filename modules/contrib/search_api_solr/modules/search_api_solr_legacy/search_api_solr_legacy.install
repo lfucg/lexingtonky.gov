@@ -1,0 +1,9 @@
+<?php
+
+/**
+ * Install new field types for legacy Solr versions.
+ */
+function search_api_solr_legacy_update_8001() {
+  module_load_include('install', 'search_api_solr');
+  search_api_solr_update_helper_install_configs();
+}

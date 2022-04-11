@@ -101,7 +101,7 @@ class RouteSubscriber extends RouteSubscriberBase {
           '_title' => 'Devel Render',
         ])
         ->addRequirements([
-          '_permission' => 'access devel information'
+          '_permission' => 'access devel information',
         ])
         ->setOption('_admin_route', TRUE)
         ->setOption('_devel_entity_type_id', $entity_type_id)
@@ -132,7 +132,7 @@ class RouteSubscriber extends RouteSubscriberBase {
           '_title' => 'Entity type definition',
         ])
         ->addRequirements([
-          '_permission' => 'access devel information'
+          '_permission' => 'access devel information',
         ])
         ->setOption('_admin_route', TRUE)
         ->setOption('_devel_entity_type_id', $entity_type_id)

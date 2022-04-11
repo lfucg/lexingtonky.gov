@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\TimeDataCollector as BaseTimeDataCollector;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Stopwatch\StopwatchEvent;
 
 /**
  * Class TimeDataCollector.
@@ -105,7 +104,7 @@ class TimeDataCollector extends BaseTimeDataCollector implements DrupalDataColle
    * {@inheritdoc}
    */
   public function getDrupalSettings() {
-    /** @var StopwatchEvent[] $collectedEvents */
+    /** @var \Symfony\Component\Stopwatch\StopwatchEvent[] $collectedEvents */
     $collectedEvents = $this->getEvents();
 
     if (!empty($collectedEvents)) {
@@ -154,4 +153,5 @@ class TimeDataCollector extends BaseTimeDataCollector implements DrupalDataColle
 
     return $data;
   }
+
 }

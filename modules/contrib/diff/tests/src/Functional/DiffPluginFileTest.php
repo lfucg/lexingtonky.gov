@@ -35,7 +35,7 @@ class DiffPluginFileTest extends DiffPluginTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->fileSystem = \Drupal::service('file_system');
@@ -86,39 +86,42 @@ class DiffPluginFileTest extends DiffPluginTestBase {
     // Upload a file to the article.
     $test_files = $this->drupalGetTestFiles('text');
     $edit['files[field_file_0]'] = $this->fileSystem->realpath($test_files['0']->uri);
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, 'Upload');
+    $this->drupalGet('node/' . $node->id() . '/edit');
+    $this->submitForm($edit, 'Upload');
     $edit['revision'] = TRUE;
-    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, 'Save and keep published');
     $node = $this->drupalGetNodeByTitle('Test article', TRUE);
     $revision2 = $node->getRevisionId();
 
     // Replace the file by a different one.
-    $this->drupalPostForm('node/' . $node->id() . '/edit', [], 'Remove');
-    $this->drupalPostNodeForm(NULL, ['revision' => FALSE], t('Save and keep published'));
+    $this->drupalGet('node/' . $node->id() . '/edit');
+    $this->submitForm([], 'Remove');
+    $this->drupalPostNodeForm(NULL, ['revision' => FALSE], 'Save and keep published');
     $edit['files[field_file_0]'] = $this->fileSystem->realpath($test_files['1']->uri);
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, 'Upload');
+    $this->drupalGet('node/' . $node->id() . '/edit');
+    $this->submitForm($edit, 'Upload');
     $edit['revision'] = TRUE;
-    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, 'Save and keep published');
     $node = $this->drupalGetNodeByTitle('Test article', TRUE);
     $revision3 = $node->getRevisionId();
 
     // Check differences between revisions.
-    $this->clickLink(t('Revisions'));
+    $this->clickLink('Revisions');
     $edit = [
       'radios_left' => $revision1,
       'radios_right' => $revision3,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Compare selected revisions'));
-    $this->assertText('File');
-    $this->assertText('File: text-1_0.txt');
-    $this->assertText('File ID: 4');
+    $this->submitForm($edit, 'Compare selected revisions');
+    $this->assertSession()->pageTextContains('File');
+    $this->assertSession()->pageTextContains('File: text-1_0.txt');
+    $this->assertSession()->pageTextContains('File ID: 4');
 
     // Use the unified fields layout.
     $this->clickLink('Unified fields');
-    $this->assertResponse(200);
-    $this->assertText('File');
-    $this->assertText('File: text-1_0.txt');
-    $this->assertText('File ID: 4');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('File');
+    $this->assertSession()->pageTextContains('File: text-1_0.txt');
+    $this->assertSession()->pageTextContains('File ID: 4');
   }
 
   /**
@@ -171,25 +174,26 @@ class DiffPluginFileTest extends DiffPluginTestBase {
     // Upload an image to the article.
     $test_files = $this->drupalGetTestFiles('image');
     $edit = ['files[field_image_0]' => $this->fileSystem->realpath($test_files['1']->uri)];
-    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, 'Save and keep published');
     $edit = [
       'field_image[0][alt]' => 'Image alt',
       'revision' => TRUE,
     ];
-    $this->drupalPostNodeForm(NULL, $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm(NULL, $edit, 'Save and keep published');
     $node = $this->drupalGetNodeByTitle('Test article', TRUE);
     $revision2 = $node->getRevisionId();
 
     // Replace the image by a different one.
-    $this->drupalPostForm('node/' . $node->id() . '/edit', [], 'Remove');
-    $this->drupalPostNodeForm(NULL, ['revision' => FALSE], t('Save and keep published'));
+    $this->drupalGet('node/' . $node->id() . '/edit');
+    $this->submitForm([], 'Remove');
+    $this->drupalPostNodeForm(NULL, ['revision' => FALSE], 'Save and keep published');
     $edit = ['files[field_image_0]' => $this->fileSystem->realpath($test_files['1']->uri)];
-    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, 'Save and keep published');
     $edit = [
       'field_image[0][alt]' => 'Image alt updated',
       'revision' => TRUE,
     ];
-    $this->drupalPostNodeForm(NULL, $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm(NULL, $edit, 'Save and keep published');
     $node = $this->drupalGetNodeByTitle('Test article', TRUE);
     $revision3 = $node->getRevisionId();
 
@@ -199,14 +203,15 @@ class DiffPluginFileTest extends DiffPluginTestBase {
       'radios_left' => $revision1,
       'radios_right' => $revision3,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Compare selected revisions'));
-    $this->assertText('Image');
-    $this->assertText('Image: image-test-transparent-indexed_0.gif');
+    $this->submitForm($edit, 'Compare selected revisions');
+    $this->assertSession()->pageTextContains('Image');
+    $this->assertSession()->pageTextContains('Image: image-test-transparent-indexed_0.gif');
     // Image title must be absent since it is not set in previous revisions.
-    $this->assertNoText('Title');
+    $this->assertSession()->pageTextNotContains('Title');
 
     // Enable Title field in instance settings.
-    $this->drupalPostForm('admin/structure/types/manage/article/fields/node.article.field_image', [
+    $this->drupalGet('admin/structure/types/manage/article/fields/node.article.field_image');
+    $this->submitForm([
       'settings[title_field]' => 1,
     ], 'Save settings');
 
@@ -216,8 +221,9 @@ class DiffPluginFileTest extends DiffPluginTestBase {
       'revision' => TRUE,
       'field_image[0][title]' => 'Image title updated',
     ];
-    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
-    $this->drupalPostForm('node/' . $node->id() . '/revisions', [], t('Compare selected revisions'));
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, 'Save and keep published');
+    $this->drupalGet('node/' . $node->id() . '/revisions');
+    $this->submitForm([], 'Compare selected revisions');
 
 
     // Image title and alternative text must be shown.
@@ -229,61 +235,66 @@ class DiffPluginFileTest extends DiffPluginTestBase {
 
     // Show File ID.
     $this->drupalGet('admin/config/content/diff/fields');
-    $this->drupalPostForm(NULL, [], 'node__field_image_settings_edit');
+    $this->submitForm([], 'node__field_image_settings_edit');
     $edit = [
       'fields[node__field_image][settings_edit_form][settings][show_id]' => TRUE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'node__field_image_plugin_settings_update');
-    $this->drupalPostForm(NULL, [], t('Save'));
-    $this->drupalPostForm('node/' . $node->id() . '/revisions', [], t('Compare selected revisions'));
+    $this->submitForm($edit, 'node__field_image_plugin_settings_update');
+    $this->submitForm([], 'Save');
+    $this->drupalGet('node/' . $node->id() . '/revisions');
+    $this->submitForm([], 'Compare selected revisions');
     // Alt and title must be hidden.
-    $this->assertText('File ID: 2');
+    $this->assertSession()->pageTextContains('File ID: 2');
 
     // Disable alt image fields.
     $this->drupalGet('admin/config/content/diff/fields');
-    $this->drupalPostForm(NULL, [], 'node__field_image_settings_edit');
+    $this->submitForm([], 'node__field_image_settings_edit');
     $edit = [
       'fields[node__field_image][settings_edit_form][settings][compare_alt_field]' => FALSE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'node__field_image_plugin_settings_update');
-    $this->drupalPostForm(NULL, [], t('Save'));
-    $this->drupalPostForm('node/' . $node->id() . '/revisions', [], t('Compare selected revisions'));
+    $this->submitForm($edit, 'node__field_image_plugin_settings_update');
+    $this->submitForm([], 'Save');
+    $this->drupalGet('node/' . $node->id() . '/revisions');
+    $this->submitForm([], 'Compare selected revisions');
     // Alt and title must be hidden.
-    $this->assertNoText('Alt: Image alt updated');
-    $this->assertNoText('Alt: Image alt updated new');
-    $this->assertText('Title: Image title updated');
+    $this->assertSession()->pageTextNotContains('Alt: Image alt updated');
+    $this->assertSession()->pageTextNotContains('Alt: Image alt updated new');
+    $this->assertSession()->pageTextContains('Title: Image title updated');
 
     // Disable title image fields, reenable alt.
     $this->drupalGet('admin/config/content/diff/fields');
-    $this->drupalPostForm(NULL, [], 'node__field_image_settings_edit');
+    $this->submitForm([], 'node__field_image_settings_edit');
     $edit = [
       'fields[node__field_image][settings_edit_form][settings][compare_alt_field]' => TRUE,
       'fields[node__field_image][settings_edit_form][settings][compare_title_field]' => FALSE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'node__field_image_plugin_settings_update');
-    $this->drupalPostForm(NULL, [], t('Save'));
-    $this->drupalPostForm('node/' . $node->id() . '/revisions', [], t('Compare selected revisions'));
-    $this->assertText('Alt: Image alt updated');
-    $this->assertText('Alt: Image alt updated new');
-    $this->assertNoText('Title: Image title updated');
+    $this->submitForm($edit, 'node__field_image_plugin_settings_update');
+    $this->submitForm([], t('Save'));
+    $this->drupalGet('node/' . $node->id() . '/revisions');
+    $this->submitForm([], 'Compare selected revisions');
+    $this->assertSession()->pageTextContains('Alt: Image alt updated');
+    $this->assertSession()->pageTextContains('Alt: Image alt updated new');
+    $this->assertSession()->pageTextNotContains('Title: Image title updated');
     // Assert the thumbnail is displayed.
-    $img1_url = file_create_url(\Drupal::token()->replace("public://styles/thumbnail/public/[date:custom:Y]-[date:custom:m]/" . $test_files['1']->name));
-    $image_url = file_url_transform_relative($img1_url);
-    $this->assertRaw($image_url);
+    $img1_url = \Drupal::service('file_url_generator')->generateAbsoluteString(\Drupal::token()->replace("public://styles/thumbnail/public/[date:custom:Y]-[date:custom:m]/" . $test_files['1']->name));
+    $image_url = \Drupal::service('file_url_generator')->transformRelative($img1_url);
+    $this->assertSession()->responseContains($image_url);
 
     // Disable thumbnail image field.
-    $this->drupalPostForm('admin/config/content/diff/fields', [], 'node__field_image_settings_edit');
+    $this->drupalGet('admin/config/content/diff/fields');
+    $this->submitForm([], 'node__field_image_settings_edit');
     $edit = [
       'fields[node__field_image][settings_edit_form][settings][show_thumbnail]' => FALSE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'node__field_image_plugin_settings_update');
-    $this->drupalPostForm(NULL, [], t('Save'));
-    $this->drupalPostForm('node/' . $node->id() . '/revisions', [], t('Compare selected revisions'));
+    $this->submitForm($edit, 'node__field_image_plugin_settings_update');
+    $this->submitForm([], 'Save');
+    $this->drupalGet('node/' . $node->id() . '/revisions');
+    $this->submitForm([], 'Compare selected revisions');
 
     // Assert the thumbnail is not displayed.
-    $img1_url = file_create_url(\Drupal::token()->replace("public://styles/thumbnail/public/[date:custom:Y]-[date:custom:m]/" . $test_files['1']->name));
-    $image_url = file_url_transform_relative($img1_url);
-    $this->assertNoRaw($image_url);
+    $img1_url = \Drupal::service('file_url_generator')->generateAbsoluteString(\Drupal::token()->replace("public://styles/thumbnail/public/[date:custom:Y]-[date:custom:m]/" . $test_files['1']->name));
+    $image_url = \Drupal::service('file_url_generator')->transformRelative($img1_url);
+    $this->assertSession()->responseNotContains($image_url);
   }
 
 }

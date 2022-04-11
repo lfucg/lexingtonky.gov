@@ -4,6 +4,7 @@
 
 namespace Composer\Autoload;
 
+<<<<<<< HEAD
 class ComposerStaticInitDrupal8
 {
     public static $files = array (
@@ -15,6 +16,21 @@ class ComposerStaticInitDrupal8
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '7e9bd612cc444b3eed788ebbe46263a0' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/autoload.php',
+=======
+class ComposerStaticInit21da3f90acc4075b2c94db7757e92f69
+{
+    public static $files = array (
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
+        '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
+        '7e9bd612cc444b3eed788ebbe46263a0' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/autoload.php',
+        '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
+        'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
+>>>>>>> Based off of manual_composer first commit
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
@@ -50,9 +66,19 @@ class ComposerStaticInitDrupal8
         array (
             'cweagans\\Composer\\' => 18,
         ),
+<<<<<<< HEAD
         'W' => 
         array (
             'Wikimedia\\Composer\\' => 19,
+=======
+        'Z' => 
+        array (
+            'ZipStream\\' => 10,
+        ),
+        'W' => 
+        array (
+            'Wikimedia\\Composer\\Merge\\V2\\' => 28,
+>>>>>>> Based off of manual_composer first commit
         ),
         'T' => 
         array (
@@ -61,6 +87,7 @@ class ComposerStaticInitDrupal8
         ),
         'S' => 
         array (
+<<<<<<< HEAD
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
@@ -68,6 +95,18 @@ class ComposerStaticInitDrupal8
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
             'Symfony\\Polyfill\\Iconv\\' => 23,
             'Symfony\\Polyfill\\Ctype\\' => 23,
+=======
+            'Symfony\\Polyfill\\Util\\' => 22,
+            'Symfony\\Polyfill\\Php80\\' => 23,
+            'Symfony\\Polyfill\\Php72\\' => 23,
+            'Symfony\\Polyfill\\Php70\\' => 23,
+            'Symfony\\Polyfill\\Php56\\' => 23,
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
+            'Symfony\\Polyfill\\Iconv\\' => 23,
+            'Symfony\\Polyfill\\Ctype\\' => 23,
+            'Symfony\\Contracts\\EventDispatcher\\' => 34,
+>>>>>>> Based off of manual_composer first commit
             'Symfony\\Component\\Yaml\\' => 23,
             'Symfony\\Component\\VarDumper\\' => 28,
             'Symfony\\Component\\Validator\\' => 28,
@@ -77,6 +116,10 @@ class ComposerStaticInitDrupal8
             'Symfony\\Component\\Process\\' => 26,
             'Symfony\\Component\\HttpKernel\\' => 29,
             'Symfony\\Component\\HttpFoundation\\' => 33,
+<<<<<<< HEAD
+=======
+            'Symfony\\Component\\Finder\\' => 25,
+>>>>>>> Based off of manual_composer first commit
             'Symfony\\Component\\EventDispatcher\\' => 34,
             'Symfony\\Component\\DependencyInjection\\' => 38,
             'Symfony\\Component\\Debug\\' => 24,
@@ -84,13 +127,23 @@ class ComposerStaticInitDrupal8
             'Symfony\\Component\\ClassLoader\\' => 30,
             'Symfony\\Cmf\\Component\\Routing\\' => 30,
             'Symfony\\Bridge\\PsrHttpMessage\\' => 30,
+<<<<<<< HEAD
+=======
+            'Solarium\\' => 9,
+>>>>>>> Based off of manual_composer first commit
         ),
         'P' => 
         array (
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
+<<<<<<< HEAD
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
+=======
+            'Psr\\Http\\Client\\' => 16,
+            'Psr\\EventDispatcher\\' => 20,
+            'Psr\\Container\\' => 14,
+>>>>>>> Based off of manual_composer first commit
             'PHPMailer\\PHPMailer\\' => 20,
         ),
         'O' => 
@@ -99,6 +152,10 @@ class ComposerStaticInitDrupal8
         ),
         'M' => 
         array (
+<<<<<<< HEAD
+=======
+            'MyCLabs\\Enum\\' => 13,
+>>>>>>> Based off of manual_composer first commit
             'Masterminds\\' => 12,
         ),
         'L' => 
@@ -123,6 +180,7 @@ class ComposerStaticInitDrupal8
         array (
             'Drupal\\Driver\\' => 14,
             'Drupal\\Core\\' => 12,
+<<<<<<< HEAD
             'Drupal\\Component\\' => 17,
             'DrupalComposer\\DrupalScaffold\\' => 30,
             'Doctrine\\Persistence\\' => 21,
@@ -130,12 +188,23 @@ class ComposerStaticInitDrupal8
             'Doctrine\\Common\\Lexer\\' => 22,
             'Doctrine\\Common\\Inflector\\' => 26,
             'Doctrine\\Common\\Collections\\' => 28,
+=======
+            'Drupal\\Composer\\Plugin\\Scaffold\\' => 32,
+            'Drupal\\Component\\' => 17,
+            'Doctrine\\Common\\Lexer\\' => 22,
+            'Doctrine\\Common\\Inflector\\' => 26,
+>>>>>>> Based off of manual_composer first commit
             'Doctrine\\Common\\Cache\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
         ),
         'C' => 
         array (
+<<<<<<< HEAD
+=======
+            'Consolidation\\OutputFormatters\\' => 31,
+            'Consolidation\\AnnotatedCommand\\' => 31,
+>>>>>>> Based off of manual_composer first commit
             'Composer\\Semver\\' => 16,
             'Composer\\Installers\\' => 20,
         ),
@@ -154,7 +223,15 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/..' . '/cweagans/composer-patches/src',
         ),
+<<<<<<< HEAD
         'Wikimedia\\Composer\\' => 
+=======
+        'ZipStream\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
+        ),
+        'Wikimedia\\Composer\\Merge\\V2\\' => 
+>>>>>>> Based off of manual_composer first commit
         array (
             0 => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src',
         ),
@@ -166,6 +243,13 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src',
         ),
+<<<<<<< HEAD
+=======
+        'Symfony\\Polyfill\\Util\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-util',
+        ),
+>>>>>>> Based off of manual_composer first commit
         'Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
@@ -174,6 +258,7 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
         ),
+<<<<<<< HEAD
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
@@ -181,6 +266,19 @@ class ComposerStaticInitDrupal8
         'Symfony\\Polyfill\\Intl\\Normalizer\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer',
+=======
+        'Symfony\\Polyfill\\Php70\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php70',
+        ),
+        'Symfony\\Polyfill\\Php56\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php56',
+        ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+>>>>>>> Based off of manual_composer first commit
         ),
         'Symfony\\Polyfill\\Intl\\Idn\\' => 
         array (
@@ -194,6 +292,13 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
+<<<<<<< HEAD
+=======
+        'Symfony\\Contracts\\EventDispatcher\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/event-dispatcher-contracts',
+        ),
+>>>>>>> Based off of manual_composer first commit
         'Symfony\\Component\\Yaml\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/yaml',
@@ -230,6 +335,13 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/..' . '/symfony/http-foundation',
         ),
+<<<<<<< HEAD
+=======
+        'Symfony\\Component\\Finder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/finder',
+        ),
+>>>>>>> Based off of manual_composer first commit
         'Symfony\\Component\\EventDispatcher\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
@@ -258,12 +370,20 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/..' . '/symfony/psr-http-message-bridge',
         ),
+<<<<<<< HEAD
+=======
+        'Solarium\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/solarium/solarium/src',
+        ),
+>>>>>>> Based off of manual_composer first commit
         'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
         'Psr\\Http\\Message\\' => 
         array (
+<<<<<<< HEAD
             0 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Container\\' => 
@@ -273,6 +393,22 @@ class ComposerStaticInitDrupal8
         'Psr\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
+=======
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Psr\\Http\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-client/src',
+        ),
+        'Psr\\EventDispatcher\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/event-dispatcher/src',
+        ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
+>>>>>>> Based off of manual_composer first commit
         ),
         'PHPMailer\\PHPMailer\\' => 
         array (
@@ -282,6 +418,13 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src',
         ),
+<<<<<<< HEAD
+=======
+        'MyCLabs\\Enum\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
+        ),
+>>>>>>> Based off of manual_composer first commit
         'Masterminds\\' => 
         array (
             0 => __DIR__ . '/..' . '/masterminds/html5/src',
@@ -320,7 +463,11 @@ class ComposerStaticInitDrupal8
         ),
         'Egulias\\EmailValidator\\' => 
         array (
+<<<<<<< HEAD
             0 => __DIR__ . '/..' . '/egulias/email-validator/src',
+=======
+            0 => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator',
+>>>>>>> Based off of manual_composer first commit
         ),
         'Drupal\\Driver\\' => 
         array (
@@ -330,6 +477,7 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/../..' . '/core/lib/Drupal/Core',
         ),
+<<<<<<< HEAD
         'Drupal\\Component\\' => 
         array (
             0 => __DIR__ . '/../..' . '/core/lib/Drupal/Component',
@@ -345,6 +493,15 @@ class ComposerStaticInitDrupal8
         'Doctrine\\Inflector\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector',
+=======
+        'Drupal\\Composer\\Plugin\\Scaffold\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/drupal/core-composer-scaffold',
+        ),
+        'Drupal\\Component\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/core/lib/Drupal/Component',
+>>>>>>> Based off of manual_composer first commit
         ),
         'Doctrine\\Common\\Lexer\\' => 
         array (
@@ -354,10 +511,13 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector',
         ),
+<<<<<<< HEAD
         'Doctrine\\Common\\Collections\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections',
         ),
+=======
+>>>>>>> Based off of manual_composer first commit
         'Doctrine\\Common\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache',
@@ -369,9 +529,20 @@ class ComposerStaticInitDrupal8
         'Doctrine\\Common\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
+<<<<<<< HEAD
             1 => __DIR__ . '/..' . '/doctrine/event-manager/lib/Doctrine/Common',
             2 => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common',
             3 => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common',
+=======
+        ),
+        'Consolidation\\OutputFormatters\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/output-formatters/src',
+        ),
+        'Consolidation\\AnnotatedCommand\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/annotated-command/src',
+>>>>>>> Based off of manual_composer first commit
         ),
         'Composer\\Semver\\' => 
         array (
@@ -401,10 +572,13 @@ class ComposerStaticInitDrupal8
             array (
                 0 => __DIR__ . '/..' . '/stack/builder/src',
             ),
+<<<<<<< HEAD
             'Solarium\\' => 
             array (
                 0 => __DIR__ . '/..' . '/solarium/solarium/library',
             ),
+=======
+>>>>>>> Based off of manual_composer first commit
         ),
         'H' => 
         array (
@@ -420,6 +594,20 @@ class ComposerStaticInitDrupal8
                 0 => __DIR__ . '/..' . '/easyrdf/easyrdf/lib',
             ),
         ),
+<<<<<<< HEAD
+=======
+        'D' => 
+        array (
+            'Doctrine\\Common\\Collections\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/doctrine/collections/lib',
+            ),
+            'Dflydev\\DotAccessData' => 
+            array (
+                0 => __DIR__ . '/..' . '/dflydev/dot-access-data/src',
+            ),
+        ),
+>>>>>>> Based off of manual_composer first commit
         'C' => 
         array (
             'Console' => 
@@ -446,8 +634,15 @@ class ComposerStaticInitDrupal8
 
     public static $classMap = array (
         'Archive_Tar' => __DIR__ . '/..' . '/pear/archive_tar/Archive/Tar.php',
+<<<<<<< HEAD
         'Asm89\\Stack\\Cors' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/Cors.php',
         'Asm89\\Stack\\CorsService' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/CorsService.php',
+=======
+        'ArithmeticError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
+        'Asm89\\Stack\\Cors' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/Cors.php',
+        'Asm89\\Stack\\CorsService' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/CorsService.php',
+        'AssertionError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
+>>>>>>> Based off of manual_composer first commit
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Caxy\\HtmlDiff\\AbstractDiff' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/AbstractDiff.php',
         'Caxy\\HtmlDiff\\DiffCache' => __DIR__ . '/..' . '/caxy/php-htmldiff/lib/Caxy/HtmlDiff/DiffCache.php',
@@ -532,6 +727,10 @@ class ComposerStaticInitDrupal8
         'Composer\\Installers\\OsclassInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/OsclassInstaller.php',
         'Composer\\Installers\\OxidInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/OxidInstaller.php',
         'Composer\\Installers\\PPIInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/PPIInstaller.php',
+<<<<<<< HEAD
+=======
+        'Composer\\Installers\\PantheonInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/PantheonInstaller.php',
+>>>>>>> Based off of manual_composer first commit
         'Composer\\Installers\\PhiftyInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/PhiftyInstaller.php',
         'Composer\\Installers\\PhpBBInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/PhpBBInstaller.php',
         'Composer\\Installers\\PimcoreInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/PimcoreInstaller.php',
@@ -581,6 +780,149 @@ class ComposerStaticInitDrupal8
         'Composer\\Semver\\Semver' => __DIR__ . '/..' . '/composer/semver/src/Semver.php',
         'Composer\\Semver\\VersionParser' => __DIR__ . '/..' . '/composer/semver/src/VersionParser.php',
         'Console_Getopt' => __DIR__ . '/..' . '/pear/console_getopt/Console/Getopt.php',
+<<<<<<< HEAD
+=======
+        'Consolidation\\AnnotatedCommand\\AnnotatedCommand' => __DIR__ . '/..' . '/consolidation/annotated-command/src/AnnotatedCommand.php',
+        'Consolidation\\AnnotatedCommand\\AnnotatedCommandFactory' => __DIR__ . '/..' . '/consolidation/annotated-command/src/AnnotatedCommandFactory.php',
+        'Consolidation\\AnnotatedCommand\\AnnotationData' => __DIR__ . '/..' . '/consolidation/annotated-command/src/AnnotationData.php',
+        'Consolidation\\AnnotatedCommand\\Cache\\CacheWrapper' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Cache/CacheWrapper.php',
+        'Consolidation\\AnnotatedCommand\\Cache\\NullCache' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Cache/NullCache.php',
+        'Consolidation\\AnnotatedCommand\\Cache\\SimpleCacheInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Cache/SimpleCacheInterface.php',
+        'Consolidation\\AnnotatedCommand\\CommandCreationListener' => __DIR__ . '/..' . '/consolidation/annotated-command/src/CommandCreationListener.php',
+        'Consolidation\\AnnotatedCommand\\CommandCreationListenerInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/CommandCreationListenerInterface.php',
+        'Consolidation\\AnnotatedCommand\\CommandData' => __DIR__ . '/..' . '/consolidation/annotated-command/src/CommandData.php',
+        'Consolidation\\AnnotatedCommand\\CommandError' => __DIR__ . '/..' . '/consolidation/annotated-command/src/CommandError.php',
+        'Consolidation\\AnnotatedCommand\\CommandFileDiscovery' => __DIR__ . '/..' . '/consolidation/annotated-command/src/CommandFileDiscovery.php',
+        'Consolidation\\AnnotatedCommand\\CommandInfoAltererInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/CommandInfoAltererInterface.php',
+        'Consolidation\\AnnotatedCommand\\CommandProcessor' => __DIR__ . '/..' . '/consolidation/annotated-command/src/CommandProcessor.php',
+        'Consolidation\\AnnotatedCommand\\CommandResult' => __DIR__ . '/..' . '/consolidation/annotated-command/src/CommandResult.php',
+        'Consolidation\\AnnotatedCommand\\Events\\CustomEventAwareInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Events/CustomEventAwareInterface.php',
+        'Consolidation\\AnnotatedCommand\\Events\\CustomEventAwareTrait' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Events/CustomEventAwareTrait.php',
+        'Consolidation\\AnnotatedCommand\\ExitCodeInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/ExitCodeInterface.php',
+        'Consolidation\\AnnotatedCommand\\Help\\HelpCommand' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Help/HelpCommand.php',
+        'Consolidation\\AnnotatedCommand\\Help\\HelpDocument' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Help/HelpDocument.php',
+        'Consolidation\\AnnotatedCommand\\Help\\HelpDocumentAlter' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Help/HelpDocumentAlter.php',
+        'Consolidation\\AnnotatedCommand\\Help\\HelpDocumentBuilder' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Help/HelpDocumentBuilder.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\AlterResultInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/AlterResultInterface.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\Dispatchers\\CommandEventHookDispatcher' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/Dispatchers/CommandEventHookDispatcher.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\Dispatchers\\ExtracterHookDispatcher' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/Dispatchers/ExtracterHookDispatcher.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\Dispatchers\\HookDispatcher' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/Dispatchers/HookDispatcher.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\Dispatchers\\InitializeHookDispatcher' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/Dispatchers/InitializeHookDispatcher.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\Dispatchers\\InteractHookDispatcher' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/Dispatchers/InteractHookDispatcher.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\Dispatchers\\OptionsHookDispatcher' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/Dispatchers/OptionsHookDispatcher.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\Dispatchers\\ProcessResultHookDispatcher' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/Dispatchers/ProcessResultHookDispatcher.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\Dispatchers\\ReplaceCommandHookDispatcher' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/Dispatchers/ReplaceCommandHookDispatcher.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\Dispatchers\\StatusDeterminerHookDispatcher' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/Dispatchers/StatusDeterminerHookDispatcher.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\Dispatchers\\ValidateHookDispatcher' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/Dispatchers/ValidateHookDispatcher.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\ExtractOutputInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/ExtractOutputInterface.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\HookManager' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/HookManager.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\InitializeHookInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/InitializeHookInterface.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\InteractorInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/InteractorInterface.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\OptionHookInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/OptionHookInterface.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\ProcessResultInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/ProcessResultInterface.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\StatusDeterminerInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/StatusDeterminerInterface.php',
+        'Consolidation\\AnnotatedCommand\\Hooks\\ValidatorInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Hooks/ValidatorInterface.php',
+        'Consolidation\\AnnotatedCommand\\Input\\StdinAwareInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Input/StdinAwareInterface.php',
+        'Consolidation\\AnnotatedCommand\\Input\\StdinAwareTrait' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Input/StdinAwareTrait.php',
+        'Consolidation\\AnnotatedCommand\\Input\\StdinHandler' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Input/StdinHandler.php',
+        'Consolidation\\AnnotatedCommand\\Options\\AlterOptionsCommandEvent' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Options/AlterOptionsCommandEvent.php',
+        'Consolidation\\AnnotatedCommand\\Options\\AutomaticOptionsProviderInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Options/AutomaticOptionsProviderInterface.php',
+        'Consolidation\\AnnotatedCommand\\Options\\PrepareFormatter' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Options/PrepareFormatter.php',
+        'Consolidation\\AnnotatedCommand\\Options\\PrepareTerminalWidthOption' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Options/PrepareTerminalWidthOption.php',
+        'Consolidation\\AnnotatedCommand\\OutputDataInterface' => __DIR__ . '/..' . '/consolidation/annotated-command/src/OutputDataInterface.php',
+        'Consolidation\\AnnotatedCommand\\ParameterInjection' => __DIR__ . '/..' . '/consolidation/annotated-command/src/ParameterInjection.php',
+        'Consolidation\\AnnotatedCommand\\ParameterInjector' => __DIR__ . '/..' . '/consolidation/annotated-command/src/ParameterInjector.php',
+        'Consolidation\\AnnotatedCommand\\Parser\\CommandInfo' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/CommandInfo.php',
+        'Consolidation\\AnnotatedCommand\\Parser\\CommandInfoDeserializer' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/CommandInfoDeserializer.php',
+        'Consolidation\\AnnotatedCommand\\Parser\\CommandInfoSerializer' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/CommandInfoSerializer.php',
+        'Consolidation\\AnnotatedCommand\\Parser\\DefaultsWithDescriptions' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/DefaultsWithDescriptions.php',
+        'Consolidation\\AnnotatedCommand\\Parser\\Internal\\BespokeDocBlockParser' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/Internal/BespokeDocBlockParser.php',
+        'Consolidation\\AnnotatedCommand\\Parser\\Internal\\CommandDocBlockParserFactory' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/Internal/CommandDocBlockParserFactory.php',
+        'Consolidation\\AnnotatedCommand\\Parser\\Internal\\CsvUtils' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/Internal/CsvUtils.php',
+        'Consolidation\\AnnotatedCommand\\Parser\\Internal\\DocblockTag' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/Internal/DocblockTag.php',
+        'Consolidation\\AnnotatedCommand\\Parser\\Internal\\FullyQualifiedClassCache' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/Internal/FullyQualifiedClassCache.php',
+        'Consolidation\\AnnotatedCommand\\Parser\\Internal\\TagFactory' => __DIR__ . '/..' . '/consolidation/annotated-command/src/Parser/Internal/TagFactory.php',
+        'Consolidation\\AnnotatedCommand\\ResultWriter' => __DIR__ . '/..' . '/consolidation/annotated-command/src/ResultWriter.php',
+        'Consolidation\\OutputFormatters\\Exception\\AbstractDataFormatException' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Exception/AbstractDataFormatException.php',
+        'Consolidation\\OutputFormatters\\Exception\\IncompatibleDataException' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Exception/IncompatibleDataException.php',
+        'Consolidation\\OutputFormatters\\Exception\\InvalidFormatException' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Exception/InvalidFormatException.php',
+        'Consolidation\\OutputFormatters\\Exception\\UnknownFieldException' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Exception/UnknownFieldException.php',
+        'Consolidation\\OutputFormatters\\Exception\\UnknownFormatException' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Exception/UnknownFormatException.php',
+        'Consolidation\\OutputFormatters\\FormatterManager' => __DIR__ . '/..' . '/consolidation/output-formatters/src/FormatterManager.php',
+        'Consolidation\\OutputFormatters\\Formatters\\CsvFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/CsvFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\FormatterAwareInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/FormatterAwareInterface.php',
+        'Consolidation\\OutputFormatters\\Formatters\\FormatterAwareTrait' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/FormatterAwareTrait.php',
+        'Consolidation\\OutputFormatters\\Formatters\\FormatterInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/FormatterInterface.php',
+        'Consolidation\\OutputFormatters\\Formatters\\HumanReadableFormat' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/HumanReadableFormat.php',
+        'Consolidation\\OutputFormatters\\Formatters\\JsonFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/JsonFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\ListFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/ListFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\MetadataFormatterInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/MetadataFormatterInterface.php',
+        'Consolidation\\OutputFormatters\\Formatters\\MetadataFormatterTrait' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/MetadataFormatterTrait.php',
+        'Consolidation\\OutputFormatters\\Formatters\\NoOutputFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/NoOutputFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\PrintRFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/PrintRFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\RenderDataInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/RenderDataInterface.php',
+        'Consolidation\\OutputFormatters\\Formatters\\RenderTableDataTrait' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/RenderTableDataTrait.php',
+        'Consolidation\\OutputFormatters\\Formatters\\SectionsFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/SectionsFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\SerializeFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/SerializeFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\StringFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/StringFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\TableFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/TableFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\TsvFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/TsvFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\VarDumpFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/VarDumpFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\VarExportFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/VarExportFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\XmlFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/XmlFormatter.php',
+        'Consolidation\\OutputFormatters\\Formatters\\YamlFormatter' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Formatters/YamlFormatter.php',
+        'Consolidation\\OutputFormatters\\Options\\FormatterOptions' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Options/FormatterOptions.php',
+        'Consolidation\\OutputFormatters\\Options\\OverrideOptionsInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Options/OverrideOptionsInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\AbstractListData' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/AbstractListData.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\AbstractStructuredList' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/AbstractStructuredList.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\AssociativeList' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/AssociativeList.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\CallableRenderer' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/CallableRenderer.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\ConversionInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/ConversionInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\FieldProcessor' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/FieldProcessor.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\HelpDocument' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/HelpDocument.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\ListDataFromKeys' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/ListDataFromKeys.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\ListDataInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/ListDataInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\MetadataHolderInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/MetadataHolderInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\MetadataHolderTrait' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/MetadataHolderTrait.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\MetadataInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/MetadataInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\NumericCellRenderer' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/NumericCellRenderer.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\OriginalDataInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/OriginalDataInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\PropertyList' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/PropertyList.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\RenderCellCollectionInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/RenderCellCollectionInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\RenderCellCollectionTrait' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/RenderCellCollectionTrait.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\RenderCellInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/RenderCellInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\RestructureInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/RestructureInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\RowsOfFields' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/RowsOfFields.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\RowsOfFieldsWithMetadata' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/RowsOfFieldsWithMetadata.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\TableDataInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/TableDataInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\UnstructuredData' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/UnstructuredData.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\UnstructuredInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/UnstructuredInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\UnstructuredListData' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/UnstructuredListData.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\Xml\\DomDataInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/Xml/DomDataInterface.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\Xml\\XmlSchema' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/Xml/XmlSchema.php',
+        'Consolidation\\OutputFormatters\\StructuredData\\Xml\\XmlSchemaInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/StructuredData/Xml/XmlSchemaInterface.php',
+        'Consolidation\\OutputFormatters\\Transformations\\DomToArraySimplifier' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/DomToArraySimplifier.php',
+        'Consolidation\\OutputFormatters\\Transformations\\OverrideRestructureInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/OverrideRestructureInterface.php',
+        'Consolidation\\OutputFormatters\\Transformations\\PropertyListTableTransformation' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/PropertyListTableTransformation.php',
+        'Consolidation\\OutputFormatters\\Transformations\\PropertyParser' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/PropertyParser.php',
+        'Consolidation\\OutputFormatters\\Transformations\\ReorderFields' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/ReorderFields.php',
+        'Consolidation\\OutputFormatters\\Transformations\\SimplifyToArrayInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/SimplifyToArrayInterface.php',
+        'Consolidation\\OutputFormatters\\Transformations\\StringTransformationInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/StringTransformationInterface.php',
+        'Consolidation\\OutputFormatters\\Transformations\\TableTransformation' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/TableTransformation.php',
+        'Consolidation\\OutputFormatters\\Transformations\\UnstructuredDataFieldAccessor' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/UnstructuredDataFieldAccessor.php',
+        'Consolidation\\OutputFormatters\\Transformations\\UnstructuredDataListTransformation' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/UnstructuredDataListTransformation.php',
+        'Consolidation\\OutputFormatters\\Transformations\\UnstructuredDataTransformation' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/UnstructuredDataTransformation.php',
+        'Consolidation\\OutputFormatters\\Transformations\\WordWrapper' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/WordWrapper.php',
+        'Consolidation\\OutputFormatters\\Transformations\\Wrap\\CalculateWidths' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/Wrap/CalculateWidths.php',
+        'Consolidation\\OutputFormatters\\Transformations\\Wrap\\ColumnWidths' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Transformations/Wrap/ColumnWidths.php',
+        'Consolidation\\OutputFormatters\\Validate\\ValidDataTypesInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Validate/ValidDataTypesInterface.php',
+        'Consolidation\\OutputFormatters\\Validate\\ValidDataTypesTrait' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Validate/ValidDataTypesTrait.php',
+        'Consolidation\\OutputFormatters\\Validate\\ValidationInterface' => __DIR__ . '/..' . '/consolidation/output-formatters/src/Validate/ValidationInterface.php',
+        'Dflydev\\DotAccessData\\Data' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Dflydev/DotAccessData/Data.php',
+        'Dflydev\\DotAccessData\\DataInterface' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Dflydev/DotAccessData/DataInterface.php',
+        'Dflydev\\DotAccessData\\Util' => __DIR__ . '/..' . '/dflydev/dot-access-data/src/Dflydev/DotAccessData/Util.php',
+        'DivisionByZeroError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
+>>>>>>> Based off of manual_composer first commit
         'Doctrine\\Common\\Annotations\\Annotation' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation.php',
         'Doctrine\\Common\\Annotations\\AnnotationException' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/AnnotationException.php',
         'Doctrine\\Common\\Annotations\\AnnotationReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/AnnotationReader.php',
@@ -589,18 +931,26 @@ class ComposerStaticInitDrupal8
         'Doctrine\\Common\\Annotations\\Annotation\\Attributes' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/Attributes.php',
         'Doctrine\\Common\\Annotations\\Annotation\\Enum' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/Enum.php',
         'Doctrine\\Common\\Annotations\\Annotation\\IgnoreAnnotation' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/IgnoreAnnotation.php',
+<<<<<<< HEAD
         'Doctrine\\Common\\Annotations\\Annotation\\NamedArgumentConstructor' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/NamedArgumentConstructor.php',
+=======
+>>>>>>> Based off of manual_composer first commit
         'Doctrine\\Common\\Annotations\\Annotation\\Required' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/Required.php',
         'Doctrine\\Common\\Annotations\\Annotation\\Target' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/Target.php',
         'Doctrine\\Common\\Annotations\\CachedReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/CachedReader.php',
         'Doctrine\\Common\\Annotations\\DocLexer' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/DocLexer.php',
         'Doctrine\\Common\\Annotations\\DocParser' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/DocParser.php',
         'Doctrine\\Common\\Annotations\\FileCacheReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/FileCacheReader.php',
+<<<<<<< HEAD
         'Doctrine\\Common\\Annotations\\ImplicitlyIgnoredAnnotationNames' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/ImplicitlyIgnoredAnnotationNames.php',
         'Doctrine\\Common\\Annotations\\IndexedReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/IndexedReader.php',
         'Doctrine\\Common\\Annotations\\NamedArgumentConstructorAnnotation' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/NamedArgumentConstructorAnnotation.php',
         'Doctrine\\Common\\Annotations\\PhpParser' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/PhpParser.php',
         'Doctrine\\Common\\Annotations\\PsrCachedReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/PsrCachedReader.php',
+=======
+        'Doctrine\\Common\\Annotations\\IndexedReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/IndexedReader.php',
+        'Doctrine\\Common\\Annotations\\PhpParser' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/PhpParser.php',
+>>>>>>> Based off of manual_composer first commit
         'Doctrine\\Common\\Annotations\\Reader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/Reader.php',
         'Doctrine\\Common\\Annotations\\SimpleAnnotationReader' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/SimpleAnnotationReader.php',
         'Doctrine\\Common\\Annotations\\TokenParser' => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations/TokenParser.php',
@@ -611,6 +961,7 @@ class ComposerStaticInitDrupal8
         'Doctrine\\Common\\Cache\\CacheProvider' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/CacheProvider.php',
         'Doctrine\\Common\\Cache\\ChainCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/ChainCache.php',
         'Doctrine\\Common\\Cache\\ClearableCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/ClearableCache.php',
+<<<<<<< HEAD
         'Doctrine\\Common\\Cache\\CouchbaseBucketCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/CouchbaseBucketCache.php',
         'Doctrine\\Common\\Cache\\CouchbaseCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/CouchbaseCache.php',
         'Doctrine\\Common\\Cache\\ExtMongoDBCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/ExtMongoDBCache.php',
@@ -634,6 +985,21 @@ class ComposerStaticInitDrupal8
         'Doctrine\\Common\\Cache\\Psr6\\InvalidArgument' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/InvalidArgument.php',
         'Doctrine\\Common\\Cache\\Psr6\\TypedCacheItem' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/TypedCacheItem.php',
         'Doctrine\\Common\\Cache\\RedisCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/RedisCache.php',
+=======
+        'Doctrine\\Common\\Cache\\CouchbaseCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/CouchbaseCache.php',
+        'Doctrine\\Common\\Cache\\FileCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/FileCache.php',
+        'Doctrine\\Common\\Cache\\FilesystemCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/FilesystemCache.php',
+        'Doctrine\\Common\\Cache\\FlushableCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/FlushableCache.php',
+        'Doctrine\\Common\\Cache\\MemcacheCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/MemcacheCache.php',
+        'Doctrine\\Common\\Cache\\MemcachedCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/MemcachedCache.php',
+        'Doctrine\\Common\\Cache\\MongoDBCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/MongoDBCache.php',
+        'Doctrine\\Common\\Cache\\MultiGetCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/MultiGetCache.php',
+        'Doctrine\\Common\\Cache\\MultiPutCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/MultiPutCache.php',
+        'Doctrine\\Common\\Cache\\PhpFileCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/PhpFileCache.php',
+        'Doctrine\\Common\\Cache\\PredisCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/PredisCache.php',
+        'Doctrine\\Common\\Cache\\RedisCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/RedisCache.php',
+        'Doctrine\\Common\\Cache\\RiakCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/RiakCache.php',
+>>>>>>> Based off of manual_composer first commit
         'Doctrine\\Common\\Cache\\SQLite3Cache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/SQLite3Cache.php',
         'Doctrine\\Common\\Cache\\Version' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/Version.php',
         'Doctrine\\Common\\Cache\\VoidCache' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/VoidCache.php',
@@ -655,6 +1021,7 @@ class ComposerStaticInitDrupal8
         'Doctrine\\Common\\Collections\\Selectable' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Selectable.php',
         'Doctrine\\Common\\CommonException' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/CommonException.php',
         'Doctrine\\Common\\Comparable' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Comparable.php',
+<<<<<<< HEAD
         'Doctrine\\Common\\EventArgs' => __DIR__ . '/..' . '/doctrine/event-manager/lib/Doctrine/Common/EventArgs.php',
         'Doctrine\\Common\\EventManager' => __DIR__ . '/..' . '/doctrine/event-manager/lib/Doctrine/Common/EventManager.php',
         'Doctrine\\Common\\EventSubscriber' => __DIR__ . '/..' . '/doctrine/event-manager/lib/Doctrine/Common/EventSubscriber.php',
@@ -693,6 +1060,46 @@ class ComposerStaticInitDrupal8
         'Doctrine\\Common\\Persistence\\PersistentObject' => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common/Persistence/PersistentObject.php',
         'Doctrine\\Common\\Persistence\\Proxy' => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common/Persistence/Proxy.php',
         'Doctrine\\Common\\PropertyChangedListener' => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common/PropertyChangedListener.php',
+=======
+        'Doctrine\\Common\\EventArgs' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/EventArgs.php',
+        'Doctrine\\Common\\EventManager' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/EventManager.php',
+        'Doctrine\\Common\\EventSubscriber' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/EventSubscriber.php',
+        'Doctrine\\Common\\Inflector\\Inflector' => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector/Inflector.php',
+        'Doctrine\\Common\\Lexer' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Lexer.php',
+        'Doctrine\\Common\\Lexer\\AbstractLexer' => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php',
+        'Doctrine\\Common\\NotifyPropertyChanged' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/NotifyPropertyChanged.php',
+        'Doctrine\\Common\\Persistence\\AbstractManagerRegistry' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/AbstractManagerRegistry.php',
+        'Doctrine\\Common\\Persistence\\ConnectionRegistry' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/ConnectionRegistry.php',
+        'Doctrine\\Common\\Persistence\\Event\\LifecycleEventArgs' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Event/LifecycleEventArgs.php',
+        'Doctrine\\Common\\Persistence\\Event\\LoadClassMetadataEventArgs' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Event/LoadClassMetadataEventArgs.php',
+        'Doctrine\\Common\\Persistence\\Event\\ManagerEventArgs' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Event/ManagerEventArgs.php',
+        'Doctrine\\Common\\Persistence\\Event\\OnClearEventArgs' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Event/OnClearEventArgs.php',
+        'Doctrine\\Common\\Persistence\\Event\\PreUpdateEventArgs' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Event/PreUpdateEventArgs.php',
+        'Doctrine\\Common\\Persistence\\ManagerRegistry' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/ManagerRegistry.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\AbstractClassMetadataFactory' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/AbstractClassMetadataFactory.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\ClassMetadata' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/ClassMetadata.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\ClassMetadataFactory' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/ClassMetadataFactory.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\Driver\\AnnotationDriver' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/Driver/AnnotationDriver.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\Driver\\DefaultFileLocator' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/Driver/DefaultFileLocator.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\Driver\\FileDriver' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/Driver/FileDriver.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\Driver\\FileLocator' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/Driver/FileLocator.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\Driver\\MappingDriver' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/Driver/MappingDriver.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\Driver\\MappingDriverChain' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/Driver/MappingDriverChain.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\Driver\\PHPDriver' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/Driver/PHPDriver.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\Driver\\StaticPHPDriver' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/Driver/StaticPHPDriver.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\Driver\\SymfonyFileLocator' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/Driver/SymfonyFileLocator.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\MappingException' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/MappingException.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\ReflectionService' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/ReflectionService.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\RuntimeReflectionService' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/RuntimeReflectionService.php',
+        'Doctrine\\Common\\Persistence\\Mapping\\StaticReflectionService' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Mapping/StaticReflectionService.php',
+        'Doctrine\\Common\\Persistence\\ObjectManager' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/ObjectManager.php',
+        'Doctrine\\Common\\Persistence\\ObjectManagerAware' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/ObjectManagerAware.php',
+        'Doctrine\\Common\\Persistence\\ObjectManagerDecorator' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/ObjectManagerDecorator.php',
+        'Doctrine\\Common\\Persistence\\ObjectRepository' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/ObjectRepository.php',
+        'Doctrine\\Common\\Persistence\\PersistentObject' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/PersistentObject.php',
+        'Doctrine\\Common\\Persistence\\Proxy' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Persistence/Proxy.php',
+        'Doctrine\\Common\\PropertyChangedListener' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/PropertyChangedListener.php',
+>>>>>>> Based off of manual_composer first commit
         'Doctrine\\Common\\Proxy\\AbstractProxyFactory' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Proxy/AbstractProxyFactory.php',
         'Doctrine\\Common\\Proxy\\Autoloader' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Proxy/Autoloader.php',
         'Doctrine\\Common\\Proxy\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Proxy/Exception/InvalidArgumentException.php',
@@ -702,6 +1109,7 @@ class ComposerStaticInitDrupal8
         'Doctrine\\Common\\Proxy\\Proxy' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Proxy/Proxy.php',
         'Doctrine\\Common\\Proxy\\ProxyDefinition' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Proxy/ProxyDefinition.php',
         'Doctrine\\Common\\Proxy\\ProxyGenerator' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Proxy/ProxyGenerator.php',
+<<<<<<< HEAD
         'Doctrine\\Common\\Reflection\\ClassFinderInterface' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/ClassFinderInterface.php',
         'Doctrine\\Common\\Reflection\\Compatibility\\Php7\\ReflectionClass' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/Compatibility/Php7/ReflectionClass.php',
         'Doctrine\\Common\\Reflection\\Compatibility\\Php7\\ReflectionMethod' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/Compatibility/Php7/ReflectionMethod.php',
@@ -717,10 +1125,21 @@ class ComposerStaticInitDrupal8
         'Doctrine\\Common\\Reflection\\StaticReflectionParser' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/StaticReflectionParser.php',
         'Doctrine\\Common\\Reflection\\StaticReflectionProperty' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/StaticReflectionProperty.php',
         'Doctrine\\Common\\Reflection\\TypedNoDefaultReflectionProperty' => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common/Reflection/TypedNoDefaultReflectionProperty.php',
+=======
+        'Doctrine\\Common\\Reflection\\ClassFinderInterface' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Reflection/ClassFinderInterface.php',
+        'Doctrine\\Common\\Reflection\\Psr0FindFile' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Reflection/Psr0FindFile.php',
+        'Doctrine\\Common\\Reflection\\ReflectionProviderInterface' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Reflection/ReflectionProviderInterface.php',
+        'Doctrine\\Common\\Reflection\\RuntimePublicReflectionProperty' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Reflection/RuntimePublicReflectionProperty.php',
+        'Doctrine\\Common\\Reflection\\StaticReflectionClass' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Reflection/StaticReflectionClass.php',
+        'Doctrine\\Common\\Reflection\\StaticReflectionMethod' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Reflection/StaticReflectionMethod.php',
+        'Doctrine\\Common\\Reflection\\StaticReflectionParser' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Reflection/StaticReflectionParser.php',
+        'Doctrine\\Common\\Reflection\\StaticReflectionProperty' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Reflection/StaticReflectionProperty.php',
+>>>>>>> Based off of manual_composer first commit
         'Doctrine\\Common\\Util\\ClassUtils' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Util/ClassUtils.php',
         'Doctrine\\Common\\Util\\Debug' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Util/Debug.php',
         'Doctrine\\Common\\Util\\Inflector' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Util/Inflector.php',
         'Doctrine\\Common\\Version' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Version.php',
+<<<<<<< HEAD
         'Doctrine\\Inflector\\CachedWordInflector' => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector/CachedWordInflector.php',
         'Doctrine\\Inflector\\GenericLanguageInflectorFactory' => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector/GenericLanguageInflectorFactory.php',
         'Doctrine\\Inflector\\Inflector' => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector/Inflector.php',
@@ -800,6 +1219,9 @@ class ComposerStaticInitDrupal8
         'DrupalComposer\\DrupalScaffold\\Handler' => __DIR__ . '/..' . '/drupal-composer/drupal-scaffold/src/Handler.php',
         'DrupalComposer\\DrupalScaffold\\Plugin' => __DIR__ . '/..' . '/drupal-composer/drupal-scaffold/src/Plugin.php',
         'DrupalComposer\\DrupalScaffold\\PrestissimoFileFetcher' => __DIR__ . '/..' . '/drupal-composer/drupal-scaffold/src/PrestissimoFileFetcher.php',
+=======
+        'Drupal' => __DIR__ . '/../..' . '/core/lib/Drupal.php',
+>>>>>>> Based off of manual_composer first commit
         'Drupal\\Component\\Annotation\\AnnotationBase' => __DIR__ . '/../..' . '/core/lib/Drupal/Component/Annotation/AnnotationBase.php',
         'Drupal\\Component\\Annotation\\AnnotationInterface' => __DIR__ . '/../..' . '/core/lib/Drupal/Component/Annotation/AnnotationInterface.php',
         'Drupal\\Component\\Annotation\\Doctrine\\DocParser' => __DIR__ . '/../..' . '/core/lib/Drupal/Component/Annotation/Doctrine/DocParser.php',
@@ -956,6 +1378,32 @@ class ComposerStaticInitDrupal8
         'Drupal\\Component\\Uuid\\Uuid' => __DIR__ . '/../..' . '/core/lib/Drupal/Component/Uuid/Uuid.php',
         'Drupal\\Component\\Uuid\\UuidInterface' => __DIR__ . '/../..' . '/core/lib/Drupal/Component/Uuid/UuidInterface.php',
         'Drupal\\Component\\Version\\Constraint' => __DIR__ . '/../..' . '/core/lib/Drupal/Component/Version/Constraint.php',
+<<<<<<< HEAD
+=======
+        'Drupal\\Composer\\Plugin\\Scaffold\\AllowedPackages' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/AllowedPackages.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\CommandProvider' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/CommandProvider.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\ComposerScaffoldCommand' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/ComposerScaffoldCommand.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\GenerateAutoloadReferenceFile' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/GenerateAutoloadReferenceFile.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Git' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Git.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Handler' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Handler.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Interpolator' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Interpolator.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\ManageGitIgnore' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/ManageGitIgnore.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\ManageOptions' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/ManageOptions.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\AbstractOperation' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/AbstractOperation.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\AppendOp' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/AppendOp.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\OperationData' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/OperationData.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\OperationFactory' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/OperationFactory.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\OperationInterface' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/OperationInterface.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\ReplaceOp' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/ReplaceOp.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\ScaffoldFileCollection' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/ScaffoldFileCollection.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\ScaffoldResult' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/ScaffoldResult.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Operations\\SkipOp' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Operations/SkipOp.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\Plugin' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/Plugin.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\PostPackageEventListenerInterface' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/PostPackageEventListenerInterface.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\ScaffoldFileInfo' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/ScaffoldFileInfo.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\ScaffoldFilePath' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/ScaffoldFilePath.php',
+        'Drupal\\Composer\\Plugin\\Scaffold\\ScaffoldOptions' => __DIR__ . '/..' . '/drupal/core-composer-scaffold/ScaffoldOptions.php',
+>>>>>>> Based off of manual_composer first commit
         'Drupal\\Core\\Access\\AccessArgumentsResolverFactory' => __DIR__ . '/../..' . '/core/lib/Drupal/Core/Access/AccessArgumentsResolverFactory.php',
         'Drupal\\Core\\Access\\AccessArgumentsResolverFactoryInterface' => __DIR__ . '/../..' . '/core/lib/Drupal/Core/Access/AccessArgumentsResolverFactoryInterface.php',
         'Drupal\\Core\\Access\\AccessCheckInterface' => __DIR__ . '/../..' . '/core/lib/Drupal/Core/Access/AccessCheckInterface.php',
@@ -2578,6 +3026,7 @@ class ComposerStaticInitDrupal8
         'EasyRdf_Sparql_Result' => __DIR__ . '/..' . '/easyrdf/easyrdf/lib/EasyRdf/Sparql/Result.php',
         'EasyRdf_TypeMapper' => __DIR__ . '/..' . '/easyrdf/easyrdf/lib/EasyRdf/TypeMapper.php',
         'EasyRdf_Utils' => __DIR__ . '/..' . '/easyrdf/easyrdf/lib/EasyRdf/Utils.php',
+<<<<<<< HEAD
         'Egulias\\EmailValidator\\EmailLexer' => __DIR__ . '/..' . '/egulias/email-validator/src/EmailLexer.php',
         'Egulias\\EmailValidator\\EmailParser' => __DIR__ . '/..' . '/egulias/email-validator/src/EmailParser.php',
         'Egulias\\EmailValidator\\EmailValidator' => __DIR__ . '/..' . '/egulias/email-validator/src/EmailValidator.php',
@@ -2643,6 +3092,72 @@ class ComposerStaticInitDrupal8
         'Egulias\\EmailValidator\\Warning\\QuotedString' => __DIR__ . '/..' . '/egulias/email-validator/src/Warning/QuotedString.php',
         'Egulias\\EmailValidator\\Warning\\TLD' => __DIR__ . '/..' . '/egulias/email-validator/src/Warning/TLD.php',
         'Egulias\\EmailValidator\\Warning\\Warning' => __DIR__ . '/..' . '/egulias/email-validator/src/Warning/Warning.php',
+=======
+        'Egulias\\EmailValidator\\EmailLexer' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/EmailLexer.php',
+        'Egulias\\EmailValidator\\EmailParser' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/EmailParser.php',
+        'Egulias\\EmailValidator\\EmailValidator' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/EmailValidator.php',
+        'Egulias\\EmailValidator\\Exception\\AtextAfterCFWS' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/AtextAfterCFWS.php',
+        'Egulias\\EmailValidator\\Exception\\CRLFAtTheEnd' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/CRLFAtTheEnd.php',
+        'Egulias\\EmailValidator\\Exception\\CRLFX2' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/CRLFX2.php',
+        'Egulias\\EmailValidator\\Exception\\CRNoLF' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/CRNoLF.php',
+        'Egulias\\EmailValidator\\Exception\\CharNotAllowed' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/CharNotAllowed.php',
+        'Egulias\\EmailValidator\\Exception\\CommaInDomain' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/CommaInDomain.php',
+        'Egulias\\EmailValidator\\Exception\\ConsecutiveAt' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/ConsecutiveAt.php',
+        'Egulias\\EmailValidator\\Exception\\ConsecutiveDot' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/ConsecutiveDot.php',
+        'Egulias\\EmailValidator\\Exception\\DomainHyphened' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/DomainHyphened.php',
+        'Egulias\\EmailValidator\\Exception\\DotAtEnd' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/DotAtEnd.php',
+        'Egulias\\EmailValidator\\Exception\\DotAtStart' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/DotAtStart.php',
+        'Egulias\\EmailValidator\\Exception\\ExpectingAT' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/ExpectingAT.php',
+        'Egulias\\EmailValidator\\Exception\\ExpectingATEXT' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/ExpectingATEXT.php',
+        'Egulias\\EmailValidator\\Exception\\ExpectingCTEXT' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/ExpectingCTEXT.php',
+        'Egulias\\EmailValidator\\Exception\\ExpectingDTEXT' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/ExpectingDTEXT.php',
+        'Egulias\\EmailValidator\\Exception\\ExpectingDomainLiteralClose' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/ExpectingDomainLiteralClose.php',
+        'Egulias\\EmailValidator\\Exception\\ExpectingQPair' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/ExpectingQPair.php',
+        'Egulias\\EmailValidator\\Exception\\InvalidEmail' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/InvalidEmail.php',
+        'Egulias\\EmailValidator\\Exception\\NoDNSRecord' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/NoDNSRecord.php',
+        'Egulias\\EmailValidator\\Exception\\NoDomainPart' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/NoDomainPart.php',
+        'Egulias\\EmailValidator\\Exception\\NoLocalPart' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/NoLocalPart.php',
+        'Egulias\\EmailValidator\\Exception\\UnclosedComment' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/UnclosedComment.php',
+        'Egulias\\EmailValidator\\Exception\\UnclosedQuotedString' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/UnclosedQuotedString.php',
+        'Egulias\\EmailValidator\\Exception\\UnopenedComment' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Exception/UnopenedComment.php',
+        'Egulias\\EmailValidator\\Parser\\DomainPart' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Parser/DomainPart.php',
+        'Egulias\\EmailValidator\\Parser\\LocalPart' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Parser/LocalPart.php',
+        'Egulias\\EmailValidator\\Parser\\Parser' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Parser/Parser.php',
+        'Egulias\\EmailValidator\\Validation\\DNSCheckValidation' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Validation/DNSCheckValidation.php',
+        'Egulias\\EmailValidator\\Validation\\EmailValidation' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Validation/EmailValidation.php',
+        'Egulias\\EmailValidator\\Validation\\Error\\RFCWarnings' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Validation/Error/RFCWarnings.php',
+        'Egulias\\EmailValidator\\Validation\\Error\\SpoofEmail' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Validation/Error/SpoofEmail.php',
+        'Egulias\\EmailValidator\\Validation\\Exception\\EmptyValidationList' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Validation/Exception/EmptyValidationList.php',
+        'Egulias\\EmailValidator\\Validation\\MultipleErrors' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Validation/MultipleErrors.php',
+        'Egulias\\EmailValidator\\Validation\\MultipleValidationWithAnd' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Validation/MultipleValidationWithAnd.php',
+        'Egulias\\EmailValidator\\Validation\\NoRFCWarningsValidation' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Validation/NoRFCWarningsValidation.php',
+        'Egulias\\EmailValidator\\Validation\\RFCValidation' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Validation/RFCValidation.php',
+        'Egulias\\EmailValidator\\Validation\\SpoofCheckValidation' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Validation/SpoofCheckValidation.php',
+        'Egulias\\EmailValidator\\Warning\\AddressLiteral' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/AddressLiteral.php',
+        'Egulias\\EmailValidator\\Warning\\CFWSNearAt' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/CFWSNearAt.php',
+        'Egulias\\EmailValidator\\Warning\\CFWSWithFWS' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/CFWSWithFWS.php',
+        'Egulias\\EmailValidator\\Warning\\Comment' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/Comment.php',
+        'Egulias\\EmailValidator\\Warning\\DeprecatedComment' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/DeprecatedComment.php',
+        'Egulias\\EmailValidator\\Warning\\DomainLiteral' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/DomainLiteral.php',
+        'Egulias\\EmailValidator\\Warning\\DomainTooLong' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/DomainTooLong.php',
+        'Egulias\\EmailValidator\\Warning\\EmailTooLong' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/EmailTooLong.php',
+        'Egulias\\EmailValidator\\Warning\\IPV6BadChar' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/IPV6BadChar.php',
+        'Egulias\\EmailValidator\\Warning\\IPV6ColonEnd' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/IPV6ColonEnd.php',
+        'Egulias\\EmailValidator\\Warning\\IPV6ColonStart' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/IPV6ColonStart.php',
+        'Egulias\\EmailValidator\\Warning\\IPV6Deprecated' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/IPV6Deprecated.php',
+        'Egulias\\EmailValidator\\Warning\\IPV6DoubleColon' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/IPV6DoubleColon.php',
+        'Egulias\\EmailValidator\\Warning\\IPV6GroupCount' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/IPV6GroupCount.php',
+        'Egulias\\EmailValidator\\Warning\\IPV6MaxGroups' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/IPV6MaxGroups.php',
+        'Egulias\\EmailValidator\\Warning\\LabelTooLong' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/LabelTooLong.php',
+        'Egulias\\EmailValidator\\Warning\\LocalTooLong' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/LocalTooLong.php',
+        'Egulias\\EmailValidator\\Warning\\NoDNSMXRecord' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/NoDNSMXRecord.php',
+        'Egulias\\EmailValidator\\Warning\\ObsoleteDTEXT' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/ObsoleteDTEXT.php',
+        'Egulias\\EmailValidator\\Warning\\QuotedPart' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/QuotedPart.php',
+        'Egulias\\EmailValidator\\Warning\\QuotedString' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/QuotedString.php',
+        'Egulias\\EmailValidator\\Warning\\TLD' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/TLD.php',
+        'Egulias\\EmailValidator\\Warning\\Warning' => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator/Warning/Warning.php',
+        'Error' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/Error.php',
+>>>>>>> Based off of manual_composer first commit
         'GuzzleHttp\\Client' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Client.php',
         'GuzzleHttp\\ClientInterface' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/ClientInterface.php',
         'GuzzleHttp\\Cookie\\CookieJar' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Cookie/CookieJar.php',
@@ -2676,11 +3191,16 @@ class ComposerStaticInitDrupal8
         'GuzzleHttp\\Promise\\AggregateException' => __DIR__ . '/..' . '/guzzlehttp/promises/src/AggregateException.php',
         'GuzzleHttp\\Promise\\CancellationException' => __DIR__ . '/..' . '/guzzlehttp/promises/src/CancellationException.php',
         'GuzzleHttp\\Promise\\Coroutine' => __DIR__ . '/..' . '/guzzlehttp/promises/src/Coroutine.php',
+<<<<<<< HEAD
         'GuzzleHttp\\Promise\\Create' => __DIR__ . '/..' . '/guzzlehttp/promises/src/Create.php',
         'GuzzleHttp\\Promise\\Each' => __DIR__ . '/..' . '/guzzlehttp/promises/src/Each.php',
         'GuzzleHttp\\Promise\\EachPromise' => __DIR__ . '/..' . '/guzzlehttp/promises/src/EachPromise.php',
         'GuzzleHttp\\Promise\\FulfilledPromise' => __DIR__ . '/..' . '/guzzlehttp/promises/src/FulfilledPromise.php',
         'GuzzleHttp\\Promise\\Is' => __DIR__ . '/..' . '/guzzlehttp/promises/src/Is.php',
+=======
+        'GuzzleHttp\\Promise\\EachPromise' => __DIR__ . '/..' . '/guzzlehttp/promises/src/EachPromise.php',
+        'GuzzleHttp\\Promise\\FulfilledPromise' => __DIR__ . '/..' . '/guzzlehttp/promises/src/FulfilledPromise.php',
+>>>>>>> Based off of manual_composer first commit
         'GuzzleHttp\\Promise\\Promise' => __DIR__ . '/..' . '/guzzlehttp/promises/src/Promise.php',
         'GuzzleHttp\\Promise\\PromiseInterface' => __DIR__ . '/..' . '/guzzlehttp/promises/src/PromiseInterface.php',
         'GuzzleHttp\\Promise\\PromisorInterface' => __DIR__ . '/..' . '/guzzlehttp/promises/src/PromisorInterface.php',
@@ -2688,12 +3208,16 @@ class ComposerStaticInitDrupal8
         'GuzzleHttp\\Promise\\RejectionException' => __DIR__ . '/..' . '/guzzlehttp/promises/src/RejectionException.php',
         'GuzzleHttp\\Promise\\TaskQueue' => __DIR__ . '/..' . '/guzzlehttp/promises/src/TaskQueue.php',
         'GuzzleHttp\\Promise\\TaskQueueInterface' => __DIR__ . '/..' . '/guzzlehttp/promises/src/TaskQueueInterface.php',
+<<<<<<< HEAD
         'GuzzleHttp\\Promise\\Utils' => __DIR__ . '/..' . '/guzzlehttp/promises/src/Utils.php',
+=======
+>>>>>>> Based off of manual_composer first commit
         'GuzzleHttp\\Psr7\\AppendStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/AppendStream.php',
         'GuzzleHttp\\Psr7\\BufferStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/BufferStream.php',
         'GuzzleHttp\\Psr7\\CachingStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/CachingStream.php',
         'GuzzleHttp\\Psr7\\DroppingStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/DroppingStream.php',
         'GuzzleHttp\\Psr7\\FnStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/FnStream.php',
+<<<<<<< HEAD
         'GuzzleHttp\\Psr7\\Header' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Header.php',
         'GuzzleHttp\\Psr7\\InflateStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/InflateStream.php',
         'GuzzleHttp\\Psr7\\LazyOpenStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/LazyOpenStream.php',
@@ -2705,6 +3229,15 @@ class ComposerStaticInitDrupal8
         'GuzzleHttp\\Psr7\\NoSeekStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/NoSeekStream.php',
         'GuzzleHttp\\Psr7\\PumpStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/PumpStream.php',
         'GuzzleHttp\\Psr7\\Query' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Query.php',
+=======
+        'GuzzleHttp\\Psr7\\InflateStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/InflateStream.php',
+        'GuzzleHttp\\Psr7\\LazyOpenStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/LazyOpenStream.php',
+        'GuzzleHttp\\Psr7\\LimitStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/LimitStream.php',
+        'GuzzleHttp\\Psr7\\MessageTrait' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/MessageTrait.php',
+        'GuzzleHttp\\Psr7\\MultipartStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/MultipartStream.php',
+        'GuzzleHttp\\Psr7\\NoSeekStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/NoSeekStream.php',
+        'GuzzleHttp\\Psr7\\PumpStream' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/PumpStream.php',
+>>>>>>> Based off of manual_composer first commit
         'GuzzleHttp\\Psr7\\Request' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Request.php',
         'GuzzleHttp\\Psr7\\Response' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Response.php',
         'GuzzleHttp\\Psr7\\Rfc7230' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Rfc7230.php',
@@ -2716,7 +3249,10 @@ class ComposerStaticInitDrupal8
         'GuzzleHttp\\Psr7\\Uri' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Uri.php',
         'GuzzleHttp\\Psr7\\UriNormalizer' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/UriNormalizer.php',
         'GuzzleHttp\\Psr7\\UriResolver' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/UriResolver.php',
+<<<<<<< HEAD
         'GuzzleHttp\\Psr7\\Utils' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/Utils.php',
+=======
+>>>>>>> Based off of manual_composer first commit
         'GuzzleHttp\\RedirectMiddleware' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/RedirectMiddleware.php',
         'GuzzleHttp\\RequestOptions' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/RequestOptions.php',
         'GuzzleHttp\\RetryMiddleware' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/RetryMiddleware.php',
@@ -3040,8 +3576,11 @@ class ComposerStaticInitDrupal8
         'Laminas\\Feed\\Reader\\Extension\\DublinCore\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/DublinCore/Feed.php',
         'Laminas\\Feed\\Reader\\Extension\\GooglePlayPodcast\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/GooglePlayPodcast/Entry.php',
         'Laminas\\Feed\\Reader\\Extension\\GooglePlayPodcast\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/GooglePlayPodcast/Feed.php',
+<<<<<<< HEAD
         'Laminas\\Feed\\Reader\\Extension\\PodcastIndex\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/PodcastIndex/Entry.php',
         'Laminas\\Feed\\Reader\\Extension\\PodcastIndex\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/PodcastIndex/Feed.php',
+=======
+>>>>>>> Based off of manual_composer first commit
         'Laminas\\Feed\\Reader\\Extension\\Podcast\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/Podcast/Entry.php',
         'Laminas\\Feed\\Reader\\Extension\\Podcast\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/Podcast/Feed.php',
         'Laminas\\Feed\\Reader\\Extension\\Slash\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Reader/Extension/Slash/Entry.php',
@@ -3088,10 +3627,13 @@ class ComposerStaticInitDrupal8
         'Laminas\\Feed\\Writer\\Extension\\ITunes\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/ITunes/Feed.php',
         'Laminas\\Feed\\Writer\\Extension\\ITunes\\Renderer\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/ITunes/Renderer/Entry.php',
         'Laminas\\Feed\\Writer\\Extension\\ITunes\\Renderer\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/ITunes/Renderer/Feed.php',
+<<<<<<< HEAD
         'Laminas\\Feed\\Writer\\Extension\\PodcastIndex\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/PodcastIndex/Entry.php',
         'Laminas\\Feed\\Writer\\Extension\\PodcastIndex\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/PodcastIndex/Feed.php',
         'Laminas\\Feed\\Writer\\Extension\\PodcastIndex\\Renderer\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/PodcastIndex/Renderer/Entry.php',
         'Laminas\\Feed\\Writer\\Extension\\PodcastIndex\\Renderer\\Feed' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/PodcastIndex/Renderer/Feed.php',
+=======
+>>>>>>> Based off of manual_composer first commit
         'Laminas\\Feed\\Writer\\Extension\\RendererInterface' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/RendererInterface.php',
         'Laminas\\Feed\\Writer\\Extension\\Slash\\Renderer\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/Slash/Renderer/Entry.php',
         'Laminas\\Feed\\Writer\\Extension\\Threading\\Renderer\\Entry' => __DIR__ . '/..' . '/laminas/laminas-feed/src/Writer/Extension/Threading/Renderer/Entry.php',
@@ -3186,10 +3728,18 @@ class ComposerStaticInitDrupal8
         'Masterminds\\HTML5\\Serializer\\OutputRules' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Serializer/OutputRules.php',
         'Masterminds\\HTML5\\Serializer\\RulesInterface' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Serializer/RulesInterface.php',
         'Masterminds\\HTML5\\Serializer\\Traverser' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Serializer/Traverser.php',
+<<<<<<< HEAD
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
         'OS_Guess' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/OS/Guess.php',
         'OomphInc\\ComposerInstallersExtender\\Installer' => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src/Installer.php',
         'OomphInc\\ComposerInstallersExtender\\InstallerHelper' => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src/InstallerHelper.php',
+=======
+        'MyCLabs\\Enum\\Enum' => __DIR__ . '/..' . '/myclabs/php-enum/src/Enum.php',
+        'MyCLabs\\Enum\\PHPUnit\\Comparator' => __DIR__ . '/..' . '/myclabs/php-enum/src/PHPUnit/Comparator.php',
+        'OS_Guess' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/OS/Guess.php',
+        'OomphInc\\ComposerInstallersExtender\\Installers\\CustomInstaller' => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src/Installers/CustomInstaller.php',
+        'OomphInc\\ComposerInstallersExtender\\Installers\\Installer' => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src/Installers/Installer.php',
+>>>>>>> Based off of manual_composer first commit
         'OomphInc\\ComposerInstallersExtender\\Plugin' => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src/Plugin.php',
         'PEAR' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/PEAR.php',
         'PEAR_Error' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/PEAR.php',
@@ -3197,6 +3747,7 @@ class ComposerStaticInitDrupal8
         'PEAR_Exception' => __DIR__ . '/..' . '/pear/pear_exception/PEAR/Exception.php',
         'PHPMailer\\PHPMailer\\Exception' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/Exception.php',
         'PHPMailer\\PHPMailer\\OAuth' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/OAuth.php',
+<<<<<<< HEAD
         'PHPMailer\\PHPMailer\\PHPMailer' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/PHPMailer.php',
         'PHPMailer\\PHPMailer\\POP3' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/POP3.php',
         'PHPMailer\\PHPMailer\\SMTP' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/SMTP.php',
@@ -3213,6 +3764,36 @@ class ComposerStaticInitDrupal8
         'Psr\\Http\\Message\\ServerRequestInterface' => __DIR__ . '/..' . '/psr/http-message/src/ServerRequestInterface.php',
         'Psr\\Http\\Message\\StreamInterface' => __DIR__ . '/..' . '/psr/http-message/src/StreamInterface.php',
         'Psr\\Http\\Message\\UploadedFileInterface' => __DIR__ . '/..' . '/psr/http-message/src/UploadedFileInterface.php',
+=======
+        'PHPMailer\\PHPMailer\\OAuthTokenProvider' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/OAuthTokenProvider.php',
+        'PHPMailer\\PHPMailer\\PHPMailer' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/PHPMailer.php',
+        'PHPMailer\\PHPMailer\\POP3' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/POP3.php',
+        'PHPMailer\\PHPMailer\\SMTP' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/SMTP.php',
+        'ParseError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ParseError.php',
+        'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
+        'Psr\\Container\\ContainerExceptionInterface' => __DIR__ . '/..' . '/psr/container/src/ContainerExceptionInterface.php',
+        'Psr\\Container\\ContainerInterface' => __DIR__ . '/..' . '/psr/container/src/ContainerInterface.php',
+        'Psr\\Container\\NotFoundExceptionInterface' => __DIR__ . '/..' . '/psr/container/src/NotFoundExceptionInterface.php',
+        'Psr\\EventDispatcher\\EventDispatcherInterface' => __DIR__ . '/..' . '/psr/event-dispatcher/src/EventDispatcherInterface.php',
+        'Psr\\EventDispatcher\\ListenerProviderInterface' => __DIR__ . '/..' . '/psr/event-dispatcher/src/ListenerProviderInterface.php',
+        'Psr\\EventDispatcher\\StoppableEventInterface' => __DIR__ . '/..' . '/psr/event-dispatcher/src/StoppableEventInterface.php',
+        'Psr\\Http\\Client\\ClientExceptionInterface' => __DIR__ . '/..' . '/psr/http-client/src/ClientExceptionInterface.php',
+        'Psr\\Http\\Client\\ClientInterface' => __DIR__ . '/..' . '/psr/http-client/src/ClientInterface.php',
+        'Psr\\Http\\Client\\NetworkExceptionInterface' => __DIR__ . '/..' . '/psr/http-client/src/NetworkExceptionInterface.php',
+        'Psr\\Http\\Client\\RequestExceptionInterface' => __DIR__ . '/..' . '/psr/http-client/src/RequestExceptionInterface.php',
+        'Psr\\Http\\Message\\MessageInterface' => __DIR__ . '/..' . '/psr/http-message/src/MessageInterface.php',
+        'Psr\\Http\\Message\\RequestFactoryInterface' => __DIR__ . '/..' . '/psr/http-factory/src/RequestFactoryInterface.php',
+        'Psr\\Http\\Message\\RequestInterface' => __DIR__ . '/..' . '/psr/http-message/src/RequestInterface.php',
+        'Psr\\Http\\Message\\ResponseFactoryInterface' => __DIR__ . '/..' . '/psr/http-factory/src/ResponseFactoryInterface.php',
+        'Psr\\Http\\Message\\ResponseInterface' => __DIR__ . '/..' . '/psr/http-message/src/ResponseInterface.php',
+        'Psr\\Http\\Message\\ServerRequestFactoryInterface' => __DIR__ . '/..' . '/psr/http-factory/src/ServerRequestFactoryInterface.php',
+        'Psr\\Http\\Message\\ServerRequestInterface' => __DIR__ . '/..' . '/psr/http-message/src/ServerRequestInterface.php',
+        'Psr\\Http\\Message\\StreamFactoryInterface' => __DIR__ . '/..' . '/psr/http-factory/src/StreamFactoryInterface.php',
+        'Psr\\Http\\Message\\StreamInterface' => __DIR__ . '/..' . '/psr/http-message/src/StreamInterface.php',
+        'Psr\\Http\\Message\\UploadedFileFactoryInterface' => __DIR__ . '/..' . '/psr/http-factory/src/UploadedFileFactoryInterface.php',
+        'Psr\\Http\\Message\\UploadedFileInterface' => __DIR__ . '/..' . '/psr/http-message/src/UploadedFileInterface.php',
+        'Psr\\Http\\Message\\UriFactoryInterface' => __DIR__ . '/..' . '/psr/http-factory/src/UriFactoryInterface.php',
+>>>>>>> Based off of manual_composer first commit
         'Psr\\Http\\Message\\UriInterface' => __DIR__ . '/..' . '/psr/http-message/src/UriInterface.php',
         'Psr\\Log\\AbstractLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/AbstractLogger.php',
         'Psr\\Log\\InvalidArgumentException' => __DIR__ . '/..' . '/psr/log/Psr/Log/InvalidArgumentException.php',
@@ -3225,6 +3806,7 @@ class ComposerStaticInitDrupal8
         'Psr\\Log\\Test\\DummyTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/DummyTest.php',
         'Psr\\Log\\Test\\LoggerInterfaceTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/LoggerInterfaceTest.php',
         'Psr\\Log\\Test\\TestLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/TestLogger.php',
+<<<<<<< HEAD
         'Solarium\\Autoloader' => __DIR__ . '/..' . '/solarium/solarium/library/Solarium/Autoloader.php',
         'Solarium\\Client' => __DIR__ . '/..' . '/solarium/solarium/library/Solarium/Client.php',
         'Solarium\\Core\\Client\\Adapter\\AdapterInterface' => __DIR__ . '/..' . '/solarium/solarium/library/Solarium/Core/Client/Adapter/AdapterInterface.php',
@@ -3432,6 +4014,436 @@ class ComposerStaticInitDrupal8
         'Solarium\\Support\\DataFixtures\\FixtureLoader' => __DIR__ . '/..' . '/solarium/solarium/library/Solarium/Support/DataFixtures/FixtureLoader.php',
         'Solarium\\Support\\DataFixtures\\Loader' => __DIR__ . '/..' . '/solarium/solarium/library/Solarium/Support/DataFixtures/Loader.php',
         'Solarium\\Support\\DataFixtures\\Purger' => __DIR__ . '/..' . '/solarium/solarium/library/Solarium/Support/DataFixtures/Purger.php',
+=======
+        'SessionUpdateTimestampHandlerInterface' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/SessionUpdateTimestampHandlerInterface.php',
+        'Solarium\\Builder\\AbstractExpressionVisitor' => __DIR__ . '/..' . '/solarium/solarium/src/Builder/AbstractExpressionVisitor.php',
+        'Solarium\\Builder\\Analytics\\AnalyticsExpressionVisitor' => __DIR__ . '/..' . '/solarium/solarium/src/Builder/Analytics/AnalyticsExpressionVisitor.php',
+        'Solarium\\Builder\\Analytics\\ExpressionBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/Builder/Analytics/ExpressionBuilder.php',
+        'Solarium\\Builder\\Analytics\\FunctionBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/Builder/Analytics/FunctionBuilder.php',
+        'Solarium\\Builder\\Analytics\\MappingFunction' => __DIR__ . '/..' . '/solarium/solarium/src/Builder/Analytics/MappingFunction.php',
+        'Solarium\\Builder\\Analytics\\ReductionFunction' => __DIR__ . '/..' . '/solarium/solarium/src/Builder/Analytics/ReductionFunction.php',
+        'Solarium\\Builder\\Comparison' => __DIR__ . '/..' . '/solarium/solarium/src/Builder/Comparison.php',
+        'Solarium\\Builder\\CompositeComparison' => __DIR__ . '/..' . '/solarium/solarium/src/Builder/CompositeComparison.php',
+        'Solarium\\Builder\\ExpressionInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Builder/ExpressionInterface.php',
+        'Solarium\\Builder\\FunctionInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Builder/FunctionInterface.php',
+        'Solarium\\Builder\\Value' => __DIR__ . '/..' . '/solarium/solarium/src/Builder/Value.php',
+        'Solarium\\Client' => __DIR__ . '/..' . '/solarium/solarium/src/Client.php',
+        'Solarium\\Component\\AbstractComponent' => __DIR__ . '/..' . '/solarium/solarium/src/Component/AbstractComponent.php',
+        'Solarium\\Component\\Analytics\\Analytics' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Analytics/Analytics.php',
+        'Solarium\\Component\\Analytics\\Facet\\AbstractFacet' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Analytics/Facet/AbstractFacet.php',
+        'Solarium\\Component\\Analytics\\Facet\\ConfigurableInitTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Analytics/Facet/ConfigurableInitTrait.php',
+        'Solarium\\Component\\Analytics\\Facet\\ObjectTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Analytics/Facet/ObjectTrait.php',
+        'Solarium\\Component\\Analytics\\Facet\\Pivot' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Analytics/Facet/Pivot.php',
+        'Solarium\\Component\\Analytics\\Facet\\PivotFacet' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Analytics/Facet/PivotFacet.php',
+        'Solarium\\Component\\Analytics\\Facet\\QueryFacet' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Analytics/Facet/QueryFacet.php',
+        'Solarium\\Component\\Analytics\\Facet\\RangeFacet' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Analytics/Facet/RangeFacet.php',
+        'Solarium\\Component\\Analytics\\Facet\\Sort\\Criterion' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Analytics/Facet/Sort/Criterion.php',
+        'Solarium\\Component\\Analytics\\Facet\\Sort\\Sort' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Analytics/Facet/Sort/Sort.php',
+        'Solarium\\Component\\Analytics\\Facet\\ValueFacet' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Analytics/Facet/ValueFacet.php',
+        'Solarium\\Component\\Analytics\\Grouping' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Analytics/Grouping.php',
+        'Solarium\\Component\\ComponentAwareQueryInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ComponentAwareQueryInterface.php',
+        'Solarium\\Component\\ComponentAwareQueryTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ComponentAwareQueryTrait.php',
+        'Solarium\\Component\\ComponentTraits\\MoreLikeThisTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ComponentTraits/MoreLikeThisTrait.php',
+        'Solarium\\Component\\ComponentTraits\\SpellcheckTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ComponentTraits/SpellcheckTrait.php',
+        'Solarium\\Component\\ComponentTraits\\SuggesterTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ComponentTraits/SuggesterTrait.php',
+        'Solarium\\Component\\ComponentTraits\\TermsTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ComponentTraits/TermsTrait.php',
+        'Solarium\\Component\\Debug' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Debug.php',
+        'Solarium\\Component\\DisMax' => __DIR__ . '/..' . '/solarium/solarium/src/Component/DisMax.php',
+        'Solarium\\Component\\DisMax\\BoostQuery' => __DIR__ . '/..' . '/solarium/solarium/src/Component/DisMax/BoostQuery.php',
+        'Solarium\\Component\\DistributedSearch' => __DIR__ . '/..' . '/solarium/solarium/src/Component/DistributedSearch.php',
+        'Solarium\\Component\\EdisMax' => __DIR__ . '/..' . '/solarium/solarium/src/Component/EdisMax.php',
+        'Solarium\\Component\\FacetSet' => __DIR__ . '/..' . '/solarium/solarium/src/Component/FacetSet.php',
+        'Solarium\\Component\\FacetSetInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/FacetSetInterface.php',
+        'Solarium\\Component\\FacetSetTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/FacetSetTrait.php',
+        'Solarium\\Component\\Facet\\AbstractFacet' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/AbstractFacet.php',
+        'Solarium\\Component\\Facet\\AbstractRange' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/AbstractRange.php',
+        'Solarium\\Component\\Facet\\FacetInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/FacetInterface.php',
+        'Solarium\\Component\\Facet\\Field' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/Field.php',
+        'Solarium\\Component\\Facet\\FieldValueParametersInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/FieldValueParametersInterface.php',
+        'Solarium\\Component\\Facet\\FieldValueParametersTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/FieldValueParametersTrait.php',
+        'Solarium\\Component\\Facet\\Interval' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/Interval.php',
+        'Solarium\\Component\\Facet\\JsonAggregation' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/JsonAggregation.php',
+        'Solarium\\Component\\Facet\\JsonFacetInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/JsonFacetInterface.php',
+        'Solarium\\Component\\Facet\\JsonFacetTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/JsonFacetTrait.php',
+        'Solarium\\Component\\Facet\\JsonQuery' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/JsonQuery.php',
+        'Solarium\\Component\\Facet\\JsonRange' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/JsonRange.php',
+        'Solarium\\Component\\Facet\\JsonTerms' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/JsonTerms.php',
+        'Solarium\\Component\\Facet\\MultiQuery' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/MultiQuery.php',
+        'Solarium\\Component\\Facet\\Pivot' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/Pivot.php',
+        'Solarium\\Component\\Facet\\PivotMinCountTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/PivotMinCountTrait.php',
+        'Solarium\\Component\\Facet\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/Query.php',
+        'Solarium\\Component\\Facet\\Range' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Facet/Range.php',
+        'Solarium\\Component\\Grouping' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Grouping.php',
+        'Solarium\\Component\\Highlighting\\Field' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Highlighting/Field.php',
+        'Solarium\\Component\\Highlighting\\Highlighting' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Highlighting/Highlighting.php',
+        'Solarium\\Component\\MoreLikeThis' => __DIR__ . '/..' . '/solarium/solarium/src/Component/MoreLikeThis.php',
+        'Solarium\\Component\\MoreLikeThisInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/MoreLikeThisInterface.php',
+        'Solarium\\Component\\QueryElevation' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryElevation.php',
+        'Solarium\\Component\\QueryInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryInterface.php',
+        'Solarium\\Component\\QueryTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTrait.php',
+        'Solarium\\Component\\QueryTraits\\AnalyticsTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/AnalyticsTrait.php',
+        'Solarium\\Component\\QueryTraits\\DebugTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/DebugTrait.php',
+        'Solarium\\Component\\QueryTraits\\DisMaxTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/DisMaxTrait.php',
+        'Solarium\\Component\\QueryTraits\\DistributedSearchTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/DistributedSearchTrait.php',
+        'Solarium\\Component\\QueryTraits\\EDisMaxTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/EDisMaxTrait.php',
+        'Solarium\\Component\\QueryTraits\\FacetSetTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/FacetSetTrait.php',
+        'Solarium\\Component\\QueryTraits\\GroupingTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/GroupingTrait.php',
+        'Solarium\\Component\\QueryTraits\\HighlightingTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/HighlightingTrait.php',
+        'Solarium\\Component\\QueryTraits\\MoreLikeThisTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/MoreLikeThisTrait.php',
+        'Solarium\\Component\\QueryTraits\\QueryElevationTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/QueryElevationTrait.php',
+        'Solarium\\Component\\QueryTraits\\ReRankQueryTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/ReRankQueryTrait.php',
+        'Solarium\\Component\\QueryTraits\\SpatialTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/SpatialTrait.php',
+        'Solarium\\Component\\QueryTraits\\SpellcheckTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/SpellcheckTrait.php',
+        'Solarium\\Component\\QueryTraits\\StatsTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/StatsTrait.php',
+        'Solarium\\Component\\QueryTraits\\SuggesterTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/SuggesterTrait.php',
+        'Solarium\\Component\\QueryTraits\\TermsTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/QueryTraits/TermsTrait.php',
+        'Solarium\\Component\\ReRankQuery' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ReRankQuery.php',
+        'Solarium\\Component\\RequestBuilder\\Analytics' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/Analytics.php',
+        'Solarium\\Component\\RequestBuilder\\ComponentRequestBuilderInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/ComponentRequestBuilderInterface.php',
+        'Solarium\\Component\\RequestBuilder\\Debug' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/Debug.php',
+        'Solarium\\Component\\RequestBuilder\\DisMax' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/DisMax.php',
+        'Solarium\\Component\\RequestBuilder\\DistributedSearch' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/DistributedSearch.php',
+        'Solarium\\Component\\RequestBuilder\\EdisMax' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/EdisMax.php',
+        'Solarium\\Component\\RequestBuilder\\FacetSet' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/FacetSet.php',
+        'Solarium\\Component\\RequestBuilder\\Grouping' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/Grouping.php',
+        'Solarium\\Component\\RequestBuilder\\Highlighting' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/Highlighting.php',
+        'Solarium\\Component\\RequestBuilder\\MoreLikeThis' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/MoreLikeThis.php',
+        'Solarium\\Component\\RequestBuilder\\QueryElevation' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/QueryElevation.php',
+        'Solarium\\Component\\RequestBuilder\\ReRankQuery' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/ReRankQuery.php',
+        'Solarium\\Component\\RequestBuilder\\RequestParamsInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/RequestParamsInterface.php',
+        'Solarium\\Component\\RequestBuilder\\RequestParamsTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/RequestParamsTrait.php',
+        'Solarium\\Component\\RequestBuilder\\Spatial' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/Spatial.php',
+        'Solarium\\Component\\RequestBuilder\\Spellcheck' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/Spellcheck.php',
+        'Solarium\\Component\\RequestBuilder\\Stats' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/Stats.php',
+        'Solarium\\Component\\RequestBuilder\\SubRequest' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/SubRequest.php',
+        'Solarium\\Component\\RequestBuilder\\Suggester' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/Suggester.php',
+        'Solarium\\Component\\RequestBuilder\\Terms' => __DIR__ . '/..' . '/solarium/solarium/src/Component/RequestBuilder/Terms.php',
+        'Solarium\\Component\\ResponseParser\\Analytics' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ResponseParser/Analytics.php',
+        'Solarium\\Component\\ResponseParser\\ComponentParserInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ResponseParser/ComponentParserInterface.php',
+        'Solarium\\Component\\ResponseParser\\Debug' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ResponseParser/Debug.php',
+        'Solarium\\Component\\ResponseParser\\FacetSet' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ResponseParser/FacetSet.php',
+        'Solarium\\Component\\ResponseParser\\Grouping' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ResponseParser/Grouping.php',
+        'Solarium\\Component\\ResponseParser\\Highlighting' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ResponseParser/Highlighting.php',
+        'Solarium\\Component\\ResponseParser\\MoreLikeThis' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ResponseParser/MoreLikeThis.php',
+        'Solarium\\Component\\ResponseParser\\Spellcheck' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ResponseParser/Spellcheck.php',
+        'Solarium\\Component\\ResponseParser\\Stats' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ResponseParser/Stats.php',
+        'Solarium\\Component\\ResponseParser\\Suggester' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ResponseParser/Suggester.php',
+        'Solarium\\Component\\ResponseParser\\Terms' => __DIR__ . '/..' . '/solarium/solarium/src/Component/ResponseParser/Terms.php',
+        'Solarium\\Component\\Result\\Analytics\\Expression' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Analytics/Expression.php',
+        'Solarium\\Component\\Result\\Analytics\\Facet' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Analytics/Facet.php',
+        'Solarium\\Component\\Result\\Analytics\\Grouping' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Analytics/Grouping.php',
+        'Solarium\\Component\\Result\\Analytics\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Analytics/Result.php',
+        'Solarium\\Component\\Result\\Debug\\Detail' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Debug/Detail.php',
+        'Solarium\\Component\\Result\\Debug\\Document' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Debug/Document.php',
+        'Solarium\\Component\\Result\\Debug\\DocumentSet' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Debug/DocumentSet.php',
+        'Solarium\\Component\\Result\\Debug\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Debug/Result.php',
+        'Solarium\\Component\\Result\\Debug\\Timing' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Debug/Timing.php',
+        'Solarium\\Component\\Result\\Debug\\TimingPhase' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Debug/TimingPhase.php',
+        'Solarium\\Component\\Result\\FacetSet' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/FacetSet.php',
+        'Solarium\\Component\\Result\\Facet\\Aggregation' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Facet/Aggregation.php',
+        'Solarium\\Component\\Result\\Facet\\Bucket' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Facet/Bucket.php',
+        'Solarium\\Component\\Result\\Facet\\Buckets' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Facet/Buckets.php',
+        'Solarium\\Component\\Result\\Facet\\FacetResultInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Facet/FacetResultInterface.php',
+        'Solarium\\Component\\Result\\Facet\\Field' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Facet/Field.php',
+        'Solarium\\Component\\Result\\Facet\\Interval' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Facet/Interval.php',
+        'Solarium\\Component\\Result\\Facet\\JsonRange' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Facet/JsonRange.php',
+        'Solarium\\Component\\Result\\Facet\\MultiQuery' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Facet/MultiQuery.php',
+        'Solarium\\Component\\Result\\Facet\\Pivot\\Pivot' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Facet/Pivot/Pivot.php',
+        'Solarium\\Component\\Result\\Facet\\Pivot\\PivotItem' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Facet/Pivot/PivotItem.php',
+        'Solarium\\Component\\Result\\Facet\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Facet/Query.php',
+        'Solarium\\Component\\Result\\Facet\\Range' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Facet/Range.php',
+        'Solarium\\Component\\Result\\Grouping\\FieldGroup' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Grouping/FieldGroup.php',
+        'Solarium\\Component\\Result\\Grouping\\QueryGroup' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Grouping/QueryGroup.php',
+        'Solarium\\Component\\Result\\Grouping\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Grouping/Result.php',
+        'Solarium\\Component\\Result\\Grouping\\ValueGroup' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Grouping/ValueGroup.php',
+        'Solarium\\Component\\Result\\Highlighting\\Highlighting' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Highlighting/Highlighting.php',
+        'Solarium\\Component\\Result\\Highlighting\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Highlighting/Result.php',
+        'Solarium\\Component\\Result\\MoreLikeThis\\MoreLikeThis' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/MoreLikeThis/MoreLikeThis.php',
+        'Solarium\\Component\\Result\\MoreLikeThis\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/MoreLikeThis/Result.php',
+        'Solarium\\Component\\Result\\Spellcheck\\Collation' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Spellcheck/Collation.php',
+        'Solarium\\Component\\Result\\Spellcheck\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Spellcheck/Result.php',
+        'Solarium\\Component\\Result\\Spellcheck\\Suggestion' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Spellcheck/Suggestion.php',
+        'Solarium\\Component\\Result\\Stats\\FacetValue' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Stats/FacetValue.php',
+        'Solarium\\Component\\Result\\Stats\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Stats/Result.php',
+        'Solarium\\Component\\Result\\Stats\\ResultTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Stats/ResultTrait.php',
+        'Solarium\\Component\\Result\\Stats\\Stats' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Stats/Stats.php',
+        'Solarium\\Component\\Result\\Suggester\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Suggester/Result.php',
+        'Solarium\\Component\\Result\\Terms\\Field' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Terms/Field.php',
+        'Solarium\\Component\\Result\\Terms\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Result/Terms/Result.php',
+        'Solarium\\Component\\Spatial' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Spatial.php',
+        'Solarium\\Component\\Spellcheck' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Spellcheck.php',
+        'Solarium\\Component\\SpellcheckInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/SpellcheckInterface.php',
+        'Solarium\\Component\\Stats\\FacetsTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Stats/FacetsTrait.php',
+        'Solarium\\Component\\Stats\\Field' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Stats/Field.php',
+        'Solarium\\Component\\Stats\\Stats' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Stats/Stats.php',
+        'Solarium\\Component\\Suggester' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Suggester.php',
+        'Solarium\\Component\\SuggesterInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/SuggesterInterface.php',
+        'Solarium\\Component\\Terms' => __DIR__ . '/..' . '/solarium/solarium/src/Component/Terms.php',
+        'Solarium\\Component\\TermsInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Component/TermsInterface.php',
+        'Solarium\\Core\\Client\\Adapter\\AdapterHelper' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/AdapterHelper.php',
+        'Solarium\\Core\\Client\\Adapter\\AdapterInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/AdapterInterface.php',
+        'Solarium\\Core\\Client\\Adapter\\ConnectionTimeoutAwareInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/ConnectionTimeoutAwareInterface.php',
+        'Solarium\\Core\\Client\\Adapter\\ConnectionTimeoutAwareTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/ConnectionTimeoutAwareTrait.php',
+        'Solarium\\Core\\Client\\Adapter\\Curl' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/Curl.php',
+        'Solarium\\Core\\Client\\Adapter\\Http' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/Http.php',
+        'Solarium\\Core\\Client\\Adapter\\Psr18Adapter' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/Psr18Adapter.php',
+        'Solarium\\Core\\Client\\Adapter\\TimeoutAwareInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/TimeoutAwareInterface.php',
+        'Solarium\\Core\\Client\\Adapter\\TimeoutAwareTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/TimeoutAwareTrait.php',
+        'Solarium\\Core\\Client\\Client' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Client.php',
+        'Solarium\\Core\\Client\\ClientInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/ClientInterface.php',
+        'Solarium\\Core\\Client\\Endpoint' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Endpoint.php',
+        'Solarium\\Core\\Client\\Request' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Request.php',
+        'Solarium\\Core\\Client\\Response' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Response.php',
+        'Solarium\\Core\\Client\\State\\AbstractState' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/State/AbstractState.php',
+        'Solarium\\Core\\Client\\State\\ClusterState' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/State/ClusterState.php',
+        'Solarium\\Core\\Client\\State\\CollectionState' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/State/CollectionState.php',
+        'Solarium\\Core\\Client\\State\\ReplicaState' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/State/ReplicaState.php',
+        'Solarium\\Core\\Client\\State\\ShardState' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/State/ShardState.php',
+        'Solarium\\Core\\Client\\State\\StateInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/State/StateInterface.php',
+        'Solarium\\Core\\Configurable' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Configurable.php',
+        'Solarium\\Core\\ConfigurableInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/ConfigurableInterface.php',
+        'Solarium\\Core\\Event\\Events' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Event/Events.php',
+        'Solarium\\Core\\Event\\PostCreateQuery' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Event/PostCreateQuery.php',
+        'Solarium\\Core\\Event\\PostCreateRequest' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Event/PostCreateRequest.php',
+        'Solarium\\Core\\Event\\PostCreateResult' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Event/PostCreateResult.php',
+        'Solarium\\Core\\Event\\PostExecute' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Event/PostExecute.php',
+        'Solarium\\Core\\Event\\PostExecuteRequest' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Event/PostExecuteRequest.php',
+        'Solarium\\Core\\Event\\PreCreateQuery' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Event/PreCreateQuery.php',
+        'Solarium\\Core\\Event\\PreCreateRequest' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Event/PreCreateRequest.php',
+        'Solarium\\Core\\Event\\PreCreateResult' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Event/PreCreateResult.php',
+        'Solarium\\Core\\Event\\PreExecute' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Event/PreExecute.php',
+        'Solarium\\Core\\Event\\PreExecuteRequest' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Event/PreExecuteRequest.php',
+        'Solarium\\Core\\Plugin\\AbstractPlugin' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Plugin/AbstractPlugin.php',
+        'Solarium\\Core\\Plugin\\PluginInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Plugin/PluginInterface.php',
+        'Solarium\\Core\\Query\\AbstractDocument' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/AbstractDocument.php',
+        'Solarium\\Core\\Query\\AbstractQuery' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/AbstractQuery.php',
+        'Solarium\\Core\\Query\\AbstractRequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/AbstractRequestBuilder.php',
+        'Solarium\\Core\\Query\\AbstractResponseParser' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/AbstractResponseParser.php',
+        'Solarium\\Core\\Query\\DocumentInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/DocumentInterface.php',
+        'Solarium\\Core\\Query\\Helper' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/Helper.php',
+        'Solarium\\Core\\Query\\LocalParameters\\LocalParameter' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/LocalParameters/LocalParameter.php',
+        'Solarium\\Core\\Query\\LocalParameters\\LocalParameterInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/LocalParameters/LocalParameterInterface.php',
+        'Solarium\\Core\\Query\\LocalParameters\\LocalParameters' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/LocalParameters/LocalParameters.php',
+        'Solarium\\Core\\Query\\LocalParameters\\LocalParametersTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/LocalParameters/LocalParametersTrait.php',
+        'Solarium\\Core\\Query\\QueryInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/QueryInterface.php',
+        'Solarium\\Core\\Query\\RequestBuilderInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/RequestBuilderInterface.php',
+        'Solarium\\Core\\Query\\ResponseParserInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/ResponseParserInterface.php',
+        'Solarium\\Core\\Query\\Result\\QueryType' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/Result/QueryType.php',
+        'Solarium\\Core\\Query\\Result\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/Result/Result.php',
+        'Solarium\\Core\\Query\\Result\\ResultInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/Result/ResultInterface.php',
+        'Solarium\\Core\\Query\\Status4xxNoExceptionInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Query/Status4xxNoExceptionInterface.php',
+        'Solarium\\Exception\\DomainException' => __DIR__ . '/..' . '/solarium/solarium/src/Exception/DomainException.php',
+        'Solarium\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Exception/ExceptionInterface.php',
+        'Solarium\\Exception\\HttpException' => __DIR__ . '/..' . '/solarium/solarium/src/Exception/HttpException.php',
+        'Solarium\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/solarium/solarium/src/Exception/InvalidArgumentException.php',
+        'Solarium\\Exception\\LogicExceptionInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Exception/LogicExceptionInterface.php',
+        'Solarium\\Exception\\OutOfBoundsException' => __DIR__ . '/..' . '/solarium/solarium/src/Exception/OutOfBoundsException.php',
+        'Solarium\\Exception\\RuntimeException' => __DIR__ . '/..' . '/solarium/solarium/src/Exception/RuntimeException.php',
+        'Solarium\\Exception\\RuntimeExceptionInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Exception/RuntimeExceptionInterface.php',
+        'Solarium\\Exception\\StreamException' => __DIR__ . '/..' . '/solarium/solarium/src/Exception/StreamException.php',
+        'Solarium\\Exception\\UnexpectedValueException' => __DIR__ . '/..' . '/solarium/solarium/src/Exception/UnexpectedValueException.php',
+        'Solarium\\Plugin\\AbstractBufferedUpdate\\AbstractBufferedUpdate' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/AbstractBufferedUpdate/AbstractBufferedUpdate.php',
+        'Solarium\\Plugin\\AbstractBufferedUpdate\\Event\\AbstractEvents' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/AbstractBufferedUpdate/Event/AbstractEvents.php',
+        'Solarium\\Plugin\\AbstractBufferedUpdate\\Event\\AbstractPostCommit' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/AbstractBufferedUpdate/Event/AbstractPostCommit.php',
+        'Solarium\\Plugin\\AbstractBufferedUpdate\\Event\\AbstractPostFlush' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/AbstractBufferedUpdate/Event/AbstractPostFlush.php',
+        'Solarium\\Plugin\\AbstractBufferedUpdate\\Event\\AbstractPreCommit' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/AbstractBufferedUpdate/Event/AbstractPreCommit.php',
+        'Solarium\\Plugin\\AbstractBufferedUpdate\\Event\\AbstractPreFlush' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/AbstractBufferedUpdate/Event/AbstractPreFlush.php',
+        'Solarium\\Plugin\\BufferedAdd\\BufferedAdd' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedAdd/BufferedAdd.php',
+        'Solarium\\Plugin\\BufferedAdd\\BufferedAddLite' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedAdd/BufferedAddLite.php',
+        'Solarium\\Plugin\\BufferedAdd\\Event\\AddDocument' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedAdd/Event/AddDocument.php',
+        'Solarium\\Plugin\\BufferedAdd\\Event\\Events' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedAdd/Event/Events.php',
+        'Solarium\\Plugin\\BufferedAdd\\Event\\PostCommit' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedAdd/Event/PostCommit.php',
+        'Solarium\\Plugin\\BufferedAdd\\Event\\PostFlush' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedAdd/Event/PostFlush.php',
+        'Solarium\\Plugin\\BufferedAdd\\Event\\PreCommit' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedAdd/Event/PreCommit.php',
+        'Solarium\\Plugin\\BufferedAdd\\Event\\PreFlush' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedAdd/Event/PreFlush.php',
+        'Solarium\\Plugin\\BufferedDelete\\AbstractDelete' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedDelete/AbstractDelete.php',
+        'Solarium\\Plugin\\BufferedDelete\\BufferedDelete' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedDelete/BufferedDelete.php',
+        'Solarium\\Plugin\\BufferedDelete\\BufferedDeleteLite' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedDelete/BufferedDeleteLite.php',
+        'Solarium\\Plugin\\BufferedDelete\\Delete\\Id' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedDelete/Delete/Id.php',
+        'Solarium\\Plugin\\BufferedDelete\\Delete\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedDelete/Delete/Query.php',
+        'Solarium\\Plugin\\BufferedDelete\\Event\\AddDeleteById' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedDelete/Event/AddDeleteById.php',
+        'Solarium\\Plugin\\BufferedDelete\\Event\\AddDeleteQuery' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedDelete/Event/AddDeleteQuery.php',
+        'Solarium\\Plugin\\BufferedDelete\\Event\\Events' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedDelete/Event/Events.php',
+        'Solarium\\Plugin\\BufferedDelete\\Event\\PostCommit' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedDelete/Event/PostCommit.php',
+        'Solarium\\Plugin\\BufferedDelete\\Event\\PostFlush' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedDelete/Event/PostFlush.php',
+        'Solarium\\Plugin\\BufferedDelete\\Event\\PreCommit' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedDelete/Event/PreCommit.php',
+        'Solarium\\Plugin\\BufferedDelete\\Event\\PreFlush' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/BufferedDelete/Event/PreFlush.php',
+        'Solarium\\Plugin\\CustomizeRequest\\Customization' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/CustomizeRequest/Customization.php',
+        'Solarium\\Plugin\\CustomizeRequest\\CustomizeRequest' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/CustomizeRequest/CustomizeRequest.php',
+        'Solarium\\Plugin\\Loadbalancer\\Event\\EndpointFailure' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/Loadbalancer/Event/EndpointFailure.php',
+        'Solarium\\Plugin\\Loadbalancer\\Event\\Events' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/Loadbalancer/Event/Events.php',
+        'Solarium\\Plugin\\Loadbalancer\\Loadbalancer' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/Loadbalancer/Loadbalancer.php',
+        'Solarium\\Plugin\\Loadbalancer\\SolrCloudLoadbalancer' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/Loadbalancer/SolrCloudLoadbalancer.php',
+        'Solarium\\Plugin\\Loadbalancer\\WeightedRandomChoice' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/Loadbalancer/WeightedRandomChoice.php',
+        'Solarium\\Plugin\\MinimumScoreFilter\\Document' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/MinimumScoreFilter/Document.php',
+        'Solarium\\Plugin\\MinimumScoreFilter\\Filter' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/MinimumScoreFilter/Filter.php',
+        'Solarium\\Plugin\\MinimumScoreFilter\\MinimumScoreFilter' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/MinimumScoreFilter/MinimumScoreFilter.php',
+        'Solarium\\Plugin\\MinimumScoreFilter\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/MinimumScoreFilter/Query.php',
+        'Solarium\\Plugin\\MinimumScoreFilter\\QueryGroupResult' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/MinimumScoreFilter/QueryGroupResult.php',
+        'Solarium\\Plugin\\MinimumScoreFilter\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/MinimumScoreFilter/Result.php',
+        'Solarium\\Plugin\\MinimumScoreFilter\\ValueGroupResult' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/MinimumScoreFilter/ValueGroupResult.php',
+        'Solarium\\Plugin\\ParallelExecution\\Event\\Events' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/ParallelExecution/Event/Events.php',
+        'Solarium\\Plugin\\ParallelExecution\\Event\\ExecuteEnd' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/ParallelExecution/Event/ExecuteEnd.php',
+        'Solarium\\Plugin\\ParallelExecution\\Event\\ExecuteStart' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/ParallelExecution/Event/ExecuteStart.php',
+        'Solarium\\Plugin\\ParallelExecution\\ParallelExecution' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/ParallelExecution/ParallelExecution.php',
+        'Solarium\\Plugin\\PostBigExtractRequest' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/PostBigExtractRequest.php',
+        'Solarium\\Plugin\\PostBigRequest' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/PostBigRequest.php',
+        'Solarium\\Plugin\\PrefetchIterator' => __DIR__ . '/..' . '/solarium/solarium/src/Plugin/PrefetchIterator.php',
+        'Solarium\\QueryType\\Analysis\\Query\\AbstractQuery' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/Query/AbstractQuery.php',
+        'Solarium\\QueryType\\Analysis\\Query\\Document' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/Query/Document.php',
+        'Solarium\\QueryType\\Analysis\\Query\\Field' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/Query/Field.php',
+        'Solarium\\QueryType\\Analysis\\RequestBuilder\\Document' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/RequestBuilder/Document.php',
+        'Solarium\\QueryType\\Analysis\\RequestBuilder\\Field' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/RequestBuilder/Field.php',
+        'Solarium\\QueryType\\Analysis\\RequestBuilder\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/RequestBuilder/RequestBuilder.php',
+        'Solarium\\QueryType\\Analysis\\ResponseParser\\Document' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/ResponseParser/Document.php',
+        'Solarium\\QueryType\\Analysis\\ResponseParser\\Field' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/ResponseParser/Field.php',
+        'Solarium\\QueryType\\Analysis\\Result\\Document' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/Result/Document.php',
+        'Solarium\\QueryType\\Analysis\\Result\\Field' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/Result/Field.php',
+        'Solarium\\QueryType\\Analysis\\Result\\Item' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/Result/Item.php',
+        'Solarium\\QueryType\\Analysis\\Result\\ResultList' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/Result/ResultList.php',
+        'Solarium\\QueryType\\Analysis\\Result\\Types' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Analysis/Result/Types.php',
+        'Solarium\\QueryType\\Extract\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Extract/Query.php',
+        'Solarium\\QueryType\\Extract\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Extract/RequestBuilder.php',
+        'Solarium\\QueryType\\Extract\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Extract/Result.php',
+        'Solarium\\QueryType\\Graph\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Graph/Query.php',
+        'Solarium\\QueryType\\Graph\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Graph/Result.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\AbstractCommand' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/AbstractCommand.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\AbstractQuery' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/AbstractQuery.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Command\\AbstractAdd' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Command/AbstractAdd.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Command\\AbstractCreate' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Command/AbstractCreate.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Command\\Config' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Command/Config.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Command\\Delete' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Command/Delete.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Command\\Exists' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Command/Exists.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Command\\Remove' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Command/Remove.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Command\\Stopwords\\Add' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Command/Stopwords/Add.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Command\\Stopwords\\Create' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Command/Stopwords/Create.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Command\\Synonyms\\Add' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Command/Synonyms/Add.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Command\\Synonyms\\Create' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Command/Synonyms/Create.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\InitArgsInterface' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/InitArgsInterface.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Resources' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Resources.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Stopwords' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Stopwords.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Stopwords\\InitArgs' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Stopwords/InitArgs.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Synonyms' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Synonyms.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Synonyms\\InitArgs' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Synonyms/InitArgs.php',
+        'Solarium\\QueryType\\ManagedResources\\Query\\Synonyms\\Synonyms' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Query/Synonyms/Synonyms.php',
+        'Solarium\\QueryType\\ManagedResources\\RequestBuilder\\Resource' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/RequestBuilder/Resource.php',
+        'Solarium\\QueryType\\ManagedResources\\RequestBuilder\\Resources' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/RequestBuilder/Resources.php',
+        'Solarium\\QueryType\\ManagedResources\\ResponseParser\\Command' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/ResponseParser/Command.php',
+        'Solarium\\QueryType\\ManagedResources\\ResponseParser\\Exists' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/ResponseParser/Exists.php',
+        'Solarium\\QueryType\\ManagedResources\\ResponseParser\\Remove' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/ResponseParser/Remove.php',
+        'Solarium\\QueryType\\ManagedResources\\ResponseParser\\Resources' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/ResponseParser/Resources.php',
+        'Solarium\\QueryType\\ManagedResources\\ResponseParser\\Stopword' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/ResponseParser/Stopword.php',
+        'Solarium\\QueryType\\ManagedResources\\ResponseParser\\Stopwords' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/ResponseParser/Stopwords.php',
+        'Solarium\\QueryType\\ManagedResources\\ResponseParser\\Synonym' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/ResponseParser/Synonym.php',
+        'Solarium\\QueryType\\ManagedResources\\ResponseParser\\Synonyms' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/ResponseParser/Synonyms.php',
+        'Solarium\\QueryType\\ManagedResources\\Result\\Command' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Result/Command.php',
+        'Solarium\\QueryType\\ManagedResources\\Result\\Resources\\Resource' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Result/Resources/Resource.php',
+        'Solarium\\QueryType\\ManagedResources\\Result\\Resources\\ResourceList' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Result/Resources/ResourceList.php',
+        'Solarium\\QueryType\\ManagedResources\\Result\\Stopwords\\WordSet' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Result/Stopwords/WordSet.php',
+        'Solarium\\QueryType\\ManagedResources\\Result\\Synonyms\\SynonymMappings' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Result/Synonyms/SynonymMappings.php',
+        'Solarium\\QueryType\\ManagedResources\\Result\\Synonyms\\Synonyms' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/ManagedResources/Result/Synonyms/Synonyms.php',
+        'Solarium\\QueryType\\MoreLikeThis\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/MoreLikeThis/Query.php',
+        'Solarium\\QueryType\\MoreLikeThis\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/MoreLikeThis/RequestBuilder.php',
+        'Solarium\\QueryType\\MoreLikeThis\\ResponseParser' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/MoreLikeThis/ResponseParser.php',
+        'Solarium\\QueryType\\MoreLikeThis\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/MoreLikeThis/Result.php',
+        'Solarium\\QueryType\\Ping\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Ping/Query.php',
+        'Solarium\\QueryType\\Ping\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Ping/RequestBuilder.php',
+        'Solarium\\QueryType\\Ping\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Ping/Result.php',
+        'Solarium\\QueryType\\RealtimeGet\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/RealtimeGet/Query.php',
+        'Solarium\\QueryType\\RealtimeGet\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/RealtimeGet/RequestBuilder.php',
+        'Solarium\\QueryType\\RealtimeGet\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/RealtimeGet/Result.php',
+        'Solarium\\QueryType\\Select\\Query\\FilterQuery' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Select/Query/FilterQuery.php',
+        'Solarium\\QueryType\\Select\\Query\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Select/Query/Query.php',
+        'Solarium\\QueryType\\Select\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Select/RequestBuilder.php',
+        'Solarium\\QueryType\\Select\\ResponseParser' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Select/ResponseParser.php',
+        'Solarium\\QueryType\\Select\\Result\\Document' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Select/Result/Document.php',
+        'Solarium\\QueryType\\Select\\Result\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Select/Result/Result.php',
+        'Solarium\\QueryType\\Server\\AbstractServerQuery' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/AbstractServerQuery.php',
+        'Solarium\\QueryType\\Server\\Api\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Api/Query.php',
+        'Solarium\\QueryType\\Server\\Api\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Api/RequestBuilder.php',
+        'Solarium\\QueryType\\Server\\Api\\ResponseParser' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Api/ResponseParser.php',
+        'Solarium\\QueryType\\Server\\Collections\\Query\\Action\\ClusterStatus' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Collections/Query/Action/ClusterStatus.php',
+        'Solarium\\QueryType\\Server\\Collections\\Query\\Action\\Create' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Collections/Query/Action/Create.php',
+        'Solarium\\QueryType\\Server\\Collections\\Query\\Action\\Delete' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Collections/Query/Action/Delete.php',
+        'Solarium\\QueryType\\Server\\Collections\\Query\\Action\\Reload' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Collections/Query/Action/Reload.php',
+        'Solarium\\QueryType\\Server\\Collections\\Query\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Collections/Query/Query.php',
+        'Solarium\\QueryType\\Server\\Collections\\ResponseParser\\ClusterStatus' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Collections/ResponseParser/ClusterStatus.php',
+        'Solarium\\QueryType\\Server\\Collections\\Result\\ClusterStatusResult' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Collections/Result/ClusterStatusResult.php',
+        'Solarium\\QueryType\\Server\\Collections\\Result\\CreateResult' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Collections/Result/CreateResult.php',
+        'Solarium\\QueryType\\Server\\Collections\\Result\\DeleteResult' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Collections/Result/DeleteResult.php',
+        'Solarium\\QueryType\\Server\\Collections\\Result\\ReloadResult' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Collections/Result/ReloadResult.php',
+        'Solarium\\QueryType\\Server\\Configsets\\Query\\Action\\Create' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Configsets/Query/Action/Create.php',
+        'Solarium\\QueryType\\Server\\Configsets\\Query\\Action\\Delete' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Configsets/Query/Action/Delete.php',
+        'Solarium\\QueryType\\Server\\Configsets\\Query\\Action\\ListConfigsets' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Configsets/Query/Action/ListConfigsets.php',
+        'Solarium\\QueryType\\Server\\Configsets\\Query\\Action\\Upload' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Configsets/Query/Action/Upload.php',
+        'Solarium\\QueryType\\Server\\Configsets\\Query\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Configsets/Query/Query.php',
+        'Solarium\\QueryType\\Server\\Configsets\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Configsets/RequestBuilder.php',
+        'Solarium\\QueryType\\Server\\Configsets\\Result\\ConfigsetsResult' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Configsets/Result/ConfigsetsResult.php',
+        'Solarium\\QueryType\\Server\\Configsets\\Result\\ListConfigsetsResult' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Configsets/Result/ListConfigsetsResult.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Action\\CoreActionInterface' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Action/CoreActionInterface.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Action\\CoreActionTrait' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Action/CoreActionTrait.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Action\\Create' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Action/Create.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Action\\MergeIndexes' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Action/MergeIndexes.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Action\\Reload' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Action/Reload.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Action\\Rename' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Action/Rename.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Action\\RequestRecovery' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Action/RequestRecovery.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Action\\RequestStatus' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Action/RequestStatus.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Action\\Split' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Action/Split.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Action\\Status' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Action/Status.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Action\\Swap' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Action/Swap.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Action\\Unload' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Action/Unload.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Query\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Query/Query.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\ResponseParser' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/ResponseParser.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Result\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Result/Result.php',
+        'Solarium\\QueryType\\Server\\CoreAdmin\\Result\\StatusResult' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/CoreAdmin/Result/StatusResult.php',
+        'Solarium\\QueryType\\Server\\Query\\AbstractResult' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Query/AbstractResult.php',
+        'Solarium\\QueryType\\Server\\Query\\Action\\AbstractAction' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Query/Action/AbstractAction.php',
+        'Solarium\\QueryType\\Server\\Query\\Action\\AbstractAsyncAction' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Query/Action/AbstractAsyncAction.php',
+        'Solarium\\QueryType\\Server\\Query\\Action\\ActionInterface' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Query/Action/ActionInterface.php',
+        'Solarium\\QueryType\\Server\\Query\\Action\\AsyncActionInterface' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Query/Action/AsyncActionInterface.php',
+        'Solarium\\QueryType\\Server\\Query\\Action\\NameParameterTrait' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Query/Action/NameParameterTrait.php',
+        'Solarium\\QueryType\\Server\\Query\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Query/RequestBuilder.php',
+        'Solarium\\QueryType\\Server\\Query\\ResponseParser' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Server/Query/ResponseParser.php',
+        'Solarium\\QueryType\\Spellcheck\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Spellcheck/Query.php',
+        'Solarium\\QueryType\\Spellcheck\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Spellcheck/RequestBuilder.php',
+        'Solarium\\QueryType\\Spellcheck\\ResponseParser' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Spellcheck/ResponseParser.php',
+        'Solarium\\QueryType\\Spellcheck\\Result\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Spellcheck/Result/Result.php',
+        'Solarium\\QueryType\\Spellcheck\\Result\\Term' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Spellcheck/Result/Term.php',
+        'Solarium\\QueryType\\Stream\\Expression' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Stream/Expression.php',
+        'Solarium\\QueryType\\Stream\\ExpressionBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Stream/ExpressionBuilder.php',
+        'Solarium\\QueryType\\Stream\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Stream/Query.php',
+        'Solarium\\QueryType\\Stream\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Stream/RequestBuilder.php',
+        'Solarium\\QueryType\\Stream\\ResponseParser' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Stream/ResponseParser.php',
+        'Solarium\\QueryType\\Stream\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Stream/Result.php',
+        'Solarium\\QueryType\\Suggester\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Suggester/Query.php',
+        'Solarium\\QueryType\\Suggester\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Suggester/RequestBuilder.php',
+        'Solarium\\QueryType\\Suggester\\ResponseParser' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Suggester/ResponseParser.php',
+        'Solarium\\QueryType\\Suggester\\Result\\Dictionary' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Suggester/Result/Dictionary.php',
+        'Solarium\\QueryType\\Suggester\\Result\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Suggester/Result/Result.php',
+        'Solarium\\QueryType\\Suggester\\Result\\Term' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Suggester/Result/Term.php',
+        'Solarium\\QueryType\\Terms\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Terms/Query.php',
+        'Solarium\\QueryType\\Terms\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Terms/RequestBuilder.php',
+        'Solarium\\QueryType\\Terms\\ResponseParser' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Terms/ResponseParser.php',
+        'Solarium\\QueryType\\Terms\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Terms/Result.php',
+        'Solarium\\QueryType\\Update\\Query\\Command\\AbstractCommand' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Update/Query/Command/AbstractCommand.php',
+        'Solarium\\QueryType\\Update\\Query\\Command\\Add' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Update/Query/Command/Add.php',
+        'Solarium\\QueryType\\Update\\Query\\Command\\Commit' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Update/Query/Command/Commit.php',
+        'Solarium\\QueryType\\Update\\Query\\Command\\Delete' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Update/Query/Command/Delete.php',
+        'Solarium\\QueryType\\Update\\Query\\Command\\Optimize' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Update/Query/Command/Optimize.php',
+        'Solarium\\QueryType\\Update\\Query\\Command\\RawXml' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Update/Query/Command/RawXml.php',
+        'Solarium\\QueryType\\Update\\Query\\Command\\Rollback' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Update/Query/Command/Rollback.php',
+        'Solarium\\QueryType\\Update\\Query\\Document' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Update/Query/Document.php',
+        'Solarium\\QueryType\\Update\\Query\\Query' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Update/Query/Query.php',
+        'Solarium\\QueryType\\Update\\RequestBuilder' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Update/RequestBuilder.php',
+        'Solarium\\QueryType\\Update\\ResponseParser' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Update/ResponseParser.php',
+        'Solarium\\QueryType\\Update\\Result' => __DIR__ . '/..' . '/solarium/solarium/src/QueryType/Update/Result.php',
+        'Solarium\\Support\\DataFixtures\\Executor' => __DIR__ . '/..' . '/solarium/solarium/src/Support/DataFixtures/Executor.php',
+        'Solarium\\Support\\DataFixtures\\FixtureInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Support/DataFixtures/FixtureInterface.php',
+        'Solarium\\Support\\DataFixtures\\FixtureLoader' => __DIR__ . '/..' . '/solarium/solarium/src/Support/DataFixtures/FixtureLoader.php',
+        'Solarium\\Support\\DataFixtures\\Loader' => __DIR__ . '/..' . '/solarium/solarium/src/Support/DataFixtures/Loader.php',
+        'Solarium\\Support\\DataFixtures\\Purger' => __DIR__ . '/..' . '/solarium/solarium/src/Support/DataFixtures/Purger.php',
+        'Solarium\\Support\\Utility' => __DIR__ . '/..' . '/solarium/solarium/src/Support/Utility.php',
+>>>>>>> Based off of manual_composer first commit
         'Stack\\Builder' => __DIR__ . '/..' . '/stack/builder/src/Stack/Builder.php',
         'Stack\\StackedHttpKernel' => __DIR__ . '/..' . '/stack/builder/src/Stack/StackedHttpKernel.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
@@ -3461,11 +4473,19 @@ class ComposerStaticInitDrupal8
         'Symfony\\Cmf\\Component\\Routing\\Event\\RouterGenerateEvent' => __DIR__ . '/..' . '/symfony-cmf/routing/Event/RouterGenerateEvent.php',
         'Symfony\\Cmf\\Component\\Routing\\Event\\RouterMatchEvent' => __DIR__ . '/..' . '/symfony-cmf/routing/Event/RouterMatchEvent.php',
         'Symfony\\Cmf\\Component\\Routing\\LazyRouteCollection' => __DIR__ . '/..' . '/symfony-cmf/routing/LazyRouteCollection.php',
+<<<<<<< HEAD
+=======
+        'Symfony\\Cmf\\Component\\Routing\\LazyRouteCollectionTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/LazyRouteCollectionTest.php',
+>>>>>>> Based off of manual_composer first commit
         'Symfony\\Cmf\\Component\\Routing\\NestedMatcher\\FinalMatcherInterface' => __DIR__ . '/..' . '/symfony-cmf/routing/NestedMatcher/FinalMatcherInterface.php',
         'Symfony\\Cmf\\Component\\Routing\\NestedMatcher\\NestedMatcher' => __DIR__ . '/..' . '/symfony-cmf/routing/NestedMatcher/NestedMatcher.php',
         'Symfony\\Cmf\\Component\\Routing\\NestedMatcher\\RouteFilterInterface' => __DIR__ . '/..' . '/symfony-cmf/routing/NestedMatcher/RouteFilterInterface.php',
         'Symfony\\Cmf\\Component\\Routing\\NestedMatcher\\UrlMatcher' => __DIR__ . '/..' . '/symfony-cmf/routing/NestedMatcher/UrlMatcher.php',
         'Symfony\\Cmf\\Component\\Routing\\PagedRouteCollection' => __DIR__ . '/..' . '/symfony-cmf/routing/PagedRouteCollection.php',
+<<<<<<< HEAD
+=======
+        'Symfony\\Cmf\\Component\\Routing\\PagedRouteCollectionTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/PagedRouteCollectionTest.php',
+>>>>>>> Based off of manual_composer first commit
         'Symfony\\Cmf\\Component\\Routing\\PagedRouteProviderInterface' => __DIR__ . '/..' . '/symfony-cmf/routing/PagedRouteProviderInterface.php',
         'Symfony\\Cmf\\Component\\Routing\\ProviderBasedGenerator' => __DIR__ . '/..' . '/symfony-cmf/routing/ProviderBasedGenerator.php',
         'Symfony\\Cmf\\Component\\Routing\\RedirectRouteInterface' => __DIR__ . '/..' . '/symfony-cmf/routing/RedirectRouteInterface.php',
@@ -3473,6 +4493,34 @@ class ComposerStaticInitDrupal8
         'Symfony\\Cmf\\Component\\Routing\\RouteProviderInterface' => __DIR__ . '/..' . '/symfony-cmf/routing/RouteProviderInterface.php',
         'Symfony\\Cmf\\Component\\Routing\\RouteReferrersInterface' => __DIR__ . '/..' . '/symfony-cmf/routing/RouteReferrersInterface.php',
         'Symfony\\Cmf\\Component\\Routing\\RouteReferrersReadInterface' => __DIR__ . '/..' . '/symfony-cmf/routing/RouteReferrersReadInterface.php',
+<<<<<<< HEAD
+=======
+        'Symfony\\Cmf\\Component\\Routing\\Test\\CmfUnitTestCase' => __DIR__ . '/..' . '/symfony-cmf/routing/Test/CmfUnitTestCase.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Candidates\\CandidatesTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Candidates/CandidatesTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\DependencyInjection\\Compiler\\RegisterRouteEnhancersPassTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/DependencyInjection/Compiler/RegisterRouteEnhancersPassTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Enhancer\\ContentRepositoryEnhancerTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Enhancer/ContentRepositoryEnhancerTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Enhancer\\FieldByClassEnhancerTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Enhancer/FieldByClassEnhancerTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Enhancer\\FieldPresenceEnhancerTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Enhancer/FieldPresenceEnhancerTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Enhancer\\RouteContentEnhancerTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Enhancer/RouteContentEnhancerTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Enhancer\\RouteObject' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Enhancer/RouteObject.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Enhancer\\TargetDocument' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Enhancer/RouteContentEnhancerTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Enhancer\\UnknownDocument' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Enhancer/RouteContentEnhancerTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Mapper\\FieldMapEnhancerTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Enhancer/FieldMapEnhancerTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\NestedMatcher\\NestedMatcherTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/NestedMatcher/NestedMatcherTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\NestedMatcher\\UrlMatcherTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/NestedMatcher/UrlMatcherTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\ChainRouterTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/ChainRouterTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\ContentAwareGeneratorTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/ContentAwareGeneratorTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\DynamicRouterTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/DynamicRouterTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\ProviderBasedGeneratorTest' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/ProviderBasedGeneratorTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RequestMatcher' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/ChainRouterTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteAware' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/ContentAwareGeneratorTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/RouteMock.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteObject' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/ProviderBasedGeneratorTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\TestableContentAwareGenerator' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/ContentAwareGeneratorTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\TestableProviderBasedGenerator' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/ProviderBasedGeneratorTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\VersatileRouter' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/ChainRouterTest.php',
+        'Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\WarmableRouterMock' => __DIR__ . '/..' . '/symfony-cmf/routing/Tests/Routing/ChainRouterTest.php',
+>>>>>>> Based off of manual_composer first commit
         'Symfony\\Cmf\\Component\\Routing\\VersatileGeneratorInterface' => __DIR__ . '/..' . '/symfony-cmf/routing/VersatileGeneratorInterface.php',
         'Symfony\\Component\\ClassLoader\\ApcClassLoader' => __DIR__ . '/..' . '/symfony/class-loader/ApcClassLoader.php',
         'Symfony\\Component\\ClassLoader\\ClassCollectionLoader' => __DIR__ . '/..' . '/symfony/class-loader/ClassCollectionLoader.php',
@@ -3565,6 +4613,10 @@ class ComposerStaticInitDrupal8
         'Symfony\\Component\\Debug\\ErrorHandler' => __DIR__ . '/..' . '/symfony/debug/ErrorHandler.php',
         'Symfony\\Component\\Debug\\ExceptionHandler' => __DIR__ . '/..' . '/symfony/debug/ExceptionHandler.php',
         'Symfony\\Component\\Debug\\Exception\\ClassNotFoundException' => __DIR__ . '/..' . '/symfony/debug/Exception/ClassNotFoundException.php',
+<<<<<<< HEAD
+=======
+        'Symfony\\Component\\Debug\\Exception\\ContextErrorException' => __DIR__ . '/..' . '/symfony/debug/Exception/ContextErrorException.php',
+>>>>>>> Based off of manual_composer first commit
         'Symfony\\Component\\Debug\\Exception\\FatalErrorException' => __DIR__ . '/..' . '/symfony/debug/Exception/FatalErrorException.php',
         'Symfony\\Component\\Debug\\Exception\\FatalThrowableError' => __DIR__ . '/..' . '/symfony/debug/Exception/FatalThrowableError.php',
         'Symfony\\Component\\Debug\\Exception\\FlattenException' => __DIR__ . '/..' . '/symfony/debug/Exception/FlattenException.php',
@@ -3741,6 +4793,32 @@ class ComposerStaticInitDrupal8
         'Symfony\\Component\\EventDispatcher\\EventSubscriberInterface' => __DIR__ . '/..' . '/symfony/event-dispatcher/EventSubscriberInterface.php',
         'Symfony\\Component\\EventDispatcher\\GenericEvent' => __DIR__ . '/..' . '/symfony/event-dispatcher/GenericEvent.php',
         'Symfony\\Component\\EventDispatcher\\ImmutableEventDispatcher' => __DIR__ . '/..' . '/symfony/event-dispatcher/ImmutableEventDispatcher.php',
+<<<<<<< HEAD
+=======
+        'Symfony\\Component\\Finder\\Comparator\\Comparator' => __DIR__ . '/..' . '/symfony/finder/Comparator/Comparator.php',
+        'Symfony\\Component\\Finder\\Comparator\\DateComparator' => __DIR__ . '/..' . '/symfony/finder/Comparator/DateComparator.php',
+        'Symfony\\Component\\Finder\\Comparator\\NumberComparator' => __DIR__ . '/..' . '/symfony/finder/Comparator/NumberComparator.php',
+        'Symfony\\Component\\Finder\\Exception\\AccessDeniedException' => __DIR__ . '/..' . '/symfony/finder/Exception/AccessDeniedException.php',
+        'Symfony\\Component\\Finder\\Exception\\DirectoryNotFoundException' => __DIR__ . '/..' . '/symfony/finder/Exception/DirectoryNotFoundException.php',
+        'Symfony\\Component\\Finder\\Finder' => __DIR__ . '/..' . '/symfony/finder/Finder.php',
+        'Symfony\\Component\\Finder\\Gitignore' => __DIR__ . '/..' . '/symfony/finder/Gitignore.php',
+        'Symfony\\Component\\Finder\\Glob' => __DIR__ . '/..' . '/symfony/finder/Glob.php',
+        'Symfony\\Component\\Finder\\Iterator\\CustomFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/CustomFilterIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\DateRangeFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/DateRangeFilterIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\DepthRangeFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/DepthRangeFilterIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\ExcludeDirectoryFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/ExcludeDirectoryFilterIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\FileTypeFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/FileTypeFilterIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\FilecontentFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/FilecontentFilterIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\FilenameFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/FilenameFilterIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\LazyIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/LazyIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\MultiplePcreFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/MultiplePcreFilterIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\PathFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/PathFilterIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\RecursiveDirectoryIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/RecursiveDirectoryIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\SizeRangeFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/SizeRangeFilterIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\SortableIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/SortableIterator.php',
+        'Symfony\\Component\\Finder\\Iterator\\VcsIgnoredFilterIterator' => __DIR__ . '/..' . '/symfony/finder/Iterator/VcsIgnoredFilterIterator.php',
+        'Symfony\\Component\\Finder\\SplFileInfo' => __DIR__ . '/..' . '/symfony/finder/SplFileInfo.php',
+>>>>>>> Based off of manual_composer first commit
         'Symfony\\Component\\HttpFoundation\\AcceptHeader' => __DIR__ . '/..' . '/symfony/http-foundation/AcceptHeader.php',
         'Symfony\\Component\\HttpFoundation\\AcceptHeaderItem' => __DIR__ . '/..' . '/symfony/http-foundation/AcceptHeaderItem.php',
         'Symfony\\Component\\HttpFoundation\\ApacheRequest' => __DIR__ . '/..' . '/symfony/http-foundation/ApacheRequest.php',
@@ -4311,7 +5389,10 @@ class ComposerStaticInitDrupal8
         'Symfony\\Component\\Validator\\Mapping\\PropertyMetadataInterface' => __DIR__ . '/..' . '/symfony/validator/Mapping/PropertyMetadataInterface.php',
         'Symfony\\Component\\Validator\\Mapping\\TraversalStrategy' => __DIR__ . '/..' . '/symfony/validator/Mapping/TraversalStrategy.php',
         'Symfony\\Component\\Validator\\ObjectInitializerInterface' => __DIR__ . '/..' . '/symfony/validator/ObjectInitializerInterface.php',
+<<<<<<< HEAD
         'Symfony\\Component\\Validator\\Test\\AssertingContextualValidator' => __DIR__ . '/..' . '/symfony/validator/Test/ConstraintValidatorTestCase.php',
+=======
+>>>>>>> Based off of manual_composer first commit
         'Symfony\\Component\\Validator\\Test\\ConstraintValidatorTestCase' => __DIR__ . '/..' . '/symfony/validator/Test/ConstraintValidatorTestCase.php',
         'Symfony\\Component\\Validator\\Test\\ConstraintViolationAssertion' => __DIR__ . '/..' . '/symfony/validator/Test/ConstraintValidatorTestCase.php',
         'Symfony\\Component\\Validator\\Test\\ForwardCompatTestTrait' => __DIR__ . '/..' . '/symfony/validator/Test/ForwardCompatTestTrait.php',
@@ -4348,6 +5429,10 @@ class ComposerStaticInitDrupal8
         'Symfony\\Component\\VarDumper\\Caster\\IntlCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/IntlCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\LinkStub' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/LinkStub.php',
         'Symfony\\Component\\VarDumper\\Caster\\MemcachedCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/MemcachedCaster.php',
+<<<<<<< HEAD
+=======
+        'Symfony\\Component\\VarDumper\\Caster\\MysqliCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/MysqliCaster.php',
+>>>>>>> Based off of manual_composer first commit
         'Symfony\\Component\\VarDumper\\Caster\\PdoCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/PdoCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\PgSqlCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/PgSqlCaster.php',
         'Symfony\\Component\\VarDumper\\Caster\\ProxyManagerCaster' => __DIR__ . '/..' . '/symfony/var-dumper/Caster/ProxyManagerCaster.php',
@@ -4399,6 +5484,7 @@ class ComposerStaticInitDrupal8
         'Symfony\\Component\\Yaml\\Tag\\TaggedValue' => __DIR__ . '/..' . '/symfony/yaml/Tag/TaggedValue.php',
         'Symfony\\Component\\Yaml\\Unescaper' => __DIR__ . '/..' . '/symfony/yaml/Unescaper.php',
         'Symfony\\Component\\Yaml\\Yaml' => __DIR__ . '/..' . '/symfony/yaml/Yaml.php',
+<<<<<<< HEAD
         'Symfony\\Polyfill\\Ctype\\Ctype' => __DIR__ . '/..' . '/symfony/polyfill-ctype/Ctype.php',
         'Symfony\\Polyfill\\Iconv\\Iconv' => __DIR__ . '/..' . '/symfony/polyfill-iconv/Iconv.php',
         'Symfony\\Polyfill\\Intl\\Idn\\Idn' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Idn.php',
@@ -4409,6 +5495,27 @@ class ComposerStaticInitDrupal8
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
         'Symfony\\Polyfill\\Php72\\Php72' => __DIR__ . '/..' . '/symfony/polyfill-php72/Php72.php',
         'Symfony\\Polyfill\\Php80\\Php80' => __DIR__ . '/..' . '/symfony/polyfill-php80/Php80.php',
+=======
+        'Symfony\\Contracts\\EventDispatcher\\Event' => __DIR__ . '/..' . '/symfony/event-dispatcher-contracts/Event.php',
+        'Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface' => __DIR__ . '/..' . '/symfony/event-dispatcher-contracts/EventDispatcherInterface.php',
+        'Symfony\\Polyfill\\Ctype\\Ctype' => __DIR__ . '/..' . '/symfony/polyfill-ctype/Ctype.php',
+        'Symfony\\Polyfill\\Iconv\\Iconv' => __DIR__ . '/..' . '/symfony/polyfill-iconv/Iconv.php',
+        'Symfony\\Polyfill\\Intl\\Idn\\Idn' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Idn.php',
+        'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
+        'Symfony\\Polyfill\\Php56\\Php56' => __DIR__ . '/..' . '/symfony/polyfill-php56/Php56.php',
+        'Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',
+        'Symfony\\Polyfill\\Php72\\Php72' => __DIR__ . '/..' . '/symfony/polyfill-php72/Php72.php',
+        'Symfony\\Polyfill\\Php80\\Php80' => __DIR__ . '/..' . '/symfony/polyfill-php80/Php80.php',
+        'Symfony\\Polyfill\\Php80\\PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/PhpToken.php',
+        'Symfony\\Polyfill\\Util\\Binary' => __DIR__ . '/..' . '/symfony/polyfill-util/Binary.php',
+        'Symfony\\Polyfill\\Util\\BinaryNoFuncOverload' => __DIR__ . '/..' . '/symfony/polyfill-util/BinaryNoFuncOverload.php',
+        'Symfony\\Polyfill\\Util\\BinaryOnFuncOverload' => __DIR__ . '/..' . '/symfony/polyfill-util/BinaryOnFuncOverload.php',
+        'Symfony\\Polyfill\\Util\\TestListener' => __DIR__ . '/..' . '/symfony/polyfill-util/TestListener.php',
+        'Symfony\\Polyfill\\Util\\TestListenerForV5' => __DIR__ . '/..' . '/symfony/polyfill-util/TestListenerForV5.php',
+        'Symfony\\Polyfill\\Util\\TestListenerForV6' => __DIR__ . '/..' . '/symfony/polyfill-util/TestListenerForV6.php',
+        'Symfony\\Polyfill\\Util\\TestListenerForV7' => __DIR__ . '/..' . '/symfony/polyfill-util/TestListenerForV7.php',
+        'Symfony\\Polyfill\\Util\\TestListenerTrait' => __DIR__ . '/..' . '/symfony/polyfill-util/TestListenerTrait.php',
+>>>>>>> Based off of manual_composer first commit
         'System' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/System.php',
         'TYPO3\\PharStreamWrapper\\Assertable' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Assertable.php',
         'TYPO3\\PharStreamWrapper\\Behavior' => __DIR__ . '/..' . '/typo3/phar-stream-wrapper/src/Behavior.php',
@@ -4473,7 +5580,10 @@ class ComposerStaticInitDrupal8
         'Twig\\Node\\BlockNode' => __DIR__ . '/..' . '/twig/twig/src/Node/BlockNode.php',
         'Twig\\Node\\BlockReferenceNode' => __DIR__ . '/..' . '/twig/twig/src/Node/BlockReferenceNode.php',
         'Twig\\Node\\BodyNode' => __DIR__ . '/..' . '/twig/twig/src/Node/BodyNode.php',
+<<<<<<< HEAD
         'Twig\\Node\\CheckSecurityCallNode' => __DIR__ . '/..' . '/twig/twig/src/Node/CheckSecurityCallNode.php',
+=======
+>>>>>>> Based off of manual_composer first commit
         'Twig\\Node\\CheckSecurityNode' => __DIR__ . '/..' . '/twig/twig/src/Node/CheckSecurityNode.php',
         'Twig\\Node\\CheckToStringNode' => __DIR__ . '/..' . '/twig/twig/src/Node/CheckToStringNode.php',
         'Twig\\Node\\DeprecatedNode' => __DIR__ . '/..' . '/twig/twig/src/Node/DeprecatedNode.php',
@@ -4808,6 +5918,7 @@ class ComposerStaticInitDrupal8
         'Twig_TokenStream' => __DIR__ . '/..' . '/twig/twig/lib/Twig/TokenStream.php',
         'Twig_Util_DeprecationCollector' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Util/DeprecationCollector.php',
         'Twig_Util_TemplateDirIterator' => __DIR__ . '/..' . '/twig/twig/lib/Twig/Util/TemplateDirIterator.php',
+<<<<<<< HEAD
         'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
         'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
         'Wikimedia\\Composer\\Logger' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/Logger.php',
@@ -4817,6 +5928,35 @@ class ComposerStaticInitDrupal8
         'Wikimedia\\Composer\\Merge\\NestedArray' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/Merge/NestedArray.php',
         'Wikimedia\\Composer\\Merge\\PluginState' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/Merge/PluginState.php',
         'Wikimedia\\Composer\\Merge\\StabilityFlags' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/Merge/StabilityFlags.php',
+=======
+        'TypeError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
+        'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
+        'Wikimedia\\Composer\\Merge\\V2\\ExtraPackage' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/ExtraPackage.php',
+        'Wikimedia\\Composer\\Merge\\V2\\Logger' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/Logger.php',
+        'Wikimedia\\Composer\\Merge\\V2\\MergePlugin' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/MergePlugin.php',
+        'Wikimedia\\Composer\\Merge\\V2\\MissingFileException' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/MissingFileException.php',
+        'Wikimedia\\Composer\\Merge\\V2\\MultiConstraint' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/MultiConstraint.php',
+        'Wikimedia\\Composer\\Merge\\V2\\NestedArray' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/NestedArray.php',
+        'Wikimedia\\Composer\\Merge\\V2\\PluginState' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/PluginState.php',
+        'Wikimedia\\Composer\\Merge\\V2\\StabilityFlags' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/StabilityFlags.php',
+        'ZipStream\\Bigint' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Bigint.php',
+        'ZipStream\\DeflateStream' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/DeflateStream.php',
+        'ZipStream\\Exception' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Exception.php',
+        'ZipStream\\Exception\\EncodingException' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Exception/EncodingException.php',
+        'ZipStream\\Exception\\FileNotFoundException' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Exception/FileNotFoundException.php',
+        'ZipStream\\Exception\\FileNotReadableException' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Exception/FileNotReadableException.php',
+        'ZipStream\\Exception\\IncompatibleOptionsException' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Exception/IncompatibleOptionsException.php',
+        'ZipStream\\Exception\\OverflowException' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Exception/OverflowException.php',
+        'ZipStream\\Exception\\StreamNotReadableException' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Exception/StreamNotReadableException.php',
+        'ZipStream\\File' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/File.php',
+        'ZipStream\\Option\\Archive' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Option/Archive.php',
+        'ZipStream\\Option\\File' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Option/File.php',
+        'ZipStream\\Option\\Method' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Option/Method.php',
+        'ZipStream\\Option\\Version' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Option/Version.php',
+        'ZipStream\\Stream' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/Stream.php',
+        'ZipStream\\ZipStream' => __DIR__ . '/..' . '/maennchen/zipstream-php/src/ZipStream.php',
+>>>>>>> Based off of manual_composer first commit
         'cweagans\\Composer\\PatchEvent' => __DIR__ . '/..' . '/cweagans/composer-patches/src/PatchEvent.php',
         'cweagans\\Composer\\PatchEvents' => __DIR__ . '/..' . '/cweagans/composer-patches/src/PatchEvents.php',
         'cweagans\\Composer\\Patches' => __DIR__ . '/..' . '/cweagans/composer-patches/src/Patches.php',
@@ -4826,11 +5966,19 @@ class ComposerStaticInitDrupal8
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+<<<<<<< HEAD
             $loader->prefixLengthsPsr4 = ComposerStaticInitDrupal8::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitDrupal8::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInitDrupal8::$prefixesPsr0;
             $loader->fallbackDirsPsr0 = ComposerStaticInitDrupal8::$fallbackDirsPsr0;
             $loader->classMap = ComposerStaticInitDrupal8::$classMap;
+=======
+            $loader->prefixLengthsPsr4 = ComposerStaticInit21da3f90acc4075b2c94db7757e92f69::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit21da3f90acc4075b2c94db7757e92f69::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit21da3f90acc4075b2c94db7757e92f69::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit21da3f90acc4075b2c94db7757e92f69::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit21da3f90acc4075b2c94db7757e92f69::$classMap;
+>>>>>>> Based off of manual_composer first commit
 
         }, null, ClassLoader::class);
     }

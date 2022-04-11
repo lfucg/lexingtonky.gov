@@ -113,7 +113,7 @@ class CacheDataCollector extends DataCollector implements DrupalDataCollectorInt
     $hits = [];
     foreach ($this->data['cache'] as $bin => $caches) {
       $hits[$bin] = 0;
-      foreach ($caches as $cid => $cache) {
+      foreach ($caches as $cache) {
         $hits[$bin] += $cache->{$type};
       }
     }
@@ -169,4 +169,5 @@ class CacheDataCollector extends DataCollector implements DrupalDataCollectorInt
   public function getIcon() {
     return 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo2Njc3QTVEQTkxNkMxMUUzQjA3OUEzQTNEMUVGMjVDOCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo2Njc3QTVEQjkxNkMxMUUzQjA3OUEzQTNEMUVGMjVDOCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjRGQTVBQzYxOTE2QzExRTNCMDc5QTNBM0QxRUYyNUM4IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjRGQTVBQzYyOTE2QzExRTNCMDc5QTNBM0QxRUYyNUM4Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+BsBwAAAAAJtJREFUeNpi/P//PwM1ARMDlcEIMdDBweEZjM0IihSgwEx8Gg4cOJCOrhGHOimqe5kF2QVYvDITl0vQvQwTo4oLkS1gQrPpPwiTEBkY6pnwKJ5JyOskJRvkcMUVxjgjhRhDsUUGSQZu3rwZb1j6+voyjhYOI9VAFmKTBTC3oMsTbyAx+RndAqxejo2NJdmL6HoYR6vRwWcgQIABAOn0PsqqgQzcAAAAAElFTkSuQmCC';
   }
+
 }

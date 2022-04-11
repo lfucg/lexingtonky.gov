@@ -18,7 +18,7 @@ class DiffLocaleTest extends DiffTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'locale',
     'content_translation',
   ];
@@ -26,7 +26,7 @@ class DiffLocaleTest extends DiffTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalLogin($this->rootUser);
@@ -35,7 +35,8 @@ class DiffLocaleTest extends DiffTestBase {
     $edit = array(
       'predefined_langcode' => 'fr',
     );
-    $this->drupalPostForm('admin/config/regional/language/add', $edit, t('Add language'));
+    $this->drupalGet('admin/config/regional/language/add');
+    $this->submitForm($edit, 'Add language');
 
     // Enable content translation on articles.
     $this->drupalGet('admin/config/regional/content-language');
@@ -44,7 +45,7 @@ class DiffLocaleTest extends DiffTestBase {
       'settings[node][article][translatable]' => TRUE,
       'settings[node][article][settings][language][language_alterable]' => TRUE,
     );
-    $this->drupalPostForm(NULL, $edit, t('Save configuration'));
+    $this->submitForm($edit, 'Save configuration');
   }
 
   /**
@@ -68,7 +69,7 @@ class DiffLocaleTest extends DiffTestBase {
       'title[0][value]' => 'English node',
       'langcode[0][value]' => 'en',
     );
-    $this->drupalPostNodeForm('node/add/article', $edit, t('Save and publish'));
+    $this->drupalPostNodeForm('node/add/article', $edit, 'Save and publish');
     $english_node = $this->drupalGetNodeByTitle('English node');
 
     $this->drupalGet('node/' . $english_node->id() . '/translations');
@@ -76,7 +77,7 @@ class DiffLocaleTest extends DiffTestBase {
     $assert_session->elementExists('css', 'a[href="#edit-revision-information"]')->click();
     $page->fillField('title[0][value]', 'French node');
     $page->uncheckField('revision');
-    $this->drupalPostNodeForm(NULL, [], t('Save and keep published (this translation)'));
+    $this->drupalPostNodeForm(NULL, [], 'Save and keep published (this translation)');
     $this->rebuildContainer();
     $english_node = $this->drupalGetNodeByTitle('English node');
     $french_node = $english_node->getTranslation('fr');
@@ -86,12 +87,12 @@ class DiffLocaleTest extends DiffTestBase {
       'title[0][value]' => 'Updated title',
       'revision' => TRUE,
     );
-    $this->drupalPostNodeForm('node/' . $english_node->id() . '/edit', $edit, t('Save and keep published (this translation)'));
+    $this->drupalPostNodeForm('node/' . $english_node->id() . '/edit', $edit, 'Save and keep published (this translation)');
     $edit = array(
       'title[0][value]' => 'Le titre',
       'revision' => TRUE,
     );
-    $this->drupalPostNodeForm('fr/node/' . $english_node->id() . '/edit', $edit, t('Save and keep published (this translation)'));
+    $this->drupalPostNodeForm('fr/node/' . $english_node->id() . '/edit', $edit, 'Save and keep published (this translation)');
 
     // View differences between revisions. Check that they don't mix up.
     $this->drupalGet('node/' . $english_node->id() . '/revisions');
@@ -151,17 +152,17 @@ class DiffLocaleTest extends DiffTestBase {
     // Compare first two revisions.
     $this->drupalGet('node/' . $node->id() . '/revisions/view/' . $revision1 . '/' . $revision2 . '/split_fields');
     $diffs = $this->getSession()->getPage()->findAll('xpath', '//span[@class="diffchange"]');
-    $this->assertEqual($diffs[0]->getText(), 'english_revision_0');
-    $this->assertEqual($diffs[1]->getText(), 'english_revision_1');
+    $this->assertEquals($diffs[0]->getText(), 'english_revision_0');
+    $this->assertEquals($diffs[1]->getText(), 'english_revision_1');
 
     // Check next difference.
     $this->clickLink('Next change');
     $diffs = $this->getSession()->getPage()->findAll('xpath', '//span[@class="diffchange"]');
-    $this->assertEqual($diffs[0]->getText(), 'english_revision_1');
-    $this->assertEqual($diffs[1]->getText(), 'english_revision_2');
+    $this->assertEquals($diffs[0]->getText(), 'english_revision_1');
+    $this->assertEquals($diffs[1]->getText(), 'english_revision_2');
 
     // There shouldn't be other differences in the current language.
-    $this->assertNoLink('Next change');
+    $this->assertSession()->linkNotExists('Next change');
   }
 
   /**
@@ -193,19 +194,19 @@ class DiffLocaleTest extends DiffTestBase {
     // Check the amount of revisions displayed.
     $this->drupalGet('node/' . $node->id() . '/revisions');
     $element = $this->getSession()->getPage()->findAll('xpath', '//*[@id="edit-node-revisions-table"]/tbody/tr');
-    $this->assertEqual(count($element), 4);
+    $this->assertCount(4, $element);
 
     // Compare the first two revisions.
     $this->drupalGet('node/' . $node->id() . '/revisions/view/' . $revision1 . '/' . $revision2 . '/split_fields');
     $diffs = $this->getSession()->getPage()->findAll('xpath', '//span[@class="diffchange"]');
-    $this->assertEqual($diffs[0]->getText(), 'undefined_language_revision_0');
-    $this->assertEqual($diffs[1]->getText(), 'undefined_language_revision_1');
+    $this->assertEquals($diffs[0]->getText(), 'undefined_language_revision_0');
+    $this->assertEquals($diffs[1]->getText(), 'undefined_language_revision_1');
 
     // Compare the next two revisions.
     $this->clickLink('Next change');
     $diffs = $this->getSession()->getPage()->findAll('xpath', '//span[@class="diffchange"]');
-    $this->assertEqual($diffs[0]->getText(), 'undefined_language_revision_1');
-    $this->assertEqual($diffs[1]->getText(), 'undefined_language_revision_2');
+    $this->assertEquals($diffs[0]->getText(), 'undefined_language_revision_1');
+    $this->assertEquals($diffs[1]->getText(), 'undefined_language_revision_2');
   }
 
 }

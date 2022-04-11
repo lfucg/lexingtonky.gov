@@ -3,7 +3,12 @@
 /**
  * @file
  * This module holds functions useful for Drupal development.
+ *
  * Please contribute!
+ *
+ * Devel is allowed to use its own functions kpr(), dpm() and dpq() so disable
+ * the coding standard which gives warnings for using these.
+ * phpcs:disable Drupal.Functions.DiscouragedFunctions
  */
 
 define('DEVEL_ERROR_HANDLER_NONE', 0);
@@ -11,22 +16,19 @@ define('DEVEL_ERROR_HANDLER_STANDARD', 1);
 define('DEVEL_ERROR_HANDLER_BACKTRACE_KINT', 2);
 define('DEVEL_ERROR_HANDLER_BACKTRACE_DPM', 4);
 
-define('DEVEL_MIN_TEXTAREA', 50);
-
-use Drupal\comment\CommentInterface;
-use Drupal\Core\Database\Database;
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\Menu\LocalTaskDefault;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\Core\Utility\Error;
 use Drupal\devel\EntityTypeInfo;
 use Drupal\devel\ToolbarHandler;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Implements hook_help().
@@ -73,7 +75,7 @@ function devel_help($route_name, RouteMatchInterface $route_match) {
       return '<p>' . t('Here are the contents of your <code>$_SESSION</code> variable.') . '</p>';
 
     case 'devel.state_system_page':
-      return '<p>' . t('This is a list of state variables and their values. For more information read online documentation of <a href=":documentation">State API in Drupal 8</a>.', array(':documentation' => "https://www.drupal.org/developing/api/8/state")) . '</p>';
+      return '<p>' . t('This is a list of state variables and their values. For more information read online documentation of <a href=":documentation">State API in Drupal 8</a>.', [':documentation' => "https://www.drupal.org/developing/api/8/state"]) . '</p>';
 
     case 'devel.layout_info':
       $output = '';
@@ -148,7 +150,7 @@ function devel_set_message($msg, $type = NULL) {
     drush_log($msg, $type);
   }
   else {
-    drupal_set_message($msg, $type, TRUE);
+    \Drupal::messenger()->addMessage($msg, $type, TRUE);
   }
 }
 
@@ -186,14 +188,14 @@ function devel_set_handler($handlers) {
  * @param string $message
  *   The error message.
  * @param string $filename
- *   The filename that the error was raised in.
+ *   (optional) The filename that the error was raised in.
  * @param int $line
- *   The line number the error was raised at.
+ *   (optional) The line number the error was raised at.
  * @param array $context
- *   An array that points to the active symbol table at the point the error
+ *   (optional) An array that points to the active symbol table at the point the error
  *   occurred.
  */
-function backtrace_error_handler($error_level, $message, $filename, $line, $context) {
+function backtrace_error_handler($error_level, $message, $filename = NULL, $line = NULL, $context = NULL) {
   // Hide stack trace and parameters from unqualified users.
   if (!\Drupal::currentUser()->hasPermission('access devel information')) {
     // Do what core does in bootstrap.inc and errors.inc.
@@ -202,11 +204,11 @@ function backtrace_error_handler($error_level, $message, $filename, $line, $cont
     if ($error_level & error_reporting()) {
       $types = drupal_error_levels();
       list($severity_msg, $severity_level) = $types[$error_level];
-      $backtrace = debug_backtrace();
+      $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
       $caller = Error::getLastCaller($backtrace);
 
       // We treat recoverable errors as fatal.
-      _drupal_log_error(array(
+      _drupal_log_error([
         '%type' => isset($types[$error_level]) ? $severity_msg : 'Unknown error',
         '@message' => $message,
         '%function' => $caller['function'],
@@ -214,13 +216,13 @@ function backtrace_error_handler($error_level, $message, $filename, $line, $cont
         '%line' => $caller['line'],
         'severity_level' => $severity_level,
         'backtrace' => $backtrace,
-      ), $error_level == E_RECOVERABLE_ERROR);
+      ], $error_level == E_RECOVERABLE_ERROR);
     }
 
     return;
   }
 
-  // Don't respond to the error if it was suppressed with a '@'
+  // Don't respond to the error if it was suppressed with a '@'.
   if (error_reporting() == 0) {
     return;
   }
@@ -234,7 +236,7 @@ function backtrace_error_handler($error_level, $message, $filename, $line, $cont
     // Only write each distinct NOTICE message once, as repeats do not give any
     // further information and can choke the page output.
     if ($error_level == E_NOTICE) {
-      static $written = array();
+      static $written = [];
       if (!empty($written[$line][$filename][$message])) {
         return;
       }
@@ -244,15 +246,15 @@ function backtrace_error_handler($error_level, $message, $filename, $line, $cont
     $types = drupal_error_levels();
     list($severity_msg, $severity_level) = $types[$error_level];
 
-    $backtrace = debug_backtrace();
+    $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
     $caller = Error::getLastCaller($backtrace);
-    $variables = array(
+    $variables = [
       '%type' => isset($types[$error_level]) ? $severity_msg : 'Unknown error',
       '@message' => $message,
       '%function' => $caller['function'],
       '%file' => $caller['file'],
       '%line' => $caller['line'],
-    );
+    ];
     $msg = t('%type: @message in %function (line %line of %file).', $variables);
 
     // Show message if error_level is ERROR_REPORTING_DISPLAY_SOME or higher.
@@ -262,7 +264,7 @@ function backtrace_error_handler($error_level, $message, $filename, $line, $cont
     if (\Drupal::config('system.logging')->get('error_level') != 'hide') {
       $error_handlers = devel_get_handlers();
       if (!empty($error_handlers[DEVEL_ERROR_HANDLER_STANDARD])) {
-        drupal_set_message($msg, ($severity_level <= RfcLogLevel::NOTICE ? 'error' : 'warning'), TRUE);
+        \Drupal::messenger()->addMessage($msg, ($severity_level <= RfcLogLevel::NOTICE ? MessengerInterface::TYPE_ERROR : MessengerInterface::TYPE_WARNING), TRUE);
       }
       if (!empty($error_handlers[DEVEL_ERROR_HANDLER_BACKTRACE_KINT])) {
         print kpr(ddebug_backtrace(TRUE, 1), TRUE, $msg);
@@ -283,6 +285,86 @@ function devel_page_attachments_alter(&$page) {
   if (\Drupal::currentUser()->hasPermission('access devel information') && \Drupal::config('devel.settings')->get('page_alter')) {
     dpm($page, 'page');
   }
+}
+
+/**
+ * Dumps information about a variable.
+ *
+ * Wrapper for DevelDumperManager::dump().
+ *
+ * @param mixed $input
+ *   The variable to dump.
+ * @param string $name
+ *   (optional) The label to output before variable, defaults to NULL.
+ * @param string $plugin_id
+ *   (optional) The plugin ID, defaults to NULL.
+ *
+ * @see \Drupal\devel\DevelDumperManager::dump()
+ */
+function devel_dump($input, $name = NULL, $plugin_id = NULL) {
+  \Drupal::service('devel.dumper')->dump($input, $name, $plugin_id);
+}
+
+/**
+ * Returns a string representation of a variable.
+ *
+ * Wrapper for DevelDumperManager::export().
+ *
+ * @param mixed $input
+ *   The variable to dump.
+ * @param string $name
+ *   (optional) The label to output before variable, defaults to NULL.
+ * @param string $plugin_id
+ *   (optional) The plugin ID, defaults to NULL.
+ *
+ * @return string
+ *   String representation of a variable.
+ *
+ * @see \Drupal\devel\DevelDumperManager::export()
+ */
+function devel_export($input, $name = NULL, $plugin_id = NULL) {
+  return \Drupal::service('devel.dumper')->export($input, $name, $plugin_id);
+}
+
+/**
+ * Sets a message with a string representation of a variable.
+ *
+ * Wrapper for DevelDumperManager::message().
+ *
+ * @param mixed $input
+ *   The variable to dump.
+ * @param string $name
+ *   (optional) The label to output before variable, defaults to NULL.
+ * @param string $type
+ *   (optional) The message's type. Defaults to 'status'.
+ * @param string $plugin_id
+ *   (optional) The plugin ID, defaults to NULL.
+ *
+ * @see \Drupal\devel\DevelDumperManager::message()
+ */
+function devel_message($input, $name = NULL, $type = 'status', $plugin_id = NULL) {
+  \Drupal::service('devel.dumper')->message($input, $name, $type, $plugin_id);
+}
+
+/**
+ * Logs a variable to a drupal_debug.txt in the site's temp directory.
+ *
+ * Wrapper for DevelDumperManager::debug().
+ *
+ * @param mixed $input
+ *   The variable to log to the drupal_debug.txt log file.
+ * @param string $name
+ *   (optional) If set, a label to output before $data in the log file.
+ * @param string $plugin_id
+ *   (optional) The plugin ID, defaults to NULL.
+ *
+ * @return null|false
+ *   Empty if successful, FALSE if the log file could not be written.
+ *
+ * @see \Drupal\devel\DevelDumperManager::debug()
+ */
+function devel_debug($input, $name = NULL, $plugin_id = NULL) {
+  return \Drupal::service('devel.dumper')->debug($input, $name, $plugin_id);
 }
 
 /**
@@ -308,27 +390,87 @@ function dfbt($label) {
   \Drupal::service('devel.dumper')->dump(FirePHP::TRACE, $label, 'firephp');
 }
 
-/**
- * Wrapper for DevelDumperManager::dump().
- *
- * Wrapper for ChromePHP Class log method.
- *
- * @see \Drupal\devel\DevelDumperManager::dump()
- */
-function dcp() {
-  $args = func_get_args();
-  \Drupal::service('devel.dumper')->dump($args, NULL, 'chromephp');
-}
-
 if (!function_exists('dd')) {
+
   /**
    * Wrapper for DevelDumperManager::debug().
+   *
+   * @deprecated since Drupal 8.6.0 because symfony now has dd() as a function.
+   *   Use the ddm() function instead.
    *
    * @see \Drupal\devel\DevelDumperManager::debug()
    */
   function dd($data, $label = NULL) {
     return \Drupal::service('devel.dumper')->debug($data, $label, 'default');
   }
+
+}
+
+if (!function_exists('ddm')) {
+
+  /**
+   * Wrapper for DevelDumperManager::debug() to replace previous dd function.
+   *
+   * @see \Drupal\devel\DevelDumperManager::debug()
+   */
+  function ddm($data, $label = NULL) {
+    return \Drupal::service('devel.dumper')->debug($data, $label, 'default');
+  }
+
+}
+
+if (!function_exists('kint')) {
+
+  /**
+   * Prints passed argument(s) using Kint debug tool.
+   *
+   * Wrapper for DevelDumperManager::dump().
+   *
+   * @see \Drupal\devel\DevelDumperManager::dump()
+   */
+  function kint() {
+    $args = func_get_args();
+    if (count($args) == 1) {
+      // Pass a single argument directly, which works for any plug-in.
+      $args = $args[0];
+      $name = NULL;
+    }
+    else {
+      // Pass an array marked with a special name. The kint plug-in expands the
+      // arguments and prints each separately.
+      $name = '__ARGS__';
+    }
+
+    return \Drupal::service('devel.dumper')->dump($args, $name, 'kint');
+  }
+
+}
+
+if (!function_exists('ksm')) {
+
+  /**
+   * Prints passed argument(s) to the 'message' area of the page.
+   *
+   * Wrapper for DevelDumperManager::message().
+   *
+   * @see \Drupal\devel\DevelDumperManager::message()
+   */
+  function ksm() {
+    $args = func_get_args();
+    if (count($args) == 1) {
+      // Pass a single argument directly, which works for any plug-in.
+      $args = $args[0];
+      $name = NULL;
+    }
+    else {
+      // Pass an array marked with a special name. The kint plug-in expands the
+      // arguments and prints each separately.
+      $name = '__ARGS__';
+    }
+
+    return \Drupal::service('devel.dumper')->message($args, $name, MessengerInterface::TYPE_STATUS, 'kint');
+  }
+
 }
 
 /**
@@ -336,21 +478,21 @@ if (!function_exists('dd')) {
  *
  * Prints a variable to the 'message' area of the page.
  *
- * Uses drupal_set_message().
+ * Uses Drupal\Core\Messenger\MessengerInterface::addMessage()
  *
- * @param $input
+ * @param mixed $input
  *   An arbitrary value to output.
  * @param string $name
  *   Optional name for identifying the output.
  * @param string $type
- *   Optional message type for drupal_set_message(), defaults to 'status'.
+ *   Optional message type see MessengerInterface, defaults to TYPE_STATUS.
  *
  * @return input
  *   The unaltered input value.
  *
  * @see \Drupal\devel\DevelDumperManager::message()
  */
-function dpm($input, $name = NULL, $type = 'status') {
+function dpm($input, $name = NULL, $type = MessengerInterface::TYPE_STATUS) {
   \Drupal::service('devel.dumper')->message($input, $name, $type);
   return $input;
 }
@@ -360,7 +502,7 @@ function dpm($input, $name = NULL, $type = 'status') {
  *
  * Displays a Variable::export() variable to the 'message' area of the page.
  *
- * Uses drupal_set_message().
+ * Uses Drupal\Core\Messenger\MessengerInterface::addMessage()
  *
  * @param $input
  *   An arbitrary value to output.
@@ -373,7 +515,7 @@ function dpm($input, $name = NULL, $type = 'status') {
  * @see \Drupal\devel\DevelDumperManager::message()
  */
 function dvm($input, $name = NULL) {
-  \Drupal::service('devel.dumper')->message($input, $name, 'status', 'drupal_variable');
+  \Drupal::service('devel.dumper')->message($input, $name, MessengerInterface::TYPE_STATUS, 'drupal_variable');
   return $input;
 }
 
@@ -423,7 +565,7 @@ function dvr($input, $export = FALSE, $name = NULL) {
 function dargs($always = TRUE) {
   static $printed;
   if ($always || !$printed) {
-    $bt = debug_backtrace();
+    $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
     print kpr($bt[1]['args'], TRUE);
     $printed = TRUE;
   }
@@ -434,7 +576,7 @@ function dargs($always = TRUE) {
  *
  * @param object $query
  *   An object that implements the SelectInterface interface.
- * @param boolean $return
+ * @param bool $return
  *   Whether to return the string. Default is FALSE, meaning to print it
  *   and return $query instead.
  * @param string $name
@@ -449,10 +591,10 @@ function dpq($query, $return = FALSE, $name = NULL) {
       $query->preExecute();
     }
     $sql = (string) $query;
-    $quoted = array();
-    $connection = Database::getConnection();
+    $quoted = [];
+    $database = \Drupal::database();
     foreach ((array) $query->arguments() as $key => $val) {
-      $quoted[$key] = is_null($val) ? 'NULL' : $connection->quote($val);
+      $quoted[$key] = is_null($val) ? 'NULL' : $database->quote($val);
     }
     $sql = strtr($sql, $quoted);
     if ($return) {
@@ -491,7 +633,7 @@ function devel_render() {
  * @param $options
  *   Options to pass on to PHP's debug_backtrace().
  *
- * @return string|NULL
+ * @return string|null
  *   The formatted backtrace, if requested, or NULL.
  *
  * @see http://php.net/manual/en/function.debug-backtrace.php
@@ -515,7 +657,7 @@ function ddebug_backtrace($return = FALSE, $pop = 0, $options = DEBUG_BACKTRACE_
     // see #970688!)
     if (\Drupal::config('system.logging')->get('error_level') != 'hide') {
       while (!empty($backtrace)) {
-        $call = array();
+        $call = [];
         if (isset($backtrace[0]['file'])) {
           $call['file'] = $backtrace[0]['file'];
           foreach ($paths as $path => $len) {
@@ -532,7 +674,7 @@ function ddebug_backtrace($return = FALSE, $pop = 0, $options = DEBUG_BACKTRACE_
           else {
             $function = $backtrace[1]['function'] . '()';
           }
-          $backtrace[1] += array('args' => array());
+          $backtrace[1] += ['args' => []];
           foreach ($backtrace[1]['args'] as $key => $value) {
             $call['args'][$key] = $value;
           }
@@ -566,8 +708,8 @@ function devel_form_user_admin_permissions_alter(&$form, FormStateInterface $for
       if (isset($form['permissions'][$key][0])) {
         $form['permissions'][$key][0]['#wrapper_attributes']['title'] = $key;
       }
-      elseif(isset($form['permissions'][$key]['description'])) {
-        $form['permissions'][$key]['description']['#wrapper_attributes']['title']  = $key;
+      elseif (isset($form['permissions'][$key]['description'])) {
+        $form['permissions'][$key]['description']['#wrapper_attributes']['title'] = $key;
       }
     }
   }

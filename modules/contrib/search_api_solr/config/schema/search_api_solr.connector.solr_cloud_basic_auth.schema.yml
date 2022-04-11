@@ -1,0 +1,7 @@
+plugin.plugin_configuration.search_api_solr_connector.solr_cloud_basic_auth:
+  type: plugin.plugin_configuration.search_api_solr_connector.basic_auth
+  label: 'Search API Solr basic authentication connector settings for Solr cloud'
+  mapping:
+    checkpoints_collection:
+      type: string
+      label: 'The collection where topic checkpoints are stored'

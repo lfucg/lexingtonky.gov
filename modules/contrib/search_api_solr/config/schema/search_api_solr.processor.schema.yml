@@ -1,0 +1,35 @@
+plugin.plugin_configuration.search_api_processor.double_quote_workaround:
+  type: search_api.fields_processor_configuration
+  label: 'Double quote workaround processor configuration'
+  mapping:
+    replacement:
+      type: string
+      label: 'Replacement'
+
+plugin.plugin_configuration.search_api_processor.solr_boost_more_recent:
+  type: search_api.fields_processor_configuration
+  label: 'Boost more recent processor configuration'
+  mapping:
+    boosts:
+      type: sequence
+      label: 'Field-specific boosts'
+      orderby: key
+      sequence:
+        type: mapping
+        nullable: true
+        mapping:
+          boost:
+            type: float
+            label: 'boost'
+          resolution:
+            type: string
+            label: 'resolution'
+          m:
+            type: string
+            label: 'm'
+          a:
+            type: float
+            label: 'a'
+          b:
+            type: float
+            label: 'b'

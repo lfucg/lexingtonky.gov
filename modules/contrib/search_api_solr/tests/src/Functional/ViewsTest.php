@@ -4,6 +4,7 @@ namespace Drupal\Tests\search_api_solr\Functional;
 
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\search_api\Entity\Index;
+use Drupal\search_api\Utility\Utility;
 use Drupal\Tests\search_api\Functional\SearchApiBrowserTestBase;
 use Drupal\Tests\search_api\Functional\ViewsTest as SearchApiViewsTest;
 use Drupal\search_api_solr\Utility\SolrCommitTrait;
@@ -22,12 +23,12 @@ class ViewsTest extends SearchApiViewsTest {
    *
    * @var string[]
    */
-  public static $modules = array('search_api_solr_test');
+  public static $modules = ['search_api_solr_test'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     // Skip parent::setUp().
     SearchApiBrowserTestBase::setUp();
 
@@ -43,18 +44,32 @@ class ViewsTest extends SearchApiViewsTest {
       ->set('id', 'database_search_index')
       ->save();
 
+    $this->adjustBackendConfig();
+
     // Now do the same as parent::setUp().
     \Drupal::getContainer()
       ->get('search_api.index_task_manager')
       ->addItemsAll(Index::load($this->indexId));
     $this->insertExampleContent();
     $this->indexItems($this->indexId);
+
+    // Do not use a batch for tracking the initial items after creating an
+    // index when running the tests via the GUI. Otherwise, it seems Drupal's
+    // Batch API gets confused and the test fails.
+    if (!Utility::isRunningInCli()) {
+      \Drupal::state()->set('search_api_use_tracking_batch', FALSE);
+    }
   }
+
+  /**
+   * Allow 3rd party Solr connectors to manipulate the config.
+   */
+  protected function adjustBackendConfig() {}
 
   /**
    * {@inheritdoc}
    */
-  protected function tearDown() {
+  protected function tearDown(): void {
     $index = Index::load($this->indexId);
     $index->clear();
     $this->ensureCommit($index);

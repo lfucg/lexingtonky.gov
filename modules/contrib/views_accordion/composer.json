@@ -6,5 +6,8 @@
   "support": {
     "issues": "https://www.drupal.org/project/issues/views_accordion"
   },
+  "require": {
+    "drupal/jquery_ui_accordion": "^1.0"
+  },
   "license": "GPL-2.0+"
 }

@@ -12,11 +12,9 @@ use Drupal\block\Entity\Block;
 class MasqueradeCacheTest extends MasqueradeWebTestBase {
 
   /**
-   * Modules to install.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'masquerade',
     'user',
     'block',
@@ -49,7 +47,7 @@ class MasqueradeCacheTest extends MasqueradeWebTestBase {
 
     // Masquerade as Nelle.
     $edit = ['masquerade_as' => $nelle->getAccountName()];
-    $this->drupalPostForm(NULL, $edit, $this->t('Switch'));
+    $this->submitForm($edit, 'Switch');
     $this->drupalGet('<front>');
     $this->assertNoBlockAppears($masquerade_block);
 
@@ -99,10 +97,10 @@ class MasqueradeCacheTest extends MasqueradeWebTestBase {
   protected function validateMasqueradeBlock($bid) {
     /** @var \Drupal\block\Entity\Block $block */
     $block = Block::load($bid);
-    $this->assertTrue(in_array('session.is_masquerading', $block->getPlugin()->getCacheContexts(), TRUE));
+    $this->assertContains('session.is_masquerading', $block->getPlugin()->getCacheContexts());
     /** @var \Drupal\Core\Access\AccessResult $result */
     $result = $block->access('view', NULL, TRUE);
-    $this->assertTrue(in_array('session.is_masquerading', $result->getCacheContexts()));
+    $this->assertContains('session.is_masquerading', $result->getCacheContexts());
   }
 
 }

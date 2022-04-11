@@ -4,7 +4,6 @@ namespace Drupal\chosen_lib\Commands;
 
 use Drush\Commands\DrushCommands;
 use Drush\Drush;
-use Symfony\Component\Filesystem\Filesystem;
 use Psr\Log\LogLevel;
 
 /**
@@ -59,8 +58,10 @@ class ChosenLibCommands extends DrushCommands {
 
       // Remove any existing Chosen plugin directory.
       if (is_dir($dirname) || is_dir('chosen')) {
-        Filesystem::remove($dirname, TRUE);
-        Filesystem::remove('chosen', TRUE);
+        $fileservice = \Drupal::service('file_system');
+        $fileservice->deleteRecursive($dirname);
+        $fileservice->deleteRecursive('chosen');
+
         $this->drush_log(dt('A existing Chosen plugin was deleted from @path', ['@path' => $path]), 'notice');
       }
 
@@ -141,8 +142,8 @@ class ChosenLibCommands extends DrushCommands {
       throw new \Exception(dt("The URL !url could not be downloaded.", ['!url' => $url]));
     }
     if ($destination) {
-      $fs = new Filesystem();
-      $fs->rename($destination_tmp, $destination, TRUE);
+      $fileservice = \Drupal::service('file_system');
+      $fileservice->move($destination_tmp, $destination, TRUE);
       return $destination;
     }
     return $destination_tmp;
@@ -156,8 +157,8 @@ class ChosenLibCommands extends DrushCommands {
    * @return bool
    */
   public function drush_move_dir($src, $dest) {
-    $fs = new Filesystem();
-    $fs->rename($src, $dest, TRUE);
+    $fileservice = \Drupal::service('file_system');
+    $fileservice->move($src, $dest, TRUE);
     return TRUE;
   }
 
@@ -167,8 +168,8 @@ class ChosenLibCommands extends DrushCommands {
    * @return bool
    */
   public function drush_mkdir($path) {
-    $fs = new Filesystem();
-    $fs->mkdir($path);
+    $fileservice = \Drupal::service('file_system');
+    $fileservice->mkdir($path);
     return TRUE;
   }
 

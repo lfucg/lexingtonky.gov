@@ -37,4 +37,5 @@ class IdeLinkGenerator implements IdeLinkGeneratorInterface {
 
     return new FormattableMarkup($ide_link, ['@file' => $file, '@line' => $line]);
   }
+
 }
