@@ -1,0 +1,10 @@
+{
+  "name": "drupal/composer_deploy",
+  "description": "Provide version number from composers lockfile.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "require": {
+    "webflo/drupal-finder": "^1.2"
+  }
+}

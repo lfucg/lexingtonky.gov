@@ -33,6 +33,7 @@
         "drupal/ckeditor_entity_link": "^1.2",
         "drupal/ckeditor_media_embed": "^1.11",
         "drupal/components": "^2.4",
+        "drupal/composer_deploy": "^1.6",
         "drupal/contact_storage": "^1.1",
         "drupal/contentimport": "^9.3",
         "drupal/core-composer-scaffold": "^8.9",

@@ -2717,6 +2717,65 @@
         }
     },
     {
+        "name": "drupal/composer_deploy",
+        "version": "1.6.0",
+        "version_normalized": "1.6.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/composer_deploy.git",
+            "reference": "8.x-1.6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/composer_deploy-8.x-1.6.zip",
+            "reference": "8.x-1.6",
+            "shasum": "95a61636e315d6f6920572513449349f6573db8a"
+        },
+        "require": {
+            "drupal/core": "^8.8 || ^9",
+            "webflo/drupal-finder": "^1.2"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "drupal": {
+                "version": "8.x-1.6",
+                "datestamp": "1606256659",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "jhedstrom",
+                "homepage": "https://www.drupal.org/user/208732"
+            },
+            {
+                "name": "joelpittet",
+                "homepage": "https://www.drupal.org/user/160302"
+            },
+            {
+                "name": "nerdstein",
+                "homepage": "https://www.drupal.org/user/1557710"
+            },
+            {
+                "name": "webflo",
+                "homepage": "https://www.drupal.org/user/254778"
+            }
+        ],
+        "description": "Provide version number from composers lockfile.",
+        "homepage": "https://www.drupal.org/project/composer_deploy",
+        "support": {
+            "source": "https://git.drupalcode.org/project/composer_deploy"
+        }
+    },
+    {
         "name": "drupal/contact_storage",
         "version": "1.1.0",
         "version_normalized": "1.1.0.0",
