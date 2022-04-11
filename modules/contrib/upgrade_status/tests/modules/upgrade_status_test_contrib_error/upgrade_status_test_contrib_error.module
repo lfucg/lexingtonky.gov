@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * Tests function deprecation detection from Drupal 8 to 9.
+ *
+ * @deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use the
+ *   replacement instead.
+ */
+function upgrade_status_test_contrib_error_function_8_to_9() {
+  @trigger_error("upgrade_status_test_contrib_error_function_8_to_9() is deprecated in Drupal 8.6.0 and will be removed before Drupal 9.0.0. Use the replacement instead. See LINK", E_USER_DEPRECATED);
+}
+
+/**
+ * Tests function deprecation detection from Drupal 8 to 10.
+ *
+ * @deprecated in drupal:8.6.0 and is removed from drupal:10.0.0. Use the
+ *   replacement instead.
+ */
+function upgrade_status_test_contrib_error_function_8_to_10() {
+  @trigger_error("upgrade_status_test_contrib_error_function_8_to_10() is deprecated in Drupal 8.6.0 and will be removed before Drupal 10.0.0. Use the replacement instead. See LINK", E_USER_DEPRECATED);
+}
+
+/**
+ * Tests function deprecation detection from Drupal 9 to 10.
+ *
+ * @deprecated in drupal:9.4.0 and is removed from drupal:10.0.0. Use the
+ *   replacement instead.
+ */
+function upgrade_status_test_contrib_error_function_9_to_10() {
+  @trigger_error("upgrade_status_test_contrib_error_function_9_to_10() is deprecated in Drupal 9.4.0 and will be removed before Drupal 10.0.0. Use the replacement instead. See LINK", E_USER_DEPRECATED);
+}
+
+/**
+ * Tests function deprecation detection from Drupal 9 to 11.
+ *
+ * @deprecated in drupal:9.0.0 and is removed from drupal:11.0.0. Use the
+ *   replacement instead.
+ */
+function upgrade_status_test_contrib_error_function_9_to_11() {
+  @trigger_error("upgrade_status_test_contrib_error_function_9_to_11() is deprecated in Drupal 9.0.0 and will be removed before Drupal 11.0.0. Use the replacement instead. See LINK", E_USER_DEPRECATED);
+}

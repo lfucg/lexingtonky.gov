@@ -1,0 +1,5 @@
+upgrade_status.admin:
+  version: VERSION
+  css:
+    theme:
+      css/upgrade_status.admin.theme.css: {}

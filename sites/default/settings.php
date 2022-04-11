@@ -3,7 +3,7 @@
 if (php_sapi_name() != "cli") {
   $redirects = __DIR__ . "/redirects.php";
   if (file_exists($redirects)) {
-    include $redirects;
+    include_once $redirects;
   }
 }
 /**
