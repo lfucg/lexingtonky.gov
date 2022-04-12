@@ -96,30 +96,14 @@
             "npm-asset"
         ],
         "installer-paths": {
-            "drush/Commands/{$name}": [
-                "type:drupal-drush"
-            ],
-            "core": [
-                "type:drupal-core"
-            ],
-            "modules/contrib/{$name}": [
-                "type:drupal-module"
-            ],
-            "modules/custom/{$name}": [
-                "type:drupal-custom-module"
-            ],
-            "profiles/contrib/{$name}": [
-                "type:drupal-profile"
-            ],
-            "profiles/custom/{$name}": [
-                "type:drupal-custom-profile"
-            ],
-            "themes/contrib/{$name}": [
-                "type:drupal-theme"
-            ],
-            "themes/custom/{$name}": [
-                "type:drupal-custom-theme"
-            ],
+            "drush/Commands/{$name}": ["type:drupal-drush"],
+            "core": ["type:drupal-core"],
+            "modules/contrib/{$name}": ["type:drupal-module"],
+            "modules/custom/{$name}": ["type:drupal-custom-module"],
+            "profiles/contrib/{$name}": ["type:drupal-profile"],
+            "profiles/custom/{$name}": ["type:drupal-custom-profile"],
+            "themes/contrib/{$name}": ["type:drupal-theme"],
+            "themes/custom/{$name}": ["type:drupal-custom-theme"],
             "libraries/{$name}": [
                 "type:drupal-library",
                 "type:bower-asset",

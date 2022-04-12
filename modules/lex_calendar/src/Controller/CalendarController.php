@@ -3,8 +3,8 @@
 namespace Drupal\lex_calendar\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+// use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\lex_calendar\EventFetch;
 use Drupal\lex_calendar\FullCalendarService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -33,37 +33,28 @@ class CalendarController extends ControllerBase {
   protected $requestStack = NULL;
 
   /**
-   * Base Drupal Query Factory.
-   *
-   * @var Drupal\Core\Entity\Query\QueryFactory object
-   */
-  protected $entityQuery = NULL;
-
-  /**
    * Default Drupal Entity Manager.
    *
-   * @var Drupal\Core\Entity\EntityManager object
+   * @var Drupal\Core\Entity\EntityTypeManager object
    */
-  protected $entityManager = NULL;
+  protected $entityTypeManager = NULL;
 
   /**
    * Constructs a CalendarController object.
    *
    * @param Drupal\lex_calendar\FullCalendarService $events
    *   Custom event managing service.
-   * @param Drupal\Core\Entity\Query\QueryFactory $entityQuery
-   *   Query prep service.
-   * @param Drupal\Core\Entity\EntityManagerInterface $entityManager
+   * @param Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity Manager service.
    * @param Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   Request Stack.
    * @param Symfony\Component\HttpFoundation\JsonResponse $response
    *   Response.
    */
-  public function __construct(FullCalendarService $events, QueryFactory $entityQuery, EntityManagerInterface $entityManager, RequestStack $requestStack, JsonResponse $response) {
+  public function __construct(FullCalendarService $events, EntityTypeManagerInterface $entityTypeManager, RequestStack $requestStack, JsonResponse $response) {
     $this->events = $events;
-    $this->entityQuery = $entityQuery;
-    $this->entityManager = $entityManager;
+    // $this->getQuery = $getQuery;
+    $this->entityTypeManager = $entityTypeManager;
     $this->requestStack = $requestStack;
     $this->response = $response;
   }
@@ -74,8 +65,8 @@ class CalendarController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('lex_calendar.full_calendar'),
-      $container->get('entity.query'),
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
+      $container->get('entity_type.manager'),
       $container->get('request_stack'),
       new JsonResponse()
     );

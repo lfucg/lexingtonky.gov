@@ -5,8 +5,8 @@ namespace Drupal\lex_calendar\Plugin\Block;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+// use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\lex_calendar\EventFetch;
@@ -29,18 +29,11 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
   protected $contentType = NULL;
 
   /**
-   * Base Drupal Query Factory.
-   *
-   * @var Drupal\Core\Entity\Query\QueryFactory object
-   */
-  protected $entityQuery = NULL;
-
-  /**
    * Default Drupal Entity Manager.
    *
-   * @var Drupal\Core\Entity\EntityManager object
+   * @var Drupal\Core\Entity\EntityTypeManagerInterface object
    */
-  protected $entityManager = NULL;
+  protected $entityTypeManager = NULL;
 
   /**
    * Current Route.
@@ -65,16 +58,13 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
    *   Block definition from annotation.
    * @param Drupal\lex_calendar\FullCalendarService $events
    *   Custom event managing service.
-   * @param Drupal\Core\Entity\Query\QueryFactory $entityQuery
-   *   Query prep service.
-   * @param Drupal\Core\Entity\EntityManagerInterface $entityManager
+   * @param Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity Manager service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, FullCalendarService $events, QueryFactory $entityQuery, EntityManagerInterface $entityManager, RouteMatchInterface $route_match) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, FullCalendarService $events, EntityTypeManagerInterface $entityTypeManager, RouteMatchInterface $route_match) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->events = $events;
-    $this->entityQuery = $entityQuery;
-    $this->entityManager = $entityManager;
+    $this->entityTypeManager = $entityTypeManager;
     $this->routeMatch = $route_match;
   }
 
@@ -141,8 +131,7 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
       $plugin_id,
       $plugin_definition,
       $container->get('lex_calendar.full_calendar'),
-      $container->get('entity.query'),
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('current_route_match')
     );
   }

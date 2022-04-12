@@ -83,7 +83,9 @@ $settings['deployment_identifier'] = '1';
 // new twig source files to a live environment with multiple app servers will
 // result in some (most) of the app servers continuing to serve the old, stale
 // compiled template files.
-$settings['php_storage']['twig']['secret'] = $settings['hash_salt'] . $settings['deployment_identifier'];
+
+// Hash salt is unidentified.
+// $settings['php_storage']['twig']['secret'] = $settings['hash_salt'] . $settings['deployment_identifier'];
 
 if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
   include_once $app_root . '/' . $site_path . '/settings.local.php';

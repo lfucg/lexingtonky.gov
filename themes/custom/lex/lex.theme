@@ -93,7 +93,7 @@ function lex_preprocess_block(&$variables) {
 
     if (stristr($element_id, 'inline_page_feedback_form')) {
       # get contact form field to render inline
-      $message = \Drupal::entityManager()
+      $message = \Drupal::entityTypeManager()
       ->getStorage('contact_message')
       ->create(array(
         'contact_form' => 'page_feedback'

@@ -92,7 +92,7 @@ class TwigExtension extends \Twig_Extension {
 
     $entity = $field->entity;
 
-    $render_controller = \Drupal::entityManager()->getViewBuilder($entity->getEntityTypeId());
+    $render_controller = \Drupal::entityTypeManager()->getViewBuilder($entity->getEntityTypeId());
 
     return $render_controller->view($entity);
 

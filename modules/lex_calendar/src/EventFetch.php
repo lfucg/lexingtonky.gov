@@ -27,7 +27,7 @@ trait EventFetch {
     /*
      * Get the non recurring events for the range.
      */
-    $query = $this->entityQuery->get('node')
+    $query = $this->entityTypeManager->getStorage('node')->getQuery()
       ->condition('status', 1)
       ->condition('type', $contentType)
       ->condition('field_date', $this->events->getStart()->format('Y-m-d'), '>=');
@@ -35,20 +35,20 @@ trait EventFetch {
     $query = $this->modifyEventQuery($query);
 
 
-    $this->events->addEvents($this->entityManager->getStorage('node')->loadMultiple($query->execute()));
+    $this->events->addEvents($this->entityTypeManager->getStorage('node')->loadMultiple($query->execute()));
 
     /*
      * And now the recurring events, which are handled by a seperate process
      * which duplicates them according to need.
      */
-    $query = $this->entityQuery->get('node')
+    $query = $this->entityTypeManager->getStorage('node')->getQuery()
       ->condition('status', 1)
       ->condition('type', $contentType)
       ->condition('field_recurring_event', ['Weekly', 'Monthly'], 'IN');
 
     $query = $this->modifyEventQuery($query);
 
-    $this->events->addRecurringEvents($this->entityManager->getStorage('node')->loadMultiple($query->execute()));
+    $this->events->addRecurringEvents($this->entityTypeManager->getStorage('node')->loadMultiple($query->execute()));
   }
 
   /**
