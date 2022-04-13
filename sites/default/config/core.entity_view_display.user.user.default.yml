@@ -32,4 +32,6 @@ content:
     third_party_settings: {  }
     label: hidden
     region: content
-hidden: {  }
+hidden:
+  langcode: true
+  search_api_excerpt: true

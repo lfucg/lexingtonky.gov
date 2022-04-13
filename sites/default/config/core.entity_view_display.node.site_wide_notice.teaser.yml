@@ -21,3 +21,5 @@ content:
 hidden:
   addtoany: true
   body: true
+  langcode: true
+  search_api_excerpt: true

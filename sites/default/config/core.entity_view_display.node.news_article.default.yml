@@ -62,4 +62,5 @@ hidden:
   field_media_contact: true
   field_related_departments: true
   field_related_documents: true
+  langcode: true
   search_api_excerpt: true

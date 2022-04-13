@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   module:
-    - search_api_pantheon
     - search_api_solr
 id: pantheon
 name: Pantheon
@@ -13,11 +12,15 @@ backend_config:
   connector: pantheon
   connector_config:
     schema: modules/contrib/search_api_solr/solr-conf/4.x/schema.xml
+    path: ''
+    skip_schema_check: true
   retrieve_data: false
   highlight_data: false
-  excerpt: false
-  skip_schema_check: true
   site_hash: false
-  suggest_suffix: true
-  suggest_corrections: true
-  suggest_words: false
+  domain: generic
+  finalize_timeout: 30
+  server_prefix: ''
+  optimize: false
+  environment: default
+  index_single_documents_fallback_count: 10
+  fallback_multiple: true

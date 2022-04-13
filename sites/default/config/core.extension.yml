@@ -2,6 +2,7 @@ module:
   addtoany: 0
   addtocal: 0
   admin_toolbar: 0
+  admin_toolbar_search: 0
   admin_toolbar_tools: 0
   autologout: 0
   automated_cron: 0
@@ -20,6 +21,7 @@ module:
   color: 0
   comment: 0
   components: 0
+  composer_deploy: 0
   config: 0
   contact: 0
   contact_storage: 0
@@ -55,13 +57,13 @@ module:
   imce: 0
   inline_entity_form: 0
   kint: 0
+  language: 0
   lex_calendar: 0
   lex_custom: 0
   lex_themecontrol: 0
   link: 0
   lookup_services: 0
   masquerade: 0
-  media_entity: 0
   menu_ui: 0
   metatag: 0
   metatag_facebook: 0
@@ -81,6 +83,7 @@ module:
   search_api: 0
   search_api_pantheon: 0
   search_api_solr: 0
+  search_api_solr_legacy: 0
   shortcut: 0
   smtp: 0
   system: 0
@@ -94,6 +97,7 @@ module:
   twig_tweak: 0
   twig_vardumper: 0
   update: 0
+  upgrade_status: 0
   user: 0
   views_accordion: 0
   views_ui: 0

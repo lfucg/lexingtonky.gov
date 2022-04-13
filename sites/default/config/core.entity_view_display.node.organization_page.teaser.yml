@@ -16,6 +16,7 @@ dependencies:
     - field.field.node.organization_page.field_related_departments
     - field.field.node.organization_page.field_related_documents
     - field.field.node.organization_page.field_top_services
+    - field.field.node.organization_page.field_upcoming_events
     - node.type.organization_page
   module:
     - text
@@ -56,3 +57,6 @@ hidden:
   field_related_departments: true
   field_related_documents: true
   field_top_services: true
+  field_upcoming_events: true
+  langcode: true
+  search_api_excerpt: true

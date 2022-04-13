@@ -58,4 +58,5 @@ hidden:
   field_related_documents: true
   field_related_page: true
   field_show_on_calendar: true
+  langcode: true
   search_api_excerpt: true

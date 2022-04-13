@@ -12,6 +12,7 @@ dependencies:
     - field.field.taxonomy_term.locations.field_hours_of_operation
     - field.field.taxonomy_term.locations.field_location_detail
     - field.field.taxonomy_term.locations.field_metatags
+    - field.field.taxonomy_term.locations.field_page_link
     - field.field.taxonomy_term.locations.field_social_link_facebook
     - field.field.taxonomy_term.locations.field_social_link_instagram
     - field.field.taxonomy_term.locations.field_social_link_linkedin
@@ -45,6 +46,7 @@ hidden:
   field_hours_of_operation: true
   field_location_detail: true
   field_metatags: true
+  field_page_link: true
   field_social_link_facebook: true
   field_social_link_instagram: true
   field_social_link_linkedin: true
@@ -54,3 +56,5 @@ hidden:
   field_street: true
   field_street_number: true
   field_zip_code: true
+  langcode: true
+  search_api_excerpt: true
