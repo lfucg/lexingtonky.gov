@@ -71,6 +71,7 @@
         "drupal/views_accordion": "^2.0",
         "drupal/viewsreference": "^1.7",
         "drupal/workbench_moderation": "^1.6",
+        "drush/drush": "^10",
         "grasmash/drupal-security-warning": "^1.1.1",
         "oomphinc/composer-installers-extender": "^2.0",
         "wikimedia/composer-merge-plugin": "^2.0"
