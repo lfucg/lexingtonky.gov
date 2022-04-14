@@ -17,20 +17,6 @@ function ckeditor_settings_editor_js_settings_alter(&$settings) {
   }
 }
 
-// function ckeditor_settings_form_entity_embed_dialog_alter(&$form, $form_state) {
-// 	$form['actions']['link_modal'] = array(
-//       '#type' => 'submit',
-//       '#value' => 'Link',
-//       '#button_type' => 'primary',
-//       // No regular submit-handler. This form only works via JavaScript.
-//       '#submit' => array(),
-//       '#ajax' => array(
-//         'callback' => '::submitEmbedStep',
-//         'event' => 'click',
-//       ),
-//     );
-// }
-
 function ckeditor_settings_entity_embed_alter(&$build, $entity, $context) {
   if (!stristr($context['data-entity-embed-display'], 'image')) {
 	$build['#attributes']['class'][] = 'embedded-file';
