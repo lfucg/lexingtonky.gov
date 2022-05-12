@@ -8,7 +8,9 @@ use Drupal\Component\Utility\Timer;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Queue\DelayableQueueInterface;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
+use Drupal\Core\Queue\DelayedRequeueException;
 use Drupal\Core\Queue\RequeueException;
 use Drupal\Core\Queue\SuspendQueueException;
 use Drupal\Core\Session\AccountSwitcherInterface;
@@ -157,7 +159,7 @@ class Cron implements CronInterface {
     // Record cron time.
     $request_time = $this->time->getRequestTime();
     $this->state->set('system.cron_last', $request_time);
-    $this->logger->notice('Cron run completed.');
+    $this->logger->info('Cron run completed.');
   }
 
   /**
@@ -172,13 +174,25 @@ class Cron implements CronInterface {
         $this->queueFactory->get($queue_name)->createQueue();
 
         $queue_worker = $this->queueManager->createInstance($queue_name);
-        $end = time() + (isset($info['cron']['time']) ? $info['cron']['time'] : 15);
+        $end = $this->time->getCurrentTime() + $info['cron']['time'];
         $queue = $this->queueFactory->get($queue_name);
-        $lease_time = isset($info['cron']['time']) ?: NULL;
-        while (time() < $end && ($item = $queue->claimItem($lease_time))) {
+        $lease_time = $info['cron']['time'];
+        while ($this->time->getCurrentTime() < $end && ($item = $queue->claimItem($lease_time))) {
           try {
             $queue_worker->processItem($item->data);
             $queue->deleteItem($item);
+          }
+          catch (DelayedRequeueException $e) {
+            // The worker requested the task not be immediately re-queued.
+            // - If the queue doesn't support ::delayItem(), we should leave the
+            // item's current expiry time alone.
+            // - If the queue does support ::delayItem(), we should allow the
+            // queue to update the item's expiry using the requested delay.
+            if ($queue instanceof DelayableQueueInterface) {
+              // This queue can handle a custom delay; use the duration provided
+              // by the exception.
+              $queue->delayItem($item, $e->getDelay());
+            }
           }
           catch (RequeueException $e) {
             // The worker requested the task be immediately requeued.
@@ -218,12 +232,12 @@ class Cron implements CronInterface {
     foreach ($this->moduleHandler->getImplementations('cron') as $module) {
 
       if (!$module_previous) {
-        $logger->notice('Starting execution of @module_cron().', [
+        $logger->info('Starting execution of @module_cron().', [
           '@module' => $module,
         ]);
       }
       else {
-        $logger->notice('Starting execution of @module_cron(), execution of @module_previous_cron() took @time.', [
+        $logger->info('Starting execution of @module_cron(), execution of @module_previous_cron() took @time.', [
           '@module' => $module,
           '@module_previous' => $module_previous,
           '@time' => Timer::read('cron_' . $module_previous) . 'ms',
@@ -243,7 +257,7 @@ class Cron implements CronInterface {
       $module_previous = $module;
     }
     if ($module_previous) {
-      $logger->notice('Execution of @module_previous_cron() took @time.', [
+      $logger->info('Execution of @module_previous_cron() took @time.', [
         '@module_previous' => $module_previous,
         '@time' => Timer::read('cron_' . $module_previous) . 'ms',
       ]);

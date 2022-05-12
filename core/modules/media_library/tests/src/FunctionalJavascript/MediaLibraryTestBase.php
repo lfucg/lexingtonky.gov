@@ -13,7 +13,7 @@ abstract class MediaLibraryTestBase extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['media_library_test'];
+  protected static $modules = ['media_library_test', 'hold_test'];
 
   /**
    * {@inheritdoc}
@@ -342,7 +342,7 @@ abstract class MediaLibraryTestBase extends WebDriverTestBase {
   protected function assertNoMediaAdded() {
     // Assert the focus is shifted to the first tabbable element of the add
     // form, which should be the source field.
-    $this->assertJsCondition('jQuery("#media-library-add-form-wrapper :tabbable").is(":focus")');
+    $this->assertJsCondition('jQuery(tabbable.tabbable(document.getElementById("media-library-add-form-wrapper"))[0]).is(":focus")');
 
     $this->assertSession()
       ->elementNotExists('css', '[data-drupal-selector="edit-media-0-fields"]');
@@ -416,9 +416,11 @@ abstract class MediaLibraryTestBase extends WebDriverTestBase {
    * Switches to the table display of the widget view.
    */
   protected function switchToMediaLibraryTable() {
+    hold_test_response(TRUE);
     $this->getSession()->getPage()->clickLink('Table');
     // Assert the display change is correctly announced for screen readers.
     $this->waitForText('Loading table view.');
+    hold_test_response(FALSE);
     $this->waitForText('Changed to table view.');
     $this->assertMediaLibraryTable();
   }

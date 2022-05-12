@@ -18,7 +18,7 @@ class QuickEditFileTest extends QuickEditJavascriptTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'file',
   ];
@@ -31,7 +31,7 @@ class QuickEditFileTest extends QuickEditJavascriptTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create the Article node type.
@@ -70,7 +70,7 @@ class QuickEditFileTest extends QuickEditJavascriptTestBase {
     // Create test node.
     $node = $this->drupalCreateNode([
       'type' => 'article',
-      'title' => t('My Test Node'),
+      'title' => 'My Test Node',
       'field_file' => [
         'target_id' => $file->id(),
       ],

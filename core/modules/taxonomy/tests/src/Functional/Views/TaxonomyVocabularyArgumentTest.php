@@ -14,7 +14,7 @@ class TaxonomyVocabularyArgumentTest extends TaxonomyTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['taxonomy', 'taxonomy_test_views', 'views'];
+  protected static $modules = ['taxonomy', 'taxonomy_test_views', 'views'];
 
   /**
    * {@inheritdoc}
@@ -41,7 +41,7 @@ class TaxonomyVocabularyArgumentTest extends TaxonomyTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp($import_test_views);
 
     // Add default vocabulary to list of vocabularies.
@@ -73,9 +73,9 @@ class TaxonomyVocabularyArgumentTest extends TaxonomyTestBase {
   public function testTermWithVocabularyArgument() {
     $this->drupalGet('test_argument_taxonomy_vocabulary/' . $this->vocabularies[0]->id());
     // First term should be present.
-    $this->assertText($this->terms[0]->label());
+    $this->assertSession()->pageTextContains($this->terms[0]->label());
     // Second term should not be present.
-    $this->assertNoText($this->terms[1]->label());
+    $this->assertSession()->pageTextNotContains($this->terms[1]->label());
   }
 
 }

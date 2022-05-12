@@ -16,7 +16,7 @@ class PathPluginTest extends NodeTestBase {
    *
    * @var array
    */
-  public static $modules = ['node'];
+  protected static $modules = ['node'];
 
   /**
    * {@inheritdoc}
@@ -40,7 +40,7 @@ class PathPluginTest extends NodeTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp($import_test_views);
 
     $this->drupalCreateContentType(['type' => 'article']);
@@ -73,7 +73,7 @@ class PathPluginTest extends NodeTestBase {
     // The configured deprecated node path plugin should be converted to the
     // entity link plugin.
     $field = $view->getHandler('page_1', 'field', 'path');
-    $this->assertEqual('entity_link', $field['plugin_id']);
+    $this->assertEquals('entity_link', $field['plugin_id']);
 
     $view->initDisplay();
     $view->setDisplay('page_1');

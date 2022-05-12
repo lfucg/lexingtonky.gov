@@ -30,15 +30,15 @@ class TaxonomyParentUITest extends UITestBase {
    *
    * @var array
    */
-  public static $modules = ['taxonomy', 'taxonomy_test_views'];
+  protected static $modules = ['taxonomy', 'taxonomy_test_views'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp($import_test_views);
 
-    ViewTestData::createTestViews(get_class($this), ['taxonomy_test_views']);
+    ViewTestData::createTestViews(static::class, ['taxonomy_test_views']);
   }
 
   /**
@@ -46,7 +46,7 @@ class TaxonomyParentUITest extends UITestBase {
    */
   public function testTaxonomyParentUI() {
     $this->drupalGet('admin/structure/views/nojs/handler/test_taxonomy_parent/default/relationship/parent');
-    $this->assertNoText('The handler for this item is broken or missing.');
+    $this->assertSession()->pageTextNotContains('The handler for this item is broken or missing.');
   }
 
 }

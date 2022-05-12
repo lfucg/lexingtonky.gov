@@ -56,11 +56,9 @@ trait PathautoTestHelperTrait {
    *   The bundle.
    */
   protected function addBundleCondition(PathautoPatternInterface $pattern, $entity_type, $bundle) {
-    $plugin_id = $entity_type == 'node' ? 'node_type' : 'entity_bundle:' . $entity_type;
-
     $pattern->addSelectionCondition(
       [
-        'id' => $plugin_id,
+        'id' => 'entity_bundle:' . $entity_type,
         'bundles' => [
           $bundle => $bundle,
         ],

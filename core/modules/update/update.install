@@ -15,20 +15,18 @@ use Drupal\update\UpdateManagerInterface;
 /**
  * Implements hook_requirements().
  *
- * @return
- *   An array describing the status of the site regarding available updates. If
- *   there is no update data, only one record will be returned, indicating that
- *   the status of core can't be determined. If data is available, there will be
- *   two records: one for core, and another for all of contrib (assuming there
- *   are any contributed modules or themes enabled on the site). In addition to
- *   the fields expected by hook_requirements ('value', 'severity', and
- *   optionally 'description'), this array will contain a 'reason' attribute,
- *   which is an integer constant to indicate why the given status is being
- *   returned (UpdateManagerInterface::NOT_SECURE,
- *   UpdateManagerInterface::NOT_CURRENT, or UpdateManagerInterface::UNKNOWN).
- *   This is used for generating the appropriate email notification messages
- *   during update_cron(), and might be useful for other modules that invoke
- *   update_requirements() to find out if the site is up to date or not.
+ * Describes the status of the site regarding available updates. If
+ * there is no update data, only one record will be returned, indicating that
+ * the status of core can't be determined. If data is available, there will be
+ * two records: one for core, and another for all of contrib (assuming there
+ * are any contributed modules or themes enabled on the site). In addition to
+ * the fields expected by hook_requirements ('value', 'severity', and
+ * optionally 'description'), this array will contain a 'reason' attribute,
+ * which is an integer constant to indicate why the given status is being
+ * returned (UPDATE_NOT_SECURE, UPDATE_NOT_CURRENT, or UPDATE_UNKNOWN). This
+ * is used for generating the appropriate email notification messages during
+ * update_cron(), and might be useful for other modules that invoke
+ * update_requirements() to find out if the site is up to date or not.
  *
  * @see _update_message_text()
  * @see _update_cron_notify()
@@ -172,13 +170,8 @@ function _update_requirement_check($project, $type) {
 }
 
 /**
- * Rebuild the router to ensure admin/reports/updates/check has CSRF protection.
+ * Implements hook_update_last_removed().
  */
-function update_update_8001() {
-  // Empty update forces a call to drupal_flush_all_caches() which rebuilds the
-  // router.
-
-  // Use hook_post_update_NAME() instead to clear the cache.The use
-  // of hook_update_N to clear the cache has been deprecated see
-  // https://www.drupal.org/node/2960601 for more details.
+function update_update_last_removed() {
+  return 8001;
 }

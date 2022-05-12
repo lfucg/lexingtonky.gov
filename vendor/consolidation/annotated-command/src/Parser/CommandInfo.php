@@ -4,6 +4,7 @@ namespace Consolidation\AnnotatedCommand\Parser;
 use Symfony\Component\Console\Input\InputOption;
 use Consolidation\AnnotatedCommand\Parser\Internal\CommandDocBlockParser;
 use Consolidation\AnnotatedCommand\Parser\Internal\CommandDocBlockParserFactory;
+use Consolidation\AnnotatedCommand\Parser\Internal\DefaultValueFromString;
 use Consolidation\AnnotatedCommand\AnnotationData;
 
 /**
@@ -94,6 +95,16 @@ class CommandInfo
     protected $injectedClasses = [];
 
     /**
+     * @var bool[]
+     */
+    protected $parameterMap = [];
+
+    /**
+     * @var bool
+     */
+    protected $simpleOptionParametersAllowed = false;
+
+    /**
      * Create a new CommandInfo class for a particular method of a class.
      *
      * @param string|mixed $classNameOrInstance The name of a class, or an
@@ -144,7 +155,14 @@ class CommandInfo
         // Set up a default name for the command from the method name.
         // This can be overridden via @command or @name annotations.
         $this->name = $this->convertName($methodName);
-        $this->options = new DefaultsWithDescriptions($this->determineOptionsFromParameters(), false);
+
+        // To start with, $this->options will contain the values from the final
+        // `$options = ['name' => 'default'], and arguments will be everything else.
+        // When we process the annotations / attributes, if we find an "option" which
+        // appears in the 'arguments' section, then we will move it.
+        $optionsFromParameters = $this->determineOptionsFromParameters();
+        $this->simpleOptionParametersAllowed = empty($optionsFromParameters);
+        $this->options = new DefaultsWithDescriptions($optionsFromParameters, false);
         $this->arguments = $this->determineAgumentClassifications();
     }
 
@@ -200,6 +218,11 @@ class CommandInfo
     public function invalidate()
     {
         $this->name = '';
+    }
+
+    public function getParameterMap()
+    {
+        return $this->parameterMap;
     }
 
     public function getReturnType()
@@ -357,7 +380,7 @@ class CommandInfo
      */
     public function setDescription($description)
     {
-        $this->description = str_replace("\n", ' ', $description);
+        $this->description = str_replace("\n", ' ', $description ?? '');
         return $this;
     }
 
@@ -601,6 +624,40 @@ class CommandInfo
         return $this->findOptionAmongAlternatives($optionName);
     }
 
+    public function addArgumentDescription($name, $description)
+    {
+        $this->addOptionOrArgumentDescription($this->arguments(), $name, $description);
+    }
+
+    public function addOptionDescription($name, $description)
+    {
+        $variableName = $this->findMatchingOption($name);
+        if ($this->simpleOptionParametersAllowed && $this->arguments()->exists($variableName)) {
+            $existingArg = $this->arguments()->removeMatching($variableName);
+            // One of our parameters is an option, not an argument. Flag it so that we can inject the right value when needed.
+            $this->parameterMap[$variableName] = true;
+        }
+        $this->addOptionOrArgumentDescription($this->options(), $variableName, $description);
+    }
+
+    protected function addOptionOrArgumentDescription(DefaultsWithDescriptions $set, $variableName, $description)
+    {
+        list($description, $defaultValue) = $this->splitOutDefault($description);
+        $set->add($variableName, $description);
+        if ($defaultValue !== null) {
+            $set->setDefaultValue($variableName, $defaultValue);
+        }
+    }
+
+    protected function splitOutDefault($description)
+    {
+        if (!preg_match('#(.*)(Default: *)(.*)#', trim($description), $matches)) {
+            return [$description, null];
+        }
+
+        return [trim($matches[1]), DefaultValueFromString::fromString(trim($matches[3]))->value()];
+    }
+
     /**
      * @param string $optionName
      * @return string
@@ -639,7 +696,7 @@ class CommandInfo
 
     /**
      * Examine the parameters of the method for this command, and
-     * build a list of commandline arguements for them.
+     * build a list of commandline arguments for them.
      *
      * @return array
      */
@@ -651,12 +708,13 @@ class CommandInfo
         if ($this->lastParameterIsOptionsArray()) {
             array_pop($params);
         }
-        while (!empty($params) && ($params[0]->getClass() != null)) {
+        while (!empty($params) && ($params[0]->getType() != null) && ($params[0]->getType() instanceof \ReflectionNamedType) && !($params[0]->getType()->isBuiltin())) {
             $param = array_shift($params);
-            $injectedClass = $param->getClass()->getName();
+            $injectedClass = $param->getType()->getName();
             array_unshift($this->injectedClasses, $injectedClass);
         }
         foreach ($params as $param) {
+            $this->parameterMap[$param->name] = false;
             $this->addParameterToResult($result, $param);
         }
         return $result;
@@ -670,8 +728,8 @@ class CommandInfo
     protected function addParameterToResult($result, $param)
     {
         // Commandline arguments must be strings, so ignore any
-        // parameter that is typehinted to any non-primative class.
-        if ($param->getClass() != null) {
+        // parameter that is typehinted to any non-primitive class.
+        if ($param->getType() && (!$param->getType() instanceof \ReflectionNamedType || !$param->getType()->isBuiltin())) {
             return;
         }
         $result->add($param->name);
@@ -680,7 +738,7 @@ class CommandInfo
             if (!$this->isAssoc($defaultValue)) {
                 $result->setDefaultValue($param->name, $defaultValue);
             }
-        } elseif ($param->isArray()) {
+        } elseif ($param->getType() && $param->getType()->getName() === 'array') {
             $result->setDefaultValue($param->name, []);
         }
     }
@@ -772,6 +830,15 @@ class CommandInfo
             // into this object, using our accessors.
             CommandDocBlockParserFactory::parse($this, $this->reflection);
             $this->docBlockIsParsed = true;
+            // Use method's return type if @return is not present.
+            if ($this->reflection->hasReturnType() && !$this->getReturnType()) {
+                $type = $this->reflection->getReturnType();
+                if ($type instanceof \ReflectionUnionType) {
+                    // Use first declared type.
+                    $type = current($type->getTypes());
+                }
+                $this->setReturnType($type->getName());
+            }
         }
     }
 

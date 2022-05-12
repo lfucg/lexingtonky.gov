@@ -16,7 +16,7 @@ class CrudTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['entity_test', 'rdf', 'system'];
+  protected static $modules = ['entity_test', 'rdf', 'system'];
 
   /**
    * @var string
@@ -33,7 +33,7 @@ class CrudTest extends KernelTestBase {
    */
   protected $bundle;
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->prefix = 'rdf.mapping';
     $this->entityType = $this->bundle = 'entity_test';
@@ -53,7 +53,7 @@ class CrudTest extends KernelTestBase {
   }
 
   /**
-   * Test the handling of bundle mappings.
+   * Tests the handling of bundle mappings.
    */
   public function testBundleMapping() {
     // Test that the bundle mapping can be saved.
@@ -63,7 +63,7 @@ class CrudTest extends KernelTestBase {
       ->save();
     $bundle_mapping = rdf_get_mapping($this->entityType, $this->bundle)
       ->getBundleMapping();
-    $this->assertEqual($types, $bundle_mapping['types'], 'Bundle mapping saved.');
+    $this->assertEquals($types, $bundle_mapping['types'], 'Bundle mapping saved.');
 
     // Test that the bundle mapping can be edited.
     $types = ['schema:BlogPosting'];
@@ -72,11 +72,11 @@ class CrudTest extends KernelTestBase {
       ->save();
     $bundle_mapping = rdf_get_mapping($this->entityType, $this->bundle)
       ->getBundleMapping();
-    $this->assertEqual($types, $bundle_mapping['types'], 'Bundle mapping updated.');
+    $this->assertEquals($types, $bundle_mapping['types'], 'Bundle mapping updated.');
   }
 
   /**
-   * Test the handling of field mappings.
+   * Tests the handling of field mappings.
    */
   public function testFieldMapping() {
     $field_name = 'created';
@@ -92,7 +92,7 @@ class CrudTest extends KernelTestBase {
       ->save();
     $field_mapping = rdf_get_mapping($this->entityType, $this->bundle)
       ->getFieldMapping($field_name);
-    $this->assertEqual($mapping, $field_mapping, 'Field mapping saved.');
+    $this->assertEquals($mapping, $field_mapping, 'Field mapping saved.');
 
     // Test that the field mapping can be edited.
     $mapping = [
@@ -105,7 +105,7 @@ class CrudTest extends KernelTestBase {
       ->save();
     $field_mapping = rdf_get_mapping($this->entityType, $this->bundle)
       ->getFieldMapping($field_name);
-    $this->assertEqual($mapping, $field_mapping, 'Field mapping updated.');
+    $this->assertEquals($mapping, $field_mapping, 'Field mapping updated.');
   }
 
 }

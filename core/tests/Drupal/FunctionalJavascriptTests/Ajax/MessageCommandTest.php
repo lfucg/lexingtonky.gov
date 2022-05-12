@@ -22,7 +22,7 @@ class MessageCommandTest extends WebDriverTestBase {
   protected $defaultTheme = 'stark';
 
   /**
-   * Test AJAX MessageCommand use in a form.
+   * Tests AJAX MessageCommand use in a form.
    */
   public function testMessageCommand() {
     $page = $this->getSession()->getPage();
@@ -56,7 +56,7 @@ class MessageCommandTest extends WebDriverTestBase {
 
       $page->pressButton('Make Warning Message');
       $this->waitForMessageVisible('I am a warning message in the default location.', NULL, 'warning');
-      // Test that setting MessageCommand::$option['announce'] => '' supresses
+      // Test that setting MessageCommand::$option['announce'] => '' suppresses
       // screen reader announcement.
       $this->assertAnnounceNotContains('I am a warning message in the default location.');
       $this->waitForMessageRemoved('I am a message in the default location.');
@@ -109,8 +109,10 @@ class MessageCommandTest extends WebDriverTestBase {
    *
    * @param string $expected_message
    *   The text expected to be present in #drupal-live-announce.
+   *
+   * @internal
    */
-  protected function assertAnnounceContains($expected_message) {
+  protected function assertAnnounceContains(string $expected_message): void {
     $assert_session = $this->assertSession();
     $this->assertNotEmpty($assert_session->waitForElement('css', "#drupal-live-announce:contains('$expected_message')"));
   }
@@ -120,8 +122,10 @@ class MessageCommandTest extends WebDriverTestBase {
    *
    * @param string $expected_message
    *   The text expected to be absent from #drupal-live-announce.
+   *
+   * @internal
    */
-  protected function assertAnnounceNotContains($expected_message) {
+  protected function assertAnnounceNotContains(string $expected_message): void {
     $assert_session = $this->assertSession();
     $this->assertEmpty($assert_session->waitForElement('css', "#drupal-live-announce:contains('$expected_message')", 1000));
   }

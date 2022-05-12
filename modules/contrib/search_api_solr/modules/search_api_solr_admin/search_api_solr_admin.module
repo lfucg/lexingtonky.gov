@@ -1,6 +1,7 @@
 <?php
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\search_api_solr\SolrBackendInterface;
 
 /**
  * Implements hook_form_FORM_alter.
@@ -8,9 +9,8 @@ use Drupal\Core\Form\FormStateInterface;
 function search_api_solr_admin_form_search_api_server_status_alter(&$form, FormStateInterface $form_state, $form_id) {
   /** @var \Drupal\search_api\ServerInterface $server */
   $server = $form['#server'];
-  /** @var \Drupal\search_api_solr\SolrBackendInterface $backend */
   $backend = $server->getBackend();
-  if ($backend->getSolrConnector()->isCloud()) {
+  if ($backend instanceof SolrBackendInterface && $backend->getSolrConnector()->isCloud()) {
     $form['actions']['delete_collection'] = [
       '#type' => 'submit',
       '#value' => t('Delete collection'),

@@ -40,7 +40,7 @@ class MetatagForumTest extends BrowserTestBase {
   /**
    * Setup basic environment.
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $admin_permissions = [
@@ -78,8 +78,7 @@ class MetatagForumTest extends BrowserTestBase {
       'taxonomy_forums' => 1,
       'body[0][value]' => 'Just testing.',
     ];
-    $save_label = (floatval(\Drupal::VERSION) <= 8.3) ? $this->t('Save and publish') : $this->t('Save');
-    $this->drupalPostForm(NULL, $edit, $save_label);
+    $this->submitForm($edit, 'Save');
     $session->statusCodeEquals(200);
     $session->pageTextContains('Forum topic Testing forums has been created.');
   }

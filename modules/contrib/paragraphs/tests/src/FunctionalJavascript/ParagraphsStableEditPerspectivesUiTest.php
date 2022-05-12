@@ -5,6 +5,7 @@ namespace Drupal\Tests\paragraphs\FunctionalJavascript;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Drupal\paragraphs\Entity\ParagraphsType;
+use Drupal\Tests\paragraphs\Traits\ParagraphsCoreVersionUiTestTrait;
 
 /**
  * Test paragraphs user interface.
@@ -15,13 +16,14 @@ class ParagraphsStableEditPerspectivesUiTest extends WebDriverTestBase {
 
   use LoginAdminTrait;
   use ParagraphsTestBaseTrait;
+  use ParagraphsCoreVersionUiTestTrait;
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'paragraphs_test',
     'paragraphs',
@@ -42,6 +44,7 @@ class ParagraphsStableEditPerspectivesUiTest extends WebDriverTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->placeDefaultBlocks();
   }
 
   /**
@@ -72,7 +75,7 @@ class ParagraphsStableEditPerspectivesUiTest extends WebDriverTestBase {
     $this->assertFalse($style_selector->isVisible());
 
     // Assert scroll position when switching tabs.
-    $this->getSession()->resizeWindow(800, 500);
+    $this->getSession()->resizeWindow(800, 450);
     $this->drupalGet('node/add/testcontent');
     $button = $this->getSession ()->getPage()->findButton('Add TestPlugin');
     $button->press();

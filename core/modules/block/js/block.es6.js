@@ -3,7 +3,7 @@
  * Block behaviors.
  */
 
-(function($, window, Drupal) {
+(function ($, window, Drupal, once) {
   /**
    * Provide the summary information for the block settings vertical tabs.
    *
@@ -46,12 +46,12 @@
       }
 
       $(
-        '[data-drupal-selector="edit-visibility-node-type"], [data-drupal-selector="edit-visibility-language"], [data-drupal-selector="edit-visibility-user-role"]',
+        '[data-drupal-selector="edit-visibility-node-type"], [data-drupal-selector="edit-visibility-entity-bundlenode"], [data-drupal-selector="edit-visibility-language"], [data-drupal-selector="edit-visibility-user-role"]',
       ).drupalSetSummary(checkboxesSummary);
 
       $(
         '[data-drupal-selector="edit-visibility-request-path"]',
-      ).drupalSetSummary(context => {
+      ).drupalSetSummary((context) => {
         const $pages = $(context).find(
           'textarea[name="visibility[request_path][pages]"]',
         );
@@ -94,7 +94,7 @@
        *   The jQuery object representing the table row.
        */
       function checkEmptyRegions(table, rowObject) {
-        table.find('tr.region-message').each(function() {
+        table.find('tr.region-message').each(function () {
           const $this = $(this);
           // If the dragged row is in this region, but above the message row,
           // swap it down one space.
@@ -170,14 +170,14 @@
       // Get the blocks tableDrag object.
       const tableDrag = Drupal.tableDrag.blocks;
       // Add a handler for when a row is swapped, update empty regions.
-      tableDrag.row.prototype.onSwap = function(swappedRow) {
+      tableDrag.row.prototype.onSwap = function (swappedRow) {
         checkEmptyRegions(table, this);
         updateLastPlaced(table, this);
       };
 
       // Add a handler so when a row is dropped, update fields dropped into
       // new regions.
-      tableDrag.onDrop = function() {
+      tableDrag.onDrop = function () {
         const dragObject = this;
         const $rowElement = $(dragObject.rowObject.element);
         // Use "region-message" row instead of "region" row because
@@ -218,10 +218,9 @@
       };
 
       // Add the behavior to each region select list.
-      $(context)
-        .find('select.block-region-select')
-        .once('block-region-select')
-        .on('change', function(event) {
+      $(once('block-region-select', 'select.block-region-select', context)).on(
+        'change',
+        function (event) {
           // Make our new row and select field.
           const row = $(this).closest('tr');
           const select = $(this);
@@ -256,7 +255,8 @@
           }
           // Remove focus from selectbox.
           select.trigger('blur');
-        });
+        },
+      );
     },
   };
-})(jQuery, window, Drupal);
+})(jQuery, window, Drupal, once);

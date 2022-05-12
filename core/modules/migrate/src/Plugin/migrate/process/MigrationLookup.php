@@ -58,14 +58,32 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * process:
  *   uid:
  *     plugin: migration_lookup
- *       migration:
- *         - users
- *         - members
- *       source_ids:
- *         users:
- *           - author
- *         members:
- *           - id
+ *     migration:
+ *       - users
+ *       - members
+ *     source_ids:
+ *       users:
+ *         - author
+ *       members:
+ *         - id
+ * @endcode
+ *
+ * It's not required to describe source identifiers for each migration. If the
+ * source identifier for a migration is not specified, the default source value
+ * will be used. In the example below, the 'author' source property will be used
+ * to do a lookup in the 'users' migration, and the 'uid' property in the
+ * 'members' migration.
+ * @code
+ * process:
+ *   uid:
+ *     plugin: migration_lookup
+ *     source: uid
+ *     migration:
+ *       - users
+ *       - members
+ *     source_ids:
+ *       users:
+ *         - author
  * @endcode
  *
  * If the migration_lookup plugin does not find the source ID in the migration
@@ -145,19 +163,9 @@ class MigrationLookup extends ProcessPluginBase implements ContainerFactoryPlugi
    * @param \Drupal\migrate\MigrateStubInterface $migrate_stub
    *   The migrate stub service.
    */
-  // @codingStandardsIgnoreLine
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration, $migrate_lookup, $migrate_stub = NULL) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration, MigrateLookupInterface $migrate_lookup, MigrateStubInterface $migrate_stub) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    if (!$migrate_lookup instanceof MigrateLookupInterface) {
-      @trigger_error('Not passing the migrate lookup service as the fifth parameter to ' . __METHOD__ . ' is deprecated in drupal:8.8.0 and will throw a type error in drupal:9.0.0. Pass an instance of \\Drupal\\migrate\\MigrateLookupInterface. See https://www.drupal.org/node/3047268', E_USER_DEPRECATED);
-      $migrate_lookup = \Drupal::service('migrate.lookup');
-    }
-    if (!$migrate_stub instanceof MigrateStubInterface) {
-      @trigger_error('Not passing the migrate stub service as the sixth parameter to ' . __METHOD__ . ' is deprecated in drupal:8.8.0 and will throw a type error in drupal:9.0.0. Pass an instance of \\Drupal\\migrate\\MigrateStubInterface. See https://www.drupal.org/node/3047268', E_USER_DEPRECATED);
-      $migrate_stub = \Drupal::service('migrate.stub');
-    }
     $this->migration = $migration;
-
     $this->migrateLookup = $migrate_lookup;
     $this->migrateStub = $migrate_stub;
   }
@@ -188,22 +196,21 @@ class MigrationLookup extends ProcessPluginBase implements ContainerFactoryPlugi
     $destination_ids = NULL;
     $source_id_values = [];
     foreach ($lookup_migration_ids as $lookup_migration_id) {
+      $lookup_value = $value;
       if ($lookup_migration_id == $this->migration->id()) {
         $self = TRUE;
       }
       if (isset($this->configuration['source_ids'][$lookup_migration_id])) {
-        $value = array_values($row->getMultiple($this->configuration['source_ids'][$lookup_migration_id]));
+        $lookup_value = array_values($row->getMultiple($this->configuration['source_ids'][$lookup_migration_id]));
       }
-      if (!is_array($value)) {
-        $value = [$value];
-      }
-      $this->skipInvalid($value);
-      $source_id_values[$lookup_migration_id] = $value;
+      $lookup_value = (array) $lookup_value;
+      $this->skipInvalid($lookup_value);
+      $source_id_values[$lookup_migration_id] = $lookup_value;
 
       // Re-throw any PluginException as a MigrateException so the executable
       // can shut down the migration.
       try {
-        $destination_id_array = $this->migrateLookup->lookup($lookup_migration_id, $value);
+        $destination_id_array = $this->migrateLookup->lookup($lookup_migration_id, $lookup_value);
       }
       catch (PluginNotFoundException $e) {
         $destination_id_array = [];
@@ -296,31 +303,6 @@ class MigrationLookup extends ProcessPluginBase implements ContainerFactoryPlugi
    */
   protected function isValid($value) {
     return !in_array($value, [NULL, FALSE, [], ""], TRUE);
-  }
-
-  /**
-   * Create a stub row source for later import as stub data.
-   *
-   * This simple wrapper of the Row constructor allows sub-classing plugins to
-   * have more control over the row.
-   *
-   * @param array $values
-   *   An array of values to add as properties on the object.
-   * @param array $source_ids
-   *   An array containing the IDs of the source using the keys as the field
-   *   names.
-   *
-   * @return \Drupal\migrate\Row
-   *   The stub row.
-   *
-   * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use the
-   *   migrate.stub service to create stubs.
-   *
-   * @see https://www.drupal.org/node/3047268
-   */
-  protected function createStubRow(array $values, array $source_ids) {
-    @trigger_error(__METHOD__ . ' is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use the migrate.stub service to create stubs. See https://www.drupal.org/node/3047268', E_USER_DEPRECATED);
-    return new Row($values, $source_ids, TRUE);
   }
 
 }

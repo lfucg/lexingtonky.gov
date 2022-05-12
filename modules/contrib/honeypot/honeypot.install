@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains install and update functions for Honeypot.
+ * Install, update and uninstall functions for the Honeypot module.
  */
 
 use Drupal\Core\Url;

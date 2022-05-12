@@ -425,8 +425,8 @@ interface SolrConnectorInterface extends ConfigurableInterface {
    * @param \Solarium\Core\Client\Endpoint|null $endpoint
    *   (optional) The Solarium endpoint object.
    *
-   * @return \Solarium\Core\Client\Response
-   *   The Solarium response object.
+   * @return \Solarium\Core\Query\Result\ResultInterface
+   *   The Solarium Result object.
    *
    * @throws \Drupal\search_api_solr\SearchApiSolrException
    */

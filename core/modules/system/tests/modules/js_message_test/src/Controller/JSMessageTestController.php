@@ -21,7 +21,7 @@ class JSMessageTestController {
    * Gets the test messages selectors.
    *
    * @return string[]
-   *   The test test messages selectors.
+   *   The test messages selectors.
    *
    * @see core/modules/system/tests/themes/test_messages/templates/status-messages.html.twig
    */
@@ -30,7 +30,7 @@ class JSMessageTestController {
   }
 
   /**
-   * Displays links to show messages via Javascript.
+   * Displays links to show messages via JavaScript.
    *
    * @return array
    *   Render array for links.

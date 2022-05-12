@@ -14,7 +14,7 @@ class ParagraphsBehaviorsTest extends ParagraphsTestBase {
    *
    * @var array
    */
-  public static $modules = ['image', 'file', 'views'];
+  protected static $modules = ['image', 'file', 'views'];
 
   /**
    * Tests the behavior plugins for paragraphs.

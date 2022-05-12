@@ -1,5 +1,33 @@
 # Change Log
 
+### 2.1.1: 2022-02-23:
+
+- psr/log ^2
+
+### 2.1.0: 2022-01-29:
+
+- SettableOutputStreamInterface
+
+### 2.0.4: 2021-12-30:
+
+- Symfony 6
+
+### 2.0.3: 2021-12-29
+
+- PHP 8.1
+
+### 2.0.2: 2020-12-10:
+
+- PHP 8
+
+### 2.0.1: 2020-5-27:
+
+- Use symfony5 in tests. Fix erroneous branch alias and minimum php versions in composer.json. (#16)
+
+### 2.0.0: 2020-2-6:
+
+- Test with PHP 7.4. Remove support for old versions of PHP.
+
 ### 1.1.1: 2019-1-1
 
 - Allow logger manager to manage a global style for loggers (#12)

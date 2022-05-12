@@ -77,7 +77,7 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
 
   /**
    * @var bool
-   * Disable the possibility to allow a exposed input to be optional.
+   * Disable the possibility to allow an exposed input to be optional.
    */
   public $always_required = FALSE;
 
@@ -170,7 +170,7 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
   }
 
   /**
-   * Display the filter on the administrative summary
+   * Display the filter on the administrative summary.
    */
   public function adminSummary() {
     return $this->operator . ' ' . $this->value;
@@ -243,7 +243,7 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
   }
 
   /**
-   * Simple validate handler
+   * Simple validate handler.
    */
   public function validateOptionsForm(&$form, FormStateInterface $form_state) {
     $this->operatorValidate($form, $form_state);
@@ -257,7 +257,7 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
   }
 
   /**
-   * Simple submit handler
+   * Simple submit handler.
    */
   public function submitOptionsForm(&$form, FormStateInterface $form_state) {
     // Do not store these values.
@@ -307,7 +307,8 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
 
   /**
    * Provide a list of options for the default operator form.
-   * Should be overridden by classes that don't override operatorForm
+   *
+   * Should be overridden by classes that don't override operatorForm.
    */
   public function operatorOptions() {
     return [];
@@ -320,6 +321,7 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
 
   /**
    * Perform any necessary changes to the form values prior to storage.
+   *
    * There is no need for this function to actually store the data.
    */
   public function operatorSubmit($form, FormStateInterface $form_state) {}
@@ -330,8 +332,8 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
   protected function showValueForm(&$form, FormStateInterface $form_state) {
     $this->valueForm($form, $form_state);
     if (empty($this->no_operator)) {
-      $form['value']['#prefix'] = '<div class="views-group-box views-right-70">' . (isset($form['value']['#prefix']) ? $form['value']['#prefix'] : '');
-      $form['value']['#suffix'] = (isset($form['value']['#suffix']) ? $form['value']['#suffix'] : '') . '</div>';
+      $form['value']['#prefix'] = '<div class="views-group-box views-right-70">' . ($form['value']['#prefix'] ?? '');
+      $form['value']['#suffix'] = ($form['value']['#suffix'] ?? '') . '</div>';
     }
   }
 
@@ -354,6 +356,7 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
 
   /**
    * Perform any necessary changes to the form values prior to storage.
+   *
    * There is no need for this function to actually store the data.
    */
   protected function valueSubmit($form, FormStateInterface $form_state) {}
@@ -518,7 +521,7 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
     // prior to rendering. That's why the preRender for it needs to run first,
     // so that when the next preRender (the one for fieldsets) runs, it gets
     // the flattened data.
-    array_unshift($form['#pre_render'], [get_class($this), 'preRenderFlattenData']);
+    array_unshift($form['#pre_render'], [static::class, 'preRenderFlattenData']);
     $form['expose']['#flatten'] = TRUE;
 
     if (empty($this->always_required)) {
@@ -739,14 +742,15 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
   /**
    * Validates a filter identifier.
    *
-   * Sets the form error if $form_state is passed or a error string if
+   * Sets the form error if $form_state is passed or an error string if
    * $form_state is not passed.
    *
    * @param string $identifier
    *   The identifier to check.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   (optional) The current state of the form.
    * @param array $form_group
-   *   The form element to set any errors on.
+   *   (optional) The form element to set any errors on.
    *
    * @return string
    */
@@ -887,7 +891,7 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
   }
 
   /**
-   * Render our chunk of the exposed filter form when selecting
+   * Render our chunk of the exposed filter form when selecting.
    *
    * You can override this if it doesn't do what you expect.
    */
@@ -914,6 +918,17 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
       $this->exposedTranslate($form[$operator], 'operator');
 
       unset($form['operator']);
+
+      // When the operator and value forms are both in play, enclose them within
+      // a wrapper.
+      if (!empty($this->options['expose']['identifier'])) {
+        $wrapper = $this->options['expose']['identifier'] . '_wrapper';
+        $this->buildValueWrapper($form, $wrapper);
+        $form[$operator]['#title_display'] = 'invisible';
+
+        $form[$wrapper][$operator] = $form[$operator];
+        unset($form[$operator]);
+      }
     }
 
     // Build the form and set the value based on the identifier.
@@ -931,12 +946,50 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
       if ($value != 'value') {
         unset($form['value']);
       }
+
+      // When the operator and value forms are both in play, enclose them within
+      // a wrapper, for usability. Also wrap if the value form is comprised of
+      // multiple elements.
+      if ((!empty($this->options['expose']['use_operator']) && !empty($this->options['expose']['operator_id'])) || count(Element::children($form[$value]))) {
+        $wrapper = $value . '_wrapper';
+        $this->buildValueWrapper($form, $wrapper);
+        $form[$wrapper][$value] = $form[$value];
+        unset($form[$value]);
+      }
+    }
+  }
+
+  /**
+   * Builds wrapper for value and operator forms.
+   *
+   * @param array $form
+   *   The form.
+   * @param string $wrapper_identifier
+   *   The key to use for the wrapper element.
+   */
+  protected function buildValueWrapper(&$form, $wrapper_identifier) {
+    // If both the field and the operator are exposed, this will end up being
+    // called twice. We don't want to wipe out what's already there, so if it
+    // exists already, do nothing.
+    if (!isset($form[$wrapper_identifier])) {
+      $form[$wrapper_identifier] = [
+        '#type' => 'fieldset',
+      ];
+
+      $exposed_info = $this->exposedInfo();
+      if (!empty($exposed_info['label'])) {
+        $form[$wrapper_identifier]['#title'] = $exposed_info['label'];
+      }
+      if (!empty($exposed_info['description'])) {
+        $form[$wrapper_identifier]['#description'] = $exposed_info['description'];
+      }
     }
   }
 
   /**
    * Build the form to let users create the group of exposed filters.
-   * This form is displayed when users click on button 'Build group'
+   *
+   * This form is displayed when users click on button 'Build group'.
    */
   protected function buildExposedFiltersGroupForm(&$form, FormStateInterface $form_state) {
     if (empty($this->options['exposed']) || empty($this->options['is_grouped'])) {
@@ -948,7 +1001,7 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
     // prior to rendering. That's why the preRender for it needs to run first,
     // so that when the next preRender (the one for fieldsets) runs, it gets
     // the flattened data.
-    array_unshift($form['#pre_render'], [get_class($this), 'preRenderFlattenData']);
+    array_unshift($form['#pre_render'], [static::class, 'preRenderFlattenData']);
     $form['group_info']['#flatten'] = TRUE;
 
     if (!empty($this->options['group_info']['identifier'])) {
@@ -1400,22 +1453,20 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
 
     // False means that we got a setting that means to recurse ourselves,
     // so we should erase whatever happened to be there.
-    if ($status === FALSE && isset($_SESSION['views'][$this->view->storage->id()][$display_id])) {
-      $session = &$_SESSION['views'][$this->view->storage->id()][$display_id];
-
-      if (isset($session[$this->options['group_info']['identifier']])) {
-        unset($session[$this->options['group_info']['identifier']]);
-      }
+    $session = $this->view->getRequest()->getSession();
+    $views_session = $session->get('views', []);
+    if ($status === FALSE && isset($views_session[$this->view->storage->id()][$display_id])) {
+      unset($views_session[$this->view->storage->id()][$display_id][$this->options['group_info']['identifier']]);
     }
 
     if ($status !== FALSE) {
-      if (!isset($_SESSION['views'][$this->view->storage->id()][$display_id])) {
-        $_SESSION['views'][$this->view->storage->id()][$display_id] = [];
+      if (!isset($views_session[$this->view->storage->id()][$display_id])) {
+        $views_session[$this->view->storage->id()][$display_id] = [];
       }
-
-      $session = &$_SESSION['views'][$this->view->storage->id()][$display_id];
-
-      $session[$this->options['group_info']['identifier']] = $input[$this->options['group_info']['identifier']];
+      $views_session[$this->view->storage->id()][$display_id][$this->options['group_info']['identifier']] = $input[$this->options['group_info']['identifier']];
+    }
+    if (!empty($views_session)) {
+      $session->set('views', $views_session);
     }
   }
 
@@ -1508,29 +1559,34 @@ abstract class FilterPluginBase extends HandlerBase implements CacheableDependen
 
     // False means that we got a setting that means to recurse ourselves,
     // so we should erase whatever happened to be there.
-    if (!$status && isset($_SESSION['views'][$this->view->storage->id()][$display_id])) {
-      $session = &$_SESSION['views'][$this->view->storage->id()][$display_id];
-      if ($operator && isset($session[$this->options['expose']['operator_id']])) {
-        unset($session[$this->options['expose']['operator_id']]);
+    $session = $this->view->getRequest()->getSession();
+    $views_session = $session->get('views', []);
+    if (!$status && isset($views_session[$this->view->storage->id()][$display_id])) {
+      $session_ref = &$views_session[$this->view->storage->id()][$display_id];
+      if ($operator && isset($session_ref[$this->options['expose']['operator_id']])) {
+        unset($session_ref[$this->options['expose']['operator_id']]);
       }
 
-      if (isset($session[$this->options['expose']['identifier']])) {
-        unset($session[$this->options['expose']['identifier']]);
+      if (isset($session_ref[$this->options['expose']['identifier']])) {
+        unset($session_ref[$this->options['expose']['identifier']]);
       }
     }
 
     if ($status) {
-      if (!isset($_SESSION['views'][$this->view->storage->id()][$display_id])) {
-        $_SESSION['views'][$this->view->storage->id()][$display_id] = [];
+      if (!isset($views_session[$this->view->storage->id()][$display_id])) {
+        $views_session[$this->view->storage->id()][$display_id] = [];
       }
 
-      $session = &$_SESSION['views'][$this->view->storage->id()][$display_id];
+      $session_ref = &$views_session[$this->view->storage->id()][$display_id];
 
       if ($operator && isset($input[$this->options['expose']['operator_id']])) {
-        $session[$this->options['expose']['operator_id']] = $input[$this->options['expose']['operator_id']];
+        $session_ref[$this->options['expose']['operator_id']] = $input[$this->options['expose']['operator_id']];
       }
 
-      $session[$this->options['expose']['identifier']] = $input[$this->options['expose']['identifier']];
+      $session_ref[$this->options['expose']['identifier']] = $input[$this->options['expose']['identifier']];
+    }
+    if (!empty($views_session)) {
+      $session->set('views', $views_session);
     }
   }
 

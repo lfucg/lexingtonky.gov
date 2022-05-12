@@ -140,6 +140,7 @@ class UtilitiesTest extends KernelTestBase {
           'slop' => 3,
           'fuzzy' => 1,
         ],
+        'debug_finalize' => FALSE,
       ],
       search_api_solr_merge_default_index_third_party_settings($third_party_settings)
     );

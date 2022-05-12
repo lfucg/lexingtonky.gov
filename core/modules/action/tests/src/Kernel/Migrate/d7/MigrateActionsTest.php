@@ -12,18 +12,18 @@ use Drupal\Tests\migrate_drupal\Kernel\d7\MigrateDrupal7TestBase;
  */
 class MigrateActionsTest extends MigrateDrupal7TestBase {
 
-  public static $modules = ['action', 'comment', 'node'];
+  protected static $modules = ['action', 'comment', 'node'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->executeMigration('d7_action');
   }
 
   /**
-   * Test Drupal 7 action migration to Drupal 8.
+   * Tests Drupal 7 action migration to Drupal 8.
    */
   public function testActions() {
     // Test default actions.
@@ -57,16 +57,18 @@ class MigrateActionsTest extends MigrateDrupal7TestBase {
    *   The expected Action type.
    * @param array $configuration
    *   The expected Action configuration.
+   *
+   * @internal
    */
-  protected function assertEntity($id, $label, $type, $configuration) {
+  protected function assertEntity(string $id, string $label, string $type, array $configuration): void {
     $action = Action::load($id);
 
     $this->assertInstanceOf(Action::class, $action);
     /** @var \Drupal\system\Entity\Action $action */
-    $this->assertIdentical($id, $action->id());
-    $this->assertIdentical($label, $action->label());
-    $this->assertIdentical($type, $action->getType());
-    $this->assertIdentical($configuration, $action->get('configuration'));
+    $this->assertSame($id, $action->id());
+    $this->assertSame($label, $action->label());
+    $this->assertSame($type, $action->getType());
+    $this->assertSame($configuration, $action->get('configuration'));
   }
 
 }

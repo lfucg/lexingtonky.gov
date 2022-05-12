@@ -11,7 +11,7 @@ use Drupal\field\Entity\FieldStorageConfig;
  */
 class ParagraphsDuplicateFeatureTest extends ParagraphsTestBase {
 
-  public static $modules = [
+  protected static $modules = [
     'node',
     'paragraphs',
     'field',

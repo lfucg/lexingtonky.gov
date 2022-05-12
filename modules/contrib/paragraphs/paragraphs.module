@@ -351,10 +351,10 @@ function template_preprocess_paragraphs_actions(&$variables) {
  * Implements hook_preprocess_HOOK() for field_multiple_value_form().
  */
 function paragraphs_preprocess_field_multiple_value_form(&$variables) {
-  if (!empty($variables['table']['#header']) && isset($variables['table']['#rows'])) {
+  if (!empty($variables['table']['#header']) && isset($variables['table']['#rows'][0])) {
     // Find paragraph_actions and move to header.
     // @see template_preprocess_field_multiple_value_form()
-    if (!empty($variables['table']['#rows'][0]['data'][1]['data']['#paragraphs_header'])) {
+    if (is_array($variables['table']['#rows'][0]['data'][1]) && !empty($variables['table']['#rows'][0]['data'][1]['data']['#paragraphs_header'])) {
       $variables['table']['#header'][0]['data'] = [
         'title' => $variables['table']['#header'][0]['data'],
         'button' => $variables['table']['#rows'][0]['data'][1]['data'],
@@ -384,9 +384,11 @@ function paragraphs_preprocess_field_multiple_value_form(&$variables) {
       foreach ($variables['table']['#rows'] as $key => $value) {
         $variables['table']['#rows'][$key]['data'][0]['class'][] = 'paragraph-bullet';
         // Restore the removed weight and give access FALSE.
-        $variables['table']['#rows'][$key]['data'][1]['data']['_weight'] = $value['data'][2]['data'];
-        unset($variables['table']['#rows'][$key]['data'][2]);
-        $variables['table']['#rows'][$key]['data'][1]['data']['_weight']['#access'] = FALSE;
+        if (isset($value['data'][2])) {
+          $variables['table']['#rows'][$key]['data'][1]['data']['_weight'] = $value['data'][2]['data'];
+          unset($variables['table']['#rows'][$key]['data'][2]);
+          $variables['table']['#rows'][$key]['data'][1]['data']['_weight']['#access'] = FALSE;
+        }
       }
     }
   }

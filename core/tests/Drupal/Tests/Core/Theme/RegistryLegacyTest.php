@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\Core\Theme;
 
+use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Theme\ActiveTheme;
 use Drupal\Core\Theme\Registry;
 use Drupal\Tests\UnitTestCase;
@@ -65,9 +66,16 @@ class RegistryLegacyTest extends UnitTestCase {
   protected $themeManager;
 
   /**
+   * The module extension list.
+   *
+   * @var \Drupal\Core\Extension\ModuleExtensionList|\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected $moduleList;
+
+  /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->cache = $this->createMock('Drupal\Core\Cache\CacheBackendInterface');
@@ -76,16 +84,16 @@ class RegistryLegacyTest extends UnitTestCase {
     $this->themeHandler = $this->createMock('Drupal\Core\Extension\ThemeHandlerInterface');
     $this->themeInitialization = $this->createMock('Drupal\Core\Theme\ThemeInitializationInterface');
     $this->themeManager = $this->createMock('Drupal\Core\Theme\ThemeManagerInterface');
+    $this->moduleList = $this->createMock(ModuleExtensionList::class);
 
     $this->setupTheme();
   }
 
   /**
    * Tests getting legacy theme function registry data defined by a module.
-   *
-   * @expectedDeprecation Theme functions are deprecated in drupal:8.0.0 and are removed from drupal:10.0.0. Use Twig templates instead of theme_theme_test(). See https://www.drupal.org/node/1831138
    */
   public function testGetLegacyThemeFunctionRegistryForModule() {
+    $this->expectDeprecation('Unsilenced deprecation: Theme functions are deprecated in drupal:8.0.0 and are removed from drupal:10.0.0. Use Twig templates instead of theme_theme_test(). See https://www.drupal.org/node/1831138');
     $test_theme = new ActiveTheme([
       'name' => 'test_legacy_theme',
       'path' => 'core/modules/system/tests/themes/test_legacy_theme/test_legacy_theme.info.yml',
@@ -112,6 +120,10 @@ class RegistryLegacyTest extends UnitTestCase {
     $this->moduleHandler->expects($this->atLeastOnce())
       ->method('getModuleList')
       ->willReturn([]);
+    $this->moduleList->expects($this->once())
+      ->method('getPath')
+      ->with('theme_legacy_test')
+      ->willReturn('core/modules/system/tests/modules/theme_legacy_test');
 
     $registry = $this->registry->get();
 
@@ -133,8 +145,18 @@ class RegistryLegacyTest extends UnitTestCase {
 
   protected function setupTheme() {
     $this->registry = $this->getMockBuilder(Registry::class)
-      ->setMethods(['getPath'])
-      ->setConstructorArgs([$this->root, $this->cache, $this->lock, $this->moduleHandler, $this->themeHandler, $this->themeInitialization])
+      ->onlyMethods(['getPath'])
+      ->setConstructorArgs([
+        $this->root,
+        $this->cache,
+        $this->lock,
+        $this->moduleHandler,
+        $this->themeHandler,
+        $this->themeInitialization,
+        NULL,
+        NULL,
+        $this->moduleList,
+      ])
       ->getMock();
     $this->registry->expects($this->any())
       ->method('getPath')

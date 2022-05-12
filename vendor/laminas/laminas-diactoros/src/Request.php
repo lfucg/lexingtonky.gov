@@ -1,10 +1,6 @@
 <?php
 
-/**
- * @see       https://github.com/laminas/laminas-diactoros for the canonical source repository
- * @copyright https://github.com/laminas/laminas-diactoros/blob/master/COPYRIGHT.md
- * @license   https://github.com/laminas/laminas-diactoros/blob/master/LICENSE.md New BSD License
- */
+declare(strict_types=1);
 
 namespace Laminas\Diactoros;
 
@@ -30,9 +26,9 @@ class Request implements RequestInterface
      * @param null|string $method HTTP method for the request, if any.
      * @param string|resource|StreamInterface $body Message body, if any.
      * @param array $headers Headers for the message, if any.
-     * @throws \InvalidArgumentException for any invalid value.
+     * @throws Exception\InvalidArgumentException for any invalid value.
      */
-    public function __construct($uri = null, $method = null, $body = 'php://temp', array $headers = [])
+    public function __construct($uri = null, string $method = null, $body = 'php://temp', array $headers = [])
     {
         $this->initialize($uri, $method, $body, $headers);
     }
@@ -40,7 +36,7 @@ class Request implements RequestInterface
     /**
      * {@inheritdoc}
      */
-    public function getHeaders()
+    public function getHeaders() : array
     {
         $headers = $this->headers;
         if (! $this->hasHeader('host')
@@ -55,7 +51,7 @@ class Request implements RequestInterface
     /**
      * {@inheritdoc}
      */
-    public function getHeader($header)
+    public function getHeader($header) : array
     {
         if (! $this->hasHeader($header)) {
             if (strtolower($header) === 'host'

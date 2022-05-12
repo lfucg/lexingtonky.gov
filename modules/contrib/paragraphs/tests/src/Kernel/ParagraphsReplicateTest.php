@@ -23,7 +23,7 @@ class ParagraphsReplicateTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'paragraphs',
     'replicate',
     'node',

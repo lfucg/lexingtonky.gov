@@ -32,10 +32,9 @@ class EntityTypeWithoutViewsDataTest extends KernelTestBase {
    * Tests the case when an entity type provides no views data.
    *
    * @see datetime_test_entity_type_alter()
-   * @see datetime_range_view_presave()
    */
   public function testEntityTypeWithoutViewsData() {
-    $view_yaml = drupal_get_path('module', 'taxonomy') . '/' . InstallStorage::CONFIG_OPTIONAL_DIRECTORY . '/views.view.taxonomy_term.yml';
+    $view_yaml = $this->getModulePath('taxonomy') . '/' . InstallStorage::CONFIG_OPTIONAL_DIRECTORY . '/views.view.taxonomy_term.yml';
     $values = Yaml::decode(file_get_contents($view_yaml));
     $this->assertEquals(SAVED_NEW, View::create($values)->save());
   }

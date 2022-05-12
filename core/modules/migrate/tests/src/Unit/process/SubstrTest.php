@@ -5,6 +5,8 @@ namespace Drupal\Tests\migrate\Unit\process;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\Plugin\migrate\process\Substr;
 
+// cspell:ignore aptain Janeway
+
 /**
  * Tests the substr plugin.
  *
@@ -17,7 +19,7 @@ class SubstrTest extends MigrateProcessTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
   }
 

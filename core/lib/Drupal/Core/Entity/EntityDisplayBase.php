@@ -158,7 +158,7 @@ abstract class EntityDisplayBase extends ConfigEntityBase implements EntityDispl
       // Fill in defaults for extra fields.
       $context = $this->displayContext == 'view' ? 'display' : $this->displayContext;
       $extra_fields = \Drupal::service('entity_field.manager')->getExtraFields($this->targetEntityType, $this->bundle);
-      $extra_fields = isset($extra_fields[$context]) ? $extra_fields[$context] : [];
+      $extra_fields = $extra_fields[$context] ?? [];
       foreach ($extra_fields as $name => $definition) {
         if (!isset($this->content[$name]) && !isset($this->hidden[$name])) {
           // Extra fields are visible by default unless they explicitly say so.
@@ -182,12 +182,6 @@ abstract class EntityDisplayBase extends ConfigEntityBase implements EntityDispl
       foreach ($fields as $name => $definition) {
         if (!$definition->isDisplayConfigurable($this->displayContext) || (!isset($this->content[$name]) && !isset($this->hidden[$name]))) {
           $options = $definition->getDisplayOptions($this->displayContext);
-
-          // @todo Remove handling of 'type' in https://www.drupal.org/node/2799641.
-          if (!isset($options['region']) && !empty($options['type']) && $options['type'] === 'hidden') {
-            $options['region'] = 'hidden';
-            @trigger_error("Support for using 'type' => 'hidden' in a component is deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. Use 'region' => 'hidden' instead. See https://www.drupal.org/node/2801513", E_USER_DEPRECATED);
-          }
 
           if (!empty($options['region']) && $options['region'] === 'hidden') {
             $this->removeComponent($name);
@@ -253,13 +247,6 @@ abstract class EntityDisplayBase extends ConfigEntityBase implements EntityDispl
   public function preSave(EntityStorageInterface $storage) {
     // Ensure that a region is set on each component.
     foreach ($this->getComponents() as $name => $component) {
-      // @todo Remove this BC layer in Drupal 9.
-      // @see https://www.drupal.org/project/drupal/issues/2799641
-      if (!isset($component['region']) && isset($component['type']) && $component['type'] === 'hidden') {
-        @trigger_error("Support for using 'type' => 'hidden' in a component is deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. Use 'region' => 'hidden' instead. See https://www.drupal.org/node/2801513", E_USER_DEPRECATED);
-        $this->removeComponent($name);
-      }
-
       // Ensure that a region is set.
       if (isset($this->content[$name]) && !isset($component['region'])) {
         // Directly set the component to bypass other changes in setComponent().
@@ -270,29 +257,6 @@ abstract class EntityDisplayBase extends ConfigEntityBase implements EntityDispl
     ksort($this->content);
     ksort($this->hidden);
     parent::preSave($storage);
-  }
-
-  /**
-   * Handles a component type of 'hidden'.
-   *
-   * The logic of this method has been duplicated inline in the preSave()
-   * method so that this method may remain deprecated and trigger an error.
-   *
-   * @param string $name
-   *   The name of the component.
-   * @param array $component
-   *   The component array.
-   *
-   * @deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. No
-   *   replacement is provided.
-   *
-   * @see https://www.drupal.org/node/2801513
-   */
-  protected function handleHiddenType($name, array $component) {
-    @trigger_error(__METHOD__ . ' is deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. No replacement is provided. See https://www.drupal.org/node/2801513', E_USER_DEPRECATED);
-    if (!isset($component['region']) && isset($component['type']) && $component['type'] === 'hidden') {
-      $this->removeComponent($name);
-    }
   }
 
   /**
@@ -364,7 +328,7 @@ abstract class EntityDisplayBase extends ConfigEntityBase implements EntityDispl
    * {@inheritdoc}
    */
   public function getComponent($name) {
-    return isset($this->content[$name]) ? $this->content[$name] : NULL;
+    return $this->content[$name] ?? NULL;
   }
 
   /**
@@ -427,7 +391,7 @@ abstract class EntityDisplayBase extends ConfigEntityBase implements EntityDispl
    */
   protected function getFieldDefinition($field_name) {
     $definitions = $this->getFieldDefinitions();
-    return isset($definitions[$field_name]) ? $definitions[$field_name] : NULL;
+    return $definitions[$field_name] ?? NULL;
   }
 
   /**

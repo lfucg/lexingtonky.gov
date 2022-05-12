@@ -15,13 +15,16 @@
    */
   Drupal.behaviors.claroDetails = {
     attach(context) {
-      $(context)
-        .once('claroDetails')
-        .on('click', event => {
+      // The second argument of once() needs to be an instance of Element, but
+      // document is an instance of Document, replace it with the html Element.
+      $(once('claroDetails', context === document ? 'html' : context)).on(
+        'click',
+        (event) => {
           if (event.target.nodeName === 'SUMMARY') {
             $(event.target).trigger('focus');
           }
-        });
+        },
+      );
     },
   };
 
@@ -41,18 +44,35 @@
         return;
       }
 
-      $(context)
-        .find('details .details-title')
-        .once('claroDetailsToggleShim')
-        .on('keypress', event => {
+      $(once('claroDetailsToggleShim', 'details .details-title', context)).on(
+        'keypress',
+        (event) => {
           const keyCode = event.keyCode || event.charCode;
           if (keyCode === 32) {
-            $(event.target)
-              .closest('summary')
-              .trigger('click');
+            $(event.target).closest('summary').trigger('click');
             event.preventDefault();
           }
-        });
+        },
+      );
     },
   };
+
+  /**
+   * Theme override providing a wrapper for summarized details content.
+   *
+   * @return {string}
+   *   The markup for the element that will contain the summarized content.
+   */
+  Drupal.theme.detailsSummarizedContentWrapper = () =>
+    `<span class="claro-details__summary-summary"></span>`;
+
+  /**
+   * Theme override of summarized details content text.
+   *
+   * @param {string|null} [text]
+   *   (optional) The summarized content displayed in the summary.
+   * @return {string}
+   *   The formatted summarized content text.
+   */
+  Drupal.theme.detailsSummarizedContentText = (text) => text || '';
 })(jQuery, Modernizr, Drupal);

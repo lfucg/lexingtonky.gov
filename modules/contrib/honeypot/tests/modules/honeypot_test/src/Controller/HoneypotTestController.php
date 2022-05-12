@@ -2,16 +2,42 @@
 
 namespace Drupal\honeypot_test\Controller;
 
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Controller for honeypot_test routes.
  */
-class HoneypotTestController {
+class HoneypotTestController implements ContainerInjectionInterface {
 
-  use StringTranslationTrait;
+  /**
+   * The form_builder service.
+   *
+   * @var \Drupal\Core\Form\FormBuilderInterface
+   */
+  protected $formBuilder;
+
+  /**
+   * Constructs a HoneypotTestController.
+   *
+   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
+   *   The form builder service.
+   */
+  public function __construct(FormBuilderInterface $form_builder) {
+    $this->formBuilder = $form_builder;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('form_builder')
+    );
+  }
 
   /**
    * Page that triggers a programmatic form submission.
@@ -23,10 +49,10 @@ class HoneypotTestController {
     $values = [
       'name' => 'robo-user',
       'mail' => 'robouser@example.com',
-      'op' => $this->t('Submit'),
+      'op' => 'Submit',
     ];
     $form_state->setValues($values);
-    \Drupal::formBuilder()->submitForm('\Drupal\user\Form\UserPasswordForm', $form_state);
+    $this->formBuilder->submitForm('\Drupal\user\Form\UserPasswordForm', $form_state);
 
     return new JsonResponse($form_state->getErrors());
   }

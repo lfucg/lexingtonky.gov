@@ -95,9 +95,6 @@ interface ParagraphsBehaviorInterface extends PluginFormInterface, ConfigurableI
    *   entity components.
    * @param string $view_mode
    *   The view mode the entity is rendered in.
-   *
-   * @return array
-   *   A render array provided by the plugin.
    */
   public function view(array &$build, Paragraph $paragraph, EntityViewDisplayInterface $display, $view_mode);
 

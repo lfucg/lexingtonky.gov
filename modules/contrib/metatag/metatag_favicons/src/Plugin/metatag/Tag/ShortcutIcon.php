@@ -9,9 +9,9 @@ use Drupal\metatag\Plugin\metatag\Tag\LinkRelBase;
  *
  * @MetatagTag(
  *   id = "shortcut_icon",
- *   label = @Translation("Default shortcut icon"),
+ *   label = @Translation("Default icon"),
  *   description = @Translation("The traditional favicon, must be either a GIF, ICO, JPG/JPEG or PNG image."),
- *   name = "shortcut icon",
+ *   name = "icon",
  *   group = "favicons",
  *   weight = 1,
  *   type = "image",

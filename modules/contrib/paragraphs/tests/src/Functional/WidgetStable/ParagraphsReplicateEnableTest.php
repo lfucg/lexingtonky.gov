@@ -10,7 +10,7 @@ namespace Drupal\Tests\paragraphs\Functional\WidgetStable;
 
 class ParagraphsReplicateEnableTest extends ParagraphsDuplicateFeatureTest {
 
-  public static $modules = [
+  protected static $modules = [
     'replicate',
   ];
 

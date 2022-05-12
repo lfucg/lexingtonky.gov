@@ -10,7 +10,6 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaNameBase;
  * @MetatagTag(
  *   id = "msapplication_task_separator",
  *   label = @Translation("MSApplication - Task separator"),
- *   description = @Translation(""),
  *   name = "msapplication-task-separator",
  *   group = "windows_mobile",
  *   weight = 107,

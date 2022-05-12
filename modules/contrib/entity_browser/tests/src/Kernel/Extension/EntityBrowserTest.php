@@ -14,7 +14,6 @@ use Drupal\entity_browser\WidgetSelectorInterface;
 use Drupal\entity_browser\SelectionDisplayInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\views\Entity\View;
-use Symfony\Component\Routing\RouteCollection;
 
 /**
  * Tests the entity_browser config entity.
@@ -70,7 +69,7 @@ class EntityBrowserTest extends KernelTestBase {
     $this->widgetUUID = $this->container->get('uuid')->generate();
     $this->routeProvider = $this->container->get('router.route_provider');
 
-    $this->installSchema('system', ['key_value_expire', 'sequences']);
+    $this->installSchema('system', ['router', 'key_value_expire', 'sequences']);
     View::create(['id' => 'test_view'])->save();
   }
 
@@ -128,7 +127,7 @@ class EntityBrowserTest extends KernelTestBase {
         $this->fail('An entity browser without required ' . $plugin_type . ' created with no exception thrown.');
       }
       catch (PluginException $e) {
-        $this->assertStringContainsString('The "" plugin does not exist.', $e->getMessage(), 'An exception was thrown when an entity_browser was created without a ' . $plugin_type . ' plugin.');
+        $this->assertContains('The "" plugin does not exist.', $e->getMessage(), 'An exception was thrown when an entity_browser was created without a ' . $plugin_type . ' plugin.');
       }
     }
 
@@ -194,7 +193,7 @@ class EntityBrowserTest extends KernelTestBase {
 
     // Ensure that rebuilding routes works.
     $route = $this->routeProvider->getRoutesByPattern('/test-browser-test');
-    $this->assertInstanceOf(RouteCollection::class, $route);
+    $this->assertTrue($route, 'Route exists.');
   }
 
   /**
@@ -208,7 +207,7 @@ class EntityBrowserTest extends KernelTestBase {
 
     // Verify several properties of the entity browser.
     $this->assertEquals($entity->label(), 'Testing entity browser instance');
-    $this->assertNotEmpty($entity->uuid());
+    $this->assertTrue($entity->uuid());
     $plugin = $entity->getDisplay();
     $this->assertTrue($plugin instanceof DisplayInterface, 'Testing display plugin.');
     $this->assertEquals($plugin->getPluginId(), 'standalone');

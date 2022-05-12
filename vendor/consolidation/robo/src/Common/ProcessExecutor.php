@@ -13,7 +13,6 @@ class ProcessExecutor implements ConfigAwareInterface, LoggerAwareInterface, Out
     use ExecTrait;
     use TaskIO; // uses LoggerAwareTrait and ConfigAwareTrait
     use ProgressIndicatorAwareTrait;
-    use OutputAwareTrait;
 
     /**
      * @param \Symfony\Component\Process\Process $process
@@ -24,7 +23,7 @@ class ProcessExecutor implements ConfigAwareInterface, LoggerAwareInterface, Out
     }
 
     /**
-     * @param \League\Container\ContainerInterface $container
+     * @param \Psr\Container\ContainerInterface $container
      * @param \Symfony\Component\Process\Process $process
      *
      * @return static

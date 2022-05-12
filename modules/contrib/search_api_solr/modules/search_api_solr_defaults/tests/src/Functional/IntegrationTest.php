@@ -19,6 +19,11 @@ class IntegrationTest extends BrowserTestBase {
   use SolrCommitTrait;
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * The profile to install as a basis for testing.
    *
    * @var string

@@ -14,7 +14,7 @@ class ParagraphsEditModesTest extends ParagraphsTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'image',
     'block_field',
   ];

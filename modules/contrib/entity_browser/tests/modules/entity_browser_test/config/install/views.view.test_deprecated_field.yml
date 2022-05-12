@@ -12,6 +12,7 @@ description: 'Contains a deprecated "Entity browser bulk select form" field.'
 tag: ''
 base_table: node_field_data
 base_field: nid
+core: 8.x
 display:
   default:
     display_plugin: default

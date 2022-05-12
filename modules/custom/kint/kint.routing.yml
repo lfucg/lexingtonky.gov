@@ -1,0 +1,6 @@
+kint:
+path: /hello/world  - (The url path)  
+defaults:
+_controller: Drupal\hello_world\Controller\HelloWorldController::hello  - (the namespace and the method that the controller will call)  
+requirements:
+_permission: 'access content' - (The permissions required for the module to successfully perform its function)

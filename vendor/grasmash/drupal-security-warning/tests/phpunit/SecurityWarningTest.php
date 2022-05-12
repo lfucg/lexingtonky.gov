@@ -14,7 +14,7 @@ class SecurityWarningTest extends TestCase
    */
   public function testComposerOutput() {
     $fs = new Filesystem();
-    $tmp_dir = __DIR__ . "/../tmp";
+    $tmp_dir = __DIR__ . "/../../../tmp";
     $fs->remove($tmp_dir);
     $fs->mkdir($tmp_dir);
     $fs->copy(__DIR__ . "/../fixtures/example.composer.json", $tmp_dir . "/composer.json");
@@ -23,6 +23,10 @@ class SecurityWarningTest extends TestCase
     $process = new Process("$bin_dir/composer install --working-dir=$tmp_dir -v");
     $process->setTimeout(600);
     $process->run();
+    if (!$process->isSuccessful()) {
+        throw new \Exception($process->getErrorOutput());
+    }
+
     $output = $process->getOutput();
 
     $this->assertContains("You are using Drupal packages that are not supported by the Drupal Security Team!", $output);

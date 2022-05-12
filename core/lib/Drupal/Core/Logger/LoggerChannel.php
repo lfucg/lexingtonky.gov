@@ -79,7 +79,7 @@ class LoggerChannel implements LoggerChannelInterface {
   protected $currentUser;
 
   /**
-   * Constructs a LoggerChannel object
+   * Constructs a LoggerChannel object.
    *
    * @param string $channel
    *   The channel name for this instance.
@@ -111,7 +111,7 @@ class LoggerChannel implements LoggerChannelInterface {
     if ($this->requestStack && $request = $this->requestStack->getCurrentRequest()) {
       $context['request_uri'] = $request->getUri();
       $context['referer'] = $request->headers->get('Referer', '');
-      $context['ip'] = $request->getClientIP();
+      $context['ip'] = $request->getClientIP() ?: '';
 
       if ($this->currentUser) {
         $context['uid'] = $this->currentUser->id();

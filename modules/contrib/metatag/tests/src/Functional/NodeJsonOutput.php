@@ -49,7 +49,7 @@ class NodeJsonOutput extends BrowserTestBase {
   public function testNode() {
     $this->provisionResource();
 
-    /* @var\Drupal\node\NodeInterface $node */
+    /** @var \Drupal\node\NodeInterface $node */
     $node = $this->createContentTypeNode('Test JSON output', 'Testing JSON output for a content type');
     $url = $node->toUrl();
 

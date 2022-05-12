@@ -50,7 +50,7 @@ class RestRegisterUserTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['hal', 'user'];
+  protected static $modules = ['hal', 'user'];
 
   const USER_EMAIL_DOMAIN = '@example.com';
 
@@ -59,7 +59,7 @@ class RestRegisterUserTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $auth = isset(static::$auth) ? [static::$auth] : [];
@@ -81,10 +81,10 @@ class RestRegisterUserTest extends ResourceTestBase {
     $config->save();
     $user = $this->registerUser('Palmer.Eldritch');
     $this->assertFalse($user->isBlocked());
-    $this->assertFalse(empty($user->getPassword()));
+    $this->assertNotEmpty($user->getPassword());
     $email_count = count($this->drupalGetMails());
 
-    $this->assertEquals($email_count, 0);
+    $this->assertEquals(0, $email_count);
 
     // Attempt to register without sending a password.
     $response = $this->registerRequest('Rick.Deckard', FALSE);
@@ -103,7 +103,7 @@ class RestRegisterUserTest extends ResourceTestBase {
     $config->save();
     $name = 'Jason.Taverner';
     $user = $this->registerUser($name, FALSE);
-    $this->assertTrue(empty($user->getPassword()));
+    $this->assertEmpty($user->getPassword());
     $this->assertTrue($user->isBlocked());
     $this->resetAll();
 
@@ -116,7 +116,7 @@ class RestRegisterUserTest extends ResourceTestBase {
     $name = 'Argaven';
     $user = $this->registerUser($name);
     $this->resetAll();
-    $this->assertFalse(empty($user->getPassword()));
+    $this->assertNotEmpty($user->getPassword());
     $this->assertTrue($user->isBlocked());
     $this->assertMailString('body', 'Your application for an account is', 2);
     $this->assertMailString('body', 'Argaven has applied for an account', 2);
@@ -128,7 +128,7 @@ class RestRegisterUserTest extends ResourceTestBase {
     $name = 'Bob.Arctor';
     $user = $this->registerUser($name, FALSE);
     $this->resetAll();
-    $this->assertTrue(empty($user->getPassword()));
+    $this->assertEmpty($user->getPassword());
     $this->assertTrue($user->isBlocked());
 
     $this->assertMailString('body', 'Your application for an account is', 2);
@@ -210,7 +210,7 @@ class RestRegisterUserTest extends ResourceTestBase {
     $response = $this->registerRequest($name, $include_password, $include_email);
     $this->assertResourceResponse(200, FALSE, $response);
     $user = user_load_by_name($name);
-    $this->assertFalse(empty($user), 'User was create as expected');
+    $this->assertNotEmpty($user, 'User was create as expected');
     return $user;
   }
 
@@ -256,17 +256,12 @@ class RestRegisterUserTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function assertNormalizationEdgeCases($method, Url $url, array $request_options) {}
+  protected function assertNormalizationEdgeCases($method, Url $url, array $request_options): void {}
 
   /**
    * {@inheritdoc}
    */
   protected function getExpectedUnauthorizedAccessMessage($method) {}
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getExpectedBcUnauthorizedAccessMessage($method) {}
 
   /**
    * {@inheritdoc}

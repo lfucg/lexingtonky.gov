@@ -54,14 +54,11 @@ function drupal_error_levels() {
  *   The filename that the error was raised in.
  * @param $line
  *   The line number the error was raised at.
- * @param $context
- *   An array that points to the active symbol table at the point the error
- *   occurred.
  */
-function _drupal_error_handler_real($error_level, $message, $filename, $line, $context) {
+function _drupal_error_handler_real($error_level, $message, $filename, $line) {
   if ($error_level & error_reporting()) {
     $types = drupal_error_levels();
-    list($severity_msg, $severity_level) = $types[$error_level];
+    [$severity_msg, $severity_level] = $types[$error_level];
     $backtrace = debug_backtrace();
     $caller = Error::getLastCaller($backtrace);
 
@@ -74,7 +71,7 @@ function _drupal_error_handler_real($error_level, $message, $filename, $line, $c
     _drupal_log_error([
       '%type' => isset($types[$error_level]) ? $severity_msg : 'Unknown error',
       // The standard PHP error handler considers that the error messages
-      // are HTML. We mimick this behavior here.
+      // are HTML. We mimic this behavior here.
       '@message' => Markup::create(Xss::filterAdmin($message)),
       '%function' => $caller['function'],
       '%file' => $caller['file'],
@@ -82,6 +79,7 @@ function _drupal_error_handler_real($error_level, $message, $filename, $line, $c
       'severity_level' => $severity_level,
       'backtrace' => $backtrace,
       '@backtrace_string' => (new \Exception())->getTraceAsString(),
+      'exception' => NULL,
     ], $recoverable || $to_string);
   }
   // If the site is a test site then fail for user deprecations so they can be
@@ -136,10 +134,12 @@ function error_displayable($error = NULL) {
  * Logs a PHP error or exception and displays an error page in fatal cases.
  *
  * @param $error
- *   An array with the following keys: %type, @message, %function, %file,
- *   %line, @backtrace_string, severity_level, and backtrace. All the parameters
- *   are plain-text, with the exception of @message, which needs to be an HTML
- *   string, and backtrace, which is a standard PHP backtrace.
+ *   An array with the following keys: %type, @message, %function, %file, %line,
+ *   @backtrace_string, severity_level, backtrace, and exception. All the
+ *   parameters are plain-text, with the exception of @message, which needs to
+ *   be an HTML string, backtrace, which is a standard PHP backtrace, and
+ *   exception, which is the exception object (or NULL if the error is not an
+ *   exception).
  * @param bool $fatal
  *   TRUE for:
  *   - An exception is thrown and not caught by something else.
@@ -149,9 +149,12 @@ function error_displayable($error = NULL) {
 function _drupal_log_error($error, $fatal = FALSE) {
   $is_installer = InstallerKernel::installationAttempted();
 
-  // Backtrace array is not a valid replacement value for t().
+  // Backtrace, exception and 'severity_level' are not valid replacement values
+  // for t().
   $backtrace = $error['backtrace'];
-  unset($error['backtrace']);
+  $exception = $error['exception'];
+  $severity = $error['severity_level'];
+  unset($error['backtrace'], $error['exception'], $error['severity_level']);
 
   // When running inside the testing framework, we relay the errors
   // to the tested site by the way of HTTP headers.
@@ -166,8 +169,10 @@ function _drupal_log_error($error, $fatal = FALSE) {
   // installer.
   if (\Drupal::hasService('logger.factory')) {
     try {
-      // Provide the PHP backtrace to logger implementations.
-      \Drupal::logger('php')->log($error['severity_level'], '%type: @message in %function (line %line of %file) @backtrace_string.', $error + ['backtrace' => $backtrace]);
+      // Provide the PHP backtrace and exception to logger implementations. Add
+      // 'severity_level' to the context to maintain BC and allow logging
+      // implementations to use it.
+      \Drupal::logger('php')->log($severity, '%type: @message in %function (line %line of %file) @backtrace_string.', $error + ['backtrace' => $backtrace, 'exception' => $exception, 'severity_level' => $severity]);
     }
     catch (\Exception $e) {
       // We can't log, for example because the database connection is not
@@ -212,7 +217,6 @@ function _drupal_log_error($error, $fatal = FALSE) {
 
       // If error type is 'User notice' then treat it as debug information
       // instead of an error message.
-      // @see debug()
       if ($error['%type'] == 'User notice') {
         $error['%type'] = 'Debug';
         $class = 'status';
@@ -220,7 +224,7 @@ function _drupal_log_error($error, $fatal = FALSE) {
 
       // Attempt to reduce verbosity by removing DRUPAL_ROOT from the file path
       // in the message. This does not happen for (false) security.
-      if (\Drupal::hasService('app.root')) {
+      if (\Drupal::hasService('kernel')) {
         $root_length = strlen(\Drupal::root());
         if (substr($error['%file'], 0, $root_length) == \Drupal::root()) {
           $error['%file'] = substr($error['%file'], $root_length + 1);
@@ -264,7 +268,7 @@ function _drupal_log_error($error, $fatal = FALSE) {
           '#title' => 'Error',
           '#markup' => $message,
         ];
-        install_display_output($output, $GLOBALS['install_state'], $response->headers->all());
+        install_display_output($output, $GLOBALS['install_state']);
         exit;
       }
 
@@ -319,7 +323,7 @@ function _drupal_get_error_level() {
     $error_level = \Drupal::config('system.logging')->get('error_level');
   }
   catch (\Exception $e) {
-    $error_level = isset($GLOBALS['config']['system.logging']['error_level']) ? $GLOBALS['config']['system.logging']['error_level'] : ERROR_REPORTING_HIDE;
+    $error_level = $GLOBALS['config']['system.logging']['error_level'] ?? ERROR_REPORTING_HIDE;
   }
 
   // If there is no container or if it has no config.factory service, we are

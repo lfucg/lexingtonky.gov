@@ -17,7 +17,7 @@ class CacheabilityMetadataConfigOverrideIntegrationTest extends BrowserTestBase 
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'block_test',
     'config_override_integration_test',
   ];
@@ -30,7 +30,7 @@ class CacheabilityMetadataConfigOverrideIntegrationTest extends BrowserTestBase 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // @todo If our block does not contain any content then the cache context
@@ -48,21 +48,21 @@ class CacheabilityMetadataConfigOverrideIntegrationTest extends BrowserTestBase 
     // Check the default (disabled) state of the cache context. The block label
     // should not be overridden.
     $this->drupalGet('<front>');
-    $this->assertNoText('Overridden block label');
+    $this->assertSession()->pageTextNotContains('Overridden block label');
 
     // Both the cache context and tag should be present.
     $this->assertCacheContext('config_override_integration_test');
-    $this->assertCacheTag('config_override_integration_test_tag');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config_override_integration_test_tag');
 
     // Flip the state of the cache context. The block label should now be
     // overridden.
     \Drupal::state()->set('config_override_integration_test.enabled', TRUE);
     $this->drupalGet('<front>');
-    $this->assertText('Overridden block label');
+    $this->assertSession()->pageTextContains('Overridden block label');
 
     // Both the cache context and tag should still be present.
     $this->assertCacheContext('config_override_integration_test');
-    $this->assertCacheTag('config_override_integration_test_tag');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config_override_integration_test_tag');
   }
 
 }

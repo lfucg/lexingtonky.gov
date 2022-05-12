@@ -50,9 +50,9 @@ class NodeAdminTest extends NodeTestBase {
    *
    * @var array
    */
-  public static $modules = ['views'];
+  protected static $modules = ['views'];
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Remove the "view own unpublished content" permission which is set
@@ -103,8 +103,11 @@ class NodeAdminTest extends NodeTestBase {
 
     $this->drupalGet('admin/content');
     foreach ($nodes_query as $delta => $string) {
-      $elements = $this->xpath('//table[contains(@class, :class)]/tbody/tr[' . ($delta + 1) . ']/td[2]/a[normalize-space(text())=:label]', [':class' => 'views-table', ':label' => $string]);
-      $this->assertTrue(!empty($elements), 'The node was found in the correct order.');
+      // Verify that the node was found in the correct order.
+      $this->assertSession()->elementExists('xpath', $this->assertSession()->buildXPathQuery('//table[contains(@class, :class)]/tbody/tr[' . ($delta + 1) . ']/td[2]/a[normalize-space(text())=:label]', [
+        ':class' => 'views-table',
+        ':label' => $string,
+      ]));
     }
 
     // Compare the rendered HTML node list to a query for the nodes ordered by
@@ -117,8 +120,11 @@ class NodeAdminTest extends NodeTestBase {
 
     $this->drupalGet('admin/content', ['query' => ['sort' => 'asc', 'order' => 'title']]);
     foreach ($nodes_query as $delta => $string) {
-      $elements = $this->xpath('//table[contains(@class, :class)]/tbody/tr[' . ($delta + 1) . ']/td[2]/a[normalize-space(text())=:label]', [':class' => 'views-table', ':label' => $string]);
-      $this->assertTrue(!empty($elements), 'The node was found in the correct order.');
+      // Verify that the node was found in the correct order.
+      $this->assertSession()->elementExists('xpath', $this->assertSession()->buildXPathQuery('//table[contains(@class, :class)]/tbody/tr[' . ($delta + 1) . ']/td[2]/a[normalize-space(text())=:label]', [
+        ':class' => 'views-table',
+        ':label' => $string,
+      ]));
     }
   }
 
@@ -149,64 +155,64 @@ class NodeAdminTest extends NodeTestBase {
     $node_type_labels = $this->xpath('//td[contains(@class, "views-field-type")]');
     $delta = 0;
     foreach ($nodes as $node) {
-      $this->assertLinkByHref('node/' . $node->id());
-      $this->assertLinkByHref('node/' . $node->id() . '/edit');
-      $this->assertLinkByHref('node/' . $node->id() . '/delete');
+      $this->assertSession()->linkByHrefExists('node/' . $node->id());
+      $this->assertSession()->linkByHrefExists('node/' . $node->id() . '/edit');
+      $this->assertSession()->linkByHrefExists('node/' . $node->id() . '/delete');
       // Verify that we can see the content type label.
-      $this->assertEqual(trim($node_type_labels[$delta]->getText()), $node->type->entity->label());
+      $this->assertEquals(trim($node_type_labels[$delta]->getText()), $node->type->entity->label());
       $delta++;
     }
 
     // Verify filtering by publishing status.
     $this->drupalGet('admin/content', ['query' => ['status' => TRUE]]);
 
-    $this->assertLinkByHref('node/' . $nodes['published_page']->id() . '/edit');
-    $this->assertLinkByHref('node/' . $nodes['published_article']->id() . '/edit');
-    $this->assertNoLinkByHref('node/' . $nodes['unpublished_page_1']->id() . '/edit');
+    $this->assertSession()->linkByHrefExists('node/' . $nodes['published_page']->id() . '/edit');
+    $this->assertSession()->linkByHrefExists('node/' . $nodes['published_article']->id() . '/edit');
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['unpublished_page_1']->id() . '/edit');
 
     // Verify filtering by status and content type.
     $this->drupalGet('admin/content', ['query' => ['status' => TRUE, 'type' => 'page']]);
 
-    $this->assertLinkByHref('node/' . $nodes['published_page']->id() . '/edit');
-    $this->assertNoLinkByHref('node/' . $nodes['published_article']->id() . '/edit');
+    $this->assertSession()->linkByHrefExists('node/' . $nodes['published_page']->id() . '/edit');
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['published_article']->id() . '/edit');
 
     // Verify no operation links are displayed for regular users.
     $this->drupalLogout();
     $this->drupalLogin($this->baseUser1);
     $this->drupalGet('admin/content');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertLinkByHref('node/' . $nodes['published_page']->id());
-    $this->assertLinkByHref('node/' . $nodes['published_article']->id());
-    $this->assertNoLinkByHref('node/' . $nodes['published_page']->id() . '/edit');
-    $this->assertNoLinkByHref('node/' . $nodes['published_page']->id() . '/delete');
-    $this->assertNoLinkByHref('node/' . $nodes['published_article']->id() . '/edit');
-    $this->assertNoLinkByHref('node/' . $nodes['published_article']->id() . '/delete');
+    $this->assertSession()->linkByHrefExists('node/' . $nodes['published_page']->id());
+    $this->assertSession()->linkByHrefExists('node/' . $nodes['published_article']->id());
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['published_page']->id() . '/edit');
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['published_page']->id() . '/delete');
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['published_article']->id() . '/edit');
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['published_article']->id() . '/delete');
 
     // Verify no unpublished content is displayed without permission.
-    $this->assertNoLinkByHref('node/' . $nodes['unpublished_page_1']->id());
-    $this->assertNoLinkByHref('node/' . $nodes['unpublished_page_1']->id() . '/edit');
-    $this->assertNoLinkByHref('node/' . $nodes['unpublished_page_1']->id() . '/delete');
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['unpublished_page_1']->id());
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['unpublished_page_1']->id() . '/edit');
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['unpublished_page_1']->id() . '/delete');
 
     // Verify no tableselect.
-    $this->assertNoFieldByName('nodes[' . $nodes['published_page']->id() . ']', '', 'No tableselect found.');
+    $this->assertSession()->fieldNotExists('nodes[' . $nodes['published_page']->id() . ']');
 
     // Verify unpublished content is displayed with permission.
     $this->drupalLogout();
     $this->drupalLogin($this->baseUser2);
     $this->drupalGet('admin/content');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertLinkByHref('node/' . $nodes['unpublished_page_2']->id());
+    $this->assertSession()->linkByHrefExists('node/' . $nodes['unpublished_page_2']->id());
     // Verify no operation links are displayed.
-    $this->assertNoLinkByHref('node/' . $nodes['unpublished_page_2']->id() . '/edit');
-    $this->assertNoLinkByHref('node/' . $nodes['unpublished_page_2']->id() . '/delete');
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['unpublished_page_2']->id() . '/edit');
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['unpublished_page_2']->id() . '/delete');
 
     // Verify user cannot see unpublished content of other users.
-    $this->assertNoLinkByHref('node/' . $nodes['unpublished_page_1']->id());
-    $this->assertNoLinkByHref('node/' . $nodes['unpublished_page_1']->id() . '/edit');
-    $this->assertNoLinkByHref('node/' . $nodes['unpublished_page_1']->id() . '/delete');
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['unpublished_page_1']->id());
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['unpublished_page_1']->id() . '/edit');
+    $this->assertSession()->linkByHrefNotExists('node/' . $nodes['unpublished_page_1']->id() . '/delete');
 
     // Verify no tableselect.
-    $this->assertNoFieldByName('nodes[' . $nodes['unpublished_page_2']->id() . ']', '', 'No tableselect found.');
+    $this->assertSession()->fieldNotExists('nodes[' . $nodes['unpublished_page_2']->id() . ']');
 
     // Verify node access can be bypassed.
     $this->drupalLogout();
@@ -214,9 +220,9 @@ class NodeAdminTest extends NodeTestBase {
     $this->drupalGet('admin/content');
     $this->assertSession()->statusCodeEquals(200);
     foreach ($nodes as $node) {
-      $this->assertLinkByHref('node/' . $node->id());
-      $this->assertLinkByHref('node/' . $node->id() . '/edit');
-      $this->assertLinkByHref('node/' . $node->id() . '/delete');
+      $this->assertSession()->linkByHrefExists('node/' . $node->id());
+      $this->assertSession()->linkByHrefExists('node/' . $node->id() . '/edit');
+      $this->assertSession()->linkByHrefExists('node/' . $node->id() . '/delete');
     }
   }
 

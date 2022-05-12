@@ -192,7 +192,7 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    * {@inheritdoc}
    */
   public function getProvider() {
-    return isset($this->definition['provider']) ? $this->definition['provider'] : NULL;
+    return $this->definition['provider'] ?? NULL;
   }
 
   /**
@@ -257,7 +257,7 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    */
   public function getCardinality() {
     // @todo: Allow to control this.
-    return isset($this->definition['cardinality']) ? $this->definition['cardinality'] : 1;
+    return $this->definition['cardinality'] ?? 1;
   }
 
   /**
@@ -286,34 +286,6 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
   public function isMultiple() {
     $cardinality = $this->getCardinality();
     return ($cardinality == static::CARDINALITY_UNLIMITED) || ($cardinality > 1);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isQueryable() {
-    @trigger_error('BaseFieldDefinition::isQueryable() is deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0. Instead, you should use \Drupal\Core\Field\BaseFieldDefinition::hasCustomStorage(). See https://www.drupal.org/node/2856563.', E_USER_DEPRECATED);
-    return !$this->hasCustomStorage();
-  }
-
-  /**
-   * Sets whether the field is queryable.
-   *
-   * @param bool $queryable
-   *   Whether the field is queryable.
-   *
-   * @return static
-   *   The object itself for chaining.
-   *
-   * @deprecated in drupal:8.4.0 and is removed from drupal:9.0.0. Use
-   *   \Drupal\Core\Field\BaseFieldDefinition::setCustomStorage() instead.
-   *
-   * @see https://www.drupal.org/node/2856563
-   */
-  public function setQueryable($queryable) {
-    @trigger_error('BaseFieldDefinition::setQueryable() is deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0. Instead, you should use \Drupal\Core\Field\BaseFieldDefinition::setCustomStorage(). See https://www.drupal.org/node/2856563.', E_USER_DEPRECATED);
-    $this->definition['queryable'] = $queryable;
-    return $this;
   }
 
   /**
@@ -436,28 +408,28 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    * {@inheritdoc}
    */
   public function getDisplayOptions($display_context) {
-    return isset($this->definition['display'][$display_context]['options']) ? $this->definition['display'][$display_context]['options'] : NULL;
+    return $this->definition['display'][$display_context]['options'] ?? NULL;
   }
 
   /**
    * {@inheritdoc}
    */
   public function isDisplayConfigurable($display_context) {
-    return isset($this->definition['display'][$display_context]['configurable']) ? $this->definition['display'][$display_context]['configurable'] : FALSE;
+    return $this->definition['display'][$display_context]['configurable'] ?? FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getDefaultValueLiteral() {
-    return isset($this->definition['default_value']) ? $this->definition['default_value'] : [];
+    return $this->definition['default_value'] ?? [];
   }
 
   /**
    * {@inheritdoc}
    */
   public function getDefaultValueCallback() {
-    return isset($this->definition['default_value_callback']) ? $this->definition['default_value_callback'] : NULL;
+    return $this->definition['default_value_callback'] ?? NULL;
   }
 
   /**
@@ -552,7 +524,7 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    *   The field name.
    */
   public function getInitialValueFromField() {
-    return isset($this->definition['initial_value_from_field']) ? $this->definition['initial_value_from_field'] : NULL;
+    return $this->definition['initial_value_from_field'] ?? NULL;
   }
 
   /**
@@ -635,24 +607,6 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
   }
 
   /**
-   * Helper to retrieve the field item class.
-   *
-   * @deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use
-   *   \Drupal\Core\TypedData\ListDataDefinition::getClass() instead.
-   */
-  protected function getFieldItemClass() {
-    @trigger_error('BaseFieldDefinition::getFieldItemClass() is deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0. Instead, you should use \Drupal\Core\TypedData\ListDataDefinition::getClass(). See https://www.drupal.org/node/2933964.', E_USER_DEPRECATED);
-    if ($class = $this->getItemDefinition()->getClass()) {
-      return $class;
-    }
-    else {
-      $type_definition = \Drupal::typedDataManager()
-        ->getDefinition($this->getItemDefinition()->getDataType());
-      return $type_definition['class'];
-    }
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function __sleep() {
@@ -666,7 +620,7 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    * {@inheritdoc}
    */
   public function getTargetEntityTypeId() {
-    return isset($this->definition['entity_type']) ? $this->definition['entity_type'] : NULL;
+    return $this->definition['entity_type'] ?? NULL;
   }
 
   /**
@@ -686,7 +640,7 @@ class BaseFieldDefinition extends ListDataDefinition implements FieldDefinitionI
    * {@inheritdoc}
    */
   public function getTargetBundle() {
-    return isset($this->definition['bundle']) ? $this->definition['bundle'] : NULL;
+    return $this->definition['bundle'] ?? NULL;
   }
 
   /**

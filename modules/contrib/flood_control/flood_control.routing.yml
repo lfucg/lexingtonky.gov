@@ -6,6 +6,7 @@ flood_control.settings:
    _form: 'Drupal\flood_control\Form\FloodControlSettingsForm'
  requirements:
    _permission: 'administer site configuration'
+
 flood_control.unblock_form:
   path: '/admin/people/flood-unblock'
   defaults:

@@ -25,7 +25,7 @@ class ParagraphsCompositeRelationshipTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array(
+  protected static $modules = array(
     'paragraphs',
     'node',
     'user',

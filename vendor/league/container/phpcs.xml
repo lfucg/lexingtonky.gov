@@ -12,5 +12,9 @@
     <!-- Directories to be checked -->
     <file>src</file>
 
+    <rule ref="PSR2">
+        <exclude name="PSR2.Namespaces.UseDeclaration"/>
+    </rule>
+
     <rule ref="PSR2"/>
 </ruleset>

@@ -14,7 +14,7 @@ use Drupal\Tests\UnitTestCase;
 class NullStorageTest extends UnitTestCase {
 
   /**
-   * Test createCollection.
+   * Tests createCollection.
    */
   public function testCollection() {
     $nullStorage = new NullStorage();
@@ -22,7 +22,7 @@ class NullStorageTest extends UnitTestCase {
     $this->assertInstanceOf(StorageInterface::class, $collection);
     $this->assertEquals(StorageInterface::DEFAULT_COLLECTION, $nullStorage->getCollectionName());
     $this->assertEquals('test', $collection->getCollectionName());
-    $this->assertArrayEquals([], $collection->getAllCollectionNames());
+    $this->assertSame([], $collection->getAllCollectionNames());
   }
 
 }

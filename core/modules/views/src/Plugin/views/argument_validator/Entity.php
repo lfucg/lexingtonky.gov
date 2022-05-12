@@ -2,7 +2,6 @@
 
 namespace Drupal\views\Plugin\views\argument_validator;
 
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -12,7 +11,7 @@ use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Defines a argument validator plugin for each entity type.
+ * Defines an argument validator plugin for each entity type.
  *
  * @ViewsArgumentValidator(
  *   id = "entity",
@@ -22,12 +21,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @see \Drupal\views\Plugin\Derivative\ViewsEntityArgumentValidator
  */
 class Entity extends ArgumentValidatorPluginBase {
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The entity type manager.
@@ -51,7 +44,7 @@ class Entity extends ArgumentValidatorPluginBase {
   protected $multipleCapable = TRUE;
 
   /**
-   * Constructs an \Drupal\views\Plugin\views\argument_validator\Entity object.
+   * Constructs a \Drupal\views\Plugin\views\argument_validator\Entity object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -64,14 +57,10 @@ class Entity extends ArgumentValidatorPluginBase {
    * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
    *   The entity type bundle info.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->entityTypeManager = $entity_type_manager;
-    if (!$entity_type_bundle_info) {
-      @trigger_error('Calling Entity::__construct() with the $entity_type_bundle_info argument is supported in drupal:8.7.0 and will be required before drupal:9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
-      $entity_type_bundle_info = \Drupal::service('entity_type.bundle.info');
-    }
     $this->entityTypeBundleInfo = $entity_type_bundle_info;
   }
 
@@ -220,6 +209,7 @@ class Entity extends ArgumentValidatorPluginBase {
    * Validates an individual entity against class access settings.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity.
    *
    * @return bool
    *   True if validated.

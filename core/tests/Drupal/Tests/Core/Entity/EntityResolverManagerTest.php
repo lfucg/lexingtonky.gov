@@ -30,7 +30,7 @@ class EntityResolverManagerTest extends UnitTestCase {
   protected $entityResolverManager;
 
   /**
-   * The mocked entity manager.
+   * The mocked entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface|\PHPUnit\Framework\MockObject\MockObject
    */
@@ -55,7 +55,7 @@ class EntityResolverManagerTest extends UnitTestCase {
    *
    * @covers ::__construct
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->entityTypeManager = $this->createMock('Drupal\Core\Entity\EntityTypeManagerInterface');
     $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
     $this->classResolver = $this->getClassResolverStub();
@@ -266,7 +266,7 @@ class EntityResolverManagerTest extends UnitTestCase {
   }
 
   /**
-   * Tests setRouteOptions() with an form parameter without interface.
+   * Tests setRouteOptions() with a form parameter without interface.
    *
    * @covers ::setRouteOptions
    * @covers ::getControllerClass
@@ -438,7 +438,7 @@ class EntityResolverManagerTest extends UnitTestCase {
   }
 
   /**
-   * Creates the entity manager mock returning entity type objects.
+   * Creates the entity type manager mock returning entity type objects.
    */
   protected function setupEntityTypes() {
     $definition = $this->createMock('Drupal\Core\Entity\EntityTypeInterface');
@@ -463,7 +463,7 @@ class EntityResolverManagerTest extends UnitTestCase {
       ]));
     $this->entityTypeManager->expects($this->any())
       ->method('getDefinition')
-      ->will($this->returnCallback(function ($entity_type) use ($definition, $revisionable_definition) {
+      ->willReturnCallback(function ($entity_type) use ($definition, $revisionable_definition) {
         if ($entity_type == 'entity_test') {
           return $definition;
         }
@@ -473,7 +473,7 @@ class EntityResolverManagerTest extends UnitTestCase {
         else {
           return NULL;
         }
-      }));
+      });
   }
 
 }

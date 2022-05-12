@@ -33,7 +33,7 @@ class TextFieldTest extends StringFieldTest {
    */
   protected $defaultTheme = 'stark';
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->adminUser = $this->drupalCreateUser(['administer filters']);
@@ -42,7 +42,7 @@ class TextFieldTest extends StringFieldTest {
   // Test fields.
 
   /**
-   * Test text field validation.
+   * Tests text field validation.
    */
   public function testTextFieldValidation() {
     // Create a field with settings to validate.
@@ -77,7 +77,7 @@ class TextFieldTest extends StringFieldTest {
   }
 
   /**
-   * Test required long text with file upload.
+   * Tests required long text with file upload.
    */
   public function testRequiredLongTextWithFileUpload() {
     // Create a text field.
@@ -126,19 +126,20 @@ class TextFieldTest extends StringFieldTest {
 
     $test_file = current($this->drupalGetTestFiles('text'));
     $edit['files[file_field_0]'] = \Drupal::service('file_system')->realpath($test_file->uri);
-    $this->drupalPostForm('entity_test/add', $edit, 'Upload');
+    $this->drupalGet('entity_test/add');
+    $this->submitForm($edit, 'Upload');
     $this->assertSession()->statusCodeEquals(200);
     $edit = [
       'text_long[0][value]' => 'Long text',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->statusCodeEquals(200);
     $this->drupalGet('entity_test/1');
-    $this->assertText('Long text');
+    $this->assertSession()->pageTextContains('Long text');
   }
 
   /**
-   * Test widgets.
+   * Tests widgets.
    */
   public function testTextfieldWidgets() {
     $this->_testTextfieldWidgets('text', 'text_textfield');
@@ -146,7 +147,7 @@ class TextFieldTest extends StringFieldTest {
   }
 
   /**
-   * Test widgets + 'formatted_text' setting.
+   * Tests widgets + 'formatted_text' setting.
    */
   public function testTextfieldWidgetsFormatted() {
     $this->_testTextfieldWidgetsFormatted('text', 'text_textfield');
@@ -188,7 +189,8 @@ class TextFieldTest extends StringFieldTest {
     $this->drupalLogin($this->adminUser);
     foreach (filter_formats() as $format) {
       if (!$format->isFallbackFormat()) {
-        $this->drupalPostForm('admin/config/content/formats/manage/' . $format->id() . '/disable', [], t('Disable'));
+        $this->drupalGet('admin/config/content/formats/manage/' . $format->id() . '/disable');
+        $this->submitForm([], 'Disable');
       }
     }
     $this->drupalLogin($this->webUser);
@@ -196,18 +198,18 @@ class TextFieldTest extends StringFieldTest {
     // Display the creation form. Since the user only has access to one format,
     // no format selector will be displayed.
     $this->drupalGet('entity_test/add');
-    $this->assertFieldByName("{$field_name}[0][value]", '', 'Widget is displayed');
-    $this->assertNoFieldByName("{$field_name}[0][format]", '', 'Format selector is not displayed');
+    $this->assertSession()->fieldValueEquals("{$field_name}[0][value]", '');
+    $this->assertSession()->fieldNotExists("{$field_name}[0][format]");
 
     // Submit with data that should be filtered.
     $value = '<em>' . $this->randomMachineName() . '</em>';
     $edit = [
       "{$field_name}[0][value]" => $value,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, 'Save');
     preg_match('|entity_test/manage/(\d+)|', $this->getUrl(), $match);
     $id = $match[1];
-    $this->assertText(t('entity_test @id has been created.', ['@id' => $id]), 'Entity was created');
+    $this->assertSession()->pageTextContains('entity_test ' . $id . ' has been created.');
 
     // Display the entity.
     $entity = EntityTest::load($id);
@@ -224,7 +226,8 @@ class TextFieldTest extends StringFieldTest {
       'format' => mb_strtolower($this->randomMachineName()),
       'name' => $this->randomMachineName(),
     ];
-    $this->drupalPostForm('admin/config/content/formats/add', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/content/formats/add');
+    $this->submitForm($edit, 'Save configuration');
     filter_formats_reset();
     $format = FilterFormat::load($edit['format']);
     $format_id = $format->id();
@@ -237,15 +240,15 @@ class TextFieldTest extends StringFieldTest {
     // Display edition form.
     // We should now have a 'text format' selector.
     $this->drupalGet('entity_test/manage/' . $id . '/edit');
-    $this->assertFieldByName("{$field_name}[0][value]", NULL, 'Widget is displayed');
-    $this->assertFieldByName("{$field_name}[0][format]", NULL, 'Format selector is displayed');
+    $this->assertSession()->fieldExists("{$field_name}[0][value]");
+    $this->assertSession()->fieldExists("{$field_name}[0][format]");
 
     // Edit and change the text format to the new one that was created.
     $edit = [
       "{$field_name}[0][format]" => $format_id,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
-    $this->assertText(t('entity_test @id has been updated.', ['@id' => $id]), 'Entity was updated');
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->pageTextContains('entity_test ' . $id . ' has been updated.');
 
     // Display the entity.
     $this->container->get('entity_type.manager')->getStorage('entity_test')->resetCache([$id]);

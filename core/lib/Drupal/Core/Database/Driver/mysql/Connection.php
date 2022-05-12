@@ -3,13 +3,15 @@
 namespace Drupal\Core\Database\Driver\mysql;
 
 use Drupal\Core\Database\DatabaseAccessDeniedException;
+use Drupal\Core\Database\IntegrityConstraintViolationException;
 use Drupal\Core\Database\DatabaseExceptionWrapper;
-
+use Drupal\Core\Database\StatementInterface;
+use Drupal\Core\Database\StatementWrapper;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Database\DatabaseNotFoundException;
 use Drupal\Core\Database\DatabaseException;
 use Drupal\Core\Database\Connection as DatabaseConnection;
-use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Database\TransactionNoActiveException;
 
 /**
  * @addtogroup database
@@ -47,11 +49,30 @@ class Connection extends DatabaseConnection {
   const SQLSTATE_SYNTAX_ERROR = 42000;
 
   /**
+   * {@inheritdoc}
+   */
+  protected $statementClass = NULL;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $statementWrapperClass = StatementWrapper::class;
+
+  /**
    * Flag to indicate if the cleanup function in __destruct() should run.
    *
    * @var bool
    */
   protected $needsCleanup = FALSE;
+
+  /**
+   * Stores the server version after it has been retrieved from the database.
+   *
+   * @var string
+   *
+   * @see \Drupal\Core\Database\Driver\mysql\Connection::version
+   */
+  private $serverVersion;
 
   /**
    * The minimal possible value for the max_allowed_packet setting of MySQL.
@@ -64,308 +85,56 @@ class Connection extends DatabaseConnection {
   const MIN_MAX_ALLOWED_PACKET = 1024;
 
   /**
-   * The list of MySQL reserved key words.
-   *
-   * @link https://dev.mysql.com/doc/refman/8.0/en/keywords.html
+   * {@inheritdoc}
    */
-  private $reservedKeyWords = [
-    'accessible',
-    'add',
-    'admin',
-    'all',
-    'alter',
-    'analyze',
-    'and',
-    'as',
-    'asc',
-    'asensitive',
-    'before',
-    'between',
-    'bigint',
-    'binary',
-    'blob',
-    'both',
-    'by',
-    'call',
-    'cascade',
-    'case',
-    'change',
-    'char',
-    'character',
-    'check',
-    'collate',
-    'column',
-    'condition',
-    'constraint',
-    'continue',
-    'convert',
-    'create',
-    'cross',
-    'cube',
-    'cume_dist',
-    'current_date',
-    'current_time',
-    'current_timestamp',
-    'current_user',
-    'cursor',
-    'database',
-    'databases',
-    'day_hour',
-    'day_microsecond',
-    'day_minute',
-    'day_second',
-    'dec',
-    'decimal',
-    'declare',
-    'default',
-    'delayed',
-    'delete',
-    'dense_rank',
-    'desc',
-    'describe',
-    'deterministic',
-    'distinct',
-    'distinctrow',
-    'div',
-    'double',
-    'drop',
-    'dual',
-    'each',
-    'else',
-    'elseif',
-    'empty',
-    'enclosed',
-    'escaped',
-    'except',
-    'exists',
-    'exit',
-    'explain',
-    'false',
-    'fetch',
-    'first_value',
-    'float',
-    'float4',
-    'float8',
-    'for',
-    'force',
-    'foreign',
-    'from',
-    'fulltext',
-    'function',
-    'generated',
-    'get',
-    'grant',
-    'group',
-    'grouping',
-    'groups',
-    'having',
-    'high_priority',
-    'hour_microsecond',
-    'hour_minute',
-    'hour_second',
-    'if',
-    'ignore',
-    'in',
-    'index',
-    'infile',
-    'inner',
-    'inout',
-    'insensitive',
-    'insert',
-    'int',
-    'int1',
-    'int2',
-    'int3',
-    'int4',
-    'int8',
-    'integer',
-    'interval',
-    'into',
-    'io_after_gtids',
-    'io_before_gtids',
-    'is',
-    'iterate',
-    'join',
-    'json_table',
-    'key',
-    'keys',
-    'kill',
-    'lag',
-    'last_value',
-    'lead',
-    'leading',
-    'leave',
-    'left',
-    'like',
-    'limit',
-    'linear',
-    'lines',
-    'load',
-    'localtime',
-    'localtimestamp',
-    'lock',
-    'long',
-    'longblob',
-    'longtext',
-    'loop',
-    'low_priority',
-    'master_bind',
-    'master_ssl_verify_server_cert',
-    'match',
-    'maxvalue',
-    'mediumblob',
-    'mediumint',
-    'mediumtext',
-    'middleint',
-    'minute_microsecond',
-    'minute_second',
-    'mod',
-    'modifies',
-    'natural',
-    'not',
-    'no_write_to_binlog',
-    'nth_value',
-    'ntile',
-    'null',
-    'numeric',
-    'of',
-    'on',
-    'optimize',
-    'optimizer_costs',
-    'option',
-    'optionally',
-    'or',
-    'order',
-    'out',
-    'outer',
-    'outfile',
-    'over',
-    'partition',
-    'percent_rank',
-    'persist',
-    'persist_only',
-    'precision',
-    'primary',
-    'procedure',
-    'purge',
-    'range',
-    'rank',
-    'read',
-    'reads',
-    'read_write',
-    'real',
-    'recursive',
-    'references',
-    'regexp',
-    'release',
-    'rename',
-    'repeat',
-    'replace',
-    'require',
-    'resignal',
-    'restrict',
-    'return',
-    'revoke',
-    'right',
-    'rlike',
-    'row',
-    'rows',
-    'row_number',
-    'schema',
-    'schemas',
-    'second_microsecond',
-    'select',
-    'sensitive',
-    'separator',
-    'set',
-    'show',
-    'signal',
-    'smallint',
-    'spatial',
-    'specific',
-    'sql',
-    'sqlexception',
-    'sqlstate',
-    'sqlwarning',
-    'sql_big_result',
-    'sql_calc_found_rows',
-    'sql_small_result',
-    'ssl',
-    'starting',
-    'stored',
-    'straight_join',
-    'system',
-    'table',
-    'terminated',
-    'then',
-    'tinyblob',
-    'tinyint',
-    'tinytext',
-    'to',
-    'trailing',
-    'trigger',
-    'true',
-    'undo',
-    'union',
-    'unique',
-    'unlock',
-    'unsigned',
-    'update',
-    'usage',
-    'use',
-    'using',
-    'utc_date',
-    'utc_time',
-    'utc_timestamp',
-    'values',
-    'varbinary',
-    'varchar',
-    'varcharacter',
-    'varying',
-    'virtual',
-    'when',
-    'where',
-    'while',
-    'window',
-    'with',
-    'write',
-    'xor',
-    'year_month',
-    'zerofill',
-  ];
+  protected $identifierQuotes = ['"', '"'];
 
   /**
-   * Constructs a Connection object.
+   * {@inheritdoc}
    */
-  public function __construct(\PDO $connection, array $connection_options = []) {
+  public function __construct(\PDO $connection, array $connection_options) {
+    // If the SQL mode doesn't include 'ANSI_QUOTES' (explicitly or via a
+    // combination mode), then MySQL doesn't interpret a double quote as an
+    // identifier quote, in which case use the non-ANSI-standard backtick.
+    //
+    // Because we still support MySQL 5.7, check for the deprecated combination
+    // modes as well.
+    //
+    // @see https://dev.mysql.com/doc/refman/5.7/en/sql-mode.html#sqlmode_ansi_quotes
+    $ansi_quotes_modes = ['ANSI_QUOTES', 'ANSI', 'DB2', 'MAXDB', 'MSSQL', 'ORACLE', 'POSTGRESQL'];
+    $is_ansi_quotes_mode = FALSE;
+    foreach ($ansi_quotes_modes as $mode) {
+      // None of the modes in $ansi_quotes_modes are substrings of other modes
+      // that are not in $ansi_quotes_modes, so a simple stripos() does not
+      // return false positives.
+      if (stripos($connection_options['init_commands']['sql_mode'], $mode) !== FALSE) {
+        $is_ansi_quotes_mode = TRUE;
+        break;
+      }
+    }
+    if ($this->identifierQuotes === ['"', '"'] && !$is_ansi_quotes_mode) {
+      $this->identifierQuotes = ['`', '`'];
+    }
     parent::__construct($connection, $connection_options);
-
-    // This driver defaults to transaction support, except if explicitly passed FALSE.
-    $this->transactionSupport = !isset($connection_options['transactions']) || ($connection_options['transactions'] !== FALSE);
-
-    // MySQL never supports transactional DDL.
-    $this->transactionalDDLSupport = FALSE;
-
-    $this->connectionOptions = $connection_options;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function query($query, array $args = [], $options = []) {
-    try {
-      return parent::query($query, $args, $options);
+  protected function handleQueryException(\PDOException $e, $query, array $args = [], $options = []) {
+    // In case of attempted INSERT of a record with an undefined column and no
+    // default value indicated in schema, MySql returns a 1364 error code.
+    // Throw an IntegrityConstraintViolationException here like the other
+    // drivers do, to avoid the parent class to throw a generic
+    // DatabaseExceptionWrapper instead.
+    if (!empty($e->errorInfo[1]) && $e->errorInfo[1] === 1364) {
+      @trigger_error('Connection::handleQueryException() is deprecated in drupal:9.2.0 and is removed in drupal:10.0.0. Get a handler through $this->exceptionHandler() instead, and use one of its methods. See https://www.drupal.org/node/3187222', E_USER_DEPRECATED);
+      $query_string = ($query instanceof StatementInterface) ? $query->getQueryString() : $query;
+      $message = $e->getMessage() . ": " . $query_string . "; " . print_r($args, TRUE);
+      throw new IntegrityConstraintViolationException($message, is_int($e->getCode()) ? $e->getCode() : 0, $e);
     }
-    catch (DatabaseException $e) {
-      if ($e->getPrevious()->errorInfo[1] == 1153) {
-        // If a max_allowed_packet error occurs the message length is truncated.
-        // This should prevent the error from recurring if the exception is
-        // logged to the database using dblog or the like.
-        $message = Unicode::truncateBytes($e->getMessage(), self::MIN_MAX_ALLOWED_PACKET);
-        $e = new DatabaseExceptionWrapper($message, $e->getCode(), $e->getPrevious());
-      }
-      throw $e;
-    }
+
+    parent::handleQueryException($e, $query, $args, $options);
   }
 
   /**
@@ -410,6 +179,11 @@ class Connection extends DatabaseConnection {
       \PDO::ATTR_EMULATE_PREPARES => TRUE,
       // Limit SQL to a single statement like mysqli.
       \PDO::MYSQL_ATTR_MULTI_STATEMENTS => FALSE,
+      // Convert numeric values to strings when fetching. In PHP 8.1,
+      // \PDO::ATTR_EMULATE_PREPARES now behaves the same way as non emulated
+      // prepares and returns integers. See https://externals.io/message/113294
+      // for further discussion.
+      \PDO::ATTR_STRINGIFY_FETCHES => TRUE,
     ];
 
     try {
@@ -448,15 +222,8 @@ class Connection extends DatabaseConnection {
       'init_commands' => [],
     ];
 
-    $sql_mode = 'ANSI,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,ONLY_FULL_GROUP_BY';
-    // NO_AUTO_CREATE_USER is removed in MySQL 8.0.11
-    // https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-11.html#mysqld-8-0-11-deprecation-removal
-    $version_server = $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION);
-    if (version_compare($version_server, '8.0.11', '<')) {
-      $sql_mode .= ',NO_AUTO_CREATE_USER';
-    }
     $connection_options['init_commands'] += [
-      'sql_mode' => "SET sql_mode = '$sql_mode'",
+      'sql_mode' => "SET sql_mode = 'ANSI,TRADITIONAL'",
     ];
 
     // Execute initial commands.
@@ -470,73 +237,22 @@ class Connection extends DatabaseConnection {
   /**
    * {@inheritdoc}
    */
-  public function escapeField($field) {
-    $field = parent::escapeField($field);
-    return $this->quoteIdentifier($field);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function escapeAlias($field) {
-    // Quote fields so that MySQL reserved words like 'function' can be used
-    // as aliases.
-    $field = parent::escapeAlias($field);
-    return $this->quoteIdentifier($field);
-  }
-
-  /**
-   * Quotes an identifier if it matches a MySQL reserved keyword.
-   *
-   * @param string $identifier
-   *   The field to check.
-   *
-   * @return string
-   *   The identifier, quoted if it matches a MySQL reserved keyword.
-   */
-  private function quoteIdentifier($identifier) {
-    // Quote identifiers so that MySQL reserved words like 'function' can be
-    // used as column names. Sometimes the 'table.column_name' format is passed
-    // in. For example,
-    // \Drupal\Core\Entity\Sql\SqlContentEntityStorage::buildQuery() adds a
-    // condition on "base.uid" while loading user entities.
-    if (strpos($identifier, '.') !== FALSE) {
-      list($table, $identifier) = explode('.', $identifier, 2);
-    }
-    if (in_array(strtolower($identifier), $this->reservedKeyWords, TRUE)) {
-      // Quote the string for MySQL reserved keywords.
-      $identifier = '"' . $identifier . '"';
-    }
-    return isset($table) ? $table . '.' . $identifier : $identifier;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function serialize() {
-    // Cleanup the connection, much like __destruct() does it as well.
-    if ($this->needsCleanup) {
-      $this->nextIdDelete();
-    }
-    $this->needsCleanup = FALSE;
-
-    return parent::serialize();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function __destruct() {
     if ($this->needsCleanup) {
       $this->nextIdDelete();
     }
+    parent::__destruct();
   }
 
   public function queryRange($query, $from, $count, array $args = [], array $options = []) {
     return $this->query($query . ' LIMIT ' . (int) $from . ', ' . (int) $count, $args, $options);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function queryTemporary($query, array $args = [], array $options = []) {
+    @trigger_error('Connection::queryTemporary() is deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. There is no replacement. See https://www.drupal.org/node/3211781', E_USER_DEPRECATED);
     $tablename = $this->generateTemporaryTableName();
     $this->query('CREATE TEMPORARY TABLE {' . $tablename . '} Engine=MEMORY ' . $query, $args, $options);
     return $tablename;
@@ -544,6 +260,56 @@ class Connection extends DatabaseConnection {
 
   public function driver() {
     return 'mysql';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function version() {
+    if ($this->isMariaDb()) {
+      return $this->getMariaDbVersionMatch();
+    }
+
+    return $this->getServerVersion();
+  }
+
+  /**
+   * Determines whether the MySQL distribution is MariaDB or not.
+   *
+   * @return bool
+   *   Returns TRUE if the distribution is MariaDB, or FALSE if not.
+   */
+  public function isMariaDb(): bool {
+    return (bool) $this->getMariaDbVersionMatch();
+  }
+
+  /**
+   * Gets the MariaDB portion of the server version.
+   *
+   * @return string
+   *   The MariaDB portion of the server version if present, or NULL if not.
+   */
+  protected function getMariaDbVersionMatch(): ?string {
+    // MariaDB may prefix its version string with '5.5.5-', which should be
+    // ignored.
+    // @see https://github.com/MariaDB/server/blob/f6633bf058802ad7da8196d01fd19d75c53f7274/include/mysql_com.h#L42.
+    $regex = '/^(?:5\.5\.5-)?(\d+\.\d+\.\d+.*-mariadb.*)/i';
+
+    preg_match($regex, $this->getServerVersion(), $matches);
+    return (empty($matches[1])) ? NULL : $matches[1];
+  }
+
+  /**
+   * Gets the server version.
+   *
+   * @return string
+   *   The PDO server version.
+   */
+  protected function getServerVersion(): string {
+    if (!$this->serverVersion) {
+      $this->serverVersion = $this->connection->query('SELECT VERSION()')->fetchColumn();
+    }
+    return $this->serverVersion;
   }
 
   public function databaseType() {
@@ -662,6 +428,64 @@ class Connection extends DatabaseConnection {
         }
       }
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function rollBack($savepoint_name = 'drupal_transaction') {
+    // MySQL will automatically commit transactions when tables are altered or
+    // created (DDL transactions are not supported). Prevent triggering an
+    // exception to ensure that the error that has caused the rollback is
+    // properly reported.
+    if (!$this->connection->inTransaction()) {
+      // On PHP 7 $this->connection->inTransaction() will return TRUE and
+      // $this->connection->rollback() does not throw an exception; the
+      // following code is unreachable.
+
+      // If \Drupal\Core\Database\Connection::rollBack() would throw an
+      // exception then continue to throw an exception.
+      if (!$this->inTransaction()) {
+        throw new TransactionNoActiveException();
+      }
+      // A previous rollback to an earlier savepoint may mean that the savepoint
+      // in question has already been accidentally committed.
+      if (!isset($this->transactionLayers[$savepoint_name])) {
+        throw new TransactionNoActiveException();
+      }
+
+      trigger_error('Rollback attempted when there is no active transaction. This can cause data integrity issues.', E_USER_WARNING);
+      return;
+    }
+    return parent::rollBack($savepoint_name);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function doCommit() {
+    // MySQL will automatically commit transactions when tables are altered or
+    // created (DDL transactions are not supported). Prevent triggering an
+    // exception in this case as all statements have been committed.
+    if ($this->connection->inTransaction()) {
+      // On PHP 7 $this->connection->inTransaction() will return TRUE and
+      // $this->connection->commit() does not throw an exception.
+      $success = parent::doCommit();
+    }
+    else {
+      // Process the post-root (non-nested) transaction commit callbacks. The
+      // following code is copied from
+      // \Drupal\Core\Database\Connection::doCommit()
+      $success = TRUE;
+      if (!empty($this->rootTransactionEndCallbacks)) {
+        $callbacks = $this->rootTransactionEndCallbacks;
+        $this->rootTransactionEndCallbacks = [];
+        foreach ($callbacks as $callback) {
+          call_user_func($callback, $success);
+        }
+      }
+    }
+    return $success;
   }
 
 }

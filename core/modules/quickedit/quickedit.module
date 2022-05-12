@@ -24,7 +24,7 @@ function quickedit_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     case 'help.page.quickedit':
       $output = '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('The Quick Edit module allows users with the <a href=":quickedit_permission">Access in-place editing</a> and <a href=":contextual_permission">Use contextual links</a> permissions to edit field content without visiting a separate page. For more information, see the <a href=":handbook_url">online documentation for the Quick Edit module</a>.', [':handbook_url' => 'https://www.drupal.org/documentation/modules/edit', ':quickedit_permission' => Url::fromRoute('user.admin_permissions', [], ['fragment' => 'module-quickedit'])->toString(), ':contextual_permission' => Url::fromRoute('user.admin_permissions', [], ['fragment' => 'module-contextual'])->toString()]) . '</p>';
+      $output .= '<p>' . t('The Quick Edit module allows users with the <a href=":quickedit_permission">Access in-place editing</a> and <a href=":contextual_permission">Use contextual links</a> permissions to edit field content without visiting a separate page. For more information, see the <a href=":handbook_url">online documentation for the Quick Edit module</a>.', [':handbook_url' => 'https://www.drupal.org/documentation/modules/edit', ':quickedit_permission' => Url::fromRoute('user.admin_permissions.module', ['modules' => 'quickedit'])->toString(), ':contextual_permission' => Url::fromRoute('user.admin_permissions.module', ['modules' => 'contextual'])->toString()]) . '</p>';
       $output .= '<h3>' . t('Uses') . '</h3>';
       $output .= '<dl>';
       $output .= '<dt>' . t('Editing content in-place') . '</dt>';
@@ -80,8 +80,10 @@ function quickedit_library_info_alter(&$libraries, $extension) {
 
     // First let the base theme modify the library, then the actual theme.
     $alter_library = function (&$library, $theme) use (&$alter_library) {
-      if (!empty($theme) && $theme_path = drupal_get_path('theme', $theme)) {
-        $info = \Drupal::service('extension.list.theme')->getExtensionInfo($theme);
+      /** @var \Drupal\Core\Extension\ThemeExtensionList $theme_list */
+      $theme_list = \Drupal::service('extension.list.theme');
+      if (!empty($theme) && $theme_path = $theme_list->getPath($theme)) {
+        $info = $theme_list->getExtensionInfo($theme);
         // Recurse to process base theme(s) first.
         if (isset($info['base theme'])) {
           $alter_library($library, $info['base theme']);
@@ -169,25 +171,4 @@ function quickedit_entity_view_alter(&$build, EntityInterface $entity, EntityVie
   }
 
   $build['#attributes']['data-quickedit-entity-id'] = $entity->getEntityTypeId() . '/' . $entity->id();
-}
-
-/**
- * Check if a loaded entity is the latest revision.
- *
- * @param \Drupal\Core\Entity\RevisionableInterface $entity
- *   The entity to check.
- *
- * @return bool
- *   TRUE if the loaded entity is the latest revision, FALSE otherwise.
- *
- * @deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Core\Entity\RevisionableInterface::isLatestRevision() instead.
- *   As internal API, _quickedit_entity_is_latest_revision() may also be removed
- *   in a minor release.
- *
- * @internal
- */
-function _quickedit_entity_is_latest_revision(RevisionableInterface $entity) {
-  @trigger_error('_quickedit_entity_is_latest_revision() is deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0. Use \Drupal\Core\Entity\RevisionableInterface::isLatestRevision() instead. As internal API, _quickedit_entity_is_latest_revision() may also be removed in a minor release.', E_USER_DEPRECATED);
-  return $entity->isLatestRevision();
 }

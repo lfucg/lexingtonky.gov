@@ -14,7 +14,7 @@ class MigrateBlockContentTranslationTest extends MigrateDrupal6TestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'aggregator',
     'book',
     'block',
@@ -22,8 +22,9 @@ class MigrateBlockContentTranslationTest extends MigrateDrupal6TestBase {
     'forum',
     'views',
     'block_content',
-    'content_translation',
+    'config_translation',
     'language',
+    'locale',
     'path_alias',
     'statistics',
     'taxonomy',
@@ -32,13 +33,14 @@ class MigrateBlockContentTranslationTest extends MigrateDrupal6TestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('block_content');
     $this->installConfig(['block']);
     $this->installConfig(['block_content']);
 
     $this->executeMigrations([
+      'language',
       'd6_filter_format',
       'block_content_type',
       'block_content_body_field',

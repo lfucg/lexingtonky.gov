@@ -186,7 +186,7 @@ class ImageWidget extends FileWidget {
   }
 
   /**
-   * Form API callback: Processes a image_image field element.
+   * Form API callback: Processes an image_image field element.
    *
    * Expands the image_image type to include the alt and title fields.
    *
@@ -258,25 +258,25 @@ class ImageWidget extends FileWidget {
     $element['alt'] = [
       '#title' => t('Alternative text'),
       '#type' => 'textfield',
-      '#default_value' => isset($item['alt']) ? $item['alt'] : '',
+      '#default_value' => $item['alt'] ?? '',
       '#description' => t('Short description of the image used by screen readers and displayed when the image is not loaded. This is important for accessibility.'),
       // @see https://www.drupal.org/node/465106#alt-text
       '#maxlength' => 512,
       '#weight' => -12,
       '#access' => (bool) $item['fids'] && $element['#alt_field'],
       '#required' => $element['#alt_field_required'],
-      '#element_validate' => $element['#alt_field_required'] == 1 ? [[get_called_class(), 'validateRequiredFields']] : [],
+      '#element_validate' => $element['#alt_field_required'] == 1 ? [[static::class, 'validateRequiredFields']] : [],
     ];
     $element['title'] = [
       '#type' => 'textfield',
       '#title' => t('Title'),
-      '#default_value' => isset($item['title']) ? $item['title'] : '',
+      '#default_value' => $item['title'] ?? '',
       '#description' => t('The title is used as a tool tip when the user hovers the mouse over the image.'),
       '#maxlength' => 1024,
       '#weight' => -11,
       '#access' => (bool) $item['fids'] && $element['#title_field'],
       '#required' => $element['#title_field_required'],
-      '#element_validate' => $element['#title_field_required'] == 1 ? [[get_called_class(), 'validateRequiredFields']] : [],
+      '#element_validate' => $element['#title_field_required'] == 1 ? [[static::class, 'validateRequiredFields']] : [],
     ];
 
     return parent::process($element, $form_state, $form);

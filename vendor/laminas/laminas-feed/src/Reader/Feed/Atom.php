@@ -1,16 +1,14 @@
 <?php
 
-/**
- * @see       https://github.com/laminas/laminas-feed for the canonical source repository
- * @copyright https://github.com/laminas/laminas-feed/blob/master/COPYRIGHT.md
- * @license   https://github.com/laminas/laminas-feed/blob/master/LICENSE.md New BSD License
- */
-
 namespace Laminas\Feed\Reader\Feed;
 
 use DateTime;
 use DOMDocument;
 use Laminas\Feed\Reader;
+
+use function array_key_exists;
+use function count;
+use function is_array;
 
 class Atom extends AbstractFeed
 {
@@ -43,17 +41,15 @@ class Atom extends AbstractFeed
      * Get a single author
      *
      * @param  int $index
-     * @return null|string
+     * @return null|array<string, string>
      */
     public function getAuthor($index = 0)
     {
         $authors = $this->getAuthors();
 
-        if (isset($authors[$index])) {
-            return $authors[$index];
-        }
-
-        return;
+        return isset($authors[$index]) && is_array($authors[$index])
+            ? $authors[$index]
+            : null;
     }
 
     /**
@@ -143,11 +139,10 @@ class Atom extends AbstractFeed
     /**
      * Get the feed lastBuild date. This is not implemented in Atom.
      *
-     * @return null|string
+     * @return void
      */
     public function getLastBuildDate()
     {
-        return;
     }
 
     /**
@@ -329,7 +324,7 @@ class Atom extends AbstractFeed
     }
 
     /**
-     * Get an array of any supported Pusubhubbub endpoints
+     * Get an array of any supported PubSubHubbub endpoints
      *
      * @return null|array
      */
@@ -375,7 +370,8 @@ class Atom extends AbstractFeed
      */
     protected function indexEntries()
     {
-        if ($this->getType() === Reader\Reader::TYPE_ATOM_10
+        if (
+            $this->getType() === Reader\Reader::TYPE_ATOM_10
             || $this->getType() === Reader\Reader::TYPE_ATOM_03
         ) {
             $entries = $this->xpath->evaluate('//atom:entry');
@@ -388,6 +384,8 @@ class Atom extends AbstractFeed
 
     /**
      * Register the default namespaces for the current feed format
+     *
+     * @return void
      */
     protected function registerNamespaces()
     {

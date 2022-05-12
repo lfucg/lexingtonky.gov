@@ -18,7 +18,7 @@ class ParagraphsTypeHasEnabledBehaviorPluginTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'paragraphs',
     'user',
     'paragraphs_test',

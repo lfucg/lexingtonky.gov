@@ -12,6 +12,7 @@
 namespace Symfony\Component\Validator\Mapping;
 
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\Composite;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Constraints\Traverse;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
@@ -108,12 +109,7 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
      */
     private $reflClass;
 
-    /**
-     * Constructs a metadata for the given class.
-     *
-     * @param string $class
-     */
-    public function __construct($class)
+    public function __construct(string $class)
     {
         $this->name = $class;
         // class name without namespace
@@ -178,9 +174,7 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
      */
     public function addConstraint(Constraint $constraint)
     {
-        if (!\in_array(Constraint::CLASS_CONSTRAINT, (array) $constraint->getTargets())) {
-            throw new ConstraintDefinitionException(sprintf('The constraint "%s" cannot be put on classes.', \get_class($constraint)));
-        }
+        $this->checkConstraint($constraint);
 
         if ($constraint instanceof Traverse) {
             if ($constraint->traverse) {
@@ -205,8 +199,7 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
     /**
      * Adds a constraint to the given property.
      *
-     * @param string     $property   The name of the property
-     * @param Constraint $constraint The constraint
+     * @param string $property The name of the property
      *
      * @return $this
      */
@@ -244,10 +237,9 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
      * Adds a constraint to the getter of the given property.
      *
      * The name of the getter is assumed to be the name of the property with an
-     * uppercased first letter and either the prefix "get" or "is".
+     * uppercased first letter and the prefix "get", "is" or "has".
      *
-     * @param string     $property   The name of the property
-     * @param Constraint $constraint The constraint
+     * @param string $property The name of the property
      *
      * @return $this
      */
@@ -269,9 +261,8 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
     /**
      * Adds a constraint to the getter of the given property.
      *
-     * @param string     $property   The name of the property
-     * @param string     $method     The name of the getter method
-     * @param Constraint $constraint The constraint
+     * @param string $property The name of the property
+     * @param string $method   The name of the getter method
      *
      * @return $this
      */
@@ -374,11 +365,7 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
      */
     public function getPropertyMetadata($property)
     {
-        if (!isset($this->members[$property])) {
-            return [];
-        }
-
-        return $this->members[$property];
+        return $this->members[$property] ?? [];
     }
 
     /**
@@ -494,5 +481,18 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
         $property = $metadata->getPropertyName();
 
         $this->members[$property][] = $metadata;
+    }
+
+    private function checkConstraint(Constraint $constraint)
+    {
+        if (!\in_array(Constraint::CLASS_CONSTRAINT, (array) $constraint->getTargets(), true)) {
+            throw new ConstraintDefinitionException(sprintf('The constraint "%s" cannot be put on classes.', \get_class($constraint)));
+        }
+
+        if ($constraint instanceof Composite) {
+            foreach ($constraint->getNestedConstraints() as $nestedConstraint) {
+                $this->checkConstraint($nestedConstraint);
+            }
+        }
     }
 }

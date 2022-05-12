@@ -41,7 +41,7 @@ class FilterDateTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'datetime',
     'datetime_test',
     'node',
@@ -59,7 +59,7 @@ class FilterDateTest extends BrowserTestBase {
    *
    * Create nodes with relative dates of yesterday, today, and tomorrow.
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $now = \Drupal::time()->getRequestTime();
@@ -109,7 +109,7 @@ class FilterDateTest extends BrowserTestBase {
     $this->container->get('views.views_data')->clear();
 
     // Load test views.
-    ViewTestData::createTestViews(get_class($this), ['datetime_test']);
+    ViewTestData::createTestViews(static::class, ['datetime_test']);
   }
 
   /**
@@ -117,8 +117,9 @@ class FilterDateTest extends BrowserTestBase {
    */
   public function testExposedGroupedFilters() {
     // Expose the empty and not empty operators in a grouped filter.
-    $this->drupalPostForm('admin/structure/views/nojs/handler/test_filter_datetime/default/filter/' . $this->fieldName . '_value', [], t('Expose filter'));
-    $this->drupalPostForm(NULL, [], 'Grouped filters');
+    $this->drupalGet('admin/structure/views/nojs/handler/test_filter_datetime/default/filter/' . $this->fieldName . '_value');
+    $this->submitForm([], 'Expose filter');
+    $this->submitForm([], 'Grouped filters');
 
     $edit = [];
     $edit['options[group_info][group_items][1][title]'] = 'empty';
@@ -126,13 +127,15 @@ class FilterDateTest extends BrowserTestBase {
     $edit['options[group_info][group_items][2][title]'] = 'not empty';
     $edit['options[group_info][group_items][2][operator]'] = 'not empty';
 
-    $this->drupalPostForm(NULL, $edit, 'Apply');
+    $this->submitForm($edit, 'Apply');
 
     // Test that the exposed filter works as expected.
     $path = 'test_filter_datetime-path';
-    $this->drupalPostForm('admin/structure/views/view/test_filter_datetime/edit', [], 'Add Page');
-    $this->drupalPostForm('admin/structure/views/nojs/display/test_filter_datetime/page_1/path', ['path' => $path], 'Apply');
-    $this->drupalPostForm(NULL, [], t('Save'));
+    $this->drupalGet('admin/structure/views/view/test_filter_datetime/edit');
+    $this->submitForm([], 'Add Page');
+    $this->drupalGet('admin/structure/views/nojs/display/test_filter_datetime/page_1/path');
+    $this->submitForm(['path' => $path], 'Apply');
+    $this->submitForm([], 'Save');
 
     $this->drupalGet($path);
 

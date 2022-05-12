@@ -116,7 +116,7 @@ address {
 }
 u,
 ins {
-  text-decoration: none;
+  text-decoration: underline;
 }
 s,
 strike,
@@ -184,7 +184,7 @@ pre {
   white-space: pre-wrap;
 }
 details {
-  line-height: 1.295em;
+  line-height: var(--details-line-height);
 }
 details summary {
   padding: 0.95em 1.45em;

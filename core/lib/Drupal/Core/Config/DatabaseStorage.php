@@ -66,7 +66,7 @@ class DatabaseStorage implements StorageInterface {
    */
   public function exists($name) {
     try {
-      return (bool) $this->connection->queryRange('SELECT 1 FROM {' . $this->connection->escapeTable($this->table) . '} WHERE collection = :collection AND name = :name', 0, 1, [
+      return (bool) $this->connection->queryRange('SELECT 1 FROM {' . $this->connection->escapeTable($this->table) . '} WHERE [collection] = :collection AND [name] = :name', 0, 1, [
         ':collection' => $this->collection,
         ':name' => $name,
       ], $this->options)->fetchField();
@@ -84,7 +84,7 @@ class DatabaseStorage implements StorageInterface {
   public function read($name) {
     $data = FALSE;
     try {
-      $raw = $this->connection->query('SELECT data FROM {' . $this->connection->escapeTable($this->table) . '} WHERE collection = :collection AND name = :name', [':collection' => $this->collection, ':name' => $name], $this->options)->fetchField();
+      $raw = $this->connection->query('SELECT [data] FROM {' . $this->connection->escapeTable($this->table) . '} WHERE [collection] = :collection AND [name] = :name', [':collection' => $this->collection, ':name' => $name], $this->options)->fetchField();
       if ($raw !== FALSE) {
         $data = $this->decode($raw);
       }
@@ -102,7 +102,7 @@ class DatabaseStorage implements StorageInterface {
   public function readMultiple(array $names) {
     $list = [];
     try {
-      $list = $this->connection->query('SELECT name, data FROM {' . $this->connection->escapeTable($this->table) . '} WHERE collection = :collection AND name IN ( :names[] )', [':collection' => $this->collection, ':names[]' => $names], $this->options)->fetchAllKeyed();
+      $list = $this->connection->query('SELECT [name], [data] FROM {' . $this->connection->escapeTable($this->table) . '} WHERE [collection] = :collection AND [name] IN ( :names[] )', [':collection' => $this->collection, ':names[]' => $names], $this->options)->fetchAllKeyed();
       foreach ($list as &$data) {
         $data = $this->decode($data);
       }
@@ -128,7 +128,7 @@ class DatabaseStorage implements StorageInterface {
         return $this->doWrite($name, $data);
       }
       // Some other failure that we can not recover from.
-      throw $e;
+      throw new StorageException($e->getMessage(), 0, $e);
     }
   }
 
@@ -161,10 +161,7 @@ class DatabaseStorage implements StorageInterface {
    */
   protected function ensureTableExists() {
     try {
-      if (!$this->connection->schema()->tableExists($this->table)) {
-        $this->connection->schema()->createTable($this->table, static::schemaDefinition());
-        return TRUE;
-      }
+      $this->connection->schema()->createTable($this->table, static::schemaDefinition());
     }
     // If another process has already created the config table, attempting to
     // recreate it will throw an exception. In this case just catch the
@@ -173,9 +170,9 @@ class DatabaseStorage implements StorageInterface {
       return TRUE;
     }
     catch (\Exception $e) {
-      throw new StorageException($e->getMessage(), NULL, $e);
+      return FALSE;
     }
-    return FALSE;
+    return TRUE;
   }
 
   /**
@@ -318,7 +315,7 @@ class DatabaseStorage implements StorageInterface {
    */
   public function getAllCollectionNames() {
     try {
-      return $this->connection->query('SELECT DISTINCT collection FROM {' . $this->connection->escapeTable($this->table) . '} WHERE collection <> :collection ORDER by collection', [
+      return $this->connection->query('SELECT DISTINCT [collection] FROM {' . $this->connection->escapeTable($this->table) . '} WHERE [collection] <> :collection ORDER by [collection]', [
           ':collection' => StorageInterface::DEFAULT_COLLECTION,
         ]
       )->fetchCol();

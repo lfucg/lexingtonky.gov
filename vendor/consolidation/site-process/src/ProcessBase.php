@@ -40,23 +40,6 @@ class ProcessBase extends Process
     private $logger;
 
     /**
-     * Symfony 4 style constructor for creating Process instances from strings.
-     * @param string $command The commandline string to run
-     * @param string|null $cwd     The working directory or null to use the working dir of the current PHP process
-     * @param array|null $env     The environment variables or null to use the same environment as the current PHP process
-     * @param mixed|null $input   The input as stream resource, scalar or \Traversable, or null for no input
-     * @param int|float|null $timeout The timeout in seconds or null to disable
-     * @return Process
-     */
-    public static function fromShellCommandline($command, $cwd = null, array $env = null, $input = null, $timeout = 60)
-    {
-        if (method_exists('\Symfony\Component\Process\Process', 'fromShellCommandline')) {
-            return Process::fromShellCommandline($command, $cwd, $env, $input, $timeout);
-        }
-        return new self($command, $cwd, $env, $input, $timeout);
-    }
-
-    /**
      * realtimeStdout returns the output stream that realtime output
      * should be sent to (if applicable)
      *
@@ -142,20 +125,20 @@ class ProcessBase extends Process
     /**
      * @inheritDoc
      */
-    public function start(callable $callback = null, $env = array())
+    public function start(callable $callback = null, array $env = [])
     {
         $cmd = $this->getCommandLine();
         if ($this->isSimulated()) {
             $this->getLogger()->notice('Simulating: ' . $cmd);
             // Run a command that always succeeds (on Linux and Windows).
-            $this->setCommandLine('true');
+            $this->overrideCommandLine('true');
         } elseif ($this->isVerbose()) {
             $this->getLogger()->info('Executing: ' . $cmd);
         }
         parent::start($callback, $env);
         // Set command back to original value in case anyone asks.
         if ($this->isSimulated()) {
-            $this->setCommandLine($cmd);
+            $this->overrideCommandLine($cmd);
         }
     }
 
@@ -229,5 +212,24 @@ class ProcessBase extends Process
         $realTimeOutput = new RealtimeOutputHandler($this->realtimeStdout(), $this->realtimeStderr());
         $realTimeOutput->configure($this);
         return $realTimeOutput;
+    }
+
+    /**
+     * Overrides the command line to be executed.
+     *
+     * @param string|array $commandline The command to execute
+     *
+     * @return $this
+     *
+     * @todo refactor library so this hack to get around changes in
+     *   symfony/process 5 is unnecessary.
+     */
+    private function overrideCommandLine($commandline)
+    {
+        $commandlineSetter = function ($commandline) {
+            $this->commandline = $commandline;
+        };
+        $commandlineSetter->bindTo($this, Process::class)($commandline);
+        return $this;
     }
 }

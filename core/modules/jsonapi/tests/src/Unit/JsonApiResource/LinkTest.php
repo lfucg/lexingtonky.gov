@@ -128,32 +128,15 @@ class LinkTest extends UnitTestCase {
   }
 
   /**
-   * @group legacy
-   * @expectedDeprecation Constructing a Drupal\jsonapi\JsonApiResource\Link with an array of link relation types is deprecated in drupal:8.8.0 and will throw a fatal error in drupal:9.0.0. Pass a single string instead. See https://www.drupal.org/node/3087821.
-   * @expectedDeprecation Drupal\jsonapi\JsonApiResource\Link::getLinkRelationTypes() is deprecated in drupal:8.8.0 and will be removed in drupal:9.0.0. Use getLinkRelationType() instead. See https://www.drupal.org/node/3087821.
-   * @covers ::__construct
-   * @covers ::getLinkRelationTypes
-   */
-  public function testLinkDeprecations() {
-    $this->mockUrlAssembler();
-    $link = new Link((new CacheableMetadata())->addCacheTags(['foo']), Url::fromUri('https://jsonapi.org/foo'), ['self', 'foo']);
-    $this->assertSame(['self', 'foo'], $link->getLinkRelationTypes());
-    $this->assertSame('self', $link->getLinkRelationType());
-
-    $link = new Link((new CacheableMetadata())->addCacheTags(['foo']), Url::fromUri('https://jsonapi.org/foo'), 'self');
-    $this->assertSame(['self'], $link->getLinkRelationTypes());
-  }
-
-  /**
    * Mocks the unrouted URL assembler.
    */
   protected function mockUrlAssembler() {
     $url_assembler = $this->getMockBuilder(UnroutedUrlAssemblerInterface::class)
       ->disableOriginalConstructor()
       ->getMock();
-    $url_assembler->method('assemble')->will($this->returnCallback(function ($uri) {
+    $url_assembler->method('assemble')->willReturnCallback(function ($uri) {
       return (new GeneratedUrl())->setGeneratedUrl($uri);
-    }));
+    });
 
     $container = new ContainerBuilder();
     $container->set('unrouted_url_assembler', $url_assembler);

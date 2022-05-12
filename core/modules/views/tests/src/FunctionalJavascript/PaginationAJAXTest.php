@@ -20,7 +20,7 @@ class PaginationAJAXTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'views', 'views_test_config'];
+  protected static $modules = ['node', 'views', 'views_test_config'];
 
   /**
    * {@inheritdoc}
@@ -38,7 +38,7 @@ class PaginationAJAXTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     ViewTestData::createTestViews(self::class, ['views_test_config']);
@@ -136,8 +136,10 @@ class PaginationAJAXTest extends WebDriverTestBase {
 
   /**
    * Assert that assets are not loaded twice on a page.
+   *
+   * @internal
    */
-  protected function assertNoDuplicateAssetsOnPage() {
+  protected function assertNoDuplicateAssetsOnPage(): void {
     /** @var \Behat\Mink\Element\NodeElement[] $scripts */
     $scripts = $this->getSession()->getPage()->findAll('xpath', '//script');
     $script_src = [];

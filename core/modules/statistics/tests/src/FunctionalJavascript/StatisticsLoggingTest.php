@@ -17,7 +17,7 @@ class StatisticsLoggingTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'statistics', 'language'];
+  protected static $modules = ['node', 'statistics', 'language'];
 
   /**
    * {@inheritdoc}
@@ -34,7 +34,7 @@ class StatisticsLoggingTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->config('statistics.settings')
@@ -46,7 +46,7 @@ class StatisticsLoggingTest extends WebDriverTestBase {
       ->save();
 
     // Add another language to enable multilingual path processor.
-    ConfigurableLanguage::create(['id' => 'xx'])->save();
+    ConfigurableLanguage::create(['id' => 'xx', 'label' => 'Test language'])->save();
     $this->config('language.negotiation')->set('url.prefixes.en', 'en')->save();
 
     $this->drupalCreateContentType(['type' => 'page', 'name' => 'Basic page']);

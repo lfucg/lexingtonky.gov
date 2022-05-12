@@ -22,7 +22,7 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
    */
   const FIELD_UI_PREFIX = 'admin/structure/types/manage/bundle_with_section_field';
 
-  public static $modules = [
+  protected static $modules = [
     'layout_builder',
     'block',
     'node',
@@ -39,7 +39,7 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->createContentType(['type' => 'bundle_with_section_field']);
@@ -53,11 +53,8 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
     ]));
 
     // Enable layout builder.
-    $this->drupalPostForm(
-      static::FIELD_UI_PREFIX . '/display/default',
-      ['layout[enabled]' => TRUE],
-      'Save'
-    );
+    $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default');
+    $this->submitForm(['layout[enabled]' => TRUE], 'Save');
   }
 
   /**
@@ -108,17 +105,19 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
    *
    * @param string $path
    *   The path to a Layout Builder UI page.
+   *
+   * @internal
    */
-  protected function assertModifiedLayout($path) {
+  protected function assertModifiedLayout(string $path): void {
     $assert_session = $this->assertSession();
     $page = $this->getSession()->getPage();
 
     $this->drupalGet($path);
     $page->clickLink('Add section');
-    $assert_session->assertWaitOnAjaxRequest();
+    $assert_session->waitForElementVisible('named', ['link', 'One column']);
     $assert_session->pageTextNotContains('You have unsaved changes.');
     $page->clickLink('One column');
-    $assert_session->assertWaitOnAjaxRequest();
+    $assert_session->waitForElementVisible('named', ['button', 'Add section']);
     $page->pressButton('Add section');
     $assert_session->assertWaitOnAjaxRequest();
     $assert_session->pageTextContainsOnce('You have unsaved changes.');
@@ -241,12 +240,36 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
   }
 
   /**
+   * Tests removing newly added extra field.
+   */
+  public function testNewExtraField() {
+    $assert_session = $this->assertSession();
+    $page = $this->getSession()->getPage();
+
+    // At this point layout builder has been enabled for the test content type.
+    // Install a test module that creates a new extra field then clear cache.
+    \Drupal::service('module_installer')->install(['layout_builder_extra_field_test']);
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+
+    // View the layout and try to remove the new extra field.
+    $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default/layout');
+    $assert_session->pageTextContains('New Extra Field');
+    $this->clickContextualLink('.block-extra-field-blocknodebundle-with-section-fieldlayout-builder-extra-field-test', 'Remove block');
+    $this->assertNotEmpty($assert_session->waitForElementVisible('css', '#drupal-off-canvas'));
+    $assert_session->assertWaitOnAjaxRequest();
+    $assert_session->pageTextContains('Are you sure you want to remove');
+    $page->pressButton('Remove');
+    $assert_session->assertWaitOnAjaxRequest();
+    $assert_session->pageTextNotContains('New Extra Field');
+  }
+
+  /**
    * Confirms the presence of the 'is-layout-builder-highlighted' class.
    *
    * @param string $selector
    *   The highlighted element must also match this selector.
    */
-  private function assertHighlightedElement($selector) {
+  private function assertHighlightedElement(string $selector): void {
     $assert_session = $this->assertSession();
     $page = $this->getSession()->getPage();
 
@@ -260,7 +283,7 @@ class LayoutBuilderUiTest extends WebDriverTestBase {
   /**
    * Waits for the dialog to close and confirms no highlights are present.
    */
-  private function assertHighlightNotExists() {
+  private function assertHighlightNotExists(): void {
     $assert_session = $this->assertSession();
 
     $assert_session->assertNoElementAfterWait('css', '#drupal-off-canvas');

@@ -25,6 +25,8 @@ use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 use GuzzleHttp\RequestOptions;
 
+// cspell:ignore llamalovers catcuddlers Cuddlers
+
 /**
  * JSON:API regression tests.
  *
@@ -39,7 +41,7 @@ class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'basic_auth',
   ];
 
@@ -460,6 +462,9 @@ class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
       [
         'type' => 'node--journal_conference',
         'id' => $conference_node->uuid(),
+        'meta' => [
+          'drupal_internal__target_id' => (int) $conference_node->id(),
+        ],
       ],
     ], Json::decode((string) $response->getBody())['data']['relationships']['field_mentioned_in']['data']);
   }
@@ -921,7 +926,7 @@ class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
   /**
    * Ensure filtering for entities with empty entity reference fields works.
    *
-   * @see https://www.drupal.org/project/drupal/issues/3025372
+   * @see https://www.drupal.org/project/jsonapi/issues/3025372
    */
   public function testEmptyRelationshipFilteringFromIssue3025372() {
     // Set up data model.
@@ -1297,6 +1302,132 @@ class JsonApiRegressionTest extends JsonApiFunctionalTestBase {
     ];
     $response = $this->request('GET', Url::fromUri('internal:/jsonapi/node/article/' . $article_node->uuid()), $request_options);
     $this->assertSame(200, $response->getStatusCode());
+  }
+
+  /**
+   * Tests that caching isn't happening for non-cacheable methods.
+   *
+   * @see https://www.drupal.org/project/drupal/issues/3072076
+   */
+  public function testNonCacheableMethods() {
+    $this->container->get('module_installer')->install([
+      'jsonapi_test_non_cacheable_methods',
+    ], TRUE);
+    $this->config('jsonapi.settings')->set('read_only', FALSE)->save(TRUE);
+
+    $node = Node::create([
+      'type' => 'article',
+      'title' => 'Llama non-cacheable',
+    ]);
+    $node->save();
+
+    $user = $this->drupalCreateUser([
+      'access content',
+      'create article content',
+      'edit any article content',
+      'delete any article content',
+    ]);
+    $base_request_options = [
+      RequestOptions::HEADERS => [
+        'Content-Type' => 'application/vnd.api+json',
+        'Accept' => 'application/vnd.api+json',
+      ],
+      RequestOptions::AUTH => [$user->getAccountName(), $user->pass_raw],
+    ];
+    $methods = [
+      'HEAD',
+      'GET',
+      'PATCH',
+      'DELETE',
+    ];
+    $non_post_request_options = $base_request_options + [
+      RequestOptions::JSON => [
+        'data' => [
+          'type' => 'node--article',
+          'id' => $node->uuid(),
+        ],
+      ],
+    ];
+    foreach ($methods as $method) {
+      $response = $this->request($method, Url::fromUri('internal:/jsonapi/node/article/' . $node->uuid()), $non_post_request_options);
+      $this->assertSame($method === 'DELETE' ? 204 : 200, $response->getStatusCode());
+    }
+
+    $post_request_options = $base_request_options + [
+      RequestOptions::JSON => [
+        'data' => [
+          'type' => 'node--article',
+          'attributes' => [
+            'title' => 'Llama non-cacheable',
+          ],
+        ],
+      ],
+    ];
+    $response = $this->request('POST', Url::fromUri('internal:/jsonapi/node/article'), $post_request_options);
+    $this->assertSame(201, $response->getStatusCode());
+  }
+
+  /**
+   * Tests that collections can be filtered by an entity reference target_id.
+   *
+   * @see https://www.drupal.org/project/drupal/issues/3036593
+   */
+  public function testFilteringEntitiesByEntityReferenceTargetId() {
+    // Create two config entities to be the config targets of an entity
+    // reference. In this case, the `roles` field.
+    $role_llamalovers = $this->drupalCreateRole([], 'llamalovers', 'Llama Lovers');
+    $role_catcuddlers = $this->drupalCreateRole([], 'catcuddlers', 'Cat Cuddlers');
+
+    /** @var \Drupal\user\UserInterface[] $users */
+    for ($i = 0; $i < 3; $i++) {
+      // Create 3 users, one with the first role and two with the second role.
+      $users[$i] = $this->drupalCreateUser();
+      $users[$i]->addRole($i === 0 ? $role_llamalovers : $role_catcuddlers);
+      $users[$i]->save();
+      // For each user, create a node that is owned by that user. The node's
+      // `uid` field will be used to test filtering by a content entity ID.
+      Node::create([
+        'type' => 'article',
+        'uid' => $users[$i]->id(),
+        'title' => 'Article created by ' . $users[$i]->uuid(),
+      ])->save();
+    }
+
+    // Create a user that will be used to execute the test HTTP requests.
+    $account = $this->drupalCreateUser([
+      'administer users',
+      'bypass node access',
+    ]);
+    $request_options = [
+      RequestOptions::AUTH => [
+        $account->getAccountName(),
+        $account->pass_raw,
+      ],
+    ];
+
+    // Ensure that an entity can be filtered by a target machine name.
+    $response = $this->request('GET', Url::fromUri('internal:/jsonapi/user/user?filter[roles.meta.drupal_internal__target_id]=llamalovers'), $request_options);
+    $document = Json::decode((string) $response->getBody());
+    $this->assertSame(200, $response->getStatusCode(), var_export($document, TRUE));
+    // Only one user should have the first role.
+    $this->assertCount(1, $document['data']);
+    $this->assertSame($users[0]->uuid(), $document['data'][0]['id']);
+    $response = $this->request('GET', Url::fromUri('internal:/jsonapi/user/user?sort=drupal_internal__uid&filter[roles.meta.drupal_internal__target_id]=catcuddlers'), $request_options);
+    $document = Json::decode((string) $response->getBody());
+    $this->assertSame(200, $response->getStatusCode(), var_export($document, TRUE));
+    // Two users should have the second role. A sort is used on this request to
+    // ensure a consistent ordering with different databases.
+    $this->assertCount(2, $document['data']);
+    $this->assertSame($users[1]->uuid(), $document['data'][0]['id']);
+    $this->assertSame($users[2]->uuid(), $document['data'][1]['id']);
+
+    // Ensure that an entity can be filtered by an target entity integer ID.
+    $response = $this->request('GET', Url::fromUri('internal:/jsonapi/node/article?filter[uid.meta.drupal_internal__target_id]=' . $users[1]->id()), $request_options);
+    $document = Json::decode((string) $response->getBody());
+    $this->assertSame(200, $response->getStatusCode(), var_export($document, TRUE));
+    // Only the node authored by the filtered user should be returned.
+    $this->assertCount(1, $document['data']);
+    $this->assertSame('Article created by ' . $users[1]->uuid(), $document['data'][0]['attributes']['title']);
   }
 
 }

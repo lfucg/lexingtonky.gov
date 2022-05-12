@@ -2,7 +2,11 @@
 
 namespace Drupal\Tests;
 
+use Drupal\Composer\Plugin\VendorHardening\Config;
+use Drupal\Core\Composer\Composer;
 use Drupal\Tests\Composer\ComposerIntegrationTrait;
+use Drupal\TestTools\PhpUnitCompatibility\RunnerVersion;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Tests Composer integration.
@@ -15,6 +19,11 @@ class ComposerIntegrationTest extends UnitTestCase {
 
   /**
    * Tests composer.lock content-hash.
+   *
+   * If you have made a change to composer.json, you may need to reconstruct
+   * composer.lock. Follow the link below for further instructions.
+   *
+   * @see https://www.drupal.org/about/core/policies/core-dependencies-policies/managing-composer-updates-for-drupal-core
    */
   public function testComposerLockHash() {
     $content_hash = self::getContentHash(file_get_contents($this->root . '/composer.json'));
@@ -97,9 +106,18 @@ class ComposerIntegrationTest extends UnitTestCase {
     $discard = ['.', '..'];
     foreach ($folders as $file_name) {
       if ((!in_array($file_name, $discard)) && is_dir($module_path . '/' . $file_name)) {
+        // Skip any modules marked as hidden.
+        $info_yml = $module_path . '/' . $file_name . '/' . $file_name . '.info.yml';
+        if (file_exists($info_yml)) {
+          $info = Yaml::parseFile($info_yml);
+          if (!empty($info['hidden'])) {
+            continue;
+          }
+        }
         $module_names[] = $file_name;
       }
     }
+    $this->assertNotEmpty($module_names);
 
     // Assert that each core module has a corresponding 'replace' in
     // composer.json.
@@ -129,7 +147,7 @@ class ComposerIntegrationTest extends UnitTestCase {
       ['example.gitignore', 'assets/scaffold/files/example.gitignore'],
       ['index.php', 'assets/scaffold/files/index.php'],
       ['INSTALL.txt', 'assets/scaffold/files/drupal.INSTALL.txt'],
-      ['README.txt', 'assets/scaffold/files/drupal.README.txt'],
+      ['README.md', 'assets/scaffold/files/drupal.README.md'],
       ['robots.txt', 'assets/scaffold/files/robots.txt'],
       ['update.php', 'assets/scaffold/files/update.php'],
       ['web.config', 'assets/scaffold/files/web.config'],
@@ -187,7 +205,7 @@ class ComposerIntegrationTest extends UnitTestCase {
     $this->assertFileEquals($this->root . '/core/' . $sourceRelPath, $this->root . '/' . $destRelPath, 'Scaffold source and destination files must have the same contents.');
   }
 
-  // @codingStandardsIgnoreStart
+  // phpcs:disable
   /**
    * The following method is copied from \Composer\Package\Locker.
    *
@@ -231,6 +249,43 @@ class ComposerIntegrationTest extends UnitTestCase {
 
     return md5(json_encode($relevantContent));
   }
-  // @codingStandardsIgnoreEnd
+  // phpcs:enable
+
+  /**
+   * Tests the vendor cleanup utilities do not have obsolete packages listed.
+   *
+   * @dataProvider providerTestVendorCleanup
+   */
+  public function testVendorCleanup($class, $property) {
+    $lock = json_decode(file_get_contents($this->root . '/composer.lock'), TRUE);
+    $packages = [];
+    foreach (array_merge($lock['packages'], $lock['packages-dev']) as $package) {
+      $packages[] = $package['name'];
+    }
+
+    $reflection = new \ReflectionProperty($class, $property);
+    $reflection->setAccessible(TRUE);
+    $config = $reflection->getValue();
+    // PHPUnit 9.5.3 removes 'phpunit/php-token-stream' from its dependencies.
+    // @todo remove the check below when PHPUnit 9 is the minimum.
+    if (RunnerVersion::getMajor() >= 9) {
+      unset($config['phpunit/php-token-stream']);
+    }
+    foreach (array_keys($config) as $package) {
+      $this->assertContains(strtolower($package), $packages);
+    }
+  }
+
+  /**
+   * Data provider for the vendor cleanup utility classes.
+   *
+   * @return array[]
+   */
+  public function providerTestVendorCleanup() {
+    return [
+      [Composer::class, 'packageToCleanup'],
+      [Config::class, 'defaultConfig'],
+    ];
+  }
 
 }

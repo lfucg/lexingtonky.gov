@@ -68,7 +68,7 @@ class InstallCommand extends Command {
     }
 
     // Change the directory to the Drupal root.
-    chdir(dirname(dirname(dirname(dirname(dirname(__DIR__))))));
+    chdir(dirname(__DIR__, 5));
 
     // Check whether there is already an installation.
     if ($this->isDrupalInstalled()) {
@@ -328,8 +328,8 @@ class InstallCommand extends Command {
       }
       // Determine the name of the profile; default to the internal name if none
       // is specified.
-      $name = isset($details['name']) ? $details['name'] : $profile->getName();
-      $description = isset($details['description']) ? $details['description'] : $name;
+      $name = $details['name'] ?? $profile->getName();
+      $description = $details['description'] ?? $name;
       $profiles[$profile->getName()] = $description;
 
       if ($auto_select_distributions && !empty($details['distribution'])) {

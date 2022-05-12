@@ -2,6 +2,7 @@
 
 namespace Drupal\metatag\Plugin\migrate\process\d7;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\ProcessPluginBase;
@@ -65,6 +66,9 @@ class MetatagEntities extends ProcessPluginBase {
       }
       else {
         $metatag_value = $metatag_value['value'];
+      }
+      if (!Unicode::validateUtf8($metatag_value)) {
+        $metatag_value = Unicode::convertToUtf8($metatag_value, 'Windows-1252');
       }
 
       // Keep the entire data structure.
@@ -345,9 +349,11 @@ class MetatagEntities extends ProcessPluginBase {
       'video:writer' => 'video_writer',
 
       // From metatag_opengraph_products.metatag.inc:
-      // https://www.drupal.org/project/metatag/issues/2835925
       'product:price:amount' => 'product_price_amount',
       'product:price:currency' => 'product_price_currency',
+      // Not supported in D7.
+      // @todo '' => 'product_retailer_item_id,
+      // Not yet supported in D9.
       // @todo 'product:availability' => '',
       // @todo 'product:brand' => '',
       // @todo 'product:upc' => '',

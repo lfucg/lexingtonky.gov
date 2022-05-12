@@ -67,6 +67,10 @@ class PathautoState extends TypedData {
     if ($this->originalValue === NULL) {
       // If no value has been set or loaded yet, try to load a value if this
       // entity has already been saved.
+      if ($this->parent->getEntity()->isNew()) {
+        return NULL;
+      }
+
       $this->originalValue = \Drupal::keyValue($this->getCollection())
         ->get(static::getPathautoStateKey($this->parent->getEntity()->id()));
     }

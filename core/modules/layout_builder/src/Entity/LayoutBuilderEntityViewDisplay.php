@@ -21,15 +21,15 @@ use Drupal\layout_builder\Plugin\SectionStorage\OverridesSectionStorage;
 use Drupal\layout_builder\QuickEditIntegration;
 use Drupal\layout_builder\Section;
 use Drupal\layout_builder\SectionComponent;
-use Drupal\layout_builder\SectionStorage\SectionStorageTrait;
+use Drupal\layout_builder\SectionListTrait;
 
 /**
  * Provides an entity view display entity that has a layout.
  */
 class LayoutBuilderEntityViewDisplay extends BaseEntityViewDisplay implements LayoutEntityDisplayInterface {
 
-  use SectionStorageTrait;
   use LayoutEntityHelperTrait;
+  use SectionListTrait;
 
   /**
    * The entity field manager.
@@ -334,35 +334,12 @@ class LayoutBuilderEntityViewDisplay extends BaseEntityViewDisplay implements La
    *   An array of context objects for a given entity.
    */
   protected function getContextsForEntity(FieldableEntityInterface $entity) {
+    $available_context_ids = array_keys($this->contextRepository()->getAvailableContexts());
     return [
       'view_mode' => new Context(ContextDefinition::create('string'), $this->getMode()),
       'entity' => EntityContext::fromEntity($entity),
       'display' => EntityContext::fromEntity($this),
-    ] + $this->contextRepository()->getAvailableContexts();
-  }
-
-  /**
-   * Gets the runtime sections for a given entity.
-   *
-   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
-   *   The entity.
-   *
-   * @return \Drupal\layout_builder\Section[]
-   *   The sections.
-   *
-   * @deprecated in drupal:8.7.0 and is removed from drupal:9.0.0.
-   *   \Drupal\layout_builder\SectionStorage\SectionStorageManagerInterface::findByContext()
-   *   should be used instead. See https://www.drupal.org/node/3022574.
-   */
-  protected function getRuntimeSections(FieldableEntityInterface $entity) {
-    @trigger_error('\Drupal\layout_builder\Entity\LayoutBuilderEntityViewDisplay::getRuntimeSections() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. \Drupal\layout_builder\SectionStorage\SectionStorageManagerInterface::findByContext() should be used instead. See https://www.drupal.org/node/3022574.', E_USER_DEPRECATED);
-    // For backwards compatibility, mimic the functionality of ::buildSections()
-    // by constructing a cacheable metadata object and retrieving the
-    // entity-based contexts.
-    $cacheability = new CacheableMetadata();
-    $contexts = $this->getContextsForEntity($entity);
-    $storage = $this->sectionStorageManager()->findByContext($contexts, $cacheability);
-    return $storage ? $storage->getSections() : [];
+    ] + $this->contextRepository()->getRuntimeContexts($available_context_ids);
   }
 
   /**
@@ -459,7 +436,7 @@ class LayoutBuilderEntityViewDisplay extends BaseEntityViewDisplay implements La
       }
 
       $section = $this->getDefaultSection();
-      $region = isset($options['region']) ? $options['region'] : $section->getDefaultRegion();
+      $region = $options['region'] ?? $section->getDefaultRegion();
       $new_component = (new SectionComponent(\Drupal::service('uuid')->generate(), $region, $configuration));
       $section->appendComponent($new_component);
     }
@@ -527,7 +504,7 @@ class LayoutBuilderEntityViewDisplay extends BaseEntityViewDisplay implements La
       // Builder component. It follows the structure prescribed by the
       // documentation of hook_quickedit_render_field().
       if (count($parts) === 6 && $parts[0] === 'layout_builder') {
-        list(, $delta, $component_uuid, $entity_id) = QuickEditIntegration::deconstructViewModeId($original_mode);
+        [, $delta, $component_uuid, $entity_id] = QuickEditIntegration::deconstructViewModeId($original_mode);
         $entity = $this->entityTypeManager()->getStorage($this->getTargetEntityTypeId())->load($entity_id);
         $sections = $this->getEntitySections($entity);
         if (isset($sections[$delta])) {
@@ -559,10 +536,10 @@ class LayoutBuilderEntityViewDisplay extends BaseEntityViewDisplay implements La
     foreach ($this->getSections() as $section) {
       foreach ($section->getComponents() as $component) {
         $plugin = $component->getPlugin();
-        if ($plugin instanceof DerivativeInspectionInterface && $plugin->getBaseId() === 'field_block') {
+        if ($plugin instanceof DerivativeInspectionInterface && in_array($plugin->getBaseId(), ['field_block', 'extra_field_block'], TRUE)) {
           // FieldBlock derivative IDs are in the format
           // [entity_type]:[bundle]:[field].
-          list(, , $field_block_field_name) = explode(PluginBase::DERIVATIVE_SEPARATOR, $plugin->getDerivativeId());
+          [, , $field_block_field_name] = explode(PluginBase::DERIVATIVE_SEPARATOR, $plugin->getDerivativeId());
           if ($field_block_field_name === $field_name) {
             return $component;
           }

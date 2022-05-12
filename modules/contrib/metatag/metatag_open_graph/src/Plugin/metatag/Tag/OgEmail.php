@@ -10,7 +10,6 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
  * @MetatagTag(
  *   id = "og_email",
  *   label = @Translation("Email address"),
- *   description = @Translation(""),
  *   name = "og:email",
  *   group = "open_graph",
  *   weight = 23,

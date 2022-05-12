@@ -87,7 +87,7 @@ class SectionComponent {
    */
   public function toRenderArray(array $contexts = [], $in_preview = FALSE) {
     $event = new SectionComponentBuildRenderArrayEvent($this, $contexts, $in_preview);
-    $this->eventDispatcher()->dispatch(LayoutBuilderEvents::SECTION_COMPONENT_BUILD_RENDER_ARRAY, $event);
+    $this->eventDispatcher()->dispatch($event, LayoutBuilderEvents::SECTION_COMPONENT_BUILD_RENDER_ARRAY);
     $output = $event->getBuild();
     $event->getCacheableMetadata()->applyTo($output);
     return $output;
@@ -104,10 +104,10 @@ class SectionComponent {
    */
   public function get($property) {
     if (property_exists($this, $property)) {
-      $value = isset($this->{$property}) ? $this->{$property} : NULL;
+      $value = $this->{$property} ?? NULL;
     }
     else {
-      $value = isset($this->additional[$property]) ? $this->additional[$property] : NULL;
+      $value = $this->additional[$property] ?? NULL;
     }
     return $value;
   }
@@ -272,7 +272,7 @@ class SectionComponent {
   /**
    * Wraps the event dispatcher.
    *
-   * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   * @return \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
    *   The event dispatcher.
    */
   protected function eventDispatcher() {
@@ -292,8 +292,8 @@ class SectionComponent {
       'uuid' => $this->getUuid(),
       'region' => $this->getRegion(),
       'configuration' => $this->getConfiguration(),
-      'additional' => $this->additional,
       'weight' => $this->getWeight(),
+      'additional' => $this->additional,
     ];
   }
 

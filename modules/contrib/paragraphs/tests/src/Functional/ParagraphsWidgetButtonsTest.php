@@ -18,7 +18,7 @@ class ParagraphsWidgetButtonsTest extends ParagraphsTestBase {
    *
    * @var string[]
    */
-  public static $modules = [
+  protected static $modules = [
     'paragraphs_test',
     'node',
     'paragraphs',

@@ -53,7 +53,7 @@ class MetatagAdminTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Use the test page as the front page.
@@ -99,7 +99,7 @@ class MetatagAdminTest extends BrowserTestBase {
     // entity.
     $this->drupalGet('admin/config/search/metatag/global');
     $session->statusCodeEquals(200);
-    $this->assertFieldById('edit-title', $metatag_defaults->get('title'), $this->t('Metatag defaults were injected into the Global configuration entity.'));
+    $this->assertSession()->fieldExists('edit-title', $metatag_defaults->get('title'));
     // Update the Global defaults and test them.
     $this->drupalGet('admin/config/search/metatag/global');
     $session->statusCodeEquals(200);
@@ -107,7 +107,7 @@ class MetatagAdminTest extends BrowserTestBase {
       'title' => 'Test title',
       'description' => 'Test description',
     ];
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains('Saved the Global Metatag defaults.');
     $this->drupalGet('hit-a-404');
     $session->statusCodeEquals(404);
@@ -122,7 +122,7 @@ class MetatagAdminTest extends BrowserTestBase {
       'title' => '[site:name] | Test title',
       'description' => '[site:name] | Test description',
     ];
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains('Saved the Global Metatag defaults.');
     drupal_flush_all_caches();
     $this->drupalGet('hit-a-404');
@@ -140,7 +140,7 @@ class MetatagAdminTest extends BrowserTestBase {
     foreach ($robots_values as $value) {
       $values['robots[' . $value . ']'] = TRUE;
     }
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains('Saved the Global Metatag defaults.');
     drupal_flush_all_caches();
 
@@ -153,7 +153,7 @@ class MetatagAdminTest extends BrowserTestBase {
     // Test reverting global configuration to its defaults.
     $this->drupalGet('admin/config/search/metatag/global/revert');
     $session->statusCodeEquals(200);
-    $this->drupalPostForm(NULL, [], 'Revert');
+    $this->submitForm([], 'Revert');
     $session->pageTextContains('Reverted Global defaults.');
     $session->pageTextContains($default_title);
 
@@ -214,7 +214,7 @@ class MetatagAdminTest extends BrowserTestBase {
     $values = [
       'description' => 'Front page description',
     ];
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains('Saved the Front page Metatag defaults.');
     $this->drupalGet('<front>');
     $session->statusCodeEquals(200);
@@ -226,7 +226,7 @@ class MetatagAdminTest extends BrowserTestBase {
     $values = [
       'description' => '403 page description.',
     ];
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains('Saved the 403 access denied Metatag defaults.');
     $this->drupalLogout();
     $this->drupalGet('admin/config/search/metatag');
@@ -240,7 +240,7 @@ class MetatagAdminTest extends BrowserTestBase {
     $values = [
       'description' => '404 page description.',
     ];
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains('Saved the 404 page not found Metatag defaults.');
     $this->drupalGet('foo');
     $session->statusCodeEquals(404);
@@ -273,7 +273,7 @@ class MetatagAdminTest extends BrowserTestBase {
       'title' => 'Test title for a node.',
       'description' => 'Test description for a node.',
     ];
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains('Saved the Content Metatag defaults.');
 
     // Create a test node.
@@ -298,7 +298,7 @@ class MetatagAdminTest extends BrowserTestBase {
       'title' => '',
       'description' => '',
     ];
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains('Saved the Content Metatag defaults.');
 
     // Then, set global ones.
@@ -308,7 +308,7 @@ class MetatagAdminTest extends BrowserTestBase {
       'title' => 'Global title',
       'description' => 'Global description',
     ];
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains('Saved the Global Metatag defaults.');
 
     // Next, test that global defaults are rendered since node ones are empty.
@@ -335,7 +335,7 @@ class MetatagAdminTest extends BrowserTestBase {
       'title' => 'Article title override',
       'description' => 'Article description override',
     ];
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains(strip_tags('Created the Content: Article Metatag defaults.'));
 
     // Confirm the fields load properly on the node/add/article page.
@@ -353,7 +353,7 @@ class MetatagAdminTest extends BrowserTestBase {
     // Test deleting the article defaults.
     $this->drupalGet('admin/config/search/metatag/node__article/delete');
     $session->statusCodeEquals(200);
-    $this->drupalPostForm(NULL, [], 'Delete');
+    $this->submitForm([], 'Delete');
     $session->pageTextContains('Deleted Content: Article defaults.');
   }
 
@@ -387,10 +387,10 @@ class MetatagAdminTest extends BrowserTestBase {
       'label' => 'Meta tags',
       'field_name' => 'meta_tags',
     ];
-    $this->drupalPostForm(NULL, $edit, $this->t('Save and continue'));
-    $this->drupalPostForm(NULL, [], $this->t('Save field settings'));
+    $this->submitForm($edit, $this->t('Save and continue'));
+    $this->submitForm([], $this->t('Save field settings'));
     $session->pageTextContains(strip_tags('Updated field Meta tags field settings.'));
-    $this->drupalPostForm(NULL, [], $this->t('Save settings'));
+    $this->submitForm([], $this->t('Save settings'));
     $session->pageTextContains(strip_tags('Saved Meta tags configuration.'));
 
     // Try creating an article, confirm the fields are present. This should be
@@ -408,7 +408,7 @@ class MetatagAdminTest extends BrowserTestBase {
       'title' => 'Article title override',
       'description' => 'Article description override',
     ];
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains(strip_tags('Created the Content: Article Metatag defaults.'));
 
     // Try creating an article, this time with the overridden defaults.
@@ -432,7 +432,8 @@ class MetatagAdminTest extends BrowserTestBase {
     $edit = [
       'id' => 'node__article',
     ];
-    $this->drupalPostForm('/admin/config/search/metatag/add', $edit, 'Save');
+    $this->drupalGet('/admin/config/search/metatag/add');
+    $this->submitForm($edit, 'Save');
 
     // Check that protected defaults contains "Revert" link instead of "Delete".
     foreach (MetatagManager::protectedDefaults() as $protected) {
@@ -505,6 +506,41 @@ class MetatagAdminTest extends BrowserTestBase {
     $session->linkByHrefNotExists('/admin/config/search/metatag/node');
     // User is present because was pushed to page 2.
     $session->linkByHrefExists('/admin/config/search/metatag/user');
+  }
+
+  /**
+   * Tests for the trim config.
+   */
+  public function testTrimSettings() {
+    $this->loginUser1();
+    $this->drupalGet('/admin/config/search/metatag/settings');
+    $session = $this->assertSession();
+    $page = $this->getSession()->getPage();
+    $session->statusCodeEquals(200);
+    // Test if option for a metatag that shouldn't be trimmable exists:
+    $session->pageTextNotContains('Meta Tags: robots length');
+    // Test if option for a trimmable metatag exists:
+    $session->pageTextContains('Meta Tags: description length');
+    // Test if the the title,abstract and description header gets trimmed:
+    // Change description abstract and title on the front page:
+    $this->drupalGet('/admin/config/search/metatag/front');
+    $page->fillField('edit-title', 'my wonderful drupal test site');
+    $page->fillField('edit-description', '[site:name] [site:slogan] [random:number]');
+    $page->fillField('edit-abstract', 'my wonderful drupal test site abstract');
+    $page->pressButton('edit-submit');
+    // Set the new trim settings:
+    $this->drupalGet('/admin/config/search/metatag/settings');
+    $page->fillField('edit-tag-trim-maxlength-metatag-maxlength-description', '5');
+    $page->fillField('edit-tag-trim-maxlength-metatag-maxlength-title', '5');
+    $page->fillField('edit-tag-trim-maxlength-metatag-maxlength-abstract', '5');
+    $page->fillField('edit-tag-trim-tag-trim-method', 'afterValue');
+    $page->pressButton('edit-submit');
+    // See if on the front page the metatags are correctly trimmed:
+    $this->drupalGet('');
+    $session->statusCodeEquals(200);
+    $session->titleEquals('my wonderful');
+    $session->elementAttributeContains('css', 'meta[name=description]', 'content', 'Drupal');
+    $session->elementAttributeContains('css', 'meta[name=abstract]', 'content', 'my wonderful');
   }
 
 }

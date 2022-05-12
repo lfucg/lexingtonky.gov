@@ -26,7 +26,7 @@ class MenuLinkContentTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['menu_link_content'];
+  protected static $modules = ['menu_link_content'];
 
   /**
    * {@inheritdoc}
@@ -175,19 +175,12 @@ class MenuLinkContentTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public function testRelated() {
-    $this->markTestSkipped('Remove this in https://www.drupal.org/project/drupal/issues/2940339');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function testCollectionFilterAccess() {
     $this->doTestCollectionFilterAccessBasedOnPermissions('title', 'administer menu');
   }
 
   /**
-   * Test requests using a serialized field item property.
+   * Tests requests using a serialized field item property.
    *
    * @see https://security.drupal.org/node/161923
    */

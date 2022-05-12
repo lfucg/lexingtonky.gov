@@ -7,6 +7,8 @@ use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
 use Drupal\search_api\Processor\ProcessorPluginBase;
 use Drupal\search_api\Query\QueryInterface;
+use Drupal\search_api\Utility\Utility;
+use Drupal\search_api_solr\SolrBackendInterface;
 
 /**
  * Adds a boost for more recent dates.
@@ -24,29 +26,6 @@ class BoostMoreRecent extends ProcessorPluginBase implements PluginFormInterface
 
   use PluginFormTrait;
 
-  public const FIELD_PLACEHOLDER = 'FIELD_PLACEHOLDER';
-
-  /**
-   * The available boost factors.
-   *
-   * @var string[]
-   */
-  protected static $boost_factors = [
-    '0.0' => '0.0',
-    '0.1' => '0.1',
-    '0.2' => '0.2',
-    '0.3' => '0.3',
-    '0.5' => '0.5',
-    '0.8' => '0.8',
-    '1.0' => '1.0',
-    '2.0' => '2.0',
-    '3.0' => '3.0',
-    '5.0' => '5.0',
-    '8.0' => '8.0',
-    '13.0' => '13.0',
-    '21.0' => '21.0',
-  ];
-
   /**
    * {@inheritdoc}
    */
@@ -60,6 +39,13 @@ class BoostMoreRecent extends ProcessorPluginBase implements PluginFormInterface
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $formState) {
+    $additional_factors = [];
+    foreach ($this->index->getFields(TRUE) as $field_id => $field) {
+      $additional_factors[] = $this->configuration['boosts'][$field_id]['boost'] ?? 0;
+    }
+
+    $boost_factors = Utility::getBoostFactors($additional_factors);
+
     foreach ($this->index->getFields(TRUE) as $field_id => $field) {
       if ('date' === $field->getType()) {
         $form['boosts'][$field_id] = [
@@ -70,9 +56,9 @@ class BoostMoreRecent extends ProcessorPluginBase implements PluginFormInterface
         $form['boosts'][$field_id]['boost'] = [
           '#type' => 'select',
           '#title' => $this->t('Boost'),
-          '#options' => static::$boost_factors,
-          '#description' => $this->t('To boost more recent dates, Solr performs a reciprocal function with recip(x,m,a,b) implementing a/(m*x+b) where m,a,b are constants, and x is a date converted into the difference between NOW and its timestamp using a configurable resolution. When a and b are equal, and x>=0, this function has a maximum value of 1 that drops as x increases. Increasing the value of a and b together results in a movement of the entire function to a flatter part of the curve. These properties make this an ideal function for boosting more recent documents. Therefore its result is multiplied with a configurable boost factor. Setting it to 0.0 disables the boost by recent date for this field.'),
-          '#default_value' => sprintf('%.1F', $this->configuration['boosts'][$field_id]['boost'] ?? 0.0),
+          '#options' => $boost_factors,
+          '#description' => $this->t('To boost more recent dates, Solr performs a reciprocal function with recip(x,m,a,b) implementing a/(m*x+b) where m,a,b are constants, and x is a date converted into the difference between NOW and its timestamp using a configurable resolution. When a and b are equal, and x>=0, this function has a maximum value of 1 that drops as x increases. Increasing the value of a and b together results in a movement of the entire function to a flatter part of the curve. These properties make this an ideal function for boosting more recent documents. Therefore its result is multiplied with a configurable boost factor. Setting it to 0.00 disables the boost by recent date for this field.'),
+          '#default_value' => Utility::formatBoostFactor($this->configuration['boosts'][$field_id]['boost'] ?? 0),
         ];
 
         $form['boosts'][$field_id]['resolution'] = [
@@ -122,7 +108,7 @@ class BoostMoreRecent extends ProcessorPluginBase implements PluginFormInterface
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
     foreach ($values['boosts'] as $field_id => $boost) {
-      if (0 == $boost['boost']) {
+      if (Utility::formatBoostFactor(0) === $boost['boost']) {
         unset($values['boosts'][$field_id]);
       }
     }
@@ -136,12 +122,12 @@ class BoostMoreRecent extends ProcessorPluginBase implements PluginFormInterface
   public function preprocessSearchQuery(QueryInterface $query) {
     parent::preprocessSearchQuery($query);
 
-    $boosts = [];
+    $boosts = $query->getOption('solr_document_boost_factors', []);
     foreach ($this->configuration['boosts'] as $field_id => $boost) {
-      $boosts[$field_id] = sprintf('product(%.1F,recip(ms(%s,%s),%s,%.3F,%3F))', $boost['boost'], $boost['resolution'], self::FIELD_PLACEHOLDER, $boost['m'], $boost['a'], $boost['b']);
+      $boosts[$field_id] = sprintf('product(%.2F,recip(ms(%s,%s),%s,%.3F,%3F))', $boost['boost'], $boost['resolution'], SolrBackendInterface::FIELD_PLACEHOLDER, $boost['m'], $boost['a'], $boost['b']);
     }
     if ($boosts) {
-      $query->setOption('solr_boost_more_recent', $boosts);
+      $query->setOption('solr_document_boost_factors', $boosts);
     }
   }
 

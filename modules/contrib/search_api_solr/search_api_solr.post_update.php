@@ -51,3 +51,14 @@ function search_api_solr_post_update_8319() {
   module_load_include('install', 'search_api_solr');
   search_api_solr_update_helper_install_configs();
 }
+
+/**
+ * Install new Search API Solr Autocomplete.
+ */
+function search_api_solr_post_update_8320(): void {
+  if (\Drupal::moduleHandler()->moduleExists('search_api_autocomplete')) {
+    /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
+    $module_installer = \Drupal::service('module_installer');
+    $module_installer->install(['search_api_solr_autocomplete']);
+  }
+}

@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * Provides a container optimized for Drupal's needs.
@@ -41,12 +42,9 @@ use Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceExce
  * - The function getServiceIds() was added as it has a use-case in core and
  *   contrib.
  *
- * @todo Implement Symfony\Contracts\Service\ResetInterface once Symfony 4
- *   is being used. See https://www.drupal.org/project/drupal/issues/3032605
- *
  * @ingroup container
  */
-class Container implements ContainerInterface {
+class Container implements ContainerInterface, ResetInterface {
 
   /**
    * The parameters of the container.
@@ -117,10 +115,10 @@ class Container implements ContainerInterface {
       throw new InvalidArgumentException('The non-optimized format is not supported by this class. Use an optimized machine-readable format instead, e.g. as produced by \Drupal\Component\DependencyInjection\Dumper\OptimizedPhpArrayDumper.');
     }
 
-    $this->aliases = isset($container_definition['aliases']) ? $container_definition['aliases'] : [];
-    $this->parameters = isset($container_definition['parameters']) ? $container_definition['parameters'] : [];
-    $this->serviceDefinitions = isset($container_definition['services']) ? $container_definition['services'] : [];
-    $this->frozen = isset($container_definition['frozen']) ? $container_definition['frozen'] : FALSE;
+    $this->aliases = $container_definition['aliases'] ?? [];
+    $this->parameters = $container_definition['parameters'] ?? [];
+    $this->serviceDefinitions = $container_definition['services'] ?? [];
+    $this->frozen = $container_definition['frozen'] ?? FALSE;
 
     // Register the service_container with itself.
     $this->services['service_container'] = $this;
@@ -130,6 +128,11 @@ class Container implements ContainerInterface {
    * {@inheritdoc}
    */
   public function get($id, $invalid_behavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE) {
+    if ($this->hasParameter('_deprecated_service_list')) {
+      if ($deprecation = $this->getParameter('_deprecated_service_list')[$id] ?? '') {
+        @trigger_error($deprecation, E_USER_DEPRECATED);
+      }
+    }
     if (isset($this->aliases[$id])) {
       $id = $this->aliases[$id];
     }
@@ -143,7 +146,7 @@ class Container implements ContainerInterface {
       throw new ServiceCircularReferenceException($id, array_keys($this->loading));
     }
 
-    $definition = isset($this->serviceDefinitions[$id]) ? $this->serviceDefinitions[$id] : NULL;
+    $definition = $this->serviceDefinitions[$id] ?? NULL;
 
     if (!$definition && $invalid_behavior === ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE) {
       if (!$id) {

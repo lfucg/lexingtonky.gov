@@ -5,7 +5,7 @@ namespace Drupal\FunctionalTests\Installer;
 use Drupal\Component\Utility\Crypt;
 
 /**
- * Tests the installer when a config_directory set up but does not exist.
+ * Tests installation when a config_sync_directory is set up but does not exist.
  *
  * @group Installer
  */
@@ -59,8 +59,8 @@ class InstallerConfigDirectorySetNoDirectoryErrorTest extends InstallerTestBase 
    * Verifies that installation failed.
    */
   public function testError() {
-    $this->assertText("An automated attempt to create the directory {$this->configDirectory}/sync failed, possibly due to a permissions problem.");
-    $this->assertDirectoryNotExists($this->configDirectory . '/sync');
+    $this->assertSession()->pageTextContains("An automated attempt to create the directory {$this->configDirectory}/sync failed, possibly due to a permissions problem.");
+    $this->assertDirectoryDoesNotExist($this->configDirectory . '/sync');
   }
 
 }

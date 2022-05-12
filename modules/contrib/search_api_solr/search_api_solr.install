@@ -50,6 +50,7 @@ function search_api_solr_requirements($phase) {
         /** @var \Drupal\search_api_solr\SolrBackendInterface $backend */
         $backend = $server->getBackend();
         $connector = $backend->getSolrConnector();
+        $configuration = $backend->getConfiguration();
         if ($backend->isAvailable() && $connector->pingCore()) {
           if (!$backend->isNonDrupalOrOutdatedConfigSetAllowed()) {
             $config_set_controller = new SolrConfigSetController();
@@ -149,22 +150,28 @@ function search_api_solr_requirements($phase) {
               foreach ($indexes as $index_id => $index) {
                 $endpoint = $backend->getCollectionEndpoint($index);
                 if ($connector->pingEndpoint($endpoint)) {
-                  $stats = $backend->getSchemaLanguageStatistics($endpoint);
-                  if ($missing_languages = array_filter($stats, function ($state) {
-                    return !$state;
-                  })) {
-                    $requirements['search_api_solr_schema_' . $server_id . $endpoint->getKey() . '_languages'] = [
-                      'title' => t('Solr Server %server', ['%server' => $server->label()]),
-                      'value' => t('Schema incomplete'),
-                      'severity' => REQUIREMENT_WARNING,
-                      'description' => t('There are some language-specific field types missing in schema of index <a href=":index_url">@index</a> on server <a href=":server_url">@server</a>.', [
-                        ':index_url' => $index->toUrl('canonical')->toString(),
-                        '@index' => $index->label(),
-                        ':server_url' => $server->toUrl('canonical')
-                          ->toString(),
-                        '@server' => $server->label(),
-                      ]),
-                    ];
+                  if (!$configuration['suppress_missing_languages']) {
+                    $stats = $backend->getSchemaLanguageStatistics($endpoint);
+                    if ($missing_languages = array_filter($stats, function ($state) {
+                      return !$state;
+                    })) {
+                      $requirements['search_api_solr_schema_' . $server_id . $endpoint->getKey() . '_languages'] = [
+                        'title' => t('Solr Server %server', ['%server' => $server->label()]),
+                        'value' => t('Schema incomplete'),
+                        'severity' => REQUIREMENT_WARNING,
+                        'description' => t('There are some language-specific field types missing in schema of index <a href=":index_url">@index</a> on server <a href=":server_url">@server</a>: %missing. These languages will use the language-undefined fallback field type. In case of language variations like "de-at" the fallback will be the non-variation language "de" if it exists. You can suppress this warning by checking the corresponding checkbox in the advanced section on the server <a href=":server_edit_url">edit page</a>. But before doing this you should whether the missing language-specific field type exists or not. If it is available and you get this warning you simply need to generate and deploy a new Solr config-set.', [
+                          ':index_url' => $index->toUrl('canonical')
+                            ->toString(),
+                          '@index' => $index->label(),
+                          ':server_url' => $server->toUrl('canonical')
+                            ->toString(),
+                          '@server' => $server->label(),
+                          '%missing' => implode(', ', array_keys($missing_languages)),
+                          ':server_edit_url' => $server->toUrl('edit-form')
+                            ->toString(),
+                        ]),
+                      ];
+                    }
                   }
                 }
                 else {
@@ -202,7 +209,7 @@ function search_api_solr_requirements($phase) {
       }
     }
 
-    if (!Client::checkMinimal('6.1.3')) {
+    if (!Client::checkMinimal('6.2.3')) {
       $requirements['search_api_solr_solarium'] = [
         'title' => t('Solarium library'),
         'value' => t('Solarium library'),
@@ -398,6 +405,18 @@ function search_api_solr_update_helper_install_configs($directory = InstallStora
     'module' => 'search_api_solr',
   ];
   $config_installer->installOptionalConfig(NULL, $restrict_by_dependency);
+}
+
+function search_api_solr_update_helper_replace_field_type($field_type_name, $path = 'optional') {
+  $filename = __DIR__ . '/config/' . $path . '/'. $field_type_name . '.yml';
+  $field_type_config = Yaml::decode(file_get_contents($filename));
+
+  foreach (search_api_solr_update_helper_get_field_type_configs() as $name => $config) {
+    if ($name === $field_type_name) {
+      search_api_solr_update_helper_save_field_type_config($field_type_name, ['uuid' => $config['uuid']] + $field_type_config);
+      break;
+    }
+  }
 }
 
 /**
@@ -1934,15 +1953,7 @@ function search_api_solr_update_8401() {
   }
 
   foreach (['br', 'pt'] as $locale) {
-    $filename = __DIR__ . '/config/optional/search_api_solr.solr_field_type.text_pt-' . $locale . '_7_0_0.yml';
-    $pt = Yaml::decode(file_get_contents($filename));
-
-    foreach (search_api_solr_update_helper_get_field_type_configs() as $field_type_name => $field_type_config) {
-      if ('search_api_solr.solr_field_type.text_pt-' . $locale . '_7_0_0' === $field_type_name) {
-        search_api_solr_update_helper_save_field_type_config($field_type_name, ['uuid' => $field_type_config['uuid']] + $pt);
-        break;
-      }
-    }
+    search_api_solr_update_helper_replace_field_type('search_api_solr.solr_field_type.text_pt-' . $locale . '_7_0_0');
   }
 }
 
@@ -2008,15 +2019,7 @@ function search_api_solr_update_8406() {
  */
 function search_api_solr_update_8407() {
   foreach (['6_0_0', '7_0_0', 'scientific_6_0_0', 'scientific_7_0_0'] as $version) {
-    $filename = __DIR__ . '/config/optional/search_api_solr.solr_field_type.text_de_' . $version . '.yml';
-    $config = Yaml::decode(file_get_contents($filename));
-
-    foreach (search_api_solr_update_helper_get_field_type_configs() as $field_type_name => $field_type_config) {
-      if ('search_api_solr.solr_field_type.text_de_' . $version === $field_type_name) {
-        search_api_solr_update_helper_save_field_type_config($field_type_name, ['uuid' => $field_type_config['uuid']] + $config);
-        break;
-      }
-    }
+    search_api_solr_update_helper_replace_field_type('search_api_solr.solr_field_type.text_de_' . $version);
   }
 }
 
@@ -2027,10 +2030,42 @@ function search_api_solr_update_8408() {
   // Covered search_api_solr_update_8409().
 }
 
-
 /**
  * Add Hungarian field type.
  */
 function search_api_solr_update_8409() {
   search_api_solr_update_helper_install_configs();
+}
+
+/**
+ * Allow to turn off the distrib parameter for Solr Cloud.
+ */
+function search_api_solr_update_8410() {
+  foreach (search_api_solr_update_helper_get_backend_configs() as $server_name => $backend_config) {
+    if (!isset($backend_config['connector_config']['distrib']) && (strpos($backend_config['connector'], 'solr_cloud') === 0)) {
+      $backend_config['connector_config']['distrib'] = TRUE;
+      search_api_solr_update_helper_save_backend_config($server_name, $backend_config);
+    }
+  }
+}
+
+/**
+ * Handle American and British synonyms and Māori macrons.
+ */
+function search_api_solr_update_8411() {
+  foreach (['6_0_0', '7_0_0'] as $version) {
+    search_api_solr_update_helper_replace_field_type('search_api_solr.solr_field_type.text_en_' . $version);
+  }
+}
+
+/**
+ * Add support for hostContext parameter for Solr Cloud.
+ */
+function search_api_solr_update_8412() {
+  foreach (search_api_solr_update_helper_get_backend_configs() as $server_name => $backend_config) {
+    if (!isset($backend_config['connector_config']['context']) && (strpos($backend_config['connector'], 'solr_cloud') === 0)) {
+      $backend_config['connector_config']['context'] = 'solr';
+      search_api_solr_update_helper_save_backend_config($server_name, $backend_config);
+    }
+  }
 }

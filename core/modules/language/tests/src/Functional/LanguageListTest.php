@@ -20,7 +20,7 @@ class LanguageListTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['language'];
+  protected static $modules = ['language'];
 
   /**
    * {@inheritdoc}
@@ -47,17 +47,18 @@ class LanguageListTest extends BrowserTestBase {
     $edit = [
       'predefined_langcode' => 'fr',
     ];
-    $this->drupalPostForm('admin/config/regional/language/add', $edit, t('Add language'));
-    $this->assertText('French', 'Language added successfully.');
-    $this->assertUrl(Url::fromRoute('entity.configurable_language.collection', [], ['absolute' => TRUE])->toString());
+    $this->drupalGet('admin/config/regional/language/add');
+    $this->submitForm($edit, 'Add language');
+    $this->assertSession()->pageTextContains('French');
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.configurable_language.collection'));
 
     // Get the weight of the last language and check that the weight is one unit
     // heavier than the last configurable language.
     $this->rebuildContainer();
     $languages = \Drupal::service('language_manager')->getLanguages();
     $last_language = end($languages);
-    $this->assertEqual($last_language->getWeight(), $last_language_weight + 1);
-    $this->assertEqual($last_language->getId(), $edit['predefined_langcode']);
+    $this->assertEquals($last_language_weight + 1, $last_language->getWeight());
+    $this->assertEquals($edit['predefined_langcode'], $last_language->getId());
 
     // Add custom language.
     $langcode = 'xx';
@@ -68,10 +69,11 @@ class LanguageListTest extends BrowserTestBase {
       'label' => $name,
       'direction' => Language::DIRECTION_LTR,
     ];
-    $this->drupalPostForm('admin/config/regional/language/add', $edit, t('Add custom language'));
-    $this->assertUrl(Url::fromRoute('entity.configurable_language.collection', [], ['absolute' => TRUE])->toString());
-    $this->assertRaw('"edit-languages-' . $langcode . '-weight"', 'Language code found.');
-    $this->assertText(t($name), 'Test language added.');
+    $this->drupalGet('admin/config/regional/language/add');
+    $this->submitForm($edit, 'Add custom language');
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.configurable_language.collection'));
+    $this->assertSession()->responseContains('"edit-languages-' . $langcode . '-weight"');
+    $this->assertSession()->pageTextContains($name);
 
     $language = \Drupal::service('language_manager')->getLanguage($langcode);
     $english = \Drupal::service('language_manager')->getLanguage('en');
@@ -79,15 +81,15 @@ class LanguageListTest extends BrowserTestBase {
     // Check if we can change the default language.
     $path = 'admin/config/regional/language';
     $this->drupalGet($path);
-    $this->assertFieldChecked('edit-site-default-language-en', 'English is the default language.');
+    $this->assertSession()->checkboxChecked('edit-site-default-language-en');
     // Change the default language.
     $edit = [
       'site_default_language' => $langcode,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save configuration'));
+    $this->submitForm($edit, 'Save configuration');
     $this->rebuildContainer();
-    $this->assertNoFieldChecked('edit-site-default-language-en', 'Default language updated.');
-    $this->assertUrl(Url::fromRoute('entity.configurable_language.collection', [], ['absolute' => TRUE, 'language' => $language])->toString());
+    $this->assertSession()->checkboxNotChecked('edit-site-default-language-en');
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.configurable_language.collection', [], ['language' => $language]));
 
     // Ensure we can't delete the default language.
     $this->drupalGet('admin/config/regional/language/delete/' . $langcode);
@@ -95,52 +97,52 @@ class LanguageListTest extends BrowserTestBase {
 
     // Ensure 'Edit' link works.
     $this->drupalGet('admin/config/regional/language');
-    $this->clickLink(t('Edit'));
-    $this->assertTitle('Edit language | Drupal');
+    $this->clickLink('Edit');
+    $this->assertSession()->titleEquals('Edit language | Drupal');
     // Edit a language.
     $name = $this->randomMachineName(16);
     $edit = [
       'label' => $name,
     ];
-    $this->drupalPostForm('admin/config/regional/language/edit/' . $langcode, $edit, t('Save language'));
-    $this->assertRaw($name, 'The language has been updated.');
-    $this->assertUrl(Url::fromRoute('entity.configurable_language.collection', [], ['absolute' => TRUE, 'language' => $language])->toString());
+    $this->drupalGet('admin/config/regional/language/edit/' . $langcode);
+    $this->submitForm($edit, 'Save language');
+    $this->assertSession()->pageTextContains($name);
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.configurable_language.collection', [], ['language' => $language]));
 
     // Change back the default language.
     $edit = [
       'site_default_language' => 'en',
     ];
-    $this->drupalPostForm($path, $edit, t('Save configuration'));
+    $this->drupalGet($path);
+    $this->submitForm($edit, 'Save configuration');
     $this->rebuildContainer();
     // Ensure 'delete' link works.
     $this->drupalGet('admin/config/regional/language');
-    $this->clickLink(t('Delete'));
-    $this->assertText(t('Are you sure you want to delete the language'), '"Delete" link is correct.');
+    $this->clickLink('Delete');
+    $this->assertSession()->pageTextContains('Are you sure you want to delete the language');
     // Delete a language.
     $this->drupalGet('admin/config/regional/language/delete/' . $langcode);
     // First test the 'cancel' link.
-    $this->clickLink(t('Cancel'));
-    $this->assertUrl(Url::fromRoute('entity.configurable_language.collection', [], ['absolute' => TRUE, 'language' => $english])->toString());
-    $this->assertRaw($name, 'The language was not deleted.');
+    $this->clickLink('Cancel');
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.configurable_language.collection', [], ['language' => $english]));
+    $this->assertSession()->pageTextContains($name);
     // Delete the language for real. This a confirm form, we do not need any
     // fields changed.
-    $this->drupalPostForm('admin/config/regional/language/delete/' . $langcode, [], t('Delete'));
-    // We need raw here because %language and %langcode will add HTML.
-    $t_args = ['%language' => $name, '%langcode' => $langcode];
-    $this->assertRaw(t('The %language (%langcode) language has been removed.', $t_args), 'The test language has been removed.');
-    $this->assertUrl(Url::fromRoute('entity.configurable_language.collection', [], ['absolute' => TRUE, 'language' => $english])->toString());
+    $this->drupalGet('admin/config/regional/language/delete/' . $langcode);
+    $this->submitForm([], 'Delete');
+    $this->assertSession()->pageTextContains("The {$name} ({$langcode}) language has been removed.");
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.configurable_language.collection', [], ['language' => $english]));
     // Verify that language is no longer found.
     $this->drupalGet('admin/config/regional/language/delete/' . $langcode);
     $this->assertSession()->statusCodeEquals(404);
 
     // Delete French.
-    $this->drupalPostForm('admin/config/regional/language/delete/fr', [], t('Delete'));
+    $this->drupalGet('admin/config/regional/language/delete/fr');
+    $this->submitForm([], 'Delete');
     // Make sure the "language_count" state has been updated correctly.
     $this->rebuildContainer();
-    // We need raw here because %language and %langcode will add HTML.
-    $t_args = ['%language' => 'French', '%langcode' => 'fr'];
-    $this->assertRaw(t('The %language (%langcode) language has been removed.', $t_args), 'The French language has been removed.');
-    $this->assertUrl(Url::fromRoute('entity.configurable_language.collection', [], ['absolute' => TRUE])->toString());
+    $this->assertSession()->pageTextContains("The French (fr) language has been removed.");
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.configurable_language.collection'));
     // Verify that language is no longer found.
     $this->drupalGet('admin/config/regional/language/delete/fr');
     $this->assertSession()->statusCodeEquals(404);
@@ -157,27 +159,27 @@ class LanguageListTest extends BrowserTestBase {
       'label' => $name,
       'direction' => Language::DIRECTION_LTR,
     ];
-    $this->drupalPostForm('admin/config/regional/language/add', $edit, t('Add custom language'));
-    $this->assertUrl(Url::fromRoute('entity.configurable_language.collection', [], ['absolute' => TRUE])->toString());
-    $this->assertText($name, 'Name found.');
+    $this->drupalGet('admin/config/regional/language/add');
+    $this->submitForm($edit, 'Add custom language');
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.configurable_language.collection'));
+    $this->assertSession()->pageTextContains($name);
 
     // Check if we can change the default language.
     $path = 'admin/config/regional/language';
     $this->drupalGet($path);
-    $this->assertFieldChecked('edit-site-default-language-en', 'English is the default language.');
+    $this->assertSession()->checkboxChecked('edit-site-default-language-en');
     // Change the default language.
     $edit = [
       'site_default_language' => $langcode,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save configuration'));
+    $this->submitForm($edit, 'Save configuration');
     $this->rebuildContainer();
-    $this->assertNoFieldChecked('edit-site-default-language-en', 'Default language updated.');
-    $this->assertUrl(Url::fromRoute('entity.configurable_language.collection', [], ['absolute' => TRUE, 'language' => $language])->toString());
+    $this->assertSession()->checkboxNotChecked('edit-site-default-language-en');
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.configurable_language.collection', [], ['language' => $language]));
 
-    $this->drupalPostForm('admin/config/regional/language/delete/en', [], t('Delete'));
-    // We need raw here because %language and %langcode will add HTML.
-    $t_args = ['%language' => 'English', '%langcode' => 'en'];
-    $this->assertRaw(t('The %language (%langcode) language has been removed.', $t_args), 'The English language has been removed.');
+    $this->drupalGet('admin/config/regional/language/delete/en');
+    $this->submitForm([], 'Delete');
+    $this->assertSession()->pageTextContains("The English (en) language has been removed.");
     $this->rebuildContainer();
 
     // Ensure we can't delete a locked language.
@@ -189,7 +191,8 @@ class LanguageListTest extends BrowserTestBase {
     $edit = [
       'predefined_langcode' => 'nl',
     ];
-    $this->drupalPostForm('admin/config/regional/language/add', $edit, 'Add language');
+    $this->drupalGet('admin/config/regional/language/add');
+    $this->submitForm($edit, 'Add language');
 
     // Load the form which has now the additional NL language option.
     $this->drupalGet('admin/config/regional/language');
@@ -198,9 +201,9 @@ class LanguageListTest extends BrowserTestBase {
     $language_storage = $this->container->get('entity_type.manager')->getStorage('configurable_language');
     $language_storage->load('nl')->delete();
 
-    $this->drupalPostForm(NULL, ['site_default_language' => 'nl'], 'Save configuration');
-    $this->assertText(t('Selected default language no longer exists.'));
-    $this->assertNoFieldChecked('edit-site-default-language-xx', 'The previous default language got deselected.');
+    $this->submitForm(['site_default_language' => 'nl'], 'Save configuration');
+    $this->assertSession()->pageTextContains('Selected default language no longer exists.');
+    $this->assertSession()->checkboxNotChecked('edit-site-default-language-xx');
   }
 
   /**
@@ -217,13 +220,13 @@ class LanguageListTest extends BrowserTestBase {
     $expected_conf_languages = ['l3' => 'l3', 'l1' => 'l1', 'en' => 'en'];
 
     $locked_languages = $this->container->get('language_manager')->getLanguages(LanguageInterface::STATE_LOCKED);
-    $this->assertEqual(array_diff_key($expected_locked_languages, $locked_languages), [], 'Locked languages loaded correctly.');
+    $this->assertEquals([], array_diff_key($expected_locked_languages, $locked_languages), 'Locked languages loaded correctly.');
 
     $all_languages = $this->container->get('language_manager')->getLanguages(LanguageInterface::STATE_ALL);
-    $this->assertEqual(array_diff_key($expected_all_languages, $all_languages), [], 'All languages loaded correctly.');
+    $this->assertEquals([], array_diff_key($expected_all_languages, $all_languages), 'All languages loaded correctly.');
 
     $conf_languages = $this->container->get('language_manager')->getLanguages();
-    $this->assertEqual(array_diff_key($expected_conf_languages, $conf_languages), [], 'Configurable languages loaded correctly.');
+    $this->assertEquals([], array_diff_key($expected_conf_languages, $conf_languages), 'Configurable languages loaded correctly.');
   }
 
 }

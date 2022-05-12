@@ -20,14 +20,14 @@ class CommentAdminTest extends CommentTestBase {
    */
   protected $defaultTheme = 'classy';
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalPlaceBlock('page_title_block');
   }
 
   /**
-   * Test comment approval functionality through admin/content/comment.
+   * Tests comment approval functionality through admin/content/comment.
    */
   public function testApprovalAdminInterface() {
     // Set anonymous comments to require approval.
@@ -42,7 +42,7 @@ class CommentAdminTest extends CommentTestBase {
 
     // Test that the comments page loads correctly when there are no comments
     $this->drupalGet('admin/content/comment');
-    $this->assertText(t('No comments available.'));
+    $this->assertSession()->pageTextContains('No comments available.');
 
     $this->drupalLogout();
 
@@ -51,7 +51,7 @@ class CommentAdminTest extends CommentTestBase {
     $body = $this->randomMachineName();
     // Set $contact to true so that it won't check for id and message.
     $this->postComment($this->node, $body, $subject, TRUE);
-    $this->assertText(t('Your comment has been queued for review by site administrators and will be published after approval.'), 'Comment requires approval.');
+    $this->assertSession()->pageTextContains('Your comment has been queued for review by site administrators and will be published after approval.');
 
     // Get unapproved comment id.
     $this->drupalLogin($this->adminUser);
@@ -83,13 +83,13 @@ class CommentAdminTest extends CommentTestBase {
     // Publish multiple comments in one operation.
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('admin/content/comment/approval');
-    $this->assertText(t('Unapproved comments (@count)', ['@count' => 2]), 'Two unapproved comments waiting for approval.');
+    $this->assertSession()->pageTextContains('Unapproved comments (2)');
     $edit = [
       "comments[{$comments[0]->id()}]" => 1,
       "comments[{$comments[1]->id()}]" => 1,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Update'));
-    $this->assertText(t('Unapproved comments (@count)', ['@count' => 0]), 'All comments were approved.');
+    $this->submitForm($edit, 'Update');
+    $this->assertSession()->pageTextContains('Unapproved comments (0)');
 
     // Delete multiple comments in one operation.
     $edit = [
@@ -98,25 +98,25 @@ class CommentAdminTest extends CommentTestBase {
       "comments[{$comments[1]->id()}]" => 1,
       "comments[{$anonymous_comment4->id()}]" => 1,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Update'));
-    $this->assertText(t('Are you sure you want to delete these comments and all their children?'), 'Confirmation required.');
-    $this->drupalPostForm(NULL, [], t('Delete'));
-    $this->assertText(t('No comments available.'), 'All comments were deleted.');
+    $this->submitForm($edit, 'Update');
+    $this->assertSession()->pageTextContains('Are you sure you want to delete these comments and all their children?');
+    $this->submitForm([], 'Delete');
+    $this->assertSession()->pageTextContains('No comments available.');
     // Test message when no comments selected.
     $edit = [
       'operation' => 'delete',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Update'));
-    $this->assertText(t('Select one or more comments to perform the update on.'));
+    $this->submitForm($edit, 'Update');
+    $this->assertSession()->pageTextContains('Select one or more comments to perform the update on.');
 
     // Make sure the label of unpublished node is not visible on listing page.
     $this->drupalGet('admin/content/comment');
     $this->postComment($this->node, $this->randomMachineName());
     $this->drupalGet('admin/content/comment');
-    $this->assertText(Html::escape($this->node->label()));
+    $this->assertSession()->pageTextContains(Html::escape($this->node->label()));
     $this->node->setUnpublished()->save();
     $this->drupalGet('admin/content/comment');
-    $this->assertNoText(Html::escape($this->node->label()));
+    $this->assertSession()->pageTextNotContains(Html::escape($this->node->label()));
   }
 
   /**
@@ -139,7 +139,7 @@ class CommentAdminTest extends CommentTestBase {
     $body = $this->randomMachineName();
     // Set $contact to true so that it won't check for id and message.
     $this->postComment($this->node, $body, $subject, TRUE);
-    $this->assertText(t('Your comment has been queued for review by site administrators and will be published after approval.'), 'Comment requires approval.');
+    $this->assertSession()->pageTextContains('Your comment has been queued for review by site administrators and will be published after approval.');
 
     // Get unapproved comment id.
     $this->drupalLogin($this->adminUser);
@@ -165,9 +165,9 @@ class CommentAdminTest extends CommentTestBase {
 
     // Approve comment.
     $this->drupalGet('comment/1/edit');
-    $this->assertFieldChecked('edit-status-0');
+    $this->assertSession()->checkboxChecked('edit-status-0');
     $this->drupalGet('node/' . $this->node->id());
-    $this->clickLink(t('Approve'));
+    $this->clickLink('Approve');
     $this->drupalLogout();
 
     $this->drupalGet('node/' . $this->node->id());
@@ -184,15 +184,15 @@ class CommentAdminTest extends CommentTestBase {
     $this->drupalGet('admin/structure/comment');
     $this->assertSession()->statusCodeEquals(200);
     // Make sure titles visible.
-    $this->assertText('Comment type');
-    $this->assertText('Description');
+    $this->assertSession()->pageTextContains('Comment type');
+    $this->assertSession()->pageTextContains('Description');
     // Make sure the description is present.
-    $this->assertText('Default comment field');
+    $this->assertSession()->pageTextContains('Default comment field');
     // Manage fields.
     $this->clickLink('Manage fields');
     $this->assertSession()->statusCodeEquals(200);
     // Make sure comment_body field is shown.
-    $this->assertText('comment_body');
+    $this->assertSession()->pageTextContains('comment_body');
     // Rest from here on in is field_ui.
   }
 
@@ -231,12 +231,12 @@ class CommentAdminTest extends CommentTestBase {
     // Make sure the comment field is not visible when
     // the comment was posted by an authenticated user.
     $this->drupalGet('comment/' . $comment->id() . '/edit');
-    $this->assertNoFieldById('edit-mail', $comment->getAuthorEmail());
+    $this->assertSession()->fieldNotExists('edit-mail');
 
     // Make sure the comment field is visible when
     // the comment was posted by an anonymous user.
     $this->drupalGet('comment/' . $anonymous_comment->id() . '/edit');
-    $this->assertFieldById('edit-mail', $anonymous_comment->getAuthorEmail());
+    $this->assertSession()->fieldValueEquals('edit-mail', $anonymous_comment->getAuthorEmail());
   }
 
   /**
@@ -258,6 +258,7 @@ class CommentAdminTest extends CommentTestBase {
     $count_query = \Drupal::entityTypeManager()
       ->getStorage('comment')
       ->getQuery()
+      ->accessCheck(FALSE)
       ->count();
     $before_count = $count_query->execute();
     // Post 2 anonymous comments without contact info.
@@ -276,14 +277,15 @@ class CommentAdminTest extends CommentTestBase {
       "comments[{$comment1->id()}]" => 1,
       "comments[{$comment2->id()}]" => 1,
     ];
-    $this->drupalPostForm('admin/content/comment', $edit, t('Update'));
-    $this->assertRaw(new FormattableMarkup('@label (Original translation) - <em>The following comment translations will be deleted:</em>', ['@label' => $comment1->label()]));
-    $this->assertRaw(new FormattableMarkup('@label (Original translation) - <em>The following comment translations will be deleted:</em>', ['@label' => $comment2->label()]));
-    $this->assertText('English');
-    $this->assertText('Urdu');
-    $this->drupalPostForm(NULL, [], t('Delete'));
+    $this->drupalGet('admin/content/comment');
+    $this->submitForm($edit, 'Update');
+    $this->assertSession()->responseContains(new FormattableMarkup('@label (Original translation) - <em>The following comment translations will be deleted:</em>', ['@label' => $comment1->label()]));
+    $this->assertSession()->responseContains(new FormattableMarkup('@label (Original translation) - <em>The following comment translations will be deleted:</em>', ['@label' => $comment2->label()]));
+    $this->assertSession()->pageTextContains('English');
+    $this->assertSession()->pageTextContains('Urdu');
+    $this->submitForm([], 'Delete');
     $after_count = $count_query->execute();
-    $this->assertEqual($after_count, $before_count, 'No comment or translation found.');
+    $this->assertEquals($before_count, $after_count, 'No comment or translation found.');
   }
 
 }

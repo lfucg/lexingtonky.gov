@@ -131,7 +131,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Any additional configuration that's neede for this entity type.
@@ -160,7 +160,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
       $title = '<h2>' . Html::escape($title) . "</h2>\n";
     }
 
-    parent::verbose($title . $message);
+    dump($title . $message);
   }
 
   /**
@@ -192,8 +192,8 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
       'field_name' => 'metatag',
       'new_storage_type' => 'metatag',
     ];
-    $this->drupalPostForm(NULL, $edit, $this->t('Save and continue'));
-    $this->drupalPostForm(NULL, [], $this->t('Save field settings'));
+    $this->submitForm($edit, $this->t('Save and continue'));
+    $this->submitForm([], $this->t('Save field settings'));
 
     // Clear all settings.
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
@@ -212,7 +212,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $global_values = [
       'metatag_test_tag' => 'Global description',
     ];
-    $this->drupalPostForm(NULL, $global_values, 'Save');
+    $this->submitForm($global_values, 'Save');
     $session->pageTextContains('Saved the Global Metatag defaults.');
 
     // Add the field to this entity type.
@@ -241,7 +241,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $global_values = [
       'metatag_test_tag' => 'Global description',
     ];
-    $this->drupalPostForm(NULL, $global_values, 'Save');
+    $this->submitForm($global_values, 'Save');
     $session->pageTextContains(strip_tags('Saved the Global Metatag defaults.'));
 
     // Set an entity default.
@@ -250,7 +250,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $entity_values = [
       'metatag_test_tag' => 'Entity description',
     ];
-    $this->drupalPostForm(NULL, $entity_values, 'Save');
+    $this->submitForm($entity_values, 'Save');
     $session->pageTextContains(strip_tags("Saved the $this->entityLabel Metatag defaults."));
 
     // Add the field to this entity type.
@@ -324,7 +324,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $global_values = [
       'metatag_test_tag' => 'Global description',
     ];
-    $this->drupalPostForm(NULL, $global_values, 'Save');
+    $this->submitForm($global_values, 'Save');
     $session->pageTextContains(strip_tags('Saved the Global Metatag defaults.'));
 
     // Set an entity default if it's supported by the entity type.
@@ -334,7 +334,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
       $entity_values = [
         'metatag_test_tag' => 'Entity description',
       ];
-      $this->drupalPostForm(NULL, $entity_values, 'Save');
+      $this->submitForm($entity_values, 'Save');
       $session->pageTextContains(strip_tags("Saved the $this->entityLabel Metatag defaults."));
     }
 
@@ -353,7 +353,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     }
 
     // Create a new entity object.
-    $this->drupalPostForm(NULL, $edit, $this->t($this->entitySaveButtonLabel));
+    $this->submitForm($edit, $this->t($this->entitySaveButtonLabel));
     $entities = \Drupal::entityTypeManager()
       ->getStorage($this->entityType)
       ->loadByProperties([$this->entityTitleField => $title]);
@@ -394,7 +394,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $global_values = [
       'metatag_test_tag' => 'Global description',
     ];
-    $this->drupalPostForm(NULL, $global_values, 'Save');
+    $this->submitForm($global_values, 'Save');
     $session->pageTextContains(strip_tags('Saved the Global Metatag defaults.'));
 
     // Set an entity default if it's supported by the entity type.
@@ -404,7 +404,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
       $entity_values = [
         'metatag_test_tag' => 'Entity description',
       ];
-      $this->drupalPostForm(NULL, $entity_values, 'Save');
+      $this->submitForm($entity_values, 'Save');
       $session->pageTextContains(strip_tags("Saved the $this->entityLabel Metatag defaults."));
     }
 
@@ -436,7 +436,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     }
 
     // Create a new entity object.
-    $this->drupalPostForm(NULL, $edit, $this->t($this->entitySaveButtonLabel));
+    $this->submitForm($edit, $this->t($this->entitySaveButtonLabel));
     $entities = \Drupal::entityTypeManager()
       ->getStorage($this->entityType)
       ->loadByProperties([$this->entityTitleField => $title]);
@@ -478,7 +478,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $edit = $this->entityDefaultValues($title) + [
       'field_metatag[0][basic][metatag_test_tag]' => 'Kilimanjaro',
     ];
-    $this->drupalPostForm(NULL, $edit, $this->t('Save'));
+    $this->submitForm($edit, $this->t('Save'));
     $entities = \Drupal::entityTypeManager()
       ->getStorage('entity_test')
       ->loadByProperties([$this->entityTitleField => 'Barfoo']);
@@ -503,7 +503,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $values = [
       'metatag_test_tag' => 'Purple monkey dishwasher',
     ];
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains('Saved the Global Metatag defaults.');
     $this->drupalGet($entity->toUrl());
     $session->statusCodeEquals(200);

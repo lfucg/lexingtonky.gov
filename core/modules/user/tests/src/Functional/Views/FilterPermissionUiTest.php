@@ -25,17 +25,17 @@ class FilterPermissionUiTest extends ViewTestBase {
    *
    * @var array
    */
-  public static $modules = ['user', 'user_test_views', 'views_ui'];
+  protected static $modules = ['user', 'user_test_views', 'views_ui'];
 
   /**
    * {@inheritdoc}
    */
   protected $defaultTheme = 'stark';
 
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp($import_test_views);
 
-    ViewTestData::createTestViews(get_class($this), ['user_test_views']);
+    ViewTestData::createTestViews(static::class, ['user_test_views']);
     $this->enableViewsTestModule();
   }
 
@@ -52,10 +52,10 @@ class FilterPermissionUiTest extends ViewTestBase {
     // Verify that the handler summary is correctly displaying the selected
     // permission.
     $this->assertSession()->linkExists('User: Permission (= View user information)');
-    $this->drupalPostForm(NULL, [], 'Save');
+    $this->submitForm([], 'Save');
     // Verify that we can save the view.
-    $this->assertNoText('No valid values found on filter: User: Permission.');
-    $this->assertText('The view test_filter_permission has been saved.');
+    $this->assertSession()->pageTextNotContains('No valid values found on filter: User: Permission.');
+    $this->assertSession()->pageTextContains('The view test_filter_permission has been saved.');
 
     // Verify that the handler summary is also correct when multiple values are
     // selected in the filter.
@@ -65,12 +65,13 @@ class FilterPermissionUiTest extends ViewTestBase {
         'administer views',
       ],
     ];
-    $this->drupalPostForm('admin/structure/views/nojs/handler/test_filter_permission/default/filter/permission', $edit, 'Apply');
+    $this->drupalGet('admin/structure/views/nojs/handler/test_filter_permission/default/filter/permission');
+    $this->submitForm($edit, 'Apply');
     $this->assertSession()->linkExists('User: Permission (or View us…)');
-    $this->drupalPostForm(NULL, [], 'Save');
+    $this->submitForm([], 'Save');
     // Verify that we can save the view.
-    $this->assertNoText('No valid values found on filter: User: Permission.');
-    $this->assertText('The view test_filter_permission has been saved.');
+    $this->assertSession()->pageTextNotContains('No valid values found on filter: User: Permission.');
+    $this->assertSession()->pageTextContains('The view test_filter_permission has been saved.');
   }
 
 }

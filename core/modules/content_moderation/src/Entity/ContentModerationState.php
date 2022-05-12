@@ -135,6 +135,7 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
       $storage = \Drupal::entityTypeManager()->getStorage('content_moderation_state');
 
       $ids = $storage->getQuery()
+        ->accessCheck(FALSE)
         ->condition('content_entity_type_id', $entity->getEntityTypeId())
         ->condition('content_entity_id', $entity->id())
         ->condition('workflow', $moderation_info->getWorkflowForEntity($entity)->id())
@@ -149,22 +150,6 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
     }
 
     return $content_moderation_state;
-  }
-
-  /**
-   * Default value callback for the 'uid' base field definition.
-   *
-   * @see \Drupal\content_moderation\Entity\ContentModerationState::baseFieldDefinitions()
-   *
-   * @deprecated The ::getCurrentUserId method is deprecated in 8.6.x and will
-   *   be removed before 9.0.0.
-   *
-   * @return array
-   *   An array of default values.
-   */
-  public static function getCurrentUserId() {
-    @trigger_error('The ::getCurrentUserId method is deprecated in 8.6.x and will be removed before 9.0.0.', E_USER_DEPRECATED);
-    return [\Drupal::currentUser()->id()];
   }
 
   /**

@@ -13,6 +13,14 @@ use Drupal\Core\Database\Install\Tasks as InstallTasks;
 class Tasks extends InstallTasks {
 
   /**
+   * Minimum required SQLite version.
+   *
+   * Use to build sqlite library with json1 option for JSON datatype support.
+   * @see https://www.sqlite.org/json1.html
+   */
+  const SQLITE_MINIMUM_VERSION = '3.26';
+
+  /**
    * {@inheritdoc}
    */
   protected $pdoDriver = 'sqlite';
@@ -28,7 +36,7 @@ class Tasks extends InstallTasks {
    * {@inheritdoc}
    */
   public function minimumVersion() {
-    return '3.7.11';
+    return static::SQLITE_MINIMUM_VERSION;
   }
 
   /**
@@ -43,7 +51,7 @@ class Tasks extends InstallTasks {
     // Make the text more accurate for SQLite.
     $form['database']['#title'] = t('Database file');
     $form['database']['#description'] = t('The absolute path to the file where @drupal data will be stored. This must be writable by the web server and should exist outside of the web root.', ['@drupal' => drupal_install_profile_distribution_name()]);
-    $default_database = \Drupal::service('site.path') . '/files/.ht.sqlite';
+    $default_database = \Drupal::getContainer()->getParameter('site.path') . '/files/.ht.sqlite';
     $form['database']['#default_value'] = empty($database['database']) ? $default_database : $database['database'];
     return $form;
   }
@@ -66,8 +74,8 @@ class Tasks extends InstallTasks {
         $connection_info = Database::getConnectionInfo();
         $database = $connection_info['default']['database'];
 
-        // We cannot use file_directory_temp() here because we haven't yet
-        // successfully connected to the database.
+        // We cannot use \Drupal::service('file_system')->getTempDirectory()
+        // here because we haven't yet successfully connected to the database.
         $connection_info['default']['database'] = \Drupal::service('file_system')->tempnam(sys_get_temp_dir(), 'sqlite');
 
         // In order to change the Database::$databaseInfo array, need to remove
@@ -95,8 +103,8 @@ class Tasks extends InstallTasks {
         }
       }
       else {
-        // Database connection failed for some other reason than the database
-        // not existing.
+        // Database connection failed for some other reason than a non-existent
+        // database.
         $this->fail(t('Failed to connect to database. The database engine reports the following message: %error.<ul><li>Does the database file exist?</li><li>Does web server have permission to write to the database file?</li>Does the web server have permission to write to the directory the database file should be created in?</li></ul>', ['%error' => $e->getMessage()]));
         return FALSE;
       }

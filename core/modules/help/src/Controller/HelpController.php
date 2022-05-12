@@ -4,6 +4,7 @@ namespace Drupal\help\Controller;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Extension\ExtensionLifecycle;
 use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\help\HelpSectionManager;
@@ -44,16 +45,11 @@ class HelpController extends ControllerBase {
    * @param \Drupal\help\HelpSectionManager $help_manager
    *   The help section manager.
    * @param \Drupal\Core\Extension\ModuleExtensionList|null $module_extension_list
-   *   The module extension list. This is left optional for BC reasons, but the
-   *   optional usage is deprecated and will become required in Drupal 9.0.0.
+   *   The module extension list.
    */
-  public function __construct(RouteMatchInterface $route_match, HelpSectionManager $help_manager, ModuleExtensionList $module_extension_list = NULL) {
+  public function __construct(RouteMatchInterface $route_match, HelpSectionManager $help_manager, ModuleExtensionList $module_extension_list) {
     $this->routeMatch = $route_match;
     $this->helpManager = $help_manager;
-    if ($module_extension_list === NULL) {
-      @trigger_error('Calling HelpController::__construct() with the $module_extension_list argument is supported in drupal:8.8.0 and will be required before drupal:9.0.0. See https://www.drupal.org/node/2709919.', E_USER_DEPRECATED);
-      $module_extension_list = \Drupal::service('extension.list.module');
-    }
     $this->moduleExtensionList = $module_extension_list;
   }
 
@@ -137,7 +133,7 @@ class HelpController extends ControllerBase {
       $build['#title'] = $module_name;
 
       $info = $this->moduleExtensionList->getExtensionInfo($name);
-      if ($info['package'] === 'Core (Experimental)') {
+      if ($info[ExtensionLifecycle::LIFECYCLE_IDENTIFIER] === ExtensionLifecycle::EXPERIMENTAL) {
         $this->messenger()->addWarning($this->t('This module is experimental. <a href=":url">Experimental modules</a> are provided for testing purposes only. Use at your own risk.', [':url' => 'https://www.drupal.org/core/experimental']));
       }
 

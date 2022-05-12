@@ -19,7 +19,7 @@ class ParagraphContentMigrationTest extends ParagraphsMigrationTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'comment',
     'datetime',
     'datetime_range',

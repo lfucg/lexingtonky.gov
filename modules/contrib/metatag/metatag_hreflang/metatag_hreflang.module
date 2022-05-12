@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Implements hook_help().
@@ -15,8 +16,8 @@ function metatag_hreflang_help($route_name, RouteMatchInterface $route_match) {
     // Main module help for the metatag_hreflang module.
     case 'help.page.metatag_hreflang':
       $output = '';
-      $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Provides support for the hreflang meta tag with some extra logic to simplify it.') . '</p>';
+      $output .= '<h3>' . (string) new TranslatableMarkup('About') . '</h3>';
+      $output .= '<p>' . (string) new TranslatableMarkup('Provides support for the hreflang meta tag with some extra logic to simplify it.') . '</p>';
       return $output;
 
     default:
@@ -36,7 +37,7 @@ function metatag_hreflang_page_attachments_alter(array &$attachments) {
       foreach ($attachments['#attached']['html_head'] as $element) {
         // Check for Metatag's identifier "hreflang_per_language".
         if (!empty($element[1])) {
-          if (strpos($element[1], 'hreflang_per_language') !== false) {
+          if (strpos($element[1], 'hreflang_per_language') !== false && isset($element[0]['#attributes']['hreflang'])) {
             $hreflang_per_language[] = $element[0]['#attributes']['hreflang'];
           }
         }

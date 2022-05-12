@@ -77,11 +77,11 @@ class TestSiteTearDownCommand extends Command {
    *
    * @see \Drupal\Tests\BrowserTestBase::cleanupEnvironment()
    */
-  protected function tearDown(TestDatabase $test_database, $db_url) {
+  protected function tearDown(TestDatabase $test_database, $db_url): void {
     // Connect to the test database.
-    $root = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+    $root = dirname(__DIR__, 5);
     $database = Database::convertDbUrlToConnectionInfo($db_url, $root);
-    $database['prefix'] = ['default' => $test_database->getDatabasePrefix()];
+    $database['prefix'] = $test_database->getDatabasePrefix();
     Database::addConnectionInfo(__CLASS__, 'default', $database);
 
     // Remove all the tables.
@@ -100,7 +100,7 @@ class TestSiteTearDownCommand extends Command {
    * test site can be torn down even if something in the test site is broken.
    *
    * @param string $path
-   *   A string containing either an URI or a file or directory path.
+   *   A string containing either a URI or a file or directory path.
    * @param callable $callback
    *   (optional) Callback function to run on each file prior to deleting it and
    *   on each directory prior to traversing it. For example, can be used to

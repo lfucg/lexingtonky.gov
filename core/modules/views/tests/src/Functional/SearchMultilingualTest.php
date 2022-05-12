@@ -20,7 +20,7 @@ class SearchMultilingualTest extends ViewTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'search',
     'language',
@@ -63,14 +63,16 @@ class SearchMultilingualTest extends ViewTestBase {
     $edit = [
       'language_configuration[language_alterable]' => TRUE,
     ];
-    $this->drupalPostForm('admin/structure/types/manage/' . $type->id(), $edit, t('Save content type'));
+    $this->drupalGet('admin/structure/types/manage/' . $type->id());
+    $this->submitForm($edit, 'Save content type');
     $edit = [
       'entity_types[node]' => TRUE,
       'settings[node][' . $type->id() . '][translatable]' => TRUE,
       'settings[node][' . $type->id() . '][fields][title]' => TRUE,
       'settings[node][' . $type->id() . '][fields][body]' => TRUE,
     ];
-    $this->drupalPostForm('admin/config/regional/content-language', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/regional/content-language');
+    $this->submitForm($edit, 'Save configuration');
 
     // Add a node in English, with title "sandwich".
     $values = [

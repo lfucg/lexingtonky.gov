@@ -21,11 +21,11 @@ class BaseFieldAccessTest extends ViewTestBase {
   public static $testViews = ['test_entity_test_protected_access'];
 
   /**
-   * Modules to enable
+   * Modules to enable.
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'views', 'views_test_config', 'entity_test', 'node', 'views_entity_test',
   ];
 
@@ -37,10 +37,10 @@ class BaseFieldAccessTest extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp($import_test_views);
 
-    ViewTestData::createTestViews(get_class($this), ['comment_test_views']);
+    ViewTestData::createTestViews(static::class, ['comment_test_views']);
     \Drupal::state()->set('entity_test.views_data', [
       'entity_test' => [
         'test_text_access' => [
@@ -62,12 +62,12 @@ class BaseFieldAccessTest extends ViewTestBase {
   }
 
   /**
-   * Test access to protected base fields.
+   * Tests access to protected base fields.
    */
   public function testProtectedField() {
     $this->drupalGet('test-entity-protected-access');
-    $this->assertText('ok to see this one');
-    $this->assertNoText('no access value');
+    $this->assertSession()->pageTextContains('ok to see this one');
+    $this->assertSession()->pageTextNotContains('no access value');
   }
 
 }

@@ -2,7 +2,10 @@
 
 Improved [PSR-3](http://www.php-fig.org/psr/psr-3/) [Psr\Log](https://github.com/php-fig/log) logger based on Symfony Console components.
 
-[![Travis CI](https://travis-ci.org/consolidation/log.svg?branch=master)](https://travis-ci.org/consolidation/log) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/consolidation/log/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/consolidation/log/?branch=master) [![Coverage Status](https://coveralls.io/repos/github/consolidation/log/badge.svg?branch=master)](https://coveralls.io/github/consolidation/log?branch=master) [![License](https://poser.pugx.org/consolidation/log/license)](https://packagist.org/packages/consolidation/log)
+[![ci](https://github.com/consolidation/log/workflows/CI/badge.svg)](https://travis-ci.org/consolidation/log)
+[![scrutinizer](https://scrutinizer-ci.com/g/consolidation/log/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/consolidation/log/?branch=master)
+[![codecov](https://codecov.io/gh/consolidation/log/branch/main/graph/badge.svg?token=CAaB7ofhxx)](https://codecov.io/gh/consolidation/log)
+[![license](https://poser.pugx.org/consolidation/log/license)](https://packagist.org/packages/consolidation/log)
 
 ## Component Status
 
@@ -39,4 +42,4 @@ Symfony Console provides the ConsoleLogger to fill this need; however, ConsoleLo
 
 Consolidation\Log provides the benefits of both classes, allowing for code that both behaved technically correctly (redirecting to stderr) without sacrificing on style.
 
-Monlog also provides a full-featured Console logger that might be applicable for some use cases.
+Monolog also provides a full-featured Console logger that might be applicable for some use cases.

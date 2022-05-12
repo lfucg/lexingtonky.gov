@@ -46,6 +46,11 @@ class MetatagTokenTest extends BrowserTestBase {
 
     $this->drupalLogin($this->rootUser);
     $this->fieldUIAddNewField('/admin/config/people/accounts', 'metatags', 'Metatags', 'metatag');
+
+    // This extra step is necessary due to changes in core that removed a cache
+    // invalidation step.
+    // @see https://www.drupal.org/project/drupal/issues/2189411
+    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
   }
 
   /**
@@ -105,6 +110,25 @@ class MetatagTokenTest extends BrowserTestBase {
       '[user:field_metatags:og_image]' => 'Image 1,Image 2',
       '[user:field_metatags:og_image:0]' => 'Image 1',
       '[user:field_metatags:og_image:1]' => 'Image 2',
+    ];
+
+    $this->assertPageTokens($user->toUrl(), $tokens, ['user' => $user]);
+  }
+
+  /**
+   * Test precedence overridden tags over defaults in tokens.
+   */
+  public function testTokenOverriddenMetatagPrecedence() {
+    $user = $this->createUser();
+    $this->drupalGet($user->toUrl('edit-form'));
+    $this->submitForm([
+      'field_metatags[0][basic][title]' => 'My Title',
+      'field_metatags[0][basic][description]' => 'My Description',
+    ], 'Save');
+
+    $tokens = [
+      '[current-page:metatag:title]' => 'My Title',
+      '[current-page:metatag:description]' => 'My Description',
     ];
 
     $this->assertPageTokens($user->toUrl(), $tokens, ['user' => $user]);

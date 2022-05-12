@@ -17,7 +17,7 @@ class LanguageBreadcrumbTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['language', 'block', 'filter'];
+  protected static $modules = ['language', 'block', 'filter'];
 
   /**
    * {@inheritdoc}
@@ -27,7 +27,7 @@ class LanguageBreadcrumbTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->drupalPlaceBlock('system_breadcrumb_block');
     ConfigurableLanguage::createFromLangcode('de')->save();
@@ -40,7 +40,7 @@ class LanguageBreadcrumbTest extends BrowserTestBase {
   public function testBreadCrumbs() {
     // Prepare common base breadcrumb elements.
     $home = ['' => 'Home'];
-    $admin = $home + ['admin' => t('Administration')];
+    $admin = $home + ['admin' => 'Administration'];
 
     $page = $this->getSession()->getPage();
 

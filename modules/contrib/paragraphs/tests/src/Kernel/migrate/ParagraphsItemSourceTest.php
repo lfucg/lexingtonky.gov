@@ -17,7 +17,7 @@ class ParagraphsItemSourceTest extends MigrateSqlSourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['migrate_drupal', 'paragraphs'];
+  protected static $modules = ['migrate_drupal', 'paragraphs'];
 
   /**
    * {@inheritdoc}

@@ -4,13 +4,14 @@ namespace Drupal\Core;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Drupal\Core\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -42,7 +43,7 @@ class Url implements TrustedCallbackInterface {
   protected $urlAssembler;
 
   /**
-   * The access manager
+   * The access manager.
    *
    * @var \Drupal\Core\Access\AccessManagerInterface
    */
@@ -241,7 +242,7 @@ class Url implements TrustedCallbackInterface {
    *   you may use entity:{entity_type}/{entity_id} URIs. The internal: scheme
    *   should be avoided except when processing actual user input that may or
    *   may not correspond to a Drupal route. Normally use Url::fromRoute() for
-   *   code linking to any any Drupal page.
+   *   code linking to any Drupal page.
    * @param array $options
    *   (optional) An associative array of additional URL options, with the
    *   following elements:
@@ -334,7 +335,7 @@ class Url implements TrustedCallbackInterface {
    * Create a new Url object for entity URIs.
    *
    * @param array $uri_parts
-   *   Parts from an URI of the form entity:{entity_type}/{entity_id} as from
+   *   Parts from a URI of the form entity:{entity_type}/{entity_id} as from
    *   parse_url().
    * @param array $options
    *   An array of options, see \Drupal\Core\Url::fromUri() for details.
@@ -348,7 +349,7 @@ class Url implements TrustedCallbackInterface {
    *   Thrown if the entity URI is invalid.
    */
   protected static function fromEntityUri(array $uri_parts, array $options, $uri) {
-    list($entity_type_id, $entity_id) = explode('/', $uri_parts['path'], 2);
+    [$entity_type_id, $entity_id] = explode('/', $uri_parts['path'], 2);
     if ($uri_parts['scheme'] != 'entity' || $entity_id === '') {
       throw new \InvalidArgumentException("The entity URI '$uri' is invalid. You must specify the entity id in the URL. e.g., entity:node/1 for loading the canonical path to node entity with id 1.");
     }
@@ -387,12 +388,12 @@ class Url implements TrustedCallbackInterface {
    * - 'internal:/some-path' (path component is '/some-path') to 'some-path'
    *
    * @param array $uri_parts
-   *   Parts from an URI of the form internal:{path} as from parse_url().
+   *   Parts from a URI of the form internal:{path} as from parse_url().
    * @param array $options
    *   An array of options, see \Drupal\Core\Url::fromUri() for details.
    *
    * @return static
-   *   A new Url object for a 'internal:' URI.
+   *   A new Url object for an 'internal:' URI.
    *
    * @throws \InvalidArgumentException
    *   Thrown when the URI's path component doesn't have a leading slash.
@@ -432,7 +433,7 @@ class Url implements TrustedCallbackInterface {
    * Creates a new Url object for 'route:' URIs.
    *
    * @param array $uri_parts
-   *   Parts from an URI of the form route:{route_name};{route_parameters} as
+   *   Parts from a URI of the form route:{route_name};{route_parameters} as
    *   from parse_url(), where the path is the route name optionally followed by
    *   a ";" followed by route parameters in key=value format with & separators.
    * @param array $options
@@ -511,7 +512,7 @@ class Url implements TrustedCallbackInterface {
    * Generates a URI string that represents the data in the Url object.
    *
    * The URI will typically have the scheme of route: even if the object was
-   * constructed using an entity: or internal: scheme. A internal: URI that
+   * constructed using an entity: or internal: scheme. An internal: URI that
    * does not match a Drupal route with be returned here with the base: scheme,
    * and external URLs will be returned in their original form.
    *
@@ -806,18 +807,23 @@ class Url implements TrustedCallbackInterface {
    *
    * Determines whether the route is accessible or not.
    *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   (optional) Run access checks for this account. Defaults to the current
-   *   user.
+   * @param \Drupal\Core\Session\AccountInterface|null $account
+   *   (optional) Run access checks for this account. NULL for the current user.
+   * @param bool $return_as_object
+   *   (optional) Defaults to FALSE.
    *
-   * @return bool
-   *   Returns TRUE if the user has access to the url, otherwise FALSE.
+   * @return bool|\Drupal\Core\Access\AccessResultInterface
+   *   The access result. Returns a boolean if $return_as_object is FALSE (this
+   *   is the default) and otherwise an AccessResultInterface object.
+   *   When a boolean is returned, the result of AccessInterface::isAllowed() is
+   *   returned, i.e. TRUE means access is explicitly allowed, FALSE means
+   *   access is either explicitly forbidden or "no opinion".
    */
-  public function access(AccountInterface $account = NULL) {
+  public function access(AccountInterface $account = NULL, $return_as_object = FALSE) {
     if ($this->isRouted()) {
-      return $this->accessManager()->checkNamedRoute($this->getRouteName(), $this->getRouteParameters(), $account);
+      return $this->accessManager()->checkNamedRoute($this->getRouteName(), $this->getRouteParameters(), $account, $return_as_object);
     }
-    return TRUE;
+    return $return_as_object ? AccessResult::allowed() : TRUE;
   }
 
   /**

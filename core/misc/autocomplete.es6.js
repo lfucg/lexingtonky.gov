@@ -3,7 +3,7 @@
  * Autocomplete based on jQuery UI.
  */
 
-(function($, Drupal) {
+(function ($, Drupal) {
   let autocomplete;
 
   /**
@@ -38,14 +38,14 @@
       }
     }
     if (value.length > 0) {
-      result.push($.trim(current));
+      result.push(current.trim());
     }
 
     return result;
   }
 
   /**
-   * Returns the last value of an multi-value textfield.
+   * Returns the last value of a multi-value textfield.
    *
    * @function Drupal.autocomplete.extractLastTerm
    *
@@ -196,9 +196,7 @@
    *   jQuery collection of the ul element.
    */
   function renderItem(ul, item) {
-    return $('<li>')
-      .append($('<a>').html(item.label))
-      .appendTo(ul);
+    return $('<li>').append($('<a>').html(item.label)).appendTo(ul);
   }
 
   /**
@@ -214,9 +212,9 @@
   Drupal.behaviors.autocomplete = {
     attach(context) {
       // Act on textfields with the "form-autocomplete" class.
-      const $autocomplete = $(context)
-        .find('input.form-autocomplete')
-        .once('autocomplete');
+      const $autocomplete = $(
+        once('autocomplete', 'input.form-autocomplete', context),
+      );
       if ($autocomplete.length) {
         // Allow options to be overridden per instance.
         const blacklist = $autocomplete.attr(
@@ -226,7 +224,7 @@
           firstCharacterBlacklist: blacklist || '',
         });
         // Use jQuery UI Autocomplete on the textfield.
-        $autocomplete.autocomplete(autocomplete.options).each(function() {
+        $autocomplete.autocomplete(autocomplete.options).each(function () {
           $(this).data('ui-autocomplete')._renderItem =
             autocomplete.options.renderItem;
         });
@@ -242,10 +240,9 @@
     },
     detach(context, settings, trigger) {
       if (trigger === 'unload') {
-        $(context)
-          .find('input.form-autocomplete')
-          .removeOnce('autocomplete')
-          .autocomplete('destroy');
+        $(
+          once.remove('autocomplete', 'input.form-autocomplete', context),
+        ).autocomplete('destroy');
       }
     },
   };

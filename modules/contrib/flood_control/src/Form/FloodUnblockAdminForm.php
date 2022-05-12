@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\flood_control\FloodUnblockManager;
+use Drupal\Core\Session\AccountProxy;
 
 /**
  * Admin form of Flood Unblock.
@@ -44,6 +45,13 @@ class FloodUnblockAdminForm extends FormBase {
   protected $userFloodConfig;
 
   /**
+   * Current user object.
+   *
+   * @var \Drupal\Core\Session\AccountProxy
+   */
+  protected $currentUser;
+
+  /**
    * FloodUnblockAdminForm constructor.
    *
    * @param \Drupal\flood_control\FloodUnblockManager $floodUnblockManager
@@ -52,12 +60,15 @@ class FloodUnblockAdminForm extends FormBase {
    *   The database connection.
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
+   * @param \Drupal\Core\Session\AccountProxy $currentUser
+   *   The current user service.
    */
-  public function __construct(FloodUnblockManager $floodUnblockManager, Connection $database, DateFormatterInterface $date_formatter) {
+  public function __construct(FloodUnblockManager $floodUnblockManager, Connection $database, DateFormatterInterface $date_formatter, AccountProxy $currentUser) {
     $this->floodUnblockManager = $floodUnblockManager;
     $this->database = $database;
     $this->dateFormatter = $date_formatter;
     $this->userFloodConfig = $this->configFactory()->get('user.flood');
+    $this->currentUser = $currentUser;
   }
 
   /**
@@ -67,7 +78,8 @@ class FloodUnblockAdminForm extends FormBase {
     return new static(
       $container->get('flood_control.flood_unblock_manager'),
       $container->get('database'),
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('current_user')
     );
   }
 
@@ -89,9 +101,17 @@ class FloodUnblockAdminForm extends FormBase {
     // Fetches the identifier from the form.
     $identifier = $form_state->getValue('identifier');
 
+    // Set default markup.
+    $top_markup = $this->t("List of IP addresses and user ID's that are blocked after multiple failed login attempts. You can remove separate entries.");
+
+    // Add link to control settings page if current user haas permission to access it.
+    if ($this->currentUser->hasPermission('access flood control settings page')) {
+      $top_markup .= $this->t(" You can configure the login attempt limits and time windows on the <a href=':url'>Flood Control settings page</a>.</p>", [':url' => Url::fromRoute('flood_control.settings')->toString()]);
+    }
+
     // Provides introduction to the table.
     $form['top_markup'] = [
-      '#markup' => $this->t("<p>List of IP addresses and user ID's that are blocked after multiple failed login attempts. You can remove separate entries. You can configure the login attempt limits and time windows on the <a href=':url'>Flood Control settings page</a>.</p>", [':url' => Url::fromRoute('flood_control.settings')->toString()]),
+      '#markup' => "<p> {$top_markup} </p>",
     ];
 
     // Provides table filters.
@@ -194,7 +214,7 @@ class FloodUnblockAdminForm extends FormBase {
     // Provides the remove submit button.
     $form['remove'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Removed selected items from the flood table'),
+      '#value' => $this->t('Remove selected items from the flood table'),
       '#validate' => ['::validateRemoveItems'],
     ];
     if (count($options) == 0) {

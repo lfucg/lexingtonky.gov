@@ -9,7 +9,3 @@ services:
     tags:
       - { name: needs_destruction }
 
-  paragraphs.migration_plugins_alterer:
-    class: Drupal\paragraphs\MigrationPluginsAlterer
-    arguments:
-      - '@logger.factory'

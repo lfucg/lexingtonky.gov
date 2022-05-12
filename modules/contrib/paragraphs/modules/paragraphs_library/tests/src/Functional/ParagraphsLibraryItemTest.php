@@ -8,6 +8,7 @@ use Drupal\paragraphs\Entity\ParagraphsType;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\Tests\field_ui\Traits\FieldUiTestTrait;
 use Drupal\Tests\paragraphs\FunctionalJavascript\ParagraphsTestBaseTrait;
+use Drupal\Tests\paragraphs\Traits\ParagraphsCoreVersionUiTestTrait;
 
 /**
  * Tests the functionality of the Paragraphs Library.
@@ -16,14 +17,14 @@ use Drupal\Tests\paragraphs\FunctionalJavascript\ParagraphsTestBaseTrait;
  */
 class ParagraphsLibraryItemTest extends BrowserTestBase {
 
-  use ParagraphsTestBaseTrait, FieldUiTestTrait;
+  use ParagraphsTestBaseTrait, FieldUiTestTrait, ParagraphsCoreVersionUiTestTrait;
 
   /**
    * Modules to be enabled.
    *
    * @var string[]
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'paragraphs_library',
     'block',
@@ -56,10 +57,7 @@ class ParagraphsLibraryItemTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($admin);
 
-    $this->drupalPlaceBlock('system_breadcrumb_block');
-    $this->drupalPlaceBlock('local_tasks_block');
-    $this->drupalPlaceBlock('local_actions_block');
-    $this->drupalPlaceBlock('page_title_block');
+    $this->placeDefaultBlocks();
   }
 
   /**

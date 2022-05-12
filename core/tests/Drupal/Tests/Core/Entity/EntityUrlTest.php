@@ -10,16 +10,15 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Exception\UndefinedLinkTemplateException;
 use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\GeneratedUrl;
-use Drupal\Core\Link;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Url;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 
 /**
- * Tests URL handling of the \Drupal\Core\Entity\Entity class.
+ * Tests URL handling of the \Drupal\Core\Entity\EntityBase class.
  *
- * @coversDefaultClass \Drupal\Core\Entity\Entity
+ * @coversDefaultClass \Drupal\Core\Entity\EntityBase
  *
  * @group Entity
  */
@@ -177,11 +176,12 @@ class EntityUrlTest extends UnitTestCase {
     $entity->method('isDefaultRevision')->willReturn($is_default_revision);
     $this->registerLinkTemplate($link_template);
     // Even though this is tested with both the 'canonical' and the 'revision'
-    // template registered with the entity, we always ask for the 'revision'
-    // link template, to test that it falls back to the 'canonical' link
-    // template in case of the default revision.
+    // template registered with the entity, we ask for the 'revision' link
+    // template instead of 'canonical', to test that it falls back to the
+    // 'canonical' link template in case of the default revision.
+    $link_template = $link_template === 'canonical' ? 'revision' : $link_template;
     /** @var \Drupal\Core\Url $url */
-    $url = $entity->toUrl('revision');
+    $url = $entity->toUrl($link_template);
     $this->assertUrl($expected_route_name, $expected_route_parameters, $entity, TRUE, $url);
 
   }
@@ -200,6 +200,7 @@ class EntityUrlTest extends UnitTestCase {
     // Add the revision ID to the expected route parameters.
     $route_parameters['test_entity_revision'] = $this->revisionId;
     $test_cases['non_default_revision'] = [static::NON_DEFAULT_REVISION, 'revision', 'entity.test_entity.revision', $route_parameters];
+    $test_cases['revision-delete'] = [static::NON_DEFAULT_REVISION, 'revision-delete-form', 'entity.test_entity.revision_delete_form', $route_parameters];
 
     return $test_cases;
   }
@@ -379,164 +380,6 @@ class EntityUrlTest extends UnitTestCase {
   }
 
   /**
-   * Tests the urlInfo() method.
-   *
-   * @param string $rel
-   *   The link relation to test.
-   * @param array $options
-   *   An array of URL options to test with.
-   *
-   * @covers ::urlInfo
-   *
-   * @dataProvider providerTestUrlInfo
-   *
-   * @group legacy
-   * @expectedDeprecation EntityInterface::urlInfo() is deprecated in Drupal 8.0.0 and will be removed in Drupal 9.0.0. EntityInterface::toUrl() instead. See https://www.drupal.org/node/2614344
-   */
-  public function testUrlInfo($rel, $options) {
-    $entity = $this->getEntity(EntityBase::class, [], ['toUrl']);
-    $entity->expects($this->once())
-      ->method('toUrl')
-      ->with($rel, $options);
-
-    $entity->urlInfo($rel, $options);
-  }
-
-  /**
-   * Tests the link() method.
-   *
-   * @covers ::urlInfo
-   *
-   * @group legacy
-   * @expectedDeprecation EntityInterface::link() is deprecated in Drupal 8.0.0 and will be removed in Drupal 9.0.0. Use EntityInterface::toLink()->toString() instead. Note, the default relationship for configuration entities changes from 'edit-form' to 'canonical'. See https://www.drupal.org/node/2614344
-   */
-  public function testLink() {
-
-    $link = $this->createMock(Link::class);
-    $link->expects($this->once())
-      ->method('toString')
-      ->willReturn('<a href="/foo">The link</a>');
-
-    $entity = $this->getEntity(EntityBase::class, [], ['toLink']);
-    $entity->expects($this->once())
-      ->method('toLink')
-      ->with(NULL, 'canonical')
-      ->willReturn($link);
-
-    $this->assertEquals('<a href="/foo">The link</a>', $entity->link());
-  }
-
-  /**
-   * Provides data for testUrlInfo().
-   *
-   * @return array
-   *   An array of test cases for testUrlInfo().
-   */
-  public function providerTestUrlInfo() {
-    $test_cases = [];
-
-    $test_cases['default'] = ['canonical', []];
-    $test_cases['with_option'] = ['canonical', ['absolute' => TRUE]];
-    $test_cases['revision'] = ['revision', []];
-
-    return $test_cases;
-  }
-
-  /**
-   * Tests the url() method without an entity ID.
-   *
-   * @param string $rel
-   *   The link relation to test.
-   *
-   * @covers ::url
-   * @covers ::hasLinkTemplate
-   * @covers ::linkTemplates
-   *
-   * @dataProvider providerTestUrl
-   *
-   * @group legacy
-   * @expectedDeprecation EntityInterface::url() is deprecated in Drupal 8.0.0 and will be removed in Drupal 9.0.0. EntityInterface::toUrl() instead. Note, a \Drupal\Core\Url object is returned. See https://www.drupal.org/node/2614344
-   */
-  public function testUrlEmpty($rel) {
-    $entity = $this->getEntity(EntityBase::class, []);
-    $this->assertEquals('', $entity->url($rel));
-  }
-
-  /**
-   * Provides data for testUrlEmpty().
-   *
-   * @return array
-   *   An array of test cases for testUrlEmpty().
-   */
-  public function providerTestUrlEmpty() {
-    $test_cases = [];
-
-    $test_cases['default'] = ['canonical', []];
-    $test_cases['revision'] = ['revision', []];
-
-    return $test_cases;
-  }
-
-  /**
-   * Tests the url() method.
-   *
-   * @param string $rel
-   *   The link relation to test.
-   * @param array $options
-   *   An array of URL options to call url() with.
-   * @param array $default_options
-   *   An array of URL options that toUrl() should generate.
-   * @param array $expected_options
-   *   An array of combined URL options that should be set on the final URL.
-   *
-   * @covers ::url
-   * @covers ::hasLinkTemplate
-   * @covers ::linkTemplates
-   *
-   * @dataProvider providerTestUrl
-   *
-   * @group legacy
-   * @expectedDeprecation EntityInterface::url() is deprecated in Drupal 8.0.0 and will be removed in Drupal 9.0.0. EntityInterface::toUrl() instead. Note, a \Drupal\Core\Url object is returned. See https://www.drupal.org/node/2614344
-   */
-  public function testUrl($rel, $options, $default_options, $expected_options) {
-    $entity = $this->getEntity(EntityBase::class, ['id' => $this->entityId], ['toUrl']);
-    $this->registerLinkTemplate($rel);
-
-    $uri = $this->prophesize(Url::class);
-    $uri->getOptions()->willReturn($default_options);
-    $uri->setOptions($expected_options)->shouldBeCalled();
-
-    $url_string = "/test-entity/{$this->entityId}/$rel";
-    $uri->toString()->willReturn($url_string);
-
-    $entity->expects($this->once())
-      ->method('toUrl')
-      ->with($rel)
-      ->willReturn($uri->reveal());
-
-    $this->assertEquals($url_string, $entity->url($rel, $options));
-  }
-
-  /**
-   * Provides data for testUrl().
-   *
-   * @return array
-   *   An array of test cases for testUrl().
-   */
-  public function providerTestUrl() {
-    $test_cases = [];
-
-    $test_cases['default'] = ['canonical', [], [], []];
-    $test_cases['revision'] = ['revision', [], [], []];
-    $test_cases['option'] = ['canonical', ['absolute' => TRUE], [], ['absolute' => TRUE]];
-    $test_cases['default_option'] = ['canonical', [], ['absolute' => TRUE], ['absolute' => TRUE]];
-    $test_cases['option_merge'] = ['canonical', ['absolute' => TRUE], ['entity_type' => $this->entityTypeId], ['absolute' => TRUE, 'entity_type' => $this->entityTypeId]];
-    $test_cases['option_override'] = ['canonical', ['absolute' => TRUE], ['absolute' => FALSE], ['absolute' => TRUE]];
-
-    return $test_cases;
-  }
-
-  /**
    * Tests the uriRelationships() method.
    *
    * @covers ::uriRelationships
@@ -552,7 +395,7 @@ class EntityUrlTest extends UnitTestCase {
     // Test route with no mandatory parameters.
     $this->registerLinkTemplate('canonical');
     $route_name_0 = 'entity.' . $this->entityTypeId . '.canonical';
-    $url_generator->expects($this->at(0))
+    $url_generator->expects($this->any())
       ->method('generateFromRoute')
       ->with($route_name_0)
       ->willReturn((new GeneratedUrl())->setGeneratedUrl('/entity_test'));
@@ -561,7 +404,7 @@ class EntityUrlTest extends UnitTestCase {
     // Test route with non-default mandatory parameters.
     $this->registerLinkTemplate('{non_default_parameter}');
     $route_name_1 = 'entity.' . $this->entityTypeId . '.{non_default_parameter}';
-    $url_generator->expects($this->at(0))
+    $url_generator->expects($this->any())
       ->method('generateFromRoute')
       ->with($route_name_1)
       ->willThrowException(new MissingMandatoryParametersException());
@@ -590,7 +433,7 @@ class EntityUrlTest extends UnitTestCase {
     // add method prophecies later while still revealing the prophecy now.
     $entity = $this->getMockBuilder($class)
       ->setConstructorArgs([$values, $this->entityTypeId])
-      ->setMethods($methods)
+      ->onlyMethods($methods)
       ->getMockForAbstractClass();
 
     $this->entityType = $this->prophesize(EntityTypeInterface::class);
@@ -617,8 +460,10 @@ class EntityUrlTest extends UnitTestCase {
    *   Whether or not the URL is expected to have a language option.
    * @param \Drupal\Core\Url $url
    *   The URL option to make the assertions on.
+   *
+   * @internal
    */
-  protected function assertUrl($expected_route_name, array $expected_route_parameters, $entity, $has_language, Url $url) {
+  protected function assertUrl(string $expected_route_name, array $expected_route_parameters, $entity, bool $has_language, Url $url): void {
     $this->assertEquals($expected_route_name, $url->getRouteName());
     $this->assertEquals($expected_route_parameters, $url->getRouteParameters());
     $this->assertEquals($this->entityTypeId, $url->getOption('entity_type'));

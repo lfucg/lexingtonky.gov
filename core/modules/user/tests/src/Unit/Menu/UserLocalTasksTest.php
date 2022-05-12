@@ -11,7 +11,7 @@ use Drupal\Tests\Core\Menu\LocalTaskIntegrationTestBase;
  */
 class UserLocalTasksTest extends LocalTaskIntegrationTestBase {
 
-  protected function setUp() {
+  protected function setUp(): void {
     $this->directoryList = ['user' => 'core/modules/user'];
     parent::setUp();
   }
@@ -30,9 +30,9 @@ class UserLocalTasksTest extends LocalTaskIntegrationTestBase {
    */
   public function getUserAdminRoutes() {
     return [
-      ['entity.user.collection', [['entity.user.collection', 'user.admin_permissions', 'entity.user_role.collection']]],
-      ['user.admin_permissions', [['entity.user.collection', 'user.admin_permissions', 'entity.user_role.collection']]],
-      ['entity.user_role.collection', [['entity.user.collection', 'user.admin_permissions', 'entity.user_role.collection']]],
+      ['entity.user.collection', [['entity.user.collection', 'user.admin_permissions', 'entity.user_role.collection', 'user.role.settings']]],
+      ['user.admin_permissions', [['entity.user.collection', 'user.admin_permissions', 'entity.user_role.collection', 'user.role.settings']]],
+      ['entity.user_role.collection', [['entity.user.collection', 'user.admin_permissions', 'entity.user_role.collection', 'user.role.settings']]],
       ['entity.user.admin_form', [['user.account_settings_tab']]],
     ];
   }

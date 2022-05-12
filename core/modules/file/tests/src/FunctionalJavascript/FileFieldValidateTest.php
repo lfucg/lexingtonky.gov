@@ -20,7 +20,7 @@ class FileFieldValidateTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'file'];
+  protected static $modules = ['node', 'file'];
 
   /**
    * {@inheritdoc}
@@ -28,7 +28,7 @@ class FileFieldValidateTest extends WebDriverTestBase {
   protected $defaultTheme = 'stark';
 
   /**
-   * Test the validation message is displayed only once for ajax uploads.
+   * Tests the validation message is displayed only once for ajax uploads.
    */
   public function testAjaxValidationMessage() {
     $field_name = strtolower($this->randomMachineName());

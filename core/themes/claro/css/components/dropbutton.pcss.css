@@ -140,7 +140,7 @@
   height: 0.5625rem;
   content: "";
   transform: translate(50%, -50%) rotate(0);
-  background: url("data:image/svg+xml,%3Csvg width='14' height='9' viewBox='0 0 14 9' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.2384999,1.9384769 1.646703,0.5166019 7.0002189,5.8193359 12.353735,0.5166019 13.761938,1.9384769 7.0002189,8.635742Z' fill='%23222330'/%3E%3C/svg%3E") no-repeat center;
+  background: url(../../images/icons/222330/chevron-down.svg) no-repeat center;
   background-size: contain;
 }
 
@@ -184,7 +184,7 @@
 }
 
 /* High contrast. */
-@media screen and (-ms-high-contrast: active) {
+@media (-ms-high-contrast: active), (forced-colors: active) {
   /* Default. */
   .dropbutton__toggle::before {
     width: 0.5625rem;
@@ -246,14 +246,14 @@
 }
 
 /* Variants */
-.no-touchevents .dropbutton__item--small:first-of-type > * {
+.no-touchevents .dropbutton--small .dropbutton__item:first-of-type > * {
   padding-top: calc(var(--dropbutton-small-spacing-size) - var(--dropbutton-border-size));
   padding-bottom: calc(var(--dropbutton-small-spacing-size) - var(--dropbutton-border-size));
   font-size: var(--dropbutton-small-font-size);
   line-height: var(--dropbutton-small-line-height);
 }
 
-.no-touchevents .dropbutton__item--extrasmall:first-of-type > * {
+.no-touchevents .dropbutton--extrasmall .dropbutton__item:first-of-type > * {
   padding-top: calc(var(--dropbutton-extrasmall-spacing-size) - var(--dropbutton-border-size));
   padding-bottom: calc(var(--dropbutton-extrasmall-spacing-size) - var(--dropbutton-border-size));
   font-size: var(--dropbutton-extrasmall-font-size);
@@ -319,7 +319,7 @@
  * Non-first dropbutton list elements.
  */
 .dropbutton__item:first-of-type ~ .dropbutton__item {
-  border: var(--dropbutton-border-size) solid var(--color-lightgray);
+  border: var(--dropbutton-border-size) solid var(--color-gray-200);
   border-bottom: 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
 }
@@ -329,7 +329,7 @@
 }
 
 .dropbutton__item ~ .dropbutton__item:last-child {
-  border-bottom: var(--dropbutton-border-size) solid var(--color-lightgray);
+  border-bottom: var(--dropbutton-border-size) solid var(--color-gray-200);
   border-radius: 0 0 var(--dropbutton-border-radius-size) var(--dropbutton-border-radius-size);
 }
 
@@ -341,7 +341,7 @@
   position: relative;
   padding: calc(var(--dropbutton-spacing-size) - var(--dropbutton-border-size));
   text-decoration: none;
-  color: var(--color-davysgrey);
+  color: var(--color-gray-800);
   border: var(--dropbutton-border-size) solid transparent !important; /* 1 */
   border-radius: var(--dropbutton-border-radius-size);
   background: var(--color-white);
@@ -353,7 +353,8 @@
 }
 
 /**
- * Set the inherited button border color to transparent for high contrast mode.
+ * Set the inherited button border color to transparent for high contrast
+ * mode.
  */
 @media screen and (-ms-high-contrast: active) {
   .dropbutton__item:first-of-type ~ .dropbutton__item > a,
@@ -368,16 +369,16 @@
 }
 
 /* Variants. */
-.no-touchevents .dropbutton__item:first-of-type ~ .dropbutton__item--small > a,
-.no-touchevents .dropbutton__item:first-of-type ~ .dropbutton__item--small > .button {
+.no-touchevents .dropbutton--small .dropbutton__item:first-of-type ~ .dropbutton__item > a,
+.no-touchevents .dropbutton--small .dropbutton__item:first-of-type ~ .dropbutton__item > .button {
   padding-top: var(--dropbutton-small-spacing-size);
   padding-bottom: var(--dropbutton-small-spacing-size);
   font-size: var(--dropbutton-small-font-size);
   line-height: var(--dropbutton-small-line-height);
 }
 
-.no-touchevents .dropbutton__item:first-of-type ~ .dropbutton__item--extrasmall > a,
-.no-touchevents .dropbutton__item:first-of-type ~ .dropbutton__item--extrasmall > .button {
+.no-touchevents .dropbutton--extrasmall .dropbutton__item:first-of-type ~ .dropbutton__item > a,
+.no-touchevents .dropbutton--extrasmall .dropbutton__item:first-of-type ~ .dropbutton__item > .button {
   padding-top: var(--dropbutton-extrasmall-spacing-size);
   padding-bottom: var(--dropbutton-extrasmall-spacing-size);
   font-size: var(--dropbutton-extrasmall-font-size);
@@ -392,7 +393,7 @@
 
 .dropbutton__item:first-of-type ~ .dropbutton__item > *:hover {
   color: var(--color-text);
-  background: var(--color-whitesmoke);
+  background: var(--color-gray-050);
 }
 
 .dropbutton__item > .button:not(:focus) {

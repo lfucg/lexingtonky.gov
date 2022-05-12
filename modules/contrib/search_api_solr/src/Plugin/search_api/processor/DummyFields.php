@@ -32,7 +32,7 @@ class DummyFields extends ProcessorPluginBase {
     if ($datasource) {
       $definition = [
         'label' => $this->t('Dummy field'),
-        'description' => $this->t('Adds dummy field that gets its values via API, for example hook_search_api_solr_documents_alter().'),
+        'description' => $this->t('Adds dummy field that gets its values via API, for example hook_search_api_solr_documents_alter(). To have these values as part of the result set you need to enable "Retrieve result data from Solr" in the server edit form.'),
         'type' => 'string',
         'processor_id' => $this->getPluginId(),
         'is_list' => TRUE,

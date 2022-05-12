@@ -13,9 +13,7 @@ use Drupal\Tests\BrowserTestBase;
 class HoneypotFormProgrammaticSubmissionTest extends BrowserTestBase {
 
   /**
-   * Default theme.
-   *
-   * @var string
+   * {@inheritdoc}
    */
   protected $defaultTheme = 'stark';
 
@@ -27,7 +25,7 @@ class HoneypotFormProgrammaticSubmissionTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Set up required Honeypot configuration.
@@ -44,7 +42,7 @@ class HoneypotFormProgrammaticSubmissionTest extends BrowserTestBase {
   /**
    * Trigger a programmatic form submission and verify the validation errors.
    */
-  public function testProgrammaticFormSubmission() {
+  public function testProgrammaticFormSubmission(): void {
     $result = $this->drupalGet('/honeypot_test/submit_form');
     $form_errors = (array) Json::decode($result);
     $this->assertSession()->responseNotContains('There was a problem with your form submission. Please wait 6 seconds and try again.');

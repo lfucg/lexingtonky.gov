@@ -17,6 +17,7 @@ use Symfony\Component\Finder\Finder;
  * ->add('README')                         // Puts file 'README' in archive at the root
  * ->add('project')                        // Puts entire contents of directory 'project' in archinve inside 'project'
  * ->addFile('dir/file.txt', 'file.txt')   // Takes 'file.txt' from cwd and puts it in archive inside 'dir'.
+ * ->exclude(['dir\/.*.zip', '.*.md'])      // Add regex (or array of regex) to the excluded patterns list.
  * ->run();
  * ?>
  * ```
@@ -38,6 +39,12 @@ class Pack extends BaseTask implements PrintedInterface
     private $archiveFile;
 
     /**
+     * A list of regex patterns to exclude from the archive.
+     *
+     * @var array
+     */
+    private $ignoreList;
+    /**
      * Construct the class.
      *
      * @param string $archiveFile
@@ -48,6 +55,7 @@ class Pack extends BaseTask implements PrintedInterface
     public function __construct($archiveFile)
     {
         $this->archiveFile = $archiveFile;
+        $this->ignoreList = [];
     }
 
     /**
@@ -135,6 +143,20 @@ class Pack extends BaseTask implements PrintedInterface
     }
 
     /**
+     * Allow files or folder to be excluded from the archive. Use regex, without enclosing slashes.
+     *
+     * @param string|string[]
+     *   A regex (or array of) to be excluded.
+     *
+     * @return $this
+     */
+    public function exclude($ignoreList)
+    {
+        $this->ignoreList = array_merge($this->ignoreList, (array) $ignoreList);
+        return $this;
+    }
+
+    /**
      * Create a zip archive for distribution.
      *
      * @return \Robo\Result
@@ -184,6 +206,10 @@ class Pack extends BaseTask implements PrintedInterface
         }
 
         $tar_object = new \Archive_Tar($archiveFile);
+        if (!empty($this->ignoreList)) {
+            $regexp = '#/' . join('$|/', $this->ignoreList) . '#';
+            $tar_object->setIgnoreRegexp($regexp);
+        }
         foreach ($items as $placementLocation => $filesystemLocation) {
             $p_remove_dir = $filesystemLocation;
             $p_add_dir = $placementLocation;
@@ -215,7 +241,7 @@ class Pack extends BaseTask implements PrintedInterface
             return Result::errorMissingExtension($this, 'zlib', 'zip packing');
         }
 
-        $zip = new \ZipArchive($archiveFile, \ZipArchive::CREATE);
+        $zip = new \ZipArchive();
         if (!$zip->open($archiveFile, \ZipArchive::CREATE)) {
             return Result::error($this, "Could not create zip archive {$archiveFile}");
         }
@@ -237,6 +263,11 @@ class Pack extends BaseTask implements PrintedInterface
             if (is_dir($filesystemLocation)) {
                 $finder = new Finder();
                 $finder->files()->in($filesystemLocation)->ignoreDotFiles(false);
+                if (!empty($this->ignoreList)) {
+                    // Add slashes so Symfony Finder patterns work like Archive_Tar ones.
+                    $zipIgnoreList = preg_filter('/^|$/', '/', $this->ignoreList);
+                    $finder->notName($zipIgnoreList)->notPath($zipIgnoreList);
+                }
 
                 foreach ($finder as $file) {
                     // Replace Windows slashes or resulting zip will have issues on *nixes.

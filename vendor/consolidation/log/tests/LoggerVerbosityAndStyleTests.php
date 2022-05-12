@@ -13,7 +13,7 @@ class LoggerVerbosityAndStyleTests extends TestCase
   protected $output;
   protected $logger;
 
-  function setup() {
+  function setup(): void {
     $this->output = new BufferedOutput();
     //$this->output->setVerbosity(OutputInterface::VERBOSITY_VERY_VERBOSE);
     $this->logger = new Logger($this->output);
@@ -38,6 +38,27 @@ class LoggerVerbosityAndStyleTests extends TestCase
     // all array items will be calculated, and one test will
     // be generated for each one.
     return TestDataPermuter::expandProviderDataArrays([
+      [
+        '\Consolidation\Log\UnstyledLogOutputStyler',
+        $TEST_ALL_LOG_LEVELS,
+        LogLevel::EMERGENCY,
+        'The planet is melting. Consume less.',
+        ' [emergency] The planet is melting. Consume less.',
+      ],
+      [
+        '\Consolidation\Log\UnstyledLogOutputStyler',
+        $TEST_ALL_LOG_LEVELS,
+        LogLevel::ALERT,
+        'Masks required.',
+        ' [alert] Masks required.',
+      ],
+      [
+        '\Consolidation\Log\UnstyledLogOutputStyler',
+        $TEST_ALL_LOG_LEVELS,
+        LogLevel::CRITICAL,
+        'Reactor meltdown imminent.',
+        ' [critical] Reactor meltdown imminent.',
+      ],
       [
         '\Consolidation\Log\UnstyledLogOutputStyler',
         $TEST_ALL_LOG_LEVELS,
@@ -160,6 +181,8 @@ class LoggerVerbosityAndStyleTests extends TestCase
     $this->output->setVerbosity($verbocity);
     $this->logger->log($level, $message);
     $outputText = rtrim($this->output->fetch(), "\n\r\t ");
+    $outputText = preg_replace('#\r\n#ms', "\n", $outputText);
+    $expected = preg_replace('#\r\n#ms', "\n", $expected);
     $this->assertEquals($expected, $outputText);
   }
 }

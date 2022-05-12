@@ -42,14 +42,22 @@ class NodeRouteContext implements ContextProviderInterface {
     $result = [];
     $context_definition = EntityContextDefinition::create('node')->setRequired(FALSE);
     $value = NULL;
-    if (($route_object = $this->routeMatch->getRouteObject()) && ($route_contexts = $route_object->getOption('parameters')) && isset($route_contexts['node'])) {
-      if ($node = $this->routeMatch->getParameter('node')) {
+    if (($route_object = $this->routeMatch->getRouteObject())) {
+      $route_contexts = $route_object->getOption('parameters');
+      // Check for a node revision parameter first.
+      if (isset($route_contexts['node_revision']) && $revision = $this->routeMatch->getParameter('node_revision')) {
+        $value = $revision;
+      }
+      elseif (isset($route_contexts['node']) && $node = $this->routeMatch->getParameter('node')) {
         $value = $node;
       }
-    }
-    elseif ($this->routeMatch->getRouteName() == 'node.add') {
-      $node_type = $this->routeMatch->getParameter('node_type');
-      $value = Node::create(['type' => $node_type->id()]);
+      elseif (isset($route_contexts['node_preview']) && $node = $this->routeMatch->getParameter('node_preview')) {
+        $value = $node;
+      }
+      elseif ($this->routeMatch->getRouteName() == 'node.add') {
+        $node_type = $this->routeMatch->getParameter('node_type');
+        $value = Node::create(['type' => $node_type->id()]);
+      }
     }
 
     $cacheability = new CacheableMetadata();

@@ -33,7 +33,7 @@ class EntityLabel extends FieldPluginBase {
   protected $entityTypeManager;
 
   /**
-   * Constructs a EntityLabel object.
+   * Constructs an EntityLabel object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -103,7 +103,7 @@ class EntityLabel extends FieldPluginBase {
       return;
     }
 
-    /** @var $entity \Drupal\Core\Entity\EntityInterface */
+    /** @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = $this->loadedReferencers[$type][$value];
 
     if (!empty($this->options['link_to_entity'])) {

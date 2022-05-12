@@ -18,7 +18,7 @@ class ModuleConfigureRouteTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['system', 'user'];
+  protected static $modules = ['system', 'user', 'path_alias'];
 
   /**
    * @var \Drupal\Core\Routing\RouteProviderInterface
@@ -35,14 +35,14 @@ class ModuleConfigureRouteTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->routeProvider = \Drupal::service('router.route_provider');
     $this->moduleInfo = \Drupal::service('extension.list.module')->getList();
   }
 
   /**
-   * Test the module configure routes exist.
+   * Tests the module configure routes exist.
    *
    * @dataProvider coreModuleListDataProvider
    */

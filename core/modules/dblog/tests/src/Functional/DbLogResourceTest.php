@@ -45,12 +45,12 @@ class DbLogResourceTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['hal', 'dblog'];
+  protected static $modules = ['hal', 'dblog'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $auth = isset(static::$auth) ? [static::$auth] : [];
@@ -84,11 +84,11 @@ class DbLogResourceTest extends ResourceTestBase {
     $this->setUpAuthorization('GET');
 
     $response = $this->request('GET', $url, $request_options);
-    $this->assertResourceResponse(200, FALSE, $response, ['config:rest.resource.dblog', 'config:rest.settings', 'http_response'], ['user.permissions'], FALSE, 'MISS');
+    $this->assertResourceResponse(200, FALSE, $response, ['config:rest.resource.dblog', 'http_response'], ['user.permissions'], FALSE, 'MISS');
     $log = Json::decode((string) $response->getBody());
-    $this->assertEqual($log['wid'], $id, 'Log ID is correct.');
-    $this->assertEqual($log['type'], 'rest', 'Type of log message is correct.');
-    $this->assertEqual($log['message'], 'Test message', 'Log message text is correct.');
+    $this->assertEquals($id, $log['wid'], 'Log ID is correct.');
+    $this->assertEquals('rest', $log['type'], 'Type of log message is correct.');
+    $this->assertEquals('Test message', $log['message'], 'Log message text is correct.');
 
     // Request an unknown log entry.
     $url->setRouteParameter('id', 9999);
@@ -118,17 +118,12 @@ class DbLogResourceTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function assertNormalizationEdgeCases($method, Url $url, array $request_options) {}
+  protected function assertNormalizationEdgeCases($method, Url $url, array $request_options): void {}
 
   /**
    * {@inheritdoc}
    */
   protected function getExpectedUnauthorizedAccessMessage($method) {}
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getExpectedBcUnauthorizedAccessMessage($method) {}
 
   /**
    * {@inheritdoc}

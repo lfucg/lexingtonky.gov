@@ -41,7 +41,7 @@ class MetatagFrontpageTest extends BrowserTestBase {
   /**
    * Setup basic environment.
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Login user 1.
@@ -71,7 +71,7 @@ class MetatagFrontpageTest extends BrowserTestBase {
       'description' => 'Test description',
       'keywords' => 'testing,keywords',
     ];
-    $this->drupalPostForm(NULL, $edit, $this->t('Save'));
+    $this->submitForm($edit, $this->t('Save'));
     $session->statusCodeEquals(200);
     $session->pageTextContains('Saved the Front page Metatag defaults.');
 
@@ -116,7 +116,7 @@ class MetatagFrontpageTest extends BrowserTestBase {
     ];
     $this->drupalGet('admin/config/system/site-information');
     $session->statusCodeEquals(200);
-    $this->drupalPostForm(NULL, $site_edit, $this->t('Save configuration'));
+    $this->submitForm($site_edit, $this->t('Save configuration'));
     $session->pageTextContains('The configuration options have been saved.');
     return;
 
@@ -139,7 +139,7 @@ class MetatagFrontpageTest extends BrowserTestBase {
     $this->drupalGet('admin/config/search/metatag/front/delete');
     $session = $this->assertSession();
     $session->statusCodeEquals(200);
-    $this->drupalPostForm(NULL, [], $this->t('Delete'));
+    $this->submitForm([], $this->t('Delete'));
     $session->statusCodeEquals(200);
     $session->pageTextContains('Deleted Front page defaults.');
 
@@ -150,7 +150,7 @@ class MetatagFrontpageTest extends BrowserTestBase {
       'title' => 'Test title for a node.',
       'description' => 'Test description for a node.',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $session->pageTextContains('Saved the Content Metatag defaults.');
     $this->drupalGet('<front>');
     foreach ($edit as $metatag => $metatag_value) {
@@ -174,7 +174,7 @@ class MetatagFrontpageTest extends BrowserTestBase {
     $edit = [
       'site_frontpage' => '/test-page',
     ];
-    $this->drupalPostForm(NULL, $edit, $this->t('Save configuration'));
+    $this->submitForm($edit, $this->t('Save configuration'));
     $session->pageTextContains('The configuration options have been saved.');
 
     // Front page is custom route.
@@ -185,7 +185,7 @@ class MetatagFrontpageTest extends BrowserTestBase {
       'title' => 'Test title.',
       'description' => 'Test description.',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $session->pageTextContains('Saved the Global Metatag defaults.');
 
     // Test Metatags.

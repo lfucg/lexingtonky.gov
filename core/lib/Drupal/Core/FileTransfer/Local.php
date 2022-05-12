@@ -22,12 +22,8 @@ class Local extends FileTransfer implements ChmodInterface {
   /**
    * {@inheritdoc}
    */
-  public function __construct($jail, FileSystemInterface $file_system = NULL) {
+  public function __construct($jail, FileSystemInterface $file_system) {
     parent::__construct($jail);
-    if (!isset($file_system)) {
-      @trigger_error('The $file_system parameter was added in Drupal 8.8.0 and will be required in 9.0.0. See https://www.drupal.org/node/3021434.', E_USER_DEPRECATED);
-      $file_system = \Drupal::service('file_system');
-    }
     $this->fileSystem = $file_system;
   }
 
@@ -50,7 +46,7 @@ class Local extends FileTransfer implements ChmodInterface {
    */
   protected function copyFileJailed($source, $destination) {
     if (@!copy($source, $destination)) {
-      throw new FileTransferException('Cannot copy %source to %destination.', NULL, ['%source' => $source, '%destination' => $destination]);
+      throw new FileTransferException('Cannot copy %source to %destination.', 0, ['%source' => $source, '%destination' => $destination]);
     }
   }
 
@@ -59,7 +55,7 @@ class Local extends FileTransfer implements ChmodInterface {
    */
   protected function createDirectoryJailed($directory) {
     if (!is_dir($directory) && @!mkdir($directory, 0777, TRUE)) {
-      throw new FileTransferException('Cannot create directory %directory.', NULL, ['%directory' => $directory]);
+      throw new FileTransferException('Cannot create directory %directory.', 0, ['%directory' => $directory]);
     }
   }
 
@@ -69,24 +65,24 @@ class Local extends FileTransfer implements ChmodInterface {
   protected function removeDirectoryJailed($directory) {
     if (!is_dir($directory)) {
       // Programmer error assertion, not something we expect users to see.
-      throw new FileTransferException('removeDirectoryJailed() called with a path (%directory) that is not a directory.', NULL, ['%directory' => $directory]);
+      throw new FileTransferException('removeDirectoryJailed() called with a path (%directory) that is not a directory.', 0, ['%directory' => $directory]);
     }
     /** @var \Drupal\Core\File\FileSystemInterface $file_system */
     $file_system = \Drupal::service('file_system');
     foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $filename => $file) {
       if ($file->isDir()) {
         if (@!$file_system->rmdir($filename)) {
-          throw new FileTransferException('Cannot remove directory %directory.', NULL, ['%directory' => $filename]);
+          throw new FileTransferException('Cannot remove directory %directory.', 0, ['%directory' => $filename]);
         }
       }
       elseif ($file->isFile()) {
         if (@!$this->fileSystem->unlink($filename)) {
-          throw new FileTransferException('Cannot remove file %file.', NULL, ['%file' => $filename]);
+          throw new FileTransferException('Cannot remove file %file.', 0, ['%file' => $filename]);
         }
       }
     }
     if (@!$file_system->rmdir($directory)) {
-      throw new FileTransferException('Cannot remove directory %directory.', NULL, ['%directory' => $directory]);
+      throw new FileTransferException('Cannot remove directory %directory.', 0, ['%directory' => $directory]);
     }
   }
 
@@ -95,7 +91,7 @@ class Local extends FileTransfer implements ChmodInterface {
    */
   protected function removeFileJailed($file) {
     if (@!$this->fileSystem->unlink($file)) {
-      throw new FileTransferException('Cannot remove file %file.', NULL, ['%file' => $file]);
+      throw new FileTransferException('Cannot remove file %file.', 0, ['%file' => $file]);
     }
   }
 
@@ -120,12 +116,12 @@ class Local extends FileTransfer implements ChmodInterface {
     if ($recursive && is_dir($path)) {
       foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST) as $filename => $file) {
         if (@!chmod($filename, $mode)) {
-          throw new FileTransferException('Cannot chmod %path.', NULL, ['%path' => $filename]);
+          throw new FileTransferException('Cannot chmod %path.', 0, ['%path' => $filename]);
         }
       }
     }
     elseif (@!chmod($path, $mode)) {
-      throw new FileTransferException('Cannot chmod %path.', NULL, ['%path' => $path]);
+      throw new FileTransferException('Cannot chmod %path.', 0, ['%path' => $path]);
     }
   }
 

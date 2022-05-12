@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Implements hook_help().
@@ -15,8 +16,8 @@ function metatag_favicons_help($route_name, RouteMatchInterface $route_match) {
     // Main module help for the metatag_favicons module.
     case 'help.page.metatag_favicons':
       $output = '';
-      $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Provides support for many different favicons.') . '</p>';
+      $output .= '<h3>' . (string) new TranslatableMarkup('About') . '</h3>';
+      $output .= '<p>' . (string) new TranslatableMarkup('Provides support for many different favicons.') . '</p>';
       return $output;
 
     default:
@@ -34,9 +35,9 @@ function metatag_favicons_page_attachments_alter(array &$attachments) {
 
   // Remove the default shortcut icon if one was set by Metatag.
   foreach ($attachments['#attached']['html_head'] as $element) {
-    if (isset($element[1]) && $element[1] == 'shortcut_icon') {
+    if (isset($element[1]) && in_array($element[1], ['shortcut_icon', 'icon'])) {
       foreach ($attachments['#attached']['html_head_link'] as $key => $value) {
-        if (isset($value[0]['rel']) && $value[0]['rel'] == 'shortcut icon') {
+        if (isset($value[0]['rel']) && in_array($value[0]['rel'], ['shortcut_icon', 'icon'])) {
           unset($attachments['#attached']['html_head_link'][$key]);
         }
       }

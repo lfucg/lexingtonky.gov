@@ -9,7 +9,6 @@ use Drupal\search_api\Entity\Server;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\Query\ResultSetInterface;
 use Drupal\search_api\Utility\Utility;
-use Drupal\search_api_autocomplete\Entity\Search;
 use Drupal\search_api_solr\Controller\SolrConfigSetController;
 use Drupal\search_api_solr\SearchApiSolrException;
 use Drupal\search_api_solr\SolrBackendInterface;
@@ -77,7 +76,6 @@ class SearchApiSolrTest extends SolrBackendTestBase {
    */
   public static $modules = [
     'language',
-    'search_api_autocomplete',
     'search_api_solr_legacy',
     'user',
   ];
@@ -678,6 +676,20 @@ class SearchApiSolrTest extends SolrBackendTestBase {
     $this->assertEquals('tm_X3b_en_body:("some text")', $fq[0]['query']);
     $this->assertArrayNotHasKey(1, $fq);
 
+    $query = $this->buildSearch();
+    $query->setLanguages([LanguageInterface::LANGCODE_NOT_SPECIFIED]);
+    $query->addCondition('body', 'some text', '=');
+    $fq = $this->invokeMethod($backend, 'getFilterQueries', [$query, &$options]);
+    $this->assertEquals('tm_X3b_und_body:("some text")', $fq[0]['query']);
+    $this->assertArrayNotHasKey(1, $fq);
+
+    $query = $this->buildSearch();
+    $query->setLanguages([LanguageInterface::LANGCODE_NOT_APPLICABLE]);
+    $query->addCondition('body', 'some text', '=');
+    $fq = $this->invokeMethod($backend, 'getFilterQueries', [$query, &$options]);
+    $this->assertEquals('tm_X3b_und_body:("some text")', $fq[0]['query']);
+    $this->assertArrayNotHasKey(1, $fq);
+
     $parse_mode_manager = \Drupal::service('plugin.manager.search_api.parse_mode');
     $parse_mode_phrase = $parse_mode_manager->createInstance('phrase');
 
@@ -1086,9 +1098,9 @@ class SearchApiSolrTest extends SolrBackendTestBase {
   }
 
   /**
-   * Tests the autocomplete support and ngram results.
+   * Tests the ngram result.
    */
-  public function testAutocompleteAndNgram() {
+  protected function testNgram(): void {
     $this->addTestEntity(1, [
       'name' => 'Test Article 1',
       'body' => 'The test article number 1 about cats, dogs and trees.',
@@ -1105,89 +1117,6 @@ class SearchApiSolrTest extends SolrBackendTestBase {
     ]);
 
     $this->indexItems($this->indexId);
-
-    /** @var \Drupal\search_api_solr\Plugin\search_api\backend\SearchApiSolrBackend $backend */
-    $backend = Server::load($this->serverId)->getBackend();
-    $solr_major_version = $backend->getSolrConnector()->getSolrMajorVersion();
-    $autocompleteSearch = new Search([], 'search_api_autocomplete_search');
-
-    $query = $this->buildSearch(['artic'], [], ['body_unstemmed'], FALSE);
-    $query->setLanguages(['en']);
-    $suggestions = $backend->getAutocompleteSuggestions($query, $autocompleteSearch, 'artic', 'artic');
-    $this->assertEquals(1, count($suggestions));
-    $this->assertEquals('le', $suggestions[0]->getSuggestionSuffix());
-    $this->assertEquals(2, $suggestions[0]->getResultsCount());
-
-    $query = $this->buildSearch(['artic'], [], ['body'], FALSE);
-    $query->setLanguages(['en']);
-    $suggestions = $backend->getTermsSuggestions($query, $autocompleteSearch, 'artic', 'artic');
-    $this->assertEquals(1, count($suggestions));
-    // This time we test the stemmed token.
-    $this->assertEquals('l', $suggestions[0]->getSuggestionSuffix());
-    $this->assertEquals(2, $suggestions[0]->getResultsCount());
-
-    $targeted_branch = $backend->getSolrConnector()->getSchemaTargetedSolrBranch();
-    if ('4.x' !== $targeted_branch && '3.x' !== $targeted_branch) {
-      $query = $this->buildSearch(['articel'], [], ['body'], FALSE);
-      $query->setLanguages(['en']);
-      $suggestions = $backend->getSpellcheckSuggestions($query, $autocompleteSearch, 'articel', 'articel');
-      $this->assertEquals(1, count($suggestions));
-      $this->assertEquals('article', $suggestions[0]->getSuggestedKeys());
-      $this->assertEquals(0, $suggestions[0]->getResultsCount());
-    }
-
-    $query = $this->buildSearch(['article tre'], [], ['body_unstemmed'], FALSE);
-    $query->setLanguages(['en']);
-    $suggestions = $backend->getAutocompleteSuggestions($query, $autocompleteSearch, 'tre', 'article tre');
-    $this->assertEquals('article tree', $suggestions[0]->getSuggestedKeys());
-    $this->assertEquals(1, $suggestions[0]->getResultsCount());
-    // Having set preserveOriginal in WordDelimiter let punction remain.
-    $this->assertEquals('article tree.', $suggestions[1]->getSuggestedKeys());
-    $this->assertEquals(1, $suggestions[1]->getResultsCount());
-    $this->assertEquals('article trees', $suggestions[2]->getSuggestedKeys());
-    $this->assertEquals(1, $suggestions[2]->getResultsCount());
-    $this->assertEquals('article trees.', $suggestions[3]->getSuggestedKeys());
-    $this->assertEquals(1, $suggestions[3]->getResultsCount());
-
-    // @todo spellcheck tests
-    // @codingStandardsIgnoreStart
-    // $query = $this->buildSearch(['articel cats doks'], [], ['body'], FALSE);
-    // $query->setLanguages(['en']);
-    // $suggestions = $backend->getSpellcheckSuggestions($query, $autocompleteSearch, 'doks', 'articel doks');
-    // $this->assertEquals(1, count($suggestions));
-    // $this->assertEquals('article dogs', $suggestions[0]->getSuggestedKeys());
-
-    // $query = $this->buildSearch(['articel tre'], [], ['body'], FALSE);
-    // $query->setLanguages(['en']);
-    // $suggestions = $backend->getAutocompleteSuggestions($query, $autocompleteSearch, 'tre', 'articel tre');
-    // $this->assertEquals(5, count($suggestions));
-    // $this->assertEquals('e', $suggestions[0]->getSuggestionSuffix());
-    // $this->assertEquals(1, $suggestions[0]->getResultsCount());
-    // $this->assertEquals('es', $suggestions[1]->getSuggestionSuffix());
-    // @codingStandardsIgnoreEnd
-
-    if (version_compare($solr_major_version, '6', '>=')) {
-      // @todo Add more suggester tests.
-      $query = $this->buildSearch(['artic'], [], ['body'], FALSE);
-      $query->setLanguages(['en']);
-      $suggestions = $backend->getSuggesterSuggestions($query, $autocompleteSearch, 'artic', 'artic');
-      $this->assertEquals(2, count($suggestions));
-
-      // Since we don't specify the result weights explicitly for this suggester
-      // we need to deal with a random order and need predictable array keys.
-      foreach ($suggestions as $suggestion) {
-        $suggestions[$suggestion->getSuggestedKeys()] = $suggestion;
-      }
-      $this->assertEquals('artic', $suggestions['The test <b>artic</b>le number 1 about cats, dogs and trees.']->getUserInput());
-      $this->assertEquals('The test <b>', $suggestions['The test <b>artic</b>le number 1 about cats, dogs and trees.']->getSuggestionPrefix());
-      $this->assertEquals('</b>le number 1 about cats, dogs and trees.', $suggestions['The test <b>artic</b>le number 1 about cats, dogs and trees.']->getSuggestionSuffix());
-      $this->assertEquals('The test <b>artic</b>le number 1 about cats, dogs and trees.', $suggestions['The test <b>artic</b>le number 1 about cats, dogs and trees.']->getSuggestedKeys());
-
-      $this->assertEquals('artic', $suggestions['The test <b>artic</b>le number 2 about a tree.']->getUserInput());
-      $this->assertEquals('The test <b>', $suggestions['The test <b>artic</b>le number 2 about a tree.']->getSuggestionPrefix());
-      $this->assertEquals('</b>le number 2 about a tree.', $suggestions['The test <b>artic</b>le number 2 about a tree.']->getSuggestionSuffix());
-      $this->assertEquals('The test <b>artic</b>le number 2 about a tree.', $suggestions['The test <b>artic</b>le number 2 about a tree.']->getSuggestedKeys());
-    }
 
     // Tests NGram and Edge NGram search result.
     foreach (['category_ngram', 'category_edge'] as $field) {
@@ -1331,7 +1260,7 @@ class SearchApiSolrTest extends SolrBackendTestBase {
     $expected_results = [
       1 => 'en',
       2 => 'en',
-      7 => LanguageInterface::LANGCODE_NOT_SPECIFIED
+      7 => LanguageInterface::LANGCODE_NOT_APPLICABLE
     ];
     $this->assertResults($expected_results, $results, 'Search content and unspecified language for "gene".');
 
@@ -1348,9 +1277,16 @@ class SearchApiSolrTest extends SolrBackendTestBase {
       4 => 'de',
       5 => 'de-at',
       6 => 'de-at',
-      7 => LanguageInterface::LANGCODE_NOT_SPECIFIED
+      7 => LanguageInterface::LANGCODE_NOT_APPLICABLE,
     ];
     $this->assertResults($expected_results, $results, 'Search all and unspecified languages for "gene".');
+
+    $results = $this->buildSearch('und', [], ['name'])->execute();
+    $expected_results = [
+      7 => LanguageInterface::LANGCODE_NOT_APPLICABLE,
+      8 => LanguageInterface::LANGCODE_NOT_SPECIFIED,
+    ];
+    $this->assertResults($expected_results, $results, 'Search all and unspecified languages for "und".');
 
     $this->assertFalse($this->getIndex()->isReindexing());
     ConfigurableLanguage::createFromLangcode('de-ch')->save();
@@ -1401,7 +1337,7 @@ class SearchApiSolrTest extends SolrBackendTestBase {
       'name' => 'und 7',
       'body' => 'gene',
       'type' => 'item',
-      'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
+      'langcode' => LanguageInterface::LANGCODE_NOT_APPLICABLE,
     ]);
     $this->addTestEntity(8, [
       'name' => 'und 8',

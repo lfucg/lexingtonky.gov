@@ -1,31 +1,79 @@
 # Changelog
 
-### 1.4.13 - 10/10/2020
+### 3.0.10 2/21/2022
 
-- Allow symfony/finder ^5 (#992)
-- Fix #981: PHP 7.3 compatibility fixes (#982)
+* symfony/process ^6
 
-### 1.4.12 2/18/2020
+### 3.0.8 2/15/2022
 
-- Fixed #922: PHP 7.4 compatibility. (#923) (#928)
-- Test on PHP 7.4. Backport removal of Codeception to 1.x branch. (#925)
-- Copy branches documentation to the 1.x branch.
-- Fix incosistent white space formatting in code example. (#916)
-- Viktor Szépe extract() is not our friend (#903)
-- Viktor Szépe Old variables in ImageMinify (#904)
-- Viktor Szépe RuntimeException used realtively (#905)
+* Fix bug when using dot-access-data ^3 (#1104)
+* ProgressIndicator uses the stdError by Andor (#1101)
+* Use TaskAccessor trait in Task\Archive\Extract by Andor (#1089)
+* Avoid cross volume rename in Task\Archive\Extract by Andor (#1090)
+* Fixing PHPDoc block @param on BuilderAwareTrait::collectionBuilder by Jay Klehr (#1096)
+* League container 4 by Nicos Panayides (#1083)
+* PHP 8.1 TimeKeeper implicit conversion from float to int by Andor (#1095)
 
-### 1.4.11 10/29/2019
+### 3.0.7 12/30/2021
 
-- Deprecate $this->io() and provide style injector instead. (#910)
-- Jordon Replogle Changed leafo to scssphp as leafo is archived (#900)
-- Patrick Kollitsch Add missing code formatting to sample code (#861)
-- Patrick Kollitsch Adding documentation as option to pull_request_template.md (#862)
-- RTLcoil Tiny formatting fix in README (#874)
-- Tal Ater Updated README with command for initiating a RoboFile (#875)
+* PHP 8.1 & Symfony 6 (#1092, #1091)
+* PackPhar: Don't strip PHP8 attributes by Gintautas Miselis (#1084)
+* Fix image minifier task by Dan Untenzu (#1052)
+
+### 3.0.6 10/5/2021
+
+* Use consolidation/self-update ^2
+
+### 3.0.4 08/28/2021
+
+* Undeprecate escapeArgument() by Mark Dorison (#1039)
+* Add setProcessInput and deprecate setInput by Rodrigo (#1034)
+* Add array as a type accepted for argv parameter by Rodrigo (#1032)
+* Fix null return in createContainer by Rodrigo (#1031)
+* Fix mkdir error in taskExtract on PHP 8 by wxa (#1028)
+* refactor: Remove hardcoded namespace by Pol Dellaiera refactor (#1026)
+* refactor: Use proper use imports by Pol Dellaiera refactor (#1025)
+* Run linter in parallel by Viktor Szépe (#1020)
+* Fix task pack (#1044)
+
+### 3.0.0 02/21/2021
+
+* PHP 8 support
+* Update to league/container ^3
+* Prefer passing `ConsoleIO $io` to commands over `$this->io()`, which is now deprecated.
+* `loadTasks` renamed to `Tasks`
+
+### 2.2.0 09/05/2020
+
+* New CheckPlatformReqs task by Pierre Rudloff (#957)
+* Add Runner function for retrieving an application to be used with tests by Les Peabody (#968)
+* Add ignorelist to pack command by O'Briat (#964)
+* Create a semver file if using the SemVer task for the first time by Dan Untenzu (#960)
+* Allow symfony/yaml ^5
+
+### 2.1.0 05/27/2020
+
+* Symfony 5 support. (#940)
+
+### 2.0.4 - 2.0.5 05/22/2020
+
+* Class ZipArchive does not have a constructor by Viktor Szépe (#902)
+* In instances where the simple default config rules are in use, allow for config files to be loaded from the root of the app when Robo is in the vendor directory. (#948)
+* Docker builds with Buildkit by Mario Lubenka (#942)
+* Add a limit to replace via regexp by Patrick Kollitsch (#946)
+* Github access_token via query parameter is deprecated. by Dane Powell (#943)
+* Added the --no-suggest option to composer tasks by Klein Thomas (#934)
+
+### 2.0.0 - 2.0.3 02/18/2019
+
+* Compatible with the 1.x branch, but removes support for old versions of PHP and requires Symfony 4.x.
+* PHP 7.4 compatibility by Dane Powell (#923)
+* extract() is not our friend by Viktor Szépe (#903)
+* Old variables in ImageMinify by Viktor Szépe (#904)
+* RuntimeException used realtively by Viktor Szépe (#905)
 
 ### 1.4.10 7/29/2019
-
+ 
 * Allow default argument for confirm() questions by Dane Powell (#850)
 * Allow command classes to end in Commands or Command by Jelle Sebreghts (#878)
 * ImageMinify: Prevent undefined variable error by Dan (#852) (#854)
@@ -37,14 +85,14 @@
 ### 1.4.7 - 1.4.9 2/19/2019
 
 * Re-release 1.4.6 to remove artifacts inadvertantly added to tagged release.
-
+ 
 ### 1.4.6 2/16/2019
-
-* Simplify ConfigAwareTrait to avoid probem with downstream clients.
+ 
+* Extend ConfigAwareTrait from consolidation config (#838)
 
 ### 1.4.5 2/15/2019
 
-* Extend ConfigAwareTrait from consolidation config (#838)
+* Improved paramameter injection (#822)
 
 ### 1.4.4 2/8/2019
 

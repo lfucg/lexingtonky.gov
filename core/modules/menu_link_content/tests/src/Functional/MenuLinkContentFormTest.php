@@ -17,7 +17,7 @@ class MenuLinkContentFormTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'menu_link_content',
   ];
 
@@ -45,7 +45,7 @@ class MenuLinkContentFormTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->adminUser = $this->drupalCreateUser([
       'administer menu',
@@ -83,21 +83,16 @@ class MenuLinkContentFormTest extends BrowserTestBase {
    */
   public function testMenuLinkContentForm() {
     $this->drupalGet('admin/structure/menu/manage/admin/add');
-    $element = $this->xpath('//select[@id = :id]/option[@selected]', [':id' => 'edit-menu-parent']);
-    $this->assertNotEmpty($element, 'A default menu parent was found.');
-    $this->assertEqual('admin:', $element[0]->getValue(), '<Administration> menu is the parent.');
+    $option = $this->assertSession()->optionExists('edit-menu-parent', 'admin:');
+    $this->assertTrue($option->isSelected());
     // Test that the field description is present.
-    $this->assertRaw('The location this menu link points to.');
+    $this->assertSession()->pageTextContains('The location this menu link points to.');
 
-    $this->drupalPostForm(
-      NULL,
-      [
-        'title[0][value]' => t('Front page'),
-        'link[0][uri]' => '<front>',
-      ],
-      t('Save')
-    );
-    $this->assertText(t('The menu link has been saved.'));
+    $this->submitForm([
+      'title[0][value]' => 'Front page',
+      'link[0][uri]' => '<front>',
+    ], 'Save');
+    $this->assertSession()->pageTextContains('The menu link has been saved.');
   }
 
   /**
@@ -105,15 +100,11 @@ class MenuLinkContentFormTest extends BrowserTestBase {
    */
   public function testMenuLinkContentFormValidation() {
     $this->drupalGet('admin/structure/menu/manage/admin/add');
-    $this->drupalPostForm(
-      NULL,
-      [
-        'title[0][value]' => t('Test page'),
-        'link[0][uri]' => '<test>',
-      ],
-      t('Save')
-    );
-    $this->assertText(t('Manually entered paths should start with one of the following characters: / ? #'));
+    $this->submitForm([
+      'title[0][value]' => 'Test page',
+      'link[0][uri]' => '<test>',
+    ], 'Save');
+    $this->assertSession()->pageTextContains('Manually entered paths should start with one of the following characters: / ? #');
   }
 
 }

@@ -115,7 +115,7 @@ class MetatagManager implements MetatagManagerInterface {
 
     $fields = $this->getFields($entity);
 
-    /* @var \Drupal\field\Entity\FieldConfig $field_info */
+    /** @var \Drupal\field\Entity\FieldConfig $field_info */
     foreach ($fields as $field_name => $field_info) {
       // Get the tags from this field.
       $tags = $this->getFieldTags($entity, $field_name);
@@ -538,7 +538,7 @@ class MetatagManager implements MetatagManagerInterface {
       }
     }
 
-    // Ge the current language code.
+    // Get the current language code.
     $langcode = \Drupal::languageManager()
       ->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)
       ->getId();
@@ -573,8 +573,18 @@ class MetatagManager implements MetatagManagerInterface {
         // @see Robots::setValue()
         $tag->setValue($value);
 
-        // Obtain the processed value.
-        $processed_value = htmlspecialchars_decode($this->tokenService->replace($tag->value(), $token_replacements, ['langcode' => $langcode], $cache));
+        // Obtain the processed value. Some meta tags will store this as a
+        // string, so support that option.
+        $value = $tag->value();
+        if (is_array($value)) {
+          $processed_value = [];
+          foreach ($value as $key => $value_item) {
+            $processed_value[$key] = htmlspecialchars_decode($this->tokenService->replace($value_item, $token_replacements, ['langcode' => $langcode]));
+          }
+        }
+        else {
+          $processed_value = htmlspecialchars_decode($this->tokenService->replace($value, $token_replacements, ['langcode' => $langcode]));
+        }
 
         // Now store the value with processed tokens back into the plugin.
         $tag->setValue($processed_value);

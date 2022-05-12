@@ -79,7 +79,7 @@ class Select extends Query implements SelectInterface {
   protected $having;
 
   /**
-   * Whether or not this query should be DISTINCT
+   * Whether or not this query should be DISTINCT.
    *
    * @var bool
    */
@@ -112,7 +112,7 @@ class Select extends Query implements SelectInterface {
   protected $prepared = FALSE;
 
   /**
-   * The FOR UPDATE status
+   * The FOR UPDATE status.
    *
    * @var bool
    */
@@ -121,19 +121,19 @@ class Select extends Query implements SelectInterface {
   /**
    * Constructs a Select object.
    *
-   * @param string $table
-   *   The name of the table that is being queried.
-   * @param string $alias
-   *   The alias for the table.
    * @param \Drupal\Core\Database\Connection $connection
    *   Database connection object.
+   * @param string|\Drupal\Core\Database\Query\SelectInterface $table
+   *   The table name or subquery that is being queried.
+   * @param string $alias
+   *   The alias for the table.
    * @param array $options
    *   Array of query options.
    */
-  public function __construct($table, $alias, Connection $connection, $options = []) {
+  public function __construct(Connection $connection, $table, $alias = NULL, $options = []) {
     $options['return'] = Database::RETURN_STATEMENT;
     parent::__construct($connection, $options);
-    $conjunction = isset($options['conjunction']) ? $options['conjunction'] : 'AND';
+    $conjunction = $options['conjunction'] ?? 'AND';
     $this->condition = $this->connection->condition($conjunction);
     $this->having = $this->connection->condition($conjunction);
     $this->addJoin(NULL, $table, $alias);
@@ -180,7 +180,7 @@ class Select extends Query implements SelectInterface {
    * {@inheritdoc}
    */
   public function getMetaData($key) {
-    return isset($this->alterMetaData[$key]) ? $this->alterMetaData[$key] : NULL;
+    return $this->alterMetaData[$key] ?? NULL;
   }
 
   /**
@@ -318,9 +318,11 @@ class Select extends Query implements SelectInterface {
    * {@inheritdoc}
    */
   public function extend($extender_name) {
-    $override_class = $extender_name . '_' . $this->connection->driver();
-    if (class_exists($override_class)) {
-      $extender_name = $override_class;
+    $parts = explode('\\', $extender_name);
+    $class = end($parts);
+    $driver_class = $this->connection->getDriverClass($class);
+    if ($driver_class !== $class) {
+      return new $driver_class($this, $this->connection);
     }
     return new $extender_name($this, $this->connection);
   }
@@ -615,13 +617,6 @@ class Select extends Query implements SelectInterface {
   /**
    * {@inheritdoc}
    */
-  public function rightJoin($table, $alias = NULL, $condition = NULL, $arguments = []) {
-    return $this->addJoin('RIGHT OUTER', $table, $alias, $condition, $arguments);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function addJoin($type, $table, $alias = NULL, $condition = NULL, $arguments = []) {
     if (empty($alias)) {
       if ($table instanceof SelectInterface) {
@@ -818,12 +813,12 @@ class Select extends Query implements SelectInterface {
       }
     }
     foreach ($this->fields as $field) {
-      // Note that $field['table'] holds the table alias.
+      // Note that $field['table'] holds the table_alias.
       // @see \Drupal\Core\Database\Query\Select::addField
-      $table = isset($field['table']) ? $this->connection->escapeAlias($field['table']) . '.' : '';
+      $table = isset($field['table']) ? $field['table'] . '.' : '';
       // Always use the AS keyword for field aliases, as some
       // databases require it (e.g., PostgreSQL).
-      $fields[] = $table . $this->connection->escapeField($field['field']) . ' AS ' . $this->connection->escapeAlias($field['alias']);
+      $fields[] = $this->connection->escapeField($table . $field['field']) . ' AS ' . $this->connection->escapeAlias($field['alias']);
     }
     foreach ($this->expressions as $expression) {
       $fields[] = $expression['expression'] . ' AS ' . $this->connection->escapeAlias($expression['alias']);

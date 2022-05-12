@@ -22,7 +22,7 @@ class MigrationPluginManagerTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Get a plugin manager for testing.
@@ -58,7 +58,7 @@ class MigrationPluginManagerTest extends UnitTestCase {
         $requirements = array_combine($requirements, $requirements);
 
         $this->assertCount(1, $migration->set);
-        list($set_prop, $set_requirements) = reset($migration->set);
+        [$set_prop, $set_requirements] = reset($migration->set);
         $this->assertEquals('requirements', $set_prop);
         $this->assertEquals($requirements, $set_requirements);
       }

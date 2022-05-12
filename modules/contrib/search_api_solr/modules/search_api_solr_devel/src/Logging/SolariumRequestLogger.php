@@ -4,12 +4,13 @@ namespace Drupal\search_api_solr_devel\Logging;
 
 use Drupal\Component\Utility\Timer;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Component\Serialization\Json;
 use Drupal\devel\DevelDumperManagerInterface;
 use Drupal\search_api\LoggerTrait;
-use Drupal\search_api_solr\Utility\Utility;
 use Solarium\Core\Client\Adapter\AdapterHelper;
-use Solarium\Core\Event\Events;
+use Solarium\Core\Event\Events as SolariumEvents;
+use Solarium\Core\Event\PostCreateQuery;
+use Solarium\Core\Event\PostExecuteRequest;
+use Solarium\Core\Event\PreExecuteRequest;
 use Solarium\QueryType\Select\Query\Query;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -42,21 +43,20 @@ class SolariumRequestLogger implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    return [
-      Events::POST_CREATE_QUERY => 'postCreateQuery',
-      Events::PRE_EXECUTE_REQUEST => 'preExecuteRequest',
-      Events::POST_EXECUTE_REQUEST => 'postExecuteRequest',
-    ];
+    $events[SolariumEvents::POST_CREATE_QUERY][] = ['postCreateQuery'];
+    $events[SolariumEvents::PRE_EXECUTE_REQUEST][] = ['preExecuteRequest'];
+    $events[SolariumEvents::POST_EXECUTE_REQUEST][] = ['postExecuteRequest'];
+
+    return $events;
   }
 
   /**
    * Dumps a Solr query as drupal messages.
    *
-   * @param \Drupal\search_api_solr\Solarium\EventDispatcher\EventProxy $event
+   * @param \Solarium\Core\Event\PostCreateQuery $event
    *   The pre execute event.
    */
-  public function postCreateQuery($event) {
-    /** @var \Solarium\Core\Event\PostCreateQuery $event */
+  public function postCreateQuery(PostCreateQuery $event) {
     $query = $event->getQuery();
     if ($query instanceof Query) {
       /** @var $query */
@@ -119,14 +119,13 @@ class SolariumRequestLogger implements EventSubscriberInterface {
   /**
    * Dumps a Solr query as drupal messages.
    *
-   * @param \Drupal\search_api_solr\Solarium\EventDispatcher\EventProxy $event
+   * @param \Solarium\Core\Event\PreExecuteRequest $event
    *   The pre execute event.
    */
-  public function preExecuteRequest($event) {
+  public function preExecuteRequest(PreExecuteRequest $event) {
     static $counter = 0;
     $counter++;
 
-    /** @var \Solarium\Core\Event\PreExecuteRequest $event */
     $request = $event->getRequest();
     $endpoint = $event->getEndpoint();
 
@@ -153,10 +152,10 @@ class SolariumRequestLogger implements EventSubscriberInterface {
   /**
    * Dumps a Solr response status as drupal messages and logs the response body.
    *
-   * @param \Drupal\search_api_solr\Solarium\EventDispatcher\EventProxy $event
+   * @param \Solarium\Core\Event\PostExecuteRequest $event
    *   The post execute event.
    */
-  public function postExecuteRequest($event) {
+  public function postExecuteRequest(PostExecuteRequest $event) {
     static $counter = 0;
     $counter++;
 
@@ -166,7 +165,6 @@ class SolariumRequestLogger implements EventSubscriberInterface {
 
     $timer = $this->timerStop($counter);
 
-    /** @var \Solarium\Core\Event\PostExecuteRequest $event */
     $response = $event->getResponse();
 
     $debug = [

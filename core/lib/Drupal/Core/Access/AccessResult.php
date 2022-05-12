@@ -6,8 +6,6 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyTrait;
-use Drupal\Core\Config\ConfigBase;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
@@ -279,38 +277,6 @@ abstract class AccessResult implements AccessResultInterface, RefinableCacheable
   }
 
   /**
-   * Convenience method, adds the entity's cache tag.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity whose cache tag to set on the access result.
-   *
-   * @return $this
-   *
-   * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use
-   *   ::addCacheableDependency() instead.
-   */
-  public function cacheUntilEntityChanges(EntityInterface $entity) {
-    @trigger_error(__METHOD__ . ' is deprecated in drupal:8.0.0 and is removed in drupal:9.0.0. Use \Drupal\Core\Access\AccessResult::addCacheableDependency() instead.', E_USER_DEPRECATED);
-    return $this->addCacheableDependency($entity);
-  }
-
-  /**
-   * Convenience method, adds the configuration object's cache tag.
-   *
-   * @param \Drupal\Core\Config\ConfigBase $configuration
-   *   The configuration object whose cache tag to set on the access result.
-   *
-   * @return $this
-   *
-   * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use
-   *   \Drupal\Core\Access\AccessResult::addCacheableDependency() instead.
-   */
-  public function cacheUntilConfigurationChanges(ConfigBase $configuration) {
-    @trigger_error(__METHOD__ . ' is deprecated in drupal:8.0.0 and is removed in drupal:9.0.0. Use \Drupal\Core\Access\AccessResult::addCacheableDependency() instead.', E_USER_DEPRECATED);
-    return $this->addCacheableDependency($configuration);
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function orIf(AccessResultInterface $other) {
@@ -338,10 +304,10 @@ abstract class AccessResult implements AccessResultInterface, RefinableCacheable
         $merge_other = TRUE;
       }
 
-      if ($this->isForbidden() && $this instanceof AccessResultReasonInterface && !is_null($this->getReason())) {
+      if ($this->isForbidden() && $this instanceof AccessResultReasonInterface && $this->getReason() !== '') {
         $result->setReason($this->getReason());
       }
-      elseif ($other->isForbidden() && $other instanceof AccessResultReasonInterface && !is_null($other->getReason())) {
+      elseif ($other->isForbidden() && $other instanceof AccessResultReasonInterface && $other->getReason() !== '') {
         $result->setReason($other->getReason());
       }
     }
@@ -357,10 +323,10 @@ abstract class AccessResult implements AccessResultInterface, RefinableCacheable
         $merge_other = TRUE;
       }
 
-      if ($this instanceof AccessResultReasonInterface && !is_null($this->getReason())) {
+      if ($this instanceof AccessResultReasonInterface && $this->getReason() !== '') {
         $result->setReason($this->getReason());
       }
-      elseif ($other instanceof AccessResultReasonInterface && !is_null($other->getReason())) {
+      elseif ($other instanceof AccessResultReasonInterface && $other->getReason() !== '') {
         $result->setReason($other->getReason());
       }
     }

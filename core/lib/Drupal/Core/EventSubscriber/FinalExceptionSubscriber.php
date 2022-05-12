@@ -8,7 +8,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Utility\Error;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -73,11 +73,11 @@ class FinalExceptionSubscriber implements EventSubscriberInterface {
   /**
    * Handles exceptions for this subscriber.
    *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\ExceptionEvent $event
    *   The event to process.
    */
-  public function onException(GetResponseForExceptionEvent $event) {
-    $exception = $event->getException();
+  public function onException(ExceptionEvent $event) {
+    $exception = $event->getThrowable();
     $error = Error::decodeException($exception);
 
     // Display the message if the current error reporting level allows this type
@@ -86,14 +86,13 @@ class FinalExceptionSubscriber implements EventSubscriberInterface {
     if ($this->isErrorDisplayable($error)) {
       // If error type is 'User notice' then treat it as debug information
       // instead of an error message.
-      // @see debug()
       if ($error['%type'] == 'User notice') {
         $error['%type'] = 'Debug';
       }
 
       $error = $this->simplifyFileInError($error);
 
-      unset($error['backtrace']);
+      unset($error['backtrace'], $error['exception'], $error['severity_level']);
 
       if (!$this->isErrorLevelVerbose()) {
         // Without verbose logging, use a simple message.
@@ -125,7 +124,7 @@ class FinalExceptionSubscriber implements EventSubscriberInterface {
 
     $content_type = $event->getRequest()->getRequestFormat() == 'html' ? 'text/html' : 'text/plain';
     $content = $this->t('The website encountered an unexpected error. Please try again later.');
-    $content .= $message ? '</br></br>' . $message : '';
+    $content .= $message ? '<br><br>' . $message : '';
     $response = new Response($content, 500, ['Content-Type' => $content_type]);
 
     if ($exception instanceof HttpExceptionInterface) {

@@ -3,7 +3,7 @@
  * Attaches behavior for the Filter module.
  */
 
-(function($, Drupal) {
+(function ($, Drupal) {
   /**
    * Displays the guidelines of the selected text format automatically.
    *
@@ -25,9 +25,7 @@
           .show();
       }
 
-      $(context)
-        .find('.js-filter-guidelines')
-        .once('filter-guidelines')
+      $(once('filter-guidelines', '.js-filter-guidelines', context))
         .find(':header')
         .hide()
         .closest('.js-filter-wrapper')

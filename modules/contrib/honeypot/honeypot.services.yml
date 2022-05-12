@@ -1,0 +1,4 @@
+services:
+  honeypot:
+    class: Drupal\honeypot\HoneypotService
+    arguments: ['@current_user', '@module_handler', '@config.factory', '@keyvalue.expirable', '@page_cache_kill_switch', '@database', '@logger.factory', '@datetime.time', '@string_translation', '@cache.default', '@request_stack']

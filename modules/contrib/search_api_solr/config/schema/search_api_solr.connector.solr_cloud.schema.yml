@@ -8,3 +8,9 @@ plugin.plugin_configuration.search_api_solr_connector.solr_cloud:
     stats_cache:
       type: string
       label: 'StatsCache'
+    distrib:
+      type: boolean
+      label: 'Distribute queries across all nodes'
+    context:
+      type: string
+      label: 'hostContext'

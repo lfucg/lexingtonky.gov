@@ -12,13 +12,14 @@
 namespace Symfony\Component\Validator\Validator;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * Collects some data about validator calls.
  *
  * @author Maxime Steinhausser <maxime.steinhausser@gmail.com>
  */
-class TraceableValidator implements ValidatorInterface
+class TraceableValidator implements ValidatorInterface, ResetInterface
 {
     private $validator;
     private $collectedData = [];
@@ -64,7 +65,7 @@ class TraceableValidator implements ValidatorInterface
     {
         $violations = $this->validator->validate($value, $constraints, $groups);
 
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 7);
+        $trace = debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 7);
 
         $file = $trace[0]['file'];
         $line = $trace[0]['line'];
@@ -78,7 +79,7 @@ class TraceableValidator implements ValidatorInterface
                 $line = $trace[$i]['line'];
 
                 while (++$i < 7) {
-                    if (isset($trace[$i]['function'], $trace[$i]['file']) && empty($trace[$i]['class']) && 0 !== strpos($trace[$i]['function'], 'call_user_func')) {
+                    if (isset($trace[$i]['function'], $trace[$i]['file']) && empty($trace[$i]['class']) && !str_starts_with($trace[$i]['function'], 'call_user_func')) {
                         $file = $trace[$i]['file'];
                         $line = $trace[$i]['line'];
 

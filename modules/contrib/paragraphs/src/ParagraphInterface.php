@@ -18,7 +18,7 @@ interface ParagraphInterface extends ContentEntityInterface, EntityOwnerInterfac
    *
    * Preserves language context with translated entities.
    *
-   * @return ContentEntityInterface
+   * @return \Drupal\Core\Entity\ContentEntityInterface|null
    *   The parent entity.
    */
   public function getParentEntity();

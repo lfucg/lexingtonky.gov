@@ -4,13 +4,12 @@ namespace Drupal\honeypot\Form;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
-use Drupal\Core\Cache\CacheBackendInterface;
-use Drupal\Core\Messenger\MessengerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -47,13 +46,6 @@ class HoneypotSettingsForm extends ConfigFormBase {
   protected $cache;
 
   /**
-   * The Messenger service.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
-
-  /**
    * Constructs a settings controller.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -66,16 +58,13 @@ class HoneypotSettingsForm extends ConfigFormBase {
    *   The entity type bundle info service.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
    *   The cache backend interface.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info, CacheBackendInterface $cache_backend, MessengerInterface $messenger) {
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info, CacheBackendInterface $cache_backend) {
     parent::__construct($config_factory);
     $this->moduleHandler = $module_handler;
     $this->entityTypeManager = $entity_type_manager;
     $this->entityTypeBundleInfo = $entity_type_bundle_info;
     $this->cache = $cache_backend;
-    $this->messenger = $messenger;
   }
 
   /**
@@ -87,31 +76,8 @@ class HoneypotSettingsForm extends ConfigFormBase {
       $container->get('module_handler'),
       $container->get('entity_type.manager'),
       $container->get('entity_type.bundle.info'),
-      $container->get('cache.default'),
-      $container->get('messenger')
+      $container->get('cache.default')
     );
-  }
-
-  /**
-   * Get a value from the retrieved form settings array.
-   */
-  public function getFormSettingsValue($form_settings, $form_id) {
-    // If there are settings in the array and the form ID already has a setting,
-    // return the saved setting for the form ID.
-    if (!empty($form_settings) && isset($form_settings[$form_id])) {
-      return $form_settings[$form_id];
-    }
-    // Default to false.
-    else {
-      return 0;
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getEditableConfigNames() {
-    return ['honeypot.settings'];
   }
 
   /**
@@ -124,8 +90,16 @@ class HoneypotSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  protected function getEditableConfigNames() {
+    return ['honeypot.settings'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Honeypot Configuration.
+    $honeypot_config = $this->config('honeypot.settings');
     $form['configuration'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Honeypot Configuration'),
@@ -136,36 +110,48 @@ class HoneypotSettingsForm extends ConfigFormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Protect all forms with Honeypot'),
       '#description' => $this->t('Enable Honeypot protection for ALL forms on this site (it is best to only enable Honeypot for the forms you need below).'),
-      '#default_value' => $this->config('honeypot.settings')->get('protect_all_forms'),
+      '#default_value' => $honeypot_config->get('protect_all_forms'),
     ];
     $form['configuration']['protect_all_forms']['#description'] .= '<br />' . $this->t('<strong>Page caching will be disabled on any page where a form is present if the Honeypot time limit is not set to 0.</strong>');
     $form['configuration']['log'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Log blocked form submissions'),
       '#description' => $this->t('Log submissions that are blocked due to Honeypot protection.'),
-      '#default_value' => $this->config('honeypot.settings')->get('log'),
+      '#default_value' => $honeypot_config->get('log'),
     ];
     $form['configuration']['element_name'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Honeypot element name'),
-      '#description' => $this->t("The name of the Honeypot form field. It's usually most effective to use a generic name like email, homepage, or link, but this should be changed if it interferes with fields that are already in your forms. Must not contain spaces or special characters."),
-      '#default_value' => $this->config('honeypot.settings')->get('element_name'),
+      '#description' => $this->t("The name of the Honeypot form field. It's usually most effective to use a generic name like email, homepage, or link, but this should be changed if it interferes with fields that are already in your forms. Must not contain spaces or special characters. Should not contain words like 'honeypot', as these may allow a spam bot to identify the purpose of this field."),
+      '#default_value' => $honeypot_config->get('element_name'),
       '#required' => TRUE,
       '#size' => 30,
     ];
     $form['configuration']['time_limit'] = [
-      '#type' => 'textfield',
+      '#type' => 'number',
       '#title' => $this->t('Honeypot time limit'),
       '#description' => $this->t('Minimum time required before form should be considered entered by a human instead of a bot. Set to 0 to disable.'),
-      '#default_value' => $this->config('honeypot.settings')->get('time_limit'),
+      '#default_value' => $honeypot_config->get('time_limit'),
       '#required' => TRUE,
+      '#min' => 0,
       '#size' => 5,
       '#field_suffix' => $this->t('seconds'),
     ];
     $form['configuration']['time_limit']['#description'] .= '<br />' . $this->t('<strong>Page caching will be disabled if there is a form protected by time limit on the page.</strong>');
 
+    $form['configuration']['expire'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Honeypot expire'),
+      '#description' => $this->t("Entries in the {honeypot_user} table that are older than the value of 'expire' will be deleted when cron is run."),
+      '#default_value' => $honeypot_config->get('expire'),
+      '#required' => TRUE,
+      '#min' => 0,
+      '#size' => 5,
+      '#field_suffix' => $this->t('seconds'),
+    ];
+
     // Honeypot Enabled forms.
-    $form_settings = $this->config('honeypot.settings')->get('form_settings');
+    $form_settings = $honeypot_config->get('form_settings');
     $form['form_settings'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Honeypot Enabled Forms'),
@@ -220,6 +206,7 @@ class HoneypotSettingsForm extends ConfigFormBase {
 
     // Node types for node forms.
     if ($this->moduleHandler->moduleExists('node')) {
+      /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface[] $types */
       $types = $this->entityTypeManager->getStorage('node_type')->loadMultiple();
       if (!empty($types)) {
         // Node forms.
@@ -260,35 +247,13 @@ class HoneypotSettingsForm extends ConfigFormBase {
     }
     $form_state->setStorage(['keys' => $keys_to_save]);
 
-    // For now, manually add submit button. Hopefully, by the time D8 is
-    // released, there will be something like system_settings_form() in D7.
-    $form['actions']['#type'] = 'container';
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Save configuration'),
-    ];
-
-    return $form;
+    return parent::buildForm($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    // Make sure the time limit is a positive integer or 0.
-    $time_limit = $form_state->getValue('time_limit');
-    if ((is_numeric($time_limit) && $time_limit > 0) || $time_limit === '0') {
-      if (ctype_digit($time_limit)) {
-        // Good to go.
-      }
-      else {
-        $form_state->setErrorByName('time_limit', $this->t("The time limit must be a positive integer or 0."));
-      }
-    }
-    else {
-      $form_state->setErrorByName('time_limit', $this->t("The time limit must be a positive integer or 0."));
-    }
-
     // Make sure Honeypot element name only contains A-Z, 0-9.
     if (!preg_match("/^[-_a-zA-Z0-9]+$/", $form_state->getValue('element_name'))) {
       $form_state->setErrorByName('element_name', $this->t("The element name cannot contain spaces or other special characters."));
@@ -332,8 +297,32 @@ class HoneypotSettingsForm extends ConfigFormBase {
     // Clear the honeypot protected forms cache.
     $this->cache->delete('honeypot_protected_forms');
 
-    // Tell the user the settings have been saved.
-    $this->messenger->addMessage($this->t('The configuration options have been saved.'));
+    parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Gets a value from the retrieved form settings array.
+   *
+   * @param array $form_settings
+   *   Array of configuration settings that Honeypot uses to determine which
+   *   forms to protect. Keys are form IDs, values are boolean to indicate
+   *   whether that form ID should be protected.
+   * @param string $form_id
+   *   The Form ID.
+   *
+   * @return bool
+   *   TRUE if the form is protected.
+   */
+  protected function getFormSettingsValue(array $form_settings, string $form_id) {
+    // If there are settings in the array and the form ID already has a setting,
+    // return the saved setting for the form ID.
+    if (!empty($form_settings) && isset($form_settings[$form_id])) {
+      return $form_settings[$form_id];
+    }
+    // Default to false.
+    else {
+      return FALSE;
+    }
   }
 
 }

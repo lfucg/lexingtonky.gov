@@ -61,7 +61,7 @@ class SolrField extends TypedData implements \IteratorAggregate {
   /**
    * {@inheritdoc}
    */
-  public function getIterator() {
+  public function getIterator(): \Traversable {
     return new \ArrayIterator((array) $this->value);
   }
 

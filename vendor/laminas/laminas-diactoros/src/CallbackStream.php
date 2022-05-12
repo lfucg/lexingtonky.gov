@@ -1,16 +1,10 @@
 <?php
 
-/**
- * @see       https://github.com/laminas/laminas-diactoros for the canonical source repository
- * @copyright https://github.com/laminas/laminas-diactoros/blob/master/COPYRIGHT.md
- * @license   https://github.com/laminas/laminas-diactoros/blob/master/LICENSE.md New BSD License
- */
+declare(strict_types=1);
 
 namespace Laminas\Diactoros;
 
-use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
-use RuntimeException;
 
 use function array_key_exists;
 
@@ -28,7 +22,7 @@ class CallbackStream implements StreamInterface
 
     /**
      * @param callable $callback
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
      */
     public function __construct(callable $callback)
     {
@@ -38,7 +32,7 @@ class CallbackStream implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function __toString()
+    public function __toString() : string
     {
         return $this->getContents();
     }
@@ -46,7 +40,7 @@ class CallbackStream implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function close()
+    public function close() : void
     {
         $this->callback = null;
     }
@@ -54,7 +48,7 @@ class CallbackStream implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function detach()
+    public function detach() : ?callable
     {
         $callback = $this->callback;
         $this->callback = null;
@@ -63,11 +57,8 @@ class CallbackStream implements StreamInterface
 
     /**
      * Attach a new callback to the instance.
-     *
-     * @param callable $callback
-     * @throws InvalidArgumentException for callable callback
      */
-    public function attach(callable $callback)
+    public function attach(callable $callback) : void
     {
         $this->callback = $callback;
     }
@@ -75,22 +66,23 @@ class CallbackStream implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function getSize()
+    public function getSize() : ?int
     {
+        return null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function tell()
+    public function tell() : int
     {
-        throw new RuntimeException('Callback streams cannot tell position');
+        throw Exception\UntellableStreamException::forCallbackStream();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function eof()
+    public function eof() : bool
     {
         return empty($this->callback);
     }
@@ -98,47 +90,34 @@ class CallbackStream implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function isSeekable()
+    public function isSeekable() : bool
     {
         return false;
     }
 
     /**
      * {@inheritdoc}
+     * @param int $offset
+     * @param int $whence
+     * @return void
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        throw new RuntimeException('Callback streams cannot seek position');
+        throw Exception\UnseekableStreamException::forCallbackStream();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind() : void
     {
-        throw new RuntimeException('Callback streams cannot rewind position');
+        throw Exception\UnrewindableStreamException::forCallbackStream();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isWritable()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function write($string)
-    {
-        throw new RuntimeException('Callback streams cannot write');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isReadable()
+    public function isWritable() : bool
     {
         return false;
     }
@@ -146,18 +125,35 @@ class CallbackStream implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function read($length)
+    public function write($string) : void
     {
-        throw new RuntimeException('Callback streams cannot read');
+        throw Exception\UnwritableStreamException::forCallbackStream();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getContents()
+    public function isReadable() : bool
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function read($length) : string
+    {
+        throw Exception\UnreadableStreamException::forCallbackStream();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContents() : string
     {
         $callback = $this->detach();
-        return $callback ? $callback() : '';
+        $contents = $callback ? $callback() : '';
+        return (string) $contents;
     }
 
     /**

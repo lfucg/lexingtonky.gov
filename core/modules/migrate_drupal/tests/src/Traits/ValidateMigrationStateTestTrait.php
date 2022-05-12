@@ -86,14 +86,16 @@ trait ValidateMigrationStateTestTrait {
     // destination is not used yet but can be later for validating the
     // source/destination pairs with the actual source/destination pairs in the
     // migrate plugins.
-    $system_info = (new YamlDiscovery('migrate_drupal', array_map(function (&$value) {
+    $system_info = (new YamlDiscovery('migrate_drupal', array_map(function ($value) {
       return $value . '/migrations/state/';
     }, \Drupal::moduleHandler()->getModuleDirectories())))->findAll();
 
-    $declared = [];
-    $states = [MigrationState::FINISHED, MigrationState::NOT_FINISHED];
+    $declared = [
+      MigrationState::FINISHED => [],
+      MigrationState::NOT_FINISHED => [],
+    ];
     foreach ($system_info as $module => $info) {
-      foreach ($states as $state) {
+      foreach (array_keys($declared) as $state) {
         if (isset($info[$state][$version])) {
           foreach ($info[$state][$version] as $source => $destination) {
             // Do not add the source module i18nstrings or i18_string. The

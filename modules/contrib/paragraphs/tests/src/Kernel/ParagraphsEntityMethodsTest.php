@@ -23,7 +23,7 @@ class ParagraphsEntityMethodsTest extends KernelTestBase {
    *
    * @var string[]
    */
-  public static $modules = [
+  protected static $modules = [
     'paragraphs',
     'node',
     'user',

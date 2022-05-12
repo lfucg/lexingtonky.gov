@@ -20,7 +20,7 @@ class BlockContentTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['block_content'];
+  protected static $modules = ['block_content'];
 
   /**
    * {@inheritdoc}
@@ -132,6 +132,9 @@ class BlockContentTest extends ResourceTestBase {
           'block_content_type' => [
             'data' => [
               'id' => BlockContentType::load('basic')->uuid(),
+              'meta' => [
+                'drupal_internal__target_id' => 'basic',
+              ],
               'type' => 'block_content_type--block_content_type',
             ],
             'links' => [
@@ -194,13 +197,6 @@ class BlockContentTest extends ResourceTestBase {
       $contexts = Cache::mergeContexts($contexts, ['languages:language_interface', 'theme']);
     }
     return $contexts;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function testRelated() {
-    $this->markTestSkipped('Remove this in https://www.drupal.org/project/drupal/issues/2940339');
   }
 
   /**

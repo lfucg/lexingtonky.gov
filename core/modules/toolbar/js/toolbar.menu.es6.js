@@ -8,13 +8,13 @@
  * $('.toolbar-menu').drupalToolbarMenu();
  */
 
-(function($, Drupal, drupalSettings) {
+(function ($, Drupal, drupalSettings) {
   /**
    * Store the open menu tray.
    */
   let activeItem = Drupal.url(drupalSettings.path.currentPath);
 
-  $.fn.drupalToolbarMenu = function() {
+  $.fn.drupalToolbarMenu = function () {
     const ui = {
       handleOpen: Drupal.t('Extend'),
       handleClose: Drupal.t('Collapse'),
@@ -164,9 +164,10 @@
     }
 
     // Return the jQuery object.
-    return this.each(function(selector) {
-      const $menu = $(this).once('toolbar-menu');
-      if ($menu.length) {
+    return this.each(function (selector) {
+      const menu = once('toolbar-menu', this);
+      if (menu.length) {
+        const $menu = $(menu);
         // Bind event handlers.
         $menu
           .on('click.toolbar', '.toolbar-box', toggleClickHandler)
@@ -196,7 +197,7 @@
    * @return {string}
    *   A string representing a DOM fragment.
    */
-  Drupal.theme.toolbarMenuItemToggle = function(options) {
+  Drupal.theme.toolbarMenuItemToggle = function (options) {
     return `<button class="${options.class}"><span class="action">${options.action}</span> <span class="label">${options.text}</span></button>`;
   };
 })(jQuery, Drupal, drupalSettings);

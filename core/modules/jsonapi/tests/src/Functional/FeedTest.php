@@ -18,7 +18,7 @@ class FeedTest extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['aggregator'];
+  protected static $modules = ['aggregator'];
 
   /**
    * {@inheritdoc}
@@ -95,7 +95,7 @@ class FeedTest extends ResourceTestBase {
    * {@inheritdoc}
    */
   protected function createAnotherEntity($key) {
-    /* @var \Drupal\aggregator\FeedInterface $duplicate */
+    /** @var \Drupal\aggregator\FeedInterface $duplicate */
     $duplicate = $this->getEntityDuplicate($this->entity, $key);
     $duplicate->set('field_rest_test', 'Duplicate feed entity');
     $duplicate->setUrl("http://example.com/$key.xml");

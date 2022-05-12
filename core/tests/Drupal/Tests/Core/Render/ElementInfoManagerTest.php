@@ -57,7 +57,7 @@ class ElementInfoManagerTest extends UnitTestCase {
    *
    * @covers ::__construct
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->cache = $this->createMock('Drupal\Core\Cache\CacheBackendInterface');
@@ -91,7 +91,7 @@ class ElementInfoManagerTest extends UnitTestCase {
 
     $element_info = $this->getMockBuilder('Drupal\Core\Render\ElementInfoManager')
       ->setConstructorArgs([new \ArrayObject(), $this->cache, $this->cacheTagsInvalidator, $this->moduleHandler, $this->themeManager])
-      ->setMethods(['getDefinitions', 'createInstance'])
+      ->onlyMethods(['getDefinitions', 'createInstance'])
       ->getMock();
 
     $this->themeManager->expects($this->any())

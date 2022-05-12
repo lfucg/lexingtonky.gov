@@ -23,7 +23,7 @@ entity.metatag_defaults.edit_form:
   path: '/admin/config/search/metatag/{metatag_defaults}'
   defaults:
     _entity_form: 'metatag_defaults.edit'
-    _title: 'Edit default meta tags'
+    _title_callback: '\Drupal\metatag\Form\MetatagDefaultsForm::getTitle'
   requirements:
     _permission: 'administer meta tags'
   options:

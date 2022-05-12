@@ -47,10 +47,10 @@ class TermParentsTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
-    /* @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager */
+    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager */
     $entity_type_manager = $this->container->get('entity_type.manager');
     $this->termStorage = $entity_type_manager->getStorage('taxonomy_term');
     $this->state = $this->container->get('state');
@@ -117,13 +117,14 @@ class TermParentsTest extends BrowserTestBase {
   protected function submitAddTermForm($name) {
     $this->getSession()->getPage()->fillField('Name', $name);
 
-    $this->drupalPostForm(NULL, [], 'Save');
+    $this->submitForm([], 'Save');
 
     $result = $this->termStorage
       ->getQuery()
+      ->accessCheck(FALSE)
       ->condition('name', $name)
       ->execute();
-    /* @var \Drupal\taxonomy\TermInterface $term_1 */
+    /** @var \Drupal\taxonomy\TermInterface $term_1 */
     $term_1 = $this->termStorage->load(reset($result));
     $this->assertInstanceOf(TermInterface::class, $term_1);
     return $term_1;
@@ -151,7 +152,7 @@ class TermParentsTest extends BrowserTestBase {
     $this->assertParentOption('--Test term 5', TRUE);
     $this->assertParentOption('Test term 2');
     $this->assertParentOption('-Test term 4', TRUE);
-    $this->drupalPostForm(NULL, [], 'Save');
+    $this->submitForm([], 'Save');
     $this->assertParentsUnchanged($term_6);
   }
 
@@ -182,12 +183,12 @@ class TermParentsTest extends BrowserTestBase {
     $this->assertParentOption('--Test term 5', TRUE);
     $this->assertParentOption('Test term 2');
     $this->assertParentOption('-Test term 4', TRUE);
-    $this->drupalPostForm(NULL, [], 'Save');
+    $this->submitForm([], 'Save');
     $this->assertParentsUnchanged($term_6);
   }
 
   /**
-   * Performs tests that edit terms with a single parent
+   * Performs tests that edit terms with a single parent.
    *
    * @return \Drupal\taxonomy\TermInterface[]
    *   A list of terms created for testing.
@@ -199,7 +200,7 @@ class TermParentsTest extends BrowserTestBase {
     $term_1 = $this->createTerm('Test term 1');
     $this->drupalGet($term_1->toUrl('edit-form'));
     $this->assertParentOption('<root>', TRUE);
-    $this->drupalPostForm(NULL, [], 'Save');
+    $this->submitForm([], 'Save');
     $this->assertParentsUnchanged($term_1);
     $terms[] = $term_1;
 
@@ -207,7 +208,7 @@ class TermParentsTest extends BrowserTestBase {
     $this->drupalGet($term_2->toUrl('edit-form'));
     $this->assertParentOption('<root>', TRUE);
     $this->assertParentOption('Test term 1');
-    $this->drupalPostForm(NULL, [], 'Save');
+    $this->submitForm([], 'Save');
     $this->assertParentsUnchanged($term_2);
     $terms[] = $term_2;
 
@@ -218,7 +219,7 @@ class TermParentsTest extends BrowserTestBase {
     $this->assertParentOption('<root>');
     $this->assertParentOption('Test term 1', TRUE);
     $this->assertParentOption('Test term 2');
-    $this->drupalPostForm(NULL, [], 'Save');
+    $this->submitForm([], 'Save');
     $this->assertParentsUnchanged($term_3);
     $terms[] = $term_3;
 
@@ -228,7 +229,7 @@ class TermParentsTest extends BrowserTestBase {
     $this->assertParentOption('Test term 1');
     $this->assertParentOption('-Test term 3');
     $this->assertParentOption('Test term 2', TRUE);
-    $this->drupalPostForm(NULL, [], 'Save');
+    $this->submitForm([], 'Save');
     $this->assertParentsUnchanged($term_4);
     $terms[] = $term_4;
 
@@ -240,7 +241,7 @@ class TermParentsTest extends BrowserTestBase {
     $this->assertParentOption('-Test term 3', TRUE);
     $this->assertParentOption('Test term 2');
     $this->assertParentOption('-Test term 4');
-    $this->drupalPostForm(NULL, [], 'Save');
+    $this->submitForm([], 'Save');
     $this->assertParentsUnchanged($term_5);
     $terms[] = $term_5;
 
@@ -259,7 +260,7 @@ class TermParentsTest extends BrowserTestBase {
    *   The created term.
    */
   protected function createTerm($name, array $parent_ids = []) {
-    /* @var \Drupal\taxonomy\TermInterface $term */
+    /** @var \Drupal\taxonomy\TermInterface $term */
     $term = $this->termStorage->create([
       'name' => $name,
       'vid' => $this->vocabularyId,
@@ -281,8 +282,10 @@ class TermParentsTest extends BrowserTestBase {
    * @param bool $selected
    *   (optional) Whether or not the option should be selected. Defaults to
    *   FALSE.
+   *
+   * @internal
    */
-  protected function assertParentOption($option, $selected = FALSE) {
+  protected function assertParentOption(string $option, bool $selected = FALSE): void {
     $option = $this->assertSession()->optionExists('Parent terms', $option);
     if ($selected) {
       $this->assertTrue($option->hasAttribute('selected'));
@@ -297,8 +300,10 @@ class TermParentsTest extends BrowserTestBase {
    *
    * @param \Drupal\taxonomy\TermInterface $term
    *   The term to check.
+   *
+   * @internal
    */
-  protected function assertParentsUnchanged(TermInterface $term) {
+  protected function assertParentsUnchanged(TermInterface $term): void {
     $saved_term = $this->termStorage->load($term->id());
 
     $expected = $term->get('parent')->getValue();

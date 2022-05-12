@@ -2,13 +2,15 @@
 
 namespace Drupal\Tests\layout_builder\Functional\Update;
 
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\FunctionalTests\Update\UpdatePathTestBase;
 
 /**
- * Tests context-aware blocks after the context changes to section storage.
+ * Tests the upgrade path for Layout Builder layout context mappings.
+ *
+ * @see layout_builder_post_update_section_storage_context_mapping()
  *
  * @group layout_builder
- * @group legacy
  */
 class LayoutBuilderContextMappingUpdatePathTest extends UpdatePathTestBase {
 
@@ -17,35 +19,25 @@ class LayoutBuilderContextMappingUpdatePathTest extends UpdatePathTestBase {
    */
   protected function setDatabaseDumpFiles() {
     $this->databaseDumpFiles = [
-      __DIR__ . '/../../../../../system/tests/fixtures/update/drupal-8.filled.standard.php.gz',
+      __DIR__ . '/../../../../../system/tests/fixtures/update/drupal-9.0.0.bare.standard.php.gz',
       __DIR__ . '/../../../fixtures/update/layout-builder.php',
-      __DIR__ . '/../../../fixtures/update/layout-builder-field-schema.php',
-      __DIR__ . '/../../../fixtures/update/layout-builder-field-block.php',
+      __DIR__ . '/../../../fixtures/update/layout-builder-context-mapping.php',
     ];
   }
 
   /**
-   * Tests the upgrade path for enabling Layout Builder.
+   * Tests the upgrade path for Layout Builder layout context mappings.
    */
   public function testRunUpdates() {
-    $assert_session = $this->assertSession();
+    $data = EntityViewDisplay::load('node.article.teaser')->toArray();
+    $this->assertSame(TRUE, $data['third_party_settings']['layout_builder']['enabled']);
+    $this->assertArrayNotHasKey('context_mapping', $data['third_party_settings']['layout_builder']['sections'][0]->toArray()['layout_settings']);
 
     $this->runUpdates();
 
-    $this->drupalLogin($this->rootUser);
-    // Ensure that defaults and overrides display the body field within the
-    // content region of the one column layout.
-    $paths = [
-      // Overrides.
-      'node/1',
-      // Defaults.
-      'admin/structure/types/manage/article/display/default/layout',
-    ];
-    foreach ($paths as $path) {
-      $this->drupalGet($path);
-      $assert_session->statusCodeEquals(200);
-      $assert_session->elementExists('css', '.layout--onecol .layout__region--content .field--name-body');
-    }
+    $data = EntityViewDisplay::load('node.article.teaser')->toArray();
+    $this->assertSame(TRUE, $data['third_party_settings']['layout_builder']['enabled']);
+    $this->assertSame([], $data['third_party_settings']['layout_builder']['sections'][0]->toArray()['layout_settings']['context_mapping']);
   }
 
 }

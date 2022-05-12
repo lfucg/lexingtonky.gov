@@ -23,7 +23,7 @@ class NodeAccessLanguageAwareCombinationTest extends NodeAccessTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'language',
     'node_access_test_language',
     'node_access_test',
@@ -50,7 +50,7 @@ class NodeAccessLanguageAwareCombinationTest extends NodeAccessTestBase {
    */
   protected $adminUser;
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     node_access_test_add_field(NodeType::load('page'));
@@ -214,7 +214,7 @@ class NodeAccessLanguageAwareCombinationTest extends NodeAccessTestBase {
     $this->assertNodeAccess($expected_node_access, $this->nodes['private_both_public']->getTranslation('hu'), $this->webUser);
     $this->assertNodeAccess($expected_node_access, $this->nodes['private_both_public']->getTranslation('ca'), $this->webUser);
 
-    // If the node is marked private, but a existing translation is public,
+    // If the node is marked private, but an existing translation is public,
     // access should only be granted for the public translation. With the
     // Hungarian translation marked as private, but the Catalan translation
     // public, the access is granted.
@@ -309,7 +309,7 @@ class NodeAccessLanguageAwareCombinationTest extends NodeAccessTestBase {
     $nids = $select->execute()->fetchAllAssoc('nid');
 
     // There are no nodes with German translations, so no results are returned.
-    $this->assertTrue(empty($nids), 'Query returns an empty result.');
+    $this->assertEmpty($nids, 'Query returns an empty result.');
 
     // Query the nodes table as admin user (full access) with the node access
     // tag and no specific langcode.

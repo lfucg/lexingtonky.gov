@@ -10,7 +10,7 @@ abstract class TourResourceTestBase extends EntityResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['tour'];
+  protected static $modules = ['tour'];
 
   /**
    * {@inheritdoc}
@@ -50,9 +50,7 @@ abstract class TourResourceTestBase extends EntityResourceTestBase {
           'label' => 'Llama',
           'body' => 'Who handle the awesomeness of llamas?',
           'weight' => 100,
-          'attributes' => [
-            'data-id' => 'tour-llama-1',
-          ],
+          'selector' => '#tour-llama-1',
         ],
       ],
     ]);
@@ -84,9 +82,7 @@ abstract class TourResourceTestBase extends EntityResourceTestBase {
           'label' => 'Llama',
           'body' => 'Who handle the awesomeness of llamas?',
           'weight' => 100,
-          'attributes' => [
-            'data-id' => 'tour-llama-1',
-          ],
+          'selector' => '#tour-llama-1',
         ],
       ],
       'uuid' => $this->entity->uuid(),
@@ -113,10 +109,6 @@ abstract class TourResourceTestBase extends EntityResourceTestBase {
    * {@inheritdoc}
    */
   protected function getExpectedUnauthorizedAccessMessage($method) {
-    if ($this->config('rest.settings')->get('bc_entity_resource_permissions')) {
-      return parent::getExpectedUnauthorizedAccessMessage($method);
-    }
-
     return "The following permissions are required: 'access tour' OR 'administer site configuration'.";
   }
 

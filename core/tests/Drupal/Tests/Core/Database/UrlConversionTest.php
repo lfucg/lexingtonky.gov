@@ -7,7 +7,7 @@ use Drupal\Core\Site\Settings;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests for database URL to/from database connection array coversions.
+ * Tests for database URL to/from database connection array conversions.
  *
  * These tests run in isolation since we don't want the database static to
  * affect other tests.
@@ -24,9 +24,9 @@ class UrlConversionTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
-    $this->root = dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))));
+    $this->root = dirname(__FILE__, 7);
     // Mock the container so we don't need to mock drupal_valid_test_ua().
     // @see \Drupal\Core\Extension\ExtensionDiscovery::scan()
     $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
@@ -35,7 +35,7 @@ class UrlConversionTest extends UnitTestCase {
       ->with('kernel')
       ->willReturn(TRUE);
     $container->expects($this->any())
-      ->method('get')
+      ->method('getParameter')
       ->with('site.path')
       ->willReturn('');
     \Drupal::setContainer($container);
@@ -48,13 +48,13 @@ class UrlConversionTest extends UnitTestCase {
    *
    * @dataProvider providerConvertDbUrlToConnectionInfo
    */
-  public function testDbUrltoConnectionConversion($root, $url, $database_array) {
+  public function testDbUrlToConnectionConversion($root, $url, $database_array) {
     $result = Database::convertDbUrlToConnectionInfo($url, $root ?: $this->root);
     $this->assertEquals($database_array, $result);
   }
 
   /**
-   * Dataprovider for testDbUrltoConnectionConversion().
+   * Data provider for testDbUrlToConnectionConversion().
    *
    * @return array
    *   Array of arrays with the following elements:
@@ -96,9 +96,7 @@ class UrlConversionTest extends UnitTestCase {
           'password' => 'test_pass',
           'host' => 'test_host',
           'database' => 'test_database',
-          'prefix' => [
-            'default' => 'bar',
-          ],
+          'prefix' => 'bar',
           'port' => 3306,
           'namespace' => 'Drupal\Core\Database\Driver\mysql',
         ],
@@ -110,9 +108,7 @@ class UrlConversionTest extends UnitTestCase {
           'driver' => 'sqlite',
           'host' => 'localhost',
           'database' => '/var/www/d8/test_database',
-          'prefix' => [
-            'default' => 'foo',
-          ],
+          'prefix' => 'foo',
           'namespace' => 'Drupal\Core\Database\Driver\sqlite',
         ],
       ],
@@ -149,9 +145,7 @@ class UrlConversionTest extends UnitTestCase {
           'password' => 'test_pass',
           'host' => 'test_host',
           'database' => 'test_database',
-          'prefix' => [
-            'default' => 'bar',
-          ],
+          'prefix' => 'bar',
           'port' => 3306,
           'namespace' => 'Drupal\driver_test\Driver\Database\DrivertestMysql',
           'autoload' => 'core/modules/system/tests/modules/driver_test/src/Driver/Database/DrivertestMysql/',
@@ -180,9 +174,7 @@ class UrlConversionTest extends UnitTestCase {
           'password' => 'test_pass',
           'host' => 'test_host',
           'database' => 'test_database',
-          'prefix' => [
-            'default' => 'bar',
-          ],
+          'prefix' => 'bar',
           'port' => 5432,
           'namespace' => 'Drupal\driver_test\Driver\Database\DrivertestPgsql',
           'autoload' => 'core/modules/system/tests/modules/driver_test/src/Driver/Database/DrivertestPgsql/',
@@ -205,7 +197,7 @@ class UrlConversionTest extends UnitTestCase {
   }
 
   /**
-   * Test ::convertDbUrlToConnectionInfo() exception for invalid arguments.
+   * Tests ::convertDbUrlToConnectionInfo() exception for invalid arguments.
    *
    * @dataProvider providerInvalidArgumentsUrlConversion
    */
@@ -216,7 +208,7 @@ class UrlConversionTest extends UnitTestCase {
   }
 
   /**
-   * Dataprovider for testGetInvalidArgumentExceptionInUrlConversion().
+   * Data provider for testGetInvalidArgumentExceptionInUrlConversion().
    *
    * @return array
    *   Array of arrays with the following elements:
@@ -248,7 +240,7 @@ class UrlConversionTest extends UnitTestCase {
   }
 
   /**
-   * Dataprovider for testGetConnectionInfoAsUrl().
+   * Data provider for testGetConnectionInfoAsUrl().
    *
    * @return array
    *   Array of arrays with the following elements:
@@ -357,7 +349,7 @@ class UrlConversionTest extends UnitTestCase {
   }
 
   /**
-   * Test ::getConnectionInfoAsUrl() exception for invalid arguments.
+   * Tests ::getConnectionInfoAsUrl() exception for invalid arguments.
    *
    * @covers ::getConnectionInfoAsUrl
    *
@@ -376,7 +368,7 @@ class UrlConversionTest extends UnitTestCase {
   }
 
   /**
-   * Dataprovider for testGetInvalidArgumentGetConnectionInfoAsUrl().
+   * Data provider for testGetInvalidArgumentGetConnectionInfoAsUrl().
    *
    * @return array
    *   Array of arrays with the following elements:

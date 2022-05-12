@@ -3,7 +3,7 @@
  * Content Translation admin behaviors.
  */
 
-(function($, Drupal, drupalSettings) {
+(function ($, Drupal, drupalSettings) {
   /**
    * Forces applicable options to be checked as translatable.
    *
@@ -19,7 +19,7 @@
       let $fields;
 
       function fieldsChangeHandler($fields, dependentColumns) {
-        return function(e) {
+        return function (e) {
           Drupal.behaviors.contentTranslationDependentOptions.check(
             $fields,
             dependentColumns,
@@ -32,7 +32,7 @@
       // that name and copy over the input values that require all columns to be
       // translatable.
       if (options && options.dependent_selectors) {
-        Object.keys(options.dependent_selectors).forEach(field => {
+        Object.keys(options.dependent_selectors).forEach((field) => {
           $fields = $context.find(`input[name^="${field}"]`);
           const dependentColumns = options.dependent_selectors[field];
 
@@ -54,7 +54,7 @@
 
       // A field that has many different translatable parts can also define one
       // or more columns that require all columns to be translatable.
-      Object.keys(dependentColumns || {}).forEach(index => {
+      Object.keys(dependentColumns || {}).forEach((index) => {
         column = dependentColumns[index];
 
         if (!$changed) {
@@ -62,10 +62,7 @@
         }
 
         if ($element.is(`input[value="${column}"]:checked`)) {
-          $fields
-            .prop('checked', true)
-            .not($element)
-            .prop('disabled', true);
+          $fields.prop('checked', true).not($element).prop('disabled', true);
         } else {
           $fields.prop('disabled', false);
         }
@@ -85,30 +82,30 @@
     attach(context) {
       // Initially hide all field rows for non translatable bundles and all
       // column rows for non translatable fields.
-      $(context)
-        .find('table .bundle-settings .translatable :input')
-        .once('translation-entity-admin-hide')
-        .each(function() {
-          const $input = $(this);
-          const $bundleSettings = $input.closest('.bundle-settings');
-          if (!$input.is(':checked')) {
-            $bundleSettings.nextUntil('.bundle-settings').hide();
-          } else {
-            $bundleSettings
-              .nextUntil('.bundle-settings', '.field-settings')
-              .find('.translatable :input:not(:checked)')
-              .closest('.field-settings')
-              .nextUntil(':not(.column-settings)')
-              .hide();
-          }
-        });
+      once(
+        'translation-entity-admin-hide',
+        // Keep jQuery because of the use of `:input`.
+        $(context).find('table .bundle-settings .translatable :input'),
+      ).forEach((input) => {
+        const $input = $(input);
+        const $bundleSettings = $input.closest('.bundle-settings');
+        if (!$input.is(':checked')) {
+          $bundleSettings.nextUntil('.bundle-settings').hide();
+        } else {
+          $bundleSettings
+            .nextUntil('.bundle-settings', '.field-settings')
+            .find('.translatable :input:not(:checked)')
+            .closest('.field-settings')
+            .nextUntil(':not(.column-settings)')
+            .hide();
+        }
+      });
 
       // When a bundle is made translatable all of its fields should inherit
       // this setting. Instead when it is made non translatable its fields are
       // hidden, since their translatability no longer matters.
-      $('body')
-        .once('translation-entity-admin-bind')
-        .on('click', 'table .bundle-settings .translatable :input', e => {
+      $(once('translation-entity-admin-bind', 'body'))
+        .on('click', 'table .bundle-settings .translatable :input', (e) => {
           const $target = $(e.target);
           const $bundleSettings = $target.closest('.bundle-settings');
           const $settings = $bundleSettings.nextUntil('.bundle-settings');
@@ -123,7 +120,7 @@
             $settings.hide();
           }
         })
-        .on('click', 'table .field-settings .translatable :input', e => {
+        .on('click', 'table .field-settings .translatable :input', (e) => {
           const $target = $(e.target);
           const $fieldSettings = $target.closest('.field-settings');
           const $columnSettings = $fieldSettings.nextUntil(

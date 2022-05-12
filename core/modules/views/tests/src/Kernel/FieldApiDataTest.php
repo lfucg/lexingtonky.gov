@@ -21,7 +21,7 @@ class FieldApiDataTest extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'field',
     'filter',
     'language',
@@ -37,7 +37,7 @@ class FieldApiDataTest extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp($import_test_views);
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
@@ -139,7 +139,7 @@ class FieldApiDataTest extends ViewsKernelTestBase {
     // Test click sortable for string field.
     $this->assertTrue($data[$current_table][$field_storage_string->getName()]['field']['click sortable']);
     // Click sort should only be on the primary field.
-    $this->assertTrue(empty($data[$revision_table][$field_storage_string->getName()]['field']['click sortable']));
+    $this->assertArrayNotHasKey($field_storage_string->getName(), $data[$revision_table]);
     // Test click sortable for long text field.
     $data_long = $this->getViewsData('field_string_long');
     $current_table_long = $table_mapping->getDedicatedDataTableName($field_storage_string_long);

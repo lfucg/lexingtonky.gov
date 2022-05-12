@@ -90,7 +90,7 @@ class SwitchShortcutSet extends FormBase {
       $form['label'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Label'),
-        '#description' => $this->t('The new set is created by copying items from your default shortcut set.'),
+        '#description' => $this->t('The new set is created by copying links from your default shortcut set.'),
         '#access' => $add_access,
         '#states' => [
           'visible' => [
@@ -120,7 +120,7 @@ class SwitchShortcutSet extends FormBase {
 
       if (!$account_is_user) {
         $default_set = $this->shortcutSetStorage->getDefaultSet($this->user);
-        $form['new']['#description'] = $this->t('The new set is created by copying items from the %default set.', ['%default' => $default_set->label()]);
+        $form['new']['#description'] = $this->t('The new set is created by copying links from the %default set.', ['%default' => $default_set->label()]);
       }
 
       $form['actions'] = ['#type' => 'actions'];
@@ -175,7 +175,7 @@ class SwitchShortcutSet extends FormBase {
     $account_is_user = $this->user->id() == $account->id();
     if ($form_state->getValue('set') == 'new') {
       // Save a new shortcut set with links copied from the user's default set.
-      /* @var \Drupal\shortcut\Entity\ShortcutSet $set */
+      /** @var \Drupal\shortcut\Entity\ShortcutSet $set */
       $set = $this->shortcutSetStorage->create([
         'id' => $form_state->getValue('id'),
         'label' => $form_state->getValue('label'),
@@ -201,7 +201,7 @@ class SwitchShortcutSet extends FormBase {
     }
     else {
       // Switch to a different shortcut set.
-      /* @var \Drupal\shortcut\Entity\ShortcutSet $set */
+      /** @var \Drupal\shortcut\Entity\ShortcutSet $set */
       $set = $this->shortcutSetStorage->load($form_state->getValue('set'));
       $replacements = [
         '%user' => $this->user->getDisplayName(),

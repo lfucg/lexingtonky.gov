@@ -16,19 +16,19 @@ class EmailActionTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['system', 'user', 'dblog'];
+  protected static $modules = ['system', 'user', 'dblog'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installSchema('dblog', ['watchdog']);
   }
 
   /**
-   * Test the email action plugin.
+   * Tests the email action plugin.
    */
   public function testEmailAction() {
     /** @var \Drupal\Core\Action\ActionManager $plugin_manager */
@@ -57,9 +57,9 @@ class EmailActionTest extends KernelTestBase {
       ->execute()
       ->fetch();
 
-    $this->assertEquals($log->message, 'Sent email to %recipient');
+    $this->assertEquals('Sent email to %recipient', $log->message);
     $variables = unserialize($log->variables);
-    $this->assertEquals($variables['%recipient'], 'test@example.com');
+    $this->assertEquals('test@example.com', $variables['%recipient']);
   }
 
 }

@@ -16,7 +16,7 @@ class ParagraphsUiTest extends ParagraphsTestBase {
    *
    * @var string[]
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'paragraphs',
     'field',

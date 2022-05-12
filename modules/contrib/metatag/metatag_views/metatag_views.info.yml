@@ -1,13 +1,13 @@
 name: 'Metatag: Views'
 type: module
 description: Provides views integration for metatags.
-core_version_requirement: '^8.7.7 || ^9'
+core_version_requirement: '^9'
 package: SEO
 dependencies:
   - metatag:metatag
   - drupal:views
 
-# Information added by Drupal.org packaging script on 2021-03-15
-version: '8.x-1.16'
+# Information added by Drupal.org packaging script on 2022-01-06
+version: '8.x-1.19'
 project: 'metatag'
-datestamp: 1615820871
+datestamp: 1641496016

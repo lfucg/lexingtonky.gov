@@ -112,10 +112,6 @@ function paragraphs_library_make_library_item_submit(array $form, FormStateInter
 
   // Replacing element in the array.
   $library_item = LibraryItem::createFromParagraph($submit['widget_state']['paragraphs'][$submit['delta']]['entity']);
-  // If the item has a moderation field, set it to published.
-  if ($library_item->hasField('moderation_state')) {
-    $library_item->set('moderation_state', 'published');
-  }
   $library_item->save();
 
   // Replace this paragraph with a library reference one.

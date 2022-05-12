@@ -16,7 +16,7 @@ class SettingsTrayTestBase extends OffCanvasTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'settings_tray',
     // Add test module to override CSS pointer-events properties because they
     // cause test failures.
@@ -137,11 +137,11 @@ class SettingsTrayTestBase extends OffCanvasTestBase {
     $web_assert->elementTextContains('css', '.form-item-settings-label-display label', 'Display block title');
     // Confirm Block title label is shown if checkbox is checked.
     if ($this->getSession()->getPage()->find('css', 'input[name="settings[label_display]"]')->isChecked()) {
-      $this->assertEquals($this->isLabelInputVisible(), TRUE, 'Label is visible');
+      $this->assertTrue($this->isLabelInputVisible(), 'Label is visible');
       $web_assert->elementTextContains('css', '.form-item-settings-label label', 'Block title');
     }
     else {
-      $this->assertEquals($this->isLabelInputVisible(), FALSE, 'Label is not visible');
+      $this->assertFalse($this->isLabelInputVisible(), 'Label is not visible');
     }
 
     // Check that common block form elements exist.

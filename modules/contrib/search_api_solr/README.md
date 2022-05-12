@@ -34,9 +34,9 @@ the [Apache Solr Reference Guide](https://solr.apache.org/guide/) or use
 docker-compose with
 https://github.com/docker-solr/docker-solr-examples/blob/master/docker-compose/docker-compose.yml
 
-The preferred way for local developent is to use DDev where you can easily add
+The preferred way for local development is to use DDev where you can easily add
 the pre-definded
-[solr-cloud service](https://github.com/docker-solr/docker-solr-examples/blob/master/docker-compose/docker-compose.yml).
+[solr-cloud service](https://github.com/drud/ddev-contrib/tree/master/docker-compose-services/solr).
 
 Once Solr Cloud is running with DDev you don't need to deal with any configset
 files like described in the sections below. Just enable the
@@ -48,6 +48,10 @@ button on the Serch API server details page. Or automate things using
 ```
 ddev drush search_api_solr:upload-configset SERVER_ID
 ```
+
+Check the
+[Apache Solr (Cloud) Integration for DDEV-Local README](https://github.com/drud/ddev-contrib/blob/master/docker-compose-services/solr/README.md)
+for more detailed instructions.
 
 Setting up Solr (single core) - the classic way
 -----------------------------------------------
@@ -178,6 +182,19 @@ the need for advanced features or customizations.
 
 ![Jump Start Config-Sets](https://github.com/mkalkbrenner/search_api_solr/workflows/Jump%20Start%20Config-Sets/badge.svg?branch=4.x)
 
+Updating Solr
+-------------
+
+Whenever you update your Solr installation it is recommended that you generate a
+new config-set and deploy it. The deployment depends on the the installation
+variation you choose before. It is also recommended to re-index yur content
+after an update. But if it is a minor update it should be save to just queue all
+contentfor re-indexing.
+
+When performing a major version update like from Solr 6 to Solr 8 it is
+recommended to delete the core or collection and recreate it like described in
+the installation instructions above.
+
 Search API Solr features
 ========================
 
@@ -194,7 +211,7 @@ a Solr Query Debugger and shows how content gets indexed.
 Regarding third-party features, the following are supported:
 
 - autocomplete
-  - Introduced by module: search_api_autocomplete
+  - Introduced by module: search_api_solr_autocomplete
   - Lets you add autocompletion capabilities to search forms on the site.
 - facets
   - Introduced by module: facet
@@ -318,6 +335,20 @@ notice that Views will randomly output the same value for all of these fields if
 you enabled "Retrieve result data from Solr". In this case you have to enable
 the "Solr dummy fields" processor and add as many dummy fields to the index as
 you require. Afterwards you should manipulate these fields via API.
+
+Troubleshooting Facets
+----------------------
+Facetting on fulltext fields is not yet supported. We recommend the use of
+string fields for that purpose.
+
+Trie based field types were deprecated in Solr 6 and with Solr 7 we switched to
+the point based equivalents. But lucene doesn't support a mincount of "0" for
+these field types. We recommend the use of string fields instead of numeric ones
+for that purpose.
+
+If updating from Search API Solr 8.x-1.x or from Solr versions before 7 to Solr
+7 or 8, check your Search API index' field configurations to avoid these errors
+that will lead to exceptions and zero results.
 
 Support
 =======

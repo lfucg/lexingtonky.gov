@@ -4,15 +4,13 @@ namespace Drupal\entity_browser;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Generates routes for entity browsers.
  */
 class Permissions implements ContainerInjectionInterface {
-
-  use StringTranslationTrait;
 
   /**
    * The entity browser storage.
@@ -22,13 +20,22 @@ class Permissions implements ContainerInjectionInterface {
   protected $browserStorage;
 
   /**
+   * Translation manager service.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationManager
+   */
+  protected $translationManager;
+
+  /**
    * Constructs Permissions object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity manager service.
+   * @param \Drupal\Core\StringTranslation\TranslationManager $translation
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, TranslationManager $translation) {
     $this->browserStorage = $entity_type_manager->getStorage('entity_browser');
+    $this->translationManager = $translation;
   }
 
   /**
@@ -36,7 +43,8 @@ class Permissions implements ContainerInjectionInterface {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('string_translation')
     );
   }
 
@@ -51,8 +59,8 @@ class Permissions implements ContainerInjectionInterface {
     foreach ($browsers as $browser) {
       if ($browser->route()) {
         $permissions['access ' . $browser->id() . ' entity browser pages'] = [
-          'title' => $this->t('Access @name pages', ['@name' => $browser->label()]),
-          'description' => $this->t('Access pages that %browser uses to operate.', ['%browser' => $browser->label()]),
+          'title' => $this->translationManager->translate('Access @name pages', ['@name' => $browser->label()]),
+          'description' => $this->translationManager->translate('Access pages that %browser uses to operate.', ['%browser' => $browser->label()]),
         ];
       }
     }

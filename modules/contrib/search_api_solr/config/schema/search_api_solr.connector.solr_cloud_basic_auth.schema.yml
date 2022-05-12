@@ -5,3 +5,9 @@ plugin.plugin_configuration.search_api_solr_connector.solr_cloud_basic_auth:
     checkpoints_collection:
       type: string
       label: 'The collection where topic checkpoints are stored'
+    stats_cache:
+      type: string
+      label: 'StatsCache'
+    distrib:
+      type: boolean
+      label: 'Distribute queries across all nodes'

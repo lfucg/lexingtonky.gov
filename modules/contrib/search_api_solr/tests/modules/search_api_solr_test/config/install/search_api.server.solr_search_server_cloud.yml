@@ -30,6 +30,7 @@ backend_config:
     solr_install_dir: ''
     checkpoints_collection: checkpoints
     skip_schema_check: false
+    distrib: true
   optimize: false
   fallback_multiple: true
 status: true

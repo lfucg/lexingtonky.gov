@@ -43,9 +43,9 @@ function paragraphs_test_paragraph_view(array &$build, ParagraphInterface $entit
 }
 
 /**
- * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
  */
-function paragraphs_test_field_widget_entity_reference_paragraphs_form_alter(&$element, &$form_state, $context) {
+function paragraphs_test_field_widget_single_element_entity_reference_paragraphs_form_alter(&$element, &$form_state, $context) {
   if ($element['#paragraph_type'] == 'altered_paragraph') {
     $element['subform']['field_text']['widget'][0]['#title'] = 'Altered title';
   }

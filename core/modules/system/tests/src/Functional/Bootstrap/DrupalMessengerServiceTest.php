@@ -17,7 +17,7 @@ class DrupalMessengerServiceTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['system_test'];
+  protected static $modules = ['system_test'];
 
   /**
    * {@inheritdoc}
@@ -31,24 +31,34 @@ class DrupalMessengerServiceTest extends BrowserTestBase {
     // The page at system_test.messenger_service route sets two messages and
     // then removes the first before it is displayed.
     $this->drupalGet(Url::fromRoute('system_test.messenger_service'));
-    $this->assertNoText('First message (removed).');
-    $this->assertRaw(t('Second message with <em>markup!</em> (not removed).'));
+    $this->assertSession()->pageTextNotContains('First message (removed).');
+    $this->assertSession()->responseContains('Second message with <em>markup!</em> (not removed).');
 
     // Ensure duplicate messages are handled as expected.
-    $this->assertUniqueText('Non Duplicated message');
-    $this->assertNoUniqueText('Duplicated message');
+    $this->assertSession()->pageTextMatchesCount(1, '/Non Duplicated message/');
+    $this->assertSession()->pageTextMatchesCount(3, '/Duplicated message/');
 
     // Ensure Markup objects are rendered as expected.
-    $this->assertRaw('Markup with <em>markup!</em>');
-    $this->assertUniqueText('Markup with markup!');
-    $this->assertRaw('Markup2 with <em>markup!</em>');
+    $this->assertSession()->responseContains('Markup with <em>markup!</em>');
+    $this->assertSession()->pageTextMatchesCount(1, '/Markup with markup!/');
+    $this->assertSession()->responseContains('Markup2 with <em>markup!</em>');
 
     // Ensure when the same message is of different types it is not duplicated.
-    $this->assertUniqueText('Non duplicate Markup / string.');
-    $this->assertNoUniqueText('Duplicate Markup / string.');
+    $this->assertSession()->pageTextMatchesCount(1, '$Non duplicate Markup / string.$');
+    $this->assertSession()->pageTextMatchesCount(2, '$Duplicate Markup / string.$');
 
     // Ensure that strings that are not marked as safe are escaped.
-    $this->assertEscaped('<em>This<span>markup will be</span> escaped</em>.');
+    $this->assertSession()->assertEscaped('<em>This<span>markup will be</span> escaped</em>.');
+
+    // Ensure messages survive a container rebuild.
+    $assert = $this->assertSession();
+    $this->drupalLogin($this->rootUser);
+    $edit = [];
+    $edit["modules[help][enable]"] = TRUE;
+    $this->drupalGet('admin/modules');
+    $this->submitForm($edit, 'Install');
+    $assert->pageTextContains('Help has been enabled');
+    $assert->pageTextContains('system_test_preinstall_module called');
   }
 
 }

@@ -48,6 +48,11 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
   protected $targetDepartment = NULL;
 
   /**
+   * Page of Contact or Related Department.
+   */
+  protected $targetPage = NULL;
+
+  /**
    * Constructs a CalendarController object.
    *
    * @param array $configuration

@@ -177,7 +177,7 @@ trait UserCreationTrait {
     }
     $edit += [
       'mail' => $edit['name'] . '@example.com',
-      'pass' => user_password(),
+      'pass' => \Drupal::service('password_generator')->generate(),
       'status' => 1,
     ];
     if ($rid) {
@@ -272,10 +272,7 @@ trait UserCreationTrait {
     }
     $result = $role->save();
 
-    $this->assertIdentical($result, SAVED_NEW, new FormattableMarkup('Created role ID @rid with name @name.', [
-      '@name' => var_export($role->label(), TRUE),
-      '@rid' => var_export($role->id(), TRUE),
-    ]), 'Role');
+    $this->assertSame(SAVED_NEW, $result, new FormattableMarkup('Created role ID @rid with name @name.', ['@name' => var_export($role->label(), TRUE), '@rid' => var_export($role->id(), TRUE)]), 'Role');
 
     if ($result === SAVED_NEW) {
       // Grant the specified permissions to the role, if any.
@@ -283,12 +280,7 @@ trait UserCreationTrait {
         $this->grantPermissions($role, $permissions);
         $assigned_permissions = Role::load($role->id())->getPermissions();
         $missing_permissions = array_diff($permissions, $assigned_permissions);
-        if (!$missing_permissions) {
-          $this->pass(new FormattableMarkup('Created permissions: @perms', ['@perms' => implode(', ', $permissions)]), 'Role');
-        }
-        else {
-          $this->fail(new FormattableMarkup('Failed to create permissions: @perms', ['@perms' => implode(', ', $missing_permissions)]), 'Role');
-        }
+        $this->assertEmpty($missing_permissions);
       }
       return $role->id();
     }

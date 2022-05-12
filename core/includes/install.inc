@@ -5,13 +5,12 @@
  * API functions for installing modules and themes.
  */
 
-use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Utility\OpCodeCache;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Database\Database;
 use Drupal\Core\Extension\Dependency;
 use Drupal\Core\Extension\ExtensionDiscovery;
-use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Installer\InstallerKernel;
 use Drupal\Core\Site\Settings;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -82,7 +81,7 @@ const FILE_NOT_EXECUTABLE = 128;
 function drupal_load_updates() {
   /** @var \Drupal\Core\Extension\ModuleExtensionList $extension_list_module */
   $extension_list_module = \Drupal::service('extension.list.module');
-  foreach (drupal_get_installed_schema_version(NULL, FALSE, TRUE) as $module => $schema_version) {
+  foreach (\Drupal::service('update.update_hook_registry')->getAllInstalledVersions() as $module => $schema_version) {
     if ($extension_list_module->exists($module) && !$extension_list_module->checkIncompatibility($module)) {
       if ($schema_version > -1) {
         module_load_install($module);
@@ -115,7 +114,7 @@ function drupal_install_profile_distribution_name() {
     $profile = \Drupal::installProfile();
     $info = \Drupal::service('extension.list.profile')->getExtensionInfo($profile);
   }
-  return isset($info['distribution']['name']) ? $info['distribution']['name'] : 'Drupal';
+  return $info['distribution']['name'] ?? 'Drupal';
 }
 
 /**
@@ -133,7 +132,7 @@ function drupal_install_profile_distribution_version() {
   // installation state (it might not be saved anywhere yet).
   if (InstallerKernel::installationAttempted()) {
     global $install_state;
-    return isset($install_state['profile_info']['version']) ? $install_state['profile_info']['version'] : \Drupal::VERSION;
+    return $install_state['profile_info']['version'] ?? \Drupal::VERSION;
   }
   // At all other times, we load the profile via standard methods.
   else {
@@ -257,7 +256,7 @@ function drupal_get_database_types() {
  */
 function drupal_rewrite_settings($settings = [], $settings_file = NULL) {
   if (!isset($settings_file)) {
-    $settings_file = \Drupal::service('site.path') . '/settings.php';
+    $settings_file = \Drupal::getContainer()->getParameter('site.path') . '/settings.php';
   }
   // Build list of setting names and insert the values into the global namespace.
   $variable_names = [];
@@ -283,7 +282,7 @@ function drupal_rewrite_settings($settings = [], $settings_file = NULL) {
     $state = 'default';
     foreach (token_get_all($contents) as $token) {
       if (is_array($token)) {
-        list($type, $value) = $token;
+        [$type, $value] = $token;
       }
       else {
         $type = -1;
@@ -524,88 +523,6 @@ function _drupal_rewrite_settings_dump_one(\stdClass $variable, $prefix = '', $s
 }
 
 /**
- * Creates the config directory and ensures it is operational.
- *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. There is no
- *   replacement.
- *
- * @see https://www.drupal.org/node/3018145
- */
-function drupal_install_config_directories() {
-  @trigger_error('drupal_install_config_directories() is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. There is no replacement. See https://www.drupal.org/node/3018145.', E_USER_DEPRECATED);
-  global $config_directories, $install_state;
-
-  // If settings.php does not contain a config sync directory name we need to
-  // configure one.
-  if (empty($config_directories[CONFIG_SYNC_DIRECTORY])) {
-    if (empty($install_state['config_install_path'])) {
-      // Add a randomized config directory name to settings.php
-      $config_directories[CONFIG_SYNC_DIRECTORY] = \Drupal::service('site.path') . '/files/config_' . Crypt::randomBytesBase64(55) . '/sync';
-    }
-    else {
-      // Install profiles can contain a config sync directory. If they do,
-      // 'config_install_path' is a path to the directory.
-      $config_directories[CONFIG_SYNC_DIRECTORY] = $install_state['config_install_path'];
-    }
-    $settings['config_directories'][CONFIG_SYNC_DIRECTORY] = (object) [
-      'value' => $config_directories[CONFIG_SYNC_DIRECTORY],
-      'required' => TRUE,
-    ];
-    // Rewrite settings.php, which also sets the value as global variable.
-    drupal_rewrite_settings($settings);
-  }
-
-  // This should never fail, since if the config directory was specified in
-  // settings.php it will have already been created and verified earlier, and
-  // if it wasn't specified in settings.php, it is created here inside the
-  // public files directory, which has already been verified to be writable
-  // itself. But if it somehow fails anyway, the installation cannot proceed.
-  // Bail out using a similar error message as in system_requirements().
-  if (!\Drupal::service('file_system')->prepareDirectory($config_directories[CONFIG_SYNC_DIRECTORY], FileSystemInterface::CREATE_DIRECTORY)
-    && !file_exists($config_directories[CONFIG_SYNC_DIRECTORY])) {
-    throw new Exception("The directory '" . config_get_config_directory(CONFIG_SYNC_DIRECTORY) . "' could not be created. To proceed with the installation, either create the directory or ensure that the installer has the permissions to create it automatically. For more information, see the <a href='https://www.drupal.org/server-permissions'>online handbook</a>.");
-  }
-  elseif (is_writable($config_directories[CONFIG_SYNC_DIRECTORY])) {
-    // Put a README.txt into the sync config directory. This is required so that
-    // they can later be added to git. Since this directory is auto-created, we
-    // have to write out the README rather than just adding it to the drupal core
-    // repo.
-    $text = 'This directory contains configuration to be imported into your Drupal site. To make this configuration active, visit admin/config/development/configuration/sync.' . ' For information about deploying configuration between servers, see https://www.drupal.org/documentation/administer/config';
-    file_put_contents(config_get_config_directory(CONFIG_SYNC_DIRECTORY) . '/README.txt', "$text\n");
-  }
-}
-
-/**
- * Ensures that the config directory exists and is writable, or can be made so.
- *
- * @param string $type
- *   Type of config directory to return. Drupal core provides 'sync'.
- *
- * @return bool
- *   TRUE if the config directory exists and is writable.
- *
- * @deprecated in drupal:8.1.0 and is removed from drupal:9.0.0. Use
- *   config_get_config_directory() and
- *  \Drupal\Core\File\FileSystemInterface::prepareDirectory() instead.
- *
- * @see https://www.drupal.org/node/2501187
- */
-function install_ensure_config_directory($type) {
-  @trigger_error('install_ensure_config_directory() is deprecated in Drupal 8.1.0 and will be removed before Drupal 9.0.0. Use config_get_config_directory() and \Drupal\Core\File\FileSystemInterface::prepareDirectory() instead. See https://www.drupal.org/node/2501187.', E_USER_DEPRECATED);
-  // The config directory must be defined in settings.php.
-  global $config_directories;
-  if (!isset($config_directories[$type])) {
-    return FALSE;
-  }
-  // The logic here is similar to that used by system_requirements() for other
-  // directories that the installer creates.
-  else {
-    $config_directory = config_get_config_directory($type);
-    return \Drupal::service('file_system')->prepareDirectory($config_directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
-  }
-}
-
-/**
  * Verifies that all dependencies are met for a given installation profile.
  *
  * @param $install_state
@@ -703,9 +620,20 @@ function drupal_install_system($install_state) {
     ->set('profile', $install_state['parameters']['profile'])
     ->save();
 
-  // Install System module and rebuild the newly available routes.
+  $connection = Database::getConnection();
+  $provider = $connection->getProvider();
+  // When the database driver is provided by a module, then install that module.
+  // This module must be installed before any other module, as it must be able
+  // to override any call to hook_schema() or any "backend_overridable" service.
+  if ($provider !== 'core') {
+    $autoload = $connection->getConnectionOptions()['autoload'] ?? '';
+    if (($pos = strpos($autoload, 'src/Driver/Database/')) !== FALSE) {
+      $kernel->getContainer()->get('module_installer')->install([$provider], FALSE);
+    }
+  }
+
+  // Install System module.
   $kernel->getContainer()->get('module_installer')->install(['system'], FALSE);
-  \Drupal::service('router.builder')->rebuild();
 
   // Ensure default language is saved.
   if (isset($install_state['parameters']['langcode'])) {
@@ -1183,10 +1111,10 @@ function install_profile_info($profile, $langcode = 'en') {
       'description' => '',
       'version' => NULL,
       'hidden' => FALSE,
-      'php' => DRUPAL_MINIMUM_PHP,
+      'php' => \Drupal::MINIMUM_PHP,
       'config_install_path' => NULL,
     ];
-    $profile_path = drupal_get_path('profile', $profile);
+    $profile_path = \Drupal::service('extension.list.profile')->getPath($profile);
     $info = \Drupal::service('info_parser')->parse("$profile_path/$profile.info.yml");
     $info += $defaults;
 

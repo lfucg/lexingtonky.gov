@@ -3,7 +3,7 @@
  * CKEditor StylesCombo admin behavior.
  */
 
-(function($, Drupal, drupalSettings, _) {
+(function ($, Drupal, drupalSettings, _) {
   /**
    * Ensures that the "stylescombo" button's metadata remains up-to-date.
    *
@@ -35,8 +35,8 @@
       const that = this;
       $context
         .find('[name="editor[settings][plugins][stylescombo][styles]"]')
-        .on('blur.ckeditorStylesComboSettings', function() {
-          const styles = $.trim($(this).val());
+        .on('blur.ckeditorStylesComboSettings', function () {
+          const styles = $(this).val().trim();
           const stylesSet = that._generateStylesSetSetting(styles);
           if (!_.isEqual(previousStylesSet, stylesSet)) {
             previousStylesSet = stylesSet;
@@ -68,7 +68,7 @@
       styles = styles.replace(/\r/g, '\n');
       const lines = styles.split('\n');
       for (let i = 0; i < lines.length; i++) {
-        const style = $.trim(lines[i]);
+        const style = lines[i].trim();
 
         // Ignore empty lines in between non-empty lines.
         if (style.length === 0) {
@@ -114,19 +114,21 @@
    */
   Drupal.behaviors.ckeditorStylesComboSettingsSummary = {
     attach() {
-      $('[data-ckeditor-plugin-id="stylescombo"]').drupalSetSummary(context => {
-        const styles = $.trim(
-          $(
+      $('[data-ckeditor-plugin-id="stylescombo"]').drupalSetSummary(
+        (context) => {
+          const styles = $(
             '[data-drupal-selector="edit-editor-settings-plugins-stylescombo-styles"]',
-          ).val(),
-        );
-        if (styles.length === 0) {
-          return Drupal.t('No styles configured');
-        }
+          )
+            .val()
+            .trim();
+          if (styles.length === 0) {
+            return Drupal.t('No styles configured');
+          }
 
-        const count = $.trim(styles).split('\n').length;
-        return Drupal.t('@count styles configured', { '@count': count });
-      });
+          const count = styles.split('\n').length;
+          return Drupal.t('@count styles configured', { '@count': count });
+        },
+      );
     },
   };
 })(jQuery, Drupal, drupalSettings, _);

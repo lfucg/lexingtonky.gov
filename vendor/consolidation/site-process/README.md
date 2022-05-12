@@ -2,10 +2,9 @@
 
 A thin wrapper around the Symfony Process Component that allows applications to use the Site Alias library to specify the target for a remote call. 
 
-[![Travis CI](https://travis-ci.org/consolidation/site-process.svg?branch=master)](https://travis-ci.org/consolidation/site-process)
-[![Windows CI](https://ci.appveyor.com/api/projects/status/a4u1r5pj9jo1enje?svg=true)](https://ci.appveyor.com/project/greg-1-anderson/site-process)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/consolidation/site-process/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/consolidation/site-process/?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/consolidation/site-process/badge.svg?branch=master)](https://coveralls.io/github/consolidation/site-process?branch=master) 
+[![ci](https://github.com/consolidation/site-process/workflows/CI/badge.svg)](https://travis-ci.org/consolidation/site-process)
+[![scrutinizer](https://scrutinizer-ci.com/g/consolidation/site-process/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/consolidation/site-process/?branch=master)
+[![codecov](https://codecov.io/gh/consolidation/site-process/branch/main/graph/badge.svg?token=CAaB7ofhxx)](https://codecov.io/gh/consolidation/site-process)
 [![License](https://img.shields.io/badge/license-MIT-408677.svg)](LICENSE)
 
 
@@ -86,12 +85,6 @@ Check the [docker-compose](https://docs.docker.com/compose/reference/overview/) 
 #### Local
 Runs the command on the local system.
 
-## Symfony 4
-
-The Symfony Process component has different typehints in the parameters of several APIs in Symfony 4 than Symfony 3 does. This is due to the fact that Symfony 4 requires PHP 7.1.3 or later, which supports a number of typehints not permitted in earlier PHP versions. This difference is minor for most clients, but presents problems for code that subclasses Process, as it is not possible to be compatible with both the Symofny 3 and the Symfony 4 typehints at the same time.
-
-In the future, Symfony 4 will be supported in this library on a separate branch.
-
 ## Running the tests
 
 The test suite may be run locally by way of some simple composer scripts:
@@ -116,6 +109,15 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the process for su
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [releases](https://github.com/consolidation/site-process/releases) page.
+
+| Branch       | Symfony Versions | PHP Versions
+| ------------ | ---------------- | ------------
+| main (4.x) | ^4               | 7.1+
+| 2.x          | ^2 | ^3          | 5.6+
+
+Note that all 3.x releases of consolidation/site-process were skipped simply to align the 4.x versions with Symfony 4.x support.
+
+Note that the API of consolidation/site-process itself is compatible between the 2.x and 4.x versions, so most clients that work with both Symfony 3 and Symfony 4 should be able to require `"consolidation/site-process": "^2 | ^4"` without problems.
 
 ## Authors
 

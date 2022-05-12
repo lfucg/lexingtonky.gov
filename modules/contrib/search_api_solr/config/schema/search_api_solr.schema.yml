@@ -13,6 +13,9 @@ search_api.index.*.third_party.search_api_solr:
     commit_after_finalize:
       type: boolean
       label: 'Wait for commit after last finalization'
+    debug_finalize:
+      type: boolean
+      label: 'Log debug messages for finalization'
     highlighter:
       type: mapping
       label: 'highlighter settings'

@@ -39,7 +39,6 @@ class IcuResFileLoader implements LoaderInterface
         try {
             $rb = new \ResourceBundle($locale, $resource);
         } catch (\Exception $e) {
-            // HHVM compatibility: constructor throws on invalid resource
             $rb = null;
         }
 
@@ -53,7 +52,7 @@ class IcuResFileLoader implements LoaderInterface
         $catalogue = new MessageCatalogue($locale);
         $catalogue->add($messages, $domain);
 
-        if (class_exists('Symfony\Component\Config\Resource\DirectoryResource')) {
+        if (class_exists(DirectoryResource::class)) {
             $catalogue->addResource(new DirectoryResource($resource));
         }
 

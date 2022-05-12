@@ -29,7 +29,7 @@ class FieldDropbuttonTest extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'system',
     'user',
     'node',
@@ -70,7 +70,7 @@ class FieldDropbuttonTest extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp(FALSE);
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
@@ -78,7 +78,7 @@ class FieldDropbuttonTest extends ViewsKernelTestBase {
     $this->installConfig('node');
     $this->installConfig('filter');
 
-    ViewTestData::createTestViews(get_class($this), ['views_test_config']);
+    ViewTestData::createTestViews(static::class, ['views_test_config']);
     // Create two node types.
     $this->createContentType(['type' => 'foo']);
     $this->createContentType(['type' => 'bar']);

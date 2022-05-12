@@ -162,7 +162,7 @@ use Drupal\Core\Database\Query\SelectInterface;
  * remains in scope; when $transaction is destroyed, the transaction will be
  * committed. If your transaction is nested inside of another then Drupal will
  * track each transaction and only commit the outer-most transaction when the
- * last transaction object goes out out of scope (when all relevant queries have
+ * last transaction object goes out of scope (when all relevant queries have
  * completed successfully).
  *
  * Example:
@@ -175,7 +175,7 @@ use Drupal\Core\Database\Query\SelectInterface;
  *   try {
  *     $id = $connection->insert('example')
  *       ->fields(array(
- *         'field1' => 'mystring',
+ *         'field1' => 'string',
  *         'field2' => 5,
  *       ))
  *       ->execute();
@@ -390,7 +390,9 @@ use Drupal\Core\Database\Query\SelectInterface;
  * ];
  * @endcode
  *
- * @see drupal_install_schema()
+ * @see \Drupal\Core\Extension\ModuleInstaller::installSchema()
+ * @see \Drupal\Core\Extension\ModuleInstaller::uninstallSchema()
+ * @see \Drupal\TestTools\Extension\SchemaInspector::getTablesSpecification()
  *
  * @}
  */
@@ -432,7 +434,7 @@ function hook_query_alter(Drupal\Core\Database\Query\AlterableInterface $query) 
  *   a listing (e.g., from Views) and therefore require access control.
  *
  * @param $query
- *   An Query object describing the composite parts of a SQL query.
+ *   A Query object describing the composite parts of a SQL query.
  *
  * @see hook_query_alter()
  * @see node_query_node_access_alter()

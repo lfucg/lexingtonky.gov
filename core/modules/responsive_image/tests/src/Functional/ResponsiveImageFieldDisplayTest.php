@@ -36,21 +36,30 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
   protected $responsiveImgStyle;
 
   /**
+   * The file URL generator.
+   *
+   * @var \Drupal\Core\File\FileUrlGeneratorInterface
+   */
+  protected $fileUrlGenerator;
+
+  /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'field_ui',
     'responsive_image',
     'responsive_image_test_module',
   ];
 
   /**
-   * Drupal\simpletest\WebTestBase\setUp().
+   * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
+
+    $this->fileUrlGenerator = $this->container->get('file_url_generator');
 
     // Create user.
     $this->adminUser = $this->drupalCreateUser([
@@ -95,7 +104,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
   }
 
   /**
-   * Test responsive image formatters when image style is empty.
+   * Tests responsive image formatters when image style is empty.
    */
   public function testResponsiveImageFieldFormattersEmptyStyle() {
     $this->addTestImageStyleMappings(TRUE);
@@ -166,7 +175,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
   }
 
   /**
-   * Test responsive image formatters on node display.
+   * Tests responsive image formatters on node display.
    *
    * If the empty styles param is set, then the function only tests for the
    * fallback image style (large).
@@ -203,8 +212,8 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
       '#height' => 240,
       '#alt' => $alt,
     ];
-    $default_output = str_replace("\n", NULL, $renderer->renderRoot($image));
-    $this->assertRaw($default_output, 'Default formatter displaying correctly on full node view.');
+    $default_output = str_replace("\n", '', $renderer->renderRoot($image));
+    $this->assertSession()->responseContains($default_output);
 
     // Test field not being configured. This should not cause a fatal error.
     $display_options = [
@@ -256,21 +265,21 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
       ->save();
 
     $this->drupalGet('node/' . $nid);
-    $cache_tags_header = $this->drupalGetHeader('X-Drupal-Cache-Tags');
-    $this->assertTrue(!preg_match('/ image_style\:/', $cache_tags_header), 'No image style cache tag found.');
+    // No image style cache tag should be found.
+    $this->assertSession()->responseHeaderNotContains('X-Drupal-Cache-Tags', 'image_style:');
 
-    $this->assertPattern('/<a(.*?)href="' . preg_quote(file_url_transform_relative(file_create_url($image_uri)), '/') . '"(.*?)>\s*<picture/');
+    $this->assertSession()->responseMatches('/<a(.*?)href="' . preg_quote($this->fileUrlGenerator->generateString($image_uri), '/') . '"(.*?)>\s*<picture/');
     // Verify that the image can be downloaded.
-    $this->assertEqual(file_get_contents($test_image->uri), $this->drupalGet(file_create_url($image_uri)), 'File was downloaded successfully.');
+    $this->assertEquals(file_get_contents($test_image->uri), $this->drupalGet($this->fileUrlGenerator->generateAbsoluteString($image_uri)), 'File was downloaded successfully.');
     if ($scheme == 'private') {
       // Only verify HTTP headers when using private scheme and the headers are
       // sent by Drupal.
-      $this->assertEqual($this->drupalGetHeader('Content-Type'), 'image/png', 'Content-Type header was sent.');
-      $this->assertTrue(strstr($this->drupalGetHeader('Cache-Control'), 'private') !== FALSE, 'Cache-Control header was sent.');
+      $this->assertSession()->responseHeaderEquals('Content-Type', 'image/png');
+      $this->assertSession()->responseHeaderContains('Cache-Control', 'private');
 
       // Log out and ensure the file cannot be accessed.
       $this->drupalLogout();
-      $this->drupalGet(file_create_url($image_uri));
+      $this->drupalGet($this->fileUrlGenerator->generateAbsoluteString($image_uri));
       $this->assertSession()->statusCodeEquals(403);
 
       // Log in again.
@@ -290,56 +299,54 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
     // Output should contain all image styles and all breakpoints.
     $this->drupalGet('node/' . $nid);
     if (!$empty_styles) {
-      $this->assertRaw('/styles/medium/');
+      $this->assertSession()->responseContains('/styles/medium/');
       // Assert the empty image is present.
-      $this->assertRaw('data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==');
+      $this->assertSession()->responseContains('data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==');
       $thumbnail_style = ImageStyle::load('thumbnail');
       // Assert the output of the 'srcset' attribute (small multipliers first).
-      $this->assertRaw('data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1x, ' . file_url_transform_relative($thumbnail_style->buildUrl($image_uri)) . ' 1.5x');
-      $this->assertRaw('/styles/medium/');
+      $this->assertSession()->responseContains('data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== 1x, ' . $this->fileUrlGenerator->transformRelative($thumbnail_style->buildUrl($image_uri)) . ' 1.5x');
+      $this->assertSession()->responseContains('/styles/medium/');
       // Assert the output of the original image.
-      $this->assertRaw(file_url_transform_relative(file_create_url($image_uri)) . ' 3x');
+      $this->assertSession()->responseContains($this->fileUrlGenerator->generateString($image_uri) . ' 3x');
       // Assert the output of the breakpoints.
-      $this->assertRaw('media="(min-width: 0px)"');
-      $this->assertRaw('media="(min-width: 560px)"');
+      $this->assertSession()->responseContains('media="(min-width: 0px)"');
+      $this->assertSession()->responseContains('media="(min-width: 560px)"');
       // Assert the output of the 'sizes' attribute.
-      $this->assertRaw('sizes="(min-width: 700px) 700px, 100vw"');
-      $this->assertPattern('/media="\(min-width: 560px\)".+?sizes="\(min-width: 700px\) 700px, 100vw"/');
+      $this->assertSession()->responseContains('sizes="(min-width: 700px) 700px, 100vw"');
+      $this->assertSession()->responseMatches('/media="\(min-width: 560px\)".+?sizes="\(min-width: 700px\) 700px, 100vw"/');
       // Assert the output of the 'srcset' attribute (small images first).
       $medium_style = ImageStyle::load('medium');
-      $this->assertRaw(file_url_transform_relative($medium_style->buildUrl($image_uri)) . ' 220w, ' . file_url_transform_relative($large_style->buildUrl($image_uri)) . ' 360w');
-      $this->assertRaw('media="(min-width: 851px)"');
+      $this->assertSession()->responseContains($this->fileUrlGenerator->transformRelative($medium_style->buildUrl($image_uri)) . ' 220w, ' . $this->fileUrlGenerator->transformRelative($large_style->buildUrl($image_uri)) . ' 360w');
+      $this->assertSession()->responseContains('media="(min-width: 851px)"');
     }
-    $this->assertRaw('/styles/large/');
-    $cache_tags = explode(' ', $this->drupalGetHeader('X-Drupal-Cache-Tags'));
-    $this->assertContains('config:responsive_image.styles.style_one', $cache_tags);
+    $this->assertSession()->responseContains('/styles/large/');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:responsive_image.styles.style_one');
     if (!$empty_styles) {
-      $this->assertContains('config:image.style.medium', $cache_tags);
-      $this->assertContains('config:image.style.thumbnail', $cache_tags);
-      $this->assertRaw('type="image/png"');
+      $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:image.style.medium');
+      $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:image.style.thumbnail');
+      $this->assertSession()->responseContains('type="image/png"');
     }
-    $this->assertContains('config:image.style.large', $cache_tags);
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:image.style.large');
 
     // Test the fallback image style.
     $image = \Drupal::service('image.factory')->get($image_uri);
     $fallback_image = [
       '#theme' => 'image',
       '#alt' => $alt,
-      '#uri' => file_url_transform_relative($large_style->buildUrl($image->getSource())),
+      '#uri' => $this->fileUrlGenerator->transformRelative($large_style->buildUrl($image->getSource())),
     ];
     // The image.html.twig template has a newline after the <img> tag but
     // responsive-image.html.twig doesn't have one after the fallback image, so
     // we remove it here.
     $default_output = trim($renderer->renderRoot($fallback_image));
-    $this->assertRaw($default_output, 'Image style large formatter displaying correctly on full node view.');
+    $this->assertSession()->responseContains($default_output);
 
     if ($scheme == 'private') {
       // Log out and ensure the file cannot be accessed.
       $this->drupalLogout();
       $this->drupalGet($large_style->buildUrl($image_uri));
       $this->assertSession()->statusCodeEquals(403);
-      $cache_tags_header = $this->drupalGetHeader('X-Drupal-Cache-Tags');
-      $this->assertTrue(!preg_match('/ image_style\:/', $cache_tags_header), 'No image style cache tag found.');
+      $this->assertSession()->responseHeaderNotMatches('X-Drupal-Cache-Tags', '/ image_style\:/');
     }
   }
 
@@ -406,7 +413,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
     $thumbnail_style = ImageStyle::load('thumbnail');
     $node = $node_storage->load($nid);
     $image_uri = File::load($node->{$field_name}->target_id)->getFileUri();
-    $this->assertPattern('/srcset="' . preg_quote(file_url_transform_relative($thumbnail_style->buildUrl($image_uri)), '/') . ' 1x".+?media="\(min-width: 0px\)"/');
+    $this->assertSession()->responseMatches('/srcset="' . preg_quote($this->fileUrlGenerator->transformRelative($thumbnail_style->buildUrl($image_uri)), '/') . ' 1x".+?media="\(min-width: 0px\)"/');
   }
 
   /**
@@ -453,7 +460,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
     $medium_style = ImageStyle::load('medium');
     $node = $node_storage->load($nid);
     $image_uri = File::load($node->{$field_name}->target_id)->getFileUri();
-    $this->assertRaw('<img srcset="' . file_url_transform_relative($medium_style->buildUrl($image_uri)) . ' 1x, ' . file_url_transform_relative($large_style->buildUrl($image_uri)) . ' 2x"');
+    $this->assertSession()->responseContains('<img srcset="' . $this->fileUrlGenerator->transformRelative($medium_style->buildUrl($image_uri)) . ' 1x, ' . $this->fileUrlGenerator->transformRelative($large_style->buildUrl($image_uri)) . ' 2x"');
   }
 
   /**
@@ -462,7 +469,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
    * @param string $link_type
    *   The link type to test. Either 'file' or 'content'.
    */
-  private function assertResponsiveImageFieldFormattersLink($link_type) {
+  private function assertResponsiveImageFieldFormattersLink(string $link_type): void {
     $field_name = mb_strtolower($this->randomMachineName());
     $field_settings = ['alt_field_required' => 0];
     $this->createImageField($field_name, 'article', ['uri_scheme' => 'public'], $field_settings);
@@ -487,7 +494,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
     $this->previewNodeImage($test_image, $field_name, 'article');
 
     // Look for a picture tag in the preview output
-    $this->assertPattern('/picture/');
+    $this->assertSession()->responseMatches('/picture/');
 
     $nid = $this->uploadNodeImage($test_image, $field_name, 'article');
     $this->container->get('entity_type.manager')->getStorage('node')->resetCache([$nid]);
@@ -515,12 +522,12 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
     switch ($link_type) {
       case 'file':
         // Make sure the link to the file is present.
-        $this->assertPattern('/<a(.*?)href="' . preg_quote(file_url_transform_relative(file_create_url($image_uri)), '/') . '"(.*?)>\s*<picture/');
+        $this->assertSession()->responseMatches('/<a(.*?)href="' . preg_quote($this->fileUrlGenerator->generateString($image_uri), '/') . '"(.*?)>\s*<picture/');
         break;
 
       case 'content':
         // Make sure the link to the node is present.
-        $this->assertPattern('/<a(.*?)href="' . preg_quote($node->toUrl()->toString(), '/') . '"(.*?)>\s*<picture/');
+        $this->assertSession()->responseMatches('/<a(.*?)href="' . preg_quote($node->toUrl()->toString(), '/') . '"(.*?)>\s*<picture/');
         break;
     }
   }

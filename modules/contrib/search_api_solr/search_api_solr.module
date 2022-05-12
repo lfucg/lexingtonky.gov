@@ -122,6 +122,7 @@ function search_api_solr_default_index_third_party_settings() {
     'finalize' => FALSE,
     'commit_before_finalize' => FALSE,
     'commit_after_finalize' => FALSE,
+    'debug_finalize' => FALSE,
     'highlighter' => [
       'maxAnalyzedChars' => 51200,
       'fragmenter' => 'gap',
@@ -237,6 +238,20 @@ function search_api_solr_form_search_api_index_form_alter(&$form, FormStateInter
       '#title' => t('Wait for commit after last finalization'),
       '#description' => t('If enabled, Solr will be be forced to flush all commits after the last "finalizations" have been applied.'),
       '#default_value' => $settings['commit_after_finalize'],
+      '#states' => [
+        'invisible' => [
+          ':input[name="third_party_settings[search_api_solr][finalize]"]' => [
+            'checked' => FALSE,
+          ],
+        ],
+      ],
+    ];
+
+    $form['third_party_settings']['search_api_solr']['debug_finalize'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Log debug messages for finalization'),
+      '#description' => t('If enabled, log debug messages for "finalizations".'),
+      '#default_value' => $settings['debug_finalize'],
       '#states' => [
         'invisible' => [
           ':input[name="third_party_settings[search_api_solr][finalize]"]' => [

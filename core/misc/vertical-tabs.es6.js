@@ -12,7 +12,7 @@
  * @event summaryUpdated
  */
 
-(function($, Drupal, drupalSettings) {
+(function ($, Drupal, drupalSettings) {
   /**
    * Show the parent vertical tab pane of a targeted page fragment.
    *
@@ -26,9 +26,7 @@
    */
   const handleFragmentLinkClickOrHashChange = (e, $target) => {
     $target.parents('.vertical-tabs__pane').each((index, pane) => {
-      $(pane)
-        .data('verticalTab')
-        .focus();
+      $(pane).data('verticalTab').focus();
     });
   };
 
@@ -58,18 +56,14 @@
       /**
        * Binds a listener to handle fragment link clicks and URL hash changes.
        */
-      $('body')
-        .once('vertical-tabs-fragments')
-        .on(
-          'formFragmentLinkClickOrHashChange.verticalTabs',
-          handleFragmentLinkClickOrHashChange,
-        );
+      $(once('vertical-tabs-fragments', 'body')).on(
+        'formFragmentLinkClickOrHashChange.verticalTabs',
+        handleFragmentLinkClickOrHashChange,
+      );
 
-      $(context)
-        .find('[data-vertical-tabs-panes]')
-        .once('vertical-tabs')
-        .each(function() {
-          const $this = $(this).addClass('vertical-tabs__panes');
+      once('vertical-tabs', '[data-vertical-tabs-panes]', context).forEach(
+        (verticalTab) => {
+          const $this = $(verticalTab).addClass('vertical-tabs__panes');
           const focusID = $this.find(':hidden.vertical-tabs__active-tab').val();
           let tabFocus;
 
@@ -87,7 +81,7 @@
             .before(tabList);
 
           // Transform each details into a tab.
-          $details.each(function() {
+          $details.each(function () {
             const $that = $(this);
             const verticalTab = new Drupal.verticalTab({
               title: $that.find('> summary').text(),
@@ -106,14 +100,8 @@
             }
           });
 
-          $(tabList)
-            .find('> li')
-            .eq(0)
-            .addClass('first');
-          $(tabList)
-            .find('> li')
-            .eq(-1)
-            .addClass('last');
+          $(tabList).find('> li').eq(0).addClass('first');
+          $(tabList).find('> li').eq(-1).addClass('last');
 
           if (!tabFocus) {
             // If the current URL has a fragment and one of the tabs contains an
@@ -128,7 +116,8 @@
           if (tabFocus.length) {
             tabFocus.data('verticalTab').focus();
           }
-        });
+        },
+      );
     },
   };
 
@@ -148,27 +137,25 @@
    *
    * @listens event:summaryUpdated
    */
-  Drupal.verticalTab = function(settings) {
+  Drupal.verticalTab = function (settings) {
     const self = this;
     $.extend(this, settings, Drupal.theme('verticalTab', settings));
 
     this.link.attr('href', `#${settings.details.attr('id')}`);
 
-    this.link.on('click', e => {
+    this.link.on('click', (e) => {
       e.preventDefault();
       self.focus();
     });
 
     // Keyboard events added:
     // Pressing the Enter key will open the tab pane.
-    this.link.on('keydown', event => {
+    this.link.on('keydown', (event) => {
       if (event.keyCode === 13) {
         event.preventDefault();
         self.focus();
         // Set focus on the first input field of the visible details/tab pane.
-        $('.vertical-tabs__pane :input:visible:enabled')
-          .eq(0)
-          .trigger('focus');
+        $('.vertical-tabs__pane :input:visible:enabled').eq(0).trigger('focus');
       }
     });
 
@@ -186,7 +173,7 @@
     focus() {
       this.details
         .siblings('.vertical-tabs__pane')
-        .each(function() {
+        .each(function () {
           const tab = $(this).data('verticalTab');
           tab.details.hide();
           tab.item.removeClass('is-selected');
@@ -291,7 +278,7 @@
    *       (jQuery version)
    *   - summary: The jQuery element that contains the tab summary
    */
-  Drupal.theme.verticalTab = function(settings) {
+  Drupal.theme.verticalTab = function (settings) {
     const tab = {};
     tab.item = $(
       '<li class="vertical-tabs__menu-item" tabindex="-1"></li>',

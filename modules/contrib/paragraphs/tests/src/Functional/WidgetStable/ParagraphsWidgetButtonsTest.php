@@ -22,7 +22,7 @@ class ParagraphsWidgetButtonsTest extends ParagraphsTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'paragraphs_test',
     'language',
     'content_translation',

@@ -14,7 +14,7 @@ class ParagraphsSummaryFormatterTest extends ParagraphsTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'image',
   ];
 

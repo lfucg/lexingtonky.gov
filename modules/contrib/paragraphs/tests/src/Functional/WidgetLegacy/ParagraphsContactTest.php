@@ -16,7 +16,7 @@ class ParagraphsContactTest extends ParagraphsTestBase {
    *
    * @var array
    */
-  public static $modules = array(
+  protected static $modules = array(
     'contact',
   );
 

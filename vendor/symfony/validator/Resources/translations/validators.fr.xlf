@@ -382,6 +382,26 @@
                 <source>Each element of this collection should satisfy its own set of constraints.</source>
                 <target>Chaque élément de cette collection doit satisfaire à son propre jeu de contraintes.</target>
             </trans-unit>
+            <trans-unit id="99">
+                <source>This value is not a valid International Securities Identification Number (ISIN).</source>
+                <target>Cette valeur n'est pas un code international de sécurité valide (ISIN).</target>
+            </trans-unit>
+            <trans-unit id="100">
+                <source>This value should be a valid expression.</source>
+                <target>Cette valeur doit être une expression valide.</target>
+            </trans-unit>
+            <trans-unit id="101">
+                <source>This value is not a valid CSS color.</source>
+                <target>Cette valeur n'est pas une couleur CSS valide.</target>
+            </trans-unit>
+            <trans-unit id="102">
+                <source>This value is not a valid CIDR notation.</source>
+                <target>Cette valeur n'est pas une notation CIDR valide.</target>
+            </trans-unit>
+            <trans-unit id="103">
+                <source>The value of the netmask should be between {{ min }} and {{ max }}.</source>
+                <target>La valeur du masque de réseau doit être comprise entre {{ min }} et {{ max }}.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

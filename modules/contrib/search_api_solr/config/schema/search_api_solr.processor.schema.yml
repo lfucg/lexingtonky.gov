@@ -33,3 +33,23 @@ plugin.plugin_configuration.search_api_processor.solr_boost_more_recent:
           b:
             type: float
             label: 'b'
+
+plugin.plugin_configuration.search_api_processor.solr_regex_replace:
+  type: search_api.fields_processor_configuration
+  label: 'Regex Replace'
+  mapping:
+    regexes:
+      type: sequence
+      label: 'List of regexes'
+      sequence:
+        type: string
+        label: 'regex'
+    replacements:
+      type: sequence
+      label: 'List of replacements'
+      sequence:
+        type: string
+        label: 'replacement'
+    preserve_original:
+      type: boolean
+      label: 'Preserve original'

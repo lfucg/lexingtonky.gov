@@ -422,7 +422,7 @@ EOF;
 
     $test_discovery = $this->getMockBuilder(TestDiscovery::class)
       ->setConstructorArgs([$app_root, $class_loader->reveal(), $module_handler->reveal()])
-      ->setMethods(['getExtensions'])
+      ->onlyMethods(['getExtensions'])
       ->getMock();
 
     $test_discovery->expects($this->any())
@@ -487,7 +487,7 @@ EOF;
 
     $container = new Container();
     $container->set('kernel', new DrupalKernel('prod', new ClassLoader()));
-    $container->set('site.path', 'sites/default');
+    $container->setParameter('site.path', 'sites/default');
     \Drupal::setContainer($container);
 
     $test_discovery = new TestDiscovery('vfs://drupal', $class_loader->reveal(), $module_handler->reveal());

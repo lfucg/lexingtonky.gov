@@ -25,7 +25,7 @@ abstract class FieldTestBase extends ViewTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'field_test_views'];
+  protected static $modules = ['node', 'field_test_views'];
 
   /**
    * Stores the field definitions used by the test.
@@ -51,7 +51,7 @@ abstract class FieldTestBase extends ViewTestBase {
       'name' => 'page',
     ])->save();
 
-    ViewTestData::createTestViews(get_class($this), ['field_test_views']);
+    ViewTestData::createTestViews(static::class, ['field_test_views']);
   }
 
   public function setUpFieldStorages($amount = 3, $type = 'string') {

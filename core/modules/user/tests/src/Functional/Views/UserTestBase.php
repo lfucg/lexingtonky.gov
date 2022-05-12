@@ -16,7 +16,7 @@ abstract class UserTestBase extends ViewTestBase {
    *
    * @var array
    */
-  public static $modules = ['user_test_views', 'node'];
+  protected static $modules = ['user_test_views', 'node'];
 
   /**
    * Users to use during this test.
@@ -35,7 +35,7 @@ abstract class UserTestBase extends ViewTestBase {
   protected function setUp($import_test_views = TRUE) {
     parent::setUp($import_test_views);
 
-    ViewTestData::createTestViews(get_class($this), ['user_test_views']);
+    ViewTestData::createTestViews(static::class, ['user_test_views']);
 
     $this->users[] = $this->drupalCreateUser();
     $this->users[] = User::load(1);

@@ -9,7 +9,7 @@ use Drupal\node\Entity\NodeType;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
-use Symfony\Component\Debug\BufferingLogger;
+use Symfony\Component\ErrorHandler\BufferingLogger;
 
 /**
  * Tests entity reference field settings.
@@ -23,7 +23,7 @@ class EntityReferenceSettingsTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'taxonomy',
     'field',
@@ -65,8 +65,8 @@ class EntityReferenceSettingsTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
-    parent::setup();
+  protected function setUp(): void {
+    parent::setUp();
 
     $this->installEntitySchema('node');
     $this->installEntitySchema('taxonomy_term');
@@ -115,7 +115,7 @@ class EntityReferenceSettingsTest extends KernelTestBase {
     // Check that the 'target_bundle' setting contains the vocabulary.
     $field_config = FieldConfig::loadByName('node', $this->nodeType->id(), $name);
     $actual_handler_settings = $field_config->getSetting('handler_settings');
-    $this->assertEqual($handler_settings, $actual_handler_settings);
+    $this->assertEquals($handler_settings, $actual_handler_settings);
 
     // Delete the vocabulary.
     $vocabularies[0]->delete();
@@ -159,7 +159,7 @@ class EntityReferenceSettingsTest extends KernelTestBase {
     // Check that the 'target_bundle' setting contains the custom bundle.
     $field_config = FieldConfig::loadByName('node', $this->nodeType->id(), $name);
     $actual_handler_settings = $field_config->getSetting('handler_settings');
-    $this->assertEqual($handler_settings, $actual_handler_settings);
+    $this->assertEquals($handler_settings, $actual_handler_settings);
 
     // Delete the custom bundle.
     entity_test_delete_bundle($this->customBundle, 'entity_test');
@@ -177,7 +177,7 @@ class EntityReferenceSettingsTest extends KernelTestBase {
     // 'target_bundles' field setting.
     $field_config = FieldConfig::loadByName('node', $this->nodeType->id(), $name);
     $handler_settings = $field_config->getSetting('handler_settings');
-    $this->assertTrue(empty($handler_settings['target_bundles']));
+    $this->assertEmpty($handler_settings['target_bundles']);
   }
 
   /**

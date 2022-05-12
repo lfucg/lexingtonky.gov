@@ -16,6 +16,8 @@ date_default_timezone_set('America/New_York');
  */
 $settings['container_yamls'][] = __DIR__ . '/services.yml';
 
+$settings['config_sync_directory'] = $app_root . '/config/sync';
+
 /**
  * Include the Pantheon-specific settings file.
  *

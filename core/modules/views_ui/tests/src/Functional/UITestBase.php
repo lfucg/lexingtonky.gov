@@ -28,7 +28,7 @@ abstract class UITestBase extends ViewTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'views_ui', 'block', 'taxonomy'];
+  protected static $modules = ['node', 'views_ui', 'block', 'taxonomy'];
 
   /**
    * {@inheritdoc}
@@ -64,7 +64,8 @@ abstract class UITestBase extends ViewTestBase {
 
     $view += $default;
 
-    $this->drupalPostForm('admin/structure/views/add', $view, t('Save and edit'));
+    $this->drupalGet('admin/structure/views/add');
+    $this->submitForm($view, 'Save and edit');
 
     return $default;
   }
@@ -80,7 +81,7 @@ abstract class UITestBase extends ViewTestBase {
       $url = preg_replace('|/nojs/|', '/ajax/', $url, 1);
       $result = $this->drupalGet($url, $options);
       $this->assertSession()->statusCodeEquals(200);
-      $this->assertEquals('application/json', $this->getSession()->getResponseHeader('Content-Type'));
+      $this->assertSession()->responseHeaderEquals('Content-Type', 'application/json');
       $this->assertNotEmpty(json_decode($result), 'Ensure that the AJAX request returned valid content.');
     }
 

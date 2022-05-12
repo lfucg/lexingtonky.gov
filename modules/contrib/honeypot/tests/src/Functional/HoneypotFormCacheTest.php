@@ -16,13 +16,10 @@ use Drupal\user\UserInterface;
  * @group honeypot
  */
 class HoneypotFormCacheTest extends BrowserTestBase {
-
   use CommentTestTrait;
 
   /**
-   * Default theme.
-   *
-   * @var string
+   * {@inheritdoc}
    */
   protected $defaultTheme = 'stark';
 
@@ -41,7 +38,7 @@ class HoneypotFormCacheTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Set up required Honeypot configuration.
@@ -71,7 +68,10 @@ class HoneypotFormCacheTest extends BrowserTestBase {
   /**
    * Test enabling and disabling of page cache based on time limit settings.
    */
-  public function testCacheContactForm() {
+  public function testCacheContactForm(): void {
+    /** @var \Drupal\Tests\WebAssert $assert */
+    $assert = $this->assertSession();
+
     // Create a Website feedback contact form.
     $feedback_form = ContactForm::create([
       'id' => 'feedback',
@@ -94,7 +94,7 @@ class HoneypotFormCacheTest extends BrowserTestBase {
 
     // Test on cache header with time limit enabled, cache should miss.
     $this->drupalGet('contact/feedback');
-    $this->assertEquals('', $this->drupalGetHeader('X-Drupal-Cache'), 'Page was not cached.');
+    $assert->responseHeaderEquals('X-Drupal-Cache', NULL);
 
     // Disable time limit.
     \Drupal::configFactory()->getEditable('honeypot.settings')->set('time_limit', 0)->save();
@@ -103,18 +103,21 @@ class HoneypotFormCacheTest extends BrowserTestBase {
     $this->drupalGet('contact/feedback');
     // Test on cache header with time limit disabled, cache should hit.
     $this->drupalGet('contact/feedback');
-    $this->assertEquals('HIT', $this->drupalGetHeader('X-Drupal-Cache'), 'Page was cached.');
+    $assert->responseHeaderEquals('X-Drupal-Cache', 'HIT');
 
     // Re-enable the time limit, we should not be seeing the cached version.
     \Drupal::configFactory()->getEditable('honeypot.settings')->set('time_limit', 5)->save();
     $this->drupalGet('contact/feedback');
-    $this->assertEquals('', $this->drupalGetHeader('X-Drupal-Cache'), 'Page was not cached.');
+    $assert->responseHeaderEquals('X-Drupal-Cache', NULL);
   }
 
   /**
    * Test enabling and disabling of page cache based on time limit settings.
    */
-  public function testCacheCommentForm() {
+  public function testCacheCommentForm(): void {
+    /** @var \Drupal\Tests\WebAssert $assert */
+    $assert = $this->assertSession();
+
     // Set up example node.
     $this->node = $this->drupalCreateNode([
       'type' => 'article',
@@ -132,7 +135,7 @@ class HoneypotFormCacheTest extends BrowserTestBase {
 
     // Test on cache header with time limit enabled, cache should miss.
     $this->drupalGet('node/' . $this->node->id());
-    $this->assertEquals('', $this->drupalGetHeader('X-Drupal-Cache'), 'Page was not cached.');
+    $assert->responseHeaderEquals('X-Drupal-Cache', NULL);
 
     // Disable time limit.
     \Drupal::configFactory()->getEditable('honeypot.settings')->set('time_limit', 0)->save();
@@ -142,8 +145,7 @@ class HoneypotFormCacheTest extends BrowserTestBase {
 
     // Test on cache header with time limit disabled, cache should hit.
     $this->drupalGet('node/' . $this->node->id());
-    $this->assertEquals('HIT', $this->drupalGetHeader('X-Drupal-Cache'), 'Page was cached.');
-
+    $assert->responseHeaderEquals('X-Drupal-Cache', 'HIT');
   }
 
 }

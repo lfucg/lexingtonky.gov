@@ -7,10 +7,9 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Database\Query\Condition;
+use Drupal\Core\Database\Query\PagerSelectExtender;
 use Drupal\Core\Database\Query\SelectExtender;
 use Drupal\Core\Database\StatementInterface;
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -24,7 +23,7 @@ use Drupal\node\NodeInterface;
 use Drupal\search\Plugin\ConfigurableSearchPluginBase;
 use Drupal\search\Plugin\SearchIndexingInterface;
 use Drupal\search\SearchIndexInterface;
-use Drupal\Search\SearchQuery;
+use Drupal\search\SearchQuery;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -36,12 +35,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInterface, SearchIndexingInterface, TrustedCallbackInterface {
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The current database connection.
@@ -192,13 +185,13 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The $account object to use for checking for access to advanced search.
    * @param \Drupal\Core\Database\Connection|null $database_replica
-   *   (Optional) the replica database connection.
+   *   The replica database connection.
    * @param \Drupal\search\SearchIndexInterface $search_index
    *   The search index.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Connection $database, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, Config $search_settings, LanguageManagerInterface $language_manager, RendererInterface $renderer, MessengerInterface $messenger, AccountInterface $account = NULL, Connection $database_replica = NULL, SearchIndexInterface $search_index = NULL) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Connection $database, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, Config $search_settings, LanguageManagerInterface $language_manager, RendererInterface $renderer, MessengerInterface $messenger, AccountInterface $account, Connection $database_replica, SearchIndexInterface $search_index) {
     $this->database = $database;
-    $this->databaseReplica = $database_replica ?: $database;
+    $this->databaseReplica = $database_replica;
     $this->entityTypeManager = $entity_type_manager;
     $this->moduleHandler = $module_handler;
     $this->searchSettings = $search_settings;
@@ -209,10 +202,6 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->addCacheTags(['node_list']);
-    if (!$search_index) {
-      @trigger_error('Calling NodeSearch::__construct() without the $search_index argument is deprecated in drupal:8.8.0 and is required in drupal:9.0.0. See https://www.drupal.org/node/3075696', E_USER_DEPRECATED);
-      $search_index = \Drupal::service('search.index');
-    }
     $this->searchIndex = $search_index;
   }
 
@@ -273,9 +262,9 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
     // Build matching conditions.
     $query = $this->databaseReplica
       ->select('search_index', 'i')
-      ->extend('Drupal\search\SearchQuery')
-      ->extend('Drupal\Core\Database\Query\PagerSelectExtender');
-    $query->join('node_field_data', 'n', 'n.nid = i.sid AND n.langcode = i.langcode');
+      ->extend(SearchQuery::class)
+      ->extend(PagerSelectExtender::class);
+    $query->join('node_field_data', 'n', '[n].[nid] = [i].[sid] AND [n].[langcode] = [i].[langcode]');
     $query->condition('n.status', 1)
       ->addTag('node_access')
       ->searchExpression($keys, $this->getPluginId());
@@ -306,7 +295,7 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
         $info = $this->advanced[$option];
         // Insert additional conditions. By default, all use the OR operator.
         $operator = empty($info['operator']) ? 'OR' : $info['operator'];
-        $where = new Condition($operator);
+        $where = $this->databaseReplica->condition($operator);
         foreach ($matched as $value) {
           $where->condition($info['column'], $value);
         }
@@ -457,7 +446,7 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
           if (isset($values['join']) && !isset($tables[$values['join']['alias']])) {
             $query->addJoin($values['join']['type'], $values['join']['table'], $values['join']['alias'], $values['join']['on']);
           }
-          $arguments = isset($values['arguments']) ? $values['arguments'] : [];
+          $arguments = $values['arguments'] ?? [];
           $query->addScore($values['score'], $arguments, $node_rank);
         }
       }
@@ -474,12 +463,12 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
 
     $query = $this->databaseReplica->select('node', 'n');
     $query->addField('n', 'nid');
-    $query->leftJoin('search_dataset', 'sd', 'sd.sid = n.nid AND sd.type = :type', [':type' => $this->getPluginId()]);
-    $query->addExpression('CASE MAX(sd.reindex) WHEN NULL THEN 0 ELSE 1 END', 'ex');
-    $query->addExpression('MAX(sd.reindex)', 'ex2');
+    $query->leftJoin('search_dataset', 'sd', '[sd].[sid] = [n].[nid] AND [sd].[type] = :type', [':type' => $this->getPluginId()]);
+    $query->addExpression('CASE MAX([sd].[reindex]) WHEN NULL THEN 0 ELSE 1 END', 'ex');
+    $query->addExpression('MAX([sd].[reindex])', 'ex2');
     $query->condition(
         $query->orConditionGroup()
-          ->where('sd.sid IS NULL')
+          ->where('[sd].[sid] IS NULL')
           ->condition('sd.reindex', 0, '<>')
       );
     $query->orderBy('ex', 'DESC')
@@ -570,7 +559,7 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
    */
   public function indexStatus() {
     $total = $this->database->query('SELECT COUNT(*) FROM {node}')->fetchField();
-    $remaining = $this->database->query("SELECT COUNT(DISTINCT n.nid) FROM {node} n LEFT JOIN {search_dataset} sd ON sd.sid = n.nid AND sd.type = :type WHERE sd.sid IS NULL OR sd.reindex <> 0", [':type' => $this->getPluginId()])->fetchField();
+    $remaining = $this->database->query("SELECT COUNT(DISTINCT [n].[nid]) FROM {node} [n] LEFT JOIN {search_dataset} [sd] ON [sd].[sid] = [n].[nid] AND [sd].[type] = :type WHERE [sd].[sid] IS NULL OR [sd].[reindex] <> 0", [':type' => $this->getPluginId()])->fetchField();
 
     return ['remaining' => $remaining, 'total' => $total];
   }
@@ -615,7 +604,7 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
       '#title' => t('Containing any of the words'),
       '#size' => 30,
       '#maxlength' => 255,
-      '#default_value' => isset($defaults['or']) ? $defaults['or'] : '',
+      '#default_value' => $defaults['or'] ?? '',
     ];
 
     $form['advanced']['keywords-fieldset']['keywords']['phrase'] = [
@@ -623,7 +612,7 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
       '#title' => t('Containing the phrase'),
       '#size' => 30,
       '#maxlength' => 255,
-      '#default_value' => isset($defaults['phrase']) ? $defaults['phrase'] : '',
+      '#default_value' => $defaults['phrase'] ?? '',
     ];
 
     $form['advanced']['keywords-fieldset']['keywords']['negative'] = [
@@ -631,7 +620,7 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
       '#title' => t('Containing none of the words'),
       '#size' => 30,
       '#maxlength' => 255,
-      '#default_value' => isset($defaults['negative']) ? $defaults['negative'] : '',
+      '#default_value' => $defaults['negative'] ?? '',
     ];
 
     // Add node types.
@@ -646,7 +635,7 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
       '#prefix' => '<div class="criterion">',
       '#suffix' => '</div>',
       '#options' => $types,
-      '#default_value' => isset($defaults['type']) ? $defaults['type'] : [],
+      '#default_value' => $defaults['type'] ?? [],
     ];
 
     $form['advanced']['submit'] = [
@@ -675,7 +664,7 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
         '#prefix' => '<div class="criterion">',
         '#suffix' => '</div>',
         '#options' => $language_options,
-        '#default_value' => isset($defaults['language']) ? $defaults['language'] : [],
+        '#default_value' => $defaults['language'] ?? [],
       ];
     }
   }
@@ -768,7 +757,7 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
 
     // Split out the advanced search parameters.
     foreach ($f as $advanced) {
-      list($key, $value) = explode(':', $advanced, 2);
+      [$key, $value] = explode(':', $advanced, 2);
       if (!isset($defaults[$key])) {
         $defaults[$key] = [];
       }
@@ -858,7 +847,7 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
         '#type' => 'select',
         '#options' => $options,
         '#attributes' => ['aria-label' => $this->t("Influence of '@title'", ['@title' => $values['title']])],
-        '#default_value' => isset($this->configuration['rankings'][$var]) ? $this->configuration['rankings'][$var] : 0,
+        '#default_value' => $this->configuration['rankings'][$var] ?? 0,
       ];
     }
     return $form;

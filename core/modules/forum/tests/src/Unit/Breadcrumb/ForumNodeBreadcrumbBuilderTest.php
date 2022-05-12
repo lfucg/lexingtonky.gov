@@ -3,6 +3,7 @@
 namespace Drupal\Tests\forum\Unit\Breadcrumb;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\forum\Breadcrumb\ForumNodeBreadcrumbBuilder;
 use Drupal\taxonomy\TermStorageInterface;
@@ -18,7 +19,7 @@ class ForumNodeBreadcrumbBuilderTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $cache_contexts_manager = $this->getMockBuilder('Drupal\Core\Cache\Context\CacheContextsManager')
@@ -45,7 +46,7 @@ class ForumNodeBreadcrumbBuilderTest extends UnitTestCase {
    */
   public function testApplies($expected, $route_name = NULL, $parameter_map = []) {
     // Make some test doubles.
-    $entity_manager = $this->createMock('Drupal\Core\Entity\EntityManagerInterface');
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $config_factory = $this->getConfigFactoryStub([]);
 
     $forum_manager = $this->createMock('Drupal\forum\ForumManagerInterface');
@@ -59,13 +60,13 @@ class ForumNodeBreadcrumbBuilderTest extends UnitTestCase {
     $builder = $this->getMockBuilder('Drupal\forum\Breadcrumb\ForumNodeBreadcrumbBuilder')
       ->setConstructorArgs(
         [
-          $entity_manager,
+          $entity_type_manager,
           $config_factory,
           $forum_manager,
           $translation_manager,
         ]
       )
-      ->setMethods(NULL)
+      ->onlyMethods([])
       ->getMock();
 
     $route_match = $this->createMock('Drupal\Core\Routing\RouteMatchInterface');
@@ -74,7 +75,7 @@ class ForumNodeBreadcrumbBuilderTest extends UnitTestCase {
       ->will($this->returnValue($route_name));
     $route_match->expects($this->any())
       ->method('getParameter')
-      ->will($this->returnValueMap($parameter_map));
+      ->willReturnMap($parameter_map);
 
     $this->assertEquals($expected, $builder->applies($route_match));
   }
@@ -152,12 +153,12 @@ class ForumNodeBreadcrumbBuilderTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
     $term_storage = $this->getMockBuilder(TermStorageInterface::class)->getMock();
-    $term_storage->expects($this->at(0))
+    $term_storage->expects($this->exactly(2))
       ->method('loadAllParents')
-      ->will($this->returnValue([$term1]));
-    $term_storage->expects($this->at(1))
-      ->method('loadAllParents')
-      ->will($this->returnValue([$term1, $term2]));
+      ->willReturnOnConsecutiveCalls(
+        [$term1],
+        [$term1, $term2],
+      );
 
     $prophecy = $this->prophesize('Drupal\taxonomy\VocabularyInterface');
     $prophecy->label()->willReturn('Forums');
@@ -168,19 +169,19 @@ class ForumNodeBreadcrumbBuilderTest extends UnitTestCase {
     $vocab_storage = $this->createMock('Drupal\Core\Entity\EntityStorageInterface');
     $vocab_storage->expects($this->any())
       ->method('load')
-      ->will($this->returnValueMap([
+      ->willReturnMap([
         ['forums', $prophecy->reveal()],
-      ]));
+      ]);
 
-    $entity_manager = $this->getMockBuilder('Drupal\Core\Entity\EntityManagerInterface')
+    $entity_type_manager = $this->getMockBuilder(EntityTypeManagerInterface::class)
       ->disableOriginalConstructor()
       ->getMock();
-    $entity_manager->expects($this->any())
+    $entity_type_manager->expects($this->any())
       ->method('getStorage')
-      ->will($this->returnValueMap([
+      ->willReturnMap([
         ['taxonomy_vocabulary', $vocab_storage],
         ['taxonomy_term', $term_storage],
-      ]));
+      ]);
 
     $config_factory = $this->getConfigFactoryStub(
       [
@@ -191,7 +192,7 @@ class ForumNodeBreadcrumbBuilderTest extends UnitTestCase {
     );
 
     // Build a breadcrumb builder to test.
-    $breadcrumb_builder = new ForumNodeBreadcrumbBuilder($entity_manager,
+    $breadcrumb_builder = new ForumNodeBreadcrumbBuilder($entity_type_manager,
       $config_factory,
       $forum_manager,
       $translation_manager);
@@ -220,8 +221,8 @@ class ForumNodeBreadcrumbBuilderTest extends UnitTestCase {
     ];
     $breadcrumb = $breadcrumb_builder->build($route_match);
     $this->assertEquals($expected1, $breadcrumb->getLinks());
-    $this->assertEquals(['route'], $breadcrumb->getCacheContexts());
-    $this->assertEquals(['taxonomy_term:1', 'taxonomy_vocabulary:5'], $breadcrumb->getCacheTags());
+    $this->assertEqualsCanonicalizing(['route'], $breadcrumb->getCacheContexts());
+    $this->assertEqualsCanonicalizing(['taxonomy_term:1', 'taxonomy_vocabulary:5'], $breadcrumb->getCacheTags());
     $this->assertEquals(Cache::PERMANENT, $breadcrumb->getCacheMaxAge());
 
     // Second test.
@@ -233,8 +234,8 @@ class ForumNodeBreadcrumbBuilderTest extends UnitTestCase {
     ];
     $breadcrumb = $breadcrumb_builder->build($route_match);
     $this->assertEquals($expected2, $breadcrumb->getLinks());
-    $this->assertEquals(['route'], $breadcrumb->getCacheContexts());
-    $this->assertEquals(['taxonomy_term:1', 'taxonomy_term:2', 'taxonomy_vocabulary:5'], $breadcrumb->getCacheTags());
+    $this->assertEqualsCanonicalizing(['route'], $breadcrumb->getCacheContexts());
+    $this->assertEqualsCanonicalizing(['taxonomy_term:1', 'taxonomy_term:2', 'taxonomy_vocabulary:5'], $breadcrumb->getCacheTags());
     $this->assertEquals(Cache::PERMANENT, $breadcrumb->getCacheMaxAge());
   }
 

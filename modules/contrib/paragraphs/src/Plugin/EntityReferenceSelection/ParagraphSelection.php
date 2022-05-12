@@ -250,7 +250,7 @@ class ParagraphSelection extends DefaultSelection {
     $entity_type = $this->entityTypeManager->getDefinition($target_type);
 
     $query = $this->entityTypeManager->getStorage($target_type)->getQuery();
-
+    $query->accessCheck(TRUE);
     // If 'target_bundles' is NULL, all bundles are referenceable, no further
     // conditions are needed.
     if (is_array($this->configuration['target_bundles'])) {

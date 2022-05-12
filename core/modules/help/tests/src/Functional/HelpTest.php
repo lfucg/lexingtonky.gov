@@ -21,7 +21,7 @@ class HelpTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['help_test', 'help_page_test'];
+  protected static $modules = ['help_test', 'help_page_test'];
 
   /**
    * {@inheritdoc}
@@ -45,7 +45,7 @@ class HelpTest extends BrowserTestBase {
    */
   protected $anyUser;
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create users.
@@ -73,26 +73,26 @@ class HelpTest extends BrowserTestBase {
     // Verify that introductory help text exists, goes for 100% module coverage.
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('admin/help');
-    $this->assertRaw(t('For more information, refer to the help listed on this page or to the <a href=":docs">online documentation</a> and <a href=":support">support</a> pages at <a href=":drupal">drupal.org</a>.', [':docs' => 'https://www.drupal.org/documentation', ':support' => 'https://www.drupal.org/support', ':drupal' => 'https://www.drupal.org']));
+    $this->assertSession()->responseContains('For more information, refer to the help listed on this page or to the <a href="https://www.drupal.org/documentation">online documentation</a> and <a href="https://www.drupal.org/support">support</a> pages at <a href="https://www.drupal.org">drupal.org</a>.');
 
     // Verify that hook_help() section title and description appear.
-    $this->assertRaw('<h2>' . t('Module overviews') . '</h2>');
-    $this->assertRaw('<p>' . t('Module overviews are provided by modules. Overviews available for your installed modules:'), '</p>');
+    $this->assertSession()->responseContains('<h2>Module overviews</h2>');
+    $this->assertSession()->responseContains('<p>Module overviews are provided by modules. Overviews available for your installed modules:</p>');
 
     // Verify that an empty section is handled correctly.
-    $this->assertRaw('<h2>' . t('Empty section') . '</h2>');
-    $this->assertRaw('<p>' . t('This description should appear.'), '</p>');
-    $this->assertText(t('There is currently nothing in this section.'));
+    $this->assertSession()->responseContains('<h2>Empty section</h2>');
+    $this->assertSession()->responseContains('<p>This description should appear.</p>');
+    $this->assertSession()->pageTextContains('There is currently nothing in this section.');
 
     // Make sure links are properly added for modules implementing hook_help().
     foreach ($this->getModuleList() as $module => $name) {
       $this->assertSession()->linkExists($name, 0, new FormattableMarkup('Link properly added to @name (admin/help/@module)', ['@module' => $module, '@name' => $name]));
     }
 
-    // Ensure that module which does not provide an module overview page is
-    // handled correctly.
+    // Ensure a module which does not provide a module overview page is handled
+    // correctly.
     $this->clickLink(\Drupal::moduleHandler()->getName('help_test'));
-    $this->assertRaw(t('No help is available for module %module.', ['%module' => \Drupal::moduleHandler()->getName('help_test')]));
+    $this->assertSession()->pageTextContains('No help is available for module ' . \Drupal::moduleHandler()->getName('help_test'));
 
     // Verify that the order of topics is alphabetical by displayed module
     // name, by checking the order of some modules, including some that would
@@ -101,11 +101,11 @@ class HelpTest extends BrowserTestBase {
     $page_text = $this->getTextContent();
     $start = strpos($page_text, 'Module overviews');
     $pos = $start;
-    $list = ['Block', 'Color', 'Custom Block', 'History', 'Text Editor'];
+    $list = ['Block', 'Breakpoint', 'Custom Block', 'History', 'Text Editor'];
     foreach ($list as $name) {
       $this->assertSession()->linkExists($name);
       $new_pos = strpos($page_text, $name, $start);
-      $this->assertTrue($new_pos > $pos, 'Order of ' . $name . ' is correct on page');
+      $this->assertGreaterThan($pos, $new_pos, "Order of $name is not correct on page");
       $pos = $new_pos;
     }
   }
@@ -120,10 +120,10 @@ class HelpTest extends BrowserTestBase {
     $this->drupalGet('admin/index');
     $this->assertSession()->statusCodeEquals($response);
     if ($response == 200) {
-      $this->assertText('This page shows you all available administration tasks for each module.');
+      $this->assertSession()->pageTextContains('This page shows you all available administration tasks for each module.');
     }
     else {
-      $this->assertNoText('This page shows you all available administration tasks for each module.');
+      $this->assertSession()->pageTextNotContains('This page shows you all available administration tasks for each module.');
     }
 
     foreach ($this->getModuleList() as $module => $name) {
@@ -131,26 +131,26 @@ class HelpTest extends BrowserTestBase {
       $this->drupalGet('admin/help/' . $module);
       $this->assertSession()->statusCodeEquals($response);
       if ($response == 200) {
-        $this->assertTitle("$name | Drupal");
+        $this->assertSession()->titleEquals("$name | Drupal");
         $this->assertEquals($name, $this->cssSelect('h1.page-title')[0]->getText(), "$module heading was displayed");
         $info = \Drupal::service('extension.list.module')->getExtensionInfo($module);
         $admin_tasks = system_get_module_admin_tasks($module, $info);
         if (!empty($admin_tasks)) {
-          $this->assertText(t('@module administration pages', ['@module' => $name]));
+          $this->assertSession()->pageTextContains($name . ' administration pages');
         }
         foreach ($admin_tasks as $task) {
           $this->assertSession()->linkExists($task['title']);
           // Ensure there are no double escaped '&' or '<' characters.
-          $this->assertNoEscaped('&amp;');
-          $this->assertNoEscaped('&lt;');
+          $this->assertSession()->assertNoEscaped('&amp;');
+          $this->assertSession()->assertNoEscaped('&lt;');
           // Ensure there are no escaped '<' characters.
-          $this->assertNoEscaped('<');
+          $this->assertSession()->assertNoEscaped('<');
         }
         // Ensure there are no double escaped '&' or '<' characters.
-        $this->assertNoEscaped('&amp;');
-        $this->assertNoEscaped('&lt;');
+        $this->assertSession()->assertNoEscaped('&amp;');
+        $this->assertSession()->assertNoEscaped('&lt;');
         // Ensure there are no escaped '<' characters.
-        $this->assertNoEscaped('<');
+        $this->assertSession()->assertNoEscaped('<');
       }
     }
   }

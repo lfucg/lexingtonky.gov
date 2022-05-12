@@ -141,4 +141,11 @@ class MetatagFieldInstance extends DrupalSqlBase {
     return $this->initializeIterator()->count();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function doCount() {
+    return $this->initializeIterator()->count();
+  }
+
 }

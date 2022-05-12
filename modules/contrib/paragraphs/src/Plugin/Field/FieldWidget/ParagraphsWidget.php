@@ -419,8 +419,7 @@ class ParagraphsWidget extends WidgetBase {
     if ($paragraphs_entity) {
       // Detect if we are translating.
       $this->initIsTranslating($form_state, $host);
-      $langcode = $form_state->get('langcode');
-
+      $langcode = $this->getCurrentLangcode($form_state, $items);
       if (!$this->isTranslating) {
         // Set the langcode if we are not translating.
         $langcode_key = $paragraphs_entity->getEntityType()->getKey('langcode');
@@ -1170,6 +1169,14 @@ class ParagraphsWidget extends WidgetBase {
 
     $host = $items->getEntity();
     $this->initIsTranslating($form_state, $host);
+    if (!$form_state->has('langcode')) {
+      // Entity forms usually have the langcode set, but it's not guaranteed.
+      // Any form object can embed entities with their field widgets.
+      // At this point, without knowing the langcode from the form state,
+      // it's not certain which language is chosen. Remember the host entity,
+      // to get the langcode at a stage when the chosen value is more certain.
+      $elements['#host'] = $host;
+    }
 
     $header_actions = $this->buildHeaderActions($field_state, $form_state);
     if ($header_actions) {
@@ -1590,6 +1597,7 @@ class ParagraphsWidget extends WidgetBase {
       // Even though operations are run through the "links" element type, the
       // theme system will render any render array passed as a link "title".
       '#links' => $operations,
+      '#dropbutton_type' => 'small',
     ];
 
     return $build + $elements;
@@ -1698,6 +1706,25 @@ class ParagraphsWidget extends WidgetBase {
 
     $add_more_elements['add_more_button']['#suffix'] = $this->t(' to %type', ['%type' => $field_title]);
     return $add_more_elements;
+  }
+
+  /**
+   * Gets current language code from the form state or item.
+   *
+   * Since the paragraph field is not set as translatable, the item language
+   * code is set to the source language. The intended translation language
+   * is only accessibly through the form state.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field item list.
+   *
+   * @return string
+   *   The language code.
+   */
+  protected function getCurrentLangcode(FormStateInterface $form_state, FieldItemListInterface $items) {
+    return $form_state->has('langcode') ? $form_state->get('langcode') : $items->getEntity()->language()->getId();
   }
 
   /**
@@ -2241,7 +2268,7 @@ class ParagraphsWidget extends WidgetBase {
       return $values;
     }
 
-    foreach ($values as $delta => &$item) {
+    foreach ($values as &$item) {
       if (isset($widget_state['paragraphs'][$item['_original_delta']]['entity'])
         && $widget_state['paragraphs'][$item['_original_delta']]['mode'] != 'remove') {
         /** @var \Drupal\paragraphs\ParagraphInterface $paragraphs_entity */
@@ -2255,14 +2282,20 @@ class ParagraphsWidget extends WidgetBase {
         // A content entity form saves without any rebuild. It needs to set the
         // language to update it in case of language change.
         $langcode_key = $paragraphs_entity->getEntityType()->getKey('langcode');
-        if ($paragraphs_entity->get($langcode_key)->value != $form_state->get('langcode')) {
+        $langcode = $form_state->get('langcode');
+        if (!isset($langcode) && isset($element['#host'])) {
+          // Use the host entity as a last resort to determine the langcode.
+          // @see self::formMultipleElements
+          $langcode = $element['#host']->language()->getId();
+        }
+        if ($paragraphs_entity->get($langcode_key)->value != $langcode) {
           // If a translation in the given language already exists, switch to
           // that. If there is none yet, update the language.
-          if ($paragraphs_entity->hasTranslation($form_state->get('langcode'))) {
-            $paragraphs_entity = $paragraphs_entity->getTranslation($form_state->get('langcode'));
+          if ($paragraphs_entity->hasTranslation($langcode)) {
+            $paragraphs_entity = $paragraphs_entity->getTranslation($langcode);
           }
           else {
-            $paragraphs_entity->set($langcode_key, $form_state->get('langcode'));
+            $paragraphs_entity->set($langcode_key, $langcode);
           }
         }
         if (isset($item['behavior_plugins'])) {
@@ -2378,7 +2411,7 @@ class ParagraphsWidget extends WidgetBase {
       $this->isTranslating = TRUE;
     }
     $langcode = $form_state->get('langcode');
-    if ($host->hasTranslation($langcode) && $host->getTranslation($langcode)->get($default_langcode_key)->value == 0) {
+    if (isset($langcode) && $host->hasTranslation($langcode) && $host->getTranslation($langcode)->get($default_langcode_key)->value == 0) {
       // Editing a translation.
       $this->isTranslating = TRUE;
     }

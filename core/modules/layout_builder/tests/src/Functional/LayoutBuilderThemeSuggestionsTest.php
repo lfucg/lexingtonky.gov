@@ -14,7 +14,7 @@ class LayoutBuilderThemeSuggestionsTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'layout_builder',
     'node',
     'layout_builder_theme_suggestions_test',
@@ -28,7 +28,7 @@ class LayoutBuilderThemeSuggestionsTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->createContentType([
@@ -51,7 +51,7 @@ class LayoutBuilderThemeSuggestionsTest extends BrowserTestBase {
     ]));
 
     $this->drupalGet('admin/structure/types/manage/bundle_with_section_field/display/default');
-    $this->drupalPostForm(NULL, ['layout[enabled]' => TRUE], 'Save');
+    $this->submitForm(['layout[enabled]' => TRUE], 'Save');
   }
 
   /**

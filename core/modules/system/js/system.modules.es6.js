@@ -3,7 +3,7 @@
  * Module page behaviors.
  */
 
-(function($, Drupal, debounce) {
+(function ($, Drupal, debounce) {
   /**
    * Filters the module list table by a text input search string.
    *
@@ -18,8 +18,11 @@
    */
   Drupal.behaviors.tableFilterByText = {
     attach(context, settings) {
-      const $input = $('input.table-filter-text').once('table-filter-text');
-      const $table = $($input.attr('data-table'));
+      const [input] = once('table-filter-text', 'input.table-filter-text');
+      if (!input) {
+        return;
+      }
+      const $table = $(input.getAttribute('data-table'));
       let $rowsAndDetails;
       let $rows;
       let $details;
@@ -92,7 +95,7 @@
         $rows = $table.find('tbody tr');
         $details = $rowsAndDetails.filter('.package-listing');
 
-        $input.on({
+        $(input).on({
           keyup: debounce(filterModuleList, 200),
           keydown: preventEnterKey,
         });

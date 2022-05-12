@@ -20,11 +20,24 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
  */
 class JsonEncode implements EncoderInterface
 {
-    private $options;
+    public const OPTIONS = 'json_encode_options';
 
-    public function __construct($bitmask = 0)
+    private $defaultContext = [
+        self::OPTIONS => 0,
+    ];
+
+    /**
+     * @param array $defaultContext
+     */
+    public function __construct($defaultContext = [])
     {
-        $this->options = $bitmask;
+        if (!\is_array($defaultContext)) {
+            @trigger_error(sprintf('Passing an integer as first parameter of the "%s()" method is deprecated since Symfony 4.2, use the "json_encode_options" key of the context instead.', __METHOD__), \E_USER_DEPRECATED);
+
+            $this->defaultContext[self::OPTIONS] = (int) $defaultContext;
+        } else {
+            $this->defaultContext = array_merge($this->defaultContext, $defaultContext);
+        }
     }
 
     /**
@@ -34,8 +47,7 @@ class JsonEncode implements EncoderInterface
      */
     public function encode($data, $format, array $context = [])
     {
-        $context = $this->resolveContext($context);
-        $options = $context['json_encode_options'];
+        $options = $context[self::OPTIONS] ?? $this->defaultContext[self::OPTIONS];
 
         try {
             $encodedJson = json_encode($data, $options);
@@ -43,11 +55,11 @@ class JsonEncode implements EncoderInterface
             throw new NotEncodableValueException($e->getMessage(), 0, $e);
         }
 
-        if (\PHP_VERSION_ID >= 70300 && (JSON_THROW_ON_ERROR & $options)) {
+        if (\PHP_VERSION_ID >= 70300 && (\JSON_THROW_ON_ERROR & $options)) {
             return $encodedJson;
         }
 
-        if (JSON_ERROR_NONE !== json_last_error() && (false === $encodedJson || !($options & JSON_PARTIAL_OUTPUT_ON_ERROR))) {
+        if (\JSON_ERROR_NONE !== json_last_error() && (false === $encodedJson || !($options & \JSON_PARTIAL_OUTPUT_ON_ERROR))) {
             throw new NotEncodableValueException(json_last_error_msg());
         }
 
@@ -60,15 +72,5 @@ class JsonEncode implements EncoderInterface
     public function supportsEncoding($format)
     {
         return JsonEncoder::FORMAT === $format;
-    }
-
-    /**
-     * Merge default json encode options with context.
-     *
-     * @return array
-     */
-    private function resolveContext(array $context = [])
-    {
-        return array_merge(['json_encode_options' => $this->options], $context);
     }
 }

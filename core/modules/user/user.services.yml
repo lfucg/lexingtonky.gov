@@ -17,9 +17,10 @@ services:
       - { name: access_check, applies_to: _user_is_logged_in }
   user.authentication.cookie:
     class: Drupal\user\Authentication\Provider\Cookie
-    arguments: ['@session_configuration', '@database']
+    arguments: ['@session_configuration', '@database', '@messenger']
     tags:
       - { name: authentication_provider, provider_id: 'cookie', priority: 0, global: TRUE }
+      - { name: event_subscriber }
   user.data:
     class: Drupal\user\UserData
     arguments: ['@database']
@@ -48,18 +49,6 @@ services:
   user.auth:
     class: Drupal\user\UserAuth
     arguments: ['@entity_type.manager', '@password']
-  user.private_tempstore:
-    class: Drupal\user\PrivateTempStoreFactory
-    arguments: ['@keyvalue.expirable', '@lock', '@current_user', '@request_stack', '%tempstore.expire%']
-    deprecated: The "%service_id%" service is deprecated. You should use the 'tempstore.private' service instead. See https://www.drupal.org/node/2935639.
-    tags:
-      - { name: backend_overridable }
-  user.shared_tempstore:
-    class: Drupal\user\SharedTempStoreFactory
-    arguments: ['@keyvalue.expirable', '@lock', '@request_stack', '%tempstore.expire%']
-    deprecated: The "%service_id%" service is deprecated. You should use the 'tempstore.shared' service instead. See https://www.drupal.org/node/2935639.
-    tags:
-      - { name: backend_overridable }
   user.permissions:
     class: Drupal\user\PermissionHandler
     arguments: ['@module_handler', '@string_translation', '@controller_resolver']
@@ -71,3 +60,14 @@ services:
   user.toolbar_link_builder:
     class: Drupal\user\ToolbarLinkBuilder
     arguments: ['@current_user']
+  user.flood_control:
+    class: Drupal\user\UserFloodControl
+    arguments: ['@flood', '@event_dispatcher', '@request_stack']
+  user.flood_subscriber:
+    class: Drupal\user\EventSubscriber\UserFloodSubscriber
+    arguments: ['@logger.channel.user']
+    tags:
+      - { name: 'event_subscriber' }
+  logger.channel.user:
+    parent: logger.channel_base
+    arguments: ['user']

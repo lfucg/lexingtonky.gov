@@ -24,11 +24,11 @@
         "ext-dom": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
-        "drupal/search_api": "~1.17",
+        "drupal/search_api": "~1.23",
         "composer/semver": "^1.0|^3.0",
         "consolidation/annotated-command": "^2.12|^4.1",
         "maennchen/zipstream-php": "^1.2|^2.0",
-        "solarium/solarium": "^6.1.5",
+        "solarium/solarium": "^6.2.3",
         "laminas/laminas-stdlib": "^3.2"
     },
     "require-dev": {
@@ -37,12 +37,12 @@
         "drupal/devel": "^4.0",
         "drupal/facets": "1.x-dev",
         "drupal/geofield": "1.x-dev",
-        "drupal/search_api_autocomplete": "1.x-dev",
         "drupal/search_api_location": "1.x-dev",
         "drupal/search_api_spellcheck": "3.x-dev"
     },
     "conflict": {
         "drupal/acquia_search_solr": "<1.0.0-beta8",
+        "drupal/search_api_autocomplete": "<1.6.0",
         "drupal/search_api_solr_multilingual": "<3.0.0"
     },
     "suggest": {
@@ -55,7 +55,7 @@
     "extra": {
         "drush": {
             "services": {
-                "drush.services.yml": "^9"
+                "drush.services.yml": "^9 || ^10"
             }
         }
     }

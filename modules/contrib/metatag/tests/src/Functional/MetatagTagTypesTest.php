@@ -77,7 +77,7 @@ class MetatagTagTypesTest extends BrowserTestBase {
   /**
    * Sets the test up.
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->adminUser = $this->drupalCreateUser($this->permissions);
     $this->drupalLogin($this->adminUser);
@@ -90,8 +90,8 @@ class MetatagTagTypesTest extends BrowserTestBase {
       'field_name' => 'metatag',
       'new_storage_type' => 'metatag',
     ];
-    $this->drupalPostForm(NULL, $edit, $this->t('Save and continue'));
-    $this->drupalPostForm(NULL, [], $this->t('Save field settings'));
+    $this->submitForm($edit, $this->t('Save and continue'));
+    $this->submitForm([], $this->t('Save field settings'));
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
   }
 
@@ -112,7 +112,7 @@ class MetatagTagTypesTest extends BrowserTestBase {
       'keywords' => '&lt;html&gt;&lt;body&gt;&lt;p class="test"&gt;Surrounded by escaped HTML&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;',
     ];
 
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains('Saved the Global Metatag defaults.');
     drupal_flush_all_caches();
     $this->drupalGet('hit-a-404');
@@ -139,7 +139,7 @@ class MetatagTagTypesTest extends BrowserTestBase {
       'og_image' => 'https://blahblahblah.com/insecure.jpg',
       'og_image_secure_url' => 'https://blahblahblah.com/secure.jpg',
     ];
-    $this->drupalPostForm(NULL, $values, 'Save');
+    $this->submitForm($values, 'Save');
     $session->pageTextContains('Saved the Global Metatag defaults.');
     drupal_flush_all_caches();
     $this->drupalGet('');
@@ -183,7 +183,7 @@ class MetatagTagTypesTest extends BrowserTestBase {
     //   'user_id[0][target_id]' => 'foo (' . $this->adminUser->id() . ')',
     //   'field_metatag[0][advanced][original_source]' => 'https://example.com/foo.html',
     // ];
-    // $this->drupalPostForm(NULL, $edit, $save_label);
+    // $this->submitForm($edit, $save_label);
     // $entities = entity_load_multiple_by_properties('entity_test', [
     //   'name' => 'UrlTags',
     // ]);

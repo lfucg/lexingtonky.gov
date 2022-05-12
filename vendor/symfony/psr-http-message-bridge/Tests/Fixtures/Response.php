@@ -21,24 +21,27 @@ class Response extends Message implements ResponseInterface
 {
     private $statusCode;
 
-    public function __construct($version = '1.1', array $headers = array(), StreamInterface $body = null, $statusCode = 200)
+    public function __construct($version = '1.1', array $headers = [], StreamInterface $body = null, $statusCode = 200)
     {
         parent::__construct($version, $headers, $body);
 
         $this->statusCode = $statusCode;
     }
 
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
+    /**
+     * @return static
+     */
     public function withStatus($code, $reasonPhrase = '')
     {
         throw new \BadMethodCallException('Not implemented.');
     }
 
-    public function getReasonPhrase()
+    public function getReasonPhrase(): string
     {
         throw new \BadMethodCallException('Not implemented.');
     }

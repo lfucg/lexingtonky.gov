@@ -3,6 +3,7 @@
 namespace Drupal\Tests\paragraphs\Functional\WidgetStable;
 
 use Drupal\language\Entity\ConfigurableLanguage;
+use Drupal\Tests\paragraphs\Traits\ParagraphsCoreVersionUiTestTrait;
 use Drupal\Tests\paragraphs\Traits\ParagraphsLastEntityQueryTrait;
 
 /**
@@ -12,14 +13,14 @@ use Drupal\Tests\paragraphs\Traits\ParagraphsLastEntityQueryTrait;
  */
 class ParagraphsTranslationsTest extends ParagraphsTestBase {
 
-  use ParagraphsLastEntityQueryTrait;
+  use ParagraphsLastEntityQueryTrait, ParagraphsCoreVersionUiTestTrait;
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'paragraphs_test',
     'paragraphs',
@@ -42,11 +43,7 @@ class ParagraphsTranslationsTest extends ParagraphsTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    // Place the breadcrumb, tested in fieldUIAddNewField().
-    $this->drupalPlaceBlock('system_breadcrumb_block');
-    $this->drupalPlaceBlock('local_tasks_block');
-    $this->drupalPlaceBlock('local_actions_block');
-    $this->drupalPlaceBlock('page_title_block');
+    $this->placeDefaultBlocks();
 
     $this->addParagraphedContentType('paragraphed_test', 'field_paragraphs', 'paragraphs');
 

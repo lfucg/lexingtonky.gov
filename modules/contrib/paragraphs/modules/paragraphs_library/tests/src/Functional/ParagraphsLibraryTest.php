@@ -17,7 +17,7 @@ class ParagraphsLibraryTest extends ParagraphsTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'views',
     'paragraphs_library',
   ];
@@ -57,7 +57,11 @@ class ParagraphsLibraryTest extends ParagraphsTestBase {
     $this->assertSession()->responseContains('bartik/css/base/elements.css');
     $this->clickLink('Edit');
     $this->assertSession()->responseNotContains('class="messages messages--warning"');
-    $items = \Drupal::entityQuery('paragraphs_library_item')->sort('id', 'DESC')->range(0, 1)->execute();
+    $items = \Drupal::entityQuery('paragraphs_library_item')
+      ->accessCheck(TRUE)
+      ->sort('id', 'DESC')
+      ->range(0, 1)
+      ->execute();
     $library_item_id = reset($items);
 
     // Assert local tasks and URLs.

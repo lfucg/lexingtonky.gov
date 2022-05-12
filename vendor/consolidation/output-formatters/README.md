@@ -2,31 +2,26 @@
 
 Apply transformations to structured data to write output in different formats.
 
-[![Travis CI](https://travis-ci.org/consolidation/output-formatters.svg?branch=master)](https://travis-ci.org/consolidation/output-formatters)
-[![Windows CI](https://ci.appveyor.com/api/projects/status/umyfuujca6d2g2k6?svg=true)](https://ci.appveyor.com/project/greg-1-anderson/output-formatters)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/consolidation/output-formatters/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/consolidation/output-formatters/?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/consolidation/output-formatters/badge.svg?branch=master)](https://coveralls.io/github/consolidation/output-formatters?branch=master)
-[![License](https://poser.pugx.org/consolidation/output-formatters/license)](https://packagist.org/packages/consolidation/output-formatters)
+[![ci](https://github.com/consolidation/output-formatters/workflows/CI/badge.svg)](https://travis-ci.org/consolidation/output-formatters)
+[![scrutinizer](https://scrutinizer-ci.com/g/consolidation/output-formatters/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/consolidation/output-formatters/?branch=master)
+[![codecov](https://codecov.io/gh/consolidation/output-formatters/branch/main/graph/badge.svg?token=CAaB7ofhxx)](https://codecov.io/gh/consolidation/output-formatters)
+[![license](https://poser.pugx.org/consolidation/output-formatters/license)](https://packagist.org/packages/consolidation/output-formatters)
 
-## Component Status
-
-Currently in use in [Robo](https://github.com/consolidation/Robo) (1.x+), [Drush](https://github.com/drush-ops/drush) (9.x+) and [Terminus](https://github.com/pantheon-systems/terminus) (1.x+).
 
 ## Motivation
 
 Formatters are used to allow simple commandline tool commands to be implemented in a manner that is completely independent from the Symfony Console output interfaces.  A command receives its input via its method parameters, and returns its result as structured data (e.g. a php standard object or array).  The structured data is then formatted by a formatter, and the result is printed.
 
-This process is managed by the [Consolidation/AnnotationCommand](https://github.com/consolidation/annotation-command) project.
+This process is managed by the [Consolidation/AnnotatedCommand](https://github.com/consolidation/annotated-command) project.
 
 ## Library Usage
 
 This is a library intended to be used in some other project.  Require from your composer.json file:
 ```
     "require": {
-        "consolidation/output-formatters": "~3"
+        "consolidation/output-formatters": "^4"
     },
 ```
-If you require the feature that allows a data table to be automatically reduced to a single element when the `string` format is selected, then you should require version ^2 instead. In most other respects, the 1.x and 2.x versions are compatible. See the [CHANGELOG](CHANGELOG.md) for details.
 
 ## Example Formatter
 
@@ -90,7 +85,7 @@ Most formatters will operate on any array or ArrayObject data. Some formatters r
 - `RowsOfFieldsWithMetadata`: Equivalent to `RowsOfFields`, but allows for metadata to be attached to the result. The metadata is not displayed in table format, but is evident if the data is converted to another format (e.g. `yaml` or `json`). The table data may either be nested inside of a specially-designated element, with other elements being used as metadata, or, alternately, the metadata may be nested inside of an element, with all other elements being used as data.
 - `PropertyList`: Each row contains a field:value pair. Each field is unique. This format is ideal for displaying in a table, with labels in the first column and values in the second common.
 - `UnstructuredListData`: The result is assumed to be a list of items, with the key of each row being used as the row id. The data elements may contain any sort of array data. The elements on each row do not need to be uniform, and the data may be nested to arbitrary depths.
-- `UnstruturedData`: The result is an unstructured array nested to arbitrary levels.
+- `UnstructuredData`: The result is an unstructured array nested to arbitrary levels.
 - `DOMDocument`: The standard PHP DOM document class may be used by functions that need to be able to presicely specify the exact attributes and children when the XML output format is used.
 - `ListDataFromKeys`: This data structure is deprecated. Use `UnstructuredListData` instead.
 
@@ -290,7 +285,7 @@ use Consolidation\OutputFormatters\StructuredData\NumericCellRenderer;
 
 ## API Usage
 
-It is recommended to use [Consolidation/AnnotationCommand](https://github.com/consolidation/annotation-command) to manage commands and formatters.  See the [AnnotationCommand API Usage](https://github.com/consolidation/annotation-command#api-usage) for details.
+It is recommended to use [Consolidation/AnnotatedCommand](https://github.com/consolidation/annotated-command) to manage commands and formatters.  See the [AnnotatedCommand API Usage](https://github.com/consolidation/annotated-command#api-usage) for details.
 
 The FormatterManager may also be used directly, if desired:
 ```php

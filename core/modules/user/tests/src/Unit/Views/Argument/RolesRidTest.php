@@ -18,13 +18,6 @@ class RolesRidTest extends UnitTestCase {
    * Tests the titleQuery method.
    *
    * @covers ::titleQuery
-   *
-   * @group legacy
-   *
-   * Note this is only a legacy test because it triggers a call to
-   * \Drupal\Core\Entity\EntityTypeInterface::getLabelCallback() which is mocked
-   * and triggers a deprecation error. Remove when ::getLabelCallback() is
-   * removed.
    */
   public function testTitleQuery() {
     $role1 = new Role([
@@ -40,11 +33,14 @@ class RolesRidTest extends UnitTestCase {
     $role_storage = $this->getMockForAbstractClass('Drupal\Core\Entity\EntityStorageInterface');
     $role_storage->expects($this->any())
       ->method('loadMultiple')
-      ->will($this->returnValueMap([
+      ->willReturnMap([
         [[], []],
         [['test_rid_1'], ['test_rid_1' => $role1]],
-        [['test_rid_1', 'test_rid_2'], ['test_rid_1' => $role1, 'test_rid_2' => $role2]],
-      ]));
+        [
+          ['test_rid_1', 'test_rid_2'],
+          ['test_rid_1' => $role1, 'test_rid_2' => $role2],
+        ],
+      ]);
 
     $entity_type = $this->createMock('Drupal\Core\Entity\EntityTypeInterface');
     $entity_type->expects($this->any())

@@ -40,7 +40,7 @@ tr .form-item,
   margin-bottom: calc(var(--space-xs) / 2); /* 4px */
   font-size: var(--font-size-s); /* ~14px */
   font-weight: bold;
-  line-height: calc(18rem / 16); /* 18px */
+  line-height: var(--line-height-form-label);
 }
 .form-item__label--multiple-value-form {
   margin-top: 0;
@@ -204,4 +204,24 @@ tr .form-item,
   div.form-item div.password-suggestions {
     float: none;
   }
+}
+
+/**
+ * Prevent regression due to explicit line-heights applied to these elements in
+ * normalize.css 7.0.0.
+ */
+button {
+  line-height: 1.125rem;
+}
+input,
+optgroup {
+  line-height: 1.5rem;
+}
+
+/**
+ * Prevent regression due to -webkit-appearance being set to button in
+ * normalize.css 4.1.0.
+ */
+::-webkit-file-upload-button {
+  -webkit-appearance: push-button;
 }

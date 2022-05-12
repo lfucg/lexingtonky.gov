@@ -22,7 +22,7 @@ abstract class TaxonomyTestBase extends ViewTestBase {
    *
    * @var array
    */
-  public static $modules = ['taxonomy', 'taxonomy_test_views'];
+  protected static $modules = ['taxonomy', 'taxonomy_test_views'];
 
   /**
    * Stores the nodes used for the different tests.
@@ -60,7 +60,7 @@ abstract class TaxonomyTestBase extends ViewTestBase {
     $this->mockStandardInstall();
 
     if ($import_test_views) {
-      ViewTestData::createTestViews(get_class($this), ['taxonomy_test_views']);
+      ViewTestData::createTestViews(static::class, ['taxonomy_test_views']);
     }
 
     $this->term1 = $this->createTerm();

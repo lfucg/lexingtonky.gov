@@ -8,6 +8,8 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\file\Plugin\migrate\field\d6\FileField;
 use Prophecy\Argument;
 
+// cspell:ignore filefield imagefield
+
 /**
  * @coversDefaultClass \Drupal\file\Plugin\migrate\field\d6\FileField
  * @group file
@@ -27,7 +29,7 @@ class FileFieldTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->plugin = new FileField([], 'file', []);
 
     $migration = $this->prophesize(MigrationInterface::class);
@@ -47,11 +49,11 @@ class FileFieldTest extends UnitTestCase {
    * @covers ::defineValueProcessPipeline
    */
   public function testDefineValueProcessPipeline($method = 'defineValueProcessPipeline') {
-    $this->plugin->$method($this->migration, 'somefieldname', []);
+    $this->plugin->$method($this->migration, 'field_name', []);
 
     $expected = [
       'plugin' => 'd6_field_file',
-      'source' => 'somefieldname',
+      'source' => 'field_name',
     ];
     $this->assertSame($expected, $this->migration->getProcess());
   }

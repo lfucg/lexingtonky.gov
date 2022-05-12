@@ -14,7 +14,7 @@ class ParagraphsAlterByTypeTest extends ParagraphsTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'paragraphs_test',
   ];
 

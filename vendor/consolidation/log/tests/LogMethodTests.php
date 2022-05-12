@@ -10,7 +10,7 @@ class LogMethodTests extends TestCase
   protected $output;
   protected $logger;
 
-  function setup() {
+  function setup(): void {
     $this->output = new BufferedOutput();
     $this->output->setVerbosity(OutputInterface::VERBOSITY_DEBUG);
     $this->logger = new Logger($this->output);

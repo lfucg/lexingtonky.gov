@@ -8,30 +8,30 @@
 (function ($, Drupal, drupalSettings) {
   function findFieldForFormatSelector($formatSelector) {
     var fieldId = $formatSelector.attr('data-editor-for');
-
-    return $('#' + fieldId).get(0);
+    return $("#".concat(fieldId)).get(0);
   }
 
   function filterXssWhenSwitching(field, format, originalFormatID, callback) {
     if (format.editor.isXssSafe) {
       callback(field, format);
     } else {
-        $.ajax({
-          url: Drupal.url('editor/filter_xss/' + format.format),
-          type: 'POST',
-          data: {
-            value: field.value,
-            original_format_id: originalFormatID
-          },
-          dataType: 'json',
-          success: function success(xssFilteredValue) {
-            if (xssFilteredValue !== false) {
-              field.value = xssFilteredValue;
-            }
-            callback(field, format);
+      $.ajax({
+        url: Drupal.url("editor/filter_xss/".concat(format.format)),
+        type: 'POST',
+        data: {
+          value: field.value,
+          original_format_id: originalFormatID
+        },
+        dataType: 'json',
+        success: function success(xssFilteredValue) {
+          if (xssFilteredValue !== false) {
+            field.value = xssFilteredValue;
           }
-        });
-      }
+
+          callback(field, format);
+        }
+      });
+    }
   }
 
   function changeTextEditor(field, newFormatID) {
@@ -40,8 +40,8 @@
     if (drupalSettings.editor.formats[previousFormatID]) {
       Drupal.editorDetach(field, drupalSettings.editor.formats[previousFormatID]);
     } else {
-        $(field).off('.editor');
-      }
+      $(field).off('.editor');
+    }
 
     if (drupalSettings.editor.formats[newFormatID]) {
       var format = drupalSettings.editor.formats[newFormatID];
@@ -62,13 +62,13 @@
     }
 
     var supportContentFiltering = drupalSettings.editor.formats[newFormatID] && drupalSettings.editor.formats[newFormatID].editorSupportsContentFiltering;
-
     var hasContent = field.value !== '';
+
     if (hasContent && supportContentFiltering) {
       var message = Drupal.t('Changing the text format to %text_format will permanently remove content that is not allowed in that text format.<br><br>Save your changes before switching the text format to avoid losing data.', {
         '%text_format': $select.find('option:selected').text()
       });
-      var confirmationDialog = Drupal.dialog('<div>' + message + '</div>', {
+      var confirmationDialog = Drupal.dialog("<div>".concat(message, "</div>"), {
         title: Drupal.t('Change text format?'),
         dialogClass: 'editor-change-text-format-modal',
         resizable: false,
@@ -87,18 +87,15 @@
             confirmationDialog.close();
           }
         }],
-
         closeOnEscape: false,
         create: function create() {
           $(this).parent().find('.ui-dialog-titlebar-close').remove();
         },
-
         beforeClose: false,
         close: function close(event) {
           $(event.target).remove();
         }
       });
-
       confirmationDialog.showModal();
     } else {
       changeTextEditor(field, newFormatID);
@@ -106,15 +103,14 @@
   }
 
   Drupal.editors = {};
-
   Drupal.behaviors.editor = {
     attach: function attach(context, settings) {
       if (!settings.editor) {
         return;
       }
 
-      $(context).find('[data-editor-for]').once('editor').each(function () {
-        var $this = $(this);
+      once('editor', '[data-editor-for]', context).forEach(function (editor) {
+        var $this = $(editor);
         var field = findFieldForFormatSelector($this);
 
         if (!field) {
@@ -130,12 +126,13 @@
 
         $(field).on('change.editor keypress.editor', function () {
           field.setAttribute('data-editor-value-is-changed', 'true');
-
           $(field).off('.editor');
         });
 
         if ($this.is('select')) {
-          $this.on('change.editorAttach', { field: field }, onTextFormatChange);
+          $this.on('change.editorAttach', {
+            field: field
+          }, onTextFormatChange);
         }
 
         $this.parents('form').on('submit', function (event) {
@@ -150,18 +147,19 @@
       });
     },
     detach: function detach(context, settings, trigger) {
-      var editors = void 0;
+      var editors;
 
       if (trigger === 'serialize') {
-        editors = $(context).find('[data-editor-for]').findOnce('editor');
+        editors = once.filter('editor', '[data-editor-for]', context);
       } else {
-        editors = $(context).find('[data-editor-for]').removeOnce('editor');
+        editors = once.remove('editor', '[data-editor-for]', context);
       }
 
-      editors.each(function () {
-        var $this = $(this);
+      editors.forEach(function (editor) {
+        var $this = $(editor);
         var activeFormatID = $this.val();
         var field = findFieldForFormatSelector($this);
+
         if (field && activeFormatID in settings.editor.formats) {
           Drupal.editorDetach(field, settings.editor.formats[activeFormatID], trigger);
         }
@@ -172,10 +170,8 @@
   Drupal.editorAttach = function (field, format) {
     if (format.editor) {
       Drupal.editors[format.editor].attach(field, format);
-
       Drupal.editors[format.editor].onChange(field, function () {
         $(field).trigger('formUpdated');
-
         field.setAttribute('data-editor-value-is-changed', 'true');
       });
     }

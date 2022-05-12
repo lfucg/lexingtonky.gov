@@ -6,21 +6,17 @@
  */
 
 use Drupal\Component\Utility\Crypt;
-use Drupal\Component\Utility\Html;
-use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Component\Utility\Unicode;
-use Drupal\Core\Config\BootstrapConfigStorageFactory;
-use Drupal\Core\Installer\InstallerKernel;
+use Drupal\Core\Http\InputBag;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\Test\TestDatabase;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Site\Settings;
 use Drupal\Core\Utility\Error;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\InputBag as SymfonyInputBag;
 
 /**
- * Minimum allowed version of PHP.
+ * Minimum allowed version of PHP for Drupal to be bootstrapped.
  *
  * Below this version:
  * - The installer cannot be run.
@@ -29,12 +25,13 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
  * - If a site managed to bypass all of the above, then an error is shown in
  *   the status report and various fatal errors occur on various pages.
  *
- * @see install.php
+ * @deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use
+ *   \Drupal::MINIMUM_PHP instead.
  *
- * @todo Move this to an appropriate autoloadable class. See
- *   https://www.drupal.org/project/drupal/issues/2908079
+ * @see https://www.drupal.org/node/2909361
+ * @see install.php
  */
-const DRUPAL_MINIMUM_PHP = '7.0.8';
+const DRUPAL_MINIMUM_PHP = \Drupal::MINIMUM_PHP;
 
 /**
  * Minimum supported version of PHP.
@@ -45,10 +42,12 @@ const DRUPAL_MINIMUM_PHP = '7.0.8';
  *   that Drupal no longer supports that PHP version.
  * - An error is shown in the status report that the PHP version is too old.
  *
- * @todo Move this to an appropriate autoloadable class. See
- *   https://www.drupal.org/project/drupal/issues/2908079
+ * @deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use
+ *   \Drupal::MINIMUM_SUPPORTED_PHP instead.
+ *
+ * @see https://www.drupal.org/node/2909361
  */
-const DRUPAL_MINIMUM_SUPPORTED_PHP = '7.0.8';
+const DRUPAL_MINIMUM_SUPPORTED_PHP = \Drupal::MINIMUM_SUPPORTED_PHP;
 
 /**
  * Minimum recommended version of PHP.
@@ -57,10 +56,12 @@ const DRUPAL_MINIMUM_SUPPORTED_PHP = '7.0.8';
  * message, but Drupal can still be installed. Used for (e.g.) PHP versions
  * that have reached their EOL or will in the near future.
  *
- * @todo Move this to an appropriate autoloadable class. See
- *   https://www.drupal.org/project/drupal/issues/2908079
+ * @deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use
+ *   \Drupal::RECOMMENDED_PHP instead.
+ *
+ * @see https://www.drupal.org/node/2909361
  */
-const DRUPAL_RECOMMENDED_PHP = '7.3';
+const DRUPAL_RECOMMENDED_PHP = \Drupal::RECOMMENDED_PHP;
 
 /**
  * Minimum recommended value of PHP memory_limit.
@@ -69,10 +70,12 @@ const DRUPAL_RECOMMENDED_PHP = '7.3';
  * contributed modules to be installed prior to hitting the limit. However,
  * 40M is the target for the Standard installation profile.
  *
- * @todo Move this to an appropriate autoloadable class. See
- *   https://www.drupal.org/project/drupal/issues/2908079
+ * @deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use
+ *   \Drupal::MINIMUM_PHP_MEMORY_LIMIT instead.
+ *
+ * @see https://www.drupal.org/node/2909361
  */
-const DRUPAL_MINIMUM_PHP_MEMORY_LIMIT = '64M';
+const DRUPAL_MINIMUM_PHP_MEMORY_LIMIT = \Drupal::MINIMUM_PHP_MEMORY_LIMIT;
 
 /**
  * Error reporting level: display no errors.
@@ -93,28 +96,6 @@ const ERROR_REPORTING_DISPLAY_ALL = 'all';
  * Error reporting level: display all messages, plus backtrace information.
  */
 const ERROR_REPORTING_DISPLAY_VERBOSE = 'verbose';
-
-/**
- * Role ID for anonymous users; should match what's in the "role" table.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use Drupal\Core\Session\AccountInterface::ANONYMOUS_ROLE or
- *   \Drupal\user\RoleInterface::ANONYMOUS_ID instead.
- *
- * @see https://www.drupal.org/node/1619504
- */
-const DRUPAL_ANONYMOUS_RID = AccountInterface::ANONYMOUS_ROLE;
-
-/**
- * Role ID for authenticated users; should match what's in the "role" table.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use Drupal\Core\Session\AccountInterface::AUTHENTICATED_ROLE or
- *   \Drupal\user\RoleInterface::AUTHENTICATED_ID instead.
- *
- * @see https://www.drupal.org/node/1619504
- */
-const DRUPAL_AUTHENTICATED_RID = AccountInterface::AUTHENTICATED_ROLE;
 
 /**
  * The maximum number of characters in a module or theme name.
@@ -139,96 +120,35 @@ const DRUPAL_EXTENSION_NAME_MAX_LENGTH = 50;
 define('REQUEST_TIME', (int) $_SERVER['REQUEST_TIME']);
 
 /**
- * Regular expression to match PHP function names.
- *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Core\Extension\ExtensionDiscovery::PHP_FUNCTION_PATTERN instead.
- *
- * @see https://www.drupal.org/node/2936107
- * @see http://php.net/manual/language.functions.php
- */
-const DRUPAL_PHP_FUNCTION_PATTERN = '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*';
-
-/**
- * $config_directories key for active directory.
- *
- * @see config_get_config_directory()
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Drupal core no
- *   longer creates an active directory.
- *
- * @see https://www.drupal.org/node/2501187
- */
-const CONFIG_ACTIVE_DIRECTORY = 'active';
-
-/**
- * $config_directories key for sync directory.
- *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Core\Site\Settings::get('config_sync_directory') instead.
- *
- * @see https://www.drupal.org/node/3018145
- */
-const CONFIG_SYNC_DIRECTORY = 'sync';
-
-/**
- * $config_directories key for staging directory.
- *
- * @see config_get_config_directory()
- * @see CONFIG_SYNC_DIRECTORY
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. The staging
- *   directory was renamed to sync.
- *
- * @see https://www.drupal.org/node/2574957
- */
-const CONFIG_STAGING_DIRECTORY = 'staging';
-
-/**
  * Defines the root directory of the Drupal installation.
  *
  * This strips two levels of directories off the current directory.
  */
-define('DRUPAL_ROOT', dirname(dirname(__DIR__)));
+define('DRUPAL_ROOT', dirname(__DIR__, 2));
 
 /**
- * Returns the path of a configuration directory.
- *
- * Configuration directories are configured using $config_directories in
- * settings.php.
- *
- * @param string $type
- *   The type of config directory to return. Drupal core provides the
- *   CONFIG_SYNC_DIRECTORY constant to access the sync directory.
- *
- * @return string
- *   The configuration directory path.
- *
- * @throws \Exception
- *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Core\Site\Settings::get('config_sync_directory') instead.
- *
- * @see https://www.drupal.org/node/3018145
+ * Declare class aliases that will be added by the autoloader.
  */
-function config_get_config_directory($type) {
-  global $config_directories;
-  @trigger_error('config_get_config_directory() is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use \Drupal\Core\Site\Settings::get(\'config_sync_directory\') instead. See https://www.drupal.org/node/3018145', E_USER_DEPRECATED);
-  $config_sync_directory = Settings::get('config_sync_directory', FALSE);
-  if ($config_sync_directory) {
-    $config_directories[CONFIG_SYNC_DIRECTORY] = $config_sync_directory;
-  }
-  // @todo Remove fallback in Drupal 9. https://www.drupal.org/node/2574943
-  if ($type == CONFIG_SYNC_DIRECTORY && !isset($config_directories[CONFIG_SYNC_DIRECTORY]) && isset($config_directories[CONFIG_STAGING_DIRECTORY])) {
-    $type = CONFIG_STAGING_DIRECTORY;
-  }
+// @todo https://www.drupal.org/project/drupal/issues/3197482 Remove this class
+//   alias once Drupal is running Symfony 5.3 or higher.
+class_alias('Drupal\Core\Http\KernelEvent', 'Symfony\Component\HttpKernel\Event\KernelEvent', TRUE);
 
-  if (!empty($config_directories[$type])) {
-    return $config_directories[$type];
+/**
+ * Set up the Symfony Request factory for forward compatibility with Symfony 5.
+ *
+ * @todo Remove this when Symfony 4 is no longer supported.
+ */
+Request::setFactory(
+  function ($query, $request, $attributes, $cookies, $files, $server, $content) {
+    $request = new Request($query, $request, $attributes, $cookies, $files, $server, $content);
+    foreach (['request', 'query', 'cookies'] as $bag) {
+      if (!($bag instanceof SymfonyInputBag)) {
+        $request->$bag = new InputBag($request->$bag->all());
+      }
+    }
+    return $request;
   }
-  // @todo https://www.drupal.org/node/2696103 Throw a more specific exception.
-  throw new \Exception("The configuration directory type '$type' does not exist");
-}
+);
 
 /**
  * Returns and optionally sets the filename for a system resource.
@@ -260,12 +180,19 @@ function config_get_config_directory($type) {
  *
  * @return string
  *   The filename of the requested item or NULL if the item is not found.
+ *
+ * @deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use
+ *   \Drupal\Core\Extension\ExtensionPathResolver::getPathname() instead.
+ *
+ * @see https://www.drupal.org/node/2940438
  */
 function drupal_get_filename($type, $name, $filename = NULL) {
+  @trigger_error('drupal_get_filename() is deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use \Drupal\Core\Extension\ExtensionPathResolver::getPathname() instead. See https://www.drupal.org/node/2940438', E_USER_DEPRECATED);
   // Type 'core' only exists to simplify application-level logic; it always maps
   // to the /core directory, whereas $name is ignored. It is only requested via
-  // drupal_get_path(). /core/core.info.yml does not exist, but is required
-  // since drupal_get_path() returns the dirname() of the returned pathname.
+  // \Drupal\Core\Extension\ExtensionList::getPath(). The file
+  // /core/core.info.yml does not exist, but is required since
+  // ExtensionList::getPath() returns the dirname() of the returned pathname.
   if ($type === 'core') {
     return 'core/core.info.yml';
   }
@@ -309,8 +236,15 @@ function drupal_get_filename($type, $name, $filename = NULL) {
  *
  * @return string
  *   The path to the requested item or an empty string if the item is not found.
+ *
+ * @deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use
+ *   \Drupal\Core\Extension\ExtensionPathResolver::getPath() instead.
+ *
+ * @see https://www.drupal.org/node/2940438
+ * @see \Drupal\Core\Extension\ExtensionList::getPath()
  */
 function drupal_get_path($type, $name) {
+  @trigger_error('drupal_get_path() is deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use \Drupal\Core\Extension\ExtensionPathResolver::getPath() instead. See https://www.drupal.org/node/2940438', E_USER_DEPRECATED);
   return dirname(drupal_get_filename($type, $name));
 }
 
@@ -357,58 +291,6 @@ function t($string, array $args = [], array $options = []) {
 }
 
 /**
- * Formats a string for HTML display by replacing variable placeholders.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use \Drupal\Component\Render\FormattableMarkup instead.
- *
- * @see https://www.drupal.org/node/2302363
- * @see \Drupal\Component\Render\FormattableMarkup::placeholderFormat()
- * @see \Drupal\Component\Render\FormattableMarkup
- * @see t()
- * @ingroup sanitization
- */
-function format_string($string, array $args) {
-  @trigger_error("format_string() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use \Drupal\Component\Render\FormattableMarkup instead. See https://www.drupal.org/node/2302363", E_USER_DEPRECATED);
-  return new FormattableMarkup($string, $args);
-}
-
-/**
- * Checks whether a string is valid UTF-8.
- *
- * All functions designed to filter input should use drupal_validate_utf8
- * to ensure they operate on valid UTF-8 strings to prevent bypass of the
- * filter.
- *
- * When text containing an invalid UTF-8 lead byte (0xC0 - 0xFF) is presented
- * as UTF-8 to Internet Explorer 6, the program may misinterpret subsequent
- * bytes. When these subsequent bytes are HTML control characters such as
- * quotes or angle brackets, parts of the text that were deemed safe by filters
- * end up in locations that are potentially unsafe; An onerror attribute that
- * is outside of a tag, and thus deemed safe by a filter, can be interpreted
- * by the browser as if it were inside the tag.
- *
- * The function does not return FALSE for strings containing character codes
- * above U+10FFFF, even though these are prohibited by RFC 3629.
- *
- * @param $text
- *   The text to check.
- *
- * @return bool
- *   TRUE if the text is valid UTF-8, FALSE if not.
- *
- * @see \Drupal\Component\Utility\Unicode::validateUtf8()
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use \Drupal\Component\Utility\Unicode::validateUtf8().
- *
- * @see https://www.drupal.org/node/1992584
- */
-function drupal_validate_utf8($text) {
-  return Unicode::validateUtf8($text);
-}
-
-/**
  * Logs an exception.
  *
  * This is a wrapper logging function which automatically decodes an exception.
@@ -448,139 +330,6 @@ function watchdog_exception($type, Exception $exception, $message = NULL, $varia
 }
 
 /**
- * Sets a message to display to the user.
- *
- * Messages are stored in a session variable and displayed in the page template
- * via the $messages theme variable.
- *
- * Example usage:
- * @code
- * drupal_set_message(t('An error occurred and processing did not complete.'), 'error');
- * @endcode
- *
- * @param string|\Drupal\Component\Render\MarkupInterface $message
- *   (optional) The translated message to be displayed to the user. For
- *   consistency with other messages, it should begin with a capital letter and
- *   end with a period.
- * @param string $type
- *   (optional) The message's type. Defaults to 'status'. These values are
- *   supported:
- *   - 'status'
- *   - 'warning'
- *   - 'error'
- * @param bool $repeat
- *   (optional) If this is FALSE and the message is already set, then the
- *   message won't be repeated. Defaults to FALSE.
- *
- * @return array|null
- *   A multidimensional array with keys corresponding to the set message types.
- *   The indexed array values of each contain the set messages for that type,
- *   and each message is an associative array with the following format:
- *   - safe: Boolean indicating whether the message string has been marked as
- *     safe. Non-safe strings will be escaped automatically.
- *   - message: The message string.
- *   So, the following is an example of the full return array structure:
- *   @code
- *     array(
- *       'status' => array(
- *         array(
- *           'safe' => TRUE,
- *           'message' => 'A <em>safe</em> markup string.',
- *         ),
- *         array(
- *           'safe' => FALSE,
- *           'message' => "$arbitrary_user_input to escape.",
- *         ),
- *       ),
- *     );
- *   @endcode
- *   If there are no messages set, the function returns NULL.
- *
- * @see drupal_get_messages()
- * @see status-messages.html.twig
- * @see https://www.drupal.org/node/2774931
- *
- * @deprecated in drupal:8.5.0 and is removed from drupal:9.0.0.
- *   Use \Drupal\Core\Messenger\MessengerInterface::addMessage() instead.
- */
-function drupal_set_message($message = NULL, $type = 'status', $repeat = FALSE) {
-  @trigger_error('drupal_set_message() is deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0. Use \Drupal\Core\Messenger\MessengerInterface::addMessage() instead. See https://www.drupal.org/node/2774931', E_USER_DEPRECATED);
-  $messenger = \Drupal::messenger();
-  if (isset($message)) {
-    $messenger->addMessage($message, $type, $repeat);
-  }
-  return $messenger->all();
-}
-
-/**
- * Returns all messages that have been set with drupal_set_message().
- *
- * @param string $type
- *   (optional) Limit the messages returned by type. Defaults to NULL, meaning
- *   all types. These values are supported:
- *   - NULL
- *   - 'status'
- *   - 'warning'
- *   - 'error'
- * @param bool $clear_queue
- *   (optional) If this is TRUE, the queue will be cleared of messages of the
- *   type specified in the $type parameter. Otherwise the queue will be left
- *   intact. Defaults to TRUE.
- *
- * @return array
- *   An associative, nested array of messages grouped by message type, with
- *   the top-level keys as the message type. The messages returned are
- *   limited to the type specified in the $type parameter, if any. If there
- *   are no messages of the specified type, an empty array is returned. See
- *   drupal_set_message() for the array structure of individual messages.
- *
- * @see drupal_set_message()
- * @see status-messages.html.twig
- * @see https://www.drupal.org/node/2774931
- *
- * @deprecated in drupal:8.5.0 and is removed from drupal:9.0.0.
- *   Use \Drupal\Core\Messenger\MessengerInterface::all() or
- *   \Drupal\Core\Messenger\MessengerInterface::messagesByType() instead.
- */
-function drupal_get_messages($type = NULL, $clear_queue = TRUE) {
-  @trigger_error('drupal_get_message() is deprecated in Drupal 8.5.0 and will be removed before Drupal 9.0.0. Use \Drupal\Core\Messenger\MessengerInterface::all() or \Drupal\Core\Messenger\MessengerInterface::messagesByType() instead. See https://www.drupal.org/node/2774931', E_USER_DEPRECATED);
-  $messenger = \Drupal::messenger();
-  if ($messages = $messenger->all()) {
-    if ($type) {
-      if ($clear_queue) {
-        $messenger->deleteByType($type);
-      }
-      if (isset($messages[$type])) {
-        return [$type => $messages[$type]];
-      }
-    }
-    else {
-      if ($clear_queue) {
-        $messenger->deleteAll();
-      }
-      return $messages;
-    }
-  }
-  return [];
-}
-
-/**
- * Returns the time zone of the current user.
- *
- * @return string
- *   The name of the current user's timezone or the name of the default timezone.
- *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use
- *   date_default_timezone_get() instead.
- *
- * @see https://www.drupal.org/node/3009387
- */
-function drupal_get_user_timezone() {
-  @trigger_error('drupal_get_user_timezone() is deprecated in drupal:8.8.0. It will be removed from drupal:9.0.0. Use date_default_timezone_get() instead. See https://www.drupal.org/node/3009387', E_USER_DEPRECATED);
-  return date_default_timezone_get();
-}
-
-/**
  * Provides custom PHP error handling.
  *
  * @param $error_level
@@ -591,13 +340,10 @@ function drupal_get_user_timezone() {
  *   (optional) The filename that the error was raised in.
  * @param $line
  *   (optional) The line number the error was raised at.
- * @param $context
- *   (optional) An array that points to the active symbol table at the point the
- *   error occurred.
  */
-function _drupal_error_handler($error_level, $message, $filename = NULL, $line = NULL, $context = NULL) {
+function _drupal_error_handler($error_level, $message, $filename = NULL, $line = NULL) {
   require_once __DIR__ . '/errors.inc';
-  _drupal_error_handler_real($error_level, $message, $filename, $line, $context);
+  _drupal_error_handler_real($error_level, $message, $filename, $line);
 }
 
 /**
@@ -669,10 +415,10 @@ function drupal_valid_test_ua($new_prefix = NULL) {
   // A valid Simpletest request will contain a hashed and salted authentication
   // code. Check if this code is present in a cookie or custom user agent
   // string.
-  $http_user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : NULL;
-  $user_agent = isset($_COOKIE['SIMPLETEST_USER_AGENT']) ? $_COOKIE['SIMPLETEST_USER_AGENT'] : $http_user_agent;
+  $http_user_agent = $_SERVER['HTTP_USER_AGENT'] ?? NULL;
+  $user_agent = $_COOKIE['SIMPLETEST_USER_AGENT'] ?? $http_user_agent;
   if (isset($user_agent) && preg_match("/^simple(\w+\d+):(.+):(.+):(.+)$/", $user_agent, $matches)) {
-    list(, $prefix, $time, $salt, $hmac) = $matches;
+    [, $prefix, $time, $salt, $hmac] = $matches;
     $check_string = $prefix . ':' . $time . ':' . $salt;
     // Read the hash salt prepared by drupal_generate_test_ua().
     // This function is called before settings.php is read and Drupal's error
@@ -757,95 +503,6 @@ function drupal_generate_test_ua($prefix) {
 function drupal_maintenance_theme() {
   require_once __DIR__ . '/theme.maintenance.inc';
   _drupal_maintenance_theme();
-}
-
-/**
- * Returns TRUE if a Drupal installation is currently being attempted.
- *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0.
- *   Use \Drupal\Core\Installer\InstallerKernel::installationAttempted()
- *   instead.
- *
- * @see https://www.drupal.org/node/3035275
- */
-function drupal_installation_attempted() {
-  @trigger_error('drupal_installation_attempted() is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use \Drupal\Core\Installer\InstallerKernel::installationAttempted() instead. See https://www.drupal.org/node/3035275', E_USER_DEPRECATED);
-  return InstallerKernel::installationAttempted();
-}
-
-/**
- * Gets the name of the currently active installation profile.
- *
- * When this function is called during Drupal's initial installation process,
- * the name of the profile that's about to be installed is stored in the global
- * installation state. At all other times, the "install_profile" setting will be
- * available in container as a parameter.
- *
- * @return string|null
- *   The name of the installation profile or NULL if no installation profile is
- *   currently active. This is the case for example during the first steps of
- *   the installer or during unit tests.
- *
- * @deprecated in drupal:8.3.0 and is removed from drupal:9.0.0.
- *   Use the install_profile container parameter or \Drupal::installProfile()
- *   instead. If you are accessing the value before it is written to
- *   configuration during the installer use the $install_state global. If you
- *   need to access the value before container is available you can use
- *   BootstrapConfigStorageFactory to load the value directly from
- *   configuration.
- *
- * @see https://www.drupal.org/node/2538996
- */
-function drupal_get_profile() {
-  global $install_state;
-
-  @trigger_error('drupal_get_profile() is deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. Use the install_profile container parameter or \Drupal::installProfile() instead. If you are accessing the value before it is written to configuration during the installer use the $install_state global. If you need to access the value before container is available you can use BootstrapConfigStorageFactory to load the value directly from configuration. See https://www.drupal.org/node/2538996', E_USER_DEPRECATED);
-
-  if (InstallerKernel::installationAttempted()) {
-    // If the profile has been selected return it.
-    if (isset($install_state['parameters']['profile'])) {
-      $profile = $install_state['parameters']['profile'];
-    }
-    else {
-      $profile = NULL;
-    }
-  }
-  else {
-    if (\Drupal::hasContainer()) {
-      $profile = \Drupal::installProfile();
-    }
-    else {
-      $profile = BootstrapConfigStorageFactory::getDatabaseStorage()->read('core.extension')['profile'];
-    }
-  }
-
-  return $profile;
-}
-
-/**
- * Registers an additional namespace.
- *
- * @param string $name
- *   The namespace component to register; e.g., 'node'.
- * @param string $path
- *   The relative path to the Drupal component in the filesystem.
- *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use the
- *   class loader as injected service instance to register the namespace:
- *   @code
- *   $this->classLoader->addPsr4('Drupal\\' . $name . '\\', \Drupal::root() . '/' . $path . '/src');
- *   @endcode
- *   or the following code if the service cannot be injected:
- *   @code
- *   \Drupal::service('class_loader')->addPsr4('Drupal\\' . $name . '\\', \Drupal::root() . '/' . $path . '/src');
- *   @endcode
- *
- * @see https://www.drupal.org/node/3035275
- */
-function drupal_classloader_register($name, $path) {
-  @trigger_error('drupal_classloader_register() is deprecated in Drupal 8.8.0 and will be removed before Drupal 9.0.0. Use the method ::addPsr4() of the class_loader service to register the namespace. See https://www.drupal.org/node/3035275.', E_USER_DEPRECATED);
-  $loader = \Drupal::service('class_loader');
-  $loader->addPsr4('Drupal\\' . $name . '\\', \Drupal::root() . '/' . $path . '/src');
 }
 
 /**
@@ -1002,22 +659,24 @@ function &drupal_static($name, $default_value = NULL, $reset = FALSE) {
  *   unit tests with a clean environment.
  */
 function drupal_static_reset($name = NULL) {
-  drupal_static($name, NULL, TRUE);
-}
+  switch ($name) {
+    case 'taxonomy_vocabulary_get_names':
+      @trigger_error("Calling drupal_static_reset() with 'taxonomy_vocabulary_get_names' as argument is deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. There is no replacement for this usage. See https://www.drupal.org/node/3039041", E_USER_DEPRECATED);
+      break;
 
-/**
- * Formats text for emphasized display in a placeholder inside a sentence.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Component\Render\FormattableMarkup or Twig's "placeholder" filter
- *   instead. Note this method should not be used to simply emphasize a string
- *   and therefore has few valid use-cases. Note also, that this method does not
- *   mark the string as safe.
- *
- * @see https://www.drupal.org/node/2302363
- */
-function drupal_placeholder($text) {
-  return '<em class="placeholder">' . Html::escape($text) . '</em>';
+    case 'node_mark':
+      @trigger_error("Calling drupal_static_reset() with 'node_mark' as argument is deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. There is no replacement for this usage. See https://www.drupal.org/node/3037203", E_USER_DEPRECATED);
+      break;
+
+    case 'Drupal\book\BookManager::bookSubtreeData':
+    case 'Drupal\book\BookManager::bookTreeAllData':
+    case 'Drupal\book\BookManager::doBookTreeBuild':
+      @trigger_error("Calling drupal_static_reset() with '{$name}' as argument is deprecated in drupal:9.3.0 and is removed in drupal:10.0.0. Use \Drupal::service('book.memory_cache')->deleteAll() instead. See https://www.drupal.org/node/3039439", E_USER_DEPRECATED);
+      \Drupal::service('book.memory_cache')->deleteAll();
+      break;
+
+  }
+  drupal_static($name, NULL, TRUE);
 }
 
 /**

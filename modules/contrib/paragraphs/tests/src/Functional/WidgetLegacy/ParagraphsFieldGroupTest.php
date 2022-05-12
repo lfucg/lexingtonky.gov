@@ -15,7 +15,7 @@ class ParagraphsFieldGroupTest extends ParagraphsTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'field_group',
   ];
 

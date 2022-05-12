@@ -5,7 +5,11 @@
  * Contains hook implementations for the metatag_views module.
  */
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\metatag_views\MetatagViewsCacheWrapper;
+use Drupal\metatag_views\Plugin\views\display_extender\MetatagDisplayExtender;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\views\ViewEntityInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
@@ -92,4 +96,19 @@ function metatag_views_metatag_route_entity(RouteMatchInterface $route_match) {
     $entity = \Drupal::entityTypeManager()->getStorage('view')->load($view_id);
     return $entity;
   }
+}
+
+/**
+ * Implements hook_views_post_render().
+ */
+function metatag_views_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+  if ($cache instanceof MetatagViewsCacheWrapper) {
+    $cache->doDeferredCacheSet();
+  }
+  $extenders = $view->getDisplay()->getExtenders();
+  if (isset($extenders['metatag_display_extender'])) {
+    $first_row_tokens = MetatagDisplayExtender::getFirstRowTokensFromStylePlugin($view);
+    $extenders['metatag_display_extender']->setFirstRowTokens($first_row_tokens);
+  }
+
 }

@@ -35,7 +35,7 @@ class PathProcessorTest extends UnitTestCase {
    */
   protected $languageManager;
 
-  protected function setUp() {
+  protected function setUp(): void {
 
     // Set up some languages to be used by the language-based path processor.
     $languages = [];
@@ -90,7 +90,7 @@ class PathProcessorTest extends UnitTestCase {
 
     $alias_manager->expects($this->any())
       ->method('getPathByAlias')
-      ->will($this->returnValueMap($system_path_map));
+      ->willReturnMap($system_path_map);
 
     // Create a stub config factory with all config settings that will be checked
     // during this test.

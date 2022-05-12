@@ -144,7 +144,7 @@ class FullCalendarService {
         'id' => $event->nid->value,
         'end' => $end,
         'start' => $start,
-        'url' => $event->url(),
+        'url' => $event->toUrl()->toString(),
         'description' => $event->body->value,
         'color' => $event->bundle() === 'meeting' ? '#51A47C' : '#004585',
         'relatedDepartments' => $event->get('field_related_departments')->target_id ? Term::load($event->get('field_related_departments')->target_id)->name->value : NULL,

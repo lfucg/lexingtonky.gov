@@ -10,10 +10,10 @@ namespace Drupal\Tests\views_ui\Functional;
 class UnsavedPreviewTest extends UITestBase {
 
   /**
-    * Views used by this test.
-    *
-    * @var array
-    */
+   * Views used by this test.
+   *
+   * @var array
+   */
   public static $testViews = ['content'];
 
   /**
@@ -31,12 +31,12 @@ class UnsavedPreviewTest extends UITestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'views_ui'];
+  protected static $modules = ['node', 'views_ui'];
 
   /**
    * Sets up a Drupal site for running functional and integration tests.
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp(FALSE);
 
     $this->adminUser = $this->drupalCreateUser(['administer views']);
@@ -55,28 +55,28 @@ class UnsavedPreviewTest extends UITestBase {
     $this->drupalGet('admin/structure/views/view/content');
     $this->assertSession()->statusCodeEquals(200);
 
-    $this->drupalPostForm(NULL, [], t('Add Page'));
+    $this->submitForm([], 'Add Page');
     $this->assertSession()->statusCodeEquals(200);
 
     $this->drupalGet('admin/structure/views/nojs/display/content/page_2/path');
     $this->assertSession()->statusCodeEquals(200);
 
-    $this->drupalPostForm(NULL, ['path' => 'foobarbaz'], t('Apply'));
+    $this->submitForm(['path' => 'foobarbaz'], 'Apply');
     $this->assertSession()->statusCodeEquals(200);
 
-    $this->drupalPostForm(NULL, [], t('Update preview'));
+    $this->submitForm([], 'Update preview');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertText(t('This display has no path'));
+    $this->assertSession()->pageTextContains('This display has no path');
 
     $this->drupalGet('admin/structure/views/view/content/edit/page_2');
     $this->assertSession()->statusCodeEquals(200);
 
-    $this->drupalPostForm(NULL, [], t('Save'));
+    $this->submitForm([], 'Save');
     $this->assertSession()->statusCodeEquals(200);
 
-    $this->drupalPostForm(NULL, [], t('Update preview'));
+    $this->submitForm([], 'Update preview');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertLinkByHref('foobarbaz');
+    $this->assertSession()->linkByHrefExists('foobarbaz');
   }
 
 }

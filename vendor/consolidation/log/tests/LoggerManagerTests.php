@@ -45,6 +45,7 @@ class LoggerManagerTests extends TestCase
 
     $actual = "Fallback:\n====\n$fallbackActual\nPrimary:\n====\n$primaryActual\nReplacement:\n====\n$replacementActual";
 
+    $actual = preg_replace('#\r\n#ms', "\n", $actual);
     $actual = preg_replace('# *$#ms', '', $actual);
     $actual = preg_replace('#^ *$\n#ms', '', $actual);
 
@@ -64,6 +65,7 @@ Replacement:
  ! [NOTE] Replaced logger
 __EOT__;
 
+    $expected = preg_replace('#\r\n#ms', "\n", $expected);
     $this->assertEquals($expected, $actual);
   }
 }

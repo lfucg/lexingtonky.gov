@@ -2,7 +2,7 @@
 
 namespace Drupal\search_api_solr;
 
-use Drupal\search_api\Backend\BackendInterface;
+use Drupal\search_api\Contrib\AutocompleteBackendInterface;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\ItemInterface;
 use Drupal\search_api\Query\QueryInterface;
@@ -15,19 +15,19 @@ use Solarium\QueryType\Update\Query\Query as UpdateQuery;
  * It extends the generic \Drupal\search_api\Backend\BackendInterface and covers
  * additional Solr specific methods.
  */
-interface SolrBackendInterface extends BackendInterface {
+interface SolrBackendInterface extends AutocompleteBackendInterface {
 
   /**
    * The current Solr schema version.
    *
    * @todo replace by an automatic detection when core provides module versions.
    */
-  const SEARCH_API_SOLR_SCHEMA_VERSION = '4.2.1';
+  public const SEARCH_API_SOLR_SCHEMA_VERSION = '4.2.7';
 
   /**
    * The minimum required Solr schema version.
    */
-  const SEARCH_API_SOLR_MIN_SCHEMA_VERSION = '4.1.1';
+  public const SEARCH_API_SOLR_MIN_SCHEMA_VERSION = '4.1.1';
 
   /**
    * The separator to indicate the start of a language ID.
@@ -41,7 +41,11 @@ interface SolrBackendInterface extends BackendInterface {
    * @see http://de2.php.net/manual/en/regexp.reference.meta.php
    * @see https://www.w3.org/International/articles/language-tags/
    */
-  const SEARCH_API_SOLR_LANGUAGE_SEPARATOR = ';';
+  public const SEARCH_API_SOLR_LANGUAGE_SEPARATOR = ';';
+
+  public const FIELD_PLACEHOLDER = 'FIELD_PLACEHOLDER';
+
+  public const EMPTY_TEXT_FIELD_DUMMY_VALUE = 'aöbäcüdöeäfüg';
 
   /**
    * Creates a list of all indexed field names mapped to their Solr field names.
@@ -388,5 +392,18 @@ interface SolrBackendInterface extends BackendInterface {
    * @return bool
    */
   public function isNonDrupalOrOutdatedConfigSetAllowed(): bool;
+
+  /**
+   * Provide an easy to access event dispatcher for plugins.
+   *
+   * @param object $event
+   *   The object to process.
+   *
+   * @return object
+   *   The Event that was passed, now modified by listeners.
+   *
+   * @see \Psr\EventDispatcher\EventDispatcherInterface
+   */
+  public function dispatch(object $event): void;
 
 }

@@ -20,7 +20,7 @@ class FilterIdTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['filter'];
+  protected static $modules = ['filter'];
 
   /**
    * The mocked MigrateExecutable.
@@ -32,7 +32,7 @@ class FilterIdTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->executable = $this->createMock(MigrateExecutableInterface::class);
   }
@@ -97,7 +97,7 @@ class FilterIdTest extends KernelTestBase {
    * Provides filter ids for testing transformations.
    *
    * @return array
-   *   Formatted as $source_id, $tranformed_id, $invalid_id.
+   *   Formatted as $source_id, $transformed_id, $invalid_id.
    *   When $invalid_id is provided the transformation should fail with the
    *   supplied id.
    */

@@ -6,6 +6,10 @@ use Drupal\Core\Database\Database;
 use Drupal\Core\Database\Connection as DatabaseConnection;
 use Drupal\Core\Database\DatabaseAccessDeniedException;
 use Drupal\Core\Database\DatabaseNotFoundException;
+use Drupal\Core\Database\StatementInterface;
+use Drupal\Core\Database\StatementWrapper;
+
+// cSpell:ignore ilike nextval
 
 /**
  * @addtogroup database
@@ -36,6 +40,16 @@ class Connection extends DatabaseConnection {
   const CONNECTION_FAILURE = '08006';
 
   /**
+   * {@inheritdoc}
+   */
+  protected $statementClass = NULL;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $statementWrapperClass = StatementWrapper::class;
+
+  /**
    * A map of condition operators to PostgreSQL operators.
    *
    * In PostgreSQL, 'LIKE' is case-sensitive. ILIKE should be used for
@@ -50,41 +64,20 @@ class Connection extends DatabaseConnection {
   ];
 
   /**
-   * The list of PostgreSQL reserved key words.
-   *
-   * @see http://www.postgresql.org/docs/9.4/static/sql-keywords-appendix.html
+   * {@inheritdoc}
    */
-  protected $postgresqlReservedKeyWords = ['all', 'analyse', 'analyze', 'and',
-    'any', 'array', 'as', 'asc', 'asymmetric', 'authorization', 'binary', 'both',
-    'case', 'cast', 'check', 'collate', 'collation', 'column', 'concurrently',
-    'constraint', 'create', 'cross', 'current_catalog', 'current_date',
-    'current_role', 'current_schema', 'current_time', 'current_timestamp',
-    'current_user', 'default', 'deferrable', 'desc', 'distinct', 'do', 'else',
-    'end', 'except', 'false', 'fetch', 'for', 'foreign', 'freeze', 'from', 'full',
-    'grant', 'group', 'having', 'ilike', 'in', 'initially', 'inner', 'intersect',
-    'into', 'is', 'isnull', 'join', 'lateral', 'leading', 'left', 'like', 'limit',
-    'localtime', 'localtimestamp', 'natural', 'not', 'notnull', 'null', 'offset',
-    'on', 'only', 'or', 'order', 'outer', 'over', 'overlaps', 'placing',
-    'primary', 'references', 'returning', 'right', 'select', 'session_user',
-    'similar', 'some', 'symmetric', 'table', 'tablesample', 'then', 'to',
-    'trailing', 'true', 'union', 'unique', 'user', 'using', 'variadic', 'verbose',
-    'when', 'where', 'window', 'with',
-  ];
+  protected $transactionalDDLSupport = TRUE;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $identifierQuotes = ['"', '"'];
 
   /**
    * Constructs a connection object.
    */
   public function __construct(\PDO $connection, array $connection_options) {
     parent::__construct($connection, $connection_options);
-
-    // This driver defaults to transaction support, except if explicitly passed FALSE.
-    $this->transactionSupport = !isset($connection_options['transactions']) || ($connection_options['transactions'] !== FALSE);
-
-    // Transactional DDL is always available in PostgreSQL,
-    // but we'll only enable it if standard transactions are.
-    $this->transactionalDDLSupport = $this->transactionSupport;
-
-    $this->connectionOptions = $connection_options;
 
     // Force PostgreSQL to use the UTF-8 character set by default.
     $this->connection->exec("SET NAMES 'UTF8'");
@@ -205,96 +198,30 @@ class Connection extends DatabaseConnection {
     return $return;
   }
 
-  public function prepareQuery($query) {
+  /**
+   * {@inheritdoc}
+   */
+  public function prepareStatement(string $query, array $options, bool $allow_row_count = FALSE): StatementInterface {
     // mapConditionOperator converts some operations (LIKE, REGEXP, etc.) to
     // PostgreSQL equivalents (ILIKE, ~*, etc.). However PostgreSQL doesn't
     // automatically cast the fields to the right type for these operators,
     // so we need to alter the query and add the type-cast.
-    return parent::prepareQuery(preg_replace('/ ([^ ]+) +(I*LIKE|NOT +I*LIKE|~\*|!~\*) /i', ' ${1}::text ${2} ', $query));
+    $query = preg_replace('/ ([^ ]+) +(I*LIKE|NOT +I*LIKE|~\*|!~\*) /i', ' ${1}::text ${2} ', $query);
+    return parent::prepareStatement($query, $options, $allow_row_count);
   }
 
   public function queryRange($query, $from, $count, array $args = [], array $options = []) {
     return $this->query($query . ' LIMIT ' . (int) $count . ' OFFSET ' . (int) $from, $args, $options);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function queryTemporary($query, array $args = [], array $options = []) {
+    @trigger_error('Connection::queryTemporary() is deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. There is no replacement. See https://www.drupal.org/node/3211781', E_USER_DEPRECATED);
     $tablename = $this->generateTemporaryTableName();
     $this->query('CREATE TEMPORARY TABLE {' . $tablename . '} AS ' . $query, $args, $options);
     return $tablename;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function escapeField($field) {
-    $escaped = parent::escapeField($field);
-
-    // Remove any invalid start character.
-    $escaped = preg_replace('/^[^A-Za-z0-9_]/', '', $escaped);
-
-    // The pgsql database driver does not support field names that contain
-    // periods (supported by PostgreSQL server) because this method may be
-    // called by a field with a table alias as part of SQL conditions or
-    // order by statements. This will consider a period as a table alias
-    // identifier, and split the string at the first period.
-    if (preg_match('/^([A-Za-z0-9_]+)"?[.]"?([A-Za-z0-9_.]+)/', $escaped, $parts)) {
-      $table = $parts[1];
-      $column = $parts[2];
-
-      // Use escape alias because escapeField may contain multiple periods that
-      // need to be escaped.
-      $escaped = $this->escapeTable($table) . '.' . $this->escapeAlias($column);
-    }
-    else {
-      $escaped = $this->doEscape($escaped);
-    }
-
-    return $escaped;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function escapeAlias($field) {
-    $escaped = preg_replace('/[^A-Za-z0-9_]+/', '', $field);
-    $escaped = $this->doEscape($escaped);
-    return $escaped;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function escapeTable($table) {
-    $escaped = parent::escapeTable($table);
-
-    // Ensure that each part (database, schema and table) of the table name is
-    // properly and independently escaped.
-    $parts = explode('.', $escaped);
-    $parts = array_map([$this, 'doEscape'], $parts);
-    $escaped = implode('.', $parts);
-
-    return $escaped;
-  }
-
-  /**
-   * Escape a string if needed.
-   *
-   * @param $string
-   *   The string to escape.
-   *
-   * @return string
-   *   The escaped string.
-   */
-  protected function doEscape($string) {
-    // Quote identifier to make it case-sensitive.
-    if (preg_match('/[A-Z]/', $string)) {
-      $string = '"' . $string . '"';
-    }
-    elseif (in_array(strtolower($string), $this->postgresqlReservedKeyWords)) {
-      // Quote the string for PostgreSQL reserved key words.
-      $string = '"' . $string . '"';
-    }
-    return $string;
   }
 
   public function driver() {
@@ -336,7 +263,7 @@ class Connection extends DatabaseConnection {
   }
 
   public function mapConditionOperator($operator) {
-    return isset(static::$postgresqlConditionOperatorMap[$operator]) ? static::$postgresqlConditionOperatorMap[$operator] : NULL;
+    return static::$postgresqlConditionOperatorMap[$operator] ?? NULL;
   }
 
   /**
@@ -348,7 +275,7 @@ class Connection extends DatabaseConnection {
   public function nextId($existing = 0) {
 
     // Retrieve the name of the sequence. This information cannot be cached
-    // because the prefix may change, for example, like it does in simpletests.
+    // because the prefix may change, for example, like it does in tests.
     $sequence_name = $this->makeSequenceName('sequences', 'value');
 
     // When PostgreSQL gets a value too small then it will lock the table,
@@ -396,7 +323,7 @@ class Connection extends DatabaseConnection {
   }
 
   /**
-   * Add a new savepoint with an unique name.
+   * Add a new savepoint with a unique name.
    *
    * The main use for this method is to mimic InnoDB functionality, which
    * provides an inherent savepoint before any query in a transaction.
@@ -439,21 +366,6 @@ class Connection extends DatabaseConnection {
     if (isset($this->transactionLayers[$savepoint_name])) {
       $this->rollBack($savepoint_name);
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function upsert($table, array $options = []) {
-    // Use the (faster) native Upsert implementation for PostgreSQL >= 9.5.
-    if (version_compare($this->version(), '9.5', '>=')) {
-      $class = $this->getDriverClass('NativeUpsert');
-    }
-    else {
-      $class = $this->getDriverClass('Upsert');
-    }
-
-    return new $class($this, $table, $options);
   }
 
 }

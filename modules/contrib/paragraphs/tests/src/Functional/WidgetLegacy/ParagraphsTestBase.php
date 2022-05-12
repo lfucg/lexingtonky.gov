@@ -35,7 +35,7 @@ abstract class ParagraphsTestBase extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'paragraphs',
     'field',
@@ -54,11 +54,7 @@ abstract class ParagraphsTestBase extends BrowserTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    // Place the breadcrumb, tested in fieldUIAddNewField().
-    $this->drupalPlaceBlock('system_breadcrumb_block');
-    $this->drupalPlaceBlock('local_tasks_block');
-    $this->drupalPlaceBlock('local_actions_block');
-    $this->drupalPlaceBlock('page_title_block');
+    $this->placeDefaultBlocks();
 
     $this->admin_permissions = [
       'administer content types',

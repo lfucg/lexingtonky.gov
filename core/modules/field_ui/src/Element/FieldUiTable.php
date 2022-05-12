@@ -83,7 +83,7 @@ class FieldUiTable extends Table {
             $indentation = [
               '#theme' => 'indentation',
               '#size' => $depth,
-              '#suffix' => isset($row[$cell]['#prefix']) ? $row[$cell]['#prefix'] : '',
+              '#suffix' => $row[$cell]['#prefix'] ?? '',
             ];
             $row[$cell]['#prefix'] = \Drupal::service('renderer')->render($indentation);
           }
@@ -110,7 +110,7 @@ class FieldUiTable extends Table {
 
     $elements['#attached']['drupalSettings']['fieldUIRowsData'] = $js_settings;
 
-    // If the custom #tabledrag is set and there is a HTML ID, add the table's
+    // If the custom #tabledrag is set and there is an HTML ID, add the table's
     // HTML ID to the options and attach the behavior.
     // @see \Drupal\Core\Render\Element\Table::preRenderTable()
     if (!empty($elements['#tabledrag']) && isset($elements['#attributes']['id'])) {
@@ -225,7 +225,7 @@ class FieldUiTable extends Table {
    */
   public static function reduceOrder($array, $a) {
     $array = !$array ? [] : $array;
-    if ($a['name']) {
+    if (!empty($a['name'])) {
       $array[] = $a['name'];
     }
     if (!empty($a['children'])) {

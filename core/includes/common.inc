@@ -8,18 +8,11 @@
  * a cached page are instead located in bootstrap.inc.
  */
 
-use Drupal\Component\Gettext\PoItem;
 use Drupal\Component\Utility\Bytes;
-use Drupal\Component\Utility\Environment;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\SortArray;
-use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Form\FormHelper;
-use Drupal\Core\Render\Element;
-use Drupal\Core\Render\Element\Link;
-use Drupal\Core\Render\HtmlResponseAttachmentsProcessor;
-use Drupal\Core\Render\Markup;
+use Drupal\Core\DrupalKernel;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
@@ -124,116 +117,6 @@ const JS_DEFAULT = 0;
 const JS_THEME = 100;
 
 /**
- * The delimiter used to split plural strings.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use Drupal\Component\Gettext\PoItem::DELIMITER instead.
- */
-const LOCALE_PLURAL_DELIMITER = PoItem::DELIMITER;
-
-/**
- * Prepares a 'destination' URL query parameter.
- *
- * Used to direct the user back to the referring page after completing a form.
- * By default the current URL is returned. If a destination exists in the
- * previous request, that destination is returned. As such, a destination can
- * persist across multiple pages.
- *
- * @return array
- *   An associative array containing the key:
- *   - destination: The value of the current request's 'destination' query
- *     parameter, if present. This can be either a relative or absolute URL.
- *     However, for security, redirection to external URLs is not performed.
- *     If the query parameter isn't present, then the URL of the current
- *     request is returned.
- *
- * @ingroup form_api
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use the redirect.destination service.
- *
- * @see \Drupal\Core\EventSubscriber\RedirectResponseSubscriber::checkRedirectUrl()
- * @see https://www.drupal.org/node/2448603
- */
-function drupal_get_destination() {
-  return \Drupal::destination()->getAsArray();
-}
-
-/**
- * @defgroup validation Input validation
- * @{
- * Functions to validate user input.
- */
-
-/**
- * Verifies the syntax of the given email address.
- *
- * @param string $mail
- *   A string containing an email address.
- *
- * @return bool
- *   TRUE if the address is in a valid format.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use \Drupal::service('email.validator')->isValid().
- *
- * @see https://www.drupal.org/node/2912661
- */
-function valid_email_address($mail) {
-  return \Drupal::service('email.validator')->isValid($mail);
-}
-
-/**
- * @} End of "defgroup validation".
- */
-
-/**
- * @defgroup sanitization Sanitization functions
- * @{
- * Functions to sanitize values.
- *
- * See https://www.drupal.org/writing-secure-code for information
- * on writing secure code.
- */
-
-/**
- * Strips dangerous protocols from a URI and encodes it for output to HTML.
- *
- * @param $uri
- *   A plain-text URI that might contain dangerous protocols.
- *
- * @return string
- *   A URI stripped of dangerous protocols and encoded for output to an HTML
- *   attribute value. Because it is already encoded, it should not be set as a
- *   value within a $attributes array passed to Drupal\Core\Template\Attribute,
- *   because Drupal\Core\Template\Attribute expects those values to be
- *   plain-text strings. To pass a filtered URI to
- *   Drupal\Core\Template\Attribute, call
- *   \Drupal\Component\Utility\UrlHelper::stripDangerousProtocols() instead.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use UrlHelper::stripDangerousProtocols() or UrlHelper::filterBadProtocol()
- *   instead. UrlHelper::stripDangerousProtocols() can be used in conjunction
- *   with \Drupal\Component\Render\FormattableMarkup and an @variable
- *   placeholder which will perform the necessary escaping.
- *   UrlHelper::filterBadProtocol() is functionality equivalent to check_url()
- *   apart from the fact it is protected from double escaping bugs. Note that
- *   this method no longer marks its output as safe.
- *
- * @see \Drupal\Component\Utility\UrlHelper::stripDangerousProtocols()
- * @see \Drupal\Component\Utility\UrlHelper::filterBadProtocol()
- * @see https://www.drupal.org/node/2560027
- */
-function check_url($uri) {
-  @trigger_error(__FUNCTION__ . '() is deprecated in Drupal 8.0.0 and will be removed before Drupal 9.0.0. Use UrlHelper::stripDangerousProtocols() or UrlHelper::filterBadProtocol() instead. See https://www.drupal.org/node/2560027', E_USER_DEPRECATED);
-  return Html::escape(UrlHelper::stripDangerousProtocols($uri));
-}
-
-/**
- * @} End of "defgroup sanitization".
- */
-
-/**
  * @defgroup format Formatting
  * @{
  * Functions to format numbers, strings, dates, etc.
@@ -295,128 +178,8 @@ function format_size($size, $langcode = NULL) {
 }
 
 /**
- * Formats a date, using a date type or a custom date format string.
- *
- * @param $timestamp
- *   A UNIX timestamp to format.
- * @param $type
- *   (optional) The format to use, one of:
- *   - One of the built-in formats: 'short', 'medium',
- *     'long', 'html_datetime', 'html_date', 'html_time',
- *     'html_yearless_date', 'html_week', 'html_month', 'html_year'.
- *   - The name of a date type defined by a date format config entity.
- *   - The machine name of an administrator-defined date format.
- *   - 'custom', to use $format.
- *   Defaults to 'medium'.
- * @param $format
- *   (optional) If $type is 'custom', a PHP date format string suitable for
- *   input to date(). Use a backslash to escape ordinary text, so it does not
- *   get interpreted as date format characters.
- * @param $timezone
- *   (optional) Time zone identifier, as described at
- *   http://php.net/manual/timezones.php Defaults to the time zone used to
- *   display the page.
- * @param $langcode
- *   (optional) Language code to translate to. Defaults to the language used to
- *   display the page.
- *
- * @return
- *   A translated date string in the requested format.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use \Drupal::service('date.formatter')->format().
- *
- * @see \Drupal\Core\Datetime\DateFormatter::format()
- * @see https://www.drupal.org/node/1876852
- */
-function format_date($timestamp, $type = 'medium', $format = '', $timezone = NULL, $langcode = NULL) {
-  @trigger_error("format_date() is deprecated in Drupal 8.0.0 and will be removed before Drupal 9.0.0. Use \Drupal::service('date.formatter')->format() instead. See https://www.drupal.org/node/1876852", E_USER_DEPRECATED);
-  return \Drupal::service('date.formatter')->format($timestamp, $type, $format, $timezone, $langcode);
-}
-
-/**
- * Returns an ISO8601 formatted date based on the given date.
- *
- * @param string $date
- *   A UNIX timestamp.
- *
- * @return string
- *   An ISO8601 formatted date.
- *
- * @deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use
- *   date('c', $date) instead.
- *
- * @see https://www.drupal.org/node/2999991
- */
-function date_iso8601($date) {
-  @trigger_error('date_iso8601() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. Use date("c", $date) instead. See https://www.drupal.org/node/2999991.', E_USER_DEPRECATED);
-  // The DATE_ISO8601 constant cannot be used here because it does not match
-  // date('c') and produces invalid RDF markup.
-  return date('c', $date);
-}
-
-/**
  * @} End of "defgroup format".
  */
-
-/**
- * Formats an attribute string for an HTTP header.
- *
- * @param array $attributes
- *   An associative array of attributes such as 'rel'.
- *
- * @return string
- *   A ; separated string ready for insertion in a HTTP header. No escaping is
- *   performed for HTML entities, so this string is not safe to be printed.
- *
- * @deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Core\Render\HtmlResponseAttachmentsProcessor::formatHttpHeaderAttributes()
- *   instead.
- *
- * @see https://www.drupal.org/node/3000051
- */
-function drupal_http_header_attributes(array $attributes = []) {
-  @trigger_error("drupal_http_header_attributes() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. Use \Drupal\Core\Render\HtmlResponseAttachmentsProcessor::formatHttpHeaderAttributes() instead. See https://www.drupal.org/node/3000051", E_USER_DEPRECATED);
-  return HtmlResponseAttachmentsProcessor::formatHttpHeaderAttributes($attributes);
-}
-
-/**
- * Attempts to set the PHP maximum execution time.
- *
- * This function is a wrapper around the PHP function set_time_limit().
- * When called, set_time_limit() restarts the timeout counter from zero.
- * In other words, if the timeout is the default 30 seconds, and 25 seconds
- * into script execution a call such as set_time_limit(20) is made, the
- * script will run for a total of 45 seconds before timing out.
- *
- * If the current time limit is not unlimited it is possible to decrease the
- * total time limit if the sum of the new time limit and the current time spent
- * running the script is inferior to the original time limit. It is inherent to
- * the way set_time_limit() works, it should rather be called with an
- * appropriate value every time you need to allocate a certain amount of time
- * to execute a task than only once at the beginning of the script.
- *
- * Before calling set_time_limit(), we check if this function is available
- * because it could be disabled by the server administrator. We also hide all
- * the errors that could occur when calling set_time_limit(), because it is
- * not possible to reliably ensure that PHP or a security extension will
- * not issue a warning/error if they prevent the use of this function.
- *
- * @param $time_limit
- *   An integer specifying the new time limit, in seconds. A value of 0
- *   indicates unlimited execution time.
- *
- * @ingroup php_wrappers
- *
- * @deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Component\Utility\Environment::setTimeLimit() instead.
- *
- * @see https://www.drupal.org/node/3000058
- */
-function drupal_set_time_limit($time_limit) {
-  @trigger_error('drupal_set_time_limit() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. Use \Drupal\Component\Utility\Environment::setTimeLimit() instead. See https://www.drupal.org/node/3000058.', E_USER_DEPRECATED);
-  Environment::setTimeLimit($time_limit);
-}
 
 /**
  * Returns the base URL path (i.e., directory) of the Drupal installation.
@@ -430,18 +193,6 @@ function drupal_set_time_limit($time_limit) {
  */
 function base_path() {
   return $GLOBALS['base_path'];
-}
-
-/**
- * Deletes old cached CSS files.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use \Drupal\Core\Asset\AssetCollectionOptimizerInterface::deleteAll().
- *
- * @see https://www.drupal.org/node/2317841
- */
-function drupal_clear_css_cache() {
-  \Drupal::service('asset.css.collection_optimizer')->deleteAll();
 }
 
 /**
@@ -465,138 +216,6 @@ function drupal_js_defaults($data = NULL) {
     'data' => $data,
     'browsers' => [],
   ];
-}
-
-/**
- * Adds JavaScript to change the state of an element based on another element.
- *
- * A "state" means a certain property on a DOM element, such as "visible" or
- * "checked". A state can be applied to an element, depending on the state of
- * another element on the page. In general, states depend on HTML attributes and
- * DOM element properties, which change due to user interaction.
- *
- * Since states are driven by JavaScript only, it is important to understand
- * that all states are applied on presentation only, none of the states force
- * any server-side logic, and that they will not be applied for site visitors
- * without JavaScript support. All modules implementing states have to make
- * sure that the intended logic also works without JavaScript being enabled.
- *
- * #states is an associative array in the form of:
- * @code
- * array(
- *   STATE1 => CONDITIONS_ARRAY1,
- *   STATE2 => CONDITIONS_ARRAY2,
- *   ...
- * )
- * @endcode
- * Each key is the name of a state to apply to the element, such as 'visible'.
- * Each value is a list of conditions that denote when the state should be
- * applied.
- *
- * Multiple different states may be specified to act on complex conditions:
- * @code
- * array(
- *   'visible' => CONDITIONS,
- *   'checked' => OTHER_CONDITIONS,
- * )
- * @endcode
- *
- * Every condition is a key/value pair, whose key is a jQuery selector that
- * denotes another element on the page, and whose value is an array of
- * conditions, which must be met on that element:
- * @code
- * array(
- *   'visible' => array(
- *     JQUERY_SELECTOR => REMOTE_CONDITIONS,
- *     JQUERY_SELECTOR => REMOTE_CONDITIONS,
- *     ...
- *   ),
- * )
- * @endcode
- * All conditions must be met for the state to be applied.
- *
- * Each remote condition is a key/value pair specifying conditions on the other
- * element that need to be met to apply the state to the element:
- * @code
- * array(
- *   'visible' => array(
- *     ':input[name="remote_checkbox"]' => array('checked' => TRUE),
- *   ),
- * )
- * @endcode
- *
- * For example, to show a textfield only when a checkbox is checked:
- * @code
- * $form['toggle_me'] = array(
- *   '#type' => 'checkbox',
- *   '#title' => t('Tick this box to type'),
- * );
- * $form['settings'] = array(
- *   '#type' => 'textfield',
- *   '#states' => array(
- *     // Only show this field when the 'toggle_me' checkbox is enabled.
- *     'visible' => array(
- *       ':input[name="toggle_me"]' => array('checked' => TRUE),
- *     ),
- *   ),
- * );
- * @endcode
- *
- * The following states may be applied to an element:
- * - enabled
- * - disabled
- * - required
- * - optional
- * - visible
- * - invisible
- * - checked
- * - unchecked
- * - expanded
- * - collapsed
- *
- * The following states may be used in remote conditions:
- * - empty
- * - filled
- * - checked
- * - unchecked
- * - expanded
- * - collapsed
- * - value
- *
- * The following states exist for both elements and remote conditions, but are
- * not fully implemented and may not change anything on the element:
- * - relevant
- * - irrelevant
- * - valid
- * - invalid
- * - touched
- * - untouched
- * - readwrite
- * - readonly
- *
- * When referencing select lists and radio buttons in remote conditions, a
- * 'value' condition must be used:
- * @code
- *   '#states' => array(
- *     // Show the settings if 'bar' has been selected for 'foo'.
- *     'visible' => array(
- *       ':input[name="foo"]' => array('value' => 'bar'),
- *     ),
- *   ),
- * @endcode
- *
- * @param $elements
- *   A renderable array element having a #states property as described above.
- *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Core\Form\FormHelper::processStates() instead.
- *
- * @see https://www.drupal.org/node/3000069
- * @see \Drupal\Core\Form\FormHelper::processStates()
- */
-function drupal_process_states(&$elements) {
-  @trigger_error('drupal_process_states() is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use \Drupal\Core\Form\FormHelper::processStates() instead. See https://www.drupal.org/node/3000069', E_USER_DEPRECATED);
-  FormHelper::processStates($elements);
 }
 
 /**
@@ -736,8 +355,8 @@ function drupal_attach_tabledrag(&$element, array $options) {
   $tabledrag_id = (!isset($tabledrag_id)) ? 0 : $tabledrag_id + 1;
 
   // If a subgroup or source isn't set, assume it is the same as the group.
-  $target = isset($options['subgroup']) ? $options['subgroup'] : $group;
-  $source = isset($options['source']) ? $options['source'] : $target;
+  $target = $options['subgroup'] ?? $group;
+  $source = $options['source'] ?? $target;
   $element['#attached']['drupalSettings']['tableDrag'][$options['table_id']][$group][$tabledrag_id] = [
     'target' => $target,
     'source' => $source,
@@ -748,101 +367,6 @@ function drupal_attach_tabledrag(&$element, array $options) {
   ];
 
   $element['#attached']['library'][] = 'core/drupal.tabledrag';
-}
-
-/**
- * Deletes old cached JavaScript files and variables.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use \Drupal\Core\Asset\AssetCollectionOptimizerInterface::deleteAll().
- *
- * @see https://www.drupal.org/node/2317841
- */
-function drupal_clear_js_cache() {
-  \Drupal::service('asset.js.collection_optimizer')->deleteAll();
-}
-
-/**
- * Pre-render callback: Renders a link into #markup.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use \Drupal\Core\Render\Element\Link::preRenderLink().
- */
-function drupal_pre_render_link($element) {
-  return Link::preRenderLink($element);
-}
-
-/**
- * Pre-render callback: Collects child links into a single array.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Core\Render\Element\Link::preRenderLinks() instead.
- *
- * @see https://www.drupal.org/node/2966725
- */
-function drupal_pre_render_links($element) {
-  @trigger_error('drupal_pre_render_links() is deprecated in Drupal 8.8.0 and will be removed before Drupal 9.0.0. Use \Drupal\Core\Render\Element\Link::preRenderLinks() instead. See https://www.drupal.org/node/2966725', E_USER_DEPRECATED);
-  return Link::preRenderLinks($element);
-}
-
-/**
- * Renders final HTML given a structured array tree.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Core\Render\RendererInterface::renderRoot() instead.
- *
- * @see \Drupal\Core\Render\RendererInterface::renderRoot()
- * @see https://www.drupal.org/node/2912696
- */
-function drupal_render_root(&$elements) {
-  @trigger_error('drupal_render_root() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use \Drupal\Core\Render\RendererInterface::renderRoot() instead. See https://www.drupal.org/node/2912696', E_USER_DEPRECATED);
-  return \Drupal::service('renderer')->renderRoot($elements);
-}
-
-/**
- * Renders HTML given a structured array tree.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the
- *   'renderer' service instead.
- *
- * @see \Drupal\Core\Render\RendererInterface::render()
- * @see https://www.drupal.org/node/2912696
- */
-function drupal_render(&$elements, $is_recursive_call = FALSE) {
-  return \Drupal::service('renderer')->render($elements, $is_recursive_call);
-}
-
-/**
- * Renders children of an element and concatenates them.
- *
- * @param array $element
- *   The structured array whose children shall be rendered.
- * @param array $children_keys
- *   (optional) If the keys of the element's children are already known, they
- *   can be passed in to save another run of
- *   \Drupal\Core\Render\Element::children().
- *
- * @return string|\Drupal\Component\Render\MarkupInterface
- *   The rendered HTML of all children of the element.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Avoid early
- *   rendering when possible or loop through the elements and render them as
- *   they are available.
- *
- * @see \Drupal\Core\Render\RendererInterface::render()
- * @see https://www.drupal.org/node/2912757
- */
-function drupal_render_children(&$element, $children_keys = NULL) {
-  if ($children_keys === NULL) {
-    $children_keys = Element::children($element);
-  }
-  $output = '';
-  foreach ($children_keys as $key) {
-    if (!empty($element[$key])) {
-      $output .= \Drupal::service('renderer')->render($element[$key]);
-    }
-  }
-  return Markup::create($output);
 }
 
 /**
@@ -858,11 +382,16 @@ function drupal_render_children(&$element, $children_keys = NULL) {
  * @return
  *   The rendered element.
  *
+ * @deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use
+ *   \Drupal\Core\Render\RendererInterface::render() instead.
+ *
+ * @see https://www.drupal.org/node/2939099
  * @see \Drupal\Core\Render\RendererInterface
  * @see show()
  * @see hide()
  */
 function render(&$element) {
+  @trigger_error('The render() function is deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use \Drupal\Core\Render\RendererInterface::render() instead. See https://www.drupal.org/node/2939099', E_USER_DEPRECATED);
   if (!$element && $element !== 0) {
     return NULL;
   }
@@ -884,13 +413,13 @@ function render(&$element) {
 /**
  * Hides an element from later rendering.
  *
- * The first time render() or drupal_render() is called on an element tree,
- * as each element in the tree is rendered, it is marked with a #printed flag
- * and the rendered children of the element are cached. Subsequent calls to
- * render() or drupal_render() will not traverse the child tree of this element
- * again: they will just use the cached children. So if you want to hide an
- * element, be sure to call hide() on the element before its parent tree is
- * rendered for the first time, as it will have no effect on subsequent
+ * The first time render() or RenderInterface::render() is called on an element
+ * tree, as each element in the tree is rendered, it is marked with a #printed
+ * flag and the rendered children of the element are cached. Subsequent calls to
+ * render() or RenderInterface::render() will not traverse the child tree of
+ * this element again: they will just use the cached children. So if you want to
+ * hide an element, be sure to call hide() on the element before its parent tree
+ * is rendered for the first time, as it will have no effect on subsequent
  * renderings of the parent tree.
  *
  * @param $element
@@ -899,6 +428,7 @@ function render(&$element) {
  * @return
  *   The element.
  *
+ * @see \Drupal\Core\Render\RendererInterface
  * @see render()
  * @see show()
  */
@@ -913,13 +443,13 @@ function hide(&$element) {
  * You can also use render($element), which shows the element while rendering
  * it.
  *
- * The first time render() or drupal_render() is called on an element tree,
- * as each element in the tree is rendered, it is marked with a #printed flag
- * and the rendered children of the element are cached. Subsequent calls to
- * render() or drupal_render() will not traverse the child tree of this element
- * again: they will just use the cached children. So if you want to show an
- * element, be sure to call show() on the element before its parent tree is
- * rendered for the first time, as it will have no effect on subsequent
+ * The first time render() or RenderInterface::render() is called on an element
+ * tree, as each element in the tree is rendered, it is marked with a #printed
+ * flag and the rendered children of the element are cached. Subsequent calls to
+ * render() or RenderInterface::render() will not traverse the child tree of
+ * this element again: they will just use the cached children. So if you want to
+ * show an element, be sure to call show() on the element before its parent tree
+ * is rendered for the first time, as it will have no effect on subsequent
  * renderings of the parent tree.
  *
  * @param $element
@@ -928,6 +458,7 @@ function hide(&$element) {
  * @return
  *   The element.
  *
+ * @see \Drupal\Core\Render\RendererInterface
  * @see render()
  * @see hide()
  */
@@ -937,45 +468,11 @@ function show(&$element) {
 }
 
 /**
- * Retrieves the default properties for the defined element type.
- *
- * @param $type
- *   An element type as defined by an element plugin.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use \Drupal::service('element_info')->getInfo() instead.
- *
- * @see https://www.drupal.org/node/2235461
- */
-function element_info($type) {
-  return \Drupal::service('element_info')->getInfo($type);
-}
-
-/**
- * Retrieves a single property for the defined element type.
- *
- * @param $type
- *   An element type as defined by an element plugin.
- * @param $property_name
- *   The property within the element type that should be returned.
- * @param $default
- *   (Optional) The value to return if the element type does not specify a
- *   value for the property. Defaults to NULL.
- *
- * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
- *   Use \Drupal::service('element_info')->getInfoProperty() instead.
- *
- * @see https://www.drupal.org/node/2235461
- */
-function element_info_property($type, $property_name, $default = NULL) {
-  return \Drupal::service('element_info')->getInfoProperty($type, $property_name, $default);
-}
-
-/**
- * Flushes all persistent caches, resets all variables, and rebuilds all data structures.
+ * Rebuilds the container, flushes all persistent caches, resets all variables, and rebuilds all data structures.
  *
  * At times, it is necessary to re-initialize the entire system to account for
  * changed or new code. This function:
+ * - Rebuilds the container if $kernel is not passed in.
  * - Clears all persistent caches:
  *   - The bootstrap cache bin containing base system, module system, and theme
  *     system information.
@@ -994,6 +491,10 @@ function element_info_property($type, $property_name, $default = NULL) {
  *     database
  *   - The 'active' status of fields is refreshed.
  * - Rebuilds the menu router.
+ *
+ * It's discouraged to call this during a regular page request.
+ * If you call this function in tests, every code afterwards should use the new
+ * container.
  *
  * This means the entire system is reset so all caches and static variables are
  * effectively empty. After that is guaranteed, information about the currently
@@ -1024,12 +525,19 @@ function element_info_property($type, $property_name, $default = NULL) {
  *   cache though.)
  * @todo Add a global lock to ensure that caches are not primed in concurrent
  *   requests.
+ *
+ * @param \Drupal\Core\DrupalKernel|array $kernel
+ *   (optional) The Drupal Kernel. It is the caller's responsibility to rebuild
+ *   the container if this is passed in. Sometimes drupal_flush_all_caches is
+ *   used as a batch operation so $kernel will be an array, in this instance it
+ *   will be treated as if it it NULL.
  */
-function drupal_flush_all_caches() {
+function drupal_flush_all_caches($kernel = NULL) {
+  // This is executed based on old/previously known information if $kernel is
+  // not passed in, which is sufficient, since new extensions cannot have any
+  // primed caches yet.
   $module_handler = \Drupal::moduleHandler();
   // Flush all persistent caches.
-  // This is executed based on old/previously known information, which is
-  // sufficient, since new extensions cannot have any primed caches yet.
   $module_handler->invokeAll('cache_flush');
   foreach (Cache::getBins() as $service_id => $cache_backend) {
     $cache_backend->deleteAll();
@@ -1043,43 +551,26 @@ function drupal_flush_all_caches() {
   // Reset all static caches.
   drupal_static_reset();
 
-  // Invalidate the container.
-  \Drupal::service('kernel')->invalidateContainer();
-
   // Wipe the Twig PHP Storage cache.
   \Drupal::service('twig')->invalidate();
 
-  // Rebuild module and theme data.
-  $module_data = \Drupal::service('extension.list.module')->reset()->getList();
-  /** @var \Drupal\Core\Extension\ThemeHandlerInterface $theme_handler */
-  $theme_handler = \Drupal::service('theme_handler');
-  $theme_handler->refreshInfo();
+  // Rebuild theme data that is stored in state.
+  \Drupal::service('theme_handler')->refreshInfo();
   // In case the active theme gets requested later in the same request we need
   // to reset the theme manager.
   \Drupal::theme()->resetActiveTheme();
 
-  // Rebuild and reboot a new kernel. A simple DrupalKernel reboot is not
-  // sufficient, since the list of enabled modules might have been adjusted
-  // above due to changed code.
-  $files = [];
-  $modules = [];
-  foreach ($module_data as $name => $extension) {
-    if ($extension->status) {
-      $files[$name] = $extension;
-      $modules[$name] = $extension->weight;
-    }
+  if (!$kernel instanceof DrupalKernel) {
+    $kernel = \Drupal::service('kernel');
+    $kernel->invalidateContainer();
+    $kernel->rebuildContainer();
   }
-  $modules = module_config_sort($modules);
-  \Drupal::service('kernel')->updateModules($modules, $files);
-  // New container, new module handler.
-  $module_handler = \Drupal::moduleHandler();
 
-  // Ensure that all modules that are currently supposed to be enabled are
-  // actually loaded.
-  $module_handler->loadAll();
+  // Rebuild module data that is stored in state.
+  \Drupal::service('extension.list.module')->reset();
 
   // Rebuild all information based on new module data.
-  $module_handler->invokeAll('rebuild');
+  \Drupal::moduleHandler()->invokeAll('rebuild');
 
   // Clear all plugin caches.
   \Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
@@ -1113,7 +604,7 @@ function _drupal_flush_css_js() {
  * Outputs debug information.
  *
  * The debug information is passed on to trigger_error() after being converted
- * to a string using _drupal_debug_message().
+ * to a string using print_r() or var_export().
  *
  * @param $data
  *   Data to be output.
@@ -1123,8 +614,14 @@ function _drupal_flush_css_js() {
  *   Flag to switch between print_r() and var_export() for data conversion to
  *   string. Set $print_r to FALSE to use var_export() instead of print_r().
  *   Passing recursive data structures to var_export() will generate an error.
+ *
+ * @deprecated in drupal:9.2.0 and is removed from drupal:10.0.0. Use dump()
+ *   instead.
+ *
+ * @see https://www.drupal.org/node/3192283
  */
 function debug($data, $label = NULL, $print_r = TRUE) {
+  @trigger_error('debug() is deprecated in drupal:9.2.0 and is removed from drupal:10.0.0. Use dump() instead. See https://www.drupal.org/node/3192283', E_USER_DEPRECATED);
   // Print $data contents to string.
   $string = Html::escape($print_r ? print_r($data, TRUE) : var_export($data, TRUE));
 
@@ -1132,82 +629,6 @@ function debug($data, $label = NULL, $print_r = TRUE) {
   $string = '<pre>' . $string . '</pre>';
 
   trigger_error(trim($label ? "$label: $string" : $string));
-}
-
-/**
- * Checks whether a version is compatible with a given dependency.
- *
- * @param $v
- *   A parsed dependency structure e.g. from ModuleHandler::parseDependency().
- * @param $current_version
- *   The version to check against (like 4.2).
- *
- * @return
- *   NULL if compatible, otherwise the original dependency version string that
- *   caused the incompatibility.
- *
- * @deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Core\Extension\Dependency::isCompatible() instead.
- *
- * @see https://www.drupal.org/node/2756875
- */
-function drupal_check_incompatibility($v, $current_version) {
-  @trigger_error(__FUNCTION__ . '() is deprecated. Use \Drupal\Core\Extension\Dependency::isCompatible() instead. See https://www.drupal.org/node/2756875', E_USER_DEPRECATED);
-  if (!empty($v['versions'])) {
-    foreach ($v['versions'] as $required_version) {
-      if ((isset($required_version['op']) && !version_compare($current_version, $required_version['version'], $required_version['op']))) {
-        return $v['original_version'];
-      }
-    }
-  }
-}
-
-/**
- * Returns a string of supported archive extensions.
- *
- * @return string
- *   A space-separated string of extensions suitable for use by the file
- *   validation system.
- *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Core\Archiver\ArchiverManager::getExtensions() instead.
- *
- * @see https://www.drupal.org/node/2999951
- */
-function archiver_get_extensions() {
-  @trigger_error('archiver_get_extensions() is deprecated in Drupal 8.8.0 and will be removed in Drupal 9.0.0. Use \Drupal\Core\Archiver\ArchiverManager::getExtensions() instead. See https://www.drupal.org/node/2999951', E_USER_DEPRECATED);
-  return \Drupal::service('plugin.manager.archiver')->getExtensions();
-}
-
-/**
- * Creates the appropriate archiver for the specified file.
- *
- * @param string $file
- *   The full path of the archive file. Note that stream wrapper paths are
- *   supported, but not remote ones.
- *
- * @return \Drupal\Core\Archiver\ArchiverInterface|false
- *   A newly created instance of the archiver class appropriate for the
- *   specified file, already bound to that file. If no appropriate archiver
- *   class was found, will return FALSE.
- *
- * @throws \Exception
- *   If a remote stream wrapper path was passed.
- *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Instead,
- *   get plugin.manager.archiver service from container and call getInstance()
- *   method on it. For example $archiver->getInstance(['filepath' => $file]);
- *
- * @see https://www.drupal.org/node/2999951
- */
-function archiver_get_archiver($file) {
-  @trigger_error('archiver_get_archiver() is deprecated in Drupal 8.8.0 and will be removed in Drupal 9.0.x. Instead, get plugin.manager.archiver service from container and call getInstance() method on it. For example $archiver->getInstance(["filepath" => $file]); See https://www.drupal.org/node/2999951', E_USER_DEPRECATED);
-  // Archivers can only work on local paths
-  $filepath = \Drupal::service('file_system')->realpath($file);
-  if (!is_file($filepath)) {
-    throw new Exception("Archivers can only operate on local files: '$file' not supported");
-  }
-  return \Drupal::service('plugin.manager.archiver')->getInstance(['filepath' => $filepath]);
 }
 
 /**

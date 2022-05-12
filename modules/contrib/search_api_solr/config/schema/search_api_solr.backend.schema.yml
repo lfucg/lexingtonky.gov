@@ -57,3 +57,9 @@ plugin.plugin_configuration.search_api_backend.search_api_solr:
     index_single_documents_fallback_count:
       type: integer
       label: 'Limit the number of documents in songle document indexing fallback'
+    index_empty_text_fields:
+      type: boolean
+      label: 'Indexes a dummy value instead removing the field.'
+    suppress_missing_languages:
+      type: boolean
+      label: 'Suppress warnings about missing languages.'

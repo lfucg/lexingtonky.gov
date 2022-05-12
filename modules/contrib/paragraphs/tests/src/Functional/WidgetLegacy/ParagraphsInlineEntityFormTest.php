@@ -14,7 +14,7 @@ class ParagraphsInlineEntityFormTest extends ParagraphsTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'inline_entity_form',
   ];
 

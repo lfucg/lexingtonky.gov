@@ -166,7 +166,7 @@ class SolrDocument extends TypedData implements \IteratorAggregate, ComplexDataI
   /**
    * {@inheritdoc}
    */
-  public function getIterator() {
+  public function getIterator(): \Traversable {
     return isset($this->item) ? $this->item->getIterator() : new \ArrayIterator([]);
   }
 

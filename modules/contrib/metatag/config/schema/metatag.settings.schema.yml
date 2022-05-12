@@ -14,3 +14,12 @@ metatag.settings:
           sequence:
             type: string
             label: 'Group'
+    tag_trim_method:
+      type: string
+      label: 'Trim method for trimmable tags.'
+    tag_trim_maxlength:
+      type: sequence
+      label: 'Tag-specific maximum length'
+      sequence:
+        type: integer
+        label: 'Tag maximum length in characters'

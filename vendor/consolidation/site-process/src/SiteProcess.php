@@ -11,6 +11,8 @@ use Consolidation\Config\Util\Interpolator;
 use Consolidation\SiteProcess\Util\Shell;
 use Consolidation\SiteProcess\Util\ShellOperatorInterface;
 use Consolidation\SiteProcess\Util\Escape;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 /**
  * A wrapper around Symfony Process that uses site aliases
@@ -82,6 +84,11 @@ class SiteProcess extends ProcessBase
      */
     public function setWorkingDirectoryLocal($cd)
     {
+        // Symfony 4 REQUIRES that there be a directory set, and defaults
+        // it to the cwd if it is not set. We will maintain that pattern here.
+        if (!$cd) {
+            $cd = getcwd();
+        }
         return parent::setWorkingDirectory($cd);
     }
 
@@ -183,7 +190,7 @@ class SiteProcess extends ProcessBase
             $processedArgs = $this->processArgs();
             $commandLine = Escape::argsForSite($this->siteAlias, $processedArgs);
             $commandLine = implode(' ', $commandLine);
-            $this->setCommandLine($commandLine);
+            $this->overrideCommandLine($commandLine);
         }
         return $commandLine;
     }
@@ -191,10 +198,23 @@ class SiteProcess extends ProcessBase
     /**
      * @inheritDoc
      */
-    public function start(callable $callback = null, $env = array())
+    public function start(callable $callback = null, array $env = [])
     {
         $cmd = $this->getCommandLine();
         parent::start($callback, $env);
+    }
+
+    public function mustRun(callable $callback = null, array $env = []): \Symfony\Component\Process\Process
+    {
+        if (0 !== $this->run($callback, $env)) {
+            // Be less verbose when there is nothing in stdout or stderr.
+            if (empty($this->getOutput()) && empty($this->getErrorOutput())) {
+                $this->disableOutput();
+            }
+            throw new ProcessFailedException($this);
+        }
+
+        return $this;
     }
 
     /**
@@ -235,5 +255,24 @@ class SiteProcess extends ProcessBase
             },
             $args
         );
+    }
+
+    /**
+     * Overrides the command line to be executed.
+     *
+     * @param string|array $commandline The command to execute
+     *
+     * @return $this
+     *
+     * @todo refactor library so this hack to get around changes in
+     *   symfony/process 5 is unnecessary.
+     */
+    private function overrideCommandLine($commandline)
+    {
+        $commandlineSetter = function ($commandline) {
+            $this->commandline = $commandline;
+        };
+        $commandlineSetter->bindTo($this, Process::class)($commandline);
+        return $this;
     }
 }

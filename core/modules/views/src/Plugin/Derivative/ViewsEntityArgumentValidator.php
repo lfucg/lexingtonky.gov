@@ -3,7 +3,6 @@
 namespace Drupal\views\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -19,12 +18,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ViewsEntityArgumentValidator extends DeriverBase implements ContainerDeriverInterface {
   use StringTranslationTrait;
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The base plugin ID this derivative is for.
@@ -48,7 +41,7 @@ class ViewsEntityArgumentValidator extends DeriverBase implements ContainerDeriv
   protected $derivatives = [];
 
   /**
-   * Constructs an ViewsEntityArgumentValidator object.
+   * Constructs a ViewsEntityArgumentValidator object.
    *
    * @param string $base_plugin_id
    *   The base plugin ID.

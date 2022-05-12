@@ -223,7 +223,7 @@ class PathautoSettingsForm extends ConfigFormBase {
         PathautoGeneratorInterface::UPDATE_ACTION_NO_NEW => $this->t('Do nothing. Leave the old alias intact.'),
         PathautoGeneratorInterface::UPDATE_ACTION_LEAVE => $this->t('Create a new alias. Leave the existing alias functioning.'),
         PathautoGeneratorInterface::UPDATE_ACTION_DELETE => $this->t('Create a new alias. Delete the old alias.'),
-    ],
+      ],
       '#description' => $description,
     ];
 
@@ -281,7 +281,7 @@ class PathautoSettingsForm extends ConfigFormBase {
           PathautoGeneratorInterface::PUNCTUATION_REMOVE => $this->t('Remove'),
           PathautoGeneratorInterface::PUNCTUATION_REPLACE => $this->t('Replace by separator'),
           PathautoGeneratorInterface::PUNCTUATION_DO_NOTHING => $this->t('No action (do not replace)'),
-      ],
+        ],
       ];
     }
 

@@ -52,7 +52,8 @@ class RemoveCoreMetaTags extends BrowserTestBase {
     $edit = [
       'canonical_url' => '[current-page:url:unaliased]',
     ];
-    $this->drupalPostForm('admin/config/search/metatag/taxonomy_term', $edit, 'Save');
+    $this->drupalGet('admin/config/search/metatag/taxonomy_term');
+    $this->submitForm($edit, 'Save');
 
     // Ensure there is only 1 canonical metatag.
     $this->drupalGet('taxonomy/term/' . $term->id());

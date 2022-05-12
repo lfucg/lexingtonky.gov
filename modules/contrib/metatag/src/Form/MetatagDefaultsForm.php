@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\metatag\MetatagDefaultsInterface;
 use Drupal\metatag\MetatagManager;
 use Drupal\metatag\MetatagManagerInterface;
 use Drupal\metatag\MetatagTagPluginManager;
@@ -394,6 +395,21 @@ class MetatagDefaultsForm extends EntityForm {
     }
 
     return $label;
+  }
+
+  /**
+   * Route title callback.
+   *
+   * @param \Drupal\metatag\MetatagDefaultsInterface|null $metatag_defaults
+   *   Metatags default entity.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   Translated route title.
+   */
+  public function getTitle(MetatagDefaultsInterface $metatag_defaults) {
+    return $this->t('Edit default meta tags for @path', [
+      '@path' => $metatag_defaults->label(),
+    ]);
   }
 
 }

@@ -59,6 +59,8 @@ class ViewsTest extends SearchApiViewsTest {
     if (!Utility::isRunningInCli()) {
       \Drupal::state()->set('search_api_use_tracking_batch', FALSE);
     }
+
+    $this->rebuildContainer();
   }
 
   /**

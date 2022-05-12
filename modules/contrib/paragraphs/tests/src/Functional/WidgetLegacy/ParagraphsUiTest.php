@@ -16,7 +16,7 @@ class ParagraphsUiTest extends ParagraphsTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'content_translation',
     'image',
     'field',

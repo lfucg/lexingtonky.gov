@@ -40,6 +40,7 @@ class ParagraphsTypeIconUuidLookup extends CacheCollector {
   protected function resolveCacheMiss($key) {
     $ids = $this->entityTypeManager->getStorage('file')->getQuery()
       ->condition('uuid', $key)
+      ->accessCheck(TRUE)
       ->execute();
 
     // Only cache if there is a match, otherwise creating new entities would

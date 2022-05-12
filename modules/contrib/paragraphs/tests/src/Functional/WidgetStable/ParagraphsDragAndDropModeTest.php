@@ -16,7 +16,7 @@ class ParagraphsDragAndDropModeTest extends ParagraphsTestBase {
   /**
    * Modules to be enabled.
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'paragraphs',
     'field'

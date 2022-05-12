@@ -3,17 +3,15 @@
 namespace Drupal\Tests\Core\Site;
 
 use Drupal\Core\Site\Settings;
-use Drupal\Tests\Traits\ExpectDeprecationTrait;
 use Drupal\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
 
 /**
  * @coversDefaultClass \Drupal\Core\Site\Settings
+ * @runTestsInSeparateProcesses
  * @group Site
  */
 class SettingsTest extends UnitTestCase {
-
-  use ExpectDeprecationTrait;
 
   /**
    * Simple settings array to test against.
@@ -32,7 +30,7 @@ class SettingsTest extends UnitTestCase {
   /**
    * @covers ::__construct
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->config = [
       'one' => '1',
       'two' => '2',
@@ -70,7 +68,7 @@ class SettingsTest extends UnitTestCase {
   }
 
   /**
-   * Tests Settings::getHashSalt();
+   * Tests Settings::getHashSalt().
    *
    * @covers ::getHashSalt
    */
@@ -143,113 +141,186 @@ class SettingsTest extends UnitTestCase {
     $settings = new Settings([]);
 
     $class = new \ReflectionClass(Settings::class);
-    $instace_property = $class->getProperty("instance");
-    $instace_property->setAccessible(TRUE);
-    $instace_property->setValue(NULL);
+    $instance_property = $class->getProperty("instance");
+    $instance_property->setAccessible(TRUE);
+    $instance_property->setValue(NULL);
 
     $this->expectException(\BadMethodCallException::class);
     $settings->getInstance();
   }
 
   /**
-   * @runInSeparateProcess
+   * Tests deprecation messages and values when using fake deprecated settings.
+   *
+   * Note: Tests for real deprecated settings should not be added to this test
+   * or provider. This test is only for the general deprecated settings API
+   * itself.
+   *
+   * @see self::testRealDeprecatedSettings()
+   * @see self::providerTestRealDeprecatedSettings()
+   *
+   * @param string[] $settings_config
+   *   Array of settings to put in the settings.php file for testing.
+   * @param string $setting_name
+   *   The name of the setting this case should use for Settings::get().
+   * @param string $expected_value
+   *   The expected value of the setting.
+   * @param bool $expect_deprecation_message
+   *   Should the case expect a deprecation message? Defaults to TRUE.
+   *
+   * @dataProvider providerTestFakeDeprecatedSettings
+   *
+   * @covers ::handleDeprecations
+   * @covers ::initialize
+   *
    * @group legacy
-   * @covers ::__construct
-   * @dataProvider configDirectoriesBcLayerProvider
    */
-  public function testConfigDirectoriesBcLayer($settings_file_content, $directory, $expect_deprecation) {
-    global $config_directories;
-    $class_loader = NULL;
+  public function testFakeDeprecatedSettings(array $settings_config, string $setting_name, string $expected_value, bool $expect_deprecation_message = TRUE): void {
 
+    $settings_file_content = "<?php\n";
+    foreach ($settings_config as $name => $value) {
+      $settings_file_content .= "\$settings['$name'] = '$value';\n";
+    }
+    $class_loader = NULL;
     $vfs_root = vfsStream::setup('root');
     $sites_directory = vfsStream::newDirectory('sites')->at($vfs_root);
     vfsStream::newFile('settings.php')
       ->at($sites_directory)
       ->setContent($settings_file_content);
 
-    if ($expect_deprecation) {
-      $this->addExpectedDeprecationMessage('$config_directories[\'sync\'] has moved to $settings[\'config_sync_directory\']. See https://www.drupal.org/node/3018145.');
+    // This is the deprecated setting used by all cases for this test method.
+    $deprecated_setting = [
+      'replacement' => 'happy_replacement',
+      'message' => 'The settings key "deprecated_legacy" is deprecated in drupal:9.1.0 and will be removed in drupal:10.0.0. Use "happy_replacement" instead. See https://www.drupal.org/node/3163226.',
+    ];
+
+    $class = new \ReflectionClass(Settings::class);
+    $instance_property = $class->getProperty('deprecatedSettings');
+    $instance_property->setAccessible(TRUE);
+    $deprecated_settings = $instance_property->getValue();
+    $deprecated_settings['deprecated_legacy'] = $deprecated_setting;
+    $instance_property->setValue($deprecated_settings);
+
+    if ($expect_deprecation_message) {
+      $this->expectDeprecation($deprecated_setting['message']);
     }
 
     Settings::initialize(vfsStream::url('root'), 'sites', $class_loader);
-    $this->assertSame($directory, Settings::get('config_sync_directory'));
-    $this->assertSame($directory, $config_directories['sync']);
+    $this->assertEquals($expected_value, Settings::get($setting_name));
   }
 
   /**
-   * Data provider for self::testConfigDirectoriesBcLayer().
+   * Provides data for testFakeDeprecatedSettings().
+   *
+   * Note: Tests for real deprecated settings should not be added here.
+   *
+   * @see self::providerTestRealDeprecatedSettings()
    */
-  public function configDirectoriesBcLayerProvider() {
-    $no_config_directories = <<<'EOD'
-<?php
-$settings['config_sync_directory'] = 'foo';
-EOD;
+  public function providerTestFakeDeprecatedSettings(): array {
 
-    $only_config_directories = <<<'EOD'
-<?php
-$config_directories['sync'] = 'bar';
-EOD;
-
-    $both = <<<'EOD'
-<?php
-$settings['config_sync_directory'] = 'foo';
-$config_directories['sync'] = 'bar';
-EOD;
+    $only_legacy = [
+      'deprecated_legacy' => 'old',
+    ];
+    $only_replacement = [
+      'happy_replacement' => 'new',
+    ];
+    $both_settings = [
+      'deprecated_legacy' => 'old',
+      'happy_replacement' => 'new',
+    ];
 
     return [
-      'Only $settings[\'config_sync_directory\']' => [
-        $no_config_directories,
-        'foo',
+      'Only legacy defined, get legacy' => [
+        $only_legacy,
+        'deprecated_legacy',
+        'old',
+      ],
+      'Only legacy defined, get replacement' => [
+        $only_legacy,
+        'happy_replacement',
+        // Since the new setting isn't yet defined, use the old value.
+        'old',
+        // Since the old setting is there, we should see a deprecation message.
+      ],
+      'Both legacy and replacement defined, get legacy' => [
+        $both_settings,
+        'deprecated_legacy',
+        // Since the replacement is already defined, that should be used.
+        'new',
+      ],
+      'Both legacy and replacement defined, get replacement' => [
+        $both_settings,
+        'happy_replacement',
+        'new',
+        // Should see the deprecation, since the legacy setting is defined.
+      ],
+      'Only replacement defined, get legacy' => [
+        $only_replacement,
+        'deprecated_legacy',
+        // Should get the new value.
+        'new',
+        // But we should see a deprecation message for accessing the old name.
+      ],
+      'Only replacement defined, get replacement' => [
+        $only_replacement,
+        'happy_replacement',
+        // Should get the new value.
+        'new',
+        // No deprecation since the old name is neither used nor defined.
         FALSE,
       ],
-      'Only $config_directories' => [$only_config_directories, 'bar', TRUE],
-      'Both' => [$both, 'foo', FALSE],
     ];
   }
 
   /**
-   * @runInSeparateProcess
+   * Tests deprecation messages for real deprecated settings.
+   *
+   * @param string $legacy_setting
+   *   The legacy name of the setting to test.
+   * @param string $expected_deprecation
+   *   The expected deprecation message.
+   *
+   * @dataProvider providerTestRealDeprecatedSettings
    * @group legacy
    */
-  public function testConfigDirectoriesBcLayerEmpty() {
-    global $config_directories;
-    $class_loader = NULL;
+  public function testRealDeprecatedSettings(string $legacy_setting, string $expected_deprecation): void {
 
+    $settings_file_content = "<?php\n\$settings['$legacy_setting'] = 'foo';\n";
+    $class_loader = NULL;
     $vfs_root = vfsStream::setup('root');
     $sites_directory = vfsStream::newDirectory('sites')->at($vfs_root);
-    vfsStream::newFile('settings.php')->at($sites_directory)->setContent(<<<'EOD'
-<?php
-$settings = [];
-EOD
-    );
+    vfsStream::newFile('settings.php')
+      ->at($sites_directory)
+      ->setContent($settings_file_content);
 
+    $this->expectDeprecation($expected_deprecation);
+
+    // Presence of the old name in settings.php is enough to trigger messages.
     Settings::initialize(vfsStream::url('root'), 'sites', $class_loader);
-    $this->assertNull(Settings::get('config_sync_directory'));
-    $this->assertNull($config_directories);
   }
 
   /**
-   * @runInSeparateProcess
-   * @group legacy
+   * Provides data for testRealDeprecatedSettings().
    */
-  public function testConfigDirectoriesBcLayerMultiple() {
-    global $config_directories;
-    $class_loader = NULL;
-
-    $vfs_root = vfsStream::setup('root');
-    $sites_directory = vfsStream::newDirectory('sites')->at($vfs_root);
-    vfsStream::newFile('settings.php')->at($sites_directory)->setContent(<<<'EOD'
-<?php
-$settings['config_sync_directory'] = 'foo';
-$config_directories['sync'] = 'bar';
-$config_directories['custom'] = 'custom';
-EOD
-    );
-
-    Settings::initialize(vfsStream::url('root'), 'sites', $class_loader);
-    $this->assertSame('foo', Settings::get('config_sync_directory'));
-    $this->assertSame('foo', $config_directories['sync']);
-    $this->assertSame('custom', $config_directories['custom']);
+  public function providerTestRealDeprecatedSettings(): array {
+    return [
+      [
+        'sanitize_input_whitelist',
+        'The "sanitize_input_whitelist" setting is deprecated in drupal:9.1.0 and will be removed in drupal:10.0.0. Use Drupal\Core\Security\RequestSanitizer::SANITIZE_INPUT_SAFE_KEYS instead. See https://www.drupal.org/node/3163148.',
+      ],
+      [
+        'twig_sandbox_whitelisted_classes',
+        'The "twig_sandbox_whitelisted_classes" setting is deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use "twig_sandbox_allowed_classes" instead. See https://www.drupal.org/node/3162897.',
+      ],
+      [
+        'twig_sandbox_whitelisted_methods',
+        'The "twig_sandbox_whitelisted_methods" setting is deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use "twig_sandbox_allowed_methods" instead. See https://www.drupal.org/node/3162897.',
+      ],
+      [
+        'twig_sandbox_whitelisted_prefixes',
+        'The "twig_sandbox_whitelisted_prefixes" setting is deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use "twig_sandbox_allowed_prefixes" instead. See https://www.drupal.org/node/3162897.',
+      ],
+    ];
   }
 
 }

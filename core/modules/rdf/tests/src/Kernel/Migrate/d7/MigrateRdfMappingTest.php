@@ -15,7 +15,7 @@ class MigrateRdfMappingTest extends MigrateDrupal7TestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'menu_ui',
     'node',
     'rdf',
@@ -26,7 +26,7 @@ class MigrateRdfMappingTest extends MigrateDrupal7TestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installConfig(static::$modules);
@@ -49,8 +49,10 @@ class MigrateRdfMappingTest extends MigrateDrupal7TestBase {
    *   The expected RDF types.
    * @param array[] $field_mappings
    *   The expected RDF field mappings.
+   *
+   * @internal
    */
-  protected function assertRdfMapping($entity_type, $bundle, $types, $field_mappings) {
+  protected function assertRdfMapping(string $entity_type, string $bundle, array $types, array $field_mappings): void {
     $rdf_mapping = rdf_get_mapping($entity_type, $bundle);
     $this->assertInstanceOf(RdfMappingInterface::class, $rdf_mapping);
     $this->assertSame($types, $rdf_mapping->getBundleMapping());

@@ -2,10 +2,8 @@
 
 namespace Drupal\metatag\Form;
 
-use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\metatag\MetatagManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,6 +33,13 @@ class MetatagSettingsForm extends ConfigFormBase {
   protected $state;
 
   /**
+   * The tag plugin manager.
+   *
+   * @var \Drupal\metatag\MetatagTagPluginManager
+   */
+  protected $tagPluginManager;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
@@ -45,6 +50,7 @@ class MetatagSettingsForm extends ConfigFormBase {
     $instance->entityTypeBundleInfo = $container->get('entity_type.bundle.info');
     $instance->metatagManager = $container->get('metatag.manager');
     $instance->state = $container->get('state');
+    $instance->tagPluginManager = $container->get('plugin.manager.metatag.tag');
 
     return $instance;
   }
@@ -70,8 +76,7 @@ class MetatagSettingsForm extends ConfigFormBase {
     if ($this->state->get('system.maintenance_mode')) {
       $this->messenger()->addMessage($this->t('Please note that while the site is in maintenance mode none of the usual meta tags will be output.'));
     }
-    $settings = $this->config('metatag.settings')->get('entity_type_groups');
-
+    $entitySettings = $this->config('metatag.settings')->get('entity_type_groups');
     $form['entity_type_groups'] = [
       '#type' => 'details',
       '#open' => TRUE,
@@ -98,11 +103,54 @@ class MetatagSettingsForm extends ConfigFormBase {
         $form['entity_type_groups'][$entity_type][$bundle_id][] = [
           '#type' => 'checkboxes',
           '#options' => $options,
-          '#default_value' => isset($settings[$entity_type]) && isset($settings[$entity_type][$bundle_id]) ? $settings[$entity_type][$bundle_id] : [],
+          '#default_value' => isset($entitySettings[$entity_type]) && isset($entitySettings[$entity_type][$bundle_id]) ? $entitySettings[$entity_type][$bundle_id] : [],
         ];
       }
     }
 
+    $trimSettingsMaxlength = $this->config('metatag.settings')->get('tag_trim_maxlength');
+    $trimMethod = $this->config('metatag.settings')->get('tag_trim_method');
+    $metatags = $this->tagPluginManager->getDefinitions();
+
+    $form['tag_trim'] = [
+      '#title' => $this->t('Metatag Trimming Options'),
+      '#type' => 'details',
+      '#tree' => TRUE,
+      '#open' => TRUE,
+      '#description' => $this->t("Many Meta-Tags can be trimmed on a specific length for search engine optimization.<br/>If the value is set to '0' or left empty, the whole Metatag will be untrimmed."),
+    ];
+
+    $form['tag_trim']['maxlength'] = [
+      '#title' => $this->t('Tags'),
+      '#type' => 'fieldset',
+      '#tree' => TRUE,
+    ];
+
+    foreach ($metatags as $metatag_name => $metatag_info) {
+      if (!empty($metatag_info['trimmable'])) {
+
+        $form['tag_trim']['maxlength']['metatag_maxlength_' . $metatag_name] = [
+          '#title' => $this->t('Meta Tags:') . ' ' . $metatag_name . ' ' . $this->t('length'),
+          '#type' => 'number',
+          '#required' => FALSE,
+          '#default_value' => $trimSettingsMaxlength['metatag_maxlength_' . $metatag_name] ?? NULL,
+          '#min' => 0,
+          '#step' => 1,
+        ];
+      }
+    }
+
+    $form['tag_trim']['tag_trim_method'] = [
+      '#title' => $this->t('Meta Tags: Trimming Options'),
+      '#type' => 'select',
+      '#required' => TRUE,
+      '#default_value' => $trimMethod ?? 'beforeValue',
+      '#options' => [
+        'afterValue' => $this->t('Trim the Meta Tag after the word on the given value'),
+        'onValue' => $this->t('Trim the Meta Tag on the given value'),
+        'beforeValue' => $this->t('Trim the Meta Tag before the word on the given value'),
+      ],
+    ];
     return parent::buildForm($form, $form_state);
   }
 
@@ -111,15 +159,23 @@ class MetatagSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $settings = $this->config('metatag.settings');
-    $value = $form_state->getValue('entity_type_groups');
-    $value = static::arrayFilterRecursive($value);
+    // entity_type_groups handling:
+    $entityTypeGroupsValues = $form_state->getValue('entity_type_groups');
+    $entityTypeGroupsValues = static::arrayFilterRecursive($entityTypeGroupsValues);
     // Remove the extra layer created by collapsible fieldsets.
-    foreach ($value as $entity_type => $bundle) {
+    foreach ($entityTypeGroupsValues as $entity_type => $bundle) {
       foreach ($bundle as $bundle_id => $groups) {
-        $value[$entity_type][$bundle_id] = $groups[0];
+        $entityTypeGroupsValues[$entity_type][$bundle_id] = $groups[0];
       }
     }
-    $settings->set('entity_type_groups', $value);
+    $settings->set('entity_type_groups', $entityTypeGroupsValues);
+
+    // tag_trim handling:
+    $trimmingMethod = $form_state->getValue(['tag_trim', 'tag_trim_method']);
+    $settings->set('tag_trim_method', $trimmingMethod);
+    $trimmingValues = $form_state->getValue(['tag_trim', 'maxlength']);
+    $settings->set('tag_trim_maxlength', $trimmingValues);
+
     $settings->save();
     parent::submitForm($form, $form_state);
   }

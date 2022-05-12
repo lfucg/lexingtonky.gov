@@ -18,7 +18,7 @@ class AggregatorTitleTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'file',
     'field',
     'options',
@@ -36,14 +36,12 @@ class AggregatorTitleTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installConfig(['field']);
     $this->installEntitySchema('aggregator_feed');
     $this->installEntitySchema('aggregator_item');
-
-    \Drupal::service('router.builder')->rebuild();
 
     $this->fieldName = 'title';
   }

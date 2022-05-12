@@ -20,7 +20,7 @@ class MaximumFileSizeExceededUploadTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'file'];
+  protected static $modules = ['node', 'file'];
 
   /**
    * {@inheritdoc}
@@ -54,7 +54,7 @@ class MaximumFileSizeExceededUploadTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->fileSystem = $this->container->get('file_system');
@@ -83,7 +83,7 @@ class MaximumFileSizeExceededUploadTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function tearDown() {
+  protected function tearDown(): void {
     // Restore the displaying of errors to the original value.
     // @todo Remove this when issue #2905597 is fixed.
     // @see https://www.drupal.org/node/2905597
@@ -99,7 +99,7 @@ class MaximumFileSizeExceededUploadTest extends WebDriverTestBase {
     $session = $this->getSession();
 
     // Create a test file that exceeds the maximum POST size with 1 kilobyte.
-    $post_max_size = Bytes::toInt(ini_get('post_max_size'));
+    $post_max_size = Bytes::toNumber(ini_get('post_max_size'));
     $invalid_file = $this->generateFile('exceeding_post_max_size', ceil(($post_max_size + 1024) / 1024), 1024);
 
     // Go to the node creation form and try to upload the test file.

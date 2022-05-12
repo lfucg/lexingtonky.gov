@@ -21,7 +21,7 @@ class RouterTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['router_test'];
+  protected static $modules = ['router_test'];
 
   /**
    * {@inheritdoc}
@@ -34,65 +34,72 @@ class RouterTest extends BrowserTestBase {
   public function testFinishResponseSubscriber() {
     $renderer_required_cache_contexts = ['languages:' . LanguageInterface::TYPE_INTERFACE, 'theme', 'user.permissions'];
     $expected_cache_contexts = Cache::mergeContexts($renderer_required_cache_contexts, ['url.query_args:' . MainContentViewSubscriber::WRAPPER_FORMAT]);
+    sort($expected_cache_contexts);
 
     // Confirm that the router can get to a controller.
     $this->drupalGet('router_test/test1');
-    $this->assertRaw('test1', 'The correct string was returned because the route was successful.');
+    $this->assertSession()->pageTextContains('test1');
     $session = $this->getSession();
-    // Check expected headers from FinishResponseSubscriber.
-    $headers = $session->getResponseHeaders();
 
-    $this->assertEquals($headers['X-UA-Compatible'], ['IE=edge']);
-    $this->assertEquals($headers['Content-language'], ['en']);
-    $this->assertEquals($headers['X-Content-Type-Options'], ['nosniff']);
-    $this->assertEquals($headers['X-Frame-Options'], ['SAMEORIGIN']);
-    $this->assertNull($this->drupalGetHeader('Vary'), 'Vary header is not set.');
+    // Check expected headers from FinishResponseSubscriber.
+    $this->assertSession()->responseHeaderEquals('X-UA-Compatible', 'IE=edge');
+    $this->assertSession()->responseHeaderEquals('Content-language', 'en');
+    $this->assertSession()->responseHeaderEquals('X-Content-Type-Options', 'nosniff');
+    $this->assertSession()->responseHeaderEquals('X-Frame-Options', 'SAMEORIGIN');
+    $this->assertSession()->responseHeaderDoesNotExist('Vary');
 
     $this->drupalGet('router_test/test2');
-    $this->assertRaw('test2', 'The correct string was returned because the route was successful.');
+    $this->assertSession()->pageTextContains('test2');
     // Check expected headers from FinishResponseSubscriber.
     $headers = $session->getResponseHeaders();
-    $this->assertEqual($headers['X-Drupal-Cache-Contexts'], [implode(' ', $expected_cache_contexts)]);
-    $this->assertEqual($headers['X-Drupal-Cache-Tags'], ['config:user.role.anonymous http_response rendered']);
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Cache-Contexts', implode(' ', $expected_cache_contexts));
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Cache-Tags', 'config:user.role.anonymous http_response rendered');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Cache-Max-Age', '-1 (Permanent)');
     // Confirm that the page wrapping is being added, so we're not getting a
     // raw body returned.
-    $this->assertRaw('</html>', 'Page markup was found.');
+    $this->assertSession()->responseContains('</html>');
     // In some instances, the subrequest handling may get confused and render
     // a page inception style.  This test verifies that is not happening.
-    $this->assertSession()->responseNotMatches('#</body>.*</body>#s', 'There was no double-page effect from a misrendered subrequest.');
+    $this->assertSession()->responseNotMatches('#</body>.*</body>#s');
 
     // Confirm that route-level access check's cacheability is applied to the
     // X-Drupal-Cache-Contexts and X-Drupal-Cache-Tags headers.
     // 1. controller result: render array, globally cacheable route access.
     $this->drupalGet('router_test/test18');
-    $headers = $session->getResponseHeaders();
-    $this->assertEqual($headers['X-Drupal-Cache-Contexts'], [implode(' ', Cache::mergeContexts($renderer_required_cache_contexts, ['url']))]);
-    $this->assertEqual($headers['X-Drupal-Cache-Tags'], ['config:user.role.anonymous foo http_response rendered']);
+    $expected_cache_contexts = Cache::mergeContexts($renderer_required_cache_contexts, ['url']);
+    sort($expected_cache_contexts);
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Cache-Contexts', implode(' ', $expected_cache_contexts));
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Cache-Tags', 'config:user.role.anonymous foo http_response rendered');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Cache-Max-Age', '60');
     // 2. controller result: render array, per-role cacheable route access.
     $this->drupalGet('router_test/test19');
-    $headers = $session->getResponseHeaders();
-    $this->assertEqual($headers['X-Drupal-Cache-Contexts'], [implode(' ', Cache::mergeContexts($renderer_required_cache_contexts, ['url', 'user.roles']))]);
-    $this->assertEqual($headers['X-Drupal-Cache-Tags'], ['config:user.role.anonymous foo http_response rendered']);
+    $expected_cache_contexts = Cache::mergeContexts($renderer_required_cache_contexts, [
+      'url',
+      'user.roles',
+    ]);
+    sort($expected_cache_contexts);
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Cache-Contexts', implode(' ', $expected_cache_contexts));
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Cache-Tags', 'config:user.role.anonymous foo http_response rendered');
     // 3. controller result: Response object, globally cacheable route access.
     $this->drupalGet('router_test/test1');
     $headers = $session->getResponseHeaders();
     $this->assertFalse(isset($headers['X-Drupal-Cache-Contexts']));
     $this->assertFalse(isset($headers['X-Drupal-Cache-Tags']));
+    $this->assertFalse(isset($headers['X-Drupal-Cache-Max-Age']));
     // 4. controller result: Response object, per-role cacheable route access.
     $this->drupalGet('router_test/test20');
     $headers = $session->getResponseHeaders();
     $this->assertFalse(isset($headers['X-Drupal-Cache-Contexts']));
     $this->assertFalse(isset($headers['X-Drupal-Cache-Tags']));
+    $this->assertFalse(isset($headers['X-Drupal-Cache-Max-Age']));
     // 5. controller result: CacheableResponse object, globally cacheable route access.
     $this->drupalGet('router_test/test21');
-    $headers = $session->getResponseHeaders();
-    $this->assertEqual($headers['X-Drupal-Cache-Contexts'], ['']);
-    $this->assertEqual($headers['X-Drupal-Cache-Tags'], ['http_response']);
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Cache-Contexts', '');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Cache-Tags', 'http_response');
     // 6. controller result: CacheableResponse object, per-role cacheable route access.
     $this->drupalGet('router_test/test22');
-    $headers = $session->getResponseHeaders();
-    $this->assertEqual($headers['X-Drupal-Cache-Contexts'], ['user.roles']);
-    $this->assertEqual($headers['X-Drupal-Cache-Tags'], ['http_response']);
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Cache-Contexts', 'user.roles');
+    $this->assertSession()->responseHeaderEquals('X-Drupal-Cache-Tags', 'http_response');
 
     // Finally, verify that the X-Drupal-Cache-Contexts and X-Drupal-Cache-Tags
     // headers are not sent when their container parameter is set to FALSE.
@@ -100,6 +107,7 @@ class RouterTest extends BrowserTestBase {
     $headers = $session->getResponseHeaders();
     $this->assertTrue(isset($headers['X-Drupal-Cache-Contexts']));
     $this->assertTrue(isset($headers['X-Drupal-Cache-Tags']));
+    $this->assertTrue(isset($headers['X-Drupal-Cache-Max-Age']));
     $this->setContainerParameter('http.response.debug_cacheability_headers', FALSE);
     $this->rebuildContainer();
     $this->resetAll();
@@ -107,6 +115,7 @@ class RouterTest extends BrowserTestBase {
     $headers = $session->getResponseHeaders();
     $this->assertFalse(isset($headers['X-Drupal-Cache-Contexts']));
     $this->assertFalse(isset($headers['X-Drupal-Cache-Tags']));
+    $this->assertFalse(isset($headers['X-Drupal-Cache-Max-Age']));
   }
 
   /**
@@ -119,22 +128,22 @@ class RouterTest extends BrowserTestBase {
     // @see \Drupal\Core\Routing\RouteProvider::getRoutesByPath()
     $this->drupalGet('router-test/duplicate-path2');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertRaw('router_test.two_duplicate1');
+    $this->assertSession()->responseContains('router_test.two_duplicate1');
 
     // Tests three routes with same the path. One of the routes the path has a
     // different case.
     $this->drupalGet('router-test/case-sensitive-duplicate-path3');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertRaw('router_test.case_sensitive_duplicate1');
+    $this->assertSession()->responseContains('router_test.case_sensitive_duplicate1');
     // While case-insensitive matching works, exact matches are preferred.
     $this->drupalGet('router-test/case-sensitive-Duplicate-PATH3');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertRaw('router_test.case_sensitive_duplicate2');
+    $this->assertSession()->responseContains('router_test.case_sensitive_duplicate2');
     // Test that case-insensitive matching works, falling back to the first
     // route defined.
     $this->drupalGet('router-test/case-sensitive-Duplicate-Path3');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertRaw('router_test.case_sensitive_duplicate1');
+    $this->assertSession()->responseContains('router_test.case_sensitive_duplicate1');
   }
 
   /**
@@ -146,16 +155,16 @@ class RouterTest extends BrowserTestBase {
     foreach ($values as $value) {
       $this->drupalGet('router_test/test3/' . $value);
       $this->assertSession()->statusCodeEquals(200);
-      $this->assertRaw($value, 'The correct string was returned because the route was successful.');
+      $this->assertSession()->pageTextContains($value);
     }
 
     // Confirm that the page wrapping is being added, so we're not getting a
     // raw body returned.
-    $this->assertRaw('</html>', 'Page markup was found.');
+    $this->assertSession()->responseContains('</html>');
 
     // In some instances, the subrequest handling may get confused and render
     // a page inception style.  This test verifies that is not happening.
-    $this->assertSession()->responseNotMatches('#</body>.*</body>#s', 'There was no double-page effect from a misrendered subrequest.');
+    $this->assertSession()->responseNotMatches('#</body>.*</body>#s');
   }
 
   /**
@@ -164,15 +173,15 @@ class RouterTest extends BrowserTestBase {
   public function testControllerPlaceholdersDefaultValues() {
     $this->drupalGet('router_test/test4');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertRaw('narf', 'The correct string was returned because the route was successful.');
+    $this->assertSession()->pageTextContains('narf');
 
     // Confirm that the page wrapping is being added, so we're not getting a
     // raw body returned.
-    $this->assertRaw('</html>', 'Page markup was found.');
+    $this->assertSession()->responseContains('</html>');
 
     // In some instances, the subrequest handling may get confused and render
     // a page inception style.  This test verifies that is not happening.
-    $this->assertSession()->responseNotMatches('#</body>.*</body>#s', 'There was no double-page effect from a misrendered subrequest.');
+    $this->assertSession()->responseNotMatches('#</body>.*</body>#s');
   }
 
   /**
@@ -181,15 +190,15 @@ class RouterTest extends BrowserTestBase {
   public function testControllerPlaceholdersDefaultValuesProvided() {
     $this->drupalGet('router_test/test4/barf');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertRaw('barf', 'The correct string was returned because the route was successful.');
+    $this->assertSession()->pageTextContains('barf');
 
     // Confirm that the page wrapping is being added, so we're not getting a
     // raw body returned.
-    $this->assertRaw('</html>', 'Page markup was found.');
+    $this->assertSession()->responseContains('</html>');
 
     // In some instances, the subrequest handling may get confused and render
     // a page inception style.  This test verifies that is not happening.
-    $this->assertSession()->responseNotMatches('#</body>.*</body>#s', 'There was no double-page effect from a misrendered subrequest.');
+    $this->assertSession()->responseNotMatches('#</body>.*</body>#s');
   }
 
   /**
@@ -201,7 +210,7 @@ class RouterTest extends BrowserTestBase {
     // Test the altered route.
     $this->drupalGet('router_test/test6');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertRaw('test5', 'The correct string was returned because the route was successful.');
+    $this->assertSession()->pageTextContains('test5');
   }
 
   /**
@@ -210,15 +219,15 @@ class RouterTest extends BrowserTestBase {
   public function testControllerResolutionPage() {
     $this->drupalGet('/router_test/test10');
 
-    $this->assertRaw('abcde', 'Correct body was found.');
+    $this->assertSession()->pageTextContains('abcde');
 
     // Confirm that the page wrapping is being added, so we're not getting a
     // raw body returned.
-    $this->assertRaw('</html>', 'Page markup was found.');
+    $this->assertSession()->responseContains('</html>');
 
     // In some instances, the subrequest handling may get confused and render
     // a page inception style. This test verifies that is not happening.
-    $this->assertSession()->responseNotMatches('#</body>.*</body>#s', 'There was no double-page effect from a misrendered subrequest.');
+    $this->assertSession()->responseNotMatches('#</body>.*</body>#s');
   }
 
   /**
@@ -228,7 +237,7 @@ class RouterTest extends BrowserTestBase {
     $front_url = Url::fromRoute('<front>', [], ['absolute' => TRUE]);
     // Compare to the site base URL.
     $base_url = Url::fromUri('base:/', ['absolute' => TRUE]);
-    $this->assertIdentical($base_url->toString(), $front_url->toString());
+    $this->assertSame($base_url->toString(), $front_url->toString());
   }
 
   /**
@@ -237,12 +246,12 @@ class RouterTest extends BrowserTestBase {
   public function testRouterMatching() {
     $this->drupalGet('router_test/test14/1');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertText('User route "entity.user.canonical" was matched.');
+    $this->assertSession()->pageTextContains('User route "entity.user.canonical" was matched.');
 
     // Try to match a route for a non-existent user.
     $this->drupalGet('router_test/test14/2');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertText('Route not matched.');
+    $this->assertSession()->pageTextContains('Route not matched.');
 
     // Check that very long paths don't cause an error.
     $path = 'router_test/test1';
@@ -260,7 +269,7 @@ class RouterTest extends BrowserTestBase {
   public function testRouterResponsePsr7() {
     $this->drupalGet('/router_test/test23');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertText('test23');
+    $this->assertSession()->pageTextContains('test23');
   }
 
   /**
@@ -273,12 +282,12 @@ class RouterTest extends BrowserTestBase {
     $second_account = $this->drupalCreateUser();
 
     $this->drupalGet('router_test/test12/' . $second_account->id());
-    $this->assertText($account->getAccountName() . ':' . $second_account->getAccountName());
-    $this->assertEqual($account->id(), $this->loggedInUser->id(), 'Ensure that the user was not changed.');
+    $this->assertSession()->pageTextContains($account->getAccountName() . ':' . $second_account->getAccountName());
+    $this->assertEquals($this->loggedInUser->id(), $account->id(), 'Ensure that the user was not changed.');
 
     $this->drupalGet('router_test/test13/' . $second_account->id());
-    $this->assertText($account->getAccountName() . ':' . $second_account->getAccountName());
-    $this->assertEqual($account->id(), $this->loggedInUser->id(), 'Ensure that the user was not changed.');
+    $this->assertSession()->pageTextContains($account->getAccountName() . ':' . $second_account->getAccountName());
+    $this->assertEquals($this->loggedInUser->id(), $account->id(), 'Ensure that the user was not changed.');
   }
 
   /**
@@ -291,9 +300,9 @@ class RouterTest extends BrowserTestBase {
     $headers[] = 'X-Requested-With: XMLHttpRequest';
     $this->drupalGet('/router_test/test10', $options, $headers);
 
-    $this->assertEqual($this->drupalGetHeader('Content-Type'), 'application/json', 'Correct mime content type was returned');
+    $this->assertSession()->responseHeaderEquals('Content-Type', 'application/json');
 
-    $this->assertRaw('abcde', 'Correct body was found.');
+    $this->assertSession()->pageTextContains('abcde');
   }
 
   /**
@@ -301,7 +310,6 @@ class RouterTest extends BrowserTestBase {
    */
   public function testRouterUninstallInstall() {
     \Drupal::service('module_installer')->uninstall(['router_test']);
-    \Drupal::service('router.builder')->rebuild();
     try {
       \Drupal::service('router.route_provider')->getRouteByName('router_test.1');
       $this->fail('Route was delete on uninstall.');
@@ -311,7 +319,6 @@ class RouterTest extends BrowserTestBase {
     }
     // Install the module again.
     \Drupal::service('module_installer')->install(['router_test']);
-    \Drupal::service('router.builder')->rebuild();
     $route = \Drupal::service('router.route_provider')->getRouteByName('router_test.1');
     $this->assertNotNull($route, 'Route exists after module installation');
   }
@@ -323,19 +330,19 @@ class RouterTest extends BrowserTestBase {
     $request = $this->container->get('request_stack')->getCurrentRequest();
     $url = $request->getUriForPath('//router_test/test1');
     $this->drupalGet($url);
-    $this->assertUrl($request->getUriForPath('/router_test/test1'));
+    $this->assertSession()->addressEquals($request->getUriForPath('/router_test/test1'));
 
     // It should not matter how many leading slashes are used and query strings
     // should be preserved.
     $url = $request->getUriForPath('/////////////////////////////////////////////////router_test/test1') . '?qs=test';
     $this->drupalGet($url);
-    $this->assertUrl($request->getUriForPath('/router_test/test1') . '?qs=test');
+    $this->assertSession()->addressEquals($request->getUriForPath('/router_test/test1') . '?qs=test');
 
     // Ensure that external URLs in destination query params are not redirected
     // to.
     $url = $request->getUriForPath('/////////////////////////////////////////////////router_test/test1') . '?qs=test&destination=http://www.example.com%5c@drupal8alt.test';
     $this->drupalGet($url);
-    $this->assertUrl($request->getUriForPath('/router_test/test1') . '?qs=test');
+    $this->assertSession()->addressEquals($request->getUriForPath('/router_test/test1') . '?qs=test');
   }
 
 }

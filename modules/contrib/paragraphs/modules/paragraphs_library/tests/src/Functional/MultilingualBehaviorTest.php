@@ -16,7 +16,7 @@ class MultilingualBehaviorTest extends ParagraphsTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'language',
     'content_translation',
     'paragraphs_library',
@@ -174,6 +174,86 @@ class MultilingualBehaviorTest extends ParagraphsTestBase {
 
     // Check library item after converting translated paragraph.
     $this->drupalGet('de/admin/content/paragraphs/1');
+    $this->assertSession()->pageTextContains('De label Beispieltext fur den Test in geschachteltem Absatz.');
+  }
+
+  /**
+   * Tests converting moderated translated nested paragraph into library.
+   */
+  public function testMoveModeratedTranslatedNestedParagraphToLibrary() {
+    $this->container->get('module_installer')->install(['content_moderation']);
+    $this->createEditorialWorkflow('paragraphed_test');
+
+    $this->loginAsAdmin([
+      'access administration pages',
+      'view any unpublished content',
+      'view all revisions',
+      'revert all revisions',
+      'view latest version',
+      'view any unpublished content',
+      'use ' . $this->workflow->id() . ' transition create_new_draft',
+      'use ' . $this->workflow->id() . ' transition publish',
+      'use ' . $this->workflow->id() . ' transition archived_published',
+      'use ' . $this->workflow->id() . ' transition archived_draft',
+      'use ' . $this->workflow->id() . ' transition archive',
+      'administer nodes',
+      'bypass node access',
+      'administer content translation',
+      'translate any entity',
+      'create content translations',
+      'administer languages',
+      'administer content types',
+      'administer node form display',
+      'edit any paragraphed_test content',
+      'create paragraphed_test content',
+      'edit behavior plugin settings',
+      'administer paragraphs library',
+      'administer workflows'
+    ]);
+
+    $this->drupalGet('admin/config/workflow/workflows/manage/' . $this->workflow->id() . '/type/paragraphs_library_item');
+    $edit = [
+      'bundles[paragraphs_library_item]' => 1,
+    ];
+    $this->submitForm($edit, 'Save');
+
+    $this->enableConvertingParagraphsTypeToLibrary('nested_paragraph');
+
+    // Add node with text paragraph.
+    $this->drupalGet('node/add/paragraphed_test');
+    $this->submitForm([], 'field_paragraphs_nested_paragraph_add_more');
+    $this->submitForm([], 'field_paragraphs_0_subform_field_err_field_test_content_add_more');
+    $edit = [
+      'title[0][value]' => 'En label Test node nested',
+      'field_paragraphs[0][subform][field_err_field][0][subform][field_paragraphs_text][0][value]' => 'En label Example text for test in nested paragraph',
+      'moderation_state[0][state]' => 'published'
+    ];
+    $this->submitForm($edit, 'Save');
+
+    // Add translation for node.
+    $node = $this->drupalGetNodeByTitle('En label Test node nested');
+    $this->drupalGet('node/' . $node->id() . '/translations');
+    $this->clickLink('Add');
+    $edit = [
+      'title[0][value]' => 'Testknoten',
+      'field_paragraphs[0][subform][field_err_field][0][subform][field_paragraphs_text][0][value]' => 'De label Beispieltext fur den Test in geschachteltem Absatz.',
+    ];
+    $this->submitForm($edit, 'Save (this translation)');
+
+    // Convert translated paragraph to library.
+    $this->drupalGet($node->toUrl('edit-form'));
+    $this->submitForm([], 'field_paragraphs_0_promote_to_library');
+    $this->submitForm([], 'Save (this translation)');
+
+    // Visible to admins.
+    $this->drupalGet($node->toUrl());
+    $this->assertSession()->pageTextContains('En label Example text for test in nested paragraph');
+    $this->drupalGet('de/node/' . $node->id());
+    $this->assertSession()->pageTextContains('De label Beispieltext fur den Test in geschachteltem Absatz.');
+
+    // And to anonymous users as well.
+    $this->drupalLogout();
+    $this->drupalGet('de/node/' . $node->id());
     $this->assertSession()->pageTextContains('De label Beispieltext fur den Test in geschachteltem Absatz.');
   }
 

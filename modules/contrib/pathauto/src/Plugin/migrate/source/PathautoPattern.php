@@ -117,7 +117,7 @@ class PathautoPattern extends DrupalSqlBase {
         $row->setSourceProperty('pattern', unserialize($row->getSourceProperty('value')));
 
         $selection_criteria = [
-          'id' => ($entity_type == 'node') ? 'node_type' : 'entity_bundle:' . $entity_type,
+          'id' => 'entity_bundle:' . $entity_type,
           'bundles' => [$bundle => $bundle],
           'negate' => FALSE,
           'context_mapping' => [$entity_type => $entity_type],

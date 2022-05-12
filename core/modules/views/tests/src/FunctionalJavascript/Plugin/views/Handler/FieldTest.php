@@ -9,7 +9,7 @@ use Drupal\node\Entity\NodeType;
 use Drupal\views\Tests\ViewTestData;
 
 /**
- * Tests the field field handler UI.
+ * Tests the field handler UI.
  *
  * @group views
  */
@@ -19,7 +19,12 @@ class FieldTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'views', 'views_ui', 'views_test_config'];
+  protected static $modules = [
+    'node',
+    'views',
+    'views_ui',
+    'views_test_config',
+  ];
 
   /**
    * {@inheritdoc}
@@ -43,10 +48,10 @@ class FieldTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
-    ViewTestData::createTestViews(get_class($this), ['views_test_config']);
+    ViewTestData::createTestViews(static::class, ['views_test_config']);
 
     // Disable automatic live preview to make the sequence of calls clearer.
     \Drupal::configFactory()->getEditable('views.settings')->set('ui.always_live_preview', FALSE)->save();
@@ -80,7 +85,7 @@ class FieldTest extends WebDriverTestBase {
     $web_assert->assertWaitOnAjaxRequest();
     $page->fillField('options[settings][trim_length]', '700');
     $apply_button = $page->find('css', '.views-ui-dialog button.button--primary');
-    $this->assertTrue(!empty($apply_button));
+    $this->assertNotEmpty($apply_button);
     $apply_button->press();
     $web_assert->assertWaitOnAjaxRequest();
 

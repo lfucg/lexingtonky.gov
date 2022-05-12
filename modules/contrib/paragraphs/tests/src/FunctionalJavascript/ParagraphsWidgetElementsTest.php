@@ -20,7 +20,7 @@ class ParagraphsWidgetElementsTest extends WebDriverTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'paragraphs',
     'field',

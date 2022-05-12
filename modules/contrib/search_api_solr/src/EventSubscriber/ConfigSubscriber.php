@@ -52,10 +52,17 @@ class ConfigSubscriber implements EventSubscriberInterface {
    * @throws \Drupal\search_api\SearchApiException
    */
   public function onConfigSave(ConfigCrudEvent $event) {
+    // To prevent config to be installed during a site install with existing config
+    // we need to check that situation through the install state.
+    global $install_state;
+    if (isset($install_state['parameters']['existing_config'])) {
+      return;
+    }
+
     $saved_config = $event->getConfig();
 
     if (preg_match('@^language\.entity\.(.+)@', $saved_config->getName(), $matches) &&
-        $matches[1] != LanguageInterface::LANGCODE_NOT_SPECIFIED) {
+        $matches[1] != LanguageInterface::LANGCODE_NOT_SPECIFIED && $matches[1] != LanguageInterface::LANGCODE_NOT_APPLICABLE) {
       $restrict_by_dependency = [
         'module' => 'search_api_solr',
       ];

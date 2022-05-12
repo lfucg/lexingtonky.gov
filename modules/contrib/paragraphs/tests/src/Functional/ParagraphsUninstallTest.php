@@ -16,7 +16,7 @@ class ParagraphsUninstallTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = array('paragraphs_demo');
+  protected static $modules = array('paragraphs_demo');
 
   /**
    * {@inheritdoc}

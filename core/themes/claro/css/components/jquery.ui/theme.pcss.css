@@ -16,6 +16,10 @@
   border: none;
 }
 
+.ui-dialog {
+  z-index: var(--jui-dialog-z-index);
+}
+
 /**
  * Interaction states
  */
@@ -45,12 +49,12 @@
 .ui-state-disabled,
 .ui-widget-content .ui-state-disabled {
   opacity: 0.35;
-  filter: alpha(Opacity=35);
+  filter: alpha(opacity=35);
 }
 .ui-priority-secondary,
 .ui-widget-content .ui-priority-secondary {
   opacity: 0.7;
-  filter: alpha(Opacity=70);
+  filter: alpha(opacity=70);
 }
 
 /**
@@ -332,9 +336,9 @@
  * Overlays
  */
 .ui-widget-overlay {
+  z-index: calc(var(--jui-dialog-z-index) - 1);
   opacity: 0.7;
-  filter: alpha(Opacity=70);
-  background: #000;
+  background: var(--color-text);
 }
 
 /**
@@ -374,64 +378,9 @@
 }
 
 /**
- * Date Picker
- */
-.ui-datepicker {
-  /* Override datepicker.css */
-  padding: 0;
-  border: 1px solid #a6a6a6;
-  background: #fff;
-}
-
-/* Override tables.css */
-.ui-datepicker-calendar thead tr {
-  border-top: 1px solid #a6a6a6;
-  border-bottom: 1px solid #a6a6a6;
-}
-.ui-datepicker-calendar tr:hover {
-  background: transparent;
-}
-
-/* Override datepicker.css */
-.ui-datepicker td {
-  padding: 0;
-}
-.ui-datepicker td span,
-.ui-datepicker td a {
-  /* Override datepicker.css */
-  text-align: center;
-  color: inherit;
-}
-.ui-datepicker .ui-datepicker-header .ui-datepicker-next-hover {
-  top: 2px;
-  /* Override datepicker.css - keep icons still on hover */
-  right: 2px;
-  cursor: pointer;
-}
-.ui-datepicker .ui-datepicker-header .ui-datepicker-prev-hover {
-  top: 2px;
-  /* Override datepicker.css - keep icons still on hover */
-  left: 2px;
-  cursor: pointer;
-}
-.ui-datepicker td a.ui-state-hover {
-  background-color: #f7fcff;
-}
-.ui-datepicker .ui-state-active {
-  border: none;
-  background: #ebeae4;
-}
-.ui-datepicker .ui-state-highlight {
-  /* Override datepicker.css */
-  color: inherit;
-  font-weight: bold;
-}
-
-/**
  * Autocomplete
  */
 .ui-autocomplete {
-  overflow: hidden;
   color: var(--jui-dropdown-fg-color);
   border: var(--input-border-size) solid var(--jui-dropdown-border-color);
   border-top: 0;

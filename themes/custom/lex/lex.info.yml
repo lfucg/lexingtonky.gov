@@ -39,7 +39,7 @@ regions:
   feedback: 'Feedback Form'
   footer: 'Footer'
 
-component-libraries:
-  components:
-    paths:
-      - patterns
+components:
+  namespaces:
+    components:
+        - patterns

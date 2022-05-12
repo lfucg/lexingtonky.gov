@@ -6,6 +6,8 @@ use SelfUpdate\SelfUpdateCommand;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Application extends SymfonyApplication
 {
@@ -40,8 +42,7 @@ class Application extends SymfonyApplication
     {
         $createRoboFile = new Command('init');
         $createRoboFile->setDescription("Intitalizes basic RoboFile in current dir");
-        $createRoboFile->setCode(function () use ($roboClass, $roboFile) {
-            $output = Robo::output();
+        $createRoboFile->setCode(function (InputInterface $input, OutputInterface $output) use ($roboClass, $roboFile) {
             $output->writeln("<comment>  ~~~ Welcome to Robo! ~~~~ </comment>");
             $output->writeln("<comment>  " . basename($roboFile) . " will be created in the current directory </comment>");
             file_put_contents(
@@ -50,7 +51,7 @@ class Application extends SymfonyApplication
                 . "\n/**"
                 . "\n * This is project's console commands configuration for Robo task runner."
                 . "\n *"
-                . "\n * @see http://robo.li/"
+                . "\n * @see https://robo.li/"
                 . "\n */"
                 . "\nclass " . $roboClass . " extends \\Robo\\Tasks\n{\n    // define public methods as commands\n}"
             );

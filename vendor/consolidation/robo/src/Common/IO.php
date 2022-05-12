@@ -2,10 +2,14 @@
 
 namespace Robo\Common;
 
+use Robo\Symfony\ConsoleIO;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Consolidation\AnnotatedCommand\State\State;
 
 trait IO
 {
@@ -17,6 +21,59 @@ trait IO
      */
     protected $io;
 
+    public function currentState()
+    {
+        return new class($this, $this->input, $this->output, $this->io) implements State {
+            protected $obj;
+            protected $input;
+            protected $output;
+            protected $io;
+
+            public function __construct($obj, $input, $output, $io)
+            {
+                $this->obj = $obj;
+                $this->input = $input;
+                $this->output = $output;
+                $this->io = $io;
+            }
+
+            public function restore()
+            {
+                $this->obj->restoreState($this->input, $this->output, $this->io);
+            }
+        };
+    }
+
+    // This should typically only be called by State::restore()
+    public function restoreState(InputInterface $input = null, OutputInterface $output = null, SymfonyStyle $io = null)
+    {
+        $this->setInput($input);
+        $this->setOutput($output);
+        $this->io = $io;
+
+        return $this;
+    }
+
+    public function setInput(InputInterface $input)
+    {
+        if ($input != $this->input) {
+            $this->io = null;
+        }
+        $this->input = $input;
+
+        return $this;
+    }
+
+    public function setOutput(OutputInterface $output)
+    {
+        if ($output != $this->output) {
+            $this->io = null;
+        }
+        $this->output = $output;
+
+        return $this;
+    }
+
     /**
      * Provide access to SymfonyStyle object.
      *
@@ -24,12 +81,12 @@ trait IO
      *
      * @return \Symfony\Component\Console\Style\SymfonyStyle
      *
-     * @see http://symfony.com/blog/new-in-symfony-2-8-console-style-guide
+     * @see https://symfony.com/blog/new-in-symfony-2-8-console-style-guide
      */
     protected function io()
     {
         if (!$this->io) {
-            $this->io = new SymfonyStyle($this->input(), $this->output());
+            $this->io = new ConsoleIO($this->input(), $this->output());
         }
         return $this->io;
     }

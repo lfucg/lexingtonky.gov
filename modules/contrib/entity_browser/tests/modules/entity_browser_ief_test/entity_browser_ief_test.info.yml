@@ -8,11 +8,11 @@ dependencies:
   - entity_browser:entity_browser
   - entity_browser_entity_form:entity_browser_entity_form
   - entity_browser_test:entity_browser_test
-  - drupal:media
+  - media_entity:media_entity
   - inline_entity_form:inline_entity_form
   - drupal:views
 
-# Information added by Drupal.org packaging script on 2021-06-22
-version: '8.x-2.6'
+# Information added by Drupal.org packaging script on 2020-01-20
+version: '8.x-1.10'
 project: 'entity_browser'
-datestamp: 1624401308
+datestamp: 1579563796
