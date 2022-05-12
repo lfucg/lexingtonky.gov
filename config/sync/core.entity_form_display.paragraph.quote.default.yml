@@ -15,21 +15,21 @@ bundle: quote
 mode: default
 content:
   field_case_subtitle:
+    type: text_textfield
     weight: 7
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: text_textfield
-    region: content
   field_heading:
+    type: text_textfield
     weight: 6
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: text_textfield
-    region: content
 hidden:
   created: true
   status: true

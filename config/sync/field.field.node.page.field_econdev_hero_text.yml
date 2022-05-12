@@ -22,14 +22,11 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       econdev_secondary_hero_text: econdev_secondary_hero_text
       econdev_main_hero_text: econdev_main_hero_text
+    negate: 0
     target_bundles_drag_drop:
-      econdev_secondary_hero_text:
-        enabled: true
-        weight: 18
       accordion_block:
         weight: 19
         enabled: false
@@ -46,8 +43,11 @@ settings:
         weight: 23
         enabled: false
       econdev_main_hero_text:
-        enabled: true
         weight: 24
+        enabled: true
+      econdev_secondary_hero_text:
+        weight: 18
+        enabled: true
       flex_grid:
         weight: 25
         enabled: false

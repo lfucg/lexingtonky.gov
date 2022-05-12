@@ -1,7 +1,28 @@
 uuid: 5a03d304-7236-4988-9a47-718790a6ac97
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  config:
+    - filter.format.advanced_html
+    - filter.format.full_html
+    - node.type.landing_page
+    - node.type.organization_page
+    - node.type.site_wide_notice
+    - taxonomy.vocabulary.locations
+    - taxonomy.vocabulary.organizations
+    - taxonomy.vocabulary.site_navigation
+  module:
+    - contact
+    - embed
+    - entity_browser
+    - filter
+    - masquerade
+    - node
+    - path
+    - system
+    - taxonomy
+    - toolbar
+    - workbench_moderation
 id: webmaster
 label: Webmaster
 weight: -7

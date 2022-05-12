@@ -16,16 +16,17 @@ bundle: quote_grid
 mode: default
 content:
   field_description:
+    type: text_textarea
     weight: 0
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
   field_quote:
     type: entity_reference_paragraphs
     weight: 1
+    region: content
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -34,7 +35,6 @@ content:
       form_display_mode: default
       default_paragraph_type: ''
     third_party_settings: {  }
-    region: content
 hidden:
   created: true
   status: true

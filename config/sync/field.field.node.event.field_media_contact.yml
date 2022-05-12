@@ -24,8 +24,8 @@ settings:
       paragraphs_media_contact: paragraphs_media_contact
     target_bundles_drag_drop:
       paragraphs_media_contact:
-        enabled: true
         weight: 3
+        enabled: true
       paragraphs_page_section:
         weight: 4
         enabled: false

@@ -18,13 +18,13 @@ plugin: 'views_block:resources_list-one_lex_resources'
 settings:
   id: 'views_block:resources_list-one_lex_resources'
   label: ''
-  provider: views
   label_display: '0'
+  provider: views
   views_label: ''
   items_per_page: none
 visibility:
   request_path:
     id: request_path
-    pages: /onelexresources
     negate: false
     context_mapping: {  }
+    pages: /onelexresources

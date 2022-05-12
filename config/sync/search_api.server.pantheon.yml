@@ -9,18 +9,18 @@ name: Pantheon
 description: ''
 backend: search_api_solr
 backend_config:
+  retrieve_data: false
+  highlight_data: false
+  site_hash: false
+  server_prefix: ''
+  domain: generic
+  environment: default
   connector: pantheon
   connector_config:
     schema: modules/contrib/search_api_solr/solr-conf/4.x/schema.xml
     path: ''
     skip_schema_check: true
-  retrieve_data: false
-  highlight_data: false
-  site_hash: false
-  domain: generic
-  finalize_timeout: 30
-  server_prefix: ''
   optimize: false
-  environment: default
-  index_single_documents_fallback_count: 10
   fallback_multiple: true
+  index_single_documents_fallback_count: 10
+  finalize_timeout: 30

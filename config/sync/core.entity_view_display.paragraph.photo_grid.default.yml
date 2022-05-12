@@ -13,13 +13,12 @@ bundle: photo_grid
 mode: default
 content:
   field_grid_photo:
-    weight: 0
+    type: image
     label: above
     settings:
       image_link: ''
       image_style: ''
     third_party_settings: {  }
-    type: image
+    weight: 0
     region: content
-hidden:
-  search_api_excerpt: true
+hidden: {  }

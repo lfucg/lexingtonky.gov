@@ -18,20 +18,20 @@ plugin: 'fieldblock:node'
 settings:
   id: 'fieldblock:node'
   label: Contact
-  provider: fieldblock
   label_display: visible
-  label_from_field: 0
+  provider: fieldblock
+  label_from_field: false
   field_name: field_office_to_contact
   formatter_id: entity_reference_entity_view
   formatter_settings:
     view_mode: default
 visibility:
-  node_type:
-    id: node_type
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
     bundles:
       board_commission: board_commission
       organization_page: organization_page
       page: page
-    negate: false
-    context_mapping:
-      node: '@node.node_route_context:node'

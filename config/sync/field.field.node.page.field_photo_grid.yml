@@ -21,13 +21,10 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       photo_grid: photo_grid
+    negate: 0
     target_bundles_drag_drop:
-      photo_grid:
-        enabled: true
-        weight: 7
       lexidme_case:
         weight: 8
         enabled: false
@@ -43,4 +40,7 @@ settings:
       paragraphs_page_section:
         weight: 12
         enabled: false
+      photo_grid:
+        weight: 7
+        enabled: true
 field_type: entity_reference_revisions

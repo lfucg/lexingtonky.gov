@@ -24,16 +24,19 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       paragraphs_page_section: paragraphs_page_section
       accordion_block: accordion_block
       flex_grid: flex_grid
       quote_grid: quote_grid
+    negate: 0
     target_bundles_drag_drop:
-      paragraphs_page_section:
+      accordion_block:
+        weight: 21
         enabled: true
-        weight: 2
+      accordion_section:
+        weight: 22
+        enabled: false
       card_button:
         weight: 11
         enabled: false
@@ -43,9 +46,15 @@ settings:
       contact_card:
         weight: 13
         enabled: false
-      rendered_block:
-        weight: 13
+      econdev_main_hero_text:
+        weight: 26
         enabled: false
+      econdev_secondary_hero_text:
+        weight: 27
+        enabled: false
+      flex_grid:
+        weight: 28
+        enabled: true
       icon_button_with_description:
         weight: 14
         enabled: false
@@ -61,34 +70,25 @@ settings:
       paragraphs_media_contact:
         weight: 18
         enabled: false
+      paragraphs_page_section:
+        weight: 2
+        enabled: true
       photo_grid:
         weight: 20
         enabled: false
-      accordion_block:
-        enabled: true
-        weight: 21
-      accordion_section:
-        weight: 22
-        enabled: false
-      views_block:
-        weight: 24
-        enabled: false
-      econdev_main_hero_text:
-        weight: 26
-        enabled: false
-      econdev_secondary_hero_text:
-        weight: 27
-        enabled: false
-      flex_grid:
-        enabled: true
-        weight: 28
       quote:
         weight: 36
         enabled: false
       quote_grid:
-        enabled: true
         weight: 37
+        enabled: true
+      rendered_block:
+        weight: 13
+        enabled: false
       standalone_link:
         weight: 39
+        enabled: false
+      views_block:
+        weight: 24
         enabled: false
 field_type: entity_reference_revisions

@@ -18,13 +18,13 @@ plugin: 'views_block:boards_directory-block_1'
 settings:
   id: 'views_block:boards_directory-block_1'
   label: ''
-  provider: views
   label_display: '0'
+  provider: views
   views_label: ''
   items_per_page: none
 visibility:
   request_path:
     id: request_path
-    pages: /browse/government/boards-commissions
     negate: false
     context_mapping: {  }
+    pages: /browse/government/boards-commissions

@@ -18,14 +18,14 @@ plugin: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
 settings:
   id: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
   label: 'Find your council district'
-  provider: block_content
   label_display: visible
+  provider: block_content
   status: true
   info: ''
   view_mode: full
 visibility:
   request_path:
     id: request_path
-    pages: "/council-district-*\r\n/council-at-large-*"
     negate: false
     context_mapping: {  }
+    pages: "/council-district-*\r\n/council-at-large-*"

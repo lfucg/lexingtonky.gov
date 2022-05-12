@@ -20,12 +20,12 @@ widget_selector: single
 widget_selector_configuration: {  }
 widgets:
   ff4d0944-7778-4ce4-8d23-e9e6fcca4865:
+    id: paragraph_entity_form
+    uuid: ff4d0944-7778-4ce4-8d23-e9e6fcca4865
+    label: paragraph_entity_form
+    weight: 1
     settings:
-      entity_type: paragraph
       submit_text: 'Save paragraph'
+      entity_type: paragraph
       bundle: '0'
       form_mode: default
-    uuid: ff4d0944-7778-4ce4-8d23-e9e6fcca4865
-    weight: 1
-    label: paragraph_entity_form
-    id: paragraph_entity_form

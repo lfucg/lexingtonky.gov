@@ -16,18 +16,18 @@ plugin: Lex_calendar_list_block
 settings:
   id: Lex_calendar_list_block
   label: Events
-  provider: lex_calendar
   label_display: visible
+  provider: lex_calendar
   display_limit: '10'
   content_type: event
   show_all: 'no'
 visibility:
-  node_type:
-    id: node_type
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
     bundles:
       board_commission: board_commission
       organization_page: organization_page
       page: page
-    negate: false
-    context_mapping:
-      node: '@node.node_route_context:node'

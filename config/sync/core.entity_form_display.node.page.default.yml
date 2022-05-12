@@ -45,6 +45,7 @@ content:
   field_econdev_hero_text:
     type: entity_reference_paragraphs
     weight: 10
+    region: content
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -53,6 +54,7 @@ content:
       form_display_mode: default
       default_paragraph_type: ''
     third_party_settings: {  }
+<<<<<<< HEAD
     region: content
   field_iframe:
     weight: 26
@@ -70,16 +72,18 @@ content:
     third_party_settings: {  }
     type: iframe_urlwidthheight
     region: content
+=======
+>>>>>>> Exported configuration for working druapl 9
   field_keywords:
+    type: entity_reference_autocomplete
     weight: 14
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_lex_custom_banner_image:
     type: image_image
     weight: 9
@@ -91,6 +95,7 @@ content:
   field_lex_grid_ref:
     type: entity_reference_paragraphs
     weight: 17
+    region: content
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -99,16 +104,15 @@ content:
       form_display_mode: default
       default_paragraph_type: ''
     third_party_settings: {  }
-    region: content
   field_lex_site_nav:
     type: entity_reference_autocomplete
     weight: 6
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
   field_metatags:
     type: metatag_firehose
@@ -122,9 +126,9 @@ content:
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
   field_page_overview:
     type: text_textarea_with_summary
@@ -151,6 +155,7 @@ content:
   field_photo_grid:
     type: entity_reference_paragraphs
     weight: 16
+    region: content
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -159,7 +164,6 @@ content:
       form_display_mode: default
       default_paragraph_type: ''
     third_party_settings: {  }
-    region: content
   field_related_departments:
     type: chosen_select
     weight: 8
@@ -174,15 +178,15 @@ content:
       progress_indicator: throbber
     third_party_settings: {  }
   field_related_page:
+    type: entity_reference_autocomplete
     weight: 18
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_sidebar_section:
     type: entity_reference_paragraphs
     weight: 12
@@ -210,11 +214,11 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
+    weight: 15
+    region: content
     settings:
       display_label: true
-    weight: 15
     third_party_settings: {  }
-    region: content
   title:
     type: string_textfield
     weight: 0
@@ -226,12 +230,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
 hidden:
   body: true

@@ -21,43 +21,43 @@ bundle: icon_button_with_description
 mode: default
 content:
   field_contact_email:
-    weight: 5
+    type: basic_string
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 5
     region: content
   field_description:
-    weight: 2
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    weight: 2
     region: content
   field_heading:
-    weight: 0
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    weight: 0
     region: content
   field_icon:
-    weight: 4
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    weight: 4
     region: content
   field_image:
-    weight: 6
+    type: image_url
     label: hidden
     settings:
       image_style: thumbnail
     third_party_settings: {  }
-    type: image_url
+    weight: 6
     region: content
   field_link:
-    weight: 3
+    type: link
     label: hidden
     settings:
       trim_length: 80
@@ -66,7 +66,7 @@ content:
       rel: '0'
       target: '0'
     third_party_settings: {  }
-    type: link
+    weight: 3
     region: content
 hidden:
   search_api_excerpt: true

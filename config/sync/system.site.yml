@@ -1,3 +1,4 @@
+langcode: en
 uuid: dcdfdab3-584e-4bcb-9a2e-461af1b9750d
 name: 'City of Lexington'
 mail: webmaster@lexingtonky.gov
@@ -8,6 +9,5 @@ page:
   front: /node/57
 admin_compact_mode: false
 weight_select_max: 100
-langcode: en
 default_langcode: en
 mail_notification: ''

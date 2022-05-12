@@ -15,13 +15,13 @@ plugin: local_tasks_block
 settings:
   id: local_tasks_block
   label: Tabs
-  provider: core
   label_display: '0'
+  provider: core
   primary: true
   secondary: true
 visibility:
   request_path:
     id: request_path
-    pages: "<front>\r\n/browse/*"
     negate: true
     context_mapping: {  }
+    pages: "<front>\r\n/browse/*"

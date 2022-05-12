@@ -16,27 +16,25 @@ bundle: default_headers_for_themes
 mode: default
 content:
   field_organization_image:
-    weight: 102
+    type: image
     label: above
     settings:
-      image_style: ''
       image_link: ''
+      image_style: ''
     third_party_settings: {  }
-    type: image
+    weight: 102
     region: content
   field_theme:
-    weight: 103
+    type: list_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: list_default
+    weight: 103
     region: content
   links:
-    weight: 100
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 100
+    region: content
 hidden:
   addtoany: true
-  langcode: true
-  search_api_excerpt: true

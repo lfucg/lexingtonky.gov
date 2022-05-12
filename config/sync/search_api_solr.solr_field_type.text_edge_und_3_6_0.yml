@@ -1,4 +1,4 @@
-uuid: deaac15a-ee05-486d-860d-a914776f7f9a
+uuid: 17787a7b-2424-4816-ac59-06b63dbe5b6c
 langcode: en
 status: true
 dependencies: {  }
@@ -27,8 +27,8 @@ field_type:
         -
           class: solr.StopFilterFactory
           ignoreCase: true
-          words: stopwords_und.txt
           enablePositionIncrements: true
+          words: stopwords_und.txt
         -
           class: solr.WordDelimiterFilterFactory
           catenateNumbers: 1

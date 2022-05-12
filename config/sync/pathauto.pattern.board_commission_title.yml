@@ -10,13 +10,13 @@ type: 'canonical_entities:node'
 pattern: '/boards/[node:title]'
 selection_criteria:
   ac9b38fa-a593-4d7f-a8ba-8d56fb42c7fa:
-    id: node_type
-    bundles:
-      board_commission: board_commission
+    id: 'entity_bundle:node'
     negate: false
+    uuid: ac9b38fa-a593-4d7f-a8ba-8d56fb42c7fa
     context_mapping:
       node: node
-    uuid: ac9b38fa-a593-4d7f-a8ba-8d56fb42c7fa
+    bundles:
+      board_commission: board_commission
 selection_logic: and
 weight: -5
 relationships: {  }

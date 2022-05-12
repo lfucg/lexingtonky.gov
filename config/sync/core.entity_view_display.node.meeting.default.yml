@@ -29,73 +29,73 @@ bundle: meeting
 mode: default
 content:
   body:
-    label: hidden
     type: text_default
-    weight: 5
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 5
     region: content
   field_all_day:
-    weight: 6
+    type: boolean
     label: above
     settings:
       format: default
       format_custom_false: ''
       format_custom_true: ''
     third_party_settings: {  }
-    type: boolean
+    weight: 6
     region: content
   field_date:
-    weight: 2
+    type: datetime_default
     label: hidden
     settings:
       timezone_override: ''
       format_type: html_datetime
     third_party_settings: {  }
-    type: datetime_default
+    weight: 2
     region: content
   field_date_end:
-    weight: 3
+    type: datetime_default
     label: hidden
     settings:
       timezone_override: ''
       format_type: html_datetime
     third_party_settings: {  }
-    type: datetime_default
+    weight: 3
     region: content
   field_locations:
-    weight: 4
+    type: entity_reference_entity_view
     label: hidden
     settings:
-      link: true
       view_mode: default
+      link: true
     third_party_settings: {  }
-    type: entity_reference_entity_view
+    weight: 4
     region: content
   field_metatags:
-    weight: 8
+    type: metatag_empty_formatter
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: metatag_empty_formatter
+    weight: 8
     region: content
   field_recurring_event:
-    weight: 7
+    type: list_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: list_default
+    weight: 7
     region: content
   links:
+    settings: {  }
+    third_party_settings: {  }
     weight: 1
     region: content
+  workbench_moderation_control:
     settings: {  }
     third_party_settings: {  }
-  workbench_moderation_control:
     weight: 0
     region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
   addtoany: true
   field_external_id: true
@@ -104,5 +104,4 @@ hidden:
   field_related_documents: true
   field_related_page: true
   field_show_on_calendar: true
-  langcode: true
   search_api_excerpt: true

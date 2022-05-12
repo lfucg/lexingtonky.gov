@@ -2,11 +2,6 @@ uuid: 158f6609-6c5c-4145-98d7-3b70f89535d1
 langcode: en
 status: true
 dependencies:
-  module:
-    - node
-    - taxonomy
-    - search_api
-    - paragraphs
   config:
     - field.storage.node.body
     - field.storage.node.field_keywords
@@ -14,6 +9,38 @@ dependencies:
     - field.storage.paragraph.field_section_body
     - search_api.server.pantheon
     - core.entity_view_mode.node.teaser
+  module:
+    - node
+    - taxonomy
+    - search_api
+    - paragraphs
+third_party_settings:
+  search_api_solr:
+    highlighter:
+      maxAnalyzedChars: 51200
+      fragmenter: gap
+      usePhraseHighlighter: true
+      highlightMultiTerm: true
+      preserveMulti: false
+      regex:
+        slop: 0.5
+        pattern: blank
+        maxAnalyzedChars: 10000
+      highlight:
+        mergeContiguous: false
+        requireFieldMatch: false
+        snippets: 3
+        fragsize: 0
+      _core:
+        default_config_hash: 914vBglS7nVnl8EUqBejfUPPRT6wnWYcOhMli6oL4jY
+    term_modifiers:
+      slop: 10000000
+      fuzzy: 2
+    advanced:
+      index_prefix: ''
+    multilingual:
+      limit_to_content_language: false
+      include_language_independent: true
 id: pantheon_index
 name: 'Pantheon Index'
 description: ''
@@ -129,6 +156,9 @@ processor_settings:
   aggregated_field: {  }
   entity_status: {  }
   html_filter:
+    weights:
+      preprocess_index: -47
+      preprocess_query: -47
     all_fields: false
     fields:
       - body
@@ -144,12 +174,12 @@ processor_settings:
       h2: 3
       h3: 2
       strong: 2
-    weights:
-      preprocess_index: -47
-      preprocess_query: -47
   language_with_fallback: {  }
   rendered_item: {  }
   stemmer:
+    weights:
+      preprocess_index: -49
+      preprocess_query: -49
     all_fields: false
     fields:
       - body
@@ -184,10 +214,9 @@ processor_settings:
       trash: waste+management
       222: current+year+occupational+tax+forms
       228: current+year+occupational+tax+forms
-    weights:
-      preprocess_index: -49
-      preprocess_query: -49
   type_boost:
+    weights:
+      preprocess_index: -48
     boosts:
       'entity:node':
         datasource_boost: !!float 5
@@ -214,40 +243,11 @@ processor_settings:
           organizations: !!float 0
           site_navigation: !!float 0
           tags: !!float 0
-    weights:
-      preprocess_index: -48
 tracker_settings:
   default:
     indexing_order: fifo
 options:
-  index_directly: true
   cron_limit: 50
+  index_directly: true
   track_changes_in_references: true
 server: pantheon
-third_party_settings:
-  search_api_solr:
-    highlighter:
-      maxAnalyzedChars: 51200
-      fragmenter: gap
-      usePhraseHighlighter: true
-      highlightMultiTerm: true
-      preserveMulti: false
-      regex:
-        slop: 0.5
-        pattern: blank
-        maxAnalyzedChars: 10000
-      highlight:
-        mergeContiguous: false
-        requireFieldMatch: false
-        snippets: 3
-        fragsize: 0
-      _core:
-        default_config_hash: 914vBglS7nVnl8EUqBejfUPPRT6wnWYcOhMli6oL4jY
-    advanced:
-      index_prefix: ''
-    multilingual:
-      limit_to_content_language: false
-      include_language_independent: true
-    term_modifiers:
-      slop: 10000000
-      fuzzy: 2

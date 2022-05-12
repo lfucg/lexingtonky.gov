@@ -10,13 +10,13 @@ type: 'canonical_entities:node'
 pattern: '/departments/[node:field_organization_taxonomy_term]'
 selection_criteria:
   edeb47e4-dd86-4ad6-87de-e8a2a8a24ce1:
-    id: node_type
-    bundles:
-      organization_page: organization_page
+    id: 'entity_bundle:node'
     negate: false
+    uuid: edeb47e4-dd86-4ad6-87de-e8a2a8a24ce1
     context_mapping:
       node: node
-    uuid: edeb47e4-dd86-4ad6-87de-e8a2a8a24ce1
+    bundles:
+      organization_page: organization_page
 selection_logic: and
 weight: -5
 relationships: {  }

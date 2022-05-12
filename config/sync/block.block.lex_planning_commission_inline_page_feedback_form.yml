@@ -18,14 +18,14 @@ plugin: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
 settings:
   id: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
   label: 'Inline page feedback form'
-  provider: block_content
   label_display: '0'
+  provider: block_content
   status: true
   info: ''
   view_mode: full
 visibility:
   request_path:
     id: request_path
-    pages: '/contact/*'
     negate: true
     context_mapping: {  }
+    pages: '/contact/*'

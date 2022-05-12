@@ -25,53 +25,51 @@ bundle: news_article
 mode: front_page_news
 content:
   body:
-    label: hidden
     type: text_summary_or_trimmed
-    weight: 2
+    label: hidden
     settings:
       trim_length: 600
     third_party_settings: {  }
+    weight: 2
     region: content
   field_image:
     type: image
-    weight: 5
-    region: content
     label: hidden
     settings:
-      image_style: ''
       image_link: ''
+      image_style: ''
     third_party_settings: {  }
+    weight: 5
+    region: content
   field_media_contact:
     type: entity_reference_revisions_entity_view
-    weight: 3
     label: hidden
     settings:
       view_mode: default
       link: ''
     third_party_settings: {  }
+    weight: 3
     region: content
   field_metatags:
-    weight: 4
+    type: metatag_empty_formatter
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: metatag_empty_formatter
+    weight: 4
     region: content
   links:
+    settings: {  }
+    third_party_settings: {  }
     weight: 1
     region: content
+  workbench_moderation_control:
     settings: {  }
     third_party_settings: {  }
-  workbench_moderation_control:
     weight: 0
     region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
   addtoany: true
   field_keywords: true
   field_lex_custom_banner_image: true
   field_related_departments: true
   field_related_documents: true
-  langcode: true
-  search_api_excerpt: true

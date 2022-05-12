@@ -23,65 +23,12 @@ base_table: taxonomy_term_field_data
 base_field: tid
 display:
   default:
-    display_plugin: default
     id: default
     display_title: Master
+    display_plugin: default
     position: 0
     display_options:
-      access:
-        type: perm
-        options:
-          perm: 'access content'
-      cache:
-        type: tag
-        options: {  }
-      query:
-        type: views_query
-        options:
-          disable_sql_rewrite: false
-          distinct: false
-          replica: false
-          query_comment: ''
-          query_tags: {  }
-      exposed_form:
-        type: basic
-        options:
-          submit_button: Apply
-          reset_button: false
-          reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-      pager:
-        type: some
-        options:
-          items_per_page: 0
-          offset: 0
-      style:
-        type: grid
-        options:
-          grouping: {  }
-          columns: 1
-          automatic_width: true
-          alignment: horizontal
-          col_class_default: true
-          col_class_custom: ''
-          row_class_default: true
-          row_class_custom: ''
-      row:
-        type: fields
-        options:
-          default_field_elements: true
-          inline:
-            name: name
-            field_social_link_facebook: field_social_link_facebook
-            field_social_link_instagram: field_social_link_instagram
-            field_social_link_linkedin: field_social_link_linkedin
-            field_social_link_twitter: field_social_link_twitter
-            field_social_link_youtube: field_social_link_youtube
-          separator: ''
-          hide_empty: true
+      title: 'City Social Media Accounts'
       fields:
         field_page_link:
           id: field_page_link
@@ -90,6 +37,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -149,7 +97,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         name:
           id: name
           table: taxonomy_term_field_data
@@ -157,11 +104,19 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: term_name
           label: ''
           exclude: false
           alter:
             alter_text: true
-            text: "{% if field_page_link is empty %}\n<span>{{ name }} </span>\n{% else %}\n<a href=\"{{ field_page_link }}\">{{ name }}</a>\n{% endif %}"
+            text: |-
+              {% if field_page_link is empty %}
+              <span>{{ name }} </span>
+              {% else %}
+              <a href="{{ field_page_link }}">{{ name }}</a>
+              {% endif %}
             make_link: false
             path: ''
             absolute: false
@@ -213,9 +168,6 @@ display:
           separator: ', '
           field_api_classes: false
           convert_spaces: false
-          entity_type: taxonomy_term
-          entity_field: name
-          plugin_id: term_name
         field_social_link_facebook:
           id: field_social_link_facebook
           table: taxonomy_term__field_social_link_facebook
@@ -223,6 +175,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -282,7 +235,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_social_link_instagram:
           id: field_social_link_instagram
           table: taxonomy_term__field_social_link_instagram
@@ -290,6 +242,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -349,7 +302,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_social_link_linkedin:
           id: field_social_link_linkedin
           table: taxonomy_term__field_social_link_linkedin
@@ -357,6 +309,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -416,7 +369,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_social_link_twitter:
           id: field_social_link_twitter
           table: taxonomy_term__field_social_link_twitter
@@ -424,6 +376,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -483,7 +436,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_social_link_youtube:
           id: field_social_link_youtube
           table: taxonomy_term__field_social_link_youtube
@@ -491,6 +443,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -550,17 +503,56 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 0
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      empty: {  }
+      sorts:
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: Name
+            field_identifier: name
+          exposed: false
+      arguments: {  }
       filters:
         vid:
           id: vid
           table: taxonomy_term_field_data
           field: vid
-          value:
-            locations: locations
           entity_type: taxonomy_term
           entity_field: vid
           plugin_id: bundle
+          value:
+            locations: locations
           group: 1
           expose:
             operator_limit_selection: false
@@ -572,6 +564,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: string
           operator: longerthan
           value: '0'
           group: 2
@@ -582,6 +575,8 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -589,8 +584,6 @@ display:
             remember_roles:
               authenticated: authenticated
             placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -603,7 +596,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
         field_social_link_linkedin_uri:
           id: field_social_link_linkedin_uri
           table: taxonomy_term__field_social_link_linkedin
@@ -611,6 +603,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: string
           operator: longerthan
           value: '0'
           group: 2
@@ -621,6 +614,8 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -628,8 +623,6 @@ display:
             remember_roles:
               authenticated: authenticated
             placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -642,7 +635,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
         field_social_link_instagram_uri:
           id: field_social_link_instagram_uri
           table: taxonomy_term__field_social_link_instagram
@@ -650,6 +642,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: string
           operator: longerthan
           value: '0'
           group: 2
@@ -660,6 +653,8 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -667,8 +662,6 @@ display:
             remember_roles:
               authenticated: authenticated
             placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -681,7 +674,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
         field_social_link_youtube_uri:
           id: field_social_link_youtube_uri
           table: taxonomy_term__field_social_link_youtube
@@ -689,6 +681,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: string
           operator: longerthan
           value: '0'
           group: 2
@@ -699,6 +692,8 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -706,8 +701,6 @@ display:
             remember_roles:
               authenticated: authenticated
             placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -720,7 +713,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
         field_social_link_twitter_uri:
           id: field_social_link_twitter_uri
           table: taxonomy_term__field_social_link_twitter
@@ -728,6 +720,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: string
           operator: longerthan
           value: '0'
           group: 2
@@ -738,6 +731,8 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -745,8 +740,6 @@ display:
             remember_roles:
               authenticated: authenticated
             placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -759,7 +752,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
         status:
           id: status
           table: taxonomy_term_field_data
@@ -767,6 +759,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: status
+          plugin_id: boolean
           operator: '='
           value: '1'
           group: 1
@@ -777,6 +772,8 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -785,8 +782,6 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -799,36 +794,47 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: taxonomy_term
-          entity_field: status
-          plugin_id: boolean
-      sorts:
-        name:
-          id: name
-          table: taxonomy_term_field_data
-          field: name
-          relationship: none
-          group_type: group
-          admin_label: ''
-          order: ASC
-          exposed: false
-          expose:
-            label: Name
-          entity_type: taxonomy_term
-          entity_field: name
-          plugin_id: standard
-      title: 'City Social Media Accounts'
-      header: {  }
-      footer: {  }
-      empty: {  }
-      relationships: {  }
-      arguments: {  }
-      display_extenders: {  }
       filter_groups:
         operator: AND
         groups:
           1: AND
           2: OR
+      style:
+        type: grid
+        options:
+          grouping: {  }
+          columns: 1
+          automatic_width: true
+          alignment: horizontal
+          row_class_custom: ''
+          row_class_default: true
+          col_class_custom: ''
+          col_class_default: true
+      row:
+        type: fields
+        options:
+          default_field_elements: true
+          inline:
+            name: name
+            field_social_link_facebook: field_social_link_facebook
+            field_social_link_instagram: field_social_link_instagram
+            field_social_link_linkedin: field_social_link_linkedin
+            field_social_link_twitter: field_social_link_twitter
+            field_social_link_youtube: field_social_link_youtube
+          separator: ''
+          hide_empty: true
+      query:
+        type: views_query
+        options:
+          query_comment: ''
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_tags: {  }
+      relationships: {  }
+      header: {  }
+      footer: {  }
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -843,13 +849,11 @@ display:
         - 'config:field.storage.taxonomy_term.field_social_link_twitter'
         - 'config:field.storage.taxonomy_term.field_social_link_youtube'
   page_1:
-    display_plugin: page
     id: page_1
     display_title: Page
+    display_plugin: page
     position: 1
     display_options:
-      display_extenders: {  }
-      path: city-social-media-accounts
       fields: {  }
       sorts: {  }
       filters:
@@ -860,6 +864,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: status
+          plugin_id: boolean
           operator: '='
           value: '1'
           group: 1
@@ -870,6 +877,8 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -878,8 +887,6 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -892,9 +899,8 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: taxonomy_term
-          entity_field: status
-          plugin_id: boolean
+      display_extenders: {  }
+      path: city-social-media-accounts
     cache_metadata:
       max-age: -1
       contexts:

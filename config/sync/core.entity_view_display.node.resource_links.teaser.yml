@@ -15,13 +15,11 @@ bundle: resource_links
 mode: teaser
 content:
   links:
-    weight: 100
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 100
+    region: content
 hidden:
   addtoany: true
   field_link_to_: true
   field_resources_list: true
-  langcode: true
-  search_api_excerpt: true

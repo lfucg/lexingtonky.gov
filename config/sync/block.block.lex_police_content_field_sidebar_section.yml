@@ -18,9 +18,9 @@ plugin: 'fieldblock:node'
 settings:
   id: 'fieldblock:node'
   label: 'Sidebar section'
-  provider: fieldblock
   label_display: '0'
-  label_from_field: 0
+  provider: fieldblock
+  label_from_field: false
   field_name: field_sidebar_section
   formatter_id: entity_reference_revisions_entity_view
   formatter_settings:

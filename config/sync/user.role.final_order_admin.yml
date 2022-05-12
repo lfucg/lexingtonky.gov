@@ -1,7 +1,11 @@
 uuid: 3364c0b1-d3af-4114-8b50-8a624485a4cd
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  config:
+    - node.type.final_order
+  module:
+    - node
 id: final_order_admin
 label: 'Final order admin'
 weight: -5

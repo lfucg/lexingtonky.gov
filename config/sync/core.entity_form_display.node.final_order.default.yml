@@ -25,23 +25,23 @@ content:
   created:
     type: datetime_timestamp
     weight: 2
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_address:
+    type: string_textfield
     weight: 5
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_final_order_date:
+    type: datetime_default
     weight: 3
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: datetime_default
-    region: content
   field_final_order_docs:
     type: file_generic
     weight: 8
@@ -50,33 +50,33 @@ content:
       progress_indicator: throbber
     third_party_settings: {  }
   field_metatags:
-    weight: 9
-    settings: {  }
-    third_party_settings: {  }
     type: metatag_firehose
+    weight: 9
     region: content
-  field_owners_address:
-    weight: 7
-    settings:
-      rows: 5
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textarea
-    region: content
-  field_person_charged:
-    weight: 6
-    settings:
-      rows: 5
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textarea
-    region: content
-  field_pva_num:
-    weight: 4
     settings: {  }
     third_party_settings: {  }
-    type: parcel_lookup
+  field_owners_address:
+    type: string_textarea
+    weight: 7
     region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_person_charged:
+    type: string_textarea
+    weight: 6
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_pva_num:
+    type: parcel_lookup
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   langcode:
     type: language_select
     weight: 2
@@ -86,29 +86,29 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
+    weight: 121
+    region: content
     settings:
       display_label: true
-    weight: 121
     third_party_settings: {  }
-    region: content
   title:
     type: string_textfield
     weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 1
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
-    region: content
 hidden:
   path: true
   promote: true

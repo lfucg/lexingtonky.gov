@@ -14,7 +14,6 @@ mode: default
 content:
   field_accordion_section:
     type: paragraphs_jquery_ui_accordion_formatter
-    weight: 0
     label: hidden
     settings:
       bundle: accordion_block
@@ -27,6 +26,7 @@ content:
       autoscroll: 0
       autoscroll_offset_toolbar: 0
     third_party_settings: {  }
+    weight: 0
     region: content
 hidden:
   search_api_excerpt: true

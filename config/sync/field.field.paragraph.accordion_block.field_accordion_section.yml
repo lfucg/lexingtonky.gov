@@ -21,16 +21,16 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       accordion_section: accordion_section
+    negate: 0
     target_bundles_drag_drop:
-      accordion_section:
-        enabled: true
-        weight: 16
       accordion_block:
         weight: 17
         enabled: false
+      accordion_section:
+        weight: 16
+        enabled: true
       card_button:
         weight: 18
         enabled: false

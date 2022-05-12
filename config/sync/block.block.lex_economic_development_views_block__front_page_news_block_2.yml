@@ -18,15 +18,15 @@ plugin: 'views_block:front_page_news-block_2'
 settings:
   id: 'views_block:front_page_news-block_2'
   label: ''
-  provider: views
   label_display: visible
+  provider: views
   views_label: ''
   items_per_page: none
 visibility:
   'entity_bundle:node':
     id: 'entity_bundle:node'
-    bundles:
-      news_article: news_article
     negate: false
     context_mapping:
       node: '@node.node_route_context:node'
+    bundles:
+      news_article: news_article

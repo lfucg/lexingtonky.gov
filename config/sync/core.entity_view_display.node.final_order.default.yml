@@ -23,63 +23,61 @@ mode: default
 content:
   field_address:
     type: string
-    weight: 4
     label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 4
     region: content
   field_final_order_date:
     type: datetime_custom
-    weight: 1
     label: inline
     settings:
       timezone_override: ''
       date_format: Y-m-d
     third_party_settings: {  }
+    weight: 1
     region: content
   field_final_order_docs:
-    weight: 6
+    type: file_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: file_default
+    weight: 6
     region: content
   field_metatags:
-    weight: 9
+    type: metatag_empty_formatter
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: metatag_empty_formatter
+    weight: 9
     region: content
   field_owners_address:
-    weight: 8
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 8
     region: content
   field_person_charged:
-    weight: 7
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 7
     region: content
   field_pva_num:
     type: string
-    weight: 5
     label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 5
     region: content
   links:
-    weight: 0
     settings: {  }
     third_party_settings: {  }
+    weight: 0
     region: content
 hidden:
   addtoany: true
-  langcode: true
-  search_api_excerpt: true

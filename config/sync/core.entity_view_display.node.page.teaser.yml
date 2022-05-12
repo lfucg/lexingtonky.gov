@@ -30,23 +30,23 @@ bundle: page
 mode: teaser
 content:
   addtoany:
-    weight: 101
     settings: {  }
     third_party_settings: {  }
+    weight: 101
     region: content
   field_page_overview:
     type: text_summary_or_trimmed
-    weight: 0
     label: above
     settings:
       trim_length: 600
     third_party_settings: {  }
+    weight: 0
     region: content
   workbench_moderation_control:
-    weight: -20
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: -20
+    region: content
 hidden:
   body: true
   field_econdev_hero_text: true
@@ -63,6 +63,5 @@ hidden:
   field_related_documents: true
   field_related_page: true
   field_sidebar_section: true
-  langcode: true
   links: true
   search_api_excerpt: true

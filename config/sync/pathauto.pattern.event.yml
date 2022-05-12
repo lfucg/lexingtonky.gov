@@ -10,13 +10,13 @@ type: 'canonical_entities:node'
 pattern: '/events/[node:nid]/[node:title]'
 selection_criteria:
   27772f17-51e5-471e-8392-9726cd446dd7:
-    id: node_type
-    bundles:
-      event: event
+    id: 'entity_bundle:node'
     negate: false
+    uuid: 27772f17-51e5-471e-8392-9726cd446dd7
     context_mapping:
       node: node
-    uuid: 27772f17-51e5-471e-8392-9726cd446dd7
+    bundles:
+      event: event
 selection_logic: and
 weight: -5
 relationships: {  }

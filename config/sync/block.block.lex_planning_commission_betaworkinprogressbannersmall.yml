@@ -18,14 +18,14 @@ plugin: 'block_content:0830dd71-46af-44d3-8807-7c73429d54af'
 settings:
   id: 'block_content:0830dd71-46af-44d3-8807-7c73429d54af'
   label: 'Beta: work in progress banner (small)'
-  provider: block_content
   label_display: '0'
+  provider: block_content
   status: true
   info: ''
   view_mode: full
 visibility:
   request_path:
     id: request_path
-    pages: '<front>'
     negate: true
     context_mapping: {  }
+    pages: '<front>'

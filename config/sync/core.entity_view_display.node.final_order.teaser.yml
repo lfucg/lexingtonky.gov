@@ -20,10 +20,10 @@ bundle: final_order
 mode: teaser
 content:
   links:
-    weight: 100
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 100
+    region: content
 hidden:
   addtoany: true
   field_address: true
@@ -35,5 +35,3 @@ hidden:
   field_owners_address: true
   field_person_charged: true
   field_pva_num: true
-  langcode: true
-  search_api_excerpt: true

@@ -22,15 +22,15 @@ bundle: board_commission
 mode: teaser
 content:
   links:
+    settings: {  }
+    third_party_settings: {  }
     weight: 100
     region: content
+  workbench_moderation_control:
     settings: {  }
     third_party_settings: {  }
-  workbench_moderation_control:
     weight: -20
     region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
   addtoany: true
   field_granicus_id: true
@@ -42,5 +42,3 @@ hidden:
   field_page_overview: true
   field_page_section: true
   field_related_documents: true
-  langcode: true
-  search_api_excerpt: true

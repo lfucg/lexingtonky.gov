@@ -22,14 +22,11 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       quote: quote
       standalone_link: standalone_link
+    negate: 0
     target_bundles_drag_drop:
-      quote_grid:
-        weight: 20
-        enabled: false
       accordion_block:
         weight: 21
         enabled: false
@@ -76,15 +73,18 @@ settings:
         weight: 35
         enabled: false
       quote:
-        enabled: true
         weight: 36
+        enabled: true
+      quote_grid:
+        weight: 20
+        enabled: false
       rendered_block:
         weight: 37
         enabled: false
+      standalone_link:
+        weight: 39
+        enabled: true
       views_block:
         weight: 38
         enabled: false
-      standalone_link:
-        enabled: true
-        weight: 39
 field_type: entity_reference_revisions

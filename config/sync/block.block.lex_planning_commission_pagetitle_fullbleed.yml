@@ -16,18 +16,18 @@ plugin: page_title_block
 settings:
   id: page_title_block
   label: 'Page title for full-bleed'
-  provider: core
   label_display: '0'
+  provider: core
 visibility:
   'entity_bundle:node':
     id: 'entity_bundle:node'
-    bundles:
-      landing_page: landing_page
     negate: false
     context_mapping:
       node: '@node.node_route_context:node'
+    bundles:
+      landing_page: landing_page
   request_path:
     id: request_path
-    pages: '<front>'
     negate: true
     context_mapping: {  }
+    pages: '<front>'

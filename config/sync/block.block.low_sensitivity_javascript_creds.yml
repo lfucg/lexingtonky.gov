@@ -18,16 +18,16 @@ plugin: 'block_content:9f727ba5-277d-4564-a215-0900a7f5ac75'
 settings:
   id: 'block_content:9f727ba5-277d-4564-a215-0900a7f5ac75'
   label: 'Low-sensitivity javascript credentials for authenticated users'
-  provider: block_content
   label_display: ''
+  provider: block_content
   status: true
   info: ''
   view_mode: full
 visibility:
   user_role:
     id: user_role
-    roles:
-      authenticated: authenticated
     negate: false
     context_mapping:
       user: '@user.current_user_context:current_user'
+    roles:
+      authenticated: authenticated

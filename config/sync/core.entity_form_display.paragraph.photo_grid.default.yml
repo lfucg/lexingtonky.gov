@@ -15,13 +15,13 @@ bundle: photo_grid
 mode: default
 content:
   field_grid_photo:
+    type: image_image
     weight: 6
+    region: content
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
-    type: image_image
-    region: content
 hidden:
   created: true
   status: true

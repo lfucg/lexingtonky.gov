@@ -19,19 +19,19 @@ plugin: 'fieldblock:node'
 settings:
   id: 'fieldblock:node'
   label: 'Fieldblock organization image'
-  provider: fieldblock
   label_display: '0'
-  label_from_field: 1
+  provider: fieldblock
+  label_from_field: true
   field_name: field_organization_image
   formatter_id: responsive_image
   formatter_settings:
-    image_style: lex_two_column
     image_link: ''
+    image_style: lex_two_column
 visibility:
   'entity_bundle:node':
     id: 'entity_bundle:node'
-    bundles:
-      organization_page: organization_page
     negate: false
     context_mapping:
       node: '@node.node_route_context:node'
+    bundles:
+      organization_page: organization_page

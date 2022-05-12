@@ -17,8 +17,8 @@ plugin: 'block_content:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
 settings:
   id: 'block_content:68f3ffe9-ac3a-49a4-a000-c76d57ac65e5'
   label: 'Front Page Quick Links'
-  provider: block_content
   label_display: '0'
+  provider: block_content
   status: true
   info: ''
   view_mode: full

@@ -17,72 +17,71 @@ mode: default
 content:
   field_feedback_url:
     type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
     weight: 5
     region: content
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
   field_internal_notes:
     type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
     weight: 8
     region: content
-    label: above
-    settings: {  }
-    third_party_settings: {  }
   field_optional_email:
-    weight: 7
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 7
     region: content
   field_optional_name:
-    weight: 6
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 6
     region: content
   field_page_suggestion:
     type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
     weight: 4
     region: content
-    label: above
-    settings: {  }
-    third_party_settings: {  }
   mail:
     type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
     weight: 1
     region: content
-    label: above
-    settings: {  }
-    third_party_settings: {  }
   message:
     type: basic_string
-    weight: 3
-    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
+    weight: 3
+    region: content
   name:
     type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
     weight: 0
     region: content
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
   subject:
-    weight: 2
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 2
     region: content
 hidden:
   field_city_response_from: true
-  langcode: true
   search_api_excerpt: true

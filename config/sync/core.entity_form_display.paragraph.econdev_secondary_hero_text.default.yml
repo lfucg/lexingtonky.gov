@@ -14,13 +14,13 @@ bundle: econdev_secondary_hero_text
 mode: default
 content:
   field_heading:
+    type: text_textfield
     weight: 6
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: text_textfield
-    region: content
 hidden:
   created: true
   status: true

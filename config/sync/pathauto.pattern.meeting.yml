@@ -10,13 +10,13 @@ type: 'canonical_entities:node'
 pattern: '/meeting-notices/[node:nid]/[node:title]'
 selection_criteria:
   df78bac5-1fc3-4764-aade-40a8b59f1219:
-    id: node_type
-    bundles:
-      meeting: meeting
+    id: 'entity_bundle:node'
     negate: false
+    uuid: df78bac5-1fc3-4764-aade-40a8b59f1219
     context_mapping:
       node: node
-    uuid: df78bac5-1fc3-4764-aade-40a8b59f1219
+    bundles:
+      meeting: meeting
 selection_logic: and
 weight: -5
 relationships: {  }

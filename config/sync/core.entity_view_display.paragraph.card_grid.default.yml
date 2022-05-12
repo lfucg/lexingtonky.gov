@@ -14,12 +14,11 @@ mode: default
 content:
   field_grid_card:
     type: entity_reference_revisions_entity_view
-    weight: 0
     label: above
     settings:
       view_mode: default
       link: ''
     third_party_settings: {  }
+    weight: 0
     region: content
-hidden:
-  search_api_excerpt: true
+hidden: {  }

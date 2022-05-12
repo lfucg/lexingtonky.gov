@@ -18,14 +18,14 @@ plugin: 'block_content:f6575967-795d-406e-a821-e8bda1c23c21'
 settings:
   id: 'block_content:f6575967-795d-406e-a821-e8bda1c23c21'
   label: 'Urban County Council'
-  provider: block_content
   label_display: visible
+  provider: block_content
   status: true
   info: ''
   view_mode: full
 visibility:
   request_path:
     id: request_path
-    pages: '<front>'
     negate: false
     context_mapping: {  }
+    pages: '<front>'

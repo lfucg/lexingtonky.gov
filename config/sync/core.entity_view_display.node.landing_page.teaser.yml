@@ -18,15 +18,15 @@ bundle: landing_page
 mode: teaser
 content:
   links:
+    settings: {  }
+    third_party_settings: {  }
     weight: 100
     region: content
+  workbench_moderation_control:
     settings: {  }
     third_party_settings: {  }
-  workbench_moderation_control:
     weight: -20
     region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
   addtoany: true
   body: true
@@ -34,5 +34,3 @@ hidden:
   field_lex_site_nav: true
   field_metatags: true
   field_related_departments: true
-  langcode: true
-  search_api_excerpt: true

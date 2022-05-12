@@ -11,34 +11,33 @@ mode: default
 content:
   mail:
     type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
     weight: 1
     region: content
-    label: above
-    settings: {  }
-    third_party_settings: {  }
   message:
     type: basic_string
-    weight: 3
-    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
+    weight: 3
+    region: content
   name:
     type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
     weight: 0
     region: content
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
   subject:
     type: string
-    weight: 2
-    region: content
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 2
+    region: content
 hidden:
-  langcode: true
   search_api_excerpt: true

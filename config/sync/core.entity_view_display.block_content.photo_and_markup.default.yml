@@ -16,21 +16,20 @@ bundle: photo_and_markup
 mode: default
 content:
   field_image:
-    weight: 0
+    type: image
     label: hidden
     settings:
-      image_style: 4x3
       image_link: ''
+      image_style: 4x3
     third_party_settings: {  }
-    type: image
+    weight: 0
     region: content
   field_markup:
-    weight: 1
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    weight: 1
     region: content
 hidden:
-  langcode: true
   search_api_excerpt: true

@@ -14,24 +14,22 @@ bundle: user
 mode: default
 content:
   masquerade:
+    settings: {  }
+    third_party_settings: {  }
     weight: 50
     region: content
+  member_for:
     settings: {  }
     third_party_settings: {  }
-  member_for:
     weight: 5
     region: content
-    settings: {  }
-    third_party_settings: {  }
   user_picture:
     type: image
-    weight: 0
-    settings:
-      image_style: thumbnail
-      image_link: content
-    third_party_settings: {  }
     label: hidden
+    settings:
+      image_link: content
+      image_style: thumbnail
+    third_party_settings: {  }
+    weight: 0
     region: content
-hidden:
-  langcode: true
-  search_api_excerpt: true
+hidden: {  }

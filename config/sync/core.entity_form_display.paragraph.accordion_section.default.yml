@@ -15,21 +15,21 @@ bundle: accordion_section
 mode: default
 content:
   field_description:
+    type: text_textarea
     weight: 7
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
   field_heading:
+    type: text_textfield
     weight: 6
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: text_textfield
-    region: content
 hidden:
   created: true
   status: true

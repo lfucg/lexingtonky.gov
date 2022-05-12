@@ -27,26 +27,26 @@ bundle: organization_page
 mode: default
 content:
   field_metatags:
-    weight: 1
+    type: metatag_empty_formatter
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: metatag_empty_formatter
+    weight: 1
     region: content
   field_upcoming_events:
-    weight: 2
+    type: viewsreference_formatter
     label: above
     settings:
       plugin_types:
         - block
     third_party_settings: {  }
-    type: viewsreference_formatter
+    weight: 2
     region: content
   workbench_moderation_control:
-    weight: 0
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 0
+    region: content
 hidden:
   addtoany: true
   body: true
@@ -60,6 +60,5 @@ hidden:
   field_related_departments: true
   field_related_documents: true
   field_top_services: true
-  langcode: true
   links: true
   search_api_excerpt: true

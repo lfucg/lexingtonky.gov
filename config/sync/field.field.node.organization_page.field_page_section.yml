@@ -24,22 +24,16 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       paragraphs_page_section: paragraphs_page_section
       accordion_block: accordion_block
       flex_grid: flex_grid
       quote_grid: quote_grid
+    negate: 0
     target_bundles_drag_drop:
-      paragraphs_media_contact:
-        weight: 3
-        enabled: false
-      paragraphs_page_section:
-        enabled: true
-        weight: 4
       accordion_block:
-        enabled: true
         weight: 21
+        enabled: true
       accordion_section:
         weight: 22
         enabled: false
@@ -59,8 +53,8 @@ settings:
         weight: 27
         enabled: false
       flex_grid:
-        enabled: true
         weight: 28
+        enabled: true
       icon_button_with_description:
         weight: 29
         enabled: false
@@ -73,6 +67,12 @@ settings:
       paragraph_sidebar_section:
         weight: 34
         enabled: false
+      paragraphs_media_contact:
+        weight: 3
+        enabled: false
+      paragraphs_page_section:
+        weight: 4
+        enabled: true
       photo_grid:
         weight: 35
         enabled: false
@@ -80,8 +80,8 @@ settings:
         weight: 36
         enabled: false
       quote_grid:
-        enabled: true
         weight: 37
+        enabled: true
       rendered_block:
         weight: 38
         enabled: false

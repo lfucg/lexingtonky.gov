@@ -16,12 +16,12 @@ plugin: lookup_services_block
 settings:
   id: lookup_services_block
   label: 'Lookup Services block'
-  provider: lookup_services
   label_display: '0'
+  provider: lookup_services
   lookup_services_block_settings: null
 visibility:
   request_path:
     id: request_path
-    pages: '<front>'
     negate: false
     context_mapping: {  }
+    pages: '<front>'

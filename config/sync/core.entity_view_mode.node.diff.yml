@@ -2,12 +2,12 @@ uuid: 437e6fba-34c0-4031-a747-3496ac876872
 langcode: en
 status: false
 dependencies:
+  module:
+    - node
   enforced:
     module:
       - node
       - diff
-  module:
-    - node
 _core:
   default_config_hash: q75Otzlypu_5TghImH1cxuN6umtka1UE4GdONTsPaD8
 id: node.diff

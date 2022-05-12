@@ -20,14 +20,14 @@ bundle: contact_card
 mode: default
 content:
   field_contact_email:
-    weight: 4
+    type: basic_string
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 4
     region: content
   field_contact_link:
-    weight: 5
+    type: link
     label: above
     settings:
       trim_length: 80
@@ -36,39 +36,39 @@ content:
       rel: ''
       target: ''
     third_party_settings: {  }
-    type: link
+    weight: 5
     region: content
   field_contact_name:
-    weight: 1
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 1
     region: content
   field_contact_phone:
-    weight: 2
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 2
     region: content
   field_contact_position:
-    weight: 3
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 3
     region: content
   field_image:
-    weight: 0
+    type: image_url
     label: hidden
     settings:
       image_style: contact_image
     third_party_settings: {  }
-    type: image_url
+    weight: 0
     region: content
 hidden:
   search_api_excerpt: true

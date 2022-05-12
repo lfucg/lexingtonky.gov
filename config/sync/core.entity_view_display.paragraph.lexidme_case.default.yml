@@ -17,36 +17,35 @@ bundle: lexidme_case
 mode: default
 content:
   field_card_photo:
-    weight: 3
+    type: image
     label: above
     settings:
-      image_style: ''
       image_link: ''
+      image_style: ''
     third_party_settings: {  }
-    type: image
+    weight: 3
     region: content
   field_case_subtitle:
-    weight: 1
+    type: text_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    weight: 1
     region: content
   field_case_title:
-    weight: 2
+    type: text_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    weight: 2
     region: content
   field_lexid_reference:
-    weight: 0
+    type: entity_reference_entity_view
     label: above
     settings:
-      link: true
       view_mode: default
+      link: true
     third_party_settings: {  }
-    type: entity_reference_entity_view
+    weight: 0
     region: content
-hidden:
-  search_api_excerpt: true
+hidden: {  }

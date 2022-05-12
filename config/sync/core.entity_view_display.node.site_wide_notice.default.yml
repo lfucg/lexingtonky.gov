@@ -14,18 +14,16 @@ bundle: site_wide_notice
 mode: default
 content:
   body:
-    weight: 101
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    weight: 101
     region: content
   links:
-    weight: 100
     settings: {  }
     third_party_settings: {  }
+    weight: 100
     region: content
 hidden:
   addtoany: true
-  langcode: true
-  search_api_excerpt: true

@@ -1,3 +1,5 @@
+_core:
+  default_config_hash: 9YPlBuinIKLe5jVEf-aIhZvKFn77i18yD4CrNR0BbVQ
 buttons_size: 32
 additional_html: "<a class=\"a2a_button_facebook\"></a>\r\n<a class=\"a2a_button_twitter\"></a>\r\n<a class=\"a2a_button_email\"></a>\r\n"
 additional_css: ''
@@ -5,7 +7,6 @@ additional_js: ''
 universal_button: default
 custom_universal_button: ''
 universal_button_placement: after
-no_3p: false
 entities:
   media: 1
   node: 1
@@ -19,5 +20,4 @@ entities:
   user: 0
   menu_link_content: 0
   paragraph: 0
-_core:
-  default_config_hash: 9YPlBuinIKLe5jVEf-aIhZvKFn77i18yD4CrNR0BbVQ
+no_3p: false

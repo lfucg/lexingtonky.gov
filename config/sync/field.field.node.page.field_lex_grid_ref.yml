@@ -21,19 +21,19 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       lexidme_grid: lexidme_grid
+    negate: 0
     target_bundles_drag_drop:
+      card_grid:
+        weight: 8
+        enabled: false
       lexidme_case:
         weight: 6
         enabled: false
       lexidme_grid:
-        enabled: true
         weight: 7
-      card_grid:
-        weight: 8
-        enabled: false
+        enabled: true
       paragraph_sidebar_section:
         weight: 8
         enabled: false

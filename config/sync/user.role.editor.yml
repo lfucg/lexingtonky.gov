@@ -1,7 +1,32 @@
 uuid: 6ddf906b-9461-4c38-9f00-cadaccb914e3
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  config:
+    - filter.format.advanced_html
+    - filter.format.basic_html
+    - filter.format.restricted_html
+    - node.type.board_commission
+    - node.type.event
+    - node.type.landing_page
+    - node.type.meeting
+    - node.type.news_article
+    - node.type.organization_page
+    - node.type.page
+    - node.type.site_wide_notice
+  module:
+    - contact
+    - contextual
+    - embed
+    - entity_browser
+    - file
+    - filter
+    - node
+    - path
+    - taxonomy
+    - toolbar
+    - tour
+    - workbench_moderation
 id: editor
 label: Editor
 weight: -8

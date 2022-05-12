@@ -12,7 +12,6 @@ dependencies:
     - field.field.taxonomy_term.locations.field_hours_of_operation
     - field.field.taxonomy_term.locations.field_location_detail
     - field.field.taxonomy_term.locations.field_metatags
-    - field.field.taxonomy_term.locations.field_page_link
     - field.field.taxonomy_term.locations.field_social_link_facebook
     - field.field.taxonomy_term.locations.field_social_link_instagram
     - field.field.taxonomy_term.locations.field_social_link_linkedin
@@ -31,11 +30,11 @@ bundle: locations
 mode: link_to_edit
 content:
   description:
-    label: hidden
     type: text_default
-    weight: 0
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 0
     region: content
 hidden:
   field_contact_email: true
@@ -46,7 +45,6 @@ hidden:
   field_hours_of_operation: true
   field_location_detail: true
   field_metatags: true
-  field_page_link: true
   field_social_link_facebook: true
   field_social_link_instagram: true
   field_social_link_linkedin: true
@@ -56,5 +54,3 @@ hidden:
   field_street: true
   field_street_number: true
   field_zip_code: true
-  langcode: true
-  search_api_excerpt: true

@@ -13,7 +13,7 @@ bundle: list_of_links
 mode: default
 content:
   field_lex_link:
-    weight: 1
+    type: link
     label: visually_hidden
     settings:
       trim_length: 80
@@ -22,8 +22,6 @@ content:
       rel: ''
       target: ''
     third_party_settings: {  }
-    type: link
+    weight: 1
     region: content
-hidden:
-  langcode: true
-  search_api_excerpt: true
+hidden: {  }

@@ -28,7 +28,6 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 1
     target_bundles:
       flex_grid: flex_grid
       card_grid: card_grid
@@ -39,19 +38,20 @@ settings:
       photo_grid: photo_grid
       rendered_block: rendered_block
       views_block: views_block
+    negate: 1
     target_bundles_drag_drop:
-      flex_grid:
-        enabled: true
-        weight: 14
       card_button:
         weight: 15
         enabled: false
       card_grid:
-        enabled: true
         weight: 16
+        enabled: true
       contact_card:
         weight: 17
         enabled: false
+      flex_grid:
+        weight: 14
+        enabled: true
       icon_button_with_description:
         weight: 18
         enabled: false
@@ -59,24 +59,24 @@ settings:
         weight: 19
         enabled: false
       lexidme_grid:
-        enabled: true
         weight: 20
+        enabled: true
       paragraph_sidebar_section:
-        enabled: true
         weight: 21
+        enabled: true
       paragraphs_media_contact:
-        enabled: true
         weight: 22
+        enabled: true
       paragraphs_page_section:
-        enabled: true
         weight: 23
+        enabled: true
       photo_grid:
-        enabled: true
         weight: 24
+        enabled: true
       rendered_block:
-        enabled: true
         weight: 25
-      views_block:
         enabled: true
+      views_block:
         weight: 26
+        enabled: true
 field_type: entity_reference_revisions
