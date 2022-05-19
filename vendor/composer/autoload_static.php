@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit0495cb476748113cd8c2b650669189aa
+class ComposerStaticInitfc5c072bbc18e8af9e5599ba42ad535d
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -7826,6 +7826,7 @@ class ComposerStaticInit0495cb476748113cd8c2b650669189aa
         return \Closure::bind(function () use ($loader) {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             $loader->prefixLengthsPsr4 = ComposerStaticInitDrupal8::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitDrupal8::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInitDrupal8::$prefixesPsr0;
@@ -7845,6 +7846,13 @@ class ComposerStaticInit0495cb476748113cd8c2b650669189aa
             $loader->fallbackDirsPsr0 = ComposerStaticInit0495cb476748113cd8c2b650669189aa::$fallbackDirsPsr0;
             $loader->classMap = ComposerStaticInit0495cb476748113cd8c2b650669189aa::$classMap;
 >>>>>>> Site is upgraded and working
+=======
+            $loader->prefixLengthsPsr4 = ComposerStaticInitfc5c072bbc18e8af9e5599ba42ad535d::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitfc5c072bbc18e8af9e5599ba42ad535d::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitfc5c072bbc18e8af9e5599ba42ad535d::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitfc5c072bbc18e8af9e5599ba42ad535d::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitfc5c072bbc18e8af9e5599ba42ad535d::$classMap;
+>>>>>>> Pulled DB from Live
 
         }, null, ClassLoader::class);
     }

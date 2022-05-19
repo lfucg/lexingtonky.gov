@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'c309ddf249d2f542060f8d45c546bc854ca31b0b',
+    'reference' => 'f4811e6d73f48c13b33b1063febfeaf16147aa2a',
     'name' => 'my/project',
   ),
   'versions' => 
@@ -1756,7 +1756,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'c309ddf249d2f542060f8d45c546bc854ca31b0b',
+      'reference' => 'f4811e6d73f48c13b33b1063febfeaf16147aa2a',
     ),
     'myclabs/php-enum' => 
     array (

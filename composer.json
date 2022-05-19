@@ -79,7 +79,15 @@
     "config": {
         "sort-packages": true,
         "discard-changes": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "composer/installers": true,
+            "cweagans/composer-patches": true,
+            "drupal/core-composer-scaffold": true,
+            "grasmash/drupal-security-warning": true,
+            "oomphinc/composer-installers-extender": true,
+            "wikimedia/composer-merge-plugin": true
+        }
     },
     "conflict": {
         "drupal/drupal": "*"
