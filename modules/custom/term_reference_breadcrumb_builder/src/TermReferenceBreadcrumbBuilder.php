@@ -10,6 +10,7 @@ namespace Drupal\term_reference_breadcrumb_builder;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -28,6 +29,13 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    */
   protected $entityManager;
 
+    /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityRepositoryInterface
+   */
+  protected $entityRepository;
+
   /**
    * The taxonomy storage.
    */
@@ -38,9 +46,12 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityManager
    *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entityRepository
+   *   The entity respository interface.
    */
-  public function __construct(EntityTypeManagerInterface $entityManager) {
+  public function __construct(EntityTypeManagerInterface $entityManager, EntityRepositoryInterface $entityRepository) {
     $this->entityManager = $entityManager;
+    $this->entityRepository = $entityRepository;
     $this->termStorage = $entityManager->getStorage('taxonomy_term');
   }
 
@@ -77,7 +88,7 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     }
     $parents = $this->termStorage->loadAllParents($termId);
     foreach (array_reverse($parents) as $term) {
-      $term = $this->entityManager->getTranslationFromContext($term);
+      $term = $this->entityRepository->getTranslationFromContext($term);
       $breadcrumb->addCacheableDependency($term);
       $breadcrumb->addLink(Link::createFromRoute($term->getName(), 'entity.taxonomy_term.canonical', array('taxonomy_term' => $term->id())));
     }

@@ -1,6 +1,6 @@
 services:
   term_reference_breadcrumb_builder.breadcrumb:
     class: Drupal\term_reference_breadcrumb_builder\TermReferenceBreadcrumbBuilder
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@entity.repository']
     tags:
       - { name: breadcrumb_builder, priority: 1 }
