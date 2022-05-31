@@ -1,0 +1,22 @@
+{#
+/**
+* @file
+* Default theme implementation to display an iframe field.
+*
+* Available variables:
+* - src: Url being loaded into the iframe.
+* - attributes: An array of HTML attributes, intended to be added to the iframe tag.
+* - text: Title text.
+* - style: style Block
+* - headerlevel: header level
+*/
+#}
+<div{% if attributes.class is not empty %} class="{{ attributes.class }}"{% endif %}>
+  {% if text is not empty %}
+    <h{{ headerlevel ?? 3 }} class="iframe_title">{{ text }}</h{{ headerlevel ?? 3 }}>
+  {% endif %}
+  <style type="text/css">{{ style|raw }}</style>
+  <iframe {{ attributes }}>
+    {{ 'Your browser does not support iframes, but you can visit <a href=":url">@text</a>'|t({ ':url': src, '@text': text }) }}
+  </iframe>
+</div>

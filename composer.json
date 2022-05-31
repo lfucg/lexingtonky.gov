@@ -51,6 +51,7 @@
         "drupal/file_browser": "^1.1.0",
         "drupal/flood_control": "^2.2",
         "drupal/honeypot": "^1.27.0",
+        "drupal/iframe": "^2.16",
         "drupal/imce": "^2.2",
         "drupal/masquerade": "^2.0.0-beta2",
         "drupal/media_entity": "^1.8.0",
