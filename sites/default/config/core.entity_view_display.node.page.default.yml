@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.page.body
     - field.field.node.page.field_econdev_hero_text
+    - field.field.node.page.field_iframe
     - field.field.node.page.field_keywords
     - field.field.node.page.field_lex_custom_banner_image
     - field.field.node.page.field_lex_grid_ref
@@ -21,6 +22,7 @@ dependencies:
     - node.type.page
   module:
     - entity_reference_revisions
+    - iframe
     - metatag
     - text
     - user
@@ -34,6 +36,24 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_iframe:
+    weight: 9
+    label: visually_hidden
+    settings:
+      url: ''
+      title: ''
+      headerlevel: '3'
+      width: ''
+      height: ''
+      class: ''
+      frameborder: '0'
+      scrolling: ''
+      transparency: '0'
+      tokensupport: '0'
+      allowfullscreen: '0'
+    third_party_settings: {  }
+    type: iframe_only
+    region: content
   field_lex_grid_ref:
     type: entity_reference_revisions_entity_view
     weight: 7

@@ -1,0 +1,19 @@
+uuid: 5271b59d-b10f-452d-8703-ce7eca2fe7d2
+langcode: en
+status: true
+dependencies:
+  module:
+    - iframe
+    - node
+id: node.field_iframe
+field_name: field_iframe
+entity_type: node
+type: iframe
+settings: {  }
+module: iframe
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

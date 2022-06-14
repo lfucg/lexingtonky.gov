@@ -2447,6 +2447,8 @@ return array(
     'HTMLPurifier_Injector_RemoveEmpty' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier/Injector/RemoveEmpty.php',
     'HTMLPurifier_Injector_RemoveSpansWithoutAttributes' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier/Injector/RemoveSpansWithoutAttributes.php',
     'HTMLPurifier_Injector_SafeObject' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier/Injector/SafeObject.php',
+    'HTMLPurifier_Language' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier/Language.php',
+    'HTMLPurifier_LanguageFactory' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier/LanguageFactory.php',
     'HTMLPurifier_Length' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier/Length.php',
     'HTMLPurifier_Lexer' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier/Lexer.php',
     'HTMLPurifier_Lexer_DOMLex' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier/Lexer/DOMLex.php',

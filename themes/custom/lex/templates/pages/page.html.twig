@@ -69,33 +69,35 @@
   {% endblock %}
   </div>
   {% block sidebar %}
-  <div>
-    {% if node.field_media_contact[0].entity.field_contact_name.value %}
-      <div id="block-field-block-field-office-to-contact" class="lex-block">
-      <h2>Contact</h2>
+    {% if node.field_media_contact[0].entity.field_contact_name.value or page.sidebar is not empty %}
       <div>
-        <div about="/taxonomy/term/31">
-          <ul class="lex-aside-list">
-            <li>
-              <h4 class="lex-card-title lex-card-title-medium">
-              <div>{{node.field_media_contact[0].entity.field_contact_name.value}}</div>
-              </h4>
-            </li>
-            <li class="lex-location-contact">
-              <a class="lex-social-link fa-envelope" href="mailto:{{node.field_media_contact[0].entity.field_contact_email.value}}">Email us</a>
-            </li>
-            <li class="lex-location-contact">
-              <a class="lex-social-link fa-phone" href="tel:{{node.field_media_contact[0].entity.field_contact_phone.value}}">{{node.field_media_contact[0].entity.field_contact_phone.value}}</a>
-            </li>
-          </ul>
+        {% if node.field_media_contact[0].entity.field_contact_name.value %}
+          <div id="block-field-block-field-office-to-contact" class="lex-block">
+          <h2>Contact</h2>
+          <div>
+            <div about="/taxonomy/term/31">
+              <ul class="lex-aside-list">
+                <li>
+                  <h4 class="lex-card-title lex-card-title-medium">
+                  <div>{{node.field_media_contact[0].entity.field_contact_name.value}}</div>
+                  </h4>
+                </li>
+                <li class="lex-location-contact">
+                  <a class="lex-social-link fa-envelope" href="mailto:{{node.field_media_contact[0].entity.field_contact_email.value}}">Email us</a>
+                </li>
+                <li class="lex-location-contact">
+                  <a class="lex-social-link fa-phone" href="tel:{{node.field_media_contact[0].entity.field_contact_phone.value}}">{{node.field_media_contact[0].entity.field_contact_phone.value}}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
+        {% endif %}
+        {% if page.sidebar is not empty %}
+          {{ page.sidebar }}
+        {% endif %}
       </div>
-    </div>
     {% endif %}
-    {% if page.sidebar is not empty %}
-      {{ page.sidebar }}
-    {% endif %}
-  </div>
   {% endblock %}
 </main>
 {% endblock %}

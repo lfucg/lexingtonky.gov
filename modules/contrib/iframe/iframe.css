@@ -1,0 +1,12 @@
+div.field-type-iframe {
+  margin: 0 auto;
+  color: black;
+  background-color: white;
+}
+
+@media only screen and (max-width: 480px) {
+  div.field-type-iframe {
+    width: 100%;
+    height: auto;
+  }
+}

@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.page.body
     - field.field.node.page.field_econdev_hero_text
+    - field.field.node.page.field_iframe
     - field.field.node.page.field_keywords
     - field.field.node.page.field_lex_custom_banner_image
     - field.field.node.page.field_lex_grid_ref
@@ -23,6 +24,7 @@ dependencies:
   module:
     - chosen_field
     - file
+    - iframe
     - image
     - metatag
     - paragraphs
@@ -51,6 +53,22 @@ content:
       form_display_mode: default
       default_paragraph_type: ''
     third_party_settings: {  }
+    region: content
+  field_iframe:
+    weight: 26
+    settings:
+      width: ''
+      height: ''
+      headerlevel: '3'
+      class: ''
+      expose_class: false
+      frameborder: '0'
+      scrolling: auto
+      transparency: '0'
+      tokensupport: '0'
+      allowfullscreen: '0'
+    third_party_settings: {  }
+    type: iframe_urlwidthheight
     region: content
   field_keywords:
     weight: 14

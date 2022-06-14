@@ -1,0 +1,34 @@
+uuid: 2c2a5709-4ce7-461c-9560-2557aa1a2896
+langcode: en
+status: false
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.full_page_iframe.body
+    - field.field.node.full_page_iframe.field_iframe
+    - node.type.full_page_iframe
+  module:
+    - text
+    - user
+id: node.full_page_iframe.teaser
+targetEntityType: node
+bundle: full_page_iframe
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  addtoany: true
+  field_iframe: true
+  search_api_excerpt: true
