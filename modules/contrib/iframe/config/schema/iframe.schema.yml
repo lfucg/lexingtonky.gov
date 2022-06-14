@@ -1,0 +1,91 @@
+iframe.field.schema:
+  type: mapping
+  label: Iframe default settings
+  mapping:
+    url:
+      type: string
+      label: URL
+    title:
+      type: label
+      label: Title
+      nullable: true
+    headerlevel:
+      type: string
+      label: 'Header Level'
+      nullable: true
+    class:
+      type: string
+      label: Class
+      nullable: true
+    frameborder:
+      type: string
+      label: 'Frame border'
+      nullable: true
+    scrolling:
+      type: string
+      label: Scrolling
+      nullable: true
+    transparency:
+      type: string
+      label: Transparency
+      nullable: true
+    allowfullscreen:
+      type: string
+      label: 'Allow full screen'
+      nullable: true
+    tokensupport:
+      type: string
+      label: 'Token Support'
+      nullable: true
+    width:
+      type: string
+      label: Width
+      nullable: true
+    height:
+      type: string
+      label: Height
+      nullable: true
+
+
+field.value.iframe:
+  type: iframe.field.schema
+  label: 'Default value'
+
+field.field_settings.iframe:
+  type: iframe.field.schema
+  label: 'Field settings'
+
+field.widget.settings.iframe_urlwidthheight:
+  type: iframe.field.schema
+  label: 'Iframe URL with width and height widget'
+  mapping:
+    expose_class:
+      label: 'Expose Additional CSS Class'
+      type: boolean
+    tokensupport:
+      label: 'Token Support'
+      type: string
+
+field.widget.settings.iframe_url:
+  type: field.widget.settings.iframe_urlwidthheight
+  label: 'Iframe URL only widget'
+
+field.widget.settings.iframe_urlheight:
+  type: field.widget.settings.iframe_urlwidthheight
+  label: 'Iframe URL with height widget'
+
+field.formatter.settings.iframe_default:
+  type: iframe.field.schema
+  label: 'Formatter "iframe_asurl" settings'
+
+field.formatter.settings.iframe_asurl:
+  type: field.formatter.settings.iframe_default
+  label: 'Formatter "iframe_asurl"'
+
+field.formatter.settings.iframe_asurlwithuri:
+  type: field.formatter.settings.iframe_default
+  label: 'Formatter "iframe_asurlwithuri"'
+
+field.formatter.settings.iframe_only:
+  type: field.formatter.settings.iframe_default
+  label: 'Formatter "iframe_only"'

@@ -42,6 +42,22 @@ gulp.task('uglify', function() {
     .pipe(gulp.dest('./js'))
 });
 
+/**
+* @task refresh
+* Refresh browser
+*/
+gulp.task('refresh', function(done) {
+    livereload.reload();
+   done();
+ });
+
+/**
+ * @task build
+ * Compile sass / js
+ */
+ gulp.task('build', gulp.series('imagemin', 'sass', 'old_sass', 'refresh'));
+
+
 gulp.task('watch', function(){
     livereload.listen();
     gulp.watch('./scss/**/*.scss', gulp.series('sass'));
