@@ -69,7 +69,7 @@
   {% endblock %}
   </div>
   {% block sidebar %}
-    {% if node.field_media_contact[0].entity.field_contact_name.value or page.sidebar is not empty %}
+    {% if node.type.value[0].target_id != 'full_page_iframe' %}
       <div>
         {% if node.field_media_contact[0].entity.field_contact_name.value %}
           <div id="block-field-block-field-office-to-contact" class="lex-block">
