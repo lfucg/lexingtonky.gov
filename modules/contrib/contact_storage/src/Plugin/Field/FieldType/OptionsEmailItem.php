@@ -2,6 +2,7 @@
 
 namespace Drupal\contact_storage\Plugin\Field\FieldType;
 
+use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\options\Plugin\Field\FieldType\ListItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
@@ -59,7 +60,7 @@ class OptionsEmailItem extends ListItemBase {
     $description .= '<br/>' . $this->t('"label" is the value displayed in the dropdown menu on the contact form.');
     $description .= '<br/>' . $this->t('"emails" are the email addresses to add to the recipients list (each separated by a comma).');
     $description .= '</p>';
-    $description .= '<p>' . $this->t('Allowed HTML tags in labels: @tags', ['@tags' => $this->displayAllowedTags()]) . '</p>';
+    $description .= '<p>' . $this->t('Allowed HTML tags in labels: @tags', ['@tags' => FieldFilteredMarkup::displayAllowedTags()]) . '</p>';
     return $description;
   }
 

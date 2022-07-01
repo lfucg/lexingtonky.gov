@@ -85,7 +85,7 @@ class HelpController extends ControllerBase {
 
     foreach ($plugins as $plugin_id => $plugin_definition) {
       // Check the provided permission.
-      if (!empty($plugin_definition['permission']) && !$this->currentuser()->hasPermission($plugin_definition['permission'])) {
+      if (!empty($plugin_definition['permission']) && !$this->currentUser()->hasPermission($plugin_definition['permission'])) {
         continue;
       }
 
@@ -128,7 +128,7 @@ class HelpController extends ControllerBase {
    */
   public function helpPage($name) {
     $build = [];
-    if ($this->moduleHandler()->implementsHook($name, 'help')) {
+    if ($this->moduleHandler()->hasImplementations('help', $name)) {
       $module_name = $this->moduleHandler()->getName($name);
       $build['#title'] = $module_name;
 

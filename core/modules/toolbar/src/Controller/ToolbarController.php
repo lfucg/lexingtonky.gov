@@ -22,7 +22,7 @@ class ToolbarController extends ControllerBase implements TrustedCallbackInterfa
    * @return \Drupal\Core\Ajax\AjaxResponse
    */
   public function subtreesAjax() {
-    [$subtrees, $cacheability] = toolbar_get_rendered_subtrees();
+    [$subtrees] = toolbar_get_rendered_subtrees();
     $response = new AjaxResponse();
     $response->addCommand(new SetSubtreesCommand($subtrees));
 

@@ -32,3 +32,7 @@
   background: none !important;
   border: 0 none !important;
 }
+
+.chosen-container-multi.chosen-with-drop .chosen-drop {
+  left: 0;
+}

@@ -31,7 +31,7 @@ class CaptchaTest extends CaptchaWebTestBase {
     $this->drupalLogout();
 
     // Set a CAPTCHA on login form.
-    /* @var \Drupal\captcha\Entity\CaptchaPoint $captcha_point */
+    /** @var \Drupal\captcha\Entity\CaptchaPoint $captcha_point */
     $captcha_point = \Drupal::entityTypeManager()
       ->getStorage('captcha_point')
       ->load('user_login_form');
@@ -50,7 +50,7 @@ class CaptchaTest extends CaptchaWebTestBase {
     ];
     $this->submitForm($edit, $this->t('Log in'), self::LOGIN_HTML_FORM_ID);
     // Check for error message.
-    $this->assertSession()->pageTextContains(self::CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE, 'CAPTCHA should block user login form', 'CAPTCHA');
+    $this->assertSession()->pageTextContains(self::CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE);
 
     // And make sure that user is not logged in:
     // check for name and password fields on ?q=user.
@@ -62,7 +62,7 @@ class CaptchaTest extends CaptchaWebTestBase {
   /**
    * Testing the response error menssage.
    */
-  public function testCaptchaResponseErrorMenssage() {
+  public function testCaptchaResponseErrorMessage() {
     // Customize the response error message.
     $this->drupalLogin($this->adminUser);
     $customized_menssage = 'The answer you entered is wrong.';
@@ -73,7 +73,7 @@ class CaptchaTest extends CaptchaWebTestBase {
     $this->submitForm($edit, $this->t('Save configuration'));
 
     // Set a CAPTCHA on login form.
-    /* @var \Drupal\captcha\Entity\CaptchaPoint $captcha_point */
+    /** @var \Drupal\captcha\Entity\CaptchaPoint $captcha_point */
     $captcha_point = \Drupal::entityTypeManager()
       ->getStorage('captcha_point')
       ->load('user_login_form');
@@ -90,7 +90,7 @@ class CaptchaTest extends CaptchaWebTestBase {
       'captcha_response' => '?',
     ];
     $this->submitForm($edit, $this->t('Log in'), self::LOGIN_HTML_FORM_ID);
-    $this->assertSession()->pageTextContains($customized_menssage, 'CAPTCHA should block user login form', 'CAPTCHA');
+    $this->assertSession()->pageTextContains($customized_menssage);
 
   }
 
@@ -130,16 +130,16 @@ class CaptchaTest extends CaptchaWebTestBase {
       $this->assertCaptchaResponseAccepted();
       // Get node page and check that comment shows up.
       $this->drupalGet('node/' . $node->id());
-      $this->assertSession()->pageTextContains($comment_subject, $message . ' Comment should show up on node page.', 'CAPTCHA');
-      $this->assertSession()->pageTextContains($comment_body, $message . ' Comment should show up on node page.', 'CAPTCHA');
+      $this->assertSession()->pageTextContains($comment_subject);
+      $this->assertSession()->pageTextContains($comment_body);
     }
     else {
       // Check for error message.
-      $this->assertSession()->pageTextContains(self::CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE, $message . ' Comment submission should be blocked.', 'CAPTCHA');
+      $this->assertSession()->pageTextContains(self::CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE);
       // Get node page and check that comment is not present.
       $this->drupalGet('node/' . $node->id());
-      $this->assertSession()->pageTextNotContains($comment_subject, $message . ' Comment should not show up on node page.', 'CAPTCHA');
-      $this->assertSession()->pageTextNotContains($comment_body, $message . ' Comment should not show up on node page.', 'CAPTCHA');
+      $this->assertSession()->pageTextNotContains($comment_subject);
+      $this->assertSession()->pageTextNotContains($comment_body);
     }
   }
 
@@ -231,7 +231,7 @@ class CaptchaTest extends CaptchaWebTestBase {
    */
   public function testCaptchaOnLoginBlockOnAdminPagesIssue893810() {
     // Set a CAPTCHA on login block form.
-    /* @var \Drupal\captcha\Entity\CaptchaPoint $captcha_point */
+    /** @var \Drupal\captcha\Entity\CaptchaPoint $captcha_point */
     $captcha_point = \Drupal::entityTypeManager()
       ->getStorage('captcha_point')
       ->load('user_login_form');

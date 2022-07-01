@@ -30,9 +30,9 @@ quickedit:
     - core/jquery
     - core/once
     - core/jquery.once.bc
-    - core/underscore
-    - core/backbone
-    - core/jquery.form
+    - core/internal.underscore
+    - core/internal.backbone
+    - core/internal.jquery.form
     - core/drupal
     - core/drupal.displace
     - core/drupal.form
@@ -54,4 +54,19 @@ quickedit.inPlaceEditor.plainText:
   js:
     js/editors/plainTextEditor.js: {}
   dependencies:
+    - quickedit/quickedit
+
+quickedit.inPlaceEditor.image:
+  version: VERSION
+  js:
+    js/editors/image.js: {}
+  css:
+    component:
+      css/editors/image.css: {}
+    theme:
+      css/editors/image.theme.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/underscore
     - quickedit/quickedit

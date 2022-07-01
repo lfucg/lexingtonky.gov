@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace Laminas\ServiceManager;
 
+use Interop\Container\ContainerInterface as InteropContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 /**
  * Interface for service locator
  */
-interface ServiceLocatorInterface extends ContainerInterface
+interface ServiceLocatorInterface extends
+    PsrContainerInterface,
+    InteropContainerInterface
 {
     /**
      * Build a service by its name, using optional options (such services are NEVER cached).
      *
      * @param  string $name
-     * @param  null|array<mixed>  $options
+     * @param  null|array  $options
      * @return mixed
      * @throws Exception\ServiceNotFoundException If no factory/abstract
      *     factory could be found to create the instance.

@@ -7,10 +7,13 @@
  * @see https://harvesthq.github.com/chosen/
  */
 
+use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
+use Drupal\migrate\Exception\RequirementsException;
+use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
 
 /**
  * Define chosen library url.
@@ -149,4 +152,51 @@ function chosen_help($route_name, RouteMatchInterface $route_match) {
       return $output;
   }
 
+}
+
+/**
+ * Implements hook_migration_plugins_alter().
+ */
+function chosen_migration_plugins_alter(array &$migrations) {
+  // Check if the module is enabled on source site.
+  try {
+    $variable_source = \Drupal::service('plugin.manager.migration')
+      ->createStubMigration([
+        'id' => 'foo',
+        'idMap' => ['plugin' => 'null'],
+        'source' => [
+          'plugin' => 'variable',
+          'ignore_map' => TRUE,
+        ],
+        'destination' => ['plugin' => 'null'],
+      ])
+      ->getSourcePlugin();
+    if (!$variable_source instanceof DrupalSqlBase) {
+      return;
+    }
+    $variable_source->checkRequirements();
+  }
+  catch (PluginException $e) {
+    // The 'variable' source plugin isn't available because Migrate Drupal
+    // isn't enabled. There is nothing we can do.
+    return;
+  }
+  catch (RequirementsException $e) {
+    // The source database is not a Drupal 7 database.
+    return;
+  }
+  $system_data = $variable_source->getSystemData();
+  if (empty($system_data['module']['chosen']['status'])) {
+    unset($migrations['d7_chosen_settings']);
+    return;
+  }
+  $chosen_migration = array_filter(
+    $migrations,
+    function ($definition) {
+      return $definition['id'] === 'd7_field_instance_widget_settings';
+    }
+  );
+  foreach (array_keys($chosen_migration) as $plugin_id) {
+    $migrations[$plugin_id]['process']['options/type'][] = ['plugin' => 'chosen'];
+  }
 }

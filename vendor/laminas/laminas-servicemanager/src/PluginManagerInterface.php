@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Laminas\ServiceManager;
 
+use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\InvalidServiceException;
-use Psr\Container\ContainerExceptionInterface;
 
 /**
  * Interface for a plugin manager
@@ -17,11 +17,11 @@ interface PluginManagerInterface extends ServiceLocatorInterface
     /**
      * Validate an instance
      *
-     * @param  mixed $instance
+     * @param  object $instance
      * @return void
      * @throws InvalidServiceException If created instance does not respect the
      *     constraint on type imposed by the plugin manager.
-     * @throws ContainerExceptionInterface If any other error occurs.
+     * @throws ContainerException If any other error occurs.
      */
     public function validate($instance);
 }

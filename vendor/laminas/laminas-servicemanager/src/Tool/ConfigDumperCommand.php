@@ -51,9 +51,11 @@ and injects it with ConfigAbstractFactory dependency configuration for
 the provided class name, writing the changes back to the file.
 EOH;
 
-    private ConsoleHelper $helper;
+    /** @var ConsoleHelper */
+    private $helper;
 
-    private string $scriptName;
+    /** @var string */
+    private $scriptName;
 
     /**
      * @param string $scriptName

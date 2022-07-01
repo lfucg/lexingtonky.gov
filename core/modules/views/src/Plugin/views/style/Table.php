@@ -103,7 +103,7 @@ class Table extends StylePluginBase implements CacheableDependencyInterface {
     $query = $this->view->getRequest()->query;
     $order = $query->get('order');
     if (!isset($order)) {
-      // check for a 'default' clicksort. If there isn't one, exit gracefully.
+      // check for a 'default' clickSort. If there isn't one, exit gracefully.
       if (empty($this->options['default'])) {
         return;
       }
@@ -433,7 +433,7 @@ class Table extends StylePluginBase implements CacheableDependencyInterface {
   public function getCacheContexts() {
     $contexts = [];
 
-    foreach ($this->options['info'] as $field_id => $info) {
+    foreach ($this->options['info'] as $info) {
       if (!empty($info['sortable'])) {
         // The rendered link needs to play well with any other query parameter
         // used on the page, like pager and exposed filter.

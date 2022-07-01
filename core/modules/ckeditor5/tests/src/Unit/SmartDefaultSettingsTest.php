@@ -108,7 +108,7 @@ class SmartDefaultSettingsTest extends UnitTestCase {
       return $definition;
     };
 
-    yield 'Tag needed, no match' => [
+    yield 'Tag needed, no match due to no plugin supporting it' => [
       HTMLRestrictions::emptySet(),
       HTMLRestrictions::fromString('<foo>'),
       [
@@ -135,21 +135,15 @@ class SmartDefaultSettingsTest extends UnitTestCase {
       ['test_foo' => ['-attributes-none-' => ['foo' => NULL]]],
     ];
 
-    yield 'Tag needed, single match with surplus' => [
+    yield 'Tag needed, no match due to plugins only supporting attributes on the needed tag' => [
       HTMLRestrictions::emptySet(),
       HTMLRestrictions::fromString('<foo>'),
       [
         $generate_definition('foo', ['drupal.elements' => ['<foo bar baz>']]),
       ],
-      [
-        'foo' => [
-          '-attributes-none-' => [
-            'test_foo' => 2200,
-          ],
-        ],
-      ],
-      // Not great surplus score, but only choice available.
-      ['test_foo' => ['-attributes-none-' => ['foo' => NULL]]],
+      [],
+      // No choice available due to the tag not being creatable.
+      [],
     ];
 
     $various_foo_definitions = [
@@ -169,13 +163,8 @@ class SmartDefaultSettingsTest extends UnitTestCase {
       [
         'foo' => [
           '-attributes-none-' => [
-            'test_all_attrs' => 100000,
-            'test_attrs' => 2200,
-            'test_attr_values' => 1002,
             'test_plain' => 0,
             'test_tags' => 2000000,
-            'test_tags_and_attrs' => 2002200,
-            'test_tags_and_attr_values' => 2002102,
           ],
         ],
       ],
@@ -200,15 +189,15 @@ class SmartDefaultSettingsTest extends UnitTestCase {
             // Because `<foo bar="a">` allowed.
             'a' => [
               TRUE => [
-                'test_attr_values' => 1002,
-                'test_tags_and_attr_values' => 2002102,
+                'test_attr_values' => 0,
+                'test_tags_and_attr_values' => 2001100,
               ],
             ],
             // Because `<foo bar="b">` allowed.
             'b' => [
               TRUE => [
-                'test_attr_values' => 1002,
-                'test_tags_and_attr_values' => 2002102,
+                'test_attr_values' => 0,
+                'test_tags_and_attr_values' => 2001100,
               ],
             ],
           ],
@@ -216,9 +205,9 @@ class SmartDefaultSettingsTest extends UnitTestCase {
           '-attributes-none-' => [
             'test_all_attrs' => 100000,
             'test_attrs' => 1100,
-            'test_attr_values' => 1002,
+            'test_attr_values' => 0,
             'test_tags_and_attrs' => 2001100,
-            'test_tags_and_attr_values' => 2002102,
+            'test_tags_and_attr_values' => 2001100,
           ],
         ],
       ],

@@ -14,6 +14,8 @@ use Drupal\Core\Utility\UnroutedUrlAssemblerInterface;
 use Drupal\Core\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+// cspell:ignore abempty
+
 /**
  * Defines an object that holds information about a URL.
  *
@@ -562,7 +564,7 @@ class Url implements TrustedCallbackInterface {
    */
   public function getRouteName() {
     if ($this->unrouted) {
-      throw new \UnexpectedValueException('External URLs do not have an internal route name.');
+      throw new \UnexpectedValueException($this->getUri() . ' has no corresponding route.');
     }
 
     return $this->routeName;

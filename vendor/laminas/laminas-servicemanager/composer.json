@@ -21,42 +21,35 @@
         "forum": "https://discourse.laminas.dev"
     },
     "config": {
-        "platform": {
-            "php": "7.4.99"
-        },
-        "sort-packages": true,
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "composer/package-versions-deprecated": true,
-            "laminas/laminas-dependency-plugin": true
-        }
+        "sort-packages": true
     },
     "require": {
-        "php": "~7.4.0 || ~8.0.0 || ~8.1.0",
+        "php": "^7.3 || ~8.0.0",
+        "container-interop/container-interop": "^1.2",
         "laminas/laminas-stdlib": "^3.2.1",
+        "laminas/laminas-zendframework-bridge": "^1.0",
         "psr/container": "^1.0"
     },
     "require-dev": {
         "composer/package-versions-deprecated": "^1.0",
-        "laminas/laminas-coding-standard": "~2.3.0",
-        "laminas/laminas-container-config-test": "^0.6",
+        "laminas/laminas-coding-standard": "~2.2.0",
+        "laminas/laminas-container-config-test": "^0.3",
         "laminas/laminas-dependency-plugin": "^2.1.2",
-        "mikey179/vfsstream": "^1.6.10@alpha",
-        "ocramius/proxy-manager": "^2.11",
-        "phpbench/phpbench": "^1.1",
+        "mikey179/vfsstream": "^1.6.8",
+        "ocramius/proxy-manager": "^2.2.3",
+        "phpbench/phpbench": "^1.0.4",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpunit/phpunit": "^9.5.5",
+        "phpunit/phpunit": "^9.4",
         "psalm/plugin-phpunit": "^0.16.1",
         "vimeo/psalm": "^4.8"
     },
     "provide": {
+        "container-interop/container-interop-implementation": "^1.2",
         "psr/container-implementation": "^1.0"
     },
     "conflict": {
-        "ext-psr": "*",
-        "laminas/laminas-code": "<3.3.1",
         "zendframework/zend-code": "<3.3.1",
-        "zendframework/zend-servicemanager": "*"
+        "laminas/laminas-code": "<3.3.1"
     },
     "suggest": {
         "ocramius/proxy-manager": "ProxyManager ^2.1.1 to handle lazy initialization of services"
@@ -64,13 +57,9 @@
     "autoload": {
         "psr-4": {
             "Laminas\\ServiceManager\\": "src/"
-        },
-        "files": ["src/autoload.php"]
+        }
     },
     "autoload-dev": {
-        "files": [
-            "test/autoload.php"
-        ],
         "psr-4": {
             "LaminasTest\\ServiceManager\\": "test/",
             "LaminasBench\\ServiceManager\\": "benchmarks/"
@@ -93,6 +82,6 @@
         "static-analysis" : "psalm --shepherd --stats"
     },
     "replace": {
-        "container-interop/container-interop": "^1.2.0"
+        "zendframework/zend-servicemanager": "^3.4.0"
     }
 }

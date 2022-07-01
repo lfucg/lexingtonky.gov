@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\node\Functional\Views;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Url;
@@ -24,12 +23,7 @@ class FrontPageTest extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'classy';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $dumpHeaders = TRUE;
+  protected $defaultTheme = 'stark';
 
   /**
    * The entity storage for nodes.
@@ -48,8 +42,8 @@ class FrontPageTest extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE): void {
-    parent::setUp($import_test_views);
+  protected function setUp($import_test_views = TRUE, $modules = []): void {
+    parent::setUp($import_test_views, $modules);
 
     $this->nodeStorage = $this->container->get('entity_type.manager')
       ->getStorage('node');
@@ -83,7 +77,7 @@ class FrontPageTest extends ViewTestBase {
     $this->executeView($view);
     $view->preview();
 
-    $this->assertEquals(new FormattableMarkup('Welcome to @site_name', ['@site_name' => $site_name]), $view->getTitle(), 'The welcome title is used for the empty view.');
+    $this->assertEquals('Welcome!', $view->getTitle(), 'The welcome title is used for the empty view.');
     $view->destroy();
 
     // Create some nodes on the frontpage view. Add more than 10 nodes in order
@@ -177,22 +171,6 @@ class FrontPageTest extends ViewTestBase {
   }
 
   /**
-   * Tests the frontpage when logged in as admin.
-   */
-  public function testAdminFrontPage() {
-    // When a user with sufficient permissions is logged in, views_ui adds
-    // contextual links to the homepage view. This verifies there are no errors.
-    \Drupal::service('module_installer')->install(['views_ui']);
-    // Log in root user with sufficient permissions.
-    $this->drupalLogin($this->rootUser);
-    // Test frontpage view.
-    $this->drupalGet('node');
-    $this->assertSession()->statusCodeEquals(200);
-    // Check that the frontpage view was rendered.
-    $this->assertSession()->responseMatches('/class=".+view-frontpage/');
-  }
-
-  /**
    * Tests the cache tags when using the "none" cache plugin.
    */
   public function testCacheTagsWithCachePluginNone() {
@@ -268,7 +246,6 @@ class FrontPageTest extends ViewTestBase {
     ];
 
     $render_cache_tags = Cache::mergeTags($empty_node_listing_cache_tags, $cache_context_tags);
-    $render_cache_tags = Cache::mergeTags($render_cache_tags, ['config:system.site']);
     $this->assertViewsCacheTags(
       $view,
       $empty_node_listing_cache_tags,
@@ -276,7 +253,7 @@ class FrontPageTest extends ViewTestBase {
       $render_cache_tags
     );
     $expected_tags = Cache::mergeTags($empty_node_listing_cache_tags, $cache_context_tags);
-    $expected_tags = Cache::mergeTags($expected_tags, ['http_response', 'rendered', 'config:user.role.anonymous', 'config:system.site']);
+    $expected_tags = Cache::mergeTags($expected_tags, ['http_response', 'rendered', 'config:user.role.anonymous']);
     $this->assertPageCacheContextsAndTags(
       Url::fromRoute('view.frontpage.page_1'),
       $cache_contexts,

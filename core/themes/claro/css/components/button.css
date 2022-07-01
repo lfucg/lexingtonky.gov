@@ -126,7 +126,7 @@ a.button:active {
 
 .button--primary {
   color: #fff;
-  background-color: #003cc5;
+  background-color: #003ecc;
 }
 
 .button--primary:hover {
@@ -135,7 +135,7 @@ a.button:active {
 }
 
 .button--primary:active {
-  background-color: #00339a;
+  background-color: #002e9a;
 }
 
 a.button--primary:hover,
@@ -147,16 +147,16 @@ a.button--primary:active {
 
 .button--danger {
   color: #fff;
-  background-color: #d72222;
+  background-color: #dc2323;
 }
 
 .button--danger:hover {
   color: #fff;
-  background-color: #c11f1f;
+  background-color: #c61f1f;
 }
 
 .button--danger:active {
-  background-color: #ab1b1b;
+  background-color: #b01c1c;
 }
 
 a.button--danger:hover,

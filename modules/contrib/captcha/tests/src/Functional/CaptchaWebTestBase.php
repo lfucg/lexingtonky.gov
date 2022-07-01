@@ -44,7 +44,7 @@ abstract class CaptchaWebTestBase extends BrowserTestBase {
    *
    * @var array
    */
-  protected static $modules = ['captcha', 'comment'];
+  protected static $modules = ['captcha', 'comment', 'node'];
 
   /**
    * {@inheritdoc}
@@ -68,11 +68,11 @@ abstract class CaptchaWebTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     // Load two modules: the captcha module itself and the comment
     // module for testing anonymous comments.
     parent::setUp();
-    module_load_include('inc', 'captcha');
+    \Drupal::moduleHandler()->loadInclude('captcha', 'inc');
 
     $this->drupalCreateContentType(['type' => 'page']);
 
@@ -102,7 +102,7 @@ abstract class CaptchaWebTestBase extends BrowserTestBase {
     $comment_field->setSetting('form_location', CommentItemInterface::FORM_SEPARATE_PAGE);
     $comment_field->save();
 
-    /* @var \Drupal\captcha\Entity\CaptchaPoint $captcha_point */
+    /** @var \Drupal\captcha\Entity\CaptchaPoint $captcha_point */
     $captcha_point = \Drupal::entityTypeManager()
       ->getStorage('captcha_point')
       ->load('user_login_form');
@@ -120,15 +120,9 @@ abstract class CaptchaWebTestBase extends BrowserTestBase {
    */
   protected function assertCaptchaResponseAccepted() {
     // There should be no error message about unknown CAPTCHA session ID.
-    $this->assertSession()->pageTextNotContains(self::CAPTCHA_UNKNOWN_CSID_ERROR_MESSAGE,
-      'CAPTCHA response should be accepted (known CSID).',
-      'CAPTCHA'
-    );
+    $this->assertSession()->pageTextNotContains(self::CAPTCHA_UNKNOWN_CSID_ERROR_MESSAGE);
     // There should be no error message about wrong response.
-    $this->assertSession()->pageTextNotContains(self::CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE,
-      'CAPTCHA response should be accepted (correct response).',
-      'CAPTCHA'
-    );
+    $this->assertSession()->pageTextNotContains(self::CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE);
   }
 
   /**
@@ -139,14 +133,10 @@ abstract class CaptchaWebTestBase extends BrowserTestBase {
    */
   protected function assertCaptchaPresence($presence) {
     if ($presence) {
-      $this->assertSession()->pageTextContains(_captcha_get_description(),
-        'There should be a CAPTCHA on the form.', 'CAPTCHA'
-      );
+      $this->assertSession()->pageTextContains(_captcha_get_description());
     }
     else {
-      $this->assertSession()->pageTextNotContains(_captcha_get_description(),
-        'There should be no CAPTCHA on the form.', 'CAPTCHA'
-      );
+      $this->assertSession()->pageTextNotContains(_captcha_get_description());
     }
   }
 

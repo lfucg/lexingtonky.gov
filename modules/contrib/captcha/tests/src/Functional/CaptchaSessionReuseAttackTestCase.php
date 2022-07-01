@@ -14,10 +14,7 @@ class CaptchaSessionReuseAttackTestCase extends CaptchaWebTestBase {
    */
   protected function assertCaptchaSessionIdReuseAttackDetection() {
     // There should be an error message about wrong response.
-    $this->assertSession()->pageTextContains(self::CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE,
-      'CAPTCHA response should flagged as wrong.',
-      'CAPTCHA'
-    );
+    $this->assertSession()->pageTextContains(self::CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE);
   }
 
   /**
@@ -57,8 +54,8 @@ class CaptchaSessionReuseAttackTestCase extends CaptchaWebTestBase {
 
     // Post a new comment, reusing the previous CAPTCHA session.
     $edit = $this->getCommentFormValues();
-    $this->assertSession()->hiddenFieldExists("captcha_sid")->setValue((string)$captcha_sid);
-    $this->assertSession()->hiddenFieldExists("captcha_token")->setValue((string)$captcha_token);
+    $this->assertSession()->hiddenFieldExists("captcha_sid")->setValue((string) $captcha_sid);
+    $this->assertSession()->hiddenFieldExists("captcha_token")->setValue((string) $captcha_token);
     $edit['captcha_response'] = $solution;
     $this->submitForm($edit, 'Preview');
     // CAPTCHA session reuse attack should be detected.
@@ -105,8 +102,8 @@ class CaptchaSessionReuseAttackTestCase extends CaptchaWebTestBase {
 
     // Post a new node, reusing the previous CAPTCHA session.
     $edit = $this->getNodeFormValues();
-    $this->assertSession()->hiddenFieldExists("captcha_sid")->setValue((string)$captcha_sid);
-    $this->assertSession()->hiddenFieldExists("captcha_token")->setValue((string)$captcha_token);
+    $this->assertSession()->hiddenFieldExists("captcha_sid")->setValue((string) $captcha_sid);
+    $this->assertSession()->hiddenFieldExists("captcha_token")->setValue((string) $captcha_token);
     $edit['captcha_response'] = $solution;
     $this->submitForm($edit, 'Preview');
     // CAPTCHA session reuse attack should be detected.
@@ -154,8 +151,8 @@ class CaptchaSessionReuseAttackTestCase extends CaptchaWebTestBase {
     $this->drupalGet('<front>');
 
     // Try to log in again, reusing the previous CAPTCHA session.
-    $this->assertSession()->hiddenFieldExists("captcha_sid")->setValue((string)$captcha_sid);
-    $this->assertSession()->hiddenFieldExists("captcha_token")->setValue((string)$captcha_token);
+    $this->assertSession()->hiddenFieldExists("captcha_sid")->setValue((string) $captcha_sid);
+    $this->assertSession()->hiddenFieldExists("captcha_token")->setValue((string) $captcha_token);
     $this->assertNotEmpty(json_encode($edit));
     $this->submitForm($edit, 'Log in');
     // CAPTCHA session reuse attack should be detected.

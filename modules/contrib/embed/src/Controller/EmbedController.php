@@ -7,6 +7,7 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\editor\EditorInterface;
 use Drupal\embed\Ajax\EmbedInsertCommand;
 use Drupal\embed\EmbedButtonInterface;
@@ -14,6 +15,7 @@ use Drupal\filter\FilterFormatInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -52,7 +54,7 @@ class EmbedController extends ControllerBase {
   /**
    * Returns an Ajax response to generate preview of embedded items.
    *
-   * Expects the the HTML element as GET parameter.
+   * Expects the HTML element as GET parameter.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
@@ -66,6 +68,8 @@ class EmbedController extends ControllerBase {
    *   The preview of the embedded item specified by the data attributes.
    */
   public function preview(Request $request, FilterFormatInterface $filter_format) {
+    self::checkCsrf($request, \Drupal::currentUser());
+
     $text = $request->get('text') ?: $request->get('value');
     if (empty($text)) {
       throw new NotFoundHttpException();
@@ -101,7 +105,7 @@ class EmbedController extends ControllerBase {
   /**
    * Returns an Ajax response to generate preview of an entity.
    *
-   * Expects the the HTML element as GET parameter.
+   * Expects the HTML element as GET parameter.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
@@ -118,6 +122,32 @@ class EmbedController extends ControllerBase {
    */
   public function previewEditor(Request $request, EditorInterface $editor, EmbedButtonInterface $embed_button) {
     return $this->preview($request, $editor->getFilterFormat());
+  }
+
+  /**
+   * Throws an AccessDeniedHttpException if the request fails CSRF validation.
+   *
+   * This is used instead of \Drupal\Core\Access\CsrfAccessCheck, in order to
+   * allow access for anonymous users.
+   *
+   * @todo Refactor this to an access checker.
+   */
+  private static function checkCsrf(Request $request, AccountInterface $account) {
+    $header = 'X-Drupal-EmbedPreview-CSRF-Token';
+
+    if (!$request->headers->has($header)) {
+      throw new AccessDeniedHttpException();
+    }
+    if ($account->isAnonymous()) {
+      // For anonymous users, just the presence of the custom header is
+      // sufficient protection.
+      return;
+    }
+    // For authenticated users, validate the token value.
+    $token = $request->headers->get($header);
+    if (!\Drupal::csrfToken()->validate($token, $header)) {
+      throw new AccessDeniedHttpException();
+    }
   }
 
 }

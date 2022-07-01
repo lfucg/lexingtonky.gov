@@ -7,6 +7,7 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\KeyValueStore\KeyValueExpirableFactory;
@@ -21,6 +22,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Provides a service to append Honeypot protection to forms.
  */
 class HoneypotService implements HoneypotServiceInterface {
+  use DependencySerializationTrait;
   use StringTranslationTrait;
 
   /**
@@ -66,11 +68,11 @@ class HoneypotService implements HoneypotServiceInterface {
   protected $connection;
 
   /**
-   * The Honeypot logger channel.
+   * The Honeypot logger channel factory.
    *
-   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
-  protected $logger;
+  protected $loggerFactory;
 
   /**
    * The datetime.time service.
@@ -126,7 +128,7 @@ class HoneypotService implements HoneypotServiceInterface {
     $this->keyValue = $key_value->get('honeypot_time_restriction');
     $this->killSwitch = $kill_switch;
     $this->connection = $connection;
-    $this->logger = $logger_factory->get('honeypot');
+    $this->loggerFactory = $logger_factory;
     $this->timeService = $time_service;
     $this->stringTranslation = $string_translation;
     $this->cacheBackend = $cache_backend;
@@ -361,7 +363,8 @@ class HoneypotService implements HoneypotServiceInterface {
         '%form'  => $form_id,
         '@cause' => ($type == 'honeypot') ? $this->t('submission of a value in the honeypot field') : $this->t('submission of the form in less than minimum required time'),
       ];
-      $this->logger->notice('Blocked submission of %form due to @cause.', $variables);
+      $this->loggerFactory->get('honeypot')
+        ->notice('Blocked submission of %form due to @cause.', $variables);
     }
   }
 

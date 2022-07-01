@@ -32,13 +32,16 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       var $rows;
 
       function filterViewList(e) {
-        var query = $(e.target).val().toLowerCase();
+        var query = e.target.value.toLowerCase();
 
         function showViewRow(index, row) {
-          var $row = $(row);
-          var $sources = $row.find('[data-drupal-selector="views-table-filter-text-source"]');
-          var textMatch = $sources.text().toLowerCase().indexOf(query) !== -1;
-          $row.closest('tr').toggle(textMatch);
+          var sources = row.querySelectorAll('[data-drupal-selector="views-table-filter-text-source"]');
+          var sourcesConcat = '';
+          sources.forEach(function (item) {
+            sourcesConcat += item.textContent;
+          });
+          var textMatch = sourcesConcat.toLowerCase().indexOf(query) !== -1;
+          $(row).closest('tr').toggle(textMatch);
         }
 
         if (query.length >= 2) {

@@ -26,7 +26,7 @@
       this.listenTo(this.model, 'change:mqMatches', this.onMediaQueryChange);
       this.listenTo(this.model, 'change:offsets', this.adjustPlacement);
       this.listenTo(this.model, 'change:activeTab change:orientation change:isOriented', this.updateToolbarHeight);
-      this.$el.find('.toolbar-tray .toolbar-lining').append(Drupal.theme('toolbarOrientationToggle'));
+      this.$el.find('.toolbar-tray .toolbar-lining').has('.toolbar-menu').append(Drupal.theme('toolbarOrientationToggle'));
       this.model.trigger('change:activeTab');
     },
     updateToolbarHeight: function updateToolbarHeight() {
@@ -135,7 +135,10 @@
       var iconClass = "toolbar-icon-toggle-".concat(orientation);
       var iconAntiClass = "toolbar-icon-toggle-".concat(antiOrientation);
       var $orientationToggle = this.$el.find('.toolbar-toggle-orientation').toggle(this.model.get('isTrayToggleVisible'));
-      $orientationToggle.find('button').val(antiOrientation).attr('title', this.strings[antiOrientation]).text(this.strings[antiOrientation]).removeClass(iconClass).addClass(iconAntiClass);
+      var $orientationToggleButton = $orientationToggle.find('button');
+      $orientationToggleButton[0].value = antiOrientation;
+      $orientationToggleButton.attr('title', this.strings[antiOrientation]).removeClass(iconClass).addClass(iconAntiClass);
+      $orientationToggleButton[0].textContent = this.strings[antiOrientation];
       var dir = document.documentElement.dir;
       var edge = dir === 'rtl' ? 'right' : 'left';
       $trays.removeAttr('data-offset-left data-offset-right data-offset-top');

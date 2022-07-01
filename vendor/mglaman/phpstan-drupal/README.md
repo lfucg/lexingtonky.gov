@@ -6,7 +6,7 @@ Extension for [PHPStan](https://phpstan.org/) to allow analysis of Drupal code.
 
 ## Sponsors
 
-<a href="https://www.undpaul.de/"><img src="https://www.undpaul.de/themes/custom/undpaul3/logo.svg" alt="undpaul" width="250" /></a> <a href="https://www.iodigital.com/en"><img src="https://www.drupal.org/files/iO-logo%2Bblack.png" alt="iO" width="225" /></a>
+<a href="https://www.undpaul.de/"><img src="https://www.undpaul.de/themes/custom/undpaul3/logo.svg" alt="undpaul" width="250" /></a> <a href="https://www.intracto.com/"><img src="https://digidak.be/wp-content/uploads/2020/03/logo-intracto-base-positief-grijs-blauw@4x-rgb.png" alt="Intracto" width="225" /></a> <a href="https://osinet.fr//"><img src="https://d3c0fbruclr8uq.cloudfront.net/sites/default/files/logo-osinet.png" alt="OSInet" width="250" /></a>
 
 [Would you like to sponsor?](https://github.com/sponsors/mglaman)
 
@@ -14,23 +14,28 @@ Extension for [PHPStan](https://phpstan.org/) to allow analysis of Drupal code.
 
 When you are using [`phpstan/extension-installer`](https://github.com/phpstan/extension-installer), `phpstan.neon` will be automatically included.
 
-<details>
-  <summary>Manual installation</summary>
+Otherwise add `phpstan.neon` to your Drupal project.
 
-If you don't want to use `phpstan/extension-installer`, include `extension.neon` in your project's PHPStan config:
+Make sure it has
 
-```
+```neon
 includes:
-    - vendor/mglaman/phpstan-drupal/extension.neon
+	- vendor/mglaman/phpstan-drupal/extension.neon
 ```
 
-To include Drupal specific analysis rules, include this file:
+## Enabling rules one-by-one
+
+If you don't want to start using all the available strict rules at once but only one or two, you can! Just don't include
+the whole `rules.neon` from this package in your configuration, but look at its contents and copy only the rules you
+want to your configuration under the `services` key:
 
 ```
-includes:
-    - vendor/mglaman/phpstan-drupal/rules.neon
+services:
+	-
+		class: PHPStan\Rules\Drupal\PluginManager\PluginManagerSetsCacheBackendRule
+		tags:
+			- phpstan.rules.rule
 ```
-</details>
 
 ## Excluding tests from analysis
 

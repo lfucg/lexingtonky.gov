@@ -20,6 +20,7 @@
   --dropbutton-border-size: 1px;
   --dropbutton-toggle-size-spacing: var(--dropbutton-border-size);
   --dropbutton-border-radius-size: 2px;
+  --dropbutton-item-max-width: 12.5rem;
   /* Variant variables: small. */
   --dropbutton-small-spacing-size: 0.625rem;
   --dropbutton-small-font-size: var(--font-size-xs);
@@ -69,6 +70,7 @@
 }
 
 .js .dropbutton {
+  min-width: 6rem; /* Help mitigate long dropbutton text from obscuring other dropbuttons. */
   height: var(--dropbutton-toggle-size);
 }
 
@@ -140,7 +142,7 @@
   height: 0.5625rem;
   content: "";
   transform: translate(50%, -50%) rotate(0);
-  background: url(../../images/icons/222330/chevron-down.svg) no-repeat center;
+  background: url(../../images/icons/000f33/chevron-down.svg) no-repeat center;
   background-size: contain;
 }
 
@@ -312,7 +314,7 @@
 }
 
 .js .dropbutton-wrapper:not(.open) .dropbutton__item:first-of-type ~ .dropbutton__item {
-  display: none;
+  visibility: hidden;
 }
 
 /**
@@ -336,6 +338,10 @@
 /**
  * Dropbutton items of non-first dropbutton list elements.
  */
+.dropbutton__item:first-of-type ~ .dropbutton__item {
+  max-width: var(--dropbutton-item-max-width);
+}
+
 .dropbutton__item:first-of-type ~ .dropbutton__item > a,
 .dropbutton__item:first-of-type ~ .dropbutton__item > .button {
   position: relative;

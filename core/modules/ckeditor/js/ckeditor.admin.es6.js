@@ -41,7 +41,7 @@
         // Create a configuration model.
         Drupal.ckeditor.models.Model = new Drupal.ckeditor.Model({
           $textarea,
-          activeEditorConfig: JSON.parse($textarea.val()),
+          activeEditorConfig: JSON.parse($textarea[0].value),
           hiddenEditorConfig: drupalSettings.ckeditor.hiddenCKEditorConfig,
         });
 
@@ -285,7 +285,9 @@
           $group
             .attr('data-drupal-ckeditor-toolbar-group-name', name)
             .children('.ckeditor-toolbar-group-name')
-            .text(name);
+            .each(function () {
+              this.textContent = name;
+            });
         }
 
         // Invoke a user-provided callback and indicate failure.

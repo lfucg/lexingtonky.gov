@@ -1,5 +1,4 @@
 description: Supports diff's automated tests.
-core_version_requirement: ^8.7.7 || ^9
 dependencies:
   - diff:diff
   - drupal:filter
@@ -8,5 +7,5 @@ dependencies:
   - drupal:node
 hidden: true
 name: Diff tests
-package: diff
+package: Testing
 type: module

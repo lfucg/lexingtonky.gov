@@ -10,8 +10,7 @@ use Drupal\user\Entity\Role;
  *
  * @group jsonapi
  */
-class RoleTest extends ResourceTestBase {
-
+class RoleTest extends ConfigEntityResourceTestBase {
 
   /**
    * {@inheritdoc}
@@ -102,6 +101,7 @@ class RoleTest extends ResourceTestBase {
    */
   protected function getPostDocument() {
     // @todo Update in https://www.drupal.org/node/2300677.
+    return [];
   }
 
 }

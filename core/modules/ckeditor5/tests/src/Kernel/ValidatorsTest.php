@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Drupal\Tests\ckeditor5\Kernel;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\editor\EditorInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\filter\Entity\FilterFormat;
@@ -21,6 +22,7 @@ use Symfony\Component\Yaml\Yaml;
  * @covers \Drupal\ckeditor5\Plugin\Validation\Constraint\EnabledConfigurablePluginsConstraintValidator
  * @covers \Drupal\ckeditor5\Plugin\Editor\CKEditor5::validatePair()
  * @covers \Drupal\ckeditor5\Plugin\Validation\Constraint\FundamentalCompatibilityConstraintValidator
+ * @covers \Drupal\ckeditor5\Plugin\Validation\Constraint\CKEditor5MediaAndFilterSettingsInSyncConstraintValidator
  * @group ckeditor5
  */
 class ValidatorsTest extends KernelTestBase {
@@ -43,7 +45,6 @@ class ValidatorsTest extends KernelTestBase {
     'ckeditor5_plugin_conditions_test',
     'editor',
     'filter',
-    'filter_test',
     'media',
     'media_library',
     'views',
@@ -355,6 +356,20 @@ class ValidatorsTest extends KernelTestBase {
       'settings' => $ckeditor5_settings,
       'image_upload' => $editor_image_upload_settings,
     ]);
+    EntityViewMode::create([
+      'id' => 'media.view_mode_1',
+      'targetEntityType' => 'media',
+      'status' => TRUE,
+      'enabled' => TRUE,
+      'label' => 'View Mode 1',
+    ])->save();
+    EntityViewMode::create([
+      'id' => 'media.view_mode_2',
+      'targetEntityType' => 'media',
+      'status' => TRUE,
+      'enabled' => TRUE,
+      'label' => 'View Mode 2',
+    ])->save();
     assert($text_editor instanceof EditorInterface);
     $this->assertConfigSchema(
       $this->typedConfig,
@@ -375,6 +390,71 @@ class ValidatorsTest extends KernelTestBase {
   public function providerPair(): array {
     // cspell:ignore donk
     $data = [];
+    $data['INVALID: allow_view_mode_override condition not met: filter must be configured to allow 2 or more view modes'] = [
+      'settings' => [
+        'toolbar' => [
+          'items' => [],
+        ],
+        'plugins' => [
+          'media_media' => [
+            'allow_view_mode_override' => TRUE,
+          ],
+        ],
+      ],
+      'image_upload' => [
+        'status' => FALSE,
+      ],
+      'filters' => [
+        'media_embed' => [
+          'id' => 'media_embed',
+          'provider' => 'media',
+          'status' => TRUE,
+          'weight' => 0,
+          'settings' => [
+            'default_view_mode' => 'default',
+            'allowed_view_modes' => [],
+            'allowed_media_types' => [],
+          ],
+        ],
+      ],
+      'violations' => [
+        '' => 'The CKEditor 5 "<em class="placeholder">Media</em>" plugin\'s "<em class="placeholder">Allow the user to override the default view mode</em>" setting should be in sync with the "<em class="placeholder">Embed media</em>" filter\'s "<em class="placeholder">View modes selectable in the &quot;Edit media&quot; dialog</em>" setting: when checked, two or more view modes must be allowed by the filter.',
+      ],
+    ];
+    $data['VALID: allow_view_mode_override condition met: filter must be configured to allow 2 or more view modes'] = [
+      'settings' => [
+        'toolbar' => [
+          'items' => [
+            'drupalMedia',
+          ],
+        ],
+        'plugins' => [
+          'media_media' => [
+            'allow_view_mode_override' => TRUE,
+          ],
+        ],
+      ],
+      'image_upload' => [
+        'status' => FALSE,
+      ],
+      'filters' => [
+        'media_embed' => [
+          'id' => 'media_embed',
+          'provider' => 'media',
+          'status' => TRUE,
+          'weight' => 0,
+          'settings' => [
+            'default_view_mode' => 'view_mode_1',
+            'allowed_view_modes' => [
+              'view_mode_1' => 'view_mode_1',
+              'view_mode_2' => 'view_mode_2',
+            ],
+            'allowed_media_types' => [],
+          ],
+        ],
+      ],
+      'violations' => [],
+    ];
     $data['VALID: legacy format: filter_autop'] = [
       'settings' => [
         'toolbar' => [
@@ -461,33 +541,6 @@ class ValidatorsTest extends KernelTestBase {
         ],
       ],
       'violations' => [],
-    ];
-    $data['INVALID: forbidden tags'] = [
-      'settings' => [
-        'toolbar' => [
-          'items' => [],
-        ],
-        'plugins' => [],
-      ],
-      'image_upload' => [
-        'status' => FALSE,
-      ],
-      'filters' => [
-        'filter_test_restrict_tags_and_attributes' => [
-          'id' => 'filter_test_restrict_tags_and_attributes',
-          'provider' => 'filter_test',
-          'status' => TRUE,
-          'weight' => 0,
-          'settings' => [
-            'restrictions' => [
-              'forbidden_tags' => ['p' => FALSE],
-            ],
-          ],
-        ],
-      ],
-      'violations' => [
-        '' => 'CKEditor 5 needs at least the &lt;p&gt; and &lt;br&gt; tags to be allowed to be able to function. They are forbidden by the "<em class="placeholder">Tag and attribute restricting filter</em>" (<em class="placeholder">filter_test_restrict_tags_and_attributes</em>) filter.',
-      ],
     ];
     $restricted_html_format_filters = Yaml::parseFile(__DIR__ . '/../../../../../profiles/standard/config/install/filter.format.restricted_html.yml')['filters'];
     $data['INVALID: the default restricted_html text format'] = [
@@ -671,7 +724,7 @@ class ValidatorsTest extends KernelTestBase {
               // Tag + attributes; all supported by an ineligible disabled
               // plugin (has no toolbar item, has conditions).
               '<img src>',
-              // Tag + attributes; all supported by disabled plugin.
+              // Tag + attributes; attributes supported by disabled plugin.
               '<code class="language-*">',
               // Tag + attributes; tag already supported by enabled plugin,
               // attributes supported by disabled plugin
@@ -679,6 +732,9 @@ class ValidatorsTest extends KernelTestBase {
               // Tag + attributes; tag already supported by enabled plugin,
               // attribute not supported by no plugin.
               '<a hreflang>',
+              // Tag-only; supported by no plugin (only attributes on tag
+              // supported by a plugin).
+              '<span>',
             ],
           ],
         ],
@@ -691,8 +747,8 @@ class ValidatorsTest extends KernelTestBase {
         'settings.plugins.ckeditor5_sourceEditing.allowed_tags.0' => 'The following tag(s) are already supported by enabled plugins and should not be added to the Source Editing "Manually editable HTML tags" field: <em class="placeholder">Bold (&lt;strong&gt;)</em>.',
         'settings.plugins.ckeditor5_sourceEditing.allowed_tags.1' => 'The following tag(s) are already supported by available plugins and should not be added to the Source Editing "Manually editable HTML tags" field. Instead, enable the following plugins to support these tags: <em class="placeholder">Table (&lt;table&gt;)</em>.',
         'settings.plugins.ckeditor5_sourceEditing.allowed_tags.3' => 'The following attribute(s) are already supported by enabled plugins and should not be added to the Source Editing "Manually editable HTML tags" field: <em class="placeholder">Language (&lt;span lang&gt;)</em>.',
-        'settings.plugins.ckeditor5_sourceEditing.allowed_tags.5' => 'The following tag(s) are already supported by available plugins and should not be added to the Source Editing "Manually editable HTML tags" field. Instead, enable the following plugins to support these tags: <em class="placeholder">Code Block (&lt;code class=&quot;language-*&quot;&gt;)</em>.',
-        'settings.plugins.ckeditor5_sourceEditing.allowed_tags.6' => 'The following attribute(s) are already supported by available plugins and should not be added to the Source Editing "Manually editable HTML tags" field. Instead, enable the following plugins to support these attributes: <em class="placeholder">Alignment (&lt;h2 class=&quot;text-align-center&quot;&gt;), Align center (&lt;h2 class=&quot;text-align-center&quot;&gt;)</em>.',
+        'settings.plugins.ckeditor5_sourceEditing.allowed_tags.5' => 'The following attribute(s) are already supported by available plugins and should not be added to the Source Editing "Manually editable HTML tags" field. Instead, enable the following plugins to support these attributes: <em class="placeholder">Code Block (&lt;code class=&quot;language-*&quot;&gt;)</em>.',
+        'settings.plugins.ckeditor5_sourceEditing.allowed_tags.6' => 'The following attribute(s) are already supported by available plugins and should not be added to the Source Editing "Manually editable HTML tags" field. Instead, enable the following plugins to support these attributes: <em class="placeholder">Alignment (&lt;h2 class=&quot;text-align-center&quot;&gt;)</em>.',
       ],
     ];
     $data['INVALID some invalid Source Editable tags provided by plugin and another available in a not enabled plugin'] = [
@@ -703,7 +759,6 @@ class ValidatorsTest extends KernelTestBase {
             'bold',
             'italic',
             'sourceEditing',
-            'textPartLanguage',
           ],
         ],
         'plugins' => [
@@ -715,9 +770,6 @@ class ValidatorsTest extends KernelTestBase {
               'heading5',
               'heading6',
             ],
-          ],
-          'ckeditor5_language' => [
-            'language_list' => 'un',
           ],
           'ckeditor5_sourceEditing' => [
             'allowed_tags' => [

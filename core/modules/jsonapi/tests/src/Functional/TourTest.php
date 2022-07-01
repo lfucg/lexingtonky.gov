@@ -10,7 +10,7 @@ use Drupal\tour\Entity\Tour;
  *
  * @group jsonapi
  */
-class TourTest extends ResourceTestBase {
+class TourTest extends ConfigEntityResourceTestBase {
 
   /**
    * {@inheritdoc}
@@ -131,6 +131,7 @@ class TourTest extends ResourceTestBase {
    */
   protected function getPostDocument() {
     // @todo Update in https://www.drupal.org/node/2300677.
+    return [];
   }
 
   /**

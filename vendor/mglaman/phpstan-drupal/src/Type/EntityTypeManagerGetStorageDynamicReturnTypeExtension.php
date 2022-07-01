@@ -2,16 +2,21 @@
 
 namespace mglaman\PHPStanDrupal\Type;
 
+use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
+use Drupal\Core\Entity\ContentEntityStorageInterface;
 use mglaman\PHPStanDrupal\Drupal\EntityDataRepository;
+use mglaman\PHPStanDrupal\Type\EntityStorage\ConfigEntityStorageType;
+use mglaman\PHPStanDrupal\Type\EntityStorage\ContentEntityStorageType;
 use mglaman\PHPStanDrupal\Type\EntityStorage\EntityStorageType;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\VariadicPlaceholder;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 
@@ -69,14 +74,12 @@ class EntityTypeManagerGetStorageDynamicReturnTypeExtension implements DynamicMe
         if ($arg1 instanceof Concat) {
             return $returnType;
         }
-
-        $type = $scope->getType($arg1);
-        if ($type instanceof ConstantStringType) {
-            $entityTypeId = $type->getValue();
-        } else {
+        if (!$arg1 instanceof String_) {
             // @todo determine what these types are, and try to resolve entity name from.
             return $returnType;
         }
+
+        $entityTypeId = $arg1->value;
 
         $storageType = $this->entityDataRepository->get($entityTypeId)->getStorageType();
         if ($storageType !== null) {

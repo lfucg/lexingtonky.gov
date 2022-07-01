@@ -62,6 +62,20 @@ class EmbedPreviewTest extends BrowserTestBase {
       ],
     ]);
 
+    $this->assertSession()->statusCodeEquals(403);
+
+    // Now test with a CSRF token
+    $this->drupalGet('embed-test/get_csrf_token');
+    $token = json_decode($this->getSession()->getPage()->getContent());
+    $headers = ['X-Drupal-EmbedPreview-CSRF-Token' => $token];
+
+    $response = $this->drupalGet('/embed/preview/foo', [
+      'query' => [
+        'value' => 'node:' . $node->id(),
+        '_wrapper_format' => 'drupal_ajax',
+      ],
+    ], $headers);
+
     $this->assertSession()->statusCodeEquals(200);
 
     // Assert the presence of commands to add out-of-band assets to the page, as

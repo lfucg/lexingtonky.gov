@@ -516,6 +516,7 @@ trait FunctionalTestSetupTrait {
     $driver = $connection_info['default']['driver'];
     unset($connection_info['default']['driver']);
     unset($connection_info['default']['namespace']);
+    unset($connection_info['default']['autoload']);
     unset($connection_info['default']['pdo']);
     unset($connection_info['default']['init_commands']);
     // Remove database connection info that is not used by SQLite.
@@ -620,11 +621,6 @@ trait FunctionalTestSetupTrait {
    *
    * Also sets up new resources for the testing environment, such as the public
    * filesystem and configuration directories.
-   *
-   * This method is private as it must only be called once by
-   * BrowserTestBase::setUp() (multiple invocations for the same test would have
-   * unpredictable consequences) and it must not be callable or overridable by
-   * test classes.
    */
   protected function prepareEnvironment() {
     // Bootstrap Drupal so we can use Drupal's built in functions.

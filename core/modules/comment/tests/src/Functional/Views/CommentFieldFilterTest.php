@@ -36,8 +36,8 @@ class CommentFieldFilterTest extends CommentTestBase {
    */
   public $commentTitles = [];
 
-  protected function setUp($import_test_views = TRUE): void {
-    parent::setUp($import_test_views);
+  protected function setUp($import_test_views = TRUE, $modules = ['comment_test_views']): void {
+    parent::setUp($import_test_views, $modules);
     $this->drupalLogin($this->drupalCreateUser(['access comments']));
 
     // Add two new languages.

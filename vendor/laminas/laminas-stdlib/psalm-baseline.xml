@@ -41,9 +41,10 @@
       <code>$this-&gt;storage[$key]</code>
       <code>$this-&gt;storage[$key]</code>
     </MixedArrayOffset>
-    <MixedAssignment occurrences="2">
+    <MixedAssignment occurrences="3">
       <code>$ret</code>
       <code>$ret</code>
+      <code>$v</code>
     </MixedAssignment>
     <MoreSpecificReturnType occurrences="1">
       <code>Iterator</code>
@@ -160,10 +161,6 @@
     </PossiblyNullArrayOffset>
   </file>
   <file src="src/Glob.php">
-    <InvalidOperand occurrences="2">
-      <code>! $flags</code>
-      <code>! $flags</code>
-    </InvalidOperand>
     <PossiblyNullArrayOffset occurrences="1">
       <code>$pattern</code>
     </PossiblyNullArrayOffset>
@@ -305,28 +302,15 @@
       <code>$data[]</code>
       <code>$item</code>
       <code>$item</code>
-      <code>$item</code>
-    </MixedAssignment>
-  </file>
-  <file src="src/SplQueue.php">
-    <MixedAssignment occurrences="3">
-      <code>$array[]</code>
-      <code>$item</code>
-      <code>$item</code>
-    </MixedAssignment>
-  </file>
-  <file src="src/SplStack.php">
-    <MixedAssignment occurrences="3">
-      <code>$array[]</code>
-      <code>$item</code>
-      <code>$item</code>
     </MixedAssignment>
   </file>
   <file src="src/StringUtils.php">
-    <DocblockTypeContradiction occurrences="2">
+    <DocblockTypeContradiction occurrences="1">
       <code>static::$hasPcreUnicodeSupport === null</code>
-      <code>static::$wrapperRegistry === null</code>
     </DocblockTypeContradiction>
+    <PossiblyNullArrayAccess occurrences="1">
+      <code>static::$wrapperRegistry[$index]</code>
+    </PossiblyNullArrayAccess>
     <RedundantCastGivenDocblockType occurrences="2">
       <code>(string) $wrapper</code>
       <code>(string) $wrapper</code>
@@ -377,9 +361,7 @@
     </RedundantCastGivenDocblockType>
   </file>
   <file src="src/StringWrapper/Iconv.php">
-    <PossiblyNullArgument occurrences="4">
-      <code>$length</code>
-      <code>$this-&gt;getEncoding()</code>
+    <PossiblyNullArgument occurrences="2">
       <code>$this-&gt;getEncoding()</code>
       <code>$this-&gt;getEncoding()</code>
     </PossiblyNullArgument>
@@ -424,6 +406,12 @@
       <code>$ar['foo']['bar']</code>
       <code>$ar['foo']['bar']</code>
     </MixedArrayAccess>
+    <MixedAssignment occurrences="1">
+      <code>$unserialized</code>
+    </MixedAssignment>
+    <MixedMethodCall occurrences="1">
+      <code>isImmutable</code>
+    </MixedMethodCall>
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>assertSame</code>
     </RedundantConditionGivenDocblockType>
@@ -499,6 +487,11 @@
       <code>$this-&gt;helper</code>
       <code>$this-&gt;helper</code>
     </UndefinedThisPropertyFetch>
+  </file>
+  <file src="test/CustomArrayObject.php">
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>CustomArrayObject</code>
+    </PropertyNotSetInConstructor>
   </file>
   <file src="test/ErrorHandlerTest.php">
     <ArgumentTypeCoercion occurrences="3">

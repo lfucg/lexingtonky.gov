@@ -148,7 +148,7 @@ class ImageTest extends CKEditor5TestBase {
     // Run test cases in a single test to make the test run faster.
     $attributes_to_retain = [
       '-none-' => 'inline',
-      'data-caption="test caption ðŸ¦™"' => 'block',
+      'data-caption="test caption 🦙"' => 'block',
       'data-align="left"' => 'inline',
     ];
 
@@ -168,8 +168,10 @@ class ImageTest extends CKEditor5TestBase {
           "<p>$img_tag</p>",
           $expected_upcast_behavior_when_wrapped_in_block_element === 'inline' ? "<p>$img_tag</p>" : $img_tag,
         ],
-        // Image tag wrapped with an unallowed paragraph-like element. When
-        // inline is the expected upcast behavior the wrapping is expected.
+        // Image tag wrapped with an unallowed paragraph-like element (<div).
+        // When inline is the expected upcast behavior, it will wrap in <p>
+        // because it still must wrap in a paragraph-like element, and <p> is
+        // available to be that element.
         [
           "<div>$img_tag</div>",
           $expected_upcast_behavior_when_wrapped_in_block_element === 'inline' ? "<p>$img_tag</p>" : $img_tag,
@@ -384,27 +386,14 @@ class ImageTest extends CKEditor5TestBase {
     // widget exists but not the link, or *any* link for that matter. Then
     // assert the expected DOM structure in detail.
     $assert_session->elementExists('css', '.ck-content .ck-widget.' . $expected_widget_class);
-    // @todo Remove the different assertion for the "inline, unrestricted" case when https://www.drupal.org/project/ckeditor5/issues/3247634 is fixed.
-    if ($image_type === 'inline' && $unrestricted) {
-      $assert_session->elementNotExists('css', '.ck-content a[href]');
-      $assert_session->elementExists('css', '.ck-content a.trusted');
-    }
-    else {
-      $assert_session->elementNotExists('css', '.ck-content a');
-    }
+    $assert_session->elementNotExists('css', '.ck-content a');
     $assert_session->elementExists('css', '.ck-content .ck-widget.' . $expected_widget_class . ' > img[src*="image-test.png"][alt="drupalimage test image"]');
 
     // Assert the "dataDowncast" HTML after making changes.
     $xpath = new \DOMXPath($this->getEditorDataAsDom());
     $this->assertCount(0, $xpath->query('//a[@href="http://www.drupal.org/association"]/img[@alt="drupalimage test image"]'));
     $this->assertCount(1, $xpath->query('//img[@alt="drupalimage test image"]'));
-    // @todo Remove the different assertion for the inline cases when https://www.drupal.org/project/ckeditor5/issues/3247634 is fixed.
-    if ($image_type === 'inline') {
-      $this->assertCount(1, $xpath->query('//a'));
-    }
-    else {
-      $this->assertCount(0, $xpath->query('//a'));
-    }
+    $this->assertCount(0, $xpath->query('//a'));
   }
 
   /**

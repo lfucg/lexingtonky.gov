@@ -157,15 +157,9 @@
    *   Array of IDs for form fields.
    */
   function fieldsList(form) {
-    const $fieldList = $(form)
-      .find('[name]')
-      .map(
-        // We use id to avoid name duplicates on radio fields and filter out
-        // elements with a name but no id.
-        (index, element) => element.getAttribute('id'),
-      );
-    // Return a true array.
-    return $.makeArray($fieldList);
+    // We use id to avoid name duplicates on radio fields and filter out
+    // elements with a name but no id.
+    return [].map.call(form.querySelectorAll('[name][id]'), (el) => el.id);
   }
 
   /**
@@ -251,11 +245,16 @@
         userInfo.forEach((info) => {
           const $element = $forms.find(`[name=${info}]`);
           const browserData = localStorage.getItem(`Drupal.visitor.${info}`);
-          const emptyOrDefault =
-            $element.val() === '' ||
-            $element.attr('data-drupal-default-value') === $element.val();
-          if ($element.length && emptyOrDefault && browserData) {
-            $element.val(browserData);
+          if (!$element.length) {
+            return;
+          }
+          const emptyValue = $element[0].value === '';
+          const defaultValue =
+            $element.attr('data-drupal-default-value') === $element[0].value;
+          if (browserData && (emptyValue || defaultValue)) {
+            $element.each(function (index, item) {
+              item.value = browserData;
+            });
           }
         });
       }
@@ -263,7 +262,7 @@
         userInfo.forEach((info) => {
           const $element = $forms.find(`[name=${info}]`);
           if ($element.length) {
-            localStorage.setItem(`Drupal.visitor.${info}`, $element.val());
+            localStorage.setItem(`Drupal.visitor.${info}`, $element[0].value);
           }
         });
       });

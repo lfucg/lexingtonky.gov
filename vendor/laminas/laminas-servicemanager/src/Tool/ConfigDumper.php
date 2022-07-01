@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\ServiceManager\Tool;
 
+use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\ServiceManager\Exception\InvalidArgumentException;
-use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionParameter;
 use Traversable;
@@ -38,7 +38,8 @@ class ConfigDumper
 return %s;
 EOC;
 
-    private ?ContainerInterface $container;
+    /** @var ContainerInterface */
+    private $container;
 
     public function __construct(?ContainerInterface $container = null)
     {
@@ -71,7 +72,9 @@ EOC;
         $constructorArguments = $reflectionClass->getConstructor()->getParameters();
         $constructorArguments = array_filter(
             $constructorArguments,
-            static fn(ReflectionParameter $argument): bool => ! $argument->isOptional()
+            function (ReflectionParameter $argument) {
+                return ! $argument->isOptional();
+            }
         );
 
         // has no required parameters, treat it as an invokable

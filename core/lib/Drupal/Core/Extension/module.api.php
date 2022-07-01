@@ -94,7 +94,7 @@ function hook_hook_info() {
 /**
  * Alter the registry of modules implementing a hook.
  *
- * This hook is invoked during \Drupal::moduleHandler()->getImplementations().
+ * This hook is invoked in \Drupal::moduleHandler()->getImplementationInfo().
  * A module may implement this hook in order to reorder the implementing
  * modules, which are otherwise ordered by the module's system weight.
  *
@@ -117,7 +117,7 @@ function hook_hook_info() {
 function hook_module_implements_alter(&$implementations, $hook) {
   if ($hook == 'form_alter') {
     // Move my_module_form_alter() to the end of the list.
-    // \Drupal::moduleHandler()->getImplementations()
+    // \Drupal::moduleHandler()->getImplementationInfo()
     // iterates through $implementations with a foreach loop which PHP iterates
     // in the order that the items were added, so to move an item to the end of
     // the array, we remove it and then add it.
@@ -698,7 +698,8 @@ function hook_update_N(&$sandbox) {
 /**
  * Executes an update which is intended to update data, like entities.
  *
- * These implementations have to be placed in a MODULE.post_update.php file.
+ * These implementations have to be placed in a MODULE.post_update.php file or
+ * a THEME.post_update.php file.
  *
  * These updates are executed after all hook_update_N() implementations. At this
  * stage Drupal is already fully repaired so you can use any API as you wish.

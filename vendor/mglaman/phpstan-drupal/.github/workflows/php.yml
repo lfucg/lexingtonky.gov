@@ -8,15 +8,29 @@ on:
     - cron: 0 0 * * *
 
 jobs:
-  lint:
+  tests:
+    continue-on-error: ${{ matrix.experimental }}
     runs-on: "ubuntu-latest"
-    name: "Linting | PHP ${{ matrix.php-version }}"
+    name: "Tests | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}"
     strategy:
       matrix:
+        experimental: [false]
         php-version:
+          - "7.3"
           - "7.4"
-          - "8.0"
-          - "8.1"
+        drupal:
+          - "^8.9"
+          - "^9.0"
+        include:
+          - php-version: "7.2"
+            drupal: "^8.9"
+            experimental: false
+          - php-version: "8.0"
+            drupal: "^9.0"
+            experimental: true
+          - php-version: "8.0"
+            drupal: "10.0.x-dev"
+            experimental: true
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
@@ -27,59 +41,25 @@ jobs:
           php-version: "${{ matrix.php-version }}"
           tools: composer:v2
           extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, gd
-      - name: "Install dependencies"
-        run: "composer update --no-progress --prefer-dist"
-      - name: "PHPCS"
-        run: "php vendor/bin/phpcs"
-      - name: "PHPStan"
-        run: "php vendor/bin/phpstan analyze"
-  tests:
-    continue-on-error: ${{ matrix.experimental }}
-    runs-on: "ubuntu-latest"
-    name: "Tests | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}"
-    strategy:
-      matrix:
-        experimental: [false]
-        php-version:
-          - "7.4"
-        drupal:
-          - "^8.9"
-          - "^9.0"
-        include:
-          - php-version: "8.0"
-            drupal: "^9.0"
-            experimental: true
-          - php-version: "8.1"
-            drupal: "10.0.x-dev"
-            experimental: true
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@v2"
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@v2"
-        with:
-          coverage: "xdebug"
-          php-version: "${{ matrix.php-version }}"
-          tools: composer:v2
-          extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, gd
       - name: "Downgrade dev dependencies"
         run: "composer require phpunit/phpunit:6.5.14 drush/drush:~9 drupal/core-recommended:${{ matrix.drupal }} drupal/core-dev:${{ matrix.drupal }} --with-all-dependencies --dev --no-update"
         if: ${{ matrix.drupal == '^8.9' }}
-      - name: "Upgrade to drupal/core:10.0.x and drush/drush:^11.0"
-        run: "composer require drupal/core-recommended:${{ matrix.drupal }} drush/drush:^11.0 --with-all-dependencies --dev --no-update"
+      - name: "Upgrade to drupal/core:10.0.x"
+        run: "composer require drupal/core-recommended:${{ matrix.drupal }} drupal/core-dev:${{ matrix.drupal }} --with-all-dependencies --dev --no-update"
         if: ${{ matrix.drupal == '10.0.x-dev' }}
       - name: "Add phpspec/prophecy-phpunit"
         run: "composer require phpspec/prophecy-phpunit:^2 --dev --no-update"
         if: ${{ matrix.drupal != '^8.9' }}
       - name: "Install dependencies"
         run: "composer update --no-progress --prefer-dist"
+      - name: "PHPCS"
+        run: "php vendor/bin/phpcs src"
+      - name: "PHPStan"
+        run: "php vendor/bin/phpstan analyze"
       - name: "PHPUnit"
         run: "php vendor/bin/phpunit --debug"
 
   build_integration:
-    needs:
-      - lint
-      - tests
     continue-on-error: ${{ matrix.experimental }}
     runs-on: "ubuntu-latest"
     name: "Build Integration | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}"
@@ -87,15 +67,19 @@ jobs:
       matrix:
         experimental: [false]
         php-version:
+          - "7.3"
           - "7.4"
         drupal:
           - "^8.9"
           - "^9.0"
         include:
+          - php-version: "7.2"
+            drupal: "^8.9"
+            experimental: false
           - php-version: "8.0"
             drupal: "^9.0"
             experimental: true
-          - php-version: "8.1"
+          - php-version: "8.0"
             drupal: "10.0.x-dev"
             experimental: true
     steps:
@@ -113,18 +97,10 @@ jobs:
         with:
           version: ${{ matrix.drupal }}
           path: ~/drupal
-      - name: "set the version alias for self"
-        run: |
-          if [ "${{ github.event_name }}" == 'pull_request' ]; then
-            echo ::set-output name=VERSION_ALIAS::dev-"${{ github.sha }}"
-          else
-            echo ::set-output name=VERSION_ALIAS::dev-main
-          fi
-        id: branch_alias
       - name: "require phpstan-drupal"
         run: |
           cd ~/drupal
-          COMPOSER_MEMORY_LIMIT=-1 composer require mglaman/phpstan-drupal "${{ steps.branch_alias.outputs.VERSION_ALIAS }} as 1.1.99" phpstan/extension-installer --with-all-dependencies
+          COMPOSER_MEMORY_LIMIT=-1 composer require mglaman/phpstan-drupal *@dev
           cp $GITHUB_WORKSPACE/tests/fixtures/config/drupal-phpstan.neon phpstan.neon
       - name: "Test core/install.php"
         run: |
@@ -157,9 +133,6 @@ jobs:
           ./vendor/bin/phpstan analyze web/modules/contrib --no-progress || if (($? == 255)); then false; else true; fi
           COMPOSER_MEMORY_LIMIT=-1 composer remove drupal/video_embed_field drupal/slick
   build_integration_no_phpunit:
-    needs:
-      - lint
-      - tests
     continue-on-error: ${{ matrix.experimental }}
     runs-on: "ubuntu-latest"
     name: "Build Integration (No PHPUnit) | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}"
@@ -172,7 +145,7 @@ jobs:
           - "^8.9"
           - "^9.0"
         include:
-          - php-version: "8.1"
+          - php-version: "8.0"
             drupal: "10.0.x-dev"
             experimental: true
     steps:

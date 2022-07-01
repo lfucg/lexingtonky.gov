@@ -21,7 +21,6 @@ class Upgrade7Test extends MigrateUpgradeExecuteTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'aggregator',
     'book',
     'config_translation',
     'content_translation',
@@ -46,6 +45,7 @@ class Upgrade7Test extends MigrateUpgradeExecuteTestBase {
   protected function setUp(): void {
     parent::setUp();
 
+    // @todo remove in https://www.drupal.org/project/drupal/issues/3267040
     // Delete the existing content made to test the ID Conflict form. Migrations
     // are to be done on a site without content. The test of the ID Conflict
     // form is being moved to its own issue which will remove the deletion
@@ -56,6 +56,9 @@ class Upgrade7Test extends MigrateUpgradeExecuteTestBase {
     $this->nodeStorage->delete($this->nodeStorage->loadMultiple());
 
     $this->loadFixture($this->getModulePath('migrate_drupal') . '/tests/fixtures/drupal7.php');
+
+    // @todo Remove this in https://www.drupal.org/node/3267515
+    \Drupal::service('module_installer')->uninstall(['rdf']);
   }
 
   /**
@@ -70,9 +73,7 @@ class Upgrade7Test extends MigrateUpgradeExecuteTestBase {
    */
   protected function getEntityCounts() {
     return [
-      'aggregator_item' => 11,
-      'aggregator_feed' => 1,
-      'block' => 25,
+      'block' => 27,
       'block_content' => 1,
       'block_content_type' => 1,
       'comment' => 4,
@@ -93,11 +94,10 @@ class Upgrade7Test extends MigrateUpgradeExecuteTestBase {
       'language_content_settings' => 24,
       'node' => 7,
       'node_type' => 8,
-      'rdf_mapping' => 8,
       'search_page' => 2,
       'shortcut' => 6,
       'shortcut_set' => 2,
-      'action' => 21,
+      'action' => 27,
       'menu' => 7,
       'taxonomy_term' => 25,
       'taxonomy_vocabulary' => 8,
@@ -106,12 +106,12 @@ class Upgrade7Test extends MigrateUpgradeExecuteTestBase {
       'user' => 4,
       'user_role' => 4,
       'menu_link_content' => 12,
-      'view' => 16,
-      'date_format' => 11,
+      'view' => 14,
+      'date_format' => 12,
       'entity_form_display' => 24,
       'entity_form_mode' => 1,
-      'entity_view_display' => 37,
-      'entity_view_mode' => 14,
+      'entity_view_display' => 34,
+      'entity_view_mode' => 12,
       'base_field_override' => 4,
     ];
   }
@@ -136,12 +136,10 @@ class Upgrade7Test extends MigrateUpgradeExecuteTestBase {
    */
   protected function getAvailablePaths() {
     return [
-      'Aggregator',
       'Block languages',
       'Block',
       'Book',
       'Chaos tools',
-      'Color',
       'Comment',
       'Contact',
       'Content translation',
@@ -171,7 +169,6 @@ class Upgrade7Test extends MigrateUpgradeExecuteTestBase {
       'Options',
       'Path',
       'Phone',
-      'RDF',
       'Search',
       'Shortcut',
       'Statistics',
@@ -206,6 +203,11 @@ class Upgrade7Test extends MigrateUpgradeExecuteTestBase {
    */
   protected function getMissingPaths() {
     return [
+      'Aggregator',
+      // @todo Remove Color in https://www.drupal.org/project/drupal/issues/3270899
+      'Color',
+      // @todo Remove RDF in https://www.drupal.org/node/3267515
+      'RDF',
       'References',
       'Translation sets',
       'Variable realm',

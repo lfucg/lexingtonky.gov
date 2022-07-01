@@ -61,7 +61,7 @@ class DiffAdminFormsTest extends DiffTestBase {
    * Tests the module requirements.
    */
   public function testRequirements() {
-    module_load_install('diff');
+    \Drupal::moduleHandler()->loadInclude('diff', 'install');
     $requirements = diff_requirements('runtime');
     $this->assertEquals($requirements['html_diff_advanced']['title'], 'Diff');
 

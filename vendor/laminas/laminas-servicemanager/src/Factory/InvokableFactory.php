@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\ServiceManager\Factory;
 
-use Psr\Container\ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 /**
  * Factory for instantiating classes with no dependencies or which accept a single array.

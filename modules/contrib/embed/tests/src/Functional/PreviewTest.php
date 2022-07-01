@@ -65,7 +65,15 @@ class PreviewTest extends EmbedTestBase {
     if (!isset($value)) {
       $value = static::SUCCESS;
     }
-    return $this->drupalGet($url, ['query' => ['text' => $value]]);
+    if ($this->drupalUserIsLoggedIn($this->webUser)) {
+      $this->drupalGet('embed-test/get_csrf_token');
+      $token = json_decode($this->getSession()->getPage()->getContent());
+    }
+    else {
+      $token = 'Any value will do for Anonymous';
+    }
+    $headers = ['X-Drupal-EmbedPreview-CSRF-Token' => $token];
+    return $this->drupalGet($url, ['query' => ['text' => $value]], $headers);
   }
 
 }

@@ -2,11 +2,17 @@
 
 namespace mglaman\PHPStanDrupal\Reflection;
 
-use PHPStan\Reflection\ClassMemberReflection;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ClassMemberReflection;
+use PHPStan\Reflection\ReflectionProviderStaticAccessor;
 use PHPStan\Reflection\TrivialParametersAcceptor;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\TrinaryLogic;
+use PHPStan\Type\NullType;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 
 /**
@@ -15,9 +21,11 @@ use PHPStan\Type\Type;
 class FieldItemListMethodReflection implements MethodReflection
 {
 
-    private ClassReflection $declaringClass;
+    /** @var ClassReflection */
+    private $declaringClass;
 
-    private string $methodName;
+    /** @var string */
+    private $methodName;
 
     public function __construct(ClassReflection $declaringClass, string $methodName)
     {

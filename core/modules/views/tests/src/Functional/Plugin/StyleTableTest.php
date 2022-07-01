@@ -29,8 +29,8 @@ class StyleTableTest extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE): void {
-    parent::setUp($import_test_views);
+  protected function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
+    parent::setUp($import_test_views, $modules);
 
     $this->enableViewsTestModule();
   }
@@ -122,7 +122,7 @@ class StyleTableTest extends ViewTestBase {
    * Tests that a number with the value of "0" is displayed in the table.
    */
   public function testNumericFieldVisible() {
-    // Adds a new datapoint in the views_test_data table to have a person with
+    // Adds a new data point in the views_test_data table to have a person with
     // an age of zero.
     $data_set = $this->dataSet();
     $query = Database::getConnection()->insert('views_test_data')

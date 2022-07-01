@@ -5,6 +5,7 @@ namespace Drupal\Tests\jsonapi\Functional;
 use Drupal\Component\Render\PlainTextOutput;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Url;
 use Drupal\entity_test\Entity\EntityTest;
@@ -309,7 +310,7 @@ class FileUploadTest extends ResourceTestBase {
 
     $this->setUpAuthorization('GET');
 
-    // Reuploading the same file will result in the file being uploaded twice
+    // Re-uploading the same file will result in the file being uploaded twice
     // and referenced twice.
     $response = $this->fileRequest($uri, $this->testFileData);
     $this->assertSame(200, $response->getStatusCode());
@@ -775,6 +776,7 @@ class FileUploadTest extends ResourceTestBase {
       case 'PATCH':
         return "The current user is not permitted to upload a file for this field. The 'administer entity_test content' permission is required.";
     }
+    return '';
   }
 
   /**
@@ -927,6 +929,7 @@ class FileUploadTest extends ResourceTestBase {
   protected function getExpectedUnauthorizedAccessCacheability() {
     // There is cacheability metadata to check as file uploads only allows POST
     // requests, which will not return cacheable responses.
+    return new CacheableMetadata();
   }
 
 }

@@ -35,17 +35,21 @@
       }
 
       function filterModuleList(e) {
-        const query = $(e.target).val();
+        const query = e.target.value;
         // Case insensitive expression to find query at the beginning of a word.
         const re = new RegExp(`\\b${query}`, 'i');
 
         function showModuleRow(index, row) {
-          const $row = $(row);
-          const $sources = $row.find(
+          const sources = row.querySelectorAll(
             '.table-filter-text-source, .module-name, .module-description',
           );
-          const textMatch = $sources.text().search(re) !== -1;
-          $row.closest('tr').toggle(textMatch);
+          let sourcesConcat = '';
+          // Concatenate the textContent of the elements in the row.
+          sources.forEach((item) => {
+            sourcesConcat += item.textContent;
+          });
+          const textMatch = sourcesConcat.search(re) !== -1;
+          $(row).closest('tr').toggle(textMatch);
         }
         // Search over all rows and packages.
         $rowsAndDetails.show();

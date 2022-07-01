@@ -161,7 +161,9 @@ class ThemeTest extends BrowserTestBase {
     \Drupal::service('module_installer')->install(['block', 'theme_region_test']);
 
     // Place a block.
-    $this->drupalPlaceBlock('system_main_block');
+    $this->drupalPlaceBlock('system_main_block', [
+      'region' => 'sidebar_first',
+    ]);
     $this->drupalGet('');
     $elements = $this->cssSelect(".region-sidebar-first.new_class");
     $this->assertCount(1, $elements, 'New class found.');
@@ -192,6 +194,14 @@ class ThemeTest extends BrowserTestBase {
         $this->assertEquals((string) $value, $items[$key]->getText());
       }
     }
+  }
+
+  /**
+   * Ensures that preprocess callbacks can be defined.
+   */
+  public function testPreprocessCallback() {
+    $this->drupalGet('theme-test/preprocess-callback');
+    $this->assertSession()->pageTextContains('Make Drupal full of kittens again!');
   }
 
 }

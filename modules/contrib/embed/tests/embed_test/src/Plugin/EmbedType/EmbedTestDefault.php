@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\embed_test\Plugin\EmbedType\EmbedTestDefault.
- */
-
 namespace Drupal\embed_test\Plugin\EmbedType;
 
 use Drupal\embed\EmbedType\EmbedTypeBase;

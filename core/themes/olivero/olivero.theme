@@ -359,7 +359,7 @@ function olivero_preprocess_field(&$variables) {
     $variables['attributes']['class'][] = 'text-content';
   }
 
-  if ($variables['field_type'] == 'image' && $variables['element']['#view_mode'] == 'full' && !$variables["element"]["#is_multiple"]) {
+  if ($variables['field_type'] == 'image' && $variables['element']['#view_mode'] == 'full' && !$variables["element"]["#is_multiple"] && $variables['field_name'] !== 'user_picture') {
     $variables['attributes']['class'][] = 'wide-image';
   }
 }
@@ -492,21 +492,6 @@ function olivero_preprocess_field__node__created(&$variables) {
  */
 function olivero_preprocess_filter_caption(&$variables) {
   $variables['classes'] = isset($variables['classes']) && !empty($variables['classes']) ? $variables['classes'] . ' caption' : 'caption';
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function olivero_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $comment = $form_state->getFormObject()
-    ->getEntity();
-  /** @var \Drupal\comment\Entity\Comment $comment */
-  if ($comment->hasParentComment()) {
-    $form['actions']['submit']['#value'] = t('Reply to comment');
-  }
-  else {
-    $form['actions']['submit']['#value'] = t('Post comment');
-  }
 }
 
 /**

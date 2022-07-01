@@ -20,7 +20,7 @@
   border: solid 2px var(--color--blue-20);
   border-radius: var(--border-radius);
   background-color: var(--color--white);
-  font-family: inherit;
+  font-family: var(--font-sans);
   font-size: var(--font-size-l);
   font-weight: 700;
   appearance: none;
@@ -123,4 +123,8 @@
 
 [dir="rtl"] .button--icon-back:before {
   transform: rotate(-45deg);
+}
+
+.shepherd-cancel-icon {
+  font-size: 1.5em;
 }

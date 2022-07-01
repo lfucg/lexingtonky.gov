@@ -88,7 +88,7 @@ function locale_translate_batch_import_files(array $options, $force = FALSE) {
  *   An array of interface translation files keyed by their URI.
  */
 function locale_translate_get_interface_translation_files(array $projects = [], array $langcodes = []) {
-  module_load_include('compare.inc', 'locale');
+  \Drupal::moduleHandler()->loadInclude('locale', 'inc', 'locale.compare');
   $files = [];
   $projects = $projects ? $projects : array_keys(locale_translation_get_projects());
   $langcodes = $langcodes ? $langcodes : array_keys(locale_translatable_language_list());
@@ -305,8 +305,9 @@ function locale_translate_batch_refresh(&$context) {
       // Get list of unique string identifiers and language codes updated.
       $langcodes = array_unique(array_values($context['results']['languages']));
       foreach ($context['results']['stats'] as $report) {
-        $strings = array_merge($strings, $report['strings']);
+        $strings[] = $report['strings'];
       }
+      $strings = array_merge([], ...$strings);
     }
     if ($strings) {
       // Initialize multi-step string refresh.

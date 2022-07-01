@@ -1119,11 +1119,11 @@ PHP,
 
     // Case 7: GHS is enabled for other text editors if they are using a
     // CKEditor 5 plugin that uses wildcard tags.
-    $settings['toolbar']['items'][] = 'alignment:center';
+    $settings['toolbar']['items'][] = 'alignment';
     $editor->setSettings($settings);
     $plugin_ids = array_keys($this->manager->getEnabledDefinitions($editor));
     $expected_plugins = array_merge($expected_plugins, [
-      'ckeditor5_alignment.center',
+      'ckeditor5_alignment',
       'ckeditor5_wildcardHtmlSupport',
     ]);
     sort($expected_plugins);
@@ -1464,6 +1464,30 @@ PHP,
         'expected_plugin' => NULL,
       ],
     ];
+  }
+
+  /**
+   * @covers \Drupal\ckeditor5\Plugin\CKEditor5PluginDefinition::validateCKEditor5Aspects()
+   */
+  public function testAutomaticLinkDecoratorsDisallowed(): void {
+    $this->expectException(InvalidPluginDefinitionException::class);
+    $this->expectExceptionMessage('The "ckeditor5_automatic_link_decorator_test_llamaClass" CKEditor 5 plugin definition specifies an automatic decorator, this is not supported. Use the Drupal filter system instead.');
+
+    $this->enableModules(['ckeditor5_automatic_link_decorator_test']);
+
+    $this->manager->getDefinitions();
+  }
+
+  /**
+   * @covers \Drupal\ckeditor5\Plugin\CKEditor5PluginDefinition::validateCKEditor5Aspects()
+   */
+  public function testExternalLinkAutomaticLinkDecoratorDisallowed(): void {
+    $this->expectException(InvalidPluginDefinitionException::class);
+    $this->expectExceptionMessage('The "ckeditor5_automatic_link_decorator_test_2_addTargetToExternalLinks" CKEditor 5 plugin definition specifies an automatic decorator, this is not supported. Use the Drupal filter system instead.');
+
+    $this->enableModules(['ckeditor5_automatic_link_decorator_test_2']);
+
+    $this->manager->getDefinitions();
   }
 
 }

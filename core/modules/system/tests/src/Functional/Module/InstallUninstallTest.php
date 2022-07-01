@@ -60,9 +60,14 @@ class InstallUninstallTest extends ModuleTestBase {
 
     $required_modules['help'] = $all_modules['help'];
 
-    // Test uninstalling without hidden, required, and already enabled modules.
+    // Filter out contrib, hidden, testing, experimental, and deprecated
+    // modules. We also don't need to enable modules that are already enabled.
     $all_modules = array_filter($all_modules, function ($module) {
-      if (!empty($module->info['hidden']) || !empty($module->info['required']) || $module->status == TRUE || $module->info['package'] == 'Testing') {
+      if (!empty($module->info['hidden'])
+        || !empty($module->info['required'])
+        || $module->status == TRUE
+        || $module->info['package'] === 'Testing'
+        || $module->info[ExtensionLifecycle::LIFECYCLE_IDENTIFIER] === ExtensionLifecycle::DEPRECATED) {
         return FALSE;
       }
       return TRUE;
@@ -112,9 +117,20 @@ class InstallUninstallTest extends ModuleTestBase {
 
       // Handle experimental modules, which require a confirmation screen.
       if ($lifecycle === ExtensionLifecycle::EXPERIMENTAL) {
-        $this->assertSession()->pageTextContains('Are you sure you wish to enable experimental modules?');
+        $this->assertSession()->pageTextContains('Are you sure you wish to enable an experimental module?');
         if (count($modules_to_install) > 1) {
           // When there are experimental modules, needed dependencies do not
+          // result in the same page title, but there will be expected text
+          // indicating they need to be enabled.
+          $this->assertSession()->pageTextContains('You must enable');
+        }
+        $this->submitForm([], 'Continue');
+      }
+      // Handle deprecated modules, which require a confirmation screen.
+      elseif ($lifecycle === ExtensionLifecycle::DEPRECATED) {
+        $this->assertSession()->pageTextContains('Are you sure you wish to enable a deprecated module?');
+        if (count($modules_to_install) > 1) {
+          // When there are deprecated modules, needed dependencies do not
           // result in the same page title, but there will be expected text
           // indicating they need to be enabled.
           $this->assertSession()->pageTextContains('You must enable');
@@ -207,20 +223,47 @@ class InstallUninstallTest extends ModuleTestBase {
     // - That enabling more than one module at the same time does not lead to
     //   any errors.
     $edit = [];
-    $experimental = FALSE;
+    $count_experimental = 0;
+    $count_deprecated = 0;
     foreach ($all_modules as $name => $module) {
       $edit['modules[' . $name . '][enable]'] = TRUE;
-      // Track whether there is at least one experimental module.
       if ($module->info[ExtensionLifecycle::LIFECYCLE_IDENTIFIER] === ExtensionLifecycle::EXPERIMENTAL) {
-        $experimental = TRUE;
+        $count_experimental++;
+      }
+      if ($module->info[ExtensionLifecycle::LIFECYCLE_IDENTIFIER] === ExtensionLifecycle::DEPRECATED) {
+        $count_deprecated++;
       }
     }
     $this->drupalGet('admin/modules');
     $this->submitForm($edit, 'Install');
 
-    // If there are experimental modules, click the confirm form.
-    if ($experimental) {
-      $this->assertSession()->pageTextContains('Are you sure you wish to enable experimental modules?');
+    // If there are experimental and deprecated modules, click the confirm form.
+    if ($count_experimental > 0 && $count_deprecated > 0) {
+      $this->assertSession()->titleEquals('Are you sure you wish to enable experimental and deprecated modules? | Drupal');
+      $this->submitForm([], 'Continue');
+    }
+    // If there are experimental, and no deprecated modules, click the confirm
+    // form.
+    elseif ($count_experimental > 0) {
+      if ($count_experimental === 1) {
+        $page_title = 'Are you sure you wish to enable an experimental module? | Drupal';
+      }
+      else {
+        $page_title = 'Are you sure you wish to enable experimental modules? | Drupal';
+      }
+      $this->assertSession()->titleEquals($page_title);
+      $this->submitForm([], 'Continue');
+    }
+    // If there are deprecated, and no experimental modules, click the confirm
+    // form.
+    elseif ($count_deprecated > 0) {
+      if ($count_deprecated === 1) {
+        $page_title = 'Are you sure you wish to enable a deprecated module? | Drupal';
+      }
+      else {
+        $page_title = 'Are you sure you wish to enable deprecated modules? | Drupal';
+      }
+      $this->assertSession()->titleEquals($page_title);
       $this->submitForm([], 'Continue');
     }
     $this->assertSession()->pageTextContains(count($all_modules) . ' modules have been enabled: ');

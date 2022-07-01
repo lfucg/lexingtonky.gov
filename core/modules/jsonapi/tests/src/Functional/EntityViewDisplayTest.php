@@ -11,7 +11,7 @@ use Drupal\node\Entity\NodeType;
  *
  * @group jsonapi
  */
-class EntityViewDisplayTest extends ResourceTestBase {
+class EntityViewDisplayTest extends ConfigEntityResourceTestBase {
 
   /**
    * {@inheritdoc}
@@ -127,6 +127,7 @@ class EntityViewDisplayTest extends ResourceTestBase {
    */
   protected function getPostDocument() {
     // @todo Update in https://www.drupal.org/node/2300677.
+    return [];
   }
 
   /**

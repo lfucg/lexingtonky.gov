@@ -31,7 +31,9 @@ class ContextualLinksTest extends WebDriverTestBase {
     parent::setUp();
 
     $this->drupalLogin($this->createUser(['access contextual links']));
-    $this->placeBlock('system_branding_block', ['id' => 'branding']);
+    $this->placeBlock('system_branding_block', [
+      'id' => 'branding',
+    ]);
   }
 
   /**

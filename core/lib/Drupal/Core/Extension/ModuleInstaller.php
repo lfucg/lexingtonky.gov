@@ -125,6 +125,9 @@ class ModuleInstaller implements ModuleInstallerInterface {
       if ($module_data[$module]->info[ExtensionLifecycle::LIFECYCLE_IDENTIFIER] === ExtensionLifecycle::OBSOLETE) {
         throw new ObsoleteExtensionException("Unable to install modules: module '$module' is obsolete.");
       }
+      if ($module_data[$module]->info[ExtensionLifecycle::LIFECYCLE_IDENTIFIER] === ExtensionLifecycle::DEPRECATED) {
+        @trigger_error("The module '$module' is deprecated. See " . $module_data[$module]->info['lifecycle_link'], E_USER_DEPRECATED);
+      }
     }
     if ($enable_dependencies) {
       $module_list = $module_list ? array_combine($module_list, $module_list) : [];
@@ -242,7 +245,7 @@ class ModuleInstaller implements ModuleInstallerInterface {
 
         // Load the module's .module and .install files.
         $this->moduleHandler->load($module);
-        module_load_install($module);
+        $this->moduleHandler->loadInclude($module, 'install');
 
         if (!InstallerKernel::installationAttempted()) {
           // Replace the route provider service with a version that will rebuild
@@ -330,14 +333,6 @@ class ModuleInstaller implements ModuleInstallerInterface {
           $version = max($version, $last_removed);
         }
         $this->updateRegistry->setInstalledVersion($module, $version);
-
-        // Ensure that all post_update functions are registered already. This
-        // should include existing post-updates, as well as any specified as
-        // having been previously removed, to ensure that newly installed and
-        // updated sites have the same entries in the registry.
-        /** @var \Drupal\Core\Update\UpdateRegistry $post_update_registry */
-        $post_update_registry = \Drupal::service('update.post_update_registry');
-        $post_update_registry->registerInvokedUpdates(array_merge($post_update_registry->getModuleUpdateFunctions($module), array_keys($post_update_registry->getRemovedPostUpdates($module))));
 
         // Record the fact that it was installed.
         $modules_installed[] = $module;
@@ -468,7 +463,7 @@ class ModuleInstaller implements ModuleInstallerInterface {
       $this->moduleHandler->invokeAll('module_preuninstall', [$module]);
 
       // Uninstall the module.
-      module_load_install($module);
+      $this->moduleHandler->loadInclude($module, 'install');
       $this->moduleHandler->invoke($module, 'uninstall', [$sync_status]);
 
       // Remove all configuration belonging to the module.
@@ -543,10 +538,6 @@ class ModuleInstaller implements ModuleInstallerInterface {
       /** @var \Drupal\Core\Update\UpdateHookRegistry $update_registry */
       $update_registry = \Drupal::service('update.update_hook_registry');
       $update_registry->deleteInstalledVersion($module);
-
-      /** @var \Drupal\Core\Update\UpdateRegistry $post_update_registry */
-      $post_update_registry = \Drupal::service('update.post_update_registry');
-      $post_update_registry->filterOutInvokedUpdatesByModule($module);
     }
     // Rebuild routes after installing module. This is done here on top of
     // \Drupal\Core\Routing\RouteBuilder::destruct to not run into errors on
@@ -561,7 +552,7 @@ class ModuleInstaller implements ModuleInstallerInterface {
     // Any cache entry might implicitly depend on the uninstalled modules,
     // so clear all of them explicitly.
     $this->moduleHandler->invokeAll('cache_flush');
-    foreach (Cache::getBins() as $service_id => $cache_backend) {
+    foreach (Cache::getBins() as $cache_backend) {
       $cache_backend->deleteAll();
     }
 

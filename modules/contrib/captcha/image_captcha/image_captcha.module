@@ -84,7 +84,8 @@ function _image_captcha_get_available_fonts_from_directories($directories = NULL
   if ($directories === NULL) {
     $request = \Drupal::service('request_stack')->getCurrentRequest();
     $directories = [
-      drupal_get_path('module', 'image_captcha') . '/fonts',
+      // @phpstan-ignore-next-line
+      (Drupal::hasService('extension.list.module') ? \Drupal::service('extension.list.module')->getPath('image_captcha') : drupal_get_path('module', 'image_captcha')) . '/fonts',
       'sites/all/libraries/fonts',
       DrupalKernel::findSitePath($request) . '/libraries/fonts',
     ];
@@ -92,7 +93,7 @@ function _image_captcha_get_available_fonts_from_directories($directories = NULL
   // Collect the font information.
   $fonts = [];
   foreach ($directories as $directory) {
-    if (\Drupal::service('file_system')->prepareDirectory($directory)) {
+    if (is_dir($directory) && is_readable($directory)) {
       $files = \Drupal::service('file_system')->scanDirectory($directory, '/\.[tT][tT][fF]$/');
       foreach ($files as $filename => $font) {
         $fonts[hash('sha256', $filename)] = (array) $font;
@@ -209,10 +210,23 @@ function _image_captcha_check_setup($check_fonts = TRUE) {
   if ($check_fonts) {
     // Check availability of enabled fonts.
     $fonts = _image_captcha_get_enabled_fonts();
-    $readable_fonts = [];
-    list($readable_fonts, $problem_fonts) = _image_captcha_check_fonts($fonts);
-    if (count($problem_fonts) != 0) {
-      $status = $status | IMAGE_CAPTCHA_ERROR_TTF_FILE_READ_PROBLEM;
+    if (empty($fonts)) {
+      // Config value might be wrong, try to reinstall the field.
+      require_once __DIR__ . '/image_captcha.install';
+      image_captcha_install();
+
+      // Try again now.
+      $fonts = _image_captcha_get_enabled_fonts();
+      if (empty($fonts)) {
+        $status = $status | IMAGE_CAPTCHA_ERROR_TTF_FILE_READ_PROBLEM;
+      }
+    }
+    if (!empty($fonts)) {
+      $readable_fonts = [];
+      [$readable_fonts, $problem_fonts] = _image_captcha_check_fonts($fonts);
+      if (count($problem_fonts) != 0) {
+        $status = $status | IMAGE_CAPTCHA_ERROR_TTF_FILE_READ_PROBLEM;
+      }
     }
   }
 
@@ -289,7 +303,7 @@ function image_captcha_captcha($op, $captcha_type = '', $captcha_sid = NULL) {
         // Generate image source URL (add timestamp to avoid problems with
         // client side caching: subsequent images of the same CAPTCHA session
         // have the same URL, but should display a different code).
-        list($width, $height) = _image_captcha_image_size($code);
+        [$width, $height] = _image_captcha_image_size($code);
         $result['form']['captcha_image'] = [
           '#theme' => 'image',
           '#uri' => Url::fromRoute('image_captcha.generator', [
@@ -364,34 +378,36 @@ function image_captcha_element_info_alter(array &$element) {
  * @see image_captcha_element_info_alter()
  */
 function image_captcha_after_build_process($element) {
-  $form_id = $element['#captcha_info']['form_id'];
-  $captcha_point = captcha_get_form_id_setting($form_id);
+  if (isset($element['#captcha_info'])) {
+    $form_id = $element['#captcha_info']['form_id'];
+    $captcha_point = captcha_get_form_id_setting($form_id);
 
-  $is_image_captcha = FALSE;
-  if (isset($captcha_point->captchaType) && $captcha_point->captchaType == 'image_captcha/Image') {
-    $is_image_captcha = TRUE;
-  }
-  elseif (isset($captcha_point->captchaType) && $captcha_point->captchaType == 'default') {
-    $default_challenge = \Drupal::service('config.manager')
-      ->getConfigFactory()
-      ->get('captcha.settings')
-      ->get('default_challenge');
-    if ($default_challenge == 'image_captcha/Image') {
+    $is_image_captcha = FALSE;
+    if (isset($captcha_point->captchaType) && $captcha_point->captchaType == 'image_captcha/Image') {
       $is_image_captcha = TRUE;
     }
-  }
+    elseif (isset($captcha_point->captchaType) && $captcha_point->captchaType == 'default') {
+      $default_challenge = \Drupal::service('config.manager')
+        ->getConfigFactory()
+        ->get('captcha.settings')
+        ->get('default_challenge');
+      if ($default_challenge == 'image_captcha/Image') {
+        $is_image_captcha = TRUE;
+      }
+    }
 
-  if ($is_image_captcha && isset($element['captcha_widgets']['captcha_image'])) {
-    $uri = Link::fromTextAndUrl(t('Get new captcha!'),
-      new Url('image_captcha.refresh',
-        ['form_id' => $form_id],
-        ['attributes' => ['class' => ['reload-captcha']]]
-      )
-    );
-    $element['captcha_widgets']['captcha_refresh'] = [
-      '#theme' => 'image_captcha_refresh',
-      '#captcha_refresh_link' => $uri,
-    ];
+    if ($is_image_captcha && isset($element['captcha_widgets']['captcha_image'])) {
+      $uri = Link::fromTextAndUrl(t('Get new captcha!'),
+        new Url('image_captcha.refresh',
+          ['form_id' => $form_id],
+          ['attributes' => ['class' => ['reload-captcha']]]
+        )
+      );
+      $element['captcha_widgets']['captcha_refresh'] = [
+        '#theme' => 'image_captcha_refresh',
+        '#captcha_refresh_link' => $uri,
+      ];
+    }
   }
   return $element;
 }

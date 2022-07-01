@@ -60,8 +60,10 @@ interface EmbedButtonInterface extends ConfigEntityInterface {
    * @return \Drupal\file\FileInterface
    *   The file entity of the button icon.
    *
-   * @deprecated in embed:1.2 and will be removed in embed:1.3. Use
+   * @deprecated in embed:8.x-1.2 and is removed from embed:2.0.0. Use
    *   \Drupal\embed\EmbedButtonInterface::getIconUrl() instead.
+   *
+   * @see https://www.drupal.org/project/embed/issues/3039598
    */
   public function getIconFile();
 

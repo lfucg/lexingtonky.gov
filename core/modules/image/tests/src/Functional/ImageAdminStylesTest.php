@@ -68,7 +68,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
     ];
     $this->drupalGet('admin/config/media/image-styles/add');
     $this->submitForm($edit, 'Create new style');
-    $this->assertSession()->pageTextContains("Style {$style_label} was created.");
+    $this->assertSession()->statusMessageContains("Style {$style_label} was created.", 'status');
     $options = image_style_options();
     $this->assertArrayHasKey($style_name, $options);
   }
@@ -120,7 +120,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
     ];
     $this->drupalGet($admin_path . '/add');
     $this->submitForm($edit, 'Create new style');
-    $this->assertSession()->pageTextContains("Style {$style_label} was created.");
+    $this->assertSession()->statusMessageContains("Style {$style_label} was created.", 'status');
 
     // Ensure that the expected entity operations are there.
     $this->drupalGet($admin_path);
@@ -140,6 +140,8 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
       $this->drupalGet($style_path);
       $this->submitForm(['new' => $effect], 'Add');
       if (!empty($edit)) {
+        $effect_label = \Drupal::service('plugin.manager.image.effect')->createInstance($effect)->label();
+        $this->assertSession()->pageTextContains("Add {$effect_label} effect to style {$style_label}");
         $this->submitForm($edit_data, 'Add effect');
       }
     }
@@ -257,7 +259,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
     // Confirm that the form submission was successful.
     $this->assertSession()->statusCodeEquals(200);
     $image_crop_effect = $style->getEffect($uuids['image_crop']);
-    $this->assertSession()->pageTextContains("The image effect {$image_crop_effect->label()} has been deleted.");
+    $this->assertSession()->statusMessageContains("The image effect {$image_crop_effect->label()} has been deleted.", 'status');
     // Confirm that there is no longer a link to the effect.
     $this->assertSession()->linkByHrefNotExists($style_path . '/effects/' . $uuids['image_crop'] . '/delete');
     // Refresh the image style information and verify that the effect was
@@ -357,7 +359,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
     ];
     $this->drupalGet($style_path . $style_name);
     $this->submitForm($edit, 'Save');
-    $this->assertSession()->pageTextContains('Changes to the style have been saved.');
+    $this->assertSession()->statusMessageContains('Changes to the style have been saved.', 'status');
     $this->drupalGet('node/' . $nid);
 
     // Reload the image style using the new name.
@@ -370,7 +372,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
     ];
     $this->drupalGet($style_path . $new_style_name . '/delete');
     $this->submitForm($edit, 'Delete');
-    $this->assertSession()->pageTextContains("The image style {$new_style_label} has been deleted.");
+    $this->assertSession()->statusMessageContains("The image style {$new_style_label} has been deleted.", 'status');
 
     $replacement_style = ImageStyle::load('thumbnail');
     $this->drupalGet('node/' . $nid);
@@ -391,6 +393,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
 
     // There should normally be only one edit link on this page initially.
     $this->clickLink('Edit');
+    $this->assertSession()->pageTextContains("Edit Scale and crop effect on style Test style effect edit");
     $this->submitForm(['data[width]' => '360', 'data[height]' => '240'], 'Update effect');
     $this->assertSession()->pageTextContains('Scale and crop 360×240');
 
@@ -405,6 +408,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
 
     // Edit the scale effect that was just added.
     $this->clickLink('Edit');
+    $this->assertSession()->pageTextContains("Edit Scale effect on style Test style scale edit scale");
     $this->submitForm(['data[width]' => '24', 'data[height]' => '19'], 'Update effect');
 
     // Add another scale effect and make sure both exist. Click through from

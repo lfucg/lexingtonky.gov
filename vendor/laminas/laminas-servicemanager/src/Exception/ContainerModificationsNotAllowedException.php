@@ -8,6 +8,9 @@ use DomainException;
 
 use function sprintf;
 
+/**
+ * @inheritDoc
+ */
 class ContainerModificationsNotAllowedException extends DomainException implements ExceptionInterface
 {
     /**

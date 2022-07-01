@@ -2,6 +2,7 @@
 
 namespace Drupal\captcha\Service;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
@@ -10,6 +11,23 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 class CaptchaService {
 
   use StringTranslationTrait;
+
+  /**
+   * Module Handler Service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * Constructor for Captcha Service helper.
+   *
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Module Handler Service.
+   */
+  public function __construct(ModuleHandlerInterface $module_handler) {
+    $this->moduleHandler = $module_handler;
+  }
 
   /**
    * Return an array with the available CAPTCHA types.
@@ -33,12 +51,36 @@ class CaptchaService {
 
     // We do our own version of Drupal's module_invoke_all() here because
     // we want to build an array with custom keys and values.
-    foreach (\Drupal::moduleHandler()->getImplementations('captcha') as $module) {
-      $result = call_user_func_array($module . '_captcha', ['list']);
-      if (is_array($result)) {
-        foreach ($result as $type) {
-          $challenges["$module/$type"] = $this->t('@type (from module @module)', [
-            '@type' => $type,
+    $types = [];
+    if (method_exists($this->moduleHandler, 'invokeAllWith')) {
+      $this->moduleHandler->invokeAllWith('captcha', function (callable $hook, string $module) use (&$types) {
+        if ($type = $hook('list')) {
+          if (!is_array($type)) {
+            $types[$module] = [$type];
+          }
+          else {
+            $types[$module] = $type;
+          }
+        }
+      });
+    }
+    else {
+      // @phpstan-ignore-next-line
+      foreach (\Drupal::moduleHandler()->getImplementations('captcha') as $module) {
+        $type = call_user_func_array($module . '_captcha', ['list']);
+        if (!is_array($type)) {
+          $types[$module] = [$type];
+        }
+        else {
+          $types[$module] = $type;
+        }
+      }
+    }
+    if (!empty($types)) {
+      foreach ($types as $module => $values) {
+        foreach ($values as $value) {
+          $challenges["$module/$value"] = $this->t('@type (from module @module)', [
+            '@type' => $value,
             '@module' => $module,
           ]);
         }
@@ -69,9 +111,9 @@ class CaptchaService {
    */
   public function insertCaptchaElement(array &$form, array $placement, array $captcha_element) {
     // Get path, target and target weight or use defaults if not available.
-    $target_key = isset($placement['key']) ? $placement['key'] : NULL;
-    $target_weight = isset($placement['weight']) ? $placement['weight'] : NULL;
-    $path = isset($placement['path']) ? $placement['path'] : [];
+    $target_key = $placement['key'] ?? NULL;
+    $target_weight = $placement['weight'] ?? NULL;
+    $path = $placement['path'] ?? [];
 
     // Walk through the form along the path.
     $form_stepper = &$form;

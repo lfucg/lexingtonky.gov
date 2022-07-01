@@ -14,7 +14,6 @@
 use Drupal\Core\File\Exception\FileException;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\update\UpdateFetcherInterface;
@@ -68,7 +67,7 @@ function update_page_top() {
   /** @var \Drupal\Core\Routing\AdminContext $admin_context */
   $admin_context = \Drupal::service('router.admin_context');
   $route_match = \Drupal::routeMatch();
-  if ($admin_context->isAdminRoute($route_match->getRouteObject()) && \Drupal::currentUser()->hasPermission('administer site configuration')) {
+  if ($admin_context->isAdminRoute($route_match->getRouteObject()) && \Drupal::currentUser()->hasPermission('view update notifications')) {
     $route_name = \Drupal::routeMatch()->getRouteName();
     switch ($route_name) {
       // These pages don't need additional nagging.
@@ -93,7 +92,7 @@ function update_page_top() {
         break;
 
     }
-    module_load_install('update');
+    \Drupal::moduleHandler()->loadInclude('update', 'install');
     $status = update_requirements('runtime');
     foreach (['core', 'contrib'] as $report_type) {
       $type = 'update_' . $report_type;
@@ -194,7 +193,7 @@ function update_cron() {
   if ((REQUEST_TIME - $last_email_notice) > $interval) {
     // If configured time between notifications elapsed, send email about
     // updates possibly available.
-    module_load_include('inc', 'update', 'update.fetch');
+    \Drupal::moduleHandler()->loadInclude('update', 'inc', 'update.fetch');
     _update_cron_notify();
   }
 
@@ -223,23 +222,21 @@ function update_themes_uninstalled($themes) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter() for system_modules().
+ * Implements hook_modules_installed().
  *
- * Adds a form submission handler to the system modules form, so that if a site
- * admin saves the form, we invalidate the information of available updates.
- *
- * @see _update_cache_clear()
+ * If modules are installed, we invalidate the information of available updates.
  */
-function update_form_system_modules_alter(&$form, FormStateInterface $form_state) {
-  $form['#submit'][] = 'update_storage_clear_submit';
+function update_modules_installed($modules) {
+  // Clear all update module data.
+  update_storage_clear();
 }
 
 /**
- * Form submission handler for system_modules().
+ * Implements hook_modules_uninstalled().
  *
- * @see update_form_system_modules_alter()
+ * If modules are uninstalled, we invalidate the information of available updates.
  */
-function update_storage_clear_submit($form, FormStateInterface $form_state) {
+function update_modules_uninstalled($modules) {
   // Clear all update module data.
   update_storage_clear();
 }
@@ -277,7 +274,7 @@ function _update_no_data() {
  * @see \Drupal\update\UpdateManager::getProjects()
  */
 function update_get_available($refresh = FALSE) {
-  module_load_include('inc', 'update', 'update.compare');
+  \Drupal::moduleHandler()->loadInclude('update', 'inc', 'update.compare');
   $needs_refresh = FALSE;
 
   // Grab whatever data we currently have.

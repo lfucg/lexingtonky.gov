@@ -117,6 +117,16 @@ PHPCS_XML_DIST_FILE_CHANGED=0
 #  - core/.eslintrc.jquery.json
 ESLINT_CONFIG_PASSING_FILE_CHANGED=0
 
+# This variable will be set to one when the stylelint config file is changed.
+# changed:
+#  - core/.stylelintignore
+#  - core/.stylelintrc.json
+STYLELINT_CONFIG_FILE_CHANGED=0
+
+# This variable will be set when a Drupal-specific CKEditor 5 plugin has changed
+# it is used to make sure the compiled JS is valid.
+CKEDITOR5_PLUGINS_CHANGED=0
+
 # Build up a list of absolute file names.
 ABS_FILES=
 for FILE in $FILES; do
@@ -128,6 +138,20 @@ for FILE in $FILES; do
 
   if [[ $FILE == "core/.eslintrc.json" || $FILE == "core/.eslintrc.passing.json" || $FILE == "core/.eslintrc.jquery.json" ]]; then
     ESLINT_CONFIG_PASSING_FILE_CHANGED=1;
+  fi;
+
+  if [[ $FILE == "core/.stylelintignore" || $FILE == "core/.stylelintrc.json" ]]; then
+    STYLELINT_CONFIG_FILE_CHANGED=1;
+  fi;
+
+  # If JavaScript packages change, then rerun all JavaScript style checks.
+  if [[ $FILE == "core/package.json" || $FILE == "core/yarn.lock" ]]; then
+    ESLINT_CONFIG_PASSING_FILE_CHANGED=1;
+    STYLELINT_CONFIG_FILE_CHANGED=1;
+  fi;
+
+  if [[ -f "$TOP_LEVEL/$FILE" ]] && [[ $FILE =~ \.js$ ]] && [[ $FILE =~ ^core/modules/ckeditor5/js/build || $FILE =~ ^core/modules/ckeditor5/js/ckeditor5_plugins ]]; then
+    CKEDITOR5_PLUGINS_CHANGED=1;
   fi;
 done
 
@@ -184,7 +208,7 @@ printf "\n"
 # When the file core/phpcs.xml.dist has been changed, then PHPCS must check all files.
 if [[ $PHPCS_XML_DIST_FILE_CHANGED == "1" ]]; then
   # Test all files with phpcs rules.
-  vendor/bin/phpcs -ps --runtime-set installed_paths "$TOP_LEVEL/vendor/drupal/coder/coder_sniffer" --standard="$TOP_LEVEL/core/phpcs.xml.dist"
+  vendor/bin/phpcs -ps --standard="$TOP_LEVEL/core/phpcs.xml.dist"
   PHPCS=$?
   if [ "$PHPCS" -ne "0" ]; then
     # If there are failures set the status to a number other than 0.
@@ -210,6 +234,45 @@ if [[ $ESLINT_CONFIG_PASSING_FILE_CHANGED == "1" ]]; then
     printf "\neslint: ${red}failed${reset}\n"
   else
     printf "\neslint: ${green}passed${reset}\n"
+  fi
+  cd $TOP_LEVEL
+  # Add a separator line to make the output easier to read.
+  printf "\n"
+  printf -- '-%.0s' {1..100}
+  printf "\n"
+fi
+
+# When the stylelint config has been changed, then stylelint must check all files.
+if [[ $STYLELINT_CONFIG_FILE_CHANGED == "1" ]]; then
+  cd "$TOP_LEVEL/core"
+  yarn run -s lint:css
+  if [ "$?" -ne "0" ]; then
+    # If there are failures set the status to a number other than 0.
+    FINAL_STATUS=1
+    printf "\nstylelint: ${red}failed${reset}\n"
+  else
+    printf "\nstylelint: ${green}passed${reset}\n"
+  fi
+  cd $TOP_LEVEL
+  # Add a separator line to make the output easier to read.
+  printf "\n"
+  printf -- '-%.0s' {1..100}
+  printf "\n"
+fi
+
+# When a Drupal-specific CKEditor 5 plugin changed ensure that it is compiled
+# properly. Only check on DrupalCI, since we're concerned about the build being
+# run with the expected package versions and making sure the result of the build
+# is in sync and conform to expectations.
+if [[ "$DRUPALCI" == "1" ]] && [[ $CKEDITOR5_PLUGINS_CHANGED == "1" ]]; then
+  cd "$TOP_LEVEL/core"
+  yarn run -s check:ckeditor5
+  if [ "$?" -ne "0" ]; then
+    # If there are failures set the status to a number other than 0.
+    FINAL_STATUS=1
+    printf "\nDrupal-specific CKEditor 5 plugins: ${red}failed${reset}\n"
+  else
+    printf "\nDrupal-specific CKEditor 5 plugins: ${green}passed${reset}\n"
   fi
   cd $TOP_LEVEL
   # Add a separator line to make the output easier to read.
@@ -256,7 +319,7 @@ for FILE in $FILES; do
   ############################################################################
   if [[ -f "$TOP_LEVEL/$FILE" ]] && [[ $FILE =~ \.(inc|install|module|php|profile|test|theme|yml)$ ]] && [[ $PHPCS_XML_DIST_FILE_CHANGED == "0" ]]; then
     # Test files with phpcs rules.
-    vendor/bin/phpcs "$TOP_LEVEL/$FILE" --runtime-set installed_paths "$TOP_LEVEL/vendor/drupal/coder/coder_sniffer" --standard="$TOP_LEVEL/core/phpcs.xml.dist"
+    vendor/bin/phpcs "$TOP_LEVEL/$FILE" --standard="$TOP_LEVEL/core/phpcs.xml.dist"
     PHPCS=$?
     if [ "$PHPCS" -ne "0" ]; then
       # If there are failures set the status to a number other than 0.

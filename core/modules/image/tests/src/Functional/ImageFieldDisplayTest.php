@@ -24,8 +24,6 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
     compareFiles as drupalCompareFiles;
   }
 
-  protected $dumpHeaders = TRUE;
-
   /**
    * Modules to enable.
    *
@@ -36,7 +34,7 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'classy';
+  protected $defaultTheme = 'stark';
 
   /**
    * Tests image formatters on node display for public files.
@@ -115,6 +113,7 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
       '#width' => 40,
       '#height' => 20,
       '#alt' => $alt,
+      '#attributes' => ['loading' => 'lazy'],
     ];
     $default_output = str_replace("\n", '', $renderer->renderRoot($image));
     $this->assertSession()->responseContains($default_output);
@@ -135,6 +134,7 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
       '#width' => 40,
       '#height' => 20,
       '#alt' => $alt,
+      '#attributes' => ['loading' => 'lazy'],
     ];
     $default_output = '<a href="' . $file->createFileUrl() . '">' . $renderer->renderRoot($image) . '</a>';
     $this->drupalGet('node/' . $nid);
@@ -203,6 +203,7 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
       '#height' => 20,
       '#style_name' => 'thumbnail',
       '#alt' => $alt,
+      '#attributes' => ['loading' => 'lazy'],
     ];
     $default_output = $renderer->renderRoot($image_style);
     $this->drupalGet('node/' . $nid);
@@ -288,7 +289,7 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
 
     $file_url_generator = \Drupal::service('file_url_generator');
     $url = $file_url_generator->transformRelative(ImageStyle::load('medium')->buildUrl($file->getFileUri()));
-    $this->assertSession()->elementExists('css', 'img[width=40][height=20][class=image-style-medium][src="' . $url . '"]');
+    $this->assertSession()->elementExists('css', 'img[width=40][height=20][src="' . $url . '"]');
 
     // Add alt/title fields to the image and verify that they are displayed.
     $image = [
@@ -298,6 +299,7 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
       '#title' => $this->randomMachineName(),
       '#width' => 40,
       '#height' => 20,
+      '#attributes' => ['loading' => 'lazy'],
     ];
     $edit = [
       $field_name . '[0][alt]' => $image['#alt'],
@@ -317,8 +319,8 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
     $this->drupalGet('node/' . $nid . '/edit');
     $this->submitForm($edit, 'Save');
     $schema = $field->getFieldStorageDefinition()->getSchema();
-    $this->assertSession()->pageTextContains("Alternative text cannot be longer than {$schema['columns']['alt']['length']} characters but is currently {$test_size} characters long.");
-    $this->assertSession()->pageTextContains("Title cannot be longer than {$schema['columns']['title']['length']} characters but is currently {$test_size} characters long.");
+    $this->assertSession()->statusMessageContains("Alternative text cannot be longer than {$schema['columns']['alt']['length']} characters but is currently {$test_size} characters long.", 'error');
+    $this->assertSession()->statusMessageContains("Title cannot be longer than {$schema['columns']['title']['length']} characters but is currently {$test_size} characters long.", 'error');
 
     // Set cardinality to unlimited and add upload a second image.
     // The image widget is extending on the file widget, but the image field
@@ -338,7 +340,7 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
     $this->submitForm($edit, 'Save');
     // Add the required alt text.
     $this->submitForm([$field_name . '[1][alt]' => $alt], 'Save');
-    $this->assertSession()->pageTextContains('Article ' . $node->getTitle() . ' has been updated.');
+    $this->assertSession()->statusMessageContains('Article ' . $node->getTitle() . ' has been updated.', 'status');
 
     // Assert ImageWidget::process() calls FieldWidget::process().
     $this->drupalGet('node/' . $node->id() . '/edit');
@@ -348,6 +350,120 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
     $this->submitForm($edit, $field_name . '_2_upload_button');
     $this->assertSession()->elementNotExists('css', 'input[name="files[' . $field_name . '_2][]"]');
     $this->assertSession()->elementExists('css', 'input[name="files[' . $field_name . '_3][]"]');
+  }
+
+  /**
+   * Tests for image loading attribute settings.
+   */
+  public function testImageLoadingAttribute(): void {
+    /** @var \Drupal\Core\Render\RendererInterface $renderer */
+    $renderer = $this->container->get('renderer');
+    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $field_name = strtolower($this->randomMachineName());
+    $field_settings = ['alt_field_required' => 0];
+    $instance = $this->createImageField($field_name, 'article', [], $field_settings);
+
+    // Go to manage display page.
+    $this->drupalGet("admin/structure/types/manage/article/display");
+
+    // Test for existence of link to image styles configuration.
+    $this->submitForm([], "{$field_name}_settings_edit");
+    $this->assertSession()->linkByHrefExists(Url::fromRoute('entity.image_style.collection')->toString(), 0, 'Link to image styles configuration is found');
+
+    // Remove 'administer image styles' permission from testing admin user.
+    $admin_user_roles = $this->adminUser->getRoles(TRUE);
+    user_role_change_permissions(reset($admin_user_roles), ['administer image styles' => FALSE]);
+
+    // Go to manage display page again.
+    $this->drupalGet("admin/structure/types/manage/article/display");
+
+    // Test for absence of link to image styles configuration.
+    $this->submitForm([], "{$field_name}_settings_edit");
+    $this->assertSession()->linkByHrefNotExists(Url::fromRoute('entity.image_style.collection')->toString(), 'Link to image styles configuration is absent when permissions are insufficient');
+
+    // Restore 'administer image styles' permission to testing admin user
+    user_role_change_permissions(reset($admin_user_roles), ['administer image styles' => TRUE]);
+
+    // Create a new node with an image attached.
+    $test_image = current($this->drupalGetTestFiles('image'));
+
+    // Ensure that preview works.
+    $this->previewNodeImage($test_image, $field_name, 'article');
+
+    // After previewing, make the alt field required. It cannot be required
+    // during preview because the form validation will fail.
+    $instance->setSetting('alt_field_required', 1);
+    $instance->save();
+
+    // Create alt text for the image.
+    $alt = $this->randomMachineName();
+
+    // Save node.
+    $nid = $this->uploadNodeImage($test_image, $field_name, 'article', $alt);
+    $node_storage->resetCache([$nid]);
+    $node = $node_storage->load($nid);
+
+    // Test that the default image loading attribute is being used.
+    /** @var \Drupal\file\FileInterface $file */
+    $file = $node->{$field_name}->entity;
+    $image_uri = $file->getFileUri();
+    $image = [
+      '#theme' => 'image',
+      '#uri' => $image_uri,
+      '#width' => 40,
+      '#height' => 20,
+      '#alt' => $alt,
+      '#attributes' => ['loading' => 'lazy'],
+    ];
+    $default_output = str_replace("\n", '', $renderer->renderRoot($image));
+    $this->assertSession()->responseContains($default_output);
+
+    // Test overrides of image loading attribute.
+    $display_options = [
+      'type' => 'image',
+      'settings' => [
+        'image_link' => '',
+        'image_style' => '',
+        'image_loading' => ['attribute' => 'eager'],
+      ],
+    ];
+    $display = \Drupal::service('entity_display.repository')
+      ->getViewDisplay('node', $node->getType());
+    $display->setComponent($field_name, $display_options)
+      ->save();
+
+    $image = [
+      '#theme' => 'image',
+      '#uri' => $image_uri,
+      '#width' => 40,
+      '#height' => 20,
+      '#alt' => $alt,
+      '#attributes' => ['loading' => 'eager'],
+    ];
+    $default_output = $renderer->renderRoot($image);
+    $this->drupalGet('node/' . $nid);
+    $this->assertSession()->responseContains($default_output);
+
+    // Test the image loading "priority" formatter works together with "image_style".
+    $display_options['settings']['image_style'] = 'thumbnail';
+    $display->setComponent($field_name, $display_options)
+      ->save();
+
+    // Ensure the derivative image is generated so we do not have to deal with
+    // image style callback paths.
+    $this->drupalGet(ImageStyle::load('thumbnail')->buildUrl($image_uri));
+    $image_style = [
+      '#theme' => 'image_style',
+      '#uri' => $image_uri,
+      '#width' => 40,
+      '#height' => 20,
+      '#style_name' => 'thumbnail',
+      '#alt' => $alt,
+      '#attributes' => ['loading' => 'eager'],
+    ];
+    $default_output = $renderer->renderRoot($image_style);
+    $this->drupalGet('node/' . $nid);
+    $this->assertSession()->responseContains($default_output);
   }
 
   /**
@@ -397,6 +513,7 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
       '#title' => $title,
       '#width' => 40,
       '#height' => 20,
+      '#attributes' => ['loading' => 'lazy'],
     ];
     $default_output = str_replace("\n", '', $renderer->renderRoot($image));
     $this->drupalGet('node/' . $node->id());
@@ -422,6 +539,7 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
       '#width' => 40,
       '#height' => 20,
       '#alt' => $alt,
+      '#attributes' => ['loading' => 'lazy'],
     ];
     $image_output = str_replace("\n", '', $renderer->renderRoot($image));
     $this->drupalGet('node/' . $nid);
@@ -476,6 +594,7 @@ class ImageFieldDisplayTest extends ImageFieldTestBase {
       '#title' => $title,
       '#width' => 40,
       '#height' => 20,
+      '#attributes' => ['loading' => 'lazy'],
     ];
     $default_output = str_replace("\n", '', $renderer->renderRoot($image));
     $this->drupalGet('node/' . $node->id());

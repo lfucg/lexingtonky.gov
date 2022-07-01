@@ -11,7 +11,7 @@ use Drupal\Core\Url;
  *
  * @group jsonapi
  */
-class BlockTest extends ResourceTestBase {
+class BlockTest extends ConfigEntityResourceTestBase {
 
   /**
    * {@inheritdoc}
@@ -136,6 +136,7 @@ class BlockTest extends ResourceTestBase {
    */
   protected function getPostDocument() {
     // @todo Update once https://www.drupal.org/node/2300677 is fixed.
+    return [];
   }
 
   /**

@@ -397,6 +397,7 @@ function template_preprocess_textarea(&$variables) {
 
 /**
  * Returns HTML for a form element.
+ *
  * Prepares variables for form element templates.
  *
  * Default template: form-element.html.twig.
@@ -519,7 +520,7 @@ function template_preprocess_form_element(&$variables) {
  * this function will output no label (''). For required elements that have an
  * empty #title, this will output the required marker alone within the label.
  * The label will use the #id to associate the marker with the field that is
- * required. That is especially important for screenreader users to know
+ * required. That is especially important for screen reader users to know
  * which field is required.
  *
  * To associate the label with a different field, set the #for property to the

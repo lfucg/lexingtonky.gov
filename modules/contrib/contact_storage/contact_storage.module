@@ -6,6 +6,7 @@
  */
 
 use Drupal\contact\MessageForm;
+use Drupal\contact_storage\ContactRouteProvider;
 use Drupal\contact_storage\Form\ContactFormDisableForm;
 use Drupal\contact_storage\Form\ContactFormEnableForm;
 use Drupal\Core\Entity\EntityInterface;
@@ -65,7 +66,7 @@ function contact_storage_form_contact_form_form_alter(&$form, FormStateInterface
     $aliases = \Drupal::entityTypeManager()
       ->getStorage('path_alias')
       ->loadByProperties([
-        'path' => '/' . $contact_form->toUrl()->getInternalPath(),
+        'path' => '/' . $contact_form->toUrl('canonical')->getInternalPath(),
       ]);
     if ($aliases) {
       /** @var \Drupal\path_alias\PathAliasInterface $alias */
@@ -170,11 +171,12 @@ function contact_storage_contact_form_form_submit(&$form, FormStateInterface &$f
     $old_alias = $alias_storage->load($old_alias);
   }
   $new_alias = $formState->getValue('contact_storage_url_alias');
+
   // If there isn't an alias, set a new one.
   if (!$old_alias) {
     if ($new_alias) {
       $alias_storage->create([
-        'path' => '/' . $entity->toUrl()->getInternalPath(),
+        'path' => '/' . $entity->toUrl('canonical')->getInternalPath(),
         'alias' => $formState->getValue('contact_storage_url_alias'),
       ])->save();
     }
@@ -361,10 +363,11 @@ function contact_storage_entity_type_alter(array &$entity_types) {
   $entity_types['contact_form']->setLinkTemplate('clone-form', '/admin/structure/contact/manage/{contact_form}/clone');
 
   // Define the entity route provider.
-  $route_providers = $entity_types['contact_message']->getRouteProviderClasses();
-  $route_providers['html'] = '\Drupal\contact_storage\ContactRouteProvider';
-  $entity_types['contact_message']->setHandlerClass('route_provider', $route_providers);
-  $entity_types['contact_form']->setHandlerClass('route_provider', $route_providers);
+  foreach (['contact_message', 'contact_form'] as $entity_type_id) {
+    $entity_types[$entity_type_id]->setHandlerClass('route_provider', [
+      'html' => ContactRouteProvider::class,
+    ] + $entity_types[$entity_type_id]->getRouteProviderClasses());
+  }
 
   // @todo Replace with access control handler when not enough.
   $entity_types['contact_message']->set('admin_permission', 'administer contact forms');
@@ -528,10 +531,9 @@ function contact_storage_maximum_submissions_user(ContactFormInterface $contact_
  */
 function contact_storage_contact_form_delete(EntityInterface $entity) {
   $alias_storage = \Drupal::entityTypeManager()->getStorage('path_alias');
-
   // Delete all aliases with this contact form as a source.
   $aliases = $alias_storage->loadByProperties([
-    'path' => '/' . $entity->toUrl()->getInternalPath(),
+    'path' => '/' . $entity->toUrl('canonical')->getInternalPath(),
   ]);
   $alias_storage->delete($aliases);
 }

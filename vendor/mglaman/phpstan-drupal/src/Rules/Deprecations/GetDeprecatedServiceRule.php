@@ -2,10 +2,10 @@
 
 namespace mglaman\PHPStanDrupal\Rules\Deprecations;
 
-use mglaman\PHPStanDrupal\Drupal\DrupalServiceDefinition;
-use mglaman\PHPStanDrupal\Drupal\ServiceMap;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use mglaman\PHPStanDrupal\Drupal\DrupalServiceDefinition;
+use mglaman\PHPStanDrupal\Drupal\ServiceMap;
 use PHPStan\Rules\Rule;
 
 final class GetDeprecatedServiceRule implements Rule

@@ -283,14 +283,14 @@ class AttachedAssetsTest extends KernelTestBase {
    * Tests JavaScript versioning.
    */
   public function testVersionQueryString() {
-    $build['#attached']['library'][] = 'core/backbone';
+    $build['#attached']['library'][] = 'core/once';
     $assets = AttachedAssets::createFromRenderArray($build);
 
     $js = $this->assetResolver->getJsAssets($assets, FALSE)[1];
     $js_render_array = \Drupal::service('asset.js.collection_renderer')->render($js);
 
     $rendered_js = $this->renderer->renderPlain($js_render_array);
-    $this->assertStringContainsString('core/assets/vendor/backbone/backbone-min.js?v=1.4.1', $rendered_js, 'JavaScript version identifiers correctly appended to URLs');
+    $this->assertStringContainsString('core/assets/vendor/once/once.min.js?v=1.0.1', $rendered_js, 'JavaScript version identifiers correctly appended to URLs');
   }
 
   /**
@@ -467,7 +467,7 @@ class AttachedAssetsTest extends KernelTestBase {
   }
 
   /**
-   * Tests JavaScript files that have querystrings attached get added right.
+   * Tests JavaScript files that have query strings attached get added right.
    */
   public function testAddJsFileWithQueryString() {
     $build['#attached']['library'][] = 'common_test/querystring';
@@ -485,6 +485,16 @@ class AttachedAssetsTest extends KernelTestBase {
     $query_string = $this->container->get('state')->get('system.css_js_query_string') ?: '0';
     $this->assertStringContainsString('<link rel="stylesheet" media="all" href="' . str_replace('&', '&amp;', $this->fileUrlGenerator->generateString('core/modules/system/tests/modules/common_test/querystring.css?arg1=value1&arg2=value2')) . '&amp;' . $query_string . '" />', $rendered_css, 'CSS file with query string gets version query string correctly appended..');
     $this->assertStringContainsString('<script src="' . str_replace('&', '&amp;', $this->fileUrlGenerator->generateString('core/modules/system/tests/modules/common_test/querystring.js?arg1=value1&arg2=value2')) . '&amp;' . $query_string . '"></script>', $rendered_js, 'JavaScript file with query string gets version query string correctly appended.');
+  }
+
+  /**
+   * Tests deprecated drupal_js_defaults() function.
+   *
+   * @group legacy
+   */
+  public function testDeprecatedDrupalJsDefaults() {
+    $this->expectDeprecation('drupal_js_defaults() is deprecated in drupal:9.4.0 and is removed from drupal:10.0.0. No direct replacement is provided. See https://www.drupal.org/node/3197679');
+    $this->assertIsArray(drupal_js_defaults());
   }
 
 }

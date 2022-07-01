@@ -5,7 +5,6 @@
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
     errorBaseline="psalm-baseline.xml"
-    findUnusedPsalmSuppress="true"
 >
     <projectFiles>
         <directory name="bin"/>
@@ -13,41 +12,8 @@
         <directory name="test"/>
         <ignoreFiles>
             <directory name="vendor"/>
-            <directory name="test/TestAsset"/>
-            <directory name="test/**/TestAsset"/>
         </ignoreFiles>
     </projectFiles>
-    
-    <issueHandlers>
-        <InvalidCatch>
-            <errorLevel type="suppress">
-                <!-- PSR does not implement Throwable in 1.x version -->
-                <referencedClass name="Psr\Container\ContainerExceptionInterface"/>
-                <referencedClass name="Psr\Container\NotFoundExceptionInterface"/>
-            </errorLevel>
-        </InvalidCatch>
-        <InvalidThrow>
-            <errorLevel type="suppress">
-                <!-- PSR does not implement Throwable in 1.x version -->
-                <referencedClass name="Psr\Container\ContainerExceptionInterface"/>
-            </errorLevel>
-        </InvalidThrow>
-    </issueHandlers>
-
-    <issueHandlers>
-        <DeprecatedClass>
-            <errorLevel type="suppress">
-                <referencedClass name="Laminas\ServiceManager\DelegatorFactoryInterface"/>
-                <referencedClass name="Laminas\ServiceManager\InitializerInterface"/>
-                <referencedClass name="Laminas\ServiceManager\FactoryInterface"/>
-            </errorLevel>
-        </DeprecatedClass>
-        <InvalidThrow>
-            <errorLevel type="suppress">
-                <referencedClass name="Interop\Container\Exception\ContainerException"/>
-            </errorLevel>
-        </InvalidThrow>
-    </issueHandlers>
 
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>

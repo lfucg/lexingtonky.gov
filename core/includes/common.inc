@@ -201,9 +201,13 @@ function base_path() {
  * @param $data
  *   (optional) The default data parameter for the JavaScript asset array.
  *
- * @see hook_js_alter()
+ * @deprecated in drupal:9.4.0 and is removed from drupal:10.0.0. No direct
+ *   replacement is provided.
+ *
+ * @see https://www.drupal.org/node/3197679
  */
 function drupal_js_defaults($data = NULL) {
+  @trigger_error('drupal_js_defaults() is deprecated in drupal:9.4.0 and is removed from drupal:10.0.0. No direct replacement is provided. See https://www.drupal.org/node/3197679', E_USER_DEPRECATED);
   return [
     'type' => 'file',
     'group' => JS_DEFAULT,
@@ -530,7 +534,7 @@ function show(&$element) {
  *   (optional) The Drupal Kernel. It is the caller's responsibility to rebuild
  *   the container if this is passed in. Sometimes drupal_flush_all_caches is
  *   used as a batch operation so $kernel will be an array, in this instance it
- *   will be treated as if it it NULL.
+ *   will be treated as if it is NULL.
  */
 function drupal_flush_all_caches($kernel = NULL) {
   // This is executed based on old/previously known information if $kernel is
@@ -539,7 +543,7 @@ function drupal_flush_all_caches($kernel = NULL) {
   $module_handler = \Drupal::moduleHandler();
   // Flush all persistent caches.
   $module_handler->invokeAll('cache_flush');
-  foreach (Cache::getBins() as $service_id => $cache_backend) {
+  foreach (Cache::getBins() as $cache_backend) {
     $cache_backend->deleteAll();
   }
 
@@ -597,7 +601,7 @@ function drupal_flush_all_caches($kernel = NULL) {
  */
 function _drupal_flush_css_js() {
   // The timestamp is converted to base 36 in order to make it more compact.
-  Drupal::state()->set('system.css_js_query_string', base_convert(REQUEST_TIME, 10, 36));
+  Drupal::state()->set('system.css_js_query_string', base_convert(\Drupal::time()->getRequestTime(), 10, 36));
 }
 
 /**

@@ -237,7 +237,7 @@ class Sql extends QueryPluginBase {
    * Set the view to be distinct (per base field).
    *
    * @param bool $value
-   *   Should the view be distincted.
+   *   Should the view be distinct.
    */
   protected function setDistinct($value = TRUE) {
     if (!(isset($this->noDistinct) && $value)) {
@@ -973,6 +973,7 @@ class Sql extends QueryPluginBase {
 
   /**
    * Add a complex HAVING clause to the query.
+   *
    * The caller is responsible for ensuring that all fields are fully qualified
    * (TABLE.FIELD) and that the table and an appropriate GROUP BY already exist in the query.
    * Internally the dbtng method "having" is used.
@@ -1357,7 +1358,7 @@ class Sql extends QueryPluginBase {
         ];
       }
 
-      foreach ($entity_information as $entity_type_id => $info) {
+      foreach ($entity_information as $info) {
         $entity_type = \Drupal::entityTypeManager()->getDefinition($info['entity_type']);
         $base_field = !$info['revision'] ? $entity_type->getKey('id') : $entity_type->getKey('revision');
         $this->addField($info['alias'], $base_field, '', $params);
@@ -1422,14 +1423,7 @@ class Sql extends QueryPluginBase {
    * Get the arguments attached to the WHERE and HAVING clauses of this query.
    */
   public function getWhereArgs() {
-    $args = [];
-    foreach ($this->where as $where) {
-      $args = array_merge($args, $where['args']);
-    }
-    foreach ($this->having as $having) {
-      $args = array_merge($args, $having['args']);
-    }
-    return $args;
+    return array_merge([], ...array_column($this->where, 'args'), ...array_column($this->having, 'args'));
   }
 
   /**

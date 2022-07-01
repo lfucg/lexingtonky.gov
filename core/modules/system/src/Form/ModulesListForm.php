@@ -15,6 +15,7 @@ use Drupal\Core\Extension\ModuleInstallerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\PermissionHandlerInterface;
@@ -24,10 +25,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides module installation interface.
  *
- * The list of modules gets populated by module.info.yml files, which contain
- * each module's name, description, and information about which modules it
- * requires. See \Drupal\Core\Extension\InfoParser for info on module.info.yml
- * descriptors.
+ * The list of modules includes all modules, except obsolete modules. The list
+ * is generated from the data in the info.yml file for each module, which
+ * includes the module name, description, dependencies and other information.
+ *
+ * @see \Drupal\Core\Extension\InfoParser
  *
  * @internal
  */
@@ -171,6 +173,11 @@ class ModulesListForm extends FormBase {
       // The module list needs to be reset so that it can re-scan and include
       // any new modules that may have been added directly into the filesystem.
       $modules = $this->moduleExtensionList->reset()->getList();
+
+      // Remove obsolete modules.
+      $modules = array_filter($modules, function ($module) {
+        return !$module->isObsolete();
+      });
       uasort($modules, [ModuleExtensionList::class, 'sortByName']);
     }
     catch (InfoParserException $e) {
@@ -249,19 +256,34 @@ class ModulesListForm extends FormBase {
     $row['#requires'] = [];
     $row['#required_by'] = [];
 
+    $lifecycle = $module->info[ExtensionLifecycle::LIFECYCLE_IDENTIFIER];
     $row['name']['#markup'] = $module->info['name'];
+    if ($lifecycle !== ExtensionLifecycle::STABLE && !empty($module->info[ExtensionLifecycle::LIFECYCLE_LINK_IDENTIFIER])) {
+      $row['name']['#markup'] .= ' ' . Link::fromTextAndUrl('(' . $this->t('@lifecycle', ['@lifecycle' => ucfirst($lifecycle)]) . ')',
+          Url::fromUri($module->info[ExtensionLifecycle::LIFECYCLE_LINK_IDENTIFIER], [
+            'attributes' =>
+              [
+                'class' => 'module-link--non-stable',
+                'aria-label' => $this->t('View information on the @lifecycle status of the module @module', [
+                  '@lifecycle' => ucfirst($lifecycle),
+                  '@module' => $module->info['name'],
+                ]),
+              ],
+          ])
+        )->toString();
+    }
     $row['description']['#markup'] = $this->t($module->info['description']);
     $row['version']['#markup'] = $module->info['version'];
 
     // Generate link for module's help page. Assume that if a hook_help()
     // implementation exists then the module provides an overview page, rather
     // than checking to see if the page exists, which is costly.
-    if ($this->moduleHandler->moduleExists('help') && $module->status && in_array($module->getName(), $this->moduleHandler->getImplementations('help'))) {
+    if ($this->moduleHandler->moduleExists('help') && $module->status && $this->moduleHandler->hasImplementations('help', $module->getName())) {
       $row['links']['help'] = [
         '#type' => 'link',
-        '#title' => $this->t('Help'),
+        '#title' => $this->t('Help <span class="visually-hidden">for @module</span>', ['@module' => $module->info['name']]),
         '#url' => Url::fromRoute('help.page', ['name' => $module->getName()]),
-        '#options' => ['attributes' => ['class' => ['module-link', 'module-link-help'], 'title' => $this->t('Help')]],
+        '#options' => ['attributes' => ['class' => ['module-link', 'module-link-help']]],
       ];
     }
 
@@ -269,9 +291,9 @@ class ModulesListForm extends FormBase {
     if ($module->status && $this->currentUser->hasPermission('administer permissions') && $this->permissionHandler->moduleProvidesPermissions($module->getName())) {
       $row['links']['permissions'] = [
         '#type' => 'link',
-        '#title' => $this->t('Permissions'),
+        '#title' => $this->t('Permissions <span class="visually-hidden">for @module</span>', ['@module' => $module->info['name']]),
         '#url' => Url::fromRoute('user.admin_permissions.module', ['modules' => $module->getName()]),
-        '#options' => ['attributes' => ['class' => ['module-link', 'module-link-permissions'], 'title' => $this->t('Configure permissions')]],
+        '#options' => ['attributes' => ['class' => ['module-link', 'module-link-permissions']]],
       ];
     }
 
@@ -281,7 +303,7 @@ class ModulesListForm extends FormBase {
       if ($this->accessManager->checkNamedRoute($module->info['configure'], $route_parameters, $this->currentUser)) {
         $row['links']['configure'] = [
           '#type' => 'link',
-          '#title' => $this->t('Configure <span class="visually-hidden">the @module module</span>', ['@module' => $module->info['name']]),
+          '#title' => $this->t('Configure <span class="visually-hidden">@module</span>', ['@module' => $module->info['name']]),
           '#url' => Url::fromRoute($module->info['configure'], $route_parameters),
           '#options' => [
             'attributes' => [
@@ -390,7 +412,7 @@ class ModulesListForm extends FormBase {
     $modules = [
       'install' => [],
       'dependencies' => [],
-      'experimental' => [],
+      'non_stable' => [],
     ];
 
     $data = $this->moduleExtensionList->getList();
@@ -405,10 +427,12 @@ class ModulesListForm extends FormBase {
       }
       // Selected modules should be installed.
       elseif (($checkbox = $form_state->getValue(['modules', $name], FALSE)) && $checkbox['enable']) {
-        $modules['install'][$name] = $data[$name]->info['name'];
-        // Identify experimental modules.
-        if ($data[$name]->info[ExtensionLifecycle::LIFECYCLE_IDENTIFIER] === ExtensionLifecycle::EXPERIMENTAL) {
-          $modules['experimental'][$name] = $data[$name]->info['name'];
+        $info = $data[$name]->info;
+        $modules['install'][$name] = $info['name'];
+        // Identify non-stable modules.
+        $lifecycle = $info[ExtensionLifecycle::LIFECYCLE_IDENTIFIER];
+        if ($lifecycle !== ExtensionLifecycle::STABLE) {
+          $modules['non_stable'][$name] = $info['name'];
         }
       }
     }
@@ -417,12 +441,14 @@ class ModulesListForm extends FormBase {
     foreach ($modules['install'] as $module => $value) {
       foreach (array_keys($data[$module]->requires) as $dependency) {
         if (!isset($modules['install'][$dependency]) && !$this->moduleHandler->moduleExists($dependency)) {
-          $modules['dependencies'][$module][$dependency] = $data[$dependency]->info['name'];
-          $modules['install'][$dependency] = $data[$dependency]->info['name'];
+          $dependency_info = $data[$dependency]->info;
+          $modules['dependencies'][$module][$dependency] = $dependency_info['name'];
+          $modules['install'][$dependency] = $dependency_info['name'];
 
-          // Identify experimental modules.
-          if ($data[$dependency]->info[ExtensionLifecycle::LIFECYCLE_IDENTIFIER] === ExtensionLifecycle::EXPERIMENTAL) {
-            $modules['experimental'][$dependency] = $data[$dependency]->info['name'];
+          // Identify non-stable modules.
+          $lifecycle = $dependency_info[ExtensionLifecycle::LIFECYCLE_IDENTIFIER];
+          if ($lifecycle !== ExtensionLifecycle::STABLE) {
+            $modules['non_stable'][$dependency] = $dependency_info['name'];
           }
         }
       }
@@ -436,7 +462,7 @@ class ModulesListForm extends FormBase {
     foreach (array_keys($modules['install']) as $module) {
       if (!drupal_check_module($module)) {
         unset($modules['install'][$module]);
-        unset($modules['experimental'][$module]);
+        unset($modules['non_stable'][$module]);
         foreach (array_keys($data[$module]->required_by) as $dependent) {
           unset($modules['install'][$dependent]);
           unset($modules['dependencies'][$dependent]);
@@ -455,9 +481,9 @@ class ModulesListForm extends FormBase {
     $modules = $this->buildModuleList($form_state);
 
     // Redirect to a confirmation form if needed.
-    if (!empty($modules['experimental']) || !empty($modules['dependencies'])) {
+    if (!empty($modules['non_stable']) || !empty($modules['dependencies'])) {
 
-      $route_name = !empty($modules['experimental']) ? 'system.modules_list_experimental_confirm' : 'system.modules_list_confirm';
+      $route_name = !empty($modules['non_stable']) ? 'system.modules_list_non_stable_confirm' : 'system.modules_list_confirm';
       // Write the list of changed module states into a key value store.
       $account = $this->currentUser()->id();
       $this->keyValueExpirable->setWithExpire($account, $modules, 60);

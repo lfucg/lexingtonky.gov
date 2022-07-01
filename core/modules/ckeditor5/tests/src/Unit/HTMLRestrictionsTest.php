@@ -294,6 +294,14 @@ class HTMLRestrictionsTest extends UnitTestCase {
       '<a target class>',
       ['a' => ['target' => TRUE, 'class' => TRUE]],
     ];
+    yield 'tag with allowed attribute value that happen to be numbers' => [
+      '<ol type="1 A I">',
+      ['ol' => ['type' => [1 => TRUE, 'A' => TRUE, 'I' => TRUE]]],
+    ];
+    yield 'tag with allowed attribute value that happen to be numbers (reversed)' => [
+      '<ol type="I A 1">',
+      ['ol' => ['type' => ['I' => TRUE, 'A' => TRUE, 1 => TRUE]]],
+    ];
 
     // Multiple tag cases.
     yield 'two tags' => [
@@ -682,6 +690,27 @@ class HTMLRestrictionsTest extends UnitTestCase {
         ],
       ],
     ];
+
+    yield '<ol type="1 A">' => [
+      new HTMLRestrictions(['ol' => ['type' => ['1' => TRUE, 'A' => TRUE]]]),
+      ['<ol type="1 A">'],
+      '<ol type="1 A">',
+      [
+        [
+          'name' => 'ol',
+          'attributes' => [
+            [
+              'key' => 'type',
+              'value' => [
+                'regexp' => [
+                  'pattern' => '/^(1|A)$/',
+                ],
+              ],
+            ],
+          ],
+        ],
+      ],
+    ];
   }
 
   /**
@@ -902,7 +931,35 @@ class HTMLRestrictionsTest extends UnitTestCase {
     yield 'attribute restrictions are different: <a hreflang=*> vs <a hreflang="en"> — vice versa' => [
       'a' => new HTMLRestrictions(['a' => ['hreflang' => ['en' => TRUE]]]),
       'b' => new HTMLRestrictions(['a' => ['hreflang' => TRUE]]),
+      'diff' => HTMLRestrictions::emptySet(),
+      'intersection' => 'a',
+      'union' => 'b',
+    ];
+    yield 'attribute restrictions are different: <ol type=*> vs <ol type="A">' => [
+      'a' => new HTMLRestrictions(['ol' => ['type' => TRUE]]),
+      'b' => new HTMLRestrictions(['ol' => ['type' => ['A' => TRUE]]]),
       'diff' => 'a',
+      'intersection' => 'b',
+      'union' => 'a',
+    ];
+    yield 'attribute restrictions are different: <ol type=*> vs <ol type="A"> — vice versa' => [
+      'b' => new HTMLRestrictions(['ol' => ['type' => ['A' => TRUE]]]),
+      'a' => new HTMLRestrictions(['ol' => ['type' => TRUE]]),
+      'diff' => HTMLRestrictions::emptySet(),
+      'intersection' => 'a',
+      'union' => 'b',
+    ];
+    yield 'attribute restrictions are different: <ol type=*> vs <ol type="1">' => [
+      'a' => new HTMLRestrictions(['ol' => ['type' => TRUE]]),
+      'b' => new HTMLRestrictions(['ol' => ['type' => ['1' => TRUE]]]),
+      'diff' => 'a',
+      'intersection' => 'b',
+      'union' => 'a',
+    ];
+    yield 'attribute restrictions are different: <ol type=*> vs <ol type="1"> — vice versa' => [
+      'b' => new HTMLRestrictions(['ol' => ['type' => ['1' => TRUE]]]),
+      'a' => new HTMLRestrictions(['ol' => ['type' => TRUE]]),
+      'diff' => HTMLRestrictions::emptySet(),
       'intersection' => 'a',
       'union' => 'b',
     ];
@@ -1196,7 +1253,7 @@ class HTMLRestrictionsTest extends UnitTestCase {
     yield 'global attribute tag + global attribute tag: overlap in attributes, different attribute value restrictions' => [
       'a' => new HTMLRestrictions(['*' => ['foo' => TRUE, 'bar' => FALSE, 'dir' => ['ltr' => TRUE, 'rtl' => TRUE]]]),
       'b' => new HTMLRestrictions(['*' => ['bar' => TRUE, 'dir' => TRUE, 'foo' => FALSE]]),
-      'diff' => 'a',
+      'diff' => new HTMLRestrictions(['*' => ['foo' => TRUE, 'bar' => FALSE]]),
       'intersection' => new HTMLRestrictions(['*' => ['bar' => FALSE, 'dir' => ['ltr' => TRUE, 'rtl' => TRUE], 'foo' => FALSE]]),
       'union' => new HTMLRestrictions(['*' => ['foo' => TRUE, 'bar' => TRUE, 'dir' => TRUE]]),
     ];
@@ -1258,15 +1315,21 @@ class HTMLRestrictionsTest extends UnitTestCase {
   /**
    * @covers ::getWildcardSubset
    * @covers ::getConcreteSubset
+   * @covers ::getPlainTagsSubset()
+   * @covers ::extractPlainTagsSubset()
    * @dataProvider providerSubsets
    */
-  public function testSubsets(HTMLRestrictions $input, HTMLRestrictions $expected_wildcard_subset, HTMLRestrictions $expected_concrete_subset): void {
+  public function testSubsets(HTMLRestrictions $input, HTMLRestrictions $expected_wildcard_subset, HTMLRestrictions $expected_concrete_subset, HTMLRestrictions $expected_plain_tags_subset, HTMLRestrictions $expected_extracted_plain_tags_subset): void {
     $this->assertEquals($expected_wildcard_subset, $input->getWildcardSubset());
     $this->assertEquals($expected_concrete_subset, $input->getConcreteSubset());
+    $this->assertEquals($expected_plain_tags_subset, $input->getPlainTagsSubset());
+    $this->assertEquals($expected_extracted_plain_tags_subset, $input->extractPlainTagsSubset());
   }
 
   public function providerSubsets(): \Generator {
     yield 'empty set' => [
+      new HTMLRestrictions([]),
+      new HTMLRestrictions([]),
       new HTMLRestrictions([]),
       new HTMLRestrictions([]),
       new HTMLRestrictions([]),
@@ -1276,23 +1339,39 @@ class HTMLRestrictionsTest extends UnitTestCase {
       new HTMLRestrictions(['div' => FALSE]),
       new HTMLRestrictions([]),
       new HTMLRestrictions(['div' => FALSE]),
+      new HTMLRestrictions(['div' => FALSE]),
+      new HTMLRestrictions(['div' => FALSE]),
+    ];
+
+    yield 'without wildcards with attributes' => [
+      new HTMLRestrictions(['div' => ['foo' => ['bar' => TRUE]]]),
+      new HTMLRestrictions([]),
+      new HTMLRestrictions(['div' => ['foo' => ['bar' => TRUE]]]),
+      new HTMLRestrictions([]),
+      new HTMLRestrictions(['div' => FALSE]),
     ];
 
     yield 'with wildcards' => [
       new HTMLRestrictions(['div' => FALSE, '$text-container' => ['data-llama' => TRUE], '*' => ['on*' => FALSE, 'dir' => ['ltr' => TRUE, 'rtl' => TRUE]]]),
       new HTMLRestrictions(['$text-container' => ['data-llama' => TRUE]]),
       new HTMLRestrictions(['div' => FALSE, '*' => ['on*' => FALSE, 'dir' => ['ltr' => TRUE, 'rtl' => TRUE]]]),
+      new HTMLRestrictions(['div' => FALSE]),
+      new HTMLRestrictions(['div' => FALSE]),
     ];
 
     yield 'wildcards and global attribute tag' => [
       new HTMLRestrictions(['$text-container' => ['data-llama' => TRUE], '*' => ['on*' => FALSE, 'dir' => ['ltr' => TRUE, 'rtl' => TRUE]]]),
       new HTMLRestrictions(['$text-container' => ['data-llama' => TRUE]]),
       new HTMLRestrictions(['*' => ['on*' => FALSE, 'dir' => ['ltr' => TRUE, 'rtl' => TRUE]]]),
+      new HTMLRestrictions([]),
+      new HTMLRestrictions([]),
     ];
 
     yield 'only wildcards' => [
       new HTMLRestrictions(['$text-container' => ['data-llama' => TRUE]]),
       new HTMLRestrictions(['$text-container' => ['data-llama' => TRUE]]),
+      new HTMLRestrictions([]),
+      new HTMLRestrictions([]),
       new HTMLRestrictions([]),
     ];
   }

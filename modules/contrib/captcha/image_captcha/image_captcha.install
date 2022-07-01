@@ -36,9 +36,24 @@ function image_captcha_requirements($phase) {
  */
 function image_captcha_install() {
   $config = \Drupal::configFactory()->getEditable('image_captcha.settings');
-
+  // @phpstan-ignore-next-line
+  $module_path = Drupal::hasService('extension.list.module') ? \Drupal::service('extension.list.module')->getPath('image_captcha') : drupal_get_path('module', 'image_captcha');
   $config->set('image_captcha_fonts', [
-    hash('sha256', drupal_get_path('module', 'image_captcha') . '/fonts/Tesox/tesox.ttf'),
-    hash('sha256', drupal_get_path('module', 'image_captcha') . '/fonts/Tuffy/Tuffy.ttf'),
+    hash('sha256', $module_path . '/fonts/Tesox/tesox.ttf'),
+    hash('sha256', $module_path . '/fonts/Tuffy/Tuffy.ttf'),
   ])->save(TRUE);
+}
+
+/**
+ * Convert existing setting to hashes.
+ */
+function image_captcha_update_8001() {
+  $config = \Drupal::configFactory()->getEditable('image_captcha.settings');
+
+  foreach ($config->get('image_captcha_fonts') as $index => $font) {
+    if (strpos($font, '.ttf') !== FALSE) {
+      $config->set('image_captcha_fonts.' . $index, hash('sha256', $font));
+    }
+  }
+  $config->save(TRUE);
 }

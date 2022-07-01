@@ -4,6 +4,7 @@ namespace mglaman\PHPStanDrupal\Rules\Deprecations;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\Broker\Broker;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Reflection\ReflectionProvider;
 
@@ -97,32 +98,6 @@ class AccessDeprecatedConstant implements \PHPStan\Rules\Rule
             'USER_REGISTER_VISITORS' => 'Deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. Use \Drupal\user\UserInterface::REGISTER_VISITORS instead.',
             'USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL' => 'Deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. Use \Drupal\user\UserInterface::REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL instead.',
         ];
-        [$major, $minor] = explode('.', \Drupal::VERSION, 3);
-        if ($major === '9') {
-            if ((int) $minor >= 1) {
-                $deprecatedConstants = array_merge($deprecatedConstants, [
-                    'DRUPAL_MINIMUM_PHP' => 'Deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use \Drupal::MINIMUM_PHP instead.',
-                    'DRUPAL_MINIMUM_PHP_MEMORY_LIMIT' => 'Deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use \Drupal::MINIMUM_PHP_MEMORY_LIMIT instead.',
-                    'DRUPAL_MINIMUM_SUPPORTED_PHP' => 'Deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use \Drupal::MINIMUM_SUPPORTED_PHP instead.',
-                    'DRUPAL_RECOMMENDED_PHP' => 'Deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use \Drupal::RECOMMENDED_PHP instead.',
-                    'PREG_CLASS_CJK' => 'Deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use \Drupal\search\SearchTextProcessorInterface::PREG_CLASS_CJK instead.',
-                    'PREG_CLASS_NUMBERS' => 'Deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use \Drupal\search\SearchTextProcessorInterface::PREG_CLASS_NUMBERS',
-                    'PREG_CLASS_PUNCTUATION' => 'Deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use \Drupal\search\SearchTextProcessorInterface::PREG_CLASS_PUNCTUATION',
-                ]);
-            }
-            if ((int) $minor >= 2) {
-                $deprecatedConstants = array_merge($deprecatedConstants, [
-                    'FILE_INSECURE_EXTENSION_REGEX' => 'Deprecated in drupal:9.2.0 and is removed from drupal:10.0.0. Use \Drupal\Core\File\FileSystemInterface::INSECURE_EXTENSION_REGEX.',
-                ]);
-            }
-            if ((int) $minor >= 3) {
-                $deprecatedConstants = array_merge($deprecatedConstants, [
-                    'FILE_STATUS_PERMANENT' => 'Deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use \Drupal\file\FileInterface::STATUS_PERMANENT or \Drupal\file\FileInterface::setPermanent().',
-                    'SCHEMA_UNINSTALLED' => 'Deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use \Drupal\Core\Update\UpdateHookRegistry::SCHEMA_UNINSTALLED',
-                ]);
-            }
-        }
-
         $constantName = $this->reflectionProvider->resolveConstantName($node->name, $scope);
         if (isset($deprecatedConstants[$constantName])) {
             return [

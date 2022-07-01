@@ -23,7 +23,7 @@ use Drupal\Core\Render\Element;
  *   and $captcha_type->captcha_type.
  */
 function captcha_set_form_id_setting($form_id, $captcha_type) {
-  /* @var Drupal\captcha\Entity\CaptchaPoint $captcha_point */
+  /** @var Drupal\captcha\Entity\CaptchaPoint $captcha_point */
   $captcha_point = CaptchaPoint::load($form_id);
 
   if ($captcha_point) {
@@ -55,7 +55,7 @@ function captcha_set_form_id_setting($form_id, $captcha_type) {
  *   form 'captcha/Math'.
  */
 function captcha_get_form_id_setting($form_id, $symbolic = FALSE) {
-  /* @var CaptchaPoint $captchaPoint */
+  /** @var \Drupal\captcha\Entity\CaptchaPoint $captchaPoint */
   $captcha_point = CaptchaPoint::load($form_id);
 
   if ($symbolic) {
@@ -261,7 +261,7 @@ function _captcha_get_captcha_placement($form_id, $form) {
       $buttons = _captcha_search_buttons($form);
       if (count($buttons)) {
         // Pick first button.
-        // TODO: make this more sofisticated? Use cases needed.
+        // @todo make this more sofisticated? Use cases needed.
         $placement = (isset($buttons[count($buttons) - 1])) ? $buttons[count($buttons) - 1] : $buttons[0];
       }
       else {
@@ -299,7 +299,7 @@ function _captcha_search_buttons(array $form) {
   foreach (Element::children($form, FALSE) as $key) {
     // Look for submit or button type elements.
     if (isset($form[$key]['#type']) && ($form[$key]['#type'] == 'submit' || $form[$key]['#type'] == 'button')) {
-      $weight = isset($form[$key]['#weight']) ? $form[$key]['#weight'] : NULL;
+      $weight = $form[$key]['#weight'] ?? NULL;
       $buttons[] = [
         'path' => [],
         'key' => $key,

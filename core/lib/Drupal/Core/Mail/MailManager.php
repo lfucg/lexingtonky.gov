@@ -101,7 +101,7 @@ class MailManager extends DefaultPluginManager implements MailManagerInterface {
    * by one module, set the plugin ID as the value for the key corresponding to
    * the module name. To specify a plugin for a particular message sent by one
    * module, set the plugin ID as the value for the array key that is the
-   * message ID, which is "${module}_${key}".
+   * message ID, which is "{$module}_{$key}".
    *
    * For example to debug all mail sent by the user module by logging it to a
    * file, you might set the variable as something like:
@@ -268,12 +268,8 @@ class MailManager extends DefaultPluginManager implements MailManagerInterface {
     $message['headers'] = $headers;
 
     // Build the email (get subject and body, allow additional headers) by
-    // invoking hook_mail() on this module. We cannot use
-    // moduleHandler()->invoke() as we need to have $message by reference in
-    // hook_mail().
-    if (function_exists($function = $module . '_mail')) {
-      $function($key, $message, $params);
-    }
+    // invoking hook_mail() on this module.
+    $this->moduleHandler->invoke($module, 'mail', [$key, &$message, $params]);
 
     // Invoke hook_mail_alter() to allow all modules to alter the resulting
     // email.

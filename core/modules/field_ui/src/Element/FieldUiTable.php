@@ -31,6 +31,8 @@ class FieldUiTable extends Table {
    * @param array $elements
    *   A structured array containing two sub-levels of elements. Properties
    *   used:
+   *   - #region_callback: A callback that provides the region of the table to
+   *     place the row in.
    *   - #tabledrag: The value is a list of $options arrays that are passed to
    *     drupal_attach_tabledrag(). The HTML ID of the table is added to each
    *     $options array.
@@ -70,6 +72,7 @@ class FieldUiTable extends Table {
           $region_name = call_user_func_array($row['#region_callback'], [&$row]);
 
           // Add the element in the tree.
+          // phpcs:ignore DrupalPractice.CodeAnalysis.VariableAnalysis.UnusedVariable
           $target = &$trees[$region_name][''];
           foreach ($parents[$name] as $key) {
             $target = &$target['children'][$key];

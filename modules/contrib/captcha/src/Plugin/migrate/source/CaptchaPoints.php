@@ -2,8 +2,6 @@
 
 namespace Drupal\captcha\Plugin\migrate\source;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\State\StateInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,13 +19,6 @@ class CaptchaPoints extends DrupalSqlBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration, StateInterface $state, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $migration, $state, $entity_type_manager);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration = NULL) {
     return new static(
       $configuration,
@@ -35,7 +26,7 @@ class CaptchaPoints extends DrupalSqlBase {
       $plugin_definition,
       $migration,
       $container->get('state'),
-      $container->get('entity_type.manager'),
+      $container->get('entity_type.manager')
     );
   }
 

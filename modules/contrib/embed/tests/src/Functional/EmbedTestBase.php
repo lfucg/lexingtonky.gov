@@ -29,6 +29,11 @@ abstract class EmbedTestBase extends BrowserTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * The test administrative user.
    *
    * @var \Drupal\user\UserInterface
@@ -93,11 +98,21 @@ abstract class EmbedTestBase extends BrowserTestBase {
   /**
    * Retrieves a sample file of the specified type.
    *
+   * @param string $type
+   *   File type, possible values: 'binary', 'html', 'image', 'javascript',
+   *   'php', 'sql', 'text'.
+   * @param int $size
+   *   (optional) File size in bytes to match. Defaults to NULL, which will not
+   *   filter the returned list by size.
+   *
    * @return \Drupal\file\FileInterface
+   *   The file entity.
+   *
+   * @see \Drupal\Tests\TestFileCreationTrait::getTestFiles()
    */
-  protected function getTestFile($type_name, $size = NULL) {
+  protected function getTestFile($type, $size = NULL) {
     // Get a file to upload.
-    $file = current($this->getTestFiles($type_name, $size));
+    $file = current($this->getTestFiles($type, $size));
 
     // Add a filesize property to files as would be read by
     // \Drupal\file\Entity\File::load().

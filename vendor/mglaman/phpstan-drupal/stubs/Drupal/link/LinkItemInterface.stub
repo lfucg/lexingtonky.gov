@@ -1,8 +1,0 @@
-<?php
-
-namespace Drupal\link;
-
-use Drupal\Core\Field\FieldItemInterface;
-
-interface LinkItemInterface extends FieldItemInterface {
-}

@@ -189,7 +189,8 @@ class DiffRevisionTest extends DiffTestBase {
     $this->assertSession()->pageTextContains('Copy of the revision from');
 
     // Delete the first revision (last entry in table).
-    $this->clickLink(t('Delete'), 0);
+    $this->assertSession()->elementExists('css', '#revision-overview-form')->clickLink('Delete');
+
     $this->submitForm([], 'Delete');
     $this->assertSession()->pageTextContains('of Article ' . $title . ' has been deleted.');
 
@@ -198,7 +199,7 @@ class DiffRevisionTest extends DiffTestBase {
     $this->assertCount(2, $rows);
 
     // Delete one revision so that we are left with only 1 revision.
-    $this->clickLink(t('Delete'), 0);
+    $this->assertSession()->elementExists('css', '#revision-overview-form')->clickLink('Delete');
     $this->submitForm([], 'Delete');
     $this->assertSession()->pageTextContains('of Article ' . $title . ' has been deleted.');
 

@@ -70,8 +70,8 @@ class DisplayEntityReferenceTest extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE): void {
-    parent::setUp($import_test_views);
+  protected function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
+    parent::setUp($import_test_views, $modules);
 
     $this->drupalLogin($this->drupalCreateUser(['administer views']));
 
@@ -122,7 +122,7 @@ class DisplayEntityReferenceTest extends ViewTestBase {
     EntityTest::create([
       'bundle' => 'entity_test',
       'name' => 'name',
-      $this->fieldName => 'sometext',
+      $this->fieldName => 'some_text',
     ])->save();
   }
 
