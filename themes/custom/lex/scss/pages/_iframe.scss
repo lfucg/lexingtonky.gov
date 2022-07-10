@@ -1,7 +1,9 @@
-.full-width-iframe {
-  width: 100vw;
+@media (min-width: 900px) {
+  .full-width-iframe {
+    width: 100vw;
 
-  .iframe-container {
-    margin: 0 -5vw;
+    .iframe-container {
+      margin: 0 -5vw;
+    }
   }
 }
