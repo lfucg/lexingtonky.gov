@@ -53,7 +53,6 @@ class CalendarController extends ControllerBase {
    */
   public function __construct(FullCalendarService $events, EntityTypeManagerInterface $entityTypeManager, RequestStack $requestStack, JsonResponse $response) {
     $this->events = $events;
-    // $this->getQuery = $getQuery;
     $this->entityTypeManager = $entityTypeManager;
     $this->requestStack = $requestStack;
     $this->response = $response;
@@ -65,7 +64,6 @@ class CalendarController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('lex_calendar.full_calendar'),
-      $container->get('entity_type.manager'),
       $container->get('entity_type.manager'),
       $container->get('request_stack'),
       new JsonResponse()
