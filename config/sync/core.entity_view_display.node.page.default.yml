@@ -125,4 +125,5 @@ hidden:
   field_related_departments: true
   field_related_documents: true
   field_sidebar_section: true
+  langcode: true
   search_api_excerpt: true

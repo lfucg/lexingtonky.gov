@@ -208,4 +208,6 @@ content:
     third_party_settings: {  }
     weight: 7
     region: content
-hidden: {  }
+hidden:
+  langcode: true
+  search_api_excerpt: true

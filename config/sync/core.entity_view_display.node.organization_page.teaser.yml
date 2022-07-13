@@ -56,3 +56,6 @@ hidden:
   field_related_departments: true
   field_related_documents: true
   field_top_services: true
+  field_upcoming_events: true
+  langcode: true
+  search_api_excerpt: true

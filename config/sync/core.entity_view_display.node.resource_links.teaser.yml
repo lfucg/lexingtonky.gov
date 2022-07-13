@@ -23,3 +23,5 @@ hidden:
   addtoany: true
   field_link_to_: true
   field_resources_list: true
+  langcode: true
+  search_api_excerpt: true

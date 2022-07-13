@@ -81,3 +81,5 @@ hidden:
   field_office_to_contact: true
   field_organization_taxonomy_term: true
   field_related_documents: true
+  langcode: true
+  search_api_excerpt: true
