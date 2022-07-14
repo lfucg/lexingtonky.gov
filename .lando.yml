@@ -4,3 +4,9 @@ config:
   framework: drupal8
   site: lexky-d8
   id: 085efc9d-6f4f-4d02-a80b-9d5cf086a982
+services:
+  solr:
+    type: solr:8
+    portforward: true
+    config:
+      dir: web/modules/contrib/search_api_solr/solr-conf-templates/8.x

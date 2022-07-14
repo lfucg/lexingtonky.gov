@@ -1,0 +1,5 @@
+search_api_pantheon_admin.solr_admin_form:
+  route_name: search_api_pantheon_admin.solr_admin_form
+  base_route: entity.search_api_server.canonical
+  title: 'Pantheon Search Admin'
+  weight: 99

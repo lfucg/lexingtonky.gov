@@ -60,7 +60,7 @@
         "drupal/paragraphs_jquery_ui_accordion": "^1.4",
         "drupal/pathauto": "^1.9",
         "drupal/search_api": "^1.23",
-        "drupal/search_api_pantheon": "^3.0",
+        "drupal/search_api_pantheon": "^8.0",
         "drupal/search_api_solr": "^4.2",
         "drupal/smtp": "^1.0",
         "drupal/taxonomy_menu": "^3.5",
@@ -104,14 +104,30 @@
             "npm-asset"
         ],
         "installer-paths": {
-            "drush/Commands/{$name}": ["type:drupal-drush"],
-            "core": ["type:drupal-core"],
-            "modules/contrib/{$name}": ["type:drupal-module"],
-            "modules/custom/{$name}": ["type:drupal-custom-module"],
-            "profiles/contrib/{$name}": ["type:drupal-profile"],
-            "profiles/custom/{$name}": ["type:drupal-custom-profile"],
-            "themes/contrib/{$name}": ["type:drupal-theme"],
-            "themes/custom/{$name}": ["type:drupal-custom-theme"],
+            "drush/Commands/{$name}": [
+                "type:drupal-drush"
+            ],
+            "core": [
+                "type:drupal-core"
+            ],
+            "modules/contrib/{$name}": [
+                "type:drupal-module"
+            ],
+            "modules/custom/{$name}": [
+                "type:drupal-custom-module"
+            ],
+            "profiles/contrib/{$name}": [
+                "type:drupal-profile"
+            ],
+            "profiles/custom/{$name}": [
+                "type:drupal-custom-profile"
+            ],
+            "themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ],
+            "themes/custom/{$name}": [
+                "type:drupal-custom-theme"
+            ],
             "libraries/{$name}": [
                 "type:drupal-library",
                 "type:bower-asset",

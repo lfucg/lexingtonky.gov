@@ -1,0 +1,11 @@
+# Pantheon SearchAPI Module Vars
+# This file can be used with direnv
+# `brew install direnv`
+# or as a .env file for docker-compose
+# Provided for the PHP container to communicate
+# with the solr container.
+export PANTHEON_INDEX_HOST=${SOLR_HOST}
+export PANTHEON_INDEX_PORT=8983
+export PANTHEON_INDEX_PATH=/solr
+export PANTHEON_INDEX_CORE=${SOLR_CORE}
+export PANTHEON_INDEX_SCHEME=http

@@ -1,0 +1,20 @@
+<phpunit bootstrap="tests/bootstrap.php" colors="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutChangesToGlobalState="true"
+         failOnWarning="true"
+         cacheResult="false">
+  <php>
+    <server name="PANTHEON_INDEX_SCHEME" value="${PANTHEON_INDEX_SCHEME}" />
+    <server name="PANTHEON_INDEX_HOST"   value="${PANTHEON_INDEX_HOST}" />
+    <server name="PANTHEON_INDEX_PORT"   value="${PANTHEON_INDEX_PORT}" />
+    <server name="PANTHEON_INDEX_PATH"   value="${PANTHEON_INDEX_PATH}" />
+    <server name="PANTHEON_INDEX_CORE"   value="${PANTHEON_INDEX_CORE}" />
+    <server name="PANTHEON_INDEX_SCHEMA"   value="${PANTHEON_INDEX_SCHEMA}" />
+  </php>
+  <testsuites>
+    <testsuite name="unit">
+      <directory phpVersion="7.4.0" phpVersionOperator=">=">./tests/Unit/</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>

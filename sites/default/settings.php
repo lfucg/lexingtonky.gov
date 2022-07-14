@@ -92,3 +92,11 @@ $settings['deployment_identifier'] = '1';
 if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
   include_once $app_root . '/' . $site_path . '/settings.local.php';
 }
+
+if (isset($_ENV['AH_REALM'])) {
+  if ($_ENV['AH_REALM'] == 'lando') {
+    // Enable lando server and set index to use it.
+    $config['search_api.server.lando']['status'] = true;
+    $config['search_api.index.lexky']['server'] = 'lando';
+  }
+}

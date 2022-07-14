@@ -19,7 +19,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '88380323adf741cebe7d449e1e0a6310c1dda633',
+    'reference' => '55f16cb1e75c57e6797f5b8a8f49b11ec28178ae',
     'name' => 'my/project',
   ),
   'versions' => 
@@ -1324,12 +1324,12 @@ private static $installed = array (
     ),
     'drupal/search_api_pantheon' => 
     array (
-      'pretty_version' => '3.0.1',
-      'version' => '3.0.1.0',
+      'pretty_version' => '8.0.1',
+      'version' => '8.0.1.0',
       'aliases' => 
       array (
       ),
-      'reference' => '3.0.1',
+      'reference' => '8.0.1',
     ),
     'drupal/search_api_solr' => 
     array (
@@ -1339,15 +1339,6 @@ private static $installed = array (
       array (
       ),
       'reference' => '4.2.7',
-    ),
-    'drupal/search_api_solr_legacy' => 
-    array (
-      'pretty_version' => '4.2.7',
-      'version' => '4.2.7.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => NULL,
     ),
     'drupal/serialization' => 
     array (
@@ -1684,6 +1675,24 @@ private static $installed = array (
       ),
       'reference' => 'ad86732b668627c131e61ee8f0e6e9ed52e4db8d',
     ),
+    'http-interop/http-factory-guzzle' => 
+    array (
+      'pretty_version' => '1.2.0',
+      'version' => '1.2.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '8f06e92b95405216b237521cc64c804dd44c4a81',
+    ),
+    'kint-php/kint' => 
+    array (
+      'pretty_version' => '4.1.3',
+      'version' => '4.1.3.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '055630e77a9ae625968ade09addb0bd57ce1f4b3',
+    ),
     'laminas/laminas-diactoros' => 
     array (
       'pretty_version' => '2.11.0',
@@ -1808,7 +1817,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '88380323adf741cebe7d449e1e0a6310c1dda633',
+      'reference' => '55f16cb1e75c57e6797f5b8a8f49b11ec28178ae',
     ),
     'myclabs/php-enum' => 
     array (
@@ -1898,6 +1907,47 @@ private static $installed = array (
       ),
       'reference' => 'b14fbe2ddb0b9f94f5b24cf08783d599f776fff0',
     ),
+    'php-http/async-client-implementation' => 
+    array (
+      'provided' => 
+      array (
+        0 => '1.0',
+      ),
+    ),
+    'php-http/client-implementation' => 
+    array (
+      'provided' => 
+      array (
+        0 => '1.0',
+      ),
+    ),
+    'php-http/guzzle6-adapter' => 
+    array (
+      'pretty_version' => 'v2.0.2',
+      'version' => '2.0.2.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '9d1a45eb1c59f12574552e81fb295e9e53430a56',
+    ),
+    'php-http/httplug' => 
+    array (
+      'pretty_version' => '2.3.0',
+      'version' => '2.3.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'f640739f80dfa1152533976e3c112477f69274eb',
+    ),
+    'php-http/promise' => 
+    array (
+      'pretty_version' => '1.1.0',
+      'version' => '1.1.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '4c4c1f9b7289a2ec57cde7f1e9762a5789506f88',
+    ),
     'phpmailer/phpmailer' => 
     array (
       'pretty_version' => 'v6.6.3',
@@ -1976,6 +2026,13 @@ private static $installed = array (
       ),
       'reference' => '2dfb5f6c5eff0e91e20e913f8c5452ed95b86621',
     ),
+    'psr/http-client-implementation' => 
+    array (
+      'provided' => 
+      array (
+        0 => '1.0',
+      ),
+    ),
     'psr/http-factory' => 
     array (
       'pretty_version' => '1.0.1',
@@ -1989,7 +2046,8 @@ private static $installed = array (
     array (
       'provided' => 
       array (
-        0 => '1.0',
+        0 => '^1.0',
+        1 => '1.0',
       ),
     ),
     'psr/http-message' => 

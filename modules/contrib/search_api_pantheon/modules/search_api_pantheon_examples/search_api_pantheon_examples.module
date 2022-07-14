@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * Module file for search_api_pantheon_examples.
+ */
+
+/**
+ * Implements hook_search_api_solr_config_files_alter().
+ *
+ * Remember to post schema after any changes to the XML files here.
+ */
+function search_api_pantheon_examples_search_api_solr_config_files_alter(array &$files, string $lucene_match_version, string $server_id = '') {
+  // Append at the end of the file.
+  $files['solrconfig_extra.xml'] .= "<writeLockTimeout>500</writeLockTimeout>";
+
+  // Use PHP's DOM API to modify the XML files.
+  $schema_xml = &$files['schema.xml'];
+  if ($schema_xml_dom = \DomDocument::loadXML($schema_xml)) {
+    $fields = $schema_xml_dom->getElementsByTagName('field');
+    foreach ($fields as $field) {
+      if ($field->hasAttribute('name') && $field->getAttribute('name') === 'hash') {
+        $field->setAttribute('stored', 'true');
+      }
+    }
+    $schema_xml = $schema_xml_dom->saveXML();
+  }
+
+}

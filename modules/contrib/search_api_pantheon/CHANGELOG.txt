@@ -1,35 +1,13 @@
-Search API Patheon 3.0.1, 2021-11-11
-------------------------------------
-#3247682 by jproctor, DamienMcKenna, codesmith: Specify Solr 3 in pantheon.yml.
+Search API Patheon 8.x-8.x-alpha1
+--------------------------------------------------
+- Compatible with Pantheon Search (Solr 8)
+- Compatible with Drupal 9.x
 
+Search API Patheon 8.x-1.x-alpha2
+--------------------------------------------------
+- Issue #2818001 by stevector: Refactor for SolrConnector Plugin
+- Issue #2761831 by stevector: Update .gitattributes file
 
-Search API Patheon 3.0.0, 2021-10-06
-------------------------------------
-By stovak: Fixing code style issues causing CI failures with new version of
-  drupal/coder.
-By stovak: adding .gitignore.
-#3185736 by NickWilde, DamienMcKenna, cristian100, aasarava, dalin,
-  generalredneck, amjad1233: Upgrade for Search API Solr 4 and Drupal 9.
-#3241167 by DamienMcKenna: Update the CHANGELOG.txt file.
-#3161987 by Sahana _N, Webbeh, snehalgaikwad, DamienMcKenna, jimmy_sebastian:
-  README line lengths.
-
-
-Search API Patheon 8.x-1.0, 2018-12-28
---------------------------------------
-#2994946 by JQTNguyen, alonaoneill, chipway: Update Format of Dependencies in
-  .info File
-#2775549 by stevector, NickWilde: Automatically repost schema when creating a
-  new environment (multidev).
-By stevector: Various changes for CI.
-
-
-Search API Patheon 8.x-1.x-alpha2, 2017-02-15
----------------------------------------------
-#2818001 by stevector: Refactor for SolrConnector Plugin
-#2761831 by stevector: Update .gitattributes file
-
-
-Search API Patheon 8.x-1.x-alpha1, 2016-10-26
----------------------------------------------
-#2821769 by stevector: Initial release. Compatible with Search API Solr alpha6.
+Search API Patheon 8.x-1.x-alpha1
+--------------------------------------------------
+- Issue #2821769 by stevector: Initial release. Compatible with Search API Solr alpha6.

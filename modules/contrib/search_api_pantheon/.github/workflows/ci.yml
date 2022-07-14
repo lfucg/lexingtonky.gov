@@ -1,0 +1,100 @@
+name: Search API Pantheon
+on:
+  push:
+  pull_request:
+  repository_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      tmate_enabled:
+        description: Enable tmate debugging
+        required: true
+        default: 0
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/pantheon-public/build-tools-ci:8.x-php7.4
+      options: --user root
+    name: Code linting
+    env:
+      TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+      TERM: dumb
+      TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
+      TERMINUS_SITE: ${{ secrets.TERMINUS_SITE }}
+      TERMINUS_ORG: ${{ secrets.TERMINUS_ORG }}
+      GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
+      GITHUB_RUN_NUMBER: ${{ github.run_number }}
+      COMMIT_SHA: ${{ github.sha }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SANDBOX_SSH_KEY: ${{ secrets.SANDBOX_SSH_KEY }}
+      BASH_ENV: ~/.bashrc
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Composer install
+        run: composer install --ignore-platform-req=php
+
+      - name: Code sniff
+        run: composer run-script code:lint
+  build_test:
+    strategy:
+      matrix:
+        drupal-version: [ 9, 8 ]
+      fail-fast: false
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/pantheon-public/build-tools-ci:8.x-php7.4
+      options: --user root
+    name: Build and test (Drupal ${{ matrix.drupal-version }})
+    env:
+      TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+      TERM: dumb
+      TERMINUS_TOKEN: ${{ secrets.TERMINUS_TOKEN }}
+      TERMINUS_SITE: ${{ secrets.TERMINUS_SITE }}
+      TERMINUS_ORG: ${{ secrets.TERMINUS_ORG }}
+      GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
+      GITHUB_RUN_NUMBER: ${{ github.run_number }}
+      COMMIT_SHA: ${{ github.sha }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SANDBOX_SSH_KEY: ${{ secrets.SANDBOX_SSH_KEY }}
+      BASH_ENV: ~/.bashrc
+      DRUPAL_VERSION: ${{ matrix.drupal-version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login
+        run: |
+          git config --global user.email "$GIT_EMAIL"
+          git config --global user.name "Github Actions"
+          mkdir -p /root/.ssh && echo "${{ secrets.SSH_CONFIG }}" >> "/root/.ssh/config"
+
+      - name: Log in to Terminus
+        run: |
+          terminus auth:login --email=$GIT_EMAIL --machine-token="$TERMINUS_TOKEN"
+          terminus auth:whoami
+
+      - name: Setup SSH Keys
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SANDBOX_SSH_KEY }}
+
+      - name: Composer install
+        run: composer install --ignore-platform-req=php
+
+      - name: Setup tmate session
+        if: ${{ github.event.inputs.tmate_enabled == 1 }}
+        uses: mxschmitt/action-tmate@v3
+
+      - name: Run tests
+        run: |
+          export TERMINUS_ORG=$TERMINUS_ORG
+          ./vendor/bin/robo test:full $DRUPAL_VERSION $TERMINUS_SITE
+
+      - name: Cleanup sites
+        if: ${{ always() }}
+        run: |
+          ./vendor/bin/robo test:delete-sites

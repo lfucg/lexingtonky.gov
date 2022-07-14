@@ -1,0 +1,5 @@
+search_api_pantheon_admin.post_solr_schema:
+  route_name: 'search_api_pantheon_admin.post_solr_schema'
+  title: 'Post Solr Schema'
+  appears_on:
+    - search_api_pantheon_admin.solr_admin_form
