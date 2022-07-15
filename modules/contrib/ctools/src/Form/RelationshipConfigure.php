@@ -12,25 +12,35 @@ use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+/**
+ * Configure Relationship Form.
+ */
 abstract class RelationshipConfigure extends FormBase {
 
   /**
+   * Tempstore Factory.
+   *
    * @var \Drupal\Core\TempStore\SharedTempStoreFactory
    */
   protected $tempstore;
 
   /**
+   * Typed Data Resolver Service.
+   *
    * @var \Drupal\ctools\TypedDataResolver
    */
   protected $resolver;
 
   /**
+   * Tempstore ID.
+   *
    * @var string
    */
   protected $tempstore_id;
 
   /**
+   * Relationship Machine Name.
+   *
    * @var string
    */
   protected $machine_name;
@@ -42,7 +52,14 @@ abstract class RelationshipConfigure extends FormBase {
     return new static($container->get('tempstore.shared'), $container->get('ctools.typed_data.resolver'));
   }
 
-
+  /**
+   * Configure Relationship Form constructor.
+   *
+   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   *   Tempstore Service.
+   * @param \Drupal\ctools\TypedDataResolver $resolver
+   *   Typed Data Resolver Service.
+   */
   public function __construct(SharedTempStoreFactory $tempstore, TypedDataResolver $resolver) {
     $this->tempstore = $tempstore;
     $this->resolver = $resolver;
@@ -100,19 +117,24 @@ abstract class RelationshipConfigure extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $cached_values = $this->tempstore->get($this->tempstore_id)->get($this->machine_name);
-    list($route_name, $route_options) = $this->getParentRouteInfo($cached_values);
+    [$route_name, $route_options] = $this->getParentRouteInfo($cached_values);
     $form_state->setRedirect($route_name, $route_options);
   }
 
   /**
+   * Ajax Save Method.
+   *
    * @param array $form
+   *   Drupal Form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form State.
    *
    * @return \Drupal\Core\Ajax\AjaxResponse
+   *   The ajax data in the response.
    */
   public function ajaxSave(array &$form, FormStateInterface $form_state) {
     $cached_values = $this->tempstore->get($this->tempstore_id)->get($this->machine_name);
-    list($route_name, $route_parameters) = $this->getParentRouteInfo($cached_values);
+    [$route_name, $route_parameters] = $this->getParentRouteInfo($cached_values);
     $response = new AjaxResponse();
     $url = Url::fromRoute($route_name, $route_parameters);
     $response->addCommand(new RedirectCommand($url->toString()));
@@ -124,33 +146,36 @@ abstract class RelationshipConfigure extends FormBase {
    * Document the route name and parameters for redirect after submission.
    *
    * @param array $cached_values
+   *   Cached Values get route info from.
    *
    * @return array In the format of
    *   In the format of
-   *   return ['route.name', ['machine_name' => $this->machine_name, 'step' => 'step_name']];
+   *   return ['route.name',
+   *      ['machine_name' => $this->machine_name, 'step' => 'step_name']];
    */
-  abstract protected function getParentRouteInfo($cached_values);
+  abstract protected function getParentRouteInfo(array $cached_values);
 
   /**
    * Custom logic for setting the conditions array in cached_values.
    *
-   * @param $cached_values
+   * @param array $cached_values
    *
-   * @param $contexts
+   * @param mixed $contexts
    *   The conditions to set within the cached values.
    *
    * @return mixed
    *   Return the $cached_values
    */
-  abstract protected function setContexts($cached_values, $contexts);
+  abstract protected function setContexts(array $cached_values, mixed $contexts);
 
   /**
    * Custom logic for retrieving the contexts array from cached_values.
    *
-   * @param $cached_values
+   * @param array $cached_values
+   *   Cached Values contexts are fetched from.
    *
    * @return \Drupal\Core\Plugin\Context\ContextInterface[]
    */
-  abstract protected function getContexts($cached_values);
+  abstract protected function getContexts(array $cached_values);
 
 }

@@ -15,7 +15,6 @@ use Drupal\search_api_solr\SolrAutocompleteBackendTrait;
 use Drupal\search_api_solr\SolrBackendInterface;
 use Drupal\search_api_solr\SolrSpellcheckBackendTrait;
 use Drupal\search_api_solr_autocomplete\Event\PreSpellcheckQueryEvent;
-use Solarium\Component\ComponentAwareQueryInterface;
 use Solarium\Core\Query\Result\ResultInterface;
 
 /**
@@ -83,6 +82,7 @@ class Spellcheck extends SuggesterPluginBase implements PluginFormInterface {
    * Autocompletion suggestions for some user input using Spellcheck component.
    *
    * @param \Drupal\search_api_solr\SolrBackendInterface $backend
+   *   The Solr backend.
    * @param \Drupal\search_api\Query\QueryInterface $query
    *   A query representing the base search, with all completely entered words
    *   in the user input so far as the search keys.
@@ -127,6 +127,7 @@ class Spellcheck extends SuggesterPluginBase implements PluginFormInterface {
    * Set the spellcheck parameters for the solarium autocomplete query.
    *
    * @param \Drupal\search_api_solr\SolrBackendInterface $backend
+   *   The Solr backend.
    * @param \Drupal\search_api\Query\QueryInterface $query
    *   A query representing the completed user input so far.
    * @param \Drupal\search_api_solr\Solarium\Autocomplete\Query $solarium_query

@@ -83,7 +83,7 @@ interface SolrCloudConnectorInterface extends SolrConnectorInterface {
    * @param string|null $collection
    *   Collection.
    *
-   * @return ClusterState|null
+   * @return \Solarium\Core\Client\State\ClusterState|null
    *   A response object with system information.
    *
    * @throws \Drupal\search_api_solr\SearchApiSolrException
@@ -107,7 +107,7 @@ interface SolrCloudConnectorInterface extends SolrConnectorInterface {
    * Creates collection.
    *
    * @param array $options
-   *
+   *  The options array.
    * @param string|null $collection
    *   Collection.
    *
@@ -132,15 +132,15 @@ interface SolrCloudConnectorInterface extends SolrConnectorInterface {
   public function deleteCollection(?string $collection = NULL): bool;
 
   /**
-   * Upload a configset to Solr Cloud
+   * Upload a config-set to Solr Cloud.
    *
    * @param string $name
-   *   The name of the configset within Solr
-   *
+   *   The name of the configset within Solr.
    * @param string $filename
-   *   The file name of the configset to uplaod.
+   *   The file name of the config-set to upload.
    *
    * @return bool
+   *   Indicates if the upload succeeded.
    *
    * @throws \Drupal\search_api_solr\SearchApiSolrException
    */

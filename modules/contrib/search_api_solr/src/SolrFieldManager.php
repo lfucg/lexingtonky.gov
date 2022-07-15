@@ -189,25 +189,32 @@ class SolrFieldManager implements SolrFieldManagerInterface {
           // matches point and trie variants as well, for example int, pint and
           // tint. Finally this function only feeds the presets for the config
           // form, so mismatches aren't critical.
-          if (strpos($field->getDataType(), 'text') !== FALSE) {
+          $type = $field->getDataType();
+          if (strpos($type, 'text') !== FALSE) {
             $field->setDataType('search_api_text');
           }
-          elseif (strpos($field->getDataType(), 'date') !== FALSE) {
-            $field->setDataType('timestamp');
+          elseif (strpos($type, 'date_range') !== FALSE) {
+            $field->setDataType('solr_date_range');
           }
-          elseif (strpos($field->getDataType(), 'int') !== FALSE) {
+          elseif (strpos($type, 'date') !== FALSE) {
+            // The field config UI uses "date" but converts that to "timestamp"
+            // internally. We handle this in the mapping.
+            /** @see \Drupal\search_api_solr\EventSubscriber\SearchApiSubscriber::onMappingViewsFieldHandlers() */
+            $field->setDataType('date');
+          }
+          elseif (strpos($type, 'int') !== FALSE) {
             $field->setDataType('integer');
           }
-          elseif (strpos($field->getDataType(), 'long') !== FALSE) {
+          elseif (strpos($type, 'long') !== FALSE) {
             $field->setDataType('integer');
           }
-          elseif (strpos($field->getDataType(), 'float') !== FALSE) {
+          elseif (strpos($type, 'float') !== FALSE) {
             $field->setDataType('float');
           }
-          elseif (strpos($field->getDataType(), 'double') !== FALSE) {
+          elseif (strpos($type, 'double') !== FALSE) {
             $field->setDataType('float');
           }
-          elseif (strpos($field->getDataType(), 'bool') !== FALSE) {
+          elseif (strpos($type, 'bool') !== FALSE) {
             $field->setDataType('boolean');
           }
           else {

@@ -38,6 +38,8 @@ content:
     settings:
       image_link: ''
       image_style: ''
+      image_loading:
+        attribute: lazy
     third_party_settings: {  }
     weight: 5
     region: content
@@ -73,5 +75,4 @@ hidden:
   field_lex_custom_banner_image: true
   field_related_departments: true
   field_related_documents: true
-  langcode: true
   search_api_excerpt: true

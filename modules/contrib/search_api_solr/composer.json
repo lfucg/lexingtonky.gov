@@ -24,11 +24,11 @@
         "ext-dom": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
-        "drupal/search_api": "~1.23",
+        "drupal/search_api": "~1.24",
         "composer/semver": "^1.0|^3.0",
         "consolidation/annotated-command": "^2.12|^4.1",
-        "maennchen/zipstream-php": "^1.2|^2.0",
-        "solarium/solarium": "^6.2.3",
+        "maennchen/zipstream-php": "^2.2",
+        "solarium/solarium": "^6.2.4",
         "laminas/laminas-stdlib": "^3.2"
     },
     "require-dev": {
@@ -37,6 +37,7 @@
         "drupal/devel": "^4.0",
         "drupal/facets": "1.x-dev",
         "drupal/geofield": "1.x-dev",
+        "drupal/search_api_autocomplete": "1.x-dev",
         "drupal/search_api_location": "1.x-dev",
         "drupal/search_api_spellcheck": "3.x-dev"
     },

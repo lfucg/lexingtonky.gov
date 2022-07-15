@@ -20,7 +20,7 @@ use Drupal\search_api\Event\MappingForeignRelationshipsEvent;
 use Drupal\search_api\Event\SearchApiEvents;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\SearchApiException;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Provides datasource-independent item change tracking functionality.
@@ -44,7 +44,7 @@ class TrackingHelper implements TrackingHelperInterface {
   /**
    * The event dispatcher.
    *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   * @var \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
    */
   protected $eventDispatcher;
 
@@ -69,7 +69,7 @@ class TrackingHelper implements TrackingHelperInterface {
    *   The entity type manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
    *   The language manager.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher
+   * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $eventDispatcher
    *   The event dispatcher.
    * @param \Drupal\search_api\Utility\FieldsHelperInterface $fieldsHelper
    *   The fields helper.
@@ -253,7 +253,7 @@ class TrackingHelper implements TrackingHelperInterface {
     // Let other modules alter this information, potentially adding more
     // relationships.
     $event = new MappingForeignRelationshipsEvent($index, $data, $cacheability);
-    $this->eventDispatcher->dispatch(SearchApiEvents::MAPPING_FOREIGN_RELATIONSHIPS, $event);
+    $this->eventDispatcher->dispatch($event, SearchApiEvents::MAPPING_FOREIGN_RELATIONSHIPS);
 
     $this->cache->set($cid, $data, $cacheability->getCacheMaxAge(), $cacheability->getCacheTags());
 

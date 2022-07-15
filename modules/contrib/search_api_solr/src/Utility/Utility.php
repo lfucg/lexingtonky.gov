@@ -4,6 +4,7 @@ namespace Drupal\search_api_solr\Utility;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\ParseMode\ParseModeInterface;
@@ -135,12 +136,16 @@ class Utility {
    *   A unique site hash, containing only alphanumeric characters.
    */
   public static function getSiteHash() {
-    // Copied from apachesolr_site_hash().
-    if (!($hash = \Drupal::state()->get('search_api_solr.site_hash', FALSE))) {
-      global $base_url;
-      $hash = substr(base_convert(hash('sha256', uniqid($base_url, TRUE)), 16, 36), 0, 6);
-      \Drupal::state()->set('search_api_solr.site_hash', $hash);
+    if (!($hash = Settings::get('search_api_solr.site_hash'))) {
+      // Copied from apachesolr_site_hash().
+      if (!($hash = \Drupal::state()
+        ->get('search_api_solr.site_hash', FALSE))) {
+        global $base_url;
+        $hash = substr(base_convert(hash('sha256', uniqid($base_url, TRUE)), 16, 36), 0, 6);
+        \Drupal::state()->set('search_api_solr.site_hash', $hash);
+      }
     }
+
     return $hash;
   }
 
@@ -683,7 +688,8 @@ class Utility {
    * @param array $fields
    *   (optional) An array of field names.
    * @param string $parse_mode_id
-   *   (optional) The parse mode ID. Defaults to "phrase".
+   *   (optional) The parse mode ID. Defaults to "phrase". "keys" is not a real
+   *   parse mode ID but used internally by Search API Solr.
    * @param array $options
    *   (optional) An array of options.
    *
@@ -846,7 +852,7 @@ class Utility {
             if ($sloppiness && strpos($term_or_phrase, ' ') && strpos($term_or_phrase, '"') === 0) {
               $term_or_phrase .= $sloppiness;
             }
-            // Otherwise just add fuzziness when if we really have a term.
+            // Otherwise, just add fuzziness when if we really have a term.
             elseif ($fuzziness && !strpos($term_or_phrase, ' ') && strpos($term_or_phrase, '"') !== 0) {
               $term_or_phrase .= $fuzziness;
             }
@@ -926,6 +932,7 @@ class Utility {
             switch ($parse_mode_id) {
               case 'terms':
               case "sloppy_terms":
+              case 'fuzzy_terms':
               case 'edismax':
                 $k[] = $queryHelper->escapePhrase(trim($key));
                 break;
@@ -1219,7 +1226,7 @@ class Utility {
     // If there are no languages set, we need to set them. As an example, a
     // language might be set by a filter in a search view.
     if (empty($language_ids)) {
-      if (!$query->hasTag('views') && $settings['multilingual']['limit_to_content_language']) {
+      if (!$query->hasTag('views') && !$query->hasTag('server_index_status') && $settings['multilingual']['limit_to_content_language']) {
         // Limit the language to the current content language being used.
         $language_ids[] = \Drupal::languageManager()
           ->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)

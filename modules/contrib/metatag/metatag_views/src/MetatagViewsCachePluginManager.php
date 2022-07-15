@@ -8,9 +8,14 @@ use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\views\Plugin\ViewsPluginManager;
 
+/**
+ * Custom cache plugin system for Views.
+ */
 class MetatagViewsCachePluginManager implements PluginManagerInterface, CachedDiscoveryInterface, CacheableDependencyInterface {
 
   /**
+   * {@inheritdoc}
+   *
    * @var \Drupal\views\Plugin\ViewsPluginManager
    */
   protected $viewsPluginManager;
@@ -19,15 +24,20 @@ class MetatagViewsCachePluginManager implements PluginManagerInterface, CachedDi
    * MetatagViewsCachePluginManager constructor.
    *
    * @param \Drupal\views\Plugin\ViewsPluginManager $views_plugin_manager
+   *   The ViewsPluginManager as argument.
    */
   public function __construct(ViewsPluginManager $views_plugin_manager) {
     $this->viewsPluginManager = $views_plugin_manager;
   }
 
   /**
+   * {@inheritdoc}
+   *
    * @param \Drupal\views\Plugin\views\cache\CachePluginBase $plugin
+   *   The CachePluginBase as argument.
    *
    * @return \Drupal\metatag_views\MetatagViewsCacheWrapper
+   *   Return new MetatagViewsCacheWrapper
    */
   protected function wrap(CachePluginBase $plugin) {
     return new MetatagViewsCacheWrapper($plugin);

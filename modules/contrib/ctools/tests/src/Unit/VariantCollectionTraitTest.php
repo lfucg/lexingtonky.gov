@@ -27,7 +27,7 @@ class VariantCollectionTraitTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     parent::setUp();
     $container = new ContainerBuilder();
     $this->manager = $this->prophesize(PluginManagerInterface::class);
@@ -119,7 +119,7 @@ class VariantCollectionTraitTest extends UnitTestCase {
    * @depends testAddVariant
    */
   public function testGetVariant($data) {
-    list($trait_object, $uuid, $plugin) = $data;
+    [$trait_object, $uuid, $plugin] = $data;
     $this->manager->createInstance()->shouldNotBeCalled();
 
     $this->assertSame($plugin, $trait_object->getVariant($uuid));
@@ -132,7 +132,7 @@ class VariantCollectionTraitTest extends UnitTestCase {
    * @depends testGetVariant
    */
   public function testRemoveVariant($data) {
-    list($trait_object, $uuid) = $data;
+    [$trait_object, $uuid] = $data;
 
     $this->assertSame($trait_object, $trait_object->removeVariant($uuid));
     $this->assertFalse($trait_object->getVariants()->has($uuid));
@@ -145,7 +145,7 @@ class VariantCollectionTraitTest extends UnitTestCase {
    * @depends testRemoveVariant
    */
   public function testGetVariantException($data) {
-    list($trait_object, $uuid) = $data;
+    [$trait_object, $uuid] = $data;
     // Attempt to retrieve a variant that has been removed.
     $this->expectException('\Drupal\Component\Plugin\Exception\PluginNotFoundException');
     $this->expectExceptionMessage("Plugin ID 'test-uuid' was not found.");
@@ -153,7 +153,9 @@ class VariantCollectionTraitTest extends UnitTestCase {
   }
 
 }
-
+/**
+ *
+ */
 class TestVariantCollectionTrait {
   use VariantCollectionTrait;
 

@@ -34,10 +34,11 @@ function metatag_favicons_page_attachments_alter(array &$attachments) {
   }
 
   // Remove the default shortcut icon if one was set by Metatag.
+  $valid_meta_tags = ['shortcut icon', 'shortcut_icon', 'icon'];
   foreach ($attachments['#attached']['html_head'] as $element) {
-    if (isset($element[1]) && in_array($element[1], ['shortcut_icon', 'icon'])) {
+    if (isset($element[1]) && in_array($element[1], $valid_meta_tags)) {
       foreach ($attachments['#attached']['html_head_link'] as $key => $value) {
-        if (isset($value[0]['rel']) && in_array($value[0]['rel'], ['shortcut_icon', 'icon'])) {
+        if (isset($value[0]['rel']) && in_array($value[0]['rel'], $valid_meta_tags)) {
           unset($attachments['#attached']['html_head_link'][$key]);
         }
       }

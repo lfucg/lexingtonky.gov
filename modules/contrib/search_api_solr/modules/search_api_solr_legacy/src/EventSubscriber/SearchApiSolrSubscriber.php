@@ -15,6 +15,7 @@ class SearchApiSolrSubscriber implements EventSubscriberInterface {
    * Adds the mapping Solr 3, 4 and 5.
    *
    * @param \Drupal\search_api_solr\Event\PostConfigSetTemplateMappingEvent $event
+   *   The event.
    */
   public function postConfigSetTemplateMapping(PostConfigSetTemplateMappingEvent $event) {
     $template_path = drupal_get_path('module', 'search_api_solr_legacy') . '/solr-conf-templates/';

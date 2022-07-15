@@ -151,15 +151,11 @@ jobs:
 
         strategy:
             matrix:
-                drupal: ['9.2', '9.3']
+                drupal: ['9.3', '9.4']
                 solr: ['4', '5', '6', '7', '8']
                 php: ['7.4', '8.0']
                 experimental: [false]
                 include:
-                  - drupal: '9.4'
-                    solr: '8'
-                    php: '8.0'
-                    experimental: true
                   - drupal: '10.0'
                     solr: '8'
                     php: '8.0'
@@ -228,7 +224,7 @@ jobs:
               run: |
                 cd drupal
                 composer config repositories.search_api_solr '{"type": "vcs", "url": "../search_api_solr"}'
-                composer require solarium/solarium:"dev-master as 6.2.99" drupal/search_api_solr:4.99.0 drupal/search_api_autocomplete:1.x-dev drupal/search_api_spellcheck:3.x-dev drupal/facets:2.0.x-dev drupal/devel drupal/search_api_location:1.x-dev drupal/geofield drush/drush monolog/monolog --ignore-platform-reqs --no-interaction
+                composer require solarium/solarium:"dev-master as 6.2.99" drupal/search_api_solr:4.99.0 drupal/search_api_autocomplete:1.x-dev drupal/search_api_spellcheck:3.x-dev drupal/facets:2.0.x-dev drupal/devel drupal/search_api_location:1.x-dev drupal/geofield drush/drush monolog/monolog:^2.6 --ignore-platform-reqs --no-interaction
                 # search_api was installed as dendency above. This is a required check! Now switch to the latest dev version.
                 composer require drupal/search_api:1.x-dev --ignore-platform-reqs --no-interaction
 
@@ -250,7 +246,7 @@ jobs:
                 cd drupal
                 php -S localhost:8888 >& /dev/null &
                 vendor/bin/drush si standard --db-url=sqlite://sites/default/files/db.sqlite --yes
-                vendor/bin/drush en search_api_solr_admin,search_api_solr_defaults,search_api_solr_devel,search_api_solr_legacy --yes
+                vendor/bin/drush en search_api_solr_admin,search_api_solr_devel,search_api_solr_legacy --yes
                 vendor/bin/drush en search_api_spellcheck,search_api_solr_autocomplete,facets,search_api_location --yes
                 vendor/bin/phpunit -v -c core --group search_api_solr --exclude-group not_drupal${{ matrix.drupal }},not_solr${{ matrix.solr }} modules/contrib/search_api_solr
 
@@ -261,9 +257,9 @@ jobs:
 
       strategy:
         matrix:
-          drupal: ['9.2', '9.3']
+          drupal: ['9.3', '9.4']
           solr: ['3']
-          php: ['7.3', '8.0']
+          php: ['7.4', '8.0']
 
       name: Drupal ${{ matrix.drupal }}, Solr ${{ matrix.solr }}, PHP ${{ matrix.php }}
 
@@ -316,7 +312,7 @@ jobs:
           run: |
             cd drupal
             composer config repositories.search_api_solr '{"type": "vcs", "url": "../search_api_solr"}'
-            composer require solarium/solarium:"dev-master as 6.2.99" drupal/search_api_solr:4.99.0 drupal/search_api_autocomplete:1.x-dev drupal/search_api_spellcheck:3.x-dev drupal/facets:2.0.x-dev drupal/devel drupal/search_api_location:1.x-dev drupal/geofield drush/drush monolog/monolog --ignore-platform-reqs --no-interaction
+            composer require solarium/solarium:"dev-master as 6.2.99" drupal/search_api_solr:4.99.0 drupal/search_api_autocomplete:1.x-dev drupal/search_api_spellcheck:3.x-dev drupal/facets:2.0.x-dev drupal/devel drupal/search_api_location:1.x-dev drupal/geofield drush/drush monolog/monolog:^2.6 --ignore-platform-reqs --no-interaction
             # search_api was installed as dendency above. This is a required check! Now switch to the latest dev version.
             composer require drupal/search_api:1.x-dev --ignore-platform-reqs --no-interaction
 

@@ -19,12 +19,12 @@ content:
       bundle: accordion_block
       title: field_heading
       content: field_description
-      view_mode: default
-      active: '1'
+      active: 1
+      autoscroll: false
       autoscroll_offset: ''
-      simple_id: 0
-      autoscroll: 0
-      autoscroll_offset_toolbar: 0
+      autoscroll_offset_toolbar: false
+      view_mode: default
+      simple_id: false
     third_party_settings: {  }
     weight: 0
     region: content

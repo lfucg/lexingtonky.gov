@@ -16,6 +16,7 @@ use Drupal\search_api\Item\ItemInterface;
 use Drupal\search_api\LoggerTrait;
 use Drupal\search_api\Plugin\search_api\processor\Property\RenderedItemProperty;
 use Drupal\search_api\Processor\ProcessorPluginBase;
+use Drupal\user\RoleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -256,10 +257,18 @@ class RenderedItem extends ProcessorPluginBase {
     foreach ($fields as $field) {
       $configuration = $field->getConfiguration();
 
+      // If a (non-anonymous) role is selected, then also add the authenticated
+      // user role.
+      $roles = $configuration['roles'];
+      $authenticated = RoleInterface::AUTHENTICATED_ID;
+      if (array_diff($roles, [$authenticated, RoleInterface::ANONYMOUS_ID])) {
+        $roles[$authenticated] = $authenticated;
+      }
+
       // Change the current user to our dummy implementation to ensure we are
       // using the configured roles.
       $this->getAccountSwitcher()
-        ->switchTo(new UserSession(['roles' => $configuration['roles']]));
+        ->switchTo(new UserSession(['roles' => array_values($roles)]));
 
       $datasource_id = $item->getDatasourceId();
       $datasource = $item->getDatasource();

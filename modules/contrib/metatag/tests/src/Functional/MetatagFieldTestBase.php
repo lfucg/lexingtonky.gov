@@ -281,7 +281,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
    *
    * When there is no field for overriding the defaults.
    *
-   * @todo
+   * @todo Write this.
    */
   public function testBundleDefaultsInheritance() {
   }
@@ -353,7 +353,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     }
 
     // Create a new entity object.
-    $this->submitForm($edit, $this->t($this->entitySaveButtonLabel));
+    $this->submitForm($edit, $this->entitySaveButtonLabel);
     $entities = \Drupal::entityTypeManager()
       ->getStorage($this->entityType)
       ->loadByProperties([$this->entityTitleField => $title]);
@@ -436,7 +436,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     }
 
     // Create a new entity object.
-    $this->submitForm($edit, $this->t($this->entitySaveButtonLabel));
+    $this->submitForm($edit, $this->entitySaveButtonLabel);
     $entities = \Drupal::entityTypeManager()
       ->getStorage($this->entityType)
       ->loadByProperties([$this->entityTitleField => $title]);

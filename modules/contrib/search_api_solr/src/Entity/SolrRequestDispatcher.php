@@ -69,7 +69,7 @@ class SolrRequestDispatcher extends AbstractSolrEntity implements SolrRequestDis
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getPurposeId(): string {
     return $this->request_dispatcher['name'];

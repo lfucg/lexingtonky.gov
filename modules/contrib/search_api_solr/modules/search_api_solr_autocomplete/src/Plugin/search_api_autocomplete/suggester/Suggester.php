@@ -148,6 +148,7 @@ class Suggester extends SuggesterPluginBase implements PluginFormInterface {
    * Autocompletion suggestions for some user input using Suggester component.
    *
    * @param \Drupal\search_api_solr\SolrBackendInterface $backend
+   *   The Solr backend.
    * @param \Drupal\search_api\Query\QueryInterface $query
    *   A query representing the base search, with all completely entered words
    *   in the user input so far as the search keys.
@@ -170,7 +171,7 @@ class Suggester extends SuggesterPluginBase implements PluginFormInterface {
    */
   protected function getSuggesterSuggestions(SolrBackendInterface $backend, QueryInterface $query, $incomplete_key, $user_input, array $options = []) {
     $suggestions = [];
-    if ($solarium_query = $this->getAutocompleteQuery($backend,$incomplete_key, $user_input)) {
+    if ($solarium_query = $this->getAutocompleteQuery($backend, $incomplete_key, $user_input)) {
       try {
         $suggestion_factory = new SuggestionFactory($user_input);
         $this->setAutocompleteSuggesterQuery($query, $solarium_query, $user_input, $options);

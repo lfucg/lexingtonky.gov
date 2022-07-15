@@ -10,9 +10,13 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\views\ViewEntityInterface;
+use Drupal\Core\Path\PathMatcherInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\Core\Language\LanguageManagerInterface;
 
 /**
- * Class MetatagManager.
+ * Primary logic for the Metatag module.
  *
  * @package Drupal\metatag
  */
@@ -56,6 +60,34 @@ class MetatagManager implements MetatagManagerInterface {
   protected $logger;
 
   /**
+   * The path matcher.
+   *
+   * @var \Drupal\Core\Path\PathMatcherInterface
+   */
+  protected $pathMatcher;
+
+  /**
+   * The route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+  /**
+   * The request stack.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  protected $requestStack;
+
+  /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
    * Caches processed strings, keyed by tag name.
    *
    * @var array
@@ -68,32 +100,48 @@ class MetatagManager implements MetatagManagerInterface {
    * @param \Drupal\metatag\MetatagGroupPluginManager $groupPluginManager
    *   The MetatagGroupPluginManager object.
    * @param \Drupal\metatag\MetatagTagPluginManager $tagPluginManager
-   *   The MetatagTagPluginMπanager object.
+   *   The MetatagTagPluginManager object.
    * @param \Drupal\metatag\MetatagToken $token
    *   The MetatagToken object.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $channelFactory
    *   The LoggerChannelFactoryInterface object.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The EntityTypeManagerInterface object.
+   * @param \Drupal\Core\Path\PathMatcherInterface $pathMatcher
+   *   The path matcher.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
+   *   The route match.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+   *   The request stack.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
+   *   The language manager.
    */
   public function __construct(MetatagGroupPluginManager $groupPluginManager,
     MetatagTagPluginManager $tagPluginManager,
     MetatagToken $token,
     LoggerChannelFactoryInterface $channelFactory,
-    EntityTypeManagerInterface $entityTypeManager
+    EntityTypeManagerInterface $entityTypeManager,
+    PathMatcherInterface $pathMatcher,
+    RouteMatchInterface $routeMatch,
+    RequestStack $requestStack,
+    LanguageManagerInterface $languageManager
   ) {
     $this->groupPluginManager = $groupPluginManager;
     $this->tagPluginManager = $tagPluginManager;
     $this->tokenService = $token;
     $this->logger = $channelFactory->get('metatag');
     $this->metatagDefaults = $entityTypeManager->getStorage('metatag_defaults');
+    $this->pathMatcher = $pathMatcher;
+    $this->routeMatch = $routeMatch;
+    $this->requestStack = $requestStack;
+    $this->languageManager = $languageManager;
   }
 
   /**
    * Returns the list of protected defaults.
    *
    * @return array
-   *   Th protected defaults.
+   *   The protected defaults.
    */
   public static function protectedDefaults() {
     return [
@@ -186,7 +234,7 @@ class MetatagManager implements MetatagManagerInterface {
     foreach ($metatag_groups as $group_name => $group_info) {
       $groups[$group_name]['id'] = $group_info['id'];
       $groups[$group_name]['label'] = $group_info['label']->render();
-      $groups[$group_name]['description'] = $group_info['description'];
+      $groups[$group_name]['description'] = $group_info['description'] ?? '';
       $groups[$group_name]['weight'] = $group_info['weight'];
     }
 
@@ -243,7 +291,10 @@ class MetatagManager implements MetatagManagerInterface {
       if (!isset($groups[$tag_group])) {
         // If the tag is claiming a group that has no matching plugin, log an
         // error and force it to the basic group.
-        $this->logger->error("Undefined group '%group' on tag '%tag'", ['%group' => $tag_group, '%tag' => $tag_name]);
+        $this->logger->error("Undefined group '%group' on tag '%tag'", [
+          '%group' => $tag_group,
+          '%tag' => $tag_name,
+        ]);
         $tag['group'] = 'basic';
         $tag_group = 'basic';
       }
@@ -280,7 +331,7 @@ class MetatagManager implements MetatagManagerInterface {
         // Create the fieldset.
         $element[$group_name]['#type'] = 'details';
         $element[$group_name]['#title'] = $group['label'];
-        $element[$group_name]['#description'] = $group['description'];
+        $element[$group_name]['#description'] = $group['description'] ?? '';
         $element[$group_name]['#open'] = FALSE;
 
         foreach ($group['tags'] as $tag_name => $tag) {
@@ -290,7 +341,7 @@ class MetatagManager implements MetatagManagerInterface {
             $tag = $this->tagPluginManager->createInstance($tag_name);
 
             // Set the value to the stored value, if any.
-            $tag_value = isset($values[$tag_name]) ? $values[$tag_name] : NULL;
+            $tag_value = $values[$tag_name] ?? NULL;
             $tag->setValue($tag_value);
 
             // Open any groups that have non-empty values.
@@ -359,7 +410,7 @@ class MetatagManager implements MetatagManagerInterface {
       // Get serialized value and break it into an array of tags with values.
       $serialized_value = $item->get('value')->getValue();
       if (!empty($serialized_value)) {
-        $tags += unserialize($serialized_value);
+        $tags += unserialize($serialized_value, ['allowed_classes' => FALSE]);
       }
     }
 
@@ -380,7 +431,7 @@ class MetatagManager implements MetatagManagerInterface {
     $metatags = $this->getGlobalMetatags();
     // If that is empty something went wrong.
     if (!$metatags) {
-      return;
+      return [];
     }
 
     // Check if this is a special page.
@@ -430,13 +481,13 @@ class MetatagManager implements MetatagManagerInterface {
   public function getSpecialMetatags() {
     $metatags = NULL;
 
-    if (\Drupal::service('path.matcher')->isFrontPage()) {
+    if ($this->pathMatcher->isFrontPage()) {
       $metatags = $this->metatagDefaults->load('front');
     }
-    elseif (\Drupal::service('current_route_match')->getRouteName() == 'system.403') {
+    elseif ($this->routeMatch->getRouteName() == 'system.403') {
       $metatags = $this->metatagDefaults->load('403');
     }
-    elseif (\Drupal::service('current_route_match')->getRouteName() == 'system.404') {
+    elseif ($this->routeMatch->getRouteName() == 'system.404') {
       $metatags = $this->metatagDefaults->load('404');
     }
 
@@ -519,7 +570,7 @@ class MetatagManager implements MetatagManagerInterface {
    */
   public function generateRawElements(array $tags, $entity = NULL, BubbleableMetadata $cache = NULL) {
     // Ignore the update.php path.
-    $request = \Drupal::request();
+    $request = $this->requestStack->getCurrentRequest();
     if ($request->getBaseUrl() == '/update.php') {
       return [];
     }
@@ -527,6 +578,7 @@ class MetatagManager implements MetatagManagerInterface {
     // Prepare any tokens that might exist.
     $token_replacements = [];
     if ($entity) {
+
       // @todo This needs a better way of discovering the context.
       if ($entity instanceof ViewEntityInterface) {
         // Views tokens require the ViewExecutable, not the config entity.
@@ -537,15 +589,14 @@ class MetatagManager implements MetatagManagerInterface {
         $token_replacements = [$entity->getEntityTypeId() => $entity];
       }
     }
-
-    // Get the current language code.
-    $langcode = \Drupal::languageManager()
-      ->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)
-      ->getId();
-
     $rawTags = [];
-
     $metatag_tags = $this->tagPluginManager->getDefinitions();
+
+    // Use the entity's language code, if one is defined.
+    $langcode = NULL;
+    if ($entity) {
+      $langcode = $entity->language()->getId();
+    }
 
     // Order metatags based on the group and weight.
     $group = array_column($metatag_tags, 'group');
@@ -567,24 +618,8 @@ class MetatagManager implements MetatagManagerInterface {
         // Get an instance of the plugin.
         $tag = $this->tagPluginManager->createInstance($tag_name);
 
-        // Set the value as sometimes the data needs massaging, such as when
-        // field defaults are used for the Robots field, which come as an array
-        // that needs to be filtered and converted to a string.
-        // @see Robots::setValue()
-        $tag->setValue($value);
-
-        // Obtain the processed value. Some meta tags will store this as a
-        // string, so support that option.
-        $value = $tag->value();
-        if (is_array($value)) {
-          $processed_value = [];
-          foreach ($value as $key => $value_item) {
-            $processed_value[$key] = htmlspecialchars_decode($this->tokenService->replace($value_item, $token_replacements, ['langcode' => $langcode]));
-          }
-        }
-        else {
-          $processed_value = htmlspecialchars_decode($this->tokenService->replace($value, $token_replacements, ['langcode' => $langcode]));
-        }
+        // Prepare value.
+        $processed_value = $this->processTagValue($tag, $value, $token_replacements, FALSE, $langcode);
 
         // Now store the value with processed tokens back into the plugin.
         $tag->setValue($processed_value);
@@ -625,14 +660,20 @@ class MetatagManager implements MetatagManagerInterface {
    */
   public function generateTokenValues(array $tags, $entity = NULL) {
     // Ignore the update.php path.
-    $request = \Drupal::request();
+    $request = $this->requestStack->getCurrentRequest();
     if ($request->getBaseUrl() == '/update.php') {
       return [];
     }
 
     $entity_identifier = '_none';
     if ($entity) {
-      $entity_identifier = $entity->getEntityTypeId() . ':' . ($entity->uuid() ?: $entity->id());
+      $entity_identifier = $entity->getEntityTypeId() . ':' . ($entity->uuid() ?? $entity->id());
+    }
+
+    // Use the entity's language code, if one is defined.
+    $langcode = NULL;
+    if ($entity) {
+      $langcode = $entity->language()->getId();
     }
 
     if (!isset($this->processedTokenCache[$entity_identifier])) {
@@ -659,15 +700,8 @@ class MetatagManager implements MetatagManagerInterface {
               $token_replacements = [$entity->getEntityTypeId() => $entity];
             }
           }
-
-          // Set the value as sometimes the data needs massaging, such as when
-          // field defaults are used for the Robots field, which come as an
-          // array that needs to be filtered and converted to a string.
-          // @see Robots::setValue()
-          $tag->setValue($value);
-          $langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
-          $value = PlainTextOutput::renderFromHtml(htmlspecialchars_decode($this->tokenService->replace($value, $token_replacements, ['langcode' => $langcode])));
-          $this->processedTokenCache[$entity_identifier][$tag_name] = $tag->multiple() ? explode(',', $value) : $value;
+          $processed_value = $this->processTagValue($tag, $value, $token_replacements, TRUE);
+          $this->processedTokenCache[$entity_identifier][$tag_name] = $tag->multiple() ? explode(',', $processed_value) : $processed_value;
         }
       }
     }
@@ -685,6 +719,68 @@ class MetatagManager implements MetatagManagerInterface {
     // @todo Either get this dynamically from field plugins or forget it and
     // just hardcode metatag where this is called.
     return ['metatag'];
+  }
+
+  /**
+   * Sets tag value and returns sanitized value with token replaced.
+   *
+   * @param \Drupal\metatag\Plugin\metatag\Tag\MetaNameBase|object $tag
+   *   Metatag object.
+   * @param array|string $value
+   *   Value to process.
+   * @param array $token_replacements
+   *   Arguments for token->replace().
+   * @param bool $plain_text
+   *   (optional) If TRUE, value will be formatted as a plain text. Defaults to
+   *   FALSE.
+   * @param string $langcode
+   *   (optional) The language code to use for replacements; if not provided the
+   *   current interface language code will be used.
+   *
+   * @return array|string
+   *   Processed value.
+   */
+  protected function processTagValue($tag, $value, array $token_replacements, bool $plain_text = FALSE, $langcode = FALSE) {
+    // Set the value as sometimes the data needs massaging, such as when
+    // field defaults are used for the Robots field, which come as an array
+    // that needs to be filtered and converted to a string.
+    // @see Robots::setValue()
+    $tag->setValue($value);
+
+    // Obtain the processed value. Some meta tags will store this as a
+    // string, so support that option.
+    // @todo Is there a better way of doing this? It seems unclean.
+    $value = $tag->value();
+
+    // Make sure the value is always handled as an array, but track whether it
+    // was actually passed in as an array.
+    $is_array = is_array($value);
+    if (!$is_array) {
+      $value = [$value];
+    }
+
+    // If a langcode was not specified, use the current interface language.
+    if (empty($langcode)) {
+      $langcode = $this->languageManager
+        ->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)
+        ->getId();
+    }
+
+    // Loop over each item in the array.
+    foreach ($value as $key => $value_item) {
+      // Process the tokens in this value and decode any HTML characters that
+      // might be found.
+      $value[$key] = htmlspecialchars_decode($this->tokenService->replace($value_item, $token_replacements, ['langcode' => $langcode]));
+
+      // If requested, run the value through the render system.
+      if ($plain_text) {
+        $value[$key] = PlainTextOutput::renderFromHtml($value[$key]);
+      }
+    }
+
+    // If the original value was passed as an array return the whole value,
+    // otherwise return the first item from the array.
+    return $is_array ? $value : reset($value);
   }
 
 }

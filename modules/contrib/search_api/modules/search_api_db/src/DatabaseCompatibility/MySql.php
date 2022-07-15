@@ -24,6 +24,12 @@ class MySql extends GenericDatabase {
     $collation = $type === 'text' ? 'utf8mb4_bin' : 'utf8_general_ci';
     try {
       $this->database->query("ALTER TABLE {{$table}} CONVERT TO CHARACTER SET '$charset' COLLATE '$collation'");
+      // Even for text tables, we need the "item_id" column to have the same
+      // collation as everywhere else. Otherwise, this can slow down search
+      // queries significantly.
+      if ($type === 'text') {
+        $this->database->query("ALTER TABLE {{$table}} MODIFY item_id VARCHAR(150) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'");
+      }
     }
     catch (\PDOException $e) {
       $class = get_class($e);

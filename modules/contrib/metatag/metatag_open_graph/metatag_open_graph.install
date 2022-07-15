@@ -16,7 +16,7 @@ use Drupal\metatag\Entity\MetatagDefaults;
  * The "article:tags" meta tag was renamed to the correct "article:tag".
  */
 function metatag_open_graph_update_8101() {
-  /** @var $configs Drupal\metatag\Entity\MetatagDefaults */
+  /** @var Drupal\metatag\Entity\MetatagDefaults $configs */
   $configs = MetatagDefaults::loadMultiple();
 
   foreach ($configs as $config) {
@@ -72,7 +72,7 @@ function metatag_open_graph_update_8102(&$sandbox) {
 
   foreach ($sandbox['todo'] as $entity_type => $fields) {
 
-    /** @var $def Drupal\Core\Entity\ContentEntityType */
+    /** @var Drupal\Core\Entity\ContentEntityType $def */
     $def = Drupal::entityTypeManager()->getDefinition($entity_type);
 
     // Grab the primary key field for this entity type
@@ -95,7 +95,7 @@ function metatag_open_graph_update_8102(&$sandbox) {
       $entities = $etm->getStorage($entity_type)->loadMultiple($res);
 
       foreach ($entities as $entity) {
-        /** @var $entity ContentEntityBase */
+        /** @var \Drupal\Core\Entity\ContentEntityBase $entity */
         if ($entity instanceof ContentEntityBase) {
           if ($entity->hasField($field_name)) {
             /** @var LanguageInterface $langcode */
@@ -105,7 +105,7 @@ function metatag_open_graph_update_8102(&$sandbox) {
               $tags_serialized = $trans->get($field_name)->value;
               if ($tags_serialized) {
                 // Change key from article_tags to article_tag.
-                $tags = unserialize($tags_serialized);
+                $tags = unserialize($tags_serialized, ['allowed_classes' => FALSE]);
                 if (array_key_exists("article_tags", $tags)) {
                   $tags['article_tag'] = $tags['article_tags'];
                   unset($tags['article_tags']);

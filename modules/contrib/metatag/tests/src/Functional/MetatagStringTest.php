@@ -63,7 +63,10 @@ class MetatagStringTest extends BrowserTestBase {
     $this->adminUser = $this->drupalCreateUser($this->permissions);
     $this->drupalLogin($this->adminUser);
 
-    $this->drupalCreateContentType(['type' => 'page', 'display_submitted' => FALSE]);
+    $this->drupalCreateContentType([
+      'type' => 'page',
+      'display_submitted' => FALSE,
+    ]);
 
     // Add a Metatag field to the content type.
     $this->drupalGet('admin/structure/types');

@@ -125,7 +125,7 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
 <tbody>';
       foreach ($tags as $tag_id => $tag_value) {
         if (is_array($tag_value)) {
-          $tag_value = implode(', ', $tag_value);
+          $tag_value = implode(', ', array_filter($tag_value));
         }
         $output .= '<tr><td>' . $tag_id . ':</td><td>' . $tag_value . '</td></tr>';
       }

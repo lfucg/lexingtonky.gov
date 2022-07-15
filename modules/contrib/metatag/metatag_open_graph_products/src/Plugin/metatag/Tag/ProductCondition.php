@@ -22,5 +22,3 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
 class ProductCondition extends MetaPropertyBase {
   // Nothing here yet. Just a placeholder class for a plugin.
 }
-
-

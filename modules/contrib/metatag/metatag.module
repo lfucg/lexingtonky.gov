@@ -5,8 +5,8 @@
  * Contains metatag.module.
  */
 
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Plugin\Factory\DefaultFactory;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -26,8 +26,8 @@ use Drupal\taxonomy\Plugin\migrate\source\d7\Term as Term7;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\Plugin\migrate\source\d6\User as User6;
 use Drupal\user\Plugin\migrate\source\d7\User as User7;
-use Drupal\Core\Render\HtmlResponseAttachmentsProcessor;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\commerce_migrate_commerce\Plugin\migrate\source\commerce1\ProductDisplay;
 
 /**
  * Implements hook_help().
@@ -143,7 +143,6 @@ function metatag_page_attachments(array &$attachments) {
       $attachments['#attached']['html_head'] = [];
     }
 
-    $head_links = [];
     foreach ($metatag_attachments['#attached']['html_head'] as $item) {
       // Do not attach a title meta tag as this unnecessarily duplicates the
       // title tag.
@@ -153,32 +152,6 @@ function metatag_page_attachments(array &$attachments) {
       }
 
       $attachments['#attached']['html_head'][] = $item;
-
-      // Also add a HTTP header "Link:" for canonical URLs and shortlinks.
-      // See HtmlResponseAttachmentsProcessor::processHtmlHeadLink() for the
-      // implementation of the functionality in core.
-      if (isset($item[0]['#attributes']['href'])) {
-        if (in_array($item[1], ['canonical_url', 'shortlink'])) {
-          $attributes = $item[0]['#attributes'];
-
-          $href = '<' . Html::escape($attributes['href']) . '>';
-          unset($attributes['href']);
-          $param = HtmlResponseAttachmentsProcessor::formatHttpHeaderAttributes($attributes);
-          if (!empty($param)) {
-            $href .= ';' . $param;
-          }
-          $head_links[] = $href;
-        }
-      }
-    }
-
-    // If any HTTP Header items were found, add them too.
-    if (!empty($head_links)) {
-      $attachments['#attached']['http_header'][] = [
-        'Link',
-        implode(', ', $head_links),
-        FALSE,
-      ];
     }
   }
 }
@@ -301,11 +274,12 @@ function _metatag_remove_duplicate_entity_tags(array &$build) {
     // Check to see if the page currently outputs a canonical and/or shortlink
     // tag.
     if (isset($metatag_attachments['#attached']['html_head'])) {
+      $tags_to_look_for = ['canonical', 'shortlink'];
       foreach ($metatag_attachments['#attached']['html_head'] as $metatag_item) {
         if (in_array($metatag_item[1], ['canonical_url', 'shortlink'])) {
           // Metatag provides rel="canonical" and/or rel="shortlink" tags.
           foreach ($build['#attached']['html_head_link'] as $key => $item) {
-            if (isset($item[0]['rel']) && in_array($item[0]['rel'], ['canonical', 'shortlink'])) {
+            if (isset($item[0]['rel']) && in_array($item[0]['rel'], $tags_to_look_for)) {
               // Remove the link rel="canonical" or link rel="shortlink" tag
               // from the entity's build array.
               unset($build['#attached']['html_head_link'][$key]);
@@ -348,12 +322,17 @@ function metatag_is_current_route_supported() {
 /**
  * Returns the entity of the current route.
  *
- * @return Drupal\Core\Entity\EntityInterface
+ * @return Drupal\Core\Entity\EntityInterface|null
  *   The entity or NULL if this is not an entity route.
  */
 function metatag_get_route_entity() {
   $route_match = \Drupal::routeMatch();
   $route_name = $route_match->getRouteName();
+
+  // In certain circumstances the route can be empty.
+  if (is_null($route_name)) {
+    return NULL;
+  }
 
   // Look for a canonical entity view page, e.g. node/{nid}, user/{uid}, etc.
   $matches = [];
@@ -732,6 +711,11 @@ function metatag_migrate_prepare_row(Row $row, MigrateSourceInterface $source, M
       // E.g. d7_user.
       $source_type = 'user';
     }
+    // Custom handling for Drupal Commerce.
+    elseif (\Drupal::moduleHandler()->moduleExists('commerce_migrate_commerce') && is_a($source, ProductDisplay::class)) {
+      // Products were nodes in Drupal 7 so map the $source_type to node.
+      $source_type = 'node';
+    }
     else {
       // Not supported now, nothing to do.
       return;
@@ -808,24 +792,31 @@ function metatag_migrate_prepare_row(Row $row, MigrateSourceInterface $source, M
       // @todo Write a more general version rather than a switch statement.
       switch ($source_type) {
         case 'node':
-          // define('NODEWORDS_TYPE_NODE',       5);
+          // @code
+          // define('NODEWORDS_TYPE_NODE', 5);
+          // @endcode
           $nodeword_type = 5;
           $entity_id = $row->getSourceProperty('nid');
           break;
 
         case 'taxonomy_term':
-          // define('NODEWORDS_TYPE_TERM',       6);
+          // @code
+          // define('NODEWORDS_TYPE_TERM', 6);
+          // @endcode
           $nodeword_type = 6;
           $entity_id = $row->getSourceProperty('tid');
           break;
 
         case 'user':
-          // define('NODEWORDS_TYPE_USER',       8);
+          // @code
+          // define('NODEWORDS_TYPE_USER', 8);
+          // @endcode
           $nodeword_type = 8;
           $entity_id = $row->getSourceProperty('uid');
           break;
       }
-      // @todo
+      // @todo Migrate these configuration items.
+      // @code
       // define('NODEWORDS_TYPE_BLOG',       13);
       // define('NODEWORDS_TYPE_DEFAULT',    1);
       // define('NODEWORDS_TYPE_ERRORPAGE',  2);
@@ -837,7 +828,7 @@ function metatag_migrate_prepare_row(Row $row, MigrateSourceInterface $source, M
       // define('NODEWORDS_TYPE_PAGER',      4);
       // define('NODEWORDS_TYPE_TRACKER',    7);
       // define('NODEWORDS_TYPE_VOCABULARY', 9);
-
+      // @endcode
       /** @var \Drupal\migrate\Plugin\migrate\source\SqlBase $source */
       /** @var \Drupal\Core\Database\Query\SelectInterface $query */
       $query = $source->getDatabase()->select('nodewords', 'nw')
@@ -847,7 +838,7 @@ function metatag_migrate_prepare_row(Row $row, MigrateSourceInterface $source, M
         ->orderBy('nw.name');
       $value = $query->execute()->fetchAllKeyed();
 
-      $row->setSourceProperty('pseudo_metatag_entities',  $value);
+      $row->setSourceProperty('pseudo_metatag_entities', $value);
     }
   }
 }
@@ -1001,7 +992,7 @@ function _metatag_is_migration_plugin_supported(array $definition) {
       return FALSE;
     }
   }
-  catch (\Drupal\Component\Plugin\Exception\PluginNotFoundException $e) {
+  catch (PluginNotFoundException $e) {
     // If the entity type doesn't exist, neither with the migration plugin.
     return FALSE;
   }

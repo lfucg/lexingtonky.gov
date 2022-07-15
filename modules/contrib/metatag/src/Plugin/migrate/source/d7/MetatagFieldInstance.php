@@ -60,8 +60,8 @@ class MetatagFieldInstance extends DrupalSqlBase {
         $bundle = $this->configuration['bundle'];
         switch ($entity_type_id) {
           case 'node':
-            // We want to get a per-node-type metatag migration. So we inner join
-            // the base query on node table based on the parsed node ID.
+            // We want to get a per-node-type metatag migration. So we inner
+            // join the base query on node table based on the parsed node ID.
             $base_query->join('node', 'n', "n.nid = m.entity_id");
             $base_query->condition('n.type', $bundle);
             $base_query->addField('n', 'type', 'bundle');

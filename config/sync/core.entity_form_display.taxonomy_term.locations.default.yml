@@ -27,7 +27,6 @@ dependencies:
     - metatag
     - path
     - text
-    - workbench_moderation
 id: taxonomy_term.locations.default
 targetEntityType: taxonomy_term
 bundle: locations
@@ -183,13 +182,6 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  langcode:
-    type: language_select
-    weight: 2
-    region: content
-    settings:
-      include_locked: true
-    third_party_settings: {  }
   name:
     type: string_textfield
     weight: 0
@@ -203,12 +195,5 @@ content:
     weight: 2
     region: content
     settings: {  }
-    third_party_settings: {  }
-  status:
-    type: boolean_checkbox
-    weight: 100
-    region: content
-    settings:
-      display_label: true
     third_party_settings: {  }
 hidden: {  }

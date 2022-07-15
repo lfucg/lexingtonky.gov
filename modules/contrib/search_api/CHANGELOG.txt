@@ -1,3 +1,49 @@
+Search API 1.24 (2022-07-07):
+-----------------------------
+- #3292241 by drunken monkey: Fixed test fails.
+- #3243313 by Steven Jones, drunken monkey: Removed the "search_api_base_path"
+  query option for views.
+- #3179643 by drunken monkey: Fixed Views field extraction bevahior when fields
+  returned from server don't have values.
+- #3253986 by drunken monkey, gaddman: Fixed empty "ignore characters" setting
+  for the Tokenizer processor.
+- #3197050 by BAHbKA, drunken monkey: Fixed caching issue for facets on AJAX
+  views.
+- #3246615 by drunken monkey: Fixed error when saving an unindexed translation
+  of an entity.
+- #3258375 by Eugene Bocharov, wells, drunken monkey, joshuami, MrDaleSmith,
+  Grayle: Fixed out-of-memory error when used with Views, Metatag and caching.
+- #3270324 by drunken monkey, kimberleycgm: Fixed incorrect storing of
+  "Rendered item" processor setting "roles".
+- #3266715 by kimberleycgm, drunken monkey: Fixed "Rendered item" processor not
+  adding the "Authenticated" role when another is selected.
+- #3270695 by mkalkbrenner, drunken monkey: Improved status messages during
+  indexing.
+- #3268953 by drunken monkey: Changed indents in composer.json to 4 spaces.
+- #3168162 by gabesullice, drunken monkey, mkalkbrenner: Updated to latest
+  changes in Event system.
+- #3248262 by Robert_T, drunken monkey: Fixed problems with recent database
+  update functions.
+- #3239649 by drunken monkey, phma: Fixed missing config schemas for various
+  Views plugins.
+- #3262771 by drunken monkey, marciaibanez: Moved test modules to test/modules.
+- #3256028 by drunken monkey, mkalkbrenner:  Increased Core version requirement
+  to 9.2.
+- #3247914 by drunken monkey: Fixed config form of the "Type-specific boosting"
+  processor.
+- #3262702 by drunken monkey: Fixed test failures on Drupal 9.2.
+- #3227659 by drunken monkey, daften: Fixed double-escaped query parameters
+  when using the Views "Preserve facets" option.
+- #3227268 by drunken monkey, Driskell: Fixed inconsistent collation in
+  Database backend.
+- #3196990 by nguerrier, ekes, drunken monkey, hswong3i: Fixed wrong query and
+  cache type on Search API views.
+- #3258802 by drunken monkey: Fixed errors when indexing fields with unknown
+  types.
+- #3232736 by GuyPaddock, idebr, drunken monkey: Added query tags as an option
+  to Views.
+- #3188138 by drunken monkey, devad: Added an "Item URL" field to Views.
+
 Search API 1.23 (2022-01-21):
 -----------------------------
 - #3247781 (follow-up) by drunken monkey: Fixed missing update for Task entity

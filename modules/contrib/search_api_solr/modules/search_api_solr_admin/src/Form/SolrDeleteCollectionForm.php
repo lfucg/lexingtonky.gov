@@ -23,9 +23,9 @@ class SolrDeleteCollectionForm extends SolrAdminFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, ServerInterface $search_api_server = NULL) {
-    $this->search_api_server = $search_api_server;
+    $this->searchApiServer = $search_api_server;
 
-    $core = $this->search_api_server->getBackendConfig()['connector_config']['core'];
+    $core = $this->searchApiServer->getBackendConfig()['connector_config']['core'];
     $form['#title'] = $this->t('Delete collection %core?', ['%core' => $core]);
 
     $form['actions'] = [
@@ -43,7 +43,7 @@ class SolrDeleteCollectionForm extends SolrAdminFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     try {
-      $this->commandHelper->deleteCollection($this->search_api_server->id());
+      $this->commandHelper->deleteCollection($this->searchApiServer->id());
       $this->messenger->addMessage($this->t('Successfully deleted collection.'));
     }
     catch (\Exception $e) {
@@ -51,7 +51,7 @@ class SolrDeleteCollectionForm extends SolrAdminFormBase {
       $this->logException($e);
     }
 
-    $form_state->setRedirect('entity.search_api_server.canonical', ['search_api_server' => $this->search_api_server->id()]);
+    $form_state->setRedirect('entity.search_api_server.canonical', ['search_api_server' => $this->searchApiServer->id()]);
   }
 
 }

@@ -97,6 +97,15 @@ class Solr36TestConnector extends Solr36Connector {
     $this->intercept = $intercept;
   }
 
+  /**
+   * Adjust a config for test cases.
+   *
+   * @param $config_name
+   *  The name of the config.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
   public static function adjustBackendConfig($config_name) {
     $config_factory = \Drupal::configFactory();
     $config = $config_factory->getEditable($config_name);
@@ -122,4 +131,5 @@ class Solr36TestConnector extends Solr36Connector {
     $search_api_index_storage = \Drupal::entityTypeManager()->getStorage('search_api_index');
     $search_api_index_storage->resetCache();
   }
+
 }

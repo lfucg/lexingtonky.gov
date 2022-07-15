@@ -123,8 +123,8 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
     // This should have the "current revision" keywords value, indicating it is
     // the current revision.
     $expected = [
-      'keywords' => 'current revision',
       'canonical_url' => 'the-node',
+      'keywords' => 'current revision',
       'robots' => 'noindex, nofollow',
     ];
     $this->assertSame(serialize($expected), $node->field_metatag->value);
@@ -135,8 +135,8 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
     // This should have the "old revision" keywords value, indicating it is
     // a non-current revision.
     $expected = [
-      'keywords' => 'old revision',
       'canonical_url' => 'the-node',
+      'keywords' => 'old revision',
       'robots' => 'noindex, nofollow',
     ];
     $this->assertSame(serialize($expected), $node->field_metatag->value);
@@ -147,9 +147,9 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
     $this->assertTrue($user->hasField('field_metatag'));
     // This should have the Utf8 converted description value.
     $expected = [
-      'keywords' => 'a user',
       'canonical_url' => 'the-user',
       'description' => 'Drupal™ user',
+      'keywords' => 'a user',
     ];
     $this->assertSame(serialize($expected), $user->field_metatag->value);
 
@@ -158,8 +158,8 @@ class MetatagEntitiesTest extends MigrateDrupal7TestBase {
     $this->assertInstanceOf(TermInterface::class, $term);
     $this->assertTrue($term->hasField('field_metatag'));
     $expected = [
-      'keywords' => 'a taxonomy',
       'canonical_url' => 'the-term',
+      'keywords' => 'a taxonomy',
     ];
     $this->assertSame(serialize($expected), $term->field_metatag->value);
   }

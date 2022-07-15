@@ -55,9 +55,6 @@ module:
   image: 0
   imce: 0
   inline_entity_form: 0
-  jquery_ui: 0
-  jquery_ui_accordion: 0
-  language: 0
   lex_calendar: 0
   lex_custom: 0
   lex_themecontrol: 0
@@ -69,6 +66,7 @@ module:
   metatag_facebook: 0
   metatag_open_graph: 0
   metatag_open_graph_products: 0
+  mysql: 0
   node: 0
   options: 0
   page_cache: 0
@@ -83,7 +81,6 @@ module:
   search_api: 0
   search_api_pantheon: 0
   search_api_solr: 0
-  search_api_solr_legacy: 0
   shortcut: 0
   smtp: 0
   system: 0

@@ -5,7 +5,6 @@
  * Contains hook implementations for the metatag_views module.
  */
 
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\metatag_views\MetatagViewsCacheWrapper;
 use Drupal\metatag_views\Plugin\views\display_extender\MetatagDisplayExtender;

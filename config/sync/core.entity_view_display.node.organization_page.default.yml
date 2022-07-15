@@ -60,6 +60,5 @@ hidden:
   field_related_departments: true
   field_related_documents: true
   field_top_services: true
-  langcode: true
   links: true
   search_api_excerpt: true

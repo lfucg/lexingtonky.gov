@@ -21,7 +21,6 @@ Metatag for Drupal 9 requires the following:
 * [Token](https://www.drupal.org/project/token): Provides a popup browser to
   see the available tokens for use in meta tag fields.
 
-
 ## Features
 
 The primary features include:
@@ -35,6 +34,9 @@ The primary features include:
   Graph tags, Twitter Cards tags, Dublin Core tags, Google+ tags, App Links
   tags, site verification tags and more; all but the basic meta tags are kept
   in separate submodules.
+
+* Configuration can be added for individual paths using the Metatag Custom
+  Routes submodule.
 
 * The fifteen Dublin Core Basic Element Set 1.1 meta tags may be added by
   enabling the "Metatag: Dublin Core" submodule.

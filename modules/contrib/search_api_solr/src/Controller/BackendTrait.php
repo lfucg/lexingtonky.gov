@@ -47,7 +47,7 @@ trait BackendTrait {
    * @throws \Drupal\search_api\SearchApiException
    */
   public function setServer(ServerInterface $server) {
-    /* @var SolrBackendInterface $backend */
+    /** @var \Drupal\search_api_solr\SolrBackendInterface $backend */
     $backend = $server->getBackend();
     $this->setBackend($backend);
     $this->serverId = $server->id();

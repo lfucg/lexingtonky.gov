@@ -62,7 +62,7 @@ class DefaultConfigEntityInstallationTest extends KernelTestBase {
    * Tests that creating new config entities directly works correctly.
    */
   public function testNormalEntityCreation() {
-    $dir = __DIR__ . '/../../../search_api_test_inconsistent_config/config/install/';
+    $dir = __DIR__ . '/../../../modules/search_api_test_inconsistent_config/config/install/';
     $yaml_file = $dir . 'search_api.server.inconsistent_search_server.yml';
     $values = Yaml::decode(file_get_contents($yaml_file));
     Server::create($values)->save();

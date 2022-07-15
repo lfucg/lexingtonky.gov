@@ -672,9 +672,10 @@ class ContentEntity extends DatasourcePluginBase implements PluginFormInterface 
    */
   public function getItemId(ComplexDataInterface $item) {
     if ($entity = $this->getEntity($item)) {
-      $enabled_bundles = $this->getBundles();
-      if (isset($enabled_bundles[$entity->bundle()])) {
-        return $entity->id() . ':' . $entity->language()->getId();
+      $langcode = $entity->language()->getId();
+      if (isset($this->getBundles()[$entity->bundle()])
+          && isset($this->getLanguages()[$langcode])) {
+        return $entity->id() . ':' . $langcode;
       }
     }
     return NULL;

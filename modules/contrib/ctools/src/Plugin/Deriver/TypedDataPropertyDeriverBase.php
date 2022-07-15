@@ -15,7 +15,9 @@ use Drupal\Core\TypedData\TypedDataManagerInterface;
 use Drupal\field\Entity\FieldConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+/**
+ *
+ */
 abstract class TypedDataPropertyDeriverBase extends DeriverBase implements ContainerDeriverInterface {
 
   use StringTranslationTrait;

@@ -34,27 +34,25 @@ content:
   addtoany:
     settings: {  }
     third_party_settings: {  }
-<<<<<<< HEAD
+    weight: 6
+    region: content
   field_iframe:
-    weight: 9
+    type: iframe_only
     label: visually_hidden
     settings:
       url: ''
       title: ''
       headerlevel: '3'
-      width: ''
-      height: ''
       class: ''
       frameborder: '0'
       scrolling: ''
       transparency: '0'
-      tokensupport: '0'
       allowfullscreen: '0'
+      tokensupport: '0'
+      width: ''
+      height: ''
     third_party_settings: {  }
-    type: iframe_only
-=======
-    weight: 6
->>>>>>> Exported configuration for working druapl 9
+    weight: 9
     region: content
   field_lex_grid_ref:
     type: entity_reference_revisions_entity_view
@@ -125,5 +123,4 @@ hidden:
   field_related_departments: true
   field_related_documents: true
   field_sidebar_section: true
-  langcode: true
   search_api_excerpt: true

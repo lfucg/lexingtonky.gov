@@ -2,8 +2,10 @@
 
 /**
  * @file
+ * Implement hooks.
  */
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -80,7 +82,7 @@ function search_api_solr_cron() {
           $endpoint = $backend->getCollectionEndpoint($index);
 
           // Delete "cached" endpoint data and schema_parts once a day. We keep
-          // theses in states instead of a caches because we might need to
+          // these in states instead of a caches because we might need to
           // access this data even if Solr is temporarily not reachable and
           // caches have been cleared or Solr itself is used as caching backend.
           \Drupal::state()->delete('search_api_solr.endpoint.data');
@@ -116,6 +118,7 @@ function search_api_solr_cron() {
  * Get the default third party settings of an index for Solr.
  *
  * @return array
+ *   Third party settings array.
  */
 function search_api_solr_default_index_third_party_settings() {
   return [
@@ -173,15 +176,17 @@ function search_api_solr_default_index_third_party_settings() {
  * Merges the default third party settings to those of an index for Solr.
  *
  * @param array $third_party_settings
+ *   Third party settings array.
  *
  * @return array
+ *   Third party settings array.
  */
 function search_api_solr_merge_default_index_third_party_settings(array $third_party_settings) {
   return ArrayUtils::merge(search_api_solr_default_index_third_party_settings(), $third_party_settings, TRUE);
 }
 
 /**
- * Implements hook_form_FORM_alter.
+ * Implements hook_form_FORM_ID_alter().
  */
 function search_api_solr_form_search_api_index_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // We need to restrict by form ID here because this function is also called
@@ -353,7 +358,7 @@ function search_api_solr_form_search_api_index_form_alter(&$form, FormStateInter
     $form['third_party_settings']['search_api_solr']['highlighter']['highlightMultiTerm'] = [
       '#type' => 'checkbox',
       '#title' => t('highlightMultiTerm'),
-      '#description' => t('If set, Solr will highlight wildcard queries (and other MultiTermQuery subclasses). If false, they won\'t be highlighted at all.'),
+      '#description' => t('If set, Solr will highlight wildcard queries (and other MultiTermQuery subclasses). If false, they will not be highlighted at all.'),
       '#default_value' => $settings['highlighter']['highlightMultiTerm'],
     ];
 
@@ -539,9 +544,18 @@ function search_api_solr_form_search_api_index_form_alter(&$form, FormStateInter
 }
 
 /**
+ * Form validation.
  *
+ * @param array $element
+ *   The form element.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ * @param array $form
+ *   The form array.
+ *
+ * @throws \Drupal\search_api\SearchApiException
  */
-function search_api_solr_form_search_api_index_form_validate_server(&$element, FormStateInterface $form_state, $form) {
+function search_api_solr_form_search_api_index_form_validate_server(array &$element, FormStateInterface $form_state, array $form) {
   if ($server = Server::load($form_state->getValue('server'))) {
     if ($server->getBackend() instanceof SolrBackendInterface) {
       /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
@@ -563,6 +577,38 @@ function search_api_solr_form_search_api_index_form_validate_server(&$element, F
         );
       }
     }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function search_api_solr_form_search_api_index_fields_alter(&$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+  /** @var IndexInterface $this_index */
+  $index = $form_object->getEntity();
+
+  if (Utility::hasIndexSolrDatasources($index)) {
+    $form['add-all-document-fields'] = [
+      '#type' => 'link',
+      '#title' => t('Add new Solr Document fields'),
+      '#url' => $index->toUrl('add-solr-document-fields'),
+      '#attributes' => [
+        'class' => [
+          'use-ajax',
+          'button',
+          'button-action',
+          'button--primary',
+          'button--small',
+        ],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => Json::encode([
+          'width' => 700,
+        ]),
+      ],
+      '#weight' => -10,
+    ];
   }
 }
 
@@ -594,8 +640,10 @@ function search_api_solr_install_missing_field_types() {
  * Get all Search API servers that use a Solr backend.
  *
  * @param bool $only_active
+ *   Whether to only return only active servers or all.
  *
  * @return \Drupal\search_api\ServerInterface[]
+ *   The servers.
  *
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -622,10 +670,6 @@ function search_api_solr_get_servers($only_active = TRUE) {
  * Implements hook_entity_operation().
  *
  * Adds an operation to Solr servers to directly generate and download a config.
- *
- * @param \Drupal\Core\Entity\EntityInterface $entity
- *
- * @return array
  *
  * @throws \Drupal\search_api\SearchApiException
  */
@@ -656,7 +700,6 @@ function search_api_solr_entity_operation(EntityInterface $entity) {
     elseif ($entity->isValidDatasource('solr_multisite_document')) {
       $operations['update_for_multisite'] = [
         'title' => t('Update for Multisite'),
-        // @todo
         'url' => Url::fromRoute('entity.search_api_index.solr_multisite_update_form', ['search_api_index' => $entity->id()]),
         'weight' => 50,
       ];
@@ -666,18 +709,21 @@ function search_api_solr_entity_operation(EntityInterface $entity) {
 }
 
 /**
- *
+ * Implements hook_entity_type_alter().
  */
 function search_api_solr_entity_type_alter(array &$entity_types) {
-  /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
+  /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
   $entity_types['search_api_index']->setFormClass('solr_multisite_clone', IndexSolrMultisiteCloneForm::class);
   $entity_types['search_api_index']->setFormClass('solr_multisite_update', IndexSolrMultisiteUpdateForm::class);
+  $entity_types['search_api_index']->setFormClass('add_solr_document_fields', \Drupal\search_api_solr\Form\IndexAddSolrDocumentFieldsForm::class);
+  $entity_types['search_api_index']->setLinkTemplate('add-solr-document-fields', '/admin/config/search/search-api/index/{search_api_index}/fields/add/solr-document');
 }
 
 /**
  * Returns visibility state status values.
  *
  * @return array
+ *   Options array.
  *
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException

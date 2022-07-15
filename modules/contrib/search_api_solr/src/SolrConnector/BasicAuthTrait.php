@@ -3,9 +3,6 @@
 namespace Drupal\search_api_solr\SolrConnector;
 
 use Drupal\Core\Form\FormStateInterface;
-use Solarium\Core\Client\Endpoint;
-use Solarium\Core\Client\Request;
-use Solarium\QueryType\Select\Query\Query;
 
 /**
  * Basic auth functionality for a Solr connector.

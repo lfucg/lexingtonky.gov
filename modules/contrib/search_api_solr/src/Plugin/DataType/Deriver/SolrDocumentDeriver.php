@@ -72,7 +72,7 @@ class SolrDocumentDeriver extends DeriverBase implements ContainerDeriverInterfa
     $this->derivatives[''] = $base_plugin_definition;
     // Load all indexes and filter out solr-based.
     $indexes = $this->entityTypeManager->getStorage('search_api_index')->loadMultiple();
-    /* @var \Drupal\search_api\Entity\Index $entity */
+    /** @var \Drupal\search_api\Entity\Index $entity */
     foreach ($indexes as $index_id => $entity) {
       $server = $entity->getServerInstance();
       if (

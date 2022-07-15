@@ -337,7 +337,7 @@ class StreamingExpressionBuilder extends ExpressionBuilder {
    *   Defaults to TRUE.
    * @param string $search_api_field_name
    *   (optional) If provided the method will use it to check for each processor
-   *   whether it is supposed to be run on the value. If the the name is not
+   *   whether it is supposed to be run on the value. If the name is not
    *   provided no processor will act on the value.
    *
    * @return string

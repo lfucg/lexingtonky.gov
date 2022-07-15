@@ -820,6 +820,20 @@
   </analyzer>
 </fieldType>
 <!--
+  Fulltext String Field
+  6.0.0
+-->
+<fieldType name="text_string" class="solr.TextField" positionIncrementGap="100">
+  <analyzer type="index">
+    <tokenizer class="solr.PatternTokenizerFactory" pattern="[\t\r\n]"/>
+    <filters/>
+  </analyzer>
+  <analyzer type="query">
+    <tokenizer class="solr.PatternTokenizerFactory" pattern="[\t\r\n]"/>
+    <filters/>
+  </analyzer>
+</fieldType>
+<!--
   German Text Field
   7.0.0
 -->
@@ -1929,7 +1943,7 @@
   Simplified Chinese Text Field collated
   7.0.0
 -->
-<fieldType name="collated_zh-hans" class="solr.ICUCollationField" locale="zh" strength="primary" caseLevel="false"/>
+<fieldType name="collated_zh_hans" class="solr.ICUCollationField" locale="zh" strength="primary" caseLevel="false"/>
 <!--
   Simplified Chinese Text Field unstemmed
   7.0.0
@@ -2185,7 +2199,7 @@
   Traditional Chinese Text Field collated
   7.0.0
 -->
-<fieldType name="collated_zh-hant" class="solr.ICUCollationField" locale="zh-hant" strength="primary" caseLevel="false"/>
+<fieldType name="collated_zh_hant" class="solr.ICUCollationField" locale="zh-hant" strength="primary" caseLevel="false"/>
 <!--
   Turkish Text Field
   7.0.0

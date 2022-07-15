@@ -114,7 +114,7 @@ metatag.metatag_tag.og_street_address:
   type: label
   label: 'Open Graph: Street address'
 metatag.metatag_tag.og_title:
-  type: label
+  type: text
   label: 'Open Graph: Title'
 metatag.metatag_tag.og_type:
   type: label

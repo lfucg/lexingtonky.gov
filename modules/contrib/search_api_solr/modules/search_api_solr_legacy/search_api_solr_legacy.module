@@ -2,12 +2,13 @@
 
 /**
  * @file
+ * Support for legacy Solr versions.
  */
 
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Implements hook_form_FORM_alter.
+ * Implements hook_form_FORM_ID_alter().
  */
 function search_api_solr_legacy_form_search_api_server_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // We need to restrict by form ID here because this function is also called

@@ -16,14 +16,14 @@ abstract class AbstractSearchApiItemSolariumDocumentEvent extends Event {
    *
    * @var \Drupal\search_api\Item\ItemInterface
    */
-  protected $search_api_item;
+  protected $searchApiItem;
 
   /**
    * The solarium document.
    *
    * @var \Solarium\Core\Query\DocumentInterface
    */
-  protected $solarium_document;
+  protected $solariumDocument;
 
   /**
    * Constructs a new class instance.
@@ -34,8 +34,8 @@ abstract class AbstractSearchApiItemSolariumDocumentEvent extends Event {
    *   The solarium document.
    */
   public function __construct(ItemInterface $search_api_item, DocumentInterface $solarium_document) {
-    $this->search_api_item = $search_api_item;
-    $this->solarium_document = $solarium_document;
+    $this->searchApiItem = $search_api_item;
+    $this->solariumDocument = $solarium_document;
   }
 
   /**
@@ -45,7 +45,7 @@ abstract class AbstractSearchApiItemSolariumDocumentEvent extends Event {
    *   The search_api item.
    */
   public function getSearchApiItem() : ItemInterface {
-    return $this->search_api_item;
+    return $this->searchApiItem;
   }
 
   /**
@@ -55,7 +55,7 @@ abstract class AbstractSearchApiItemSolariumDocumentEvent extends Event {
    *   The solarium document.
    */
   public function getSolariumDocument() : DocumentInterface {
-    return $this->solarium_document;
+    return $this->solariumDocument;
   }
 
 }

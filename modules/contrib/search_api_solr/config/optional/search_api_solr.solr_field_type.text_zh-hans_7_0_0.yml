@@ -86,7 +86,7 @@ spellcheck_field_type:
       -
         class: solr.LowerCaseFilterFactory
 collated_field_type:
-  name: collated_zh-hans
+  name: collated_zh_hans
   class: solr.ICUCollationField
   locale: zh
   strength: primary

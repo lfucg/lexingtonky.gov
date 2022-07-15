@@ -74,7 +74,7 @@ INSTALLATION
 
  * Install the Chaos Tool Suite module as you would normally install a
    contributed Drupal module. Visit
-   https://www.drupal.org/docs/8/extending-drupal-8/installing-drupal-8-modules
+   https://www.drupal.org/docs/extending-drupal/installing-modules
    for further information.
 
 

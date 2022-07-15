@@ -4,18 +4,16 @@ namespace Drupal\metatag\Plugin\migrate\source\d7;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\migrate\Exception\RequirementsException;
 use Drupal\migrate\Plugin\MigrationDeriverTrait;
 use Drupal\migrate_drupal\MigrationConfigurationTrait;
-use Drupal\migrate_drupal\NodeMigrateType;
 use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @todo.
+ * Creates field plugins for each entity type.
  */
 class MetatagFieldDeriver extends DeriverBase implements ContainerDeriverInterface {
 

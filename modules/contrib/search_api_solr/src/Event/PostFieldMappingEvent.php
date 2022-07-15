@@ -5,10 +5,14 @@ namespace Drupal\search_api_solr\Event;
 use Drupal\Component\EventDispatcher\Event;
 use Drupal\search_api\IndexInterface;
 
+/**
+ * Event after the Search API to Solr fileds mapping is generated.
+ */
 final class PostFieldMappingEvent extends Event {
 
   /**
-   * @var IndexInterface
+   * The Search API index.
+   * @var \Drupal\search_api\IndexInterface
    */
   protected $index;
 
@@ -20,6 +24,8 @@ final class PostFieldMappingEvent extends Event {
   protected $fieldMapping;
 
   /**
+   * The language ID
+   *
    * @var string
    */
   protected $langcode;
@@ -28,9 +34,11 @@ final class PostFieldMappingEvent extends Event {
    * Constructs a new class instance.
    *
    * @param \Drupal\search_api\IndexInterface $index
+   *   The Search API index.
    * @param array $field_mapping
    *   Reference to field mapping array.
    * @param string $langcode
+   *   The language ID.
    */
   public function __construct(IndexInterface $index, array &$field_mapping, string $langcode) {
     $this->index = $index;
@@ -52,6 +60,7 @@ final class PostFieldMappingEvent extends Event {
    * Set the field mapping.
    *
    * @param array $field_mapping
+   *   The field mapping array.
    */
   public function setFieldMapping(array $field_mapping) {
     $this->fieldMapping = $field_mapping;
@@ -59,6 +68,9 @@ final class PostFieldMappingEvent extends Event {
 
   /**
    * Retrieves the index.
+   *
+   * @return \Drupal\search_api\IndexInterface
+   *   The Search API index.
    */
   public function getIndex(): IndexInterface {
     return $this->index;
@@ -73,4 +85,5 @@ final class PostFieldMappingEvent extends Event {
   public function getLangcode(): string {
     return $this->langcode;
   }
+
 }

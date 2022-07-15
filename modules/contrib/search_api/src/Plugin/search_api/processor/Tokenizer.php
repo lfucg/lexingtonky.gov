@@ -78,7 +78,7 @@ class Tokenizer extends FieldsProcessorPluginBase {
     $form['ignored'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Ignored characters'),
-      '#description' => $this->t('Specify the characters that should be removed prior to processing. Dots, dashes, and underscores are ignored by default to allow meaningful search behavior with acronyms and URLs. Specify the characters as the inside of a <a href=":pcre-url">PCRE character class</a>.', $args),
+      '#description' => $this->t('Specify the characters that should be removed prior to processing, as the inside of a <a href=":pcre-url">PCRE character class</a>.', $args),
       '#default_value' => $this->configuration['ignored'],
     ];
 
@@ -256,11 +256,13 @@ class Tokenizer extends FieldsProcessorPluginBase {
     // Readable regular expression: "([number]+)[punctuation]+(?=[number])".
     $text = preg_replace('/([' . $this->getPregClassNumbers() . ']+)[' . $this->getPregClassPunctuation() . ']+(?=[' . $this->getPregClassNumbers() . '])/u', '\1', $text);
 
-    // A group of multiple ignored characters is still treated as whitespace.
-    $text = preg_replace('/[' . $this->ignored . ']{2,}/u', ' ', $text);
+    if ($this->ignored !== '') {
+      // A group of multiple ignored characters is still treated as whitespace.
+      $text = preg_replace('/[' . $this->ignored . ']{2,}/u', ' ', $text);
 
-    // Remove all other instances of ignored characters.
-    $text = preg_replace('/[' . $this->ignored . ']+/u', '', $text);
+      // Remove all other instances of ignored characters.
+      $text = preg_replace('/[' . $this->ignored . ']+/u', '', $text);
+    }
 
     // Finally, convert all characters we want to treat as word boundaries to
     // plain spaces.
@@ -337,7 +339,7 @@ class Tokenizer extends FieldsProcessorPluginBase {
   }
 
   /**
-   * Prepares the processor by setting the $spaces property.
+   * Prepares the processor by setting the $spaces and $ignored properties.
    */
   protected function prepare() {
     if (!isset($this->spaces)) {
@@ -349,12 +351,7 @@ class Tokenizer extends FieldsProcessorPluginBase {
       }
     }
     if (!isset($this->ignored)) {
-      if ($this->configuration['ignored'] !== '') {
-        $this->ignored = str_replace('/', '\/', $this->configuration['ignored']);
-      }
-      else {
-        $this->ignored = '._-';
-      }
+      $this->ignored = str_replace('/', '\/', $this->configuration['ignored']);
     }
   }
 

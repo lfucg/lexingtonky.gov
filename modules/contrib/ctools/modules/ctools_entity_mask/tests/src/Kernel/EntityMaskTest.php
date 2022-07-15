@@ -16,7 +16,7 @@ class EntityMaskTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'block',
     'block_content',
     'ctools_entity_mask',

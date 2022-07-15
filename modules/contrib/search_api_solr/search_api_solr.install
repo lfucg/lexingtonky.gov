@@ -40,10 +40,9 @@ function search_api_solr_requirements($phase) {
   }
   elseif ($phase === 'runtime') {
     // @todo Warn if autocomplete uses an implementation that is not suitable
-    // for multiple indexes per core. But we need the possibility to turn that
-    // off if the user acknowledged it because he might really want to have it
-    // like this as a feature.
-
+    //   for multiple indexes per core. But we need the possibility to turn that
+    //   off if the user acknowledged it because it might really be the desired
+    //   feature.
     $servers = search_api_solr_get_servers();
     foreach ($servers as $server_id => $server) {
       if ($server->status()) {
@@ -59,7 +58,8 @@ function search_api_solr_requirements($phase) {
             try {
               // The freshly generated files.
               $new_config_set = $config_set_controller->getConfigFiles();
-            } catch (\Exception $e) {
+            }
+            catch (\Exception $e) {
               $requirements['search_api_solr_schema_' . $server_id . '_modifications']['title'] = t('Solr Server %server', ['%server' => $server->label()]);
               $requirements['search_api_solr_schema_' . $server_id . '_modifications']['value'] = t('Schema could not be generated');
               $requirements['search_api_solr_schema_' . $server_id . '_modifications']['severity'] = REQUIREMENT_ERROR;
@@ -84,7 +84,8 @@ function search_api_solr_requirements($phase) {
             if (!empty($new_config_set)) {
               try {
                 $server_files_list = SearchApiSolrUtility::getServerFiles($server);
-              } catch (SearchApiSolrException $e) {
+              }
+              catch (SearchApiSolrException $e) {
                 $server_files_list = [];
               }
               // The files that are already on the server.
@@ -105,11 +106,14 @@ function search_api_solr_requirements($phase) {
               }
               foreach ($new_config_set as $new_file_name => $new_file_body) {
                 if (stripos(strrev($new_file_name), 'lmx.') === 0) {
+                  $exception = FALSE;
                   try {
                     $server_file_data = $connector->getFile($new_file_name);
                     $server_file_body = $server_file_data->getBody();
-                  } catch (SearchApiSolrException $e) {
+                  }
+                  catch (SearchApiSolrException $e) {
                     $server_file_body = '';
+                    $exception = $e;
                   }
 
                   [
@@ -136,10 +140,21 @@ function search_api_solr_requirements($phase) {
                     }
                     elseif ($version_number_server === $version_number_new && !$connector->isJumpStartConfigSet()) {
                       $requirements['search_api_solr_schema_' . $server_id . '_modifications']['title'] = t('Solr Server %server', ['%server' => $server->label()]);
-                      $requirements['search_api_solr_schema_' . $server_id . '_modifications']['value'] = t('Schema modified');
                       $requirements['search_api_solr_schema_' . $server_id . '_modifications']['severity'] = REQUIREMENT_WARNING;
-                      $requirements['search_api_solr_schema_' . $server_id . '_modifications']['description'] = t(
-                        'Your config-set contains manually added customizations. Be aware that these will be lost when the config-set needs to be regenerated.', []);
+                      if (!$exception) {
+                        $requirements['search_api_solr_schema_' . $server_id . '_modifications']['value'] = t('Schema modified');
+                        $requirements['search_api_solr_schema_' . $server_id . '_modifications']['description'] = t(
+                          'Your config-set contains manually added customizations. Be aware that these will be lost when the config-set needs to be regenerated.', []);
+                      }
+                      else {
+                        $requirements['search_api_solr_schema_' . $server_id . '_modifications']['value'] = t('Schema validation');
+                        $requirements['search_api_solr_schema_' . $server_id . '_modifications']['description'] = t(
+                          'File %filename could not be fetched from Solr server for validation: @message', [
+                            '%filename' => $new_file_name,
+                            '@message' => $exception->getMessage(),
+                          ]);
+                      }
+                      break;
                     }
                   }
                 }
@@ -198,12 +213,10 @@ function search_api_solr_requirements($phase) {
         $requirements['search_api_solr_' . $server_id . '_modifications'] = [
           'title' => t('Solr Server %server', ['%server' => $server->label()]),
           'value' => t('Solr not reachable'),
-          'description' => t(
-          'Solr server <a href=":url">@server</a> is not reachable.', [
-              ':url' => $server->toUrl('canonical')->toString(),
-              '@server' => $server->label(),
-            ]
-          ),
+          'description' => t('Solr server <a href=":url">@server</a> is not reachable.', [
+            ':url' => $server->toUrl('canonical')->toString(),
+            '@server' => $server->label(),
+          ]),
           'severity' => REQUIREMENT_ERROR,
         ];
       }
@@ -248,6 +261,7 @@ function search_api_solr_uninstall() {
  * Gets all backend configs for active Solr servers.
  *
  * @param string $pattern
+ *   Pattern to filter the backend configs.
  *
  * @return array
  *   All backend configs for active Solr servers keyed by server name.
@@ -273,6 +287,7 @@ function search_api_solr_update_helper_get_backend_configs($pattern = 'solr') {
  * @param array $backend_config
  *   Solr backend configuration.
  * @param bool $trusted_data
+ *   Boolean to indicate if the data is trusted.
  */
 function search_api_solr_update_helper_save_backend_config($server_name, array $backend_config, $trusted_data = TRUE) {
   \Drupal::configFactory()->getEditable($server_name)
@@ -284,6 +299,7 @@ function search_api_solr_update_helper_save_backend_config($server_name, array $
  * Gets all index third party settings for Solr servers.
  *
  * @param string $pattern
+ *   Pattern to filter the server configs.
  *
  * @return array
  *   All backend configs for active Solr servers keyed by server name.
@@ -308,7 +324,9 @@ function search_api_solr_update_helper_get_index_third_party_settings($pattern =
  * @param string $index_id
  *   Id of the solr index.
  * @param array $third_party_settings
+ *   Third party settings array.
  * @param bool $trusted_data
+ *   Boolean to indicate if the data is trusted.
  */
 function search_api_solr_update_helper_save_index_third_party_settings($index_id, array $third_party_settings, $trusted_data = TRUE) {
   \Drupal::configFactory()->getEditable($index_id)
@@ -320,6 +338,7 @@ function search_api_solr_update_helper_save_index_third_party_settings($index_id
  * Gets all index settings for Solr servers.
  *
  * @param string $pattern
+ *   Pattern to filter the index configs.
  *
  * @return array
  *   All index configs for Solr servers keyed by index name.
@@ -345,7 +364,9 @@ function search_api_solr_update_helper_get_indexes($pattern = 'solr') {
  * @param string $index_id
  *   Id of the Solr Index.
  * @param array $settings
+ *   Settings array.
  * @param bool $trusted_data
+ *   Boolean to indicate if the data is trusted.
  */
 function search_api_solr_update_helper_save_indexes($index_id, array $settings, $trusted_data = TRUE) {
   \Drupal::configFactory()->getEditable($index_id)
@@ -373,8 +394,11 @@ function search_api_solr_update_helper_get_field_type_configs() {
  * Saves a modified solr field type config.
  *
  * @param string $field_type_name
+ *   The field type config name.
  * @param array $field_type_config
+ *   The field type config.
  * @param bool $trusted_data
+ *   Boolean to indicate if the data is trusted.
  */
 function search_api_solr_update_helper_save_field_type_config($field_type_name, array $field_type_config, $trusted_data = TRUE) {
   \Drupal::configFactory()->getEditable($field_type_name)
@@ -386,6 +410,7 @@ function search_api_solr_update_helper_save_field_type_config($field_type_name, 
  * Helper function to install all new configs.
  *
  * @param string $directory
+ *   The configs directory.
  */
 function search_api_solr_update_helper_install_configs($directory = InstallStorage::CONFIG_OPTIONAL_DIRECTORY) {
   /** @var \Drupal\Core\Config\ConfigInstallerInterface $config_installer */
@@ -407,8 +432,16 @@ function search_api_solr_update_helper_install_configs($directory = InstallStora
   $config_installer->installOptionalConfig(NULL, $restrict_by_dependency);
 }
 
+/**
+ * Replace installed field type config with module version.
+ *
+ * @param string $field_type_name
+ *   The field type config name.
+ * @param string $path
+ *   The config path.
+ */
 function search_api_solr_update_helper_replace_field_type($field_type_name, $path = 'optional') {
-  $filename = __DIR__ . '/config/' . $path . '/'. $field_type_name . '.yml';
+  $filename = __DIR__ . '/config/' . $path . '/' . $field_type_name . '.yml';
   $field_type_config = Yaml::decode(file_get_contents($filename));
 
   foreach (search_api_solr_update_helper_get_field_type_configs() as $name => $config) {
@@ -1052,9 +1085,10 @@ function search_api_solr_update_8308() {
 }
 
 /**
- * Solarium 5 adjustments. Warning! If you have overwritten the connection
- * settings, don't forget to adjust the 'path'. See the release notes for
- * details.
+ * Solarium 5 adjustments.
+ *
+ * Warning! If you have overwritten the connection settings, don't forget to
+ * adjust the 'path'. See the release notes for details.
  */
 function search_api_solr_update_8309() {
   // Remove the V1 API endpoint from the path.
@@ -1148,9 +1182,10 @@ function search_api_solr_update_8310() {
 }
 
 /**
- * Add the Polish diacritics to the language configs. Unset the obsolete min and
- * max parameters from the CJKWidthFilter of the spellchecker (mainly for
- * Japanese).
+ * Add the Polish diacritics to the language configs.
+ *
+ * Unset the obsolete min and max parameters from the CJKWidthFilter of the
+ * spellchecker (mainly for Japanese).
  */
 function search_api_solr_update_8311() {
   $accents = <<<ACCENTS
@@ -2068,4 +2103,11 @@ function search_api_solr_update_8412() {
       search_api_solr_update_helper_save_backend_config($server_name, $backend_config);
     }
   }
+}
+
+/**
+ * Add fulltext string field type.
+ */
+function search_api_solr_update_8413() {
+  search_api_solr_update_helper_install_configs();
 }

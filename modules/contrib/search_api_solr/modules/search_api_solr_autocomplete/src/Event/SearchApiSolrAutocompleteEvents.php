@@ -6,6 +6,7 @@ namespace Drupal\search_api_solr_autocomplete\Event;
  * Defines events for the Search API Solr Autocomplete module.
  *
  * You can also leverage any solarium event:
+ *
  * @see https://solarium.readthedocs.io/en/stable/customizing-solarium/#plugin-system
  * @see https://github.com/solariumphp/solarium/blob/master/src/Core/Event/Events.php
  */

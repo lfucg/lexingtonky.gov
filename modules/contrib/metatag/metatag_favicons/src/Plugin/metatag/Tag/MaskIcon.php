@@ -41,9 +41,9 @@ class MaskIcon extends LinkRelBase {
     $form['href'] = [
       '#type' => 'textfield',
       '#title' => $this->label(),
-      '#default_value' => isset($defaults['href']) ? $defaults['href'] : '',
+      '#default_value' => $defaults['href'] ?? '',
       '#maxlength' => 255,
-      '#required' => isset($element['#required']) ? $element['#required'] : FALSE,
+      '#required' => $element['#required'] ?? FALSE,
       '#description' => $this->description(),
       '#element_validate' => [[get_class($this), 'validateTag']],
     ];
@@ -52,7 +52,7 @@ class MaskIcon extends LinkRelBase {
     $form['color'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Mask icon color'),
-      '#default_value' => isset($defaults['color']) ? $defaults['color'] : '',
+      '#default_value' => $defaults['color'] ?? '',
       '#required' => FALSE,
       '#description' => $this->t("Color attribute for SVG (mask) icon in hexadecimal format, e.g. '#0000ff'. Setting it will break HTML validation. If not set macOS Safari ignores the Mask Icon entirely, making the Icon: SVG completely useless."),
     ];
@@ -79,6 +79,14 @@ class MaskIcon extends LinkRelBase {
     }
 
     return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setValue($value) {
+    // Do not store array with empty values.
+    $this->value = is_array($value) && empty(array_filter($value)) ? NULL : $value;
   }
 
 }

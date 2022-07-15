@@ -22,5 +22,3 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
 class ProductAvailability extends MetaPropertyBase {
   // Nothing here yet. Just a placeholder class for a plugin.
 }
-
-

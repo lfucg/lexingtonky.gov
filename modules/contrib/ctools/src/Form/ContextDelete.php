@@ -34,12 +34,19 @@ abstract class ContextDelete extends ConfirmFormBase {
    */
   protected $context_id;
 
-
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container) {
     return new static($container->get('tempstore.shared'));
   }
 
-
+  /**
+   * Context Delete Constructor.
+   *
+   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   *   Tempstore Service.
+   */
   public function __construct(SharedTempStoreFactory $tempstore) {
     $this->tempstore = $tempstore;
   }
@@ -75,12 +82,24 @@ abstract class ContextDelete extends ConfirmFormBase {
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
 
-
+  /**
+   * Get a temp storage object.
+   *
+   * @return mixed
+   *   The tempstore object.
+   */
   protected function getTempstore() {
     return $this->tempstore->get($this->tempstore_id)->get($this->machine_name);
   }
 
-
+  /**
+   * Set the temp storage.
+   *
+   * @param array $cached_values
+   *   Cached values to use in the tempstore.
+   *
+   * @throws \Drupal\Core\TempStore\TempStoreException
+   */
   protected function setTempstore($cached_values) {
     $this->tempstore->get($this->tempstore_id)->set($this->machine_name, $cached_values);
   }

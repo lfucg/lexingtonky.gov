@@ -15,14 +15,14 @@ abstract class AbstractSearchApiQuerySolariumResultEvent extends Event {
    *
    * @var \Drupal\search_api\Query\QueryInterface
    */
-  protected $search_api_query;
+  protected $searchApiQuery;
 
   /**
    * The solarium result.
    *
    * @var \Solarium\QueryType\Select\Result\Result|\Solarium\QueryType\Stream\Result
    */
-  protected $solarium_result;
+  protected $solariumResult;
 
   /**
    * Constructs a new class instance.
@@ -33,8 +33,8 @@ abstract class AbstractSearchApiQuerySolariumResultEvent extends Event {
    *   The solarium result.
    */
   public function __construct(QueryInterface $search_api_query, $solarium_result) {
-    $this->search_api_query = $search_api_query;
-    $this->solarium_result = $solarium_result;
+    $this->searchApiQuery = $search_api_query;
+    $this->solariumResult = $solarium_result;
   }
 
   /**
@@ -44,7 +44,7 @@ abstract class AbstractSearchApiQuerySolariumResultEvent extends Event {
    *   The created query.
    */
   public function getSearchApiQuery() : QueryInterface {
-    return $this->search_api_query;
+    return $this->searchApiQuery;
   }
 
   /**
@@ -54,7 +54,7 @@ abstract class AbstractSearchApiQuerySolariumResultEvent extends Event {
    *   The solarium result.
    */
   public function getSolariumResult() {
-    return $this->solarium_result;
+    return $this->solariumResult;
   }
 
 }

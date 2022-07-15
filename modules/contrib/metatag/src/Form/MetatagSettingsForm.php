@@ -126,14 +126,16 @@ class MetatagSettingsForm extends ConfigFormBase {
       '#tree' => TRUE,
     ];
 
-    foreach ($metatags as $metatag_name => $metatag_info) {
+    // Name the variable "metatag_id" to avoid confusing this with the "name"
+    // value from the meta tag plugin as it's actually the plugin ID.
+    foreach ($metatags as $metatag_id => $metatag_info) {
       if (!empty($metatag_info['trimmable'])) {
 
-        $form['tag_trim']['maxlength']['metatag_maxlength_' . $metatag_name] = [
-          '#title' => $this->t('Meta Tags:') . ' ' . $metatag_name . ' ' . $this->t('length'),
+        $form['tag_trim']['maxlength']['metatag_maxlength_' . $metatag_id] = [
+          '#title' => $this->t('Meta Tags:') . ' ' . $metatag_id . ' ' . $this->t('length'),
           '#type' => 'number',
           '#required' => FALSE,
-          '#default_value' => $trimSettingsMaxlength['metatag_maxlength_' . $metatag_name] ?? NULL,
+          '#default_value' => $trimSettingsMaxlength['metatag_maxlength_' . $metatag_id] ?? NULL,
           '#min' => 0,
           '#step' => 1,
         ];
@@ -150,6 +152,24 @@ class MetatagSettingsForm extends ConfigFormBase {
         'onValue' => $this->t('Trim the Meta Tag on the given value'),
         'beforeValue' => $this->t('Trim the Meta Tag before the word on the given value'),
       ],
+    ];
+
+    $scrollheight = $this->config('metatag.settings')->get('tag_scroll_max_height');
+
+    $form['firehose_widget'] = [
+      '#title' => $this->t('Metatag widget options'),
+      '#type' => 'details',
+      '#tree' => TRUE,
+      '#open' => TRUE,
+      '#description' => $this->t("Various options for the field widget used on entity forms, e.g. on content type forms."),
+    ];
+
+    $form['firehose_widget']['tag_scroll_max_height'] = [
+      '#title' => $this->t('Scroll maximum height'),
+      '#type' => 'textfield',
+      '#default_value' => $scrollheight,
+      '#placeholder' => $this->t('eg 500px or 8rem'),
+      '#description' => $this->t("To enable scrolling please enter a value and its units, e.g. 500px, 8rem, etc. Removing this value will remove the scroll."),
     ];
     return parent::buildForm($form, $form_state);
   }
@@ -175,6 +195,10 @@ class MetatagSettingsForm extends ConfigFormBase {
     $settings->set('tag_trim_method', $trimmingMethod);
     $trimmingValues = $form_state->getValue(['tag_trim', 'maxlength']);
     $settings->set('tag_trim_maxlength', $trimmingValues);
+
+    // Widget settings.
+    $scrollheightvalue = $form_state->getValue(['firehose_widget', 'tag_scroll_max_height']);
+    $settings->set('tag_scroll_max_height', $scrollheightvalue);
 
     $settings->save();
     parent::submitForm($form, $form_state);

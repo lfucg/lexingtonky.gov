@@ -69,7 +69,7 @@ metatag.metatag_tag.standout:
   type: label
   label: 'Standout'
 metatag.metatag_tag.title:
-  type: label
+  type: text
   label: 'Page title'
 metatag.metatag_tag.icbm:
   type: label
@@ -89,3 +89,6 @@ metatag.metatag_tag.set_cookie:
 metatag.metatag_tag.google:
   type: label
   label: 'Google'
+metatag.metatag_tag.author:
+  type: label
+  label: 'Author'

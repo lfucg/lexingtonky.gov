@@ -15,8 +15,19 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class SolrMultisiteDocument extends SolrDocument {
 
-  protected $solr_field = 'solr_multisite_field';
-  protected $solr_document = 'solr_multisite_document';
+  /**
+   * Solr field property name.
+   *
+   * @var string
+   */
+  protected $solrField = 'solr_multisite_field';
+
+  /**
+   * Solr document property name.
+   *
+   * @var string
+   */
+  protected $solrDocument = 'solr_multisite_document';
 
   /**
    * {@inheritdoc}

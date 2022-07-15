@@ -321,7 +321,7 @@
 
     <autoSoftCommit>
       <maxDocs>${solr.autoSoftCommit.MaxDocs:-1}</maxDocs>
-      <maxTime>${solr.autoSoftCommit.MaxTime:-1}</maxTime>
+      <maxTime>${solr.autoSoftCommit.MaxTime:5000}</maxTime>
     </autoSoftCommit>
 
     <!-- Update Related Event Listeners

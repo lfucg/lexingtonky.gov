@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Install, update and uninstall functions for the Search API Solr Legacy.
+ */
+
+/**
  * Install new field types for legacy Solr versions.
  */
 function search_api_solr_legacy_update_8001() {

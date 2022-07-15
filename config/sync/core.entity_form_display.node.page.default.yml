@@ -54,26 +54,22 @@ content:
       form_display_mode: default
       default_paragraph_type: ''
     third_party_settings: {  }
-<<<<<<< HEAD
-    region: content
   field_iframe:
+    type: iframe_urlwidthheight
     weight: 26
+    region: content
     settings:
-      width: ''
-      height: ''
       headerlevel: '3'
       class: ''
-      expose_class: false
       frameborder: '0'
       scrolling: auto
       transparency: '0'
-      tokensupport: '0'
       allowfullscreen: '0'
+      tokensupport: '0'
+      width: ''
+      height: ''
+      expose_class: false
     third_party_settings: {  }
-    type: iframe_urlwidthheight
-    region: content
-=======
->>>>>>> Exported configuration for working druapl 9
   field_keywords:
     type: entity_reference_autocomplete
     weight: 14
@@ -198,13 +194,6 @@ content:
       add_mode: dropdown
       form_display_mode: default
       default_paragraph_type: ''
-    third_party_settings: {  }
-  langcode:
-    type: language_select
-    weight: 2
-    region: content
-    settings:
-      include_locked: true
     third_party_settings: {  }
   path:
     type: path

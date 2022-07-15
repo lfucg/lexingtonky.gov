@@ -133,7 +133,7 @@ class DefaultTags extends BrowserTestBase {
    * Test the default values for the user login page, etc.
    */
   public function testUserLoginPages() {
-    $front_url = $this->buildUrl('<front>', ['absolute' => TRUE]);;
+    $front_url = $this->buildUrl('<front>', ['absolute' => TRUE]);
 
     // A list of paths to examine.
     $routes = [

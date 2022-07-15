@@ -42,7 +42,7 @@ abstract class GroupBase extends PluginBase {
     // @todo Should we have setProperty() methods for each of these?
     $this->id = $plugin_definition['id'];
     $this->label = $plugin_definition['label'];
-    $this->description = $plugin_definition['description'];
+    $this->description = $plugin_definition['description'] ?? '';
   }
 
   /**

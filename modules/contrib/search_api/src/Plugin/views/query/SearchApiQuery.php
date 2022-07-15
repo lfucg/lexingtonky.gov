@@ -12,7 +12,6 @@ use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Url;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\LoggerTrait;
 use Drupal\search_api\ParseMode\ParseModeInterface;
@@ -369,6 +368,9 @@ class SearchApiQuery extends QueryPluginBase {
       'preserve_facet_query_args' => [
         'default' => FALSE,
       ],
+      'query_tags' => [
+        'default' => [],
+      ],
     ];
   }
 
@@ -408,6 +410,29 @@ class SearchApiQuery extends QueryPluginBase {
         '#value' => FALSE,
       ];
     }
+
+    $form['query_tags'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Query Tags'),
+      '#description' => $this->t('If set, these tags will be appended to the query and can be used to identify the query in a module. This can be helpful for altering queries.'),
+      '#default_value' => implode(', ', $this->options['query_tags']),
+      '#element_validate' => ['views_element_validate_tags'],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitOptionsForm(&$form, FormStateInterface $form_state) {
+    $value = &$form_state->getValue(['query', 'options', 'query_tags']);
+    if (is_array($value)) {
+      // We already ran on this form state. This happens when the user toggles a
+      // display to override defaults or vice-versa – the submit handler gets
+      // invoked twice, and we don't want to bash the values  from the original
+      // call.
+      return;
+    }
+    $value = array_filter(array_map('trim', explode(',', $value)));
   }
 
   /**
@@ -516,10 +541,11 @@ class SearchApiQuery extends QueryPluginBase {
       $this->query->setOption('search_api_bypass_access', TRUE);
     }
 
-    // If the View and the Panel conspire to provide an overridden path then
-    // pass that through as the base path.
-    if (($path = $this->view->getPath()) && strpos(Url::fromRoute('<current>')->toString(), $path) !== 0) {
-      $this->query->setOption('search_api_base_path', $path);
+    // Add the query tags.
+    if (!empty($this->options['query_tags'])) {
+      foreach ($this->options['query_tags'] as $tag) {
+        $this->query->addTag($tag);
+      }
     }
 
     // Save query information for Views UI.
@@ -685,25 +711,23 @@ class SearchApiQuery extends QueryPluginBase {
 
       // Gather any properties from the search results.
       foreach ($result->getFields(FALSE) as $field_id => $field) {
-        if ($field->getValues()) {
-          $path = $field->getCombinedPropertyPath();
-          try {
-            $property = $field->getDataDefinition();
-            // For configurable processor-defined properties, our Views field
-            // handlers use a special property path to distinguish multiple
-            // fields with the same property path. Therefore, we here also set
-            // the values using that special property path so this will work
-            // correctly.
-            if ($property instanceof ConfigurablePropertyInterface) {
-              $path .= '|' . $field_id;
-            }
+        $path = $field->getCombinedPropertyPath();
+        try {
+          $property = $field->getDataDefinition();
+          // For configurable processor-defined properties, our Views field
+          // handlers use a special property path to distinguish multiple
+          // fields with the same property path. Therefore, we here also set
+          // the values using that special property path so this will work
+          // correctly.
+          if ($property instanceof ConfigurablePropertyInterface) {
+            $path .= '|' . $field_id;
           }
-          catch (SearchApiException $e) {
-            // If we're not able to retrieve the data definition at this point,
-            // it doesn't really matter.
-          }
-          $values[$path] = $field->getValues();
         }
+        catch (SearchApiException $e) {
+          // If we're not able to retrieve the data definition at this point,
+          // it doesn't really matter.
+        }
+        $values[$path] = $field->getValues();
       }
 
       $values['index'] = $count++;

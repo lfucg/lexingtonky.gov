@@ -51,4 +51,5 @@ class StandardSolrConnector extends SolrConnectorPluginBase {
       $files['solrcore.properties'] = preg_replace("/solr\.install\.dir.*$/m", '', $files['solrcore.properties']);
     }
   }
+
 }

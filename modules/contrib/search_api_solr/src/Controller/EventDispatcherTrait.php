@@ -10,14 +10,17 @@ use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 trait EventDispatcherTrait {
 
   /**
-   * @var ContainerAwareEventDispatcher
+   * The event dispatcher.
+   *
+   * @var \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher
    */
   protected $eventDispatcher;
 
   /**
    * Returns the event dispatcher.
    *
-   * @return ContainerAwareEventDispatcher
+   * @return \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher
+   *   The event dispatcher.
    */
   protected function eventDispatcher(): ContainerAwareEventDispatcher {
     if (!$this->eventDispatcher) {

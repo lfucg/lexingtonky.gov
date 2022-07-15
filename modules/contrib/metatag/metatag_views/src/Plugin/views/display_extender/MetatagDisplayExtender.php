@@ -59,6 +59,9 @@ class MetatagDisplayExtender extends DisplayExtenderPluginBase {
     return $instance;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function defineOptions() {
     $options = parent::defineOptions();
 
@@ -67,7 +70,6 @@ class MetatagDisplayExtender extends DisplayExtenderPluginBase {
 
     return $options;
   }
-
 
   /**
    * Provide a form to edit options for this plugin.
@@ -260,8 +262,8 @@ class MetatagDisplayExtender extends DisplayExtenderPluginBase {
   /**
    * Store first row tokens on the class.
    *
-   * metatag_views_metatag_route_entity() loads the View fresh, to avoid
-   * rebuilding and re-rendering it, preserve the first row tokens.
+   * The function metatag_views_metatag_route_entity() loads the View fresh, to
+   * avoid rebuilding and re-rendering it, preserve the first row tokens.
    */
   public function setFirstRowTokens(array $first_row_tokens) {
     self::$firstRowTokens = $first_row_tokens;
@@ -285,6 +287,7 @@ class MetatagDisplayExtender extends DisplayExtenderPluginBase {
    *
    * @param \Drupal\views\ViewExecutable $view
    *   The view.
+   *
    * @return array
    *   The first row tokens.
    */
@@ -294,9 +297,13 @@ class MetatagDisplayExtender extends DisplayExtenderPluginBase {
   }
 
   /**
+   * Get the first row tokens for this Views object iteration.
+   *
    * @param \Drupal\views\Plugin\views\style\StylePluginBase $style
+   *   The style plugin used for this request.
    *
    * @return \ReflectionProperty
+   *   The rawTokens property.
    */
   protected static function getFirstRowTokensReflection(StylePluginBase $style): \ReflectionProperty {
     $r = new \ReflectionObject($style);

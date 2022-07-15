@@ -141,7 +141,14 @@ class MetatagFirehose extends WidgetBase implements ContainerFactoryPluginInterf
     // Retrieve the values for each metatag from the serialized array.
     $values = [];
     if (!empty($item->value)) {
-      $values = unserialize($item->value);
+      $values = unserialize($item->value, ['allowed_classes' => FALSE]);
+    }
+
+    // Make sure that this variable is always an array to avoid problems when
+    // unserializing didn't work correctly and it as returned as FALSE.
+    // @see https://www.php.net/unserialize
+    if (!is_array($values)) {
+      $values = [];
     }
 
     // Populate fields which have not been overridden in the entity.
@@ -191,6 +198,15 @@ class MetatagFirehose extends WidgetBase implements ContainerFactoryPluginInterf
     $details = $this->getSetting('use_details');
     if (!$sidebar && !$details) {
       $element['#type'] = 'container';
+    }
+
+    // Scroll height configuration.
+    $scroll_height = $settings->get('tag_scroll_max_height');
+    if (!empty($scrollheight)) {
+      $form['#attached']['drupalSettings']['metatag']['max_height'] = $scroll_height;
+      $form['#attached']['library'][] = 'metatag/firehose_widget';
+      $element['#attributes']['class'][] = 'metatags';
+      $element['#attributes']['style'][] = 'max-height:' . $scroll_height . ';';
     }
 
     return $element;

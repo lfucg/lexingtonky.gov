@@ -30,21 +30,21 @@ interface FormWizardInterface extends FormInterface {
   public function initValues();
 
   /**
-   * The shared temp store factory collection name.
+   * The private temp store factory collection name.
    *
    * @return string
    */
   public function getTempstoreId();
 
   /**
-   * The active SharedTempStore for this wizard.
+   * The active PrivateTempStore for this wizard.
    *
-   * @return \Drupal\Core\TempStore\SharedTempStore
+   * @return \Drupal\Core\TempStore\PrivateTempStore
    */
   public function getTempstore();
 
   /**
-   * The SharedTempStore key for our current wizard values.
+   * The PrivateTempStore key for our current wizard values.
    *
    * @return null|string
    */
@@ -173,13 +173,19 @@ interface FormWizardInterface extends FormInterface {
    */
   public function finish(array &$form, FormStateInterface $form_state);
 
-
+  /**
+   *
+   */
   public function ajaxSubmit(array $form, FormStateInterface $form_state);
 
-
+  /**
+   *
+   */
   public function ajaxPrevious(array $form, FormStateInterface $form_state);
 
-
+  /**
+   *
+   */
   public function ajaxFinish(array $form, FormStateInterface $form_state);
 
 }

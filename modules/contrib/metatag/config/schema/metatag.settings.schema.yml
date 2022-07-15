@@ -23,3 +23,6 @@ metatag.settings:
       sequence:
         type: integer
         label: 'Tag maximum length in characters'
+    tag_scroll_max_height:
+      type: string
+      label: 'Add max height value'

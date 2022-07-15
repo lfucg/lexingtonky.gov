@@ -521,7 +521,7 @@ class MetatagAdminTest extends BrowserTestBase {
     $session->pageTextNotContains('Meta Tags: robots length');
     // Test if option for a trimmable metatag exists:
     $session->pageTextContains('Meta Tags: description length');
-    // Test if the the title,abstract and description header gets trimmed:
+    // Test if the title,abstract and description header gets trimmed:
     // Change description abstract and title on the front page:
     $this->drupalGet('/admin/config/search/metatag/front');
     $page->fillField('edit-title', 'my wonderful drupal test site');

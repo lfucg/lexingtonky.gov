@@ -70,11 +70,13 @@ class PermissionsTest extends BrowserTestBase {
       'revisit_after' => 'Revisit After',
       'rights' => 'Rights',
       // This one is more complicated, so skip it.
+      // @code
       // 'robots' => 'Robots',
+      // @endcode
       'set_cookie' => 'Set cookie',
       'shortlink' => 'Shortlink URL',
       'standout' => 'Standout',
-    ]
+    ],
   ];
 
   /**

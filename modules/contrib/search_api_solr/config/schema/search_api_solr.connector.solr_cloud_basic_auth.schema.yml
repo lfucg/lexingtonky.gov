@@ -1,13 +1,10 @@
 plugin.plugin_configuration.search_api_solr_connector.solr_cloud_basic_auth:
-  type: plugin.plugin_configuration.search_api_solr_connector.basic_auth
+  type: plugin.plugin_configuration.search_api_solr_connector.solr_cloud
   label: 'Search API Solr basic authentication connector settings for Solr cloud'
   mapping:
-    checkpoints_collection:
+    username:
       type: string
-      label: 'The collection where topic checkpoints are stored'
-    stats_cache:
+      label: 'Username for HTTP basic authentication'
+    password:
       type: string
-      label: 'StatsCache'
-    distrib:
-      type: boolean
-      label: 'Distribute queries across all nodes'
+      label: 'Password for HTTP basic authentication'

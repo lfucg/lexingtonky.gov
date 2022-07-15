@@ -2,7 +2,7 @@
 
 namespace Drupal\search_api\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Wraps a mapping Views handlers event.
@@ -37,7 +37,7 @@ final class MappingViewsHandlersEvent extends Event {
    *   "entity:ENTITY_TYPE" (with "ENTITY_TYPE" being the machine name of an
    *   entity type) for entities of that type.
    */
-  public function &getHandlerMapping() {
+  public function &getHandlerMapping(): array {
     return $this->handlerMapping;
   }
 

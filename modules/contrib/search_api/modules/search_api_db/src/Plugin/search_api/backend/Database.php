@@ -2,6 +2,7 @@
 
 namespace Drupal\search_api_db\Plugin\search_api\backend;
 
+use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
@@ -36,7 +37,7 @@ use Drupal\search_api_db\DatabaseCompatibility\GenericDatabase;
 use Drupal\search_api_db\Event\QueryPreExecuteEvent;
 use Drupal\search_api_db\Event\SearchApiDbEvents;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Indexes and searches items using the database.
@@ -138,7 +139,7 @@ class Database extends BackendPluginBase implements AutocompleteBackendInterface
   /**
    * The event dispatcher.
    *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|null
+   * @var \Symfony\Contracts\EventDispatcher\EventDispatcherInterface|null
    */
   protected $eventDispatcher;
 
@@ -362,7 +363,7 @@ class Database extends BackendPluginBase implements AutocompleteBackendInterface
   /**
    * Retrieves the event dispatcher.
    *
-   * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   * @return \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
    *   The event dispatcher.
    */
   public function getEventDispatcher() {
@@ -372,7 +373,7 @@ class Database extends BackendPluginBase implements AutocompleteBackendInterface
   /**
    * Sets the event dispatcher.
    *
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The new event dispatcher.
    *
    * @return $this
@@ -920,6 +921,18 @@ class Database extends BackendPluginBase implements AutocompleteBackendInterface
         return ['type' => 'int', 'size' => 'tiny'];
 
       default:
+        try {
+          $data_type = $this->getDataTypePluginManager()->createInstance($type);
+          if ($data_type && !$data_type->isDefault()) {
+            $fallback_type = $data_type->getFallbackType();
+            if ($fallback_type != $type) {
+              return $this->sqlType($fallback_type);
+            }
+          }
+        }
+        catch (PluginException $e) {
+          // Ignore.
+        }
         throw new SearchApiException("Unknown field type '$type'.");
     }
   }
@@ -1540,6 +1553,18 @@ class Database extends BackendPluginBase implements AutocompleteBackendInterface
         return $value ? 1 : 0;
 
       default:
+        try {
+          $data_type = $this->getDataTypePluginManager()->createInstance($type);
+          if ($data_type && !$data_type->isDefault()) {
+            $fallback_type = $data_type->getFallbackType();
+            if ($fallback_type != $type) {
+              return $this->convert($value, $fallback_type, $original_type, $index);
+            }
+          }
+        }
+        catch (PluginException $e) {
+          // Ignore.
+        }
         throw new SearchApiException("Unknown field type '$type'.");
     }
   }
@@ -1799,7 +1824,7 @@ class Database extends BackendPluginBase implements AutocompleteBackendInterface
     // query is constructed from it).
     $event_base_name = SearchApiDbEvents::QUERY_PRE_EXECUTE;
     $event = new QueryPreExecuteEvent($db_query, $query);
-    $this->getEventDispatcher()->dispatch($event_base_name, $event);
+    $this->getEventDispatcher()->dispatch($event, $event_base_name);
     $db_query = $event->getDbQuery();
 
     $description = 'This hook is deprecated in search_api:8.x-1.16 and is removed from search_api:2.0.0. Please use the "search_api_db.query_pre_execute" event instead. See https://www.drupal.org/node/3103591';

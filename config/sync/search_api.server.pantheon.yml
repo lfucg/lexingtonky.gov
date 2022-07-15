@@ -1,15 +1,8 @@
-uuid: 70d33a55-309f-4d97-a6a9-b4cf0d1b3a18
+uuid: 803e77cc-6370-4f97-b41f-81e97ef33099
 langcode: en
 status: true
 dependencies:
-  config:
-    - search_api_solr.solr_field_type.text_edge_und_3_6_0
-    - search_api_solr.solr_field_type.text_edgestring_und_3_6_0
-    - search_api_solr.solr_field_type.text_ngram_und_3_6_0
-    - search_api_solr.solr_field_type.text_ngramstring_und_3_6_0
-    - search_api_solr.solr_field_type.text_und_3_6_0
   module:
-    - search_api_pantheon
     - search_api_solr
 id: pantheon
 name: Pantheon
@@ -24,18 +17,10 @@ backend_config:
   environment: default
   connector: pantheon
   connector_config:
-    schema: modules/contrib/search_api_solr/modules/search_api_solr_legacy/solr-conf-templates/4.x/schema.xml
+    schema: modules/contrib/search_api_solr/solr-conf/4.x/schema.xml
+    path: ''
+    skip_schema_check: true
   optimize: false
-  fallback_multiple: false
-  disabled_field_types: {  }
-  disabled_caches: {  }
-  disabled_request_handlers:
-    - request_handler_elevate_default_7_0_0
-    - request_handler_replicationmaster_default_7_0_0
-    - request_handler_replicationslave_default_7_0_0
-  disabled_request_dispatchers:
-    - request_dispatcher_httpcaching_default_7_0_0
-  rows: 10
+  fallback_multiple: true
   index_single_documents_fallback_count: 10
-  index_empty_text_fields: false
-  suppress_missing_languages: false
+  finalize_timeout: 30

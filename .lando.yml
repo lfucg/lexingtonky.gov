@@ -8,5 +8,6 @@ services:
   solr:
     type: solr:8
     portforward: true
+    core: lexky
     config:
       dir: web/modules/contrib/search_api_solr/solr-conf-templates/8.x

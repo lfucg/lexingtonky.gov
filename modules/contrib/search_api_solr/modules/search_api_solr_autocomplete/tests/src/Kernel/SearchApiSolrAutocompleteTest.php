@@ -3,14 +3,12 @@
 namespace Drupal\Tests\search_api_solr_autocomplete\Kernel;
 
 use Drupal\search_api\Entity\Server;
-use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api_autocomplete\Entity\Search;
-use Drupal\search_api_solr\SolrBackendInterface;
 use Drupal\Tests\search_api_solr\Kernel\SolrBackendTestBase;
 use Drupal\Tests\search_api_solr\Traits\InvokeMethodTrait;
 
 /**
- * Tests search autocomplete support and ngram results using the Solr search backend.
+ * Tests search autocomplete support and ngram results using the Solr backend.
  *
  * @group search_api_solr
  */
@@ -121,7 +119,12 @@ class SearchApiSolrAutocompleteTest extends SolrBackendTestBase {
       // @todo Add more suggester tests.
       $query = $this->buildSearch(['artic'], [], ['body'], FALSE);
       $query->setLanguages(['en']);
-      $suggestions = $this->invokeMethod($suggester_plugin, 'getSuggesterSuggestions', [$backend, $query, 'artic', 'artic']);
+      $suggestions = $this->invokeMethod($suggester_plugin, 'getSuggesterSuggestions', [
+        $backend,
+        $query,
+        'artic',
+        'artic',
+      ]);
       $this->assertEquals(2, count($suggestions));
 
       // Since we don't specify the result weights explicitly for this suggester
@@ -140,6 +143,5 @@ class SearchApiSolrAutocompleteTest extends SolrBackendTestBase {
       $this->assertEquals('The test <b>artic</b>le number 2 about a tree.', $suggestions['The test <b>artic</b>le number 2 about a tree.']->getSuggestedKeys());
     }
   }
-
 
 }

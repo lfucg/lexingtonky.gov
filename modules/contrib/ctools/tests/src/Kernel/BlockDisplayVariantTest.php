@@ -18,7 +18,7 @@ class BlockDisplayVariantTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['ctools', 'ctools_block_display_test', 'system', 'user'];
+  protected static $modules = ['ctools', 'ctools_block_display_test', 'system', 'user'];
 
   /**
    * Tests that events are fired when manipulating a block variant.

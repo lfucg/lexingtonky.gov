@@ -53,3 +53,11 @@ plugin.plugin_configuration.search_api_processor.solr_regex_replace:
     preserve_original:
       type: boolean
       label: 'Preserve original'
+
+search_api.property_configuration.dummy_field:
+  type: mapping
+  label: 'Dummy field'
+  mapping:
+    dummy_value:
+      type: string
+      label: 'Default dummy value'

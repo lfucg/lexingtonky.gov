@@ -37,7 +37,7 @@ function metatag_hreflang_page_attachments_alter(array &$attachments) {
       foreach ($attachments['#attached']['html_head'] as $element) {
         // Check for Metatag's identifier "hreflang_per_language".
         if (!empty($element[1])) {
-          if (strpos($element[1], 'hreflang_per_language') !== false && isset($element[0]['#attributes']['hreflang'])) {
+          if (strpos($element[1], 'hreflang_per_language') !== FALSE && isset($element[0]['#attributes']['hreflang'])) {
             $hreflang_per_language[] = $element[0]['#attributes']['hreflang'];
           }
         }

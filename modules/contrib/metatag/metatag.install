@@ -91,6 +91,7 @@ function metatag_update_8109(&$sandbox) {
     $field_counter = 0;
 
     // Get all of the field storage entities of type metatag.
+    /** @var \Drupal\field\FieldStorageConfigInterface[] $field_storage_configs */
     $field_storage_configs = \Drupal::entityTypeManager()
       ->getStorage('field_storage_config')
       ->loadByProperties(['type' => 'metatag']);
@@ -101,7 +102,10 @@ function metatag_update_8109(&$sandbox) {
       // Get the individual fields (field instances) associated with bundles.
       $fields = \Drupal::entityTypeManager()
         ->getStorage('field_config')
-        ->loadByProperties(['field_name' => $field_name]);
+        ->loadByProperties([
+          'field_name' => $field_name,
+          'entity_type' => $field_storage->getTargetEntityTypeId(),
+        ]);
 
       foreach ($fields as $field) {
         // Get the bundle this field is attached to.
@@ -157,30 +161,27 @@ function metatag_update_8109(&$sandbox) {
     $field_value_field = $sandbox['fields'][$current_field]['field_value_field'];
 
     // Loop through the field(s) and update the mask_icon values if necessary.
-    while ($counter <= $max_per_batch) {
-      if (isset($current_field_records[$current_record])) {
-        $record = $current_field_records[$current_record];
+    while ($counter <= $max_per_batch && isset($current_field_records[$current_record])) {
+      $record = $current_field_records[$current_record];
 
-        // Strip any empty tags or ones matching the field's defaults and leave
-        // only the overridden tags in $new_tags.
-        $tags = unserialize($record->$field_value_field);
-        if (isset($tags['mask-icon'])) {
-          $tags['mask_icon'] = [
-            'href' => $tags['mask-icon'],
-          ];
+      // Strip any empty tags or ones matching the field's defaults and leave
+      // only the overridden tags in $new_tags.
+      $tags = unserialize($record->$field_value_field, ['allowed_classes' => FALSE]);
+      if (isset($tags['mask-icon'])) {
+        $tags['mask_icon'] = [
+          'href' => $tags['mask-icon'],
+        ];
 
-          $tags_string = serialize($tags);
-          \Drupal::database()->update($field_table)
-            ->fields([
-              $field_value_field => $tags_string,
-            ])
-            ->condition('entity_id', $record->entity_id)
-            ->condition('revision_id', $record->revision_id)
-            ->condition('langcode', $record->langcode)
-            ->execute();
-        }
+        $tags_string = serialize($tags);
+        \Drupal::database()->update($field_table)
+          ->fields([
+            $field_value_field => $tags_string,
+          ])
+          ->condition('entity_id', $record->entity_id)
+          ->condition('revision_id', $record->revision_id)
+          ->condition('langcode', $record->langcode)
+          ->execute();
       }
-
       $counter++;
       $current_record++;
     }

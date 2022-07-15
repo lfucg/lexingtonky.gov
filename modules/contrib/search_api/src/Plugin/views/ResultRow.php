@@ -3,6 +3,7 @@
 namespace Drupal\search_api\Plugin\views;
 
 use Drupal\views\ResultRow as ViewsResultRow;
+use Drupal\views\ViewExecutable;
 
 /**
  * A class representing a result row of a Search API-based view.
@@ -72,7 +73,7 @@ class ResultRow extends ViewsResultRow {
   }
 
   /**
-   * Implements the magic __wakeup() method to lazy-load certain properties.
+   * Implements the magic __get() method to lazy-load certain properties.
    */
   public function __get($name) {
     $properties = get_object_vars($this);
@@ -88,6 +89,28 @@ class ResultRow extends ViewsResultRow {
     $class = get_class($this);
     trigger_error("Undefined property: $class::\$$name");
     return NULL;
+  }
+
+  /**
+   * Implements the magic __sleep() method to remove the view from the entity.
+   *
+   * The "view" property is added by the "Rendered entity" row plugin in
+   * \Drupal\search_api\Plugin\views\row\SearchApiRow::preRender() to make it
+   * available to entity viewing code. It should not be needed elsewhere, but
+   * can cause problems (including infinite loops) when Views results are
+   * serialized (as done, for instance, by the Metatag module in some setups).
+   *
+   * @return string[]
+   *   An array with the names of all object properties.
+   */
+  public function __sleep() {
+    if (!empty($this->_object)) {
+      $entity = $this->_object->getValue();
+      if (($entity->view ?? NULL) instanceof ViewExecutable) {
+        unset($entity->view);
+      }
+    }
+    return array_keys(get_object_vars($this));
   }
 
 }

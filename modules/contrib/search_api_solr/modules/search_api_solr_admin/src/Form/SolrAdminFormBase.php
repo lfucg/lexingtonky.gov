@@ -20,6 +20,8 @@ abstract class SolrAdminFormBase extends FormBase {
   }
 
   /**
+   * The core messenger.
+   *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
   protected $messenger;
@@ -29,7 +31,7 @@ abstract class SolrAdminFormBase extends FormBase {
    *
    * @var \Drupal\search_api\ServerInterface
    */
-  protected $search_api_server;
+  protected $searchApiServer;
 
   /**
    * The Search API server entity.
@@ -43,6 +45,8 @@ abstract class SolrAdminFormBase extends FormBase {
    *
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
+   * @param \Drupal\search_api_solr_admin\Utility\SolrAdminCommandHelper $commandHelper
+   *   The command helper.
    */
   public function __construct(MessengerInterface $messenger, SolrAdminCommandHelper $commandHelper) {
     $this->messenger = $messenger;
@@ -59,6 +63,15 @@ abstract class SolrAdminFormBase extends FormBase {
     );
   }
 
+  /**
+   * Get Logger.
+   *
+   * @param string $channel
+   *   The log channel.
+   *
+   * @return \Psr\Log\LoggerInterface
+   *   The logger.
+   */
   protected function getLogger($channel = '') {
     return $this->getSearchApiLogger();
   }

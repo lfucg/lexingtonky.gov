@@ -21,7 +21,7 @@ metatag.metatag_tag.apple_mobile_web_app_status_bar_style:
   type: label
   label: 'Apple Mobile: Web App Status bar color'
 metatag.metatag_tag.apple_mobile_web_app_title:
-  type: label
+  type: text
   label: 'Apple Mobile: Web App Title'
 metatag.metatag_tag.application_name:
   type: label

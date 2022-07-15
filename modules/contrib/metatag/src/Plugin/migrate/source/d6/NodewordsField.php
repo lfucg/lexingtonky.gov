@@ -30,17 +30,23 @@ class NodewordsField extends DrupalSqlBase {
     $instances = [];
     foreach (parent::initializeIterator() as $instance) {
       switch ($instance['type']) {
+        // @code
         // define('NODEWORDS_TYPE_NODE', 5);
+        // @endcode
         case 5:
           $instance['entity_type'] = 'node';
           break;
 
+        // @code
         // define('NODEWORDS_TYPE_TERM', 6);
+        // @endcode
         case 6:
           $instance['entity_type'] = 'taxonomy_term';
           break;
 
+        // @code
         // define('NODEWORDS_TYPE_USER', 8);
+        // @endcode
         case 8:
           $instance['entity_type'] = 'user';
           break;

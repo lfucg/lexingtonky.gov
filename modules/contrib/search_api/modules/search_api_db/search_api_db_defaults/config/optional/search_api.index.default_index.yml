@@ -36,7 +36,7 @@ field_settings:
     property_path: rendered_item
     configuration:
       roles:
-        anonymous: anonymous
+        - anonymous
       view_mode:
         'entity:node':
           article: search_index

@@ -246,7 +246,7 @@ search_api.property_configuration.rendered_item:
     roles:
       type: sequence
       label: 'The selected roles'
-      orderby: key
+      orderby: value
       sequence:
         type: string
         label: 'The user roles which will be active when the entity is rendered'

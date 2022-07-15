@@ -36,7 +36,7 @@ class MetatagViewsTranslationController extends ControllerBase {
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
   protected $languageManager;
-  
+
   /**
    * The request stack.
    *
@@ -161,9 +161,9 @@ class MetatagViewsTranslationController extends ControllerBase {
         '#links' => $operations,
         // Even if the mapper contains multiple language codes, the source
         // configuration can still be edited.
-        // {@code}
+        // @code
         // '#access' => ($langcode == $original_langcode) || $operations_access,
-        // {@endcode}
+        // @endcode
       ];
     }
 

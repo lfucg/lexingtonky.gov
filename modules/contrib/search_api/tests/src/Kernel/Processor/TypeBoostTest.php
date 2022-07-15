@@ -133,13 +133,14 @@ class TypeBoostTest extends ProcessorTestBase {
   }
 
   /**
-   * Tests that default values for individual bundles are correct in the form.
+   * Tests that default values are correct in the config form.
    */
-  public function testConfigFormBundleBoostDefaults() {
+  public function testConfigFormDefaultValues() {
     $form = $this->processor->buildConfigurationForm([], new FormState());
 
-    $this->assertEquals(Utility::formatBoostFactor(0), $form['boosts']['entity:node']['bundle_boosts']['article']['#default_value']);
-    $this->assertEquals(Utility::formatBoostFactor(0), $form['boosts']['entity:node']['bundle_boosts']['page']['#default_value']);
+    $this->assertEquals(Utility::formatBoostFactor(1), $form['boosts']['entity:node']['datasource_boost']['#default_value']);
+    $this->assertEquals('', $form['boosts']['entity:node']['bundle_boosts']['article']['#default_value']);
+    $this->assertEquals('', $form['boosts']['entity:node']['bundle_boosts']['page']['#default_value']);
 
     $configuration = [
       'boosts' => [
@@ -155,8 +156,28 @@ class TypeBoostTest extends ProcessorTestBase {
 
     $form = $this->processor->buildConfigurationForm([], new FormState());
 
+    $this->assertEquals(Utility::formatBoostFactor(3), $form['boosts']['entity:node']['datasource_boost']['#default_value']);
     $this->assertEquals(Utility::formatBoostFactor(0), $form['boosts']['entity:node']['bundle_boosts']['article']['#default_value']);
-    $this->assertEquals(Utility::formatBoostFactor(0), $form['boosts']['entity:node']['bundle_boosts']['page']['#default_value']);
+    $this->assertEquals('', $form['boosts']['entity:node']['bundle_boosts']['page']['#default_value']);
+
+    $configuration = [
+      'boosts' => [
+        'entity:node' => [
+          'datasource_boost' => Utility::formatBoostFactor(2),
+          'bundle_boosts' => [
+            'article' => Utility::formatBoostFactor(3),
+            'page' => Utility::formatBoostFactor(1.5),
+          ],
+        ],
+      ],
+    ];
+    $this->processor->setConfiguration($configuration);
+
+    $form = $this->processor->buildConfigurationForm([], new FormState());
+
+    $this->assertEquals(Utility::formatBoostFactor(2), $form['boosts']['entity:node']['datasource_boost']['#default_value']);
+    $this->assertEquals(Utility::formatBoostFactor(3), $form['boosts']['entity:node']['bundle_boosts']['article']['#default_value']);
+    $this->assertEquals(Utility::formatBoostFactor(1.5), $form['boosts']['entity:node']['bundle_boosts']['page']['#default_value']);
   }
 
 }

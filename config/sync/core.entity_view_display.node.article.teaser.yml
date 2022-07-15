@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.article.field_image
     - field.field.node.article.field_keywords
     - field.field.node.article.field_lex_custom_banner_image
+    - field.field.node.article.field_paragraph
     - field.field.node.article.field_tags
     - image.style.medium
     - node.type.article
@@ -40,6 +41,8 @@ content:
     settings:
       image_link: content
       image_style: medium
+      image_loading:
+        attribute: lazy
     third_party_settings: {  }
     weight: -1
     region: content
@@ -58,10 +61,8 @@ content:
     region: content
 hidden:
   comment: true
-  field_image: true
   field_keywords: true
   field_lex_custom_banner_image: true
   field_paragraph: true
   field_tags: true
-  langcode: true
   search_api_excerpt: true

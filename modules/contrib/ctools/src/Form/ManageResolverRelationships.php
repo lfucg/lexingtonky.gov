@@ -119,7 +119,7 @@ abstract class ManageResolverRelationships extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     if ($form_state->getTriggeringElement()['#name'] == 'add') {
       $cached_values = $form_state->getTemporaryValue('wizard');
-      list(, $route_parameters) = $this->getRelationshipOperationsRouteInfo($cached_values, $this->machine_name, $form_state->getValue('relationships'));
+      [, $route_parameters] = $this->getRelationshipOperationsRouteInfo($cached_values, $this->machine_name, $form_state->getValue('relationships'));
       $form_state->setRedirect($this->getAddRoute($cached_values), $route_parameters);
     }
   }
@@ -137,7 +137,7 @@ abstract class ManageResolverRelationships extends FormBase {
     $content = $this->formBuilder->getForm($this->getContextClass(), $relationship, $this->getTempstoreId(), $this->machine_name);
     $content['#attached']['library'][] = 'core/drupal.dialog.ajax';
     $cached_values = $form_state->getTemporaryValue('wizard');
-    list(, $route_parameters) = $this->getRelationshipOperationsRouteInfo($cached_values, $this->machine_name, $relationship);
+    [, $route_parameters] = $this->getRelationshipOperationsRouteInfo($cached_values, $this->machine_name, $relationship);
     $route_name = $this->getAddRoute($cached_values);
     $route_options = [
       'query' => [
@@ -175,7 +175,7 @@ abstract class ManageResolverRelationships extends FormBase {
   protected function renderRows($cached_values) {
     $contexts = [];
     foreach ($this->getContexts($cached_values) as $row => $context) {
-      list($route_name, $route_parameters) = $this->getRelationshipOperationsRouteInfo($cached_values, $this->machine_name, $row);
+      [$route_name, $route_parameters] = $this->getRelationshipOperationsRouteInfo($cached_values, $this->machine_name, $row);
       $build = [
         '#type' => 'operations',
         '#links' => $this->getOperations($cached_values, $row, $route_name, $route_parameters),

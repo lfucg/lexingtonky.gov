@@ -6,3 +6,6 @@ views.display_extender.metatag_display_extender:
       label: 'Metatags'
       sequence:
         type: metatag.metatag_tag.[%key]
+    tokenize:
+      type: boolean
+      label: 'Should replacement tokens be used from the first row'

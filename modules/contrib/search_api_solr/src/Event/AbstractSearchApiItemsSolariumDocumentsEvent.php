@@ -14,14 +14,14 @@ abstract class AbstractSearchApiItemsSolariumDocumentsEvent extends Event {
    *
    * @var \Drupal\search_api\Item\ItemInterface[]
    */
-  protected $search_api_items;
+  protected $searchApiItems;
 
   /**
    * The solarium document.
    *
    * @var \Solarium\Core\Query\DocumentInterface[]
    */
-  protected $solarium_documents;
+  protected $solariumDocuments;
 
   /**
    * Constructs a new class instance.
@@ -32,8 +32,8 @@ abstract class AbstractSearchApiItemsSolariumDocumentsEvent extends Event {
    *   The solarium documents.
    */
   public function __construct(array &$search_api_items, array &$solarium_documents) {
-    $this->search_api_items = &$search_api_items;
-    $this->solarium_documents = &$solarium_documents;
+    $this->searchApiItems = &$search_api_items;
+    $this->solariumDocuments = &$solarium_documents;
   }
 
   /**
@@ -43,7 +43,7 @@ abstract class AbstractSearchApiItemsSolariumDocumentsEvent extends Event {
    *   The search_api items.
    */
   public function getSearchApiItems() : array {
-    return $this->search_api_items;
+    return $this->searchApiItems;
   }
 
   /**
@@ -53,17 +53,17 @@ abstract class AbstractSearchApiItemsSolariumDocumentsEvent extends Event {
    *   The solarium documents.
    */
   public function getSolariumDocuments() : array {
-    return $this->solarium_documents;
+    return $this->solariumDocuments;
   }
 
   /**
    * Sets the solarium documents.
    *
-   * @param \Solarium\Core\Query\DocumentInterface[]
+   * @param \Solarium\Core\Query\DocumentInterface[] $solarium_documents
    *   The solarium documents.
    */
   public function setSolariumDocuments(array $solarium_documents) : void {
-    $this->solarium_documents = $solarium_documents;
+    $this->solariumDocuments = $solarium_documents;
   }
 
 }

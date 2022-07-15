@@ -101,7 +101,10 @@ class MetatagXssTest extends BrowserTestBase {
     $this->drupalLogin($this->adminUser);
 
     // Set up a content type.
-    $this->drupalCreateContentType(['type' => 'metatag_node', 'name' => 'Test Content Type']);
+    $this->drupalCreateContentType([
+      'type' => 'metatag_node',
+      'name' => 'Test Content Type',
+    ]);
 
     // Add a metatag field to the content type.
     $this->drupalGet('admin/structure/types/manage/metatag_node/fields/add-field');
@@ -215,9 +218,9 @@ class MetatagXssTest extends BrowserTestBase {
     $this->submitForm($edit, 'Save');
 
     // Check the body text.
-    // {@code}
+    // @code
     // $this->assertNoTitle($this->xssTitleString);
-    // {@endcode}
+    // @endcode
     $session->responseNotContains($this->xssTitleString);
   }
 

@@ -23,5 +23,3 @@ hidden:
   addtoany: true
   field_organization_image: true
   field_theme: true
-  langcode: true
-  search_api_excerpt: true

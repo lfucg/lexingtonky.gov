@@ -111,6 +111,9 @@ search_api_solr.solr_field_type.*:
         stoptags:
           type: string
           label: 'Stop tags'
+        pos:
+          type: string
+          label: 'Part of Speech'
 
 search_api_solr.solr_common_field_type:
   type: mapping
@@ -157,6 +160,12 @@ search_api_solr.solr_common_field_type:
               mode:
                 type: string
                 label: 'JapaneseTokenizerFactory::'
+              sentenceModel:
+                type: string
+                label: 'OpenNLPTokenizerFactory::sentenceModel'
+              tokenizerModel:
+                type: string
+                label: 'OpenNLPTokenizerFactory::tokenizerModel'
           filters:
             type: search_api_solr.solr_field_type_filters
     similarity:

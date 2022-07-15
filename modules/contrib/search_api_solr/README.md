@@ -35,7 +35,7 @@ docker-compose with
 https://github.com/docker-solr/docker-solr-examples/blob/master/docker-compose/docker-compose.yml
 
 The preferred way for local development is to use DDev where you can easily add
-the pre-definded
+the pre-defined
 [solr-cloud service](https://github.com/drud/ddev-contrib/tree/master/docker-compose-services/solr).
 
 Once Solr Cloud is running with DDev you don't need to deal with any configset
@@ -186,7 +186,7 @@ Updating Solr
 -------------
 
 Whenever you update your Solr installation it is recommended that you generate a
-new config-set and deploy it. The deployment depends on the the installation
+new config-set and deploy it. The deployment depends on the installation
 variation you choose before. It is also recommended to re-index yur content
 after an update. But if it is a minor update it should be save to just queue all
 contentfor re-indexing.
@@ -371,7 +371,8 @@ configuration management.
 We leverage the [solarium library](http://www.solarium-project.org/). You can
 also interact with solarium's API using our hooks and callbacks or via event
 listeners.
-This way you can for example add any solr specific parameter to a query you need.
+This way you can for example add any solr specific parameter to a query you
+need.
 
 But if you create Search API Queries by yourself in code there's an easier way.
 You can simply set the required parameter as option prefixed by 'solr_param_'.

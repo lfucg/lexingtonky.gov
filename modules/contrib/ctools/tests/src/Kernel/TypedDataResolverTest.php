@@ -22,7 +22,7 @@ class TypedDataResolverTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['user', 'system', 'entity_test', 'ctools'];
+  protected static $modules = ['user', 'system', 'entity_test', 'ctools'];
 
   /**
    * @var \Drupal\ctools\TypedDataResolver
@@ -77,7 +77,7 @@ class TypedDataResolverTest extends KernelTestBase {
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity to test with.
-   * @param $property_path
+   * @param string $property_path
    *   The property path to look for.
    * @param $expected_data_type
    *   The expected data type.
@@ -85,7 +85,7 @@ class TypedDataResolverTest extends KernelTestBase {
    * @return \Drupal\Core\Plugin\Context\ContextInterface
    *   The context with a value.
    */
-  protected function assertPropertyPath(ContentEntityInterface $entity, $property_path, $expected_data_type) {
+  protected function assertPropertyPath(ContentEntityInterface $entity, string $property_path, $expected_data_type) {
     $typed_data_entity = $entity->getTypedData();
     if (strpos($typed_data_entity->getDataDefinition()->getDataType(), 'entity:') === 0) {
       $context_definition = new EntityContextDefinition($typed_data_entity->getDataDefinition()->getDataType());

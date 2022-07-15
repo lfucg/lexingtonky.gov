@@ -4,14 +4,21 @@ namespace Drupal\search_api_solr\Event;
 
 use Drupal\Component\EventDispatcher\Event;
 
+/**
+ * Search API Solr event base class.
+ */
 abstract class AbstractServerAwareEvent extends Event {
 
   /**
+   * The lucene match version string.
+   *
    * @var string
    */
   protected $luceneMatchVersion;
 
   /**
+   * The server ID.
+   *
    * @var string
    */
   protected $serverId;
@@ -20,7 +27,9 @@ abstract class AbstractServerAwareEvent extends Event {
    * Constructs a new class instance.
    *
    * @param string $lucene_match_version
+   *   The lucene match version string.
    * @param string $server_id
+   *   The server ID.
    */
   public function __construct(string $lucene_match_version, string $server_id) {
     $this->luceneMatchVersion = $lucene_match_version;
@@ -40,4 +49,5 @@ abstract class AbstractServerAwareEvent extends Event {
   public function getServerId(): string {
     return $this->serverId;
   }
+
 }

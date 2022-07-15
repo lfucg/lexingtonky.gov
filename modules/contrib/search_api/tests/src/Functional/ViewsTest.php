@@ -64,6 +64,8 @@ class ViewsTest extends SearchApiBrowserTestBase {
     if (!Utility::isRunningInCli()) {
       \Drupal::state()->set('search_api_use_tracking_batch', FALSE);
     }
+
+    $this->rebuildContainer();
   }
 
   /**
@@ -781,6 +783,7 @@ class ViewsTest extends SearchApiBrowserTestBase {
     $this->assertSession()->pageTextContains('Language code');
     $this->assertSession()->pageTextContains('The user language code.');
     $this->assertSession()->pageTextContains('(No description available)');
+    $this->assertSession()->pageTextContains('Item URL');
     $this->assertSession()->pageTextNotContains('Error: missing help');
 
     // Then add some fields.
@@ -797,6 +800,7 @@ class ViewsTest extends SearchApiBrowserTestBase {
       'search_api_entity_user.roles',
       'search_api_index_database_search_index.rendered_item',
       'search_api_index_database_search_index.search_api_rendered_item',
+      'search_api_index_database_search_index.search_api_url',
     ];
     $edit = [];
     foreach ($fields as $field) {
@@ -879,6 +883,7 @@ class ViewsTest extends SearchApiBrowserTestBase {
       'user_id:roles',
       'rendered_item',
       'search_api_rendered_item',
+      'search_api_url',
     ];
     $rendered_item_fields = ['rendered_item', 'search_api_rendered_item'];
     foreach ($this->entities as $id => $entity) {
@@ -900,6 +905,9 @@ class ViewsTest extends SearchApiBrowserTestBase {
         foreach ($entities as $i => $field_entity) {
           if ($field === 'search_api_datasource') {
             $data = [$datasource_id];
+          }
+          elseif ($field === 'search_api_url') {
+            $data = [$field_entity->toUrl()->toString()];
           }
           elseif (in_array($field, $rendered_item_fields)) {
             $view_mode = $field === 'rendered_item' ? 'full' : 'teaser';
@@ -990,6 +998,19 @@ class ViewsTest extends SearchApiBrowserTestBase {
     $this->submitForm([], 'Save');
     $this->assertSession()->statusCodeEquals(200);
 
+    // Set query tags.
+    $this->drupalGet('admin/structure/views/nojs/display/search_api_test_view/page_1/query');
+    $this->submitForm(['query[options][query_tags]' => 'weather'], 'Apply');
+    $this->submitForm([], 'Save');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->drupalGet('search-api-test');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Sunshine');
+    $this->drupalGet('admin/structure/views/nojs/display/search_api_test_view/page_1/query');
+    $this->submitForm(['query[options][query_tags]' => 'weather'], 'Apply');
+    $this->submitForm([], 'Save');
+    $this->assertSession()->statusCodeEquals(200);
+
     $this->drupalLogout();
     $this->drupalGet('search-api-test');
     $this->assertSession()->statusCodeEquals(200);
@@ -1018,6 +1039,7 @@ class ViewsTest extends SearchApiBrowserTestBase {
       'search_api_datasource',
       'rendered_item',
       'search_api_rendered_item',
+      'search_api_url',
     ];
     // The "Fallback options" are only available for fields based on the Field
     // API.

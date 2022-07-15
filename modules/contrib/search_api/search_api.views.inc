@@ -407,7 +407,7 @@ function _search_api_views_handler_mapping() {
 
     $event = new MappingViewsHandlersEvent($mapping);
     \Drupal::getContainer()->get('event_dispatcher')
-      ->dispatch(SearchApiEvents::MAPPING_VIEWS_HANDLERS, $event);
+      ->dispatch($event, SearchApiEvents::MAPPING_VIEWS_HANDLERS);
   }
 
   return $mapping;
@@ -513,6 +513,14 @@ function _search_api_views_data_special_fields(array &$table, IndexInterface $in
   $table[$language_field]['sort']['id'] = 'search_api';
   if ($language_field != 'search_api_language') {
     $table[$language_field]['real field'] = 'search_api_language';
+  }
+
+  $url_field = _search_api_views_find_field_alias('search_api_url', $table);
+  $table[$url_field]['title'] = t('Item URL');
+  $table[$url_field]['help'] = t("The item's URL");
+  $table[$url_field]['field']['id'] = 'search_api';
+  if ($url_field != 'search_api_url') {
+    $table[$url_field]['real field'] = 'search_api_url';
   }
 
   $relevance_field = _search_api_views_find_field_alias('search_api_relevance', $table);
@@ -990,7 +998,7 @@ function _search_api_views_get_field_handler_mapping() {
 
     $event = new MappingViewsFieldHandlersEvent($plain_mapping);
     \Drupal::getContainer()->get('event_dispatcher')
-      ->dispatch(SearchApiEvents::MAPPING_VIEWS_FIELD_HANDLERS, $event);
+      ->dispatch($event, SearchApiEvents::MAPPING_VIEWS_FIELD_HANDLERS);
 
     // Then create a new, more practical structure, with the mappings grouped by
     // mapping type.
