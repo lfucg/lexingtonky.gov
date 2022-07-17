@@ -10,4 +10,4 @@ services:
     portforward: true
     core: lexky
     config:
-      dir: web/modules/contrib/search_api_solr/solr-conf-templates/8.x
+      dir: sites/all/modules/search_api_solr/solr-conf/8.x
