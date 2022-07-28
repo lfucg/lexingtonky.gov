@@ -2,7 +2,7 @@
 
 set -e
 
-# . clear_solr_index.sh
+. clear_solr_index.sh
 
 lando drush sapi-r
 
