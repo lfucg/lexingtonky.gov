@@ -12,7 +12,7 @@ echo
 [[ ! $REPLY =~ ^[Yy]$ ]] && exit
 
 output=$(curl -X POST -H 'Content-Type: application/json' \
-    "$SOLR_URL/solr/ukhc/update?commit=true" \
+    "$SOLR_URL/solr/lexky/update?commit=true" \
     -d '{ "delete": {"query":"*:*"} }' 2>&1)
 
 err_code=$?

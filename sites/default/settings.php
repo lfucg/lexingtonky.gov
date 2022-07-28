@@ -97,7 +97,6 @@ if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
 /**
  * Sets solr configuration for local and pantheon enviroments.
  */
-
 // if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
 //   if ($_ENV['PANTHEON_ENVIRONMENT'] == 'lando') {
 //     // Enable lando server and set index to use it for local development.

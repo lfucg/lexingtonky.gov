@@ -5,9 +5,18 @@ config:
   site: lexky-d8
   id: 085efc9d-6f4f-4d02-a80b-9d5cf086a982
 services:
+  appserver:
+    build_as_root:
+      - apt-get update -y && apt-get install -y jq
   solr:
     type: solr:8
     portforward: true
     core: lexky
     config:
       dir: sites/all/modules/search_api_solr/solr-conf/8.x
+tooling:
+  drush:
+    service: appserver
+    cmd: drush --root=/app/docroot --uri=https://lexky-d8.lndo.site
+  jq:
+    service: appserver
