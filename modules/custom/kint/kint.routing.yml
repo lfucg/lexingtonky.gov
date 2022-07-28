@@ -1,6 +1,0 @@
-kint:
-path: /hello/world  - (The url path)
-defaults:
-_controller: Drupal\hello_world\Controller\HelloWorldController::hello
-requirements:
-_permission: 'access content'
