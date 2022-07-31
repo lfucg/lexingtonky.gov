@@ -70,7 +70,7 @@ class MetatagFieldItem extends FieldItemBase {
     $current_value = $this->value;
     // Only unserialize if still serialized string.
     if (is_string($current_value)) {
-      $current_tags = unserialize($current_value);
+      $current_tags = unserialize($current_value, ['allowed_classes' => FALSE]);
     }
     else {
       $current_tags = $current_value;
@@ -84,6 +84,9 @@ class MetatagFieldItem extends FieldItemBase {
         $tags_to_save[$tag_id] = $tag_value;
       }
     }
+
+    // Sort the values prior to saving. so that they are easier to manage.
+    ksort($tags_to_save);
 
     // Update the value to only save overridden tags.
     $this->value = serialize($tags_to_save);

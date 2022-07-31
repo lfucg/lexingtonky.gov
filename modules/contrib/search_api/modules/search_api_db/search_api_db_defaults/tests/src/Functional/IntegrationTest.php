@@ -61,6 +61,14 @@ class IntegrationTest extends BrowserTestBase {
     // Installation invokes a batch and this breaks it.
     \Drupal::state()->set('search_api_use_tracking_batch', FALSE);
 
+    // Uninstall the Core search module.
+    $edit_enable = [
+      'uninstall[search]' => TRUE,
+    ];
+    $this->drupalGet('admin/modules/uninstall');
+    $this->submitForm($edit_enable, 'Uninstall');
+    $this->submitForm([], 'Uninstall');
+
     // Install the search_api_db_defaults module.
     $edit_enable = [
       'modules[search_api_db_defaults][enable]' => TRUE,
@@ -110,6 +118,8 @@ class IntegrationTest extends BrowserTestBase {
     $this->submitForm(['keys' => 'test'], 'Search');
     $this->assertSession()->pageTextContains($title);
     $this->assertSession()->responseNotContains('Error message');
+    $this->assertSession()->pageTextNotContains('Please enter some keywords.');
+    $this->assertSession()->pageTextNotContains('Your search yielded no results.');
 
     // Uninstall the module.
     $this->drupalLogin($this->adminUser);

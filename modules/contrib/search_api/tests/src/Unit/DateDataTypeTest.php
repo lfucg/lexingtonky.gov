@@ -4,6 +4,7 @@ namespace Drupal\Tests\search_api\Unit;
 
 use Drupal\search_api\Plugin\search_api\data_type\DateDataType;
 use Drupal\Tests\UnitTestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Tests functionality of the "Date" data type plugin.
@@ -66,6 +67,23 @@ class DateDataTypeTest extends UnitTestCase {
       'date string' => [gmdate($f, $t), $t],
       'date string with timezone' => [date($f . 'P', $t), $t],
     ];
+  }
+
+  /**
+   * Tests that an invalid date value is handled correctly.
+   */
+  public function testInvalidValue(): void {
+    $logger = $this->createMock(LoggerInterface::class);
+    $logged = [];
+    $callback = function (string $message, array $context = []) use (&$logged) {
+      $logged[] = strtr($message, $context);
+    };
+    $logger->method('warning')->willReturnCallback($callback);
+    $this->plugin->setLogger($logger);
+
+    $value = $this->plugin->getValue('foobar');
+    $this->assertNull($value);
+    $this->assertEquals(['Error while parsing date/time value "foobar": The timezone could not be found in the database.'], $logged);
   }
 
 }

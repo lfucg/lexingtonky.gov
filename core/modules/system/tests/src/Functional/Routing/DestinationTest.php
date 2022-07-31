@@ -20,7 +20,7 @@ class DestinationTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['system_test'];
+  protected static $modules = ['system_test'];
 
   /**
    * {@inheritdoc}
@@ -63,18 +63,18 @@ class DestinationTest extends BrowserTestBase {
       [
         'input' => 'javascript:alert(0)',
         'output' => 'javascript:alert(0)',
-        'message' => 'Javascript URL is allowed because it is treated as an internal URL.',
+        'message' => 'JavaScript URL is allowed because it is treated as an internal URL.',
       ],
     ];
     foreach ($test_cases as $test_case) {
       // Test $_GET['destination'].
       $this->drupalGet('system-test/get-destination', ['query' => ['destination' => $test_case['input']]]);
-      $this->assertIdentical($test_case['output'], $session->getPage()->getContent(), $test_case['message']);
+      $this->assertSame($test_case['output'], $session->getPage()->getContent(), $test_case['message']);
       // Test $_REQUEST['destination'].
       $post_output = $http_client->request('POST', $this->buildUrl('system-test/request-destination'), [
         'form_params' => ['destination' => $test_case['input']],
       ]);
-      $this->assertIdentical($test_case['output'], (string) $post_output->getBody(), $test_case['message']);
+      $this->assertSame($test_case['output'], (string) $post_output->getBody(), $test_case['message']);
     }
 
     // Make sure that 404 pages do not populate $_GET['destination'] with
@@ -82,7 +82,7 @@ class DestinationTest extends BrowserTestBase {
     \Drupal::configFactory()->getEditable('system.site')->set('page.404', '/system-test/get-destination')->save();
     $this->drupalGet('http://example.com', ['external' => FALSE]);
     $this->assertSession()->statusCodeEquals(404);
-    $this->assertIdentical(Url::fromRoute('<front>')->toString(), $session->getPage()->getContent(), 'External URL is not allowed on 404 pages.');
+    $this->assertSame(Url::fromRoute('<front>')->toString(), $session->getPage()->getContent(), 'External URL is not allowed on 404 pages.');
   }
 
 }

@@ -6,7 +6,6 @@ use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Security\DoTrustedCallbackTrait;
 use Drupal\Core\Security\UntrustedCallbackException;
 use Drupal\Tests\UnitTestCase;
-use PHPUnit\Framework\Error\Warning;
 
 /**
  * @coversDefaultClass \Drupal\Core\Security\DoTrustedCallbackTrait
@@ -77,9 +76,9 @@ class DoTrustedCallbackTraitTest extends UnitTestCase {
   /**
    * @dataProvider errorTypeProvider
    * @group legacy
-   * @expectedDeprecation Drupal\Tests\Core\Security\UntrustedObject::callback is not trusted
    */
   public function testSilencedDeprecation($callback) {
+    $this->expectDeprecation('Drupal\Tests\Core\Security\UntrustedObject::callback is not trusted');
     $this->doTrustedCallback($callback, [], '%s is not trusted', TrustedCallbackInterface::TRIGGER_SILENCED_DEPRECATION);
   }
 
@@ -87,7 +86,8 @@ class DoTrustedCallbackTraitTest extends UnitTestCase {
    * @dataProvider errorTypeProvider
    */
   public function testWarning($callback) {
-    $this->expectException(Warning::class, 'Drupal\Tests\Core\Security\UntrustedObject::callback is not trusted');
+    $this->expectWarning();
+    $this->expectWarningMessage('Drupal\Tests\Core\Security\UntrustedObject::callback is not trusted');
     $this->doTrustedCallback($callback, [], '%s is not trusted', TrustedCallbackInterface::TRIGGER_WARNING);
   }
 

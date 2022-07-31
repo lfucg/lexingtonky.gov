@@ -17,13 +17,6 @@ use Drupal\Component\Annotation\Plugin;
 class DevelDumper extends Plugin {
 
   /**
-   * The plugin ID.
-   *
-   * @var string
-   */
-  public $id;
-
-  /**
    * The human-readable name of the DevelDumper type.
    *
    * @ingroup plugin_translatable

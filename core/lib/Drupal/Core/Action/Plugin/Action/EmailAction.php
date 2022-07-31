@@ -49,7 +49,7 @@ class EmailAction extends ConfigurableActionBase implements ContainerFactoryPlug
   protected $logger;
 
   /**
-   * The mail manager
+   * The mail manager.
    *
    * @var \Drupal\Core\Mail\MailManagerInterface
    */
@@ -70,7 +70,7 @@ class EmailAction extends ConfigurableActionBase implements ContainerFactoryPlug
   protected $emailValidator;
 
   /**
-   * Constructs a EmailAction object.
+   * Constructs an EmailAction object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -81,7 +81,7 @@ class EmailAction extends ConfigurableActionBase implements ContainerFactoryPlug
    * @param \Drupal\Core\Utility\Token $token
    *   The token service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity manager.
+   *   The entity type manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
    * @param \Drupal\Core\Mail\MailManagerInterface $mail_manager

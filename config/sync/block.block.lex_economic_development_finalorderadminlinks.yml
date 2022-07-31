@@ -1,0 +1,38 @@
+uuid: 1c5a7511-acda-4ee7-b308-6c4d96b9a0fc
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.final-order-admin
+  module:
+    - system
+    - user
+  theme:
+    - lex_economic_development
+id: lex_economic_development_finalorderadminlinks
+theme: lex_economic_development
+region: title
+weight: -15
+provider: null
+plugin: 'system_menu_block:final-order-admin'
+settings:
+  id: 'system_menu_block:final-order-admin'
+  label: 'Final order admin links - view'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: /final-orders
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      final_order_admin: final_order_admin

@@ -22,7 +22,7 @@ function comment_token_info() {
   ];
 
   $tokens = [];
-  // Provide a integration for each entity type except comment.
+  // Provides an integration for each entity type except comment.
   foreach (\Drupal::entityTypeManager()->getDefinitions() as $entity_type_id => $entity_type) {
     if ($entity_type_id == 'comment' || !$entity_type->entityClassImplements(ContentEntityInterface::class)) {
       continue;
@@ -251,7 +251,7 @@ function comment_tokens($type, $tokens, array $data, array $options, BubbleableM
   }
   // Replacement tokens for any content entities that have comment field.
   elseif (!empty($data[$type]) && $data[$type] instanceof FieldableEntityInterface) {
-    /** @var $entity \Drupal\Core\Entity\FieldableEntityInterface */
+    /** @var \Drupal\Core\Entity\FieldableEntityInterface $entity */
     $entity = $data[$type];
 
     foreach ($tokens as $name => $original) {

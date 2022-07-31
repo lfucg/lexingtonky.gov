@@ -39,7 +39,6 @@ class IcuDatFileLoader extends IcuResFileLoader
         try {
             $rb = new \ResourceBundle($locale, $resource);
         } catch (\Exception $e) {
-            // HHVM compatibility: constructor throws on invalid resource
             $rb = null;
         }
 
@@ -53,7 +52,7 @@ class IcuDatFileLoader extends IcuResFileLoader
         $catalogue = new MessageCatalogue($locale);
         $catalogue->add($messages, $domain);
 
-        if (class_exists('Symfony\Component\Config\Resource\FileResource')) {
+        if (class_exists(FileResource::class)) {
             $catalogue->addResource(new FileResource($resource.'.dat'));
         }
 

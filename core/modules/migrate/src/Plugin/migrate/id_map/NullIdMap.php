@@ -55,14 +55,6 @@ class NullIdMap extends PluginBase implements MigrateIdMapInterface {
   /**
    * {@inheritdoc}
    */
-  public function lookupDestinationId(array $source_id_values) {
-    @trigger_error(__NAMESPACE__ . '\NullIdMap::lookupDestinationId() is deprecated in drupal:8.1.0 and is removed from drupal:9.0.0. Use Sql::lookupDestinationIds() instead. See https://www.drupal.org/node/2725809', E_USER_DEPRECATED);
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function lookupDestinationIds(array $source_id_values) {
     return [];
   }
@@ -86,14 +78,6 @@ class NullIdMap extends PluginBase implements MigrateIdMapInterface {
    */
   public function getMessages(array $source_id_values = [], $level = NULL) {
     return new \ArrayIterator([]);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getMessageIterator(array $source_id_values = [], $level = NULL) {
-    @trigger_error('getMessageIterator() is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use getMessages() instead. See https://www.drupal.org/node/3060969', E_USER_DEPRECATED);
-    return $this->getMessages($source_id_values, $level);
   }
 
   /**
@@ -197,6 +181,7 @@ class NullIdMap extends PluginBase implements MigrateIdMapInterface {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function rewind() {
     return NULL;
   }
@@ -204,6 +189,7 @@ class NullIdMap extends PluginBase implements MigrateIdMapInterface {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function current() {
     return NULL;
   }
@@ -211,6 +197,7 @@ class NullIdMap extends PluginBase implements MigrateIdMapInterface {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function key() {
     return '';
   }
@@ -218,6 +205,7 @@ class NullIdMap extends PluginBase implements MigrateIdMapInterface {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function next() {
     return NULL;
   }
@@ -225,6 +213,7 @@ class NullIdMap extends PluginBase implements MigrateIdMapInterface {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function valid() {
     return FALSE;
   }

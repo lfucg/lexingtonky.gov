@@ -3,11 +3,6 @@ access devel information:
   title: 'Access developer information'
   restrict access: TRUE
 
-execute php code:
-  title: 'Execute PHP code'
-  description: 'Run arbitrary PHP from a block.'
-  restrict access: TRUE
-
 switch users:
   title: 'Switch users'
   description: 'Become any user on the site with just a click.'

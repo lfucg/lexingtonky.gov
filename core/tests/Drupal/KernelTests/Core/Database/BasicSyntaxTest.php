@@ -24,7 +24,7 @@ class BasicSyntaxTest extends DatabaseTestBase {
       ':a4' => ' a ',
       ':a5' => 'test.',
     ]);
-    $this->assertIdentical($result->fetchField(), 'This is a test.', 'Basic CONCAT works.');
+    $this->assertSame('This is a test.', $result->fetchField(), 'Basic CONCAT works.');
   }
 
   /**
@@ -37,7 +37,7 @@ class BasicSyntaxTest extends DatabaseTestBase {
    */
   public function testConcatFields() {
     $result = $this->connection->query(
-      'SELECT CONCAT(:a1, CONCAT(job, CONCAT(:a2, CONCAT(age, :a3)))) FROM {test} WHERE age = :age', [
+      'SELECT CONCAT(:a1, CONCAT([job], CONCAT(:a2, CONCAT([age], :a3)))) FROM {test} WHERE [age] = :age', [
         ':a1' => 'The age of ',
         ':a2' => ' is ',
         ':a3' => '.',
@@ -57,19 +57,19 @@ class BasicSyntaxTest extends DatabaseTestBase {
       ':a3' => '',
       ':a4' => 'world.',
     ]);
-    $this->assertIdentical($result->fetchField(), 'Hello, , world.');
+    $this->assertSame('Hello, , world.', $result->fetchField());
   }
 
   /**
    * Tests string concatenation with separator, with field values.
    */
   public function testConcatWsFields() {
-    $result = $this->connection->query("SELECT CONCAT_WS('-', :a1, name, :a2, age) FROM {test} WHERE age = :age", [
+    $result = $this->connection->query("SELECT CONCAT_WS('-', :a1, [name], :a2, [age]) FROM {test} WHERE [age] = :age", [
       ':a1' => 'name',
       ':a2' => 'age',
       ':age' => 25,
     ]);
-    $this->assertIdentical($result->fetchField(), 'name-John-age-25');
+    $this->assertSame('name-John-age-25', $result->fetchField());
   }
 
   /**
@@ -88,14 +88,14 @@ class BasicSyntaxTest extends DatabaseTestBase {
       ->countQuery()
       ->execute()
       ->fetchField();
-    $this->assertIdentical($num_matches, '2', 'Found 2 records.');
+    $this->assertSame('2', $num_matches, 'Found 2 records.');
     // Match only "Ring_" using a LIKE expression with no wildcards.
     $num_matches = $this->connection->select('test', 't')
       ->condition('name', $this->connection->escapeLike('Ring_'), 'LIKE')
       ->countQuery()
       ->execute()
       ->fetchField();
-    $this->assertIdentical($num_matches, '1', 'Found 1 record.');
+    $this->assertSame('1', $num_matches, 'Found 1 record.');
   }
 
   /**
@@ -119,14 +119,14 @@ class BasicSyntaxTest extends DatabaseTestBase {
       ->countQuery()
       ->execute()
       ->fetchField();
-    $this->assertIdentical($num_matches, '2', 'Found 2 records.');
+    $this->assertSame('2', $num_matches, 'Found 2 records.');
     // Match only the former using a LIKE expression with no wildcards.
     $num_matches = $this->connection->select('test', 't')
       ->condition('name', $this->connection->escapeLike('abc%\_'), 'LIKE')
       ->countQuery()
       ->execute()
       ->fetchField();
-    $this->assertIdentical($num_matches, '1', 'Found 1 record.');
+    $this->assertSame('1', $num_matches, 'Found 1 record.');
   }
 
   /**
@@ -138,7 +138,36 @@ class BasicSyntaxTest extends DatabaseTestBase {
       ->countQuery()
       ->execute()
       ->fetchField();
-    $this->assertIdentical($num_matches, '4', 'Found 4 records.');
+    $this->assertSame('4', $num_matches, 'Found 4 records.');
+  }
+
+  /**
+   * Tests allowing square brackets in queries.
+   *
+   * @see \Drupal\Core\Database\Connection::prepareQuery()
+   */
+  public function testAllowSquareBrackets() {
+    $this->connection->insert('test')
+      ->fields(['name'])
+      ->values([
+        'name' => '[square]',
+      ])
+      ->execute();
+
+    // Note that this is a very bad example query because arguments should be
+    // passed in via the $args parameter.
+    $result = $this->connection->query("select name from {test} where name = '[square]'", [], ['allow_square_brackets' => TRUE]);
+    $this->assertSame('[square]', $result->fetchField());
+
+    // Test that allow_square_brackets has no effect on arguments.
+    $result = $this->connection->query("select [name] from {test} where [name] = :value", [':value' => '[square]']);
+    $this->assertSame('[square]', $result->fetchField());
+    $result = $this->connection->query("select name from {test} where name = :value", [':value' => '[square]'], ['allow_square_brackets' => TRUE]);
+    $this->assertSame('[square]', $result->fetchField());
+
+    // Test square brackets using the query builder.
+    $result = $this->connection->select('test')->fields('test', ['name'])->condition('name', '[square]')->execute();
+    $this->assertSame('[square]', $result->fetchField());
   }
 
 }

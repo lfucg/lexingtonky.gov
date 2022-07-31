@@ -2,7 +2,6 @@
 
 namespace Drupal\user\Form;
 
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -18,12 +17,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @internal
  */
 class UserMultipleCancelConfirm extends ConfirmFormBase {
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The temp store factory.
@@ -98,7 +91,14 @@ class UserMultipleCancelConfirm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getConfirmText() {
-    return $this->t('Cancel accounts');
+    return $this->t('Confirm');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDescription() {
+    return '';
   }
 
   /**
@@ -106,7 +106,7 @@ class UserMultipleCancelConfirm extends ConfirmFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Retrieve the accounts to be canceled from the temp store.
-    /* @var \Drupal\user\Entity\User[] $accounts */
+    /** @var \Drupal\user\Entity\User[] $accounts */
     $accounts = $this->tempStoreFactory
       ->get('user_user_operations_cancel')
       ->get($this->currentUser()->id());
@@ -155,7 +155,7 @@ class UserMultipleCancelConfirm extends ConfirmFormBase {
 
     $form['user_cancel_method'] = [
       '#type' => 'radios',
-      '#title' => $this->t('When cancelling these accounts'),
+      '#title' => $this->t('Cancellation method'),
       '#access' => $selectCancel,
     ];
 
@@ -174,7 +174,7 @@ class UserMultipleCancelConfirm extends ConfirmFormBase {
     // Allow to send the account cancellation confirmation mail.
     $form['user_cancel_confirm'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Require email confirmation to cancel account'),
+      '#title' => $this->t('Require email confirmation'),
       '#default_value' => FALSE,
       '#description' => $this->t('When enabled, the user must confirm the account cancellation via email.'),
     ];

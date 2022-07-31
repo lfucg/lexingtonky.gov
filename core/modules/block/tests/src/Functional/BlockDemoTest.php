@@ -16,12 +16,12 @@ class BlockDemoTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['block'];
+  protected static $modules = ['block'];
 
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'classy';
+  protected $defaultTheme = 'stark';
 
   /**
    * Check for the accessibility of the admin block demo page.
@@ -39,13 +39,13 @@ class BlockDemoTest extends BrowserTestBase {
     $default_theme = $config->get('default');
     $this->drupalGet('admin/structure/block/demo/' . $default_theme);
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertLinkByHref('admin/structure/block');
-    $this->assertNoLinkByHref('admin/structure/block/list/' . $default_theme);
+    $this->assertSession()->linkByHrefExists('admin/structure/block');
+    $this->assertSession()->linkByHrefNotExists('admin/structure/block/list/' . $default_theme);
 
     // All available themes in core.
     $available_themes = [
       'bartik',
-      'classy',
+      'olivero',
       'seven',
       'stark',
     ];
@@ -60,7 +60,7 @@ class BlockDemoTest extends BrowserTestBase {
       $this->drupalGet('admin/structure/block/demo/' . $theme);
       $this->assertSession()->statusCodeEquals(200);
       // Confirm existence of link for "Exit block region demonstration".
-      $this->assertLinkByHref('admin/structure/block/list/' . $theme);
+      $this->assertSession()->linkByHrefExists('admin/structure/block/list/' . $theme);
     }
 
     // Confirm access to the block demo page is denied for an invalid theme.

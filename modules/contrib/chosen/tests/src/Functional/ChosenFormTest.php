@@ -27,7 +27,7 @@ class ChosenFormTest extends BrowserTestBase {
    */
   public function testFormPage() {
     $this->drupalGet('chosen-test');
-    $this->assertText('Select');
+    $this->assertSession()->pageTextContains('Select');
     $this->assertSession()->elementExists('css', 'select#edit-select.chosen-enable');
   }
 

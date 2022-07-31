@@ -23,7 +23,7 @@ class ImageFormatterTest extends FieldKernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['file', 'image'];
+  protected static $modules = ['file', 'image'];
 
   /**
    * @var string
@@ -48,7 +48,7 @@ class ImageFormatterTest extends FieldKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installConfig(['field']);
@@ -206,8 +206,10 @@ class ImageFormatterTest extends FieldKernelTestBase {
    *   The renderable array. Must have a #cache[tags] element.
    * @param array $cache_tags
    *   The expected cache tags.
+   *
+   * @internal
    */
-  protected function assertCacheTags(array $renderable, array $cache_tags) {
+  protected function assertCacheTags(array $renderable, array $cache_tags): void {
     $diff = array_diff($cache_tags, $renderable['#cache']['tags']);
     $this->assertEmpty($diff);
   }

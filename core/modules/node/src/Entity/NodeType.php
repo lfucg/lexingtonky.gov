@@ -26,6 +26,9 @@ use Drupal\node\NodeTypeInterface;
  *       "edit" = "Drupal\node\NodeTypeForm",
  *       "delete" = "Drupal\node\Form\NodeTypeDeleteConfirm"
  *     },
+ *     "route_provider" = {
+ *       "permissions" = "Drupal\user\Entity\EntityPermissionsRouteProvider",
+ *     },
  *     "list_builder" = "Drupal\node\NodeTypeListBuilder",
  *   },
  *   admin_permission = "administer content types",
@@ -38,6 +41,7 @@ use Drupal\node\NodeTypeInterface;
  *   links = {
  *     "edit-form" = "/admin/structure/types/manage/{node_type}",
  *     "delete-form" = "/admin/structure/types/manage/{node_type}/delete",
+ *     "entity-permissions-form" = "/admin/structure/types/manage/{node_type}/permissions",
  *     "collection" = "/admin/structure/types",
  *   },
  *   config_export = {
@@ -119,14 +123,6 @@ class NodeType extends ConfigEntityBundleBase implements NodeTypeInterface {
   public function isLocked() {
     $locked = \Drupal::state()->get('node.type.locked');
     return isset($locked[$this->id()]) ? $locked[$this->id()] : FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isNewRevision() {
-    @trigger_error('NodeType::isNewRevision is deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. Use Drupal\Core\Entity\RevisionableEntityBundleInterface::shouldCreateNewRevision() instead. See https://www.drupal.org/node/3067365', E_USER_DEPRECATED);
-    return $this->shouldCreateNewRevision();
   }
 
   /**

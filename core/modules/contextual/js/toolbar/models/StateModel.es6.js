@@ -3,7 +3,11 @@
  * A Backbone Model for the state of Contextual module's edit toolbar tab.
  */
 
-(function(Drupal, Backbone) {
+(function (Drupal, Backbone) {
+  /**
+   * @deprecated in drupal:9.4.0 and is removed from drupal:10.0.0. There is no
+   *  replacement.
+   */
   Drupal.contextualToolbar.StateModel = Backbone.Model.extend(
     /** @lends Drupal.contextualToolbar.StateModel# */ {
       /**
@@ -79,7 +83,7 @@
 
         // Whenever edit mode is toggled, lock all contextual links.
         this.listenTo(this, 'change:isViewing', (model, isViewing) => {
-          options.contextualCollection.each(contextualModel => {
+          options.contextualCollection.each((contextualModel) => {
             contextualModel.set('isLocked', !isViewing);
           });
         });

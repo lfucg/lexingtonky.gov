@@ -24,13 +24,13 @@ class UserDataTest extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['user_test_views'];
+  protected static $modules = ['user_test_views'];
 
   /**
    * Tests field handler.
    */
   public function testDataField() {
-    ViewTestData::createTestViews(get_class($this), ['user_test_views']);
+    ViewTestData::createTestViews(static::class, ['user_test_views']);
 
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);

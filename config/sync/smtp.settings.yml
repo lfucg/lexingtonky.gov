@@ -1,0 +1,20 @@
+_core:
+  default_config_hash: fP57Sd8RjnZMVH3p_R-Yt0tC8j7Z-BuzGMIp6pmrHAI
+smtp_on: true
+smtp_host: null
+smtp_hostbackup: ''
+smtp_port: '465'
+smtp_protocol: ssl
+smtp_autotls: true
+smtp_timeout: 30
+smtp_username: ''
+smtp_password: ''
+smtp_from: webmaster@lexingtonky.gov
+smtp_fromname: ''
+smtp_client_hostname: ''
+smtp_client_helo: ''
+smtp_allowhtml: '0'
+smtp_test_address: ''
+smtp_debugging: false
+prev_mail_system: php_mail
+smtp_keepalive: false

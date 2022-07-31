@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * Really remove vendor_dir from composer_deploy config.
+ */
+function composer_deploy_update_8101() {
+  \Drupal::configFactory()
+    ->getEditable('composer_deploy.settings')
+    ->clear('vendor_dir')
+    ->save();
+}

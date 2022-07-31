@@ -41,6 +41,13 @@ class TypedDataEntityRelationshipPluginTest extends RelationshipsTestBase {
     $relationship = $uid_plugin->getRelationship();
     $this->assertTrue($relationship->getContextValue() instanceof User);
     $this->assertSame('entity:user', $relationship->getContextDefinition()->getDataType());
+
+    /** @var \Drupal\ctools\Plugin\RelationshipInterface $uid_plugin */
+    $uid_plugin = $this->relationshipManager->createInstance('typed_data_entity_relationship:entity:node:uid');
+    $uid_plugin->setContextValue('base', $this->entities['node4']);
+    $relationship = $uid_plugin->getRelationship();
+    $this->assertFalse($relationship->hasContextValue());
+    $this->assertSame('entity:user', $relationship->getContextDefinition()->getDataType());
   }
 
 }

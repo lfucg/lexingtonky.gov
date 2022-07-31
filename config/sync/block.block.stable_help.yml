@@ -1,0 +1,20 @@
+uuid: 8f528f53-96aa-439b-a703-3f3778d55831
+langcode: en
+status: true
+dependencies:
+  module:
+    - help
+  theme:
+    - stable
+id: stable_help
+theme: stable
+region: content
+weight: -30
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Help
+  label_display: '0'
+  provider: help
+visibility: {  }

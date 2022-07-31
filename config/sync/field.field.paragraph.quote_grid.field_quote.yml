@@ -1,0 +1,90 @@
+uuid: fd86cfb5-785b-4812-bdaf-b32b4f0a8ee1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_quote
+    - paragraphs.paragraphs_type.quote
+    - paragraphs.paragraphs_type.quote_grid
+    - paragraphs.paragraphs_type.standalone_link
+  module:
+    - entity_reference_revisions
+id: paragraph.quote_grid.field_quote
+field_name: field_quote
+entity_type: paragraph
+bundle: quote_grid
+label: Quote
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      quote: quote
+      standalone_link: standalone_link
+    negate: 0
+    target_bundles_drag_drop:
+      accordion_block:
+        weight: 21
+        enabled: false
+      accordion_section:
+        weight: 22
+        enabled: false
+      card_button:
+        weight: 23
+        enabled: false
+      card_grid:
+        weight: 24
+        enabled: false
+      contact_card:
+        weight: 25
+        enabled: false
+      econdev_main_hero_text:
+        weight: 26
+        enabled: false
+      econdev_secondary_hero_text:
+        weight: 27
+        enabled: false
+      flex_grid:
+        weight: 28
+        enabled: false
+      icon_button_with_description:
+        weight: 29
+        enabled: false
+      lexidme_case:
+        weight: 30
+        enabled: false
+      lexidme_grid:
+        weight: 31
+        enabled: false
+      paragraph_sidebar_section:
+        weight: 32
+        enabled: false
+      paragraphs_media_contact:
+        weight: 33
+        enabled: false
+      paragraphs_page_section:
+        weight: 34
+        enabled: false
+      photo_grid:
+        weight: 35
+        enabled: false
+      quote:
+        weight: 36
+        enabled: true
+      quote_grid:
+        weight: 20
+        enabled: false
+      rendered_block:
+        weight: 37
+        enabled: false
+      standalone_link:
+        weight: 39
+        enabled: true
+      views_block:
+        weight: 38
+        enabled: false
+field_type: entity_reference_revisions

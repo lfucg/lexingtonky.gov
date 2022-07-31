@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Class WebprofilerEventSubscriber
+ * Class WebprofilerEventSubscriber.
  */
 class WebprofilerEventSubscriber implements EventSubscriberInterface {
 
@@ -55,7 +55,7 @@ class WebprofilerEventSubscriber implements EventSubscriberInterface {
       );
     }
 
-    // do not capture redirects or modify XML HTTP Requests
+    // Do not capture redirects or modify XML HTTP Requests.
     if ($request->isXmlHttpRequest()) {
       return;
     }
@@ -94,4 +94,5 @@ class WebprofilerEventSubscriber implements EventSubscriberInterface {
       KernelEvents::RESPONSE => ['onKernelResponse', -128],
     ];
   }
+
 }

@@ -15,6 +15,10 @@ bug fixes, and enhancements to the original code.
 
 For more information on these modifications, read the [differences from rashid2538/php-htmldiff][differences] or view the [CHANGELOG][changelog].
 
+## Demo
+
+https://php-htmldiff.caxy.com/
+
 ## Installation
 
 The recommended way to install php-htmldiff is through [Composer][composer].
@@ -40,6 +44,10 @@ use Caxy\HtmlDiff\HtmlDiff;
 $htmlDiff = new HtmlDiff($oldHtml, $newHtml);
 $content = $htmlDiff->build();
 ```
+
+## CSS Example
+
+See https://github.com/caxy/php-htmldiff/blob/master/demo/codes.css for starter CSS you can use for displaying the HTML diff output.
 
 ## Configuration
 
@@ -140,10 +148,7 @@ $config
     
     // List of characters to consider part of a single word when in the middle of text.
     ->setSpecialCaseChars(array('.', ',', '(', ')', '\''))
-    
-    // List of tags to treat as special case tags.
-    ->setSpecialCaseTags(array('strong', 'b', 'i', 'big', 'small', 'u', 'sub', 'sup', 'strike', 's', 'p'))
-    
+        
     // List of tags (and their replacement strings) to be diffed in isolation.
     ->setIsolatedDiffTags(array(
         'ol'     => '[[REPLACE_ORDERED_LIST]]',

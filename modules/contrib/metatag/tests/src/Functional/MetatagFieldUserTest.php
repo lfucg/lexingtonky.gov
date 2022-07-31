@@ -95,14 +95,14 @@ class MetatagFieldUserTest extends MetatagFieldTestBase {
   /**
    * Confirm the metatag field can be shown on a user registration page.
    *
-   * @todo
+   * @todo Write this.
    */
   public function testFieldsOnUserRegistrationForm() {}
 
   /**
    * Confirm the metatag field can be shown on a normal user's own edit form.
    *
-   * @todo
+   * @todo Write this.
    */
   public function testFieldsOnUserEditForm() {}
 

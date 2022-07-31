@@ -1,0 +1,31 @@
+uuid: 72c92885-6bad-4b29-8a5e-e30f23cfbeb1
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:34db9b12-5ecc-4371-89df-16ac11fe0d70'
+  module:
+    - block_content
+    - system
+  theme:
+    - lex_economic_development
+id: lex_economic_development_find_council_district_sidebar
+theme: lex_economic_development
+region: notices
+weight: -26
+provider: null
+plugin: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
+settings:
+  id: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
+  label: 'Find your council district'
+  label_display: visible
+  provider: block_content
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: "/council-district-*\r\n/council-at-large-*\r\n/district-*"

@@ -107,7 +107,7 @@ class EntityReferenceFieldTranslatedReferenceViewTest extends BrowserTestBase {
   protected $translatedLabel;
 
   /**
-   * An user with permission to edit the referrer entity.
+   * A user with permission to edit the referrer entity.
    *
    * @var \Drupal\user\UserInterface
    */
@@ -118,7 +118,7 @@ class EntityReferenceFieldTranslatedReferenceViewTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'language',
     'content_translation',
     'node',
@@ -129,7 +129,7 @@ class EntityReferenceFieldTranslatedReferenceViewTest extends BrowserTestBase {
    */
   protected $defaultTheme = 'stark';
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->labelOfNotTranslatedReference = $this->randomMachineName();
@@ -163,7 +163,8 @@ class EntityReferenceFieldTranslatedReferenceViewTest extends BrowserTestBase {
 
     // Disable translation for referrer content type.
     $this->drupalLogin($this->rootUser);
-    $this->drupalPostForm('admin/config/regional/content-language', ['settings[node][referrer][translatable]' => FALSE], t('Save configuration'));
+    $this->drupalGet('admin/config/regional/content-language');
+    $this->submitForm(['settings[node][referrer][translatable]' => FALSE], 'Save configuration');
     $this->drupalLogout();
 
     // Create a referrer entity without translation.
@@ -174,25 +175,29 @@ class EntityReferenceFieldTranslatedReferenceViewTest extends BrowserTestBase {
 
   /**
    * Assert entity reference display.
+   *
+   * @internal
    */
-  protected function assertEntityReferenceDisplay() {
+  protected function assertEntityReferenceDisplay(): void {
     $url = $this->referrerEntity->toUrl();
     $translation_url = $this->referrerEntity->toUrl('canonical', ['language' => ConfigurableLanguage::load($this->translateToLangcode)]);
 
     $this->drupalGet($url);
-    $this->assertText($this->labelOfNotTranslatedReference, 'The label of not translated reference is displayed.');
-    $this->assertText($this->originalLabel, 'The default label of translated reference is displayed.');
-    $this->assertNoText($this->translatedLabel, 'The translated label of translated reference is not displayed.');
+    $this->assertSession()->pageTextContains($this->labelOfNotTranslatedReference);
+    $this->assertSession()->pageTextContains($this->originalLabel);
+    $this->assertSession()->pageTextNotContains($this->translatedLabel);
     $this->drupalGet($translation_url);
-    $this->assertText($this->labelOfNotTranslatedReference, 'The label of not translated reference is displayed.');
-    $this->assertNoText($this->originalLabel, 'The default label of translated reference is not displayed.');
-    $this->assertText($this->translatedLabel, 'The translated label of translated reference is displayed.');
+    $this->assertSession()->pageTextContains($this->labelOfNotTranslatedReference);
+    $this->assertSession()->pageTextNotContains($this->originalLabel);
+    $this->assertSession()->pageTextContains($this->translatedLabel);
   }
 
   /**
    * Assert entity reference form display.
+   *
+   * @internal
    */
-  protected function assertEntityReferenceFormDisplay() {
+  protected function assertEntityReferenceFormDisplay(): void {
     $this->drupalLogin($this->webUser);
     $url = $this->referrerEntity->toUrl('edit-form');
     $translation_url = $this->referrerEntity->toUrl('edit-form', ['language' => ConfigurableLanguage::load($this->translateToLangcode)]);
@@ -229,8 +234,6 @@ class EntityReferenceFieldTranslatedReferenceViewTest extends BrowserTestBase {
     // up.
     \Drupal::service('content_translation.manager')->setEnabled($this->testEntityTypeName, $this->referrerType->id(), TRUE);
     \Drupal::service('content_translation.manager')->setEnabled($this->testEntityTypeName, $this->referencedType->id(), TRUE);
-
-    \Drupal::service('router.builder')->rebuild();
   }
 
   /**

@@ -18,14 +18,14 @@ class NestedFormTest extends FieldTestBase {
    *
    * @var array
    */
-  public static $modules = ['field_test', 'entity_test'];
+  protected static $modules = ['field_test', 'entity_test'];
 
   /**
    * {@inheritdoc}
    */
   protected $defaultTheme = 'stark';
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $web_user = $this->drupalCreateUser([
@@ -88,8 +88,8 @@ class NestedFormTest extends FieldTestBase {
 
     $entity_1 = $storage->create(['id' => 1]);
     $entity_1->enforceIsNew();
-    $entity_1->field_single->value = 0;
-    $entity_1->field_unlimited->value = 1;
+    $entity_1->field_single->value = 1;
+    $entity_1->field_unlimited->value = 2;
     $entity_1->save();
 
     $entity_2 = $storage->create(['id' => 2]);
@@ -100,10 +100,10 @@ class NestedFormTest extends FieldTestBase {
 
     // Display the 'combined form'.
     $this->drupalGet('test-entity/nested/1/2');
-    $this->assertFieldByName('field_single[0][value]', 0, 'Entity 1: field_single value appears correctly is the form.');
-    $this->assertFieldByName('field_unlimited[0][value]', 1, 'Entity 1: field_unlimited value 0 appears correctly is the form.');
-    $this->assertFieldByName('entity_2[field_single][0][value]', 10, 'Entity 2: field_single value appears correctly is the form.');
-    $this->assertFieldByName('entity_2[field_unlimited][0][value]', 11, 'Entity 2: field_unlimited value 0 appears correctly is the form.');
+    $this->assertSession()->fieldValueEquals('field_single[0][value]', 1);
+    $this->assertSession()->fieldValueEquals('field_unlimited[0][value]', 2);
+    $this->assertSession()->fieldValueEquals('entity_2[field_single][0][value]', 10);
+    $this->assertSession()->fieldValueEquals('entity_2[field_unlimited][0][value]', 11);
 
     // Submit the form and check that the entities are updated accordingly.
     $edit = [
@@ -114,7 +114,7 @@ class NestedFormTest extends FieldTestBase {
       'entity_2[field_unlimited][0][value]' => 12,
       'entity_2[field_unlimited][1][value]' => 13,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, 'Save');
     $entity_1 = $storage->load(1);
     $entity_2 = $storage->load(2);
     $this->assertFieldValues($entity_1, 'field_single', [1]);
@@ -127,17 +127,21 @@ class NestedFormTest extends FieldTestBase {
     $edit = [
       'field_unlimited[1][value]' => -1,
     ];
-    $this->drupalPostForm('test-entity/nested/1/2', $edit, t('Save'));
-    $this->assertRaw(t('%label does not accept the value -1', ['%label' => 'Unlimited field']), 'Entity 1: the field validation error was reported.');
-    $error_field = $this->xpath('//input[@id=:id and contains(@class, "error")]', [':id' => 'edit-field-unlimited-1-value']);
-    $this->assertCount(1, $error_field, 'Entity 1: the error was flagged on the correct element.');
+    $this->drupalGet('test-entity/nested/1/2');
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->pageTextContains("Unlimited field does not accept the value -1.");
+    // Entity 1: check that the error was flagged on the correct element.
+    $error_field = $this->assertSession()->fieldExists('edit-field-unlimited-1-value');
+    $this->assertTrue($error_field->hasClass('error'));
     $edit = [
       'entity_2[field_unlimited][1][value]' => -1,
     ];
-    $this->drupalPostForm('test-entity/nested/1/2', $edit, t('Save'));
-    $this->assertRaw(t('%label does not accept the value -1', ['%label' => 'Unlimited field']), 'Entity 2: the field validation error was reported.');
-    $error_field = $this->xpath('//input[@id=:id and contains(@class, "error")]', [':id' => 'edit-entity-2-field-unlimited-1-value']);
-    $this->assertCount(1, $error_field, 'Entity 2: the error was flagged on the correct element.');
+    $this->drupalGet('test-entity/nested/1/2');
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->pageTextContains("Unlimited field does not accept the value -1.");
+    // Entity 2: check that the error was flagged on the correct element.
+    $error_field = $this->assertSession()->fieldExists('edit-entity-2-field-unlimited-1-value');
+    $this->assertTrue($error_field->hasClass('error'));
 
     // Test that reordering works on both entities.
     $edit = [
@@ -146,31 +150,32 @@ class NestedFormTest extends FieldTestBase {
       'entity_2[field_unlimited][0][_weight]' => 0,
       'entity_2[field_unlimited][1][_weight]' => -1,
     ];
-    $this->drupalPostForm('test-entity/nested/1/2', $edit, t('Save'));
+    $this->drupalGet('test-entity/nested/1/2');
+    $this->submitForm($edit, 'Save');
     $this->assertFieldValues($entity_1, 'field_unlimited', [3, 2]);
     $this->assertFieldValues($entity_2, 'field_unlimited', [13, 12]);
 
     // Test the 'add more' buttons.
     // 'Add more' button in the first entity:
     $this->drupalGet('test-entity/nested/1/2');
-    $this->drupalPostForm(NULL, [], 'field_unlimited_add_more');
-    $this->assertFieldByName('field_unlimited[0][value]', 3, 'Entity 1: field_unlimited value 0 appears correctly is the form.');
-    $this->assertFieldByName('field_unlimited[1][value]', 2, 'Entity 1: field_unlimited value 1 appears correctly is the form.');
-    $this->assertFieldByName('field_unlimited[2][value]', '', 'Entity 1: field_unlimited value 2 appears correctly is the form.');
-    $this->assertFieldByName('field_unlimited[3][value]', '', 'Entity 1: an empty widget was added for field_unlimited value 3.');
+    $this->submitForm([], 'field_unlimited_add_more');
+    $this->assertSession()->fieldValueEquals('field_unlimited[0][value]', 3);
+    $this->assertSession()->fieldValueEquals('field_unlimited[1][value]', 2);
+    $this->assertSession()->fieldValueEquals('field_unlimited[2][value]', '');
+    $this->assertSession()->fieldValueEquals('field_unlimited[3][value]', '');
     // 'Add more' button in the first entity (changing field values):
     $edit = [
       'entity_2[field_unlimited][0][value]' => 13,
       'entity_2[field_unlimited][1][value]' => 14,
       'entity_2[field_unlimited][2][value]' => 15,
     ];
-    $this->drupalPostForm(NULL, $edit, 'entity_2_field_unlimited_add_more');
-    $this->assertFieldByName('entity_2[field_unlimited][0][value]', 13, 'Entity 2: field_unlimited value 0 appears correctly is the form.');
-    $this->assertFieldByName('entity_2[field_unlimited][1][value]', 14, 'Entity 2: field_unlimited value 1 appears correctly is the form.');
-    $this->assertFieldByName('entity_2[field_unlimited][2][value]', 15, 'Entity 2: field_unlimited value 2 appears correctly is the form.');
-    $this->assertFieldByName('entity_2[field_unlimited][3][value]', '', 'Entity 2: an empty widget was added for field_unlimited value 3.');
+    $this->submitForm($edit, 'entity_2_field_unlimited_add_more');
+    $this->assertSession()->fieldValueEquals('entity_2[field_unlimited][0][value]', 13);
+    $this->assertSession()->fieldValueEquals('entity_2[field_unlimited][1][value]', 14);
+    $this->assertSession()->fieldValueEquals('entity_2[field_unlimited][2][value]', 15);
+    $this->assertSession()->fieldValueEquals('entity_2[field_unlimited][3][value]', '');
     // Save the form and check values are saved correctly.
-    $this->drupalPostForm(NULL, [], t('Save'));
+    $this->submitForm([], 'Save');
     $this->assertFieldValues($entity_1, 'field_unlimited', [3, 2]);
     $this->assertFieldValues($entity_2, 'field_unlimited', [13, 14, 15]);
   }
@@ -199,7 +204,7 @@ class NestedFormTest extends FieldTestBase {
     // Submit the form and check that the entities are updated accordingly.
     $assert_session->hiddenFieldExists('entity_2[changed]')
       ->setValue(REQUEST_TIME - 86400);
-    $page->pressButton(t('Save'));
+    $page->pressButton('Save');
 
     $elements = $this->cssSelect('.entity-2.error');
     $this->assertCount(1, $elements, 'The whole nested entity form has been correctly flagged with an error class.');

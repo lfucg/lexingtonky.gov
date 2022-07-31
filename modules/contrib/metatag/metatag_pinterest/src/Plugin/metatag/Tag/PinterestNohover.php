@@ -30,7 +30,7 @@ class PinterestNohover extends MetaNameBase {
       '#title' => $this->label(),
       '#description' => $this->description(),
       '#default_value' => ($this->value === 'nohover') ?: '',
-      '#required' => isset($element['#required']) ? $element['#required'] : FALSE,
+      '#required' => $element['#required'] ?? FALSE,
       '#element_validate' => [[get_class($this), 'validateTag']],
       '#return_value' => 'nohover',
     ];

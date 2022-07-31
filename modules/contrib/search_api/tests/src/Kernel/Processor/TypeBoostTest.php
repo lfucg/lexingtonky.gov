@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormState;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\search_api\Utility\Utility;
 
 /**
  * Tests the "Type-specific boosting" processor.
@@ -74,9 +75,9 @@ class TypeBoostTest extends ProcessorTestBase {
     $configuration = [
       'boosts' => [
         'entity:node' => [
-          'datasource_boost' => '3.0',
+          'datasource_boost' => Utility::formatBoostFactor(3),
           'bundle_boosts' => [
-            'article' => '5.0',
+            'article' => Utility::formatBoostFactor(5),
           ],
         ],
       ],
@@ -132,20 +133,21 @@ class TypeBoostTest extends ProcessorTestBase {
   }
 
   /**
-   * Tests that default values for individual bundles are correct in the form.
+   * Tests that default values are correct in the config form.
    */
-  public function testConfigFormBundleBoostDefaults() {
+  public function testConfigFormDefaultValues() {
     $form = $this->processor->buildConfigurationForm([], new FormState());
 
+    $this->assertEquals(Utility::formatBoostFactor(1), $form['boosts']['entity:node']['datasource_boost']['#default_value']);
     $this->assertEquals('', $form['boosts']['entity:node']['bundle_boosts']['article']['#default_value']);
     $this->assertEquals('', $form['boosts']['entity:node']['bundle_boosts']['page']['#default_value']);
 
     $configuration = [
       'boosts' => [
         'entity:node' => [
-          'datasource_boost' => '3.0',
+          'datasource_boost' => Utility::formatBoostFactor(3),
           'bundle_boosts' => [
-            'article' => '0.0',
+            'article' => Utility::formatBoostFactor(0),
           ],
         ],
       ],
@@ -154,8 +156,28 @@ class TypeBoostTest extends ProcessorTestBase {
 
     $form = $this->processor->buildConfigurationForm([], new FormState());
 
-    $this->assertEquals('0.0', $form['boosts']['entity:node']['bundle_boosts']['article']['#default_value']);
+    $this->assertEquals(Utility::formatBoostFactor(3), $form['boosts']['entity:node']['datasource_boost']['#default_value']);
+    $this->assertEquals(Utility::formatBoostFactor(0), $form['boosts']['entity:node']['bundle_boosts']['article']['#default_value']);
     $this->assertEquals('', $form['boosts']['entity:node']['bundle_boosts']['page']['#default_value']);
+
+    $configuration = [
+      'boosts' => [
+        'entity:node' => [
+          'datasource_boost' => Utility::formatBoostFactor(2),
+          'bundle_boosts' => [
+            'article' => Utility::formatBoostFactor(3),
+            'page' => Utility::formatBoostFactor(1.5),
+          ],
+        ],
+      ],
+    ];
+    $this->processor->setConfiguration($configuration);
+
+    $form = $this->processor->buildConfigurationForm([], new FormState());
+
+    $this->assertEquals(Utility::formatBoostFactor(2), $form['boosts']['entity:node']['datasource_boost']['#default_value']);
+    $this->assertEquals(Utility::formatBoostFactor(3), $form['boosts']['entity:node']['bundle_boosts']['article']['#default_value']);
+    $this->assertEquals(Utility::formatBoostFactor(1.5), $form['boosts']['entity:node']['bundle_boosts']['page']['#default_value']);
   }
 
 }

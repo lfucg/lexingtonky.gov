@@ -21,11 +21,11 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
   public function testAdminAccess() {
     $this->drupalLogin($this->normalUser);
     $this->drupalGet(self::CAPTCHA_ADMIN_PATH);
-    $this->assertSession()->pageTextContains($this->t('Access denied'), 'Normal users should not be able to access the CAPTCHA admin pages', 'CAPTCHA');
+    $this->assertSession()->pageTextContains($this->t('Access denied'));
 
     $this->drupalLogin($this->adminUser);
     $this->drupalGet(self::CAPTCHA_ADMIN_PATH);
-    $this->assertSession()->pageTextNotContains($this->t('Access denied'), 'Admin users should be able to access the CAPTCHA admin pages', 'CAPTCHA');
+    $this->assertSession()->pageTextNotContains($this->t('Access denied'));
   }
 
   /**
@@ -34,12 +34,12 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
   public function testCaptchaPointSettingGetterAndSetter() {
     $comment_form_id = self::COMMENT_FORM_ID;
     captcha_set_form_id_setting($comment_form_id, 'test');
-    /* @var CaptchaPoint $result */
+    /** @var \Drupal\captcha\Entity\CaptchaPoint $result */
     $result = captcha_get_form_id_setting($comment_form_id);
-    $this->assertNotNull($result, 'CAPTCHA exists', 'CAPTCHA');
+    $this->assertNotNull($result, 'CAPTCHA exists');
     $this->assertEquals($result->getCaptchaType(), 'test', 'CAPTCHA type: default');
     $result = captcha_get_form_id_setting($comment_form_id, TRUE);
-    $this->assertNotNull($result, 'CAPTCHA exists', 'CAPTCHA');
+    $this->assertNotNull($result, 'CAPTCHA exists');
     $this->assertEquals($result, 'test', 'Setting and symbolic getting CAPTCHA point: "test"');
 
     // Set to 'default'.
@@ -48,7 +48,7 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
       ->set('default_challenge', 'foo/bar')
       ->save();
     $result = captcha_get_form_id_setting($comment_form_id);
-    $this->assertNotNull($result, 'CAPTCHA exists', 'CAPTCHA');
+    $this->assertNotNull($result, 'CAPTCHA exists');
     $this->assertEquals($result->getCaptchaType(), 'foo/bar', 'Setting and getting CAPTCHA point: default');
     $result = captcha_get_form_id_setting($comment_form_id, TRUE);
     $this->assertNotNull($result, 'Setting and symbolic getting CAPTCHA point: "default"');
@@ -57,7 +57,7 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     // Set to 'baz/boo'.
     captcha_set_form_id_setting($comment_form_id, 'baz/boo');
     $result = captcha_get_form_id_setting($comment_form_id);
-    $this->assertNotNull($result, 'CAPTCHA exists', 'CAPTCHA');
+    $this->assertNotNull($result, 'CAPTCHA exists');
     $this->assertEquals($result->getCaptchaType(), 'baz/boo', 'Setting and getting CAPTCHA point: baz/boo');
     $result = captcha_get_form_id_setting($comment_form_id, TRUE);
     $this->assertEquals($result, 'baz/boo', 'Setting and symbolic getting CAPTCHA point: "baz/boo"');
@@ -65,17 +65,17 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     // Set to NULL (which should delete the CAPTCHA point setting entry).
     captcha_set_form_id_setting($comment_form_id, NULL);
     $result = captcha_get_form_id_setting($comment_form_id);
-    $this->assertNotNull($result, 'CAPTCHA exists', 'CAPTCHA');
+    $this->assertNotNull($result, 'CAPTCHA exists');
     $this->assertEquals($result->getCaptchaType(), 'foo/bar', 'Setting and getting CAPTCHA point: NULL');
     $result = captcha_get_form_id_setting($comment_form_id, TRUE);
-    $this->assertNotNull($result, 'CAPTCHA exists', 'CAPTCHA');
+    $this->assertNotNull($result, 'CAPTCHA exists');
 
     // Set with object.
     $captcha_type = 'baba/fofo';
     captcha_set_form_id_setting($comment_form_id, $captcha_type);
 
     $result = captcha_get_form_id_setting($comment_form_id);
-    $this->assertNotNull($result, 'Setting and getting CAPTCHA point: baba/fofo', 'CAPTCHA');
+    $this->assertNotNull($result, 'Setting and getting CAPTCHA point: baba/fofo');
     // $this->assertEqual($result->module, 'baba', 'Setting and getting
     // CAPTCHA point: baba/fofo', 'CAPTCHA');.
     $this->assertEquals($result->getCaptchaType(), 'baba/fofo', 'Setting and getting CAPTCHA point: baba/fofo');
@@ -112,7 +112,7 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     $edit = [
       'administration_mode' => TRUE,
     ];
-    
+
     $this->drupalGet(self::CAPTCHA_ADMIN_PATH);
     $this->submitForm($edit, $this->t('Save configuration'));
 
@@ -139,13 +139,11 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     $this->submitForm($edit, $this->t('Save'));
 
     // Check if returned to original comment form.
-    $this->assertSession()->addressEquals($add_comment_url, [],
-      'After setting CAPTCHA with CAPTCHA admin links: should return to original form.', 'CAPTCHA');
+    $this->assertSession()->addressEquals($add_comment_url);
 
     // Check if CAPTCHA was successfully enabled
     // (on CAPTCHA admin links fieldset).
-    $this->assertSession()->pageTextContains($this->t('CAPTCHA: challenge "@type" enabled', ['@type' => $edit['captchaType']]),
-      'Enable a challenge through the CAPTCHA admin links', 'CAPTCHA');
+    $this->assertSession()->pageTextContains($this->t('CAPTCHA: challenge "@type" enabled', ['@type' => $edit['captchaType']]));
 
     // Check if CAPTCHA was successfully enabled (through API).
     $this->assertCaptchaSetting(self::COMMENT_FORM_ID, 'captcha/Math');
@@ -166,9 +164,8 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     // (on CAPTCHA admin links fieldset).
     // This is actually the same as the previous setting because
     // the captcha/Math is the default for the default challenge.
-    // TODO Make sure the edit is a real change.
-    $this->assertSession()->pageTextContains($this->t('CAPTCHA: challenge "@type" enabled', ['@type' => $edit['captchaType']]),
-      'Enable a challenge through the CAPTCHA admin links', 'CAPTCHA');
+    // @todo Make sure the edit is a real change.
+    $this->assertSession()->pageTextContains($this->t('CAPTCHA: challenge "@type" enabled', ['@type' => $edit['captchaType']]));
     // Check if CAPTCHA was successfully edited (through API).
     $this->assertCaptchaSetting(self::COMMENT_FORM_ID, 'default');
 
@@ -183,8 +180,7 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
 
     // Check if CAPTCHA was successfully disabled
     // (on CAPTCHA admin links fieldset).
-    $this->assertSession()->responseContains($this->t('Captcha point %form_id has been disabled.', ['%form_id' => self::COMMENT_FORM_ID]),
-      'Disable challenge through the CAPTCHA admin links', 'CAPTCHA');
+    $this->assertSession()->responseContains($this->t('Captcha point %form_id has been disabled.', ['%form_id' => self::COMMENT_FORM_ID]));
   }
 
   /**
@@ -212,8 +208,7 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     $edit['captcha_response'] = 'xx';
     $this->drupalGet($add_comment_url);
     $this->submitForm($edit, $this->t('Preview'));
-    $this->assertSession()->pageTextContains(self::CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE,
-      'wrong CAPTCHA should block form submission.', 'CAPTCHA');
+    $this->assertSession()->pageTextContains(self::CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE);
   }
 
   /**
@@ -233,7 +228,7 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     // Visit user register form and check if JavaScript snippet is there.
     $this->drupalLogout();
     $this->drupalGet('user/register');
-    $this->assertSession()->responseNotContains($xss, 'JavaScript should not be allowed in CAPTCHA description.', 'CAPTCHA');
+    $this->assertSession()->responseNotContains($xss);
   }
 
   /**
@@ -307,7 +302,7 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     $this->assertSession()->responseContains($this->t('Captcha Point for %label form was created.', ['%label' => $captcha_point_form_id]));
 
     // Check in database.
-    /* @var CaptchaPoint result */
+    /** @var \Drupal\captcha\Entity\CaptchaPoint result */
     $result = $this->getCaptchaPointSettingFromDatabase($captcha_point_form_id);
     $this->assertEquals($result->captchaType, $captcha_point_module . '/' . $captcha_point_type,
       'Enabled CAPTCHA point should have module and type set');
@@ -315,7 +310,7 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     // Disable CAPTCHA point again.
     $this->drupalGet(self::CAPTCHA_ADMIN_PATH . '/captcha-points/' . $captcha_point_form_id . '/disable');
     $this->submitForm([], $this->t('Disable'));
-    $this->assertSession()->responseContains($this->t('Captcha point %label has been disabled.', ['%label' => $label]), 'Disabling of CAPTCHA point');
+    $this->assertSession()->responseContains($this->t('Captcha point %label has been disabled.', ['%label' => $label]));
 
     // Check in database.
     $result = $this->getCaptchaPointSettingFromDatabase($captcha_point_form_id);
@@ -328,7 +323,7 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     ];
     $this->drupalGet(self::CAPTCHA_ADMIN_PATH . '/captcha-points/' . $captcha_point_form_id);
     $this->submitForm($form_values, $this->t('Save'));
-    $this->assertSession()->responseContains($this->t('Captcha Point for %form_id form was updated.', ['%form_id' => $captcha_point_form_id]), 'Saving of CAPTCHA point settings');
+    $this->assertSession()->responseContains($this->t('Captcha Point for %form_id form was updated.', ['%form_id' => $captcha_point_form_id]));
 
     // Check in database.
     $result = $this->getCaptchaPointSettingFromDatabase($captcha_point_form_id);
@@ -338,8 +333,7 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     // Delete CAPTCHA point.
     $this->drupalGet(self::CAPTCHA_ADMIN_PATH . '/captcha-points/' . $captcha_point_form_id . '/delete');
     $this->submitForm([], $this->t('Delete'));
-    $this->assertSession()->responseContains($this->t('Captcha point %label has been deleted.', ['%label' => $label]),
-      'Deleting of CAPTCHA point');
+    $this->assertSession()->responseContains($this->t('Captcha point %label has been deleted.', ['%label' => $label]));
 
     $result = $this->getCaptchaPointSettingFromDatabase($captcha_point_form_id);
     $this->assertNull($result, 'Deleted CAPTCHA point should not be in database');
@@ -372,18 +366,15 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     // Try to set CAPTCHA point
     // through admin/user/captcha/captcha/captcha_point.
     $this->drupalGet(self::CAPTCHA_ADMIN_PATH . '/captcha-points');
-    $this->assertSession()->pageTextContains($this->t('You are not authorized to access this page.'),
-      'Non admin should not be able to set a CAPTCHA point');
+    $this->assertSession()->pageTextContains($this->t('You are not authorized to access this page.'));
 
     // Try to disable the CAPTCHA point.
     $this->drupalGet(self::CAPTCHA_ADMIN_PATH . '/captcha-points/' . $captcha_point_form_id . '/disable');
-    $this->assertSession()->pageTextContains($this->t('You are not authorized to access this page.'),
-      'Non admin should not be able to disable a CAPTCHA point');
+    $this->assertSession()->pageTextContains($this->t('You are not authorized to access this page.'));
 
     // Try to delete the CAPTCHA point.
     $this->drupalGet(self::CAPTCHA_ADMIN_PATH . '/captcha-points/' . $captcha_point_form_id . '/delete');
-    $this->assertSession()->pageTextContains($this->t('You are not authorized to access this page.'),
-      'Non admin should not be able to delete a CAPTCHA point');
+    $this->assertSession()->pageTextContains($this->t('You are not authorized to access this page.'));
 
     // Switch from nonadmin to admin again.
     $this->drupalLogin($this->adminUser);
@@ -395,7 +386,7 @@ class CaptchaAdminTest extends CaptchaWebTestBase {
     // Delete captcha point.
     $this->drupalGet(self::CAPTCHA_ADMIN_PATH . '/captcha-points/' . $captcha_point_form_id . '/delete');
     $this->submitForm([], 'Delete');
-    $this->assertSession()->responseContains($this->t('Captcha point %label has been deleted.', ['%label' => $label]), 'Disabling of CAPTCHA point');
+    $this->assertSession()->responseContains($this->t('Captcha point %label has been deleted.', ['%label' => $label]));
   }
 
 }

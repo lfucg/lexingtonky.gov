@@ -33,6 +33,17 @@ use Drupal\taxonomy_menu\TaxonomyMenuInterface;
  *     "edit-form" = "/admin/structure/taxonomy_menu/{taxonomy_menu}",
  *     "delete-form" = "/admin/structure/taxonomy_menu/{taxonomy_menu}/delete",
  *     "collection" = "/admin/structure/taxonomy_menu"
+ *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "vocabulary",
+ *     "depth",
+ *     "menu",
+ *     "expanded",
+ *     "menu_parent",
+ *     "description_field_name",
+ *     "use_term_weight_order"
  *   }
  * )
  */
@@ -149,11 +160,6 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
    */
   public function preSave(EntityStorageInterface $storage) {
     parent::preSave($storage);
-    if (!$this->isNew()) {
-      foreach (array_keys($this->getLinks([], TRUE)) as $link_key) {
-        $this->getMenuLinkManager()->removeDefinition($link_key, FALSE);
-      }
-    }
     $this->addDependency('config', 'system.menu.' . $this->getMenu());
     $this->addDependency('config', 'taxonomy.vocabulary.' . $this->getVocabulary());
   }
@@ -166,7 +172,12 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
     // definitions.
     $return = parent::save();
     foreach ($this->getLinks([], TRUE) as $link_key => $link_def) {
-      $this->getMenuLinkManager()->addDefinition($link_key, $link_def);
+      if ($this->isNew() || !$this->getMenuLinkManager()->hasDefinition($link_key)) {
+        $this->getMenuLinkManager()->addDefinition($link_key, $link_def);
+      }
+      else {
+        $this->getMenuLinkManager()->updateDefinition($link_key, $link_def);
+      }
     }
     return $return;
   }
@@ -184,8 +195,8 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
   /**
    * {@inheritdoc}
    */
-  public function getLinks($base_plugin_definition = [], $include_base_plugin_id = FALSE) {
-    /** @var $termStorage \Drupal\taxonomy\TermStorageInterface */
+  public function getLinks(array $base_plugin_definition = [], $include_base_plugin_id = FALSE) {
+    /* @var $termStorage \Drupal\taxonomy\TermStorageInterface */
     $termStorage = $this->entityTypeManager()->getStorage('taxonomy_term');
     // Load taxonomy terms for tax menu vocab.
     $terms = $termStorage->loadTree($this->getVocabulary(), 0, $this->getDepth() + 1);
@@ -206,7 +217,7 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
   }
 
   /**
-   * Get the Menu Link Manager
+   * Get the Menu Link Manager.
    *
    * @return \Drupal\Core\Menu\MenuLinkManagerInterface
    *   The Menu Link Manager Service
@@ -231,12 +242,12 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
    * Generate a menu link plugin definition for a taxonomy term.
    *
    * @param \Drupal\taxonomy\TermInterface $term
-   *  The taxonomy term for which to build a menu link render array.
+   *   The taxonomy term for which to build a menu link render array.
    * @param array $base_plugin_definition
-   *  The base plugin definition to merge the link with.
+   *   The base plugin definition to merge the link with.
    *
    * @return array
-   *  The menu link plugin definition.
+   *   The menu link plugin definition.
    */
   protected function buildMenuDefinition(TermInterface $term, array $base_plugin_definition) {
     $term_id = $term->id();
@@ -245,7 +256,8 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
     $menu_id = $this->getMenu();
 
     // Determine parent link.
-    // TODO: Evaluate use case of multiple parents (should we make many menu items?)
+    // TODO:
+    // Evaluate use case of multiple parents (should we make many menu items?)
     $menu_parent_id = NULL;
     /* @var $termStorage \Drupal\taxonomy\TermStorageInterface */
     $termStorage = $this->entityTypeManager()->getStorage('taxonomy_term');
@@ -256,7 +268,8 @@ class TaxonomyMenu extends ConfigEntityBase implements TaxonomyMenuInterface {
       $menu_parent_id = $this->buildMenuPluginId($parents[0]);
     }
 
-    // Note: if menu_parent_id is NULL, it will not update the hierarchy properly.
+    // Note:
+    // if menu_parent_id is NULL, it will not update the hierarchy properly.
     if (empty($menu_parent_id)) {
       $menu_parent_id = str_replace($this->getMenu() . ':', '', $this->getMenuParent());
     }

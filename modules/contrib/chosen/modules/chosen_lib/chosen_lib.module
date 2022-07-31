@@ -7,6 +7,8 @@
  * @see https://harvesthq.github.com/chosen/
  */
 
+use Drupal\Core\DrupalKernel;
+
 /**
  * Implements hook_library_info_alter().
  */
@@ -36,9 +38,6 @@ function chosen_lib_library_info_alter(array &$libraries, $module) {
  *   The location of the library, or FALSE if the library isn't installed.
  */
 function _chosen_lib_get_chosen_path() {
-  if (function_exists('libraries_get_path')) {
-    return libraries_get_path('chosen');
-  }
 
   // The following logic is taken from libraries_get_libraries()
   $searchdir = [];
@@ -52,11 +51,14 @@ function _chosen_lib_get_chosen_path() {
   $searchdir[] = 'libraries';
 
   // Also search sites/<domain>/*.
-  $searchdir[] = \Drupal::service('site.path') . '/libraries';
+  $searchdir[] = DrupalKernel::findSitePath(\Drupal::request()) . '/libraries';
 
   foreach ($searchdir as $dir) {
     if (file_exists($dir . '/chosen/chosen.jquery.min.js') || file_exists($dir . '/chosen/chosen.jquery.js')) {
       return $dir . '/chosen';
+    }
+    if (file_exists($dir . '/chosen-js/chosen.jquery.min.js') || file_exists($dir . '/chosen-js/chosen.jquery.js')) {
+      return $dir . '/chosen-js';
     }
   }
 

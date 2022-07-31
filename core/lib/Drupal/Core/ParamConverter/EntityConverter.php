@@ -2,15 +2,11 @@
 
 namespace Drupal\Core\ParamConverter;
 
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\RevisionableInterface;
-use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\Core\TypedData\TranslatableInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -42,6 +38,23 @@ use Symfony\Component\Routing\Route;
  *         type: entity:{entity_type}
  * @endcode
  *
+ * The conversion can be limited to certain entity bundles by specifying a
+ * parameter 'bundle' definition property as an array:
+ * @code
+ * example.route:
+ *   path: foo/{example}
+ *   options:
+ *     parameters:
+ *       example:
+ *         type: entity:node
+ *         bundle:
+ *           - article
+ *           - news
+ * @endcode
+ * In the above example, only node entities of types 'article' and 'news' are
+ * converted. For a node of a different type, such as 'page', the route will
+ * return 404 'Not found'.
+ *
  * If your route needs to support pending revisions, you can specify the
  * "load_latest_revision" parameter. This will ensure that the latest revision
  * is returned, even if it is not the default one:
@@ -67,16 +80,7 @@ use Symfony\Component\Routing\Route;
  */
 class EntityConverter implements ParamConverterInterface {
 
-  use DeprecatedServicePropertyTrait;
   use DynamicEntityTypeParamConverterTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = [
-    'entityManager' => 'entity.manager',
-    'languageManager' => 'language_manager',
-  ];
 
   /**
    * Entity type manager which performs the upcasting in the end.
@@ -100,19 +104,10 @@ class EntityConverter implements ParamConverterInterface {
    * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
    *   The entity repository.
    *
-   * @see https://www.drupal.org/node/2549139
    * @see https://www.drupal.org/node/2938929
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, $entity_repository = NULL) {
-    if ($entity_type_manager instanceof EntityManagerInterface) {
-      @trigger_error('Passing the entity.manager service to EntityConverter::__construct() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. Pass the entity_type.manager service instead. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
-    }
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityRepositoryInterface $entity_repository) {
     $this->entityTypeManager = $entity_type_manager;
-
-    if (!($entity_repository instanceof EntityRepositoryInterface)) {
-      @trigger_error('Calling EntityConverter::__construct() with the $entity_repository argument is supported in drupal:8.7.0 and will be required before drupal:9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
-      $entity_repository = \Drupal::service('entity.repository');
-    }
     $this->entityRepository = $entity_repository;
   }
 
@@ -148,68 +143,15 @@ class EntityConverter implements ParamConverterInterface {
     }
     $entity = $this->entityRepository->getCanonical($entity_type_id, $value, $contexts);
 
+    if (
+      !empty($definition['bundle']) &&
+      $entity instanceof EntityInterface &&
+      !in_array($entity->bundle(), $definition['bundle'], TRUE)
+    ) {
+      return NULL;
+    }
+
     return $entity;
-  }
-
-  /**
-   * Returns the latest revision translation of the specified entity.
-   *
-   * @param \Drupal\Core\Entity\RevisionableInterface $entity
-   *   The default revision of the entity being converted.
-   * @param string $langcode
-   *   The language of the revision translation to be loaded.
-   *
-   * @return \Drupal\Core\Entity\RevisionableInterface
-   *   The latest translation-affecting revision for the specified entity, or
-   *   just the latest revision, if the specified entity is not translatable or
-   *   does not have a matching translation yet.
-   *
-   * @deprecated in drupal:8.7.0 and is removed from drupal:9.0.0.
-   *   Use \Drupal\Core\Entity\EntityRepositoryInterface::getActive() instead.
-   */
-  protected function getLatestTranslationAffectedRevision(RevisionableInterface $entity, $langcode) {
-    @trigger_error('\Drupal\Core\ParamConverter\EntityConverter::getLatestTranslationAffectedRevision() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. Use \Drupal\Core\Entity\EntityRepositoryInterface::getActive() instead.', E_USER_DEPRECATED);
-    $data_type = 'language';
-    $context_id_prefix = '@language.current_language_context:';
-    $contexts = [
-      $context_id_prefix . LanguageInterface::TYPE_CONTENT => new Context(new ContextDefinition($data_type), $langcode),
-      $context_id_prefix . LanguageInterface::TYPE_INTERFACE => new Context(new ContextDefinition($data_type), $langcode),
-    ];
-    $revision = $this->entityRepository->getActive($entity->getEntityTypeId(), $entity->id(), $contexts);
-    // The EntityRepositoryInterface::getActive() method performs entity
-    // translation negotiation, but this used to return an untranslated entity
-    // object as translation negotiation happened later in ::convert().
-    if ($revision instanceof TranslatableInterface) {
-      $revision = $revision->getUntranslated();
-    }
-    return $revision;
-  }
-
-  /**
-   * Loads the specified entity revision.
-   *
-   * @param \Drupal\Core\Entity\RevisionableInterface $entity
-   *   The default revision of the entity being converted.
-   * @param string $revision_id
-   *   The identifier of the revision to be loaded.
-   *
-   * @return \Drupal\Core\Entity\RevisionableInterface
-   *   An entity revision object.
-   *
-   * @deprecated in drupal:8.7.0 and is removed from drupal:9.0.0.
-   */
-  protected function loadRevision(RevisionableInterface $entity, $revision_id) {
-    @trigger_error('\Drupal\Core\ParamConverter\EntityConverter::loadRevision() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0.', E_USER_DEPRECATED);
-    // We explicitly perform a loose equality check, since a revision ID may
-    // be returned as an integer or a string.
-    if ($entity->getLoadedRevisionId() != $revision_id) {
-      /** @var \Drupal\Core\Entity\RevisionableStorageInterface $storage */
-      $storage = $this->entityTypeManager->getStorage($entity->getEntityTypeId());
-      return $storage->loadRevision($revision_id);
-    }
-    else {
-      return $entity;
-    }
   }
 
   /**
@@ -225,18 +167,6 @@ class EntityConverter implements ParamConverterInterface {
       return $this->entityTypeManager->hasDefinition($entity_type_id);
     }
     return FALSE;
-  }
-
-  /**
-   * Returns a language manager instance.
-   *
-   * @return \Drupal\Core\Language\LanguageManagerInterface
-   *   The language manager.
-   *
-   * @internal
-   */
-  protected function languageManager() {
-    return $this->__get('languageManager');
   }
 
 }

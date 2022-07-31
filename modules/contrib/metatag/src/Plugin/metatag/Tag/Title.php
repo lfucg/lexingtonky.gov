@@ -14,32 +14,10 @@ namespace Drupal\metatag\Plugin\metatag\Tag;
  *   weight = -1,
  *   type = "label",
  *   secure = FALSE,
- *   multiple = FALSE
+ *   multiple = FALSE,
+ *   trimmable = TRUE
  * )
  */
 class Title extends MetaNameBase {
-
-  /**
-   * Override the output of this tag so it's an actual TITLE tag.
-   *
-   * @todo Override the existing title tag X-)
-   */
-  // {@code}
-  // public function output() {
-  //   if (empty($this->value)) {
-  //     // If there is no value, we don't want a tag output.
-  //     $element = '';
-  //   }
-  //   else {
-  //     $element = [
-  //       '#theme' => 'hidden',
-  //       // '#tag' => 'title',
-  //       '#value' => $this->value(),
-  //     ];
-  //   }
-  //
-  //   return $element;
-  // }
-  // {@endcode}
-
+  // Nothing here yet. Just a placeholder class for a plugin.
 }

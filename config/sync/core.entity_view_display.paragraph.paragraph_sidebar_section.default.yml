@@ -1,0 +1,33 @@
+uuid: a7dac451-c925-466e-9443-dcc35752d7f3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.paragraph_sidebar_section.field_section_body
+    - field.field.paragraph.paragraph_sidebar_section.field_section_heading
+    - paragraphs.paragraphs_type.paragraph_sidebar_section
+  module:
+    - text
+id: paragraph.paragraph_sidebar_section.default
+targetEntityType: paragraph
+bundle: paragraph_sidebar_section
+mode: default
+content:
+  field_section_body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_section_heading:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  uid: true

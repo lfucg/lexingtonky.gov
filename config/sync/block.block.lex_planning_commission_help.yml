@@ -1,0 +1,20 @@
+uuid: 6d6e6546-27fb-457e-8c31-63f629173cba
+langcode: en
+status: true
+dependencies:
+  module:
+    - help
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_help
+theme: lex_planning_commission
+region: breadcrumb
+weight: -25
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Help
+  label_display: '0'
+  provider: help
+visibility: {  }

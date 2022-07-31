@@ -6,7 +6,7 @@ use Drupal\Core\ParamConverter\ParamConverterInterface;
 use Symfony\Component\Routing\Route;
 
 /**
- * Class TokenConverter
+ * Class TokenConverter.
  */
 class TokenConverter implements ParamConverterInterface {
 
@@ -43,4 +43,5 @@ class TokenConverter implements ParamConverterInterface {
     }
     return FALSE;
   }
+
 }

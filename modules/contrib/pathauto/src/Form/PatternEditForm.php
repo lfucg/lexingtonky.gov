@@ -223,17 +223,16 @@ class PatternEditForm extends EntityForm {
       $entity_type = $alias_type->getDerivativeId();
       // First, remove bundle and language conditions.
       foreach ($entity->getSelectionConditions() as $condition_id => $condition) {
-        if (in_array($condition->getPluginId(), ['entity_bundle:' . $entity_type, 'node_type', 'language'])) {
+        if (in_array($condition->getPluginId(), ['entity_bundle:' . $entity_type, 'language'])) {
           $entity->removeSelectionCondition($condition_id);
         }
       }
 
       if ($bundles = array_filter((array) $form_state->getValue('bundles'))) {
         $default_weight -= 5;
-        $plugin_id = $entity_type == 'node' ? 'node_type' : 'entity_bundle:' . $entity_type;
         $entity->addSelectionCondition(
           [
-            'id' => $plugin_id,
+            'id' => 'entity_bundle:' . $entity_type,
             'bundles' => $bundles,
             'negate' => FALSE,
             'context_mapping' => [

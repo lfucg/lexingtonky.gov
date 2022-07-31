@@ -1,53 +1,41 @@
-// stylelint-disable selector-max-combinators, selector-max-type, selector-max-compound-selectors
-
-//
-// Right side table of contents
-//
+// stylelint-disable selector-max-type
 
 .bd-toc {
-  @supports (position: sticky) {
+  @include media-breakpoint-up(lg) {
     position: sticky;
-    top: 4rem;
-    height: subtract(100vh, 4rem);
+    top: 5rem;
+    right: 0;
+    z-index: 2;
+    height: subtract(100vh, 7rem);
     overflow-y: auto;
   }
-  order: 2;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-  @include font-size(.875rem);
 
   nav {
-    padding-left: 0;
-    border-left: 1px solid #eee;
+    @include font-size(.875rem);
 
     ul {
       padding-left: 0;
+      list-style: none;
 
       ul {
         padding-left: 1rem;
+        margin-top: .25rem;
       }
-    }
-
-    a code {
-      font: inherit;
     }
 
     li {
-      display: block;
+      margin-bottom: .25rem;
+    }
 
-      ul li ul {
-        padding-left: 1rem;
+    a {
+      color: inherit;
+
+      &:not(:hover) {
+        text-decoration: none;
       }
 
-      a {
-        display: block;
-        padding: .125rem 1.5rem;
-        color: #77757a;
-
-        &:hover {
-          color: $blue;
-          text-decoration: none;
-        }
+      code {
+        font: inherit;
       }
     }
   }

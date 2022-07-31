@@ -23,10 +23,12 @@ class MetatagServiceProvider extends ServiceProviderBase {
       // Priority of the metatag normalizer must be higher than other
       // general-purpose typed data and field item normalizers.
       $metatag = new Definition(MetatagNormalizer::class);
+      $metatag->setPublic(TRUE);
       $metatag->addTag('normalizer', ['priority' => 30]);
       $container->setDefinition('metatag.normalizer.metatag', $metatag);
 
       $metatag_hal = new Definition(MetatagHalNormalizer::class);
+      $metatag_hal->setPublic(TRUE);
       $metatag_hal->addTag('normalizer', ['priority' => 31]);
       $container->setDefinition('metatag.normalizer.metatag.hal', $metatag_hal);
     }

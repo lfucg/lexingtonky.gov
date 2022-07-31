@@ -46,10 +46,6 @@ devel.phpinfo:
   title: 'PHPinfo()'
   route_name: system.php
   menu_name: devel
-devel.execute_php:
-  title: 'Execute PHP'
-  route_name: devel.execute_php
-  menu_name: devel
 devel.session:
   title: 'View Session'
   route_name: devel.session

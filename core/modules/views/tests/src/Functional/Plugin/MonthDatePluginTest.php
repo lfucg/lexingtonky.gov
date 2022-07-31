@@ -24,7 +24,7 @@ class MonthDatePluginTest extends ViewTestBase {
    *
    * @var array
    */
-  public static $modules = ['node'];
+  protected static $modules = ['node'];
 
   /**
    * {@inheritdoc}
@@ -48,8 +48,8 @@ class MonthDatePluginTest extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp($import_test_views = TRUE): void {
-    parent::setUp($import_test_views);
+  public function setUp($import_test_views = TRUE, $modules = ['views_test_config']): void {
+    parent::setUp($import_test_views, $modules);
     $utc = new \DateTimeZone('UTC');
     $format = 'Y-m-d h:i:s';
     $this->node1 = $this->drupalCreateNode([

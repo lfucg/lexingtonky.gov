@@ -74,3 +74,24 @@
   margin: 0 auto;
   border-radius: 5px;
 }
+
+/* User account page */
+body.path-user .field--label-inline .field__label {
+  width: 100px;
+}
+
+body.path-user .field--label-inline .field__item {
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
+  background: #e9ecef;
+  min-width: 250px;
+  margin: 0.25rem 0;
+}
+
+body.path-user .field--label-above .field__item {
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
+  background: #e9ecef;
+  width: 100%;
+  margin: 0.25rem 0;
+}

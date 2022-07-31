@@ -31,7 +31,7 @@ class BlockFilterTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $user = $this->drupalCreateUser([
       'configure any layout',
@@ -52,7 +52,8 @@ class BlockFilterTest extends WebDriverTestBase {
 
     // From the manage display page, go to manage the layout.
     $field_ui_prefix = 'admin/structure/types/manage/bundle_with_section_field';
-    $this->drupalPostForm("$field_ui_prefix/display/default", ['layout[enabled]' => TRUE], 'Save');
+    $this->drupalGet("{$field_ui_prefix}/display/default");
+    $this->submitForm(['layout[enabled]' => TRUE], 'Save');
     $assert_session->linkExists('Manage layout');
     $this->clickLink('Manage layout');
     $assert_session->addressEquals("$field_ui_prefix/display/default/layout");
@@ -75,7 +76,7 @@ class BlockFilterTest extends WebDriverTestBase {
     $filter->setValue('a');
     $this->assertAnnounceContains($init_message);
     $visible_rows = $this->filterVisibleElements($blocks);
-    $this->assertEquals(count($blocks), count($visible_rows));
+    $this->assertSameSize($blocks, $visible_rows);
 
     // Get the Content Fields category, which will be closed before filtering.
     $contentFieldsCategory = $page->find('named', ['content', 'Content fields']);
@@ -148,8 +149,10 @@ class BlockFilterTest extends WebDriverTestBase {
    *
    * @param string $expected_message
    *   The text expected to be present in #drupal-live-announce.
+   *
+   * @internal
    */
-  protected function assertAnnounceContains($expected_message) {
+  protected function assertAnnounceContains(string $expected_message): void {
     $assert_session = $this->assertSession();
     $this->assertNotEmpty($assert_session->waitForElement('css', "#drupal-live-announce:contains('$expected_message')"));
   }

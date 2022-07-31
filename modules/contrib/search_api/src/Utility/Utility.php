@@ -269,4 +269,64 @@ class Utility {
     return Markup::create(Html::escape((string) $text));
   }
 
+  /**
+   * Returns the available boost factors according to the configuration.
+   *
+   * @param float[] $additional_factors
+   *   (optional) Array of boost factors that will be added to the configured
+   *   ones.
+   *
+   * @return string[]
+   *   An array with the available boost factors (formatted as strings), as both
+   *   keys and values.
+   */
+  public static function getBoostFactors(array $additional_factors = []): array {
+    $settings = \Drupal::config('search_api.settings');
+    $boost_factors = $settings->get('boost_factors') ?: [
+      0.0,
+      0.1,
+      0.2,
+      0.3,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9,
+      1.0,
+      1.1,
+      1.2,
+      1.3,
+      1.4,
+      1.5,
+      2.0,
+      3.0,
+      5.0,
+      8.0,
+      13.0,
+      21.0,
+    ];
+    if ($additional_factors) {
+      $boost_factors = array_merge($boost_factors, $additional_factors);
+      sort($boost_factors, SORT_NUMERIC);
+    }
+    array_walk($boost_factors, function (&$value) {
+      $value = self::formatBoostFactor($value);
+    });
+
+    return array_combine($boost_factors, $boost_factors);
+  }
+
+  /**
+   * Formats a boost factor as a standard float value.
+   *
+   * @param string|float $boost_factor
+   *   The boost factor to be formatted.
+   *
+   * @return string
+   *   The formatted boost factor (with two decimal places).
+   */
+  public static function formatBoostFactor($boost_factor): string {
+    return sprintf('%.2F', $boost_factor ?? 0);
+  }
+
 }

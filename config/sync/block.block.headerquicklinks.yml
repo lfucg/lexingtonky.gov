@@ -1,0 +1,25 @@
+uuid: 4783b17b-8bb1-4278-9ac8-7434f3443357
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.header-quick-links
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: headerquicklinks
+theme: lex_planning_commission
+region: sitemast
+weight: -25
+provider: null
+plugin: 'system_menu_block:header-quick-links'
+settings:
+  id: 'system_menu_block:header-quick-links'
+  label: 'Header quick links'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility: {  }

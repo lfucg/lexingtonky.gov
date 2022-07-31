@@ -1,0 +1,36 @@
+uuid: 168ef2a3-63a4-4fd2-8bf4-44122562c401
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.paragraph_sidebar_section.field_section_body
+    - field.field.paragraph.paragraph_sidebar_section.field_section_heading
+    - paragraphs.paragraphs_type.paragraph_sidebar_section
+  module:
+    - text
+    - workbench_moderation
+id: paragraph.paragraph_sidebar_section.default
+targetEntityType: paragraph
+bundle: paragraph_sidebar_section
+mode: default
+content:
+  field_section_body:
+    type: text_textarea
+    weight: 7
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_section_heading:
+    type: string_textfield
+    weight: 6
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

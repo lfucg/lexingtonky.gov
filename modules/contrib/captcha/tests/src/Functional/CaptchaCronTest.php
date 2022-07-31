@@ -27,14 +27,14 @@ class CaptchaCronTest extends BrowserTestBase {
   /**
    * Temporary captcha sessions storage.
    *
-   * @var [int]
+   * @var array
    */
   public $captchaSessions;
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     ini_set('session.gc_maxlifetime', 60 * 60 * 24);
@@ -92,7 +92,7 @@ class CaptchaCronTest extends BrowserTestBase {
       ->fields('captcha_sessions', ['csid'])
       ->condition('csid', array_values($this->captchaSessions), 'IN')
       ->execute()
-      ->fetchCol('csid');
+      ->fetchCol();
 
     // Test if CAPTCHA cron appropriately removes sessions older than a day.
     $this->assertNotContains($this->captchaSessions['remove_sid'], $sids, 'CAPTCHA cron removes captcha session data older than 1 day.');

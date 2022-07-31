@@ -1,0 +1,28 @@
+uuid: 4b3d7f78-f5b3-4a41-b9d1-d5dbf9e86054
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.photo_grid.field_grid_photo
+    - image.style.thumbnail
+    - paragraphs.paragraphs_type.photo_grid
+  module:
+    - image
+    - workbench_moderation
+id: paragraph.photo_grid.default
+targetEntityType: paragraph
+bundle: photo_grid
+mode: default
+content:
+  field_grid_photo:
+    type: image_image
+    weight: 6
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

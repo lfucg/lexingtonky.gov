@@ -28,7 +28,7 @@ class MinimalTest extends BrowserTestBase {
   public function testMinimal() {
     $this->drupalGet('');
     // Check the login block is present.
-    $this->assertSession()->linkExists(t('Create new account'));
+    $this->assertSession()->linkExists('Create new account');
     $this->assertSession()->statusCodeEquals(200);
 
     // Create a user to test tools and navigation blocks for logged in users
@@ -39,15 +39,15 @@ class MinimalTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($user);
     $this->drupalGet('');
-    $this->assertText(t('Tools'));
-    $this->assertText(t('Administration'));
+    $this->assertSession()->pageTextContains('Tools');
+    $this->assertSession()->pageTextContains('Administration');
 
     // Ensure that there are no pending updates after installation.
     $this->drupalLogin($this->rootUser);
     $this->drupalGet('update.php/selection');
     $this->updateRequirementsProblem();
     $this->drupalGet('update.php/selection');
-    $this->assertText('No pending updates.');
+    $this->assertSession()->pageTextContains('No pending updates.');
 
     // Ensure that there are no pending entity updates after installation.
     $this->assertFalse($this->container->get('entity.definition_update_manager')->needsUpdates(), 'After installation, entity schema is up to date.');

@@ -14,3 +14,6 @@ field.widget.settings.metatag_firehose:
     sidebar:
       type: boolean
       label: 'Place field in sidebar'
+    use_details:
+      type: boolean
+      label: 'Place field in collapsed details container'

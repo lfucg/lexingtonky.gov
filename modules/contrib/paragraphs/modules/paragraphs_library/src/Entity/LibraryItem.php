@@ -267,6 +267,11 @@ class LibraryItem extends EditorialContentEntityBase implements LibraryItemInter
       'langcode' => $paragraph->language()->getId(),
     ]);
 
+    // If the item has a moderation field, set it to published.
+    if ($library_item->hasField('moderation_state')) {
+      $library_item->set('moderation_state', 'published');
+    }
+
     // Build the label in each available translation and ensure the translations
     // exist.
     foreach ($duplicate_paragraph->getTranslationLanguages() as $langcode => $language) {

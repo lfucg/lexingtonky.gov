@@ -7,7 +7,7 @@ use Drupal\views\Views;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class TraceableViewExecutable
+ * Class TraceableViewExecutable.
  */
 class TraceableViewExecutable extends ViewExecutable {
 
@@ -68,7 +68,7 @@ class TraceableViewExecutable extends ViewExecutable {
     // @TODO In the longrun, it would be great to execute a view without
     //   the theme system at all. See https://www.drupal.org/node/2322623.
     $active_theme = \Drupal::theme()->getActiveTheme();
-    $themes = array_keys($active_theme->getBaseThemes());
+    $themes = array_keys($active_theme->getBaseThemeExtensions());
     $themes[] = $active_theme->getName();
 
     // Check for already-cached output.
@@ -138,7 +138,7 @@ class TraceableViewExecutable extends ViewExecutable {
     $module_handler->invokeAll('views_post_render', [
       $this,
       &$this->display_handler->output,
-      $cache
+      $cache,
     ]);
 
     // Let the themes play too, because post render is a very themey thing.
@@ -153,4 +153,5 @@ class TraceableViewExecutable extends ViewExecutable {
 
     return $this->display_handler->output;
   }
+
 }

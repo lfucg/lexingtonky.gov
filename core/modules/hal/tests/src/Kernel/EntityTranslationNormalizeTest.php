@@ -11,6 +11,7 @@ use Drupal\node\Entity\NodeType;
  * Tests that translated nodes are correctly (de-)normalized.
  *
  * @group hal
+ * @group legacy
  */
 class EntityTranslationNormalizeTest extends NormalizerTestBase {
 
@@ -19,12 +20,12 @@ class EntityTranslationNormalizeTest extends NormalizerTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'content_translation'];
+  protected static $modules = ['node', 'content_translation'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installSchema('system', ['sequences']);
     $this->installConfig(['node', 'content_translation']);
@@ -70,8 +71,8 @@ class EntityTranslationNormalizeTest extends NormalizerTestBase {
 
     $normalized = $this->serializer->normalize($node, $this->format);
 
-    $this->assertContains(['lang' => 'en', 'value' => $node->getTitle()], $normalized['title'], 'Original language title has been normalized.');
-    $this->assertContains(['lang' => 'de', 'value' => $translation->getTitle()], $normalized['title'], 'Translation language title has been normalized.');
+    $this->assertContainsEquals(['lang' => 'en', 'value' => $node->getTitle()], $normalized['title'], 'Original language title has been normalized.');
+    $this->assertContainsEquals(['lang' => 'de', 'value' => $translation->getTitle()], $normalized['title'], 'Translation language title has been normalized.');
 
     /** @var \Drupal\node\NodeInterface $denormalized_node */
     $denormalized_node = $this->serializer->denormalize($normalized, 'Drupal\node\Entity\Node', $this->format);

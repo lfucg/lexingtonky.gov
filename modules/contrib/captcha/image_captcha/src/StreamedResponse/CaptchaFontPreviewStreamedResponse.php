@@ -20,7 +20,7 @@ class CaptchaFontPreviewStreamedResponse extends StreamedResponse {
   /**
    * Token font selector.
    *
-   * @string
+   * @var string
    */
   protected $token;
 

@@ -15,7 +15,7 @@ class BlockFilterTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['user', 'block'];
+  protected static $modules = ['user', 'block'];
 
   /**
    * {@inheritdoc}
@@ -25,7 +25,7 @@ class BlockFilterTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $admin_user = $this->drupalCreateUser([
@@ -56,7 +56,7 @@ class BlockFilterTest extends WebDriverTestBase {
     $session->wait(10000, 'jQuery("#drupal-live-announce").html().indexOf("blocks are available") > -1');
     $visible_rows = $this->filterVisibleElements($block_rows);
     if (count($block_rows) > 0) {
-      $this->assertNotEquals(count($block_rows), count($visible_rows));
+      $this->assertNotSameSize($block_rows, $visible_rows);
     }
 
     // Test Drupal.announce() message when multiple matches are expected.

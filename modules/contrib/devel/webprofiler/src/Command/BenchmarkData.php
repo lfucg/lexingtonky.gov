@@ -3,7 +3,7 @@
 namespace Drupal\webprofiler\Command;
 
 /**
- * Class BenchmarkData
+ * Class BenchmarkData.
  */
 class BenchmarkData {
 

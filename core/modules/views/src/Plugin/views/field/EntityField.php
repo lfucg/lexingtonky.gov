@@ -6,7 +6,6 @@ use Drupal\Component\Plugin\DependentPluginInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableDependencyInterface;
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
@@ -42,12 +41,6 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
 
   use FieldAPIHandlerTrait;
   use PluginDependencyTrait;
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * An array to store field renderable arrays for use by renderItems().
@@ -157,7 +150,7 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   The entity field manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, FormatterPluginManager $formatter_plugin_manager, FieldTypePluginManagerInterface $field_type_plugin_manager, LanguageManagerInterface $language_manager, RendererInterface $renderer, EntityRepositoryInterface $entity_repository = NULL, EntityFieldManagerInterface $entity_field_manager = NULL) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, FormatterPluginManager $formatter_plugin_manager, FieldTypePluginManagerInterface $field_type_plugin_manager, LanguageManagerInterface $language_manager, RendererInterface $renderer, EntityRepositoryInterface $entity_repository, EntityFieldManagerInterface $entity_field_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->entityTypeManager = $entity_type_manager;
@@ -165,6 +158,8 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
     $this->fieldTypePluginManager = $field_type_plugin_manager;
     $this->languageManager = $language_manager;
     $this->renderer = $renderer;
+    $this->entityRepository = $entity_repository;
+    $this->entityFieldManager = $entity_field_manager;
 
     // @todo Unify 'entity field'/'field_name' instead of converting back and
     //   forth. https://www.drupal.org/node/2410779
@@ -172,17 +167,6 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
       $this->definition['field_name'] = $this->definition['entity field'];
     }
 
-    if (!$entity_repository) {
-      @trigger_error('Calling EntityField::__construct() with the $entity_repository argument is supported in drupal:8.7.0 and will be required before drupal:9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
-      $entity_repository = \Drupal::service('entity.repository');
-    }
-    $this->entityRepository = $entity_repository;
-
-    if (!$entity_field_manager) {
-      @trigger_error('Calling EntityField::__construct() with the $entity_field_manager argument is supported in drupal:8.7.0 and will be required before drupal:9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
-      $entity_field_manager = \Drupal::service('entity_field.manager');
-    }
-    $this->entityFieldManager = $entity_field_manager;
   }
 
   /**
@@ -336,8 +320,12 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
     $field_storage_definition = $this->getFieldStorageDefinition();
     $column = $this->getTableMapping()->getFieldColumnName($field_storage_definition, $this->options['click_sort_column']);
     if (!isset($this->aliases[$column])) {
-      // Column is not in query; add a sort on it (without adding the column).
+      // Column is not in query; add a sort on it.
       $this->aliases[$column] = $this->tableAlias . '.' . $column;
+      // If the query uses DISTINCT we need to add the column too.
+      if (!empty($this->view->getQuery()->options['distinct'])) {
+        $this->query->addField($this->tableAlias, $column);
+      }
     }
     $this->query->addOrderBy(NULL, NULL, $order, $this->aliases[$column]);
   }
@@ -406,7 +394,7 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
     }
 
     $options['settings'] = [
-      'default' => isset($this->definition['default_formatter_settings']) ? $this->definition['default_formatter_settings'] : [],
+      'default' => $this->definition['default_formatter_settings'] ?? [],
     ];
     $options['group_column'] = [
       'default' => $default_column,
@@ -467,7 +455,7 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
     if (count($field->getColumns()) == 1) {
       $form['click_sort_column'] = [
         '#type' => 'value',
-        '#value' => isset($column_names[0]) ? $column_names[0] : '',
+        '#value' => $column_names[0] ?? '',
       ];
     }
     else {
@@ -553,7 +541,7 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
 
     // Make the string translatable by keeping it as a whole rather than
     // translating prefix and suffix separately.
-    list($prefix, $suffix) = explode('@count', $this->t('Display @count value(s)'));
+    [$prefix, $suffix] = explode('@count', $this->t('Display @count value(s)'));
 
     if ($field->getCardinality() == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED) {
       $type = 'textfield';
@@ -612,7 +600,7 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
       '#fieldset' => 'multiple_field_settings',
     ];
 
-    list($prefix, $suffix) = explode('@count', $this->t('starting from @count'));
+    [$prefix, $suffix] = explode('@count', $this->t('starting from @count'));
     $form['delta_offset'] = [
       '#type' => 'textfield',
       '#size' => 5,
@@ -707,7 +695,6 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
    */
   public function renderItems($items) {
     if (!empty($items)) {
-      $items = $this->prepareItemsByDelta($items);
       if ($this->options['multi_type'] == 'separator' || !$this->options['group_rows']) {
         $separator = $this->options['multi_type'] == 'separator' ? Xss::filterAdmin($this->options['separator']) : '';
         $build = [
@@ -873,7 +860,7 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
     }
 
     if ($this->options['field_api_classes']) {
-      return [['rendered' => $this->renderer->render($build_list)]];
+      return [['rendered' => $build_list]];
     }
 
     // Render using the formatted data itself.
@@ -892,7 +879,7 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
         'raw' => $build_list['#items'][$delta],
       ];
     }
-    return $items;
+    return $this->prepareItemsByDelta($items);
   }
 
   /**
@@ -944,7 +931,7 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
   }
 
   public function render_item($count, $item) {
-    return render($item['rendered']);
+    return $this->renderer->render($item['rendered']);
   }
 
   protected function documentSelfTokens(&$tokens) {
@@ -1091,7 +1078,7 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
     // Some bundles might not have a specific field, in which case the entity
     // (potentially a fake one) doesn't have it either.
     /** @var \Drupal\Core\Field\FieldItemListInterface $field_item_list */
-    $field_item_list = isset($translated_entity->{$this->definition['field_name']}) ? $translated_entity->{$this->definition['field_name']} : NULL;
+    $field_item_list = $translated_entity->{$this->definition['field_name']} ?? NULL;
 
     if (!isset($field_item_list)) {
       // There isn't anything we can do without a valid field.

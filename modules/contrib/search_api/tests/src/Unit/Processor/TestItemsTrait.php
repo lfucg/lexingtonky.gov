@@ -13,7 +13,7 @@ use Drupal\search_api\Item\Item;
 use Drupal\search_api\Query\Query;
 use Drupal\search_api\Utility\QueryHelperInterface;
 use Drupal\search_api\Utility\Utility;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Provides common methods for test cases that need to create search items.

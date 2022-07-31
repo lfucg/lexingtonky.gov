@@ -10,17 +10,14 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeRepositoryInterface;
 use Drupal\Core\Language\Language;
 use Drupal\entity_test\Entity\EntityTestMul;
-use Drupal\Tests\Traits\ExpectDeprecationTrait;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\Core\Entity\Entity
+ * @coversDefaultClass \Drupal\Core\Entity\EntityBase
  * @group Entity
  * @group Access
  */
 class EntityUnitTest extends UnitTestCase {
-
-  use ExpectDeprecationTrait;
 
   /**
    * The entity under test.
@@ -88,7 +85,7 @@ class EntityUnitTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->values = [
       'id' => 1,
       'langcode' => 'en',
@@ -118,8 +115,6 @@ class EntityUnitTest extends UnitTestCase {
     $this->cacheTagsInvalidator = $this->createMock('Drupal\Core\Cache\CacheTagsInvalidator');
 
     $container = new ContainerBuilder();
-    // Ensure that Entity doesn't use the deprecated entity.manager service.
-    $container->set('entity.manager', NULL);
     $container->set('entity_type.manager', $this->entityTypeManager);
     $container->set('uuid', $this->uuid);
     $container->set('language_manager', $this->languageManager);
@@ -171,33 +166,17 @@ class EntityUnitTest extends UnitTestCase {
 
   /**
    * @covers ::label
-   * @group legacy
    */
   public function testLabel() {
-
-    $this->addExpectedDeprecationMessage('Entity type ' . $this->entityTypeId . ' defines a label callback. Support for that is deprecated in drupal:8.0.0 and will be removed in drupal:9.0.0. Override the EntityInterface::label() method instead. See https://www.drupal.org/node/3050794');
-
-    // Make a mock with one method that we use as the entity's uri_callback. We
-    // check that it is called, and that the entity's label is the callback's
-    // return value.
-    $callback_label = $this->randomMachineName();
     $property_label = $this->randomMachineName();
-    $callback_container = $this->createMock(get_class());
-    $callback_container->expects($this->once())
-      ->method(__FUNCTION__)
-      ->will($this->returnValue($callback_label));
-    $this->entityType->expects($this->at(0))
-      ->method('get')
-      ->with('label_callback')
-      ->will($this->returnValue([$callback_container, __FUNCTION__]));
-    $this->entityType->expects($this->at(2))
+    $this->entityType->expects($this->atLeastOnce())
       ->method('getKey')
       ->with('label')
       ->will($this->returnValue('label'));
 
     // Set a dummy property on the entity under test to test that the label can
     // be returned form a property if there is no callback.
-    $this->entityTypeManager->expects($this->at(1))
+    $this->entityTypeManager->expects($this->atLeastOnce())
       ->method('getDefinition')
       ->with($this->entityTypeId)
       ->will($this->returnValue([
@@ -207,7 +186,6 @@ class EntityUnitTest extends UnitTestCase {
       ]));
     $this->entity->label = $property_label;
 
-    $this->assertSame($callback_label, $this->entity->label());
     $this->assertSame($property_label, $this->entity->label());
   }
 
@@ -217,11 +195,11 @@ class EntityUnitTest extends UnitTestCase {
   public function testAccess() {
     $access = $this->createMock('\Drupal\Core\Entity\EntityAccessControlHandlerInterface');
     $operation = $this->randomMachineName();
-    $access->expects($this->at(0))
+    $access->expects($this->once())
       ->method('access')
       ->with($this->entity, $operation)
       ->will($this->returnValue(AccessResult::allowed()));
-    $access->expects($this->at(1))
+    $access->expects($this->once())
       ->method('createAccess')
       ->will($this->returnValue(AccessResult::allowed()));
     $this->entityTypeManager->expects($this->exactly(2))
@@ -238,9 +216,9 @@ class EntityUnitTest extends UnitTestCase {
   public function testLanguage() {
     $this->entityType->expects($this->any())
       ->method('getKey')
-      ->will($this->returnValueMap([
+      ->willReturnMap([
         ['langcode', 'langcode'],
-      ]));
+      ]);
     $this->assertSame('en', $this->entity->language()->getId());
   }
 
@@ -257,7 +235,7 @@ class EntityUnitTest extends UnitTestCase {
     unset($methods[array_search('create', $methods)]);
     $this->entity = $this->getMockBuilder(EntityTestMul::class)
       ->disableOriginalConstructor()
-      ->setMethods($methods)
+      ->onlyMethods($methods)
       ->getMock();
 
   }
@@ -418,19 +396,21 @@ class EntityUnitTest extends UnitTestCase {
    * @covers ::postSave
    */
   public function testPostSave() {
-    $this->cacheTagsInvalidator->expects($this->at(0))
+    $this->cacheTagsInvalidator->expects($this->exactly(2))
       ->method('invalidateTags')
-      ->with([
-        // List cache tag.
-        $this->entityTypeId . '_list',
-      ]);
-    $this->cacheTagsInvalidator->expects($this->at(1))
-      ->method('invalidateTags')
-      ->with([
-        // Own cache tag.
-        $this->entityTypeId . ':' . $this->values['id'],
-        // List cache tag.
-        $this->entityTypeId . '_list',
+      ->withConsecutive([
+        [
+          // List cache tag.
+          $this->entityTypeId . '_list',
+        ],
+      ],
+      [
+        [
+          // List cache tag.
+          $this->entityTypeId . '_list',
+          // Own cache tag.
+          $this->entityTypeId . ':' . $this->values['id'],
+        ],
       ]);
 
     // This method is internal, so check for errors on calling it only.
@@ -447,21 +427,23 @@ class EntityUnitTest extends UnitTestCase {
    * @covers ::postSave
    */
   public function testPostSaveBundle() {
-    $this->cacheTagsInvalidator->expects($this->at(0))
+    $this->cacheTagsInvalidator->expects($this->exactly(2))
       ->method('invalidateTags')
-      ->with([
-        // List cache tag.
-        $this->entityTypeId . '_list',
-        $this->entityTypeId . '_list:' . $this->entity->bundle(),
-      ]);
-    $this->cacheTagsInvalidator->expects($this->at(1))
-      ->method('invalidateTags')
-      ->with([
-        // Own cache tag.
-        $this->entityTypeId . ':' . $this->values['id'],
-        // List cache tag.
-        $this->entityTypeId . '_list',
-        $this->entityTypeId . '_list:' . $this->entity->bundle(),
+      ->withConsecutive([
+        [
+          // List cache tag.
+          $this->entityTypeId . '_list',
+          $this->entityTypeId . '_list:' . $this->entity->bundle(),
+        ],
+      ],
+      [
+        [
+          // List cache tag.
+          $this->entityTypeId . '_list',
+          $this->entityTypeId . '_list:' . $this->entity->bundle(),
+          // Own cache tag.
+          $this->entityTypeId . ':' . $this->values['id'],
+        ],
       ]);
 
     $this->entityType->expects($this->atLeastOnce())
@@ -518,8 +500,8 @@ class EntityUnitTest extends UnitTestCase {
     $this->cacheTagsInvalidator->expects($this->once())
       ->method('invalidateTags')
       ->with([
-        $this->entityTypeId . ':' . $this->values['id'],
         $this->entityTypeId . '_list',
+        $this->entityTypeId . ':' . $this->values['id'],
       ]);
     $storage = $this->createMock('\Drupal\Core\Entity\EntityStorageInterface');
     $storage->expects($this->once())
@@ -536,11 +518,16 @@ class EntityUnitTest extends UnitTestCase {
   public function testPostDeleteBundle() {
     $this->cacheTagsInvalidator->expects($this->once())
       ->method('invalidateTags')
-      ->with([
-        $this->entityTypeId . ':' . $this->values['id'],
-        $this->entityTypeId . '_list',
-        $this->entityTypeId . '_list:' . $this->entity->bundle(),
-      ]);
+      // with() also asserts on the order of array values and array keys that
+      // is something we should avoid here.
+      ->willReturnCallback(function (array $tags) {
+        self::assertEqualsCanonicalizing([
+          $this->entityTypeId . '_list',
+          $this->entityTypeId . ':' . $this->values['id'],
+          $this->entityTypeId . '_list:' . $this->entity->bundle(),
+        ], $tags);
+        return NULL;
+      });
     $this->entityType->expects($this->atLeastOnce())
       ->method('hasKey')
       ->with('bundle')
@@ -579,8 +566,8 @@ class EntityUnitTest extends UnitTestCase {
    */
   public function testCacheTags() {
     // Ensure that both methods return the same by default.
-    $this->assertEquals([$this->entityTypeId . ':' . 1], $this->entity->getCacheTags());
-    $this->assertEquals([$this->entityTypeId . ':' . 1], $this->entity->getCacheTagsToInvalidate());
+    $this->assertEqualsCanonicalizing([$this->entityTypeId . ':' . 1], $this->entity->getCacheTags());
+    $this->assertEqualsCanonicalizing([$this->entityTypeId . ':' . 1], $this->entity->getCacheTagsToInvalidate());
 
     // Add an additional cache tag and make sure only getCacheTags() returns
     // that.
@@ -588,10 +575,9 @@ class EntityUnitTest extends UnitTestCase {
 
     // EntityTypeId is random so it can shift order. We need to duplicate the
     // sort from \Drupal\Core\Cache\Cache::mergeTags().
-    $tags = ['additional_cache_tag', $this->entityTypeId . ':' . 1];
-    sort($tags);
-    $this->assertEquals($tags, $this->entity->getCacheTags());
-    $this->assertEquals([$this->entityTypeId . ':' . 1], $this->entity->getCacheTagsToInvalidate());
+    $tags = [$this->entityTypeId . ':' . 1, 'additional_cache_tag'];
+    $this->assertEqualsCanonicalizing($tags, $this->entity->getCacheTags());
+    $this->assertEqualsCanonicalizing([$this->entityTypeId . ':' . 1], $this->entity->getCacheTagsToInvalidate());
   }
 
   /**
@@ -609,11 +595,11 @@ class EntityUnitTest extends UnitTestCase {
     \Drupal::setContainer($container);
 
     // There are no cache contexts by default.
-    $this->assertEquals([], $this->entity->getCacheContexts());
+    $this->assertEqualsCanonicalizing([], $this->entity->getCacheContexts());
 
     // Add an additional cache context.
     $this->entity->addCacheContexts(['user']);
-    $this->assertEquals(['user'], $this->entity->getCacheContexts());
+    $this->assertEqualsCanonicalizing(['user'], $this->entity->getCacheContexts());
   }
 
   /**

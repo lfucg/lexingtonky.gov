@@ -2,44 +2,6 @@
 (function($) {
   // $('.lex-hide-unless-javascript').removeClass('lex-hide-unless-javascript');
 
-  // // smooth scroll in-page: https://css-tricks.com/snippets/jquery/smooth-scrolling/
-  // $('a[href*="#"]:not([href="#"])').click(function() {
-  //   var openAccordion = function(container) {
-  //     if (container.find('.js-accordion-content:visible').length === 0) {
-  //       container.find('.js-accordion-control').click();
-  //     }
-  //   }
-
-  //   if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
-  //     var target = $(this.hash);
-  //     target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
-  //     if (target.length) {
-  //       openAccordion(target);
-  //       $('html, body').animate({
-  //         scrollTop: target.offset().top,
-  //       }, 1000);
-  //       return false;
-  //     }
-  //   }
-  // });
-
-  // covidRedirect();
-
-  // // This is a temporary solution that allows a redirect to a main-domain node from a connected custom domain
-  // function covidRedirect () {
-  //   $url = window.location.href;
-  //   $referrer = document.referrer;
-
-
-  //   if ($url.search('covid19renterhelp') != -1) {
-  //     window.location.replace('https://lexingtonky.gov/how-do-i-get-help');
-  //   }
-
-  //   if ($referrer.search('covid19renterhelp') != -1) {
-  //     window.location.replace('https://lexingtonky.gov/how-do-i-get-help');
-  //   }
-  // }
-
   $('#js-feedback-button').find('a').click(function () {
     $('.lex-pagefeedback-container').find('.js-accordion-control').click();
   });
@@ -92,39 +54,41 @@
 }(jQuery));
 
 
-function googleTranslateElementInit() {
-  if (document.querySelector('body > header > section') && !document.querySelector('body > header > section > nav')) {
-    document.querySelector('body > header > section').classList.add('nonav');
-  }
+// function googleTranslateElementInit() {
+//   if (document.querySelector('body > header > section') && !document.querySelector('body > header > section > nav')) {
+//     document.querySelector('body > header > section').classList.add('nonav');
+//   }
 
-  if(document.getElementById('#google_translate_element')) {
-    document.getElementById('#google_translate_element').innerHTML = '';
-  }
-  else {
-    var e = document.createElement('div');
-    e.id = 'google_translate_element';
+//   if(document.getElementById('#google_translate_element')) {
+//     document.getElementById('#google_translate_element').innerHTML = '';
+//   }
+//   else {
+//     var e = document.createElement('div');
+//     e.id = 'google_translate_element';
 
-    if (document.querySelector('body > header > .region')) {
-      document.querySelector('body > header > .region').appendChild(e);
-    }
-    else {
-      document.querySelector('body > header').appendChild(e);
-    }
-  }
+//     if (document.querySelector('body > header > .region') && e) {
+//       console.log('if');
+//       document.querySelector('body > header > .region').appendChild(e);
+//     }
+//     else if (e) {
+//       console.log('else');
+//       document.querySelector('body > header').appendChild(e);
+//     }
+//   }
 
-  /* empty the translate element in case it has contents */
-  new google.translate.TranslateElement({
-    pageLanguage: 'en',
-    includedLanguages: 'en,es,fr',
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-  }, 'google_translate_element');
+//   /* empty the translate element in case it has contents */
+//   new google.translate.TranslateElement({
+//     pageLanguage: 'en',
+//     includedLanguages: 'en,es,fr',
+//     layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+//   }, 'google_translate_element');
 
-  /* override default "Select Language" */
-  var label = document.getElementsByClassName('goog-te-menu-value')[0];
-  if (label && ! label.innerHTML.match('Translate')) {
-    label.innerHTML = '<span class="lex-translatelink">Translate</span>';
-  }
-}
+//   /* override default "Select Language" */
+//   var label = document.getElementsByClassName('goog-te-menu-value')[0];
+//   if (label && ! label.innerHTML.match('Translate')) {
+//     label.innerHTML = '<span class="lex-translatelink">Translate</span>';
+//   }
+// }
 
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;

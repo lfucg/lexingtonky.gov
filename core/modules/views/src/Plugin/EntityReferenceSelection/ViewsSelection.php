@@ -3,7 +3,6 @@
 namespace Drupal\views\Plugin\EntityReferenceSelection;
 
 use Drupal\Component\Utility\Xss;
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -28,12 +27,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  * )
  */
 class ViewsSelection extends SelectionPluginBase implements ContainerFactoryPluginInterface {
-  use DeprecatedServicePropertyTrait;
   use StringTranslationTrait;
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The loaded View object.
@@ -85,20 +79,15 @@ class ViewsSelection extends SelectionPluginBase implements ContainerFactoryPlug
    *   The module handler service.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
-   * @param \Drupal\Core\Render\RendererInterface|null $renderer
+   * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, AccountInterface $current_user, RendererInterface $renderer = NULL) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, AccountInterface $current_user, RendererInterface $renderer) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->entityTypeManager = $entity_type_manager;
     $this->moduleHandler = $module_handler;
     $this->currentUser = $current_user;
-
-    if (!$renderer) {
-      @trigger_error('Calling ' . __METHOD__ . ' without the $renderer argument is deprecated in drupal:8.8.0 and is required in drupal:9.0.0. See https://www.drupal.org/node/2791359', E_USER_DEPRECATED);
-      $renderer = \Drupal::service('renderer');
-    }
     $this->renderer = $renderer;
   }
 
@@ -145,7 +134,7 @@ class ViewsSelection extends SelectionPluginBase implements ContainerFactoryPlug
 
     $options = [];
     foreach ($displays as $data) {
-      list($view_id, $display_id) = $data;
+      [$view_id, $display_id] = $data;
       $view = $view_storage->load($view_id);
       if (in_array($view->get('base_table'), [$entity_type->getBaseTable(), $entity_type->getDataTable()])) {
         $display = $view->get('display');
@@ -157,7 +146,7 @@ class ViewsSelection extends SelectionPluginBase implements ContainerFactoryPlug
     // into 'view_name' and 'view_display' in the final submitted values, so
     // we massage the data at validate time on the wrapping element (not
     // ideal).
-    $form['view']['#element_validate'] = [[get_called_class(), 'settingsFormValidate']];
+    $form['view']['#element_validate'] = [[static::class, 'settingsFormValidate']];
 
     if ($options) {
       $default = !empty($view_settings['view_name']) ? $view_settings['view_name'] . ':' . $view_settings['display_name'] : NULL;
@@ -329,7 +318,7 @@ class ViewsSelection extends SelectionPluginBase implements ContainerFactoryPlug
   public static function settingsFormValidate($element, FormStateInterface $form_state, $form) {
     // Split view name and display name from the 'view_and_display' value.
     if (!empty($element['view_and_display']['#value'])) {
-      list($view, $display) = explode(':', $element['view_and_display']['#value']);
+      [$view, $display] = explode(':', $element['view_and_display']['#value']);
     }
     else {
       $form_state->setError($element, t('The views entity selection mode requires a view.'));

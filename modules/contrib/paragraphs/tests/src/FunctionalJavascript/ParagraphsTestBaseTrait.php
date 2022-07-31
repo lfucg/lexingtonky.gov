@@ -33,9 +33,9 @@ trait ParagraphsTestBaseTrait {
    * @param string $paragraphs_field_name
    *   (optional) Field name to be used. Defaults to 'field_paragraphs'.
    * @param string $widget_type
-   *   (optional) Declares if we use experimental or classic widget.
-   *   Defaults to 'paragraphs' for experimental widget.
-   *   Use 'entity_reference_paragraphs' for classic widget.
+   *   (optional) Declares if we use stable or legacy widget.
+   *   Defaults to 'paragraphs' for stable widget.
+   *   Use 'entity_reference_paragraphs' for legacy widget.
    */
   protected function addParagraphedContentType($content_type_name, $paragraphs_field_name = 'field_paragraphs', $widget_type = 'paragraphs') {
     // Create the content type.
@@ -58,9 +58,9 @@ trait ParagraphsTestBaseTrait {
    * @param string $entity_type
    *   Entity type where to add the field.
    * @param string $widget_type
-   *   (optional) Declares if we use experimental or classic widget.
-   *   Defaults to 'paragraphs' for experimental widget.
-   *   Use 'entity_reference_paragraphs' for classic widget.
+   *   (optional) Declares if we use stable or legacy widget.
+   *   Defaults to 'paragraphs' for stable widget.
+   *   Use 'entity_reference_paragraphs' for legacy widget.
    */
   protected function addParagraphsField($bundle, $paragraphs_field_name, $entity_type, $widget_type = 'paragraphs') {
     $field_storage = FieldStorageConfig::loadByName($entity_type, $paragraphs_field_name);
@@ -209,7 +209,7 @@ trait ParagraphsTestBaseTrait {
     $component = $default_form_display->getComponent($paragraphs_field);
 
     $updated_component = $component;
-    if ($field_widget === NULL || $field_widget === $component['type']) {
+    if ($field_widget === NULL || (isset($component['type']) && $field_widget === $component['type'])) {
       // The widget stays the same.
       $updated_component['settings'] = $settings + $component['settings'];
     }

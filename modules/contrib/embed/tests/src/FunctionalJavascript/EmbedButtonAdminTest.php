@@ -113,10 +113,9 @@ class EmbedButtonAdminTest extends WebDriverTestBase {
     $button_id = strtolower($button_label);
     $page->fillField('label', $button_label);
     $this->assertNotEmpty($assert_session->waitForText("Machine name: $button_id"));
-    $edit = [
-      'type_id' => 'embed_test_default',
-    ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $page->selectFieldOption('type_id', 'embed_test_default');
+    $assert_session->assertWaitOnAjaxRequest();
+    $this->drupalPostForm(NULL, [], 'Save');
     // Ensure that the newly created button is listed.
     $this->drupalGet('admin/config/content/embed');
     $assert_session->pageTextContains($button_label);

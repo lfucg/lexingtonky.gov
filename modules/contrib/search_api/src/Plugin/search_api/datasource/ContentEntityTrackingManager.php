@@ -157,14 +157,22 @@ class ContentEntityTrackingManager {
 
     foreach ($indexes as $index) {
       if ($inserted_ids) {
-        $filtered_item_ids = $this->filterValidItemIds($index, $datasource_id, $inserted_ids);
-        $index->trackItemsInserted($datasource_id, $filtered_item_ids);
+        $filtered_item_ids = static::filterValidItemIds($index, $datasource_id, $inserted_ids);
+        if ($filtered_item_ids) {
+          $index->trackItemsInserted($datasource_id, $filtered_item_ids);
+        }
       }
       if ($updated_ids) {
-        $index->trackItemsUpdated($datasource_id, $updated_ids);
+        $filtered_item_ids = static::filterValidItemIds($index, $datasource_id, $updated_ids);
+        if ($filtered_item_ids) {
+          $index->trackItemsUpdated($datasource_id, $filtered_item_ids);
+        }
       }
       if ($deleted_ids) {
-        $index->trackItemsDeleted($datasource_id, $deleted_ids);
+        $filtered_item_ids = static::filterValidItemIds($index, $datasource_id, $deleted_ids);
+        if ($filtered_item_ids) {
+          $index->trackItemsDeleted($datasource_id, $filtered_item_ids);
+        }
       }
     }
   }
@@ -384,7 +392,7 @@ class ContentEntityTrackingManager {
    * @return string[]
    *   All given item IDs that are valid for that index and datasource.
    */
-  protected function filterValidItemIds(IndexInterface $index, string $datasource_id, array $item_ids): array {
+  public static function filterValidItemIds(IndexInterface $index, string $datasource_id, array $item_ids): array {
     if (!$index->isValidDatasource($datasource_id)) {
       return $item_ids;
     }

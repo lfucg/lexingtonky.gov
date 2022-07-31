@@ -3,7 +3,7 @@
 namespace Drupal\search_api\Event;
 
 use Drupal\search_api\IndexInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Wraps an items indexed event.
@@ -43,7 +43,7 @@ final class ItemsIndexedEvent extends Event {
    * @return \Drupal\search_api\IndexInterface
    *   The used index.
    */
-  public function getIndex() {
+  public function getIndex(): IndexInterface {
     return $this->index;
   }
 
@@ -53,7 +53,7 @@ final class ItemsIndexedEvent extends Event {
    * @return int[]
    *   An array containing the successfully indexed items' IDs.
    */
-  public function getProcessedIds() {
+  public function getProcessedIds(): array {
     return $this->processedIds;
   }
 

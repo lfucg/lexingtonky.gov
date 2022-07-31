@@ -9,8 +9,8 @@
     "source": "https://www.drupal.org/project/drupal/git-instructions"
   },
   "require": {
-    "php": ">=7.0.8",
-    "drupal/core-utility": "^8.8"
+    "php": ">=7.3.0",
+    "drupal/core-render": "^9.4"
   },
   "autoload": {
     "psr-4": {

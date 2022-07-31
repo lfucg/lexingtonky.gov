@@ -15,12 +15,12 @@ class EntityHasFieldConstraintValidatorTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['entity_test_constraints'];
+  protected static $modules = ['entity_test_constraints'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('entity_test_constraints');
     $this->createUser();
@@ -47,7 +47,7 @@ class EntityHasFieldConstraintValidatorTest extends EntityKernelTestBase {
     // field has been created.
     $violations = $entity->validate();
     $this->assertCount(1, $violations);
-    $this->assertEquals($violations[0]->getMessage(), 'The entity must have the <em class="placeholder">body</em> field.');
+    $this->assertEquals('The entity must have the <em class="placeholder">body</em> field.', $violations[0]->getMessage());
     $storage->save($entity);
 
     // Create the field.

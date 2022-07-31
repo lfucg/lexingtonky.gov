@@ -47,19 +47,19 @@ class DecoratorTest extends KernelTestBase {
    *   The array of values to run tests on.
    */
   public function decorators() {
-    return array(
-      array('entity_type.manager', 'Drupal\Core\Entity\EntityTypeManager', 'Drupal\webprofiler\Entity\EntityManagerWrapper'),
-      array('cache_factory', 'Drupal\Core\Cache\MemoryBackendFactory', 'Drupal\webprofiler\Cache\CacheFactoryWrapper'),
-      array('asset.css.collection_renderer', 'Drupal\Core\Asset\CssCollectionRenderer', 'Drupal\webprofiler\Asset\CssCollectionRendererWrapper'),
-      array('asset.js.collection_renderer', 'Drupal\Core\Asset\JsCollectionRenderer', 'Drupal\webprofiler\Asset\JsCollectionRendererWrapper'),
-      array('state', 'Drupal\Core\State\State', 'Drupal\webprofiler\State\StateWrapper'),
-      array('views.executable', 'Drupal\views\ViewExecutableFactory', 'Drupal\webprofiler\Views\ViewExecutableFactoryWrapper'),
-      array('form_builder', 'Drupal\Core\Form\FormBuilder', 'Drupal\webprofiler\Form\FormBuilderWrapper'),
-      array('access_manager', 'Drupal\Core\Access\AccessManager', 'Drupal\webprofiler\Access\AccessManagerWrapper'),
-      array('theme.negotiator', 'Drupal\Core\Theme\ThemeNegotiator', 'Drupal\webprofiler\Theme\ThemeNegotiatorWrapper'),
-      array('config.factory', 'Drupal\Core\Config\ConfigFactory', 'Drupal\webprofiler\Config\ConfigFactoryWrapper'),
-      array('string_translation', 'Drupal\Core\StringTranslation\TranslationManager', 'Drupal\webprofiler\StringTranslation\TranslationManagerWrapper'),
-    );
+    return [
+      ['entity_type.manager', 'Drupal\Core\Entity\EntityTypeManager', 'Drupal\webprofiler\Entity\EntityManagerWrapper'],
+      ['cache_factory', 'Drupal\Core\Cache\MemoryBackendFactory', 'Drupal\webprofiler\Cache\CacheFactoryWrapper'],
+      ['asset.css.collection_renderer', 'Drupal\Core\Asset\CssCollectionRenderer', 'Drupal\webprofiler\Asset\CssCollectionRendererWrapper'],
+      ['asset.js.collection_renderer', 'Drupal\Core\Asset\JsCollectionRenderer', 'Drupal\webprofiler\Asset\JsCollectionRendererWrapper'],
+      ['state', 'Drupal\Core\State\State', 'Drupal\webprofiler\State\StateWrapper'],
+      ['views.executable', 'Drupal\views\ViewExecutableFactory', 'Drupal\webprofiler\Views\ViewExecutableFactoryWrapper'],
+      ['form_builder', 'Drupal\Core\Form\FormBuilder', 'Drupal\webprofiler\Form\FormBuilderWrapper'],
+      ['access_manager', 'Drupal\Core\Access\AccessManager', 'Drupal\webprofiler\Access\AccessManagerWrapper'],
+      ['theme.negotiator', 'Drupal\Core\Theme\ThemeNegotiator', 'Drupal\webprofiler\Theme\ThemeNegotiatorWrapper'],
+      ['config.factory', 'Drupal\Core\Config\ConfigFactory', 'Drupal\webprofiler\Config\ConfigFactoryWrapper'],
+      ['string_translation', 'Drupal\Core\StringTranslation\TranslationManager', 'Drupal\webprofiler\StringTranslation\TranslationManagerWrapper'],
+    ];
   }
 
 }

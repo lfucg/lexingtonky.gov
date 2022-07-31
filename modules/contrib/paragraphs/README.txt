@@ -18,18 +18,19 @@ WIDGETS
 
 Paragraphs currently provides two different widgets that can be used.
 
- * Classic: a stable UI with limited features that will not be changed or
-   updated.
+ * Legacy (formerly Classic): a stable UI with limited features that will not be
+   changed or updated.
 
- * Experimental: This widget provides additional features like duplicating
-   paragraphs and a drag & drop mode (see below) as well a improved user
-   experience. It is just as well tested as the classic UI but major changes
-   between versions are to be expected.
+ * Stable (formerly Experimental): This widget provides additional features like
+   duplicating paragraphs and a drag & drop mode (see below) as well a improved
+   user experience. It is now the default and recommended widget, but changes
+   between versions are to be expected and customizations might need to be
+   updated.
 
 Drag & drop
 -------------
 
-The experimental widget offers a separate mode that allows to re-sort paragraphs
+The stable widget offers a separate mode that allows to re-sort paragraphs
 not just within the same level but it is also possible to change the hierarchy
 and move paragraphs including their children around and into other paragraphs.
 

@@ -49,7 +49,7 @@ class SqliteDateSql implements DateSqlInterface {
     'j' => '%d',
     'W' => '%W',
     'H' => '%H',
-    // No format for 12 hour hour with leading zeros.
+    // No format for 12 hour with leading zeros.
     'h' => '%H',
     'i' => '%M',
     's' => '%S',
@@ -83,7 +83,7 @@ class SqliteDateSql implements DateSqlInterface {
   public function getDateFormat($field, $format) {
     $format = strtr($format, static::$replace);
 
-    // SQLite does not have a ISO week substitution string, so it needs special
+    // SQLite does not have an ISO week substitution string, so it needs special
     // handling.
     // @see http://wikipedia.org/wiki/ISO_week_date#Calculation
     // @see http://stackoverflow.com/a/15511864/1499564
@@ -97,7 +97,7 @@ class SqliteDateSql implements DateSqlInterface {
     // case the comparison value is a float, integer, or numeric. All of the
     // above SQLite format tokens only produce integers. However, the given
     // $format may contain 'Y-m-d', which results in a string.
-    // @see \Drupal\Core\Database\Driver\sqlite\Connection::expandArguments()
+    // @see \Drupal\sqlite\Driver\Database\sqlite\Connection::expandArguments()
     // @see http://www.sqlite.org/lang_datefunc.html
     // @see http://www.sqlite.org/lang_expr.html#castexpr
     if (preg_match('/^(?:%\w)+$/', $format)) {

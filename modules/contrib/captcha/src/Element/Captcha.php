@@ -66,12 +66,12 @@ class Captcha extends FormElement implements ContainerFactoryPluginInterface {
       // it (despite previous successful responses).
       '#captcha_admin_mode' => FALSE,
       // The default CAPTCHA validation function.
-      // TODO: should this be a single string or an array of strings?
+      // @todo should this be a single string or an array of strings?
       '#captcha_validate' => 'captcha_validate_strict_equality',
     ];
     // Override the default CAPTCHA validation function for case
     // insensitive validation.
-    // TODO: shouldn't this be done somewhere else, e.g. in form_alter?
+    // @todo shouldn't this be done somewhere else, e.g. in form_alter?
     if (CAPTCHA_DEFAULT_VALIDATION_CASE_INSENSITIVE == $this->configFactory->get('captcha.settings')
       ->get('default_validation')
     ) {
@@ -85,7 +85,7 @@ class Captcha extends FormElement implements ContainerFactoryPluginInterface {
    */
   public static function processCaptchaElement(&$element, FormStateInterface $form_state, &$complete_form) {
     // Add captcha.inc file.
-    module_load_include('inc', 'captcha');
+    \Drupal::moduleHandler()->loadInclude('captcha', 'inc');
 
     // Add JavaScript for general CAPTCHA functionality.
     $element['#attached']['library'][] = 'captcha/base';
@@ -107,7 +107,7 @@ class Captcha extends FormElement implements ContainerFactoryPluginInterface {
     // Get the CAPTCHA session ID.
     // If there is a submitted form: try to retrieve and reuse the
     // CAPTCHA session ID from the posted data.
-    list($posted_form_id, $posted_captcha_sid) = _captcha_get_posted_captcha_info($element, $form_state, $this_form_id);
+    [$posted_form_id, $posted_captcha_sid] = _captcha_get_posted_captcha_info($element, $form_state, $this_form_id);
     if ($this_form_id == $posted_form_id && isset($posted_captcha_sid)) {
       $captcha_sid = $posted_captcha_sid;
     }
@@ -146,7 +146,7 @@ class Captcha extends FormElement implements ContainerFactoryPluginInterface {
     ];
 
     // Get implementing module and challenge for CAPTCHA.
-    list($captcha_type_module, $captcha_type_challenge) = _captcha_parse_captcha_type($element['#captcha_type']);
+    [$captcha_type_module, $captcha_type_challenge] = _captcha_parse_captcha_type($element['#captcha_type']);
 
     // Store CAPTCHA information for further processing in
     // - $form_state->get('captcha_info'), which survives
@@ -163,7 +163,7 @@ class Captcha extends FormElement implements ContainerFactoryPluginInterface {
       'captcha_sid' => $captcha_sid,
       'module' => $captcha_type_module,
       'captcha_type' => $captcha_type_challenge,
-      'access' => isset($element['#access']) ? $element['#access'] : CAPTCHA_FIELD_DEFAULT_ACCESS,
+      'access' => $element['#access'] ?? CAPTCHA_FIELD_DEFAULT_ACCESS,
     ]);
     $element['#captcha_info'] = [
       'form_id' => $this_form_id,
@@ -262,7 +262,7 @@ class Captcha extends FormElement implements ContainerFactoryPluginInterface {
    *   The manipulated element.
    */
   public static function preRenderProcess(array $element) {
-    module_load_include('inc', 'captcha');
+    \Drupal::moduleHandler()->loadInclude('captcha', 'inc');
 
     // Get form and CAPTCHA information.
     $captcha_info = $element['#captcha_info'];

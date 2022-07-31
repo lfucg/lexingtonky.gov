@@ -1,0 +1,30 @@
+uuid: 69a89a19-f18a-4506-bf0f-57e2d6ce3332
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.taxonomy_top_level
+  module:
+    - system
+    - views
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_views_block__taxonomy_top_level_block_1
+theme: lex_planning_commission
+region: content
+weight: -25
+provider: null
+plugin: 'views_block:taxonomy_top_level-block_1'
+settings:
+  id: 'views_block:taxonomy_top_level-block_1'
+  label: ''
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: '<front>'

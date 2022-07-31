@@ -23,7 +23,7 @@ class ModerationStateWidgetTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'system',
     'user',
     'workflows',
@@ -34,7 +34,7 @@ class ModerationStateWidgetTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('content_moderation_state');
@@ -54,7 +54,7 @@ class ModerationStateWidgetTest extends KernelTestBase {
   }
 
   /**
-   * Test the widget does not impact a non-moderated entity.
+   * Tests the widget does not impact a non-moderated entity.
    */
   public function testWidgetNonModeratedEntity() {
     // Create an unmoderated entity and build a form display which will include

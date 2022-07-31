@@ -16,7 +16,13 @@ class EntityFieldDeriver extends EntityDeriverBase {
   public function getDerivativeDefinitions($base_plugin_definition) {
     $entity_type_labels = $this->entityTypeRepository->getEntityTypeLabels();
     foreach ($this->entityFieldManager->getFieldMap() as $entity_type_id => $entity_field_map) {
-      foreach ($this->entityFieldManager->getFieldStorageDefinitions($entity_type_id) as $field_storage_definition) {
+      // Some base fields have no storage.
+      /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $field_storage_definitions */
+      $field_storage_definitions = array_merge(
+        $this->entityFieldManager->getBaseFieldDefinitions($entity_type_id),
+        $this->entityFieldManager->getFieldStorageDefinitions($entity_type_id)
+      );
+      foreach ($field_storage_definitions as $field_storage_definition) {
         $field_name = $field_storage_definition->getName();
 
         // The blocks are based on fields. However, we are looping through field

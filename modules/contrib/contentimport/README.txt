@@ -66,7 +66,11 @@ For Image field - upload all the images
 
 For Entity Reference field(Taxonomy) - put the data as Vocabulary: term1, term2
 	If the Vocabulary or Term is not exists it will create automatically.
-	Eg: fruits:apple:orange
+	If a field has multiple vocabularies as a target in field settings, you must
+	do this:
+	Eg: fruits:apple,orange
+	Otherwise, if there is a single target, you must omit the vocabulary name:
+	Eg: apple,orange,pear,banana
 
 For Entity Reference field(Users) - put the user's email address 
 	comma separated 
@@ -92,6 +96,21 @@ For Geolocation field - Put the latitude and longitude values with , separated
 		lat2,long2;lat3,long3
 		lat4,long4;lat5,long5;lat6,long6
 		lat7,long7
+
+For Geo field - Put the latitude and longitude values with , separated
+	If the field having mulitple values, put the data with ; as delimiter
+	Eg: lat1,long1
+		lat2,long2;lat3,long3
+		lat4,long4;lat5,long5;lat6,long6
+		lat7,long7
+
+For List (String) - Put the latitude and longitude values with , separated
+	If the field having mulitple values, put the data with , as delimiter
+	Eg: mango,banana
+
+For Author - add column with key "author" in CSV and put the user names under 
+  this column, system will be adding the author information when the import
+  happens.
 
 Check the attached CSV file for Sample.
 

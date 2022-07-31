@@ -65,7 +65,8 @@ class ParagraphsLibraryItemEntityBrowserTest extends EntityBrowserWebDriverTestB
       'entity_types[paragraphs_library_item]' => TRUE,
       'settings[paragraphs_library_item][paragraphs_library_item][translatable]' => TRUE,
     ];
-    $this->drupalPostForm('admin/config/regional/content-language', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/regional/content-language');
+    $this->submitForm($edit, 'Save configuration');
 
     $this->addParagraphsType('text');
     $this->addFieldtoParagraphType('text', 'field_text', 'text');
@@ -105,7 +106,7 @@ JS;
     // processing in the iframe.
     sleep(1);
     $this->waitForAjaxToFinish();
-    $this->drupalPostForm(NULL, [], t('Save'));
+    $this->submitForm([], 'Save');
     // Check that the paragraph was correctly reused.
     $this->assertSession()->pageTextContains('reusable_text');
 
@@ -118,7 +119,7 @@ JS;
       'label[0][value]' => 'DE Title',
       'paragraphs[0][subform][field_text][0][value]' => 'DE Library text',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->pageTextContains('Paragraph DE Title has been updated.');
 
     // Add a node with a paragraph from library.

@@ -1,5 +1,5 @@
 services:
-  devel.command:
+  devel.commands:
     class: Drupal\devel\Commands\DevelCommands
     arguments: ['@token', '@service_container', '@event_dispatcher', '@module_handler']
     tags:

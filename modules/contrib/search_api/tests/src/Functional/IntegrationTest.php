@@ -60,7 +60,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'search_api',
     'search_api_test',
@@ -758,6 +758,12 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
     $this->submitForm($edit, 'Save and manage fields');
 
+    // Make sure this worked.
+    $entity_bundle_info = $this->container->get('entity_type.bundle.info');
+    $entity_bundle_info->clearCachedBundles();
+    $bundles = $entity_bundle_info->getBundleInfo('node');
+    $this->assertArrayHasKey('_content_', $bundles);
+
     // Add a field to that content type with funky chars.
     $field_name = '^6%{[*>.<"field';
     FieldStorageConfig::create([
@@ -784,6 +790,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     // Also check data type labels/descriptions.
     $this->assertHtmlEscaped('"Test" data type');
     $this->assertSession()->responseContains('Dummy <em>data type</em> implementation');
+    $this->submitForm([], 'Save changes');
 
     $edit = [
       'datasource_configs[entity:node][bundles][default]' => 1,
@@ -866,7 +873,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
       'fields[title][title]' => 'new_title',
       'fields[title][id]' => 'new_id',
       'fields[title][type]' => 'text',
-      'fields[title][boost]' => '21.0',
+      'fields[title][boost]' => Utility::formatBoostFactor(21),
       'fields[revision_log][type]' => 'search_api_test',
     ];
     $this->drupalGet($this->getIndexPath('fields'));
@@ -896,6 +903,17 @@ class IntegrationTest extends SearchApiBrowserTestBase {
 
     // Make sure that property paths are correctly displayed.
     $this->assertSession()->pageTextContains('uid:entity:name');
+
+    // Verify that custom boost values set directly in the config won't be
+    // overwritten when saving the "Fields" form in the UI.
+    $index = $this->getIndex(TRUE);
+    $index->getField('title')->setBoost(4.0);
+    $index->save();
+    $this->drupalGet($this->getIndexPath('fields'));
+    $this->submitForm([], 'Save changes');
+    $this->assertSession()->pageTextContains('The changes were successfully saved.');
+    $index = $this->getIndex(TRUE);
+    $this->assertEquals(4.0, $index->getField('title')->getBoost());
   }
 
   /**
@@ -1241,10 +1259,10 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     // Change the boost of the field.
     $fields_path = $this->getIndexPath('fields');
     $this->drupalGet($fields_path);
-    $this->submitForm(['fields[url][boost]' => '8.0'], 'Save changes');
+    $this->submitForm(['fields[url][boost]' => Utility::formatBoostFactor(8)], 'Save changes');
     $this->assertSession()->pageTextContains('The changes were successfully saved.');
     $option_field = $this->assertSession()
-      ->optionExists('edit-fields-url-boost', '8.0');
+      ->optionExists('edit-fields-url-boost', Utility::formatBoostFactor(8));
     $this->assertTrue($option_field->hasAttribute('selected'), 'Boost is correctly saved.');
 
     // Change the type of the field.
@@ -1365,8 +1383,14 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $index = $this->getIndex(TRUE);
     $index->reindex();
 
-    $user_count = \Drupal::entityQuery('user')->count()->execute();
-    $node_count = \Drupal::entityQuery('node')->count()->execute();
+    $user_count = \Drupal::entityQuery('user')
+      ->accessCheck(FALSE)
+      ->count()
+      ->execute();
+    $node_count = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
+      ->count()
+      ->execute();
 
     // Enable indexing of users.
     $settings_path = $this->getIndexPath('edit');
@@ -1407,7 +1431,10 @@ class IntegrationTest extends SearchApiBrowserTestBase {
    * "unindexed" in the tracker.
    */
   protected function changeIndexServer() {
-    $node_count = \Drupal::entityQuery('node')->count()->execute();
+    $node_count = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
+      ->count()
+      ->execute();
     $this->assertEquals($node_count, $this->countTrackedItems(), 'All nodes are correctly tracked by the index.');
 
     // Index all remaining items on the index.
@@ -1453,7 +1480,10 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $this->submitForm([], 'Index now');
     $this->assertSession()->statusCodeEquals(200);
     $this->checkForMetaRefresh();
-    $count = \Drupal::entityQuery('node')->count()->execute() - 1;
+    $count = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
+      ->count()
+      ->execute() - 1;
     $this->assertSession()->pageTextContains("Successfully indexed $count items.");
     $this->assertSession()->pageTextContains('1 item could not be indexed.');
     $this->assertSession()->pageTextNotContains("Couldn't index items.");
@@ -1503,7 +1533,10 @@ class IntegrationTest extends SearchApiBrowserTestBase {
       ->condition('item_id', Utility::createCombinedId('entity:node', '2:en'))
       ->execute();
     $this->assertEquals(1, $deleted);
-    $manipulated_items_count = \Drupal::entityQuery('node')->count()->execute() - 1;
+    $manipulated_items_count = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
+      ->count()
+      ->execute() - 1;
 
     $this->assertEquals($manipulated_items_count, $tracker->getIndexedItemsCount());
     $this->assertEquals($manipulated_items_count, $tracker->getTotalItemsCount());

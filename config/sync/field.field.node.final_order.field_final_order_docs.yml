@@ -1,0 +1,27 @@
+uuid: b6366083-8b4e-4a64-b2f9-b127f1236551
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_final_order_docs
+    - node.type.final_order
+  module:
+    - file
+id: node.final_order.field_final_order_docs
+field_name: field_final_order_docs
+entity_type: node
+bundle: final_order
+label: 'Final order and related documents'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: 'final-orders/[date:custom:Y]-[date:custom:m]'
+  file_extensions: pdf
+  max_filesize: 5MB
+  description_field: true
+field_type: file

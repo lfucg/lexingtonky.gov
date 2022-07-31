@@ -6,7 +6,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class ProfilerStorageFactory
+ * Class ProfilerStorageFactory.
  */
 class ProfilerStorageFactory {
 

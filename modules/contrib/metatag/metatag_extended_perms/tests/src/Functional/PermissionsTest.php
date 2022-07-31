@@ -70,17 +70,19 @@ class PermissionsTest extends BrowserTestBase {
       'revisit_after' => 'Revisit After',
       'rights' => 'Rights',
       // This one is more complicated, so skip it.
+      // @code
       // 'robots' => 'Robots',
+      // @endcode
       'set_cookie' => 'Set cookie',
       'shortlink' => 'Shortlink URL',
       'standout' => 'Standout',
-    ]
+    ],
   ];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Log in as the super admin.
@@ -207,8 +209,8 @@ class PermissionsTest extends BrowserTestBase {
       'field_name' => 'metatag',
       'new_storage_type' => 'metatag',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save and continue');
-    $this->drupalPostForm(NULL, [], 'Save field settings');
+    $this->submitForm($edit, 'Save and continue');
+    $this->submitForm([], 'Save field settings');
 
     // Clear all settings.
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();

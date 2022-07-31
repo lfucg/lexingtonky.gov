@@ -1,0 +1,25 @@
+uuid: ae40d77f-3244-41aa-a88a-79e57eb022a0
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.default_headers_for_themes.field_organization_image
+    - field.field.node.default_headers_for_themes.field_theme
+    - node.type.default_headers_for_themes
+  module:
+    - user
+id: node.default_headers_for_themes.teaser
+targetEntityType: node
+bundle: default_headers_for_themes
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  addtoany: true
+  field_organization_image: true
+  field_theme: true

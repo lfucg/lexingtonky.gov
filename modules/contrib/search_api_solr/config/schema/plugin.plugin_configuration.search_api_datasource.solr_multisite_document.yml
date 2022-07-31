@@ -1,0 +1,13 @@
+plugin.plugin_configuration.search_api_datasource.solr_multisite_document:
+  type: plugin.plugin_configuration.search_api_datasource.solr_document
+  label: "Solr multisite document datasource configuration"
+  mapping:
+    target_index:
+      type: string
+      label: "Targeted index"
+    target_index_machine_name:
+      type: string
+      label: "Targeted index"
+    target_hash:
+      type: string
+      label: "Targeted site hash"

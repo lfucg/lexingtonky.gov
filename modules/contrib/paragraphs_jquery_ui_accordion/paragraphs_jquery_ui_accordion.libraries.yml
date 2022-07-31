@@ -5,5 +5,5 @@ accordion:
   dependencies:
     - core/drupal
     - core/jquery
-    - core/jquery.ui.accordion
     - core/drupalSettings
+    - jquery_ui_accordion/accordion

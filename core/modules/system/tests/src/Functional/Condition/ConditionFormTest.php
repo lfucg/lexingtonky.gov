@@ -16,7 +16,7 @@ use Drupal\Tests\BrowserTestBase;
  */
 class ConditionFormTest extends BrowserTestBase {
 
-  public static $modules = ['node', 'condition_test'];
+  protected static $modules = ['node', 'condition_test'];
 
   /**
    * {@inheritdoc}
@@ -37,13 +37,13 @@ class ConditionFormTest extends BrowserTestBase {
     $article->save();
 
     $this->drupalGet('condition_test');
-    $this->assertField('bundles[article]', 'There is an article bundle selector.');
-    $this->assertField('bundles[page]', 'There is a page bundle selector.');
-    $this->drupalPostForm(NULL, ['bundles[page]' => 'page', 'bundles[article]' => 'article'], t('Submit'));
+    $this->assertSession()->fieldExists('bundles[article]');
+    $this->assertSession()->fieldExists('bundles[page]');
+    $this->submitForm(['bundles[page]' => 'page', 'bundles[article]' => 'article'], 'Submit');
     // @see \Drupal\condition_test\FormController::submitForm()
-    $this->assertText('Bundle: page');
-    $this->assertText('Bundle: article');
-    $this->assertText('Executed successfully.', 'The form configured condition executed properly.');
+    $this->assertSession()->pageTextContains('Bundle: page');
+    $this->assertSession()->pageTextContains('Bundle: article');
+    $this->assertSession()->pageTextContains('Executed successfully.');
   }
 
 }

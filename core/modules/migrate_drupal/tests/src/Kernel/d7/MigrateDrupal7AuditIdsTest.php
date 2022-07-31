@@ -8,7 +8,6 @@ use Drupal\migrate\Audit\IdAuditor;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\Tests\content_moderation\Traits\ContentModerationTestTrait;
-use Drupal\Tests\DeprecatedModulesTestTrait;
 use Drupal\Tests\migrate_drupal\Traits\CreateTestContentEntitiesTrait;
 
 /**
@@ -21,15 +20,13 @@ class MigrateDrupal7AuditIdsTest extends MigrateDrupal7TestBase {
   use FileSystemModuleDiscoveryDataProviderTrait;
   use CreateTestContentEntitiesTrait;
   use ContentModerationTestTrait;
-  use DeprecatedModulesTestTrait;
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     // Enable all modules.
     self::$modules = array_keys($this->coreModuleListDataProvider());
-    self::$modules = $this->removeDeprecatedModules(self::$modules);
     parent::setUp();
 
     // Install required entity schemas.
@@ -130,6 +127,7 @@ class MigrateDrupal7AuditIdsTest extends MigrateDrupal7TestBase {
     );
 
     $expected = [
+      // @todo Remove aggregator in https://www.drupal.org/project/drupal/issues/3264120
       'd7_aggregator_feed',
       'd7_aggregator_item',
       'd7_comment',

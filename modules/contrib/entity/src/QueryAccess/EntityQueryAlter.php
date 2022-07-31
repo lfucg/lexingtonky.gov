@@ -152,7 +152,7 @@ class EntityQueryAlter implements ContainerInjectionInterface {
           '=' => 'LIKE',
           '<>' => 'NOT LIKE',
         ];
-        if (!$case_sensitive && isset($operator_map[$operator])) {
+        if ($case_sensitive === FALSE && isset($operator_map[$operator])) {
           $operator = $operator_map[$operator];
           $value = $query->escapeLike($value);
         }

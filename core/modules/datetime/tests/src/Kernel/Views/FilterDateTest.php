@@ -46,7 +46,7 @@ class FilterDateTest extends DateTimeHandlerTestBase {
    *
    * Create nodes with relative dates of yesterday, today, and tomorrow.
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp($import_test_views);
 
     // Change field storage to date-only.
@@ -83,7 +83,7 @@ class FilterDateTest extends DateTimeHandlerTestBase {
   }
 
   /**
-   * Test offsets with date-only fields.
+   * Tests offsets with date-only fields.
    */
   public function testDateOffsets() {
     $view = Views::getView('test_filter_datetime');
@@ -167,7 +167,7 @@ class FilterDateTest extends DateTimeHandlerTestBase {
   }
 
   /**
-   * Test date filter with date-only fields.
+   * Tests date filter with date-only fields.
    */
   public function testDateIs() {
     $view = Views::getView('test_filter_datetime');

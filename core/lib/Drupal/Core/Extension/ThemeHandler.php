@@ -3,7 +3,6 @@
 namespace Drupal\Core\Extension;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Extension\Exception\UninstalledExtensionException;
 use Drupal\Core\Extension\Exception\UnknownExtensionException;
 
 /**
@@ -47,7 +46,7 @@ class ThemeHandler implements ThemeHandlerInterface {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory to get the installed themes.
    * @param \Drupal\Core\Extension\ThemeExtensionList $theme_list
-   *   A extension discovery instance.
+   *   An extension discovery instance.
    */
   public function __construct($root, ConfigFactoryInterface $config_factory, ThemeExtensionList $theme_list) {
     $this->root = $root;
@@ -60,41 +59,6 @@ class ThemeHandler implements ThemeHandlerInterface {
    */
   public function getDefault() {
     return $this->configFactory->get('system.theme')->get('default');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setDefault($name) {
-    @trigger_error(__METHOD__ . ' is deprecated in drupal:8.2.0 and is removed from drupal:9.0.0. Use the configuration system to edit the system.theme config directly. See https://www.drupal.org/node/3082630', E_USER_DEPRECATED);
-    $list = $this->listInfo();
-    if (!isset($list[$name])) {
-      throw new UninstalledExtensionException("$name theme is not installed.");
-    }
-    $this->configFactory->getEditable('system.theme')
-      ->set('default', $name)
-      ->save();
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function install(array $theme_list, $install_dependencies = TRUE) {
-    // We keep the old install() method as BC layer but redirect directly to the
-    // theme installer.
-    @trigger_error('\Drupal\Core\Extension\ThemeHandlerInterface::install() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use \Drupal\Core\Extension\ThemeInstallerInterface::install() instead. See https://www.drupal.org/node/3017233', E_USER_DEPRECATED);
-    return \Drupal::service('theme_installer')->install($theme_list, $install_dependencies);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function uninstall(array $theme_list) {
-    // We keep the old uninstall() method as BC layer but redirect directly to
-    // the theme installer.
-    @trigger_error('\Drupal\Core\Extension\ThemeHandlerInterface::uninstall() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use \Drupal\Core\Extension\ThemeInstallerInterface::uninstall() instead. See https://www.drupal.org/node/3017233', E_USER_DEPRECATED);
-    \Drupal::service('theme_installer')->uninstall($theme_list);
   }
 
   /**

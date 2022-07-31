@@ -19,7 +19,7 @@ abstract class SearchApiBrowserTestBase extends BrowserTestBase {
    *
    * @var string[]
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'search_api',
     'search_api_test',

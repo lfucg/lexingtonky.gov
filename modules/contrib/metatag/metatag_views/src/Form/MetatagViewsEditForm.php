@@ -10,7 +10,7 @@ use Drupal\metatag_views\MetatagViewsValuesCleanerTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class MetatagViewsEditForm.
+ * The edit form for the Metatag field.
  *
  * @package Drupal\metatag_views\Form
  */
@@ -139,7 +139,7 @@ class MetatagViewsEditForm extends FormBase {
             $tag = $this->tagPluginManager->createInstance($tag_id);
 
             // Set the value to the stored value, if any.
-            $tag_value = isset($values[$tag_id]) ? $values[$tag_id] : NULL;
+            $tag_value = $values[$tag_id] ?? NULL;
             $tag->setValue($tag_value);
 
             // Create the bit of form for this tag.
@@ -158,7 +158,7 @@ class MetatagViewsEditForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Get the submitted form values.
     $view_name = $form_state->getValue('view');
-    list($view_id, $display_id) = explode(':', $view_name);
+    [$view_id, $display_id] = explode(':', $view_name);
 
     $metatags = $form_state->getValues();
     unset($metatags['view']);
@@ -178,6 +178,9 @@ class MetatagViewsEditForm extends FormBase {
       $configuration->clear($config_path);
     }
     else {
+      // Sort the values prior to saving. so that they are easier to manage.
+      ksort($metatags);
+
       $configuration->set($config_path, $metatags);
     }
     $configuration->save();

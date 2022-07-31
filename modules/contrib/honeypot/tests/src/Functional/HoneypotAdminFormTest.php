@@ -19,24 +19,19 @@ class HoneypotAdminFormTest extends BrowserTestBase {
   protected $adminUser;
 
   /**
-   * Default theme.
-   *
-   * @var string
+   * {@inheritdoc}
    */
   protected $defaultTheme = 'stark';
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = ['honeypot'];
+  protected static $modules = ['honeypot'];
 
   /**
-   * Setup before test.
+   * {@inheritdoc}
    */
-  public function setUp() {
-    // Enable modules required for this test.
+  protected function setUp(): void {
     parent::setUp();
 
     // Set up admin user.
@@ -49,35 +44,41 @@ class HoneypotAdminFormTest extends BrowserTestBase {
   /**
    * Test a valid element name.
    */
-  public function testElementNameUpdateSuccess() {
+  public function testElementNameUpdateSuccess(): void {
+    /** @var \Drupal\Tests\WebAssert $assert */
+    $assert = $this->assertSession();
+
     // Log in the admin user.
     $this->drupalLogin($this->adminUser);
 
     // Set up form and submit it.
     $edit['element_name'] = "test";
-    $this->drupalPostForm('admin/config/content/honeypot', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/content/honeypot');
+    $this->submitForm($edit, 'Save configuration');
 
     // Form should have been submitted successfully.
-    $this->assertSession()->pageTextContains('The configuration options have been saved.');
+    $assert->pageTextContains('The configuration options have been saved.');
 
     // Set up form and submit it.
     $edit['element_name'] = "test-1";
-    $this->drupalPostForm('admin/config/content/honeypot', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/content/honeypot');
+    $this->submitForm($edit, 'Save configuration');
 
     // Form should have been submitted successfully.
-    $this->assertSession()->pageTextContains('The configuration options have been saved.');
+    $assert->pageTextContains('The configuration options have been saved.');
   }
 
   /**
    * Test an invalid element name (invalid first character).
    */
-  public function testElementNameUpdateFirstCharacterFail() {
+  public function testElementNameUpdateFirstCharacterFail(): void {
     // Log in the admin user.
     $this->drupalLogin($this->adminUser);
 
     // Set up form and submit it.
     $edit['element_name'] = "1test";
-    $this->drupalPostForm('admin/config/content/honeypot', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/content/honeypot');
+    $this->submitForm($edit, 'Save configuration');
 
     // Form submission should fail.
     $this->assertSession()->pageTextContains('The element name must start with a letter.');
@@ -86,23 +87,28 @@ class HoneypotAdminFormTest extends BrowserTestBase {
   /**
    * Test an invalid element name (invalid character in name).
    */
-  public function testElementNameUpdateInvalidCharacterFail() {
+  public function testElementNameUpdateInvalidCharacterFail(): void {
+    /** @var \Drupal\Tests\WebAssert $assert */
+    $assert = $this->assertSession();
+
     // Log in the admin user.
     $this->drupalLogin($this->adminUser);
 
     // Set up form and submit it.
     $edit['element_name'] = "special-character-&";
-    $this->drupalPostForm('admin/config/content/honeypot', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/content/honeypot');
+    $this->submitForm($edit, 'Save configuration');
 
     // Form submission should fail.
-    $this->assertSession()->pageTextContains('The element name cannot contain spaces or other special characters.');
+    $assert->pageTextContains('The element name cannot contain spaces or other special characters.');
 
     // Set up form and submit it.
     $edit['element_name'] = "space in name";
-    $this->drupalPostForm('admin/config/content/honeypot', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/content/honeypot');
+    $this->submitForm($edit, 'Save configuration');
 
     // Form submission should fail.
-    $this->assertSession()->pageTextContains('The element name cannot contain spaces or other special characters.');
+    $assert->pageTextContains('The element name cannot contain spaces or other special characters.');
   }
 
 }

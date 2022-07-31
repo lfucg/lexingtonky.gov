@@ -25,7 +25,7 @@ class CommandHelperTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'search_api',
     'search_api_test',
     'user',

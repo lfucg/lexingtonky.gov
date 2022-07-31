@@ -33,7 +33,7 @@ class ReadOnlyStorageTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     // Set up a memory storage we can manipulate to set fixtures.
     $this->memory = new MemoryStorage();
     // Wrap the memory storage in the read-only storage to test it.
@@ -104,7 +104,7 @@ class ReadOnlyStorageTest extends UnitTestCase {
     }
 
     // Assert that the memory storage has not been altered.
-    $this->assertTrue($backup == $this->memory);
+    $this->assertEquals($backup, $this->memory);
   }
 
   /**

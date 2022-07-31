@@ -16,7 +16,8 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
  *   weight = 8,
  *   type = "label",
  *   secure = FALSE,
- *   multiple = FALSE
+ *   multiple = FALSE,
+ *   trimmable = TRUE
  * )
  */
 class PinterestDescription extends MetaPropertyBase {

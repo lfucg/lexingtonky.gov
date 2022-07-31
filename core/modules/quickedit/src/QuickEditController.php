@@ -6,10 +6,12 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Entity\EntityInterface;
@@ -87,15 +89,7 @@ class QuickEditController extends ControllerBase {
     $this->metadataGenerator = $metadata_generator;
     $this->editorSelector = $editor_selector;
     $this->renderer = $renderer;
-    if (!$entity_display_repository) {
-      @trigger_error('The entity_display.repository service must be passed to QuickEditController::__construct(), it is required before Drupal 9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
-      $entity_display_repository = \Drupal::service('entity_display.repository');
-    }
     $this->entityDisplayRepository = $entity_display_repository;
-    if (!$entity_repository) {
-      @trigger_error('The entity.repository service must be passed to QuickEditController::__construct(), it is required before Drupal 9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
-      $entity_repository = \Drupal::service('entity.repository');
-    }
     $this->entityRepository = $entity_repository;
   }
 
@@ -132,7 +126,7 @@ class QuickEditController extends ControllerBase {
 
     $metadata = [];
     foreach ($fields as $field) {
-      list($entity_type, $entity_id, $field_name, $langcode, $view_mode) = explode('/', $field);
+      [$entity_type, $entity_id, $field_name, $langcode, $view_mode] = explode('/', $field);
 
       // Load the entity.
       if (!$entity_type || !$this->entityTypeManager()->getDefinition($entity_type)) {
@@ -163,6 +157,32 @@ class QuickEditController extends ControllerBase {
     }
 
     return new JsonResponse($metadata);
+  }
+
+  /**
+   * Throws an AccessDeniedHttpException if the request fails CSRF validation.
+   *
+   * This is used instead of \Drupal\Core\Access\CsrfAccessCheck, in order to
+   * allow access for anonymous users.
+   *
+   * @todo Refactor this to an access checker.
+   */
+  private static function checkCsrf(Request $request, AccountInterface $account) {
+    $header = 'X-Drupal-Quickedit-CSRF-Token';
+
+    if (!$request->headers->has($header)) {
+      throw new AccessDeniedHttpException();
+    }
+    if ($account->isAnonymous()) {
+      // For anonymous users, just the presence of the custom header is
+      // sufficient protection.
+      return;
+    }
+    // For authenticated users, validate the token value.
+    $token = $request->headers->get($header);
+    if (!\Drupal::csrfToken()->validate($token, $header)) {
+      throw new AccessDeniedHttpException();
+    }
   }
 
   /**
@@ -315,6 +335,8 @@ class QuickEditController extends ControllerBase {
    *   The Ajax response.
    */
   public function entitySave(EntityInterface $entity) {
+    self::checkCsrf(\Drupal::request(), \Drupal::currentUser());
+
     // Take the entity from PrivateTempStore and save in entity storage.
     // fieldForm() ensures that the PrivateTempStore copy exists ahead.
     $tempstore = $this->tempStoreFactory->get('quickedit');

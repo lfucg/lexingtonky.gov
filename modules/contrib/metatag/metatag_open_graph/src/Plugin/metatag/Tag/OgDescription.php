@@ -18,6 +18,7 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
  *   secure = FALSE,
  *   multiple = FALSE,
  *   long = TRUE,
+ *   trimmable = TRUE
  * )
  */
 class OgDescription extends MetaPropertyBase {

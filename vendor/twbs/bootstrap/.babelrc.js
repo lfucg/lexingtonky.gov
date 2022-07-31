@@ -8,10 +8,5 @@ module.exports = {
         modules: false
       }
     ]
-  ],
-  env: {
-    test: {
-      plugins: [ 'istanbul' ]
-    }
-  }
+  ]
 };

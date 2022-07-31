@@ -15,6 +15,7 @@ namespace Drupal\metatag\Plugin\metatag\Tag;
  *   type = "label",
  *   secure = FALSE,
  *   multiple = FALSE,
+ *   trimmable = TRUE,
  *   long = TRUE,
  * )
  */

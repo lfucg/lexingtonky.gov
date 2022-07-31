@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\search_api_solr\Kernel\Processor;
 
+use Drupal\Tests\search_api\Kernel\Processor\ContentAccessTest as SearchApiContentAccessTest;
+
 /**
  * Tests the "Content access" processor.
  *
@@ -9,7 +11,7 @@ namespace Drupal\Tests\search_api_solr\Kernel\Processor;
  *
  * @see \Drupal\search_api\Plugin\search_api\processor\ContentAccess
  */
-class ContentAccessTest extends \Drupal\Tests\search_api\Kernel\Processor\ContentAccessTest  {
+class ContentAccessTest extends SearchApiContentAccessTest {
 
   use SolrBackendTrait;
 
@@ -24,9 +26,9 @@ class ContentAccessTest extends \Drupal\Tests\search_api\Kernel\Processor\Conten
   /**
    * {@inheritdoc}
    */
-  public function setUp($processor = NULL) {
+  public function setUp($processor = NULL): void {
     parent::setUp();
-    $this->enableSolrServer('search_api_solr_test', '/config/install/search_api.server.solr_search_server.yml');
+    $this->enableSolrServer();
   }
 
 }

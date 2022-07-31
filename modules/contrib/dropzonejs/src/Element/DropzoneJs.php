@@ -76,9 +76,6 @@ class DropzoneJs extends FormElement {
       '#theme' => 'dropzonejs',
       '#theme_wrappers' => ['form_element'],
       '#tree' => TRUE,
-      '#attached' => [
-        'library' => ['dropzonejs/integration'],
-      ],
     ];
   }
 
@@ -86,6 +83,8 @@ class DropzoneJs extends FormElement {
    * Processes a dropzone upload element.
    */
   public static function processDropzoneJs(&$element, FormStateInterface $form_state, &$complete_form) {
+    // Generate url and collect metadata for CSRF token to be up to date.
+    $generated_url = Url::fromRoute('dropzonejs.upload')->toString(TRUE);
     $element['uploaded_files'] = [
       '#type' => 'hidden',
       // @todo Handle defaults.
@@ -93,9 +92,10 @@ class DropzoneJs extends FormElement {
       // If we send a url with a token through drupalSettings the placeholder
       // doesn't get replaced, because the actual scripts markup is not there
       // yet. So we pass this information through a data attribute.
-      '#attributes' => ['data-upload-path' => Url::fromRoute('dropzonejs.upload')->toString()],
+      '#attributes' => ['data-upload-path' => $generated_url->getGeneratedUrl()],
     ];
-
+    // Apply cacheable metadata to element.
+    $generated_url->applyTo($element);
     if (empty($element['#max_filesize'])) {
       $element['#max_filesize'] = Environment::getUploadMaxSize();
     }
@@ -129,6 +129,7 @@ class DropzoneJs extends FormElement {
     // Convert the human size input to bytes, convert it to MB and round it.
     $max_size = round(Bytes::toInt($element['#max_filesize']) / pow(Bytes::KILOBYTE, 2), 2);
 
+    $element['#attached']['library'] = ['dropzonejs/integration'];
     $element['#attached']['drupalSettings']['dropzonejs'] = [
       'instances' => [
         // Configuration keys are matched with DropzoneJS configuration

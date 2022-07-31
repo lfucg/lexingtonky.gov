@@ -1,0 +1,6 @@
+services:
+  access_check.search_api_pantheon_admin:
+    class: Drupal\search_api_pantheon_admin\Access\AdminAccessCheck
+    arguments: [ '@current_user' ]
+    tags:
+      - { name: access_check, applies_to: _search_api_pantheon_admin_access_check }

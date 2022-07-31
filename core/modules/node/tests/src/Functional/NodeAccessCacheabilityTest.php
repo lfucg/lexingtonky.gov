@@ -21,7 +21,7 @@ class NodeAccessCacheabilityTest extends NodeTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'node_access_test',
     'node_access_test_auto_bubbling',
   ];
@@ -34,7 +34,7 @@ class NodeAccessCacheabilityTest extends NodeTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     node_access_rebuild();
@@ -52,8 +52,6 @@ class NodeAccessCacheabilityTest extends NodeTestBase {
    * @see node_query_node_access_alter()
    */
   public function testNodeAccessCacheabilitySafeguard() {
-    $this->dumpHeaders = TRUE;
-
     // The node grants cache context should be added automatically.
     $this->drupalGet(new Url('node_access_test_auto_bubbling'));
     $this->assertCacheContext('user.node_grants:view');

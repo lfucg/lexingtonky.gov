@@ -19,12 +19,12 @@ class PathautoUserWebTest extends BrowserTestBase {
    */
   protected $defaultTheme = 'stable';
 
-   /**
+  /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = ['pathauto', 'views'];
+  protected static $modules = ['pathauto', 'views'];
 
   /**
    * Admin user.
@@ -36,7 +36,7 @@ class PathautoUserWebTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Allow other modules to add additional permissions for the admin user.
@@ -58,7 +58,7 @@ class PathautoUserWebTest extends BrowserTestBase {
   public function testUserEditing() {
     // There should be no Pathauto checkbox on user forms.
     $this->drupalGet('user/' . $this->adminUser->id() . '/edit');
-    $this->assertNoFieldById('path[0][pathauto]');
+    $this->assertSession()->fieldValueNotEquals('path[0][pathauto]', '');
   }
 
   /**
@@ -85,8 +85,9 @@ class PathautoUserWebTest extends BrowserTestBase {
       'action' => 'pathauto_update_alias_user',
       "user_bulk_form[$key]" => TRUE,
     ];
-    $this->drupalPostForm('admin/people', $edit, t('Apply to selected items'));
-    $this->assertText('Update URL alias was applied to 1 item.');
+    $this->drupalGet('admin/people');
+    $this->submitForm($edit, 'Apply to selected items');
+    $this->assertSession()->pageTextContains('Update URL alias was applied to 1 item.');
 
     $this->assertEntityAlias($account, '/users/' . mb_strtolower($account->getDisplayName()));
     $this->assertEntityAlias($this->adminUser, '/user/' . $this->adminUser->id());

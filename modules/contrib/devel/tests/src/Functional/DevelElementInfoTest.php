@@ -4,37 +4,21 @@ namespace Drupal\Tests\devel\Functional;
 
 use Behat\Mink\Element\NodeElement;
 use Drupal\Core\Url;
-use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests element info pages and links.
  *
  * @group devel
  */
-class DevelElementInfoTest extends BrowserTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static $modules = ['devel', 'block'];
-
-  /**
-   * The user for the test.
-   *
-   * @var \Drupal\user\UserInterface
-   */
-  protected $develUser;
+class DevelElementInfoTest extends DevelBrowserTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
-
     $this->drupalPlaceBlock('system_menu_block:devel');
     $this->drupalPlaceBlock('page_title_block');
-
-    $this->develUser = $this->drupalCreateUser(['access devel information']);
     $this->drupalLogin($this->develUser);
   }
 
@@ -96,7 +80,7 @@ class DevelElementInfoTest extends BrowserTestBase {
       $row = $table->find('css', sprintf('tbody tr:contains("%s")', $element_name));
       $this->assertNotNull($row);
 
-      /** @var $cells \Behat\Mink\Element\NodeElement[] */
+      /* @var $cells \Behat\Mink\Element\NodeElement[] */
       $cells = $row->findAll('css', 'td');
       $this->assertEquals(4, count($cells));
 

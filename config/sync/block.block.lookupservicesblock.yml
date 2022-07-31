@@ -1,0 +1,27 @@
+uuid: 0dfa6577-a895-4c82-bb7d-7221c698dd70
+langcode: en
+status: true
+dependencies:
+  module:
+    - lookup_services
+    - system
+  theme:
+    - lex
+id: lookupservicesblock
+theme: lex
+region: breadcrumb
+weight: -14
+provider: null
+plugin: lookup_services_block
+settings:
+  id: lookup_services_block
+  label: 'Lookup Services block'
+  label_display: '0'
+  provider: lookup_services
+  lookup_services_block_settings: null
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: '<front>'

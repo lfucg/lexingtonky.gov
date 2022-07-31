@@ -11,7 +11,7 @@ use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Defines the access control handler for the custom block entity type.
@@ -23,7 +23,7 @@ class BlockContentAccessControlHandler extends EntityAccessControlHandler implem
   /**
    * The event dispatcher.
    *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   * @var \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
    */
   protected $eventDispatcher;
 
@@ -32,7 +32,7 @@ class BlockContentAccessControlHandler extends EntityAccessControlHandler implem
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
+   * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The event dispatcher.
    */
   public function __construct(EntityTypeInterface $entity_type, EventDispatcherInterface $dispatcher) {
@@ -73,7 +73,7 @@ class BlockContentAccessControlHandler extends EntityAccessControlHandler implem
       if (empty($dependency)) {
         // If an access dependency has not been set let modules set one.
         $event = new BlockContentGetDependencyEvent($entity);
-        $this->eventDispatcher->dispatch(BlockContentEvents::BLOCK_CONTENT_GET_DEPENDENCY, $event);
+        $this->eventDispatcher->dispatch($event, BlockContentEvents::BLOCK_CONTENT_GET_DEPENDENCY);
         $dependency = $event->getAccessDependency();
         if (empty($dependency)) {
           return AccessResult::forbidden("Non-reusable blocks must set an access dependency for access control.");

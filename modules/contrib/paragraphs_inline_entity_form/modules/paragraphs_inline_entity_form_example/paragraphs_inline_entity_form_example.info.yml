@@ -14,8 +14,3 @@ dependencies:
   - drupal:views
   - drupal:datetime
   - paragraphs_inline_entity_form:paragraphs_inline_entity_form
-
-# Information added by Drupal.org packaging script on 2020-11-30
-version: '8.x-1.0-beta3'
-project: 'paragraphs_inline_entity_form'
-datestamp: 1606730795

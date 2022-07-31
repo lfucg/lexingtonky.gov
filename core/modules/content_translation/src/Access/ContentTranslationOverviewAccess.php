@@ -3,7 +3,6 @@
 namespace Drupal\content_translation\Access;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -13,12 +12,6 @@ use Drupal\Core\Session\AccountInterface;
  * Access check for entity translation overview.
  */
 class ContentTranslationOverviewAccess implements AccessInterface {
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The entity type manager service.
@@ -51,7 +44,7 @@ class ContentTranslationOverviewAccess implements AccessInterface {
    *   The access result.
    */
   public function access(RouteMatchInterface $route_match, AccountInterface $account, $entity_type_id) {
-    /* @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity = $route_match->getParameter($entity_type_id);
     if ($entity && $entity->isTranslatable()) {
       // Get entity base info.

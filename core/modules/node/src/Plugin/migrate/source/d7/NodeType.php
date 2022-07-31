@@ -8,6 +8,11 @@ use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
 /**
  * Drupal 7 Node types source from database.
  *
+ * For available configuration keys, refer to the parent classes.
+ *
+ * @see \Drupal\migrate\Plugin\migrate\source\SqlBase
+ * @see \Drupal\migrate\Plugin\migrate\source\SourcePluginBase
+ *
  * @MigrateSource(
  *   id = "d7_node_type",
  *   source_module = "node"
@@ -16,7 +21,7 @@ use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
 class NodeType extends DrupalSqlBase {
 
   /**
-   * The teaser length
+   * The teaser length.
    *
    * @var int
    */

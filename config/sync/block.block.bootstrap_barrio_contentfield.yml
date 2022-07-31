@@ -1,0 +1,37 @@
+uuid: 939c8d29-4232-4f5f-9035-6aead57de119
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_image
+  module:
+    - fieldblock
+    - image
+    - node
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_contentfield
+theme: bootstrap_barrio
+region: top_header
+weight: -19
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'News article image'
+  label_display: '0'
+  provider: fieldblock
+  label_from_field: false
+  field_name: field_image
+  formatter_id: image
+  formatter_settings:
+    image_link: ''
+    image_style: one_column
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      news_article: news_article

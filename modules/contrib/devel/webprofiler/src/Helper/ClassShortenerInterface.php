@@ -3,7 +3,7 @@
 namespace Drupal\webprofiler\Helper;
 
 /**
- * Interface ClassShortenerInterface
+ * Interface ClassShortenerInterface.
  */
 interface ClassShortenerInterface {
 

@@ -5,16 +5,7 @@ namespace Drupal\chosen;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Language\LanguageInterface;
-
-// @codingStandardsIgnoreStart
-// @todo remove this BC layer once support for Drupal 8.7 is sunsetted
-if (interface_exists('\Drupal\Core\Security\TrustedCallbackInterface')) {
-  interface TrustedCallbackInterface extends \Drupal\Core\Security\TrustedCallbackInterface {}
-}
-else {
-  interface TrustedCallbackInterface {}
-}
-// @codingStandardsIgnoreStop
+use Drupal\Core\Security\TrustedCallbackInterface;
 
 class ChosenFormRender implements TrustedCallbackInterface {
 
@@ -82,8 +73,21 @@ class ChosenFormRender implements TrustedCallbackInterface {
 
       if (isset($element['#entity_type']) && isset($element['#bundle']) && isset($element['#field_name'])) {
         // Set data-cardinality for fields that aren't unlimited.
-        $field = FieldConfig::loadByName($element['#entity_type'], $element['#bundle'], $element['#field_name'])->getFieldStorageDefinition();
-        $cardinality = $field->getCardinality();
+        $field = NULL;
+        $field_config = FieldConfig::loadByName($element['#entity_type'], $element['#bundle'], $element['#field_name']);
+        if ($field_config) {
+            $field = $field_config->getFieldStorageDefinition();
+        }
+        else {
+          /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager */
+          $entity_field_manager = \Drupal::service('entity_field.manager');
+          $fields = $entity_field_manager->getFieldDefinitions($element['#entity_type'], $element['#bundle']);
+          if (isset($fields[$element['#field_name']])) {
+            $field = $fields[$element['#field_name']]->getFieldStorageDefinition();
+          }
+        }
+        $cardinality = ($field instanceof FieldStorageDefinitionInterface) ? $field->getCardinality() : NULL;
+
         if ($cardinality != FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED && $cardinality > 1) {
           $element['#attributes']['data-cardinality'] = $cardinality;
         }

@@ -30,7 +30,7 @@ class ImageThemeFunctionTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'entity_test',
     'field',
     'file',
@@ -51,7 +51,7 @@ class ImageThemeFunctionTest extends KernelTestBase {
    */
   protected $imageFactory;
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('entity_test');
@@ -93,7 +93,7 @@ class ImageThemeFunctionTest extends KernelTestBase {
     // Create a style.
     $style = ImageStyle::create(['name' => 'test', 'label' => 'Test']);
     $style->save();
-    $url = file_url_transform_relative($style->buildUrl($original_uri));
+    $url = \Drupal::service('file_url_generator')->transformRelative($style->buildUrl($original_uri));
 
     // Create a test entity with the image field set.
     $entity = EntityTest::create();
@@ -155,7 +155,7 @@ class ImageThemeFunctionTest extends KernelTestBase {
     // Create a style.
     $style = ImageStyle::create(['name' => 'image_test', 'label' => 'Test']);
     $style->save();
-    $url = file_url_transform_relative($style->buildUrl($original_uri));
+    $url = \Drupal::service('file_url_generator')->transformRelative($style->buildUrl($original_uri));
 
     // Create the base element that we'll use in the tests below.
     $base_element = [

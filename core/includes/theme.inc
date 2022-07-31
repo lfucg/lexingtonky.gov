@@ -8,6 +8,7 @@
  * customized by user themes.
  */
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Url;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Crypt;
@@ -125,6 +126,9 @@ function drupal_theme_rebuild() {
 /**
  * Allows themes and/or theme engines to discover overridden theme functions.
  *
+ * @internal only exists to support discovery of deprecated theme functions,
+ *   will be removed in Drupal 10.0.0.
+ *
  * @param array $cache
  *   The existing cache of theme hooks to test against.
  * @param array $prefixes
@@ -142,7 +146,7 @@ function drupal_find_theme_functions($cache, $prefixes) {
       // Find theme functions that implement possible "suggestion" variants of
       // registered theme hooks and add those as new registered theme hooks.
       // The 'pattern' key defines a common prefix that all suggestions must
-      // start with. The default is the name of the hook followed by '__'. An
+      // start with. The default is the name of the hook followed by '__'. A
       // 'base hook' key is added to each entry made for a found suggestion,
       // so that common functionality can be implemented for all suggestions of
       // the same base hook. To keep things simple, deep hierarchy of
@@ -150,9 +154,9 @@ function drupal_find_theme_functions($cache, $prefixes) {
       // refers to a base hook, not to another suggestion, and all suggestions
       // are found using the base hook's pattern, not a pattern from an
       // intermediary suggestion.
-      $pattern = isset($info['pattern']) ? $info['pattern'] : ($hook . '__');
+      $pattern = $info['pattern'] ?? ($hook . '__');
       // Grep only the functions which are within the prefix group.
-      list($first_prefix,) = explode('_', $prefix, 2);
+      [$first_prefix] = explode('_', $prefix, 2);
       if (!isset($info['base hook']) && !empty($pattern) && isset($grouped_functions[$first_prefix])) {
         $matches = preg_grep('/^' . $prefix . '_' . $pattern . '/', $grouped_functions[$first_prefix]);
         if ($matches) {
@@ -211,7 +215,7 @@ function drupal_find_theme_templates($cache, $extension, $path) {
     }
   }
   $theme = \Drupal::theme()->getActiveTheme()->getName();
-  $subtheme_paths = isset($theme_paths[$theme]) ? $theme_paths[$theme] : [];
+  $subtheme_paths = $theme_paths[$theme] ?? [];
 
   // Escape the periods in the extension.
   $regex = '/' . str_replace('.', '\.', $extension) . '$/';
@@ -260,7 +264,7 @@ function drupal_find_theme_templates($cache, $extension, $path) {
   // the use of 'pattern' and 'base hook'.
   $patterns = array_keys($files);
   foreach ($cache as $hook => $info) {
-    $pattern = isset($info['pattern']) ? $info['pattern'] : ($hook . '__');
+    $pattern = $info['pattern'] ?? ($hook . '__');
     if (!isset($info['base hook']) && !empty($pattern)) {
       // Transform _ in pattern to - to match file naming scheme
       // for the purposes of searching.
@@ -346,13 +350,16 @@ function theme_get_setting($setting_name, $theme = NULL) {
         }
       }
 
+      /** @var \Drupal\Core\File\FileUrlGeneratorInterface $file_url_generator */
+      $file_url_generator = \Drupal::service('file_url_generator');
+
       // Generate the path to the logo image.
       if ($cache[$theme]->get('logo.use_default')) {
         $logo = \Drupal::service('theme.initialization')->getActiveThemeByName($theme)->getLogo();
-        $cache[$theme]->set('logo.url', file_url_transform_relative(file_create_url($logo)));
+        $cache[$theme]->set('logo.url', $file_url_generator->generateString($logo));
       }
       elseif ($logo_path = $cache[$theme]->get('logo.path')) {
-        $cache[$theme]->set('logo.url', file_url_transform_relative(file_create_url($logo_path)));
+        $cache[$theme]->set('logo.url', $file_url_generator->generateString($logo_path));
       }
 
       // Generate the path to the favicon.
@@ -360,14 +367,14 @@ function theme_get_setting($setting_name, $theme = NULL) {
         $favicon_path = $cache[$theme]->get('favicon.path');
         if ($cache[$theme]->get('favicon.use_default')) {
           if (file_exists($favicon = $theme_object->getPath() . '/favicon.ico')) {
-            $cache[$theme]->set('favicon.url', file_url_transform_relative(file_create_url($favicon)));
+            $cache[$theme]->set('favicon.url', $file_url_generator->generateString($favicon));
           }
           else {
-            $cache[$theme]->set('favicon.url', file_url_transform_relative(file_create_url('core/misc/favicon.ico')));
+            $cache[$theme]->set('favicon.url', $file_url_generator->generateString('core/misc/favicon.ico'));
           }
         }
         elseif ($favicon_path) {
-          $cache[$theme]->set('favicon.url', file_url_transform_relative(file_create_url($favicon_path)));
+          $cache[$theme]->set('favicon.url', $file_url_generator->generateString($favicon_path));
         }
         else {
           $cache[$theme]->set('features.favicon', FALSE);
@@ -552,6 +559,7 @@ function template_preprocess_datetime_form(&$variables) {
   $element = $variables['element'];
 
   $variables['attributes'] = [];
+
   if (isset($element['#id'])) {
     $variables['attributes']['id'] = $element['#id'];
   }
@@ -560,6 +568,27 @@ function template_preprocess_datetime_form(&$variables) {
   }
 
   $variables['content'] = $element;
+
+  // Add instructional text describing the required date and time formats.
+  // This will be hidden on JavaScript-enabled browsers that have a native
+  // datepicker.
+  if (!empty($element['#date_date_format'])) {
+    $placeholder_date = 'YYYY-MM-DD';
+    $variables['attributes']['data-drupal-field-elements'] = 'date' . ($element['#date_time_element'] === 'none' ? '' : '-time');
+    $date_format = is_array($element['#date_date_format']) ? $element['#date_date_format'][0] : date($element['#date_date_format']);
+    $variables['content']['date']['#attributes']['placeholder'] = $placeholder_date;
+    $help_date = t('Enter the date using the format @placeholder_date (e.g., @date_format).', ['@date_format' => $date_format, '@placeholder_date' => $placeholder_date]);
+    $variables['content']['date']['#attributes']['data-help'] = $help_date;
+
+    // Include time formatting instructions when a time input is present.
+    if (!empty($element['#date_time_format'])) {
+      $placeholder_time = 'hh:mm:ss';
+      $time_format = is_array($element['#date_time_format']) ? $element['#date_time_format'][0] : date($element['#date_time_format']);
+      $variables['content']['time']['#attributes']['placeholder'] = $placeholder_time;
+      $help_time = t('Enter the time using the format @placeholder_time (e.g., @time_format).', ['@time_format' => $time_format, '@placeholder_time' => $placeholder_time]);
+      $variables['content']['time']['#attributes']['data-help'] = $help_time;
+    }
+  }
 }
 
 /**
@@ -593,6 +622,7 @@ function template_preprocess_datetime_wrapper(&$variables) {
     if (!empty($element['#id'])) {
       $description_attributes['id'] = $element['#id'] . '--description';
     }
+    $description_attributes['data-drupal-field-elements'] = 'description';
     $variables['description'] = $element['#description'];
     $variables['description_attributes'] = new Attribute($description_attributes);
   }
@@ -796,8 +826,11 @@ function template_preprocess_links(&$variables) {
  *     - http://www.whatwg.org/specs/web-apps/current-work/multipage/embedded-content.html#introduction-3:viewport-based-selection-2
  */
 function template_preprocess_image(&$variables) {
+  /** @var \Drupal\Core\File\FileUrlGeneratorInterface $file_url_generator */
+  $file_url_generator = \Drupal::service('file_url_generator');
+
   if (!empty($variables['uri'])) {
-    $variables['attributes']['src'] = file_url_transform_relative(file_create_url($variables['uri']));
+    $variables['attributes']['src'] = $file_url_generator->generateString($variables['uri']);
   }
   // Generate a srcset attribute conforming to the spec at
   // http://www.w3.org/html/wg/drafts/html/master/embedded-content.html#attr-img-srcset
@@ -805,7 +838,7 @@ function template_preprocess_image(&$variables) {
     $srcset = [];
     foreach ($variables['srcset'] as $src) {
       // URI is mandatory.
-      $source = file_url_transform_relative(file_create_url($src['uri']));
+      $source = $file_url_generator->generateString($src['uri']);
       if (isset($src['width']) && !empty($src['width'])) {
         $source .= ' ' . $src['width'];
       }
@@ -826,6 +859,13 @@ function template_preprocess_image(&$variables) {
       }
       $variables['attributes'][$key] = $variables[$key];
     }
+  }
+
+  // Without dimensions specified, layout shifts can occur,
+  // which are more noticeable on pages that take some time to load.
+  // As a result, only mark images as lazy load that have dimensions.
+  if (isset($variables['width'], $variables['height']) && !isset($variables['attributes']['loading'])) {
+    $variables['attributes']['loading'] = 'lazy';
   }
 }
 
@@ -983,7 +1023,7 @@ function template_preprocess_table(&$variables) {
           unset($cell['data']);
         }
         // Flag the cell as a header or not and remove the flag.
-        $is_header = isset($cell['header']) ? $cell['header'] : TRUE;
+        $is_header = $cell['header'] ?? TRUE;
         unset($cell['header']);
 
         // Track responsive classes for each column as needed. Only the header
@@ -1024,7 +1064,7 @@ function template_preprocess_table(&$variables) {
         // Check if we're dealing with a simple or complex row
         if (isset($row['data'])) {
           $cells = $row['data'];
-          $variables['no_striping'] = isset($row['no_striping']) ? $row['no_striping'] : FALSE;
+          $variables['no_striping'] = $row['no_striping'] ?? FALSE;
 
           // Set the attributes array and exclude 'data' and 'no_striping'.
           $row_attributes = $row;
@@ -1349,8 +1389,6 @@ function template_preprocess_html(&$variables) {
   }
 
   $variables['head_title'] = $head_title;
-  // @deprecated in Drupal 8.0.0, will be removed before Drupal 9.0.0.
-  $variables['head_title_array'] = $head_title;
 
   // Create placeholder strings for these keys.
   // @see \Drupal\Core\Render\HtmlResponseSubscriber
@@ -1729,6 +1767,220 @@ function template_preprocess_breadcrumb(&$variables) {
 }
 
 /**
+ * Prepares variables for pager templates.
+ *
+ * Default template: pager.html.twig.
+ *
+ * Menu callbacks that display paged query results should use #type => pager
+ * to retrieve a pager control so that users can view other results. Format a
+ * list of nearby pages with additional query results.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - pager: A render element containing:
+ *     - #tags: An array of labels for the controls in the pager.
+ *     - #element: An optional integer to distinguish between multiple pagers on
+ *       one page.
+ *     - #parameters: An associative array of query string parameters to append
+ *       to the pager links.
+ *     - #route_parameters: An associative array of the route parameters.
+ *     - #quantity: The number of pages in the list.
+ */
+function template_preprocess_pager(&$variables) {
+  $element = $variables['pager']['#element'];
+  $parameters = $variables['pager']['#parameters'];
+  $quantity = empty($variables['pager']['#quantity']) ? 0 : $variables['pager']['#quantity'];
+  $route_name = $variables['pager']['#route_name'];
+  $route_parameters = $variables['pager']['#route_parameters'] ?? [];
+
+  /** @var \Drupal\Core\Pager\PagerManagerInterface $pager_manager */
+  $pager_manager = \Drupal::service('pager.manager');
+
+  $pager = $pager_manager->getPager($element);
+
+  // Nothing to do if there is no pager.
+  if (!isset($pager)) {
+    return;
+  }
+
+  $pager_max = $pager->getTotalPages();
+
+  // Nothing to do if there is only one page.
+  if ($pager_max <= 1) {
+    return;
+  }
+
+  $tags = $variables['pager']['#tags'];
+
+  // Calculate various markers within this pager piece:
+  // Middle is used to "center" pages around the current page.
+  $pager_middle = ceil($quantity / 2);
+  $current_page = $pager->getCurrentPage();
+  // The current pager is the page we are currently paged to.
+  $pager_current = $current_page + 1;
+  // The first pager is the first page listed by this pager piece (re quantity).
+  $pager_first = $pager_current - $pager_middle + 1;
+  // The last is the last page listed by this pager piece (re quantity).
+  $pager_last = $pager_current + $quantity - $pager_middle;
+  // End of marker calculations.
+
+  // Prepare for generation loop.
+  $i = $pager_first;
+  if ($pager_last > $pager_max) {
+    // Adjust "center" if at end of query.
+    $i = $i + ($pager_max - $pager_last);
+    $pager_last = $pager_max;
+  }
+  if ($i <= 0) {
+    // Adjust "center" if at start of query.
+    $pager_last = $pager_last + (1 - $i);
+    $i = 1;
+  }
+  // End of generation loop preparation.
+
+  // Create the "first" and "previous" links if we are not on the first page.
+  if ($current_page > 0) {
+    $items['first'] = [];
+    $items['first']['attributes'] = new Attribute();
+    $options = [
+      'query' => $pager_manager->getUpdatedParameters($parameters, $element, 0),
+    ];
+    $items['first']['href'] = Url::fromRoute($route_name, $route_parameters, $options)->toString();
+    if (isset($tags[0])) {
+      $items['first']['text'] = $tags[0];
+    }
+
+    $items['previous'] = [];
+    $items['previous']['attributes'] = new Attribute();
+    $options = [
+      'query' => $pager_manager->getUpdatedParameters($parameters, $element, $current_page - 1),
+    ];
+    $items['previous']['href'] = Url::fromRoute($route_name, $route_parameters, $options)->toString();
+    if (isset($tags[1])) {
+      $items['previous']['text'] = $tags[1];
+    }
+  }
+
+  if ($i != $pager_max) {
+    // Add an ellipsis if there are further previous pages.
+    if ($i > 1) {
+      $variables['ellipses']['previous'] = TRUE;
+    }
+    // Now generate the actual pager piece.
+    for (; $i <= $pager_last && $i <= $pager_max; $i++) {
+      $options = [
+        'query' => $pager_manager->getUpdatedParameters($parameters, $element, $i - 1),
+      ];
+      $items['pages'][$i]['href'] = Url::fromRoute($route_name, $route_parameters, $options)->toString();
+      $items['pages'][$i]['attributes'] = new Attribute();
+      if ($i == $pager_current) {
+        $variables['current'] = $i;
+      }
+    }
+    // Add an ellipsis if there are further next pages.
+    if ($i < $pager_max + 1) {
+      $variables['ellipses']['next'] = TRUE;
+    }
+  }
+
+  // Create the "next" and "last" links if we are not on the last page.
+  if ($current_page < ($pager_max - 1)) {
+    $items['next'] = [];
+    $items['next']['attributes'] = new Attribute();
+    $options = [
+      'query' => $pager_manager->getUpdatedParameters($parameters, $element, $current_page + 1),
+    ];
+    $items['next']['href'] = Url::fromRoute($route_name, $route_parameters, $options)->toString();
+    if (isset($tags[3])) {
+      $items['next']['text'] = $tags[3];
+    }
+
+    $items['last'] = [];
+    $items['last']['attributes'] = new Attribute();
+    $options = [
+      'query' => $pager_manager->getUpdatedParameters($parameters, $element, $pager_max - 1),
+    ];
+    $items['last']['href'] = Url::fromRoute($route_name, $route_parameters, $options)->toString();
+    if (isset($tags[4])) {
+      $items['last']['text'] = $tags[4];
+    }
+  }
+
+  $variables['items'] = $items;
+  $variables['heading_id'] = Html::getUniqueId('pagination-heading');
+
+  // The rendered link needs to play well with any other query parameter used
+  // on the page, like exposed filters, so for the cacheability all query
+  // parameters matter.
+  $variables['#cache']['contexts'][] = 'url.query_args';
+}
+
+/**
+ * Prepares variables for single local task link templates.
+ *
+ * Default template: menu-local-task.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: A render element containing:
+ *     - #link: A menu link array with 'title', 'url', and (optionally)
+ *       'localized_options' keys.
+ *     - #active: A boolean indicating whether the local task is active.
+ */
+function template_preprocess_menu_local_task(&$variables) {
+  $link = $variables['element']['#link'];
+  $link += [
+    'localized_options' => [],
+  ];
+  $link_text = $link['title'];
+
+  if (!empty($variables['element']['#active'])) {
+    $variables['is_active'] = TRUE;
+
+    // Add text to indicate active tab for non-visual users.
+    $active = new FormattableMarkup('<span class="visually-hidden">@label</span>', ['@label' => t('(active tab)')]);
+    $link_text = t('@local-task-title@active', ['@local-task-title' => $link_text, '@active' => $active]);
+  }
+
+  $link['localized_options']['set_active_class'] = TRUE;
+
+  $variables['link'] = [
+    '#type' => 'link',
+    '#title' => $link_text,
+    '#url' => $link['url'],
+    '#options' => $link['localized_options'],
+  ];
+}
+
+/**
+ * Prepares variables for single local action link templates.
+ *
+ * Default template: menu-local-action.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: A render element containing:
+ *     - #link: A menu link array with 'title', 'url', and (optionally)
+ *       'localized_options' keys.
+ */
+function template_preprocess_menu_local_action(&$variables) {
+  $link = $variables['element']['#link'];
+  $link += [
+    'localized_options' => [],
+  ];
+  $link['localized_options']['attributes']['class'][] = 'button';
+  $link['localized_options']['attributes']['class'][] = 'button-action';
+  $link['localized_options']['set_active_class'] = TRUE;
+
+  $variables['link'] = [
+    '#type' => 'link',
+    '#title' => $link['title'],
+    '#options' => $link['localized_options'],
+    '#url' => $link['url'],
+  ];
+}
+
+/**
  * Callback for usort() within template_preprocess_field_multiple_value_form().
  *
  * Sorts using ['_weight']['#value']
@@ -1830,7 +2082,6 @@ function drupal_common_theme() {
       'includes' => ['core/includes/theme.maintenance.inc'],
       'template' => 'authorize-report',
     ],
-    // From pager.inc.
     'pager' => [
       'render element' => 'pager',
     ],

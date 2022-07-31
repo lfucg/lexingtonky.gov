@@ -5,15 +5,12 @@
  * Contains paragraphs.module
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\field\FieldStorageConfigInterface;
-use Drupal\field\Plugin\migrate\source\d7\Field;
-use Drupal\field\Plugin\migrate\source\d7\FieldInstance;
-use Drupal\field\Plugin\migrate\source\d7\ViewMode;
-use Drupal\migrate_drupal\Plugin\migrate\FieldMigration;
 use Drupal\paragraphs\Entity\ParagraphsType;
-use Drupal\paragraphs\Plugin\migrate\field\FieldCollection;
+use Drupal\paragraphs\MigrationPluginsAlterer;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Entity\EntityTypeInterface;
 
@@ -103,7 +100,7 @@ function paragraphs_theme_suggestions_paragraph(array $variables) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function paragraphs_form_entity_form_display_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function paragraphs_form_entity_form_display_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions($form['#entity_type'], $form['#bundle']);
   // Loop over ERR field's display options with paragraph target type.
   foreach (array_keys($field_definitions) as $field_name) {
@@ -120,7 +117,7 @@ function paragraphs_form_entity_form_display_edit_form_alter(&$form, \Drupal\Cor
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function paragraphs_form_field_storage_config_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function paragraphs_form_field_storage_config_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_state->getFormObject()->getEntity()->getType() == 'entity_reference') {
     // Entity Reference fields are no longer supported to reference Paragraphs.
     unset($form['settings']['target_type']['#options'][(string) t('Content')]['paragraph']);
@@ -132,7 +129,7 @@ function paragraphs_form_field_storage_config_edit_form_alter(&$form, \Drupal\Co
  *
  * Indicate unsupported multilingual paragraphs field configuration.
  */
-function paragraphs_form_field_config_edit_form_alter(&$form,  \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function paragraphs_form_field_config_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $field = $form_state->getFormObject()->getEntity();
 
   if (!\Drupal::hasService('content_translation.manager')) {
@@ -195,7 +192,7 @@ function paragraphs_module_implements_alter(&$implementations, $hook) {
  * Add a warning that paragraph fields can not be translated.
  * Switch to error if a paragraph field is marked as translatable.
  */
-function paragraphs_form_language_content_settings_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function paragraphs_form_language_content_settings_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Without it Paragraphs message are meaningless.
   if (!\Drupal::hasService('content_translation.manager')) {
     return;
@@ -314,6 +311,10 @@ function template_preprocess_paragraphs_add_dialog(&$variables) {
       // $add variable for the add button.
       $variables['add'] = $variables['element'][$key];
     }
+    elseif ($key == 'add_more_delta') {
+      // Add the delta to the add wrapper.
+      $variables['add'][$key] = $variables['element'][$key];
+    }
     else {
       // Buttons for the paragraph types in the modal form.
       $variables['buttons'][$key] = $variables['element'][$key];
@@ -350,10 +351,10 @@ function template_preprocess_paragraphs_actions(&$variables) {
  * Implements hook_preprocess_HOOK() for field_multiple_value_form().
  */
 function paragraphs_preprocess_field_multiple_value_form(&$variables) {
-  if (!empty($variables['table']['#header']) && isset($variables['table']['#rows'])) {
+  if (!empty($variables['table']['#header']) && isset($variables['table']['#rows'][0])) {
     // Find paragraph_actions and move to header.
     // @see template_preprocess_field_multiple_value_form()
-    if (!empty($variables['table']['#rows'][0]['data'][1]['data']['#paragraphs_header'])) {
+    if (is_array($variables['table']['#rows'][0]['data'][1]) && !empty($variables['table']['#rows'][0]['data'][1]['data']['#paragraphs_header'])) {
       $variables['table']['#header'][0]['data'] = [
         'title' => $variables['table']['#header'][0]['data'],
         'button' => $variables['table']['#rows'][0]['data'][1]['data'],
@@ -383,9 +384,11 @@ function paragraphs_preprocess_field_multiple_value_form(&$variables) {
       foreach ($variables['table']['#rows'] as $key => $value) {
         $variables['table']['#rows'][$key]['data'][0]['class'][] = 'paragraph-bullet';
         // Restore the removed weight and give access FALSE.
-        $variables['table']['#rows'][$key]['data'][1]['data']['_weight'] = $value['data'][2]['data'];
-        unset($variables['table']['#rows'][$key]['data'][2]);
-        $variables['table']['#rows'][$key]['data'][1]['data']['_weight']['#access'] = FALSE;
+        if (isset($value['data'][2])) {
+          $variables['table']['#rows'][$key]['data'][1]['data']['_weight'] = $value['data'][2]['data'];
+          unset($variables['table']['#rows'][$key]['data'][2]);
+          $variables['table']['#rows'][$key]['data'][1]['data']['_weight']['#access'] = FALSE;
+        }
       }
     }
   }
@@ -398,38 +401,9 @@ function paragraphs_preprocess_field_multiple_value_form(&$variables) {
  * https://www.drupal.org/project/drupal/issues/2904765 is resolved
  */
 function paragraphs_migration_plugins_alter(array &$migrations) {
-  /** @var \Drupal\migrate\Plugin\MigrationPluginManager $migration_plugin_manager */
-  $migration_plugin_manager = \Drupal::service('plugin.manager.migration');
-  /** @var \Drupal\migrate\Plugin\MigrateSourcePluginManager $source_plugin_manager */
-  $source_plugin_manager = \Drupal::service('plugin.manager.migrate.source');
-
-  foreach ($migrations as &$migration) {
-    if (!empty($migration['source'])) {
-      $configuration = $migration['source'];
-      $migration_stub = $migration_plugin_manager->createStubMigration($migration);
-      $source = $source_plugin_manager->createInstance($migration['source']['plugin'], $configuration, $migration_stub);
-      if (is_a($migration['class'], FieldMigration::class, TRUE)) {
-
-        // Field storage.
-        if (is_a($source, Field::class)) {
-          _paragraphs_migration_entity_type_adjust($migration);
-        }
-
-        // Field instance.
-        if (is_a($source, FieldInstance::class)) {
-          _paragraphs_migration_entity_type_adjust($migration);
-          _paragraphs_migration_bundle_adjust($migration);
-          $migration['migration_dependencies']['optional']['d7_field_collection_type'] = 'd7_field_collection_type';
-          $migration['migration_dependencies']['optional']['d7_paragraphs_type'] = 'd7_paragraphs_type';
-        }
-      }
-
-      // View Modes.
-      if (is_a($source, ViewMode::class)) {
-        _paragraphs_migration_entity_type_adjust($migration, 'targetEntityType');
-      }
-    }
-  }
+  $migration_plugins_alterer = \Drupal::service('paragraphs.migration_plugins_alterer');
+  assert($migration_plugins_alterer instanceof MigrationPluginsAlterer);
+  $migration_plugins_alterer->alterMigrationPlugins($migrations);
 }
 
 /**
@@ -457,62 +431,33 @@ function paragraphs_entity_base_field_info_alter(&$fields, EntityTypeInterface $
  *
  * @param array $migration
  *   The migration configuration to process.
+ *
+ * @deprecated in paragraphs:8.x-1.13 and is removed from paragraphs:8.x-2.0.
+ *   Use \Drupal\paragraphs\MigrationPluginsAlterer::paragraphsMigrationBundleAdjust().
+ * @see https://www.drupal.org/project/paragraphs/issues/2911244
  */
 function _paragraphs_migration_bundle_adjust(array &$migration) {
-
-  if (!isset($migration['process']['bundle'])) {
-    $migration['process']['bundle'] = [];
-  }
-
-  $bundle_process = $migration['process']['bundle'];
-
-  // Try to play nice with other modules altering this, and don't replace
-  // it outright unless it's unchanged.
-  if (array_key_exists('plugin', $bundle_process)) {
-    $bundle_process = [$bundle_process];
-  }
-  $bundle_process['paragraphs'] = [
-    'plugin' => 'paragraphs_process_on_value',
-    'source_value' => 'entity_type',
-    'expected_value' => 'field_collection_item',
-    'process' => [
-      'plugin' => 'substr',
-      'start' => FieldCollection::FIELD_COLLECTION_PREFIX_LENGTH,
-    ],
-  ];
-  $migration['process']['bundle'] = $bundle_process;
+  $migration_plugins_alterer = \Drupal::service('paragraphs.migration_plugins_alterer');
+  assert($migration_plugins_alterer instanceof MigrationPluginsAlterer);
+  $migration_plugins_alterer->paragraphsMigrationBundleAdjust($migration);
 }
 
 /**
  * Map field_collection_item and 'paragraphs_item' fields to 'paragraph'.
  *
  * @param array $migration
- *   Thei migration to process.
+ *   The migration to process.
  * @param string $destination
  *   The process destination.
+ *
+ * @deprecated in paragraphs:8.x-1.13 and is removed from paragraphs:8.x-2.0.
+ *   Use \Drupal\paragraphs\MigrationPluginsAlterer::paragraphsMigrationEntityTypeAdjust().
+ * @see https://www.drupal.org/project/paragraphs/issues/2911244
  */
 function _paragraphs_migration_entity_type_adjust(array &$migration, $destination = 'entity_type') {
-  $entity_type_process = $migration['process'][$destination];
-
-  // Try to play with other modules altering this, and don't replace it
-  // outright unless it's unchanged.
-  if (!is_array($entity_type_process)) {
-    $entity_type_process = [
-      [
-        'plugin' => 'get',
-        'source' => 'entity_type',
-      ],
-    ];
-  }
-  $entity_type_process['paragraphs'] = [
-    'plugin' => 'static_map',
-    'map' => [
-      'field_collection_item' => 'paragraph',
-      'paragraphs_item' => 'paragraph',
-    ],
-    'bypass' => TRUE,
-  ];
-  $migration['process'][$destination] = $entity_type_process;
+  $migration_plugins_alterer = \Drupal::service('paragraphs.migration_plugins_alterer');
+  assert($migration_plugins_alterer instanceof MigrationPluginsAlterer);
+  $migration_plugins_alterer->paragraphsMigrationEntityTypeAdjust($migration, $destination);
 }
 
 /**

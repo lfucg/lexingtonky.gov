@@ -7,6 +7,7 @@ use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Provides a delete action for each content entity type.
@@ -14,6 +15,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @deprecated
  */
 class DeleteActionDeriver extends DeriverBase implements ContainerDeriverInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The entity type manager.
@@ -47,7 +50,7 @@ class DeleteActionDeriver extends DeriverBase implements ContainerDeriverInterfa
       $definitions = [];
       foreach ($this->getParticipatingEntityTypes() as $entity_type_id => $entity_type) {
         $definition = $base_plugin_definition;
-        $definition['label'] = t('Delete @entity_type (Deprecated)', ['@entity_type' => $entity_type->getSingularLabel()]);
+        $definition['label'] = $this->t('Delete @entity_type (Deprecated)', ['@entity_type' => $entity_type->getSingularLabel()]);
         $definition['type'] = $entity_type_id;
         $definition['confirm_form_route_name'] = 'entity.' . $entity_type_id . '.delete_multiple_form';
         $definitions[$entity_type_id] = $definition;

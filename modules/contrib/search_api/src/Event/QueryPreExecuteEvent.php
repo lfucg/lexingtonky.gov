@@ -3,7 +3,7 @@
 namespace Drupal\search_api\Event;
 
 use Drupal\search_api\Query\QueryInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Wraps a query pre-execute event.
@@ -33,7 +33,7 @@ final class QueryPreExecuteEvent extends Event {
    * @return \Drupal\search_api\Query\QueryInterface
    *   The created query.
    */
-  public function getQuery() {
+  public function getQuery(): QueryInterface {
     return $this->query;
   }
 

@@ -3,7 +3,11 @@
  * A Backbone View that provides the visual view of the edit mode toggle.
  */
 
-(function(Drupal, Backbone) {
+(function (Drupal, Backbone) {
+  /**
+   * @deprecated in drupal:9.4.0 and is removed from drupal:10.0.0. There is no
+   *  replacement.
+   */
   Drupal.contextualToolbar.VisualView = Backbone.View.extend(
     /** @lends Drupal.contextualToolbar.VisualView# */ {
       /**
@@ -14,7 +18,7 @@
        */
       events() {
         // Prevents delay and simulated mouse events.
-        const touchEndToClick = function(event) {
+        const touchEndToClick = function (event) {
           event.preventDefault();
           event.target.click();
         };

@@ -1,0 +1,61 @@
+uuid: f3dd345f-d27a-4a3b-adff-9a9fbd0b1a52
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.meeting.body
+    - field.field.node.meeting.field_all_day
+    - field.field.node.meeting.field_date
+    - field.field.node.meeting.field_date_end
+    - field.field.node.meeting.field_external_id
+    - field.field.node.meeting.field_keywords
+    - field.field.node.meeting.field_locations
+    - field.field.node.meeting.field_metatags
+    - field.field.node.meeting.field_recurring_event
+    - field.field.node.meeting.field_related_departments
+    - field.field.node.meeting.field_related_documents
+    - field.field.node.meeting.field_related_page
+    - field.field.node.meeting.field_show_on_calendar
+    - node.type.meeting
+  module:
+    - text
+    - user
+id: node.meeting.teaser
+targetEntityType: node
+bundle: meeting
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  workbench_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
+hidden:
+  addtoany: true
+  field_all_day: true
+  field_date: true
+  field_date_end: true
+  field_external_id: true
+  field_keywords: true
+  field_locations: true
+  field_metatags: true
+  field_recurring_event: true
+  field_related_departments: true
+  field_related_documents: true
+  field_related_page: true
+  field_show_on_calendar: true
+  search_api_excerpt: true

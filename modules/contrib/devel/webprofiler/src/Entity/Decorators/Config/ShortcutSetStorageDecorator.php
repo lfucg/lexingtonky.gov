@@ -7,7 +7,7 @@ use Drupal\shortcut\ShortcutSetInterface;
 use Drupal\shortcut\ShortcutSetStorageInterface;
 
 /**
- * Class ShortcutSetStorageDecorator
+ * Class ShortcutSetStorageDecorator.
  */
 class ShortcutSetStorageDecorator extends ConfigEntityStorageDecorator implements ShortcutSetStorageInterface {
 

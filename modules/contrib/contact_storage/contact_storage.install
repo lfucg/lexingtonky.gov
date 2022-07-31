@@ -70,7 +70,7 @@ function contact_storage_update_8002() {
     $storage = new FileStorage($config_install_path);
     $entity_type_manager
       ->getStorage('action')
-      ->create($storage->read('system.action.message_delete_action'))
+      ->create($storage->read('system.action.contact_message_delete_action'))
       ->save();
   }
 }

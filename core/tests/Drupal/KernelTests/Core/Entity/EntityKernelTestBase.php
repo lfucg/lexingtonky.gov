@@ -2,7 +2,6 @@
 
 namespace Drupal\KernelTests\Core\Entity;
 
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
@@ -20,14 +19,13 @@ abstract class EntityKernelTestBase extends KernelTestBase {
     setCurrentUser as drupalSetCurrentUser;
     setUpCurrentUser as drupalSetUpCurrentUser;
   }
-  use DeprecatedServicePropertyTrait;
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'user',
     'system',
     'field',
@@ -35,13 +33,6 @@ abstract class EntityKernelTestBase extends KernelTestBase {
     'filter',
     'entity_test',
   ];
-
-  /**
-   * The list of deprecated services.
-   *
-   * @var array
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The entity type manager service.
@@ -80,7 +71,7 @@ abstract class EntityKernelTestBase extends KernelTestBase {
     // field configurations are installed. This is because the entity tables
     // need to be created before the body field storage tables. This prevents
     // trying to create the body field tables twice.
-    $class = get_class($this);
+    $class = static::class;
     while ($class) {
       if (property_exists($class, 'modules')) {
         // Only check the modules, if the $modules property was not inherited.

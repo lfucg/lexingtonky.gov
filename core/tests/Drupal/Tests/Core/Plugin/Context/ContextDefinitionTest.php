@@ -33,11 +33,13 @@ class ContextDefinitionTest extends UnitTestCase {
   public function testGetDataDefinition($is_multiple) {
     $data_type = 'valid';
     $mock_data_definition = $this->getMockBuilder('\Drupal\Core\TypedData\ListDataDefinitionInterface')
-      ->setMethods([
+      ->onlyMethods([
+        'getConstraints',
+      ])
+      ->addMethods([
         'setLabel',
         'setDescription',
         'setRequired',
-        'getConstraints',
         'setConstraints',
       ])
       ->getMockForAbstractClass();
@@ -76,7 +78,7 @@ class ContextDefinitionTest extends UnitTestCase {
     // methods.
     $mock_context_definition = $this->getMockBuilder('Drupal\Core\Plugin\Context\ContextDefinition')
       ->disableOriginalConstructor()
-      ->setMethods([
+      ->onlyMethods([
         'isMultiple',
         'getTypedDataManager',
         'getDataType',
@@ -137,7 +139,7 @@ class ContextDefinitionTest extends UnitTestCase {
     // that will be called before the expected exception.
     $mock_context_definition = $this->getMockBuilder('Drupal\Core\Plugin\Context\ContextDefinition')
       ->disableOriginalConstructor()
-      ->setMethods([
+      ->onlyMethods([
         'isMultiple',
         'getTypedDataManager',
         'getDataType',
@@ -158,7 +160,7 @@ class ContextDefinitionTest extends UnitTestCase {
   }
 
   /**
-   * Data provider for testGetConstraint
+   * Data provider for testGetConstraint.
    */
   public function providerGetConstraint() {
     return [
@@ -181,7 +183,7 @@ class ContextDefinitionTest extends UnitTestCase {
   public function testGetConstraint($expected, $constraint_array, $constraint) {
     $mock_context_definition = $this->getMockBuilder('Drupal\Core\Plugin\Context\ContextDefinition')
       ->disableOriginalConstructor()
-      ->setMethods([
+      ->onlyMethods([
         'getConstraints',
       ])
       ->getMock();

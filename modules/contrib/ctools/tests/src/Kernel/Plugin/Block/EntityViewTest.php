@@ -2,8 +2,7 @@
 
 namespace Drupal\Tests\ctools\Kernel\Plugin\Block;
 
-use Drupal\Core\Access\AccessResultForbidden;
-use Drupal\Core\Plugin\Context\ContextDefinition;
+use Drupal\Core\Plugin\Context\EntityContextDefinition;
 use Drupal\ctools\Plugin\Block\EntityView;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\node\Traits\NodeCreationTrait;
@@ -24,7 +23,7 @@ class EntityViewTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'block',
     'ctools',
     'filter',
@@ -68,8 +67,8 @@ class EntityViewTest extends KernelTestBase {
       ],
     ];
     $definition = [
-      'context' => [
-        'entity' => new ContextDefinition('entity:node', NULL, TRUE, FALSE, NULL, $node),
+      'context_definitions' => [
+        'entity' => new EntityContextDefinition('entity:node', NULL, TRUE, FALSE, NULL, $node),
       ],
       'provider' => 'ctools',
     ];

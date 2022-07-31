@@ -96,7 +96,7 @@ class MetatagFieldTermTest extends MetatagFieldTestBase {
       'name' => 'Tags',
       'vid' => 'tags',
     ];
-    $this->drupalPostForm(NULL, $edit, $this->t('Save'));
+    $this->submitForm($edit, $this->t('Save'));
     $this->drupalLogout();
   }
 

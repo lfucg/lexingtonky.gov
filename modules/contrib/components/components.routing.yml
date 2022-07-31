@@ -1,7 +1,0 @@
-components.config:
-  path: '/admin/config/components/settings'
-  defaults:
-    _form: '\Drupal\components\Form\ComponentsSettingsForm'
-    _title: 'Component Library Configuration'
-  requirements:
-    _permission: 'administer site configuration'

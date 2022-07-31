@@ -19,7 +19,7 @@
 .chosen-container {
   display: inline-block !important;
 }
-.container-inline div.chosen-container div:not('.chosen-drop') {
+.container-inline div.chosen-container div:not(.chosen-drop) {
   display: block;
 }
 

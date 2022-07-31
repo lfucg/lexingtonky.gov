@@ -19,7 +19,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\DeterminingServerFeaturesEvent
    */
-  const DETERMINING_SERVER_FEATURES = 'search_api.determining_server_features';
+  public const DETERMINING_SERVER_FEATURES = 'search_api.determining_server_features';
 
   /**
    * The name of the event fired when gathering backend plugins.
@@ -28,7 +28,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\GatheringPluginInfoEvent
    */
-  const GATHERING_BACKENDS = 'search_api.gathering_backends';
+  public const GATHERING_BACKENDS = 'search_api.gathering_backends';
 
   /**
    * The name of the event fired when gathering datasource plugins.
@@ -37,7 +37,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\GatheringPluginInfoEvent
    */
-  const GATHERING_DATA_SOURCES = 'search_api.gathering_data_sources';
+  public const GATHERING_DATA_SOURCES = 'search_api.gathering_data_sources';
 
   /**
    * The name of the event fired when gathering data type plugins.
@@ -46,7 +46,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\GatheringPluginInfoEvent
    */
-  const GATHERING_DATA_TYPES = 'search_api.gathering_data_types';
+  public const GATHERING_DATA_TYPES = 'search_api.gathering_data_types';
 
   /**
    * The name of the event fired when gathering display plugins.
@@ -55,7 +55,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\GatheringPluginInfoEvent
    */
-  const GATHERING_DISPLAYS = 'search_api.gathering_displays';
+  public const GATHERING_DISPLAYS = 'search_api.gathering_displays';
 
   /**
    * The name of the event fired when gathering parse mode plugins.
@@ -64,7 +64,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\GatheringPluginInfoEvent
    */
-  const GATHERING_PARSE_MODES = 'search_api.gathering_parse_modes';
+  public const GATHERING_PARSE_MODES = 'search_api.gathering_parse_modes';
 
   /**
    * The name of the event fired when gathering processor plugins.
@@ -73,7 +73,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\GatheringPluginInfoEvent
    */
-  const GATHERING_PROCESSORS = 'search_api.gathering_processors';
+  public const GATHERING_PROCESSORS = 'search_api.gathering_processors';
 
   /**
    * The name of the event fired when gathering tracker plugins.
@@ -82,7 +82,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\GatheringPluginInfoEvent
    */
-  const GATHERING_TRACKERS = 'search_api.gathering_trackers';
+  public const GATHERING_TRACKERS = 'search_api.gathering_trackers';
 
   /**
    * The name of the event fired when preparing items for indexing.
@@ -100,7 +100,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\IndexingItemsEvent
    */
-  const INDEXING_ITEMS = 'search_api.indexing_items';
+  public const INDEXING_ITEMS = 'search_api.indexing_items';
 
   /**
    * The name of the event fired when items have been successfully indexed.
@@ -109,7 +109,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\ItemsIndexedEvent
    */
-  const ITEMS_INDEXED = 'search_api.items_indexed';
+  public const ITEMS_INDEXED = 'search_api.items_indexed';
 
   /**
    * The name of the event fired when mapping data types.
@@ -122,7 +122,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\MappingFieldTypesEvent
    */
-  const MAPPING_FIELD_TYPES = 'search_api.mapping_field_types';
+  public const MAPPING_FIELD_TYPES = 'search_api.mapping_field_types';
 
   /**
    * The name of the event fired when mapping foreign relationships of an index.
@@ -137,7 +137,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\MappingForeignRelationshipsEvent
    */
-  const MAPPING_FOREIGN_RELATIONSHIPS = 'search_api.mapping_foreign_relationships';
+  public const MAPPING_FOREIGN_RELATIONSHIPS = 'search_api.mapping_foreign_relationships';
 
   /**
    * The name of the event fired when building a map of Views field handlers.
@@ -154,7 +154,7 @@ final class SearchApiEvents {
    * @see \Drupal\search_api\Event\MappingViewsFieldHandlersEvent
    * @see _search_api_views_get_field_handler_mapping()
    */
-  const MAPPING_VIEWS_FIELD_HANDLERS = 'search_api.mapping_views_field_handlers';
+  public const MAPPING_VIEWS_FIELD_HANDLERS = 'search_api.mapping_views_field_handlers';
 
   /**
    * The name of the event fired when building a map of Views handlers.
@@ -171,7 +171,7 @@ final class SearchApiEvents {
    * @see \Drupal\search_api\Event\MappingViewsFieldHandlersEvent
    * @see _search_api_views_handler_mapping()
    */
-  const MAPPING_VIEWS_HANDLERS = 'search_api.mapping_views_handlers';
+  public const MAPPING_VIEWS_HANDLERS = 'search_api.mapping_views_handlers';
 
   /**
    * The name of the event fired after a search has been executed on the server.
@@ -182,7 +182,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\ProcessingResultsEvent
    */
-  const PROCESSING_RESULTS = 'search_api.processing_results';
+  public const PROCESSING_RESULTS = 'search_api.processing_results';
 
   /**
    * The name of the event fired before executing a search query.
@@ -194,7 +194,7 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\QueryPreExecuteEvent
    */
-  const QUERY_PRE_EXECUTE = 'search_api.query_pre_execute';
+  public const QUERY_PRE_EXECUTE = 'search_api.query_pre_execute';
 
   /**
    * The name of the event fired when scheduling an index for re-indexing.
@@ -207,6 +207,6 @@ final class SearchApiEvents {
    *
    * @see \Drupal\search_api\Event\ReindexScheduledEvent
    */
-  const REINDEX_SCHEDULED = 'search_api.reindex_scheduled';
+  public const REINDEX_SCHEDULED = 'search_api.reindex_scheduled';
 
 }

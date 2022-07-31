@@ -207,6 +207,20 @@ function entity_embed_filter_format_edit_form_validate($form, FormStateInterface
             $missing_attributes = $required_attributes;
           }
           else {
+            // If any of the attributes on the drupal-entity tag use wildcards,
+            // iterate through and replace them with matching required
+            // attributes.
+            $wildcards = preg_grep('/\*/', array_keys($allowed['drupal-entity']));
+            if (!empty($wildcards)) {
+              foreach ($wildcards as $wildcard) {
+                $pattern = str_replace('*', '(.*)', $wildcard);
+                $matches = preg_grep('/' . $pattern . '/', $required_attributes);
+                foreach ($matches as $match) {
+                  $allowed['drupal-entity'][$match] = 1;
+                }
+                unset($allowed['drupal-entity'][$wildcard]);
+              }
+            }
             $missing_attributes = array_diff($required_attributes, array_keys($allowed['drupal-entity']));
           }
 

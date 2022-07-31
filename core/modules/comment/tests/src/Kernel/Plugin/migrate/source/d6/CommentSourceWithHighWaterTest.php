@@ -16,7 +16,7 @@ class CommentSourceWithHighWaterTest extends MigrateSqlSourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['comment', 'migrate_drupal'];
+  protected static $modules = ['comment', 'migrate_drupal'];
 
   /**
    * {@inheritdoc}
@@ -40,7 +40,7 @@ class CommentSourceWithHighWaterTest extends MigrateSqlSourceTestBase {
         'name' => '',
         'mail' => '',
         'homepage' => '',
-        'format' => 'testformat1',
+        'format' => 'test_format1',
         'type' => 'story',
       ],
       [
@@ -57,7 +57,7 @@ class CommentSourceWithHighWaterTest extends MigrateSqlSourceTestBase {
         'name' => '',
         'mail' => '',
         'homepage' => '',
-        'format' => 'testformat2',
+        'format' => 'test_format2',
         'type' => 'page',
       ],
     ];
@@ -91,7 +91,7 @@ class CommentSourceWithHighWaterTest extends MigrateSqlSourceTestBase {
         'name' => '',
         'mail' => '',
         'homepage' => '',
-        'format' => 'testformat2',
+        'format' => 'test_format2',
         'type' => 'page',
         'language' => 'fr',
       ],

@@ -16,7 +16,7 @@ class FieldCollectionsFieldInstanceSettingsTest extends ProcessTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->plugin = new FieldCollectionFieldInstanceSettings([], 'field_collection_field_instance_settings', [], $this->entityTypeBundleInfo);
@@ -43,7 +43,7 @@ class FieldCollectionsFieldInstanceSettingsTest extends ProcessTestCase {
       ]);
     $value = $this->plugin->transform($source, $this->migrateExecutable, $this->row, 'settings');
 
-    $this->assertArrayEquals($expected, $value);
+    $this->assertEquals($expected, $value);
   }
 
   /**

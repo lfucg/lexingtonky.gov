@@ -12,6 +12,7 @@ use Laminas\Feed\Reader\StandaloneExtensionManager;
 /**
  * @coversDefaultClass \Drupal\Component\Bridge\ZfExtensionManagerSfContainer
  * @group Bridge
+ * @group legacy
  */
 class ZfExtensionManagerSfContainerTest extends TestCase {
 
@@ -22,7 +23,7 @@ class ZfExtensionManagerSfContainerTest extends TestCase {
    */
   public function testGet() {
     $service = new \stdClass();
-    $service->value = 'myvalue';
+    $service->value = 'my_value';
     $container = new ContainerBuilder();
     $container->set('foo', $service);
     $bridge = new ZfExtensionManagerSfContainer();
@@ -30,9 +31,9 @@ class ZfExtensionManagerSfContainerTest extends TestCase {
     $this->assertEquals($service, $bridge->get('foo'));
     $bridge->setStandalone(StandaloneExtensionManager::class);
     $this->assertInstanceOf(Entry::class, $bridge->get('Atom\Entry'));
-    // Ensure that the container is checked first.
+    // Ensure that the standalone service is checked before the container.
     $container->set('atomentry', $service);
-    $this->assertEquals($service, $bridge->get('Atom\Entry'));
+    $this->assertInstanceOf(Entry::class, $bridge->get('Atom\Entry'));
   }
 
   /**
@@ -42,7 +43,7 @@ class ZfExtensionManagerSfContainerTest extends TestCase {
    */
   public function testHas() {
     $service = new \stdClass();
-    $service->value = 'myvalue';
+    $service->value = 'my_value';
     $container = new ContainerBuilder();
     $container->set('foo', $service);
     $bridge = new ZfExtensionManagerSfContainer();
@@ -84,7 +85,7 @@ class ZfExtensionManagerSfContainerTest extends TestCase {
    */
   public function testPrefix() {
     $service = new \stdClass();
-    $service->value = 'myvalue';
+    $service->value = 'my_value';
     $container = new ContainerBuilder();
     $container->set('foo.bar', $service);
     $bridge = new ZfExtensionManagerSfContainer('foo.');
@@ -100,7 +101,7 @@ class ZfExtensionManagerSfContainerTest extends TestCase {
    */
   public function testCanonicalizeName($name, $canonical_name) {
     $service = new \stdClass();
-    $service->value = 'myvalue';
+    $service->value = 'my_value';
     $container = new ContainerBuilder();
     $container->set($canonical_name, $service);
     $bridge = new ZfExtensionManagerSfContainer();

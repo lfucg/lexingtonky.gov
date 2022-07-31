@@ -29,7 +29,7 @@ class EntityAccessControlHandlerTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $module_handler = $this->prophesize(ModuleHandlerInterface::class);
@@ -56,7 +56,7 @@ class EntityAccessControlHandlerTest extends UnitTestCase {
     $handler->setStringTranslation($this->getStringTranslationStub());
     $result = $handler->access($entity, $operation, $account, TRUE);
     $this->assertEquals($allowed, $result->isAllowed());
-    $this->assertEquals($cache_contexts, $result->getCacheContexts());
+    $this->assertEqualsCanonicalizing($cache_contexts, $result->getCacheContexts());
   }
 
   /**

@@ -24,14 +24,14 @@ class DatabaseProfilerStorage implements ProfilerStorageInterface {
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
    */
-  function __construct(Connection $database) {
+  public function __construct(Connection $database) {
     $this->database = $database;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function find($ip, $url, $limit, $method, $start = NULL, $end = NULL) {
+  public function find($ip, $url, $limit, $method, $start = NULL, $end = NULL): array {
     $select = $this->database->select('webprofiler', 'wp', ['fetch' => \PDO::FETCH_ASSOC]);
 
     if (NULL === $start) {
@@ -69,7 +69,7 @@ class DatabaseProfilerStorage implements ProfilerStorageInterface {
       'url',
       'time',
       'parent',
-      'status_code'
+      'status_code',
     ]);
     $select->orderBy('time', 'DESC');
     $select->range(0, $limit);
@@ -80,7 +80,7 @@ class DatabaseProfilerStorage implements ProfilerStorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function read($token) {
+  public function read($token): ?Profile {
     $record = $this->database->select('webprofiler', 'w')
       ->fields('w')
       ->condition('token', $token)
@@ -89,12 +89,13 @@ class DatabaseProfilerStorage implements ProfilerStorageInterface {
     if (isset($record->data)) {
       return $this->createProfileFromData($token, $record);
     }
+    return NULL;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function write(Profile $profile) {
+  public function write(Profile $profile): bool {
     $args = [
       'token' => $profile->getToken(),
       'parent' => $profile->getParentToken(),
@@ -124,7 +125,8 @@ class DatabaseProfilerStorage implements ProfilerStorageInterface {
       }
 
       $status = TRUE;
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $status = FALSE;
     }
 
@@ -142,7 +144,7 @@ class DatabaseProfilerStorage implements ProfilerStorageInterface {
    * @param string $token
    * @param $data
    *
-   * @return Profile
+   * @return \Symfony\Component\HttpKernel\Profiler\Profile
    */
   private function createProfileFromData($token, $data) {
     $profile = new Profile($token);
@@ -155,4 +157,5 @@ class DatabaseProfilerStorage implements ProfilerStorageInterface {
 
     return $profile;
   }
+
 }

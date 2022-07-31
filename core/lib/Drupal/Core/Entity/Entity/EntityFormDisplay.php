@@ -13,7 +13,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
- * Configuration entity that contains widget options for all components of a
+ * Configuration entity that contains widget options for all components of an
  * entity form in a given form mode.
  *
  * @ConfigEntityType(
@@ -80,6 +80,9 @@ class EntityFormDisplay extends EntityDisplayBase implements EntityFormDisplayIn
   public static function collectRenderDisplay(FieldableEntityInterface $entity, $form_mode, $default_fallback = TRUE) {
     $entity_type = $entity->getEntityTypeId();
     $bundle = $entity->bundle();
+
+    // Allow modules to change the form mode.
+    \Drupal::moduleHandler()->alter('entity_form_mode', $form_mode, $entity);
 
     // Check the existence and status of:
     // - the display for the form mode,
@@ -213,7 +216,7 @@ class EntityFormDisplay extends EntityDisplayBase implements EntityFormDisplayIn
 
     // Hide extra fields.
     $extra_fields = \Drupal::service('entity_field.manager')->getExtraFields($this->targetEntityType, $this->bundle);
-    $extra_fields = isset($extra_fields['form']) ? $extra_fields['form'] : [];
+    $extra_fields = $extra_fields['form'] ?? [];
     foreach ($extra_fields as $extra_field => $info) {
       if (!$this->getComponent($extra_field)) {
         $element[$extra_field]['#access'] = FALSE;

@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\search_api\Plugin\PluginFormTrait;
 use Drupal\search_api\Processor\ProcessorPluginBase;
+use Drupal\search_api\Utility\Utility;
 
 /**
  * Adds a boost based on a number field value.
@@ -36,22 +37,15 @@ class NumberFieldBoost extends ProcessorPluginBase implements PluginFormInterfac
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
-    $boost_factors = [
-      '' => $this->t('Ignore'),
-      '0.1' => '0.1',
-      '0.2' => '0.2',
-      '0.3' => '0.3',
-      '0.5' => '0.5',
-      '0.8' => '0.8',
-      '1.0' => '1.0',
-      '2.0' => '2.0',
-      '3.0' => '3.0',
-      '5.0' => '5.0',
-      '8.0' => '8.0',
-      '13.0' => '13.0',
-      '21.0' => '21.0',
-    ];
     $config = $this->configuration['boosts'];
+    $additional_factors = [];
+    foreach ($config as $field_configs) {
+      if (isset($field_configs['boost_factor'])) {
+        $additional_factors[] = $field_configs['boost_factor'];
+      }
+    }
+    $boost_factors = Utility::getBoostFactors($additional_factors);
+    $boost_factors[Utility::formatBoostFactor(0)] = $this->t('Ignore');
 
     foreach ($this->index->getFields(TRUE) as $field_id => $field) {
       if (in_array($field->getType(), ['integer', 'decimal'])) {
@@ -60,16 +54,12 @@ class NumberFieldBoost extends ProcessorPluginBase implements PluginFormInterfac
           '#title' => $field->getLabel(),
         ];
 
-        $default_boost = $config[$field_id]['boost_factor'] ?? '';
-        if ($default_boost) {
-          $default_boost = sprintf('%.1F', $default_boost);
-        }
         $form['boosts'][$field_id]['boost_factor'] = [
           '#type' => 'select',
           '#title' => $this->t('Boost factor'),
           '#options' => $boost_factors,
-          '#description' => $this->t('The boost factor the field value gets multiplied with. Setting it to 1.0 means using the field value as a boost as it is.'),
-          '#default_value' => $default_boost,
+          '#description' => $this->t('The boost factor the field value gets multiplied with. Setting it to 1.00 means using the field value as a boost as it is.'),
+          '#default_value' => Utility::formatBoostFactor($config[$field_id]['boost_factor'] ?? 0),
         ];
 
         $form['boosts'][$field_id]['aggregation'] = [
@@ -106,8 +96,9 @@ class NumberFieldBoost extends ProcessorPluginBase implements PluginFormInterfac
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
+    $ignore = Utility::formatBoostFactor(0);
     foreach ($values['boosts'] as $field_id => $settings) {
-      if (!$settings['boost_factor']) {
+      if (!$settings['boost_factor'] || $settings['boost_factor'] === $ignore) {
         unset($values['boosts'][$field_id]);
       }
     }

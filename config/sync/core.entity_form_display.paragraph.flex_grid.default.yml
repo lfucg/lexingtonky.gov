@@ -1,0 +1,41 @@
+uuid: 9ad5102f-61c5-4373-ae62-d51801bc75b5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.flex_grid.field_heading
+    - field.field.paragraph.flex_grid.field_item
+    - paragraphs.paragraphs_type.flex_grid
+  module:
+    - paragraphs
+    - text
+    - workbench_moderation
+id: paragraph.flex_grid.default
+targetEntityType: paragraph
+bundle: flex_grid
+mode: default
+content:
+  field_heading:
+    type: text_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_item:
+    type: entity_reference_paragraphs
+    weight: 1
+    region: content
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

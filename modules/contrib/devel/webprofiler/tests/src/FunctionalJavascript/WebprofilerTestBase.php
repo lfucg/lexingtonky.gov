@@ -2,46 +2,26 @@
 
 namespace Drupal\Tests\webprofiler\FunctionalJavascript;
 
-use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
-use PHPUnit_Framework_AssertionFailedError;
+use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 
 /**
  * Class WebprofilerTestBase.
  *
  * @group webprofiler
  */
-abstract class WebprofilerTestBase extends JavascriptTestBase {
+abstract class WebprofilerTestBase extends WebDriverTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * Wait until the toolbar is present on page.
    */
   protected function waitForToolbar() {
-    $session = $this->getSession();
-    $token = $this->getToken();
-    $page = $session->getPage();
-
-    $toolbar = $page->findById('webprofiler' . $token);
-    $this->assertTrue($toolbar->hasClass('sf-toolbar'), 'Toolbar loader is present in page');
-
-    $session->wait(1000, 'null !== document.getElementById(\'sfToolbarMainContent-' . $token . '\')');
-
-    return $token;
-  }
-
-  /**
-   * Return the Webprofiler token.
-   *
-   * @return null|string
-   *   The page token
-   */
-  protected function getToken() {
-    $token = $this->getSession()->getResponseHeader('X-Debug-Token');
-
-    if (NULL === $token) {
-      throw new PHPUnit_Framework_AssertionFailedError();
-    }
-
-    return $token;
+    $assert_session = $this->assertSession();
+    $assert_session->waitForText(\Drupal::VERSION);
   }
 
   /**

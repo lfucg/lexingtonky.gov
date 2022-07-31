@@ -52,11 +52,11 @@ class SystemStateEdit extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $state_name = '') {
-    // Get the old value
+    // Get the old value.
     $old_value = $this->state->get($state_name);
 
     if (!isset($old_value)) {
-      drupal_set_message(t('State @name does not exist in the system.', array('@name' => $state_name)), 'warning');
+      $this->messenger()->addWarning($this->t('State @name does not exist in the system.', ['@name' => $state_name]));
       return;
     }
 
@@ -64,15 +64,17 @@ class SystemStateEdit extends FormBase {
     $disabled = !$this->checkObject($old_value);
 
     if ($disabled) {
-      drupal_set_message(t('Only simple structures are allowed to be edited. State @name contains objects.', array('@name' => $state_name)), 'warning');
+      $this->messenger()->addWarning($this->t('Only simple structures are allowed to be edited. State @name contains objects.', ['@name' => $state_name]));
+
     }
 
     // First we will show the user the content of the variable about to be edited.
-    $form['value'] = array(
+    $form['value'] = [
       '#type' => 'item',
-      '#title' => $this->t('Current value for %name', array('%name' => $state_name)),
+      '#title' => $this->t('Current value for %name', ['%name' => $state_name]),
+      // phpcs:ignore Drupal.Functions.DiscouragedFunctions
       '#markup' => kpr($old_value, TRUE),
-    );
+    ];
 
     $transport = 'plain';
 
@@ -82,43 +84,43 @@ class SystemStateEdit extends FormBase {
         $transport = 'yaml';
       }
       catch (InvalidDataTypeException $e) {
-        drupal_set_message(t('Invalid data detected for @name : %error', array('@name' => $state_name, '%error' => $e->getMessage())), 'error');
+        $this->messenger()->addError($this->t('Invalid data detected for @name : %error', ['@name' => $state_name, '%error' => $e->getMessage()]));
         return;
       }
     }
 
-    // Store in the form the name of the state variable
-    $form['state_name'] = array(
+    // Store in the form the name of the state variable.
+    $form['state_name'] = [
       '#type' => 'value',
       '#value' => $state_name,
-    );
+    ];
     // Set the transport format for the new value. Values:
     //  - plain
-    //  - yaml
-    $form['transport'] = array(
+    //  - yaml.
+    $form['transport'] = [
       '#type' => 'value',
       '#value' => $transport,
-    );
+    ];
 
-    $form['new_value'] = array(
+    $form['new_value'] = [
       '#type' => 'textarea',
       '#title' => $this->t('New value'),
       '#default_value' => $disabled ? '' : $old_value,
       '#disabled' => $disabled,
       '#rows' => 15,
-    );
+    ];
 
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array(
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Save'),
       '#disabled' => $disabled,
-    );
-    $form['actions']['cancel'] = array(
+    ];
+    $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancel'),
-      '#url' => Url::fromRoute('devel.state_system_page')
-    );
+      '#url' => Url::fromRoute('devel.state_system_page'),
+    ];
 
     return $form;
   }
@@ -130,13 +132,13 @@ class SystemStateEdit extends FormBase {
     $values = $form_state->getValues();
 
     if ($values['transport'] == 'yaml') {
-      // try to parse the new provided value
+      // Try to parse the new provided value.
       try {
         $parsed_value = Yaml::decode($values['new_value']);
         $form_state->setValue('parsed_value', $parsed_value);
       }
       catch (InvalidDataTypeException $e) {
-        $form_state->setErrorByName('new_value', $this->t('Invalid input: %error', array('%error' => $e->getMessage())));
+        $form_state->setErrorByName('new_value', $this->t('Invalid input: %error', ['%error' => $e->getMessage()]));
       }
     }
     else {
@@ -149,14 +151,13 @@ class SystemStateEdit extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Save the state
+    // Save the state.
     $values = $form_state->getValues();
     $this->state->set($values['state_name'], $values['parsed_value']);
 
     $form_state->setRedirectUrl(Url::fromRoute('devel.state_system_page'));
-
-    drupal_set_message($this->t('Variable %variable was successfully edited.', array('%variable' => $values['state_name'])));
-    $this->logger('devel')->info('Variable %variable was successfully edited.', array('%variable' => $values['state_name']));
+    $this->messenger()->addMessage($this->t('Variable %variable was successfully edited.', ['%variable' => $values['state_name']]));
+    $this->logger('devel')->info('Variable %variable was successfully edited.', ['%variable' => $values['state_name']]);
   }
 
   /**
@@ -175,14 +176,14 @@ class SystemStateEdit extends FormBase {
     if (is_array($data)) {
       // If the current object is an array, then check recursively.
       foreach ($data as $value) {
-        // If there is an object the whole container is "contaminated"
+        // If there is an object the whole container is "contaminated".
         if (!$this->checkObject($value)) {
           return FALSE;
         }
       }
     }
 
-    // All checks pass
+    // All checks pass.
     return TRUE;
   }
 

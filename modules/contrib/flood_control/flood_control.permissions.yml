@@ -2,3 +2,7 @@ access flood unblock:
   title: 'Access the flood unblock module'
   description: 'Allow user to flood unblock.'
   restrict access: TRUE
+
+access flood control settings page:
+  title: 'Access the flood control settings page'
+  description: 'Allow user to access flood control settings page.'

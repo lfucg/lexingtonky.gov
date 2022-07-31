@@ -1,0 +1,25 @@
+uuid: 3256635d-2cf9-45a3-8278-fd7caf88eb0e
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.econdev-header-quick-links
+  module:
+    - system
+  theme:
+    - lex_economic_development
+id: econdevheaderquicklinks
+theme: lex_economic_development
+region: sitemast
+weight: 0
+provider: null
+plugin: 'system_menu_block:econdev-header-quick-links'
+settings:
+  id: 'system_menu_block:econdev-header-quick-links'
+  label: 'EconDev Header Quick Links'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility: {  }

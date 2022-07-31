@@ -1,0 +1,126 @@
+uuid: 1a7774b6-5503-4e9c-ab45-693f464b7031
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.page.body
+    - field.field.node.page.field_econdev_hero_text
+    - field.field.node.page.field_iframe
+    - field.field.node.page.field_keywords
+    - field.field.node.page.field_lex_custom_banner_image
+    - field.field.node.page.field_lex_grid_ref
+    - field.field.node.page.field_lex_site_nav
+    - field.field.node.page.field_metatags
+    - field.field.node.page.field_office_to_contact
+    - field.field.node.page.field_page_overview
+    - field.field.node.page.field_page_section
+    - field.field.node.page.field_photo_grid
+    - field.field.node.page.field_related_departments
+    - field.field.node.page.field_related_documents
+    - field.field.node.page.field_related_page
+    - field.field.node.page.field_sidebar_section
+    - node.type.page
+  module:
+    - entity_reference_revisions
+    - iframe
+    - metatag
+    - text
+    - user
+id: node.page.default
+targetEntityType: node
+bundle: page
+mode: default
+content:
+  addtoany:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_iframe:
+    type: iframe_only
+    label: visually_hidden
+    settings:
+      url: ''
+      title: ''
+      headerlevel: '3'
+      class: ''
+      frameborder: '0'
+      scrolling: ''
+      transparency: '0'
+      allowfullscreen: '0'
+      tokensupport: '0'
+      width: ''
+      height: ''
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_lex_grid_ref:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_metatags:
+    type: metatag_empty_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_page_overview:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_page_section:
+    type: entity_reference_revisions_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_photo_grid:
+    type: entity_reference_revisions_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_related_page:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  workbench_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  body: true
+  field_econdev_hero_text: true
+  field_keywords: true
+  field_lex_custom_banner_image: true
+  field_lex_site_nav: true
+  field_office_to_contact: true
+  field_related_departments: true
+  field_related_documents: true
+  field_sidebar_section: true
+  search_api_excerpt: true

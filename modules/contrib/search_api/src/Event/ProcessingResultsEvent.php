@@ -3,7 +3,7 @@
 namespace Drupal\search_api\Event;
 
 use Drupal\search_api\Query\ResultSetInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Wraps a processing results event.
@@ -33,7 +33,7 @@ final class ProcessingResultsEvent extends Event {
    * @return \Drupal\search_api\Query\ResultSetInterface
    *   The search results to alter.
    */
-  public function getResults() {
+  public function getResults(): ResultSetInterface {
     return $this->results;
   }
 

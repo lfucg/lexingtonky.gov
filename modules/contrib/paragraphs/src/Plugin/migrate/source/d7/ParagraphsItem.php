@@ -2,6 +2,7 @@
 
 namespace Drupal\paragraphs\Plugin\migrate\source\d7;
 
+use Drupal\Core\Database\DatabaseExceptionWrapper;
 use Drupal\migrate\Row;
 
 /**
@@ -20,8 +21,17 @@ class ParagraphsItem extends FieldableEntity {
 
   /**
    * Join string for getting current revisions.
+   *
+   * @var string
    */
   const JOIN = "p.revision_id = pr.revision_id";
+
+  /**
+   * The prefix of the field table that contains the entity properties.
+   *
+   * @var string
+   */
+  const PARENT_FIELD_TABLE_PREFIX = 'field_data_';
 
   /**
    * {@inheritdoc}
@@ -38,7 +48,8 @@ class ParagraphsItem extends FieldableEntity {
   public function query() {
     $query = $this->select('paragraphs_item', 'p')
       ->fields('p',
-        ['item_id',
+        [
+          'item_id',
           'bundle',
           'field_name',
           'archived',
@@ -58,13 +69,47 @@ class ParagraphsItem extends FieldableEntity {
    * {@inheritdoc}
    */
   public function prepareRow(Row $row) {
+    [
+      'item_id' => $paragraph_id,
+      'revision_id' => $paragraph_revision_id,
+      'field_name' => $paragraph_parent_field_name,
+      'bundle' => $bundle,
+    ] = $row->getSource();
+
+    if (!$paragraph_parent_field_name || !is_string($paragraph_parent_field_name)) {
+      return FALSE;
+    }
 
     // Get Field API field values.
-    $item_id = $row->getSourceProperty('item_id');
-    $revision_id = $row->getSourceProperty('revision_id');
+    foreach (array_keys($this->getFields('paragraphs_item', $bundle)) as $field_name) {
+      $row->setSourceProperty($field_name, $this->getFieldValues('paragraphs_item', $field_name, $paragraph_id, $paragraph_revision_id));
+    }
 
-    foreach (array_keys($this->getFields('paragraphs_item', $row->getSourceProperty('bundle'))) as $field) {
-      $row->setSourceProperty($field, $this->getFieldValues('paragraphs_item', $field, $item_id, $revision_id));
+    // We have to find the corresponding parent entity (which might be an
+    // another paragraph). Active revision only.
+    try {
+      $parent_data_query = $this->getDatabase()->select(static::PARENT_FIELD_TABLE_PREFIX . $paragraph_parent_field_name, 'fd');
+      $parent_data_query->addField('fd', 'entity_type', 'parent_type');
+      $parent_data_query->addField('fd', 'entity_id', 'parent_id');
+      $parent_data = $parent_data_query
+        ->condition("fd.{$paragraph_parent_field_name}_value", $paragraph_id)
+        ->condition("fd.{$paragraph_parent_field_name}_revision_id", $paragraph_revision_id)
+        ->execute()->fetchAssoc();
+    }
+    catch (DatabaseExceptionWrapper $e) {
+      // The paragraphs field data|revision table is missing, we cannot get
+      // the parent entity identifiers. This is a corrupted database.
+      // @todo Shouldn't we have to throw an exception instead?
+      return FALSE;
+    }
+
+    if (!is_iterable($parent_data)) {
+      // We cannot get the parent entity identifiers.
+      return FALSE;
+    }
+
+    foreach ($parent_data as $property_name => $property_value) {
+      $row->setSourceProperty($property_name, $property_value);
     }
 
     return parent::prepareRow($row);
@@ -88,14 +133,12 @@ class ParagraphsItem extends FieldableEntity {
    * {@inheritdoc}
    */
   public function getIds() {
-    $ids = [
+    return [
       'item_id' => [
         'type' => 'integer',
         'alias' => 'p',
       ],
     ];
-
-    return $ids;
   }
 
 }

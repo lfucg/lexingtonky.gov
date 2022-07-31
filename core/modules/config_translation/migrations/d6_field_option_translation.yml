@@ -1,3 +1,4 @@
+# cspell:ignore filefield imagefield optionwidgets
 id: d6_field_option_translation
 label: Field option configuration translation
 migration_tags:
@@ -142,3 +143,4 @@ destination:
 migration_dependencies:
   required:
     - d6_field
+    - language

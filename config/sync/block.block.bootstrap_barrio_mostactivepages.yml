@@ -1,0 +1,30 @@
+uuid: 168d5faf-dcee-4dcd-b6c9-cdd4b316e06f
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.most-active-pages
+  module:
+    - system
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_mostactivepages
+theme: bootstrap_barrio
+region: top_header
+weight: -12
+provider: null
+plugin: 'system_menu_block:most-active-pages'
+settings:
+  id: 'system_menu_block:most-active-pages'
+  label: 'Most active pages'
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: '<front>'

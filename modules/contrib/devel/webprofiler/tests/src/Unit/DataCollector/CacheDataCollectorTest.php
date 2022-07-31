@@ -27,7 +27,7 @@ class CacheDataCollectorTest extends DataCollectorBaseTest {
    */
   public function setUp() {
     $this->cacheDataCollector = new CacheDataCollector();
-    $this->cacheBackendInterface = $this->getMock('Drupal\Core\Cache\CacheBackendInterface');
+    $this->cacheBackendInterface = $this->createMock('Drupal\Core\Cache\CacheBackendInterface');
   }
 
   /**

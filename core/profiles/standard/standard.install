@@ -17,13 +17,10 @@ use Drupal\shortcut\Entity\Shortcut;
  */
 function standard_install() {
   // Assign user 1 the "administrator" role.
+  /** @var \Drupal\user\Entity\User $user */
   $user = User::load(1);
-  $user->roles[] = 'administrator';
+  $user->addRole('administrator');
   $user->save();
-
-  // We install some menu links, so we have to rebuild the router, to ensure the
-  // menu links are valid.
-  \Drupal::service('router.builder')->rebuildIfNeeded();
 
   // Populate the default shortcut set.
   $shortcut = Shortcut::create([

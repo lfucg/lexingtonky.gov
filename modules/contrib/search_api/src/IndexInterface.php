@@ -81,6 +81,8 @@ interface IndexInterface extends ConfigEntityInterface {
    * - cron_limit: The maximum number of items to be indexed per cron batch.
    * - index_directly: Boolean setting whether entities are indexed immediately
    *   after they are created or updated.
+   * - track_changes_in_references: Boolean setting whether changes to
+   *   referenced entities should be tracked by this index.
    *
    * @return array
    *   An associative array of option values, keyed by the option name.

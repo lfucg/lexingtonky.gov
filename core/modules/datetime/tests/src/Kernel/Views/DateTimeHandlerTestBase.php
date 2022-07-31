@@ -19,7 +19,7 @@ abstract class DateTimeHandlerTestBase extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['datetime_test', 'node', 'datetime', 'field'];
+  protected static $modules = ['datetime_test', 'node', 'datetime', 'field'];
 
   /**
    * Name of the field.
@@ -83,7 +83,7 @@ abstract class DateTimeHandlerTestBase extends ViewsKernelTestBase {
     ];
 
     // Load test views.
-    ViewTestData::createTestViews(get_class($this), ['datetime_test']);
+    ViewTestData::createTestViews(static::class, ['datetime_test']);
   }
 
   /**

@@ -3,7 +3,7 @@
 namespace Drupal\draggableviews\Plugin\migrate\destination;
 
 use Drupal\Core\Database\Database;
-use Drupal\migrate\Entity\MigrationInterface;
+use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Plugin\migrate\destination\DestinationBase;
 use Drupal\migrate\Row;
 

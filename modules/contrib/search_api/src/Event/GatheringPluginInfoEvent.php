@@ -2,7 +2,7 @@
 
 namespace Drupal\search_api\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Wraps a gathering of plugin information event.
@@ -32,7 +32,7 @@ final class GatheringPluginInfoEvent extends Event {
    * @return array[]
    *   The plugin definitions collected so far, keyed by plugin ID.
    */
-  public function &getDefinitions() {
+  public function &getDefinitions(): array {
     return $this->definitions;
   }
 

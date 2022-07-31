@@ -12,6 +12,14 @@ abstract class OffCanvasTestBase extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected static $modules = [
+    // @todo Remove this in https://www.drupal.org/node/3219959
+    'block',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
   protected function drupalGet($path, array $options = [], array $headers = []) {
     $return = parent::drupalGet($path, $options, $headers);
     $this->assertPageLoadComplete();
@@ -96,29 +104,13 @@ abstract class OffCanvasTestBase extends WebDriverTestBase {
   }
 
   /**
-   * Waits for an element to be removed from the page.
-   *
-   * @param string $selector
-   *   CSS selector.
-   * @param int $timeout
-   *   (optional) Timeout in milliseconds, defaults to 10000.
-   *
-   * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use
-   *   Drupal\FunctionalJavascriptTests\JSWebAssert::assertNoElementAfterWait()
-   */
-  protected function waitForNoElement($selector, $timeout = 10000) {
-    @trigger_error('::waitForNoElement is deprecated in Drupal 8.8.0 and will be removed before Drupal 9.0.0. Use \Drupal\FunctionalJavascriptTests\JSWebAssert::assertNoElementAfterWait() instead.', E_USER_DEPRECATED);
-    $this->assertSession()->assertNoElementAfterWait('css', $selector, $timeout);
-  }
-
-  /**
    * Get themes to test.
    *
    * @return string[]
    *   Theme names to test.
    */
   protected function getTestThemes() {
-    return ['bartik', 'stark', 'classy', 'stable', 'seven'];
+    return ['bartik', 'classy', 'olivero', 'seven', 'stable', 'stark'];
   }
 
   /**
@@ -138,7 +130,7 @@ abstract class OffCanvasTestBase extends WebDriverTestBase {
   }
 
   /**
-   * Dataprovider that returns theme name as the sole argument.
+   * Data provider that returns theme name as the sole argument.
    */
   public function themeDataProvider() {
     $themes = $this->getTestThemes();

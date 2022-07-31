@@ -64,7 +64,7 @@ abstract class ViewsBlockBase extends BlockBase implements ContainerFactoryPlugi
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ViewExecutableFactory $executable_factory, EntityStorageInterface $storage, AccountInterface $user) {
     $this->pluginId = $plugin_id;
     $delta = $this->getDerivativeId();
-    list($name, $this->displayID) = explode('-', $delta, 2);
+    [$name, $this->displayID] = explode('-', $delta, 2);
     // Load the view.
     $view = $storage->load($name);
     $this->view = $executable_factory->get($view);
@@ -193,7 +193,7 @@ abstract class ViewsBlockBase extends BlockBase implements ContainerFactoryPlugi
    * Converts Views block content to a renderable array with contextual links.
    *
    * @param string|array $output
-   *   An string|array representing the block. This will be modified to be a
+   *   A string|array representing the block. This will be modified to be a
    *   renderable array, containing the optional '#contextual_links' property (if
    *   there are any contextual links associated with the block).
    * @param string $block_type

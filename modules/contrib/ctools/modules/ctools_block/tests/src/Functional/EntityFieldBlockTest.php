@@ -14,7 +14,7 @@ class EntityFieldBlockTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['block', 'ctools_block', 'ctools_block_field_test'];
+  protected static $modules = ['block', 'ctools_block', 'ctools_block_field_test'];
 
   /**
    * {@inheritdoc}

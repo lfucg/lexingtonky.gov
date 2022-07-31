@@ -34,6 +34,8 @@ interface EntityTypeRepositoryInterface {
    *
    * @throws \Drupal\Core\Entity\Exception\AmbiguousEntityClassException
    *   Thrown when multiple subclasses correspond to the called class.
+   * @throws \Drupal\Core\Entity\Exception\AmbiguousBundleClassException
+   *   Thrown when multiple subclasses correspond to the called bundle class.
    * @throws \Drupal\Core\Entity\Exception\NoCorrespondingEntityClassException
    *   Thrown when no entity class corresponds to the called class.
    *
@@ -41,12 +43,5 @@ interface EntityTypeRepositoryInterface {
    * @see \Drupal\Core\Entity\Entity::loadMultiple()
    */
   public function getEntityTypeFromClass($class_name);
-
-  /**
-   * Clear the static cache.
-   *
-   * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
-   */
-  public function clearCachedDefinitions();
 
 }

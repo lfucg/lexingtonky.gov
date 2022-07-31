@@ -25,7 +25,7 @@ class MetatagAvailableTokensTest extends WebDriverTestBase {
   /**
    * Test the node metatag defaults page.
    */
-  function testNodeMetatagDefaultsPage() {
+  public function testNodeMetatagDefaultsPage() {
     $this->drupalLogin($this->rootUser);
     $this->drupalGet(Url::fromRoute('entity.metatag_defaults.edit_form', ['metatag_defaults' => 'node']));
     $page = $this->getSession()->getPage();

@@ -14,7 +14,6 @@ use Drupal\user\UserInterface;
  * @group honeypot
  */
 class HoneypotFormTest extends BrowserTestBase {
-
   use CommentTestTrait;
 
   /**
@@ -39,24 +38,19 @@ class HoneypotFormTest extends BrowserTestBase {
   protected $node;
 
   /**
-   * Default theme.
-   *
-   * @var string
+   * {@inheritdoc}
    */
   protected $defaultTheme = 'stark';
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = ['honeypot', 'node', 'comment', 'contact'];
+  protected static $modules = ['honeypot', 'node', 'comment', 'contact'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
-    // Enable modules required for this test.
+  protected function setUp(): void {
     parent::setUp();
 
     // Set up required Honeypot configuration.
@@ -112,7 +106,7 @@ class HoneypotFormTest extends BrowserTestBase {
   /**
    * Make sure user login form is not protected.
    */
-  public function testUserLoginNotProtected() {
+  public function testUserLoginNotProtected(): void {
     $this->drupalGet('user');
     $this->assertSession()->responseNotContains('id="edit-url" name="url"');
   }
@@ -120,11 +114,12 @@ class HoneypotFormTest extends BrowserTestBase {
   /**
    * Test user registration (anonymous users).
    */
-  public function testProtectRegisterUserNormal() {
+  public function testProtectRegisterUserNormal(): void {
     // Set up form and submit it.
     $edit['name'] = $this->randomMachineName();
     $edit['mail'] = $edit['name'] . '@example.com';
-    $this->drupalPostForm('user/register', $edit, t('Create new account'));
+    $this->drupalGet('user/register');
+    $this->submitForm($edit, 'Create new account');
 
     // Form should have been submitted successfully.
     $this->assertSession()->pageTextContains('A welcome message with further instructions has been sent to your email address.');
@@ -133,12 +128,13 @@ class HoneypotFormTest extends BrowserTestBase {
   /**
    * Test for user register honeypot filled.
    */
-  public function testProtectUserRegisterHoneypotFilled() {
+  public function testProtectUserRegisterHoneypotFilled(): void {
     // Set up form and submit it.
     $edit['name'] = $this->randomMachineName();
     $edit['mail'] = $edit['name'] . '@example.com';
     $edit['url'] = 'http://www.example.com/';
-    $this->drupalPostForm('user/register', $edit, t('Create new account'));
+    $this->drupalGet('user/register');
+    $this->submitForm($edit, 'Create new account');
 
     // Form should have error message.
     $this->assertSession()->pageTextContains('There was a problem with your form submission. Please refresh the page and try again.');
@@ -147,7 +143,11 @@ class HoneypotFormTest extends BrowserTestBase {
   /**
    * Test for user register too fast.
    */
-  public function testProtectRegisterUserTooFast() {
+  public function testProtectRegisterUserTooFast(): void {
+    /** @var \Drupal\Tests\WebAssert $assert */
+    $assert = $this->assertSession();
+
+    // Set the time limit to 1 second.
     \Drupal::configFactory()->getEditable('honeypot.settings')->set('time_limit', 1)->save();
 
     // First attempt a submission that does not trigger honeypot.
@@ -155,8 +155,8 @@ class HoneypotFormTest extends BrowserTestBase {
     $edit['mail'] = $edit['name'] . '@example.com';
     $this->drupalGet('user/register');
     sleep(2);
-    $this->drupalPostForm(NULL, $edit, t('Create new account'));
-    $this->assertNoText(t('There was a problem with your form submission.'));
+    $this->submitForm($edit, 'Create new account');
+    $assert->pageTextNotContains('There was a problem with your form submission.');
 
     // Set the time limit a bit higher so we can trigger honeypot.
     \Drupal::configFactory()->getEditable('honeypot.settings')->set('time_limit', 5)->save();
@@ -164,7 +164,8 @@ class HoneypotFormTest extends BrowserTestBase {
     // Set up form and submit it.
     $edit['name'] = $this->randomMachineName();
     $edit['mail'] = $edit['name'] . '@example.com';
-    $this->drupalPostForm('user/register', $edit, t('Create new account'));
+    $this->drupalGet('user/register');
+    $this->submitForm($edit, 'Create new account');
 
     // Form should have error message.
     $this->assertSession()->pageTextContains('There was a problem with your form submission. Please wait 6 seconds and try again.');
@@ -173,7 +174,7 @@ class HoneypotFormTest extends BrowserTestBase {
   /**
    * Test that any (not-strict-empty) value triggers protection.
    */
-  public function testStrictEmptinessOnHoneypotField() {
+  public function testStrictEmptinessOnHoneypotField(): void {
     // Initialise the form values.
     $edit['name'] = $this->randomMachineName();
     $edit['mail'] = $edit['name'] . '@example.com';
@@ -181,15 +182,18 @@ class HoneypotFormTest extends BrowserTestBase {
     // Any value that is not strictly empty should trigger Honeypot.
     foreach (['0', ' '] as $value) {
       $edit['url'] = $value;
-      $this->drupalPostForm('user/register', $edit, t('Create new account'));
-      $this->assertText(t('There was a problem with your form submission. Please refresh the page and try again.'), "Honeypot protection is triggered when the honeypot field contains '{$value}'.");
+      $this->drupalGet('user/register');
+      $this->submitForm($edit, 'Create new account');
+      // Assert that Honeypot protection is triggered when the honeypot field
+      // contains $value.
+      $this->assertSession()->pageTextContains('There was a problem with your form submission. Please refresh the page and try again.');
     }
   }
 
   /**
    * Test comment form protection.
    */
-  public function testProtectCommentFormNormal() {
+  public function testProtectCommentFormNormal(): void {
     $comment = 'Test comment.';
 
     // Disable time limit for honeypot.
@@ -200,14 +204,15 @@ class HoneypotFormTest extends BrowserTestBase {
 
     // Set up form and submit it.
     $edit["comment_body[0][value]"] = $comment;
-    $this->drupalPostForm('comment/reply/node/' . $this->node->id() . '/comment', $edit, t('Save'));
+    $this->drupalGet('comment/reply/node/' . $this->node->id() . '/comment');
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->pageTextContains('Your comment has been queued for review');
   }
 
   /**
    * Test for comment form honeypot filled.
    */
-  public function testProtectCommentFormHoneypotFilled() {
+  public function testProtectCommentFormHoneypotFilled(): void {
     $comment = 'Test comment.';
 
     // Log in the web user.
@@ -216,14 +221,15 @@ class HoneypotFormTest extends BrowserTestBase {
     // Set up form and submit it.
     $edit["comment_body[0][value]"] = $comment;
     $edit['url'] = 'http://www.example.com/';
-    $this->drupalPostForm('comment/reply/node/' . $this->node->id() . '/comment', $edit, t('Save'));
+    $this->drupalGet('comment/reply/node/' . $this->node->id() . '/comment');
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->pageTextContains('There was a problem with your form submission. Please refresh the page and try again.');
   }
 
   /**
    * Test for comment form honeypot bypass.
    */
-  public function testProtectCommentFormHoneypotBypass() {
+  public function testProtectCommentFormHoneypotBypass(): void {
     // Log in the admin user.
     $this->drupalLogin($this->adminUser);
 
@@ -235,7 +241,7 @@ class HoneypotFormTest extends BrowserTestBase {
   /**
    * Test node form protection.
    */
-  public function testProtectNodeFormTooFast() {
+  public function testProtectNodeFormTooFast(): void {
     // Log in the admin user.
     $this->drupalLogin($this->webUser);
 
@@ -244,27 +250,29 @@ class HoneypotFormTest extends BrowserTestBase {
 
     // Set up the form and submit it.
     $edit["title[0][value]"] = 'Test Page';
-    $this->drupalPostForm('node/add/article', $edit, t('Save'));
+    $this->drupalGet('node/add/article');
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->pageTextContains('There was a problem with your form submission.');
   }
 
   /**
    * Test node form protection.
    */
-  public function testProtectNodeFormPreviewPassthru() {
+  public function testProtectNodeFormPreviewPassthru(): void {
     // Log in the admin user.
     $this->drupalLogin($this->webUser);
 
     // Post a node form using the 'Preview' button and make sure it's allowed.
     $edit["title[0][value]"] = 'Test Page';
-    $this->drupalPostForm('node/add/article', $edit, t('Preview'));
+    $this->drupalGet('node/add/article');
+    $this->submitForm($edit, 'Preview');
     $this->assertSession()->pageTextNotContains('There was a problem with your form submission.');
   }
 
   /**
    * Test protection on the Contact form.
    */
-  public function testProtectContactForm() {
+  public function testProtectContactForm(): void {
     $this->drupalLogin($this->adminUser);
 
     // Disable 'protect_all_forms'.
@@ -286,9 +294,11 @@ class HoneypotFormTest extends BrowserTestBase {
     $contact_settings->set('default_form', 'feedback')->save();
 
     // Submit the admin form so we can verify the right forms are displayed.
-    $this->drupalPostForm('admin/config/content/honeypot', [
-      'form_settings[contact_message_feedback_form]' => TRUE,
-    ], t('Save configuration'));
+    $this->drupalGet('admin/config/content/honeypot');
+    $this->submitForm(
+      ['form_settings[contact_message_feedback_form]' => TRUE],
+      'Save configuration'
+    );
 
     $this->drupalLogin($this->webUser);
     $this->drupalGet('contact/feedback');

@@ -1,0 +1,25 @@
+uuid: 78d2fd22-a17e-4af1-baf6-b68031a704fc
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_economic_development
+id: lex_economic_development_pagetitle
+theme: lex_economic_development
+region: title
+weight: -17
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  label_display: '0'
+  provider: core
+visibility:
+  request_path:
+    id: request_path
+    negate: true
+    context_mapping: {  }
+    pages: "<front>\r\n/browse/*\r\n/search"

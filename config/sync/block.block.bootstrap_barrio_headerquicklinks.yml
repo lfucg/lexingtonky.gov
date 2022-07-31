@@ -1,0 +1,30 @@
+uuid: cd0e4f6c-8f14-4100-a58a-4ba235ef1281
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.header-quick-links
+  module:
+    - system
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_headerquicklinks
+theme: bootstrap_barrio
+region: top_header
+weight: -18
+provider: null
+plugin: 'system_menu_block:header-quick-links'
+settings:
+  id: 'system_menu_block:header-quick-links'
+  label: 'Homepage Header Links'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: '<front>'

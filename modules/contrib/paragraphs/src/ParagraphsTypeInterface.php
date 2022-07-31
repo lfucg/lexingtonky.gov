@@ -46,7 +46,7 @@ interface ParagraphsTypeInterface extends ConfigEntityInterface {
   /**
    * Returns the icon file entity.
    *
-   * @return \Drupal\file\FileInterface|bool
+   * @return \Drupal\file\FileInterface|false
    *   The icon's file entity or FALSE if icon does not exist.
    */
   public function getIconFile();
@@ -54,7 +54,7 @@ interface ParagraphsTypeInterface extends ConfigEntityInterface {
   /**
    * Returns the icon's URL.
    *
-   * @return string|bool
+   * @return string|false
    *   The icon's URL or FALSE if icon does not exits.
    */
   public function getIconUrl();

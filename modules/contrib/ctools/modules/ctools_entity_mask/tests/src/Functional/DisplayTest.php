@@ -21,7 +21,7 @@ class DisplayTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'block',
     'block_content',
     'ctools_entity_mask',

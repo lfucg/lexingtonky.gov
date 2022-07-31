@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class LongIdForm.
+ * Test class for long form ids (over 64 chars).
  */
 class LongIdForm extends FormBase {
 

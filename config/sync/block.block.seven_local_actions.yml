@@ -1,0 +1,18 @@
+uuid: 5f66a317-437c-43a4-af36-5456034b38de
+langcode: en
+status: true
+dependencies:
+  theme:
+    - seven
+id: seven_local_actions
+theme: seven
+region: content
+weight: -10
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Primary admin actions'
+  label_display: '0'
+  provider: core
+visibility: {  }

@@ -76,11 +76,10 @@ class EntityTypeBundleInfoTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->moduleHandler = $this->prophesize(ModuleHandlerInterface::class);
-    $this->moduleHandler->getImplementations('entity_type_build')->willReturn([]);
     $this->moduleHandler->alter('entity_type', Argument::type('array'))->willReturn(NULL);
 
     $this->cacheBackend = $this->prophesize(CacheBackendInterface::class);

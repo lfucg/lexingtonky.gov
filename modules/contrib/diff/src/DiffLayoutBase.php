@@ -166,7 +166,7 @@ abstract class DiffLayoutBase extends PluginBase implements DiffLayoutInterface,
    */
   protected function buildRevisionData(ContentEntityInterface $revision) {
     if ($revision instanceof RevisionLogInterface) {
-      $revision_log = Xss::filter($revision->getRevisionLogMessage());
+      $revision_log = $revision->getRevisionLogMessage();
       $user_id = $revision->getRevisionUserId();
 
       $revision_link['date'] = [
@@ -192,7 +192,7 @@ abstract class DiffLayoutBase extends PluginBase implements DiffLayoutInterface,
           '#type' => 'markup',
           '#prefix' => '<div class="diff-revision__item diff-revision__item-message">',
           '#suffix' => '</div>',
-          '#markup' => $revision_log,
+          '#markup' => Xss::filter($revision_log),
         ];
       }
     }

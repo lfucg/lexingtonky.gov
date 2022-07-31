@@ -1,0 +1,20 @@
+uuid: 5a212712-e29c-4984-9809-a90cfc0db039
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_powered
+theme: lex_planning_commission
+region: notices
+weight: -9
+provider: null
+plugin: system_powered_by_block
+settings:
+  id: system_powered_by_block
+  label: 'Powered by Drupal'
+  label_display: '0'
+  provider: system
+visibility: {  }

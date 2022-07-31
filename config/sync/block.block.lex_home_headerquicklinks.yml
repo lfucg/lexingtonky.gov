@@ -1,0 +1,30 @@
+uuid: 1fdee163-5063-44ce-b4f4-a4434cd34722
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.header-quick-links
+  module:
+    - system
+  theme:
+    - lex_home
+id: lex_home_headerquicklinks
+theme: lex_home
+region: sitemast
+weight: -26
+provider: null
+plugin: 'system_menu_block:header-quick-links'
+settings:
+  id: 'system_menu_block:header-quick-links'
+  label: 'Homepage Header Links'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: '<front>'

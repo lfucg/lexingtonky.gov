@@ -2,7 +2,7 @@
 
 namespace Drupal\search_api\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Wraps a field types mapped event.
@@ -34,7 +34,7 @@ final class MappingFieldTypesEvent extends Event {
    *   corresponding Search API data types. A value of FALSE means that fields
    *   of that type should be ignored by the Search API.
    */
-  public function &getFieldTypeMapping() {
+  public function &getFieldTypeMapping(): array {
     return $this->fieldTypeMapping;
   }
 

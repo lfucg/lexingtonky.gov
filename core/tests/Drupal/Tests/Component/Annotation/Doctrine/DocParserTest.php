@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreFile
 
 namespace Drupal\Tests\Component\Annotation\Doctrine;
 
@@ -9,7 +8,6 @@ use Doctrine\Common\Annotations\Annotation\Target;
 use Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithConstants;
 use Drupal\Tests\Component\Annotation\Doctrine\Fixtures\ClassWithConstants;
 use Drupal\Tests\Component\Annotation\Doctrine\Fixtures\IntefaceWithConstants;
-use Drupal\Tests\PhpunitCompatibilityTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -28,7 +26,6 @@ use PHPUnit\Framework\TestCase;
  */
 class DocParserTest extends TestCase
 {
-  use PhpunitCompatibilityTrait;
     public function testNestedArraysWithNestedAnnotation()
     {
         $parser = $this->createTestParser();
@@ -214,7 +211,7 @@ DOCBLOCK;
 
         $this->assertNull($annot->name);
         $this->assertNotNull($annot->data);
-        $this->assertEquals($annot->data, "Some data");
+        $this->assertEquals("Some data", $annot->data);
 
 
 
@@ -233,8 +230,8 @@ DOCBLOCK;
         $this->assertNotNull($annot);
         $this->assertInstanceOf(SomeAnnotationClassNameWithoutConstructor::class, $annot);
 
-        $this->assertEquals($annot->name, "Some Name");
-        $this->assertEquals($annot->data, "Some data");
+        $this->assertEquals("Some Name", $annot->name);
+        $this->assertEquals("Some data", $annot->data);
 
 
 
@@ -249,7 +246,7 @@ DOCBLOCK;
         $this->assertCount(1, $result);
         $annot      = $result[0];
 
-        $this->assertEquals($annot->data, "Some data");
+        $this->assertEquals("Some data", $annot->data);
         $this->assertNull($annot->name);
 
 
@@ -263,7 +260,7 @@ DOCBLOCK;
         $this->assertCount(1, $result);
         $annot      = $result[0];
 
-        $this->assertEquals($annot->name, "Some name");
+        $this->assertEquals("Some name", $annot->name);
         $this->assertNull($annot->data);
 
         $docblock = <<<DOCBLOCK
@@ -276,7 +273,7 @@ DOCBLOCK;
         $this->assertCount(1, $result);
         $annot      = $result[0];
 
-        $this->assertEquals($annot->data, "Some data");
+        $this->assertEquals("Some data", $annot->data);
         $this->assertNull($annot->name);
 
 
@@ -291,8 +288,8 @@ DOCBLOCK;
         $this->assertCount(1, $result);
         $annot      = $result[0];
 
-        $this->assertEquals($annot->name, "Some name");
-        $this->assertEquals($annot->data, "Some data");
+        $this->assertEquals("Some name", $annot->name);
+        $this->assertEquals("Some data", $annot->data);
 
 
         $docblock = <<<DOCBLOCK
@@ -305,8 +302,8 @@ DOCBLOCK;
         $this->assertCount(1, $result);
         $annot      = $result[0];
 
-        $this->assertEquals($annot->name, "Some name");
-        $this->assertEquals($annot->data, "Some data");
+        $this->assertEquals("Some name", $annot->name);
+        $this->assertEquals("Some data", $annot->data);
 
         $docblock = <<<DOCBLOCK
 /**
@@ -544,7 +541,7 @@ DOCBLOCK;
 
         $result = $parser->parse($docblock, $context);
 
-        $this->assertTrue(sizeof($result) === 1);
+        $this->assertCount(1, $result);
         $this->assertInstanceOf('Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithVarType', $result[0]);
         $this->assertNotNull($result[0]->$attribute);
     }
@@ -563,7 +560,7 @@ DOCBLOCK;
             $parser->parse($docblock, $context);
             $this->fail();
         } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
-            $this->assertContains("[Type Error] Attribute \"$attribute\" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithVarType declared on property SomeClassName::invalidProperty. expects a(n) $type, but got $given.", $exc->getMessage());
+            $this->assertStringContainsString("[Type Error] Attribute \"$attribute\" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithVarType declared on property SomeClassName::invalidProperty. expects a(n) $type, but got $given.", $exc->getMessage());
         }
     }
 
@@ -582,7 +579,7 @@ DOCBLOCK;
             $parser->parse($docblock, $context);
             $this->fail();
         } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
-            $this->assertContains("[Type Error] Attribute \"$attribute\" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithVarType declared on property SomeClassName::invalidProperty. expects either a(n) $type, or an array of {$type}s, but got $given.", $exc->getMessage());
+            $this->assertStringContainsString("[Type Error] Attribute \"$attribute\" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithVarType declared on property SomeClassName::invalidProperty. expects either a(n) $type, or an array of {$type}s, but got $given.", $exc->getMessage());
         }
     }
 
@@ -598,7 +595,7 @@ DOCBLOCK;
 
         $result = $parser->parse($docblock, $context);
 
-        $this->assertTrue(sizeof($result) === 1);
+        $this->assertCount(1, $result);
         $this->assertInstanceOf('Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithAttributes', $result[0]);
         $getter = "get".ucfirst($attribute);
         $this->assertNotNull($result[0]->$getter());
@@ -618,7 +615,7 @@ DOCBLOCK;
             $parser->parse($docblock, $context);
             $this->fail();
         } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
-            $this->assertContains("[Type Error] Attribute \"$attribute\" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithAttributes declared on property SomeClassName::invalidProperty. expects a(n) $type, but got $given.", $exc->getMessage());
+            $this->assertStringContainsString("[Type Error] Attribute \"$attribute\" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithAttributes declared on property SomeClassName::invalidProperty. expects a(n) $type, but got $given.", $exc->getMessage());
         }
     }
 
@@ -637,7 +634,7 @@ DOCBLOCK;
             $parser->parse($docblock, $context);
             $this->fail();
         } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
-            $this->assertContains("[Type Error] Attribute \"$attribute\" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithAttributes declared on property SomeClassName::invalidProperty. expects either a(n) $type, or an array of {$type}s, but got $given.", $exc->getMessage());
+            $this->assertStringContainsString("[Type Error] Attribute \"$attribute\" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithAttributes declared on property SomeClassName::invalidProperty. expects either a(n) $type, or an array of {$type}s, but got $given.", $exc->getMessage());
         }
     }
 
@@ -651,7 +648,7 @@ DOCBLOCK;
         $docblock   = '@Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributes("Some Value", annot = @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationTargetAnnotation)';
         $result     = $parser->parse($docblock);
 
-        $this->assertTrue(sizeof($result) === 1);
+        $this->assertCount(1, $result);
         $this->assertInstanceOf('Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributes', $result[0]);
         $this->assertEquals("Some Value",$result[0]->getValue());
         $this->assertInstanceOf('Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationTargetAnnotation', $result[0]->getAnnot());
@@ -662,7 +659,7 @@ DOCBLOCK;
             $result = $parser->parse($docblock,$context);
             $this->fail();
         } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
-            $this->assertContains('Attribute "annot" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributes declared on property SomeClassName::invalidProperty. expects a(n) Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationTargetAnnotation. This value should not be null.', $exc->getMessage());
+            $this->assertStringContainsString('Attribute "annot" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributes declared on property SomeClassName::invalidProperty. expects a(n) Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationTargetAnnotation. This value should not be null.', $exc->getMessage());
         }
 
         $docblock   = '@Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributes(annot = @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationTargetAnnotation)';
@@ -670,7 +667,7 @@ DOCBLOCK;
             $result = $parser->parse($docblock,$context);
             $this->fail();
         } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
-            $this->assertContains('Attribute "value" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributes declared on property SomeClassName::invalidProperty. expects a(n) string. This value should not be null.', $exc->getMessage());
+            $this->assertStringContainsString('Attribute "value" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributes declared on property SomeClassName::invalidProperty. expects a(n) string. This value should not be null.', $exc->getMessage());
         }
 
     }
@@ -685,7 +682,7 @@ DOCBLOCK;
         $docblock   = '@Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributesWithoutContructor("Some Value", annot = @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationTargetAnnotation)';
         $result     = $parser->parse($docblock);
 
-        $this->assertTrue(sizeof($result) === 1);
+        $this->assertCount(1, $result);
         $this->assertInstanceOf('Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributesWithoutContructor', $result[0]);
         $this->assertEquals("Some Value", $result[0]->value);
         $this->assertInstanceOf('Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationTargetAnnotation', $result[0]->annot);
@@ -696,7 +693,7 @@ DOCBLOCK;
             $result = $parser->parse($docblock,$context);
             $this->fail();
         } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
-            $this->assertContains('Attribute "annot" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributesWithoutContructor declared on property SomeClassName::invalidProperty. expects a(n) Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationTargetAnnotation. This value should not be null.', $exc->getMessage());
+            $this->assertStringContainsString('Attribute "annot" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributesWithoutContructor declared on property SomeClassName::invalidProperty. expects a(n) Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationTargetAnnotation. This value should not be null.', $exc->getMessage());
         }
 
         $docblock   = '@Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributesWithoutContructor(annot = @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationTargetAnnotation)';
@@ -704,7 +701,7 @@ DOCBLOCK;
             $result = $parser->parse($docblock,$context);
             $this->fail();
         } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
-            $this->assertContains('Attribute "value" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributesWithoutContructor declared on property SomeClassName::invalidProperty. expects a(n) string. This value should not be null.', $exc->getMessage());
+            $this->assertStringContainsString('Attribute "value" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationWithRequiredAttributesWithoutContructor declared on property SomeClassName::invalidProperty. expects a(n) string. This value should not be null.', $exc->getMessage());
         }
 
     }
@@ -712,7 +709,7 @@ DOCBLOCK;
     public function testAnnotationEnumeratorException()
     {
         $this->expectException('\Doctrine\Common\Annotations\AnnotationException');
-        $this->expectExceptionMessage('Attribute "value" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationEnum declared on property SomeClassName::invalidProperty. accept only [ONE, TWO, THREE], but got FOUR.');
+        $this->expectExceptionMessage('Attribute "value" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationEnum declared on property SomeClassName::invalidProperty. accepts only [ONE, TWO, THREE], but got FOUR.');
 
         $parser     = $this->createTestParser();
         $context    = 'property SomeClassName::invalidProperty.';
@@ -726,7 +723,7 @@ DOCBLOCK;
     public function testAnnotationEnumeratorLiteralException()
     {
         $this->expectException('\Doctrine\Common\Annotations\AnnotationException');
-        $this->expectExceptionMessage('Attribute "value" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationEnumLiteral declared on property SomeClassName::invalidProperty. accept only [AnnotationEnumLiteral::ONE, AnnotationEnumLiteral::TWO, AnnotationEnumLiteral::THREE], but got 4.');
+        $this->expectExceptionMessage('Attribute "value" of @Drupal\Tests\Component\Annotation\Doctrine\Fixtures\AnnotationEnumLiteral declared on property SomeClassName::invalidProperty. accepts only [AnnotationEnumLiteral::ONE, AnnotationEnumLiteral::TWO, AnnotationEnumLiteral::THREE], but got 4.');
 
         $parser     = $this->createTestParser();
         $context    = 'property SomeClassName::invalidProperty.';
@@ -926,7 +923,7 @@ DOCBLOCK;
     public function testAnnotationWithInvalidTargetDeclarationError()
     {
         $this->expectException('\InvalidArgumentException');
-        $this->expectExceptionMessage('Invalid Target "Foo". Available targets: [ALL, CLASS, METHOD, PROPERTY, ANNOTATION]');
+        $this->expectExceptionMessage('Invalid Target "Foo". Available targets: [ALL, CLASS, METHOD, PROPERTY, FUNCTION, ANNOTATION]');
 
         $parser     = $this->createTestParser();
         $context    = 'class ' . 'SomeClassName';
@@ -1149,7 +1146,7 @@ DOCBLOCK;
 
         $result = $parser->parse("@Name(foo=1234)");
         $annot = $result[0];
-        $this->assertInternalType('int', $annot->foo);
+        $this->assertIsInt($annot->foo);
     }
 
     /**
@@ -1161,7 +1158,7 @@ DOCBLOCK;
 
         $result = $parser->parse("@Name(foo=-1234)");
         $annot = $result[0];
-        $this->assertInternalType('int', $annot->foo);
+        $this->assertIsInt($annot->foo);
     }
 
     /**
@@ -1173,7 +1170,7 @@ DOCBLOCK;
 
         $result = $parser->parse("@Name(foo=1234.345)");
         $annot = $result[0];
-        $this->assertInternalType('float', $annot->foo);
+        $this->assertIsFloat($annot->foo);
     }
 
     /**
@@ -1185,11 +1182,11 @@ DOCBLOCK;
 
         $result = $parser->parse("@Name(foo=-1234.345)");
         $annot = $result[0];
-        $this->assertInternalType('float', $annot->foo);
+        $this->assertIsFloat($annot->foo);
 
         $result = $parser->parse("@Marker(-1234.345)");
         $annot = $result[0];
-        $this->assertInternalType('float', $annot->value);
+        $this->assertIsFloat($annot->value);
     }
 
     public function testReservedKeywordsInAnnotations()

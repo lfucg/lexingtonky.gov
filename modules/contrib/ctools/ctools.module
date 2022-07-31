@@ -5,8 +5,10 @@
  * Provides utility and helper APIs for Drupal developers and site builders.
  */
 
-use Drupal\Core\Url;
+use Drupal\Core\Entity\Plugin\Condition\EntityBundle as CoreEntityBundle;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Drupal\ctools\Plugin\Condition\EntityBundle;
 
 /**
  * Implements hook_theme().
@@ -47,7 +49,7 @@ function ctools_theme($existing, $type, $theme, $path) {
  * @param $variables
  */
 function template_preprocess_ctools_wizard_trail(&$variables) {
-  /** @var $wizard \Drupal\ctools\Wizard\FormWizardInterface|\Drupal\ctools\Wizard\EntityFormWizardInterface */
+  /** @var \Drupal\ctools\Wizard\FormWizardInterface|\Drupal\ctools\Wizard\EntityFormWizardInterface $wizard */
   $wizard = $variables['wizard'];
   $cached_values = $variables['cached_values'];
   $trail = $variables['trail'];
@@ -64,7 +66,7 @@ function template_preprocess_ctools_wizard_trail(&$variables) {
  * @param $variables
  */
 function template_preprocess_ctools_wizard_trail_links(&$variables) {
-  /** @var $wizard \Drupal\ctools\Wizard\FormWizardInterface|\Drupal\ctools\Wizard\EntityFormWizardInterface */
+  /** @var \Drupal\ctools\Wizard\FormWizardInterface|\Drupal\ctools\Wizard\EntityFormWizardInterface $wizard */
   $wizard = $variables['wizard'];
   $cached_values = $variables['cached_values'];
   $trail = $variables['trail'];
@@ -91,8 +93,16 @@ function ctools_condition_info_alter(&$definitions) {
   if (isset($definitions['node_type']) && $definitions['node_type']['class'] == 'Drupal\node\Plugin\Condition\NodeType') {
     $definitions['node_type']['class'] = 'Drupal\ctools\Plugin\Condition\NodeType';
   }
-}
 
+  // Replace all generic entity bundle conditions classes if they are unaltered,
+  // these exist in Drupal 9.3+.
+  foreach ($definitions as $id => $definition) {
+    if (strpos($id, 'entity_bundle:') === 0 && $definition['class'] == CoreEntityBundle::class) {
+      $definitions[$id]['class'] = EntityBundle::class;
+    }
+  }
+
+}
 
 /**
  * Implements hook_help().
@@ -115,8 +125,9 @@ function ctools_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<li>' . t('Modal dialog -- tool to make it simple to put a form in a modal dialog.') . '</li>';
       $output .= '<li>' . t('Dependent -- a simple form widget to make form items appear and disappear based upon the selections in another item.') . '</li>';
       $output .= '<li>' . t('Content -- pluggable content types used as panes in Panels and other modules like Dashboard.') . '</li>';
-      $output .= '<li>' . t('Form wizard -- an API to make multi-step forms much easier.') . '</li>';+      $output .= '<li>' . t('CSS tools -- tools to cache and sanitize CSS easily to make user-input CSS safe.') . '</li>';
+      $output .= '<li>' . t('Form wizard -- an API to make multi-step forms much easier.') . '</li>';
+      $output .= '<li>' . t('CSS tools -- tools to cache and sanitize CSS easily to make user-input CSS safe.') . '</li>';
       $output .= '</ul>';
-    return $output;
+      return $output;
   }
 }

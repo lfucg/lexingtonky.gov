@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
- * Implements taxonomy_menu_help().
+ * Implements hook_menu_help().
  */
 function taxonomy_menu_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {

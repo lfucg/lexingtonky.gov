@@ -22,15 +22,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "${{ env.NODE }}"
-
-      - name: Set up npm cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-v${{ env.NODE }}-${{ hashFiles('package.json') }}-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-v${{ env.NODE }}-${{ hashFiles('package.json') }}-${{ hashFiles('package-lock.json') }}
-            ${{ runner.os }}-node-v${{ env.NODE }}-
+          cache: npm
 
       - name: Install npm dependencies
         run: npm ci
@@ -42,4 +34,4 @@ jobs:
         run: npm run bundlewatch
         env:
           BUNDLEWATCH_GITHUB_TOKEN: "${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}"
-          CI_BRANCH_BASE: v4-dev
+          CI_BRANCH_BASE: main

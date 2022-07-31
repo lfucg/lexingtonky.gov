@@ -17,7 +17,7 @@ abstract class ShortcutTestBase extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'toolbar', 'shortcut'];
+  protected static $modules = ['node', 'toolbar', 'shortcut'];
 
   /**
    * User with permission to administer shortcuts.
@@ -110,7 +110,7 @@ abstract class ShortcutTestBase extends BrowserTestBase {
    */
   public function generateShortcutSet($label = '', $id = NULL) {
     $set = ShortcutSet::create([
-      'id' => isset($id) ? $id : strtolower($this->randomMachineName()),
+      'id' => $id ?? strtolower($this->randomMachineName()),
       'label' => empty($label) ? $this->randomString() : $label,
     ]);
     $set->save();

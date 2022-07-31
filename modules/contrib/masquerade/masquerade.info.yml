@@ -6,8 +6,3 @@ dependencies:
   - drupal:user
 tags:
   - admin
-
-# Information added by Drupal.org packaging script on 2020-06-02
-version: '8.x-2.0-beta4'
-project: 'masquerade'
-datestamp: 1591126508

@@ -1,0 +1,20 @@
+uuid: 3cb12aea-3bfc-4e5b-80a3-748e73c264bc
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_breadcrumbs
+theme: lex_planning_commission
+region: breadcrumb
+weight: -25
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Breadcrumbs
+  label_display: '0'
+  provider: system
+visibility: {  }

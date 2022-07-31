@@ -7,6 +7,7 @@
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Component\Utility\Crypt;
@@ -41,7 +42,7 @@ function toolbar_theme($existing, $type, $theme, $path) {
   ];
   $items['menu__toolbar'] = [
     'base hook' => 'menu',
-    'variables' => ['items' => [], 'attributes' => []],
+    'variables' => ['menu_name' => NULL, 'items' => [], 'attributes' => []],
   ];
 
   return $items;
@@ -164,7 +165,7 @@ function toolbar_toolbar() {
   // toolbar_subtrees route. We provide the JavaScript requesting that JSONP
   // script here with the hash parameter that is needed for that route.
   // @see toolbar_subtrees_jsonp()
-  list($hash, $hash_cacheability) = _toolbar_get_subtrees_hash();
+  [$hash, $hash_cacheability] = _toolbar_get_subtrees_hash();
   $subtrees_attached['drupalSettings']['toolbar'] = [
     'subtreesHash' => $hash,
   ];
@@ -204,27 +205,6 @@ function toolbar_toolbar() {
   $hash_cacheability->applyTo($items['administration']);
 
   return $items;
-}
-
-/**
- * Renders the toolbar's administration tray.
- *
- * @param array $element
- *   A renderable array.
- *
- * @return array
- *   The updated renderable array.
- *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\toolbar\Controller\ToolbarController::preRenderAdministrationTray()
- *   instead.
- *
- * @see https://www.drupal.org/node/2966725
- * @see \Drupal\Core\Render\RendererInterface::render()
- */
-function toolbar_prerender_toolbar_administration_tray(array $element) {
-  @trigger_error('toolbar_prerender_toolbar_administration_tray() is deprecated in Drupal 8.8.0 and will be removed before Drupal 9.0.0. Use \Drupal\toolbar\Controller\ToolbarController::preRenderAdministrationTray() instead. See https://www.drupal.org/node/2966725', E_USER_DEPRECATED);
-  return ToolbarController::preRenderAdministrationTray($element);
 }
 
 /**
@@ -296,32 +276,25 @@ function toolbar_get_rendered_subtrees() {
     ],
     '#cache_properties' => ['#subtrees'],
   ];
-  \Drupal::service('renderer')->renderPlain($data);
+  /** @var \Drupal\Core\Render\Renderer $renderer */
+  $renderer = \Drupal::service('renderer');
+  // The pre_render process populates $data during the render pipeline.
+  // We need to pass by reference so that populated data can be returned and
+  // used to resolve cacheability.
+  $renderer->executeInRenderContext(new RenderContext(), function () use ($renderer, &$data) {
+    $renderer->render($data);
+  });
   return [$data['#subtrees'], CacheableMetadata::createFromRenderArray($data)];
 }
 
 /**
- * #pre_render callback for toolbar_get_rendered_subtrees().
+ * Returns the hash of the user-rendered toolbar subtrees and cacheability.
  *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\toolbar\Controller\ToolbarController::preRenderGetRenderedSubtrees()
- *   instead.
- *
- * @see https://www.drupal.org/node/2966725
- */
-function _toolbar_do_get_rendered_subtrees(array $data) {
-  @trigger_error('_toolbar_do_get_rendered_subtrees() is deprecated in Drupal 8.8.0 and will be removed before Drupal 9.0.0. Use Drupal\toolbar\Controller\ToolbarController::preRenderGetRenderedSubtrees() instead. See https://www.drupal.org/node/2966725', E_USER_DEPRECATED);
-  return ToolbarController::preRenderGetRenderedSubtrees($data);
-}
-
-/**
- * Returns the hash of the per-user rendered toolbar subtrees.
- *
- * @return string
- *   The hash of the admin_menu subtrees.
+ * @return array
+ *   An array with the hash of the toolbar subtrees and cacheability.
  */
 function _toolbar_get_subtrees_hash() {
-  list($subtrees, $cacheability) = toolbar_get_rendered_subtrees();
+  [$subtrees, $cacheability] = toolbar_get_rendered_subtrees();
   $hash = Crypt::hashBase64(serialize($subtrees));
   return [$hash, $cacheability];
 }

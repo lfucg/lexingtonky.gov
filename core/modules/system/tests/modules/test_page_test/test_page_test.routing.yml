@@ -59,6 +59,14 @@ test_page_test.error:
   requirements:
     _access: 'TRUE'
 
+test_page_test.null_header:
+  path: '/test-null-header'
+  defaults:
+    _controller: '\Drupal\test_page_test\Controller\Test::setHeader'
+    name: Null-Header
+  requirements:
+    _access: 'TRUE'
+
 test_page_test.encoded:
   path: '/test-encoded'
   defaults:
@@ -115,10 +123,32 @@ test_page_test.meta_refresh:
   requirements:
     _access: 'TRUE'
 
+test_page_test.page_with_duplicate_ids:
+  path: '/test-page-with-duplicate-ids'
+  defaults:
+    _controller: '\Drupal\test_page_test\Controller\Test::renderPageWithDuplicateIds'
+  requirements:
+    _access: 'TRUE'
+
+test_page_test.page_without_duplicate_ids:
+  path: '/test-page-without-duplicate-ids'
+  defaults:
+    _controller: '\Drupal\test_page_test\Controller\Test::renderPageWithoutDuplicateIds'
+  requirements:
+    _access: 'TRUE'
+
 test_page_test.deprecations:
   path: '/test-deprecations'
   defaults:
     _title: 'Page with deprecation notices'
     _controller: '\Drupal\test_page_test\Controller\Test::deprecations'
+  requirements:
+    _access: 'TRUE'
+
+test_page_test.test_page_var_dump:
+  path: '/test-page-var-dump'
+  defaults:
+    _title: 'Test front page with var dump'
+    _controller: '\Drupal\test_page_test\Controller\TestPageTestController::testPageVarDump'
   requirements:
     _access: 'TRUE'

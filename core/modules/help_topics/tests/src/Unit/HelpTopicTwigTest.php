@@ -42,7 +42,7 @@ class HelpTopicTwigTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->helpTopic = new HelpTopicTwig([],
       self::PLUGIN_INFORMATION['id'],
       self::PLUGIN_INFORMATION,
@@ -80,9 +80,9 @@ class HelpTopicTwigTest extends UnitTestCase {
    * @covers ::getCacheMaxAge
    */
   public function testCacheInfo() {
-    $this->assertEquals($this->helpTopic->getCacheContexts(), []);
-    $this->assertEquals($this->helpTopic->getCacheTags(), ['core.extension']);
-    $this->assertEquals($this->helpTopic->getCacheMaxAge(), Cache::PERMANENT);
+    $this->assertEquals([], $this->helpTopic->getCacheContexts());
+    $this->assertEquals(['core.extension'], $this->helpTopic->getCacheTags());
+    $this->assertEquals(Cache::PERMANENT, $this->helpTopic->getCacheMaxAge());
   }
 
   /**
@@ -104,7 +104,7 @@ class HelpTopicTwigTest extends UnitTestCase {
 }
 
 /**
- * Defines a fake template class to mock \Twig_TemplateWrapper.
+ * Defines a fake template class to mock \Twig\TemplateWrapper.
  *
  * We cannot use getMockBuilder() for this, because the Twig TemplateWrapper
  * class is declared "final" and cannot be mocked.
@@ -129,7 +129,7 @@ class FakeTemplateWrapper {
   }
 
   /**
-   * Mocks the \Twig_TemplateWrapper render() method.
+   * Mocks the \Twig\TemplateWrapper render() method.
    *
    * @param array $context
    *   (optional) Render context.

@@ -2,14 +2,10 @@
 
 namespace Drupal\ctools_views\Plugin\Display;
 
-use Drupal\Core\Block\BlockManagerInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\Block\ViewsBlock;
 use Drupal\views\Plugin\views\display\Block as CoreBlock;
-use Drupal\views\Plugin\ViewsHandlerManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Provides a Block display plugin.
@@ -33,43 +29,17 @@ class Block extends CoreBlock {
   protected $request;
 
   /**
-   * Constructs a new Block instance.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity manager.
-   * @param \Drupal\Core\Block\BlockManagerInterface $block_manager
-   *   The block manager.
-   * @param \Drupal\views\Plugin\ViewsHandlerManager $filter_manager
-   *   The views filter plugin manager.
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The current request.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, BlockManagerInterface $block_manager, ViewsHandlerManager $filter_manager, Request $request) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $block_manager);
-
-    $this->filterManager = $filter_manager;
-    $this->request = $request;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('entity_type.manager'),
-      $container->get('plugin.manager.block'),
-      $container->get('plugin.manager.views.filter'),
-      $container->get('request_stack')->getCurrentRequest()
-    );
+    /**
+     * @var \Drupal\ctools_views\Plugin\Display\Block
+     */
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->filterManager = $container->get('plugin.manager.views.filter');
+    $instance->request = $container->get('request_stack')->getCurrentRequest();
+
+    return $instance;
   }
 
   /**
@@ -141,7 +111,7 @@ class Block extends CoreBlock {
       $form['override']['pager_offset'] = [
         '#type' => 'number',
         '#title' => $this->t('Pager offset'),
-        '#default_value' => isset($block_configuration['pager_offset']) ? $block_configuration['pager_offset'] : 0,
+        '#default_value' => $block_configuration['pager_offset'] ?? 0,
         '#description' => $this->t('For example, set this to 3 and the first 3 items will not be displayed.'),
       ];
     }
@@ -157,7 +127,7 @@ class Block extends CoreBlock {
         '#type' => 'radios',
         '#title' => $this->t('Pager'),
         '#options' => $pager_options,
-        '#default_value' => isset($block_configuration['pager']) ? $block_configuration['pager'] : 'view',
+        '#default_value' => $block_configuration['pager'] ?? 'view',
       ];
     }
 
@@ -245,7 +215,7 @@ class Block extends CoreBlock {
     if (!empty($allow_settings['disable_filters'])) {
       $items = [];
       foreach ((array) $this->getOption('filters') as $filter_name => $item) {
-        $item['value'] = isset($block_configuration["filter"][$filter_name]['value']) ? $block_configuration["filter"][$filter_name]['value'] : '';
+        $item['value'] = $block_configuration["filter"][$filter_name]['value'] ?? '';
         $items[$filter_name] = $item;
       }
       $this->setOption('filters', $items);
@@ -390,7 +360,7 @@ class Block extends CoreBlock {
 
     $allow_settings = array_filter($this->getOption('allow'));
     $config = $block->getConfiguration();
-    list(, $display_id) = explode('-', $block->getDerivativeId(), 2);
+    [, $display_id] = explode('-', $block->getDerivativeId(), 2);
 
     // Change pager offset settings based on block configuration.
     if (!empty($allow_settings['offset']) && isset($config['pager_offset'])) {
@@ -460,19 +430,6 @@ class Block extends CoreBlock {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function usesExposed() {
-    $filters = $this->getHandlers('filter');
-    foreach ($filters as $filter) {
-      if ($filter->isExposed() && !empty($filter->exposedInfo())) {
-        return TRUE;
-      }
-    }
-    return FALSE;
-  }
-
-  /**
    * Exposed widgets.
    *
    * Exposed widgets typically only work with ajax in Drupal core, however
@@ -501,8 +458,8 @@ class Block extends CoreBlock {
    *   Return the more weight
    */
   public static function sortFieldsByWeight($a, $b) {
-    $a_weight = isset($a['weight']) ? $a['weight'] : 0;
-    $b_weight = isset($b['weight']) ? $b['weight'] : 0;
+    $a_weight = $a['weight'] ?? 0;
+    $b_weight = $b['weight'] ?? 0;
     if ($a_weight == $b_weight) {
       return 0;
     }

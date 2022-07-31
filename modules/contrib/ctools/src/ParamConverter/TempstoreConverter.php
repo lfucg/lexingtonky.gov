@@ -110,7 +110,7 @@ class TempstoreConverter implements ParamConverterInterface {
     $tempstore_id = !empty($definition['tempstore_id']) ? $definition['tempstore_id'] : $defaults['tempstore_id'];
     $machine_name = $this->convertVariable($value, $defaults);
 
-    list(, $parts) = explode(':', $definition['type'], 2);
+    [, $parts] = explode(':', $definition['type'], 2);
     $parts = explode(':', $parts);
     foreach ($parts as $key => $part) {
       $parts[$key] = $this->convertVariable($part, $defaults);
@@ -144,11 +144,11 @@ class TempstoreConverter implements ParamConverterInterface {
    * @return mixed
    *   The value of a variable in defaults.
    */
-  protected function convertVariable($name, $defaults) {
+  protected function convertVariable($name, array $defaults) {
     if (is_string($name) && strpos($name, '{') === 0) {
       $length = strlen($name);
       $name = substr($name, 1, $length - 2);
-      return isset($defaults[$name]) ? $defaults[$name] : NULL;
+      return $defaults[$name] ?? NULL;
     }
     return $name;
   }

@@ -1,0 +1,40 @@
+uuid: 292b7940-5875-4432-bf48-72baf7143a9c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.paragraphs_media_contact.field_contact_email
+    - field.field.paragraph.paragraphs_media_contact.field_contact_name
+    - field.field.paragraph.paragraphs_media_contact.field_contact_phone
+    - paragraphs.paragraphs_type.paragraphs_media_contact
+id: paragraph.paragraphs_media_contact.default
+targetEntityType: paragraph
+bundle: paragraphs_media_contact
+mode: default
+content:
+  field_contact_email:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_contact_name:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_contact_phone:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden:
+  created: true
+  uid: true

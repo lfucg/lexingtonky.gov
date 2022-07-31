@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\dropzonejs\Form\DropzoneJsUploadForm;
 
 /**
  * Implements hook_help().
@@ -111,5 +112,26 @@ function dropzonejs_library_info_alter(&$libraries, $extension) {
     if ($exif_path = libraries_get_path('exif-js')) {
       $libraries['exif-js']['js'] = ['/' . $exif_path . '/exif.js' => []];
     }
+  }
+}
+
+/**
+ * Implements hook_media_source_info_alter().
+ */
+function dropzonejs_media_source_info_alter(array &$sources) {
+  if (isset($sources['image'])) {
+    $sources['image']['forms']['media_library_add'] = DropzoneJsUploadForm::class;
+  }
+
+  if (isset($sources['video_file'])) {
+    $sources['video_file']['forms']['media_library_add'] = DropzoneJsUploadForm::class;
+  }
+
+  if (isset($sources['audio_file'])) {
+    $sources['audio_file']['forms']['media_library_add'] = DropzoneJsUploadForm::class;
+  }
+
+  if (isset($sources['file'])) {
+    $sources['file']['forms']['media_library_add'] = DropzoneJsUploadForm::class;
   }
 }

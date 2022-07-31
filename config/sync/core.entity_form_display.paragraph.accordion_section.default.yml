@@ -1,0 +1,36 @@
+uuid: e187e983-9a08-413a-b687-f86fdc46883d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.accordion_section.field_description
+    - field.field.paragraph.accordion_section.field_heading
+    - paragraphs.paragraphs_type.accordion_section
+  module:
+    - text
+    - workbench_moderation
+id: paragraph.accordion_section.default
+targetEntityType: paragraph
+bundle: accordion_section
+mode: default
+content:
+  field_description:
+    type: text_textarea
+    weight: 7
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_heading:
+    type: text_textfield
+    weight: 6
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

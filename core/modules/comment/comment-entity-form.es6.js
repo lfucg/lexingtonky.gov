@@ -3,7 +3,7 @@
  * Attaches comment behaviors to the entity form.
  */
 
-(function($, Drupal) {
+(function ($, Drupal) {
   /**
    *
    * @type {Drupal~behavior}
@@ -13,12 +13,11 @@
       const $context = $(context);
       $context
         .find('fieldset.comment-entity-settings-form')
-        .drupalSetSummary(context =>
+        .drupalSetSummary((context) =>
           Drupal.checkPlain(
             $(context)
               .find('.js-form-item-comment input:checked')
-              .next('label')
-              .text(),
+              .next('label')[0].textContent,
           ),
         );
     },

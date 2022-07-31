@@ -36,24 +36,26 @@ class DiffViewModeTest extends DiffTestBase {
       'body[0][value]' => 'Fighters',
       'revision' => TRUE,
     );
-    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, 'Save and keep published');
 
     // Set the Body field to hidden in the diff view mode.
     $edit = [
       'fields[body][region]' => 'hidden',
     ];
-    $this->drupalPostForm('admin/structure/types/manage/article/display', $edit, t('Save'));
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->submitForm($edit, 'Save');
     $edit = [
       'fields[body][region]' => 'hidden',
     ];
-    $this->drupalPostForm('admin/structure/types/manage/article/display/teaser', $edit, t('Save'));
+    $this->drupalGet('admin/structure/types/manage/article/display/teaser');
+    $this->submitForm($edit, 'Save');
 
     // Check the difference between the last two revisions.
     $this->drupalGet('node/' . $node->id() . '/revisions');
-    $this->drupalPostForm(NULL, [], t('Compare selected revisions'));
-    $this->assertNoText('Body');
-    $this->assertNoText('Foo');
-    $this->assertNoText('Fighters');
+    $this->submitForm([], 'Compare selected revisions');
+    $this->assertSession()->pageTextNotContains('Body');
+    $this->assertSession()->pageTextNotContains('Foo');
+    $this->assertSession()->pageTextNotContains('Fighters');
   }
 
 }

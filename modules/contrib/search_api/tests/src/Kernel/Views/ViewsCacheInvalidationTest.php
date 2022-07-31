@@ -96,6 +96,13 @@ class ViewsCacheInvalidationTest extends KernelTestBase {
   protected $nodes;
 
   /**
+   * The state service.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
+
+  /**
    * {@inheritdoc}
    */
   protected static $modules = [
@@ -112,6 +119,7 @@ class ViewsCacheInvalidationTest extends KernelTestBase {
     'text',
     'user',
     'views',
+    'views_test_data',
   ];
 
   /**
@@ -140,6 +148,7 @@ class ViewsCacheInvalidationTest extends KernelTestBase {
     $this->renderer = $this->container->get('renderer');
     $this->cacheTagsInvalidator = $this->container->get('cache_tags.invalidator');
     $this->currentUser = $this->container->get('current_user');
+    $this->state = $this->container->get('state');
 
     // Use the test search index from the search_api_test_db module.
     $this->index = Index::load('test_node_index');
@@ -326,6 +335,22 @@ class ViewsCacheInvalidationTest extends KernelTestBase {
     $this->assertViewsResult('has-access', ['Angua', 'Cheery', 'Detritus']);
     $this->assertCached('no-access');
     $this->assertCached('has-access');
+
+    // Activate the alter hook and resave the view so it will recalculate the
+    // cacheability metadata.
+    $this->state->set('search_api_test_views.alter_query_cacheability_metadata', TRUE);
+    $view = $this->getView();
+    $view->save();
+    // Populate the Views results cache.
+    $this->assertViewsResult('no-access', ['Cheery']);
+    $this->assertViewsResult('has-access', ['Angua', 'Cheery', 'Detritus']);
+    $this->assertCached('no-access');
+    $this->assertCached('has-access');
+    // Make sure that the Views results cache is invalidated whenever the custom
+    // cache tag that was added to the query is invalidated.
+    $this->cacheTagsInvalidator->invalidateTags(['search_api:test_views_page:search_api_test_node_view__page_1']);
+    $this->assertNotCached('no-access');
+    $this->assertNotCached('has-access');
   }
 
   /**

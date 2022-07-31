@@ -2,30 +2,12 @@
   "extends": [
     "../../../.eslintrc.json"
   ],
-  "parserOptions": {
-    "ecmaVersion": 5,
-    "sourceType": "script"
-  },
   "env": {
-    "es6": false,
-    "jquery": true,
-    "qunit": true
-  },
-  "globals": {
-    "bootstrap": false,
-    "sinon": false,
-    "Util": false,
-    "Alert": false,
-    "Button": false,
-    "Carousel": false,
-    "Simulator": false,
-    "Toast": false
+    "jasmine": true
   },
   "rules": {
-    "no-var": "off",
-    "object-shorthand": "off",
-    "prefer-arrow-callback": "off",
-    "prefer-template": "off",
-    "prefer-rest-params": "off"
+    "unicorn/consistent-function-scoping": "off",
+    "unicorn/no-useless-undefined": "off",
+    "unicorn/prefer-add-event-listener": "off"
   }
 }

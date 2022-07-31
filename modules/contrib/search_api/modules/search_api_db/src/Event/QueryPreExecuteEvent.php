@@ -4,7 +4,7 @@ namespace Drupal\search_api_db\Event;
 
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\search_api\Query\QueryInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Wraps a query pre-execute event.

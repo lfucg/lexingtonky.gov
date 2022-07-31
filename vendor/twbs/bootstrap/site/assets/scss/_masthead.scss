@@ -1,65 +1,29 @@
-// stylelint-disable declaration-no-important
-
 .bd-masthead {
-  position: relative;
-  padding: 3rem ($grid-gutter-width / 2);
-  background: linear-gradient(to right bottom, lighten($bd-purple-light, 16%) 50%, #fff 50%);
+  padding: 3rem 0;
+  background: linear-gradient(165deg, tint-color($bd-purple-light, 85%) 50%, $white 50%);
 
   h1 {
     @include font-size(4rem);
     line-height: 1;
   }
 
-  .lead {
-    @include font-size(1.5rem);
-    font-weight: 400;
+  p:not(.lead) {
     color: $gray-700;
   }
 
   .btn {
     padding: .8rem 2rem;
     font-weight: 600;
-    @include font-size(1.25rem);
   }
-
-  .carbonad {
-    margin-top: 0 !important;
-    margin-bottom: -3rem !important;
-  }
-
-  @include media-breakpoint-up(sm) {
-    padding-top: 5rem;
-    padding-bottom: 5rem;
-
-    .carbonad {
-      margin-bottom: 0 !important;
-    }
-  }
-
-  @include media-breakpoint-up(md) {
-    .carbonad {
-      margin-top: 3rem !important;
-    }
+  .lead {
+    @include font-size(1.5rem);
+    font-weight: 400;
+    color: $gray-700;
   }
 }
 
-.masthead-followup {
-  h2 {
-    @include font-size(2.5rem);
-  }
-
-  .highlight {
-    @include border-radius(.5rem);
-
-    pre::-webkit-scrollbar {
-      display: none;
-    }
-
-    pre code {
-      display: inline-block;
-      white-space: pre;
-    }
-  }
+@include media-breakpoint-up(md) {
+  .mw-md-75 { max-width: 75%; }
 }
 
 .masthead-followup-icon {

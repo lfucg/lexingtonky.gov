@@ -7,7 +7,7 @@ use Drupal\metatag_views\Controller\MetatagViewsController;
 use Drupal\views\Views;
 
 /**
- * Class MetatagViewsAddForm.
+ * The add form for the Metatag field, which extends the edit form.
  *
  * @package Drupal\metatag_views\Form
  */

@@ -1,7 +1,6 @@
 type: module
-# core: 8.x
 name: lookup_services
 description: 'Lookup Services by Address Feature with ArcGIS'
-core: '8.x'
+core_version_requirement: ^8 || ^9
 libraries:
   - lookup_services/global

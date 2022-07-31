@@ -1,2 +1,6 @@
 api_version: 1
-php_version: 7.3
+php_version: 7.4
+search:
+  version: 8
+database:
+  version: 10.3

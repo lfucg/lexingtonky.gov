@@ -68,6 +68,7 @@ class NodeTest extends KernelTestBase {
       'type' => 'page',
       'type-name' => 'Basic page',
       'url:alias' => '/content/source-node',
+      'language:name' => 'English'
     ];
     $this->assertTokens('node', ['node' => $page], $tokens);
 
@@ -93,6 +94,7 @@ class NodeTest extends KernelTestBase {
       'type' => 'article',
       'type-name' => 'Article',
       'url:alias' => "/node/{$article->id()}",
+      'language:name' => 'English'
     ];
     $this->assertTokens('node', ['node' => $article], $tokens);
   }

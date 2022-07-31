@@ -87,6 +87,12 @@ class ContactStorageTest extends ContactStorageTestBase {
     $this->addContactForm('test_id', 'test_label', $mail, TRUE);
     $this->assertText('Contact form test_label has been added.');
 
+    // Ensure that new contact form can be cloned.
+    $this->cloneContactForm('test_id', 'test_id_cloned');
+    $original_form = ContactForm::load('test_id');
+    $cloned_form = ContactForm::load('test_id_cloned');
+    $this->assertNotEquals($original_form->uuid(), $cloned_form->uuid());
+
     // Ensure that anonymous can submit site-wide contact form.
     user_role_grant_permissions(AccountInterface::ANONYMOUS_ROLE, ['access site-wide contact form']);
     $this->drupalLogout();
@@ -248,11 +254,7 @@ class ContactStorageTest extends ContactStorageTestBase {
     // Test clone functionality - add field to existing form.
     $this->fieldUIAddNewField('admin/structure/contact/manage/test_id', 'text_field', 'Text field', 'text');
     // Then clone it.
-    $this->drupalGet('admin/structure/contact/manage/test_id/clone');
-    $this->drupalPostForm(NULL, [
-      'id' => 'test_id_2',
-      'label' => 'Cloned',
-    ], t('Clone'));
+    $this->cloneContactForm('test_id', 'test_id_2');
 
     $edit = [
       'subject[0][value]' => 'Test subject',
@@ -351,6 +353,7 @@ class ContactStorageTest extends ContactStorageTestBase {
     $this->drupalGet('form51');
     $this->assertResponse(200);
     $this->assertText('contactForm');
+    $this->assertSession()->buttonExists('Send message');
 
     // Edit the contact form without changing anything. Verify that the existing
     // alias continues to work.
@@ -440,8 +443,8 @@ class ContactStorageTest extends ContactStorageTestBase {
     // Checks that the last captured email is the auto-reply, has a correct
     // body and is in html format.
     $this->assertEqual(end($captured_emails)['key'], 'page_autoreply');
-    $this->assertContains("auto_reply_1\nsecond_line", end($captured_emails)['body']);
-    $this->assertContains('text/plain', end($captured_emails)['headers']['Content-Type']);
+    $this->assertStringContainsString("auto_reply_1\nsecond_line", end($captured_emails)['body']);
+    $this->assertStringContainsString('text/plain', end($captured_emails)['headers']['Content-Type']);
 
     // Enable sending messages in html format and verify that the available
     // formats correctly show up on the contact form edit page.
@@ -475,6 +478,22 @@ class ContactStorageTest extends ContactStorageTestBase {
     $this->drupalGet('admin/structure/contact/manage/test_auto_reply_id_1');
     $this->assertNotEmpty($this->xpath('//select[@name="reply[format]"]//option[@value="full_html" and @selected="selected"]'));
 
+  }
+
+  /**
+   * Clone form.
+   *
+   * @param string $original_form_id
+   *   The original form machine name.
+   * @param string $clone_form_id
+   *   The new form machine name.
+   */
+  protected function cloneContactForm($original_form_id, $clone_form_id) {
+    $this->drupalGet("admin/structure/contact/manage/$original_form_id/clone");
+    $this->drupalPostForm(NULL, [
+      'id' => $clone_form_id,
+      'label' => 'Cloned',
+    ], t('Clone'));
   }
 
 }

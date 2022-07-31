@@ -29,7 +29,7 @@ class UncacheableQueryAccessHandlerTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'entity',
     'entity_module_test',
   ];
@@ -37,7 +37,7 @@ class UncacheableQueryAccessHandlerTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('entity_test_enhanced_with_owner');
@@ -101,7 +101,7 @@ class UncacheableQueryAccessHandlerTest extends EntityKernelTestBase {
     $this->assertEquals('AND', $conditions->getConjunction());
     $this->assertEquals(2, $conditions->count());
     $this->assertEquals($expected_conditions, $conditions->getConditions());
-    $this->assertEquals(['user', 'user.permissions'], $conditions->getCacheContexts());
+    $this->assertEqualsCanonicalizing(['user', 'user.permissions'], $conditions->getCacheContexts());
     $this->assertFalse($conditions->isAlwaysFalse());
 
     // Any permission for the first bundle, own permission for the second.
@@ -122,8 +122,8 @@ class UncacheableQueryAccessHandlerTest extends EntityKernelTestBase {
     ];
     $this->assertEquals('AND', $conditions->getConjunction());
     $this->assertEquals(2, $conditions->count());
-    $this->assertEquals($expected_conditions, $conditions->getConditions());
-    $this->assertEquals(['user', 'user.permissions'], $conditions->getCacheContexts());
+    $this->assertEqualsCanonicalizing($expected_conditions, $conditions->getConditions());
+    $this->assertEqualsCanonicalizing(['user', 'user.permissions'], $conditions->getCacheContexts());
     $this->assertFalse($conditions->isAlwaysFalse());
 
     // View own unpublished permission.
@@ -153,7 +153,7 @@ class UncacheableQueryAccessHandlerTest extends EntityKernelTestBase {
     ];
     $this->assertEquals(2, $conditions->count());
     $this->assertEquals($expected_conditions, $conditions->getConditions());
-    $this->assertEquals(['user', 'user.permissions'], $conditions->getCacheContexts());
+    $this->assertEqualsCanonicalizing(['user', 'user.permissions'], $conditions->getCacheContexts());
     $this->assertFalse($conditions->isAlwaysFalse());
   }
 
@@ -177,7 +177,7 @@ class UncacheableQueryAccessHandlerTest extends EntityKernelTestBase {
       $this->assertEquals('OR', $conditions->getConjunction());
       $this->assertEquals(2, $conditions->count());
       $this->assertEquals($expected_conditions, $conditions->getConditions());
-      $this->assertEquals(['user', 'user.permissions'], $conditions->getCacheContexts());
+      $this->assertEqualsCanonicalizing(['user', 'user.permissions'], $conditions->getCacheContexts());
       $this->assertFalse($conditions->isAlwaysFalse());
     }
   }

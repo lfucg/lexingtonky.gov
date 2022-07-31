@@ -5,9 +5,16 @@
 metatag.metatag_tag.shortcut_icon:
   type: label
   label: 'Default shortcut icon'
-metatag.metatag_tag.mask_ico:
-  type: label
+metatag.metatag_tag.mask_icon:
+  type: mapping
   label: 'Icon: SVG'
+  mapping:
+    href:
+      type: label
+      label: 'href'
+    color:
+      type: label
+      label: 'Color'
 metatag.metatag_tag.icon_16x16:
   type: label
   label: 'Icon: 16px x 16px'

@@ -1,0 +1,31 @@
+uuid: 773d72e4-0634-4dca-bfdd-3afe0f0347cf
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.card_grid.field_grid_card
+    - paragraphs.paragraphs_type.card_grid
+  module:
+    - paragraphs
+    - workbench_moderation
+id: paragraph.card_grid.default
+targetEntityType: paragraph
+bundle: card_grid
+mode: default
+content:
+  field_grid_card:
+    type: entity_reference_paragraphs
+    weight: 6
+    region: content
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

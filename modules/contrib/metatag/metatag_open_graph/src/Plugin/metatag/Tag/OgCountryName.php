@@ -10,7 +10,6 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
  * @MetatagTag(
  *   id = "og_country_name",
  *   label = @Translation("Country name"),
- *   description = @Translation(""),
  *   name = "og:country_name",
  *   group = "open_graph",
  *   weight = 22,

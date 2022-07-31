@@ -1,0 +1,299 @@
+uuid: 158f6609-6c5c-4145-98d7-3b70f89535d1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - field.storage.node.field_keywords
+    - field.storage.taxonomy_term.field_keywords
+    - field.storage.paragraph.field_section_body
+    - core.entity_view_mode.node.teaser
+  module:
+    - search_api_solr
+    - taxonomy
+    - node
+    - search_api
+    - paragraphs
+third_party_settings:
+  search_api_solr:
+    finalize: false
+    commit_before_finalize: false
+    commit_after_finalize: false
+    debug_finalize: false
+    highlighter:
+      maxAnalyzedChars: 51200
+      fragmenter: gap
+      usePhraseHighlighter: true
+      highlightMultiTerm: true
+      preserveMulti: false
+      regex:
+        slop: 0.5
+        pattern: blank
+        maxAnalyzedChars: 10000
+      highlight:
+        mergeContiguous: false
+        requireFieldMatch: false
+        snippets: 3
+        fragsize: 0
+    mlt:
+      mintf: 1
+      mindf: 1
+      maxdf: 0
+      maxdfpct: 0
+      minwl: 0
+      maxwl: 0
+      maxqt: 100
+      maxntp: 2000
+      boost: false
+      interestingTerms: none
+    term_modifiers:
+      slop: 10000000
+      fuzzy: 2
+    advanced:
+      index_prefix: ''
+      collection: ''
+      timezone: ''
+    multilingual:
+      limit_to_content_language: false
+      include_language_independent: true
+id: pantheon_index
+name: 'Pantheon Index'
+description: ''
+read_only: false
+field_settings:
+  body:
+    label: Body
+    datasource_id: 'entity:node'
+    property_path: body
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.body
+  field_keywords:
+    label: 'Keywords » Taxonomy term » Keywords'
+    datasource_id: 'entity:node'
+    property_path: 'field_keywords:entity:field_keywords'
+    type: text
+    boost: !!float 8
+    dependencies:
+      config:
+        - field.storage.node.field_keywords
+        - field.storage.taxonomy_term.field_keywords
+      module:
+        - taxonomy
+  field_keywords_1:
+    label: Keywords
+    datasource_id: 'entity:node'
+    property_path: field_keywords
+    type: text
+    boost: !!float 8
+    dependencies:
+      config:
+        - field.storage.node.field_keywords
+  field_section_body:
+    label: 'Section body'
+    datasource_id: 'entity:paragraph'
+    property_path: field_section_body
+    type: text
+    dependencies:
+      config:
+        - field.storage.paragraph.field_section_body
+  name:
+    label: 'Keywords » Taxonomy term » Name'
+    datasource_id: 'entity:node'
+    property_path: 'field_keywords:entity:name'
+    type: text
+    boost: !!float 8
+    dependencies:
+      config:
+        - field.storage.node.field_keywords
+      module:
+        - taxonomy
+  rendered_item:
+    label: 'Rendered HTML output'
+    property_path: rendered_item
+    type: text
+    configuration:
+      roles:
+        - anonymous
+      view_mode:
+        'entity:node':
+          article: teaser
+          board_commission: teaser
+          default_headers_for_themes: ''
+          event: teaser
+          full_page_iframe: teaser
+          landing_page: ''
+          meeting: teaser
+          news_article: teaser
+          organization_page: teaser
+          page: teaser
+          resource_links: ''
+          site_wide_notice: ''
+        'entity:paragraph':
+          accordion_block: ''
+          accordion_section: ''
+          card_button: ''
+          card_grid: ''
+          contact_card: ''
+          econdev_main_hero_text: ''
+          econdev_secondary_hero_text: ''
+          flex_grid: ''
+          icon_button_with_description: ''
+          lexidme_case: ''
+          lexidme_grid: ''
+          paragraph_sidebar_section: ''
+          paragraphs_media_contact: ''
+          paragraphs_page_section: ''
+          photo_grid: ''
+          quote: ''
+          quote_grid: ''
+          rendered_block: ''
+          standalone_link: ''
+          views_block: ''
+        'entity:taxonomy_term':
+          locations: ''
+          organizations: ''
+          site_navigation: ''
+          tags: ''
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: text
+    boost: !!float 8
+    dependencies:
+      module:
+        - node
+  url:
+    label: URI
+    property_path: search_api_url
+    type: text
+    boost: !!float 3
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: true
+      selected:
+        - final_order
+    languages:
+      default: true
+      selected: {  }
+  'entity:paragraph':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+  'entity:taxonomy_term':
+    bundles:
+      default: true
+      selected:
+        - keywords
+    languages:
+      default: true
+      selected: {  }
+processor_settings:
+  add_url: {  }
+  aggregated_field: {  }
+  auto_aggregated_fulltext_field: {  }
+  entity_status: {  }
+  entity_type: {  }
+  html_filter:
+    weights:
+      preprocess_index: -47
+      preprocess_query: -47
+    all_fields: false
+    fields:
+      - body
+      - field_section_body
+      - rendered_item
+      - title
+      - url
+    title: true
+    alt: true
+    tags:
+      b: 2
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+  language_with_fallback: {  }
+  rendered_item: {  }
+  solr_date_range: {  }
+  stemmer:
+    weights:
+      preprocess_index: -49
+      preprocess_query: -49
+    all_fields: false
+    fields:
+      - body
+      - field_section_body
+      - rendered_item
+      - title
+      - url
+    exceptions:
+      Cafr: accounting
+      DMV: county+clerk
+      ESP: extended+school+program
+      Form+222: current+year+occupational+tax+forms
+      GIS: geographic+information+services
+      GTV3: lextv
+      PDR: purchase+of+development+rights
+      REAL: recreation+enrichment+and+learning+program
+      RFP: current+bids+quotes
+      bail: inmate+information
+      bid: current+bids+quotes
+      cafr: accounting
+      dmv: county+clerk
+      esp: extended+school+program
+      form+222: current+year+occupational+tax+forms
+      garbage: waste+management
+      gis: geographic+information+services
+      gtv: lextv
+      gtv3: lextv
+      noise: code+of+ordinances+and+zoning+ordinance
+      pdr: purchase+of+development+rights
+      pva: property+valuation+administrator
+      rfp: current+bids+quotes
+      trash: waste+management
+      222: current+year+occupational+tax+forms
+      228: current+year+occupational+tax+forms
+  type_boost:
+    weights:
+      preprocess_index: -48
+    boosts:
+      'entity:node':
+        datasource_boost: !!float 5
+        bundle_boosts:
+          article: !!float 3
+          board_commission: !!float 0
+          event: !!float 5
+          landing_page: !!float 0
+          meeting: !!float 8
+          news_article: !!float 0
+          organization_page: !!float 13
+          page: !!float 21
+          site_wide_notice: !!float 0
+      'entity:paragraph':
+        datasource_boost: !!float 1
+        bundle_boosts:
+          paragraph_sidebar_section: !!float 0
+          paragraphs_media_contact: !!float 0
+          paragraphs_page_section: !!float 0
+      'entity:taxonomy_term':
+        datasource_boost: !!float 5
+        bundle_boosts:
+          locations: !!float 0
+          organizations: !!float 0
+          site_navigation: !!float 0
+          tags: !!float 0
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  cron_limit: 50
+  index_directly: true
+  track_changes_in_references: true
+server: null

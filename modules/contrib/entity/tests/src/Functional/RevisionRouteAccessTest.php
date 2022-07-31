@@ -27,11 +27,9 @@ class RevisionRouteAccessTest extends BrowserTestBase {
   protected $account;
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = ['entity_module_test', 'user', 'entity', 'block'];
+  protected static $modules = ['entity_module_test', 'user', 'entity', 'block'];
 
   /**
    * {@inheritdoc}
@@ -41,7 +39,7 @@ class RevisionRouteAccessTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->placeBlock('local_tasks_block');

@@ -1,0 +1,30 @@
+uuid: d5d80b98-e066-4094-9da2-eb8bc31a99cf
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.department_directory
+  module:
+    - system
+    - views
+  theme:
+    - lex_police
+id: lex_police_views_block__department_directory_block_1
+theme: lex_police
+region: content
+weight: -23
+provider: null
+plugin: 'views_block:department_directory-block_1'
+settings:
+  id: 'views_block:department_directory-block_1'
+  label: ''
+  label_display: '0'
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: /browse/government/departments

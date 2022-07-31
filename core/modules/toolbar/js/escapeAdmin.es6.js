@@ -3,7 +3,7 @@
  * Replaces the home link in toolbar with a back to site link.
  */
 
-(function($, Drupal, drupalSettings) {
+(function ($, Drupal, drupalSettings) {
   const pathInfo = drupalSettings.path;
   const escapeAdminPath = sessionStorage.getItem('escapeAdminPath');
   const windowLocation = window.location;
@@ -32,14 +32,12 @@
    */
   Drupal.behaviors.escapeAdmin = {
     attach() {
-      const $toolbarEscape = $('[data-toolbar-escape-admin]').once(
-        'escapeAdmin',
-      );
-      if ($toolbarEscape.length && pathInfo.currentPathIsAdmin) {
+      const toolbarEscape = once('escapeAdmin', '[data-toolbar-escape-admin]');
+      if (toolbarEscape.length && pathInfo.currentPathIsAdmin) {
         if (escapeAdminPath !== null) {
-          $toolbarEscape.attr('href', escapeAdminPath);
+          $(toolbarEscape).attr('href', escapeAdminPath);
         } else {
-          $toolbarEscape.text(Drupal.t('Home'));
+          toolbarEscape[0].textContent = Drupal.t('Home');
         }
       }
     },

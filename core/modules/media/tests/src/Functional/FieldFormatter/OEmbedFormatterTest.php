@@ -21,7 +21,7 @@ class OEmbedFormatterTest extends MediaFunctionalTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'field_ui',
     'link',
     'media_test_oembed',
@@ -35,7 +35,7 @@ class OEmbedFormatterTest extends MediaFunctionalTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->lockHttpClientToFixtures();
 
@@ -98,7 +98,11 @@ class OEmbedFormatterTest extends MediaFunctionalTestBase {
       'tweet' => [
         'https://twitter.com/drupaldevdays/status/935643039741202432',
         'rich_twitter.json',
-        [],
+        [
+          // The tweet resource does not specify a height, so the formatter
+          // should default to the configured maximum height.
+          'max_height' => 360,
+        ],
         [
           'iframe' => [
             'src' => '/media/oembed?url=https%3A//twitter.com/drupaldevdays/status/935643039741202432',
@@ -155,8 +159,8 @@ class OEmbedFormatterTest extends MediaFunctionalTestBase {
    * @param string $url
    *   The canonical URL of the media asset to test.
    * @param string $resource_url
-   *   The oEmebd resource URL of the media asset to test.
-   * @param mixed $formatter_settings
+   *   The oEmbed resource URL of the media asset to test.
+   * @param array $formatter_settings
    *   Settings for the oEmbed field formatter.
    * @param array $selectors
    *   An array of arrays. Each key is a CSS selector targeting an element in

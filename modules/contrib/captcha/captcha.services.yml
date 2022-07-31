@@ -7,3 +7,4 @@ services:
 
   captcha.helper:
     class: Drupal\captcha\Service\CaptchaService
+    arguments: ['@module_handler']

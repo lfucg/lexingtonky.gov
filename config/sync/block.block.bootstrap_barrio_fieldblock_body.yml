@@ -1,0 +1,35 @@
+uuid: c315e86a-9e0d-4227-a56a-114bf5fce1d2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+  module:
+    - ctools
+    - fieldblock
+    - text
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_fieldblock_body
+theme: bootstrap_barrio
+region: content
+weight: -20
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Org page: body'
+  label_display: '0'
+  provider: fieldblock
+  label_from_field: false
+  field_name: body
+  formatter_id: text_default
+  formatter_settings: {  }
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      organization_page: organization_page

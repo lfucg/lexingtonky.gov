@@ -5,14 +5,12 @@
  * Install, uninstall and update hooks for Media module.
  */
 
-use Drupal\Core\Entity\Sql\SqlEntityStorageInterface;
 use Drupal\Core\File\Exception\FileException;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Url;
 use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaTypeInterface;
 use Drupal\media\Plugin\media\Source\OEmbedInterface;
-use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -21,7 +19,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * Implements hook_install().
  */
 function media_install() {
-  $source = drupal_get_path('module', 'media') . '/images/icons';
+  $source = \Drupal::service('extension.list.module')->getPath('media') . '/images/icons';
   $destination = \Drupal::config('media.settings')->get('icon_base_uri');
   /** @var \Drupal\Core\File\FileSystemInterface $file_system */
   $file_system = \Drupal::service('file_system');
@@ -77,20 +75,6 @@ function media_requirements($phase) {
         $requirements['media']['severity'] = REQUIREMENT_ERROR;
       }
     }
-
-    // Prevent installation if the 1.x branch of the contrib module is enabled.
-    if (\Drupal::moduleHandler()->moduleExists('media_entity')) {
-      $info = \Drupal::service('extension.list.module')->getExtensionInfo('media_entity');
-      if (version_compare($info['version'], '8.x-2') < 0) {
-        $requirements['media_module_incompatibility'] = [
-          'title' => t('Media'),
-          'description' => t('The Media module is not compatible with contrib <a href=":url">Media Entity</a> 1.x branch. Please check the 2.x branch of that module for an upgrade path.', [
-            ':url' => 'https://drupal.org/project/media_entity',
-          ]),
-          'severity' => REQUIREMENT_ERROR,
-        ];
-      }
-    }
   }
   elseif ($phase === 'runtime') {
     // Check that oEmbed content is served in an iframe on a different domain,
@@ -122,21 +106,36 @@ function media_requirements($phase) {
       }
     }
 
-    // When a new media type with an image source is created we're configuring
-    // the default entity view display using the 'large' image style.
-    // Unfortunately, if a site builder has deleted the 'large' image style,
-    // we need some other image style to use, but at this point, we can't
-    // really know the site builder's intentions. So rather than do something
-    // surprising, we're leaving the embedded media without an image style and
-    // adding a warning that the site builder might want to add an image style.
-    // @see Drupal\media\Plugin\media\Source\Image::prepareViewDisplay
     $module_handler = \Drupal::service('module_handler');
     foreach (MediaType::loadMultiple() as $type) {
       // Load the default display.
       $display = \Drupal::service('entity_display.repository')
         ->getViewDisplay('media', $type->id());
 
+      // Check for missing source field definition.
       $source_field_definition = $type->getSource()->getSourceFieldDefinition($type);
+      if (empty($source_field_definition)) {
+        $requirements['media_missing_source_field_' . $type->id()] = [
+          'title' => t('Media'),
+          'description' => t('The source field definition for the %type media type is missing.',
+            [
+              '%type' => $type->label(),
+            ]
+          ),
+          'severity' => REQUIREMENT_ERROR,
+        ];
+        continue;
+      }
+
+      // When a new media type with an image source is created we're
+      // configuring the default entity view display using the 'large' image
+      // style. Unfortunately, if a site builder has deleted the 'large' image
+      // style, we need some other image style to use, but at this point, we
+      // can't really know the site builder's intentions. So rather than do
+      // something surprising, we're leaving the embedded media without an
+      // image style and adding a warning that the site builder might want to
+      // add an image style.
+      // @see Drupal\media\Plugin\media\Source\Image::prepareViewDisplay
       if (!is_a($source_field_definition->getItemDefinition()->getClass(), ImageItem::class, TRUE)) {
         continue;
       }
@@ -176,84 +175,8 @@ function media_requirements($phase) {
 }
 
 /**
- * Introduce per-bundle permissions.
+ * Implements hook_update_last_removed().
  */
-function media_update_8500() {
-  $media_types = \Drupal::entityQuery('media_type')->execute();
-
-  /** @var \Drupal\user\RoleInterface $role */
-  foreach (Role::loadMultiple() as $role) {
-    if ($role->hasPermission('update media')) {
-      foreach ($media_types as $media_type) {
-        $role->grantPermission("edit own $media_type media");
-      }
-    }
-
-    if ($role->hasPermission('update any media')) {
-      foreach ($media_types as $media_type) {
-        $role->grantPermission("edit any $media_type media");
-      }
-    }
-
-    if ($role->hasPermission('delete media')) {
-      foreach ($media_types as $media_type) {
-        $role->grantPermission("delete own $media_type media");
-      }
-    }
-
-    if ($role->hasPermission('delete any media')) {
-      foreach ($media_types as $media_type) {
-        $role->grantPermission("delete any $media_type media");
-      }
-    }
-
-    if ($role->hasPermission('create media')) {
-      foreach ($media_types as $media_type) {
-        $role->grantPermission("create $media_type media");
-      }
-    }
-
-    $role->save();
-  }
-}
-
-/**
- * Updates media.settings to support OEmbed.
- */
-function media_update_8600() {
-  \Drupal::configFactory()->getEditable('media.settings')
-    ->set('iframe_domain', '')
-    ->set('oembed_providers_url', 'https://oembed.com/providers.json')
-    ->save(TRUE);
-}
-
-/**
- * Set the 'owner' entity key and update the field.
- */
-function media_update_8700() {
-  $definition_update_manager = \Drupal::entityDefinitionUpdateManager();
-  $entity_type = $definition_update_manager->getEntityType('media');
-  $database = \Drupal::database();
-
-  if (\Drupal::entityTypeManager()->getStorage('media') instanceof SqlEntityStorageInterface) {
-    if ($database->schema()->tableExists($entity_type->getDataTable())) {
-      $database->update($entity_type->getDataTable())
-        ->fields(['uid' => 0])
-        ->isNull('uid')
-        ->execute();
-    }
-
-    if ($database->schema()->tableExists($entity_type->getRevisionDataTable())) {
-      $database->update($entity_type->getRevisionDataTable())
-        ->fields(['uid' => 0])
-        ->isNull('uid')
-        ->execute();
-    }
-  }
-
-  $keys = $entity_type->getKeys();
-  $keys['owner'] = 'uid';
-  $entity_type->set('entity_keys', $keys);
-  $definition_update_manager->updateEntityType($entity_type);
-  $definition_update_manager->updateFieldStorageDefinition($definition_update_manager->getFieldStorageDefinition('uid', 'media'));
+function media_update_last_removed() {
+  return 8700;
 }

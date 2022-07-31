@@ -1,0 +1,46 @@
+uuid: e0c20fb4-88d9-4a18-84ca-3fc99daa1852
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_top_services
+  module:
+    - ctools
+    - fieldblock
+    - link
+    - system
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_fieldblock_field_organization_services
+theme: bootstrap_barrio
+region: top_header
+weight: -22
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Top services'
+  label_display: visible
+  provider: fieldblock
+  label_from_field: true
+  field_name: field_top_services
+  formatter_id: link
+  formatter_settings:
+    trim_length: 80
+    url_only: false
+    url_plain: false
+    rel: '0'
+    target: '0'
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      organization_page: organization_page
+  request_path:
+    id: request_path
+    negate: true
+    context_mapping: {  }
+    pages: '<front>'

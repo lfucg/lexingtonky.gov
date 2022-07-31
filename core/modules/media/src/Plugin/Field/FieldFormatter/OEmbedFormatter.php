@@ -10,7 +10,6 @@ use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Url;
 use Drupal\media\Entity\MediaType;
 use Drupal\media\IFrameUrlHelper;
@@ -21,6 +20,7 @@ use Drupal\media\OEmbed\UrlResolverInterface;
 use Drupal\media\Plugin\media\Source\OEmbedInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+// cspell:ignore allowtransparency
 /**
  * Plugin implementation of the 'oembed' formatter.
  *
@@ -38,7 +38,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   },
  * )
  */
-class OEmbedFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
+class OEmbedFormatter extends FormatterBase {
 
   /**
    * The messenger service.

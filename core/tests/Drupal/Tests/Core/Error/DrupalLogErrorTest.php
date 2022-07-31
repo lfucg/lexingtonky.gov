@@ -13,7 +13,7 @@ use Symfony\Component\Process\PhpProcess;
 class DrupalLogErrorTest extends UnitTestCase {
 
   /**
-   * Test that fatal errors return a non-zero exit code.
+   * Tests that fatal errors return a non-zero exit code.
    */
   public function testFatalExitCode() {
     $script = <<<'EOT'
@@ -23,7 +23,6 @@ if (PHP_SAPI !== 'cli') {
 }
 
 $autoloader = require_once 'autoload.php';
-require_once 'core/includes/bootstrap.inc';
 require_once 'core/includes/errors.inc';
 define('DRUPAL_TEST_IN_CHILD_SITE', FALSE);
 
@@ -36,6 +35,7 @@ $error = [
   '@backtrace_string' => 'backtrace',
   'severity_level' => 0,
   'backtrace' => [],
+  'exception' => NULL,
 ];
 _drupal_log_error($error, TRUE);
 EOT;

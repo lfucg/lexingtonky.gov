@@ -16,6 +16,11 @@ class ViewsAccordionTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = [
     'views_accordion_test',
   ];
@@ -62,6 +67,7 @@ class ViewsAccordionTest extends WebDriverTestBase {
   public function testViewsAccordion() {
     $this->drupalGet('views-accordion-test');
     $driver = $this->getSession()->getDriver();
+    $assert_session = $this->assertSession();
 
     // Assert our JS settings are available.
     $settings = $this->getDrupalSettings();
@@ -83,14 +89,12 @@ class ViewsAccordionTest extends WebDriverTestBase {
     $this->drupalGet('views-accordion-test-grouping');
     // Assert the first header is the first user name.
     $this->assertEquals($this->user1->getAccountName(), $driver->getText($this->cssSelectToXpath('#ui-id-1')));
-    $first_group_xpath = $this->cssSelectToXpath('#ui-id-2');
-    $driver->isVisible($first_group_xpath);
-    // Assert correct nodes are in the first group.
-    $first_group_content = $driver->getText($first_group_xpath);
-    $this->assertContains($this->nodes[0]->getTitle(), $first_group_content, 'First node is on first accordion group');
-    $this->assertContains($this->nodes[1]->getTitle(), $first_group_content, 'Second node is on first accordion group');
-    $this->assertNotContains($this->nodes[2]->getTitle(), $first_group_content, 'Third node is not on first accordion group');
-    $this->assertNotContains($this->nodes[3]->getTitle(), $first_group_content, 'Fourth node is not on first accordion group');
+    $driver->isVisible($this->cssSelectToXpath('#ui-id-2'));
+    // Assert correct nodes are in the correct groups.
+    $assert_session->elementTextContains('css', '#ui-id-2', $this->nodes[0]->getTitle());
+    $assert_session->elementTextContains('css', '#ui-id-2', $this->nodes[1]->getTitle());
+    $assert_session->elementTextNotContains('css', '#ui-id-2', $this->nodes[2]->getTitle());
+    $assert_session->elementTextNotContains('css', '#ui-id-2', $this->nodes[3]->getTitle());
 
     // Assert the second accordion header is the second user name.
     $this->assertEquals($this->user2->getAccountName(), $driver->getText($this->cssSelectToXpath('#ui-id-3')));
@@ -98,12 +102,11 @@ class ViewsAccordionTest extends WebDriverTestBase {
     $this->assertFalse($driver->isVisible($second_group_xpath), 'Second accordion group is collapsed');
     $this->click('#ui-id-3');
     $driver->isVisible($second_group_xpath);
-    // Assert correct nodes are in the second group.
-    $second_group_content = $driver->getText($second_group_xpath);
-    $this->assertNotContains($this->nodes[0]->getTitle(), $second_group_content, 'First node is not on second accordion group');
-    $this->assertNotContains($this->nodes[1]->getTitle(), $second_group_content, 'Second node is not on second accordion group');
-    $this->assertContains($this->nodes[2]->getTitle(), $second_group_content, 'Third node is on second accordion group');
-    $this->assertContains($this->nodes[3]->getTitle(), $second_group_content, 'Fourth node is on second accordion group');
+    // Assert correct nodes are in the correct groups.
+    $assert_session->elementTextNotContains('css', '#ui-id-4', $this->nodes[0]->getTitle());
+    $assert_session->elementTextNotContains('css', '#ui-id-4', $this->nodes[1]->getTitle());
+    $assert_session->elementTextContains('css', '#ui-id-4', $this->nodes[2]->getTitle());
+    $assert_session->elementTextContains('css', '#ui-id-4', $this->nodes[3]->getTitle());
   }
 
 }

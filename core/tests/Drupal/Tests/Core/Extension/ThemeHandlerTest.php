@@ -43,7 +43,7 @@ class ThemeHandlerTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->configFactory = $this->getConfigFactoryStub([
@@ -74,10 +74,10 @@ class ThemeHandlerTest extends UnitTestCase {
    * @see \Drupal\Core\Extension\ThemeHandler::rebuildThemeData()
    */
   public function testRebuildThemeData() {
-    $this->themeList->expects($this->at(0))
+    $this->themeList->expects($this->once())
       ->method('reset')
       ->willReturnSelf();
-    $this->themeList->expects($this->at(1))
+    $this->themeList->expects($this->once())
       ->method('getList')
       ->will($this->returnValue([
         'seven' => new Extension($this->root, 'theme', 'core/themes/seven/seven.info.yml', 'seven.theme'),
@@ -144,8 +144,4 @@ class StubThemeHandler extends ThemeHandler {
     $this->registryRebuild = TRUE;
   }
 
-}
-
-if (!defined('DRUPAL_MINIMUM_PHP')) {
-  define('DRUPAL_MINIMUM_PHP', '5.5.9');
 }

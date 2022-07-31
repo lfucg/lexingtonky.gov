@@ -2,7 +2,6 @@
 
 namespace Drupal\filter\Plugin;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Component\Plugin\DependentPluginInterface;
@@ -77,7 +76,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @see \Drupal\filter\Plugin\FilterBase
  * @see plugin_api
  */
-interface FilterInterface extends ConfigurableInterface, DependentPluginInterface, ConfigurablePluginInterface, PluginInspectionInterface {
+interface FilterInterface extends ConfigurableInterface, DependentPluginInterface, PluginInspectionInterface {
 
   /**
    * Non-HTML markup language filters that generate HTML.
@@ -199,7 +198,7 @@ interface FilterInterface extends ConfigurableInterface, DependentPluginInterfac
    *             be attribute values (which may use a wildcard, e.g. "xsd:*"),
    *             the possible values are TRUE or FALSE: to mark the attribute
    *             value as allowed or forbidden, respectively
-   *     -  'forbidden_tags': (optional) the forbidden tags
+   *     -  'forbidden_tags': (deprecated) the forbidden tags
    *
    *   There is one special case: the "wildcard tag", "*": any attribute
    *   restrictions on that pseudotag apply to all tags.

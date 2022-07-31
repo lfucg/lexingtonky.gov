@@ -105,7 +105,7 @@ metatag.metatag_tag.twitter_cards_site_id:
   type: label
   label: "Twitter Cards: Site's Twitter account ID"
 metatag.metatag_tag.twitter_cards_title:
-  type: label
+  type: text
   label: 'Twitter Cards: Title'
 metatag.metatag_tag.twitter_cards_type:
   type: label

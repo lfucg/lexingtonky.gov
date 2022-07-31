@@ -14,6 +14,7 @@ trait AjaxFormTrait {
    * Gets attributes for use with an AJAX modal.
    *
    * @return array
+   *   The array of attributes.
    */
   public static function getAjaxAttributes() {
     return [
@@ -29,6 +30,7 @@ trait AjaxFormTrait {
    * Gets attributes for use with an add button AJAX modal.
    *
    * @return array
+   *   The array of attributes.
    */
   public static function getAjaxButtonAttributes() {
     return NestedArray::mergeDeep(AjaxFormTrait::getAjaxAttributes(), [

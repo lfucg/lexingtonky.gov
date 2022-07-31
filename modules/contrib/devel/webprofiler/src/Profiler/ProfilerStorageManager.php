@@ -5,7 +5,7 @@ namespace Drupal\webprofiler\Profiler;
 use Symfony\Component\HttpKernel\Profiler\ProfilerStorageInterface;
 
 /**
- * Class ProfilerStorageManager
+ * Class ProfilerStorageManager.
  */
 class ProfilerStorageManager {
 

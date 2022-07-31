@@ -41,11 +41,10 @@ class EntityReferenceSelectionReferenceableTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'system',
     'user',
     'field',
-    'entity_reference',
     'node',
     'entity_test',
   ];
@@ -53,7 +52,7 @@ class EntityReferenceSelectionReferenceableTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('entity_test_no_label');
@@ -114,10 +113,10 @@ class EntityReferenceSelectionReferenceableTest extends KernelTestBase {
 
     // Number of returned items.
     if (empty($count_limited)) {
-      $this->assertTrue(empty($referenceables[$this->bundle]));
+      $this->assertArrayNotHasKey($this->bundle, $referenceables);
     }
     else {
-      $this->assertSame(count($referenceables[$this->bundle]), $count_limited);
+      $this->assertCount($count_limited, $referenceables[$this->bundle]);
     }
 
     // Test returned items.
@@ -126,7 +125,7 @@ class EntityReferenceSelectionReferenceableTest extends KernelTestBase {
       // entity labels.
       // @see \Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface::getReferenceableEntities()
       $item = is_string($item) ? Html::escape($item) : $item;
-      $this->assertContains($item, $referenceables[$this->bundle]);
+      $this->assertContainsEquals($item, $referenceables[$this->bundle]);
     }
 
     // Test ::countReferenceableEntities().
@@ -186,15 +185,15 @@ class EntityReferenceSelectionReferenceableTest extends KernelTestBase {
       // 'xyabz_', 'foo_', 'bar_', 'baz_', 'șz_', NULL, '<strong>').
       //
       // Note: Even we set the name as NULL, when retrieving the label from the
-      //   entity we'll get an empty string, meaning that this match operator
-      //   will return TRUE every time.
+      // entity we'll get an empty string, meaning that this match operator
+      // will return TRUE every time.
       [NULL, 'IS NOT NULL', 0, 9, static::$labels, 9],
       // Referenceables null, no limit. Expecting 9 items ('abc', 'Xyz_',
       // 'xyabz_', 'foo_', 'bar_', 'baz_', 'șz_', NULL, '<strong>').
       //
       // Note: Even we set the name as NULL, when retrieving the label from the
-      //   entity we'll get an empty string, meaning that this match operator
-      //   will return FALSE every time.
+      // entity we'll get an empty string, meaning that this match operator
+      // will return FALSE every time.
       [NULL, 'IS NULL', 0, 9, static::$labels, 9],
       // Referenceables containing '<strong>' markup, no limit. Expecting 1 item
       // ('<strong>').

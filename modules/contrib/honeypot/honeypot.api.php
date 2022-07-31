@@ -58,8 +58,8 @@ function hook_honeypot_add_form_protection(array $options, array $form) {
  *   0 for anonymous users, otherwise the user ID of the user.
  * @param string $type
  *   String indicating the reason the submission was blocked. Allowed values:
- *     - honeypot: If honeypot field was filled in.
- *     - honeypot_time: If form was completed before the configured time limit.
+ *   - honeypot: If honeypot field was filled in.
+ *   - honeypot_time: If form was completed before the configured time limit.
  */
 function hook_honeypot_reject($form_id, $uid, $type) {
   if ($form_id == 'mymodule_form') {

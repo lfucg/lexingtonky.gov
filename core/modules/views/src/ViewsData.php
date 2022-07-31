@@ -111,8 +111,6 @@ class ViewsData {
   /**
    * Gets all table data.
    *
-   * @see https://www.drupal.org/node/2723553
-   *
    * @return array
    *   An array of table data.
    */
@@ -129,23 +127,17 @@ class ViewsData {
   }
 
   /**
-   * Gets data for a particular table, or all tables.
+   * Gets data for a particular table.
    *
-   * @param string|null $key
-   *   The key of the cache entry to retrieve. Defaults to NULL, this will
-   *   return all table data. NULL $key deprecated in Drupal 8.2.x and will be
-   *   removed in 9.0.0. Use getAll() instead.
-   *
-   * @see https://www.drupal.org/node/2723553
-   * @see https://www.drupal.org/node/3090442
+   * @param string $key
+   *   The key of the cache entry to retrieve.
    *
    * @return array
    *   An array of table data.
    */
-  public function get($key = NULL) {
+  public function get($key) {
     if (!$key) {
-      @trigger_error('Calling get() without the $key argument is deprecated in drupal:8.2.0 and is required in drupal:9.0.0. See https://www.drupal.org/node/3090442', E_USER_DEPRECATED);
-      return $this->getAll();
+      throw new \InvalidArgumentException('A valid cache entry key is required. Use getAll() to get all table data.');
     }
     if (!isset($this->storage[$key])) {
       // Prepare a cache ID for get and set.
@@ -239,10 +231,9 @@ class ViewsData {
       return $data->data;
     }
     else {
-      $modules = $this->moduleHandler->getImplementations('views_data');
       $data = [];
-      foreach ($modules as $module) {
-        $views_data = $this->moduleHandler->invoke($module, 'views_data');
+      $this->moduleHandler->invokeAllWith('views_data', function (callable $hook, string $module) use (&$data) {
+        $views_data = $hook();
         // Set the provider key for each base table.
         foreach ($views_data as &$table) {
           if (isset($table['table']) && !isset($table['table']['provider'])) {
@@ -250,7 +241,7 @@ class ViewsData {
           }
         }
         $data = NestedArray::mergeDeep($data, $views_data);
-      }
+      });
       $this->moduleHandler->alter('views_data', $data);
 
       $this->processEntityTypes($data);
@@ -312,12 +303,9 @@ class ViewsData {
     // Sorts by the 'weight' and then by 'title' element.
     uasort($tables, function ($a, $b) {
       if ($a['weight'] != $b['weight']) {
-        return $a['weight'] < $b['weight'] ? -1 : 1;
+        return $a['weight'] <=> $b['weight'];
       }
-      if ($a['title'] != $b['title']) {
-        return $a['title'] < $b['title'] ? -1 : 1;
-      }
-      return 0;
+      return $a['title'] <=> $b['title'];
     });
 
     return $tables;

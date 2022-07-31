@@ -1,0 +1,31 @@
+field.formatter.settings.paragraphs_jquery_ui_accordion_formatter:
+  type: mapping
+  label: 'Paragraphs jQuery UI Accordion formatter settings'
+  mapping:
+    bundle:
+      type: string
+      label: 'Bundle'
+    title:
+      type: string
+      label: 'Title'
+    content:
+      type: string
+      label: 'Content'
+    active:
+      type: integer
+      label: 'Active'
+    autoscroll:
+      type: boolean
+      label: 'Auto-scroll'
+    autoscroll_offset:
+      type: string
+      label: 'Auto-scroll offset'
+    autoscroll_offset_toolbar:
+      type: boolean
+      label: 'Apply offset only to admin toolbar'
+    view_mode:
+      type: string
+      label: 'View mode'
+    simple_id:
+      type: boolean
+      label: 'Simple Ids'

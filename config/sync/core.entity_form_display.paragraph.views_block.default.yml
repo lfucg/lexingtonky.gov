@@ -1,0 +1,29 @@
+uuid: 2d30c225-cbf1-482d-825f-97728cba75ec
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.views_block.field_view
+    - paragraphs.paragraphs_type.views_block
+  module:
+    - viewsreference
+    - workbench_moderation
+id: paragraph.views_block.default
+targetEntityType: paragraph
+bundle: views_block
+mode: default
+content:
+  field_view:
+    type: viewsreference_autocomplete
+    weight: 6
+    region: content
+    settings:
+      match_operator: CONTAINS
+      size: '60'
+      placeholder: ''
+      match_limit: 10
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

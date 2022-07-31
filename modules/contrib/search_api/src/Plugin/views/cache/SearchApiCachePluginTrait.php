@@ -4,6 +4,7 @@ namespace Drupal\search_api\Plugin\views\cache;
 
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\Context\CacheContextsManager;
 use Drupal\search_api\Plugin\views\query\SearchApiQuery;
@@ -115,19 +116,22 @@ trait SearchApiCachePluginTrait {
     }
 
     $view = $this->getView();
+    $query = $this->getQuery();
     $data = [
       'result' => $view->result,
       'total_rows' => $view->total_rows ?? 0,
       'current_page' => $view->getCurrentPage(),
-      'search_api results' => $this->getQuery()->getSearchApiResults(),
+      'search_api results' => $query->getSearchApiResults(),
     ];
 
     $expire = $this->cacheSetMaxAge($type);
     if ($expire !== Cache::PERMANENT) {
       $expire += (int) $view->getRequest()->server->get('REQUEST_TIME');
     }
+    $tags = Cache::mergeTags($this->getCacheTags(), $query->getCacheTags());
+
     $this->getCacheBackend()
-      ->set($this->generateResultsKey(), $data, $expire, $this->getCacheTags());
+      ->set($this->generateResultsKey(), $data, $expire, $tags);
   }
 
   /**
@@ -216,18 +220,48 @@ trait SearchApiCachePluginTrait {
   /**
    * Retrieves the Search API Views query for the current view.
    *
-   * @return \Drupal\search_api\Plugin\views\query\SearchApiQuery|null
+   * @param bool $reset
+   *   (optional) If TRUE, reset the query to its initial/unprocessed state.
+   *   Should only be used in the context of a view being saved, never when the
+   *   view is actually being executed.
+   *
+   * @return \Drupal\search_api\Plugin\views\query\SearchApiQuery
    *   The Search API Views query associated with the current view.
    *
    * @throws \Drupal\search_api\SearchApiException
    *   Thrown if there is no current Views query, or it is no Search API query.
    */
-  protected function getQuery() {
-    $query = $this->getView()->getQuery();
+  protected function getQuery(bool $reset = FALSE): SearchApiQuery {
+    if ($reset) {
+      $view = $this->getView();
+      $view_display = $view->getDisplay();
+      $query = $view_display->getPlugin('query');
+      $query->init($view, $view_display);
+    }
+    else {
+      $query = $this->getView()->getQuery();
+    }
+
     if ($query instanceof SearchApiQuery) {
       return $query;
     }
     throw new SearchApiException('No matching Search API Views query found in view.');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function alterCacheMetadata(CacheableMetadata $cache_metadata) {
+    // A view can have multiple displays, but when information is gathered about
+    // all the displays' metadata, it initializes the query plugin only once for
+    // the first display. However, we need to collect cacheability metadata for
+    // every single cacheable display in the view, thus we are resetting the
+    // query to its original unprocessed state.
+    $query = $this->getQuery(TRUE)->getSearchApiQuery();
+    $query->preExecute();
+    // Allow modules that alter the query to add their cache metadata to the
+    // view.
+    $cache_metadata->addCacheableDependency($query);
   }
 
 }

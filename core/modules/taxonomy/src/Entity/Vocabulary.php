@@ -31,6 +31,7 @@ use Drupal\taxonomy\VocabularyInterface;
  *     },
  *     "route_provider" = {
  *       "html" = "Drupal\taxonomy\Entity\Routing\VocabularyRouteProvider",
+ *       "permissions" = "Drupal\user\Entity\EntityPermissionsRouteProvider",
  *     }
  *   },
  *   admin_permission = "administer taxonomy",
@@ -47,6 +48,7 @@ use Drupal\taxonomy\VocabularyInterface;
  *     "reset-form" = "/admin/structure/taxonomy/manage/{taxonomy_vocabulary}/reset",
  *     "overview-form" = "/admin/structure/taxonomy/manage/{taxonomy_vocabulary}/overview",
  *     "edit-form" = "/admin/structure/taxonomy/manage/{taxonomy_vocabulary}",
+ *     "entity-permissions-form" = "/admin/structure/taxonomy/manage/{taxonomy_vocabulary}/overview/permissions",
  *     "collection" = "/admin/structure/taxonomy",
  *   },
  *   config_export = {
@@ -86,23 +88,6 @@ class Vocabulary extends ConfigEntityBundleBase implements VocabularyInterface {
    * @var int
    */
   protected $weight = 0;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getHierarchy() {
-    @trigger_error('\Drupal\taxonomy\VocabularyInterface::getHierarchy() is deprecated in Drupal 8.7.x and will be removed before Drupal 9.0.x. Use \Drupal\taxonomy\TermStorage::getVocabularyHierarchyType() instead.', E_USER_DEPRECATED);
-    return $this->entityTypeManager()->getStorage('taxonomy_term')->getVocabularyHierarchyType($this->id());
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setHierarchy($hierarchy) {
-    @trigger_error('\Drupal\taxonomy\VocabularyInterface::setHierarchy() is deprecated in Drupal 8.7.x and will be removed before Drupal 9.0.x. Reset the cache of the taxonomy_term storage controller instead.', E_USER_DEPRECATED);
-    $this->entityTypeManager()->getStorage('taxonomy_term')->resetCache();
-    return $this;
-  }
 
   /**
    * {@inheritdoc}

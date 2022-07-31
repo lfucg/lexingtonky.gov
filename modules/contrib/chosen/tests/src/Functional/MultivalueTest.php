@@ -33,7 +33,7 @@ class MultivalueTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Enable chosen for all multiselect fields.

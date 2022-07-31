@@ -119,14 +119,14 @@ class RevisionRevertForm extends ConfirmFormBase {
       $original_revision_timestamp = $this->revision->getRevisionCreationTime();
 
       $this->revision->setRevisionLogMessage($this->t('Copy of the revision from %date.', ['%date' => $this->dateFormatter->format($original_revision_timestamp)]));
-      $this->messenger()->addStatus(t('@type %title has been reverted to the revision from %revision-date.', [
+      $this->messenger()->addStatus($this->t('@type %title has been reverted to the revision from %revision-date.', [
         '@type' => $this->getBundleLabel($this->revision),
         '%title' => $this->revision->label(),
         '%revision-date' => $this->dateFormatter->format($original_revision_timestamp),
       ]));
     }
     else {
-      $this->messenger()->addStatus(t('@type %title has been reverted', [
+      $this->messenger()->addStatus($this->t('@type %title has been reverted', [
         '@type' => $this->getBundleLabel($this->revision),
         '%title' => $this->revision->label(),
       ]));

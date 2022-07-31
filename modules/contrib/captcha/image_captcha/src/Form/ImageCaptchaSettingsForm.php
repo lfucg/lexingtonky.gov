@@ -278,7 +278,7 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
       foreach ($fonts as $token) {
         $fonts[$token] = $available_fonts[$token];
       }
-      list($readable_fonts, $problem_fonts) = _image_captcha_check_fonts($fonts);
+      [$readable_fonts, $problem_fonts] = _image_captcha_check_fonts($fonts);
       if (count($problem_fonts) > 0) {
         $form_state->setErrorByName('image_captcha_fonts', $this->t('The following fonts are not readable: %fonts.', ['%fonts' => implode(', ', $problem_fonts)]));
       }
@@ -375,7 +375,7 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
 
       // Append the PHP built-in font at the end.
       $title = $this->t('Preview of built-in font');
-      $available_fonts['BUILTIN'] = $this->t('PHP built-in font: <img src="@font_preview_url" alt="@title" title="@title"', [
+      $available_fonts['BUILTIN'] = $this->t('PHP built-in font: <img src="@font_preview_url" alt="@title" title="@title">', [
         '@font_preview_url' => Url::fromRoute('image_captcha.font_preview', ['token' => 'BUILTIN'])
           ->toString(),
         '@title' => $title,

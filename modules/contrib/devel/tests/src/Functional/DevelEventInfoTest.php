@@ -2,37 +2,19 @@
 
 namespace Drupal\Tests\devel\Functional;
 
-use Drupal\Core\Url;
-use Drupal\Tests\BrowserTestBase;
-
 /**
  * Tests event info pages and links.
  *
  * @group devel
  */
-class DevelEventInfoTest extends BrowserTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static $modules = ['devel', 'block'];
-
-  /**
-   * The user for the test.
-   *
-   * @var \Drupal\user\UserInterface
-   */
-  protected $develUser;
+class DevelEventInfoTest extends DevelBrowserTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
-
     $this->drupalPlaceBlock('page_title_block');
-
-    $this->develUser = $this->drupalCreateUser(['access devel information']);
     $this->drupalLogin($this->develUser);
   }
 
@@ -54,6 +36,7 @@ class DevelEventInfoTest extends BrowserTestBase {
    * Tests event info page.
    */
   public function testEventList() {
+    /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher */
     $event_dispatcher = \Drupal::service('event_dispatcher');
 
     $this->drupalGet('/devel/events');
@@ -67,7 +50,7 @@ class DevelEventInfoTest extends BrowserTestBase {
     $this->assertNotNull($table);
 
     // Ensures that the expected table headers are found.
-    /** @var $headers \Behat\Mink\Element\NodeElement[] */
+    /* @var $headers \Behat\Mink\Element\NodeElement[] */
     $headers = $table->findAll('css', 'thead th');
     $this->assertEquals(3, count($headers));
 
@@ -100,14 +83,14 @@ class DevelEventInfoTest extends BrowserTestBase {
       $this->assertEquals(1, count($event_header_row));
 
       // Ensures that all the event listener are listed in the table.
-      /** @var $event_rows \Behat\Mink\Element\NodeElement[] */
+      /* @var $event_rows \Behat\Mink\Element\NodeElement[] */
       $event_rows = $table->findAll('css', sprintf('tbody tr:contains("%s")', $event_name));
       // Remove the header row.
       array_shift($event_rows);
       $this->assertEquals(count($listeners), count($event_rows));
 
       foreach ($listeners as $index => $listener) {
-        /** @var $cells \Behat\Mink\Element\NodeElement[] */
+        /* @var $cells \Behat\Mink\Element\NodeElement[] */
         $cells = $event_rows[$index]->findAll('css', 'td');
         $this->assertEquals(3, count($cells));
 
@@ -121,7 +104,8 @@ class DevelEventInfoTest extends BrowserTestBase {
         $this->assertEquals($callable_name, $cell_callable->getText());
 
         $cell_methods = $cells[2];
-        $this->assertEquals($index, $cell_methods->getText());
+        $priority = $event_dispatcher->getListenerPriority($event_name, $listener);
+        $this->assertEquals($priority, $cell_methods->getText());
       }
     }
 

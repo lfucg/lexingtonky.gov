@@ -32,7 +32,7 @@ class DiffControllerTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->config('diff.settings')
       ->set('entity.entity_test_rev.name', TRUE)

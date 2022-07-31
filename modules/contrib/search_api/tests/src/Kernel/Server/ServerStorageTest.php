@@ -21,7 +21,7 @@ class ServerStorageTest extends KernelTestBase {
    *
    * @var string[]
    */
-  public static $modules = [
+  protected static $modules = [
     'search_api',
     'search_api_test',
     'user',

@@ -6,6 +6,8 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\migrate\MigrateMessageInterface;
 use Drupal\migrate\Row;
 
+// cspell:ignore destid sourceid
+
 /**
  * Defines an interface for migrate ID mappings.
  *
@@ -121,30 +123,10 @@ interface MigrateIdMapInterface extends \Iterator, PluginInspectionInterface {
   public function getMessages(array $source_id_values = [], $level = NULL);
 
   /**
-   * Retrieves an iterator over messages relate to source records.
-   *
-   * @param array $source_id_values
-   *   (optional) The source identifier keyed values of the record, e.g.
-   *   ['nid' => 5]. If empty (the default), all messages are retrieved.
-   * @param int $level
-   *   (optional) Message severity. If NULL (the default), retrieve messages of
-   *   all severities.
-   *
-   * @return \Iterator
-   *   Retrieves an iterator over the message rows.
-   *
-   * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0.
-   *   Use \Drupal\migrate\Plugin\MigrateIdMapInterface::getMessages() instead.
-   *
-   * @see https://www.drupal.org/node/3060969
-   */
-  public function getMessageIterator(array $source_id_values = [], $level = NULL);
-
-  /**
    * Prepares to run a full update.
    *
    * Prepares this migration to run as an update - that is, in addition to
-   * unmigrated content (source records not in the map table) being imported,
+   * un-migrated content (source records not in the map table) being imported,
    * previously-migrated content will also be updated in place by marking all
    * previously-imported content as ready to be re-imported.
    */
@@ -178,7 +160,7 @@ interface MigrateIdMapInterface extends \Iterator, PluginInspectionInterface {
    * Returns the number of items that failed to import.
    *
    * @return int
-   *   The number of items that errored out.
+   *   The number of items that failed to import.
    */
   public function errorCount();
 
@@ -231,7 +213,7 @@ interface MigrateIdMapInterface extends \Iterator, PluginInspectionInterface {
    *   The destination identifier keyed values of the record, e.g. ['nid' => 5].
    *
    * @return array
-   *   The row(s) of data.
+   *   The row(s) of data or an empty array when there is no matching map row.
    */
   public function getRowByDestination(array $destination_id_values);
 
@@ -260,25 +242,6 @@ interface MigrateIdMapInterface extends \Iterator, PluginInspectionInterface {
    *   an empty array on failure.
    */
   public function lookupSourceId(array $destination_id_values);
-
-  /**
-   * Looks up the destination identifier corresponding to a source key.
-   *
-   * Given a (possibly multi-field) source identifier value, return the
-   * (possibly multi-field) destination identifier value it is mapped to.
-   *
-   * @param array $source_id_values
-   *   The source identifier keyed values of the record, e.g. ['nid' => 5].
-   *
-   * @return array
-   *   The destination identifier values of the record, or empty on failure.
-   *
-   * @deprecated in drupal:8.1.0 and is removed from drupal:9.0.0. Use
-   *   lookupDestinationIds() instead.
-   *
-   * @see https://www.drupal.org/node/2725809
-   */
-  public function lookupDestinationId(array $source_id_values);
 
   /**
    * Looks up the destination identifiers corresponding to a source key.

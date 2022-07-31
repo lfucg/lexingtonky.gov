@@ -1,0 +1,20 @@
+uuid: db86b967-818e-4290-b45e-94ebd85a7020
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex
+id: lex_messages
+theme: lex
+region: breadcrumb
+weight: -16
+provider: null
+plugin: system_messages_block
+settings:
+  id: system_messages_block
+  label: 'Status messages'
+  label_display: '0'
+  provider: system
+visibility: {  }

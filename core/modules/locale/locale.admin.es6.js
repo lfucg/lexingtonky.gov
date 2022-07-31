@@ -3,7 +3,7 @@
  * Locale admin behavior.
  */
 
-(function($, Drupal) {
+(function ($, Drupal) {
   /**
    * Marks changes of translations.
    *
@@ -16,41 +16,39 @@
    */
   Drupal.behaviors.localeTranslateDirty = {
     attach() {
-      const $form = $('#locale-translate-edit-form').once(
-        'localetranslatedirty',
-      );
-      if ($form.length) {
+      const form = once('localetranslatedirty', '#locale-translate-edit-form');
+      if (form.length) {
+        const $form = $(form);
         // Display a notice if any row changed.
-        $form.one('formUpdated.localeTranslateDirty', 'table', function() {
+        $form.one('formUpdated.localeTranslateDirty', 'table', function () {
           const $marker = $(
             Drupal.theme('localeTranslateChangedWarning'),
           ).hide();
-          $(this)
-            .addClass('changed')
-            .before($marker);
+          $(this).addClass('changed').before($marker);
           $marker.fadeIn('slow');
         });
         // Highlight changed row.
-        $form.on('formUpdated.localeTranslateDirty', 'tr', function() {
+        $form.on('formUpdated.localeTranslateDirty', 'tr', function () {
           const $row = $(this);
-          const $rowToMark = $row.once('localemark');
+          const rowToMark = once('localemark', $row);
           const marker = Drupal.theme('localeTranslateChangedMarker');
 
           $row.addClass('changed');
           // Add an asterisk only once if row changed.
-          if ($rowToMark.length) {
-            $rowToMark.find('td:first-child .js-form-item').append(marker);
+          if (rowToMark.length) {
+            $(rowToMark).find('td:first-child .js-form-item').append(marker);
           }
         });
       }
     },
     detach(context, settings, trigger) {
       if (trigger === 'unload') {
-        const $form = $('#locale-translate-edit-form').removeOnce(
+        const form = once.remove(
           'localetranslatedirty',
+          '#locale-translate-edit-form',
         );
-        if ($form.length) {
-          $form.off('formUpdated.localeTranslateDirty');
+        if (form.length) {
+          $(form).off('formUpdated.localeTranslateDirty');
         }
       }
     },
@@ -66,14 +64,13 @@
    */
   Drupal.behaviors.hideUpdateInformation = {
     attach(context, settings) {
-      const $table = $('#locale-translation-status-form').once(
-        'expand-updates',
-      );
-      if ($table.length) {
+      const table = once('expand-updates', '#locale-translation-status-form');
+      if (table.length) {
+        const $table = $(table);
         const $tbodies = $table.find('tbody');
 
         // Open/close the description details by toggling a tr class.
-        $tbodies.on('click keydown', '.description', function(e) {
+        $tbodies.on('click keydown', '.description', function (e) {
           if (e.keyCode && e.keyCode !== 13 && e.keyCode !== 32) {
             return;
           }
@@ -82,14 +79,13 @@
 
           $tr.toggleClass('expanded');
 
-          // Change screen reader text.
-          $tr.find('.locale-translation-update__prefix').text(() => {
-            if ($tr.hasClass('expanded')) {
-              return Drupal.t('Hide description');
-            }
-
-            return Drupal.t('Show description');
-          });
+          const $localePrefix = $tr.find('.locale-translation-update__prefix');
+          if ($localePrefix.length) {
+            // Change screen reader text.
+            $localePrefix[0].textContent = $tr.hasClass('expanded')
+              ? Drupal.t('Hide description')
+              : Drupal.t('Show description');
+          }
         });
         $table.find('.requirements, .links').hide();
       }

@@ -22,7 +22,7 @@ class ModerationActionsTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'content_moderation',
     'node',
     'views',
@@ -31,12 +31,12 @@ class ModerationActionsTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'classy';
+  protected $defaultTheme = 'stark';
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $moderated_bundle = $this->createContentType(['type' => 'moderated_bundle']);
@@ -57,7 +57,7 @@ class ModerationActionsTest extends BrowserTestBase {
   }
 
   /**
-   * Test the node status actions report moderation status to users correctly.
+   * Tests the node status actions report moderation status to users correctly.
    *
    * @dataProvider nodeStatusActionsTestCases
    */
@@ -73,23 +73,22 @@ class ModerationActionsTest extends BrowserTestBase {
     }
     $node->save();
 
-    $this->drupalPostForm('admin/content', [
+    $this->drupalGet('admin/content');
+    $this->submitForm([
       'node_bulk_form[0]' => TRUE,
       'action' => $action,
     ], 'Apply to selected items');
 
     if ($warning_appears) {
       if ($action == 'node_publish_action') {
-        $this->assertSession()
-          ->elementContains('css', '.messages--warning', node_get_type_label($node) . ' content items were skipped as they are under moderation and may not be directly published.');
+        $this->assertSession()->statusMessageContains(node_get_type_label($node) . ' content items were skipped as they are under moderation and may not be directly published.', 'warning');
       }
       else {
-        $this->assertSession()
-          ->elementContains('css', '.messages--warning', node_get_type_label($node) . ' content items were skipped as they are under moderation and may not be directly unpublished.');
+        $this->assertSession()->statusMessageContains(node_get_type_label($node) . ' content items were skipped as they are under moderation and may not be directly unpublished.', 'warning');
       }
     }
     else {
-      $this->assertSession()->elementNotExists('css', '.messages--warning');
+      $this->assertSession()->statusMessageNotExists('warning');
     }
 
     // Ensure after the action has run, the node matches the expected status.

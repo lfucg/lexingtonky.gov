@@ -23,7 +23,7 @@ class LanguageWithFallbackTest extends ProcessorTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'language',
     'search_api_test_language_fallback',
     'language_fallback_fix',

@@ -4,8 +4,8 @@ namespace Drupal\webprofiler\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatter;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\webprofiler\DrupalDataCollectorInterface;
 use Drupal\webprofiler\Profiler\ProfilerStorageManager;
 use Drupal\webprofiler\Profiler\TemplateManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Profiler\Profile;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Class DashboardController
+ * Class DashboardController.
  */
 class DashboardController extends ControllerBase {
 
@@ -78,7 +78,7 @@ class DashboardController extends ControllerBase {
   /**
    * Generates the dashboard page.
    *
-   * @param Profile $profile
+   * @param \Symfony\Component\HttpKernel\Profiler\Profile $profile
    *
    * @return array
    */
@@ -101,7 +101,7 @@ class DashboardController extends ControllerBase {
     ];
 
     foreach ($templates as $name => $template) {
-      /** @var DrupalDataCollectorInterface $collector */
+      /** @var \Drupal\webprofiler\DrupalDataCollectorInterface $collector */
       $collector = $profile->getCollector($name);
 
       if ($collector->hasPanel()) {
@@ -134,8 +134,8 @@ class DashboardController extends ControllerBase {
       '#profile' => $profile,
       '#panels' => $panels,
       '#spinner_path' => '/' . $this->moduleHandler()
-          ->getModule('webprofiler')
-          ->getPath() . '/images/searching.gif',
+        ->getModule('webprofiler')
+        ->getPath() . '/images/searching.gif',
       '#attached' => [
         'drupalSettings' => $drupalSettings,
         'library' => $libraries,
@@ -166,7 +166,7 @@ class DashboardController extends ControllerBase {
     if (count($profiles)) {
       foreach ($profiles as $profile) {
         $row = [];
-        $row[] = $this->l($profile['token'], new Url('webprofiler.dashboard', ['profile' => $profile['token']]));
+        $row[] = Link::fromTextAndUrl($profile['token'], new Url('webprofiler.dashboard', ['profile' => $profile['token']]))->toString();
         $row[] = $profile['ip'];
         $row[] = $profile['method'];
         $row[] = $profile['url'];
@@ -240,4 +240,5 @@ class DashboardController extends ControllerBase {
 
     return new JsonResponse(['data' => $data]);
   }
+
 }

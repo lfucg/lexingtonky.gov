@@ -46,7 +46,7 @@ class Decorator {
    * @return bool|mixed
    */
   public function isCallable($method, $checkSelf = FALSE) {
-    //Check the original object
+    // Check the original object.
     $object = $this->getOriginalObject();
     if (is_callable([$object, $method])) {
       return $object;
@@ -91,4 +91,5 @@ class Decorator {
     }
     return NULL;
   }
+
 }

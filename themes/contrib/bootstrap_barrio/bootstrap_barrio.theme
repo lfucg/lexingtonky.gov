@@ -45,8 +45,8 @@ function bootstrap_barrio_preprocess_html(&$variables) {
 
   // Scroll Spy info added to body.
   if ($scroll_spy = theme_get_setting('bootstrap_barrio_scroll_spy')) {
-    $variables['attributes']['data-target'] = $scroll_spy;
-    $variables['attributes']['data-spy'] = "scroll";
+    $variables['attributes']['data-bs-target'] = $scroll_spy;
+    $variables['attributes']['data-bs-spy'] = "scroll";
   }
 
   // Page specific info.
@@ -123,6 +123,33 @@ function bootstrap_barrio_preprocess_page(&$variables) {
 
     }
   }
+  else {
+    $source = theme_get_setting('bootstrap_barrio_source');
+    if ($source) {
+      $variables['#attached']['library'][] = $source;
+    }
+  }
+
+  $img_fluid = theme_get_setting('bootstrap_barrio_image_fluid');
+  if ($img_fluid) {
+    $variables['#attached']['library'][] = 'bootstrap_barrio/image_fluid';
+  }
+
+  $flyout = theme_get_setting('bootstrap_barrio_navbar_flyout');
+  if ($flyout) {
+    $variables['#attached']['library'][] = 'bootstrap_barrio/navigation';
+  }
+
+  $slide = theme_get_setting('bootstrap_barrio_navbar_slide');
+  if ($slide) {
+    $variables['#attached']['library'][] = 'bootstrap_barrio/slide_nav';
+  }
+
+  switch (theme_get_setting('bootstrap_barrio_tabs_style')) {
+    case 'full':
+      $variables['#attached']['library'][] = 'bootstrap_barrio/tabs_full';
+      break;
+  }
 
   $fonts = theme_get_setting('bootstrap_barrio_google_fonts');
   if ($fonts) {
@@ -170,13 +197,25 @@ function bootstrap_barrio_preprocess_page(&$variables) {
     'class' => ['sidebar_second', 'sidebar', $sidebar_second_width],
     'id' => ['sidebar_second'],
   ];
-
+  
   // Get custom Navbar classes from config and add them to Navbars.
   if (theme_get_setting('bootstrap_barrio_navbar_top_class') !== NULL) {
     $variables['navbar_top_attributes']['class'][] = theme_get_setting('bootstrap_barrio_navbar_top_class');
   }
   if (theme_get_setting('bootstrap_barrio_navbar_class') !== NULL) {
     $variables['navbar_attributes']['class'][] = theme_get_setting('bootstrap_barrio_navbar_class');
+  }
+
+  switch (theme_get_setting('bootstrap_barrio_navbar_offcanvas')) {
+    case 'offcanvas-collapse':
+      $variables['navbar_offcanvas'] = TRUE;
+      $variables['navbar_collapse_class'] = "offcanvas offcanvas-end";
+      $variables['navbar_collapse_btn_data'] = "offcanvas";
+      break;
+    default:
+      $variables['navbar _offcanvas'] = TRUE; 
+      $variables['navbar_collapse_class'] = 'collapse navbar-collapse justify-content-end';
+      $variables['navbar_collapse_btn_data'] = "collapse";
   }
 
   // Affix.
@@ -243,6 +282,10 @@ function bootstrap_barrio_preprocess_page(&$variables) {
 
   // Define navigation toggle size.
   switch (theme_get_setting('bootstrap_barrio_navbar_toggle')) {
+    case 'navbar-toggleable-xl':
+      $variables['navbar_attributes']['class'][] = 'navbar-expand-xl';
+      break;
+
     case 'navbar-toggleable-lg':
       $variables['navbar_attributes']['class'][] = 'navbar-expand-lg';
       break;
@@ -257,6 +300,10 @@ function bootstrap_barrio_preprocess_page(&$variables) {
 
     case 'navbar-toggleable-xs':
       $variables['navbar_attributes']['class'][] = 'navbar-expand-xs';
+      break;
+
+    case 'navbar-toggleable-all':
+      $variables['navbar_attributes']['class'][] = '';
       break;
 
     default:
@@ -330,6 +377,9 @@ function bootstrap_barrio_preprocess_node(&$variables) {
   if ($variables['teaser'] || !empty($variables['content']['comments']['comment_form'])) {
     unset($variables['content']['links']['comment']['#links']['comment-add']);
   }
+  if (theme_get_setting('bootstrap_barrio_hide_node_label') != NULL) {
+    unset($variables['label']);
+  }
 }
 
 /**
@@ -359,7 +409,7 @@ function bootstrap_barrio_preprocess_region(&$variables) {
  */
 function bootstrap_barrio_preprocess_block(&$variables) {
   if ($variables['base_plugin_id'] == 'system_menu_block' && isset($variables['attributes']['id'])) {
-    $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
+    $variables['content']['#attributes']['id'] = $variables['attributes']['id'];
   }
   // Add a clearfix class to system branding blocks.
   if ($variables['plugin_id'] == 'system_branding_block') {
@@ -385,20 +435,6 @@ function bootstrap_barrio_preprocess_form_element(&$variables) {
   if (isset($variables['element']['#attributes'])) {
     $variables['input_attributes'] = new Attribute($variables['element']['#attributes']);
   }
-  if (isset($variables['type'])) {
-    switch ($variables['type']) {
-      case 'checkbox':
-        $variables['customtype'] = theme_get_setting('bootstrap_barrio_checkbox');
-        break;
-
-      case 'radio':
-        $variables['customtype'] = theme_get_setting('bootstrap_barrio_radio');
-        break;
-
-      default:
-        break;
-    }
-  }
 }
 
 /**
@@ -406,20 +442,6 @@ function bootstrap_barrio_preprocess_form_element(&$variables) {
  */
 function bootstrap_barrio_preprocess_form_element_label(&$variables) {
   $element = $variables['element'];
-}
-
-/**
- * Implements hook_preprocess_HOOK() for select.html.twig.
- */
-function bootstrap_barrio_preprocess_select(&$variables) {
-  $variables['customtype'] = theme_get_setting('bootstrap_barrio_select');
-}
-
-/**
- * Implements hook_preprocess_HOOK() for file-managed-file.html.twig.
- */
-function bootstrap_barrio_preprocess_file_managed_file(&$variables) {
-  $variables['customtype'] = theme_get_setting('bootstrap_barrio_file');
 }
 
 /**
@@ -438,6 +460,20 @@ function bootstrap_barrio_preprocess_menu_local_task(&$variables) {
   $options = $url->getOptions();
   $url->setOptions($options + $link['localized_options']);
   $variables['item'] = Link::fromTextAndUrl($link['title'], $url);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for menu-local-tasks.html.twig.
+ */
+function bootstrap_barrio_preprocess_menu_local_tasks(&$variables) {
+  switch (theme_get_setting('bootstrap_barrio_tabs_style')) {
+    case 'pills':
+      $variables['nav_style'] = 'nav-pills';
+      break;
+    default:
+      $variables['nav_style'] = 'nav-tabs';
+      break;
+  }
 }
 
 /**
@@ -581,8 +617,10 @@ function bootstrap_barrio_theme_suggestions_status_messages_alter(array &$sugges
  */
 function bootstrap_barrio_preprocess_status_messages(&$variables) {
   $variables['title_ids'] = [];
-  foreach ($variables['message_list'] as $message_type => $messages) {
-    $variables['title_ids'][$message_type] = Html::getUniqueId("message-$message_type-title");
+  if (is_array($variables['message_list'])) {
+    foreach ($variables['message_list'] as $message_type => $messages) {
+      $variables['title_ids'][$message_type] = Html::getUniqueId("message-$message_type-title");
+    }
   }
 }
 

@@ -71,15 +71,15 @@ class ElementInfoController extends ControllerBase {
     foreach ($this->elementInfo->getDefinitions() as $element_type => $definition) {
       $row['name'] = [
         'data' => $element_type,
-        'class' => 'table-filter-text-source',
+        'filter' => TRUE,
       ];
       $row['provider'] = [
         'data' => $definition['provider'],
-        'class' => 'table-filter-text-source',
+        'filter' => TRUE,
       ];
       $row['class'] = [
         'data' => $definition['class'],
-        'class' => 'table-filter-text-source',
+        'filter' => TRUE,
       ];
       $row['operations']['data'] = [
         '#type' => 'operations',
@@ -104,34 +104,17 @@ class ElementInfoController extends ControllerBase {
 
     ksort($rows);
 
-    $output['#attached']['library'][] = 'system/drupal.system.modules';
-
-    $output['filters'] = [
-      '#type' => 'container',
-      '#attributes' => [
-        'class' => ['table-filter', 'js-show'],
-      ],
-    ];
-    $output['filters']['text'] = [
-      '#type' => 'search',
-      '#title' => $this->t('Search'),
-      '#size' => 30,
-      '#placeholder' => $this->t('Enter element id, provider or class'),
-      '#attributes' => [
-        'class' => ['table-filter-text'],
-        'data-table' => '.devel-filter-text',
-        'autocomplete' => 'off',
-        'title' => $this->t('Enter a part of the element id, provider or class to filter by.'),
-      ],
-    ];
     $output['elements'] = [
-      '#type' => 'table',
+      '#type' => 'devel_table_filter',
+      '#filter_label' => $this->t('Search'),
+      '#filter_placeholder' => $this->t('Enter element id, provider or class'),
+      '#filter_description' => $this->t('Enter a part of the element id, provider or class to filter by.'),
       '#header' => $headers,
       '#rows' => $rows,
       '#empty' => $this->t('No elements found.'),
       '#sticky' => TRUE,
       '#attributes' => [
-        'class' => ['devel-element-list', 'devel-filter-text'],
+        'class' => ['devel-element-list'],
       ],
     ];
 

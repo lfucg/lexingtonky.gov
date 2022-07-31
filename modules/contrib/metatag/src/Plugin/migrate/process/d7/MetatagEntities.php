@@ -2,6 +2,7 @@
 
 namespace Drupal\metatag\Plugin\migrate\process\d7;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\ProcessPluginBase;
@@ -27,7 +28,7 @@ class MetatagEntities extends ProcessPluginBase {
     }
 
     // Re-shape D7 entries into for D8 entries.
-    $old_tags = unserialize($value);
+    $old_tags = unserialize($value, ['allowed_classes' => FALSE]);
 
     // This is expected to be an array, if it isn't then something went wrong.
     if (!is_array($old_tags)) {
@@ -66,10 +67,16 @@ class MetatagEntities extends ProcessPluginBase {
       else {
         $metatag_value = $metatag_value['value'];
       }
+      if (!Unicode::validateUtf8($metatag_value)) {
+        $metatag_value = Unicode::convertToUtf8($metatag_value, 'Windows-1252');
+      }
 
       // Keep the entire data structure.
       $metatags[$d8_metatag_name] = $metatag_value;
     }
+
+    // Sort the meta tags alphabetically to make testing easier.
+    ksort($metatags);
 
     return serialize($metatags);
   }
@@ -345,9 +352,11 @@ class MetatagEntities extends ProcessPluginBase {
       'video:writer' => 'video_writer',
 
       // From metatag_opengraph_products.metatag.inc:
-      // https://www.drupal.org/project/metatag/issues/2835925
       'product:price:amount' => 'product_price_amount',
       'product:price:currency' => 'product_price_currency',
+      // Not supported in D7.
+      // @todo '' => 'product_retailer_item_id,
+      // Not yet supported in D9.
       // @todo 'product:availability' => '',
       // @todo 'product:brand' => '',
       // @todo 'product:upc' => '',
@@ -423,8 +432,8 @@ class MetatagEntities extends ProcessPluginBase {
       // From metatag_verification.metatag.inc:
       'baidu-site-verification' => 'baidu',
       'facebook-domain-verification' => 'facebook_domain_verification',
-      'google-site-verification' => 'bing',
-      'msvalidate.01' => 'google',
+      'google-site-verification' => 'google_site_verification',
+      'msvalidate.01' => 'bing',
       'norton-safeweb-site-verification' => 'norton_safe_web',
       'p:domain_verify' => 'pinterest',
       // @todo '' => 'pocket',

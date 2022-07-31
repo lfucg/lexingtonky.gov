@@ -1,0 +1,20 @@
+uuid: ea47cb80-fb25-48b7-ba07-7c73642653c7
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - stable
+id: stable_messages
+theme: stable
+region: highlighted
+weight: 0
+provider: null
+plugin: system_messages_block
+settings:
+  id: system_messages_block
+  label: 'Status messages'
+  label_display: '0'
+  provider: system
+visibility: {  }

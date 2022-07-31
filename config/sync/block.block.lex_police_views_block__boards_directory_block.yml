@@ -1,0 +1,30 @@
+uuid: bfd0a802-31ef-4066-b4ee-0d6ab7999bdd
+langcode: en
+status: false
+dependencies:
+  config:
+    - views.view.boards_directory
+  module:
+    - system
+    - views
+  theme:
+    - lex_police
+id: lex_police_views_block__boards_directory_block
+theme: lex_police
+region: notices
+weight: -25
+provider: null
+plugin: 'views_block:boards_directory-block_1'
+settings:
+  id: 'views_block:boards_directory-block_1'
+  label: ''
+  label_display: '0'
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: /browse/government/boards-commissions

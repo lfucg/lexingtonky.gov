@@ -42,6 +42,8 @@ class AssetManager {
       'embedsemantic',
       'notification',
       'notificationaggregator',
+      'link',
+      'fakeobjects',
     ];
 
     // Text match was added as a new dependency of autolink as of 4.11.

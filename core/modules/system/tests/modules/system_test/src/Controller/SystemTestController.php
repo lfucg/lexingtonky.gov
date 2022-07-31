@@ -147,6 +147,27 @@ class SystemTestController extends ControllerBase implements TrustedCallbackInte
   }
 
   /**
+   * Sets messages for testing the WebAssert methods related to messages.
+   *
+   * @return array
+   *   Empty array, we just need the messages.
+   */
+  public function statusMessagesForAssertions(): array {
+    // Add a simple message of each type.
+    $this->messenger->addMessage('My Status Message', 'status');
+    $this->messenger->addMessage('My Error Message', 'error');
+    $this->messenger->addMessage('My Warning Message', 'warning');
+
+    // Add messages with special characters and/or markup.
+    $this->messenger->addStatus('This has " in the middle');
+    $this->messenger->addStatus('This has \' in the middle');
+    $this->messenger->addStatus('<em>This<span>markup will be</span> escaped</em>.');
+    $this->messenger->addStatus('Peaches & cream');
+
+    return [];
+  }
+
+  /**
    * Controller to return $_GET['destination'] for testing.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
@@ -220,7 +241,7 @@ class SystemTestController extends ControllerBase implements TrustedCallbackInte
   }
 
   /**
-   * Set cache tag on on the returned render array.
+   * Set cache tag on the returned render array.
    */
   public function system_test_cache_tags_page() {
     $build['main'] = [

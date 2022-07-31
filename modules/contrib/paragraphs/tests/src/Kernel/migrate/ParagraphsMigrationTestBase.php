@@ -16,7 +16,17 @@ abstract class ParagraphsMigrationTestBase extends MigrateDrupalTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected static $modules = [
+    'entity_reference_revisions',
+    'migrate',
+    'migrate_drupal',
+    'paragraphs',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp(): void {
     parent::setUp();
     $this->loadFixture(__DIR__ . '/../../../fixtures/drupal7.php');
 
@@ -119,8 +129,7 @@ abstract class ParagraphsMigrationTestBase extends MigrateDrupalTestBase {
    * {@inheritdoc}
    */
   protected function prepareMigration(MigrationInterface $migration) {
-
-    // We want to run the revision migraiton without running all the node
+    // We want to run the revision migration without running all the node
     // migrations.
     if ($migration->id() == 'd7_node_revision:paragraphs_test') {
       $migration->set('migration_dependencies', [
@@ -128,7 +137,6 @@ abstract class ParagraphsMigrationTestBase extends MigrateDrupalTestBase {
         'optional' => [],
       ]);
       $migration->set('requirements', ['d7_node:paragraphs_test' => 'd7_node:paragraphs_test']);
-
     }
   }
 

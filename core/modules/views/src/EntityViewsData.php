@@ -2,7 +2,7 @@
 
 namespace Drupal\views;
 
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityHandlerInterface;
@@ -23,12 +23,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EntityViewsData implements EntityHandlerInterface, EntityViewsDataInterface {
 
   use StringTranslationTrait;
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * Entity type for this views data handler instance.
@@ -95,16 +89,12 @@ class EntityViewsData implements EntityHandlerInterface, EntityViewsDataInterfac
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   The entity field manager.
    */
-  public function __construct(EntityTypeInterface $entity_type, SqlEntityStorageInterface $storage_controller, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, TranslationInterface $translation_manager, EntityFieldManagerInterface $entity_field_manager = NULL) {
+  public function __construct(EntityTypeInterface $entity_type, SqlEntityStorageInterface $storage_controller, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, TranslationInterface $translation_manager, EntityFieldManagerInterface $entity_field_manager) {
     $this->entityType = $entity_type;
     $this->entityTypeManager = $entity_type_manager;
     $this->storage = $storage_controller;
     $this->moduleHandler = $module_handler;
     $this->setStringTranslation($translation_manager);
-    if (!$entity_field_manager) {
-      @trigger_error('Calling EntityViewsData::__construct() with the $entity_field_manager argument is supported in drupal:8.8.0 and will be required before drupal:9.0.0. See https://www.drupal.org/node/2549139.', E_USER_DEPRECATED);
-      $entity_field_manager = \Drupal::service('entity_field.manager');
-    }
     $this->entityFieldManager = $entity_field_manager;
   }
 
@@ -143,7 +133,8 @@ class EntityViewsData implements EntityHandlerInterface, EntityViewsDataInterfac
     $base_table = $this->entityType->getBaseTable() ?: $this->entityType->id();
     $views_revision_base_table = NULL;
     $revisionable = $this->entityType->isRevisionable();
-    $base_field = $this->entityType->getKey('id');
+    $entity_id_key = $this->entityType->getKey('id');
+    $entity_keys = $this->entityType->getKeys();
 
     $revision_table = '';
     if ($revisionable) {
@@ -164,7 +155,8 @@ class EntityViewsData implements EntityHandlerInterface, EntityViewsDataInterfac
     if ($revisionable && $translatable) {
       $revision_data_table = $this->entityType->getRevisionDataTable() ?: $this->entityType->id() . '_field_revision';
     }
-    $revision_field = $this->entityType->getKey('revision');
+    $entity_revision_key = $this->entityType->getKey('revision');
+    $revision_field = $entity_revision_key;
 
     // Setup base information of the views data.
     $data[$base_table]['table']['group'] = $this->entityType->getLabel();
@@ -175,7 +167,7 @@ class EntityViewsData implements EntityHandlerInterface, EntityViewsDataInterfac
       $views_base_table = $data_table;
     }
     $data[$views_base_table]['table']['base'] = [
-      'field' => $base_field,
+      'field' => $entity_id_key,
       'title' => $this->entityType->getLabel(),
       'cache_contexts' => $this->entityType->getListCacheContexts(),
       'access query tag' => $this->entityType->id() . '_access',
@@ -230,8 +222,8 @@ class EntityViewsData implements EntityHandlerInterface, EntityViewsDataInterfac
     // Setup relations to the revisions/property data.
     if ($data_table) {
       $data[$base_table]['table']['join'][$data_table] = [
-        'left_field' => $base_field,
-        'field' => $base_field,
+        'left_field' => $entity_id_key,
+        'field' => $entity_id_key,
         'type' => 'INNER',
       ];
       $data[$data_table]['table']['group'] = $this->entityType->getLabel();
@@ -282,6 +274,33 @@ class EntityViewsData implements EntityHandlerInterface, EntityViewsDataInterfac
           'filter' => ['id' => 'latest_translation_affected_revision'],
         ];
       }
+      // Add a relationship from the revision table back to the main table.
+      $entity_type_label = $this->entityType->getLabel();
+      $data[$views_revision_base_table][$entity_id_key]['relationship'] = [
+        'id' => 'standard',
+        'base' => $views_base_table,
+        'base field' => $entity_id_key,
+        'title' => $entity_type_label,
+        'help' => $this->t('Get the actual @label from a @label revision', ['@label' => $entity_type_label]),
+      ];
+      $data[$views_revision_base_table][$entity_revision_key]['relationship'] = [
+        'id' => 'standard',
+        'base' => $views_base_table,
+        'base field' => $entity_revision_key,
+        'title' => $this->t('@label revision', ['@label' => $entity_type_label]),
+        'help' => $this->t('Get the actual @label from a @label revision', ['@label' => $entity_type_label]),
+      ];
+      if ($translatable) {
+        $extra = [
+          'field' => $entity_keys['langcode'],
+          'left_field' => $entity_keys['langcode'],
+        ];
+        $data[$views_revision_base_table][$entity_id_key]['relationship']['extra'][] = $extra;
+        $data[$views_revision_base_table][$entity_revision_key]['relationship']['extra'][] = $extra;
+        $data[$revision_table]['table']['join'][$views_base_table]['left_field'] = $entity_revision_key;
+        $data[$revision_table]['table']['join'][$views_base_table]['field'] = $entity_revision_key;
+      }
+
     }
 
     $this->addEntityLinks($data[$base_table]);
@@ -296,11 +315,10 @@ class EntityViewsData implements EntityHandlerInterface, EntityViewsDataInterfac
     if ($table_mapping = $this->storage->getTableMapping($field_definitions)) {
       // Fetch all fields that can appear in both the base table and the data
       // table.
-      $entity_keys = $this->entityType->getKeys();
       $duplicate_fields = array_intersect_key($entity_keys, array_flip(['id', 'revision', 'bundle']));
       // Iterate over each table we have so far and collect field data for each.
       // Based on whether the field is in the field_definitions provided by the
-      // entity manager.
+      // entity field manager.
       // @todo We should better just rely on information coming from the entity
       //   storage.
       // @todo https://www.drupal.org/node/2337511
@@ -323,7 +341,7 @@ class EntityViewsData implements EntityHandlerInterface, EntityViewsDataInterfac
           $data[$table]['table']['group'] = $this->entityType->getLabel();
           $data[$table]['table']['provider'] = $this->entityType->getProvider();
           $data[$table]['table']['join'][$views_base_table] = [
-            'left_field' => $base_field,
+            'left_field' => $entity_id_key,
             'field' => 'entity_id',
             'extra' => [
               ['field' => 'deleted', 'value' => 0, 'numeric' => TRUE],
@@ -344,6 +362,12 @@ class EntityViewsData implements EntityHandlerInterface, EntityViewsDataInterfac
             ];
           }
         }
+      }
+      if (($uid_key = $entity_keys['uid'] ?? '')) {
+        $data[$data_table][$uid_key]['filter']['id'] = 'user_name';
+      }
+      if ($revision_table && ($revision_uid_key = $this->entityType->getRevisionMetadataKeys()['revision_user'] ?? '')) {
+        $data[$revision_table][$revision_uid_key]['filter']['id'] = 'user_name';
       }
     }
 
@@ -422,7 +446,10 @@ class EntityViewsData implements EntityHandlerInterface, EntityViewsDataInterfac
     //   mapSingleFieldViewsData() method does with $first.
     $first = TRUE;
     foreach ($field_column_mapping as $field_column_name => $schema_field_name) {
-      $table_data[$schema_field_name] = $this->mapSingleFieldViewsData($table, $field_name, $field_definition_type, $field_column_name, $field_schema['columns'][$field_column_name]['type'], $first, $field_definition);
+      // The fields might be defined before the actual table.
+      $table_data = $table_data ?: [];
+      $table_data += [$schema_field_name => []];
+      $table_data[$schema_field_name] = NestedArray::mergeDeep($table_data[$schema_field_name], $this->mapSingleFieldViewsData($table, $field_name, $field_definition_type, $field_column_name, $field_schema['columns'][$field_column_name]['type'], $first, $field_definition));
       $table_data[$schema_field_name]['entity field'] = $field_name;
       $first = FALSE;
     }

@@ -4,7 +4,9 @@ namespace Drupal\ctools_wizard_test\Wizard;
 
 use Drupal\ctools\Wizard\EntityFormWizardBase;
 
-
+/**
+ *
+ */
 class EntityEditWizardTest extends EntityFormWizardBase {
 
   /**
@@ -39,7 +41,7 @@ class EntityEditWizardTest extends EntityFormWizardBase {
    * {@inheritdoc}
    */
   public function getOperations($cached_values) {
-    /** @var $page \Drupal\ctools_wizard_test\Entity\ExampleConfigEntity */
+    /** @var \Drupal\ctools_wizard_test\Entity\ExampleConfigEntity $page */
     $config_entity = $cached_values['ctools_wizard_test_config_entity'];
 
     $steps = [

@@ -1,0 +1,30 @@
+uuid: 9ea79286-5423-4cf8-9090-8dba38c63404
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.taxonomy_top_level
+  module:
+    - system
+    - views
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_views_block__taxonomy_top_level_block_1
+theme: bootstrap_barrio
+region: content
+weight: -22
+provider: null
+plugin: 'views_block:taxonomy_top_level-block_1'
+settings:
+  id: 'views_block:taxonomy_top_level-block_1'
+  label: ''
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: '<front>'

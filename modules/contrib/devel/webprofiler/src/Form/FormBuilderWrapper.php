@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBuilder;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class FormBuilderWrapper
+ * Class FormBuilderWrapper.
  */
 class FormBuilderWrapper extends FormBuilder {
 
@@ -58,4 +58,5 @@ class FormBuilderWrapper extends FormBuilder {
 
     return $form;
   }
+
 }

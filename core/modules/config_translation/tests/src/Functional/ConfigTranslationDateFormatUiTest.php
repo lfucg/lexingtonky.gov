@@ -12,7 +12,7 @@ use Drupal\Tests\BrowserTestBase;
  */
 class ConfigTranslationDateFormatUiTest extends BrowserTestBase {
 
-  public static $modules = [
+  protected static $modules = [
     'language',
     'config_translation',
     'system',
@@ -23,7 +23,7 @@ class ConfigTranslationDateFormatUiTest extends BrowserTestBase {
    */
   protected $defaultTheme = 'stark';
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Enable additional languages.
@@ -46,18 +46,18 @@ class ConfigTranslationDateFormatUiTest extends BrowserTestBase {
     $this->drupalGet('admin/config/regional/date-time');
 
     // Assert translation link unlocked date format.
-    $this->assertLinkByHref('admin/config/regional/date-time/formats/manage/medium/translate');
+    $this->assertSession()->linkByHrefExists('admin/config/regional/date-time/formats/manage/medium/translate');
 
     // Assert translation link locked date format.
-    $this->assertLinkByHref('admin/config/regional/date-time/formats/manage/html_datetime/translate');
+    $this->assertSession()->linkByHrefExists('admin/config/regional/date-time/formats/manage/html_datetime/translate');
 
     // Date pattern is visible on unlocked date formats.
     $this->drupalGet('admin/config/regional/date-time/formats/manage/medium/translate/de/add');
-    $this->assertField('translation[config_names][core.date_format.medium][pattern]');
+    $this->assertSession()->fieldExists('translation[config_names][core.date_format.medium][pattern]');
 
     // Date pattern is not visible on locked date formats.
     $this->drupalGet('admin/config/regional/date-time/formats/manage/html_datetime/translate/es/add');
-    $this->assertNoField('translation[config_names][core.date_format.html_datetime][pattern]');
+    $this->assertSession()->fieldNotExists('translation[config_names][core.date_format.html_datetime][pattern]');
   }
 
 }

@@ -6,10 +6,11 @@ core: 8.x
 core_version_requirement: ^8 || ^9
 dependencies:
   - paragraphs:paragraphs
+  - jquery_ui_accordion:jquery_ui_accordion
 libraries:
   - paragraphs_jquery_ui_accordion/accordion
 
-# Information added by Drupal.org packaging script on 2020-06-01
-version: '8.x-1.4'
+# Information added by Drupal.org packaging script on 2022-05-13
+version: '8.x-1.5'
 project: 'paragraphs_jquery_ui_accordion'
-datestamp: 1591042184
+datestamp: 1652447591

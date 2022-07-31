@@ -56,7 +56,7 @@ class CKEditorIntegrationTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     FilterFormat::create([
@@ -171,8 +171,8 @@ class CKEditorIntegrationTest extends WebDriverTestBase {
 
     $targetSelector = 'ul.ckeditor-toolbar-group-buttons';
     $buttonSelector = 'li[data-drupal-ckeditor-button-name="DrupalMediaLibrary"]';
-    $this->assertNotEmpty($target = $assert_session->waitForElementVisible('css', $targetSelector));
-    $this->assertNotEmpty($button = $assert_session->elementExists('css', $buttonSelector));
+    $this->assertNotEmpty($assert_session->waitForElementVisible('css', $targetSelector));
+    $this->assertNotEmpty($assert_session->elementExists('css', $buttonSelector));
     $this->sortableTo($buttonSelector, 'ul.ckeditor-available-buttons', $targetSelector);
     $page->pressButton('Save configuration');
     $assert_session->pageTextContains('The Embed media filter must be enabled to use the Insert from Media Library button.');
@@ -236,8 +236,6 @@ class CKEditorIntegrationTest extends WebDriverTestBase {
     $this->assignNameToCkeditorIframe();
     $this->getSession()->switchToIFrame('ckeditor');
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', '.cke_widget_drupalmedia drupal-media .media'));
-    // @todo Inserting media embed should enable undo.
-    // @see https://www.drupal.org/project/drupal/issues/3073294
     $this->pressEditorButton('source');
     $value = $assert_session->elementExists('css', 'textarea.cke_source')->getValue();
     $dom = Html::load($value);
@@ -278,7 +276,7 @@ class CKEditorIntegrationTest extends WebDriverTestBase {
       'all_media_types' => [],
       'only_image' => ['image' => 'image'],
       'only_arrakis' => ['arrakis' => 'arrakis'],
-      'both_items_chedked' => [
+      'both_items_checked' => [
         'image' => 'image',
         'arrakis' => 'arrakis',
       ],

@@ -1,0 +1,36 @@
+uuid: b6dc8e54-55e8-4c63-9ff1-002c192931cb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_page_section
+  module:
+    - ctools
+    - entity_reference_revisions
+    - fieldblock
+  theme:
+    - lex_economic_development
+id: lex_economic_development_fieldblock_page_section
+theme: lex_economic_development
+region: content
+weight: -19
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Org page: page sections'
+  label_display: '0'
+  provider: fieldblock
+  label_from_field: false
+  field_name: field_page_section
+  formatter_id: entity_reference_revisions_entity_view
+  formatter_settings:
+    view_mode: default
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      organization_page: organization_page

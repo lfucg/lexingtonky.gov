@@ -10,8 +10,6 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\CurrentPathStack;
 use Drupal\Core\PathProcessor\InboundPathProcessorInterface;
 use Drupal\Core\State\StateInterface;
-use Symfony\Cmf\Component\Routing\PagedRouteCollection;
-use Symfony\Cmf\Component\Routing\PagedRouteProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -21,7 +19,7 @@ use Drupal\Core\Database\Connection;
 /**
  * A Route Provider front-end for all Drupal-stored routes.
  */
-class RouteProvider implements CacheableRouteProviderInterface, PreloadableRouteProviderInterface, PagedRouteProviderInterface, EventSubscriberInterface {
+class RouteProvider implements CacheableRouteProviderInterface, PreloadableRouteProviderInterface, EventSubscriberInterface {
 
   /**
    * The database connection from which to read route information.
@@ -228,7 +226,7 @@ class RouteProvider implements CacheableRouteProviderInterface, PreloadableRoute
       }
       else {
         try {
-          $result = $this->connection->query('SELECT name, route FROM {' . $this->connection->escapeTable($this->tableName) . '} WHERE name IN ( :names[] )', [':names[]' => $routes_to_load]);
+          $result = $this->connection->query('SELECT [name], [route] FROM {' . $this->connection->escapeTable($this->tableName) . '} WHERE [name] IN ( :names[] )', [':names[]' => $routes_to_load]);
           $routes = $result->fetchAllKeyed();
 
           $this->cache->set($cid, $routes, Cache::PERMANENT, ['routes']);
@@ -312,7 +310,7 @@ class RouteProvider implements CacheableRouteProviderInterface, PreloadableRoute
           $current .= $parts[$length - $j];
         }
         else {
-          // Bit zero means means wildcard.
+          // Bit zero means wildcard.
           $current .= '%';
         }
         // Unless we are at offset 0, add a slash.
@@ -351,7 +349,7 @@ class RouteProvider implements CacheableRouteProviderInterface, PreloadableRoute
     // have a case-insensitive match from the incoming path to the lower case
     // pattern outlines from \Drupal\Core\Routing\RouteCompiler::compile().
     // @see \Drupal\Core\Routing\CompiledRoute::__construct()
-    $parts = preg_split('@/+@', mb_strtolower($path), NULL, PREG_SPLIT_NO_EMPTY);
+    $parts = preg_split('@/+@', mb_strtolower($path), -1, PREG_SPLIT_NO_EMPTY);
 
     $collection = new RouteCollection();
 
@@ -364,7 +362,7 @@ class RouteProvider implements CacheableRouteProviderInterface, PreloadableRoute
     // trailing wildcard parts as long as the pattern matches, since we
     // dump the route pattern without those optional parts.
     try {
-      $routes = $this->connection->query("SELECT name, route, fit FROM {" . $this->connection->escapeTable($this->tableName) . "} WHERE pattern_outline IN ( :patterns[] ) AND number_parts >= :count_parts", [
+      $routes = $this->connection->query("SELECT [name], [route], [fit] FROM {" . $this->connection->escapeTable($this->tableName) . "} WHERE [pattern_outline] IN ( :patterns[] ) AND [number_parts] >= :count_parts", [
         ':patterns[]' => $ancestors,
         ':count_parts' => count($parts),
       ])
@@ -394,14 +392,24 @@ class RouteProvider implements CacheableRouteProviderInterface, PreloadableRoute
     }
     // Reverse sort from highest to lowest fit. PHP should cast to int, but
     // the explicit cast makes this sort more robust against unexpected input.
-    return (int) $a['fit'] < (int) $b['fit'] ? 1 : -1;
+    return (int) $b['fit'] <=> (int) $a['fit'];
   }
 
   /**
    * {@inheritdoc}
    */
   public function getAllRoutes() {
-    return new PagedRouteCollection($this);
+    $select = $this->connection->select($this->tableName, 'router')
+      ->fields('router', ['name', 'route']);
+    $routes = $select->execute()->fetchAllKeyed();
+
+    $result = [];
+    foreach ($routes as $name => $route) {
+      $result[$name] = unserialize($route);
+    }
+
+    $array_object = new \ArrayObject($result);
+    return $array_object->getIterator();
   }
 
   /**
@@ -422,9 +430,25 @@ class RouteProvider implements CacheableRouteProviderInterface, PreloadableRoute
   }
 
   /**
-   * {@inheritdoc}
+   * Returns a chunk of routes.
+   *
+   * Should only be used in conjunction with an iterator.
+   *
+   * @param int $offset
+   *   The query offset.
+   * @param int $length
+   *   The number of records.
+   *
+   * @return \Symfony\Component\Routing\Route[]
+   *   Routes keyed by the route name.
+   *
+   * @deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. No direct
+   *   replacement is provided.
+   *
+   * @see https://www.drupal.org/node/3151009
    */
   public function getRoutesPaged($offset, $length = NULL) {
+    @trigger_error(__METHOD__ . '() is deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. No direct replacement is provided. See https://www.drupal.org/node/3151009', E_USER_DEPRECATED);
     $select = $this->connection->select($this->tableName, 'router')
       ->fields('router', ['name', 'route']);
 
@@ -443,9 +467,18 @@ class RouteProvider implements CacheableRouteProviderInterface, PreloadableRoute
   }
 
   /**
-   * {@inheritdoc}
+   * Gets the total count of routes provided by the router.
+   *
+   * @return int
+   *   Number of routes.
+   *
+   * @deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. No direct
+   *   replacement is provided.
+   *
+   * @see https://www.drupal.org/node/3151009
    */
   public function getRoutesCount() {
+    @trigger_error(__METHOD__ . '() is deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. No direct replacement is provided. See https://www.drupal.org/node/3151009', E_USER_DEPRECATED);
     return $this->connection->query("SELECT COUNT(*) FROM {" . $this->connection->escapeTable($this->tableName) . "}")->fetchField();
   }
 

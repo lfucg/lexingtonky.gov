@@ -11,7 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @DevelGenerate(
  *   id = "devel_generate_example",
  *   label = "Example",
- *   description = "Generate a given number of examples. Optionally delete current examples.",
+ *   description = "Generate a given number of examples.",
  *   url = "devel_generate_example",
  *   permission = "administer devel_generate",
  *   settings = {
@@ -22,20 +22,23 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class ExampleDevelGenerate extends DevelGenerateBase {
 
+  /**
+   *
+   */
   public function settingsForm(array $form, FormStateInterface $form_state) {
 
-    $form['num'] = array(
+    $form['num'] = [
       '#type' => 'textfield',
       '#title' => $this->t('How many examples would you like to generate?'),
       '#default_value' => $this->getSetting('num'),
       '#size' => 10,
-    );
+    ];
 
-    $form['kill'] = array(
+    $form['kill'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Delete all examples before generating new examples.'),
       '#default_value' => $this->getSetting('kill'),
-    );
+    ];
 
     return $form;
   }
@@ -48,40 +51,46 @@ class ExampleDevelGenerate extends DevelGenerateBase {
     $kill = $values['kill'];
 
     if ($kill) {
-        $this->setMessage($this->t('Old examples have been deleted.'));
+      $this->setMessage($this->t('Old examples have been deleted.'));
     }
 
-    //Creating user in order to demonstrate
+    // Creating user in order to demonstrate
     // how to override default business login generation.
-    $edit = array(
+    $edit = [
       'uid'     => NULL,
       'name'    => 'example_devel_generate',
       'pass'    => '',
       'mail'    => 'example_devel_generate@example.com',
       'status'  => 1,
-      'created' => REQUEST_TIME,
+      'created' => \Drupal::time()->getRequestTime(),
       'roles' => '',
-      'devel_generate' => TRUE // A flag to let hook_user_* know that this is a generated user.
-    );
+      // A flag to let hook_user_* know that this is a generated user.
+      'devel_generate' => TRUE,
+    ];
 
     $account = user_load_by_name('example_devel_generate');
     if (!$account) {
-      $account = entity_create('user', $edit);
+      $account = $this->getEntityTypeManager()->getStorage('user')->create($edit);
     }
 
     // Populate all fields with sample values.
-    $this->populateFields($node);
+    $this->populateFields($account);
 
     $account->save();
 
-    $this->setMessage($this->t('@num_examples created.', array('@num_examples' => $this->formatPlural($num, '1 example', '@count examples'))));
+    $this->setMessage($this->t('@num_examples created.', [
+      '@num_examples' => $this->formatPlural($num, '1 example', '@count examples'),
+    ]));
   }
 
-  public function validateDrushParams($args) {
-    $values = array(
-      'num' => array_shift($args),
-      'kill' => drush_get_option('kill'),
-    );
+  /**
+   *
+   */
+  public function validateDrushParams(array $args, array $options = []) {
+    $values = [
+      'num' => $options['num'],
+      'kill' => $options['kill'],
+    ];
     return $values;
   }
 

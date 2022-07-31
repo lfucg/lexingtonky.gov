@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ */
+
+$index_fallback_test = FALSE;
+
+/**
+ * Implements hook_search_api_solr_config_files_alter().
+ */
+function search_api_solr_test_search_api_solr_config_files_alter(array &$files, string $lucene_match_version, string $server_id = '') {
+  $files['test.txt'] =
+    "hook_search_api_solr_config_files_alter() works\n" .
+    $server_id . "\n";
+}
+
+/**
+ * Implements hook_search_api_solr_documents_alter().
+ *
+ * @param \Solarium\QueryType\Update\Query\Document[] $documents
+ *   An array of \Solarium\QueryType\Update\Query\Document\Document objects
+ *   ready to be indexed, generated from $items array.
+ * @param \Drupal\search_api\IndexInterface $index
+ *   The search index for which items are being indexed.
+ * @param \Drupal\search_api\Item\ItemInterface[] $items
+ *   An array of items to be indexed, keyed by their item IDs.
+ */
+function search_api_solr_test_search_api_solr_documents_alter(array &$documents, \Drupal\search_api\IndexInterface $index, array $items) {
+  global $index_fallback_test;
+
+  if ($index_fallback_test) {
+    foreach ($documents as $document) {
+      if ('entity:entity_test_mulrev_changed/2:en' === $document->ss_search_api_id) {
+        // Mess up this document by sending a string as value of a float field.
+        $document->setField('fts_width', 'bar');
+      }
+    }
+  }
+}

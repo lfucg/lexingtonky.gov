@@ -6,6 +6,8 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 
+// cspell:ignore datefield
+
 /**
  * @coversDefaultClass \Drupal\layout_builder\Plugin\Block\FieldBlock
  *
@@ -33,7 +35,7 @@ class FieldBlockTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $field_storage = FieldStorageConfig::create([

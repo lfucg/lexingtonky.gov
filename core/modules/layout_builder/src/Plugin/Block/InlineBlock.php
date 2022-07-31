@@ -84,20 +84,15 @@ class InlineBlock extends BlockBase implements ContainerFactoryPluginInterface, 
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityDisplayRepositoryInterface $entity_display_repository, AccountInterface $current_user = NULL) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityDisplayRepositoryInterface $entity_display_repository, AccountInterface $current_user) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->entityTypeManager = $entity_type_manager;
     $this->entityDisplayRepository = $entity_display_repository;
+    $this->currentUser = $current_user;
     if (!empty($this->configuration['block_revision_id']) || !empty($this->configuration['block_serialized'])) {
       $this->isNew = FALSE;
     }
-
-    if (!$current_user) {
-      @trigger_error('The current_user service must be passed to InlineBlock::__construct(), it is required before Drupal 9.0.0.', E_USER_DEPRECATED);
-      $current_user = \Drupal::currentUser();
-    }
-    $this->currentUser = $current_user;
   }
 
   /**
@@ -268,7 +263,7 @@ class InlineBlock extends BlockBase implements ContainerFactoryPluginInterface, 
    * Saves the block_content entity for this plugin.
    *
    * @param bool $new_revision
-   *   Whether to create new revision.
+   *   Whether to create new revision, if the block was modified.
    * @param bool $duplicate_block
    *   Whether to duplicate the "block_content" entity.
    */
@@ -288,6 +283,8 @@ class InlineBlock extends BlockBase implements ContainerFactoryPluginInterface, 
     }
 
     if ($block) {
+      // Since the custom block is only set if it was unserialized, the flag
+      // will only effect blocks which were modified or serialized originally.
       if ($new_revision) {
         $block->setNewRevision();
       }

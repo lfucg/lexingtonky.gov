@@ -5,8 +5,6 @@
  * Drush integration for chosen.
  */
 
-use Symfony\Component\Filesystem\Filesystem;
-
 /**
  * The Chosen plugin URI.
  */
@@ -73,8 +71,9 @@ function drush_chosen_lib_plugin() {
 
     // Remove any existing Chosen plugin directory.
     if (is_dir($dirname) || is_dir('chosen')) {
-      Filesystem::remove($dirname, TRUE);
-      Filesystem::remove('chosen', TRUE);
+      $fileservice = \Drupal::service('file_system');
+      $fileservice->deleteRecursive($dirname);
+      $fileservice->deleteRecursive('chosen');
       \Drupal::logger(dt('A existing Chosen plugin was deleted from @path', ['@path' => $path]))->notice('notice');
     }
 

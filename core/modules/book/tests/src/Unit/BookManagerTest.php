@@ -3,6 +3,7 @@
 namespace Drupal\Tests\book\Unit;
 
 use Drupal\book\BookManager;
+use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 
@@ -18,6 +19,20 @@ class BookManagerTest extends UnitTestCase {
    * @var \Drupal\Core\Entity\EntityTypeManager|\PHPUnit\Framework\MockObject\MockObject
    */
   protected $entityTypeManager;
+
+  /**
+   * The mocked language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManager|\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected $languageManager;
+
+  /**
+   * The mocked entity repository.
+   *
+   * @var \Drupal\Core\Entity\EntityRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected $entityRepository;
 
   /**
    * The mocked config factory.
@@ -57,13 +72,17 @@ class BookManagerTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $this->translation = $this->getStringTranslationStub();
     $this->configFactory = $this->getConfigFactoryStub([]);
     $this->bookOutlineStorage = $this->createMock('Drupal\book\BookOutlineStorageInterface');
     $this->renderer = $this->createMock('\Drupal\Core\Render\RendererInterface');
-    $this->bookManager = new BookManager($this->entityTypeManager, $this->translation, $this->configFactory, $this->bookOutlineStorage, $this->renderer);
+    $this->languageManager = $this->createMock('Drupal\Core\Language\LanguageManagerInterface');
+    $this->entityRepository = $this->createMock('Drupal\Core\Entity\EntityRepositoryInterface');
+    // Used for both book manager cache services: backend chain and memory.
+    $cache = $this->createMock(CacheBackendInterface::class);
+    $this->bookManager = new BookManager($this->entityTypeManager, $this->translation, $this->configFactory, $this->bookOutlineStorage, $this->renderer, $this->languageManager, $this->entityRepository, $cache, $cache);
   }
 
   /**

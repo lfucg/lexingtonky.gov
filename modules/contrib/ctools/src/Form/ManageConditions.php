@@ -12,7 +12,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+/**
+ *
+ */
 abstract class ManageConditions extends FormBase {
 
   /**
@@ -32,7 +34,9 @@ abstract class ManageConditions extends FormBase {
    */
   protected $machine_name;
 
-
+  /**
+   *
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.manager.condition'),
@@ -40,7 +44,9 @@ abstract class ManageConditions extends FormBase {
     );
   }
 
-
+  /**
+   *
+   */
   public function __construct(PluginManagerInterface $manager, FormBuilderInterface $form_builder) {
     $this->manager = $manager;
     $this->formBuilder = $form_builder;
@@ -98,17 +104,19 @@ abstract class ManageConditions extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $cached_values = $form_state->getTemporaryValue('wizard');
-    list(, $route_parameters) = $this->getOperationsRouteInfo($cached_values, $this->machine_name, $form_state->getValue('conditions'));
+    [, $route_parameters] = $this->getOperationsRouteInfo($cached_values, $this->machine_name, $form_state->getValue('conditions'));
     $form_state->setRedirect($this->getAddRoute($cached_values), $route_parameters);
   }
 
-
+  /**
+   *
+   */
   public function add(array &$form, FormStateInterface $form_state) {
     $condition = $form_state->getValue('conditions');
     $content = $this->formBuilder->getForm($this->getConditionClass(), $condition, $this->getTempstoreId(), $this->machine_name);
     $content['#attached']['library'][] = 'core/drupal.dialog.ajax';
     $cached_values = $form_state->getTemporaryValue('wizard');
-    list(, $route_parameters) = $this->getOperationsRouteInfo($cached_values, $this->machine_name, $form_state->getValue('conditions'));
+    [, $route_parameters] = $this->getOperationsRouteInfo($cached_values, $this->machine_name, $form_state->getValue('conditions'));
     $route_name = $this->getAddRoute($cached_values);
     $route_options = [
       'query' => [
@@ -130,9 +138,9 @@ abstract class ManageConditions extends FormBase {
   public function renderRows($cached_values) {
     $configured_conditions = [];
     foreach ($this->getConditions($cached_values) as $row => $condition) {
-      /** @var $instance \Drupal\Core\Condition\ConditionInterface */
+      /** @var \Drupal\Core\Condition\ConditionInterface $instance */
       $instance = $this->manager->createInstance($condition['id'], $condition);
-      list($route_name, $route_parameters) = $this->getOperationsRouteInfo($cached_values, $cached_values['id'], $row);
+      [$route_name, $route_parameters] = $this->getOperationsRouteInfo($cached_values, $cached_values['id'], $row);
       $build = [
         '#type' => 'operations',
         '#links' => $this->getOperations($route_name, $route_parameters),
@@ -148,7 +156,9 @@ abstract class ManageConditions extends FormBase {
     return $configured_conditions;
   }
 
-
+  /**
+   *
+   */
   protected function getOperations($route_name_base, array $route_parameters = []) {
     $operations['edit'] = [
       'title' => $this->t('Edit'),

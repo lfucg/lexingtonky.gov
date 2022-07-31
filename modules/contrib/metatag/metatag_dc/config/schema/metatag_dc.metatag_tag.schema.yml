@@ -42,7 +42,7 @@ metatag.metatag_tag.dcterms_subject:
   type: label
   label: 'Dublin Core: Subject'
 metatag.metatag_tag.dcterms_title:
-  type: label
+  type: text
   label: 'Dublin Core: Title'
 metatag.metatag_tag.dcterms_type:
   type: label

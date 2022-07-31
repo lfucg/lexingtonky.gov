@@ -13,7 +13,10 @@ use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Deriver for d7_metatag_field_instance and d7_metatag_field_instance_widget_settings.
+ * Deriver for Metatag-D7 field instances.
+ *
+ * Covers d7_metatag_field_instance and
+ * d7_metatag_field_instance_widget_settings.
  */
 class MetatagFieldInstanceDeriver extends DeriverBase implements ContainerDeriverInterface {
 
@@ -170,6 +173,7 @@ class MetatagFieldInstanceDeriver extends DeriverBase implements ContainerDerive
             case 'node':
               $this->derivatives[$derivative_id]['migration_dependencies']['required'][] = "d7_node_type:$bundle_id";
               break;
+
             case 'taxonomy_term':
               $this->derivatives[$derivative_id]['migration_dependencies']['required'][] = "d7_taxonomy_vocabulary:$bundle_id";
               break;

@@ -156,7 +156,7 @@ class IndexBatchHelper {
       $context['results']['indexed'] += $indexed;
       // Display progress message.
       if ($indexed > 0) {
-        $context['message'] = static::formatPlural($context['results']['indexed'], 'Successfully indexed 1 item.', 'Successfully indexed @count items.');
+        $context['message'] = static::formatPlural($context['results']['indexed'], 'Successfully indexed 1 item on @index.', 'Successfully indexed @count items on @index.', ['@index' => $index->label()]);
       }
       // Everything has been indexed?
       if ($indexed === 0 || $context['results']['indexed'] >= $context['sandbox']['original_item_count']) {
@@ -170,7 +170,7 @@ class IndexBatchHelper {
     catch (\Exception $e) {
       // Log exception to watchdog and abort the batch job.
       watchdog_exception('search_api', $e);
-      $context['message'] = static::t('An error occurred during indexing: @message', ['@message' => $e->getMessage()]);
+      $context['message'] = static::t('An error occurred during indexing on @index: @message', ['@index' => $index->label(), '@message' => $e->getMessage()]);
       $context['finished'] = 1;
       $context['results']['not indexed'] = $context['sandbox']['original_item_count'] - $context['results']['indexed'];
     }

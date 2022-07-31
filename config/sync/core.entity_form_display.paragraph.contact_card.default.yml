@@ -1,0 +1,74 @@
+uuid: 0c85e59c-0a46-45cb-ad5a-4ec65565cda3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.contact_card.field_contact_email
+    - field.field.paragraph.contact_card.field_contact_link
+    - field.field.paragraph.contact_card.field_contact_name
+    - field.field.paragraph.contact_card.field_contact_phone
+    - field.field.paragraph.contact_card.field_contact_position
+    - field.field.paragraph.contact_card.field_image
+    - image.style.thumbnail
+    - paragraphs.paragraphs_type.contact_card
+  module:
+    - image
+    - link
+    - workbench_moderation
+id: paragraph.contact_card.default
+targetEntityType: paragraph
+bundle: contact_card
+mode: default
+content:
+  field_contact_email:
+    type: email_default
+    weight: 4
+    region: content
+    settings:
+      placeholder: ''
+      size: 60
+    third_party_settings: {  }
+  field_contact_link:
+    type: link_default
+    weight: 6
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_contact_name:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_contact_phone:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_contact_position:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_image:
+    type: image_image
+    weight: 0
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

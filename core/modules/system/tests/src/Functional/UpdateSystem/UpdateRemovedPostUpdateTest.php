@@ -23,20 +23,12 @@ class UpdateRemovedPostUpdateTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $connection = Database::getConnection();
 
     // Set the schema version.
-    $connection->merge('key_value')
-      ->condition('collection', 'system.schema')
-      ->condition('name', 'update_test_postupdate')
-      ->fields([
-        'collection' => 'system.schema',
-        'name' => 'update_test_postupdate',
-        'value' => 'i:8000;',
-      ])
-      ->execute();
+    \Drupal::service('update.update_hook_registry')->setInstalledVersion('update_test_postupdate', 8000);
 
     // Update core.extension.
     $extensions = $connection->select('config')

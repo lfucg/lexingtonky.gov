@@ -1,0 +1,41 @@
+uuid: 3e675009-24e1-49f7-93d3-a24e3e0a34bf
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.quote_grid.field_description
+    - field.field.paragraph.quote_grid.field_quote
+    - paragraphs.paragraphs_type.quote_grid
+  module:
+    - paragraphs
+    - text
+    - workbench_moderation
+id: paragraph.quote_grid.default
+targetEntityType: paragraph
+bundle: quote_grid
+mode: default
+content:
+  field_description:
+    type: text_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_quote:
+    type: entity_reference_paragraphs
+    weight: 1
+    region: content
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

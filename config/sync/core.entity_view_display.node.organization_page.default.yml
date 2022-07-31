@@ -1,0 +1,64 @@
+uuid: 7c5de6e9-f87e-452f-bc37-616459b72d34
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.organization_page.body
+    - field.field.node.organization_page.field_keywords
+    - field.field.node.organization_page.field_lex_custom_banner_image
+    - field.field.node.organization_page.field_lex_site_nav
+    - field.field.node.organization_page.field_metatags
+    - field.field.node.organization_page.field_office_to_contact
+    - field.field.node.organization_page.field_organization_image
+    - field.field.node.organization_page.field_organization_taxonomy_term
+    - field.field.node.organization_page.field_page_section
+    - field.field.node.organization_page.field_related_departments
+    - field.field.node.organization_page.field_related_documents
+    - field.field.node.organization_page.field_top_services
+    - field.field.node.organization_page.field_upcoming_events
+    - node.type.organization_page
+  module:
+    - metatag
+    - user
+    - viewsreference
+id: node.organization_page.default
+targetEntityType: node
+bundle: organization_page
+mode: default
+content:
+  field_metatags:
+    type: metatag_empty_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_upcoming_events:
+    type: viewsreference_formatter
+    label: above
+    settings:
+      plugin_types:
+        - block
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  workbench_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  addtoany: true
+  body: true
+  field_keywords: true
+  field_lex_custom_banner_image: true
+  field_lex_site_nav: true
+  field_office_to_contact: true
+  field_organization_image: true
+  field_organization_taxonomy_term: true
+  field_page_section: true
+  field_related_departments: true
+  field_related_documents: true
+  field_top_services: true
+  links: true
+  search_api_excerpt: true

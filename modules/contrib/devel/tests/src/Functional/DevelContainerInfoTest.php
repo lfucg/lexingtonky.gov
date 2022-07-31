@@ -3,39 +3,23 @@
 namespace Drupal\Tests\devel\Functional;
 
 use Drupal\Core\Url;
-use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests container info pages and links.
  *
  * @group devel
  */
-class DevelContainerInfoTest extends BrowserTestBase {
+class DevelContainerInfoTest extends DevelBrowserTestBase {
 
   use DevelWebAssertHelper;
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['devel', 'devel_test', 'block'];
-
-  /**
-   * The user for tests.
-   *
-   * @var \Drupal\user\UserInterface
-   */
-  protected $develUser;
-
-  /**
-   * {@inheritdoc}
-   */
   protected function setUp() {
     parent::setUp();
-
     $this->drupalPlaceBlock('local_tasks_block');
     $this->drupalPlaceBlock('page_title_block');
-
-    $this->develUser = $this->drupalCreateUser(['access devel information']);
     $this->drupalLogin($this->develUser);
   }
 
@@ -69,7 +53,7 @@ class DevelContainerInfoTest extends BrowserTestBase {
     $this->assertNotNull($table);
 
     // Ensures that the expected table headers are found.
-    /** @var $headers \Behat\Mink\Element\NodeElement[] */
+    /* @var $headers \Behat\Mink\Element\NodeElement[] */
     $headers = $table->findAll('css', 'thead th');
     $this->assertEquals(4, count($headers));
 
@@ -105,7 +89,7 @@ class DevelContainerInfoTest extends BrowserTestBase {
       $row = $table->find('css', sprintf('tbody tr:contains("%s")', $service_id));
       $this->assertNotNull($row);
 
-      /** @var $cells \Behat\Mink\Element\NodeElement[] */
+      /* @var $cells \Behat\Mink\Element\NodeElement[] */
       $cells = $row->findAll('css', 'td');
       $this->assertEquals(4, count($cells));
 
@@ -174,7 +158,7 @@ class DevelContainerInfoTest extends BrowserTestBase {
     $this->assertNotNull($table);
 
     // Ensures that the expected table headers are found.
-    /** @var $headers \Behat\Mink\Element\NodeElement[] */
+    /* @var $headers \Behat\Mink\Element\NodeElement[] */
     $headers = $table->findAll('css', 'thead th');
     $this->assertEquals(2, count($headers));
 
@@ -202,7 +186,7 @@ class DevelContainerInfoTest extends BrowserTestBase {
       $row = $table->find('css', sprintf('tbody tr:contains("%s")', $parameter_name));
       $this->assertNotNull($row);
 
-      /** @var $cells \Behat\Mink\Element\NodeElement[] */
+      /* @var $cells \Behat\Mink\Element\NodeElement[] */
       $cells = $row->findAll('css', 'td');
       $this->assertEquals(2, count($cells));
 

@@ -1,0 +1,25 @@
+uuid: 3ae0ae49-bdb0-40a4-8a5d-3c83647065b1
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_pagetitle
+theme: lex_police
+region: title
+weight: -25
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  label_display: '0'
+  provider: core
+visibility:
+  request_path:
+    id: request_path
+    negate: true
+    context_mapping: {  }
+    pages: "<front>\r\n/browse/*"

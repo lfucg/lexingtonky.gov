@@ -106,10 +106,11 @@ class MasqueradeAccessTest extends MasqueradeWebTestBase {
     $edit = [
       'masquerade_as' => $this->masquerade_user->getAccountName(),
     ];
-    $this->drupalPostForm('masquerade', $edit, $this->t('Switch'));
+    $this->drupalGet('masquerade');
+    $this->submitForm($edit, 'Switch');
     $this->assertSession()
       ->responseContains($this->t('You cannot masquerade as yourself. Please choose a different user to masquerade as.'));
-    $this->assertSession()->pageTextNotContains($this->t('Unmasquerade'));
+    $this->assertSession()->pageTextNotContains('Unmasquerade');
 
     // Basic 'masquerade' permission check.
     $this->drupalLogin($this->auth_user);
@@ -129,12 +130,13 @@ class MasqueradeAccessTest extends MasqueradeWebTestBase {
     $edit = [
       'masquerade_as' => $target_account->getAccountName(),
     ];
-    $this->drupalPostForm('masquerade', $edit, $this->t('Switch'));
+    $this->drupalGet('masquerade');
+    $this->submitForm($edit, 'Switch');
     $this->assertSession()
       ->responseNotContains($this->t('You are not allowed to masquerade as %name.', [
         '%name' => $target_account->getDisplayName(),
       ]));
-    $this->clickLink($this->t('Unmasquerade'));
+    $this->clickLink('Unmasquerade');
   }
 
   /**
@@ -150,12 +152,13 @@ class MasqueradeAccessTest extends MasqueradeWebTestBase {
     $edit = [
       'masquerade_as' => $target_account->getAccountName(),
     ];
-    $this->drupalPostForm('masquerade', $edit, $this->t('Switch'));
+    $this->drupalGet('masquerade');
+    $this->submitForm($edit, 'Switch');
     $this->assertSession()
       ->responseContains($this->t('You are not allowed to masquerade as %name.', [
         '%name' => $target_account->getDisplayName(),
       ]));
-    $this->assertSession()->pageTextNotContains($this->t('Unmasquerade'));
+    $this->assertSession()->pageTextNotContains('Unmasquerade');
   }
 
 }

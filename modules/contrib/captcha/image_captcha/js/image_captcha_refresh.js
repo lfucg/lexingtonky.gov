@@ -22,8 +22,7 @@
         var $form = $(this).parents('form');
         // Send post query for getting new captcha data.
         var date = new Date();
-        var baseUrl = document.location.origin;
-        var url = baseUrl + '/' + $(this).attr('href') + '?' + date.getTime();
+        var url = $(this).attr('href') + '?' + date.getTime();
         // Adding loader.
         $('.captcha').append('<div class="image_captcha_refresh_loader"></div>');
         $.get(

@@ -30,7 +30,7 @@ class FieldEntityLinkTest extends ViewsKernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['user', 'entity_test'];
+  protected static $modules = ['user', 'entity_test'];
 
   /**
    * An admin user account.
@@ -147,7 +147,7 @@ class FieldEntityLinkTest extends ViewsKernelTestBase {
           }
         }
         $link = $view->style_plugin->getField($index, $info[$template]['field_id']);
-        $this->assertEqual($link, $expected_link);
+        $this->assertEquals($expected_link, $link);
       }
       $index++;
     }

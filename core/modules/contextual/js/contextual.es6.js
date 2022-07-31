@@ -3,7 +3,7 @@
  * Attaches behaviors for the Contextual module.
  */
 
-(function($, Drupal, drupalSettings, _, Backbone, JSON, storage) {
+(function ($, Drupal, drupalSettings, _, Backbone, JSON, storage) {
   const options = $.extend(
     drupalSettings.contextual,
     // Merge strings on top of drupalSettings so that they are not mutable.
@@ -25,7 +25,7 @@
     if (typeof permissionsHash === 'string') {
       _.chain(storage)
         .keys()
-        .each(key => {
+        .each((key) => {
           if (key.substring(0, 18) === 'Drupal.contextual.') {
             storage.removeItem(key);
           }
@@ -101,19 +101,20 @@
     const destination = `destination=${Drupal.encodePath(
       Drupal.url(drupalSettings.path.currentPath),
     )}`;
-    $contextual.find('.contextual-links a').each(function() {
+    $contextual.find('.contextual-links a').each(function () {
       const url = this.getAttribute('href');
       const glue = url.indexOf('?') === -1 ? '?' : '&';
       this.setAttribute('href', url + glue + destination);
     });
 
+    let title = '';
+    const $regionHeading = $region.find('h2');
+    if ($regionHeading.length) {
+      title = $regionHeading[0].textContent.trim();
+    }
     // Create a model and the appropriate views.
     const model = new contextual.StateModel({
-      title: $region
-        .find('h2')
-        .eq(0)
-        .text()
-        .trim(),
+      title,
     });
     const viewOptions = $.extend({ el: $contextual, model }, options);
     contextual.views.push({
@@ -131,11 +132,19 @@
     contextual.collection.add(model);
 
     // Let other JavaScript react to the adding of a new contextual link.
-    $(document).trigger('drupalContextualLinkAdded', {
-      $el: $contextual,
-      $region,
-      model,
-    });
+    $(document).trigger(
+      'drupalContextualLinkAdded',
+      Drupal.deprecatedProperty({
+        target: {
+          $el: $contextual,
+          $region,
+          model,
+        },
+        deprecatedProperty: 'model',
+        message:
+          'The model property is deprecated in drupal:9.4.0 and is removed from drupal:10.0.0. There is no replacement.',
+      }),
+    );
 
     // Fix visual collisions between contextual link triggers.
     adjustIfNestedAndOverlapping($contextual);
@@ -158,16 +167,16 @@
       const $context = $(context);
 
       // Find all contextual links placeholders, if any.
-      let $placeholders = $context
-        .find('[data-contextual-id]')
-        .once('contextual-render');
+      let $placeholders = $(
+        once('contextual-render', '[data-contextual-id]', context),
+      );
       if ($placeholders.length === 0) {
         return;
       }
 
       // Collect the IDs for all contextual links placeholders.
       const ids = [];
-      $placeholders.each(function() {
+      $placeholders.each(function () {
         ids.push({
           id: $(this).attr('data-contextual-id'),
           token: $(this).attr('data-contextual-token'),
@@ -176,7 +185,7 @@
 
       const uncachedIDs = [];
       const uncachedTokens = [];
-      ids.forEach(contextualID => {
+      ids.forEach((contextualID) => {
         const html = storage.getItem(`Drupal.contextual.${contextualID.id}`);
         if (html && html.length) {
           // Initialize after the current execution cycle, to make the AJAX
@@ -239,6 +248,8 @@
    * Namespace for contextual related functionality.
    *
    * @namespace
+   *
+   * @private
    */
   Drupal.contextual = {
     /**
@@ -246,6 +257,9 @@
      * element of contextual links.
      *
      * @type {Array}
+     *
+     * @deprecated in drupal:9.4.0 and is removed from drupal:10.0.0. There is no
+     *  replacement.
      */
     views: [],
 
@@ -254,6 +268,9 @@
      * contextual region element.
      *
      * @type {Array}
+     *
+     * @deprecated in drupal:9.4.0 and is removed from drupal:10.0.0. There is no
+     *  replacement.
      */
     regionViews: [],
   };
@@ -262,6 +279,9 @@
    * A Backbone.Collection of {@link Drupal.contextual.StateModel} instances.
    *
    * @type {Backbone.Collection}
+   *
+   * @deprecated in drupal:9.4.0 and is removed from drupal:10.0.0. There is no
+   *  replacement.
    */
   Drupal.contextual.collection = new Backbone.Collection([], {
     model: Drupal.contextual.StateModel,
@@ -273,7 +293,7 @@
    * @return {string}
    *   A string representing a DOM fragment.
    */
-  Drupal.theme.contextualTrigger = function() {
+  Drupal.theme.contextualTrigger = function () {
     return '<button class="trigger visually-hidden focusable" type="button"></button>';
   };
 
