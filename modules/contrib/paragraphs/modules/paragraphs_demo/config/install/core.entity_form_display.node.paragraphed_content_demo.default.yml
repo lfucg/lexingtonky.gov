@@ -40,11 +40,6 @@ content:
     weight: 2
     settings: {  }
     third_party_settings: {  }
-  path:
-    type: path
-    weight: 30
-    settings: {  }
-    third_party_settings: {  }
   promote:
     type: boolean_checkbox
     weight: 15

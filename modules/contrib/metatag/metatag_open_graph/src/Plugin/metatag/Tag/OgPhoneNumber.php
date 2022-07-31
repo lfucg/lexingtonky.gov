@@ -10,7 +10,6 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
  * @MetatagTag(
  *   id = "og_phone_number",
  *   label = @Translation("Phone number"),
- *   description = @Translation(""),
  *   name = "og:phone_number",
  *   group = "open_graph",
  *   weight = 24,

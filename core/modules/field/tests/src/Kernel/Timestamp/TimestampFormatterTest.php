@@ -20,7 +20,13 @@ class TimestampFormatterTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['system', 'field', 'text', 'entity_test', 'user'];
+  protected static $modules = [
+    'system',
+    'field',
+    'text',
+    'entity_test',
+    'user',
+  ];
 
   /**
    * @var string
@@ -45,7 +51,7 @@ class TimestampFormatterTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installConfig(['system']);
@@ -113,7 +119,7 @@ class TimestampFormatterTest extends KernelTestBase {
     $data[] = ['date_format' => 'custom', 'custom_date_format' => 'e', 'timezone' => 'Asia/Tokyo'];
 
     foreach ($data as $settings) {
-      list($date_format, $custom_date_format, $timezone) = array_values($settings);
+      [$date_format, $custom_date_format, $timezone] = array_values($settings);
       if (empty($timezone)) {
         $timezone = NULL;
       }

@@ -8,7 +8,9 @@ use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\field\FieldConfigInterface;
 
-
+/**
+ *
+ */
 class TypedDataRelationshipDeriver extends TypedDataPropertyDeriverBase implements ContainerDeriverInterface {
 
   /**
@@ -32,24 +34,28 @@ class TypedDataRelationshipDeriver extends TypedDataPropertyDeriverBase implemen
         '@property' => $property_definition->getLabel(),
         '@base' => $data_type_definition['label'],
       ]);
-      $derivative['data_type'] = $property_definition->getFieldStorageDefinition()->getPropertyDefinition($property_definition->getFieldStorageDefinition()->getMainPropertyName())->getDataType();
-      $derivative['property_name'] = $property_name;
-      if (strpos($base_data_type, 'entity:') === 0) {
-        $context_definition = new EntityContextDefinition($base_data_type, $this->typedDataManager->createDataDefinition($base_data_type));
-      }
-      else {
-        $context_definition = new ContextDefinition($base_data_type, $this->typedDataManager->createDataDefinition($base_data_type));
-      }
-      // Add the constraints of the base definition to the context definition.
-      if ($base_definition->getConstraint('Bundle')) {
-        $context_definition->addConstraint('Bundle', $base_definition->getConstraint('Bundle'));
-      }
-      $derivative['context_definitions'] = [
-        'base' => $context_definition,
-      ];
-      $derivative['property_name'] = $property_name;
 
-      $this->derivatives[$base_data_type . ':' . $property_name] = $derivative;
+      $main_property = $property_definition->getFieldStorageDefinition()->getPropertyDefinition($property_definition->getFieldStorageDefinition()->getMainPropertyName());
+      if ($main_property) {
+        $derivative['data_type'] = $main_property->getDataType();
+        $derivative['property_name'] = $property_name;
+        if (strpos($base_data_type, 'entity:') === 0) {
+          $context_definition = new EntityContextDefinition($base_data_type, $this->typedDataManager->createDataDefinition($base_data_type));
+        }
+        else {
+          $context_definition = new ContextDefinition($base_data_type, $this->typedDataManager->createDataDefinition($base_data_type));
+        }
+        // Add the constraints of the base definition to the context definition.
+        if ($base_definition->getConstraint('Bundle')) {
+          $context_definition->addConstraint('Bundle', $base_definition->getConstraint('Bundle'));
+        }
+        $derivative['context_definitions'] = [
+          'base' => $context_definition,
+        ];
+        $derivative['property_name'] = $property_name;
+
+        $this->derivatives[$base_data_type . ':' . $property_name] = $derivative;
+      }
     }
     // Individual fields can be on multiple bundles.
     elseif ($property_definition instanceof FieldConfigInterface) {
@@ -58,7 +64,7 @@ class TypedDataRelationshipDeriver extends TypedDataPropertyDeriverBase implemen
       // Update label.
       /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
       $label = $derivative['label'];
-      list(,, $argument_name) = explode(':', $data_type_id);
+      [,, $argument_name] = explode(':', $data_type_id);
       $arguments = $label->getArguments();
       $arguments['@' . $argument_name] = $data_type_definition['label'];
       $string_args = $arguments;

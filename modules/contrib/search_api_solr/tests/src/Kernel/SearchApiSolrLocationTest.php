@@ -6,15 +6,15 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
-use Drupal\search_api_solr_test\Logger\InMemoryLogger;
-use Drupal\Tests\search_api\Kernel\BackendTestBase;
 
 /**
  * Tests location searches and distance facets using the Solr search backend.
  *
  * @group search_api_solr
+ * @group not_solr3
+ * @group not_solr4
  */
-class SearchApiSolrLocationTest extends BackendTestBase {
+class SearchApiSolrLocationTest extends SolrBackendTestBase {
 
   /**
    * Modules to enable for this test.
@@ -22,56 +22,12 @@ class SearchApiSolrLocationTest extends BackendTestBase {
    * @var string[]
    */
   public static $modules = [
-    'system',
-    'search_api',
-    'search_api_solr',
+    'language',
     'search_api_location',
     'search_api_test_example_content',
-    'search_api_solr_test',
     'entity_test',
     'geofield',
-    'field',
   ];
-
-  /**
-   * A Search API server ID.
-   *
-   * @var string
-   */
-  protected $serverId = 'solr_search_server';
-
-  /**
-   * A Search API index ID.
-   *
-   * @var string
-   */
-  protected $indexId = 'solr_search_index';
-
-  /**
-   * Seconds to wait for a soft commit on Solr.
-   *
-   * @var int
-   */
-  protected $waitForCommit = 2;
-
-  /**
-   * @var \Drupal\search_api_solr_test\Logger\InMemoryLogger
-   */
-  protected $logger;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    $this->installConfig([
-      'search_api_solr',
-      'search_api_solr_test',
-    ]);
-
-    $this->commonSolrBackendSetUp();
-  }
 
   /**
    * Required parts of the setUp() function that are the same for all backends.
@@ -126,34 +82,6 @@ class SearchApiSolrLocationTest extends BackendTestBase {
     $server->save();
 
     $this->indexItems($this->indexId);
-
-    $this->logger = new InMemoryLogger();
-      /** @var \Drupal\Core\Logger\LoggerChannelInterface $loggerChannel */
-    $loggerChannel = \Drupal::service('logger.factory')->get('search_api_solr');
-    $loggerChannel->addLogger($this->logger);
-  }
-
-  protected function assertLogMessage($level, $message) {
-    $last_message = $this->logger->getLastMessage();
-    $this->assertEquals($level, $last_message['level']);
-    $this->assertEquals($message, $last_message['message']);
-  }
-
-  /**
-   * Clear the index after every test.
-   */
-  public function tearDown() {
-    $this->clearIndex();
-    parent::tearDown();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function indexItems($index_id) {
-    $index_status = parent::indexItems($index_id);
-    sleep($this->waitForCommit);
-    return $index_status;
   }
 
   /**
@@ -186,7 +114,12 @@ class SearchApiSolrLocationTest extends BackendTestBase {
    * Tests location searches and distance facets.
    */
   public function testBackend() {
-    $solr_version = $this->getServer()->getBackend()->getSolrConnector()->getSolrVersion();
+    // Regression test.
+    // @see https://www.drupal.org/project/search_api_solr/issues/2921774
+    $query = $this->buildSearch(NULL, [], NULL, TRUE);
+    $query->addCondition('location', NULL, '<>');
+    $result = $query->execute();
+    $this->assertResults([1, 2, 3], $result, 'Search for all documents having a location');
 
     // Search 500km from Antwerp.
     $location_options = [
@@ -210,7 +143,9 @@ class SearchApiSolrLocationTest extends BackendTestBase {
     $item = $result->getResultItems()['entity:entity_test_mulrev_changed/3:en'];
     $distance = $item->getField('location__distance')->getValues()[0];
 
-    $this->assertEquals(42.5263374675, $distance, 'The distance is correctly returned');
+    // We get different precisions from Solr 6 and 7. Therefore we treat the
+    // decimal as string and compare the first 9 characters.
+    $this->assertEquals('42.526337', substr($distance, 0, 9), 'The distance is correctly returned');
 
     // Search between 100km and 6000km from Antwerp.
     $location_options = [
@@ -232,7 +167,7 @@ class SearchApiSolrLocationTest extends BackendTestBase {
     $facets_options['location__distance'] = [
       'field' => 'location__distance',
       'limit' => 10,
-      'min_count' => 0,
+      'min_count' => 1,
       'missing' => TRUE,
     ];
 
@@ -261,18 +196,6 @@ class SearchApiSolrLocationTest extends BackendTestBase {
       [
         'filter' => '[200 399]',
         'count' => 1,
-      ],
-      [
-        'filter' => '[400 599]',
-        'count' => 0,
-      ],
-      [
-        'filter' => '[600 799]',
-        'count' => 0,
-      ],
-      [
-        'filter' => '[800 999]',
-        'count' => 0,
       ],
     ];
 
@@ -334,37 +257,50 @@ class SearchApiSolrLocationTest extends BackendTestBase {
       'format' => 'ints2D',
     ];
     $result = $query->execute();
+    // @codingStandardsIgnoreLine
+    $heatmap = [NULL, NULL, NULL, NULL, NULL, NULL, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], NULL, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL];
+    $filter = [];
+    if (version_compare($this->getSolrVersion(), '7.5', '>=')) {
+      $filter = [
+        "gridLevel" => 2,
+        "columns" => 32,
+        "rows" => 32,
+        "minX" => -180.0,
+        "maxX" => 180.0,
+        "minY" => -90.0,
+        "maxY" => 90.0,
+        "counts_ints2D" => $heatmap,
+      ];
+    }
+    else {
+      $filter = [
+        "gridLevel",
+        2,
+        "columns",
+        32,
+        "rows",
+        32,
+        "minX",
+        -180.0,
+        "maxX",
+        180.0,
+        "minY",
+        -90.0,
+        "maxY",
+        90.0,
+        "counts_ints2D",
+        $heatmap,
+      ];
+    }
     $expected = [
       [
-        'filter' => [
-          "gridLevel",
-          2,
-          "columns",
-          32,
-          "rows",
-          32,
-          "minX",
-          -180.0,
-          "maxX",
-          180.0,
-          "minY",
-          -90.0,
-          "maxY",
-          90.0,
-          "counts_ints2D",
-          [NULL, NULL, NULL, NULL, NULL, NULL, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], NULL, [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL],
-        ],
+        'filter' => $filter,
         'count' => 3,
       ],
     ];
 
-    if (version_compare($solr_version, 5.1, '>=')) {
-      $facets = $result->getExtraData('search_api_facets', [])['rpt'];
-      $this->assertEquals($expected, $facets, 'The correct location facets are returned');
-    }
-    else {
-      $this->assertLogMessage(LOG_ERR, 'Rpt data type feature is only supported by Solr version 5.1 or higher.');
-    }
+    $facets = $result->getExtraData('search_api_facets', [])['rpt'];
+    $this->assertEquals($expected, $facets, 'The correct location facets are returned');
 
     $query = $this->buildSearch(NULL, [], NULL, FALSE);
     $options = &$query->getOptions();
@@ -385,58 +321,61 @@ class SearchApiSolrLocationTest extends BackendTestBase {
       'format' => 'ints2D',
     ];
     $result = $query->execute();
+    // @codingStandardsIgnoreLine
+    $heatmap = [NULL, NULL, NULL, [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL];
+    $filter = [];
+    if (version_compare($this->getSolrVersion(), '7.5', '>=')) {
+      $filter = [
+        "gridLevel" => 2,
+        "columns" => 18,
+        "rows" => 29,
+        "minX" => -67.5,
+        "maxX" => 135.0,
+        "minY" => -90.0,
+        "maxY" => 73.125,
+        "counts_ints2D" => $heatmap,
+      ];
+    }
+    else {
+      $filter = [
+        "gridLevel",
+        2,
+        "columns",
+        18,
+        "rows",
+        29,
+        "minX",
+        -67.5,
+        "maxX",
+        135.0,
+        "minY",
+        -90.0,
+        "maxY",
+        73.125,
+        "counts_ints2D",
+        $heatmap,
+      ];
+    }
     $expected = [
       [
-        'filter' => [
-          "gridLevel",
-          2,
-          "columns",
-          18,
-          "rows",
-          29,
-          "minX",
-          -67.5,
-          "maxX",
-          135.0,
-          "minY",
-          -90.0,
-          "maxY",
-          73.125,
-          "counts_ints2D",
-          [NULL, NULL, NULL, [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL],
-        ],
+        'filter' => $filter,
         'count' => 2,
       ],
     ];
 
-    if (version_compare($solr_version, 5.1, '>=')) {
-      $facets = $result->getExtraData('search_api_facets', [])['rpt'];
-      $this->assertEquals($expected, $facets, 'The correct location facets are returned');
-    }
-    else {
-      $this->assertLogMessage(LOG_ERR, 'Rpt data type feature is only supported by Solr version 5.1 or higher.');
-    }
+    $facets = $result->getExtraData('search_api_facets', [])['rpt'];
+    $this->assertEquals($expected, $facets, 'The correct location facets are returned');
 
+    // Test boundary filtering.
+    $query = $this->buildSearch()
+      ->addCondition('location', ['38,-75', '42,-70'], 'BETWEEN');
+    $result = $query->execute();
+    $this->assertResults([2], $result, 'Search for NYC by boundary and NYC only');
+
+    $query = $this->buildSearch()
+      ->addCondition('location', ['38,-75', '42,-70'], 'NOT BETWEEN');
+    $result = $query->execute();
+    $this->assertResults([1, 3], $result, 'Search for outside NYC by boundary');
   }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function checkServerBackend() {}
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function updateIndex() {}
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function checkSecondServer() {}
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function checkModuleUninstall() {}
 
 }

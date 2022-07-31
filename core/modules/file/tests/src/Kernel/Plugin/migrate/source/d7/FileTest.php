@@ -15,7 +15,7 @@ class FileTest extends MigrateSqlSourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['file', 'migrate_drupal'];
+  protected static $modules = ['file', 'migrate_drupal'];
 
   /**
    * {@inheritdoc}
@@ -156,6 +156,36 @@ class FileTest extends MigrateSqlSourceTestBase {
         'source_base_path' => '/path/to/files',
       ],
       'scheme' => 'public',
+    ];
+
+    // Test getting only private files with absolute file private path.
+    $tests[3]['source_data'] = $tests[0]['source_data'];
+    $tests[3]['source_data']['variable'][1] = [
+      'name' => 'file_private_path',
+      'value' => serialize('/home/lillian/subdomains/u2/u2-private-files'),
+    ];
+    $tests[3]['expected_data'] = [
+      [
+        'fid' => '1',
+        'uid' => '1',
+        'filename' => 'cube.jpeg',
+        'uri' => 'private://cube.jpeg',
+        'filemime' => 'image/jpeg',
+        'filesize' => '3620',
+        'status' => '1',
+        'timestamp' => '1421727515',
+        'filepath' => 'home/lillian/subdomains/u2/u2-private-files/cube.jpeg',
+      ],
+    ];
+    // Do an automatic count.
+    $tests[3]['expected_count'] = NULL;
+
+    // Set up plugin configuration.
+    $tests[3]['configuration'] = [
+      'constants' => [
+        'source_base_path' => '/',
+      ],
+      'scheme' => 'private',
     ];
 
     return $tests;

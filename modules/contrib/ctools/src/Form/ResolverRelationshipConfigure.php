@@ -11,7 +11,9 @@ use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+/**
+ * Configure Relationships Resolver form.
+ */
 abstract class ResolverRelationshipConfigure extends FormBase {
 
   /**
@@ -36,7 +38,12 @@ abstract class ResolverRelationshipConfigure extends FormBase {
     return new static($container->get('tempstore.shared'));
   }
 
-
+  /**
+   * Configure Relationships Resolver form.
+   *
+   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   *   Tempstore Factory.
+   */
   public function __construct(SharedTempStoreFactory $tempstore) {
     $this->tempstore = $tempstore;
   }
@@ -105,7 +112,14 @@ abstract class ResolverRelationshipConfigure extends FormBase {
     return $form;
   }
 
-
+  /**
+   * Configuration Form Validator.
+   *
+   * @param array $form
+   *   The Drupal Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The Form State.
+   */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $machine_name = $form_state->getValue('machine_name');
     $cached_values = $this->tempstore->get($this->tempstore_id)->get($this->machine_name);
@@ -136,15 +150,25 @@ abstract class ResolverRelationshipConfigure extends FormBase {
     }
     $cached_values = $this->setContexts($cached_values, $contexts);
     $this->tempstore->get($this->tempstore_id)->set($this->machine_name, $cached_values);
-    list($route_name, $route_parameters) = $this->getParentRouteInfo($cached_values);
+    [$route_name, $route_parameters] = $this->getParentRouteInfo($cached_values);
     $form_state->setRedirect($route_name, $route_parameters);
   }
 
-
+  /**
+   * Ajax Save Method.
+   *
+   * @param array $form
+   *   Drupal Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form State.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   *   The ajax data in the response.
+   */
   public function ajaxSave(array &$form, FormStateInterface $form_state) {
     $response = new AjaxResponse();
     $cached_values = $this->tempstore->get($this->tempstore_id)->get($this->machine_name);
-    list($route_name, $route_parameters) = $this->getParentRouteInfo($cached_values);
+    [$route_name, $route_parameters] = $this->getParentRouteInfo($cached_values);
     $url = Url::fromRoute($route_name, $route_parameters);
     $response->addCommand(new RedirectCommand($url->toString()));
     $response->addCommand(new CloseModalDialogCommand());

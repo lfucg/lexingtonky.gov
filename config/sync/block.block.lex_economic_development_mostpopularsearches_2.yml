@@ -1,0 +1,33 @@
+uuid: 8dd54c58-18b7-45c3-8696-2701f7d14691
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.most-popular-searches
+  module:
+    - ctools
+    - system
+  theme:
+    - lex_economic_development
+id: lex_economic_development_mostpopularsearches_2
+theme: lex_economic_development
+region: hero
+weight: -17
+provider: null
+plugin: 'system_menu_block:most-popular-searches'
+settings:
+  id: 'system_menu_block:most-popular-searches'
+  label: 'Most Popular Searches'
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: true
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      landing_page: landing_page

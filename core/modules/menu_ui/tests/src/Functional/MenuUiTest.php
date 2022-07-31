@@ -80,10 +80,15 @@ class MenuUiTest extends BrowserTestBase {
    */
   protected $items;
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalPlaceBlock('page_title_block');
+    $this->drupalPlaceBlock('system_menu_block:main');
+    $this->drupalPlaceBlock('local_actions_block', [
+      'region' => 'content',
+      'weight' => -100,
+    ]);
 
     $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
 
@@ -100,7 +105,7 @@ class MenuUiTest extends BrowserTestBase {
   /**
    * Tests menu functionality using the admin and user interfaces.
    */
-  public function testMenu() {
+  public function testMenuAdministration() {
     // Log in the user.
     $this->drupalLogin($this->adminUser);
     $this->items = [];
@@ -118,7 +123,7 @@ class MenuUiTest extends BrowserTestBase {
     $before_count = $menu_link_manager->countMenuLinks(NULL);
     $menu_link_manager->rebuild();
     $after_count = $menu_link_manager->countMenuLinks(NULL);
-    $this->assertIdentical($before_count, $after_count, 'MenuLinkManager::rebuild() does not add more links');
+    $this->assertSame($before_count, $after_count, 'MenuLinkManager::rebuild() does not add more links');
     // Do standard user tests.
     // Log in the user.
     $this->drupalLogin($this->authenticatedUser);
@@ -135,8 +140,8 @@ class MenuUiTest extends BrowserTestBase {
 
     // Verify delete link exists and reset link does not exist.
     $this->drupalGet('admin/structure/menu/manage/' . $this->menu->id());
-    $this->assertLinkByHref(Url::fromRoute('entity.menu_link_content.delete_form', ['menu_link_content' => $this->items[0]->id()])->toString());
-    $this->assertNoLinkByHref(Url::fromRoute('menu_ui.link_reset', ['menu_link_plugin' => $this->items[0]->getPluginId()])->toString());
+    $this->assertSession()->linkByHrefExists(Url::fromRoute('entity.menu_link_content.delete_form', ['menu_link_content' => $this->items[0]->id()])->toString());
+    $this->assertSession()->linkByHrefNotExists(Url::fromRoute('menu_ui.link_reset', ['menu_link_plugin' => $this->items[0]->getPluginId()])->toString());
     // Check delete and reset access.
     $this->drupalGet('admin/structure/menu/item/' . $this->items[0]->id() . '/delete');
     $this->assertSession()->statusCodeEquals(200);
@@ -158,13 +163,14 @@ class MenuUiTest extends BrowserTestBase {
     $edit = [];
     $edit['weight'] = 10;
     $id = $instance->getPluginId();
-    $this->drupalPostForm("admin/structure/menu/link/$id/edit", $edit, t('Save'));
+    $this->drupalGet("admin/structure/menu/link/{$id}/edit");
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertText('The menu link has been saved.');
+    $this->assertSession()->pageTextContains('The menu link has been saved.');
     $menu_link_manager->resetDefinitions();
 
     $instance = $menu_link_manager->createInstance($instance->getPluginId());
-    $this->assertEqual($edit['weight'], $instance->getWeight(), 'Saving an existing link updates the weight.');
+    $this->assertEquals($edit['weight'], $instance->getWeight(), 'Saving an existing link updates the weight.');
     $this->resetMenuLink($instance, $old_weight);
   }
 
@@ -185,14 +191,24 @@ class MenuUiTest extends BrowserTestBase {
 
     // Assert the new menu.
     $this->drupalGet('admin/structure/menu/manage/' . $menu_name);
-    $this->assertRaw($label, 'Custom menu was added.');
+    $this->assertSession()->pageTextContains($label);
 
     // Edit the menu.
     $new_label = $this->randomMachineName(16);
     $menu->set('label', $new_label);
     $menu->save();
     $this->drupalGet('admin/structure/menu/manage/' . $menu_name);
-    $this->assertRaw($new_label, 'Custom menu was edited.');
+    $this->assertSession()->pageTextContains($new_label);
+
+    // Delete the custom menu via the UI to testing destination handling.
+    $this->drupalGet('admin/structure/menu');
+    $this->assertSession()->pageTextContains($new_label);
+    // Click the "Delete menu" operation in the Tools row.
+    $links = $this->xpath('//*/td[contains(text(),:menu_label)]/following::a[normalize-space()=:link_label]', [':menu_label' => $new_label, ':link_label' => 'Delete menu']);
+    $links[0]->click();
+    $this->submitForm([], 'Delete');
+    $this->assertSession()->addressEquals('admin/structure/menu');
+    $this->assertSession()->responseContains("The menu <em class=\"placeholder\">$new_label</em> has been deleted.");
   }
 
   /**
@@ -211,36 +227,31 @@ class MenuUiTest extends BrowserTestBase {
       'description' => '',
       'label' => $label,
     ];
-    $this->drupalPostForm('admin/structure/menu/add', $edit, t('Save'));
+    $this->drupalGet('admin/structure/menu/add');
+    $this->submitForm($edit, 'Save');
 
     // Verify that using a menu_name that is too long results in a validation
     // message.
-    $this->assertRaw(t('@name cannot be longer than %max characters but is currently %length characters long.', [
-      '@name' => t('Menu name'),
-      '%max' => MenuStorage::MAX_ID_LENGTH,
-      '%length' => mb_strlen($menu_name),
-    ]));
+    $this->assertSession()->pageTextContains("Menu name cannot be longer than " . MenuStorage::MAX_ID_LENGTH . " characters but is currently " . mb_strlen($menu_name) . " characters long.");
 
     // Change the menu_name so it no longer exceeds the maximum length.
     $menu_name = strtolower($this->randomMachineName(MenuStorage::MAX_ID_LENGTH));
     $edit['id'] = $menu_name;
-    $this->drupalPostForm('admin/structure/menu/add', $edit, t('Save'));
+    $this->drupalGet('admin/structure/menu/add');
+    $this->submitForm($edit, 'Save');
 
     // Verify that no validation error is given for menu_name length.
-    $this->assertNoRaw(t('@name cannot be longer than %max characters but is currently %length characters long.', [
-      '@name' => t('Menu name'),
-      '%max' => MenuStorage::MAX_ID_LENGTH,
-      '%length' => mb_strlen($menu_name),
-    ]));
+    $this->assertSession()->pageTextNotContains("Menu name cannot be longer than " . MenuStorage::MAX_ID_LENGTH . " characters but is currently " . mb_strlen($menu_name) . " characters long.");
+
     // Verify that the confirmation message is displayed.
-    $this->assertRaw(t('Menu %label has been added.', ['%label' => $label]));
+    $this->assertSession()->pageTextContains("Menu $label has been added.");
     $this->drupalGet('admin/structure/menu');
-    $this->assertText($label, 'Menu created');
+    $this->assertSession()->pageTextContains($label);
 
     // Confirm that the custom menu block is available.
     $this->drupalGet('admin/structure/block/list/' . $this->config('system.theme')->get('default'));
     $this->clickLink('Place block');
-    $this->assertText($label);
+    $this->assertSession()->pageTextContains($label);
 
     // Enable the block.
     $block = $this->drupalPlaceBlock('system_menu_block:' . $menu_name);
@@ -259,9 +270,11 @@ class MenuUiTest extends BrowserTestBase {
     $label = $this->menu->label();
 
     // Delete custom menu.
-    $this->drupalPostForm("admin/structure/menu/manage/$menu_name/delete", [], t('Delete'));
+    $this->drupalGet("admin/structure/menu/manage/{$menu_name}/delete");
+    $this->submitForm([], 'Delete');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertRaw(t('The menu %title has been deleted.', ['%title' => $label]), 'Custom menu was deleted');
+    $this->assertSession()->addressEquals("admin/structure/menu");
+    $this->assertSession()->pageTextContains("The menu $label has been deleted.");
     $this->assertNull(Menu::load($menu_name), 'Custom menu was deleted');
     // Test if all menu links associated with the menu were removed from
     // database.
@@ -270,37 +283,79 @@ class MenuUiTest extends BrowserTestBase {
 
     // Make sure there's no delete button on system menus.
     $this->drupalGet('admin/structure/menu/manage/main');
-    $this->assertNoRaw('edit-delete', 'The delete button was not found');
+    $this->assertSession()->responseNotContains('edit-delete');
 
     // Try to delete the main menu.
     $this->drupalGet('admin/structure/menu/manage/main/delete');
-    $this->assertText(t('You are not authorized to access this page.'));
+    $this->assertSession()->pageTextContains('You are not authorized to access this page.');
   }
 
   /**
    * Tests menu functionality.
    */
   public function doMenuTests() {
+    // Add a link to the tools menu first, to test cacheability metadata of the
+    // destination query string.
+    $this->drupalGet('admin/structure/menu/manage/tools');
+    $this->clickLink('Add link');
+    $link_title = $this->randomString();
+    $this->submitForm(['link[0][uri]' => '/', 'title[0][value]' => $link_title], 'Save');
+    $this->assertSession()->linkExists($link_title);
+    $this->assertSession()->addressEquals('admin/structure/menu/manage/tools');
+
+    // Test adding a menu link direct from the menus listing page.
+    $this->drupalGet('admin/structure/menu');
+    // Click the "Add link" operation in the Tools row.
+    $links = $this->xpath('//*/td[contains(text(),:menu_label)]/following::a[normalize-space()=:link_label]', [':menu_label' => 'Tools', ':link_label' => 'Add link']);
+    $links[0]->click();
+    $this->assertMatchesRegularExpression('#admin/structure/menu/manage/tools/add\?destination=(/[^/]*)*/admin/structure/menu/manage/tools$#', $this->getSession()->getCurrentUrl());
+    $link_title = $this->randomString();
+    $this->submitForm(['link[0][uri]' => '/', 'title[0][value]' => $link_title], 'Save');
+    $this->assertSession()->linkExists($link_title);
+    $this->assertSession()->addressEquals('admin/structure/menu/manage/tools');
+
     $menu_name = $this->menu->id();
 
-    // Test the 'Add link' local action.
-    $this->drupalGet(Url::fromRoute('entity.menu.edit_form', ['menu' => $menu_name]));
+    // Access the menu via the overview form to ensure it does not add a
+    // destination that breaks the user interface.
+    $this->drupalGet('admin/structure/menu');
 
-    $this->clickLink(t('Add link'));
+    // Select the edit menu link for our menu.
+    $links = $this->xpath('//*/td[contains(text(),:menu_label)]/following::a[normalize-space()=:link_label]', [':menu_label' => (string) $this->menu->label(), ':link_label' => 'Edit menu']);
+    $links[0]->click();
+
+    // Test the 'Add link' local action.
+    $this->clickLink('Add link');
     $link_title = $this->randomString();
-    $this->drupalPostForm(NULL, ['link[0][uri]' => '/', 'title[0][value]' => $link_title], t('Save'));
-    $this->assertUrl(Url::fromRoute('entity.menu.edit_form', ['menu' => $menu_name]));
+    $this->submitForm(['link[0][uri]' => '/', 'title[0][value]' => $link_title], 'Save');
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.menu.edit_form', ['menu' => $menu_name]));
     // Test the 'Edit' operation.
-    $this->clickLink(t('Edit'));
-    $this->assertFieldByName('title[0][value]', $link_title);
+    $this->clickLink('Edit');
+    $this->assertSession()->fieldValueEquals('title[0][value]', $link_title);
     $link_title = $this->randomString();
-    $this->drupalPostForm(NULL, ['title[0][value]' => $link_title], t('Save'));
-    $this->assertUrl(Url::fromRoute('entity.menu.edit_form', ['menu' => $menu_name]));
+    $this->submitForm(['title[0][value]' => $link_title], 'Save');
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.menu.edit_form', ['menu' => $menu_name]));
     // Test the 'Delete' operation.
-    $this->clickLink(t('Delete'));
-    $this->assertRaw(t('Are you sure you want to delete the custom menu link %item?', ['%item' => $link_title]));
-    $this->drupalPostForm(NULL, [], t('Delete'));
-    $this->assertUrl(Url::fromRoute('entity.menu.edit_form', ['menu' => $menu_name]));
+    $this->clickLink('Delete');
+    $this->assertSession()->pageTextContains("Are you sure you want to delete the custom menu link {$link_title}?");
+    $this->submitForm([], 'Delete');
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.menu.edit_form', ['menu' => $menu_name]));
+
+    // Clear the cache to ensure that recent caches aren't preventing us from
+    // seeing a broken add link.
+    $this->resetAll();
+    $this->drupalGet('admin/structure/menu');
+
+    // Select the edit menu link for our menu.
+    $links = $this->xpath('//*/td[contains(text(),:menu_label)]/following::a[normalize-space()=:link_label]', [':menu_label' => (string) $this->menu->label(), ':link_label' => 'Edit menu']);
+    $links[0]->click();
+
+    // Test the 'Add link' local action.
+    $this->clickLink('Add link');
+    $link_title = $this->randomString();
+    $this->submitForm(['link[0][uri]' => '/', 'title[0][value]' => $link_title], 'Save');
+    $this->assertSession()->linkExists($link_title);
+    $this->assertSession()->addressEquals(Url::fromRoute('entity.menu.edit_form', ['menu' => $menu_name]));
 
     // Add nodes to use as links for menu links.
     $node1 = $this->drupalCreateNode(['type' => 'article']);
@@ -317,7 +372,7 @@ class MenuUiTest extends BrowserTestBase {
 
     // Verify add link button.
     $this->drupalGet('admin/structure/menu');
-    $this->assertLinkByHref('admin/structure/menu/manage/' . $menu_name . '/add', 0, "The add menu link button URL is correct");
+    $this->assertSession()->linkByHrefExists('admin/structure/menu/manage/' . $menu_name . '/add', 0, "The add menu link button URL is correct");
 
     // Verify form defaults.
     $this->doMenuLinkFormDefaultsTest();
@@ -457,7 +512,8 @@ class MenuUiTest extends BrowserTestBase {
     $this->disableMenuLink($item1);
     $edit = [];
     $edit['links[menu_plugin_id:' . $item1->getPluginId() . '][enabled]'] = TRUE;
-    $this->drupalPostForm('admin/structure/menu/manage/' . $item1->getMenuName(), $edit, t('Save'));
+    $this->drupalGet('admin/structure/menu/manage/' . $item1->getMenuName());
+    $this->submitForm($edit, 'Save');
 
     // Mark item2, item4 and item5 as expanded.
     // This is done in order to show them on the frontpage.
@@ -493,20 +549,42 @@ class MenuUiTest extends BrowserTestBase {
   }
 
   /**
-   * Ensures that the proper default values are set when adding a menu link
+   * Test logout link isn't displayed when the user is logged out.
+   */
+  public function testLogoutLinkVisibility() {
+    $adminUserWithLinkAnyPage = $this->drupalCreateUser([
+      'access administration pages',
+      'administer blocks',
+      'administer menu',
+      'create article content',
+      'link to any page',
+    ]);
+    $this->drupalLogin($adminUserWithLinkAnyPage);
+    $this->addMenuLink('', '/user/logout', 'main');
+    $assert = $this->assertSession();
+    // Verify that any link with logout URL is displayed.
+    $assert->linkByHrefExists('user/logout');
+
+    // Verify that any link with logout URL is not displayed.
+    $this->drupalLogout();
+    $assert->linkByHrefNotExists('user/logout');
+  }
+
+  /**
+   * Ensures that the proper default values are set when adding a menu link.
    */
   protected function doMenuLinkFormDefaultsTest() {
     $this->drupalGet("admin/structure/menu/manage/tools/add");
     $this->assertSession()->statusCodeEquals(200);
 
-    $this->assertFieldByName('title[0][value]', '');
-    $this->assertFieldByName('link[0][uri]', '');
+    $this->assertSession()->fieldValueEquals('title[0][value]', '');
+    $this->assertSession()->fieldValueEquals('link[0][uri]', '');
 
-    $this->assertNoFieldChecked('edit-expanded-value');
-    $this->assertFieldChecked('edit-enabled-value');
+    $this->assertSession()->checkboxNotChecked('edit-expanded-value');
+    $this->assertSession()->checkboxChecked('edit-enabled-value');
 
-    $this->assertFieldByName('description[0][value]', '');
-    $this->assertFieldByName('weight[0][value]', 0);
+    $this->assertSession()->fieldValueEquals('description[0][value]', '');
+    $this->assertSession()->fieldValueEquals('weight[0][value]', 0);
   }
 
   /**
@@ -519,26 +597,29 @@ class MenuUiTest extends BrowserTestBase {
     $path = '/test-page?arg1=value1&arg2=value2';
     $item = $this->addMenuLink('', $path);
 
+    // Check that the path has both the query and fragment.
     $this->drupalGet('admin/structure/menu/item/' . $item->id() . '/edit');
-    $this->assertFieldByName('link[0][uri]', $path, 'Path is found with both query and fragment.');
+    $this->assertSession()->fieldValueEquals('link[0][uri]', $path);
 
     // Now change the path to something without query and fragment.
     $path = '/test-page';
-    $this->drupalPostForm('admin/structure/menu/item/' . $item->id() . '/edit', ['link[0][uri]' => $path], t('Save'));
     $this->drupalGet('admin/structure/menu/item/' . $item->id() . '/edit');
-    $this->assertFieldByName('link[0][uri]', $path, 'Path no longer has query or fragment.');
+    $this->submitForm(['link[0][uri]' => $path], 'Save');
+    $this->drupalGet('admin/structure/menu/item/' . $item->id() . '/edit');
+    $this->assertSession()->fieldValueEquals('link[0][uri]', $path);
 
     // Use <front>#fragment and ensure that saving it does not lose its content.
     $path = '<front>?arg1=value#fragment';
     $item = $this->addMenuLink('', $path);
 
     $this->drupalGet('admin/structure/menu/item/' . $item->id() . '/edit');
-    $this->assertFieldByName('link[0][uri]', $path, 'Path is found with both query and fragment.');
-
-    $this->drupalPostForm('admin/structure/menu/item/' . $item->id() . '/edit', [], t('Save'));
+    $this->assertSession()->fieldValueEquals('link[0][uri]', $path);
 
     $this->drupalGet('admin/structure/menu/item/' . $item->id() . '/edit');
-    $this->assertFieldByName('link[0][uri]', $path, 'Path is found with both query and fragment.');
+    $this->submitForm([], 'Save');
+
+    $this->drupalGet('admin/structure/menu/item/' . $item->id() . '/edit');
+    $this->assertSession()->fieldValueEquals('link[0][uri]', $path);
   }
 
   /**
@@ -549,13 +630,14 @@ class MenuUiTest extends BrowserTestBase {
     $edit = [
       'label' => $this->randomMachineName(16),
     ];
-    $this->drupalPostForm('admin/structure/menu/manage/main', $edit, t('Save'));
+    $this->drupalGet('admin/structure/menu/manage/main');
+    $this->submitForm($edit, 'Save');
 
     // Make sure menu shows up with new name in block addition.
     $default_theme = $this->config('system.theme')->get('default');
     $this->drupalget('admin/structure/block/list/' . $default_theme);
     $this->clickLink('Place block');
-    $this->assertText($edit['label']);
+    $this->assertSession()->pageTextContains($edit['label']);
   }
 
   /**
@@ -583,7 +665,7 @@ class MenuUiTest extends BrowserTestBase {
     $this->drupalLogout();
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('admin/structure/menu/manage/' . $item->getMenuName());
-    $this->assertNoText($item->getTitle(), "Menu link pointing to unpublished node is only visible to users with 'bypass node access' permission");
+    $this->assertSession()->pageTextNotContains($item->getTitle());
     // The cache contexts associated with the (in)accessible menu links are
     // bubbled. See DefaultMenuLinkTreeManipulators::menuLinkCheckAccess().
     $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'user.permissions');
@@ -625,9 +707,9 @@ class MenuUiTest extends BrowserTestBase {
     ];
 
     // Add menu link.
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertText('The menu link has been saved.');
+    $this->assertSession()->pageTextContains('The menu link has been saved.');
 
     $menu_links = \Drupal::entityTypeManager()->getStorage('menu_link_content')->loadByProperties(['title' => $title]);
 
@@ -647,8 +729,9 @@ class MenuUiTest extends BrowserTestBase {
         'link[0][uri]' => $link_path,
         'title[0][value]' => 'title',
       ];
-      $this->drupalPostForm("admin/structure/menu/manage/{$this->menu->id()}/add", $edit, t('Save'));
-      $this->assertRaw(t("The path '@link_path' is inaccessible.", ['@link_path' => $link_path]), 'Menu link was not created');
+      $this->drupalGet("admin/structure/menu/manage/{$this->menu->id()}/add");
+      $this->submitForm($edit, 'Save');
+      $this->assertSession()->pageTextContains("The path '{$link_path}' is inaccessible.");
     }
   }
 
@@ -676,7 +759,8 @@ class MenuUiTest extends BrowserTestBase {
         'expanded[value]' => FALSE,
         'weight[0][value]' => '0',
       ];
-      $this->drupalPostForm("admin/structure/menu/manage/{$this->menu->id()}/add", $edit, t('Save'));
+      $this->drupalGet("admin/structure/menu/manage/{$this->menu->id()}/add");
+      $this->submitForm($edit, 'Save');
       $menu_links = \Drupal::entityTypeManager()->getStorage('menu_link_content')->loadByProperties(['title' => $title]);
       $last_link = reset($menu_links);
       $created_links[] = 'tools:' . $last_link->getPluginId();
@@ -685,12 +769,12 @@ class MenuUiTest extends BrowserTestBase {
     // The last link cannot be a parent in the new menu link form.
     $this->drupalGet('admin/structure/menu/manage/admin/add');
     $value = 'tools:' . $last_link->getPluginId();
-    $this->assertNoOption('edit-menu-parent', $value, 'The invalid option is not there.');
+    $this->assertSession()->optionNotExists('edit-menu-parent', $value);
 
     // All but the last link can be parents in the new menu link form.
     array_pop($created_links);
     foreach ($created_links as $key => $link) {
-      $this->assertOption('edit-menu-parent', $link, 'The valid option number ' . ($key + 1) . ' is there.');
+      $this->assertSession()->optionExists('edit-menu-parent', $link);
     }
   }
 
@@ -717,26 +801,26 @@ class MenuUiTest extends BrowserTestBase {
       $title = $parent->getTitle();
       $this->assertSession()->linkExists($title, 0, 'Parent menu link was displayed');
 
-      // Verify menu link link.
+      // Verify menu link.
       $this->clickLink($title);
       $title = $parent_node->label();
-      $this->assertTitle("$title | Drupal");
+      $this->assertSession()->titleEquals("$title | Drupal");
     }
 
     // Verify menu link.
     $title = $item->getTitle();
     $this->assertSession()->linkExists($title, 0, 'Menu link was displayed');
 
-    // Verify menu link link.
+    // Verify menu link.
     $this->clickLink($title);
     $title = $item_node->label();
-    $this->assertTitle("$title | Drupal");
+    $this->assertSession()->titleEquals("$title | Drupal");
   }
 
   /**
    * Changes the parent of a menu link using the UI.
    *
-   * @param \Drupal\menu_link_content\MenuLinkContentInterface $item
+   * @param \Drupal\menu_link_content\MenuLinkContent $item
    *   The menu link item to move.
    * @param int $parent
    *   The id of the new parent.
@@ -749,7 +833,8 @@ class MenuUiTest extends BrowserTestBase {
     $edit = [
       'menu_parent' => $menu_name . ':' . $parent,
     ];
-    $this->drupalPostForm("admin/structure/menu/item/$mlid/edit", $edit, t('Save'));
+    $this->drupalGet("admin/structure/menu/item/{$mlid}/edit");
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->statusCodeEquals(200);
   }
 
@@ -768,12 +853,13 @@ class MenuUiTest extends BrowserTestBase {
     // Edit menu link.
     $edit = [];
     $edit['title[0][value]'] = $title;
-    $this->drupalPostForm("admin/structure/menu/item/$mlid/edit", $edit, t('Save'));
+    $this->drupalGet("admin/structure/menu/item/{$mlid}/edit");
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertText('The menu link has been saved.');
+    $this->assertSession()->pageTextContains('The menu link has been saved.');
     // Verify menu link.
     $this->drupalGet('admin/structure/menu/manage/' . $item->getMenuName());
-    $this->assertText($title, 'Menu link was edited');
+    $this->assertSession()->pageTextContains($title);
   }
 
   /**
@@ -786,13 +872,14 @@ class MenuUiTest extends BrowserTestBase {
    */
   public function resetMenuLink(MenuLinkInterface $menu_link, $old_weight) {
     // Reset menu link.
-    $this->drupalPostForm("admin/structure/menu/link/{$menu_link->getPluginId()}/reset", [], t('Reset'));
+    $this->drupalGet("admin/structure/menu/link/{$menu_link->getPluginId()}/reset");
+    $this->submitForm([], 'Reset');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertRaw(t('The menu link was reset to its default settings.'), 'Menu link was reset');
+    $this->assertSession()->pageTextContains('The menu link was reset to its default settings.');
 
     // Verify menu link.
     $instance = \Drupal::service('plugin.manager.menu.link')->createInstance($menu_link->getPluginId());
-    $this->assertEqual($old_weight, $instance->getWeight(), 'Resets to the old weight.');
+    $this->assertEquals($old_weight, $instance->getWeight(), 'Resets to the old weight.');
   }
 
   /**
@@ -806,13 +893,14 @@ class MenuUiTest extends BrowserTestBase {
     $title = $item->getTitle();
 
     // Delete menu link.
-    $this->drupalPostForm("admin/structure/menu/item/$mlid/delete", [], t('Delete'));
+    $this->drupalGet("admin/structure/menu/item/{$mlid}/delete");
+    $this->submitForm([], 'Delete');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertRaw(t('The menu link %title has been deleted.', ['%title' => $title]), 'Menu link was deleted');
+    $this->assertSession()->pageTextContains("The menu link $title has been deleted.");
 
     // Verify deletion.
     $this->drupalGet('');
-    $this->assertNoText($title, 'Menu link was deleted');
+    $this->assertSession()->pageTextNotContains($title);
   }
 
   /**
@@ -826,12 +914,12 @@ class MenuUiTest extends BrowserTestBase {
 
     // Verify menu link is absent.
     $this->drupalGet('');
-    $this->assertNoText($item->getTitle(), 'Menu link was not displayed');
+    $this->assertSession()->pageTextNotContains($item->getTitle());
     $this->enableMenuLink($item);
 
     // Verify menu link is displayed.
     $this->drupalGet('');
-    $this->assertText($item->getTitle(), 'Menu link was displayed');
+    $this->assertSession()->pageTextContains($item->getTitle());
   }
 
   /**
@@ -843,7 +931,8 @@ class MenuUiTest extends BrowserTestBase {
   public function disableMenuLink(MenuLinkContent $item) {
     $mlid = $item->id();
     $edit['enabled[value]'] = FALSE;
-    $this->drupalPostForm("admin/structure/menu/item/$mlid/edit", $edit, t('Save'));
+    $this->drupalGet("admin/structure/menu/item/{$mlid}/edit");
+    $this->submitForm($edit, 'Save');
 
     // Unlike most other modules, there is no confirmation message displayed.
     // Verify in the database.
@@ -859,7 +948,8 @@ class MenuUiTest extends BrowserTestBase {
   public function enableMenuLink(MenuLinkContent $item) {
     $mlid = $item->id();
     $edit['enabled[value]'] = TRUE;
-    $this->drupalPostForm("admin/structure/menu/item/$mlid/edit", $edit, t('Save'));
+    $this->drupalGet("admin/structure/menu/item/{$mlid}/edit");
+    $this->submitForm($edit, 'Save');
 
     // Verify in the database.
     $this->assertMenuLink(['enabled' => 1], $item->getPluginId());
@@ -882,7 +972,7 @@ class MenuUiTest extends BrowserTestBase {
   }
 
   /**
-   * Test the "expand all items" feature.
+   * Tests the "expand all items" feature.
    */
   public function testExpandAllItems() {
     $this->drupalLogin($this->adminUser);
@@ -904,11 +994,11 @@ class MenuUiTest extends BrowserTestBase {
     $block_id = $this->blockPlacements[$menu->id()];
     $this->drupalGet('admin/structure/block/manage/' . $block_id);
     $this->assertSession()->checkboxNotChecked('settings[expand_all_items]');
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'settings[depth]' => 2,
       'settings[level]' => 1,
       'settings[expand_all_items]' => 1,
-    ], t('Save block'));
+    ], 'Save block');
 
     // Ensure the setting is persisted.
     $this->drupalGet('admin/structure/block/manage/' . $block_id);
@@ -950,21 +1040,21 @@ class MenuUiTest extends BrowserTestBase {
     $this->drupalGet('admin/help/menu');
     $this->assertSession()->statusCodeEquals($response);
     if ($response == 200) {
-      $this->assertText(t('Menu'), 'Menu help was displayed');
+      $this->assertSession()->pageTextContains('Menu', 'Menu help was displayed');
     }
 
     // View menu build overview page.
     $this->drupalGet('admin/structure/menu');
     $this->assertSession()->statusCodeEquals($response);
     if ($response == 200) {
-      $this->assertText(t('Menus'), 'Menu build overview page was displayed');
+      $this->assertSession()->pageTextContains('Menus', 'Menu build overview page was displayed');
     }
 
     // View tools menu customization page.
     $this->drupalGet('admin/structure/menu/manage/' . $this->menu->id());
     $this->assertSession()->statusCodeEquals($response);
     if ($response == 200) {
-      $this->assertText(t('Tools'), 'Tools menu page was displayed');
+      $this->assertSession()->pageTextContains('Tools', 'Tools menu page was displayed');
     }
 
     // View menu edit page for a static link.
@@ -972,14 +1062,14 @@ class MenuUiTest extends BrowserTestBase {
     $this->drupalGet('admin/structure/menu/link/' . $item->getPluginId() . '/edit');
     $this->assertSession()->statusCodeEquals($response);
     if ($response == 200) {
-      $this->assertText(t('Edit menu item'), 'Menu edit page was displayed');
+      $this->assertSession()->pageTextContains('Edit menu item', 'Menu edit page was displayed');
     }
 
     // View add menu page.
     $this->drupalGet('admin/structure/menu/add');
     $this->assertSession()->statusCodeEquals($response);
     if ($response == 200) {
-      $this->assertText(t('Menus'), 'Add menu page was displayed');
+      $this->assertSession()->pageTextContains('Menus', 'Add menu page was displayed');
     }
   }
 
@@ -990,14 +1080,14 @@ class MenuUiTest extends BrowserTestBase {
     $menu_id = $this->menu->id();
     $block_id = $this->blockPlacements[$menu_id];
     $this->drupalGet('admin/structure/block/manage/' . $block_id);
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'settings[depth]' => 3,
       'settings[level]' => 2,
-    ], t('Save block'));
+    ], 'Save block');
     $block = Block::load($block_id);
     $settings = $block->getPlugin()->getConfiguration();
-    $this->assertEqual($settings['depth'], 3);
-    $this->assertEqual($settings['level'], 2);
+    $this->assertEquals(3, $settings['depth']);
+    $this->assertEquals(2, $settings['level']);
     // Reset settings.
     $block->getPlugin()->setConfigurationValue('depth', 0);
     $block->getPlugin()->setConfigurationValue('level', 1);
@@ -1005,7 +1095,7 @@ class MenuUiTest extends BrowserTestBase {
   }
 
   /**
-   * Test that menu links with pending revisions can not be re-parented.
+   * Tests that menu links with pending revisions can not be re-parented.
    */
   public function testMenuUiWithPendingRevisions() {
     $this->drupalLogin($this->adminUser);
@@ -1043,7 +1133,8 @@ class MenuUiTest extends BrowserTestBase {
 
     // Check that the menu overview form can be saved without errors when there
     // are pending revisions.
-    $this->drupalPostForm('admin/structure/menu/manage/' . $menu_2->id(), [], 'Save');
+    $this->drupalGet('admin/structure/menu/manage/' . $menu_2->id());
+    $this->submitForm([], 'Save');
     $this->assertSession()->elementNotExists('xpath', '//div[contains(@class, "messages--error")]');
   }
 

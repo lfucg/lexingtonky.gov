@@ -314,11 +314,14 @@ class SearchApiFulltext extends FilterPluginBase {
     }
 
     // Store searched fields.
-    $searched_fields_identifier = $this->options['id'] . '_searched_fields';
-    if (!empty($this->options['expose']['searched_fields_id'])) {
-      $searched_fields_identifier = $this->options['expose']['searched_fields_id'];
+    $this->searchedFields = [];
+    if ($this->options['expose']['expose_fields']) {
+      $searched_fields_identifier = $this->options['id'] . '_searched_fields';
+      if (!empty($this->options['expose']['searched_fields_id'])) {
+        $searched_fields_identifier = $this->options['expose']['searched_fields_id'];
+      }
+      $this->searchedFields = $form_state->getValue($searched_fields_identifier, []);
     }
-    $this->searchedFields = $form_state->getValue($searched_fields_identifier, []);
 
     $identifier = $this->options['expose']['identifier'];
     $input = &$form_state->getValue($identifier, '');

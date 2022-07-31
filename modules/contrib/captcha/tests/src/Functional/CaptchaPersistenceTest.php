@@ -168,7 +168,7 @@ class CaptchaPersistenceTest extends CaptchaWebTestBase {
     $this->assertDifferentCsid($captcha_sid_initial);
 
     // Check another form.
-    /* @var \Drupal\captcha\Entity\CaptchaPoint $captcha_point */
+    /** @var \Drupal\captcha\Entity\CaptchaPoint $captcha_point */
     $captcha_point = \Drupal::entityTypeManager()
       ->getStorage('captcha_point')
       ->load('user_register_form');

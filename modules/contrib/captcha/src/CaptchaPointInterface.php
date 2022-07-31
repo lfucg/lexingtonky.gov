@@ -5,7 +5,7 @@ namespace Drupal\captcha;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 
 /**
- * Interface CaptchaPointInterface.
+ * Captcha Point Entity Interface.
  *
  * @package Drupal\captcha
  *

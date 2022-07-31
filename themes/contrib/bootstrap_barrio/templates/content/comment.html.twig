@@ -67,6 +67,7 @@
 {% if threaded %}
   {{ attach_library('classy/drupal.comment.threaded') }}
 {% endif %}
+{{ attach_library('bootstrap_barrio/comments') }}
 {%
   set classes = [
     'comment',
@@ -94,7 +95,7 @@
       reader without this information.
     #}
     {% if parent %}
-      <p class="sr-only">{{ parent }}</p>
+      <p class="visually-hidden">{{ parent }}</p>
     {% endif %}
   </div>
 

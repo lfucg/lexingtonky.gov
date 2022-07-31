@@ -7,8 +7,15 @@ use Drupal\Core\Condition\ConditionPluginCollection;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\Context\Context;
+use Drupal\Core\Plugin\Context\ContextDefinition;
+use Drupal\Core\Plugin\Context\ContextInterface;
+use Drupal\Core\Plugin\Context\EntityContextDefinition;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
+use Drupal\Core\TypedData\DataReferenceDefinitionInterface;
+use Drupal\Core\TypedData\DataReferenceInterface;
+use Drupal\Core\TypedData\ListDataDefinitionInterface;
+use Drupal\Core\TypedData\ListInterface;
 use Drupal\pathauto\PathautoPatternInterface;
 
 /**
@@ -231,9 +238,7 @@ class PathautoPattern extends ConfigEntityBase implements PathautoPatternInterfa
   public function getContexts() {
     $contexts = $this->getAliasType()->getContexts();
     foreach ($this->getRelationships() as $token => $definition) {
-      /** @var \Drupal\ctools\TypedDataResolver $resolver */
-      $resolver = \Drupal::service('ctools.typed_data.resolver');
-      $context = $resolver->convertTokenToContext($token, $contexts);
+      $context = $this->convertTokenToContext($token, $contexts);
       $context_definition = $context->getContextDefinition();
       if (!empty($definition['label'])) {
         $context_definition->setLabel($definition['label']);
@@ -379,6 +384,138 @@ class PathautoPattern extends ConfigEntityBase implements PathautoPatternInterfa
       return TRUE;
     }
     return FALSE;
+  }
+
+  /**
+   * Extracts a context from an array of contexts by a tokenized pattern.
+   *
+   * This is more than simple isset/empty checks on the contexts array. The
+   * pattern could be node:uid:name which will iterate over all provided
+   * contexts in the array for one named 'node', it will then load the data
+   * definition of 'node' and check for a property named 'uid'. This will then
+   * set a new (temporary) context on the array and recursively call itself to
+   * navigate through related properties all the way down until the request
+   * property is located. At that point the property is passed to a
+   * TypedDataResolver which will convert it to an appropriate ContextInterface
+   * object.
+   *
+   * @param string $token
+   *   A ":" delimited set of tokens representing
+   * @param \Drupal\Core\Plugin\Context\ContextInterface[] $contexts
+   *   The array of available contexts.
+   *
+   * @return \Drupal\Core\Plugin\Context\ContextInterface
+   *   The requested token as a full Context object.
+   *
+   * @throws \Exception
+   */
+  public function convertTokenToContext(string $token, array $contexts) {
+    // If the requested token is already a context, just return it.
+    if (isset($contexts[$token])) {
+      return $contexts[$token];
+    }
+    else {
+      list($base, $property_path) = explode(':', $token, 2);
+      // A base must always be set. This method recursively calls itself
+      // setting bases for this reason.
+      if (!empty($contexts[$base])) {
+        return $this->getContextFromProperty($property_path, $contexts[$base]);
+      }
+      // @todo improve this exception message.
+      throw new ContextNotFoundException("The requested context was not found in the supplied array of contexts.");
+    }
+  }
+
+  /**
+   * Convert a property to a context.
+   *
+   * This method will respect the value of contexts as well, so if a context
+   * object is pass that contains a value, the appropriate value will be
+   * extracted and injected into the resulting context object if available.
+   *
+   * @param string $property_path
+   *   The name of the property.
+   * @param \Drupal\Core\Plugin\Context\ContextInterface $context
+   *   The context from which we will extract values if available.
+   *
+   * @return \Drupal\Core\Plugin\Context\Context
+   *   A context object that represents the definition & value of the property.
+   *
+   * @throws \Exception
+   */
+  public function getContextFromProperty($property_path, ContextInterface $context) {
+    $value = NULL;
+    $data_definition = NULL;
+    if ($context->hasContextValue()) {
+      /** @var \Drupal\Core\TypedData\ComplexDataInterface $data */
+      $data = $context->getContextData();
+      foreach (explode(':', $property_path) as $name) {
+
+        if ($data instanceof ListInterface) {
+          if (!is_numeric($name)) {
+            // Implicitly default to delta 0 for lists when not specified.
+            $data = $data->first();
+          }
+          else {
+            // If we have a delta, fetch it and continue with the next part.
+            $data = $data->get($name);
+            continue;
+          }
+        }
+
+        // Forward to the target value if this is a data reference.
+        if ($data instanceof DataReferenceInterface) {
+          $data = $data->getTarget();
+        }
+
+        if (!$data->getDataDefinition()->getPropertyDefinition($name)) {
+          throw new \Exception("Unknown property $name in property path $property_path");
+        }
+        $data = $data->get($name);
+      }
+
+      $value = $data->getValue();
+      $data_definition = $data instanceof DataReferenceInterface ? $data->getDataDefinition()->getTargetDefinition() : $data->getDataDefinition();
+    }
+    else {
+      /** @var \Drupal\Core\TypedData\ComplexDataDefinitionInterface $data_definition */
+      $data_definition = $context->getContextDefinition()->getDataDefinition();
+      foreach (explode(':', $property_path) as $name) {
+
+        if ($data_definition instanceof ListDataDefinitionInterface) {
+          $data_definition = $data_definition->getItemDefinition();
+
+          // If the delta was specified explicitly, continue with the next part.
+          if (is_numeric($name)) {
+            continue;
+          }
+        }
+
+        // Forward to the target definition if this is a data reference
+        // definition.
+        if ($data_definition instanceof DataReferenceDefinitionInterface) {
+          $data_definition = $data_definition->getTargetDefinition();
+        }
+
+        if (!$data_definition->getPropertyDefinition($name)) {
+          throw new \Exception("Unknown property $name in property path $property_path");
+        }
+        $data_definition = $data_definition->getPropertyDefinition($name);
+      }
+
+      // Forward to the target definition if this is a data reference
+      // definition.
+      if ($data_definition instanceof DataReferenceDefinitionInterface) {
+        $data_definition = $data_definition->getTargetDefinition();
+      }
+    }
+    if (strpos($data_definition->getDataType(), 'entity:') === 0) {
+      $context_definition = new EntityContextDefinition($data_definition->getDataType(), $data_definition->getLabel(), $data_definition->isRequired(), FALSE, $data_definition->getDescription());
+    }
+    else {
+      $context_definition = new ContextDefinition($data_definition->getDataType(), $data_definition->getLabel(), $data_definition->isRequired(), FALSE, $data_definition->getDescription());
+    }
+    return new Context($context_definition, $value);
   }
 
 }

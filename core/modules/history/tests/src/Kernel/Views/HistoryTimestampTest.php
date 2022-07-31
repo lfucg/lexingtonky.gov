@@ -22,7 +22,7 @@ class HistoryTimestampTest extends ViewsKernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['history', 'node'];
+  protected static $modules = ['history', 'node'];
 
   /**
    * Views used by this test.
@@ -34,16 +34,16 @@ class HistoryTimestampTest extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp($import_test_views);
 
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
     $this->installSchema('history', ['history']);
-    // Use classy theme because its marker is wrapped in a span so it can be
-    // easily targeted with xpath.
-    \Drupal::service('theme_installer')->install(['classy']);
-    \Drupal::theme()->setActiveTheme(\Drupal::service('theme.initialization')->initTheme('classy'));
+    // Use history_test_theme because its marker is wrapped in a span so it can
+    // be easily targeted with xpath.
+    \Drupal::service('theme_installer')->install(['history_test_theme']);
+    \Drupal::theme()->setActiveTheme(\Drupal::service('theme.initialization')->initTheme('history_test_theme'));
   }
 
   /**

@@ -17,6 +17,11 @@ class ButtonAdminTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'node',
     'user',
@@ -98,7 +103,7 @@ class ButtonAdminTest extends WebDriverTestBase {
     $page->checkField('type_settings[display_plugins][' . $entity_embed_display_plugin_id . ']');
     $page->pressButton('Save');
 
-    $this->assertContains('The embed button ' . $entity_type_id . ' has been added.', $page->getText());
+    $this->assertStringContainsString('The embed button ' . $entity_type_id . ' has been added.', $page->getText());
     $this->assertSession()->linkByHrefExists('/admin/config/content/embed/button/manage/' . $entity_type_id);
 
     $this->drupalGet('/admin/config/content/embed/button/manage/' . $entity_type_id);

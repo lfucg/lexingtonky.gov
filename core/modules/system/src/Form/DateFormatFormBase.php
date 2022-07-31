@@ -77,13 +77,13 @@ abstract class DateFormatFormBase extends EntityForm {
       '#type' => 'textfield',
       '#title' => 'Name',
       '#maxlength' => 100,
-      '#description' => t('Name of the date format'),
+      '#description' => $this->t('Name of the date format'),
       '#default_value' => $this->entity->label(),
     ];
 
     $form['id'] = [
       '#type' => 'machine_name',
-      '#description' => t('A unique machine-readable name. Can only contain lowercase letters, numbers, and underscores.'),
+      '#description' => $this->t('A unique machine-readable name. Can only contain lowercase letters, numbers, and underscores.'),
       '#disabled' => !$this->entity->isNew(),
       '#default_value' => $this->entity->id(),
       '#machine_name' => [
@@ -94,9 +94,9 @@ abstract class DateFormatFormBase extends EntityForm {
     ];
     $form['date_format_pattern'] = [
       '#type' => 'textfield',
-      '#title' => t('Format string'),
+      '#title' => $this->t('Format string'),
       '#maxlength' => 100,
-      '#description' => $this->t('A user-defined date format. See the <a href="http://php.net/manual/function.date.php">PHP manual</a> for available options.'),
+      '#description' => $this->t('A user-defined date format. See the <a href="https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters">PHP manual</a> for available options.'),
       '#required' => TRUE,
       '#attributes' => [
         'data-drupal-date-formatter' => 'source',
@@ -106,7 +106,7 @@ abstract class DateFormatFormBase extends EntityForm {
 
     $form['langcode'] = [
       '#type' => 'language_select',
-      '#title' => t('Language'),
+      '#title' => $this->t('Language'),
       '#languages' => LanguageInterface::STATE_ALL,
       '#default_value' => $this->entity->language()->getId(),
     ];

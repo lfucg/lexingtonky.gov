@@ -62,53 +62,38 @@ class EventInfoController extends ControllerBase {
 
       $rows[][] = [
         'data' => $event_name,
-        'class' => 'table-filter-text-source devel-event-name-header',
+        'class' => ['devel-event-name-header'],
+        'filter' => TRUE,
         'colspan' => '3',
         'header' => TRUE,
       ];
 
-      foreach ($listeners as $priority => $listener) {
+      foreach ($listeners as $listener) {
         $row['name'] = [
           'data' => $event_name,
-          'class' => 'table-filter-text-source visually-hidden',
+          'class' => ['visually-hidden'],
+          'filter' => TRUE,
         ];
         $row['class'] = [
           'data' => $this->resolveCallableName($listener),
         ];
         $row['priority'] = [
-          'data' => $priority,
+          'data' => $this->eventDispatcher->getListenerPriority($event_name, $listener),
         ];
         $rows[] = $row;
       }
     }
 
-    $output['#attached']['library'][] = 'system/drupal.system.modules';
-
-    $output['filters'] = [
-      '#type' => 'container',
-      '#attributes' => [
-        'class' => ['table-filter', 'js-show'],
-      ],
-    ];
-    $output['filters']['name'] = [
-      '#type' => 'search',
-      '#title' => $this->t('Search'),
-      '#size' => 30,
-      '#placeholder' => $this->t('Enter event name'),
-      '#attributes' => [
-        'class' => ['table-filter-text'],
-        'data-table' => '.devel-filter-text',
-        'autocomplete' => 'off',
-        'title' => $this->t('Enter a part of the event name to filter by.'),
-      ],
-    ];
     $output['events'] = [
-      '#type' => 'table',
+      '#type' => 'devel_table_filter',
+      '#filter_label' => $this->t('Search'),
+      '#filter_placeholder' => $this->t('Enter event name'),
+      '#filter_description' => $this->t('Enter a part of the event name to filter by.'),
       '#header' => $headers,
       '#rows' => $rows,
       '#empty' => $this->t('No events found.'),
       '#attributes' => [
-        'class' => ['devel-event-list', 'devel-filter-text'],
+        'class' => ['devel-event-list'],
       ],
     ];
 

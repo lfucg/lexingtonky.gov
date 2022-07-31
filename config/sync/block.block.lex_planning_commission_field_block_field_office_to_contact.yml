@@ -1,0 +1,37 @@
+uuid: 807bfe76-e3c0-43d8-b9cf-7e40f4ce90eb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_office_to_contact
+  module:
+    - fieldblock
+    - node
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_field_block_field_office_to_contact
+theme: lex_planning_commission
+region: sidebar
+weight: -20
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: Contact
+  label_display: visible
+  provider: fieldblock
+  label_from_field: false
+  field_name: field_office_to_contact
+  formatter_id: entity_reference_entity_view
+  formatter_settings:
+    view_mode: default
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      board_commission: board_commission
+      organization_page: organization_page
+      page: page

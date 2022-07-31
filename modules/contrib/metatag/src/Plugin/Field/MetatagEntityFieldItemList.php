@@ -22,5 +22,4 @@ class MetatagEntityFieldItemList extends FieldItemList {
     return NULL;
   }
 
-
 }

@@ -12,6 +12,7 @@
 namespace Symfony\Component\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Exception\InvalidArgumentException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 /**
@@ -22,9 +23,9 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
  */
 class Length extends Constraint
 {
-    const TOO_SHORT_ERROR = '9ff3fdc4-b214-49db-8718-39c315e33d45';
-    const TOO_LONG_ERROR = 'd94b19cc-114f-4f44-9cc4-4138e80a87b9';
-    const INVALID_CHARACTERS_ERROR = '35e6a710-aa2e-4719-b58e-24b35749b767';
+    public const TOO_SHORT_ERROR = '9ff3fdc4-b214-49db-8718-39c315e33d45';
+    public const TOO_LONG_ERROR = 'd94b19cc-114f-4f44-9cc4-4138e80a87b9';
+    public const INVALID_CHARACTERS_ERROR = '35e6a710-aa2e-4719-b58e-24b35749b767';
 
     protected static $errorNames = [
         self::TOO_SHORT_ERROR => 'TOO_SHORT_ERROR',
@@ -39,6 +40,8 @@ class Length extends Constraint
     public $max;
     public $min;
     public $charset = 'UTF-8';
+    public $normalizer;
+    public $allowEmptyString;
 
     public function __construct($options = null)
     {
@@ -56,6 +59,10 @@ class Length extends Constraint
 
         if (null === $this->min && null === $this->max) {
             throw new MissingOptionsException(sprintf('Either option "min" or "max" must be given for constraint "%s".', __CLASS__), ['min', 'max']);
+        }
+
+        if (null !== $this->normalizer && !\is_callable($this->normalizer)) {
+            throw new InvalidArgumentException(sprintf('The "normalizer" option must be a valid callable ("%s" given).', \is_object($this->normalizer) ? \get_class($this->normalizer) : \gettype($this->normalizer)));
         }
     }
 }

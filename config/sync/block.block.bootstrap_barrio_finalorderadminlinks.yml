@@ -1,0 +1,38 @@
+uuid: 64413c4c-a378-4ddb-8f37-d1ef200dd19b
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.final-order-admin
+  module:
+    - system
+    - user
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_finalorderadminlinks
+theme: bootstrap_barrio
+region: top_header
+weight: -23
+provider: null
+plugin: 'system_menu_block:final-order-admin'
+settings:
+  id: 'system_menu_block:final-order-admin'
+  label: 'Final order admin links - view'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: /final-orders
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      final_order_admin: final_order_admin

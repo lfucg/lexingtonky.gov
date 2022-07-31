@@ -1,0 +1,25 @@
+uuid: ac52e9ec-e58d-44c1-a989-7106ee3a07ac
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.most-popular-searches
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: mostpopularsearches_4
+theme: lex_planning_commission
+region: hero
+weight: -23
+provider: null
+plugin: 'system_menu_block:most-popular-searches'
+settings:
+  id: 'system_menu_block:most-popular-searches'
+  label: 'Most Popular Searches'
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility: {  }

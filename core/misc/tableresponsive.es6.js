@@ -3,7 +3,7 @@
  * Responsive table functionality.
  */
 
-(function($, Drupal, window) {
+(function ($, Drupal, window) {
   /**
    * The TableResponsive object optimizes table presentation for screen size.
    *
@@ -64,15 +64,11 @@
    */
   Drupal.behaviors.tableResponsive = {
     attach(context, settings) {
-      const $tables = $(context)
-        .find('table.responsive-enabled')
-        .once('tableresponsive');
-      if ($tables.length) {
-        const il = $tables.length;
-        for (let i = 0; i < il; i++) {
-          TableResponsive.tables.push(new TableResponsive($tables[i]));
-        }
-      }
+      once('tableresponsive', 'table.responsive-enabled', context).forEach(
+        (table) => {
+          TableResponsive.tables.push(new TableResponsive(table));
+        },
+      );
     },
   };
 
@@ -112,13 +108,15 @@
         // If the table has hidden columns, associate an action link with the
         // table to show the columns.
         if (hiddenLength > 0) {
-          this.$link.show().text(this.showText);
+          this.$link.show();
+          this.$link[0].textContent = this.showText;
         }
         // When the toggle is pegged, its presence is maintained because the user
         // has interacted with it. This is necessary to keep the link visible if
         // the user adjusts screen size and changes the visibility of columns.
         if (!pegged && hiddenLength === 0) {
-          this.$link.hide().text(this.hideText);
+          this.$link.hide();
+          this.$link[0].textContent = this.hideText;
         }
       },
 
@@ -139,33 +137,28 @@
         this.$revealedCells = this.$revealedCells || $();
         // Reveal hidden columns.
         if ($hiddenHeaders.length > 0) {
-          $hiddenHeaders.each(function(index, element) {
+          $hiddenHeaders.each(function (index, element) {
             const $header = $(this);
             const position = $header.prevAll('th').length;
-            self.$table.find('tbody tr').each(function() {
-              const $cells = $(this)
-                .find('td')
-                .eq(position);
+            self.$table.find('tbody tr').each(function () {
+              const $cells = $(this).find('td').eq(position);
               $cells.show();
               // Keep track of the revealed cells, so they can be hidden later.
-              self.$revealedCells = $()
-                .add(self.$revealedCells)
-                .add($cells);
+              self.$revealedCells = $().add(self.$revealedCells).add($cells);
             });
             $header.show();
             // Keep track of the revealed headers, so they can be hidden later.
-            self.$revealedCells = $()
-              .add(self.$revealedCells)
-              .add($header);
+            self.$revealedCells = $().add(self.$revealedCells).add($header);
           });
-          this.$link.text(this.hideText).data('pegged', 1);
+          this.$link[0].textContent = this.hideText;
+          this.$link.data('pegged', 1);
         }
         // Hide revealed columns.
         else {
           this.$revealedCells.hide();
           // Strip the 'display:none' declaration from the style attributes of
           // the table cells that .hide() added.
-          this.$revealedCells.each(function(index, element) {
+          this.$revealedCells.each(function (index, element) {
             const $cell = $(this);
             const properties = $cell.attr('style').split(';');
             const newProps = [];
@@ -187,7 +180,8 @@
             // Return the rest of the style attribute values to the element.
             $cell.attr('style', newProps.join(';'));
           });
-          this.$link.text(this.showText).data('pegged', 0);
+          this.$link[0].textContent = this.showText;
+          this.$link.data('pegged', 0);
           // Refresh the toggle link.
           $(window).trigger('resize.tableresponsive');
         }

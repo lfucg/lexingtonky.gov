@@ -43,16 +43,18 @@ interface TaxonomyMenuInterface extends ConfigEntityInterface {
   public function getMenuParent();
 
   /**
+   * Get machine name of the field.
+   *
    * @return string
    *   The machine name of the field to be used as the description.
    */
   public function getDescriptionFieldName();
 
   /**
-   * Get menu link plugin definitions
+   * Get menu link plugin definitions.
    *
    * @param array $base_plugin_definition
-   *
+   *   Base plugin deifinition.
    * @param bool $include_base_plugin_id
    *   If true, 'taxonomy_menu.menu_link:' will be prepended to the returned
    *   plugin ids.
@@ -60,7 +62,7 @@ interface TaxonomyMenuInterface extends ConfigEntityInterface {
    * @return array
    *   Associative array of menu links ids and definitions.
    */
-  public function getLinks($base_plugin_definition = [], $include_base_plugin_id = FALSE);
+  public function getLinks(array $base_plugin_definition = [], $include_base_plugin_id = FALSE);
 
   /**
    * Generates a menu link id for the taxonomy term.
@@ -69,8 +71,9 @@ interface TaxonomyMenuInterface extends ConfigEntityInterface {
    *   Term to build menu item for.
    * @param bool $include_base_plugin_id
    *   Include base plugin id in menu item id.
+   *
    * @return string
-   *    A unique string id for the menu item.
+   *   A unique string id for the menu item.
    */
   public function buildMenuPluginId(TermInterface $term, $include_base_plugin_id = TRUE);
 

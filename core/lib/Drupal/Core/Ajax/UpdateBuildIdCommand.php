@@ -14,7 +14,7 @@ namespace Drupal\Core\Ajax;
  *
  * This command is implemented by
  * Drupal.AjaxCommands.prototype.update_build_id() defined in misc/ajax.js.
- *O
+ *
  * @ingroup ajax
  */
 class UpdateBuildIdCommand implements CommandInterface {
@@ -34,7 +34,7 @@ class UpdateBuildIdCommand implements CommandInterface {
   protected $new;
 
   /**
-   * Constructs a UpdateBuildIdCommand object.
+   * Constructs an UpdateBuildIdCommand object.
    *
    * @param string $old
    *   The old build_id.

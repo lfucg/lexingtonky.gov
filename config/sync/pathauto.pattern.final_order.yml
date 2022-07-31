@@ -1,0 +1,22 @@
+uuid: 33f9ab23-5005-4526-937a-ba18e8035fd8
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: final_order
+label: 'Final order'
+type: 'canonical_entities:node'
+pattern: 'final-orders/[node:nid]'
+selection_criteria:
+  d6df41c5-609d-4565-8859-4898e5a7d144:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: d6df41c5-609d-4565-8859-4898e5a7d144
+    context_mapping:
+      node: node
+    bundles:
+      final_order: final_order
+selection_logic: and
+weight: -5
+relationships: {  }

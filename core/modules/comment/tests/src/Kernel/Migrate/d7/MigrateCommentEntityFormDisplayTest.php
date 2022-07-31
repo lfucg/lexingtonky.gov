@@ -16,12 +16,12 @@ class MigrateCommentEntityFormDisplayTest extends MigrateDrupal7TestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'comment', 'text', 'menu_ui'];
+  protected static $modules = ['node', 'comment', 'text', 'menu_ui'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->migrateContentTypes();
     $this->migrateCommentTypes();
@@ -39,8 +39,10 @@ class MigrateCommentEntityFormDisplayTest extends MigrateDrupal7TestBase {
    *   The entity ID.
    * @param string $component_id
    *   The ID of the form component.
+   *
+   * @internal
    */
-  protected function assertDisplay($id, $component_id) {
+  protected function assertDisplay(string $id, string $component_id): void {
     $component = EntityFormDisplay::load($id)->getComponent($component_id);
     $this->assertIsArray($component);
     $this->assertSame('comment_default', $component['type']);

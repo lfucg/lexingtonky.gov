@@ -32,20 +32,19 @@ class InstallerLanguageDirectionTest extends InstallerTestBase {
     parent::setUpLanguage();
     // After selecting a different language than English, all following screens
     // should be translated already.
-    $elements = $this->xpath('//input[@type="submit"]/@value');
-    $this->assertEqual(current($elements)->getText(), 'Save and continue Arabic');
+    $this->assertSession()->buttonExists('Save and continue Arabic');
     $this->translations['Save and continue'] = 'Save and continue Arabic';
 
     // Verify that language direction is right-to-left.
     $direction = current($this->xpath('/@dir'))->getText();
-    $this->assertEqual($direction, 'rtl');
+    $this->assertEquals('rtl', $direction);
   }
 
   /**
    * Confirms that the installation succeeded.
    */
   public function testInstalled() {
-    $this->assertUrl('user/1');
+    $this->assertSession()->addressEquals('user/1');
     $this->assertSession()->statusCodeEquals(200);
   }
 

@@ -15,7 +15,7 @@ class ViewsDisplayTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'field',
     'search_api',
     'search_api_db',

@@ -1,7 +1,7 @@
 name: Paragraphs
 type: module
 description: 'Enables the creation of paragraphs entities.'
-core_version_requirement: ^8.8 || ^9
+core_version_requirement: ^9.2
 package: Paragraphs
 configure: entity.paragraphs_type.collection
 
@@ -16,7 +16,7 @@ test_dependencies:
   - field_group:field_group
   - block_field:block_field
 
-# Information added by Drupal.org packaging script on 2020-05-21
-version: '8.x-1.12'
+# Information added by Drupal.org packaging script on 2022-04-21
+version: '8.x-1.14'
 project: 'paragraphs'
-datestamp: 1590061337
+datestamp: 1650520871

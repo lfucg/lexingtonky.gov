@@ -54,7 +54,7 @@ class CaptchaImageRefresh extends ControllerBase {
       'message' => '',
     ];
     try {
-      module_load_include('inc', 'captcha', 'captcha');
+      \Drupal::moduleHandler()->loadInclude('captcha', 'inc', 'captcha');
       $config = $this->config('image_captcha.settings');
       $captcha_sid = _captcha_generate_captcha_session($form_id);
       $captcha_token = Crypt::randomBytesBase64();
@@ -73,6 +73,7 @@ class CaptchaImageRefresh extends ControllerBase {
         ->condition('csid', $captcha_sid, '=')
         ->execute();
       $result['data'] = [
+        //phpcs:ignore
         'url' => Url::fromRoute('image_captcha.generator', ['session_id' => $captcha_sid, 'timestamp' => $this->time->getRequestTime()])->toString(),
         'token' => $captcha_token,
         'sid' => $captcha_sid,

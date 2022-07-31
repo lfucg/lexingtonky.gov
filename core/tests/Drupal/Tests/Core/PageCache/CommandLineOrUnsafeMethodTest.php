@@ -19,11 +19,11 @@ class CommandLineOrUnsafeMethodTest extends UnitTestCase {
    */
   protected $policy;
 
-  protected function setUp() {
+  protected function setUp(): void {
     // Note that it is necessary to partially mock the class under test in
     // order to disable the isCli-check.
     $this->policy = $this->getMockBuilder('Drupal\Core\PageCache\RequestPolicy\CommandLineOrUnsafeMethod')
-      ->setMethods(['isCli'])
+      ->onlyMethods(['isCli'])
       ->getMock();
   }
 

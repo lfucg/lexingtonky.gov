@@ -6,7 +6,7 @@ namespace Drupal\search_api\Event;
 
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\search_api\IndexInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Wraps a foreign relationships mapping event.

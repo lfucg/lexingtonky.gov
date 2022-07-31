@@ -19,7 +19,7 @@ class ParagraphsDemoTest extends BrowserTestBase {
    *
    * @var string[]
    */
-  public static $modules = array(
+  protected static $modules = array(
     'paragraphs_demo',
     'block',
   );
@@ -32,11 +32,9 @@ class ParagraphsDemoTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
-    $this->drupalPlaceBlock('local_tasks_block');
-    $this->drupalPlaceBlock('local_actions_block');
-    $this->drupalPlaceBlock('page_title_block');
+    $this->placeDefaultBlocks();
   }
 
   /**
@@ -81,9 +79,9 @@ class ParagraphsDemoTest extends BrowserTestBase {
 
     // Set edit mode to open.
     $this->drupalGet('admin/structure/types/manage/paragraphed_content_demo/form-display');
-    $this->drupalPostForm(NULL, [], "field_paragraphs_demo_settings_edit");
+    $this->submitForm([], "field_paragraphs_demo_settings_edit");
     $edit = ['fields[field_paragraphs_demo][settings_edit_form][settings][edit_mode]' => 'open'];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, 'Save');
 
     // Check for all pre-configured paragraphs_types.
     $this->drupalGet('admin/structure/paragraphs_type');
@@ -144,7 +142,7 @@ class ParagraphsDemoTest extends BrowserTestBase {
 
     $this->drupalGet('node/add/paragraphed_content_demo');
     $this->assertSession()->responseContains('<h4 class="label">Paragraphs</h4>');
-    $this->drupalPostForm(NULL, NULL, t('Add Text'));
+    $this->submitForm([], 'Add Text');
     $this->assertSession()->responseNotContains('<strong data-drupal-selector="edit-field-paragraphs-demo-title">Paragraphs</strong>');
     $this->assertSession()->responseContains('<h4 class="label">Paragraphs</h4>');
     $edit = array(
@@ -152,11 +150,11 @@ class ParagraphsDemoTest extends BrowserTestBase {
       'moderation_state[0][state]' => 'published',
       'field_paragraphs_demo[0][subform][field_text_demo][0][value]' => 'Paragraph text',
     );
-    $this->drupalPostForm(NULL, $edit, t('Add User'));
+    $this->submitForm($edit, 'Add User');
     $edit = [
       'field_paragraphs_demo[1][subform][field_user_demo][0][target_id]' => $admin_user->label() . ' (' . $admin_user->id() . ')',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, 'Save');
 
     $this->assertSession()->pageTextContains('Paragraphed article Paragraph title has been created.');
     $this->assertSession()->pageTextContains('Paragraph title');
@@ -173,7 +171,7 @@ class ParagraphsDemoTest extends BrowserTestBase {
     $this->assertSession()->responseNotContains('Welcome to the Paragraphs Demo module!');
 
     // Check that the dropbutton of Nested Paragraph has the Duplicate function.
-    // For now, this indicates that it is using the EXPERIMENTAL widget.
+    // For now, this indicates that it is using the stable widget.
     $this->drupalGet('node/1/edit');
     $this->assertSession()->buttonExists('field_paragraphs_demo_3_subform_field_paragraphs_demo_0_duplicate');
 

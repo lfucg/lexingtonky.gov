@@ -18,7 +18,7 @@ class ContentTranslationEntityBundleInfoTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'system',
     'node',
     'user',
@@ -45,7 +45,7 @@ class ContentTranslationEntityBundleInfoTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->contentTranslationManager = $this->container->get('content_translation.manager');
@@ -98,7 +98,7 @@ class ContentTranslationEntityBundleInfoTest extends KernelTestBase {
   }
 
   /**
-   * Tests that bundle translation settings are propegated on creation.
+   * Tests that bundle translation settings are propagated on creation.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
@@ -110,7 +110,7 @@ class ContentTranslationEntityBundleInfoTest extends KernelTestBase {
   }
 
   /**
-   * Tests that bundle translation setting changes are propegated.
+   * Tests that bundle translation setting changes are propagated.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    * @throws \Exception

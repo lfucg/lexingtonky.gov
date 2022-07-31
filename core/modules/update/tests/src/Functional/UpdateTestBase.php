@@ -2,8 +2,6 @@
 
 namespace Drupal\Tests\update\Functional;
 
-use Drupal\Core\DrupalKernel;
-use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Tests\BrowserTestBase;
 
@@ -55,29 +53,6 @@ abstract class UpdateTestBase extends BrowserTestBase {
    */
   protected $updateProject;
 
-  protected function setUp() {
-    parent::setUp();
-
-    // Change the root path which Update Manager uses to install and update
-    // projects to be inside the testing site directory. See
-    // \Drupal\update\UpdateRootFactory::get() for equivalent changes to the
-    // test child site.
-    $request = \Drupal::request();
-    $update_root = $this->container->get('update.root') . '/' . DrupalKernel::findSitePath($request);
-    $this->container->set('update.root', $update_root);
-    \Drupal::setContainer($this->container);
-
-    // Create the directories within the root path within which the Update
-    // Manager will install projects.
-    foreach (drupal_get_updaters() as $updater_info) {
-      $updater = $updater_info['class'];
-      $install_directory = $update_root . '/' . $updater::getRootDirectoryRelativePath();
-      if (!is_dir($install_directory)) {
-        mkdir($install_directory);
-      }
-    }
-  }
-
   /**
    * Refreshes the update status based on the desired available update scenario.
    *
@@ -98,7 +73,7 @@ abstract class UpdateTestBase extends BrowserTestBase {
     $this->config('update_test.settings')->set('xml_map', $xml_map)->save();
     // Manually check the update status.
     $this->drupalGet('admin/reports/updates');
-    $this->clickLink(t('Check manually'));
+    $this->clickLink('Check manually');
     $this->checkForMetaRefresh();
   }
 
@@ -106,9 +81,12 @@ abstract class UpdateTestBase extends BrowserTestBase {
    * Runs a series of assertions that are applicable to all update statuses.
    */
   protected function standardTests() {
-    $this->assertRaw('<h3>' . t('Drupal core') . '</h3>');
-    $this->assertRaw(Link::fromTextAndUrl(t('Drupal'), Url::fromUri('http://example.com/project/drupal'))->toString(), 'Link to the Drupal project appears.');
-    $this->assertNoText(t('No available releases found'));
+    $this->assertSession()->responseContains('<h3>Drupal core</h3>');
+    // Verify that the link to the Drupal project appears.
+    $this->assertSession()->linkExists('Drupal');
+    $this->assertSession()->linkByHrefExists('http://example.com/project/drupal');
+    $this->assertSession()->pageTextNotContains('No available releases found');
+    $this->assertSession()->pageTextContains('Last checked:');
   }
 
   /**
@@ -140,7 +118,8 @@ abstract class UpdateTestBase extends BrowserTestBase {
       if ($expected_update_message_type === static::SECURITY_UPDATE_REQUIRED) {
         $assert_session->elementTextNotContains('css', $update_element_css_locator, 'Update available');
         $assert_session->elementTextContains('css', $update_element_css_locator, 'Security update required!');
-        $assert_session->responseContains('error.svg', 'Error icon was found.');
+        // Verify that the error icon is found.
+        $assert_session->responseContains('error.svg');
       }
       else {
         $assert_session->elementTextContains('css', $update_element_css_locator, 'Update available');
@@ -217,7 +196,7 @@ abstract class UpdateTestBase extends BrowserTestBase {
    */
   protected function confirmRevokedStatus($revoked_version, $newer_version, $new_version_label) {
     $this->drupalGet('admin/reports/updates');
-    $this->clickLink(t('Check manually'));
+    $this->clickLink('Check manually');
     $this->checkForMetaRefresh();
     $this->assertUpdateTableTextContains('Revoked!');
     $this->assertUpdateTableTextContains($revoked_version);
@@ -239,7 +218,7 @@ abstract class UpdateTestBase extends BrowserTestBase {
    */
   protected function confirmUnsupportedStatus($unsupported_version, $newer_version, $new_version_label) {
     $this->drupalGet('admin/reports/updates');
-    $this->clickLink(t('Check manually'));
+    $this->clickLink('Check manually');
     $this->checkForMetaRefresh();
     $this->assertUpdateTableTextContains('Not supported!');
     $this->assertUpdateTableTextContains($unsupported_version);
@@ -262,6 +241,16 @@ abstract class UpdateTestBase extends BrowserTestBase {
   }
 
   /**
+   * Asserts that the update table text does not contain the specified text.
+   *
+   * @param string $text
+   *   The expected text.
+   */
+  protected function assertUpdateTableTextNotContains($text) {
+    $this->assertSession()->elementTextNotContains('css', $this->updateTableLocator, $text);
+  }
+
+  /**
    * Asserts that the update table element HTML contains the specified text.
    *
    * @param string $text
@@ -272,6 +261,19 @@ abstract class UpdateTestBase extends BrowserTestBase {
   protected function assertUpdateTableElementContains($text) {
     $this->assertSession()
       ->elementContains('css', $this->updateTableLocator, $text);
+  }
+
+  /**
+   * Asserts that the update table element HTML contains the specified text.
+   *
+   * @param string $text
+   *   The expected text.
+   *
+   * @see \Behat\Mink\WebAssert::elementNotContains()
+   */
+  protected function assertUpdateTableElementNotContains($text) {
+    $this->assertSession()
+      ->elementNotContains('css', $this->updateTableLocator, $text);
   }
 
   /**

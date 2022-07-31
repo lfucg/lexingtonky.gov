@@ -21,7 +21,6 @@ class MetatagFaviconsTagsTest extends MetatagTagsTestBase {
    */
   protected $tags = [
     'shortcut_icon',
-    // 'mask_icon'.
     'icon_16x16',
     'icon_32x32',
     'icon_96x96',
@@ -221,17 +220,47 @@ class MetatagFaviconsTagsTest extends MetatagTagsTestBase {
   }
 
   /**
-   * Implements {tag_name}TestOutputXpath for 'mask-icon'.
-   */
-  protected function maskIconTestTagName() {
-    return 'mask-icon';
-  }
-
-  /**
    * Implements {tag_name}TestTagName for 'shortcut icon'.
    */
   protected function shortcutIconTestTagName() {
-    return 'shortcut icon';
+    return 'icon';
+  }
+
+  /**
+   * Test mask_icon.
+   *
+   * The mask_icon is a separate test case because of it's unusual structure.
+   * Mask_icon exists of 2 parts, an href and a color.
+   */
+  public function testMaskIcon() {
+    // Test that mask icon fields are available.
+    $this->drupalGet('admin/config/search/metatag/global');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('mask_icon[href]');
+    $this->assertSession()->fieldExists('mask_icon[color]');
+
+    // Test that a mask_icon is saved successfully and is correctly shown in
+    // the meta tags.
+    $edit = [
+      'mask_icon[href]' => 'mask_icon_href',
+    ];
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->pageTextContains('Saved the Global Metatag defaults.');
+
+    $this->drupalGet('user');
+    $this->xpath("//link[@rel='mask-icon' and @href='mask_icon_href']");
+
+    // Add a mask_icon color and check if it's correctly shown in the meta
+    // tags.
+    $this->drupalGet('admin/config/search/metatag/global');
+    $edit = [
+      'mask_icon[color]' => '#FFFFFF',
+    ];
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->pageTextContains('Saved the Global Metatag defaults.');
+
+    $this->drupalGet('user');
+    $this->xpath("//link[@rel='mask-icon' and @href='mask_icon_href' and @color='#FFFFFF']");
   }
 
 }

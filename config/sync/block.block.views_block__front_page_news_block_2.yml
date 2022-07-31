@@ -1,0 +1,32 @@
+uuid: 975b6b64-4f58-449b-8ace-6a40fc8bb688
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.front_page_news
+  module:
+    - ctools
+    - views
+  theme:
+    - lex
+id: views_block__front_page_news_block_2
+theme: lex
+region: sidebar
+weight: 0
+provider: null
+plugin: 'views_block:front_page_news-block_2'
+settings:
+  id: 'views_block:front_page_news-block_2'
+  label: ''
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      news_article: news_article

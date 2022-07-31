@@ -1,3 +1,4 @@
+# cspell:ignore filefield imagefield optionwidgets
 id: d6_field
 label: Field configuration
 migration_tags:

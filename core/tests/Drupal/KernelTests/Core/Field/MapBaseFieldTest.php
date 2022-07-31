@@ -23,7 +23,7 @@ class MapBaseFieldTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['entity_test_update'];
+  protected static $modules = ['entity_test_update'];
 
   /**
    * {@inheritdoc}

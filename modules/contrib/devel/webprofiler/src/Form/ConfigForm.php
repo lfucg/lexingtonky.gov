@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 
 /**
- * Class ConfigForm
+ * Class ConfigForm.
  */
 class ConfigForm extends ConfigFormBase {
 
@@ -43,7 +43,7 @@ class ConfigForm extends ConfigFormBase {
 
   /**
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   * @param Profiler $profiler
+   * @param \Symfony\Component\HttpKernel\Profiler\Profiler $profiler
    * @param \Drupal\webprofiler\Profiler\ProfilerStorageManager $storageManager
    * @param array $templates
    */
@@ -131,13 +131,13 @@ class ConfigForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('Database settings'),
       '#open' => FALSE,
-      '#states' => array(
-        'visible' => array(
-          array(
-            'input[name="active_toolbar_items[database]"]' => array('checked' => TRUE),
-          ),
-        ),
-      ),
+      '#states' => [
+        'visible' => [
+          [
+            'input[name="active_toolbar_items[database]"]' => ['checked' => TRUE],
+          ],
+        ],
+      ],
     ];
 
     $form['database']['query_sort'] = [
@@ -165,7 +165,8 @@ class ConfigForm extends ConfigFormBase {
       '#open' => FALSE,
     ];
 
-    $form['purge']['purge'] = [
+    $form['purge']['actions'] = ['#type' => 'actions'];
+    $form['purge']['actions']['purge'] = [
       '#type' => 'submit',
       '#value' => $this->t('Purge'),
       '#submit' => [[$this, 'purge']],
@@ -206,7 +207,7 @@ class ConfigForm extends ConfigFormBase {
    */
   public function purge(array &$form, FormStateInterface $form_state) {
     $this->profiler->purge();
-    drupal_set_message($this->t('Profiles purged'));
+    $this->messenger()->addMessage($this->t('Profiles purged'));
   }
 
   /**
@@ -215,7 +216,7 @@ class ConfigForm extends ConfigFormBase {
   private function getCollectors() {
     $options = [];
     foreach ($this->templates as $template) {
-      // drupal collector should not be disabled
+      // Drupal collector should not be disabled.
       if ($template[0] != 'drupal') {
         $options[$template[0]] = $template[2];
       }
@@ -234,4 +235,5 @@ class ConfigForm extends ConfigFormBase {
       'webprofiler.config',
     ];
   }
+
 }

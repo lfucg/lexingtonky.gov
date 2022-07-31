@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\Core\Extension;
 
+use Drupal\Core\Extension\ExtensionLifecycle;
 use Drupal\Core\Extension\InfoParser;
 use Drupal\Core\Extension\InfoParserException;
 use Drupal\Tests\UnitTestCase;
@@ -30,7 +31,7 @@ class InfoParserUnitTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     // Use a fake DRUPAL_ROOT.
     $this->infoParser = new InfoParser('vfs:/');
@@ -44,11 +45,11 @@ class InfoParserUnitTest extends UnitTestCase {
   public function testInfoParserNonExisting() {
     vfsStream::setup('modules');
     $info = $this->infoParser->parse(vfsStream::url('modules') . '/does_not_exist.info.txt');
-    $this->assertTrue(empty($info), 'Non existing info.yml returns empty array.');
+    $this->assertEmpty($info, 'Non existing info.yml returns empty array.');
   }
 
   /**
-   * Test if correct exception is thrown for a broken info file.
+   * Tests if correct exception is thrown for a broken info file.
    *
    * @covers ::parse
    */
@@ -125,7 +126,7 @@ MISSING_CORE_AND_CORE_VERSION_REQUIREMENT;
         'missing_core_and_core_version_requirement-duplicate.info.txt' => $missing_core_and_core_version_requirement,
       ],
     ]);
-    $exception_message = "The 'core' or the 'core_version_requirement' key must be present in vfs://modules/fixtures/missing_core_and_core_version_requirement";
+    $exception_message = "The 'core_version_requirement' key must be present in vfs://modules/fixtures/missing_core_and_core_version_requirement";
     // Set the expected exception for the 2nd call to parse().
     $this->expectException('\Drupal\Core\Extension\InfoParserException');
     $this->expectExceptionMessage("$exception_message-duplicate.info.txt");
@@ -237,12 +238,15 @@ BOTH_CORE_CORE_VERSION_REQUIREMENT_88;
    * Tests a invalid 'core' key.
    *
    * @covers ::parse
+   *
+   * @dataProvider providerInvalidCore
    */
-  public function testInvalidCore() {
+  public function testInvalidCore($core, $filename) {
     $invalid_core = <<<INVALID_CORE
 # info.yml for testing invalid core key.
 package: Core
-core: ^8
+core: $core
+core_version_requirement: ^8 || ^9
 version: VERSION
 type: module
 name: Llama or Alpaca
@@ -255,23 +259,148 @@ INVALID_CORE;
     vfsStream::setup('modules');
     vfsStream::create([
       'fixtures' => [
-        'invalid_core.info.txt' => $invalid_core,
-        'invalid_core-duplicate.info.txt' => $invalid_core,
+        "invalid_core-$filename.info.txt" => $invalid_core,
+        "invalid_core-$filename-duplicate.info.txt" => $invalid_core,
       ],
     ]);
-    $exception_message = "Invalid 'core' value \"^8\" in vfs://modules/fixtures/invalid_core";
+    $exception_message = "'core: {$core}' is not supported. Use 'core_version_requirement' to specify core compatibility. Only 'core: 8.x' is supported to provide backwards compatibility for Drupal 8 when needed in vfs://modules/fixtures/invalid_core-$filename";
     // Set the expected exception for the 2nd call to parse().
     $this->expectException('\Drupal\Core\Extension\InfoParserException');
     $this->expectExceptionMessage("$exception_message-duplicate.info.txt");
 
     try {
-      $this->infoParser->parse(vfsStream::url('modules/fixtures/invalid_core.info.txt'));
+      $this->infoParser->parse(vfsStream::url("modules/fixtures/invalid_core-$filename.info.txt"));
     }
     catch (InfoParserException $exception) {
       $this->assertSame("$exception_message.info.txt", $exception->getMessage());
 
-      $this->infoParser->parse(vfsStream::url('modules/fixtures/invalid_core-duplicate.info.txt'));
+      $this->infoParser->parse(vfsStream::url("modules/fixtures/invalid_core-$filename-duplicate.info.txt"));
     }
+  }
+
+  public function providerInvalidCore() {
+    return [
+      '^8' => [
+        '^8',
+        'caret8',
+      ],
+      '^9' => [
+        '^9',
+        'caret9',
+      ],
+      '7.x' => [
+        '7.x',
+        '7.x',
+      ],
+      '9.x' => [
+        '9.x',
+        '9.x',
+      ],
+      '10.x' => [
+        '10.x',
+        '10.x',
+      ],
+    ];
+  }
+
+  /**
+   * Tests a 'core: 8.x' with different values for 'core_version_requirement'.
+   *
+   * @covers ::parse
+   *
+   * @dataProvider providerCore8x
+   */
+  public function testCore8x($core_version_requirement, $filename) {
+    $core_8x = <<<CORE_8X
+package: Tests
+core: 8.x
+core_version_requirement: '$core_version_requirement'
+version: VERSION
+type: module
+name: Yet another test module
+description: Sorry, I am running out of witty descriptions
+CORE_8X;
+
+    vfsStream::setup('modules');
+    vfsStream::create([
+      'fixtures' => [
+        "core_8x-$filename.info.txt" => $core_8x,
+        "core_8x-$filename-duplicate.info.txt" => $core_8x,
+      ],
+    ]);
+    $parsed = $this->infoParser->parse(vfsStream::url("modules/fixtures/core_8x-$filename.info.txt"));
+    $this->assertSame($core_version_requirement, $parsed['core_version_requirement']);
+    $this->infoParser->parse(vfsStream::url("modules/fixtures/core_8x-$filename-duplicate.info.txt"));
+    $this->assertSame($core_version_requirement, $parsed['core_version_requirement']);
+  }
+
+  /**
+   * Data provider for testCore8x().
+   */
+  public function providerCore8x() {
+    return [
+      '^8 || ^9' => [
+        '^8 || ^9',
+        'all-8-9',
+      ],
+      '*' => [
+        '*',
+        'asterisk',
+      ],
+      '>=8' => [
+        ">=8",
+        'gte8',
+      ],
+    ];
+  }
+
+  /**
+   * Tests setting the 'core' key without the 'core_version_requirement' key.
+   *
+   * @covers ::parse
+   *
+   * @dataProvider providerCoreWithoutCoreVersionRequirement
+   */
+  public function testCoreWithoutCoreVersionRequirement($core) {
+    $core_without_core_version_requirement = <<<CORE_WITHOUT_CORE_VERSION_REQUIREMENT
+package: Dogs
+core: $core
+version: VERSION
+type: module
+name: Gracie Daily Picture
+description: Shows a random picture of Gracie the Dog everyday.
+CORE_WITHOUT_CORE_VERSION_REQUIREMENT;
+
+    vfsStream::setup('modules');
+    vfsStream::create([
+      'fixtures' => [
+        "core_without_core_version_requirement-$core.info.txt" => $core_without_core_version_requirement,
+        "core_without_core_version_requirement-$core-duplicate.info.txt" => $core_without_core_version_requirement,
+      ],
+    ]);
+    $exception_message = "'core: $core' is not supported. Use 'core_version_requirement' to specify core compatibility. Only 'core: 8.x' is supported to provide backwards compatibility for Drupal 8 when needed in vfs://modules/fixtures/core_without_core_version_requirement-$core";
+    // Set the expected exception for the 2nd call to parse().
+    $this->expectException('\Drupal\Core\Extension\InfoParserException');
+    $this->expectExceptionMessage("$exception_message-duplicate.info.txt");
+
+    try {
+      $this->infoParser->parse(vfsStream::url("modules/fixtures/core_without_core_version_requirement-$core.info.txt"));
+    }
+    catch (InfoParserException $exception) {
+      $this->assertSame("$exception_message.info.txt", $exception->getMessage());
+      $this->infoParser->parse(vfsStream::url("modules/fixtures/core_without_core_version_requirement-$core-duplicate.info.txt"));
+    }
+  }
+
+  /**
+   * DataProvider for testCoreWithoutCoreVersionRequirement().
+   */
+  public function providerCoreWithoutCoreVersionRequirement() {
+    return [
+      '7.x' => ['7.x'],
+      '9.x' => ['9.x'],
+      '10.x' => ['10.x'],
+    ];
   }
 
   /**
@@ -316,7 +445,7 @@ INVALID_CORE_VERSION_REQUIREMENT;
   }
 
   /**
-   * Dataprovider for testCoreVersionRequirementInvalid().
+   * Data provider for testCoreVersionRequirementInvalid().
    */
   public function providerCoreVersionRequirementInvalid() {
     return [
@@ -391,9 +520,9 @@ COMMONTEST;
         ],
       ]);
       $info_values = $this->infoParser->parse(vfsStream::url("modules/fixtures/$filename"));
-      $this->assertEquals($info_values['simple_string'], 'A simple string', 'Simple string value was parsed correctly.');
-      $this->assertEquals($info_values['version'], \Drupal::VERSION, 'Constant value was parsed correctly.');
-      $this->assertEquals($info_values['double_colon'], 'dummyClassName::method', 'Value containing double-colon was parsed correctly.');
+      $this->assertEquals('A simple string', $info_values['simple_string'], 'Simple string value was parsed correctly.');
+      $this->assertEquals(\Drupal::VERSION, $info_values['version'], 'Constant value was parsed correctly.');
+      $this->assertEquals('dummyClassName::method', $info_values['double_colon'], 'Value containing double-colon was parsed correctly.');
       $this->assertFalse($info_values['core_incompatible']);
     }
   }
@@ -420,7 +549,7 @@ CORETEST;
       ],
     ]);
     $info_values = $this->infoParser->parse(vfsStream::url("core/fixtures/$filename"));
-    $this->assertEquals($info_values['version'], \Drupal::VERSION, 'Constant value was parsed correctly.');
+    $this->assertEquals(\Drupal::VERSION, $info_values['version'], 'Constant value was parsed correctly.');
     $this->assertFalse($info_values['core_incompatible']);
     $this->assertEquals(\Drupal::VERSION, $info_values['core_version_requirement']);
   }
@@ -455,10 +584,10 @@ CORE_INCOMPATIBILITY;
   }
 
   /**
-   * Dataprovider for testCoreIncompatibility().
+   * Data provider for testCoreIncompatibility().
    */
   public function providerCoreIncompatibility() {
-    list($major, $minor) = explode('.', \Drupal::VERSION);
+    [$major, $minor] = explode('.', \Drupal::VERSION);
 
     $next_minor = $minor + 1;
     $next_major = $major + 1;
@@ -487,7 +616,7 @@ CORE_INCOMPATIBILITY;
   }
 
   /**
-   * Test a profile info file.
+   * Tests a profile info file.
    */
   public function testProfile() {
     $profile = <<<PROFILE_TEST
@@ -532,6 +661,224 @@ UNPARSABLE_CORE_VERSION_REQUIREMENT;
     $this->expectException(InfoParserException::class);
     $this->expectExceptionMessage("The 'core_version_requirement' constraint (not-this-version) is not a valid value in vfs://modules/fixtures/unparsable_core_version_requirement.info.txt");
     $this->infoParser->parse(vfsStream::url('modules/fixtures/unparsable_core_version_requirement.info.txt'));
+  }
+
+  /**
+   * Tests an info file with 'core: 8.x' but without 'core_version_requirement'.
+   *
+   * @covers ::parse
+   */
+  public function testCore8xNoCoreVersionRequirement() {
+    $info = <<<INFO
+package: Core
+core: 8.x
+version: VERSION
+type: module
+name: Module for That
+dependencies:
+  - field
+INFO;
+
+    vfsStream::setup('modules');
+    foreach (['1', '2'] as $file_delta) {
+      $filename = "core_version_requirement-$file_delta.info.txt";
+      vfsStream::create([
+        'fixtures' => [
+          $filename => $info,
+        ],
+      ]);
+      $info_values = $this->infoParser->parse(vfsStream::url("modules/fixtures/$filename"));
+      $this->assertSame(TRUE, $info_values['core_incompatible'], "Expected 'core_incompatible's for file: $filename");
+    }
+  }
+
+  /**
+   * Tests an info file with valid lifecycle values.
+   *
+   * @covers ::parse
+   *
+   * @dataProvider providerValidLifecycle
+   */
+  public function testValidLifecycle($lifecycle, $expected) {
+    $info = <<<INFO
+package: Core
+core: 8.x
+version: VERSION
+type: module
+name: Module for That
+INFO;
+    if (!empty($lifecycle)) {
+      $info .= "\nlifecycle: $lifecycle\n";
+    }
+    if (in_array($lifecycle, [ExtensionLifecycle::DEPRECATED, ExtensionLifecycle::OBSOLETE], TRUE)) {
+      $info .= "\nlifecycle_link: http://example.com\n";
+    }
+    vfsStream::setup('modules');
+    $filename = "lifecycle-$lifecycle.info.yml";
+    vfsStream::create([
+      'fixtures' => [
+        $filename => $info,
+      ],
+    ]);
+    $info_values = $this->infoParser->parse(vfsStream::url("modules/fixtures/$filename"));
+    $this->assertSame($expected, $info_values[ExtensionLifecycle::LIFECYCLE_IDENTIFIER]);
+  }
+
+  /**
+   * Data provider for testValidLifecycle().
+   */
+  public function providerValidLifecycle() {
+    return [
+      'empty' => [
+        '',
+        ExtensionLifecycle::STABLE,
+      ],
+      'experimental' => [
+        ExtensionLifecycle::EXPERIMENTAL,
+        ExtensionLifecycle::EXPERIMENTAL,
+      ],
+      'stable' => [
+        ExtensionLifecycle::STABLE,
+        ExtensionLifecycle::STABLE,
+      ],
+      'deprecated' => [
+        ExtensionLifecycle::DEPRECATED,
+        ExtensionLifecycle::DEPRECATED,
+      ],
+      'obsolete' => [
+        ExtensionLifecycle::OBSOLETE,
+        ExtensionLifecycle::OBSOLETE,
+      ],
+    ];
+  }
+
+  /**
+   * Tests an info file with invalid lifecycle values.
+   *
+   * @covers ::parse
+   *
+   * @dataProvider providerInvalidLifecycle
+   */
+  public function testInvalidLifecycle($lifecycle, $exception_message) {
+    $info = <<<INFO
+package: Core
+core: 8.x
+version: VERSION
+type: module
+name: Module for That
+INFO;
+    $info .= "\nlifecycle: $lifecycle\n";
+    vfsStream::setup('modules');
+    $filename = "lifecycle-$lifecycle.info.txt";
+    vfsStream::create([
+      'fixtures' => [
+        $filename => $info,
+      ],
+    ]);
+    $this->expectException('\Drupal\Core\Extension\InfoParserException');
+    $this->expectExceptionMessage($exception_message);
+    $info_values = $this->infoParser->parse(vfsStream::url("modules/fixtures/$filename"));
+    $this->assertEmpty($info_values);
+  }
+
+  /**
+   * Data provider for testInvalidLifecycle().
+   */
+  public function providerInvalidLifecycle() {
+    return [
+      'bogus' => [
+        'bogus',
+        "'lifecycle: bogus' is not valid",
+      ],
+      'two words' => [
+        'deprecated obsolete',
+        "'lifecycle: deprecated obsolete' is not valid",
+      ],
+      'wrong case' => [
+        'Experimental',
+        "'lifecycle: Experimental' is not valid",
+      ],
+    ];
+  }
+
+  /**
+   * Tests an info file's lifecycle_link values.
+   *
+   * @covers ::parse
+   *
+   * @dataProvider providerLifecycleLink
+   */
+  public function testLifecycleLink($lifecycle, $lifecycle_link = NULL, $exception_message = NULL) {
+    $info = <<<INFO
+package: Core
+core: 8.x
+version: VERSION
+type: module
+name: Module for That
+lifecycle: $lifecycle
+INFO;
+    if (($lifecycle_link)) {
+      $info .= "\nlifecycle_link: $lifecycle_link\n";
+    }
+    vfsStream::setup('modules');
+    // Use a random file name to bypass the static caching in
+    // \Drupal\Core\Extension\InfoParser.
+    $random = mb_strtolower($this->randomMachineName());
+    $filename = "lifecycle-$random.info.yml";
+    vfsStream::create([
+      'fixtures' => [
+        $filename => $info,
+      ],
+    ]);
+    $path = vfsStream::url("modules/fixtures/$filename");
+    if ($exception_message) {
+      $this->expectException(InfoParserException::class);
+      $this->expectExceptionMessage(sprintf($exception_message, $path));
+    }
+    $info_values = $this->infoParser->parse($path);
+    $this->assertSame($lifecycle, $info_values[ExtensionLifecycle::LIFECYCLE_IDENTIFIER]);
+  }
+
+  /**
+   * Data provider for testLifecycleLink().
+   */
+  public function providerLifecycleLink() {
+    return [
+      'valid deprecated' => [
+        ExtensionLifecycle::DEPRECATED,
+        'http://example.com',
+      ],
+      'valid obsolete' => [
+        ExtensionLifecycle::OBSOLETE,
+        'http://example.com',
+      ],
+      'valid stable' => [
+        ExtensionLifecycle::STABLE,
+      ],
+      'valid experimental' => [
+        ExtensionLifecycle::EXPERIMENTAL,
+      ],
+      'missing deprecated' => [
+        ExtensionLifecycle::DEPRECATED,
+        NULL,
+        "Extension Module for That (%s) has 'lifecycle: deprecated' but is missing a 'lifecycle_link' entry.",
+      ],
+      'missing obsolete' => [
+        ExtensionLifecycle::OBSOLETE,
+        NULL,
+        "Extension Module for That (%s) has 'lifecycle: obsolete' but is missing a 'lifecycle_link' entry.",
+      ],
+      'invalid deprecated' => [
+        ExtensionLifecycle::DEPRECATED,
+        'look ma, not a url',
+        "Extension Module for That (%s) has a 'lifecycle_link' entry that is not a valid URL.",
+      ],
+      'invalid obsolete' => [
+        ExtensionLifecycle::OBSOLETE,
+        'I think you may find that this is also not a url',
+        "Extension Module for That (%s) has a 'lifecycle_link' entry that is not a valid URL.",
+      ],
+    ];
   }
 
 }

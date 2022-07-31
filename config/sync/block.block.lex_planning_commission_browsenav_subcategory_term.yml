@@ -1,0 +1,25 @@
+uuid: 09182989-ed53-4fc7-9838-e09eadcaa834
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_browsenav_subcategory_term
+theme: lex_planning_commission
+region: content
+weight: -25
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Browse navigation: sub-category term'
+  label_display: '0'
+  provider: core
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: '/browse/*/*'

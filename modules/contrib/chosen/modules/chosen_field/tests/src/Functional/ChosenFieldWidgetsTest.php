@@ -49,7 +49,7 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
   /**
    * Function used to setup before running the test.
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Field storage with cardinality 1.
@@ -138,12 +138,12 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
 
     // Submit form: select invalid 'none' option.
     $edit = ['card_1' => '_none'];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->responseContains((string) new FormattableMarkup('@title field is required.', ['@title' => $instance->getName()]));
 
     // Submit form: select first option.
     $edit = ['card_1' => 0];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->assertFieldValues($entity_init, 'card_1', [0]);
 
     // Display form: check that the right options are selected.
@@ -175,7 +175,8 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
     $this->assertSession()->elementExists('xpath', '//select[@id="edit-card-1"]//option[@value="_none" and text()="- None -"]');
     // Submit form: Unselect the option.
     $edit = ['card_1' => '_none'];
-    $this->drupalPostForm('entity_test/manage/' . $entity->id() . '/edit', $edit, 'Save');
+    $this->drupalGet('entity_test/manage/' . $entity->id() . '/edit');
+    $this->submitForm($edit, 'Save');
     $this->assertFieldValues($entity_init, 'card_1', []);
 
     // Test optgroups.
@@ -199,7 +200,7 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
 
     // Submit form: select first option.
     $edit = ['card_1' => 0];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->assertFieldValues($entity_init, 'card_1', [0]);
 
     // Display form: check that the right options are selected.
@@ -221,7 +222,8 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
 
     // Submit form: Unselect the option.
     $edit = ['card_1' => '_none'];
-    $this->drupalPostForm('entity_test/manage/' . $entity->id() . '/edit', $edit, 'Save');
+    $this->drupalGet('entity_test/manage/' . $entity->id() . '/edit');
+    $this->submitForm($edit, 'Save');
     $this->assertFieldValues($entity_init, 'card_1', []);
   }
 
@@ -265,7 +267,7 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
 
     // Submit form: select first and third options.
     $edit = ['card_2[]' => [0 => 0, 2 => 2]];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->assertFieldValues($entity_init, 'card_2', [0, 2]);
 
     // Display form: check that the right options are selected.
@@ -291,7 +293,7 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
 
     // Submit form: select only first option.
     $edit = ['card_2[]' => [0 => 0]];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->assertFieldValues($entity_init, 'card_2', [0]);
 
     // Display form: check that the right options are selected.
@@ -313,12 +315,12 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
 
     // Submit form: select the three options while the field accepts only 2.
     $edit = ['card_2[]' => [0 => 0, 1 => 1, 2 => 2]];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->pageTextContains('this field cannot hold more than 2 values');
 
     // Submit form: uncheck all options.
     $edit = ['card_2[]' => []];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->assertFieldValues($entity_init, 'card_2', []);
 
     // A required select list does not have an empty key.
@@ -354,7 +356,7 @@ class ChosenFieldWidgetsTest extends FieldTestBase {
 
     // Submit form: select first option.
     $edit = ['card_2[]' => [0 => 0]];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->assertFieldValues($entity_init, 'card_2', [0]);
 
     // Display form: check that the right options are selected.

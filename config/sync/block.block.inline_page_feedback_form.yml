@@ -1,0 +1,31 @@
+uuid: 9cb31045-7c97-4182-8300-fc0d7ff02e90
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
+  module:
+    - block_content
+    - system
+  theme:
+    - lex
+id: inline_page_feedback_form
+theme: lex
+region: feedback
+weight: -25
+provider: null
+plugin: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
+settings:
+  id: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
+  label: 'Inline page feedback form'
+  label_display: '0'
+  provider: block_content
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    negate: true
+    context_mapping: {  }
+    pages: '/contact/*'

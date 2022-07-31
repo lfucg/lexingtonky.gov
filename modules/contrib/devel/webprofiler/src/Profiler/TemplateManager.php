@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Profiler\Profiler as SymfonyProfiler;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 
 /**
- * Profiler Templates Manager
+ * Profiler Templates Manager.
  */
 class TemplateManager {
 
@@ -43,7 +43,7 @@ class TemplateManager {
   /**
    * Constructor.
    *
-   * @param SymfonyProfiler $profiler
+   * @param \Symfony\Component\HttpKernel\Profiler\Profiler $profiler
    * @param \Twig_Environment $twig
    * @param \Twig_Loader_Chain $twigLoader
    * @param array $templates
@@ -58,7 +58,7 @@ class TemplateManager {
   /**
    * Gets the template name for a given panel.
    *
-   * @param Profile $profile
+   * @param \Symfony\Component\HttpKernel\Profiler\Profile $profile
    * @param string $panel
    *
    * @return mixed
@@ -127,4 +127,5 @@ class TemplateManager {
 
     return $templates;
   }
+
 }

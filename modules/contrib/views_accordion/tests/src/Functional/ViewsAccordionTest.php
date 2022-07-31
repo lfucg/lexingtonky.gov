@@ -14,6 +14,11 @@ class ViewsAccordionTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = [
     'views_accordion_test',
     'views_ui',

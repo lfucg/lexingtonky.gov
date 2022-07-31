@@ -7,10 +7,11 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Defines a form that allows privileged users to generate entities.
+ * Define a form to allow the user to switch and become another user.
  */
 class SwitchUserForm extends FormBase {
 
@@ -25,6 +26,7 @@ class SwitchUserForm extends FormBase {
    * Constructs a new SwitchUserForm object.
    *
    * @param \Drupal\Core\Access\CsrfTokenGenerator $csrf_token_generator
+   *   The CSRF token generator.
    */
   public function __construct(CsrfTokenGenerator $csrf_token_generator) {
     $this->csrfToken = $csrf_token_generator;
@@ -62,10 +64,10 @@ class SwitchUserForm extends FormBase {
       '#placeholder' => $this->t('Enter username'),
       '#target_type' => 'user',
       '#selection_settings' => [
-        'include_anonymous' => FALSE
+        'include_anonymous' => FALSE,
       ],
       '#process_default_value' => FALSE,
-      '#maxlength' => USERNAME_MAX_LENGTH,
+      '#maxlength' => UserInterface::USERNAME_MAX_LENGTH,
       '#title_display' => 'invisible',
       '#required' => TRUE,
       '#size' => '28',

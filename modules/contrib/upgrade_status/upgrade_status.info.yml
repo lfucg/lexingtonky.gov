@@ -1,0 +1,15 @@
+type: module
+name: 'Upgrade Status'
+description: 'Review Drupal major upgrade readiness of the environment and components of the site.'
+configure: upgrade_status.report
+package: Administration
+core_version_requirement: ^8 || ^9
+core: 8.x
+php: '7.1'
+dependencies:
+  - drupal:update
+
+# Information added by Drupal.org packaging script on 2022-03-01
+version: '8.x-3.14'
+project: 'upgrade_status'
+datestamp: 1646132504

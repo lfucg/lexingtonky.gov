@@ -16,7 +16,7 @@ use Drupal\Core\Url;
 function locale_install() {
   // Create the interface translations directory and ensure it's writable.
   if (!$directory = \Drupal::config('locale.settings')->get('translation.path')) {
-    $site_path = \Drupal::service('site.path');
+    $site_path = \Drupal::getContainer()->getParameter('site.path');
     $directory = $site_path . '/files/translations';
     \Drupal::configFactory()->getEditable('locale.settings')->set('translation.path', $directory)->save();
   }
@@ -32,7 +32,7 @@ function locale_uninstall() {
   $locale_js_directory = 'public://' . $config->get('javascript.directory');
 
   if (is_dir($locale_js_directory)) {
-    $locale_javascripts = \Drupal::state()->get('locale.translation.javascript') ?: [];
+    $locale_javascripts = \Drupal::state()->get('locale.translation.javascript', []);
     /** @var \Drupal\Core\File\FileSystemInterface $file_system */
     $file_system = \Drupal::service('file_system');
     foreach ($locale_javascripts as $langcode => $file_suffix) {
@@ -183,7 +183,6 @@ function locale_schema() {
       ],
     ],
     'indexes' => [
-      'string_id' => ['sid'],
       'string_type' => ['sid', 'type'],
     ],
   ];
@@ -309,29 +308,19 @@ function locale_requirements($phase) {
 }
 
 /**
- * Delete translation status data in state.
+ * Delete an unnecessary index on the locales_location table.
  */
-function locale_update_8300() {
-  // Delete the old translation status data, it will be rebuilt and stored in
-  // the new key value collection.
-  \Drupal::state()->delete('locale.translation_status');
-}
-
-/**
- * Update default server pattern value to use https.
- */
-function locale_update_8500() {
-  $update_url = \Drupal::config('locale.settings')->get('translation.default_server_pattern');
-  if ($update_url == 'http://ftp.drupal.org/files/translations/%core/%project/%project-%version.%language.po') {
-    \Drupal::configFactory()->getEditable('locale.settings')
-      ->set('translation.default_server_pattern', 'https://ftp.drupal.org/files/translations/%core/%project/%project-%version.%language.po')
-      ->save();
+function locale_update_9101() {
+  $schema = \Drupal::database()->schema();
+  $table = 'locales_location';
+  if ($schema->indexExists($table, 'string_id')) {
+    $schema->dropIndex($table, 'string_id');
   }
 }
 
 /**
- * Clear Locale project storage to use new 'all' instead of 8.x in URLs.
+ * Implements hook_update_last_removed().
  */
-function locale_update_8800() {
-  \Drupal::service('locale.project')->deleteAll();
+function locale_update_last_removed() {
+  return 8800;
 }

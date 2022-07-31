@@ -9,7 +9,7 @@ use Drupal\search_api\Contrib\RowsOfMultiValueFields;
 use Drupal\search_api\Utility\CommandHelper;
 use Drush\Commands\DrushCommands;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Defines Drush commands for the Search API.
@@ -30,7 +30,7 @@ class SearchApiCommands extends DrushCommands {
    *   The entity type manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The module handler.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher
+   * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $eventDispatcher
    *   The event dispatcher.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException

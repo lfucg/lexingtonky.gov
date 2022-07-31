@@ -8,13 +8,14 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\Core\Plugin\ContextAwarePluginBase;
+use Drupal\Core\Plugin\ContextAwarePluginTrait;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\layout_builder\Plugin\SectionStorage\SectionStorageLocalTaskProviderInterface;
 use Drupal\layout_builder\Routing\LayoutBuilderRoutesTrait;
 use Drupal\layout_builder\Section;
-use Drupal\layout_builder\SectionStorage\SectionStorageTrait;
+use Drupal\layout_builder\SectionListTrait;
 use Drupal\layout_builder\SectionStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\RouteCollection;
@@ -29,10 +30,11 @@ use Symfony\Component\Routing\RouteCollection;
  *   }
  * )
  */
-class SimpleConfigSectionStorage extends ContextAwarePluginBase implements SectionStorageInterface, SectionStorageLocalTaskProviderInterface, ContainerFactoryPluginInterface {
+class SimpleConfigSectionStorage extends PluginBase implements SectionStorageInterface, SectionStorageLocalTaskProviderInterface, ContainerFactoryPluginInterface {
 
+  use ContextAwarePluginTrait;
   use LayoutBuilderRoutesTrait;
-  use SectionStorageTrait;
+  use SectionListTrait;
 
   /**
    * The config factory.
@@ -196,22 +198,6 @@ class SimpleConfigSectionStorage extends ContextAwarePluginBase implements Secti
    */
   public function getContextsDuringPreview() {
     return $this->getContexts();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSectionListFromId($id) {
-    @trigger_error('\Drupal\layout_builder\SectionStorageInterface::getSectionListFromId() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. The section list should be derived from context. See https://www.drupal.org/node/3016262.', E_USER_DEPRECATED);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function extractIdFromRoute($value, $definition, $name, array $defaults) {
-    @trigger_error('\Drupal\layout_builder\SectionStorageInterface::extractIdFromRoute() is deprecated in Drupal 8.7.0 and will be removed before Drupal 9.0.0. \Drupal\layout_builder\SectionStorageInterface::deriveContextsFromRoute() should be used instead. See https://www.drupal.org/node/3016262.', E_USER_DEPRECATED);
-    return $value ?: $defaults['id'];
   }
 
   /**

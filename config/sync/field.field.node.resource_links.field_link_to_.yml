@@ -1,0 +1,23 @@
+uuid: d5c131ee-5c9a-4d34-b473-a8815062676f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_link_to_
+    - node.type.resource_links
+  module:
+    - link
+id: node.resource_links.field_link_to_
+field_name: field_link_to_
+entity_type: node
+bundle: resource_links
+label: 'Link to Resource'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 0
+  link_type: 17
+field_type: link

@@ -61,6 +61,7 @@ class ContactViewBuilderTest extends ContactStorageTestBase {
       'administer users',
       'administer account settings',
       'administer contact_message fields',
+      'create article content',
     ]);
 
     // Login as admin user.

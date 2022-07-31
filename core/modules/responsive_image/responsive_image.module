@@ -12,30 +12,8 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\responsive_image\Entity\ResponsiveImageStyle;
 use Drupal\responsive_image\ResponsiveImageStyleInterface;
-use Drupal\Core\Image\ImageInterface;
 use Drupal\breakpoint\BreakpointInterface;
-
-/**
- * The machine name for the empty image breakpoint image style option.
- *
- * @deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. Use
- *   Drupal\responsive_image\ResponsiveImageStyleInterface::EMPTY_IMAGE
- *   instead.
- *
- * @see https://www.drupal.org/node/2831620
- */
-const RESPONSIVE_IMAGE_EMPTY_IMAGE = '_empty image_';
-
-/**
- * The machine name for the original image breakpoint image style option.
- *
- * @deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\responsive_image\ResponsiveImageStyleInterface::ORIGINAL_IMAGE
- *   instead.
- *
- * @see https://www.drupal.org/node/2831620
- */
-const RESPONSIVE_IMAGE_ORIGINAL_IMAGE = '_original image_';
+use Symfony\Component\Mime\MimeTypeGuesserInterface;
 
 /**
  * Implements hook_help().
@@ -128,7 +106,7 @@ function template_preprocess_responsive_image_formatter(&$variables) {
   $item = $variables['item'];
   $attributes = [];
   // Do not output an empty 'title' attribute.
-  if (mb_strlen($item->title) != 0) {
+  if (!is_null($item->title) && mb_strlen($item->title) != 0) {
     $attributes['title'] = $item->title;
   }
   $attributes['alt'] = $item->alt;
@@ -234,32 +212,6 @@ function template_preprocess_responsive_image(&$variables) {
     }
     $variables['img_element']['#attributes'] = $variables['attributes'];
   }
-}
-
-/**
- * Helper function for template_preprocess_responsive_image().
- *
- * @param \Drupal\Core\Image\ImageInterface $image
- *   The image to build the <source> tags for.
- * @param array $variables
- *   An array with the following keys:
- *     - responsive_image_style_id: The \Drupal\responsive_image\Entity\ResponsiveImageStyle
- *       ID.
- *     - width: The width of the image (if known).
- *     - height: The height of the image (if known).
- *     - uri: The URI of the image file.
- * @param \Drupal\breakpoint\BreakpointInterface $breakpoint
- *   The breakpoint for this source tag.
- * @param array $multipliers
- *   An array with multipliers as keys and image style mappings as values.
- *
- * @return \Drupal\Core\Template\Attribute[]
- *   An array of attributes for the source tag.
- *
- * @deprecated in drupal:8.3.0 and is removed from drupal:9.0.0.
- */
-function responsive_image_build_source_attributes(ImageInterface $image, array $variables, BreakpointInterface $breakpoint, array $multipliers) {
-  return _responsive_image_build_source_attributes($variables, $breakpoint, $multipliers);
 }
 
 /**
@@ -526,7 +478,12 @@ function responsive_image_get_mime_type($image_style_name, $extension) {
   else {
     $fake_path = 'responsive_image.' . ImageStyle::load($image_style_name)->getDerivativeExtension($extension);
   }
-  return Drupal::service('file.mime_type.guesser.extension')->guess($fake_path);
+  $guesser = \Drupal::service('file.mime_type.guesser.extension');
+  if (!$guesser instanceof MimeTypeGuesserInterface) {
+    @trigger_error('\Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface is deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Implement \Symfony\Component\Mime\MimeTypeGuesserInterface instead. See https://www.drupal.org/node/3133341', E_USER_DEPRECATED);
+    return $guesser->guess($fake_path);
+  }
+  return $guesser->guessMimeType($fake_path);
 }
 
 /**
@@ -538,11 +495,15 @@ function _responsive_image_image_style_url($style_name, $path) {
     // http://probablyprogramming.com/2009/03/15/the-tiniest-gif-ever
     return 'data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
   }
+
+  /** @var \Drupal\Core\File\FileUrlGeneratorInterface $file_url_generator */
+  $file_url_generator = \Drupal::service('file_url_generator');
+
   $entity = ImageStyle::load($style_name);
   if ($entity instanceof ImageStyle) {
-    return file_url_transform_relative($entity->buildUrl($path));
+    return $file_url_generator->transformRelative($entity->buildUrl($path));
   }
-  return file_url_transform_relative(file_create_url($path));
+  return $file_url_generator->generateString($path);
 }
 
 /**

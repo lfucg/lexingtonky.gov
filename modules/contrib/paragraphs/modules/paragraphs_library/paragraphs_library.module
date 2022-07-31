@@ -139,7 +139,7 @@ function paragraphs_library_preprocess_paragraph(&$variables) {
     // Only replace the content if access is allowed to the library. Access
     // cacheability metadata is already returned by the original widget in case
     // access is not allowed.
-    if ($library_item->access('view')) {
+    if ($library_item->access('view') && isset($variables['elements']['field_reusable_paragraph'][0]['#view_mode'])) {
       $view_builder = \Drupal::entityTypeManager()
         ->getViewBuilder('paragraphs_library_item');
       $library_item_render_array = $view_builder->view($library_item, $variables['elements']['field_reusable_paragraph'][0]['#view_mode']);

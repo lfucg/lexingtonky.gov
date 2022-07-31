@@ -23,7 +23,7 @@ class StateValuesCleanAdvancedTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['file', 'form_test'];
+  protected static $modules = ['file', 'form_test'];
 
   /**
    * {@inheritdoc}
@@ -53,11 +53,12 @@ class StateValuesCleanAdvancedTest extends BrowserTestBase {
     $edit = ['files[image]' => \Drupal::service('file_system')->realpath($this->image->uri)];
 
     // Post the form.
-    $this->drupalPostForm('form_test/form-state-values-clean-advanced', $edit, t('Submit'));
+    $this->drupalGet('form_test/form-state-values-clean-advanced');
+    $this->submitForm($edit, 'Submit');
 
     // Expecting a 200 HTTP code.
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertRaw(t('You WIN!'), 'Found the success message.');
+    $this->assertSession()->pageTextContains("You WIN!");
   }
 
 }

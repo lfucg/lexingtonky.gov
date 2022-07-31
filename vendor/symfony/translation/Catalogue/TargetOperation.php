@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Translation\Catalogue;
 
+use Symfony\Component\Translation\MessageCatalogueInterface;
+
 /**
  * Target operation between two catalogues:
  * intersection = source ∩ target = {x: x ∈ source ∧ x ∈ target}
@@ -33,6 +35,7 @@ class TargetOperation extends AbstractOperation
             'new' => [],
             'obsolete' => [],
         ];
+        $intlDomain = $domain.MessageCatalogueInterface::INTL_DOMAIN_SUFFIX;
 
         // For 'all' messages, the code can't be simplified as ``$this->messages[$domain]['all'] = $target->all($domain);``,
         // because doing so will drop messages like {x: x ∈ source ∧ x ∉ target.all ∧ x ∈ target.fallback}
@@ -46,9 +49,10 @@ class TargetOperation extends AbstractOperation
         foreach ($this->source->all($domain) as $id => $message) {
             if ($this->target->has($id, $domain)) {
                 $this->messages[$domain]['all'][$id] = $message;
-                $this->result->add([$id => $message], $domain);
-                if (null !== $keyMetadata = $this->source->getMetadata($id, $domain)) {
-                    $this->result->setMetadata($id, $keyMetadata, $domain);
+                $d = $this->source->defines($id, $intlDomain) ? $intlDomain : $domain;
+                $this->result->add([$id => $message], $d);
+                if (null !== $keyMetadata = $this->source->getMetadata($id, $d)) {
+                    $this->result->setMetadata($id, $keyMetadata, $d);
                 }
             } else {
                 $this->messages[$domain]['obsolete'][$id] = $message;
@@ -59,9 +63,10 @@ class TargetOperation extends AbstractOperation
             if (!$this->source->has($id, $domain)) {
                 $this->messages[$domain]['all'][$id] = $message;
                 $this->messages[$domain]['new'][$id] = $message;
-                $this->result->add([$id => $message], $domain);
-                if (null !== $keyMetadata = $this->target->getMetadata($id, $domain)) {
-                    $this->result->setMetadata($id, $keyMetadata, $domain);
+                $d = $this->target->defines($id, $intlDomain) ? $intlDomain : $domain;
+                $this->result->add([$id => $message], $d);
+                if (null !== $keyMetadata = $this->target->getMetadata($id, $d)) {
+                    $this->result->setMetadata($id, $keyMetadata, $d);
                 }
             }
         }

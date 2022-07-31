@@ -5,17 +5,17 @@ namespace Drupal\webprofiler\Views;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\views\ViewEntityInterface;
-use Drupal\views\ViewExecutable;
 use Drupal\views\ViewExecutableFactory;
 use Drupal\views\ViewsData;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Class ViewExecutableFactoryWrapper
+ * Class ViewExecutableFactoryWrapper.
  */
 class ViewExecutableFactoryWrapper extends ViewExecutableFactory {
 
-  /** @var ViewExecutable $view_executable */
+  /**
+   * @var \Drupal\views\ViewExecutable*/
   private $views;
 
   /**
@@ -44,4 +44,5 @@ class ViewExecutableFactoryWrapper extends ViewExecutableFactory {
   public function getViews() {
     return $this->views;
   }
+
 }

@@ -14,6 +14,7 @@ use Drupal\Core\Field\ChangedFieldItemList;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\entity_reference_revisions\EntityNeedsSaveTrait;
@@ -83,7 +84,7 @@ use Drupal\user\UserInterface;
  *       }
  *     },
  *     "entity_form_display" = {
- *       "type" = "entity_reference_paragraphs"
+ *       "type" = "paragraphs"
  *     },
  *     "entity_view_display" = {
  *       "type" = "entity_reference_revisions_entity_view"
@@ -100,6 +101,7 @@ class Paragraph extends ContentEntityBase implements ParagraphInterface {
 
   use EntityNeedsSaveTrait;
   use EntityPublishedTrait;
+  use StringTranslationTrait;
 
   /**
    * The behavior plugin data for the paragraph entity.
@@ -164,7 +166,7 @@ class Paragraph extends ContentEntityBase implements ParagraphInterface {
       }
     }
     else {
-      $label = t('Orphaned @type: @summary', ['@summary' => Unicode::truncate(strip_tags($this->getSummary()), 50, FALSE, TRUE), '@type' => $this->get('type')->entity->label()]);
+      $label = $this->t('Orphaned @type: @summary', ['@summary' => Unicode::truncate(strip_tags($this->getSummary()), 50, FALSE, TRUE), '@type' => $this->get('type')->entity->label()]);
     }
     return $label;
   }
@@ -219,6 +221,8 @@ class Paragraph extends ContentEntityBase implements ParagraphInterface {
    * {@inheritdoc}
    */
   public function setBehaviorSettings($plugin_id, array $settings) {
+    // Get existing behaviors first.
+    $this->getAllBehaviorSettings();
     // Set behavior settings fields.
     $this->unserializedBehaviorSettings[$plugin_id] = $settings;
   }
@@ -736,7 +740,7 @@ class Paragraph extends ContentEntityBase implements ParagraphInterface {
         return '';
       }
 
-      $text = $this->get($field_name)->value;
+      $text = $this->get($field_name)->value ?? '';
       $summary = Unicode::truncate(trim(strip_tags($text)), 150);
       if (empty($summary)) {
         // Autoescape is applied to the summary when it is rendered with twig,

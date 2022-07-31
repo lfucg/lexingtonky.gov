@@ -21,7 +21,7 @@ glob
         )
       : defaultIgnore,
   })
-  .forEach(file => {
+  .forEach((file) => {
     let m = regex.exec(file);
     while (m !== null) {
       // This is necessary to avoid infinite loops with zero-width matches.
@@ -30,7 +30,7 @@ glob
       }
 
       const key = `../${m[1]}`;
-      Object.keys(collectedFolders).forEach(folder => {
+      Object.keys(collectedFolders).forEach((folder) => {
         if (file.includes(`Nightwatch/${folder}`)) {
           collectedFolders[folder].push(`${searchDirectory}${key}/${folder}`);
         }
@@ -40,7 +40,7 @@ glob
   });
 
 // Remove duplicate folders.
-Object.keys(collectedFolders).forEach(folder => {
+Object.keys(collectedFolders).forEach((folder) => {
   collectedFolders[folder] = Array.from(new Set(collectedFolders[folder]));
 });
 
@@ -76,6 +76,7 @@ module.exports = {
         path: `${process.env.DRUPAL_NIGHTWATCH_OUTPUT}/screenshots`,
       },
       end_session_on_fail: false,
+      skip_testcases_on_fail: false,
     },
     local: {
       webdriver: {
@@ -100,6 +101,7 @@ module.exports = {
         path: `${process.env.DRUPAL_NIGHTWATCH_OUTPUT}/screenshots`,
       },
       end_session_on_fail: false,
+      skip_testcases_on_fail: false,
     },
   },
 };

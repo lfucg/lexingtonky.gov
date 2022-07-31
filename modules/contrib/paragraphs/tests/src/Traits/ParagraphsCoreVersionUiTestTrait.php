@@ -35,24 +35,38 @@ trait ParagraphsCoreVersionUiTestTrait {
     if ($drupal_version > 8.3) {
       switch ($submit) {
         case  t('Save and unpublish'):
-          $submit = t('Save');
+          $submit = 'Save';
           $edit['status[value]'] = FALSE;
           break;
 
-        case t('Save and publish'):
-          $submit = t('Save');
+        case 'Save and publish':
+          $submit = 'Save';
           $edit['status[value]'] = TRUE;
           break;
 
-        case t('Save and keep published (this translation)'):
-          $submit = t('Save (this translation)');
+        case 'Save and keep published (this translation)':
+          $submit = 'Save (this translation)';
           break;
 
         default:
-          $submit = t('Save');
+          $submit = 'Save';
       }
     }
     parent::drupalPostForm($path, $edit, $submit, $options, $headers, $form_html_id, $extra_post);
+  }
+
+  /**
+   * Places commonly used blocks in a consistent order.
+   */
+  protected function placeDefaultBlocks() {
+    // Place the system main block explicitly and first to have a consistent
+    // block order before and after Drupal 9.4
+    $this->drupalPlaceBlock('system_main_block', ['weight' => -1, 'region' => 'content']);
+    // Place the breadcrumb, tested in fieldUIAddNewField().
+    $this->drupalPlaceBlock('system_breadcrumb_block', ['region' => 'content']);
+    $this->drupalPlaceBlock('local_tasks_block', ['region' => 'content']);
+    $this->drupalPlaceBlock('local_actions_block', ['region' => 'content']);
+    $this->drupalPlaceBlock('page_title_block', ['region' => 'content']);
   }
 
 }

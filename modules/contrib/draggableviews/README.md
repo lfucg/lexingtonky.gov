@@ -32,7 +32,7 @@ CONFIGURATION
 3) Under the "FIELDS" section, do you see "Content: Title"?  If you do not:
     - Click 'add' button at the "Fields" section and choose field
     "Content:title", add and apply.
-4) Add the Draggableviews Field:
+4) Add the "Draggableviews: Content" Field:
     - Click Add button at the "FIELDS" section.
     - At the top of the overlay, Change "For: 'All displays'" to 'This block
      (override)'.

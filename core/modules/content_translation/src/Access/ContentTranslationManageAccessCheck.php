@@ -3,7 +3,6 @@
 namespace Drupal\content_translation\Access;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageInterface;
@@ -17,12 +16,6 @@ use Symfony\Component\Routing\Route;
  * Access check for entity translation CRUD operation.
  */
 class ContentTranslationManageAccessCheck implements AccessInterface {
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The entity type manager.
@@ -74,7 +67,7 @@ class ContentTranslationManageAccessCheck implements AccessInterface {
    *   The access result.
    */
   public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account, $source = NULL, $target = NULL, $language = NULL, $entity_type_id = NULL) {
-    /* @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     if ($entity = $route_match->getParameter($entity_type_id)) {
       $operation = $route->getRequirement('_access_content_translation_manage');
       $language = $this->languageManager->getLanguage($language) ?: $this->languageManager->getCurrentLanguage(LanguageInterface::TYPE_CONTENT);
@@ -100,7 +93,7 @@ class ContentTranslationManageAccessCheck implements AccessInterface {
 
       switch ($operation) {
         case 'create':
-          /* @var \Drupal\content_translation\ContentTranslationHandlerInterface $handler */
+          /** @var \Drupal\content_translation\ContentTranslationHandlerInterface $handler */
           $handler = $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'translation');
           $translations = $entity->getTranslationLanguages();
           $languages = $this->languageManager->getLanguages();
@@ -144,7 +137,7 @@ class ContentTranslationManageAccessCheck implements AccessInterface {
    *   An access result object.
    */
   protected function checkAccess(ContentEntityInterface $entity, LanguageInterface $language, $operation) {
-    /* @var \Drupal\content_translation\ContentTranslationHandlerInterface $handler */
+    /** @var \Drupal\content_translation\ContentTranslationHandlerInterface $handler */
     $handler = $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'translation');
     $translations = $entity->getTranslationLanguages();
     $languages = $this->languageManager->getLanguages();

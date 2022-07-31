@@ -35,13 +35,6 @@ bootstrap_barrio_navbar_background: 'bg-primary'
 # ----------------------------
 bootstrap_barrio_messages_widget: 'toasts'
 
-# Form.
-# ----------------------------
-bootstrap_barrio_radio: 'custom'
-bootstrap_barrio_checkbox: 'switch'
-bootstrap_barrio_select: 'custom'
-bootstrap_barrio_file: 'custom'
-
 # Colors.
 # ----------------------------
 bootstrap_barrio_system_messages: 'messages_white'

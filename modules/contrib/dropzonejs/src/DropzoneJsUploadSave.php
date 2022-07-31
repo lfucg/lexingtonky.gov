@@ -170,23 +170,28 @@ class DropzoneJsUploadSave implements DropzoneJsUploadSaveInterface {
       return FALSE;
     }
 
-    // Prepare destination.
-    if (!$this->prepareDestination($file, $destination)) {
-      $this->messenger->addError($this->t('The file could not be uploaded because the destination %destination is invalid.', ['%destination' => $destination]));
-      return FALSE;
+    if (!empty($destination)) {
+      // Prepare destination.
+      if (!$this->prepareDestination($file, $destination)) {
+        $this->messenger->addError($this->t('The file could not be uploaded because the destination %destination is invalid.', ['%destination' => $destination]));
+        return FALSE;
+      }
+
+      // Move uploaded files from PHP's upload_tmp_dir to destination.
+      $move_result = $this->fileSystem->move($uri, $file->getFileUri());
+      if (!$move_result) {
+        $this->messenger->addError($this->t('File upload error. Could not move uploaded file.'));
+
+        $this->logger->notice('Upload error. Could not move uploaded file %file to destination %destination.', [
+          '%file' => $file->getFilename(),
+          '%destination' => $file->getFileUri(),
+        ]);
+        return FALSE;
+      }
+
+      // Set the permissions on the new file.
+      $this->fileSystem->chmod($file->getFileUri());
     }
-
-    // Move uploaded files from PHP's upload_tmp_dir to destination.
-    $move_result = $this->fileSystem->move($uri, $file->getFileUri());
-    if (!$move_result) {
-      $this->messenger->addError($this->t('File upload error. Could not move uploaded file.'));
-
-      $this->logger->notice('Upload error. Could not move uploaded file %file to destination %destination.', ['%file' => $file->getFilename(), '%destination' => $file->getFileUri()]);
-      return FALSE;
-    }
-
-    // Set the permissions on the new file.
-    $this->fileSystem->chmod($file->getFileUri());
 
     return $file;
   }

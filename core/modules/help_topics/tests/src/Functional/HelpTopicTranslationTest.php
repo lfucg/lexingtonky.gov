@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\help_topics\Functional;
 
+// cspell:ignore hilfetestmodul übersetzung
+
 /**
  * Verifies help topic translations.
  *
@@ -17,7 +19,7 @@ class HelpTopicTranslationTest extends HelpTopicTranslatedTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create user and log in.

@@ -5,6 +5,8 @@
  * Various install/uninstall hooks for the Metatag Views module.
  */
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
 /**
  * Implements hook_install().
  */
@@ -41,5 +43,12 @@ function metatag_views_uninstall() {
  * Notify admins that the custom admin pages were (temporarily) disabled.
  */
 function metatag_views_update_8100() {
-  return (string) t("The custom admin pages for managing Views meta tags at /admin/config/search/metatag/views have been disabled for now, hopefully they'll be back in a future release. Until then, the meta tags can be managed directly on each individual view via the \"Meta tags\" section.");
+  return (string) new TranslatableMarkup("The custom admin pages for managing Views meta tags at /admin/config/search/metatag/views have been disabled for now, hopefully they'll be back in a future release. Until then, the meta tags can be managed directly on each individual view via the \"Meta tags\" section.");
+}
+
+/**
+ * Empty update script to trigger a cache clear.
+ */
+function metatag_views_update_8101() {
+  return (string) new TranslatableMarkup("Empty update script to clear the site's caches so the new token replacement functionality will work.");
 }

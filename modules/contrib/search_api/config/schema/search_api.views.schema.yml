@@ -11,6 +11,12 @@ views.query.search_api_query:
     preserve_facet_query_args:
       type: boolean
       label: By default, changing an exposed filter would reset all selected facets. This option allows you to prevent this behavior.
+    query_tags:
+      type: sequence
+      label: 'Query Tags'
+      sequence:
+        type: string
+        label: 'Tag'
 
 views.row.search_api:
   type: views_row
@@ -27,6 +33,10 @@ views.row.search_api:
         sequence:
           type: string
           label: View mode for the specific bundle
+
+views.row.search_api_data:
+  type: views.row.data_field
+  label: 'Entity (Search API)'
 
 views.cache.search_api_time:
   type: views_cache
@@ -61,6 +71,14 @@ views.cache.search_api_tag:
 views.argument.search_api:
   type: views.argument.numeric
   label: 'Search API'
+
+views.argument.search_api_all_terms:
+  type: views.argument.search_api
+  label: 'Search API all taxonomy terms'
+
+views.argument.search_api_date:
+  type: views.argument.search_api
+  label: 'Search API date'
 
 views.argument.search_api_fulltext:
   type: views.argument.search_api
@@ -169,6 +187,10 @@ views.field.search_api_entity:
           view_mode:
             type: string
             label: 'View mode'
+
+views.field.search_api_entity_operations:
+  type: views.field.entity_operations
+  label: 'Search API operations links'
 
 views.field.search_api_field:
   type: views.field.field

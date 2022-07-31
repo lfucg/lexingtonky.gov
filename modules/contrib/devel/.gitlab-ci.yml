@@ -1,0 +1,15 @@
+include:
+  # This remote project centralize our CI "golden path" https://docs.gitlab.com/ee/ci/yaml/#includefile
+  remote: 'https://gitlab.com/drupalspoons/composer-plugin/-/raw/master/templates/.gitlab-ci.yml'
+
+#
+# Projects may override anything in the template above.
+# The code below is specific to devel project. Comment it out or delete it when
+# copying this file to your new project.
+#
+
+# Add /webprofiler to ignored paths.
+phpcs:
+  script:
+    - PWD=$(pwd) && vendor/bin/phpcs --runtime-set ignore_warnings_on_exit 1 --runtime-set ignore_errors_on_exit 1 --ignore=$PWD/web/,$PWD/vendor/,$PWD/webprofiler/ --report-junit=junit.xml --report-full --report-summary
+

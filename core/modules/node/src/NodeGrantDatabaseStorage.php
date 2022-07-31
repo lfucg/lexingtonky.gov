@@ -5,7 +5,6 @@ namespace Drupal\node;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
-use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -67,7 +66,7 @@ class NodeGrantDatabaseStorage implements NodeGrantDatabaseStorageInterface {
 
     // If no module implements the hook or the node does not have an id there is
     // no point in querying the database for access grants.
-    if (!$this->moduleHandler->getImplementations('node_grants') || !$node->id()) {
+    if (!$this->moduleHandler->hasImplementations('node_grants') || !$node->id()) {
       // Return the equivalent of the default grant, defined by
       // self::writeDefault().
       if ($operation === 'view') {
@@ -98,7 +97,7 @@ class NodeGrantDatabaseStorage implements NodeGrantDatabaseStorageInterface {
     $query->condition($nids);
     $query->range(0, 1);
 
-    $grants = static::buildGrantsQueryCondition(node_access_grants($operation, $account));
+    $grants = $this->buildGrantsQueryCondition(node_access_grants($operation, $account));
 
     if (count($grants) > 0) {
       $query->condition($grants);
@@ -136,7 +135,7 @@ class NodeGrantDatabaseStorage implements NodeGrantDatabaseStorageInterface {
       ->condition('nid', 0)
       ->condition('grant_view', 1, '>=');
 
-    $grants = static::buildGrantsQueryCondition(node_access_grants('view', $account));
+    $grants = $this->buildGrantsQueryCondition(node_access_grants('view', $account));
 
     if (count($grants) > 0) {
       $query->condition($grants);
@@ -158,7 +157,7 @@ class NodeGrantDatabaseStorage implements NodeGrantDatabaseStorageInterface {
     $grants = node_access_grants($op, $account);
     // If any grant exists for the specified user, then user has access to the
     // node for the specified operation.
-    $grant_conditions = static::buildGrantsQueryCondition($grants);
+    $grant_conditions = $this->buildGrantsQueryCondition($grants);
     $grants_exist = count($grant_conditions->conditions()) > 0;
 
     $is_multilingual = \Drupal::languageManager()->isMultilingual();
@@ -190,7 +189,7 @@ class NodeGrantDatabaseStorage implements NodeGrantDatabaseStorageInterface {
 
         $field = 'nid';
         // Now handle entities.
-        $subquery->where("$nalias.$field = na.nid");
+        $subquery->where("[$nalias].[$field] = [na].[nid]");
 
         $query->exists($subquery);
       }
@@ -209,7 +208,7 @@ class NodeGrantDatabaseStorage implements NodeGrantDatabaseStorageInterface {
       $query->execute();
     }
     // Only perform work when node_access modules are active.
-    if (!empty($grants) && count($this->moduleHandler->getImplementations('node_grants'))) {
+    if (!empty($grants) && $this->moduleHandler->hasImplementations('node_grants')) {
       $query = $this->database->insert('node_access')->fields(['nid', 'langcode', 'fallback', 'realm', 'gid', 'grant_view', 'grant_update', 'grant_delete']);
       // If we have defined a granted langcode, use it. But if not, add a grant
       // for every language this node is translated to.
@@ -294,11 +293,11 @@ class NodeGrantDatabaseStorage implements NodeGrantDatabaseStorageInterface {
    *
    * @see node_access_grants()
    */
-  protected static function buildGrantsQueryCondition(array $node_access_grants) {
-    $grants = new Condition("OR");
+  protected function buildGrantsQueryCondition(array $node_access_grants) {
+    $grants = $this->database->condition('OR');
     foreach ($node_access_grants as $realm => $gids) {
       if (!empty($gids)) {
-        $and = new Condition('AND');
+        $and = $this->database->condition('AND');
         $grants->condition($and
           ->condition('gid', $gids, 'IN')
           ->condition('realm', $realm)

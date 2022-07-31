@@ -16,27 +16,35 @@ use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+/**
+ * Configure Context Form.
+ */
 abstract class ContextConfigure extends FormBase {
 
   /**
+   * Tempstore Factory.
+   *
    * @var \Drupal\Core\TempStore\SharedTempStoreFactory
    */
   protected $tempstore;
 
   /**
-   * Object EntityTypeManager.
+   * Entity Type Manager.
    *
-   * @var Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * The Tempstore ID.
+   *
    * @var string
    */
   protected $tempstore_id;
 
   /**
+   * The form machine name.
+   *
    * @var string
    */
   protected $machine_name;
@@ -51,7 +59,14 @@ abstract class ContextConfigure extends FormBase {
     );
   }
 
-
+  /**
+   * Configure Context Form constructor.
+   *
+   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   *   The tempstore factory.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
   public function __construct(SharedTempStoreFactory $tempstore, EntityTypeManagerInterface $entity_type_manager) {
     $this->tempstore = $tempstore;
     $this->entityTypeManager = $entity_type_manager;
@@ -120,7 +135,7 @@ abstract class ContextConfigure extends FormBase {
       '#default_value' => $description,
     ];
     if (strpos($data_type, 'entity:') === 0) {
-      list(, $entity_type) = explode(':', $data_type);
+      [, $entity_type] = explode(':', $data_type);
       /** @var \Drupal\Core\Entity\Plugin\DataType\EntityAdapter $entity */
       $entity = $edit ? $context->getContextValue() : NULL;
       $form['context_value'] = [
@@ -187,7 +202,7 @@ abstract class ContextConfigure extends FormBase {
     }
     // We're dealing with an entity and should make sure it's loaded.
     if (strpos($context_definition->getDataType(), 'entity:') === 0) {
-      list(, $entity_type) = explode(':', $context_definition->getDataType());
+      [, $entity_type] = explode(':', $context_definition->getDataType());
       if (is_numeric($form_state->getValue('context_value'))) {
         $value = $this->entityTypeManager->getStorage($entity_type)->load($form_state->getValue('context_value'));
       }
@@ -200,15 +215,25 @@ abstract class ContextConfigure extends FormBase {
 
     $cached_values = $this->addContext($cached_values, $form_state->getValue('machine_name'), $context);
     $this->tempstore->get($this->tempstore_id)->set($this->machine_name, $cached_values);
-    list($route_name, $route_parameters) = $this->getParentRouteInfo($cached_values);
+    [$route_name, $route_parameters] = $this->getParentRouteInfo($cached_values);
     $form_state->setRedirect($route_name, $route_parameters);
   }
 
-
+  /**
+   * Ajax Save Method.
+   *
+   * @param array $form
+   *   Drupal Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form State.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   *   The ajax data in the response.
+   */
   public function ajaxSave(array &$form, FormStateInterface $form_state) {
     $response = new AjaxResponse();
     $cached_values = $this->tempstore->get($this->tempstore_id)->get($this->machine_name);
-    list($route_name, $route_parameters) = $this->getParentRouteInfo($cached_values);
+    [$route_name, $route_parameters] = $this->getParentRouteInfo($cached_values);
     $url = new Url($route_name, $route_parameters);
     $response->addCommand(new RedirectCommand($url->toString()));
     $response->addCommand(new CloseModalDialogCommand());

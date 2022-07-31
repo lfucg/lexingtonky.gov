@@ -33,11 +33,8 @@ class InlineBlockTest extends InlineBlockTestBase {
     ]));
 
     // Enable layout builder.
-    $this->drupalPostForm(
-      static::FIELD_UI_PREFIX . '/display/default',
-      ['layout[enabled]' => TRUE],
-      'Save'
-    );
+    $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default');
+    $this->submitForm(['layout[enabled]' => TRUE], 'Save');
     $this->clickLink('Manage layout');
     $assert_session->addressEquals(static::FIELD_UI_PREFIX . '/display/default/layout');
     // Add a basic block with the body field set.
@@ -50,7 +47,8 @@ class InlineBlockTest extends InlineBlockTestBase {
     $assert_session->pageTextContains('The DEFAULT block body');
 
     // Enable overrides.
-    $this->drupalPostForm(static::FIELD_UI_PREFIX . '/display/default', ['layout[allow_custom]' => TRUE], 'Save');
+    $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default');
+    $this->submitForm(['layout[allow_custom]' => TRUE], 'Save');
     $this->drupalGet('node/1/layout');
 
     // Confirm the block can be edited.
@@ -80,7 +78,7 @@ class InlineBlockTest extends InlineBlockTestBase {
 
     // Confirm the block can be edited.
     $this->drupalGet('node/1/layout');
-    /* @var \Behat\Mink\Element\NodeElement $inline_block_2 */
+    /** @var \Behat\Mink\Element\NodeElement $inline_block_2 */
     $inline_block_2 = $page->findAll('css', static::INLINE_BLOCK_LOCATOR)[1];
     $uuid = $inline_block_2->getAttribute('data-layout-block-uuid');
     $block_css_locator = static::INLINE_BLOCK_LOCATOR . "[data-layout-block-uuid=\"$uuid\"]";
@@ -118,11 +116,11 @@ class InlineBlockTest extends InlineBlockTestBase {
     $page = $this->getSession()->getPage();
     $this->assertEmpty($this->blockStorage->loadMultiple(), 'No entity blocks exist');
     // Enable layout builder and overrides.
-    $this->drupalPostForm(
-      static::FIELD_UI_PREFIX . '/display/default',
-      ['layout[enabled]' => TRUE, 'layout[allow_custom]' => TRUE],
-      'Save'
-    );
+    $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default');
+    $this->submitForm([
+      'layout[enabled]' => TRUE,
+      'layout[allow_custom]' => TRUE,
+    ], 'Save');
 
     $this->drupalGet('node/1/layout');
     $this->addInlineBlockToLayout('Block title', 'The block body');
@@ -142,7 +140,7 @@ class InlineBlockTest extends InlineBlockTestBase {
     $assert_session->pageTextContains('The block body');
     $blocks = $this->blockStorage->loadMultiple();
     $this->assertCount(1, $blocks);
-    /* @var \Drupal\Core\Entity\ContentEntityBase $block */
+    /** @var \Drupal\Core\Entity\ContentEntityBase $block */
     $block = array_pop($blocks);
     $revision_id = $block->getRevisionId();
 
@@ -166,7 +164,7 @@ class InlineBlockTest extends InlineBlockTestBase {
       $this->assertCount(1, $blocks);
       $block = array_pop($blocks);
       $this->assertEquals($block->getRevisionId(), $revision_id);
-      $this->assertEquals($block->get('body')->getValue()[0]['value'], 'The block body');
+      $this->assertEquals('The block body', $block->get('body')->getValue()[0]['value']);
     }
     else {
       // The block should not be visible.
@@ -210,11 +208,8 @@ class InlineBlockTest extends InlineBlockTestBase {
       'create and edit custom blocks',
     ]));
     // Enable layout builder and overrides.
-    $this->drupalPostForm(
-      static::FIELD_UI_PREFIX . '/display/default',
-      ['layout[enabled]' => TRUE, 'layout[allow_custom]' => TRUE],
-      'Save'
-    );
+    $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default');
+    $this->submitForm(['layout[enabled]' => TRUE, 'layout[allow_custom]' => TRUE], 'Save');
     $this->drupalGet('node/1/layout');
 
     // Add an inline block.
@@ -264,6 +259,94 @@ class InlineBlockTest extends InlineBlockTestBase {
   }
 
   /**
+   * Tests entity blocks revisioning.
+   */
+  public function testInlineBlocksRevisioningIntegrity() {
+    $this->drupalLogin($this->drupalCreateUser([
+      'access contextual links',
+      'configure any layout',
+      'administer node display',
+      'view all revisions',
+      'access content',
+      'create and edit custom blocks',
+    ]));
+    $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default');
+    $this->submitForm(['layout[enabled]' => TRUE, 'layout[allow_custom]' => TRUE], 'Save');
+
+    $block_1_locator = static::INLINE_BLOCK_LOCATOR;
+    $block_2_locator = sprintf('%s + %s', static::INLINE_BLOCK_LOCATOR, static::INLINE_BLOCK_LOCATOR);
+
+    // Add two blocks to the page and assert the content in each.
+    $this->drupalGet('node/1/layout');
+    $this->addInlineBlockToLayout('Block 1', 'Block 1 original');
+    $this->addInlineBlockToLayout('Block 2', 'Block 2 original');
+    $this->assertSaveLayout();
+    $this->assertNodeRevisionContent(3, ['Block 1 original', 'Block 2 original']);
+    $this->assertBlockRevisionCountByTitle('Block 1', 1);
+    $this->assertBlockRevisionCountByTitle('Block 2', 1);
+
+    // Update the contents of one of the blocks and assert the updated content
+    // appears on the next revision.
+    $this->drupalGet('node/1/layout');
+    $this->configureInlineBlock('Block 2 original', 'Block 2 updated', $block_2_locator);
+    $this->assertSaveLayout();
+    $this->assertNodeRevisionContent(4, ['Block 1 original', 'Block 2 updated']);
+    $this->assertBlockRevisionCountByTitle('Block 1', 1);
+    $this->assertBlockRevisionCountByTitle('Block 2', 2);
+
+    // Update block 1 without creating a new revision of the parent.
+    $this->drupalGet('node/1/layout');
+    $this->configureInlineBlock('Block 1 original', 'Block 1 updated', $block_1_locator);
+    $this->getSession()->getPage()->uncheckField('revision');
+    $this->getSession()->getPage()->pressButton('Save layout');
+    $this->assertNotEmpty($this->assertSession()->waitForElement('css', '.messages--status'));
+    $this->assertNodeRevisionContent(4, ['Block 1 updated', 'Block 2 updated']);
+    $this->assertBlockRevisionCountByTitle('Block 1', 2);
+    $this->assertBlockRevisionCountByTitle('Block 2', 2);
+
+    // Reassert all of the parent revisions contain the correct block content
+    // and the integrity of the revisions was preserved.
+    $this->assertNodeRevisionContent(3, ['Block 1 original', 'Block 2 original']);
+  }
+
+  /**
+   * Assert the contents of a node revision.
+   *
+   * @param int $revision_id
+   *   The revision ID to assert.
+   * @param array $content
+   *   The content items to assert on the page.
+   *
+   * @internal
+   */
+  protected function assertNodeRevisionContent(int $revision_id, array $content): void {
+    $this->drupalGet("node/1/revisions/$revision_id/view");
+    foreach ($content as $content_item) {
+      $this->assertSession()->pageTextContains($content_item);
+    }
+  }
+
+  /**
+   * Assert the number of block content revisions by the block title.
+   *
+   * @param string $block_title
+   *   The block title.
+   * @param int $expected_revision_count
+   *   The revision count.
+   *
+   * @internal
+   */
+  protected function assertBlockRevisionCountByTitle(string $block_title, int $expected_revision_count): void {
+    $actual_revision_count = $this->blockStorage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('info', $block_title)
+      ->allRevisions()
+      ->count()
+      ->execute();
+    $this->assertEquals($actual_revision_count, $expected_revision_count);
+  }
+
+  /**
    * Tests that entity blocks deleted correctly.
    */
   public function testDeletion() {
@@ -285,11 +368,8 @@ class InlineBlockTest extends InlineBlockTestBase {
     $page = $this->getSession()->getPage();
 
     // Enable layout builder.
-    $this->drupalPostForm(
-      static::FIELD_UI_PREFIX . '/display/default',
-      ['layout[enabled]' => TRUE],
-      'Save'
-    );
+    $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default');
+    $this->submitForm(['layout[enabled]' => TRUE], 'Save');
     // Add a block to default layout.
     $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default');
     $this->clickLink('Manage layout');
@@ -307,7 +387,8 @@ class InlineBlockTest extends InlineBlockTestBase {
     $assert_session->pageTextContains('The DEFAULT block body');
 
     // Enable overrides.
-    $this->drupalPostForm(static::FIELD_UI_PREFIX . '/display/default', ['layout[allow_custom]' => TRUE], 'Save');
+    $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default');
+    $this->submitForm(['layout[allow_custom]' => TRUE], 'Save');
 
     // Ensure we have 2 copies of the block in node overrides.
     $this->drupalGet('node/1/layout');
@@ -408,11 +489,8 @@ class InlineBlockTest extends InlineBlockTestBase {
     $assert_session = $this->assertSession();
 
     // Enable layout builder and overrides.
-    $this->drupalPostForm(
-      static::FIELD_UI_PREFIX . '/display/default',
-      ['layout[enabled]' => TRUE, 'layout[allow_custom]' => TRUE],
-      'Save'
-    );
+    $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default');
+    $this->submitForm(['layout[enabled]' => TRUE, 'layout[allow_custom]' => TRUE], 'Save');
 
     // Ensure we have 2 copies of the block in node overrides.
     $this->drupalGet('node/1/layout');
@@ -461,11 +539,8 @@ class InlineBlockTest extends InlineBlockTestBase {
     ]));
 
     // Enable layout builder and overrides.
-    $this->drupalPostForm(
-      static::FIELD_UI_PREFIX . '/display/default',
-      ['layout[enabled]' => TRUE, 'layout[allow_custom]' => TRUE],
-      'Save'
-    );
+    $this->drupalGet(static::FIELD_UI_PREFIX . '/display/default');
+    $this->submitForm(['layout[enabled]' => TRUE, 'layout[allow_custom]' => TRUE], 'Save');
 
     $layout_default_path = 'admin/structure/types/manage/bundle_with_section_field/display/default/layout';
     $this->drupalGet($layout_default_path);

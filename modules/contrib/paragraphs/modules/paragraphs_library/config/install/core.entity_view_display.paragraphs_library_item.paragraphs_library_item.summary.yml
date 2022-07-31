@@ -21,7 +21,7 @@ content:
     third_party_settings: {  }
   paragraphs:
     label: hidden
-    type: paragraph_summary
+    type: library_item_summary
     weight: 0
     region: content
     settings: {  }

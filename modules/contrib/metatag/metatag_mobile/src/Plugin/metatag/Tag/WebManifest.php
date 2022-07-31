@@ -20,5 +20,22 @@ use Drupal\metatag\Plugin\metatag\Tag\LinkRelBase;
  * )
  */
 class WebManifest extends LinkRelBase {
-  // Nothing here yet. Just a placeholder class for a plugin.
+
+  /**
+   * {@inheritdoc}
+   */
+  public function output() {
+    // Get the standard LinkRelBase output.
+    $element = parent::output();
+
+    // This attribute is required on the tag to avoid errors in Chrome.
+    // @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/crossorigin
+    // @see https://developer.chrome.com/docs/extensions/mv2/xhr/
+    if (!empty($element) && is_array($element)) {
+      $element['#attributes']['crossorigin'] = 'use-credentials';
+    }
+
+    return $element;
+  }
+
 }

@@ -3,6 +3,7 @@
 namespace Drupal\Core\Database\Install;
 
 use Drupal\Core\Database\Database;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Database installer structure.
@@ -81,41 +82,50 @@ abstract class Tasks {
 
   /**
    * Ensure the PDO driver is supported by the version of PHP in use.
+   *
+   * @return bool
+   *   TRUE if the PDO driver is supported, otherwise FALSE.
    */
   protected function hasPdoDriver() {
     return in_array($this->pdoDriver, \PDO::getAvailableDrivers());
   }
 
   /**
-   * Assert test as failed.
+   * Asserts test as failed.
    */
   protected function fail($message) {
     $this->results['fail'][] = $message;
   }
 
   /**
-   * Assert test as a pass.
+   * Asserts test as a pass.
    */
   protected function pass($message) {
     $this->results['pass'][] = $message;
   }
 
   /**
-   * Check whether Drupal is installable on the database.
+   * Checks whether Drupal is installable on the database.
+   *
+   * @return bool
+   *   TRUE if Drupal can be installed on the database, otherwise FALSE.
    */
   public function installable() {
     return $this->hasPdoDriver() && empty($this->error);
   }
 
   /**
-   * Return the human-readable name of the driver.
+   * Returns the human-readable name of the driver.
+   *
+   * @return string
+   *   The human-readable name of the driver.
    */
   abstract public function name();
 
   /**
-   * Return the minimum required version of the engine.
+   * Returns the minimum required version of the engine.
    *
-   * @return
+   * @return string|null
    *   A version string. If not NULL, it will be checked against the version
    *   reported by the Database engine using version_compare().
    */
@@ -124,9 +134,9 @@ abstract class Tasks {
   }
 
   /**
-   * Run database tasks and tests to see if Drupal can run on the database.
+   * Runs database tasks and tests to see if Drupal can run on the database.
    *
-   * @return array
+   * @return string[]
    *   A list of error messages.
    */
   public function runTasks() {
@@ -164,7 +174,10 @@ abstract class Tasks {
   }
 
   /**
-   * Check if we can connect to the database.
+   * Checks if we can connect to the database.
+   *
+   * @return bool
+   *   TRUE if we can connect to the database, otherwise FALSE.
    */
   protected function connect() {
     try {
@@ -182,7 +195,7 @@ abstract class Tasks {
   }
 
   /**
-   * Run SQL tests to ensure the database can execute commands with the current user.
+   * Ensures the database can execute commands with the current user.
    */
   protected function runTestQuery($query, $pass, $fail, $fatal = FALSE) {
     try {
@@ -196,22 +209,37 @@ abstract class Tasks {
   }
 
   /**
-   * Check the engine version.
+   * Checks the engine version.
    */
   protected function checkEngineVersion() {
     // Ensure that the database server has the right version.
-    if ($this->minimumVersion() && version_compare(Database::getConnection()->version(), $this->minimumVersion(), '<')) {
+    // We append '-AnyName' to the minimum version for comparison purposes, so
+    // that engines that append a package name or other build information to
+    // their version strings still pass. For example, MariaDB might report its
+    // version as '10.2.7-MariaDB' or '10.2.7+maria' or similar.
+    // version_compare() treats '-' and '+' as equivalent, and non-numeric
+    // parts other than conventional stability specifiers (dev, alpha, beta,
+    // etc.) as equal to each other and less than numeric parts and stability
+    // specifiers. In other words, 10.2.7-MariaDB, 10.2.7+maria, and
+    // 10.2.7-AnyName are all equal to each other and less than 10.2.7-alpha.
+    // This means that by appending '-AnyName' for the comparison check, that
+    // alpha and other pre-release versions of the minimum will pass this
+    // check, which isn't ideal; however, people running pre-release versions
+    // of database servers should know what they're doing, whether Drupal warns
+    // them or not.
+    // @see https://www.php.net/manual/en/function.version-compare.php
+    if ($this->minimumVersion() && version_compare(Database::getConnection()->version(), $this->minimumVersion() . '-AnyName', '<')) {
       $this->fail(t("The database server version %version is less than the minimum required version %minimum_version.", ['%version' => Database::getConnection()->version(), '%minimum_version' => $this->minimumVersion()]));
     }
   }
 
   /**
-   * Return driver specific configuration options.
+   * Returns driver specific configuration options.
    *
-   * @param $database
+   * @param string[] $database
    *   An array of driver specific configuration options.
    *
-   * @return
+   * @return array
    *   The options form array.
    */
   public function getFormOptions(array $database) {
@@ -219,7 +247,7 @@ abstract class Tasks {
     // @todo https:///www.drupal.org/node/3123240 Provide a better way to get
     //   the driver name.
     $reflection = new \ReflectionClass($this);
-    $dir_parts = explode(DIRECTORY_SEPARATOR, dirname(dirname($reflection->getFileName())));
+    $dir_parts = explode(DIRECTORY_SEPARATOR, dirname($reflection->getFileName(), 2));
     $driver = array_pop($dir_parts);
 
     $form['database'] = [
@@ -303,13 +331,13 @@ abstract class Tasks {
    * Checks to ensure correct basic database settings and that a proper
    * connection to the database can be established.
    *
-   * @param $database
+   * @param string[] $database
    *   An array of driver specific configuration options.
    *
-   * @return
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup[]
    *   An array of driver configuration errors, keyed by form element name.
    */
-  public function validateDatabaseSettings($database) {
+  public function validateDatabaseSettings(array $database) {
     $errors = [];
 
     // Verify the table prefix.
@@ -318,6 +346,46 @@ abstract class Tasks {
     }
 
     return $errors;
+  }
+
+  /**
+   * Translates a string to the current language or to a given language.
+   *
+   * @param string $string
+   *   The string literal to translate.
+   * @param array $args
+   *   Placeholder arguments to use inside the translated string (if any).
+   * @param array $options
+   *   Options for the translation.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   An object representing the translatable markup for the given string.
+   *
+   * @see \Drupal\Core\StringTranslation\TranslatableMarkup::__construct()
+   */
+  protected function t($string, array $args = [], array $options = []) {
+    return new TranslatableMarkup($string, $args, $options);
+  }
+
+  /**
+   * Determines if there is an active connection.
+   *
+   * @return bool
+   *   TRUE if there is at least one database connection established, FALSE
+   *   otherwise.
+   */
+  protected function isConnectionActive() {
+    return Database::isActiveConnection();
+  }
+
+  /**
+   * Returns the database connection.
+   *
+   * @return \Drupal\Core\Database\Connection
+   *   The database connection.
+   */
+  protected function getConnection() {
+    return Database::getConnection();
   }
 
 }

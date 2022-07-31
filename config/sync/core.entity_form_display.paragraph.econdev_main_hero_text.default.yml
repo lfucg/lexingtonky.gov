@@ -1,0 +1,27 @@
+uuid: 8979b662-1044-4655-a2be-52a9aecd4fe9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.econdev_main_hero_text.field_heading
+    - paragraphs.paragraphs_type.econdev_main_hero_text
+  module:
+    - text
+    - workbench_moderation
+id: paragraph.econdev_main_hero_text.default
+targetEntityType: paragraph
+bundle: econdev_main_hero_text
+mode: default
+content:
+  field_heading:
+    type: text_textfield
+    weight: 6
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

@@ -8,7 +8,7 @@
    * Off-canvas dialog implementation using jQuery Dialog.
    *
    * Transforms the regular dialogs created using Drupal.dialog when the dialog
-   * element equals '#drupal-off-canvas' into an side-loading dialog.
+   * element equals '#drupal-off-canvas' into a side-loading dialog.
    *
    * @namespace
    */
@@ -334,26 +334,27 @@
    */
   Drupal.behaviors.offCanvasEvents = {
     attach: () => {
-      $(window)
-        .once('off-canvas')
-        .on({
-          'dialog:beforecreate': (event, dialog, $element, settings) => {
-            if (Drupal.offCanvas.isOffCanvas($element)) {
-              Drupal.offCanvas.beforeCreate({ dialog, $element, settings });
-            }
-          },
-          'dialog:aftercreate': (event, dialog, $element, settings) => {
-            if (Drupal.offCanvas.isOffCanvas($element)) {
-              Drupal.offCanvas.render({ dialog, $element, settings });
-              Drupal.offCanvas.afterCreate({ $element, settings });
-            }
-          },
-          'dialog:beforeclose': (event, dialog, $element) => {
-            if (Drupal.offCanvas.isOffCanvas($element)) {
-              Drupal.offCanvas.beforeClose({ dialog, $element });
-            }
-          },
-        });
+      if (!once('off-canvas', 'html').length) {
+        return;
+      }
+      $(window).on({
+        'dialog:beforecreate': (event, dialog, $element, settings) => {
+          if (Drupal.offCanvas.isOffCanvas($element)) {
+            Drupal.offCanvas.beforeCreate({ dialog, $element, settings });
+          }
+        },
+        'dialog:aftercreate': (event, dialog, $element, settings) => {
+          if (Drupal.offCanvas.isOffCanvas($element)) {
+            Drupal.offCanvas.render({ dialog, $element, settings });
+            Drupal.offCanvas.afterCreate({ $element, settings });
+          }
+        },
+        'dialog:beforeclose': (event, dialog, $element) => {
+          if (Drupal.offCanvas.isOffCanvas($element)) {
+            Drupal.offCanvas.beforeClose({ dialog, $element });
+          }
+        },
+      });
     },
   };
 })(jQuery, Drupal, Drupal.debounce, Drupal.displace);

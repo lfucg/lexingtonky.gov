@@ -1,0 +1,18 @@
+uuid: 77a04961-7c12-4a04-865f-9545a041b4b8
+langcode: en
+status: true
+dependencies:
+  theme:
+    - lex_admin
+id: lex_admin_page_title
+theme: lex_admin
+region: header
+weight: -5
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  label_display: '0'
+  provider: core
+visibility: {  }

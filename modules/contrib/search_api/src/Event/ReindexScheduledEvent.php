@@ -3,7 +3,7 @@
 namespace Drupal\search_api\Event;
 
 use Drupal\search_api\IndexInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Wraps a reindex scheduled event.
@@ -32,7 +32,7 @@ final class ReindexScheduledEvent extends Event {
    * @param bool $clear
    *   Boolean indicating whether the index was also cleared.
    */
-  public function __construct(IndexInterface $index, $clear) {
+  public function __construct(IndexInterface $index, bool $clear) {
     $this->index = $index;
     $this->clear = $clear;
   }
@@ -43,7 +43,7 @@ final class ReindexScheduledEvent extends Event {
    * @return \Drupal\search_api\IndexInterface
    *   The index scheduled for reindexing.
    */
-  public function getIndex() {
+  public function getIndex(): IndexInterface {
     return $this->index;
   }
 
@@ -54,7 +54,7 @@ final class ReindexScheduledEvent extends Event {
    *   TRUE if the index was also cleared as part of the reindexing, FALSE
    *   otherwise.
    */
-  public function isClear() {
+  public function isClear(): bool {
     return $this->clear;
   }
 

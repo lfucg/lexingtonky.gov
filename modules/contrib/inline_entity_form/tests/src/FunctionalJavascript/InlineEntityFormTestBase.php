@@ -65,7 +65,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    * @return string
    *   The name of the button.
    */
-  protected function getButtonName($xpath) {
+  protected function getButtonName(string $xpath) {
     $retval = '';
     /** @var \SimpleXMLElement[] $elements */
     if ($elements = $this->xpath($xpath)) {
@@ -87,7 +87,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    * @param string $message
    *   Message to display.
    */
-  protected function assertNoNodeByTitle($title, $message = '') {
+  protected function assertNoNodeByTitle(string $title, $message = '') {
     if (!$message) {
       $message = "No node with title: $title";
     }
@@ -106,7 +106,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    * @param string $message
    *   Message to display.
    */
-  protected function assertNodeByTitle($title, $content_type = NULL, $message = '') {
+  protected function assertNodeByTitle(string $title, $content_type = NULL, $message = '') {
     if (!$message) {
       $message = "Node with title found: $title";
     }
@@ -127,7 +127,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    * @param string $bundle
    *   (optional) The bundle this entity should have.
    */
-  protected function assertEntityByLabel($label, $entity_type_id = 'node', $bundle = NULL) {
+  protected function assertEntityByLabel(string $label, $entity_type_id = 'node', $bundle = NULL) {
     $entity_type_manager = \Drupal::entityTypeManager();
     $entity_type = $entity_type_manager->getDefinition($entity_type_id);
     $label_key = $entity_type->getKey('label');
@@ -155,7 +155,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    * @param string $prefix
    *   The config prefix.
    */
-  protected function checkFormDisplayFields($form_display, $prefix) {
+  protected function checkFormDisplayFields(string $form_display, string $prefix) {
     $assert_session = $this->assertSession();
     $form_display_fields = [
       'node.ief_test_custom.default' => [
@@ -194,7 +194,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
       $assert_session->fieldExists($prefix . $expected_field);
     }
     foreach ($fields['unexpected'] as $unexpected_field) {
-      $assert_session->fieldNotExists($prefix . $unexpected_field, NULL);
+      $assert_session->fieldNotExists($prefix . $unexpected_field);
     }
   }
 
@@ -204,7 +204,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    * @param string $title
    *   The title of the row for which to wait.
    */
-  protected function waitForRowByTitle($title) {
+  protected function waitForRowByTitle(string $title) {
     $this->assertNotEmpty($this->assertSession()->waitForElement('xpath', '//td[@class="inline-entity-form-node-label" and text()="' . $title . '"]'));
   }
 
@@ -214,7 +214,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    * @param string $title
    *   The title of the row for which to wait.
    */
-  protected function waitForRowRemovedByTitle($title) {
+  protected function waitForRowRemovedByTitle(string $title) {
     $this->assertNotEmpty($this->assertSession()->waitForElementRemoved('xpath', '//td[@class="inline-entity-form-node-label" and text()="' . $title . '"]'));
   }
 
@@ -227,7 +227,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    * @return \Behat\Mink\Element\NodeElement
    *   The <td> element containing the label for the IEF row.
    */
-  protected function assertRowByTitle($title) {
+  protected function assertRowByTitle(string $title) {
     $this->assertNotEmpty($element = $this->assertSession()->elementExists('xpath', '//td[@class="inline-entity-form-node-label" and text()="' . $title . '"]'));
     return $element;
   }
@@ -238,7 +238,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    * @param string $title
    *   The title of the row to check.
    */
-  protected function assertNoRowByTitle($title) {
+  protected function assertNoRowByTitle(string $title) {
     $this->assertSession()->elementNotExists('xpath', '//td[@class="inline-entity-form-node-label" and text()="' . $title . '"]');
   }
 
@@ -255,8 +255,8 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    * @return string
    *   The xpath selector for the input to select.
    */
-  protected function getXpathForNthInputByLabelText($label, $index) {
-    return "(//*[@id=string((//label[.='{$label}']/@for)[{$index}])])";
+  protected function getXpathForNthInputByLabelText(string $label, int $index) {
+    return "(//*[@id=string((//label[.='$label']/@for)[$index])])";
   }
 
   /**
@@ -274,7 +274,7 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    *
    * Note: index starts at 1.
    *
-   * @param string @value
+   * @param string $value
    *   The text on the button to select.
    * @param int $index
    *   The index of the button to select.
@@ -282,8 +282,8 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    * @return string
    *   The xpath selector for the button to select.
    */
-  protected function getXpathForButtonWithValue($value, $index) {
-    return "(//input[@type='submit' and @value='{$value}'])[{$index}]";
+  protected function getXpathForButtonWithValue(string $value, int $index) {
+    return "(//input[@type='submit' and @value='$value'])[$index]";
   }
 
   /**
@@ -297,8 +297,8 @@ abstract class InlineEntityFormTestBase extends WebDriverTestBase {
    * @return string
    *   The xpath selector for the fieldset label to select.
    */
-  protected function getXpathForFieldsetLabel($label, $index) {
-    return "(//fieldset/legend/span[.='{$label}'])[{$index}]";
+  protected function getXpathForFieldsetLabel(string $label, int $index) {
+    return "(//fieldset/legend/span[.='{$label}'])[$index]";
   }
 
 }

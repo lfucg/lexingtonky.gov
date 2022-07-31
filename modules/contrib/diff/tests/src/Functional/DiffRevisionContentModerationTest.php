@@ -21,7 +21,7 @@ class DiffRevisionContentModerationTest extends DiffRevisionTest {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Enable moderation on articles.
@@ -89,10 +89,10 @@ class DiffRevisionContentModerationTest extends DiffRevisionTest {
 
     // Verify proper moderation states are displayed.
     $diff_rows = $this->xpath('//tbody/tr/td[1]/p');
-    $this->assertEqual('Fourth revision (Draft)', $diff_rows[0]->getText());
-    $this->assertEqual('Third revision (Published)', $diff_rows[1]->getText());
-    $this->assertEqual('Second revision (Draft)', $diff_rows[2]->getText());
-    $this->assertEqual('First revision (Draft)', $diff_rows[3]->getText());
+    $this->assertEquals('Fourth revision (Draft)', $diff_rows[0]->getText());
+    $this->assertEquals('Third revision (Published)', $diff_rows[1]->getText());
+    $this->assertEquals('Second revision (Draft)', $diff_rows[2]->getText());
+    $this->assertEquals('First revision (Draft)', $diff_rows[3]->getText());
   }
 
 }

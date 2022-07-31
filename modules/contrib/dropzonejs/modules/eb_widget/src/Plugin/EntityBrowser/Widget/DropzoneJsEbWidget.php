@@ -131,7 +131,7 @@ class DropzoneJsEbWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
+    return array_merge(parent::defaultConfiguration(), [
       'upload_location' => 'public://[date:custom:Y]-[date:custom:m]',
       'dropzone_description' => $this->t('Drop files here to upload them'),
       'max_filesize' => Environment::getUploadMaxSize() / pow(Bytes::KILOBYTE, 2) . 'M',
@@ -142,7 +142,7 @@ class DropzoneJsEbWidget extends WidgetBase {
       'resize_quality' => 1,
       'resize_method' => 'contain',
       'thumbnail_method' => 'contain',
-    ] + parent::defaultConfiguration();
+    ]);
   }
 
   /**

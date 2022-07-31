@@ -1,0 +1,33 @@
+uuid: 994256a9-0a29-426e-9806-259134230c50
+langcode: en
+status: true
+dependencies:
+  module:
+    - lex_calendar
+    - node
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_meetingsblock
+theme: bootstrap_barrio
+region: top_header
+weight: -17
+provider: null
+plugin: Lex_calendar_list_block
+settings:
+  id: Lex_calendar_list_block
+  label: Meetings
+  label_display: visible
+  provider: lex_calendar
+  display_limit: '5'
+  content_type: meeting
+  show_all: 'no'
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      organization_page: organization_page
+      board_commission: board_commission
+      page: page

@@ -6,6 +6,7 @@
 table {
   width: 100%;
   margin: 0 0 10px;
+  border-collapse: collapse;
 }
 caption {
   text-align: left; /* LTR */
@@ -149,4 +150,13 @@ th.select-all {
   td.priority-low {
     display: none;
   }
+}
+
+/**
+ * Target every .form-text input where its parent is a form-item inside a table
+ * cell.
+ */
+td > .form-item > .form-text,
+td > .ajax-new-content > .form-item > .form-text {
+  width: 100%;
 }

@@ -33,7 +33,7 @@ class DiffPluginEntityTest extends DiffPluginTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->fileSystem = \Drupal::service('file_system');
@@ -76,21 +76,21 @@ class DiffPluginEntityTest extends DiffPluginTestBase {
       'field_reference[0][target_id]' => 'Article B (' . $node2->id() . ')',
       'revision' => TRUE,
     );
-    $this->drupalPostNodeForm('node/' . $node1->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm('node/' . $node1->id() . '/edit', $edit, 'Save and keep published');
 
     // Update article A so it points to article C instead of B.
     $edit = array(
       'field_reference[0][target_id]' => 'Article C (' . $node3->id() . ')',
       'revision' => TRUE,
     );
-    $this->drupalPostNodeForm('node/' . $node1->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm('node/' . $node1->id() . '/edit', $edit, 'Save and keep published');
 
     // Check differences between revisions.
     $this->clickLink(t('Revisions'));
-    $this->drupalPostForm(NULL, NULL, t('Compare selected revisions'));
-    $this->assertText('Reference');
-    $this->assertText('Article B');
-    $this->assertText('Article C');
+    $this->submitForm([], 'Compare selected revisions');
+    $this->assertSession()->pageTextContains('Reference');
+    $this->assertSession()->pageTextContains('Article B');
+    $this->assertSession()->pageTextContains('Article C');
   }
 
 }

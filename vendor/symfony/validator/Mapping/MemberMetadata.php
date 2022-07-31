@@ -60,7 +60,7 @@ abstract class MemberMetadata extends GenericMetadata implements PropertyMetadat
      * @param string $name     The name of the member
      * @param string $property The property the member belongs to
      */
-    public function __construct($class, $name, $property)
+    public function __construct(string $class, string $name, string $property)
     {
         $this->class = $class;
         $this->name = $name;
@@ -188,8 +188,8 @@ abstract class MemberMetadata extends GenericMetadata implements PropertyMetadat
         }
 
         if ($constraint instanceof Composite) {
-            foreach ($constraint->getNestedContraints() as $nestedContraint) {
-                $this->checkConstraint($nestedContraint);
+            foreach ($constraint->getNestedConstraints() as $nestedConstraint) {
+                $this->checkConstraint($nestedConstraint);
             }
         }
     }

@@ -1,0 +1,73 @@
+uuid: 9b6113e1-642e-4538-8898-f8a05ac0e66a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_accordion_section
+    - paragraphs.paragraphs_type.accordion_block
+    - paragraphs.paragraphs_type.accordion_section
+  module:
+    - entity_reference_revisions
+id: paragraph.accordion_block.field_accordion_section
+field_name: field_accordion_section
+entity_type: paragraph
+bundle: accordion_block
+label: 'Accordion Section'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      accordion_section: accordion_section
+    negate: 0
+    target_bundles_drag_drop:
+      accordion_block:
+        weight: 17
+        enabled: false
+      accordion_section:
+        weight: 16
+        enabled: true
+      card_button:
+        weight: 18
+        enabled: false
+      card_grid:
+        weight: 19
+        enabled: false
+      contact_card:
+        weight: 20
+        enabled: false
+      flex_grid:
+        weight: 21
+        enabled: false
+      icon_button_with_description:
+        weight: 22
+        enabled: false
+      lexidme_case:
+        weight: 23
+        enabled: false
+      lexidme_grid:
+        weight: 24
+        enabled: false
+      paragraph_sidebar_section:
+        weight: 25
+        enabled: false
+      paragraphs_media_contact:
+        weight: 26
+        enabled: false
+      paragraphs_page_section:
+        weight: 27
+        enabled: false
+      photo_grid:
+        weight: 28
+        enabled: false
+      rendered_block:
+        weight: 29
+        enabled: false
+      views_block:
+        weight: 30
+        enabled: false
+field_type: entity_reference_revisions

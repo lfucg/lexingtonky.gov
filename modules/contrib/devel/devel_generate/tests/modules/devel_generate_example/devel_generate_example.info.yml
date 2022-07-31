@@ -1,14 +1,13 @@
-name: 'Devel generate Example'
+name: 'Devel Generate Example'
 type: module
-description: 'Create an example of DevelGenerate plugin type for testing purposing.'
+description: 'Create an example of a Devel Generate plugin type for testing purposes.'
 package: Development
-# core: 8.x
+core_version_requirement: ^8.8 || ^9
 configure: admin/config/development/generate
 tags:
  - developer
 
-# Information added by Drupal.org packaging script on 2017-10-05
-version: '8.x-1.2'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2022-02-28
+version: '4.1.5'
 project: 'devel'
-datestamp: 1507197848
+datestamp: 1646072828

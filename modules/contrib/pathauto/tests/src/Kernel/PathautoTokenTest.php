@@ -4,6 +4,7 @@ namespace Drupal\Tests\pathauto\Kernel;
 
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\Component\Render\FormattableMarkup;
 
 /**
  * Tests tokens provided by Pathauto.
@@ -17,7 +18,7 @@ class PathautoTokenTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['system', 'token', 'path_alias', 'pathauto'];
+  protected static $modules = ['system', 'token', 'path_alias', 'pathauto'];
 
   public function testPathautoTokens() {
 
@@ -88,16 +89,16 @@ class PathautoTokenTest extends KernelTestBase {
     foreach ($tokens as $name => $expected) {
       $token = $input[$name];
       if (!isset($expected)) {
-        $this->assertTrue(!isset($values[$token]), t("Token value for @token was not generated.", ['@type' => $type, '@token' => $token]));
+        $this->assertTrue(!isset($values[$token]), new FormattableMarkup("Token value for @token was not generated.", ['@type' => $type, '@token' => $token]));
       }
       elseif (!isset($replacements[$token])) {
-        $this->fail(t("Token value for @token was not generated.", ['@type' => $type, '@token' => $token]));
+        $this->fail(new FormattableMarkup("Token value for @token was not generated.", ['@type' => $type, '@token' => $token]));
       }
       elseif (!empty($options['regex'])) {
-        $this->assertTrue(preg_match('/^' . $expected . '$/', $replacements[$token]), t("Token value for @token was '@actual', matching regular expression pattern '@expected'.", ['@type' => $type, '@token' => $token, '@actual' => $replacements[$token], '@expected' => $expected]));
+        $this->assertTrue(preg_match('/^' . $expected . '$/', $replacements[$token]), new FormattableMarkup("Token value for @token was '@actual', matching regular expression pattern '@expected'.", ['@type' => $type, '@token' => $token, '@actual' => $replacements[$token], '@expected' => $expected]));
       }
       else {
-        $this->assertSame($expected, $replacements[$token], t("Token value for @token was '@actual', expected value '@expected'.", ['@type' => $type, '@token' => $token, '@actual' => $replacements[$token], '@expected' => $expected]));
+        $this->assertSame($expected, $replacements[$token], new FormattableMarkup("Token value for @token was '@actual', expected value '@expected'.", ['@type' => $type, '@token' => $token, '@actual' => $replacements[$token], '@expected' => $expected]));
       }
     }
 

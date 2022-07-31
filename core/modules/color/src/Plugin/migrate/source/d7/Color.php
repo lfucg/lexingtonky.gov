@@ -2,7 +2,6 @@
 
 namespace Drupal\color\Plugin\migrate\source\d7;
 
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Extension\ThemeHandler;
 use Drupal\migrate\Row;
 use Drupal\migrate_drupal\Plugin\migrate\source\VariableMultiRow;
@@ -14,18 +13,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Drupal 7 color source from database.
  *
+ * For available configuration keys, refer to the parent classes.
+ *
+ * @see \Drupal\migrate\Plugin\migrate\source\SqlBase
+ * @see \Drupal\migrate\Plugin\migrate\source\SourcePluginBase
+ *
  * @MigrateSource(
  *   id = "d7_color",
  *   source_module = "color"
  * )
  */
 class Color extends VariableMultiRow {
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The theme handler.

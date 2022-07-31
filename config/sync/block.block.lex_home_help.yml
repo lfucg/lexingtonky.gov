@@ -1,0 +1,20 @@
+uuid: e941ef88-fde0-4fbb-a985-a46fe33cf996
+langcode: en
+status: true
+dependencies:
+  module:
+    - help
+  theme:
+    - lex_home
+id: lex_home_help
+theme: lex_home
+region: breadcrumb
+weight: -7
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Help
+  label_display: '0'
+  provider: help
+visibility: {  }

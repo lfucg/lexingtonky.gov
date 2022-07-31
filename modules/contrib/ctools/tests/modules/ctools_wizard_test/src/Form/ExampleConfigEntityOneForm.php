@@ -23,7 +23,7 @@ class ExampleConfigEntityOneForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $cached_values = $form_state->getTemporaryValue('wizard');
-    /** @var $page \Drupal\ctools_wizard_test\Entity\ExampleConfigEntity */
+    /** @var \Drupal\ctools_wizard_test\Entity\ExampleConfigEntity $page */
     $config_entity = $cached_values['ctools_wizard_test_config_entity'];
 
     $form['one'] = [
@@ -52,7 +52,7 @@ class ExampleConfigEntityOneForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $cached_values = $form_state->getTemporaryValue('wizard');
-    /** @var $page \Drupal\ctools_wizard_test\Entity\ExampleConfigEntity */
+    /** @var \Drupal\ctools_wizard_test\Entity\ExampleConfigEntity $page */
     $config_entity = $cached_values['ctools_wizard_test_config_entity'];
 
     $config_entity->set('one', $form_state->getValue('one'));

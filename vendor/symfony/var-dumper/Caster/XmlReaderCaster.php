@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Symfony package.
  *
@@ -17,7 +18,7 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  *
- * @final since Symfony 4.4
+ * @final
  */
 class XmlReaderCaster
 {
@@ -42,8 +43,24 @@ class XmlReaderCaster
         \XMLReader::XML_DECLARATION => 'XML_DECLARATION',
     ];
 
-    public static function castXmlReader(\XMLReader $reader, array $a, Stub $stub, $isNested)
+    public static function castXmlReader(\XMLReader $reader, array $a, Stub $stub, bool $isNested)
     {
+        try {
+            $properties = [
+                'LOADDTD' => @$reader->getParserProperty(\XMLReader::LOADDTD),
+                'DEFAULTATTRS' => @$reader->getParserProperty(\XMLReader::DEFAULTATTRS),
+                'VALIDATE' => @$reader->getParserProperty(\XMLReader::VALIDATE),
+                'SUBST_ENTITIES' => @$reader->getParserProperty(\XMLReader::SUBST_ENTITIES),
+            ];
+        } catch (\Error $e) {
+            $properties = [
+                'LOADDTD' => false,
+                'DEFAULTATTRS' => false,
+                'VALIDATE' => false,
+                'SUBST_ENTITIES' => false,
+            ];
+        }
+
         $props = Caster::PREFIX_VIRTUAL.'parserProperties';
         $info = [
             'localName' => $reader->localName,
@@ -57,12 +74,7 @@ class XmlReaderCaster
             'value' => $reader->value,
             'namespaceURI' => $reader->namespaceURI,
             'baseURI' => $reader->baseURI ? new LinkStub($reader->baseURI) : $reader->baseURI,
-            $props => [
-                'LOADDTD' => $reader->getParserProperty(\XMLReader::LOADDTD),
-                'DEFAULTATTRS' => $reader->getParserProperty(\XMLReader::DEFAULTATTRS),
-                'VALIDATE' => $reader->getParserProperty(\XMLReader::VALIDATE),
-                'SUBST_ENTITIES' => $reader->getParserProperty(\XMLReader::SUBST_ENTITIES),
-            ],
+            $props => $properties,
         ];
 
         if ($info[$props] = Caster::filter($info[$props], Caster::EXCLUDE_EMPTY, [], $count)) {

@@ -21,9 +21,9 @@ use Symfony\Component\Validator\Constraint;
  */
 class Choice extends Constraint
 {
-    const NO_SUCH_CHOICE_ERROR = '8e179f1b-97aa-4560-a02f-2a8b42e49df7';
-    const TOO_FEW_ERROR = '11edd7eb-5872-4b6e-9f12-89923999fd0e';
-    const TOO_MANY_ERROR = '9bd98e49-211c-433f-8630-fd1c2d0f08c3';
+    public const NO_SUCH_CHOICE_ERROR = '8e179f1b-97aa-4560-a02f-2a8b42e49df7';
+    public const TOO_FEW_ERROR = '11edd7eb-5872-4b6e-9f12-89923999fd0e';
+    public const TOO_MANY_ERROR = '9bd98e49-211c-433f-8630-fd1c2d0f08c3';
 
     protected static $errorNames = [
         self::NO_SUCH_CHOICE_ERROR => 'NO_SUCH_CHOICE_ERROR',
@@ -34,7 +34,7 @@ class Choice extends Constraint
     public $choices;
     public $callback;
     public $multiple = false;
-    public $strict = false;
+    public $strict = true;
     public $min;
     public $max;
     public $message = 'The value you selected is not a valid choice.';

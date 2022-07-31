@@ -2,7 +2,6 @@ name: 'Demo: Umami Food Magazine (Experimental)'
 type: profile
 description: 'Install an example site that shows off some of Drupal’s capabilities.'
 version: VERSION
-core: 8.x
 install:
   - node
   - history
@@ -10,7 +9,6 @@ install:
   - block
   - breakpoint
   - ckeditor
-  - color
   - config
   - contextual
   - contact
@@ -19,7 +17,6 @@ install:
   - menu_link_content
   - datetime
   - block_content
-  - quickedit
   - editor
   - help
   - image
@@ -50,6 +47,6 @@ install:
   - config_translation
   - content_translation
 themes:
-  - seven
+  - claro
   - umami
 keep_english: true

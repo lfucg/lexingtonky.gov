@@ -74,31 +74,6 @@ function foo_captcha_captcha($op, $captcha_type = '') {
 }
 
 /**
- * Implements hook_menu().
- *
- * Validation of the answer against the solution and other stuff is done by the
- * base CAPTCHA module.
- * === Recommended: hook_menu($may_cache) ===
- * More advanced CAPTCHA modules probably want some configuration page.
- * To integrate nicely with the base CAPTCHA module you should offer your
- * configuration page as a MENU_LOCAL_TASK menu entry under
- * 'admin/config/people/captcha/'.
- * For our simple foo CAPTCHA module this would mean:
- */
-function foo_captcha_menu($may_cache) {
-  $items = [];
-  if ($may_cache) {
-    $items['admin/config/people/captcha/foo_captcha'] = [
-      'title' => t('Foo CAPTCHA'),
-      'page callback' => 'drupal_get_form',
-      'page arguments' => ['foo_captcha_settings_form'],
-      'type' => MENU_LOCAL_TASK,
-    ];
-  }
-  return $items;
-}
-
-/**
  * Implements hook_help().
  *
  * You should of course implement a function foo_captcha_settings_form() which

@@ -3,7 +3,7 @@
  * An abstract Backbone View that controls an in-place editor.
  */
 
-(function($, Backbone, Drupal) {
+(function ($, Backbone, Drupal) {
   Drupal.quickedit.EditorView = Backbone.View.extend(
     /** @lends Drupal.quickedit.EditorView# */ {
       /**
@@ -129,7 +129,7 @@
             // do so at this stage, and once the in-place editor is ready,
             // set the 'active' state. A "loading" indicator will be shown in the
             // UI for as long as the field remains in this state.
-            const loadDependencies = function(callback) {
+            const loadDependencies = function (callback) {
               // Do the loading here.
               callback();
             };
@@ -198,6 +198,7 @@
           const $form = $(`#${backstageId}`).find('form');
           // Fill in the value in any <input> that isn't hidden or a submit
           // button.
+          // eslint-disable-next-line jquery/no-val
           $form
             .find(':input[type!="hidden"][type!="submit"]:not(select)')
             // Don't mess with the node summary.
@@ -250,7 +251,7 @@
           }
 
           // Successfully saved.
-          self.formSaveAjax.commands.quickeditFieldFormSaved = function(
+          self.formSaveAjax.commands.quickeditFieldFormSaved = function (
             ajax,
             response,
             status,
@@ -269,15 +270,12 @@
           };
 
           // Unsuccessfully saved; validation errors.
-          self.formSaveAjax.commands.quickeditFieldFormValidationErrors = function(
-            ajax,
-            response,
-            status,
-          ) {
-            removeHiddenForm();
-            editorModel.set('validationErrors', response.data);
-            fieldModel.set('state', 'invalid');
-          };
+          self.formSaveAjax.commands.quickeditFieldFormValidationErrors =
+            function (ajax, response, status) {
+              removeHiddenForm();
+              editorModel.set('validationErrors', response.data);
+              fieldModel.set('state', 'invalid');
+            };
 
           // The quickeditFieldForm AJAX command is only called upon loading the
           // form for the first time, and when there are validation errors in the
@@ -285,7 +283,7 @@
           // useful for the form-based in-place editor, but pointless for any
           // other: the form itself won't be visible at all anyway! So, we just
           // ignore it.
-          self.formSaveAjax.commands.quickeditFieldForm = function() {};
+          self.formSaveAjax.commands.quickeditFieldForm = function () {};
 
           fillAndSubmitForm(editorModel.get('currentValue'));
         });

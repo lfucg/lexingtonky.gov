@@ -9,30 +9,42 @@ use Drupal\ctools\TypedDataResolver;
 use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+/**
+ * Resolver Relatinoship Delete Form.
+ */
 abstract class ResolverRelationshipDelete extends ConfirmFormBase {
 
   /**
+   * Tempstore Factory.
+   *
    * @var \Drupal\Core\TempStore\SharedTempStoreFactory
    */
   protected $tempstore;
 
   /**
+   * The resolver service.
+   *
    * @var \Drupal\ctools\TypedDataResolver
    */
   protected $resolver;
 
   /**
+   * Tempstore ID.
+   *
    * @var string
    */
   protected $tempstore_id;
 
   /**
+   * Machine name of the relationship.
+   *
    * @var string
    */
   protected $machine_name;
 
   /**
+   * Resolver ID.
+   *
    * @var string
    */
   protected $id;
@@ -45,6 +57,8 @@ abstract class ResolverRelationshipDelete extends ConfirmFormBase {
   }
 
   /**
+   * Resolver Relationship Delete Form Constructor.
+   *
    * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
    *   The shared tempstore.
    * @param \Drupal\ctools\TypedDataResolver $resolver
@@ -120,6 +134,7 @@ abstract class ResolverRelationshipDelete extends ConfirmFormBase {
    *   The current wizard cached values.
    *
    * @return array
+   *   Actions to call.
    */
   protected function actions(array $form, FormStateInterface $form_state, $cached_values) {
     return [
@@ -144,7 +159,8 @@ abstract class ResolverRelationshipDelete extends ConfirmFormBase {
    *   The cached values.
    *
    * @return \Drupal\Core\Plugin\Context\ContextInterface[]
+   *   Contexts from the cached values.
    */
-  abstract public function getContexts($cached_values);
+  abstract public function getContexts(array $cached_values);
 
 }

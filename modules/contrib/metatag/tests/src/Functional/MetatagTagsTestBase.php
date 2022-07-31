@@ -69,7 +69,7 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Use the test page as the front page.
@@ -182,7 +182,9 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
 
       $values[$test_key] = $test_value;
       $all_values[$tag_name] = $test_value;
-      $this->drupalPostForm(NULL, $values, 'Save');
+      $this->submitForm($values, 'Save');
+      // Note: if this line fails then check that the failing meta tag has a
+      // definition in the relevant *.metatag_tag.schema.yml file.
       $session->pageTextContains($save_message);
 
       // Load the test page.
@@ -193,9 +195,9 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
       // Look for a custom method named "{$tag_name}TestOutputXpath", if
       // found use that method to get the xpath definition for this meta tag,
       // otherwise it defaults to just looking for a meta tag matching:
-      // {@code}
+      // @code
       // <$testTag $testNameAttribute=$tag_name $testValueAttribute=$value />
-      // {@endcode}
+      // @endcode
       $method = $this->getMethodFromTagCallback($tag_name, 'TestOutputXpath');
       if (method_exists($this, $method)) {
         $xpath_string = $this->$method();
@@ -251,7 +253,11 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
 
       // Extract the meta tag from the HTML.
       $xpath = $this->xpath($xpath_string);
-      $this->assertCount(1, $xpath, new FormattableMarkup('One @tag tag found using @xpath.', ['@tag' => $tag_name, '@xpath' => $xpath_string]));
+      $message = new FormattableMarkup('One @tag tag found using @xpath.', [
+        '@tag' => $tag_name,
+        '@xpath' => $xpath_string,
+      ]);
+      $this->assertCount(1, $xpath, $message);
       if (count($xpath) !== 1) {
         $this->verbose($xpath, $tag_name . ': ' . $xpath_string);
       }
@@ -276,7 +282,11 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
       else {
         $this->verbose($xpath, $tag_name . ': ' . $xpath_string);
         $this->assertTrue((string) $xpath[0]);
-        $this->assertEquals((string) $xpath[0], $all_values[$tag_name], new FormattableMarkup("The '@tag' tag was found with the expected value '@value'.", ['@tag' => $tag_name, '@value' => $all_values[$tag_name]]));
+        $message = new FormattableMarkup("The '@tag' tag was found with the expected value '@value'.", [
+          '@tag' => $tag_name,
+          '@value' => $all_values[$tag_name],
+        ]);
+        $this->assertEquals((string) $xpath[0], $all_values[$tag_name], $message);
       }
     }
 

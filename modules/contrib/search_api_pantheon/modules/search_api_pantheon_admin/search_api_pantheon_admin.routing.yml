@@ -1,0 +1,26 @@
+search_api_pantheon_admin.solr_admin_form:
+  path: '/admin/config/search/search-api/server/{search_api_server}/pantheon-admin'
+  options:
+    parameters:
+      search_api_server:
+        type: entity:search_api_server
+        with_config_overrides: TRUE
+  defaults:
+    _form: '\Drupal\search_api_pantheon_admin\Form\PantheonSolrAdminForm'
+    _title: 'Pantheon Search Admin'
+  requirements:
+    _search_api_pantheon_admin_access_check: 'TRUE'
+    _permission: 'execute pantheon_solr admin task'
+search_api_pantheon_admin.post_solr_schema:
+  path: '/admin/config/search/search-api/server/{search_api_server}/pantheon-admin/schema'
+  options:
+    parameters:
+      search_api_server:
+        type: entity:search_api_server
+        with_config_overrides: TRUE
+  defaults:
+    _form: '\Drupal\search_api_pantheon_admin\Form\PostSolrSchema'
+    _title: 'Pantheon Search Admin'
+  requirements:
+    _search_api_pantheon_admin_access_check: 'TRUE'
+    _permission: 'execute pantheon_solr admin task'

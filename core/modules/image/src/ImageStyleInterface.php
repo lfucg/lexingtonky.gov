@@ -10,20 +10,6 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 interface ImageStyleInterface extends ConfigEntityInterface {
 
   /**
-   * Returns the replacement ID.
-   *
-   * @return string|null
-   *   The replacement image style ID or NULL if no replacement has been
-   *   selected.
-   *
-   * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use
-   *   \Drupal\image\ImageStyleStorageInterface::getReplacementId() instead.
-   *
-   * @see \Drupal\image\ImageStyleStorageInterface::getReplacementId()
-   */
-  public function getReplacementID();
-
-  /**
    * Returns the image style.
    *
    * @return string
@@ -70,7 +56,7 @@ interface ImageStyleInterface extends ConfigEntityInterface {
    *   in an <img> tag. Requesting the URL will cause the image to be created.
    *
    * @see \Drupal\image\Controller\ImageStyleDownloadController::deliver()
-   * @see file_url_transform_relative()
+   * @see \Drupal\Core\File\FileUrlGeneratorInterface::transformRelative()
    */
   public function buildUrl($path, $clean_urls = NULL);
 

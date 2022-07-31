@@ -4,26 +4,26 @@ namespace Drupal\Tests\migrate_drupal_ui\Functional\d7;
 
 use Drupal\Tests\migrate_drupal_ui\Functional\MultilingualReviewPageTestBase;
 
+// cspell:ignore Filefield Flexslider Multiupload Imagefield
+
 /**
  * Tests migrate upgrade review page for Drupal 7.
  *
- * Tests with translation modules and migrate_drupal_multilingual enabled.
+ * Tests with translation modules enabled.
  *
  * @group migrate_drupal_7
  * @group migrate_drupal_ui
- *
- * @group legacy
  */
 class MultilingualReviewPageTest extends MultilingualReviewPageTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
+    'datetime_range',
     'language',
     'content_translation',
     'telephone',
-    'aggregator',
     'book',
     'forum',
     'statistics',
@@ -33,16 +33,17 @@ class MultilingualReviewPageTest extends MultilingualReviewPageTestBase {
     // Test migrations states.
     'migrate_state_finished_test',
     'migrate_state_not_finished_test',
-    // Test missing migrate_drupal.yml.
-    'migrate_state_no_file_test',
   ];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
-    $this->loadFixture(drupal_get_path('module', 'migrate_drupal') . '/tests/fixtures/drupal7.php');
+    $this->loadFixture($this->getModulePath('migrate_drupal') . '/tests/fixtures/drupal7.php');
+
+    // @todo Remove this in https://www.drupal.org/node/3267515
+    \Drupal::service('module_installer')->uninstall(['rdf']);
   }
 
   /**
@@ -57,83 +58,89 @@ class MultilingualReviewPageTest extends MultilingualReviewPageTestBase {
    */
   protected function getAvailablePaths() {
     return [
-      'blog',
-      'book',
-      'bulk_export',
-      'color',
-      'comment',
-      'contact',
-      'contextual',
-      'ctools',
-      'ctools_access_ruleset',
-      'ctools_ajax_sample',
-      'ctools_custom_content',
-      'dashboard',
-      'date',
-      'date_api',
-      'date_all_day',
-      'date_context',
-      'date_migrate',
-      'date_popup',
-      'date_repeat',
-      'date_repeat_field',
-      'date_tools',
-      'date_views',
-      'dblog',
-      'email',
-      'entity',
-      'entity_feature',
-      'entity_token',
-      'entity_translation',
-      'entityreference',
-      'field',
-      'field_sql_storage',
-      'field_ui',
-      'file',
-      'filter',
-      'forum',
-      'help',
-      'i18n_block',
-      'i18n_sync',
-      'image',
-      'link',
-      'list',
-      'locale',
-      'menu',
-      'number',
-      'node',
-      'openid',
-      'options',
-      'overlay',
-      'page_manager',
-      'path',
-      'phone',
-      'php',
-      'poll',
-      'profile',
-      'rdf',
-      'search',
-      'search_embedded_form',
-      'search_extra_type',
-      'search_node_tags',
-      'shortcut',
-      'simpletest',
-      'statistics',
-      'stylizer',
-      'syslog',
-      'system',
-      'taxonomy',
-      'term_depth',
-      'text',
-      'title',
-      'toolbar',
-      'tracker',
-      'translation',
-      'trigger',
-      'update',
-      'user',
-      'views_content',
-      'views_ui',
+      'Block languages',
+      'Blog',
+      'Book',
+      'Bulk Export',
+      'Chaos tools',
+      'Chaos Tools (CTools) AJAX Example',
+      'Comment',
+      'Contact',
+      'Content translation',
+      'Contextual links',
+      'Custom content panes',
+      'Custom rulesets',
+      'Dashboard',
+      'Database logging',
+      'Date',
+      'Date API',
+      'Date All Day',
+      'Date Context',
+      'Date Migration',
+      'Date Popup',
+      'Date Repeat API',
+      'Date Repeat Field',
+      'Date Tools',
+      'Date Views',
+      'Email',
+      'Entity API',
+      'Entity Reference',
+      'Entity Translation',
+      'Entity feature module',
+      'Entity tokens',
+      'Field',
+      'Field SQL storage',
+      'Field UI',
+      'File',
+      'Filter',
+      'Forum',
+      'Help',
+      'Image',
+      'Internationalization',
+      'Link',
+      'List',
+      'Locale',
+      'Menu',
+      'Menu translation',
+      'Multiupload Filefield Widget',
+      'Multiupload Imagefield Widget',
+      'Node',
+      'Node Reference',
+      'Number',
+      'OpenID',
+      'Overlay',
+      'PHP filter',
+      'Page manager',
+      'Path',
+      'Phone',
+      'Poll',
+      'Profile',
+      'Search',
+      'Search embedded form',
+      'Shortcut',
+      'Statistics',
+      'String translation',
+      'Stylizer',
+      'Synchronize translations',
+      'Syslog',
+      'System',
+      'Taxonomy translation',
+      'Taxonomy',
+      'Telephone',
+      'Term Depth access',
+      'Test search node tags',
+      'Test search type',
+      'Testing',
+      'Text',
+      'Title',
+      'Toolbar',
+      'Tracker',
+      'Trigger',
+      'Update manager',
+      'User',
+      'User Reference',
+      'Views content panes',
+      'Views UI',
     ];
   }
 
@@ -142,39 +149,41 @@ class MultilingualReviewPageTest extends MultilingualReviewPageTestBase {
    */
   protected function getMissingPaths() {
     return [
-      // Action is set not_finished in migrate_sate_not_finished_test.
-      // Aggregator is set not_finished in migrate_sate_not_finished_test.
-      'aggregator',
-      // Block is set not_finished in migrate_sate_not_finished_test.
-      'block',
-      'breakpoints',
-      'entity_translation_i18n_menu',
-      'entity_translation_upgrade',
+      // Action is set not_finished in migrate_state_not_finished_test.
+      'Aggregator',
+      // Block is set not_finished in migrate_state_not_finished_test.
+      'Block',
+      'Breakpoints',
+      // @todo Remove Color in https://www.drupal.org/project/drupal/issues/3270899
+      'Color',
+      'Contact translation',
+      'Entity Translation Menu',
+      'Entity Translation Upgrade',
+      'Field translation',
       // Flexslider_picture is a sub module of Picture module. Only the
       // styles from picture are migrated.
-      'flexslider_picture',
-      'i18n',
-      'i18n_contact',
-      'i18n_field',
-      'i18n_forum',
-      'i18n_menu',
-      'i18n_node',
-      'i18n_path',
-      'i18n_redirect',
-      'i18n_select',
-      'i18n_string',
-      'i18n_taxonomy',
-      'i18n_translation',
-      'i18n_user',
-      'i18n_variable',
-      'picture',
+      'FlexSlider Picture',
+      'Multilingual content',
+      'Multilingual forum',
+      'Multilingual select',
+      // Options is set not_finished in migrate_state_not_finished_test.
+      'Options',
+      'Path translation',
+      'Picture',
+      'RDF',
+      'References',
+      'References UUID',
+      'Translation redirect',
+      'Translation sets',
+      'User mail translation',
+      'Variable',
+      'Variable admin',
+      'Variable realm',
+      'Variable store',
+      'Variable translation',
+      'Variable views',
+      'Views',
       'migrate_status_active_test',
-      'variable',
-      'variable_admin',
-      'variable_realm',
-      'variable_store',
-      'variable_views',
-      'views',
     ];
   }
 

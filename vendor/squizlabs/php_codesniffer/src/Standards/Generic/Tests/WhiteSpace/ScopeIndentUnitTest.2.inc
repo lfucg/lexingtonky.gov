@@ -1547,6 +1547,31 @@ $foo = match ($type) {
 	],
 };
 
+$a = [
+	'a' => [
+		'a' => fn () => foo()
+	],
+	'a' => [
+		'a' => 'a',
+	]
+];
+
+switch ($foo) {
+	case 'a':
+		$foo = match ($foo) {
+			'bar' => 'custom_1',
+			default => 'a'
+		};
+		return $foo;
+	case 'b':
+		return match ($foo) {
+			'bar' => 'custom_1',
+			default => 'b'
+		};
+	default:
+		return 'default';
+}
+
 /* ADD NEW TESTS ABOVE THIS LINE AND MAKE SURE THAT THE 1 (space-based) AND 2 (tab-based) FILES ARE IN SYNC! */
 ?>
 
@@ -1555,7 +1580,7 @@ $foo = match ($type) {
 	 <?php endif ?>
 
 <?php
-	if (true) {
+	if (true) { // first error after line above is here
 	}
 	else if (true) {
 	}

@@ -1,0 +1,25 @@
+uuid: 8d62c426-65a4-4273-8e00-b1586e24847d
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.footer
+  module:
+    - system
+  theme:
+    - lex
+id: footer
+theme: lex
+region: footer
+weight: -23
+provider: null
+plugin: 'system_menu_block:footer'
+settings:
+  id: 'system_menu_block:footer'
+  label: Services
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility: {  }

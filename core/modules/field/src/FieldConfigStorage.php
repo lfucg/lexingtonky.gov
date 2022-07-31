@@ -4,7 +4,6 @@ namespace Drupal\field;
 
 use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\Core\Config\Config;
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\DeletedFieldsRepositoryInterface;
@@ -19,12 +18,6 @@ use Drupal\Component\Uuid\UuidInterface;
  * Storage handler for field config.
  */
 class FieldConfigStorage extends FieldConfigStorageBase {
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The entity type manager.
@@ -108,7 +101,7 @@ class FieldConfigStorage extends FieldConfigStorageBase {
    */
   public function loadByProperties(array $conditions = []) {
     // Include deleted fields if specified in the $conditions parameters.
-    $include_deleted = isset($conditions['include_deleted']) ? $conditions['include_deleted'] : FALSE;
+    $include_deleted = $conditions['include_deleted'] ?? FALSE;
     unset($conditions['include_deleted']);
 
     $fields = [];

@@ -4,26 +4,25 @@ namespace Drupal\Tests\migrate_drupal_ui\Functional\d6;
 
 use Drupal\Tests\migrate_drupal_ui\Functional\NoMultilingualReviewPageTestBase;
 
+// cspell:ignore multigroup nodeaccess
+
 /**
  * Tests migrate upgrade review page for Drupal 6 without translations.
  *
- * Tests with the translation modules and migrate_drupal_multilingual module
- * disabled.
+ * Tests with the translation modules disabled.
  *
  * @group migrate_drupal_6
  * @group migrate_drupal_ui
- *
- * @group legacy
  */
 class NoMultilingualReviewPageTest extends NoMultilingualReviewPageTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
+    'datetime_range',
     'language',
     'telephone',
-    'aggregator',
     'book',
     'forum',
     'statistics',
@@ -33,16 +32,14 @@ class NoMultilingualReviewPageTest extends NoMultilingualReviewPageTestBase {
     // Test migrations states.
     'migrate_state_finished_test',
     'migrate_state_not_finished_test',
-    // Test missing migrate_drupal.yml.
-    'migrate_state_no_file_test',
   ];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
-    $this->loadFixture(drupal_get_path('module', 'migrate_drupal') . '/tests/fixtures/drupal6.php');
+    $this->loadFixture($this->getModulePath('migrate_drupal') . '/tests/fixtures/drupal6.php');
   }
 
   /**
@@ -57,77 +54,76 @@ class NoMultilingualReviewPageTest extends NoMultilingualReviewPageTestBase {
    */
   protected function getAvailablePaths() {
     return [
-      'aggregator',
-      'blog',
-      'blogapi',
-      'book',
-      'calendarsignup',
-      'color',
-      'comment',
-      'contact',
-      'content',
-      'content_copy',
-      'content_multigroup',
-      'content_permissions',
-      'date',
-      'date_api',
-      'date_locale',
-      'date_php4',
-      'date_popup',
-      'date_repeat',
-      'date_timezone',
-      'date_tools',
-      'datepicker',
-      'dblog',
-      'ddblock',
-      'email',
-      'event',
-      'fieldgroup',
-      'filefield',
-      'filefield_meta',
-      'filter',
-      'forum',
-      'help',
-      'imageapi',
-      'imageapi_gd',
-      'imageapi_imagemagick',
-      'imagecache',
-      'imagecache_ui',
-      'imagefield',
-      'jquery_ui',
-      'link',
-      'locale',
-      'menu',
-      'node',
-      'nodeaccess',
-      'nodereference',
-      'number',
-      'openid',
-      'optionwidgets',
-      'path',
-      'phone',
-      'php',
-      'ping',
-      'poll',
-      'profile',
-      'search',
-      'statistics',
-      'syslog',
-      'system',
-      'taxonomy',
-      'text',
-      'throttle',
-      'tracker',
-      'translation',
-      'trigger',
-      'update',
-      'upload',
-      'user',
-      'userreference',
-      'variable',
-      'variable_admin',
-      'views_export',
-      'views_ui',
+      'Blog',
+      'Blog API',
+      'Book',
+      'Calendar Signup',
+      // @todo Remove Color in https://www.drupal.org/project/drupal/issues/3270899
+      'Color',
+      'Comment',
+      'Contact',
+      'Content',
+      'Content Copy',
+      'Content Multigroup',
+      'Content Permissions',
+      'Content translation',
+      'Database logging',
+      'Date',
+      'Date API',
+      'Date Locale',
+      'Date PHP4',
+      'Date Picker',
+      'Date Popup',
+      'Date Repeat API',
+      'Date Timezone',
+      'Date Tools',
+      'Dynamic display block',
+      'Email',
+      'Event',
+      'Fieldgroup',
+      'FileField',
+      'FileField Meta',
+      'Filter',
+      'Forum',
+      'Help',
+      'ImageAPI',
+      'ImageAPI GD2',
+      'ImageAPI ImageMagick',
+      'ImageCache',
+      'ImageCache UI',
+      'ImageField',
+      'Link',
+      'Locale',
+      'Menu',
+      'Node',
+      'Nodeaccess',
+      'Node Reference',
+      'Number',
+      'OpenID',
+      'PHP filter',
+      'Path',
+      'Phone - CCK',
+      'Ping',
+      'Poll',
+      'Profile',
+      'Search',
+      'Statistics',
+      'Syslog',
+      'System',
+      'Taxonomy',
+      'Text',
+      'Throttle',
+      'Tracker',
+      'Trigger',
+      'Update status',
+      'Upload',
+      'User',
+      'User Reference',
+      'Variable API',
+      'Variable admin',
+      'Views UI',
+      'Views exporter',
+      'jQuery UI',
     ];
   }
 
@@ -143,24 +139,27 @@ class NoMultilingualReviewPageTest extends NoMultilingualReviewPageTestBase {
    */
   protected function getMissingPaths() {
     return [
+      'Aggregator',
       // Block is set not_finished in migrate_state_not_finished_test.
-      'block',
-      'devel',
-      'devel_generate',
-      'devel_node_access',
-      'i18n',
-      'i18nblocks',
-      'i18ncck',
-      'i18ncontent',
-      'i18nmenu',
-      'i18npoll',
-      'i18nprofile',
-      'i18nstrings',
-      'i18nsync',
-      'i18ntaxonomy',
-      'i18nviews',
+      'Block',
+      'Block translation',
+      'CCK translation',
+      'Content type translation',
+      'Devel',
+      'Devel generate',
+      'Devel node access',
+      'Internationalization',
+      'Menu translation',
       'migrate_status_active_test',
-      'views',
+      // Option Widgets is set not_finished in migrate_state_not_finished_test.
+      'Option Widgets',
+      'Poll aggregate',
+      'Profile translation',
+      'String translation',
+      'Synchronize translations',
+      'Taxonomy translation',
+      'Views',
+      'Views translation',
     ];
   }
 

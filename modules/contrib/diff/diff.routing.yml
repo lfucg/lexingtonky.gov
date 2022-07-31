@@ -4,7 +4,7 @@ diff.revisions_diff:
     _controller: '\Drupal\diff\Controller\NodeRevisionController::compareNodeRevisions'
     _title: Diff General Settings
   requirements:
-    _access_node_revision: 'view'
+    _entity_access: 'node.view all revisions'
   options:
     _admin_route: TRUE
 

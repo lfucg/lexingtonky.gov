@@ -1,0 +1,86 @@
+uuid: d2362792-20ab-4d9f-b596-042c30dacdb8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.board_commission.field_granicus_id
+    - field.field.node.board_commission.field_lex_custom_banner_image
+    - field.field.node.board_commission.field_lex_site_nav
+    - field.field.node.board_commission.field_metatags
+    - field.field.node.board_commission.field_office_to_contact
+    - field.field.node.board_commission.field_organization_taxonomy_term
+    - field.field.node.board_commission.field_page_overview
+    - field.field.node.board_commission.field_page_section
+    - field.field.node.board_commission.field_related_documents
+    - node.type.board_commission
+  module:
+    - entity_reference_revisions
+    - image
+    - metatag
+    - text
+    - user
+id: node.board_commission.default
+targetEntityType: node
+bundle: board_commission
+mode: default
+content:
+  field_granicus_id:
+    type: number_integer
+    label: hidden
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_lex_custom_banner_image:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_metatags:
+    type: metatag_empty_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_page_overview:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_page_section:
+    type: entity_reference_revisions_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  workbench_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  addtoany: true
+  field_lex_site_nav: true
+  field_office_to_contact: true
+  field_organization_taxonomy_term: true
+  field_related_documents: true
+  search_api_excerpt: true

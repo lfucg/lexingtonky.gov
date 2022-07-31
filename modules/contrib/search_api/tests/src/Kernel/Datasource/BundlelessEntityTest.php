@@ -25,7 +25,7 @@ class BundlelessEntityTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'search_api',
     'user',
     'system',

@@ -30,7 +30,7 @@ class ContentEntityDatasourceTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'search_api',
     'language',
     'user',
@@ -80,6 +80,7 @@ class ContentEntityDatasourceTest extends KernelTestBase {
         'weight' => $i,
       ])->save();
     }
+    $this->container->get('language_manager')->reset();
 
     // Create a test index.
     $this->index = Index::create([
@@ -182,6 +183,10 @@ class ContentEntityDatasourceTest extends KernelTestBase {
 
     $item = $loaded_items['1:l0'];
     $build = $this->datasource->viewItem($item, 'foobar');
+    // Order of cache tags does not matter.
+    if (!empty($build['#cache']['tags'])) {
+      sort($build['#cache']['tags']);
+    }
     $expected = [
       '#entity_test_mulrev_changed' => $item->getValue(),
       '#view_mode' => 'foobar',
@@ -204,6 +209,10 @@ class ContentEntityDatasourceTest extends KernelTestBase {
     $this->assertTrue($build['#sorted']);
     $this->assertEquals([[$builder, 'buildMultiple']], $build['#pre_render']);
     foreach ($loaded_items as $item_id => $item) {
+      // Order of cache tags does not matter.
+      if (!empty($build[$item_id]['#cache']['tags'])) {
+        sort($build[$item_id]['#cache']['tags']);
+      }
       /** @var \Drupal\Core\Entity\EntityInterface $entity */
       $entity = $item->getValue();
       $expected = [
@@ -307,6 +316,97 @@ class ContentEntityDatasourceTest extends KernelTestBase {
     }
     sort($discovered_ids);
     return $discovered_ids;
+  }
+
+  /**
+   * Tests the getLanguages() method.
+   *
+   * @param array $language_config
+   *   The "languages" config to set on the datasource.
+   * @param string[] $expected
+   *   The expected returned language codes.
+   *
+   * @covers ::getLanguages
+   *
+   * @dataProvider getLanguagesDataProvider
+   */
+  public function testGetLanguages(array $language_config, array $expected) {
+    $this->datasource->setConfiguration([
+      'languages' => $language_config,
+    ]);
+    $method = new \ReflectionMethod($this->datasource, 'getLanguages');
+    $method->setAccessible(TRUE);
+    /** @var \Drupal\Core\Language\LanguageInterface[] $returned */
+    $returned = $method->invoke($this->datasource);
+    foreach ($returned as $langcode => $language) {
+      $this->assertEquals($langcode, $language->getId());
+    }
+    $actual = array_keys($returned);
+    sort($actual);
+    $this->assertEquals($expected, $actual);
+  }
+
+  /**
+   * Provides test data sets for testGetLanguages().
+   *
+   * @return array[]
+   *   An array of parameter arrays for testGetLanguages().
+   *
+   * @see \Drupal\Tests\search_api\Kernel\Datasource\ContentEntityDatasourceTest::testGetLanguages()
+   */
+  public function getLanguagesDataProvider(): array {
+    return [
+      'all' => [
+        'language_config' => [
+          'default' => TRUE,
+          'selected' => [],
+        ],
+        'expected' => [
+          'en',
+          'l0',
+          'l1',
+          'und',
+          'zxx',
+        ],
+      ],
+      'none' => [
+        'language_config' => [
+          'default' => FALSE,
+          'selected' => [],
+        ],
+        'expected' => [
+          'und',
+          'zxx',
+        ],
+      ],
+      'some removed' => [
+        'language_config' => [
+          'default' => TRUE,
+          'selected' => [
+            'l0',
+          ],
+        ],
+        'expected' => [
+          'en',
+          'l1',
+          'und',
+          'zxx',
+        ],
+      ],
+      'some added' => [
+        'language_config' => [
+          'default' => FALSE,
+          'selected' => [
+            'l0',
+          ],
+        ],
+        'expected' => [
+          'l0',
+          'und',
+          'zxx',
+        ],
+      ],
+    ];
   }
 
 }

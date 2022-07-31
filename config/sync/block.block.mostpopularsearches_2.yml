@@ -1,0 +1,33 @@
+uuid: 376b706d-729e-4ebe-807f-6df7614ff906
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.most-popular-searches
+  module:
+    - ctools
+    - system
+  theme:
+    - lex
+id: mostpopularsearches_2
+theme: lex
+region: hero
+weight: -17
+provider: null
+plugin: 'system_menu_block:most-popular-searches'
+settings:
+  id: 'system_menu_block:most-popular-searches'
+  label: 'Most Popular Searches'
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: true
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      landing_page: landing_page

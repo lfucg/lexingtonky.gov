@@ -30,10 +30,10 @@ class TaxonomyMenuHelper {
   /**
    * Constructor.
    *
-   * @param EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager.
    * @param \Drupal\Core\Menu\MenuLinkManagerInterface $manager
    *   The menu link manager.
-   * @internal param EntityTypeManagerInterface $entity_manager The storage interface.*   The storage interface.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, MenuLinkManagerInterface $manager) {
     $this->menuStorage = $entity_type_manager->getStorage('taxonomy_menu');
@@ -50,18 +50,20 @@ class TaxonomyMenuHelper {
    *   The Taxonomy Menu
    */
   public function getTermMenusByVocabulary($vid) {
-    return $this->menuStorage->loadByProperties(['vocabulary'=>$vid]);
+    return $this->menuStorage->loadByProperties(['vocabulary' => $vid]);
   }
 
   /**
    * Create menu entries associate with the vocabulary of this term.
    *
    * @param \Drupal\taxonomy\TermInterface $term
-   *   Term
+   *   Term.
+   * @param bool $rebuild_all
+   *   Rebuild all.
    */
   public function generateTaxonomyMenuEntries(TermInterface $term, $rebuild_all = TRUE) {
     // Load relevant taxonomy menus.
-    $tax_menus = $this->getTermMenusByVocabulary($term->getVocabularyId());
+    $tax_menus = $this->getTermMenusByVocabulary($term->bundle());
     foreach ($tax_menus as $menu) {
       foreach ($menu->getLinks([], TRUE) as $plugin_id => $plugin_def) {
         if (!$rebuild_all) {
@@ -86,13 +88,15 @@ class TaxonomyMenuHelper {
    * Update menu entries associate with the vocabulary of this term.
    *
    * @param \Drupal\taxonomy\TermInterface $term
-   *   Term
+   *   Term.
+   * @param bool $rebuild_all
+   *   Rebuild all.
    */
   public function updateTaxonomyMenuEntries(TermInterface $term, $rebuild_all = TRUE) {
 
     // Load relevant taxonomy menus.
-    $tax_menus = $this->getTermMenusByVocabulary($term->getVocabularyId());
-    /** @var $menu \Drupal\taxonomy_menu\TaxonomyMenuInterface */
+    $tax_menus = $this->getTermMenusByVocabulary($term->bundle());
+    /* @var $menu \Drupal\taxonomy_menu\TaxonomyMenuInterface */
     foreach ($tax_menus as $menu) {
 
       $links = $menu->getLinks([], TRUE);
@@ -111,7 +115,7 @@ class TaxonomyMenuHelper {
         }
         else {
           // Remove specific menu link if vid term is different to this old vid.
-          if ($term->original->getVocabularyId() != $term->getVocabularyId()) {
+          if ($term->original->bundle() != $term->bundle()) {
             $this->removeTaxonomyMenuEntries($term->original);
           }
           $this->manager->addDefinition($plugin_id, $plugin_def);
@@ -130,8 +134,8 @@ class TaxonomyMenuHelper {
    */
   public function removeTaxonomyMenuEntries(TermInterface $term, $rebuild_all = TRUE) {
     // Load relevant taxonomy menus.
-    $tax_menus = $this->getTermMenusByVocabulary($term->getVocabularyId());
-    /** @var $menu \Drupal\taxonomy_menu\TaxonomyMenuInterface */
+    $tax_menus = $this->getTermMenusByVocabulary($term->bundle());
+    /* @var $menu \Drupal\taxonomy_menu\TaxonomyMenuInterface */
     foreach ($tax_menus as $menu) {
       // Remove all links.
       if ($rebuild_all) {
@@ -139,8 +143,10 @@ class TaxonomyMenuHelper {
         foreach ($links as $plugin_id) {
           $this->manager->removeDefinition($plugin_id, FALSE);
         }
-      // Remove specific term link. Note - this link does not exist in the taxonomy menu and is not in $links.
-      } else if (!empty($term)) {
+      }
+      // Remove specific term link.
+      // Note: this link does not exist in the taxonomy menu and not in $links.
+      elseif (!empty($term)) {
         $this->manager->removeDefinition($menu->buildMenuPluginId($term), FALSE);
       }
     }

@@ -15,7 +15,7 @@ abstract class UserKernelTestBase extends ViewsKernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['user_test_views', 'user', 'system', 'field'];
+  protected static $modules = ['user_test_views', 'user', 'system', 'field'];
 
   /**
    * Users to use during this test.
@@ -41,7 +41,7 @@ abstract class UserKernelTestBase extends ViewsKernelTestBase {
   protected function setUp($import_test_views = TRUE) {
     parent::setUp();
 
-    ViewTestData::createTestViews(get_class($this), ['user_test_views']);
+    ViewTestData::createTestViews(static::class, ['user_test_views']);
 
     $this->installEntitySchema('user');
 
@@ -55,16 +55,16 @@ abstract class UserKernelTestBase extends ViewsKernelTestBase {
    */
   protected function setupPermissionTestData() {
     // Setup a role without any permission.
-    $this->roleStorage->create(['id' => 'authenticated'])
+    $this->roleStorage->create(['id' => 'authenticated', 'label' => 'Authenticated'])
       ->save();
-    $this->roleStorage->create(['id' => 'no_permission'])
+    $this->roleStorage->create(['id' => 'no_permission', 'label' => 'No permission'])
       ->save();
     // Setup a role with just one permission.
-    $this->roleStorage->create(['id' => 'one_permission'])
+    $this->roleStorage->create(['id' => 'one_permission', 'label' => '1 permission'])
       ->save();
     user_role_grant_permissions('one_permission', ['administer permissions']);
     // Setup a role with multiple permissions.
-    $this->roleStorage->create(['id' => 'multiple_permissions'])
+    $this->roleStorage->create(['id' => 'multiple_permissions', 'label' => 'Multiple permissions'])
       ->save();
     user_role_grant_permissions('multiple_permissions', ['administer permissions', 'administer users', 'access user profiles']);
 

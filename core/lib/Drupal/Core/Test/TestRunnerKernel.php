@@ -4,6 +4,7 @@ namespace Drupal\Core\Test;
 
 use Drupal\Core\DrupalKernel;
 use Drupal\Core\Extension\Extension;
+use Drupal\Core\Extension\ExtensionDiscovery;
 use Drupal\Core\Site\Settings;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -35,12 +36,17 @@ class TestRunnerKernel extends DrupalKernel {
     //   DateFormatter::formatInterval() cause a plugin not found exception.
     $this->moduleList = [
       'system' => 0,
-      'simpletest' => 0,
     ];
     $this->moduleData = [
       'system' => new Extension($this->root, 'module', 'core/modules/system/system.info.yml', 'system.module'),
-      'simpletest' => new Extension($this->root, 'module', 'core/modules/simpletest/simpletest.info.yml', 'simpletest.module'),
     ];
+    // In order to support Simpletest in Drupal 9 conditionally include the
+    // module.
+    $extensions = (new ExtensionDiscovery($this->root, FALSE, [], 'ignore_site_path_does_not_exist'))->scan('module', FALSE);
+    if (isset($extensions['simpletest'])) {
+      $this->moduleList['simpletest'] = 0;
+      $this->moduleData['simpletest'] = $extensions['simpletest'];
+    }
   }
 
   /**
@@ -71,7 +77,7 @@ class TestRunnerKernel extends DrupalKernel {
     $this->getContainer()->get('module_handler')->loadAll();
 
     $test_discovery = new TestDiscovery(
-      $this->getContainer()->get('app.root'),
+      $this->getContainer()->getParameter('app.root'),
       $this->getContainer()->get('class_loader')
     );
     $test_discovery->registerTestNamespaces();
@@ -81,8 +87,8 @@ class TestRunnerKernel extends DrupalKernel {
 
     // Create the build/artifacts directory if necessary.
     include_once $this->getAppRoot() . '/core/includes/file.inc';
-    if (!is_dir('public://simpletest')) {
-      mkdir('public://simpletest', 0777, TRUE);
+    if (!is_dir('public://simpletest') && !@mkdir('public://simpletest', 0777, TRUE) && !is_dir('public://simpletest')) {
+      throw new \RuntimeException('Unable to create directory: public://simpletest');
     }
   }
 

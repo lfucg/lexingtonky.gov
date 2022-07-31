@@ -103,7 +103,7 @@ class Robots extends MetaNameBase {
         ],
       ],
       '#default_value' => $default_value,
-      '#required' => isset($element['#required']) ? $element['#required'] : FALSE,
+      '#required' => $element['#required'] ?? FALSE,
       '#element_validate' => [[get_class($this), 'validateTag']],
     ];
 

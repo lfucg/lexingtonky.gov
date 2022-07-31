@@ -239,7 +239,7 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
    * @param int $cardinality
    *   The field cardinality with which to check.
    */
-  protected function checkEditAccess(NodeInterface $host_node, $number_of_items, $cardinality) {
+  protected function checkEditAccess(NodeInterface $host_node, int $number_of_items, int $cardinality) {
     $assert_session = $this->assertSession();
     $page = $this->getSession()->getPage();
     $other_user = $this->createUser([

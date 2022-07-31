@@ -8,6 +8,7 @@
 namespace Drupal\Tests\Component\DependencyInjection;
 
 use Drupal\Component\Utility\Crypt;
+use Drupal\Tests\PhpUnitCompatibilityTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
@@ -23,6 +24,8 @@ use Prophecy\Argument;
  * @group DependencyInjection
  */
 class ContainerTest extends TestCase {
+
+  use PhpUnitCompatibilityTrait;
 
   /**
    * The tested container.
@@ -55,7 +58,7 @@ class ContainerTest extends TestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->machineFormat = TRUE;
     $this->containerClass = '\Drupal\Component\DependencyInjection\Container';
     $this->containerDefinition = $this->getMockContainerDefinition();
@@ -165,7 +168,7 @@ class ContainerTest extends TestCase {
     $this->assertEquals($some_parameter, $service->getSomeParameter(), '%some_config% was injected via constructor.');
     $this->assertEquals($this->container, $service->getContainer(), 'Container was injected via setter injection.');
     $this->assertEquals($some_other_parameter, $service->getSomeOtherParameter(), '%some_other_config% was injected via setter injection.');
-    $this->assertEquals($service->_someProperty, 'foo', 'Service has added properties.');
+    $this->assertEquals('foo', $service->_someProperty, 'Service has added properties.');
   }
 
   /**
@@ -434,7 +437,7 @@ class ContainerTest extends TestCase {
    * @covers ::createService
    */
   public function testGetWithFileInclude() {
-    $file_service = $this->container->get('container_test_file_service_test');
+    $this->container->get('container_test_file_service_test');
     $this->assertTrue(function_exists('container_test_file_service_test_service_function'));
     $this->assertEquals('Hello Container', container_test_file_service_test_service_function());
   }
@@ -537,13 +540,13 @@ class ContainerTest extends TestCase {
   public function testResolveServicesAndParametersForPrivateService() {
     $service = $this->container->get('service_using_private');
     $private_service = $service->getSomeOtherService();
-    $this->assertEquals($private_service->getSomeParameter(), 'really_private_lama', 'Private was found successfully.');
+    $this->assertEquals('really_private_lama', $private_service->getSomeParameter(), 'Private was found successfully.');
 
     // Test that sharing the same private services works.
     $service = $this->container->get('another_service_using_private');
     $another_private_service = $service->getSomeOtherService();
     $this->assertNotSame($private_service, $another_private_service, 'Private service is not shared.');
-    $this->assertEquals($private_service->getSomeParameter(), 'really_private_lama', 'Private was found successfully.');
+    $this->assertEquals('really_private_lama', $private_service->getSomeParameter(), 'Private was found successfully.');
   }
 
   /**
@@ -556,13 +559,13 @@ class ContainerTest extends TestCase {
   public function testResolveServicesAndParametersForSharedPrivateService() {
     $service = $this->container->get('service_using_shared_private');
     $private_service = $service->getSomeOtherService();
-    $this->assertEquals($private_service->getSomeParameter(), 'really_private_lama', 'Private was found successfully.');
+    $this->assertEquals('really_private_lama', $private_service->getSomeParameter(), 'Private was found successfully.');
 
     // Test that sharing the same private services works.
     $service = $this->container->get('another_service_using_shared_private');
     $same_private_service = $service->getSomeOtherService();
     $this->assertSame($private_service, $same_private_service, 'Private service is shared.');
-    $this->assertEquals($private_service->getSomeParameter(), 'really_private_lama', 'Private was found successfully.');
+    $this->assertEquals('really_private_lama', $private_service->getSomeParameter(), 'Private was found successfully.');
   }
 
   /**

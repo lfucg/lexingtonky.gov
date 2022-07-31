@@ -21,7 +21,6 @@ use DateTimeZone;
 class FormatDate extends ProcessPluginBase {
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
 
-    // \Drupal::logger('my_module')->error('value: ' . $value);
     if (! $value) { return false; }
 
     $date = new DateTime($value, new DateTimeZone('America/New_York'));

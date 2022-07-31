@@ -5,7 +5,7 @@ namespace Drupal\webprofiler\Entity\Decorators\Config;
 use Drupal\user\RoleStorageInterface;
 
 /**
- * Class RoleStorageDecorator
+ * Class RoleStorageDecorator.
  */
 class RoleStorageDecorator extends ConfigEntityStorageDecorator implements RoleStorageInterface {
 

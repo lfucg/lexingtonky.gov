@@ -1,0 +1,28 @@
+uuid: ce034488-efd3-42a4-b55f-34b647658e8f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.rendered_block.field_block
+    - paragraphs.paragraphs_type.rendered_block
+  module:
+    - block_field
+    - workbench_moderation
+id: paragraph.rendered_block.default
+targetEntityType: paragraph
+bundle: rendered_block
+mode: default
+content:
+  field_block:
+    type: block_field_default
+    weight: 6
+    region: content
+    settings:
+      plugin_id: ''
+      settings: {  }
+      configuration_form: full
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

@@ -39,7 +39,7 @@ class RenderedItemTest extends ProcessorTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'user',
     'node',
     'search_api',
@@ -286,7 +286,6 @@ class RenderedItemTest extends ProcessorTestBase {
     $this->assertStringContainsString("view-mode-$view_mode", $field_value, 'Node item ' . $nid . " rendered in view-mode \"$view_mode\".");
     $this->assertStringContainsString('field--name-title', $field_value, 'Node item ' . $nid . ' has a rendered title field.');
     $this->assertStringContainsString('>' . $node->label() . '<', $field_value, 'Node item ' . $nid . ' has a rendered title inside HTML-Tags.');
-    $this->assertStringContainsString('>Member for<', $field_value, 'Node item ' . $nid . ' has rendered member information HTML-Tags.');
     if ($full_view) {
       $body_value = $node->get('body')->getValue()[0]['value'] . '<';
     }

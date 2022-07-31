@@ -1,7 +1,7 @@
 /**
  * Dumpers
  */
-.devel-dumper .details-wrapper{
+.devel-dumper .details-wrapper {
   max-height: 450px;
   margin-right: 3px;
   overflow: auto;
@@ -10,33 +10,19 @@
 /**
  * Switch User block
  */
-#content .block-devel-switch-user ul.links,
-#footer .block-devel-switch-user ul.links {
-  margin-left: 0;
-  padding-left: 0;
-}
-
-#content .block-devel-switch-user ul.links li,
-#footer .block-devel-switch-user ul.links li {
-  display: inline-block;
-  margin-left: 0;
-  margin-right: 1.5em;
-  padding-right: 0;
-}
-
-#footer .block-devel-switch-user ul.links li a {
-  margin: 0;
+.region-content .block-devel-switch-user ul,
+.site-footer .block-devel-switch-user ul {
+  display: flex;
+  flex-flow: row wrap;
   padding: 0;
-  border: none;
 }
 
-#content #devel-switch-user-form .form-item-username,
-#footer #devel-switch-user-form .form-item-username {
-  float: left;
-  margin-right: 2em;
+.region-content .block-devel-switch-user ul li,
+.site-footer .block-devel-switch-user ul li {
+  display: block;
+  padding-right: 2em;
 }
 
-#content #devel-switch-user-form .button-primary,
-#footer #devel-switch-user-form .button-primary {
-  margin-top: 1em;
+.devel-switchuser-form {
+  margin-top: 0.5em;
 }

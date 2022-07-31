@@ -32,7 +32,7 @@ class HelpTopicTwigLoaderTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->setUpVfs();
     $this->helpLoader = new HelpTopicTwigLoader('\fake\root\path',
       $this->getHandlerMock('module'),
@@ -67,7 +67,7 @@ class HelpTopicTwigLoaderTest extends UnitTestCase {
     $this->expectException(LoaderError::class);
     $this->expectExceptionMessage("Malformed YAML in help topic \"vfs://root/modules/test/help_topics/test.invalid_yaml.html.twig\":");
 
-    $source = $this->helpLoader->getSourceContext('@' . HelpTopicTwigLoader::MAIN_NAMESPACE . '/test.invalid_yaml.html.twig');
+    $this->helpLoader->getSourceContext('@' . HelpTopicTwigLoader::MAIN_NAMESPACE . '/test.invalid_yaml.html.twig');
   }
 
   /**

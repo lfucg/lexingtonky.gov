@@ -3,12 +3,13 @@ name: 'Search API Test Solr search'
 description: 'Support module for Search API Solr search tests.'
 package: 'Search API'
 dependencies:
-  - search_api_test_example_content
-  - search_api_solr
-core: 8.x
+  - drupal:language
+  - search_api:search_api_test_example_content
+  - search_api_solr:search_api_solr
+core_version_requirement: ^9.2 || ^10.0
 hidden: true
 
-# Information added by Drupal.org packaging script on 2020-12-20
-version: '8.x-1.7'
+# Information added by Drupal.org packaging script on 2022-07-08
+version: '4.2.8'
 project: 'search_api_solr'
-datestamp: 1608460722
+datestamp: 1657270266

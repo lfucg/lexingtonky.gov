@@ -14,6 +14,7 @@ class MetatagTagsTest extends MetatagTagsTestBase {
    */
   protected $tags = [
     'abstract',
+    'author',
     'cache_control',
     'canonical_url',
     'content_language',
@@ -82,20 +83,6 @@ class MetatagTagsTest extends MetatagTagsTestBase {
    */
   protected function abstractTestFieldXpath() {
     return "//textarea[@name='abstract']";
-  }
-
-  /**
-   * Implements {tag_name}TestNameAttribute() for 'author'.
-   */
-  protected function authorTestOutputXpath() {
-    return "//link[@rel='author']";
-  }
-
-  /**
-   * Implements {tag_name}TestValueAttribute() for 'author'.
-   */
-  protected function authorTestValueAttribute() {
-    return 'href';
   }
 
   /**

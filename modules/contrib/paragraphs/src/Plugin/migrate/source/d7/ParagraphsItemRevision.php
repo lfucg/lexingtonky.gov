@@ -17,22 +17,25 @@ namespace Drupal\paragraphs\Plugin\migrate\source\d7;
 class ParagraphsItemRevision extends ParagraphsItem {
 
   /**
-   * Join string for getting all except the current revisions.
+   * {@inheritdoc}
    */
   const JOIN = "p.item_id=pr.item_id AND p.revision_id <> pr.revision_id";
 
   /**
    * {@inheritdoc}
    */
+  const PARENT_FIELD_TABLE_PREFIX = 'field_revision_';
+
+  /**
+   * {@inheritdoc}
+   */
   public function getIds() {
-    $ids = [
+    return [
       'revision_id' => [
         'type' => 'integer',
         'alias' => 'pr',
       ],
     ];
-
-    return $ids;
   }
 
 }

@@ -1,3 +1,8 @@
+- name: العربية
+  code: ar
+  description: Bootstrap 5 باللغة العربية
+  url: https://bootstrap.mahdi.style/
+
 - name: 中文(繁體)
   code: zh-tw
   description: Bootstrap 4 繁體中文手冊
@@ -7,11 +12,6 @@
   code: zh
   description: Bootstrap 4 · 全球最流行的 HTML、CSS 和 JS 工具库。
   url: https://code.z01.com/v4/
-
-- name: Chinese Simplified
-  code: zh-CN
-  description: Bootstrap · 全球最受欢迎的 HTML、CSS 和 JS 库。
-  url: https://bootstrap-zh-cn.github.io/
 
 - name: Brazilian Portuguese
   code: pt-BR
@@ -23,12 +23,22 @@
   description: Bootstrap 4 日本語リファレンス
   url: https://getbootstrap.jp/
 
-- name: Korean
-  code: ko
-  description: Bootstrap 4 한국어 문서
-  url: https://getbootstrap.kr/
-
 - name: Russian
   code: ru
-  description: Bootstrap 4 на русском
-  url: https://v4.getbootstrap.su/
+  description: Bootstrap 5 на русском
+  url: https://getbootstrap.su/
+
+- name: Korean
+  code: ko
+  description: Bootstrap 5 한국어 문서
+  url: https://getbootstrap.kr/
+
+- name: 中文(繁體)
+  code: zh-tw
+  description: Bootstrap 5 繁體中文手冊
+  url: https://bootstrap5.hexschool.com/
+
+- name: Simplified Chinese
+  code: zh-CN
+  description: Bootstrap 5 中文文档
+  url: https://v5.bootcss.com/

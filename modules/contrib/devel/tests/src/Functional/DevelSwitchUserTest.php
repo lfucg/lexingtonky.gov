@@ -3,21 +3,13 @@
 namespace Drupal\Tests\devel\Functional;
 
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests switch user.
  *
  * @group devel
  */
-class DevelSwitchUserTest extends BrowserTestBase {
-
-  /**
-   * Modules to enable.
-   *
-   * @var array
-   */
-  public static $modules = ['devel', 'block'];
+class DevelSwitchUserTest extends DevelBrowserTestBase {
 
   /**
    * The block used by this test.
@@ -53,38 +45,38 @@ class DevelSwitchUserTest extends BrowserTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->block = $this->drupalPlaceBlock('devel_switch_user', ['id' => 'switch-user']);
+    $this->block = $this->drupalPlaceBlock('devel_switch_user', ['id' => 'switch-user', 'label' => 'Switch Hit']);
 
-    $this->develUser = $this->drupalCreateUser(['access devel information', 'switch users']);
-    $this->switchUser = $this->drupalCreateUser(['switch users']);
-    $this->webUser = $this->drupalCreateUser();
+    $this->develUser = $this->drupalCreateUser(['access devel information', 'switch users'], 'Devel User Four');
+    $this->switchUser = $this->drupalCreateUser(['switch users'], 'Switch User Five');
+    $this->webUser = $this->drupalCreateUser([], 'Web User Six');
   }
 
   /**
-   * Tests switch user.
+   * Tests switch user basic functionality.
    */
-  public function testSwitchUser() {
+  public function testSwitchUserFunctionality() {
     $this->drupalLogin($this->webUser);
 
     $this->drupalGet('');
-    $this->assertNoText($this->block->label(), 'Block title was not found.');
+    $this->assertSession()->pageTextNotContains($this->block->label());
 
     // Ensure that a token is required to switch user.
     $this->drupalGet('/devel/switch/' . $this->webUser->getDisplayName());
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
 
     $this->drupalLogin($this->develUser);
 
     $this->drupalGet('');
-    $this->assertText($this->block->label(), 'Block title was found.');
+    $this->assertSession()->pageTextContains($this->block->label(), 'Block title was found.');
 
     // Ensure that if name in not passed the controller returns access denied.
     $this->drupalGet('/devel/switch');
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
 
     // Ensure that a token is required to switch user.
     $this->drupalGet('/devel/switch/' . $this->switchUser->getDisplayName());
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
 
     // Switch to another user account.
     $this->drupalGet('/user/' . $this->switchUser->id());
@@ -99,7 +91,7 @@ class DevelSwitchUserTest extends BrowserTestBase {
 
     // Use the search form to switch to another account.
     $edit = ['userid' => $this->switchUser->getDisplayName()];
-    $this->drupalPostForm(NULL, $edit, t('Switch'));
+    $this->drupalPostForm(NULL, $edit, 'Switch');
     $this->assertSessionByUid($this->switchUser->id());
     $this->assertNoSessionByUid($this->develUser->id());
   }
@@ -118,13 +110,13 @@ class DevelSwitchUserTest extends BrowserTestBase {
     $this->drupalLogin($this->develUser);
 
     $this->drupalGet('');
-    $this->assertText($this->block->label(), 'Block title was found.');
+    $this->assertSession()->pageTextContains($this->block->label(), 'Block title was found.');
 
     // Ensure that block default configuration is effectively used. The block
     // default configuration is the following:
-    // - list_size : 12
-    // - include_anon : FALSE
-    // - show_form : TRUE
+    // - list_size : 12.
+    // - include_anon : FALSE.
+    // - show_form : TRUE.
     $this->assertSwitchUserSearchForm();
     $this->assertSwitchUserListCount(12);
     $this->assertSwitchUserListNoContainsUser($anonymous);
@@ -157,14 +149,14 @@ class DevelSwitchUserTest extends BrowserTestBase {
     $this->setBlockConfiguration('list_size', 2);
 
     // Login as web user so we are sure that this account is prioritized
-    // in the list if not enougth user with 'switch users' permission are
+    // in the list if not enough users with 'switch users' permission are
     // present.
     $this->drupalLogin($this->webUser);
 
     $this->drupalLogin($this->develUser);
     $this->drupalGet('');
 
-    // Ensure that user with 'switch users' permission are prioritized.
+    // Ensure that users with 'switch users' permission are prioritized.
     $this->assertSwitchUserListCount(2);
     $this->assertSwitchUserListContainsUser($this->develUser->getDisplayName());
     $this->assertSwitchUserListContainsUser($this->switchUser->getDisplayName());
@@ -177,7 +169,8 @@ class DevelSwitchUserTest extends BrowserTestBase {
     $this->assertSwitchUserListContainsUser($this->webUser->getDisplayName());
     $this->assertSwitchUserListNoContainsUser($this->switchUser->getDisplayName());
 
-    // Ensure that anonymous user are prioritized if include_anon is set to true.
+    // Ensure that anonymous user are prioritized if include_anon is set to
+    // true.
     $this->setBlockConfiguration('include_anon', TRUE);
     $this->drupalGet('');
     $this->assertSwitchUserListCount(2);
@@ -192,7 +185,10 @@ class DevelSwitchUserTest extends BrowserTestBase {
     $this->drupalLogin($this->rootUser);
     $this->drupalGet('');
     $this->assertSwitchUserListCount(2);
-    $this->assertSwitchUserListContainsUser($this->rootUser->getDisplayName());
+    // Removed assertion on rootUser which causes random test failures.
+    // @todo Adjust the tests when user 1 option is completed.
+    // @see https://www.drupal.org/project/devel/issues/3097047
+    // @see https://www.drupal.org/project/devel/issues/3114264
     $this->assertSwitchUserListContainsUser($anonymous);
 
     // Ensure that the switch user block works properly even if no roles have
@@ -202,7 +198,10 @@ class DevelSwitchUserTest extends BrowserTestBase {
 
     $this->drupalGet('');
     $this->assertSwitchUserListCount(2);
-    $this->assertSwitchUserListContainsUser($this->rootUser->getDisplayName());
+    // Removed assertion on rootUser which causes random test failures.
+    // @todo Adjust the tests when user 1 option is completed.
+    // @see https://www.drupal.org/project/devel/issues/3097047
+    // @see https://www.drupal.org/project/devel/issues/3114264
     $this->assertSwitchUserListContainsUser($anonymous);
   }
 
@@ -214,7 +213,7 @@ class DevelSwitchUserTest extends BrowserTestBase {
    */
   public function assertSwitchUserListCount($number) {
     $result = $this->xpath('//div[@id=:block]//ul/li/a', [':block' => 'block-switch-user']);
-    $this->assert(count($result) == $number, 'The number of users shown in switch user is correct.');
+    $this->assertTrue(count($result) == $number, 'The number of users shown in switch user is correct.');
   }
 
   /**
@@ -225,7 +224,7 @@ class DevelSwitchUserTest extends BrowserTestBase {
    */
   public function assertSwitchUserListContainsUser($username) {
     $result = $this->xpath('//div[@id=:block]//ul/li/a[normalize-space()=:user]', [':block' => 'block-switch-user', ':user' => $username]);
-    $this->assert(count($result) > 0, new FormattableMarkup('User "%user" is included in the switch user list.', ['%user' => $username]));
+    $this->assertTrue(count($result) > 0, new FormattableMarkup('User "%user" is included in the switch user list.', ['%user' => $username]));
   }
 
   /**
@@ -236,7 +235,7 @@ class DevelSwitchUserTest extends BrowserTestBase {
    */
   public function assertSwitchUserListNoContainsUser($username) {
     $result = $this->xpath('//div[@id=:block]//ul/li/a[normalize-space()=:user]', [':block' => 'block-switch-user', ':user' => $username]);
-    $this->assert(count($result) == 0, new FormattableMarkup('User "%user" is not included in the switch user list.', ['%user' => $username]));
+    $this->assertTrue(count($result) == 0, new FormattableMarkup('User "%user" is not included in the switch user list.', ['%user' => $username]));
   }
 
   /**
@@ -244,7 +243,7 @@ class DevelSwitchUserTest extends BrowserTestBase {
    */
   public function assertSwitchUserSearchForm() {
     $result = $this->xpath('//div[@id=:block]//form[contains(@class, :form)]', [':block' => 'block-switch-user', ':form' => 'devel-switchuser-form']);
-    $this->assert(count($result) > 0, 'The search form is shown.');
+    $this->assertTrue(count($result) > 0, 'The search form is shown.');
   }
 
   /**
@@ -252,7 +251,7 @@ class DevelSwitchUserTest extends BrowserTestBase {
    */
   public function assertSwitchUserNoSearchForm() {
     $result = $this->xpath('//div[@id=:block]//form[contains(@class, :form)]', [':block' => 'block-switch-user', ':form' => 'devel-switchuser-form']);
-    $this->assert(count($result) == 0, 'The search form is not shown.');
+    $this->assertTrue(count($result) == 0, 'The search form is not shown.');
   }
 
   /**
@@ -272,24 +271,17 @@ class DevelSwitchUserTest extends BrowserTestBase {
    * @param int $uid
    *   The user ID for which to find a session record.
    *
-   * TODO find a cleaner way to do this check.
+   * @TODO find a cleaner way to do this check.
    */
   protected function assertSessionByUid($uid) {
     $query = \Drupal::database()->select('sessions');
     $query->fields('sessions', ['uid']);
     $query->condition('uid', $uid);
     $result = $query->execute()->fetchAll();
-
-    if (empty($result)) {
-      $this->fail(new FormattableMarkup('No session found for uid @uid', ['@uid' => $uid]));
-    }
-    elseif (count($result) > 1) {
-      // If there is more than one session, then that must be unexpected.
-      $this->fail("Found more than 1 session for uid $uid.");
-    }
-    else {
-      $this->pass("Found session for uid $uid.");
-    }
+    // Check that we have some results.
+    $this->assertNotEmpty($result, sprintf('No session found for uid %s', $uid));
+    // If there is more than one session, then that must be unexpected.
+    $this->assertTrue(count($result) == 1, sprintf('Found more than one session for uid %s', $uid));
   }
 
   /**
@@ -300,14 +292,14 @@ class DevelSwitchUserTest extends BrowserTestBase {
    * @param int $uid
    *   The user ID to assert.
    *
-   * TODO find a cleaner way to do this check.
+   * @TODO find a cleaner way to do this check.
    */
   protected function assertNoSessionByUid($uid) {
     $query = \Drupal::database()->select('sessions');
     $query->fields('sessions', ['uid']);
     $query->condition('uid', $uid);
     $result = $query->execute()->fetchAll();
-    $this->assert(empty($result), "No session for uid $uid found.");
+    $this->assertTrue(empty($result), "No session for uid $uid found.");
   }
 
 }

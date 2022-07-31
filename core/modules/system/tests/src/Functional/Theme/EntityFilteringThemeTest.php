@@ -81,7 +81,7 @@ class EntityFilteringThemeTest extends BrowserTestBase {
    */
   protected $xssLabel = "string with <em>HTML</em> and <script>alert('JS');</script>";
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Install all available non-testing themes.
@@ -147,7 +147,7 @@ class EntityFilteringThemeTest extends BrowserTestBase {
       foreach ($paths as $path) {
         $this->drupalGet($path);
         $this->assertSession()->statusCodeEquals(200);
-        $this->assertNoRaw($this->xssLabel);
+        $this->assertSession()->responseNotContains($this->xssLabel);
       }
     }
   }

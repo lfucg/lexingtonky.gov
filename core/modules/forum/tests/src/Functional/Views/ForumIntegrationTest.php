@@ -5,7 +5,6 @@ namespace Drupal\Tests\forum\Functional\Views;
 use Drupal\node\NodeInterface;
 use Drupal\views\Views;
 use Drupal\Tests\views\Functional\ViewTestBase;
-use Drupal\views\Tests\ViewTestData;
 
 /**
  * Tests the forum integration into views.
@@ -19,7 +18,7 @@ class ForumIntegrationTest extends ViewTestBase {
    *
    * @var array
    */
-  public static $modules = ['forum_test_views'];
+  protected static $modules = ['forum_test_views'];
 
   /**
    * {@inheritdoc}
@@ -33,10 +32,8 @@ class ForumIntegrationTest extends ViewTestBase {
    */
   public static $testViews = ['test_forum_index'];
 
-  protected function setUp($import_test_views = TRUE) {
-    parent::setUp($import_test_views);
-
-    ViewTestData::createTestViews(get_class($this), ['forum_test_views']);
+  protected function setUp($import_test_views = TRUE, $modules = ['forum_test_views']): void {
+    parent::setUp($import_test_views, $modules);
   }
 
   /**

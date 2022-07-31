@@ -38,7 +38,7 @@ process:
   new_nid:
     -
       # If the path is of the form "node/<ID>" and is not routed, we will get
-      # back an URI of the form "base:node/<ID>".
+      # back a URI of the form "base:node/<ID>".
       plugin: link_uri
       source: link_path
       validate_route: false
@@ -114,8 +114,12 @@ destination:
   default_bundle: menu_link_content
   no_stub: true
 migration_dependencies:
+  required:
+    - language
   optional:
+    - d6_menu
     - d6_menu_links
     - d6_node_translation
+    - d7_menu
     - d7_menu_links
     - d7_node_translation

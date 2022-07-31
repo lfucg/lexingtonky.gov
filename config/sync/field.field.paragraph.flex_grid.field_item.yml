@@ -1,0 +1,82 @@
+uuid: d73ba301-5c11-4791-b647-8308407c8a77
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_item
+    - paragraphs.paragraphs_type.card_grid
+    - paragraphs.paragraphs_type.flex_grid
+    - paragraphs.paragraphs_type.lexidme_grid
+    - paragraphs.paragraphs_type.paragraph_sidebar_section
+    - paragraphs.paragraphs_type.paragraphs_media_contact
+    - paragraphs.paragraphs_type.paragraphs_page_section
+    - paragraphs.paragraphs_type.photo_grid
+    - paragraphs.paragraphs_type.rendered_block
+    - paragraphs.paragraphs_type.views_block
+  module:
+    - entity_reference_revisions
+id: paragraph.flex_grid.field_item
+field_name: field_item
+entity_type: paragraph
+bundle: flex_grid
+label: Items
+description: 'Add as few or as many items to this as you''d like. '
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      flex_grid: flex_grid
+      card_grid: card_grid
+      lexidme_grid: lexidme_grid
+      paragraph_sidebar_section: paragraph_sidebar_section
+      paragraphs_media_contact: paragraphs_media_contact
+      paragraphs_page_section: paragraphs_page_section
+      photo_grid: photo_grid
+      rendered_block: rendered_block
+      views_block: views_block
+    negate: 1
+    target_bundles_drag_drop:
+      card_button:
+        weight: 15
+        enabled: false
+      card_grid:
+        weight: 16
+        enabled: true
+      contact_card:
+        weight: 17
+        enabled: false
+      flex_grid:
+        weight: 14
+        enabled: true
+      icon_button_with_description:
+        weight: 18
+        enabled: false
+      lexidme_case:
+        weight: 19
+        enabled: false
+      lexidme_grid:
+        weight: 20
+        enabled: true
+      paragraph_sidebar_section:
+        weight: 21
+        enabled: true
+      paragraphs_media_contact:
+        weight: 22
+        enabled: true
+      paragraphs_page_section:
+        weight: 23
+        enabled: true
+      photo_grid:
+        weight: 24
+        enabled: true
+      rendered_block:
+        weight: 25
+        enabled: true
+      views_block:
+        weight: 26
+        enabled: true
+field_type: entity_reference_revisions

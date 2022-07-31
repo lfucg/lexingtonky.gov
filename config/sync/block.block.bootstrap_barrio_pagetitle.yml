@@ -1,0 +1,25 @@
+uuid: b6abcabf-63bb-428d-996e-0cb3e0d376a8
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_pagetitle
+theme: bootstrap_barrio
+region: top_header
+weight: -25
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  label_display: '0'
+  provider: core
+visibility:
+  request_path:
+    id: request_path
+    negate: true
+    context_mapping: {  }
+    pages: "<front>\r\n/browse/*\r\n/search"

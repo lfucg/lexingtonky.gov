@@ -2,7 +2,7 @@
 
 namespace Drupal\driver_test\Driver\Database\DrivertestMysql;
 
-use Drupal\Core\Database\Driver\mysql\Merge as CoreMerge;
+use Drupal\mysql\Driver\Database\mysql\Merge as CoreMerge;
 
 /**
  * MySQL test implementation of \Drupal\Core\Database\Query\Merge.

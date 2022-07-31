@@ -1,0 +1,83 @@
+uuid: 8fa828f5-b20c-428c-b6a6-0c2fc08cd2c9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.final_order.field_address
+    - field.field.node.final_order.field_final_order_date
+    - field.field.node.final_order.field_final_order_docs
+    - field.field.node.final_order.field_metatags
+    - field.field.node.final_order.field_owners_address
+    - field.field.node.final_order.field_person_charged
+    - field.field.node.final_order.field_pva_num
+    - node.type.final_order
+  module:
+    - datetime
+    - file
+    - metatag
+    - user
+id: node.final_order.default
+targetEntityType: node
+bundle: final_order
+mode: default
+content:
+  field_address:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_final_order_date:
+    type: datetime_custom
+    label: inline
+    settings:
+      timezone_override: ''
+      date_format: Y-m-d
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_final_order_docs:
+    type: file_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_metatags:
+    type: metatag_empty_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_owners_address:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_person_charged:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_pva_num:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  addtoany: true

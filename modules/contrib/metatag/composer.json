@@ -22,13 +22,15 @@
     "docs": "https://www.drupal.org/docs/8/modules/metatag"
   },
   "require": {
-    "drupal/core": "^8 || ^9",
+    "php": ">=7.0",
+    "drupal/core": "^9",
     "drupal/token": "^1.0"
   },
   "require-dev": {
     "drupal/devel": "^4.0",
     "drupal/redirect": "1.x-dev",
     "drupal/page_manager": "4.x-dev",
-    "drupal/panelizer": "4.x-dev"
+    "drupal/panelizer": "4.x-dev",
+    "mpyw/phpunit-patch-serializable-comparison": "*"
   }
 }

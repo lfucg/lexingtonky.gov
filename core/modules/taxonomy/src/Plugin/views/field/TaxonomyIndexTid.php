@@ -118,7 +118,7 @@ class TaxonomyIndexTid extends PrerenderList {
   }
 
   /**
-   * Add this term to the query
+   * Add this term to the query.
    */
   public function query() {
     $this->addAdditionalFields();
@@ -170,7 +170,7 @@ class TaxonomyIndexTid extends PrerenderList {
 
   protected function addSelfTokens(&$tokens, $item) {
     foreach (['tid', 'name', 'vocabulary_vid', 'vocabulary'] as $token) {
-      $tokens['{{ ' . $this->options['id'] . '__' . $token . ' }}'] = isset($item[$token]) ? $item[$token] : '';
+      $tokens['{{ ' . $this->options['id'] . '__' . $token . ' }}'] = $item[$token] ?? '';
     }
   }
 

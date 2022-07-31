@@ -6,6 +6,8 @@ use Drupal\Core\Url;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Drupal\pathauto\Entity\PathautoPattern;
 use Drupal\Tests\pathauto\Functional\PathautoTestHelperTrait;
+use Drupal\Component\Render\FormattableMarkup;
+
 
 /**
  * Test basic pathauto functionality.
@@ -26,7 +28,7 @@ class PathautoUiTest extends WebDriverTestBase {
    *
    * @var array
    */
-  public static $modules = ['pathauto', 'node', 'block'];
+  protected static $modules = ['pathauto', 'node', 'block'];
 
   /**
    * Admin user.
@@ -38,7 +40,7 @@ class PathautoUiTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalCreateContentType(['type' => 'page', 'name' => 'Basic page']);
@@ -91,33 +93,33 @@ class PathautoUiTest extends WebDriverTestBase {
       'label' => 'Page pattern',
       'pattern' => '[node:title]/[user:name]/[term:name]',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
 
     $this->assertSession()->waitForElementVisible('css', '[name="id"]');
     $edit += [
       'id' => 'page_pattern',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm( $edit, 'Save');
 
     $this->assertSession()->pageTextContains('Path pattern is using the following invalid tokens: [user:name], [term:name].');
     $this->assertSession()->pageTextNotContains('The configuration options have been saved.');
 
-    // We do not need ID anymore, it is already set in previous step and made a label by browser
+    // We do not need ID anymore, it is already set in previous step and made a label by browser.
     unset($edit['id']);
     $edit['pattern'] = '#[node:title]';
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->pageTextContains('The Path pattern is using the following invalid characters: #.');
     $this->assertSession()->pageTextNotContains('The configuration options have been saved.');
 
     // Checking whitespace ending of the string.
     $edit['pattern'] = '[node:title] ';
-    $this->drupalPostForm(NULL, $edit, 'Save');
-    $this->assertSession()->pageTextContains('The Path pattern doesn\'t allow the patterns ending with whitespace.');
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->pageTextContains("The Path pattern doesn't allow the patterns ending with whitespace.");
     $this->assertSession()->pageTextNotContains('The configuration options have been saved.');
 
     // Fix the pattern, then check that it gets saved successfully.
     $edit['pattern'] = '[node:title]';
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->pageTextContains('Pattern Page pattern saved.');
 
     \Drupal::service('pathauto.generator')->resetCaches();
@@ -133,27 +135,28 @@ class PathautoUiTest extends WebDriverTestBase {
     // Edit workflow, set a new label and weight for the pattern.
     $this->drupalGet('/admin/config/search/path/patterns');
     $session->getPage()->pressButton('Show row weights');
-    $this->drupalPostForm(NULL, ['entities[page_pattern][weight]' => '4'], t('Save'));
+    $this->submitForm(['entities[page_pattern][weight]' => '4'], 'Save');
 
     $session->getPage()->find('css', '.dropbutton-toggle > button')->press();
-    $this->clickLink(t('Edit'));
+    $this->clickLink('Edit');
     $destination_query = ['query' => ['destination' => Url::fromRoute('entity.pathauto_pattern.collection')->toString()]];
-    $this->assertUrl('/admin/config/search/path/patterns/page_pattern', $destination_query);
-    $this->assertFieldByName('pattern', '[node:title]');
-    $this->assertFieldByName('label', 'Page pattern');
-    $this->assertFieldChecked('edit-status');
-    $this->assertLink(t('Delete'));
+    $this->assertSession()->addressEquals('/admin/config/search/path/patterns/page_pattern', $destination_query);
+    $this->assertSession()->fieldValueEquals('pattern', '[node:title]');
+    $this->assertSession()->fieldValueEquals('label', 'Page pattern');
+    $this->assertSession()->checkboxChecked('edit-status');
+    $this->assertSession()->linkExists('Delete');
 
     $edit = ['label' => 'Test'];
-    $this->drupalPostForm('/admin/config/search/path/patterns/page_pattern', $edit, t('Save'));
+    $this->drupalGet('/admin/config/search/path/patterns/page_pattern');
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->pageTextContains('Pattern Test saved.');
     // Check that the pattern weight did not change.
-    $this->assertOptionSelected('edit-entities-page-pattern-weight', '4');
+    $this->assertSession()->optionExists('edit-entities-page-pattern-weight', '4');
 
     $this->drupalGet('/admin/config/search/path/patterns/page_pattern/duplicate');
     $session->getPage()->pressButton('Edit');
-    $edit = array('label' => 'Test Duplicate', 'id' => 'page_pattern_test_duplicate');
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $edit = ['label' => 'Test Duplicate', 'id' => 'page_pattern_test_duplicate'];
+    $this->submitForm($edit, 'Save');
     $this->assertSession()->pageTextContains('Pattern Test Duplicate saved.');
 
     PathautoPattern::load('page_pattern_test_duplicate')->delete();
@@ -161,10 +164,10 @@ class PathautoUiTest extends WebDriverTestBase {
     // Disable workflow.
     $this->drupalGet('/admin/config/search/path/patterns');
     $session->getPage()->find('css', '.dropbutton-toggle > button')->press();
-    $this->assertNoLink(t('Enable'));
-    $this->clickLink(t('Disable'));
-    $this->assertUrl('/admin/config/search/path/patterns/page_pattern/disable', $destination_query);
-    $this->drupalPostForm(NULL, [], t('Disable'));
+    $this->assertSession()->linkNotExists('Enable');
+    $this->clickLink('Disable');
+    $this->assertSession()->addressEquals('/admin/config/search/path/patterns/page_pattern/disable');
+    $this->submitForm([], 'Disable');
     $this->assertSession()->pageTextContains('Disabled pattern Test.');
 
     // Load the pattern from storage and check if its disabled.
@@ -180,10 +183,10 @@ class PathautoUiTest extends WebDriverTestBase {
 
     // Enable workflow.
     $this->drupalGet('/admin/config/search/path/patterns');
-    $this->assertNoLink(t('Disable'));
-    $this->clickLink(t('Enable'));
-    $this->assertUrl('/admin/config/search/path/patterns/page_pattern/enable', $destination_query);
-    $this->drupalPostForm(NULL, [], t('Enable'));
+    $this->assertSession()->linkNotExists('Disable');
+    $this->clickLink('Enable');
+    $this->assertSession()->addressEquals('/admin/config/search/path/patterns/page_pattern/enable', $destination_query);
+    $this->submitForm([], 'Enable');
     $this->assertSession()->pageTextContains('Enabled pattern Test.');
 
     // Reload pattern from storage and check if its enabled.
@@ -193,10 +196,10 @@ class PathautoUiTest extends WebDriverTestBase {
     // Delete workflow.
     $this->drupalGet('/admin/config/search/path/patterns');
     $session->getPage()->find('css', '.dropbutton-toggle > button')->press();
-    $this->clickLink(t('Delete'));
-    $this->assertUrl('/admin/config/search/path/patterns/page_pattern/delete', $destination_query);
-    $this->assertSession()->pageTextContains(t('This action cannot be undone.'));
-    $this->drupalPostForm(NULL, [], t('Delete'));
+    $this->clickLink('Delete');
+    $this->assertSession()->addressEquals('/admin/config/search/path/patterns/page_pattern/delete', $destination_query);
+    $this->assertSession()->pageTextContains('This action cannot be undone.');
+    $this->submitForm([], 'Delete');
     $this->assertSession()->pageTextContains('The pathauto pattern Test has been deleted.');
 
     $this->assertEmpty(PathautoPattern::load('page_pattern'));

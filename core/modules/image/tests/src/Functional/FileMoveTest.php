@@ -25,12 +25,27 @@ class FileMoveTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['image'];
+  protected static $modules = ['image'];
 
   /**
    * {@inheritdoc}
    */
   protected $defaultTheme = 'stark';
+
+  /**
+   * The file repository service.
+   *
+   * @var \Drupal\file\FileRepository
+   */
+  protected $fileRepository;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->fileRepository = $this->container->get('file.repository');
+  }
 
   /**
    * Tests moving a randomly generated image.
@@ -52,13 +67,13 @@ class FileMoveTest extends BrowserTestBase {
     // Clone the object so we don't have to worry about the function changing
     // our reference copy.
     $desired_filepath = 'public://' . $this->randomMachineName();
-    $result = file_move(clone $file, $desired_filepath, FileSystemInterface::EXISTS_ERROR);
+    $result = $this->fileRepository->move(clone $file, $desired_filepath, FileSystemInterface::EXISTS_ERROR);
 
     // Check if image has been moved.
     $this->assertFileExists($result->getFileUri());
 
     // Check if derivative image has been flushed.
-    $this->assertFileNotExists($derivative_uri);
+    $this->assertFileDoesNotExist($derivative_uri);
   }
 
 }

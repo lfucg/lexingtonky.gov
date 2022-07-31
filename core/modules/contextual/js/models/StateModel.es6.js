@@ -3,13 +3,16 @@
  * A Backbone Model for the state of a contextual link's trigger, list & region.
  */
 
-(function(Drupal, Backbone) {
+(function (Drupal, Backbone) {
   /**
    * Models the state of a contextual link's trigger, list & region.
    *
    * @constructor
    *
    * @augments Backbone.Model
+   *
+   * @deprecated in drupal:9.4.0 and is removed from drupal:10.0.0. There is no
+   *  replacement.
    */
   Drupal.contextual.StateModel = Backbone.Model.extend(
     /** @lends Drupal.contextual.StateModel# */ {
@@ -102,7 +105,7 @@
       focus() {
         this.set('hasFocus', true);
         const cid = this.cid;
-        this.collection.each(model => {
+        this.collection.each((model) => {
           if (model.cid !== cid) {
             model.close().blur();
           }

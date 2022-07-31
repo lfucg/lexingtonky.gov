@@ -1,0 +1,23 @@
+uuid: 4bc7f5b1-7912-4dcf-8117-40ab7769b0de
+langcode: en
+status: true
+dependencies:
+  module:
+    - lex_calendar
+  theme:
+    - lex_home
+id: homemeetings
+theme: lex_home
+region: events
+weight: -8
+provider: null
+plugin: Lex_calendar_list_block
+settings:
+  id: Lex_calendar_list_block
+  label: Meetings
+  label_display: visible
+  provider: lex_calendar
+  display_limit: '50'
+  content_type: meeting
+  show_all: 'yes'
+visibility: {  }

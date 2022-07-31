@@ -2,8 +2,6 @@
 
 namespace Drupal\Tests\inline_entity_form\FunctionalJavascript;
 
-use Drupal\Core\Entity\Display\EntityDisplayInterface;
-
 /**
  * IEF complex entity reference revisions tests.
  *

@@ -71,6 +71,7 @@ class MetatagFirehose extends WidgetBase implements ContainerFactoryPluginInterf
   public static function defaultSettings() {
     return [
       'sidebar' => TRUE,
+      'use_details' => TRUE,
     ] + parent::defaultSettings();
   }
 
@@ -84,6 +85,17 @@ class MetatagFirehose extends WidgetBase implements ContainerFactoryPluginInterf
       '#default_value' => $this->getSetting('sidebar'),
       '#description' => $this->t('If checked, the field will be placed in the sidebar on entity forms.'),
     ];
+    $element['use_details'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Wrap the meta tags in a collapsed details container.'),
+      '#default_value' => $this->getSetting('use_details'),
+      '#description' => $this->t('If checked, the contents of the field will be placed inside a collapsed details container.'),
+      '#states' => [
+        'visible' => [
+          'input[name$="[sidebar]"]' => ['checked' => FALSE],
+        ],
+      ],
+    ];
 
     return $element;
   }
@@ -93,10 +105,17 @@ class MetatagFirehose extends WidgetBase implements ContainerFactoryPluginInterf
    */
   public function settingsSummary() {
     if ($this->getSetting('sidebar')) {
-      $summary[] = $this->t('Use sidebar: Yes');
+      $summary['sidebar'] = $this->t('Use sidebar: Yes');
     }
     else {
-      $summary[] = $this->t('Use sidebar: No');
+      $summary['sidebar'] = $this->t('Use sidebar: No');
+
+      if ($this->getSetting('use_details')) {
+        $summary['use_details'] = $this->t('Use details container: Yes');
+      }
+      else {
+        $summary['use_details'] = $this->t('Use details container: No');
+      }
     }
 
     return $summary;
@@ -122,7 +141,14 @@ class MetatagFirehose extends WidgetBase implements ContainerFactoryPluginInterf
     // Retrieve the values for each metatag from the serialized array.
     $values = [];
     if (!empty($item->value)) {
-      $values = unserialize($item->value);
+      $values = unserialize($item->value, ['allowed_classes' => FALSE]);
+    }
+
+    // Make sure that this variable is always an array to avoid problems when
+    // unserializing didn't work correctly and it as returned as FALSE.
+    // @see https://www.php.net/unserialize
+    if (!is_array($values)) {
+      $values = [];
     }
 
     // Populate fields which have not been overridden in the entity.
@@ -158,12 +184,29 @@ class MetatagFirehose extends WidgetBase implements ContainerFactoryPluginInterf
       $element = $this->metatagManager->form($values, $element, [$entity_type]);
     }
 
-    // If the "sidebar" option was checked on the field widget, put the
-    // form element into the form's "advanced" group. Otherwise, let it
-    // default to the main field area.
+    // If the "sidebar" option was checked on the field widget, put the form
+    // element into the form's "advanced" group. Otherwise, let it default to
+    // the main field area.
     $sidebar = $this->getSetting('sidebar');
     if ($sidebar) {
       $element['#group'] = 'advanced';
+    }
+
+    // If the "use_details" option was not checked on the field widget, put the
+    // form element into normal container. Otherwise, let it default to a
+    // detail's container.
+    $details = $this->getSetting('use_details');
+    if (!$sidebar && !$details) {
+      $element['#type'] = 'container';
+    }
+
+    // Scroll height configuration.
+    $scroll_height = $settings->get('tag_scroll_max_height');
+    if (!empty($scrollheight)) {
+      $form['#attached']['drupalSettings']['metatag']['max_height'] = $scroll_height;
+      $form['#attached']['library'][] = 'metatag/firehose_widget';
+      $element['#attributes']['class'][] = 'metatags';
+      $element['#attributes']['style'][] = 'max-height:' . $scroll_height . ';';
     }
 
     return $element;

@@ -22,7 +22,7 @@ class RelationshipUserImageDataTest extends ViewsKernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'file',
     'field',
     'image',
@@ -38,7 +38,7 @@ class RelationshipUserImageDataTest extends ViewsKernelTestBase {
    */
   public static $testViews = ['test_image_user_image_data'];
 
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp($import_test_views);
 
     $this->installEntitySchema('file');
@@ -61,7 +61,7 @@ class RelationshipUserImageDataTest extends ViewsKernelTestBase {
       'required' => 0,
     ])->save();
 
-    ViewTestData::createTestViews(get_class($this), ['image_test_views']);
+    ViewTestData::createTestViews(static::class, ['image_test_views']);
   }
 
   /**
@@ -76,8 +76,8 @@ class RelationshipUserImageDataTest extends ViewsKernelTestBase {
       'filemime' => 'image/jpeg',
       'created' => 1,
       'changed' => 1,
-      'status' => FILE_STATUS_PERMANENT,
     ]);
+    $file->setPermanent();
     $file->enforceIsNew();
     file_put_contents($file->getFileUri(), file_get_contents('core/tests/fixtures/files/image-1.png'));
     $file->save();
@@ -96,7 +96,7 @@ class RelationshipUserImageDataTest extends ViewsKernelTestBase {
         'user',
       ],
     ];
-    $this->assertIdentical($expected, $view->getDependencies());
+    $this->assertSame($expected, $view->getDependencies());
     $this->executeView($view);
     $expected_result = [
       [

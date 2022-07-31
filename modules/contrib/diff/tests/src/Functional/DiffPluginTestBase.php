@@ -37,7 +37,7 @@ abstract class DiffPluginTestBase extends DiffTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->formDisplay = \Drupal::entityTypeManager()->getStorage('entity_form_display');

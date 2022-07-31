@@ -47,8 +47,8 @@ class EnsureDevelWorks extends BrowserTestBase {
    */
   public function testCustomRoute() {
     $this->drupalGet('metatag_test_custom_route');
-    $this->assertResponse(200);
-    $this->assertText('Hello world!');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Hello world!');
   }
 
   /**
@@ -57,7 +57,7 @@ class EnsureDevelWorks extends BrowserTestBase {
   public function testNode() {
     $node = $this->createContentTypeNode();
     $this->drupalGet($node->toUrl());
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
 }

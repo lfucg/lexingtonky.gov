@@ -1,0 +1,28 @@
+uuid: 703f33b4-ae5b-406f-ac5d-66772c477905
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_sidebar_section
+  module:
+    - entity_reference_revisions
+    - fieldblock
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_content_field_sidebar_section
+theme: lex_planning_commission
+region: sidebar
+weight: -21
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Sidebar section'
+  label_display: '0'
+  provider: fieldblock
+  label_from_field: false
+  field_name: field_sidebar_section
+  formatter_id: entity_reference_revisions_entity_view
+  formatter_settings:
+    view_mode: default
+visibility: {  }

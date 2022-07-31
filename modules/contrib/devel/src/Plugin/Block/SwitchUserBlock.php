@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Block(
  *   id = "devel_switch_user",
  *   admin_label = @Translation("Switch user"),
- *   category = @Translation("Forms")
+ *   category = "Devel"
  * )
  */
 class SwitchUserBlock extends BlockBase implements ContainerFactoryPluginInterface {
@@ -82,7 +82,7 @@ class SwitchUserBlock extends BlockBase implements ContainerFactoryPluginInterfa
       $plugin_id,
       $plugin_definition,
       $container->get('current_user'),
-      $container->get('entity.manager')->getStorage('user'),
+      $container->get('entity_type.manager')->getStorage('user'),
       $container->get('form_builder')
     );
   }
@@ -109,7 +109,7 @@ class SwitchUserBlock extends BlockBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public function blockForm($form, FormStateInterface $form_state) {
-    $anononymous = new AnonymousUserSession();
+    $anonymous = new AnonymousUserSession();
     $form['list_size'] = [
       '#type' => 'number',
       '#title' => $this->t('Number of users to display in the list'),
@@ -119,7 +119,7 @@ class SwitchUserBlock extends BlockBase implements ContainerFactoryPluginInterfa
     ];
     $form['include_anon'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Include %anonymous', ['%anonymous' => $anononymous->getAccountName()]),
+      '#title' => $this->t('Include %anonymous', ['%anonymous' => $anonymous->getDisplayName()]),
       '#default_value' => $this->configuration['include_anon'],
     ];
     $form['show_form'] = [
@@ -170,7 +170,7 @@ class SwitchUserBlock extends BlockBase implements ContainerFactoryPluginInterfa
    * with 'switch users' permission and anonymous user if include_anon property
    * is set to TRUE, are prioritized.
    *
-   * @return \Drupal\core\Session\AccountInterface[]
+   * @return \Drupal\Core\Session\AccountInterface[]
    *   List of accounts to be used for the switch.
    */
   protected function getUsers() {
@@ -214,6 +214,7 @@ class SwitchUserBlock extends BlockBase implements ContainerFactoryPluginInterfa
       $user_ids += $query->execute();
     }
 
+    /** @var \Drupal\Core\Session\AccountInterface[] $accounts */
     $accounts = $this->userStorage->loadMultiple($user_ids);
 
     if ($include_anonymous) {
@@ -266,6 +267,17 @@ class SwitchUserBlock extends BlockBase implements ContainerFactoryPluginInterfa
 
   /**
    * Helper callback for uasort() to sort accounts by last access.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $a
+   *   First account.
+   * @param \Drupal\Core\Session\AccountInterface $b
+   *   Second account.
+   *
+   * @return int
+   *   Result of comparing the last access times:
+   *   - -1 if $a was more recently accessed
+   *   -  0 if last access times compare equal
+   *   -  1 if $b was more recently accessed
    */
   public static function sortUserList(AccountInterface $a, AccountInterface $b) {
     $a_access = (int) $a->getLastAccessedTime();

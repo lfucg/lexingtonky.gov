@@ -2,15 +2,16 @@
 
 namespace Drupal\ctools;
 
-
+/**
+ * Interface for Constraint Conditions
+ */
 interface ConstraintConditionInterface {
 
   /**
    * Applies relevant constraints for this condition to the injected contexts.
    *
    * @param \Drupal\Core\Plugin\Context\ContextInterface[] $contexts
-   *
-   * @return null
+   *   Contexts to apply.
    */
   public function applyConstraints(array $contexts = []);
 
@@ -18,8 +19,7 @@ interface ConstraintConditionInterface {
    * Removes constraints for this condition from the injected contexts.
    *
    * @param \Drupal\Core\Plugin\Context\ContextInterface[] $contexts
-   *
-   * @return null
+   *   Contexts to remove.
    */
   public function removeConstraints(array $contexts = []);
 

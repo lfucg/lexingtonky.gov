@@ -16,18 +16,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class FieldMigration extends Migration implements ContainerFactoryPluginInterface {
 
   /**
-   * Defines which configuration option has the migration processing function.
-   *
-   * Default method is 'field_plugin_method'. For backwards compatibility,
-   * this constant is overridden in the CckMigration class, in order to
-   * fallback to the old 'cck_plugin_method'.
-   *
-   * @const string
-   * @deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use the migrate_drupal.field_discovery service instead. See https://www.drupal.org/node/3006076.
-   */
-  const PLUGIN_METHOD = 'field_plugin_method';
-
-  /**
    * Flag indicating whether the field data has been filled already.
    *
    * @var bool
@@ -58,13 +46,13 @@ class FieldMigration extends Migration implements ContainerFactoryPluginInterfac
    *   The process migration plugin manager.
    * @param \Drupal\migrate\Plugin\MigrateDestinationPluginManager $destination_plugin_manager
    *   The destination migration plugin manager.
-   * @param \Drupal\migrate\Plugin\MigratePluginManager $idmap_plugin_manager
+   * @param \Drupal\migrate\Plugin\MigratePluginManager $id_map_plugin_manager
    *   The ID map migration plugin manager.
    * @param \Drupal\migrate_drupal\FieldDiscoveryInterface $field_discovery
    *   The migration field discovery service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationPluginManagerInterface $migration_plugin_manager, MigratePluginManager $source_plugin_manager, MigratePluginManager $process_plugin_manager, MigrateDestinationPluginManager $destination_plugin_manager, MigratePluginManager $idmap_plugin_manager, FieldDiscoveryInterface $field_discovery) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $migration_plugin_manager, $source_plugin_manager, $process_plugin_manager, $destination_plugin_manager, $idmap_plugin_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationPluginManagerInterface $migration_plugin_manager, MigratePluginManager $source_plugin_manager, MigratePluginManager $process_plugin_manager, MigrateDestinationPluginManager $destination_plugin_manager, MigratePluginManager $id_map_plugin_manager, FieldDiscoveryInterface $field_discovery) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $migration_plugin_manager, $source_plugin_manager, $process_plugin_manager, $destination_plugin_manager, $id_map_plugin_manager);
     $this->fieldDiscovery = $field_discovery;
   }
 

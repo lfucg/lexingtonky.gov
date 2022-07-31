@@ -1,0 +1,32 @@
+uuid: 963dd0b5-322d-4843-ac19-6f631f8e12e6
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.front_page_news
+  module:
+    - ctools
+    - views
+  theme:
+    - lex_economic_development
+id: lex_economic_development_views_block__front_page_news_block_2
+theme: lex_economic_development
+region: notices
+weight: 0
+provider: null
+plugin: 'views_block:front_page_news-block_2'
+settings:
+  id: 'views_block:front_page_news-block_2'
+  label: ''
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      news_article: news_article

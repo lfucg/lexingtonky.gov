@@ -9,7 +9,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 /**
  * Plugin type manager for DevelGenerate plugins.
  */
-Class DevelGeneratePluginManager extends DefaultPluginManager {
+class DevelGeneratePluginManager extends DefaultPluginManager {
 
   /**
    * Constructs a DevelGeneratePluginManager object.
@@ -26,6 +26,28 @@ Class DevelGeneratePluginManager extends DefaultPluginManager {
     parent::__construct('Plugin/DevelGenerate', $namespaces, $module_handler, NULL, 'Drupal\devel_generate\Annotation\DevelGenerate');
     $this->alterInfo('devel_generate_info');
     $this->setCacheBackend($cache_backend, 'devel_generate_plugins');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function findDefinitions() {
+    $definitions = [];
+    foreach (parent::findDefinitions() as $plugin_id => $plugin_definition) {
+      $plugin_available = TRUE;
+      foreach ($plugin_definition['dependencies'] as $module_name) {
+        // If a plugin defines module dependencies and at least one module is
+        // not installed don't make this plugin available.
+        if (!$this->moduleHandler->moduleExists($module_name)) {
+          $plugin_available = FALSE;
+          break;
+        }
+      }
+      if ($plugin_available) {
+        $definitions[$plugin_id] = $plugin_definition;
+      }
+    }
+    return $definitions;
   }
 
 }

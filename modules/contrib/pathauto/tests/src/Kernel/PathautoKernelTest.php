@@ -17,6 +17,8 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
+use Drupal\Component\Render\FormattableMarkup;
+
 
 /**
  * Unit tests for Pathauto functions.
@@ -27,7 +29,7 @@ class PathautoKernelTest extends KernelTestBase {
 
   use PathautoTestHelperTrait;
 
-  public static $modules = ['system', 'field', 'text', 'user', 'node', 'path', 'path_alias', 'pathauto', 'pathauto_custom_punctuation_test', 'taxonomy', 'token', 'filter', 'ctools', 'language'];
+  protected static $modules = ['system', 'field', 'text', 'user', 'node', 'path', 'path_alias', 'pathauto', 'pathauto_custom_punctuation_test', 'taxonomy', 'token', 'filter', 'ctools', 'language'];
 
   protected $currentUser;
 
@@ -41,7 +43,7 @@ class PathautoKernelTest extends KernelTestBase {
    */
   protected $userPattern;
 
-  public function setUp() {
+  public function setUp(): void {
     parent::setup();
 
     $this->installEntitySchema('user');
@@ -155,7 +157,7 @@ class PathautoKernelTest extends KernelTestBase {
       $entity = \Drupal::entityTypeManager()->getStorage($test['entity'])->create($test['values']);
       $entity->save();
       $actual = \Drupal::service('pathauto.generator')->getPatternByEntity($entity);
-      $this->assertSame($actual->getPattern(), $test['expected'], t("Correct pattern returned for @entity_type with @values", [
+      $this->assertSame($actual->getPattern(), $test['expected'], new FormattableMarkup("Correct pattern returned for @entity_type with @values", [
         '@entity' => $test['entity'],
         '@values' => print_r($test['values'], TRUE),
       ]));
@@ -225,7 +227,7 @@ class PathautoKernelTest extends KernelTestBase {
 
     foreach ($tests as $input => $expected) {
       $output = \Drupal::service('pathauto.alias_cleaner')->cleanString($input);
-      $this->assertEquals($expected, $output, t("Drupal::service('pathauto.alias_cleaner')->cleanString('@input') expected '@expected', actual '@output'", [
+      $this->assertEquals($expected, $output, new FormattableMarkup("Drupal::service('pathauto.alias_cleaner')->cleanString('@input') expected '@expected', actual '@output'", [
         '@input' => $input,
         '@expected' => $expected,
         '@output' => $output,
@@ -246,7 +248,7 @@ class PathautoKernelTest extends KernelTestBase {
 
     foreach ($tests as $input => $expected) {
       $output = \Drupal::service('pathauto.alias_cleaner')->cleanAlias($input);
-      $this->assertEquals($expected, $output, t("Drupal::service('pathauto.generator')->cleanAlias('@input') expected '@expected', actual '@output'", [
+      $this->assertEquals($expected, $output, new FormattableMarkup("Drupal::service('pathauto.generator')->cleanAlias('@input') expected '@expected', actual '@output'", [
         '@input' => $input,
         '@expected' => $expected,
         '@output' => $output,
@@ -471,7 +473,7 @@ class PathautoKernelTest extends KernelTestBase {
 
     $edit['name'] = 'Test user';
     $edit['mail'] = 'test-user@example.com';
-    $edit['pass'] = user_password();
+    $edit['pass'] = \Drupal::service('password_generator')->generate();
     $edit['path'] = ['pathauto' => TRUE];
     $edit['status'] = 1;
     $account = User::create($edit);

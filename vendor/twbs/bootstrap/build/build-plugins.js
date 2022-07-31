@@ -14,7 +14,7 @@ const rollup = require('rollup')
 const { babel } = require('@rollup/plugin-babel')
 const banner = require('./banner.js')
 
-const TEST = process.env.NODE_ENV === 'test'
+const rootPath = path.resolve(__dirname, '../js/dist/')
 const plugins = [
   babel({
     // Only transpile our source code
@@ -24,43 +24,133 @@ const plugins = [
   })
 ]
 const bsPlugins = {
+  Data: path.resolve(__dirname, '../js/src/dom/data.js'),
+  EventHandler: path.resolve(__dirname, '../js/src/dom/event-handler.js'),
+  Manipulator: path.resolve(__dirname, '../js/src/dom/manipulator.js'),
+  SelectorEngine: path.resolve(__dirname, '../js/src/dom/selector-engine.js'),
   Alert: path.resolve(__dirname, '../js/src/alert.js'),
+  Base: path.resolve(__dirname, '../js/src/base-component.js'),
   Button: path.resolve(__dirname, '../js/src/button.js'),
   Carousel: path.resolve(__dirname, '../js/src/carousel.js'),
   Collapse: path.resolve(__dirname, '../js/src/collapse.js'),
   Dropdown: path.resolve(__dirname, '../js/src/dropdown.js'),
   Modal: path.resolve(__dirname, '../js/src/modal.js'),
+  Offcanvas: path.resolve(__dirname, '../js/src/offcanvas.js'),
   Popover: path.resolve(__dirname, '../js/src/popover.js'),
   ScrollSpy: path.resolve(__dirname, '../js/src/scrollspy.js'),
   Tab: path.resolve(__dirname, '../js/src/tab.js'),
   Toast: path.resolve(__dirname, '../js/src/toast.js'),
-  Tooltip: path.resolve(__dirname, '../js/src/tooltip.js'),
-  Util: path.resolve(__dirname, '../js/src/util.js')
+  Tooltip: path.resolve(__dirname, '../js/src/tooltip.js')
 }
-const rootPath = TEST ? '../js/coverage/dist/' : '../js/dist/'
+
+const defaultPluginConfig = {
+  external: [
+    bsPlugins.Data,
+    bsPlugins.Base,
+    bsPlugins.EventHandler,
+    bsPlugins.SelectorEngine
+  ],
+  globals: {
+    [bsPlugins.Data]: 'Data',
+    [bsPlugins.Base]: 'Base',
+    [bsPlugins.EventHandler]: 'EventHandler',
+    [bsPlugins.SelectorEngine]: 'SelectorEngine'
+  }
+}
+
+const getConfigByPluginKey = pluginKey => {
+  switch (pluginKey) {
+    case 'Alert':
+    case 'Offcanvas':
+    case 'Tab':
+      return defaultPluginConfig
+
+    case 'Base':
+    case 'Button':
+    case 'Carousel':
+    case 'Collapse':
+    case 'Modal':
+    case 'ScrollSpy': {
+      const config = Object.assign(defaultPluginConfig)
+      config.external.push(bsPlugins.Manipulator)
+      config.globals[bsPlugins.Manipulator] = 'Manipulator'
+      return config
+    }
+
+    case 'Dropdown':
+    case 'Tooltip': {
+      const config = Object.assign(defaultPluginConfig)
+      config.external.push(bsPlugins.Manipulator, '@popperjs/core')
+      config.globals[bsPlugins.Manipulator] = 'Manipulator'
+      config.globals['@popperjs/core'] = 'Popper'
+      return config
+    }
+
+    case 'Popover':
+      return {
+        external: [
+          bsPlugins.Data,
+          bsPlugins.SelectorEngine,
+          bsPlugins.Tooltip
+        ],
+        globals: {
+          [bsPlugins.Data]: 'Data',
+          [bsPlugins.SelectorEngine]: 'SelectorEngine',
+          [bsPlugins.Tooltip]: 'Tooltip'
+        }
+      }
+
+    case 'Toast':
+      return {
+        external: [
+          bsPlugins.Data,
+          bsPlugins.Base,
+          bsPlugins.EventHandler,
+          bsPlugins.Manipulator
+        ],
+        globals: {
+          [bsPlugins.Data]: 'Data',
+          [bsPlugins.Base]: 'Base',
+          [bsPlugins.EventHandler]: 'EventHandler',
+          [bsPlugins.Manipulator]: 'Manipulator'
+        }
+      }
+
+    default:
+      return {
+        external: []
+      }
+  }
+}
+
+const utilObjects = new Set([
+  'Util',
+  'Sanitizer',
+  'Backdrop'
+])
+
+const domObjects = new Set([
+  'Data',
+  'EventHandler',
+  'Manipulator',
+  'SelectorEngine'
+])
 
 const build = async plugin => {
   console.log(`Building ${plugin} plugin...`)
 
-  const external = ['jquery', 'popper.js']
-  const globals = {
-    jquery: 'jQuery', // Ensure we use jQuery which is always available even in noConflict mode
-    'popper.js': 'Popper'
+  const { external, globals } = getConfigByPluginKey(plugin)
+  const pluginFilename = path.basename(bsPlugins[plugin])
+  let pluginPath = rootPath
+
+  if (utilObjects.has(plugin)) {
+    pluginPath = `${rootPath}/util/`
   }
 
-  // Do not bundle Util in plugins
-  if (plugin !== 'Util') {
-    external.push(bsPlugins.Util)
-    globals[bsPlugins.Util] = 'Util'
+  if (domObjects.has(plugin)) {
+    pluginPath = `${rootPath}/dom/`
   }
 
-  // Do not bundle Tooltip in Popover
-  if (plugin === 'Popover') {
-    external.push(bsPlugins.Tooltip)
-    globals[bsPlugins.Tooltip] = 'Tooltip'
-  }
-
-  const pluginFilename = `${plugin.toLowerCase()}.js`
   const bundle = await rollup.rollup({
     input: bsPlugins[plugin],
     plugins,
@@ -73,7 +163,8 @@ const build = async plugin => {
     name: plugin,
     sourcemap: true,
     globals,
-    file: path.resolve(__dirname, `${rootPath}${pluginFilename}`)
+    generatedCode: 'es2015',
+    file: path.resolve(__dirname, `${pluginPath}/${pluginFilename}`)
   })
 
   console.log(`Building ${plugin} plugin... Done!`)

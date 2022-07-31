@@ -1,0 +1,74 @@
+uuid: 01578da3-21a8-4bfc-af00-c9b0c18d1b8d
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.basic_html
+    - node.type.board_commission
+    - node.type.event
+    - node.type.landing_page
+    - node.type.meeting
+    - node.type.news_article
+    - node.type.organization_page
+    - node.type.page
+  module:
+    - contact
+    - contextual
+    - dropzonejs
+    - file
+    - filter
+    - node
+    - search
+    - shortcut
+    - system
+    - toolbar
+    - tour
+    - workbench_moderation
+id: authenticated
+label: 'Authenticated user'
+weight: -9
+is_admin: false
+permissions:
+  - 'access content'
+  - 'access content overview'
+  - 'access contextual links'
+  - 'access files overview'
+  - 'access shortcuts'
+  - 'access site-wide contact form'
+  - 'access toolbar'
+  - 'access tour'
+  - 'create event content'
+  - 'create meeting content'
+  - 'create news_article content'
+  - 'create page content'
+  - 'dropzone upload files'
+  - 'edit any board_commission content'
+  - 'edit any event content'
+  - 'edit any landing_page content'
+  - 'edit any meeting content'
+  - 'edit any news_article content'
+  - 'edit any organization_page content'
+  - 'edit any page content'
+  - 'edit own board_commission content'
+  - 'edit own event content'
+  - 'edit own landing_page content'
+  - 'edit own meeting content'
+  - 'edit own news_article content'
+  - 'edit own organization_page content'
+  - 'edit own page content'
+  - 'search content'
+  - 'use draft_draft transition'
+  - 'use draft_needs_review transition'
+  - 'use needs_review_needs_review transition'
+  - 'use published_draft transition'
+  - 'use published_needs_review transition'
+  - 'use text format basic_html'
+  - 'view all revisions'
+  - 'view any unpublished content'
+  - 'view landing_page revisions'
+  - 'view latest version'
+  - 'view moderation states'
+  - 'view news_article revisions'
+  - 'view own unpublished content'
+  - 'view page revisions'
+  - 'view the administration theme'

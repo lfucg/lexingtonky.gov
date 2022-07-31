@@ -1,0 +1,23 @@
+uuid: 818fb37f-5996-4839-a47e-b2f9011a0c6c
+langcode: en
+status: true
+dependencies:
+  module:
+    - lex_calendar
+  theme:
+    - lex_home
+id: homeevents
+theme: lex_home
+region: events
+weight: -9
+provider: null
+plugin: Lex_calendar_list_block
+settings:
+  id: Lex_calendar_list_block
+  label: Events
+  label_display: visible
+  provider: lex_calendar
+  display_limit: '50'
+  content_type: event
+  show_all: 'yes'
+visibility: {  }

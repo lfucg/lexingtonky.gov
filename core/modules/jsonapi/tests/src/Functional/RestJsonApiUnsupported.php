@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\jsonapi\Functional;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -22,7 +23,7 @@ class RestJsonApiUnsupported extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['jsonapi', 'node'];
+  protected static $modules = ['jsonapi', 'node'];
 
   /**
    * {@inheritdoc}
@@ -61,7 +62,7 @@ class RestJsonApiUnsupported extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Set up a HTTP client that accepts relative URLs.
@@ -112,21 +113,20 @@ class RestJsonApiUnsupported extends ResourceTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function assertNormalizationEdgeCases($method, Url $url, array $request_options) {}
+  protected function assertNormalizationEdgeCases($method, Url $url, array $request_options): void {}
 
   /**
    * {@inheritdoc}
    */
-  protected function getExpectedUnauthorizedAccessMessage($method) {}
+  protected function getExpectedUnauthorizedAccessMessage($method) {
+    return '';
+  }
 
   /**
    * {@inheritdoc}
    */
-  protected function getExpectedUnauthorizedAccessCacheability() {}
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getExpectedBcUnauthorizedAccessMessage($method) {}
+  protected function getExpectedUnauthorizedAccessCacheability() {
+    return (new CacheableMetadata());
+  }
 
 }

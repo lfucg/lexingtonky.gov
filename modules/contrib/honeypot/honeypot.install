@@ -2,11 +2,10 @@
 
 /**
  * @file
- * Contains install and update functions for Honeypot.
+ * Install, update and uninstall functions for the Honeypot module.
  */
 
 use Drupal\Core\Url;
-use Drupal\Core\Link;
 
 /**
  * Implements hook_schema().
@@ -47,11 +46,9 @@ function honeypot_schema() {
  */
 function honeypot_install() {
   if (PHP_SAPI !== 'cli') {
-    $config_url = Url::fromUri('base://admin/config/content/honeypot');
-    \Drupal::messenger()->addMessage(t(
-      'Honeypot installed successfully. Please <a href=":url">configure Honeypot</a> to protect your forms from spam bots.',
-      [':url' => $config_url->toString()]
-    ));
+    \Drupal::messenger()->addMessage(t('Honeypot installed successfully. Please <a href=":url">configure Honeypot</a> to protect your forms from spam bots.', [
+      ':url' => Url::fromRoute('honeypot.config')->toString(),
+    ]));
   }
 }
 

@@ -1,0 +1,33 @@
+uuid: c0c65df4-e948-4cdc-bbff-021ea0992858
+langcode: en
+status: false
+dependencies:
+  module:
+    - fieldblock
+    - user
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_publishing_status
+theme: bootstrap_barrio
+region: top_header
+weight: -7
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Publishing status'
+  label_display: '0'
+  provider: fieldblock
+  label_from_field: false
+  field_name: moderation_state
+  formatter_id: entity_reference_label
+  formatter_settings:
+    link: false
+visibility:
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      authenticated: authenticated

@@ -16,7 +16,8 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaItempropBase;
  *   weight = 1,
  *   type = "label",
  *   secure = FALSE,
- *   multiple = FALSE
+ *   multiple = FALSE,
+ *   trimmable = TRUE
  * )
  */
 class Name extends MetaItempropBase {

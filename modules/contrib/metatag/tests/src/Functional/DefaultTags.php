@@ -44,7 +44,7 @@ class DefaultTags extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Set the front page to the main /node page, so that the front page is not
@@ -133,7 +133,7 @@ class DefaultTags extends BrowserTestBase {
    * Test the default values for the user login page, etc.
    */
   public function testUserLoginPages() {
-    $front_url = $this->buildUrl('<front>', ['absolute' => TRUE]);;
+    $front_url = $this->buildUrl('<front>', ['absolute' => TRUE]);
 
     // A list of paths to examine.
     $routes = [

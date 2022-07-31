@@ -1,0 +1,31 @@
+uuid: ac54e1d8-52cf-4d94-b836-5e1de0110f99
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
+  module:
+    - block_content
+    - system
+  theme:
+    - lex_police
+id: lex_police_inline_page_feedback_form
+theme: lex_police
+region: feedback
+weight: -25
+provider: null
+plugin: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
+settings:
+  id: 'block_content:c3d6bc17-534d-40d8-aa16-22a6cd0300a6'
+  label: 'Inline page feedback form'
+  label_display: '0'
+  provider: block_content
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    negate: true
+    context_mapping: {  }
+    pages: '/contact/*'

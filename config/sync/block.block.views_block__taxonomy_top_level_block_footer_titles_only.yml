@@ -1,0 +1,24 @@
+uuid: b140ecd0-cfc4-4cd7-a225-3701d3929fcd
+langcode: en
+status: false
+dependencies:
+  config:
+    - views.view.taxonomy_top_level
+  module:
+    - views
+  theme:
+    - lex
+id: views_block__taxonomy_top_level_block_footer_titles_only
+theme: lex
+region: footer
+weight: -24
+provider: null
+plugin: 'views_block:taxonomy_top_level-block_2'
+settings:
+  id: 'views_block:taxonomy_top_level-block_2'
+  label: ''
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility: {  }

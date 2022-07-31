@@ -73,15 +73,11 @@ class SearchPageListBuilder extends DraggableListBuilder implements FormInterfac
    * @param \Drupal\search\SearchIndexInterface $search_index
    *   The search index.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, SearchPluginManager $search_manager, ConfigFactoryInterface $config_factory, MessengerInterface $messenger, SearchIndexInterface $search_index = NULL) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, SearchPluginManager $search_manager, ConfigFactoryInterface $config_factory, MessengerInterface $messenger, SearchIndexInterface $search_index) {
     parent::__construct($entity_type, $storage);
     $this->configFactory = $config_factory;
     $this->searchManager = $search_manager;
     $this->messenger = $messenger;
-    if (!$search_index) {
-      @trigger_error('Calling SearchPageListBuilder::__construct() without the $search_index argument is deprecated in drupal:8.8.0 and is required in drupal:9.0.0. See https://www.drupal.org/node/3075696', E_USER_DEPRECATED);
-      $search_index = \Drupal::service('search.index');
-    }
     $this->searchIndex = $search_index;
   }
 
@@ -142,7 +138,7 @@ class SearchPageListBuilder extends DraggableListBuilder implements FormInterfac
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /** @var $entity \Drupal\search\SearchPageInterface */
+    /** @var \Drupal\search\SearchPageInterface $entity */
     $row['label'] = $entity->label();
     $row['url']['#markup'] = 'search/' . $entity->getPath();
     // If the search page is active, link to it.
@@ -321,7 +317,7 @@ class SearchPageListBuilder extends DraggableListBuilder implements FormInterfac
    * {@inheritdoc}
    */
   public function getDefaultOperations(EntityInterface $entity) {
-    /** @var $entity \Drupal\search\SearchPageInterface */
+    /** @var \Drupal\search\SearchPageInterface $entity */
     $operations = parent::getDefaultOperations($entity);
 
     // Prevent the default search from being disabled or deleted.

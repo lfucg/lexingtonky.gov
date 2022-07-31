@@ -5,7 +5,7 @@ namespace Drupal\webprofiler\Entity;
 use Drupal\webprofiler\Decorator;
 
 /**
- * Class EntityDecorator
+ * Class EntityDecorator.
  */
 class EntityDecorator extends Decorator {
 
@@ -20,5 +20,5 @@ class EntityDecorator extends Decorator {
   public function getEntities() {
     return $this->entities;
   }
-  
+
 }

@@ -6,10 +6,12 @@
  */
 
 use Drupal\draggableviews\DraggableViews;
-use Drupal\views\ViewExecutable;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Cache\Cache;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\Plugin\views\query\Sql;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_views_data_alter().
@@ -23,7 +25,8 @@ function draggableviews_views_data_alter(&$data) {
       'id' => 'numeric',
     ],
     'sort' => [
-      'id' => 'standard',
+      'id' => 'draggable_views_sort_default',
+      'help' => t('Sort by the weight value.'),
     ],
     'filter' => [
       'help' => t('Filter by the draggableviews weight value (Native handler only).'),
@@ -52,7 +55,7 @@ function draggableviews_views_data_alter(&$data) {
   foreach (\Drupal::entityTypeManager()->getDefinitions() as $entity_type) {
     $base_table = $entity_type->getDataTable() ?: $entity_type->getBaseTable();
     $entity_keys = $entity_type->getKeys();
-    if ($base_table && isset($data[$base_table]['table'])) {
+    if ($base_table && isset($data[$base_table]['table']) && isset($data[$base_table]['table']['group'])) {
       $data[$base_table]['draggableviews'] = [
         'title' => $data[$base_table]['table']['group'],
         'group' => t('Draggableviews'),
@@ -66,26 +69,14 @@ function draggableviews_views_data_alter(&$data) {
       // Explain to every entity how to join with draggableviews_structure
       // table.
       $data['draggableviews_structure']['table']['join'][$base_table] = [
-        'handler' => 'draggableviews_join_handler',
+        'join_id' => 'draggableviews_with_args',
         // Because this is a direct link it could be left out.
         'left_table' => $base_table,
         'left_field' => $entity_keys['id'],
         'field' => 'entity_id',
-        'extra' => [
-          ['field' => 'view_name', 'value' => '***VIEW_ID***'],
-        ],
       ];
     }
   }
-}
-
-/**
- * Implements hook_views_query_substitutions().
- */
-function draggableviews_views_query_substitutions(ViewExecutable $view) {
-  return [
-    '***VIEW_ID***' => $view->id(),
-  ];
 }
 
 /**
@@ -104,15 +95,13 @@ function draggableviews_preprocess_views_view_table(&$variables) {
   // Add hierarchy.
   foreach ($variables['rows'] as $key => $row) {
     $columns = array_keys($row['columns']);
+
     // Find the first column that is not the draggableviews field.
-    do {
-      $first_column = current($columns);
+    foreach ($columns as $first_column) {
       if ($first_column !== 'draggableviews') {
         break;
       }
-      // Set the first column.
-      $first_column = each($columns);
-    } while ($first_column);
+    }
 
     // Indent the first column that is not the draggableviews field.
     $columns_title = $row['columns'][$first_column]['content'][0]['field_output']['#markup'];
@@ -148,6 +137,9 @@ function draggableviews_form_alter(&$form, FormStateInterface $form_state, $form
     return;
   }
 
+  // Attach library.
+  $form['#attached']['library'][] = 'draggableviews/draggableviews';
+
   // Remove default submit button.
   $form['actions']['submit']['#access'] = FALSE;
 
@@ -178,8 +170,7 @@ function draggableviews_views_submit(&$form, FormStateInterface $form_state) {
   $view = $form_state->getBuildInfo()['args'][0];
   $view_name = $view->id();
   $view_display = $view->current_display;
-
-  $weight = 0;
+  $view_args = !empty($view->args) ? json_encode($view->args) : '[]';
 
   $connection = Database::getConnection();
   $transaction = $connection->startTransaction();
@@ -189,6 +180,7 @@ function draggableviews_views_submit(&$form, FormStateInterface $form_state) {
       $connection->delete('draggableviews_structure')
         ->condition('view_name', $view_name)
         ->condition('view_display', $view_display)
+        ->condition('args', $view_args)
         ->condition('entity_id', $item['id'])
         ->execute();
 
@@ -196,16 +188,15 @@ function draggableviews_views_submit(&$form, FormStateInterface $form_state) {
       $record = [
         'view_name' => $view_name,
         'view_display' => $view_display,
-        'args' => '[]',
+        'args' => $view_args,
         'entity_id' => $item['id'],
-        'weight' => $weight,
+        'weight' => $item['weight'],
       ];
       // Save parent if exists.
       if (isset($item['parent'])) {
         $record['parent'] = $item['parent'];
       }
       $connection->insert('draggableviews_structure')->fields($record)->execute();
-      $weight++;
     }
     // We invalidate the entity list cache, so other views are also aware of the
     // cache.
@@ -216,11 +207,16 @@ function draggableviews_views_submit(&$form, FormStateInterface $form_state) {
     }));
     $entity_type_id = reset($result);
     $list_cache_tags = \Drupal::entityTypeManager()->getDefinition($entity_type_id)->getListCacheTags();
+
+    // Add the view configuration cache tag to let third-party integrations to
+    // rely on it.
+    $list_cache_tags[] = 'config:views.view.' . $view_name;
+
     Cache::invalidateTags($list_cache_tags);
   }
   catch (\Exception $e) {
     $transaction->rollback();
     \Drupal::logger('draggableviews')->error('Failed with @message', ['@message' => $e->getMessage()]);
-    drupal_set_message(t('There was an error while saving the data. Please, try gain.'), 'warning');
+    \Drupal::messenger()->addMessage(t('There was an error while saving the data. Please, try again.'), 'warning');
   }
 }

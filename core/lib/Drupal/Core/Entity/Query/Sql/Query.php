@@ -132,10 +132,14 @@ class Query extends QueryBase implements QueryInterface {
     // Add a self-join to the base revision table if we're querying only the
     // latest revisions.
     if ($this->latestRevision && $revision_field) {
-      $this->sqlQuery->leftJoin($base_table, 'base_table_2', "base_table.$id_field = base_table_2.$id_field AND base_table.$revision_field < base_table_2.$revision_field");
+      $this->sqlQuery->leftJoin($base_table, 'base_table_2', "[base_table].[$id_field] = [base_table_2].[$id_field] AND [base_table].[$revision_field] < [base_table_2].[$revision_field]");
       $this->sqlQuery->isNull("base_table_2.$id_field");
     }
 
+    if (is_null($this->accessCheck)) {
+      $this->accessCheck = TRUE;
+      @trigger_error('Relying on entity queries to check access by default is deprecated in drupal:9.2.0 and an error will be thrown from drupal:10.0.0. Call \Drupal\Core\Entity\Query\QueryInterface::accessCheck() with TRUE or FALSE to specify whether access should be checked. See https://www.drupal.org/node/3201242', E_USER_DEPRECATED);
+    }
     if ($this->accessCheck) {
       $this->sqlQuery->addTag($this->entityTypeId . '_access');
     }
@@ -246,7 +250,7 @@ class Query extends QueryBase implements QueryInterface {
       $this->sqlQuery->groupBy($field);
     }
     foreach ($this->sqlFields as $field) {
-      $this->sqlQuery->addField($field[0], $field[1], isset($field[2]) ? $field[2] : NULL);
+      $this->sqlQuery->addField($field[0], $field[1], $field[2] ?? NULL);
     }
     return $this;
   }
@@ -346,6 +350,7 @@ class Query extends QueryBase implements QueryInterface {
 
     // Replace table name brackets.
     $sql = $clone->connection->prefixTables((string) $clone->sqlQuery);
+    $sql = $clone->connection->quoteIdentifiers($sql);
 
     return strtr($sql, $quoted);
   }

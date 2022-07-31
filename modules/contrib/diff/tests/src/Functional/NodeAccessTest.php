@@ -24,7 +24,7 @@ class NodeAccessTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->createContentType(['type' => 'article']);
@@ -69,7 +69,7 @@ class NodeAccessTest extends BrowserTestBase {
 
     // Compare selected revisions should not time out.
     $this->drupalGet('/node/' . $node->id(). '/revisions');
-    $this->drupalPostForm(NULL, NULL, t('Compare selected revisions'));
+    $this->submitForm([], 'Compare selected revisions');
     $this->assertSession()->statusCodeEquals(200);
   }
 

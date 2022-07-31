@@ -24,7 +24,7 @@ class DialogTest extends WebDriverTestBase {
   protected $defaultTheme = 'classy';
 
   /**
-   * Test sending non-JS and AJAX requests to open and manipulate modals.
+   * Tests sending non-JS and AJAX requests to open and manipulate modals.
    */
   public function testDialog() {
     $this->drupalLogin($this->drupalCreateUser(['administer contact forms']));
@@ -46,7 +46,7 @@ class DialogTest extends WebDriverTestBase {
     // expected.
     $this->getSession()->getPage()->clickLink('Link 1 (modal)');
 
-    // Clicking the link triggers a AJAX request/response.
+    // Clicking the link triggers an AJAX request/response.
     // Opens a Dialog panel.
     $link1_dialog_div = $this->assertSession()->waitForElementVisible('css', 'div.ui-dialog');
     $this->assertNotNull($link1_dialog_div, 'Link was used to open a dialog ( modal )');
@@ -125,7 +125,7 @@ class DialogTest extends WebDriverTestBase {
     $button2_dialog = $this->assertSession()->waitForElementVisible('css', 'div.ui-dialog-content');
     $this->assertNotNull($button2_dialog, 'Non-modal content displays as expected.');
 
-    // Use a link to close the pagnel opened by button 2.
+    // Use a link to close the panel opened by button 2.
     $this->getSession()->getPage()->clickLink('Link 4 (close non-modal if open)');
 
     // Form modal.
@@ -153,7 +153,7 @@ class DialogTest extends WebDriverTestBase {
     $hidden_button_text = [];
     foreach ($hidden_buttons as $button) {
       $styles = $button->getAttribute('style');
-      $this->assertTrue((stripos($styles, 'display: none;') !== FALSE));
+      $this->assertStringContainsStringIgnoringCase('display: none;', $styles);
       $hidden_button_text[] = $button->getAttribute('value');
     }
 
@@ -162,7 +162,7 @@ class DialogTest extends WebDriverTestBase {
     $moved_to_buttonpane_buttons = $this->getSession()->getPage()->findAll('css', '.ui-dialog-buttonpane button');
     $this->assertCount(2, $moved_to_buttonpane_buttons);
     foreach ($moved_to_buttonpane_buttons as $key => $button) {
-      $this->assertEqual($button->getText(), $hidden_button_text[$key]);
+      $this->assertEquals($hidden_button_text[$key], $button->getText());
     }
 
     // Reset: close the form.
@@ -173,7 +173,7 @@ class DialogTest extends WebDriverTestBase {
     // Check we get a chunk of the code, we can't test the whole form as form
     // build id and token with be different.
     $contact_form = $this->xpath("//form[@id='contact-form-add-form']");
-    $this->assertTrue(!empty($contact_form), 'Non-JS entity form page present.');
+    $this->assertNotEmpty($contact_form, 'Non-JS entity form page present.');
 
     // Reset: Return to the dialog links page.
     $this->drupalGet('ajax-test/dialog');

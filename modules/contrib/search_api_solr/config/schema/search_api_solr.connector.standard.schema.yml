@@ -9,7 +9,7 @@ plugin.plugin_configuration.search_api_solr_connector.standard:
       type: string
       label: 'The host name or IP of the Solr server'
     port:
-      type: string
+      type: integer
       label: 'The port of the Solr server'
     path:
       type: string
@@ -26,8 +26,11 @@ plugin.plugin_configuration.search_api_solr_connector.standard:
     optimize_timeout:
       type: integer
       label: 'Timeout for optimize requests'
-    skip_schema_check:
+    finalize_timeout:
       type: integer
+      label: 'Timeout for finalize requests'
+    skip_schema_check:
+      type: boolean
       label: 'Do not validate if the schema is correct'
     solr_version:
       type: string
@@ -38,3 +41,12 @@ plugin.plugin_configuration.search_api_solr_connector.standard:
     commit_within:
       type: integer
       label: 'Time until a soft commit has to happen'
+    jmx:
+      type: boolean
+      label: 'Enable JMX'
+    jts:
+      type: boolean
+      label: 'Enable JTS'
+    solr_install_dir:
+      type: string
+      label: 'solr.install.dir property'

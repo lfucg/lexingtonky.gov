@@ -16,7 +16,7 @@ class ParagraphsFieldSettingsTest extends MigrateProcessTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->plugin = new ParagraphsFieldSettings([], 'paragraphs_field_settings', []);
     parent::setUp();
 
@@ -31,7 +31,7 @@ class ParagraphsFieldSettingsTest extends MigrateProcessTestCase {
       ->with('type')
       ->willReturn('paragraphs');
     $value = $this->plugin->transform([], $this->migrateExecutable, $this->row, 'settings');
-    $this->assertArrayEquals(['target_type' => 'paragraph'], $value);
+    $this->assertEquals(['target_type' => 'paragraph'], $value);
   }
 
   /**
@@ -55,7 +55,7 @@ class ParagraphsFieldSettingsTest extends MigrateProcessTestCase {
       ->with('type')
       ->willReturn('taxonomy_term');
     $value = $this->plugin->transform(['target_type' => 'some_preset_vaue'], $this->migrateExecutable, $this->row, 'settings');
-    $this->assertArrayEquals(['target_type' => 'some_preset_vaue'], $value);
+    $this->assertEquals(['target_type' => 'some_preset_vaue'], $value);
   }
 
 }

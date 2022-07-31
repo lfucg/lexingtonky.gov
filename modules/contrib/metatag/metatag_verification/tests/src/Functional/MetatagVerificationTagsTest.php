@@ -25,10 +25,11 @@ class MetatagVerificationTagsTest extends MetatagTagsTestBase {
     'baidu',
     'bing',
     'facebook_domain_verification',
-    'google',
+    'google_site_verification',
     'norton_safe_web',
     'pinterest',
     'pocket',
+    'siwecos',
     'yandex',
     'zoom_domain_verification',
   ];
@@ -46,7 +47,7 @@ class MetatagVerificationTagsTest extends MetatagTagsTestBase {
     elseif ($tag_name == 'facebook_domain_verification') {
       $tag_name = 'facebook-domain-verification';
     }
-    elseif ($tag_name == 'google') {
+    elseif ($tag_name == 'google_site_verification') {
       $tag_name = 'google-site-verification';
     }
     elseif ($tag_name == 'norton_safe_web') {
@@ -57,6 +58,9 @@ class MetatagVerificationTagsTest extends MetatagTagsTestBase {
     }
     elseif ($tag_name == 'pocket') {
       $tag_name = 'pocket-site-verification';
+    }
+    elseif ($tag_name == 'siwecos') {
+      $tag_name = 'siwecostoken';
     }
     elseif ($tag_name == 'yandex') {
       $tag_name = 'yandex-verification';

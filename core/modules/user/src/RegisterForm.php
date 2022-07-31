@@ -15,7 +15,6 @@ class RegisterForm extends AccountForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $user = $this->currentUser();
     /** @var \Drupal\user\UserInterface $account */
     $account = $this->entity;
 
@@ -75,7 +74,7 @@ class RegisterForm extends AccountForm {
       $pass = $form_state->getValue('pass');
     }
     else {
-      $pass = user_password();
+      $pass = \Drupal::service('password_generator')->generate();
     }
 
     // Remove unneeded values.

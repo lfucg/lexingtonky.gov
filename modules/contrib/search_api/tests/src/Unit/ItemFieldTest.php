@@ -36,7 +36,7 @@ class ItemFieldTest extends UnitTestCase {
         return "*$v";
       });
 
-    /** @var \Drupal\search_api\DataType\DataTypePluginManager|\PHPUnit_Framework_MockObject_MockObject $data_type_manager */
+    /** @var \Drupal\search_api\DataType\DataTypePluginManager|\PHPUnit\Framework\MockObject\MockObject $data_type_manager */
     $data_type_manager = $this->getMockBuilder('Drupal\search_api\DataType\DataTypePluginManager')
       ->disableOriginalConstructor()
       ->getMock();

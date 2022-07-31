@@ -2,44 +2,31 @@
   "name": "drupal/devel",
   "description": "Various blocks, pages, and functions for developers.",
   "type": "drupal-module",
-  "homepage": "http://drupal.org/project/devel",
-  "authors": [
-    {
-      "name": "Moshe Weitzman",
-      "email": "weitzman@tejasa.com",
-      "homepage": "https://github.com/weitzman",
-      "role": "Maintainer"
-    },
-    {
-      "name": "Hans Salvisberg",
-      "email": "drupal@salvisberg.com",
-      "homepage": "https://www.drupal.org/u/salvis",
-      "role": "Maintainer"
-    },
-    {
-      "name": "Luca Lusso",
-      "homepage": "https://www.drupal.org/u/lussoluca",
-      "role": "Maintainer"
-    },
-    {
-      "name": "Marco (willzyx)",
-      "homepage": "https://www.drupal.org/u/willzyx",
-      "role": "Maintainer"
-    },
-    {
-      "name": "See contributors",
-      "homepage": "https://www.drupal.org/node/3236/committers"
-    }
-  ],
   "support": {
-    "issues": "http://drupal.org/project/devel",
-    "irc": "irc://irc.freenode.org/drupal-contribute",
-    "source": "http://cgit.drupalcode.org/devel"
+    "issues": "https://gitlab.com/drupalspoons/devel/-/issues",
+    "slack": "https://drupal.slack.com/archives/C012WAW1MH6",
+    "source": "https://gitlab.com/drupalspoons/devel"
   },
-  "license": "GPL-2.0+",
-  "minimum-stability": "dev",
-  "require": {},
+  "license": "GPL-2.0-or-later",
+  "prefer-stable": true,
+  "require": {
+    "symfony/var-dumper": "^4 || ^5",
+    "doctrine/common": "^2.7"
+  },
+  "require-dev": {
+    "drush/drush": "^10"
+  },
   "suggest": {
-    "symfony/var-dumper": "Pretty print complex values better with var-dumper available"
+    "kint-php/kint": "Kint provides an informative display of arrays/objects. Useful for debugging and developing."
+  },
+  "conflict": {
+    "kint-php/kint": "<3"
+  },
+  "extra": {
+    "drush": {
+      "services": {
+        "drush.services.yml": "^9 || ^10"
+      }
+    }
   }
 }

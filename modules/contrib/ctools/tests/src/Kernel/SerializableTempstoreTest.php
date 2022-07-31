@@ -16,7 +16,7 @@ class SerializableTempstoreTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['ctools', 'system', 'user'];
+  protected static $modules = ['ctools', 'system', 'user'];
 
   /**
    * {@inheritdoc}

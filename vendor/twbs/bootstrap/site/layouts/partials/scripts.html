@@ -1,6 +1,3 @@
-<script src="{{ .Site.Params.cdn.jquery }}" {{ printf "integrity=%q" .Site.Params.cdn.jquery_hash | safeHTMLAttr }} crossorigin="anonymous"></script>
-<script>window.jQuery || document.write('<script src="/docs/{{ .Site.Params.docs_version }}/assets/js/vendor/jquery.slim.min.js"><\/script>')</script>
-
 {{ if eq hugo.Environment "production" -}}
   <script src="/docs/{{ .Site.Params.docs_version }}/dist/js/bootstrap.bundle.min.js" {{ printf "integrity=%q" .Site.Params.cdn.js_bundle_hash | safeHTMLAttr }} crossorigin="anonymous"></script>
 {{ else -}}
@@ -13,7 +10,7 @@
 
 {{- $vendor := resources.Match "js/vendor/*.js" -}}
 {{- $js := resources.Match "js/*.js" -}}
-{{- $targetDocsJSPath := printf "/docs/%s/assets/js/docs.js" .Site.Params.docs_version -}}
+{{- $targetDocsJSPath := path.Join "/docs" .Site.Params.docs_version "assets/js/docs.js" -}}
 {{- $docsJs := append $js $vendor | resources.Concat $targetDocsJSPath -}}
 
 {{- if eq hugo.Environment "production" -}}

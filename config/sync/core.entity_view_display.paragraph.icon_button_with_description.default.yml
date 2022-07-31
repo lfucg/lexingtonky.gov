@@ -1,0 +1,72 @@
+uuid: cb5ea275-8017-44c9-99cc-bc6180c42dea
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.icon_button_with_description.field_contact_email
+    - field.field.paragraph.icon_button_with_description.field_description
+    - field.field.paragraph.icon_button_with_description.field_heading
+    - field.field.paragraph.icon_button_with_description.field_icon
+    - field.field.paragraph.icon_button_with_description.field_image
+    - field.field.paragraph.icon_button_with_description.field_link
+    - image.style.thumbnail
+    - paragraphs.paragraphs_type.icon_button_with_description
+  module:
+    - image
+    - link
+    - text
+id: paragraph.icon_button_with_description.default
+targetEntityType: paragraph
+bundle: icon_button_with_description
+mode: default
+content:
+  field_contact_email:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_heading:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_icon:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_image:
+    type: image_url
+    label: hidden
+    settings:
+      image_style: thumbnail
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_link:
+    type: link
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: '0'
+      target: '0'
+    third_party_settings: {  }
+    weight: 3
+    region: content
+hidden:
+  search_api_excerpt: true

@@ -5,7 +5,7 @@ namespace Drupal\search_api;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\search_api\Event\GatheringPluginInfoEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Extends the default plugin manager to add support for alter events.
@@ -15,7 +15,7 @@ class SearchApiPluginManager extends DefaultPluginManager {
   /**
    * The event dispatcher.
    *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   * @var \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
    */
   protected $eventDispatcher;
 
@@ -36,7 +36,7 @@ class SearchApiPluginManager extends DefaultPluginManager {
    *   keyed by the corresponding namespace to look for plugin implementations.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher
+   * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $eventDispatcher
    *   The event dispatcher.
    * @param string|null $plugin_interface
    *   (optional) The interface each plugin should implement.
@@ -77,7 +77,7 @@ class SearchApiPluginManager extends DefaultPluginManager {
 
     if ($this->alterEventName) {
       $event = new GatheringPluginInfoEvent($definitions);
-      $this->eventDispatcher->dispatch($this->alterEventName, $event);
+      $this->eventDispatcher->dispatch($event, $this->alterEventName);
     }
   }
 

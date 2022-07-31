@@ -13,6 +13,11 @@ class EntityEmbedDisplayManagerTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'field_ui',
     'node',

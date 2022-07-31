@@ -19,7 +19,7 @@ class MigrateExternalTranslatedTest extends MigrateTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'system',
     'user',
     'language',
@@ -31,7 +31,7 @@ class MigrateExternalTranslatedTest extends MigrateTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->installSchema('system', ['sequences']);
     $this->installSchema('node', ['node_access']);
@@ -51,7 +51,7 @@ class MigrateExternalTranslatedTest extends MigrateTestBase {
   }
 
   /**
-   * Test importing and rolling back our data.
+   * Tests importing and rolling back our data.
    */
   public function testMigrations() {
     /** @var \Drupal\Core\Entity\ContentEntityStorageInterface $storage */

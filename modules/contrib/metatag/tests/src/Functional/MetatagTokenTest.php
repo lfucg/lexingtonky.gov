@@ -27,6 +27,7 @@ class MetatagTokenTest extends BrowserTestBase {
     'token_module_test',
     'metatag',
     'metatag_open_graph',
+    'metatag_favicons',
   ];
 
   /**
@@ -46,6 +47,11 @@ class MetatagTokenTest extends BrowserTestBase {
 
     $this->drupalLogin($this->rootUser);
     $this->fieldUIAddNewField('/admin/config/people/accounts', 'metatags', 'Metatags', 'metatag');
+
+    // This extra step is necessary due to changes in core that removed a cache
+    // invalidation step.
+    // @see https://www.drupal.org/project/drupal/issues/2189411
+    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
   }
 
   /**
@@ -90,6 +96,7 @@ class MetatagTokenTest extends BrowserTestBase {
       'field_metatags[0][basic][abstract]' => 'My abstract',
       'field_metatags[0][open_graph][og_title]' => 'My OG Title',
       'field_metatags[0][open_graph][og_image]' => 'Image 1,Image 2',
+      'field_metatags[0][favicons][mask_icon][href]' => 'mask_icon.svg',
     ], 'Save');
 
     $tokens = [
@@ -105,6 +112,27 @@ class MetatagTokenTest extends BrowserTestBase {
       '[user:field_metatags:og_image]' => 'Image 1,Image 2',
       '[user:field_metatags:og_image:0]' => 'Image 1',
       '[user:field_metatags:og_image:1]' => 'Image 2',
+      // Test metatags that store value as an array.
+      '[user:field_metatags:mask_icon]' => 'mask_icon.svg',
+    ];
+
+    $this->assertPageTokens($user->toUrl(), $tokens, ['user' => $user]);
+  }
+
+  /**
+   * Test precedence overridden tags over defaults in tokens.
+   */
+  public function testTokenOverriddenMetatagPrecedence() {
+    $user = $this->createUser();
+    $this->drupalGet($user->toUrl('edit-form'));
+    $this->submitForm([
+      'field_metatags[0][basic][title]' => 'My Title',
+      'field_metatags[0][basic][description]' => 'My Description',
+    ], 'Save');
+
+    $tokens = [
+      '[current-page:metatag:title]' => 'My Title',
+      '[current-page:metatag:description]' => 'My Description',
     ];
 
     $this->assertPageTokens($user->toUrl(), $tokens, ['user' => $user]);

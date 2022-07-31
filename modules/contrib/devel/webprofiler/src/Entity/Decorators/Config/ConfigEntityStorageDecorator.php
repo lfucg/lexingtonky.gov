@@ -13,12 +13,12 @@ use Drupal\webprofiler\Entity\EntityDecorator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class ConfigEntityStorageDecorator
+ * Class ConfigEntityStorageDecorator.
  */
 class ConfigEntityStorageDecorator extends EntityDecorator implements ConfigEntityStorageInterface, ImportableEntityStorageInterface, EntityHandlerInterface {
 
   /**
-   * @param ConfigEntityStorageInterface $controller
+   * @param \Drupal\Core\Config\ConfigEntityStorageInterface $controller
    */
   public function __construct(ConfigEntityStorageInterface $controller) {
     parent::__construct($controller);
@@ -218,4 +218,19 @@ class ConfigEntityStorageDecorator extends EntityDecorator implements ConfigEnti
       $container->get('language_manager')
     );
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function restore(EntityInterface $entity) {
+    $this->getOriginalObject()->restore($entity);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEntityClass(?string $bundle = NULL) : string {
+    return $this->getOriginalObject()->getEntityClass($bundle);
+  }
+
 }

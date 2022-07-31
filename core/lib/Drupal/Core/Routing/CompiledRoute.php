@@ -113,53 +113,70 @@ class CompiledRoute extends SymfonyCompiledRoute {
   /**
    * Returns the options.
    *
+   * @deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. No direct
+   *   replacement is provided.
+   *
+   * @see https://www.drupal.org/node/3159706
+   *
    * @return array
    *   The options.
    */
   public function getOptions() {
+    @trigger_error(__METHOD__ . '() is deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. No direct replacement is provided. See https://www.drupal.org/node/3159706', E_USER_DEPRECATED);
     return $this->route->getOptions();
   }
 
   /**
    * Returns the defaults.
    *
+   * @deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. No direct
+   *   replacement is provided.
+   *
+   * @see https://www.drupal.org/node/3159706
+   *
    * @return array
    *   The defaults.
    */
   public function getDefaults() {
+    @trigger_error(__METHOD__ . '() is deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. No direct replacement is provided. See https://www.drupal.org/node/3159706', E_USER_DEPRECATED);
     return $this->route->getDefaults();
   }
 
   /**
    * Returns the requirements.
    *
+   * @deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. No direct
+   *   replacement is provided.
+   *
+   * @see https://www.drupal.org/node/3159706
+   *
    * @return array
    *   The requirements.
    */
   public function getRequirements() {
+    @trigger_error(__METHOD__ . '() is deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. No direct replacement is provided. See https://www.drupal.org/node/3159706', E_USER_DEPRECATED);
     return $this->route->getRequirements();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function serialize() {
+  public function __serialize(): array {
     // Calling the parent method is safer than trying to optimize out the extra
     // function calls.
-    $data = unserialize(parent::serialize());
+    $data = parent::__serialize();
     $data['fit'] = $this->fit;
     $data['patternOutline'] = $this->patternOutline;
     $data['numParts'] = $this->numParts;
 
-    return serialize($data);
+    return $data;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function unserialize($serialized) {
-    parent::unserialize($serialized);
-    $data = unserialize($serialized);
+  public function __unserialize(array $data): void {
+    parent::__unserialize($data);
 
     $this->fit = $data['fit'];
     $this->patternOutline = $data['patternOutline'];

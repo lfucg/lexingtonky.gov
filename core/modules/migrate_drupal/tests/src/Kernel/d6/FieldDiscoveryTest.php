@@ -7,6 +7,8 @@ use Drupal\field_discovery_test\FieldDiscoveryTestClass;
 use Drupal\migrate_drupal\FieldDiscoveryInterface;
 use Drupal\Tests\migrate_drupal\Traits\FieldDiscoveryTestTrait;
 
+// cspell:ignore filefield imagefield imagelink nodelink selectlist spamspan
+
 /**
  * Tests FieldDiscovery service against Drupal 6.
  *
@@ -19,7 +21,7 @@ class FieldDiscoveryTest extends MigrateDrupal6TestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'menu_ui',
     'comment',
     'datetime',
@@ -63,7 +65,7 @@ class FieldDiscoveryTest extends MigrateDrupal6TestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->installConfig(['node']);
     $this->executeMigration('d6_node_type');
@@ -157,6 +159,8 @@ class FieldDiscoveryTest extends MigrateDrupal6TestBase {
                 ],
                 'datetime' => [
                   'date_default' => 'datetime_default',
+                  'format_interval' => 'datetime_time_ago',
+                  'date_plain' => 'datetime_plain',
                 ],
                 'filefield' => [
                   'default' => 'file_default',
@@ -187,8 +191,12 @@ class FieldDiscoveryTest extends MigrateDrupal6TestBase {
           'options/type' => [
             'type' => [
               'map' => [
-                'userreference' => 'userreference_default',
-                'nodereference' => 'nodereference_default',
+                'userreference_select' => 'options_select',
+                'userreference_buttons' => 'options_buttons',
+                'userreference_autocomplete' => 'entity_reference_autocomplete_tags',
+                'nodereference_select' => 'options_select',
+                'nodereference_buttons' => 'options_buttons',
+                'nodereference_autocomplete' => 'entity_reference_autocomplete_tags',
                 'email_textfield' => 'email_default',
                 'text_textfield' => 'text_textfield',
                 'date' => 'datetime_default',
@@ -269,9 +277,11 @@ class FieldDiscoveryTest extends MigrateDrupal6TestBase {
   public function testGetAllFields() {
     $field_discovery_test = new FieldDiscoveryTestClass($this->fieldPluginManager, $this->migrationPluginManager, $this->logger);
     $actual_fields = $field_discovery_test->getAllFields('6');
+    $actual_node_types = array_keys($actual_fields['node']);
+    sort($actual_node_types);
     $this->assertSame(['node'], array_keys($actual_fields));
-    $this->assertSame(['employee', 'test_planet', 'page', 'story', 'test_page'], array_keys($actual_fields['node']));
-    $this->assertCount(21, $actual_fields['node']['story']);
+    $this->assertSame(['employee', 'page', 'story', 'test_page', 'test_planet'], $actual_node_types);
+    $this->assertCount(25, $actual_fields['node']['story']);
     foreach ($actual_fields['node'] as $bundle => $fields) {
       foreach ($fields as $field_name => $field_info) {
         $this->assertArrayHasKey('type', $field_info);

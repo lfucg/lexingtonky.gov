@@ -2,7 +2,6 @@
 
 namespace Drupal\webprofiler\DataCollector;
 
-use Drupal\block\Entity\Block;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -13,22 +12,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 
 /**
- * Class BlocksDataCollector
+ * Class BlocksDataCollector.
  */
 class BlocksDataCollector extends DataCollector implements DrupalDataCollectorInterface {
 
   use StringTranslationTrait, DrupalDataCollectorTrait;
 
   /**
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  private $entityManager;
+  private $entityTypeManager;
 
   /**
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    */
-  public function __construct(EntityTypeManagerInterface $entityManager) {
-    $this->entityManager = $entityManager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
 
     $this->data['blocks']['loaded'] = [];
     $this->data['blocks']['rendered'] = [];
@@ -38,14 +37,12 @@ class BlocksDataCollector extends DataCollector implements DrupalDataCollectorIn
    * {@inheritdoc}
    */
   public function collect(Request $request, Response $response, \Exception $exception = NULL) {
-    $storage = $this->entityManager->getStorage('block');
-
-    $loaded = $this->entityManager->getLoaded('config', 'block');
-    $rendered = $this->entityManager->getRendered('block');
+    $storage = $this->entityTypeManager->getStorage('block');
+    $loaded = $this->entityTypeManager->getLoaded('config', 'block');
+    $rendered = $this->entityTypeManager->getRendered('block');
 
     if ($loaded) {
       $this->data['blocks']['loaded'] = $this->getBlocksData($loaded, $storage);
-
     }
 
     if ($rendered) {
@@ -101,7 +98,7 @@ class BlocksDataCollector extends DataCollector implements DrupalDataCollectorIn
   public function getPanelSummary() {
     return $this->t('Loaded: @loaded, rendered: @rendered', [
       '@loaded' => $this->getLoadedBlocksCount(),
-      '@rendered' => $this->getRenderedBlocksCount()
+      '@rendered' => $this->getRenderedBlocksCount(),
     ]);
   }
 
@@ -123,8 +120,8 @@ class BlocksDataCollector extends DataCollector implements DrupalDataCollectorIn
 
     /** @var \Drupal\block\BlockInterface $block */
     foreach ($decorator->getEntities() as $block) {
-      /** @var Block $entity */
-      if (null !== $block && $entity = $storage->load($block->get('id'))) {
+      /** @var \Drupal\block\Entity\Block $entity */
+      if (NULL !== $block && $entity = $storage->load($block->get('id'))) {
 
         $route = '';
         if ($entity->hasLinkTemplate('edit-form')) {
@@ -146,4 +143,5 @@ class BlocksDataCollector extends DataCollector implements DrupalDataCollectorIn
 
     return $blocks;
   }
+
 }

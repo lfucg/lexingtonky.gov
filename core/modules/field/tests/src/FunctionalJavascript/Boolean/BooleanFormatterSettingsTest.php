@@ -18,7 +18,7 @@ class BooleanFormatterSettingsTest extends WebDriverTestBase {
    *
    * @var array
    */
-  public static $modules = ['field', 'field_ui', 'text', 'node', 'user'];
+  protected static $modules = ['field', 'field_ui', 'text', 'node', 'user'];
 
   /**
    * {@inheritdoc}
@@ -42,7 +42,7 @@ class BooleanFormatterSettingsTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create a content type. Use Node because it has Field UI pages that work.
@@ -90,7 +90,7 @@ class BooleanFormatterSettingsTest extends WebDriverTestBase {
   public function testBooleanFormatterSettings() {
     // List the options we expect to see on the settings form. Omit the one
     // with the Unicode check/x characters, which does not appear to work
-    // well in WebTestBase.
+    // well in BrowserTestBase.
     $options = [
       'Yes / No',
       'True / False',
@@ -112,10 +112,10 @@ class BooleanFormatterSettingsTest extends WebDriverTestBase {
     foreach ($settings as $values) {
       // Set up the field settings.
       $this->drupalGet('admin/structure/types/manage/' . $this->bundle . '/fields/node.' . $this->bundle . '.' . $this->fieldName);
-      $this->drupalPostForm(NULL, [
+      $this->submitForm([
         'settings[on_label]' => $values[0],
         'settings[off_label]' => $values[1],
-      ], t('Save settings'));
+      ], 'Save settings');
 
       // Open the Manage Display page and trigger the field settings form.
       $this->drupalGet('admin/structure/types/manage/' . $this->bundle . '/display');
@@ -126,7 +126,7 @@ class BooleanFormatterSettingsTest extends WebDriverTestBase {
       foreach ($options as $string) {
         $assert_session->pageTextContains($string);
       }
-      $assert_session->pageTextContains(t('Field settings (@on_label / @off_label)', ['@on_label' => $values[0], '@off_label' => $values[1]]));
+      $assert_session->pageTextContains("Field settings ({$values[0]} / {$values[1]})");
     }
   }
 

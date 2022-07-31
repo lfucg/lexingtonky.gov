@@ -2,17 +2,17 @@
 
 namespace Drupal\webprofiler\Command;
 
+use Drupal\Console\Annotations\DrupalCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Drupal\Console\Core\Command\Shared\ContainerAwareCommandTrait;
-use Drupal\Console\Annotations\DrupalCommand;
 
 /**
- * Class ListCommand
- **
+ * Class ListCommand.
+ *
  * @DrupalCommand (
  *     extension="webprofiler",
  *     extensionType="module"
@@ -79,4 +79,5 @@ class ListCommand extends Command {
    */
   public function showMessage($output, $message, $type = 'info') {
   }
+
 }

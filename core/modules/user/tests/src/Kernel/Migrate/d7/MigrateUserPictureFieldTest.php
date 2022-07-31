@@ -13,26 +13,26 @@ use Drupal\Tests\migrate_drupal\Kernel\d7\MigrateDrupal7TestBase;
  */
 class MigrateUserPictureFieldTest extends MigrateDrupal7TestBase {
 
-  public static $modules = ['image', 'file'];
+  protected static $modules = ['image', 'file'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->executeMigration('user_picture_field');
   }
 
   /**
-   * Test the user picture field migration.
+   * Tests the user picture field migration.
    */
   public function testUserPictureField() {
     /** @var \Drupal\field\FieldStorageConfigInterface $field_storage */
     $field_storage = FieldStorageConfig::load('user.user_picture');
     $this->assertInstanceOf(FieldStorageConfigInterface::class, $field_storage);
-    $this->assertIdentical('user.user_picture', $field_storage->id());
-    $this->assertIdentical('image', $field_storage->getType());
-    $this->assertIdentical('user', $field_storage->getTargetEntityTypeId());
+    $this->assertSame('user.user_picture', $field_storage->id());
+    $this->assertSame('image', $field_storage->getType());
+    $this->assertSame('user', $field_storage->getTargetEntityTypeId());
   }
 
 }

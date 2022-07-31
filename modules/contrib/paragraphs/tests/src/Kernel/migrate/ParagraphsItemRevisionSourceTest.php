@@ -17,7 +17,7 @@ class ParagraphsItemRevisionSourceTest extends MigrateSqlSourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['migrate_drupal', 'paragraphs'];
+  protected static $modules = ['migrate_drupal', 'paragraphs'];
 
   /**
    * {@inheritdoc}
@@ -31,6 +31,8 @@ class ParagraphsItemRevisionSourceTest extends MigrateSqlSourceTestBase {
         'field_name' => 'field_paragraphs_field',
         'bundle' => 'paragraphs_field',
         'archived' => '0',
+        'parent_id' => '42',
+        'parent_type' => 'taxonomy_term',
         'field_text' => [
           0 => [
             'value' => 'PID2R2 text',

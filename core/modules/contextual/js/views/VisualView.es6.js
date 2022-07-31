@@ -3,7 +3,11 @@
  * A Backbone View that provides the visual view of a contextual link.
  */
 
-(function(Drupal, Backbone, Modernizr) {
+(function (Drupal, Backbone) {
+  /**
+   * @deprecated in drupal:9.4.0 and is removed from drupal:10.0.0. There is no
+   *  replacement.
+   */
   Drupal.contextual.VisualView = Backbone.View.extend(
     /** @lends Drupal.contextual.VisualView# */ {
       /**
@@ -14,27 +18,45 @@
        */
       events() {
         // Prevents delay and simulated mouse events.
-        const touchEndToClick = function(event) {
+        const touchEndToClick = function (event) {
           event.preventDefault();
           event.target.click();
         };
-        const mapping = {
-          'click .trigger': function() {
+
+        // Used for tracking the presence of touch events. When true, the
+        // mousemove and mouseenter event handlers are effectively disabled.
+        // This is used instead of preventDefault() on touchstart as some
+        // touchstart events are not cancelable.
+        let touchStart = false;
+
+        return {
+          touchstart() {
+            // Set to true so the mouseenter events that follows knows to not
+            // execute any hover related logic.
+            touchStart = true;
+          },
+          mouseenter() {
+            // We only want mouse hover events on non-touch.
+            if (!touchStart) {
+              this.model.focus();
+            }
+          },
+          mousemove() {
+            // Because there are scenarios where there are both touchscreens
+            // and pointer devices, the touchStart flag should be set back to
+            // false after mouseenter and mouseleave complete. It will be set to
+            // true if another touchstart event occurs.
+            touchStart = false;
+          },
+          'click .trigger': function () {
             this.model.toggleOpen();
           },
           'touchend .trigger': touchEndToClick,
-          'click .contextual-links a': function() {
+          'click .contextual-links a': function () {
             this.model.close().blur();
           },
           'touchend .contextual-links a': touchEndToClick,
         };
-        // We only want mouse hover events on non-touch.
-        if (!Modernizr.touchevents) {
-          mapping.mouseenter = function() {
-            this.model.focus();
-          };
-        }
-        return mapping;
       },
 
       /**
@@ -84,4 +106,4 @@
       },
     },
   );
-})(Drupal, Backbone, Modernizr);
+})(Drupal, Backbone);

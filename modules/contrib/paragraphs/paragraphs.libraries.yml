@@ -94,3 +94,8 @@ drupal.paragraphs.unpublished:
   css:
     theme:
       css/paragraphs.unpublished.css: {}
+
+paragraphs.seven:
+  css:
+    theme:
+      css/paragraphs.seven.css: {}

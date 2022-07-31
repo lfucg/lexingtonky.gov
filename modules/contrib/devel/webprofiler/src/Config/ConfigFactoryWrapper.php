@@ -41,4 +41,5 @@ class ConfigFactoryWrapper extends ConfigFactory {
   public function setDataCollector(ConfigDataCollector $dataCollector) {
     $this->dataCollector = $dataCollector;
   }
+
 }

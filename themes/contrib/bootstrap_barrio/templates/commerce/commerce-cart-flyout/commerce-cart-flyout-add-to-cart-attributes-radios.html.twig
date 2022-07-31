@@ -5,9 +5,9 @@
   <div class="fieldset-wrapper">
     <div class="form-radios">
       <% _.each(attributeValues, function(currentValue, key) { %>
-      <div class="custom-control custom-radio js-form-item form-item js-form-type-radio form-type-radio js-form-item-purchased-entity-attributes-attribute-<%= attributeId %> form-item-purchased-entity-attributes-attribute-<%= attributeId %>">
-        <input type="radio" class="custom-control-input form-radio" name="attribute_<%= attributeId %>" id="attribute_<%= attributeId %>_<%= currentValue.attribute_value_id %>" value="<%= currentValue.attribute_value_id %>" <%= (activeValue === currentValue.attribute_value_id) ? 'checked' : '' %>/>
-        <label class="custom-control-label control-label option" for="attribute_<%= attributeId %>_<%= currentValue.attribute_value_id %>">
+      <div class="form-check custom-radio js-form-item form-item js-form-type-radio form-type-radio js-form-item-purchased-entity-attributes-attribute-<%= attributeId %> form-item-purchased-entity-attributes-attribute-<%= attributeId %>">
+        <input type="radio" class="form-check-input form-radio" name="attribute_<%= attributeId %>" id="attribute_<%= attributeId %>_<%= currentValue.attribute_value_id %>" value="<%= currentValue.attribute_value_id %>" <%= (activeValue === currentValue.attribute_value_id) ? 'checked' : '' %>/>
+        <label class="form-check-label control-label option" for="attribute_<%= attributeId %>_<%= currentValue.attribute_value_id %>">
           <%= currentValue.name %>
         </label>
       </div>

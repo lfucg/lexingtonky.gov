@@ -1,0 +1,50 @@
+uuid: fea52a98-a8ce-4932-88de-bbc5d6058247
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.full_page_iframe.body
+    - field.field.node.full_page_iframe.field_iframe
+    - node.type.full_page_iframe
+  module:
+    - iframe
+    - text
+    - user
+id: node.full_page_iframe.default
+targetEntityType: node
+bundle: full_page_iframe
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_iframe:
+    type: iframe_default
+    label: hidden
+    settings:
+      url: ''
+      title: ''
+      headerlevel: '3'
+      class: ''
+      frameborder: '0'
+      scrolling: ''
+      transparency: '0'
+      allowfullscreen: '0'
+      tokensupport: '0'
+      width: ''
+      height: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  addtoany: true
+  search_api_excerpt: true

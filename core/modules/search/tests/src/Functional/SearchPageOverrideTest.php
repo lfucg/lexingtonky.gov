@@ -31,7 +31,7 @@ class SearchPageOverrideTest extends BrowserTestBase {
    */
   public $searchUser;
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Log in as a user that can create and search content.
@@ -45,8 +45,8 @@ class SearchPageOverrideTest extends BrowserTestBase {
   public function testSearchPageHook() {
     $keys = 'bike shed ' . $this->randomMachineName();
     $this->drupalGet("search/dummy_path", ['query' => ['keys' => $keys]]);
-    $this->assertText('Dummy search snippet', 'Dummy search snippet is shown');
-    $this->assertText('Test page text is here', 'Page override is working');
+    $this->assertSession()->pageTextContains('Dummy search snippet');
+    $this->assertSession()->pageTextContains('Test page text is here');
   }
 
 }

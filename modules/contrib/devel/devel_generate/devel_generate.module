@@ -1,7 +1,12 @@
 <?php
 
+/**
+ * @file
+ */
+
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\Component\Utility\Random;
 use Drupal\devel_generate\DevelGenerateBase;
@@ -11,16 +16,47 @@ use Drupal\node\NodeInterface;
  * Implements hook_menu_links_discovered_alter().
  */
 function devel_generate_menu_links_discovered_alter(&$links) {
-  $devel_generate_plugins = $devel_generate_manager = \Drupal::service('plugin.manager.develgenerate')->getDefinitions();
+  $devel_generate_plugins = \Drupal::service('plugin.manager.develgenerate')->getDefinitions();
   foreach ($devel_generate_plugins as $id => $plugin) {
     $label = $plugin['label'];
-    $links["devel_generate.$id"] = array(
-      'title' => "Generate $label",
-      'parent' => 'system.admin_config_development',
+    $links["devel_generate.$id"] = [
+      'title' => new TranslatableMarkup("Generate @label", ['@label' => $label]),
+      'parent' => 'devel_generate.admin_config_generate',
       'description' => $plugin['description'],
       'route_name' => "devel_generate.$id",
-    );
+      'provider' => 'devel_generate',
+    ];
   }
+
+  // Store the basic link info for repeated use. Each of the three actual links
+  // require subtle variations on this.
+  $basics = [
+    'title' => new TranslatableMarkup('Generate'),
+    'description' => new TranslatableMarkup('Generate realistic items (content, users, menus, etc) to assist your site development and testing.'),
+    'route_name' => 'devel_generate.admin_config_generate',
+    'provider' => 'devel_generate',
+  ];
+
+  // Define a separate group on admin/config page, so that 'Generate' has its
+  // own block with all the generate links.
+  $links['devel_generate.admin_config_generate'] = [
+    'parent' => 'system.admin_config',
+    // The main development group has weight -10 in system.links.menu.yml so use
+    // -9 here as this block should be near but just after it on the page.
+    'weight' => -9,
+  ] + $basics;
+
+  // Add a link in the main development group, to allow direct access to the
+  // the Generate page and to make the back breadcrumb more useful.
+  $links['devel_generate.generate'] = [
+    'title' => new TranslatableMarkup('Devel generate'),
+    'parent' => 'system.admin_config_development',
+  ] + $basics;
+
+  // Define a top-level link (with no parent) in the 'devel' menu. This also
+  // means that it will be available in the devel admin toolbar.
+  $links['devel_generate.generate2'] = ['menu_name' => 'devel'] + $basics;
+
 }
 
 /**
@@ -29,13 +65,16 @@ function devel_generate_menu_links_discovered_alter(&$links) {
  * Inserts nodes properly based on generation options.
  *
  * @param \Drupal\Core\Entity\EntityInterface $entity
- *  The base node created on submit. Inspects $node->devel_generate.
+ *   The base node created on submit. Inspects $node->devel_generate.
+ *
+ * @todo Can more of this processing move into develGenerateContentAddNode() ?
+ * Adding url alias is now moved.
  */
 function devel_generate_entity_insert(EntityInterface $entity) {
   if ($entity->getEntityTypeId() != 'node' || !isset($entity->devel_generate)) {
     return;
   }
-  /** @var \Drupal\node\NodeInterface $entity */
+  /* @var \Drupal\node\NodeInterface $entity */
   $results = $entity->devel_generate;
 
   if (!empty($results['max_comments'])) {
@@ -45,15 +84,6 @@ function devel_generate_entity_insert(EntityInterface $entity) {
         devel_generate_add_comments($entity, $field_definition, $results['users'], $results['max_comments'], $results['title_length']);
       }
     }
-  }
-
-  // Add an url alias. Cannot happen before save because we don't know the nid.
-  if (!empty($results['add_alias'])) {
-    $path = array(
-      'source' => '/node/' . $entity->id(),
-      'alias' => '/node-' . $entity->id() . '-' . $entity->bundle(),
-    );
-    \Drupal::service('path.alias_storage')->save($path['source'], $path['alias']);
   }
 
   // Add node statistics.
@@ -77,9 +107,9 @@ function devel_generate_entity_insert(EntityInterface $entity) {
  *   Max length of the title of the comments.
  */
 function devel_generate_add_comments(NodeInterface $node, FieldDefinitionInterface $field_definition, $users, $max_comments, $title_length = 8) {
-  $parents = array();
+  $parents = [];
   $field_name = $field_definition->getName();
-  $num_comments = mt_rand(1, $max_comments);
+  $num_comments = mt_rand(0, $max_comments);
   for ($i = 1; $i <= $num_comments; $i++) {
     switch ($i % 3) {
       case 0:
@@ -94,6 +124,7 @@ function devel_generate_add_comments(NodeInterface $node, FieldDefinitionInterfa
           ->range(0, 1)
           ->execute();
         break;
+
       case 2:
         // Non top level parent.
         $parents = \Drupal::entityQuery('comment')
@@ -106,23 +137,23 @@ function devel_generate_add_comments(NodeInterface $node, FieldDefinitionInterfa
         break;
     }
     $random = new Random();
-    $stub = array(
+    $stub = [
       'entity_type' => $node->getEntityTypeId(),
       'entity_id' => $node->id(),
       'field_name' => $field_name,
       'name' => 'devel generate',
       'mail' => 'devel_generate@example.com',
-      'timestamp' => mt_rand($node->getCreatedTime(), REQUEST_TIME),
-      'subject' => substr($random->sentences(mt_rand(2, $title_length), TRUE), 0, 63),
+      'timestamp' => mt_rand($node->getCreatedTime(), \Drupal::time()->getRequestTime()),
+      'subject' => substr($random->sentences(mt_rand(1, $title_length), TRUE), 0, 63),
       'uid' => $users[array_rand($users)],
       'langcode' => $node->language()->getId(),
-    );
+    ];
     if ($parents) {
       $stub['pid'] = current($parents);
     }
-    $comment = entity_create('comment', $stub);
+    $comment = \Drupal::entityTypeManager()->getStorage('comment')->create($stub);
 
-    //Populate all core fields on behalf of field.module
+    // Populate all core fields on behalf of field.module.
     DevelGenerateBase::populateFields($comment);
     $comment->save();
   }
@@ -135,11 +166,12 @@ function devel_generate_add_comments(NodeInterface $node, FieldDefinitionInterfa
  *   A node object.
  */
 function devel_generate_add_statistics(NodeInterface $node) {
-  $statistic = array(
+  $statistic = [
     'nid' => $node->id(),
     'totalcount' => mt_rand(0, 500),
-    'timestamp' => REQUEST_TIME - mt_rand(0, $node->getCreatedTime()),
-  );
+    'timestamp' => \Drupal::time()->getRequestTime() - mt_rand(0, $node->getCreatedTime()),
+  ];
   $statistic['daycount'] = mt_rand(0, $statistic['totalcount']);
-  db_insert('node_counter')->fields($statistic)->execute();
+  $database = \Drupal::database();
+  $database->insert('node_counter')->fields($statistic)->execute();
 }

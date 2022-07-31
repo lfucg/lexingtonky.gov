@@ -32,9 +32,9 @@ abstract class DataCollectorBaseTest extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-    $this->response = $this->getMock('Symfony\Component\HttpFoundation\Response');
-    $this->exception = $this->getMock('Exception');
+    $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
+    $this->response = $this->createMock('Symfony\Component\HttpFoundation\Response');
+    $this->exception = $this->createMock('Exception');
   }
 
 }

@@ -10,6 +10,7 @@ use Drupal\node\Entity\Node;
  * configurable.
  *
  * @group aggregator
+ * @group legacy
  */
 class AggregatorDisplayConfigurableTest extends AggregatorTestBase {
 
@@ -21,7 +22,7 @@ class AggregatorDisplayConfigurableTest extends AggregatorTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalPlaceBlock('page_title_block');

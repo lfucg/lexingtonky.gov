@@ -36,11 +36,12 @@ class EntityLocalTaskTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $entity = EnhancedEntity::create([
       'type' => 'default',
+      'name' => 'Enhanced Entity test'
     ]);
     $entity->save();
     $this->viewPath = $entity->toUrl()->toString();

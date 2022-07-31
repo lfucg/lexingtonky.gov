@@ -31,7 +31,7 @@ class FileManagedFileElementTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->adminUser = $this->drupalCreateUser([
       'access content',
@@ -73,10 +73,10 @@ class FileManagedFileElementTest extends WebDriverTestBase {
           $this->assertNotEmpty($uploaded_file);
           $last_fid = $this->getLastFileId();
           $this->assertGreaterThan($last_fid_prior, $last_fid, 'New file got uploaded.');
-          $this->drupalPostForm(NULL, [], t('Save'));
+          $this->submitForm([], 'Save');
 
           // Remove, then Submit.
-          $remove_button_title = $multiple ? t('Remove selected') : t('Remove');
+          $remove_button_title = $multiple ? 'Remove selected' : 'Remove';
           $this->drupalGet($path . '/' . $last_fid);
           if ($multiple) {
             $selected_checkbox = ($tree ? 'nested[file]' : 'file') . '[file_' . $last_fid . '][selected]';
@@ -84,8 +84,8 @@ class FileManagedFileElementTest extends WebDriverTestBase {
           }
           $this->getSession()->getPage()->pressButton($remove_button_title);
           $this->assertSession()->assertWaitOnAjaxRequest();
-          $this->drupalPostForm(NULL, [], t('Save'));
-          $this->assertSession()->responseContains(t('The file ids are %fids.', ['%fids' => '']));
+          $this->submitForm([], 'Save');
+          $this->assertSession()->pageTextContains('The file ids are .');
 
           // Upload, then Remove, then Submit.
           $this->drupalGet($path);
@@ -99,8 +99,8 @@ class FileManagedFileElementTest extends WebDriverTestBase {
           $this->getSession()->getPage()->pressButton($remove_button_title);
           $this->assertSession()->assertWaitOnAjaxRequest();
 
-          $this->drupalPostForm(NULL, [], t('Save'));
-          $this->assertSession()->responseContains(t('The file ids are %fids.', ['%fids' => '']));
+          $this->submitForm([], 'Save');
+          $this->assertSession()->pageTextContains('The file ids are .');
         }
       }
     }
@@ -110,7 +110,10 @@ class FileManagedFileElementTest extends WebDriverTestBase {
    * Retrieves the fid of the last inserted file.
    */
   protected function getLastFileId() {
-    return (int) \Drupal::entityQueryAggregate('file')->aggregate('fid', 'max')->execute()[0]['fid_max'];
+    return (int) \Drupal::entityQueryAggregate('file')
+      ->accessCheck(FALSE)
+      ->aggregate('fid', 'max')
+      ->execute()[0]['fid_max'];
   }
 
 }

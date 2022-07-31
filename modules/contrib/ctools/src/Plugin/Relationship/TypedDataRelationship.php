@@ -47,12 +47,16 @@ class TypedDataRelationship extends RelationshipBase {
     return new Context($context_definition, $context_value);
   }
 
-
+  /**
+   *
+   */
   public function getName() {
     return $this->getPluginDefinition()['property_name'];
   }
 
-
+  /**
+   *
+   */
   protected function getData(ContextInterface $context) {
     /** @var \Drupal\Core\TypedData\ComplexDataInterface $base */
     $base = $context->getContextValue();
@@ -68,12 +72,16 @@ class TypedDataRelationship extends RelationshipBase {
     return $data;
   }
 
-
+  /**
+   *
+   */
   protected function getMainPropertyName(FieldItemInterface $data) {
     return $data->getFieldDefinition()->getFieldStorageDefinition()->getMainPropertyName();
   }
 
-
+  /**
+   *
+   */
   public function getRelationshipValue() {
     $property = $this->getMainPropertyName();
     /** @var \Drupal\Core\TypedData\ComplexDataInterface $data */

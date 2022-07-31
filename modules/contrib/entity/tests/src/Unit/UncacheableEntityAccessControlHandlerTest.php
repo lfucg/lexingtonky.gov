@@ -29,7 +29,7 @@ class UncacheableEntityAccessControlHandlerTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $module_handler = $this->prophesize(ModuleHandlerInterface::class);

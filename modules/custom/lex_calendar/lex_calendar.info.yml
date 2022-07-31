@@ -1,0 +1,5 @@
+type: module
+name: Custom Calendar
+description: 'Displays events entries in calendar format using Fullcalendar js.'
+package: Lexington
+core_version_requirement: ^8 || ^9

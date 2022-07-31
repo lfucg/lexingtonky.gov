@@ -89,7 +89,7 @@ abstract class ArgumentPluginBase extends HandlerBase implements CacheableDepend
 
   public function isException($arg = NULL) {
     if (!isset($arg)) {
-      $arg = isset($this->argument) ? $this->argument : NULL;
+      $arg = $this->argument ?? NULL;
     }
     return !empty($this->options['exception']['value']) && $this->options['exception']['value'] === $arg;
   }
@@ -163,7 +163,7 @@ abstract class ArgumentPluginBase extends HandlerBase implements CacheableDepend
 
     $argument_text = $this->view->display_handler->getArgumentText();
 
-    $form['#pre_render'][] = [get_class($this), 'preRenderMoveArgumentOptions'];
+    $form['#pre_render'][] = [static::class, 'preRenderMoveArgumentOptions'];
 
     $form['description'] = [
       '#markup' => $argument_text['description'],
@@ -764,7 +764,7 @@ abstract class ArgumentPluginBase extends HandlerBase implements CacheableDepend
   }
 
   /**
-   * Default action: empty
+   * Default action: empty.
    *
    * If an argument was expected and was not given, in this case, display
    * the view's empty text
@@ -926,6 +926,9 @@ abstract class ArgumentPluginBase extends HandlerBase implements CacheableDepend
    *
    * @param $order
    *   The order selected in the UI.
+   * @param string|null $by
+   *   (optional) This parameter sets the direction for which to order.
+   *   Defaults to NULL.
    */
   public function summarySort($order, $by = NULL) {
     $this->query->addOrderBy(NULL, NULL, $order, (!empty($by) ? $by : $this->name_alias));
@@ -1034,7 +1037,7 @@ abstract class ArgumentPluginBase extends HandlerBase implements CacheableDepend
   }
 
   /**
-   * Set the input for this argument
+   * Set the input for this argument.
    *
    * @return TRUE if it successfully validates; FALSE if it does not.
    */
@@ -1063,7 +1066,7 @@ abstract class ArgumentPluginBase extends HandlerBase implements CacheableDepend
       $position++;
     }
 
-    $arg = isset($this->view->args[$position]) ? $this->view->args[$position] : NULL;
+    $arg = $this->view->args[$position] ?? NULL;
     $this->position = $position;
 
     // Clone ourselves so that we don't break things when we're really
@@ -1120,7 +1123,7 @@ abstract class ArgumentPluginBase extends HandlerBase implements CacheableDepend
     // we only fetch the options if we're fetching the plugin actually
     // in use.
     if ($name == $plugin_name) {
-      $options = isset($this->options[$options_name]) ? $this->options[$options_name] : [];
+      $options = $this->options[$options_name] ?? [];
     }
 
     $plugin = Views::pluginManager($type)->createInstance($name);
@@ -1168,11 +1171,11 @@ abstract class ArgumentPluginBase extends HandlerBase implements CacheableDepend
           // The key is sanitized in drupal_attributes() during output from the
           // theme function.
           '#return_value' => $key,
-          '#default_value' => isset($element['#default_value']) ? $element['#default_value'] : NULL,
+          '#default_value' => $element['#default_value'] ?? NULL,
           '#attributes' => $element['#attributes'],
           '#parents' => $element['#parents'],
           '#id' => Html::getUniqueId('edit-' . implode('-', $parents_for_id)),
-          '#ajax' => isset($element['#ajax']) ? $element['#ajax'] : NULL,
+          '#ajax' => $element['#ajax'] ?? NULL,
         ];
         $element[$key . '_options'] = [
           '#type' => 'container',

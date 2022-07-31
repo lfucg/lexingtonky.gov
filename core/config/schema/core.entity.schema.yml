@@ -343,10 +343,10 @@ field.formatter.settings.timestamp_ago:
   label: 'Timestamp ago display format settings'
   mapping:
     future_format:
-      type: string
+      type: label
       label: 'Future format'
     past_format:
-      type: string
+      type: label
       label: 'Past format'
     granularity:
       type: integer
@@ -376,6 +376,12 @@ field.formatter.settings.entity_reference_label:
       label: 'Link label to the referenced entity'
 
 block.settings.field_block:*:*:*:
+  type: block_settings
+  mapping:
+    formatter:
+      type: field_formatter
+
+block.settings.extra_field_block:*:*:*:
   type: block_settings
   mapping:
     formatter:

@@ -35,7 +35,7 @@ function pathauto_tokens($type, $tokens, array $data, array $options, Bubbleable
         case 'join-path':
           $values = [];
           foreach (token_element_children($array) as $key) {
-            $value = is_array($array[$key]) ? render($array[$key]) : (string) $array[$key];
+            $value = is_array($array[$key]) ? \Drupal::service('renderer')->render($array[$key]) : (string) $array[$key];
             $value = \Drupal::service('pathauto.alias_cleaner')->cleanString($value, $options);
             $values[] = $value;
           }

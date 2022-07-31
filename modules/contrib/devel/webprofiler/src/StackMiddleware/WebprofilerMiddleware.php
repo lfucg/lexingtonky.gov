@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
- * Class WebprofilerMiddleware
+ * Class WebprofilerMiddleware.
  */
 class WebprofilerMiddleware implements HttpKernelInterface {
 

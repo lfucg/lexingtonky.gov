@@ -26,7 +26,7 @@ class RequestSanitizerTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->errors = [];
     set_error_handler([$this, "errorHandler"]);
@@ -321,7 +321,7 @@ class RequestSanitizerTest extends UnitTestCase {
     $data[] = ['/example.com'];
     // Internal URL using a colon is allowed.
     $data[] = ['example:test'];
-    // Javascript URL is allowed because it is treated as an internal URL.
+    // JavaScript URL is allowed because it is treated as an internal URL.
     $data[] = ['javascript:alert(0)'];
     return $data;
   }
@@ -357,8 +357,10 @@ class RequestSanitizerTest extends UnitTestCase {
    *   The error message.
    * @param int $errno
    *   The severity level of the error.
+   *
+   * @internal
    */
-  protected function assertError($errstr, $errno) {
+  protected function assertError(string $errstr, int $errno): void {
     foreach ($this->errors as $error) {
       if ($error['errstr'] === $errstr && $error['errno'] === $errno) {
         return;

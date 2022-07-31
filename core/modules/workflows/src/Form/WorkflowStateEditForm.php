@@ -12,7 +12,7 @@ use Drupal\workflows\StateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class WorkflowStateEditForm.
+ * Entity form variant for editing workflow states.
  *
  * @internal
  */
@@ -72,7 +72,7 @@ class WorkflowStateEditForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    /* @var \Drupal\workflows\WorkflowInterface $workflow */
+    /** @var \Drupal\workflows\WorkflowInterface $workflow */
     $workflow = $this->getEntity();
     $workflow_type = $workflow->getTypePlugin();
     $state = $workflow->getTypePlugin()->getState($this->stateId);
@@ -149,7 +149,7 @@ class WorkflowStateEditForm extends EntityForm {
   }
 
   /**
-   * Copies top-level form values to entity properties
+   * Copies top-level form values to entity properties.
    *
    * This form can only change values for a state, which is part of workflow.
    *

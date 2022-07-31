@@ -22,7 +22,7 @@ class ViewsModerationStateSortTest extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'content_moderation',
     'workflows',
@@ -35,7 +35,7 @@ class ViewsModerationStateSortTest extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp(FALSE);
 
     $this->installEntitySchema('user');
@@ -60,7 +60,7 @@ class ViewsModerationStateSortTest extends ViewsKernelTestBase {
   }
 
   /**
-   * Test sorting with a standard data base table.
+   * Tests sorting with a standard data base table.
    */
   public function testSortBaseTable() {
     $this->enableModules(['content_moderation_test_views']);
@@ -99,7 +99,7 @@ class ViewsModerationStateSortTest extends ViewsKernelTestBase {
   }
 
   /**
-   * Test sorting with the revision base table.
+   * Tests sorting with the revision base table.
    */
   public function testSortRevisionBaseTable() {
     $this->enableModules(['content_moderation_test_views']);
@@ -165,8 +165,10 @@ class ViewsModerationStateSortTest extends ViewsKernelTestBase {
    *   The sort order.
    * @param array $expected
    *   The expected results array.
+   *
+   * @internal
    */
-  protected function assertSortResults($view_id, $column, $order, array $expected) {
+  protected function assertSortResults(string $view_id, string $column, string $order, array $expected): void {
     // Test with exposed input.
     $view = Views::getView($view_id);
     $view->setExposedInput([

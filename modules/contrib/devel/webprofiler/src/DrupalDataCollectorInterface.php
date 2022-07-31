@@ -64,4 +64,5 @@ interface DrupalDataCollectorInterface {
    * @return mixed
    */
   public function getData();
+
 }

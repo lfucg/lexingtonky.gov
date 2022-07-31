@@ -55,9 +55,9 @@ class MediaEntityDropzoneJsEbWidget extends DropzoneJsEbWidget {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
+    return array_merge(parent::defaultConfiguration(), [
       'media_type' => '',
-    ] + parent::defaultConfiguration();
+    ]);
   }
 
   /**

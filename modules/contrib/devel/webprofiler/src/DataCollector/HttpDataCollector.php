@@ -160,9 +160,9 @@ class HttpDataCollector extends DataCollector implements DrupalDataCollectorInte
   public function getPanelSummary() {
     return $this->t(
       'Completed @completed, error @error', [
-      '@completed' => $this->getCompletedRequestsCount(),
-      '@error' => $this->getFailedRequestsCount(),
-    ]
+        '@completed' => $this->getCompletedRequestsCount(),
+        '@error' => $this->getFailedRequestsCount(),
+      ]
     );
   }
 
@@ -172,4 +172,5 @@ class HttpDataCollector extends DataCollector implements DrupalDataCollectorInte
   public function getIcon() {
     return 'iVBORw0KGgoAAAANSUhEUgAAABUAAAAcCAYAAACOGPReAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAATlJREFUeNrsleERgjAMha0TdISOwAZ2BEZghI7ABo7AOQFuwAjoBLgBblBbfb0LudByp/4jdw+PNnxtkqYq7/3h13Y8/MF26B9spfo6yAX1QSa6EY2Y0xLrzROgddAMOcgLmuFbhDqyG00W8Rm1JWgEWCG0oQBuJKjGigNUs/xWUJdJheZQJzhZFGkgKWkw1mM8bmTCvOPQcSVXrTA+Ydc0kujXJGg6p5VwrG5BJzb2CLriN9kT74afUylPloQ+kdDPELXpg1qGvwbtURwjFGkkC8RIZw6d2QeO7MII81wRbDm0Z068Zf0G1bxQl8z1UH1zoQwk9NRZdkPoHt+KbZoqa+HYZS4T3iimdEvRDrIF4KIRclBNjk+uSB2/eBJUvR9KSek26BZHOit2zl3oqkV91P6//3N7CTAAIIc/qj2gy4gAAAAASUVORK5CYII=';
   }
+
 }

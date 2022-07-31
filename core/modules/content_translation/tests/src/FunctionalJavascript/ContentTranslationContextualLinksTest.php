@@ -22,7 +22,7 @@ class ContentTranslationContextualLinksTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['content_translation', 'contextual', 'node'];
+  protected static $modules = ['content_translation', 'contextual', 'node'];
 
   /**
    * {@inheritdoc}
@@ -32,7 +32,7 @@ class ContentTranslationContextualLinksTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Set up an additional language.
@@ -48,7 +48,7 @@ class ContentTranslationContextualLinksTest extends WebDriverTestBase {
       'entity_types[node]' => TRUE,
       'settings[node][page][translatable]' => TRUE,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save configuration'));
+    $this->submitForm($edit, 'Save configuration');
     $this->drupalLogout();
 
     // Create a translator user.

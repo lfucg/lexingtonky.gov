@@ -21,7 +21,7 @@ class ParagraphsIEFTests extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'ckeditor',
     'entity',

@@ -22,6 +22,7 @@ class LookupTerm extends ProcessPluginBase {
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
 
     $tid = array_keys(\Drupal::entityQuery('taxonomy_term')
+      ->accessCheck(FALSE)
       ->condition('name', trim($value))
       ->condition('vid', 'organizations')
       ->execute())[0];

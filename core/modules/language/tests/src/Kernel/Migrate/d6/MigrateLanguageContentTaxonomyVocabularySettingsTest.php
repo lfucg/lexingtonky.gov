@@ -16,7 +16,7 @@ class MigrateLanguageContentTaxonomyVocabularySettingsTest extends MigrateDrupal
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'language',
     'content_translation',
     'taxonomy',
@@ -25,7 +25,7 @@ class MigrateLanguageContentTaxonomyVocabularySettingsTest extends MigrateDrupal
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('taxonomy_term');
     $this->executeMigrations([
@@ -66,8 +66,10 @@ class MigrateLanguageContentTaxonomyVocabularySettingsTest extends MigrateDrupal
    *   The expected state of language alterable.
    * @param array $third_party_settings
    *   The content translation setting.
+   *
+   * @internal
    */
-  public function assertLanguageContentSettings($target_entity, $bundle, $default_langcode, $language_alterable, array $third_party_settings) {
+  public function assertLanguageContentSettings(string $target_entity, string $bundle, string $default_langcode, bool $language_alterable, array $third_party_settings): void {
     $config = ContentLanguageSettings::load($target_entity . "." . $bundle);
     $this->assertInstanceOf(ContentLanguageSettings::class, $config);
     $this->assertSame($target_entity, $config->getTargetEntityTypeId());

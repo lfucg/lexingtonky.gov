@@ -19,7 +19,7 @@ class CacheabilityTest extends SearchApiBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'rest',
     'search_api',
     'search_api_test',

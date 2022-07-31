@@ -74,7 +74,7 @@ class DiffPluginVariousTest extends DiffPluginTestBase {
       'body[0][value]' => '<p>Revision 1</p>',
       'comment[0][status]' => CommentItemInterface::OPEN,
     );
-    $this->drupalPostNodeForm('node/add/article', $edit, t('Save and publish'));
+    $this->drupalPostNodeForm('node/add/article', $edit, 'Save and publish');
     $node = $this->drupalGetNodeByTitle($title);
 
     // Edit the article and close its comments.
@@ -82,14 +82,14 @@ class DiffPluginVariousTest extends DiffPluginTestBase {
       'comment[0][status]' => CommentItemInterface::CLOSED,
       'revision' => TRUE,
     );
-    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, 'Save and keep published');
 
     // Check the difference between the last two revisions.
     $this->clickLink(t('Revisions'));
-    $this->drupalPostForm(NULL, NULL, t('Compare selected revisions'));
-    $this->assertText('Comments');
-    $this->assertText('Comments for this entity are open.');
-    $this->assertText('Comments for this entity are closed.');
+    $this->submitForm([], 'Compare selected revisions');
+    $this->assertSession()->pageTextContains('Comments');
+    $this->assertSession()->pageTextContains('Comments for this entity are open.');
+    $this->assertSession()->pageTextContains('Comments for this entity are closed.');
   }
 
   /**
@@ -138,10 +138,10 @@ class DiffPluginVariousTest extends DiffPluginTestBase {
 
     // Check the difference between the last two revisions.
     $this->clickLink(t('Revisions'));
-    $this->drupalPostForm(NULL, NULL, t('Compare selected revisions'));
-    $this->assertText('Email');
-    $this->assertText('foo@example.com');
-    $this->assertText('bar@example.com');
+    $this->submitForm([], 'Compare selected revisions');
+    $this->assertSession()->pageTextContains('Email');
+    $this->assertSession()->pageTextContains('foo@example.com');
+    $this->assertSession()->pageTextContains('bar@example.com');
   }
 
   /**
@@ -193,13 +193,13 @@ class DiffPluginVariousTest extends DiffPluginTestBase {
 
     // Compare the revisions.
     $this->drupalGet('node/' . $node->id() . '/revisions');
-    $this->drupalPostForm(NULL, NULL, t('Compare selected revisions'));
+    $this->submitForm([], 'Compare selected revisions');
 
     // Assert that the timestamp field does not show a unix time format.
-    $this->assertText('Timestamp test');
+    $this->assertSession()->pageTextContains('Timestamp test');
     $date_formatter = \Drupal::service('date.formatter');
-    $this->assertText($date_formatter->format($old_timestamp));
-    $this->assertText($date_formatter->format($new_timestamp));
+    $this->assertSession()->pageTextContains($date_formatter->format($old_timestamp));
+    $this->assertSession()->pageTextContains($date_formatter->format($new_timestamp));
   }
 
   /**
@@ -263,12 +263,12 @@ class DiffPluginVariousTest extends DiffPluginTestBase {
 
     // Check differences between revisions.
     $this->clickLink(t('Revisions'));
-    $this->drupalPostForm(NULL, [], t('Compare selected revisions'));
-    $this->assertText('Link');
-    $this->assertText('Google');
-    $this->assertText('http://www.google.com');
-    $this->assertText('Guguel');
-    $this->assertText('http://www.google.es');
+    $this->submitForm([], 'Compare selected revisions');
+    $this->assertSession()->pageTextContains('Link');
+    $this->assertSession()->pageTextContains('Google');
+    $this->assertSession()->pageTextContains('http://www.google.com');
+    $this->assertSession()->pageTextContains('Guguel');
+    $this->assertSession()->pageTextContains('http://www.google.es');
   }
 
   /**
@@ -324,10 +324,10 @@ class DiffPluginVariousTest extends DiffPluginTestBase {
 
     // Check differences between revisions.
     $this->clickLink(t('Revisions'));
-    $this->drupalPostForm(NULL, [], t('Compare selected revisions'));
-    $this->assertText('List');
-    $this->assertText('value_a');
-    $this->assertText('value_b');
+    $this->submitForm([], 'Compare selected revisions');
+    $this->assertSession()->pageTextContains('List');
+    $this->assertSession()->pageTextContains('value_a');
+    $this->assertSession()->pageTextContains('value_b');
   }
 
   /**
@@ -358,13 +358,13 @@ class DiffPluginVariousTest extends DiffPluginTestBase {
 
     // Check differences between revisions.
     $this->clickLink(t('Revisions'));
-    $this->drupalPostForm(NULL, [], t('Compare selected revisions'));
-    $this->assertText('Text Field');
-    $this->assertText('Text Long Field');
-    $this->assertText('Foo');
-    $this->assertText('Fighters');
-    $this->assertText('Bar');
-    $this->assertText('Fly');
+    $this->submitForm([], 'Compare selected revisions');
+    $this->assertSession()->pageTextContains('Text Field');
+    $this->assertSession()->pageTextContains('Text Long Field');
+    $this->assertSession()->pageTextContains('Foo');
+    $this->assertSession()->pageTextContains('Fighters');
+    $this->assertSession()->pageTextContains('Bar');
+    $this->assertSession()->pageTextContains('Fly');
   }
 
   /**
@@ -396,16 +396,16 @@ class DiffPluginVariousTest extends DiffPluginTestBase {
       'body[0][summary]' => 'Bar summary',
       'revision' => TRUE,
     ];
-    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, 'Save and keep published');
 
     // Check differences between revisions.
     $this->clickLink(t('Revisions'));
-    $this->drupalPostForm(NULL, [], t('Compare selected revisions'));
-    $this->assertText('Body');
-    $this->assertText('Foo value');
-    $this->assertText('Foo summary');
-    $this->assertText('Bar value');
-    $this->assertText('Bar summary');
+    $this->submitForm([], 'Compare selected revisions');
+    $this->assertSession()->pageTextContains('Body');
+    $this->assertSession()->pageTextContains('Foo value');
+    $this->assertSession()->pageTextContains('Foo summary');
+    $this->assertSession()->pageTextContains('Bar value');
+    $this->assertSession()->pageTextContains('Bar summary');
   }
 
 }

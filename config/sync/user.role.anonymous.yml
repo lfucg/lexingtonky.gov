@@ -1,0 +1,16 @@
+uuid: 96399353-5c2b-4722-8133-516994141e02
+langcode: en
+status: true
+dependencies:
+  module:
+    - contact
+    - search
+    - system
+id: anonymous
+label: 'Anonymous user'
+weight: -10
+is_admin: false
+permissions:
+  - 'access content'
+  - 'access site-wide contact form'
+  - 'search content'

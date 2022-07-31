@@ -7,7 +7,7 @@ use Drupal\Core\Entity\Entity\EntityFormMode;
 use Drupal\Core\Entity\EntityType;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -76,7 +76,7 @@ class EntityTypeTest extends UnitTestCase {
   public function testGetKey($entity_keys, $expected) {
     $entity_type = $this->setUpEntityType(['entity_keys' => $entity_keys]);
     $this->assertSame($expected['bundle'], $entity_type->getKey('bundle'));
-    $this->assertSame(FALSE, $entity_type->getKey('bananas'));
+    $this->assertFalse($entity_type->getKey('bananas'));
   }
 
   /**
@@ -88,7 +88,7 @@ class EntityTypeTest extends UnitTestCase {
     $entity_type = $this->setUpEntityType(['entity_keys' => $entity_keys]);
     $this->assertSame(!empty($expected['bundle']), $entity_type->hasKey('bundle'));
     $this->assertSame(!empty($expected['id']), $entity_type->hasKey('id'));
-    $this->assertSame(FALSE, $entity_type->hasKey('bananas'));
+    $this->assertFalse($entity_type->hasKey('bananas'));
   }
 
   /**
@@ -483,8 +483,11 @@ class EntityTypeTest extends UnitTestCase {
    * Asserts there on no public properties on the object instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type.
+   *
+   * @internal
    */
-  protected function assertNoPublicProperties(EntityTypeInterface $entity_type) {
+  protected function assertNoPublicProperties(EntityTypeInterface $entity_type): void {
     $reflection = new \ReflectionObject($entity_type);
     $this->assertEmpty($reflection->getProperties(\ReflectionProperty::IS_PUBLIC));
   }
@@ -494,19 +497,19 @@ class EntityTypeTest extends UnitTestCase {
    */
   public function testEntityClassImplements() {
     $entity_type = $this->setUpEntityType(['class' => EntityFormMode::class]);
-    $this->assertSame(TRUE, $entity_type->entityClassImplements(ConfigEntityInterface::class));
-    $this->assertSame(FALSE, $entity_type->entityClassImplements(\DateTimeInterface::class));
+    $this->assertTrue($entity_type->entityClassImplements(ConfigEntityInterface::class));
+    $this->assertFalse($entity_type->entityClassImplements(\DateTimeInterface::class));
   }
 
   /**
    * @covers ::isSubclassOf
    * @group legacy
-   * @expectedDeprecation Drupal\Core\Entity\EntityType::isSubclassOf() is deprecated in drupal:8.3.0 and is removed from drupal:10.0.0. Use Drupal\Core\Entity\EntityTypeInterface::entityClassImplements() instead. See https://www.drupal.org/node/2842808
    */
   public function testIsSubClassOf() {
+    $this->expectDeprecation('Drupal\Core\Entity\EntityType::isSubclassOf() is deprecated in drupal:8.3.0 and is removed from drupal:10.0.0. Use Drupal\Core\Entity\EntityTypeInterface::entityClassImplements() instead. See https://www.drupal.org/node/2842808');
     $entity_type = $this->setUpEntityType(['class' => EntityFormMode::class]);
-    $this->assertSame(TRUE, $entity_type->isSubclassOf(ConfigEntityInterface::class));
-    $this->assertSame(FALSE, $entity_type->isSubclassOf(\DateTimeInterface::class));
+    $this->assertTrue($entity_type->isSubclassOf(ConfigEntityInterface::class));
+    $this->assertFalse($entity_type->isSubclassOf(\DateTimeInterface::class));
   }
 
   /**
@@ -515,10 +518,7 @@ class EntityTypeTest extends UnitTestCase {
   public function testIsSerializable() {
     $entity_type = $this->setUpEntityType([]);
 
-    $translation = $this->prophesize(TranslationInterface::class);
-    $translation->willImplement(\Serializable::class);
-    $translation->serialize()->willThrow(\Exception::class);
-    $translation_service = $translation->reveal();
+    $translation_service = new UnserializableTranslationManager();
     $translation_service->_serviceId = 'string_translation';
 
     $entity_type->setStringTranslation($translation_service);
@@ -527,47 +527,24 @@ class EntityTypeTest extends UnitTestCase {
     $this->assertEquals('example_entity_type', $entity_type->id());
   }
 
-  /**
-   * @covers ::getLabelCallback
-   *
-   * @group legacy
-   *
-   * @deprecatedMessage EntityType::getLabelCallback() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Override the EntityInterface::label() method instead for dynamic labels. See https://www.drupal.org/node/3050794
-   */
-  public function testGetLabelCallack() {
-    $entity_type = $this->setUpEntityType(['label_callback' => 'label_function']);
-    $this->assertSame('label_function', $entity_type->getLabelCallback());
+}
 
-    $entity_type = $this->setUpEntityType([]);
-    $this->assertNull($entity_type->getLabelCallback());
+/**
+ * Test class.
+ */
+class UnserializableTranslationManager extends TranslationManager {
+
+  /**
+   * Constructs a UnserializableTranslationManager object.
+   */
+  public function __construct() {
   }
 
   /**
-   * @covers ::setLabelCallback
-   *
-   * @group legacy
-   *
-   * @deprecatedMessage EntityType::setLabelCallback() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Override the EntityInterface::label() method instead for dynamic labels. See https://www.drupal.org/node/3050794
+   * @return array
    */
-  public function testSetLabelCallack() {
-    $entity_type = $this->setUpEntityType([]);
-    $entity_type->setLabelCallback('label_function');
-    $this->assertSame('label_function', $entity_type->get('label_callback'));
-  }
-
-  /**
-   * @covers ::hasLabelCallback
-   *
-   * @group legacy
-   *
-   * @deprecatedMessage EntityType::hasLabelCallback() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Override the EntityInterface::label() method instead for dynamic labels. See https://www.drupal.org/node/3050794
-   */
-  public function testHasLabelCallack() {
-    $entity_type = $this->setUpEntityType(['label_callback' => 'label_function']);
-    $this->assertTrue($entity_type->hasLabelCallback());
-
-    $entity_type = $this->setUpEntityType([]);
-    $this->assertFalse($entity_type->hasLabelCallback());
+  public function __serialize(): array {
+    throw new \Exception();
   }
 
 }

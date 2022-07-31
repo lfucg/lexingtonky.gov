@@ -2,7 +2,7 @@
 
 namespace Drupal\search_api\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Wraps a mapping Views field handlers event.
@@ -40,7 +40,7 @@ final class MappingViewsFieldHandlersEvent extends Event {
    *   tried before shorter ones. The "*" mapping therefore is the default if no
    *   other match could be found.
    */
-  public function &getFieldHandlerMapping() {
+  public function &getFieldHandlerMapping(): array {
     return $this->fieldHandlerMapping;
   }
 

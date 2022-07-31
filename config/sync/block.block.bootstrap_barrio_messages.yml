@@ -1,0 +1,20 @@
+uuid: 4c2df21f-78c0-4992-a3f1-b88b5259959b
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_messages
+theme: bootstrap_barrio
+region: breadcrumb
+weight: -25
+provider: null
+plugin: system_messages_block
+settings:
+  id: system_messages_block
+  label: 'Status messages'
+  label_display: '0'
+  provider: system
+visibility: {  }

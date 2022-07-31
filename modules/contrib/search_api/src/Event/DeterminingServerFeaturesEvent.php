@@ -3,7 +3,7 @@
 namespace Drupal\search_api\Event;
 
 use Drupal\search_api\ServerInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Wraps a determining server features event.
@@ -43,7 +43,7 @@ final class DeterminingServerFeaturesEvent extends Event {
    * @return array
    *   Reference to the features supported by the server's backend.
    */
-  public function &getFeatures() {
+  public function &getFeatures(): array {
     return $this->features;
   }
 
@@ -53,7 +53,7 @@ final class DeterminingServerFeaturesEvent extends Event {
    * @return \Drupal\search_api\ServerInterface
    *   The search server in question.
    */
-  public function getServer() {
+  public function getServer(): ServerInterface {
     return $this->server;
   }
 

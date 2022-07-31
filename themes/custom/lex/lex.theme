@@ -49,7 +49,7 @@ function lex_preprocess_html(&$variables) {
 
 function lex_preprocess_page__taxonomy__term(&$variables) {
   $path = \Drupal::service('path.current')->getPath();
-  $alias = \Drupal::service('path.alias_manager')->getAliasByPath($path);
+  $alias = \Drupal::service('path_alias.manager')->getAliasByPath($path);
   $variables['browse_level'] = preg_match('|/browse/.*/|', $alias) == 1 ? 'subsection' : 'section';
 }
 
@@ -93,7 +93,7 @@ function lex_preprocess_block(&$variables) {
 
     if (stristr($element_id, 'inline_page_feedback_form')) {
       # get contact form field to render inline
-      $message = \Drupal::entityManager()
+      $message = \Drupal::entityTypeManager()
       ->getStorage('contact_message')
       ->create(array(
         'contact_form' => 'page_feedback'

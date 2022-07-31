@@ -46,9 +46,10 @@
 
         <% if (!_.isEmpty(data.request_query)) { %>
         <div class="panel__container">
+            <h3>GET parameters</h3>
             <table class="table--duo">
                 <thead>
-                <th>{{ 'GET Parameters'|t }}</th>
+                <th>{{ 'Name'|t }}</th>
                 <th>{{ 'Value'|t }}</th>
                 </thead>
                 <tbody>
@@ -65,9 +66,10 @@
 
         <% if (!_.isEmpty(data.request_request)) { %>
         <div class="panel__container">
+            <h3>POST parameters</h3>
             <table class="table--duo">
                 <thead>
-                <th>{{ 'POST Parameters'|t }}</th>
+                <th>{{ 'Name'|t }}</th>
                 <th>{{ 'Value'|t }}</th>
                 </thead>
                 <tbody>
@@ -83,17 +85,19 @@
         <% } %>
 
         <div class="panel__container">
+            <h3>Request attributes</h3>
             <table class="table--duo">
                 <thead>
-                <th>{{ 'Attributes'|t }}</th>
+                <th>{{ 'Name'|t }}</th>
                 <th>{{ 'Value'|t }}</th>
                 </thead>
                 <tbody>
                 <% _.each( data.request_attributes, function( item, key ){ %>
                 <tr>
                     <td><%- key %></td>
-
                     <% if(key == '_controller') { %>
+                    <td><%= Drupal.webprofiler.helpers.classLink(data.controller) %></td>
+                    <% } else if(key == '_form') { %>
                     <td><%= Drupal.webprofiler.helpers.classLink(data.controller) %></td>
                     <% } else { %>
                     <td><%= Drupal.webprofiler.helpers.frm(item) %></td>
@@ -106,9 +110,10 @@
 
         <% if (!_.isEmpty(data.request_cookies)) { %>
         <div class="panel__container">
+            <h3>Cookies</h3>
             <table class="table--duo">
                 <thead>
-                <th>{{ 'Cookies'|t }}</th>
+                <th>{{ 'Name'|t }}</th>
                 <th>{{ 'Value'|t }}</th>
                 </thead>
                 <tbody>
@@ -124,9 +129,10 @@
         <% } %>
 
         <div class="panel__container">
+            <h3>Request headers</h3>
             <table class="table--duo">
                 <thead>
-                <th>{{ 'Request headers'|t }}</th>
+                <th>{{ 'Name'|t }}</th>
                 <th>{{ 'Value'|t }}</th>
                 </thead>
                 <tbody>
@@ -142,16 +148,18 @@
 
         <% if (!_.isEmpty(data.content)) { %>
         <div class="panel__container">
+            <h3>Raw content</h3>
             <div class="h--word-broken"><%- data.content %></div>
         </div>
         <% } %>
 
         <% if (!_.isEmpty(data.access_check)) { %>
         <div class="panel__container">
+            <h3>Access check</h3>
             <table class="table--duo">
                 <thead>
                 <th>{{ 'Path'|t }}</th>
-                <th>{{ 'Access check'|t }}</th>
+                <th>{{ 'Service'|t }}</th>
                 </thead>
                 <tbody>
                 <% _.each(data.access_check, function(items, key){ %>
@@ -170,9 +178,10 @@
         <% } %>
 
         <div class="panel__container">
+            <h3>Server Parameters</h3>
             <table class="table--duo">
                 <thead>
-                <th>{{ 'Server Parameters'|t }}</th>
+                <th>{{ 'Name'|t }}</th>
                 <th>{{ 'Value'|t }}</th>
                 </thead>
                 <tbody>
@@ -187,9 +196,10 @@
         </div>
 
         <div class="panel__container">
+            <h3>Response headers</h3>
             <table class="table--duo">
                 <thead>
-                <th>{{ 'Response headers'|t }}</th>
+                <th>{{ 'Name'|t }}</th>
                 <th>{{ 'Value'|t }}</th>
                 </thead>
                 <tbody>

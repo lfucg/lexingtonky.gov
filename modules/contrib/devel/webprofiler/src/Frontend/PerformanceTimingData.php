@@ -3,7 +3,7 @@
 namespace Drupal\webprofiler\Frontend;
 
 /**
- * Class PerformanceTimingData
+ * Class PerformanceTimingData.
  */
 class PerformanceTimingData {
 
@@ -78,4 +78,5 @@ class PerformanceTimingData {
       return 0;
     }
   }
+
 }

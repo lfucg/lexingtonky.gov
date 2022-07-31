@@ -8,12 +8,10 @@
 (function ($, _ref, _ref2) {
   var behaviors = _ref.behaviors;
   var testMessages = _ref2.testMessages;
-
   var indexes = {};
   testMessages.types.forEach(function (type) {
     indexes[type] = [];
   });
-
   var messageObjects = {
     default: {
       zone: new Drupal.Message(),
@@ -21,19 +19,16 @@
     },
     multiple: []
   };
-
   messageObjects.default.zone.clear();
-
   testMessages.selectors.filter(Boolean).forEach(function (selector) {
     messageObjects[selector] = {
       zone: new Drupal.Message(document.querySelector(selector)),
       indexes: indexes
     };
   });
-
   behaviors.js_message_test = {
     attach: function attach() {
-      $('[data-drupal-messages-area]').once('messages-details').on('click', '[data-action]', function (e) {
+      $(once('messages-details', '[data-drupal-messages-area]')).on('click', '[data-action]', function (e) {
         var $target = $(e.currentTarget);
         var type = $target.attr('data-type');
         var area = $target.closest('[data-drupal-messages-area]').attr('data-drupal-messages-area') || 'default';
@@ -41,39 +36,47 @@
         var action = $target.attr('data-action');
 
         if (action === 'add') {
-          messageObjects[area].indexes[type].push(message.add('This is a message of the type, ' + type + '. You be the judge of its importance.', { type: type }));
+          messageObjects[area].indexes[type].push(message.add("This is a message of the type, ".concat(type, ". You be the judge of its importance."), {
+            type: type
+          }));
         } else if (action === 'remove') {
           message.remove(messageObjects[area].indexes[type].pop());
         }
       });
-      $('[data-action="add-multiple"]').once('add-multiple').on('click', function () {
+      $(once('add-multiple', '[data-action="add-multiple"]')).on('click', function () {
         [0, 1, 2, 3, 4, 5].forEach(function (i) {
-          messageObjects.multiple.push(messageObjects.default.zone.add('This is message number ' + i + ' of the type, ' + testMessages.types[i % testMessages.types.length] + '. You be the judge of its importance.', { type: testMessages.types[i % testMessages.types.length] }));
+          messageObjects.multiple.push(messageObjects.default.zone.add("This is message number ".concat(i, " of the type, ").concat(testMessages.types[i % testMessages.types.length], ". You be the judge of its importance."), {
+            type: testMessages.types[i % testMessages.types.length]
+          }));
         });
       });
-      $('[data-action="remove-multiple"]').once('remove-multiple').on('click', function () {
+      $(once('remove-multiple', '[data-action="remove-multiple"]')).on('click', function () {
         messageObjects.multiple.forEach(function (messageIndex) {
           return messageObjects.default.zone.remove(messageIndex);
         });
         messageObjects.multiple = [];
       });
-      $('[data-action="add-multiple-error"]').once('add-multiple-error').on('click', function () {
+      $(once('add-multiple-error', '[data-action="add-multiple-error"]')).on('click', function () {
         [0, 1, 2, 3, 4, 5].forEach(function (i) {
-          return messageObjects.default.zone.add('Msg-' + i, { type: 'error' });
+          return messageObjects.default.zone.add("Msg-".concat(i), {
+            type: 'error'
+          });
         });
-        messageObjects.default.zone.add('Msg-' + testMessages.types.length * 2, { type: 'status' });
+        messageObjects.default.zone.add("Msg-".concat(testMessages.types.length * 2), {
+          type: 'status'
+        });
       });
-      $('[data-action="remove-type"]').once('remove-type').on('click', function () {
+      $(once('remove-type', '[data-action="remove-type"]')).on('click', function () {
         Array.prototype.map.call(document.querySelectorAll('[data-drupal-message-id^="error"]'), function (element) {
           return element.getAttribute('data-drupal-message-id');
         }).forEach(function (id) {
           return messageObjects.default.zone.remove(id);
         });
       });
-      $('[data-action="clear-all"]').once('clear-all').on('click', function () {
+      $(once('clear-all', '[data-action="clear-all"]')).on('click', function () {
         messageObjects.default.zone.clear();
       });
-      $('[data-action="id-no-status"]').once('id-no-status').on('click', function () {
+      $(once('id-no-status', '[data-action="id-no-status"]')).on('click', function () {
         messageObjects.default.zone.add('Msg-id-no-status', {
           id: 'my-special-id'
         });

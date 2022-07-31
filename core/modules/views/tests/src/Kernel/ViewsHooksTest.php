@@ -52,7 +52,7 @@ class ViewsHooksTest extends ViewsKernelTestBase {
    */
   protected $moduleHandler;
 
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp();
 
     $this->moduleHandler = $this->container->get('module_handler');
@@ -67,7 +67,7 @@ class ViewsHooksTest extends ViewsKernelTestBase {
 
     // Test each hook is found in the implementations array and is invoked.
     foreach (static::$hooks as $hook => $type) {
-      $this->assertTrue($this->moduleHandler->implementsHook('views_test_data', $hook), new FormattableMarkup('The hook @hook was registered.', ['@hook' => $hook]));
+      $this->assertTrue($this->moduleHandler->hasImplementations($hook, 'views_test_data'), new FormattableMarkup('The hook @hook was registered.', ['@hook' => $hook]));
 
       if ($hook == 'views_post_render') {
         $this->moduleHandler->invoke('views_test_data', $hook, [$view, &$view->display_handler->output, $view->display_handler->getPlugin('cache')]);
@@ -81,7 +81,7 @@ class ViewsHooksTest extends ViewsKernelTestBase {
 
         case 'alter':
           $data = [];
-          $this->moduleHandler->invoke('views_test_data', $hook, [$data]);
+          $this->moduleHandler->alter($hook, $data);
           break;
 
         default:
@@ -110,28 +110,6 @@ class ViewsHooksTest extends ViewsKernelTestBase {
     ];
     $element = \Drupal::service('renderer')->executeInRenderContext(new RenderContext(), function () use ($element) {
       return ViewsFormMainForm::preRenderViewsForm($element);
-    });
-    $this->setRawContent((string) $element['output']['#markup']);
-    $this->assertEscaped('<em>escaped</em>');
-    $this->assertRaw('<em>unescaped</em>');
-  }
-
-  /**
-   * Tests views_pre_render_views_form_views_form() deprecation.
-   *
-   * @group legacy
-   *
-   * @expectedDeprecation views_pre_render_views_form_views_form() is deprecated in Drupal 8.8.0 and will be removed before Drupal 9.0.0. Use \Drupal\views\Form\ViewsFormMainForm::preRenderViewsForm() instead. See https://www.drupal.org/node/2966725
-   */
-  public function testViewsPreRenderViewsFormViewsForm() {
-    $element = [
-      'output' => [
-        '#plain_text' => '<!--will-be-escaped--><!--will-be-not-escaped-->',
-      ],
-      '#substitutions' => ['#value' => []],
-    ];
-    $element = \Drupal::service('renderer')->executeInRenderContext(new RenderContext(), function () use ($element) {
-      return views_pre_render_views_form_views_form($element);
     });
     $this->setRawContent((string) $element['output']['#markup']);
     $this->assertEscaped('<em>escaped</em>');

@@ -35,6 +35,15 @@ EOF;
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function setUpRequirementsProblem() {
+    // The parent method asserts that there are no requirements errors, but
+    // this test expects a requirements error in the test method below.
+    // Therefore, we override this method to suppress the parent's assertions.
+  }
+
+  /**
    * Final installer step: Configure site.
    */
   protected function setUpSite() {
@@ -54,9 +63,9 @@ EOF;
    * Confirms the installation has failed and the expected error is displayed.
    */
   public function testConfigSync() {
-    $this->assertTitle('Requirements problem | Drupal');
-    $this->assertText($this->profile);
-    $this->assertText('The selected profile has a hook_install() implementation and therefore can not be installed from configuration.');
+    $this->assertSession()->titleEquals('Requirements problem | Drupal');
+    $this->assertSession()->pageTextContains($this->profile);
+    $this->assertSession()->pageTextContains('The selected profile has a hook_install() implementation and therefore can not be installed from configuration.');
   }
 
 }

@@ -3,7 +3,7 @@
 if (php_sapi_name() != "cli") {
   $redirects = __DIR__ . "/redirects.php";
   if (file_exists($redirects)) {
-    include $redirects;
+    include_once $redirects;
   }
 }
 /**
@@ -16,6 +16,8 @@ date_default_timezone_set('America/New_York');
  */
 $settings['container_yamls'][] = __DIR__ . '/services.yml';
 
+$settings['config_sync_directory'] = $app_root . '/config/sync';
+
 /**
  * Include the Pantheon-specific settings file.
  *
@@ -25,7 +27,7 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
  *      a local development environment, to insure that
  *      the site settings remain consistent.
  */
-include __DIR__ . "/settings.pantheon.php";
+include_once __DIR__ . "/settings.pantheon.php";
 
 $settings['trusted_host_patterns'] = array(
   '^.+lexky-d8\.pantheonsite\.io$',
@@ -39,7 +41,7 @@ $settings['trusted_host_patterns'] = array(
 
 $config_overrides = __DIR__ . "/config.overrides.php";
 if (file_exists($config_overrides)) {
-  include $config_overrides;
+  include_once $config_overrides;
 }
 
 if (! (isset($_ENV['PANTHEON_ENVIRONMENT']) && $_ENV['PANTHEON_ENVIRONMENT'] == 'live')) {
@@ -51,7 +53,7 @@ if (! (isset($_ENV['PANTHEON_ENVIRONMENT']) && $_ENV['PANTHEON_ENVIRONMENT'] == 
  */
 $local_settings = __DIR__ . "/settings.local.php";
 if (file_exists($local_settings)) {
-  include $local_settings;
+  include_once $local_settings;
 }
 $settings['install_profile'] = 'standard';
 
@@ -83,8 +85,26 @@ $settings['deployment_identifier'] = '1';
 // new twig source files to a live environment with multiple app servers will
 // result in some (most) of the app servers continuing to serve the old, stale
 // compiled template files.
-$settings['php_storage']['twig']['secret'] = $settings['hash_salt'] . $settings['deployment_identifier'];
+
+// Hash salt is unidentified.
+// $settings['php_storage']['twig']['secret'] = $settings['hash_salt'] . $settings['deployment_identifier'];
 
 if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
-  include $app_root . '/' . $site_path . '/settings.local.php';
+  include_once $app_root . '/' . $site_path . '/settings.local.php';
 }
+
+
+/**
+ * Sets solr configuration for local and pantheon enviroments.
+ */
+// if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
+//   if ($_ENV['PANTHEON_ENVIRONMENT'] == 'lando') {
+//     // Enable lando server and set index to use it for local development.
+//     $config['search_api.server.lando']['status'] = true;
+//     $config['search_api.index.pantheon_index']['server'] = 'lando';
+//   } else {
+//     // Pantheon Configuration.
+//     $config['search_api.server.pantheon']['status'] = true;
+//     $config['search_api.index.pantheon_index']['server'] = 'pantheon';
+//   }
+// }

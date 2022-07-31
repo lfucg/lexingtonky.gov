@@ -17,13 +17,13 @@ class MediaSettingsTest extends MediaFunctionalTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->drupalLogin($this->createUser(['administer site configuration']));
   }
 
   /**
-   * Test that media warning appears if oEmbed media types exists.
+   * Tests that media warning appears if oEmbed media types exists.
    */
   public function testStatusPage() {
     $assert_session = $this->assertSession();

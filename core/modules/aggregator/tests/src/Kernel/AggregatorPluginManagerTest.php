@@ -8,6 +8,7 @@ use Drupal\KernelTests\KernelTestBase;
  * Tests the aggregator plugin manager.
  *
  * @group aggregator
+ * @group legacy
  */
 class AggregatorPluginManagerTest extends KernelTestBase {
 
@@ -16,7 +17,7 @@ class AggregatorPluginManagerTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['aggregator', 'aggregator_test'];
+  protected static $modules = ['aggregator', 'aggregator_test'];
 
   /**
    * Tests that the fetcher info alter hook works.

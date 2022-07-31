@@ -15,21 +15,31 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class RequiredContextDelete extends ConfirmFormBase {
 
   /**
+   * Creates a shared temporary storage for a collection.
+   *
    * @var \Drupal\Core\TempStore\SharedTempStoreFactory
    */
   protected $tempstore;
 
   /**
+   * The temporary id storage.
+   *
    * @var string
    */
+  // @codingStandardsIgnoreLine
   protected $tempstore_id;
 
   /**
+   * The machine name.
+   *
    * @var string
    */
+  // @codingStandardsIgnoreLine
   protected $machine_name;
 
   /**
+   * The id.
+   *
    * @var int
    */
   protected $id;
@@ -42,7 +52,10 @@ abstract class RequiredContextDelete extends ConfirmFormBase {
   }
 
   /**
+   * The constructor.
+   *
    * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   *   The shared temporary storage.
    */
   public function __construct(SharedTempStoreFactory $tempstore) {
     $this->tempstore = $tempstore;
@@ -88,7 +101,7 @@ abstract class RequiredContextDelete extends ConfirmFormBase {
     unset($contexts[$this->id]);
     $cached_values = $this->setContexts($cached_values, $contexts);
     $this->tempstore->get($this->tempstore_id)->set($this->machine_name, $cached_values);
-    list($route_name, $route_parameters) = $this->getParentRouteInfo($cached_values);
+    [$route_name, $route_parameters] = $this->getParentRouteInfo($cached_values);
     $form_state->setRedirect($route_name, $route_parameters);
   }
 
@@ -140,7 +153,7 @@ abstract class RequiredContextDelete extends ConfirmFormBase {
    */
   public function getCancelUrl() {
     $cached_values = $this->tempstore->get($this->tempstore_id)->get($this->machine_name);
-    list($route_name, $route_parameters) = $this->getParentRouteInfo($cached_values);
+    [$route_name, $route_parameters] = $this->getParentRouteInfo($cached_values);
     return new Url($route_name, $route_parameters);
   }
 
@@ -161,29 +174,35 @@ abstract class RequiredContextDelete extends ConfirmFormBase {
   /**
    * Document the route name and parameters for redirect after submission.
    *
-   * @param $cached_values
+   * @param mixed $cached_values
+   *   The cached values.
    *
    * @return array
    *   In the format of
-   *   return ['route.name', ['machine_name' => $this->machine_name, 'step' => 'step_name]];
+   *   return [
+   *     'route.name',
+   *     ['machine_name' => $this->machine_name,'step' => 'step_name],
+   *   ];
    */
   abstract protected function getParentRouteInfo($cached_values);
 
   /**
    * Custom logic for retrieving the contexts array from cached_values.
    *
-   * @param $cached_values
+   * @param mixed $cached_values
+   *   The cache values.
    *
    * @return array
+   *   Return an array.
    */
   abstract protected function getContexts($cached_values);
 
   /**
    * Custom logic for setting the contexts array in cached_values.
    *
-   * @param $cached_values
-   *
-   * @param $contexts
+   * @param mixed $cached_values
+   *   The cache values.
+   * @param mixed $contexts
    *   The contexts to set within the cached values.
    *
    * @return mixed

@@ -18,7 +18,7 @@ class ParagraphsIsChangedTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'paragraphs',
     'user',
     'system',
@@ -30,7 +30,7 @@ class ParagraphsIsChangedTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('paragraph');

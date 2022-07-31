@@ -1,0 +1,67 @@
+uuid: 7dcea6fd-0923-4720-8100-bfc2734f4abd
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.page.body
+    - field.field.node.page.field_econdev_hero_text
+    - field.field.node.page.field_iframe
+    - field.field.node.page.field_keywords
+    - field.field.node.page.field_lex_custom_banner_image
+    - field.field.node.page.field_lex_grid_ref
+    - field.field.node.page.field_lex_site_nav
+    - field.field.node.page.field_metatags
+    - field.field.node.page.field_office_to_contact
+    - field.field.node.page.field_page_overview
+    - field.field.node.page.field_page_section
+    - field.field.node.page.field_photo_grid
+    - field.field.node.page.field_related_departments
+    - field.field.node.page.field_related_documents
+    - field.field.node.page.field_related_page
+    - field.field.node.page.field_sidebar_section
+    - node.type.page
+  module:
+    - text
+    - user
+id: node.page.teaser
+targetEntityType: node
+bundle: page
+mode: teaser
+content:
+  addtoany:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_page_overview:
+    type: text_summary_or_trimmed
+    label: above
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  workbench_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
+hidden:
+  body: true
+  field_econdev_hero_text: true
+  field_iframe: true
+  field_keywords: true
+  field_lex_custom_banner_image: true
+  field_lex_grid_ref: true
+  field_lex_site_nav: true
+  field_metatags: true
+  field_office_to_contact: true
+  field_page_section: true
+  field_photo_grid: true
+  field_related_departments: true
+  field_related_documents: true
+  field_related_page: true
+  field_sidebar_section: true
+  links: true
+  search_api_excerpt: true

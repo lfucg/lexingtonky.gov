@@ -25,6 +25,7 @@ trait ParagraphsLastEntityQueryTrait {
    */
   protected function getLastEntityOfType($entity_type_id, $load = FALSE) {
     $query_result = \Drupal::entityQuery($entity_type_id)
+      ->accessCheck(TRUE)
       ->sort('created', 'DESC')
       ->range(0, 1)
       ->execute();

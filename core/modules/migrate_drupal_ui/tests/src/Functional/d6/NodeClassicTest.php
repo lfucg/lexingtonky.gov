@@ -21,26 +21,23 @@ class NodeClassicTest extends MigrateUpgradeExecuteTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'language',
     'content_translation',
     'config_translation',
     'migrate_drupal_ui',
     'telephone',
-    'aggregator',
     'book',
     'forum',
     'statistics',
-    // Required for translation migrations.
-    'migrate_drupal_multilingual',
   ];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
-    $this->loadFixture(drupal_get_path('module', 'migrate_drupal') . '/tests/fixtures/drupal6.php');
+    $this->loadFixture($this->getModulePath('migrate_drupal') . '/tests/fixtures/drupal6.php');
   }
 
   /**
@@ -54,77 +51,44 @@ class NodeClassicTest extends MigrateUpgradeExecuteTestBase {
    * {@inheritdoc}
    */
   protected function getEntityCounts() {
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
   protected function getEntityCountsIncremental() {
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
   protected function getAvailablePaths() {
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
   protected function getMissingPaths() {
+    return [];
   }
 
   /**
-   * Tests ID Conflict form.
+   * Tests node classic migration via the UI.
    */
-  public function testMigrateUpgradeExecute() {
+  public function testNodeClassicUpgrade() {
     // Add a node classic migrate table to d8.
     $this->makeNodeMigrateMapTable(NodeMigrateType::NODE_MIGRATE_TYPE_CLASSIC, '6');
 
-    $connection_options = $this->sourceDatabase->getConnectionOptions();
-    $this->drupalGet('/upgrade');
-    $session = $this->assertSession();
-    $session->responseContains("Upgrade a site by importing its files and the data from its database into a clean and empty new install of Drupal $this->destinationSiteVersion.");
-
-    $this->drupalPostForm(NULL, [], t('Continue'));
-    $session->pageTextContains('Provide credentials for the database of the Drupal site you want to upgrade.');
-    $session->fieldExists('mysql[host]');
-
-    $driver = $connection_options['driver'];
-    $connection_options['prefix'] = $connection_options['prefix']['default'];
-
-    // Use the driver connection form to get the correct options out of the
-    // database settings. This supports all of the databases we test against.
-    $drivers = drupal_get_database_types();
-    $form = $drivers[$driver]->getFormOptions($connection_options);
-    $connection_options = array_intersect_key($connection_options, $form + $form['advanced_options']);
-    $version = $this->getLegacyDrupalVersion($this->sourceDatabase);
-    $edit = [
-      $driver => $connection_options,
-      'source_private_file_path' => $this->getSourceBasePath(),
-      'version' => $version,
-    ];
-    $edit['d6_source_base_path'] = $this->getSourceBasePath();
-    if (count($drivers) !== 1) {
-      $edit['driver'] = $driver;
-    }
-    $edits = $this->translatePostValues($edit);
-
     // Start the upgrade process.
-    $this->drupalGet('/upgrade');
-    $session->responseContains("Upgrade a site by importing its files and the data from its database into a clean and empty new install of Drupal $this->destinationSiteVersion.");
-
-    $this->drupalPostForm(NULL, [], t('Continue'));
-    $session->pageTextContains('Provide credentials for the database of the Drupal site you want to upgrade.');
-    $session->fieldExists('mysql[host]');
-
-    // When the Credential form is submitted the migrate map tables are created.
-    $this->drupalPostForm(NULL, $edits, t('Review upgrade'));
+    $this->submitCredentialForm();
 
     // Confirm there are only classic node migration map tables. This shows
     // that only the classic migration will run.
     $results = $this->nodeMigrateMapTableCount('6');
-    $this->assertSame(13, $results['node']);
+    $this->assertSame(14, $results['node']);
     $this->assertSame(0, $results['node_complete']);
   }
 

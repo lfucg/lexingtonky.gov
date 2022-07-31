@@ -24,7 +24,7 @@ class DiffViewsTest extends ViewTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'diff', 'user', 'views', 'diff_test'];
+  protected static $modules = ['node', 'diff', 'user', 'views', 'diff_test'];
 
   /**
    * Tests the behavior of a view that uses the diff_from and diff_to fields.
@@ -53,13 +53,13 @@ class DiffViewsTest extends ViewTestBase {
     $revision2 = $node->getRevisionId();
 
     $this->drupalGet("node/{$node->id()}/diff-views");
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
 
     $user = $this->createUser(['view all revisions']);
     $this->drupalLogin($user);
 
     $this->drupalGet("node/{$node->id()}/diff-views");
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     $from_first = $this->cssSelect('#edit-diff-from--3')[0]->getAttribute('value');
     $to_second = $this->cssSelect('#edit-diff-to--2')[0]->getAttribute('value');
@@ -68,7 +68,7 @@ class DiffViewsTest extends ViewTestBase {
       'diff_from' => $from_first,
       'diff_to' => $to_second,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Compare'));
+    $this->submitForm($edit, 'Compare');
     $expected_url = Url::fromRoute(
       'diff.revisions_diff',
       // Route parameters.
@@ -85,9 +85,9 @@ class DiffViewsTest extends ViewTestBase {
         ],
       ]
     );
-    $this->assertUrl($expected_url);
-    $this->assertRaw('<td class="diff-context diff-deletedline">Test article: <span class="diffchange">giraffe</span></td>');
-    $this->assertRaw('<td class="diff-context diff-addedline">Test article: <span class="diffchange">llama</span></td>');
+    $this->assertSession()->addressEquals($expected_url);
+    $this->assertSession()->responseContains('<td class="diff-context diff-deletedline">Test article: <span class="diffchange">giraffe</span></td>');
+    $this->assertSession()->responseContains('<td class="diff-context diff-addedline">Test article: <span class="diffchange">llama</span></td>');
   }
 
 }

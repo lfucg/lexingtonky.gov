@@ -1,0 +1,49 @@
+uuid: c7c88620-8b43-4dac-93e1-64c51a8414a6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_lex_grid_ref
+    - node.type.page
+    - paragraphs.paragraphs_type.lexidme_grid
+  module:
+    - entity_reference_revisions
+id: node.page.field_lex_grid_ref
+field_name: field_lex_grid_ref
+entity_type: node
+bundle: page
+label: 'Card Grid'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      lexidme_grid: lexidme_grid
+    negate: 0
+    target_bundles_drag_drop:
+      card_grid:
+        weight: 8
+        enabled: false
+      lexidme_case:
+        weight: 6
+        enabled: false
+      lexidme_grid:
+        weight: 7
+        enabled: true
+      paragraph_sidebar_section:
+        weight: 8
+        enabled: false
+      paragraphs_media_contact:
+        weight: 9
+        enabled: false
+      paragraphs_page_section:
+        weight: 10
+        enabled: false
+      photo_grid:
+        weight: 14
+        enabled: false
+field_type: entity_reference_revisions

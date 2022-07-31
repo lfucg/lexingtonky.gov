@@ -5,7 +5,7 @@ package: 'Administration'
 type: module
 core_version_requirement: ^8 || ^9
 
-# Information added by Drupal.org packaging script on 2021-08-25
-version: '2.2.2'
+# Information added by Drupal.org packaging script on 2022-04-26
+version: '2.2.3'
 project: 'flood_control'
-datestamp: 1629899262
+datestamp: 1650976353

@@ -40,7 +40,7 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->drupalPlaceBlock('system_breadcrumb_block');
     ConfigurableLanguage::create(['id' => 'de', 'label' => '1German'])->save();
@@ -83,7 +83,8 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
       'settings[paragraph][text_image][fields][field_text_demo]' => TRUE,
       'settings[node][paragraphed_content_demo][settings][language][language_alterable]' => TRUE
     ];
-    $this->drupalPostForm('admin/config/regional/content-language', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/regional/content-language');
+    $this->submitForm($edit, 'Save configuration');
 
     $display_options = [
       'type' => 'image',
@@ -141,24 +142,24 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
 
     // Create a node with some Paragraph types.
     $this->drupalGet('node/add/paragraphed_content_demo');
-    $this->drupalPostForm(NULL, NULL, t('Add text_image'));
-    $this->drupalPostForm(NULL, NULL, t('Add images'));
-    $this->drupalPostForm(NULL, NULL, t('Add text'));
+    $this->submitForm([], 'Add text_image');
+    $this->submitForm([], 'Add images');
+    $this->submitForm([], 'Add text');
 
     $image_text = $this->getTestFiles('image')[0];
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'files[field_paragraphs_demo_0_subform_field_image_demo_0]' => $image_text->uri,
-    ], t('Upload'));
+    ], 'Upload');
     $images = $this->getTestFiles('image')[1];
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'files[field_paragraphs_demo_1_subform_field_images_demo_0][]' => $images->uri,
-    ], t('Upload'));
+    ], 'Upload');
     $edit = [
       'title[0][value]' => 'paragraph node title',
       'field_paragraphs_demo[0][subform][field_text_demo][0][value]' => 'Paragraph type Image + Text',
       'field_paragraphs_demo[2][subform][field_text_demo][0][value]' => 'Paragraph type Text',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, 'Save');
 
     // Get the node to edit it later.
     $node = $this->drupalGetNodeByTitle($edit['title[0][value]']);
@@ -195,9 +196,9 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
 
     // Set edit mode to open.
     $this->drupalGet('admin/structure/types/manage/paragraphed_content_demo/form-display');
-    $this->drupalPostForm(NULL, [], "field_paragraphs_demo_settings_edit");
+    $this->submitForm([], "field_paragraphs_demo_settings_edit");
     $edit = ['fields[field_paragraphs_demo][settings_edit_form][settings][edit_mode]' => 'open'];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, 'Save');
 
     // Unpublish the 'Image + Text' paragraph type.
     $this->drupalGet('node/' . $node->id() . '/edit');
@@ -205,7 +206,7 @@ class ParagraphsTypePermissionsTest extends BrowserTestBase {
     $edit = [
       'field_paragraphs_demo[0][subform][status][value]' => FALSE,
     ];
-    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->submitForm($edit, 'Save');
 
     // Check that 'Image + Text' paragraph is not shown anymore for admin user.
     $this->assertSession()->responseNotContains($image_text_tag);

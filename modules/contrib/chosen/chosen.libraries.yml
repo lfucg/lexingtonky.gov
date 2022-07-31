@@ -15,3 +15,11 @@ drupal.chosen:
     - core/jquery
     - core/jquery.once
     - chosen_lib/chosen
+drupal.chosen.all:
+  dependencies:
+    - chosen/drupal.chosen
+    - chosen_lib/chosen.css
+chosen.claro:
+  css:
+    component:
+      css/chosen.claro.css: {}

@@ -10,12 +10,12 @@ use Drupal\workflows\Entity\Workflow;
  *
  * @group jsonapi
  */
-class WorkflowTest extends ResourceTestBase {
+class WorkflowTest extends ConfigEntityResourceTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['workflows', 'workflow_type_test'];
+  protected static $modules = ['workflows', 'workflow_type_test'];
 
   /**
    * {@inheritdoc}
@@ -126,6 +126,7 @@ class WorkflowTest extends ResourceTestBase {
    */
   protected function getPostDocument() {
     // @todo Update in https://www.drupal.org/node/2300677.
+    return [];
   }
 
 }

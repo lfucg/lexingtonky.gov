@@ -1,0 +1,30 @@
+uuid: 35b3983b-34db-4167-920b-d4684d3c96b0
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.final-order-admin
+  module:
+    - system
+  theme:
+    - lex_police
+id: lex_police_finalorderadminlinks
+theme: lex_police
+region: notices
+weight: -19
+provider: null
+plugin: 'system_menu_block:final-order-admin'
+settings:
+  id: 'system_menu_block:final-order-admin'
+  label: 'Final order admin links - view'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: /final-orders

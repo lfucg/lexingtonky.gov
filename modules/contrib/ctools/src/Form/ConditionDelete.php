@@ -11,7 +11,9 @@ use Drupal\ctools\ConstraintConditionInterface;
 use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+/**
+ * Delete Condition Confirmation Form.
+ */
 abstract class ConditionDelete extends ConfirmFormBase {
 
   /**
@@ -46,7 +48,14 @@ abstract class ConditionDelete extends ConfirmFormBase {
     return new static($container->get('tempstore.shared'), $container->get('plugin.manager.condition'));
   }
 
-
+  /**
+   * Condition Delete Confirmation Form Constructor.
+   *
+   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
+   *   The Tempstore Factory.
+   * @param \Drupal\Component\Plugin\PluginManagerInterface $manager
+   *   The Plugin Manager.
+   */
   public function __construct(SharedTempStoreFactory $tempstore, PluginManagerInterface $manager) {
     $this->tempstore = $tempstore;
     $this->manager = $manager;
@@ -89,7 +98,7 @@ abstract class ConditionDelete extends ConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $cached_values = $this->tempstore->get($this->tempstore_id)->get($this->machine_name);
     $conditions = $this->getConditions($cached_values);
-    /** @var  $instance \Drupal\ctools\ConstraintConditionInterface */
+    /** @var  \Drupal\ctools\ConstraintConditionInterface $instance */
     $instance = $this->manager->createInstance($conditions[$this->id]['id'], $conditions[$this->id]);
     if ($instance instanceof ConstraintConditionInterface) {
       $instance->removeConstraints($this->getContexts($cached_values));
@@ -97,11 +106,21 @@ abstract class ConditionDelete extends ConfirmFormBase {
     unset($conditions[$this->id]);
     $cached_values = $this->setConditions($cached_values, $conditions);
     $this->tempstore->get($this->tempstore_id)->set($this->machine_name, $cached_values);
-    list($route_name, $route_parameters) = $this->getParentRouteInfo($cached_values);
+    [$route_name, $route_parameters] = $this->getParentRouteInfo($cached_values);
     $form_state->setRedirect($route_name, $route_parameters);
   }
 
-
+  /**
+   * Gets the delete question.
+   *
+   * @param $id
+   *   Condition ID.
+   * @param $cached_values
+   *   Cached Context values.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   The confirmation delete question.
+   */
   public function getQuestion($id = NULL, $cached_values = NULL) {
     $condition = $this->getConditions($cached_values)[$id];
     return $this->t('Are you sure you want to delete the @label condition?', [
@@ -150,7 +169,7 @@ abstract class ConditionDelete extends ConfirmFormBase {
    */
   public function getCancelUrl() {
     $cached_values = $this->tempstore->get($this->tempstore_id)->get($this->machine_name);
-    list($route_name, $route_parameters) = $this->getParentRouteInfo($cached_values);
+    [$route_name, $route_parameters] = $this->getParentRouteInfo($cached_values);
     return new Url($route_name, $route_parameters);
   }
 
@@ -171,43 +190,47 @@ abstract class ConditionDelete extends ConfirmFormBase {
   /**
    * Document the route name and parameters for redirect after submission.
    *
-   * @param $cached_values
+   * @param array $cached_values
+   *   The cached context values.
    *
    * @return array
    *   In the format of
    *   return ['route.name', ['machine_name' => $this->machine_name, 'step' => 'step_name]];
    */
-  abstract protected function getParentRouteInfo($cached_values);
+  abstract protected function getParentRouteInfo(array $cached_values);
 
   /**
    * Custom logic for retrieving the conditions array from cached_values.
    *
-   * @param $cached_values
+   * @param array $cached_values
+   *   The cached context values.
    *
    * @return array
+   *   The conditions.
    */
-  abstract protected function getConditions($cached_values);
+  abstract protected function getConditions(array $cached_values);
 
   /**
    * Custom logic for setting the conditions array in cached_values.
    *
-   * @param $cached_values
-   *
-   * @param $conditions
+   * @param array $cached_values
+   *   The cached context values.
+   * @param mixed $conditions
    *   The conditions to set within the cached values.
    *
    * @return mixed
    *   Return the $cached_values
    */
-  abstract protected function setConditions($cached_values, $conditions);
+  abstract protected function setConditions(array $cached_values, mixed $conditions);
 
   /**
    * Custom logic for retrieving the contexts array from cached_values.
    *
-   * @param $cached_values
+   * @param array $cached_values
+   *   The cached context values.
    *
    * @return \Drupal\Core\Plugin\Context\ContextInterface[]
    */
-  abstract protected function getContexts($cached_values);
+  abstract protected function getContexts(array $cached_values);
 
 }

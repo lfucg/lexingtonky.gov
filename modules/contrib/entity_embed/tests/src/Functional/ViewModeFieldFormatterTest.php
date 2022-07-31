@@ -11,6 +11,11 @@ use Drupal\Core\Form\FormState;
  */
 class ViewModeFieldFormatterTest extends EntityEmbedTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'classy';
+
   private $plugins = [
     'view_mode:node.full',
     'view_mode:node.rss',

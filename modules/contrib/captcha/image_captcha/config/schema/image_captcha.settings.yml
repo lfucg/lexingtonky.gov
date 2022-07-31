@@ -5,6 +5,18 @@ image_captcha.settings:
     image_captcha_fonts_preview_map_cache:
       type: sequence
       label: 'Font preview map cache'
+      sequence:
+        type: mapping
+        mapping:
+          uri:
+            type: string
+            label: 'Uri'
+          filename:
+            type: string
+            label: 'Filename'
+          name:
+            type: string
+            label: 'Name'
     image_captcha_fonts:
       type: sequence
       label: Fonts

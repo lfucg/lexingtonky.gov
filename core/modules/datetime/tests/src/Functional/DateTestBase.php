@@ -21,7 +21,7 @@ abstract class DateTestBase extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'entity_test', 'datetime', 'field_ui'];
+  protected static $modules = ['node', 'entity_test', 'datetime', 'field_ui'];
 
   /**
    * An array of display options.
@@ -97,6 +97,7 @@ abstract class DateTestBase extends BrowserTestBase {
       'administer entity_test content',
       'administer entity_test form display',
       'administer content types',
+      'bypass node access',
       'administer node fields',
     ]);
     $this->drupalLogin($web_user);
@@ -151,7 +152,7 @@ abstract class DateTestBase extends BrowserTestBase {
   }
 
   /**
-   * Renders a entity_test and sets the output in the internal browser.
+   * Renders an entity_test and sets the output in the internal browser.
    *
    * @param int $id
    *   The entity_test ID to render.

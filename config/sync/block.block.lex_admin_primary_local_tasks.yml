@@ -1,0 +1,20 @@
+uuid: f079caca-5f7e-4270-9b3b-5991c79cbc9d
+langcode: en
+status: true
+dependencies:
+  theme:
+    - lex_admin
+id: lex_admin_primary_local_tasks
+theme: lex_admin
+region: header
+weight: 0
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: 'Primary tabs'
+  label_display: '0'
+  provider: core
+  primary: true
+  secondary: false
+visibility: {  }

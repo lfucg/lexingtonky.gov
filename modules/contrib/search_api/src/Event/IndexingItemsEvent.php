@@ -3,7 +3,7 @@
 namespace Drupal\search_api\Event;
 
 use Drupal\search_api\IndexInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Wraps an indexing items event.
@@ -43,7 +43,7 @@ final class IndexingItemsEvent extends Event {
    * @return \Drupal\search_api\IndexInterface
    *   The index on which items will be indexed.
    */
-  public function getIndex() {
+  public function getIndex(): IndexInterface {
     return $this->index;
   }
 
@@ -53,7 +53,7 @@ final class IndexingItemsEvent extends Event {
    * @return \Drupal\search_api\Item\ItemInterface[]
    *   The items that will be indexed.
    */
-  public function getItems() {
+  public function getItems(): array {
     return $this->items;
   }
 

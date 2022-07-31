@@ -1,4 +1,4 @@
-(function ($, Drupal, drupalSettings) {
+(function ($, Drupal, drupalSettings, once) {
 
   'use strict';
 
@@ -6,7 +6,8 @@
     attach: function (context, settings) {
       // drupalSettings in not anymore bound to attached functions.
       // It is available outside the scope of this anonymous function also.
-      var $rows = $('table.diff-revisions tbody tr').once('diff-revisions');
+      var rows = once('diff-revisions', 'table.diff-revisions tbody tr');
+      var $rows = $(rows);
       if ($rows.length === 0) {
         return;
       }
@@ -66,4 +67,4 @@
     }
   };
 
-})(jQuery, Drupal, drupalSettings);
+})(jQuery, Drupal, drupalSettings, once);

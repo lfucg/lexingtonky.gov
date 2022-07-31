@@ -18,14 +18,14 @@ class ContentTypeHeaderMatcher implements FilterInterface {
     // The Content-type header does not make sense on GET or DELETE requests,
     // because they do not carry any content. Nothing to filter in this case.
     // Same for all other safe methods.
-    if ($request->isMethodSafe(FALSE) || $request->isMethod('DELETE')) {
+    if ($request->isMethodSafe() || $request->isMethod('DELETE')) {
       return $collection;
     }
 
     $format = $request->getContentType();
 
     foreach ($collection as $name => $route) {
-      $supported_formats = array_filter(explode('|', $route->getRequirement('_content_type_format')));
+      $supported_formats = array_filter(explode('|', $route->getRequirement('_content_type_format') ?? ''));
       if (empty($supported_formats)) {
         // No restriction on the route, so we move the route to the end of the
         // collection by re-adding it. That way generic routes sink down in the

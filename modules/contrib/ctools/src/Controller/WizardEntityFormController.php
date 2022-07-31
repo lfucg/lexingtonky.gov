@@ -40,7 +40,7 @@ class WizardEntityFormController extends WizardFormController {
    */
   protected function getFormArgument(RouteMatchInterface $route_match) {
     $form_arg = $route_match->getRouteObject()->getDefault('_entity_wizard');
-    list($entity_type_id, $operation) = explode('.', $form_arg);
+    [$entity_type_id, $operation] = explode('.', $form_arg);
     $definition = $this->entityTypeManager->getDefinition($entity_type_id);
     $handlers = $definition->getHandlerClasses();
     if (empty($handlers['wizard'][$operation])) {

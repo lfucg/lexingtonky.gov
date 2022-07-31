@@ -1,0 +1,32 @@
+uuid: 3c89f81e-176e-4573-a068-5164ff0f56c6
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.sibling_pages
+  module:
+    - ctools
+    - views
+  theme:
+    - lex
+id: views_block__sibling_pages_full_bleed
+theme: lex
+region: title
+weight: -16
+provider: null
+plugin: 'views_block:sibling_pages-block_2'
+settings:
+  id: 'views_block:sibling_pages-block_2'
+  label: ''
+  label_display: '0'
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      landing_page: landing_page

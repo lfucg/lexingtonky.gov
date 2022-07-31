@@ -82,6 +82,9 @@ search_api.index.*:
         index_directly:
           type: boolean
           label: 'Index items immediately'
+        track_changes_in_references:
+          type: boolean
+          label: 'Track changes in referenced entities'
     server:
       type: string
       label: 'Server ID'

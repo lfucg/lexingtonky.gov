@@ -1,3 +1,155 @@
+Metatag 8.x-1.20, 2022-07-12
+----------------------------
+#3257588 by Eugene Bocharov, lobodacyril, jippie1948, Kasey_MK, djween, awasson,
+  DamienMcKenna, Valdes14, laura.florey, stacypendell: DB update hangs at
+  metatag 8109 - Update mask_icon values to the new structure.
+#3258978 by heddn, DamienMcKenna: tokenize not in config schema for
+  metatag_display_extender.
+#3258346 by Eugene Bocharov, jedgar1mx, 4kant, Renrhaf, DamienMcKenna, kriboogh:
+  Error: Call to a member function __wakeup() on null.
+#3113761 by DamienMcKenna, thalles, rokzabukovec, Diego_Mow, urvashi_vora:
+  Coding standards cleanup.
+#3261505 by DamienMcKenna, Eugene Bocharov, Sergiu Stici: In php 8.1 the explode
+  function throws a notice when default value is null.
+#3265679 by DamienMcKenna: Additional coding standards bugs.
+#3241256 by ndf, sabina.h, idebr, DamienMcKenna: Remove redundant HTTP headers
+  for canonical and short_link tags.
+#3262308 by YahyaAlHamad, DamienMcKenna: metatag_update_8109 fails because of
+  unknown column.
+#3261467 by DamienMcKenna, HnLn: in php 8.1 preg_match in
+  metatag_get_route_entity throws notice when route is null.
+#3266326 by victoria-marina, Guilherme Rabelo, DamienMcKenna: Use Dependency
+  Injection in MetatagManager.
+#3265567 by DamienMcKenna, Anatolij Zajika, PCate: PHP8 undefined array key
+  "description".
+#3266406 by szato, DamienMcKenna: Don't assume the 'first_row_tokens' cache key
+  is defined.
+#3264449 by DamienMcKenna, gilles_webstanz: Trim og:description doesn't work.
+#3258427 by Eugene Bocharov, mrshowerman, saranchuk_hys, phthlaap, apaderno,
+  Kulturmensch, DamienMcKenna, quicksketch: TypeError: preg_match_all():
+  Arg #2 ($subject) must be of type string, array given in preg_match_all().
+#3258358 by Eugene Bocharov, sashken2, DamienMcKenna, modernrockstar: Empty
+  values saved in 'mask_icon' meta tag.
+#3269670 by DamienMcKenna, sd123: Trimming even trims metatags shorter than the
+  limit.
+#3269742 by DamienMcKenna, z3cka: Migrate D7 Product Display node metatag data
+  to D9 Drupal Commerce Product entities.
+#3280904 by DamienMcKenna, 3li: Automatic conversion of false to array is
+  deprecated.
+#3278924 by lamp5, DamienMcKenna: Translation of title metatag is limited to
+  128 characters.
+#3271284 by Shashwat Purav: Double occurrences of word "the".
+#3257520 by er.garg.karan, DamienMcKenna: Default Drupal favicon icon on core
+  before 9.3.
+#3281987 by DamienMcKenna: Sort configuration items prior to saving.
+#3284465 by DamienMcKenna, murilohp: Deprecated obsolete meta
+  http-equiv="content-language".
+#3270951 by marciaibanez, tmaiochi, Guilherme Rabelo, chakkche, DamienMcKenna:
+  Coding standards improvements.
+#3112509 by DamienMcKenna, ciprian.stavovei, Renrhaf, sitiveni: Convert
+  "author" tag to HTML 5.2 spec, deprecate Google+ Author tag.
+#3280745 by DamienMcKenna, Anybody: Trimming should use multibyte functions.
+#3112509 by DamienMcKenna: Fix regression in Google+ tests.
+#2563655 by DamienMcKenna, waldomero: Absorb Metatag Routes module to allow
+  per-path/route configurations.
+#3268439 by chakkche, bygeoffthompson, DamienMcKenna, Ruturaj Chaubey: Optional
+  overflow control on expanded Metatag field widget.
+#3231981 by sanduhrs, DamienMcKenna: Add support for SIWECOS website security
+  scanner.
+#3198100 by thejimbirch, DamienMcKenna, sriharsha.uppuluri: Two Google meta tags
+  conflict with each other.
+#3077442 by daniel.bosen, DamienMcKenna, esdrasterrero, Vivek Panicker,
+  Supreetam09, rigoucr: Current language through the language manager doesn't
+  work (decoupled site).
+#3295569 by DamienMcKenna: 8.x-1.x tests fail against PHP 7.3.
+
+
+Metatag 8.x-1.19, 2022-01-06
+----------------------------
+#3104170 by DamienMcKenna, tobiasb, marcoliver, hosterholz, Berdir: Do not send
+  empty Metatag descriptions through translation.
+#3255547 by Eugene Bocharov, Thomas Kaisuka, Stephen Ollman, glynster, oxy86,
+  Matthijs, Mahmoud Barhouma, DamienMcKenna, wells: View preview broken after
+  Metatag upgrade.
+#3255731 by acbramley, DamienMcKenna, tim.anderson: Undefined array key errors
+  from metatag_update_8109.
+#3256373 by DamienMcKenna, Kulturmensch: WebManifest::output() doesn't verify
+  output is array before adding new element.
+
+
+Metatag 8.x-1.18, 2021-12-21
+----------------------------
+#3255342 by Eugene Bocharov, trickfun, DamienMcKenna, paulocs: Table
+  'db.node__field_meta_tags' doesn't exist.
+
+
+Metatag 8.x-1.17, 2021-12-20
+----------------------------
+#3210890 by DamienMcKenna: Convert the README.txt to a markdown file.
+#3210433 by DamienMcKenna, byybora: Documented a solution for when the meta tags
+  are not output.
+#2952229 by Charlie ChX Negyesi, DamienMcKenna, joseph.olstad, solide-echt:
+  Allow Views meta tags to "Use replacement tokens from the first row".
+#3223680 by DamienMcKenna, Eugene Bocharov: Test errors 8.x-1.x branch with
+  Drupal 9.2.
+#3219963 by AndyThornton, DamienMcKenna: _metatag_is_entity_route_entity static
+  cache problematic.
+#3227367 by DamienMcKenna: Replace uses of static with drupal_static().
+#3228362 by narendraR, DamienMcKenna: SQL error when migrating non-UTF8 meta
+  tags.
+#3230747 by segovia94, DamienMcKenna: Defaults UI page has malformed HTML
+  markup.
+#3231725 by DamienMcKenna: Replace t() calls with (string) new
+  TranslatableMarkup().
+#3158395 by Kasey_MK, geekygnr, DamienMcKenna, mherchel: Avoid similar-sounding
+  links with different purposes.
+#3204262 by jplanginier, DamienMcKenna: PHP version declared in composer.json
+  isn't valid regarding current code.
+#3170178 by geekygnr, dionsj, DamienMcKenna: Allow widget to use regular
+  container instead of details.
+#3243815 by DamienMcKenna, jastraat: 401 error on Web Manifest.
+#3248439 by lamp5, DamienMcKenna: Schema for icon mask is missing.
+#3248361 by COBadger, DamienMcKenna: Correct README.md instruction on adding
+  bundle defaults.
+#3189429 by Eugene Bocharov, bwaindwain, nJim, DamienMcKenna: "title" token
+  doesn't work as expected.
+#3244106 by Nikhilesh Gupta, nJim, DamienMcKenna: New coding standards: Inline
+  @var declarations should use the /** */ delimiters.
+#3252359 by murilohp, DamienMcKenna: Remove workarounds for Drupal 8, update
+  references to say "Drupal 9".
+#3252354 by tijsdeboeck, DamienMcKenna: Fix small typo in
+  metatag_extended_perms.info.yml.
+#3240989 by anagomes, DamienMcKenna, Berdir: Not marking service definitions as
+  public is deprecated.
+#2958193 by Grevil, Anybody, DamienMcKenna, nikhileshpaul: Automatically trim
+  meta tag lengths.
+#3247678 by esolitos, DamienMcKenna: Support migration with multiple "d7_*"
+  sources.
+#2914998 by JeroenT, DamienMcKenna, gngn, ytsurk: Add the mask icon "color"
+  attribute.
+#3205932 by dalin, DamienMcKenna: Add noindex to "403 access denied" defaults.
+#3229004 by larisse, Rar9, DamienMcKenna: Undefined index: hreflang in
+  metatag_hreflang_page_attachments_alter().
+#3190804 by DamienMcKenna, Wim Leers: Allow source counts to be cached:
+  implement ::doCount() instead of ::count().
+#3252159 by DamienMcKenna, Eugene Bocharov: Fix tests compatibility with Drupal
+  9.3.x.
+#3253736 by Dave Reid, zebda, DamienMcKenna: favicon meta tag was renamed in
+  Drupal 9.3.0.
+#3223289 by DamienMcKenna, introfini: Added product:retailer_item_id.
+#3230393 by introfini, DamienMcKenna: Added product:availability and
+  product:condition.
+#3209938 by Sutharsan, murilohp, DamienMcKenna: Edit form title does not contain
+  path.
+#3218647 by luisrhaas, DamienMcKenna, Anybody: Remove line breaks from meta tag
+  output.
+#3254423 by andregp, DamienMcKenna: Replace deprecated APIs in tests.
+#3254597 by DamienMcKenna: Remove Console integration.
+#2761909 by roshkovanv, andrewsuth, greenSkin, plach, Boobaa, DamienMcKenna,
+  lmeurs, seancasey: og:image does not parse url from image field properly when
+  there is a comma in the alt field.
+
+
 Metatag 8.x-1.16, 2021-03-15
 ----------------------------
 #3186893 by DamienMcKenna: Document how to update from Metatag Access to Metatag

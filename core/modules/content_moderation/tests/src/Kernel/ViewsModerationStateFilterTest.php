@@ -27,7 +27,7 @@ class ViewsModerationStateFilterTest extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'content_moderation_test_views',
     'node',
     'content_moderation',
@@ -41,7 +41,7 @@ class ViewsModerationStateFilterTest extends ViewsKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp(FALSE);
 
     $this->installEntitySchema('user');
@@ -173,7 +173,7 @@ class ViewsModerationStateFilterTest extends ViewsKernelTestBase {
   }
 
   /**
-   * Test the moderation filter with a non-translatable entity type.
+   * Tests the moderation filter with a non-translatable entity type.
    */
   public function testNonTranslatableEntityType() {
     $workflow = Workflow::load('editorial');
@@ -321,8 +321,10 @@ class ViewsModerationStateFilterTest extends ViewsKernelTestBase {
    *
    * @param string[] $states
    *   The states which should appear in the filter.
+   *
+   * @internal
    */
-  protected function assertPluginStates($states) {
+  protected function assertPluginStates(array $states): void {
     $plugin = Views::pluginManager('filter')->createInstance('moderation_state_filter', []);
     $view = Views::getView('test_content_moderation_state_filter_base_table');
     $plugin->init($view, $view->getDisplay());
@@ -338,8 +340,10 @@ class ViewsModerationStateFilterTest extends ViewsKernelTestBase {
    *   An array of filters to apply to the view.
    * @param string $view_id
    *   The view to execute for the results.
+   *
+   * @internal
    */
-  protected function assertNodesWithFilters(array $nodes, array $filters, $view_id = 'test_content_moderation_state_filter_base_table') {
+  protected function assertNodesWithFilters(array $nodes, array $filters, string $view_id = 'test_content_moderation_state_filter_base_table'): void {
     $view = Views::getView($view_id);
     $view->setExposedInput($filters);
     $view->execute();

@@ -23,7 +23,7 @@ class EntityConverterLatestRevisionTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'entity_test',
     'user',
     'language',
@@ -40,7 +40,7 @@ class EntityConverterLatestRevisionTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->setUpCurrentUser();
@@ -175,7 +175,7 @@ class EntityConverterLatestRevisionTest extends KernelTestBase {
   }
 
   /**
-   * Test the latest revision flag and non-revisionable entities.
+   * Tests the latest revision flag and non-revisionable entities.
    */
   public function testConvertNonRevisionableEntityType() {
     $entity = EntityTest::create();

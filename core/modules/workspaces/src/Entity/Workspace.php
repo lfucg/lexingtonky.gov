@@ -26,6 +26,7 @@ use Drupal\workspaces\WorkspaceInterface;
  *   ),
  *   handlers = {
  *     "list_builder" = "\Drupal\workspaces\WorkspaceListBuilder",
+ *     "view_builder" = "Drupal\workspaces\WorkspaceViewBuilder",
  *     "access" = "Drupal\workspaces\WorkspaceAccessControlHandler",
  *     "route_provider" = {
  *       "html" = "\Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
@@ -36,7 +37,6 @@ use Drupal\workspaces\WorkspaceInterface;
  *       "edit" = "\Drupal\workspaces\Form\WorkspaceForm",
  *       "delete" = "\Drupal\workspaces\Form\WorkspaceDeleteForm",
  *       "activate" = "\Drupal\workspaces\Form\WorkspaceActivateForm",
- *       "deploy" = "\Drupal\workspaces\Form\WorkspaceDeployForm",
  *     },
  *   },
  *   admin_permission = "administer workspaces",
@@ -54,11 +54,11 @@ use Drupal\workspaces\WorkspaceInterface;
  *     "owner" = "uid",
  *   },
  *   links = {
+ *     "canonical" = "/admin/config/workflow/workspaces/manage/{workspace}",
  *     "add-form" = "/admin/config/workflow/workspaces/add",
  *     "edit-form" = "/admin/config/workflow/workspaces/manage/{workspace}/edit",
  *     "delete-form" = "/admin/config/workflow/workspaces/manage/{workspace}/delete",
  *     "activate-form" = "/admin/config/workflow/workspaces/manage/{workspace}/activate",
- *     "deploy-form" = "/admin/config/workflow/workspaces/manage/{workspace}/deploy",
  *     "collection" = "/admin/config/workflow/workspaces",
  *   },
  * )
@@ -133,14 +133,6 @@ class Workspace extends ContentEntityBase implements WorkspaceInterface {
   /**
    * {@inheritdoc}
    */
-  public function isDefaultWorkspace() {
-    @trigger_error('WorkspaceInterface::isDefaultWorkspace() is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use \Drupal\workspaces\WorkspaceManager::hasActiveWorkspace() instead. See https://www.drupal.org/node/3071527', E_USER_DEPRECATED);
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getCreatedTime() {
     return $this->get('created')->value;
   }
@@ -191,20 +183,6 @@ class Workspace extends ContentEntityBase implements WorkspaceInterface {
     // Trigger a batch purge to allow empty workspaces to be deleted
     // immediately.
     \Drupal::service('workspaces.manager')->purgeDeletedWorkspacesBatch();
-  }
-
-  /**
-   * Default value callback for 'uid' base field definition.
-   *
-   * @deprecated The ::getCurrentUserId method is deprecated in 8.6.x and will
-   *   be removed before 9.0.0.
-   *
-   * @return int[]
-   *   An array containing the ID of the current user.
-   */
-  public static function getCurrentUserId() {
-    @trigger_error('The ::getCurrentUserId method is deprecated in 8.6.x and will be removed before 9.0.0.', E_USER_DEPRECATED);
-    return [\Drupal::currentUser()->id()];
   }
 
 }

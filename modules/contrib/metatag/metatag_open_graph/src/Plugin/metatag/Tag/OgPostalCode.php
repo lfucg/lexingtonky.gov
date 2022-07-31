@@ -10,7 +10,6 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
  * @MetatagTag(
  *   id = "og_postal_code",
  *   label = @Translation("Postal/ZIP code"),
- *   description = @Translation(""),
  *   name = "og:postal_code",
  *   group = "open_graph",
  *   weight = 21,

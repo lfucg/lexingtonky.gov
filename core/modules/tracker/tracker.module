@@ -11,7 +11,6 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\Core\Session\AccountInterface;
 
 /**
  * Implements hook_help().
@@ -137,49 +136,6 @@ function tracker_cron() {
 }
 
 /**
- * Access callback: Determines access permission for a user's own account.
- *
- * @deprecated in drupal:8.4.0 and is removed from drupal:9.0.0. As
- *   internal API, _tracker_user_access() may also be removed in a minor
- *   release.
- *
- * @internal
- *
- * @param \Drupal\Core\Session\AccountInterface $account
- *   The user account to track.
- *
- * @return bool
- *   TRUE if a user is accessing tracking info for their own account and
- *   has permission to access the content.
- */
-function _tracker_myrecent_access(AccountInterface $account) {
-  @trigger_error('_tracker_myrecent_access() is deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0.', E_USER_DEPRECATED);
-  // This path is only allowed for authenticated users looking at their own content.
-  return $account->id() && (\Drupal::currentUser()->id() == $account->id()) && $account->hasPermission('access content');
-}
-
-/**
- * Access callback: Determines access permission for an account.
- *
- * @deprecated in drupal:8.4.0 and is removed from drupal:9.0.0. As
- *   internal API, _tracker_user_access() may also be removed in a minor
- *   release.
- *
- * @internal
- *
- * @param int $account
- *   The user account ID to track.
- *
- * @return bool
- *   TRUE if a user has permission to access the account for $account and
- *   has permission to access the content.
- */
-function _tracker_user_access($account) {
-  @trigger_error('_tracker_user_access() is deprecated in Drupal 8.4.0 and will be removed before Drupal 9.0.0.', E_USER_DEPRECATED);
-  return $account->access('view') && $account->hasPermission('access content');
-}
-
-/**
  * Implements hook_ENTITY_TYPE_insert() for node entities.
  *
  * Adds new tracking information for this node since it's new.
@@ -258,7 +214,7 @@ function _tracker_add($nid, $uid, $changed) {
   $connection = \Drupal::database();
   // @todo This should be actually filtering on the desired language and just
   //   fall back to the default language.
-  $node = $connection->query('SELECT nid, status, uid, changed FROM {node_field_data} WHERE nid = :nid AND default_langcode = 1 ORDER BY changed DESC, status DESC', [':nid' => $nid])->fetchObject();
+  $node = $connection->query('SELECT [nid], [status], [uid], [changed] FROM {node_field_data} WHERE [nid] = :nid AND [default_langcode] = 1 ORDER BY [changed] DESC, [status] DESC', [':nid' => $nid])->fetchObject();
 
   // Adding a comment can only increase the changed timestamp, so our
   // calculation here is simple.
@@ -339,6 +295,7 @@ function _tracker_remove($nid, $uid = NULL, $changed = NULL) {
     if (!$keep_subscription) {
       // Check if the user has commented at least once on the given nid.
       $keep_subscription = \Drupal::entityQuery('comment')
+        ->accessCheck(FALSE)
         ->condition('entity_type', 'node')
         ->condition('entity_id', $nid)
         ->condition('uid', $uid)
@@ -360,7 +317,7 @@ function _tracker_remove($nid, $uid = NULL, $changed = NULL) {
     // and the node itself.
     // We only need to do this if the removed item has a timestamp that equals
     // or exceeds the listed changed timestamp for the node.
-    $tracker_node = $connection->query('SELECT nid, changed FROM {tracker_node} WHERE nid = :nid', [':nid' => $nid])->fetchObject();
+    $tracker_node = $connection->query('SELECT [nid], [changed] FROM {tracker_node} WHERE [nid] = :nid', [':nid' => $nid])->fetchObject();
     if ($tracker_node && $changed >= $tracker_node->changed) {
       // If we're here, the item being removed is *possibly* the item that
       // established the node's changed timestamp.

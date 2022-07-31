@@ -14,7 +14,7 @@ metatag.metatag_tag.bing:
 metatag.metatag_tag.facebook_domain_verification:
   type: label
   label: 'Site validation: Facebook'
-metatag.metatag_tag.google:
+metatag.metatag_tag.google_site_verification:
   type: label
   label: 'Site validation: Google'
 metatag.metatag_tag.norton_safe_web:
@@ -26,6 +26,9 @@ metatag.metatag_tag.pinterest:
 metatag.metatag_tag.pocket:
   type: label
   label: 'Site validation: Pocket'
+metatag.metatag_tag.siwecos:
+  type: label
+  label: 'Site validation: SIWECOS'
 metatag.metatag_tag.yahoo:
   type: label
   label: 'Site validation: Yahoo'

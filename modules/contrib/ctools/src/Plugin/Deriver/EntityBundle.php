@@ -13,6 +13,13 @@ class EntityBundle extends EntityDeriverBase {
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
+
+    // Do not define any derivatives on Drupal 9.3+, instead, replace the core
+    // class in ctools_condition_info_alter().
+    if (\version_compare(\Drupal::VERSION, '9.3', '>')) {
+      return [];
+    }
+
     foreach ($this->entityTypeManager->getDefinitions() as $entity_type_id => $entity_type) {
       if ($entity_type->hasKey('bundle')) {
         $this->derivatives[$entity_type_id] = $base_plugin_definition;

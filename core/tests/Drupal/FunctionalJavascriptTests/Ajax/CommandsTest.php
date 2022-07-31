@@ -14,7 +14,7 @@ class CommandsTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'ajax_test', 'ajax_forms_test'];
+  protected static $modules = ['node', 'ajax_test', 'ajax_forms_test'];
 
   /**
    * {@inheritdoc}
@@ -145,8 +145,10 @@ JS;
    *
    * @param string $text
    *   A needle text.
+   *
+   * @internal
    */
-  protected function assertWaitPageContains($text) {
+  protected function assertWaitPageContains(string $text): void {
     $page = $this->getSession()->getPage();
     $page->waitFor(10, function () use ($page, $text) {
       return stripos($page->getContent(), $text) !== FALSE;

@@ -10,14 +10,6 @@ namespace Drupal\Tests\paragraphs\Kernel\migrate;
 class ParagraphsTypeMigrationTest extends ParagraphsMigrationTestBase {
 
   /**
-   * {@inheritdoc}
-   */
-  public static $modules = [
-    'migrate',
-    'paragraphs',
-  ];
-
-  /**
    * Test if the paragraph/fc types were brought over as a paragraph.
    */
   public function testParagraphsTypeMigration() {

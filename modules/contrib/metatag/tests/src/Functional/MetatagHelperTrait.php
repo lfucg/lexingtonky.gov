@@ -18,7 +18,7 @@ trait MetatagHelperTrait {
    */
   protected function loginUser1() {
     // Load user 1.
-    /* @var \Drupal\user\Entity\User $account */
+    /** @var \Drupal\user\Entity\User $account */
     $account = User::load(1);
 
     // Reset the password.

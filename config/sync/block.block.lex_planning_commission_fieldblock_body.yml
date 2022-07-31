@@ -1,0 +1,35 @@
+uuid: bc733417-096c-4ea7-8c3b-1a64370f9333
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+  module:
+    - ctools
+    - fieldblock
+    - text
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_fieldblock_body
+theme: lex_planning_commission
+region: content
+weight: -23
+provider: null
+plugin: 'fieldblock:node'
+settings:
+  id: 'fieldblock:node'
+  label: 'Org page: body'
+  label_display: '0'
+  provider: fieldblock
+  label_from_field: false
+  field_name: body
+  formatter_id: text_default
+  formatter_settings: {  }
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      organization_page: organization_page

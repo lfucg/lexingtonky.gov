@@ -5,7 +5,6 @@ namespace Drupal\webprofiler;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\webprofiler\Compiler\DecoratorPass;
-use Drupal\webprofiler\Compiler\EventPass;
 use Drupal\webprofiler\Compiler\ProfilerPass;
 use Drupal\webprofiler\Compiler\ServicePass;
 use Drupal\webprofiler\Compiler\StoragePass;
@@ -36,7 +35,7 @@ class WebprofilerServiceProvider extends ServiceProviderBase {
     if (isset($modules['views'])) {
       $container->register('webprofiler.views', 'Drupal\webprofiler\DataCollector\ViewsDataCollector')
         ->addArgument(new Reference(('views.executable')))
-        ->addArgument(new Reference(('entity.manager')))
+        ->addArgument(new Reference(('entity_type.manager')))
         ->addTag('data_collector', [
           'template' => '@webprofiler/Collector/views.html.twig',
           'id' => 'views',

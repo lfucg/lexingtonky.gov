@@ -118,17 +118,21 @@ class ContactFormCloneForm extends ContactFormEditForm {
 
     // Clone the entity form display.
     $display = EntityFormDisplay::load('contact_message.' . $original_id . '.default');
-    EntityFormDisplay::create([
-      'bundle' => $contact_form->id(),
-      'uuid' => NULL,
-    ] + $display->toArray())->save();
+    if ($display) {
+      EntityFormDisplay::create([
+        'bundle' => $contact_form->id(),
+        'uuid' => NULL,
+      ] + $display->toArray())->save();
+    }
 
     // Clone the entity view display.
     $display = EntityViewDisplay::load('contact_message.' . $original_id . '.default');
-    EntityViewDisplay::create([
-      'bundle' => $contact_form->id(),
-      'uuid' => NULL,
-    ] + $display->toArray())->save();
+    if ($display) {
+      EntityViewDisplay::create([
+        'bundle' => $contact_form->id(),
+        'uuid' => NULL,
+      ] + $display->toArray())->save();
+    }
 
     // Redirect and show messge.
     $form_state->setRedirect('entity.contact_form.edit_form', ['contact_form' => $contact_form->id()]);

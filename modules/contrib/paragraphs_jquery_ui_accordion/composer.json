@@ -1,0 +1,9 @@
+{
+  "name": "drupal/paragraphs_jquery_ui_accordion",
+  "description": "Adds jQuery UI Accordion for paragraphs.",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "drupal/jquery_ui_accordion": "^1.1"
+  }
+}

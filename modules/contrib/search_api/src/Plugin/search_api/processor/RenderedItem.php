@@ -16,6 +16,7 @@ use Drupal\search_api\Item\ItemInterface;
 use Drupal\search_api\LoggerTrait;
 use Drupal\search_api\Plugin\search_api\processor\Property\RenderedItemProperty;
 use Drupal\search_api\Processor\ProcessorPluginBase;
+use Drupal\user\RoleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -231,14 +232,22 @@ class RenderedItem extends ProcessorPluginBase {
    * {@inheritdoc}
    */
   public function addFieldValues(ItemInterface $item) {
-    // Switch to the default theme in case the admin theme is enabled.
+    // Switch to the default theme in case the admin theme (or any other theme)
+    // is enabled.
     $active_theme = $this->getThemeManager()->getActiveTheme();
     $default_theme = $this->getConfigFactory()
       ->get('system.theme')
       ->get('default');
     $default_theme = $this->getThemeInitializer()
       ->getActiveThemeByName($default_theme);
-    $this->getThemeManager()->setActiveTheme($default_theme);
+    $active_theme_switched = FALSE;
+    if ($default_theme->getName() !== $active_theme->getName()) {
+      $this->getThemeManager()->setActiveTheme($default_theme);
+      // Ensure that static cached default variables are set correctly,
+      // especially the directory variable.
+      drupal_static_reset('template_preprocess');
+      $active_theme_switched = TRUE;
+    }
 
     // Fields for which some view mode config is missing.
     $unset_view_modes = [];
@@ -248,10 +257,18 @@ class RenderedItem extends ProcessorPluginBase {
     foreach ($fields as $field) {
       $configuration = $field->getConfiguration();
 
+      // If a (non-anonymous) role is selected, then also add the authenticated
+      // user role.
+      $roles = $configuration['roles'];
+      $authenticated = RoleInterface::AUTHENTICATED_ID;
+      if (array_diff($roles, [$authenticated, RoleInterface::ANONYMOUS_ID])) {
+        $roles[$authenticated] = $authenticated;
+      }
+
       // Change the current user to our dummy implementation to ensure we are
       // using the configured roles.
       $this->getAccountSwitcher()
-        ->switchTo(new UserSession(['roles' => $configuration['roles']]));
+        ->switchTo(new UserSession(['roles' => array_values($roles)]));
 
       $datasource_id = $item->getDatasourceId();
       $datasource = $item->getDatasource();
@@ -294,8 +311,14 @@ class RenderedItem extends ProcessorPluginBase {
 
     // Restore the original user.
     $this->getAccountSwitcher()->switchBack();
-    // Restore the original theme.
-    $this->getThemeManager()->setActiveTheme($active_theme);
+
+    // Restore the original theme if themes got switched before.
+    if ($active_theme_switched) {
+      $this->getThemeManager()->setActiveTheme($active_theme);
+      // Ensure that static cached default variables are set correctly,
+      // especially the directory variable.
+      drupal_static_reset('template_preprocess');
+    }
 
     if ($unset_view_modes > 0) {
       foreach ($unset_view_modes as $field_id => $field_label) {

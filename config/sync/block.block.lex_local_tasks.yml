@@ -1,0 +1,27 @@
+uuid: 77506490-7005-4287-b400-e1d55869a7c6
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - lex
+id: lex_local_tasks
+theme: lex
+region: breadcrumb
+weight: -15
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  label_display: '0'
+  provider: core
+  primary: true
+  secondary: true
+visibility:
+  request_path:
+    id: request_path
+    negate: true
+    context_mapping: {  }
+    pages: "<front>\r\n/browse/*"

@@ -37,12 +37,8 @@ class DialogRenderer implements MainContentRendererInterface {
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer.
    */
-  public function __construct(TitleResolverInterface $title_resolver, RendererInterface $renderer = NULL) {
+  public function __construct(TitleResolverInterface $title_resolver, RendererInterface $renderer) {
     $this->titleResolver = $title_resolver;
-    if ($renderer === NULL) {
-      @trigger_error('The renderer service must be passed to ' . __METHOD__ . ' and will be required before Drupal 9.0.0. See https://www.drupal.org/node/3009400', E_USER_DEPRECATED);
-      $renderer = \Drupal::service('renderer');
-    }
     $this->renderer = $renderer;
   }
 
@@ -62,7 +58,7 @@ class DialogRenderer implements MainContentRendererInterface {
 
     // Determine the title: use the title provided by the main content if any,
     // otherwise get it from the routing information.
-    $title = isset($main_content['#title']) ? $main_content['#title'] : $this->titleResolver->getTitle($request, $route_match->getRouteObject());
+    $title = $main_content['#title'] ?? $this->titleResolver->getTitle($request, $route_match->getRouteObject());
 
     // Determine the dialog options and the target for the OpenDialogCommand.
     $options = $request->request->get('dialogOptions', []);

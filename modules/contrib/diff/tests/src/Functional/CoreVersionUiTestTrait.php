@@ -21,11 +21,11 @@ trait CoreVersionUiTestTrait {
     if (!version_compare(\Drupal::VERSION, '8.4', '<')) {
       // Check for translations.
       if (strpos($submit, 'translation') !== FALSE) {
-        $submit = t('Save (this translation)');
+        $submit = 'Save (this translation)';
       }
       else {
         // Form button is back to simply 'Save'.
-        $submit = t('Save');
+        $submit = 'Save';
       }
 
       // Check the publish checkbox.
@@ -34,6 +34,16 @@ trait CoreVersionUiTestTrait {
       }
     }
     $this->drupalPostForm($path, $edit, $submit);
+  }
+
+  protected function drupalPostForm($path, $edit, $submit, array $options = [], $form_html_id = NULL) {
+    if (isset($path)) {
+      $this->drupalGet($path, $options);
+    }
+
+    $this->submitForm($edit, $submit, $form_html_id);
+
+    return $this->getSession()->getPage()->getContent();
   }
 
 }

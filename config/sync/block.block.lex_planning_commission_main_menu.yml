@@ -1,0 +1,30 @@
+uuid: 59817bcd-ff23-4cfc-9195-50ab73e42af3
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_main_menu
+theme: lex_planning_commission
+region: notices
+weight: -25
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'All categories menu'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 1
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: '/browse/*'

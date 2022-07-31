@@ -10,7 +10,6 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaPropertyBase;
  * @MetatagTag(
  *   id = "og_latitude",
  *   label = @Translation("Latitude"),
- *   description = @Translation(""),
  *   name = "place:location:latitude",
  *   group = "open_graph",
  *   weight = 16,

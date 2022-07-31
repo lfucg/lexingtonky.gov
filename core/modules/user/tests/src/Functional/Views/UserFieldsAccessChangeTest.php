@@ -14,12 +14,12 @@ class UserFieldsAccessChangeTest extends UserTestBase {
    *
    * @var array
    */
-  public static $modules = ['user_access_test'];
+  protected static $modules = ['user_access_test'];
 
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'classy';
+  protected $defaultTheme = 'stark';
 
   /**
    * Views used by this test.
@@ -35,13 +35,13 @@ class UserFieldsAccessChangeTest extends UserTestBase {
     $this->drupalGet('test_user_fields_access');
 
     // User has access to name and created date by default.
-    $this->assertText(t('Name'));
-    $this->assertText(t('Created'));
+    $this->assertSession()->pageTextContains('Name');
+    $this->assertSession()->pageTextContains('Created');
 
     // User does not by default have access to init, mail and status.
-    $this->assertNoText(t('Init'));
-    $this->assertNoText(t('Email'));
-    $this->assertNoText(t('Status'));
+    $this->assertSession()->pageTextNotContains('Init');
+    $this->assertSession()->pageTextNotContains('Email');
+    $this->assertSession()->pageTextNotContains('Status');
 
     // Assign sub-admin role to grant extra access.
     $user = $this->drupalCreateUser(['sub-admin']);
@@ -49,9 +49,9 @@ class UserFieldsAccessChangeTest extends UserTestBase {
     $this->drupalGet('test_user_fields_access');
 
     // Access for init, mail and status is added in hook_entity_field_access().
-    $this->assertText(t('Init'));
-    $this->assertText(t('Email'));
-    $this->assertText(t('Status'));
+    $this->assertSession()->pageTextContains('Init');
+    $this->assertSession()->pageTextContains('Email');
+    $this->assertSession()->pageTextContains('Status');
   }
 
   /**
@@ -60,17 +60,16 @@ class UserFieldsAccessChangeTest extends UserTestBase {
    */
   public function testUserNameLink() {
     $test_user = $this->drupalCreateUser();
-    $xpath = "//td/a[.='" . $test_user->getAccountName() . "'][@class='username']/@href[.='" . $test_user->toUrl()->toString() . "']";
+    $xpath = "//td/a[.='" . $test_user->getAccountName() . "']/@href[.='" . $test_user->toUrl()->toString() . "']";
 
     $attributes = [
       'title' => 'View user profile.',
-      'class' => 'username',
     ];
     $link = $test_user->toLink(NULL, 'canonical', ['attributes' => $attributes])->toString();
 
     // No access, so no link.
     $this->drupalGet('test_user_fields_access');
-    $this->assertText($test_user->getAccountName(), 'Found user in view');
+    $this->assertSession()->pageTextContains($test_user->getAccountName());
     $result = $this->xpath($xpath);
     $this->assertCount(0, $result, 'User is not a link');
 

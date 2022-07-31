@@ -1,11 +1,14 @@
 name: Views Accordion
 type: module
 description: 'Provides an accordion views display plugin.'
-core: 8.x
+core_version_requirement: ^8.7.7 || ^9
 dependencies:
   - drupal:views
+  - jquery_ui_accordion:jquery_ui_accordion
+test_dependencies:
+  - jquery_ui_accordion:jquery_ui_accordion
 
-# Information added by Drupal.org packaging script on 2019-09-11
-version: '8.x-1.3'
+# Information added by Drupal.org packaging script on 2020-05-23
+version: '2.0.0'
 project: 'views_accordion'
-datestamp: 1568186887
+datestamp: 1590238738

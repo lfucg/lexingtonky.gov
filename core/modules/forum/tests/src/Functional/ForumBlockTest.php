@@ -19,7 +19,7 @@ class ForumBlockTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['forum', 'block'];
+  protected static $modules = ['forum', 'block'];
 
   /**
    * {@inheritdoc}
@@ -31,7 +31,7 @@ class ForumBlockTest extends BrowserTestBase {
    */
   protected $adminUser;
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create users.
@@ -58,8 +58,8 @@ class ForumBlockTest extends BrowserTestBase {
     // Create 5 forum topics.
     $topics = $this->createForumTopics();
 
-    $this->assertSession()->linkExists(t('More'), 0, 'New forum topics block has a "more"-link.');
-    $this->assertLinkByHref('forum', 0, 'New forum topics block has a "more"-link.');
+    $this->assertSession()->linkExists('More', 0, 'New forum topics block has a "more"-link.');
+    $this->assertSession()->linkByHrefExists('forum', 0, 'New forum topics block has a "more"-link.');
 
     // We expect all 5 forum topics to appear in the "New forum topics" block.
     foreach ($topics as $topic) {
@@ -78,7 +78,7 @@ class ForumBlockTest extends BrowserTestBase {
         $this->assertSession()->linkExists($topics[$index], 0, new FormattableMarkup('Forum topic @topic found in the "New forum topics" block.', ['@topic' => $topics[$index]]));
       }
       else {
-        $this->assertNoText($topics[$index], new FormattableMarkup('Forum topic @topic not found in the "New forum topics" block.', ['@topic' => $topics[$index]]));
+        $this->assertSession()->pageTextNotContains($topics[$index]);
       }
     }
   }
@@ -113,8 +113,8 @@ class ForumBlockTest extends BrowserTestBase {
     // Enable the block.
     $block = $this->drupalPlaceBlock('forum_active_block');
     $this->drupalGet('');
-    $this->assertSession()->linkExists(t('More'), 0, 'Active forum topics block has a "more"-link.');
-    $this->assertLinkByHref('forum', 0, 'Active forum topics block has a "more"-link.');
+    $this->assertSession()->linkExists('More', 0, 'Active forum topics block has a "more"-link.');
+    $this->assertSession()->linkByHrefExists('forum', 0, 'Active forum topics block has a "more"-link.');
 
     // We expect the first 5 forum topics to appear in the "Active forum topics"
     // block.
@@ -124,7 +124,7 @@ class ForumBlockTest extends BrowserTestBase {
         $this->assertSession()->linkExists($topics[$index], 0, new FormattableMarkup('Forum topic @topic found in the "Active forum topics" block.', ['@topic' => $topics[$index]]));
       }
       else {
-        $this->assertNoText($topics[$index], new FormattableMarkup('Forum topic @topic not found in the "Active forum topics" block.', ['@topic' => $topics[$index]]));
+        $this->assertSession()->pageTextNotContains($topics[$index]);
       }
     }
 
@@ -141,7 +141,7 @@ class ForumBlockTest extends BrowserTestBase {
         $this->assertSession()->linkExists($topics[$index], 0, 'Forum topic found in the "Active forum topics" block.');
       }
       else {
-        $this->assertNoText($topics[$index], 'Forum topic not found in the "Active forum topics" block.');
+        $this->assertSession()->pageTextNotContains($topics[$index]);
       }
     }
   }
@@ -175,7 +175,8 @@ class ForumBlockTest extends BrowserTestBase {
       ];
 
       // Create the forum topic, preselecting the forum ID via a URL parameter.
-      $this->drupalPostForm('node/add/forum', $edit, t('Save'), ['query' => ['forum_id' => 1]]);
+      $this->drupalGet('node/add/forum', ['query' => ['forum_id' => 1]]);
+      $this->submitForm($edit, 'Save');
       $topics[] = $title;
     }
 

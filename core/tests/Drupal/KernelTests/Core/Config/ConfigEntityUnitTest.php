@@ -25,7 +25,7 @@ class ConfigEntityUnitTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['config_test'];
+  protected static $modules = ['config_test'];
 
   /**
    * The config_test entity storage.
@@ -37,7 +37,7 @@ class ConfigEntityUnitTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->storage = $this->container->get('entity_type.manager')->getStorage('config_test');
   }
@@ -52,7 +52,7 @@ class ConfigEntityUnitTest extends KernelTestBase {
     $expected_id = 'test_id';
     $config_name = $entity_type->getConfigPrefix() . '.' . $expected_id;
     $storage = $this->storage;
-    $this->assertIdentical($storage::getIDFromConfigName($config_name, $entity_type->getConfigPrefix()), $expected_id);
+    $this->assertSame($expected_id, $storage::getIDFromConfigName($config_name, $entity_type->getConfigPrefix()));
 
     // Create three entities, two with the same style.
     $style = $this->randomMachineName(8);
@@ -90,7 +90,7 @@ class ConfigEntityUnitTest extends KernelTestBase {
 
     // Assert that both returned entities have a matching style property.
     foreach ($entities as $entity) {
-      $this->assertIdentical($entity->get('style'), $style, 'The loaded entity has the correct style value specified.');
+      $this->assertSame($style, $entity->get('style'), 'The loaded entity has the correct style value specified.');
     }
 
     // Test that schema type enforcement can be overridden by trusting the data.

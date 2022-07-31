@@ -1,0 +1,33 @@
+uuid: f18a849a-e2b3-4480-a903-2ec3f978b201
+langcode: en
+status: true
+dependencies:
+  module:
+    - lex_calendar
+    - node
+  theme:
+    - lex
+id: eventsblock
+theme: lex
+region: sidebar
+weight: -18
+provider: null
+plugin: Lex_calendar_list_block
+settings:
+  id: Lex_calendar_list_block
+  label: Events
+  label_display: visible
+  provider: lex_calendar
+  display_limit: '3'
+  content_type: event
+  show_all: 'no'
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      page: page
+      board_commission: board_commission
+      organization_page: organization_page

@@ -1,0 +1,108 @@
+uuid: fc5537de-a59b-4c94-9e16-f809434422df
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.final_order.field_address
+    - field.field.node.final_order.field_final_order_date
+    - field.field.node.final_order.field_final_order_docs
+    - field.field.node.final_order.field_metatags
+    - field.field.node.final_order.field_owners_address
+    - field.field.node.final_order.field_person_charged
+    - field.field.node.final_order.field_pva_num
+    - node.type.final_order
+  module:
+    - datetime
+    - file
+    - gis_api
+    - metatag
+    - workbench_moderation
+id: node.final_order.default
+targetEntityType: node
+bundle: final_order
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_address:
+    type: string_textfield
+    weight: 5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_final_order_date:
+    type: datetime_default
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_final_order_docs:
+    type: file_generic
+    weight: 8
+    region: content
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_metatags:
+    type: metatag_firehose
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_owners_address:
+    type: string_textarea
+    weight: 7
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_person_charged:
+    type: string_textarea
+    weight: 6
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_pva_num:
+    type: parcel_lookup
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 121
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  path: true
+  promote: true
+  sticky: true

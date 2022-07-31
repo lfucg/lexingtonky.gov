@@ -1,0 +1,23 @@
+uuid: 922fc040-6083-4d53-ac04-f6a89f0c052e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.full_page_iframe
+  module:
+    - text
+id: node.full_page_iframe.body
+field_name: body
+entity_type: node
+bundle: full_page_iframe
+label: Body
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+field_type: text_with_summary

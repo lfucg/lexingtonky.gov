@@ -1,0 +1,27 @@
+uuid: b57dada1-e00d-4048-a74e-b429afb23d49
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.standalone_link.field_link
+    - paragraphs.paragraphs_type.standalone_link
+  module:
+    - link
+    - workbench_moderation
+id: paragraph.standalone_link.default
+targetEntityType: paragraph
+bundle: standalone_link
+mode: default
+content:
+  field_link:
+    type: link_default
+    weight: 6
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

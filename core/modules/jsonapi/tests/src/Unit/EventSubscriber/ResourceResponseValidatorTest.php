@@ -12,7 +12,7 @@ use Drupal\rest\ResourceResponse;
 use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
 use Psr\Log\LoggerInterface;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Drupal\Core\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -33,7 +33,7 @@ class ResourceResponseValidatorTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     // Check that the validation class is available.
     if (!class_exists("\\JsonSchema\\Validator")) {
@@ -42,7 +42,7 @@ class ResourceResponseValidatorTest extends UnitTestCase {
 
     $module_handler = $this->prophesize(ModuleHandlerInterface::class);
     $module = $this->prophesize(Extension::class);
-    $module_path = dirname(dirname(dirname(dirname(__DIR__))));
+    $module_path = dirname(__DIR__, 4);
     $module->getPath()->willReturn($module_path);
     $module_handler->getModule('jsonapi')->willReturn($module->reveal());
     $subscriber = new ResourceResponseValidator(
@@ -190,7 +190,7 @@ EOD
     ];
 
     $test_cases = array_map(function ($input) use ($defaults) {
-      list($json, $expected, $description, $route_name, $resource_type) = array_values($input + $defaults);
+      [$json, $expected, $description, $route_name, $resource_type] = array_values($input + $defaults);
       return [
         $this->createRequest($route_name, $resource_type),
         $this->createResponse($json),

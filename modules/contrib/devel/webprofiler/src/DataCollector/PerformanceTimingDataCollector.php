@@ -80,4 +80,5 @@ class PerformanceTimingDataCollector extends DataCollector implements DrupalData
 
     return $data;
   }
+
 }

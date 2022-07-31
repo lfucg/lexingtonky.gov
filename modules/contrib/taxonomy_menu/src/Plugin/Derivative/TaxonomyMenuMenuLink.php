@@ -36,7 +36,7 @@ class TaxonomyMenuMenuLink extends DeriverBase implements ContainerDeriverInterf
    */
   public static function create(ContainerInterface $container, $base_plugin_id) {
     return new static(
-      $container->get('entity.manager')->getStorage('taxonomy_menu')
+      $container->get('entity_type.manager')->getStorage('taxonomy_menu')
     );
   }
 
@@ -48,7 +48,7 @@ class TaxonomyMenuMenuLink extends DeriverBase implements ContainerDeriverInterf
     /* @var $taxonomy_menus \Drupal\taxonomy_menu\TaxonomyMenuInterface[] */
     $taxonomy_menus = $this->taxonomyMenuStorage->loadMultiple();
 
-    //MenuLinkContent entity, menulinkcontent table, look for data
+    // MenuLinkContent entity, menulinkcontent table, look for data.
     foreach ($taxonomy_menus as $taxonomy_menu) {
       /* @var $taxonomy_menu \Drupal\taxonomy_menu\TaxonomyMenuInterface */
       $taxonomy_menu->getMenu();

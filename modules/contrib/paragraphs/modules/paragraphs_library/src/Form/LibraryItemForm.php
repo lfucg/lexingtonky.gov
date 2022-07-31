@@ -50,10 +50,10 @@ class LibraryItemForm extends ContentEntityForm {
     parent::save($form, $form_state);
     $form_state->setRedirect('entity.paragraphs_library_item.collection');
     if ($insert) {
-      $this->messenger->addMessage(t('Paragraph %label has been created.', ['%label' => $this->entity->label()]));
+      $this->messenger->addMessage($this->t('Paragraph %label has been created.', ['%label' => $this->entity->label()]));
     }
     else {
-      $this->messenger->addMessage(t('Paragraph %label has been updated.', ['%label' => $this->entity->label()]));
+      $this->messenger->addMessage($this->t('Paragraph %label has been updated.', ['%label' => $this->entity->label()]));
     }
   }
 

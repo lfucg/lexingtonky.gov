@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 
 /**
- * Class ServicesDataCollector
+ * Class ServicesDataCollector.
  */
 class ServicesDataCollector extends DataCollector implements DrupalDataCollectorInterface {
 
@@ -73,7 +73,7 @@ class ServicesDataCollector extends DataCollector implements DrupalDataCollector
    * @return array
    */
   public function getInitializedServices() {
-    return array_filter($this->getServices(), function($item) {
+    return array_filter($this->getServices(), function ($item) {
       return $item['initialized'];
     });
   }
@@ -89,7 +89,7 @@ class ServicesDataCollector extends DataCollector implements DrupalDataCollector
    * @return array
    */
   public function getInitializedServicesWithoutWebprofiler() {
-    return array_filter($this->getInitializedServices(), function($item) {
+    return array_filter($this->getInitializedServices(), function ($item) {
       return strpos($item['value']['id'], 'webprofiler') !== 0;
     });
   }
@@ -137,7 +137,7 @@ class ServicesDataCollector extends DataCollector implements DrupalDataCollector
   public function getData() {
     $data = $this->data;
 
-    $http_middleware = array_filter($data['services'], function($service) {
+    $http_middleware = array_filter($data['services'], function ($service) {
       return isset($service['value']['tags']['http_middleware']);
     });
 
@@ -159,4 +159,5 @@ class ServicesDataCollector extends DataCollector implements DrupalDataCollector
 
     return $data;
   }
+
 }

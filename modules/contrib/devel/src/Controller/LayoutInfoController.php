@@ -44,48 +44,39 @@ class LayoutInfoController extends ControllerBase {
    *   Array of page elements to render.
    */
   public function layoutInfoPage() {
-    $definedLayouts = [];
-    $layouts = $this->layoutPluginManager->getDefinitions();
-    foreach ($layouts as $layout) {
-      // @todo Revisit once https://www.drupal.org/node/2660124 gets in, getting
-      // the image should be as simple as $layout->getIcon().
-      $image = NULL;
-      if ($layout->getIconPath() != NULL) {
-        $image = [
-          'data' => [
-            '#theme' => 'image',
-            '#uri' => $layout->getIconPath(),
-            '#alt' => $layout->getLabel(),
-            '#height' => '65',
-          ]
-        ];
-      }
-      $definedLayouts[] = [
-        $image,
-        $layout->getLabel(),
-        $layout->getDescription(),
-        $layout->getCategory(),
-        implode(', ', $layout->getRegionLabels()),
-        $layout->getProvider(),
+    $headers = [
+      $this->t('Icon'),
+      $this->t('Label'),
+      $this->t('Description'),
+      $this->t('Category'),
+      $this->t('Regions'),
+      $this->t('Provider'),
+    ];
+
+    $rows = [];
+
+    foreach ($this->layoutPluginManager->getDefinitions() as $layout) {
+      $rows[] = [
+        'icon' => ['data' => $layout->getIcon()],
+        'label' => $layout->getLabel(),
+        'description' => $layout->getDescription(),
+        'category' => $layout->getCategory(),
+        'regions' => implode(', ', $layout->getRegionLabels()),
+        'provider' => $layout->getProvider(),
       ];
     }
 
-    return [
-      '#theme' => 'table',
-      '#header' => [
-        $this->t('Icon'),
-        $this->t('Label'),
-        $this->t('Description'),
-        $this->t('Category'),
-        $this->t('Regions'),
-        $this->t('Provider'),
-      ],
-      '#rows' => $definedLayouts,
+    $output['layouts'] = [
+      '#type' => 'table',
+      '#header' => $headers,
+      '#rows' => $rows,
       '#empty' => $this->t('No layouts available.'),
       '#attributes' => [
         'class' => ['devel-layout-list'],
       ],
     ];
+
+    return $output;
   }
 
 }

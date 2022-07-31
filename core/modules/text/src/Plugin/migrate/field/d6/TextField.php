@@ -6,6 +6,8 @@ use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Row;
 use Drupal\migrate_drupal\Plugin\migrate\field\FieldPluginBase;
 
+// cspell:ignore optionwidgets
+
 /**
  * @MigrateField(
  *   id = "d6_text",
@@ -45,7 +47,7 @@ class TextField extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function defineValueProcessPipeline(MigrationInterface $migration, $field_name, $field_info) {
-    $widget_type = isset($field_info['widget_type']) ? $field_info['widget_type'] : $field_info['widget']['type'];
+    $widget_type = $field_info['widget_type'] ?? $field_info['widget']['type'];
 
     if ($widget_type == 'optionwidgets_onoff') {
       $process = [

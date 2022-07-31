@@ -41,9 +41,9 @@
                 <tr>
                     <td><%- item.id %></td>
                     <td><%- item.current_display %></td>
-                    <td><%- Drupal.webprofiler.helpers.printTime(item.build_time) %></td>
-                    <td><%- Drupal.webprofiler.helpers.printTime(item.execute_time) %></td>
-                    <td><%- Drupal.webprofiler.helpers.printTime(item.render_time) %></td>
+                    <td><%- Drupal.webprofiler.helpers.printTime(item.build_time, 's') %></td>
+                    <td><%- Drupal.webprofiler.helpers.printTime(item.execute_time, 's') %></td>
+                    <td><%- Drupal.webprofiler.helpers.printTime(item.render_time, 's') %></td>
                     <td><a href="<%- item.route %>">{{ 'Edit'|t }}</a></td>
                 </tr>
                 <% }); %>

@@ -21,13 +21,13 @@ class UpdatePathTestJavaScriptTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->ensureUpdatesToRun();
   }
 
   /**
-   * Test JavaScript loading at update.php.
+   * Tests JavaScript loading at update.php.
    *
    * @see ::doPreUpdateTests
    */

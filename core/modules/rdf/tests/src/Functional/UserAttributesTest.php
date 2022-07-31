@@ -20,7 +20,7 @@ class UserAttributesTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['rdf', 'node', 'user_hooks_test'];
+  protected static $modules = ['rdf', 'node', 'user_hooks_test'];
 
   /**
    * {@inheritdoc}
@@ -34,7 +34,7 @@ class UserAttributesTest extends BrowserTestBase {
    */
   protected $baseUri;
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     rdf_get_mapping('user', 'user')
       ->setBundleMapping([

@@ -26,7 +26,7 @@ class ConfigImporterMissingContentTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'system',
     'user',
     'entity_test',
@@ -34,7 +34,7 @@ class ConfigImporterMissingContentTest extends KernelTestBase {
     'config_import_test',
   ];
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installSchema('system', 'sequences');
     $this->installEntitySchema('entity_test');
@@ -97,11 +97,11 @@ class ConfigImporterMissingContentTest extends KernelTestBase {
 
     // Import.
     $this->configImporter->reset()->import();
-    $this->assertEqual([], $this->configImporter->getErrors(), 'There were no errors during the import.');
-    $this->assertEqual($entity_one->uuid(), \Drupal::state()->get('config_import_test.config_import_missing_content_one'), 'The missing content event is fired during configuration import.');
-    $this->assertEqual($entity_two->uuid(), \Drupal::state()->get('config_import_test.config_import_missing_content_two'), 'The missing content event is fired during configuration import.');
+    $this->assertEquals([], $this->configImporter->getErrors(), 'There were no errors during the import.');
+    $this->assertEquals($entity_one->uuid(), \Drupal::state()->get('config_import_test.config_import_missing_content_one'), 'The missing content event is fired during configuration import.');
+    $this->assertEquals($entity_two->uuid(), \Drupal::state()->get('config_import_test.config_import_missing_content_two'), 'The missing content event is fired during configuration import.');
     $original_dynamic_data = $storage->read($dynamic_name);
-    $this->assertEqual([$entity_one->getConfigDependencyName(), $entity_two->getConfigDependencyName(), $entity_three->getConfigDependencyName()], $original_dynamic_data['dependencies']['content'], 'The imported configuration entity has the missing content entity dependency.');
+    $this->assertEquals([$entity_one->getConfigDependencyName(), $entity_two->getConfigDependencyName(), $entity_three->getConfigDependencyName()], $original_dynamic_data['dependencies']['content'], 'The imported configuration entity has the missing content entity dependency.');
   }
 
 }

@@ -50,31 +50,15 @@
 %}
 
 {% if type == 'checkbox' %}
-  {% if customtype == 'custom' %}
-    {% set wrapperclass = "custom-control custom-checkbox" %}
-    {% set labelclass = "custom-control-label" %}
-    {% set inputclass = "custom-control-input" %}
-  {% elseif customtype == 'switch' %}
-    {% set wrapperclass = "custom-control custom-switch" %}
-    {% set labelclass = "custom-control-label" %}
-    {% set inputclass = "custom-control-input" %}
-  {% else %}
-    {% set wrapperclass = "form-check" %}
-    {% set labelclass = "form-check-label" %}
-    {% set inputclass = "form-check-input" %}
-  {% endif %}
+  {% set wrapperclass = "form-check" %}
+  {% set labelclass = "form-check-label" %}
+  {% set inputclass = "form-check-input" %}
 {% endif %}
 
 {% if type == 'radio' %}
-  {% if customtype == 'custom' %}
-    {% set wrapperclass = "custom-control custom-radio" %}
-    {% set labelclass = "custom-control-label" %}
-    {% set inputclass = "custom-control-input" %}
-  {% else %}
-    {% set wrapperclass = "form-check" %}
-    {% set labelclass = "form-check-label" %}
-    {% set inputclass = "form-check-input" %}
-  {% endif %}
+  {% set wrapperclass = "form-check" %}
+  {% set labelclass = "form-check-label" %}
+  {% set inputclass = "form-check-input" %}
 {% endif %}
 
 {%
@@ -94,7 +78,7 @@
   set description_classes = [
     'description',
 	  'text-muted',
-    description_display == 'invisible' ? 'sr-only',
+    description_display == 'invisible' ? 'visually-hidden',
   ]
 %}
 {% if type in ['checkbox', 'radio'] %}
@@ -133,7 +117,7 @@
     {% endif %}
   </div>
 {% else %}
-  <fieldset{{ attributes.addClass(classes, 'form-group') }}>
+  <fieldset{{ attributes.addClass(classes, 'mb-3') }}>
     {% if label_display in ['before', 'invisible'] %}
       {{ label }}
     {% endif %}

@@ -1,0 +1,30 @@
+uuid: 807b4ea6-6dd0-45b5-be63-f248e5a215e4
+langcode: en
+status: false
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - system
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_mainnavigation_2
+theme: lex_planning_commission
+region: notices
+weight: -15
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'Main navigation - level 3'
+  label_display: '0'
+  provider: system
+  level: 3
+  depth: 1
+  expand_all_items: false
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: '/browse*'

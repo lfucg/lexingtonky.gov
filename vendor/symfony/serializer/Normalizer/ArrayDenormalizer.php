@@ -22,9 +22,9 @@ use Symfony\Component\Serializer\SerializerInterface;
  *
  * @author Alexander M. Turek <me@derrabus.de>
  *
- * @final since version 3.3.
+ * @final
  */
-class ArrayDenormalizer implements DenormalizerInterface, SerializerAwareInterface
+class ArrayDenormalizer implements ContextAwareDenormalizerInterface, SerializerAwareInterface, CacheableSupportsMethodInterface
 {
     /**
      * @var SerializerInterface|DenormalizerInterface
@@ -35,6 +35,8 @@ class ArrayDenormalizer implements DenormalizerInterface, SerializerAwareInterfa
      * {@inheritdoc}
      *
      * @throws NotNormalizableValueException
+     *
+     * @return array
      */
     public function denormalize($data, $type, $format = null, array $context = [])
     {
@@ -44,7 +46,7 @@ class ArrayDenormalizer implements DenormalizerInterface, SerializerAwareInterfa
         if (!\is_array($data)) {
             throw new InvalidArgumentException('Data expected to be an array, '.\gettype($data).' given.');
         }
-        if ('[]' !== substr($type, -2)) {
+        if (!str_ends_with($type, '[]')) {
             throw new InvalidArgumentException('Unsupported class: '.$type);
         }
 
@@ -53,7 +55,7 @@ class ArrayDenormalizer implements DenormalizerInterface, SerializerAwareInterfa
 
         $builtinType = isset($context['key_type']) ? $context['key_type']->getBuiltinType() : null;
         foreach ($data as $key => $value) {
-            if (null !== $builtinType && !\call_user_func('is_'.$builtinType, $key)) {
+            if (null !== $builtinType && !('is_'.$builtinType)($key)) {
                 throw new NotNormalizableValueException(sprintf('The type of the key "%s" must be "%s" ("%s" given).', $key, $builtinType, \gettype($key)));
             }
 
@@ -66,15 +68,13 @@ class ArrayDenormalizer implements DenormalizerInterface, SerializerAwareInterfa
     /**
      * {@inheritdoc}
      */
-    public function supportsDenormalization($data, $type, $format = null/*, array $context = []*/)
+    public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
         if (null === $this->serializer) {
             throw new BadMethodCallException(sprintf('The serializer needs to be set to allow "%s()" to be used.', __METHOD__));
         }
 
-        $context = \func_num_args() > 3 ? func_get_arg(3) : [];
-
-        return '[]' === substr($type, -2)
+        return str_ends_with($type, '[]')
             && $this->serializer->supportsDenormalization($data, substr($type, 0, -2), $format, $context);
     }
 
@@ -88,5 +88,13 @@ class ArrayDenormalizer implements DenormalizerInterface, SerializerAwareInterfa
         }
 
         $this->serializer = $serializer;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasCacheableSupportsMethod(): bool
+    {
+        return $this->serializer instanceof CacheableSupportsMethodInterface && $this->serializer->hasCacheableSupportsMethod();
     }
 }

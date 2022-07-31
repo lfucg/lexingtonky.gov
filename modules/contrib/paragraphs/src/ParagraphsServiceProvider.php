@@ -28,5 +28,13 @@ class ParagraphsServiceProvider extends ServiceProviderBase {
       $service_definition->setPublic(TRUE);
       $container->setDefinition('replicate.event_subscriber.paragraphs', $service_definition);
     }
+    // Check for installed Migrate module.
+    if (isset($modules['migrate']) ) {
+      // Add a Migration plugins alterer service.
+      $service_definition = new Definition('Drupal\paragraphs\MigrationPluginsAlterer');
+      $service_definition->addArgument(new Reference('logger.factory'));
+      $service_definition->setPublic(TRUE);
+      $container->setDefinition('paragraphs.migration_plugins_alterer', $service_definition);
+    }
   }
 }

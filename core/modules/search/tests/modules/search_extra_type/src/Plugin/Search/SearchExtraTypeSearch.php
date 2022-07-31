@@ -12,7 +12,8 @@ use Drupal\search\Plugin\ConfigurableSearchPluginBase;
  *
  * @SearchPlugin(
  *   id = "search_extra_type_search",
- *   title = @Translation("Dummy search type")
+ *   title = @Translation("Dummy search type"),
+ *   use_admin_theme = TRUE,
  * )
  */
 class SearchExtraTypeSearch extends ConfigurableSearchPluginBase {
@@ -98,7 +99,7 @@ class SearchExtraTypeSearch extends ConfigurableSearchPluginBase {
       '#type' => 'select',
       '#title' => t('Boost method'),
       '#options' => [
-        'bi' => t('Bistromathic'),
+        'bi' => t('Bistro mathematics'),
         'ii' => t('Infinite Improbability'),
       ],
       '#default_value' => $this->configuration['boost'],

@@ -39,7 +39,7 @@ class DependencyRemovalTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'user',
     'system',
     'field',

@@ -33,7 +33,6 @@ class DevelMailLogTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->installSchema('system', 'mail');
     $this->installConfig(['system', 'devel']);
 
     // Configure system.site mail settings.

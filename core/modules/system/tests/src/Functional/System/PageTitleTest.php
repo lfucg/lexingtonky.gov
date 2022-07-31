@@ -19,7 +19,7 @@ class PageTitleTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'test_page_test', 'form_test', 'block'];
+  protected static $modules = ['node', 'test_page_test', 'form_test', 'block'];
 
   /**
    * {@inheritdoc}
@@ -32,7 +32,7 @@ class PageTitleTest extends BrowserTestBase {
   /**
    * Implement setUp().
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalCreateContentType(['type' => 'page', 'name' => 'Basic page']);
@@ -60,17 +60,19 @@ class PageTitleTest extends BrowserTestBase {
       'body[0][value]' => '!SimpleTest! test body' . $this->randomMachineName(200),
     ];
     // Create the node with HTML in the title.
-    $this->drupalPostForm('node/add/page', $edit, t('Save'));
+    $this->drupalGet('node/add/page');
+    $this->submitForm($edit, 'Save');
 
+    // Make sure tags in the node title are converted.
     $node = $this->drupalGetNodeByTitle($edit['title[0][value]']);
     $this->assertNotNull($node, 'Node created and found in database');
-    $this->assertText(Html::escape($edit['title[0][value]']), 'Check to make sure tags in the node title are converted.');
+    $this->assertSession()->responseContains(Html::escape($edit['title[0][value]']));
     $this->drupalGet("node/" . $node->id());
-    $this->assertText(Html::escape($edit['title[0][value]']), 'Check to make sure tags in the node title are converted.');
+    $this->assertSession()->responseContains(Html::escape($edit['title[0][value]']));
   }
 
   /**
-   * Test if the title of the site is XSS proof.
+   * Tests if the title of the site is XSS proof.
    */
   public function testTitleXSS() {
     // Set some title with JavaScript and HTML chars to escape.
@@ -85,7 +87,8 @@ class PageTitleTest extends BrowserTestBase {
       'site_name'    => $title,
       'site_slogan'  => $slogan,
     ];
-    $this->drupalPostForm('admin/config/system/site-information', $edit, t('Save configuration'));
+    $this->drupalGet('admin/config/system/site-information');
+    $this->submitForm($edit, 'Save configuration');
 
     // Place branding block with site name and slogan into header region.
     $this->drupalPlaceBlock('system_branding_block', ['region' => 'header']);
@@ -93,15 +96,18 @@ class PageTitleTest extends BrowserTestBase {
     // Load frontpage.
     $this->drupalGet('');
 
-    // Test the title.
-    $this->assertNoRaw($title, 'Check for the lack of the unfiltered version of the title.');
+    // Test the title, checking for the lack of the unfiltered version of the
+    // title.
+    $this->assertSession()->responseNotContains($title);
     // Add </title> to make sure we're checking the title tag, rather than the
     // first 'heading' on the page.
-    $this->assertRaw($title_filtered . '</title>', 'Check for the filtered version of the title in a <title> tag.');
+    $this->assertSession()->responseContains($title_filtered . '</title>');
 
     // Test the slogan.
-    $this->assertNoRaw($slogan, 'Check for the unfiltered version of the slogan.');
-    $this->assertRaw($slogan_filtered, 'Check for the filtered version of the slogan.');
+    // Check the unfiltered version of the slogan is missing.
+    $this->assertSession()->responseNotContains($slogan);
+    // Check for the filtered version of the slogan.
+    $this->assertSession()->responseContains($slogan_filtered);
   }
 
   /**
@@ -113,16 +119,16 @@ class PageTitleTest extends BrowserTestBase {
     // Test the '#title' render array attribute.
     $this->drupalGet('test-render-title');
 
-    $this->assertTitle('Foo | Drupal');
+    $this->assertSession()->titleEquals('Foo | Drupal');
     $result = $this->xpath('//h1[@class="page-title"]');
-    $this->assertEqual('Foo', $result[0]->getText());
+    $this->assertEquals('Foo', $result[0]->getText());
 
     // Test forms
     $this->drupalGet('form-test/object-builder');
 
-    $this->assertTitle('Test dynamic title | Drupal');
+    $this->assertSession()->titleEquals('Test dynamic title | Drupal');
     $result = $this->xpath('//h1[@class="page-title"]');
-    $this->assertEqual('Test dynamic title', $result[0]->getText());
+    $this->assertEquals('Test dynamic title', $result[0]->getText());
 
     // Set some custom translated strings.
     $settings_key = 'locale_custom_strings_en';
@@ -145,25 +151,25 @@ class PageTitleTest extends BrowserTestBase {
     // Ensure that the title got translated.
     $this->drupalGet('test-page-static-title');
 
-    $this->assertTitle('Static title translated | Drupal');
+    $this->assertSession()->titleEquals('Static title translated | Drupal');
     $result = $this->xpath('//h1[@class="page-title"]');
-    $this->assertEqual('Static title translated', $result[0]->getText());
+    $this->assertEquals('Static title translated', $result[0]->getText());
 
     // Test the dynamic '_title_callback' route option.
     $this->drupalGet('test-page-dynamic-title');
 
-    $this->assertTitle('Dynamic title | Drupal');
+    $this->assertSession()->titleEquals('Dynamic title | Drupal');
     $result = $this->xpath('//h1[@class="page-title"]');
-    $this->assertEqual('Dynamic title', $result[0]->getText());
+    $this->assertEquals('Dynamic title', $result[0]->getText());
 
     // Ensure that titles are cacheable and are escaped normally if the
     // controller does not escape them.
     $this->drupalGet('test-page-cached-controller');
-    $this->assertTitle('Cached title | Drupal');
-    $this->assertRaw(Html::escape('<span>Cached title</span>') . '</h1>');
+    $this->assertSession()->titleEquals('Cached title | Drupal');
+    $this->assertSession()->responseContains(Html::escape('<span>Cached title</span>') . '</h1>');
     $this->drupalGet('test-page-cached-controller');
-    $this->assertTitle('Cached title | Drupal');
-    $this->assertRaw(Html::escape('<span>Cached title</span>') . '</h1>');
+    $this->assertSession()->titleEquals('Cached title | Drupal');
+    $this->assertSession()->responseContains(Html::escape('<span>Cached title</span>') . '</h1>');
   }
 
 }

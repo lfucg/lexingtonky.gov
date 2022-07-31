@@ -1,0 +1,34 @@
+uuid: f06e0db4-ca3a-4508-8f00-aa33d516e0aa
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.quote
+    - field.field.block_content.quote.body
+  module:
+    - text
+    - workbench_moderation
+id: block_content.quote.default
+targetEntityType: block_content
+bundle: quote
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 3
+    region: content
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+  info:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

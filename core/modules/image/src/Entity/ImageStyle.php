@@ -222,7 +222,10 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
     $token_query = [];
     if (!\Drupal::config('image.settings')->get('suppress_itok_output')) {
       // The passed $path variable can be either a relative path or a full URI.
-      $original_uri = $stream_wrapper_manager::getScheme($path) ? $stream_wrapper_manager->normalizeUri($path) : file_build_uri($path);
+      if (!$stream_wrapper_manager::getScheme($path)) {
+        $path = \Drupal::config('system.file')->get('default_scheme') . '://' . $path;
+      }
+      $original_uri = $stream_wrapper_manager->normalizeUri($path);
       $token_query = [IMAGE_DERIVATIVE_TOKEN => $this->getPathToken($original_uri)];
     }
 
@@ -247,7 +250,9 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
       return Url::fromUri('base:' . $directory_path . '/' . $stream_wrapper_manager::getTarget($uri), ['absolute' => TRUE, 'query' => $token_query])->toString();
     }
 
-    $file_url = file_create_url($uri);
+    /** @var \Drupal\Core\File\FileUrlGeneratorInterface $file_url_generator */
+    $file_url_generator = \Drupal::service('file_url_generator');
+    $file_url = $file_url_generator->generateAbsoluteString($uri);
     // Append the query string with the token, if necessary.
     if ($token_query) {
       $file_url .= (strpos($file_url, '?') !== FALSE ? '&' : '?') . UrlHelper::buildQuery($token_query);
@@ -503,51 +508,6 @@ class ImageStyle extends ConfigEntityBase implements ImageStyleInterface, Entity
       $path .= '.' . $extension;
     }
     return $path;
-  }
-
-  /**
-   * Provides a wrapper for file_uri_scheme() to allow unit testing.
-   *
-   * Returns the scheme of a URI (e.g. a stream).
-   *
-   * @param string $uri
-   *   A stream, referenced as "scheme://target"  or "data:target".
-   *
-   * @return string
-   *   A string containing the name of the scheme, or FALSE if none. For
-   *   example, the URI "public://example.txt" would return "public".
-   *
-   * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use
-   *   \Drupal\Core\StreamWrapper\StreamWrapperManager::getTarget() instead.
-   *
-   * @see https://www.drupal.org/node/3035273
-   */
-  protected function fileUriScheme($uri) {
-    @trigger_error('fileUriTarget() is deprecated in drupal:8.8.0. It will be removed from drupal:9.0.0. See https://www.drupal.org/node/3035273', E_USER_DEPRECATED);
-    return StreamWrapperManager::getScheme($uri);
-  }
-
-  /**
-   * Provides a wrapper for file_uri_target() to allow unit testing.
-   *
-   * Returns the part of a URI after the schema.
-   *
-   * @param string $uri
-   *   A stream, referenced as "scheme://target" or "data:target".
-   *
-   * @return string|bool
-   *   A string containing the target (path), or FALSE if none.
-   *   For example, the URI "public://sample/test.txt" would return
-   *   "sample/test.txt".
-   *
-   * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use
-   *   \Drupal\Core\StreamWrapper\StreamWrapperManager::getUriTarget() instead.
-   *
-   * @see https://www.drupal.org/node/3035273
-   */
-  protected function fileUriTarget($uri) {
-    @trigger_error('fileUriTarget() is deprecated in drupal:8.8.0. It will be removed from drupal:9.0.0. See https://www.drupal.org/node/3035273', E_USER_DEPRECATED);
-    return StreamWrapperManager::getTarget($uri);
   }
 
   /**

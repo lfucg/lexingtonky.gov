@@ -1,0 +1,76 @@
+uuid: 5a03d304-7236-4988-9a47-718790a6ac97
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.advanced_html
+    - filter.format.full_html
+    - node.type.landing_page
+    - node.type.organization_page
+    - node.type.site_wide_notice
+    - taxonomy.vocabulary.locations
+    - taxonomy.vocabulary.organizations
+    - taxonomy.vocabulary.site_navigation
+  module:
+    - contact
+    - embed
+    - entity_browser
+    - filter
+    - masquerade
+    - node
+    - path
+    - system
+    - taxonomy
+    - toolbar
+    - workbench_moderation
+id: webmaster
+label: Webmaster
+weight: -7
+is_admin: null
+permissions:
+  - 'access administration pages'
+  - 'access paragraph_items entity browser pages'
+  - 'access toolbar'
+  - 'access user profiles'
+  - 'administer account settings'
+  - 'administer contact forms'
+  - 'administer embed buttons'
+  - 'administer entity browsers'
+  - 'administer menu'
+  - 'administer permissions'
+  - 'administer taxonomy'
+  - 'administer url aliases'
+  - 'administer users'
+  - 'create landing_page content'
+  - 'create organization_page content'
+  - 'create site_wide_notice content'
+  - 'create url aliases'
+  - 'delete any landing_page content'
+  - 'delete any organization_page content'
+  - 'delete any site_wide_notice content'
+  - 'delete organization_page revisions'
+  - 'delete own landing_page content'
+  - 'delete own organization_page content'
+  - 'delete own site_wide_notice content'
+  - 'delete site_wide_notice revisions'
+  - 'delete terms in locations'
+  - 'delete terms in organizations'
+  - 'delete terms in site_navigation'
+  - 'edit any organization_page content'
+  - 'edit any site_wide_notice content'
+  - 'edit own organization_page content'
+  - 'edit own site_wide_notice content'
+  - 'edit terms in locations'
+  - 'edit terms in organizations'
+  - 'edit terms in site_navigation'
+  - 'masquerade as any user'
+  - 'revert organization_page revisions'
+  - 'revert site_wide_notice revisions'
+  - 'use draft_published transition'
+  - 'use published_archived transition'
+  - 'use text format advanced_html'
+  - 'use text format full_html'
+  - 'view all revisions'
+  - 'view latest version'
+  - 'view organization_page revisions'
+  - 'view site_wide_notice revisions'

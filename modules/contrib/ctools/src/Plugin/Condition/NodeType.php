@@ -5,7 +5,9 @@ namespace Drupal\ctools\Plugin\Condition;
 use Drupal\node\Plugin\Condition\NodeType as CoreNodeType;
 use Drupal\ctools\ConstraintConditionInterface;
 
-
+/**
+ *
+ */
 class NodeType extends CoreNodeType implements ConstraintConditionInterface {
 
   /**

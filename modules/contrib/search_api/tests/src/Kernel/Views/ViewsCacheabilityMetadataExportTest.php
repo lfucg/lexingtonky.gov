@@ -2,10 +2,7 @@
 
 namespace Drupal\Tests\search_api\Kernel\Views;
 
-use Drupal\Core\Cache\Context\CacheContextsManager;
-use Drupal\Core\Cache\Context\ContextCacheKeys;
 use Drupal\Core\Config\Config;
-use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\views\ViewExecutable;
 
@@ -19,14 +16,16 @@ class ViewsCacheabilityMetadataExportTest extends KernelTestBase {
   /**
    * The ID of the view used in the test.
    */
-  const TEST_VIEW_ID = 'search_api_test_node_view';
+  protected const TEST_VIEW_ID = 'search_api_test_node_view';
 
   /**
    * The display IDs used in the test.
-   *
-   * @var string[]
    */
-  protected static $testViewDisplayIds = ['default', 'page_1'];
+  protected const TEST_VIEW_DISPLAY_IDS = [
+    'default',
+    'page_1',
+    'page_2',
+  ];
 
   /**
    * The entity type manager.
@@ -63,22 +62,8 @@ class ViewsCacheabilityMetadataExportTest extends KernelTestBase {
     'text',
     'user',
     'views',
+    'views_test_data',
   ];
-
-  /**
-   * {@inheritdoc}
-   */
-  public function register(ContainerBuilder $container) {
-    parent::register($container);
-
-    // Use a mocked version of the cache contexts manager so we can use a mocked
-    // cache context "search_api_test_context" without triggering a validation
-    // error.
-    $cache_contexts_manager = $this->createMock(CacheContextsManager::class);
-    $cache_contexts_manager->method('assertValidTokens')->willReturn(TRUE);
-    $cache_contexts_manager->method('convertTokensToKeys')->willReturn(new ContextCacheKeys([]));
-    $container->set('cache_contexts_manager', $cache_contexts_manager);
-  }
 
   /**
    * {@inheritdoc}
@@ -133,24 +118,32 @@ class ViewsCacheabilityMetadataExportTest extends KernelTestBase {
       // By default the result is permanently cached.
       'max-age' => -1,
     ];
+    $expected_view_metadata = [];
+    foreach (self::TEST_VIEW_DISPLAY_IDS as $display_id) {
+      $expected_view_metadata[$display_id] = $expected_cacheability_metadata;
+    }
 
     // Check that our test view has the expected cacheability metadata.
     $view = $this->getView();
-    $this->assertViewCacheabilityMetadata($expected_cacheability_metadata, $view);
+    $this->assertViewCacheabilityMetadata($expected_view_metadata, $view);
 
     // For efficiency Views calculates the cacheability metadata whenever a view
     // is saved, and includes it in the exported configuration.
     // @see \Drupal\views\Entity\View::addCacheMetadata()
     // Check that the exported configuration contains the expected metadata.
     $view_config = $this->config('views.view.' . self::TEST_VIEW_ID);
-    $this->assertViewConfigCacheabilityMetadata($expected_cacheability_metadata, $view_config);
+    $this->assertViewConfigCacheabilityMetadata($expected_view_metadata, $view_config);
 
     // Test that modules are able to alter the cacheability metadata. Our test
     // hook implementation will alter all 3 types of metadata.
     // @see search_api_test_views_search_api_query_alter()
-    $expected_cacheability_metadata['contexts'][] = 'search_api_test_context';
-    $expected_cacheability_metadata['tags'][] = 'search_api:test_tag';
-    $expected_cacheability_metadata['max-age'] = 100;
+    foreach (self::TEST_VIEW_DISPLAY_IDS as $display_id) {
+      $expected_view_metadata[$display_id]['contexts'][] = 'views_test_cache_context';
+      $expected_view_metadata[$display_id]['tags'][] = 'search_api:test_tag';
+      [$plugin_id] = explode('_', $display_id, 2);
+      $expected_view_metadata[$display_id]['tags'][] = "search_api:test_views_$plugin_id:search_api_test_node_view__$display_id";
+      $expected_view_metadata[$display_id]['max-age'] = 100;
+    }
 
     // Activate the alter hook and resave the view so it will recalculate the
     // cacheability metadata.
@@ -161,18 +154,18 @@ class ViewsCacheabilityMetadataExportTest extends KernelTestBase {
     // Check that the altered metadata is now present in the view and the
     // configuration.
     $view = $this->getView();
-    $this->assertViewCacheabilityMetadata($expected_cacheability_metadata, $view);
+    $this->assertViewCacheabilityMetadata($expected_view_metadata, $view);
 
     $view_config = $this->config('views.view.' . self::TEST_VIEW_ID);
-    $this->assertViewConfigCacheabilityMetadata($expected_cacheability_metadata, $view_config);
+    $this->assertViewConfigCacheabilityMetadata($expected_view_metadata, $view_config);
   }
 
   /**
    * Checks that the given view has the expected cacheability metadata.
    *
-   * @param array $expected_cacheability_metadata
-   *   An array of cacheability metadata that is expected to be present on the
-   *   view.
+   * @param array[] $expected_cacheability_metadata
+   *   Arrays of cacheability metadata that are expected to be present on the
+   *   various displays of the view, keyed by display ID.
    * @param \Drupal\views\ViewExecutable $view
    *   The view.
    */
@@ -180,23 +173,23 @@ class ViewsCacheabilityMetadataExportTest extends KernelTestBase {
     // Cacheability metadata is stored separately for each Views display since
     // depending on how the display is configured it might have different
     // caching needs. Ensure to check all displays.
-    foreach (self::$testViewDisplayIds as $display_id) {
+    foreach (self::TEST_VIEW_DISPLAY_IDS as $display_id) {
       $view->setDisplay($display_id);
       $display = $view->getDisplay();
       $actual_cacheability_metadata = $display->getCacheMetadata();
 
-      $this->assertArrayEquals($expected_cacheability_metadata['contexts'], $actual_cacheability_metadata->getCacheContexts());
-      $this->assertArrayEquals($expected_cacheability_metadata['tags'], $actual_cacheability_metadata->getCacheTags());
-      $this->assertEquals($expected_cacheability_metadata['max-age'], $actual_cacheability_metadata->getCacheMaxAge());
+      $this->assertArrayEquals($expected_cacheability_metadata[$display_id]['contexts'], $actual_cacheability_metadata->getCacheContexts());
+      $this->assertArrayEquals($expected_cacheability_metadata[$display_id]['tags'], $actual_cacheability_metadata->getCacheTags());
+      $this->assertEquals($expected_cacheability_metadata[$display_id]['max-age'], $actual_cacheability_metadata->getCacheMaxAge());
     }
   }
 
   /**
    * Checks that the given view config has the expected cacheability metadata.
    *
-   * @param array $expected_cacheability_metadata
-   *   An array of cacheability metadata that is expected to be present on the
-   *   view configuration.
+   * @param array[] $expected_cacheability_metadata
+   *   Arrays of cacheability metadata that are expected to be present in the
+   *   configuration of the various displays of the view, keyed by display ID.
    * @param \Drupal\Core\Config\Config $config
    *   The configuration to check.
    */
@@ -204,9 +197,9 @@ class ViewsCacheabilityMetadataExportTest extends KernelTestBase {
     // Cacheability metadata is stored separately for each Views display since
     // depending on how the display is configured it might have different
     // caching needs. Ensure to check all displays.
-    foreach (self::$testViewDisplayIds as $display_id) {
+    foreach (self::TEST_VIEW_DISPLAY_IDS as $display_id) {
       $view_config_display = $config->get("display.$display_id");
-      foreach ($expected_cacheability_metadata as $cache_key => $value) {
+      foreach ($expected_cacheability_metadata[$display_id] as $cache_key => $value) {
         if (is_array($value)) {
           $this->assertArrayEquals($value, $view_config_display['cache_metadata'][$cache_key]);
         }

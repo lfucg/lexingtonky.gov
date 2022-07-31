@@ -114,7 +114,7 @@ class EmbedButton extends ConfigEntityBase implements EmbedButtonInterface {
    * {@inheritdoc}
    */
   public function getIconFile() {
-    @trigger_error(__METHOD__ . ' is deprecated in Embed 1.2 and will be removed before 1.3.', E_USER_DEPRECATED);
+    @trigger_error(__METHOD__ . ' is deprecated in embed:8.x-1.2 and will be removed in embed:2.0.0. Use \Drupal\embed\Entity\EmbedButton::getIconUrl instead. See https://www.drupal.org/node/3139211', E_USER_DEPRECATED);
     if (!empty($this->icon_uuid)) {
       $files = $this->entityTypeManager()->getStorage('file')->loadByProperties(['uuid' => $this->icon_uuid]);
       return reset($files);

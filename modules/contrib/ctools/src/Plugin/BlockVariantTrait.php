@@ -92,7 +92,7 @@ trait BlockVariantTrait {
    */
   public function getRegionAssignment($block_id) {
     $configuration = $this->getBlock($block_id)->getConfiguration();
-    return isset($configuration['region']) ? $configuration['region'] : NULL;
+    return $configuration['region'] ?? NULL;
   }
 
   /**
@@ -111,7 +111,7 @@ trait BlockVariantTrait {
    */
   public function getRegionName($region) {
     $regions = $this->getRegionNames();
-    return isset($regions[$region]) ? $regions[$region] : '';
+    return $regions[$region] ?? '';
   }
 
   /**

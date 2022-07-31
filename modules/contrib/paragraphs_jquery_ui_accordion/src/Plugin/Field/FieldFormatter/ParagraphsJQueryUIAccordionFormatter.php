@@ -9,13 +9,13 @@ namespace Drupal\paragraphs_jquery_ui_accordion\Plugin\Field\FieldFormatter;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
-use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceFormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\entity_reference_revisions\Plugin\Field\FieldFormatter\EntityReferenceRevisionsFormatterBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Component\Transliteration\TransliterationInterface;
@@ -31,7 +31,7 @@ use Drupal\Component\Transliteration\TransliterationInterface;
  *   }
  * )
  */
-class ParagraphsJQueryUIAccordionFormatter extends EntityReferenceFormatterBase implements ContainerFactoryPluginInterface {
+class ParagraphsJQueryUIAccordionFormatter extends EntityReferenceRevisionsFormatterBase implements ContainerFactoryPluginInterface {
 
   /**
    * The entity type bundle info service.

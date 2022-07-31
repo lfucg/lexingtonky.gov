@@ -1,0 +1,18 @@
+uuid: 96649f2b-f093-48c9-b0fd-6ea78721ced9
+langcode: en
+status: false
+dependencies:
+  theme:
+    - lex_planning_commission
+id: lex_planning_commission_local_actions
+theme: lex_planning_commission
+region: notices
+weight: -8
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Primary admin actions'
+  label_display: '0'
+  provider: core
+visibility: {  }

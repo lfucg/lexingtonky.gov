@@ -1,0 +1,31 @@
+uuid: 8ad2328e-8e4a-4776-9fe4-2252871ad16a
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:html_block:34db9b12-5ecc-4371-89df-16ac11fe0d70'
+  module:
+    - block_content
+    - system
+  theme:
+    - bootstrap_barrio
+id: bootstrap_barrio_find_council_district
+theme: bootstrap_barrio
+region: content
+weight: -23
+provider: null
+plugin: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
+settings:
+  id: 'block_content:34db9b12-5ecc-4371-89df-16ac11fe0d70'
+  label: 'Find your council district'
+  label_display: '0'
+  provider: block_content
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: /browse/government/council

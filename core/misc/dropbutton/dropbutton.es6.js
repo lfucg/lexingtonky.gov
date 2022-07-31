@@ -3,7 +3,7 @@
  * Dropbutton feature.
  */
 
-(function($, Drupal) {
+(function ($, Drupal) {
   /**
    * A DropButton presents an HTML list as a button with a primary action.
    *
@@ -97,9 +97,7 @@
    */
   function dropbuttonClickHandler(e) {
     e.preventDefault();
-    $(e.target)
-      .closest('.dropbutton-wrapper')
-      .toggleClass('open');
+    $(e.target).closest('.dropbutton-wrapper').toggleClass('open');
   }
 
   /**
@@ -112,22 +110,19 @@
    */
   Drupal.behaviors.dropButton = {
     attach(context, settings) {
-      const $dropbuttons = $(context)
-        .find('.dropbutton-wrapper')
-        .once('dropbutton');
-      if ($dropbuttons.length) {
+      const dropbuttons = once('dropbutton', '.dropbutton-wrapper', context);
+      if (dropbuttons.length) {
         // Adds the delegated handler that will toggle dropdowns on click.
-        const $body = $('body').once('dropbutton-click');
-        if ($body.length) {
-          $body.on('click', '.dropbutton-toggle', dropbuttonClickHandler);
+        const body = once('dropbutton-click', 'body');
+        if (body.length) {
+          $(body).on('click', '.dropbutton-toggle', dropbuttonClickHandler);
         }
         // Initialize all buttons.
-        const il = $dropbuttons.length;
-        for (let i = 0; i < il; i++) {
+        dropbuttons.forEach((dropbutton) => {
           DropButton.dropbuttons.push(
-            new DropButton($dropbuttons[i], settings.dropbutton),
+            new DropButton(dropbutton, settings.dropbutton),
           );
-        }
+        });
       }
     },
   };

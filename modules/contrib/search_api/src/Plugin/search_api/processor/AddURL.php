@@ -54,7 +54,7 @@ class AddURL extends ProcessorPluginBase {
       foreach ($fields as $field) {
         $config = $field->getConfiguration();
         $url->setAbsolute(!empty($config['absolute']));
-        $field->addValue($url->toString());
+        $field->addValue($url->toString(TRUE)->getGeneratedUrl());
       }
     }
   }

@@ -44,7 +44,13 @@
                             <tr>
                                 <td><%= event_name %></td>
                                 <% if( listener.clazz ) { %>
-                                    <td><%= Drupal.webprofiler.helpers.classLink(listener.clazz) %></td>
+                                    <td>
+                                        <% if( listener.class == "Closure" ) { %>
+                                            <%= "Closure" %>
+                                        <% } else { %>
+                                            <%= Drupal.webprofiler.helpers.classLink(listener.clazz) %>
+                                        <% } %>
+                                    </td>
                                 <% } else { %>
                                     <td><%= listener.service[0] %>::<%= listener.service[1] %></td>
                                 <% } %>

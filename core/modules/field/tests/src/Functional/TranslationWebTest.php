@@ -19,7 +19,7 @@ class TranslationWebTest extends FieldTestBase {
    *
    * @var array
    */
-  public static $modules = ['language', 'field_test', 'entity_test'];
+  protected static $modules = ['language', 'field_test', 'entity_test'];
 
   /**
    * {@inheritdoc}
@@ -54,7 +54,7 @@ class TranslationWebTest extends FieldTestBase {
    */
   protected $field;
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->fieldName = mb_strtolower($this->randomMachineName() . '_field_name');
@@ -120,7 +120,8 @@ class TranslationWebTest extends FieldTestBase {
       "{$field_name}[0][value]" => $entity->{$field_name}->value,
       'revision' => TRUE,
     ];
-    $this->drupalPostForm($this->entityTypeId . '/manage/' . $entity->id() . '/edit', $edit, t('Save'));
+    $this->drupalGet($this->entityTypeId . '/manage/' . $entity->id() . '/edit');
+    $this->submitForm($edit, 'Save');
 
     // Check translation revisions.
     $this->checkTranslationRevisions($entity->id(), $entity->getRevisionId(), $available_langcodes);

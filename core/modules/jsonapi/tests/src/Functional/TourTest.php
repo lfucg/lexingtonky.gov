@@ -10,12 +10,12 @@ use Drupal\tour\Entity\Tour;
  *
  * @group jsonapi
  */
-class TourTest extends ResourceTestBase {
+class TourTest extends ConfigEntityResourceTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['tour'];
+  protected static $modules = ['tour'];
 
   /**
    * {@inheritdoc}
@@ -67,9 +67,7 @@ class TourTest extends ResourceTestBase {
           'label' => 'Llama',
           'body' => 'Who handle the awesomeness of llamas?',
           'weight' => 100,
-          'attributes' => [
-            'data-id' => 'tour-llama-1',
-          ],
+          'selector' => '#tour-llama-1',
         ],
       ],
     ]);
@@ -119,9 +117,7 @@ class TourTest extends ResourceTestBase {
               'label' => 'Llama',
               'body' => 'Who handle the awesomeness of llamas?',
               'weight' => 100,
-              'attributes' => [
-                'data-id' => 'tour-llama-1',
-              ],
+              'selector' => '#tour-llama-1',
             ],
           ],
           'drupal_internal__id' => 'tour-llama',
@@ -135,6 +131,7 @@ class TourTest extends ResourceTestBase {
    */
   protected function getPostDocument() {
     // @todo Update in https://www.drupal.org/node/2300677.
+    return [];
   }
 
   /**

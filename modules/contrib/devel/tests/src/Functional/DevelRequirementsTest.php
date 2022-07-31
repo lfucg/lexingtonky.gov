@@ -2,26 +2,18 @@
 
 namespace Drupal\Tests\devel\Functional;
 
-use Drupal\Tests\BrowserTestBase;
-
 /**
  * Tests devel requirements.
  *
  * @group devel
  */
-class DevelRequirementsTest extends BrowserTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static $modules = ['devel'];
+class DevelRequirementsTest extends DevelBrowserTestBase {
 
   /**
    * Tests that the status page shows a warning when evel is enabled.
    */
   public function testStatusPage() {
-    $admin_user = $this->drupalCreateUser(['administer site configuration']);
-    $this->drupalLogin($admin_user);
+    $this->drupalLogin($this->adminUser);
 
     $this->drupalGet('admin/reports/status');
     $this->assertSession()->statusCodeEquals(200);

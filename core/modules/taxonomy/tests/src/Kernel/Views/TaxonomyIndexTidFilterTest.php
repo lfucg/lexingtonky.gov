@@ -29,7 +29,7 @@ class TaxonomyIndexTidFilterTest extends TaxonomyTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp($import_test_views = TRUE) {
+  protected function setUp($import_test_views = TRUE): void {
     parent::setUp(FALSE);
 
     // Setup vocabulary and terms so the initial import is valid.
@@ -53,7 +53,7 @@ class TaxonomyIndexTidFilterTest extends TaxonomyTestBase {
     $term->save();
     $this->terms[$term->id()] = $term;
 
-    ViewTestData::createTestViews(get_class($this), ['taxonomy_test_views']);
+    ViewTestData::createTestViews(static::class, ['taxonomy_test_views']);
   }
 
   /**
@@ -97,55 +97,6 @@ class TaxonomyIndexTidFilterTest extends TaxonomyTestBase {
         'user',
       ],
     ], $view->calculateDependencies()->getDependencies());
-  }
-
-  /**
-   * Tests post update function fixes dependencies.
-   *
-   * @see views_post_update_taxonomy_index_tid()
-   */
-  public function testPostUpdateFunction() {
-    /** @var \Drupal\views\Entity\View $view */
-    $view = View::load('test_filter_taxonomy_index_tid__non_existing_dependency');
-
-    // Dependencies are sorted.
-    $content_dependencies = [
-      $this->terms[3]->getConfigDependencyName(),
-      $this->terms[4]->getConfigDependencyName(),
-    ];
-    sort($content_dependencies);
-
-    $this->assertEquals([
-      'config' => [
-        'taxonomy.vocabulary.tags',
-      ],
-      'content' => $content_dependencies,
-      'module' => [
-        'node',
-        'taxonomy',
-        'user',
-      ],
-    ], $view->calculateDependencies()->getDependencies());
-
-    $this->terms[3]->delete();
-
-    \Drupal::moduleHandler()->loadInclude('views', 'post_update.php');
-    views_post_update_taxonomy_index_tid();
-
-    $view = View::load('test_filter_taxonomy_index_tid__non_existing_dependency');
-    $this->assertEquals([
-      'config' => [
-        'taxonomy.vocabulary.tags',
-      ],
-      'content' => [
-        $this->terms[4]->getConfigDependencyName(),
-      ],
-      'module' => [
-        'node',
-        'taxonomy',
-        'user',
-      ],
-    ], $view->getDependencies());
   }
 
 }

@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
- * Class ProfilesFilterForm
+ * Class ProfilesFilterForm.
  */
 class ProfilesFilterForm extends FormBase {
 
@@ -55,7 +55,7 @@ class ProfilesFilterForm extends FormBase {
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['filter'] = [
       '#type' => 'submit',
-      '#value' => t('Filter'),
+      '#value' => $this->t('Filter'),
       '#attributes' => ['class' => ['button--primary']],
       '#suffix' => '</div>',
     ];
@@ -67,7 +67,7 @@ class ProfilesFilterForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $ip = $form_state->getValue('ip');// ['values']['ip'];
+    $ip = $form_state->getValue('ip');
     $url = $form_state->getValue('url');
     $method = $form_state->getValue('method');
     $limit = $form_state->getValue('limit');
@@ -78,9 +78,10 @@ class ProfilesFilterForm extends FormBase {
         'url' => $url,
         'method' => $method,
         'limit' => $limit,
-      ]
+      ],
     ]);
 
     $form_state->setRedirectUrl($url);
   }
+
 }
