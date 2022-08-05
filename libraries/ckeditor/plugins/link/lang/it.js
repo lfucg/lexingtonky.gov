@@ -1,6 +1,6 @@
-/*
-Copyright (c) 2003-2016, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.md or http://ckeditor.com/license
+﻿/*
+Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 CKEDITOR.plugins.setLang( 'link', 'it', {
 	acccessKey: 'Scorciatoia da tastiera',
@@ -19,6 +19,7 @@ CKEDITOR.plugins.setLang( 'link', 'it', {
 	anchorName: 'Per Nome',
 	charset: 'Set di caretteri della risorsa collegata',
 	cssClasses: 'Nome classe CSS',
+	download: 'Forza scaricamento',
 	displayText: 'Mostra testo',
 	emailAddress: 'Indirizzo E-Mail',
 	emailBody: 'Corpo del messaggio',
@@ -34,7 +35,9 @@ CKEDITOR.plugins.setLang( 'link', 'it', {
 	noAnchors: '(Nessuna ancora disponibile nel documento)',
 	noEmail: 'Devi inserire un\'indirizzo e-mail',
 	noUrl: 'Devi inserire l\'URL del collegamento',
+	noTel: 'Inserire il numero di telefono',
 	other: '<altro>',
+	phoneNumber: 'Numero di telefono',
 	popupDependent: 'Dipendente (Netscape)',
 	popupFeatures: 'Caratteristiche finestra popup',
 	popupFullScreen: 'A tutto schermo (IE)',
@@ -59,6 +62,7 @@ CKEDITOR.plugins.setLang( 'link', 'it', {
 	toAnchor: 'Ancora nel testo',
 	toEmail: 'E-Mail',
 	toUrl: 'URL',
+	toPhone: 'Telefono',
 	toolbar: 'Collegamento',
 	type: 'Tipo di Collegamento',
 	unlink: 'Elimina collegamento',

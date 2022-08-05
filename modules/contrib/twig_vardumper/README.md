@@ -1,4 +1,4 @@
-# Twig VarDumper for Drupal 8
+# Twig VarDumper for Drupal 9
 
 Provides a way to display Twig PHP variables in a pretty way.
 
@@ -15,7 +15,7 @@ See the examples below on how to use it, it's very easy to use.
 The module is relying on the VarDumper and http-foundation components of the Symfony project.
 There easiest way to install this module is with composer. Here are the commands to run:
 
-* `composer config repositories.drupal composer https://packages.drupal.org/8`
+* `composer config repositories.drupal composer https://packages.drupal.org/9`
 * `composer require drupal/twig_vardumper`
 * `drush en twig_vardumper -y`
 * Once the module and/or the submodules are enabled, don't forget to check for the new user permissions.
@@ -27,14 +27,14 @@ Enable the module twig_vardumper then (e.g., page.html.twig)...
     <header class="header-mediador">
       {{ page.header }}
     </header>
-    
+
     {{ dump(page.content) }}
     {{ vardumper(page.content) }}
-    
+
     {{ page.content }}
-    
+
     <footer class="seccion-footer">
-      {{ page.footer }}      
+      {{ page.footer }}
     </footer>
 
 ## Related modules

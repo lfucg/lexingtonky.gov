@@ -1,6 +1,6 @@
-/*
-Copyright (c) 2003-2016, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.md or http://ckeditor.com/license
+﻿/*
+Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 CKEDITOR.plugins.setLang( 'link', 'el', {
 	acccessKey: 'Συντόμευση',
@@ -19,6 +19,7 @@ CKEDITOR.plugins.setLang( 'link', 'el', {
 	anchorName: 'Βάσει του Ονόματος Άγκυρας',
 	charset: 'Κωδικοποίηση Χαρακτήρων Προσαρτημένης Πηγής',
 	cssClasses: 'Κλάσεις Φύλλων Στυλ',
+	download: 'Force Download', // MISSING
 	displayText: 'Display Text', // MISSING
 	emailAddress: 'Διεύθυνση E-mail',
 	emailBody: 'Κείμενο Μηνύματος',
@@ -34,7 +35,9 @@ CKEDITOR.plugins.setLang( 'link', 'el', {
 	noAnchors: '(Δεν υπάρχουν άγκυρες στο κείμενο)',
 	noEmail: 'Εισάγετε τη διεύθυνση ηλεκτρονικού ταχυδρομείου',
 	noUrl: 'Εισάγετε την τοποθεσία (URL) του συνδέσμου',
+	noTel: 'Please type the phone number', // MISSING
 	other: '<άλλο>',
+	phoneNumber: 'Phone number', // MISSING
 	popupDependent: 'Εξαρτημένο (Netscape)',
 	popupFeatures: 'Επιλογές Αναδυόμενου Παραθύρου',
 	popupFullScreen: 'Πλήρης Οθόνη (IE)',
@@ -59,6 +62,7 @@ CKEDITOR.plugins.setLang( 'link', 'el', {
 	toAnchor: 'Άγκυρα σε αυτήν τη σελίδα',
 	toEmail: 'E-Mail',
 	toUrl: 'URL',
+	toPhone: 'Phone', // MISSING
 	toolbar: 'Σύνδεσμος',
 	type: 'Τύπος Συνδέσμου',
 	unlink: 'Αφαίρεση Συνδέσμου',

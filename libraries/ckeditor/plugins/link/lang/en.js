@@ -1,6 +1,6 @@
-/*
-Copyright (c) 2003-2016, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.md or http://ckeditor.com/license
+﻿/*
+Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 CKEDITOR.plugins.setLang( 'link', 'en', {
 	acccessKey: 'Access Key',
@@ -19,6 +19,7 @@ CKEDITOR.plugins.setLang( 'link', 'en', {
 	anchorName: 'By Anchor Name',
 	charset: 'Linked Resource Charset',
 	cssClasses: 'Stylesheet Classes',
+	download: 'Force Download',
 	displayText: 'Display Text',
 	emailAddress: 'E-Mail Address',
 	emailBody: 'Message Body',
@@ -34,7 +35,9 @@ CKEDITOR.plugins.setLang( 'link', 'en', {
 	noAnchors: '(No anchors available in the document)',
 	noEmail: 'Please type the e-mail address',
 	noUrl: 'Please type the link URL',
+	noTel: 'Please type the phone number',
 	other: '<other>',
+	phoneNumber: 'Phone number',
 	popupDependent: 'Dependent (Netscape)',
 	popupFeatures: 'Popup Window Features',
 	popupFullScreen: 'Full Screen (IE)',
@@ -59,6 +62,7 @@ CKEDITOR.plugins.setLang( 'link', 'en', {
 	toAnchor: 'Link to anchor in the text',
 	toEmail: 'E-mail',
 	toUrl: 'URL',
+	toPhone: 'Phone',
 	toolbar: 'Link',
 	type: 'Link Type',
 	unlink: 'Unlink',
