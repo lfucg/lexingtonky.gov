@@ -49,7 +49,7 @@
     "@ckeditor/ckeditor5-essentials": "34.1.x",
     "@ckeditor/ckeditor5-heading": "34.1.x",
     "@ckeditor/ckeditor5-horizontal-line": "34.1.x",
-    "@ckeditor/ckeditor5-html-support": "34.1.x",
+    "@ckeditor/ckeditor5-html-support": "35.0.x",
     "@ckeditor/ckeditor5-image": "34.1.x",
     "@ckeditor/ckeditor5-indent": "34.1.x",
     "@ckeditor/ckeditor5-language": "34.1.x",
