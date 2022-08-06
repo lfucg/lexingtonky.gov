@@ -1,6 +1,6 @@
 ﻿/**
- * @license Copyright (c) 2003-2016, CKSource - Frederico Knabben. All rights reserved.
- * For licensing, see LICENSE.md or http://ckeditor.com/license
+ * @license Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
 ( function() {
@@ -27,33 +27,9 @@
 		return length2;
 	}
 
-	var htmlFilterRules = {
-		elements: {
-			$: function( element ) {
-				var attributes = element.attributes,
-					realHtml = attributes && attributes[ 'data-cke-realelement' ],
-					realFragment = realHtml && new CKEDITOR.htmlParser.fragment.fromHtml( decodeURIComponent( realHtml ) ),
-					realElement = realFragment && realFragment.children[ 0 ];
-
-				// Width/height in the fake object are subjected to clone into the real element.
-				if ( realElement && element.attributes[ 'data-cke-resizable' ] ) {
-					var styles = new cssStyle( element ).rules,
-						realAttrs = realElement.attributes,
-						width = styles.width,
-						height = styles.height;
-
-					width && ( realAttrs.width = replaceCssLength( realAttrs.width, width ) );
-					height && ( realAttrs.height = replaceCssLength( realAttrs.height, height ) );
-				}
-
-				return realElement;
-			}
-		}
-	};
-
 	CKEDITOR.plugins.add( 'fakeobjects', {
 		// jscs:disable maximumLineLength
-		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,de-ch,el,en,en-au,en-ca,en-gb,eo,es,et,eu,fa,fi,fo,fr,fr-ca,gl,gu,he,hi,hr,hu,id,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt,pt-br,ro,ru,si,sk,sl,sq,sr,sr-latn,sv,th,tr,tt,ug,uk,vi,zh,zh-cn', // %REMOVE_LINE_CORE%
+		lang: 'af,ar,az,bg,bn,bs,ca,cs,cy,da,de,de-ch,el,en,en-au,en-ca,en-gb,eo,es,es-mx,et,eu,fa,fi,fo,fr,fr-ca,gl,gu,he,hi,hr,hu,id,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,oc,pl,pt,pt-br,ro,ru,si,sk,sl,sq,sr,sr-latn,sv,th,tr,tt,ug,uk,vi,zh,zh-cn', // %REMOVE_LINE_CORE%
 		// jscs:enable maximumLineLength
 
 		init: function( editor ) {
@@ -67,7 +43,7 @@
 				htmlFilter = dataProcessor && dataProcessor.htmlFilter;
 
 			if ( htmlFilter ) {
-				htmlFilter.addRules( htmlFilterRules, {
+				htmlFilter.addRules( createHtmlFilterRules( editor ), {
 					applyToAll: true
 				} );
 			}
@@ -75,8 +51,15 @@
 	} );
 
 	/**
+	 * Creates fake {@link CKEDITOR.dom.element} based on real element.
+	 * Fake element is an img with special attributes, which keep real element properties.
+	 *
 	 * @member CKEDITOR.editor
-	 * @todo
+	 * @param {CKEDITOR.dom.element} realElement Real element to transform.
+	 * @param {String} className Class name which will be used as class of fake element.
+	 * @param {String} realElementType Stores type of fake element.
+	 * @param {Boolean} isResizable Keeps information if element is resizable.
+	 * @returns {CKEDITOR.dom.element} Fake element.
 	 */
 	CKEDITOR.editor.prototype.createFakeElement = function( realElement, className, realElementType, isResizable ) {
 		var lang = this.lang.fakeobjects,
@@ -91,7 +74,7 @@
 			align: realElement.getAttribute( 'align' ) || ''
 		};
 
-		// Do not set "src" on high-contrast so the alt text is displayed. (#8945)
+		// Do not set "src" on high-contrast so the alt text is displayed. (https://dev.ckeditor.com/ticket/8945)
 		if ( !CKEDITOR.env.hc )
 			attributes.src = CKEDITOR.tools.transparentImageData;
 
@@ -115,8 +98,14 @@
 	};
 
 	/**
+	 * Creates fake {@link CKEDITOR.htmlParser.element} based on real element.
+	 *
 	 * @member CKEDITOR.editor
-	 * @todo
+	 * @param {CKEDITOR.dom.element} realElement Real element to transform.
+	 * @param {String} className Class name which will be used as class of fake element.
+	 * @param {String} realElementType Store type of fake element.
+	 * @param {Boolean} isResizable Keep information if element is resizable.
+	 * @returns {CKEDITOR.htmlParser.element} Fake htmlParser element.
 	 */
 	CKEDITOR.editor.prototype.createFakeParserElement = function( realElement, className, realElementType, isResizable ) {
 		var lang = this.lang.fakeobjects,
@@ -136,7 +125,7 @@
 			align: realElement.attributes.align || ''
 		};
 
-		// Do not set "src" on high-contrast so the alt text is displayed. (#8945)
+		// Do not set "src" on high-contrast so the alt text is displayed. (https://dev.ckeditor.com/ticket/8945)
 		if ( !CKEDITOR.env.hc )
 			attributes.src = CKEDITOR.tools.transparentImageData;
 
@@ -160,24 +149,91 @@
 	};
 
 	/**
+	 * Creates {@link CKEDITOR.dom.element} from fake element.
+	 *
 	 * @member CKEDITOR.editor
-	 * @todo
+	 * @param {CKEDITOR.dom.element} fakeElement Fake element to transform.
+	 * @returns {CKEDITOR.dom.element/null} Returns real element or `null` if transformed element wasn't fake.
 	 */
 	CKEDITOR.editor.prototype.restoreRealElement = function( fakeElement ) {
 		if ( fakeElement.data( 'cke-real-node-type' ) != CKEDITOR.NODE_ELEMENT )
 			return null;
 
-		var element = CKEDITOR.dom.element.createFromHtml( decodeURIComponent( fakeElement.data( 'cke-realelement' ) ), this.document );
+		var realElementHtml = decodeURIComponent( fakeElement.data( 'cke-realelement' ) ),
+			filteredHtml = filterHtml( this, realElementHtml ),
+			realElement = CKEDITOR.dom.element.createFromHtml( filteredHtml, this.document );
 
 		if ( fakeElement.data( 'cke-resizable' ) ) {
 			var width = fakeElement.getStyle( 'width' ),
 				height = fakeElement.getStyle( 'height' );
 
-			width && element.setAttribute( 'width', replaceCssLength( element.getAttribute( 'width' ), width ) );
-			height && element.setAttribute( 'height', replaceCssLength( element.getAttribute( 'height' ), height ) );
+			width && realElement.setAttribute( 'width', replaceCssLength( realElement.getAttribute( 'width' ), width ) );
+			height && realElement.setAttribute( 'height', replaceCssLength( realElement.getAttribute( 'height' ), height ) );
 		}
 
-		return element;
+		return realElement;
 	};
 
+	function createHtmlFilterRules( editor ) {
+		return {
+			elements: {
+				$: function( element ) {
+					var attributes = element.attributes,
+						realHtml = attributes && attributes[ 'data-cke-realelement' ],
+						filteredRealHtml = filterHtml( editor, decodeURIComponent( realHtml ) ),
+						realFragment = realHtml && new CKEDITOR.htmlParser.fragment.fromHtml( filteredRealHtml ),
+						realElement = realFragment && realFragment.children[ 0 ];
+
+					// Width/height in the fake object are subjected to clone into the real element.
+					if ( realElement && element.attributes[ 'data-cke-resizable' ] ) {
+						var styles = new cssStyle( element ).rules,
+							realAttrs = realElement.attributes,
+							width = styles.width,
+							height = styles.height;
+
+						width && ( realAttrs.width = replaceCssLength( realAttrs.width, width ) );
+						height && ( realAttrs.height = replaceCssLength( realAttrs.height, height ) );
+					}
+
+					return realElement;
+				}
+			}
+		};
+	}
+
+	// Content stored inside fake element is raw and should be explicitly
+	// passed to ACF filter. Additionally some elements can have prefixes in tag names,
+	// which should be removed before filtering and added after it.
+	function filterHtml( editor, html ) {
+		var unprefixedElements = [],
+			prefixRegex = /^cke:/i,
+			dataFilter =  new CKEDITOR.htmlParser.filter( {
+				elements: {
+					'^': function( element ) {
+						if ( prefixRegex.test( element.name ) ) {
+							element.name = element.name.replace( prefixRegex, '' );
+
+							unprefixedElements.push( element );
+						}
+					},
+					iframe: function( element ) {
+						element.children = [];
+					}
+				}
+			} ),
+			acfFilter = editor.activeFilter,
+			writer = new CKEDITOR.htmlParser.basicWriter(),
+			fragment = CKEDITOR.htmlParser.fragment.fromHtml( html );
+
+		dataFilter.applyTo( fragment );
+		acfFilter.applyTo( fragment );
+
+		CKEDITOR.tools.array.forEach( unprefixedElements, function( element ) {
+			element.name = 'cke:' + element.name;
+		} );
+
+		fragment.writeHtml( writer );
+
+		return writer.getHtml();
+	}
 } )();
