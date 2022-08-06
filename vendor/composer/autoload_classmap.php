@@ -6197,7 +6197,6 @@ return array(
     'cweagans\\Composer\\PatchEvent' => $vendorDir . '/cweagans/composer-patches/src/PatchEvent.php',
     'cweagans\\Composer\\PatchEvents' => $vendorDir . '/cweagans/composer-patches/src/PatchEvents.php',
     'cweagans\\Composer\\Patches' => $vendorDir . '/cweagans/composer-patches/src/Patches.php',
-    'grasmash\\DrupalSecurityWarning\\Composer\\Plugin' => $vendorDir . '/grasmash/drupal-security-warning/src/Composer/Plugin.php',
     'mglaman\\PHPStanDrupal\\Drupal\\DrupalAutoloader' => $vendorDir . '/mglaman/phpstan-drupal/src/Drupal/DrupalAutoloader.php',
     'mglaman\\PHPStanDrupal\\Drupal\\DrupalServiceDefinition' => $vendorDir . '/mglaman/phpstan-drupal/src/Drupal/DrupalServiceDefinition.php',
     'mglaman\\PHPStanDrupal\\Drupal\\DrupalStubFilesExtension' => $vendorDir . '/mglaman/phpstan-drupal/src/Drupal/DrupalStubFilesExtension.php',

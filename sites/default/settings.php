@@ -55,7 +55,6 @@ $local_settings = __DIR__ . "/settings.local.php";
 if (file_exists($local_settings)) {
   include_once $local_settings;
 }
-$settings['install_profile'] = 'standard';
 
 /**
  * Define appropriate location for tmp directory
@@ -97,14 +96,16 @@ if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
 /**
  * Sets solr configuration for local and pantheon enviroments.
  */
-// if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-//   if ($_ENV['PANTHEON_ENVIRONMENT'] == 'lando') {
-//     // Enable lando server and set index to use it for local development.
-//     $config['search_api.server.lando']['status'] = true;
-//     $config['search_api.index.pantheon_index']['server'] = 'lando';
-//   } else {
-//     // Pantheon Configuration.
-//     $config['search_api.server.pantheon']['status'] = true;
-//     $config['search_api.index.pantheon_index']['server'] = 'pantheon';
-//   }
-// }
+if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
+  if ($_ENV['PANTHEON_ENVIRONMENT'] == 'lando') {
+    // Enable lando server and set index to use it for local development.
+    $config['search_api.server.pantheon']['status'] = false;
+    $config['search_api.server.lando']['status'] = true;
+    $config['search_api.index.pantheon_index']['server'] = 'lando';
+  } else {
+    // Pantheon Configuration.
+    $config['search_api.server.lando']['status'] = false;
+    $config['search_api.server.pantheon']['status'] = true;
+    $config['search_api.index.pantheon_index']['server'] = 'pantheon';
+  }
+}
