@@ -1,6 +1,9 @@
-body header {
-  height: 120px;
-  background: white;
+body {
+
+  #site-banner {
+    height: 120px;
+    background: white;
+  }
 
   .sticky-top {
     z-index: 500;
