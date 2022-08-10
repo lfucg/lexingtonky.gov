@@ -14,9 +14,22 @@ services:
     core: lexky
     config:
       dir: sites/all/modules/search_api_solr/solr-conf/8.x
+  nodejs:
+    ssl: true
+    sslExpose: true
+    scanner: false
+    type: 'node:14'
+    overrides:
+      image: node:14-buster
+    globals:
+      gulp-cli: latest
+    run:
+      - cd $LANDO_MOUNT/themes/custom/lex && npm i && gulp build
 tooling:
   drush:
     service: appserver
     cmd: drush --root=/app/docroot --uri=https://lexky-d8.lndo.site
   jq:
     service: appserver
+  gulp:
+    service: nodejs
