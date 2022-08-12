@@ -33,32 +33,32 @@ function lex_custom_system_breadcrumb_alter(Breadcrumb &$breadcrumb, RouteMatchI
  * Implements hook_update_N().
  * https://www.drupal.org/node/3034742
  */
-// function lex_custom_update_9401() {
+function lex_custom_update_9401() {
 
-//   $entity_type_manager = \Drupal::entityTypeManager();
-//   $entity_type_manager->clearCachedDefinitions();
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $entity_type_manager->clearCachedDefinitions();
 
-//   $entity_type_ids = [];
-//   $change_summary = \Drupal::service('entity.definition_update_manager')->getChangeSummary();
-//   foreach ($change_summary as $entity_type_id => $change_list) {
-//     $entity_type = $entity_type_manager->getDefinition($entity_type_id);
-//     \Drupal::entityDefinitionUpdateManager()->installEntityType($entity_type);
-//     $entity_type_ids[] = $entity_type_id;
-//   }
+  $entity_type_ids = [];
+  $change_summary = \Drupal::service('entity.definition_update_manager')->getChangeSummary();
+  foreach ($change_summary as $entity_type_id => $change_list) {
+    $entity_type = $entity_type_manager->getDefinition($entity_type_id);
+    \Drupal::entityDefinitionUpdateManager()->installEntityType($entity_type);
+    $entity_type_ids[] = $entity_type_id;
+  }
 
-//   return t("Installed/Updated the entity type(s): @entity_type_ids", [
-//     '@entity_type_ids' => implode(', ', $entity_type_ids),
-//   ]);
-// }
+  return t("Installed/Updated the entity type(s): @entity_type_ids", [
+    '@entity_type_ids' => implode(', ', $entity_type_ids),
+  ]);
+}
 
 /**
  * Create moderation_state column for taxonomy terms.
  */
-// function lex_custom_update_9402 () {
-//   $field_storage_definition = BaseFieldDefinition::create('string')
-//     ->setLabel(t('Moderation state'))
-//     ->setDescription(t('Moderation state'));
+function lex_custom_update_9402 () {
+  $field_storage_definition = BaseFieldDefinition::create('string')
+    ->setLabel(t('Moderation state'))
+    ->setDescription(t('Moderation state'));
 
-//   \Drupal::entityDefinitionUpdateManager()
-//     ->installFieldStorageDefinition('moderation_state', 'taxonomy_term', 'lex_custom', $field_storage_definition);
-// }
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('moderation_state', 'taxonomy_term', 'workbench_moderation', $field_storage_definition);
+}

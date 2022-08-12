@@ -1,4 +1,3 @@
 embed_provider: '//www.lexingtonky.gov/proxies/ckmedia.php?url={url}&callback={callback}'
 _core:
   default_config_hash: wHgddFra_KkG7ATiHI-Wks4-pkdtvei_fEb0UbgdB9Y
-plugins_version_installed: 4.18.0
