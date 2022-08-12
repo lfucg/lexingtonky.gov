@@ -25,17 +25,15 @@ class MigrationHelper {
    */
   public function alterPlugins(array &$migrations) {
     foreach ($migrations as &$migration) {
-      /** @var \Drupal\migrate\Plugin\MigratePluginManager $migration_plugin_manager */
-      $migration_plugin_manager = \Drupal::service('plugin.manager.migration');
-      $migration_stub = $migration_plugin_manager->createStubMigration($migration);
       /** @var \Drupal\migrate\Plugin\MigrateSourcePluginManager $source_plugin_manager */
       $source_plugin_manager = \Drupal::service('plugin.manager.migrate.source');
       $source = NULL;
-      $configuration = $migration['source'];
-      $source = $source_plugin_manager->createInstance($migration['source']['plugin'], $configuration, $migration_stub);
-      if ($source) {
+      if (isset($migration['source']['plugin'])) {
+        $source = $source_plugin_manager->getDefinition($migration['source']['plugin']);
+      }
+      if (isset($source['class'])) {
         // Field instance.
-        if (get_class($source) === FieldInstance::class) {
+        if ($source['class'] === FieldInstance::class) {
           $settings[] = $migration['process']['settings'];
           $addition = [
             'inline_entity_form' => [
@@ -45,7 +43,7 @@ class MigrationHelper {
           $settings = NestedArray::mergeDeepArray([$settings, $addition], TRUE);
           $migration['process']['settings'] = $settings;
         }
-        if (is_a($source, FieldInstancePerFormDisplay::class)) {
+        if (is_a($source['class'], FieldInstancePerFormDisplay::class, TRUE)) {
           $addition = [
             'inline_entity_form_single' => 'inline_entity_form_simple',
             'inline_entity_form' => 'inline_entity_form_complex',

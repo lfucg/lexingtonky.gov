@@ -141,6 +141,7 @@ class PathautoSettingsForm extends ConfigFormBase {
       // patterns currently defined or if it isn't defined by us.
       $patterns_count = $this->entityTypeManager->getStorage('pathauto_pattern')->getQuery()
         ->condition('type', 'canonical_entities:' . $entity_type_id)
+        ->accessCheck(TRUE)
         ->count()
         ->execute();
 

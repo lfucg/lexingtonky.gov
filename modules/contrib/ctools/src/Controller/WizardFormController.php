@@ -24,7 +24,7 @@ class WizardFormController extends FormController {
   /**
    * Tempstore Factory for keeping track of values in each step of the wizard.
    *
-   * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
+   * @var \Drupal\Core\TempStore\SharedTempStoreFactory
    */
   protected $tempstore;
 

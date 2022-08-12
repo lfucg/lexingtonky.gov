@@ -59,7 +59,3 @@
 *.ttf     -text diff
 *.woff    -text diff
 *.woff2   -text diff
-
-# Exclude generated files from PR diffs
-vendor/**/* linguist-generated=true
-libraries/**/* linguist-generated=true

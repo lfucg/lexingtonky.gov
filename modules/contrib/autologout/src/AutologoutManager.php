@@ -4,16 +4,18 @@ namespace Drupal\autologout;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\SessionManager;
-use Drupal\user\Entity\User;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\user\UserData;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\user\UserInterface;
 
 /**
  * Defines an AutologoutManager service.
@@ -85,6 +87,20 @@ class AutologoutManager implements AutologoutManagerInterface {
   protected $time;
 
   /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The translation service.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationInterface
+   */
+  protected $stringTranslation;
+
+  /**
    * Constructs an AutologoutManager object.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
@@ -103,6 +119,10 @@ class AutologoutManager implements AutologoutManagerInterface {
    *   Data of the user.
    * @param \Drupal\Component\Datetime\TimeInterface $time
    *   The time service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager service.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $stringTranslation
+   *   The string translation service.
    */
   public function __construct(
     ModuleHandlerInterface $module_handler,
@@ -112,7 +132,9 @@ class AutologoutManager implements AutologoutManagerInterface {
     LoggerChannelFactoryInterface $logger,
     SessionManager $sessionManager,
     UserData $userData,
-    TimeInterface $time
+    TimeInterface $time,
+    EntityTypeManagerInterface $entityTypeManager,
+    TranslationInterface $stringTranslation
   ) {
     $this->moduleHandler = $module_handler;
     $this->autoLogoutSettings = $config_factory->get('autologout.settings');
@@ -123,12 +145,19 @@ class AutologoutManager implements AutologoutManagerInterface {
     $this->session = $sessionManager;
     $this->userData = $userData;
     $this->time = $time;
+    $this->entityTypeManager = $entityTypeManager;
+    $this->stringTranslation = $stringTranslation;
   }
 
   /**
    * {@inheritdoc}
    */
   public function preventJs() {
+    if ($this->autoLogoutSettings->get('enabled') === FALSE) {
+      // Autologout is disabled globally.
+      return TRUE;
+    }
+
     foreach ($this->moduleHandler->invokeAll('autologout_prevent') as $prevent) {
       if (!empty($prevent)) {
         return TRUE;
@@ -158,7 +187,7 @@ class AutologoutManager implements AutologoutManagerInterface {
     $message = Xss::filter($this->autoLogoutSettings->get('inactivity_message'));
     $type = $this->autoLogoutSettings->get('inactivity_message_type');
     if (!empty($message)) {
-      $this->messenger->addMessage($this->t($message), $type);
+      $this->messenger->addMessage($this->t('@message', ['@message' => $message]), $type);
     }
   }
 
@@ -221,11 +250,15 @@ class AutologoutManager implements AutologoutManagerInterface {
    * {@inheritdoc}
    */
   public function getRemainingTime() {
+    if ($this->configFactory->get('logout_regardless_of_activity')) {
+      $time_passed = $this->time->getRequestTime() - $_COOKIE['Drupal_visitor_autologout_login'];
+    }
+    else {
+      $time_passed = isset($_SESSION['autologout_last'])
+        ? $this->time->getRequestTime() - $_SESSION['autologout_last']
+        : 0;
+    }
     $timeout = $this->getUserTimeout();
-    $time_passed = isset($_SESSION['autologout_last'])
-      ? $this->time->getRequestTime() - $_SESSION['autologout_last']
-      : 0;
-
     return $timeout - $time_passed;
   }
 
@@ -245,7 +278,8 @@ class AutologoutManager implements AutologoutManagerInterface {
       $user = $this->currentUser;
     }
     else {
-      $user = User::load($uid);
+      $user = $this->entityTypeManager->getStorage('user')
+        ->load($uid);
     }
 
     if ($user->id() == 0) {
@@ -292,10 +326,12 @@ class AutologoutManager implements AutologoutManagerInterface {
   public function getUserRedirectUrl($uid = NULL) {
     if (is_null($uid)) {
       // If $uid is not provided, use the logged in user.
-      $user = \Drupal::currentUser();
+      $user = $this->entityTypeManager->getStorage('user')
+        ->load($this->currentUser->id());
     }
     else {
-      $user = User::load($uid);
+      $user = $this->entityTypeManager->getStorage('user')
+        ->load($uid);
     }
 
     if ($user->id() == 0) {
@@ -328,7 +364,7 @@ class AutologoutManager implements AutologoutManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function logoutRole($user) {
+  public function logoutRole(UserInterface $user) {
     if ($this->autoLogoutSettings->get('role_logout')) {
       foreach ($user->roles as $name => $role) {
         if ($this->configFactory->get('autologout.role.' . $name . '.enabled')) {

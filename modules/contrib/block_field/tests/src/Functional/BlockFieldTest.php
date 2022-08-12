@@ -22,7 +22,7 @@ class BlockFieldTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'user',
     'block',
@@ -217,6 +217,44 @@ class BlockFieldTest extends BrowserTestBase {
 
     $this->drupalGet('admin/structure/types/manage/block_field_test/fields/node.block_field_test.field_block_field_test');
     $assert->statusCodeEquals(200);
+  }
+
+
+  /**
+   * Test the block "Page Title".
+   */
+  public function testBlockPageTitle() {
+    $assert = $this->assertSession();
+
+    $admin_user = $this->drupalCreateUser([
+      'access content',
+      'administer nodes',
+      'administer content types',
+      'bypass node access',
+      'administer node fields',
+    ]);
+    $this->drupalLogin($admin_user);
+
+    $this->drupalGet('node/add/block_field_test');
+    $this->submitForm([
+      'title[0][value]' => 'Block field test',
+      'field_block_field_test[0][plugin_id]' => 'page_title_block',
+    ], 'Save');
+
+    $node = $this->drupalGetNodeByTitle('Block field test');
+    $this->drupalGet($node->toUrl());
+    $selector = '.field--name-field-block-field-test';
+    $assert->elementExists('css', $selector);
+    $assert->elementContains('css', $selector, '<div class="field__label">Block field test</div>');
+    $assert->elementContains('css', $selector, '<h1 class="page-title">Block field test</h1>');
+
+    $this->drupalGet($node->toUrl('edit-form'));
+    $this->submitForm([
+      'title[0][value]' => 'Test Title',
+    ], 'Save');
+    $assert->elementContains('css', $selector, '<div class="field__label">Block field test</div>');
+    $assert->elementNotContains('css', $selector, '<h1 class="page-title">Block field test</h1>');
+    $assert->elementContains('css', $selector, '<h1 class="page-title">Test Title</h1>');
   }
 
 }

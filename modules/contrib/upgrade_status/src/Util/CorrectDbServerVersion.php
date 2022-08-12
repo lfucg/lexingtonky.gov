@@ -3,8 +3,9 @@
 namespace Drupal\upgrade_status\Util;
 
 use Drupal\Core\Database\Connection;
+use Drupal\upgrade_status\ProjectCollector;
 
-class CorrectDbServerVersion {
+class DatabaseServerMetadataExtractor {
 
   /**
    * Database connection
@@ -14,26 +15,24 @@ class CorrectDbServerVersion {
   protected $database;
 
   /**
-   * Cached database version (Used in Drupal 8.9.x only)
+   * MySql database version.
    *
    * @var string
    */
-  protected $databaseServerVersion;
+  protected $mysqlVersion;
 
   /**
    * Constructs a Drupal\upgrade_status\Util\MariaDbServerVersion.
    *
-   * @param \Drupal\Core\Database\Connection $connection
-   *   The database connection
+   * @param \Drupal\Core\Database\Connection $database
+   *   The database connection.
    */
-  public function __construct(
-    Connection $database
-  ) {
+  public function __construct(Connection $database) {
     $this->database = $database;
   }
 
   /**
-   * Returns corrected version of database.
+   * Returns version of database.
    *
    * When running on MariaDb on Drupal 8.9.x, the version
    * from $database->version() is not reported correctly.
@@ -45,14 +44,28 @@ class CorrectDbServerVersion {
    * @see https://www.drupal.org/project/drupal/issues/3213482
    *
    * @return string
-   *   Returns the MariaDb server version if applicable, or the passed-in
+   *   Returns the MariaDb server version if applicable, or the default
    *   version if not.
    */
-  public function getCorrectedDbServerVersion($version) {
+  public function getVersion() {
     if ($this->isMariaDb()) {
-      return $this->getMariaDbVersionMatch();
+      return $this->getMariaDbVersion();
     }
-    return $version;
+    return $this->database->version();
+  }
+
+  /**
+   * Returns type of database.
+   *
+   * @return string
+   *   Returns specific to MariaDb type if applicable, or the default
+   *   database server type if not.
+   */
+  public function getType() {
+    if ($this->isMariaDb()) {
+      return 'mariadb';
+    }
+    return $this->database->databaseType();
   }
 
   /**
@@ -62,7 +75,12 @@ class CorrectDbServerVersion {
    *   Returns TRUE if the distribution is MariaDB, or FALSE if not.
    */
   protected function isMariaDb(): bool {
-    return (bool) $this->getMariaDbVersionMatch();
+    if ($this->database->databaseType() !== 'mysql' || ProjectCollector::getDrupalCoreMajorVersion() !== 8) {
+      return FALSE;
+    }
+    // If running on Drupal 8, the mysql driver might
+    // mis-report the database version.
+    return (bool) $this->getMariaDbVersion();
   }
 
   /**
@@ -71,26 +89,26 @@ class CorrectDbServerVersion {
    * @return string
    *   The MariaDB portion of the server version if present, or NULL if not.
    */
-  protected function getMariaDbVersionMatch(): ?string {
+  protected function getMariaDbVersion(): ?string {
     // MariaDB may prefix its version string with '5.5.5-', which should be
     // ignored.
     // @see https://github.com/MariaDB/server/blob/f6633bf058802ad7da8196d01fd19d75c53f7274/include/mysql_com.h#L42.
     $regex = '/^(?:5\.5\.5-)?(\d+\.\d+\.\d+.*-mariadb.*)/i';
 
-    preg_match($regex, $this->getDatabaseServerVersion(), $matches);
+    preg_match($regex, $this->getMysqlDbVersion(), $matches);
     return (empty($matches[1])) ? NULL : $matches[1];
   }
 
   /**
-   * Gets the database server version.
+   * Returns MySql database server version.
    *
    * @return string
-   *   The database server version.
+   *   MySql database server version.
    */
-  protected function getDatabaseServerVersion(): string {
-    if (!$this->databaseServerVersion) {
-      $this->databaseServerVersion = $this->database->version();
+  protected function getMysqlDbVersion(): string {
+    if (!$this->mysqlVersion) {
+      $this->mysqlVersion = $this->database->query('SELECT VERSION()')->fetchColumn();
     }
-    return $this->databaseServerVersion;
+    return $this->mysqlVersion;
   }
 }

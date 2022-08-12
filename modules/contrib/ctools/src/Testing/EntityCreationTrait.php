@@ -34,7 +34,7 @@ trait EntityCreationTrait {
     $status = $entity->save();
     \Drupal::service('router.builder')->rebuild();
 
-    if ($this instanceof \PHPUnit_Framework_TestCase) {
+    if ($this instanceof \PHPUnit\Framework\TestCase) {
       // phpcs:ignore
       $this->assertSame(SAVED_NEW, $status, (new FormattableMarkup('Created entity %id of type %type.', ['%id' => $entity->id(), '%type' => $entity_type]))->__toString()); //psp
     }

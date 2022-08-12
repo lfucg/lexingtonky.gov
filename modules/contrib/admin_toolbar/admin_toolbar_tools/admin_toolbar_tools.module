@@ -8,6 +8,7 @@
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 
 /**
  * Implements hook_toolbar().
@@ -24,6 +25,49 @@ function admin_toolbar_tools_toolbar() {
     ],
     '#attached' => ['library' => ['admin_toolbar_tools/toolbar.icon']],
   ];
+
+  // Toolbar item for primary local tasks.
+  $config = \Drupal::config('admin_toolbar_tools.settings')->get('show_local_tasks');
+  $items['admin_toolbar_local_tasks'] = [];
+  CacheableMetadata::createFromObject($config)->applyTo($items['admin_toolbar_local_tasks']);
+
+  if ($config) {
+    $items['admin_toolbar_local_tasks'] += [
+      '#type' => 'toolbar_item',
+      '#wrapper_attributes' => [
+        'class' => ['local-tasks-toolbar-tab'],
+      ],
+      // Put it after contextual toolbar item so when float right is applied
+      // local tasks item will be first.
+      '#weight' => 10,
+      'tab' => [
+        // We can't use #lazy_builder here because
+        // ToolbarItem::preRenderToolbarItem will insert #attributes before
+        // lazy_builder callback and this will produce Exception.
+        // This means that for now we always render Local Tasks item even when
+        // the tray is empty.
+        '#type' => 'link',
+        '#title' => t('Local Tasks'),
+        '#url' => Url::fromRoute('<none>'),
+        '#attributes' => [
+          'class' => [
+            'toolbar-icon',
+            'toolbar-icon-local-tasks',
+          ],
+        ],
+      ],
+      'tray' => [
+        'local_links' => [
+          '#lazy_builder' => [
+            'admin_toolbar_tools.helper:localTasksTrayLazyBuilder',
+            [],
+          ],
+        ],
+      ],
+      '#attached' => ['library' => ['admin_toolbar_tools/toolbar.icon']],
+    ];
+  }
+
   return $items;
 }
 

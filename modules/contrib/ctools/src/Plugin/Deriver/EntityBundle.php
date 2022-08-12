@@ -6,6 +6,9 @@ use Drupal\Core\Plugin\Context\EntityContextDefinition;
 
 /**
  * Deriver that creates a condition for each entity type with bundles.
+ *
+ * @deprecated in ctools:8.x-1.10. Will be removed before ctools:4.1.0.
+ *   Use \Drupal\Core\Entity\Plugin\Condition\Deriver\EntityBundle instead.
  */
 class EntityBundle extends EntityDeriverBase {
 

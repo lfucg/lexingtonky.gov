@@ -14,7 +14,7 @@ class IefTest extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'ief_test';
   }
 
@@ -30,11 +30,11 @@ class IefTest extends FormBase {
     ];
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => t('Save'),
+      '#value' => $this->t('Save'),
     ];
     if (!empty($node)) {
       $form['inline_entity_form']['#default_value'] = $node;
-      $form['submit']['#value'] = t('Update');
+      $form['submit']['#value'] = $this->t('Update');
     }
 
     return $form;
@@ -45,7 +45,13 @@ class IefTest extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $entity = $form['inline_entity_form']['#entity'];
-    $message = $this->t('Created @entity_type @label.', ['@entity_type' => $entity->getEntityType()->getLabel(), '@label' => $entity->label()]);
+    $message = $this->t(
+      'Created @entity_type @label.',
+      [
+        '@entity_type' => $entity->getEntityType()->getLabel(),
+        '@label' => $entity->label(),
+      ]
+    );
     $this->messenger()->addMessage($message);
   }
 

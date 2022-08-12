@@ -162,8 +162,7 @@ class CKEditor5AllowedTagsTest extends CKEditor5TestBase {
 
     $page->selectFieldOption('editor[editor]', 'ckeditor5');
     $assert_session->assertWaitOnAjaxRequest();
-
-    $assert_session->pageTextContains('The following tag(s) were added to Limit allowed HTML tags and correct faulty HTML, because they are needed to provide fundamental CKEditor 5 functionality : <br> <p>');
+    $assert_session->pageTextContains('The <br>, <p> tags were added because they are required by CKEditor 5');
     $this->assertHtmlEsqueFieldValueEquals('filters[filter_html][settings][allowed_html]', $this->defaultElementsAfterUpdatingToCkeditor5);
 
     $page->pressButton('Save configuration');
@@ -496,7 +495,7 @@ class CKEditor5AllowedTagsTest extends CKEditor5TestBase {
 
     // But note that the `style` attribute was stripped by
     // \Drupal\editor\EditorXssFilter\Standard.
-    $assert_session->responseContains('<p><a href="https://example.com" hreflang="en" foo="bar"><abbr title="National Aeronautics and Space Administration">NASA</abbr> is an acronym.</a></p>');
+    $assert_session->responseContains('<p><a foo="bar" hreflang="en" href="https://example.com"><abbr title="National Aeronautics and Space Administration">NASA</abbr> is an acronym.</a></p>');
 
     // Ensure attributes are retained after enabling link plugin.
     $this->drupalGet('admin/config/content/formats/manage/full_html');
@@ -508,7 +507,7 @@ class CKEditor5AllowedTagsTest extends CKEditor5TestBase {
     $this->drupalGet('node/1/edit');
     $page->pressButton('Save');
 
-    $assert_session->responseContains('<p><a href="https://example.com" hreflang="en" foo="bar"><abbr title="National Aeronautics and Space Administration">NASA</abbr> is an acronym.</a></p>');
+    $assert_session->responseContains('<p><a foo="bar" hreflang="en" href="https://example.com"><abbr title="National Aeronautics and Space Administration">NASA</abbr> is an acronym.</a></p>');
 
     // Configure Basic HTML text format to use CKE5 and enable the link plugin.
     $this->drupalGet('admin/config/content/formats/manage/basic_html');

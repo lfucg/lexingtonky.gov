@@ -120,7 +120,7 @@ class AutologoutWarningBlock extends BlockBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    // @todo: This is not the place where we should be doing this.
+    // @todo This is not the place where we should be doing this.
     $return = [];
     return $return;
   }

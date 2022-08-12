@@ -2,7 +2,7 @@
 
 namespace Drupal\autologout;
 
-use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * Interface for AutologoutManager.
@@ -76,13 +76,13 @@ interface AutologoutManagerInterface {
   /**
    * Helper to determine if a given user should be autologged out.
    *
-   * @param \Drupal\user\Entity\User $user
+   * @param \Drupal\user\UserInterface $user
    *   User entity.
    *
    * @return bool
    *   TRUE if the user should be autologged out, otherwise FALSE.
    */
-  public function logoutRole(User $user);
+  public function logoutRole(UserInterface $user);
 
   /**
    * Display the inactivity message if required when the user is logged out.

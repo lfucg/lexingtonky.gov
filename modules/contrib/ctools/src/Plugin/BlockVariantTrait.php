@@ -53,7 +53,7 @@ trait BlockVariantTrait {
     $block = $this->getBlock($configuration['uuid']);
     // Allow modules to react to the change.
     $event = new BlockVariantEvent($block, $this);
-    $this->eventDispatcher()->dispatch(BlockVariantEvents::ADD_BLOCK, $event);
+    $this->eventDispatcher()->dispatch($event, BlockVariantEvents::ADD_BLOCK);
 
     return $configuration['uuid'];
   }
@@ -67,7 +67,7 @@ trait BlockVariantTrait {
 
     // Allow modules to react to the change.
     $event = new BlockVariantEvent($block, $this);
-    $this->eventDispatcher()->dispatch(BlockVariantEvents::DELETE_BLOCK, $event);
+    $this->eventDispatcher()->dispatch($event, BlockVariantEvents::DELETE_BLOCK);
 
     return $this;
   }
@@ -82,7 +82,7 @@ trait BlockVariantTrait {
 
     // Allow modules to react to the change.
     $event = new BlockVariantEvent($block, $this);
-    $this->eventDispatcher()->dispatch(BlockVariantEvents::UPDATE_BLOCK, $event);
+    $this->eventDispatcher()->dispatch($event, BlockVariantEvents::UPDATE_BLOCK);
 
     return $this;
   }

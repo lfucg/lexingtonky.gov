@@ -5,9 +5,7 @@
 
   Drupal.behaviors.tokenTree = {
     attach: function (context, settings) {
-      $('table.token-tree', context).once('token-tree').each(function () {
-        $(this).treetable({ expandable: true });
-      });
+      $(once('token-tree', 'table.token-tree', context)).treetable({ expandable: true});
     }
   };
 
@@ -18,8 +16,8 @@
         drupalSettings.tokenFocusedField = this;
       });
 
-      $('.token-click-insert .token-key', context).once('token-click-insert').each(function () {
-        var newThis = $('<a href="javascript:void(0);" title="' + Drupal.t('Insert this token into your form') + '">' + $(this).html() + '</a>').click(function () {
+      once('token-click-insert', '.token-click-insert .token-key', context).forEach(function (token) {
+        var newThis = $('<a href="javascript:void(0);" title="' + Drupal.t('Insert this token into your form') + '">' + $(token).html() + '</a>').click(function () {
           var content = this.text;
 
           // Always work in normal text areas that currently have focus.
@@ -58,7 +56,7 @@
 
           return false;
         });
-        $(this).html(newThis);
+        $(token).html(newThis);
       });
 
       function insertAtCursor(editor, content) {

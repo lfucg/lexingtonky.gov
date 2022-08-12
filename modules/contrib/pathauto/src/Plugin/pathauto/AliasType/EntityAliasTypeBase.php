@@ -10,8 +10,8 @@ use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\Context\Context;
-use Drupal\Core\Plugin\ContextAwarePluginBase;
-use Drupal\Core\Messenger\MessengerTrait;
+use Drupal\Core\Plugin\ContextAwarePluginTrait;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\pathauto\AliasTypeBatchUpdateInterface;
 use Drupal\pathauto\AliasTypeInterface;
 use Drupal\pathauto\PathautoState;
@@ -25,9 +25,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   deriver = "\Drupal\pathauto\Plugin\Deriver\EntityAliasTypeDeriver"
  * )
  */
-class EntityAliasTypeBase extends ContextAwarePluginBase implements AliasTypeInterface, AliasTypeBatchUpdateInterface, ContainerFactoryPluginInterface {
+class EntityAliasTypeBase extends PluginBase implements AliasTypeInterface, AliasTypeBatchUpdateInterface, ContainerFactoryPluginInterface {
 
-  use MessengerTrait;
+  use ContextAwarePluginTrait;
 
   /**
    * The module handler service.

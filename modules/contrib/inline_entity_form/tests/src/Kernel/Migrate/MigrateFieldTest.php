@@ -23,7 +23,7 @@ class MigrateFieldTest extends MigrateTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->executeMigration('d7_field');
   }
@@ -41,7 +41,7 @@ class MigrateFieldTest extends MigrateTestBase {
    *   The expected cardinality of the field.
    */
   protected function assertEntity($id, $expected_type, $expected_translatable, $expected_cardinality) {
-    list ($expected_entity_type, $expected_name) = explode('.', $id);
+    [$expected_entity_type, $expected_name] = explode('.', $id);
 
     /** @var \Drupal\field\FieldStorageConfigInterface $field */
     $field = FieldStorageConfig::load($id);

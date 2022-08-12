@@ -32,7 +32,7 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
   /**
    * The Drupal context repository.
    *
-   * @var \Drupal\context\Entity\ContextRepositoryInterface
+   * @var \Drupal\Core\Plugin\Context\ContextRepositoryInterface
    */
   protected $contextRepository;
 
@@ -58,7 +58,6 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
     $this->blockManager = $block_manager;
     $this->blockFieldSelectionManager = $block_field_selection_manager;
     $this->contextRepository = $contextRepository;
-    $this->blockManager = $block_manager;
   }
 
   /**
@@ -129,7 +128,12 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
     ));
 
     $values = $form_state->getValues();
-    $item->plugin_id = (isset($values[$field_name][$delta]['plugin_id'])) ? $values[$field_name][$delta]['plugin_id'] : $item->plugin_id;
+    if ($form_state->getValue('form_id') == "field_config_edit_form") {
+      $item->plugin_id = (isset($values['default_value_input'][$field_name][$delta]['plugin_id'])) ? $values['default_value_input'][$field_name][$delta]['plugin_id'] : $item->plugin_id;
+    }
+    else {
+      $item->plugin_id = (isset($values[$field_name][$delta]['plugin_id'])) ? $values[$field_name][$delta]['plugin_id'] : $item->plugin_id;
+    }
     if (!empty($values[$field_name][$delta]['settings'])) {
       $item->settings = $values[$field_name][$delta]['settings'];
     }
@@ -281,7 +285,9 @@ class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInter
     foreach ($values as &$value) {
       // Execute block submit configuration in order to transform the form
       // values into block configuration.
-      if (!empty($value['plugin_id']) && !empty($value['settings']) && $block = $this->blockManager->createInstance($value['plugin_id'])) {
+      if (isset($form[$field_name]['widget'][$value['_original_delta']]['settings']) &&
+            !empty($value['plugin_id']) &&
+              !empty($value['settings']) && $block = $this->blockManager->createInstance($value['plugin_id'])) {
         $elements = &$form[$field_name]['widget'][$value['_original_delta']]['settings'];
         $subform_state = SubformState::createForSubform($elements, $form_state->getCompleteForm(), $form_state);
         $block->submitConfigurationForm($elements, $subform_state);

@@ -14,7 +14,7 @@ class BlockFieldSelectionTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['block', 'system', 'block_field', 'locale'];
+  protected static $modules = ['block', 'system', 'block_field', 'locale'];
 
   /**
    * Returns a plugin instance from BlockFieldSelectionManager.

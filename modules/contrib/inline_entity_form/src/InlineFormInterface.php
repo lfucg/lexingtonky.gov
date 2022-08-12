@@ -60,8 +60,7 @@ interface InlineFormInterface extends EntityHandlerInterface {
    *      - 'field': A field value from the entity. The name of the field is
    *        given by the key in this array.
    *      - 'callback': A callback, given by the 'callback' property.
-   *     @see template_preprocess_inline_entity_form_entity_table() for the
-   *     handling of these.
+   *     @see template_preprocess_inline_entity_form_entity_table()
    *   - label: the title of the table field's column in the IEF table.
    *   - weight: the sort order of the column in the IEF table.
    *   - display_options: (optional) used for 'field' type table columns, an
@@ -72,7 +71,7 @@ interface InlineFormInterface extends EntityHandlerInterface {
    *     to the callback. The entity and the theme variables are always passed
    *     as as the first two arguments.
    */
-  public function getTableFields($bundles);
+  public function getTableFields(array $bundles);
 
   /**
    * Checks whether tabledrag should be enabled for the given table.
@@ -83,7 +82,7 @@ interface InlineFormInterface extends EntityHandlerInterface {
    * @return bool
    *   TRUE if tabledrag should be enabled, FALSE otherwise.
    */
-  public function isTableDragEnabled($element);
+  public function isTableDragEnabled(array $element);
 
   /**
    * Builds the entity form.
@@ -142,6 +141,6 @@ interface InlineFormInterface extends EntityHandlerInterface {
    *   - parent_entity_type: The type of the parent entity.
    *   - parent_entity: The parent entity.
    */
-  public function delete($ids, $context);
+  public function delete(array $ids, array $context);
 
 }

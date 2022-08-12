@@ -12,11 +12,9 @@ abstract class TokenTestBase extends BrowserTestBase {
   use TokenTestTrait;
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = ['path', 'token', 'token_module_test'];
+  protected static $modules = ['path', 'token', 'token_module_test'];
 
   /**
    * {@inheritdoc}

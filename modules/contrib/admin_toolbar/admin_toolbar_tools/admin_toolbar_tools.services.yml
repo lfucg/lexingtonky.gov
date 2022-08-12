@@ -3,3 +3,5 @@ services:
     class: Drupal\admin_toolbar_tools\AdminToolbarToolsHelper
     arguments:
      - '@entity_type.manager'
+     - '@plugin.manager.menu.local_task'
+     - '@current_route_match'

@@ -26,7 +26,7 @@ function token_module_test_page_attachments() {
 function token_module_test_node_presave(NodeInterface $node) {
   // Transform tokens in the body.
   // @see \Drupal\token\Tests\TokenMenuTest::testMenuTokens()
-  if ($node->hasField('body')) {
+  if ($node->hasField('body') && $node->get('body')->value) {
     $node->body->value = \Drupal::token()
       ->replace($node->body->value, ['node' => $node]);
   }

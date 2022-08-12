@@ -36,7 +36,7 @@ class UrlTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->token = $this->container->get('token');
     $this->requestStack = $this->container->get('request_stack');

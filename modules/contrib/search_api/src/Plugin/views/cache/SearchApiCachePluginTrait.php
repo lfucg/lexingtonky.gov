@@ -110,7 +110,7 @@ trait SearchApiCachePluginTrait {
    * {@inheritdoc}
    */
   public function cacheSet($type) {
-    if ($type != 'results') {
+    if ($type !== 'results') {
       parent::cacheSet($type);
       return;
     }
@@ -124,7 +124,33 @@ trait SearchApiCachePluginTrait {
       'search_api results' => $query->getSearchApiResults(),
     ];
 
+    // Get the max-age value according to the configuration of the view.
     $expire = $this->cacheSetMaxAge($type);
+    // Get the max-age value of the executed query. A 3rd party module might
+    // have set a different value on the query, especially in case of an error.
+    // Search API advises backend implementations to set a max-age of "0" on
+    // the query in case of errors before throwing exceptions.
+    $query_max_age = $query->getCacheMaxAge();
+
+    // If the max-age set on the query at runtime is anything else than
+    // Cache::PERMANENT we must handle it.
+    if ($query_max_age !== Cache::PERMANENT) {
+      // If the max-age set on the query at runtime is lower than the value
+      // configured in the view's caching settings, we must use the value
+      // provided by the query. That mathematical rule covers the case of no
+      // caching (max-age is "0") as well.
+      // In case that Cache::PERMANENT is configured for the view, any runtime
+      // value set on the query has precedence.
+      if ($expire === Cache::PERMANENT || $query_max_age < $expire) {
+        $expire = $query_max_age;
+      }
+    }
+
+    if ($expire === 0) {
+      // Don't cache the results.
+      return;
+    }
+
     if ($expire !== Cache::PERMANENT) {
       $expire += (int) $view->getRequest()->server->get('REQUEST_TIME');
     }
@@ -138,7 +164,7 @@ trait SearchApiCachePluginTrait {
    * {@inheritdoc}
    */
   public function cacheGet($type) {
-    if ($type != 'results') {
+    if ($type !== 'results') {
       return parent::cacheGet($type);
     }
 
@@ -258,6 +284,12 @@ trait SearchApiCachePluginTrait {
     // every single cacheable display in the view, thus we are resetting the
     // query to its original unprocessed state.
     $query = $this->getQuery(TRUE)->getSearchApiQuery();
+    // Add a tag to the query to indicate that this is not a real search but the
+    // save process of a view. Modules like facets can use this information to
+    // not perform their normal search time tasks on this query. This is
+    // especially important when an event handler would add caching information
+    // to the query.
+    $query->addTag('alter_cache_metadata');
     $query->preExecute();
     // Allow modules that alter the query to add their cache metadata to the
     // view.

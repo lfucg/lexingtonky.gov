@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
+class ComposerStaticInite3429cef06ac87390b37498e120d8279
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -5255,7 +5255,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'Solarium\\Support\\Utility' => __DIR__ . '/..' . '/solarium/solarium/src/Support/Utility.php',
         'Stack\\Builder' => __DIR__ . '/..' . '/stack/builder/src/Stack/Builder.php',
         'Stack\\StackedHttpKernel' => __DIR__ . '/..' . '/stack/builder/src/Stack/StackedHttpKernel.php',
-        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'Stringable' => __DIR__ . '/..' . '/myclabs/php-enum/stubs/Stringable.php',
         'Symfony\\Bridge\\PsrHttpMessage\\ArgumentValueResolver\\PsrServerRequestResolver' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/ArgumentValueResolver/PsrServerRequestResolver.php',
         'Symfony\\Bridge\\PsrHttpMessage\\EventListener\\PsrResponseListener' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/EventListener/PsrResponseListener.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\HttpFoundationFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/HttpFoundationFactory.php',
@@ -6866,6 +6866,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'cweagans\\Composer\\PatchEvent' => __DIR__ . '/..' . '/cweagans/composer-patches/src/PatchEvent.php',
         'cweagans\\Composer\\PatchEvents' => __DIR__ . '/..' . '/cweagans/composer-patches/src/PatchEvents.php',
         'cweagans\\Composer\\Patches' => __DIR__ . '/..' . '/cweagans/composer-patches/src/Patches.php',
+        'grasmash\\DrupalSecurityWarning\\Composer\\Plugin' => __DIR__ . '/..' . '/grasmash/drupal-security-warning/src/Composer/Plugin.php',
         'mglaman\\PHPStanDrupal\\Drupal\\DrupalAutoloader' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Drupal/DrupalAutoloader.php',
         'mglaman\\PHPStanDrupal\\Drupal\\DrupalServiceDefinition' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Drupal/DrupalServiceDefinition.php',
         'mglaman\\PHPStanDrupal\\Drupal\\DrupalStubFilesExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Drupal/DrupalStubFilesExtension.php',
@@ -6895,8 +6896,6 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\SymfonyCmfRouteObjectInterfaceConstantsRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/SymfonyCmfRouteObjectInterfaceConstantsRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\SymfonyCmfRoutingInClassMethodSignatureRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/SymfonyCmfRoutingInClassMethodSignatureRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\Coder\\DiscouragedFunctionsRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/Coder/DiscouragedFunctionsRule.php',
-        'mglaman\\PHPStanDrupal\\Rules\\Drupal\\DrupalRequestStackShimInClassMethodRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/DrupalRequestStackShimInClassMethodRule.php',
-        'mglaman\\PHPStanDrupal\\Rules\\Drupal\\DrupalRequestStackShimInstantiationRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/DrupalRequestStackShimInstantiationRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\EntityQuery\\EntityQueryHasAccessCheckRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/EntityQuery/EntityQueryHasAccessCheckRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\GlobalDrupalDependencyInjectionRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/GlobalDrupalDependencyInjectionRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\LoadIncludeBase' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/LoadIncludeBase.php',
@@ -6905,6 +6904,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\PluginManager\\AbstractPluginManagerRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/PluginManager/AbstractPluginManagerRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\PluginManager\\PluginManagerSetsCacheBackendRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/PluginManager/PluginManagerSetsCacheBackendRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\RenderCallbackRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/RenderCallbackRule.php',
+        'mglaman\\PHPStanDrupal\\Rules\\Drupal\\RequestStackGetMainRequestRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/RequestStackGetMainRequestRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\Tests\\BrowserTestBaseDefaultThemeRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/Tests/BrowserTestBaseDefaultThemeRule.php',
         'mglaman\\PHPStanDrupal\\Type\\ContainerDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/ContainerDynamicReturnTypeExtension.php',
         'mglaman\\PHPStanDrupal\\Type\\DrupalClassResolverDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/DrupalClassResolverDynamicReturnTypeExtension.php',
@@ -6933,11 +6933,11 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInite3429cef06ac87390b37498e120d8279::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInite3429cef06ac87390b37498e120d8279::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInite3429cef06ac87390b37498e120d8279::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInite3429cef06ac87390b37498e120d8279::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInite3429cef06ac87390b37498e120d8279::$classMap;
 
         }, null, ClassLoader::class);
     }
