@@ -1,4 +1,5 @@
 <?php
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
@@ -48,4 +49,16 @@ function lex_custom_update_9401() {
   return t("Installed/Updated the entity type(s): @entity_type_ids", [
     '@entity_type_ids' => implode(', ', $entity_type_ids),
   ]);
+}
+
+/**
+ * Create moderation_state column for taxonomy terms.
+ */
+function lex_custom_update_9402 () {
+  $field_storage_definition = BaseFieldDefinition::create('string')
+    ->setLabel(t('Moderation state'))
+    ->setDescription(t('Moderation state'));
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('moderation_state', 'taxonomy_term', 'workbench_moderation', $field_storage_definition);
 }
