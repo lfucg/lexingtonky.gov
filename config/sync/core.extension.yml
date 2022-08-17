@@ -24,6 +24,7 @@ module:
   config: 0
   contact: 0
   contact_storage: 0
+  content_moderation: 0
   contentimport: 0
   contextual: 0
   ctools: 0
@@ -82,6 +83,7 @@ module:
   rdf: 0
   redirect: 0
   responsive_image: 0
+  scheduled_publish: 0
   search: 0
   search_api: 0
   search_api_pantheon: 0
@@ -105,6 +107,7 @@ module:
   views_ui: 0
   viewsreference: 0
   workbench_moderation: 0
+  workflows: 0
   menu_link_content: 1
   pathauto: 1
   views: 10
