@@ -54,7 +54,7 @@ a, p {
 }
 
 a,
-.ui-widget-content a {
+.ui-widget-content a:not(.lex-calltoaction) {
   color: color(med-blue);
   &.dark-bg {
     color: color(white);
