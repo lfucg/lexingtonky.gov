@@ -31,7 +31,7 @@
       color: white;
       padding: 50px;
       line-height: 4rem;
-      
+
       @media screen and (max-width: 900px ) {
         font-size: 1.25rem;
         padding: 10px;
@@ -112,7 +112,7 @@
   .paragraph--type--quote-grid {
 
     .flex-content {
-      justify-content: space-between; 
+      justify-content: space-between;
 
     }
     .paragraph--type--quote {
@@ -216,7 +216,8 @@
 
   #logo {
     img {
-      margin: 10px;
+      margin: 0;
+      height: 100%;
     }
 
     .econdev-logo {
@@ -242,7 +243,7 @@
       }
     }
   }
-  
+
 
 .ed-help {
   .lex-button {
@@ -255,5 +256,5 @@
 }
 
 .econdev-img {
-  height: 50px !important;
+  height: 50px;
 }
