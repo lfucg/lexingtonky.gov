@@ -5,5 +5,6 @@ dependencies: {  }
 id: photo_grid
 label: 'Photo Grid'
 icon_uuid: null
+icon_default: null
 description: ''
 behavior_plugins: {  }

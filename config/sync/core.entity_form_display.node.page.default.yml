@@ -56,7 +56,7 @@ content:
     third_party_settings: {  }
   field_iframe:
     type: iframe_urlwidthheight
-    weight: 26
+    weight: 17
     region: content
     settings:
       headerlevel: '3'
@@ -88,18 +88,6 @@ content:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
-  field_lex_grid_ref:
-    type: entity_reference_paragraphs
-    weight: 17
-    region: content
-    settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: dropdown
-      form_display_mode: default
-      default_paragraph_type: ''
-    third_party_settings: {  }
   field_lex_site_nav:
     type: entity_reference_autocomplete
     weight: 6
@@ -114,7 +102,9 @@ content:
     type: metatag_firehose
     weight: 13
     region: content
-    settings: {  }
+    settings:
+      sidebar: true
+      use_details: true
     third_party_settings: {  }
   field_office_to_contact:
     type: entity_reference_autocomplete
@@ -148,18 +138,6 @@ content:
       form_display_mode: default
       default_paragraph_type: ''
     third_party_settings: {  }
-  field_photo_grid:
-    type: entity_reference_paragraphs
-    weight: 16
-    region: content
-    settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: dropdown
-      form_display_mode: default
-      default_paragraph_type: ''
-    third_party_settings: {  }
   field_related_departments:
     type: chosen_select
     weight: 8
@@ -175,7 +153,7 @@ content:
     third_party_settings: {  }
   field_related_page:
     type: entity_reference_autocomplete
-    weight: 18
+    weight: 16
     region: content
     settings:
       match_operator: CONTAINS
@@ -228,5 +206,7 @@ content:
     third_party_settings: {  }
 hidden:
   body: true
+  field_lex_grid_ref: true
+  field_photo_grid: true
   promote: true
   sticky: true
