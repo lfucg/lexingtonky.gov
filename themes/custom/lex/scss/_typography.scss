@@ -53,7 +53,8 @@ a, p {
   font-size: 1rem;
 }
 
-a {
+a,
+.ui-widget-content a:not(.lex-calltoaction) {
   color: color(med-blue);
   &.dark-bg {
     color: color(white);

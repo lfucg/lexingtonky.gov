@@ -63,6 +63,8 @@ body footer {
 
   a {
     color: color(white);
+    text-decoration: underline;
+
     &:hover {
       color: color(yellow);
     }
