@@ -9,7 +9,7 @@ use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\TypedData\FieldItemDataDefinitionInterface;
 
 /**
- * Class ReferenceUpgrader
+ * Class ReferenceUpgrader.
  *
  * When saving nested IEFs inside-out, after saving an inner entity, we must
  * "upgrade" its reference item with e.g. revision ID information.
@@ -25,17 +25,26 @@ final class ReferenceUpgrader {
    */
   private $entities = [];
 
+  /**
+   * Registers entities.
+   */
   public function registerEntity(EntityInterface $entity) {
     $entityId = $entity->id() ?? $this->throwNeedsId();
     $this->entities[$entity->getEntityTypeId()][$entityId] = $entity;
   }
 
+  /**
+   * Throws exceptions on trying to register entities without id.
+   */
   private function throwNeedsId() {
     throw new \RuntimeException("Can only register entity with ID.");
   }
 
+  /**
+   * Upgrades entities references.
+   */
   public function upgradeEntityReferences(FieldableEntityInterface $entity) {
-    foreach ($entity as $fieldName => $fieldItemList) {
+    foreach ($entity as $fieldItemList) {
       if (
         $fieldItemList instanceof EntityReferenceFieldItemListInterface
         && ($targetEntityType = $fieldItemList->getFieldDefinition()->getSetting('target_type'))

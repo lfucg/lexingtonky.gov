@@ -53,6 +53,7 @@ module:
   honeypot: 0
   iframe: 0
   image: 0
+  image_captcha: 0
   imce: 0
   inline_entity_form: 0
   jquery_ui: 0

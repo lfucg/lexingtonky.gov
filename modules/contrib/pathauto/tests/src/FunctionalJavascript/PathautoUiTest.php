@@ -140,7 +140,8 @@ class PathautoUiTest extends WebDriverTestBase {
     $session->getPage()->find('css', '.dropbutton-toggle > button')->press();
     $this->clickLink('Edit');
     $destination_query = ['query' => ['destination' => Url::fromRoute('entity.pathauto_pattern.collection')->toString()]];
-    $this->assertSession()->addressEquals('/admin/config/search/path/patterns/page_pattern', $destination_query);
+    $address = Url::fromRoute('entity.pathauto_pattern.edit_form', ['pathauto_pattern' => 'page_pattern'], [$destination_query]);
+    $this->assertSession()->addressEquals($address);
     $this->assertSession()->fieldValueEquals('pattern', '[node:title]');
     $this->assertSession()->fieldValueEquals('label', 'Page pattern');
     $this->assertSession()->checkboxChecked('edit-status');
@@ -185,7 +186,8 @@ class PathautoUiTest extends WebDriverTestBase {
     $this->drupalGet('/admin/config/search/path/patterns');
     $this->assertSession()->linkNotExists('Disable');
     $this->clickLink('Enable');
-    $this->assertSession()->addressEquals('/admin/config/search/path/patterns/page_pattern/enable', $destination_query);
+    $address = Url::fromRoute('entity.pathauto_pattern.enable', ['pathauto_pattern' => 'page_pattern'], [$destination_query]);
+    $this->assertSession()->addressEquals($address);
     $this->submitForm([], 'Enable');
     $this->assertSession()->pageTextContains('Enabled pattern Test.');
 
@@ -197,7 +199,8 @@ class PathautoUiTest extends WebDriverTestBase {
     $this->drupalGet('/admin/config/search/path/patterns');
     $session->getPage()->find('css', '.dropbutton-toggle > button')->press();
     $this->clickLink('Delete');
-    $this->assertSession()->addressEquals('/admin/config/search/path/patterns/page_pattern/delete', $destination_query);
+    $address = Url::fromRoute('entity.pathauto_pattern.delete_form', ['pathauto_pattern' => 'page_pattern'], [$destination_query]);
+    $this->assertSession()->addressEquals($address);
     $this->assertSession()->pageTextContains('This action cannot be undone.');
     $this->submitForm([], 'Delete');
     $this->assertSession()->pageTextContains('The pathauto pattern Test has been deleted.');

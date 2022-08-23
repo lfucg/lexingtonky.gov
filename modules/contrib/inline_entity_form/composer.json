@@ -6,7 +6,7 @@
   "minimum-stability": "dev",
   "require": {
     "php": ">=7.1",
-    "drupal/core": "^8.8 || ^9"
+    "drupal/core": "^8.8 || ^9 || ^10"
   },
   "require-dev": {
     "drupal/entity_reference_revisions": "^1.0"

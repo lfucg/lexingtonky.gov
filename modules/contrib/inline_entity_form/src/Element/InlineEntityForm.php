@@ -91,7 +91,7 @@ class InlineEntityForm extends RenderElement {
    * @return array
    *   The built entity form.
    */
-  public static function processEntityForm($entity_form, FormStateInterface $form_state, &$complete_form) {
+  public static function processEntityForm(array $entity_form, FormStateInterface $form_state, array &$complete_form) {
     if (empty($entity_form['#entity_type'])) {
       throw new \InvalidArgumentException('The inline_entity_form element requires the #entity_type property.');
     }
@@ -162,7 +162,7 @@ class InlineEntityForm extends RenderElement {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public static function validateEntityForm(&$entity_form, FormStateInterface $form_state) {
+  public static function validateEntityForm(array &$entity_form, FormStateInterface $form_state) {
     $inline_form_handler = static::getInlineFormHandler($entity_form['#entity_type']);
     $inline_form_handler->entityFormValidate($entity_form, $form_state);
   }
@@ -175,7 +175,7 @@ class InlineEntityForm extends RenderElement {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public static function submitEntityForm(&$entity_form, FormStateInterface $form_state) {
+  public static function submitEntityForm(array &$entity_form, FormStateInterface $form_state) {
     $inline_form_handler = static::getInlineFormHandler($entity_form['#entity_type']);
     $inline_form_handler->entityFormSubmit($entity_form, $form_state);
     if ($entity_form['#save_entity']) {

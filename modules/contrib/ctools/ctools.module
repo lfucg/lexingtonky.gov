@@ -9,6 +9,7 @@ use Drupal\Core\Entity\Plugin\Condition\EntityBundle as CoreEntityBundle;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\ctools\Plugin\Condition\EntityBundle;
+use Drupal\ctools\Plugin\Condition\NodeType;
 
 /**
  * Implements hook_theme().
@@ -89,9 +90,10 @@ function template_preprocess_ctools_wizard_trail_links(&$variables) {
  * @param $definitions
  */
 function ctools_condition_info_alter(&$definitions) {
-  // If the node_type's class is unaltered, use a custom ctools implementation.
+  // Drupal 9.x only: override core node_type with ctools constraints.
   if (isset($definitions['node_type']) && $definitions['node_type']['class'] == 'Drupal\node\Plugin\Condition\NodeType') {
-    $definitions['node_type']['class'] = 'Drupal\ctools\Plugin\Condition\NodeType';
+    @trigger_error('\Drupal\node\Plugin\Condition\NodeType is deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use \Drupal\Core\Entity\Plugin\Condition\EntityBundle instead. See https://www.drupal.org/node/2983299', E_USER_DEPRECATED);
+    $definitions['node_type']['class'] = NodeType::class;
   }
 
   // Replace all generic entity bundle conditions classes if they are unaltered,

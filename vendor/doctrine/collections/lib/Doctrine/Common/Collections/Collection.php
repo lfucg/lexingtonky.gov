@@ -27,7 +27,7 @@ use IteratorAggregate;
  * @psalm-template TKey of array-key
  * @psalm-template T
  * @template-extends IteratorAggregate<TKey, T>
- * @template-extends ArrayAccess<TKey|null, T>
+ * @template-extends ArrayAccess<TKey, T>
  */
 interface Collection extends Countable, IteratorAggregate, ArrayAccess
 {
@@ -123,7 +123,7 @@ interface Collection extends Countable, IteratorAggregate, ArrayAccess
      *
      * @return mixed[] The values of all elements in the collection, in the
      *                 order they appear in the collection.
-     * @psalm-return T[]
+     * @psalm-return list<T>
      */
     public function getValues();
 
@@ -239,7 +239,7 @@ interface Collection extends Countable, IteratorAggregate, ArrayAccess
      * @param Closure $p The predicate on which to partition.
      * @psalm-param Closure(TKey=, T=):bool $p
      *
-     * @return Collection<mixed> An array with two elements. The first element contains the collection
+     * @return Collection<mixed>[] An array with two elements. The first element contains the collection
      *                      of elements where the predicate returned TRUE, the second element
      *                      contains the collection of elements where the predicate returned FALSE.
      * @psalm-return array{0: Collection<TKey, T>, 1: Collection<TKey, T>}

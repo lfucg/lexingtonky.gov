@@ -6,4 +6,5 @@ inline_entity_form_test.form:
     form_mode: 'default'
     node: NULL
   requirements:
+    # Needs to be accessed by an anonymous user.
     _access: 'TRUE'

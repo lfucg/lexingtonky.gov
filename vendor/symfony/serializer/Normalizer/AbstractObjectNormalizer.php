@@ -196,7 +196,7 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
 
             $attributeValue = $this->applyCallbacks($attributeValue, $object, $attribute, $format, $context);
 
-            if (null !== $attributeValue && !is_scalar($attributeValue)) {
+            if (null !== $attributeValue && !\is_scalar($attributeValue)) {
                 $stack[$attribute] = $attributeValue;
             }
 
@@ -647,7 +647,7 @@ abstract class AbstractObjectNormalizer extends AbstractNormalizer
      *
      * @internal
      */
-    protected function createChildContext(array $parentContext, $attribute/*, ?string $format */): array
+    protected function createChildContext(array $parentContext, $attribute/* , ?string $format */): array
     {
         if (\func_num_args() >= 3) {
             $format = func_get_arg(2);

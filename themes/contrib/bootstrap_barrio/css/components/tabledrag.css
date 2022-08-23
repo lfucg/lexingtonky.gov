@@ -12,3 +12,7 @@ tr.drag-previous {
 body div.tabledrag-changed-warning {
   margin-bottom: 0.5em;
 }
+a.tabledrag-handle .handle {
+  width: 25px;
+  height: 25px;
+}

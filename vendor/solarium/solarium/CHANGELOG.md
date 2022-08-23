@@ -4,6 +4,32 @@ All notable changes to the Solarium library will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.2.6]
+### Fixed
+- An empty array for a multiValued field was wrongly interpreted as an empty child document by the Update request builder in 6.2.5
+
+
+## [6.2.5]
+### Added
+- Results and Documents implement [JsonSerializable](https://www.php.net/manual/en/class.jsonserializable)
+- ParallelExecution dispatches PreExecute, PreExecuteRequest, PostExecuteRequest, PostExecute events. It can be combined with plugins that hook into these events (e.g. PostBigRequest).
+- ParallelExecution support for Server queries
+- Solarium\Client::getVersion()
+
+### Fixed
+- Adding nested child documents through `Document::setField()` and `Document::addField()`
+
+### Changed
+- ParallelExecution doesn't replace an existing cURL adapter on the Client. Timeout and proxy settings are honoured on parallel requests.
+- ParallelExecution sets the 'timeout' and 'connectiontimeout' options from (Connection)TimeoutAware adapters when switching to a cURL adapter
+
+### Removed
+- Solarium\QueryType\Update\Query\Document::setFilterControlCharacters(), extend Update\Query\Query to use a custom request builder & helper if you don't want control characters filtered
+
+### Deprecated
+- Solarium\Client::VERSION
+
+
 ## [6.2.4] 
 ### Added
 - Symfony 6 support

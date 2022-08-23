@@ -300,6 +300,7 @@ class PathautoGenerator implements PathautoGeneratorInterface {
             ->getPluginDefinitionByType($this->tokenEntityMapper->getTokenTypeForEntityType($entity_type_id))))
         ->condition('status', 1)
         ->sort('weight')
+        ->accessCheck(TRUE)
         ->execute();
 
       $this->patternsByEntityType[$entity_type_id] = $this->entityTypeManager

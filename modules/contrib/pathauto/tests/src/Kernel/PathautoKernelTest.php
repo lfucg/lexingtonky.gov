@@ -29,7 +29,7 @@ class PathautoKernelTest extends KernelTestBase {
 
   use PathautoTestHelperTrait;
 
-  protected static $modules = ['system', 'field', 'text', 'user', 'node', 'path', 'path_alias', 'pathauto', 'pathauto_custom_punctuation_test', 'taxonomy', 'token', 'filter', 'ctools', 'language'];
+  protected static $modules = ['system', 'field', 'text', 'user', 'node', 'path', 'path_alias', 'pathauto', 'pathauto_custom_punctuation_test', 'taxonomy', 'token', 'filter', 'language'];
 
   protected $currentUser;
 

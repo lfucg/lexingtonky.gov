@@ -23,7 +23,7 @@ function hook_inline_entity_form_entity_form_alter(array &$entity_form, FormStat
  * Perform alterations before the reference form is included in the IEF widget.
  *
  * The reference form is used to add existing entities through an autocomplete
- * field
+ * field.
  *
  * @param array $reference_form
  *   Nested array of form elements that comprise the reference form.

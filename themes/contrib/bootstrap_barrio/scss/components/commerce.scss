@@ -59,7 +59,7 @@
   }
   .views-row {
     border-bottom: 1px solid $gray-400;
-    margin-top: $spacer / 2;
+    margin-top: calc($spacer / 2);
     display: flex;
     .views-field-title {
       width: 320px;
@@ -96,7 +96,7 @@
   color: $white;
   font-size: $font-size-xs;
   .cart-block--offcanvas-contents__links {
-    padding: $spacer/2 $spacer;
+    padding: calc($spacer / 2) $spacer;
     a {
       color: $white;
       text-decoration: none;
@@ -107,7 +107,7 @@
   }
   .btn-close {
     color: $white;
-    padding: $spacer / 4;
+    padding: calc($spacer / 4);
   }
   table {
     color: $white;
@@ -116,10 +116,10 @@
     }
     td.cart-block--offcanvas-cart-table__title,
     td.cart-block--offcanvas-cart-table__price {
-      padding: $spacer/2 $spacer/4 !important;
+      padding: calc($spacer / 2) calc($spacer / 4) !important;
     }
     td.cart-block--offcanvas-cart-table__quantity {
-      padding: $spacer/4 !important;
+      padding: calc($spacer / 4) !important;
     }
     .btn {
       color: $white;
@@ -134,7 +134,7 @@
         color: white;
         border-color: white;
         font-size: $font-size-xs;
-        margin-top: $spacer/2;
+        margin-top: calc($spacer / 2);
       }
       .btn:hover {
         background: $primary-shade;

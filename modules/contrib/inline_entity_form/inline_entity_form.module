@@ -2,6 +2,8 @@
 
 /**
  * @file
+ * The inline entity form module.
+ *
  * Provides a widget for inline management (creation, modification, removal) of
  * referenced entities. The primary use case is the parent -> children one
  * (for example, order -> line items), where the child entities are never
@@ -70,7 +72,7 @@ function inline_entity_form_theme() {
  * @return array
  *   The form array containing the embedded form.
  */
-function inline_entity_form_reference_form($reference_form, FormStateInterface &$form_state) {
+function inline_entity_form_reference_form(array $reference_form, FormStateInterface &$form_state) {
   $labels = $reference_form['#ief_labels'];
   $ief_id = $reference_form['#ief_id'];
   /** @var \Drupal\field\Entity\FieldConfig $instance */
@@ -93,7 +95,7 @@ function inline_entity_form_reference_form($reference_form, FormStateInterface &
     '#required' => TRUE,
     '#maxlength' => 255,
   ];
-  // Add the actions
+  // Add the actions.
   $reference_form['actions'] = [
     '#type' => 'container',
     '#weight' => 100,
@@ -119,7 +121,12 @@ function inline_entity_form_reference_form($reference_form, FormStateInterface &
       'callback' => 'inline_entity_form_get_element',
       'wrapper' => 'inline-entity-form-' . $reference_form['#ief_id'],
     ],
-    '#submit' => [['\Drupal\inline_entity_form\Plugin\Field\FieldWidget\InlineEntityFormComplex', 'closeForm']],
+    '#submit' => [
+      [
+        '\Drupal\inline_entity_form\Plugin\Field\FieldWidget\InlineEntityFormComplex',
+        'closeForm',
+      ],
+    ],
   ];
 
   $reference_form['#element_validate'][] = 'inline_entity_form_reference_form_validate';
@@ -139,7 +146,7 @@ function inline_entity_form_reference_form($reference_form, FormStateInterface &
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state of the parent form.
  */
-function inline_entity_form_reference_form_validate(&$reference_form, FormStateInterface $form_state) {
+function inline_entity_form_reference_form_validate(array &$reference_form, FormStateInterface $form_state) {
   $form_values = NestedArray::getValue($form_state->getValues(), $reference_form['#parents']);
   if (empty($form_values['entity_id'])) {
     // The entity_id element is required, the value is empty only if
@@ -153,7 +160,7 @@ function inline_entity_form_reference_form_validate(&$reference_form, FormStateI
 
   // Check if the entity is already referenced by the field.
   if (!empty($entity)) {
-    foreach ($form_state->get(['inline_entity_form', $ief_id, 'entities']) as $key => $value) {
+    foreach ($form_state->get(['inline_entity_form', $ief_id, 'entities']) as $value) {
       if ($value['entity'] && $value['entity']->id() == $entity->id()) {
         $form_state->setError($reference_form['entity_id'], t('The selected @label has already been added.', ['@label' => $labels['singular']]));
         break;
@@ -172,7 +179,7 @@ function inline_entity_form_reference_form_validate(&$reference_form, FormStateI
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state of the parent form.
  */
-function inline_entity_form_reference_form_submit($reference_form, FormStateInterface $form_state) {
+function inline_entity_form_reference_form_submit(array $reference_form, FormStateInterface $form_state) {
   $ief_id = $reference_form['#ief_id'];
   $form_values = NestedArray::getValue($form_state->getValues(), $reference_form['#parents']);
   $storage = \Drupal::entityTypeManager()->getStorage($reference_form['#entity_type']);
@@ -198,12 +205,12 @@ function inline_entity_form_reference_form_submit($reference_form, FormStateInte
  *
  * The form is shown below the entity table, at the bottom of the widget.
  *
- * @param $form
+ * @param array $form
  *   The complete parent form.
- * @param $form_state
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state of the parent form.
  */
-function inline_entity_form_open_form($form, FormStateInterface $form_state) {
+function inline_entity_form_open_form(array $form, FormStateInterface $form_state) {
   $element = inline_entity_form_get_element($form, $form_state);
   $ief_id = $element['#ief_id'];
   $form_state->setRebuild();
@@ -224,12 +231,12 @@ function inline_entity_form_open_form($form, FormStateInterface $form_state) {
 /**
  * Button #submit callback: Cleans up form state for a closed entity form.
  *
- * @param $form
+ * @param array $form
  *   The complete parent form.
- * @param $form_state
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state of the parent form.
  */
-function inline_entity_form_cleanup_form_state($form, FormStateInterface $form_state) {
+function inline_entity_form_cleanup_form_state(array $form, FormStateInterface $form_state) {
   $element = inline_entity_form_get_element($form, $form_state);
   EntityInlineForm::submitCleanFormState($element['form']['inline_entity_form'], $form_state);
 }
@@ -240,12 +247,12 @@ function inline_entity_form_cleanup_form_state($form, FormStateInterface $form_s
  * The row is identified by #ief_row_delta stored on the triggering
  * element.
  *
- * @param $form
+ * @param array $form
  *   The complete parent form.
- * @param $form_state
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state of the parent form.
  */
-function inline_entity_form_open_row_form($form, FormStateInterface $form_state) {
+function inline_entity_form_open_row_form(array $form, FormStateInterface $form_state) {
   $element = inline_entity_form_get_element($form, $form_state);
   $ief_id = $element['#ief_id'];
   $delta = $form_state->getTriggeringElement()['#ief_row_delta'];
@@ -254,18 +261,17 @@ function inline_entity_form_open_row_form($form, FormStateInterface $form_state)
   $form_state->set(['inline_entity_form', $ief_id, 'entities', $delta, 'form'], $form_state->getTriggeringElement()['#ief_row_form']);
 }
 
-
 /**
  * Closes all open IEF forms.
  *
  * Recurses and closes open forms in nested IEF widgets as well.
  *
- * @param $elements
+ * @param array $elements
  *   An array of form elements containing entity forms.
- * @param $form_state
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state of the parent form.
  */
-function inline_entity_form_close_all_forms($elements, FormStateInterface $form_state) {
+function inline_entity_form_close_all_forms(array $elements, FormStateInterface $form_state) {
   // Recurse through all children.
   foreach (Element::children($elements) as $key) {
     if (!empty($elements[$key])) {
@@ -289,12 +295,12 @@ function inline_entity_form_close_all_forms($elements, FormStateInterface $form_
 /**
  * Button #submit callback: Cleans up form state for a closed entity row form.
  *
- * @param $form
+ * @param array $form
  *   The complete parent form.
- * @param $form_state
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state of the parent form.
  */
-function inline_entity_form_cleanup_row_form_state($form, FormStateInterface $form_state) {
+function inline_entity_form_cleanup_row_form_state(array $form, FormStateInterface $form_state) {
   $element = inline_entity_form_get_element($form, $form_state);
   $delta = $form_state->getTriggeringElement()['#ief_row_delta'];
   $entity_form = $element['entities'][$delta]['form']['inline_entity_form'];
@@ -341,12 +347,18 @@ function template_preprocess_inline_entity_form_entity_table(array &$variables) 
   $header = [];
   if ($has_tabledrag) {
     $header[] = ['data' => '', 'class' => ['ief-tabledrag-header']];
-    $header[] = ['data' => t('Sort order'), 'class' => ['ief-sort-order-header']];
+    $header[] = [
+      'data' => t('Sort order'),
+      'class' => ['ief-sort-order-header'],
+    ];
   }
   // Add header columns for each field.
   $first = TRUE;
   foreach ($fields as $field_name => $field) {
-    $column = ['data' => $field['label'], 'class' => ['inline-entity-form-' . $entity_type . '-' . $field_name]];
+    $column = [
+      'data' => $field['label'],
+      'class' => ['inline-entity-form-' . $entity_type . '-' . $field_name],
+    ];
     // The first column gets a special class.
     if ($first) {
       $column['class'][] = 'ief-first-column-header';
@@ -364,7 +376,10 @@ function template_preprocess_inline_entity_form_entity_table(array &$variables) 
     $row_classes = ['ief-row-entity'];
     $cells = [];
     if ($has_tabledrag) {
-      $cells[] = ['data' => ['#plain_text' => ''], '#wrapper_attributes' => ['class' => ['ief-tabledrag-handle']]];
+      $cells[] = [
+        'data' => ['#plain_text' => ''],
+        '#wrapper_attributes' => ['class' => ['ief-tabledrag-handle']],
+      ];
       $cells[] = ['data' => $form[$key]['delta']];
       $row_classes[] = 'draggable';
     }
@@ -396,8 +411,9 @@ function template_preprocess_inline_entity_form_entity_table(array &$variables) 
 
         $data = call_user_func_array($field['callback'], array_values($arguments));
 
-        // Backward compatibility for callbacks that just provide a string not an array.
-        if(!is_array($data)) {
+        // Backward compatibility for callbacks that just provide a string not
+        // an array.
+        if (!is_array($data)) {
           $data = ['#markup' => $data];
         }
       }
@@ -419,7 +435,13 @@ function template_preprocess_inline_entity_form_entity_table(array &$variables) 
     if (!empty($form[$key]['form'])) {
       $row = [];
       $row[] = $form[$key]['form'] + ['#wrapper_attributes' => ['colspan' => count($fields) + 1]];
-      $rows[] = $row + ['#attributes' => ['class' => ['ief-row-form'], 'no_striping' => TRUE]];
+      $rows[] = $row + [
+        '#attributes' =>
+        [
+          'class' => ['ief-row-form'],
+          'no_striping' => TRUE,
+        ],
+      ];
     }
   }
 
@@ -447,7 +469,6 @@ function template_preprocess_inline_entity_form_entity_table(array &$variables) 
   }
 }
 
-
 /**
  * Implements hook_migrate_prepare_row().
  */
@@ -455,7 +476,6 @@ function inline_entity_form_migrate_prepare_row(Row $row, MigrateSourceInterface
   \Drupal::classResolver(MigrationHelper::class)
     ->alterRow($row, $source, $migration);
 }
-
 
 /**
  * Implements hook_migration_plugins_alter().

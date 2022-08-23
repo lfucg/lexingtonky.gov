@@ -36,8 +36,8 @@ class UpgradeStatusAnalyzeTest extends UpgradeStatusTestBase {
 
     $report = $key_value->get('upgrade_status_test_error');
     $this->assertNotEmpty($report);
-    $this->assertEquals(5, $report['data']['totals']['file_errors']);
-    $this->assertCount(5, $report['data']['files']);
+    $this->assertEquals($this->getDrupalCoreMajorVersion() < 9 ? 5 : 6, $report['data']['totals']['file_errors']);
+    $this->assertCount($this->getDrupalCoreMajorVersion() < 9 ? 5 : 6, $report['data']['files']);
     $file = reset($report['data']['files']);
     $message = $file['messages'][0];
     $this->assertEquals('fatal.php', basename(key($report['data']['files'])));
@@ -58,6 +58,13 @@ class UpgradeStatusAnalyzeTest extends UpgradeStatusTestBase {
     $message = $file['messages'][0];
     $this->assertEquals("Configuration entity must define a `config_export` key. See https://www.drupal.org/node/2481909", $message['message']);
     $this->assertEquals(15, $message['line']);
+    if ($this->getDrupalCoreMajorVersion() > 8) {
+      $file = next($report['data']['files']);
+      $this->assertEquals('upgrade_status_test_error.routing.yml', basename(key($report['data']['files'])));
+      $message = $file['messages'][0];
+      $this->assertEquals("The _access_node_revision routing requirement is deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use _entity_access instead. See https://www.drupal.org/node/3161210.", $message['message']);
+      $this->assertEquals(0, $message['line']);
+    }
     $file = next($report['data']['files']);
     $this->assertEquals('upgrade_status_test_error.info.yml', basename(key($report['data']['files'])));
     $message = $file['messages'][0];

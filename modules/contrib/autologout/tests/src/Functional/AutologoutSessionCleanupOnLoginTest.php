@@ -2,8 +2,9 @@
 
 namespace Drupal\Tests\autologout\Functional;
 
-use Behat\Mink\Driver\GoutteDriver;
+use Behat\Mink\Driver\BrowserKitDriver;
 use Behat\Mink\Session;
+use Drupal\Tests\DrupalTestBrowser;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\user\Entity\User;
 
@@ -17,11 +18,16 @@ use Drupal\user\Entity\User;
 class AutologoutSessionCleanupOnLoginTest extends BrowserTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = ['autologout', 'node'];
+  protected static $modules = ['autologout', 'node'];
 
   /**
    * A store references to different sessions.
@@ -54,7 +60,7 @@ class AutologoutSessionCleanupOnLoginTest extends BrowserTestBase {
   /**
    * Performs any pre-requisite tasks that need to happen.
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     // Create and log in our privileged user.
     $this->privilegedUser = $this->drupalCreateUser([
@@ -178,9 +184,12 @@ class AutologoutSessionCleanupOnLoginTest extends BrowserTestBase {
     } while (isset($this->loggedInUsers[$this->getSessionName()]));
 
     $this->loggedInUsers[$session_id] = clone $this->privilegedUser;
+    $client = new DrupalTestBrowser();
+    $driver = new BrowserKitDriver($client);
+    $session = new Session($driver);
     $this->mink->registerSession(
       $this->getSessionName(),
-      new Session(new GoutteDriver())
+      $session
     );
     $this->mink->setDefaultSessionName($this->getSessionName());
     $this->loggedInUser = FALSE;

@@ -1,0 +1,53 @@
+/**
+ * @file
+ * Visual styles for weform's form components.
+ */
+
+/* Add require asterisk to nessesary fields */
+
+.form-required::after {
+  content: '';
+  vertical-align: super;
+  display: inline-block;
+  background-image: url(../../../contrib/bootstrap_barrio/images/required.svg);
+  background-repeat: no-repeat;
+  background-size: 7px 7px;
+  width: 7px;
+  height: 7px;
+  margin: 0 0.3em;
+}
+
+ /* Button styles for radios and checkboxes when set under "Options Display" */
+
+.webform-options-display-buttons-horizontal .webform-options-display-buttons-wrapper {
+  flex: auto;
+}
+.webform-options-display-buttons {
+  .form-check-label {
+    margin: 0 5px 10px 5px;
+    border: 3px solid $gray-200;
+    border-radius: 3px;
+    background-color: $white;
+    padding: 10px;
+    width: 100%;
+
+    &:hover {
+      border-color: $border-color;
+      color: $gray-800;
+    }
+  }
+  .form-check-input:checked ~ .form-check-label {
+    border-color: $primary-shade;
+    color: $gray-800;
+  }
+  .webform-options-display-buttons-wrapper {
+    .form-check-label {
+      text-align: center;
+      margin: 0 5px 10px 0;
+    }
+    .radio,
+    .form-check {
+      padding: 0;
+    }
+  }
+}

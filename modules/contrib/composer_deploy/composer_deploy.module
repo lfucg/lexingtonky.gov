@@ -107,7 +107,7 @@ function composer_deploy_preprocess_update_project_status(&$variables) {
 function composer_deploy_theme_registry_alter(&$theme_registry) {
   if (isset($theme_registry['update_version'])) {
     $theme_registry['update_version']['type'] = 'module';
-    $theme_registry['update_version']['path'] = drupal_get_path('module', 'composer_deploy') . '/templates';
+    $theme_registry['update_version']['path'] = \Drupal::service('extension.list.module')->getPath('composer_deploy') . '/templates';
     unset($theme_registry['update_version']['theme path']);
   }
 }

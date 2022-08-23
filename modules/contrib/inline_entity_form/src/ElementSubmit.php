@@ -22,7 +22,7 @@ class ElementSubmit {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public static function attach(&$form, FormStateInterface $form_state) {
+  public static function attach(array &$form, FormStateInterface $form_state) {
     // attach() is called for each IEF form element, but the callbacks only
     // need to be added once per form build.
     if (isset($form['#ief_element_submit_attached'])) {
@@ -50,7 +50,7 @@ class ElementSubmit {
    * @param array $complete_form
    *   The complete form.
    */
-  public static function addCallback(&$element, $complete_form) {
+  public static function addCallback(array &$element, array $complete_form) {
     if (empty($element['#submit'])) {
       // Drupal runs either the button-level callbacks or the form-level ones.
       // Having no button-level callbacks indicates that the form has relied
@@ -60,7 +60,7 @@ class ElementSubmit {
 
     $element['#submit'] = array_merge([[get_called_class(), 'trigger']], $element['#submit']);
     // Used to distinguish between an inline form submit and main form submit.
-    $element['#ief_submit_trigger']  = TRUE;
+    $element['#ief_submit_trigger'] = TRUE;
     $element['#ief_submit_trigger_all'] = TRUE;
   }
 
@@ -72,7 +72,7 @@ class ElementSubmit {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public static function trigger(&$form, FormStateInterface $form_state) {
+  public static function trigger(array &$form, FormStateInterface $form_state) {
     $triggered_element = $form_state->getTriggeringElement();
     if (!empty($triggered_element['#ief_submit_trigger_all'])) {
       // The parent form was submitted, process all IEFs and their children.
@@ -95,7 +95,7 @@ class ElementSubmit {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public static function doSubmit(&$element, FormStateInterface $form_state) {
+  public static function doSubmit(array &$element, FormStateInterface $form_state) {
     // Recurse through all children.
     foreach (Element::children($element) as $key) {
       if (!empty($element[$key])) {

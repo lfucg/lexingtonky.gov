@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\ctools\Unit;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -19,15 +20,16 @@ use Drupal\Tests\UnitTestCase;
  */
 class VariantCollectionTraitTest extends UnitTestCase {
 
+  use ProphecyTrait;
   /**
-   * @var \Drupal\Component\Plugin\PluginManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Component\Plugin\PluginManagerInterface|\PHPUnit\Framework\MockObject\MockObject
    */
   protected $manager;
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $container = new ContainerBuilder();
     $this->manager = $this->prophesize(PluginManagerInterface::class);

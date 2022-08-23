@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\ctools\Kernel;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\ctools\Event\BlockVariantEvent;
 use Drupal\ctools\Event\BlockVariantEvents;
 use Drupal\ctools_block_display_test\Plugin\DisplayVariant\BlockDisplayVariant;
@@ -15,6 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class BlockDisplayVariantTest extends KernelTestBase {
 
+  use ProphecyTrait;
   /**
    * {@inheritdoc}
    */
@@ -38,11 +40,11 @@ class BlockDisplayVariantTest extends KernelTestBase {
     // Set up the expected calls to the event dispatcher.
     $event = Argument::type(BlockVariantEvent::class);
 
-    $event_dispatcher->dispatch(BlockVariantEvents::ADD_BLOCK, $event)
+    $event_dispatcher->dispatch($event, BlockVariantEvents::ADD_BLOCK)
       ->shouldBeCalled();
-    $event_dispatcher->dispatch(BlockVariantEvents::UPDATE_BLOCK, $event)
+    $event_dispatcher->dispatch($event, BlockVariantEvents::UPDATE_BLOCK)
       ->shouldBeCalled();
-    $event_dispatcher->dispatch(BlockVariantEvents::DELETE_BLOCK, $event)
+    $event_dispatcher->dispatch($event, BlockVariantEvents::DELETE_BLOCK)
       ->shouldBeCalled();
 
     $block_id = $variant->addBlock(['id' => 'system_powered_by_block']);

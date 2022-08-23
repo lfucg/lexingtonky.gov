@@ -21,10 +21,10 @@
 /* Footer Bottom Styling. */
 
 .site-footer__bottom .block {
-    margin: ($spacer / 2) 0;
+    margin: calc($spacer / 2) 0;
 }
 
 .site-footer__bottom .content {
-    padding: ($spacer / 2) 0;
+    padding: calc($spacer / 2) 0;
     margin-top: 0;
 }

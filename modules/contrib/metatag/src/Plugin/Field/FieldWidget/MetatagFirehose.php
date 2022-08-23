@@ -202,7 +202,7 @@ class MetatagFirehose extends WidgetBase implements ContainerFactoryPluginInterf
 
     // Scroll height configuration.
     $scroll_height = $settings->get('tag_scroll_max_height');
-    if (!empty($scrollheight)) {
+    if (!empty($scroll_height)) {
       $form['#attached']['drupalSettings']['metatag']['max_height'] = $scroll_height;
       $form['#attached']['library'][] = 'metatag/firehose_widget';
       $element['#attributes']['class'][] = 'metatags';

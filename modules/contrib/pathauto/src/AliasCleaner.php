@@ -213,7 +213,7 @@ class AliasCleaner implements AliasCleanerInterface {
       return '';
     }
 
-    $langcode = NULL;
+    $langcode = 'en';
     if (!empty($options['language'])) {
       $langcode = $options['language']->getId();
     }
@@ -233,7 +233,7 @@ class AliasCleaner implements AliasCleanerInterface {
 
     // Replace or drop punctuation based on user settings.
     $output = strtr($output, $this->cleanStringCache['punctuation']);
-    
+
     // Optionally transliterate.
     if ($this->cleanStringCache['transliterate']) {
       // If the reduce strings to letters and numbers is enabled, don't bother

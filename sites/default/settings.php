@@ -109,3 +109,5 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
     $config['search_api.index.pantheon_index']['server'] = 'pantheon';
   }
 }
+
+$config['system.logging']['error_level']='verbose';

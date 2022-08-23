@@ -9,7 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\ctools\Event\WizardEvent;
-use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -25,7 +25,7 @@ abstract class EntityFormWizardBase extends FormWizardBase implements EntityForm
   protected $entityTypeManager;
 
   /**
-   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $tempstore
+   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $tempstore
    *   Tempstore Factory for keeping track of values in each step of the
    *   wizard.
    * @param \Drupal\Core\Form\FormBuilderInterface $builder
@@ -36,18 +36,16 @@ abstract class EntityFormWizardBase extends FormWizardBase implements EntityForm
    *   The event dispatcher.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *   The route match object.
    * @param $tempstore_id
-   *   The private temp store factory collection name.
+   *   The shared temp store factory collection name.
    * @param null $machine_name
-   *   The PrivateTempStore key for our current wizard values.
+   *   The SharedTempStore key for our current wizard values.
    * @param null $step
    *   The current active step of the wizard.
    */
-  public function __construct(PrivateTempStoreFactory $tempstore, FormBuilderInterface $builder, ClassResolverInterface $class_resolver, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $route_match, RendererInterface $renderer, $tempstore_id, EntityTypeManagerInterface $entity_type_manager, $machine_name = NULL, $step = NULL) {
-    $this->entityTypeManager = $entity_type_manager;
+  public function __construct(SharedTempStoreFactory $tempstore, FormBuilderInterface $builder, ClassResolverInterface $class_resolver, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $route_match, RendererInterface $renderer, $tempstore_id, EntityTypeManagerInterface $entity_type_manager, $machine_name = NULL, $step = NULL) {
     parent::__construct($tempstore, $builder, $class_resolver, $event_dispatcher, $route_match, $renderer, $tempstore_id, $machine_name, $step);
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -55,7 +53,7 @@ abstract class EntityFormWizardBase extends FormWizardBase implements EntityForm
    */
   public static function getParameters() {
     $parameters = [
-      'tempstore' => \Drupal::service('tempstore.private'),
+      'tempstore' => \Drupal::service('tempstore.shared'),
       'builder' => \Drupal::service('form_builder'),
       'class_resolver' => \Drupal::service('class_resolver'),
       'event_dispatcher' => \Drupal::service('event_dispatcher'),
@@ -89,7 +87,7 @@ abstract class EntityFormWizardBase extends FormWizardBase implements EntityForm
       $values[$this->getEntityType()] = $entity;
     }
     $event = new WizardEvent($this, $values);
-    $this->dispatcher->dispatch(FormWizardInterface::LOAD_VALUES, $event);
+    $this->dispatcher->dispatch($event, FormWizardInterface::LOAD_VALUES);
     return $event->getValues();
   }
 

@@ -48,12 +48,13 @@ function autologout_form_user_form_alter(&$form, FormStateInterface $form_state)
   }
 
   if ($access) {
+    $max_timeout = \Drupal::config('autologout.settings')->get('max_timeout');
     $form['user_' . $user_id] = [
       '#type' => 'textfield',
       '#title' => t('Your current logout threshold'),
-      '#default_value' => isset($autologout_data) ? $autologout_data : '',
+      '#default_value' => $autologout_data ?? '',
       '#size' => 8,
-      '#description' => t('How many seconds to give a user to respond to the logout dialog before ending their session.'),
+      '#description' => t('The length of inactivity time, in seconds, before automated log out. Must be between 60 and @max_timeout seconds.', ['@max_timeout' => $max_timeout]),
       '#element_validate' => ['_autologout_user_uid_timeout_validate'],
     ];
 
@@ -96,8 +97,10 @@ function autologout_user_profile_submit(&$form, FormStateInterface $form_state) 
     $timeout = $form_state->getValue('user_' . $user_id);
     \Drupal::service('user.data')->set('autologout', $user_id, 'timeout', $timeout);
   }
-
-  \Drupal::service('user.data')->set('autologout', $user_id, 'timeout', $timeout);
+  else {
+    $timeout = \Drupal::config('autologout.settings')->get('timeout');
+    \Drupal::service('user.data')->set('autologout', $user_id, 'timeout', $timeout);
+  }
 }
 
 /**
@@ -121,15 +124,21 @@ function autologout_autologout_prevent() {
 
   // Check if user IP address is in the whitelist.
   $ip_address_whitelist = array_map('trim',
-      explode("\n", trim(\Drupal::config('autologout.settings')->get('whitelisted_ip_addresses')))
+      explode("\n", trim(\Drupal::config('autologout.settings')->get('whitelisted_ip_addresses') ?: ''))
   );
 
   if (in_array($path_args[1], $paths)) {
     return TRUE;
   }
 
-  // If user is anonymous or has no timeout set.
-  if ($user->id() == 0 || (!\Drupal::service('autologout.manager')->getUserTimeout())) {
+  // If user is anonymous.
+  if ($user->id() == 0) {
+    return TRUE;
+  }
+
+  // If user has no timeout set.
+  if (\Drupal::service('autologout.manager')->getUserTimeout() === 0) {
+    _check_session_variable();
     return TRUE;
   }
 
@@ -159,8 +168,20 @@ function autologout_autologout_prevent() {
       }
     }
   }
-  if (!empty($ip_address_whitelist) && in_array($user_ip, $ip_address_whitelist)) {
+  if (in_array($user_ip, $ip_address_whitelist)) {
+    _check_session_variable();
     return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Helper function to unset the autologout session variable if present.
+ */
+function _check_session_variable() {
+  if (isset($_SESSION['autologout_last'])) {
+    unset($_SESSION['autologout_last']);
   }
 }
 
@@ -182,7 +203,7 @@ function autologout_autologout_refresh_only() {
  * to 1 after initial load. If this is 1 on subsequent loads, the page was
  * loaded from cache and an autologout timeout refresh needs to be triggered.
  */
-function autologout_page_attachments(array &$page) {
+function autologout_page_attachments_alter(array &$attachments) {
   $autologout_manager = \Drupal::service('autologout.manager');
 
   // Check if JS should be included on this request.
@@ -200,7 +221,7 @@ function autologout_page_attachments(array &$page) {
   $timeout = $autologout_manager->getUserTimeout();
   $timeout_padding = $settings->get('padding');
   $redirect_url = $autologout_manager->getUserRedirectUrl();
-  $redirect_query = \Drupal::service('redirect.destination')->getAsArray() + array('autologout_timeout' => 1);
+  $redirect_query = \Drupal::service('redirect.destination')->getAsArray() + ['autologout_timeout' => 1];
   $no_dialog = $settings->get('no_dialog');
   $disable_buttons = $settings->get('disable_buttons');
   $yes_button = $settings->get('yes_button');
@@ -216,13 +237,16 @@ function autologout_page_attachments(array &$page) {
   if (!$title) {
     $title = \Drupal::config('system.site')->get('name') . ' Alert';
   }
+  // phpcs:ignore
   $msg = t(Xss::filter($settings->get('message')));
+  $logout_regardless_of_activity = $settings->get('logout_regardless_of_activity');
 
   $settings = [
     'timeout' => $refresh_only ? ($timeout * 500) : ($timeout * 1000),
     'timeout_padding' => $timeout_padding * 1000,
     'message' => $msg,
     'redirect_url' => Url::fromUserInput($redirect_url, ['query' => $redirect_query])->toString(),
+    // phpcs:ignore
     'title' => t($title),
     'refresh_only' => $refresh_only,
     'no_dialog' => $no_dialog,
@@ -230,6 +254,8 @@ function autologout_page_attachments(array &$page) {
     'yes_button' => $yes_button,
     'no_button' => $no_button,
     'use_alt_logout_method' => $use_alt_logout_method,
+    'logout_regardless_of_activity' => $logout_regardless_of_activity,
+    'modal_width' => $settings->get('modal_width') ? (int) $settings->get('modal_width') : 'auto',
   ];
   // If this is an AJAX request, then the logout redirect url should still be
   // referring to the page that generated this request.
@@ -239,7 +265,8 @@ function autologout_page_attachments(array &$page) {
     $referer = $current_request->headers->get('referer');
     if ($referer) {
       $destination = str_replace($base_url . '/', '', $referer);
-    } else {
+    }
+    else {
       $destination = $base_url;
     }
     $settings['redirect_url'] = Url::fromUserInput($redirect_url, [
@@ -248,13 +275,13 @@ function autologout_page_attachments(array &$page) {
     ]);
   }
 
-  autologout_attach_js($page, $settings);
+  autologout_attach_js($attachments, $settings);
 }
 
 /**
  * Implements hook_page_bottom().
  */
-function autologout_page_bottom() {
+function autologout_page_bottom(array &$page_bottom) {
   if (!\Drupal::service('autologout.manager')->preventJs()) {
     $page_bottom['autologout'] = [
       '#markup' => '<form id="autologout-cache-check"><input type="hidden" id="autologout-cache-check-bit" value="0" /></form>',
@@ -273,6 +300,7 @@ function autologout_page_bottom() {
 function autologout_attach_js(array &$element, array $settings) {
   $element['#attached']['drupalSettings']['autologout'] = $settings;
   $element['#attached']['library'][] = 'autologout/drupal.autologout';
+  $element['#cache']['tags'][] = 'config:autologout.settings';
 }
 
 /**
@@ -284,10 +312,11 @@ function autologout_attach_js(array &$element, array $settings) {
  */
 function autologout_user_login($account) {
   // Cleanup old sessions.
+  $autologout_manager = \Drupal::service('autologout.manager');
   $timeout = \Drupal::service('autologout.manager')->getUserTimeout($account->id());
 
-  if (empty($timeout)) {
-    // Users that don't get logged have their sessions left.
+  // Do not clear sessions if autologout prevent is triggered.
+  if ($autologout_manager->preventJs()) {
     return;
   }
 
@@ -310,4 +339,7 @@ function autologout_user_login($account) {
       ->condition('sid', $sids, 'IN')
       ->execute();
   }
+
+  // Add login time cookie.
+  user_cookie_save(['autologout_login' => \Drupal::time()->getCurrentTime()]);
 }

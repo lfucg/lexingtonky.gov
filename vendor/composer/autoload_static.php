@@ -185,6 +185,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
             'DrupalCodeGenerator\\' => 20,
             'Doctrine\\Persistence\\' => 21,
             'Doctrine\\Inflector\\' => 19,
+            'Doctrine\\Deprecations\\' => 22,
             'Doctrine\\Common\\Lexer\\' => 22,
             'Doctrine\\Common\\Inflector\\' => 26,
             'Doctrine\\Common\\Collections\\' => 28,
@@ -551,6 +552,10 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'Doctrine\\Inflector\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector',
+        ),
+        'Doctrine\\Deprecations\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/deprecations/lib/Doctrine/Deprecations',
         ),
         'Doctrine\\Common\\Lexer\\' => 
         array (
@@ -1197,6 +1202,8 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'Doctrine\\Common\\Util\\Debug' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Util/Debug.php',
         'Doctrine\\Common\\Util\\Inflector' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Util/Inflector.php',
         'Doctrine\\Common\\Version' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Version.php',
+        'Doctrine\\Deprecations\\Deprecation' => __DIR__ . '/..' . '/doctrine/deprecations/lib/Doctrine/Deprecations/Deprecation.php',
+        'Doctrine\\Deprecations\\PHPUnit\\VerifyDeprecations' => __DIR__ . '/..' . '/doctrine/deprecations/lib/Doctrine/Deprecations/PHPUnit/VerifyDeprecations.php',
         'Doctrine\\Inflector\\CachedWordInflector' => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector/CachedWordInflector.php',
         'Doctrine\\Inflector\\GenericLanguageInflectorFactory' => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector/GenericLanguageInflectorFactory.php',
         'Doctrine\\Inflector\\Inflector' => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector/Inflector.php',
@@ -5255,7 +5262,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'Solarium\\Support\\Utility' => __DIR__ . '/..' . '/solarium/solarium/src/Support/Utility.php',
         'Stack\\Builder' => __DIR__ . '/..' . '/stack/builder/src/Stack/Builder.php',
         'Stack\\StackedHttpKernel' => __DIR__ . '/..' . '/stack/builder/src/Stack/StackedHttpKernel.php',
-        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'Stringable' => __DIR__ . '/..' . '/myclabs/php-enum/stubs/Stringable.php',
         'Symfony\\Bridge\\PsrHttpMessage\\ArgumentValueResolver\\PsrServerRequestResolver' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/ArgumentValueResolver/PsrServerRequestResolver.php',
         'Symfony\\Bridge\\PsrHttpMessage\\EventListener\\PsrResponseListener' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/EventListener/PsrResponseListener.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\HttpFoundationFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/HttpFoundationFactory.php',
@@ -6895,8 +6902,6 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\SymfonyCmfRouteObjectInterfaceConstantsRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/SymfonyCmfRouteObjectInterfaceConstantsRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\SymfonyCmfRoutingInClassMethodSignatureRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/SymfonyCmfRoutingInClassMethodSignatureRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\Coder\\DiscouragedFunctionsRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/Coder/DiscouragedFunctionsRule.php',
-        'mglaman\\PHPStanDrupal\\Rules\\Drupal\\DrupalRequestStackShimInClassMethodRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/DrupalRequestStackShimInClassMethodRule.php',
-        'mglaman\\PHPStanDrupal\\Rules\\Drupal\\DrupalRequestStackShimInstantiationRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/DrupalRequestStackShimInstantiationRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\EntityQuery\\EntityQueryHasAccessCheckRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/EntityQuery/EntityQueryHasAccessCheckRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\GlobalDrupalDependencyInjectionRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/GlobalDrupalDependencyInjectionRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\LoadIncludeBase' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/LoadIncludeBase.php',
@@ -6905,6 +6910,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\PluginManager\\AbstractPluginManagerRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/PluginManager/AbstractPluginManagerRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\PluginManager\\PluginManagerSetsCacheBackendRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/PluginManager/PluginManagerSetsCacheBackendRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\RenderCallbackRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/RenderCallbackRule.php',
+        'mglaman\\PHPStanDrupal\\Rules\\Drupal\\RequestStackGetMainRequestRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/RequestStackGetMainRequestRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\Tests\\BrowserTestBaseDefaultThemeRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/Tests/BrowserTestBaseDefaultThemeRule.php',
         'mglaman\\PHPStanDrupal\\Type\\ContainerDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/ContainerDynamicReturnTypeExtension.php',
         'mglaman\\PHPStanDrupal\\Type\\DrupalClassResolverDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/DrupalClassResolverDynamicReturnTypeExtension.php',

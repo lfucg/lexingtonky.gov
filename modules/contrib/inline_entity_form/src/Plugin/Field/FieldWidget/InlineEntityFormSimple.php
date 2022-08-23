@@ -59,7 +59,7 @@ class InlineEntityFormSimple extends InlineEntityFormBase {
     $parents = array_merge($element['#field_parents'], [
       $items->getName(),
       $delta,
-      'inline_entity_form'
+      'inline_entity_form',
     ]);
     $bundle = $this->getBundle();
     $element['inline_entity_form'] = $this->getInlineEntityForm($op, $bundle, $langcode, $delta, $parents, $entity);
@@ -134,11 +134,15 @@ class InlineEntityFormSimple extends InlineEntityFormBase {
     $submitted_values = $form_state->getValue($parents);
     $values = [];
     foreach ($items as $delta => $value) {
-      $element = NestedArray::getValue($form, [$field_name, 'widget', $delta]);
-      /** @var \Drupal\Core\Entity\EntityInterface $entity */
-      $entity = $element['inline_entity_form']['#entity'];
-      $weight = isset($submitted_values[$delta]['_weight']) ? $submitted_values[$delta]['_weight'] : 0;
-      $values[$weight] = ['entity' => $entity];
+      if ($element = NestedArray::getValue(
+        $form,
+        [$field_name, 'widget', $delta]
+      )) {
+        /** @var \Drupal\Core\Entity\EntityInterface $entity */
+        $entity = $element['inline_entity_form']['#entity'];
+        $weight = $submitted_values[$delta]['_weight'] ?? 0;
+        $values[$weight] = ['entity' => $entity];
+      }
     }
 
     // Sort items base on weights.
@@ -173,7 +177,7 @@ class InlineEntityFormSimple extends InlineEntityFormBase {
     $field_name = $this->fieldDefinition->getName();
     $field_state = WidgetBase::getWidgetState($form['#parents'], $field_name, $form_state);
     foreach ($items as $delta => $item) {
-      $field_state['original_deltas'][$delta] = isset($item->_original_delta) ? $item->_original_delta : $delta;
+      $field_state['original_deltas'][$delta] = $item->_original_delta ?? $delta;
       unset($item->_original_delta, $item->weight);
     }
     WidgetBase::setWidgetState($form['#parents'], $field_name, $form_state, $field_state);

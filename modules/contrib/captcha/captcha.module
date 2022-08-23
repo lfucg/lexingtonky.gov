@@ -47,6 +47,9 @@ define('CAPTCHA_STATUS_EXAMPLE', 2);
 define('CAPTCHA_DEFAULT_VALIDATION_CASE_SENSITIVE', 0);
 define('CAPTCHA_DEFAULT_VALIDATION_CASE_INSENSITIVE', 1);
 
+define('CAPTCHA_WHITELIST_IP_ADDRESS', 'addresses');
+define('CAPTCHA_WHITELIST_IP_RANGE', 'ranges');
+
 // Default captcha field access.
 define('CAPTCHA_FIELD_DEFAULT_ACCESS', 1);
 
@@ -94,12 +97,12 @@ function captcha_point_load($id) {
  * Implements hook_theme().
  */
 function captcha_theme() {
+  // @phpstan-ignore-next-line
   $path = Drupal::hasService('extension.list.module') ? Drupal::service('extension.list.module')->getPath('captcha') : drupal_get_path('module', 'captcha');
   return [
     'captcha' => [
       'render element' => 'element',
       'template' => 'captcha',
-      // @phpstan-ignore-next-line
       'path' => $path . '/templates',
     ],
   ];
@@ -211,20 +214,30 @@ function captcha_form_alter(array &$form, FormStateInterface $form_state, $form_
     }
 
     if (!empty($captcha_point) && $captcha_point->status()) {
-      // Build CAPTCHA form element.
-      $captcha_element = [
-        '#type' => 'captcha',
-        '#captcha_type' => $captcha_point->getCaptchaType(),
-      ];
-
-      // Add a CAPTCHA description if required.
-      if ($config->get('add_captcha_description')) {
-        $captcha_element['#description'] = _captcha_get_description();
+      // Checking if user's ip is whitelisted.
+      if (captcha_whitelist_ip_whitelisted()) {
+        // If form is setup to have captcha, but user's ip is whitelisted, then
+        // we still have to disable form caching to prevent showing cached form
+        // for users with not whitelisted ips.
+        $form['#cache'] = ['max-age' => 0];
+        \Drupal::service('page_cache_kill_switch')->trigger();
       }
+      else {
+        // Build CAPTCHA form element.
+        $captcha_element = [
+          '#type' => 'captcha',
+          '#captcha_type' => $captcha_point->getCaptchaType(),
+        ];
 
-      // Get placement in form and insert in form.
-      if ($captcha_placement = _captcha_get_captcha_placement($form_id, $form)) {
-        $captchaService->insertCaptchaElement($form, $captcha_placement, $captcha_element);
+        // Add a CAPTCHA description if required.
+        if ($config->get('add_captcha_description')) {
+          $captcha_element['#description'] = _captcha_get_description();
+        }
+
+        // Get placement in form and insert in form.
+        if ($captcha_placement = _captcha_get_captcha_placement($form_id, $form)) {
+          $captchaService->insertCaptchaElement($form, $captcha_placement, $captcha_element);
+        }
       }
     }
   }
@@ -694,4 +707,76 @@ function captcha_captcha($op, $captcha_type = '') {
       }
       break;
   }
+}
+
+/**
+ * Parse values of whitelist ip addresses and ranges.
+ *
+ * @param string $whitelist_ips_value
+ *   Contains list of ip addresses and ranges set one per line.
+ *
+ * @return array
+ *   Array of parsed ip addresses and ranges.
+ */
+function captcha_whitelist_ips_parse_values($whitelist_ips_value) {
+  $whitelist_ips = [
+    CAPTCHA_WHITELIST_IP_RANGE => [],
+    CAPTCHA_WHITELIST_IP_ADDRESS => [],
+  ];
+
+  if (empty(trim($whitelist_ips_value))) {
+    return $whitelist_ips;
+  }
+
+  $value_rows = explode("\n", $whitelist_ips_value);
+  foreach ($value_rows as $value_row) {
+    $value_row = trim($value_row);
+    if (strpos($value_row, '-') !== FALSE) {
+      $whitelist_ips[CAPTCHA_WHITELIST_IP_RANGE][] = $value_row;
+    }
+    else {
+      $whitelist_ips[CAPTCHA_WHITELIST_IP_ADDRESS][] = $value_row;
+    }
+  }
+
+  return $whitelist_ips;
+}
+
+/**
+ * Check if ip address is whitelisted.
+ *
+ * @param string $ip_address
+ *   Optional. IP address to be checked if it is in whitelist. If no ip value
+ *   provided user's current ip will be used to be verified.
+ *
+ * @return bool
+ *   TRUE if requested IP address is whitelisted, FALSE if it is not.
+ */
+function captcha_whitelist_ip_whitelisted($ip_address = '') {
+  if (empty($ip_address)) {
+   $ip_address = Drupal::request()->getClientIp();
+  }
+
+  $config = \Drupal::config('captcha.settings');
+  $whitelist_ips_value = $config->get('whitelist_ips');
+  $whitelist_ips = captcha_whitelist_ips_parse_values($whitelist_ips_value);
+
+  if (in_array($ip_address, $whitelist_ips[CAPTCHA_WHITELIST_IP_ADDRESS])) {
+    return TRUE;
+  }
+  elseif (empty($whitelist_ips[CAPTCHA_WHITELIST_IP_RANGE])) {
+    return FALSE;
+  }
+
+  foreach ($whitelist_ips[CAPTCHA_WHITELIST_IP_RANGE] as $ip_range) {
+    list($ip_lower, $ip_upper) = explode('-', $ip_range, 2);
+    $ip_lower_dec = (float) sprintf("%u", ip2long($ip_lower));
+    $ip_upper_dec = (float) sprintf("%u", ip2long($ip_upper));
+    $ip_address_dec = (float) sprintf("%u", ip2long($ip_address));
+    if (($ip_address_dec >= $ip_lower_dec) && ($ip_address_dec <= $ip_upper_dec)) {
+       return TRUE;
+    }
+  }
+
+  return FALSE;
 }

@@ -61,11 +61,8 @@ class PathautoEntityWithStringIdTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installSchema('system', ['key_value']);
     $this->installConfig(['system', 'pathauto']);
-    if ($this->container->get('entity_type.manager')->hasDefinition('path_alias')) {
-      $this->installEntitySchema('path_alias');
-    }
+    $this->installEntitySchema('path_alias');
     $this->installEntitySchema('pathauto_string_id_test');
     $this->createPattern('pathauto_string_id_test', '/[pathauto_string_id_test:name]');
     /** @var \Drupal\pathauto\AliasTypeManager $alias_type_manager */

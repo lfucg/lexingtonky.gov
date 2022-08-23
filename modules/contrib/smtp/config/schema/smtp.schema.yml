@@ -47,6 +47,9 @@ smtp.settings:
     smtp_test_address:
       type: email
       label: 'E-mail address to send a test e-mail to'
+    smtp_reroute_address:
+      type: email
+      label: 'E-mail address to reroute all emails to'
     smtp_debugging:
       type: boolean
       label: 'Enable debugging'

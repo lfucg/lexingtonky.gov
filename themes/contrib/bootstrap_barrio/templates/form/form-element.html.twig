@@ -67,6 +67,7 @@
     'js-form-type-' ~ type|clean_class,
     type in ['checkbox', 'radio'] ? type|clean_class : 'form-type-' ~ type|clean_class,
     type in ['checkbox', 'radio'] ? wrapperclass,
+    type in ['checkbox'] ? 'mb-3',
     'js-form-item-' ~ name|clean_class,
     'form-item-' ~ name|clean_class,
     title_display not in ['after', 'before'] ? 'form-no-label',
@@ -74,6 +75,15 @@
     errors ? 'has-error',
   ]
 %}
+
+{% if title_display == 'invisible' %}
+  {% if labelclass is defined %}
+    {% set labelclass = labelclass ~ ' visually-hidden' %}
+  {% else %}
+    {% set labelclass = 'visually-hidden' %}
+  {% endif %}
+{% endif %}
+
 {%
   set description_classes = [
     'description',
@@ -117,12 +127,12 @@
     {% endif %}
   </div>
 {% else %}
-  <fieldset{{ attributes.addClass(classes, 'mb-3') }}>
+  <div{{ attributes.addClass(classes, 'mb-3') }}>
     {% if label_display in ['before', 'invisible'] %}
       {{ label }}
     {% endif %}
     {% if (prefix is not empty) or (suffix is not empty) %}
-      <div class="input-group">
+      <div class="input-group{{ errors ? ' is-invalid' : '' }}">
     {% endif %}
     {% if prefix is not empty %}
       <div class="input-group-prepend">
@@ -156,5 +166,5 @@
         {{ description.content }}
       </small>
     {% endif %}
-  </fieldset>
+  </div>
 {% endif %}

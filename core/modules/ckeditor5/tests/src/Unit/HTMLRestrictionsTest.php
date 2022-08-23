@@ -1079,6 +1079,20 @@ class HTMLRestrictionsTest extends UnitTestCase {
       'intersection' => new HTMLRestrictions(['$text-container' => ['class' => TRUE], 'p' => ['class' => TRUE]]),
       'union' => 'b',
     ];
+    yield 'wildcard + matching tag: wildcard resolves into matching tag, but matching tag already supports all attributes' => [
+      'a' => new HTMLRestrictions(['p' => TRUE]),
+      'b' => new HTMLRestrictions(['$text-container' => ['class' => ['foo' => TRUE, 'bar' => TRUE]]]),
+      'diff' => 'a',
+      'intersection' => HTMLRestrictions::emptySet(),
+      'union' => new HTMLRestrictions(['p' => TRUE, '$text-container' => ['class' => ['foo' => TRUE, 'bar' => TRUE]]]),
+    ];
+    yield 'wildcard + matching tag: wildcard resolves into matching tag, but matching tag already supports all attributes — vice versa' => [
+      'a' => new HTMLRestrictions(['$text-container' => ['class' => ['foo' => TRUE, 'bar' => TRUE]]]),
+      'b' => new HTMLRestrictions(['p' => TRUE]),
+      'diff' => 'a',
+      'intersection' => HTMLRestrictions::emptySet(),
+      'union' => new HTMLRestrictions(['p' => TRUE, '$text-container' => ['class' => ['foo' => TRUE, 'bar' => TRUE]]]),
+    ];
 
     // Wildcard tag + non-matching tag cases.
     yield 'wildcard + non-matching tag: attribute diff — without possible resolving' => [

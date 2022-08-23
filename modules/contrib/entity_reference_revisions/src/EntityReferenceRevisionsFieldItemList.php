@@ -69,6 +69,7 @@ class EntityReferenceRevisionsFieldItemList extends EntityReferenceFieldItemList
         $target_type = $definition->getSetting('target_type');
         $entity_ids = \Drupal::entityQuery($target_type)
           ->condition('uuid', $uuids, 'IN')
+          ->accessCheck(TRUE)
           ->execute();
         $entities = \Drupal::entityTypeManager()
           ->getStorage($target_type)

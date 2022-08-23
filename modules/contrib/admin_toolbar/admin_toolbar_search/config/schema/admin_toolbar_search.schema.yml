@@ -4,4 +4,4 @@ admin_toolbar_search.settings:
   mapping:
     display_menu_item:
       type: integer
-      label: 'How the serach input will be displayed'
+      label: 'How the search input will be displayed'

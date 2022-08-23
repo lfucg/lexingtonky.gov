@@ -7,7 +7,7 @@ configure: admin_toolbar_search.settings
 dependencies:
   - admin_toolbar:admin_toolbar_tools
 
-# Information added by Drupal.org packaging script on 2022-01-25
-version: '3.1.0'
+# Information added by Drupal.org packaging script on 2022-07-26
+version: '3.1.1'
 project: 'admin_toolbar'
-datestamp: 1643097063
+datestamp: 1658801856

@@ -16,6 +16,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class AutologoutSettingsForm extends ConfigFormBase {
 
   /**
+   * Defines the timeout limit.
+   *
+   * @var int
+   *
+   * Because we're using Javascript's setTimeout,
+   * we must limit the timeout to a maximum of 2147483 seconds.
+   * This is due to the fact that most, if not all, browsers store the
+   * timeout value (in milliseconds) as a 32-bit signed integer.
+   * An overflow then causes setTimeout to trigger immediately.
+   *
+   * More at: https://developer.mozilla.org/en-US/docs/Web/API/setTimeout
+   */
+  private $maxAllowedTimeout = 2147483;
+
+  /**
    * The module manager service.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
@@ -79,6 +94,15 @@ class AutologoutSettingsForm extends ConfigFormBase {
     if (!$default_dialog_title) {
       $default_dialog_title = $this->config('system.site')->get('name') . ' Alert';
     }
+
+    $form['enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable autologout'),
+      '#default_value' => $config->get('enabled'),
+      '#weight' => -20,
+      '#description' => $this->t("Enable autologout on this site."),
+    ];
+
     $form['timeout'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Timeout value in seconds'),
@@ -105,6 +129,14 @@ class AutologoutSettingsForm extends ConfigFormBase {
       '#size' => 8,
       '#weight' => -6,
       '#description' => $this->t('How many seconds to give a user to respond to the logout dialog before ending their session.'),
+    ];
+
+    $form['logout_regardless_of_activity'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Logout user regardless of activity'),
+      '#default_value' => $config->get('logout_regardless_of_activity'),
+      '#weight' => -5,
+      '#description' => $this->t("Enable this to autologout user regardless of his activity."),
     ];
 
     $form['no_individual_logout_threshold'] = [
@@ -191,6 +223,14 @@ class AutologoutSettingsForm extends ConfigFormBase {
         MessengerInterface::TYPE_STATUS => $this->t('Status'),
         MessengerInterface::TYPE_WARNING => $this->t('Warning'),
       ],
+    ];
+
+    $form['modal_width'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Modal width'),
+      '#default_value' => $config->get('modal_width'),
+      '#size' => 40,
+      '#description' => $this->t('This modal dialog width in pixels.'),
     ];
 
     $form['disable_buttons'] = [
@@ -329,10 +369,12 @@ class AutologoutSettingsForm extends ConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
     $new_stack = [];
-    foreach ($values['table'] as $key => $pair) {
-      if (is_array($pair)) {
-        foreach ($pair as $pairkey => $pairvalue) {
-          $new_stack[$key][$pairkey] = $pairvalue;
+    if (!empty($values['table'])) {
+      foreach ($values['table'] as $key => $pair) {
+        if (is_array($pair)) {
+          foreach ($pair as $pairkey => $pairvalue) {
+            $new_stack[$key][$pairkey] = $pairvalue;
+          }
         }
       }
     }
@@ -350,10 +392,12 @@ class AutologoutSettingsForm extends ConfigFormBase {
         $timeout = $new_stack[$role]['timeout'];
         $validate = $this->timeoutValidate($timeout, $max_timeout);
         if (!$validate) {
+          // phpcs:ignore
           $form_state->setErrorByName('table][' . $role . '][timeout', $this->t('%role role timeout must be an integer greater than 60, less then %max or 0 to disable autologout for that role.', ['%role' => $role, '%max' => $max_timeout]));
         }
         $role_redirect_url = $new_stack[$role]['url'];
         if (!empty($role_redirect_url) && strpos($role_redirect_url, '/') !== 0) {
+          // phpcs:ignore
           $form_state->setErrorByName('table][' . $role . '][url', $this->t("%role role redirect URL at logout :redirect_url must begin with a '/'", ['%role' => $role, ':redirect_url' => $role_redirect_url]));
         }
       }
@@ -366,6 +410,9 @@ class AutologoutSettingsForm extends ConfigFormBase {
     }
     elseif ($max_timeout <= 60) {
       $form_state->setErrorByName('max_timeout', $this->t('The max timeout must be an integer greater than 60.'));
+    }
+    elseif ($max_timeout > $this->maxAllowedTimeout) {
+      $form_state->setErrorByName('max_timeout', $this->t('The max timeout must be an integer lower than or equal to %limit.', ['%limit' => $this->maxAllowedTimeout]));
     }
     elseif (!is_numeric($timeout) || ((int) $timeout != $timeout) || $timeout < 60 || $timeout > $max_timeout) {
       $form_state->setErrorByName('timeout', $this->t('The timeout must be an integer greater than or equal to 60 and less then or equal to %max.', ['%max' => $max_timeout]));
@@ -383,9 +430,9 @@ class AutologoutSettingsForm extends ConfigFormBase {
     foreach ($whitelisted_ip_addresses_list as $ip_address) {
       if (!empty($ip_address) && !filter_var(trim($ip_address), FILTER_VALIDATE_IP)) {
         $form_state->setErrorByName(
-             'whitelisted_ip_addresses',
-                $this->t('Whitlelisted IP address list should contain only valid IP addresses, one per row')
-              );
+          'whitelisted_ip_addresses',
+          $this->t('Whitlelisted IP address list should contain only valid IP addresses, one per row')
+        );
       }
     }
     parent::validateForm($form, $form_state);
@@ -401,10 +448,13 @@ class AutologoutSettingsForm extends ConfigFormBase {
     $old_no_individual_logout_threshold = $autologout_settings->get('no_individual_logout_threshold');
     $new_no_individual_logout_threshold = (bool) $values['no_individual_logout_threshold'];
 
-    $autologout_settings->set('timeout', $values['timeout'])
+    $autologout_settings
+      ->set('enabled', $values['enabled'])
+      ->set('timeout', $values['timeout'])
       ->set('max_timeout', $values['max_timeout'])
       ->set('padding', $values['padding'])
       ->set('no_individual_logout_threshold', $values['no_individual_logout_threshold'])
+      ->set('logout_regardless_of_activity', $values['logout_regardless_of_activity'])
       ->set('role_logout', $values['role_logout'])
       ->set('role_logout_max', $values['role_logout_max'])
       ->set('redirect_url', $values['redirect_url'])
@@ -413,6 +463,7 @@ class AutologoutSettingsForm extends ConfigFormBase {
       ->set('message', $values['message'])
       ->set('inactivity_message', $values['inactivity_message'])
       ->set('inactivity_message_type', $values['inactivity_message_type'])
+      ->set('modal_width', $values['modal_width'])
       ->set('disable_buttons', $values['disable_buttons'])
       ->set('yes_button', $values['yes_button'])
       ->set('no_button', $values['no_button'])
@@ -422,12 +473,14 @@ class AutologoutSettingsForm extends ConfigFormBase {
       ->set('use_watchdog', $values['use_watchdog'])
       ->save();
 
-    foreach ($values['table'] as $user) {
-      $this->configFactory()->getEditable('autologout.role.' . $user['role'])
-        ->set('enabled', $user['enabled'])
-        ->set('timeout', $user['timeout'])
-        ->set('url', $user['url'])
-        ->save();
+    if (!empty($values['table'])) {
+      foreach ($values['table'] as $user) {
+        $this->configFactory()->getEditable('autologout.role.' . $user['role'])
+          ->set('enabled', $user['enabled'])
+          ->set('timeout', $user['timeout'])
+          ->set('url', $user['url'])
+          ->save();
+      }
     }
 
     if (isset($values['jstimer_format'])) {

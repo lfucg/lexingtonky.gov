@@ -83,7 +83,8 @@ class CaptchaCacheTest extends CaptchaWebTestBase {
     $web_assert = $this->assertSession();
 
     // Enable captcha on login block with a cacheable captcha.
-    captcha_set_form_id_setting('user_login_form', 'captcha_test/TestCacheable');
+    $type = 'captcha_test/TestCacheable';
+    captcha_set_form_id_setting('user_login_form', $type);
 
     // Warm up the caches.
     $this->drupalGet('');

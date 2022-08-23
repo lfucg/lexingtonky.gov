@@ -2,9 +2,9 @@ name: 'Block Field'
 type: module
 description: 'Provides a field that allows a content entity to create and configure custom block instances.'
 package: Field
-core_version_requirement: ^8.7.7 || ^9
+core_version_requirement: ^9 || ^10
 
-# Information added by Drupal.org packaging script on 2021-05-25
-version: '8.x-1.0-rc2'
+# Information added by Drupal.org packaging script on 2022-07-26
+version: '8.x-1.0-rc3'
 project: 'block_field'
-datestamp: 1621950815
+datestamp: 1658858539

@@ -197,7 +197,7 @@ function bootstrap_barrio_preprocess_page(&$variables) {
     'class' => ['sidebar_second', 'sidebar', $sidebar_second_width],
     'id' => ['sidebar_second'],
   ];
-  
+
   // Get custom Navbar classes from config and add them to Navbars.
   if (theme_get_setting('bootstrap_barrio_navbar_top_class') !== NULL) {
     $variables['navbar_top_attributes']['class'][] = theme_get_setting('bootstrap_barrio_navbar_top_class');
@@ -377,6 +377,7 @@ function bootstrap_barrio_preprocess_node(&$variables) {
   if ($variables['teaser'] || !empty($variables['content']['comments']['comment_form'])) {
     unset($variables['content']['links']['comment']['#links']['comment-add']);
   }
+  // Hide label on all nodes
   if (theme_get_setting('bootstrap_barrio_hide_node_label') != NULL) {
     unset($variables['label']);
   }
@@ -666,21 +667,33 @@ function bootstrap_barrio_theme_suggestions_input_alter(array &$suggestions, arr
  */
 
 /**
- * Implements hook_preprocess_input() for adding classes to inputs.
+ * Implements hook_preprocess().
  */
-function bootstrap_barrio_preprocess_input(&$variables) {
+function bootstrap_barrio_preprocess(&$variables, $hook) {
   if (isset($variables['attributes']['class'])) {
+    $class = 'is-invalid';
+
     if (is_object($variables['attributes']['class'])) {
       if (in_array('error', $variables['attributes']['class']->value())) {
-        $variables['attributes']['class']->addClass('is-invalid');
+        $variables['attributes']->addClass($class);
+        // If there is a wrapper, add class too.
+        if (isset($variables["wrapper_attributes"])) {
+          $variables['wrapper_attributes']->addClass($class);
+        }
       }
     }
     elseif (is_array($variables['attributes']['class'])) {
       if (in_array('error', $variables['attributes']['class'])) {
-        $variables['attributes']['class'][] = 'is-invalid';
+        $variables['attributes']['class'][] = $class;
       }
     }
   }
+}
+
+/**
+ * Implements hook_preprocess_input() for adding classes to inputs.
+ */
+function bootstrap_barrio_preprocess_input(&$variables) {
   if ($variables['element']['#type'] == 'submit') {
     $button_size = theme_get_setting('bootstrap_barrio_button_size');
     $button_types = [
@@ -728,5 +741,24 @@ function bootstrap_barrio_preprocess_input(&$variables) {
       $variables['attributes'] = new Attribute($variables['attributes']);
     }
     $variables['safe_value_label'] = Xss::filter($variables['attributes']['value']);
+  }
+}
+
+
+/**
+ * Implements hook_preprocess_select() for adding classes to select boxes.
+ */
+function bootstrap_barrio_preprocess_select(&$variables) {
+  if (isset($variables['attributes']['class'])) {
+    if (is_object($variables['attributes']['class'])) {
+      if (in_array('error', $variables['attributes']['class']->value())) {
+        $variables['attributes']['class']->addClass('is-invalid');
+      }
+    }
+    elseif (is_array($variables['attributes']['class'])) {
+      if (in_array('error', $variables['attributes']['class'])) {
+        $variables['attributes']['class'][] = 'is-invalid';
+      }
+    }
   }
 }

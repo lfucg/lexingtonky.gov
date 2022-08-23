@@ -27,7 +27,7 @@ class EntityReferenceRevisionsCompositeTest extends EntityKernelTestBase {
    *
    * @var array
    */
-  public static $modules = array(
+  protected static $modules = array(
     'node',
     'field',
     'entity_reference_revisions',
@@ -60,7 +60,7 @@ class EntityReferenceRevisionsCompositeTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('entity_test_composite');
@@ -106,7 +106,12 @@ class EntityReferenceRevisionsCompositeTest extends EntityKernelTestBase {
     $composite->save();
 
     // Assert that there is only 1 revision of the composite entity.
-    $composite_revisions_count = \Drupal::entityQuery('entity_test_composite')->condition('uuid', $composite->uuid())->allRevisions()->count()->execute();
+    $composite_revisions_count = \Drupal::entityQuery('entity_test_composite')
+      ->condition('uuid', $composite->uuid())
+      ->allRevisions()
+      ->count()
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals(1, $composite_revisions_count);
 
     // Create a node with a reference to the test composite entity.
@@ -121,10 +126,20 @@ class EntityReferenceRevisionsCompositeTest extends EntityKernelTestBase {
     $node->save();
 
     // Assert that there is only 1 revision when creating a node.
-    $node_revisions_count = \Drupal::entityQuery('node')->condition('nid', $node->id())->allRevisions()->count()->execute();
+    $node_revisions_count = \Drupal::entityQuery('node')
+      ->condition('nid', $node->id())
+      ->allRevisions()
+      ->count()
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals(1, $node_revisions_count);
     // Assert there is no new composite revision after creating a host entity.
-    $composite_revisions_count = \Drupal::entityQuery('entity_test_composite')->condition('uuid', $composite->uuid())->allRevisions()->count()->execute();
+    $composite_revisions_count = \Drupal::entityQuery('entity_test_composite')
+      ->condition('uuid', $composite->uuid())
+      ->allRevisions()
+      ->count()
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals(1, $composite_revisions_count);
 
     // Verify the value of parent type and id after create a node.
@@ -144,7 +159,12 @@ class EntityReferenceRevisionsCompositeTest extends EntityKernelTestBase {
     $this->assertNotEquals($original_composite_revision, $node->composite_reference[0]->target_revision_id, 'Composite entity got new revision when its host did.');
 
     // Make sure that there are only 2 revisions.
-    $node_revisions_count = \Drupal::entityQuery('node')->condition('nid', $node->id())->allRevisions()->count()->execute();
+    $node_revisions_count = \Drupal::entityQuery('node')
+      ->condition('nid', $node->id())
+      ->allRevisions()
+      ->count()
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals(2,$node_revisions_count);
 
     // Revert to first revision of the node.
@@ -180,13 +200,24 @@ class EntityReferenceRevisionsCompositeTest extends EntityKernelTestBase {
     $this->assertEquals('Changing composite reference', $node->get('composite_reference')->entity->getName());
 
     // Make sure the node has 4 revisions.
-    $node_revisions_count = $node_storage->getQuery()->condition('nid', $nid)->allRevisions()->count()->execute();
-    $this->assertEqual($node_revisions_count, 4);
+    $node_revisions_count = $node_storage->getQuery()
+      ->condition('nid', $nid)
+      ->allRevisions()
+      ->count()
+      ->accessCheck(TRUE)
+      ->execute();
+    $this->assertEquals(4, $node_revisions_count);
 
     // Make sure the node has no revision with revision translation affected
     // flag set to NULL.
-    $node_revisions_count = $node_storage->getQuery()->condition('nid', $nid)->allRevisions()->condition('revision_translation_affected', NULL, 'IS NULL')->count()->execute();
-    $this->assertEqual($node_revisions_count, 0, 'Node has a revision with revision translation affected set to NULL');
+    $node_revisions_count = $node_storage->getQuery()
+      ->condition('nid', $nid)
+      ->allRevisions()
+      ->condition('revision_translation_affected', NULL, 'IS NULL')
+      ->accessCheck(TRUE)
+      ->count()
+      ->execute();
+    $this->assertEquals(0, $node_revisions_count, 'Node has a revision with revision translation affected set to NULL');
 
     // Revert the changes to avoid interfering with the delete test.
     $node->set('composite_reference', $composite);
@@ -680,6 +711,7 @@ class EntityReferenceRevisionsCompositeTest extends EntityKernelTestBase {
       ->condition($id_field, $entity_id)
       ->allRevisions()
       ->count()
+      ->accessCheck(TRUE)
       ->execute();
     $this->assertEquals($expected, $revision_count);
   }

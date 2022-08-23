@@ -3,17 +3,21 @@
 namespace Drupal\block_field\Plugin\Field\FieldFormatter;
 
 use Drupal\Component\Plugin\Exception\ContextException;
+use Drupal\Core\Block\TitleBlockPluginInterface;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Controller\TitleResolverInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
+use Drupal\Core\Http\RequestStack;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Plugin\Context\ContextHandlerInterface;
 use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Security\TrustedCallbackInterface;
 
 /**
@@ -58,6 +62,27 @@ class BlockFieldFormatter extends FormatterBase implements TrustedCallbackInterf
   protected $moduleHandler;
 
   /**
+   * The request stack.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  protected $requestStack;
+
+  /**
+   * The title resolver.
+   *
+   * @var \Drupal\Core\Controller\TitleResolverInterface
+   */
+  protected $titleResolver;
+
+  /**
+   * The route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+  /**
    * Constructs a StringFormatter instance.
    *
    * @param string $plugin_id
@@ -74,17 +99,30 @@ class BlockFieldFormatter extends FormatterBase implements TrustedCallbackInterf
    *   The view mode.
    * @param array $third_party_settings
    *   Any third party settings settings.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
+   * @param \Drupal\Core\Plugin\Context\ContextRepositoryInterface $contextRepository
+   *   The context repository service.
+   * @param \Drupal\Core\Plugin\Context\ContextHandlerInterface $contextHandler
+   *   The ContextHandler for applying contexts to conditions properly.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   A request stack symfony instance.
+   * @param \Drupal\Core\Controller\TitleResolverInterface $title_resolver
+   *   The title resolver.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   Current Route Matcher.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, ContextRepositoryInterface $contextRepository, ContextHandlerInterface $contextHandler, AccountProxyInterface $current_user, ModuleHandlerInterface $module_handler){
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, ContextRepositoryInterface $contextRepository, ContextHandlerInterface $contextHandler, AccountProxyInterface $current_user, ModuleHandlerInterface $module_handler, RequestStack $request_stack, TitleResolverInterface $title_resolver, RouteMatchInterface $route_match) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
     $this->contextRepository = $contextRepository;
     $this->contextHandler = $contextHandler;
     $this->currentUser = $current_user;
     $this->moduleHandler = $module_handler;
+    $this->requestStack = $request_stack;
+    $this->titleResolver = $title_resolver;
+    $this->routeMatch = $route_match;
   }
 
   /**
@@ -102,7 +140,10 @@ class BlockFieldFormatter extends FormatterBase implements TrustedCallbackInterf
       $container->get('context.repository'),
       $container->get('context.handler'),
       $container->get('current_user'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('request_stack'),
+      $container->get('title_resolver'),
+      $container->get('current_route_match'),
     );
   }
 
@@ -137,6 +178,13 @@ class BlockFieldFormatter extends FormatterBase implements TrustedCallbackInterf
         ->applyTo($elements);
       if (!$access->isAllowed()) {
         continue;
+      }
+
+      if ($block_instance instanceof TitleBlockPluginInterface) {
+        $title = $this->titleResolver->getTitle($this->requestStack->getCurrentRequest(), $this->routeMatch->getRouteObject());
+        if ($title) {
+          $block_instance->setTitle($title);
+        }
       }
 
       // See \Drupal\block\BlockViewBuilder::buildPreRenderableBlock

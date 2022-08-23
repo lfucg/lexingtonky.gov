@@ -1,3 +1,11 @@
+Metatag 8.x-1.21, 2022-07-16
+----------------------------
+#3268439 by Dave Reid: Follow-up to fix the scroll height feature.
+#3295600 by DamienMcKenna, saranchuk_hys, Eugene Bocharov, Didier Misson,
+  loopy1492, Maplinx, W01F, jaydub, kazah: MaskIcon doesn't work properly.
+#3295757 by sleitner, DamienMcKenna: Fix regression from Google tag fix.
+
+
 Metatag 8.x-1.20, 2022-07-12
 ----------------------------
 #3257588 by Eugene Bocharov, lobodacyril, jippie1948, Kasey_MK, djween, awasson,

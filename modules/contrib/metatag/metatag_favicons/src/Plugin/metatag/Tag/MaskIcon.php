@@ -66,6 +66,16 @@ class MaskIcon extends LinkRelBase {
   public function output() {
     $values = $this->value;
 
+    // Make sure the value is an array, if it is not then assume it was assigned
+    // before the "color" attribute was added, so place the original string as
+    // the 'href' element and leave the 'color' element blank.
+    if (!is_array($values)) {
+      $values = [
+        'href' => $values,
+        'color' => '',
+      ];
+    }
+
     // Build the output.
     $element['#tag'] = 'link';
     $element['#attributes'] = [

@@ -58,6 +58,11 @@ function admin_toolbar_links_access_filter_preprocess_menu(&$variables) {
  * Hides links from admin menu, if user doesn't have access rights.
  */
 function admin_toolbar_links_access_filter_filter_non_accessible_links(array &$items) {
+  if (Drupal::currentUser()->id() == 1) {
+    // Admin can access everything.
+    return;
+  }
+
   $access_manager = \Drupal::accessManager();
   foreach ($items as $menu_id => &$item) {
     $route_name = NULL;

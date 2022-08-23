@@ -18,12 +18,12 @@ class BlockFieldFormatterTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['block', 'block_field', 'block_field_test'];
+  protected static $modules = ['block', 'block_field', 'block_field_test'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installConfig(['user']);
     // Add a block field to the test entity.

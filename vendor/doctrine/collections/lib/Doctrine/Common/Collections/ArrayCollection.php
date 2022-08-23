@@ -165,9 +165,7 @@ class ArrayCollection implements Collection, Selectable
     /**
      * Required by interface ArrayAccess.
      *
-     * {@inheritDoc}
-     *
-     * @psalm-param TKey $offset
+     * @param TKey $offset
      *
      * @return bool
      */
@@ -180,9 +178,7 @@ class ArrayCollection implements Collection, Selectable
     /**
      * Required by interface ArrayAccess.
      *
-     * {@inheritDoc}
-     *
-     * @psalm-param TKey $offset
+     * @param TKey $offset
      *
      * @return mixed
      */
@@ -195,7 +191,8 @@ class ArrayCollection implements Collection, Selectable
     /**
      * Required by interface ArrayAccess.
      *
-     * {@inheritDoc}
+     * @param TKey|null $offset
+     * @param T         $value
      *
      * @return void
      */
@@ -214,9 +211,7 @@ class ArrayCollection implements Collection, Selectable
     /**
      * Required by interface ArrayAccess.
      *
-     * {@inheritDoc}
-     *
-     * @psalm-param TKey $offset
+     * @param TKey $offset
      *
      * @return void
      */

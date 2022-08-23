@@ -18,7 +18,7 @@ class LanguageTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'language',
     'token',
   ];
@@ -85,7 +85,7 @@ class LanguageTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->token = $this->container->get('token');

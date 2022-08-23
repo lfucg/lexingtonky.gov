@@ -212,6 +212,7 @@ class AliasStorageHelper implements AliasStorageHelperInterface {
     return $this->entityTypeManager->getStorage('path_alias')->getQuery('OR')
       ->condition('path', $source, '=')
       ->condition('path', rtrim($source, '/') . '/', 'STARTS_WITH')
+      ->accessCheck(FALSE)
       ->execute();
   }
 
@@ -222,6 +223,7 @@ class AliasStorageHelper implements AliasStorageHelperInterface {
     return $this->entityTypeManager->getStorage('path_alias')->getQuery('OR')
       ->condition('path', $source, '=')
       ->condition('path', rtrim($source, '/') . '/', 'STARTS_WITH')
+      ->accessCheck(FALSE)
       ->count()
       ->execute();
   }
@@ -231,6 +233,7 @@ class AliasStorageHelper implements AliasStorageHelperInterface {
    */
   public function countAll() {
     return $this->entityTypeManager->getStorage('path_alias')->getQuery()
+      ->accessCheck(FALSE)
       ->count()
       ->execute();
   }

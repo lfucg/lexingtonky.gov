@@ -21,7 +21,7 @@ class EntityReferenceRevisionsSaveTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array(
+  protected static $modules = array(
     'node',
     'user',
     'system',
@@ -33,7 +33,7 @@ class EntityReferenceRevisionsSaveTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     // Create article content type.
     $values = ['type' => 'article', 'name' => 'Article'];
