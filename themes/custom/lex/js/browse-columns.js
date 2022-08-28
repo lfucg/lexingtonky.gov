@@ -1,11 +1,17 @@
-(function() {
-  "use strict";
-  window.GOVUK = window.GOVUK || {};
-  var $ = window.jQuery;
+(($) => {
 
-  function BrowseColumns(options){
+  "use strict";
+
+  window.GOVUK = window.GOVUK || {};
+
+  function BrowseColumns (options) {
     if(options.$el.length === 0) return;
-    if(!GOVUK.support.history()) return;
+    if(!GOVUK.support){
+      return;
+    } else if(!GOVUK.support.history()) {
+      return;
+    }
+
     if($(window).width() < 640) return; // don't ajax navigation on mobile
 
     this.$el = options.$el;
@@ -40,6 +46,7 @@
 
     $(window).on('popstate', this.popState.bind(this));
   }
+
   BrowseColumns.prototype = {
     popState: function(e){
       var state = e.originalEvent.state,
@@ -379,4 +386,4 @@
   GOVUK.BrowseColumns = BrowseColumns;
 
   $(function(){ GOVUK.browseColumns = new BrowseColumns({$el: $('.browse-panes')}); })
-}());
+})(jQuery);
