@@ -1,6 +1,18 @@
 _core:
   default_config_hash: PBJAPRAqH-w00jAUXbD9qV6frVT38tI1oXZiBIjV8gU
-image_captcha_fonts_preview_map_cache: {  }
+image_captcha_fonts_preview_map_cache:
+  93aff9384590ba3dfc5016582d39a5220435b22a8a12271aaee869b9cbdf7891:
+    uri: modules/contrib/captcha/image_captcha/fonts/Tesox/tesox.ttf
+    filename: tesox.ttf
+    name: tesox
+  41c10afec522f4850ec2a21eeac3cc590a8d3800c3065f7293101d63f580d3eb:
+    uri: modules/contrib/captcha/image_captcha/fonts/Tuffy/Tuffy.ttf
+    filename: Tuffy.ttf
+    name: Tuffy
+  beb303ea885be54ffe92e63d6f4827457599f2adc94df1cca6640914f98009c0:
+    uri: modules/contrib/captcha/image_captcha/fonts/Tuffy/Tuffy_Bold.ttf
+    filename: Tuffy_Bold.ttf
+    name: Tuffy_Bold
 image_captcha_fonts:
   - 93aff9384590ba3dfc5016582d39a5220435b22a8a12271aaee869b9cbdf7891
   - 41c10afec522f4850ec2a21eeac3cc590a8d3800c3065f7293101d63f580d3eb

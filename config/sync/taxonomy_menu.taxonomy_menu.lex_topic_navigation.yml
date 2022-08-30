@@ -12,3 +12,5 @@ menu: main
 expanded: false
 depth: 2
 menu_parent: 'admin:'
+description_field_name: null
+use_term_weight_order: null

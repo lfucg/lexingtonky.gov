@@ -59,6 +59,7 @@
         "drupal/paragraphs_inline_entity_form": "^1.x-dev@dev",
         "drupal/paragraphs_jquery_ui_accordion": "^1.4",
         "drupal/pathauto": "^1.9",
+        "drupal/recaptcha": "^3.0",
         "drupal/search_api": "^1.23",
         "drupal/search_api_pantheon": "^8.0",
         "drupal/search_api_solr": "^4.2",

@@ -49,6 +49,7 @@ return array(
     'Solarium\\' => array($vendorDir . '/solarium/solarium/src'),
     'SelfUpdate\\' => array($vendorDir . '/consolidation/self-update/src'),
     'Robo\\' => array($vendorDir . '/consolidation/robo/src'),
+    'ReCaptcha\\' => array($vendorDir . '/google/recaptcha/src/ReCaptcha'),
     'Psy\\' => array($vendorDir . '/psy/psysh/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-factory/src', $vendorDir . '/psr/http-message/src'),
