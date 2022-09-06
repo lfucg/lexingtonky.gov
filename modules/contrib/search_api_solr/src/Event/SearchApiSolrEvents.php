@@ -122,6 +122,15 @@ final class SearchApiSolrEvents {
   const POST_SET_FACETS = PostSetFacetsEvent::class;
 
   /**
+   * Fired before a value gets indexed as language fallback.
+   *
+   * @Event
+   *
+   * @see \Drupal\search_api_solr\Event\PreAddLanguageFallbackFieldEvent
+   */
+  const PRE_ADD_LANGUAGE_FALLBACK_FIELD = PreAddLanguageFallbackFieldEvent::class;
+
+  /**
    * Fired before any Search API fields gets mapped to a Solr document.
    *
    * You get access to the empty document object to be indexed later. You might

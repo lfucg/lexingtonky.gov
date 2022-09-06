@@ -3,7 +3,7 @@
  * JavaScript for autologout.
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, cookies) {
 
   'use strict';
 
@@ -66,45 +66,55 @@
         // Set no activity to start with.
         activity = false;
 
-        // Bind formUpdated events to preventAutoLogout event.
-        $('body').bind('formUpdated', debounce(function (event) {
-          $(event.target).trigger('preventAutologout');
-        }));
+        if (localSettings.logout_regardless_of_activity) {
+          // Ignore users activity and set timeout.
+          var timestamp = Math.round((new Date()).getTime() / 1000);
+          var login_time = cookies.get("Drupal.visitor.autologout_login");
+          var difference = (timestamp - login_time) * 1000;
 
-        // Bind formUpdated events to preventAutoLogout event.
-        $('body').bind('mousemove', debounce(function (event) {
-          $(event.target).trigger('preventAutologout');
-        }));
-
-        // Support for CKEditor.
-        if (typeof CKEDITOR !== 'undefined') {
-          CKEDITOR.on('instanceCreated', function (e) {
-            e.editor.on('contentDom', function () {
-              e.editor.document.on('keyup', debounce(function (event) {
-                // Keyup event in ckeditor should prevent autologout.
-                $(e.editor.element.$).trigger('preventAutologout');
-              }));
-            });
-          });
+          t = setTimeout(init, localSettings.timeout - difference);
         }
+        else {
+          // Bind formUpdated events to preventAutoLogout event.
+          $('body').bind('formUpdated', debounce(function (event) {
+            $(event.target).trigger('preventAutologout');
+          }));
 
-        $('body').bind('preventAutologout', function (event) {
-          // When the preventAutologout event fires, we set activity to true.
-          activity = true;
+          // Bind formUpdated events to preventAutoLogout event.
+          $('body').bind('mousemove', debounce(function (event) {
+            $(event.target).trigger('preventAutologout');
+          }));
 
-          // Clear timer if one exists.
-          clearTimeout(activityResetTimer);
+          // Support for CKEditor.
+          if (typeof CKEDITOR !== 'undefined') {
+            CKEDITOR.on('instanceCreated', function (e) {
+              e.editor.on('contentDom', function () {
+                e.editor.document.on('keyup', debounce(function (event) {
+                  // Keyup event in ckeditor should prevent autologout.
+                  $(e.editor.element.$).trigger('preventAutologout');
+                }));
+              });
+            });
+          }
 
-          // Set a timer that goes off and resets this activity indicator after
-          // a minute, otherwise sessions never timeout.
-          activityResetTimer = setTimeout(function () {
-            activity = false;
-          }, 60000);
-        });
+          $('body').bind('preventAutologout', function (event) {
+            // When the preventAutologout event fires, we set activity to true.
+            activity = true;
 
-        // On pages where the user should be logged out, set the timer to popup
-        // and log them out.
-        t = setTimeout(init, localSettings.timeout);
+            // Clear timer if one exists.
+            clearTimeout(activityResetTimer);
+
+            // Set a timer that goes off and resets this activity indicator after
+            // a minute, otherwise sessions never timeout.
+            activityResetTimer = setTimeout(function () {
+              activity = false;
+            }, 60000);
+          });
+
+          // On pages where the user should be logged out, set the timer to popup
+          // and log them out.
+          t = setTimeout(init, localSettings.timeout);
+        }
       }
 
       function init() {
@@ -145,6 +155,7 @@
         if (!disableButtons) {
           var yesButton = settings.autologout.yes_button;
           buttons[Drupal.t(yesButton)] = function () {
+            cookies.set("Drupal.visitor.autologout_login", Math.round((new Date()).getTime() / 1000));
             $(this).dialog("destroy");
             clearTimeout(paddingTimer);
             refresh();
@@ -160,7 +171,7 @@
         return $('<div id="autologout-confirm">' + localSettings.message + '</div>').dialog({
           modal: true,
           closeOnEscape: false,
-          width: "auto",
+          width: localSettings.modal_width,
           dialogClass: 'autologout-dialog',
           title: localSettings.title,
           buttons: buttons,
@@ -185,9 +196,22 @@
         });
       }
 
+      function triggerLogoutEvent(logoutMethod, logoutUrl) {
+        const logoutEvent = new CustomEvent('autologout', {
+          detail: {
+            logoutMethod: logoutMethod,
+            logoutUrl: logoutUrl,
+          },
+        });
+        document.dispatchEvent(logoutEvent);
+      }
+
       function logout() {
         if (localSettings.use_alt_logout_method) {
-          window.location = drupalSettings.path.baseUrl + "autologout_alt_logout";
+          var logoutUrl = drupalSettings.path.baseUrl + "autologout_alt_logout";
+          triggerLogoutEvent('alternative', logoutUrl);
+
+          window.location = logoutUrl;
         }
         else {
           $.ajax({
@@ -201,7 +225,10 @@
               });
             },
             success: function () {
-              window.location = localSettings.redirect_url;
+              var logoutUrl = localSettings.redirect_url;
+              triggerLogoutEvent('normal', logoutUrl);
+
+              window.location = logoutUrl;
             },
             error: function (XMLHttpRequest, textStatus) {
               if (XMLHttpRequest.status === 403 || XMLHttpRequest.status === 404) {
@@ -228,6 +255,9 @@
         if (ajax.ajaxing) {
           return false;
         }
+        ajax.options.submit = {
+          uactive : activity
+        };
         ajax.options.success = function (response, status) {
           if (typeof response == 'string') {
             response = $.parseJSON(response);
@@ -257,10 +287,13 @@
         base: null,
         element: document.body,
         url: drupalSettings.path.baseUrl + 'autologout_ajax_get_time_left',
+        submit: {
+          uactive : activity
+        },
         event: 'autologout.getTimeLeft',
         error: function (XMLHttpRequest, textStatus) {
           // Disable error reporting to the screen.
-        }
+        },
       });
 
       /**
@@ -337,4 +370,4 @@
     }
   };
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, window.Cookies);

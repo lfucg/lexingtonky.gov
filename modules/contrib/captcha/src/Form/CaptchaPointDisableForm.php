@@ -45,7 +45,7 @@ class CaptchaPointDisableForm extends EntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->disable();
     $this->entity->save();
-    $this->messenger()->addMessage($this->t('Captcha point %label has been disabled.', ['%label' => $this->entity->label()]));
+    $this->messenger()->addMessage($this->t('Captcha point %label has been disabled.', ['%label' => $this->entity->label() ?? $this->entity->id()]));
     $form_state->setRedirect('captcha_point.list');
   }
 

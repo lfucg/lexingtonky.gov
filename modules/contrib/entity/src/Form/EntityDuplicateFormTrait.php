@@ -51,7 +51,7 @@ trait EntityDuplicateFormTrait {
       $event = new EntityDuplicateEvent($entity, $this->sourceEntity);
       /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher */
       $event_dispatcher = \Drupal::service('event_dispatcher');
-      $event_dispatcher->dispatch(EntityEvents::ENTITY_DUPLICATE, $event);
+      $event_dispatcher->dispatch($event, EntityEvents::ENTITY_DUPLICATE);
     }
   }
 

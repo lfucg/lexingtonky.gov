@@ -20,7 +20,7 @@ class SearchApiDbUpdate8102Test extends UpdatePathTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // We need to manually set our entity types as "installed".

@@ -48,6 +48,7 @@ module:
   filter: 0
   flood_control: 0
   gis_api: 0
+  gtranslate: 0
   help: 0
   history: 0
   honeypot: 0

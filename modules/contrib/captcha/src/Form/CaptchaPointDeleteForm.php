@@ -37,7 +37,7 @@ class CaptchaPointDeleteForm extends EntityConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
-    $this->messenger()->addMessage($this->t('Captcha point %label has been deleted.', ['%label' => $this->entity->label()]));
+    $this->messenger()->addMessage($this->t('Captcha point %label has been deleted.', ['%label' => $this->entity->label() ?? $this->entity->id()]));
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
 

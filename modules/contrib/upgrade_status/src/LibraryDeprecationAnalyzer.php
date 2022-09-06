@@ -330,6 +330,9 @@ final class LibraryDeprecationAnalyzer {
 
     $deprecations = [];
     foreach ($iterator as $file) {
+      if (fnmatch('*/tests/fixtures/*.php', $file->getPathName())) {
+        continue;
+      }
       try {
         $tokens = token_get_all(file_get_contents($file->getPathName()));
       } catch (\ParseError $error) {

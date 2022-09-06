@@ -6,7 +6,7 @@ core_version_requirement: ^9.3 || ^10.0
 dependencies:
   - search_api_solr:search_api_solr
 
-# Information added by Drupal.org packaging script on 2022-07-08
-version: '4.2.8'
+# Information added by Drupal.org packaging script on 2022-10-06
+version: '4.2.9'
 project: 'search_api_solr'
-datestamp: 1657270266
+datestamp: 1665067626

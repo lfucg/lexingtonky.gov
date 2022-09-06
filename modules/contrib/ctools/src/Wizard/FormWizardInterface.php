@@ -30,21 +30,21 @@ interface FormWizardInterface extends FormInterface {
   public function initValues();
 
   /**
-   * The private temp store factory collection name.
+   * The shared temp store factory collection name.
    *
    * @return string
    */
   public function getTempstoreId();
 
   /**
-   * The active PrivateTempStore for this wizard.
+   * The active SharedTempStore for this wizard.
    *
-   * @return \Drupal\Core\TempStore\PrivateTempStore
+   * @return \Drupal\Core\TempStore\SharedTempStore
    */
   public function getTempstore();
 
   /**
-   * The PrivateTempStore key for our current wizard values.
+   * The SharedTempStore key for our current wizard values.
    *
    * @return null|string
    */

@@ -1,0 +1,7 @@
+gtranslate.settings:
+  path: '/admin/config/regional/gtranslate'
+  defaults:
+    _form: 'Drupal\gtranslate\Form\GTranslateSettingsForm'
+    _title: 'GTranslate Settings'
+  requirements:
+    _permission: 'gtranslate settings'

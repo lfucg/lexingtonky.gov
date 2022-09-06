@@ -110,11 +110,43 @@ abstract class MetaNameBase extends PluginBase {
   protected $value;
 
   /**
+   * The sort order for this meta tag.
+   *
+   * @var int
+   */
+  protected $weight;
+
+  /**
+   * The attribute this tag uses for the name.
+   *
+   * @var string
+   *
+   * @deprecated in metatag:8.x-1.20 and is removed from metatag:2.0.0. Use $this->htmlTagNameAttribute instead.
+   *
+   * @see https://www.drupal.org/node/3303208
+   */
+  protected $nameAttribute = 'name';
+
+  /**
+   * The string this tag uses for the tag itself.
+   *
+   * @var string
+   */
+  protected $htmlTag = 'meta';
+
+  /**
    * The attribute this tag uses for the name.
    *
    * @var string
    */
-  protected $nameAttribute = 'name';
+  protected $htmlNameAttribute = 'name';
+
+  /**
+   * The attribute this tag uses for the contents.
+   *
+   * @var string
+   */
+  protected $htmlValueAttribute = 'content';
 
   /**
    * {@inheritdoc}
@@ -210,6 +242,16 @@ abstract class MetaNameBase extends PluginBase {
   }
 
   /**
+   * Determine whether this meta tag is an image tag.
+   *
+   * @return bool
+   *   Whether this meta tag is an image.
+   */
+  public function isImage(): bool {
+    return $this->type() == 'image';
+  }
+
+  /**
    * Whether or not this meta tag must output secure (HTTPS) URLs.
    *
    * @return bool
@@ -217,6 +259,16 @@ abstract class MetaNameBase extends PluginBase {
    */
   public function secure() {
     return $this->secure;
+  }
+
+  /**
+   * Whether or not this meta tag must output secure (HTTPS) URLs.
+   *
+   * @return bool
+   *   Whether or not this meta tag must output secure (HTTPS) URLs.
+   */
+  public function isSecure(): bool {
+    return (bool) $this->secure;
   }
 
   /**
@@ -230,6 +282,16 @@ abstract class MetaNameBase extends PluginBase {
   }
 
   /**
+   * Whether or not this meta tag supports multiple values.
+   *
+   * @return bool
+   *   Whether or not this meta tag supports multiple values.
+   */
+  public function isMultiple(): bool {
+    return (bool) $this->multiple;
+  }
+
+  /**
    * Whether or not this meta tag should use a text area.
    *
    * @return bool
@@ -237,6 +299,38 @@ abstract class MetaNameBase extends PluginBase {
    */
   public function isLong() {
     return $this->long;
+  }
+
+  /**
+   * Whether or not this meta tag stores a URL or URI value.
+   *
+   * @return bool
+   *   Whether or not this meta tag should contain a URL or URI value.
+   */
+  public function isUrl(): bool {
+    // Secure URLs are URLs.
+    if ($this->isSecure()) {
+      return TRUE;
+    }
+    // Absolute URLs are URLs.
+    if ($this->requiresAbsoluteUrl()) {
+      return TRUE;
+    }
+    // URIs are URL-adjacent.
+    if ($this->type == 'uri') {
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * Get the HTML attribute used to store this meta tag's value.
+   *
+   * @return string
+   *   The HTML attribute used to store this meta tag's value.
+   */
+  public function getHtmlValueAttribute() {
+    return $this->htmlValueAttribute;
   }
 
   /**
@@ -383,10 +477,10 @@ abstract class MetaNameBase extends PluginBase {
       $value = $this->trimValue($value);
 
       $elements[] = [
-        '#tag' => 'meta',
+        '#tag' => $this->htmlTag,
         '#attributes' => [
-          $this->nameAttribute => $this->name,
-          'content' => $value,
+          $this->htmlNameAttribute => $this->name,
+          $this->htmlValueAttribute => $value,
         ],
       ];
     }

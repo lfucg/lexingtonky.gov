@@ -29,7 +29,7 @@ class MaskIcon extends LinkRelBase {
     $form['#tree'] = TRUE;
 
     // Backwards compatibility.
-    $defaults = $this->value();
+    $defaults = $this->value;
     if (is_string($defaults)) {
       $defaults = [
         'href' => $defaults,
@@ -66,19 +66,35 @@ class MaskIcon extends LinkRelBase {
   public function output() {
     $values = $this->value;
 
-    // Build the output.
-    $element['#tag'] = 'link';
-    $element['#attributes'] = [
-      'rel' => $this->name(),
-      'href' => $this->tidy($values['href']),
-    ];
-
-    // Add the 'color' element.
-    if (!empty($values['color'])) {
-      $element['#attributes']['color'] = $this->tidy($values['color']);
+    // Make sure the value is an array, if it is not then assume it was assigned
+    // before the "color" attribute was added, so place the original string as
+    // the 'href' element and leave the 'color' element blank.
+    if (!is_array($values)) {
+      $values = [
+        'href' => $values,
+        'color' => '',
+      ];
     }
 
-    return $element;
+    // Build the output.
+    $href = $this->tidy($values['href']);
+    if ($href != '') {
+      $this->tidy($values['href']);
+      $element['#tag'] = 'link';
+      $element['#attributes'] = [
+        'rel' => $this->name(),
+        'href' => $href,
+      ];
+
+      // Add the 'color' element.
+      if (!empty($values['color'])) {
+        $element['#attributes']['color'] = $this->tidy($values['color']);
+      }
+
+      return $element;
+    }
+
+    return '';
   }
 
   /**
@@ -86,7 +102,12 @@ class MaskIcon extends LinkRelBase {
    */
   public function setValue($value) {
     // Do not store array with empty values.
-    $this->value = is_array($value) && empty(array_filter($value)) ? NULL : $value;
+    if (is_array($value) && empty(array_filter($value))) {
+      $this->value = [];
+    }
+    else {
+      $this->value = $value;
+    }
   }
 
 }

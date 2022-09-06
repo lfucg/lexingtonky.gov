@@ -66,7 +66,7 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
   /**
    * Data provider for ::testRevisionsAtDepth.
    */
-  public function testRevisionsAtDepthDataProvider(): array {
+  public function revisionsAtDepthDataProvider(): array {
     return [
       [FALSE],
       [TRUE],
@@ -76,7 +76,7 @@ class ComplexWidgetRevisionsTest extends InlineEntityFormTestBase {
   /**
    * Tests saving entity reference revisions' field types at depth.
    *
-   * @dataProvider testRevisionsAtDepthDataProvider
+   * @dataProvider revisionsAtDepthDataProvider
    */
   public function testRevisionsAtDepth(bool $inner_widget_adds_revisions) {
     $level_2_display_config = $this->entityFormDisplayStorage->load('node.err_level_2.default');

@@ -41,7 +41,7 @@ class MetatagManager implements MetatagManagerInterface {
   /**
    * The Metatag defaults.
    *
-   * @var array
+   * @var \Drupal\metatag\Entity\MetatagDefaults
    */
   protected $metatagDefaults;
 
@@ -384,7 +384,7 @@ class MetatagManager implements MetatagManagerInterface {
         $field_type = $definition->getType();
 
         // Check the field type against our list of fields.
-        if (isset($field_type) && in_array($field_type, $field_types)) {
+        if (!empty($field_type) && in_array($field_type, $field_types)) {
           $field_list[$field_name] = $definition;
         }
       }
@@ -410,7 +410,18 @@ class MetatagManager implements MetatagManagerInterface {
       // Get serialized value and break it into an array of tags with values.
       $serialized_value = $item->get('value')->getValue();
       if (!empty($serialized_value)) {
-        $tags += unserialize($serialized_value, ['allowed_classes' => FALSE]);
+        $new_tags = unserialize($serialized_value);
+        if (!empty($new_tags)) {
+          if (is_array($new_tags)) {
+            $tags += $new_tags;
+          }
+          else {
+            $this->logger->error("This was expected to be an array but it is not: \n%value", ['%value' => print_r($new_tags, TRUE)]);
+          }
+        }
+        else {
+          $this->logger->error("This could not be unserialized: \n%value", ['%value' => print_r($serialized_value, TRUE)]);
+        }
       }
     }
 
@@ -529,15 +540,7 @@ class MetatagManager implements MetatagManagerInterface {
   }
 
   /**
-   * Generate the elements that go in the hook_page_attachments attached array.
-   *
-   * @param array $tags
-   *   The array of tags as plugin_id => value.
-   * @param object $entity
-   *   Optional entity object to use for token replacements.
-   *
-   * @return array
-   *   Render array with tag elements.
+   * {@inheritdoc}
    */
   public function generateElements(array $tags, $entity = NULL) {
     $elements = [];
@@ -556,17 +559,7 @@ class MetatagManager implements MetatagManagerInterface {
   }
 
   /**
-   * Generate the actual meta tag values.
-   *
-   * @param array $tags
-   *   The array of tags as plugin_id => value.
-   * @param object $entity
-   *   Optional entity object to use for token replacements.
-   * @param \Drupal\Core\Render\BubbleableMetadata|null $cache
-   *   (optional) Cacheability metadata.
-   *
-   * @return array
-   *   Render array with tag elements.
+   * {@inheritdoc}
    */
   public function generateRawElements(array $tags, $entity = NULL, BubbleableMetadata $cache = NULL) {
     // Ignore the update.php path.
@@ -667,7 +660,8 @@ class MetatagManager implements MetatagManagerInterface {
 
     $entity_identifier = '_none';
     if ($entity) {
-      $entity_identifier = $entity->getEntityTypeId() . ':' . ($entity->uuid() ?? $entity->id());
+      $entity_identifier = $entity->getEntityTypeId() . ':' . ($entity->uuid() ?? $entity->id()) . ':' . $entity->language()
+          ->getId();
     }
 
     // Use the entity's language code, if one is defined.
@@ -740,7 +734,7 @@ class MetatagManager implements MetatagManagerInterface {
    * @return array|string
    *   Processed value.
    */
-  protected function processTagValue($tag, $value, array $token_replacements, bool $plain_text = FALSE, $langcode = FALSE) {
+  protected function processTagValue($tag, $value, array $token_replacements, bool $plain_text = FALSE, $langcode = '') {
     // Set the value as sometimes the data needs massaging, such as when
     // field defaults are used for the Robots field, which come as an array
     // that needs to be filtered and converted to a string.
@@ -770,10 +764,15 @@ class MetatagManager implements MetatagManagerInterface {
     foreach ($value as $key => $value_item) {
       // Process the tokens in this value and decode any HTML characters that
       // might be found.
-      $value[$key] = htmlspecialchars_decode($this->tokenService->replace($value_item, $token_replacements, ['langcode' => $langcode]));
+      if (!empty($value_item) && is_string($value_item)) {
+        if (strpos($value_item, '[') !== FALSE) {
+          $value[$key] = $this->tokenService->replace($value_item, $token_replacements, ['langcode' => $langcode]);
+        }
+        $value[$key] = htmlspecialchars_decode($value[$key]);
+      }
 
       // If requested, run the value through the render system.
-      if ($plain_text) {
+      if ($plain_text && !empty($value[$key])) {
         $value[$key] = PlainTextOutput::renderFromHtml($value[$key]);
       }
     }

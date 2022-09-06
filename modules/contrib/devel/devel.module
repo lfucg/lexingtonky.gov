@@ -192,10 +192,10 @@ function devel_set_handler($handlers) {
  * @param int $line
  *   (optional) The line number the error was raised at.
  * @param array $context
- *   (optional) An array that points to the active symbol table at the point the error
- *   occurred.
+ *   (optional) An array that points to the active symbol table at the point the
+ *   error occurred.
  */
-function backtrace_error_handler($error_level, $message, $filename = NULL, $line = NULL, $context = NULL) {
+function backtrace_error_handler($error_level, $message, $filename = NULL, $line = NULL, array $context = NULL) {
   // Hide stack trace and parameters from unqualified users.
   if (!\Drupal::currentUser()->hasPermission('access devel information')) {
     // Do what core does in bootstrap.inc and errors.inc.
@@ -203,7 +203,7 @@ function backtrace_error_handler($error_level, $message, $filename = NULL, $line
     // to avoid having the backtrace_error_handler() on top of the call stack.)
     if ($error_level & error_reporting()) {
       $types = drupal_error_levels();
-      list($severity_msg, $severity_level) = $types[$error_level];
+      [$severity_msg, $severity_level] = $types[$error_level];
       $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
       $caller = Error::getLastCaller($backtrace);
 
@@ -244,7 +244,7 @@ function backtrace_error_handler($error_level, $message, $filename = NULL, $line
     }
 
     $types = drupal_error_levels();
-    list($severity_msg, $severity_level) = $types[$error_level];
+    [$severity_msg, $severity_level] = $types[$error_level];
 
     $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
     $caller = Error::getLastCaller($backtrace);
@@ -395,10 +395,10 @@ if (!function_exists('dd')) {
   /**
    * Wrapper for DevelDumperManager::debug().
    *
-   * @deprecated since Drupal 8.6.0 because symfony now has dd() as a function.
-   *   Use the ddm() function instead.
-   *
-   * @see \Drupal\devel\DevelDumperManager::debug()
+   * @deprecated in devel:8.x-2.0 and is removed from devel:5.0.0.
+   *   Symfony added dd() as a function, introduced with Drupal 8.6.
+   *   Use the Devel ddm() function instead.
+   * @see https://www.drupal.org/project/devel/issues/2999892
    */
   function dd($data, $label = NULL) {
     return \Drupal::service('devel.dumper')->debug($data, $label, 'default');
@@ -504,12 +504,12 @@ function dpm($input, $name = NULL, $type = MessengerInterface::TYPE_STATUS) {
  *
  * Uses Drupal\Core\Messenger\MessengerInterface::addMessage()
  *
- * @param $input
+ * @param mixed $input
  *   An arbitrary value to output.
  * @param string $name
  *   Optional name for identifying the output.
  *
- * @return input
+ * @return mixed
  *   The unaltered input value.
  *
  * @see \Drupal\devel\DevelDumperManager::message()
@@ -624,14 +624,14 @@ function devel_render() {
 /**
  * Prints the function call stack.
  *
- * @param $return
+ * @param bool $return
  *   Pass TRUE to return the formatted backtrace rather than displaying it in
  *   the browser via kprint_r().
- * @param $pop
+ * @param int $pop
  *   How many items to pop from the top of the stack; useful when calling from
  *   an error handler.
- * @param $options
- *   Options to pass on to PHP's debug_backtrace().
+ * @param int $options
+ *   Options (treated as a bit mask) to pass on to PHP's debug_backtrace().
  *
  * @return string|null
  *   The formatted backtrace, if requested, or NULL.

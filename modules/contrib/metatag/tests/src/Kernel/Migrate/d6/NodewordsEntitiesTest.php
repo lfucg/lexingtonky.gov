@@ -22,7 +22,7 @@ class NodewordsEntitiesTest extends MigrateDrupal6TestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     // Core modules.
     // @see testAvailableConfigEntities
     'comment',

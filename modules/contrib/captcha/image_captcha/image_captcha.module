@@ -84,8 +84,7 @@ function _image_captcha_get_available_fonts_from_directories($directories = NULL
   if ($directories === NULL) {
     $request = \Drupal::service('request_stack')->getCurrentRequest();
     $directories = [
-      // @phpstan-ignore-next-line
-      (Drupal::hasService('extension.list.module') ? \Drupal::service('extension.list.module')->getPath('image_captcha') : drupal_get_path('module', 'image_captcha')) . '/fonts',
+      \Drupal::service('extension.list.module')->getPath('image_captcha') . '/fonts',
       'sites/all/libraries/fonts',
       DrupalKernel::findSitePath($request) . '/libraries/fonts',
     ];
@@ -143,7 +142,7 @@ function _image_captcha_check_fonts(array $fonts) {
  */
 function _image_captcha_utf8_split($str) {
   $characters = [];
-  $len = strlen($str);
+  $len = mb_strlen($str);
 
   for ($i = 0; $i < $len;) {
     $chr = ord($str[$i]);
@@ -171,7 +170,7 @@ function _image_captcha_utf8_split($str) {
       }
     }
 
-    $characters[] = substr($str, $i, $width);
+    $characters[] = mb_substr($str, $i, $width);
     $i += $width;
   }
 

@@ -18,16 +18,19 @@ class CommentTest extends KernelTestBase {
   use CommentTestTrait;
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = ['node', 'comment', 'field', 'text', 'entity_reference'];
+  protected static $modules = [
+    'node',
+    'comment',
+    'field',
+    'text',
+  ];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('node');

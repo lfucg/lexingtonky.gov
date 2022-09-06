@@ -5,6 +5,8 @@ namespace Drupal\metatag_favicons\Plugin\metatag\Tag;
 /**
  * The Favicons "apple-touch-icon-precomposed_152x152" meta tag.
  *
+ * This is basically a clone of the non-precomposed class.
+ *
  * @MetatagTag(
  *   id = "apple_touch_icon_precomposed_152x152",
  *   label = @Translation("Apple touch icon (precomposed): 152px x 152px"),
@@ -17,13 +19,6 @@ namespace Drupal\metatag_favicons\Plugin\metatag\Tag;
  *   multiple = FALSE
  * )
  */
-class AppleTouchIconPrecomposed152x152 extends LinkSizesBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function sizes() {
-    return '152x152';
-  }
-
+class AppleTouchIconPrecomposed152x152 extends AppleTouchIcon152x152 {
+  // Nothing here yet. Just a placeholder class for a plugin.
 }

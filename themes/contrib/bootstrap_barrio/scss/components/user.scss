@@ -97,11 +97,11 @@ body.path-user {
       color: $primary-shade
     }
     .field__item {
-      padding: $spacer/4 $spacer;
+      padding: calc($spacer / 4) $spacer;
       border-radius: $spacer;
       background: $gray-200;
       min-width: 250px;
-      margin: $spacer/4 0; 
+      margin: calc($spacer / 4) 0;
     }
   }
 
@@ -110,11 +110,11 @@ body.path-user {
       color: $primary-shade
     }
     .field__item {
-      padding: $spacer/4 $spacer;
+      padding: calc($spacer / 4) $spacer;
       border-radius: $spacer;
       background: $gray-200;
       width: 100%;
-      margin: $spacer/4 0; 
+      margin: calc($spacer / 4) 0;
     }
   }
 }

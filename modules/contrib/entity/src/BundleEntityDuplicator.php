@@ -119,6 +119,7 @@ class BundleEntityDuplicator implements BundleEntityDuplicatorInterface {
     $storage = $this->entityTypeManager->getStorage($entity_type_id);
     $ids = $storage->getQuery()
       ->condition('id', $id_prefix, 'STARTS_WITH')
+      ->accessCheck(TRUE)
       ->execute();
 
     return $ids ? $storage->loadMultiple($ids) : [];

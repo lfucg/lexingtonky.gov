@@ -3,6 +3,7 @@
 namespace Drupal\devel\Plugin\Devel\Dumper;
 
 use Drupal\devel\DevelDumperBase;
+use Kint\Kint as KintOriginal;
 use Kint\Parser\BlacklistPlugin;
 use Kint\Renderer\RichRenderer;
 use Psr\Container\ContainerInterface;
@@ -87,7 +88,7 @@ class Kint extends DevelDumperBase {
    * {@inheritdoc}
    */
   public function getInternalFunctions() {
-    return array_merge(parent::getInternalFunctions(), \Kint\Kint::$aliases);
+    return array_merge(parent::getInternalFunctions(), KintOriginal::$aliases);
   }
 
   /**

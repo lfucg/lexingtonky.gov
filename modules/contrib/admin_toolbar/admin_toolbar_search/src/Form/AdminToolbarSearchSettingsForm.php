@@ -31,7 +31,7 @@ class AdminToolbarSearchSettingsForm extends ConfigFormBase {
     $form['display_menu_item'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Display the search input as a menu item.'),
-      '#description' => $this->t("if set, instead of display a text input field, it's displayed a menu item in the toolbar so the user has to click on it to toggle the search input."),
+      '#description' => $this->t("If set, instead of displaying a text input field, it displays a menu item in the toolbar so the user has to click on it to toggle the search input."),
       '#default_value' => $this->config('admin_toolbar_search.settings')->get('display_menu_item'),
     ];
     return parent::buildForm($form, $form_state);

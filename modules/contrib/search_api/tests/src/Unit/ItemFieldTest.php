@@ -26,7 +26,7 @@ class ItemFieldTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $data_type = $this->createMock(DataTypeInterface::class);

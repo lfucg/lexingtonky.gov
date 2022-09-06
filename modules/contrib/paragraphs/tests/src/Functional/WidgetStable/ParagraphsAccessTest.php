@@ -147,7 +147,7 @@ class ParagraphsAccessTest extends ParagraphsTestBase {
     $this->submitForm([], 'Preview');
     $image_style = ImageStyle::load('medium');
     $img1_url = $image_style->buildUrl('private://' . date('Y-m') . '/privateImage.jpg');
-    $image_url = file_url_transform_relative($img1_url);
+    $image_url = \Drupal::service('file_url_generator')->transformRelative($img1_url);
     $this->assertSession()->responseContains($image_url);
     $this->clickLink('Back to content editing');
     $this->submitForm([], 'Save');
@@ -168,7 +168,7 @@ class ParagraphsAccessTest extends ParagraphsTestBase {
     // @todo Requesting the same $img_url again triggers a caching problem on
     // drupal.org test bot, thus we request a different file here.
     $img_url = $image_style->buildUrl('private://' . date('Y-m') . '/privateImage2.jpg');
-    $image_url = file_url_transform_relative($img_url);
+    $image_url = \Drupal::service('file_url_generator')->transformRelative($img_url);
     // Check the text and image after publish. Anonymous should not see content.
     $this->assertSession()->responseNotContains($image_url);
 

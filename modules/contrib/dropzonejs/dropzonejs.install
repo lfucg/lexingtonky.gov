@@ -31,7 +31,7 @@ function dropzonejs_requirements($phase) {
 
     // If library is not found, then look in the current profile libraries path.
     if (!$library_found) {
-      $profile_path = drupal_get_path('profile', \Drupal::installProfile());
+      $profile_path = \Drupal::service('extension.list.profile')->getPath(\Drupal::installProfile());
       $profile_path .= '/libraries/dropzone/dist/min/dropzone.min.js';
       // Is the library found in the current profile libraries path.
       $library_found = file_exists($profile_path);

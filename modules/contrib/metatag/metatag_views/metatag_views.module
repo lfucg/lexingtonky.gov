@@ -50,7 +50,9 @@ function metatag_get_view_tags($view, $display_id = NULL, $args = []) {
   }
 
   // Retrieve the metatag settings from the extender.
-  return $extenders['metatag_display_extender']->getMetatags();
+  /** @var \Drupal\metatag_views\Plugin\views\display_extender\MetatagDisplayExtender */
+  $extender = $extenders['metatag_display_extender'];
+  return $extender->getMetatags();
 }
 
 /**
@@ -101,13 +103,11 @@ function metatag_views_metatag_route_entity(RouteMatchInterface $route_match) {
  * Implements hook_views_post_render().
  */
 function metatag_views_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
-  if ($cache instanceof MetatagViewsCacheWrapper) {
-    $cache->doDeferredCacheSet();
-  }
   $extenders = $view->getDisplay()->getExtenders();
   if (isset($extenders['metatag_display_extender'])) {
     $first_row_tokens = MetatagDisplayExtender::getFirstRowTokensFromStylePlugin($view);
-    $extenders['metatag_display_extender']->setFirstRowTokens($first_row_tokens);
+    /** @var \Drupal\metatag_views\Plugin\views\display_extender\MetatagDisplayExtender */
+    $extender = $extenders['metatag_display_extender'];
+    $extender->setFirstRowTokens($first_row_tokens);
   }
-
 }

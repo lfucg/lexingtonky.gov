@@ -1,0 +1,47 @@
+<?php
+/**
+ * @file
+ * Google Translate for Drupal
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function gtranslate_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.gtranslate':
+      $output = '<h3>' . t('GTranslate Resources') . '</h3>';
+      $output .= '<ul class="links">';
+      $output .= '<li><a href="https://gtranslate.io/docs" target="_blank">GTranslate Documentation</a></li>';
+      $output .= '<li><a href="https://gtranslate.io/videos" target="_blank">GTranslate Videos</a></li>';
+      $output .= '<li><a href="https://gtranslate.io/faq" target="_blank">GTranslate FAQ</a></li>';
+      $output .= '<li><a href="https://gtranslate.io/forum/" target="_blank">GTranslate Forum</a></li>';
+      $output .= '</ul>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function gtranslate_permission() {
+  return array(
+    'gtranslate settings' => array(
+      'title' => t('Manage GTranslate settings'),
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function gtranslate_theme($existing, $type, $theme, $path) {
+  return array(
+    'gtranslate' => array(
+      'variables' => array('gtranslate_html' => NULL),
+    ),
+  );
+}

@@ -63,7 +63,7 @@ class FloodControlUiPageTest extends BrowserTestBase {
     $this->drupalGet('admin/people/flood-unblock');
     $this->assertSession()->statusCodeEquals(200, 'Status code is equal to 200');
 
-    // Test that there is an empty flood list
+    // Test that there is an empty flood list.
     $this->assertSession()
       ->pageTextContains('There are no failed logins at this time.');
   }

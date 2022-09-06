@@ -112,15 +112,18 @@ function captcha_install() {
 
   if (!\Drupal::service('config.installer')->isSyncing() && \Drupal::moduleHandler()->moduleExists('node')) {
     $form_ids = [];
+    $label = [];
     // Add form_ids of all currently known node types too.
     foreach (node_type_get_names() as $type => $name) {
       $form_ids[] = 'node_' . $type . '_form';
+      $label[] = 'node_' . $type . '_form';
     }
 
     $captcha_storage = \Drupal::entityTypeManager()
       ->getStorage('captcha_point');
-    foreach ($form_ids as $form_id) {
+    foreach ($form_ids as $index=>$form_id) {
       $values = [
+        'label' => $label[$index],
         'formId' => $form_id,
         'captchaType' => 'default',
         'status' => FALSE,
@@ -141,5 +144,25 @@ function captcha_update_8901(&$sandbox) {
   if ($entityType) {
     \Drupal::entityDefinitionUpdateManager()
       ->installEntityType($entityType);
+  }
+}
+
+/**
+* Implements hook_update_N().
+*/
+function captcha_update_8902(&$sandbox) {
+  $query = \Drupal::entityQuery('captcha_point');
+  $query->notExists('label');
+  $entity_ids = $query->execute();
+
+if (!empty($entity_ids) && is_array($entity_ids)) {
+  foreach($entity_ids as $entity_id) {
+    $captcha_point_id = $entity_id;
+    $captcha_point = \Drupal::entityTypeManager()
+      ->getStorage('captcha_point')
+      ->load($captcha_point_id);
+    $captcha_point->set('label', $captcha_point->getFormId());
+    $captcha_point->save();
+   }
   }
 }

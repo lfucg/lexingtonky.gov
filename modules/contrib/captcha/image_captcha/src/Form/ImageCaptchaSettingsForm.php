@@ -113,7 +113,7 @@ class ImageCaptchaSettingsForm extends ConfigFormBase {
     $form['image_captcha_code_settings']['image_captcha_image_allowed_chars'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Characters to use in the code'),
-      '#default_value' => $config->get('image_captcha_image_allowed_chars'),
+      '#default_value' => $config->get('image_captcha_image_allowed_chars') ? $config->get('image_captcha_image_allowed_chars') : IMAGE_CAPTCHA_ALLOWED_CHARACTERS,
     ];
     $form['image_captcha_code_settings']['image_captcha_code_length'] = [
       '#type' => 'select',

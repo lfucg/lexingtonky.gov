@@ -1,13 +1,13 @@
 name: Paragraphs Type Permissions
 type: module
 description: 'Allows users to configure permissions for individual Paragraphs types.'
-core_version_requirement: ^9.2
+core_version_requirement: ^9.3 || ^10
 package: Paragraphs
 
 dependencies:
   - paragraphs:paragraphs
 
-# Information added by Drupal.org packaging script on 2022-04-21
-version: '8.x-1.14'
+# Information added by Drupal.org packaging script on 2022-08-25
+version: '8.x-1.15'
 project: 'paragraphs'
-datestamp: 1650520871
+datestamp: 1661440900

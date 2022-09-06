@@ -32,13 +32,6 @@ class MetatagViewsCacheWrapper extends CachePluginBase {
   protected $plugin;
 
   /**
-   * Whether cacheSet was called with $type 'result'.
-   *
-   * @var bool
-   */
-  protected $called = FALSE;
-
-  /**
    * MetatagViewsCacheWrapper constructor.
    *
    * @param \Drupal\views\Plugin\views\cache\CachePluginBase $plugin
@@ -53,7 +46,18 @@ class MetatagViewsCacheWrapper extends CachePluginBase {
    */
   public function cacheSet($type) {
     if ($type === self::RESULTS) {
-      $this->called = TRUE;
+      $plugin = $this->plugin;
+      $view = $plugin->view;
+      $data = [
+        'result' => $plugin->prepareViewResult($view->result),
+        'total_rows' => $view->total_rows ?? 0,
+        'current_page' => $view->getCurrentPage(),
+        'first_row_tokens' => MetatagDisplayExtender::getFirstRowTokensFromStylePlugin($view),
+      ];
+      $cache_set_max_age = $this->cacheSetMaxAge('results');
+      $expire = ($cache_set_max_age === Cache::PERMANENT) ? Cache::PERMANENT : (int) $view->getRequest()->server->get('REQUEST_TIME') + $cache_set_max_age;
+      \Drupal::cache($plugin->resultsBin)
+        ->set($plugin->generateResultsKey(), $data, $expire, $plugin->getCacheTags());
     }
     else {
       $this->plugin->cacheSet($type);
@@ -61,55 +65,35 @@ class MetatagViewsCacheWrapper extends CachePluginBase {
   }
 
   /**
-   * Actually run cacheSet for type results.
-   *
-   * It needs to be deferred past the render phase so the row tokens in
-   * the style plugin are populated.
-   */
-  public function doDeferredCacheSet() {
-    if (!$this->called) {
-      return;
-    }
-    $plugin = $this->plugin;
-    $view = $plugin->view;
-    $data = [
-      'result' => $plugin->prepareViewResult($view->result),
-      'total_rows' => $view->total_rows ?? 0,
-      'current_page' => $view->getCurrentPage(),
-      'first_row_tokens' => MetatagDisplayExtender::getFirstRowTokensFromStylePlugin($view),
-    ];
-    $cache_set_max_age = $plugin->cacheSetMaxAge(self::RESULTS);
-    $expire = ($cache_set_max_age === Cache::PERMANENT) ? Cache::PERMANENT : (int) $view->getRequest()->server->get('REQUEST_TIME') + $cache_set_max_age;
-    \Drupal::cache($plugin->resultsBin)->set($plugin->generateResultsKey(), $data, $expire, $plugin->getCacheTags());
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function cacheGet($type) {
-    if ($type === self::RESULTS) {
-      $cutoff = $this->plugin->cacheExpire($type);
-      // Values to set: $view->result, $view->total_rows, $view->execute_time,
-      // $view->current_page and pass row tokens to metatag display extender.
-      if ($cache = \Drupal::cache($this->plugin->resultsBin)->get($this->plugin->generateResultsKey())) {
-        if (!$cutoff || $cache->created > $cutoff) {
-          $view = $this->plugin->view;
-          $view->result = $cache->data['result'];
-          // Load entities for each result.
-          $view->query->loadEntities($view->result);
-          $view->total_rows = $cache->data['total_rows'];
-          $view->setCurrentPage($cache->data['current_page'], TRUE);
-          $view->execute_time = 0;
-          $extenders = $view->getDisplay()->getExtenders();
-          if (isset($extenders['metatag_display_extender'])) {
-            $extenders['metatag_display_extender']->setFirstRowTokens($cache->data['first_row_tokens'] ?? []);
+    switch ($type) {
+      case self::RESULTS:
+        $cutoff = $this->plugin->cacheExpire($type);
+        // Values to set: $view->result, $view->total_rows, $view->execute_time,
+        // $view->current_page and pass row tokens to metatag display extender.
+        if ($cache = \Drupal::cache($this->plugin->resultsBin)->get($this->plugin->generateResultsKey())) {
+          if (!$cutoff || $cache->created > $cutoff) {
+            $view = $this->plugin->view;
+            $view->result = $cache->data['result'];
+            // Load entities for each result.
+            $view->query->loadEntities($view->result);
+            $view->total_rows = $cache->data['total_rows'];
+            $view->setCurrentPage($cache->data['current_page'], TRUE);
+            $view->execute_time = 0;
+            $extenders = $view->getDisplay()->getExtenders();
+            if (isset($extenders['metatag_display_extender'])) {
+              $extenders['metatag_display_extender']->setFirstRowTokens($cache->data['first_row_tokens']);
+            }
+            return TRUE;
           }
-          return TRUE;
         }
-      }
-      return FALSE;
+        return FALSE;
+
+      default:
+        return $this->plugin->cacheGet($type);
     }
-    return $this->plugin->cacheGet($type);
   }
 
   /**

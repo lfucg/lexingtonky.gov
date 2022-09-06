@@ -96,7 +96,8 @@ class MetatagTokenTest extends BrowserTestBase {
       'field_metatags[0][basic][abstract]' => 'My abstract',
       'field_metatags[0][open_graph][og_title]' => 'My OG Title',
       'field_metatags[0][open_graph][og_image]' => 'Image 1,Image 2',
-      'field_metatags[0][favicons][mask_icon][href]' => 'mask_icon.svg',
+      // @todo Update this to use the full URL.
+      'field_metatags[0][favicons][mask_icon][href]' => 'metatag-logo.svg',
     ], 'Save');
 
     $tokens = [
@@ -113,7 +114,7 @@ class MetatagTokenTest extends BrowserTestBase {
       '[user:field_metatags:og_image:0]' => 'Image 1',
       '[user:field_metatags:og_image:1]' => 'Image 2',
       // Test metatags that store value as an array.
-      '[user:field_metatags:mask_icon]' => 'mask_icon.svg',
+      '[user:field_metatags:mask_icon]' => 'metatag-logo.svg',
     ];
 
     $this->assertPageTokens($user->toUrl(), $tokens, ['user' => $user]);

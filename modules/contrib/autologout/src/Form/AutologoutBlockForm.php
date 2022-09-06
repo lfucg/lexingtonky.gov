@@ -64,7 +64,7 @@ class AutologoutBlockForm extends FormBase {
       '#markup' => $this->autoLogoutManager->createTimer(),
     ];
 
-    return parent::buildForm($form, $form_state);
+    return $form;
   }
 
   /**

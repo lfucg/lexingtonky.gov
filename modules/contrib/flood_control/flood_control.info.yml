@@ -3,9 +3,9 @@ description: "Allows configuring hidden flood control options and unblocking IP 
 configure: flood_control.settings
 package: 'Administration'
 type: module
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^8 || ^9 || ^10
 
-# Information added by Drupal.org packaging script on 2022-04-26
-version: '2.2.3'
+# Information added by Drupal.org packaging script on 2022-09-16
+version: '2.2.4'
 project: 'flood_control'
-datestamp: 1650976353
+datestamp: 1663328529

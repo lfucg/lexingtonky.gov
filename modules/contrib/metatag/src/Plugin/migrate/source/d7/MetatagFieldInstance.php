@@ -101,6 +101,9 @@ class MetatagFieldInstance extends DrupalSqlBase {
 
   /**
    * Returns each entity_type/bundle pair.
+   *
+   * @return \ArrayIterator
+   *   An array iterator object containing the entity type and bundle.
    */
   public function initializeIterator() {
     $bundles = [];
@@ -138,14 +141,18 @@ class MetatagFieldInstance extends DrupalSqlBase {
    * {@inheritdoc}
    */
   public function count($refresh = FALSE) {
-    return $this->initializeIterator()->count();
+    /** @var \ArrayIterator $iterator */
+    $iterator = $this->initializeIterator();
+    return $iterator->count();
   }
 
   /**
    * {@inheritdoc}
    */
   protected function doCount() {
-    return $this->initializeIterator()->count();
+    /** @var \ArrayIterator $iterator */
+    $iterator = $this->initializeIterator();
+    return $iterator->count();
   }
 
 }

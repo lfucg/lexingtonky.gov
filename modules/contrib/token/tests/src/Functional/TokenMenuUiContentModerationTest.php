@@ -14,6 +14,6 @@ class TokenMenuUiContentModerationTest extends MenuUiContentModerationTest {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['token'];
+  protected static $modules = ['token'];
 
 }

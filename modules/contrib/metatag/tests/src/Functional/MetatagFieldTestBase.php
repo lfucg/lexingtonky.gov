@@ -2,9 +2,10 @@
 
 namespace Drupal\Tests\metatag\Functional;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\Cache;
-use Drupal\Tests\BrowserTestBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Base class for ensuring that the Metatag field works correctly.
@@ -147,23 +148,6 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  protected function verbose($message, $title = NULL) {
-    // Handle arrays, objects, etc.
-    if (!is_string($message)) {
-      $message = "<pre>\n" . print_r($message, TRUE) . "\n</pre>\n";
-    }
-
-    // Optional title to go before the output.
-    if (!empty($title)) {
-      $title = '<h2>' . Html::escape($title) . "</h2>\n";
-    }
-
-    dump($title . $message);
-  }
-
-  /**
    * Any additional configuration that's needed for this entity type.
    */
   protected function setUpEntityType() {}
@@ -171,13 +155,13 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
   /**
    * A list of default values to add to the entity being created.
    *
-   * Defaults to "{$entityTitleField}[0][value]" => $title.
-   *
    * @return array
    *   Default values.
    */
-  protected function entityDefaultValues() {
-    return [];
+  protected function entityDefaultValues($title = 'Barfoo') {
+    return [
+      $this->entityTitleField . '[0][value]' => $title,
+    ];
   }
 
   /**
@@ -262,13 +246,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $session->pageTextNotContains('Fatal error');
 
     // Allow the fields to be customized if needed.
-    $title = 'Barfoo';
-    $edit = $this->entityDefaultValues();
-    if (empty($edit)) {
-      $edit = [
-        $this->entityTitleField . '[0][value]' => $title,
-      ];
-    }
+    $edit = $this->entityDefaultValues('Barfoo');
 
     // If this entity type supports defaults then verify the global default is
     // not present but that the entity default *is* present.
@@ -328,6 +306,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $session->pageTextContains(strip_tags('Saved the Global Metatag defaults.'));
 
     // Set an entity default if it's supported by the entity type.
+    $entity_values = [];
     if ($this->entitySupportsDefaults) {
       $this->drupalGet('admin/config/search/metatag/' . $this->entityType);
       $session->statusCodeEquals(200);
@@ -345,12 +324,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $session->pageTextNotContains('Fatal error');
 
     // Allow the fields to be customized if needed.
-    $edit = $this->entityDefaultValues();
-    if (empty($edit)) {
-      $edit = [
-        $this->entityTitleField . '[0][value]' => $title,
-      ];
-    }
+    $edit = $this->entityDefaultValues($title);
 
     // Create a new entity object.
     $this->submitForm($edit, $this->entitySaveButtonLabel);
@@ -375,6 +349,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
       $session->fieldValueEquals('field_metatag[0][basic][metatag_test_tag]', $entity_values['metatag_test_tag']);
     }
     else {
+      // @todo This won't work.
       $session->fieldValueEquals('field_metatag[0][basic][metatag_test_tag]', $global_values['metatag_test_tag']);
     }
 
@@ -398,12 +373,12 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $session->pageTextContains(strip_tags('Saved the Global Metatag defaults.'));
 
     // Set an entity default if it's supported by the entity type.
+    $entity_values = [
+      'metatag_test_tag' => 'Entity description',
+    ];
     if ($this->entitySupportsDefaults) {
       $this->drupalGet('admin/config/search/metatag/' . $this->entityType);
       $session->statusCodeEquals(200);
-      $entity_values = [
-        'metatag_test_tag' => 'Entity description',
-      ];
       $this->submitForm($entity_values, 'Save');
       $session->pageTextContains(strip_tags("Saved the $this->entityLabel Metatag defaults."));
     }
@@ -428,12 +403,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     }
 
     // Allow the fields to be customized if needed.
-    $edit = $this->entityDefaultValues();
-    if (empty($edit)) {
-      $edit = [
-        $this->entityTitleField . '[0][value]' => $title,
-      ];
-    }
+    $edit = $this->entityDefaultValues($title);
 
     // Create a new entity object.
     $this->submitForm($edit, $this->entitySaveButtonLabel);
@@ -475,7 +445,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $session = $this->assertSession();
     $session->statusCodeEquals(200);
     $session->pageTextNotContains('Fatal error');
-    $edit = $this->entityDefaultValues($title) + [
+    $edit = $this->entityDefaultValues() + [
       'field_metatag[0][basic][metatag_test_tag]' => 'Kilimanjaro',
     ];
     $this->submitForm($edit, $this->t('Save'));
@@ -509,7 +479,6 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
     $session->statusCodeEquals(200);
     $elements = $this->cssSelect('meta[name=metatag_test_tag]');
     $this->assertCount(1, $elements, 'Found test metatag from defaults');
-    $this->verbose('<pre>' . print_r($elements, TRUE) . '</pre>');
     $this->assertEquals((string) $elements[0]['content'], $values['metatag_test_tag']);
   }
 

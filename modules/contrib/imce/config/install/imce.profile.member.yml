@@ -3,6 +3,7 @@ id: member
 label: 'Member profile'
 description: 'Configuration for site members'
 conf:
+  usertab: false
   extensions: 'jpg png gif'
   maxsize: 2
   quota: 50

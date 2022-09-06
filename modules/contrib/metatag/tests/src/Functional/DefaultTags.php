@@ -3,6 +3,7 @@
 namespace Drupal\Tests\metatag\Functional;
 
 use Drupal\Tests\BrowserTestBase;
+use Drupal\user\Entity\User;
 
 /**
  * Verify that the configured defaults load as intended.
@@ -61,6 +62,7 @@ class DefaultTags extends BrowserTestBase {
   public function testFrontpage() {
     $this->drupalGet('<front>');
     $this->assertSession()->statusCodeEquals(200);
+    // @todo Expand this selection to cover additional meta tags.
     $xpath = $this->xpath("//link[@rel='canonical']");
     $this_page_url = $this->buildUrl('<front>');
     self::assertEquals((string) $xpath[0]->getAttribute('href'), $this_page_url);
@@ -75,6 +77,7 @@ class DefaultTags extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Hello world!');
 
     // Check the meta tags.
+    // @todo Expand this selection to cover additional meta tags.
     $xpath = $this->xpath("//link[@rel='canonical']");
     $this_page_url = $this->buildUrl('/metatag_test_custom_route');
     self::assertEquals((string) $xpath[0]->getAttribute('href'), $this_page_url);
@@ -92,6 +95,7 @@ class DefaultTags extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
 
     // Check the meta tags.
+    // @todo Expand this selection to cover additional meta tags.
     $xpath = $this->xpath("//link[@rel='canonical']");
     self::assertEquals((string) $xpath[0]->getAttribute('href'), $this_page_url);
   }
@@ -107,6 +111,7 @@ class DefaultTags extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
 
     // Check the meta tags.
+    // @todo Expand this selection to cover additional meta tags.
     $xpath = $this->xpath("//link[@rel='canonical']");
     self::assertEquals((string) $xpath[0]->getAttribute('href'), $this_page_url);
   }
@@ -115,15 +120,16 @@ class DefaultTags extends BrowserTestBase {
    * Test the default values for a User entity.
    */
   public function testUser() {
-    $this->loginUser1();
-    $account = \Drupal::currentUser()->getAccount();
+    // Log in as user 1.
+    $account = $this->loginUser1();
     $this_page_url = $account->toUrl('canonical', ['absolute' => TRUE])->toString();
 
-    // Load the user's entity page.
+    // Load the user/1 entity page.
     $this->drupalGet($this_page_url);
     $this->assertSession()->statusCodeEquals(200);
 
     // Check the meta tags.
+    // @todo Expand this selection to cover additional meta tags.
     $xpath = $this->xpath("//link[@rel='canonical']");
     self::assertEquals((string) $xpath[0]->getAttribute('href'), $this_page_url);
     $this->drupalLogout();
@@ -152,6 +158,7 @@ class DefaultTags extends BrowserTestBase {
       $this->assertSession()->statusCodeEquals(200);
 
       // Check the meta tags.
+      // @todo Expand this selection to cover additional meta tags.
       $xpath = $this->xpath("//link[@rel='canonical']");
       $this->assertNotEquals((string) $xpath[0]->getAttribute('href'), $front_url);
       self::assertEquals((string) $xpath[0]->getAttribute('href'), $this_page_url);

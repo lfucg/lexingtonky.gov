@@ -75,7 +75,7 @@ class CaptchaExamplesForm extends FormBase {
         // @phpstan-ignore-next-line
         $modules_list = $this->moduleHandler->getImplementations('captcha');
         foreach ($modules_list as $mkey => $module) {
-          $challenges[$mkey] = call_user_func_array($module . '_captcha', ['list']);
+          $challenges[$module] = call_user_func_array($module . '_captcha', ['list']);
         }
       }
 

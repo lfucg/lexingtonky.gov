@@ -121,14 +121,18 @@ class NodewordsFieldInstance extends DrupalSqlBase {
    * {@inheritdoc}
    */
   public function count($refresh = FALSE) {
-    return $this->initializeIterator()->count();
+    /** @var \ArrayIterator $items */
+    $items = $this->initializeIterator();
+    return $items->count();
   }
 
   /**
    * {@inheritdoc}
    */
   protected function doCount() {
-    return $this->initializeIterator()->count();
+    /** @var \ArrayIterator $items */
+    $items = $this->initializeIterator();
+    return $items->count();
   }
 
 }

@@ -83,10 +83,17 @@ class EmbedPreviewTest extends BrowserTestBase {
     $commands = Json::decode($response);
     // There should be more than one command.
     $this->assertGreaterThan(1, count($commands));
-    // There should be a command to add jQuery to the page.
-    $this->assertMatch($commands, function (array $command) {
-      return $command['command'] == 'insert' && $command['method'] == 'append' && $command['selector'] == 'body' && strpos($command['data'], 'jquery.min.js') > 0;
-    });
+
+    if (!class_exists('Drupal\Core\Ajax\AddJsCommand')) {
+      $this->assertMatch($commands, function (array $command) {
+        return $command['command'] == 'insert' && $command['method'] == 'append' && $command['selector'] == 'body' && strpos($command['data'], 'jquery.min.js') > 0;
+      });
+    }
+    else {
+      $this->assertMatch($commands, function (array $command) {
+        return $command['command'] == 'add_js'  && $command['selector'] == 'body' && strpos($command['data'][0]['src'], 'jquery.min.js') > 0;
+      });
+    }
   }
 
   /**

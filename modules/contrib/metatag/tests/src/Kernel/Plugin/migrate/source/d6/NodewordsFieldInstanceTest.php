@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\metatag\Kernel\Plugin\migrate\source\d6;
 
-use Drupal\Node\Entity\NodeType;
 use Drupal\Tests\migrate\Kernel\MigrateSqlSourceTestBase;
+use Drupal\node\Entity\NodeType;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 
@@ -22,7 +22,7 @@ class NodewordsFieldInstanceTest extends MigrateSqlSourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     // Core modules.
     'field',
     'migrate_drupal',

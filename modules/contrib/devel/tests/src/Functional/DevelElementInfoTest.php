@@ -80,7 +80,7 @@ class DevelElementInfoTest extends DevelBrowserTestBase {
       $row = $table->find('css', sprintf('tbody tr:contains("%s")', $element_name));
       $this->assertNotNull($row);
 
-      /* @var $cells \Behat\Mink\Element\NodeElement[] */
+      /** @var \Behat\Mink\Element\NodeElement[] $cells */
       $cells = $row->findAll('css', 'td');
       $this->assertEquals(4, count($cells));
 

@@ -42,6 +42,10 @@ imce.profile_conf.extensions:
   type: string
   label: 'Allowed file extensions'
 
+imce.profile_conf.usertab:
+  type: boolean
+  label: 'Display file browser tab in user profile pages'
+
 imce.profile_conf.maxsize:
   type: float
   label: 'Maximum file size'

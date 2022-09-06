@@ -3,6 +3,7 @@
 namespace Drupal\metatag;
 
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Class MetatagManager.
@@ -97,5 +98,33 @@ interface MetatagManagerInterface {
    *   Render array for metatag form.
    */
   public function form(array $values, array $element, array $token_types = [], array $included_groups = NULL, array $included_tags = NULL, $verbose_help = FALSE);
+
+  /**
+   * Generate the elements that go in the hook_page_attachments attached array.
+   *
+   * @param array $tags
+   *   The array of tags as plugin_id => value.
+   * @param object $entity
+   *   Optional entity object to use for token replacements.
+   *
+   * @return array
+   *   Render array with tag elements.
+   */
+  public function generateElements(array $tags, $entity = NULL);
+
+  /**
+   * Generate the actual meta tag values.
+   *
+   * @param array $tags
+   *   The array of tags as plugin_id => value.
+   * @param object $entity
+   *   Optional entity object to use for token replacements.
+   * @param \Drupal\Core\Render\BubbleableMetadata|null $cache
+   *   (optional) Cacheability metadata.
+   *
+   * @return array
+   *   Render array with tag elements.
+   */
+  public function generateRawElements(array $tags, $entity = NULL, BubbleableMetadata $cache = NULL);
 
 }

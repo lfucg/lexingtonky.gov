@@ -108,18 +108,7 @@ class DevelDumperTest extends DevelBrowserTestBase {
     $this->assertSession()->responseContains('devel_dumper_test/css/devel_dumper_test.css');
     $this->assertSession()->responseContains('devel_dumper_test/js/devel_dumper_test.js');
 
-    // @todo Cater for deprecated code where the replacement has not been
-    // backported. Remove this when support for core 8.7 is no longer required.
-    // @see https://www.drupal.org/project/devel/issues/3118851
-    if (version_compare(\Drupal::VERSION, 8.8, '>=')) {
-      // For 8.8+.
-      $debug_filename = \Drupal::service('file_system')->getTempDirectory() . '/' . 'drupal_debug.txt';
-    }
-    else {
-      // Up to 8.7.
-      $debug_filename = file_directory_temp() . '/drupal_debug.txt';
-    }
-
+    $debug_filename = \Drupal::service('file_system')->getTempDirectory() . '/' . 'drupal_debug.txt';
     $this->drupalGet('devel_dumper_test/debug');
     $file_content = file_get_contents($debug_filename);
     $expected = <<<EOF

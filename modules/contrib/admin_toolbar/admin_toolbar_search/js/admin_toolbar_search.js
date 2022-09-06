@@ -35,7 +35,7 @@
           source: function (request, response) {
             var data = $self.handleAutocomplete(request.term);
             if (!$self.extraFetched && drupalSettings.adminToolbarSearch.loadExtraLinks) {
-              $.getJSON( Drupal.url('admin/admin-toolbar-search'), function( data ) {
+              $.getJSON( Drupal.url('admin/admin-toolbar-search'), function ( data ) {
                 $(data).each(function () {
                   var item = this;
                   item.label = this.labelRaw + ' ' + this.value;

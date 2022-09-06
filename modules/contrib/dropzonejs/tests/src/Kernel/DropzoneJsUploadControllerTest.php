@@ -50,12 +50,12 @@ class DropzoneJsUploadControllerTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['system', 'file', 'user', 'dropzonejs', 'language'];
+  protected static $modules = ['system', 'file', 'user', 'dropzonejs', 'language'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installConfig('dropzonejs');
     $this->installEntitySchema('user');

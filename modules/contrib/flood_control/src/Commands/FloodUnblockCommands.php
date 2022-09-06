@@ -31,30 +31,20 @@ class FloodUnblockCommands extends DrushCommands {
    * Clears the floods based on IP.
    *
    * @param string $ip
-   *   IP to clear.
+   *   IP address to clear.
    *
    * @command flood_unblock:ip
-   * @usage flood_unblock:ip
+   * @usage flood_unblock:ip ip_address
    */
-  public function unblockIp($ip = NULL) {
-    $this->manager->floodUnblockClearEvent('user.failed_login_ip', $ip);
-
-    $this->output()->writeln('Done');
-  }
-
-  /**
-   * Clears the floods based on user.
-   *
-   * @param string $user
-   *   User to clear...
-   *
-   * @command flood_unblock:user
-   * @usage flood_unblock:user
-   */
-  public function unblockUser($user = NULL) {
-    $this->manager->floodUnblockClearEvent('user.failed_login_user', $user);
-    $this->manager->floodUnblockClearEvent('user.http_login', $user);
-    $this->output()->writeln('Done');
+  public function unblockIp($ip) {
+    $events = $this->manager->getEvents();
+    foreach ($events as $key => $event) {
+      $fids = $this->manager->getEventIds($key, $ip);
+      foreach ($fids as $fid) {
+        $this->manager->floodUnblockClearEvent($fid);
+      }
+    }
+    $this->output()->writeln("Cleared the events for IP address $ip");
   }
 
   /**
@@ -64,10 +54,15 @@ class FloodUnblockCommands extends DrushCommands {
    * @usage flood_unblock:all
    */
   public function unblockAll() {
-    $this->manager->floodUnblockClearEvent('user.failed_login_ip', NULL);
-    $this->manager->floodUnblockClearEvent('user.failed_login_user', NULL);
-    $this->manager->floodUnblockClearEvent('user.http_login', NULL);
-    $this->output()->writeln('Done');
+    $events = $this->manager->getEvents();
+    foreach ($events as $key => $event) {
+      $fids = $this->manager->getEventIds($key);
+      foreach ($fids as $fid) {
+        $this->manager->floodUnblockClearEvent($fid);
+      }
+      $label = $event['label'];
+      $this->output()->writeln("Cleared the ${label} events");
+    }
   }
 
 }

@@ -31,9 +31,9 @@ The primary features include:
   revisioning of meta tag values added for individual entities.
 
 * A large volume of meta tags available, covering commonly used tags, Open
-  Graph tags, Twitter Cards tags, Dublin Core tags, Google+ tags, App Links
-  tags, site verification tags and more; all but the basic meta tags are kept
-  in separate submodules.
+  Graph tags, Twitter Cards tags, Dublin Core tags, App Links tags, site
+  verification tags and more; all but the basic meta tags are kept in separate
+  submodules.
 
 * Configuration can be added for individual paths using the Metatag Custom
   Routes submodule.
@@ -49,9 +49,6 @@ The primary features include:
 
 * The Twitter Cards meta tags may be added by enabling the "Metatag: Twitter
   Cards" submodule.
-
-* Certain meta tags used by Google+ may be added by enabling the "Metatag:
-  Google+" submodule.
 
 * Facebook's fb:app_id, fb:admins and fb:pages meta tags may be added by
   enabling the "Metatag: Facebook" submodule. These are useful for sites which
@@ -82,6 +79,10 @@ The primary features include:
 
 * Meta tags specific to Facebook are included in the "Metatag: Facebook"
   submodule.
+
+* Individual meta tags can be added to the [Search
+  API](https://www.drupal.org/project/search_api) index if a Metatag field is
+  added to the entity bundles; see below for further details.
 
 * A plugin interface allowing for additional meta tags to be easily added via
   custom modules.
@@ -134,23 +135,61 @@ Metatag field entirely, then use tokens for those fields in the defaults
 display, or just left hidden.
 
 
-Alternative option to simplify the content administration experience
---------------------------------------------------------------------------------
+## Indexing meta tags with Search API
+
+The Search API integration allows indexing the meta tag values from a meta tag
+field on an entity bundle.
+
+### Limitations
+
+* Each meta tag must be specified individually, there isn't (currently) a way to
+  add all of them at once.
+* This may not work with values stored in Schema.org data structures from the
+  Schema.org Metatag module.
+* Changing the global Metatag defaults will not trigger a reindex of the content
+  so this will need to be done separately.
+* By default meta tags will be added as "string" fields, which will not include
+  them in the keyword search index; their "Type" selection must be specifically
+  set to "Fulltext" in order for the meta tags to be included in the keyword
+  search index, otherwise they will only be useful for doing facets or filters.
+
+### Setup
+
+To add meta tags to the Search API:
+
+* Make sure that a Metatag field is present on the entity bundle(s) that are
+  being indexed.
+* In the index configuration, modify the Fields section.
+* Click the "Add fields" button.
+* In the "Add fields to index [indexname]" popup, scroll down to find the
+  Metatag field; it will have the name defined in the field's settings.
+* Click the plus `(+)` button beside the field to see which meta tags are
+  available.
+* Click the "Add" button for the meta tags that are needed.
+* Click "Done" when all of the meta tags are added.
+* Look for the meta tag fields added to the index, change their "type" selector
+  to "Fulltext"; adjust the "Boost" value if desired.
+* Click "Save changes" at the bottom of the Fields admin page.
+* Reindex the content with the new settings.
+
+
+## Alternative option to simplify the content administration experience
+
 On the settings page (/admin/config/search/metatag/settings) are options to
 control which meta tag groups are available for each entity bundle. This allows
 e.g. the Favicon meta tags to be available for global configurations but to hide
 them on entity forms.
 
 
-Programmatically assign meta tags to an entity
---------------------------------------------------------------------------------
+## Programmatically assign meta tags to an entity
+
 There are two ways to assign an entity's meta tags in custom module. Both
 scenarios require a "Metatag" field be added to the entity's field settings, the
 field name "field_meta_tags" is used but this is completely arbitrary.
 
 Option 1:
 
-```$entity_type = 'node';
+``` $entity_type = 'node';
 $values = [
   'nid' => NULL,
   'type' => 'article',
@@ -302,6 +341,10 @@ Two migration processes are supported:
 
 Some modules are available that extend Metatag with additional or complimentary
 functionality:
+
+* [Token OR](https://www.drupal.org/project/token_or):
+  Provides a means to output a second token if the first one is empty, which can
+  be very useful for complex content architectures.
 
 * [Schema.org Metatag](https://www.drupal.org/project/schema_metatag):
   Extensive solution for adding schema.org / JSON-LD support to Metatag.

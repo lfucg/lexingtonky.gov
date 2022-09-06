@@ -22,7 +22,7 @@ class Icon192x192 extends LinkSizesBase {
   /**
    * {@inheritdoc}
    */
-  protected function sizes() {
+  protected function iconSize() {
     return '192x192';
   }
 

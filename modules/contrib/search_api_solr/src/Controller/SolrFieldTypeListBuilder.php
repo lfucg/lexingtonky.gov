@@ -75,7 +75,7 @@ class SolrFieldTypeListBuilder extends AbstractSolrEntityListBuilder {
     static $entities;
 
     $active_languages = array_keys(\Drupal::languageManager()->getLanguages());
-    // Ignore region and variant of the locale string the langauge manager
+    // Ignore region and variant of the locale string the language manager
     // returns as we provide language fallbacks. For example, 'de' should be
     // used for 'de-at' if there's no dedicated 'de-at' field type.
     array_walk($active_languages, function (&$value) {

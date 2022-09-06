@@ -58,7 +58,8 @@ class CaptchaImageRefresh extends ControllerBase {
       $config = $this->config('image_captcha.settings');
       $captcha_sid = _captcha_generate_captcha_session($form_id);
       $captcha_token = Crypt::randomBytesBase64();
-      $allowed_chars = _image_captcha_utf8_split($config->get('image_captcha_image_allowed_chars', IMAGE_CAPTCHA_ALLOWED_CHARACTERS));
+      $allowed_char = $config->get('image_captcha_image_allowed_chars') ? $config->get('image_captcha_image_allowed_chars') : IMAGE_CAPTCHA_ALLOWED_CHARACTERS;
+      $allowed_chars = _image_captcha_utf8_split($allowed_char);
       $code_length = (int) $config->get('image_captcha_code_length');
       $code = '';
       for ($i = 0; $i < $code_length; $i++) {

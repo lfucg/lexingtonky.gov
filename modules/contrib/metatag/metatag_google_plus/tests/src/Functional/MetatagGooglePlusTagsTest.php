@@ -8,6 +8,10 @@ use Drupal\Tests\metatag\Functional\MetatagTagsTestBase;
  * Tests that each of the Metatag Google Plus tags work correctly.
  *
  * @group metatag
+ *
+ * @deprecated in metatag:8.x-1.22 and is removed from metatag:2.0.0. No replacement is provided.
+ *
+ * @see https://www.drupal.org/project/metatag/issues/3065441
  */
 class MetatagGooglePlusTagsTest extends MetatagTagsTestBase {
 

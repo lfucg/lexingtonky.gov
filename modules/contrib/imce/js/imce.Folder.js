@@ -211,7 +211,7 @@
   /**
    * Remove an item from the folder.
    */
-  Folder.removeItem = function (Item, shallow, i) {
+  Folder.removeItem = function (Item, shallow) {
     var name = Item.name;
     var Folder = this;
     // Check if the item is a child
@@ -222,7 +222,7 @@
     if (!shallow) {
       // Remove all descendants of the subfolder.
       if (Item.isFolder) {
-        for (i in Item.items) {
+        for (var i in Item.items) {
           if (!imce.owns(Item.items, i)) {
             continue;
           }
@@ -248,7 +248,7 @@
       delete Folder.files[name];
     }
     // Remove item
-    Folder.items.splice(!i ? Folder.indexOf(Item) : i, 1);
+    Folder.items.splice(Folder.indexOf(Item), 1);
     delete Item.parent;
     imce.removeEl(Item.el);
     Folder.updateStatus();

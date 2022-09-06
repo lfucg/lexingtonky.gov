@@ -46,6 +46,20 @@ class MetatagFieldItem extends FieldItemBase {
       ->setLabel(t('Metatag'))
       ->setRequired(TRUE);
 
+    $sorted_tags = \Drupal::service('metatag.manager')->sortedGroupsWithTags();
+
+    foreach ($sorted_tags as $group_id => $group) {
+      if (isset($group['tags'])) {
+        foreach ($group['tags'] as $tag_id => $tag) {
+          $properties[$tag_id] = DataDefinition::create('string')
+            ->setLabel(t('@label', ['@label' => $tag['label']]))
+            ->setComputed(TRUE)
+            ->setClass('\Drupal\metatag\TypedData\IndividualTag')
+            ->setSetting('tag_name', $tag_id);
+        }
+      }
+    }
+
     return $properties;
   }
 
@@ -67,7 +81,9 @@ class MetatagFieldItem extends FieldItemBase {
     $default_tags = metatag_get_default_tags($this->getEntity());
 
     // Get the value about to be saved.
+    // @todo Does this need to be rewritten to use $this->getValue()?
     $current_value = $this->value;
+
     // Only unserialize if still serialized string.
     if (is_string($current_value)) {
       $current_tags = unserialize($current_value, ['allowed_classes' => FALSE]);

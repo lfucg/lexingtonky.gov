@@ -62,7 +62,7 @@ class ContentEntityDatasourceTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Enable translation for the entity_test module.
@@ -178,6 +178,7 @@ class ContentEntityDatasourceTest extends KernelTestBase {
    */
   public function testItemViewing() {
     $loaded_items = $this->datasource->loadMultiple($this->allItemIds);
+    /** @var \Drupal\Core\Entity\EntityViewBuilder $builder */
     $builder = \Drupal::entityTypeManager()
       ->getViewBuilder('entity_test_mulrev_changed');
 

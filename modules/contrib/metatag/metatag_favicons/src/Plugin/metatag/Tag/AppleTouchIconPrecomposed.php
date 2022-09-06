@@ -2,10 +2,10 @@
 
 namespace Drupal\metatag_favicons\Plugin\metatag\Tag;
 
-use Drupal\metatag\Plugin\metatag\Tag\LinkRelBase;
-
 /**
  * The Favicons "apple-touch-icon-precomposed" meta tag.
+ *
+ * This is basically a clone of the non-precomposed class.
  *
  * @MetatagTag(
  *   id = "apple_touch_icon_precomposed",
@@ -19,6 +19,6 @@ use Drupal\metatag\Plugin\metatag\Tag\LinkRelBase;
  *   multiple = FALSE
  * )
  */
-class AppleTouchIconPrecomposed extends LinkRelBase {
+class AppleTouchIconPrecomposed extends AppleTouchIcon {
   // Nothing here yet. Just a placeholder class for a plugin.
 }

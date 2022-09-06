@@ -23,7 +23,7 @@ class IgnoreCharacterTest extends UnitTestCase {
   /**
    * Creates a new processor object for use in the tests.
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->processor = new IgnoreCharacters(['ignorable' => ''], 'ignore_character', []);
   }
@@ -155,7 +155,7 @@ class IgnoreCharacterTest extends UnitTestCase {
 
     $passed_value = NULL;
     $this->invokeMethod('processConditionValue', [&$passed_value]);
-    $this->assertSame(NULL, $passed_value);
+    $this->assertNull($passed_value);
 
     $condition = new Condition('field', NULL);
     $conditions = [$condition];

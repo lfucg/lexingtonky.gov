@@ -35,7 +35,7 @@ class SolrFieldTypeTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'language',
     'search_api',
     'search_api_solr',

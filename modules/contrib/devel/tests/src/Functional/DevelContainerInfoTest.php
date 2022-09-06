@@ -53,7 +53,7 @@ class DevelContainerInfoTest extends DevelBrowserTestBase {
     $this->assertNotNull($table);
 
     // Ensures that the expected table headers are found.
-    /* @var $headers \Behat\Mink\Element\NodeElement[] */
+    /** @var \Behat\Mink\Element\NodeElement[] $headers */
     $headers = $table->findAll('css', 'thead th');
     $this->assertEquals(4, count($headers));
 
@@ -89,7 +89,7 @@ class DevelContainerInfoTest extends DevelBrowserTestBase {
       $row = $table->find('css', sprintf('tbody tr:contains("%s")', $service_id));
       $this->assertNotNull($row);
 
-      /* @var $cells \Behat\Mink\Element\NodeElement[] */
+      /** @var \Behat\Mink\Element\NodeElement[] $cells */
       $cells = $row->findAll('css', 'td');
       $this->assertEquals(4, count($cells));
 
@@ -158,7 +158,7 @@ class DevelContainerInfoTest extends DevelBrowserTestBase {
     $this->assertNotNull($table);
 
     // Ensures that the expected table headers are found.
-    /* @var $headers \Behat\Mink\Element\NodeElement[] */
+    /** @var \Behat\Mink\Element\NodeElement[] $headers */
     $headers = $table->findAll('css', 'thead th');
     $this->assertEquals(2, count($headers));
 
@@ -186,7 +186,7 @@ class DevelContainerInfoTest extends DevelBrowserTestBase {
       $row = $table->find('css', sprintf('tbody tr:contains("%s")', $parameter_name));
       $this->assertNotNull($row);
 
-      /* @var $cells \Behat\Mink\Element\NodeElement[] */
+      /** @var \Behat\Mink\Element\NodeElement[] $cells */
       $cells = $row->findAll('css', 'td');
       $this->assertEquals(2, count($cells));
 

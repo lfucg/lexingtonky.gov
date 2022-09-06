@@ -104,7 +104,7 @@ abstract class AbstractSolrEntityListBuilder extends ConfigEntityListBuilder {
     $solr_entities = [];
     /** @var \Drupal\search_api_solr\SolrConfigInterface[] $entities */
     $entities = $this->load();
-    foreach ($this->load() as $solr_entity) {
+    foreach ($entities as $solr_entity) {
       if (!$solr_entity->disabledOnServer) {
         $solr_entities[] = $solr_entity;
       }

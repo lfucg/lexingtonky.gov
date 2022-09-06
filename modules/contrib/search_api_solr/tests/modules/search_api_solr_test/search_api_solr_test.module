@@ -4,6 +4,8 @@
  * @file
  */
 
+use Drupal\search_api\IndexInterface;
+
 $index_fallback_test = FALSE;
 
 /**
@@ -26,7 +28,7 @@ function search_api_solr_test_search_api_solr_config_files_alter(array &$files, 
  * @param \Drupal\search_api\Item\ItemInterface[] $items
  *   An array of items to be indexed, keyed by their item IDs.
  */
-function search_api_solr_test_search_api_solr_documents_alter(array &$documents, \Drupal\search_api\IndexInterface $index, array $items) {
+function search_api_solr_test_search_api_solr_documents_alter(array &$documents, IndexInterface $index, array $items) {
   global $index_fallback_test;
 
   if ($index_fallback_test) {

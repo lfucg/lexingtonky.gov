@@ -493,6 +493,9 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
     else {
       $this->develGenerateContentAddNode($context['results']);
     }
+    if (!isset($context['results']['num'])) {
+      $context['results']['num'] = 0;
+    }
     $context['results']['num']++;
     if (!empty($vars['num_translations'])) {
       $context['results']['num_translations'] += $vars['num_translations'];

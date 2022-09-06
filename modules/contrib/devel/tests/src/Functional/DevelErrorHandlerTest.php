@@ -2,8 +2,6 @@
 
 namespace Drupal\Tests\devel\Functional;
 
-use Drupal\Component\Render\FormattableMarkup;
-
 /**
  * Tests devel error handler.
  *
@@ -17,7 +15,7 @@ class DevelErrorHandlerTest extends DevelBrowserTestBase {
   public function testErrorHandler() {
     $messages_selector = '[data-drupal-messages]';
 
-    $expected_notice =  'This is an example notice';
+    $expected_notice = 'This is an example notice';
     $expected_warning = 'This is an example warning';
 
     $config = $this->config('system.logging');

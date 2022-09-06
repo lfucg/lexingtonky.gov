@@ -39,7 +39,7 @@ class LanguageWithFallbackTest extends ProcessorTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp($processor = NULL) {
+  public function setUp($processor = NULL): void {
     parent::setUp('language_with_fallback');
 
     // search_api_test_language_fallback.module adds a fallback from 'fr' to

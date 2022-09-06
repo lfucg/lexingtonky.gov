@@ -45,7 +45,7 @@ class MetatagViewsController extends ControllerBase {
     $this->metatagManager = $metatagManager;
 
     // Generate the labels for views and displays.
-    $this->labels = $this->getViewsAndDisplaysLabels();
+    $this->viewLabels = $this->getViewsAndDisplaysLabels();
   }
 
   /**

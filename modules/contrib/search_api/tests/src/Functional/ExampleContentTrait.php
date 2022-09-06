@@ -74,8 +74,8 @@ trait ExampleContentTrait {
       'width' => '2.0',
     ]);
     $count = \Drupal::entityQuery('entity_test_mulrev_changed')
-      ->accessCheck(FALSE)
       ->count()
+      ->accessCheck(FALSE)
       ->execute();
     $this->assertEquals(5, $count, "$count items inserted.");
   }

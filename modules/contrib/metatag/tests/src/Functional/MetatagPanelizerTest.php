@@ -8,6 +8,10 @@ use Drupal\Tests\BrowserTestBase;
  * Verify that the JSON output from core works as intended.
  *
  * @group panelizer_metatag
+ *
+ * @deprecated in metatag:8.x-1.22 and is removed from metatag:2.0.0. No replacement is provided.
+ *
+ * @see https://www.drupal.org/project/metatag/issues/3305580
  */
 class MetatagPanelizerTest extends BrowserTestBase {
 
@@ -17,7 +21,7 @@ class MetatagPanelizerTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     // Modules for core functionality.
     'node',
     'field',
@@ -35,15 +39,15 @@ class MetatagPanelizerTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'bartik';
+  protected $defaultTheme = 'claro';
 
   /**
    * Create an entity, view its JSON output, confirm Metatag data exists.
    */
   public function testPanelizerMetatagPreRender() {
-    /** @var \Drupal\node\NodeInterface $node */
     $title = 'Panelizer Metatag Test Title';
     $body = 'Testing JSON output for a content type';
+    /** @var \Drupal\node\NodeInterface $node */
     $node = $this->createContentTypeNode($title, $body);
     $url = $node->toUrl();
 

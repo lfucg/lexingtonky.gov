@@ -42,7 +42,7 @@ class EntityViewTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installConfig(['filter']);
@@ -62,9 +62,6 @@ class EntityViewTest extends KernelTestBase {
 
     $configuration = [
       'view_mode' => 'default',
-      'context' => [
-        'entity' => $node,
-      ],
     ];
     $definition = [
       'context_definitions' => [
@@ -73,6 +70,7 @@ class EntityViewTest extends KernelTestBase {
       'provider' => 'ctools',
     ];
     $block = EntityView::create($this->container, $configuration, 'entity_view:node', $definition);
+    $block->setContextValue('entity', $node);
 
     $access = $block->access(\Drupal::currentUser());
     $this->assertFalse($access);

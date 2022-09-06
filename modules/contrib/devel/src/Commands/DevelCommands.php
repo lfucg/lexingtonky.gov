@@ -265,7 +265,7 @@ class DevelCommands extends DrushCommands implements SiteAliasManagerAwareInterf
       $reflect = new \ReflectionFunction($function_name);
     }
     else {
-      list($class, $method) = explode('::', $function_name);
+      [$class, $method] = explode('::', $function_name);
       if (!method_exists($class, $method)) {
         throw new \Exception(dt('Method not found'));
       }

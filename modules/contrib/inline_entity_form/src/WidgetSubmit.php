@@ -22,7 +22,7 @@ class WidgetSubmit {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public static function attach(&$form, FormStateInterface $form_state) {
+  public static function attach(array &$form, FormStateInterface $form_state) {
     // $form['#ief_element_submit'] runs after the #ief_element_submit
     // callbacks of all subelements, which means that doSubmit() has
     // access to the final IEF $form_state.
@@ -45,9 +45,9 @@ class WidgetSubmit {
     // forms before outer forms, to ensure inside-out saving of entities.
     // @see \Drupal\inline_entity_form\Plugin\Field\FieldWidget\InlineEntityFormBase::makeIefId
     krsort($widget_states, SORT_STRING);
-    foreach ($widget_states as $ief_id => &$widget_state) {
+    foreach ($widget_states as &$widget_state) {
       $widget_state += ['entities' => [], 'delete' => []];
-      foreach ($widget_state['entities'] as $delta => &$entity_item) {
+      foreach ($widget_state['entities'] as &$entity_item) {
         if (!empty($entity_item['entity']) && !empty($entity_item['needs_save'])) {
           /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
           $entity = $entity_item['entity'];

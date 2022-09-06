@@ -22,31 +22,31 @@ class PreviewTest extends EmbedTestBase {
   public function testPreviewRoute() {
     // Ensure the default filter can be previewed by the anonymous user.
     $this->getRoute('plain_text');
-    $this->assertResponse(200);
-    $this->assertText(static::SUCCESS);
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains(static::SUCCESS);
 
     // The anonymous user should not have permission to use embed_test format.
     $this->getRoute('embed_test');
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
 
     // Now login a user that can use the embed_test format.
     $this->drupalLogin($this->webUser);
 
     $this->getRoute('plain_text');
-    $this->assertResponse(200);
-    $this->assertText(static::SUCCESS);
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains(static::SUCCESS);
 
     $this->getRoute('embed_test');
-    $this->assertResponse(200);
-    $this->assertText(static::SUCCESS);
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains(static::SUCCESS);
 
     // Test preview route with an empty request.
     $this->getRoute('embed_test', '');
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
 
     // Test preview route with an invalid text format.
     $this->getRoute('invalid_format');
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
   }
 
   /**

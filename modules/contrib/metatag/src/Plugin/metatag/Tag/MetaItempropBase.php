@@ -14,4 +14,9 @@ abstract class MetaItempropBase extends MetaNameBase {
    */
   protected $nameAttribute = 'itemprop';
 
+  /**
+   * {@inheritdoc}
+   */
+  protected $htmlNameAttribute = 'itemprop';
+
 }

@@ -119,9 +119,9 @@ class MetatagTagTypesTest extends BrowserTestBase {
     $this->drupalGet('hit-a-404');
     $session->statusCodeEquals(404);
 
-    $session->responseContains('<meta name="abstract" content="No HTML here" />', $this->t('Test with no HTML content'));
-    $session->responseContains('<meta name="description" content="Surrounded by raw HTML" />', $this->t('Test with raw HTML content'));
-    $session->responseContains('<meta name="keywords" content="Surrounded by escaped HTML" />', $this->t('Test with escaped HTML content'));
+    $session->responseContains('<meta name="abstract" content="No HTML here" />');
+    $session->responseContains('<meta name="description" content="Surrounded by raw HTML" />');
+    $session->responseContains('<meta name="keywords" content="Surrounded by escaped HTML" />');
   }
 
   /**
@@ -146,8 +146,8 @@ class MetatagTagTypesTest extends BrowserTestBase {
     $this->drupalGet('');
     $session->statusCodeEquals(200);
 
-    $session->responseContains('<meta property="og:image" content="https://blahblahblah.com/insecure.jpg" />', $this->t('Test og:image with regular https:// link'));
-    $session->responseContains('<meta property="og:image:secure_url" content="https://blahblahblah.com/secure.jpg" />', $this->t('Test og:image:secure_url updated regular https:// link to https://'));
+    $session->responseContains('<meta property="og:image" content="https://blahblahblah.com/insecure.jpg" />');
+    $session->responseContains('<meta property="og:image:secure_url" content="https://blahblahblah.com/secure.jpg" />');
   }
 
   /**

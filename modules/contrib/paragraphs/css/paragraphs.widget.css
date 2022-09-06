@@ -137,7 +137,7 @@
   }
 }
 
-.paragraphs-tabs-wrapper .paragraphs-tabs {
+.paragraphs-tabs-wrapper .paragraphs-tabs-hide {
   display: none;
 }
 
@@ -392,6 +392,11 @@ tr:hover .paragraphs-description::after {
 .js .paragraph-type-add-modal-button:hover {
   color: #ffffff;
   background: #057ec7 none;
+}
+
+.paragraphs-dragdrop__item .paragraphs-summary-wrapper .paragraphs-description .paragraphs-content-wrapper,
+.paragraphs-dragdrop__item .paragraphs-summary-wrapper .paragraphs-description .paragraphs-plugin-wrapper {
+  font-size: 81.3%;
 }
 
 .paragraph--view-mode--preview {

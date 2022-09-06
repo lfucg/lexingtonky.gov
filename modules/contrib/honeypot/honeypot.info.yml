@@ -8,7 +8,7 @@ test_dependencies:
 
 configure: honeypot.config
 
-# Information added by Drupal.org packaging script on 2022-05-30
-version: '2.1.1'
+# Information added by Drupal.org packaging script on 2022-10-01
+version: '2.1.2'
 project: 'honeypot'
-datestamp: 1653942830
+datestamp: 1664658206

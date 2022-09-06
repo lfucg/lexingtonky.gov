@@ -13,16 +13,14 @@ use Drupal\block_content\Entity\BlockContentType;
 class TokenBlockTest extends TokenTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = ['block', 'node', 'views', 'block_content'];
+  protected static $modules = ['block', 'node', 'views', 'block_content'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp($modules = []) {
+  public function setUp(): void {
     parent::setUp();
     $this->admin_user = $this->drupalCreateUser(['access content', 'administer blocks']);
     $this->drupalLogin($this->admin_user);
@@ -52,10 +50,10 @@ class TokenBlockTest extends TokenTestBase {
     // Ensure that the link to available tokens is present and correctly
     // positioned.
     $this->assertSession()->linkExists('Browse available tokens.');
-    $this->assertText('This field supports tokens. Browse available tokens.');
-    $this->drupalPostForm(NULL, [], 'Save block');
+    $this->assertSession()->pageTextContains('This field supports tokens. Browse available tokens.');
+    $this->submitForm([], 'Save block');
     // Ensure token validation is working on the block.
-    $this->assertText('Title is using the following invalid tokens: [user:name].');
+    $this->assertSession()->pageTextContains('Title is using the following invalid tokens: [user:name].');
 
     // Create the block for real now with a valid title.
     $settings = $block->get('settings');

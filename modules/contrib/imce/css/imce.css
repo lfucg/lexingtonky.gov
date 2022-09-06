@@ -367,6 +367,7 @@
 .file-tif > .imce-item-icon:before,
 .file-tiff > .imce-item-icon:before,
 .file-png > .imce-item-icon:before,
+.file-webp > .imce-item-icon:before,
 .file-gif > .imce-item-icon:before {
   content: "\e603";
 }

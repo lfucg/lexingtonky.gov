@@ -107,12 +107,11 @@ class MetatagConfigTranslationTest extends BrowserTestBase {
 
     // Confirm that each config translation page can be loaded.
     foreach ($defaults as $config_name) {
-      if ($config_entity = $config_manager->loadConfigEntityByName($config_name)) {
+      $config_entity = $config_manager->loadConfigEntityByName($config_name);
+      $this->assertNotNull($config_entity);
+      if (!empty($config_entity)) {
         $this->drupalGet('admin/config/search/metatag/' . $config_entity->id() . '/translate');
         $session->statusCodeEquals(200);
-      }
-      else {
-        $this->error('Unable to load a Metatag default config: ' . $config_name);
       }
     }
   }

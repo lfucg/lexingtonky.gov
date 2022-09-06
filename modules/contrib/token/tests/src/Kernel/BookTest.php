@@ -13,16 +13,22 @@ use Drupal\Core\Url;
 class BookTest extends KernelTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = ['user', 'field', 'filter', 'text', 'node', 'book'];
+  protected static $modules = [
+    'user',
+    'field',
+    'filter',
+    'text',
+    'node',
+    'book',
+  ];
+
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('user');

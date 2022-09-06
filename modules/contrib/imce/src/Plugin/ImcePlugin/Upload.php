@@ -60,6 +60,10 @@ class Upload extends ImcePluginBase {
     $width = $fm->getConf('maxwidth');
     $height = $fm->getConf('maxheight');
     if ($width || $height) {
+      // Fix exif orientation before resizing
+      if (function_exists('exif_orientation_validate_image_rotation')) {
+        $validators['exif_orientation_validate_image_rotation'] = [];
+      }
       $validators['file_validate_image_resolution'] = [($width ? $width : 10000) . 'x' . ($height ? $height : 10000)];
     }
     // Name validator.

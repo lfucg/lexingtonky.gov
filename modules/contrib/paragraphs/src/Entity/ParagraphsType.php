@@ -6,6 +6,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
 use Drupal\paragraphs\ParagraphsBehaviorCollection;
 use Drupal\paragraphs\ParagraphsTypeInterface;
 use Drupal\Core\File\FileSystemInterface;
@@ -137,7 +138,7 @@ class ParagraphsType extends ConfigEntityBundleBase implements ParagraphsTypeInt
           'uri' => $icon_file_uri,
           'uid' => \Drupal::currentUser()->id(),
           'uuid' => $this->icon_uuid,
-          'status' => FILE_STATUS_PERMANENT,
+          'status' => FileInterface::STATUS_PERMANENT,
         ];
 
         // Delete existent icon file if it exists.
@@ -184,7 +185,7 @@ class ParagraphsType extends ConfigEntityBundleBase implements ParagraphsTypeInt
    */
   public function getIconUrl() {
     if ($image = $this->getIconFile()) {
-      return file_create_url($image->getFileUri());
+      return \Drupal::service('file_url_generator')->generateString($image->getFileUri());
     }
 
     return FALSE;

@@ -1,3 +1,58 @@
+Metatag 8.x-1.22, 2022-09-29
+----------------------------
+#3299228 by DamienMcKenna: Refactor favicon meta tags.
+#3298081 by DamienMcKenna: Deprecate Google Plus meta tags.
+#3299229 by DamienMcKenna, thejimbirch: Deprecate news_keywords, standout meta
+  tags.
+#3300806 by heddn, DamienMcKenna: hreflang_per_language not in config schema.
+#3302675 by DamienMcKenna: Fix $modules definitions in tests.
+#3034248 by DanielVeza, chadmandoo, DamienMcKenna, jwilson3, justin2pin, InaW,
+  ChandeepKhosa, thejimbirch, pianomansam, FiNeX: Promote use of Token Or
+  module to make tokens more flexible.
+#3302685 by DamienMcKenna: Tiny changes from tests refactoring.
+#3303196 by DamienMcKenna: Add extra isSOMETHING() methods to MetaNameBase.
+#3304779 by luigisa, DamienMcKenna: MetatagManager::processedTokenCache() does
+  not respect the entity language.
+#3302969 by DamienMcKenna: Refactored MetaNameBase output logic.
+#3252150 by andregp, DamienMcKenna, phenaproxima, Berdir, elber, japerry,
+  Kristen Pol: Drupal 10 compatibility.
+#3305580 by DamienMcKenna: Deprecate Panelizer integration.
+#3304488 by RandalV, DamienMcKenna: metatag_get_route_entity() does not check
+  if the entity parameter is an actual entity.
+#3306039 by DamienMcKenna: Recover lost WebProfiler test script.
+#3303424 by DamienMcKenna: Android, iOS app alternate link tags don't work
+  correctly.
+#3306085 by DamienMcKenna, Berdir: Replace "bartik" theme in tests.
+#3305322 by DamienMcKenna: Remove the verbose() test methods.
+#2767107 by DamienMcKenna, Antares89: Add support for the Diff module.
+#3311343 by Anybody, DamienMcKenna: Metatag routes misses package name SEO in
+  info.yml.
+#2901039 by rcodina, tsplash, DamienMcKenna, Wannes DR, mErilainen,
+  weekbeforenext, natemow, mpp, borisson_, AMDandy, jenniferaube, klmd302: Add
+  a TypedData plugin to support Search API.
+#3311542 by DamienMcKenna, lostcarpark, lucassc: Add new Metatag logo files,
+  update tests to use them.
+#3024450 by DamienMcKenna, DantonMariano, Tаo, michaellenahan, mdmanouwer,
+  Ahmed.Raza, lexsoft00, ndobromirov, Endika Melero: Log when there are problems
+  unserializing the meta tag data.
+#3309850 by DamienMcKenna: Skip token processing if there are no tokens in the
+  value.
+#3305751 by DamienMcKenna: Fix coding standards issues.
+#3311891 by DamienMcKenna, GiorgosK: MaskIcon::setValue() should not set a NULL
+  value.
+#3311911 by DamienMcKenna: TypedData logic has an error.
+#3261473 by DamienMcKenna, saidatom, claudiu.cristea, heddn, Evaldas Užkuras,
+  Eugene Bocharov: Views cache wrapper overrides other modules cache logic.
+
+
+Metatag 8.x-1.21, 2022-07-16
+----------------------------
+#3268439 by Dave Reid: Follow-up to fix the scroll height feature.
+#3295600 by DamienMcKenna, saranchuk_hys, Eugene Bocharov, Didier Misson,
+  loopy1492, Maplinx, W01F, jaydub, kazah: MaskIcon doesn't work properly.
+#3295757 by sleitner, DamienMcKenna: Fix regression from Google tag fix.
+
+
 Metatag 8.x-1.20, 2022-07-12
 ----------------------------
 #3257588 by Eugene Bocharov, lobodacyril, jippie1948, Kasey_MK, djween, awasson,

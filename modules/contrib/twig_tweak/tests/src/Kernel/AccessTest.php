@@ -43,7 +43,7 @@ class AccessTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'twig_tweak',
     'twig_tweak_test',
     'node',
@@ -97,8 +97,8 @@ class AccessTest extends KernelTestBase {
     self::assertArrayHasKey('#node', $build);
     $expected_cache = [
       'tags' => [
-        'node:1',
         'node_view',
+        'node:1',
       ],
       'contexts' => [],
       'max-age' => Cache::PERMANENT,
@@ -112,8 +112,8 @@ class AccessTest extends KernelTestBase {
     self::assertArrayHasKey('#node', $build);
     $expected_cache = [
       'tags' => [
-        'node:1',
         'node_view',
+        'node:1',
         'tag_from_twig_tweak_test_node_access',
       ],
       'contexts' => [
@@ -129,8 +129,8 @@ class AccessTest extends KernelTestBase {
     self::assertArrayHasKey('#node', $build);
     $expected_cache = [
       'tags' => [
-        'node:1',
         'node_view',
+        'node:1',
       ],
       'contexts' => [],
       'max-age' => Cache::PERMANENT,
@@ -170,8 +170,8 @@ class AccessTest extends KernelTestBase {
         'user.permissions',
       ],
       'tags' => [
-        'node:1',
         'tag_from_twig_tweak_test_node_access',
+        'node:1',
       ],
       'max-age' => 50,
     ];
@@ -205,8 +205,8 @@ class AccessTest extends KernelTestBase {
     $expected_cache = [
       'contexts' => ['user.roles:authenticated'],
       'tags' => [
-        'config:core.entity_form_display.node.article.default',
         'node:1',
+        'config:core.entity_form_display.node.article.default',
       ],
       'max-age' => Cache::PERMANENT,
     ];
@@ -219,13 +219,13 @@ class AccessTest extends KernelTestBase {
     self::assertArrayHasKey('#form_id', $build);
     $expected_cache = [
       'contexts' => [
+        'user.roles:authenticated',
         'user',
         'user.permissions',
-        'user.roles:authenticated',
       ],
       'tags' => [
-        'config:core.entity_form_display.node.article.default',
         'node:1',
+        'config:core.entity_form_display.node.article.default',
         'tag_from_twig_tweak_test_node_access',
       ],
       'max-age' => 50,
@@ -238,8 +238,8 @@ class AccessTest extends KernelTestBase {
     $expected_cache = [
       'contexts' => ['user.roles:authenticated'],
       'tags' => [
-        'config:core.entity_form_display.node.article.default',
         'node:1',
+        'config:core.entity_form_display.node.article.default',
       ],
       'max-age' => Cache::PERMANENT,
     ];
@@ -272,15 +272,15 @@ class AccessTest extends KernelTestBase {
     // -- Privileged user with access check.
     $this->setUpCurrentUser(
       ['name' => 'User 2'],
-      ['access content', 'create article content'],
+      ['access content', 'create article content']
     );
 
     $build = $this->twigExtension->drupalEntityForm('node', NULL, 'default', $node_values);
     self::assertArrayHasKey('form_id', $build);
     $expected_cache = [
       'contexts' => [
-        'user.permissions',
         'user.roles:authenticated',
+        'user.permissions',
       ],
       'tags' => ['config:core.entity_form_display.node.article.default'],
       'max-age' => Cache::PERMANENT,
@@ -292,8 +292,8 @@ class AccessTest extends KernelTestBase {
     self::assertArrayHasKey('form_id', $build);
     $expected_cache = [
       'contexts' => [
-        'user.permissions',
         'user.roles:authenticated',
+        'user.permissions',
       ],
       'tags' => ['config:core.entity_form_display.node.article.default'],
       'max-age' => Cache::PERMANENT,
@@ -525,8 +525,8 @@ class AccessTest extends KernelTestBase {
     self::assertArrayHasKey('#node', $build);
     $expected_cache = [
       'tags' => [
-        'node:1',
         'node_view',
+        'node:1',
       ],
       'contexts' => [],
       'max-age' => Cache::PERMANENT,
@@ -540,8 +540,8 @@ class AccessTest extends KernelTestBase {
     self::assertArrayHasKey('#node', $build);
     $expected_cache = [
       'tags' => [
-        'node:1',
         'node_view',
+        'node:1',
         'tag_from_twig_tweak_test_node_access',
       ],
       'contexts' => [
@@ -557,8 +557,8 @@ class AccessTest extends KernelTestBase {
     self::assertArrayHasKey('#node', $build);
     $expected_cache = [
       'tags' => [
-        'node:1',
         'node_view',
+        'node:1',
       ],
       'contexts' => [],
       'max-age' => Cache::PERMANENT,

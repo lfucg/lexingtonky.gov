@@ -79,11 +79,11 @@ class DevelControllerTest extends DevelBrowserTestBase {
     $this->assertSession()->LinkExists('Definition');
     $this->assertSession()->LinkExists('Render');
     $this->assertSession()->LinkExists('Load');
-    $this->assertSession()->linkByHrefExists('devel/entity_test/' . $this->entity->id() . '/render');
-    $this->drupalGet('devel/entity_test/' . $this->entity->id() . '/render');
+    $this->assertSession()->linkByHrefExists('devel/render/entity_test/' . $this->entity->id());
+    $this->drupalGet('devel/render/entity_test/' . $this->entity->id());
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->linkByHrefExists('devel/entity_test/' . $this->entity->id() . '/definition');
-    $this->drupalGet('devel/entity_test/' . $this->entity->id() . '/definition');
+    $this->assertSession()->linkByHrefExists('devel/definition/entity_test/' . $this->entity->id());
+    $this->drupalGet('devel/definition/entity_test/' . $this->entity->id());
     $this->assertSession()->statusCodeEquals(200);
 
     // Test Devel load and render routes for entities with only canonical route
@@ -98,16 +98,16 @@ class DevelControllerTest extends DevelBrowserTestBase {
     $this->assertSession()->elementNotExists('xpath',
       '//a[@data-drupal-link-system-path = "devel/devel_entity_test_canonical/' . $this->entity_canonical->id() . '"]');
     $this->assertSession()->elementExists('xpath',
-      '//a[@data-drupal-link-system-path = "devel/devel_entity_test_canonical/' . $this->entity_canonical->id() . '/render"]');
+      '//a[@data-drupal-link-system-path = "devel/render/devel_entity_test_canonical/' . $this->entity_canonical->id() . '"]');
     $this->drupalGet('devel/devel_entity_test_canonical/' . $this->entity_canonical->id());
     $this->assertSession()->statusCodeEquals(404);
-    $this->drupalGet('devel/devel_entity_test_canonical/' . $this->entity_canonical->id() . '/render');
+    $this->drupalGet('devel/render/devel_entity_test_canonical/' . $this->entity_canonical->id());
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->LinkExists('Definition');
     $this->assertSession()->LinkExists('Render');
     $this->assertSession()->LinkNotExists('Load');
-    $this->assertSession()->linkByHrefExists('devel/devel_entity_test_canonical/' . $this->entity_canonical->id() . '/definition');
-    $this->drupalGet('devel/devel_entity_test_canonical/' . $this->entity_canonical->id() . '/definition');
+    $this->assertSession()->linkByHrefExists('devel/definition/devel_entity_test_canonical/' . $this->entity_canonical->id());
+    $this->drupalGet('devel/definition/devel_entity_test_canonical/' . $this->entity_canonical->id());
     $this->assertSession()->statusCodeEquals(200);
 
     // Test Devel load and render routes for entities with only edit route
@@ -123,11 +123,11 @@ class DevelControllerTest extends DevelBrowserTestBase {
     $this->assertSession()->LinkExists('Definition');
     $this->assertSession()->LinkNotExists('Render');
     $this->assertSession()->LinkExists('Load');
-    $this->assertSession()->linkByHrefExists('devel/devel_entity_test_edit/' . $this->entity_edit->id() . '/definition');
-    $this->assertSession()->linkByHrefNotExists('devel/devel_entity_test_edit/' . $this->entity_edit->id() . '/render');
-    $this->drupalGet('devel/devel_entity_test_edit/' . $this->entity_edit->id() . '/definition');
+    $this->assertSession()->linkByHrefExists('devel/definition/devel_entity_test_edit/' . $this->entity_edit->id());
+    $this->assertSession()->linkByHrefNotExists('devel/render/devel_entity_test_edit/' . $this->entity_edit->id());
+    $this->drupalGet('devel/definition/devel_entity_test_edit/' . $this->entity_edit->id());
     $this->assertSession()->statusCodeEquals(200);
-    $this->drupalGet('devel/devel_entity_test_edit/' . $this->entity_edit->id() . '/render');
+    $this->drupalGet('devel/render/devel_entity_test_edit/' . $this->entity_edit->id());
     $this->assertSession()->statusCodeEquals(404);
 
     // Test Devel load and render routes for entities with no route
@@ -136,9 +136,9 @@ class DevelControllerTest extends DevelBrowserTestBase {
     $this->assertSession()->statusCodeEquals(404);
     $this->drupalGet('devel/devel_entity_test_no_links/' . $this->entity_no_links->id());
     $this->assertSession()->statusCodeEquals(404);
-    $this->drupalGet('devel/devel_entity_test_no_links/' . $this->entity_no_links->id() . '/render');
+    $this->drupalGet('devel/render/devel_entity_test_no_links/' . $this->entity_no_links->id());
     $this->assertSession()->statusCodeEquals(404);
-    $this->drupalGet('devel/devel_entity_test_no_links/' . $this->entity_no_links->id() . '/definition');
+    $this->drupalGet('devel/definition/devel_entity_test_no_links/' . $this->entity_no_links->id());
     $this->assertSession()->statusCodeEquals(404);
   }
 

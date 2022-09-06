@@ -3,7 +3,7 @@
 namespace Drupal\entity\QueryAccess;
 
 use Drupal\Core\Session\AccountInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Defines the query access event.

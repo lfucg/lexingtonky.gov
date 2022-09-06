@@ -68,6 +68,8 @@ class MetatagMobileTagsTest extends MetatagTagsTestBase {
     $tag_name = str_replace('_', '-', $tag_name);
 
     // Fix a few specific tags.
+    $tag_name = str_replace('android-app-link-alternative', 'android_app_link_alternative', $tag_name);
+    $tag_name = str_replace('ios-app-link-alternative', 'ios_app_link_alternative', $tag_name);
     $tag_name = str_replace('android_manifest', 'manifest', $tag_name);
     $tag_name = str_replace('handheldfriendly', 'HandheldFriendly', $tag_name);
     $tag_name = str_replace('mobileoptimized', 'MobileOptimized', $tag_name);
@@ -93,14 +95,21 @@ class MetatagMobileTagsTest extends MetatagTagsTestBase {
    * Implements {tag_name}TestValue() for 'android_app_link_alternative'.
    */
   protected function androidAppLinkAlternativeTestValue() {
-    return 'android-app:' . $this->randomMachineName();
+    return $this->randomImageUrl();
   }
 
   /**
-   * Implements {tag_name}TestOutputXpath() for 'android-app-link-alternative'.
+   * Implements {tag_name}TestOutput() for 'android_app_link_alternative'.
+   */
+  protected function androidAppLinkAlternativeTestOutput($string) {
+    return 'android-app://' . $string;
+  }
+
+  /**
+   * Implements {tag_name}TestOutputXpath() for 'android_app_link_alternative'.
    */
   protected function androidAppLinkAlternativeTestOutputXpath() {
-    return "//link[@rel='alternate' and starts-with(@href, 'android-app:')]";
+    return "//link[@rel='alternate' and starts-with(@href, 'android-app://')]";
   }
 
   /**
@@ -123,14 +132,21 @@ class MetatagMobileTagsTest extends MetatagTagsTestBase {
    * Implements {tag_name}TestValue() for 'ios_app_link_alternative'.
    */
   protected function iosAppLinkAlternativeTestValue() {
-    return 'ios-app:' . $this->randomMachineName();
+    return $this->randomImageUrl();
+  }
+
+  /**
+   * Implements {tag_name}TestOutput() for 'ios_app_link_alternative'.
+   */
+  protected function iosAppLinkAlternativeTestOutput($string) {
+    return 'ios-app://' . $string;
   }
 
   /**
    * Implements {tag_name}TestOutputXpath() for 'ios_app_link_alternative'.
    */
   protected function iosAppLinkAlternativeTestOutputXpath() {
-    return "//link[@rel='alternate' and starts-with(@href, 'ios-app:')]";
+    return "//link[@rel='alternate' and starts-with(@href, 'ios-app://')]";
   }
 
   /**

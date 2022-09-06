@@ -82,7 +82,7 @@ class ContainerInfoController extends ControllerBase implements ContainerAwareIn
           'filter' => TRUE,
         ];
         $row['class'] = [
-          'data' => isset($service['class']) ? $service['class'] : '',
+          'data' => $service['class'] ?? '',
           'filter' => TRUE,
         ];
         $row['alias'] = [

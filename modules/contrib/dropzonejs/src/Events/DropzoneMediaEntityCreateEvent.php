@@ -2,10 +2,10 @@
 
 namespace Drupal\dropzonejs\Events;
 
+use Drupal\Component\EventDispatcher\Event;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;
-use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Represents Media Entity creation as an event when using DropzoneJS.

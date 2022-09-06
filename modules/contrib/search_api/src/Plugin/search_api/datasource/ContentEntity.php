@@ -649,7 +649,10 @@ class ContentEntity extends DatasourcePluginBase implements PluginFormInterface 
       }
     }
 
-    $this->setConfiguration($form_state->getValues());
+    // Make sure not to overwrite any options not included in the form (like
+    // "disable_db_tracking") by adding any existing configuration back to the
+    // new values.
+    $this->setConfiguration($form_state->getValues() + $this->configuration);
   }
 
   /**
@@ -790,7 +793,8 @@ class ContentEntity extends DatasourcePluginBase implements PluginFormInterface 
     // on large data sets. This allows for better control over what tables are
     // included in the query.
     // If no base table is present, then perform an entity query instead.
-    if ($entity_type->getBaseTable()) {
+    if ($entity_type->getBaseTable()
+        && empty($this->configuration['disable_db_tracking'])) {
       $select = $this->getDatabaseConnection()
         ->select($entity_type->getBaseTable(), 'base_table')
         ->fields('base_table', [$entity_id]);

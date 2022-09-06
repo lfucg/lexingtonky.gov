@@ -18,6 +18,10 @@ use Drupal\metatag\Plugin\metatag\Tag\LinkRelBase;
  *   secure = FALSE,
  *   multiple = FALSE
  * )
+ *
+ * @deprecated in metatag:8.x-1.22 and is removed from metatag:2.0.0. No replacement is provided.
+ *
+ * @see https://www.drupal.org/project/metatag/issues/3065441
  */
 class Publisher extends LinkRelBase {
   // Nothing here yet. Just a placeholder class for a plugin.

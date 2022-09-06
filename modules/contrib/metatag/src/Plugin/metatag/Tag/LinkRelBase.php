@@ -8,20 +8,24 @@ namespace Drupal\metatag\Plugin\metatag\Tag;
 abstract class LinkRelBase extends MetaNameBase {
 
   /**
-   * {@inheritdoc}
+   * The string this tag uses for the tag itself.
+   *
+   * @var string
    */
-  public function output() {
-    $element = parent::output();
-    if (!empty($element['#attributes']['content'])) {
-      $element['#tag'] = 'link';
-      $element['#attributes'] = [
-        'rel' => $this->name(),
-        'href' => $element['#attributes']['content'],
-      ];
-      unset($element['#attributes']['content']);
-    }
+  protected $htmlTag = 'link';
 
-    return $element;
-  }
+  /**
+   * The attribute this tag uses for the name.
+   *
+   * @var string
+   */
+  protected $htmlNameAttribute = 'rel';
+
+  /**
+   * The attribute this tag uses for the contents.
+   *
+   * @var string
+   */
+  protected $htmlValueAttribute = 'href';
 
 }

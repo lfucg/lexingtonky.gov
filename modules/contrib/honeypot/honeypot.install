@@ -46,6 +46,9 @@ function honeypot_schema() {
  */
 function honeypot_install() {
   if (PHP_SAPI !== 'cli') {
+    // Rebuild so that routes defined in honeypot.routing.yml become available.
+    \Drupal::service("router.builder")->rebuild();
+    // Prompt the user to configure Honeypot.
     \Drupal::messenger()->addMessage(t('Honeypot installed successfully. Please <a href=":url">configure Honeypot</a> to protect your forms from spam bots.', [
       ':url' => Url::fromRoute('honeypot.config')->toString(),
     ]));

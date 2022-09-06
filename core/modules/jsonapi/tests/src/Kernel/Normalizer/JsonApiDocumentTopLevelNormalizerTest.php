@@ -66,11 +66,46 @@ class JsonApiDocumentTopLevelNormalizerTest extends JsonapiKernelTestBase {
   protected $node;
 
   /**
+   * The node type.
+   *
+   * @var \Drupal\node\Entity\NodeType
+   */
+  protected $nodeType;
+
+  /**
    * A user to normalize.
    *
    * @var \Drupal\user\Entity\User
    */
   protected $user;
+
+  /**
+   * A user.
+   *
+   * @var \Drupal\user\Entity\User
+   */
+  protected $user2;
+
+  /**
+   * A vocabulary.
+   *
+   * @var \Drupal\taxonomy\Entity\Vocabulary
+   */
+  protected $vocabulary;
+
+  /**
+   * A term.
+   *
+   * @var \Drupal\taxonomy\Entity\Term
+   */
+  protected $term1;
+
+  /**
+   * A term.
+   *
+   * @var \Drupal\taxonomy\Entity\Term
+   */
+  protected $term2;
 
   /**
    * The include resolver.
@@ -325,7 +360,7 @@ class JsonApiDocumentTopLevelNormalizerTest extends JsonapiKernelTestBase {
    * @covers ::normalize
    */
   public function testNormalizeRelated() {
-    $this->markTestIncomplete('This fails and should be fixed by https://www.drupal.org/project/drupal/issues/2922121');
+    $this->markTestIncomplete('This fails and should be fixed by https://www.drupal.org/project/drupal/issues/3213752');
 
     [$request, $resource_type] = $this->generateProphecies('node', 'article', 'uid');
     $request->query = new ParameterBag([

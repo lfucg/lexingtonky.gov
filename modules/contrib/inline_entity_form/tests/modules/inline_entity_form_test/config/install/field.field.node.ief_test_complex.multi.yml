@@ -15,7 +15,7 @@ field_name: multi
 entity_type: node
 bundle: ief_test_complex
 label: Multiple nodes
-description: 'Reference multiple nodes.'
+description: 'Reference multiple nodes. A complex widget on [site:name].'
 required: true
 translatable: false
 default_value: {  }

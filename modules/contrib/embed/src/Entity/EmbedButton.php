@@ -130,13 +130,14 @@ class EmbedButton extends ConfigEntityBase implements EmbedButtonInterface {
       if (!is_file($uri) && !UrlHelper::isExternal($uri)) {
         static::convertEncodedDataToImage($this->icon);
       }
-      $uri = file_create_url($uri);
     }
     else {
       $uri = $this->getTypePlugin()->getDefaultIconUrl();
     }
 
-    return file_url_transform_relative($uri);
+    $file_generator = $this->fileUrlGenerator();
+    $uri = $file_generator->generateAbsoluteString($uri);
+    return $file_generator->transformRelative($uri);
   }
 
   /**
@@ -161,6 +162,15 @@ class EmbedButton extends ConfigEntityBase implements EmbedButtonInterface {
    */
   protected function embedTypeManager() {
     return \Drupal::service('plugin.manager.embed.type');
+  }
+
+  /**
+   * Gets the file URL generator service.
+   *
+   * @return \Drupal\Core\File\FileUrlGeneratorInterface
+   */
+  protected function fileUrlGenerator() {
+    return \Drupal::service('file_url_generator');
   }
 
   /**

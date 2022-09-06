@@ -122,7 +122,8 @@ class MediaDevelGenerate extends DevelGenerateBase implements ContainerFactoryPl
 
     $this->mediaStorage = $entity_type_manager->getStorage('media');
     $this->mediaTypeStorage = $entity_type_manager->getStorage('media_type');
-    $this->userStorage = $entity_type_manager->getStorage('user');;
+    $this->userStorage = $entity_type_manager->getStorage('user');
+    ;
     $this->languageManager = $language_manager;
     $this->urlGenerator = $url_generator;
     $this->dateFormatter = $date_formatter;
@@ -353,7 +354,7 @@ class MediaDevelGenerate extends DevelGenerateBase implements ContainerFactoryPl
    *
    * @param array $vars
    *   The input values from the settings form.
-   * @param array $context
+   * @param iterable $context
    *   Batch job context.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
@@ -365,7 +366,7 @@ class MediaDevelGenerate extends DevelGenerateBase implements ContainerFactoryPl
    *
    * @see self::createMediaItem()
    */
-  public function batchCreateMediaItem(array $vars, &$context) {
+  public function batchCreateMediaItem(array $vars, iterable &$context) {
     if ($this->drushBatch) {
       $this->createMediaItem($vars);
     }
@@ -380,12 +381,12 @@ class MediaDevelGenerate extends DevelGenerateBase implements ContainerFactoryPl
    *
    * @param array $vars
    *   The input values from the settings form.
-   * @param array $context
+   * @param iterable $context
    *   Batch job context.
    *
    * @see self::mediaKill()
    */
-  public function batchMediaKill($vars, &$context) {
+  public function batchMediaKill(array $vars, iterable &$context) {
     if ($this->drushBatch) {
       $this->mediaKill($vars);
     }
@@ -498,6 +499,7 @@ class MediaDevelGenerate extends DevelGenerateBase implements ContainerFactoryPl
       'uid' => $uid,
       'revision' => mt_rand(0, 1),
       'status' => TRUE,
+      'moderation_state' => 'published',
       'created' => $this->time->getRequestTime() - mt_rand(0, $results['time_range']),
       'langcode' => $this->getLangcode($results),
     ]);

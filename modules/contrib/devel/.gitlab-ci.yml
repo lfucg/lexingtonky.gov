@@ -9,7 +9,8 @@ include:
 #
 
 # Add /webprofiler to ignored paths.
+# Set allow_failure to false so that the test fails for coding standards faults.
 phpcs:
   script:
-    - PWD=$(pwd) && vendor/bin/phpcs --runtime-set ignore_warnings_on_exit 1 --runtime-set ignore_errors_on_exit 1 --ignore=$PWD/web/,$PWD/vendor/,$PWD/webprofiler/ --report-junit=junit.xml --report-full --report-summary
-
+    - PWD=$(pwd) && vendor/bin/phpcs --ignore=$PWD/web/,$PWD/vendor/,$PWD/webprofiler/ --report-junit=junit.xml --report-full --report-summary --report-source
+  allow_failure: false

@@ -30,6 +30,20 @@ class AddedStylesheetsTest extends BrowserTestBase {
   protected $defaultTheme = 'stark';
 
   /**
+   * The editor user.
+   *
+   * @var \Drupal\editor\Entity\Editor
+   */
+  protected $editor;
+
+  /**
+   * The admin user.
+   *
+   * @var \Drupal\user\Entity\User
+   */
+  protected $adminUser;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -69,6 +83,7 @@ class AddedStylesheetsTest extends BrowserTestBase {
       'use text format llama',
       'administer themes',
       'view the administration theme',
+      'administer filters',
     ]);
     $this->drupalLogin($this->adminUser);
   }
@@ -87,6 +102,11 @@ class AddedStylesheetsTest extends BrowserTestBase {
 
     $this->drupalGet('node/add/article');
     $assert_session->responseNotContains('test_ckeditor_stylesheets_relative/css/yokotsoko.css');
+
+    // Confirm that the missing ckeditor5-stylesheets configuration can be
+    // bypassed.
+    $this->drupalGet('admin/config/content/formats/manage/llama');
+    $assert_session->pageTextNotContains('ckeditor_stylesheets configured without a corresponding ckeditor5-stylesheets configuration.');
 
     // Install a theme with ckeditor5-stylesheets configured. Do this manually
     // to confirm `library_info` cache tags are invalidated.

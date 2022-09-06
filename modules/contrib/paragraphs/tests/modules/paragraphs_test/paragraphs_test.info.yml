@@ -7,7 +7,7 @@ package: Testing
 dependencies:
   - paragraphs:paragraphs
 
-# Information added by Drupal.org packaging script on 2022-04-21
-version: '8.x-1.14'
+# Information added by Drupal.org packaging script on 2022-08-25
+version: '8.x-1.15'
 project: 'paragraphs'
-datestamp: 1650520871
+datestamp: 1661440900

@@ -22,7 +22,7 @@ interface SolrBackendInterface extends AutocompleteBackendInterface {
    *
    * @todo replace by an automatic detection when core provides module versions.
    */
-  public const SEARCH_API_SOLR_SCHEMA_VERSION = '4.2.8';
+  public const SEARCH_API_SOLR_SCHEMA_VERSION = '4.2.9';
 
   /**
    * The minimum required Solr schema version.
@@ -33,10 +33,10 @@ interface SolrBackendInterface extends AutocompleteBackendInterface {
    * The separator to indicate the start of a language ID.
    *
    * We must not use any character that has a special meaning within regular
-   * expressions. Additionally we have to avoid characters that are valid for
+   * expressions. Additionally, we have to avoid characters that are valid for
    * Drupal machine names.
    * The end of a language ID is indicated by an underscore '_' which could not
-   * occur within the language ID itself because Drupal uses lanague tags.
+   * occur within the language ID itself because Drupal uses language tags.
    *
    * @see http://de2.php.net/manual/en/regexp.reference.meta.php
    * @see https://www.w3.org/International/articles/language-tags/

@@ -16,7 +16,7 @@ class StreamingExpressionTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'field',
     'entity_test',
     'search_api',

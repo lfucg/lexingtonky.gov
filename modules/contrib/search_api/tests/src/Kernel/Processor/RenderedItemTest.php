@@ -55,7 +55,7 @@ class RenderedItemTest extends ProcessorTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp($processor = NULL) {
+  public function setUp($processor = NULL): void {
     parent::setUp('rendered_item');
 
     // Enable the optional "path_alias" entity type as well to make sure the
@@ -167,13 +167,13 @@ class RenderedItemTest extends ProcessorTestBase {
     $this->index->setDatasources($datasources);
     $this->index->save();
 
-    // Enable the classy and stable themes as the tests rely on markup from
-    // that. Set stable as the active theme, but make classy the default. The
-    // processor should switch to classy to perform the rendering.
-    \Drupal::service('theme_installer')->install(['classy']);
-    \Drupal::service('theme_installer')->install(['stable']);
-    \Drupal::configFactory()->getEditable('system.theme')->set('default', 'classy')->save();
-    \Drupal::theme()->setActiveTheme(\Drupal::service('theme.initialization')->initTheme('stable'));
+    // Enable the Claro and Stable 9 themes as the tests rely on markup from
+    // that. Set Claro as the active theme, but make Stable 9 the default. The
+    // processor should switch to Stable 9 to perform the rendering.
+    \Drupal::service('theme_installer')->install(['stable9']);
+    \Drupal::service('theme_installer')->install(['claro']);
+    \Drupal::configFactory()->getEditable('system.theme')->set('default', 'stable9')->save();
+    \Drupal::theme()->setActiveTheme(\Drupal::service('theme.initialization')->initTheme('claro'));
   }
 
   /**
@@ -276,23 +276,22 @@ class RenderedItemTest extends ProcessorTestBase {
    */
   protected function checkRenderedNode(NodeInterface $node, $field_value) {
     // These tests rely on the template not changing. However, if we'd only
-    // check whether the field values themselves are included, there could
-    // easier be false positives. For example, the title text was present even
+    // check whether the field values themselves are included, there could more
+    // easily be false positives. For example, the title text was present even
     // when the processor was broken, because the schema metadata was also
     // adding it to the output.
     $nid = $node->id();
-    $full_view = $node->bundle() === 'page';
-    $view_mode = $full_view ? 'full' : 'teaser';
-    $this->assertStringContainsString("view-mode-$view_mode", $field_value, 'Node item ' . $nid . " rendered in view-mode \"$view_mode\".");
-    $this->assertStringContainsString('field--name-title', $field_value, 'Node item ' . $nid . ' has a rendered title field.');
-    $this->assertStringContainsString('>' . $node->label() . '<', $field_value, 'Node item ' . $nid . ' has a rendered title inside HTML-Tags.');
-    if ($full_view) {
-      $body_value = $node->get('body')->getValue()[0]['value'] . '<';
+    $this->assertStringContainsString('<article role="article">', $field_value, 'Node item ' . $nid . ' not rendered in theme Stable.');
+    if ($node->bundle() === 'page') {
+      $this->assertStringNotContainsString('>Read more<', $field_value, 'Node item ' . $nid . " rendered in view-mode \"full\".");
+      $this->assertStringContainsString('>' . $node->get('body')->getValue()[0]['value'] . '<', $field_value, 'Node item ' . $nid . ' does not have rendered body inside HTML-Tags.');
     }
     else {
-      $body_value = $node->get('body')->getValue()[0]['summary'] . '<';
+      $this->assertStringContainsString('>Read more<', $field_value, 'Node item ' . $nid . " rendered in view-mode \"teaser\".");
+      $this->assertStringContainsString('>' . $node->get('body')->getValue()[0]['summary'] . '<', $field_value, 'Node item ' . $nid . ' does not have rendered summary inside HTML-Tags.');
     }
-    $this->assertStringContainsString('>' . $body_value, $field_value, 'Node item ' . $nid . ' has rendered content inside HTML-Tags.');
+    $this->assertStringContainsString('<h2>', $field_value, 'Node item ' . $nid . ' does not have a rendered title field.');
+    $this->assertStringContainsString('>' . $node->label() . '<', $field_value, 'Node item ' . $nid . ' does not have a rendered title inside HTML-Tags.');
   }
 
   /**

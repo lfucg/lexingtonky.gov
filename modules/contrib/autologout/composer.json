@@ -3,5 +3,5 @@
   "description": "Adds automated timed logout.",
   "type": "drupal-module",
   "homepage": "http://drupal.org/project/autologout",
-  "license": "GPL-2.0+"
+  "license": "GPL-2.0-or-later"
 }

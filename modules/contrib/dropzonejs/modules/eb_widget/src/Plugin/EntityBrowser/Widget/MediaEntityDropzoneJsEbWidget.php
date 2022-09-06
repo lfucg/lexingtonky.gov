@@ -157,7 +157,7 @@ class MediaEntityDropzoneJsEbWidget extends DropzoneJsEbWidget {
       $source_field = $this->getType()->getSource()->getConfiguration()['source_field'];
       $file = $media_entity->$source_field->entity;
       /** @var \Drupal\dropzonejs\Events\DropzoneMediaEntityCreateEvent $event */
-      $event = $this->eventDispatcher->dispatch(Events::MEDIA_ENTITY_CREATE, new DropzoneMediaEntityCreateEvent($media_entity, $file, $form, $form_state, $element));
+      $event = $this->eventDispatcher->dispatch(new DropzoneMediaEntityCreateEvent($media_entity, $file, $form, $form_state, $element), Events::MEDIA_ENTITY_CREATE);
       $media_entity = $event->getMediaEntity();
       $source_field = $media_entity->getSource()->getConfiguration()['source_field'];
       // If we don't save file at this point Media entity creates another file

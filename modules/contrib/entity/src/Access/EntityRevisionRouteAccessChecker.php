@@ -158,6 +158,7 @@ class EntityRevisionRouteAccessChecker implements AccessInterface {
       ->condition($entity_type->getKey('id'), $entity->id())
       ->condition($entity_type->getKey('default_langcode'), 1)
       ->count()
+      ->accessCheck(TRUE)
       ->execute();
     return $count;
   }

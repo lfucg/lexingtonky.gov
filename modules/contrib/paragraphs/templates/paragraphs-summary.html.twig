@@ -17,7 +17,7 @@
   'paragraphs-description',
   expanded ? 'paragraphs-expanded-description' : 'paragraphs-collapsed-description'
 ] %}
-{% spaceless %}
+{% apply spaceless %}
   {% if content is not empty or behaviors is not empty %}
     <div{{ attributes.addClass(classes) }}>
       {% if content is not empty %}
@@ -42,4 +42,4 @@
       {% endif %}
     </div>
   {% endif %}
-{% endspaceless %}
+{% endapply %}

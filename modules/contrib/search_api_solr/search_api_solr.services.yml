@@ -46,4 +46,4 @@ services:
 
   search_api_solr.command_helper:
     class: Drupal\search_api_solr\Utility\SolrCommandHelper
-    arguments: ['@entity_type.manager', '@module_handler', '@event_dispatcher']
+    arguments: ['@entity_type.manager', '@module_handler', '@event_dispatcher', '@extension.list.module']

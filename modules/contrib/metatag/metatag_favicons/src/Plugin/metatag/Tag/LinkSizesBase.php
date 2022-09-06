@@ -18,7 +18,7 @@ abstract class LinkSizesBase extends LinkRelBase {
     if ($element) {
       $element['#attributes'] = [
         'rel' => $this->name(),
-        'sizes' => $this->sizes(),
+        'sizes' => $this->iconSize(),
         'href' => $element['#attributes']['href'],
       ];
     }
@@ -32,8 +32,22 @@ abstract class LinkSizesBase extends LinkRelBase {
    * @return string
    *   A string in the format "XxY" for a given width and height.
    */
-  protected function sizes() {
+  protected function iconSize() {
     return '';
+  }
+
+  /**
+   * The dimensions supported by this icon.
+   *
+   * @return string
+   *   A string in the format "XxY" for a given width and height.
+   *
+   * @deprecated in 8.x-1.22 and removed in 2.0.0. Use iconSize() instead.
+   *
+   * @see https://www.drupal.org/node/3300522
+   */
+  protected function sizes() {
+    return $this->iconSize();
   }
 
 }

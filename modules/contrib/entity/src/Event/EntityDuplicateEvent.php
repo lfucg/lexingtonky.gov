@@ -3,7 +3,7 @@
 namespace Drupal\entity\Event;
 
 use Drupal\Core\Entity\EntityInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Drupal\Component\EventDispatcher\Event;
 
 /**
  * Defines the entity duplicate event.

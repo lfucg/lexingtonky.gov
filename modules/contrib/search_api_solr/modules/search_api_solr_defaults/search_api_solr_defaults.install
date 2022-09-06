@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Search API Solr defaults module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function search_api_solr_defaults_requirements($phase) {
+  $requirements = [];
+  $requirements['search_api_solr_defaults'] = [
+    'description' => t('Search API Solr Defaults is deprecated and should be uninstalled. Future versions of Search API Solr will remove it.'),
+    'severity' => REQUIREMENT_ERROR,
+  ];
+  return $requirements;
+}

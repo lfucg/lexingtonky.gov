@@ -29,7 +29,7 @@ RCKRSCQSiUTyPlnSFQER9VCp/AAAAABJRU5ErkJggg==";
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'dropzonejs_test',
     'views',
     'block',

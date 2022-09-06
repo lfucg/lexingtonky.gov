@@ -146,7 +146,7 @@ abstract class AdminToolbarSearchTestBase extends WebDriverTestBase {
     }
     else {
       $suggestions_markup = $page->find('css', 'ul.ui-autocomplete')->getHtml();
-      $this->assertNotContains($contains, $suggestions_markup);
+      $this->assertStringNotContainsString($contains, $suggestions_markup);
     }
   }
 

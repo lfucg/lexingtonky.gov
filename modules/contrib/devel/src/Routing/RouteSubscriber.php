@@ -4,6 +4,7 @@ namespace Drupal\devel\Routing;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Drupal\Core\Routing\RoutingEvents;
 use Symfony\Component\Routing\Route;
@@ -25,13 +26,23 @@ class RouteSubscriber extends RouteSubscriberBase {
   protected $entityTypeManager;
 
   /**
+   * The router service.
+   *
+   * @var \Symfony\Component\Routing\RouterInterface
+   */
+  protected $routeProvider;
+
+  /**
    * Constructs a new RouteSubscriber object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Routing\RouteProviderInterface $router_provider
+   *   The router service.
    */
-  public function __construct(EntityTypeManagerInterface $entity_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_manager, RouteProviderInterface $router_provider) {
     $this->entityTypeManager = $entity_manager;
+    $this->routeProvider = $router_provider;
   }
 
   /**
@@ -62,9 +73,7 @@ class RouteSubscriber extends RouteSubscriberBase {
    */
   protected function getEntityLoadRoute(EntityTypeInterface $entity_type) {
     if ($devel_load = $entity_type->getLinkTemplate('devel-load')) {
-      $entity_type_id = $entity_type->id();
-      $route = new Route($devel_load);
-      $route
+      $route = (new Route($devel_load))
         ->addDefaults([
           '_controller' => '\Drupal\devel\Controller\EntityDebugController::entityLoad',
           '_title' => 'Devel Load',
@@ -73,13 +82,15 @@ class RouteSubscriber extends RouteSubscriberBase {
           '_permission' => 'access devel information',
         ])
         ->setOption('_admin_route', TRUE)
-        ->setOption('_devel_entity_type_id', $entity_type_id)
-        ->setOption('parameters', [
-          $entity_type_id => ['type' => 'entity:' . $entity_type_id],
-        ]);
+        ->setOption('_devel_entity_type_id', $entity_type->id());
+
+      if ($parameters = $this->getRouteParameters($entity_type, 'edit-form')) {
+        $route->setOption('parameters', $parameters);
+      }
 
       return $route;
     }
+    return NULL;
   }
 
   /**
@@ -93,9 +104,7 @@ class RouteSubscriber extends RouteSubscriberBase {
    */
   protected function getEntityRenderRoute(EntityTypeInterface $entity_type) {
     if ($devel_render = $entity_type->getLinkTemplate('devel-render')) {
-      $entity_type_id = $entity_type->id();
-      $route = new Route($devel_render);
-      $route
+      $route = (new Route($devel_render))
         ->addDefaults([
           '_controller' => '\Drupal\devel\Controller\EntityDebugController::entityRender',
           '_title' => 'Devel Render',
@@ -104,13 +113,15 @@ class RouteSubscriber extends RouteSubscriberBase {
           '_permission' => 'access devel information',
         ])
         ->setOption('_admin_route', TRUE)
-        ->setOption('_devel_entity_type_id', $entity_type_id)
-        ->setOption('parameters', [
-          $entity_type_id => ['type' => 'entity:' . $entity_type_id],
-        ]);
+        ->setOption('_devel_entity_type_id', $entity_type->id());
+
+      if ($parameters = $this->getRouteParameters($entity_type, 'canonical')) {
+        $route->setOption('parameters', $parameters);
+      }
 
       return $route;
     }
+    return NULL;
   }
 
   /**
@@ -124,9 +135,7 @@ class RouteSubscriber extends RouteSubscriberBase {
    */
   protected function getEntityTypeDefinitionRoute(EntityTypeInterface $entity_type) {
     if ($devel_definition = $entity_type->getLinkTemplate('devel-definition')) {
-      $entity_type_id = $entity_type->id();
-      $route = new Route($devel_definition);
-      $route
+      $route = (new Route($devel_definition))
         ->addDefaults([
           '_controller' => '\Drupal\devel\Controller\EntityDebugController::entityTypeDefinition',
           '_title' => 'Entity type definition',
@@ -135,13 +144,64 @@ class RouteSubscriber extends RouteSubscriberBase {
           '_permission' => 'access devel information',
         ])
         ->setOption('_admin_route', TRUE)
-        ->setOption('_devel_entity_type_id', $entity_type_id)
-        ->setOption('parameters', [
-          $entity_type_id => ['type' => 'entity:' . $entity_type_id],
-        ]);
+        ->setOption('_devel_entity_type_id', $entity_type->id());
+
+      $link_template = $entity_type->getLinkTemplate('edit-form') ? 'edit-form' : 'canonical';
+      if ($parameters = $this->getRouteParameters($entity_type, $link_template)) {
+        $route->setOption('parameters', $parameters);
+      }
 
       return $route;
     }
+  }
+
+  /**
+   * Gets the route parameters from the template.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type definition.
+   * @param string $link_template
+   *   The link template.
+   *
+   * @return array[]
+   *   A list of route of parameters.
+   */
+  protected function getRouteParameters(EntityTypeInterface $entity_type, string $link_template): array {
+    $parameters = [];
+    if (!$path = $entity_type->getLinkTemplate($link_template)) {
+      return $parameters;
+    }
+
+    $original_route_parameters = [];
+    $candidate_routes = $this->routeProvider->getRoutesByPattern($path);
+    if ($candidate_routes->count()) {
+      // Guess the best match. There could be more than one route sharing the
+      // same path. Try first an educated guess based on the route name. If we
+      // can't find one, pick-up the first from the list.
+      $name = 'entity.' . $entity_type->id() . '.' . str_replace('-', '_', $link_template);
+      if (!$original_route = $candidate_routes->get($name)) {
+        $iterator = $candidate_routes->getIterator();
+        $iterator->rewind();
+        $original_route = $iterator->current();
+      }
+      $original_route_parameters = $original_route->getOption('parameters') ?? [];
+    }
+
+    if (preg_match_all('/{\w*}/', $path, $matches)) {
+      foreach ($matches[0] as $match) {
+        $match = str_replace(['{', '}'], '', $match);
+        // This match has an original route parameter definition.
+        if (isset($original_route_parameters[$match])) {
+          $parameters[$match] = $original_route_parameters[$match];
+        }
+        // It could be an entity type?
+        elseif ($this->entityTypeManager->hasDefinition($match)) {
+          $parameters[$match] = ['type' => "entity:$match"];
+        }
+      }
+    }
+
+    return $parameters;
   }
 
   /**

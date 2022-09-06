@@ -50,7 +50,7 @@ abstract class EmbedTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create Filtered HTML text format and enable entity_embed filter.

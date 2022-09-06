@@ -17,7 +17,7 @@ class SolrLegacyTest extends SearchApiSolrTest {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'search_api_solr_legacy',
     'search_api_solr_legacy_test',
   ];
@@ -56,7 +56,7 @@ class SolrLegacyTest extends SearchApiSolrTest {
     $server = $this->getServer();
     $solr_major_version = $server->getBackend()->getSolrConnector()->getSolrMajorVersion();
     $backend_config = $server->getBackendConfig();
-    $solr_configset_controller = new SolrConfigSetController();
+    $solr_configset_controller = new SolrConfigSetController(\Drupal::service('extension.list.module'));
     $solr_configset_controller->setServer($server);
 
     $config_files = $solr_configset_controller->getConfigFiles();

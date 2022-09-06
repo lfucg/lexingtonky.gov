@@ -58,7 +58,7 @@
 
 
 .paragraphs-tabs-wrapper {
-  .paragraphs-tabs {
+  .paragraphs-tabs-hide {
     display: none;
   }
 }
@@ -308,6 +308,17 @@
   .paragraph-type-add-modal-button:hover {
     color: #ffffff;
     background: #057ec7 none;
+  }
+}
+
+.paragraphs-dragdrop__item {
+  .paragraphs-summary-wrapper {
+    .paragraphs-description {
+      .paragraphs-content-wrapper,
+      .paragraphs-plugin-wrapper {
+        font-size: 81.3%;
+      }
+    }
   }
 }
 

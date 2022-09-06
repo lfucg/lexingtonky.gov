@@ -26,10 +26,22 @@ imce.help:
 imce.admin_browser:
   path: '/admin/imce/browser'
   defaults:
-    _controller: '\Drupal\imce\Controller\ImceAdminBrowserController::page'
+    _controller: '\Drupal\imce\Controller\ImceFrameController::page'
     _title: 'IMCE File Browser'
   requirements:
     _permission: 'administer imce'
+
+imce.user_browser:
+  path: '/user/{user}/imce'
+  defaults:
+    _controller: '\Drupal\imce\Controller\ImceFrameController::page'
+    _title: 'IMCE File Browser'
+  requirements:
+    _custom_access: '\Drupal\imce\Controller\ImceFrameController::checkAccess'
+  options:
+    parameters:
+      user:
+        type: entity:user
 
 imce.profile_add:
   path: '/admin/config/media/imce/add-profile'

@@ -150,6 +150,7 @@ class Kint
         'Kint\\Parser\\ClosurePlugin',
         'Kint\\Parser\\ColorPlugin',
         'Kint\\Parser\\DateTimePlugin',
+        'Kint\\Parser\\EnumPlugin',
         'Kint\\Parser\\FsPathPlugin',
         'Kint\\Parser\\IteratorPlugin',
         'Kint\\Parser\\JsonPlugin',
@@ -587,7 +588,7 @@ class Kint
             isset($call_info['params']) ? $call_info['params'] : [],
             \count($args)
         );
-        $output = $kintstance->dumpAll($args, $bases);
+        $output = $kintstance->dumpAll(\array_values($args), $bases);
 
         if (static::$return || \in_array('@', $call_info['modifiers'], true)) {
             return $output;

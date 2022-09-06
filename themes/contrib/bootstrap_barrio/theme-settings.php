@@ -57,7 +57,7 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
         'bootstrap_barrio/bootswatch_cosmo' => t('Bootswatch Cosmo'),
         'bootstrap_barrio/bootswatch_cyborg' => t('Bootswatch Cyborg'),
         'bootstrap_barrio/bootswatch_darkly' => t('Bootswatch Darkly'),
-        'bootstrap_barrio/bootswatch_flaty' => t('Bootswatch Flatly'),
+        'bootstrap_barrio/bootswatch_flatly' => t('Bootswatch Flatly'),
         'bootstrap_barrio/bootswatch_journal' => t('Bootswatch Journal'),
         'bootstrap_barrio/bootswatch_litera' => t('Bootswatch Litera'),
         'bootstrap_barrio/bootswatch_lumen' => t('Bootswatch Lumen'),
@@ -443,6 +443,7 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   ];
+  
   $form['components']['navbar_behaviour']['bootstrap_barrio_navbar_offcanvas'] = [
     '#type' => 'select',
     '#title' => t('Default/Bootstrap Offcanvas Collapse'),
@@ -450,18 +451,21 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
     '#options' => [
       'offcanvas-collapse' => t('Offcanvas'),
     ],
-    '#empty_option' => t('Default'),  ];
+    '#empty_option' => t('Default'),
+  ];
+
   $form['components']['navbar_behaviour']['bootstrap_barrio_navbar_flyout'] = [
     '#type' => 'checkbox',
     '#title' => t('Flyout style main menu'),
     '#default_value' => theme_get_setting('bootstrap_barrio_navbar_flyout'),
-    '#description' => t('DO NOT USE IN NEW SITES. Removed in favor of Bootstrap Offcanvas.'),
   ];
+
   $form['components']['navbar_behaviour']['bootstrap_barrio_navbar_slide'] = [
     '#type' => 'checkbox',
     '#title' => t('Sliding navbar'),
     '#description' => t('Collapsed navbar will slide left to right'),
     '#default_value' => theme_get_setting('bootstrap_barrio_navbar_slide'),
+    '#description' => t('DO NOT USE IN NEW SITES. Removed in favor of Bootstrap Offcanvas.'),
   ];
 
   // Tabs.

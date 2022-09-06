@@ -104,7 +104,7 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $admin_user = $this->createUser([], ['administer entity_test_enhanced_with_owner']);
     $this->container->get('current_user')->setAccount($admin_user);
 
-    $result = $this->storage->getQuery()->sort('id')->execute();
+    $result = $this->storage->getQuery()->sort('id')->accessCheck(TRUE)->execute();
     $this->assertEquals([
       $this->entities[0]->id(),
       $this->entities[1]->id(),
@@ -115,7 +115,7 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $user = $this->createUser([], ['access content']);
     $this->container->get('current_user')->setAccount($user);
 
-    $result = $this->storage->getQuery()->execute();
+    $result = $this->storage->getQuery()->accessCheck(TRUE)->execute();
     $this->assertEmpty($result);
 
     // View own (published-only).
@@ -127,7 +127,7 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $this->entities[1]->set('user_id', $user->id());
     $this->entities[1]->save();
 
-    $result = $this->storage->getQuery()->sort('id')->execute();
+    $result = $this->storage->getQuery()->sort('id')->accessCheck(TRUE)->execute();
     $this->assertEquals([
       $this->entities[1]->id(),
     ], array_values($result));
@@ -136,7 +136,7 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $user = $this->createUser([], ['view any entity_test_enhanced_with_owner']);
     $this->container->get('current_user')->setAccount($user);
 
-    $result = $this->storage->getQuery()->sort('id')->execute();
+    $result = $this->storage->getQuery()->sort('id')->accessCheck(TRUE)->execute();
     $this->assertEquals([
       $this->entities[1]->id(),
       $this->entities[2]->id(),
@@ -151,7 +151,7 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $this->entities[1]->set('user_id', $user->id());
     $this->entities[1]->save();
 
-    $result = $this->storage->getQuery()->sort('id')->execute();
+    $result = $this->storage->getQuery()->sort('id')->accessCheck(TRUE)->execute();
     $this->assertEquals([
       $this->entities[0]->id(),
     ], array_values($result));
@@ -166,7 +166,7 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $this->entities[0]->set('user_id', $user->id());
     $this->entities[0]->save();
 
-    $result = $this->storage->getQuery()->sort('id')->execute();
+    $result = $this->storage->getQuery()->sort('id')->accessCheck(TRUE)->execute();
     $this->assertEquals([
       $this->entities[0]->id(),
       $this->entities[1]->id(),
@@ -183,7 +183,7 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $this->entities[1]->set('user_id', $user->id());
     $this->entities[1]->save();
 
-    $result = $this->storage->getQuery()->sort('id')->execute();
+    $result = $this->storage->getQuery()->sort('id')->accessCheck(TRUE)->execute();
     $this->assertEquals([
       $this->entities[1]->id(),
       $this->entities[2]->id(),
@@ -198,7 +198,11 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $admin_user = $this->createUser([], ['administer entity_test_enhanced_with_owner']);
     $this->container->get('current_user')->setAccount($admin_user);
 
-    $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
+    $result = $this->storage->getQuery()
+      ->allRevisions()
+      ->sort('id')
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals([
       '1' => $this->entities[0]->id(),
       '2' => $this->entities[0]->id(),
@@ -212,7 +216,7 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $user = $this->createUser([], ['access content']);
     $this->container->get('current_user')->setAccount($user);
 
-    $result = $this->storage->getQuery()->allRevisions()->execute();
+    $result = $this->storage->getQuery()->allRevisions()->accessCheck(TRUE)->execute();
     $this->assertEmpty($result);
 
     // View own (published-only).
@@ -226,7 +230,11 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $this->entities[1]->set('user_id', $user->id());
     $this->entities[1]->save();
 
-    $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
+    $result = $this->storage->getQuery()
+      ->allRevisions()
+      ->sort('id')
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals([
       '1' => $this->entities[0]->id(),
       '4' => $this->entities[1]->id(),
@@ -236,7 +244,11 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $user = $this->createUser([], ['view any entity_test_enhanced_with_owner']);
     $this->container->get('current_user')->setAccount($user);
 
-    $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
+    $result = $this->storage->getQuery()
+      ->allRevisions()
+      ->sort('id')
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals([
       '1' => $this->entities[0]->id(),
       '4' => $this->entities[1]->id(),
@@ -253,7 +265,11 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $this->entities[1]->set('user_id', $user->id());
     $this->entities[1]->save();
 
-    $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
+    $result = $this->storage->getQuery()
+      ->allRevisions()
+      ->sort('id')
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals([
       '2' => $this->entities[0]->id(),
       '3' => $this->entities[1]->id(),
@@ -269,7 +285,11 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $this->entities[0]->set('user_id', $user->id());
     $this->entities[0]->save();
 
-    $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
+    $result = $this->storage->getQuery()
+      ->allRevisions()
+      ->sort('id')
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals([
       '1' => $this->entities[0]->id(),
       '2' => $this->entities[0]->id(),
@@ -288,7 +308,11 @@ class UncacheableQueryAccessTest extends EntityKernelTestBase {
     $this->entities[1]->set('user_id', $user->id());
     $this->entities[1]->save();
 
-    $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
+    $result = $this->storage->getQuery()
+      ->allRevisions()
+      ->sort('id')
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals([
       '4' => $this->entities[1]->id(),
       '5' => $this->entities[2]->id(),

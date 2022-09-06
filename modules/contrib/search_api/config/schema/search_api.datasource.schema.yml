@@ -16,6 +16,9 @@
           sequence:
             type: string
             label: 'A bundle machine name'
+    disable_db_tracking:
+      type: boolean
+      label: 'Do not use a database query for tracking'
     languages:
       type: mapping
       label: 'Languages'

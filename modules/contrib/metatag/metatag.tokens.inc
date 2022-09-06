@@ -129,7 +129,7 @@ function metatag_tokens($type, $tokens, array $data, array $options, BubbleableM
 
   switch ($type) {
     case 'current-page':
-      /** @var \Drupal\token\TokenInterface $token_service */
+      /** @var \Drupal\Core\Utility\Token $token_service */
       $token_service = \Drupal::token();
       $metatag_tokens = $token_service->findWithPrefix($tokens, 'metatag');
       if (!empty($metatag_tokens) && metatag_is_current_route_supported()) {
@@ -158,7 +158,7 @@ function metatag_tokens($type, $tokens, array $data, array $options, BubbleableM
         }
 
         if (!empty($metatag_fields)) {
-          /** @var \Drupal\token\TokenInterface $token_service */
+          /** @var \Drupal\Core\Utility\Token $token_service */
           $token_service = \Drupal::token();
           $metatag_tokens = [];
           foreach ($metatag_fields as $metatag_field) {

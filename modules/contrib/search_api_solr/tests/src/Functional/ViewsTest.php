@@ -23,7 +23,7 @@ class ViewsTest extends SearchApiViewsTest {
    *
    * @var string[]
    */
-  public static $modules = ['search_api_solr_test'];
+  protected static $modules = ['search_api_solr_test'];
 
   /**
    * {@inheritdoc}

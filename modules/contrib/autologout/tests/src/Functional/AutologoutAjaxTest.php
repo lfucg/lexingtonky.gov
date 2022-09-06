@@ -13,12 +13,18 @@ use Drupal\Tests\BrowserTestBase;
  * @group Autologout
  */
 class AutologoutAjaxTest extends BrowserTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'system_test',
     'views',
@@ -45,7 +51,7 @@ class AutologoutAjaxTest extends BrowserTestBase {
   /**
    * SetUp() performs any pre-requisite tasks that need to happen.
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     // Create and log in our privileged user.
     $this->privilegedUser = $this->drupalCreateUser([

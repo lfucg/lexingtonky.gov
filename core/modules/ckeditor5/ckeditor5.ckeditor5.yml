@@ -62,6 +62,27 @@ ckeditor5_heading:
       - <h5>
       - <h6>
 
+ckeditor5_style:
+  ckeditor5:
+    plugins: [style.Style]
+  drupal:
+    label: Style
+    library: core/ckeditor5.style
+    admin_library: ckeditor5/admin.style
+    class: Drupal\ckeditor5\Plugin\CKEditor5Plugin\Style
+    toolbar_items:
+      style:
+        label: Style
+    # This plugin is able to add any configured class on any tag that can be
+    # created by some other CKEditor 5 plugin. Hence it indicates it allows all
+    # classes on all tags. Its subset then restricts this to a concrete set of
+    # tags, and a concrete set of classes.
+    # @todo Update in https://www.drupal.org/project/drupal/issues/3280124
+    # @see \Drupal\ckeditor5\Plugin\CKEditor5Plugin\Style::getElementsSubset()
+    # @see \Drupal\ckeditor5\Plugin\Validation\Constraint\StyleSensibleElementConstraintValidator
+    elements:
+      - <$any-html5-element class>
+
 ckeditor5_arbitraryHtmlSupport:
   ckeditor5:
     plugins: [htmlSupport.GeneralHtmlSupport]
@@ -475,18 +496,51 @@ ckeditor5_image:
       - image.Image
       - image.ImageToolbar
       - drupalImage.DrupalImage
+      - drupalImage.DrupalInsertImage
     config:
       image:
         toolbar: [drupalImageAlternativeText]
   drupal:
     label: Image
+    class: \Drupal\ckeditor5\Plugin\CKEditor5Plugin\Image
     library: ckeditor5/drupal.ckeditor5.image
+    admin_library: ckeditor5/admin.image
     elements:
       - <img>
-      - <img src alt data-entity-uuid data-entity-type height width>
+      - <img src alt height width>
+    toolbar_items:
+      drupalInsertImage:
+        label: Image
     conditions:
-      toolbarItem: uploadImage
+      toolbarItem: drupalInsertImage
+
+ckeditor5_imageUpload:
+  ckeditor5:
+    plugins:
+      - image.ImageUpload
+      - drupalImage.DrupalImageUpload
+    config:
+      image:
+        upload:
+          types: ["jpeg", "png", "gif"]
+  drupal:
+    label: Image Upload
+    elements:
+      - <img data-entity-uuid data-entity-type>
+    conditions:
       imageUploadStatus: true
+      plugins: [ckeditor5_image]
+
+ckeditor5_imageUrl:
+  ckeditor5:
+    plugins:
+      - image.ImageInsertUI
+  drupal:
+    label: Image URL
+    elements: false
+    conditions:
+      imageUploadStatus: false
+      plugins: [ckeditor5_image]
 
 ckeditor5_imageResize:
   ckeditor5:
@@ -521,9 +575,8 @@ ckeditor5_imageCaption:
     elements:
       - <img data-caption>
     conditions:
-      toolbarItem: uploadImage
-      imageUploadStatus: true
       filter: filter_caption
+      plugins: [ckeditor5_image]
 
 ckeditor5_imageAlign:
   ckeditor5:
@@ -556,9 +609,8 @@ ckeditor5_imageAlign:
     elements:
       - <img data-align>
     conditions:
-      toolbarItem: uploadImage
-      imageUploadStatus: true
       filter: filter_align
+      plugins: [ckeditor5_image]
 
 ckeditor5_indent:
   ckeditor5:
@@ -608,7 +660,8 @@ media_media:
     class: Drupal\ckeditor5\Plugin\CKEditor5Plugin\Media
     elements:
       - <drupal-media>
-      - <drupal-media data-entity-type data-entity-uuid alt data-view-mode>
+      - <drupal-media data-entity-type data-entity-uuid alt>
+      - <drupal-media data-view-mode>
     conditions:
       filter: media_embed
 

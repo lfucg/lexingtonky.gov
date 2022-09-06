@@ -6,6 +6,7 @@ namespace Drupal\ckeditor5\Plugin\Validation\Constraint;
 
 use Drupal\ckeditor5\HTMLRestrictions;
 use Drupal\ckeditor5\Plugin\CKEditor5PluginDefinition;
+use Drupal\ckeditor5\Plugin\CKEditor5PluginElementsSubsetInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\editor\EditorInterface;
 use Drupal\filter\FilterFormatInterface;
@@ -118,27 +119,13 @@ class FundamentalCompatibilityConstraintValidator extends ConstraintValidator im
    *   The constraint to validate.
    */
   private function checkHtmlRestrictionsAreCompatible(FilterFormatInterface $text_format, FundamentalCompatibilityConstraint $constraint): void {
-    $fundamental = new HTMLRestrictions($this->pluginManager->getProvidedElements(self::FUNDAMENTAL_CKEDITOR5_PLUGINS));
-
-    // @todo Remove in favor of HTMLRestrictions::diff() in https://www.drupal.org/project/drupal/issues/3231336
-    $html_restrictions = $text_format->getHtmlRestrictions();
-    $minimum_tags = array_keys($fundamental->getAllowedElements());
-    $forbidden_minimum_tags = isset($html_restrictions['forbidden_tags'])
-      ? array_diff($minimum_tags, $html_restrictions['forbidden_tags'])
-      : [];
-    if (!empty($forbidden_minimum_tags)) {
-      $offending_filter = static::findHtmlRestrictorFilterForbiddingTags($text_format, $minimum_tags);
-      $this->context->buildViolation($constraint->forbiddenElementsMessage)
-        ->setParameter('%filter_label', (string) $offending_filter->getLabel())
-        ->setParameter('%filter_plugin_id', $offending_filter->getPluginId())
-        ->addViolation();
-    }
-
-    // @todo Remove early return in https://www.drupal.org/project/drupal/issues/3231336
-    if (!isset($html_restrictions['allowed'])) {
+    $html_restrictions = HTMLRestrictions::fromTextFormat($text_format);
+    if ($html_restrictions->isUnrestricted()) {
       return;
     }
-    if (!$fundamental->diff(HTMLRestrictions::fromTextFormat($text_format))->allowsNothing()) {
+
+    $fundamental = new HTMLRestrictions($this->pluginManager->getProvidedElements(self::FUNDAMENTAL_CKEDITOR5_PLUGINS));
+    if (!$fundamental->diff($html_restrictions)->allowsNothing()) {
       $offending_filter = static::findHtmlRestrictorFilterNotAllowingTags($text_format, $fundamental);
       $this->context->buildViolation($constraint->nonAllowedElementsMessage)
         ->setParameter('%filter_label', (string) $offending_filter->getLabel())
@@ -214,32 +201,36 @@ class FundamentalCompatibilityConstraintValidator extends ConstraintValidator im
       foreach ($non_creatable_tags->toCKEditor5ElementsArray() as $non_creatable_tag) {
         // Find the plugin which has a non-creatable tag.
         $needle = HTMLRestrictions::fromString($non_creatable_tag);
-        $matching_plugins = array_filter($enabled_definitions, function (CKEditor5PluginDefinition $d) use ($needle) {
+        $matching_plugins = array_filter($enabled_definitions, function (CKEditor5PluginDefinition $d) use ($needle, $text_editor) {
           if (!$d->hasElements()) {
             return FALSE;
           }
-          $haystack = HTMLRestrictions::fromString(implode($d->getElements()));
-          return !$haystack->intersect($needle)->allowsNothing();
+          $haystack = new HTMLRestrictions($this->pluginManager->getProvidedElements([$d->id()], $text_editor, FALSE, FALSE));
+          return !$haystack->extractPlainTagsSubset()->intersect($needle)->allowsNothing();
         });
         assert(count($matching_plugins) === 1);
         $plugin_definition = reset($matching_plugins);
         assert($plugin_definition instanceof CKEditor5PluginDefinition);
 
         // Compute which attributes it would be able to create on this tag.
-        $matching_elements = array_filter($plugin_definition->getElements(), function (string $element) use ($needle) {
-          $haystack = HTMLRestrictions::fromString($element);
-          return !$haystack->intersect($needle)->allowsNothing();
-        });
-        $attributes_on_tag = HTMLRestrictions::fromString(implode($matching_elements));
+        $provided_elements = new HTMLRestrictions($this->pluginManager->getProvidedElements([$plugin_definition->id()], $text_editor, FALSE, FALSE));
+        $attributes_on_tag = $provided_elements->intersect(
+          new HTMLRestrictions(array_fill_keys(array_keys($needle->getAllowedElements()), TRUE))
+        );
 
         $violation = $this->context->buildViolation($constraint->nonCreatableTagMessage)
           ->setParameter('@non_creatable_tag', $non_creatable_tag)
           ->setParameter('%plugin', $plugin_definition->label())
           ->setParameter('@attributes_on_tag', implode(', ', $attributes_on_tag->toCKEditor5ElementsArray()));
 
+        // If this plugin has a configurable subset, associate the violation
+        // with the property path pointing to this plugin's settings form.
+        if (is_a($plugin_definition->getClass(), CKEditor5PluginElementsSubsetInterface::class, TRUE)) {
+          $violation->atPath(sprintf('settings.plugins.%s', $plugin_definition->id()));
+        }
         // If this plugin is associated with a toolbar item, associate the
         // violation with the property path pointing to the active toolbar item.
-        if ($plugin_definition->hasToolbarItems()) {
+        elseif ($plugin_definition->hasToolbarItems()) {
           $toolbar_items = $plugin_definition->getToolbarItems();
           $active_toolbar_items = array_intersect(
             $text_editor->getSettings()['toolbar']['items'],
@@ -280,47 +271,6 @@ class FundamentalCompatibilityConstraintValidator extends ConstraintValidator im
         yield $id => $filter;
       }
     }
-  }
-
-  /**
-   * Analyzes a text format to find the filter not allowing required tags.
-   *
-   * @param \Drupal\filter\FilterFormatInterface $text_format
-   *   A text format whose filters to check for compatibility.
-   * @param string[] $required_tags
-   *   A list of HTML tags that are required.
-   *
-   * @return \Drupal\filter\Plugin\FilterInterface
-   *   The filter plugin instance not allowing the required tags.
-   *
-   * @throws \InvalidArgumentException
-   */
-  private static function findHtmlRestrictorFilterForbiddingTags(FilterFormatInterface $text_format, array $required_tags): FilterInterface {
-    // Get HTML restrictor filters that actually restrict HTML.
-    $filters = static::getFiltersInFormatOfType(
-      $text_format,
-      FilterInterface::TYPE_HTML_RESTRICTOR,
-      function (FilterInterface $filter) {
-        return $filter->getHTMLRestrictions() !== FALSE;
-      }
-    );
-
-    foreach ($filters as $filter) {
-      $restrictions = $filter->getHTMLRestrictions();
-
-      // @todo Fix
-      //   \Drupal\filter_test\Plugin\Filter\FilterTestRestrictTagsAndAttributes::getHTMLRestrictions(),
-      //   whose computed value for forbidden_tags does not comply with the API
-      //   https://www.drupal.org/project/drupal/issues/3231331.
-      if (array_keys($restrictions['forbidden_tags']) != range(0, count($restrictions['forbidden_tags']))) {
-        $restrictions['forbidden_tags'] = array_keys($restrictions['forbidden_tags']);
-      }
-      if (isset($restrictions['forbidden_tags']) && !empty(array_intersect($required_tags, $restrictions['forbidden_tags']))) {
-        return $filter;
-      }
-    }
-
-    throw new \InvalidArgumentException('This text format does not have a "tags forbidden" restriction that includes the required tags.');
   }
 
   /**

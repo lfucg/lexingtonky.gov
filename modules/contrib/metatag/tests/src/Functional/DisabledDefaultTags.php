@@ -71,7 +71,6 @@ class DisabledDefaultTags extends BrowserTestBase {
     /** @var \Drupal\Core\Entity\EntityStorageInterface $global_metatag_manager */
     $global_metatag_manager = \Drupal::entityTypeManager()
       ->getStorage('metatag_defaults');
-    /** @var \Drupal\metatag\Entity\MetatagDefaults $entity_metatags */
     return $global_metatag_manager->load($id);
   }
 
@@ -79,6 +78,7 @@ class DisabledDefaultTags extends BrowserTestBase {
    * Test that a disabled Frontpage metatag default doesn't load.
    */
   public function testFrontpage() {
+    /** @var \Drupal\metatag\Entity\MetatagDefaults $metatag */
     $metatag = $this->loadMetatagDefault('front');
     $metatag->overwriteTags(['canonical_url' => 'https://test.canonical']);
     $metatag->save();
@@ -106,6 +106,7 @@ class DisabledDefaultTags extends BrowserTestBase {
    * Test that a disabled 404 metatag default doesn't load.
    */
   public function test404() {
+    /** @var \Drupal\metatag\Entity\MetatagDefaults $metatag */
     $metatag = $this->loadMetatagDefault('404');
     $metatag->overwriteTags(['canonical_url' => 'https://test.canonical']);
     $metatag->save();
@@ -133,6 +134,7 @@ class DisabledDefaultTags extends BrowserTestBase {
    * Test that a disabled 403 metatag default doesn't load.
    */
   public function test403() {
+    /** @var \Drupal\metatag\Entity\MetatagDefaults $metatag */
     $metatag = $this->loadMetatagDefault('403');
     $metatag->overwriteTags(['canonical_url' => 'https://test.canonical']);
     $metatag->save();

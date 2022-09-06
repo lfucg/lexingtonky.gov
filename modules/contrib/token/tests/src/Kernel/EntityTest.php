@@ -15,16 +15,14 @@ use Drupal\taxonomy\VocabularyInterface;
 class EntityTest extends KernelTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = ['node', 'taxonomy', 'text'];
+  protected static $modules = ['node', 'taxonomy', 'text'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Create the default tags vocabulary.

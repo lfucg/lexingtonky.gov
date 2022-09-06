@@ -6,8 +6,16 @@ use Drupal\node\Plugin\Condition\NodeType as CoreNodeType;
 use Drupal\ctools\ConstraintConditionInterface;
 
 /**
+ * Entity Bundle Constraints
  *
+ * Adds constraints to the core NodeType condition.
+ *
+ * @deprecated in ctools:8.x-1.10. Will be removed before ctools:4.1.0.
+ *   Use \Drupal\ctools\Plugin\Condition\EntityBundle instead.
+ *
+ * @see https://www.drupal.org/node/2983299
  */
+//@phpstan-ignore-next-line
 class NodeType extends CoreNodeType implements ConstraintConditionInterface {
 
   /**

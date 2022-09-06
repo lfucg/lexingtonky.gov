@@ -1020,6 +1020,17 @@ class ComplexWidgetTest extends InlineEntityFormTestBase {
   }
 
   /**
+   * Tests the token replacement in the description field.
+   */
+  public function testTokenReplacementInDescriptionField() {
+    $assert_session = $this->assertSession();
+    $this->drupalGet($this->formContentAddUrl);
+
+    $site_name = \Drupal::token()->replace('[site:name]');
+    $assert_session->pageTextContains('Reference multiple nodes. A complex widget on ' . $site_name . '.');
+  }
+
+  /**
    * Data provider: FALSE, TRUE.
    */
   public function simpleFalseTrueDataProvider() {

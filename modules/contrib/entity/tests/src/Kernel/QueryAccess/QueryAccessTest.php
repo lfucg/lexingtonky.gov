@@ -104,7 +104,10 @@ class QueryAccessTest extends EntityKernelTestBase {
     $admin_user = $this->createUser([], ['administer entity_test_enhanced']);
     $this->container->get('current_user')->setAccount($admin_user);
 
-    $result = $this->storage->getQuery()->sort('id')->execute();
+    $result = $this->storage->getQuery()
+      ->sort('id')
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals([
       $this->entities[0]->id(),
       $this->entities[1]->id(),
@@ -115,14 +118,14 @@ class QueryAccessTest extends EntityKernelTestBase {
     $user = $this->createUser([], ['access content']);
     $this->container->get('current_user')->setAccount($user);
 
-    $result = $this->storage->getQuery()->execute();
+    $result = $this->storage->getQuery()->accessCheck(TRUE)->execute();
     $this->assertEmpty($result);
 
     // View (published-only).
     $user = $this->createUser([], ['view entity_test_enhanced']);
     $this->container->get('current_user')->setAccount($user);
 
-    $result = $this->storage->getQuery()->sort('id')->execute();
+    $result = $this->storage->getQuery()->sort('id')->accessCheck(TRUE)->execute();
     $this->assertEquals([
       $this->entities[1]->id(),
       $this->entities[2]->id(),
@@ -132,7 +135,7 @@ class QueryAccessTest extends EntityKernelTestBase {
     $user = $this->createUser([], ['view first entity_test_enhanced']);
     $this->container->get('current_user')->setAccount($user);
 
-    $result = $this->storage->getQuery()->sort('id')->execute();
+    $result = $this->storage->getQuery()->sort('id')->accessCheck(TRUE)->execute();
     $this->assertEquals([
       $this->entities[1]->id(),
     ], array_values($result));
@@ -146,7 +149,11 @@ class QueryAccessTest extends EntityKernelTestBase {
     $admin_user = $this->createUser([], ['administer entity_test_enhanced']);
     $this->container->get('current_user')->setAccount($admin_user);
 
-    $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
+    $result = $this->storage->getQuery()
+      ->allRevisions()
+      ->sort('id')
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals([
       '1' => $this->entities[0]->id(),
       '2' => $this->entities[0]->id(),
@@ -160,14 +167,18 @@ class QueryAccessTest extends EntityKernelTestBase {
     $user = $this->createUser([], ['access content']);
     $this->container->get('current_user')->setAccount($user);
 
-    $result = $this->storage->getQuery()->execute();
+    $result = $this->storage->getQuery()->accessCheck(TRUE)->execute();
     $this->assertEmpty($result);
 
     // View (published-only).
     $user = $this->createUser([], ['view entity_test_enhanced']);
     $this->container->get('current_user')->setAccount($user);
 
-    $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
+    $result = $this->storage->getQuery()
+      ->allRevisions()
+      ->sort('id')
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals([
       '1' => $this->entities[0]->id(),
       '4' => $this->entities[1]->id(),
@@ -179,7 +190,11 @@ class QueryAccessTest extends EntityKernelTestBase {
     $user = $this->createUser([], ['view first entity_test_enhanced']);
     $this->container->get('current_user')->setAccount($user);
 
-    $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
+    $result = $this->storage->getQuery()
+      ->allRevisions()
+      ->sort('id')
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals([
       '1' => $this->entities[0]->id(),
       '4' => $this->entities[1]->id(),
@@ -336,14 +351,18 @@ class QueryAccessTest extends EntityKernelTestBase {
     $this->container->get('current_user')->setAccount($user);
 
     // EntityQuery.
-    $result = $this->storage->getQuery()->sort('id')->execute();
+    $result = $this->storage->getQuery()->sort('id')->accessCheck(TRUE)->execute();
     $this->assertEquals([
       $this->entities[0]->id(),
       $this->entities[1]->id(),
     ], array_values($result));
 
     // EntityQuery with revisions.
-    $result = $this->storage->getQuery()->allRevisions()->sort('id')->execute();
+    $result = $this->storage->getQuery()
+      ->allRevisions()
+      ->sort('id')
+      ->accessCheck(TRUE)
+      ->execute();
     $this->assertEquals([
       '1' => $this->entities[0]->id(),
       '2' => $this->entities[0]->id(),

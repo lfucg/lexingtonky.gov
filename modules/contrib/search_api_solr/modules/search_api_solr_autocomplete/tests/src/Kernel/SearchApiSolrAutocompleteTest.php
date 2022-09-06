@@ -19,7 +19,7 @@ class SearchApiSolrAutocompleteTest extends SolrBackendTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'search_api_autocomplete',
     'search_api_solr_autocomplete',
     'search_api_solr_legacy',

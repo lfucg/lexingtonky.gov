@@ -3,7 +3,7 @@
  *
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, once) {
 
   'use strict';
 
@@ -14,7 +14,7 @@
    */
   Drupal.behaviors.paragraphsModalAdd = {
     attach: function (context) {
-      $('.paragraph-type-add-modal-button', context).once('add-click-handler').on('click', function (event) {
+      $(once('add-click-handler', '.paragraph-type-add-modal-button', context)).on('click', function (event) {
         var $button = $(this);
         Drupal.paragraphsAddModal.openDialog($button.parent().siblings('.paragraphs-add-dialog'), $button.val());
 
@@ -67,7 +67,7 @@
     // Close the dialog after a button was clicked.
     // Use mousedown event, because we are using ajax in the modal add mode
     // which explicitly suppresses the click event.
-    $element.once().find('.field-add-more-submit').on('mousedown', function () {
+    $(once('paragraphs-add-more-submit-modal', $element.find('.field-add-more-submit'))).on('mousedown', function () {
       dialog.close();
     });
 
@@ -86,4 +86,4 @@
     }
   });
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, once);

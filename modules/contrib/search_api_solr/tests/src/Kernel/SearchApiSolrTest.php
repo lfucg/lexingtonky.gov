@@ -74,7 +74,7 @@ class SearchApiSolrTest extends SolrBackendTestBase {
    *
    * @var string[]
    */
-  public static $modules = [
+  protected static $modules = [
     'language',
     'search_api_solr_legacy',
     'user',
@@ -800,7 +800,7 @@ class SearchApiSolrTest extends SolrBackendTestBase {
 
     // If five documents are updated as batch, one illegal document causes the
     // entire batch to fail.
-    $this->assertEqual($this->indexItems($this->indexId), 0);
+    $this->assertEquals($this->indexItems($this->indexId), 0);
 
     // Enable the fallback to index the documents one by one.
     $server = $this->getIndex()->getServerInstance();
@@ -810,7 +810,7 @@ class SearchApiSolrTest extends SolrBackendTestBase {
     $server->save();
 
     // Indexed one by one, four documents get indexed successfully.
-    $this->assertEqual($this->indexItems($this->indexId), 4);
+    $this->assertEquals($this->indexItems($this->indexId), 4);
 
     // Don't mess up the remaining document anymore.
     $index_fallback_test = FALSE;
@@ -820,7 +820,7 @@ class SearchApiSolrTest extends SolrBackendTestBase {
     $server->save();
 
     // Index the previously broken document that is still in the queue.
-    $this->assertEqual($this->indexItems($this->indexId), 1);
+    $this->assertEquals($this->indexItems($this->indexId), 1);
   }
 
   /**
@@ -1391,7 +1391,7 @@ class SearchApiSolrTest extends SolrBackendTestBase {
     $server = $this->getServer();
     $solr_major_version = $server->getBackend()->getSolrConnector()->getSolrMajorVersion();
     $backend_config = $server->getBackendConfig();
-    $solr_configset_controller = new SolrConfigSetController();
+    $solr_configset_controller = new SolrConfigSetController(\Drupal::service('extension.list.module'));
     $solr_configset_controller->setServer($server);
 
     $config_files = $solr_configset_controller->getConfigFiles();

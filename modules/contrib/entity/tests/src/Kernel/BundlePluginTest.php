@@ -84,12 +84,14 @@ class BundlePluginTest extends KernelTestBase {
     $result = $this->container->get('entity_type.manager')->getStorage('entity_test_bundle_plugin')
       ->getQuery()
       ->condition('second_mail', 'admin@example.com')
+      ->accessCheck(TRUE)
       ->execute();
     $this->assertEquals([$second_entity->id() => $second_entity->id()], $result);
 
     $result = $this->container->get('entity_type.manager')->getStorage('entity_test_bundle_plugin')
       ->getQuery()
       ->condition('type', 'first')
+      ->accessCheck(TRUE)
       ->execute();
     $this->assertEquals([$first_entity->id() => $first_entity->id()], $result);
 

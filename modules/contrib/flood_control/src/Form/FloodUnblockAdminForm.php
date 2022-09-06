@@ -104,9 +104,10 @@ class FloodUnblockAdminForm extends FormBase {
     // Set default markup.
     $top_markup = $this->t("List of IP addresses and user ID's that are blocked after multiple failed login attempts. You can remove separate entries.");
 
-    // Add link to control settings page if current user haas permission to access it.
+    // Add link to control settings page if current user haas
+    // permission to access it.
     if ($this->currentUser->hasPermission('access flood control settings page')) {
-      $top_markup .= $this->t(" You can configure the login attempt limits and time windows on the <a href=':url'>Flood Control settings page</a>.</p>", [':url' => Url::fromRoute('flood_control.settings')->toString()]);
+      $top_markup .= $this->t("You can configure the login attempt limits and time windows on the <a href=':url'>Flood Control settings page</a>.</p>", [':url' => Url::fromRoute('flood_control.settings')->toString()]);
     }
 
     // Provides introduction to the table.

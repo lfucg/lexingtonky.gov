@@ -80,12 +80,13 @@ class UpgradeStatusCommands extends DrushCommands {
    * @option ignore-uninstalled Ignore uninstalled projects.
    * @option ignore-contrib Ignore contributed projects.
    * @option ignore-custom Ignore custom projects.
+   * @option phpstan-memory-limit Set memory limit for PHPStan.
    * @aliases us-cs
    *
    * @throws \InvalidArgumentException
    *   Thrown when one of the passed arguments is invalid or no arguments were provided.
    */
-  public function checkstyle(array $projects, array $options = ['all' => FALSE, 'skip-existing' => FALSE, 'ignore-uninstalled' => FALSE, 'ignore-contrib' => FALSE, 'ignore-custom' => FALSE]) {
+  public function checkstyle(array $projects, array $options = ['all' => FALSE, 'skip-existing' => FALSE, 'ignore-uninstalled' => FALSE, 'ignore-contrib' => FALSE, 'ignore-custom' => FALSE, 'phpstan-memory-limit' => '1500M']) {
     $extensions = $this->doAnalyze($projects, $options);
     $xml = new \SimpleXMLElement("<?xml version='1.0'?><checkstyle/>");
 
@@ -136,12 +137,13 @@ class UpgradeStatusCommands extends DrushCommands {
    * @option ignore-uninstalled Ignore uninstalled projects.
    * @option ignore-contrib Ignore contributed projects.
    * @option ignore-custom Ignore custom projects.
+   * @option phpstan-memory-limit Set memory limit for PHPStan.
    * @aliases us-a
    *
    * @throws \InvalidArgumentException
    *   Thrown when one of the passed arguments is invalid or no arguments were provided.
    */
-  public function analyze(array $projects, array $options = ['all' => FALSE, 'skip-existing' => FALSE, 'ignore-uninstalled' => FALSE, 'ignore-contrib' => FALSE, 'ignore-custom' => FALSE]) {
+  public function analyze(array $projects, array $options = ['all' => FALSE, 'skip-existing' => FALSE, 'ignore-uninstalled' => FALSE, 'ignore-contrib' => FALSE, 'ignore-custom' => FALSE, 'phpstan-memory-limit' => '1500M']) {
     $extensions = $this->doAnalyze($projects, $options);
 
     foreach ($extensions as $type => $list) {
@@ -177,11 +179,12 @@ class UpgradeStatusCommands extends DrushCommands {
    * @option ignore-uninstalled Ignore uninstalled projects.
    * @option ignore-contrib Ignore contributed projects.
    * @option ignore-custom Ignore custom projects.
+   * @option phpstan-memory-limit Set memory limit for PHPStan (default: 1500M).
    *
    * @throws \InvalidArgumentException
    *   Thrown when one of the passed arguments is invalid or no arguments were provided.
    */
-  public function doAnalyze(array $projects, array $options = ['all' => FALSE, 'skip-existing' => FALSE, 'ignore-uninstalled' => FALSE, 'ignore-contrib' => FALSE, 'ignore-custom' => FALSE]) {
+  public function doAnalyze(array $projects, array $options = ['all' => FALSE, 'skip-existing' => FALSE, 'ignore-uninstalled' => FALSE, 'ignore-contrib' => FALSE, 'ignore-custom' => FALSE, 'phpstan-memory-limit' => '1500M']) {
     // Group by type here so we can tell loader what is type of each one of
     // these.
     $extensions = [];
@@ -258,7 +261,7 @@ class UpgradeStatusCommands extends DrushCommands {
           }
         }
         $this->logger()->info(dt('Processing @name.', ['@name' => $name]));
-        $this->deprecationAnalyzer->analyze($extension);
+        $this->deprecationAnalyzer->analyze($extension, $options);
       }
     }
 

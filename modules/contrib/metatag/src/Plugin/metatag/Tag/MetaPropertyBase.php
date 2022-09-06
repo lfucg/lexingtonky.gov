@@ -14,4 +14,9 @@ abstract class MetaPropertyBase extends MetaNameBase {
    */
   protected $nameAttribute = 'property';
 
+  /**
+   * {@inheritdoc}
+   */
+  protected $htmlNameAttribute = 'property';
+
 }

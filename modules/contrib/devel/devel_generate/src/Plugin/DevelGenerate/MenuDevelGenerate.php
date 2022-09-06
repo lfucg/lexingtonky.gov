@@ -207,7 +207,7 @@ class MenuDevelGenerate extends DevelGenerateBase implements ContainerFactoryPlu
 
     // Delete custom menus.
     if ($values['kill']) {
-      list($menus_deleted, $links_deleted) = $this->deleteMenus();
+      [$menus_deleted, $links_deleted] = $this->deleteMenus();
       $this->setMessage($this->t('Deleted @menus_deleted menu(s) and @links_deleted other link(s).',
         ['@menus_deleted' => $menus_deleted, '@links_deleted' => $links_deleted]));
     }

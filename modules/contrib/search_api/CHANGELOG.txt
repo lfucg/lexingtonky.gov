@@ -1,3 +1,25 @@
+Search API 1.26 (2022-10-05):
+-----------------------------
+- #3306204 by mkalkbrenner, drunken monkey: Added a new query option for
+  passing non-standard language filters to the backends.
+- #3262092 by attilatilman, japerry, drunken monkey, Berdir: Fixed several
+  problems regarding Drupal 10 compatibility.
+- #3292775 by Berdir, drunken monkey: Fixed most deprecations preventing Drupal
+  10 compatibility.
+- #3257550 by drunken monkey, lpeidro: Fixed wrong handling of empty values in
+  the HTML filter.
+- #3029582 by drunken monkey, RichardDavies: Fixed handling of Views contextual
+  filters in combination with filter groups.
+- #3247840 by drunken monkey: Added a hidden datasource option to disable the
+  direct SQL query "fast path" for initial entity tracking.
+
+Search API 1.25 (2022-07-18):
+-----------------------------
+- #3296006 by mkalkbrenner, borisson_, drunken monkey: Fixed Views caching for
+  failed searches.
+- #3295564 by mkalkbrenner, drunken monkey, borisson_: Fixed broken Views
+  caching with Facets 2.0.4.
+
 Search API 1.24 (2022-07-07):
 -----------------------------
 - #3292241 by drunken monkey: Fixed test fails.

@@ -25,7 +25,7 @@ class LanguageIntegrationTest extends SearchApiBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Add extra languages.

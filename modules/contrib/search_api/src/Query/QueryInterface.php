@@ -435,6 +435,10 @@ interface QueryInterface extends ConditionSetInterface {
    *     should be returned along with the results by the backend, if possible.
    *     For backends that support retrieving fields values, this allows them to
    *     only retrieve the values that are actually needed.
+   *   - search_api_included_languages: A list of all languages that should be
+   *     included in the query, in case there were any restrictions. This is
+   *     mostly helpful if getLanguages() returns NULL but there might still be
+   *     just a subset of all available languages included.
    *   However, contrib modules might introduce arbitrary other keys with their
    *   own, special meaning. (Usually they should be prefixed with the module
    *   name, though, to avoid conflicts.)

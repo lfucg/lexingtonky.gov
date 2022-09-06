@@ -44,6 +44,7 @@ function search_api_solr_requirements($phase) {
     //   off if the user acknowledged it because it might really be the desired
     //   feature.
     $servers = search_api_solr_get_servers();
+    $module_extension_list = \Drupal::service('extension.list.module');
     foreach ($servers as $server_id => $server) {
       if ($server->status()) {
         /** @var \Drupal\search_api_solr\SolrBackendInterface $backend */
@@ -52,7 +53,7 @@ function search_api_solr_requirements($phase) {
         $configuration = $backend->getConfiguration();
         if ($backend->isAvailable() && $connector->pingCore()) {
           if (!$backend->isNonDrupalOrOutdatedConfigSetAllowed()) {
-            $config_set_controller = new SolrConfigSetController();
+            $config_set_controller = new SolrConfigSetController($module_extension_list);
             $config_set_controller->setServer($server);
             $new_config_set = [];
             try {
@@ -2110,4 +2111,17 @@ function search_api_solr_update_8412() {
  */
 function search_api_solr_update_8413() {
   search_api_solr_update_helper_install_configs();
+}
+
+/**
+ * Configure language-specific field usage individually per index.
+ */
+function search_api_solr_update_8414() {
+  $indexes = search_api_solr_update_helper_get_indexes();
+  foreach (search_api_solr_update_helper_get_index_third_party_settings() as $index_id => $third_party_settings) {
+    if (!isset($third_party_settings['multilingual']) || !isset($third_party_settings['multilingual']['specific_languages'])) {
+      $third_party_settings['multilingual']['specific_languages'] = [];
+    }
+    search_api_solr_update_helper_save_index_third_party_settings($index_id, $third_party_settings);
+  }
 }

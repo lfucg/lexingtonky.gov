@@ -34,6 +34,9 @@ captcha.settings:
     allow_on_admin_pages:
       type: boolean
       label: 'Allow CAPTCHAs and CAPTCHA administration links on administrative pages'
+    whitelist_ips:
+      type: string
+      label: 'IP addresses list'
     add_captcha_description:
       type: boolean
       label: 'Add a description to the CAPTCHA'

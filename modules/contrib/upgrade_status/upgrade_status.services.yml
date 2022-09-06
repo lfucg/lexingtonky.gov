@@ -9,6 +9,9 @@ services:
       - '@upgrade_status.twig_deprecation_analyzer'
       - '@upgrade_status.library_deprecation_analyzer'
       - '@upgrade_status.theme_function_deprecation_analyzer'
+      - '@upgrade_status.route_deprecation_analyzer'
+      - '@upgrade_status.extension_metadata_deprecation_analyzer'
+      - '@upgrade_status.css_deprecation_analyzer'
       - '@datetime.time'
   upgrade_status.library_deprecation_analyzer:
     class: Drupal\upgrade_status\LibraryDeprecationAnalyzer
@@ -24,6 +27,12 @@ services:
   upgrade_status.twig_deprecation_analyzer:
     class: Drupal\upgrade_status\TwigDeprecationAnalyzer
     arguments: ['@twig']
+  upgrade_status.route_deprecation_analyzer:
+    class: Drupal\upgrade_status\RouteDeprecationAnalyzer
+  upgrade_status.css_deprecation_analyzer:
+    class: Drupal\upgrade_status\CSSDeprecationAnalyzer
+  upgrade_status.extension_metadata_deprecation_analyzer:
+    class: Drupal\upgrade_status\ExtensionMetadataDeprecationAnalyzer
   upgrade_status.project_collector:
     class: Drupal\upgrade_status\ProjectCollector
     arguments:

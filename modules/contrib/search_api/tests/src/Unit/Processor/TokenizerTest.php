@@ -24,7 +24,7 @@ class TokenizerTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->processor = new Tokenizer([], 'tokenizer', []);

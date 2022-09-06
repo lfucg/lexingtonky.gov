@@ -101,7 +101,8 @@ class MetatagViewsRevertForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, $view_id = NULL, $display_id = NUL) {
+  public function buildForm(array $form, FormStateInterface $form_state, $view_id = NULL, $display_id = NULL) {
+    // @todo This method doesn't exist.
     $this->view = $this->viewsManager->load($view_id);
     $this->displayId = $display_id;
 

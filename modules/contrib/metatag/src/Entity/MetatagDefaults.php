@@ -99,7 +99,7 @@ class MetatagDefaults extends ConfigEntityBase implements MetatagDefaultsInterfa
    * Reverts an entity to its default values.
    */
   public function revert() {
-    $default_install_path = drupal_get_path('module', 'metatag') . '/' . InstallStorage::CONFIG_INSTALL_DIRECTORY;
+    $default_install_path = \Drupal::service('extension.list.module')->getPath('metatag') . '/' . InstallStorage::CONFIG_INSTALL_DIRECTORY;
     $storage = new FileStorage($default_install_path, StorageInterface::DEFAULT_COLLECTION);
     $default_config_data = $storage->read('metatag.metatag_defaults.' . $this->id());
     if ($default_config_data) {

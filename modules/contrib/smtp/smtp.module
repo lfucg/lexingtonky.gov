@@ -16,6 +16,26 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_modules_installed().
+ */
+function smtp_modules_installed($modules, $is_syncing = FALSE) {
+  // Disable the SMTP mailsystem if the mailsystem module is installed.
+  if (in_array('mailsystem', $modules) && !$is_syncing) {
+    // If mailsystem module is enabled, make sure SMTP is disabled.
+    \Drupal::moduleHandler()->loadInclude('smtp', 'install');
+    _disable_smtp();
+  }
+
+  // Show administrator a link to the configuration page upon installation.
+  $messenger = \Drupal::messenger();
+  $messenger->addMessage(t('Thanks for installing SMTP Authentication Support'));
+  $messenger->addMessage(t('Server settings on <a href="@url_settings">SMTP Authentication Support</a>', [
+    '@url_settings' => Url::fromRoute('smtp.config')->toString(),
+  ]));
+}
 
 /**
  * Implements hook_help().
@@ -88,7 +108,7 @@ function _smtp_mailer_send(array $variables) {
   $logger = \Drupal::logger('smtp');
 
   // Let the people know what is going on.
-  $logger->info('Sending mail to: @to', ['@to' => $to]);
+  $logger->info('Sending mail to: @to (subject: %subject)', ['@to' => $to, '%subject' => $mailer->Subject]);
 
   // Try to send e-mail. If it fails, set watchdog entry.
   try {
@@ -107,4 +127,13 @@ function _smtp_mailer_send(array $variables) {
     $mailer->SmtpClose();
   }
   return TRUE;
+}
+
+/**
+ * Implements hook_migration_plugins_alter().
+ *
+ * Adds mapping for SmtpMailSystem in d7_system_mail.
+ */
+function smtp_migration_plugins_alter(array &$migrations) {
+  $migrations["d7_system_mail"]['process']['interface/default']['map']['SmtpMailSystem'] = 'SMTPMailSystem';
 }

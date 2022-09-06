@@ -31,16 +31,7 @@ class Referrer extends MetaNameBase {
       '#type' => 'select',
       '#title' => $this->label(),
       '#description' => $this->description(),
-      '#options' => [
-        'no-referrer' => $this->t('No Referrer'),
-        'no-referrer-when-downgrade' => $this->t('No Referrer When Downgrade'),
-        'origin' => $this->t('Origin'),
-        'origin-when-cross-origin' => $this->t('Origin When Cross-Origin'),
-        'same-origin' => $this->t('Same Origin'),
-        'strict-origin' => $this->t('Strict Origin'),
-        'strict-origin-when-cross-origin' => $this->t('Strict Origin When Cross-Origin'),
-        'unsafe-url' => $this->t('Unsafe URL'),
-      ],
+      '#options' => $this->formValues(),
       '#empty_option' => $this->t('- None -'),
       '#empty_value' => '',
       '#default_value' => $this->value(),
@@ -49,6 +40,25 @@ class Referrer extends MetaNameBase {
     ];
 
     return $form;
+  }
+
+  /**
+   * The list of select values.
+   *
+   * @return array
+   *   A list of values available for this select tag.
+   */
+  protected function formValues() {
+    return [
+      'no-referrer' => $this->t('No Referrer'),
+      'no-referrer-when-downgrade' => $this->t('No Referrer When Downgrade'),
+      'origin' => $this->t('Origin'),
+      'origin-when-cross-origin' => $this->t('Origin When Cross-Origin'),
+      'same-origin' => $this->t('Same Origin'),
+      'strict-origin' => $this->t('Strict Origin'),
+      'strict-origin-when-cross-origin' => $this->t('Strict Origin When Cross-Origin'),
+      'unsafe-url' => $this->t('Unsafe URL'),
+    ];
   }
 
 }

@@ -12,7 +12,7 @@ dependencies:
     - drupal:node
     - drupal:taxonomy
 
-# Information added by Drupal.org packaging script on 2022-07-01
-version: '8.x-3.8'
+# Information added by Drupal.org packaging script on 2022-08-10
+version: '8.x-3.11'
 project: 'ctools'
-datestamp: 1656633726
+datestamp: 1660167576

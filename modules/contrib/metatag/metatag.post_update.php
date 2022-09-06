@@ -81,6 +81,7 @@ function metatag_post_update_convert_author_data(&$sandbox) {
         $bundle = $field->getTargetBundle();
 
         // Determine the table and "value" field names.
+        // @todo The class path to getTableMapping() seems to be invalid?
         $table_mapping = Drupal::entityTypeManager()
           ->getStorage($field->getTargetEntityTypeId())
           ->getTableMapping();

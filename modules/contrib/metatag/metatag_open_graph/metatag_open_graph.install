@@ -98,7 +98,7 @@ function metatag_open_graph_update_8102(&$sandbox) {
         /** @var \Drupal\Core\Entity\ContentEntityBase $entity */
         if ($entity instanceof ContentEntityBase) {
           if ($entity->hasField($field_name)) {
-            /** @var LanguageInterface $langcode */
+            /** @var \Drupal\Core\Language\LanguageInterface $langcode */
             foreach ($entity->getTranslationLanguages() as $langcode) {
               // For each translation of this entity (including the source)...
               $trans = $entity->getTranslation($langcode->getId());

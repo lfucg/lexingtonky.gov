@@ -129,6 +129,11 @@ search_api.index.*.third_party.search_api_solr:
         include_language_independent:
           type: boolean
           label: 'Include languages independent content in search results'
+        specific_languages:
+          type: sequence
+          label: 'Specific Languages'
+          sequence:
+            type: string
 
 search_api_solr.solr_configs:
   type: mapping
@@ -181,3 +186,25 @@ search_api_solr.scalar_values:
       VALUE:
         type: string
         label: 'property value'
+
+field.formatter.settings.solr_highlighted_string:
+  type: mapping
+  label: 'Highlighted plain text (Search API Solr)'
+  mapping:
+    prefix:
+      type: string
+      label: 'Prefix'
+    suffix:
+      type: string
+      label: 'Suffix'
+
+field.formatter.settings.solr_highlighted_text_default:
+  type: mapping
+  label: 'Highlighted text (Search API Solr)'
+  mapping:
+    prefix:
+      type: string
+      label: 'Prefix'
+    suffix:
+      type: string
+      label: 'Suffix'

@@ -38,7 +38,7 @@ class SearchApiBulkFormTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->index = Index::load('test_index');

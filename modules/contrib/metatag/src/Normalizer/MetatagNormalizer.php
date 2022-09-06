@@ -46,7 +46,7 @@ class MetatagNormalizer extends NormalizerBase {
   /**
    * {@inheritdoc}
    */
-  public function supportsDenormalization($data, $type, $format = NULL) {
+  public function supportsDenormalization($data, $type, $format = NULL, $context = []): bool {
     return FALSE;
   }
 

@@ -83,8 +83,8 @@ class EntityFieldBlockTest extends BrowserTestBase {
     $this->drupalGet('node/' . $node->id());
 
     $url = $file->getFileUri();
-    $url = file_create_url($url);
-    $url = file_url_transform_relative($url);
+    $url = $this->container->get('file_url_generator')->generateAbsoluteString($url);
+    $url = $this->container->get('file_url_generator')->transformRelative($url);
     $this->assertSession()->responseContains('src="' . $url . '"');
   }
 

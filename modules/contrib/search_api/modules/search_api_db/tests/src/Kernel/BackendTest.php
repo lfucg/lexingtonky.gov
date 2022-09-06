@@ -64,7 +64,7 @@ class BackendTest extends BackendTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Create a dummy table that will cause a naming conflict with the backend's

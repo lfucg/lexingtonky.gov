@@ -20,14 +20,14 @@
         "source": "http://git.drupal.org/project/search_api_solr.git"
     },
     "require": {
-        "php": "^7.3|^8.0",
+        "php": ">=7.4",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
-        "drupal/search_api": "~1.24",
+        "drupal/search_api": "~1.26",
         "composer/semver": "^1.0|^3.0",
         "consolidation/annotated-command": "^2.12|^4.1",
-        "maennchen/zipstream-php": "^2.2",
+        "maennchen/zipstream-php": "^2.2.1",
         "solarium/solarium": "^6.2.4",
         "laminas/laminas-stdlib": "^3.2"
     },
@@ -56,7 +56,7 @@
     "extra": {
         "drush": {
             "services": {
-                "drush.services.yml": "^9 || ^10"
+                "drush.services.yml": ">=9"
             }
         }
     }

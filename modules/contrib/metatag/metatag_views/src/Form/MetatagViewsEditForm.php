@@ -116,9 +116,10 @@ class MetatagViewsEditForm extends FormBase {
       '#type' => 'details',
     ];
 
+    // @todo This needs to be added via DI.
     $element += $this->tokenService->tokenBrowser($token_types, $verbose_help);
 
-    $groups_and_tags = $this->sortedGroupsWithTags();
+    $groups_and_tags = $this->metatagManager->sortedGroupsWithTags();
 
     $first = TRUE;
     foreach ($groups_and_tags as $group_id => $group) {
@@ -136,6 +137,7 @@ class MetatagViewsEditForm extends FormBase {
           // Only act on tags in the included tags list, unless that is null.
           if (is_null($included_tags) || in_array($tag_id, $included_tags)) {
             // Make an instance of the tag.
+            // @todo This needs to be added via DI.
             $tag = $this->tagPluginManager->createInstance($tag_id);
 
             // Set the value to the stored value, if any.

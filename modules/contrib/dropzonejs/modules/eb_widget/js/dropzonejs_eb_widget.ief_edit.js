@@ -11,7 +11,7 @@
   Drupal.behaviors.dropzonejsPostIntegrationEbWidgetEditJs = {
     attach: function (context) {
       if (typeof drupalSettings.dropzonejs.instances !== 'undefined') {
-        _.each(drupalSettings.dropzonejs.instances, function (item) {
+        Object.values(drupalSettings.dropzonejs.instances).forEach( function (item) {
           var $form = $(item.instance.element).parents('form');
 
           if ($form.hasClass('dropzonejs-disable-submit')) {

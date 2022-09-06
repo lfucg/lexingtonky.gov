@@ -13,4 +13,4 @@ services:
 
   search_api_solr_admin.command_helper:
     class: Drupal\search_api_solr_admin\Utility\SolrAdminCommandHelper
-    arguments: ['@entity_type.manager', '@module_handler', '@event_dispatcher', '@file_system', '@messenger']
+    arguments: ['@entity_type.manager', '@module_handler', '@event_dispatcher', '@extension.list.module', '@file_system', '@messenger']

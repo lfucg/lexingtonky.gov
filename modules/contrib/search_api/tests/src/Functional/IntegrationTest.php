@@ -73,7 +73,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->indexStorage = \Drupal::entityTypeManager()->getStorage('search_api_index');
 

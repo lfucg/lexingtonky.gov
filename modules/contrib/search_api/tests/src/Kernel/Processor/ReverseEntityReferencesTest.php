@@ -43,7 +43,7 @@ class ReverseEntityReferencesTest extends ProcessorTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp($processor = NULL) {
+  public function setUp($processor = NULL): void {
     parent::setUp('reverse_entity_references');
 
     // Create a node type for testing.

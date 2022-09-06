@@ -100,7 +100,7 @@ class SwitchUserForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // We cannot rely on automatic token creation, since the csrf seed changes
     // after the redirect and the generated token is not more valid.
-    // TODO find another way to do this.
+    // @todo find another way to do this.
     $url = Url::fromRoute('devel.switch', ['name' => $form_state->getValue('username')]);
     $url->setOption('query', ['token' => $this->csrfToken->get($url->getInternalPath())]);
 

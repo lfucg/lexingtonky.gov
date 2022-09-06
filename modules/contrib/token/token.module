@@ -267,7 +267,7 @@ function _token_module($type, $name) {
 function token_element_validate($element, FormStateInterface $form_state) {
   $value = isset($element['#value']) ? $element['#value'] : $element['#default_value'];
 
-  if (!mb_strlen($value)) {
+  if (empty($value)) {
     // Empty value needs no further validation since the element should depend
     // on using the '#required' FAPI property.
     return $element;

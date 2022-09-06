@@ -99,6 +99,8 @@ abstract class DateTestBase extends BrowserTestBase {
       'administer content types',
       'bypass node access',
       'administer node fields',
+      'administer node form display',
+      'administer node display',
     ]);
     $this->drupalLogin($web_user);
 
@@ -140,7 +142,7 @@ abstract class DateTestBase extends BrowserTestBase {
     $this->displayOptions = [
       'type' => $formatter_type,
       'label' => 'hidden',
-      'settings' => ['format_type' => 'medium'] + $this->defaultSettings,
+      'settings' => ['format_type' => 'medium'],
     ];
     EntityViewDisplay::create([
       'targetEntityType' => $this->field->getTargetEntityTypeId(),

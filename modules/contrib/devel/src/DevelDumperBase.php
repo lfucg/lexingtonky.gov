@@ -4,6 +4,7 @@ namespace Drupal\devel;
 
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\devel\Render\FilteredMarkup;
+use Drupal\devel\Twig\Extension\Debug;
 
 /**
  * Defines a base devel dumper implementation.
@@ -62,7 +63,7 @@ abstract class DevelDumperBase extends PluginBase implements DevelDumperInterfac
       [$manager_class_name, 'export'],
       [$manager_class_name, 'exportAsRenderable'],
       [$manager_class_name, 'message'],
-      [\Drupal\devel\Twig\Extension\Debug::class, 'dump'],
+      [Debug::class, 'dump'],
       'dpm',
       'dvm',
       'dsm',

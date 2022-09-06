@@ -84,7 +84,7 @@ class DevelEntityTypeInfoTest extends DevelBrowserTestBase {
       $row = $table->find('css', sprintf('tbody tr:contains("%s")', $entity_type_id));
       $this->assertNotNull($row);
 
-      /* @var $cells \Behat\Mink\Element\NodeElement[] */
+      /** @var \Behat\Mink\Element\NodeElement[] $cells */
       $cells = $row->findAll('css', 'td');
       $this->assertEquals(5, count($cells));
 

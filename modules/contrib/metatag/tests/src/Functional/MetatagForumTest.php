@@ -38,6 +38,13 @@ class MetatagForumTest extends BrowserTestBase {
   protected $adminUser;
 
   /**
+   * The nid of a node that is being tested.
+   *
+   * @var int
+   */
+  protected $nodeId;
+
+  /**
    * Setup basic environment.
    */
   protected function setUp(): void {

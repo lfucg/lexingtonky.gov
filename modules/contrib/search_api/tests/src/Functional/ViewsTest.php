@@ -46,7 +46,7 @@ class ViewsTest extends SearchApiBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Add a second language.
@@ -384,6 +384,7 @@ class ViewsTest extends SearchApiBrowserTestBase {
     $this->regressionTest2869121();
     $this->regressionTest3031991();
     $this->regressionTest3136277();
+    $this->regressionTest3029582();
   }
 
   /**
@@ -490,6 +491,147 @@ class ViewsTest extends SearchApiBrowserTestBase {
 
     $index->removeProcessor('ignorecase')->save();
     $block->delete();
+  }
+
+  /**
+   * Tests that arguments play well with multiple filter groups combined by OR.
+   *
+   * @see https://www.drupal.org/node/3029582
+   */
+  protected function regressionTest3029582() {
+    $yesterday = date('Y-m-d', strtotime('-1DAY'));
+
+    // Should result in these filters:
+    // [
+    //   keywords = 'orange'
+    // AND
+    //   [
+    //     [
+    //       id = 5
+    //     AND
+    //       created > $yesterday
+    //     ]
+    //   OR
+    //     [
+    //       type = 'item'
+    //     AND
+    //       name = 'foo'
+    //     ]
+    //   ]
+    // ]
+    // Therefore, results 1, 2 and 5 should be returned.
+    $this->checkResults(
+      [
+        'id[value]' => '5',
+        'created[value]' => $yesterday,
+        'created_op' => '>',
+        'type[value]' => 'item',
+        'name[value]' => 'foo',
+      ],
+      [1, 2, 5],
+      'Regression Test #3029582 - Search 1',
+      'orange',
+      'search-api-test-3029582',
+    );
+
+    // Should result in these filters:
+    // [
+    //   keywords = 'orange'
+    // AND
+    //   [
+    //     [
+    //       id = 5
+    //     AND
+    //       created < $yesterday
+    //     ]
+    //   OR
+    //     [
+    //       type = 'item'
+    //     AND
+    //       name = 'foo'
+    //     ]
+    //   ]
+    // ]
+    // Therefore, results 1 and 2 should be returned.
+    $this->checkResults(
+      [
+        'id[value]' => '5',
+        'created[value]' => $yesterday,
+        'created_op' => '<',
+        'type[value]' => 'item',
+        'name[value]' => 'foo',
+      ],
+      [1, 2],
+      'Regression Test #3029582 - Search 2',
+      'orange',
+      'search-api-test-3029582',
+    );
+
+    // Should result in these filters:
+    // [
+    //   keywords = 'strawberry'
+    // AND
+    //   [
+    //     [
+    //       id = 5
+    //     AND
+    //       created < $yesterday
+    //     ]
+    //   OR
+    //     [
+    //       type = 'item'
+    //     AND
+    //       name = 'foo'
+    //     ]
+    //   ]
+    // ]
+    // Therefore, no results should be returned.
+    $this->checkResults(
+      [
+        'id[value]' => '5',
+        'created[value]' => $yesterday,
+        'created_op' => '<',
+        'type[value]' => 'item',
+        'name[value]' => 'foo',
+      ],
+      [],
+      'Regression Test #3029582 - Search 3',
+      'strawberry',
+      'search-api-test-3029582',
+    );
+
+    // Should result in these filters:
+    // [
+    //   keywords = 'strawberry'
+    // AND
+    //   [
+    //     [
+    //       id = 5
+    //     AND
+    //       created < $yesterday
+    //     ]
+    //   OR
+    //     [
+    //       type = 'article'
+    //     AND
+    //       name = 'foo'
+    //     ]
+    //   ]
+    // ]
+    // Therefore, result 4 should be returned.
+    $this->checkResults(
+      [
+        'id[value]' => '5',
+        'created[value]' => $yesterday,
+        'created_op' => '<',
+        'type[value]' => 'article',
+        'name[value]' => 'foo',
+      ],
+      [4],
+      'Regression Test #3029582 - Search 3',
+      'strawberry',
+      'search-api-test-3029582',
+    );
   }
 
   /**
@@ -610,8 +752,8 @@ class ViewsTest extends SearchApiBrowserTestBase {
    * @param string $arguments
    *   (optional) A string to append to the search path.
    */
-  protected function checkResults(array $query, array $expected_results = NULL, $label = 'Search', $arguments = '') {
-    $this->drupalGet('search-api-test/' . $arguments, ['query' => $query]);
+  protected function checkResults(array $query, array $expected_results = NULL, string $label = 'Search', string $arguments = '', string $path = 'search-api-test'): void {
+    $this->drupalGet($path . '/' . $arguments, ['query' => $query]);
 
     if (isset($expected_results)) {
       $count = count($expected_results);

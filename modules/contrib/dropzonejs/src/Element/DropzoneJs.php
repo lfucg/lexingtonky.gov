@@ -6,6 +6,7 @@ use Drupal\Component\Utility\Bytes;
 use Drupal\Component\Utility\Environment;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\File\Event\FileUploadSanitizeNameEvent;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -127,7 +128,7 @@ class DropzoneJs extends FormElement {
    */
   public static function preRenderDropzoneJs(array $element) {
     // Convert the human size input to bytes, convert it to MB and round it.
-    $max_size = round(Bytes::toInt($element['#max_filesize']) / pow(Bytes::KILOBYTE, 2), 2);
+    $max_size = round(Bytes::toNumber($element['#max_filesize']) / pow(Bytes::KILOBYTE, 2), 2);
 
     $element['#attached']['library'] = ['dropzonejs/integration'];
     $element['#attached']['drupalSettings']['dropzonejs'] = [
@@ -181,7 +182,9 @@ class DropzoneJs extends FormElement {
           // security reasons. Because here we know the acceptable extensions
           // we can remove that extension and sanitize the filename.
           $name = self::fixTmpFilename($name);
-          $name = file_munge_filename($name, self::getValidExtensions($element));
+          $event = new FileUploadSanitizeNameEvent($name, self::getValidExtensions($element));
+          \Drupal::service('event_dispatcher')->dispatch($event);
+          $name = $event->getFilename();
 
           // Potentially we moved the file already, so let's check first whether
           // we still have to move.

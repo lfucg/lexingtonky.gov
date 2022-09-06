@@ -15,7 +15,7 @@ class SolrLegacyExtractionTest extends SearchApiSolrExtractionTest {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'search_api_solr_legacy',
     'search_api_solr_legacy_test',
   ];

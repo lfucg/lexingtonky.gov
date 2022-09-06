@@ -19,6 +19,10 @@ use Drupal\metatag\Plugin\metatag\Tag\MetaItempropBase;
  *   multiple = FALSE,
  *   trimmable = TRUE
  * )
+ *
+ * @deprecated in metatag:8.x-1.22 and is removed from metatag:2.0.0. No replacement is provided.
+ *
+ * @see https://www.drupal.org/project/metatag/issues/3065441
  */
 class Description extends MetaItempropBase {
   // Nothing here yet. Just a placeholder class for a plugin.

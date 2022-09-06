@@ -25,7 +25,7 @@ class AddURLKernelTest extends ProcessorTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp($processor = NULL) {
+  public function setUp($processor = NULL): void {
     parent::setUp('add_url');
 
     $url_field = new Field($this->index, 'url');

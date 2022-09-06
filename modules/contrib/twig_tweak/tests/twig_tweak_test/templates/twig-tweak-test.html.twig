@@ -23,10 +23,10 @@
   <div class="tt-view-result">{{ drupal_view_result('twig_tweak_test', 'page_1')|length }}</div>
   <div class="tt-block">{{ drupal_block('system_branding_block', {use_site_name: false}, false) }}</div>
   <div class="tt-block-with-wrapper">{{ drupal_block('system_branding_block', {label: 'Branding'}) }}</div>
-  <div class="tt-region">{{ drupal_region('sidebar_first') }}</div>
+  <div class="tt-region">{{ drupal_region('highlighted') }}</div>
   <div class="tt-entity-default">{{ drupal_entity('node', 1) }}</div>
   <div class="tt-entity-teaser">{{ drupal_entity('node', 1, 'teaser') }}</div>
-  <div class="tt-entity-from-url">{{ drupal_entity('node') }}</div>
+  <div class="tt-entity-from-url">{{ drupal_entity('node', view_mode='teaser') }}</div>
   <div class="tt-entity-add-form">{{ drupal_entity_form('node', values={type: 'page'}) }}</div>
   <div class="tt-entity-edit-form">{{ drupal_entity_form('node', 1) }}</div>
   <div class="tt-field">{{ drupal_field('body', 'node', 1) }}</div>

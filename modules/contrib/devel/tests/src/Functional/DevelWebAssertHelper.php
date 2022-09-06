@@ -25,7 +25,7 @@ trait DevelWebAssertHelper {
     $elements = $this->xpath('//h2[text()="' . $tab_label . '"]/following-sibling::ul//a');
     $this->assertNotEmpty($elements, 'Local tasks not found.');
     foreach ($routes as $index => $route_info) {
-      list($route_name, $route_parameters) = $route_info;
+      [$route_name, $route_parameters] = $route_info;
       $expected = Url::fromRoute($route_name, $route_parameters)->toString();
       $this->assertEquals($expected, $elements[$index]->getAttribute('href'));
     }

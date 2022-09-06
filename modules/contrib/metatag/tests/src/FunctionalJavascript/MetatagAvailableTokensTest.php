@@ -15,7 +15,7 @@ class MetatagAvailableTokensTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['metatag', 'node'];
+  protected static $modules = ['metatag', 'node'];
 
   /**
    * {@inheritdoc}
@@ -33,6 +33,8 @@ class MetatagAvailableTokensTest extends WebDriverTestBase {
     $token_dialog_link = $page->find('css', '.token-dialog');
     $token_dialog_link->click();
 
+    // @todo This method exists on JsWebAssert() and is not available from the
+    // assertSession() object?
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     $token_dialog = $page->find('css', '.token-tree-dialog');

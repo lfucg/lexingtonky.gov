@@ -2,12 +2,12 @@ name: Admin Toolbar Search
 description: Provides search of Admin Toolbar items.
 package: Administration
 type: module
-core_version_requirement: ^8.8.0 || ^9.0 || ^10
+core_version_requirement: ^8.8.0 || ^9.0
 configure: admin_toolbar_search.settings
 dependencies:
   - admin_toolbar:admin_toolbar_tools
 
-# Information added by Drupal.org packaging script on 2022-01-25
-version: '3.1.0'
+# Information added by Drupal.org packaging script on 2022-10-06
+version: '3.2.1'
 project: 'admin_toolbar'
-datestamp: 1643097063
+datestamp: 1665044278

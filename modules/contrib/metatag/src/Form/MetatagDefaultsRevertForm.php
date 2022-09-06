@@ -36,6 +36,7 @@ class MetatagDefaultsRevertForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    /** @var \Drupal\metatag\Entity\MetatagDefaults $this->entity */
     $this->entity->revert();
 
     $this->messenger()->addMessage(

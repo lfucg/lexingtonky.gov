@@ -3,6 +3,7 @@
 namespace Drupal\Tests\metatag_views\Functional;
 
 use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\metatag\Functional\MetatagHelperTrait;
 
 /**
  * Confirm the tokenization functionality works.
@@ -12,7 +13,7 @@ use Drupal\Tests\BrowserTestBase;
 class MetatagViewsTokenTest extends BrowserTestBase {
 
   // Contains helper methods.
-  use \Drupal\Tests\metatag\Functional\MetatagHelperTrait;
+  use MetatagHelperTrait;
 
   /**
    * {@inheritdoc}
@@ -41,7 +42,7 @@ class MetatagViewsTokenTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'bartik';
+  protected $defaultTheme = 'claro';
 
   /**
    * Confirm the Views tokenization functionality works, including UI.

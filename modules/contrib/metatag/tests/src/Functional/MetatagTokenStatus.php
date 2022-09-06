@@ -15,7 +15,7 @@ class MetatagTokenStatus extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['metatag'];
+  protected static $modules = ['metatag'];
 
   /**
    * {@inheritdoc}

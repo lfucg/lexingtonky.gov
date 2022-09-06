@@ -486,7 +486,7 @@ class TwigExtension extends AbstractExtension {
       $build['content']['#cache']['contexts'][] = 'url';
     }
 
-    if ($wrapper && !Element::isEmpty($build['content'])) {
+    if ($wrapper && is_array($build['content']) && !Element::isEmpty($build['content'])) {
       $build += [
         '#theme' => 'block',
         '#id' => $configuration['id'] ?? NULL,
@@ -579,7 +579,7 @@ class TwigExtension extends AbstractExtension {
    * @return null|array
    *   A render array for the entity or NULL if the entity does not exist.
    */
-  public function drupalEntity($entity_type, $id = NULL, $view_mode = NULL, $langcode = NULL, $check_access = TRUE) {
+  public function drupalEntity($entity_type, $id = NULL, $view_mode = 'full', $langcode = NULL, $check_access = TRUE) {
     $entity_type_manager = \Drupal::entityTypeManager();
     if ($id) {
       $entity = $entity_type_manager->getStorage($entity_type)->load($id);
@@ -716,7 +716,7 @@ class TwigExtension extends AbstractExtension {
     $parameters->setMinDepth($level);
     // When the depth is configured to zero, there is no depth limit. When depth
     // is non-zero, it indicates the number of levels that must be displayed.
-    // Hence this is a relative depth that we must convert to an actual
+    // Hence, this is a relative depth that we must convert to an actual
     // (absolute) depth, that may never exceed the maximum depth.
     if ($depth > 0) {
       $parameters->setMaxDepth(min($level + $depth - 1, $menu_tree->maxDepth()));
@@ -733,7 +733,10 @@ class TwigExtension extends AbstractExtension {
       ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
     ];
     $tree = $menu_tree->transform($tree, $manipulators);
-    return $menu_tree->build($tree);
+    $build = $menu_tree->build($tree);
+
+    $build['#cache']['contexts'][] = 'route.menu_active_trails:' . $menu_name;
+    return $build;
   }
 
   /**
@@ -888,10 +891,10 @@ class TwigExtension extends AbstractExtension {
    *   A render array to represent page title.
    */
   public function drupalTitle() {
-    $title = \Drupal::service('title_resolver')->getTitle(
-      \Drupal::request(),
-      \Drupal::routeMatch()->getRouteObject()
-    );
+    $title = NULL;
+    if ($route = \Drupal::routeMatch()->getRouteObject()) {
+      $title = \Drupal::service('title_resolver')->getTitle(\Drupal::request(), $route);
+    }
     $build['#markup'] = render($title);
     $build['#cache']['contexts'] = ['url'];
     return $build;
@@ -1016,12 +1019,21 @@ class TwigExtension extends AbstractExtension {
    *
    * @param string $text
    *   An HTML string containing replaceable tokens.
+   * @param array $data
+   *   (optional) An array of keyed objects. For simple replacement scenarios
+   *   'node', 'user', and others are common keys, with an accompanying node or
+   *   user object being the value. Some token types, like 'site', do not
+   *   require any explicit information from $data and can be replaced even if
+   *   it is empty.
+   * @param array $options
+   *   (optional) A keyed array of settings and flags to control the token
+   *   replacement process.
    *
    * @return string
    *   The entered HTML text with tokens replaced.
    */
-  public function tokenReplaceFilter($text) {
-    return \Drupal::token()->replace($text);
+  public function tokenReplaceFilter($text, array $data = [], array $options = []) {
+    return \Drupal::token()->replace($text, $data, $options);
   }
 
   /**
@@ -1324,7 +1336,7 @@ class TwigExtension extends AbstractExtension {
    */
   public function phpFilter(array $context, $code) {
     // Make Twig variables available in PHP code.
-    extract($context);
+    extract($context, EXTR_SKIP);
     ob_start();
     // phpcs:ignore Drupal.Functions.DiscouragedFunctions.Discouraged
     print eval($code);

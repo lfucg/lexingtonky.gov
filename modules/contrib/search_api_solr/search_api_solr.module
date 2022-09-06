@@ -15,6 +15,7 @@ use Drupal\search_api\Entity\Server;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\SearchApiException;
 use Drupal\search_api\ServerInterface;
+use Drupal\search_api_solr\Form\IndexAddSolrDocumentFieldsForm;
 use Drupal\search_api_solr\Form\IndexSolrMultisiteCloneForm;
 use Drupal\search_api_solr\Form\IndexSolrMultisiteUpdateForm;
 use Drupal\search_api_solr\SolrBackendInterface;
@@ -28,13 +29,14 @@ function search_api_solr_help($route_name, RouteMatchInterface $route_match) {
   if ($route_name === 'search_api.overview') {
     // Included because we need the REQUIREMENT_* constants.
     include_once DRUPAL_ROOT . '/core/includes/install.inc';
-    module_load_include('install', 'search_api_solr');
+    \Drupal::moduleHandler()->loadInclude('search_api_solr', 'install');
+    $messenger = \Drupal::messenger();
     $reqs = search_api_solr_requirements('runtime');
     foreach ($reqs as $req) {
       if (isset($req['description'])) {
         $type = $req['severity'] == REQUIREMENT_ERROR ? MessengerInterface::TYPE_ERROR :
           ($req['severity'] == REQUIREMENT_WARNING ? MessengerInterface::TYPE_WARNING : MessengerInterface::TYPE_STATUS);
-        \Drupal::messenger()->addMessage($req['description'], $type);
+        $messenger->addMessage($req['description'], $type);
       }
     }
   }
@@ -168,6 +170,7 @@ function search_api_solr_default_index_third_party_settings() {
     'multilingual' => [
       'limit_to_content_language' => FALSE,
       'include_language_independent' => TRUE,
+      'specific_languages' => [],
     ],
   ];
 }
@@ -284,6 +287,18 @@ function search_api_solr_form_search_api_index_form_alter(&$form, FormStateInter
       '#title' => t('Include language independent content in search results.'),
       '#description' => t('This option will include content without a language assigned in the results of custom queries or search pages not managed by Views. For example, if you search for English content, but have an article with languague of "undefined", you will see those results as well. If you disable this option, you will only see content that matches the language.'),
       '#default_value' => $settings['multilingual']['include_language_independent'],
+    ];
+
+    foreach (\Drupal::languageManager()->getLanguages() as $language) {
+      $langcode_options[$language->getId()] = $language->getName();
+    }
+
+    $form['third_party_settings']['search_api_solr']['multilingual']['specific_languages'] = [
+      '#type' => 'checkboxes',
+      '#title' => t('Languages to index using language-specific fields'),
+      '#description' => t('Selected languages will use language-specific fields when a values gets indexed. Others will use the language-unspecific default. If nothing is selected, all translations will be indexed using language-specific fields.'),
+      '#options' => $langcode_options,
+      '#default_value' => $settings['multilingual']['specific_languages'],
     ];
 
     $form['third_party_settings']['search_api_solr']['highlighter'] = [
@@ -632,7 +647,7 @@ function search_api_solr_views_data_alter(array &$data) {
  * Re-install all default Solr Field Types from their yml files.
  */
 function search_api_solr_install_missing_field_types() {
-  module_load_include('install', 'search_api_solr');
+  \Drupal::moduleHandler()->loadInclude('search_api_solr', 'install');
   search_api_solr_update_helper_install_configs();
 }
 
@@ -640,7 +655,7 @@ function search_api_solr_install_missing_field_types() {
  * Get all Search API servers that use a Solr backend.
  *
  * @param bool $only_active
- *   Whether to only return only active servers or all.
+ *   Whether to only return active servers or all.
  *
  * @return \Drupal\search_api\ServerInterface[]
  *   The servers.
@@ -715,7 +730,7 @@ function search_api_solr_entity_type_alter(array &$entity_types) {
   /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
   $entity_types['search_api_index']->setFormClass('solr_multisite_clone', IndexSolrMultisiteCloneForm::class);
   $entity_types['search_api_index']->setFormClass('solr_multisite_update', IndexSolrMultisiteUpdateForm::class);
-  $entity_types['search_api_index']->setFormClass('add_solr_document_fields', \Drupal\search_api_solr\Form\IndexAddSolrDocumentFieldsForm::class);
+  $entity_types['search_api_index']->setFormClass('add_solr_document_fields', IndexAddSolrDocumentFieldsForm::class);
   $entity_types['search_api_index']->setLinkTemplate('add-solr-document-fields', '/admin/config/search/search-api/index/{search_api_index}/fields/add/solr-document');
 }
 

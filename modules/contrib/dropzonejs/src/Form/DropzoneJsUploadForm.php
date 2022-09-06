@@ -156,7 +156,7 @@ class DropzoneJsUploadForm extends FileUploadForm {
 
     $settings = $item->getFieldDefinition()->getSettings();
 
-    $additional_validators = ['file_validate_size' => [Bytes::toInt($settings['max_filesize']), 0]];
+    $additional_validators = ['file_validate_size' => [Bytes::toNumber($settings['max_filesize']), 0]];
 
     $files = $form_state->get(['dropzonejs', $this->getFormId(), 'files']);
 

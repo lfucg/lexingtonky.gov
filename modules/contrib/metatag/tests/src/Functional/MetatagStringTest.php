@@ -181,9 +181,9 @@ class MetatagStringTest extends BrowserTestBase {
     // The page title should be HTML encoded; have to do this check manually
     // because assertRaw() checks the raw HTML, not the parsed strings like
     // xpath does.
-    $session->responseContains('<title>' . $title_encoded . '</title>', 'Confirmed the node title tag is available in its encoded format.');
-    $session->responseNotContains('<title>' . $title_original . '</title>', 'Confirmed the node title tag is not available in its original format.');
-    $session->responseNotContains('<title>' . $title_encodeded . '</title>', 'Confirmed the node title tag is not double-double-encoded?');
+    $session->responseContains('<title>' . $title_encoded . '</title>');
+    $session->responseNotContains('<title>' . $title_original . '</title>');
+    $session->responseNotContains('<title>' . $title_encodeded . '</title>');
 
     // Again, with xpath the HTML entities will be parsed automagically.
     $xpath = $this->xpath("//meta[@name='description']");
@@ -245,7 +245,7 @@ class MetatagStringTest extends BrowserTestBase {
     // The page title should be HTML encoded; have to do this check manually
     // because assertRaw() checks the raw HTML, not the parsed strings like
     // xpath does.
-    $session->responseContains('<title>' . $title_encoded . '</title>', 'Confirmed the node title tag is encoded.');
+    $session->responseContains('<title>' . $title_encoded . '</title>');
     // Again, with xpath the HTML entities will be parsed automagically.
     $xpath = $this->xpath("//meta[@name='description']");
     $value = $xpath[0]->getAttribute('content');
@@ -254,12 +254,12 @@ class MetatagStringTest extends BrowserTestBase {
     $this->assertNotEquals($value, $desc_encodeded);
 
     // Normal meta tags should be encoded properly.
-    $session->responseContains('"' . $desc_encoded . '"', 'Confirmed the node "description" meta tag string was encoded properly.');
+    $session->responseContains('"' . $desc_encoded . '"');
     // Normal meta tags with HTML entities should be displayed in their original
     // format.
-    $session->responseNotContains('"' . $desc_original . '"', 'Confirmed the node "description" meta tag string does not show in its original form.');
+    $session->responseNotContains('"' . $desc_original . '"');
     // Normal meta tags should not be double-encoded.
-    $session->responseNotContains('"' . $desc_encodeded . '"', 'Confirmed the node "description" meta tag string was not double-encoded.');
+    $session->responseNotContains('"' . $desc_encodeded . '"');
   }
 
   /**
@@ -312,14 +312,14 @@ class MetatagStringTest extends BrowserTestBase {
     $this->assertNotEquals($value, $desc_encodeded);
 
     // Normal meta tags should be encoded properly.
-    $session->responseContains('"' . $desc_encoded . '"', 'Confirmed the node "description" meta tag string was encoded properly.');
+    $session->responseContains('"' . $desc_encoded . '"');
 
     // Normal meta tags with HTML entities should be displayed in their original
     // format.
-    $session->responseNotContains('"' . $desc_original . '"', 'Confirmed the node "description" meta tag string does not show in its original form.');
+    $session->responseNotContains('"' . $desc_original . '"');
 
     // Normal meta tags should not be double-encoded.
-    $session->responseNotContains('"' . $desc_encodeded . '"', 'Confirmed the node "description" meta tag string was not double-encoded.');
+    $session->responseNotContains('"' . $desc_encodeded . '"');
   }
 
 }

@@ -64,6 +64,9 @@ class ConfigurablePluginTest extends KernelTestBase {
           'heading6',
         ],
       ],
+      'ckeditor5_style' => [
+        'styles' => [],
+      ],
       'ckeditor5_sourceEditing' => [
         'allowed_tags' => [],
       ],
@@ -79,13 +82,13 @@ class ConfigurablePluginTest extends KernelTestBase {
           3 => 'justify',
         ],
       ],
+      'ckeditor5_image' => [],
       'ckeditor5_imageResize' => [
         'allow_resize' => TRUE,
       ],
       'ckeditor5_language' => [
         'language_list' => 'un',
       ],
-      'ckeditor5_imageUpload' => [],
     ];
     $this->assertSame($expected_default_plugin_settings, $default_plugin_settings);
   }

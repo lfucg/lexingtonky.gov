@@ -53,7 +53,7 @@ class EventOnlyQueryAccessHandlerTest extends EntityKernelTestBase {
     $node_2->save();
 
     $renderer->executeInRenderContext($render_context, static function () use ($node_storage) {
-      $node_storage->getQuery()->execute();
+      $node_storage->getQuery()->accessCheck(TRUE)->execute();
     });
     $this->assertTrue($render_context->isEmpty(), 'Empty cacheability was not bubbled.');
 
@@ -63,7 +63,7 @@ class EventOnlyQueryAccessHandlerTest extends EntityKernelTestBase {
 
     $render_context = new RenderContext();
     $renderer->executeInRenderContext($render_context, static function () use ($node_storage) {
-      $node_storage->getQuery()->execute();
+      $node_storage->getQuery()->accessCheck(TRUE)->execute();
     });
     $this->assertFalse($render_context->isEmpty(), 'Cacheability was bubbled');
     $this->assertCount(1, $render_context);
@@ -89,7 +89,7 @@ class EventOnlyQueryAccessHandlerTest extends EntityKernelTestBase {
     $this->assertArrayHasKey($node_1->id(), $unfiltered, 'foo nodes were not filtered out.');
     $this->assertArrayHasKey($node_2->id(), $unfiltered, 'bar nodes were not filtered out.');
 
-    $filtered = $node_storage->getQuery()->execute();
+    $filtered = $node_storage->getQuery()->accessCheck(TRUE)->execute();
     $this->assertCount(1, $filtered, 'Only one node shows up when access checking is turned on.');
     $this->assertArrayHasKey($node_1->id(), $filtered, 'foo nodes were not filtered out.');
     $this->assertArrayNotHasKey($node_2->id(), $filtered, 'bar nodes were filtered out.');

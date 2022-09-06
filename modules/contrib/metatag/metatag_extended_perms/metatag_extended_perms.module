@@ -10,9 +10,9 @@ use Drupal\Core\Render\Element;
 use Drupal\metatag\Plugin\Field\FieldWidget\MetatagFirehose;
 
 /**
- * Implements hook_field_widget_form_alter().
+ * Implements hook_field_widget_single_element_form_alter().
  */
-function metatag_extended_perms_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+function metatag_extended_perms_field_widget_single_element_form_alter(&$element, FormStateInterface $form_state, $context) {
   if ($context['widget'] instanceof MetatagFirehose) {
     $group_manager = \Drupal::getContainer()->get('plugin.manager.metatag.group');
 

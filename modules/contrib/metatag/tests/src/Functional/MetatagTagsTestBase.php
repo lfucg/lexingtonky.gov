@@ -180,8 +180,20 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
         $test_value = $this->randomMachineName() . ' ' . $this->randomMachineName();
       }
 
+      // Look for a custom method named "{$tagname}TestOutput", if found use
+      // that method to get the intended output string for this meta tag,
+      // otherwise it defaults to just using the value submitted on the field.
+      $method = $this->getMethodFromTagCallback($tag_name, 'TestOutput');
+      if (method_exists($this, $method)) {
+        $test_output = $this->$method($test_value);
+      }
+      else {
+        // By default just use the value that was submitted.
+        $test_output = $test_value;
+      }
+
       $values[$test_key] = $test_value;
-      $all_values[$tag_name] = $test_value;
+      $all_values[$tag_name] = $test_output;
       $this->submitForm($values, 'Save');
       // Note: if this line fails then check that the failing meta tag has a
       // definition in the relevant *.metatag_tag.schema.yml file.
@@ -258,9 +270,6 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
         '@xpath' => $xpath_string,
       ]);
       $this->assertCount(1, $xpath, $message);
-      if (count($xpath) !== 1) {
-        $this->verbose($xpath, $tag_name . ': ' . $xpath_string);
-      }
 
       // Run various tests on the output variables.
       // Most meta tags have an attribute, but some don't.
@@ -268,29 +277,20 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
         $this->assertNotEmpty($xpath_value_attribute);
         $this->assertTrue($xpath[0]->hasAttribute($xpath_value_attribute));
         // Help with debugging.
-        if (!$xpath[0]->hasAttribute($xpath_value_attribute)) {
-          $this->verbose($xpath, $tag_name . ': ' . $xpath_string);
-        }
-        else {
-          if ((string) $xpath[0]->getAttribute($xpath_value_attribute) != $all_values[$tag_name]) {
-            $this->verbose($xpath, $tag_name . ': ' . $xpath_string);
-          }
+        if ($xpath[0]->hasAttribute($xpath_value_attribute)) {
           $this->assertNotEmpty($xpath[0]->getAttribute($xpath_value_attribute));
           $this->assertEquals($xpath[0]->getAttribute($xpath_value_attribute), $all_values[$tag_name], "The '{$tag_name}' tag was found with the expected value.");
         }
       }
       else {
-        $this->verbose($xpath, $tag_name . ': ' . $xpath_string);
-        $this->assertTrue((string) $xpath[0]);
+        $this->assertNotNull($xpath[0]);
         $message = new FormattableMarkup("The '@tag' tag was found with the expected value '@value'.", [
           '@tag' => $tag_name,
           '@value' => $all_values[$tag_name],
         ]);
-        $this->assertEquals((string) $xpath[0], $all_values[$tag_name], $message);
+        $this->assertEquals($xpath[0]->getHtml(), $all_values[$tag_name], $message);
       }
     }
-
-    $this->drupalLogout();
   }
 
   /**

@@ -75,8 +75,8 @@ final class EventOnlyQueryAccessHandler implements EntityHandlerInterface, Query
 
     // Allow other modules to modify the conditions before they are used.
     $event = new QueryAccessEvent($conditions, $operation, $account, $entity_type_id);
-    $this->eventDispatcher->dispatch("entity.query_access", $event);
-    $this->eventDispatcher->dispatch("entity.query_access.{$entity_type_id}", $event);
+    $this->eventDispatcher->dispatch($event, 'entity.query_access');
+    $this->eventDispatcher->dispatch($event, "entity.query_access.{$entity_type_id}");
 
     return $conditions;
   }

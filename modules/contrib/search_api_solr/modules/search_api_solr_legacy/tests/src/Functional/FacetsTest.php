@@ -15,7 +15,7 @@ class FacetsTest extends SearchApiSolrFacetsTest {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'search_api_solr_legacy',
     'search_api_solr_legacy_test',
   ];

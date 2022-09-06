@@ -2,11 +2,16 @@
 
 namespace Drupal\Tests\search_api_solr\Unit;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\State\StateInterface;
 use Drupal\search_api\Plugin\search_api\data_type\value\TextToken;
 use Drupal\search_api\Plugin\search_api\data_type\value\TextValue;
 use Drupal\search_api\Utility\DataTypeHelperInterface;
@@ -17,7 +22,6 @@ use Drupal\search_api_solr\Plugin\search_api\data_type\value\DateRangeValue;
 use Drupal\search_api_solr\SolrBackendInterface;
 use Drupal\search_api_solr\SolrConnector\SolrConnectorPluginManager;
 use Drupal\Tests\search_api_solr\Traits\InvokeMethodTrait;
-use Drupal\Tests\UnitTestCase;
 use Solarium\Core\Query\Helper;
 use Solarium\QueryType\Update\Query\Document;
 
@@ -28,7 +32,7 @@ use Solarium\QueryType\Update\Query\Document;
  *
  * @group search_api_solr
  */
-class SearchApiBackendUnitTest extends UnitTestCase {
+class SearchApiBackendUnitTest extends Drupal10CompatibilityUnitTestCase {
 
   use InvokeMethodTrait;
 
@@ -55,7 +59,7 @@ class SearchApiBackendUnitTest extends UnitTestCase {
   /**
    *
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $this->listBuilder = $this->prophesize(AbstractSolrEntityListBuilder::class);
@@ -78,7 +82,13 @@ class SearchApiBackendUnitTest extends UnitTestCase {
       $this->prophesize(DataTypeHelperInterface::class)->reveal(),
       $this->queryHelper,
       $this->entityTypeManager->reveal(),
-      $this->prophesize(ContainerAwareEventDispatcher::class)->reveal());
+      $this->prophesize(ContainerAwareEventDispatcher::class)->reveal(),
+      $this->prophesize(TimeInterface::class)->reveal(),
+      $this->prophesize(StateInterface::class)->reveal(),
+      $this->prophesize(MessengerInterface::class)->reveal(),
+      $this->prophesize(LockBackendInterface::class)->reveal(),
+      $this->prophesize(ModuleExtensionList::class)->reveal()
+    );
   }
 
   /**

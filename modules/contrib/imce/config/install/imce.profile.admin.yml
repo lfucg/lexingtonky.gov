@@ -3,6 +3,7 @@ id: admin
 label: 'Admin profile'
 description: 'Configuration for site administrators'
 conf:
+  usertab: false
   extensions: '*'
   maxsize: 0
   quota: 0

@@ -26,6 +26,10 @@ function metatag_mobile_help($route_name, RouteMatchInterface $route_match) {
 
 /**
  * Implements hook_theme().
+ *
+ * @deprecated in metatag:8.x-1.22 and is removed from metatag:2.0.0. No replacement is provided.
+ *
+ * @see https://www.drupal.org/project/metatag/issues/3303424
  */
 function metatag_mobile_theme() {
   $info['metatag_mobile_android_app'] = [
@@ -83,6 +87,10 @@ function metatag_mobile_page_attachments_alter(array &$attachments) {
  * The format is (all on oneline):
  * <link rel="alternate" href="android-app://com.example.Example
  * /sitesection/sitepage/thispage" />
+ *
+ * @deprecated in metatag:8.x-1.22 and is removed from metatag:2.0.0. No replacement is provided.
+ *
+ * @see https://www.drupal.org/project/metatag/issues/3303424
  */
 function theme_metatag_mobile_android_app($variables) {
   // Pass everything through to the normal 'link' tag theme.
@@ -97,6 +105,10 @@ function theme_metatag_mobile_android_app($variables) {
  *
  * The format is:
  * <link rel="alternate" href="ios-app://123456/example/hello-screen" />
+ *
+ * @deprecated in metatag:8.x-1.22 and is removed from metatag:2.0.0. No replacement is provided.
+ *
+ * @see https://www.drupal.org/project/metatag/issues/3303424
  */
 function theme_metatag_mobile_ios_app($variables) {
   // Pass everything through to the normal 'link' tag theme.

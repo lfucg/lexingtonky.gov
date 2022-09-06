@@ -16,8 +16,11 @@ REQUIREMENTS
 INSTALLATION INSTRUCTIONS
 -------------------------
 
-1.  Copy the files included in the tarball into a directory named "smtp" in
-    your Drupal /modules/ or /modules/contrib/ directory.
+1.  Install this module using Composer. Doing so will also install the PHPMailer dependency.
+    If for some reason the PHPMailer dependency/library did not get installed (for example if you had a
+    conflicting PHPMailer library installed, or you opted to manually install this module rather than using Composer), install PHPMailer separately with Composer, as follows:
+    `composer require phpmailer/phpmailer`
+    `composer require phpmailer/phpmailer:6.1.7`
 2.  Enable the module:
     a.  Login as site administrator, visit the Extend page, and enable SMTP.
     b.  Run "drush pm-enable smtp" on the command line.

@@ -227,7 +227,7 @@ class DropzoneJsEbWidget extends WidgetBase {
    */
   protected function getFiles(array $form, FormStateInterface $form_state) {
     $config = $this->getConfiguration();
-    $additional_validators = ['file_validate_size' => [Bytes::toInt($config['settings']['max_filesize']), 0]];
+    $additional_validators = ['file_validate_size' => [Bytes::toNumber($config['settings']['max_filesize']), 0]];
 
     $files = $form_state->get(['dropzonejs', $this->uuid(), 'files']);
 

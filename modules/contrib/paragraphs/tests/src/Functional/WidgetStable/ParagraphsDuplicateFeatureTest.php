@@ -214,8 +214,8 @@ class ParagraphsDuplicateFeatureTest extends ParagraphsTestBase {
     $node = $this->drupalGetNodeByTitle('paragraphs_mode_test');
 
     $this->drupalGet('node/' . $node->id() . '/edit');
-    $this->assertNoField('field_paragraphs_0_duplicate');
-    $this->assertNoField('field_paragraphs_1_duplicate');
+    $this->assertSession()->fieldNotExists('field_paragraphs_0_duplicate');
+    $this->assertSession()->fieldNotExists('field_paragraphs_1_duplicate');
   }
 
 }

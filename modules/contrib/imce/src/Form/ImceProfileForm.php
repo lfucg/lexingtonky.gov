@@ -95,6 +95,12 @@ class ImceProfileForm extends EntityForm {
     $conf = [
       '#tree' => TRUE,
     ];
+    $conf['usertab'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Display file browser tab in user profile pages.'),
+      '#default_value' => $imce_profile->getConf('usertab'),
+      '#weight' => -10,
+    ];
     // Extensions.
     $conf['extensions'] = [
       '#type' => 'textfield',

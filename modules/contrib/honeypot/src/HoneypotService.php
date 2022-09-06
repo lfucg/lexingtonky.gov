@@ -325,7 +325,7 @@ class HoneypotService implements HoneypotServiceInterface {
 
     $triggering_element = $form_state->getTriggeringElement();
     // Don't do anything if the triggering element is a preview button.
-    if ($triggering_element['#value'] == $this->t('Preview')) {
+    if ($triggering_element['#value'] == (string) $this->t('Preview')) {
       return;
     }
 

@@ -2,6 +2,9 @@
 
 /**
  * @file
+ * Devel sub-module to for generating content, menus, taxonomy terms etc.
+ *
+ * See src/Plugin for specific details of each type that can be generated.
  */
 
 use Drupal\Core\Entity\EntityInterface;
@@ -61,20 +64,14 @@ function devel_generate_menu_links_discovered_alter(&$links) {
 
 /**
  * Implements hook_entity_insert().
- *
- * Inserts nodes properly based on generation options.
- *
- * @param \Drupal\Core\Entity\EntityInterface $entity
- *   The base node created on submit. Inspects $node->devel_generate.
- *
- * @todo Can more of this processing move into develGenerateContentAddNode() ?
- * Adding url alias is now moved.
  */
 function devel_generate_entity_insert(EntityInterface $entity) {
+  // Adding url alias is now moved into develGenerateContentAddNode().
+  // @todo Can more of this processing moved there too?
   if ($entity->getEntityTypeId() != 'node' || !isset($entity->devel_generate)) {
     return;
   }
-  /* @var \Drupal\node\NodeInterface $entity */
+  /** @var \Drupal\node\NodeInterface $entity */
   $results = $entity->devel_generate;
 
   if (!empty($results['max_comments'])) {
@@ -106,7 +103,7 @@ function devel_generate_entity_insert(EntityInterface $entity) {
  * @param int $title_length
  *   Max length of the title of the comments.
  */
-function devel_generate_add_comments(NodeInterface $node, FieldDefinitionInterface $field_definition, $users, $max_comments, $title_length = 8) {
+function devel_generate_add_comments(NodeInterface $node, FieldDefinitionInterface $field_definition, array $users, $max_comments, $title_length = 8) {
   $parents = [];
   $field_name = $field_definition->getName();
   $num_comments = mt_rand(0, $max_comments);

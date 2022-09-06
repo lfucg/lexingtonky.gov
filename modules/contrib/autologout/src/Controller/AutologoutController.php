@@ -106,10 +106,21 @@ class AutologoutController extends ControllerBase {
    * AJAX callback that returns the time remaining for this user is logged out.
    */
   public function ajaxGetRemainingTime() {
+
+    $req = \Drupal::requestStack()->getCurrentRequest();
+    $active = $req->get('uactive');
+    $response = new AjaxResponse();
+
+    if (isset($active) && $active === "false") {
+      $response->addCommand(new ReplaceCommand('#timer', 0));
+      $response->addCommand(new SettingsCommand(['time' => 0]));
+
+      return $response;
+    }
+
     $time_remaining_ms = $this->autoLogoutManager->getRemainingTime() * 1000;
 
     // Reset the timer.
-    $response = new AjaxResponse();
     $markup = $this->autoLogoutManager->createTimer();
 
     $response->addCommand(new ReplaceCommand('#timer', $markup));

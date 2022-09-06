@@ -10,9 +10,7 @@
  */
 function metatag_test_integration_metatags_attachments_alter(array &$attachments) {
   $title = "This is the title I want | [site:name] | Yeah!";
-  if (isset($title)) {
-    _metatag_test_integration_replace_tag('title', \Drupal::token()->replace($title), $attachments);
-  }
+  _metatag_test_integration_replace_tag('title', \Drupal::token()->replace($title), $attachments);
 }
 
 /**

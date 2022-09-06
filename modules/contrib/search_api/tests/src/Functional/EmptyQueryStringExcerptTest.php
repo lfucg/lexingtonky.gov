@@ -22,7 +22,7 @@ class EmptyQueryStringExcerptTest extends SearchApiBrowserTestBase {
    *
    * @var string[]
    */
-  public static $modules = [
+  protected static $modules = [
     'block',
     'language',
     'search_api_test_excerpt',
@@ -33,7 +33,7 @@ class EmptyQueryStringExcerptTest extends SearchApiBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     $this->drupalLogin($this->adminUser);
@@ -64,11 +64,12 @@ class EmptyQueryStringExcerptTest extends SearchApiBrowserTestBase {
     // Set the "excerpt_always" setting.
     $this->drupalGet('admin/config/search/search-api/index/' . $this->indexId . '/processors');
     $editForm = 'admin/config/search/search-api/index/' . $this->indexId . '/processors';
+    $this->drupalGet($editForm);
     $form = [
       'status[highlight]' => 1,
       'processors[highlight][settings][excerpt_always]' => (int) $enabled,
     ];
-    $this->drupalPostForm($editForm, $form, 'Save');
+    $this->submitForm($form, 'Save');
 
     $this->drupalGet('admin/config/search/search-api/index/' . $this->indexId);
 

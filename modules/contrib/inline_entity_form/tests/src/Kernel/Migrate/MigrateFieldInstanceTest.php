@@ -49,7 +49,7 @@ class MigrateFieldInstanceTest extends MigrateTestBase {
    *   Whether or not the field is expected to be translatable.
    */
   protected function assertEntity($id, $expected_label, $expected_field_type, $is_required, $expected_translatable) {
-    list ($expected_entity_type, $expected_bundle, $expected_name) = explode('.', $id);
+    [$expected_entity_type, $expected_bundle, $expected_name] = explode('.', $id);
 
     /** @var \Drupal\field\FieldConfigInterface $field */
     $field = FieldConfig::load($id);
@@ -93,8 +93,14 @@ class MigrateFieldInstanceTest extends MigrateTestBase {
     $this->assertEntity('node.test.field_single', 'single', 'entity_reference', FALSE, FALSE);
     $this->assertEntity('node.test.field_multiple', 'multiple', 'entity_reference', FALSE, FALSE);
 
-    $this->assertEntityReferenceFields('node.test.field_single', ['page'], ['field' => 'language', 'direction' => 'DESC']);
-    $this->assertEntityReferenceFields('node.test.field_multiple', ['page', 'test'], ['field' => '_none', 'direction' => 'ASC']);
+    $this->assertEntityReferenceFields(
+      'node.test.field_single',
+      ['page'], ['field' => 'language', 'direction' => 'DESC']
+    );
+    $this->assertEntityReferenceFields(
+      'node.test.field_multiple',
+      ['page', 'test'], ['field' => '_none', 'direction' => 'ASC']
+    );
   }
 
 }

@@ -39,7 +39,7 @@ class ViewsQueryTypeTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('node');
@@ -55,7 +55,7 @@ class ViewsQueryTypeTest extends KernelTestBase {
    * Tests that a new view with default incorrect query gets corrected.
    */
   public function testViewInsert() {
-    $view_yml = file_get_contents(drupal_get_path('module', 'search_api') . '/tests/fixtures/views.view.search_api_query_type_test.yml');
+    $view_yml = file_get_contents(\Drupal::service('extension.list.module')->getPath('search_api') . '/tests/fixtures/views.view.search_api_query_type_test.yml');
     $values = Yaml::decode($view_yml);
     $view = View::create($values);
     $this->assertTrue($view->isNew());

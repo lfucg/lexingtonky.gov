@@ -458,8 +458,13 @@ class ImceFM {
    * Returns js properties of a file.
    */
   public function getFileProperties($uri) {
-    $properties = ['date' => filemtime($uri), 'size' => filesize($uri)];
-    if (preg_match('/\.(jpe?g|png|gif)$/i', $uri) && $info = getimagesize($uri)) {
+    $properties = [
+      'date' => @filemtime($uri) ?: 0,
+      'size' => @filesize($uri) ?: 0,
+    ];
+    // Get image properties
+    $regexp = isset($this->conf['image_extensions_regexp']) ? $this->conf['image_extensions_regexp'] : $this->imageExtensionsRegexp();
+    if ($regexp && preg_match($regexp, $uri) && $info = getimagesize($uri)) {
       $properties['width'] = $info[0];
       $properties['height'] = $info[1];
       $style = $this->getThumbnailStyle();
@@ -623,7 +628,7 @@ class ImceFM {
    * Checks if all the selected items are images.
    */
   public function validateImageTypes(array $items, $silent = FALSE) {
-    $regex = '/\.(' . preg_replace('/ +/', '|', preg_quote(trim($this->getConf('image_extensions', 'jpg jpeg png gif')))) . ')$/i';
+    $regex = $this->imageExtensionsRegexp();
     foreach ($items as $item) {
       if ($item->type === 'folder' || !preg_match($regex, $item->name)) {
         if (!$silent) {
@@ -633,6 +638,19 @@ class ImceFM {
       }
     }
     return TRUE;
+  }
+
+  /**
+   * Builds and returns image extension regular expression.
+   */
+  public function imageExtensionsRegexp() {
+    // Build only once
+    $regexp = &$this->conf['image_extensions_regexp'];
+    if (!isset($regexp)) {
+      $exts = trim($this->getConf('image_extensions', 'jpg jpeg png gif webp'));
+      $regexp = $exts ? '/\.(' . preg_replace('/ +/', '|', $exts) . ')$/i' : FALSE;
+    }
+    return $regexp;
   }
 
   /**

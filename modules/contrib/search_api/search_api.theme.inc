@@ -31,7 +31,7 @@ function template_preprocess_search_api_admin_fields_table(array &$variables) {
     foreach (Element::children($form['fields']) as $name) {
       $row = [];
       foreach (Element::children($form['fields'][$name]) as $field) {
-        if ($cell = render($form['fields'][$name][$field])) {
+        if ($cell = \Drupal::service('renderer')->render($form['fields'][$name][$field])) {
           $row[] = $cell;
         }
       }
@@ -231,7 +231,7 @@ function template_preprocess_search_api_server(array &$variables) {
   // Check if the indexes variable contains links.
   if ($indexes['#links']) {
     $label = t('Search indexes');
-    $info = render($indexes);
+    $info = \Drupal::service('renderer')->render($indexes);
     $classes[] = 'search-api-server-summary--indexes';
     $rows[] = Utility::deepCopy($row);
     $classes = [];

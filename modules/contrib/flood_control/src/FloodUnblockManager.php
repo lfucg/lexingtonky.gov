@@ -202,4 +202,21 @@ class FloodUnblockManager implements FloodUnblockManagerInterface {
     return FALSE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getEventIds($event, $identifier = NULL) {
+    $event_ids = [];
+    $query = $this->database->select('flood', 'f');
+    if ($identifier) {
+      $query->condition('f.identifier', $identifier, 'LIKE');
+    }
+    $query->fields('f', ['fid']);
+    $result = $query->execute();
+    foreach ($result as $record) {
+      $event_ids[] = $record->fid;
+    }
+    return $event_ids;
+  }
+
 }

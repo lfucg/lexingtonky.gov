@@ -18,7 +18,7 @@ class DropzoneJsEbWidgetTest extends DropzoneJsWebDriverTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'node',
     'media',
     'menu_ui',
@@ -41,7 +41,7 @@ class DropzoneJsEbWidgetTest extends DropzoneJsWebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $account = $this->drupalCreateUser(static::$userPermissions);
     $this->drupalLogin($account);

@@ -111,8 +111,8 @@ class MetatagAdminTest extends BrowserTestBase {
     $session->pageTextContains('Saved the Global Metatag defaults.');
     $this->drupalGet('hit-a-404');
     $session->statusCodeEquals(404);
-    foreach ($values as $metatag => $value) {
-      $session->responseContains($value, $this->t('Updated metatag @tag was found in the HEAD section of the page.', ['@tag' => $metatag]));
+    foreach ($values as $value) {
+      $session->responseContains($value);
     }
 
     // Check that tokens are processed.
@@ -129,7 +129,7 @@ class MetatagAdminTest extends BrowserTestBase {
     $session->statusCodeEquals(404);
     foreach ($values as $metatag => $value) {
       $processed_value = \Drupal::token()->replace($value);
-      $session->responseContains($processed_value, $this->t('Processed token for metatag @tag was found in the HEAD section of the page.', ['@tag' => $metatag]));
+      $session->responseContains($processed_value);
     }
 
     // Test the Robots plugin.
@@ -148,7 +148,7 @@ class MetatagAdminTest extends BrowserTestBase {
     $this->drupalGet('hit-a-404');
     $session->statusCodeEquals(404);
     $robots_value = implode(', ', $robots_values);
-    $session->responseContains($robots_value, $this->t('Robots metatag has the expected values.'));
+    $session->responseContains($robots_value);
 
     // Test reverting global configuration to its defaults.
     $this->drupalGet('admin/config/search/metatag/global/revert');
@@ -218,7 +218,7 @@ class MetatagAdminTest extends BrowserTestBase {
     $session->pageTextContains('Saved the Front page Metatag defaults.');
     $this->drupalGet('<front>');
     $session->statusCodeEquals(200);
-    $session->responseContains($values['description'], $this->t('Front page defaults are used at the front page.'));
+    $session->responseContains($values['description']);
 
     // Adjust the 403 page and test it.
     $this->drupalGet('admin/config/search/metatag/403');
@@ -231,7 +231,7 @@ class MetatagAdminTest extends BrowserTestBase {
     $this->drupalLogout();
     $this->drupalGet('admin/config/search/metatag');
     $session->statusCodeEquals(403);
-    $session->responseContains($values['description'], $this->t('403 page defaults are used at 403 pages.'));
+    $session->responseContains($values['description']);
 
     // Adjust the 404 page and test it.
     $this->drupalLogin($account);
@@ -244,7 +244,7 @@ class MetatagAdminTest extends BrowserTestBase {
     $session->pageTextContains('Saved the 404 page not found Metatag defaults.');
     $this->drupalGet('foo');
     $session->statusCodeEquals(404);
-    $session->responseContains($values['description'], $this->t('404 page defaults are used at 404 pages.'));
+    $session->responseContains($values['description']);
     $this->drupalLogout();
   }
 
@@ -285,8 +285,8 @@ class MetatagAdminTest extends BrowserTestBase {
     // Check that the new values are found in the response.
     $this->drupalGet('node/' . $node->id());
     $session->statusCodeEquals(200);
-    foreach ($values as $metatag => $value) {
-      $session->responseContains($value, $this->t('Node metatag @tag overrides Global defaults.', ['@tag' => $metatag]));
+    foreach ($values as $value) {
+      $session->responseContains($value);
     }
 
     // Check that when the node defaults don't define a metatag, the Global one
@@ -323,8 +323,8 @@ class MetatagAdminTest extends BrowserTestBase {
     ]);
     $this->drupalGet('node/' . $node->id());
     $session->statusCodeEquals(200);
-    foreach ($values as $metatag => $value) {
-      $session->responseContains($value, $this->t('Found global @tag tag as Node does not set it.', ['@tag' => $metatag]));
+    foreach ($values as $value) {
+      $session->responseContains($value);
     }
 
     // Now create article overrides and then test them.
@@ -346,8 +346,8 @@ class MetatagAdminTest extends BrowserTestBase {
     $this->drupalGet('node/' . $node->id());
     $session->statusCodeEquals(200);
     unset($values['id']);
-    foreach ($values as $metatag => $value) {
-      $session->responseContains($value, $this->t('Found bundle override for tag @tag.', ['@tag' => $metatag]));
+    foreach ($values as $value) {
+      $session->responseContains($value);
     }
 
     // Test deleting the article defaults.

@@ -10,6 +10,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Displays the captcha settings form.
@@ -38,6 +39,13 @@ class CaptchaSettingsForm extends ConfigFormBase {
   protected $moduleHandler;
 
   /**
+   * The request object.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  protected $requestStack;
+
+  /**
    * Constructs a \Drupal\captcha\Form\CaptchaSettingsForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -48,12 +56,15 @@ class CaptchaSettingsForm extends ConfigFormBase {
    *   Module handler.
    * @param \Drupal\captcha\Service\CaptchaService $captcha_service
    *   The captcha service.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   The request stack object.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, CacheBackendInterface $cache_backend, ModuleHandlerInterface $moduleHandler, CaptchaService $captcha_service) {
+  public function __construct(ConfigFactoryInterface $config_factory, CacheBackendInterface $cache_backend, ModuleHandlerInterface $moduleHandler, CaptchaService $captcha_service, RequestStack $request_stack) {
     parent::__construct($config_factory);
     $this->cacheBackend = $cache_backend;
     $this->moduleHandler = $moduleHandler;
     $this->captchaService = $captcha_service;
+    $this->requestStack = $request_stack;
   }
 
   /**
@@ -64,7 +75,8 @@ class CaptchaSettingsForm extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('cache.default'),
       $container->get('module_handler'),
-      $container->get('captcha.helper')
+      $container->get('captcha.helper'),
+      $container->get('request_stack')
     );
   }
 
@@ -125,6 +137,23 @@ class CaptchaSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Allow CAPTCHAs and CAPTCHA administration links on administrative pages'),
       '#default_value' => $config->get('allow_on_admin_pages'),
       '#description' => $this->t("This option makes it possible to add CAPTCHAs to forms on administrative pages. CAPTCHAs are disabled by default on administrative pages (which shouldn't be accessible to untrusted users normally) to avoid the related overhead. In some situations, e.g. in the case of demo sites, it can be useful to allow CAPTCHAs on administrative pages."),
+    ];
+
+    // Adding configuration for ip protection.
+    $form['form_protection']['whitelist_ips_settings'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Whitelisted IP Addresses'),
+      '#description' => $this->t('Enter the IP addresses or IP address ranges you want to skip all CAPTCHAs on this site.'),
+      '#open' => !empty($config->get('whitelist_ips')),
+    ];
+
+    $ip_address = $this->requestStack->getCurrentRequest()->getClientIp();
+    $form['form_protection']['whitelist_ips_settings']['whitelist_ips'] = [
+      '#title' => $this->t('IP addresses list'),
+      '#type' => 'textarea',
+      '#required' => FALSE,
+      '#default_value' => $config->get('whitelist_ips'),
+      '#description' => $this->t('Enter one per single line IP-address in format XXX.XXX.XXX.XXX, or IP-address range in format XXX.XXX.XXX.YYY-XXX.XXX.XXX.ZZZ. No spaces allowed. Your current IP address is %ip_address.', ['%ip_address' => $ip_address]),
     ];
 
     // Button for clearing the CAPTCHA placement cache.
@@ -238,12 +267,58 @@ class CaptchaSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    // Validating whitelisted ip addresses.
+    $whitelist_ips_value = trim($form_state->getValue('whitelist_ips', ''));
+    if (!empty($whitelist_ips_value)) {
+      $whitelist_ips = captcha_whitelist_ips_parse_values($whitelist_ips_value);
+
+      // Checking single ip addresses.
+      foreach ($whitelist_ips[CAPTCHA_WHITELIST_IP_ADDRESS] as $ip_address) {
+        if (filter_var($ip_address, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE) == FALSE) {
+          $form_state->setErrorByName('whitelist_ips', $this->t('IP address %ip_address is not valid.', ['%ip_address' => $ip_address]));
+        }
+      }
+
+      // Checking ip ranges.
+      foreach ($whitelist_ips[CAPTCHA_WHITELIST_IP_RANGE] as $ip_range) {
+        list($ip_lower, $ip_upper) = explode('-', $ip_range, 2);
+
+        if (filter_var($ip_lower, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE) == FALSE) {
+          $form_state->setErrorByName('whitelist_ips', $this->t('Lower IP address %ip_address in range %ip_range is not valid.', ['%ip_address' => $ip_lower, '%ip_range' => $ip_range]));
+        }
+
+        if (filter_var($ip_upper, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE) == FALSE) {
+          $form_state->setErrorByName('whitelist_ips', $this->t('Upper IP address %ip_address in range %ip_range is not valid.', ['%ip_address' => $ip_upper, '%ip_range' => $ip_range]));
+        }
+
+        $ip_lower_dec = (float) sprintf("%u", ip2long($ip_lower));
+        $ip_upper_dec = (float) sprintf("%u", ip2long($ip_upper));
+
+        if ($ip_lower_dec == $ip_upper_dec) {
+          $form_state->setErrorByName('whitelist_ips', $this->t('Lower and upper IP addresses should be different. Please correct range %ip_range.', ['%ip_range' => $ip_range]));
+        }
+        elseif ($ip_lower_dec > $ip_upper_dec) {
+          $form_state->setErrorByName('whitelist_ips', $this->t("Lower IP can't be greater than upper IP addresses in range. Please correct range %ip_range.", ['%ip_range' => $ip_range]));
+        }
+      }
+    }
+
+    parent::validateForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('captcha.settings');
     $config->set('administration_mode', $form_state->getValue('administration_mode'));
     $config->set('allow_on_admin_pages', $form_state->getValue('allow_on_admin_pages'));
     $config->set('default_challenge', $form_state->getValue('default_challenge'));
     $config->set('enabled_default', $form_state->getValue('enabled_default'));
+
+    // Whitelisted ip addresses and ranges.
+    $config->set('whitelist_ips', $form_state->getValue('whitelist_ips'));
 
     // CAPTCHA description stuff.
     $config->set('add_captcha_description', $form_state->getValue('add_captcha_description'));

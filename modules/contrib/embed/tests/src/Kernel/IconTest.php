@@ -26,7 +26,7 @@ class IconTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installConfig('system');
     $this->installEntitySchema('embed_button');
@@ -84,7 +84,8 @@ class IconTest extends KernelTestBase {
    *   The assertion message.
    */
   protected function assertIconUrl($uri, EmbedButtonInterface $button, string $message = '') {
-    $this->assertSame(file_url_transform_relative(file_create_url($uri)), $button->getIconUrl(), $message);
+    $file_generator = $this->container->get('file_url_generator');
+    $this->assertSame($file_generator->transformRelative($file_generator->generateAbsoluteString($uri)), $button->getIconUrl(), $message);
   }
 
 }

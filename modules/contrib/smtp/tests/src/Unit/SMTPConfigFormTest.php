@@ -8,7 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Mail\MailManagerInterface;
-use Drupal\Core\Messenger\Messenger;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\smtp\Form\SMTPConfigForm;
@@ -36,7 +36,7 @@ class SMTPConfigFormTest extends UnitTestCase {
     $this->mockConfigSystemSite->get('name')->willReturn('Site name');
     $this->mockConfigFactory->get('system.site')->willReturn($this->mockConfigSystemSite->reveal());
 
-    $this->mockMessenger = $this->prophesize(Messenger::class);
+    $this->mockMessenger = $this->prophesize(MessengerInterface::class);
     $this->mockEmailValidator = $this->prophesize(EmailValidatorInterface::class);
     $this->mockCurrentUser = $this->prophesize(AccountProxyInterface::class);
     $this->mockMailManager = $this->prophesize(MailManagerInterface::class);
@@ -79,6 +79,7 @@ class SMTPConfigFormTest extends UnitTestCase {
     $this->mockConfig->get('smtp_client_helo')->willReturn('');
     $this->mockConfig->get('smtp_debugging')->willReturn('');
     $this->mockConfig->get('smtp_keepalive')->willReturn(FALSE);
+    $this->mockConfig->get('smtp_reroute_address')->willReturn('');
   }
 
   /**

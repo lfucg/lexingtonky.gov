@@ -30,7 +30,7 @@ class NumberFieldBoostTest extends ProcessorTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp($processor = NULL) {
+  public function setUp($processor = NULL): void {
     parent::setUp('number_field_boost');
 
     // Create a page node type, if not already present.

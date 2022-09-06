@@ -3,8 +3,7 @@ drupal.paragraphs.admin:
     - core/jquery
     - core/drupal
     - core/drupalSettings
-    - core/jquery.once
-    - core/jquery.form
+    - core/once
     - core/drupal.ajax
     - core/drupal.dropbutton
   css:
@@ -16,8 +15,7 @@ drupal.paragraphs.widget:
     - core/jquery
     - core/drupal
     - core/drupalSettings
-    - core/jquery.once
-    - core/jquery.form
+    - core/once
     - core/drupal.ajax
     - core/drupal.dropbutton
     - paragraphs/drupal.paragraphs.summary
@@ -35,9 +33,8 @@ drupal.paragraphs.add_above_button:
     js/paragraphs.add_above_button.js: {}
   dependencies:
     - core/drupalSettings
-    - core/jquery.once
+    - core/once
     - core/jquery
-    - core/jquery.form
     - core/drupal.ajax
     - core/drupal
 
@@ -49,9 +46,8 @@ drupal.paragraphs.actions:
     js/paragraphs.actions.js: {}
   dependencies:
     - core/drupalSettings
-    - core/jquery.once
+    - core/once
     - core/jquery
-    - core/jquery.form
     - core/drupal.ajax
     - core/drupal
 
@@ -70,7 +66,7 @@ drupal.paragraphs.modal:
   dependencies:
     - core/drupal.dialog
     - core/drupal.dialog.ajax
-    - core/jquery.once
+    - core/once
 
 paragraphs-dragdrop:
   css:

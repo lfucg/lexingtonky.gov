@@ -28,26 +28,26 @@ class EmbedButtonEditorAccessCheckTest extends EmbedTestBase {
     // The anonymous user should have access to the plain_text format, but it
     // hasn't been configured to use an editor yet.
     $this->getRoute('plain_text', 'embed_test_default');
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
     $this->assertCacheContext('route');
-    $this->assertNoCacheTag('config:editor.editor.embed_test');
-    $this->assertNoCacheTag('config:embed.button.embed_test_default');
+    $this->assertSession()->responseHeaderNotContains('X-Drupal-Cache-Tags', 'config:editor.editor.embed_test');
+    $this->assertSession()->responseHeaderNotContains('X-Drupal-Cache-Tags', 'config:embed.button.embed_test_default');
 
     // The anonymous user should not have permission to use embed_test format.
     $this->getRoute('embed_test', 'embed_test_default');
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
     $this->assertCacheContext('route');
-    $this->assertNoCacheTag('config:editor.editor.embed_test');
-    $this->assertNoCacheTag('config:embed.button.embed_test_default');
+    $this->assertSession()->responseHeaderNotContains('X-Drupal-Cache-Tags', 'config:editor.editor.embed_test');
+    $this->assertSession()->responseHeaderNotContains('X-Drupal-Cache-Tags', 'config:embed.button.embed_test_default');
 
     // Now login a user that can use the embed_test format.
     $this->drupalLogin($this->webUser);
 
     $this->getRoute('plain_text', 'embed_test_default');
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
     $this->assertCacheContext('route');
-    $this->assertNoCacheTag('config:editor.editor.plain_text');
-    $this->assertNoCacheTag('config:embed.button.embed_test_default');
+    $this->assertSession()->responseHeaderNotContains('X-Drupal-Cache-Tags', 'config:editor.editor.plain_text');
+    $this->assertSession()->responseHeaderNotContains('X-Drupal-Cache-Tags', 'config:embed.button.embed_test_default');
 
     // Add an empty configuration for the plain_text editor configuration.
     $editor = Editor::create([
@@ -56,38 +56,38 @@ class EmbedButtonEditorAccessCheckTest extends EmbedTestBase {
     ]);
     $editor->save();
     $this->getRoute('plain_text', 'embed_test_default');
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
     $this->assertCacheContext('route');
-    $this->assertCacheTag('config:editor.editor.plain_text');
-    $this->assertCacheTag('config:embed.button.embed_test_default');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:editor.editor.plain_text');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:embed.button.embed_test_default');
 
     $this->getRoute('embed_test', 'embed_test_default');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertCacheContext('route');
-    $this->assertCacheTag('config:editor.editor.embed_test');
-    $this->assertCacheTag('config:embed.button.embed_test_default');
-    $this->assertText(static::SUCCESS);
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:editor.editor.embed_test');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:embed.button.embed_test_default');
+    $this->assertSession()->pageTextContains(static::SUCCESS);
 
     // Test route with an empty request.
     $this->getRoute('embed_test', 'embed_test_default', '');
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
     $this->assertCacheContext('route');
-    $this->assertCacheTag('config:editor.editor.embed_test');
-    $this->assertCacheTag('config:embed.button.embed_test_default');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:editor.editor.embed_test');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:embed.button.embed_test_default');
 
     // Test route with an invalid text format.
     $this->getRoute('invalid_editor', 'embed_test_default');
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
     $this->assertCacheContext('route');
-    $this->assertNoCacheTag('config:editor.editor.invalid_editor');
-    $this->assertNoCacheTag('config:embed.button.embed_test_default');
+    $this->assertSession()->responseHeaderNotContains('X-Drupal-Cache-Tags', 'config:editor.editor.invalid_editor');
+    $this->assertSession()->responseHeaderNotContains('X-Drupal-Cache-Tags', 'config:embed.button.embed_test_default');
 
     // Test route with an invalid embed button.
     $this->getRoute('embed_test', 'invalid_button');
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
     $this->assertCacheContext('route');
-    $this->assertNoCacheTag('config:editor.editor.embed_test');
-    $this->assertNoCacheTag('config:embed.button.invalid_button');
+    $this->assertSession()->responseHeaderNotContains('X-Drupal-Cache-Tags', 'config:editor.editor.embed_test');
+    $this->assertSession()->responseHeaderNotContains('X-Drupal-Cache-Tags', 'config:embed.button.invalid_button');
   }
 
   /**

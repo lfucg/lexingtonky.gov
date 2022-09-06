@@ -70,11 +70,10 @@
     %}
     {% for message in messages %}
       <!-- Then put toasts within -->
-      <div {{ attributes|without('role', 'aria-label').addClass(classes).setAttribute('role', role[type]).setAttribute('data-autohide', autohide[type]) }} aria-live="assertive" aria-atomic="true" data-delay="10000">
+      <div {{ attributes|without('role', 'aria-label').addClass(classes).setAttribute('role', role[type]).setAttribute('data-bs-autohide', autohide[type]) }} aria-live="assertive" aria-atomic="true" data-delay="10000">
         <div class="toast-header">
-          <svg class="bd-placeholder-img rounded mr-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
-            <rect {{ attributes.setAttribute('fill', color[type]) }} width="100%" height="100%">
-            </rect>
+          <svg class="bd-placeholder-img rounded mr-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" preserveaspectratio="xMidYMid slice" focusable="false" role="img">
+            <rect {{ attributes.setAttribute('fill', color[type]) }} width="100%" height="100%"></rect>
           </svg>
           <strong class="mr-auto">{{ status_headings[type] }}</strong>
           <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>

@@ -21,6 +21,6 @@ class ValidateD6MigrationStateTest extends MigrateDrupal6TestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['token'];
+  protected static $modules = ['token'];
 
 }

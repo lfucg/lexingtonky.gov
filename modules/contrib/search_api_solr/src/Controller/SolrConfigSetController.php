@@ -4,6 +4,7 @@ namespace Drupal\search_api_solr\Controller;
 
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\search_api\ServerInterface;
 use Drupal\search_api_solr\Event\PostConfigFilesGenerationEvent;
 use Drupal\search_api_solr\Event\PostConfigSetGenerationEvent;
@@ -12,6 +13,7 @@ use Drupal\search_api_solr\SearchApiSolrConflictingEntitiesException;
 use Drupal\search_api_solr\SearchApiSolrException;
 use Drupal\search_api_solr\SolrBackendInterface;
 use Drupal\search_api_solr\Utility\Utility;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use ZipStream\Option\Archive;
@@ -33,6 +35,32 @@ class SolrConfigSetController extends ControllerBase {
    * @var \Psr\EventDispatcher\EventDispatcherInterface
    */
   protected $eventDispatcher;
+
+  /**
+   * The module extension list.
+   *
+   * @var \Drupal\Core\Extension\ModuleExtensionList
+   */
+  protected $moduleExtensionList;
+
+  /**
+   * Search API SOLR Subscriber class constructor.
+   *
+   * @param \Drupal\Core\Extension\ModuleExtensionList $module_extension_list
+   *   The module extension list.
+   */
+  public function __construct(ModuleExtensionList $module_extension_list) {
+    $this->moduleExtensionList = $module_extension_list;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('extension.list.module')
+    );
+  }
 
   /**
    * Provides an XML snippet containing all extra Solr field types.
@@ -269,7 +297,7 @@ class SolrConfigSetController extends ControllerBase {
     }
     $solr_branch = $real_solr_branch = $connector->getSolrBranch($this->assumedMinimumVersion);
 
-    $template_path = drupal_get_path('module', 'search_api_solr') . '/solr-conf-templates/';
+    $template_path = $this->moduleExtensionList->getPath('search_api_solr') . '/solr-conf-templates/';
     $solr_configset_template_mapping = [
       '6.x' => $template_path . '6.x',
       '7.x' => $template_path . '7.x',

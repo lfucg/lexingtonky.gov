@@ -5,7 +5,7 @@ namespace Drupal\search_api_solr\Plugin\search_api\data_type;
 use Drupal\search_api\Plugin\search_api\data_type\TextDataType;
 
 /**
- * Provides a not stemmed full text data type.
+ * Provides a custom full text data type.
  *
  * @SearchApiDataType(
  *   id = "solr_text_custom",

@@ -97,6 +97,13 @@ class GenerateTheme extends Command {
     $tmp_dir = $this->getUniqueTmpDirPath();
     $this->copyRecursive($source, $tmp_dir);
 
+    // Readme is specific to Starterkit, so remove it from the generated theme.
+    $readme_file = "$tmp_dir/README.md";
+    if (!file_put_contents($readme_file, "$destination_theme theme, generated from $source_theme_name. Additional information on generating themes can be found in the [Starterkit documentation](https://www.drupal.org/docs/core-modules-and-themes/core-themes/starterkit-theme).")) {
+      $io->getErrorStyle()->error("The readme could not be rewritten.");
+      return 1;
+    }
+
     // Rename files based on the theme machine name.
     $file_pattern = "/$source_theme_name\.(theme|[^.]+\.yml)/";
     if ($files = @scandir($tmp_dir)) {
@@ -252,14 +259,33 @@ class GenerateTheme extends Command {
       }
     }
 
-    if (!rename($tmp_dir, $destination)) {
-      $io->getErrorStyle()->error("The theme could not be moved to the destination: $destination.");
-      return 1;
+    if (!@rename($tmp_dir, $destination)) {
+      // If rename fails, copy the files to the destination directory. This is
+      // expected to happen when the tmp directory is on a different file
+      // system.
+      $this->copyRecursive($tmp_dir, $destination);
+
+      // Renaming would not have left anything behind. Ensure that is still the
+      // case.
+      $this->rmRecursive($tmp_dir);
     }
 
     $output->writeln(sprintf('Theme generated successfully to %s', $destination));
 
     return 0;
+  }
+
+  /**
+   * Removes a directory recursively.
+   *
+   * @param string $dir
+   *   A directory to be removed.
+   */
+  private function rmRecursive(string $dir): void {
+    $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+    foreach ($files as $file) {
+      is_dir($file) ? rmdir($file) : unlink($file);
+    }
   }
 
   /**

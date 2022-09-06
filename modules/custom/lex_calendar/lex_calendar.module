@@ -32,5 +32,5 @@ function lex_calendar_preprocess_lex_calendar_event_block(&$variables) {
   catch (Exception $e) {
     // If the database is not yet available, set the default value.
     $variables['is_front'] = FALSE;
-  }  
+  }
 }

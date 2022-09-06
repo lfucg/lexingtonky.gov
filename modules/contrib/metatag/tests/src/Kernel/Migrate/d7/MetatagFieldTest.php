@@ -15,7 +15,7 @@ class MetatagFieldTest extends MigrateSqlSourceTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'token',
     'metatag',
     'migrate_drupal',

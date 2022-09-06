@@ -127,6 +127,7 @@ class PathautoNodeWebTest extends BrowserTestBase {
     // displayed.
     $ids = \Drupal::entityQuery('pathauto_pattern')
       ->condition('type', 'canonical_entities:node')
+      ->accessCheck(TRUE)
       ->execute();
     foreach (PathautoPattern::loadMultiple($ids) as $pattern) {
       $pattern->delete();
@@ -268,8 +269,7 @@ class PathautoNodeWebTest extends BrowserTestBase {
    */
   public function testCustomAliasWithoutPattern() {
     // First, delete all patterns to be sure that there will be no match.
-    $entity_ids = \Drupal::entityQuery('pathauto_pattern')->execute();
-    $entities = PathautoPattern::loadMultiple($entity_ids);
+    $entities = PathautoPattern::loadMultiple(NULL);
     foreach ($entities as $entity) {
       $entity->delete();
     }
@@ -362,8 +362,7 @@ class PathautoNodeWebTest extends BrowserTestBase {
     $this->assertSession()->elementExists('css', '#edit-path-0-pathauto');
 
     // Delete all patterns to be sure that there will be no match.
-    $entity_ids = \Drupal::entityQuery('pathauto_pattern')->execute();
-    $entities = PathautoPattern::loadMultiple($entity_ids);
+    $entities = PathautoPattern::loadMultiple(NULL);
     foreach ($entities as $entity) {
       $entity->delete();
     }

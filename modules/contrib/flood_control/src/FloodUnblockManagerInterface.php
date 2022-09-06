@@ -71,4 +71,15 @@ interface FloodUnblockManagerInterface {
    */
   public function isBlocked($event, $identifier);
 
+  /**
+   * Provides list of event IDs.
+   *
+   * @param string $event
+   *   The flood event name.
+   *
+   * @return array
+   *   List of event IDs.
+   */
+  public function getEventIds($event);
+
 }

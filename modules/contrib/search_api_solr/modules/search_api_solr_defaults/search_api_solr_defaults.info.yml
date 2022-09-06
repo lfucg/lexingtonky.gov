@@ -1,0 +1,11 @@
+type: module
+name: 'Search API Solr Search Defaults'
+description: 'This Module is deprecated and should be uninstalled.'
+package: Search
+core_version_requirement: ^9.3 || ^10.0
+
+
+# Information added by Drupal.org packaging script on 2022-10-06
+version: '4.2.9'
+project: 'search_api_solr'
+datestamp: 1665067626

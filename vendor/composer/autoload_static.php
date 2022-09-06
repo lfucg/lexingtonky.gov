@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
+class ComposerStaticInit4d0530ee546a78f8267659edd1c6c180
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -185,6 +185,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
             'DrupalCodeGenerator\\' => 20,
             'Doctrine\\Persistence\\' => 21,
             'Doctrine\\Inflector\\' => 19,
+            'Doctrine\\Deprecations\\' => 22,
             'Doctrine\\Common\\Lexer\\' => 22,
             'Doctrine\\Common\\Inflector\\' => 26,
             'Doctrine\\Common\\Collections\\' => 28,
@@ -551,6 +552,10 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'Doctrine\\Inflector\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector',
+        ),
+        'Doctrine\\Deprecations\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/deprecations/lib/Doctrine/Deprecations',
         ),
         'Doctrine\\Common\\Lexer\\' => 
         array (
@@ -1128,6 +1133,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'Doctrine\\Common\\Collections\\Expr\\ExpressionVisitor' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Expr/ExpressionVisitor.php',
         'Doctrine\\Common\\Collections\\Expr\\Value' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Expr/Value.php',
         'Doctrine\\Common\\Collections\\ExpressionBuilder' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/ExpressionBuilder.php',
+        'Doctrine\\Common\\Collections\\ReadableCollection' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/ReadableCollection.php',
         'Doctrine\\Common\\Collections\\Selectable' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Selectable.php',
         'Doctrine\\Common\\CommonException' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/CommonException.php',
         'Doctrine\\Common\\Comparable' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Comparable.php',
@@ -1197,6 +1203,8 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'Doctrine\\Common\\Util\\Debug' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Util/Debug.php',
         'Doctrine\\Common\\Util\\Inflector' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Util/Inflector.php',
         'Doctrine\\Common\\Version' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Version.php',
+        'Doctrine\\Deprecations\\Deprecation' => __DIR__ . '/..' . '/doctrine/deprecations/lib/Doctrine/Deprecations/Deprecation.php',
+        'Doctrine\\Deprecations\\PHPUnit\\VerifyDeprecations' => __DIR__ . '/..' . '/doctrine/deprecations/lib/Doctrine/Deprecations/PHPUnit/VerifyDeprecations.php',
         'Doctrine\\Inflector\\CachedWordInflector' => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector/CachedWordInflector.php',
         'Doctrine\\Inflector\\GenericLanguageInflectorFactory' => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector/GenericLanguageInflectorFactory.php',
         'Doctrine\\Inflector\\Inflector' => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector/Inflector.php',
@@ -3542,6 +3550,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'HTMLPurifier_AttrDef_HTML_Bool' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/HTML/Bool.php',
         'HTMLPurifier_AttrDef_HTML_Class' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/HTML/Class.php',
         'HTMLPurifier_AttrDef_HTML_Color' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/HTML/Color.php',
+        'HTMLPurifier_AttrDef_HTML_ContentEditable' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/HTML/ContentEditable.php',
         'HTMLPurifier_AttrDef_HTML_FrameTarget' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/HTML/FrameTarget.php',
         'HTMLPurifier_AttrDef_HTML_ID' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/HTML/ID.php',
         'HTMLPurifier_AttrDef_HTML_Length' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/HTML/Length.php',
@@ -3779,6 +3788,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'Kint\\Parser\\ColorPlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Parser/ColorPlugin.php',
         'Kint\\Parser\\DOMDocumentPlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Parser/DOMDocumentPlugin.php',
         'Kint\\Parser\\DateTimePlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Parser/DateTimePlugin.php',
+        'Kint\\Parser\\EnumPlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Parser/EnumPlugin.php',
         'Kint\\Parser\\FsPathPlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Parser/FsPathPlugin.php',
         'Kint\\Parser\\IteratorPlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Parser/IteratorPlugin.php',
         'Kint\\Parser\\JsonPlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Parser/JsonPlugin.php',
@@ -3825,6 +3835,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'Kint\\Renderer\\Text\\ArrayLimitPlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Renderer/Text/ArrayLimitPlugin.php',
         'Kint\\Renderer\\Text\\BlacklistPlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Renderer/Text/BlacklistPlugin.php',
         'Kint\\Renderer\\Text\\DepthLimitPlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Renderer/Text/DepthLimitPlugin.php',
+        'Kint\\Renderer\\Text\\EnumPlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Renderer/Text/EnumPlugin.php',
         'Kint\\Renderer\\Text\\MicrotimePlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Renderer/Text/MicrotimePlugin.php',
         'Kint\\Renderer\\Text\\Plugin' => __DIR__ . '/..' . '/kint-php/kint/src/Renderer/Text/Plugin.php',
         'Kint\\Renderer\\Text\\RecursionPlugin' => __DIR__ . '/..' . '/kint-php/kint/src/Renderer/Text/RecursionPlugin.php',
@@ -3833,6 +3844,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'Kint\\Zval\\BlobValue' => __DIR__ . '/..' . '/kint-php/kint/src/Zval/BlobValue.php',
         'Kint\\Zval\\ClosureValue' => __DIR__ . '/..' . '/kint-php/kint/src/Zval/ClosureValue.php',
         'Kint\\Zval\\DateTimeValue' => __DIR__ . '/..' . '/kint-php/kint/src/Zval/DateTimeValue.php',
+        'Kint\\Zval\\EnumValue' => __DIR__ . '/..' . '/kint-php/kint/src/Zval/EnumValue.php',
         'Kint\\Zval\\InstanceValue' => __DIR__ . '/..' . '/kint-php/kint/src/Zval/InstanceValue.php',
         'Kint\\Zval\\MethodValue' => __DIR__ . '/..' . '/kint-php/kint/src/Zval/MethodValue.php',
         'Kint\\Zval\\ParameterValue' => __DIR__ . '/..' . '/kint-php/kint/src/Zval/ParameterValue.php',
@@ -4996,6 +5008,8 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'Solarium\\Core\\Client\\Adapter\\ConnectionTimeoutAwareTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/ConnectionTimeoutAwareTrait.php',
         'Solarium\\Core\\Client\\Adapter\\Curl' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/Curl.php',
         'Solarium\\Core\\Client\\Adapter\\Http' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/Http.php',
+        'Solarium\\Core\\Client\\Adapter\\ProxyAwareInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/ProxyAwareInterface.php',
+        'Solarium\\Core\\Client\\Adapter\\ProxyAwareTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/ProxyAwareTrait.php',
         'Solarium\\Core\\Client\\Adapter\\Psr18Adapter' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/Psr18Adapter.php',
         'Solarium\\Core\\Client\\Adapter\\TimeoutAwareInterface' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/TimeoutAwareInterface.php',
         'Solarium\\Core\\Client\\Adapter\\TimeoutAwareTrait' => __DIR__ . '/..' . '/solarium/solarium/src/Core/Client/Adapter/TimeoutAwareTrait.php',
@@ -5255,7 +5269,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'Solarium\\Support\\Utility' => __DIR__ . '/..' . '/solarium/solarium/src/Support/Utility.php',
         'Stack\\Builder' => __DIR__ . '/..' . '/stack/builder/src/Stack/Builder.php',
         'Stack\\StackedHttpKernel' => __DIR__ . '/..' . '/stack/builder/src/Stack/StackedHttpKernel.php',
-        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'Stringable' => __DIR__ . '/..' . '/myclabs/php-enum/stubs/Stringable.php',
         'Symfony\\Bridge\\PsrHttpMessage\\ArgumentValueResolver\\PsrServerRequestResolver' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/ArgumentValueResolver/PsrServerRequestResolver.php',
         'Symfony\\Bridge\\PsrHttpMessage\\EventListener\\PsrResponseListener' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/EventListener/PsrResponseListener.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\HttpFoundationFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/HttpFoundationFactory.php',
@@ -6896,8 +6910,6 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\SymfonyCmfRouteObjectInterfaceConstantsRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/SymfonyCmfRouteObjectInterfaceConstantsRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Deprecations\\SymfonyCmfRoutingInClassMethodSignatureRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Deprecations/SymfonyCmfRoutingInClassMethodSignatureRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\Coder\\DiscouragedFunctionsRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/Coder/DiscouragedFunctionsRule.php',
-        'mglaman\\PHPStanDrupal\\Rules\\Drupal\\DrupalRequestStackShimInClassMethodRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/DrupalRequestStackShimInClassMethodRule.php',
-        'mglaman\\PHPStanDrupal\\Rules\\Drupal\\DrupalRequestStackShimInstantiationRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/DrupalRequestStackShimInstantiationRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\EntityQuery\\EntityQueryHasAccessCheckRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/EntityQuery/EntityQueryHasAccessCheckRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\GlobalDrupalDependencyInjectionRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/GlobalDrupalDependencyInjectionRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\LoadIncludeBase' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/LoadIncludeBase.php',
@@ -6906,6 +6918,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\PluginManager\\AbstractPluginManagerRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/PluginManager/AbstractPluginManagerRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\PluginManager\\PluginManagerSetsCacheBackendRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/PluginManager/PluginManagerSetsCacheBackendRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\RenderCallbackRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/RenderCallbackRule.php',
+        'mglaman\\PHPStanDrupal\\Rules\\Drupal\\RequestStackGetMainRequestRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/RequestStackGetMainRequestRule.php',
         'mglaman\\PHPStanDrupal\\Rules\\Drupal\\Tests\\BrowserTestBaseDefaultThemeRule' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Rules/Drupal/Tests/BrowserTestBaseDefaultThemeRule.php',
         'mglaman\\PHPStanDrupal\\Type\\ContainerDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/ContainerDynamicReturnTypeExtension.php',
         'mglaman\\PHPStanDrupal\\Type\\DrupalClassResolverDynamicReturnTypeExtension' => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src/Type/DrupalClassResolverDynamicReturnTypeExtension.php',
@@ -6934,11 +6947,11 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit4d0530ee546a78f8267659edd1c6c180::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit4d0530ee546a78f8267659edd1c6c180::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit4d0530ee546a78f8267659edd1c6c180::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit4d0530ee546a78f8267659edd1c6c180::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit4d0530ee546a78f8267659edd1c6c180::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -20,7 +20,7 @@ class EntityReferenceRevisionsAdminTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = array(
+  protected static $modules = array(
     'node',
     'field',
     'entity_reference_revisions',
@@ -36,7 +36,7 @@ class EntityReferenceRevisionsAdminTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     // Create paragraphs and article content types.
     $this->drupalCreateContentType(array('type' => 'entity_revisions', 'name' => 'Entity revisions'));
@@ -47,6 +47,7 @@ class EntityReferenceRevisionsAdminTest extends BrowserTestBase {
       'administer site configuration',
       'administer nodes',
       'create article content',
+      'create entity_revisions content',
       'administer content types',
       'administer node fields',
       'administer node display',
@@ -78,7 +79,7 @@ class EntityReferenceRevisionsAdminTest extends BrowserTestBase {
     ];
     static::fieldUIAddNewField('admin/structure/types/manage/entity_revisions', 'entity_reference_revisions', 'Entity reference revisions', 'entity_reference_revisions', $storage_edit, $field_edit);
     \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
-    $this->assertText('Saved Entity reference revisions configuration.');
+    $this->assertSession()->pageTextContains('Saved Entity reference revisions configuration.');
 
     // Resave the target node, so that the default revision is not the one we
     // want to use.
@@ -96,24 +97,24 @@ class EntityReferenceRevisionsAdminTest extends BrowserTestBase {
     );
     $this->drupalGet('node/add/article');
     $this->submitForm($edit, 'Save');
-    $this->assertText($title);
-    $this->assertText('Revision 1');
+    $this->assertSession()->pageTextContains($title);
+    $this->assertSession()->pageTextContains('Revision 1');
     $node = $this->drupalGetNodeByTitle($title);
 
     // Check if when creating an entity revisions content the default entity
     // reference is set, add also the above article as a new reference.
     $this->drupalGet('node/add/entity_revisions');
-    $this->assertFieldByName('field_entity_reference_revisions[0][target_id]', $node_target->label() . ' (' . $node_target->id() . ')');
+    $this->assertSession()->fieldValueEquals('field_entity_reference_revisions[0][target_id]', $node_target->label() . ' (' . $node_target->id() . ')');
     $edit = [
       'title[0][value]' => 'Entity reference revision content',
       'field_entity_reference_revisions[1][target_id]' => $node->label() . ' (' . $node->id() . ')',
     ];
     $this->submitForm($edit, 'Save');
-    $this->assertLinkByHref('node/' . $node_target->id());
-    $this->assertText('Entity revisions Entity reference revision content has been created.');
-    $this->assertText('Entity reference revision content');
-    $this->assertText($title);
-    $this->assertText('Revision 1');
+    $this->assertSession()->linkByHrefExists('node/' . $node_target->id());
+    $this->assertSession()->pageTextContains('Entity revisions Entity reference revision content has been created.');
+    $this->assertSession()->pageTextContains('Entity reference revision content');
+    $this->assertSession()->pageTextContains($title);
+    $this->assertSession()->pageTextContains('Revision 1');
 
     // Create 2nd revision of the article.
     $edit = array(
@@ -122,15 +123,15 @@ class EntityReferenceRevisionsAdminTest extends BrowserTestBase {
     );
     $this->drupalGet('node/' . $node->id() . '/edit');
     $this->submitForm($edit, 'Save');
-    $this->assertText($title);
-    $this->assertText('Revision 2');
+    $this->assertSession()->pageTextContains($title);
+    $this->assertSession()->pageTextContains('Revision 2');
 
     // View the Entity reference content and make sure it still has revision 1.
     $node = $this->drupalGetNodeByTitle('Entity reference revision content');
     $this->drupalGet('node/' . $node->id());
-    $this->assertText($title);
-    $this->assertText('Revision 1');
-    $this->assertNoText('Revision 2');
+    $this->assertSession()->pageTextContains($title);
+    $this->assertSession()->pageTextContains('Revision 1');
+    $this->assertSession()->pageTextNotContains('Revision 2');
 
     // Make sure the non-revisionable entities are not selectable as referenced
     // entities.
@@ -141,18 +142,18 @@ class EntityReferenceRevisionsAdminTest extends BrowserTestBase {
     );
     $this->drupalGet('admin/structure/types/manage/entity_revisions/fields/add-field');
     $this->submitForm($edit, 'Save and continue');
-    $this->assertNoOption('edit-settings-target-type', 'user');
-    $this->assertOption('edit-settings-target-type', 'node');
+    $this->assertSession()->optionNotExists('edit-settings-target-type', 'user');
+    $this->assertSession()->optionExists('edit-settings-target-type', 'node');
 
     // Check ERR default value and property definitions label are set properly.
     $field_definition = $node->getFieldDefinition('field_entity_reference_revisions');
     $default_value = $field_definition->toArray()['default_value'];
-    $this->assertEqual($default_value[0]['target_uuid'], $node_target->uuid());
-    $this->assertEqual($default_value[0]['target_revision_id'], $revision_id);
+    $this->assertEquals($node_target->uuid(), $default_value[0]['target_uuid']);
+    $this->assertEquals($revision_id, $default_value[0]['target_revision_id']);
     $properties = $field_definition->getFieldStorageDefinition()->getPropertyDefinitions();
-    $this->assertEqual((string) $properties['target_revision_id']->getLabel(), 'Content revision ID');
-    $this->assertEqual((string) $properties['target_id']->getLabel(), 'Content ID');
-    $this->assertEqual((string) $properties['entity']->getLabel(), 'Content');
+    $this->assertEquals('Content revision ID', (string) $properties['target_revision_id']->getLabel());
+    $this->assertEquals('Content ID', (string) $properties['target_id']->getLabel());
+    $this->assertEquals('Content', (string) $properties['entity']->getLabel());
   }
 
   /**
@@ -185,7 +186,7 @@ class EntityReferenceRevisionsAdminTest extends BrowserTestBase {
     // that bundle's body field. Test that there is no second field that will
     // be deleted.
     $this->drupalGet('/admin/structure/types/manage/' . $target_types[0]->id() . '/delete');
-    $this->assertNoFieldByXPath('(//details[@id="edit-entity-deletes"]//ul[@data-drupal-selector="edit-field-config"]/li)[2]');
+    $this->xpath('(//details[@id="edit-entity-deletes"]//ul[@data-drupal-selector="edit-field-config"]/li)[2]');
   }
 
 }

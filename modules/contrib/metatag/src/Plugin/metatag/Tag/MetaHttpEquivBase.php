@@ -14,4 +14,9 @@ abstract class MetaHttpEquivBase extends MetaNameBase {
    */
   protected $nameAttribute = 'http-equiv';
 
+  /**
+   * {@inheritdoc}
+   */
+  protected $htmlNameAttribute = 'http-equiv';
+
 }

@@ -23,7 +23,7 @@ class SolrFieldNamesTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'field',
     'node',
     'user',

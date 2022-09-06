@@ -80,7 +80,7 @@ class DevelTwigExtensionTest extends KernelTestBase {
    * Tests that the Twig dump functions are registered properly.
    */
   public function testDumpFunctionsRegistered() {
-    /* @var \Twig_SimpleFunction[] $functions */
+    /** @var \Twig_SimpleFunction[] $functions */
     $functions = \Drupal::service('twig')->getFunctions();
 
     $dump_functions = ['devel_dump', 'kpr'];
@@ -109,7 +109,7 @@ class DevelTwigExtensionTest extends KernelTestBase {
    * Tests that the Twig function for XDebug integration is registered properly.
    */
   public function testXdebugIntegrationFunctionsRegistered() {
-    /* @var \Twig_SimpleFunction $function */
+    /** @var \Twig_SimpleFunction $function */
     $function = \Drupal::service('twig')->getFunction('devel_breakpoint');
     $this->assertTrue($function instanceof \Twig_SimpleFunction);
     $this->assertEquals($function->getName(), 'devel_breakpoint');
@@ -136,7 +136,7 @@ class DevelTwigExtensionTest extends KernelTestBase {
       'twig_object' => new \stdClass(),
     ];
 
-    /* @var \Drupal\Core\Template\TwigEnvironment $environment */
+    /** @var \Drupal\Core\Template\TwigEnvironment $environment */
     $environment = \Drupal::service('twig');
 
     // Ensures that the twig extension does nothing if the current

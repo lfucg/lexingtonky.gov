@@ -29,7 +29,7 @@ class CacheabilityTest extends SearchApiBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Set up example structure and content and populate the test index with
@@ -53,7 +53,7 @@ class CacheabilityTest extends SearchApiBrowserTestBase {
     $this->drupalGet('search-api-test');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseHeaderEquals('x-drupal-dynamic-cache', 'UNCACHEABLE');
-    $this->assertStringContainsString('no-cache', $this->drupalGetHeader('cache-control'));
+    $this->assertSession()->responseHeaderContains('cache-control', 'no-cache');
 
     // Verify that the search results are displayed.
     $this->assertSession()->pageTextContains('foo test');

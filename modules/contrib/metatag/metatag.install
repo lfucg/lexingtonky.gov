@@ -48,6 +48,18 @@ function metatag_requirements($phase) {
         ]),
       ];
     }
+
+    // Suggest the Token OR module.
+    if (!\Drupal::moduleHandler()->moduleExists('token_or')) {
+      $requirements['metatag_token_or'] = [
+        'severity' => REQUIREMENT_INFO,
+        'title' => 'Metatag',
+        'value' => new TranslatableMarkup('Token Or'),
+        'description' => new TranslatableMarkup('The <a href="@module">Token OR module</a> is suggested for when the basic content tokens are not flexible enough, e.g. to make a meta tag show the contents of one field if it is filled in or another if the first one is empty.', [
+          '@module' => 'https://www.drupal.org/project/token_or',
+        ]),
+      ];
+    }
   }
 
   return $requirements;
@@ -112,6 +124,7 @@ function metatag_update_8109(&$sandbox) {
         $bundle = $field->getTargetBundle();
 
         // Determine the table and "value" field names.
+        // @todo The class path to getTableMapping() seems to be invalid?
         $table_mapping = Drupal::entityTypeManager()
           ->getStorage($field->getTargetEntityTypeId())
           ->getTableMapping();

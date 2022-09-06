@@ -1,0 +1,16 @@
+jquery-slider:
+  version: 1.0
+  js:
+    js/jquery-slider.js: {}
+  dependencies:
+    - core/jquery
+
+gtranslate-overlay:
+  version: 1.0
+  css:
+    layout:
+      css/gtranslate-overlay.css: {}
+  js:
+    js/gtranslate-overlay.js: {}
+  dependencies:
+    - core/jquery

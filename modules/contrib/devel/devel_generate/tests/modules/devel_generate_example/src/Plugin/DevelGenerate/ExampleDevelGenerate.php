@@ -23,7 +23,7 @@ use Drupal\Core\Form\FormStateInterface;
 class ExampleDevelGenerate extends DevelGenerateBase {
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
 
@@ -84,7 +84,7 @@ class ExampleDevelGenerate extends DevelGenerateBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function validateDrushParams(array $args, array $options = []) {
     $values = [
