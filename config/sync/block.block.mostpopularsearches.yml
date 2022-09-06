@@ -11,7 +11,7 @@ dependencies:
 id: mostpopularsearches
 theme: lex_home
 region: hero
-weight: -7
+weight: 0
 provider: null
 plugin: 'system_menu_block:most-popular-searches'
 settings:

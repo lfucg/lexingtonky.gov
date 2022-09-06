@@ -8,7 +8,7 @@ dependencies:
     - lex_home
 id: lex_home_messages
 theme: lex_home
-region: notices
+region: breadcrumb
 weight: -9
 provider: null
 plugin: system_messages_block

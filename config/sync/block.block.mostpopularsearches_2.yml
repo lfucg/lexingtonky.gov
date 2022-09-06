@@ -5,7 +5,7 @@ dependencies:
   config:
     - system.menu.most-popular-searches
   module:
-    - node
+    - ctools
     - system
   theme:
     - lex

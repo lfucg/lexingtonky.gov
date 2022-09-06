@@ -986,6 +986,7 @@ display:
           hide_empty: false
       defaults:
         css_class: false
+        use_ajax: false
         style: false
         row: false
         fields: false
@@ -993,6 +994,7 @@ display:
         filters: false
         filter_groups: false
       css_class: navigation--top-level
+      use_ajax: true
       display_description: ''
       display_extenders: {  }
     cache_metadata:

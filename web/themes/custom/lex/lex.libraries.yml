@@ -23,14 +23,12 @@ global-js:
     - core/jquery
     - core/jquery.ui.autocomplete
 
-# bootstrap_cdn:
-#   js:
-#     //cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js: {}
-#     //cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js: {}
-
-#   css:
-#     component:
-#       //cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css": {}
+bootstrap:
+  js:
+    /libraries/bootstrap/dist/js/bootstrap.bundle.min.js: { minified: true }
+  css:
+    component:
+      /libraries/bootstrap/dist/css/bootstrap.min.css: { minified: true }
 
 lex-sidenav-list:
   js:

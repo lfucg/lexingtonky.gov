@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c3544eb3d6595b31116a74cc344fd058",
+    "content-hash": "df054a0e0e82487ae63d6c19be4aae75",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -4353,6 +4353,50 @@
             "homepage": "https://www.drupal.org/project/flood_control",
             "support": {
                 "source": "https://git.drupalcode.org/project/flood_control"
+            }
+        },
+        {
+            "name": "drupal/gtranslate",
+            "version": "1.14.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/gtranslate.git",
+                "reference": "8.x-1.14"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/gtranslate-8.x-1.14.zip",
+                "reference": "8.x-1.14",
+                "shasum": "47ccdc3dee56c99e3481d65342e55e7e2cdfa099"
+            },
+            "require": {
+                "drupal/core": "^8 || ^9"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.14",
+                    "datestamp": "1613514186",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "edo888",
+                    "homepage": "https://www.drupal.org/user/291183"
+                }
+            ],
+            "description": "Uses Google power to translate your website.",
+            "homepage": "https://www.drupal.org/project/gtranslate",
+            "support": {
+                "source": "https://git.drupalcode.org/project/gtranslate"
             }
         },
         {
