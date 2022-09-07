@@ -95,6 +95,7 @@ module:
   tour: 0
   twig_tweak: 0
   twig_vardumper: 0
+  ultimate_cron: 0
   update: 0
   user: 0
   views_accordion: 0

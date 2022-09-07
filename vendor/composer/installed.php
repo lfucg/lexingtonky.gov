@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'df03a0fdb01dcd00e709f52bb17bfb766e52feec',
+        'reference' => '2ced1d1cedcf2022baaf3093444c3cefd62726fa',
         'name' => 'my/project',
         'dev' => true,
     ),
@@ -1366,6 +1366,15 @@
             'reference' => '3.0.2',
             'dev_requirement' => false,
         ),
+        'drupal/ultimate_cron' => array(
+            'pretty_version' => '2.0.0-alpha5',
+            'version' => '2.0.0.0-alpha5',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../modules/contrib/ultimate_cron',
+            'aliases' => array(),
+            'reference' => '8.x-2.0-alpha5',
+            'dev_requirement' => false,
+        ),
         'drupal/update' => array(
             'dev_requirement' => false,
             'replaced' => array(
@@ -1671,7 +1680,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'df03a0fdb01dcd00e709f52bb17bfb766e52feec',
+            'reference' => '2ced1d1cedcf2022baaf3093444c3cefd62726fa',
             'dev_requirement' => false,
         ),
         'myclabs/php-enum' => array(
