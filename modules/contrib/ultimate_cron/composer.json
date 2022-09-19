@@ -1,0 +1,16 @@
+{
+  "name": "drupal/ultimate_cron",
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "description": "Ultimate cron",
+  "require": {
+      "drupal/core": "^8.7.7 || ^9"
+  },
+  "extra": {
+    "drush": {
+      "services": {
+        "drush.services.yml": "^9 || ^10"
+      }
+    }
+  }
+}
