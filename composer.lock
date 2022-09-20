@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73c1a3e465903adb89d6d8ae828a0f35",
+    "content-hash": "351ea5ff4a28bf7a2daa659f3cbd6e2f",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5593,6 +5593,75 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/twig_vardumper",
                 "issues": "https://www.drupal.org/project/issues/twig_vardumper"
+            }
+        },
+        {
+            "name": "drupal/ultimate_cron",
+            "version": "2.0.0-alpha5",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ultimate_cron.git",
+                "reference": "8.x-2.0-alpha5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ultimate_cron-8.x-2.0-alpha5.zip",
+                "reference": "8.x-2.0-alpha5",
+                "shasum": "0f10464fff29eca89024e7afa5b6d8d07bd52f75"
+            },
+            "require": {
+                "drupal/core": "^8.7.7 || ^9"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-2.0-alpha5",
+                    "datestamp": "1600928948",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
+                    }
+                },
+                "drush": {
+                    "services": {
+                        "drush.services.yml": "^9 || ^10"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "arnested",
+                    "homepage": "https://www.drupal.org/user/245635"
+                },
+                {
+                    "name": "Berdir",
+                    "homepage": "https://www.drupal.org/user/214652"
+                },
+                {
+                    "name": "Dane Powell",
+                    "homepage": "https://www.drupal.org/user/339326"
+                },
+                {
+                    "name": "gielfeldt",
+                    "homepage": "https://www.drupal.org/user/366993"
+                },
+                {
+                    "name": "miro_dietiker",
+                    "homepage": "https://www.drupal.org/user/227761"
+                },
+                {
+                    "name": "Primsi",
+                    "homepage": "https://www.drupal.org/user/282629"
+                }
+            ],
+            "description": "Ultimate cron",
+            "homepage": "https://www.drupal.org/project/ultimate_cron",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ultimate_cron"
             }
         },
         {
@@ -12145,7 +12214,8 @@
         "drupal/diff": 20,
         "drupal/fieldblock": 15,
         "drupal/masquerade": 20,
-        "drupal/paragraphs_inline_entity_form": 20
+        "drupal/paragraphs_inline_entity_form": 20,
+        "drupal/ultimate_cron": 15
     },
     "prefer-stable": true,
     "prefer-lowest": false,
