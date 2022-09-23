@@ -1,0 +1,21 @@
+/**
+ * @file
+ * Visual styles for table drag.
+ */
+
+tr.drag {
+    background-color: #fffff0;
+}
+
+tr.drag-previous {
+    background-color: #ffd;
+}
+
+body div.tabledrag-changed-warning {
+    margin-bottom: calc($spacer / 2);
+}
+
+a.tabledrag-handle .handle {
+    width: 25px;
+    height: 25px;
+}

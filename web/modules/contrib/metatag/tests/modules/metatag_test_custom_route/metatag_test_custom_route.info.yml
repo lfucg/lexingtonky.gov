@@ -1,0 +1,12 @@
+name: "Metatag: Test Custom Route"
+type: module
+description: Support module for testing handling of a custom route that only inherits the global configuration.
+core_version_requirement: '^9'
+package: Testing
+dependencies:
+  - metatag:metatag
+
+# Information added by Drupal.org packaging script on 2022-07-16
+version: '8.x-1.21'
+project: 'metatag'
+datestamp: 1657971671

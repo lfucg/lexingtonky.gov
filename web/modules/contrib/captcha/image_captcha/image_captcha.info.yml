@@ -1,0 +1,13 @@
+name: Image CAPTCHA
+type: module
+description: Provides an image based CAPTCHA.
+package: Spam control
+core_version_requirement: '>=8.9 <11'
+dependencies:
+  - captcha:captcha
+configure: admin/config/people/captcha/image_captcha
+
+# Information added by Drupal.org packaging script on 2022-09-09
+version: '8.x-1.5'
+project: 'captcha'
+datestamp: 1662751124

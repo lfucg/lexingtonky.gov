@@ -1,0 +1,14 @@
+type: module
+name: Devel
+description: 'Various blocks, pages, and functions for developers.'
+package: Development
+core_version_requirement: ^8.8 || ^9
+php: 7.2
+configure: devel.admin_settings
+tags:
+ - developer
+
+# Information added by Drupal.org packaging script on 2022-09-22
+version: '4.2.0'
+project: 'devel'
+datestamp: 1663879916

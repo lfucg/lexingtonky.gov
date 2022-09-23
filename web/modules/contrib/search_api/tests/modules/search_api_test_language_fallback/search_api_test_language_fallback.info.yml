@@ -1,0 +1,11 @@
+type: module
+name: 'Language Fallback Test'
+description: 'Provides a language fallback fr => es.'
+package: 'Search API'
+core_version_requirement: ^9.2 || ^10.0
+hidden: true
+
+# Information added by Drupal.org packaging script on 2022-07-18
+version: '8.x-1.25'
+project: 'search_api'
+datestamp: 1658149520

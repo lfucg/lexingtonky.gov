@@ -1,0 +1,10 @@
+name: 'Composer Deploy'
+type: module
+description: 'Provide version number from composers lockfile.'
+package: Other
+core_version_requirement: ^8.8 || ^9 || ^10
+
+# Information added by Drupal.org packaging script on 2022-08-18
+version: '8.x-1.7'
+project: 'composer_deploy'
+datestamp: 1660818356

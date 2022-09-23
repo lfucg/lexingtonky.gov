@@ -1,0 +1,113 @@
+<?php
+
+use Drupal\composer_deploy\ComposerDeployHandler;
+use Drupal\Core\Extension\Extension;
+use Drupal\Core\Url;
+use DrupalFinder\DrupalFinder;
+
+/**
+ * @param array $info
+ * @param \Drupal\Core\Extension\Extension $file
+ * @param $type
+ */
+function composer_deploy_system_info_alter(array &$info, Extension $file, $type) {
+  $handler = &drupal_static(__FUNCTION__);
+
+  if (!isset($handler)) {
+    $drupalFinder = new DrupalFinder();
+    if ($drupalFinder->locateRoot(DRUPAL_ROOT)) {
+      $handler = ComposerDeployHandler::fromVendorDir($drupalFinder->getVendorDir());
+      $prefixes = \Drupal::config('composer_deploy.settings')->get('prefixes');
+
+      if (!empty($prefixes)) {
+        if (!in_array('drupal', $prefixes)) {
+          $prefixes[] = 'drupal';
+        }
+        $handler->setPrefixes($prefixes);
+      }
+    }
+    else {
+      $handler = FALSE;
+      \Drupal::logger('composer_deploy')->error('Unable to locale vendor dir.');
+    }
+  }
+
+  if (empty($info['version']) && $handler) {
+    $project = basename($file->getFilename(), '.info.yml');
+    $package = $handler->getPackage($project);
+    if ($package) {
+      // Skip processing for Drupal submodules. Submodules (e.g. ldap_authentication ldap) are shipped as metapackages.
+      if ($package['type'] == 'metapackage') {
+        return;
+      }
+
+      $info['project'] = $project;
+      $info['composer_deploy_git_hash'] = isset($package['source']['reference']) ? $package['source']['reference'] : NULL;
+
+      if (isset($package['extra']['drupal']['version'])) {
+        $info['version'] = $package['extra']['drupal']['version'];
+      }
+      if (isset($package['extra']['drupal']['datestamp'])) {
+        $info['datestamp'] = $package['extra']['drupal']['datestamp'];
+      }
+
+      // Fallback to other composer metadata
+      if (empty($info['datestamp']) && isset($package['time'])) {
+        $info['datestamp'] = strtotime($package['time']);
+      }
+      if (empty($info['version']) && substr($package['version'], 0, 4) == 'dev-') {
+        $info['version'] = substr($package['version'], 4) . '-dev';
+      }
+      elseif (empty($info['version'])) {
+        /**
+         * @todo: Handle mode version constraints.
+         */
+        $info['version'] = 'dev';
+      }
+    }
+  }
+}
+
+/**
+ * Implements template_preprocess_update_project_status().
+ */
+function composer_deploy_preprocess_update_project_status(&$variables) {
+  if (empty($variables['versions'])) {
+    return;
+  }
+  $project_type = $variables['project']['project_type'];
+  if (!in_array($project_type, ['module', 'theme'])) {
+    return;
+  }
+  $projectData = \Drupal::service('extension.list.' . $project_type)->getExtensionInfo($variables['project']['name']);
+
+  foreach ($variables['versions'] as &$version) {
+
+    $currentVersion = $variables['project']['existing_version'];
+    // Replace our current version with the specific hash when on -dev release.
+    if (substr($variables['project']['existing_version'], -3) == 'dev') {
+      $currentVersion = $projectData['composer_deploy_git_hash'];
+    }
+
+    $upstreamVersion = $version['#version']['tag'];
+    // When the upstream is using dev, switch to branch tag.
+    if (substr($version['#version']['tag'], -3) == 'dev') {
+      $upstreamVersion = substr($version['#version']['tag'], 0, -4);
+    }
+
+    // Add diff link.
+    $diff = Url::fromUri('https://git.drupalcode.org/project/' . $variables['project']['name'] . '/compare/' . $currentVersion . '...' . $upstreamVersion);
+    $version['#version']['diff_link'] = $diff->toString();
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function composer_deploy_theme_registry_alter(&$theme_registry) {
+  if (isset($theme_registry['update_version'])) {
+    $theme_registry['update_version']['type'] = 'module';
+    $theme_registry['update_version']['path'] = \Drupal::service('extension.list.module')->getPath('composer_deploy') . '/templates';
+    unset($theme_registry['update_version']['theme path']);
+  }
+}

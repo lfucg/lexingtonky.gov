@@ -108,28 +108,28 @@
             "drush/Commands/{$name}": [
                 "type:drupal-drush"
             ],
-            "core": [
+            "web/core": [
                 "type:drupal-core"
             ],
-            "modules/contrib/{$name}": [
+            "web/modules/contrib/{$name}": [
                 "type:drupal-module"
             ],
-            "modules/custom/{$name}": [
+            "web/modules/custom/{$name}": [
                 "type:drupal-custom-module"
             ],
-            "profiles/contrib/{$name}": [
+            "web/profiles/contrib/{$name}": [
                 "type:drupal-profile"
             ],
-            "profiles/custom/{$name}": [
+            "web/profiles/custom/{$name}": [
                 "type:drupal-custom-profile"
             ],
-            "themes/contrib/{$name}": [
+            "web/themes/contrib/{$name}": [
                 "type:drupal-theme"
             ],
-            "themes/custom/{$name}": [
+            "web/themes/custom/{$name}": [
                 "type:drupal-custom-theme"
             ],
-            "libraries/{$name}": [
+            "web/libraries/{$name}": [
                 "type:drupal-library",
                 "type:bower-asset",
                 "type:npm-asset"
@@ -137,10 +137,20 @@
         },
         "merge-plugin": {
             "include": [
-                "modules/custom/*/composer.json"
+                "web/modules/custom/*/composer.json"
             ],
             "replace": false,
             "ignore-duplicates": true
+        },
+        "drupal-scaffold": {
+            "locations": {
+                "web-root": "./web"
+            },
+            "file-mapping": {
+                "[project-root]/.editorconfig": false,
+                "[web-root]/sites/development.services.yml": false,
+                "[web-root]/sites/example.settings.local.php": false
+            }
         }
     },
     "minimum-stability": "dev",

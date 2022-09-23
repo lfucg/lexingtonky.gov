@@ -1,0 +1,87 @@
+<?php
+
+/**
+ * @file
+ * The base module for upgrade status.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Extension\Extension;
+use Drupal\upgrade_status\ProjectCollector;
+
+/**
+ * Implements hook_help().
+ */
+function upgrade_status_help($route_name, RouteMatchInterface $route_match) {
+  if ($route_name == 'upgrade_status.report') {
+    $help = '<p>' . t('Run the report to find out if there are detectable compatibility errors with the modules and themes installed on your site.');
+    // @todo Link to a relevant page for the Drupal 9 to 10 process when available.
+    if (ProjectCollector::getDrupalCoreMajorVersion() < 9) {
+      $help .= ' ' . t('<a href=":prepare">Read more about preparing your site for Drupal 9</a>.', [':prepare' => 'https://www.drupal.org/docs/9/how-to-prepare-your-drupal-7-or-8-site-for-drupal-9/prepare-a-drupal-8-site-for-drupal-9']);
+    }
+    $help .= '</p>';
+    return $help;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function upgrade_status_theme($existing, $type, $theme, $path) {
+  return [
+    'upgrade_status_html_export' => [
+      'variables' => [
+        'projects' => [],
+      ],
+    ],
+    'upgrade_status_ascii_export' => [
+      'variables' => [
+        'projects' => [],
+      ],
+    ],
+    'upgrade_status_summary_counter' => [
+      'variables' => [
+        'summary' => [],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Preprocess project list for HTML export.
+ *
+ * @param array $variables
+ *   Array of template variables.
+ */
+function template_preprocess_upgrade_status_html_export(array &$variables) {
+  $projects = $variables['projects'];
+  $types = ['custom', 'contrib'];
+  foreach ($types as $type) {
+    if (!empty($projects[$type])) {
+      foreach ($projects[$type] as $key => $project) {
+        $variables['projects'][$type][$key]['name'] = $projects[$type][$key]['#title'];
+      }
+    }
+  }
+}
+
+/**
+ * Preprocess project list for ASCII export.
+ *
+ * @param array $variables
+ *   Array of template variables.
+ */
+function template_preprocess_upgrade_status_ascii_export(array &$variables) {
+  template_preprocess_upgrade_status_html_export($variables);
+}
+
+/**
+ * Implements hook_system_info_alter().
+ */
+function upgrade_status_system_info_alter(array &$info, Extension $extension, $type) {
+  // Always mark upgrade_status as a contrib project regardless of how it was
+  // obtained. This makes testing the module results reliably consistent.
+  if ($extension->getName() == 'upgrade_status') {
+    $info['project'] = $extension->getName();
+  }
+}

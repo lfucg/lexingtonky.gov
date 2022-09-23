@@ -1,0 +1,10 @@
+name: CKEditor test
+type: module
+description: Support module for the CKEditor module tests.
+package: Testing
+core_version_requirement: "^9.4 || ^10"
+
+# Information added by Drupal.org packaging script on 2022-09-12
+version: '1.0.1'
+project: 'ckeditor'
+datestamp: 1662977543

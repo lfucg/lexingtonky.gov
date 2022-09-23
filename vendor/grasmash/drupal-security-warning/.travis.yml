@@ -1,0 +1,25 @@
+# Note that the example .travis.yml file for child projects lives in /install.
+sudo: required
+language: php
+
+matrix:
+  include:
+    - php: 7.4
+      env: 'HIGHEST_LOWEST="update"'
+    - php: 7.3
+      env: 'HIGHEST_LOWEST="update --prefer-lowest"'
+
+before_install:
+  - composer selfupdate
+  # Disable xdebug.
+  - phpenv config-rm xdebug.ini
+  - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - composer validate --no-check-all --ansi
+
+install:
+  # Load composer dependencies.
+  - 'composer -n ${HIGHEST_LOWEST-install} --prefer-dist'
+  - export PATH=$TRAVIS_BUILD_DIR/vendor/bin:$PATH
+
+script:
+  - composer test

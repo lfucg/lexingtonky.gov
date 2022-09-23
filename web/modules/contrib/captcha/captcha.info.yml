@@ -1,0 +1,11 @@
+name: CAPTCHA
+type: module
+description: Provides the CAPTCHA API for adding challenges to arbitrary forms.
+package: Spam control
+core_version_requirement: '>=8.9 <11'
+configure: captcha_settings
+
+# Information added by Drupal.org packaging script on 2022-09-09
+version: '8.x-1.5'
+project: 'captcha'
+datestamp: 1662751124

@@ -25,7 +25,7 @@ dependencies:
   override:
     - "./private/scripts/ci-dependencies-override.sh"
     - npm install -g gulp mocha mocha-junit-reporter
-    - cd themes/custom/lex && npm install underscore
+    - cd web/themes/custom/lex && npm install underscore
   post:
     - wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar
     - java -jar selenium-server-standalone-2.53.0.jar -Dwebdriver.chrome.driver="/usr/local/bin/chromedriver":
@@ -35,7 +35,7 @@ test:
     - ./private/scripts/ci-test-pre.sh:
         timeout: 2000
   override:
-    - cd themes/custom/lex && npm test:
+    - cd web/themes/custom/lex && npm test:
         environment:
           MOCHA_FILE: $CIRCLE_TEST_REPORTS/junit/test-results.xml
     - chmod +x vendor/phpunit/phpunit/phpunit

@@ -1,0 +1,15 @@
+name: 'Search API Excerpt Field Test'
+type: module
+description: 'Support module for testing the Search API Excerpt field'
+package: Testing
+dependencies:
+  - search_api:search_api
+  - search_api:search_api_test_db
+  - drupal:views
+core_version_requirement: ^9.2 || ^10.0
+hidden: true
+
+# Information added by Drupal.org packaging script on 2022-07-18
+version: '8.x-1.25'
+project: 'search_api'
+datestamp: 1658149520

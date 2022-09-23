@@ -1,0 +1,10 @@
+name: 'Upgrade status test 10 compatible'
+type: module
+description: 'Support module for upgrade status module testing.'
+package: Testing
+core_version_requirement: ^8 || ^9 || ^10
+
+# Information added by Drupal.org packaging script on 2022-09-06
+version: '8.x-3.17'
+project: 'upgrade_status'
+datestamp: 1662479794

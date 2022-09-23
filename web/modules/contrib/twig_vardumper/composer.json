@@ -1,0 +1,20 @@
+{
+  "name": "keopx/twig_vardumper",
+  "type": "drupal-module",
+  "description": "Twig vardumper provides a better dump() and vardumper() function that can help you debug Twig variables.",
+  "keywords": ["Drupal", "Twig", "Development"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/twig_vardumper",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    { "name": "Ruben Egiguren a.k.a keopx", "email": "keopx@keopx.net" }
+  ],
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/twig_vardumper",
+    "source": "https://git.drupalcode.org/project/twig_vardumper"
+  },
+  "require": {
+    "symfony/var-dumper":  "^6|^5"
+  }
+}
