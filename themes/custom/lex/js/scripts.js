@@ -2,6 +2,10 @@
 (function($) {
   // $('.lex-hide-unless-javascript').removeClass('lex-hide-unless-javascript');
 
+  // Commenting out the below logic.
+  // Was sercumventing captcha logic needed for page feedback form.
+  // Will remove in the near future.
+
   // $('#js-feedback-button').find('a').click(function () {
   //   $('.lex-pagefeedback-container').find('.js-accordion-control').click();
   // });
