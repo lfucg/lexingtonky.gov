@@ -110,10 +110,10 @@ function _lexky_get_legacy_document_redirect($incoming_path) {
     return 'http://previous.lexingtonky.gov' . str_replace('?', '@', $incoming_path);
   }
 }
-$incoming_path = $_SERVER['REQUEST_URI'];
+// $incoming_path = $_SERVER['REQUEST_URI'];
 
-$legacy_document_redirect = _lexky_get_legacy_document_redirect($incoming_path);
-$redirect_table_path = _lexky_get_redirect_from_table($incoming_path);
+// $legacy_document_redirect = _lexky_get_legacy_document_redirect($incoming_path);
+// $redirect_table_path = _lexky_get_redirect_from_table($incoming_path);
 
 if ($legacy_document_redirect) {
   _lexky_redirect($legacy_document_redirect, _lexky_status_temporary());
