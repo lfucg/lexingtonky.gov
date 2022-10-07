@@ -11,7 +11,7 @@ dependencies:
 id: lex_headerquicklinks
 theme: lex
 region: sitemast
-weight: -18
+weight: -17
 provider: null
 plugin: 'system_menu_block:header-quick-links'
 settings:

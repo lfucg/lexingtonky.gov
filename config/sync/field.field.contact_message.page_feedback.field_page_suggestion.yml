@@ -11,7 +11,7 @@ entity_type: contact_message
 bundle: page_feedback
 label: 'How could this page be better?'
 description: 'Remember not to include sensitive personal information'
-required: false
+required: true
 translatable: false
 default_value: {  }
 default_value_callback: ''
