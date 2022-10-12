@@ -1,0 +1,84 @@
+version: 2
+# https://circleci.com/docs/configuration#machine
+jobs:
+    build:
+        docker:
+            - image: quay.io/pantheon-public/build-tools-ci:7.x
+        environment:
+            TERMINUS_SITE: d9-papc3
+        steps:
+            - run:
+                name: login-pantheon
+                command: terminus auth:login -n --machine-token="$TERMINUS_TOKEN"
+            # Start making a multidev right away in the background so that
+            # this slow step is done as soon as possible.
+            - run:
+                name: make-multidev
+                command: |
+                    terminus env:create $TERMINUS_SITE.dev ${CIRCLE_BUILD_NUM} || echo "mystery errors were being thrown by env:create so I am adding this OR (https://circleci.com/gh/pantheon-systems/pantheon_advanced_page_cache/610)"
+                    touch multidev-made.txt
+                background: true
+            - checkout
+            - run:
+                name: Composer install
+                command: |
+                  composer install
+            - run:
+                name: Git Config
+                command: |
+                  git config --global user.email "$GitEmail"
+                  git config --global user.name "Circle CI"
+            - run:
+                # this configuration prevents a prompt from stopping git pushes.
+                name: ssh config
+                command: |
+                  touch $HOME/.ssh/config
+                  echo "StrictHostKeyChecking no" >> "$HOME/.ssh/config"
+            - run:
+                name: PHP Code Sniff
+                command: composer codesniff
+            - run:
+                name: Unit Tests for Behat helper
+                command: composer phpunit
+#             - run:
+#                 # @todo, update core update mechanism for D9
+#                 name: apply upstream updates in dev
+#                 command: terminus connection:set $TERMINUS_SITE.dev git && terminus upstream:updates:apply $TERMINUS_SITE && terminus connection:set $TERMINUS_SITE.dev sftp
+
+            - run:
+                name: Add modules to site
+                command: ./.circleci/scripts/setup-drupal-repo.sh
+
+            - run:
+                name: Wait for multidev creation to be completed before doing site install.
+                command: |
+                    while [ ! -f multidev-made.txt ]
+                    do
+                      sleep 2
+                    done
+                    exit 0
+
+            - run:
+                name: site install
+                command: |
+                  terminus connection:set ${TERMINUS_SITE}.${CIRCLE_BUILD_NUM} sftp
+                  terminus drush ${TERMINUS_SITE}.${CIRCLE_BUILD_NUM} -- site-install -y --quiet
+                  terminus drush ${TERMINUS_SITE}.${CIRCLE_BUILD_NUM} -- cset system.performance cache.page.max_age 600 -y
+
+            - run:
+                name: Enable modules
+                command: |
+                  terminus drush ${TERMINUS_SITE}.${CIRCLE_BUILD_NUM} -- en -y views_custom_cache_tag_demo pantheon_advanced_page_cache
+            - run:
+                # Giving anon users permission to make nodes makes the Behat test execute much faster.
+                # Perms are changed back at the end of the build.
+                name: allow anon content creation
+                command: |
+                  terminus drush ${TERMINUS_SITE}.${CIRCLE_BUILD_NUM} -- role-add-perm anonymous "create page content,create article content"
+            - run:
+                name: run behat
+                command: export TERMINUS_ENV=$CIRCLE_BUILD_NUM && ./tests/behat/run-behat.sh
+            - run:
+                name: Cleanup
+                command: |
+                  terminus drush ${TERMINUS_SITE}.${CIRCLE_BUILD_NUM} -- role-remove-perm anonymous "create page content,create article content"

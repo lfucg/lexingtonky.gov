@@ -1,0 +1,33 @@
+{
+    "name": "drupal/pantheon_advanced_page_cache",
+    "type": "drupal-module",
+    "require-dev": {
+        "drupal/coder": "^8.2",
+        "drupal/drupal-extension": "^3.3",
+        "phpunit/phpunit": "^6.3"
+    },
+    "scripts": {
+      "codesniff": [
+          "phpcs --report=full --extensions=php,module,inc,theme,info,install --standard=vendor/drupal/coder/coder_sniffer/Drupal src",
+          "phpcs --report=full --extensions=php,module,inc,theme,info,install --standard=vendor/drupal/coder/coder_sniffer/Drupal tests/modules",
+          "phpcs  tests/behat  --standard=PSR2"
+      ],
+      "phpcbf": [
+          "phpcbf --report=full --extensions=php,module,inc,theme,info,install --standard=vendor/drupal/coder/coder_sniffer/Drupal src",
+          "phpcbf --report=full --extensions=php,module,inc,theme,info,install --standard=vendor/drupal/coder/coder_sniffer/Drupal tests/modules",
+          "phpcbf  tests/behat  --standard=PSR2"
+      ],
+
+      "phpunit": "phpunit tests --colors=always"
+    },
+    "repositories": {
+        "drupal": {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    },
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": { "PantheonSystems\\CDNBehatHelpers\\": "tests/behat/helper_classes/" }
+    }
+}
