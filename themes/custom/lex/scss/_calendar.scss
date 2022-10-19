@@ -34,6 +34,17 @@
 .fc-list-heading {
   border-bottom: 1px solid color(gray);
 
+
+  // a:nth-child(even) {
+  //   background-color: aquamarine;
+  // }
+
+
+  .list-event-container:nth-child(odd) {
+    background-color: lightgray - 2;
+  }
+
+
   .fc-widget-header {
     height: 100%;
     min-width: 50%;
@@ -44,26 +55,30 @@
 }
 
 .details-link {
-  font-size: .8em;
-  opacity: 0;
+  font-size: 1.3vw;
+  display: none;
+
+  @media (max-width: $calendarDualBreakpoint) {
+    font-size: 2vw;
+}
 }
 
 .list-event-container {
-  margin: 8px 0 !important;
-  padding: 0 8px;
+  margin:  0 !important;
+  padding: 0;
   display: flex;
     
-  @media (min-width: 768px) {
-        min-width: 370px;
-    }
+  // @media (min-width: 768px) {
+  //       min-width: 370px;
+  //   }
 
   a {
-    background-color: none;
+    // background-color: none;
     width: 100% !important;
     display: inline-block;
   }
   &:hover {
-    background-color: color(yellow);
+    background-color: color(yellow) !important;
     
     .list-text-container {
       color: white;
@@ -73,7 +88,7 @@
       border: none;
     }
     .details-link {
-      opacity: 100%;
+      display: block;
     }
   }
 }
@@ -91,7 +106,19 @@
 }
 
 .list-event-title {
-  font-size: 1.25em;
+  font-size: 1.6vw;
+
+  @media (max-width: $calendarDualBreakpoint) {
+    font-size: 2.2vw;
+}
+}
+
+.list-event-date {
+  font-size: 1.4vw;
+
+  @media (max-width: $calendarDualBreakpoint) {
+    font-size: 2vw;
+}
 }
 
 .list-event-time {
@@ -101,29 +128,33 @@
 .fc-list-heading-main {
   text-align: center;
   text-transform: uppercase;
-  font-size: 1.5em;
+  font-size: 1.8vw;
   color: color(dark-blue);
+
+  @media (max-width: $calendarDualBreakpoint) {
+    font-size: 2.4vw;
+}
 }
 
 #sidebar-calendar {
   background-color: color(light-gray);
 
-    @media (max-width: 767px) {
-        margin-top: 2em !important;
+    @media (max-width: $calendarDualBreakpoint) {
+        // margin-top: 2em !important;
         height: auto !important;
     }
 }
 
 .calendar-container {
-  max-height: 525px;
+  max-height: fit-content;
   margin-bottom: 50px;
-  display: inline-block;
+  // display: inline-block;
 }
 
 .fc-scroller {
-  height: auto !important;
+  height: 35vh !important;
 
-    @media (max-width: 767px) {
+    @media (max-width: $calendarDualBreakpoint) {
        height: 400px !important;
        max-height: none !important;
     }
@@ -154,7 +185,7 @@
     }
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: $calendarDualBreakpoint) {
     display: flex;
   }
 }
@@ -168,7 +199,7 @@
 }
 
 .placeholder-col {
-    @media (max-width: 767px) {
+    @media (max-width: $calendarDualBreakpoint) {
         display: none;
     }
 }
@@ -184,7 +215,7 @@
         max-width: 100%;
     }
 
-    @media (max-width: 767px) {
+    @media (max-width: $calendarDualBreakpoint) {
         position: static !important;
 
         #sidebar-calendar {
@@ -207,10 +238,11 @@
   .lex-region-content {
     margin-top: 1em;
   }
-  padding-top: 2% !important;
+  padding: 2% !important;
 
   #block-pagetitle {
       margin-bottom: 0 !important;
+      padding-left: 12px !important;
   }
 }
 
@@ -224,10 +256,27 @@
     display: table-row !important;
 }
 
+.calendar-bullets {
+  font-size: 4vw;
+  background-color: transparent !important;
+  line-height: 0.7 !important;
+  margin-top: 0px !important;
+  width: 0px;
+  height: 0px;
+  padding-right: 1vw;
+  transform: scaleY(0.9);
+
+  @media (max-width: $calendarDualBreakpoint) {
+    font-size: 6.5vw;
+}
+
+}
+
 .filter-container {
     margin-bottom: 1em;
+    white-space: nowrap;
     
-    @media (max-width: 767px) {
+    @media (max-width: $calendarDualBreakpoint) {
         margin-top: 1em;
     }
 
@@ -236,3 +285,15 @@
         max-width: 100%;
     }
 }
+
+.fc-view-container-calendar {
+  padding-left: 0;
+  padding-right: 0;
+  max-width: 100%
+}
+
+.sidebar-header {
+  background-color: rgb(158, 158, 158) !important;
+  padding-left: 8px !important;
+}
+

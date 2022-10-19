@@ -51,11 +51,11 @@
         combinedHeight = height + feedbackTotal + paddingTop + paddingBottom;
         combinedTopMarg = parseInt($('.lex-region-breadcrumb').height() + $('.sticky-top').height() + $('#block-lex-headerquicklinks').height() + toolbarHeight + adminHeight + alertHeight);
 
-        $('#sidebar-calendar').css({
-            'height': combinedHeight + 'px',
-            'margin-top': combinedTopMarg + 'px'
-        });
-        $('.fc-scroller').css('max-height', combinedHeight + 'px');
+        // $('#sidebar-calendar').css({
+        //     'height': combinedHeight + 'px',
+        //     'margin-top': combinedTopMarg + 'px'
+        // });
+        // $('.fc-scroller').css('max-height', combinedHeight + 'px');
     }
 
     $(window).on('load', function () {
@@ -66,7 +66,8 @@
             heightCalc();
         }else {
             monthMode = true;
-            $('#sidebar-calendar').css('visibility', 'hidden');
+            // $('#sidebar-calendar').css('display', 'none');
+            // $('#sidebar-calendar').css('visibility', 'hidden');
         }
     });
 
@@ -96,7 +97,9 @@
                 'background-color': '#EFEFEF',
                 'color': '#353535'
             });
-            $('#sidebar-calendar').css('visibility', 'hidden');
+            // $('#sidebar-calendar').css('visibility', 'hidden');
+            $('#sidebar-calendar').css('display', 'none');
+
             $('#calendar').css('display', 'block');
             $('.calendar-key').css('display', 'block');
         }else if (listMode == true) {
