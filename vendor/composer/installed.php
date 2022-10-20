@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '2ced1d1cedcf2022baaf3093444c3cefd62726fa',
+        'reference' => '5d8e47637a5d90effbc351f3b4766929be09e7f8',
         'name' => 'my/project',
         'dev' => true,
     ),
@@ -1180,6 +1180,15 @@
                 0 => '9.4.2',
             ),
         ),
+        'drupal/redirect' => array(
+            'pretty_version' => '1.8.0',
+            'version' => '1.8.0.0',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../modules/contrib/redirect',
+            'aliases' => array(),
+            'reference' => '8.x-1.8',
+            'dev_requirement' => false,
+        ),
         'drupal/responsive_image' => array(
             'dev_requirement' => false,
             'replaced' => array(
@@ -1680,7 +1689,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '2ced1d1cedcf2022baaf3093444c3cefd62726fa',
+            'reference' => '5d8e47637a5d90effbc351f3b4766929be09e7f8',
             'dev_requirement' => false,
         ),
         'myclabs/php-enum' => array(
