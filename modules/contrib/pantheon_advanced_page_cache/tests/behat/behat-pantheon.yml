@@ -1,0 +1,24 @@
+#
+# behat.yml file for testing with a Drupal site on Pantheon.
+#
+default:
+  suites:
+    default:
+      paths:
+        - "%paths.base%/features"
+      contexts:
+        - Drupal\DrupalExtension\Context\DrushContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MinkContext
+        - PantheonSystems\CDNBehatHelpers\Contexts\FeatureContext
+  extensions:
+    Behat\MinkExtension:
+      goutte: ~
+    # Supplied by env variable.
+    #     base_url: http://dev-d8cdn.pantheonsite.io/
+    Drupal\DrupalExtension:
+      blackbox: ~
+      api_driver: 'drush'
+      drush:
+        alias: 'self'
+        binary: "terminus drush $TERMINUS_SITE.$TERMINUS_ENV -- "

@@ -55,6 +55,7 @@
         "drupal/imce": "^2.4",
         "drupal/masquerade": "^2.x-dev@dev",
         "drupal/metatag": "^1.16",
+        "drupal/pantheon_advanced_page_cache": "^2.0",
         "drupal/paragraphs": "^1.13",
         "drupal/paragraphs_inline_entity_form": "^1.x-dev@dev",
         "drupal/paragraphs_jquery_ui_accordion": "^1.4",

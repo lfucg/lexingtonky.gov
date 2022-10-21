@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '5d8e47637a5d90effbc351f3b4766929be09e7f8',
+        'reference' => 'bb527226ebcdba24e670882875a352626baf82bf',
         'name' => 'my/project',
         'dev' => true,
     ),
@@ -1112,6 +1112,15 @@
                 0 => '9.4.2',
             ),
         ),
+        'drupal/pantheon_advanced_page_cache' => array(
+            'pretty_version' => '2.0.0',
+            'version' => '2.0.0.0',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../modules/contrib/pantheon_advanced_page_cache',
+            'aliases' => array(),
+            'reference' => '2.0.0',
+            'dev_requirement' => false,
+        ),
         'drupal/paragraphs' => array(
             'pretty_version' => '1.14.0',
             'version' => '1.14.0.0',
@@ -1689,7 +1698,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '5d8e47637a5d90effbc351f3b4766929be09e7f8',
+            'reference' => 'bb527226ebcdba24e670882875a352626baf82bf',
             'dev_requirement' => false,
         ),
         'myclabs/php-enum' => array(
