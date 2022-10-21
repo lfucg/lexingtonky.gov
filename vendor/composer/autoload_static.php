@@ -127,6 +127,7 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
             'PhpParser\\' => 10,
+            'PantheonSystems\\CDNBehatHelpers\\' => 32,
             'PHPStan\\' => 8,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
@@ -415,6 +416,10 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
+        ),
+        'PantheonSystems\\CDNBehatHelpers\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/modules/contrib/pantheon_advanced_page_cache/tests/behat/helper_classes',
         ),
         'PHPStan\\' => 
         array (
@@ -4211,6 +4216,9 @@ class ComposerStaticInite3efcd40b8034c9cfd14d405bbdde23f
         'PHPStan\\Rules\\Deprecations\\TypeHintDeprecatedInFunctionSignatureRule' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/TypeHintDeprecatedInFunctionSignatureRule.php',
         'PHPStan\\Rules\\Deprecations\\UsageOfDeprecatedCastRule' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/UsageOfDeprecatedCastRule.php',
         'PHPStan\\Rules\\Deprecations\\UsageOfDeprecatedTraitRule' => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src/Rules/Deprecations/UsageOfDeprecatedTraitRule.php',
+        'PantheonSystems\\CDNBehatHelpers\\AgeTracker' => __DIR__ . '/../..' . '/modules/contrib/pantheon_advanced_page_cache/tests/behat/helper_classes/AgeTracker.php',
+        'PantheonSystems\\CDNBehatHelpers\\Contexts\\FeatureContext' => __DIR__ . '/../..' . '/modules/contrib/pantheon_advanced_page_cache/tests/behat/helper_classes/Contexts/FeatureContext.php',
+        'PantheonSystems\\CDNBehatHelpers\\tests\\AgeTrackerTest' => __DIR__ . '/../..' . '/modules/contrib/pantheon_advanced_page_cache/tests/behat/helper_classes/tests/AgeTrackerTest.php',
         'PhpParser\\Builder' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Builder.php',
         'PhpParser\\BuilderFactory' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/BuilderFactory.php',
         'PhpParser\\BuilderHelpers' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/BuilderHelpers.php',
