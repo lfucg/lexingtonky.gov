@@ -50,12 +50,6 @@
 
         combinedHeight = height + feedbackTotal + paddingTop + paddingBottom;
         combinedTopMarg = parseInt($('.lex-region-breadcrumb').height() + $('.sticky-top').height() + $('#block-lex-headerquicklinks').height() + toolbarHeight + adminHeight + alertHeight);
-
-        $('#sidebar-calendar').css({
-            'height': combinedHeight + 'px',
-            'margin-top': combinedTopMarg + 'px'
-        });
-        $('.fc-scroller').css('max-height', combinedHeight + 'px');
     }
 
     $(window).on('load', function () {
@@ -66,7 +60,7 @@
             heightCalc();
         }else {
             monthMode = true;
-            $('#sidebar-calendar').css('visibility', 'hidden');
+
         }
     });
 
@@ -96,9 +90,9 @@
                 'background-color': '#EFEFEF',
                 'color': '#353535'
             });
-            $('#sidebar-calendar').css('visibility', 'hidden');
+            $('#sidebar-calendar').css('display', 'none');
+
             $('#calendar').css('display', 'block');
-            $('.calendar-key').css('display', 'block');
         }else if (listMode == true) {
             $('.list-switch').css({
                 'background-color': 'white',
@@ -142,12 +136,13 @@
     });
 
     $(document).on('click', '.month-dot', function () {
+        $parentScrollPosition = document.documentElement.scrollTop;
         if (dualMode==true) {
             num = $(this).attr('id').substr(6);
 
             $('.list-event-container').each(function () {
                 if ($(this).attr('id').substr(5) == num) {
-                    $(this)[0].scrollIntoView();
+                    $(this).parent().closest('tr')[0].scrollIntoView();
                 }
             });
         }else {
@@ -156,13 +151,14 @@
             monthMode= false;
             listMode = true;
             modeCheck();
-
             $('.list-event-container').each(function () {
                 if ($(this).attr('id').substr(5) == num) {
-                    $(this)[0].scrollIntoView();
+                    $(this).parent().closest('tr')[0].scrollIntoView();
                 }
             });
+            
         }
+        document.documentElement.scrollTop = $parentScrollPosition;
     });
 
     $(document).on('click', '.main-prev', function () {
