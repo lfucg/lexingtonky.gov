@@ -51,7 +51,7 @@ content:
     third_party_settings: {  }
   field_keywords:
     type: entity_reference_autocomplete
-    weight: 12
+    weight: 13
     region: content
     settings:
       match_operator: CONTAINS
@@ -61,7 +61,7 @@ content:
     third_party_settings: {  }
   field_lex_custom_banner_image:
     type: image_image
-    weight: 10
+    weight: 11
     region: content
     settings:
       progress_indicator: throbber
@@ -75,9 +75,11 @@ content:
     third_party_settings: {  }
   field_metatags:
     type: metatag_firehose
-    weight: 11
+    weight: 12
     region: content
-    settings: {  }
+    settings:
+      sidebar: true
+      use_details: true
     third_party_settings: {  }
   field_office_to_contact:
     type: options_select
@@ -85,9 +87,19 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_organization_taxonomy_term:
+    type: entity_reference_autocomplete
+    weight: 8
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_page_section:
     type: entity_reference_paragraphs
-    weight: 8
+    weight: 9
     region: content
     settings:
       title: section
@@ -99,7 +111,7 @@ content:
     third_party_settings: {  }
   field_related_documents:
     type: file_generic
-    weight: 9
+    weight: 10
     region: content
     settings:
       progress_indicator: throbber
@@ -114,7 +126,7 @@ content:
     third_party_settings: {  }
   field_upcoming_events:
     type: viewsreference_autocomplete
-    weight: 26
+    weight: 15
     region: content
     settings:
       match_operator: CONTAINS
@@ -130,7 +142,7 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 13
+    weight: 14
     region: content
     settings:
       display_label: true
@@ -153,9 +165,13 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  url_redirects:
+    weight: 16
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   field_organization_image: true
-  field_organization_taxonomy_term: true
   field_related_departments: true
   promote: true
   sticky: true

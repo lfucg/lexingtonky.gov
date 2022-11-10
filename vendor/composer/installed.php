@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'bb527226ebcdba24e670882875a352626baf82bf',
+        'reference' => 'b6ba8aada9f955948f64c61945b7210bc3613bfa',
         'name' => 'my/project',
         'dev' => true,
     ),
@@ -839,6 +839,15 @@
             'replaced' => array(
                 0 => '9.4.2',
             ),
+        ),
+        'drupal/field_permissions' => array(
+            'pretty_version' => '1.2.0',
+            'version' => '1.2.0.0',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../modules/contrib/field_permissions',
+            'aliases' => array(),
+            'reference' => '8.x-1.2',
+            'dev_requirement' => false,
         ),
         'drupal/field_ui' => array(
             'dev_requirement' => false,
@@ -1698,7 +1707,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'bb527226ebcdba24e670882875a352626baf82bf',
+            'reference' => 'b6ba8aada9f955948f64c61945b7210bc3613bfa',
             'dev_requirement' => false,
         ),
         'myclabs/php-enum' => array(

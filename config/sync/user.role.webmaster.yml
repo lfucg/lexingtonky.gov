@@ -15,6 +15,7 @@ dependencies:
     - contact
     - embed
     - entity_browser
+    - field_permissions
     - filter
     - masquerade
     - node
@@ -41,6 +42,7 @@ permissions:
   - 'administer taxonomy'
   - 'administer url aliases'
   - 'administer users'
+  - 'create field_organization_taxonomy_term'
   - 'create landing_page content'
   - 'create organization_page content'
   - 'create site_wide_notice content'
@@ -58,6 +60,8 @@ permissions:
   - 'delete terms in site_navigation'
   - 'edit any organization_page content'
   - 'edit any site_wide_notice content'
+  - 'edit field_organization_taxonomy_term'
+  - 'edit own field_organization_taxonomy_term'
   - 'edit own organization_page content'
   - 'edit own site_wide_notice content'
   - 'edit terms in locations'
