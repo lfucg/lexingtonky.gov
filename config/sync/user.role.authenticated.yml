@@ -15,6 +15,7 @@ dependencies:
     - contact
     - contextual
     - dropzonejs
+    - field_permissions
     - file
     - filter
     - node
@@ -65,10 +66,12 @@ permissions:
   - 'use text format basic_html'
   - 'view all revisions'
   - 'view any unpublished content'
+  - 'view field_organization_taxonomy_term'
   - 'view landing_page revisions'
   - 'view latest version'
   - 'view moderation states'
   - 'view news_article revisions'
+  - 'view own field_organization_taxonomy_term'
   - 'view own unpublished content'
   - 'view page revisions'
   - 'view the administration theme'
