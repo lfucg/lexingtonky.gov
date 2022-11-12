@@ -62,11 +62,23 @@ content:
     type: metatag_firehose
     weight: 12
     region: content
-    settings: {  }
+    settings:
+      sidebar: true
+      use_details: true
     third_party_settings: {  }
   field_office_to_contact:
     type: entity_reference_autocomplete
     weight: 9
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_organization_taxonomy_term:
+    type: entity_reference_autocomplete
+    weight: 14
     region: content
     settings:
       match_operator: CONTAINS
@@ -118,7 +130,7 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 14
+    weight: 15
     region: content
     settings:
       display_label: true
@@ -148,5 +160,9 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden:
-  field_organization_taxonomy_term: true
+  url_redirects:
+    weight: 16
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }
