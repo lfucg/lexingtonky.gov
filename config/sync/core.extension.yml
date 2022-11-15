@@ -22,6 +22,8 @@ module:
   comment: 0
   components: 0
   config: 0
+  config_filter: 0
+  config_ignore: 0
   contact: 0
   contact_storage: 0
   contentimport: 0
@@ -55,6 +57,7 @@ module:
   honeypot: 0
   iframe: 0
   image: 0
+  image_captcha: 0
   imce: 0
   inline_entity_form: 0
   jquery_ui: 0
@@ -81,6 +84,7 @@ module:
   path_alias: 0
   quickedit: 0
   rdf: 0
+  recaptcha_v3: 0
   redirect: 0
   responsive_image: 0
   search: 0

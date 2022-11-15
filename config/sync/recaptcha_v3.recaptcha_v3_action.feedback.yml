@@ -1,0 +1,8 @@
+uuid: 30a1eef5-61b3-4b5f-9ab9-75e48eda36e4
+langcode: en
+status: true
+dependencies: {  }
+id: feedback
+label: Feedback
+threshold: 0.5
+challenge: image_captcha/Image

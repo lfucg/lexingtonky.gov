@@ -1,0 +1,8 @@
+uuid: ba0ec8b6-70c2-4c45-a08c-53e4eaa3f730
+langcode: en
+status: true
+dependencies: {  }
+id: test
+label: test
+threshold: !!float 1
+challenge: default

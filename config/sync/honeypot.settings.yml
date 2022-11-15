@@ -1,7 +1,7 @@
 protect_all_forms: false
 log: false
 element_name: email
-time_limit: 5
+time_limit: 7
 expire: 300
 form_settings:
   user_register_form: false

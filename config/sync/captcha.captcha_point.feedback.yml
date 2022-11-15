@@ -3,5 +3,5 @@ langcode: en
 status: true
 dependencies: {  }
 formId: feedback
-captchaType: default
+captchaType: recaptcha_v3/feedback
 label: feedback_form

@@ -1,7 +1,7 @@
 uuid: 0c2796d7-6f13-499f-989c-6d6d5df77974
 langcode: en
-status: true
+status: false
 dependencies: {  }
 formId: contact_message_page_feedback_form
-captchaType: default
+captchaType: recaptcha_v3/feedback
 label: contact_message_page_feedback_form

@@ -1,5 +1,9 @@
 /web/themes/custom/lex/dist/
 
+# Fail-safe ignore of sensitive config
+/config/sync/recaptcha_v3.settings.yml
+/config/sync/search_api.server.pantheon.yml
+
 # :::::::::::::::::::::: cut ::::::::::::::::::::::
 
 # Put ignore patterns for build artifacts above the cut line
