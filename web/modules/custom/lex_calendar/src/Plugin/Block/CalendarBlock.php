@@ -4,9 +4,7 @@ namespace Drupal\lex_calendar\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Block\BlockPluginInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-// use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\lex_calendar\EventFetch;
@@ -26,29 +24,38 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
 
   use EventFetch;
 
+  /**
+   * Content Type.
+   *
+   * @var string
+   */
   protected $contentType = NULL;
 
   /**
    * Default Drupal Entity Manager.
    *
-   * @var Drupal\Core\Entity\EntityTypeManagerInterface object
+   * @var Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager = NULL;
 
   /**
    * Current Route.
    *
-   * @var Drupal\Core\Routing\RouteMatchInterface object
+   * @var Drupal\Core\Routing\RouteMatchInterface
    */
   protected $routeMatch = NULL;
 
   /**
    * Office to Contact or Related Department for page.
+   *
+   * @var mixed
    */
   protected $targetDepartment = NULL;
 
   /**
    * Page of Contact or Related Department.
+   *
+   * @var mixed
    */
   protected $targetPage = NULL;
 
@@ -65,8 +72,10 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
    *   Custom event managing service.
    * @param Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity Manager service.
+   * @param Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   Entity Manager service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, FullCalendarService $events, EntityTypeManagerInterface $entityTypeManager, RouteMatchInterface $route_match) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, FullCalendarService $events, EntityTypeManagerInterface $entityTypeManager, RouteMatchInterface $route_match) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->events = $events;
     $this->entityTypeManager = $entityTypeManager;
@@ -85,7 +94,7 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
       '#type' => 'number',
       '#title' => $this->t('Item Limit'),
       '#description' => $this->t('How many items do you wish to show?'),
-      '#default_value' => isset($config['display_limit']) ? $config['display_limit'] : 3
+      '#default_value' => $config['display_limit'] ?? 3,
     ];
 
     $form['content_type'] = [
@@ -93,10 +102,10 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
       '#title' => $this->t('Content Type'),
       '#options' => [
         'event' => $this->t('Events'),
-        'meeting' => $this->t('Meetings')
+        'meeting' => $this->t('Meetings'),
       ],
-      '#default_value' => isset($config['content_type']) ? $config['content_type'] : '',
-      '#required' => TRUE
+      '#default_value' => $config['content_type'] ?? '',
+      '#required' => TRUE,
     ];
 
     $form['show_all'] = [
@@ -105,10 +114,10 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
       '#description' => $this->t('If there is no related department, do we show all possible events?'),
       '#options' => [
         'yes' => $this->t('Yes'),
-        'no' =>$this->t('No')
+        'no' => $this->t('No'),
       ],
-      '#default_value' => isset($config['show_all']) ? $config['show_all'] : 'no',
-      '#required' => TRUE
+      '#default_value' => $config['show_all'] ?? 'no',
+      '#required' => TRUE,
     ];
 
     return $form;
@@ -137,31 +146,38 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
       $plugin_definition,
       $container->get('lex_calendar.full_calendar'),
       $container->get('entity_type.manager'),
-      $container->get('current_route_match')
+      $container->get('current_route_match'),
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setQueryModification() {
     $entity = $this->routeMatch->getParameter('node');
-    $entype= $entity->getType();
+    $entype = $entity->getType();
     $entid = $entity->nid->value;
     try {
       $related = $entity->get('field_organization_taxonomy_term')->getValue();
     }
-    catch ( \InvalidArgumentException $e ) {
+    catch (\InvalidArgumentException $e) {
       try {
         $related = $entity->get('field_related_departments')->getValue();
       }
-      catch( \InvalidArgumentException $e) {}
-      }
+      catch (\InvalidArgumentException $e) {
 
-      if (!empty($related) && $entype != 'page') {
-        $this->targetDepartment = $related[0]['target_id'];
-      }else if (empty($related) && $entype == 'page') {
-        $this->targetPage = $entid;
-      }else if (!empty($related) && $entype == 'page') {
-        $this->targetPage = $entid;
       }
+    }
+
+    if (!empty($related) && $entype != 'page') {
+      $this->targetDepartment = $related[0]['target_id'];
+    }
+    elseif (empty($related) && $entype == 'page') {
+      $this->targetPage = $entid;
+    }
+    elseif (!empty($related) && $entype == 'page') {
+      $this->targetPage = $entid;
+    }
   }
 
   /**
@@ -184,11 +200,10 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
     $this->events->clear();
     $this->queryEvents($this->contentType,
       new \DateTime('now', new \DateTimeZone('America/New_York')),
-      new \DateTime('+3 months', new \DateTimeZone('America/New_York'))
+      new \DateTime('+3 months', new \DateTimeZone('America/New_York')),
     );
 
     $this->events->sort();
-
 
     $events = $this->events->getEvents();
 
@@ -203,7 +218,7 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
         if (!isset($dates[$start_day])) {
           $dates[$start_day] = [
             'title' => $start_day,
-            'events' => []
+            'events' => [],
           ];
         }
 
@@ -215,7 +230,7 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
         '#dates' => $dates,
         '#content_type' => $this->contentType,
         '#is_front' => \Drupal::service('path.matcher')->isFrontPage(),
-        '#cache' => ['max-age' => 0]
+        '#cache' => ['max-age' => 0],
       ];
     }
     else {
@@ -223,17 +238,22 @@ class CalendarBlock extends BlockBase implements BlockPluginInterface, Container
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function modifyEventQuery($query) {
     if ($this->targetPage == '13197') {
       return $query;
     }
-
     if ($this->targetPage) {
       return $query->condition('field_related_page', $this->targetPage);
-    }else if ($this->targetDepartment) {
+    }
+    elseif ($this->targetDepartment) {
       return $query->condition('field_related_departments', $this->targetDepartment);
-    }else {
+    }
+    else {
       return $query;
     }
   }
+
 }

@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * @file
+ * Contains themeing for lex home.
+ */
+
 /**
  * Alter name suggestions for the blocks so subthemes will work.
  */
@@ -6,5 +12,5 @@ function lex_home_theme_suggestions_block_alter(&$suggestions, $variables) {
   foreach ($suggestions as &$suggestion) {
     $suggestion = str_replace('lex_home_', '', $suggestion);
   }
-}
 
+}

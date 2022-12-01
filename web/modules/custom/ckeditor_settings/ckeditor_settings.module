@@ -1,11 +1,12 @@
 <?php
+
 /**
  * @file
  * These are the custom settings for the ckeditor in drupal.
  */
 
 /**
- * Implementation of hook_editor_js_settings_alter().
+ * Implements hook_editor_js_settings_alter().
  */
 function ckeditor_settings_editor_js_settings_alter(&$settings) {
   foreach ($settings['editor']['formats'] as &$format) {
@@ -17,8 +18,11 @@ function ckeditor_settings_editor_js_settings_alter(&$settings) {
   }
 }
 
+/**
+ * Implements hook_entity_embed_alter().
+ */
 function ckeditor_settings_entity_embed_alter(&$build, $entity, $context) {
   if (!stristr($context['data-entity-embed-display'], 'image')) {
-	$build['#attributes']['class'][] = 'embedded-file';
+    $build['#attributes']['class'][] = 'embedded-file';
   }
 }

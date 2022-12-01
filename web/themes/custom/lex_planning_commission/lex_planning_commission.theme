@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * @file
+ * Contains themeing for lex planning commision.
+ */
+
 /**
  * Alter name suggestions for the blocks so subthemes will work.
  */
@@ -6,4 +12,5 @@ function lex_planning_commission_theme_suggestions_block_alter(&$suggestions, $v
   foreach ($suggestions as &$suggestion) {
     $suggestion = str_replace('lex_planning_commission_', '', $suggestion);
   }
+
 }

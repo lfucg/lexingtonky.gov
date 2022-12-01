@@ -1,13 +1,26 @@
 <?php
-use Drupal\image\Entity\ImageStyle;
-use Drupal\Component\Utility\Html;
 
+/**
+ * @file
+ * Contains themeing for lex.
+ */
+
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_natural_sort_views().
+ */
 function lex_natural_sort_views($a, $b) {
-  // we can use weight module if we need manual sorting capabilities
+  // We can use weight module if we need manual sorting capabilities.
   // https://www.drupal.org/project/weight
   return strnatcmp($a->node_field_data_title, $b->node_field_data_title);
 }
 
+/**
+ * Implements hook_views_pre_render().
+ */
 function lex_views_pre_render($view) {
   if ($view->id() == "taxonomy_term") {
     $taxonomy_term = \Drupal::routeMatch()->getParameter('taxonomy_term')->name->value;
@@ -17,8 +30,11 @@ function lex_views_pre_render($view) {
   }
 }
 
+/**
+ * Implements hook_preprocess_html().
+ */
 function lex_preprocess_html(&$variables) {
-  $url = \Drupal\Core\Url::fromRoute('<current>')->toString();
+  $url = Url::fromRoute('<current>')->toString();
 
   if ($variables['root_path']) {
     $path_class = 'path-' . Html::getClass($variables['root_path']);
@@ -36,7 +52,7 @@ function lex_preprocess_html(&$variables) {
     $variables['attributes']['class'][] = 'path-frontpage';
   }
 
-  if(\Drupal::currentUser()->id()) {
+  if (\Drupal::currentUser()->id()) {
     $variables['attributes']['class'][] = 'logged-in';
   }
 
@@ -46,33 +62,44 @@ function lex_preprocess_html(&$variables) {
 
 }
 
-
+/**
+ * Implements hook_preprocess_page__taxonomy__term().
+ */
 function lex_preprocess_page__taxonomy__term(&$variables) {
   $path = \Drupal::service('path.current')->getPath();
   $alias = \Drupal::service('path_alias.manager')->getAliasByPath($path);
   $variables['browse_level'] = preg_match('|/browse/.*/|', $alias) == 1 ? 'subsection' : 'section';
 }
 
+/**
+ * Implements hook_preprocess_menu().
+ */
 function lex_preprocess_menu(&$variables) {
-  // expose the url_title so it can be displayed in a tag
+  // Expose the url_title so it can be displayed in a tag.
   if ($variables['menu_name'] == 'main') {
-    foreach($variables['items'] as &$item) {
-      foreach($item['below'] as &$sub_cat) {
+    foreach ($variables['items'] as &$item) {
+      foreach ($item['below'] as &$sub_cat) {
         $sub_cat['url_title'] = strip_tags($sub_cat['url']->getOption('attributes')['title']);
       }
     }
   }
 }
 
+/**
+ * Implements hook_preprocess_input__submit().
+ */
 function lex_preprocess_input__submit(&$variables) {
   $variables['attributes']['class'][] = 'lex-submit-drupalprovided';
 }
 
+/**
+ * Implements hook_preprocess_block().
+ */
 function lex_preprocess_block(&$variables) {
   // $variables['attributes']['class'][] = 'lex-block';
   if (isset($variables['elements']['#id'])) {
     $element_id = $variables['elements']['#id'];
-    switch($element_id) {
+    switch ($element_id) {
       case 'lex_home_headerquicklinks':
       case 'lex_police_headerquicklinks':
       case 'lex_economic_development_headerquicklinks':
@@ -87,17 +114,18 @@ function lex_preprocess_block(&$variables) {
       case 'lex_headerquicklinks':
         $variables['attributes']['class'][] = 'slab--lex-blue';
         break;
+
       default:
         break;
     }
 
     if (stristr($element_id, 'inline_page_feedback_form')) {
-      # get contact form field to render inline
+      // Get contact form field to render inline.
       $message = \Drupal::entityTypeManager()
-      ->getStorage('contact_message')
-      ->create(array(
-        'contact_form' => 'page_feedback'
-      ));
+        ->getStorage('contact_message')
+        ->create([
+          'contact_form' => 'page_feedback',
+        ]);
 
       $variables['contact_form'] = \Drupal::service('entity.form_builder')->getForm($message);
     }
@@ -105,9 +133,9 @@ function lex_preprocess_block(&$variables) {
 }
 
 /**
- * Implements hook_form_alter() to add classes to the search form.
+ * Implements hook_form_alter().
  */
-function lex_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function lex_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if (isset($form['advanced'])) {
     unset($form['basic']['keys']['#title']);
     unset($form['help_link']);
@@ -116,16 +144,20 @@ function lex_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state
   }
 
   if ($form_id == 'views_exposed_form') {
-    switch($form['#id']) {
+    switch ($form['#id']) {
       case 'views-exposed-form-front-page-news-page-1':
         asort($form['field_related_departments_target_id']['#options']);
         break;
+
       default:
         break;
     }
   }
 }
 
+/**
+ * Implements hook_preprocess_item_list__search_results().
+ */
 function lex_preprocess_item_list__search_results(&$variables) {
 
   $keys = \Drupal::request()->get('keys');
@@ -134,34 +166,48 @@ function lex_preprocess_item_list__search_results(&$variables) {
   $variables['attributes']['class'][] = 'usa-unstyled-list';
 }
 
+/**
+ * Implements hook_preprocess_search_result().
+ */
 function lex_preprocess_search_result(&$variables) {
   $variables['title_attributes']['class'][] = 'lex-card-title lex-card-title-medium';
   $variables['content_attributes']['class'][] = 'lex-card-subtitle';
 }
 
+/**
+ * Implements hook_preprocess_form().
+ */
 function lex_preprocess_form(&$variables) {
   if ($variables['attributes']['id'] == 'search-block-form') {
-    if (! isset($variables['attributes']['class'])) {
-      $variables['attributes']['class'] = array();
+    if (!isset($variables['attributes']['class'])) {
+      $variables['attributes']['class'] = [];
     }
     array_push($variables['attributes']['class'], 'usa-search', 'lex-search');
-  } else if ($variables['element']['#form_id'] == 'contact_message_page_feedback_form') {
+  }
+  elseif ($variables['element']['#form_id'] == 'contact_message_page_feedback_form') {
     $variables['attributes']['class'][] = 'lex-pagefeedback-form usa-width-one-half';
-  } else if ($variables['element']['#form_id'] == 'contact_message_feedback_form') {
+  }
+  elseif ($variables['element']['#form_id'] == 'contact_message_feedback_form') {
     $variables['attributes']['class'][] = 'lex-feedback-form usa-width-one-half';
   }
 }
 
+/**
+ * Implements hook_preprocess_menu__header_quick_links().
+ */
 function lex_preprocess_menu__header_quick_links(&$variables) {
-  foreach($variables['items'] as &$item) {
+  foreach ($variables['items'] as &$item) {
     if ($item['title'] == 'Translate') {
       $item['attributes']['id'] = 'google_translate_element';
-      // remove title so widget can take that space, and it doesn't appear w/o js
+      // Remove title for widget to take, and it doesn't appear w/o js.
       $item['title'] = '';
     }
   }
 }
 
+/**
+ * Implements hook_preprocess_container().
+ */
 function lex_preprocess_container(&$variables) {
   if (isset($variables['attributes']['class']) &&
       in_array('more-link', $variables['attributes']['class'])) {
@@ -169,14 +215,23 @@ function lex_preprocess_container(&$variables) {
   }
 }
 
+/**
+ * Implements hook_preprocess_feed_icon().
+ */
 function lex_preprocess_feed_icon(&$variables) {
-  $variables['attributes']['class'] = array('visually-hidden');
+  $variables['attributes']['class'] = ['visually-hidden'];
 }
 
+/**
+ * Implements hook_preprocess_region().
+ */
 function lex_preprocess_region(&$variables) {
   $variables['attributes']['class'][] = 'lex-region-' . $variables['region'];
 }
 
+/**
+ * Implements hook_preprocess_field().
+ */
 function lex_preprocess_field(&$variables) {
   $element = $variables['element'];
   if (strpos($element['#field_name'], 'field_social_link') === 0) {
@@ -192,15 +247,15 @@ function lex_preprocess_field(&$variables) {
     $variables['items'][0]['content']['#options']['attributes']['class'][] = $class;
   }
   if ($node = \Drupal::request()->attributes->get('node')) {
-     $variables['nid'] = $node->id();
-   }
+    $variables['nid'] = $node->id();
+  }
 }
 
 /**
  * Hook to add theme suggestion based on content type.
  */
 function lex_theme_suggestions_page_alter(array &$suggestions, array $variables) {
-  if (array_search('page__front', $suggestions) === FALSE ) {
+  if (array_search('page__front', $suggestions) === FALSE) {
     if ($node = \Drupal::routeMatch()->getParameter('node')) {
       $content_type = $node->bundle();
       if ($content_type) {
@@ -208,4 +263,5 @@ function lex_theme_suggestions_page_alter(array &$suggestions, array $variables)
       }
     }
   }
+
 }

@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Contains lookup_services.module.
+ */
+
+/**
  * Implements hook_theme().
  */
 function lookup_services_theme($existing, $type, $theme, $path) {

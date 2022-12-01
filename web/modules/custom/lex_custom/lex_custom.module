@@ -1,13 +1,15 @@
 <?php
+
+/**
+ * @file
+ * Contains lex_custom.module.
+ */
+
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\views\ViewExecutable;
-use Drupal\views\Views;
-use Drupal\views\Plugin\views\query\Sql;
-use Drupal\node\Entity\Node;
-use \Drupal\Core\Breadcrumb\Breadcrumb;
-use \Drupal\Core\Routing\RouteMatchInterface;
-
+use Drupal\Core\Breadcrumb\Breadcrumb;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Link;
 
 /**
  * Implements hook_form_alter().
@@ -24,17 +26,16 @@ function lex_custom_system_breadcrumb_alter(Breadcrumb &$breadcrumb, RouteMatchI
   if ($breadcrumb && !\Drupal::service('router.admin_context')->isAdminRoute()) {
     $title = \Drupal::service('title_resolver')->getTitle(\Drupal::request(), $route_match->getRouteObject());
     if (!empty($title)) {
-      $breadcrumb->addLink(\Drupal\Core\Link::createFromRoute($title, '<none>'));
+      $breadcrumb->addLink(Link::createFromRoute($title, '<none>'));
     }
   }
 }
 
 /**
  * Implements hook_update_N().
- * https://www.drupal.org/node/3034742
  */
 function lex_custom_update_9401() {
-
+  // https://www.drupal.org/node/3034742.
   $entity_type_manager = \Drupal::entityTypeManager();
   $entity_type_manager->clearCachedDefinitions();
 
@@ -54,7 +55,7 @@ function lex_custom_update_9401() {
 /**
  * Create moderation_state column for taxonomy terms.
  */
-function lex_custom_update_9402 () {
+function lex_custom_update_9402() {
   $field_storage_definition = BaseFieldDefinition::create('string')
     ->setLabel(t('Moderation state'))
     ->setDescription(t('Moderation state'));

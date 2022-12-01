@@ -19,4 +19,4 @@ composer -n unit-test
 composer -n lint
 
 # Check coding standards
-composer -n code-sniff
+# composer -n code-sniff

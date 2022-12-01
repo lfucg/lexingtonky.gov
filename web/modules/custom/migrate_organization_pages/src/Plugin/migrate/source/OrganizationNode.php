@@ -1,14 +1,13 @@
 <?php
 
+namespace Drupal\migrate_organization_pages\Plugin\migrate\source;
+
 /**
  * @file
  * Contains \Drupal\migrate_organization_pages\Plugin\migrate\source\OrganizationNode.
  */
 
-namespace Drupal\migrate_organization_pages\Plugin\migrate\source;
-
 use Drupal\migrate\Plugin\migrate\source\SqlBase;
-use Drupal\migrate\Row;
 
 /**
  * Source plugin for beer content.
@@ -23,7 +22,7 @@ class OrganizationNode extends SqlBase {
    * {@inheritdoc}
    */
   public function query() {
-    /**
+    /*
      * An important point to note is that your query *must* return a single row
      * for each item to be imported. Here we might be tempted to add a join to
      * migrate_example_beer_topic_node in our query, to pull in the
@@ -35,9 +34,9 @@ class OrganizationNode extends SqlBase {
      * below.
      */
     $query = $this->select('taxonomy_term_field_data', 'b')
-                 ->fields('b', ['tid', 'name'])
-                 ->condition('vid', 'organizations');
-                 
+      ->fields('b', ['tid', 'name'])
+      ->condition('vid', 'organizations');
+
     return $query;
   }
 
@@ -47,7 +46,7 @@ class OrganizationNode extends SqlBase {
   public function fields() {
     $fields = [
       'tid' => $this->t('Term ID'),
-      'name' => $this->t('Name of term')
+      'name' => $this->t('Name of term'),
     ];
 
     return $fields;
@@ -64,4 +63,5 @@ class OrganizationNode extends SqlBase {
       ],
     ];
   }
+
 }

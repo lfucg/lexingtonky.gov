@@ -3,15 +3,17 @@
 namespace Drupal\addtocal\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity;
-
+use Drupal\node\Entity\Node;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * controller for the add to calender module.
+ * Controller for the add to calender module.
  */
 class AddtocalController extends ControllerBase {
 
+  /**
+   * Formats the location.
+   */
   private function formatLocation($term) {
     return $term->getName() . ', ' .
       $term->get('field_street_number')->getValue()[0]['value'] . ' ' .
@@ -19,6 +21,9 @@ class AddtocalController extends ControllerBase {
       $term->get('field_zip_code')->getValue()[0]['value'];
   }
 
+  /**
+   * Formats the date.
+   */
   public function formatDate($date) {
     return gmdate('Ymd\THis\Z', strtotime($date . 'UTC'));
   }
@@ -27,8 +32,12 @@ class AddtocalController extends ControllerBase {
    * Function to clear acquia varnish cache.
    */
   public function addtocalics($nid) {
-    $node_detail = \Drupal\node\Entity\Node::load($nid);
-    if (!$node_detail) { throw new NotFoundHttpException(); }
+    $node_detail = Node::load($nid);
+
+    if (!$node_detail) {
+      throw new NotFoundHttpException();
+    }
+
     $now_date = $this->formatDate('');
     $start_date = $this->formatDate($node_detail->get('field_date')->getValue()[0]['value']);
     $end_date = $node_detail->get('field_date_end')->getValue() ? $node_detail->get('field_date_end')->getValue()[0]['value'] : '';
@@ -58,14 +67,17 @@ class AddtocalController extends ControllerBase {
 
     $event = array_merge($vcalendar, $vevent, ['END:VCALENDAR']);
 
-    header("Pragma: public"); // required
+    // Required.
+    header("Pragma: public");
     header("Expires: 0");
     header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-    header("Cache-Control: private",false); // required for certain browsers
+    // Required for certain browsers.
+    header("Cache-Control: private", FALSE);
     header("Content-Type: application/force-download");
     header("Content-Disposition: attachment;filename=event.ics");
 
-    echo join($event, "\r\n");
+    echo implode($event, "\r\n");
     exit;
   }
+
 }

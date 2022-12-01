@@ -19,21 +19,21 @@ class FullCalendarService {
   /**
    * The start of the event seek range.
    *
-   * @var \DateTime Object
+   * @var \DateTime
    */
   protected $start = NULL;
 
   /**
    * The end of the event seek range.
    *
-   * @var \DateTime Object
+   * @var \DateTime
    */
   protected $end = NULL;
 
   /**
    * Setter.
    *
-   * @param \DateTime object | string $date
+   * @param \DateTime|string $date
    *   Object or string parsable to a date.
    */
   public function setStart($date) {
@@ -53,7 +53,7 @@ class FullCalendarService {
   /**
    * Setter.
    *
-   * @param \DateTime object | string $date
+   * @param \DateTime|string $date
    *   Object or string parsable to a date.
    */
   public function setEnd($date) {
@@ -108,6 +108,9 @@ class FullCalendarService {
     return $date;
   }
 
+  /**
+   * Adjust time zone.
+   */
   protected function timeZoneAdjust(&$date) {
     ($date->format('I') == 1) ? $date->modify('-4 hours') : $date->modify('-5 hours');
   }
@@ -119,24 +122,25 @@ class FullCalendarService {
     if (empty($event->field_date_end->value)) {
       $date = new \DateTime($event->field_date->value);
       $this->timeZoneAdjust($date);
+
       return $date;
-     }
-     else {
+    }
+    else {
       return $this->cleanDate($event->field_date_end);
-     }
+    }
   }
 
   /**
    * Add a single event to the JSON array.
    *
-   * @param $event
+   * @param Drupal\node\Entity\Node $event
    *   Node Object.
    * @param string $start
    *   Start day and time for event.
    * @param string $end
    *   End day and time for event.
    */
-  protected function addEvent($event, $start, $end) {
+  protected function addEvent(Node $event, $start, $end) {
     if ($start >= $this->start->format('Y-m-d') && $end <= $this->end->format('Y-m-d')) {
       $this->events[] = [
         'allDay' => (bool) $event->field_all_day->value,
@@ -154,14 +158,13 @@ class FullCalendarService {
     }
   }
 
-
   /**
    * Translate node event data to fullcalendar.js format and add it.
    *
    * We also replicate the event as many times as necessary to occupy all
    * available spots in the requested range that the event is to recur on.
    *
-   * @param Node[] $events
+   * @param Drupal\node\Entity\Node[] $events
    *   Collection of events.
    */
   public function addRecurringEvents(array $events) {
@@ -174,24 +177,6 @@ class FullCalendarService {
       $dayOfWeek = $start->format('l');
       $weekOfMonth = ceil($start->format('j') / 7);
       $interval = $event->field_recurring_event->value;
-
-      /*
-       * Now if an event set to recur starts and ends on the same day
-       * it recurs indefinitely. So we will get all of the days with the same
-       * day of the week as the start and return them.
-       */
-      // if ($start->format('Y-m-d') === $end->format('Y-m-d')) {
-      //   $end = $this->end;
-
-      //   if ($start->format('m') !== $this->start->format('m')) {
-      //     $start = $this->start;
-
-      //     if ($start->format('l') !== $dayOfWeek) {
-      //       $start->modify("+1 $dayOfWeek");
-      //     }
-      //   }
-      // }
-
 
       $date = $start;
 
@@ -210,10 +195,16 @@ class FullCalendarService {
     }
   }
 
+  /**
+   * Clears events.
+   */
   public function clear() {
     $this->events = [];
   }
 
+  /**
+   * Sorts items.
+   */
   public function sort() {
     $start = [];
 

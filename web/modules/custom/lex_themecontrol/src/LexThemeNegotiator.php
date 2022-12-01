@@ -27,15 +27,25 @@ class LexThemeNegotiator extends DefaultNegotiator {
 
           if (is_array($departments)) {
             foreach ($departments as $department) {
-              switch($department['target_id']) {
-                case 2: return 'lex_police';
-                case 440: return 'lex_planning_commission';
-                case 1226: return 'lex_economic_development';
+              switch ($department['target_id']) {
+                case 2:
+
+                  return 'lex_police';
+
+                case 440:
+
+                  return 'lex_planning_commission';
+
+                case 1226:
+
+                  return 'lex_economic_development';
               }
             }
           }
         }
-        catch ( \InvalidArgumentException $e) {}
+        catch (\InvalidArgumentException $e) {
+
+        }
       }
     }
     return NULL;

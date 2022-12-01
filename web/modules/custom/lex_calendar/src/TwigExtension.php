@@ -24,7 +24,7 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Flag of whether the event is all day and time display is to be suppressed.
    *
-   * @var boolean
+   * @var bool
    */
   protected $allDay;
 
@@ -46,6 +46,8 @@ class TwigExtension extends \Twig_Extension {
    * Month list.
    *
    * Some are to be abbreviated, some not.
+   *
+   * @var string
    */
   protected $months = [
     'Jan.',
@@ -59,7 +61,7 @@ class TwigExtension extends \Twig_Extension {
     'Sept.',
     'Oct.',
     'Nov.',
-    'Dec.'
+    'Dec.',
   ];
 
   /**
@@ -81,13 +83,24 @@ class TwigExtension extends \Twig_Extension {
    */
   public function getFunctions() {
     return [
-      new \Twig_SimpleFunction('lexDateTime', [$this, 'getLexDateTime'], ['is_safe' => ['html']]),
-      new \Twig_SimpleFunction('lexDate', [$this, 'getLexDate'], ['is_safe' => ['html']]),
-      new \Twig_SimpleFunction('lexTimeRange', [$this, 'getLexTimeRange'], ['is_safe' => ['html']]),
-      new \Twig_SimpleFunction('lexRender', [$this, 'getRender', ['is_safe' => 'html']])
+      new \Twig_SimpleFunction(
+        'lexDateTime', [$this, 'getLexDateTime'], ['is_safe' => ['html']]
+      ),
+      new \Twig_SimpleFunction(
+        'lexDate', [$this, 'getLexDate'], ['is_safe' => ['html']]
+      ),
+      new \Twig_SimpleFunction(
+        'lexTimeRange', [$this, 'getLexTimeRange'], ['is_safe' => ['html']]
+      ),
+      new \Twig_SimpleFunction(
+        'lexRender', [$this, 'getRender', ['is_safe' => 'html']]
+      ),
     ];
   }
 
+  /**
+   * Returns rednered content of entity.
+   */
   public function getRender($field) {
 
     $entity = $field->entity;
@@ -95,25 +108,6 @@ class TwigExtension extends \Twig_Extension {
     $render_controller = \Drupal::entityTypeManager()->getViewBuilder($entity->getEntityTypeId());
 
     return $render_controller->view($entity);
-
-
-
-   /*$build = [];
-    $entity_type = $this->getDerivativeId();
-    $entity = $this->routeMatch->getParameter($entity_type);
-
-    if ($entity instanceof ContentEntityInterface) {
-      $build['field'] = $entity->get($this->configuration['field_name'])->view([
-        'label' => 'hidden',
-        'type' => $this->configuration['formatter_id'],
-        'settings' => $this->configuration['formatter_settings']
-      ]);
-      if ($this->configuration['label_from_field'] && !empty($build['field']['#title'])) {
-        $build['#title'] = $build['field']['#title'];
-      }
-    }
-
-    return $build;*/
   }
 
   /**
@@ -130,7 +124,7 @@ class TwigExtension extends \Twig_Extension {
     if ($event['start'] == $event['end'] || empty($event['end'])) {
       return $this->getTime($start) . $this->appendMerdiem($start);
     }
-    elseif ($start->format('a') === $end->format('a')){
+    elseif ($start->format('a') === $end->format('a')) {
       return $this->getTime($start) . ' - ' . $this->getTime($end) . $this->appendMerdiem($end);
     }
 
@@ -145,12 +139,13 @@ class TwigExtension extends \Twig_Extension {
   public function getLexDate($date) {
     if (!$date instanceof \DateTimeInterface) {
       if (is_numeric($date)) {
-        $date = \DateTime::createFromFormat( 'U', $date);
+        $date = \DateTime::createFromFormat('U', $date);
       }
       else {
         $date = new \DateTime($date);
       }
     }
+
     return $date->format('l') . ', ' . $this->getDate($date);
   }
 
@@ -216,13 +211,16 @@ class TwigExtension extends \Twig_Extension {
     switch ($recurring) {
       case 'Weekly':
         $this->recurring = 'Weekly';
-      break;
+        break;
+
       case 'Monthly':
         $this->recurring = 'Monthly';
-      break;
+        break;
+
       default:
         $this->recurring = '';
-      break;
+        break;
+
     }
 
     $this->end = empty($end) ? NULL : new \DateTime($end);
@@ -304,6 +302,9 @@ class TwigExtension extends \Twig_Extension {
     return $return;
   }
 
+  /**
+   * Get day of the month.
+   */
   protected function getMonthDay(\DateTimeInterface $date) {
     return $this->months[$date->format('n') - 1] . $date->format(' j');
   }
@@ -393,9 +394,7 @@ class TwigExtension extends \Twig_Extension {
           $return .= ' &#8211; ' . ($this->start->format('M') === $this->end->format('M') ? $this->end->format('j') : $this->getMonthDay($this->end));
         }
 
-          $return .= ', ' . $this->start->format('Y');
-
-
+        $return .= ', ' . $this->start->format('Y');
       }
 
       return $return;

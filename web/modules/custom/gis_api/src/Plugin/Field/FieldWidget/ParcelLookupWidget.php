@@ -24,16 +24,16 @@ class ParcelLookupWidget extends TextWidget {
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
-    $element['value'] += array(
+    $element['value'] += [
       '#suffix' => '<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />',
-      '#attributes' => array('class' => array('edit-field-parcel-lookup')),
-      '#attached' => array(
-        'library' => array(
+      '#attributes' => ['class' => ['edit-field-parcel-lookup']],
+      '#attached' => [
+        'library' => [
           'gis_api/lex_gis_api',
           'gis_api/leaflet',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
     return $element;
   }

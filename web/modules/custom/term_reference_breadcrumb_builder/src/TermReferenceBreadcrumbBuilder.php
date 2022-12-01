@@ -1,11 +1,11 @@
 <?php
 
+namespace Drupal\term_reference_breadcrumb_builder;
+
 /**
  * @file
  * Contains \Drupal\term_reference_breadcrumb_builder\TermReferenceBreadcrumbBuilder.
  */
-
-namespace Drupal\term_reference_breadcrumb_builder;
 
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
@@ -17,7 +17,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Provides a custom taxonomy breadcrumb builder that uses the term hierarchy.
- * based off of taxonomy module TermBreadcrumbBuilder
+ */
+/**
+ * Based off of taxonomy module TermBreadcrumbBuilder.
  */
 class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   use StringTranslationTrait;
@@ -29,7 +31,7 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    */
   protected $entityManager;
 
-    /**
+  /**
    * The entity manager.
    *
    * @var \Drupal\Core\Entity\EntityRepositoryInterface
@@ -38,6 +40,8 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
 
   /**
    * The taxonomy storage.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $termStorage;
 
@@ -59,7 +63,9 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    * {@inheritdoc}
    */
   public function applies(RouteMatchInterface $route_match) {
-    if ($route_match->getRouteName() != 'entity.node.canonical') { return false; }
+    if ($route_match->getRouteName() != 'entity.node.canonical') {
+      return FALSE;
+    }
 
     $usesSiteNav = ($route_match->getParameter('node')->field_lex_site_nav &&
       $route_match->getParameter('node')->field_lex_site_nav->referencedEntities());
@@ -72,9 +78,9 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
 
   /**
    * {@inheritdoc}
-   * based off of taxonomy module TermBreadcrumbBuilder
    */
   public function build(RouteMatchInterface $route_match) {
+    // Based off of taxonomy module TermBreadcrumbBuilder.
     $breadcrumb = new Breadcrumb();
     $breadcrumb->addLink(Link::createFromRoute($this->t('Home'), '<front>'));
     $termId = 0;
@@ -82,17 +88,19 @@ class TermReferenceBreadcrumbBuilder implements BreadcrumbBuilderInterface {
       $term = $route_match->getParameter('node')->field_lex_site_nav->referencedEntities()[0];
       $termId = $term->id();
       $breadcrumb->addCacheableDependency($term);
-    } elseif ($route_match->getParameter('node')->field_organization_taxonomy_term) {
-      // org pages default to 'departments and programs' term
+    }
+    elseif ($route_match->getParameter('node')->field_organization_taxonomy_term) {
+      // Org pages default to 'departments and programs' term.
       $termId = 294;
     }
     $parents = $this->termStorage->loadAllParents($termId);
     foreach (array_reverse($parents) as $term) {
       $term = $this->entityRepository->getTranslationFromContext($term);
       $breadcrumb->addCacheableDependency($term);
-      $breadcrumb->addLink(Link::createFromRoute($term->getName(), 'entity.taxonomy_term.canonical', array('taxonomy_term' => $term->id())));
+      $breadcrumb->addLink(Link::createFromRoute($term->getName(), 'entity.taxonomy_term.canonical', ['taxonomy_term' => $term->id()]));
     }
     $breadcrumb->addCacheContexts(['route']);
     return $breadcrumb;
   }
+
 }

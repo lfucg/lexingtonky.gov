@@ -4,7 +4,6 @@ namespace Drupal\lex_calendar\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-// use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\lex_calendar\EventFetch;
 use Drupal\lex_calendar\FullCalendarService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,21 +20,21 @@ class CalendarController extends ControllerBase {
   /**
    * Response object.
    *
-   * @var Symfony\Component\HttpFoundation\JsonResponse object
+   * @var Symfony\Component\HttpFoundation\JsonResponse
    */
   protected $response = NULL;
 
   /**
    * Request stack.
    *
-   * @var Symfony\Component\HttpFoundation\RequestStack object
+   * @var Symfony\Component\HttpFoundation\RequestStack
    */
   protected $requestStack = NULL;
 
   /**
    * Default Drupal Entity Manager.
    *
-   * @var Drupal\Core\Entity\EntityTypeManager object
+   * @var Drupal\Core\Entity\EntityTypeManager
    */
   protected $entityTypeManager = NULL;
 
@@ -90,19 +89,21 @@ class CalendarController extends ControllerBase {
    * @param array $contentTypes
    *   The Content Type to fetch, for now mettings or events.
    */
-  protected function jsonFetch($contentTypes) {
-     foreach($contentTypes as $ct) { 
+  protected function jsonFetch(array $contentTypes) {
+    foreach ($contentTypes as $ct) {
       /*
-      * Load the date range to search into the FullCalendar service.
-      */
+       * Load the date range to search into the FullCalendar service.
+       */
       $request = $this->requestStack->getCurrentRequest();
       $this->queryEvents($ct, $request->query->get('start'), $request->query->get('end'));
 
       /*
-      * Pack the results up and send them out the door.
-      */
+       * Pack the results up and send them out the door.
+       */
       $this->response->setData($this->events->getEvents());
     }
+
     return $this->response;
   }
+
 }
