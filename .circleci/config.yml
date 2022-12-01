@@ -111,7 +111,7 @@ jobs:
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
-            - node-theme-{{ checksum "web/themes/custom/apax_custom/package-lock.json" }}
+            - node-theme-{{ checksum "web/themes/custom/lex/package-lock.json" }}
             - node-theme-
 
       - run:
@@ -125,14 +125,14 @@ jobs:
           command: ./.ci/build/theme
 
       - save_cache:
-          key: node-theme-{{ checksum "web/themes/custom/apax_custom/package-lock.json" }}
+          key: node-theme-{{ checksum "web/themes/custom/lex/package-lock.json" }}
           paths:
-            - $CIRCLE_WORKING_DIRECTORY/web/themes/custom/apax_custom/.npm
+            - $CIRCLE_WORKING_DIRECTORY/web/themes/custom/lex/.npm
 
       - persist_to_workspace:
           root: .
           paths:
-            - web/themes/custom/apax_custom/css
+            - web/themes/custom/lex/dist
 
   # If needed, frontend assets compilation or similar steps
   # could be added here.

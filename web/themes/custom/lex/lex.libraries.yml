@@ -1,8 +1,8 @@
 global-css:
   css:
     theme:
-      css/main.css: {}
-      css/styles.css: {}
+      dist/main.min.css: { minified: true }
+      dist/styles.min.css: { minified: true }
 
 global-js:
   js:

@@ -28,9 +28,9 @@ services:
     ssl: true
     sslExpose: true
     scanner: false
-    type: 'node:14'
+    type: 'node:16'
     overrides:
-      image: node:14-buster
+      image: node:16-buster
     globals:
       gulp-cli: latest
     run:
@@ -44,6 +44,12 @@ tooling:
   jq:
     service: appserver
   gulp:
+    service: nodejs
+  node:
+    service: nodejs
+  npm:
+    service: nodejs
+  npx:
     service: nodejs
   terminus:
     env:

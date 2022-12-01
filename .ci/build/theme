@@ -8,7 +8,7 @@ set -eo pipefail
 # to be persisted to other jobs.
 #
 
-pushd web/themes/custom/apax_custom
+pushd web/themes/custom/lex
 
 npm install -g gulp-cli
 npm install

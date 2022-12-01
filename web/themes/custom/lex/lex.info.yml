@@ -10,8 +10,8 @@ libraries:
   - lex/bootstrap_cdn
 # Remove stylesheets.
 ckeditor_stylesheets:
-  - css/styles.css
-  - css/ckeditor-overrides.css
+  - dist/styles.min.css
+  - dist/ckeditor-overrides.min.css
 stylesheets-remove:
   - core/misc/dropbutton/dropbutton.css
   - core/misc/dropbutton/dropbutton.theme.css
