@@ -1,7 +1,0 @@
-contentimport.admin_settings:
-  path: '/admin/config/content/contentimport'
-  defaults:
-    _form: 'Drupal\contentimport\Form\ContentImport'
-    _title: 'Content Import'
-  requirements:
-    _permission: 'administer site configuration'

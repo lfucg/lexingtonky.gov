@@ -1,4 +1,0 @@
-services:
-  taxonomy_menu.helper:
-    class: Drupal\taxonomy_menu\TaxonomyMenuHelper
-    arguments: ['@entity_type.manager', '@plugin.manager.menu.link']

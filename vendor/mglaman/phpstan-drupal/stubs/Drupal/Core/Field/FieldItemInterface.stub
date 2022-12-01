@@ -1,8 +1,0 @@
-<?php
-
-namespace Drupal\Core\Field;
-
-use Drupal\Core\TypedData\ComplexDataInterface;
-
-interface FieldItemInterface extends ComplexDataInterface {
-}

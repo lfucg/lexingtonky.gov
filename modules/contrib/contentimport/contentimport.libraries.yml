@@ -1,5 +1,0 @@
-common-styling:
-  version: 1.0.0
-  css:
-      theme:
-        css/custom.css: {}

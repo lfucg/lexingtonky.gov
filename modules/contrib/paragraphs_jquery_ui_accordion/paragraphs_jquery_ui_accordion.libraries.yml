@@ -1,9 +1,0 @@
-accordion:
-  version: 1.x
-  js:
-    js/paragraphs_jquery_ui_accordion.js: {}
-  dependencies:
-    - core/drupal
-    - core/jquery
-    - core/drupalSettings
-    - jquery_ui_accordion/accordion

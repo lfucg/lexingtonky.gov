@@ -1,8 +1,0 @@
-<?php
-
-namespace Drupal\Core\Field;
-
-use Drupal\Core\TypedData\Plugin\DataType\Map;
-
-abstract class FieldItemBase extends Map implements FieldItemInterface {
-}
