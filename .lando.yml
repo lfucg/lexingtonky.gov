@@ -1,19 +1,29 @@
 name: lexky-d8
 recipe: pantheon
 config:
+  webroot: web
+  xdebug: false
+  composer_version: '2.4.2'
   framework: drupal8
   site: lexky-d8
   id: 085efc9d-6f4f-4d02-a80b-9d5cf086a982
+events:
+  post-db-import:
+    - appserver: cd $LANDO_WEBROOT && drush cr --yes
+  post-pull:
+    - appserver: cd $LANDO_WEBROOT && drush updb --yes && drush cr --yes
 services:
   appserver:
     build_as_root:
       - apt-get update -y && apt-get install -y jq
+    run:
+      - cd $LANDO_MOUNT && composer install
   solr:
     type: solr:8
     portforward: true
     core: lexky
     config:
-      dir: sites/all/modules/search_api_solr/solr-conf/8.x
+      dir: web/sites/all/modules/search_api_solr/solr-conf/8.x
   nodejs:
     ssl: true
     sslExpose: true
@@ -21,15 +31,20 @@ services:
     type: 'node:14'
     overrides:
       image: node:14-buster
-    globals:
-      gulp-cli: latest
-    run:
-      - cd $LANDO_MOUNT/themes/custom/lex && npm i && gulp build
+    # globals:
+    #   gulp-cli: latest
+    # run:
+    #   - cd $LANDO_MOUNT/web/themes/custom/lex && npm i && gulp build
+  phpmyadmin:
+    type: phpmyadmin
 tooling:
   drush:
     service: appserver
-    cmd: drush --root=/app/docroot --uri=https://lexky-d8.lndo.site
+    cmd: drush --root=/app/web --uri=https://lexky-d8.lndo.site
   jq:
     service: appserver
   gulp:
     service: nodejs
+  terminus:
+    env:
+      TERMINUS_HIDE_GIT_MODE_WARNING: 1

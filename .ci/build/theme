@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -eo pipefail
+
+#
+# This script prepares the Drupal theme artifacts.
+# The theme css artifact directories will need
+# to be persisted to other jobs.
+#
+
+pushd web/themes/custom/apax_custom
+
+npm install -g gulp-cli
+npm install
+
+gulp build
+
+popd

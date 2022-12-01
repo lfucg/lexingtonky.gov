@@ -1,26 +1,23 @@
 {
-    "name": "my/project",
-    "description": "Project template for Drupal 8 projects with composer",
+    "name": "lfucg/lexingtonky.gov",
+    "description": "The city of Lexington's website",
     "type": "project",
     "license": "GPL-2.0-or-later",
-    "authors": [
+    "repositories": [
         {
-            "name": "",
-            "role": ""
-        }
-    ],
-    "repositories": {
-        "drupal": {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
         },
-        "asset-packagist": {
+        {
+            "type": "path",
+            "url": "upstream-configuration"
+        },
+        {
             "type": "composer",
             "url": "https://asset-packagist.org"
         }
-    },
+    ],
     "require": {
-        "php": "^5.5.9|>=7.0.8",
         "composer/installers": "^1.7",
         "cweagans/composer-patches": "^1.7",
         "drupal/addtoany": "^1.16",
@@ -36,6 +33,7 @@
         "drupal/composer_deploy": "^1.6",
         "drupal/contact_storage": "^1.1",
         "drupal/contentimport": "^9.3",
+        "drupal/core": "^9",
         "drupal/core-composer-scaffold": "^9",
         "drupal/core-recommended": "^9",
         "drupal/ctools": "^3.7",
@@ -75,34 +73,68 @@
         "drupal/views_accordion": "^2.0",
         "drupal/viewsreference": "^1.7",
         "drupal/workbench_moderation": "^1.6",
-        "drush/drush": "^10",
+        "drush/drush": "^11 || ^12",
         "grasmash/drupal-security-warning": "^1.1.1",
         "oomphinc/composer-installers-extender": "^2.0",
-        "wikimedia/composer-merge-plugin": "^2.0"
+        "wikimedia/composer-merge-plugin": "^2.0",
+        "pantheon-systems/quicksilver-pushback": "^2.1",
+        "drupal/iframe": "^2.20"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+        "squizlabs/php_codesniffer": "^3.7",
+        "phpunit/phpunit": "^9.5",
+        "behat/behat": "^3.11",
+        "behat/mink": "^1.10",
+        "behat/mink-extension": "^2.3",
+        "dmore/behat-chrome-extension": "^1.4",
+        "genesis/behat-fail-aid": "^3.7",
+        "jcalderonzumba/mink-phantomjs-driver": "^0.3.3",
+        "mikey179/vfsstream": "^1.6",
+        "drupal/coder": "^8.3",
+        "drupal/drupal-extension": "^4.2",
+        "drupal/drupal-driver": "^2.2",
+        "drush-ops/behat-drush-endpoint": "^9.4"
     },
     "config": {
-        "sort-packages": true,
-        "discard-changes": true,
-        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": false,
+        "platform": {
+            "php": "7.4"
+        },
         "allow-plugins": {
             "composer/installers": true,
             "cweagans/composer-patches": true,
             "drupal/core-composer-scaffold": true,
             "grasmash/drupal-security-warning": true,
             "oomphinc/composer-installers-extender": true,
-            "wikimedia/composer-merge-plugin": true
+            "wikimedia/composer-merge-plugin": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "conflict": {
         "drupal/drupal": "*"
     },
     "extra": {
+        "patches": [],
+        "drupal-scaffold": {
+            "locations": {
+                "web-root": "./web"
+            },
+            "allowed-packages": [
+                "pantheon-systems/drupal-integrations"
+            ],
+            "file-mapping": {
+                "[project-root]/.editorconfig": false,
+                "[project-root]/pantheon.upstream.yml": false,
+                "[project-root]/.gitattributes": false
+            }
+        },
         "enable-patching": true,
         "composer-exit-on-patch-failure": true,
         "patchLevel": {
             "drupal/core": "-p2"
         },
-        "patches": [],
         "installer-types": [
             "bower-asset",
             "npm-asset"
@@ -111,32 +143,38 @@
             "drush/Commands/{$name}": [
                 "type:drupal-drush"
             ],
-            "core": [
+            "web/core": [
                 "type:drupal-core"
             ],
-            "modules/contrib/{$name}": [
+            "web/modules/contrib/{$name}": [
                 "type:drupal-module"
             ],
-            "modules/custom/{$name}": [
+            "web/modules/custom/{$name}": [
                 "type:drupal-custom-module"
             ],
-            "profiles/contrib/{$name}": [
+            "web/profiles/contrib/{$name}": [
                 "type:drupal-profile"
             ],
-            "profiles/custom/{$name}": [
+            "web/profiles/custom/{$name}": [
                 "type:drupal-custom-profile"
             ],
-            "themes/contrib/{$name}": [
+            "web/themes/contrib/{$name}": [
                 "type:drupal-theme"
             ],
-            "themes/custom/{$name}": [
+            "web/themes/custom/{$name}": [
                 "type:drupal-custom-theme"
             ],
-            "libraries/{$name}": [
+            "web/libraries/{$name}": [
                 "type:drupal-library",
                 "type:bower-asset",
                 "type:npm-asset"
+            ],
+            "web/private/scripts/quicksilver/{$name}/": [
+                "type:quicksilver-script"
             ]
+        },
+        "build-env": {
+            "export-configuration": "drush config-export --yes"
         },
         "merge-plugin": {
             "include": [
@@ -145,6 +183,30 @@
             "replace": false,
             "ignore-duplicates": true
         }
+    },
+    "autoload": {
+        "classmap": [
+            "upstream-configuration/scripts/ComposerScripts.php"
+        ]
+    },
+    "scripts": {
+        "pre-update-cmd": [
+            "DrupalComposerManaged\\ComposerScripts::preUpdate"
+        ],
+        "upstream-require": [
+            "DrupalComposerManaged\\ComposerScripts::upstreamRequire"
+        ],
+        "unit-test": "echo 'No unit test step defined.'",
+        "lint": "find web/modules/custom web/themes/custom -name '*.php' -exec php -l {} \\;",
+        "code-sniff": [
+            "./vendor/bin/phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,info,txt,md --ignore=node_modules,bower_components,vendor ./web/modules/custom",
+            "./vendor/bin/phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,info,txt,md --ignore=node_modules,bower_components,vendor ./web/themes/custom",
+            "./vendor/bin/phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme,info,txt,md --ignore=node_modules,bower_components,vendor ./web/modules/custom",
+            "./vendor/bin/phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme,info,txt,md --ignore=node_modules,bower_components,vendor ./web/themes/custom"
+        ]
+    },
+    "scripts-descriptions": {
+        "upstream-require": "Add a dependency to an upstream. See https://pantheon.io/docs/create-custom-upstream for information on creating custom upstreams."
     },
     "minimum-stability": "dev",
     "prefer-stable": true

@@ -1,6 +1,0 @@
-iframe:
-  version: VERSION
-  js:
-    iframe.js: {}
-  dependencies:
-    - core/jquery
