@@ -15,6 +15,21 @@
         {
             "type": "composer",
             "url": "https://asset-packagist.org"
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "dropzone/dropzone",
+                "version": "5.7.2",
+                "type": "drupal-library",
+                "extra": {
+                    "installer-name": "dropzone"
+                },
+                "dist": {
+                    "url": "https://github.com/dropzone/dropzone/archive/v5.7.2.zip",
+                    "type": "zip"
+                }
+            }
         }
     ],
     "require": {
@@ -78,7 +93,8 @@
         "oomphinc/composer-installers-extender": "^2.0",
         "wikimedia/composer-merge-plugin": "^2.0",
         "pantheon-systems/quicksilver-pushback": "^2.1",
-        "drupal/iframe": "^2.20"
+        "drupal/iframe": "^2.20",
+        "dropzone/dropzone": "^5.7"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",

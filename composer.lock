@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a7419fbb6a45abb8de82855886df61d6",
+    "content-hash": "c3544eb3d6595b31116a74cc344fd058",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1916,6 +1916,18 @@
             },
             "abandoned": "roave/better-reflection",
             "time": "2022-05-31T18:46:25+00:00"
+        },
+        {
+            "name": "dropzone/dropzone",
+            "version": "5.7.2",
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/dropzone/dropzone/archive/v5.7.2.zip"
+            },
+            "type": "drupal-library",
+            "extra": {
+                "installer-name": "dropzone"
+            }
         },
         {
             "name": "drupal/addtoany",
