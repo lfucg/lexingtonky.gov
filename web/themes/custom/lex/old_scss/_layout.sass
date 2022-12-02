@@ -1,0 +1,455 @@
+*
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+  box-sizing: border-box // IE 6 had one thing right at least.
+  padding: 0
+  margin: 0
+
+// Primary Structure Rules (In nesting order, so html, then body ... )
+html
+  font-family: $font-sans
+  @media (min-width: $screen-large-min)
+    font-size: 1.15vmax
+
+body
+  color: $color-secondary-4
+
+  > section
+    @include base_padding
+
+main
+  padding: $base_gutter
+  @include base_clear
+
+.search-page-main-body
+  padding: 5% 10% 2% 10%
+// Blocks
+address
+  font-style: normal
+  padding-left: 1em
+  border-left: 0.5em solid $color-secondary-1
+  line-height: 1.25
+
+blockquote
+  @include base_padding
+
+dl
+  margin-top: 2em
+  display: table
+  width: 100%
+  border-spacing: 1em
+  div
+    width: 100%
+    display: table-row
+    margin-bottom: 1em
+dt
+  font-weight: bold
+  text-align: right
+  margin-right: 2em
+  display: table-cell
+  width: 40%
+  max-width: 20em
+dd
+  display: table-cell
+  vertical-align: top
+
+
+@media (max-width: $screen-phone-max)
+  dl, dl div, dt, dd
+    display: block
+    width: 100%
+    text-align: left
+    border-spacing: 0
+
+hr
+  border: none
+  border-top: 1px solid $color-secondary-4
+  margin: 2em auto
+
+img
+  display: block
+
+nav ul
+  list-style: none
+
+table
+  border: 1px solid $color-primary-5
+  width: 100%
+  border-spacing: 0
+  border-collapse: collapse
+
+th
+  background: $color-primary-5
+  color: #fff
+  font-weight: bold
+
+th, td
+  padding: 0.5em
+
+tr:nth-child(even) td
+  background: $color-primary-1
+
+.lex-block
+  @include base_clear
+  margin-bottom: 2em
+
+.addtoany--block
+  margin-bottom: 1em
+
+.lex-location-contact ul.usa-unstyled-list
+  margin-top: 1em
+  li
+    margin: 0
+
+// Inline
+a
+  color: $color-primary-4
+
+sup
+  vertical-align: top
+  font-size: 0.4em
+
+// Forms
+button,
+input[type=text],
+input[type=email],
+input[type=number],
+input[type=tel],
+input[type=search],
+input[type=submit],
+input[type=password],
+textarea
+  -webkit-appearance: none
+  display: block
+  font-size: 1em
+  border: 1px solid $color-secondary-2
+  margin: 0.5em 0 1em
+  max-width: 100%
+
+button, input[type=submit]
+  padding: 0.25em
+  background: #fff
+
+input[type=text],
+input[type=email],
+input[type=number],
+input[type=tel],
+input[type=search],
+input[type=password]
+  line-height: 1.5
+  padding: 0.25em 0.5em
+
+label, legend
+  font-weight: bold
+  margin: 0
+
+.form-item, .form-actions
+  margin-top: 1em
+
+// Region specific Rules
+address span
+  display: block
+
+article
+  h2
+    margin-top: 2em
+
+  > time
+    margin: -1em 0 1em
+    display: block
+    font-style: italic
+    border-top: 1px solid $color-secondary-2
+    padding-top: 0.25em
+
+main
+  display: flex
+  justify-content: space-between
+  align-items: stretch
+
+  img
+    max-width: 100%
+    height: auto
+    margin-left: auto
+    margin-right: auto
+
+  iframe
+    width: 100%
+
+  div > section:first-child > div:first-child > h2:first-child
+    margin-top: 0
+
+  nav
+    line-height: 1.5
+  > div:first-child
+    float: left
+    width: 65%
+    margin-right: 5%
+
+  ul,ol
+    margin-left: 1em
+
+  .lex-aside-list, .lex-aside-list ul
+    margin-left: 0
+
+  > div:last-child
+    float: left
+    width: 30%
+
+  > div:first-child:last-child
+    float: none
+    width: 100%
+    margin-right: 0
+
+  li
+    line-height: 1.5
+    margin-bottom: 0.5em
+
+  @media (max-width: $screen-phablet-max)
+    flex-flow: column nowrap
+    >div:first-child:not(:last-child)
+      border-bottom: 1px solid $color-secondary-2
+      margin-bottom: 2em
+
+    >div:first-child, >div:last-child
+      float: none
+      width: 100%
+
+#block-pagetitle
+  margin: 0 0 2rem 0
+  padding: 0 !important
+
+.lex-aside-list, .usa-unstyled-list
+  list-style: none
+  line-height: 1.5
+  a
+    text-decoration: none
+
+  li:last-child
+    margin-bottom: 1em
+
+  li.lex-location-contact
+    margin-bottom: 0
+
+.lex-region-content
+  img
+    max-width: 100%
+
+  @media (min-width: $screen-phablet-min)
+    .align-left, .align-right
+      max-width: 50%
+      margin: 0 2em 1em 2em
+
+    .align-left
+      float: left
+      margin-left: 0
+
+    .align-right
+      float: right
+      margin-right: 0
+
+    figure img
+      margin: 0
+
+  figcaption
+    text-align: center
+
+@media (max-width: $screen-phone-max)
+  .lex-region-content
+    figure, img
+      &.align-left, &.align-right
+        float: none
+      margin: 1em 0
+
+.lex-hide-initially
+  display: none
+
+.lex-event-list ol
+  margin-left: 0
+
+// Article listings.
+.article
+  @include base_clear
+  padding-left: 36%
+  margin-bottom: 1em
+
+  > div:first-child
+    float: left
+    width: 51%
+    margin: 0 0 0 -56%
+
+  img
+    width: 100%
+    height: auto
+    border: 1px solid $color-secondary-3
+
+  @media (max-width: $screen-phone-max)
+    padding: 0
+    width: 100%
+
+    >div:first-child
+      float: none
+      width: 100%
+      margin: 0
+
+.paragraph
+  margin-top: 2em
+  clear: both
+  @include base_clear
+
+.lex-newsarticle-end
+  text-align: center
+  margin: 1em
+
+.lex-card-fulldate
+  margin-bottom: 1em
+  font-size: 0.9em
+
+.lex-accordion
+  ul
+    list-style: none
+
+  >ul li:first-child p
+    margin-bottom: 0
+
+.lex-accordion-content
+  &[aria-hidden="true"]
+    display: none
+
+#collapsible-0
+  margin-top: 2em
+
+.lex-traffic-notice-highlight
+  background: $lex-alert-warning
+
+.lex-notice
+  font-style: italic
+
+.lex-region-breadcrumb
+  padding: 0
+
+.lex-breadcrumb, #block-lex-home-views-block-taxonomy-top-level-block-1
+  @include base_padding
+  background: $color-secondary-1
+
+.lex-breadcrumb
+  ol
+    list-style: none
+    li
+      display: inline-block
+      margin-bottom: 0
+      &:after
+        content: ' / '
+      &:last-child:after
+        content: ''
+
+  .lex-aside-list li:last-child, .usa-unstyled-list li:last-child
+    margin-bottom: 0
+
+.bundle-landing_page .lex-breadcrumb
+  display: none
+
+.lex-notice
+  padding-left: 1em
+  border-left: 0.5em solid $color-secondary-1
+  margin-bottom: 1em
+
+// Event lists
+.lex-event-list
+  ol
+    list-style: none
+
+  h3
+    @include base_bottom_rule
+
+  h4
+    font-size: 1.2em
+    margin-bottom: 0
+
+  >div
+    margin-bottom: 2em
+
+// Google translate
+#google_translate_element
+  .goog-te-gadget-simple
+    border: none
+
+    a
+      font-family: $font-sans
+      font-size: 1rem
+      color: $color-primary-4
+
+  img
+    display: none
+
+iframe.goog-te-menu-frame
+  box-shadow: none
+
+body > header > #google_translate_element
+  float: right
+  margin-left: auto
+  align-self: center
+
+
+/* Final order stuff, may move later*/
+table
+  .views-field-field-final-order-date,
+  .file--mime-application-pdf,
+  .file--application-pdf
+    a
+      height: 1em
+      width: 1em
+      display: inline-block
+      margin-left: 1em
+      text-indent: -1000vw
+      position: relative
+      &:before
+        content: "\f002"
+        display: block
+        position: absolute
+        text-indent: 0
+        font-family: 'FontAwesome'
+        font-size: 1em
+        line-height: 1
+        color: $color-secondary-4
+
+  .file--mime-application-pdf, .file--application-pdf
+    a
+      font-size: 1.5em
+      &:before
+        content: "\f1c1"
+
+.final-order
+  position: relative
+  width: 100%
+  padding-top: 50%
+  border: 1px solid $color-secondary-4
+
+  iframe
+    top: 0
+    left: 0
+    position: absolute
+    height: 100%
+    width: 100%
+    border: none
+
+  @media (max-width: $screen-phablet-max)
+    display: none
+
+/* Editor bar for logged in users */
+.lex-region-breadcrumb ul.tabs
+  padding: 0 5%
+  background: $color-primary-2
+  display: flex
+
+  .lex-button, .lex-calltoaction,
+  .lex-aside-list li:last-child, .usa-unstyled-list li:last-child
+    margin-bottom: 0
+
+  li
+    border-right: 1px solid #fff
+
+    &:first-child
+      border-left: 1px solid #fff
+
+.no-hours li.lex-card-subtitle
+  display: none

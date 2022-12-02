@@ -1,0 +1,84 @@
+{
+    "extends": ["stylelint-config-standard-scss"],
+    "plugins": [
+      "stylelint-order"
+    ],
+    "overrides": [{
+      "customSyntax": "postcss-scss",
+      "files": ["./scss/**/*.scss"],
+      "ignoreFiles": ["node_modules/**/*.css"],
+      "rules": {
+        "scss/no-global-function-names": null,
+        "scss/operator-no-newline-after": null,
+        "selector-class-pattern": null,
+        "declaration-colon-newline-after": null,
+        "no-descending-specificity": null,
+        "order/properties-alphabetical-order": true,
+        "declaration-empty-line-before": "never",
+    
+        "color-hex-case": "lower",
+        "indentation": 2,
+        "max-empty-lines": 1,
+        "max-line-length": 120,
+        "color-named": "never",
+        "color-no-invalid-hex": true,
+    
+        "font-family-name-quotes": "always-unless-keyword",
+        "font-weight-notation": "named-where-possible",
+    
+        "number-leading-zero": "never",
+        "number-no-trailing-zeros": true,
+        "no-eol-whitespace": true,
+    
+        "no-missing-end-of-source-newline": true,
+        "string-no-newline": true,
+        "string-quotes": "single",
+    
+        "length-zero-no-unit": true,
+    
+        "time-min-milliseconds": 50,
+    
+        "unit-case": "lower",
+        "unit-no-unknown": true,
+    
+        "value-keyword-case": "lower",
+        "value-no-vendor-prefix": true,
+    
+        "value-list-comma-newline-after": "always-multi-line",
+    
+        "shorthand-property-no-redundant-values": true,
+    
+        "property-case": "lower",
+        "property-no-unknown": true,
+        "property-no-vendor-prefix": true,
+    
+        "declaration-bang-space-after": "never",
+        "declaration-bang-space-before": "always",
+        "declaration-colon-space-after": "always",
+        "declaration-colon-space-before": "never",
+        "declaration-no-important": null,
+    
+        "declaration-block-no-duplicate-properties": true,
+        "declaration-block-no-redundant-longhand-properties": [true, {
+          "ignoreShorthands": ["grid-column", "grid-template"]
+        }],
+        "declaration-block-semicolon-newline-after": "always",
+        "declaration-block-semicolon-newline-before": "never-multi-line",
+        "declaration-block-semicolon-space-after": "never-single-line",
+        "declaration-block-semicolon-space-before": "never",
+        "declaration-block-trailing-semicolon": "always",
+    
+        "block-closing-brace-empty-line-before": "never",
+        "block-closing-brace-newline-after": ["always", {
+          "ignoreAtRules": ["if", "else"]
+        }],
+        "block-closing-brace-newline-before": "always",
+        "block-no-empty": true,
+        "block-opening-brace-newline-after": "always-multi-line",
+        "block-opening-brace-newline-before": "never-single-line",
+        "block-opening-brace-space-after": "never-single-line",
+        "block-opening-brace-space-before": "always"
+      }
+    }]
+  }
+    

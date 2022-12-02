@@ -1,5 +1,0 @@
-name: Diff
-type: module
-description: Shows changes between content revisions.
-core_version_requirement: ^9.3 || ^10
-configure: diff.general_settings

@@ -1,7 +1,0 @@
-services:
-  ckeditor_media_embed:
-    class: Drupal\ckeditor_media_embed\Embed
-    arguments: ['@http_client', '@unrouted_url_assembler', '@request_stack', '@messenger', '@config.factory', '@path.current', '@module_handler']
-  ckeditor_media_embed_cli_commands:
-    class: Drupal\ckeditor_media_embed\Command\CliCommandWrapper
-    arguments: ['@plugin.manager.ckeditor.plugin', '@library.discovery', '@http_client', '@config.factory']

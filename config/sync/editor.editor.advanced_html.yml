@@ -44,10 +44,6 @@ settings:
   plugins:
     stylescombo:
       styles: 'a.lex-calltoaction|Call to action'
-    language:
-      language_list: un
-    autoembed:
-      status: ''
 image_upload:
   status: true
   scheme: public

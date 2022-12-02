@@ -1,5 +1,0 @@
-draggableviews:
-  js:
-    js/draggableviews.js: {}
-  dependencies:
-    - core/jquery

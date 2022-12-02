@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * @file
+ * Contains lex_custom.module.
+ */
+
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Breadcrumb\Breadcrumb;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Link;
+
+/**
+ * Implements hook_form_alter().
+ */
+function lex_custom_form_alter(&$form, FormStateInterface &$form_state, $form_id) {
+  $form['field_keywords']['widget']['add_more']['#value'] = t('Add Another Keyword');
+}
+
+/**
+ * Implements hook_system_breadcrumb_alter().
+ */
+function lex_custom_system_breadcrumb_alter(Breadcrumb &$breadcrumb, RouteMatchInterface $route_match, array $context) {
+  // Append the current page title to the breadcrumb for non-admin routes.
+  if ($breadcrumb && !\Drupal::service('router.admin_context')->isAdminRoute()) {
+    $title = \Drupal::service('title_resolver')->getTitle(\Drupal::request(), $route_match->getRouteObject());
+    if (!empty($title)) {
+      $breadcrumb->addLink(Link::createFromRoute($title, '<none>'));
+    }
+  }
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function lex_custom_update_9401() {
+  // https://www.drupal.org/node/3034742.
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $entity_type_manager->clearCachedDefinitions();
+
+  $entity_type_ids = [];
+  $change_summary = \Drupal::service('entity.definition_update_manager')->getChangeSummary();
+  foreach ($change_summary as $entity_type_id => $change_list) {
+    $entity_type = $entity_type_manager->getDefinition($entity_type_id);
+    \Drupal::entityDefinitionUpdateManager()->installEntityType($entity_type);
+    $entity_type_ids[] = $entity_type_id;
+  }
+
+  return t("Installed/Updated the entity type(s): @entity_type_ids", [
+    '@entity_type_ids' => implode(', ', $entity_type_ids),
+  ]);
+}
+
+/**
+ * Create moderation_state column for taxonomy terms.
+ */
+function lex_custom_update_9402() {
+  $field_storage_definition = BaseFieldDefinition::create('string')
+    ->setLabel(t('Moderation state'))
+    ->setDescription(t('Moderation state'));
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('moderation_state', 'taxonomy_term', 'workbench_moderation', $field_storage_definition);
+}

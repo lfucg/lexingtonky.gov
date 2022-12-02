@@ -1,7 +1,0 @@
-<?php
-
-namespace Drupal\Core\Entity;
-
-interface EntityTypeInterface {
-
-}

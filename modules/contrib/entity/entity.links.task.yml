@@ -1,2 +1,0 @@
-entity.entity_tasks:
-  deriver: Drupal\entity\Plugin\Derivative\EntityTasksDeriver

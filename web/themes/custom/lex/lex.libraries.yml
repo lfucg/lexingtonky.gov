@@ -1,0 +1,56 @@
+global-css:
+  css:
+    theme:
+      dist/main.min.css: { minified: true }
+      dist/styles.min.css: { minified: true }
+
+global-js:
+  js:
+    js/list.js: {}
+    js/scripts.js: {}
+    js/leaflet.js: {}
+    js/esri-leaflet.js: {}
+    js/browse-columns.js: {}
+    js/webdesignstandards-accordion.js: {}
+    js/lex-geocoder--councilmembers.js: {}
+    js/takeover-navigation.js: {}
+    js/internal-search-block.js: {}
+    js/cards.js: {}
+    # js/accordion.js: {}
+    js/lex-cal.js: {}
+    js/search.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.ui.autocomplete
+
+# bootstrap_cdn:
+#   js:
+#     //cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js: {}
+#     //cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js: {}
+
+#   css:
+#     component:
+#       //cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css": {}
+
+lex-sidenav-list:
+  js:
+    js/lex-sidenav-list.js: {}
+  dependencies:
+    - core/jquery
+
+lex-traffic:
+  js:
+    js/papaparse.min.js: {}
+    js/moment.js: {}
+    js/lex-traffic-ticker.js: {}
+  dependencies:
+    - core/jquery
+    - core/underscore
+
+lex-neighborhood-associations:
+  js:
+    js/lex-neighborhood-associations.js: {}
+
+lex-join-police:
+  js:
+    js/join-police.js: {}
