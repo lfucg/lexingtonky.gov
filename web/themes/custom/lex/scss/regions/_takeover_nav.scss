@@ -35,7 +35,7 @@ div.fade, div.search-fade {
 .navigation--top-level {
   color: white;
   display: inline-block;
-  overflow: scroll !important;
+  // overflow: scroll !important;
   width: 100%;
   .level-1 {
     cursor: pointer;
@@ -43,7 +43,7 @@ div.fade, div.search-fade {
     padding: 15px 15px 5px;
     color: color(white);
     border:  1px solid transparent;
-    overflow: scroll !important;
+    // overflow: scroll !important;
     &:hover {
       border: 1px solid color(yellow);
       color: color(yellow) !important;

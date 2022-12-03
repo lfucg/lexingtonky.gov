@@ -95,7 +95,8 @@
         "wikimedia/composer-merge-plugin": "^2.0",
         "pantheon-systems/quicksilver-pushback": "^2.1",
         "drupal/iframe": "^2.20",
-        "dropzone/dropzone": "^5.7"
+        "dropzone/dropzone": "^5.7",
+        "twbs/bootstrap": "<5.0"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",

@@ -74,7 +74,7 @@ gulp.task('watch', function(){
 });
 
 /**
- * Default task, running just `gulp` will 
+ * Default task, running just `gulp` will
  * Watch scss/js files for changes & recompile
  * Clear cache when Drupal related files are changed
  */
