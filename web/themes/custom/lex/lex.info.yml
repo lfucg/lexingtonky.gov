@@ -7,7 +7,7 @@ core_version_requirement: ^8 || ^9
 libraries:
   - lex/global-css
   - lex/global-js
-  - lex/bootstrap_cdn
+  - lex/bootstrap
 # Remove stylesheets.
 ckeditor_stylesheets:
   - dist/styles.min.css

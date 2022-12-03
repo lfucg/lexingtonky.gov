@@ -1,0 +1,39 @@
+.gtranslate .modal .close {
+	background-color: color(dark-blue) !important;
+	box-shadow: none;
+	color: white !important;
+	height: 100%;
+	opacity: 1;
+	outline: none !important;
+
+	span {
+		font-weight: 100;
+		font-size: 45px !important;
+	}
+
+	&:hover {
+		background-color: unset;
+		border-bottom: 1px solid color(yellow);
+		color: color(yellow) !important;
+		opacity: 1;
+		text-decoration: none;
+	}
+}
+
+.gtranslate .btn {
+	background-color: unset;
+	border-radius: 0;
+	color: white !important;
+	font-size: .8rem;
+	font-weight: unset;
+	margin: 0;
+	outline: none;
+	padding: 0;
+	transition: none;
+	&:hover {
+		background-color: unset;
+		border-bottom: 1px solid color(yellow);
+		color: color(yellow) !important;
+		text-decoration: none;
+	}
+}

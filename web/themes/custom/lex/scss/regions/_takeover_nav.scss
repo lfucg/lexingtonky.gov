@@ -1,12 +1,12 @@
 #takeoverNav {
   @include rgba-background(color(dark-blue), 0.9);
-  height: 100%;
+  height: 100vh;
   overflow: hidden;
   position: absolute;
   right: -40%;
   transition: all 1000ms;
   width: 0px;
-  z-index: 1000;
+  z-index: 999;
 }
 div.fade, div.search-fade {
   @include rgba-background(#000, 0.5);
@@ -35,6 +35,7 @@ div.fade, div.search-fade {
 .navigation--top-level {
   color: white;
   display: inline-block;
+  // overflow: scroll !important;
   width: 100%;
   .level-1 {
     cursor: pointer;
@@ -42,6 +43,7 @@ div.fade, div.search-fade {
     padding: 15px 15px 5px;
     color: color(white);
     border:  1px solid transparent;
+    // overflow: scroll !important;
     &:hover {
       border: 1px solid color(yellow);
       color: color(yellow) !important;

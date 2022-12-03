@@ -5,7 +5,7 @@ dependencies:
   config:
     - views.view.front_page_news
   module:
-    - node
+    - ctools
     - views
   theme:
     - lex

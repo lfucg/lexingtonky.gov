@@ -10,6 +10,7 @@
     {% else %}
       <ul>
     {% endif %}
+    <li>{{ drupal_block('gtranslate_block', wrapper=false) }}</li>
     {% for item in items %}
       <li{{ item.attributes }}>
         {{ link(item.title, item.url, { 'class':['dark-bg', 'ml-3 ml-xs-1'] }) }}
