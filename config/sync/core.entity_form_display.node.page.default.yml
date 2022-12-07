@@ -22,7 +22,6 @@ dependencies:
     - image.style.thumbnail
     - node.type.page
   module:
-    - chosen_field
     - file
     - iframe
     - image
@@ -107,7 +106,7 @@ content:
       use_details: true
     third_party_settings: {  }
   field_office_to_contact:
-    type: entity_reference_autocomplete
+    type: entity_reference_autocomplete_tags
     weight: 7
     region: content
     settings:
@@ -139,10 +138,14 @@ content:
       default_paragraph_type: ''
     third_party_settings: {  }
   field_related_departments:
-    type: chosen_select
+    type: entity_reference_autocomplete_tags
     weight: 8
     region: content
-    settings: {  }
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_related_documents:
     type: file_generic
@@ -203,6 +206,11 @@ content:
       match_limit: 10
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  url_redirects:
+    weight: 50
+    region: content
+    settings: {  }
     third_party_settings: {  }
 hidden:
   body: true

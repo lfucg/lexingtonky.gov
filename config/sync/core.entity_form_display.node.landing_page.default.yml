@@ -46,16 +46,22 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
   field_lex_site_nav:
-    type: options_select
+    type: entity_reference_autocomplete
     weight: 7
     region: content
-    settings: {  }
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_metatags:
     type: metatag_firehose
     weight: 9
     region: content
-    settings: {  }
+    settings:
+      sidebar: true
+      use_details: true
     third_party_settings: {  }
   field_related_departments:
     type: entity_reference_autocomplete_tags
@@ -111,5 +117,10 @@ content:
       match_limit: 10
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  url_redirects:
+    weight: 50
+    region: content
+    settings: {  }
     third_party_settings: {  }
 hidden: {  }

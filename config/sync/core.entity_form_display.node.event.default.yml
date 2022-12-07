@@ -21,7 +21,6 @@ dependencies:
     - field.field.node.event.field_show_on_calendar
     - node.type.event
   module:
-    - chosen_field
     - datetime
     - file
     - link
@@ -104,10 +103,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_locations:
-    type: options_select
+    type: entity_reference_autocomplete
     weight: 1
     region: content
-    settings: {  }
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_media_contact:
     type: entity_reference_paragraphs
@@ -125,7 +128,9 @@ content:
     type: metatag_firehose
     weight: 20
     region: content
-    settings: {  }
+    settings:
+      sidebar: true
+      use_details: true
     third_party_settings: {  }
   field_recurring_event:
     type: options_select
@@ -134,10 +139,14 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_related_departments:
-    type: chosen_select
+    type: entity_reference_autocomplete_tags
     weight: 2
     region: content
-    settings: {  }
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_related_documents:
     type: file_generic
@@ -206,5 +215,10 @@ content:
       match_limit: 10
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  url_redirects:
+    weight: 50
+    region: content
+    settings: {  }
     third_party_settings: {  }
 hidden: {  }
