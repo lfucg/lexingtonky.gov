@@ -68,10 +68,14 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
   field_lex_site_nav:
-    type: options_select
+    type: entity_reference_autocomplete
     weight: 7
     region: content
-    settings: {  }
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_metatags:
     type: metatag_firehose
@@ -82,10 +86,14 @@ content:
       use_details: true
     third_party_settings: {  }
   field_office_to_contact:
-    type: options_select
+    type: entity_reference_autocomplete_tags
     weight: 5
     region: content
-    settings: {  }
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_organization_taxonomy_term:
     type: entity_reference_autocomplete
