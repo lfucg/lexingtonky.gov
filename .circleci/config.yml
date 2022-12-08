@@ -210,30 +210,30 @@ jobs:
   #         path: /tmp/artifacts
   #         destination: artifacts
 
-  visual_regression_test:
-    <<: *defaults
-    docker:
-      - image: backstopjs/backstopjs:4.1.9
-    steps:
-      - checkout
+  # visual_regression_test:
+  #   <<: *defaults
+  #   docker:
+  #     - image: backstopjs/backstopjs:4.1.9
+  #   steps:
+  #     - checkout
 
-      - attach_workspace:
-          at: /tmp/workspace
+  #     - attach_workspace:
+  #         at: /tmp/workspace
 
-      - run: cp /tmp/workspace/bash_env.txt $BASH_ENV
-      - run: echo "export CI_BUILD_URL='${CIRCLE_BUILD_URL}'" >> $BASH_ENV
-      - run: echo "export CI_NODE_INDEX='${CIRCLE_NODE_INDEX}'" >> $BASH_ENV
-      - run: echo "export CI_REPOSITORY_URL='${CIRCLE_REPOSITORY_URL}'" >> $BASH_ENV
-      - run: echo "export ARTIFACTS_DIR_URL='https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/artifacts'" >> $BASH_ENV
-      - run: source $BASH_ENV
+  #     - run: cp /tmp/workspace/bash_env.txt $BASH_ENV
+  #     - run: echo "export CI_BUILD_URL='${CIRCLE_BUILD_URL}'" >> $BASH_ENV
+  #     - run: echo "export CI_NODE_INDEX='${CIRCLE_NODE_INDEX}'" >> $BASH_ENV
+  #     - run: echo "export CI_REPOSITORY_URL='${CIRCLE_REPOSITORY_URL}'" >> $BASH_ENV
+  #     - run: echo "export ARTIFACTS_DIR_URL='https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/artifacts'" >> $BASH_ENV
+  #     - run: source $BASH_ENV
 
-      - run:
-          name: visual regression test
-          command: ./.ci/test/visual-regression/run
+  #     - run:
+  #         name: visual regression test
+  #         command: ./.ci/test/visual-regression/run
 
-      - store_artifacts:
-          path: /tmp/artifacts
-          destination: artifacts
+  #     - store_artifacts:
+  #         path: /tmp/artifacts
+  #         destination: artifacts
 
   composer_lock_updater:
     <<: *defaults
@@ -265,14 +265,14 @@ workflows:
           requires:
             - static_tests
             - build_theme
-      - visual_regression_test:
-          requires:
-            - configure_env_vars
-            - deploy_to_pantheon
-          filters:
-            branches:
-              ignore:
-                - master
+      # - visual_regression_test:
+      #     requires:
+      #       - configure_env_vars
+      #       - deploy_to_pantheon
+      #     filters:
+      #       branches:
+      #         ignore:
+      #           - master
       # - behat_test:
       #     requires:
       #       - deploy_to_pantheon
