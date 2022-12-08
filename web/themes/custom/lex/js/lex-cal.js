@@ -1,72 +1,42 @@
 (function () {
-    var $ = jQuery;
-
-    $('#sidebar-calendar').css('display', 'inline-block');
-
-    var combinedHeight= '';
-    var combinedTopMarg= '';
-    var height= '';
-    var paddingTop = '';
-    var paddingBottom= '';
-    var feedbackHeight = '';
-    var feedbackPaddingTop = '';
-    var feedbackPaddingBottom = '';
-    var feedbackTotal = '';
-    var toolbarHeight = '';
-    var adminHeight = '';
-
+    var $ = jQuery;    
+    var calendarDualBreakpoint = 767;
     var listMode = '';
     var monthMode = '';
     var dualMode =  '';
-
     var num = '';
 
-    function heightCalc() {
-        height = parseInt($('main').height());
-        paddingTop = parseInt($('main').css('padding-top'));
-        paddingBottom = parseInt($('main').css('padding-bottom'));
-        feedbackHeight = parseInt($('.lex-region-feedback').height());
-        feedbackPaddingTop = parseInt($('.lex-region-feedback').css('padding-top'));
-        feedbackPaddingBottom = parseInt($('.lex-region-feedback').css('padding-bottom'))
-        feedbackTotal = feedbackHeight + feedbackPaddingTop + feedbackPaddingBottom;
+    function sidebarHeightCalc() {
+        if ($(window).width() >= calendarDualBreakpoint) {
+            $('.calendars-container').height($('.lex-region-title').outerHeight(true) + $('#filters').outerHeight(true) + $('#calendar-container').outerHeight(true) + $('.lex-region-feedback').outerHeight(true));
+            // $('#sidebar-calendar').height($('main').height() + $('.lex-region-feedback').height());
+            // $('#sidebar-calendar').offset({top: $('.lex-region-feedback').postion.top});
+            // $('#calendar').height($('.fc-view-container').height());
+            
+            
+            // $('.lex-region-feedback').prepend($('.mobile-switch'));
 
-        if (parseInt($('#toolbar-bar').height()) > 0) {
-            toolbarHeight = parseInt($('#toolbar-bar').height());
-        } else {
-            toolbarHeight = 0;
-        }
-
-        if (parseInt($('#toolbar-item-administration-tray').height()) > 0) {
-            adminHeight = parseInt($('#toolbar-item-administration-tray').height());
-        } else {
-            adminHeight = 0;
-        }
-
-        if (parseInt($('.lex-alertcontainer-warning').height()) > 0) {
-            alertHeight = parseInt($('.lex-alertcontainer-warning').parent().height());
-        } else {
-            alertHeight = 0;
-        }
-
-        combinedHeight = height + feedbackTotal + paddingTop + paddingBottom;
-        combinedTopMarg = parseInt($('.lex-region-breadcrumb').height() + $('.sticky-top').height() + $('#block-lex-headerquicklinks').height() + toolbarHeight + adminHeight + alertHeight);
-
-        $('#sidebar-calendar').css({
-            'height': combinedHeight + 'px',
-            'margin-top': combinedTopMarg + 'px'
-        });
-        $('.fc-scroller').css('max-height', combinedHeight + 'px');
+        } 
+        // else {
+        //     $('.calendars-container').height($('.lex-region-title').outerHeight(true) + $('.mobile-switch').outerHeight(true) + $('#filters').outerHeight(true) + $('#calendar-container').outerHeight(true) + $('.lex-region-feedback').outerHeight(true));
+        //     $('#sidebar-calendar').height($('.calendars-container').height() - ($('.lex-region-title').outerHeight(true) + $('.mobile-switch').outerHeight(true) + $('#filters').outerHeight(true) + $('.lex-region-feedback').outerHeight(true)));
+        // }
     }
 
-    $(window).on('load', function () {
-        //get the natural page height -set it in variable above.
 
-        if ($(window).width() >= 767) {
-            dualMode = true;
-            heightCalc();
+    $(window).on('load', function () { 
+        //get the natural page height -set it in variable above.
+        $('#main-calendar').prepend($('.lex-region-title'));
+        $('main').append($('.lex-region-feedback'));
+        if ($(window).width() >= calendarDualBreakpoint) {
+            dualMode = true;   
+            modeCheck();         
         }else {
             monthMode = true;
-            $('#sidebar-calendar').css('visibility', 'hidden');
+            modeCheck();
+            // $('#sidebar-calendar').css('visibility', 'hidden');
+            // $('#sidebar-calendar').css('height', '0');
+            // $('.lex-breadcrumb-wrapper')
         }
     });
 
@@ -74,7 +44,7 @@
         listMode = true;
         monthMode = false;
         dualMode = false;
-        
+
         modeCheck();
     });
 
@@ -86,7 +56,8 @@
         modeCheck();
     });
 
-    function modeCheck() {
+    function modeCheck() {  
+        sidebarHeightCalc();      
         if (monthMode === true) {
             $('.month-switch').css({
                 'background-color': 'white',
@@ -97,8 +68,11 @@
                 'color': '#353535'
             });
             $('#sidebar-calendar').css('visibility', 'hidden');
+            $('#sidebar-calendar').css('height', '0');
+
             $('#calendar').css('display', 'block');
-            $('.calendar-key').css('display', 'block');
+            $('.calendar-key').css('display', 'flex');
+            $('.calendars-container').height($('.lex-region-title').outerHeight(true) + $('.mobile-switch').outerHeight(true) + $('#filters').outerHeight(true) + $('#calendar-container').outerHeight(true) + $('.lex-region-feedback').outerHeight(true));
         }else if (listMode == true) {
             $('.list-switch').css({
                 'background-color': 'white',
@@ -110,44 +84,47 @@
             });
             $('#sidebar-calendar').css({
                 'display': 'inline-block',
-                'visibility': 'visible'
-            });
-            $('.sidecal-col').css({
-                'height': 'auto',
+                'visibility': 'visible',
+                // 'height': 'auto'
             });
             $('#calendar').css('display', 'none');
             $('.calendar-key').css('display', 'none');
+            $('#sidebar-calendar').height($('.calendars-container').height() - ($('.lex-region-title').outerHeight(true) + $('.mobile-switch').outerHeight(true) + $('#filters').outerHeight(true) + $('.lex-region-feedback').outerHeight(true)));
         }else if (dualMode == true) {
             $('#calendar').css('display', 'block');
             $('#sidebar-calendar').css('display', 'block');
             $('#sidebar-calendar').css('visibility', 'visible');
+            $('.calendar-key').css('display', 'flex');
+            $('#sidebar-calendar').height($('.calendars-container').height() + $('.lex-region-feedback').outerHeight(true));
+            $('.calendars-container').height($('.lex-region-title').outerHeight(true) + $('#filters').outerHeight(true) + $('#calendar-container').outerHeight(true) + $('.lex-region-feedback').outerHeight(true));
         }
+        
     }
 
-
     $(window).resize(function () {
-        if ($(window).width() >= 767) {
-            dualMode = true;
-            monthMode = false;
-            listMode = false;
-            modeCheck();
-            heightCalc();
+        modeCheck();
+        if ($(window).width() >= calendarDualBreakpoint) {
+            if (dualMode == false) {
+                dualMode = true;
+                monthMode = false;
+                listMode = false;
+            }            
         }else {
-            monthMode = true;
-            dualMode = false;
-            listMode = false;
-            modeCheck();
-            heightCalc();
+            if (dualMode == true) {
+                dualMode = false;
+                monthMode = true;            
+                listMode = false;
+            }
         }
     });
 
     $(document).on('click', '.month-dot', function () {
+        $parentScrollPosition = document.documentElement.scrollTop;
         if (dualMode==true) {
             num = $(this).attr('id').substr(6);
-
             $('.list-event-container').each(function () {
                 if ($(this).attr('id').substr(5) == num) {
-                    $(this)[0].scrollIntoView();
+                    $(this).parent().closest('tr')[0].scrollIntoView();
                 }
             });
         }else {
@@ -156,13 +133,13 @@
             monthMode= false;
             listMode = true;
             modeCheck();
-
             $('.list-event-container').each(function () {
                 if ($(this).attr('id').substr(5) == num) {
-                    $(this)[0].scrollIntoView();
+                    $(this).parent().closest('tr')[0].scrollIntoView();
                 }
-            });
+            });            
         }
+        document.documentElement.scrollTop = $parentScrollPosition;
     });
 
     $(document).on('click', '.main-prev', function () {
