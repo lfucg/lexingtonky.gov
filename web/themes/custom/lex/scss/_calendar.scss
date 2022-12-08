@@ -1,3 +1,21 @@
+main>div:first-child {
+  width: 100% !important; 
+}
+
+main>div:first-child:not(:last-child) {
+  border-bottom: none  !important;
+  margin-bottom: 0  !important;
+}
+
+.lex-accordion {
+  ul {
+    margin-left: 0;
+  }
+}
+
+#main-calendar {
+  padding-left: 0;
+}
 
 .fc-event {
   width: 8px;
@@ -13,10 +31,13 @@
 
 .fc-day-number {
   margin-left: 100%;
+  margin-bottom: 10px;
 }
 
 .fc-day-top {
   padding-left: 1.5% !important;
+  padding-right: 1.5% !important;
+  line-height: 1;
 }
 
 .fc-widget-header, .fc-head-container {
@@ -29,51 +50,48 @@
   color: black !important;
   border: none !important;
   box-shadow: none !important;
+  @include fluid-type(15px, 24px);
+
+  @media (max-width: $calendarDualBreakpoint) {
+    @include fluid-type(17px, 24px);
+  }
 }
 
 .fc-list-heading {
   border-bottom: 1px solid color(gray);
 
+  .list-event-container:nth-child(odd) {
+    background-color: color(white);
+  }
+
+
   .fc-widget-header {
     height: 100%;
-    min-width: 50%;
+    min-width: 50% ;
   }
   .dot-event {
     margin-top: 8px;
   }
 }
 
-.details-link {
-  font-size: .8em;
-  opacity: 0;
-}
-
 .list-event-container {
-  margin: 8px 0 !important;
-  padding: 0 8px;
+  margin:  0 !important;
+  padding: 10px 0;
   display: flex;
-    
-  @media (min-width: 768px) {
-        min-width: 370px;
-    }
 
   a {
-    background-color: none;
     width: 100% !important;
     display: inline-block;
   }
   &:hover {
-    background-color: color(yellow);
+    background-color: color(yellow) !important;
     
     .list-text-container {
       color: white;
     }
     .list-dot {
-      background-color: white !important;
+      color: white !important;
       border: none;
-    }
-    .details-link {
-      opacity: 100%;
     }
   }
 }
@@ -83,6 +101,7 @@
   display: block;
   float: right;
   color: color(dark-blue);
+  margin-top: 3px;
 }
 
 .list-event-title, .list-event-date, .list-event-time {
@@ -90,49 +109,130 @@
   display: block;
 }
 
+.list-event-date-group{
+  white-space: break-spaces;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: -4px;
+}
+
+.toolbar-month {
+  display: flex;
+  align-items: center;
+}
+
 .list-event-title {
-  font-size: 1.25em;
+  @include fluid-type(13px, 22px);
+  line-height: 1.1;
+
+  @media (max-width: $calendarDualBreakpoint) {
+    @include fluid-type(16px, 22px);
+  }
+}
+
+.list-event-date {
+  @include fluid-type(14px, 18px);
+  padding: 0;
+  white-space: nowrap;
+  width: auto;
+
+  @media (max-width: $calendarDualBreakpoint) {
+    @include fluid-type(15px, 19px);
+  }
+}
+
+.details-link {
+  display: none;
+  @include fluid-type(14px, 18px);
+
+  @media (max-width: $calendarDualBreakpoint) {
+    @include fluid-type(15px, 19px);
+  }
 }
 
 .list-event-time {
   font-size: .8em;
 }
 
+.month-header {
+  @include fluid-type(20px, 28px);
+
+  @media (max-width: $calendarDualBreakpoint) {
+    @include fluid-type(21px, 26px);
+  }
+}
+
 .fc-list-heading-main {
   text-align: center;
-  text-transform: uppercase;
-  font-size: 1.5em;
-  color: color(dark-blue);
+  @include fluid-type(15px, 24px);
+  color: color(white);
+
+  @media (max-width: $calendarDualBreakpoint) {
+    @include fluid-type(17px, 24px);
+  }
 }
 
 #sidebar-calendar {
+  padding-left: 0;
+  padding-right: 0;
+  height: 100%;
   background-color: color(light-gray);
+  overflow-y: hidden;
 
-    @media (max-width: 767px) {
-        margin-top: 2em !important;
-        height: auto !important;
+  @media (max-width: $calendarDualBreakpoint) {
+    width: 100% ;    
+    margin-right: 15px;
+  }
+
+  .fc-view-container {
+    height: 100%;
+    overflow-y: scroll;
+  }
+
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+
+  ::-webkit-scrollbar {
+    width: 15px;
+    background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
+
+  &:hover {
+    ::-webkit-scrollbar-thumb {
+      background-color: #acacac;
     }
+  }
 }
 
-.calendar-container {
-  max-height: 525px;
+.calendars-container {
   margin-bottom: 50px;
-  display: inline-block;
+}
+
+#calendar-container {
+  padding-left: 0;
+  padding-right: 30px;
+  @media (max-width: $calendarDualBreakpoint) {
+    padding: 0;
+    margin-right: 0;
+  } 
 }
 
 .fc-scroller {
   height: auto !important;
-
-    @media (max-width: 767px) {
-       height: 400px !important;
-       max-height: none !important;
-    }
+  overflow: initial !important; 
 }
 
 .mobile-switch {
   display: none;
-  width: 100vw;
-  margin-left: -5% !important;
+  width: 100%;
   font-size: 1.5em;
   text-align: center;
   line-height: 65px;
@@ -154,85 +254,162 @@
     }
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: $calendarDualBreakpoint) {
     display: flex;
   }
 }
 
 .calendar-key {
-    padding-left: 15px;
+  margin-right: 5px;
+  align-items: center;
+  margin-bottom: 10px;
 
-    .meeting-dot {
-        background-color: rgb(81, 164, 124);
-    }
+  .meeting-dot {
+    color: rgb(81, 164, 124);
+    margin-right: 5px;
+  }
+
+  .event-dot {
+    color: rgb(0, 69, 133);
+    margin-right: 5px;
+  }
 }
 
 .placeholder-col {
-    @media (max-width: 767px) {
-        display: none;
-    }
+  @media (max-width: $calendarDualBreakpoint) {
+    display: none;
+  }
+}
+
+.listCal-col {
+  @media (max-width: $calendarDualBreakpoint) {
+    height: 0;
+  }
 }
 
 .sidecal-col {
-    position: absolute !important;
-    right: 0;
-    top: 0;
-    padding-right: 0 !important;
+  position: absolute !important;
+  right: 0;
+  top: 0;
+  padding-right: 0 !important;
+
+  #sidebar-calendar {
+      position: relative;
+      max-width: 100%;
+  }
+
+  @media (max-width: $calendarDualBreakpoint) {
+      position: static !important;
 
     #sidebar-calendar {
-        position: relative;
-        max-width: 100%;
+        position: static;
     }
-
-    @media (max-width: 767px) {
-        position: static !important;
-
-        #sidebar-calendar {
-            position: static;
-        }
   }
 }
 
 .fc-week {
-    @media (min-width: 768px) {
-        height: 100px !important;
-    }
+  @media (min-width: 768px) {
+      height: 100px !important;
+  }
 }
 
 #calendar {
   margin-top: 1em !important;
 }
 
+.lex-region-title {
+  margin-top: 1em;
+}
+
 #calendar-main {
-  .lex-region-content {
-    margin-top: 1em;
+  padding: 0 0 0 5%;
+  flex-direction: column;
+
+  @media (max-width: $calendarDualBreakpoint) {
+    padding: 0 0 0 15px
   }
-  padding-top: 2% !important;
 
   #block-pagetitle {
-      margin-bottom: 0 !important;
+    margin-bottom: 0 !important;
   }
 }
 
 .month-dot {
-    &:hover {
-        cursor: pointer;
-    }
+  &:hover {
+      cursor: pointer;
+  }
 }
 
 .displayList {
     display: table-row !important;
 }
 
-.filter-container {
-    margin-bottom: 1em;
-    
-    @media (max-width: 767px) {
-        margin-top: 1em;
-    }
+.calendar-bullets {
+  @include fluid-type(3px, 60px);
+  background-color: transparent !important;
+  line-height: 0;
+  margin-top: 2px !important;
+  width: 0px;
+  height: 0px;
+  padding-right: 1vw;
+  transform: scaleY(0.9);
 
-    #calendar-filter, #page-filter {
-        border: 1px solid color(gray);
-        max-width: 100%;
-    }
+  @media (max-width: $calendarDualBreakpoint) {
+    @include fluid-type(26px, 50px);
+
+  }
+}
+
+.calendar-bullets-list {
+  width: 30px;
+  display: flex;
+  align-items: center;
+  padding: 0 !important;
+  margin: 0 !important;
+  @include fluid-height(22px, 34px);
+  justify-content: center;
+}
+
+.calendar-bullets-month {
+  padding-right: 0.8vw;
+}
+
+.filter-container {
+  margin-bottom: 1em;
+  white-space: nowrap;
+  padding-left: 0;
+
+  @media (max-width: $calendarDualBreakpoint) {
+      margin-top: 1em;
+  }
+
+  #calendar-filter, #page-filter {
+      border: 1px solid color(gray);
+      max-width: 100%;
+  }
+}
+
+.fc-view-container-calendar {
+  padding-left: 0;
+  padding-right: 0;
+  max-width: 100%;
+  display: flex;
+}
+
+
+
+.sidebar-header {
+  background-color: rgb(0, 69, 133) !important;
+  padding-left: 30px !important;
+  font-weight: 500 !important;
+}
+
+.filter-label {
+  @include fluid-type(10px, 22px);
+
+  margin-bottom: .25rem!important;
+  @media (max-width: $calendarDualBreakpoint) {
+    white-space: break-spaces;
+    @include fluid-type(16px, 22px);
+  }
 }
