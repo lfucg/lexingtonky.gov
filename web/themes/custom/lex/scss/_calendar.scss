@@ -1,15 +1,30 @@
-main>div:first-child {
-  width: 100% !important;
-}
-
-main>div:first-child:not(:last-child) {
-  border-bottom: none  !important;
-  margin-bottom: 0  !important;
-}
-
 .lex-accordion {
   ul {
     margin-left: 0;
+  }
+}
+
+#calendar-main {
+  padding: 0 0 0 5%;
+  flex-direction: column;
+
+  @media (max-width: $calendarDualBreakpoint) {
+    padding: 0 0 0 15px;
+  }
+
+  #block-pagetitle {
+    margin-bottom: 0 !important;
+  }
+
+    > div {
+    &:first-child {
+      width: 100% !important;
+    }
+
+    &:first-child:not(:last-child) {
+      border-bottom: none  !important;
+      margin-bottom: 0  !important;
+    }
   }
 }
 
@@ -63,7 +78,6 @@ main>div:first-child:not(:last-child) {
   .list-event-container:nth-child(odd) {
     background-color: color(white);
   }
-
 
   .fc-widget-header {
     height: 100%;
@@ -262,7 +276,7 @@ main>div:first-child:not(:last-child) {
 .calendar-key {
   margin-right: 5px;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 
   .meeting-dot {
     color: rgb(81, 164, 124);
@@ -319,19 +333,6 @@ main>div:first-child:not(:last-child) {
 
 .lex-region-title {
   margin-top: 1em;
-}
-
-#calendar-main {
-  padding: 0 0 0 5%;
-  flex-direction: column;
-
-  @media (max-width: $calendarDualBreakpoint) {
-    padding: 0 0 0 15px
-  }
-
-  #block-pagetitle {
-    margin-bottom: 0 !important;
-  }
 }
 
 .month-dot {
@@ -395,8 +396,6 @@ main>div:first-child:not(:last-child) {
   max-width: 100%;
   display: flex;
 }
-
-
 
 .sidebar-header {
   background-color: rgb(0, 69, 133) !important;
