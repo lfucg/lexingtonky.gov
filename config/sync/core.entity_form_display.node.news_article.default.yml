@@ -14,7 +14,6 @@ dependencies:
     - image.style.thumbnail
     - node.type.news_article
   module:
-    - chosen_field
     - file
     - image
     - metatag
@@ -85,13 +84,19 @@ content:
     type: metatag_firehose
     weight: 12
     region: content
-    settings: {  }
+    settings:
+      sidebar: true
+      use_details: true
     third_party_settings: {  }
   field_related_departments:
-    type: chosen_select
+    type: entity_reference_autocomplete_tags
     weight: 2
     region: content
-    settings: {  }
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_related_documents:
     type: file_generic
@@ -144,5 +149,10 @@ content:
       match_limit: 10
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  url_redirects:
+    weight: 50
+    region: content
+    settings: {  }
     third_party_settings: {  }
 hidden: {  }
