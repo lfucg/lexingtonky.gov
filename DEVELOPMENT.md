@@ -17,7 +17,7 @@ $ lando start
 $ terminus auth:login --machine-token=[token_from_pantheon]
 $ lando pull
 ```
-`lando pull`: You will need a machine token from Pantheon user account page. The output will ask where to pull the code, database, and site files from. 
+`lando pull`: You will need a machine token from Pantheon user account page. The output will ask where to pull the code, database, and site files from.
 
 ```
 $ lando restart
@@ -31,7 +31,7 @@ Anytime you need to get the Solr server to connect you will:
 * Go to Home Administration > Configuration > Search and metadata > Search API > Server > Edit then click save to resave it
 * Reindex at Administration > Configuration > Search and metadata > Search API > Pantheon Index
 
-The site should now be served locally on one of the ports listed in the CLI. 
+The site should now be served locally on one of the ports listed in the CLI.
 
 For information on all running services: `$ lando info`
 
@@ -95,3 +95,11 @@ $settings['hash_salt'] = 'somethingunique';
 
 [See DEPLOYMENT.md](DEPLOYMENT.md)
 
+##### For testing/merging CLU branches
+
+* Checkout master, make sure master is up to date & run lando drush cim
+* Make sure the clu branch is rebased on the current master
+* Run lando composer install
+* Run lando drush updb
+* Run lando drush cex
+* Check that the site is working properly
