@@ -1,0 +1,24 @@
+uuid: 74bffe3a-3cda-435c-83b2-1fa7a032dd23
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.alert_banner
+  module:
+    - views
+  theme:
+    - lex_home
+id: views_block__alert_banner_block_alert_banner_global_2
+theme: lex_home
+region: alerts
+weight: 0
+provider: null
+plugin: 'views_block:alert_banner-block_alert_banner_global'
+settings:
+  id: 'views_block:alert_banner-block_alert_banner_global'
+  label: ''
+  label_display: '0'
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility: {  }

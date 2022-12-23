@@ -13,6 +13,10 @@
  */
 #}
 
+{% block page_alerts %}
+  {{ page.alerts }}
+{% endblock %}
+
 {% block page_notices %}
 <div id="top-alert">
   {{ page.notices }}

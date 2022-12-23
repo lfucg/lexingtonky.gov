@@ -16,7 +16,8 @@
   "dependencies": {
     "bootstrap": "^4.4.1",
     "core-js": "^3.8.1",
-    "jquery": "^3.4.1"
+    "jquery": "^3.4.1",
+    "universal-cookie": "^4.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

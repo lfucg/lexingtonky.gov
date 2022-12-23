@@ -1,0 +1,25 @@
+uuid: 1198f997-e53b-4354-8500-86fd7e4154d4
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.alert_banner
+  module:
+    - views
+  theme:
+    - lex_police
+id: views_block__alert_banner_block_alert_banner_contextual_4
+theme: lex_police
+region: alerts
+weight: -26
+provider: null
+plugin: 'views_block:alert_banner-block_alert_banner_contextual'
+settings:
+  id: 'views_block:alert_banner-block_alert_banner_contextual'
+  label: ''
+  label_display: '0'
+  provider: views
+  context_mapping: {  }
+  views_label: ''
+  items_per_page: none
+visibility: {  }

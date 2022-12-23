@@ -4,11 +4,11 @@ var gulp        = require('gulp'),
     rename      = require('gulp-rename'),
     cleanCSS    = require('gulp-clean-css');
     // livereload = require('gulp-livereload'),
-    // browserify  = require('browserify'),
-    // source      = require('vinyl-source-stream'),
-    // buffer      = require('vinyl-buffer'),
+    browserify  = require('browserify'),
+    source      = require('vinyl-source-stream'),
+    buffer      = require('vinyl-buffer'),
     // concat      = require('gulp-concat'),
-    // sourcemaps  = require('gulp-sourcemaps')
+    sourcemaps  = require('gulp-sourcemaps')
     // cp          = require('child_process'),
     // browserSync = require('browser-sync').create(),
 
@@ -60,16 +60,48 @@ return gulp.src('./scss/**/*.scss')
 // });
 
 /**
+ * @task refresh
+ * Refresh browser
+ */
+gulp.task('refresh', function(done) {
+    browserSync.reload();
+    done();
+  });
+
+/**
+ * @task scripts
+ * Compile files from js
+ */
+gulp.task('scripts', function() {
+    return browserify('js/main.js', {debug:true})
+      .transform('babelify', {
+        presets: ['@babel/preset-env']
+      })
+      .plugin('tinyify')
+      .bundle()
+      .pipe(source('main.min.js'))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({loadMaps: true}))
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest('dist'))
+});
+
+/**
  * @task build
  * Compile sass / js
  */
- gulp.task('build', gulp.series('sass', 'old_sass'));
+ gulp.task('build', gulp.series('sass', 'old_sass', 'scripts'));
 
-
+/**
+ * @task watch
+ * Watch scss/js files for changes & recompile
+ * Clear cache when Drupal related files are changed
+ */
 gulp.task('watch', function(){
     // livereload.listen();
     gulp.watch('./scss/**/*.scss', gulp.series('sass'));
     gulp.watch('./old_scss/**/*.s[ac]ss', gulp.series('old_sass'));
+    gulp.watch(['js/*.js'], gulp.series('scripts', 'refresh'));
     // gulp.watch('./lib/*.js', gulp.series('scripts'));
 });
 

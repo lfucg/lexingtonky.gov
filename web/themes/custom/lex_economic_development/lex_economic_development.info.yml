@@ -6,6 +6,7 @@ base theme: lex
 
 # Add your regions below. Defaults to those defined in Drupal core.
 regions:
+  alerts: 'Alerts'
   notices: 'Priority Notices'
   sitemast: 'Header Navigation'
   hero: 'Page Features'

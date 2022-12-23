@@ -1,5 +1,15 @@
 body {
 
+  .lex-alerts {
+    position: relative; // This is needed to render on top of header
+    z-index: $nav-z + 1;
+
+    #block-views-block-alert-banner-block-alert-banner-global,
+    #block-views-block-alert-banner-block-alert-banner-contextual {
+      width: 100%;
+    }
+  }
+
   #site-banner {
     height: 120px;
     background: white;

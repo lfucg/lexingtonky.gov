@@ -10,7 +10,6 @@
  */
 function lex_economic_development_theme_suggestions_block_alter(&$suggestions, $variables) {
   foreach ($suggestions as &$suggestion) {
-    $suggestion = str_replace('lex_economic_development_', '', $suggestion);
+    $suggestion = str_replace('lex_economic_development_', 'lex_', $suggestion);
   }
-
 }

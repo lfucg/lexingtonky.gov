@@ -88,10 +88,6 @@ $settings['deployment_identifier'] = '1';
 // Hash salt is unidentified.
 // $settings['php_storage']['twig']['secret'] = $settings['hash_salt'] . $settings['deployment_identifier'];
 
-if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
-  include_once $app_root . '/' . $site_path . '/settings.local.php';
-}
-
 
 /**
  * Sets solr configuration for local and pantheon enviroments.

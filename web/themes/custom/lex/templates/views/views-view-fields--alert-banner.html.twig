@@ -1,0 +1,28 @@
+{%
+ set classes = [
+   'lex-alert',
+   'lex-alert--' ~ fields.field_priority.content|render|striptags|trim,
+ ]
+%}
+
+<div {{ attributes.addClass(classes).setAttribute('alert-id', fields.nid.content|render|striptags|trim)}}>
+  {% if fields.field_priority.content|render|striptags|trim == 'level-1' %}
+    <i class="fa fa-exclamation-circle fa-2x"></i>
+  {% elseif fields.field_priority.content|render|striptags|trim == 'level-2' %}
+    <i class="fa fa-exclamation-triangle fa-2x"></i>
+  {% elseif fields.field_priority.content|render|striptags|trim == 'level-3' %}
+    <div class="parent-stack">
+      <div class="square child-stack"></div>
+      <i class="fa fa-exclamation fa-1x child-stack"></i>
+    </div>
+  {% endif %}
+  <h6 class="lex-alert--headline pl-3">
+    {{ fields.field_headline.content }}
+  </h6>
+  <h6 class="lex-alert--link">
+    {{ fields.field_alert_link.content }}
+  </h6>
+  <button class="lex-alert--close">
+    <span class="close-btn">&times;</span>
+  </button>
+</div>

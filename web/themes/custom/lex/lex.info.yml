@@ -3,11 +3,14 @@ description: A theme for the City of Lexington
 type: theme
 base theme: stable
 core_version_requirement: ^8 || ^9
+
 # Add libraries.
 libraries:
   - lex/global-css
   - lex/global-js
   - lex/bootstrap
+  # - lex/fontawesome
+
 # Remove stylesheets.
 ckeditor_stylesheets:
   - dist/styles.min.css
@@ -26,8 +29,10 @@ stylesheets-remove:
   - core/modules/system/css/components/messages.theme.css
   - core/modules/system/css/components/pager.theme.css
   - core/modules/system/css/components/tabs.theme.css
+
 # Add your regions below. Defaults to those defined in Drupal core.
 regions:
+  alerts: 'Alerts'
   notices: 'Priority Notices'
   sitemast: 'Header Navigation'
   hero: 'Page Features'
