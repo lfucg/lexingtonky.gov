@@ -5,7 +5,7 @@ dependencies:
   config:
     - system.menu.final-order-admin
   module:
-    - ctools
+    - node
     - system
   theme:
     - lex_planning_commission

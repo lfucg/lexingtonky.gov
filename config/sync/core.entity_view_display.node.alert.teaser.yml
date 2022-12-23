@@ -1,0 +1,30 @@
+uuid: f5e3a07e-485c-432b-bbf2-699edd6b2e57
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.alert.field_alert_link
+    - field.field.node.alert.field_contextual_alert
+    - field.field.node.alert.field_headline
+    - field.field.node.alert.field_priority
+    - node.type.alert
+  module:
+    - user
+id: node.alert.teaser
+targetEntityType: node
+bundle: alert
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  addtoany: true
+  field_alert_link: true
+  field_contextual_alert: true
+  field_headline: true
+  field_priority: true
+  search_api_excerpt: true

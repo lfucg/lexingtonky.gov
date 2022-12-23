@@ -5,7 +5,7 @@ dependencies:
   config:
     - views.view.sibling_pages
   module:
-    - ctools
+    - node
     - views
   theme:
     - lex

@@ -5,8 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_organization_image
   module:
-    - ctools
     - fieldblock
+    - node
     - responsive_image
   theme:
     - lex_planning_commission

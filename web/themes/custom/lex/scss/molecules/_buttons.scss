@@ -1,0 +1,31 @@
+.btn-link {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  padding: 0;
+
+  &:focus {
+    box-shadow: none;
+    outline: none;
+  }
+
+  .triangle-svg {
+    margin-left: 8px;
+    // margin-top: -4px;
+    transition: margin-left $anim-dur ease-in-out;
+  }
+
+  &:hover,
+  &:focus {
+    .triangle-svg {
+      margin-left: 14px;
+    }
+  }
+}
+
+.btn-link__text {
+  max-width: calc(100vw - 4rem - 122px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

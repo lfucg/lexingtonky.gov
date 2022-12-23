@@ -1,0 +1,62 @@
+uuid: 4e13b83e-8193-4fb3-abcb-56148985140d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.alert.field_alert_link
+    - field.field.node.alert.field_contextual_alert
+    - field.field.node.alert.field_headline
+    - field.field.node.alert.field_priority
+    - node.type.alert
+  module:
+    - link
+    - options
+    - user
+id: node.alert.default
+targetEntityType: node
+bundle: alert
+mode: default
+content:
+  field_alert_link:
+    type: link
+    label: visually_hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: '0'
+      target: '0'
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_contextual_alert:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_headline:
+    type: string
+    label: visually_hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_priority:
+    type: list_default
+    label: visually_hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  addtoany: true
+  search_api_excerpt: true
