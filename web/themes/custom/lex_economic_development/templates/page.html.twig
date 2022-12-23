@@ -12,10 +12,15 @@
  * which admin displayed theme.
  */
 #}
+
+{% block page_alerts %}
+  {{ page.alerts }}
+{% endblock %}
+
 {% block page_notices %}
-<div id="top-alert">
-  {{ page.notices }}
-</div>
+  <div id="top-alert">
+    {{ page.notices }}
+  </div>
 {% endblock %}
 
 {% block page_header %}

@@ -1,0 +1,23 @@
+uuid: 4788841b-da2b-4771-a0e0-7d95f5903318
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_priority
+    - node.type.alert
+  module:
+    - options
+id: node.alert.field_priority
+field_name: field_priority
+entity_type: node
+bundle: alert
+label: Priority
+description: "This sets the color, icon, styling of the alert. <br>\r\nOrange is for emergencies and high priority alerts. Yellow is for important notices and medium priority alerts. Teal is for low priority alerts."
+required: false
+translatable: false
+default_value:
+  -
+    value: level-2
+default_value_callback: ''
+settings: {  }
+field_type: list_string

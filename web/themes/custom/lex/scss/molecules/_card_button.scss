@@ -42,17 +42,6 @@
         }
     }
 
-    //Keeping this in for now, while working on the image gradient
-    // img:before {
-    //     display: block;
-    //     position: absolute;
-    //     height: 100%;
-    //     width: 100%;
-    //     bottom: 0;
-    //     transition: height 0.5s ease-out;
-    //     background: linear-gradient(to bottom, trasnparent 0%, #E1B111 100%);
-    // }
-
     &:hover {
         background-color: color(yellow);
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;

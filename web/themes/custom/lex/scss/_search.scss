@@ -1,47 +1,47 @@
 .path-search {
-    main {
-        padding-top: 2% !important;
-    }
-    
-    .search-result-title {
-        a {
-            font-size: 1em !important;
-            color: color(lex-blue) !important;
-        }
-    }
+  main {
+    padding-top: 2% !important;
+  }
 
-    .views-row {
-        position: relative;
-        padding: 1em 0;
-
-        &:hover {
-            background-color: color(light-gray);
-        }
+  .search-result-title {
+    a {
+      color: color(lex-blue) !important;
+      font-size: 1em !important;
     }
+  }
 
-    .lex-card-subtitle {
-        a {
-            font-size: 1.1em;
-        }
-    }
+  .lex-region-content .views-row {
+    padding: 1em 0;
+    position: relative;
 
-    .search-result-html {
-        color: black;
+    &:hover {
+      background-color: color(light-gray);
     }
+  }
 
-    .views-field-type {
-        display: inline;
-        position: absolute;
-        top: 0;
-        right: 0;
-        padding: inherit;
-        color: color(gray);
+  .lex-card-subtitle {
+    a {
+      font-size: 1.1em;
     }
+  }
+
+  .search-result-html {
+    color: black;
+  }
+
+  .views-field-type {
+    color: color(gray);
+    display: inline;
+    padding: inherit;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
 }
 
 .results-header {
-    padding: 0 5%;
-    margin-top: 1em;
-    display: inline-block;
-    font-style: italic;
+  display: inline-block;
+  font-style: italic;
+  margin-top: 1em;
+  padding: 0 5%;
 }

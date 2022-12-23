@@ -1,0 +1,20 @@
+features:
+  node_user_picture: 1
+  comment_user_picture: 1
+  comment_user_verification: 1
+  favicon: 1
+logo:
+  use_default: 0
+  path: 'public://City Logo Files_Web_Horse_Blue_0_0.png'
+favicon:
+  use_default: 0
+  path: 'public://City Logo Files_Web_Horse_Blue_1.png'
+  mimetype: image/png
+browsersync_enabled: 1
+browsersync_host: lex-sync.lndo.site
+browsersync_port: ''
+third_party_settings:
+  browsersync:
+    enabled: '1'
+    host: lex-sync.lndo.site
+    port: ''

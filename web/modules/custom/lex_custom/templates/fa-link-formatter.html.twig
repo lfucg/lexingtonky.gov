@@ -1,0 +1,14 @@
+<a
+  href="{{ url }}"
+  class="btn btn-link"
+  {% if options.attributes is defined %}
+    {{ create_attribute(options.attributes) }}
+  {% endif %}
+>
+  <div class="btn-link__text">
+    {{ title }}
+  </div>
+  <svg class="triangle-svg" fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="12" height="14" viewBox="0 0 12 14">
+    <path id="Triangle" d="M7,0l7,12H0Z" transform="translate(12) rotate(90)" />
+  </svg>
+</a>

@@ -1,9 +1,3 @@
-{#
-{% set title_attributes = title_attributes.addClass('lex-section-heading', 'lex-heading') %}
-{% block drupal_block %}
-{% include "@stable/block/block.html.twig" %}
-{% endblock %}
-#}
 <div{{ attributes.addClass('section-padding') }}>
   {% block title_prefix %}
   {{ title_prefix }}

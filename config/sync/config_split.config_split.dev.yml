@@ -1,0 +1,16 @@
+uuid: e08a73da-0eec-48b6-b5b0-fd23562e2fd7
+langcode: en
+status: false
+dependencies: {  }
+id: dev
+label: 'Dev Config'
+description: 'Local development configuration'
+weight: 0
+folder: ../config/dev
+module:
+  browsersync: 0
+theme: {  }
+blacklist: {  }
+graylist: {  }
+graylist_dependents: true
+graylist_skip_equal: true

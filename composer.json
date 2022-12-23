@@ -98,7 +98,8 @@
         "dropzone/dropzone": "^5.7",
         "twbs/bootstrap": "<5.0",
         "drupal/recaptcha": "^3.1",
-        "drupal/config_ignore": "^2.3"
+        "drupal/config_ignore": "^2.3",
+        "drupal/config_split": "^1.9"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
@@ -151,7 +152,9 @@
             "file-mapping": {
                 "[project-root]/.editorconfig": false,
                 "[project-root]/pantheon.upstream.yml": false,
-                "[project-root]/.gitattributes": false
+                "[project-root]/.gitattributes": false,
+                "[web-root]/sites/development.services.yml": false,
+                "[web-root]/sites/example.settings.local.php": false
             }
         },
         "enable-patching": true,

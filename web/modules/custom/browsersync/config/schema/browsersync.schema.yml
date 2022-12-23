@@ -1,0 +1,15 @@
+# Schema for the configuration files of the Browsersync module.
+
+theme_settings.third_party.browsersync:
+  type: mapping
+  label: 'Browsersync settings'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Browsersync enabled'
+    host:
+      type: string
+      label: 'Browsersync host'
+    port:
+      type: string
+      label: 'Browsersync port'

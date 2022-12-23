@@ -10,12 +10,57 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Link;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_theme().
+ */
+function lex_custom_theme() {
+  return [
+    'fa_link_formatter' => [
+      'variables' => [
+        'url' => NULL,
+        'title' => NULL,
+        'options' => NULL,
+      ],
+      'template' => 'fa-link-formatter',
+    ],
+  ];
+}
 
 /**
  * Implements hook_form_alter().
  */
 function lex_custom_form_alter(&$form, FormStateInterface &$form_state, $form_id) {
   $form['field_keywords']['widget']['add_more']['#value'] = t('Add Another Keyword');
+}
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function lex_custom_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+  $node = \Drupal::routeMatch()->getParameter('node');
+
+  if (!is_null($node)) {
+    switch ($view->id()) {
+      case 'alert_banner':
+        if (
+          $display_id == 'block_alert_banner_contextual' &&
+          $node->bundle() == (
+            'board_commission' ||
+            'meeting' ||
+            'page' ||
+            'organization_page' ||
+            'news_article' ||
+            'event'
+          )
+        ) {
+          $args[0] = $node->id();
+        }
+        break;
+
+    }
+  }
 }
 
 /**

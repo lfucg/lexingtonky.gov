@@ -1,21 +1,21 @@
-uuid: 21707b30-e9a8-40fd-b2a9-d3e5b6181ec7
+uuid: 12453335-abf5-49d1-883a-0838a2fc90dc
 langcode: en
 status: true
 dependencies:
   config:
-    - views.view.site_wide_notice
+    - views.view.alert_banner
   module:
     - views
   theme:
     - lex_economic_development
-id: lex_economic_development_views_block__site_wide_notice_block
+id: views_block__alert_banner_block_alert_banner_global_5
 theme: lex_economic_development
-region: notices
-weight: -25
+region: alerts
+weight: -19
 provider: null
-plugin: 'views_block:site_wide_notice-block_1'
+plugin: 'views_block:alert_banner-block_alert_banner_global'
 settings:
-  id: 'views_block:site_wide_notice-block_1'
+  id: 'views_block:alert_banner-block_alert_banner_global'
   label: ''
   label_display: '0'
   provider: views
