@@ -1,40 +1,45 @@
-<div class="mobile-switch row">
-  <div class="month-switch col-6">
-    Month
+
+<div class="calendars-container row">
+  <div id="main-calendar" class="col-md-8">
+    <div class="mobile-switch row">
+      <div class="month-switch col-6">
+        Month
+      </div>
+      <div class="list-switch col-6">
+        List
+      </div>
+    </div>
+    <div id="filters" class="row">
+      <div class="filter-container main-filter col-6">
+        <label class="filter-label" for="calendar-filter">Filter calendar by department</label>
+        </br>
+        <select id="calendar-filter">
+          <option value="default">Unfiltered</option>
+        </select>
+      </div>
+      <div class="filter-container secondary-filter col-6">
+        <label class="filter-label" for="page-filter">Filter calendar by page or program</label>
+        </br>
+        <select id="page-filter">
+          <option value="default">Unfiltered</option>
+        </select>
+      </div>
+    </div>
+    <div id="calendar-container" class="col">
+      <div class="row">
+        <div id="calendar"></div>
+      </div>
+      <div class="row">
+        <div class="calendar-key">
+          <span class="calendar-bullets fc-day-grid-event fc-event fc-start fc-not-end event-dot">&#8226;</span>Event
+          <span class="calendar-bullets fc-day-grid-event fc-event fc-start fc-not-end meeting-dot">&#8226;</span>Meeting
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="list-switch col-6">
-    List
-  </div>
+  <div id="sidebar-calendar" class="col-md-4"></div> 
 </div>
-<div class="row">
-  <div class="filter-container main-filter col-6 col-md-4">
-    <label class="mb-1" for="calendar-filter">Filter calendar by department</label>
-    </br>
-    <select id="calendar-filter">
-      <option value="default">Unfiltered</option>
-    </select>
-  </div>
-  <div class="filter-container secondary-filter col-6 col-md-4">
-    <label class="mb-1" for="page-filter">Filter calendar by page or program</label>
-    </br>
-    <select id="page-filter">
-      <option value="default">Unfiltered</option>
-    </select>
-  </div>
-</div>
-<div class="calendar-container row">
-  <div class="col-12 col-md-8">
-    <div id="calendar"></div>
-  </div>
-  <div class="col-md-4 placeholder-col"></div>
-  <div class="col-12 col-md-4 sidecal-col">
-    <div id="sidebar-calendar"></div>
-  </div>
-  <div class="calendar-key">
-    <span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event" title=""></span> Event
-    <span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event meeting-dot" title=""></span> Meeting
-  </div>
-</div>
+
 <script>
 window.addEventListener( 'load', function(){
   (function($) {
@@ -80,6 +85,9 @@ window.addEventListener( 'load', function(){
         $('#calendar').find('.fc-prev-button').addClass('main-prev');
         $('#calendar').find('.fc-next-button').addClass('main-next');
         $('#calendar').find('.fc-event').remove();
+
+        $('#calendar').find('h2').addClass('month-header');
+        $('#calendar').find('.fc-left').addClass('toolbar-month');        
 
         // manage dots
         var events = $('#calendar').fullCalendar('clientEvents');
@@ -171,15 +179,15 @@ window.addEventListener( 'load', function(){
             var now = event.start.clone();
             if ($('#calendar-filter').val() == 'default' && $('#page-filter').val() == 'default') {
               if (event.showCal != 'No') {
-                var $dot = $(`<span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event month-dot" id="event-${event.id}" title=""></span>`);
-                $dot.css('background-color', event.color);
+                var $dot = $(`<span class="calendar-bullets-month calendar-bullets fc-day-grid-event fc-event fc-start fc-not-end month-dot" id="event-${event.id}" title="">&#8226;</span>`);
+                $dot.css('color', event.color);
                 // append to calendar day
                 $('.fc-day-top[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($dot);
                 now.add(1, 'days');
               }
             }else if (event.relatedDepartments == $('#calendar-filter').val() || event.relatedPages == $('#page-filter').val()) {
-                var $dot = $(`<span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event month-dot" id="event-${event.id}" title=""></span>`);
-                $dot.css('background-color', event.color);
+                var $dot = $(`<span class="calendar-bullets fc-day-grid-event fc-event fc-start fc-not-end month-dot" id="event-${event.id}" title="">&#8226;</span>`);
+                $dot.css('color', event.color);
                 // append to calendar day
                 $('.fc-day-top[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($dot);
                 now.add(1, 'days');
@@ -216,7 +224,7 @@ window.addEventListener( 'load', function(){
       defaultView: 'listMonth',
       events: '/calendar/{{ fc_callback }}',
       defaultDate: '{{ "now"|date("Y-m-d") }}',
-      listDayFormat: 'MMM D',
+      listDayFormat: 'MMM. D',
       eventAfterAllRender: function() {
         var view = $('#sidebar-calendar').fullCalendar('getView');
         var startTime = '';
@@ -227,13 +235,17 @@ window.addEventListener( 'load', function(){
         $('#sidebar-calendar').find('.fc-list-item').remove();
         $('#sidebar-calendar').find('.fc-list-heading-alt').remove();
 
+        $('#sidebar-calendar').find('.fc-widget-header').addClass('row sidebar-header');
+
         var events = $('#sidebar-calendar').fullCalendar('clientEvents');
 
         $('.fc-list-heading').each( function () {
           if ($('#calendar-filter').val() == 'default' && $(this).not(':has(.list-event-container)')) {
-            $(this).css('display', 'none');
+            {# $(this).css('display', 'none'); #}
           }
         });
+
+        {# $('.fc-widget-header').addClass('row'); #}
 
         if(document.referrer.search('/departments/') != -1) {
           referrer = document.referrer.split('/departments/')[1];
@@ -308,15 +320,43 @@ window.addEventListener( 'load', function(){
 
             if ($('#calendar-filter').val() == 'default' && $('#page-filter').val() == 'default') {
               if (event.showCal != 'No') {
-                var $listBlock = $(
-                    '<div class="list-event-container row" id="list-' + event.id + '"><a href="' + event.url + '"><div class="col-12 col-sm-8 col-md-10"><span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event list-dot " style="background-color:' + event.color +'" title=""></span><div class="list-text-container"><span class="list-event-title">' + event.title + '</span><span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '</span><span class="list-event-time">' + startTime + '</span><span class="details-link">Details <i class="fas fa-chevron-right"></i></div></div></a></div>');
+                var $listBlock = $('\
+                    <div class="list-event-container row" id="list-' + event.id + '">\
+                      <a href="' + event.url + '">\
+                        <div class="col-12 col-sm-8 col-md-10 fc-view-container-calendar">\
+                          <span class="calendar-bullets calendar-bullets-list fc-day-grid-event fc-event fc-start fc-not-end list-dot" style="color:' + event.color +'" title="">&#8226;</span>\
+                          <div class="list-text-container">\
+                            <span class="list-event-title">' + event.title + '</span>\
+                            <div class="list-event-date-group">\
+                              <span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>\
+                              <span class="list-event-date">' + startTime + '</span>\
+                            </div>\
+                            <span class="details-link">Details <i class="details-link fas fa-chevron-right"></i>\
+                          </div>\
+                        </div>\
+                      </a>\
+                    </div>');
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'table-row');
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').addClass('displayList');
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($listBlock);
               }
             }else if (event.relatedDepartments == $('#calendar-filter').val() || event.relatedPages == $('#page-filter').val()) {
-              var $listBlock = $(
-                  '<div class="list-event-container" id="list-' + event.id + '"><a href="' + event.url + '"><span class="fc-day-grid-event fc-event fc-start fc-not-end dot-event list-dot " style="background-color:' + event.color +'" title=""></span><div class="list-text-container"><span class="list-event-title">' + event.title + '</span><span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '</span><span class="list-event-time">' + startTime + '</span><span class="details-link">Details <i class="fas fa-chevron-right"></i></div></a></div>');
+              var $listBlock = $('\
+                  <div class="list-event-container" id="list-' + event.id + '">\
+                    <a href="' + event.url + '">\
+                      <div class="col-12 col-sm-8 col-md-10 fc-view-container-calendar">\
+                        <span class="calendar-bullets calendar-bullets-list fc-day-grid-event fc-event fc-start fc-not-end list-dot" style="color:' + event.color +'" title="">&#8226;</span>\
+                        <div class="list-text-container">\
+                          <span class="list-event-title">' + event.title + '</span>\
+                          <div>\
+                            <span class="list-event-date">' + event.start.format('dddd, MMM. D, YYYY') + '&nbsp;&nbsp;|&nbsp;&nbsp;' + '</span>\
+                            <span class="list-event-date">' + startTime + '</span>\
+                          </div>\
+                          <span class="details-link">Details <i class="fas fa-chevron-right"></i>\
+                        </div>\
+                      </div>\
+                    </a>\
+                  </div>');
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').css('display', 'table-row');
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').addClass('displayList');
                 $('.fc-list-heading[data-date="'+ now.format('YYYY-MM-DD') +'"]').append($listBlock);
