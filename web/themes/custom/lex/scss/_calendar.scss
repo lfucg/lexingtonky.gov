@@ -1,5 +1,5 @@
 main>div:first-child {
-  width: 100% !important; 
+  width: 100% !important;
 }
 
 main>div:first-child:not(:last-child) {
@@ -85,7 +85,7 @@ main>div:first-child:not(:last-child) {
   }
   &:hover {
     background-color: color(yellow) !important;
-    
+
     .list-text-container {
       color: white;
     }
@@ -180,7 +180,7 @@ main>div:first-child:not(:last-child) {
   overflow-y: hidden;
 
   @media (max-width: $calendarDualBreakpoint) {
-    width: 100% ;    
+    width: 100% ;
     margin-right: 15px;
   }
 
@@ -222,12 +222,12 @@ main>div:first-child:not(:last-child) {
   @media (max-width: $calendarDualBreakpoint) {
     padding: 0;
     margin-right: 0;
-  } 
+  }
 }
 
 .fc-scroller {
   height: auto !important;
-  overflow: initial !important; 
+  overflow: initial !important;
 }
 
 .mobile-switch {
