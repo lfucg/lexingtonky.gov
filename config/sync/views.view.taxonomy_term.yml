@@ -466,6 +466,38 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+      sorts:
+        weight:
+          id: weight
+          table: draggableviews_structure
+          field: weight
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: weight
+          exposed: false
+          draggable_views_reference: 'taxonomy_term:page_2'
+          draggable_views_null_order: after
+          draggable_views_pass_arguments: 0
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: title
+          exposed: false
       arguments:
         tid:
           id: tid
@@ -689,6 +721,7 @@ display:
         options: {  }
       defaults:
         fields: false
+        sorts: false
         arguments: false
         filters: false
         filter_groups: false
