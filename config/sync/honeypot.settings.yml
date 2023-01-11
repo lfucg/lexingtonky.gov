@@ -1,7 +1,7 @@
 protect_all_forms: false
-log: false
+log: true
 element_name: email
-time_limit: 5
+time_limit: 7
 expire: 300
 form_settings:
   user_register_form: false
@@ -9,6 +9,7 @@ form_settings:
   contact_message_feedback_form: true
   contact_message_page_feedback_form: true
   contact_message_personal_form: false
+  node_page_form: false
   node_article_form: false
   node_board_commission_form: false
   node_default_headers_for_themes_form: false
@@ -19,7 +20,6 @@ form_settings:
   node_meeting_form: false
   node_news_article_form: false
   node_organization_page_form: false
-  node_page_form: false
   node_resource_links_form: false
   node_site_wide_notice_form: false
   comment_comment_form: false
