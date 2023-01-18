@@ -96,7 +96,9 @@
         "pantheon-systems/quicksilver-pushback": "^2.1",
         "drupal/iframe": "^2.20",
         "dropzone/dropzone": "^5.7",
-        "twbs/bootstrap": "<5.0"
+        "twbs/bootstrap": "<5.0",
+        "drupal/recaptcha": "^3.1",
+        "drupal/config_ignore": "^2.3"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
