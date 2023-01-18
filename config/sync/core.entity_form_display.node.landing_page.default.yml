@@ -64,7 +64,7 @@ content:
       use_details: true
     third_party_settings: {  }
   field_related_departments:
-    type: entity_reference_autocomplete_tags
+    type: entity_reference_autocomplete
     weight: 8
     region: content
     settings:

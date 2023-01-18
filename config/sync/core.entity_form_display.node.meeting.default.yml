@@ -99,7 +99,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_related_departments:
-    type: entity_reference_autocomplete_tags
+    type: entity_reference_autocomplete
     weight: 2
     region: content
     settings:
