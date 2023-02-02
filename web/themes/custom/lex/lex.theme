@@ -153,6 +153,12 @@ function lex_form_alter(&$form, FormStateInterface $form_state, $form_id) {
         break;
     }
   }
+
+  if ($form_id == 'contact_message_page_feedback_form') {
+    $url= \Drupal::request()->getRequestUri();
+
+    $form['field_feedback_url']['widget'][0]['value']['#value'] = $url ?: '';
+  }
 }
 
 /**
