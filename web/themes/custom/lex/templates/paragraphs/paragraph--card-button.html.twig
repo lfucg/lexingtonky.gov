@@ -8,5 +8,8 @@
 %}
 
 <div{{ attributes.addClass(classes, 'pb-5') }}>
-    {% include '@components/molecules/card-button.twig' with {heading: content.field_heading, img: content.field_image[0]['#markup'], description: content.field_description, url: content.field_link[0]['#title']} %}
+    {% include '@components/molecules/card-button.twig' with {
+      heading: content.field_heading, img: content.field_image[0]['#markup'],
+      description: content.field_description, url: content.field_link[0]['#title']}
+    %}
 </div>

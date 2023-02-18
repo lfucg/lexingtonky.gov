@@ -28,6 +28,9 @@ fi
 # Wake the environment to make sure the database is reachable.
 terminus -n env:wake "$TERMINUS_SITE.$TERMINUS_ENV"
 
+# Clear Drupal cache
+terminus -n drush "$TERMINUS_SITE.$TERMINUS_ENV" -- cr
+
 # Update the Drupal database
 terminus -n drush "$TERMINUS_SITE.$TERMINUS_ENV" -- updatedb -y
 

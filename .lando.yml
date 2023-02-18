@@ -12,6 +12,9 @@ events:
     - appserver: cd $LANDO_WEBROOT && drush cr --yes
   post-pull:
     - appserver: cd $LANDO_WEBROOT && drush updb --yes && drush cr --yes
+proxy:
+  nodejs:
+    - lex-sync.lndo.site:3000
 services:
   appserver:
     build_as_root:

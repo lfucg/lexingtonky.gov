@@ -1,0 +1,39 @@
+uuid: 7543d603-ceda-4a6a-bd2a-8c62e6d34e09
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_contextual_alert
+    - node.type.alert
+    - node.type.board_commission
+    - node.type.event
+    - node.type.meeting
+    - node.type.news_article
+    - node.type.organization_page
+    - node.type.page
+id: node.alert.field_contextual_alert
+field_name: field_contextual_alert
+entity_type: node
+bundle: alert
+label: 'Contextual Alert'
+description: 'Tag the pages, events, meetings, or news items where you want this alert to appear.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      board_commission: board_commission
+      event: event
+      meeting: meeting
+      news_article: news_article
+      organization_page: organization_page
+      page: page
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: organization_page
+field_type: entity_reference

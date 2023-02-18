@@ -102,6 +102,10 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
     $config['search_api.server.pantheon']['status'] = false;
     $config['search_api.server.lando']['status'] = true;
     $config['search_api.index.pantheon_index']['server'] = 'lando';
+
+    // Enable dev config split locally.
+    $config['config_split.config_split.dev']['status'] = TRUE;
+
   } else {
     // Pantheon Configuration.
     $config['search_api.server.lando']['status'] = false;

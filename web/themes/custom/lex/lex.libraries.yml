@@ -8,17 +8,9 @@ global-js:
   js:
     js/list.js: {}
     js/scripts.js: {}
-    js/leaflet.js: {}
-    js/esri-leaflet.js: {}
-    js/browse-columns.js: {}
-    js/webdesignstandards-accordion.js: {}
-    js/lex-geocoder--councilmembers.js: {}
-    js/takeover-navigation.js: {}
-    js/internal-search-block.js: {}
-    js/cards.js: {}
-    # js/accordion.js: {}
-    js/lex-cal.js: {}
-    js/search.js: {}
+    js/leaflet.js: { minified: true }
+    js/esri-leaflet.js: { minified: true }
+    dist/main.min.js: { minified: true }
   dependencies:
     - core/jquery
     - core/jquery.ui.autocomplete
@@ -29,13 +21,14 @@ bootstrap:
   css:
     component:
       /libraries/bootstrap/dist/css/bootstrap.min.css: { minified: true }
-
+# fontawesome:
+#   js:
+#     //kit.fontawesome.com/eff4b7edc9.js: { minified: true, crossorigin: anonymous }
 lex-sidenav-list:
   js:
     js/lex-sidenav-list.js: {}
   dependencies:
     - core/jquery
-
 lex-traffic:
   js:
     js/papaparse.min.js: {}
@@ -44,11 +37,9 @@ lex-traffic:
   dependencies:
     - core/jquery
     - core/underscore
-
 lex-neighborhood-associations:
   js:
     js/lex-neighborhood-associations.js: {}
-
 lex-join-police:
   js:
     js/join-police.js: {}

@@ -1,0 +1,125 @@
+.lex-alert {
+  align-items: center;
+  color: $black;
+  display: none;
+  font-family: $font__open_sans;
+  font-weight: bolder !important;
+  height: $alert-banner-height;
+  padding: 0 1rem;
+  width: 100%;
+
+  .btn-link {
+    color: $black;
+  }
+}
+
+.lex-alert--level-2 {
+  background-color: $alert-yellow;
+}
+
+.lex-alert--level-3 {
+  background-color: $alert-orange;
+
+  .parent-stack {
+    height: 32px;
+    position: relative;
+    width: 32px;
+  }
+
+  .child-stack {
+    position: absolute;
+  }
+
+  .fa-exclamation {
+    left: 13px;
+    top: 9px
+  }
+
+  .square {
+    border: 3px solid $black;
+    height: 32px;
+    top: 0;
+    width: 32px;
+  }
+}
+
+.lex-alert--level-1 {
+  background-color: $alert-teal;
+  color: $white;
+
+  .btn-link,
+  svg,
+  .lex-alert--close {
+    color: $white;
+  }
+}
+
+.lex-alert--headline {
+  align-items: center;
+  flex-grow: 2;
+  font-weight: inherit !important;
+  line-height: 1.5;
+  margin: auto 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lex-alert--link {
+  flex-grow: 1;
+  margin: 0 30px;
+  min-width: 300px; // Needs this to at least be zero for flexbox
+  text-align: center;
+  text-decoration: underline;
+
+  .btn-link {
+    display: flex;
+    font-size: inherit;
+    font-weight: inherit !important;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 1050px) {
+  .lex-alert--headline {
+    flex-grow: 1;
+  }
+
+  .lex-alert--link {
+    margin: 0 10px;
+  }
+}
+
+.lex-alert--close {
+  background: none;
+  border: none;
+  margin: 0 0 0 1rem;
+
+  .close-btn {
+    font-size: 45px;
+    font-weight: bold;
+  }
+
+  &:hover,
+  &:focus {
+    transform: scale(1.1);
+  }
+}
+
+@media (max-width: 725px) {
+  .lex-alert--link {
+    min-width: 0;
+
+    .btn-link {
+      justify-content: center;
+    }
+  }
+
+  .lex-alert--headline {
+    display: none;
+  }
+
+  .lex-alert--close {
+    margin-left: 0;
+  }
+}

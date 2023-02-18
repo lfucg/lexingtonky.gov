@@ -1,5 +1,9 @@
 {% extends "@lex/pages/page.html.twig" %}
 
+{% block page_alerts %}
+  {{ parent() }}
+{% endblock %}
+
 {% block page_main %}
   {{ parent() }}
   {{ page.postscript }}

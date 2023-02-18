@@ -4,15 +4,19 @@
 @import './slab';
 @import './variables';
 @import './paragraphs';
+@import './config/dimen';
+@import './config/variables';
 @import './homepage/hero__homepage';
 @import './homepage/lookup_services';
 @import './homepage/blocks';
 @import './regions/feedback';
+@import './regions/alerts';
 @import './regions/footer';
 @import './regions/header';
 @import './regions/landing_page_title';
 @import './regions/sidebar';
 @import './regions/takeover_nav';
+@import './molecules/buttons';
 @import './molecules/icon_button_with_description';
 @import './molecules/card_button';
 @import './molecules/contact_card';
@@ -57,7 +61,18 @@ ol, ul, dl {
   margin: auto;
 }
 
-.section-padding {
+.section-padding:not(
+  #block-views-block-alert-banner-block-alert-banner-global,
+  #block-views-block-alert-banner-block-alert-banner-global-2,
+  #block-views-block-alert-banner-block-alert-banner-global-3,
+  #block-views-block-alert-banner-block-alert-banner-global-4,
+  #block-views-block-alert-banner-block-alert-banner-global-5,
+  #block-views-block-alert-banner-block-alert-banner-contextual,
+  #block-views-block-alert-banner-block-alert-banner-contextual-2,
+  #block-views-block-alert-banner-block-alert-banner-contextual-3,
+  #block-views-block-alert-banner-block-alert-banner-contextual-4,
+  #block-views-block-alert-banner-block-alert-banner-contextual-5
+) {
   padding: 2rem 5%;
 }
 

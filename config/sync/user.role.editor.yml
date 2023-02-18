@@ -6,6 +6,7 @@ dependencies:
     - filter.format.advanced_html
     - filter.format.basic_html
     - filter.format.restricted_html
+    - node.type.alert
     - node.type.board_commission
     - node.type.event
     - node.type.landing_page
@@ -13,7 +14,6 @@ dependencies:
     - node.type.news_article
     - node.type.organization_page
     - node.type.page
-    - node.type.site_wide_notice
   module:
     - contact
     - contextual
@@ -48,6 +48,8 @@ permissions:
   - 'create news_article content'
   - 'create page content'
   - 'create url aliases'
+  - 'delete alert revisions'
+  - 'delete any alert content'
   - 'delete any event content'
   - 'delete any meeting content'
   - 'delete any news_article content'
@@ -55,6 +57,7 @@ permissions:
   - 'delete event revisions'
   - 'delete meeting revisions'
   - 'delete news_article revisions'
+  - 'delete own alert content'
   - 'delete own event content'
   - 'delete own meeting content'
   - 'delete own news_article content'
@@ -63,11 +66,11 @@ permissions:
   - 'edit any news_article content'
   - 'edit any organization_page content'
   - 'edit any page content'
-  - 'edit any site_wide_notice content'
   - 'edit own event content'
   - 'edit own landing_page content'
   - 'edit own news_article content'
   - 'edit own page content'
+  - 'revert alert revisions'
   - 'revert board_commission revisions'
   - 'revert event revisions'
   - 'revert landing_page revisions'
@@ -83,6 +86,7 @@ permissions:
   - 'use text format advanced_html'
   - 'use text format basic_html'
   - 'use text format restricted_html'
+  - 'view alert revisions'
   - 'view all revisions'
   - 'view board_commission revisions'
   - 'view event revisions'

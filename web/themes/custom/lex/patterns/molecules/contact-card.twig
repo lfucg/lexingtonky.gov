@@ -1,18 +1,17 @@
 <div id="#contact-card" class="contact-card expandable rounded">
-    <div class="contact-body">
-        <div class="row">
-            <a class="contact-card-link" href="{{link[0]['#url']}}">
-                <div class="col-12">
-                    {% include '@components/atoms/card-img.twig' with {img: img} %}
-                    {% include '@components/atoms/card-heading.twig' with {heading: heading} %}
-                    {% include '@components/atoms/card-subheading.twig' with {subheading: subheading} %}
-                    {% include '@components/atoms/description.twig' with {description: description} %}
-                </div>
-            </a>
-            <div class="contact-footer">
-                {% include '@components/atoms/card-footer.twig' with {text: text, email: email} %}
-            </div>
+  <div class="contact-body">
+    <div class="row">
+      <a class="contact-card-link" href="{{link[0]['#url']}}">
+        <div class="col-12">
+          {% include '@components/atoms/card-img.twig' with {img: img} %}
+          {% include '@components/atoms/card-heading.twig' with {heading: heading} %}
+          {% include '@components/atoms/card-subheading.twig' with {subheading: subheading} %}
+          {% include '@components/atoms/description.twig' with {description: description} %}
         </div>
+      </a>
+      <div class="contact-footer">
+        {% include '@components/atoms/card-footer.twig' with {text: text, email: email} %}
+      </div>
     </div>
+  </div>
 </div>
-

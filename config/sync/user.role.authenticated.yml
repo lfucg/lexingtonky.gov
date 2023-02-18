@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - filter.format.basic_html
+    - node.type.alert
     - node.type.board_commission
     - node.type.event
     - node.type.landing_page
@@ -38,11 +39,13 @@ permissions:
   - 'access site-wide contact form'
   - 'access toolbar'
   - 'access tour'
+  - 'create alert content'
   - 'create event content'
   - 'create meeting content'
   - 'create news_article content'
   - 'create page content'
   - 'dropzone upload files'
+  - 'edit any alert content'
   - 'edit any board_commission content'
   - 'edit any event content'
   - 'edit any landing_page content'
@@ -50,6 +53,7 @@ permissions:
   - 'edit any news_article content'
   - 'edit any organization_page content'
   - 'edit any page content'
+  - 'edit own alert content'
   - 'edit own board_commission content'
   - 'edit own event content'
   - 'edit own landing_page content'

@@ -1,0 +1,182 @@
+<?php
+
+/**
+ * @file
+ * Code for the Browsersync module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function browsersync_theme($existing, $type, $theme, $path) {
+  return [
+    'browsersync_snippet' => [
+      'variables' => [
+        'host' => 'HOST',
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_css_alter().
+ *
+ * Browsersync does not work with CSS import so we need to force Drupal to embed
+ * CSS files as <link> elements.
+ *
+ * @link https://github.com/shakyShane/browser-sync/issues/10
+ */
+function browsersync_css_alter(&$css) {
+  $system_css_preprocess = \Drupal::config('system.performance')->get('css.preprocess');
+
+  if (browsersync_get_setting('enabled') && !$system_css_preprocess) {
+    foreach ($css as $key => $value) {
+      // Skip core files.
+      if (strpos($value['data'], 'core/') !== 0) {
+        $css[$key]['preprocess'] = FALSE;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Adds the Browsersync configuration options to the theme settings form.
+ *
+ * @see \Drupal\system\Form\ThemeSettingsForm
+ */
+function browsersync_form_system_theme_settings_alter(&$form, FormStateInterface $form_state) {
+  // Extract the theme key from the form arguments. If not present, it means
+  // that we are altering the global theme settings form.
+  $args = $form_state->getBuildInfo()['args'];
+  $theme_key = !empty($args[0]) ? $args[0] : NULL;
+
+  $form['browsersync'] = [
+    '#type' => 'details',
+    '#title' => 'Browsersync settings',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  ];
+
+  $form['browsersync']['browsersync_enabled'] = [
+    '#title' => 'Enable Browsersync',
+    '#type' => 'checkbox',
+    '#default_value' => browsersync_get_setting('enabled', $theme_key),
+  ];
+
+  $form['browsersync']['settings'] = [
+    '#type' => 'container',
+    '#states' => [
+      'visible' => [
+        'input[name="browsersync_enabled"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  $form['browsersync']['settings']['browsersync_host'] = [
+    '#title' => 'Host',
+    '#type' => 'textfield',
+    '#description' => t('Override host detection if you know the correct IP to use.'),
+    '#default_value' => browsersync_get_setting('host', $theme_key),
+  ];
+
+  $form['browsersync']['settings']['browsersync_port'] = [
+    '#title' => 'Port',
+    '#type' => 'textfield',
+    '#description' => t('Use a specific port (instead of the one auto-detected by Browsersync).'),
+    '#default_value' => browsersync_get_setting('port', $theme_key),
+  ];
+
+  $form['#submit'][] = 'browsersync_theme_settings_form_submit';
+}
+
+/**
+ * Form submission handler for theme settings form.
+ *
+ * @see browsersync_form_system_theme_settings_alter()
+ */
+function browsersync_theme_settings_form_submit($form, FormStateInterface $form_state) {
+  $args = $form_state->getBuildInfo()['args'];
+  $theme_key = !empty($args[0]) ? $args[0] : NULL;
+
+  if ($theme_key) {
+    $config_key = $theme_key . '.settings';
+  }
+  else {
+    $config_key = 'system.theme.global';
+  }
+
+  $user_input = $form_state->getUserInput();
+
+  \Drupal::configFactory()->getEditable($config_key)
+    ->set('third_party_settings.browsersync.enabled', $user_input['browsersync_enabled'])
+    ->set('third_party_settings.browsersync.host', $user_input['browsersync_host'])
+    ->set('third_party_settings.browsersync.port', $user_input['browsersync_port'])
+    ->save();
+}
+
+/**
+ * Implements hook_page_bottom().
+ *
+ * Adds the Browsersync snippet to the bottom of the page.
+ */
+function browsersync_page_bottom(array &$page_bottom) {
+  $twigConfig = \Drupal::getContainer()->getParameter('twig.config');
+
+  if (
+    browsersync_get_setting('enabled') &&
+    $twigConfig['debug'] &&
+    \Drupal::currentUser()->hasPermission('use browsersync')
+  ) {
+    $page_bottom['browsersync'] = [
+      '#theme' => 'browsersync_snippet',
+      '#weight' => 100,
+    ];
+    foreach (['host', 'port'] as $setting) {
+      if ($value = browsersync_get_setting($setting)) {
+        $page_bottom['browsersync']['#' . $setting] = $value;
+      }
+    }
+  }
+}
+
+/**
+ * Retrieves a setting for the current theme or for a given theme.
+ *
+ * @param string $setting_name
+ *   The name of the setting to be retrieved.
+ * @param string $theme
+ *   (optional) The name of a given theme. Defaults to the current theme.
+ *
+ * @return mixed
+ *   The value of the requested setting.
+ *
+ * @see theme_get_setting()
+ */
+function browsersync_get_setting($setting_name, $theme = NULL) {
+  $cache = &drupal_static('theme_get_setting', []);
+
+  // If no key is given, use the current theme if we can determine it.
+  if (!isset($theme)) {
+    $theme = \Drupal::theme()->getActiveTheme()->getName();
+  }
+
+  // Prefix the setting name with the module's namespace.
+  $setting_name = 'third_party_settings.browsersync.' . $setting_name;
+
+  if (empty($cache[$theme])) {
+    // If the cache has not been filled yet, invoke theme_get_setting to
+    // retrieve the value. This will populate the cache and make it available
+    // for subsequent requests.
+    $setting = theme_get_setting($setting_name, $theme);
+  }
+  else {
+    // Retrieve the value from the cache.
+    $setting = $cache[$theme]->get($setting_name);
+  }
+
+  return $setting;
+}
