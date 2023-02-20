@@ -12,7 +12,7 @@
  */
 function lex_home_theme_suggestions_block_alter(&$suggestions, $variables) {
   foreach ($suggestions as &$suggestion) {
-    $suggestion = str_replace('lex_home_', 'lex_', $suggestion);
+    $suggestion = str_replace('lex_home_', '', $suggestion);
   }
 }
 
