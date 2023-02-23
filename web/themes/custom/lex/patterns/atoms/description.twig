@@ -1,3 +1,5 @@
-<div class="description">
-  {{ description|render|striptags|trim }}
-</div>
+{% autoescape false %}
+  <div class="description">
+    {{ description|render|striptags|trim }}
+  </div>
+{% endautoescape %}
