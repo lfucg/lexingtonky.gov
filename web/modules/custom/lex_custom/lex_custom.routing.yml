@@ -1,0 +1,7 @@
+lex_custom.settings:
+  path: '/admin/config/regional/gtranslate'
+  defaults:
+    _form: 'Drupal\lex_custom\Form\GTranslateSettingsForm'
+    _title: 'GTranslate Settings'
+  requirements:
+    _permission: 'Lex Custom settings'

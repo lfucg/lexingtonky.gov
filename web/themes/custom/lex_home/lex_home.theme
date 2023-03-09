@@ -15,12 +15,3 @@ function lex_home_theme_suggestions_block_alter(&$suggestions, $variables) {
     $suggestion = str_replace('lex_home_', '', $suggestion);
   }
 }
-
-/**
- * Alter name suggestions for the views view fields.
- */
-// function lex_home_theme_suggestions_views_view_fields_alter(&$suggestions, $variables) {
-//   foreach ($suggestions as &$suggestion) {
-//     $suggestion = str_replace('lex_home_', 'lex_', $suggestion);
-//   }
-// }
