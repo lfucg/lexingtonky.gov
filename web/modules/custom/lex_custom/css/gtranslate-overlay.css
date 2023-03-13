@@ -1,3 +1,8 @@
+.gtranslate .fa-globe {
+	color: white;
+	transform: translate(3px, 2px);
+}
+
 .gtranslate .modal .modal-content {
 	margin: 0 auto;
 	width: 800px;

@@ -177,7 +177,7 @@ class GTranslateBlock extends BlockBase {
 
       switch($gtranslate_look) {
         case 'overlay': {
-          $block_content .= '<button type="button" class="btn" data-toggle="modal" data-target="#translateModal">Translate</button>';
+          $block_content .= '<button type="button" class="btn" data-toggle="modal" data-target="#translateModal">Language</button><i class="fa fa-globe" aria-hidden="true"></i>';
           $block_content .= '<div class="modal fade" id="translateModal" tabindex="-1" role="dialog" aria-labelledby="translateModalTitle" aria-hidden="true">';
           $block_content .= '<div class="modal-dialog" role="document">';
           $block_content .= '<div class="modal-content">';
