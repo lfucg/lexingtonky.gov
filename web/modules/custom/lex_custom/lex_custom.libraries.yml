@@ -1,0 +1,9 @@
+gtranslate-overlay:
+  version: 1.0
+  css:
+    layout:
+      css/gtranslate-overlay.css: {}
+  js:
+    js/gtranslate.js: {}
+  dependencies:
+    - core/jquery

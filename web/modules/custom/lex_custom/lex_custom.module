@@ -25,6 +25,11 @@ function lex_custom_theme() {
       ],
       'template' => 'fa-link-formatter',
     ],
+    'gtranslate' => [
+      'variables' => [
+        'gtranslate_html' => NULL
+      ],
+    ],
   ];
 }
 
@@ -74,6 +79,17 @@ function lex_custom_system_breadcrumb_alter(Breadcrumb &$breadcrumb, RouteMatchI
       $breadcrumb->addLink(Link::createFromRoute($title, '<none>'));
     }
   }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function lex_custom_permission() {
+  return array(
+    'gtranslate settings' => array(
+      'title' => t('Manage GTranslate settings'),
+    ),
+  );
 }
 
 /**

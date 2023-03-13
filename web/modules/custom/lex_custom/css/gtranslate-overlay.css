@@ -1,0 +1,91 @@
+.gtranslate .modal .modal-content {
+	margin: 0 auto;
+	width: 800px;
+}
+
+.gtranslate .modal .modal-body #gtranslate_selector {
+	display:grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	width: 100%;
+}
+
+.gtranslate .modal-dialog {
+	max-width: unset;
+	top: 10%;
+}
+
+.gtranslate .modal .lang-item {
+	line-height: 45px !important;
+	text-align: left;
+}
+
+.gtranslate .modal .lang-item a {
+	display: block;
+	font-size: 1rem !important;
+}
+
+.gtranslate .modal .modal-header {
+    border-bottom: none;
+}
+
+.gtranslate .modal .modal-body {
+	height: 500px;
+	overflow: scroll;
+}
+
+@media only screen and (max-width: 820px) {
+	.gtranslate .modal .modal-body #gtranslate_selector {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.gtranslate .modal-dialog {
+		margin: unset !important;
+		top: unset;
+	}
+
+	.gtranslate .modal .modal-content {
+		width: unset;
+	}
+
+	.gtranslate .modal .lang-item {
+		line-height: 65px !important;
+	}
+
+	.gtranslate .modal .modal-body {
+		height: unset;
+		overflow: unset;
+	}
+}
+
+@media only screen and (max-width: 420px) {
+	.gtranslate .modal .modal-body #gtranslate_selector {
+		grid-template-columns: 1fr;
+	}
+
+	.gtranslate .modal .lang-item a {
+		font-size: 1.2rem !important;
+	}
+}
+
+#goog-gt-tt {
+	display:none !important;
+}
+
+.goog-te-banner-frame {
+	display:none !important;
+}
+
+.skiptranslate {
+	display:none !important;
+}
+
+.goog-te-menu-value:hover {
+	text-decoration:none !important;
+}
+body {
+  top:0 !important;
+}
+
+#google_translate_element2 {
+  display:none!important;
+}
