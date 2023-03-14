@@ -1,6 +1,10 @@
 .gtranslate .fa-globe {
 	color: white;
-	transform: translate(3px, 2px);
+	transform: translateY(1px);
+}
+
+.gtranslate .btn {
+	transform: translateX(2px);
 }
 
 .gtranslate .modal .modal-content {
