@@ -9,10 +9,9 @@ config:
   id: 085efc9d-6f4f-4d02-a80b-9d5cf086a982
 events:
   post-db-import:
-    - appserver: cd $LANDO_WEBROOT && drush cr --yes
+    - appserver: cd $LANDO_WEBROOT && drush pmu devel && drush en devel && drush cr --yes
   post-pull:
-    - appserver: cd $LANDO_WEBROOT && drush updb --yes && drush cr --yes
-proxy:
+    - appserver: cd $LANDO_WEBROOT && drush pmu devel && drush en devel && drush updb --yes && drush cr --yes
   nodejs:
     - lex-sync.lndo.site:3000
 services:
@@ -43,7 +42,10 @@ services:
 tooling:
   drush:
     service: appserver
-    cmd: drush --root=/app/web --uri=https://lexky-d8.lndo.site
+    cmd: drush
+    env:
+      DRUSH_OPTIONS_URI: https://lexky-d8.lndo.site
+      DRUSH_OPTIONS_ROOT: /app/web
   jq:
     service: appserver
   gulp:
