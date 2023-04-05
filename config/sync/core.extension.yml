@@ -91,6 +91,7 @@ module:
   search_api: 0
   search_api_pantheon: 0
   search_api_solr: 0
+  seckit: 0
   shortcut: 0
   smtp: 0
   system: 0
