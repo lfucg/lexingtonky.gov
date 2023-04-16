@@ -10,15 +10,19 @@ body footer {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+
     @include screens-below(sm) {
       padding: 2rem 3rem 0;
     }
+
     nav.contextual-region, nav[role="navigation"] {
       flex: 0 0 18%;
       overflow: hidden;
+
       @include screens-below(sm) {
         flex: 100%;
       }
+
       & > ul {
         min-height: 125px;
         @include screens-below(sm) {
@@ -26,8 +30,11 @@ body footer {
           height: auto;
           padding-bottom: 2rem;
         }
-      }
 
+        a {
+          color: white;
+        }
+      }
     }
   }
 
