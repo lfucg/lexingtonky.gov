@@ -1,0 +1,9 @@
+uuid: 3fb4b54f-e3fd-4659-a99c-1d2e9da44406
+langcode: en
+status: true
+dependencies: {  }
+id: performance
+label: Performance
+description: 'These cookies allow us to analyze site usage so we can measure and improve performance. They collect information in a way that does not directly identify individuals.'
+checkbox_default_state: checked
+weight: -8

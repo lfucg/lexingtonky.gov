@@ -1,0 +1,9 @@
+uuid: f0453baf-17cc-4e3b-9cb1-73d32e196576
+langcode: en
+status: true
+dependencies: {  }
+id: statistics
+label: Statistics
+description: 'Third-party service(s) such as analytics software that are implemented to track site statistics.'
+checkbox_default_state: checked
+weight: -7

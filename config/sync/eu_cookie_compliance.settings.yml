@@ -1,0 +1,87 @@
+_core:
+  default_config_hash: zmkyvoZ03LGqfVeB0mtslC-pkWMOrGIU9lJl9_jqUkc
+langcode: en
+uuid: 527f09fe-8448-4c07-b5e3-04032d1211cb
+popup_enabled: true
+popup_clicking_confirmation: false
+popup_scrolling_confirmation: false
+eu_countries: {  }
+eu_only: false
+eu_only_js: false
+popup_position: false
+fixed_top_position: true
+popup_info:
+  value: "<p>We use a selection of our own and third-party cookies on the pages of this website that provide better ease of use when using the website and&nbsp; that generate aggregated data on website use and statistics. These cookies do not collect identifiable user information – they obtain data anonymously and only use it to improve the performance of a website. If you choose \"ACCEPT\", you consent to the use of all cookies.</p>\r\n"
+  format: full_html
+mobile_popup_info:
+  value: "<p>We use a selection of our own and third-party cookies on the pages of this website that provide better ease of use when using the website and that generate aggregated data on website use and statistics. These cookies do not collect identifiable user information.</p>\r\n"
+  format: basic_html
+popup_info_template: new
+popup_agree_button_message: Accept
+popup_more_info_button_message: 'Privacy Policy'
+mobile_breakpoint: 768
+popup_agreed_enabled: false
+popup_hide_agreed: false
+disagree_button_label: 'No, thanks'
+popup_agreed:
+  value: "<h2>Thank you for accepting cookies.</h2>\r\n\r\n<p>You can now hide this message.</p>\r\n"
+  format: full_html
+popup_find_more_button_message: 'Privacy Policy'
+popup_hide_button_message: Hide
+popup_link: /terms-of-use
+popup_link_new_window: true
+popup_height: null
+popup_width: ''
+popup_delay: 750
+show_more_info: true
+popup_bg_hex: ''
+popup_text_hex: ''
+domain: ''
+domains_option: 1
+domains_list: ''
+exclude_paths: "/admin\r\n/admin/*\r\n/batch\r\n/node/add*\r\n/node/*/*\r\n/user/*/*\r\n/cookie-statement"
+exclude_admin_theme: false
+cookie_session: 0
+set_cookie_session_zero_on_disagree: 1
+cookie_lifetime: 365
+use_mobile_message: true
+use_bare_css: true
+use_olivero_css: true
+disagree_do_not_show_popup: false
+reload_page: false
+reload_options: 0
+reload_routes_list: ''
+cookie_name: ''
+exclude_uid_1: false
+better_support_for_screen_readers: false
+method: opt_in
+disabled_javascripts: ''
+automatic_cookies_removal: true
+allowed_cookies: "\r\n\r\n"
+consent_storage_method: do_not_store
+withdraw_message:
+  value: "<h2>We use cookies on this site to enhance your user experience</h2>\r\n\r\n<p>You have given your consent for us to set cookies.</p>\r\n"
+  format: full_html
+withdraw_tab_button_label: 'Privacy Policy'
+withdraw_action_button_label: 'Withdraw consent'
+withdraw_enabled: false
+withdraw_button_on_info_popup: false
+save_preferences_button_label: 'Save preferences'
+accept_all_categories_button_label: 'Accept all cookies'
+enable_save_preferences_button: true
+domain_all_sites: true
+settings_tab_enabled: false
+containing_element: body
+cookie_policy_version: 1.0.0
+cookie_value_disagreed: '0'
+cookie_value_agreed_show_thank_you: '1'
+cookie_value_agreed: '2'
+accessibility_focus: false
+close_button_action: close_banner
+reject_button_label: ''
+reject_button_enabled: false
+close_button_enabled: false
+dependencies:
+  config:
+    - filter.format.basic_html
+    - filter.format.full_html
