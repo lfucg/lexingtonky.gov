@@ -112,10 +112,6 @@
           });
       })
 
-      if ($('.service').hasClass('hide')) {
-        $('.service').toggleClass('hide');
-        $('.service-label').toggleClass('open');
-      }
       $('.instructions').html('Service Information');
       $('.instructions').toggleClass('text-center');
       $addressInput.removeClass('loading');

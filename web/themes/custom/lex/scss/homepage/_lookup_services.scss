@@ -6,17 +6,20 @@
   top: -40px;
   width: 90%;
 
-  @include screens-below(sm){
+  @include screens-below(md){
     top: -10px;
   }
 
   .lex-find {
     border-right: 1px solid color(med-blue);
-    @include screens-below(sm){
+    text-align: left;
+
+    @include screens-below(md){
       border-right: none;
       border-bottom: 1px solid color(med-blue);
       padding-bottom: 1rem;
       margin-bottom: 1rem;
+      text-align: center;
     }
   }
 
@@ -45,10 +48,8 @@
   }
 
   .service-label {
+    border-bottom: solid 1px color(med-blue);
     height: 80px;
-    &.open {
-      border-bottom: solid 1px color(med-blue);
-    }
   }
 
   .service {
@@ -69,22 +70,19 @@
     }
   }
 
-  .hide {
-    display: none;
-  }
-
   input {
     border-radius: 5px;
     border: 1px solid color(med-blue);
-    width: 90%;
     margin: 0;
     position: relative;
-    left: -5%;
   }
 
   .instructions {
-    padding-left: 15px;
+    @include screens-below(md){
+      text-align: left;
+    }
   }
+
   .lexfind-link {
     color: color(med-blue);
     font-weight: 600;
