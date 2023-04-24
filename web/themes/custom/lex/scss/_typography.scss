@@ -53,7 +53,12 @@ a, p {
   font-size: 1rem;
 }
 
-a:not(.lex-calltoaction, .lex-font-standout) {
+a:not(
+  .lex-calltoaction,
+  .lex-font-standout,
+  .contact-card-link,
+  .toolbar-icon
+  ) {
   color: color(med-blue);
 
   &.dark-bg {
@@ -70,6 +75,6 @@ a:not(.lex-calltoaction, .lex-font-standout) {
   ) {
     color: color(yellow);
     text-decoration: none;
-    border-bottom: 1px solid color(yellow);
+    box-shadow: 0 -1px 0 0 color(yellow) inset !important;
   }
 }
