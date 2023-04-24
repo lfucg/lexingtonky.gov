@@ -707,7 +707,7 @@ display:
         filters: false
         filter_groups: false
       display_description: ''
-      use_more: true
+      use_more: false
       use_more_always: true
       use_more_text: more
       display_extenders: {  }
@@ -812,7 +812,7 @@ display:
         filters: false
         filter_groups: false
       display_description: ''
-      use_more: true
+      use_more: false
       use_more_always: true
       use_more_text: more
       display_extenders: {  }

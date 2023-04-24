@@ -53,9 +53,9 @@ a, p {
   font-size: 1rem;
 }
 
-a,
-.ui-widget-content a:not(.lex-calltoaction) {
+a:not(.lex-calltoaction, .lex-font-standout) {
   color: color(med-blue);
+
   &.dark-bg {
     color: color(white);
   }
@@ -64,7 +64,10 @@ a,
     color: color(med-blue);
   }
 
-  &:hover:not(.btn .btn-link) {
+  &:hover:not(
+    .btn .btn-link,
+    .lex-calltoaction
+  ) {
     color: color(yellow);
     text-decoration: none;
     border-bottom: 1px solid color(yellow);

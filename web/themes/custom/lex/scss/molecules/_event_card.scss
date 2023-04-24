@@ -134,9 +134,11 @@
     }
 
     .more-link {
-        margin: 10px 100px 20px 10px;
         float: left !important;
+        margin: 10px 100px 20px 10px;
         text-transform: capitalize !important;
+        width: 200px;
+        white-space: nowrap;
 
         a {
             padding: 0.5em;
