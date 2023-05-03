@@ -3,6 +3,14 @@
     phone_number
 #}
 
+{%
+    set classes = [
+      'lex-social-link',
+      'fa-phone',
+      dark_bg ? 'dark-bg'
+    ]
+%}
+
 {% set stripped_number = phone_number|replace({ '(': '', ')': '', '-': '', ' ': ''}) %}
 
-<a class="lex-social-link fa-phone dark-bg" href="tel:{{ stripped_number }}">{{ phone_number }}</a>
+<a {{ attributes.addClass(classes).removeClass('lex-region-footer') }} href="tel:{{ stripped_number }}">{{ phone_number }}</a>
