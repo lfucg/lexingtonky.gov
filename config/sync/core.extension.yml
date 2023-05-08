@@ -55,6 +55,7 @@ module:
   help: 0
   history: 0
   honeypot: 0
+  hotjar: 0
   iframe: 0
   image: 0
   image_captcha: 0
