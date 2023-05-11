@@ -4,6 +4,7 @@ status: true
 dependencies:
   module:
     - contact
+    - eu_cookie_compliance
     - search
     - system
 id: anonymous
@@ -13,4 +14,5 @@ is_admin: false
 permissions:
   - 'access content'
   - 'access site-wide contact form'
+  - 'display eu cookie compliance popup'
   - 'search content'

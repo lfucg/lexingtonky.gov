@@ -99,7 +99,8 @@
         "drupal/recaptcha": "^3.1",
         "drupal/config_ignore": "^2.3",
         "drupal/config_split": "^1.9",
-        "drupal/gtranslate": "1.14"
+        "drupal/gtranslate": "1.14",
+        "drupal/eu_cookie_compliance": "^1.24"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",

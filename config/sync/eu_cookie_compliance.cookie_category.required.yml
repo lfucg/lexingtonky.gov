@@ -1,0 +1,9 @@
+uuid: 69c948ef-7e65-43fe-8670-86b0198d3b9f
+langcode: en
+status: true
+dependencies: {  }
+id: required
+label: Required
+description: 'These cookies are required to enable core site functionality.'
+checkbox_default_state: required
+weight: -9
