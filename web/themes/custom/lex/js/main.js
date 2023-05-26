@@ -1,6 +1,7 @@
 import './alerts'
 import './browse-columns';
 import './cards';
+import './forms';
 import './internal-search-block';
 import './join-police';
 import './lex-cal';
