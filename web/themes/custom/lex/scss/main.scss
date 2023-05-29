@@ -31,6 +31,10 @@
 @import './search';
 @import './econdev';
 
+html{
+  scroll-behavior: smooth;
+}
+
 .no-scroll {
   overflow: hidden;
 }
