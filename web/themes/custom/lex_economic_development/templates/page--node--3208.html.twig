@@ -1,0 +1,48 @@
+{% extends 'page.html.twig' %}
+
+{% block page_breadcrumb %}
+  <div class="econdev-contact econ-section econ-component">
+    <h2 class="econdev-contact-heading">Contact</h2>
+    <div class="contact-content">
+      <div class="contact-block">
+        <div class="contact-icon">
+          <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <div class="contact-text">
+          Economic Development </br>
+          <a href="https://www.google.com/maps/place/200+E+Main+St,+Lexington,+KY+40507/@38.0440618,-84.4972526,16.7z/data=!4m5!3m4!1s0x884244e969fae947:0x9f4475895926f7a2!8m2!3d38.0441673!4d-84.4950457">200 E. Main St.</a> </br>
+          Lexington, KY
+        </div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-icon">
+          <i class="fas fa-phone"></i>
+        </div>
+        <div class="contact-text">
+          <a href="tel:8592583100">(859)258-3100</a> </br>
+          Fax: (859)258-3194 </br>
+          <a href="mailto:aglasscock@lexingtonky.gov">Email Us</a>
+        </div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-icon">
+          <i class="fas fa-user-alt"></i>
+        </div>
+        <div class="contact-text">
+          Amy Glasscock </br>
+          Director of Business Engagement
+        </div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="contact-text">
+          Monday - Friday </br>
+          9 a.m - 5 p.m.
+        </div>
+      </div>
+    </div>
+  </div>
+  {{ page.breadcrumb.lex_economic_development_breadcrumbs }}
+{% endblock %}
