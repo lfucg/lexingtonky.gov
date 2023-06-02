@@ -30,9 +30,9 @@ name: Lando
 description: ''
 backend: search_api_solr
 backend_config:
-  retrieve_data: false
+  retrieve_data: true
   highlight_data: false
-  site_hash: false
+  site_hash: true
   server_prefix: ''
   domain: generic
   environment: default
@@ -55,7 +55,7 @@ backend_config:
     jts: false
     solr_install_dir: ''
   optimize: false
-  fallback_multiple: false
+  fallback_multiple: true
   disabled_field_types: {  }
   disabled_caches: {  }
   disabled_request_handlers:
