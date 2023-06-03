@@ -20,6 +20,7 @@ dependencies:
     - file
     - filter
     - node
+    - search
     - shortcut
     - system
     - toolbar
@@ -60,6 +61,7 @@ permissions:
   - 'edit own news_article content'
   - 'edit own organization_page content'
   - 'edit own page content'
+  - 'search content'
   - 'use draft_draft transition'
   - 'use draft_needs_review transition'
   - 'use needs_review_needs_review transition'

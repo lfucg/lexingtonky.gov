@@ -5,6 +5,7 @@ dependencies:
   module:
     - contact
     - eu_cookie_compliance
+    - search
     - system
 id: anonymous
 label: 'Anonymous user'
@@ -14,3 +15,4 @@ permissions:
   - 'access content'
   - 'access site-wide contact form'
   - 'display eu cookie compliance popup'
+  - 'search content'
