@@ -39,10 +39,12 @@
 		if (monthMode === true) {
 		$('.month-switch').css({
 			'background-color': 'white',
+			'box-shadow': 'rgba(0, 0, 0, 0.5) 0px 3px 10px 0px',
 			'color': '#004585'
 		});
 		$('.list-switch').css({
 			'background-color': '#EFEFEF',
+			'box-shadow': 'unset',
 			'color': '#353535'
 		});
 		$('#sidebar-calendar').css('visibility', 'hidden');
@@ -58,10 +60,12 @@
 		} else if (listMode == true) {
 		$('.list-switch').css({
 			'background-color': 'white',
+			'box-shadow': 'rgba(0, 0, 0, 0.5) 0px 3px 10px 0px',
 			'color': '#004585'
 		});
 		$('.month-switch').css({
 			'background-color': '#EFEFEF',
+			'box-shadow': 'unset',
 			'color': '#353535'
 		});
 		$('#sidebar-calendar').css({

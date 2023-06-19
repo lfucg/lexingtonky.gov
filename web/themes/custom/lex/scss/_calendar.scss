@@ -50,9 +50,8 @@
 }
 
 .fc-day-top {
-  padding-left: 1.5% !important;
-  padding-right: 1.5% !important;
   line-height: 1;
+  padding: 0 1% !important;
 }
 
 .fc-widget-header, .fc-head-container {
@@ -323,7 +322,7 @@
 
 .fc-week {
   @media (min-width: 768px) {
-      height: 100px !important;
+      height: 75px !important;
   }
 }
 
@@ -346,7 +345,7 @@
 }
 
 .calendar-bullets {
-  @include fluid-type(3px, 60px);
+  @include fluid-type(3px, 50px);
   background-color: transparent !important;
   line-height: 0;
   margin-top: 2px !important;
@@ -357,7 +356,6 @@
 
   @media (max-width: $calendarDualBreakpoint) {
     @include fluid-type(26px, 50px);
-
   }
 }
 
@@ -372,7 +370,7 @@
 }
 
 .calendar-bullets-month {
-  padding-right: 0.8vw;
+  padding-right: 0.7vw;
 }
 
 .filter-container {
@@ -386,6 +384,7 @@
 
   #calendar-filter, #page-filter {
       border: 1px solid color(gray);
+      height: 35px !important;
       max-width: 100%;
   }
 }
@@ -409,6 +408,20 @@
   margin-bottom: .25rem!important;
   @media (max-width: $calendarDualBreakpoint) {
     white-space: break-spaces;
+
     @include fluid-type(16px, 22px);
   }
+}
+
+.fc-content-skeleton,
+.fc-content-skeleton table {
+  height: 100%;
+}
+
+.fc-content-skeleton table tbody {
+  display: none;
+}
+
+.fc-day-grid-container {
+  overflow: hidden !important;
 }
