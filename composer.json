@@ -138,6 +138,11 @@
         "drupal/drupal": "*"
     },
     "extra": {
+        "patches": {
+            "drupal/core": {
+                "project/drupal/issues/3359511 - missing menu active trail in Drupal 9.5.9": "https://www.drupal.org/files/issues/2023-05-12/3359511-5.patch"
+            }
+        },
         "drupal-scaffold": {
             "locations": {
                 "web-root": "./web"
