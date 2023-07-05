@@ -1,9 +1,0 @@
-{% extends 'views-view.html.twig' %}
-
-{% block rows %}
-  {% set view = drupal_view_result('taxonomy_term', 'block_term_external_links')|length %}
-  {% if view > 0 %}
-    {{ drupal_view('taxonomy_term', 'block_term_external_links') }}
-  {% endif %}
-  {{ rows }}
-{% endblock %}

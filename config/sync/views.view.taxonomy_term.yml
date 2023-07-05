@@ -294,13 +294,12 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-  block_term_external_links:
-    id: block_term_external_links
-    display_title: 'Term External Links'
-    display_plugin: block
-    position: 4
+  attachment_1:
+    id: attachment_1
+    display_title: Attachment
+    display_plugin: attachment
+    position: 5
     display_options:
-      title: 'Taxonomy Term External Links'
       fields:
         field_external_links:
           id: field_external_links
@@ -358,7 +357,7 @@ display:
             url_only: false
             url_plain: false
             rel: '0'
-            target: '0'
+            target: _blank
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -385,7 +384,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: standard
-          order: DESC
+          order: ASC
           expose:
             label: ''
             field_identifier: title
@@ -454,13 +453,11 @@ display:
       row:
         type: fields
         options:
-          default_field_elements: true
+          default_field_elements: false
           inline: {  }
           separator: ''
           hide_empty: false
       defaults:
-        title: false
-        pager: false
         style: false
         row: false
         fields: false
@@ -468,8 +465,9 @@ display:
         arguments: false
         filters: false
         filter_groups: false
-      display_description: ''
       display_extenders: {  }
+      displays:
+        page_1: page_1
     cache_metadata:
       max-age: -1
       contexts:
