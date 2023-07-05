@@ -1,49 +1,37 @@
 .icon-desc-button {
-    height: auto;
-    width: 250px;
-    background-color: color(med-blue);
+  background-color: color(med-blue);
+  color: color(white);
+  height: auto;
+  width: 250px;
+
+  .icon-img-button {
+    margin-left: 0.25em;
+    margin-top: 1em;
+  }
+
+  .button-heading {
     color: color(white);
+    margin: 0 0 15px 0;
+  }
+  .row {
+    padding-top: 15px;
+  }
 
-    .icon-img-button {
-        margin-top: 1em;
-        margin-left: .25em;
-        transform: scale(4);
-    }
-    
-    .button-heading {
-        margin: 0 0 15px 0;
-        color: color(white);
-    }
-    .row {
-        padding-top: 15px;
-    }
+  .description {
+    font-size: 1rem;
+  }
 
-    .description {
-        font-size: 1rem;
-    }
+  .button-icon {
+    font-size: 1.6em;
+  }
 
-    .button-icon {
-        font-size: 1.6em;
-    }
+  .button-arrow {
+    float: right;
+    margin-top: 3px;
+  }
 
-    .button-arrow {
-        float: right;
-        margin-top: 3px;
-    }
-
-     &:hover {
-        background-color: #E1B111;
-        height: auto;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;
-
-        .row {
-            padding: 20px 0 5px;
-        }
-
-        .description {
-            div {
-                padding-bottom: 15px;
-            }
-        }
-    }
+  &:hover {
+    background-color: #e1b111;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;
+  }
 }
