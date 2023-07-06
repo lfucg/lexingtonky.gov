@@ -1,141 +1,146 @@
 body.path-taxonomy {
 
-    .lex-pagefeedback-container {
-        padding: 0 5%;
+  .lex-pagefeedback-container {
+    padding: 0 5%;
+  }
+
+  main {
+    background-color: color(dark-blue);
+    color: color(white) !important;
+  }
+
+  #root {
+    border-right: 1px solid color(yellow);
+
+    li {
+      padding-left: 1rem !important;
+
+      a {
+        border: 1px solid transparent;
+      }
+
+      a:hover {
+        color: color(yellow) !important;
+        border: 1px solid color(yellow) !important;
+      }
     }
-    main {
-        background-color: color(dark-blue);
-        color: color(white) !important;
+  }
+
+  #section {
+    padding: 0;
+
+    .lex-card-title-heading {
+      padding-left: 1rem;
+      color: color(light-gray) !important;
     }
 
-    #root {
-        border-right: 1px solid color(yellow);
-
-        li {
-            padding-left: 1rem !important;
-
-            a {
-                border: 1px solid transparent;
-            }
-            
-            a:hover {
-                color: color(yellow) !important;
-                border: 1px solid color(yellow) !important;
-            }
-        }
+    .lex-card-title,
+    .lex-browsenav-description {
+      color: color(light-gray) !important;
     }
 
-    #section { 
-        padding: 0;
+    ul {
+      li {
+        padding-left: 1rem;
+        color: color(light-gray);
+      }
 
-        .lex-card-title-heading {
-            padding-left: 1rem;
-            color: color(light-gray) !important;
+      .active {
+        a {
+          .lex-card-title,
+          .lex-browsenav-description {
+            color: color(dark-blue) !important;
+          }
         }
-
-        .lex-card-title, .lex-browsenav-description {
-            color: color(light-gray) !important;
-        }
-
-        ul {
-            li {
-                padding-left: 1rem;
-                color: color(light-gray);
-            }
-            
-            .active {
-                a {
-                    .lex-card-title, .lex-browsenav-description {
-                        color: color(dark-blue) !important;
-                    }
-                }
-            }
-        }
+      }
     }
+  }
 }
 
 body.path-taxonomy {
-    .browse-panes {
-        #root, #section {
-            background-color: color(dark-blue);
-            color: color(white);
+  .browse-panes {
+    #root,
+    #section {
+      background-color: color(dark-blue);
+      color: color(white);
 
-            ul {
-                li {
-                    a {
-                        color: color(white);
-                    }
-                }
-            }
+      li:not(.active) a {
+        color: color(white);
 
-            .active {
-                background-color: color(yellow);
+        &:hover {
+          border: none;
+          color: color(yellow) !important;
 
-                a {
-                    color: color(dark-blue) !important;
-                }
-            }
+          .lex-card-title,
+          .lex-browsenav-description {
+            color: color(yellow) !important;
+          }
         }
+      }
 
-        #root {
-            ul {
-                li {
-                    a {
-                        color: color(light-gray);
-                        
-                        &:hover {
-                            color: color(light-gray);
-                        }
-                    }
-                }
-            }
+      li.active {
+        background-color: color(yellow);
+
+        a,
+        a:hover{
+          .lex-card-title,
+          .lex-browsenav-description {
+            color: color(dark-blue) !important;
+          }
         }
-
-        #section {
-            padding: 0;
-            border-left: 1px solid color(yellow) !important;
-            a {
-                .lex-card-title {
-                    color: color(white);
-                }
-            }
-
-            .lex-card-title {
-                color: color(white);
-            }
-            a:hover {
-                border: none;
-                .lex-card-title, .lex-browsenav-description {
-                    color: color(yellow) !important;
-                }
-            }
-        }
-
-        &.subsection {
-            #section {
-                border-right: 1px solid color(yellow) !important;
-            }
-        }
+      }
     }
+
+    #root {
+      ul {
+        li {
+          a {
+            color: color(light-gray);
+
+            &:hover {
+              color: color(light-gray);
+            }
+          }
+        }
+      }
+    }
+
+    #section {
+      padding: 0;
+      border-left: 1px solid color(yellow) !important;
+
+      a .lex-card-title,
+      .lex-card-title {
+        color: color(white);
+      }
+    }
+
+    &.subsection {
+      #section {
+        border-right: 1px solid color(yellow) !important;
+      }
+    }
+  }
 }
 
 .pane-inner {
-    a, h1 {
-        color: color(light-gray);
-    }
+  a,
+  h1 {
+    color: color(light-gray);
+  }
 
-    a:hover {
-        color: color(yellow);
-        border: none;
-    }
+  a:hover {
+    color: color(yellow);
+    border: none;
+  }
 
-    #block-browsenav-subcategory-term {
-        padding-left: 0 !important;
-    }
+  #block-browsenav-subcategory-term {
+    padding-left: 0 !important;
+  }
 }
 
 .taxonomy-wrapper {
-    #nav-icon {
-        display: none;
-    }
+  #nav-icon {
+    display: none;
+  }
 }
