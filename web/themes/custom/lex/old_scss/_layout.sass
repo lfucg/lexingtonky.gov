@@ -93,9 +93,6 @@ tr:nth-child(even) td
   @include base_clear
   margin-bottom: 2em
 
-.addtoany--block
-  margin-bottom: 1em
-
 .lex-location-contact ul.usa-unstyled-list
   margin-top: 1em
   li
@@ -167,9 +164,22 @@ main
   align-items: stretch
 
   .path-node.bundle-news_article &
+    flex-direction: column
+    max-width: 940px
+    margin: auto
+
+    > div:first-child,
+    > div:last-child
+      width: 100%
+
+  .path-node.bundle-organization_page &,
+  .path-node.bundle-page &,
+  .path-node.bundle-board_commission &
+    max-width: 1000px
+    margin: auto
+
     @media (min-width: $screen-desk-max)
-      max-width: calc(1000px + 10%)
-      margin: auto
+      padding: $base_gutter 0
 
 
   img
@@ -446,6 +456,7 @@ table
   padding: 0 5%
   background: $color-primary-2
   display: flex
+  overflow: scroll
 
   .lex-button, .lex-calltoaction,
   .lex-aside-list li:last-child, .usa-unstyled-list li:last-child
