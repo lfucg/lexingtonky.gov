@@ -1,0 +1,37 @@
+.article {
+    &-info,
+    &-share {
+        padding: 0 !important;
+
+        .col-12 {
+            padding: 0 !important;
+        }
+    }
+
+
+    &-share {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 6px;
+
+        @include screens-above(sm) {
+            justify-content: flex-end;
+        }
+    }
+
+    &-row {
+        margin-top: -1.5rem !important;
+        margin-bottom: 1rem !important;
+        flex-direction: column;
+
+        @include screens-above(sm) {
+            flex-direction: row;
+        }
+
+        .byline-contact {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    }
+}

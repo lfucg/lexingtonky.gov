@@ -14,24 +14,24 @@
 #}
 
 {% block page_alerts %}
-  {{ page.alerts }}
+	{{ page.alerts }}
 {% endblock %}
 
 {% block page_header %}
-  {% include "@components/components/header.twig" with { menu: page.sitemast } %}
+	{% include "@components/components/header.twig" with { menu: page.sitemast } %}
 {% endblock %}
 
 {% block page_hero %}
-  {% if is_front %}
-    {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri|image_style('hero_image')) %}
-    {% set hero_alt = node.field_lex_custom_banner_image.alt %}
-  {% elseif node.field_lex_custom_banner_image.entity.fileuri %}
-    {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
-    {% set hero_alt = node.field_lex_custom_banner_image.alt %}
-  {% else %}
-    {% set hero = '' %}
-  {% endif %}
-  {% include "@lex/includes/hero.html.twig" with {
+	{% if is_front %}
+		{% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri|image_style('hero_image')) %}
+		{% set hero_alt = node.field_lex_custom_banner_image.alt %}
+	{% elseif node.field_lex_custom_banner_image.entity.fileuri %}
+		{% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
+		{% set hero_alt = node.field_lex_custom_banner_image.alt %}
+	{% else %}
+		{% set hero = '' %}
+	{% endif %}
+	{% include "@lex/includes/hero.html.twig" with {
     page: page,
     hero: hero,
     hero_alt: hero_alt,
@@ -40,81 +40,77 @@
 {% endblock %}
 
 {% block page_breadcrumb %}
-{{ page.breadcrumb }}
+	{{ page.breadcrumb }}
 {% endblock %}
 
-{% block page_term %}
-{% endblock %}
+{% block page_term %}{% endblock %}
 
 {% block page_events %}
-{{page.events}}
+	{{page.events}}
 {% endblock %}
 
 {% block page_main %}
-<a id="main-content" name="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
-<main role="main">
-  <div>
-  {% block page_title_main %}
-    {% if node.bundle == 'news_article' %}
-      <img class="mb-4 w-100" src="{{file_url(node.field_image[0].entity.uri.value)}}">
-    {% endif %}
-    {{ page.title }}
-  {% endblock %}
-  {% block content %}
-    {{ page.content }}
-  {% endblock %}
-  {% block after_content %}
-    {{ page.after_content }}
-  {% endblock %}
-  </div>
-  {% block sidebar %}
-    {% if node.type.value[0].target_id != 'full_page_iframe' %}
-      <div>
-        {% if node.field_media_contact[0].entity.field_contact_name.value %}
-          <div id="block-field-block-field-office-to-contact" class="lex-block">
-          <h2>Contact</h2>
-          <div>
-            <div about="/taxonomy/term/31">
-              <ul class="lex-aside-list">
-                <li>
-                  <h4 class="lex-card-title lex-card-title-medium">
-                  <div>{{node.field_media_contact[0].entity.field_contact_name.value}}</div>
-                  </h4>
-                </li>
-                <li class="lex-location-contact">
-                  <a class="lex-social-link fa-envelope" href="mailto:{{node.field_media_contact[0].entity.field_contact_email.value}}">Email us</a>
-                </li>
-                <li class="lex-location-contact">
-                  <a class="lex-social-link fa-phone" href="tel:{{node.field_media_contact[0].entity.field_contact_phone.value}}">{{node.field_media_contact[0].entity.field_contact_phone.value}}</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        {% endif %}
-        {% if page.sidebar is not empty %}
-          {{ page.sidebar }}
-        {% endif %}
-      </div>
-    {% endif %}
-  {% endblock %}
-</main>
+	<a id="main-content" name="main-content" tabindex="-1"></a>
+	{# link is in html.html.twig #}
+	<main role="main">
+		<div>
+			{% block page_title_main %}
+				{{ page.title }}
+			{% endblock %}
+			{% block content %}
+				{{ page.content }}
+			{% endblock %}
+			{% block after_content %}
+				{{ page.after_content }}
+			{% endblock %}
+		</div>
+		{% block sidebar %}
+			{% if node.type.value[0].target_id != 'full_page_iframe' %}
+				<div>
+					{% if node.field_media_contact[0].entity.field_contact_name.value %}
+						<div class="lex-block">
+							<h2>Contact</h2>
+							<div>
+								<ul class="lex-aside-list">
+									<li>
+										<h4 class="lex-card-title lex-card-title-medium">
+											<div>{{node.field_media_contact[0].entity.field_contact_name.value}}</div>
+										</h4>
+									</li>
+									<li class="lex-location-contact">
+										<a class="lex-social-link fa-envelope" href="mailto:{{node.field_media_contact[0].entity.field_contact_email.value}}">Email us</a>
+									</li>
+									<li class="lex-location-contact">
+										<a class="lex-social-link fa-phone" href="tel:{{node.field_media_contact[0].entity.field_contact_phone.value}}">{{node.field_media_contact[0].entity.field_contact_phone.value}}</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					{% endif %}
+					{% if page.sidebar is not empty %}
+						{{ page.sidebar }}
+					{% endif %}
+				</div>
+			{% endif %}
+		{% endblock %}
+	</main>
 {% endblock %}
 
 {% block page_feedback %}
-  {{ page.feedback }}
+	{{ page.feedback }}
 {% endblock %}
 
 <footer class="slab--dark-blue section-padding">
-{% block page_footer %}
-  {{ page.footer }}
-{% endblock %}
-<div class="slab--lex-blue footer-bottom">
-  {% include "@lex/includes/lexington-copyright.html.twig"
+	{% block page_footer %}
+		{{ page.footer }}
+	{% endblock %}
+	<div class="slab--lex-blue footer-bottom">
+		{% include "@lex/includes/lexington-copyright.html.twig"
     with {
       section_class: 'd-flex d-md-none',
       wordmark_class: 'mt-2',
     }
   %}
-  </div>
+	</div>
 </footer>
+

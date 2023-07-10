@@ -13,23 +13,24 @@
 }
 
 .news-row {
-  align-items: center;
   display: flex;
-  min-height: 610px;
-
-  @include screens-below(sm) {
-    flex-wrap: nowrap;
-    overflow: scroll;
-    min-height: 0;
-    background-image: linear-gradient(to right, white, white),
-                      linear-gradient(to right, white, white),
-                      linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0)),
-                      linear-gradient(to left, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0));
-    background-position: left center, right center, left center, right center;
-    background-repeat: no-repeat;
-    background-color: white;
-    background-size: 20px 100%, 20px 100%, 10px 100%, 10px 100%;
-    background-attachment: local, local, scroll, scroll;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow: scroll;
+  min-height: 0;
+  background-image: linear-gradient(to right, white, white),
+                    linear-gradient(to right, white, white),
+                    linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0)),
+                    linear-gradient(to left, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0));
+  background-position: left center, right center, left center, right center;
+  background-repeat: no-repeat;
+  background-color: white;
+  background-size: 20px 100%, 20px 100%, 10px 100%, 10px 100%;
+  background-attachment: local, local, scroll, scroll;
+  
+  @include screens-above(sm) {
+    overflow: visible;
+    justify-content: center;
   }
 }
 
@@ -39,11 +40,15 @@
   color: #0558A7;
   position: relative;
   margin-bottom: 30px;
-  width: auto;
-
-  @include screens-below(sm) {
+  margin: 16px 12px 16px 0;
+  width: 250px;
+  
+  .path-node.bundle-news_article & {
     width: 250px;
-    margin: 16px 12px 16px 0;
+  }
+
+  @include screens-above(sm) {
+    width: auto;
   }
 
   img {
@@ -261,29 +266,3 @@ body.path-news {
   }
 }
 
-.article-info,
-.article-share {
-  padding: 0 !important;
-
-  .col-12 {
-    padding: 0 !important;
-  }
-}
-
-.byline-contact {
-  font-size: 12px;
-  margin-top: 15px;
-}
-
-.article-share {
-  text-align: right;
-}
-
-.share-header {
-  padding-right: 115px;
-  text-transform: capitalize;
-}
-
-.article-row {
-  margin-top: -1.5rem !important;
-}
