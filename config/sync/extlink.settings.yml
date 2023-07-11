@@ -15,7 +15,7 @@ extlink_include: ''
 extlink_class: ext
 extlink_label: '(link is external)'
 extlink_img_class: false
-extlink_css_exclude: '.paragraph--type--icon-button-with-description, .lex-social-link, .lex-social-links, .lex-font-standout, .addtoany--block, #block-lex-home-headerquicklinks, .lex-region-footer '
+extlink_css_exclude: '.paragraph--type--icon-button-with-description, .lex-social-link, .lex-social-links, .lex-font-standout, .addtoany--block, #block-lex-home-headerquicklinks, .lex-region-footer, .a2a_kit'
 extlink_css_explicit: ''
 extlink_mailto_class: '0'
 extlink_mailto_label: '(link sends email)'
