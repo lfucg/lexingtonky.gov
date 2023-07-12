@@ -5,6 +5,7 @@
  * Contains lex_custom.module.
  */
 
+use Drupal\Core\Batch\BatchBuilder;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
@@ -123,4 +124,61 @@ function lex_custom_update_9402() {
 
   \Drupal::entityDefinitionUpdateManager()
     ->installFieldStorageDefinition('moderation_state', 'taxonomy_term', 'workbench_moderation', $field_storage_definition);
+}
+
+/**
+ * Delete all news items prior to 2021 from database.
+ */
+function lex_custom_update_9503(&$sandbox) {
+  return _delete_entities_prior_to_date('node', 'news_article', '2021-01-01', $sandbox);
+}
+
+/**
+ * Delete all final order items prior to 2019 from database.
+ */
+function lex_custom_update_9504(&$sandbox) {
+  return _delete_entities_prior_to_date('node', 'final_order', '2019-01-01', $sandbox);
+}
+
+/**
+ * Reusable delete function of all entity types.
+ *
+ * @param string $entity_type_id  The entity type id. I.e 'node', 'taxonomy_term'
+ * @param string $bundle Entity bundle id. I.e. 'page', 'news_article'.
+ * @param string $published_date Format YYYY-MM-DD
+ * 
+ * @return void
+ */ 
+function _delete_entities_prior_to_date($entity_type_id, $bundle, $published_date, $sandbox) {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $date_limit = strtotime($published_date);
+
+  $entity_storage = $entity_type_manager->getStorage($entity_type_id);
+  $query = $entity_storage->getQuery()
+    ->condition("type", $bundle)
+    ->condition("created", $date_limit, "<");
+  $entity_ids = $query->execute();
+
+  if (empty($entity_ids)) {
+    $messenger = \Drupal::messenger();
+    $messenger->addStatus("No items found to delete.");
+    return t("All {$bundle} prior to {$published_date} have ALREADY been deleted.");
+  }
+
+  if (!isset($sandbox["progress"])) {
+    // This must be the first run. Initialize the sandbox.
+    $sandbox["progress"] = 0;
+    $sandbox["current_pk"] = 0;
+    $sandbox["max"] = count($entity_ids);
+  }
+
+  $entities = $entity_storage->loadMultiple($entity_ids);
+  foreach ($entities as $entity) {
+    $id = $entity->id();
+    $entity->delete();
+    $sandbox["progress"]++;
+    $sandbox["current_node"] = $id;
+  }
+  $sandbox["#finished"] = empty($sandbox["max"]) ? 1 : $sandbox["progress"] / $sandbox["max"];
+  return t("All {$bundle} prior to {$published_date} have been deleted.");
 }
