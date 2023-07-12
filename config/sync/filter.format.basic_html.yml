@@ -13,10 +13,10 @@ filters:
   filter_html:
     id: filter_html
     provider: filter
-    status: false
+    status: true
     weight: -50
     settings:
-      allowed_html: '<em> <strong> <cite> <blockquote cite> <code> <ul type> <ol type start> <li> <dl> <dt> <dd> <h3 id> <h4 id> <h5 id> <h6 id> <br> <span> <img width height data-caption data-align data-entity-uuid data-entity-type alt src> <div data-oembed-url> <oembed> <h1> <h2> <pre> <a hreflang href !href class="lex-calltoaction lex-recyclebutton recycle-buttton"> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button data-langcode alt title> <p class="test small">'
+      allowed_html: '<em> <strong> <cite> <blockquote cite> <code> <ul type> <ol type start> <li> <dl> <dt> <dd> <h3 id> <h4 id> <h5 id> <h6 id> <br> <span> <img width height data-caption data-align data-entity-uuid data-entity-type alt src> <div data-oembed-url> <oembed> <h1> <h2> <pre> <a hreflang href !href class="lex-calltoaction lex-recyclebutton recycle-buttton" target> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button data-langcode alt title> <p class="test small">'
       filter_html_help: false
       filter_html_nofollow: false
   filter_align:
