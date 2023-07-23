@@ -141,6 +141,21 @@ function lex_custom_update_9504(&$sandbox) {
 }
 
 /**
+ * Delete all meeting items prior to 2021 from database.
+ */
+function lex_custom_update_9505(&$sandbox) {
+  return _delete_entities_prior_to_date('node', 'meeting', '2021-01-01', $sandbox);
+}
+
+/**
+ * Delete all event items prior to 2021 from database.
+ */
+function lex_custom_update_9506(&$sandbox) {
+  return _delete_entities_prior_to_date('node', 'event', '2021-01-01', $sandbox);
+}
+
+
+/**
  * Reusable delete function of all entity types.
  *
  * @param string $entity_type_id  The entity type id. I.e 'node', 'taxonomy_term'
