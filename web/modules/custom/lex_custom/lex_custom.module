@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Link;
+use Drupal\node\NodeInterface;
 use Drupal\views\ViewExecutable;
 
 /**
@@ -196,4 +197,34 @@ function _delete_entities_prior_to_date($entity_type_id, $bundle, $published_dat
   }
   $sandbox["#finished"] = empty($sandbox["max"]) ? 1 : $sandbox["progress"] / $sandbox["max"];
   return t("All {$bundle} prior to {$published_date} have been deleted.");
+}
+
+/**
+ * Implements hook_scheduler_publish_action().
+ * Taken directly from comments on scheduler module:
+ * https://www.drupal.org/project/scheduler/issues/2977887#comment-14541704
+ * 
+ */
+function lex_custom_scheduler_publish_action(NodeInterface $node) {
+  /** @var \Drupal\workbench_moderation\ModerationInformationInterface $moderation_info */
+  $moderation_info = \Drupal::service('workbench_moderation.moderation_information');
+  if ($moderation_info->isModeratableEntity($node)) {
+    $node->set('moderation_state', 'published');
+    $node->save();
+  }
+}
+
+/**
+ * Implements hook_scheduler_unpublish_action().
+ * Taken directly from comments on scheduler module:
+ * https://www.drupal.org/project/scheduler/issues/2977887#comment-14541704
+ * 
+ */
+function lex_custom_scheduler_unpublish_action(NodeInterface $node) {
+  /** @var \Drupal\workbench_moderation\ModerationInformationInterface $moderation_info */
+  $moderation_info = \Drupal::service('workbench_moderation.moderation_information');
+  if ($moderation_info->isModeratableEntity($node)) {
+    $node->set('moderation_state', 'archived');
+    $node->save();
+  }
 }

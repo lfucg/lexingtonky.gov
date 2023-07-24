@@ -23,6 +23,7 @@ dependencies:
     - filter
     - node
     - path
+    - scheduler
     - taxonomy
     - toolbar
     - tour
@@ -78,6 +79,7 @@ permissions:
   - 'revert news_article revisions'
   - 'revert organization_page revisions'
   - 'revert page revisions'
+  - 'schedule publishing of nodes'
   - 'use draft_draft transition'
   - 'use draft_published transition'
   - 'use needs_review_published transition'
@@ -96,3 +98,4 @@ permissions:
   - 'view organization_page revisions'
   - 'view own unpublished content'
   - 'view page revisions'
+  - 'view scheduled content'
