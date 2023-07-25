@@ -4,6 +4,7 @@ status: true
 dependencies:
   module:
     - menu_ui
+    - scheduler
     - workbench_moderation
 third_party_settings:
   menu_ui:
@@ -17,10 +18,23 @@ third_party_settings:
       - needs_review
       - published
     default_moderation_state: draft
+  scheduler:
+    expand_fieldset: always
+    fields_display_mode: vertical_tab
+    publish_enable: true
+    publish_past_date: error
+    publish_past_date_created: false
+    publish_required: false
+    publish_revision: true
+    publish_touch: true
+    show_message_after_update: true
+    unpublish_enable: true
+    unpublish_required: false
+    unpublish_revision: true
 name: 'Service guide'
 type: page
 description: 'To walk someone through using a city service'
 help: ''
-new_revision: false
+new_revision: true
 preview_mode: 0
 display_submitted: false

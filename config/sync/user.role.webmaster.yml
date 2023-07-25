@@ -19,6 +19,7 @@ dependencies:
     - masquerade
     - node
     - path
+    - scheduler
     - system
     - taxonomy
     - toolbar
@@ -62,6 +63,7 @@ permissions:
   - 'edit terms in site_navigation'
   - 'masquerade as any user'
   - 'revert organization_page revisions'
+  - 'schedule publishing of nodes'
   - 'use draft_published transition'
   - 'use published_archived transition'
   - 'use text format advanced_html'
@@ -69,3 +71,4 @@ permissions:
   - 'view all revisions'
   - 'view latest version'
   - 'view organization_page revisions'
+  - 'view scheduled content'

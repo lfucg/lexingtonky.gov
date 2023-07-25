@@ -4,14 +4,26 @@ status: true
 dependencies:
   module:
     - search_api
-title: 'Default cron handler'
+title: 'Search API'
 id: search_api_cron
 weight: 0
 module: search_api
 callback: search_api_cron
 scheduler:
   id: simple
+  configuration:
+    rules:
+      - '0+@ * * * *'
 launcher:
   id: serial
+  configuration:
+    timeouts:
+      lock_timeout: 3600
+    launcher:
+      thread: 0
 logger:
   id: database
+  configuration:
+    method: '3'
+    expire: 1209600
+    retain: 1000

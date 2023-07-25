@@ -4,6 +4,7 @@ status: true
 dependencies:
   module:
     - menu_ui
+    - scheduler
     - workbench_moderation
 third_party_settings:
   menu_ui:
@@ -18,6 +19,19 @@ third_party_settings:
       - draft
       - needs_review
     default_moderation_state: draft
+  scheduler:
+    expand_fieldset: always
+    fields_display_mode: vertical_tab
+    publish_enable: true
+    publish_past_date: error
+    publish_past_date_created: false
+    publish_required: false
+    publish_revision: true
+    publish_touch: true
+    show_message_after_update: true
+    unpublish_enable: true
+    unpublish_required: false
+    unpublish_revision: true
 name: Alert
 type: alert
 description: 'Alert system for the site. You can add an alert to be displayed globally or for specific pages. '

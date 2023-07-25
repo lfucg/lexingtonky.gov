@@ -102,7 +102,8 @@
         "drupal/gtranslate": "1.14",
         "drupal/eu_cookie_compliance": "^1.24",
         "drupal/extlink": "^1.7",
-        "drupal/editor_advanced_link": "^2.2"
+        "drupal/editor_advanced_link": "^2.2",
+        "drupal/scheduler": "^1.5"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
