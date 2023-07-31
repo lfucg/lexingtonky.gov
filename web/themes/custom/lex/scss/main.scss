@@ -56,6 +56,7 @@ ol, ul, dl {
 .lex-region-events {
   background-color: color(light-gray);
   display: inline-block;
+  width: 100%;
 
   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
     display: inline;
@@ -63,9 +64,9 @@ ol, ul, dl {
 }
 
 .lex-events-container {
+  margin: auto;
   min-height: 250px;
   position: relative;
-  margin: auto;
 }
 
 .section-padding:not(

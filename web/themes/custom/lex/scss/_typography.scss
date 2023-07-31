@@ -57,7 +57,8 @@ a:not(
   .lex-calltoaction,
   .lex-font-standout,
   .contact-card-link,
-  .toolbar-icon
+  .toolbar-icon,
+  :has(.event-card)
   ) {
   color: color(med-blue);
 

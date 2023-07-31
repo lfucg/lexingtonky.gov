@@ -1,7 +1,7 @@
 @function strip-unit($value) {
   @return calc($value / ($value * 0 + 1px));
 }
-  
+
 @mixin fluid-type(
   $min-font-size,
   $max-font-size,
