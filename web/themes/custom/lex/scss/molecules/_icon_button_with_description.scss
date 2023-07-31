@@ -1,20 +1,29 @@
 .icon-desc-button {
   background-color: color(med-blue);
   color: color(white);
+  display: flex;
   height: auto;
   width: 225px;
 
-  .icon-img-button {
-    margin-left: 0.25em;
-    margin-top: 1em;
+  &__icon {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__img,
+  &__icon  {
+    flex-basis: 75px;
+    margin: auto;
   }
 
   .button-heading {
+    align-items: center;
     color: color(white);
-    margin: 0 0 15px 0;
-  }
-  .row {
-    padding-top: 15px;
+    display: flex;
+    font-size: 18px;
+    height: 40px;
+    margin: 10px;
+    text-align: start;
   }
 
   .description {
@@ -25,9 +34,13 @@
     font-size: 1.6em;
   }
 
-  .button-arrow {
-    float: right;
-    margin-top: 3px;
+  &__heading {
+    flex-grow: 1;
+  }
+
+  &__arrow {
+    margin: auto;
+    flex-basis: 30px;
   }
 
   &:hover {

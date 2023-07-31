@@ -1,0 +1,15 @@
+uuid: 21a19419-3010-49cf-ab4d-28d89e1112dd
+langcode: en
+status: true
+dependencies: {  }
+name: icon_button_image
+label: 'Icon Button Image (35px width)'
+effects:
+  4bef3fe5-b3c4-4f18-a072-fd1660cb17d1:
+    uuid: 4bef3fe5-b3c4-4f18-a072-fd1660cb17d1
+    id: image_scale
+    weight: 1
+    data:
+      width: 35
+      height: null
+      upscale: true
