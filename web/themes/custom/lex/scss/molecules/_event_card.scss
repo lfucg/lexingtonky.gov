@@ -1,92 +1,104 @@
 .event-card {
-    background-color: color(med-blue);
+  background-color: color(med-blue);
+  color: color(white);
+  float: left;
+  height: 150px;
+  margin: 10px;
+  width: 350px;
+
+  img {
+    height: 25px;
+    width: 35px;
+  }
+
+  .row {
+    padding-top: 15px;
+  }
+
+  .button-heading {
     color: color(white);
-    float: left;
-    height: 150px;
-    margin: 10px;
-    width: 350px;
+    font-size: 20px;
+    margin: 0 0 15px 0;
 
-    img {
-        height: 25px;
-        width: 35px;
+    @include lineclamp($lines: 2);
+  }
+
+  .description {
+    font-size: 18px;
+
+    @include lineclamp($lines: 2);
+  }
+
+  .button-icon {
+    font-size: 1.4em;
+    margin-left: 10px;
+  }
+
+  .event-time {
+    display: block;
+    font-size: 0.9em;
+  }
+
+  .footer-text {
+    a {
+      color: #ffff;
+      font-size: 16px;
+      font-family: $font__roboto;
+      margin-top: 0.4em;
+      display: block;
     }
+  }
 
-    .row {
-        padding-top: 15px;
-    }
-
-    .button-heading {
-        color: color(white);
-        font-size: 20px;
-        margin: 0 0 15px 0;
-
-        @include lineclamp($lines: 2);
-    }
-
-    .description {
-        font-size: 18px;
-
-        @include lineclamp($lines: 2);
-    }
+  &:hover {
+    background-color: #e1b111;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;
 
     .button-icon {
-        font-size: 1.4em;
-        margin-left: 10px;
+      transform: scale(1.01);
     }
-
-    .event-time {
-        display: block;
-        font-size: .9em;
-    }
-
-    .footer-text {
-        a {
-            color: #ffff;
-            font-size: 16px;
-            font-family: $font__roboto;
-            margin-top: .4em;
-            display: block;
-        }
-    }
-
-     &:hover {
-        background-color: #E1B111;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;
-
-        .button-icon {
-            transform: scale(1.01);
-        }
-    }
+  }
 }
 
 .home-events-block {
-    h2 {
-        line-height: 1.2;
-        font-size: 2em;
-        color: #004585;
-        margin: 0 0 5px 12px;
-    }
+  h2 {
+    line-height: 1.2;
+    font-size: 2em;
+    color: #004585;
+    margin: 0 0 5px 12px;
+  }
 
-    .more-link {
-        float: left !important;
-        margin: 10px 100px 20px 10px;
-        text-transform: capitalize !important;
-        width: 200px;
-        white-space: nowrap;
+  .more-link {
+    float: left !important;
+    margin: 10px 100px 20px 10px;
+    text-transform: capitalize !important;
+    width: 200px;
+    white-space: nowrap;
 
-        a {
-            padding: 0.5em;
-        }
+    a {
+      padding: 0.5em;
     }
+  }
 }
 
-
 .meetings-block {
-    .event-card {
-        background-color: color(green);
+  .event-card {
+    background-color: color(green);
 
-        &:hover {
-            background-color: color(yellow);
-        }
+    &:hover {
+      background-color: color(yellow);
     }
+  }
+}
+
+.meetings-block,
+.home-events-block {
+  @media (max-width: 992px) {
+    margin: auto;
+
+    .lex-event-list {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+    }
+  }
 }
