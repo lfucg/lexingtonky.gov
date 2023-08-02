@@ -1,39 +1,36 @@
 <a href="{{ url }}">
   <div class="icon-desc-button expandable rounded">
-    <div class="row">
       {% if icon[0]['#text']!= null %}
-        <div class="col-2">
+        <div class="icon-desc-button__icon">
           {% include '@components/atoms/button-icon.twig' with {icon: icon} %}
         </div>
-        <div class="col-10">
+        <div>
           {% include '@components/atoms/button-heading.twig' with {heading: heading} %}
           {% if description[0]['#text']!= null %}
             {% include '@components/atoms/description.twig' with {description: description} %}
           {% endif %}
         </div>
       {% elseif img[0]['#markup'] != null %}
-        <div class="col-2">
-          <img class="icon-img-button" src={{ img[0]['#markup'] }}>
+        <div class="icon-desc-button__img">
+          <img src={{ img[0]['#markup'] }}>
         </div>
-        <div class="col-10">
+        <div>
           {% include '@components/atoms/button-heading.twig' with {heading: heading} %}
           {% if description[0]['#text']!= null %}
             {% include '@components/atoms/description.twig' with {description: description} %}
           {% endif %}
         </div>
       {% else %}
-        <div class="col-10">
-          <span class="text-center">{% include '@components/atoms/button-heading.twig' with {heading: heading} %}</span>
-          {% if description[0]['#text']!= null %}
-            {% include '@components/atoms/description.twig' with {description: description} %}
-            </div>
-          {% else %}
-            </div>
-            <div class="col-1">
-              <span class="button-arrow"><i class="fas fa-chevron-right"></i></span>
-            </div>
+        <span class="icon-desc-button__heading">
+          {% include '@components/atoms/button-heading.twig' with { heading: heading } %}
+        </span>
+        {% if description[0]['#text']!= null %}
+          {% include '@components/atoms/description.twig' with {description: description} %}
+        {% else %}
+          <span class="icon-desc-button__arrow">
+            <i class="fas fa-chevron-right"></i>
+          </span>
         {% endif %}
       {% endif %}
-    </div>
   </div>
 </a>

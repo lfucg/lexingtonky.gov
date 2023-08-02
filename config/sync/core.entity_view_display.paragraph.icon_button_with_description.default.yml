@@ -9,7 +9,6 @@ dependencies:
     - field.field.paragraph.icon_button_with_description.field_icon
     - field.field.paragraph.icon_button_with_description.field_image
     - field.field.paragraph.icon_button_with_description.field_link
-    - image.style.thumbnail
     - paragraphs.paragraphs_type.icon_button_with_description
   module:
     - image
@@ -52,7 +51,7 @@ content:
     type: image_url
     label: hidden
     settings:
-      image_style: thumbnail
+      image_style: icon_button_image
     third_party_settings: {  }
     weight: 6
     region: content
