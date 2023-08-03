@@ -5,21 +5,55 @@
       padding-left: 15px;
     }
   }
+
   main {
-    display: none;;
+    display: none;
   }
-  div[id^="block-urban"] {
+
+  #block-urbancountycouncilnew {
+    padding: 2rem 5%;
+
     > div {
       display: flex;
+      align-items: center;
       flex-direction: row;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      overflow: scroll;
+      min-height: 0;
+      background-image: linear-gradient(to right, white, white),
+                        linear-gradient(to right, white, white),
+                        linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0)),
+                        linear-gradient(to left, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0));
+      background-position: left center, right center, left center, right center;
+      background-repeat: no-repeat;
+      background-color: white;
+      background-size: 20px 100%, 20px 100%, 10px 100%, 10px 100%;
+      background-attachment: local, local, scroll, scroll;
+
+      @include screens-above(sm) {
+        flex-wrap: wrap;
+        overflow: visible;
+      }
+
       .paragraph--type--contact-card {
         margin: .7rem;
         clear: none;
         padding-bottom: 1rem !important;
       }
     }
+
+    .council-office {
+      margin-left: 10px;
+    }
+
+    @include screens-below(sm) {
+      .council-office {
+        margin: 30px 0;
+        text-align: center;
+      }
+    }
   }
+
   .lex-region-postscript {
     .paragraph--type--icon-button-with-description {
       @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
@@ -28,14 +62,9 @@
       margin-top: 0px;
       padding-bottom: 0px !important;
       .icon-desc-button {
-        width: auto;
-        height: auto;
-        .row {
-          padding: 8px;
-          .button-heading {
-            margin: 3px 0 0 0;
-            font-size: 1.1rem;
-          }
+        .button-heading {
+          font-size: 1.1rem;
+          height: 30px;
         }
       }
     }
