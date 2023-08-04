@@ -1,132 +1,130 @@
 .contact-card {
-    width: 265px;
-    background-color: color(light-gray);
-    text-align: left;
+  width: 265px;
+  background-color: color(light-gray);
+  text-align: left;
+  display: inline-block;
+  border-radius: 15px;
+
+  .contact-img-container {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    margin: 20px auto 10px;
+    overflow: hidden;
+    display: block;
+  }
+
+  .contact-img {
+    max-width: none;
+    left: -40px;
+    position: relative;
     display: inline-block;
-    border-radius: 15px;
+  }
 
+  .contact-heading {
+    color: color(med-blue);
+    font-size: 1.2rem;
+    font-family: $font__open_sans;
+    div {
+      margin-left: 15px;
+      width: fit-content;
+    }
+    @media (min-width: 1500px) {
+      font-size: 20px;
+    }
+  }
 
-    .contact-img-container {
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        margin: 20px auto 10px;
-        overflow: hidden;
-        display: block;
+  .contact-subheading {
+    color: color(med-blue);
+    font-size: 1rem;
+    font-family: $font__roboto;
+    div {
+      margin-left: 15px;
+      width: fit-content;
+      min-height: 50px;
     }
 
+    @media (min-width: 1500px) {
+      font-size: 16px;
+    }
+  }
+
+  .description {
+    color: black;
+    font-size: 0.75rem;
+    font-family: $font__roboto;
+    margin: 15px 0;
+
+    @media (min-width: 1500px) {
+      font-size: 14px;
+    }
+  }
+
+  .contact-footer {
+    height: 35px;
+    background-color: color(med-blue);
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 0 0 5px 5px;
+  }
+
+  .contact-card-link {
+    width: 100%;
+
+    &:hover {
+      text-decoration: none !important;
+      border-bottom: none !important;
+    }
+  }
+
+  .footer-text {
+    a {
+      color: #ffff;
+      font-size: 1rem;
+      font-family: $font__roboto;
+      margin-top: 0.4rem;
+      display: block;
+      margin-left: 30px;
+
+      &:hover {
+        text-decoration: none !important;
+        border-bottom: none !important;
+      }
+
+      @media (min-width: 1500px) {
+        font-size: 14px;
+      }
+    }
+  }
+
+  &:hover {
+    background-color: color(med-blue);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;
+
     .contact-img {
-        max-width: none;
-        left: -40px;
-        position: relative;
-        display: inline-block;
+      transform: scale(1.1);
     }
 
     .contact-heading {
-        color: color(med-blue);
-        font-size: 1.2rem;
-        font-family: $font__open_sans;
-        div{
-            margin-left: 15px;
-            width: fit-content;
-        }
-        @media (min-width: 1500px) {
-            font-size: 20px;
-        }
-
+      color: color(white);
     }
 
     .contact-subheading {
-        color: color(med-blue);
-        font-size: 1rem;
-        font-family: $font__roboto;
-         div{
-            margin-left: 15px;
-            width: fit-content;
-            min-height: 50px;
-        }
-
-        @media (min-width: 1500px) {
-            font-size: 16px;
-        }
+      color: color(white);
     }
 
     .description {
-        color: black;
-        font-size: 0.75rem;
-        font-family: $font__roboto;
-        margin: 15px 0;
-
-        @media (min-width: 1500px) {
-            font-size: 14px;
-        }
+      color: color(white);
     }
 
     .contact-footer {
-        height: 35px;
-        background-color: color(med-blue);
-        width: 100%;
-        margin-top: 10px;
-        border-radius: 0 0 5px 5px;
-    }
-
-    .contact-card-link {
-        width: 100%;
-
-        &:hover {
-            text-decoration: none !important;
-            border-bottom: none !important;
-        }
+      background-color: color(dark-blue);
     }
 
     .footer-text {
-        a {
-            color: #ffff;
-            font-size: 1rem;
-            font-family: $font__roboto;
-            margin-top: .4rem;
-            display: block;
-            margin-left: 30px;
-
-            &:hover {
-                text-decoration: none !important;
-                border-bottom: none !important;
-            }
-
-            @media (min-width: 1500px) {
-                font-size: 14px;
-            }
-        }
+      a {
+        color: color(yellow);
+      }
     }
-
-    &:hover {
-        background-color: color(med-blue);
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55) !important;
-
-        .contact-img {
-            transform: scale(1.1);
-        }
-
-        .contact-heading {
-            color: color(white);
-        }
-
-        .contact-subheading {
-            color: color(white);
-        }
-
-        .description {
-            color: color(white);
-        }
-
-        .contact-footer {
-            background-color: color(dark-blue);
-        }
-
-        .footer-text {
-            a {
-                color: color(yellow);
-            }
-        }
-    }
+  }
 }

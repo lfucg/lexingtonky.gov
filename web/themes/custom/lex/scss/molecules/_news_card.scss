@@ -27,7 +27,7 @@
   background-color: white;
   background-size: 20px 100%, 20px 100%, 10px 100%, 10px 100%;
   background-attachment: local, local, scroll, scroll;
-  
+
   @include screens-above(sm) {
     overflow: visible;
     justify-content: center;
@@ -42,7 +42,7 @@
   margin-bottom: 30px;
   margin: 16px 12px 16px 0;
   width: 250px;
-  
+
   .path-node.bundle-news_article & {
     width: 250px;
   }
@@ -265,4 +265,3 @@ body.path-news {
     }
   }
 }
-

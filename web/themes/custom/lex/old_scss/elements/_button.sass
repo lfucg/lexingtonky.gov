@@ -73,8 +73,9 @@ a.lex-calltoaction
     float: right
 
   @media (max-width: $screen-phone-max)
-    width: 100%
-    display: block
+    &:not(.urban-council)
+      width: 100%
+      display: block
 
 a.lex-social-link
   &:before
