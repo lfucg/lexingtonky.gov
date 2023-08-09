@@ -4,7 +4,7 @@
         <div class="icon-desc-button__icon">
           {% include '@components/atoms/button-icon.twig' with {icon: icon} %}
         </div>
-        <div>
+        <div class="icon-desc-button__description">
           {% include '@components/atoms/button-heading.twig' with {heading: heading} %}
           {% if description[0]['#text']!= null %}
             {% include '@components/atoms/description.twig' with {description: description} %}
@@ -14,7 +14,7 @@
         <div class="icon-desc-button__img">
           <img src={{ img[0]['#markup'] }}>
         </div>
-        <div>
+        <div class="icon-desc-button__description">
           {% include '@components/atoms/button-heading.twig' with {heading: heading} %}
           {% if description[0]['#text']!= null %}
             {% include '@components/atoms/description.twig' with {description: description} %}
