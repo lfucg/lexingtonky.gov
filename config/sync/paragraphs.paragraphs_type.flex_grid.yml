@@ -5,5 +5,6 @@ dependencies: {  }
 id: flex_grid
 label: 'Flex Grid'
 icon_uuid: null
+icon_default: null
 description: 'Gives a display: flex; attribute to a grid that will automatically place other elements on the page and wrap them in the section. '
 behavior_plugins: {  }
