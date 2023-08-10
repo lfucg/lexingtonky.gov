@@ -3,13 +3,13 @@ langcode: en
 status: true
 dependencies: {  }
 name: icon_button_image
-label: 'Icon Button Image (35px width)'
+label: 'Icon Button Image'
 effects:
   4bef3fe5-b3c4-4f18-a072-fd1660cb17d1:
     uuid: 4bef3fe5-b3c4-4f18-a072-fd1660cb17d1
     id: image_scale
     weight: 1
     data:
-      width: 35
+      width: 100
       height: null
       upscale: true

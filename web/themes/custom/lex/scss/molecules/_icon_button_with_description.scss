@@ -12,8 +12,17 @@
 
   &__img,
   &__icon  {
-    flex-basis: 75px;
-    margin: auto;
+    flex-grow: 1;
+    margin: auto 0 auto 10px;
+
+    img {
+      width: 35px;
+      height: auto;
+    }
+  }
+
+  &__description {
+    flex-grow: 2;
   }
 
   .button-heading {
