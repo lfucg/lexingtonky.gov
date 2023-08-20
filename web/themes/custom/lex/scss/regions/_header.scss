@@ -1,7 +1,6 @@
 body {
 
   #site-banner {
-    height: 120px;
     background: white;
   }
 
@@ -15,12 +14,12 @@ body {
 
   #logo {
     img {
-      margin: 15px 0;
-      height: 50px;
+      margin: 12px 0;
+      height: 40px;
       max-width: max-content;
       @include screens-below(sm) {
         margin: 20px 0;
-        height: 40px;
+        height: 32px;
       }
     }
   }
@@ -114,16 +113,16 @@ body {
         transition: .25s ease-in-out;
         width: 50%;
         &:nth-child(1) {
-          top: 20px;
+          top: 14px;
         }
 
         &:nth-child(2),
         &:nth-child(3) {
-          top: 30px;
+          top: 24px;
         }
 
         &:nth-child(4) {
-          top: 40px;
+          top: 34px;
         }
     }
 
@@ -133,7 +132,7 @@ body {
       display: block;
       text-align: center;
       font-size: 0.6rem;
-      top: 50px;
+      top: 42px;
       position: relative;
     }
 
