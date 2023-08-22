@@ -1,11 +1,11 @@
 <div class="flex-content">
-    {% if items|length > 1 %}
-        {% for item in items %}
-            <div {{attributes}}>{{item.content}}</div>
-        {% endfor %}
-    {% else %}
-        {% for item in items %}
-            <div class="w-100" {{attributes}}>{{item.content}}</div>
-        {% endfor %}
-    {% endif %}
+  {% if items|length > 1 %}
+    {% for item in items %}
+      {{item.content}}
+    {% endfor %}
+  {% else %}
+    {% for item in items %}
+      <div class="w-100" {{attributes}}>{{item.content}}</div>
+    {% endfor %}
+  {% endif %}
 </div>

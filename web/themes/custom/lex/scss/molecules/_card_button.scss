@@ -7,11 +7,14 @@
 
   .button-heading {
     color: color(med-blue);
-    font-size: 1.1em !important;
     margin: 10px 0 5px;
-    min-height: 2.5em;
+    min-height: 3em;
 
     @include lineclamp($lines: 2);
+
+    @include screens-above(lg) {
+      font-size: 20px !important;
+    }
   }
 
   img {
