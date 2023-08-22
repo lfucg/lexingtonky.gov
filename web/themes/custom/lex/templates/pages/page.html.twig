@@ -78,7 +78,9 @@
 										</h4>
 									</li>
 									<li class="lex-location-contact">
-										<a class="lex-social-link fa-envelope" href="mailto:{{node.field_media_contact[0].entity.field_contact_email.value}}">Email us</a>
+                    <a class="lex-social-link fa-envelope" href="mailto:{{node.field_media_contact[0].entity.field_contact_email.value}}">
+                      {{ node.field_media_contact[0].entity.field_contact_email.value }}
+                    </a>
 									</li>
 									<li class="lex-location-contact">
 										<a class="lex-social-link fa-phone" href="tel:{{node.field_media_contact[0].entity.field_contact_phone.value}}">{{node.field_media_contact[0].entity.field_contact_phone.value}}</a>
