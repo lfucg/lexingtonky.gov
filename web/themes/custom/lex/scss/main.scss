@@ -34,6 +34,7 @@
 @import './econdev';
 
 html {
+  font-size: 100% !important;
   scroll-behavior: smooth;
 }
 
@@ -147,4 +148,8 @@ a.lex-calltoaction {
   display: flex;
   align-items: flex-start;
   width: 100%;
+
+  @include screens-below(md){
+    justify-content: center;
+  }
 }
