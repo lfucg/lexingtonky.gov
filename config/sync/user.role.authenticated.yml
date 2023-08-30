@@ -20,6 +20,7 @@ dependencies:
     - file
     - filter
     - node
+    - scheduler
     - search
     - shortcut
     - system
@@ -61,6 +62,7 @@ permissions:
   - 'edit own news_article content'
   - 'edit own organization_page content'
   - 'edit own page content'
+  - 'schedule publishing of nodes'
   - 'search content'
   - 'use draft_draft transition'
   - 'use draft_needs_review transition'
