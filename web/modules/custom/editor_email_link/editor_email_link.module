@@ -1,0 +1,106 @@
+<?php
+
+/**
+ * @file
+ * Adding new fields for phone and email in editor.
+ */
+
+//https://www.drupal.org/project/drupal/issues/2913196
+//https://drupal.stackexchange.com/questions/139075/implementing-ckeditors-plugin/191869#191869
+//https://www.drupal.org/docs/8/api/ckeditor-api/overview
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\editor\Entity\Editor;
+
+/**
+ * Implements hook_form_editor_link_dialog_alter()
+ *
+ * Alter handler for link dialog in editor.
+ * Adding new fields for phone and email.
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+function editor_email_link_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  if (isset($form_state->getUserInput()['editor_object'])) {
+    $previous_values = $form_state->getUserInput()['editor_object'];
+    $form_state->set('link_element', $previous_values);
+    $form_state->setCached(TRUE);
+  }
+  else {
+    $previous_values = $form_state->get('link_element') ?: [];
+  }
+
+  $default_values = ['href' => '', 'email' => '', 'phone' => ''];
+
+  if (!empty($previous_values['href'])) {
+    if (strpos($previous_values['href'], 'mailto:') !== FALSE) {
+      $default_values['email'] = explode(':', $previous_values['href'])[1];
+    }
+    if (strpos($previous_values['href'], 'tel:') !== FALSE) {
+      $default_values['phone'] = explode(':', $previous_values['href'])[1];
+    }
+    if (empty($default_values['email']) && empty($default_values['phone'])) {
+      $default_values['href'] = $previous_values['href'];
+    }
+  }
+
+  $form['attributes']['href']['#default_value'] = $default_values['href'];
+  $form['attributes']['href']['#weight'] = 1;
+
+  // https://www.w3.org/TR/html52/links.html#api-for-a-and-area-elements
+  // https://tools.ietf.org/html/rfc6068
+  $form['attributes']['email'] = [
+    '#title' => t('Email address'),
+    '#type' => 'textfield',
+    '#default_value' => $default_values['email'],
+    '#maxlength' => 128,
+    '#access' => TRUE,
+    '#weight' => 2,
+    '#description' => t('Create an email link by typing or pasting an email address here.'),
+  ];
+
+  $form['attributes']['phone'] = [
+    '#title' => t('Phone number'),
+    '#type' => 'textfield',
+    '#default_value' => $default_values['phone'],
+    '#maxlength' => 24,
+    '#access' => TRUE,
+    '#weight' => 3,
+    '#description' => t('Create a phone number link by typing or pasting a phone number with no spaces or special character. (Ex. 859-123-1234)'),
+  ];
+
+  $form['#suffix'] = 'Only one field may filled out at a time.';
+  $form['#validate'][] = '_editor_email_link_attributes_validate';
+
+}
+
+/**
+ * Validation handler.
+ *
+ * Prepare user input for rendering html output.
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
+function _editor_email_link_attributes_validate(array &$form, FormStateInterface $form_state) {
+  // todo add error if more then one field is filled
+  $values = $form_state->getValue('attributes');
+
+  if (empty($values['href'])) {
+    if (!empty($values['email'])) {
+      // todo add validation
+      $form_state->setValue(['attributes', 'href'], 'mailto:' . $values['email']);
+    }
+    if (!empty($values['phone'])) {
+      // todo add validation + replace spaces etc.
+      $form_state->setValue(['attributes', 'href'], 'tel:' . $values['phone']);
+    }
+  }
+
+  // we need to unset fields values, or they will be custom attributes in output html
+  $form_state->unsetValue(['attributes', 'email']);
+  $form_state->unsetValue(['attributes', 'phone']);
+}
