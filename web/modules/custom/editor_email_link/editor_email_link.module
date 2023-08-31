@@ -69,7 +69,7 @@ function editor_email_link_form_editor_link_dialog_alter(&$form, FormStateInterf
     '#maxlength' => 24,
     '#access' => TRUE,
     '#weight' => 3,
-    '#description' => t('Create a phone number link by typing or pasting a phone number with no spaces or special character. (Ex. 859-123-1234)'),
+    '#description' => t('Create a phone number link by typing or pasting a phone number with no spaces or special character. (Ex. 8591231234)'),
   ];
 
   $form['#suffix'] = 'Only one field may filled out at a time.';
