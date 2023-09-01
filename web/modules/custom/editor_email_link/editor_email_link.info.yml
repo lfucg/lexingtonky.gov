@@ -1,0 +1,6 @@
+name: 'Email link'
+description: 'Add dialog for creating email and phone link(s) in WYSWYG editor'
+type: module
+core_version_requirement: ^9.0 || ^10.0
+dependencies:
+  - drupal:editor
