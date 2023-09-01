@@ -1,6 +1,7 @@
 .path-frontpage {
   .lex-pagefeedback-container {
     padding: 0 5%;
+
     ul {
       padding-left: 15px;
     }
@@ -13,7 +14,7 @@
   #block-urbancountycouncilnew {
     padding: 2rem 5%;
 
-    > div {
+    >div {
       display: flex;
       align-items: center;
       flex-direction: row;
@@ -21,9 +22,9 @@
       overflow: scroll;
       min-height: 0;
       background-image: linear-gradient(to right, white, white),
-                        linear-gradient(to right, white, white),
-                        linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0)),
-                        linear-gradient(to left, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0));
+        linear-gradient(to right, white, white),
+        linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0)),
+        linear-gradient(to left, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0));
       background-position: left center, right center, left center, right center;
       background-repeat: no-repeat;
       background-color: white;
@@ -56,11 +57,15 @@
 
   .lex-region-postscript {
     .paragraph--type--icon-button-with-description {
-      @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+
+      @media all and (-ms-high-contrast: none),
+      (-ms-high-contrast: active) {
         max-width: 200px;
       }
+
       margin-top: 0px;
       padding-bottom: 0px !important;
+
       .icon-desc-button {
         .button-heading {
           font-size: 1.1rem;
@@ -68,11 +73,13 @@
         }
       }
     }
+
     div[id^="block-"] {
       h1 {
         margin-left: 12px;
       }
-      > h2 {
+
+      >h2 {
         line-height: 1.2;
         font-size: 2rem;
         color: color(lex-blue);
@@ -96,19 +103,23 @@
 }
 
 .quick-link {
-  background-color: color(med-blue);
-  color: white;
   display: flex;
   align-items: center;
+  gap: 5px;
+  background-color: color(med-blue);
+  color: white;
   min-height: 40px;
   margin: 1rem auto;
+  padding: 0 10px;
+  text-wrap: nowrap; // for weird wrap at >1500px
+
 
   &:hover {
     background-color: color(yellow);
   }
 
-  .row {
-    width: 100%;
+  &__title {
+    flex-grow: 1;
   }
 
   a {

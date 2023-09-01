@@ -1,23 +1,37 @@
 body {
   .lex-hero {
     position: relative;
+    overflow: hidden;
+
+    @include screens-above(xl) {
+      max-height: 500px;
+      img {
+        transform: translateY(-20%);
+      }
+    }
+
+    .search-block {
+      top: 0 !important;
+    }
   }
 
   .welcome-block, .search-block {
     @include rgba-background(color(dark-blue), 0.8);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
     color: #fff;
     margin: 0 5%;
     padding: 1rem 2rem;
-    position: absolute;
     text-align: center;
-    top: 0;
     width: 90%;
-    z-index: 500;
 
     @include screens-below(sm) {
+      position: initial;
       background-color: rgba(color(dark-blue),1);
       margin: 0;
-      position: initial;
       width: 100%;
     }
 
@@ -131,11 +145,5 @@ body {
         padding: 0 1rem;
       }
     }
-  }
-}
-
-.lex-hero {
-  .search-block {
-    top: 0 !important;
   }
 }
