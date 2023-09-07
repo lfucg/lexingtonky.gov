@@ -108,3 +108,10 @@
 #/.env
 
 /web/themes/custom/lex/node_modules/
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Thumbs.db
+._*

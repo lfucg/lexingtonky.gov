@@ -118,17 +118,6 @@ function lex_preprocess_block(&$variables) {
       default:
         break;
     }
-
-    if (stristr($element_id, 'inline_page_feedback_form')) {
-      // Get contact form field to render inline.
-      $message = \Drupal::entityTypeManager()
-        ->getStorage('contact_message')
-        ->create([
-          'contact_form' => 'page_feedback',
-        ]);
-
-      $variables['contact_form'] = \Drupal::service('entity.form_builder')->getForm($message);
-    }
   }
 }
 
@@ -152,12 +141,6 @@ function lex_form_alter(&$form, FormStateInterface $form_state, $form_id) {
       default:
         break;
     }
-  }
-
-  if ($form_id == 'contact_message_page_feedback_form') {
-    $url= \Drupal::request()->getRequestUri();
-
-    $form['field_feedback_url']['widget'][0]['value']['#value'] = $url ?: '';
   }
 }
 

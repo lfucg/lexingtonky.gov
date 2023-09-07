@@ -40,6 +40,11 @@ function lex_custom_theme() {
  */
 function lex_custom_form_alter(&$form, FormStateInterface &$form_state, $form_id) {
   $form['field_keywords']['widget']['add_more']['#value'] = t('Add Another Keyword');
+
+  if ($form_id == 'contact_message_page_feedback_form') {
+    // Setting default value client side to avoid caching.
+    $form['#attached']['library'][] = 'lex/set-default-url';
+  }
 }
 
 /**
