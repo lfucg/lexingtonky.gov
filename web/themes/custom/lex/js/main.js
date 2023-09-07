@@ -7,6 +7,5 @@ import './lex-cal';
 import './lex-geocoder--councilmembers';
 import './lex-neighborhood-associations';
 import './lex-sidenav-list';
-import './search';
 import './takeover-navigation';
 import './webdesignstandards-accordion';

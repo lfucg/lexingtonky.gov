@@ -2,11 +2,8 @@ uuid: d19770e1-9c9d-4db6-803a-95692ed43826
 langcode: en
 status: false
 dependencies:
-  config:
-    - views.view.solr_search
   module:
     - system
-    - views
   theme:
     - lex_economic_development
 id: lex_economic_development_exposedformsolr_searchpage_1_5

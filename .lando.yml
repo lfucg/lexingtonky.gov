@@ -13,7 +13,10 @@ events:
   post-pull:
     - appserver: cd $LANDO_WEBROOT && drush pmu devel && drush en devel && drush updb --yes && drush cr --yes
   nodejs:
-    - lex-sync.lndo.site:3000
+    - lexky-d8-sync.lndo.site:3000
+proxy:
+  nodejs:
+    - lexky-hmr.lndo.site:8080
 services:
   appserver:
     build_as_root:
@@ -37,6 +40,7 @@ services:
       gulp-cli: latest
     run:
       - cd $LANDO_MOUNT/web/themes/custom/lex && npm i && gulp build
+      - cd $LANDO_MOUNT/web/modules/custom/apax_search_algolia && npm i && npm run build:dev
   phpmyadmin:
     type: phpmyadmin
 tooling:

@@ -125,12 +125,12 @@ function lex_preprocess_block(&$variables) {
  * Implements hook_form_alter().
  */
 function lex_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (isset($form['advanced'])) {
-    unset($form['basic']['keys']['#title']);
-    unset($form['help_link']);
+  // if (isset($form['advanced'])) {
+  //   unset($form['basic']['keys']['#title']);
+  //   unset($form['help_link']);
 
-    array_push($form['#attributes']['class'], 'lex-search', 'lex-search-page-form', 'usa-search', 'usa-search-big');
-  }
+  //   array_push($form['#attributes']['class'], 'lex-search', 'lex-search-page-form', 'usa-search', 'usa-search-big');
+  // }
 
   if ($form_id == 'views_exposed_form') {
     switch ($form['#id']) {
@@ -145,35 +145,10 @@ function lex_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 }
 
 /**
- * Implements hook_preprocess_item_list__search_results().
- */
-function lex_preprocess_item_list__search_results(&$variables) {
-
-  $keys = \Drupal::request()->get('keys');
-  $query = $keys . ' site:lexingtonky.gov';
-  $variables['attributes']['google_link'] = 'https://www.google.com/webhp?hl=en#q=' . $query;
-  $variables['attributes']['class'][] = 'usa-unstyled-list';
-}
-
-/**
- * Implements hook_preprocess_search_result().
- */
-function lex_preprocess_search_result(&$variables) {
-  $variables['title_attributes']['class'][] = 'lex-card-title lex-card-title-medium';
-  $variables['content_attributes']['class'][] = 'lex-card-subtitle';
-}
-
-/**
  * Implements hook_preprocess_form().
  */
 function lex_preprocess_form(&$variables) {
-  if ($variables['attributes']['id'] == 'search-block-form') {
-    if (!isset($variables['attributes']['class'])) {
-      $variables['attributes']['class'] = [];
-    }
-    array_push($variables['attributes']['class'], 'usa-search', 'lex-search');
-  }
-  elseif ($variables['element']['#form_id'] == 'contact_message_page_feedback_form') {
+  if ($variables['element']['#form_id'] == 'contact_message_page_feedback_form') {
     $variables['attributes']['class'][] = 'lex-pagefeedback-form usa-width-one-half';
   }
   elseif ($variables['element']['#form_id'] == 'contact_message_feedback_form') {
@@ -233,6 +208,10 @@ function lex_preprocess_field(&$variables) {
 function lex_theme_suggestions_page_alter(array &$suggestions, array $variables) {
   if (array_search('page__front', $suggestions) === FALSE) {
     if ($node = \Drupal::routeMatch()->getParameter('node')) {
+      if ($node->getTitle() === 'Search') {
+        array_unshift($suggestions, 'page__search');
+      }
+
       $content_type = $node->bundle();
       if ($content_type) {
         array_unshift($suggestions, 'page__bundle_' . $content_type);

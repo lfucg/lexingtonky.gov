@@ -1,0 +1,25 @@
+uuid: 6a936583-26c3-46af-9fde-c34e53d82804
+langcode: en
+status: true
+dependencies:
+  module:
+    - apax_search_algolia
+    - system
+  theme:
+    - lex
+id: searchresultsblock
+theme: lex
+region: content
+weight: 0
+provider: null
+plugin: search_results
+settings:
+  id: search_results
+  label: 'Search Results Block'
+  label_display: '0'
+  provider: apax_search_algolia
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /search

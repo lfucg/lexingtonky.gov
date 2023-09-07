@@ -4,11 +4,14 @@ body {
       transform: translateY(-20%);
     }
   }
-
+  
   .lex-hero {
     position: relative;
-    overflow: hidden;
-    max-height: 500px;
+    transition: all 500ms ease;
+    
+    @include screens-above(lg) {
+      max-height: 600px;
+    }
 
     .search-block {
       top: 0 !important;
@@ -55,69 +58,7 @@ body {
     }
   }
 
-  .lex-search {
-    width: 80%;
-    margin: auto;
-
-    @include screens-below(sm) {
-      width: 95%;
-    }
-
-    .input-group {
-      height: 2.5rem;
-      margin: 0;
-
-      * {
-        height: 100%;
-      }
-
-      input {
-        border: 1px solid color(yellow);
-        border-radius: 5px 0px 0px 5px;
-        margin: 0;
-        width: 92%;
-
-        @include screens-below(sm) {
-          width: 88%;
-        }
-      }
-
-      .input-group-append {
-        width: 8%;
-        margin: 0;
-        border: 1px solid color(yellow);
-        border-radius: 0px 5px 5px 0px;
-
-        @include screens-below(sm) {
-          width: 12%;
-        }
-
-        button {
-          border-radius: 0px 5px 5px 0px;
-        }
-      }
-
-      button {
-        background-color: color(dark-blue);
-        color: color(white);
-        border: none;
-        border-radius: 0;
-        margin: auto;
-        width: 100%;
-        transition: all 500ms ease;
-
-        &:hover {
-          color: color(dark-blue);
-          background-color: color(yellow);
-        }
-      }
-    }
-  }
-
-  #block-mostpopularsearches,
-  #block-mostpopularsearches-2,
-  #block-mostpopularsearches-3,
-  #block-mostpopularsearches-4 {
+  [id^=block-mostpopularsearches] {
     align-items: center;
     display: flex;
     flex-direction: row;

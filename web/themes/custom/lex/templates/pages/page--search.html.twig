@@ -1,15 +1,27 @@
 {% extends "@lex/pages/page.html.twig" %}
 
 {% if (node.field_lex_custom_banner_image.entity.fileuri) %}
-  {% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
-  {% set hero_alt = node.field_lex_custom_banner_image.alt %}
+	{% set hero = file_url(node.field_lex_custom_banner_image.entity.fileuri) %}
+	{% set hero_alt = node.field_lex_custom_banner_image.alt %}
 {% else %}
-  {% set hero = "/themes/custom/lex/img/lexington-hero-interior.jpg" %}
-  {% set hero_alt = 'Image of Thoroughbred Park with race horse statues charging towards the viewer.' %}
+	{% set hero = "/themes/custom/lex/img/lexington-hero-interior.jpg" %}
+	{% set hero_alt = 'Image of Thoroughbred Park with race horse statues charging towards the viewer.' %}
 {% endif %}
 
+{% block page_title_main %}
+	<section class="lex-region-title region lex-search-title mt-5">
+		<h1>Search lexingtonky.gov</h1>
+	</section>
+{% endblock %}
+{% block content %}
+	{{ page.content }}
+{% endblock %}
+{% block after_content %}{% endblock %}
+
+{% block page_term %}{% endblock %}
+
 {% block page_hero %}
-  {% include "@lex/includes/hero.html.twig"
+	{% include "@lex/includes/hero.html.twig"
     with {
       page: page,
       hero: hero,
@@ -17,9 +29,4 @@
     }
   %}
 {% endblock %}
-
-{% block page_term %}
-  <span class="results-header"></span>
-{% endblock %}
-
 

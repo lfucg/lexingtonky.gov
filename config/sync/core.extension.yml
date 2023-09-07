@@ -4,6 +4,7 @@ module:
   admin_toolbar: 0
   admin_toolbar_search: 0
   admin_toolbar_tools: 0
+  apax_search_algolia: 0
   autologout: 0
   automated_cron: 0
   block: 0
@@ -91,6 +92,7 @@ module:
   scheduler: 0
   search: 0
   search_api: 0
+  search_api_algolia: 0
   search_api_pantheon: 0
   search_api_solr: 0
   shortcut: 0

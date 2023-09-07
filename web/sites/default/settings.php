@@ -102,14 +102,27 @@ if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
     $config['search_api.server.pantheon']['status'] = false;
     $config['search_api.server.lando']['status'] = true;
     $config['search_api.index.pantheon_index']['server'] = 'lando';
-
+    
     // Enable dev config split locally.
     $config['config_split.config_split.dev']['status'] = TRUE;
-
+    
   } else {
     // Pantheon Configuration.
     $config['search_api.server.lando']['status'] = false;
     $config['search_api.server.pantheon']['status'] = true;
     $config['search_api.index.pantheon_index']['server'] = 'pantheon';
   }
+  
+  if ($_ENV['PANTHEON_ENVIRONMENT'] == 'live') {
+    $config['search_api.index.main']['options']['algolia_index_name'] = 'prod_lexky';
+  }
+
+  if ($_ENV['PANTHEON_ENVIRONMENT'] == 'test') {
+    $config['search_api.index.main']['options']['algolia_index_name'] = 'test_lexky';
+  }
+
+  if ($_ENV['PANTHEON_ENVIRONMENT'] == 'dev') {
+    $config['search_api.index.main']['options']['algolia_index_name'] = 'dev_lexky';
+  }
+  
 }

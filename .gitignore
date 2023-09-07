@@ -1,8 +1,10 @@
 /web/themes/custom/lex/dist/
+/web/modules/custom/apax_search_algolia/react/dist/
 
 # Fail-safe ignore of sensitive config
 /config/sync/recaptcha.settings.yml
 /config/sync/search_api.server.pantheon.yml
+!/web/modules/custom/apax_search_algolia/.gitignore
 
 # :::::::::::::::::::::: cut ::::::::::::::::::::::
 
@@ -108,6 +110,7 @@
 #/.env
 
 /web/themes/custom/lex/node_modules/
+/web/modules/custom/apax_search_algolia/node_modules/
 
 # OS generated files #
 ######################

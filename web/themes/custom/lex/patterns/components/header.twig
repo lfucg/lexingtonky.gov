@@ -9,7 +9,7 @@
       </a>
     </div>
     <div class="navbar-button col-6 col-lg-9 text-right d-flex justify-content-end">
-      {% if not is_front %}
+      {% if not is_front and node.getTitle() != "Search" %}
         <div id="search-icon">
           <img class="" src="/themes/custom/lex/img/search_icon.svg">
           <div class="search-lines">

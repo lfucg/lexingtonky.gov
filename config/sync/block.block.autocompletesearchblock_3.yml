@@ -1,0 +1,20 @@
+uuid: d2633e64-b623-4f2c-bfcf-fd1aad52e8bb
+langcode: en
+status: true
+dependencies:
+  module:
+    - apax_search_algolia
+  theme:
+    - lex_economic_development
+id: autocompletesearchblock_3
+theme: lex_economic_development
+region: hero
+weight: -18
+provider: null
+plugin: autocomplete_search_block
+settings:
+  id: autocomplete_search_block
+  label: 'Autocomplete Search Block'
+  label_display: '0'
+  provider: apax_search_algolia
+visibility: {  }

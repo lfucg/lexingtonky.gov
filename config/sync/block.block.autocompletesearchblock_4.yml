@@ -1,0 +1,20 @@
+uuid: b55d9d7b-0105-4672-8736-39e29172c8e9
+langcode: en
+status: true
+dependencies:
+  module:
+    - apax_search_algolia
+  theme:
+    - lex_planning_commission
+id: autocompletesearchblock_4
+theme: lex_planning_commission
+region: hero
+weight: -24
+provider: null
+plugin: autocomplete_search_block
+settings:
+  id: autocomplete_search_block
+  label: 'Autocomplete Search Block'
+  label_display: '0'
+  provider: apax_search_algolia
+visibility: {  }

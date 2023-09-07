@@ -11,7 +11,7 @@ dependencies:
 id: mostpopularsearches_3
 theme: lex_police
 region: hero
-weight: -24
+weight: -25
 provider: null
 plugin: 'system_menu_block:most-popular-searches'
 settings:
