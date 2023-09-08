@@ -380,9 +380,6 @@ main
   ol
     list-style: none
 
-  h3
-    @include base_bottom_rule
-
   h4
     font-size: 1.2em
     margin-bottom: 0
@@ -485,10 +482,18 @@ table
   #block-lookupservices,
   .welcome-block,
   .search-block,
-  .news-container,
   .lex-events-container,
+  .news-container,
   .frontpage-quicklinks > div,
   #block-mayorsblocknew,
   #block-urbancountycouncilnew
     max-width: 1150px
     margin: auto
+
+    @media (min-width: $screen-tablet-max)
+      padding: 2rem 0 !important
+
+  .news-container
+    @media (min-width: $screen-tablet-min)
+      width: 90%
+

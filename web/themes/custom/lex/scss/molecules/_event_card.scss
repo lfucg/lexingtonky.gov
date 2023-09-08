@@ -19,14 +19,26 @@
     color: color(white);
     font-size: 20px;
     margin: 0 0 10px 0;
-    padding-bottom: 10px;
-
     @include lineclamp($lines: 2);
+
+    +div {
+      padding-top: 10px;
+
+      &::after {
+        height: 1px;
+        display: block;
+        width: 100%;
+        background: white;
+        content: '';
+        position: absolute;
+        top: 0;
+      }
+    }
   }
 
   .description {
     font-size: 18px;
-
+    position: relative;
     @include lineclamp($lines: 2);
   }
 
@@ -60,7 +72,18 @@
   }
 }
 
-.home-events-block {
+.lex-event-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 30px;
+
+  > a {
+    width: 100%;
+  }
+}
+
+.home-events-block,
+.home-meetings-block {
   h2 {
     line-height: 1.2;
     font-size: 2em;
@@ -81,7 +104,22 @@
   }
 }
 
+.events-block {
+  a {
+    flex: 0 1 100%;
+
+
+    @include screens-above(md) {
+      flex: 0 1 calc(50% - 15px);
+    }
+  }
+}
+
 .meetings-block {
+  a {
+    flex: 0 1 100%;
+  }
+
   .event-card {
     background-color: color(green);
 
@@ -90,4 +128,3 @@
     }
   }
 }
-
