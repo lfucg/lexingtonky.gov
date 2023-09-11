@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.news_article.field_metatags
     - field.field.node.news_article.field_related_departments
     - field.field.node.news_article.field_related_documents
+    - image.style.large
     - node.type.news_article
   module:
     - entity_reference_revisions
@@ -28,7 +29,7 @@ content:
     type: text_summary_or_trimmed
     label: hidden
     settings:
-      trim_length: 600
+      trim_length: 150
     third_party_settings: {  }
     weight: 2
     region: content
@@ -37,7 +38,7 @@ content:
     label: hidden
     settings:
       image_link: ''
-      image_style: ''
+      image_style: large
       image_loading:
         attribute: lazy
     third_party_settings: {  }
@@ -54,7 +55,7 @@ content:
     region: content
   field_metatags:
     type: metatag_empty_formatter
-    label: above
+    label: hidden
     settings: {  }
     third_party_settings: {  }
     weight: 4

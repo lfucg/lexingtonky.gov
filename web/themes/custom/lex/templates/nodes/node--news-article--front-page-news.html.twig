@@ -1,0 +1,36 @@
+{% set image_url = file_url(content.field_image['#items'].entity.uri.value|image_style('large')) %}
+{% set truncated_body = node.body.0.value|render|striptags|slice(0, 180)%}
+
+<div class="news-card rounded">
+	<a href="{{ url }}">
+		<span class="visually-hidden">Link to
+			{{node.getTitle()}}
+        </span>
+	</a>
+	<div class="row">
+		<div class="contact-img-container">
+			<div class="date-overlay">{{node.created.value|date('M. j, Y g:i a')}}</div>
+			<img class="contact-img img-fluid" src={{image_url}}>
+		</div>
+
+		<div class="col-12">
+			<div class="heading-container">
+				<h3 class="news-heading">{{node.getTitle()}}</h3>
+			</div>
+			<div class="description-container">
+				{% autoescape false %}
+					<div class="description">
+						{{ truncated_body }}
+					</div>
+				{% endautoescape %}
+
+			</div>
+		</div>
+		<div class="news-footer">
+			<span class="footer-text">
+				Continue Reading
+			</span>
+		</div>
+	</div>
+</div>
+

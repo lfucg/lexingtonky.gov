@@ -3,8 +3,8 @@
   color: color(white);
   float: left;
   height: 150px;
-  margin: 10px;
-  width: 350px;
+  margin: 10px 0;
+  width: 100%;
 
   img {
     height: 25px;
@@ -18,14 +18,27 @@
   .button-heading {
     color: color(white);
     font-size: 20px;
-    margin: 0 0 15px 0;
-
+    margin: 0 0 10px 0;
     @include lineclamp($lines: 2);
+
+    +div {
+      padding-top: 10px;
+
+      &::after {
+        height: 1px;
+        display: block;
+        width: 100%;
+        background: white;
+        content: '';
+        position: absolute;
+        top: 0;
+      }
+    }
   }
 
   .description {
     font-size: 18px;
-
+    position: relative;
     @include lineclamp($lines: 2);
   }
 
@@ -59,17 +72,28 @@
   }
 }
 
-.home-events-block {
+.lex-event-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 30px;
+
+  > a {
+    width: 100%;
+  }
+}
+
+.home-events-block,
+.home-meetings-block {
   h2 {
     line-height: 1.2;
     font-size: 2em;
     color: #004585;
-    margin: 0 0 5px 12px;
+    margin: 0 0 5px 0;
   }
 
   .more-link {
     float: left !important;
-    margin: 10px 100px 20px 10px;
+    margin: 10px auto 10px 0;
     text-transform: capitalize !important;
     width: 200px;
     white-space: nowrap;
@@ -80,25 +104,27 @@
   }
 }
 
+.events-block {
+  a {
+    flex: 0 1 100%;
+
+
+    @include screens-above(md) {
+      flex: 0 1 calc(50% - 15px);
+    }
+  }
+}
+
 .meetings-block {
+  a {
+    flex: 0 1 100%;
+  }
+
   .event-card {
     background-color: color(green);
 
     &:hover {
       background-color: color(yellow);
-    }
-  }
-}
-
-.meetings-block,
-.home-events-block {
-  @media (max-width: 992px) {
-    margin: auto;
-
-    .lex-event-list {
-      align-items: center;
-      display: flex;
-      flex-direction: column;
     }
   }
 }
