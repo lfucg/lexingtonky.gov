@@ -144,10 +144,6 @@
     "new_path": "/swim-lessons"
   },
   {
-    "old_path": "/index.aspx?page=455",
-    "new_path": "/contact/page_feedback"
-  },
-  {
     "old_path": "/index.aspx?page=269",
     "new_path": "/gay-brewer-jr-course-at-picadome"
   },
@@ -1916,10 +1912,6 @@
     "new_path": "/senior-programs-at-bell-house"
   },
   {
-    "old_path": "/contact/feedback",
-    "new_path": "/contact/page_feedback"
-  },
-  {
     "old_path": "/index.aspx?page=2120",
     "new_path": "/list-of-all-city-parks"
   },
@@ -1970,10 +1962,6 @@
   {
     "old_path": "/index.aspx?page=4",
     "new_path": "/"
-  },
-  {
-    "old_path": "/contact",
-    "new_path": "/contact/page_feedback"
   },
   {
     "old_path": "/index.aspx?page=2246",

@@ -12,6 +12,9 @@ global-js:
     js/esri-leaflet.js: { minified: true }
     dist/main.min.js: { minified: true }
   dependencies:
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery.once
     - core/jquery
     - core/jquery.ui.autocomplete
 
@@ -43,3 +46,10 @@ lex-neighborhood-associations:
 lex-join-police:
   js:
     js/join-police.js: {}
+set-default-url:
+  version: 1.0.0
+  js:
+    js/libraries/set-default-url.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
