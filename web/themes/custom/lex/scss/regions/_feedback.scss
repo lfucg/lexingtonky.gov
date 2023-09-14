@@ -1,3 +1,36 @@
 .path-calendar .lex-region-feedback {
     z-index: 1 !important;
+}
+
+.lex-region-feedback {
+  padding: 0;
+}
+
+.lex-pagefeedback-container {
+  padding: 0 5%;
+
+  p {
+    margin: 1rem 0;
   }
+}
+
+// Bad naming convention, confuses with what's above, but this is short lived.
+.page-feedback {
+  margin: 0 auto;
+  max-width: 100%;
+  padding: 1rem 4rem;
+  width: 1400px;
+
+  .form-item input,
+  .form-item textarea {
+    width: 100%;
+  }
+
+  &__instructions__item {
+    margin: .5rem 1rem;
+  }
+
+  @include screens-below(sm) {
+    padding: 1rem;
+  }
+}
