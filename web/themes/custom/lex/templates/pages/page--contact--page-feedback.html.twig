@@ -1,0 +1,25 @@
+{% extends "@lex/pages/page.html.twig" %}
+
+{% block page_main %}
+	<div class="page-feedback">
+			{% block page_title_main %}
+				{{ page.title }}
+			{% endblock %}
+			{% block content %}
+				<h2>Instructions</h2>
+				<div class="page-feedback__instructions">
+          The <b>Page URL</b> field (located below) should automatically capture the URL of the page you wish to report.
+          In case it appears incorrect or if you encounter an error message while submitting the form, please adhere to the following steps:
+
+          <p class="page-feedback__instructions__item">1. Return to the page you want to be updated or report.</p>
+          <p class="page-feedback__instructions__item">2. Copy the URL from your web browser`s address bar.</p>
+          <p class="page-feedback__instructions__item">3. Revisit this form and paste the copied URL into the <b>Page URL</b> field.</p>
+				</div>
+				{{ page.content }}
+			{% endblock %}
+			{% block after_content %}
+				{{ page.after_content }}
+			{% endblock %}
+		{% block sidebar %}{% endblock %}
+	</div>
+{% endblock %}
