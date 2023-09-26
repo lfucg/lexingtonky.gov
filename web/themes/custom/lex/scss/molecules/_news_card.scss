@@ -47,6 +47,10 @@
   //   width: 250px;
   // }
 
+  > .row {
+    height: 100%;
+  }
+
   a {
     position: absolute;
     top: 0;
@@ -122,6 +126,7 @@
     background-color: #0558A7;
     height: 35px;
     width: 100%;
+    align-self: flex-end;
   }
 
   .footer-text {

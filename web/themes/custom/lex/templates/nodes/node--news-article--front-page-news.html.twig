@@ -1,5 +1,4 @@
 {% set image_url = file_url(content.field_image['#items'].entity.uri.value|image_style('large')) %}
-{% set truncated_body = node.body.0.value|render|striptags|slice(0, 180)%}
 
 <div class="news-card rounded">
 	<a href="{{ url }}">
@@ -20,7 +19,7 @@
 			<div class="description-container">
 				{% autoescape false %}
 					<div class="description">
-						{{ truncated_body }}
+						{{ content.body }}
 					</div>
 				{% endautoescape %}
 
