@@ -30,16 +30,20 @@
   }
 
   var appendAssociation = function(associations, association, template) {
-    var newTemplate = template.clone();
     var id = 'association-' + association.properties['ID'];
-    newTemplate.find('.js-accordion-control')
-      .attr('aria-controls', id)
-      .html(association.properties['Assoc_Name']);
-    injectFieldValues(
-      association.properties,
-      newTemplate.find('.lex-accordion-content')
-      .attr('id', id));
-    associations.append(newTemplate);
+
+    // Check if the association is already in the container by searching for its ID
+    if (!associations.find('#' + id).length) {
+      var newTemplate = template.clone();
+      newTemplate.find('.js-accordion-control')
+        .attr('aria-controls', id)
+        .html(association.properties['Assoc_Name']);
+      injectFieldValues(
+        association.properties,
+        newTemplate.find('.lex-accordion-content')
+          .attr('id', id));
+      associations.append(newTemplate);
+    }
   }
 
   var query = L.esri.query({
