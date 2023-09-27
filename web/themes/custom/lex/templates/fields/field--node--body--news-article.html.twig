@@ -1,6 +1,7 @@
 {% include '@stable/field/field.html.twig' %}
 
 {# grandfather articles with manual ### #}
-{% if '###' not in content %}
+{% set view_mode = element['#view_mode'] %}
+{% if '###' not in content and view_mode != 'front_page_news' %}
   <div class="lex-newsarticle-end">###</div>
 {% endif %}
