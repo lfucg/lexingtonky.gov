@@ -11,7 +11,7 @@ field_name: field_organization_taxonomy_term
 entity_type: node
 bundle: organization_page
 label: 'Organization taxonomy term'
-description: 'The ''foreign key'' that links this page to events and news tagged to this term'
+description: "The 'foreign key' that links this page to events and news tagged to this term"
 required: true
 translatable: false
 default_value: {  }
