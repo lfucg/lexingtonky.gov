@@ -17,7 +17,7 @@ provider: null
 plugin: 'block_content:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'
 settings:
   id: 'block_content:f16a0897-2dc2-46e5-8200-ca7cf5cf3123'
-  label: 'Mayor''s Office'
+  label: "Mayor's Office"
   label_display: visible
   provider: block_content
   status: true

@@ -31,6 +31,7 @@ trait EventFetch {
      * Get the non recurring events for the range.
      */
     $query = $this->entityTypeManager->getStorage('node')->getQuery()
+      ->accessCheck(TRUE)
       ->condition('status', 1)
       ->condition('type', $contentType)
       ->condition('field_date', $this->events->getStart()->format('Y-m-d'), '>=');
@@ -44,6 +45,7 @@ trait EventFetch {
      * which duplicates them according to need.
      */
     $query = $this->entityTypeManager->getStorage('node')->getQuery()
+      ->accessCheck(TRUE)
       ->condition('status', 1)
       ->condition('type', $contentType)
       ->condition('field_recurring_event', ['Weekly', 'Monthly'], 'IN');

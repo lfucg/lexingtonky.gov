@@ -258,8 +258,8 @@ display:
           label: Updated
           exclude: false
           alter:
-            alter_text: true
-            text: '{% include ''@lex/includes/time.html.twig'' with { notag: true, time: (changed | date("m/d/Y h:i a") ) } %}'
+            alter_text: false
+            text: ''
             make_link: false
             path: ''
             absolute: false
@@ -299,9 +299,19 @@ display:
           click_sort_column: value
           type: timestamp
           settings:
-            date_format: html_datetime
+            date_format: short
             custom_date_format: ''
             timezone: ''
+            tooltip:
+              date_format: ''
+              custom_date_format: ''
+            time_diff:
+              enabled: false
+              future_format: '@interval hence'
+              past_format: '@interval ago'
+              granularity: 2
+              refresh: 60
+              description: ''
           group_column: value
           group_columns: {  }
           group_rows: true

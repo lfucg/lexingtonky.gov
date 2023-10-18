@@ -27,6 +27,7 @@ dependencies:
     - metatag
     - path
     - text
+    - workbench_moderation
 id: taxonomy_term.locations.default
 targetEntityType: taxonomy_term
 bundle: locations
@@ -196,4 +197,13 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+  status:
+    type: boolean_checkbox
+    weight: 100
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden:
+  publish_on: true
+  unpublish_on: true

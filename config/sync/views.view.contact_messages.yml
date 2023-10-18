@@ -227,7 +227,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: field
-          label: 'Sender''s email address'
+          label: "Sender's email address"
           exclude: false
           alter:
             alter_text: true
@@ -608,7 +608,7 @@ display:
             placeholder: ''
           is_grouped: true
           group_info:
-            label: 'We''ve handled the feedback?'
+            label: "We've handled the feedback?"
             description: ''
             identifier: field_city_response_from_target_id
             optional: true
