@@ -246,17 +246,17 @@ processor_settings:
       preprocess_index: -48
     boosts:
       'entity:node':
-        datasource_boost: !!float 1
+        datasource_boost: 1.0
         bundle_boosts:
-          article: !!float 2
-          board_commission: !!float 2
-          event: !!float 3
+          article: 2.0
+          board_commission: 2.0
+          event: 3.0
           full_page_iframe: 0.1
           landing_page: 0.5
-          meeting: !!float 5
-          news_article: !!float 3
-          organization_page: !!float 8
-          page: !!float 13
+          meeting: 5.0
+          news_article: 3.0
+          organization_page: 8.0
+          page: 13.0
 tracker_settings:
   default:
     indexing_order: fifo

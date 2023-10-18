@@ -1,6 +1,8 @@
 type: module
 name: lookup_services
 description: 'Lookup Services by Address Feature with ArcGIS'
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9 || ^10
 libraries:
   - lookup_services/global
+dependencies:
+  - jquery_ui_accordion:jquery_ui_accordion
