@@ -3,4 +3,4 @@ global:
     js/lex-lookup-services.js: {}
   dependencies:
     - core/jquery
-    - core/jquery.ui.autocomplete
+    - jquery_ui_accordion/accordion

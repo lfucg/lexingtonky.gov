@@ -176,6 +176,7 @@ function _delete_entities_prior_to_date($entity_type_id, $bundle, $published_dat
 
   $entity_storage = $entity_type_manager->getStorage($entity_type_id);
   $query = $entity_storage->getQuery()
+    ->accessCheck(TRUE)
     ->condition("type", $bundle)
     ->condition("created", $date_limit, "<");
   $entity_ids = $query->execute();

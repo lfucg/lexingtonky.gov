@@ -1,7 +1,7 @@
 name: Lexington Home
 description: Subtheme for Homepage.
 type: theme
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9 || ^10
 base theme: lex
 
 # Add your regions below. Defaults to those defined in Drupal core.
