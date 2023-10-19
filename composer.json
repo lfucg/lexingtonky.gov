@@ -42,15 +42,14 @@
         "drupal/bootstrap_barrio": "^5.5",
         "drupal/captcha": "^2.0",
         "drupal/chosen": "^4.0",
-        "drupal/ckeditor_entity_link": "^1.2",
         "drupal/ckeditor_media_embed": "^1.11",
         "drupal/components": "^3.0@beta",
         "drupal/composer_deploy": "^1.6",
         "drupal/contact_storage": "^1.1",
         "drupal/contentimport": "9.x-dev@dev",
         "drupal/core": "^10.1",
-        "drupal/core-composer-scaffold": "^10.1",
-        "drupal/core-recommended": "^10.1",
+        "drupal/core-composer-scaffold": "^10",
+        "drupal/core-recommended": "^10",
         "drupal/ctools": "^4.0",
         "drupal/devel": "^5.0",
         "drupal/diff": "^1.x-dev@dev",
@@ -70,8 +69,7 @@
         "drupal/masquerade": "^2.x-dev@dev",
         "drupal/metatag": "^2.0",
         "drupal/pantheon_advanced_page_cache": "^2.0",
-        "drupal/paragraphs": "^1.13",
-        "drupal/paragraphs_inline_entity_form": "^1.x-dev@dev",
+        "drupal/paragraphs": "^1.16",
         "drupal/paragraphs_jquery_ui_accordion": "^1.4",
         "drupal/pathauto": "^1.9",
         "drupal/redirect": "^1.8",
@@ -113,7 +111,10 @@
         "drupal/quickedit": "^1.0",
         "drupal/rdf": "^2.0",
         "drupal/stable": "^2.0",
-        "drupal/classy": "^1.0"
+        "drupal/classy": "^1.0",
+        "drupal/core-project-message": "^10",
+        "symfony/dependency-injection": "^6.3",
+        "symfony/event-dispatcher": "^6.3"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
@@ -124,10 +125,8 @@
         "behat/mink-extension": "^2.3",
         "dmore/behat-chrome-extension": "^1.4",
         "genesis/behat-fail-aid": "^3.7",
-        "jcalderonzumba/mink-phantomjs-driver": "^0.3.3",
         "mikey179/vfsstream": "^1.6",
         "drupal/coder": "^8.3",
-        "drupal/drupal-extension": "^4.2",
         "drupal/drupal-driver": "^2.2",
         "drush-ops/behat-drush-endpoint": "^9.4",
         "phpstan/phpstan": "^1.10"
@@ -145,7 +144,8 @@
             "grasmash/drupal-security-warning": true,
             "oomphinc/composer-installers-extender": true,
             "wikimedia/composer-merge-plugin": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "drupal/core-project-message": true
         }
     },
     "conflict": {
