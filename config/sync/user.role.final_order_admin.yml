@@ -5,6 +5,7 @@ dependencies:
   config:
     - node.type.final_order
   module:
+    - file
     - node
 id: final_order_admin
 label: 'Final order admin'
@@ -14,6 +15,7 @@ permissions:
   - 'create final_order content'
   - 'delete any final_order content'
   - 'delete final_order revisions'
+  - 'delete own files'
   - 'delete own final_order content'
   - 'edit any final_order content'
   - 'edit own final_order content'

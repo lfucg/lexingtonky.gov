@@ -10,7 +10,7 @@ field_name: field_optional_email
 entity_type: contact_message
 bundle: page_feedback
 label: 'Your email address'
-description: 'We''ll only use this to reply to your message.'
+description: "We'll only use this to reply to your message."
 required: false
 translatable: false
 default_value: {  }

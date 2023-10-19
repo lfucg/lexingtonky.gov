@@ -13,7 +13,6 @@ tags:
   icbm: '38.044810, -84.495460'
   canonical_url: '[site:url]'
   geo_placename: 'Lexington Kentucky'
-  news_keywords: 'City of Lexington KY'
   description: 'The official site of the City of Lexington provides quick and easy access to information about the agencies, programs and services available.'
   geo_region: US-KY
   generator: 'Drupal 8'

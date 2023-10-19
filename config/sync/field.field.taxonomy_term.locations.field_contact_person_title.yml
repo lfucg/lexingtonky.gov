@@ -9,7 +9,7 @@ id: taxonomy_term.locations.field_contact_person_title
 field_name: field_contact_person_title
 entity_type: taxonomy_term
 bundle: locations
-label: 'Contact person''s title'
+label: "Contact person's title"
 description: 'E.g. Council aide'
 required: false
 translatable: false

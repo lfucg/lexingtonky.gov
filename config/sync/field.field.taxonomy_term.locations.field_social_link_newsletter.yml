@@ -12,7 +12,7 @@ field_name: field_social_link_newsletter
 entity_type: taxonomy_term
 bundle: locations
 label: 'Newsletter sign-up'
-description: 'Set link text to ''Newsletter sign-up'''
+description: "Set link text to 'Newsletter sign-up'"
 required: false
 translatable: false
 default_value: {  }

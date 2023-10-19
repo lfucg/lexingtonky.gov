@@ -42,7 +42,7 @@
         "drupal/bootstrap_barrio": "^5.5",
         "drupal/captcha": "^2.0",
         "drupal/chosen": "^4.0",
-        "drupal/ckeditor_media_embed": "^1.11",
+        "drupal/ckeditor_media_embed": "^1.12",
         "drupal/components": "^3.0@beta",
         "drupal/composer_deploy": "^1.6",
         "drupal/contact_storage": "^1.1",
@@ -155,6 +155,9 @@
         "patches": {
             "drupal/core": {
                 "project/drupal/issues/3359511 - missing menu active trail in Drupal 9.5.9": "https://www.drupal.org/files/issues/2023-05-12/3359511-5.patch"
+            },
+            "drupal/ckeditor_media_embed": {
+                "project/ckeditor_media_embed/issues/3393693 - Drush 12 compatibility for custom CKEditor Media Embed Plugin": "https://www.drupal.org/files/issues/2023-10-12/ckeditor_media_embed-1-x-3393693-5.patch"
             }
         },
         "drupal-scaffold": {

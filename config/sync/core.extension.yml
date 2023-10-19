@@ -64,6 +64,12 @@ module:
   inline_entity_form: 0
   jquery_ui: 0
   jquery_ui_accordion: 0
+  jquery_ui_button: 0
+  jquery_ui_checkboxradio: 0
+  jquery_ui_controlgroup: 0
+  jquery_ui_dialog: 0
+  jquery_ui_draggable: 0
+  jquery_ui_resizable: 0
   lex_calendar: 0
   lex_custom: 0
   lex_themecontrol: 0
@@ -84,6 +90,7 @@ module:
   paragraphs_jquery_ui_accordion: 0
   path: 0
   path_alias: 0
+  phpass: 0
   quickedit: 0
   rdf: 0
   recaptcha: 0
@@ -109,6 +116,7 @@ module:
   twig_vardumper: 0
   ultimate_cron: 0
   update: 0
+  upgrade_status: 0
   user: 0
   views_accordion: 0
   views_ui: 0

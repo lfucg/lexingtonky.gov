@@ -60,4 +60,10 @@ settings:
     taxonomy_top_level: 0
     user_admin_people: 0
     watchdog: 0
+  enabled_settings:
+    argument: argument
+    offset: 0
+    limit: 0
+    pager: 0
+    title: title
 field_type: viewsreference
