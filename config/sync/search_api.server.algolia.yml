@@ -1,0 +1,14 @@
+uuid: c2734f94-f29e-4dbb-b914-761406c4850d
+langcode: en
+status: true
+dependencies:
+  module:
+    - search_api_algolia
+id: algolia
+name: Algolia
+description: ''
+backend: search_api_algolia
+backend_config:
+  application_id: U49JR38RZ5
+  api_key: redacted
+  disable_truncate: 0

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -eo pipefail
+
+#
+# This script prepares the Drupal react app artifacts.
+# The react app dist artifact directories will need
+# to be persisted to other jobs.
+#
+
+pushd web/modules/custom/apax_search_algolia
+
+npm install
+
+npm run build
+
+popd

@@ -1,0 +1,40 @@
+common:
+  js:
+    react/dist/common.min.js: {minified: true}
+    
+index:
+  version: 1.x
+  js:
+    react/dist/index.min.js:  {
+      minified: true,
+      preprocess: false,
+      attributes: {
+        defer: true,
+        async: true
+      }
+    }
+  css:
+    theme:
+      'https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css': { type: external }
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+
+autocomplete:
+  version: 1.x
+  js:
+    react/dist/autocomplete.min.js:  {
+      minified: true,
+      preprocess: false,
+      attributes: {
+        defer: true,
+        async: true
+      }
+    }
+  css:
+    theme:
+      'https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css': { type: external }
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+

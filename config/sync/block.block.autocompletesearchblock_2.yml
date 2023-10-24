@@ -1,0 +1,20 @@
+uuid: 2387825c-0026-489d-ae4f-5931f07439e2
+langcode: en
+status: true
+dependencies:
+  module:
+    - apax_search_algolia
+  theme:
+    - lex
+id: autocompletesearchblock_2
+theme: lex
+region: hero
+weight: -18
+provider: null
+plugin: autocomplete_search_block
+settings:
+  id: autocomplete_search_block
+  label: 'Autocomplete Search Block'
+  label_display: '0'
+  provider: apax_search_algolia
+visibility: {  }

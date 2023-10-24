@@ -65,7 +65,7 @@
 			{% endblock %}
 		</div>
 		{% block sidebar %}
-			{% if node.type.value[0].target_id != 'full_page_iframe' %}
+			{% if node.type.value[0].target_id != 'full_page_iframe' and node.getTitle() != 'Search' %}
 				<div>
 					{% if node.field_media_contact[0].entity.field_contact_name.value %}
 						<div class="lex-block">

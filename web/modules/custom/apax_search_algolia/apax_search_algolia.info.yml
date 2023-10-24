@@ -1,0 +1,5 @@
+name: 'APAX Search - Algolia Implementation'
+type: module
+description: 'React App Blocks for Algolia InstantSearch Components'
+core_version_requirement: ^9 || ^10
+package: Custom

@@ -1,47 +1,272 @@
-.path-search {
-  main {
-    padding-top: 2% !important;
+// for the react app root
+#root,
+.lex-search-title {
+  max-width: 1150px;
+  margin: auto;
+}
+
+.search-results {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  flex-direction: column-reverse;
+  
+  @include screens-above(sm) {
+    gap: 2rem;
+    flex-direction: row;
   }
 
-  .search-result-title {
-    a {
-      color: color(lex-blue) !important;
-      font-size: 1em !important;
+
+  &__main {
+    @include screens-above(sm) {
+      flex: 0 0 66.666667%;
+      max-width: 66.666667%;
     }
   }
 
-  .lex-region-content .views-row {
-    padding: 1em 0;
+  &__facets {
+    position: relative;
+    display: block;
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+    margin-top: 0;
+        
+    @include screens-below(sm) {
+      flex: 0 0 100%;
+      max-width: 100%;
+      background-color: #efefef;
+      padding: 1rem 0;
+
+      &::after,
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 50%;
+        background-color: inherit;
+        z-index: -1;
+      }
+
+      &::before {
+        left: -50%;
+      }
+
+      &::after {
+        right: -50%;
+      }
+    }
+
+    .ais-RefinementList-checkbox,
+    .ais-RefinementList-labelText {
+      margin-right: 10px;
+    }
+
+    ul.ais-RefinementList-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px 12px;
+      margin-top: 1rem;
+
+      @include screens-above(sm) {
+        display: block;
+      }
+    }
+  }
+
+  &__item {
+    padding: .5rem 0 1.5rem;
     position: relative;
 
     &:hover {
-      background-color: color(light-gray);
+      background-color: #efefef;
     }
   }
 
-  .lex-card-subtitle {
-    a {
-      font-size: 1.1em;
-    }
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+    padding: 0;
   }
 
-  .search-result-html {
-    color: black;
+  &__title {
+    font-size: 1.3rem;
+    color: color(lex-blue);
   }
 
-  .views-field-type {
+  &__date {
+    font-size: 1rem;
+    color: color(light-blue);
+  }
+
+  &__type {
+    padding: 0;
+    font-size: 1rem;
     color: color(gray);
-    display: inline;
-    padding: inherit;
+    text-align: right;
+  }
+
+  &__link {
     position: absolute;
-    right: 0;
     top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+
+    &:hover {
+      text-decoration: none !important;
+    }
   }
 }
 
-.results-header {
-  display: inline-block;
-  font-style: italic;
-  margin-top: 1em;
-  padding: 0 5%;
+#autocompleteSearch {
+  position: relative;
+  width: 80%;
+  margin: auto;
+  text-align: left;
+
+  @include screens-below(sm) {
+    width: 95%;
+  }
+
+  .autocomplete {
+    &-wrapper {
+      &.open {
+        display: block;
+      }
+
+      &.closed {
+        display: none;
+      }
+    }
+
+    &__list {
+      list-style-type: none !important;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 0 !important;
+    }
+
+    &__item {
+      width: 100%;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: hsl(0deg, 0%, 100%);
+      border-radius: 6px;
+      box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02);
+      color: #061e3f;
+      padding: 0;
+      border-left: 2px solid #061e3f;
+      transition: all 0.25s;
+      text-align: left;
+
+      &__title {
+        width: 100%;
+        height: 100%;
+        display: block;
+        font-size: 1rem;
+        margin-bottom: 0;
+        padding: .5rem 1.25rem;
+      }
+
+      div {
+        margin: .5rem 1.25rem;
+      }
+    }
+
+    &__button {
+      color: #fefefe;
+      font-size: 1rem;
+      outline: none;
+      border: none;
+      background-color: transparent;
+      padding: 0;
+      margin: 1rem 0;
+
+      &:hover {
+        color: color(yellow);
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// hold over styles from old search
+.lex-search {
+  height: 2.5rem;
+  margin-bottom: 1rem;
+
+  * {
+    height: 100%;
+  }
+
+  .input-group {
+    margin: 0;
+    flex-wrap: nowrap;
+
+    input {
+      border: 1px solid color(yellow);
+      border-radius: 5px 0px 0px 5px;
+      margin: 0;
+      flex-grow: 1;
+    }
+
+    .input-group-append {
+      margin: 0;
+      border-radius: 0px 5px 5px 0px;
+      border: 1px solid color(yellow);
+    }
+
+    .btn {
+      background-color: color(dark-blue);
+      color: color(white);
+      border: none;
+      transition: all 300ms ease;
+      margin: 0;
+
+      &:hover {
+        color: color(dark-blue);
+        background-color: color(yellow);
+      }
+    }
+  }
+}
+
+// pulled in for navbar search.
+#search-icon {
+  display: flex !important;
+  align-items: center;
+
+  &.open {
+    img {
+      display: none;
+    }
+
+    .search-lines {
+      display: block;
+    }
+  }
+
+  img {
+    height: 60px;
+  }
+
+  .search-lines {
+    display: none;
+  }
+}
+
+.path-frontpage #block-autocompletesearchblock {
+  padding: 1rem !important;
+}
+
+#block-searchresultsblock {
+  @include screens-below(sm) {
+    padding: 1rem !important;
+  }
 }

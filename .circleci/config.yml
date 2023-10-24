@@ -134,6 +134,37 @@ jobs:
           paths:
             - web/themes/custom/lex/dist
 
+  build_react:
+    <<: *defaults
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - node-react-{{ checksum "web/modules/custom/apax_search_algolia/package-lock.json" }}
+            - node-react-
+
+      - run:
+          # Set TERMINUS_ENV and related environment variables.
+          # https://github.com/pantheon-systems/docker-build-tools-ci/blob/6.x/scripts/set-environment
+          name: setup-environment-vars
+          command: /build-tools-ci/scripts/set-environment
+
+      - run:
+          name: Build react app
+          command: ./.ci/build/react
+
+      - save_cache:
+          key: node-react-{{ checksum "web/modules/custom/apax_search_algolia/package-lock.json" }}
+          paths:
+            - $CIRCLE_WORKING_DIRECTORY/web/modules/custom/apax_search_algolia/.npm
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - web/modules/custom/apax_search_algolia/react/dist
+
   # If needed, frontend assets compilation or similar steps
   # could be added here.
 
@@ -261,10 +292,12 @@ workflows:
       - configure_env_vars
       - static_tests
       - build_theme
+      - build_react
       - deploy_to_pantheon:
           requires:
             - static_tests
             - build_theme
+            - build_react
       # - visual_regression_test:
       #     requires:
       #       - configure_env_vars

@@ -2,6 +2,8 @@ body {
 
   #site-banner {
     background: white;
+    z-index: 1000;
+    position: relative;
   }
 
   .sticky-top {
@@ -162,27 +164,6 @@ body {
       }
     }
 
-  }
-}
-
-#search-icon {
-  display: flex !important;
-  align-items: center;
-
-  img {
-    height: 60px;
-  }
-}
-.search-lines {
-    display: none;
-  }
-
-#search-icon.open {
-  img {
-    display: none;
-  }
-  .search-lines {
-    display: block;
   }
 }
 
