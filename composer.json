@@ -114,7 +114,8 @@
         "drupal/classy": "^1.0",
         "drupal/core-project-message": "^10",
         "symfony/dependency-injection": "^6.3",
-        "symfony/event-dispatcher": "^6.3"
+        "symfony/event-dispatcher": "^6.3",
+        "drupal/linkit": "^6.1"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
