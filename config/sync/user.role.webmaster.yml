@@ -31,7 +31,6 @@ weight: -7
 is_admin: null
 permissions:
   - 'access administration pages'
-  - 'access paragraph_items entity browser pages'
   - 'access toolbar'
   - 'access user profiles'
   - 'administer account settings'

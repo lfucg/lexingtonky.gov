@@ -36,7 +36,6 @@ permissions:
   - 'access content overview'
   - 'access contextual links'
   - 'access files overview'
-  - 'access paragraph_items entity browser pages'
   - 'access toolbar'
   - 'access tour'
   - 'administer contact forms'
