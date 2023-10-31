@@ -4,11 +4,12 @@ body {
       transform: translateY(-20%);
     }
   }
-  
+
   .lex-hero {
+    overflow: hidden;
     position: relative;
     transition: all 500ms ease;
-    
+
     @include screens-above(lg) {
       max-height: 600px;
     }
