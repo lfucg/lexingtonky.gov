@@ -21,49 +21,12 @@ settings:
   handler: 'default:view'
   handler_settings:
     target_bundles: null
-    auto_create: 0
+    auto_create: false
   plugin_types:
     block: block
-    default: 0
-    page: 0
-    feed: 0
-    entity_browser: 0
   preselect_views:
     department_specific_events: department_specific_events
-    block_content: 0
-    boards_directory: 0
-    city_social_media_accounts: 0
-    comment: 0
-    contact: 0
-    contact_messages: 0
-    content: 0
-    content_needing_review: 0
-    content_recent: 0
-    department_directory: 0
-    files: 0
-    final_orders: 0
-    frontpage: 0
-    front_page_news: 0
-    headers: 0
-    links_pointing_to_old_site: 0
-    locations_list: 0
-    media: 0
-    my_recent_edits: 0
-    nodes_for_a_term: 0
-    police_contact: 0
-    police_top_services: 0
-    resources_list: 0
-    sibling_pages: 0
-    site_wide_notice: 0
-    solr_search: 0
-    taxonomy_term: 0
-    taxonomy_top_level: 0
-    user_admin_people: 0
-    watchdog: 0
   enabled_settings:
     argument: argument
-    offset: 0
-    limit: 0
-    pager: 0
-    title: title
+    title: true
 field_type: viewsreference
