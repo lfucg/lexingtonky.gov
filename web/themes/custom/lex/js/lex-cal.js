@@ -1,10 +1,9 @@
-(function () {
-	var $ = jQuery;
+jQuery(function ($) {
 	var calendarDualBreakpoint = 767;
 	var listMode = '';
 	var monthMode = '';
 	var dualMode =  '';
-	var num = '';
+	var monthDotID = '';
 
 	$(window).on('load', function () {
 		$('#main-calendar').prepend($('.path-calendar .lex-region-title'));
@@ -28,8 +27,8 @@
 	});
 
 	$('.month-switch').click(function () {
-		monthMode = true;
 		listMode = false;
+		monthMode = true;
 		dualMode = false;
 
 		modeCheck();
@@ -58,45 +57,45 @@
 			$('#filters').outerHeight(true) +
 			$('#calendar-container').outerHeight(true));
 		} else if (listMode == true) {
-		$('.list-switch').css({
-			'background-color': 'white',
-			'box-shadow': 'rgba(0, 0, 0, 0.5) 0px 3px 10px 0px',
-			'color': '#004585'
-		});
-		$('.month-switch').css({
-			'background-color': '#EFEFEF',
-			'box-shadow': 'unset',
-			'color': '#353535'
-		});
-		$('#sidebar-calendar').css({
-			'display': 'inline-block',
-			'visibility': 'visible',
-		});
-		$('#calendar').css('display', 'none');
-		$('.calendar-key').css('display', 'none');
-		$('#sidebar-calendar').height(
-			$('.calendars-container').height() - (
-				$('.lex-region-title').outerHeight(true) +
-				$('.mobile-switch').outerHeight(true) +
-				$('#filters').outerHeight(true) +
-				$('.lex-region-feedback').outerHeight(true)
-				)
-		);
-		}else if (dualMode == true) {
-		$('#calendar').css('display', 'block');
-		$('#sidebar-calendar').css('display', 'block');
-		$('#sidebar-calendar').css('visibility', 'visible');
-		$('.calendar-key').css('display', 'flex');
-		$('.calendars-container').height(
-			$('.lex-region-title').outerHeight(true) +
-			$('#filters').outerHeight(true) +
-			$('#calendar-container').outerHeight(true)
-		);
-		$('#sidebar-calendar').height(
-			$('.calendars-container').outerHeight() +
-			$('.lex-region-feedback').outerHeight(true)
-		);
-			}
+      $('.list-switch').css({
+        'background-color': 'white',
+        'box-shadow': 'rgba(0, 0, 0, 0.5) 0px 3px 10px 0px',
+        'color': '#004585'
+      });
+      $('.month-switch').css({
+        'background-color': '#EFEFEF',
+        'box-shadow': 'unset',
+        'color': '#353535'
+      });
+      $('#sidebar-calendar').css({
+        'display': 'inline-block',
+        'visibility': 'visible',
+      });
+      $('#calendar').css('display', 'none');
+      $('.calendar-key').css('display', 'none');
+      $('#sidebar-calendar').height(
+        $('.calendars-container').height() - (
+          $('.lex-region-title').outerHeight(true) +
+          $('.mobile-switch').outerHeight(true) +
+          $('#filters').outerHeight(true) +
+          $('.lex-region-feedback').outerHeight(true)
+          )
+      );
+		} else if (dualMode == true) {
+      $('#calendar').css('display', 'block');
+      $('#sidebar-calendar').css('display', 'block');
+      $('#sidebar-calendar').css('visibility', 'visible');
+      $('.calendar-key').css('display', 'flex');
+      $('.calendars-container').height(
+        $('.lex-region-title').outerHeight(true) +
+        $('#filters').outerHeight(true) +
+        $('#calendar-container').outerHeight(true)
+      );
+      $('#sidebar-calendar').height(
+        $('.calendars-container').outerHeight() +
+        $('.lex-region-feedback').outerHeight(true)
+      );
+		}
 	}
 
 	$(window).resize(function () {
@@ -116,24 +115,37 @@
 		modeCheck();
 	});
 
+  function scrollToEvent(eventHeading) {
+    if (eventHeading) {
+      // Scroll the event element to the top of the event list container
+      const eventListContainer = document.querySelector('#sidebar-calendar .fc-view-container');
+      eventListContainer.scrollTo({
+        top: eventHeading.offsetTop,
+        behavior: "smooth",
+      });
+    }
+  }
+
 	$(document).on('click', '.month-dot', function () {
 		$parentScrollPosition = document.documentElement.scrollTop;
-		if (dualMode==true) {
-			num = $(this).attr('id').substr(6);
+    monthDotID = $(this).attr('id').substr(6);
+
+		if (dualMode == true) {
 			$('.list-event-container').each(function () {
-			if ($(this).attr('id').substr(5) == num) {
-				$(this).parent().closest('tr')[0].scrollIntoView();
-			}
+        if ($(this).attr('id').substr(5) == monthDotID) {
+          var eventHeading = $(this).parent().closest('tr')[0];
+          scrollToEvent(eventHeading);
+        }
 			});
 		} else {
-			num = $(this).attr('id').substr(6);
 			dualMode = false;
 			monthMode= false;
 			listMode = true;
 			$('.list-event-container').each(function () {
-			if ($(this).attr('id').substr(5) == num) {
-				$(this).parent().closest('tr')[0].scrollIntoView();
-			}
+        if ($(this).attr('id').substr(5) == monthDotID) {
+          var eventHeading = $(this).parent().closest('tr')[0];
+          scrollToEvent(eventHeading);
+        }
 			});
 		}
 
@@ -161,4 +173,4 @@
 			</li>'
 		);
 	}
-}());
+});
