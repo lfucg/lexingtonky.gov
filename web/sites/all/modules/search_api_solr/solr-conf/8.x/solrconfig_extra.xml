@@ -22,7 +22,7 @@
       <str name="field">twm_suggest</str>
       <str name="suggestAnalyzerFieldType">text_und</str>
       <str name="contextField">sm_context_tags</str>
-      <str name="buildOnCommit">false</str>
+      <str name="buildOnCommit">true</str>
       <str name="buildOnStartup">false</str>
     </lst>
   </searchComponent>

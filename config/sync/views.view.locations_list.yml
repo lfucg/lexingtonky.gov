@@ -328,7 +328,7 @@ display:
           admin_label: ''
           plugin_id: text_custom
           empty: true
-          content: "Use the text box to filter the list and click on a term to go to the edit page. It's not a search, but a filter so spelling is important."
+          content: 'Use the text box to filter the list and click on a term to go to the edit page. It''s not a search, but a filter so spelling is important.'
           tokenize: false
       footer: {  }
       display_extenders: {  }

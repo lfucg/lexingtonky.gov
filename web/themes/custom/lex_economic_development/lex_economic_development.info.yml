@@ -1,7 +1,7 @@
 name: Lexington Economic Devleopment
 description: A theme for the Economic Development pages.
 type: theme
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^8 || ^9
 base theme: lex
 
 # Add your regions below. Defaults to those defined in Drupal core.

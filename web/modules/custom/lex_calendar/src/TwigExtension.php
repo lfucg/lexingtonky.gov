@@ -2,13 +2,10 @@
 
 namespace Drupal\lex_calendar;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
-
 /**
  * Contains Twig extensions for the Lexington Calendar displays.
  */
-class TwigExtension extends AbstractExtension {
+class TwigExtension extends \Twig_Extension {
 
   /**
    * Start of the range to be displayed.
@@ -86,16 +83,16 @@ class TwigExtension extends AbstractExtension {
    */
   public function getFunctions() {
     return [
-      new TwigFunction(
+      new \Twig_SimpleFunction(
         'lexDateTime', [$this, 'getLexDateTime'], ['is_safe' => ['html']]
       ),
-      new TwigFunction(
+      new \Twig_SimpleFunction(
         'lexDate', [$this, 'getLexDate'], ['is_safe' => ['html']]
       ),
-      new TwigFunction(
+      new \Twig_SimpleFunction(
         'lexTimeRange', [$this, 'getLexTimeRange'], ['is_safe' => ['html']]
       ),
-      new TwigFunction(
+      new \Twig_SimpleFunction(
         'lexRender', [$this, 'getRender', ['is_safe' => 'html']]
       ),
     ];

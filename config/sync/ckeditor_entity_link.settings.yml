@@ -1,0 +1,47 @@
+entity_types:
+  file: file
+  node: node
+  taxonomy_term: taxonomy_term
+  block_content: 0
+  comment: 0
+  contact_message: 0
+  media: 0
+  paragraph: 0
+  search_api_task: 0
+  shortcut: 0
+  user: 0
+  menu_link_content: 0
+node_bundles:
+  article: 0
+  board_commission: 0
+  event: 0
+  final_order: 0
+  landing_page: 0
+  meeting: 0
+  news_article: 0
+  organization_page: 0
+  page: 0
+  site_wide_notice: 0
+0_bundles: null
+file_bundles:
+  file: 0
+comment_bundles:
+  comment: 0
+contact_message_bundles:
+  feedback: 0
+  personal: 0
+block_content_bundles:
+  basic: 0
+menu_link_content_bundles:
+  menu_link_content: 0
+shortcut_bundles:
+  default: 0
+taxonomy_term_bundles:
+  locations: locations
+  organizations: organizations
+  site_navigation: 0
+  tags: 0
+user_bundles:
+  user: 0
+_core:
+  default_config_hash: H3Vu3xgbyMXr8upGTdVNfvuEr5pb7YhFkhe38BwwvME

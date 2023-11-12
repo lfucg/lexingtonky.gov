@@ -37,28 +37,14 @@ lexTicker = function () {
     '</ul>';
   };
 
-  var groupBy = function(collection, iteratee) {
-    var grouped = {};
-    collection.forEach(function (item) {
-      var key = iteratee(item);
-      if (!grouped[key]) {
-        grouped[key] = [];
-      }
-      grouped[key].push(item);
-    });
-    return grouped;
-  }
-
   var markupSection = function(options) {
     var byHeading = _this.groupByHeading(options.rows);
-    return Object.entries(byHeading)
-    .map(function ([heading, row]) {
-      var filtered = row.filter(options.filter);
-      var grouped = groupBy(filtered, options.group);
-      var body = Object.values(grouped).map(options.markupBody).join('');
+    return _.map(byHeading, function(row, heading) {
+      var filtered = _.filter(row, options.filter);
+      var grouped = _.groupBy(filtered, options.group);
+      var body = _.map(grouped, options.markupBody).join('');
       return sectionHeading(heading) + body;
-    })
-    .join('');
+    }).join('');
   };
 
   var markupIncident = function(incident) {

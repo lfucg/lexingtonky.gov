@@ -1,4 +1,4 @@
 name: Add to Cal
 type: module
 description: 'A field formatter providing a widget for exporting events to various formats.'
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^8 || ^9

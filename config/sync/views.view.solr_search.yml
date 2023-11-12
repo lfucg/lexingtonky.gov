@@ -445,7 +445,7 @@ display:
           plugin_id: text
           empty: true
           content:
-            value: "We're sorry, but there were no results for these terms."
+            value: 'We''re sorry, but there were no results for these terms.'
             format: basic_html
           tokenize: false
       sorts:

@@ -12,7 +12,7 @@ field_name: field_social_link_linkedin
 entity_type: taxonomy_term
 bundle: locations
 label: Linkedin
-description: "Set link text to 'Linkedin'"
+description: 'Set link text to ''Linkedin'''
 required: false
 translatable: false
 default_value: {  }

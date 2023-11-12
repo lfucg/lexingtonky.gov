@@ -9,7 +9,6 @@ dependencies:
     - field.field.node.article.field_image
     - field.field.node.article.field_keywords
     - field.field.node.article.field_lex_custom_banner_image
-    - field.field.node.article.field_paragraph
     - field.field.node.article.field_tags
     - node.type.article
   module:
@@ -31,6 +30,4 @@ hidden:
   field_image: true
   field_keywords: true
   field_lex_custom_banner_image: true
-  field_paragraph: true
   field_tags: true
-  search_api_excerpt: true

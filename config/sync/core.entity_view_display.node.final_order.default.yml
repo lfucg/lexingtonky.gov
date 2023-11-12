@@ -81,4 +81,3 @@ content:
     region: content
 hidden:
   addtoany: true
-  search_api_excerpt: true
