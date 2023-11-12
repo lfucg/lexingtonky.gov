@@ -16,6 +16,7 @@ module:
   chosen_field: 0
   chosen_lib: 0
   ckeditor: 0
+  ckeditor_entity_link: 0
   ckeditor_media_embed: 0
   ckeditor_settings: 0
   color: 0
@@ -63,8 +64,6 @@ module:
   inline_entity_form: 0
   jquery_ui: 0
   jquery_ui_accordion: 0
-  jquery_ui_autocomplete: 0
-  jquery_ui_menu: 0
   lex_calendar: 0
   lex_custom: 0
   lex_themecontrol: 0
@@ -81,10 +80,10 @@ module:
   options: 0
   page_cache: 0
   pantheon_advanced_page_cache: 0
+  paragraphs_inline_entity_form: 0
   paragraphs_jquery_ui_accordion: 0
   path: 0
   path_alias: 0
-  phpass: 0
   quickedit: 0
   rdf: 0
   recaptcha: 0

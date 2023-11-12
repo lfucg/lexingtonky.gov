@@ -2,4 +2,4 @@ type: module
 name: Ck Editor Setting Overrides
 description: Applies setting changes to the WYSIWYG editor.
 package: Lexington
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^8 || ^9

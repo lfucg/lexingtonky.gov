@@ -20,7 +20,7 @@ field_name: field_item
 entity_type: paragraph
 bundle: flex_grid
 label: Items
-description: "Add as few or as many items to this as you'd like. "
+description: 'Add as few or as many items to this as you''d like. '
 required: false
 translatable: false
 default_value: {  }

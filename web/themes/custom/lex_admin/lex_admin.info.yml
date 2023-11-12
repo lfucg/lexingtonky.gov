@@ -1,12 +1,10 @@
 name: Lexington Admin
 description: An admin theme for the City of Lexington, which makes very minor updates to the "seven" base theme
 type: theme
+core_version_requirement: ^8 || ^9
 base theme: seven
-core_version_requirement: ^9 || ^10
-
 libraries:
  - lex_admin/global-styling
-
 regions:
   header: 'Header'
   pre_content: 'Pre-content'

@@ -12,7 +12,7 @@ field_name: field_social_link_instagram
 entity_type: taxonomy_term
 bundle: locations
 label: Instagram
-description: "Set link text to 'Instagram'"
+description: 'Set link text to ''Instagram'''
 required: false
 translatable: false
 default_value: {  }

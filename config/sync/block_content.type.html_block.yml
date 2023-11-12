@@ -5,4 +5,4 @@ dependencies: {  }
 id: html_block
 label: 'HTML block'
 revision: 1
-description: "Use sparingly. Better to use a block that is broken out into various fields so that we don't have to manage raw html."
+description: 'Use sparingly. Better to use a block that is broken out into various fields so that we don''t have to manage raw html.'

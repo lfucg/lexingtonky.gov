@@ -12,7 +12,7 @@ field_name: field_social_link_twitter
 entity_type: taxonomy_term
 bundle: locations
 label: Twitter
-description: "Set link text to 'Twitter'"
+description: 'Set link text to ''Twitter'''
 required: false
 translatable: false
 default_value: {  }

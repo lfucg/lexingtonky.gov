@@ -1,0 +1,24 @@
+uuid: 85850f3f-c120-4f5b-8ce1-0870faa43154
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.preview
+    - entity_browser.browser.paragraph_items
+  module:
+    - entity_embed
+    - paragraphs
+_core:
+  default_config_hash: txaXSGgHLGDIyIKPjO0w0inaF5-5z-7qgO7d66xHIkM
+label: Paragraphs
+id: paragraphs_inline_entity_form
+type_id: entity
+type_settings:
+  entity_type: paragraph
+  bundles: {  }
+  display_plugins:
+    - 'view_mode:paragraph.preview'
+  entity_browser: paragraph_items
+  entity_browser_settings:
+    display_review: false
+icon_uuid: null

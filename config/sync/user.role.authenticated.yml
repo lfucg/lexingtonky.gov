@@ -45,7 +45,6 @@ permissions:
   - 'create meeting content'
   - 'create news_article content'
   - 'create page content'
-  - 'delete own files'
   - 'dropzone upload files'
   - 'edit any alert content'
   - 'edit any board_commission content'

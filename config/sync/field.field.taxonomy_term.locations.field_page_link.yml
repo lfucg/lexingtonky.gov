@@ -12,7 +12,7 @@ field_name: field_page_link
 entity_type: taxonomy_term
 bundle: locations
 label: 'Page Link'
-description: "Enter the URL for this location's homepage i.e /departments/parks-recreation"
+description: 'Enter the URL for this location''s homepage i.e /departments/parks-recreation'
 required: false
 translatable: false
 default_value: {  }

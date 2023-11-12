@@ -35,4 +35,3 @@ hidden:
   field_owners_address: true
   field_person_charged: true
   field_pva_num: true
-  search_api_excerpt: true

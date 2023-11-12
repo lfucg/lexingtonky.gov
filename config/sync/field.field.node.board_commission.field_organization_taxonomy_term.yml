@@ -11,7 +11,7 @@ field_name: field_organization_taxonomy_term
 entity_type: node
 bundle: board_commission
 label: 'Organization taxonomy term'
-description: "Allows a board to display events tagged with the same Organization taxonomy term. For instance, when this page has the 'Planning Commission' term, events with the same 'Planning Commission' term will appear on this page."
+description: 'Allows a board to display events tagged with the same Organization taxonomy term. For instance, when this page has the ''Planning Commission'' term, events with the same ''Planning Commission'' term will appear on this page.'
 required: false
 translatable: true
 default_value: {  }
