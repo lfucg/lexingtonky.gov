@@ -1,0 +1,6 @@
+name: Paragraphs Inline Entity Form
+description: 'A fake module to replicate Paragraphs Inline Entity Form removal.'
+package: custom
+type: module
+version: 1.0
+core_version_requirement: ^9 || ^10
