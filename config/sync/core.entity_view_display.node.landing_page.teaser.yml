@@ -34,3 +34,4 @@ hidden:
   field_lex_site_nav: true
   field_metatags: true
   field_related_departments: true
+  search_api_excerpt: true

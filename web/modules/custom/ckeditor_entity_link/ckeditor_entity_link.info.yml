@@ -1,0 +1,6 @@
+name: Ckeditor Entity Link
+description: 'A fake module to replicate ckeditor Entity Link removal.'
+package: custom
+type: module
+version: 1.0
+core_version_requirement: ^9 || ^10

@@ -12,7 +12,7 @@ field_name: field_theme
 entity_type: node
 bundle: default_headers_for_themes
 label: Theme
-description: 'Select which custom theme to apply the image to by default. This image will show up for the theme when a page doesn''t have a hero image on it. '
+description: "Select which custom theme to apply the image to by default. This image will show up for the theme when a page doesn't have a hero image on it. "
 required: true
 translatable: false
 default_value: {  }
