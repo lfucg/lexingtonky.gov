@@ -1,4 +1,4 @@
-(function($) {
+jQuery(function ($) {
 
   let windowWidth = $( window ).width();
   $( window ).resize( function() {
@@ -15,4 +15,4 @@
     $(".search-block").addClass('hide');
     $(".search-fade").removeClass('show');
   });
-}(jQuery));
+});

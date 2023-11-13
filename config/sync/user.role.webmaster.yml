@@ -15,6 +15,7 @@ dependencies:
     - embed
     - entity_browser
     - field_permissions
+    - file
     - filter
     - masquerade
     - node
@@ -49,6 +50,7 @@ permissions:
   - 'delete any landing_page content'
   - 'delete any organization_page content'
   - 'delete organization_page revisions'
+  - 'delete own files'
   - 'delete own landing_page content'
   - 'delete own organization_page content'
   - 'delete terms in locations'

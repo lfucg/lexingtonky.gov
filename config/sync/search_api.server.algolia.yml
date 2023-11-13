@@ -10,5 +10,5 @@ description: ''
 backend: search_api_algolia
 backend_config:
   application_id: U49JR38RZ5
-  api_key: redacted
+  api_key: 27d278155a2950d737809ebb0d799e48
   disable_truncate: 0

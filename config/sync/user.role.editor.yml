@@ -60,6 +60,7 @@ permissions:
   - 'delete news_article revisions'
   - 'delete own alert content'
   - 'delete own event content'
+  - 'delete own files'
   - 'delete own meeting content'
   - 'delete own news_article content'
   - 'edit any event content'

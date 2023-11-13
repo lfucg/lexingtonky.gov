@@ -2,7 +2,7 @@ name: Lexington
 description: A theme for the City of Lexington
 type: theme
 base theme: stable
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9 || ^10
 
 # Add libraries.
 libraries:

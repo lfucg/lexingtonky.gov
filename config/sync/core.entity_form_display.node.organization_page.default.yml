@@ -25,6 +25,7 @@ dependencies:
     - metatag
     - paragraphs
     - path
+    - scheduler
     - text
     - viewsreference
     - workbench_moderation
@@ -138,13 +139,24 @@ content:
     region: content
     settings:
       match_operator: CONTAINS
-      size: '60'
-      placeholder: ''
       match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   path:
     type: path
     weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  publish_on:
+    type: datetime_timestamp_no_default
+    weight: 52
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  scheduler_settings:
+    weight: 50
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -172,6 +184,12 @@ content:
       match_limit: 10
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  unpublish_on:
+    type: datetime_timestamp_no_default
+    weight: 54
+    region: content
+    settings: {  }
     third_party_settings: {  }
   url_redirects:
     weight: 16
