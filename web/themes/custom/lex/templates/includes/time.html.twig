@@ -4,7 +4,7 @@
   optional:
     notag - skip <time>
 #}
-{% set formatted = time | replace({'am': 'a.m.', 'pm': 'p.m.', ':00': '' }) %}
+{% set formatted = time|render|striptags|trim|replace({'am': 'a.m.', 'pm': 'p.m.', ':00': '' }) %}
 {% if notag %}
   {{ formatted }}
 {% else %}

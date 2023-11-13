@@ -1583,8 +1583,8 @@ display:
           label: ''
           exclude: true
           alter:
-            alter_text: true
-            text: '{% include "@lex/includes/time.html.twig" with { time: created } %}'
+            alter_text: false
+            text: ''
             make_link: false
             path: ''
             absolute: false
@@ -1636,6 +1636,7 @@ display:
               past_format: '@interval ago'
               granularity: 2
               refresh: 60
+              description: ''
           group_column: value
           group_columns: {  }
           group_rows: true

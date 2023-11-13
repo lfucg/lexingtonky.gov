@@ -8,8 +8,8 @@
 	</a>
 	<div class="row">
 		<div class="contact-img-container">
-			<div class="date-overlay">{{node.created.value|date('M. j, Y g:i a')}}</div>
-			<img class="contact-img img-fluid" src={{image_url}}>
+			<div class="date-overlay">{{node.getCreatedTime()|date('M. j, Y g:i a')}}</div>
+			<img class="contact-img img-fluid" src={{ image_url }}>
 		</div>
 
 		<div class="col-12">
@@ -32,4 +32,3 @@
 		</div>
 	</div>
 </div>
-
