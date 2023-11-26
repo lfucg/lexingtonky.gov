@@ -36,6 +36,10 @@
 html {
   font-size: 100% !important;
   scroll-behavior: smooth;
+
+  body {
+    position: unset !important;
+  }
 }
 
 .no-scroll {
