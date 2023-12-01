@@ -64,6 +64,8 @@ module:
   inline_entity_form: 0
   jquery_ui: 0
   jquery_ui_accordion: 0
+  jquery_ui_autocomplete: 0
+  jquery_ui_menu: 0
   lex_calendar: 0
   lex_custom: 0
   lex_themecontrol: 0
