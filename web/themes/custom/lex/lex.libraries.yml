@@ -32,6 +32,7 @@ lex-sidenav-list:
     js/lex-sidenav-list.js: {}
   dependencies:
     - core/jquery
+
 lex-traffic:
   js:
     js/papaparse.min.js: {}
@@ -39,13 +40,15 @@ lex-traffic:
     js/lex-traffic-ticker.js: {}
   dependencies:
     - core/jquery
-    - core/underscore
+
 lex-neighborhood-associations:
   js:
     js/lex-neighborhood-associations.js: {}
+
 lex-join-police:
   js:
     js/join-police.js: {}
+
 set-default-url:
   version: 1.0.0
   js:
@@ -53,3 +56,4 @@ set-default-url:
   dependencies:
     - core/drupal
     - core/jquery
+    - core/once

@@ -1,4 +1,4 @@
-lexTicker = function () {
+var lexTicker = function () {
   var _this = {};
 
   var sectionHeading = function(heading) {
@@ -55,7 +55,7 @@ lexTicker = function () {
     .map(function ([heading, row]) {
       var filtered = row.filter(options.filter);
       var grouped = groupBy(filtered, options.group);
-      var body = Object.values(grouped).map(options.markupBody).join('');
+      var body = Object.entries(grouped).map(([key, value]) => options.markupBody(value, key)).join('');
       return sectionHeading(heading) + body;
     })
     .join('');
@@ -125,7 +125,7 @@ lexTicker = function () {
   return _this;
 };
 
-lexTickerDom = function() {
+var lexTickerDom = function() {
   var $ = jQuery;
   var baseUrl = 'https://lfucg.github.io/traffic-data';
   var ticker = lexTicker();
