@@ -33,9 +33,9 @@ lexTicker = function () {
 
   var markupRows = function(rows, rowMarkupFnc) {
     return '<ul>' +
-      _.map(rows, function(i) { return rowMarkupFnc(i); }).join('') +
+      rows.map(function(i) { return rowMarkupFnc(i); }).join('') +
     '</ul>';
-  };
+};
 
   var groupBy = function(collection, iteratee) {
     var grouped = {};
