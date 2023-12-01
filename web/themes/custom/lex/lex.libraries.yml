@@ -14,9 +14,9 @@ global-js:
   dependencies:
     - core/drupal
     - core/drupalSettings
-    - core/jquery.once
     - core/jquery
-    - core/jquery.ui.autocomplete
+    - core/once
+    - jquery_ui_autocomplete/autocomplete
 
 bootstrap:
   js:
