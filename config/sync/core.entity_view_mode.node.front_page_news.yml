@@ -6,5 +6,6 @@ dependencies:
     - node
 id: node.front_page_news
 label: 'Front Page News'
+description: ''
 targetEntityType: node
 cache: true

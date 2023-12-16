@@ -10,20 +10,17 @@ name: 'Advanced HTML'
 format: advanced_html
 weight: -9
 filters:
-  filter_html:
-    id: filter_html
-    provider: filter
-    status: false
-    weight: -50
-    settings:
-      allowed_html: '<a hreflang href class="lex-calltoaction"> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h3 id> <h4 id> <h5 id> <h6 id> <img src alt data-entity-type data-entity-uuid> <p> <table> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <iframe allowfullscreen frameborder height src width>'
-      filter_html_help: false
-      filter_html_nofollow: false
   editor_file_reference:
     id: editor_file_reference
     provider: editor
     status: true
     weight: -44
+    settings: {  }
+  entity_embed:
+    id: entity_embed
+    provider: entity_embed
+    status: true
+    weight: 0
     settings: {  }
   filter_align:
     id: filter_align
@@ -43,12 +40,21 @@ filters:
     status: true
     weight: -47
     settings: {  }
-  filter_htmlcorrector:
-    id: filter_htmlcorrector
-    provider: filter
-    status: true
-    weight: -49
+  filter_ckeditor_media_embed:
+    id: filter_ckeditor_media_embed
+    provider: ckeditor_media_embed
+    status: false
+    weight: -41
     settings: {  }
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: false
+    weight: -50
+    settings:
+      allowed_html: '<a hreflang href class="lex-calltoaction"> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h3 id> <h4 id> <h5 id> <h6 id> <img src alt data-entity-type data-entity-uuid> <p> <table> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <iframe allowfullscreen frameborder height src width>'
+      filter_html_help: false
+      filter_html_nofollow: false
   filter_html_escape:
     id: filter_html_escape
     provider: filter
@@ -61,24 +67,11 @@ filters:
     status: true
     weight: -45
     settings: {  }
-  filter_url:
-    id: filter_url
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
     provider: filter
     status: true
-    weight: -46
-    settings:
-      filter_url_length: 72
-  filter_ckeditor_media_embed:
-    id: filter_ckeditor_media_embed
-    provider: ckeditor_media_embed
-    status: false
-    weight: -41
-    settings: {  }
-  entity_embed:
-    id: entity_embed
-    provider: entity_embed
-    status: true
-    weight: 0
+    weight: -49
     settings: {  }
   filter_image_lazy_load:
     id: filter_image_lazy_load
@@ -86,3 +79,10 @@ filters:
     status: true
     weight: -43
     settings: {  }
+  filter_url:
+    id: filter_url
+    provider: filter
+    status: true
+    weight: -46
+    settings:
+      filter_url_length: 72
