@@ -17,6 +17,7 @@ dependencies:
     - field_permissions
     - file
     - filter
+    - help
     - masquerade
     - node
     - path
@@ -31,6 +32,7 @@ weight: -7
 is_admin: null
 permissions:
   - 'access administration pages'
+  - 'access help pages'
   - 'access paragraph_items entity browser pages'
   - 'access toolbar'
   - 'access user profiles'

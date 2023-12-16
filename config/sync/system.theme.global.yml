@@ -10,5 +10,5 @@ features:
   node_user_picture: true
 logo:
   path: 'public://City Logo Files_Web_Horse_Blue_0_0.png'
-  url: ''
+  url: null
   use_default: false
