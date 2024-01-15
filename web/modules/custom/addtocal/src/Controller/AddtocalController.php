@@ -76,7 +76,7 @@ class AddtocalController extends ControllerBase {
     header("Content-Type: application/force-download");
     header("Content-Disposition: attachment;filename=event.ics");
 
-    echo implode($event, "\r\n");
+    echo implode("\r\n", $event);
     exit;
   }
 
