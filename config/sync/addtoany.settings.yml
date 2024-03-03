@@ -1,7 +1,7 @@
 _core:
   default_config_hash: 9YPlBuinIKLe5jVEf-aIhZvKFn77i18yD4CrNR0BbVQ
 buttons_size: 32
-additional_html: "<a class=\"a2a_button_facebook\"></a>\r\n<a class=\"a2a_button_twitter\"></a>\r\n<a class=\"a2a_button_email\"></a>\r\n"
+additional_html: "<a class=\"a2a_button_facebook\"></a>\r\n<a class=\"a2a_button_x\"></a>\r\n<a class=\"a2a_button_email\"></a>\r\n"
 additional_css: ''
 additional_js: ''
 universal_button: default
@@ -20,4 +20,7 @@ entities:
   user: 0
   menu_link_content: 0
   paragraph: 0
+  entity_embed_fake_entity: 0
+  path_alias: 0
+  redirect: 0
 no_3p: false

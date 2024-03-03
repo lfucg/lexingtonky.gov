@@ -82,9 +82,11 @@ body footer {
   }
 
   .lex-social-links {
+    display: flex;
     column-count: 5;
-    margin-top: 5px;
+    gap: 25px;
     font-size: 1.5rem;
+    margin-top: 5px;
     .fa {
       font-size: 1.5rem;
     }
