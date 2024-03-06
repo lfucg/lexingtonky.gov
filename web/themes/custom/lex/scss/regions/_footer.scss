@@ -86,9 +86,19 @@ body footer {
     column-count: 5;
     gap: 25px;
     font-size: 1.5rem;
-    margin-top: 5px;
+    margin-top: 1rem;
+
     .fa {
       font-size: 1.5rem;
+    }
+
+    li {
+      margin: auto 0;
+    }
+
+    a:hover {
+      box-shadow: none !important;
+      color: unset !important;
     }
   }
 
@@ -100,5 +110,9 @@ body footer {
       font-size: .7rem;
       display: block;
     }
+  }
+
+  .dark-bg img {
+    height: 1.5rem;
   }
 }

@@ -79,6 +79,6 @@ a:not(
   ) {
     color: color(yellow);
     text-decoration: none;
-    box-shadow: 0 -1px 0 0 color(yellow) inset !important;
+    box-shadow: 0 -1px 0 0 color(yellow) inset;
   }
 }
