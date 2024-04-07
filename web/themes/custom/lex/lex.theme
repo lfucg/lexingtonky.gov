@@ -60,6 +60,21 @@ function lex_preprocess_html(&$variables) {
     $variables['#attached']['library'][] = 'lex/lex-join-police';
   }
 
+  if ($url == '/livegreen') {
+    // Add the code to the head
+    $pixel = [
+      '#type' => 'html_tag',
+      '#tag' => 'img',
+      '#attributes' => [
+        'src' => 'https://jelly.mdhv.io/v1/star.gif?pid=4mk1f6p3oiWnxHroNKeF4D4T5Dnw&src=mh&evt=hi',
+        'style' => 'display: none;',
+        'width' => '0',
+        'height' => '0',
+      ],
+    ];
+
+    $variables['page']['#attached']['html_head'][] = [$pixel, 'madhive_pixel'];
+  }
 }
 
 /**
