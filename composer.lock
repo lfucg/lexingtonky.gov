@@ -199,16 +199,16 @@
         },
         {
             "name": "chi-teck/drupal-code-generator",
-            "version": "3.4.0",
+            "version": "3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Chi-teck/drupal-code-generator.git",
-                "reference": "b8136b945dc3446894e6cd2b2f055e147140faed"
+                "reference": "74c2dc687e124bfc4001e73e9346b33067e2ec2b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Chi-teck/drupal-code-generator/zipball/b8136b945dc3446894e6cd2b2f055e147140faed",
-                "reference": "b8136b945dc3446894e6cd2b2f055e147140faed",
+                "url": "https://api.github.com/repos/Chi-teck/drupal-code-generator/zipball/74c2dc687e124bfc4001e73e9346b33067e2ec2b",
+                "reference": "74c2dc687e124bfc4001e73e9346b33067e2ec2b",
                 "shasum": ""
             },
             "require": {
@@ -226,7 +226,7 @@
                 "squizlabs/php_codesniffer": "<3.6"
             },
             "require-dev": {
-                "chi-teck/drupal-coder-extension": "^2.0.0-beta2",
+                "chi-teck/drupal-coder-extension": "^2.0.0-beta3",
                 "drupal/coder": "8.3.23",
                 "drupal/core": "10.3.x-dev",
                 "ext-simplexml": "*",
@@ -253,9 +253,9 @@
             "description": "Drupal code generator",
             "support": {
                 "issues": "https://github.com/Chi-teck/drupal-code-generator/issues",
-                "source": "https://github.com/Chi-teck/drupal-code-generator/tree/3.4.0"
+                "source": "https://github.com/Chi-teck/drupal-code-generator/tree/3.5.0"
             },
-            "time": "2024-03-10T13:35:00+00:00"
+            "time": "2024-04-11T11:23:44+00:00"
         },
         {
             "name": "composer/installers",
@@ -3386,11 +3386,21 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/diff.git",
-                "reference": "0ff9ea085f49c01d9c257d5c4483a0f49ded6a55"
+                "reference": "6115bec7554c550ac322f87327a1ed9fb7553cef"
             },
             "require": {
                 "drupal/core": "^9.3 || ^10",
                 "mkalkbrenner/php-htmldiff-advanced": "~0.0.8"
+            },
+            "require-dev": {
+                "jangregor/phpstan-prophecy": "dev-master",
+                "mglaman/phpstan-drupal": "^1.2.10",
+                "phpstan/extension-installer": "^1.2",
+                "phpstan/phpstan": "^1.11",
+                "phpstan/phpstan-deprecation-rules": "*",
+                "phpstan/phpstan-phpunit": "1.4.x-dev",
+                "phpstan/phpstan-strict-rules": "^1@stable",
+                "previousnext/coding-standard": "^1"
             },
             "type": "drupal-module",
             "extra": {
@@ -3398,8 +3408,8 @@
                     "dev-1.x": "1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.1+1-dev",
-                    "datestamp": "1677187812",
+                    "version": "8.x-1.1+6-dev",
+                    "datestamp": "1712815928",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Dev releases are not covered by Drupal security advisories."
@@ -3437,6 +3447,11 @@
                     "role": "Maintainer"
                 },
                 {
+                    "name": "Adam Bramley (acbramley)",
+                    "homepage": "https://www.drupal.org/u/acbramley",
+                    "role": "Maintainer"
+                },
+                {
                     "name": "lhangea",
                     "homepage": "https://www.drupal.org/user/2743803"
                 },
@@ -3464,7 +3479,7 @@
             "description": "Compares two entity revisions",
             "homepage": "https://www.drupal.org/project/diff",
             "support": {
-                "source": "http://cgit.drupalcode.org/diff",
+                "source": "https://git.drupalcode.org/project/diff",
                 "issues": "https://www.drupal.org/project/issues/diff"
             }
         },
@@ -3987,17 +4002,17 @@
         },
         {
             "name": "drupal/entity_embed",
-            "version": "1.5.0",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/entity_embed.git",
-                "reference": "8.x-1.5"
+                "reference": "8.x-1.6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/entity_embed-8.x-1.5.zip",
-                "reference": "8.x-1.5",
-                "shasum": "e74f5fcd5d42e39cda3bd36d7aedcc9fa53585ce"
+                "url": "https://ftp.drupal.org/files/projects/entity_embed-8.x-1.6.zip",
+                "reference": "8.x-1.6",
+                "shasum": "9c65a87f4285dc47303783db2e3af5825164d1dc"
             },
             "require": {
                 "drupal/core": "^9.5 || ^10",
@@ -4010,8 +4025,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.5",
-                    "datestamp": "1699351444",
+                    "version": "8.x-1.6",
+                    "datestamp": "1712587671",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -6542,24 +6557,24 @@
         },
         {
             "name": "drupal/search_api_solr",
-            "version": "4.3.2",
+            "version": "4.3.3",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/search_api_solr.git",
-                "reference": "4.3.2"
+                "reference": "4.3.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/search_api_solr-4.3.2.zip",
-                "reference": "4.3.2",
-                "shasum": "ea15725d12aa9481e8f1650324d2585eec766f67"
+                "url": "https://ftp.drupal.org/files/projects/search_api_solr-4.3.3.zip",
+                "reference": "4.3.3",
+                "shasum": "10db6eb0f17899ca7f863df7664eff085ab78b78"
             },
             "require": {
                 "composer-runtime-api": ">=2.0",
                 "composer/semver": "^1.0|^3.0",
                 "consolidation/annotated-command": "^2.12|^4.1",
                 "drupal/core": "^10.1 || ^11.0",
-                "drupal/search_api": "~1.30",
+                "drupal/search_api": "~1.34",
                 "ext-dom": "*",
                 "ext-json": "*",
                 "ext-simplexml": "*",
@@ -6591,8 +6606,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "4.3.2",
-                    "datestamp": "1705573676",
+                    "version": "4.3.3",
+                    "datestamp": "1712757702",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
