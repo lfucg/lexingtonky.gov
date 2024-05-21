@@ -39,7 +39,7 @@
         "drupal/bootstrap_barrio": "^5.5",
         "drupal/captcha": "^2.0",
         "drupal/chosen": "^4.0",
-        "drupal/ckeditor_media_embed": "^1.12",
+        "drupal/ckeditor_media_embed": "1.12",
         "drupal/components": "^3.0@beta",
         "drupal/composer_deploy": "^1.6",
         "drupal/contact_storage": "^1.1",
